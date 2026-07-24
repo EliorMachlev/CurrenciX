@@ -198,6 +198,7 @@ class CartActivity : BaseActivity() {
         return when (item.itemId) {
             android.R.id.home -> { attemptClose(); true }
             R.id.cart_share -> { shareCart(); true }
+            R.id.cart_save -> { saveOrPromptForName(); true }
             R.id.cart_save_as -> { showSaveAsDialog(); true }
             R.id.cart_load -> { showLoadDialog(); true }
             R.id.cart_export -> { launchExport(); true }
@@ -367,22 +368,43 @@ class CartActivity : BaseActivity() {
     }
 
     /**
+     * "Save" menu action — overwrites the current saved cart in-place. Falls
+     * back to Save-as when there's nothing to overwrite (never saved yet).
+     */
+    private fun saveOrPromptForName(onSaved: () -> Unit = {}) {
+        if (viewModel.saveCurrent()) {
+            val name = viewModel.getCurrentCart().value?.name.orEmpty()
+            showSnackbar(getString(R.string.cart_saved_toast, name))
+            onSaved()
+        } else {
+            showSaveAsDialog(onSaved = onSaved)
+        }
+    }
+
+    /**
      * Gate a destructive action (switching carts, closing the screen) behind
-     * an unsaved-changes prompt: Save routes through Save-as and invokes
-     * [action] after the write; Continue discards changes; Cancel aborts.
+     * an unsaved-changes prompt. Presents Save (overwrite — only when the
+     * cart has a persisted counterpart), Save as (new entry), Continue
+     * (discard), and Cancel (abort). Each save path invokes [action] after
+     * the write completes.
      */
     private fun confirmUnsavedThen(action: () -> Unit) {
         if (!viewModel.hasUnsavedChanges()) {
             action()
             return
         }
+        val canOverwrite = viewModel.getCurrentCart().value?.id?.isNotEmpty() == true
+        val options = mutableListOf<Pair<String, () -> Unit>>()
+        if (canOverwrite) {
+            options += getString(R.string.cart_unsaved_save) to { saveOrPromptForName(action) }
+        }
+        options += getString(R.string.cart_unsaved_save_as) to { showSaveAsDialog(onSaved = action) }
+        options += getString(R.string.cart_unsaved_continue) to action
         AlertDialog.Builder(this)
             .setTitle(R.string.cart_unsaved_title)
-            .setMessage(R.string.cart_unsaved_message)
-            .setPositiveButton(R.string.cart_unsaved_save) { _, _ ->
-                showSaveAsDialog(onSaved = action)
+            .setItems(options.map { it.first }.toTypedArray()) { _, which ->
+                options[which].second.invoke()
             }
-            .setNeutralButton(R.string.cart_unsaved_continue) { _, _ -> action() }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
     }

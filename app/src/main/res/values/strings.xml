@@ -51,6 +51,7 @@
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
     <string name="cart_fee_line">Fees: %s%%</string>
+    <string name="cart_menu_save">Save</string>
     <string name="cart_menu_save_as">Save as…</string>
     <string name="cart_menu_load">Load</string>
     <string name="cart_menu_export">Export to file</string>
@@ -80,5 +81,6 @@
     <string name="cart_unsaved_title">Unsaved changes</string>
     <string name="cart_unsaved_message">You have unsaved changes. What would you like to do?</string>
     <string name="cart_unsaved_save">Save</string>
+    <string name="cart_unsaved_save_as">Save as new</string>
     <string name="cart_unsaved_continue">Continue</string>
 </resources>

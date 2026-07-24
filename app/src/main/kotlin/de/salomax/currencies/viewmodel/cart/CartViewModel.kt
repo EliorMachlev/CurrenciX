@@ -178,6 +178,20 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
         setCurrent(saved)
     }
 
+    /**
+     * Overwrite the working cart's persisted entry with its current state.
+     * Returns false when the cart was never saved (no id) so callers can
+     * route to "Save as" as a fallback.
+     */
+    fun saveCurrent(): Boolean {
+        val cart = current.value ?: return false
+        if (cart.id.isEmpty()) return false
+        val saved = cart.copy(createdAt = System.currentTimeMillis())
+        db.saveCart(saved)
+        setCurrent(saved)
+        return true
+    }
+
     fun loadSaved(id: String) {
         val saved = db.getSavedCartsBlocking().firstOrNull { it.id == id } ?: return
         // Treat "loaded" as a fresh session — the loaded cart becomes the
