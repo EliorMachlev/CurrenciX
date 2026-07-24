@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -28,7 +27,9 @@ import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.Fee
 import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.repository.Database
+import de.salomax.currencies.util.choiceExplainerRow
 import de.salomax.currencies.util.dpToPx
+import de.salomax.currencies.util.paddedDialogContainer
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.view.main.spinner.SearchableSpinnerDialog
 import java.math.BigDecimal
@@ -37,8 +38,6 @@ import java.util.UUID
 // Preference key for the "fee side" row — the leading __ marks it as
 // UI-only state that's ignored by the settings back-up/restore pipeline.
 private const val PREF_KEY_FEE_SIDE = "__fee_side"
-
-private const val FEE_SIDE_SUMMARY_ALPHA = 0.7f
 
 // Sign-toggle button geometry (dp) and text size (sp).
 private const val SIGN_TOGGLE_BUTTON_HEIGHT_DP = 56f
@@ -81,19 +80,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             title = getString(titleRes)
             isIconSpaceReserved = false
         }.also(screen::addPreference)
-
-    /**
-     * A vertical LinearLayout with the standard dialog horizontal padding, used
-     * as the `setView` container for the fee-side / percent / pair dialogs so
-     * the inner rows sit inside Material dialog gutters.
-     */
-    private fun paddedDialogContainer(ctx: Context, topPadding: Int = 0): LinearLayout {
-        val padH = resources.getDimensionPixelSize(R.dimen.margin3x)
-        return LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(padH, topPadding, padH, 0)
-        }
-    }
 
     // Extra clearance below the EditText so its text-selection handle doesn't
     // drop onto the sign toggle.
@@ -148,62 +134,30 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val sides = arrayOf(FeeSide.ORIGINAL, FeeSide.CONVERTED)
         val current = db.getFeeSideBlocking()
 
-        val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
         val container = paddedDialogContainer(ctx)
-
         val radios = mutableListOf<RadioButton>()
         val dialogHolder = arrayOfNulls<AlertDialog>(1)
 
         sides.forEachIndexed { index, side ->
-            val row = LinearLayout(ctx).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-                setPadding(0, padV, 0, padV)
-                isClickable = true
-                val ta = ctx.obtainStyledAttributes(
-                    intArrayOf(android.R.attr.selectableItemBackground),
-                )
-                background = ta.getDrawable(0)
-                ta.recycle()
-            }
             val radio = RadioButton(ctx).apply {
                 isChecked = side == current
                 isClickable = false
             }
             radios += radio
-
             val (titleText, descText) = feeSideLabels(side)
-            val titleView = TextView(ctx).apply {
-                text = titleText
-                setTextAppearance(
-                    com.google.android.material.R.style.TextAppearance_Material3_TitleMedium,
-                )
-            }
-            val descView = TextView(ctx).apply {
-                text = descText
-                setTextAppearance(
-                    com.google.android.material.R.style.TextAppearance_Material3_BodySmall,
-                )
-                alpha = FEE_SIDE_SUMMARY_ALPHA
-            }
-            val textCol = LinearLayout(ctx).apply {
-                orientation = LinearLayout.VERTICAL
-                addView(titleView)
-                addView(descView)
-            }
-
-            row.addView(radio)
-            row.addView(
-                textCol,
-                LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f),
+            container.addView(
+                choiceExplainerRow(
+                    ctx = ctx,
+                    title = titleText,
+                    description = descText,
+                    leadingView = radio,
+                ) {
+                    radios.forEachIndexed { i, r -> r.isChecked = i == index }
+                    db.setFeeSide(side)
+                    onPicked(side)
+                    dialogHolder[0]?.dismiss()
+                }
             )
-            row.setOnClickListener {
-                radios.forEachIndexed { i, r -> r.isChecked = i == index }
-                db.setFeeSide(side)
-                onPicked(side)
-                dialogHolder[0]?.dismiss()
-            }
-            container.addView(row)
         }
 
         dialogHolder[0] = MaterialAlertDialogBuilder(ctx)
@@ -335,7 +289,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
         val signGroup = buildSignToggle(ctx, existing?.isMarkup)
         container.addView(percentInput)
-        addSignToggleWithTopMargin(container, signGroup.first)
+        addSignToggleWithTopMargin(container, signGroup.view)
 
         MaterialAlertDialogBuilder(ctx)
             .setTitle(R.string.fee_edit_percent)
@@ -343,8 +297,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val percent = percentInput.text.toString().toBigDecimalOrNull()
                     ?: BigDecimal.ZERO
-                val isMarkup = signGroup.first.checkedButtonId != signGroup.third
-                onConfirm(percent.abs(), isMarkup)
+                onConfirm(percent.abs(), signGroup.isMarkup())
             }
             .setNegativeButton(android.R.string.cancel, null)
             .withDeleteButton(onDelete)
@@ -401,7 +354,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
         listOf(fromLabel, fromButton, toLabel, toButton, bothWays, percentLabel, percentInput)
             .forEach { container.addView(it) }
-        addSignToggleWithTopMargin(container, signToggle.first)
+        addSignToggleWithTopMargin(container, signToggle.view)
 
         MaterialAlertDialogBuilder(ctx)
             .setTitle(R.string.fee_section_specific_pair)
@@ -412,12 +365,11 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 if (from == null || to == null) return@setPositiveButton
                 val percent = percentInput.text.toString().toBigDecimalOrNull()
                     ?: BigDecimal.ZERO
-                val isMarkup = signToggle.first.checkedButtonId != signToggle.third
                 onConfirm(
                     Fee.SpecificPair(
                         id = existing?.id ?: UUID.randomUUID().toString(),
                         percent = percent.abs(),
-                        isMarkup = isMarkup,
+                        isMarkup = signToggle.isMarkup(),
                         from = from,
                         to = to,
                         bothWays = bothWays.isChecked,
@@ -437,13 +389,23 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     }
 
     /**
-     * Returns (toggle group, +id, −id). Selection defaults to + unless
-     * [initialMarkup] is explicitly false.
+     * Two-button +/− toggle group. The wrapper hides the "is minus selected?"
+     * predicate behind [SignToggle.isMarkup] so callers don't reach into the
+     * button ids directly. Selection defaults to + unless [initialMarkup] is
+     * explicitly false.
      */
+    private data class SignToggle(
+        val view: MaterialButtonToggleGroup,
+        val plusId: Int,
+        val minusId: Int,
+    ) {
+        fun isMarkup(): Boolean = view.checkedButtonId != minusId
+    }
+
     private fun buildSignToggle(
         ctx: Context,
         initialMarkup: Boolean?,
-    ): Triple<MaterialButtonToggleGroup, Int, Int> {
+    ): SignToggle {
         val group = MaterialButtonToggleGroup(ctx).apply { isSingleSelection = true }
         val btnHeight = SIGN_TOGGLE_BUTTON_HEIGHT_DP.dpToPx().toInt()
         val btnWidth = SIGN_TOGGLE_BUTTON_WIDTH_DP.dpToPx().toInt()
@@ -463,7 +425,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         group.addView(btnPlus, LinearLayout.LayoutParams(btnWidth, btnHeight))
         group.addView(btnMinus, LinearLayout.LayoutParams(btnWidth, btnHeight))
         group.check(if (initialMarkup == false) btnMinus.id else btnPlus.id)
-        return Triple(group, btnPlus.id, btnMinus.id)
+        return SignToggle(group, btnPlus.id, btnMinus.id)
     }
 
     private fun openCurrencyPicker(onPicked: (String) -> Unit) {

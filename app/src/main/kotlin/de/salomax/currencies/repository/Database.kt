@@ -14,6 +14,7 @@ import de.salomax.currencies.model.Fee
 import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.FeeType
 import de.salomax.currencies.model.Rate
+import de.salomax.currencies.model.SavedCart
 import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.util.KEY_RATES_BASE
 import de.salomax.currencies.util.KEY_RATES_DATE
@@ -41,6 +42,10 @@ private const val LEGACY_FEE_ENABLED_KEY = "_feeEnabled"
 // -1L is used because it can't collide with any real epoch millis (1970-01-01
 // stores as 0L; anything after is positive).
 private const val NO_HISTORICAL_DATE = -1L
+
+// Public keyboard-type sentinels shared by every consumer of [Database.getKeyboardType]
+// so the "basic vs extended" split is stated in exactly one place.
+const val KEYBOARD_TYPE_BASIC = 0
 
 class Database(context: Context) {
 
@@ -158,6 +163,15 @@ class Database(context: Context) {
             .map { Currency.fromString(it!!) }
     }
 
+    // Synchronous readers for callers that can't wait for the LiveData to
+    // become active (e.g. the cart's initial state, built before any
+    // observer is attached).
+    fun getLastBaseCurrencyBlocking(): Currency? =
+        Currency.fromString(prefsLastState.getString(keyLastStateFrom, "USD")!!)
+
+    fun getLastDestinationCurrencyBlocking(): Currency? =
+        Currency.fromString(prefsLastState.getString(keyLastStateTo, "EUR")!!)
+
     fun setUpdating(updating: Boolean) {
         prefsLastState.edit().putBoolean(keyIsUpdating, updating).apply()
     }
@@ -260,6 +274,8 @@ class Database(context: Context) {
     private val keyChartHighlightExtremes = "_chartHighlightExtremes"
     private val keyDateFormat = "_dateFormat"
     private val defaultDateFormat = "dd/MM/yy HH:mm"
+    private val keyCartCurrentJson = "_cart_current_json"
+    private val keyCartsSavedJson = "_carts_saved_json"
 
     /* api */
 
@@ -495,7 +511,7 @@ class Database(context: Context) {
     }
 
     fun getKeyboardType(): LiveData<Int> {
-        return SharedPreferenceIntLiveData(prefs, keyKeyboardType, 0)
+        return SharedPreferenceIntLiveData(prefs, keyKeyboardType, KEYBOARD_TYPE_BASIC)
     }
 
     /* haptic feedback */
@@ -584,6 +600,50 @@ class Database(context: Context) {
 
     fun getDateFormatBlocking(): String {
         return prefs.getString(keyDateFormat, defaultDateFormat) ?: defaultDateFormat
+    }
+
+    /* cart ================================================================================== */
+
+    fun getCurrentCart(): LiveData<SavedCart?> {
+        return SharedPreferenceStringLiveData(prefs, keyCartCurrentJson, null)
+            .map { parseCart(it) }
+    }
+
+    fun getCurrentCartBlocking(): SavedCart? {
+        return parseCart(prefs.getString(keyCartCurrentJson, null))
+    }
+
+    fun setCurrentCart(cart: SavedCart?) {
+        val editor = prefs.edit()
+        if (cart == null) editor.remove(keyCartCurrentJson)
+        else editor.putString(keyCartCurrentJson, serializeCart(cart).toString())
+        editor.apply()
+    }
+
+    fun getSavedCarts(): LiveData<List<SavedCart>> {
+        return SharedPreferenceStringLiveData(prefs, keyCartsSavedJson, "[]")
+            .map { parseCartList(it) }
+    }
+
+    fun getSavedCartsBlocking(): List<SavedCart> {
+        return parseCartList(prefs.getString(keyCartsSavedJson, "[]"))
+    }
+
+    fun saveCart(cart: SavedCart) {
+        val existing = getSavedCartsBlocking()
+        val next = if (existing.any { it.id == cart.id })
+            existing.map { if (it.id == cart.id) cart else it }
+        else
+            existing + cart
+        writeSavedCarts(next)
+    }
+
+    fun deleteSavedCart(id: String) {
+        writeSavedCarts(getSavedCartsBlocking().filter { it.id != id })
+    }
+
+    private fun writeSavedCarts(list: List<SavedCart>) {
+        prefs.edit().putString(keyCartsSavedJson, serializeCartList(list)).apply()
     }
 
 }

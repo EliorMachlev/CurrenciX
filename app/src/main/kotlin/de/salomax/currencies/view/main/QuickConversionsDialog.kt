@@ -15,6 +15,8 @@ import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.FeeSide
+import de.salomax.currencies.util.feePercentDelta
+import de.salomax.currencies.util.isNeutralFeeStack
 import de.salomax.currencies.util.ltrIsolate
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.view.preference.PreferenceActivity
@@ -25,7 +27,6 @@ import java.math.RoundingMode
 
 private val QUICK_AMOUNTS = listOf("1", "5", "10", "20", "50", "100", "500", "1000")
 
-private const val PERCENT_MULTIPLIER = 100
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
 private const val ROW_DEFAULT_DECIMALS = 2
 private const val ROW_SMALL_AMOUNT_DECIMALS = 4
@@ -128,7 +129,7 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
         }
 
         val stack = viewModel.feeStackFor(from, to)
-        val hasFees = stack.isFeeStack()
+        val hasFees = stack.hasFees()
         val inflater = android.view.LayoutInflater.from(ctx)
 
         for (amountStr in QUICK_AMOUNTS) {
@@ -165,9 +166,7 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
         }
 
         if (hasFees) {
-            val percent = (stack.subtract(BigDecimal.ONE))
-                .multiply(BigDecimal(PERCENT_MULTIPLIER), MathContext.DECIMAL128)
-                .setScale(FEE_PERCENT_DECIMAL_PLACES, RoundingMode.HALF_UP)
+            val percent = stack.feePercentDelta(FEE_PERCENT_DECIMAL_PLACES, RoundingMode.HALF_UP)
             val sign = if (percent.signum() >= 0) "+" else ""
             feeInfo.text = getString(R.string.quick_conversions_fees_applied, "$sign$percent%")
             feeInfo.visibility = View.VISIBLE
@@ -183,11 +182,14 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
 
     private fun hasFeesFor(viewModel: MainViewModel, from: Currency?, to: Currency?): Boolean {
         if (from == null || to == null) return false
-        return viewModel.feeStackFor(from, to).isFeeStack()
+        return viewModel.feeStackFor(from, to).hasFees()
     }
 
-    private fun BigDecimal.isFeeStack(): Boolean =
-        compareTo(BigDecimal.ZERO) != 0 && compareTo(BigDecimal.ONE) != 0
+    // A fee stack of exactly 0 is a "no fees configured" sentinel from the
+    // view model, distinct from the neutral 1.0 stack that means "fees
+    // cancelled to nothing". Both need to be treated as "no fees to apply".
+    private fun BigDecimal.hasFees(): Boolean =
+        compareTo(BigDecimal.ZERO) != 0 && !isNeutralFeeStack()
 
     private inline fun setFeeAnnotation(view: TextView, visible: Boolean, text: () -> String) {
         if (visible) {

@@ -40,8 +40,11 @@ class SharedPreferenceExchangeRatesLiveData(private val sharedPrefs: SharedPrefe
     private val recomputeRunnable = Runnable { postValue(getValueFromPreferences()) }
 
     private fun getValueFromPreferences(): ExchangeRates? {
-        if (sharedPrefs.getString(KEY_RATES_BASE, null) == null || sharedPrefs.getString(KEY_RATES_DATE, null) == null)
-            return null
+        // Capture the metadata strings once — the guard-then-read pattern in
+        // the previous version risked a concurrent clear() nulling them out
+        // between the guard and the `!!` deref inside the constructor call.
+        val baseString = sharedPrefs.getString(KEY_RATES_BASE, null) ?: return null
+        val dateString = sharedPrefs.getString(KEY_RATES_DATE, null) ?: return null
         // values were previously stored as Float; skip stale entries and return null if all are stale
         val rates = sharedPrefs.all.entries
             .filter { !it.key.startsWith(METADATA_KEY_PREFIX) }
@@ -54,8 +57,8 @@ class SharedPreferenceExchangeRatesLiveData(private val sharedPrefs: SharedPrefe
         return ExchangeRates(
             success = true, // success always true, when serving cached data
             error = null, // error message always null, when serving cached data
-            base = Currency.fromString(sharedPrefs.getString(KEY_RATES_BASE, null)!!),
-            date = LocalDate.parse(sharedPrefs.getString(KEY_RATES_DATE, null))!!,
+            base = Currency.fromString(baseString),
+            date = LocalDate.parse(dateString),
             time = sharedPrefs.getString(KEY_RATES_TIME, null)?.let { LocalTime.parse(it) },
             rates = rates,
             provider = sharedPrefs.getInt(KEY_RATES_PROVIDER, NO_PROVIDER_ID).let { ApiProvider.fromId(it) }

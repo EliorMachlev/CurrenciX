@@ -132,10 +132,10 @@ class ExchangeRatesRepository(private val context: Context) {
                         // away from, so switching back fast-paints from fresh cache.
                         db.putCachedTimeline(merged, base, symbol)
                         // Only notify the UI if this pair is still the one the user cares about.
+                        // postValue is safe from any thread — avoids spawning a
+                        // fire-and-forget CoroutineScope just to hop to Main.
                         if (isCurrentTimelinePair(key)) {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                liveTimeline.setValue(merged)
-                            }
+                            liveTimeline.postValue(merged)
                         }
                     }
                 )

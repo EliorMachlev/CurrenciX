@@ -17,8 +17,6 @@ import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-private const val LOOKBACK_DAYS = 7L
-
 class NorgesBank: ApiProvider.Api() {
 
     override val name = "Norges Bank"
@@ -40,7 +38,7 @@ class NorgesBank: ApiProvider.Api() {
     override suspend fun getRates(context: Context?, date: LocalDate?): Result<ExchangeRates, FuelError> {
         // As this API doesn't return results for non-work days, get the last seven days.
         // The latest available values will be used.
-        val formattedDateStart = date?.minusDays(LOOKBACK_DAYS)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val formattedDateStart = date?.minusDays(TIMELINE_LOOKBACK_DAYS)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
         val formattedDateEnd = date?.format(DateTimeFormatter.ISO_LOCAL_DATE)
         val dateString =
             // latest
