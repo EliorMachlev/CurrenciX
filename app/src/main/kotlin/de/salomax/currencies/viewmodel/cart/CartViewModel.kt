@@ -273,8 +273,23 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
         db.setCurrentCart(next)
     }
 
+    // Every cold start begins with a fresh cart that inherits the main
+    // screen's currency pair and fee side. Within the same process (e.g. the
+    // user backs out of the cart and re-opens it) we keep the working cart
+    // so nothing they typed is lost.
     private fun loadCurrentOrEmpty(): SavedCart {
+        if (!coldStartConsumed) {
+            coldStartConsumed = true
+            db.setCurrentCart(null)
+            return emptyCart()
+        }
         return db.getCurrentCartBlocking() ?: emptyCart()
+    }
+
+    private companion object {
+        // Process-scoped: resets to false every time the process is (re)created.
+        @Volatile
+        var coldStartConsumed: Boolean = false
     }
 
     private fun emptyCart(): SavedCart {
