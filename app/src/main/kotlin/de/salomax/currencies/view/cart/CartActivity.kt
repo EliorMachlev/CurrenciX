@@ -352,6 +352,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun showSaveAsDialog(onSaved: () -> Unit = {}) {
+        if (guardEmptyForSave()) return
         val input = EditText(this).apply {
             hint = getString(R.string.cart_save_name_hint)
             setText(viewModel.getCurrentCart().value?.name.orEmpty())
@@ -378,6 +379,7 @@ class CartActivity : BaseActivity() {
      * back to Save-as when there's nothing to overwrite (never saved yet).
      */
     private fun saveOrPromptForName(onSaved: () -> Unit = {}) {
+        if (guardEmptyForSave()) return
         if (viewModel.saveCurrent()) {
             val name = viewModel.getCurrentCart().value?.name.orEmpty()
             showSnackbar(getString(R.string.cart_saved_toast, name))
@@ -385,6 +387,18 @@ class CartActivity : BaseActivity() {
         } else {
             showSaveAsDialog(onSaved = onSaved)
         }
+    }
+
+    // Refuse to persist an empty cart — matches Share's "nothing to share"
+    // guard so both write paths behave consistently. Returns true when the
+    // caller should abort.
+    private fun guardEmptyForSave(): Boolean {
+        val items = viewModel.getCurrentCart().value?.items
+        if (items.isNullOrEmpty()) {
+            showSnackbar(getString(R.string.cart_save_empty))
+            return true
+        }
+        return false
     }
 
     /**
