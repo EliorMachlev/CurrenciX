@@ -162,6 +162,41 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
+     * Reset the cart back to a fresh, main-screen-seeded state: no items and
+     * currencies + fee side re-pulled from the app-wide defaults. Preserves
+     * the cart's id/name so a subsequent "Save" still targets the same
+     * persisted entry — this is a content reset, not a "delete and start
+     * over".
+     */
+    fun resetToMainDefaults() {
+        val cur = current.value ?: return
+        val fresh = emptyCart()
+        val next = cur.copy(
+            items = emptyList(),
+            currency = fresh.currency,
+            destinationCurrency = fresh.destinationCurrency,
+            feeSide = fresh.feeSide,
+        )
+        current.value = next
+        db.setCurrentCart(next)
+    }
+
+    /**
+     * Drop any unsaved edits by reverting the working cart to its on-disk
+     * counterpart. Carts that were never saved fall back to a fresh, main-
+     * seeded cart (there's nothing on disk to restore).
+     */
+    fun discardChanges() {
+        val cur = current.value ?: return
+        val restored = if (cur.id.isNotEmpty()) {
+            db.getSavedCartsBlocking().firstOrNull { it.id == cur.id } ?: emptyCart()
+        } else {
+            emptyCart()
+        }
+        setCurrent(restored)
+    }
+
+    /**
      * Persist the current cart as a named entry. If [id] matches an existing
      * saved cart, that entry is replaced (rename / update semantics).
      */

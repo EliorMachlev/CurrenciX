@@ -399,6 +399,10 @@ class CartActivity : BaseActivity() {
             options += getString(R.string.cart_unsaved_save) to { saveOrPromptForName(action) }
         }
         options += getString(R.string.cart_unsaved_save_as) to { showSaveAsDialog(onSaved = action) }
+        options += getString(R.string.cart_unsaved_discard) to {
+            viewModel.discardChanges()
+            action()
+        }
         options += getString(R.string.cart_unsaved_continue) to action
         AlertDialog.Builder(this)
             .setTitle(R.string.cart_unsaved_title)
@@ -504,11 +508,17 @@ class CartActivity : BaseActivity() {
     }
 
     private fun confirmClear() {
+        val options = arrayOf(
+            getString(R.string.cart_clear_items_only),
+            getString(R.string.cart_clear_reset_all),
+        )
         AlertDialog.Builder(this)
             .setTitle(R.string.cart_menu_clear)
-            .setMessage(R.string.cart_clear_confirm)
-            .setPositiveButton(R.string.cart_clear_confirm_button) { _, _ ->
-                viewModel.clearItems()
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> viewModel.clearItems()
+                    1 -> viewModel.resetToMainDefaults()
+                }
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()

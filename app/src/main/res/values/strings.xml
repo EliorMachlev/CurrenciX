@@ -67,6 +67,8 @@
     <string name="cart_delete_confirm_button">Delete</string>
     <string name="cart_clear_confirm">Remove all items from the current cart?</string>
     <string name="cart_clear_confirm_button">Clear</string>
+    <string name="cart_clear_items_only">Clear items only</string>
+    <string name="cart_clear_reset_all">Reset (clear items + re-sync currencies and fees side from main)</string>
     <string name="cart_export_ok">Cart exported.</string>
     <string name="cart_export_error">Export failed: %s</string>
     <string name="cart_import_ok">Cart imported.</string>
@@ -82,5 +84,6 @@
     <string name="cart_unsaved_message">You have unsaved changes. What would you like to do?</string>
     <string name="cart_unsaved_save">Save</string>
     <string name="cart_unsaved_save_as">Save as new</string>
+    <string name="cart_unsaved_discard">Discard changes</string>
     <string name="cart_unsaved_continue">Continue</string>
 </resources>
