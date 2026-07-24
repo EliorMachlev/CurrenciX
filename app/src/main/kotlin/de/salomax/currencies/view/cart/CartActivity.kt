@@ -146,8 +146,12 @@ class CartActivity : BaseActivity() {
             onEditExpression = { field, _ -> openKeypadFor(field) },
         )
 
-        // Back-press dismisses the keypad first; only bubbles up to finish
-        // the activity when the keypad is already closed.
+        // Registered before the keypad callback so the keypad's (which is
+        // added second) wins when it's enabled. When the keypad is closed
+        // and there are unsaved edits, we prompt instead of finishing.
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = attemptClose()
+        })
         keypadBackCallback = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() = closeKeypad()
         }.also { onBackPressedDispatcher.addCallback(this, it) }
@@ -192,7 +196,7 @@ class CartActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> { finish(); true }
+            android.R.id.home -> { attemptClose(); true }
             R.id.cart_share -> { shareCart(); true }
             R.id.cart_save_as -> { showSaveAsDialog(); true }
             R.id.cart_load -> { showLoadDialog(); true }
@@ -340,7 +344,7 @@ class CartActivity : BaseActivity() {
         return if (iso.isNullOrEmpty()) amount else "$amount $iso"
     }
 
-    private fun showSaveAsDialog() {
+    private fun showSaveAsDialog(onSaved: () -> Unit = {}) {
         val input = EditText(this).apply {
             hint = getString(R.string.cart_save_name_hint)
             setText(viewModel.getCurrentCart().value?.name.orEmpty())
@@ -352,15 +356,38 @@ class CartActivity : BaseActivity() {
                 val name = input.text.toString().trim().ifBlank {
                     getString(R.string.cart_default_saved_name)
                 }
-                // If we loaded a saved cart earlier its id is non-empty —
-                // reuse it so "Save" overwrites rather than duplicating.
-                val existingId = viewModel.getCurrentCart().value?.id?.takeIf { it.isNotEmpty() }
-                viewModel.saveCurrentAs(name, existingId)
+                // "Save as" always creates a fresh entry so users can keep
+                // multiple snapshots of the same cart under different names.
+                viewModel.saveCurrentAs(name)
                 showSnackbar(getString(R.string.cart_saved_toast, name))
+                onSaved()
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
+
+    /**
+     * Gate a destructive action (switching carts, closing the screen) behind
+     * an unsaved-changes prompt: Save routes through Save-as and invokes
+     * [action] after the write; Continue discards changes; Cancel aborts.
+     */
+    private fun confirmUnsavedThen(action: () -> Unit) {
+        if (!viewModel.hasUnsavedChanges()) {
+            action()
+            return
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.cart_unsaved_title)
+            .setMessage(R.string.cart_unsaved_message)
+            .setPositiveButton(R.string.cart_unsaved_save) { _, _ ->
+                showSaveAsDialog(onSaved = action)
+            }
+            .setNeutralButton(R.string.cart_unsaved_continue) { _, _ -> action() }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun attemptClose() = confirmUnsavedThen { finish() }
 
     private fun showLoadDialog() {
         val saved = viewModel.getSavedCartsSnapshot().toMutableList()
@@ -371,7 +398,10 @@ class CartActivity : BaseActivity() {
         val adapter = SavedCartAdapter(saved)
         val dialog = AlertDialog.Builder(this)
             .setTitle(R.string.cart_menu_load)
-            .setAdapter(adapter) { _, which -> viewModel.loadSaved(saved[which].id) }
+            .setAdapter(adapter) { _, which ->
+                val targetId = saved[which].id
+                confirmUnsavedThen { viewModel.loadSaved(targetId) }
+            }
             .setNegativeButton(android.R.string.cancel, null)
             .create()
         adapter.onDelete = { position ->

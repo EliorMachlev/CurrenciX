@@ -77,4 +77,8 @@
     <string name="cart_share_converted">Converted: %1$s %2$s</string>
     <string name="cart_share_fees">Fees: %s%%</string>
     <string name="cart_share_total">Total: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Unsaved changes</string>
+    <string name="cart_unsaved_message">You have unsaved changes. What would you like to do?</string>
+    <string name="cart_unsaved_save">Save</string>
+    <string name="cart_unsaved_continue">Continue</string>
 </resources>

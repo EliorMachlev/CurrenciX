@@ -188,6 +188,23 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
 
     fun deleteSaved(id: String) = db.deleteSavedCart(id)
 
+    /**
+     * Compare the working cart against its persisted counterpart (matched by
+     * id) to decide if there are unsaved edits. A cart with no id counts as
+     * dirty as soon as the user has added anything — nothing on disk to fall
+     * back to.
+     */
+    fun hasUnsavedChanges(): Boolean {
+        val cur = current.value ?: return false
+        if (cur.id.isEmpty()) return cur.items.isNotEmpty()
+        val saved = db.getSavedCartsBlocking().firstOrNull { it.id == cur.id }
+            ?: return true
+        return cur.items != saved.items
+            || cur.name != saved.name
+            || cur.currency != saved.currency
+            || cur.destinationCurrency != saved.destinationCurrency
+    }
+
     /** Rename a saved cart in place. No-op if the id isn't found. */
     fun renameSaved(id: String, name: String) {
         val existing = db.getSavedCartsBlocking().firstOrNull { it.id == id } ?: return
