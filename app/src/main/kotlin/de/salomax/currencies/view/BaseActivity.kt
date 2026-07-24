@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import com.google.android.material.snackbar.Snackbar
 import de.salomax.currencies.R
 import de.salomax.currencies.repository.Database
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,18 @@ abstract class BaseActivity : AppCompatActivity() {
      * the first feature (if any) to [onFeature] whenever it changes. Handles
      * the lifecycle-aware collection so subclasses only supply the reaction.
      */
+    /**
+     * Build a [Snackbar] anchored to the shared `snackbar_top_position` view.
+     * Passing `this` as the theme context (vs. an anchor View) skips the
+     * ActionBar-overlay theme walk that trips over Material3-only attributes.
+     * Callers apply their own tints / actions / duration on the returned
+     * builder — this only centralises the anchor-lookup boilerplate.
+     */
+    protected fun snackbar(
+        message: CharSequence,
+        duration: Int = Snackbar.LENGTH_SHORT,
+    ): Snackbar = Snackbar.make(this, findViewById(R.id.snackbar_top_position), message, duration)
+
     protected fun observeFoldingFeature(onFeature: (FoldingFeature) -> Unit) {
         lifecycleScope.launch(Dispatchers.Main) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
