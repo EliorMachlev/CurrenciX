@@ -159,6 +159,15 @@ class Database(context: Context) {
             .map { Currency.fromString(it!!) }
     }
 
+    // Synchronous readers for callers that can't wait for the LiveData to
+    // become active (e.g. the cart's initial state, built before any
+    // observer is attached).
+    fun getLastBaseCurrencyBlocking(): Currency? =
+        Currency.fromString(prefsLastState.getString(keyLastStateFrom, "USD")!!)
+
+    fun getLastDestinationCurrencyBlocking(): Currency? =
+        Currency.fromString(prefsLastState.getString(keyLastStateTo, "EUR")!!)
+
     fun setUpdating(updating: Boolean) {
         prefsLastState.edit().putBoolean(keyIsUpdating, updating).apply()
     }

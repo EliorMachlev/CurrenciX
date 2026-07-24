@@ -1,6 +1,7 @@
 package de.salomax.currencies.repository
 
 import de.salomax.currencies.model.CartItem
+import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.SavedCart
 import org.json.JSONArray
 import org.json.JSONException
@@ -16,6 +17,7 @@ internal const val CART_KEY_CURRENCY = "currency"
 internal const val CART_KEY_DEST_CURRENCY = "destinationCurrency"
 internal const val CART_KEY_ITEMS = "items"
 internal const val CART_KEY_CREATED_AT = "createdAt"
+internal const val CART_KEY_FEE_SIDE = "feeSide"
 internal const val CART_ITEM_KEY_ID = "id"
 internal const val CART_ITEM_KEY_NAME = "name"
 internal const val CART_ITEM_KEY_EXPR = "expression"
@@ -27,6 +29,7 @@ internal fun serializeCart(cart: SavedCart): JSONObject {
         put(CART_KEY_CURRENCY, cart.currency)
         cart.destinationCurrency?.let { put(CART_KEY_DEST_CURRENCY, it) }
         put(CART_KEY_CREATED_AT, cart.createdAt)
+        put(CART_KEY_FEE_SIDE, cart.feeSide.name)
         put(CART_KEY_ITEMS, JSONArray().apply {
             cart.items.forEach { put(serializeCartItem(it)) }
         })
@@ -54,8 +57,14 @@ internal fun parseCart(obj: JSONObject?): SavedCart? {
         destinationCurrency = obj.optString(CART_KEY_DEST_CURRENCY, "").ifEmpty { null },
         items = items,
         createdAt = obj.optLong(CART_KEY_CREATED_AT, System.currentTimeMillis()),
+        // Legacy payloads (pre-per-cart fee side) fall back to ORIGINAL so
+        // they render the same way the app used to render them.
+        feeSide = parseFeeSideOrDefault(obj.optString(CART_KEY_FEE_SIDE, "")),
     )
 }
+
+private fun parseFeeSideOrDefault(raw: String): FeeSide =
+    runCatching { FeeSide.valueOf(raw) }.getOrDefault(FeeSide.ORIGINAL)
 
 internal fun parseCart(json: String?): SavedCart? {
     if (json.isNullOrBlank()) return null

@@ -32,28 +32,23 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
 
     private val fees: LiveData<List<Fee>> = db.getFees()
     private val rates: LiveData<ExchangeRates?> = db.getExchangeRates()
-    private val feeSide: LiveData<FeeSide> = db.getFeeSide()
 
-    // Cache the last-known fee list, rates, and fee side so synchronous
-    // callers (share text, fee line rendering) can reflect the same totals
-    // the UI shows without a suspend hop.
+    // Cache the last-known fee list and rates so synchronous callers (share
+    // text, fee line rendering) can reflect the same totals the UI shows
+    // without a suspend hop.
     private var lastFees: List<Fee> = emptyList()
     private var lastRates: ExchangeRates? = null
-    private var lastFeeSide: FeeSide = FeeSide.ORIGINAL
     private val feesObserver = Observer<List<Fee>> { lastFees = it }
     private val ratesObserver = Observer<ExchangeRates?> { lastRates = it }
-    private val feeSideObserver = Observer<FeeSide> { lastFeeSide = it }
 
     init {
         fees.observeForever(feesObserver)
         rates.observeForever(ratesObserver)
-        feeSide.observeForever(feeSideObserver)
     }
 
     override fun onCleared() {
         fees.removeObserver(feesObserver)
         rates.removeObserver(ratesObserver)
-        feeSide.removeObserver(feeSideObserver)
         super.onCleared()
     }
 
@@ -72,7 +67,12 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
 
     fun getExchangeRates(): LiveData<ExchangeRates?> = rates
 
-    fun getFeeSide(): LiveData<FeeSide> = feeSide
+    // Per-cart fee side: new carts inherit the app-wide default (via
+    // emptyCart) so the user's usual choice carries in from the main
+    // screen, but once the cart exists the toggle mutates its own state
+    // and the main-screen preference is left alone.
+    private val feeSideLive: LiveData<FeeSide> = current.map { it.feeSide }
+    fun getFeeSide(): LiveData<FeeSide> = feeSideLive
 
     /**
      * Whether the extended calculator keypad is enabled in settings. Same
@@ -85,7 +85,7 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
 
-    fun setFeeSide(side: FeeSide) = db.setFeeSide(side)
+    fun setFeeSide(side: FeeSide) = mutate { it.copy(feeSide = side) }
 
     fun getBaseCurrency(): LiveData<Currency> = current.map { resolveCurrency(it.currency) }
 
@@ -103,17 +103,17 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun getTotal(): LiveData<BigDecimal> = MediatorLiveData<BigDecimal>().apply {
         val recompute = {
+            val cart = current.value
             value = totalOf(
-                current.value,
+                cart,
                 fees.value.orEmpty(),
                 rates.value,
-                feeSide.value ?: FeeSide.ORIGINAL,
+                cart?.feeSide ?: FeeSide.ORIGINAL,
             )
         }
         addSource(current) { recompute() }
         addSource(fees) { recompute() }
         addSource(rates) { recompute() }
-        addSource(feeSide) { recompute() }
     }
 
     fun addItem(name: String, expression: String) {
@@ -217,6 +217,7 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
             || cur.name != saved.name
             || cur.currency != saved.currency
             || cur.destinationCurrency != saved.destinationCurrency
+            || cur.feeSide != saved.feeSide
     }
 
     /** Rename a saved cart in place. No-op if the id isn't found. */
@@ -260,10 +261,10 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
         val dest = cart.destinationCurrency?.let { resolveCurrency(it) } ?: base
         val stack = FeeCalculator.totalStack(lastFees, base, dest)
         val converted = convertAmount(subtotal, base, dest, lastRates)
-        val total = applyFeeSide(converted, stack, lastFeeSide)
+        val total = applyFeeSide(converted, stack, cart.feeSide)
         return CartSnapshot(
             cart, evaluated, subtotal, converted, stack, total,
-            lastFees, base, dest, lastFeeSide,
+            lastFees, base, dest, cart.feeSide,
         )
     }
 
@@ -293,10 +294,12 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun emptyCart(): SavedCart {
-        // Prefer the app-wide "last base / destination currency" so a fresh
-        // cart lands on the pair the user is already thinking in.
-        val base = db.getLastBaseCurrency().value?.iso4217Alpha() ?: Currency.USD.iso4217Alpha()
-        val dest = db.getLastDestinationCurrency().value?.iso4217Alpha()
+        // Read the main-screen picks synchronously — the LiveData accessors
+        // return null until observed, which is why an unobserved lookup here
+        // used to fall back to USD even when the user was on a different pair.
+        val base = db.getLastBaseCurrencyBlocking()?.iso4217Alpha()
+            ?: Currency.USD.iso4217Alpha()
+        val dest = db.getLastDestinationCurrencyBlocking()?.iso4217Alpha()
         return SavedCart(
             id = "",
             name = "",
@@ -304,6 +307,10 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
             destinationCurrency = dest.takeIf { it != null && it != base },
             items = emptyList(),
             createdAt = System.currentTimeMillis(),
+            // Seed the fee-side from the app-wide default so a fresh cart
+            // matches whatever the user has on the main screen. Subsequent
+            // toggles mutate only the cart, keeping the two independent.
+            feeSide = db.getFeeSideBlocking(),
         )
     }
 
