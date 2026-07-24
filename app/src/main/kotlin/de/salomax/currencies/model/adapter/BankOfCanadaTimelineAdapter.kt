@@ -13,9 +13,6 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 
-private const val CURRENCY_CODE_START = 2
-private const val CURRENCY_CODE_END = 5
-
 @Suppress("unused", "UNUSED_PARAMETER")
 internal class BankOfCanadaTimelineAdapter(
     private val base: Currency,
@@ -98,7 +95,7 @@ internal class BankOfCanadaTimelineAdapter(
     }
 
     private fun readCurrencyValue(reader: JsonReader, name: String): Pair<Currency?, BigDecimal> {
-        val currency = Currency.fromString(name.substring(CURRENCY_CODE_START, CURRENCY_CODE_END))
+        val currency = Currency.fromString(name.substring(BANK_OF_CANADA_ISO_START, BANK_OF_CANADA_ISO_END))
         reader.beginObject()
         reader.skipName() // always "v"
         val value = BigDecimal(reader.nextString())

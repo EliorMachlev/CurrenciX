@@ -43,6 +43,10 @@ private const val LEGACY_FEE_ENABLED_KEY = "_feeEnabled"
 // stores as 0L; anything after is positive).
 private const val NO_HISTORICAL_DATE = -1L
 
+// Public keyboard-type sentinels shared by every consumer of [Database.getKeyboardType]
+// so the "basic vs extended" split is stated in exactly one place.
+const val KEYBOARD_TYPE_BASIC = 0
+
 class Database(context: Context) {
 
     /*
@@ -507,7 +511,7 @@ class Database(context: Context) {
     }
 
     fun getKeyboardType(): LiveData<Int> {
-        return SharedPreferenceIntLiveData(prefs, keyKeyboardType, 0)
+        return SharedPreferenceIntLiveData(prefs, keyKeyboardType, KEYBOARD_TYPE_BASIC)
     }
 
     /* haptic feedback */

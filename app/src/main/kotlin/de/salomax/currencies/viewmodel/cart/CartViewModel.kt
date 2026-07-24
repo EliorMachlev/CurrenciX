@@ -15,12 +15,11 @@ import de.salomax.currencies.model.FeeCalculator
 import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.SavedCart
 import de.salomax.currencies.repository.Database
+import de.salomax.currencies.repository.KEYBOARD_TYPE_BASIC
 import de.salomax.currencies.util.evaluateCalculatorExpression
 import java.math.BigDecimal
 import java.math.MathContext
 import java.util.UUID
-
-private const val KEYBOARD_TYPE_BASIC = 0
 
 class CartViewModel(app: Application) : AndroidViewModel(app) {
 

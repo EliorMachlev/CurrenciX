@@ -20,6 +20,7 @@ import de.salomax.currencies.model.FeeCalculator
 import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.repository.Database
 import de.salomax.currencies.repository.ExchangeRatesRepository
+import de.salomax.currencies.repository.KEYBOARD_TYPE_BASIC
 import de.salomax.currencies.util.OPERATOR_DIVIDE
 import de.salomax.currencies.util.OPERATOR_MINUS
 import de.salomax.currencies.util.OPERATOR_MULTIPLY
@@ -35,10 +36,6 @@ import java.math.MathContext
 import java.text.Collator
 import java.time.LocalDate
 import java.time.ZoneId
-
-// KeyboardType value used by the basic (non-extended) keypad. Any other value
-// (currently only "1" = calculator/extended) unlocks the operators row.
-private const val KEYBOARD_TYPE_BASIC = 0
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class MainViewModel(val app: Application, onlyCache: Boolean = false) : AndroidViewModel(app) {

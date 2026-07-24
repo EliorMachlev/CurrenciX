@@ -18,3 +18,9 @@ internal val SHARED_KOTLIN_JSON_ADAPTER_FACTORY: KotlinJsonAdapterFactory =
 
 // Stateless date adapter — hoisted for the same reason as the factory above.
 internal val SHARED_LOCAL_DATE_ADAPTER: LocalDateAdapter = LocalDateAdapter()
+
+// Timeline lookback window shared by the providers that don't guarantee a
+// same-day quote (BankOfCanada, NorgesBank). Widening the window here picks up
+// the most recent business-day rate when the requested date lands on a weekend
+// or holiday — 7 days safely covers long weekends.
+internal const val TIMELINE_LOOKBACK_DAYS: Long = 7L

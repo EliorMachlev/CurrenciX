@@ -66,3 +66,9 @@ internal fun newXmlPullParser(inputStream: InputStream): XmlPullParser =
 internal fun XmlPullParser.norgesBankUnitMultiplier(): Int =
     getAttributeValue(null, "UNIT_MULT")?.toIntOrNull()
         ?.let { 10.0.pow(it).toInt() } ?: 1
+
+// BankOfCanada quotes series names as "FX<iso>CAD" (e.g. "FXUSDCAD"); the
+// currency ISO-4217 alpha code lives at indices [2, 5). Shared by the rates
+// and timeline adapters so a shape change is edited in one place.
+internal const val BANK_OF_CANADA_ISO_START: Int = 2
+internal const val BANK_OF_CANADA_ISO_END: Int = 5
