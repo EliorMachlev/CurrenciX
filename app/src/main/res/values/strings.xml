@@ -68,7 +68,9 @@
     <string name="cart_clear_confirm">Remove all items from the current cart?</string>
     <string name="cart_clear_confirm_button">Clear</string>
     <string name="cart_clear_items_only">Clear items only</string>
-    <string name="cart_clear_reset_all">Reset (clear items + re-sync currencies and fees side from main)</string>
+    <string name="cart_clear_items_only_desc">Removes every row from the cart but keeps the current currencies and fees side.</string>
+    <string name="cart_clear_reset_all">Reset cart</string>
+    <string name="cart_clear_reset_all_desc">Removes every row and re-pulls the base / destination currency and fees side from the main screen.</string>
     <string name="cart_export_ok">Cart exported.</string>
     <string name="cart_export_error">Export failed: %s</string>
     <string name="cart_import_ok">Cart imported.</string>

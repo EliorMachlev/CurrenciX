@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +17,7 @@ import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -63,6 +65,10 @@ private const val EXPORT_FILE_DATE_FORMAT = "yyyyMMdd-HHmmss"
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
+
+// Same alpha the fee-side preference dialog uses for its per-option
+// description line — keeps the explainer visually secondary to the title.
+private const val CHOICE_DESC_ALPHA = 0.7f
 
 class CartActivity : BaseActivity() {
 
@@ -508,18 +514,62 @@ class CartActivity : BaseActivity() {
     }
 
     private fun confirmClear() {
-        val options = arrayOf(
-            getString(R.string.cart_clear_items_only),
-            getString(R.string.cart_clear_reset_all),
+        showChoiceExplainerDialog(
+            titleRes = R.string.cart_menu_clear,
+            choices = listOf(
+                ChoiceRow(
+                    R.string.cart_clear_items_only,
+                    R.string.cart_clear_items_only_desc,
+                ) { viewModel.clearItems() },
+                ChoiceRow(
+                    R.string.cart_clear_reset_all,
+                    R.string.cart_clear_reset_all_desc,
+                ) { viewModel.resetToMainDefaults() },
+            ),
         )
-        AlertDialog.Builder(this)
-            .setTitle(R.string.cart_menu_clear)
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> viewModel.clearItems()
-                    1 -> viewModel.resetToMainDefaults()
+    }
+
+    // Shared "title + one-line explainer per option" picker. Mirrors the
+    // preference-screen fee-side dialog so users get the same shape of
+    // guidance in the cart's destructive flows.
+    private data class ChoiceRow(val title: Int, val description: Int, val onPick: () -> Unit)
+
+    private fun showChoiceExplainerDialog(titleRes: Int, choices: List<ChoiceRow>) {
+        val padH = resources.getDimensionPixelSize(R.dimen.margin3x)
+        val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(padH, padV, padH, 0)
+        }
+        val dialogHolder = arrayOfNulls<AlertDialog>(1)
+        choices.forEach { choice ->
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(0, padV, 0, padV)
+                isClickable = true
+                val ta = obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
+                background = ta.getDrawable(0)
+                ta.recycle()
+                setOnClickListener {
+                    choice.onPick()
+                    dialogHolder[0]?.dismiss()
                 }
             }
+            row.addView(TextView(this).apply {
+                setText(choice.title)
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+            })
+            row.addView(TextView(this).apply {
+                setText(choice.description)
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
+                alpha = CHOICE_DESC_ALPHA
+            })
+            container.addView(row)
+        }
+        dialogHolder[0] = AlertDialog.Builder(this)
+            .setTitle(titleRes)
+            .setView(container)
             .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
