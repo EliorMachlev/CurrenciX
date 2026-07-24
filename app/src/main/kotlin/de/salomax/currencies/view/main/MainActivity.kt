@@ -464,16 +464,19 @@ class MainActivity : BaseActivity() {
     private fun observeBaseCurrency(currency: Currency?) {
         spinnerFrom.setSelection(currency)
         currency ?: return
-        viewModel.getExchangeRates().value?.rates?.find { it.currency == currency }?.value
-            ?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
+        findRateFor(currency)?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
     }
 
     private fun observeDestinationCurrency(currency: Currency?) {
         spinnerTo.setSelection(currency)
         currency ?: return
-        viewModel.getExchangeRates().value?.rates?.find { it.currency == currency }?.value
-            ?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
+        findRateFor(currency)?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
     }
+
+    // Look up the current-cache rate value for [currency]; null when rates
+    // haven't loaded yet or the currency isn't in the response.
+    private fun findRateFor(currency: Currency): BigDecimal? =
+        viewModel.getExchangeRates().value?.rates?.find { it.currency == currency }?.value
 
     private fun observeKeypadState(extendedEnabled: Boolean) {
         val keypadRegular = findViewById<View>(R.id.keypad)

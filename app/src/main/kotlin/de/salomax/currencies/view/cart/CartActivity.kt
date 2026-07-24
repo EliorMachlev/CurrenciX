@@ -223,6 +223,7 @@ class CartActivity : BaseActivity() {
             adapter.setCurrency(cart.currency)
             adapter.submitList(cart.items.toList())
             emptyHint.visibility = if (cart.items.isEmpty()) View.VISIBLE else View.GONE
+            updateFeeVisuals()
         }
         viewModel.getBaseCurrency().observe(this) { spinnerFrom.setSelection(it) }
         viewModel.getDestinationCurrency().observe(this) { spinnerTo.setSelection(it) }
@@ -234,14 +235,7 @@ class CartActivity : BaseActivity() {
             totalLabel.text = formatAmount(value, viewModel.getDestinationCurrency().value)
             updateFeeExtras()
         }
-        viewModel.getFees().observe(this) {
-            updateFeeLine()
-            updateFeeExtras()
-        }
-        viewModel.getCurrentCart().observe(this) {
-            updateFeeLine()
-            updateFeeExtras()
-        }
+        viewModel.getFees().observe(this) { updateFeeVisuals() }
         viewModel.getFeeSide().observe(this) { side ->
             val effective = side ?: FeeSide.ORIGINAL
             feeSideButton.setImageResource(
@@ -262,6 +256,14 @@ class CartActivity : BaseActivity() {
             spinnerTo.setSelection(viewModel.getDestinationCurrency().value)
             updateFeeLine()
         }
+    }
+
+    // Both the arrow/percentage line and the "other side" total need to re-run
+    // whenever fees or the cart's currencies change — bundle so callers don't
+    // have to know which slot depends on what.
+    private fun updateFeeVisuals() {
+        updateFeeLine()
+        updateFeeExtras()
     }
 
     private fun updateFeeLine() {
