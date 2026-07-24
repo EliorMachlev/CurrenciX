@@ -419,7 +419,11 @@ class CartActivity : BaseActivity() {
      * the write completes.
      */
     private fun confirmUnsavedThen(action: () -> Unit) {
-        if (!viewModel.hasUnsavedChanges()) {
+        // An empty cart has nothing worth saving, so skip the prompt entirely
+        // even if a persisted counterpart differs — the destructive action
+        // would just replace an empty working set with something else.
+        val items = viewModel.getCurrentCart().value?.items
+        if (items.isNullOrEmpty() || !viewModel.hasUnsavedChanges()) {
             action()
             return
         }
