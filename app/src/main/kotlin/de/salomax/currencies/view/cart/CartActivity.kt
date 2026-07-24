@@ -6,18 +6,15 @@ import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -30,15 +27,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.FeeSide
-import de.salomax.currencies.model.Rate
 import de.salomax.currencies.model.SavedCart
 import de.salomax.currencies.repository.CartExporter
 import de.salomax.currencies.repository.CartFileResult
+import de.salomax.currencies.util.choiceExplainerRow
+import de.salomax.currencies.util.feePercentDelta
 import de.salomax.currencies.util.hapticTap
+import de.salomax.currencies.util.isNeutralFeeStack
+import de.salomax.currencies.util.paddedDialogContainer
+import de.salomax.currencies.util.rateSpinnerListener
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.view.BaseActivity
 import de.salomax.currencies.view.main.spinner.SearchableSpinner
@@ -65,10 +65,6 @@ private const val EXPORT_FILE_DATE_FORMAT = "yyyyMMdd-HHmmss"
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
-
-// Same alpha the fee-side preference dialog uses for its per-option
-// description line — keeps the explainer visually secondary to the title.
-private const val CHOICE_DESC_ALPHA = 0.7f
 
 class CartActivity : BaseActivity() {
 
@@ -268,28 +264,11 @@ class CartActivity : BaseActivity() {
         }
     }
 
-    // Same shape as MainActivity's spinner listener: forwards the selected
-    // rate's currency to the given setter, guarding against spurious "no
-    // selection" callbacks that fire during adapter swaps.
-    private fun rateSpinnerListener(onCurrencySelected: (Currency) -> Unit) =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long,
-            ) {
-                if (position == -1 || parent?.adapter?.isEmpty == true) return
-                (parent?.adapter?.getItem(position) as Rate?)?.let { onCurrencySelected(it.currency) }
-            }
-        }
-
     private fun updateFeeLine() {
         // Compute the stack directly from currencies + fees so the arrow /
         // percentage show even when the cart is empty (matches main screen).
         val stack = viewModel.currentFeeStack()
-        if (stack.isNoFee()) {
+        if (stack.isNeutralFeeStack()) {
             feeLine.visibility = View.GONE
             feeSideButton.visibility = View.GONE
             return
@@ -307,7 +286,7 @@ class CartActivity : BaseActivity() {
      */
     private fun updateFeeExtras() {
         val stack = viewModel.currentFeeStack()
-        if (stack.isNoFee()) {
+        if (stack.isNeutralFeeStack()) {
             subtotalExtra.visibility = View.GONE
             totalExtra.visibility = View.GONE
             return
@@ -356,16 +335,11 @@ class CartActivity : BaseActivity() {
     // wherever we drop a number into shared text (share sheet).
     private fun BigDecimal.toCartDisplayString(): String = cartScale().toPlainString()
 
-    // A multiplicative fee stack of 1.0 means "no fees apply". Extracted so
-    // both the fee line and the fee-extras block gate on the same predicate
-    // instead of comparing to `BigDecimal.ONE` inline.
-    private fun BigDecimal.isNoFee(): Boolean = compareTo(BigDecimal.ONE) == 0
-
-    // Render a multiplicative fee stack (e.g. 1.025) as its percentage delta
-    // ("2.50") in the cart's display scale. Shared by the on-screen fee line
-    // and the "Fees:" row in shared text.
+    // Percentage delta of the fee stack ("2.50" for a 1.025 stack), pinned to
+    // the cart's display scale. Shared by the on-screen fee line and the
+    // "Fees:" row in shared text.
     private fun BigDecimal.toFeePercentDisplay(): String =
-        subtract(BigDecimal.ONE).multiply(BigDecimal(100)).toCartDisplayString()
+        feePercentDelta(CART_DISPLAY_SCALE).toPlainString()
 
     // Fallback to the localised "My cart" name when the user hasn't given
     // the cart one. Shared by Save-as, Rename, and Export.
@@ -574,37 +548,20 @@ class CartActivity : BaseActivity() {
     private data class ChoiceRow(val title: Int, val description: Int, val onPick: () -> Unit)
 
     private fun showChoiceExplainerDialog(titleRes: Int, choices: List<ChoiceRow>) {
-        val padH = resources.getDimensionPixelSize(R.dimen.margin3x)
         val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
-        val container = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(padH, padV, padH, 0)
-        }
+        val container = paddedDialogContainer(this, topPadding = padV)
         val dialogHolder = arrayOfNulls<AlertDialog>(1)
         choices.forEach { choice ->
-            val row = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.CENTER_VERTICAL
-                setPadding(0, padV, 0, padV)
-                isClickable = true
-                val ta = obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
-                background = ta.getDrawable(0)
-                ta.recycle()
-                setOnClickListener {
+            container.addView(
+                choiceExplainerRow(
+                    ctx = this,
+                    title = getString(choice.title),
+                    description = getString(choice.description),
+                ) {
                     choice.onPick()
                     dialogHolder[0]?.dismiss()
                 }
-            }
-            row.addView(TextView(this).apply {
-                setText(choice.title)
-                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
-            })
-            row.addView(TextView(this).apply {
-                setText(choice.description)
-                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
-                alpha = CHOICE_DESC_ALPHA
-            })
-            container.addView(row)
+            )
         }
         dialogHolder[0] = AlertDialog.Builder(this)
             .setTitle(titleRes)
@@ -643,7 +600,7 @@ class CartActivity : BaseActivity() {
                 getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso)
             )
         }
-        if (!snapshot.feeStack.isNoFee()) {
+        if (!snapshot.feeStack.isNeutralFeeStack()) {
             appendLine(getString(R.string.cart_share_fees, snapshot.feeStack.toFeePercentDisplay()))
         }
         append(getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
@@ -802,11 +759,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun showSnackbar(message: String) {
-        // Pass `this` as the theme context so Snackbar inflates against the
-        // activity's Material3 theme. The 2-arg overload walks up from the
-        // anchor view and can hit the ActionBar overlay, which crashes on
-        // M3 attributes missing from the AppCompat ActionBar theme.
-        Snackbar.make(this, findViewById(R.id.snackbar_top_position), message, Snackbar.LENGTH_SHORT).show()
+        snackbar(message).show()
     }
 }
 

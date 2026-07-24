@@ -13,7 +13,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
 import android.widget.DatePicker
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -35,9 +34,12 @@ import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.Rate
 import de.salomax.currencies.repository.Database
 import de.salomax.currencies.model.FeeSide
+import de.salomax.currencies.util.feePercentDelta
 import de.salomax.currencies.util.getDecimalSeparator
 import de.salomax.currencies.util.hapticTap
+import de.salomax.currencies.util.isNeutralFeeStack
 import de.salomax.currencies.util.ltrIsolate
+import de.salomax.currencies.util.rateSpinnerListener
 import de.salomax.currencies.util.stripRtlMark
 import de.salomax.currencies.util.stripTimePattern
 import de.salomax.currencies.util.toHumanReadableNumber
@@ -66,7 +68,6 @@ private const val CTX_MENU_PASTE_FROM = 1
 private const val CTX_MENU_COPY_TO = 2
 
 // fee badge / true-cost formatting
-private const val PERCENT_MULTIPLIER = 100
 private const val FEE_BADGE_DECIMAL_PLACES = 2
 private const val AMOUNT_DECIMAL_PLACES = 2
 
@@ -328,29 +329,13 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    // Forward the picked rate's currency to [onCurrencySelected]; both spinners
-    // share this exact shape (guard against empty adapter / position -1 first).
-    private fun rateSpinnerListener(onCurrencySelected: (Currency) -> Unit) =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long,
-            ) {
-                if (position == -1 || parent?.adapter?.isEmpty == true) return
-                (parent?.adapter?.getItem(position) as Rate?)?.let { onCurrencySelected(it.currency) }
-            }
-        }
-
     private fun copyToClipboard(copyText: String) {
         clipboardManager().setPrimaryClip(ClipData.newPlainText(null, copyText))
         val message = HtmlCompat.fromHtml(
             getString(R.string.copied_to_clipboard, copyText),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        Snackbar.make(this, findViewById(R.id.snackbar_top_position), message, Snackbar.LENGTH_SHORT)
+        snackbar(message)
             .setBackgroundTint(MaterialColors.getColor(this, R.attr.colorPrimary, null))
             .setTextColor(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
             .show()
@@ -396,17 +381,13 @@ class MainActivity : BaseActivity() {
 
     private fun observeTotalStack(stack: BigDecimal?) {
         val effective = stack ?: BigDecimal.ONE
-        if (effective.compareTo(BigDecimal.ONE) == 0) {
+        if (effective.isNeutralFeeStack()) {
             tvFeeBadge.visibility = View.GONE
             btnFeeSide.visibility = View.GONE
             return
         }
         btnFeeSide.visibility = View.VISIBLE
-        val deltaPercent = effective
-            .subtract(BigDecimal.ONE)
-            .multiply(BigDecimal(PERCENT_MULTIPLIER))
-            .setScale(FEE_BADGE_DECIMAL_PLACES, java.math.RoundingMode.HALF_EVEN)
-        tvFeeBadge.text = deltaPercent.toHumanReadableNumber(
+        tvFeeBadge.text = effective.feePercentDelta(FEE_BADGE_DECIMAL_PLACES).toHumanReadableNumber(
             this,
             showPositiveSign = true,
             suffix = "%",
@@ -468,11 +449,9 @@ class MainActivity : BaseActivity() {
 
     private fun showErrorSnackbar(message: String?) {
         message ?: return
-        Snackbar.make(
-            this,
-            findViewById(R.id.snackbar_top_position),
+        snackbar(
             HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY),
-            Snackbar.LENGTH_INDEFINITE
+            Snackbar.LENGTH_INDEFINITE,
         )
             .setBackgroundTint(MaterialColors.getColor(this, R.attr.colorError, null))
             .setTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))
