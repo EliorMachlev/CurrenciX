@@ -103,29 +103,20 @@ class CartItemAdapter(
             onChangeHook = onChange
             this.currency = currency
 
-            nameWatcher?.let { nameField.removeTextChangedListener(it) }
-            exprWatcher?.let { exprField.removeTextChangedListener(it) }
-
-            if (nameField.text?.toString() != item.name) nameField.setText(item.name)
-            if (exprField.text?.toString() != item.expression) exprField.setText(item.expression)
+            nameField.setTextIfDifferent(item.name)
+            exprField.setTextIfDifferent(item.expression)
             renderValue(item)
 
-            nameWatcher = watcher { scheduleCommit(item.copy(name = it)) }
-            exprWatcher = watcher {
+            nameWatcher = nameField.rebindWatcher(nameWatcher) {
+                scheduleCommit(item.copy(name = it))
+            }
+            exprWatcher = exprField.rebindWatcher(exprWatcher) {
                 val updated = item.copy(expression = it)
                 renderValue(updated)
                 scheduleCommit(updated)
             }
-            nameField.addTextChangedListener(nameWatcher)
-            exprField.addTextChangedListener(exprWatcher)
 
-            // Route expression edits through the app's calculator dialog
-            // instead of the system IME. Keep the EditText for its styling
-            // and text buffer but suppress focus/keyboard/cursor.
-            exprField.showSoftInputOnFocus = false
-            exprField.isFocusable = false
-            exprField.isClickable = true
-            exprField.isCursorVisible = false
+            exprField.configureAsCalculatorField()
             exprField.setOnClickListener {
                 it.hapticTap(hapticEnabled)
                 onEditExpression(exprField, item)
@@ -165,13 +156,6 @@ class CartItemAdapter(
             )
         }
 
-        private fun watcher(onChanged: (String) -> Unit): TextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-            override fun afterTextChanged(s: Editable?) {
-                onChanged(s?.toString().orEmpty())
-            }
-        }
     }
 
     companion object {
@@ -187,4 +171,36 @@ class CartItemAdapter(
                 oldItem.id == newItem.id
         }
     }
+}
+
+// Skip the setText round-trip when the buffer already matches — avoids a
+// spurious cursor reset on rebind for the field the user is typing into.
+private fun EditText.setTextIfDifferent(value: String) {
+    if (text?.toString() != value) setText(value)
+}
+
+// Suppress the system IME, focus, and cursor for a field driven exclusively
+// by the app's slide-up calculator keypad. Keeps the EditText for its styling
+// and text buffer but stops it from stealing keyboard focus.
+private fun EditText.configureAsCalculatorField() {
+    showSoftInputOnFocus = false
+    isFocusable = false
+    isClickable = true
+    isCursorVisible = false
+}
+
+// Detach [old], attach a fresh watcher that forwards afterTextChanged to
+// [onChanged], and return the new watcher so callers can store it for the
+// next rebind. Cheap alternative to per-field watcher subclasses.
+private fun EditText.rebindWatcher(old: TextWatcher?, onChanged: (String) -> Unit): TextWatcher {
+    old?.let { removeTextChangedListener(it) }
+    val fresh = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+        override fun afterTextChanged(s: Editable?) {
+            onChanged(s?.toString().orEmpty())
+        }
+    }
+    addTextChangedListener(fresh)
+    return fresh
 }

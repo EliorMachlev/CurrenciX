@@ -188,11 +188,7 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun discardChanges() {
         val cur = current.value ?: return
-        val restored = if (cur.id.isNotEmpty()) {
-            db.getSavedCartsBlocking().firstOrNull { it.id == cur.id } ?: emptyCart()
-        } else {
-            emptyCart()
-        }
+        val restored = if (cur.id.isNotEmpty()) findSaved(cur.id) ?: emptyCart() else emptyCart()
         setCurrent(restored)
     }
 
@@ -228,7 +224,7 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun loadSaved(id: String) {
-        val saved = db.getSavedCartsBlocking().firstOrNull { it.id == id } ?: return
+        val saved = findSaved(id) ?: return
         // Treat "loaded" as a fresh session — the loaded cart becomes the
         // current cart, but its stored id/name are kept so a subsequent
         // "Save" overwrites the same entry.
@@ -246,8 +242,7 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
     fun hasUnsavedChanges(): Boolean {
         val cur = current.value ?: return false
         if (cur.id.isEmpty()) return cur.items.isNotEmpty()
-        val saved = db.getSavedCartsBlocking().firstOrNull { it.id == cur.id }
-            ?: return true
+        val saved = findSaved(cur.id) ?: return true
         return cur.items != saved.items
             || cur.name != saved.name
             || cur.currency != saved.currency
@@ -257,13 +252,16 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
 
     /** Rename a saved cart in place. No-op if the id isn't found. */
     fun renameSaved(id: String, name: String) {
-        val existing = db.getSavedCartsBlocking().firstOrNull { it.id == id } ?: return
+        val existing = findSaved(id) ?: return
         db.saveCart(existing.copy(name = name))
         // Keep the current cart's displayed name in sync if it's the same one.
         if (current.value?.id == id) {
             setCurrent((current.value ?: return).copy(name = name))
         }
     }
+
+    private fun findSaved(id: String): SavedCart? =
+        db.getSavedCartsBlocking().firstOrNull { it.id == id }
 
     /**
      * Replace the current cart wholesale (used by "Load" and by the file
@@ -281,8 +279,7 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun currentFeeStack(): BigDecimal {
         val cart = current.value ?: return BigDecimal.ONE
-        val base = resolveCurrency(cart.currency)
-        val dest = cart.destinationCurrency?.let { resolveCurrency(it) } ?: base
+        val (base, dest) = cart.resolvedPair()
         return FeeCalculator.totalStack(lastFees, base, dest)
     }
 
@@ -292,8 +289,7 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
         if (cart.items.isEmpty()) return null
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
-        val base = resolveCurrency(cart.currency)
-        val dest = cart.destinationCurrency?.let { resolveCurrency(it) } ?: base
+        val (base, dest) = cart.resolvedPair()
         val stack = FeeCalculator.totalStack(lastFees, base, dest)
         val converted = convertAmount(subtotal, base, dest, lastRates)
         val total = applyFeeSide(converted, stack, cart.feeSide)
@@ -361,12 +357,20 @@ class CartViewModel(app: Application) : AndroidViewModel(app) {
         side: FeeSide,
     ): BigDecimal {
         cart ?: return BigDecimal.ZERO
-        val base = resolveCurrency(cart.currency)
-        val dest = cart.destinationCurrency?.let { resolveCurrency(it) } ?: base
+        val (base, dest) = cart.resolvedPair()
         val subtotal = subtotalOf(cart)
         val converted = convertAmount(subtotal, base, dest, rates)
         val stack = FeeCalculator.totalStack(feeList, base, dest)
         return applyFeeSide(converted, stack, side)
+    }
+
+    // A cart's persisted currency pair, resolved once (both ISO strings become
+    // [Currency]s) with the "unset destination collapses to base" fallback. Every
+    // pipeline stage — fee stack, share snapshot, total math — needs this shape.
+    private fun SavedCart.resolvedPair(): Pair<Currency, Currency> {
+        val base = resolveCurrency(currency)
+        val dest = destinationCurrency?.let { resolveCurrency(it) } ?: base
+        return base to dest
     }
 
     /**

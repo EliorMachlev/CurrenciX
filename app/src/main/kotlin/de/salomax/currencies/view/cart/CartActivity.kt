@@ -289,16 +289,12 @@ class CartActivity : BaseActivity() {
         // Compute the stack directly from currencies + fees so the arrow /
         // percentage show even when the cart is empty (matches main screen).
         val stack = viewModel.currentFeeStack()
-        if (stack.compareTo(BigDecimal.ONE) == 0) {
+        if (stack.isNoFee()) {
             feeLine.visibility = View.GONE
             feeSideButton.visibility = View.GONE
             return
         }
-        val deltaPercent = stack
-            .subtract(BigDecimal.ONE)
-            .multiply(BigDecimal(100))
-            .setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
-        feeLine.text = getString(R.string.cart_fee_line, deltaPercent.toPlainString())
+        feeLine.text = getString(R.string.cart_fee_line, stack.toFeePercentDisplay())
         feeLine.visibility = View.VISIBLE
         feeSideButton.visibility = View.VISIBLE
     }
@@ -311,7 +307,7 @@ class CartActivity : BaseActivity() {
      */
     private fun updateFeeExtras() {
         val stack = viewModel.currentFeeStack()
-        if (stack.compareTo(BigDecimal.ONE) == 0) {
+        if (stack.isNoFee()) {
             subtotalExtra.visibility = View.GONE
             totalExtra.visibility = View.GONE
             return
@@ -345,33 +341,49 @@ class CartActivity : BaseActivity() {
 
     private fun formatAmount(value: BigDecimal?, currency: Currency?): String {
         val amount = (value ?: BigDecimal.ZERO)
-            .setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
+            .cartScale()
             .toHumanReadableNumber(this, decimalPlaces = CART_DISPLAY_SCALE)
         val iso = currency?.iso4217Alpha()
         return if (iso.isNullOrEmpty()) amount else "$amount $iso"
     }
 
+    // Round to the two-decimal "money" scale used across the cart UI. Extracted
+    // so display, share text, and fee-percent all pin to the same rounding.
+    private fun BigDecimal.cartScale(): BigDecimal =
+        setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
+
+    // Rounded, plain string in the cart's display scale — the form used
+    // wherever we drop a number into shared text (share sheet).
+    private fun BigDecimal.toCartDisplayString(): String = cartScale().toPlainString()
+
+    // A multiplicative fee stack of 1.0 means "no fees apply". Extracted so
+    // both the fee line and the fee-extras block gate on the same predicate
+    // instead of comparing to `BigDecimal.ONE` inline.
+    private fun BigDecimal.isNoFee(): Boolean = compareTo(BigDecimal.ONE) == 0
+
+    // Render a multiplicative fee stack (e.g. 1.025) as its percentage delta
+    // ("2.50") in the cart's display scale. Shared by the on-screen fee line
+    // and the "Fees:" row in shared text.
+    private fun BigDecimal.toFeePercentDisplay(): String =
+        subtract(BigDecimal.ONE).multiply(BigDecimal(100)).toCartDisplayString()
+
+    // Fallback to the localised "My cart" name when the user hasn't given
+    // the cart one. Shared by Save-as, Rename, and Export.
+    private fun String.orDefaultCartName(): String =
+        ifBlank { getString(R.string.cart_default_saved_name) }
+
     private fun showSaveAsDialog(onSaved: () -> Unit = {}) {
         if (guardEmptyForSave()) return
-        val input = EditText(this).apply {
-            hint = getString(R.string.cart_save_name_hint)
-            setText(viewModel.getCurrentCart().value?.name.orEmpty())
+        showNameInputDialog(
+            titleRes = R.string.cart_menu_save_as,
+            initial = viewModel.getCurrentCart().value?.name.orEmpty(),
+        ) { name ->
+            // "Save as" always creates a fresh entry so users can keep
+            // multiple snapshots of the same cart under different names.
+            viewModel.saveCurrentAs(name)
+            showSnackbar(getString(R.string.cart_saved_toast, name))
+            onSaved()
         }
-        AlertDialog.Builder(this)
-            .setTitle(R.string.cart_menu_save_as)
-            .setView(input)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                val name = input.text.toString().trim().ifBlank {
-                    getString(R.string.cart_default_saved_name)
-                }
-                // "Save as" always creates a fresh entry so users can keep
-                // multiple snapshots of the same cart under different names.
-                viewModel.saveCurrentAs(name)
-                showSnackbar(getString(R.string.cart_saved_toast, name))
-                onSaved()
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
     }
 
     /**
@@ -387,6 +399,28 @@ class CartActivity : BaseActivity() {
         } else {
             showSaveAsDialog(onSaved = onSaved)
         }
+    }
+
+    // Shared "one-line text input" dialog for cart name prompts (Save-as,
+    // Rename). Blank input collapses to the localised default cart name so
+    // every entry point produces a nameable, findable saved cart.
+    private fun showNameInputDialog(
+        titleRes: Int,
+        initial: String,
+        onOk: (String) -> Unit,
+    ) {
+        val input = EditText(this).apply {
+            hint = getString(R.string.cart_save_name_hint)
+            setText(initial)
+        }
+        AlertDialog.Builder(this)
+            .setTitle(titleRes)
+            .setView(input)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                onOk(input.text.toString().trim().orDefaultCartName())
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     // Refuse to persist an empty cart — matches Share's "nothing to share"
@@ -466,23 +500,14 @@ class CartActivity : BaseActivity() {
         }
         adapter.onRename = { position ->
             val cart = saved[position]
-            val input = EditText(this).apply {
-                hint = getString(R.string.cart_save_name_hint)
-                setText(cart.name)
+            showNameInputDialog(
+                titleRes = R.string.cart_rename_title,
+                initial = cart.name,
+            ) { name ->
+                viewModel.renameSaved(cart.id, name)
+                saved[position] = cart.copy(name = name)
+                adapter.notifyDataSetChanged()
             }
-            AlertDialog.Builder(this)
-                .setTitle(R.string.cart_rename_title)
-                .setView(input)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    val name = input.text.toString().trim().ifBlank {
-                        getString(R.string.cart_default_saved_name)
-                    }
-                    viewModel.renameSaved(cart.id, name)
-                    saved[position] = cart.copy(name = name)
-                    adapter.notifyDataSetChanged()
-                }
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
         }
         dialog.show()
     }
@@ -502,7 +527,7 @@ class CartActivity : BaseActivity() {
         // Copy so the exported file always has a real name, even if the
         // user hasn't gone through Save-as yet.
         val toExport = cart.copy(
-            name = cart.name.ifBlank { getString(R.string.cart_default_saved_name) },
+            name = cart.name.orDefaultCartName(),
             createdAt = System.currentTimeMillis(),
         )
         when (val res = exporter.export(uri, toExport)) {
@@ -608,41 +633,20 @@ class CartActivity : BaseActivity() {
         val name = snapshot.cart.name.ifBlank { getString(R.string.cart_share_default_title) }
         appendLine(getString(R.string.cart_share_header, name, baseIso))
         snapshot.evaluatedItems.forEach { (item, value) ->
-            val amount = value.setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN).toPlainString()
             val label = item.name.ifBlank { item.expression }
-            appendLine("• $label: $amount")
+            appendLine("• $label: ${value.toCartDisplayString()}")
         }
         appendLine("—")
-        appendLine(
-            getString(
-                R.string.cart_share_subtotal,
-                snapshot.subtotal.setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN).toPlainString(),
-                baseIso,
-            )
-        )
+        appendLine(getString(R.string.cart_share_subtotal, snapshot.subtotal.toCartDisplayString(), baseIso))
         if (snapshot.isConverting) {
             appendLine(
-                getString(
-                    R.string.cart_share_converted,
-                    snapshot.convertedSubtotal.setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN).toPlainString(),
-                    destIso,
-                )
+                getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso)
             )
         }
-        if (snapshot.feeStack.compareTo(BigDecimal.ONE) != 0) {
-            val deltaPercent = snapshot.feeStack
-                .subtract(BigDecimal.ONE)
-                .multiply(BigDecimal(100))
-                .setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
-            appendLine(getString(R.string.cart_share_fees, deltaPercent.toPlainString()))
+        if (!snapshot.feeStack.isNoFee()) {
+            appendLine(getString(R.string.cart_share_fees, snapshot.feeStack.toFeePercentDisplay()))
         }
-        append(
-            getString(
-                R.string.cart_share_total,
-                snapshot.total.setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN).toPlainString(),
-                destIso,
-            )
-        )
+        append(getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
     }
 
     // ------------------------------------------------------------------
@@ -784,29 +788,17 @@ class CartActivity : BaseActivity() {
     // signatures here and forward to the currently-active state.
     // ------------------------------------------------------------------
 
-    fun numberEvent(view: View) {
-        view.hapticTap(hapticEnabled)
-        activeCalculatorState?.addNumber((view as AppCompatButton).text.toString())
-    }
+    fun numberEvent(view: View) = keypadEvent(view) { it.addNumber((view as AppCompatButton).text.toString()) }
+    fun decimalEvent(view: View) = keypadEvent(view) { it.addDecimal() }
+    fun deleteEvent(view: View) = keypadEvent(view) { it.delete() }
+    fun percentEvent(view: View) = keypadEvent(view) { it.addPercent() }
+    fun calculationEvent(view: View) = keypadEvent(view) { it.addOperator((view as AppCompatButton).text.toString()) }
 
-    fun decimalEvent(view: View) {
+    // Every keypad button does the same two-step: haptic tap on the button,
+    // then forward the action to whichever row's calculator state is active.
+    private inline fun keypadEvent(view: View, action: (CalculatorInputState) -> Unit) {
         view.hapticTap(hapticEnabled)
-        activeCalculatorState?.addDecimal()
-    }
-
-    fun deleteEvent(view: View) {
-        view.hapticTap(hapticEnabled)
-        activeCalculatorState?.delete()
-    }
-
-    fun percentEvent(view: View) {
-        view.hapticTap(hapticEnabled)
-        activeCalculatorState?.addPercent()
-    }
-
-    fun calculationEvent(view: View) {
-        view.hapticTap(hapticEnabled)
-        activeCalculatorState?.addOperator((view as AppCompatButton).text.toString())
+        activeCalculatorState?.let(action)
     }
 
     private fun showSnackbar(message: String) {
