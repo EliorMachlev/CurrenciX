@@ -42,6 +42,13 @@
     <string name="tooltip_filter_starred">Show only starred currencies.</string>
     <string name="currency_dropdown_api_hint">Something missing? Different data providers offer different currencies. Go to the settings to try another one!\u00A0\uD83E\uDD17</string>
 
+    <!-- Home-screen widget -->
+    <string name="widget_description">Latest conversion rate for your last-used currency pair.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">As of %s</string>
+    <string name="widget_footer_empty">Open the app to load rates.</string>
+    <string name="widget_no_rate">Rate unavailable</string>
+
     <!-- Shopping cart -->
     <string name="cart_title">Shopping cart</string>
     <string name="cart_empty_hint">Your cart is empty. Tap “Add item” to start.</string>
