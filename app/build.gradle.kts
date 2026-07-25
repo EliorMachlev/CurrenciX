@@ -122,6 +122,12 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel-android:$fuelVersion")
     implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
     implementation("com.github.kittinunf.fuel:fuel-moshi:$fuelVersion")
+    // OkHttp foundation for HTTP caching + Timber-bridged logging. Fuel is
+    // still the calling surface for now; a follow-up phase will migrate
+    // providers to Retrofit built on this shared client.
+    val okHttpVersion = "4.12.0"
+    implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
