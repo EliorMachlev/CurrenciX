@@ -60,6 +60,7 @@
     <string name="cart_menu_import">Import from file</string>
     <string name="cart_menu_clear">Clear</string>
     <string name="cart_menu_share_csv">Share as CSV</string>
+    <string name="cart_menu_share_pdf">Share as PDF</string>
     <string name="cart_save_name_hint">Cart name</string>
     <string name="cart_default_saved_name">My cart</string>
     <string name="cart_saved_toast">Saved as “%s”</string>
