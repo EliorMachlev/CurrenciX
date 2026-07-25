@@ -47,7 +47,13 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            // Only apply the release signing config when a keystore is
+            // actually present — CI's F-Droid reproducibility job builds
+            // release unsigned and would otherwise fail
+            // validateSigningRelease with "Keystore file not set".
+            if (getSecret("KEYSTORE_FILE") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true

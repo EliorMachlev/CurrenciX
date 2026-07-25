@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
+import java.math.BigDecimal
 
 @RunWith(MockitoJUnitRunner::class)
 class TextUtilsTest {
@@ -31,22 +32,23 @@ class TextUtilsTest {
 
     @Test
     fun humanReadable() {
-        // regular
+        // regular — the numeric overload now lives on BigDecimal (Float was
+        // dropped along with the currency-precision migration, PR #21).
         assertEquals(
             "123.0",
-            123f.toHumanReadableNumber(mockContext, trim = false),
+            BigDecimal("123.0").toHumanReadableNumber(mockContext, trim = false),
         )
         assertEquals(
             "123",
-            123f.toHumanReadableNumber(mockContext, trim = true),
+            BigDecimal("123.0").toHumanReadableNumber(mockContext, trim = true),
         )
         assertEquals(
             "123.45",
-            123.44612f.toHumanReadableNumber(mockContext, decimalPlaces = 2),
+            BigDecimal("123.44612").toHumanReadableNumber(mockContext, decimalPlaces = 2),
         )
         assertEquals(
             "+ 30.0 cm",
-            30f.toHumanReadableNumber(mockContext, showPositiveSign = true, suffix = "cm"),
+            BigDecimal("30.0").toHumanReadableNumber(mockContext, showPositiveSign = true, suffix = "cm"),
         )
         assertEquals(
             "12,345,678",
