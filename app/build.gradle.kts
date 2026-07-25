@@ -140,6 +140,9 @@ dependencies {
     // crypto: BouncyCastle provides pure-Java Argon2id, used by BackupManager
     // for password-based backup encryption (quantum-resistant KDF).
     implementation("org.bouncycastle:bcprov-jdk18on:1.85")
+    // logging: Timber routes to a rotating file tree written under filesDir/logs.
+    // Local-only — no remote crash / analytics sink.
+    implementation("com.jakewharton.timber:timber:5.0.1")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
