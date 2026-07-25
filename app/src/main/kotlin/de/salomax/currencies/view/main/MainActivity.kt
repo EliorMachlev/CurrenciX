@@ -620,6 +620,10 @@ class MainActivity : BaseActivity() {
         return true
     }
 
+    // Hardware-keyboard input path: KEYCODE_BACK from a physical keyboard is
+    // not the same as the gesture-back the GestureBackNavigation lint flags,
+    // so route it through onBackPressedDispatcher explicitly.
+    @Suppress("GestureBackNavigation")
     private fun handleControlKey(keyCode: Int): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_DEL -> viewModel.delete()
