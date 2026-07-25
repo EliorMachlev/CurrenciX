@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_root"
     android:layout_width="match_parent"
@@ -7,6 +8,32 @@
     android:baselineAligned="false"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/offlineBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="?attr/colorErrorContainer"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/offlineBannerText"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="12dp"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:textColor="?attr/colorOnErrorContainer"
+            app:drawableStartCompat="@drawable/ic_cloud_off"
+            app:drawableTint="?attr/colorOnErrorContainer"
+            tools:text="Offline • Rates from 2 hours ago" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <include
         layout="@layout/main_display"

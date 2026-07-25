@@ -24,6 +24,7 @@ import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.window.layout.FoldingFeature
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
@@ -34,6 +35,7 @@ import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.Rate
 import de.salomax.currencies.repository.Database
+import de.salomax.currencies.util.NetworkStatusLiveData
 import de.salomax.currencies.util.feePercentDelta
 import de.salomax.currencies.util.getDecimalSeparator
 import de.salomax.currencies.util.hapticTap
@@ -86,6 +88,12 @@ class MainActivity : BaseActivity() {
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private var menuItemRefresh: MenuItem? = null
 
+    private lateinit var offlineBanner: MaterialCardView
+    private lateinit var offlineBannerText: TextView
+    private var isOnline: Boolean = true
+    private var latestRatesDate: LocalDate? = null
+    private var latestRatesTime: LocalTime? = null
+
     private lateinit var tvCalculations: TextView
     private lateinit var tvFrom: TextView
     private lateinit var tvTo: TextView
@@ -123,6 +131,8 @@ class MainActivity : BaseActivity() {
         this.tvOriginalValue = findViewById(R.id.textOriginalValue)
         this.tvFeeBadge = findViewById(R.id.textFeeBadge)
         this.btnFeeSide = findViewById(R.id.btn_fee_side)
+        this.offlineBanner = findViewById(R.id.offlineBanner)
+        this.offlineBannerText = findViewById(R.id.offlineBannerText)
 
         // swipe-to-refresh: color scheme (not accessible in xml)
         swipeRefresh.setColorSchemeColors(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
@@ -412,6 +422,25 @@ class MainActivity : BaseActivity() {
         viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
         viewModel.getOriginalValue().observe(this) { observeOriginalValue(it) }
         viewModel.getTotalStack().observe(this) { observeTotalStack(it) }
+        NetworkStatusLiveData(this).observe(this) { online ->
+            isOnline = online
+            renderOfflineBanner()
+        }
+    }
+
+    private fun renderOfflineBanner() {
+        if (isOnline) {
+            offlineBanner.visibility = View.GONE
+            return
+        }
+        val date = latestRatesDate
+        offlineBannerText.text =
+            if (date != null) {
+                getString(R.string.offline_banner_with_date, formatRatesTimestamp(date, latestRatesTime).orEmpty())
+            } else {
+                getString(R.string.offline_banner_no_data)
+            }
+        offlineBanner.visibility = View.VISIBLE
     }
 
     private fun observeFeeSide(side: FeeSide?) {
@@ -467,6 +496,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun observeExchangeRates(rates: ExchangeRates?) {
+        latestRatesDate = rates?.date
+        latestRatesTime = rates?.time
+        renderOfflineBanner()
         rates?.let {
             val date = it.date
             val dateString = formatRatesTimestamp(date, it.time)
