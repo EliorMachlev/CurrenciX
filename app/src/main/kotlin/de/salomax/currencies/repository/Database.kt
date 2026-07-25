@@ -3,7 +3,6 @@ package de.salomax.currencies.repository
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import de.salomax.currencies.model.ApiProvider
@@ -31,6 +30,7 @@ import de.salomax.currencies.util.toMillis
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import timber.log.Timber
 import java.time.LocalDate
 import java.util.UUID
 
@@ -125,7 +125,7 @@ class Database(
                 provider = provider,
             )
         } catch (e: JSONException) {
-            Log.w("Database", "Malformed cached timeline, dropping", e)
+            Timber.tag("Database").w(e, "Malformed cached timeline, dropping")
             null
         }
     }
@@ -470,7 +470,7 @@ class Database(
             val arr = JSONArray(json)
             (0 until arr.length()).mapNotNull { i -> parseFeeEntry(arr.optJSONObject(i)) }
         } catch (e: JSONException) {
-            Log.w("Database", "Malformed fee JSON, resetting", e)
+            Timber.tag("Database").w(e, "Malformed fee JSON, resetting")
             emptyList()
         }
 

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.Fragment
@@ -26,9 +25,8 @@ import de.salomax.currencies.util.DECIMAL_PLACES_MIN
 import de.salomax.currencies.view.main.MainActivity
 import de.salomax.currencies.viewmodel.preference.PreferenceViewModel
 import de.salomax.currencies.widget.LongSummaryPreference
+import timber.log.Timber
 import java.util.Calendar
-
-private const val TAG = "PreferenceFragment"
 
 // Sentinel returned by ApiProvider.fromId when the stored value is unknown /
 // unset; the pref layer treats this as "use the default provider".
@@ -212,7 +210,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 try {
                     startActivity(createIntent(URL_PLAY_MARKET))
                 } catch (e: ActivityNotFoundException) {
-                    Log.d(TAG, "Play Store not available, opening browser", e)
+                    Timber.tag("PreferenceFragment").d(e, "Play Store not available, opening browser")
                     startActivity(createIntent(URL_PLAY_WEB))
                 }
                 true
