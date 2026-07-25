@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Named subpath under cacheDir where transient share artifacts (CSV, PDF) live.
+         The exported name in the FileProvider URI stays stable across app updates
+         even if the on-disk directory layout changes. -->
+    <cache-path
+        name="cart-exports"
+        path="cart-exports/" />
+</paths>
