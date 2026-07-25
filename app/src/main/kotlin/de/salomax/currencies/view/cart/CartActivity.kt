@@ -43,6 +43,7 @@ import de.salomax.currencies.util.paddedDialogContainer
 import de.salomax.currencies.util.rateSpinnerListener
 import de.salomax.currencies.util.toCsv
 import de.salomax.currencies.util.toHumanReadableNumber
+import de.salomax.currencies.util.toPdfBytes
 import de.salomax.currencies.view.BaseActivity
 import de.salomax.currencies.view.main.spinner.SearchableSpinner
 import de.salomax.currencies.view.preference.PreferenceActivity
@@ -69,6 +70,8 @@ private const val EXPORT_FILE_DATE_FORMAT = "yyyyMMdd-HHmmss"
 private const val SHARE_FILE_DATE_FORMAT = EXPORT_FILE_DATE_FORMAT
 private const val CSV_MIME = "text/csv"
 private const val CSV_EXT = ".csv"
+private const val PDF_MIME = "application/pdf"
+private const val PDF_EXT = ".pdf"
 private const val SHARE_FILE_PREFIX = "cart-"
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
@@ -222,6 +225,10 @@ class CartActivity : BaseActivity() {
             }
             R.id.cart_share_csv -> {
                 shareCartCsv()
+                true
+            }
+            R.id.cart_share_pdf -> {
+                shareCartPdf()
                 true
             }
             R.id.cart_save -> {
@@ -690,6 +697,23 @@ class CartActivity : BaseActivity() {
                 filename = shareFilename(CSV_EXT),
                 mimeType = CSV_MIME,
                 bytes = snapshot.toCsv().toByteArray(Charsets.UTF_8),
+            )
+        startActivity(chooser)
+    }
+
+    private fun shareCartPdf() {
+        val snapshot = viewModel.snapshotForShare()
+        if (snapshot == null) {
+            showSnackbar(getString(R.string.cart_share_empty))
+            return
+        }
+        val title = snapshot.cart.name.ifBlank { getString(R.string.cart_share_default_title) }
+        val chooser =
+            buildCartShareChooser(
+                context = this,
+                filename = shareFilename(PDF_EXT),
+                mimeType = PDF_MIME,
+                bytes = snapshot.toPdfBytes(title),
             )
         startActivity(chooser)
     }
