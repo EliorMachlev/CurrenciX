@@ -34,12 +34,14 @@ import de.salomax.currencies.model.SavedCart
 import de.salomax.currencies.repository.CartExporter
 import de.salomax.currencies.repository.CartFileResult
 import de.salomax.currencies.util.OPERATOR_REGEX
+import de.salomax.currencies.util.buildCartShareChooser
 import de.salomax.currencies.util.choiceExplainerRow
 import de.salomax.currencies.util.feePercentDelta
 import de.salomax.currencies.util.hapticTap
 import de.salomax.currencies.util.isNeutralFeeStack
 import de.salomax.currencies.util.paddedDialogContainer
 import de.salomax.currencies.util.rateSpinnerListener
+import de.salomax.currencies.util.toCsv
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.view.BaseActivity
 import de.salomax.currencies.view.main.spinner.SearchableSpinner
@@ -62,6 +64,12 @@ private const val CART_DISPLAY_SCALE = 2
 private const val EXPORT_FILE_MIME = "application/json"
 private const val EXPORT_FILE_EXT = ".json"
 private const val EXPORT_FILE_DATE_FORMAT = "yyyyMMdd-HHmmss"
+
+// Shared filename base + format for the CSV / PDF share flows.
+private const val SHARE_FILE_DATE_FORMAT = EXPORT_FILE_DATE_FORMAT
+private const val CSV_MIME = "text/csv"
+private const val CSV_EXT = ".csv"
+private const val SHARE_FILE_PREFIX = "cart-"
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
@@ -210,6 +218,10 @@ class CartActivity : BaseActivity() {
             }
             R.id.cart_share -> {
                 shareCart()
+                true
+            }
+            R.id.cart_share_csv -> {
+                shareCartCsv()
                 true
             }
             R.id.cart_save -> {
@@ -664,6 +676,27 @@ class CartActivity : BaseActivity() {
                 putExtra(Intent.EXTRA_TEXT, text)
             }
         startActivity(Intent.createChooser(intent, null))
+    }
+
+    private fun shareCartCsv() {
+        val snapshot = viewModel.snapshotForShare()
+        if (snapshot == null) {
+            showSnackbar(getString(R.string.cart_share_empty))
+            return
+        }
+        val chooser =
+            buildCartShareChooser(
+                context = this,
+                filename = shareFilename(CSV_EXT),
+                mimeType = CSV_MIME,
+                bytes = snapshot.toCsv().toByteArray(Charsets.UTF_8),
+            )
+        startActivity(chooser)
+    }
+
+    private fun shareFilename(extension: String): String {
+        val timestamp = SimpleDateFormat(SHARE_FILE_DATE_FORMAT, Locale.US).format(Date())
+        return SHARE_FILE_PREFIX + timestamp + extension
     }
 
     private fun buildShareText(snapshot: CartSnapshot): String =

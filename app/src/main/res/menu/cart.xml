@@ -9,6 +9,12 @@
         app:showAsAction="never" />
 
     <item
+        android:orderInCategory="1"
+        android:id="@+id/cart_share_csv"
+        android:title="@string/cart_menu_share_csv"
+        app:showAsAction="never" />
+
+    <item
         android:orderInCategory="9"
         android:id="@+id/cart_save"
         android:title="@string/cart_menu_save"
