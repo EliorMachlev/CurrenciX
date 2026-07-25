@@ -22,6 +22,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +47,7 @@ import de.salomax.currencies.util.toCsv
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.util.toPdfBytes
 import de.salomax.currencies.view.BaseActivity
+import de.salomax.currencies.view.cart.compose.CartEmptyHint
 import de.salomax.currencies.view.main.spinner.SearchableSpinner
 import de.salomax.currencies.view.preference.PreferenceActivity
 import de.salomax.currencies.viewmodel.cart.CartSnapshot
@@ -95,7 +98,7 @@ class CartActivity : BaseActivity() {
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var swapButton: ImageButton
     private lateinit var feeSideButton: AppCompatImageButton
-    private lateinit var emptyHint: TextView
+    private lateinit var emptyHint: ComposeView
     private lateinit var addButton: MaterialButton
 
     private lateinit var adapter: CartItemAdapter
@@ -145,7 +148,11 @@ class CartActivity : BaseActivity() {
         this.spinnerTo = findViewById(R.id.cart_spinner_to)
         this.swapButton = findViewById(R.id.cart_swap)
         this.feeSideButton = findViewById(R.id.cart_btn_fee_side)
-        this.emptyHint = findViewById(R.id.cart_empty_hint)
+        this.emptyHint =
+            findViewById<ComposeView>(R.id.cart_empty_hint).apply {
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                setContent { CartEmptyHint() }
+            }
         this.addButton = findViewById(R.id.cart_add_item)
         this.keypadContainer = findViewById(R.id.cart_keypad_container)
         this.keypadRegular = findViewById(R.id.cart_keypad_regular)
