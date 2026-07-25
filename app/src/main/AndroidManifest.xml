@@ -40,6 +40,17 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
+        <receiver
+            android:name=".view.widget.CurrencyWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/currency_widget_info" />
+        </receiver>
+
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"

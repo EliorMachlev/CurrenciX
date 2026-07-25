@@ -27,6 +27,7 @@ import de.salomax.currencies.util.SharedPreferenceLongLiveData
 import de.salomax.currencies.util.SharedPreferenceStringLiveData
 import de.salomax.currencies.util.toLocalDate
 import de.salomax.currencies.util.toMillis
+import de.salomax.currencies.view.widget.CurrencyWidget
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -48,7 +49,7 @@ private const val NO_HISTORICAL_DATE = -1L
 const val KEYBOARD_TYPE_BASIC = 0
 
 class Database(
-    context: Context,
+    private val context: Context,
 ) {
     /*
      * current exchange rates from api =============================================================
@@ -73,6 +74,7 @@ class Database(
                 // persist
                 editor.apply()
             }
+            CurrencyWidget.refreshWidgets(context)
         }
     }
 
@@ -165,6 +167,7 @@ class Database(
             from?.let { edit().putString(keyLastStateFrom, it.iso4217Alpha()).apply() }
             to?.let { edit().putString(keyLastStateTo, it.iso4217Alpha()).apply() }
         }
+        CurrencyWidget.refreshWidgets(context)
     }
 
     fun getLastBaseCurrency(): LiveData<Currency?> =
