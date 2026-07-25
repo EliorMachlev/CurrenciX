@@ -34,7 +34,6 @@ private const val PREF_KEY_IMPORT = "__backup_import"
 private const val MIN_PASSWORD_LENGTH = 8
 
 class BackupFragment : PreferenceFragmentCompat() {
-
     private lateinit var backupManager: BackupManager
     private lateinit var exportLauncher: ActivityResultLauncher<Intent>
     private lateinit var importLauncher: ActivityResultLauncher<Intent>
@@ -46,22 +45,27 @@ class BackupFragment : PreferenceFragmentCompat() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         backupManager = BackupManager(requireContext().applicationContext)
-        exportLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            val uri = result.data?.data
-            if (uri != null) runExport(uri, pendingExportPassword)
-            pendingExportPassword?.fill('\u0000')
-            pendingExportPassword = null
-        }
-        importLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            result.data?.data?.let(::beginImport)
-        }
+        exportLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult(),
+            ) { result ->
+                val uri = result.data?.data
+                if (uri != null) runExport(uri, pendingExportPassword)
+                pendingExportPassword?.fill('\u0000')
+                pendingExportPassword = null
+            }
+        importLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult(),
+            ) { result ->
+                result.data?.data?.let(::beginImport)
+            }
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         val ctx = preferenceManager.context
         val screen: PreferenceScreen = preferenceManager.createPreferenceScreen(ctx)
 
@@ -73,7 +77,7 @@ class BackupFragment : PreferenceFragmentCompat() {
                 titleRes = R.string.backup_export_title,
                 summaryRes = R.string.backup_export_summary,
                 onClick = ::promptExportPassword,
-            )
+            ),
         )
 
         val restoreCategory = addCategory(screen, ctx, R.string.backup_section_restore)
@@ -84,13 +88,16 @@ class BackupFragment : PreferenceFragmentCompat() {
                 titleRes = R.string.backup_import_title,
                 summaryRes = R.string.backup_import_summary,
                 onClick = ::launchImport,
-            )
+            ),
         )
 
         preferenceScreen = screen
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = getString(R.string.backup_manager_title)
     }
@@ -101,11 +108,16 @@ class BackupFragment : PreferenceFragmentCompat() {
         super.onDestroy()
     }
 
-    private fun addCategory(screen: PreferenceScreen, ctx: Context, titleRes: Int): PreferenceCategory =
-        PreferenceCategory(ctx).apply {
-            title = getString(titleRes)
-            isIconSpaceReserved = false
-        }.also(screen::addPreference)
+    private fun addCategory(
+        screen: PreferenceScreen,
+        ctx: Context,
+        titleRes: Int,
+    ): PreferenceCategory =
+        PreferenceCategory(ctx)
+            .apply {
+                title = getString(titleRes)
+                isIconSpaceReserved = false
+            }.also(screen::addPreference)
 
     private fun buildActionPreference(
         ctx: Context,
@@ -133,18 +145,21 @@ class BackupFragment : PreferenceFragmentCompat() {
     private fun promptExportPassword() {
         val ctx = requireContext()
         val padH = resources.getDimensionPixelSize(R.dimen.margin3x)
-        val container = LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(padH, padH, padH, 0)
-        }
+        val container =
+            LinearLayout(ctx).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(padH, padH, padH, 0)
+            }
         val encryptCheck = CheckBox(ctx).apply { text = getString(R.string.backup_encrypt_option) }
-        val passwordLayout = TextInputLayout(ctx).apply {
-            hint = getString(R.string.backup_password_hint)
-            visibility = View.GONE
-        }
-        val passwordInput = EditText(ctx).apply {
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        }
+        val passwordLayout =
+            TextInputLayout(ctx).apply {
+                hint = getString(R.string.backup_password_hint)
+                visibility = View.GONE
+            }
+        val passwordInput =
+            EditText(ctx).apply {
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
         passwordLayout.addView(passwordInput)
         container.addView(encryptCheck)
         container.addView(passwordLayout)
@@ -158,39 +173,46 @@ class BackupFragment : PreferenceFragmentCompat() {
             .setView(container)
             .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(android.R.string.ok) { _, _ ->
-                val password = if (encryptCheck.isChecked) {
-                    val chars = extractCharArray(passwordInput)
-                    if (chars.size < MIN_PASSWORD_LENGTH) {
-                        chars.fill('\u0000')
-                        toast(getString(R.string.backup_password_too_short, MIN_PASSWORD_LENGTH))
-                        return@setPositiveButton
+                val password =
+                    if (encryptCheck.isChecked) {
+                        val chars = extractCharArray(passwordInput)
+                        if (chars.size < MIN_PASSWORD_LENGTH) {
+                            chars.fill('\u0000')
+                            toast(getString(R.string.backup_password_too_short, MIN_PASSWORD_LENGTH))
+                            return@setPositiveButton
+                        }
+                        chars
+                    } else {
+                        null
                     }
-                    chars
-                } else null
                 pendingExportPassword = password
                 launchExport()
-            }
-            .show()
+            }.show()
     }
 
     private fun launchExport() {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = getString(R.string.backup_mime_json)
-            putExtra(Intent.EXTRA_TITLE, getString(R.string.backup_default_filename))
-        }
+        val intent =
+            Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = getString(R.string.backup_mime_json)
+                putExtra(Intent.EXTRA_TITLE, getString(R.string.backup_default_filename))
+            }
         exportLauncher.launch(intent)
     }
 
     private fun launchImport() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = getString(R.string.backup_mime_json)
-        }
+        val intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = getString(R.string.backup_mime_json)
+            }
         importLauncher.launch(intent)
     }
 
-    private fun runExport(uri: Uri, password: CharArray?) {
+    private fun runExport(
+        uri: Uri,
+        password: CharArray?,
+    ) {
         val result = backupManager.export(uri, password)
         toast(
             when (result) {
@@ -198,9 +220,10 @@ class BackupFragment : PreferenceFragmentCompat() {
                 is BackupResult.Failure -> getString(R.string.backup_export_failed, result.message)
                 // export never asks for a password / never sees WrongPassword
                 is BackupResult.PasswordRequired,
-                is BackupResult.WrongPassword ->
+                is BackupResult.WrongPassword,
+                ->
                     getString(R.string.backup_export_failed, "unexpected state")
-            }
+            },
         )
     }
 
@@ -212,25 +235,33 @@ class BackupFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun promptImportPassword(uri: Uri, isRetry: Boolean) {
+    private fun promptImportPassword(
+        uri: Uri,
+        isRetry: Boolean,
+    ) {
         val ctx = requireContext()
         val padH = resources.getDimensionPixelSize(R.dimen.margin3x)
-        val container = LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(padH, padH, padH, 0)
-        }
+        val container =
+            LinearLayout(ctx).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(padH, padH, padH, 0)
+            }
         if (isRetry) {
-            container.addView(TextView(ctx).apply {
-                text = getString(R.string.backup_password_wrong)
-                gravity = Gravity.CENTER
-            })
+            container.addView(
+                TextView(ctx).apply {
+                    text = getString(R.string.backup_password_wrong)
+                    gravity = Gravity.CENTER
+                },
+            )
         }
-        val passwordLayout = TextInputLayout(ctx).apply {
-            hint = getString(R.string.backup_password_hint)
-        }
-        val passwordInput = EditText(ctx).apply {
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        }
+        val passwordLayout =
+            TextInputLayout(ctx).apply {
+                hint = getString(R.string.backup_password_hint)
+            }
+        val passwordInput =
+            EditText(ctx).apply {
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
         passwordLayout.addView(passwordInput)
         container.addView(passwordLayout)
 
@@ -241,24 +272,27 @@ class BackupFragment : PreferenceFragmentCompat() {
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val password = extractCharArray(passwordInput)
                 confirmAndImport(uri, password)
-            }
-            .show()
+            }.show()
     }
 
-    private fun confirmAndImport(uri: Uri, password: CharArray?) {
+    private fun confirmAndImport(
+        uri: Uri,
+        password: CharArray?,
+    ) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.backup_import_confirm_title)
             .setMessage(R.string.backup_import_confirm_message)
             .setNegativeButton(android.R.string.cancel) { _, _ ->
                 password?.fill('\u0000')
-            }
-            .setPositiveButton(R.string.backup_import_confirm_positive) { _, _ ->
+            }.setPositiveButton(R.string.backup_import_confirm_positive) { _, _ ->
                 runImport(uri, password)
-            }
-            .show()
+            }.show()
     }
 
-    private fun runImport(uri: Uri, password: CharArray?) {
+    private fun runImport(
+        uri: Uri,
+        password: CharArray?,
+    ) {
         when (val result = backupManager.import(uri, password)) {
             is BackupResult.Success -> toast(getString(R.string.backup_import_success))
             is BackupResult.Failure -> toast(getString(R.string.backup_import_failed, result.message))

@@ -17,7 +17,6 @@ import java.time.ZoneId
 
 @Suppress("unused", "UNUSED_PARAMETER")
 internal class OpenExchangeratesRatesAdapter {
-
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "UNUSED_VALUE")
     @Synchronized
     @FromJson
@@ -30,51 +29,73 @@ internal class OpenExchangeratesRatesAdapter {
 
         if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) return null
 
-        val rates = buildList {
+        val rates =
+            buildList {
+                reader.beginObject()
+                while (reader.hasNext()) {
+                    if (reader.peek() != JsonReader.Token.NAME) continue
+                    when (reader.nextName()) {
+                        "rates" -> addAll(parseRates(reader))
+                        "timestamp" -> {
+                            val zoned =
+                                Instant
+                                    .ofEpochSecond(reader.nextLong())
+                                    .atZone(ZoneId.systemDefault())
+                            date = zoned.toLocalDate()
+                            time = zoned.toLocalTime().withSecond(0).withNano(0)
+                        }
+                        "base" -> base = Currency.fromString(reader.nextString())
+                        "message" -> errorMessage = reader.nextString()
+                        else -> reader.skipValue()
+                    }
+                }
+                reader.endObject()
+                addFokFromDkkIfMissing()
+            }
+
+        return if (rates.isNotEmpty()) {
+            ExchangeRates(
+                success = true,
+                error = null,
+                base = base,
+                date = date,
+                time = time,
+                rates = rates,
+                provider = ApiProvider.OPEN_EXCHANGERATES,
+            )
+        } else {
+            ExchangeRates(
+                success = false,
+                error = errorMessage,
+                base = base,
+                date = date,
+                time = time,
+                rates = null,
+                provider = ApiProvider.OPEN_EXCHANGERATES,
+            )
+        }
+    }
+
+    private fun parseRates(reader: JsonReader): List<Rate> =
+        buildList {
             reader.beginObject()
             while (reader.hasNext()) {
-                if (reader.peek() != JsonReader.Token.NAME) continue
-                when (reader.nextName()) {
-                    "rates" -> addAll(parseRates(reader))
-                    "timestamp" -> {
-                        val zoned = Instant.ofEpochSecond(reader.nextLong())
-                            .atZone(ZoneId.systemDefault())
-                        date = zoned.toLocalDate()
-                        time = zoned.toLocalTime().withSecond(0).withNano(0)
-                    }
-                    "base" -> base = Currency.fromString(reader.nextString())
-                    "message" -> errorMessage = reader.nextString()
-                    else -> reader.skipValue()
+                val name = Currency.fromString(reader.nextName())
+                val value: BigDecimal = BigDecimal(reader.nextString())
+                if (name != null) {
+                    add(Rate(name, value))
                 }
             }
             reader.endObject()
-            addFokFromDkkIfMissing()
         }
-
-        return if (rates.isNotEmpty())
-            ExchangeRates(success = true, error = null, base = base, date = date, time = time,
-                rates = rates, provider = ApiProvider.OPEN_EXCHANGERATES)
-        else
-            ExchangeRates(success = false, error = errorMessage, base = base, date = date, time = time,
-                rates = null, provider = ApiProvider.OPEN_EXCHANGERATES)
-    }
-
-    private fun parseRates(reader: JsonReader): List<Rate> = buildList {
-        reader.beginObject()
-        while (reader.hasNext()) {
-            val name = Currency.fromString(reader.nextName())
-            val value: BigDecimal = BigDecimal(reader.nextString())
-            if (name != null)
-                add(Rate(name, value))
-        }
-        reader.endObject()
-    }
 
     @Synchronized
     @ToJson
     @Throws(IOException::class)
-    fun toJson(writer: JsonWriter, value: ExchangeRates) {
+    fun toJson(
+        writer: JsonWriter,
+        value: ExchangeRates,
+    ) {
         writer.nullValue()
     }
-
 }

@@ -14,8 +14,9 @@ import de.salomax.currencies.repository.ExchangeRatesRepository
 // locale" without pulling the enum into this file.
 private const val LANGUAGE_SYSTEM = "system"
 
-class PreferenceViewModel(private val app: Application) : AndroidViewModel(app) {
-
+class PreferenceViewModel(
+    private val app: Application,
+) : AndroidViewModel(app) {
     private val db = Database(app)
     private var apiProvider: LiveData<ApiProvider> = db.getApiProviderAsync()
     private var openExchangeratesApiKey: LiveData<String?> = db.getOpenExchangeRatesApiKeyAsync()
@@ -25,9 +26,7 @@ class PreferenceViewModel(private val app: Application) : AndroidViewModel(app) 
         persistAndRefreshRates { db.setApiProvider(api) }
     }
 
-    fun getApiProvider(): LiveData<ApiProvider> {
-        return apiProvider
-    }
+    fun getApiProvider(): LiveData<ApiProvider> = apiProvider
 
     fun setOpenExchangeratesApiKey(id: String) {
         persistAndRefreshRates { db.setOpenExchangeRatesApiKey(id) }
@@ -40,9 +39,7 @@ class PreferenceViewModel(private val app: Application) : AndroidViewModel(app) 
         ExchangeRatesRepository(app).getExchangeRates()
     }
 
-    fun getOpenExchangeratesApiKey(): LiveData<String?> {
-        return openExchangeratesApiKey
-    }
+    fun getOpenExchangeratesApiKey(): LiveData<String?> = openExchangeratesApiKey
 
     /**
      * Returns true when the caller must rebuild the activity stack to make
@@ -62,13 +59,14 @@ class PreferenceViewModel(private val app: Application) : AndroidViewModel(app) 
 
     fun setLanguage(language: String) {
         val appLocale: LocaleListCompat =
-            if (language == LANGUAGE_SYSTEM)
+            if (language == LANGUAGE_SYSTEM) {
                 LocaleListCompat.getEmptyLocaleList()
-            else
+            } else {
                 LocaleListCompat.forLanguageTags(
                     // pt_BR -> pt-BR
-                    language.replace('_', '-')
+                    language.replace('_', '-'),
                 )
+            }
         AppCompatDelegate.setApplicationLocales(appLocale)
     }
 
@@ -78,19 +76,18 @@ class PreferenceViewModel(private val app: Application) : AndroidViewModel(app) 
      */
     fun getLanguage(): String? {
         val appLocale = AppCompatDelegate.getApplicationLocales()[0]
-        return if (appLocale == null || (appLocale.language.isEmpty() && appLocale.country.isEmpty()))
+        return if (appLocale == null || (appLocale.language.isEmpty() && appLocale.country.isEmpty())) {
             null
-        else if (appLocale.country.isEmpty())
+        } else if (appLocale.country.isEmpty()) {
             appLocale.language
-        else if (appLocale.language.isEmpty())
+        } else if (appLocale.language.isEmpty()) {
             appLocale.country
-        else
+        } else {
             "${appLocale.language}_${appLocale.country}"
+        }
     }
 
-    fun isPreviewConversionEnabled(): LiveData<Boolean> {
-        return isPreviewConversionEnabled
-    }
+    fun isPreviewConversionEnabled(): LiveData<Boolean> = isPreviewConversionEnabled
 
     fun setPreviewConversionEnabled(enabled: Boolean) {
         db.setPreviewConversionEnabled(enabled)
@@ -107,5 +104,4 @@ class PreferenceViewModel(private val app: Application) : AndroidViewModel(app) 
     fun setDecimalPlaces(places: Int) {
         db.setDecimalPlaces(places)
     }
-
 }

@@ -14,7 +14,10 @@ class NorgesBankRatesXmlParser {
     private var date: LocalDate? = null
     private val rates = mutableListOf<Rate>()
 
-    fun parse(inputStream: InputStream, requestedDate: LocalDate): ExchangeRates {
+    fun parse(
+        inputStream: InputStream,
+        requestedDate: LocalDate,
+    ): ExchangeRates {
         val parser = newXmlPullParser(inputStream)
 
         var eventType = parser.eventType
@@ -47,7 +50,7 @@ class NorgesBankRatesXmlParser {
             base = Currency.NOK,
             date = date,
             rates = rates,
-            provider = ApiProvider.NORGES_BANK
+            provider = ApiProvider.NORGES_BANK,
         )
     }
 
@@ -56,7 +59,7 @@ class NorgesBankRatesXmlParser {
         value: BigDecimal?,
         date: LocalDate,
         multiplier: Int,
-        requestedDate: LocalDate
+        requestedDate: LocalDate,
     ) {
         if (base == null || value == null) return
         // api delivers historical rates for e.g. RUB; ignore stale ones
@@ -66,8 +69,9 @@ class NorgesBankRatesXmlParser {
     }
 
     private fun updateDate(date: LocalDate) {
-        if (this.date == null || this.date?.isBefore(date) == true)
+        if (this.date == null || this.date?.isBefore(date) == true) {
             this.date = date
+        }
     }
 
     private fun addSyntheticRates() {
@@ -75,5 +79,4 @@ class NorgesBankRatesXmlParser {
         rates.add(Rate(Currency.NOK, BigDecimal.ONE))
         rates.addFokFromDkkIfMissing()
     }
-
 }

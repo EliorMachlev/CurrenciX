@@ -16,9 +16,8 @@ import java.time.LocalDate
 @Suppress("unused", "UNUSED_PARAMETER")
 internal class BankOfCanadaTimelineAdapter(
     private val base: Currency,
-    private val symbol: Currency
+    private val symbol: Currency,
 ) {
-
     @Synchronized
     @FromJson
     @Throws(IOException::class)
@@ -27,15 +26,17 @@ internal class BankOfCanadaTimelineAdapter(
         var result: Timeline? = null
         while (reader.hasNext() && result == null) {
             when (reader.nextName()) {
-                "message" -> result = Timeline(
-                    success = false,
-                    error = reader.nextString(),
-                    base = null,
-                    startDate = null,
-                    endDate = null,
-                    rates = null,
-                    provider = ApiProvider.BANK_OF_CANADA
-                )
+                "message" ->
+                    result =
+                        Timeline(
+                            success = false,
+                            error = reader.nextString(),
+                            base = null,
+                            startDate = null,
+                            endDate = null,
+                            rates = null,
+                            provider = ApiProvider.BANK_OF_CANADA,
+                        )
                 "observations" -> {
                     reader.beginArray()
                     result = convertObservations(reader)
@@ -51,10 +52,10 @@ internal class BankOfCanadaTimelineAdapter(
         var errorMessage: String? = null
         var rates = mutableMapOf<LocalDate, Rate>()
 
-        if (reader.peek() == JsonReader.Token.END_ARRAY)
+        if (reader.peek() == JsonReader.Token.END_ARRAY) {
             // no data
             errorMessage = "No data found."
-        else {
+        } else {
             while (reader.hasNext() && reader.peek() != JsonReader.Token.END_ARRAY) {
                 convertObservation(reader)?.let { rates.put(it.first, it.second) }
             }
@@ -67,7 +68,7 @@ internal class BankOfCanadaTimelineAdapter(
             startDate = rates.entries.first().key,
             endDate = rates.entries.last().key,
             rates = rates,
-            provider = ApiProvider.BANK_OF_CANADA
+            provider = ApiProvider.BANK_OF_CANADA,
         )
     }
 
@@ -83,8 +84,11 @@ internal class BankOfCanadaTimelineAdapter(
                 date = LocalDate.parse(reader.nextString())
             } else {
                 val (currency, value) = readCurrencyValue(reader, nextName)
-                if (currency == base) baseValue = value
-                else if (currency == symbol) symbolValue = value
+                if (currency == base) {
+                    baseValue = value
+                } else if (currency == symbol) {
+                    symbolValue = value
+                }
             }
             if (date != null && baseValue != null && symbolValue != null) {
                 reader.endObject()
@@ -94,7 +98,10 @@ internal class BankOfCanadaTimelineAdapter(
         return null
     }
 
-    private fun readCurrencyValue(reader: JsonReader, name: String): Pair<Currency?, BigDecimal> {
+    private fun readCurrencyValue(
+        reader: JsonReader,
+        name: String,
+    ): Pair<Currency?, BigDecimal> {
         val currency = Currency.fromString(name.substring(BANK_OF_CANADA_ISO_START, BANK_OF_CANADA_ISO_END))
         reader.beginObject()
         reader.skipName() // always "v"
@@ -106,8 +113,10 @@ internal class BankOfCanadaTimelineAdapter(
     @Synchronized
     @ToJson
     @Throws(IOException::class)
-    fun toJson(writer: JsonWriter, value: Timeline?) {
+    fun toJson(
+        writer: JsonWriter,
+        value: Timeline?,
+    ) {
         writer.nullValue()
     }
-
 }

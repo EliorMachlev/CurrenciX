@@ -5,13 +5,13 @@ import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.BaseAdapter
 import android.widget.EditText
 import android.widget.ImageButton
@@ -33,6 +33,7 @@ import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.SavedCart
 import de.salomax.currencies.repository.CartExporter
 import de.salomax.currencies.repository.CartFileResult
+import de.salomax.currencies.util.OPERATOR_REGEX
 import de.salomax.currencies.util.choiceExplainerRow
 import de.salomax.currencies.util.feePercentDelta
 import de.salomax.currencies.util.hapticTap
@@ -43,7 +44,6 @@ import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.view.BaseActivity
 import de.salomax.currencies.view.main.spinner.SearchableSpinner
 import de.salomax.currencies.view.preference.PreferenceActivity
-import de.salomax.currencies.util.OPERATOR_REGEX
 import de.salomax.currencies.viewmodel.cart.CartSnapshot
 import de.salomax.currencies.viewmodel.cart.CartViewModel
 import de.salomax.currencies.viewmodel.main.CalculatorInputState
@@ -67,7 +67,6 @@ private const val EXPORT_FILE_DATE_FORMAT = "yyyyMMdd-HHmmss"
 private const val KEYPAD_ANIM_MS = 180L
 
 class CartActivity : BaseActivity() {
-
     private lateinit var viewModel: CartViewModel
     private lateinit var exporter: CartExporter
 
@@ -142,21 +141,26 @@ class CartActivity : BaseActivity() {
         this.keypadExtended = findViewById(R.id.cart_keypad_extended)
         this.contentColumn = findViewById(R.id.cart_content)
 
-        adapter = CartItemAdapter(
-            onChange = viewModel::updateItem,
-            onDelete = viewModel::removeItem,
-            onEditExpression = { field, _ -> openKeypadFor(field) },
-        )
+        adapter =
+            CartItemAdapter(
+                onChange = viewModel::updateItem,
+                onDelete = viewModel::removeItem,
+                onEditExpression = { field, _ -> openKeypadFor(field) },
+            )
 
         // Registered before the keypad callback so the keypad's (which is
         // added second) wins when it's enabled. When the keypad is closed
         // and there are unsaved edits, we prompt instead of finishing.
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() = attemptClose()
-        })
-        keypadBackCallback = object : OnBackPressedCallback(false) {
-            override fun handleOnBackPressed() = closeKeypad()
-        }.also { onBackPressedDispatcher.addCallback(this, it) }
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() = attemptClose()
+            },
+        )
+        keypadBackCallback =
+            object : OnBackPressedCallback(false) {
+                override fun handleOnBackPressed() = closeKeypad()
+            }.also { onBackPressedDispatcher.addCallback(this, it) }
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
@@ -181,12 +185,14 @@ class CartActivity : BaseActivity() {
             true
         }
 
-        exportLauncher = registerForActivityResult(
-            ActivityResultContracts.CreateDocument(EXPORT_FILE_MIME)
-        ) { uri -> uri?.let(::doExport) }
-        importLauncher = registerForActivityResult(
-            ActivityResultContracts.OpenDocument()
-        ) { uri -> uri?.let(::doImport) }
+        exportLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.CreateDocument(EXPORT_FILE_MIME),
+            ) { uri -> uri?.let(::doExport) }
+        importLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.OpenDocument(),
+            ) { uri -> uri?.let(::doImport) }
 
         observe()
     }
@@ -196,19 +202,42 @@ class CartActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> { attemptClose(); true }
-            R.id.cart_share -> { shareCart(); true }
-            R.id.cart_save -> { saveOrPromptForName(); true }
-            R.id.cart_save_as -> { showSaveAsDialog(); true }
-            R.id.cart_load -> { showLoadDialog(); true }
-            R.id.cart_export -> { launchExport(); true }
-            R.id.cart_import -> { launchImport(); true }
-            R.id.cart_clear -> { confirmClear(); true }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
+            android.R.id.home -> {
+                attemptClose()
+                true
+            }
+            R.id.cart_share -> {
+                shareCart()
+                true
+            }
+            R.id.cart_save -> {
+                saveOrPromptForName()
+                true
+            }
+            R.id.cart_save_as -> {
+                showSaveAsDialog()
+                true
+            }
+            R.id.cart_load -> {
+                showLoadDialog()
+                true
+            }
+            R.id.cart_export -> {
+                launchExport()
+                true
+            }
+            R.id.cart_import -> {
+                launchImport()
+                true
+            }
+            R.id.cart_clear -> {
+                confirmClear()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
-    }
 
     private fun observe() {
         viewModel.isHapticFeedbackEnabled.observe(this) {
@@ -239,8 +268,11 @@ class CartActivity : BaseActivity() {
         viewModel.getFeeSide().observe(this) { side ->
             val effective = side ?: FeeSide.ORIGINAL
             feeSideButton.setImageResource(
-                if (effective == FeeSide.CONVERTED) R.drawable.ic_fee_side_converted_horizontal
-                else R.drawable.ic_fee_side_original_horizontal
+                if (effective == FeeSide.CONVERTED) {
+                    R.drawable.ic_fee_side_converted_horizontal
+                } else {
+                    R.drawable.ic_fee_side_original_horizontal
+                },
             )
             updateFeeExtras()
         }
@@ -317,21 +349,23 @@ class CartActivity : BaseActivity() {
     // Existing prefix strings end with a locale-specific ": " / " : " / "：" for
     // inline use. When we're showing them as a standalone left-aligned label,
     // strip the trailing separator so it doesn't dangle before the right column.
-    private fun stripLabelSeparator(text: String): String =
-        text.trimEnd(' ', '\u00A0', ':', '：')
+    private fun stripLabelSeparator(text: String): String = text.trimEnd(' ', '\u00A0', ':', '：')
 
-    private fun formatAmount(value: BigDecimal?, currency: Currency?): String {
-        val amount = (value ?: BigDecimal.ZERO)
-            .cartScale()
-            .toHumanReadableNumber(this, decimalPlaces = CART_DISPLAY_SCALE)
+    private fun formatAmount(
+        value: BigDecimal?,
+        currency: Currency?,
+    ): String {
+        val amount =
+            (value ?: BigDecimal.ZERO)
+                .cartScale()
+                .toHumanReadableNumber(this, decimalPlaces = CART_DISPLAY_SCALE)
         val iso = currency?.iso4217Alpha()
         return if (iso.isNullOrEmpty()) amount else "$amount $iso"
     }
 
     // Round to the two-decimal "money" scale used across the cart UI. Extracted
     // so display, share text, and fee-percent all pin to the same rounding.
-    private fun BigDecimal.cartScale(): BigDecimal =
-        setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
+    private fun BigDecimal.cartScale(): BigDecimal = setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
 
     // Rounded, plain string in the cart's display scale — the form used
     // wherever we drop a number into shared text (share sheet).
@@ -340,19 +374,22 @@ class CartActivity : BaseActivity() {
     // Percentage delta of the fee stack ("2.50" for a 1.025 stack), pinned to
     // the cart's display scale. Shared by the on-screen fee line and the
     // "Fees:" row in shared text.
-    private fun BigDecimal.toFeePercentDisplay(): String =
-        feePercentDelta(CART_DISPLAY_SCALE).toPlainString()
+    private fun BigDecimal.toFeePercentDisplay(): String = feePercentDelta(CART_DISPLAY_SCALE).toPlainString()
 
     // Fallback to the localised "My cart" name when the user hasn't given
     // the cart one. Shared by Save-as, Rename, and Export.
-    private fun String.orDefaultCartName(): String =
-        ifBlank { getString(R.string.cart_default_saved_name) }
+    private fun String.orDefaultCartName(): String = ifBlank { getString(R.string.cart_default_saved_name) }
 
     private fun showSaveAsDialog(onSaved: () -> Unit = {}) {
         if (guardEmptyForSave()) return
         showNameInputDialog(
             titleRes = R.string.cart_menu_save_as,
-            initial = viewModel.getCurrentCart().value?.name.orEmpty(),
+            initial =
+                viewModel
+                    .getCurrentCart()
+                    .value
+                    ?.name
+                    .orEmpty(),
         ) { name ->
             // "Save as" always creates a fresh entry so users can keep
             // multiple snapshots of the same cart under different names.
@@ -369,7 +406,12 @@ class CartActivity : BaseActivity() {
     private fun saveOrPromptForName(onSaved: () -> Unit = {}) {
         if (guardEmptyForSave()) return
         if (viewModel.saveCurrent()) {
-            val name = viewModel.getCurrentCart().value?.name.orEmpty()
+            val name =
+                viewModel
+                    .getCurrentCart()
+                    .value
+                    ?.name
+                    .orEmpty()
             showSnackbar(getString(R.string.cart_saved_toast, name))
             onSaved()
         } else {
@@ -385,17 +427,23 @@ class CartActivity : BaseActivity() {
         initial: String,
         onOk: (String) -> Unit,
     ) {
-        val input = EditText(this).apply {
-            hint = getString(R.string.cart_save_name_hint)
-            setText(initial)
-        }
-        AlertDialog.Builder(this)
+        val input =
+            EditText(this).apply {
+                hint = getString(R.string.cart_save_name_hint)
+                setText(initial)
+            }
+        AlertDialog
+            .Builder(this)
             .setTitle(titleRes)
             .setView(input)
             .setPositiveButton(android.R.string.ok) { _, _ ->
-                onOk(input.text.toString().trim().orDefaultCartName())
-            }
-            .setNegativeButton(android.R.string.cancel, null)
+                onOk(
+                    input.text
+                        .toString()
+                        .trim()
+                        .orDefaultCartName(),
+                )
+            }.setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
@@ -427,7 +475,12 @@ class CartActivity : BaseActivity() {
             action()
             return
         }
-        val canOverwrite = viewModel.getCurrentCart().value?.id?.isNotEmpty() == true
+        val canOverwrite =
+            viewModel
+                .getCurrentCart()
+                .value
+                ?.id
+                ?.isNotEmpty() == true
         val options = mutableListOf<Pair<String, () -> Unit>>()
         if (canOverwrite) {
             options += getString(R.string.cart_unsaved_save) to { saveOrPromptForName(action) }
@@ -438,12 +491,12 @@ class CartActivity : BaseActivity() {
             action()
         }
         options += getString(R.string.cart_unsaved_continue) to action
-        AlertDialog.Builder(this)
+        AlertDialog
+            .Builder(this)
             .setTitle(R.string.cart_unsaved_title)
             .setItems(options.map { it.first }.toTypedArray()) { _, which ->
                 options[which].second.invoke()
-            }
-            .setNegativeButton(android.R.string.cancel, null)
+            }.setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
@@ -456,26 +509,30 @@ class CartActivity : BaseActivity() {
             return
         }
         val adapter = SavedCartAdapter(saved)
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(R.string.cart_menu_load)
-            .setAdapter(adapter) { _, which ->
-                val targetId = saved[which].id
-                confirmUnsavedThen { viewModel.loadSaved(targetId) }
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .create()
+        val dialog =
+            AlertDialog
+                .Builder(this)
+                .setTitle(R.string.cart_menu_load)
+                .setAdapter(adapter) { _, which ->
+                    val targetId = saved[which].id
+                    confirmUnsavedThen { viewModel.loadSaved(targetId) }
+                }.setNegativeButton(android.R.string.cancel, null)
+                .create()
         adapter.onDelete = { position ->
             val cart = saved[position]
-            AlertDialog.Builder(this)
+            AlertDialog
+                .Builder(this)
                 .setTitle(cart.name.ifBlank { cart.id.take(8) })
                 .setMessage(getString(R.string.cart_delete_confirm, cart.name))
                 .setPositiveButton(R.string.cart_delete_confirm_button) { _, _ ->
                     viewModel.deleteSaved(cart.id)
                     saved.removeAt(position)
-                    if (saved.isEmpty()) dialog.dismiss()
-                    else adapter.notifyDataSetChanged()
-                }
-                .setNegativeButton(android.R.string.cancel, null)
+                    if (saved.isEmpty()) {
+                        dialog.dismiss()
+                    } else {
+                        adapter.notifyDataSetChanged()
+                    }
+                }.setNegativeButton(android.R.string.cancel, null)
                 .show()
         }
         adapter.onRename = { position ->
@@ -493,7 +550,12 @@ class CartActivity : BaseActivity() {
     }
 
     private fun launchExport() {
-        val name = viewModel.getCurrentCart().value?.name?.ifBlank { null } ?: "cart"
+        val name =
+            viewModel
+                .getCurrentCart()
+                .value
+                ?.name
+                ?.ifBlank { null } ?: "cart"
         val stamp = SimpleDateFormat(EXPORT_FILE_DATE_FORMAT, Locale.US).format(Date())
         exportLauncher.launch("$name-$stamp$EXPORT_FILE_EXT")
     }
@@ -506,15 +568,17 @@ class CartActivity : BaseActivity() {
         val cart = viewModel.getCurrentCart().value ?: return
         // Copy so the exported file always has a real name, even if the
         // user hasn't gone through Save-as yet.
-        val toExport = cart.copy(
-            name = cart.name.orDefaultCartName(),
-            createdAt = System.currentTimeMillis(),
-        )
+        val toExport =
+            cart.copy(
+                name = cart.name.orDefaultCartName(),
+                createdAt = System.currentTimeMillis(),
+            )
         when (val res = exporter.export(uri, toExport)) {
             is CartFileResult.Success -> showSnackbar(getString(R.string.cart_export_ok))
-            is CartFileResult.Failure -> showSnackbar(
-                getString(R.string.cart_export_error, res.message)
-            )
+            is CartFileResult.Failure ->
+                showSnackbar(
+                    getString(R.string.cart_export_error, res.message),
+                )
             is CartFileResult.Loaded -> Unit
         }
     }
@@ -525,9 +589,10 @@ class CartActivity : BaseActivity() {
                 viewModel.setCurrent(res.cart)
                 showSnackbar(getString(R.string.cart_import_ok))
             }
-            is CartFileResult.Failure -> showSnackbar(
-                getString(R.string.cart_import_error, res.message)
-            )
+            is CartFileResult.Failure ->
+                showSnackbar(
+                    getString(R.string.cart_import_error, res.message),
+                )
             is CartFileResult.Success -> Unit
         }
     }
@@ -535,25 +600,33 @@ class CartActivity : BaseActivity() {
     private fun confirmClear() {
         showChoiceExplainerDialog(
             titleRes = R.string.cart_menu_clear,
-            choices = listOf(
-                ChoiceRow(
-                    R.string.cart_clear_items_only,
-                    R.string.cart_clear_items_only_desc,
-                ) { viewModel.clearItems() },
-                ChoiceRow(
-                    R.string.cart_clear_reset_all,
-                    R.string.cart_clear_reset_all_desc,
-                ) { viewModel.resetToMainDefaults() },
-            ),
+            choices =
+                listOf(
+                    ChoiceRow(
+                        R.string.cart_clear_items_only,
+                        R.string.cart_clear_items_only_desc,
+                    ) { viewModel.clearItems() },
+                    ChoiceRow(
+                        R.string.cart_clear_reset_all,
+                        R.string.cart_clear_reset_all_desc,
+                    ) { viewModel.resetToMainDefaults() },
+                ),
         )
     }
 
     // Shared "title + one-line explainer per option" picker. Mirrors the
     // preference-screen fee-side dialog so users get the same shape of
     // guidance in the cart's destructive flows.
-    private data class ChoiceRow(val title: Int, val description: Int, val onPick: () -> Unit)
+    private data class ChoiceRow(
+        val title: Int,
+        val description: Int,
+        val onPick: () -> Unit,
+    )
 
-    private fun showChoiceExplainerDialog(titleRes: Int, choices: List<ChoiceRow>) {
+    private fun showChoiceExplainerDialog(
+        titleRes: Int,
+        choices: List<ChoiceRow>,
+    ) {
         val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
         val container = paddedDialogContainer(this, topPadding = padV)
         val dialogHolder = arrayOfNulls<AlertDialog>(1)
@@ -566,14 +639,16 @@ class CartActivity : BaseActivity() {
                 ) {
                     choice.onPick()
                     dialogHolder[0]?.dismiss()
-                }
+                },
             )
         }
-        dialogHolder[0] = AlertDialog.Builder(this)
-            .setTitle(titleRes)
-            .setView(container)
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
+        dialogHolder[0] =
+            AlertDialog
+                .Builder(this)
+                .setTitle(titleRes)
+                .setView(container)
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
     }
 
     private fun shareCart() {
@@ -583,34 +658,36 @@ class CartActivity : BaseActivity() {
             return
         }
         val text = buildShareText(snapshot)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, text)
-        }
+        val intent =
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, text)
+            }
         startActivity(Intent.createChooser(intent, null))
     }
 
-    private fun buildShareText(snapshot: CartSnapshot): String = buildString {
-        val baseIso = snapshot.baseCurrency.iso4217Alpha()
-        val destIso = snapshot.destinationCurrency.iso4217Alpha()
-        val name = snapshot.cart.name.ifBlank { getString(R.string.cart_share_default_title) }
-        appendLine(getString(R.string.cart_share_header, name, baseIso))
-        snapshot.evaluatedItems.forEach { (item, value) ->
-            val label = item.name.ifBlank { item.expression }
-            appendLine("• $label: ${value.toCartDisplayString()}")
+    private fun buildShareText(snapshot: CartSnapshot): String =
+        buildString {
+            val baseIso = snapshot.baseCurrency.iso4217Alpha()
+            val destIso = snapshot.destinationCurrency.iso4217Alpha()
+            val name = snapshot.cart.name.ifBlank { getString(R.string.cart_share_default_title) }
+            appendLine(getString(R.string.cart_share_header, name, baseIso))
+            snapshot.evaluatedItems.forEach { (item, value) ->
+                val label = item.name.ifBlank { item.expression }
+                appendLine("• $label: ${value.toCartDisplayString()}")
+            }
+            appendLine("—")
+            appendLine(getString(R.string.cart_share_subtotal, snapshot.subtotal.toCartDisplayString(), baseIso))
+            if (snapshot.isConverting) {
+                appendLine(
+                    getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso),
+                )
+            }
+            if (!snapshot.feeStack.isNeutralFeeStack()) {
+                appendLine(getString(R.string.cart_share_fees, snapshot.feeStack.toFeePercentDisplay()))
+            }
+            append(getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
         }
-        appendLine("—")
-        appendLine(getString(R.string.cart_share_subtotal, snapshot.subtotal.toCartDisplayString(), baseIso))
-        if (snapshot.isConverting) {
-            appendLine(
-                getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso)
-            )
-        }
-        if (!snapshot.feeStack.isNeutralFeeStack()) {
-            appendLine(getString(R.string.cart_share_fees, snapshot.feeStack.toFeePercentDisplay()))
-        }
-        append(getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
-    }
 
     // ------------------------------------------------------------------
     // Slide-up keypad — behaves like a soft IME. A value field taps calls
@@ -650,7 +727,8 @@ class CartActivity : BaseActivity() {
         keypadContainer.visibility = View.VISIBLE
         keypadContainer.translationY = keypadContainer.height.toFloat().takeIf { it > 0f }
             ?: resources.displayMetrics.heightPixels.toFloat()
-        keypadContainer.animate()
+        keypadContainer
+            .animate()
             .translationY(0f)
             .setDuration(KEYPAD_ANIM_MS)
             .start()
@@ -663,7 +741,8 @@ class CartActivity : BaseActivity() {
     private fun hideKeypad() {
         keypadBackCallback?.isEnabled = false
         if (keypadContainer.visibility != View.VISIBLE) return
-        keypadContainer.animate()
+        keypadContainer
+            .animate()
             .translationY(keypadContainer.height.toFloat())
             .setDuration(KEYPAD_ANIM_MS)
             .withEndAction { keypadContainer.visibility = View.GONE }
@@ -678,8 +757,9 @@ class CartActivity : BaseActivity() {
 
     private fun setContentBottomInsetToKeypad() {
         val apply = {
-            val h = keypadContainer.height.takeIf { it > 0 }
-                ?: keypadContainer.layoutParams.height
+            val h =
+                keypadContainer.height.takeIf { it > 0 }
+                    ?: keypadContainer.layoutParams.height
             contentColumn.setPadding(
                 contentColumn.paddingLeft,
                 contentColumn.paddingTop,
@@ -688,8 +768,11 @@ class CartActivity : BaseActivity() {
             )
         }
         // If the keypad hasn't laid out yet (first open), wait one pass.
-        if (keypadContainer.height > 0) apply()
-        else keypadContainer.post(apply)
+        if (keypadContainer.height > 0) {
+            apply()
+        } else {
+            keypadContainer.post(apply)
+        }
     }
 
     private fun detachActiveField() {
@@ -714,8 +797,8 @@ class CartActivity : BaseActivity() {
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN && keypadContainer.visibility == View.VISIBLE) {
             val keypadRect = Rect().also(keypadContainer::getGlobalVisibleRect)
-            if (!keypadRect.contains(ev.rawX.toInt(), ev.rawY.toInt())
-                && !isTouchOnActiveField(ev)
+            if (!keypadRect.contains(ev.rawX.toInt(), ev.rawY.toInt()) &&
+                !isTouchOnActiveField(ev)
             ) {
                 keypadContainer.post {
                     // If the touched view was another expr field, its click
@@ -752,14 +835,21 @@ class CartActivity : BaseActivity() {
     // ------------------------------------------------------------------
 
     fun numberEvent(view: View) = keypadEvent(view) { it.addNumber((view as AppCompatButton).text.toString()) }
+
     fun decimalEvent(view: View) = keypadEvent(view) { it.addDecimal() }
+
     fun deleteEvent(view: View) = keypadEvent(view) { it.delete() }
+
     fun percentEvent(view: View) = keypadEvent(view) { it.addPercent() }
+
     fun calculationEvent(view: View) = keypadEvent(view) { it.addOperator((view as AppCompatButton).text.toString()) }
 
     // Every keypad button does the same two-step: haptic tap on the button,
     // then forward the action to whichever row's calculator state is active.
-    private inline fun keypadEvent(view: View, action: (CalculatorInputState) -> Unit) {
+    private inline fun keypadEvent(
+        view: View,
+        action: (CalculatorInputState) -> Unit,
+    ) {
         view.hapticTap(hapticEnabled)
         activeCalculatorState?.let(action)
     }
@@ -833,12 +923,20 @@ private class SavedCartAdapter(
     var onRename: ((Int) -> Unit)? = null
 
     override fun getCount(): Int = items.size
+
     override fun getItem(position: Int): SavedCart = items[position]
+
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView ?: LayoutInflater.from(parent.context)
-            .inflate(R.layout.dialog_saved_cart_row, parent, false)
+    override fun getView(
+        position: Int,
+        convertView: View?,
+        parent: ViewGroup,
+    ): View {
+        val view =
+            convertView ?: LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.dialog_saved_cart_row, parent, false)
         val cart = items[position]
         view.findViewById<TextView>(R.id.saved_cart_row_name).text =
             cart.name.ifBlank { cart.id.take(8) }

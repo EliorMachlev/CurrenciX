@@ -21,58 +21,61 @@ import java.time.format.DateTimeFormatter
 private const val HTTP_UNAUTHORIZED = 401
 
 class OpenExchangerates : ApiProvider.Api() {
-
     override val name = "Open Exchangerates"
 
-    override fun descriptionShort(context: Context) =
-        context.getText(R.string.api_openExchangeRates_descriptionShort)
+    override fun descriptionShort(context: Context) = context.getText(R.string.api_openExchangeRates_descriptionShort)
 
-    override fun getDescriptionLong(context: Context) =
-        context.getText(R.string.api_openExchangeRates_descriptionFull)
+    override fun getDescriptionLong(context: Context) = context.getText(R.string.api_openExchangeRates_descriptionFull)
 
-    override fun descriptionUpdateInterval(context: Context) =
-        context.getText(R.string.api_openExchangeRates_descriptionUpdateInterval)
+    override fun descriptionUpdateInterval(context: Context) = context.getText(R.string.api_openExchangeRates_descriptionUpdateInterval)
 
-    override fun descriptionHint(context: Context) =
-        context.getText(R.string.api_openExchangeRates_hint)
+    override fun descriptionHint(context: Context) = context.getText(R.string.api_openExchangeRates_hint)
 
     override val baseUrl = "https://openexchangerates.org/api"
 
-    override suspend fun getRates(context: Context?, date: LocalDate?): Result<ExchangeRates, FuelError> {
+    override suspend fun getRates(
+        context: Context?,
+        date: LocalDate?,
+    ): Result<ExchangeRates, FuelError> {
         val apiKey = context?.let { Database(it).getOpenExchangeRatesApiKey() }
-        if (apiKey.isNullOrBlank())
+        if (apiKey.isNullOrBlank()) {
             return Result.error(FuelError.wrap(Exception(context?.getString(R.string.error_no_api_key))))
-
-        val endpoint =
-            if (date != null)
-                "/historical/" + date.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".json"
-            else
-                "/latest.json"
-
-        val result = Fuel.get(
-            baseUrl +
-                    endpoint +
-                    "?app_id=$apiKey" +
-                    "&prettyprint=false" +
-                    "&show_alternative=false"
-        ).awaitResult(
-            moshiDeserializerOf(
-                Moshi.Builder()
-                    .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                    .apply {
-                        add(OpenExchangeratesRatesAdapter())
-                    }
-                    .build()
-                    .adapter(ExchangeRates::class.java)
-            )
-        ).map { rates ->
-            rates.copy(provider = ApiProvider.OPEN_EXCHANGERATES)
         }
 
-        return if (result.component2()?.response?.statusCode == HTTP_UNAUTHORIZED)
+        val endpoint =
+            if (date != null) {
+                "/historical/" + date.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".json"
+            } else {
+                "/latest.json"
+            }
+
+        val result =
+            Fuel
+                .get(
+                    baseUrl +
+                        endpoint +
+                        "?app_id=$apiKey" +
+                        "&prettyprint=false" +
+                        "&show_alternative=false",
+                ).awaitResult(
+                    moshiDeserializerOf(
+                        Moshi
+                            .Builder()
+                            .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
+                            .apply {
+                                add(OpenExchangeratesRatesAdapter())
+                            }.build()
+                            .adapter(ExchangeRates::class.java),
+                    ),
+                ).map { rates ->
+                    rates.copy(provider = ApiProvider.OPEN_EXCHANGERATES)
+                }
+
+        return if (result.component2()?.response?.statusCode == HTTP_UNAUTHORIZED) {
             Result.error(FuelError.wrap(Exception(context.getString(R.string.error_invalid_api_key))))
-        else
+        } else {
             result
+        }
     }
 
     override suspend fun getTimeline(
@@ -80,9 +83,6 @@ class OpenExchangerates : ApiProvider.Api() {
         base: Currency,
         symbol: Currency,
         startDate: LocalDate,
-        endDate: LocalDate
-    ): Result<Timeline, FuelError> {
-        return Result.error(FuelError.wrap(Exception(context?.getString(R.string.error_unsupported_timeline))))
-    }
-
+        endDate: LocalDate,
+    ): Result<Timeline, FuelError> = Result.error(FuelError.wrap(Exception(context?.getString(R.string.error_unsupported_timeline))))
 }

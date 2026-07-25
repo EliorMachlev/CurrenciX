@@ -9,19 +9,18 @@ import java.time.LocalDate
 
 @Suppress("unused")
 internal class LocalDateAdapter {
-
     @Synchronized
     @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): LocalDate? {
-        return LocalDate.parse(reader.nextString())
-    }
+    fun fromJson(reader: JsonReader): LocalDate? = LocalDate.parse(reader.nextString())
 
     @Synchronized
     @ToJson
     @Throws(IOException::class)
-    fun toJson(writer: JsonWriter, value: LocalDate?) {
+    fun toJson(
+        writer: JsonWriter,
+        value: LocalDate?,
+    ) {
         writer.value(value?.toString())
     }
-
 }

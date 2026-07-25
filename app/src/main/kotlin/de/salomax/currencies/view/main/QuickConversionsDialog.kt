@@ -33,7 +33,6 @@ private const val ROW_SMALL_AMOUNT_DECIMALS = 4
 private val ROW_SMALL_AMOUNT_THRESHOLD: BigDecimal = BigDecimal.ONE
 
 class QuickConversionsDialog : AppCompatDialogFragment() {
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val ctx = requireContext()
         val view = View.inflate(ctx, R.layout.dialog_quick_conversions, null)
@@ -56,8 +55,11 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
             renderHeader(ctx, flagFrom, labelFrom, from)
             renderHeader(ctx, flagTo, labelTo, to)
             btnFeeSide.setImageResource(
-                if (side == FeeSide.CONVERTED) R.drawable.ic_fee_side_converted_horizontal
-                else R.drawable.ic_fee_side_original_horizontal
+                if (side == FeeSide.CONVERTED) {
+                    R.drawable.ic_fee_side_converted_horizontal
+                } else {
+                    R.drawable.ic_fee_side_original_horizontal
+                },
             )
             btnFeeSide.visibility =
                 if (hasFeesFor(viewModel, from, to)) View.VISIBLE else View.GONE
@@ -81,7 +83,8 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
         }
         btnFeeSide.setOnLongClickListener { openFeesSettings(ctx) }
 
-        return AlertDialog.Builder(ctx)
+        return AlertDialog
+            .Builder(ctx)
             .setTitle(R.string.quick_conversions_title)
             .setView(view)
             .setPositiveButton(android.R.string.ok, null)
@@ -118,11 +121,12 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
         val destRate = rates?.rates?.find { it.currency == to }?.value
 
         if (from == null || to == null || baseRate == null || destRate == null) {
-            val tv = TextView(ctx).apply {
-                text = getString(R.string.quick_conversions_no_rates)
-                gravity = android.view.Gravity.CENTER
-                setPadding(0, resources.getDimensionPixelSize(R.dimen.margin2x), 0, 0)
-            }
+            val tv =
+                TextView(ctx).apply {
+                    text = getString(R.string.quick_conversions_no_rates)
+                    gravity = android.view.Gravity.CENTER
+                    setPadding(0, resources.getDimensionPixelSize(R.dimen.margin2x), 0, 0)
+                }
             container.addView(tv)
             feeInfo.visibility = View.GONE
             return
@@ -135,10 +139,12 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
         for (amountStr in QUICK_AMOUNTS) {
             val amt = BigDecimal(amountStr)
             val fair = amt.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
-            val displayed = if (hasFees && side == FeeSide.CONVERTED)
-                fair.divide(stack, MathContext.DECIMAL128)
-            else
-                fair
+            val displayed =
+                if (hasFees && side == FeeSide.CONVERTED) {
+                    fair.divide(stack, MathContext.DECIMAL128)
+                } else {
+                    fair
+                }
 
             val row = inflater.inflate(R.layout.dialog_quick_conversions_row, container, false)
             row.findViewById<TextView>(R.id.text_amount_from).text =
@@ -180,7 +186,11 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
         return true
     }
 
-    private fun hasFeesFor(viewModel: MainViewModel, from: Currency?, to: Currency?): Boolean {
+    private fun hasFeesFor(
+        viewModel: MainViewModel,
+        from: Currency?,
+        to: Currency?,
+    ): Boolean {
         if (from == null || to == null) return false
         return viewModel.feeStackFor(from, to).hasFees()
     }
@@ -188,10 +198,13 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
     // A fee stack of exactly 0 is a "no fees configured" sentinel from the
     // view model, distinct from the neutral 1.0 stack that means "fees
     // cancelled to nothing". Both need to be treated as "no fees to apply".
-    private fun BigDecimal.hasFees(): Boolean =
-        compareTo(BigDecimal.ZERO) != 0 && !isNeutralFeeStack()
+    private fun BigDecimal.hasFees(): Boolean = compareTo(BigDecimal.ZERO) != 0 && !isNeutralFeeStack()
 
-    private inline fun setFeeAnnotation(view: TextView, visible: Boolean, text: () -> String) {
+    private inline fun setFeeAnnotation(
+        view: TextView,
+        visible: Boolean,
+        text: () -> String,
+    ) {
         if (visible) {
             view.text = text()
             view.visibility = View.VISIBLE
@@ -202,8 +215,11 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
 
     private fun BigDecimal.formatForRow(ctx: Context): String {
         val decimals =
-            if (this.abs() >= ROW_SMALL_AMOUNT_THRESHOLD) ROW_DEFAULT_DECIMALS
-            else ROW_SMALL_AMOUNT_DECIMALS
+            if (this.abs() >= ROW_SMALL_AMOUNT_THRESHOLD) {
+                ROW_DEFAULT_DECIMALS
+            } else {
+                ROW_SMALL_AMOUNT_DECIMALS
+            }
         return this.setScale(decimals, RoundingMode.HALF_UP).toHumanReadableNumber(ctx)
     }
 }

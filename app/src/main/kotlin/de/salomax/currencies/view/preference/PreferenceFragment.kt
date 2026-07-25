@@ -2,11 +2,11 @@ package de.salomax.currencies.view.preference
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.util.Log
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.Fragment
@@ -20,10 +20,10 @@ import de.salomax.currencies.BuildConfig
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.AppTheme
-import de.salomax.currencies.view.main.MainActivity
 import de.salomax.currencies.util.DECIMAL_PLACES_DEFAULT
 import de.salomax.currencies.util.DECIMAL_PLACES_MAX
 import de.salomax.currencies.util.DECIMAL_PLACES_MIN
+import de.salomax.currencies.view.main.MainActivity
 import de.salomax.currencies.viewmodel.preference.PreferenceViewModel
 import de.salomax.currencies.widget.LongSummaryPreference
 import java.util.Calendar
@@ -44,16 +44,21 @@ private const val URL_PLAY_MARKET = "market://details?id=de.salomax.currencies"
 private const val URL_PLAY_WEB = "https://play.google.com/store/apps/details?id=de.salomax.currencies"
 
 @Suppress("unused")
-class PreferenceFragment: PreferenceFragmentCompat() {
-
+class PreferenceFragment : PreferenceFragmentCompat() {
     private lateinit var viewModel: PreferenceViewModel
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.title_preferences)
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         setPreferencesFromResource(R.xml.prefs, rootKey)
         viewModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
         setupFeePreference()
@@ -81,9 +86,13 @@ class PreferenceFragment: PreferenceFragmentCompat() {
         pushFragmentOnClick(R.string.backup_key, ::BackupFragment)
     }
 
-    private fun pushFragmentOnClick(keyRes: Int, factory: () -> Fragment) {
+    private fun pushFragmentOnClick(
+        keyRes: Int,
+        factory: () -> Fragment,
+    ) {
         findPreference<Preference>(getString(keyRes))?.setOnPreferenceClickListener {
-            parentFragmentManager.beginTransaction()
+            parentFragmentManager
+                .beginTransaction()
                 .replace(R.id.preferences_fragment, factory())
                 .addToBackStack(null)
                 .commit()
@@ -108,7 +117,7 @@ class PreferenceFragment: PreferenceFragmentCompat() {
             setOnPreferenceChangeListener { _, newValue ->
                 viewModel.setDecimalPlaces(
                     (newValue.toString().toIntOrNull() ?: DECIMAL_PLACES_DEFAULT)
-                        .coerceIn(DECIMAL_PLACES_MIN, DECIMAL_PLACES_MAX)
+                        .coerceIn(DECIMAL_PLACES_MIN, DECIMAL_PLACES_MAX),
                 )
                 true
             }
@@ -149,9 +158,10 @@ class PreferenceFragment: PreferenceFragmentCompat() {
             dialogMessage = getText(R.string.api_open_exchangerates_api_key_message)
         }
         viewModel.getOpenExchangeratesApiKey().observe(this) { id ->
-            apiKeyPref?.summaryProvider = Preference.SummaryProvider<EditTextPreference> {
-                if (id.isNullOrBlank()) getText(R.string.api_open_exchangerates_api_key_missing) else id
-            }
+            apiKeyPref?.summaryProvider =
+                Preference.SummaryProvider<EditTextPreference> {
+                    if (id.isNullOrBlank()) getText(R.string.api_open_exchangerates_api_key_missing) else id
+                }
         }
         findPreference<ProviderPickerPreference>(getString(R.string.api_key))?.apply {
             val providers = ApiProvider.entries
@@ -224,8 +234,8 @@ class PreferenceFragment: PreferenceFragmentCompat() {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.addFlags(
             Intent.FLAG_ACTIVITY_NO_HISTORY
-                    or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-                    or Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+                or Intent.FLAG_ACTIVITY_NEW_DOCUMENT,
         )
         return intent
     }
@@ -235,11 +245,13 @@ class PreferenceFragment: PreferenceFragmentCompat() {
     // Matches the pre-fork OLED toggle behavior.
     private fun rebuildActivityStack() {
         val activity = requireActivity()
-        TaskStackBuilder.create(activity)
-            .addNextIntent(Intent(activity, MainActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-            })
-            .addNextIntent(Intent(activity, PreferenceActivity::class.java))
+        TaskStackBuilder
+            .create(activity)
+            .addNextIntent(
+                Intent(activity, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                },
+            ).addNextIntent(Intent(activity, PreferenceActivity::class.java))
             .startActivities()
         activity.finish()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -249,5 +261,4 @@ class PreferenceFragment: PreferenceFragmentCompat() {
             activity.overridePendingTransition(0, 0)
         }
     }
-
 }

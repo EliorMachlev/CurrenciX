@@ -15,7 +15,7 @@ import kotlin.math.pow
 // the error message to [onError].
 internal inline fun <T> JsonReader.readArrayOrError(
     onError: (String?) -> T,
-    onArray: (JsonReader) -> T
+    onArray: (JsonReader) -> T,
 ): T {
     if (peek() != JsonReader.Token.BEGIN_ARRAY) return onError(readErrorMessage())
     beginArray()
@@ -30,8 +30,11 @@ internal fun JsonReader.readErrorMessage(): String? {
     beginObject()
     var message: String? = null
     while (hasNext()) {
-        if (nextName() == "message") message = nextString()
-        else skipValue()
+        if (nextName() == "message") {
+            message = nextString()
+        } else {
+            skipValue()
+        }
     }
     endObject()
     return message
@@ -57,14 +60,17 @@ internal fun MutableList<Rate>.addFokFromDkkIfMissing() {
 // Namespace-unaware XmlPullParser bound to [inputStream]. The five XML
 // parsers all want this exact configuration.
 internal fun newXmlPullParser(inputStream: InputStream): XmlPullParser =
-    XmlPullParserFactory.newInstance()
-        .apply { isNamespaceAware = false }.newPullParser()
+    XmlPullParserFactory
+        .newInstance()
+        .apply { isNamespaceAware = false }
+        .newPullParser()
         .apply { setInput(inputStream, null) }
 
 // Norges Bank encodes the currency's decimal scale as UNIT_MULT (an integer
 // exponent). Missing/invalid values fall back to 1 (10^0).
 internal fun XmlPullParser.norgesBankUnitMultiplier(): Int =
-    getAttributeValue(null, "UNIT_MULT")?.toIntOrNull()
+    getAttributeValue(null, "UNIT_MULT")
+        ?.toIntOrNull()
         ?.let { 10.0.pow(it).toInt() } ?: 1
 
 // BankOfCanada quotes series names as "FX<iso>CAD" (e.g. "FXUSDCAD"); the

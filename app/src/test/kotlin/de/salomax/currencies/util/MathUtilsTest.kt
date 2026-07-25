@@ -9,7 +9,6 @@ import java.math.BigDecimal
 
 @RunWith(MockitoJUnitRunner::class)
 class MathUtilsTest {
-
     @Test
     fun calculateDifferenceTest() {
         assertEquals(0, calculateDifference(bd("100"), bd("110"))?.compareTo(bd("10")))
@@ -34,5 +33,4 @@ class MathUtilsTest {
     }
 
     private fun bd(value: String) = BigDecimal(value)
-
 }

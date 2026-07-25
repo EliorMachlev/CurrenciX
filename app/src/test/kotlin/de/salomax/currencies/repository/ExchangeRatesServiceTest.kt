@@ -12,21 +12,24 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 class ExchangeRatesServiceTest {
-
     @Test
-    fun testFrankfurterApp() = runBlocking {
-        // latest
-        testWebservice(
-            ExchangeRatesService.getRates(ApiProvider.FRANKFURTER_APP).get(), 4
-        )
-        // timeline
-        testTimeline(
-            ExchangeRatesService.getTimeline(
-                ApiProvider.FRANKFURTER_APP,
-                Currency.EUR, Currency.ISK
-            ).get()
-        )
-    }
+    fun testFrankfurterApp() =
+        runBlocking {
+            // latest
+            testWebservice(
+                ExchangeRatesService.getRates(ApiProvider.FRANKFURTER_APP).get(),
+                4,
+            )
+            // timeline
+            testTimeline(
+                ExchangeRatesService
+                    .getTimeline(
+                        ApiProvider.FRANKFURTER_APP,
+                        Currency.EUR,
+                        Currency.ISK,
+                    ).get(),
+            )
+        }
 
 //    @Test
 //    fun testFerEe() = runBlocking {
@@ -44,19 +47,23 @@ class ExchangeRatesServiceTest {
 //    }
 
     @Test
-    fun testInforEuro() = runBlocking {
-        // latest
-        testWebservice(
-            ExchangeRatesService.getRates(ApiProvider.INFOR_EURO).get(), 31
-        )
-        // timeline
-        testTimeline(
-            ExchangeRatesService.getTimeline(
-                ApiProvider.INFOR_EURO,
-                Currency.EUR, Currency.ISK
-            ).get()
-        )
-    }
+    fun testInforEuro() =
+        runBlocking {
+            // latest
+            testWebservice(
+                ExchangeRatesService.getRates(ApiProvider.INFOR_EURO).get(),
+                31,
+            )
+            // timeline
+            testTimeline(
+                ExchangeRatesService
+                    .getTimeline(
+                        ApiProvider.INFOR_EURO,
+                        Currency.EUR,
+                        Currency.ISK,
+                    ).get(),
+            )
+        }
 
     /*
      * Can't unit test providers where XmlPullParserFactory is used. It's an Android component!
@@ -107,7 +114,10 @@ class ExchangeRatesServiceTest {
 //        )
 //    }
 
-    private fun testWebservice(rates: ExchangeRates?, maxAge: Long) {
+    private fun testWebservice(
+        rates: ExchangeRates?,
+        maxAge: Long,
+    ) {
         // see there is some valid data
         assertNotNull(rates)
 
@@ -146,5 +156,4 @@ class ExchangeRatesServiceTest {
         assertTrue(data.rates != null)
         assertTrue(data.rates!!.isNotEmpty())
     }
-
 }

@@ -19,8 +19,10 @@ import de.salomax.currencies.viewmodel.main.MainViewModel
 import de.salomax.currencies.viewmodel.preference.PreferenceViewModel
 import java.math.BigDecimal
 
-class SearchableSpinnerDialog(context: Context) : AppCompatDialogFragment(), SearchView.OnQueryTextListener {
-
+class SearchableSpinnerDialog(
+    context: Context,
+) : AppCompatDialogFragment(),
+    SearchView.OnQueryTextListener {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var prefViewModel: PreferenceViewModel
 
@@ -35,6 +37,7 @@ class SearchableSpinnerDialog(context: Context) : AppCompatDialogFragment(), Sea
     fun setCurrentRate(currentRate: Rate) {
         adapter.setCurrentRate(currentRate)
     }
+
     fun setCurrentSum(currentSum: BigDecimal) {
         adapter.setCurrentSum(currentSum)
     }
@@ -42,9 +45,11 @@ class SearchableSpinnerDialog(context: Context) : AppCompatDialogFragment(), Sea
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = View.inflate(context, R.layout.searchable_spinner_dialog, null)
 
-        this.mainViewModel = ViewModelProvider(
-            this, MainViewModel.Factory(requireActivity().application, true)
-        )[MainViewModel::class.java]
+        this.mainViewModel =
+            ViewModelProvider(
+                this,
+                MainViewModel.Factory(requireActivity().application, true),
+            )[MainViewModel::class.java]
         this.prefViewModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
 
         // listView
@@ -60,49 +65,53 @@ class SearchableSpinnerDialog(context: Context) : AppCompatDialogFragment(), Sea
         }
 
         // drag-to-reorder for starred rows (long-press to drag)
-        val dragCallback = object : ItemTouchHelper.Callback() {
-            override fun isLongPressDragEnabled(): Boolean = true
-            override fun isItemViewSwipeEnabled(): Boolean = false
+        val dragCallback =
+            object : ItemTouchHelper.Callback() {
+                override fun isLongPressDragEnabled(): Boolean = true
 
-            override fun getMovementFlags(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ): Int {
-                val pos = viewHolder.bindingAdapterPosition
-                return if (adapter.isDraggable(pos))
-                    makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
-                else 0
+                override fun isItemViewSwipeEnabled(): Boolean = false
+
+                override fun getMovementFlags(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                ): Int {
+                    val pos = viewHolder.bindingAdapterPosition
+                    return if (adapter.isDraggable(pos)) {
+                        makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
+                    } else {
+                        0
+                    }
+                }
+
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder,
+                ): Boolean =
+                    adapter.moveItem(
+                        viewHolder.bindingAdapterPosition,
+                        target.bindingAdapterPosition,
+                    )
+
+                override fun canDropOver(
+                    recyclerView: RecyclerView,
+                    current: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder,
+                ): Boolean = adapter.isDraggable(target.bindingAdapterPosition)
+
+                override fun onSwiped(
+                    viewHolder: RecyclerView.ViewHolder,
+                    direction: Int,
+                ) = Unit
+
+                override fun clearView(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                ) {
+                    super.clearView(recyclerView, viewHolder)
+                    mainViewModel.setStarredCurrencyOrder(adapter.getCurrentStarredOrder())
+                }
             }
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return adapter.moveItem(
-                    viewHolder.bindingAdapterPosition,
-                    target.bindingAdapterPosition
-                )
-            }
-
-            override fun canDropOver(
-                recyclerView: RecyclerView,
-                current: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return adapter.isDraggable(target.bindingAdapterPosition)
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) = Unit
-
-            override fun clearView(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ) {
-                super.clearView(recyclerView, viewHolder)
-                mainViewModel.setStarredCurrencyOrder(adapter.getCurrentStarredOrder())
-            }
-        }
         ItemTouchHelper(dragCallback).attachToRecyclerView(listView)
 
         // searchView
@@ -117,8 +126,11 @@ class SearchableSpinnerDialog(context: Context) : AppCompatDialogFragment(), Sea
         }
         mainViewModel.isFilterStarredEnabled().observe(this) { enabled ->
             filterStarredButton?.setImageDrawable(
-                if (enabled) ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_on)
-                else ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_off)
+                if (enabled) {
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_on)
+                } else {
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_off)
+                },
             )
         }
         mainViewModel.isFilterStarredEnabled().observe(this) {
@@ -143,7 +155,8 @@ class SearchableSpinnerDialog(context: Context) : AppCompatDialogFragment(), Sea
         }
 
         // build dialog
-        return AlertDialog.Builder(requireContext())
+        return AlertDialog
+            .Builder(requireContext())
             .setNegativeButton(getString(android.R.string.cancel), null)
             .setView(view)
             .create()
@@ -167,5 +180,4 @@ class SearchableSpinnerDialog(context: Context) : AppCompatDialogFragment(), Sea
         adapter.reset()
         dismiss()
     }
-
 }

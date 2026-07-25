@@ -18,25 +18,24 @@ import java.math.BigDecimal
 private const val NO_SELECTION = -1
 
 class SearchableSpinner : AppCompatSpinner {
-
     private val mContext = context
     private lateinit var spinnerDialog: SearchableSpinnerDialog
 
     private val adapter = SearchableSpinnerAdapter(context, android.R.layout.simple_spinner_item)
 
     constructor(
-        context: Context
+        context: Context,
     ) : this(context, null)
 
     constructor(
         context: Context,
-        attrs: AttributeSet?
+        attrs: AttributeSet?,
     ) : this(context, attrs, R.attr.spinnerStyle)
 
     constructor (
         context: Context,
         attrs: AttributeSet?,
-        defStyleAttr: Int
+        defStyleAttr: Int,
     ) : super(context, attrs, defStyleAttr) {
         init()
     }
@@ -52,10 +51,11 @@ class SearchableSpinner : AppCompatSpinner {
         }
         // prevent "drag-to-open" (interferes with pull-to-refresh): https://stackoverflow.com/questions/27923266/
         setOnTouchListener { v, event ->
-            if (event.action != MotionEvent.ACTION_MOVE)
+            if (event.action != MotionEvent.ACTION_MOVE) {
                 v.onTouchEvent(event)
-            else
+            } else {
                 true
+            }
         }
     }
 
@@ -63,25 +63,22 @@ class SearchableSpinner : AppCompatSpinner {
         setSelection(currency?.let { adapter.getPosition(it) } ?: NO_SELECTION)
     }
 
-    override fun setAdapter(adapter: SpinnerAdapter?) {
-        throw NoSuchMethodException("This Spinner sets its own adapter.")
-    }
+    override fun setAdapter(adapter: SpinnerAdapter?): Unit = throw NoSuchMethodException("This Spinner sets its own adapter.")
 
     // click on spinner -> open the dialog
-    override fun performClick(): Boolean {
-        return when {
+    override fun performClick(): Boolean =
+        when {
             // dialog is already active
             spinnerDialog.isAdded -> true
             // else show dialog, if this spinner is backed by an adapter
             !spinnerDialog.isVisible -> {
                 val fm = findActivity(mContext)?.supportFragmentManager
-                if (fm != null) { spinnerDialog.show(fm, null) }
+                if (fm != null) spinnerDialog.show(fm, null)
                 true
             }
             // else do nothing
             else -> super.performClick()
         }
-    }
 
     fun setRates(rates: List<Rate>?) {
         // set in own adapter...
@@ -93,17 +90,16 @@ class SearchableSpinner : AppCompatSpinner {
         // set in dialog
         spinnerDialog.setCurrentRate(currentRate)
     }
+
     fun setCurrentSum(currentSum: BigDecimal) {
         // set in dialog
         spinnerDialog.setCurrentSum(currentSum)
     }
 
-    private fun findActivity(context: Context?): FragmentActivity? {
-        return when (context) {
+    private fun findActivity(context: Context?): FragmentActivity? =
+        when (context) {
             is FragmentActivity -> context
             is ContextWrapper -> findActivity(context.baseContext)
             else -> null
         }
-    }
-
 }

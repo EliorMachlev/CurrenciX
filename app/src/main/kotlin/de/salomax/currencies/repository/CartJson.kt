@@ -22,34 +22,36 @@ internal const val CART_ITEM_KEY_ID = "id"
 internal const val CART_ITEM_KEY_NAME = "name"
 internal const val CART_ITEM_KEY_EXPR = "expression"
 
-internal fun serializeCart(cart: SavedCart): JSONObject {
-    return JSONObject().apply {
+internal fun serializeCart(cart: SavedCart): JSONObject =
+    JSONObject().apply {
         put(CART_KEY_ID, cart.id)
         put(CART_KEY_NAME, cart.name)
         put(CART_KEY_CURRENCY, cart.currency)
         cart.destinationCurrency?.let { put(CART_KEY_DEST_CURRENCY, it) }
         put(CART_KEY_CREATED_AT, cart.createdAt)
         put(CART_KEY_FEE_SIDE, cart.feeSide.name)
-        put(CART_KEY_ITEMS, JSONArray().apply {
-            cart.items.forEach { put(serializeCartItem(it)) }
-        })
+        put(
+            CART_KEY_ITEMS,
+            JSONArray().apply {
+                cart.items.forEach { put(serializeCartItem(it)) }
+            },
+        )
     }
-}
 
-private fun serializeCartItem(item: CartItem): JSONObject {
-    return JSONObject().apply {
+private fun serializeCartItem(item: CartItem): JSONObject =
+    JSONObject().apply {
         put(CART_ITEM_KEY_ID, item.id)
         put(CART_ITEM_KEY_NAME, item.name)
         put(CART_ITEM_KEY_EXPR, item.expression)
     }
-}
 
 internal fun parseCart(obj: JSONObject?): SavedCart? {
     obj ?: return null
     val itemsArr = obj.optJSONArray(CART_KEY_ITEMS) ?: JSONArray()
-    val items = (0 until itemsArr.length()).mapNotNull { i ->
-        parseCartItem(itemsArr.optJSONObject(i))
-    }
+    val items =
+        (0 until itemsArr.length()).mapNotNull { i ->
+            parseCartItem(itemsArr.optJSONObject(i))
+        }
     return SavedCart(
         id = obj.optString(CART_KEY_ID, "").ifEmpty { UUID.randomUUID().toString() },
         name = obj.optString(CART_KEY_NAME, ""),
@@ -63,8 +65,7 @@ internal fun parseCart(obj: JSONObject?): SavedCart? {
     )
 }
 
-private fun parseFeeSideOrDefault(raw: String): FeeSide =
-    runCatching { FeeSide.valueOf(raw) }.getOrDefault(FeeSide.ORIGINAL)
+private fun parseFeeSideOrDefault(raw: String): FeeSide = runCatching { FeeSide.valueOf(raw) }.getOrDefault(FeeSide.ORIGINAL)
 
 internal fun parseCart(json: String?): SavedCart? {
     if (json.isNullOrBlank()) return null
