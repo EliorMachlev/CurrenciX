@@ -1,8 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
-import java.util.Properties
-import java.io.FileInputStream
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -53,7 +53,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {
@@ -170,9 +170,11 @@ tasks.register("checkVersion") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode
         val correctVersionCode: Int = generateVersionCode(android.defaultConfig.versionName!!)
-        if (versionCode != correctVersionCode) throw GradleException(
-            "versionCode and versionName don't match: versionCode should be $correctVersionCode. Is $versionCode."
-        )
+        if (versionCode != correctVersionCode) {
+            throw GradleException(
+                "versionCode and versionName don't match: versionCode should be $correctVersionCode. Is $versionCode.",
+            )
+        }
     }
 }
 tasks.findByName("assemble")!!.dependsOn(tasks.findByName("checkVersion")!!)
@@ -184,11 +186,12 @@ tasks.register("checkFastlaneChangelog") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode
         val changelogFile: File =
-            file("$rootDir/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt")
-        if (!changelogFile.exists())
+            file("$rootDir/fastlane/metadata/android/en-US/changelogs/$versionCode.txt")
+        if (!changelogFile.exists()) {
             throw GradleException(
-                "Fastlane changelog missing: expecting file '$changelogFile'"
+                "Fastlane changelog missing: expecting file '$changelogFile'",
             )
+        }
     }
 }
 tasks.findByName("build")!!.dependsOn(tasks.findByName("checkFastlaneChangelog")!!)
@@ -199,8 +202,8 @@ tasks.findByName("build")!!.dependsOn(tasks.findByName("checkFastlaneChangelog")
  * @param semVer e.g. 1.3.1
  * @return e.g. 10301 (-> 1 03 01)
  */
-fun generateVersionCode(semVer: String): Int {
-    return semVer.split('.')
+fun generateVersionCode(semVer: String): Int =
+    semVer
+        .split('.')
         .map { Integer.parseInt(it) }
         .reduce { sum, value -> sum * 100 + value }
-}

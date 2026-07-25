@@ -17,15 +17,13 @@ import de.salomax.currencies.util.OPERATOR_REGEX
  * is null iff we are not in calculation mode.
  */
 internal class CalculatorInputState {
-
     private val _baseValueText = MutableLiveData("0")
     private val _calculationValueText = MutableLiveData<String?>()
 
     val baseValueText: LiveData<String?> = _baseValueText
     val calculationValueText: LiveData<String?> = _calculationValueText
 
-    fun isInCalculationMode(): Boolean =
-        _calculationValueText.value.isNullOrBlank().not()
+    fun isInCalculationMode(): Boolean = _calculationValueText.value.isNullOrBlank().not()
 
     fun addNumber(value: String) {
         if (isInCalculationMode()) {
@@ -39,8 +37,8 @@ internal class CalculatorInputState {
                     }
                 }
                 // last input was an operator: collapse "00"/"000" down to "0"
-                current.split(" ").last().isEmpty()
-                        && (value == "00" || value == "000") -> {
+                current.split(" ").last().isEmpty() &&
+                    (value == "00" || value == "000") -> {
                     _calculationValueText.value = current + "0"
                 }
                 else -> {
@@ -49,11 +47,12 @@ internal class CalculatorInputState {
             }
         } else {
             val current = _baseValueText.value
-            _baseValueText.value = if (current == "0") {
-                if (value == "00" || value == "000") "0" else value
-            } else {
-                current + value
-            }
+            _baseValueText.value =
+                if (current == "0") {
+                    if (value == "00" || value == "000") "0" else value
+                } else {
+                    current + value
+                }
         }
     }
 

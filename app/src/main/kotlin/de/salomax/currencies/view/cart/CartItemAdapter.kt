@@ -40,7 +40,6 @@ class CartItemAdapter(
     // churn later.
     private val onEditExpression: (field: EditText, item: CartItem) -> Unit,
 ) : ListAdapter<CartItem, CartItemAdapter.VH>(DIFF) {
-
     // The cart's ISO code. Held on the adapter so a currency change can be
     // propagated to every visible row via a lightweight `notifyDataSetChanged`
     // without touching the debounced text watchers on each holder.
@@ -61,17 +60,27 @@ class CartItemAdapter(
         hapticEnabled = enabled
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_cart_row, parent, false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): VH {
+        val view =
+            LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_cart_row, parent, false)
         return VH(view)
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
+    override fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+    ) {
         holder.bind(getItem(position), currency, hapticEnabled, onChange, onDelete, onEditExpression)
     }
 
-    class VH(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
+    class VH(
+        itemView: android.view.View,
+    ) : RecyclerView.ViewHolder(itemView) {
         private val nameField: EditText = itemView.findViewById(R.id.cart_row_name)
         private val exprField: EditText = itemView.findViewById(R.id.cart_row_expression)
         private val valueLabel: TextView = itemView.findViewById(R.id.cart_row_value)
@@ -107,14 +116,16 @@ class CartItemAdapter(
             exprField.setTextIfDifferent(item.expression)
             renderValue(item)
 
-            nameWatcher = nameField.rebindWatcher(nameWatcher) {
-                scheduleCommit(item.copy(name = it))
-            }
-            exprWatcher = exprField.rebindWatcher(exprWatcher) {
-                val updated = item.copy(expression = it)
-                renderValue(updated)
-                scheduleCommit(updated)
-            }
+            nameWatcher =
+                nameField.rebindWatcher(nameWatcher) {
+                    scheduleCommit(item.copy(name = it))
+                }
+            exprWatcher =
+                exprField.rebindWatcher(exprWatcher) {
+                    val updated = item.copy(expression = it)
+                    renderValue(updated)
+                    scheduleCommit(updated)
+                }
 
             exprField.configureAsCalculatorField()
             exprField.setOnClickListener {
@@ -145,31 +156,37 @@ class CartItemAdapter(
                 return
             }
             val value = evaluateItem(item).setScale(ROW_PREVIEW_SCALE, RoundingMode.HALF_EVEN)
-            val formatted = value.toHumanReadableNumber(
-                valueLabel.context,
-                decimalPlaces = ROW_PREVIEW_SCALE,
-            )
-            valueLabel.text = itemView.context.getString(
-                R.string.cart_row_value_format,
-                formatted,
-                currency,
-            )
+            val formatted =
+                value.toHumanReadableNumber(
+                    valueLabel.context,
+                    decimalPlaces = ROW_PREVIEW_SCALE,
+                )
+            valueLabel.text =
+                itemView.context.getString(
+                    R.string.cart_row_value_format,
+                    formatted,
+                    currency,
+                )
         }
-
     }
 
     companion object {
-        private val DIFF = object : DiffUtil.ItemCallback<CartItem>() {
-            override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem): Boolean =
-                oldItem.id == newItem.id
+        private val DIFF =
+            object : DiffUtil.ItemCallback<CartItem>() {
+                override fun areItemsTheSame(
+                    oldItem: CartItem,
+                    newItem: CartItem,
+                ): Boolean = oldItem.id == newItem.id
 
-            // Rows are individually stateful (they hold their own EditText
-            // buffers) — payload equality is intentionally shallow: id alone.
-            // A "same id" row is *not* rebound if content changed under it,
-            // which keeps the cursor from jumping while the user types.
-            override fun areContentsTheSame(oldItem: CartItem, newItem: CartItem): Boolean =
-                oldItem.id == newItem.id
-        }
+                // Rows are individually stateful (they hold their own EditText
+                // buffers) — payload equality is intentionally shallow: id alone.
+                // A "same id" row is *not* rebound if content changed under it,
+                // which keeps the cursor from jumping while the user types.
+                override fun areContentsTheSame(
+                    oldItem: CartItem,
+                    newItem: CartItem,
+                ): Boolean = oldItem.id == newItem.id
+            }
     }
 }
 
@@ -192,15 +209,31 @@ private fun EditText.configureAsCalculatorField() {
 // Detach [old], attach a fresh watcher that forwards afterTextChanged to
 // [onChanged], and return the new watcher so callers can store it for the
 // next rebind. Cheap alternative to per-field watcher subclasses.
-private fun EditText.rebindWatcher(old: TextWatcher?, onChanged: (String) -> Unit): TextWatcher {
+private fun EditText.rebindWatcher(
+    old: TextWatcher?,
+    onChanged: (String) -> Unit,
+): TextWatcher {
     old?.let { removeTextChangedListener(it) }
-    val fresh = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-        override fun afterTextChanged(s: Editable?) {
-            onChanged(s?.toString().orEmpty())
+    val fresh =
+        object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int,
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int,
+            ) = Unit
+
+            override fun afterTextChanged(s: Editable?) {
+                onChanged(s?.toString().orEmpty())
+            }
         }
-    }
     addTextChangedListener(fresh)
     return fresh
 }

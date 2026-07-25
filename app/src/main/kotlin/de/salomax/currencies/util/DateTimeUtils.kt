@@ -7,17 +7,20 @@ import java.time.ZoneOffset
 /**
  * Converts a Unix timestamp to a LocalDate
  */
-fun Long.toLocalDate(): LocalDate = Instant.ofEpochMilli(this)
-    .atZone(ZoneOffset.UTC)
-    .toLocalDate()
+fun Long.toLocalDate(): LocalDate =
+    Instant
+        .ofEpochMilli(this)
+        .atZone(ZoneOffset.UTC)
+        .toLocalDate()
 
 /**
  * Converts a LocalDate to a Unix timestamp
  */
-fun LocalDate.toMillis() = this
-    .atStartOfDay(ZoneOffset.UTC)
-    .toInstant()
-    .toEpochMilli()
+fun LocalDate.toMillis() =
+    this
+        .atStartOfDay(ZoneOffset.UTC)
+        .toInstant()
+        .toEpochMilli()
 
 /**
  * Returns only the date portion of a combined "date time" pattern (drops anything from the first

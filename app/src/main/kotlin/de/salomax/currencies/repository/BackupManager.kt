@@ -85,18 +85,24 @@ private val BACKUP_NAMESPACES = listOf("prefs", "last_state", "starred_currencie
 
 sealed class BackupResult {
     data object Success : BackupResult()
-    data class Failure(val message: String) : BackupResult()
+
+    data class Failure(
+        val message: String,
+    ) : BackupResult()
+
     // Import saw an encrypted file and needs a password from the user.
     // The manager itself never prompts — the caller drives the UI.
     data object PasswordRequired : BackupResult()
+
     // Import saw an encrypted file, tried the supplied password, and the
     // GCM tag failed to verify. Distinct from a generic failure so the UI
     // can re-prompt without treating the file as corrupt.
     data object WrongPassword : BackupResult()
 }
 
-class BackupManager(private val context: Context) {
-
+class BackupManager(
+    private val context: Context,
+) {
     private val secureRandom = SecureRandom()
 
     /**
@@ -104,7 +110,10 @@ class BackupManager(private val context: Context) {
      * `namespaces` block is encrypted with a PBKDF2-derived AES-256-GCM key;
      * otherwise the file matches the PR-C plaintext format exactly.
      */
-    fun export(uri: Uri, password: CharArray? = null): BackupResult {
+    fun export(
+        uri: Uri,
+        password: CharArray? = null,
+    ): BackupResult {
         return try {
             val root = buildBackupJson(password)
             val payload = root.toString(2).toByteArray(Charsets.UTF_8)
@@ -130,10 +139,14 @@ class BackupManager(private val context: Context) {
      * password fails the GCM tag check. The caller is expected to re-invoke
      * with a password in either case.
      */
-    fun import(uri: Uri, password: CharArray? = null): BackupResult {
+    fun import(
+        uri: Uri,
+        password: CharArray? = null,
+    ): BackupResult {
         return try {
-            val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                ?: return BackupResult.Failure("Could not open input stream")
+            val bytes =
+                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    ?: return BackupResult.Failure("Could not open input stream")
             val root = JSONObject(String(bytes, Charsets.UTF_8))
             val version = root.optInt(BACKUP_KEY_VERSION, -1)
             if (version != BACKUP_SCHEMA_VERSION) {
@@ -160,8 +173,9 @@ class BackupManager(private val context: Context) {
     /** True if the file at [uri] is a valid encrypted backup. */
     fun isEncrypted(uri: Uri): Boolean {
         return try {
-            val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                ?: return false
+            val bytes =
+                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    ?: return false
             JSONObject(String(bytes, Charsets.UTF_8)).has(KEY_ENCRYPTION)
         } catch (e: IOException) {
             false
@@ -175,11 +189,12 @@ class BackupManager(private val context: Context) {
         BACKUP_NAMESPACES.forEach { name ->
             nsObj.put(name, serializeNamespace(context.getSharedPreferences(name, MODE_PRIVATE)))
         }
-        val root = JSONObject().apply {
-            put(BACKUP_KEY_VERSION, BACKUP_SCHEMA_VERSION)
-            put(BACKUP_KEY_CREATED_AT, Instant.now().toString())
-            put(BACKUP_KEY_APP, BACKUP_APP_ID)
-        }
+        val root =
+            JSONObject().apply {
+                put(BACKUP_KEY_VERSION, BACKUP_SCHEMA_VERSION)
+                put(BACKUP_KEY_CREATED_AT, Instant.now().toString())
+                put(BACKUP_KEY_APP, BACKUP_APP_ID)
+            }
         if (password != null && password.isNotEmpty()) {
             root.put(KEY_ENCRYPTION, encryptNamespaces(nsObj, password))
         } else {
@@ -192,7 +207,10 @@ class BackupManager(private val context: Context) {
      * @return the decrypted `namespaces` object, or `null` if the file is
      * encrypted and [password] is null/empty (caller must prompt).
      */
-    private fun extractNamespaces(root: JSONObject, password: CharArray?): JSONObject? {
+    private fun extractNamespaces(
+        root: JSONObject,
+        password: CharArray?,
+    ): JSONObject? {
         val encBlock = root.optJSONObject(KEY_ENCRYPTION)
         if (encBlock != null) {
             if (password == null || password.isEmpty()) return null
@@ -202,7 +220,10 @@ class BackupManager(private val context: Context) {
             ?: throw JSONException("Missing 'namespaces' section")
     }
 
-    private fun encryptNamespaces(namespaces: JSONObject, password: CharArray): JSONObject {
+    private fun encryptNamespaces(
+        namespaces: JSONObject,
+        password: CharArray,
+    ): JSONObject {
         // Key-IV reuse invariant: on every call we draw a fresh 32-byte salt
         // AND a fresh 12-byte IV from SecureRandom. Because the AES key is
         // derived as Argon2id(password, salt), a new salt yields a new key —
@@ -229,7 +250,10 @@ class BackupManager(private val context: Context) {
         }
     }
 
-    private fun decryptNamespaces(encBlock: JSONObject, password: CharArray): JSONObject {
+    private fun decryptNamespaces(
+        encBlock: JSONObject,
+        password: CharArray,
+    ): JSONObject {
         val kdf = encBlock.optString(ENC_KDF)
         val cipherId = encBlock.optString(ENC_CIPHER)
         if (cipherId != CIPHER_ID) {
@@ -238,33 +262,35 @@ class BackupManager(private val context: Context) {
         val salt = decodeBase64(encBlock, ENC_SALT)
         val iv = decodeBase64(encBlock, ENC_IV)
         val ciphertext = decodeBase64(encBlock, ENC_CIPHERTEXT)
-        val key = when (kdf) {
-            ARGON2ID_ID -> {
-                val memoryKib = encBlock.optInt(ENC_MEMORY_KIB, -1)
-                val iterations = encBlock.optInt(ENC_ITERATIONS, -1)
-                val parallelism = encBlock.optInt(ENC_PARALLELISM, -1)
-                if (memoryKib <= 0 || iterations <= 0 || parallelism <= 0) {
-                    throw GeneralSecurityException("Invalid Argon2 parameters")
+        val key =
+            when (kdf) {
+                ARGON2ID_ID -> {
+                    val memoryKib = encBlock.optInt(ENC_MEMORY_KIB, -1)
+                    val iterations = encBlock.optInt(ENC_ITERATIONS, -1)
+                    val parallelism = encBlock.optInt(ENC_PARALLELISM, -1)
+                    if (memoryKib <= 0 || iterations <= 0 || parallelism <= 0) {
+                        throw GeneralSecurityException("Invalid Argon2 parameters")
+                    }
+                    deriveKeyArgon2id(password, salt, memoryKib, iterations, parallelism)
                 }
-                deriveKeyArgon2id(password, salt, memoryKib, iterations, parallelism)
+                PBKDF2_ID -> {
+                    val iterations = encBlock.optInt(ENC_ITERATIONS, -1)
+                    if (iterations <= 0) throw GeneralSecurityException("Invalid iteration count")
+                    deriveKeyPbkdf2(password, salt, iterations)
+                }
+                else -> throw GeneralSecurityException("Unsupported KDF: $kdf")
             }
-            PBKDF2_ID -> {
-                val iterations = encBlock.optInt(ENC_ITERATIONS, -1)
-                if (iterations <= 0) throw GeneralSecurityException("Invalid iteration count")
-                deriveKeyPbkdf2(password, salt, iterations)
-            }
-            else -> throw GeneralSecurityException("Unsupported KDF: $kdf")
-        }
         // Decrypt path — same GCM Semgrep heuristic; IV comes from the file
         // and is uniquely paired with its key (see encryptNamespaces).
         // nosemgrep: kotlin.lang.security.gcm-detection.gcm-detection
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
-        val plaintext = try {
-            cipher.doFinal(ciphertext)
-        } catch (e: javax.crypto.AEADBadTagException) {
-            throw WrongPasswordException()
-        }
+        val plaintext =
+            try {
+                cipher.doFinal(ciphertext)
+            } catch (e: javax.crypto.AEADBadTagException) {
+                throw WrongPasswordException()
+            }
         return JSONObject(String(plaintext, Charsets.UTF_8))
     }
 
@@ -283,13 +309,15 @@ class BackupManager(private val context: Context) {
     ): SecretKeySpec {
         val passwordBytes = password.toUtf8Bytes()
         try {
-            val params = Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
-                .withVersion(Argon2Parameters.ARGON2_VERSION_13)
-                .withSalt(salt)
-                .withMemoryAsKB(memoryKib)
-                .withIterations(iterations)
-                .withParallelism(parallelism)
-                .build()
+            val params =
+                Argon2Parameters
+                    .Builder(Argon2Parameters.ARGON2_id)
+                    .withVersion(Argon2Parameters.ARGON2_VERSION_13)
+                    .withSalt(salt)
+                    .withMemoryAsKB(memoryKib)
+                    .withIterations(iterations)
+                    .withParallelism(parallelism)
+                    .build()
             val generator = Argon2BytesGenerator().apply { init(params) }
             val out = ByteArray(KEY_LENGTH_BYTES)
             generator.generateBytes(passwordBytes, out)
@@ -306,8 +334,11 @@ class BackupManager(private val context: Context) {
     ): SecretKeySpec {
         val spec = PBEKeySpec(password, salt, iterations, KEY_LENGTH_BITS)
         try {
-            val raw = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-                .generateSecret(spec).encoded
+            val raw =
+                SecretKeyFactory
+                    .getInstance("PBKDF2WithHmacSHA256")
+                    .generateSecret(spec)
+                    .encoded
             return SecretKeySpec(raw, "AES")
         } finally {
             spec.clearPassword()
@@ -335,17 +366,20 @@ class BackupManager(private val context: Context) {
     }
 
     private fun serializeEntry(value: Any?): JSONObject? {
-        val (type, payload) = when (value) {
-            is String -> TYPE_STRING to value
-            is Int -> TYPE_INT to value
-            is Long -> TYPE_LONG to value
-            is Float -> TYPE_FLOAT to value.toDouble()
-            is Boolean -> TYPE_BOOLEAN to value
-            is Set<*> -> TYPE_STRING_SET to JSONArray().apply {
-                value.forEach { if (it is String) put(it) }
+        val (type, payload) =
+            when (value) {
+                is String -> TYPE_STRING to value
+                is Int -> TYPE_INT to value
+                is Long -> TYPE_LONG to value
+                is Float -> TYPE_FLOAT to value.toDouble()
+                is Boolean -> TYPE_BOOLEAN to value
+                is Set<*> ->
+                    TYPE_STRING_SET to
+                        JSONArray().apply {
+                            value.forEach { if (it is String) put(it) }
+                        }
+                else -> return null
             }
-            else -> return null
-        }
         return JSONObject().apply {
             put(KEY_TYPE, type)
             put(KEY_VALUE, payload)
@@ -365,7 +399,11 @@ class BackupManager(private val context: Context) {
         }
     }
 
-    private fun applyEntry(editor: SharedPreferences.Editor, key: String, entry: JSONObject) {
+    private fun applyEntry(
+        editor: SharedPreferences.Editor,
+        key: String,
+        entry: JSONObject,
+    ) {
         when (entry.optString(KEY_TYPE)) {
             TYPE_STRING -> editor.putString(key, entry.optString(KEY_VALUE))
             TYPE_INT -> editor.putInt(key, entry.optInt(KEY_VALUE))
@@ -381,10 +419,12 @@ class BackupManager(private val context: Context) {
         }
     }
 
-    private fun base64(bytes: ByteArray): String =
-        Base64.encodeToString(bytes, Base64.NO_WRAP)
+    private fun base64(bytes: ByteArray): String = Base64.encodeToString(bytes, Base64.NO_WRAP)
 
-    private fun decodeBase64(obj: JSONObject, key: String): ByteArray {
+    private fun decodeBase64(
+        obj: JSONObject,
+        key: String,
+    ): ByteArray {
         val str = obj.optString(key)
         if (str.isEmpty()) throw GeneralSecurityException("Missing $key")
         return Base64.decode(str, Base64.DEFAULT)

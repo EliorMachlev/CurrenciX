@@ -6,7 +6,6 @@ import de.salomax.currencies.model.Currency
 import de.salomax.currencies.util.toNumber
 
 class FuzzTest {
-
     @FuzzTest
     fun fuzzCurrencyFromString(data: FuzzedDataProvider) {
         val code = data.consumeRemainingAsString()

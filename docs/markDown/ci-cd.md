@@ -6,7 +6,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `build.yaml` | Push → `master` | Lint, test, build debug APK |
+| `build.yaml` | Push → `master`, PR | Spotless, lint, test, build debug APK for both flavors (matrix) + fdroid release APK |
 | `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK and upload as artifact |
 | `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |
@@ -20,10 +20,14 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 
 ## Build Gate (`build.yaml`)
 
-Runs `./gradlew check assembleDebug`, which includes:
-- `lint` — Android Lint (missing translations suppressed)
-- `test` — JUnit unit tests
-- `assembleDebug` — compiles the debug APK for all flavors
+Runs on both PRs and pushes to `master`. Two jobs:
+
+- **`build`** — matrix over `Fdroid` and `Play` flavors. Steps:
+  - `spotlessCheck` — ktlint via Spotless (see [Code Style](contributing.md#code-style))
+  - `lint<Flavor>Debug` — Android Lint (missing translations suppressed)
+  - `test<Flavor>DebugUnitTest` — JUnit unit tests
+  - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
+- **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and uploads it as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
 
 ## Security Scans
 

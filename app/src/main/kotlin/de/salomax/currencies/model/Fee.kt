@@ -52,10 +52,13 @@ sealed class Fee {
  * on-disk backups and the [Database] JSON encoding read from a single source
  * of truth. `wire` values are persisted verbatim and **must not change**.
  */
-enum class FeeType(val wire: String) {
+enum class FeeType(
+    val wire: String,
+) {
     GLOBAL_EXCHANGE("global_exchange"),
     GLOBAL_BANK("global_bank"),
-    SPECIFIC_PAIR("specific_pair");
+    SPECIFIC_PAIR("specific_pair"),
+    ;
 
     companion object {
         fun fromWire(wire: String?): FeeType? = entries.firstOrNull { it.wire == wire }
@@ -70,10 +73,12 @@ enum class FeeType(val wire: String) {
  */
 enum class FeeSide {
     ORIGINAL,
-    CONVERTED;
+    CONVERTED,
+    ;
 
-    fun toggled(): FeeSide = when (this) {
-        ORIGINAL -> CONVERTED
-        CONVERTED -> ORIGINAL
-    }
+    fun toggled(): FeeSide =
+        when (this) {
+            ORIGINAL -> CONVERTED
+            CONVERTED -> ORIGINAL
+        }
 }

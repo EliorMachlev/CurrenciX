@@ -25,23 +25,30 @@ class BankRossiiRatesXmlParser {
         while (eventType != XmlPullParser.END_DOCUMENT) {
             tagname = parser.name ?: tagname
             when (eventType) {
-                XmlPullParser.START_TAG -> if (tagname == "ValCurs")
-                    date = LocalDate.parse(
-                        parser.getAttributeValue(null, "Date"),
-                        BANK_ROSSII_DATE_FORMATTER
-                    )
-                XmlPullParser.TEXT -> when (tagname) {
-                    "CharCode" -> currency = Currency.fromString(parser.text)
-                    "VunitRate" -> value = BigDecimal.ONE.divide(
-                        parser.text.replace(',', '.').toBigDecimal(),
-                        MathContext.DECIMAL128
-                    )
-                }
-                XmlPullParser.END_TAG -> if (tagname == "Valute") {
-                    recordRate(currency, value)
-                    currency = null
-                    value = null
-                }
+                XmlPullParser.START_TAG ->
+                    if (tagname == "ValCurs") {
+                        date =
+                            LocalDate.parse(
+                                parser.getAttributeValue(null, "Date"),
+                                BANK_ROSSII_DATE_FORMATTER,
+                            )
+                    }
+                XmlPullParser.TEXT ->
+                    when (tagname) {
+                        "CharCode" -> currency = Currency.fromString(parser.text)
+                        "VunitRate" ->
+                            value =
+                                BigDecimal.ONE.divide(
+                                    parser.text.replace(',', '.').toBigDecimal(),
+                                    MathContext.DECIMAL128,
+                                )
+                    }
+                XmlPullParser.END_TAG ->
+                    if (tagname == "Valute") {
+                        recordRate(currency, value)
+                        currency = null
+                        value = null
+                    }
             }
             eventType = parser.next()
         }
@@ -53,13 +60,17 @@ class BankRossiiRatesXmlParser {
             base = Currency.RUB,
             date = date,
             rates = rates,
-            provider = ApiProvider.BANK_ROSSII
+            provider = ApiProvider.BANK_ROSSII,
         )
     }
 
-    private fun recordRate(currency: Currency?, value: BigDecimal?) {
-        if (currency != null && value != null)
+    private fun recordRate(
+        currency: Currency?,
+        value: BigDecimal?,
+    ) {
+        if (currency != null && value != null) {
             rates.add(Rate(currency, value))
+        }
     }
 
     private fun addSyntheticRates() {
@@ -67,5 +78,4 @@ class BankRossiiRatesXmlParser {
         rates.add(Rate(Currency.RUB, BigDecimal.ONE))
         rates.addFokFromDkkIfMissing()
     }
-
 }

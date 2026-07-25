@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class CalculatorExpressionTest {
-
     @Test
     fun `plain arithmetic with display glyphs`() {
         assertEquals("9", "1 + 2 ${OPERATOR_MULTIPLY} 4".evaluateCalculatorExpression())

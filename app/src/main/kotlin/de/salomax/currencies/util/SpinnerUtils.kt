@@ -19,6 +19,7 @@ import de.salomax.currencies.model.Rate
 fun rateSpinnerListener(onCurrencySelected: (Currency) -> Unit): AdapterView.OnItemSelectedListener =
     object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
         override fun onItemSelected(
             parent: AdapterView<*>?,
             view: View?,

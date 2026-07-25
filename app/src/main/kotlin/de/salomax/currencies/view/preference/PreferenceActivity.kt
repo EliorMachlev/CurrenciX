@@ -10,8 +10,7 @@ import androidx.core.view.updatePadding
 import de.salomax.currencies.R
 import de.salomax.currencies.view.BaseActivity
 
-class PreferenceActivity: BaseActivity() {
-
+class PreferenceActivity : BaseActivity() {
     companion object {
         const val EXTRA_OPEN_FEES = "EXTRA_OPEN_FEES"
 
@@ -45,14 +44,15 @@ class PreferenceActivity: BaseActivity() {
         // The path from Settings itself uses its own fragment transaction in
         // PreferenceFragment (with addToBackStack), so back there still pops to Settings.
         if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_OPEN_FEES, false)) {
-            supportFragmentManager.beginTransaction()
+            supportFragmentManager
+                .beginTransaction()
                 .replace(R.id.preferences_fragment, FeeManagerFragment())
                 .commit()
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             android.R.id.home -> {
                 if (supportFragmentManager.backStackEntryCount > 0) {
                     supportFragmentManager.popBackStack()
@@ -63,5 +63,4 @@ class PreferenceActivity: BaseActivity() {
             }
             else -> false
         }
-    }
 }

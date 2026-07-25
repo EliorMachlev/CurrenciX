@@ -13,7 +13,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class CalculatorInputStateTest {
-
     @get:Rule
     val instantTaskRule = InstantTaskExecutorRule()
 
@@ -155,9 +154,9 @@ class CalculatorInputStateTest {
         // upper row. From base row, "4." carries forward unmodified.
         val s = state()
         s.addNumber("4")
-        s.addOperator(OPERATOR_PLUS)   // calc = "4 + "
-        s.addNumber("2")               // calc = "4 + 2"
-        s.addDecimal()                 // calc = "4 + 2."
+        s.addOperator(OPERATOR_PLUS) // calc = "4 + "
+        s.addNumber("2") // calc = "4 + 2"
+        s.addDecimal() // calc = "4 + 2."
         s.addOperator(OPERATOR_DIVIDE) // calc = "4 + 2 ÷ "
         assertEquals("4 $OPERATOR_PLUS 2 $OPERATOR_DIVIDE ", s.calc)
     }

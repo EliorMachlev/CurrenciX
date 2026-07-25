@@ -11,10 +11,10 @@ import de.salomax.currencies.R
 import java.lang.reflect.Modifier
 
 class ChangelogDialog : AppCompatDialogFragment() {
-
     companion object {
         private const val SEMVER_MAJOR_MULTIPLIER = 10_000
         private const val SEMVER_MINOR_MULTIPLIER = 100
+
         // R.array entries whose name begins with this prefix are treated as
         // per-version changelog bullet lists; the rest of the name is the
         // version string with underscores in place of dots.
@@ -42,36 +42,42 @@ class ChangelogDialog : AppCompatDialogFragment() {
                 }
             }) {
             val modifiers = declaredField.modifiers
-            if (Modifier.isStatic(modifiers)
-                && !Modifier.isPrivate(modifiers)
-                && declaredField.type == Int::class.java
-            )
+            if (Modifier.isStatic(modifiers) &&
+                !Modifier.isPrivate(modifiers) &&
+                declaredField.type == Int::class.java
+            ) {
                 try {
                     val arrayId = declaredField.getInt(null)
                     // version number
-                    val versionNumber = "<b>" + declaredField.name
-                        .substringAfter('_')
-                        .replace('_', '.') +
+                    val versionNumber =
+                        "<b>" +
+                            declaredField.name
+                                .substringAfter('_')
+                                .replace('_', '.') +
                             "</b><br>&#11834;"
                     // changes
-                    val versionChanges = resources.getTextArray(arrayId)
-                        .fold("") { acc, string -> "$acc<li>&nbsp;$string</li>" }
-                        .plus("<br>")
+                    val versionChanges =
+                        resources
+                            .getTextArray(arrayId)
+                            .fold("") { acc, string -> "$acc<li>&nbsp;$string</li>" }
+                            .plus("<br>")
 
                     textView.append(
                         HtmlCompat.fromHtml(
                             versionNumber + versionChanges,
-                            HtmlCompat.FROM_HTML_MODE_COMPACT
-                        )
+                            HtmlCompat.FROM_HTML_MODE_COMPACT,
+                        ),
                     )
-                } catch (ignored: IllegalAccessException) {}
+                } catch (ignored: IllegalAccessException) {
+                }
+            }
         }
 
-        return AlertDialog.Builder(requireContext())
+        return AlertDialog
+            .Builder(requireContext())
             .setPositiveButton(android.R.string.ok, null)
             .setTitle(R.string.title_changelog)
             .setView(view)
             .create()
     }
-
 }

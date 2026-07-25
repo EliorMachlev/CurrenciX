@@ -27,11 +27,13 @@ internal fun showProviderPickerDialog(
     onSelected: (ApiProvider) -> Unit,
 ) {
     val adapter = ProviderPickerDialogAdapter(context, current)
-    val dialog = AlertDialog.Builder(context)
-        .setSingleChoiceItems(adapter, current?.let { ApiProvider.entries.indexOf(it) } ?: -1, null)
-        .setTitle(R.string.api_title)
-        .setNegativeButton(android.R.string.cancel, null)
-        .create()
+    val dialog =
+        AlertDialog
+            .Builder(context)
+            .setSingleChoiceItems(adapter, current?.let { ApiProvider.entries.indexOf(it) } ?: -1, null)
+            .setTitle(R.string.api_title)
+            .setNegativeButton(android.R.string.cancel, null)
+            .create()
     adapter.onProviderClicked = { provider ->
         onSelected(provider)
         dialog.dismiss()
@@ -40,19 +42,18 @@ internal fun showProviderPickerDialog(
 }
 
 @Suppress("unused")
-class ProviderPickerPreference: ListPreference {
-
+class ProviderPickerPreference : ListPreference {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
-            super(context, attrs, defStyleAttr, defStyleRes)
+        super(context, attrs, defStyleAttr, defStyleRes)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
-            super(context, attrs, defStyleAttr)
+        super(context, attrs, defStyleAttr)
 
     constructor(context: Context, attrs: AttributeSet?) :
-            super(context, attrs)
+        super(context, attrs)
 
     constructor(context: Context) :
-            super(context)
+        super(context)
 
     // open dialog
     override fun onClick() {
@@ -71,9 +72,8 @@ class ProviderPickerPreference: ListPreference {
  */
 internal class ProviderPickerDialogAdapter(
     val context: Context,
-    private val selectedItem: ApiProvider?
+    private val selectedItem: ApiProvider?,
 ) : BaseAdapter() {
-
     // listener
     var onProviderClicked: ((ApiProvider) -> Unit)? = null
     private val providers = ApiProvider.entries
@@ -82,24 +82,27 @@ internal class ProviderPickerDialogAdapter(
 
     override fun getItem(position: Int) = providers[position]
 
-    override fun getItemId(position: Int): Long {
-        return getItem(position).id.toLong()
-    }
+    override fun getItemId(position: Int): Long = getItem(position).id.toLong()
 
     @SuppressLint("InflateParams")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+    override fun getView(
+        position: Int,
+        convertView: View?,
+        parent: ViewGroup?,
+    ): View {
         var view = convertView
         val holder: ViewHolder
 
         if (view == null) {
             view = (context as Activity).layoutInflater.inflate(R.layout.row_provider_picker, null)
-            holder = ViewHolder().apply {
-                parentView = view
-                radioButton = view.findViewById(R.id.radio)
-                textProviderName = view.findViewById(R.id.text)
-                textDesc = view.findViewById(R.id.text2)
-                textHint = view.findViewById(R.id.text3)
-            }
+            holder =
+                ViewHolder().apply {
+                    parentView = view
+                    radioButton = view.findViewById(R.id.radio)
+                    textProviderName = view.findViewById(R.id.text)
+                    textDesc = view.findViewById(R.id.text2)
+                    textHint = view.findViewById(R.id.text3)
+                }
             view.tag = holder
         } else {
             holder = view.tag as ViewHolder

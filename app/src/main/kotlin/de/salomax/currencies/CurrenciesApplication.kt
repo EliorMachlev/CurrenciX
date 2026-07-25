@@ -7,7 +7,6 @@ import java.net.InetAddress
 import kotlin.concurrent.thread
 
 class CurrenciesApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
         applyNightMode()
@@ -47,5 +46,4 @@ class CurrenciesApplication : Application() {
             runCatching { InetAddress.getAllByName(host) }
         }
     }
-
 }

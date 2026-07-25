@@ -33,7 +33,6 @@ private const val DIM_TIME_PERIOD = "TIME_PERIOD"
  * Fixing — the same series exposed by the simpler PublicApi endpoint).
  */
 internal class BankOfIsraelSdmxParser {
-
     fun parse(inputStream: InputStream): List<BankOfIsraelObservation> {
         JsonReader.of(inputStream.source().buffer()).use { reader ->
             val root = reader.readJsonValue() as? Map<*, *> ?: return emptyList()
@@ -52,17 +51,21 @@ internal class BankOfIsraelSdmxParser {
 
             return buildList {
                 for ((seriesKey, seriesValue) in series) {
-                    val indices = (seriesKey as? String)?.split(':')?.mapNotNull { it.toIntOrNull() }
-                        ?: continue
+                    val indices =
+                        (seriesKey as? String)?.split(':')?.mapNotNull { it.toIntOrNull() }
+                            ?: continue
                     if (indices.size <= maxOf(baseCurrencyPos, dataTypePos)) continue
 
                     val dataType = seriesDimCodes.getOrNull(dataTypePos)?.getOrNull(indices[dataTypePos])
                     if (dataType != DATA_TYPE_OFFICIAL_FIXING) continue
 
-                    val currency = seriesDimCodes.getOrNull(baseCurrencyPos)
-                        ?.getOrNull(indices[baseCurrencyPos]) ?: continue
-                    val observations = (seriesValue as? Map<*, *>)?.get("observations") as? Map<*, *>
-                        ?: continue
+                    val currency =
+                        seriesDimCodes
+                            .getOrNull(baseCurrencyPos)
+                            ?.getOrNull(indices[baseCurrencyPos]) ?: continue
+                    val observations =
+                        (seriesValue as? Map<*, *>)?.get("observations") as? Map<*, *>
+                            ?: continue
 
                     for ((obsKey, obsValue) in observations) {
                         val dateIndex = (obsKey as? String)?.toIntOrNull() ?: continue
@@ -75,9 +78,13 @@ internal class BankOfIsraelSdmxParser {
         }
     }
 
-    private fun readDimensions(data: Map<*, *>, kind: String): Pair<List<String>, List<List<String>>> {
-        val structures = data["structures"] as? List<*>
-            ?: (data["structure"]?.let { listOf(it) }) ?: return emptyList<String>() to emptyList()
+    private fun readDimensions(
+        data: Map<*, *>,
+        kind: String,
+    ): Pair<List<String>, List<List<String>>> {
+        val structures =
+            data["structures"] as? List<*>
+                ?: (data["structure"]?.let { listOf(it) }) ?: return emptyList<String>() to emptyList()
         val first = structures.firstOrNull() as? Map<*, *> ?: return emptyList<String>() to emptyList()
         val dimensions = first["dimensions"] as? Map<*, *> ?: return emptyList<String>() to emptyList()
         val dims = dimensions[kind] as? List<*> ?: return emptyList<String>() to emptyList()

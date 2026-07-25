@@ -38,12 +38,15 @@ private const val RATE_DIFF_DECIMALS = 2
 private const val STAT_DEFAULT_DECIMALS = 3
 
 class TimelineActivity : BaseActivity() {
-
     companion object {
         const val EXTRA_FROM = "ARG_FROM"
         const val EXTRA_TO = "ARG_TO"
 
-        fun newIntent(context: Context, from: Currency, to: Currency): Intent =
+        fun newIntent(
+            context: Context,
+            from: Currency,
+            to: Currency,
+        ): Intent =
             Intent(context, TimelineActivity::class.java)
                 .putExtra(EXTRA_FROM, from)
                 .putExtra(EXTRA_TO, to)
@@ -85,10 +88,11 @@ class TimelineActivity : BaseActivity() {
         val currencyTo = readCurrencyExtra(EXTRA_TO, Currency.USD)
 
         // model
-        this.timelineModel = ViewModelProvider(
-            this,
-            TimelineViewModel.Factory(this.application, currencyFrom, currencyTo)
-        )[TimelineViewModel::class.java]
+        this.timelineModel =
+            ViewModelProvider(
+                this,
+                TimelineViewModel.Factory(this.application, currencyFrom, currencyTo),
+            )[TimelineViewModel::class.java]
 
         // views
         findViews()
@@ -118,8 +122,8 @@ class TimelineActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             R.id.toggle -> {
                 timelineModel.toggleCurrencies()
                 true
@@ -130,7 +134,6 @@ class TimelineActivity : BaseActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
 
     private fun findViews() {
         this.refreshIndicator = findViewById(R.id.refreshIndicator)
@@ -148,9 +151,10 @@ class TimelineActivity : BaseActivity() {
 
     private fun initChartView() {
         val db = Database(this)
-        val entriesLive = timelineModel.getRates().map { rates ->
-            rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
-        }
+        val entriesLive =
+            timelineModel.getRates().map { rates ->
+                rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
+            }
         val lineColor = Color(MaterialColors.getColor(this, R.attr.colorPrimary, 0))
         val secondaryColor = Color(MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0))
         val baselineColor = secondaryColor
@@ -172,30 +176,35 @@ class TimelineActivity : BaseActivity() {
     }
 
     private fun initStatsView() {
-        val labels = listOf(
-            findViewById<View>(R.id.stats_row_1).findViewById<TextView>(R.id.text)
-                to getString(R.string.rate_max),
-            findViewById<View>(R.id.stats_row_2).findViewById<TextView>(R.id.text)
-                to getString(R.string.rate_average),
-            findViewById<View>(R.id.stats_row_3).findViewById<TextView>(R.id.text)
-                to getString(R.string.rate_min),
-        )
+        val labels =
+            listOf(
+                findViewById<View>(R.id.stats_row_1).findViewById<TextView>(R.id.text)
+                    to getString(R.string.rate_max),
+                findViewById<View>(R.id.stats_row_2).findViewById<TextView>(R.id.text)
+                    to getString(R.string.rate_average),
+                findViewById<View>(R.id.stats_row_3).findViewById<TextView>(R.id.text)
+                    to getString(R.string.rate_min),
+            )
         labels.forEach { (view, text) -> view.text = text }
         // equalize label column width across max/avg/min
-        val maxWidth = (labels.maxOf { (view, text) -> view.paint.measureText(text) } *
-            TEXT_WIDTH_PADDING_FACTOR).toInt()
+        val maxWidth =
+            (
+                labels.maxOf { (view, text) -> view.paint.measureText(text) } *
+                    TEXT_WIDTH_PADDING_FACTOR
+            ).toInt()
         labels.forEach { (view, _) -> view.width = maxWidth }
     }
 
     private fun setListeners() {
         findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.toggleButton)
             .addOnButtonCheckedListener { _, checkedId, isChecked ->
-                if (isChecked)
+                if (isChecked) {
                     when (checkedId) {
                         R.id.button_week -> timelineModel.setTimePeriod(TimelineViewModel.Period.WEEK)
                         R.id.button_month -> timelineModel.setTimePeriod(TimelineViewModel.Period.MONTH)
                         R.id.button_year -> timelineModel.setTimePeriod(TimelineViewModel.Period.YEAR)
                     }
+                }
             }
     }
 
@@ -214,17 +223,24 @@ class TimelineActivity : BaseActivity() {
             menuItemToggle?.isEnabled = isRefreshing.not()
         }
         timelineModel.getProvider().observe(this) {
-            textProvider.text = if (it != null)
-                HtmlCompat.fromHtml(getString(R.string.data_provider, it), HtmlCompat.FROM_HTML_MODE_LEGACY)
-            else null
+            textProvider.text =
+                if (it != null) {
+                    HtmlCompat.fromHtml(getString(R.string.data_provider, it), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                } else {
+                    null
+                }
         }
         timelineModel.getRatesDifferencePercent().observe(this) {
             textRateDifference.text = it?.toHumanReadableNumber(this, RATE_DIFF_DECIMALS, true, "%")
-            if (it != null)
+            if (it != null) {
                 textRateDifference.setTextColor(
-                    if (it < BigDecimal.ZERO) MaterialColors.getColor(this, R.attr.colorError, null)
-                    else getColor(R.color.dollarBill)
+                    if (it < BigDecimal.ZERO) {
+                        MaterialColors.getColor(this, R.attr.colorError, null)
+                    } else {
+                        getColor(R.color.dollarBill)
+                    },
                 )
+            }
         }
         observeRateComparison()
         observeStatistics()
@@ -254,7 +270,11 @@ class TimelineActivity : BaseActivity() {
         timelineModel.getRatesMax().observe(this) {
             val rate = it.first
             populateStat(
-                findViewById(R.id.stats_row_1), rate?.currency?.symbol(), rate?.value, it.second, it.third
+                findViewById(R.id.stats_row_1),
+                rate?.currency?.symbol(),
+                rate?.value,
+                it.second,
+                it.third,
             )
         }
         timelineModel.getRatesAverage().observe(this) {
@@ -263,55 +283,65 @@ class TimelineActivity : BaseActivity() {
                 it.first?.currency?.symbol(),
                 it.first?.value,
                 null,
-                it.second
+                it.second,
             )
         }
         timelineModel.getRatesMin().observe(this) {
             val rate = it.first
             populateStat(
-                findViewById(R.id.stats_row_3), rate?.currency?.symbol(), rate?.value, it.second, it.third
+                findViewById(R.id.stats_row_3),
+                rate?.currency?.symbol(),
+                rate?.value,
+                it.second,
+                it.third,
             )
         }
     }
 
-    private fun populateStat(parent: View, symbol: String?, value: BigDecimal?, date: LocalDate?, places: Int = STAT_DEFAULT_DECIMALS) {
+    private fun populateStat(
+        parent: View,
+        symbol: String?,
+        value: BigDecimal?,
+        date: LocalDate?,
+        places: Int = STAT_DEFAULT_DECIMALS,
+    ) {
         // hide entire row when there's no data
         parent.visibility = if (symbol == null) View.GONE else View.VISIBLE
         // hide dotted line when there's no date
         parent.findViewById<View>(R.id.dotted_line).visibility = if (date == null) View.GONE else View.VISIBLE
-        if (value != null)
+        if (value != null) {
             parent.findViewById<TextView>(R.id.text2).text = combineValueAndSymbol(value, symbol, places)
+        }
         parent.findViewById<TextView>(R.id.text3).text = date?.format(formatter)
     }
 
     private fun combineValueAndSymbol(
         value: BigDecimal,
         symbol: String?,
-        decimalPlaces: Int
-    ): SpannableStringBuilder {
-        return if (hasAppendedCurrencySymbol(this))
+        decimalPlaces: Int,
+    ): SpannableStringBuilder =
+        if (hasAppendedCurrencySymbol(this)) {
             SpannableStringBuilder()
                 .bold {
                     append(
                         value.toHumanReadableNumber(
                             this@TimelineActivity,
-                            decimalPlaces = decimalPlaces
-                        )
+                            decimalPlaces = decimalPlaces,
+                        ),
                     )
-                }
-                .append(" " + (symbol ?: ""))
-        else
+                }.append(" " + (symbol ?: ""))
+        } else {
             SpannableStringBuilder()
                 .append((symbol ?: "") + " ")
                 .bold {
                     append(
                         value.toHumanReadableNumber(
                             this@TimelineActivity,
-                            decimalPlaces = decimalPlaces
-                        )
+                            decimalPlaces = decimalPlaces,
+                        ),
                     )
                 }
-    }
+        }
 
     private fun prepareFoldableLayoutChanges() {
         observeFoldingFeature { feature ->
@@ -322,8 +352,9 @@ class TimelineActivity : BaseActivity() {
 
     private fun orientationFor(feature: FoldingFeature): Int {
         val isPortrait = feature.orientation == FoldingFeature.Orientation.VERTICAL
-        val isBent = feature.state == FoldingFeature.State.HALF_OPENED ||
-            (!isPortrait && feature.state == FoldingFeature.State.FLAT)
+        val isBent =
+            feature.state == FoldingFeature.State.HALF_OPENED ||
+                (!isPortrait && feature.state == FoldingFeature.State.FLAT)
         return if (isPortrait) {
             if (isBent) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL
         } else {
@@ -331,11 +362,14 @@ class TimelineActivity : BaseActivity() {
         }
     }
 
-    private fun readCurrencyExtra(key: String, default: Currency): Currency =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    private fun readCurrencyExtra(
+        key: String,
+        default: Currency,
+    ): Currency =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra(key, Currency::class.java) ?: default
-        else
+        } else {
             @Suppress("DEPRECATION")
             (intent.getSerializableExtra(key) as? Currency) ?: default
-
+        }
 }

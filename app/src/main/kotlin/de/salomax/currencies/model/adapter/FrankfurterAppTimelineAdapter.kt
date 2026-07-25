@@ -16,43 +16,51 @@ import java.time.LocalDate
  * This converter reduces the list.
  */
 @Suppress("unused", "UNUSED_PARAMETER")
-internal class FrankfurterAppTimelineAdapter(private val symbol: Currency) {
-
+internal class FrankfurterAppTimelineAdapter(
+    private val symbol: Currency,
+) {
     @Synchronized
     @FromJson
-    fun fromJson(reader: JsonReader): Map<LocalDate, Rate> = buildMap {
-        reader.beginObject()
-        // convert
-        while (reader.hasNext()) {
-            val date: LocalDate = LocalDate.parse(reader.nextName())
-            var rate: Rate? = null
+    fun fromJson(reader: JsonReader): Map<LocalDate, Rate> =
+        buildMap {
             reader.beginObject()
-            // sometimes there's no rate yet, but an empty body or more than one rate, so check first
-            while (reader.hasNext() && reader.peek() == JsonReader.Token.NAME) {
-                val name = Currency.fromString(reader.nextName())
-                val value: BigDecimal = BigDecimal(reader.nextString())
-                rate =
-                        // change dkk to fok, when needed
-                    if (name == Currency.DKK && symbol == Currency.FOK)
-                        Rate(Currency.FOK, value)
-                    // make sure that the symbol matches the one we requested
-                    else if (name == symbol)
-                        Rate(name, value)
-                    else
-                        null
+            // convert
+            while (reader.hasNext()) {
+                val date: LocalDate = LocalDate.parse(reader.nextName())
+                var rate: Rate? = null
+                reader.beginObject()
+                // sometimes there's no rate yet, but an empty body or more than one rate, so check first
+                while (reader.hasNext() && reader.peek() == JsonReader.Token.NAME) {
+                    val name = Currency.fromString(reader.nextName())
+                    val value: BigDecimal = BigDecimal(reader.nextString())
+                    // Rate resolution order:
+                    //   - change dkk to fok, when needed
+                    //   - otherwise, require the symbol to match the one we requested
+                    //   - anything else is discarded
+                    rate =
+                        if (name == Currency.DKK && symbol == Currency.FOK) {
+                            Rate(Currency.FOK, value)
+                        } else if (name == symbol) {
+                            Rate(name, value)
+                        } else {
+                            null
+                        }
+                }
+                if (rate != null) {
+                    put(date, rate)
+                }
+                reader.endObject()
             }
-            if (rate != null)
-                put(date, rate)
             reader.endObject()
         }
-        reader.endObject()
-    }
 
     @Synchronized
     @ToJson
     @Throws(IOException::class)
-    fun toJson(writer: JsonWriter, value: Map<LocalDate, Rate>?) {
+    fun toJson(
+        writer: JsonWriter,
+        value: Map<LocalDate, Rate>?,
+    ) {
         writer.nullValue()
     }
-
 }

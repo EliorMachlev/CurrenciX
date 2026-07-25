@@ -8,11 +8,9 @@ import java.time.LocalDate
 data class Timeline(
     @field:Json(name = "success") val success: Boolean?,
     @field:Json(name = "error") val error: String?,
-
     @field:Json(name = "base") val base: String?,
     @field:Json(name = "start_date") val startDate: LocalDate?,
     @field:Json(name = "end_date") val endDate: LocalDate?,
     @field:Json(name = "rates") val rates: Map<LocalDate, Rate>?,
-
-    @Transient val provider: ApiProvider? = null
+    @Transient val provider: ApiProvider? = null,
 )
