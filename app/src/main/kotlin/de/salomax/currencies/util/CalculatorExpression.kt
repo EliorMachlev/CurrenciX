@@ -47,5 +47,5 @@ fun String.evaluateCalculatorExpression(): String {
         '.' -> s += "0"
     }
     val result = Expression(s).calculate()
-    return if (result.isNaN()) "0" else result.toBigDecimal().toPlainString()
+    return if (result.isNaN()) "0" else result.toBigDecimal().stripTrailingZeros().toPlainString()
 }
