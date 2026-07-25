@@ -28,14 +28,10 @@
             android:paddingHorizontal="@dimen/margin1x"
             android:paddingVertical="@dimen/margin1x" />
 
-        <TextView
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/cart_empty_hint"
-            style="@style/TextAppearance.Material3.BodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin3x"
-            android:gravity="center"
-            android:text="@string/cart_empty_hint"
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
