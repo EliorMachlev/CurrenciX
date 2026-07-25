@@ -66,7 +66,7 @@ fun String.stripRtlMark(): String = replace(RTL_MARK, "")
  * - system=af & app=system-default -> en (as there's no af localization it falls back to en)
  */
 fun getLocale(context: Context): Locale =
-    AppCompatDelegate.getApplicationLocales()[0] ?: Locale.of(
+    AppCompatDelegate.getApplicationLocales()[0] ?: Locale(
         context.getString(R.string.locale_language),
         context.getString(R.string.locale_country),
     )
