@@ -65,11 +65,16 @@ fun String.stripRtlMark(): String = replace(RTL_MARK, "")
  * - system=en & app=fr             -> fr
  * - system=af & app=system-default -> en (as there's no af localization it falls back to en)
  */
-fun getLocale(context: Context): Locale =
-    AppCompatDelegate.getApplicationLocales()[0] ?: Locale(
-        context.getString(R.string.locale_language),
-        context.getString(R.string.locale_country),
-    )
+fun getLocale(context: Context): Locale {
+    val fromDelegate = AppCompatDelegate.getApplicationLocales()[0]
+    if (fromDelegate != null) return fromDelegate
+    val language = context.getString(R.string.locale_language)
+    val country = context.getString(R.string.locale_country)
+    return Locale.Builder()
+        .setLanguage(language)
+        .apply { if (country.isNotEmpty()) setRegion(country) }
+        .build()
+}
 
 /**
  * Returns the DecimalFormatSymbols for the localization that is active in the app.

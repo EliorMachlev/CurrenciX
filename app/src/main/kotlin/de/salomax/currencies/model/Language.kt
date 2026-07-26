@@ -14,7 +14,7 @@ enum class Language(
     private val nameLocalized: Int,
 ) {
     SYSTEM("system", null, R.string.system_default),
-    IN("in", "Bahasa Indonesia", R.string.language_in),
+    ID("id", "Bahasa Indonesia", R.string.language_id),
     CA("ca", "Català", R.string.language_ca),
     CS("cs", "Čeština", R.string.language_cs),
     DA("da", "Dansk", R.string.language_da),
@@ -40,7 +40,7 @@ enum class Language(
     BG("bg", "Български", R.string.language_bg),
     RU("ru", "Русский", R.string.language_ru),
     UK("uk", "Українська", R.string.language_uk),
-    IW("iw", "עִבְרִית", R.string.language_iw),
+    HE("he", "עִבְרִית", R.string.language_he),
     AR("ar", "اَلْعَرَبِيَّة", R.string.language_ar),
     FA("fa", "فارسی", R.string.language_fa),
     BN("bn", "বাংলা", R.string.language_bn),
@@ -51,36 +51,13 @@ enum class Language(
     companion object {
         private val isoMapping: Map<String, Language> = entries.associateBy(Language::iso)
 
-        // Android's per-app locale storage normalises legacy ISO 639-1 codes via
-        // Locale.toLanguageTag() (iw -> he, in -> id, ji -> yi). Our enum keeps the
-        // legacy codes to match the res/values-* folder names, so map modern codes
-        // back before lookup.
-        private val legacyLanguageAliases =
-            mapOf(
-                "he" to "iw",
-                "id" to "in",
-                "yi" to "ji",
-            )
-
-        private fun canonicalize(isoValue: String?): String? {
-            if (isoValue == null) return null
-            val (lang, rest) =
-                isoValue
-                    .split(REGION_SEPARATOR, limit = 2)
-                    .let { it[0] to it.getOrNull(1) }
-            val canonicalLang = legacyLanguageAliases[lang] ?: lang
-            return if (rest != null) "$canonicalLang$REGION_SEPARATOR$rest" else canonicalLang
-        }
-
         private fun String.stripRegion(): String = substringBefore(REGION_SEPARATOR)
 
-        fun byIso(isoValue: String?): Language? {
-            val canonical = canonicalize(isoValue)
-            return isoMapping[canonical]
+        fun byIso(isoValue: String?): Language? =
+            isoMapping[isoValue]
                 // either the resource string has no country, or the given locale has none:
                 // use only language without country
-                ?: isoMapping.mapKeys { it.key.stripRegion() }[canonical?.stripRegion()]
-        }
+                ?: isoMapping.mapKeys { it.key.stripRegion() }[isoValue?.stripRegion()]
     }
 
     fun nativeName(context: Context): String =
