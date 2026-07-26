@@ -70,7 +70,8 @@ fun getLocale(context: Context): Locale {
     if (fromDelegate != null) return fromDelegate
     val language = context.getString(R.string.locale_language)
     val country = context.getString(R.string.locale_country)
-    return Locale.Builder()
+    return Locale
+        .Builder()
         .setLanguage(language)
         .apply { if (country.isNotEmpty()) setRegion(country) }
         .build()
