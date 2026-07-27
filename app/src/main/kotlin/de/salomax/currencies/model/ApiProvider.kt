@@ -1,8 +1,6 @@
 package de.salomax.currencies.model
 
 import android.content.Context
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.result.Result
 import com.squareup.moshi.JsonClass
 import de.salomax.currencies.model.provider.BankOfCanada
 import de.salomax.currencies.model.provider.BankOfIsrael
@@ -63,7 +61,7 @@ enum class ApiProvider(
     suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-    ): Result<ExchangeRates, FuelError> = this.implementation.getRates(context, date)
+    ): Result<ExchangeRates> = this.implementation.getRates(context, date)
 
     suspend fun getTimeline(
         context: Context?,
@@ -71,7 +69,7 @@ enum class ApiProvider(
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline, FuelError> = this.implementation.getTimeline(context, base, symbol, startDate, endDate)
+    ): Result<Timeline> = this.implementation.getTimeline(context, base, symbol, startDate, endDate)
 
     abstract class Api {
         abstract val name: String
@@ -89,7 +87,7 @@ enum class ApiProvider(
         abstract suspend fun getRates(
             context: Context?,
             date: LocalDate?,
-        ): Result<ExchangeRates, FuelError>
+        ): Result<ExchangeRates>
 
         abstract suspend fun getTimeline(
             context: Context?,
@@ -97,6 +95,6 @@ enum class ApiProvider(
             symbol: Currency,
             startDate: LocalDate,
             endDate: LocalDate,
-        ): Result<Timeline, FuelError>
+        ): Result<Timeline>
     }
 }

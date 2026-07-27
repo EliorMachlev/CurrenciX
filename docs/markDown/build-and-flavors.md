@@ -50,7 +50,8 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Dependency | Version |
 |---|---|
-| `com.github.kittinunf.fuel:*` | 2.3.1 |
+| `com.squareup.okhttp3:okhttp` | 4.12.0 |
+| `com.squareup.okhttp3:logging-interceptor` | 4.12.0 |
 | `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
 | `com.google.devtools.ksp:*` | 2.3.9 |
 

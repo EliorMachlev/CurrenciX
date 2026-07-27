@@ -1,11 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.ResponseDeserializable
-import com.github.kittinunf.fuel.core.awaitResult
-import com.github.kittinunf.result.Result
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -13,7 +8,8 @@ import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.NorgesBankRatesXmlParser
 import de.salomax.currencies.model.adapter.NorgesBankTimelineXmlParser
-import java.io.InputStream
+import de.salomax.currencies.util.HttpClientProvider
+import de.salomax.currencies.util.fetch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -33,34 +29,18 @@ class NorgesBank : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-    ): Result<ExchangeRates, FuelError> {
-        // As this API doesn't return results for non-work days, get the last seven days.
-        // The latest available values will be used.
+    ): Result<ExchangeRates> {
         val formattedDateStart = date?.minusDays(TIMELINE_LOOKBACK_DAYS)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
         val formattedDateEnd = date?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        // `lastNObservations=1` returns just the latest observation; a start/end
-        // range asks for the historical window ending on the requested date.
         val dateString =
-            if (date == null) {
-                "?lastNObservations=1"
-            } else {
-                "?StartPeriod=$formattedDateStart&EndPeriod=$formattedDateEnd"
-            }
+            if (date == null) "?lastNObservations=1" else "?StartPeriod=$formattedDateStart&EndPeriod=$formattedDateEnd"
 
-        return Fuel
-            .get(
-                baseUrl +
-                    "/data" +
-                    "/EXR" +
-                    "/B..NOK.SP" +
-                    dateString +
-                    "&format=sdmx-compact-2.1",
-            ).awaitResult(
-                object : ResponseDeserializable<ExchangeRates> {
-                    override fun deserialize(inputStream: InputStream): ExchangeRates =
-                        NorgesBankRatesXmlParser().parse(inputStream, date ?: LocalDate.now())
-                },
-            )
+        return HttpClientProvider.fetch(
+            context,
+            "$baseUrl/data/EXR/B..NOK.SP$dateString&format=sdmx-compact-2.1",
+        ) { body ->
+            NorgesBankRatesXmlParser().parse(body.byteStream(), date ?: LocalDate.now())
+        }
     }
 
     override suspend fun getTimeline(
@@ -69,28 +49,21 @@ class NorgesBank : ApiProvider.Api() {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline, FuelError> {
+    ): Result<Timeline> {
         val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
         val parameterBase = base.apiCodeOrDkkForFok()
         val parameterSymbol = symbol.apiCodeOrDkkForFok()
 
         // if we request NOK->NOK, the response would be empty. Add EUR in that case.
         val eur = if (base == Currency.NOK && symbol == Currency.NOK) "EUR" else ""
-        // call API
-        return Fuel
-            .get(
-                baseUrl +
-                    "/data" +
-                    "/EXR" +
-                    "/B.$parameterBase+$parameterSymbol+$eur.NOK.SP" +
-                    "?StartPeriod=${dateFormatter.format(startDate)}" +
-                    "&EndPeriod=${dateFormatter.format(endDate)}" +
-                    "&format=sdmx-compact-2.1",
-            ).awaitResult(
-                object : ResponseDeserializable<Timeline> {
-                    override fun deserialize(inputStream: InputStream): Timeline =
-                        NorgesBankTimelineXmlParser(base, symbol, startDate, endDate).parse(inputStream)
-                },
-            )
+        val url =
+            "$baseUrl/data/EXR/B.$parameterBase+$parameterSymbol+$eur.NOK.SP" +
+                "?StartPeriod=${dateFormatter.format(startDate)}" +
+                "&EndPeriod=${dateFormatter.format(endDate)}" +
+                "&format=sdmx-compact-2.1"
+
+        return HttpClientProvider.fetch(context, url) { body ->
+            NorgesBankTimelineXmlParser(base, symbol, startDate, endDate).parse(body.byteStream())
+        }
     }
 }

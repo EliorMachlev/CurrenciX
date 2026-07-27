@@ -17,7 +17,7 @@ class ExchangeRatesServiceTest {
         runBlocking {
             // latest
             testWebservice(
-                ExchangeRatesService.getRates(ApiProvider.FRANKFURTER_APP).get(),
+                ExchangeRatesService.getRates(ApiProvider.FRANKFURTER_APP).getOrThrow(),
                 4,
             )
             // timeline
@@ -27,7 +27,7 @@ class ExchangeRatesServiceTest {
                         ApiProvider.FRANKFURTER_APP,
                         Currency.EUR,
                         Currency.ISK,
-                    ).get(),
+                    ).getOrThrow(),
             )
         }
 
@@ -35,14 +35,14 @@ class ExchangeRatesServiceTest {
 //    fun testFerEe() = runBlocking {
 //        // latest
 //        testWebservice(
-//            ExchangeRatesService.getRates(ApiProvider.FER_EE).get(), 4
+//            ExchangeRatesService.getRates(ApiProvider.FER_EE).getOrThrow(), 4
 //        )
 //        // timeline
 //        testTimeline(
 //            ExchangeRatesService.getTimeline(
 //                ApiProvider.FER_EE,
 //                Currency.EUR, Currency.ISK
-//            ).get()
+//            ).getOrThrow()
 //        )
 //    }
 
@@ -51,7 +51,7 @@ class ExchangeRatesServiceTest {
         runBlocking {
             // latest
             testWebservice(
-                ExchangeRatesService.getRates(ApiProvider.INFOR_EURO).get(),
+                ExchangeRatesService.getRates(ApiProvider.INFOR_EURO).getOrThrow(),
                 31,
             )
             // timeline
@@ -61,7 +61,7 @@ class ExchangeRatesServiceTest {
                         ApiProvider.INFOR_EURO,
                         Currency.EUR,
                         Currency.ISK,
-                    ).get(),
+                    ).getOrThrow(),
             )
         }
 
@@ -73,14 +73,14 @@ class ExchangeRatesServiceTest {
 //    fun testBankOfCanada() = runBlocking {
 //        // latest
 //        testWebservice(
-//            ExchangeRatesService.getRates(ApiProvider.BANK_OF_CANADA).get(), 4
+//            ExchangeRatesService.getRates(ApiProvider.BANK_OF_CANADA).getOrThrow(), 4
 //        )
 //        // timeline
 //        testTimeline(
 //            ExchangeRatesService.getTimeline(
 //                ApiProvider.BANK_OF_CANADA,
 //                Currency.EUR, Currency.CAD
-//            ).get()
+//            ).getOrThrow()
 //        )
 //    }
 //
@@ -88,14 +88,14 @@ class ExchangeRatesServiceTest {
 //    fun testBankRossii() = runBlocking {
 //        // latest
 //        testWebservice(
-//            ExchangeRatesService.getRates(ApiProvider.BANK_ROSSII).get(), 4
+//            ExchangeRatesService.getRates(ApiProvider.BANK_ROSSII).getOrThrow(), 4
 //        )
 //        // timeline
 //        testTimeline(
 //            ExchangeRatesService.getTimeline(
 //                ApiProvider.BANK_ROSSII,
 //                Currency.EUR, Currency.RUB
-//            ).get()
+//            ).getOrThrow()
 //        )
 //    }
 //
@@ -103,14 +103,14 @@ class ExchangeRatesServiceTest {
 //    fun testNorgesBank() = runBlocking {
 //        // latest
 //        testWebservice(
-//            ExchangeRatesService.getRates(ApiProvider.NORGES_BANK).get(), 4
+//            ExchangeRatesService.getRates(ApiProvider.NORGES_BANK).getOrThrow(), 4
 //        )
 //        // timeline
 //        testTimeline(
 //            ExchangeRatesService.getTimeline(
 //                ApiProvider.NORGES_BANK,
 //                Currency.EUR, Currency.NOK
-//            ).get()
+//            ).getOrThrow()
 //        )
 //    }
 

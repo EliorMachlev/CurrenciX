@@ -1,12 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.awaitResult
-import com.github.kittinunf.fuel.moshi.moshiDeserializerOf
-import com.github.kittinunf.result.Result
-import com.github.kittinunf.result.map
 import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
@@ -15,6 +9,10 @@ import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.OpenExchangeratesRatesAdapter
 import de.salomax.currencies.repository.Database
+import de.salomax.currencies.util.ApiHttpError
+import de.salomax.currencies.util.HttpClientProvider
+import de.salomax.currencies.util.fetch
+import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -36,10 +34,10 @@ class OpenExchangerates : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-    ): Result<ExchangeRates, FuelError> {
+    ): Result<ExchangeRates> {
         val apiKey = context?.let { Database(it).getOpenExchangeRatesApiKey() }
         if (apiKey.isNullOrBlank()) {
-            return Result.error(FuelError.wrap(Exception(context?.getString(R.string.error_no_api_key))))
+            return Result.failure(Exception(context?.getString(R.string.error_no_api_key)))
         }
 
         val endpoint =
@@ -48,31 +46,27 @@ class OpenExchangerates : ApiProvider.Api() {
             } else {
                 "/latest.json"
             }
+        val adapter =
+            Moshi
+                .Builder()
+                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
+                .apply {
+                    add(OpenExchangeratesRatesAdapter())
+                }.build()
+                .adapter(ExchangeRates::class.java)
 
         val result =
-            Fuel
-                .get(
-                    baseUrl +
-                        endpoint +
-                        "?app_id=$apiKey" +
-                        "&prettyprint=false" +
-                        "&show_alternative=false",
-                ).awaitResult(
-                    moshiDeserializerOf(
-                        Moshi
-                            .Builder()
-                            .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                            .apply {
-                                add(OpenExchangeratesRatesAdapter())
-                            }.build()
-                            .adapter(ExchangeRates::class.java),
-                    ),
-                ).map { rates ->
-                    rates.copy(provider = ApiProvider.OPEN_EXCHANGERATES)
-                }
+            HttpClientProvider
+                .fetch(
+                    context,
+                    "$baseUrl$endpoint?app_id=$apiKey&prettyprint=false&show_alternative=false",
+                ) { body ->
+                    adapter.fromJson(body.source()) ?: throw IOException("OpenExchangeRates: empty JSON")
+                }.map { rates -> rates.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
 
-        return if (result.component2()?.response?.statusCode == HTTP_UNAUTHORIZED) {
-            Result.error(FuelError.wrap(Exception(context.getString(R.string.error_invalid_api_key))))
+        val err = result.exceptionOrNull()
+        return if (err is ApiHttpError && err.statusCode == HTTP_UNAUTHORIZED) {
+            Result.failure(Exception(context.getString(R.string.error_invalid_api_key)))
         } else {
             result
         }
@@ -84,5 +78,5 @@ class OpenExchangerates : ApiProvider.Api() {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline, FuelError> = Result.error(FuelError.wrap(Exception(context?.getString(R.string.error_unsupported_timeline))))
+    ): Result<Timeline> = Result.failure(Exception(context?.getString(R.string.error_unsupported_timeline)))
 }

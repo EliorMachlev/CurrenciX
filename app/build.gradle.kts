@@ -116,15 +116,9 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
     implementation("androidx.window:window:1.5.1")
     implementation("com.google.android.material:material:1.14.0")
-    // downloader
-    val fuelVersion = "2.3.1"
-    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-android:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-moshi:$fuelVersion")
-    // OkHttp foundation for HTTP caching + Timber-bridged logging. Fuel is
-    // still the calling surface for now; a follow-up phase will migrate
-    // providers to Retrofit built on this shared client.
+    // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
+    // interceptor is wired up in HttpClientProvider; provider modules call
+    // the shared instance via the HttpClientProvider.fetch extension.
     val okHttpVersion = "4.12.0"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")

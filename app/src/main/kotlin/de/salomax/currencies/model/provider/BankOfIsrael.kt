@@ -1,13 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.ResponseDeserializable
-import com.github.kittinunf.fuel.core.awaitResult
-import com.github.kittinunf.fuel.moshi.moshiDeserializerOf
-import com.github.kittinunf.result.Result
-import com.github.kittinunf.result.map
 import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
@@ -19,7 +12,9 @@ import de.salomax.currencies.model.adapter.BankOfIsraelObservation
 import de.salomax.currencies.model.adapter.BankOfIsraelRatesAdapter
 import de.salomax.currencies.model.adapter.BankOfIsraelSdmxParser
 import de.salomax.currencies.model.adapter.addFokFromDkkIfMissing
-import java.io.InputStream
+import de.salomax.currencies.util.HttpClientProvider
+import de.salomax.currencies.util.fetch
+import java.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -57,38 +52,38 @@ class BankOfIsrael : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-    ): Result<ExchangeRates, FuelError> = if (date == null) fetchLatestRates() else fetchHistoricalRates(date)
+    ): Result<ExchangeRates> = if (date == null) fetchLatestRates(context) else fetchHistoricalRates(context, date)
 
-    private suspend fun fetchLatestRates(): Result<ExchangeRates, FuelError> =
-        Fuel
-            .get("$baseUrl/PublicApi/GetExchangeRates")
-            .awaitResult(
-                moshiDeserializerOf(
-                    Moshi
-                        .Builder()
-                        .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                        .add(BankOfIsraelRatesAdapter())
-                        .build()
-                        .adapter(ExchangeRates::class.java),
-                ),
-            ).map { it.copy(provider = ApiProvider.BANK_OF_ISRAEL) }
+    private suspend fun fetchLatestRates(context: Context?): Result<ExchangeRates> {
+        val adapter =
+            Moshi
+                .Builder()
+                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
+                .add(BankOfIsraelRatesAdapter())
+                .build()
+                .adapter(ExchangeRates::class.java)
+        return HttpClientProvider
+            .fetch(context, "$baseUrl/PublicApi/GetExchangeRates") { body ->
+                adapter.fromJson(body.source()) ?: throw IOException("BankOfIsrael: empty JSON")
+            }.map { it.copy(provider = ApiProvider.BANK_OF_ISRAEL) }
+    }
 
-    private suspend fun fetchHistoricalRates(date: LocalDate): Result<ExchangeRates, FuelError> =
-        Fuel
-            .get(sdmxUrl(date, date))
-            .awaitResult(sdmxObservationsDeserializer())
-            .map { observations ->
-                val latestPerCurrency = latestObservationPerCurrency(observations)
-                val rates = buildIlsRateList(latestPerCurrency.values)
-                ExchangeRates(
-                    success = rates.isNotEmpty(),
-                    error = if (rates.isEmpty()) "No data found." else null,
-                    base = Currency.ILS,
-                    date = latestPerCurrency.values.maxOfOrNull { it.date },
-                    rates = rates,
-                    provider = ApiProvider.BANK_OF_ISRAEL,
-                )
-            }
+    private suspend fun fetchHistoricalRates(
+        context: Context?,
+        date: LocalDate,
+    ): Result<ExchangeRates> =
+        fetchSdmxObservations(context, date, date).map { observations ->
+            val latestPerCurrency = latestObservationPerCurrency(observations)
+            val rates = buildIlsRateList(latestPerCurrency.values)
+            ExchangeRates(
+                success = rates.isNotEmpty(),
+                error = if (rates.isEmpty()) "No data found." else null,
+                base = Currency.ILS,
+                date = latestPerCurrency.values.maxOfOrNull { it.date },
+                rates = rates,
+                provider = ApiProvider.BANK_OF_ISRAEL,
+            )
+        }
 
     override suspend fun getTimeline(
         context: Context?,
@@ -96,11 +91,18 @@ class BankOfIsrael : ApiProvider.Api() {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline, FuelError> =
-        Fuel
-            .get(sdmxUrl(startDate, endDate))
-            .awaitResult(sdmxObservationsDeserializer())
+    ): Result<Timeline> =
+        fetchSdmxObservations(context, startDate, endDate)
             .map { observations -> buildTimeline(observations, base, symbol) }
+
+    private suspend fun fetchSdmxObservations(
+        context: Context?,
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): Result<List<BankOfIsraelObservation>> =
+        HttpClientProvider.fetch(context, sdmxUrl(startDate, endDate)) { body ->
+            BankOfIsraelSdmxParser().parse(body.byteStream())
+        }
 
     private fun buildTimeline(
         observations: List<BankOfIsraelObservation>,
@@ -172,14 +174,9 @@ class BankOfIsrael : ApiProvider.Api() {
         endDate: LocalDate,
     ): String {
         val fmt = DateTimeFormatter.ISO_LOCAL_DATE
-        return "$SDMX_BASE_URL" +
+        return SDMX_BASE_URL +
             "?startPeriod=${startDate.format(fmt)}" +
             "&endPeriod=${endDate.format(fmt)}" +
             "&format=$SDMX_FORMAT"
     }
-
-    private fun sdmxObservationsDeserializer() =
-        object : ResponseDeserializable<List<BankOfIsraelObservation>> {
-            override fun deserialize(inputStream: InputStream): List<BankOfIsraelObservation> = BankOfIsraelSdmxParser().parse(inputStream)
-        }
 }

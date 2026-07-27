@@ -71,7 +71,7 @@ Configured in `.github/dependabot.yml` with weekly Monday schedule.
 - `com.google.android.material:*`
 - `org.jetbrains.kotlin*` + `com.google.devtools.ksp*`
 - `com.squareup.moshi:*`
-- `com.github.kittinunf.fuel:*`
+- `com.squareup.okhttp3:*`
 - Test dependencies
 - All GitHub Actions (single PR)
 

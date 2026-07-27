@@ -1,11 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.ResponseDeserializable
-import com.github.kittinunf.fuel.core.awaitResult
-import com.github.kittinunf.result.Result
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -15,7 +10,8 @@ import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.BankRossiiCurrencyCodesXmlParser
 import de.salomax.currencies.model.adapter.BankRossiiRatesXmlParser
 import de.salomax.currencies.model.adapter.BankRossiiTimelineXmlParser
-import java.io.InputStream
+import de.salomax.currencies.util.HttpClientProvider
+import de.salomax.currencies.util.fetch
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -43,26 +39,12 @@ class BankRossii : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-    ): Result<ExchangeRates, FuelError> {
-        // Empty query returns the latest daily fix; `date_req=…` selects the
-        // fix for a historical date.
+    ): Result<ExchangeRates> {
         val dateString =
-            if (date == null) {
-                ""
-            } else {
-                "?date_req=${date.format(BANK_ROSSII_URL_DATE_FORMATTER)}"
-            }
-
-        return Fuel
-            .get(
-                baseUrl +
-                    "/XML_daily.asp" +
-                    dateString,
-            ).awaitResult(
-                object : ResponseDeserializable<ExchangeRates> {
-                    override fun deserialize(inputStream: InputStream): ExchangeRates = BankRossiiRatesXmlParser().parse(inputStream)
-                },
-            )
+            if (date == null) "" else "?date_req=${date.format(BANK_ROSSII_URL_DATE_FORMATTER)}"
+        return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateString") { body ->
+            BankRossiiRatesXmlParser().parse(body.byteStream())
+        }
     }
 
     override suspend fun getTimeline(
@@ -71,11 +53,12 @@ class BankRossii : ApiProvider.Api() {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline, FuelError> {
+    ): Result<Timeline> {
         val parameterBase = base.apiCodeOrDkkForFok()
         val parameterSymbol = symbol.apiCodeOrDkkForFok()
 
-        val ids = fetchCurrencyIds().get()
+        val idsResult = fetchCurrencyIds(context)
+        val ids = idsResult.getOrElse { return Result.failure(it) }
 
         val idBase =
             if (parameterBase != Currency.RUB.iso4217Alpha()) {
@@ -96,7 +79,7 @@ class BankRossii : ApiProvider.Api() {
                 else -> null
             }
         if (missingId != null) {
-            return Result.error(FuelError.wrap(Throwable("No currency ID found for: $missingId")))
+            return Result.failure(Throwable("No currency ID found for: $missingId"))
         }
 
         val timelineRub = buildRubTimeline(startDate, endDate)
@@ -104,24 +87,24 @@ class BankRossii : ApiProvider.Api() {
             if (parameterBase == Currency.RUB.iso4217Alpha()) {
                 Result.success(timelineRub)
             } else {
-                fetchCurrencyTimeline(startDate, endDate, idBase!!, ids)
+                fetchCurrencyTimeline(context, startDate, endDate, idBase!!, ids)
             }
 
         val symbolTimeline =
             if (parameterSymbol == Currency.RUB.iso4217Alpha()) {
                 Result.success(timelineRub)
             } else {
-                fetchCurrencyTimeline(startDate, endDate, idSymbol!!, ids)
+                fetchCurrencyTimeline(context, startDate, endDate, idSymbol!!, ids)
             }
 
-        val baseRates: Map<LocalDate, Rate>? = baseTimeline.component1()?.rates
-        val symbolRates: Map<LocalDate, Rate>? = symbolTimeline.component1()?.rates
+        val baseRates: Map<LocalDate, Rate>? = baseTimeline.getOrNull()?.rates
+        val symbolRates: Map<LocalDate, Rate>? = symbolTimeline.getOrNull()?.rates
 
         return if (baseRates == null || symbolRates == null) {
-            Result.error(FuelError.wrap(Throwable("Timeline data unavailable for base or symbol currency")))
+            Result.failure(Throwable("Timeline data unavailable for base or symbol currency"))
         } else {
-            Result.of {
-                symbolTimeline.get().copy(
+            runCatching {
+                symbolTimeline.getOrThrow().copy(
                     rates =
                         symbolRates
                             .filter { (date, _) -> baseRates[date] != null }
@@ -154,31 +137,25 @@ class BankRossii : ApiProvider.Api() {
         )
     }
 
-    private suspend fun fetchCurrencyIds(): Result<Map<String, String>, FuelError> =
-        Fuel
-            .get(baseUrl + "/XML_valFull.asp")
-            .awaitResult(
-                object : ResponseDeserializable<Map<String, String>> {
-                    override fun deserialize(inputStream: InputStream): Map<String, String> =
-                        BankRossiiCurrencyCodesXmlParser().parse(inputStream)
-                },
-            )
+    private suspend fun fetchCurrencyIds(context: Context?): Result<Map<String, String>> =
+        HttpClientProvider.fetch(context, "$baseUrl/XML_valFull.asp") { body ->
+            BankRossiiCurrencyCodesXmlParser().parse(body.byteStream())
+        }
 
     private suspend fun fetchCurrencyTimeline(
+        context: Context?,
         startDate: LocalDate,
         endDate: LocalDate,
         currencyId: String,
         ids: Map<String, String>,
-    ): Result<Timeline, FuelError> =
-        Fuel
-            .get(
-                baseUrl + "/XML_dynamic.asp" +
-                    "?date_req1=${startDate.format(BANK_ROSSII_URL_DATE_FORMATTER)}" +
-                    "&date_req2=${endDate.format(BANK_ROSSII_URL_DATE_FORMATTER)}" +
-                    "&VAL_NM_RQ=$currencyId",
-            ).awaitResult(
-                object : ResponseDeserializable<Timeline> {
-                    override fun deserialize(inputStream: InputStream): Timeline = BankRossiiTimelineXmlParser(ids).parse(inputStream)
-                },
-            )
+    ): Result<Timeline> =
+        HttpClientProvider.fetch(
+            context,
+            "$baseUrl/XML_dynamic.asp" +
+                "?date_req1=${startDate.format(BANK_ROSSII_URL_DATE_FORMATTER)}" +
+                "&date_req2=${endDate.format(BANK_ROSSII_URL_DATE_FORMATTER)}" +
+                "&VAL_NM_RQ=$currencyId",
+        ) { body ->
+            BankRossiiTimelineXmlParser(ids).parse(body.byteStream())
+        }
 }

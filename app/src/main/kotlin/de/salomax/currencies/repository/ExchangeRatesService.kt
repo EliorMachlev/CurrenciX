@@ -1,12 +1,6 @@
 package de.salomax.currencies.repository
 
 import android.content.Context
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.core.interceptors.LogRequestInterceptor
-import com.github.kittinunf.fuel.core.interceptors.LogResponseInterceptor
-import com.github.kittinunf.result.Result
-import de.salomax.currencies.BuildConfig
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.ExchangeRates
@@ -14,13 +8,6 @@ import de.salomax.currencies.model.Timeline
 import java.time.LocalDate
 
 object ExchangeRatesService {
-    init {
-        if (BuildConfig.DEBUG) {
-            FuelManager.instance.addRequestInterceptor { LogRequestInterceptor(it) }
-            FuelManager.instance.addResponseInterceptor { LogResponseInterceptor(it) }
-        }
-    }
-
     /**
      * Get all the current exchange rates from the given api provider. Base will be Euro.
      */
@@ -28,7 +15,7 @@ object ExchangeRatesService {
         apiProvider: ApiProvider,
         date: LocalDate? = null,
         context: Context? = null,
-    ): Result<ExchangeRates, FuelError> = apiProvider.getRates(context, date)
+    ): Result<ExchangeRates> = apiProvider.getRates(context, date)
 
     /**
      * Get the historic rates between the given base and symbol for [startDate]..[endDate]
@@ -42,5 +29,5 @@ object ExchangeRatesService {
         startDate: LocalDate = LocalDate.now().minusYears(1),
         endDate: LocalDate = LocalDate.now(),
         context: Context? = null,
-    ): Result<Timeline, FuelError> = apiProvider.getTimeline(context, base, symbol, startDate, endDate)
+    ): Result<Timeline> = apiProvider.getTimeline(context, base, symbol, startDate, endDate)
 }
