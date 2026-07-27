@@ -419,6 +419,7 @@ class CartActivity : BaseActivity() {
         ) { name ->
             // "Save as" always creates a fresh entry so users can keep
             // multiple snapshots of the same cart under different names.
+            adapter.flushPendingCommits()
             viewModel.saveCurrentAs(name)
             showSnackbar(getString(R.string.cart_saved_toast, name))
             onSaved()
@@ -431,6 +432,7 @@ class CartActivity : BaseActivity() {
      */
     private fun saveOrPromptForName(onSaved: () -> Unit = {}) {
         if (guardEmptyForSave()) return
+        adapter.flushPendingCommits()
         if (viewModel.saveCurrent()) {
             val name =
                 viewModel
@@ -576,6 +578,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun launchExport() {
+        adapter.flushPendingCommits()
         val name =
             viewModel
                 .getCurrentCart()
@@ -678,6 +681,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun shareCart() {
+        adapter.flushPendingCommits()
         val snapshot = viewModel.snapshotForShare()
         if (snapshot == null) {
             showSnackbar(getString(R.string.cart_share_empty))
@@ -693,6 +697,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun shareCartCsv() {
+        adapter.flushPendingCommits()
         val snapshot = viewModel.snapshotForShare()
         if (snapshot == null) {
             showSnackbar(getString(R.string.cart_share_empty))
@@ -709,6 +714,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun shareCartPdf() {
+        adapter.flushPendingCommits()
         val snapshot = viewModel.snapshotForShare()
         if (snapshot == null) {
             showSnackbar(getString(R.string.cart_share_empty))

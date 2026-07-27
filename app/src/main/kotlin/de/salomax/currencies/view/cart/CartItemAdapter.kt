@@ -60,6 +60,25 @@ class CartItemAdapter(
         hapticEnabled = enabled
     }
 
+    // Cancel every row's pending debounce and push its current buffer to the
+    // view model synchronously. Must run before any snapshot/save/share so a
+    // freshly-typed name doesn't get lost inside the 300 ms edit window.
+    fun flushPendingCommits() {
+        boundHolders.forEach { it.commitNow() }
+    }
+
+    private val boundHolders = mutableSetOf<VH>()
+
+    override fun onViewAttachedToWindow(holder: VH) {
+        super.onViewAttachedToWindow(holder)
+        boundHolders += holder
+    }
+
+    override fun onViewDetachedFromWindow(holder: VH) {
+        super.onViewDetachedFromWindow(holder)
+        boundHolders -= holder
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
@@ -148,6 +167,17 @@ class CartItemAdapter(
         private fun commit() {
             val item = currentItem ?: return
             onChangeHook?.invoke(item.id, item.name, item.expression)
+        }
+
+        fun commitNow() {
+            itemView.removeCallbacks(commitRunnable)
+            val latest =
+                currentItem?.copy(
+                    name = nameField.text?.toString().orEmpty(),
+                    expression = exprField.text?.toString().orEmpty(),
+                ) ?: return
+            currentItem = latest
+            onChangeHook?.invoke(latest.id, latest.name, latest.expression)
         }
 
         private fun renderValue(item: CartItem) {
