@@ -29,7 +29,10 @@ class FrankfurterApp : ApiProvider.Api() {
 
     override fun descriptionHint(context: Context) = null
 
-    override val baseUrl = "https://api.frankfurter.app"
+    // api.frankfurter.app started returning a 301 to api.frankfurter.dev/v1
+    // (Fuel doesn't follow the redirect cleanly — the response body arrives
+    // empty, surfacing as EOFException). Point at the new host directly.
+    override val baseUrl = "https://api.frankfurter.dev/v1"
 
     override suspend fun getRates(
         context: Context?,
