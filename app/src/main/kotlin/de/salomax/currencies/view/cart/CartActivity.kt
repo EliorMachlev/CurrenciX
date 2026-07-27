@@ -227,15 +227,7 @@ class CartActivity : BaseActivity() {
                 true
             }
             R.id.cart_share -> {
-                shareCart()
-                true
-            }
-            R.id.cart_share_csv -> {
-                shareCartCsv()
-                true
-            }
-            R.id.cart_share_pdf -> {
-                shareCartPdf()
+                showShareDialog()
                 true
             }
             R.id.cart_save -> {
@@ -680,13 +672,37 @@ class CartActivity : BaseActivity() {
                 .show()
     }
 
-    private fun shareCart() {
+    // Single "Share" entry point — presents plain-text / CSV / PDF as picker
+    // rows so the top-level overflow menu stays short. Flush + empty-guard run
+    // once up-front so an empty cart never surfaces a picker it can't act on.
+    private fun showShareDialog() {
         adapter.flushPendingCommits()
         val snapshot = viewModel.snapshotForShare()
         if (snapshot == null) {
             showSnackbar(getString(R.string.cart_share_empty))
             return
         }
+        showChoiceExplainerDialog(
+            titleRes = R.string.menu_share,
+            choices =
+                listOf(
+                    ChoiceRow(
+                        R.string.cart_share_option_text,
+                        R.string.cart_share_option_text_desc,
+                    ) { shareCartAsText(snapshot) },
+                    ChoiceRow(
+                        R.string.cart_share_option_csv,
+                        R.string.cart_share_option_csv_desc,
+                    ) { shareCartAsCsv(snapshot) },
+                    ChoiceRow(
+                        R.string.cart_share_option_pdf,
+                        R.string.cart_share_option_pdf_desc,
+                    ) { shareCartAsPdf(snapshot) },
+                ),
+        )
+    }
+
+    private fun shareCartAsText(snapshot: CartSnapshot) {
         val text = buildShareText(snapshot)
         val intent =
             Intent(Intent.ACTION_SEND).apply {
@@ -696,13 +712,7 @@ class CartActivity : BaseActivity() {
         startActivity(Intent.createChooser(intent, null))
     }
 
-    private fun shareCartCsv() {
-        adapter.flushPendingCommits()
-        val snapshot = viewModel.snapshotForShare()
-        if (snapshot == null) {
-            showSnackbar(getString(R.string.cart_share_empty))
-            return
-        }
+    private fun shareCartAsCsv(snapshot: CartSnapshot) {
         val chooser =
             buildCartShareChooser(
                 context = this,
@@ -713,13 +723,7 @@ class CartActivity : BaseActivity() {
         startActivity(chooser)
     }
 
-    private fun shareCartPdf() {
-        adapter.flushPendingCommits()
-        val snapshot = viewModel.snapshotForShare()
-        if (snapshot == null) {
-            showSnackbar(getString(R.string.cart_share_empty))
-            return
-        }
+    private fun shareCartAsPdf(snapshot: CartSnapshot) {
         val title = snapshot.cart.name.ifBlank { getString(R.string.cart_share_default_title) }
         val chooser =
             buildCartShareChooser(
