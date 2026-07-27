@@ -11,7 +11,14 @@ import java.util.concurrent.TimeUnit
 private const val CACHE_DIR = "http-cache"
 private const val CACHE_SIZE_BYTES = 5L * 1024L * 1024L
 private const val CONNECT_TIMEOUT_SECONDS = 15L
-private const val READ_TIMEOUT_SECONDS = 15L
+
+// Read timeout is deliberately generous: some upstream providers (Cloudflare-
+// fronted Frankfurter, InforEuro's Europa.eu host) take several seconds to
+// respond during cold-start / warmup, and CI runners have flakier network
+// baselines than dev machines. 30 s comfortably absorbs that without letting
+// a truly dead endpoint hang the UI thread for too long.
+private const val READ_TIMEOUT_SECONDS = 30L
+private const val CALL_TIMEOUT_SECONDS = 45L
 
 // Shared OkHttp client with an on-disk response cache and Timber-bridged
 // wire logging. Every rate provider funnels through this client via
@@ -55,6 +62,11 @@ object HttpClientProvider {
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                // Belt-and-braces: cap total call time as well, so an HTTP/2
+                // stream that stalls between frames can't outlive the per-frame
+                // read timeout indefinitely.
+                .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
         if (context != null) {
             val cacheDir = File(context.cacheDir, CACHE_DIR).apply { mkdirs() }
             builder.cache(Cache(cacheDir, CACHE_SIZE_BYTES))
