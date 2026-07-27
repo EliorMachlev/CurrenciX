@@ -36,6 +36,12 @@ fun CartEmptyHint() {
         ) {
             Text(
                 text = stringResource(id = R.string.cart_empty_hint),
+                // Without a wrapping Surface, LocalContentColor stays at its
+                // Material3 default of Color.Black — invisible on the app's
+                // dark background. Pin the hint colour to the theme's
+                // onSurfaceVariant so the contrast matches other secondary
+                // labels (e.g. "Subtotal") on the same screen.
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),

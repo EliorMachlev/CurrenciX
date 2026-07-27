@@ -407,8 +407,9 @@ class CartViewModel(
 
     /**
      * Fold [stack] into [converted] according to [side]. Mirrors main-screen
-     * semantics: ORIGINAL shows fees as an outflow markup (multiply), CONVERTED
-     * bakes them into the destination amount (divide, i.e. what you'd receive).
+     * semantics exactly: ORIGINAL keeps the destination fair (the fee is
+     * surfaced as "true cost" on the input side, not baked into the total),
+     * CONVERTED divides — the fee reduces what you'd actually receive.
      */
     private fun applyFeeSide(
         converted: BigDecimal,
@@ -417,7 +418,7 @@ class CartViewModel(
     ): BigDecimal {
         if (stack.compareTo(BigDecimal.ZERO) == 0) return converted
         return when (side) {
-            FeeSide.ORIGINAL -> converted.multiply(stack, MathContext.DECIMAL128)
+            FeeSide.ORIGINAL -> converted
             FeeSide.CONVERTED -> converted.divide(stack, MathContext.DECIMAL128)
         }
     }
