@@ -20,7 +20,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.window.layout.FoldingFeature
@@ -37,6 +36,7 @@ import de.salomax.currencies.model.Rate
 import de.salomax.currencies.repository.Database
 import de.salomax.currencies.util.NetworkStatusLiveData
 import de.salomax.currencies.util.feePercentDelta
+import de.salomax.currencies.util.fromHtmlLegacy
 import de.salomax.currencies.util.getDecimalSeparator
 import de.salomax.currencies.util.hapticTap
 import de.salomax.currencies.util.isNeutralFeeStack
@@ -383,11 +383,7 @@ class MainActivity : BaseActivity() {
 
     private fun copyToClipboard(copyText: String) {
         clipboardManager().setPrimaryClip(ClipData.newPlainText(null, copyText))
-        val message =
-            HtmlCompat.fromHtml(
-                getString(R.string.copied_to_clipboard, copyText),
-                HtmlCompat.FROM_HTML_MODE_LEGACY,
-            )
+        val message = getString(R.string.copied_to_clipboard, copyText).fromHtmlLegacy()
         snackbar(message)
             .setBackgroundTint(MaterialColors.getColor(this, R.attr.colorPrimary, null))
             .setTextColor(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
@@ -505,18 +501,15 @@ class MainActivity : BaseActivity() {
             val providerString = it.provider?.getName()
             tvInfoDate.text =
                 if (dateString != null && providerString != null) {
-                    HtmlCompat.fromHtml(
-                        getString(
-                            if (viewModel.getHistoricalDate() != null) {
-                                R.string.info_date_historical
-                            } else {
-                                R.string.info_date_latest
-                            },
-                            dateString,
-                            providerString,
-                        ),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY,
-                    )
+                    getString(
+                        if (viewModel.getHistoricalDate() != null) {
+                            R.string.info_date_historical
+                        } else {
+                            R.string.info_date_latest
+                        },
+                        dateString,
+                        providerString,
+                    ).fromHtmlLegacy()
                 } else {
                     null
                 }
@@ -540,7 +533,7 @@ class MainActivity : BaseActivity() {
     private fun showErrorSnackbar(message: String?) {
         message ?: return
         snackbar(
-            HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY),
+            message.fromHtmlLegacy(),
             Snackbar.LENGTH_INDEFINITE,
         ).setBackgroundTint(MaterialColors.getColor(this, R.attr.colorError, null))
             .setTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))

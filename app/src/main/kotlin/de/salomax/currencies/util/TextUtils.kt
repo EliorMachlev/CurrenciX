@@ -1,7 +1,9 @@
 package de.salomax.currencies.util
 
 import android.content.Context
+import android.text.Spanned
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.text.HtmlCompat
 import de.salomax.currencies.R
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -41,6 +43,19 @@ private val NUMERIC_INPUT_REGEX = Regex("[0-9,.\\s]+")
 // Any run of whitespace — used to strip locale thousands separators before
 // handing the string to NumberFormat.parse.
 private val WHITESPACE_REGEX = Regex("\\s+")
+
+/**
+ * Parse HTML markup with `FROM_HTML_MODE_LEGACY` — the only mode used across
+ * this app for lightweight `<b>`/`<br>` snippets in string resources.
+ * Consolidates ~10 call sites that all repeated the same enum argument.
+ */
+fun CharSequence?.fromHtmlLegacy(): Spanned = HtmlCompat.fromHtml(this?.toString().orEmpty(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+/**
+ * Rounds a monetary [BigDecimal] to [scale] decimal places using banker's
+ * rounding (HALF_EVEN) — the app-wide convention for money-facing values.
+ */
+fun BigDecimal.roundForDisplay(scale: Int): BigDecimal = setScale(scale, RoundingMode.HALF_EVEN)
 
 /**
  * Wrap [s] in Unicode LTR isolate (U+2066 … U+2069) so an "<amount> <currency>"
@@ -161,7 +176,7 @@ private fun roundIfNeeded(
     // also converts scientific to natural (123456789.123 instead of 1.23456789E8)
     return value
         .toBigDecimal()
-        .setScale(decimalPlaces, RoundingMode.HALF_EVEN)
+        .roundForDisplay(decimalPlaces)
         .toPlainString()
 }
 

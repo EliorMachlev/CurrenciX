@@ -3,7 +3,6 @@ package de.salomax.currencies.viewmodel.timeline
 import android.app.Application
 import android.text.Spanned
 import android.text.SpannedString
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -17,6 +16,7 @@ import de.salomax.currencies.model.Rate
 import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.repository.ExchangeRatesRepository
 import de.salomax.currencies.util.calculateDifference
+import de.salomax.currencies.util.fromHtmlLegacy
 import de.salomax.currencies.util.getSignificantDecimalPlaces
 import java.math.BigDecimal
 import java.math.MathContext
@@ -117,14 +117,12 @@ class TimelineViewModel(
             if (it == null) {
                 SpannedString("")
             } else {
-                HtmlCompat.fromHtml(
-                    app.getString(
+                app
+                    .getString(
                         R.string.activity_timeline_title,
                         base.iso4217Alpha(),
                         target.iso4217Alpha(),
-                    ),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY,
-                )
+                    ).fromHtmlLegacy()
             }
         }
 

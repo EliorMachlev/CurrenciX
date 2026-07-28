@@ -20,6 +20,11 @@ import de.salomax.currencies.util.KEY_RATES_DATE
 import de.salomax.currencies.util.KEY_RATES_PROVIDER
 import de.salomax.currencies.util.KEY_RATES_TIME
 import de.salomax.currencies.util.NO_PROVIDER_ID
+import de.salomax.currencies.util.PREFS_APP
+import de.salomax.currencies.util.PREFS_LAST_STATE
+import de.salomax.currencies.util.PREFS_RATES
+import de.salomax.currencies.util.PREFS_STARRED_CURRENCIES
+import de.salomax.currencies.util.PREFS_TIMELINES
 import de.salomax.currencies.util.SharedPreferenceBooleanLiveData
 import de.salomax.currencies.util.SharedPreferenceExchangeRatesLiveData
 import de.salomax.currencies.util.SharedPreferenceIntLiveData
@@ -54,7 +59,7 @@ class Database(
     /*
      * current exchange rates from api =============================================================
      */
-    private val prefsRates: SharedPreferences = context.getSharedPreferences("rates", MODE_PRIVATE)
+    private val prefsRates: SharedPreferences = context.getSharedPreferences(PREFS_RATES, MODE_PRIVATE)
 
     fun insertExchangeRates(items: ExchangeRates) {
         // don't insert null-values. this would clear the cache
@@ -92,7 +97,7 @@ class Database(
      * in the key).
      */
     private val prefsTimelines: SharedPreferences =
-        context.getSharedPreferences("timelines", MODE_PRIVATE)
+        context.getSharedPreferences(PREFS_TIMELINES, MODE_PRIVATE)
 
     private fun timelineKey(
         providerId: Int,
@@ -152,7 +157,7 @@ class Database(
     /*
      * last state ==================================================================================
      */
-    private val prefsLastState: SharedPreferences = context.getSharedPreferences("last_state", MODE_PRIVATE)
+    private val prefsLastState: SharedPreferences = context.getSharedPreferences(PREFS_LAST_STATE, MODE_PRIVATE)
 
     private val keyLastStateFrom = "_last_from"
     private val keyLastStateTo = "_last_to"
@@ -214,7 +219,7 @@ class Database(
      * starred currencies ==========================================================================
      */
     private val prefsStarredCurrencies: SharedPreferences =
-        context.getSharedPreferences("starred_currencies", MODE_PRIVATE)
+        context.getSharedPreferences(PREFS_STARRED_CURRENCIES, MODE_PRIVATE)
 
     private val keyStars = "_stars"
     private val keyStarsOrder = "_starsOrder"
@@ -270,7 +275,7 @@ class Database(
     /*
      * preferences =================================================================================
      */
-    private val prefs: SharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE)
+    private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_APP, MODE_PRIVATE)
 
     private val keyApi = "_api"
     private val keyOpenExchangeratesApiKey = "_api_openExchangeratesApiKey"

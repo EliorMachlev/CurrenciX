@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import de.salomax.currencies.R
 import de.salomax.currencies.model.CartItem
 import de.salomax.currencies.util.hapticTap
+import de.salomax.currencies.util.roundForDisplay
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.viewmodel.cart.evaluateItem
-import java.math.RoundingMode
 
 // Debounce so the persistence pump doesn't fire on every keystroke — the
 // user typing "12.34" would otherwise write four times to prefs.
@@ -185,7 +185,7 @@ class CartItemAdapter(
                 valueLabel.text = ""
                 return
             }
-            val value = evaluateItem(item).setScale(ROW_PREVIEW_SCALE, RoundingMode.HALF_EVEN)
+            val value = evaluateItem(item).roundForDisplay(ROW_PREVIEW_SCALE)
             val formatted =
                 value.toHumanReadableNumber(
                     valueLabel.context,

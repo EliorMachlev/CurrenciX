@@ -3,7 +3,6 @@ package de.salomax.currencies.viewmodel.main
 import android.app.Application
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import androidx.core.text.HtmlCompat
 import androidx.core.text.bold
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -27,6 +26,7 @@ import de.salomax.currencies.util.OPERATOR_MULTIPLY
 import de.salomax.currencies.util.OPERATOR_PLUS
 import de.salomax.currencies.util.combineWith
 import de.salomax.currencies.util.evaluateCalculatorExpression
+import de.salomax.currencies.util.fromHtmlLegacy
 import de.salomax.currencies.util.getDecimalSeparator
 import de.salomax.currencies.util.getSignificantDecimalPlaces
 import de.salomax.currencies.util.hasAppendedCurrencySymbol
@@ -338,8 +338,8 @@ class MainViewModel(
 
                     // create string
                     this.value =
-                        HtmlCompat.fromHtml(
-                            app.getString(
+                        app
+                            .getString(
                                 R.string.info_conversion,
                                 "1",
                                 baseCurrency!!.iso4217Alpha(),
@@ -348,9 +348,7 @@ class MainViewModel(
                                     decimalPlaces = destinationValueCalculated.getSignificantDecimalPlaces(2),
                                 ) ?: "",
                                 destinationCurrency!!.iso4217Alpha(),
-                            ),
-                            HtmlCompat.FROM_HTML_MODE_LEGACY,
-                        )
+                            ).fromHtmlLegacy()
                 }
             }
         }

@@ -11,13 +11,13 @@ import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.util.KEY_RATES_BASE
 import de.salomax.currencies.util.KEY_RATES_DATE
+import de.salomax.currencies.util.PREFS_LAST_STATE
+import de.salomax.currencies.util.PREFS_RATES
+import de.salomax.currencies.util.roundForDisplay
 import de.salomax.currencies.view.main.MainActivity
 import java.math.BigDecimal
 import java.math.MathContext
-import java.math.RoundingMode
 
-private const val RATES_PREFS = "rates"
-private const val LAST_STATE_PREFS = "last_state"
 private const val KEY_LAST_FROM = "_last_from"
 private const val KEY_LAST_TO = "_last_to"
 private const val DEFAULT_FROM = "USD"
@@ -74,8 +74,8 @@ class CurrencyWidget : AppWidgetProvider() {
         }
 
         private fun readSnapshot(context: Context): WidgetSnapshot {
-            val ratesPrefs = context.getSharedPreferences(RATES_PREFS, Context.MODE_PRIVATE)
-            val lastState = context.getSharedPreferences(LAST_STATE_PREFS, Context.MODE_PRIVATE)
+            val ratesPrefs = context.getSharedPreferences(PREFS_RATES, Context.MODE_PRIVATE)
+            val lastState = context.getSharedPreferences(PREFS_LAST_STATE, Context.MODE_PRIVATE)
             val fromCode = lastState.getString(KEY_LAST_FROM, DEFAULT_FROM) ?: DEFAULT_FROM
             val toCode = lastState.getString(KEY_LAST_TO, DEFAULT_TO) ?: DEFAULT_TO
             val from = Currency.fromString(fromCode)
@@ -89,7 +89,7 @@ class CurrencyWidget : AppWidgetProvider() {
                     BigDecimal.ONE
                         .divide(fromRate, MathContext.DECIMAL64)
                         .multiply(toRate)
-                        .setScale(WIDGET_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
+                        .roundForDisplay(WIDGET_DISPLAY_SCALE)
                 } else {
                     null
                 }

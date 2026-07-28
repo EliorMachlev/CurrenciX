@@ -13,6 +13,17 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
 
+// SharedPreferences file names — these are the on-disk XML basenames that
+// `getSharedPreferences(...)` maps to `/data/data/<pkg>/shared_prefs/<name>.xml`.
+// Hoisted here so Database (writer), CurrencyWidget (reader), and the LiveData
+// wrapper below all agree; a rename in one place used to silently break the
+// widget without touching Database.
+internal const val PREFS_RATES = "rates"
+internal const val PREFS_TIMELINES = "timelines"
+internal const val PREFS_LAST_STATE = "last_state"
+internal const val PREFS_STARRED_CURRENCIES = "starred_currencies"
+internal const val PREFS_APP = "prefs"
+
 // SharedPreferences keys for the cached "rates" bucket. Shared with Database so
 // writer and reader agree on the schema. The leading underscore separates
 // metadata keys from currency-code entries (e.g. "USD", "EUR").

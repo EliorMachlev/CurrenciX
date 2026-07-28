@@ -19,6 +19,7 @@ import de.salomax.currencies.repository.KEYBOARD_TYPE_BASIC
 import de.salomax.currencies.util.evaluateCalculatorExpression
 import java.math.BigDecimal
 import java.math.MathContext
+import java.time.LocalDate
 import java.util.UUID
 
 class CartViewModel(
@@ -327,6 +328,8 @@ class CartViewModel(
             base,
             dest,
             cart.feeSide,
+            providerName = lastRates?.provider?.getName()?.toString(),
+            ratesDate = lastRates?.date,
         )
     }
 
@@ -470,6 +473,10 @@ data class CartSnapshot(
     val baseCurrency: Currency,
     val destinationCurrency: Currency,
     val feeSide: FeeSide,
+    /** Name of the exchange-rate provider that produced the current rates (e.g. "Frankfurter App"). */
+    val providerName: String? = null,
+    /** Date the exchange rates were published by the provider. */
+    val ratesDate: LocalDate? = null,
 ) {
     val isConverting: Boolean get() = baseCurrency != destinationCurrency
 }

@@ -13,7 +13,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.text.HtmlCompat
 import androidx.core.text.bold
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.map
@@ -23,6 +22,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.repository.Database
+import de.salomax.currencies.util.fromHtmlLegacy
 import de.salomax.currencies.util.hasAppendedCurrencySymbol
 import de.salomax.currencies.util.stripTimePattern
 import de.salomax.currencies.util.toHumanReadableNumber
@@ -214,7 +214,7 @@ class TimelineActivity : BaseActivity() {
         timelineModel.getError().observe(this) {
             findViewById<TextView>(R.id.error).apply {
                 visibility = View.VISIBLE
-                text = HtmlCompat.fromHtml(it ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                text = it.fromHtmlLegacy()
             }
             menuItemToggle?.isEnabled = it == null
         }
@@ -225,7 +225,7 @@ class TimelineActivity : BaseActivity() {
         timelineModel.getProvider().observe(this) {
             textProvider.text =
                 if (it != null) {
-                    HtmlCompat.fromHtml(getString(R.string.data_provider, it), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    getString(R.string.data_provider, it).fromHtmlLegacy()
                 } else {
                     null
                 }

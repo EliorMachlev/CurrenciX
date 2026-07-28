@@ -35,6 +35,7 @@ import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.SavedCart
 import de.salomax.currencies.repository.CartExporter
 import de.salomax.currencies.repository.CartFileResult
+import de.salomax.currencies.util.CART_EXPORT_DISPLAY_SCALE
 import de.salomax.currencies.util.OPERATOR_REGEX
 import de.salomax.currencies.util.buildCartShareChooser
 import de.salomax.currencies.util.choiceExplainerRow
@@ -43,6 +44,7 @@ import de.salomax.currencies.util.hapticTap
 import de.salomax.currencies.util.isNeutralFeeStack
 import de.salomax.currencies.util.paddedDialogContainer
 import de.salomax.currencies.util.rateSpinnerListener
+import de.salomax.currencies.util.roundForDisplay
 import de.salomax.currencies.util.toCsv
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.util.toPdfBytes
@@ -55,27 +57,43 @@ import de.salomax.currencies.viewmodel.cart.CartViewModel
 import de.salomax.currencies.viewmodel.main.CalculatorInputState
 import java.math.BigDecimal
 import java.math.MathContext
-import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 // Decimal places for cart display; matches the main-screen convention where
-// "money-facing" values render to two places by default.
-private const val CART_DISPLAY_SCALE = 2
+// "money-facing" values render to two places by default. Aliased onto the
+// shared export scale so on-screen numbers and exported artefacts always
+// round identically.
+private const val CART_DISPLAY_SCALE = CART_EXPORT_DISPLAY_SCALE
 
 // Suffix used when SAF asks for a suggested filename.
 private const val EXPORT_FILE_MIME = "application/json"
 private const val EXPORT_FILE_EXT = ".json"
-private const val EXPORT_FILE_DATE_FORMAT = "yyyyMMdd-HHmmss"
 
-// Shared filename base + format for the CSV / PDF share flows.
-private const val SHARE_FILE_DATE_FORMAT = EXPORT_FILE_DATE_FORMAT
+// Filename-safe timestamp used both as the JSON-export suffix and as the
+// fallback name for share artefacts (CSV/PDF) when a cart has no user name.
+// Stateless formatter, no need to instantiate per call.
+private val FILENAME_TIMESTAMP: SimpleDateFormat = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US)
+
+private fun filenameTimestampNow(): String = FILENAME_TIMESTAMP.format(Date())
+
 private const val CSV_MIME = "text/csv"
 private const val CSV_EXT = ".csv"
 private const val PDF_MIME = "application/pdf"
 private const val PDF_EXT = ".pdf"
-private const val SHARE_FILE_PREFIX = "cart-"
+
+// Chars that can trip up FileProvider / OSes when embedded in a filename.
+// Collapsed to a single underscore so a cart named "Café / July 2026" becomes
+// "Café_July_2026", not "Café___July_2026".
+private val FILENAME_UNSAFE = Regex("""[\\/:*?"<>|\p{Cntrl}]+""")
+private val FILENAME_WHITESPACE = Regex("""\s+""")
+
+private fun String.sanitizeForFilename(): String =
+    replace(FILENAME_UNSAFE, "_")
+        .replace(FILENAME_WHITESPACE, "_")
+        .trim('_', '.')
+        .ifBlank { "cart" }
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
@@ -383,7 +401,7 @@ class CartActivity : BaseActivity() {
 
     // Round to the two-decimal "money" scale used across the cart UI. Extracted
     // so display, share text, and fee-percent all pin to the same rounding.
-    private fun BigDecimal.cartScale(): BigDecimal = setScale(CART_DISPLAY_SCALE, RoundingMode.HALF_EVEN)
+    private fun BigDecimal.cartScale(): BigDecimal = roundForDisplay(CART_DISPLAY_SCALE)
 
     // Rounded, plain string in the cart's display scale — the form used
     // wherever we drop a number into shared text (share sheet).
@@ -577,8 +595,7 @@ class CartActivity : BaseActivity() {
                 .value
                 ?.name
                 ?.ifBlank { null } ?: "cart"
-        val stamp = SimpleDateFormat(EXPORT_FILE_DATE_FORMAT, Locale.US).format(Date())
-        exportLauncher.launch("$name-$stamp$EXPORT_FILE_EXT")
+        exportLauncher.launch("$name-${filenameTimestampNow()}$EXPORT_FILE_EXT")
     }
 
     private fun launchImport() {
@@ -713,32 +730,37 @@ class CartActivity : BaseActivity() {
     }
 
     private fun shareCartAsCsv(snapshot: CartSnapshot) {
+        val title = shareTitle(snapshot)
         val chooser =
             buildCartShareChooser(
                 context = this,
-                filename = shareFilename(CSV_EXT),
+                filename = shareFilename(title, CSV_EXT),
                 mimeType = CSV_MIME,
-                bytes = snapshot.toCsv().toByteArray(Charsets.UTF_8),
+                bytes = snapshot.toCsv(title = title).toByteArray(Charsets.UTF_8),
             )
         startActivity(chooser)
     }
 
     private fun shareCartAsPdf(snapshot: CartSnapshot) {
-        val title = snapshot.cart.name.ifBlank { getString(R.string.cart_share_default_title) }
+        val title = shareTitle(snapshot)
         val chooser =
             buildCartShareChooser(
                 context = this,
-                filename = shareFilename(PDF_EXT),
+                filename = shareFilename(title, PDF_EXT),
                 mimeType = PDF_MIME,
-                bytes = snapshot.toPdfBytes(title),
+                bytes = snapshot.toPdfBytes(title = title),
             )
         startActivity(chooser)
     }
 
-    private fun shareFilename(extension: String): String {
-        val timestamp = SimpleDateFormat(SHARE_FILE_DATE_FORMAT, Locale.US).format(Date())
-        return SHARE_FILE_PREFIX + timestamp + extension
-    }
+    // Cart name if the user has one (from Save-as), otherwise a phone-local
+    // timestamp so the artefact still has an identifying handle.
+    private fun shareTitle(snapshot: CartSnapshot): String = snapshot.cart.name.ifBlank { filenameTimestampNow() }
+
+    private fun shareFilename(
+        title: String,
+        extension: String,
+    ): String = title.sanitizeForFilename() + extension
 
     private fun buildShareText(snapshot: CartSnapshot): String =
         buildString {
