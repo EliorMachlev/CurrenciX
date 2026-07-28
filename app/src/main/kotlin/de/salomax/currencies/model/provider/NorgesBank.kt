@@ -11,7 +11,8 @@ import de.salomax.currencies.model.adapter.NorgesBankTimelineXmlParser
 import de.salomax.currencies.util.HttpClientProvider
 import de.salomax.currencies.util.fetch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+
+private const val SDMX_FORMAT_QS = "&format=sdmx-compact-2.1"
 
 class NorgesBank : ApiProvider.Api() {
     override val name = "Norges Bank"
@@ -30,14 +31,17 @@ class NorgesBank : ApiProvider.Api() {
         context: Context?,
         date: LocalDate?,
     ): Result<ExchangeRates> {
-        val formattedDateStart = date?.minusDays(TIMELINE_LOOKBACK_DAYS)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val formattedDateEnd = date?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val dateString =
-            if (date == null) "?lastNObservations=1" else "?StartPeriod=$formattedDateStart&EndPeriod=$formattedDateEnd"
+        val dateQuery =
+            if (date == null) {
+                "?lastNObservations=1"
+            } else {
+                "?StartPeriod=${date.minusDays(TIMELINE_LOOKBACK_DAYS).format(ISO_DATE)}" +
+                    "&EndPeriod=${date.format(ISO_DATE)}"
+            }
 
         return HttpClientProvider.fetch(
             context,
-            "$baseUrl/data/EXR/B..NOK.SP$dateString&format=sdmx-compact-2.1",
+            "$baseUrl/data/EXR/B..NOK.SP$dateQuery$SDMX_FORMAT_QS",
         ) { body ->
             NorgesBankRatesXmlParser().parse(body.byteStream(), date ?: LocalDate.now())
         }
@@ -50,17 +54,16 @@ class NorgesBank : ApiProvider.Api() {
         startDate: LocalDate,
         endDate: LocalDate,
     ): Result<Timeline> {
-        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
         val parameterBase = base.apiCodeOrDkkForFok()
         val parameterSymbol = symbol.apiCodeOrDkkForFok()
-
         // if we request NOK->NOK, the response would be empty. Add EUR in that case.
         val eur = if (base == Currency.NOK && symbol == Currency.NOK) "EUR" else ""
+
         val url =
             "$baseUrl/data/EXR/B.$parameterBase+$parameterSymbol+$eur.NOK.SP" +
-                "?StartPeriod=${dateFormatter.format(startDate)}" +
-                "&EndPeriod=${dateFormatter.format(endDate)}" +
-                "&format=sdmx-compact-2.1"
+                "?StartPeriod=${startDate.format(ISO_DATE)}" +
+                "&EndPeriod=${endDate.format(ISO_DATE)}" +
+                SDMX_FORMAT_QS
 
         return HttpClientProvider.fetch(context, url) { body ->
             NorgesBankTimelineXmlParser(base, symbol, startDate, endDate).parse(body.byteStream())

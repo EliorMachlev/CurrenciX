@@ -1,7 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -14,17 +13,16 @@ import de.salomax.currencies.model.adapter.BankOfIsraelSdmxParser
 import de.salomax.currencies.model.adapter.addFokFromDkkIfMissing
 import de.salomax.currencies.util.HttpClientProvider
 import de.salomax.currencies.util.fetch
-import java.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 // SDMX-JSON representative-exchange-rate series live on a separate host from
 // the simpler PublicApi endpoint used for live rates.
 private const val SDMX_BASE_URL =
     "https://edge.boi.gov.il/FusionEdgeServer/sdmx/v2/data/dataflow/BOI.STATISTICS/EXR/1.0"
 private const val SDMX_FORMAT = "sdmx-json"
+private const val NO_DATA_ERROR = "No data found."
 
 // Bank of Israel quotes JPY per 100 units and LBP per 10 units in both the
 // PublicApi and SDMX feeds; every other currency is quoted per single unit.
@@ -56,16 +54,10 @@ class BankOfIsrael : ApiProvider.Api() {
 
     private suspend fun fetchLatestRates(context: Context?): Result<ExchangeRates> {
         val adapter =
-            Moshi
-                .Builder()
-                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                .add(BankOfIsraelRatesAdapter())
-                .build()
+            moshi { add(BankOfIsraelRatesAdapter()) }
                 .adapter(ExchangeRates::class.java)
-        return HttpClientProvider
-            .fetch(context, "$baseUrl/PublicApi/GetExchangeRates") { body ->
-                adapter.fromJson(body.source()) ?: throw IOException("BankOfIsrael: empty JSON")
-            }.map { it.copy(provider = ApiProvider.BANK_OF_ISRAEL) }
+        return fetchJson(context, "$baseUrl/PublicApi/GetExchangeRates", name, adapter)
+            .map { it.copy(provider = ApiProvider.BANK_OF_ISRAEL) }
     }
 
     private suspend fun fetchHistoricalRates(
@@ -77,7 +69,7 @@ class BankOfIsrael : ApiProvider.Api() {
             val rates = buildIlsRateList(latestPerCurrency.values)
             ExchangeRates(
                 success = rates.isNotEmpty(),
-                error = if (rates.isEmpty()) "No data found." else null,
+                error = if (rates.isEmpty()) NO_DATA_ERROR else null,
                 base = Currency.ILS,
                 date = latestPerCurrency.values.maxOfOrNull { it.date },
                 rates = rates,
@@ -131,7 +123,7 @@ class BankOfIsrael : ApiProvider.Api() {
 
         return Timeline(
             success = rates.isNotEmpty(),
-            error = if (rates.isEmpty()) "No data found." else null,
+            error = if (rates.isEmpty()) NO_DATA_ERROR else null,
             base = baseCode,
             startDate = rates.keys.firstOrNull(),
             endDate = rates.keys.lastOrNull(),
@@ -172,11 +164,9 @@ class BankOfIsrael : ApiProvider.Api() {
     private fun sdmxUrl(
         startDate: LocalDate,
         endDate: LocalDate,
-    ): String {
-        val fmt = DateTimeFormatter.ISO_LOCAL_DATE
-        return SDMX_BASE_URL +
-            "?startPeriod=${startDate.format(fmt)}" +
-            "&endPeriod=${endDate.format(fmt)}" +
+    ): String =
+        SDMX_BASE_URL +
+            "?startPeriod=${startDate.format(ISO_DATE)}" +
+            "&endPeriod=${endDate.format(ISO_DATE)}" +
             "&format=$SDMX_FORMAT"
-    }
 }

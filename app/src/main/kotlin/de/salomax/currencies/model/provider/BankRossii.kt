@@ -20,8 +20,9 @@ import java.time.format.DateTimeFormatter
 // The Bank Rossii URL endpoints accept dates as dd/MM/yyyy in the query
 // string. The XML *response* uses dd.MM.yyyy — that formatter lives in
 // AdapterUtils as BANK_ROSSII_DATE_FORMATTER and shouldn't be reused here.
-private val BANK_ROSSII_URL_DATE_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("dd/MM/yyyy")
+private val URL_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+private val RUB_CODE: String = Currency.RUB.iso4217Alpha()
 
 class BankRossii : ApiProvider.Api() {
     override val name = "Bank Rossii"
@@ -40,9 +41,8 @@ class BankRossii : ApiProvider.Api() {
         context: Context?,
         date: LocalDate?,
     ): Result<ExchangeRates> {
-        val dateString =
-            if (date == null) "" else "?date_req=${date.format(BANK_ROSSII_URL_DATE_FORMATTER)}"
-        return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateString") { body ->
+        val dateQuery = date?.let { "?date_req=${it.format(URL_DATE)}" } ?: ""
+        return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateQuery") { body ->
             BankRossiiRatesXmlParser().parse(body.byteStream())
         }
     }
@@ -57,45 +57,18 @@ class BankRossii : ApiProvider.Api() {
         val parameterBase = base.apiCodeOrDkkForFok()
         val parameterSymbol = symbol.apiCodeOrDkkForFok()
 
-        val idsResult = fetchCurrencyIds(context)
-        val ids = idsResult.getOrElse { return Result.failure(it) }
+        val ids = fetchCurrencyIds(context).getOrElse { return Result.failure(it) }
 
         val idBase =
-            if (parameterBase != Currency.RUB.iso4217Alpha()) {
-                ids.entries.find { it.value == parameterBase }?.key
-            } else {
-                null
-            }
+            resolveCurrencyId(parameterBase, ids)
+                ?: return Result.failure(Throwable("No currency ID found for: $parameterBase"))
         val idSymbol =
-            if (parameterSymbol != Currency.RUB.iso4217Alpha()) {
-                ids.entries.find { it.value == parameterSymbol }?.key
-            } else {
-                null
-            }
-        val missingId =
-            when {
-                parameterBase != Currency.RUB.iso4217Alpha() && idBase == null -> parameterBase
-                parameterSymbol != Currency.RUB.iso4217Alpha() && idSymbol == null -> parameterSymbol
-                else -> null
-            }
-        if (missingId != null) {
-            return Result.failure(Throwable("No currency ID found for: $missingId"))
-        }
+            resolveCurrencyId(parameterSymbol, ids)
+                ?: return Result.failure(Throwable("No currency ID found for: $parameterSymbol"))
 
-        val timelineRub = buildRubTimeline(startDate, endDate)
-        val baseTimeline =
-            if (parameterBase == Currency.RUB.iso4217Alpha()) {
-                Result.success(timelineRub)
-            } else {
-                fetchCurrencyTimeline(context, startDate, endDate, idBase!!, ids)
-            }
-
-        val symbolTimeline =
-            if (parameterSymbol == Currency.RUB.iso4217Alpha()) {
-                Result.success(timelineRub)
-            } else {
-                fetchCurrencyTimeline(context, startDate, endDate, idSymbol!!, ids)
-            }
+        val rubTimeline = buildRubTimeline(startDate, endDate)
+        val baseTimeline = timelineFor(context, parameterBase, startDate, endDate, idBase, ids, rubTimeline)
+        val symbolTimeline = timelineFor(context, parameterSymbol, startDate, endDate, idSymbol, ids, rubTimeline)
 
         val baseRates: Map<LocalDate, Rate>? = baseTimeline.getOrNull()?.rates
         val symbolRates: Map<LocalDate, Rate>? = symbolTimeline.getOrNull()?.rates
@@ -116,20 +89,45 @@ class BankRossii : ApiProvider.Api() {
         }
     }
 
+    // Returns the numeric ID for [code], or null when unknown. RUB itself
+    // has no ID (it's the API's implicit quote currency) — signal that with
+    // a sentinel string that only [timelineFor] recognises.
+    private fun resolveCurrencyId(
+        code: String,
+        ids: Map<String, String>,
+    ): String? = if (code == RUB_CODE) RUB_CODE else ids.entries.find { it.value == code }?.key
+
+    // Picks either the synthetic RUB timeline (1:1) or hits the API for the
+    // real currency series.
+    private suspend fun timelineFor(
+        context: Context?,
+        code: String,
+        startDate: LocalDate,
+        endDate: LocalDate,
+        id: String,
+        ids: Map<String, String>,
+        rubTimeline: Timeline,
+    ): Result<Timeline> =
+        if (code == RUB_CODE) {
+            Result.success(rubTimeline)
+        } else {
+            fetchCurrencyTimeline(context, startDate, endDate, id, ids)
+        }
+
     private fun buildRubTimeline(
         startDate: LocalDate,
         endDate: LocalDate,
     ): Timeline {
         val rubMap = LinkedHashMap<LocalDate, Rate>()
         var currentDate = startDate
-        while (currentDate.isBefore(endDate) || currentDate.isEqual(endDate)) {
+        while (!currentDate.isAfter(endDate)) {
             rubMap[currentDate] = Rate(Currency.RUB, BigDecimal.ONE)
             currentDate = currentDate.plusDays(1)
         }
         return Timeline(
             success = true,
             error = null,
-            base = Currency.RUB.iso4217Alpha(),
+            base = RUB_CODE,
             startDate = startDate,
             endDate = endDate,
             rates = rubMap.toSortedMap(),
@@ -152,8 +150,8 @@ class BankRossii : ApiProvider.Api() {
         HttpClientProvider.fetch(
             context,
             "$baseUrl/XML_dynamic.asp" +
-                "?date_req1=${startDate.format(BANK_ROSSII_URL_DATE_FORMATTER)}" +
-                "&date_req2=${endDate.format(BANK_ROSSII_URL_DATE_FORMATTER)}" +
+                "?date_req1=${startDate.format(URL_DATE)}" +
+                "&date_req2=${endDate.format(URL_DATE)}" +
                 "&VAL_NM_RQ=$currencyId",
         ) { body ->
             BankRossiiTimelineXmlParser(ids).parse(body.byteStream())

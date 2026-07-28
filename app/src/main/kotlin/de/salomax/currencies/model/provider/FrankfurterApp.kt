@@ -1,7 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -9,11 +8,7 @@ import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.FrankfurterAppRatesAdapter
 import de.salomax.currencies.model.adapter.FrankfurterAppTimelineAdapter
-import de.salomax.currencies.util.HttpClientProvider
-import de.salomax.currencies.util.fetch
-import java.io.IOException
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class FrankfurterApp : ApiProvider.Api() {
     override val name = "Frankfurter.app"
@@ -37,21 +32,14 @@ class FrankfurterApp : ApiProvider.Api() {
         // Currency conversions are done relatively to each other - so it basically doesn't matter
         // which base is used here. However, Euro is a strong currency, preventing rounding errors.
         val base = Currency.EUR
-        val dateString = if (date != null) date.format(DateTimeFormatter.ISO_LOCAL_DATE) else "latest"
         val adapter =
-            Moshi
-                .Builder()
-                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                .apply {
-                    add(FrankfurterAppRatesAdapter(base))
-                    add(SHARED_LOCAL_DATE_ADAPTER)
-                }.build()
-                .adapter(ExchangeRates::class.java)
+            moshi {
+                add(FrankfurterAppRatesAdapter(base))
+                add(SHARED_LOCAL_DATE_ADAPTER)
+            }.adapter(ExchangeRates::class.java)
 
-        return HttpClientProvider
-            .fetch(context, "$baseUrl/$dateString?base=$base") { body ->
-                adapter.fromJson(body.source()) ?: throw IOException("Frankfurter: empty JSON")
-            }.map { rates -> rates.copy(provider = ApiProvider.FRANKFURTER_APP) }
+        return fetchJson(context, ratesUrl(base, date), name, adapter)
+            .map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
     }
 
     override suspend fun getTimeline(
@@ -61,36 +49,34 @@ class FrankfurterApp : ApiProvider.Api() {
         startDate: LocalDate,
         endDate: LocalDate,
     ): Result<Timeline> {
-        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
-        val parameterBase = base.apiCodeOrDkkForFok()
-        val parameterSymbol = symbol.apiCodeOrDkkForFok()
         val adapter =
-            Moshi
-                .Builder()
-                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                .apply {
-                    add(FrankfurterAppRatesAdapter(base))
-                    add(SHARED_LOCAL_DATE_ADAPTER)
-                    add(FrankfurterAppTimelineAdapter(symbol))
-                }.build()
-                .adapter(Timeline::class.java)
+            moshi {
+                add(FrankfurterAppRatesAdapter(base))
+                add(SHARED_LOCAL_DATE_ADAPTER)
+                add(FrankfurterAppTimelineAdapter(symbol))
+            }.adapter(Timeline::class.java)
 
-        val url =
-            "$baseUrl/" +
-                startDate.format(dateFormatter) + ".." + endDate.format(dateFormatter) +
-                "?base=$parameterBase&symbols=$parameterSymbol"
-
-        return HttpClientProvider
-            .fetch(context, url) { body ->
-                adapter.fromJson(body.source()) ?: throw IOException("Frankfurter: empty JSON")
-            }.map { timeline ->
-                when (base) {
-                    // change dkk base back to fok, if needed
-                    Currency.FOK -> timeline.copy(base = base.iso4217Alpha())
-                    else -> timeline
-                }
-            }.map { timeline ->
-                timeline.copy(provider = ApiProvider.FRANKFURTER_APP)
-            }
+        return fetchJson(context, timelineUrl(base, symbol, startDate, endDate), name, adapter)
+            .map { timeline ->
+                // change dkk base back to fok, if needed
+                if (base == Currency.FOK) timeline.copy(base = base.iso4217Alpha()) else timeline
+            }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
     }
+
+    private fun ratesUrl(
+        base: Currency,
+        date: LocalDate?,
+    ): String {
+        val datePart = date?.format(ISO_DATE) ?: "latest"
+        return "$baseUrl/$datePart?base=$base"
+    }
+
+    private fun timelineUrl(
+        base: Currency,
+        symbol: Currency,
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): String =
+        "$baseUrl/${startDate.format(ISO_DATE)}..${endDate.format(ISO_DATE)}" +
+            "?base=${base.apiCodeOrDkkForFok()}&symbols=${symbol.apiCodeOrDkkForFok()}"
 }

@@ -2,7 +2,6 @@ package de.salomax.currencies.model.provider
 
 import android.content.Context
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -11,9 +10,6 @@ import de.salomax.currencies.model.Rate
 import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.InforEuroRatesAdapter
 import de.salomax.currencies.model.adapter.InforEuroTimelineAdapter
-import de.salomax.currencies.util.HttpClientProvider
-import de.salomax.currencies.util.fetch
-import java.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -36,22 +32,14 @@ class InforEuro : ApiProvider.Api() {
         context: Context?,
         date: LocalDate?,
     ): Result<ExchangeRates> {
+        val effective = date ?: LocalDate.now(ZoneOffset.UTC)
         val adapter =
-            Moshi
-                .Builder()
-                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                .apply {
-                    add(InforEuroRatesAdapter(date ?: LocalDate.now(ZoneOffset.UTC)))
-                }.build()
+            moshi { add(InforEuroRatesAdapter(effective)) }
                 .adapter(ExchangeRates::class.java)
-        val url =
-            baseUrl + "/monthly-rates" +
-                if (date != null) "?year=${date.year}&month=${date.monthValue}" else ""
+        val dateQuery = if (date != null) "?year=${date.year}&month=${date.monthValue}" else ""
 
-        return HttpClientProvider
-            .fetch(context, url) { body ->
-                adapter.fromJson(body.source()) ?: throw IOException("InforEuro: empty JSON")
-            }.map { rates -> rates.copy(provider = ApiProvider.INFOR_EURO) }
+        return fetchJson(context, "$baseUrl/monthly-rates$dateQuery", name, adapter)
+            .map { it.copy(provider = ApiProvider.INFOR_EURO) }
     }
 
     override suspend fun getTimeline(
@@ -61,21 +49,14 @@ class InforEuro : ApiProvider.Api() {
         startDate: LocalDate,
         endDate: LocalDate,
     ): Result<Timeline> {
-        val parameterBase = base.apiCodeOrDkkForFok()
-        val parameterSymbol = symbol.apiCodeOrDkkForFok()
-
         // InforEuro needs 2 calls: the API only provides EUR <-> symbol, without changing the base.
         // So, we make 2 calls: EUR <-> base & EUR <-> symbol
         val adapter =
-            Moshi
-                .Builder()
-                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                .add(InforEuroTimelineAdapter(startDate, endDate))
-                .build()
+            moshi { add(InforEuroTimelineAdapter(startDate, endDate)) }
                 .adapter(Timeline::class.java)
 
-        val resultBase = fetchTimeline(context, parameterBase, adapter)
-        val resultSymbol = fetchTimeline(context, parameterSymbol, adapter)
+        val resultBase = fetchTimeline(context, base.apiCodeOrDkkForFok(), adapter)
+        val resultSymbol = fetchTimeline(context, symbol.apiCodeOrDkkForFok(), adapter)
 
         return when {
             resultBase.isFailure -> resultBase
@@ -86,17 +67,11 @@ class InforEuro : ApiProvider.Api() {
                     val symbolTimeline = resultSymbol.getOrThrow()
                     baseTimeline.copy(
                         provider = ApiProvider.INFOR_EURO,
-                        base = (if (base == Currency.FOK) Currency.FOK else base).iso4217Alpha(),
+                        base = base.iso4217Alpha(),
                         rates =
-                            symbolTimeline.rates?.mapValues { symbolEntry ->
-                                val baseValue = baseTimeline.rates?.get(symbolEntry.key)
-                                Rate(
-                                    symbol,
-                                    symbolEntry.value.value.divide(
-                                        baseValue?.value ?: BigDecimal.ONE,
-                                        MathContext.DECIMAL128,
-                                    ),
-                                )
+                            symbolTimeline.rates?.mapValues { (date, symbolRate) ->
+                                val baseValue = baseTimeline.rates?.get(date)?.value ?: BigDecimal.ONE
+                                Rate(symbol, symbolRate.value.divide(baseValue, MathContext.DECIMAL128))
                             },
                     )
                 }
@@ -107,8 +82,5 @@ class InforEuro : ApiProvider.Api() {
         context: Context?,
         parameter: String,
         adapter: JsonAdapter<Timeline>,
-    ): Result<Timeline> =
-        HttpClientProvider.fetch(context, "$baseUrl/currencies/$parameter") { body ->
-            adapter.fromJson(body.source()) ?: throw IOException("InforEuro: empty JSON")
-        }
+    ): Result<Timeline> = fetchJson(context, "$baseUrl/currencies/$parameter", name, adapter)
 }

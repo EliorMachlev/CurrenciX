@@ -1,7 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -10,11 +9,7 @@ import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.OpenExchangeratesRatesAdapter
 import de.salomax.currencies.repository.Database
 import de.salomax.currencies.util.ApiHttpError
-import de.salomax.currencies.util.HttpClientProvider
-import de.salomax.currencies.util.fetch
-import java.io.IOException
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 private const val HTTP_UNAUTHORIZED = 401
 
@@ -42,27 +37,21 @@ class OpenExchangerates : ApiProvider.Api() {
 
         val endpoint =
             if (date != null) {
-                "/historical/" + date.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".json"
+                "/historical/${date.format(ISO_DATE)}.json"
             } else {
                 "/latest.json"
             }
         val adapter =
-            Moshi
-                .Builder()
-                .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                .apply {
-                    add(OpenExchangeratesRatesAdapter())
-                }.build()
+            moshi { add(OpenExchangeratesRatesAdapter()) }
                 .adapter(ExchangeRates::class.java)
 
         val result =
-            HttpClientProvider
-                .fetch(
-                    context,
-                    "$baseUrl$endpoint?app_id=$apiKey&prettyprint=false&show_alternative=false",
-                ) { body ->
-                    adapter.fromJson(body.source()) ?: throw IOException("OpenExchangeRates: empty JSON")
-                }.map { rates -> rates.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
+            fetchJson(
+                context,
+                "$baseUrl$endpoint?app_id=$apiKey&prettyprint=false&show_alternative=false",
+                name,
+                adapter,
+            ).map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
 
         val err = result.exceptionOrNull()
         return if (err is ApiHttpError && err.statusCode == HTTP_UNAUTHORIZED) {
