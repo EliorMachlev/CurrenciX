@@ -4,6 +4,7 @@ import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.Timeline
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -11,23 +12,45 @@ import org.junit.Test
 import java.time.LocalDate
 import java.time.ZoneId
 
+// Live-network tests hit real upstream APIs, which occasionally 5xx or drop
+// HTTP/2 streams under CI-runner load. Retry once with a short backoff so a
+// single upstream hiccup doesn't fail the whole build gate — a true outage
+// still surfaces after both attempts.
+private const val LIVE_RETRY_ATTEMPTS = 2
+private const val LIVE_RETRY_BACKOFF_MS = 3_000L
+
+private suspend fun <T> retryLive(block: suspend () -> T): T {
+    var last: Throwable? = null
+    repeat(LIVE_RETRY_ATTEMPTS) { attempt ->
+        try {
+            return block()
+        } catch (t: Throwable) {
+            last = t
+            if (attempt < LIVE_RETRY_ATTEMPTS - 1) delay(LIVE_RETRY_BACKOFF_MS)
+        }
+    }
+    throw last!!
+}
+
 class ExchangeRatesServiceTest {
     @Test
     fun testFrankfurterApp() =
         runBlocking {
             // latest
             testWebservice(
-                ExchangeRatesService.getRates(ApiProvider.FRANKFURTER_APP).getOrThrow(),
+                retryLive { ExchangeRatesService.getRates(ApiProvider.FRANKFURTER_APP).getOrThrow() },
                 4,
             )
             // timeline
             testTimeline(
-                ExchangeRatesService
-                    .getTimeline(
-                        ApiProvider.FRANKFURTER_APP,
-                        Currency.EUR,
-                        Currency.ISK,
-                    ).getOrThrow(),
+                retryLive {
+                    ExchangeRatesService
+                        .getTimeline(
+                            ApiProvider.FRANKFURTER_APP,
+                            Currency.EUR,
+                            Currency.ISK,
+                        ).getOrThrow()
+                },
             )
         }
 
@@ -51,17 +74,19 @@ class ExchangeRatesServiceTest {
         runBlocking {
             // latest
             testWebservice(
-                ExchangeRatesService.getRates(ApiProvider.INFOR_EURO).getOrThrow(),
+                retryLive { ExchangeRatesService.getRates(ApiProvider.INFOR_EURO).getOrThrow() },
                 31,
             )
             // timeline
             testTimeline(
-                ExchangeRatesService
-                    .getTimeline(
-                        ApiProvider.INFOR_EURO,
-                        Currency.EUR,
-                        Currency.ISK,
-                    ).getOrThrow(),
+                retryLive {
+                    ExchangeRatesService
+                        .getTimeline(
+                            ApiProvider.INFOR_EURO,
+                            Currency.EUR,
+                            Currency.ISK,
+                        ).getOrThrow()
+                },
             )
         }
 
