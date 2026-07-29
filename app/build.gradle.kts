@@ -127,14 +127,17 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
     // math (v5 releases use incompatible license to fdroid: noinspection GradleDependency)
     implementation("org.mariuszgromada.math:MathParser.org-mXparser:4.4.3")
-    // compose (needed to host the Vico chart via ComposeView)
+    // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
     val composeBomVersion = "2026.06.01"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.runtime:runtime")
     implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.activity:activity-compose:1.11.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
     // charts
     val vicoVersion = "3.2.3"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
