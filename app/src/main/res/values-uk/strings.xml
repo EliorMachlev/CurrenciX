@@ -29,7 +29,6 @@
     <string name="quick_conversions_fees_applied">Застосовані комісії: %s</string>
     <string name="tooltip_filter_starred">Показувати лише обрані валюти.</string>
     <string name="currency_dropdown_api_hint">Чогось не вистачає? Різні постачальники даних пропонують різні валюти. Перейдіть до налаштувань, щоб спробувати іншого!\u00A0\uD83E\uDD17</string>
-    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курси від %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Кешованих курсів ще немає</string>
 

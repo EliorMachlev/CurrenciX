@@ -30,7 +30,6 @@
     <string name="tooltip_filter_starred">Nur favorisierte Währungen anzeigen.</string>
     <string name="currency_dropdown_api_hint">Fehlt etwas? Unterschiedliche Datenquellen bieten unterschiedliche Währungen an. In die Einstellungen gehen, um eine andere auszuprobieren!\u00A0\uD83E\uDD17</string>
 
-    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Kurse vom %1$s</string>
     <string name="offline_banner_no_data">Offline • Noch keine zwischengespeicherten Kurse</string>
 
