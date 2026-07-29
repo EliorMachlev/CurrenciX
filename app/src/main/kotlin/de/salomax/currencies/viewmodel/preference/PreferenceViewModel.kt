@@ -9,6 +9,7 @@ import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.AppTheme
 import de.salomax.currencies.repository.Database
 import de.salomax.currencies.repository.ExchangeRatesRepository
+import de.salomax.currencies.util.androidLanguageCode
 
 // Language.SYSTEM.iso — matches the enum value that means "follow system
 // locale" without pulling the enum into this file.
@@ -63,8 +64,10 @@ class PreferenceViewModel(
                 LocaleListCompat.getEmptyLocaleList()
             } else {
                 LocaleListCompat.forLanguageTags(
-                    // pt_BR -> pt-BR
-                    language.replace('_', '-'),
+                    // pt_BR -> pt-BR, and modern BCP-47 -> Android's legacy
+                    // form so what we hand Android matches what it hands back
+                    // via getLanguage() later (avoids picker/lookup drift).
+                    androidLanguageCode(language).replace('_', '-'),
                 )
             }
         AppCompatDelegate.setApplicationLocales(appLocale)

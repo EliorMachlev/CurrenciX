@@ -2,6 +2,7 @@ package de.salomax.currencies.model
 
 import android.content.Context
 import de.salomax.currencies.R
+import de.salomax.currencies.util.androidLanguageCode
 
 // Legacy Android-style locale separator used in this enum's iso strings
 // (e.g. "pt_BR", "zh_CN"). Kept as an underscore because it matches the
@@ -49,38 +50,21 @@ enum class Language(
     ;
 
     companion object {
-        private val isoMapping: Map<String, Language> = entries.associateBy(Language::iso)
-
-        // Android's Locale.getLanguage() returns the *legacy* ISO 639-1 code
-        // for a handful of locales (iw/in/ji), regardless of whether the app
-        // stored the modern BCP-47 tag (he/id/yi). This enum keys off the
-        // modern codes so the ISO strings match the values-* folder names for
-        // every other locale — map the legacy variants back before lookup.
-        private val legacyLanguageAliases =
-            mapOf(
-                "iw" to "he",
-                "in" to "id",
-                "ji" to "yi",
-            )
-
-        private fun canonicalize(isoValue: String?): String? {
-            if (isoValue == null) return null
-            val (lang, rest) =
-                isoValue
-                    .split(REGION_SEPARATOR, limit = 2)
-                    .let { it[0] to it.getOrNull(1) }
-            val canonicalLang = legacyLanguageAliases[lang] ?: lang
-            return if (rest != null) "$canonicalLang$REGION_SEPARATOR$rest" else canonicalLang
-        }
+        // Keyed on the Android-runtime code (see [androidLanguageCode]) so a
+        // lookup with either the modern or legacy form of a normalised locale
+        // (he/iw, id/in, yi/ji) finds the same entry without a second map.
+        private val isoMapping: Map<String, Language> =
+            entries.associateBy { androidLanguageCode(it.iso) }
 
         private fun String.stripRegion(): String = substringBefore(REGION_SEPARATOR)
 
         fun byIso(isoValue: String?): Language? {
-            val canonical = canonicalize(isoValue)
-            return isoMapping[canonical]
+            if (isoValue == null) return null
+            val key = androidLanguageCode(isoValue)
+            return isoMapping[key]
                 // either the resource string has no country, or the given locale has none:
                 // use only language without country
-                ?: isoMapping.mapKeys { it.key.stripRegion() }[canonical?.stripRegion()]
+                ?: isoMapping.mapKeys { it.key.stripRegion() }[key.stripRegion()]
         }
     }
 
