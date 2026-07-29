@@ -5,14 +5,12 @@ import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.BaseAdapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
@@ -22,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.Observer
@@ -50,6 +49,8 @@ import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.util.toPdfBytes
 import de.salomax.currencies.view.BaseActivity
 import de.salomax.currencies.view.cart.compose.CartEmptyHint
+import de.salomax.currencies.view.cart.compose.SavedCartsList
+import de.salomax.currencies.view.compose.AppTheme
 import de.salomax.currencies.view.main.spinner.SearchableSpinner
 import de.salomax.currencies.view.preference.PreferenceActivity
 import de.salomax.currencies.viewmodel.cart.CartSnapshot
@@ -541,49 +542,57 @@ class CartActivity : BaseActivity() {
     private fun attemptClose() = confirmUnsavedThen { finish() }
 
     private fun showLoadDialog() {
-        val saved = viewModel.getSavedCartsSnapshot().toMutableList()
-        if (saved.isEmpty()) {
+        val initial = viewModel.getSavedCartsSnapshot()
+        if (initial.isEmpty()) {
             showSnackbar(getString(R.string.cart_no_saved))
             return
         }
-        val adapter = SavedCartAdapter(saved)
-        val dialog =
+        val saved = mutableStateListOf<SavedCart>().apply { addAll(initial) }
+        lateinit var dialog: AlertDialog
+        val composeView =
+            ComposeView(this).apply {
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
+                setContent {
+                    AppTheme {
+                        SavedCartsList(
+                            items = saved,
+                            onPick = { cart ->
+                                dialog.dismiss()
+                                confirmUnsavedThen { viewModel.loadSaved(cart.id) }
+                            },
+                            onRename = { cart ->
+                                showNameInputDialog(
+                                    titleRes = R.string.cart_rename_title,
+                                    initial = cart.name,
+                                ) { name ->
+                                    viewModel.renameSaved(cart.id, name)
+                                    val idx = saved.indexOfFirst { it.id == cart.id }
+                                    if (idx >= 0) saved[idx] = cart.copy(name = name)
+                                }
+                            },
+                            onDelete = { cart ->
+                                AlertDialog
+                                    .Builder(this@CartActivity)
+                                    .setTitle(cart.name.ifBlank { cart.id.take(8) })
+                                    .setMessage(getString(R.string.cart_delete_confirm, cart.name))
+                                    .setPositiveButton(R.string.cart_delete_confirm_button) { _, _ ->
+                                        viewModel.deleteSaved(cart.id)
+                                        saved.removeAll { it.id == cart.id }
+                                        if (saved.isEmpty()) dialog.dismiss()
+                                    }.setNegativeButton(android.R.string.cancel, null)
+                                    .show()
+                            },
+                        )
+                    }
+                }
+            }
+        dialog =
             AlertDialog
                 .Builder(this)
                 .setTitle(R.string.cart_menu_load)
-                .setAdapter(adapter) { _, which ->
-                    val targetId = saved[which].id
-                    confirmUnsavedThen { viewModel.loadSaved(targetId) }
-                }.setNegativeButton(android.R.string.cancel, null)
+                .setView(composeView)
+                .setNegativeButton(android.R.string.cancel, null)
                 .create()
-        adapter.onDelete = { position ->
-            val cart = saved[position]
-            AlertDialog
-                .Builder(this)
-                .setTitle(cart.name.ifBlank { cart.id.take(8) })
-                .setMessage(getString(R.string.cart_delete_confirm, cart.name))
-                .setPositiveButton(R.string.cart_delete_confirm_button) { _, _ ->
-                    viewModel.deleteSaved(cart.id)
-                    saved.removeAt(position)
-                    if (saved.isEmpty()) {
-                        dialog.dismiss()
-                    } else {
-                        adapter.notifyDataSetChanged()
-                    }
-                }.setNegativeButton(android.R.string.cancel, null)
-                .show()
-        }
-        adapter.onRename = { position ->
-            val cart = saved[position]
-            showNameInputDialog(
-                titleRes = R.string.cart_rename_title,
-                initial = cart.name,
-            ) { name ->
-                viewModel.renameSaved(cart.id, name)
-                saved[position] = cart.copy(name = name)
-                adapter.notifyDataSetChanged()
-            }
-        }
         dialog.show()
     }
 
@@ -1005,43 +1014,4 @@ private fun CalculatorInputState.replayDigits(number: String) {
 private fun CalculatorInputState.toExpressionString(): String {
     val calc = calculationValueText.value
     return if (calc.isNullOrBlank()) baseValueText.value.orEmpty() else calc.trim()
-}
-
-/**
- * ListAdapter for the "Load" dialog: each row shows the saved cart's name and
- * a trailing delete button. Tapping the row itself falls through to the
- * dialog's `OnClickListener` (load); tapping the delete icon calls [onDelete].
- */
-private class SavedCartAdapter(
-    private val items: List<SavedCart>,
-) : BaseAdapter() {
-    var onDelete: ((Int) -> Unit)? = null
-    var onRename: ((Int) -> Unit)? = null
-
-    override fun getCount(): Int = items.size
-
-    override fun getItem(position: Int): SavedCart = items[position]
-
-    override fun getItemId(position: Int): Long = position.toLong()
-
-    override fun getView(
-        position: Int,
-        convertView: View?,
-        parent: ViewGroup,
-    ): View {
-        val view =
-            convertView ?: LayoutInflater
-                .from(parent.context)
-                .inflate(R.layout.dialog_saved_cart_row, parent, false)
-        val cart = items[position]
-        view.findViewById<TextView>(R.id.saved_cart_row_name).text =
-            cart.name.ifBlank { cart.id.take(8) }
-        view.findViewById<View>(R.id.saved_cart_row_rename).setOnClickListener {
-            onRename?.invoke(position)
-        }
-        view.findViewById<View>(R.id.saved_cart_row_delete).setOnClickListener {
-            onDelete?.invoke(position)
-        }
-        return view
-    }
 }
