@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">החלפה בין המטבעות</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="info_date_latest">שערים לפי &lt;b>%1$s&lt;/b> בחסות &lt;b>%2$s&lt;/b></string>
     <string name="info_date_historical">שערי עבר של &lt;b>%1$s&lt;/b> בחסות &lt;b>%2$s&lt;/b></string>
+    <string name="offline_banner_with_date">לא מקוון • שערים מתאריך %1$s</string>
+    <string name="offline_banner_no_data">לא מקוון • אין עדיין שערים שמורים</string>
     <string name="copied_to_clipboard">&lt;b>%s&lt;/b> הועתק ללוח הגזירים</string>
     <string name="historical_rates_dialog_title">שערי עבר</string>
     <string name="historical_rates_dialog_toggle">שימוש בשערי חליפין בתאריך מסוים. כשמושבת ייעשה שימוש רק בעדכניים.</string>
@@ -28,4 +31,67 @@
     <string name="quick_conversions_fees_applied">עמלות שהוחלו: %s</string>
     <string name="tooltip_filter_starred">הצגת מטבעות מסומנים בלבד.</string>
     <string name="currency_dropdown_api_hint">משהו חסר? ספקי נתונים שונים מציעים מטבעות שונים. אפשר לגשת להגדרות ולנסות ספק אחר!\u00A0\uD83E\uDD17</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">שער ההמרה האחרון עבור צמד המטבעות האחרון בשימוש.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">נכון לתאריך %s</string>
+    <string name="widget_footer_empty">יש לפתוח את האפליקציה כדי לטעון שערים.</string>
+    <string name="widget_no_rate">השער אינו זמין</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">עגלת קניות</string>
+    <string name="cart_empty_hint">העגלה ריקה. יש להקיש על ״הוספת פריט״ כדי להתחיל.</string>
+    <string name="cart_add_item">הוספת פריט</string>
+    <string name="cart_item_name_hint">פריט</string>
+    <string name="cart_item_expression_hint">מחיר (למשל 2 × 3.50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">מחיקת פריט</string>
+    <string name="cart_subtotal_label">סכום ביניים</string>
+    <string name="cart_total_label">סה״כ</string>
+    <string name="cart_fee_line">עמלות: %s%%</string>
+    <string name="cart_menu_save">שמירה</string>
+    <string name="cart_menu_save_as">שמירה בשם…</string>
+    <string name="cart_menu_load">טעינה</string>
+    <string name="cart_menu_export">ייצוא לקובץ</string>
+    <string name="cart_menu_import">ייבוא מקובץ</string>
+    <string name="cart_menu_clear">ניקוי</string>
+    <string name="cart_share_option_text">טקסט רגיל</string>
+    <string name="cart_share_option_text_desc">סיכום מעוצב שאפשר להדביק בצ׳אט או באפליקציית פתקים.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">קובץ גיליון עם שורה אחת לכל פריט.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">מסמך בסגנון קבלה להדפסה.</string>
+    <string name="cart_save_name_hint">שם העגלה</string>
+    <string name="cart_default_saved_name">העגלה שלי</string>
+    <string name="cart_saved_toast">נשמר בשם ״%s״</string>
+    <string name="cart_no_saved">אין עדיין עגלות שמורות.</string>
+    <string name="cart_rename">שינוי שם</string>
+    <string name="cart_rename_title">שינוי שם העגלה</string>
+    <string name="cart_delete_confirm">למחוק את ״%s״?</string>
+    <string name="cart_delete_confirm_button">מחיקה</string>
+    <string name="cart_clear_confirm">להסיר את כל הפריטים מהעגלה הנוכחית?</string>
+    <string name="cart_clear_confirm_button">ניקוי</string>
+    <string name="cart_clear_items_only">ניקוי פריטים בלבד</string>
+    <string name="cart_clear_items_only_desc">מסיר את כל השורות מהעגלה אך שומר על המטבעות ועל צד העמלות הנוכחיים.</string>
+    <string name="cart_clear_reset_all">איפוס העגלה</string>
+    <string name="cart_clear_reset_all_desc">מסיר את כל השורות וטוען מחדש את מטבע המקור/היעד ואת צד העמלות מהמסך הראשי.</string>
+    <string name="cart_export_ok">העגלה יוצאה.</string>
+    <string name="cart_export_error">הייצוא נכשל: %s</string>
+    <string name="cart_import_ok">העגלה יובאה.</string>
+    <string name="cart_import_error">הייבוא נכשל: %s</string>
+    <string name="cart_share_empty">העגלה ריקה — אין מה לשתף.</string>
+    <string name="cart_save_empty">העגלה ריקה — אין מה לשמור.</string>
+    <string name="cart_share_default_title">עגלה</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">סכום ביניים: %1$s %2$s</string>
+    <string name="cart_share_converted">מומר: %1$s %2$s</string>
+    <string name="cart_share_fees">עמלות: %s%%</string>
+    <string name="cart_share_total">סה״כ: %1$s %2$s</string>
+    <string name="cart_unsaved_title">שינויים לא שמורים</string>
+    <string name="cart_unsaved_message">יש שינויים שלא נשמרו. מה ברצונך לעשות?</string>
+    <string name="cart_unsaved_save">שמירה</string>
+    <string name="cart_unsaved_save_as">שמירה כחדש</string>
+    <string name="cart_unsaved_discard">מחיקת השינויים</string>
+    <string name="cart_unsaved_continue">המשך</string>
 </resources>
