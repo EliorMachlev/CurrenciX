@@ -22,4 +22,70 @@
     <string name="quick_conversions_no_rates">Курсовете все още не са заредени.</string>
     <string name="quick_conversions_fees_applied">Приложени такси: %s</string>
     <string name="tooltip_filter_starred">Покажи само любимите курсове.</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Офлайн • Курсове от %1$s</string>
+    <string name="offline_banner_no_data">Офлайн • Все още няма кеширани курсове</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Последен обменен курс за последно използваната валутна двойка.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Към %s</string>
+    <string name="widget_footer_empty">Отворете приложението, за да заредите курсовете.</string>
+    <string name="widget_no_rate">Курсът е недостъпен</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Пазарска количка</string>
+    <string name="cart_empty_hint">Количката ви е празна. Докоснете „Добави артикул", за да започнете.</string>
+    <string name="cart_add_item">Добави артикул</string>
+    <string name="cart_item_name_hint">Артикул</string>
+    <string name="cart_item_expression_hint">Цена (напр. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Изтрий артикул</string>
+    <string name="cart_subtotal_label">Междинна сума</string>
+    <string name="cart_total_label">Общо</string>
+    <string name="cart_fee_line">Такси: %s%%</string>
+    <string name="cart_menu_save">Запази</string>
+    <string name="cart_menu_save_as">Запази като…</string>
+    <string name="cart_menu_load">Зареди</string>
+    <string name="cart_menu_export">Експортирай във файл</string>
+    <string name="cart_menu_import">Импортирай от файл</string>
+    <string name="cart_menu_clear">Изчисти</string>
+    <string name="cart_share_option_text">Обикновен текст</string>
+    <string name="cart_share_option_text_desc">Форматирано резюме, което можете да поставите в чат или приложение за бележки.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Файл за електронна таблица с по един ред за всеки артикул.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Документ за печат във вид на касова бележка.</string>
+    <string name="cart_save_name_hint">Име на количката</string>
+    <string name="cart_default_saved_name">Моята количка</string>
+    <string name="cart_saved_toast">Запазена като „%s"</string>
+    <string name="cart_no_saved">Все още няма запазени колички.</string>
+    <string name="cart_rename">Преименувай</string>
+    <string name="cart_rename_title">Преименуване на количка</string>
+    <string name="cart_delete_confirm">Да се изтрие ли „%s"?</string>
+    <string name="cart_delete_confirm_button">Изтрий</string>
+    <string name="cart_clear_confirm">Да се премахнат ли всички артикули от текущата количка?</string>
+    <string name="cart_clear_confirm_button">Изчисти</string>
+    <string name="cart_clear_items_only">Изчисти само артикулите</string>
+    <string name="cart_clear_items_only_desc">Премахва всички редове от количката, но запазва текущите валути и страната на таксите.</string>
+    <string name="cart_clear_reset_all">Нулирай количката</string>
+    <string name="cart_clear_reset_all_desc">Премахва всички редове и повторно взема базовата/целевата валута и страната на таксите от главния екран.</string>
+    <string name="cart_export_ok">Количката е експортирана.</string>
+    <string name="cart_export_error">Експортът е неуспешен: %s</string>
+    <string name="cart_import_ok">Количката е импортирана.</string>
+    <string name="cart_import_error">Импортът е неуспешен: %s</string>
+    <string name="cart_share_empty">Количката е празна — няма какво да се сподели.</string>
+    <string name="cart_save_empty">Количката е празна — няма какво да се запази.</string>
+    <string name="cart_share_default_title">Количка</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Междинна сума: %1$s %2$s</string>
+    <string name="cart_share_converted">Конвертирано: %1$s %2$s</string>
+    <string name="cart_share_fees">Такси: %s%%</string>
+    <string name="cart_share_total">Общо: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Незапазени промени</string>
+    <string name="cart_unsaved_message">Имате незапазени промени. Какво искате да направите?</string>
+    <string name="cart_unsaved_save">Запази</string>
+    <string name="cart_unsaved_save_as">Запази като нова</string>
+    <string name="cart_unsaved_discard">Отхвърли промените</string>
+    <string name="cart_unsaved_continue">Продължи</string>
 </resources>

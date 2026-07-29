@@ -22,4 +22,71 @@
     <string name="quick_conversions_no_rates">Kursene er ikke lastet inn ennå.</string>
     <string name="quick_conversions_fees_applied">Anvendte gebyrer: %s</string>
     <string name="tooltip_filter_starred">Vis kun favorittvalutaer.</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Frakoblet • Kurser fra %1$s</string>
+    <string name="offline_banner_no_data">Frakoblet • Ingen mellomlagrede kurser ennå</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Nyeste omregningskurs for det sist brukte valutaparet ditt.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Pr. %s</string>
+    <string name="widget_footer_empty">Åpne appen for å laste kurser.</string>
+    <string name="widget_no_rate">Kurs utilgjengelig</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Handlekurv</string>
+    <string name="cart_empty_hint">Handlekurven er tom. Trykk «Legg til vare» for å starte.</string>
+    <string name="cart_add_item">Legg til vare</string>
+    <string name="cart_item_name_hint">Vare</string>
+    <string name="cart_item_expression_hint">Pris (f.eks. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Slett vare</string>
+    <string name="cart_subtotal_label">Delsum</string>
+    <string name="cart_total_label">Totalt</string>
+    <string name="cart_fee_line">Gebyrer: %s%%</string>
+    <string name="cart_menu_save">Lagre</string>
+    <string name="cart_menu_save_as">Lagre som…</string>
+    <string name="cart_menu_load">Last inn</string>
+    <string name="cart_menu_export">Eksporter til fil</string>
+    <string name="cart_menu_import">Importer fra fil</string>
+    <string name="cart_menu_clear">Tøm</string>
+    <string name="cart_share_option_text">Ren tekst</string>
+    <string name="cart_share_option_text_desc">Formatert oversikt du kan lime inn i en chat eller notatapp.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Regnearkfil med én rad per vare.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Utskriftsvennlig dokument i kvitteringsstil.</string>
+    <string name="cart_save_name_hint">Navn på handlekurv</string>
+    <string name="cart_default_saved_name">Min handlekurv</string>
+    <string name="cart_saved_toast">Lagret som «%s»</string>
+    <string name="cart_no_saved">Ingen lagrede handlekurver ennå.</string>
+    <string name="cart_rename">Gi nytt navn</string>
+    <string name="cart_rename_title">Gi handlekurven nytt navn</string>
+    <string name="cart_delete_confirm">Slette «%s»?</string>
+    <string name="cart_delete_confirm_button">Slett</string>
+    <string name="cart_clear_confirm">Fjerne alle varer fra gjeldende handlekurv?</string>
+    <string name="cart_clear_confirm_button">Tøm</string>
+    <string name="cart_clear_items_only">Tøm kun varer</string>
+    <string name="cart_clear_items_only_desc">Fjerner alle rader fra handlekurven, men beholder gjeldende valutaer og gebyrside.</string>
+    <string name="cart_clear_reset_all">Tilbakestill handlekurv</string>
+    <string name="cart_clear_reset_all_desc">Fjerner alle rader og henter basis-/målvaluta og gebyrside på nytt fra hovedskjermen.</string>
+    <string name="cart_export_ok">Handlekurv eksportert.</string>
+    <string name="cart_export_error">Eksport mislyktes: %s</string>
+    <string name="cart_import_ok">Handlekurv importert.</string>
+    <string name="cart_import_error">Import mislyktes: %s</string>
+    <string name="cart_share_empty">Handlekurven er tom — ingenting å dele.</string>
+    <string name="cart_save_empty">Handlekurven er tom — ingenting å lagre.</string>
+    <string name="cart_share_default_title">Handlekurv</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Delsum: %1$s %2$s</string>
+    <string name="cart_share_converted">Omregnet: %1$s %2$s</string>
+    <string name="cart_share_fees">Gebyrer: %s%%</string>
+    <string name="cart_share_total">Totalt: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Ulagrede endringer</string>
+    <string name="cart_unsaved_message">Du har ulagrede endringer. Hva vil du gjøre?</string>
+    <string name="cart_unsaved_save">Lagre</string>
+    <string name="cart_unsaved_save_as">Lagre som ny</string>
+    <string name="cart_unsaved_discard">Forkast endringer</string>
+    <string name="cart_unsaved_continue">Fortsett</string>
 </resources>

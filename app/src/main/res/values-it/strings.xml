@@ -28,4 +28,71 @@
     <string name="quick_conversions_fees_applied">Commissioni applicate: %s</string>
     <string name="tooltip_filter_starred">Mostra solo le valute stellate.</string>
     <string name="currency_dropdown_api_hint">Manca qualcosa? Diversi fornitori di dati offrono valute diverse. Vai nelle impostazioni per provarne un altro! 🤗</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Tassi del %1$s</string>
+    <string name="offline_banner_no_data">Offline • Nessun tasso in cache</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Ultimo tasso di conversione per la tua ultima coppia di valute usata.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Al %s</string>
+    <string name="widget_footer_empty">Apri l\'app per caricare i tassi.</string>
+    <string name="widget_no_rate">Tasso non disponibile</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Carrello</string>
+    <string name="cart_empty_hint">Il tuo carrello è vuoto. Tocca «Aggiungi articolo» per iniziare.</string>
+    <string name="cart_add_item">Aggiungi articolo</string>
+    <string name="cart_item_name_hint">Articolo</string>
+    <string name="cart_item_expression_hint">Prezzo (es. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Elimina articolo</string>
+    <string name="cart_subtotal_label">Subtotale</string>
+    <string name="cart_total_label">Totale</string>
+    <string name="cart_fee_line">Commissioni: %s%%</string>
+    <string name="cart_menu_save">Salva</string>
+    <string name="cart_menu_save_as">Salva con nome…</string>
+    <string name="cart_menu_load">Carica</string>
+    <string name="cart_menu_export">Esporta su file</string>
+    <string name="cart_menu_import">Importa da file</string>
+    <string name="cart_menu_clear">Svuota</string>
+    <string name="cart_share_option_text">Testo semplice</string>
+    <string name="cart_share_option_text_desc">Riepilogo formattato da incollare in chat o in un\'app di note.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">File foglio di calcolo con una riga per articolo.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Documento stampabile in stile ricevuta.</string>
+    <string name="cart_save_name_hint">Nome carrello</string>
+    <string name="cart_default_saved_name">Il mio carrello</string>
+    <string name="cart_saved_toast">Salvato come «%s»</string>
+    <string name="cart_no_saved">Nessun carrello salvato.</string>
+    <string name="cart_rename">Rinomina</string>
+    <string name="cart_rename_title">Rinomina carrello</string>
+    <string name="cart_delete_confirm">Eliminare «%s»?</string>
+    <string name="cart_delete_confirm_button">Elimina</string>
+    <string name="cart_clear_confirm">Rimuovere tutti gli articoli dal carrello attuale?</string>
+    <string name="cart_clear_confirm_button">Svuota</string>
+    <string name="cart_clear_items_only">Svuota solo articoli</string>
+    <string name="cart_clear_items_only_desc">Rimuove tutte le righe dal carrello ma mantiene le valute e il lato commissioni correnti.</string>
+    <string name="cart_clear_reset_all">Reimposta carrello</string>
+    <string name="cart_clear_reset_all_desc">Rimuove tutte le righe e ripristina valuta di partenza/destinazione e lato commissioni dalla schermata principale.</string>
+    <string name="cart_export_ok">Carrello esportato.</string>
+    <string name="cart_export_error">Esportazione non riuscita: %s</string>
+    <string name="cart_import_ok">Carrello importato.</string>
+    <string name="cart_import_error">Importazione non riuscita: %s</string>
+    <string name="cart_share_empty">Il carrello è vuoto — niente da condividere.</string>
+    <string name="cart_save_empty">Il carrello è vuoto — niente da salvare.</string>
+    <string name="cart_share_default_title">Carrello</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Subtotale: %1$s %2$s</string>
+    <string name="cart_share_converted">Convertito: %1$s %2$s</string>
+    <string name="cart_share_fees">Commissioni: %s%%</string>
+    <string name="cart_share_total">Totale: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Modifiche non salvate</string>
+    <string name="cart_unsaved_message">Ci sono modifiche non salvate. Cosa vuoi fare?</string>
+    <string name="cart_unsaved_save">Salva</string>
+    <string name="cart_unsaved_save_as">Salva come nuovo</string>
+    <string name="cart_unsaved_discard">Annulla modifiche</string>
+    <string name="cart_unsaved_continue">Continua</string>
 </resources>

@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">کارمزدهای اعمال‌شده: %s</string>
     <string name="tooltip_filter_starred">تنها ارز های ستاره‌دار را نمایش دهید.</string>
     <string name="currency_dropdown_api_hint">نمی توانید ارز دلخواه خود را پیدا کنید؟ فراهم‌گران متفاوت ارز‌های متفاوت ارائه می‌کنند. به پیکربندی‌ها بروید و یکی دیگر را بیازمایید! \u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">آفلاین • نرخ‌ها از %1$s</string>
+    <string name="offline_banner_no_data">آفلاین • هنوز نرخی ذخیره نشده است</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">آخرین نرخ تبدیل برای آخرین جفت‌ارز استفاده‌شده.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">به تاریخ %s</string>
+    <string name="widget_footer_empty">برای بارگیری نرخ‌ها برنامه را باز کنید.</string>
+    <string name="widget_no_rate">نرخ در دسترس نیست</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">سبد خرید</string>
+    <string name="cart_empty_hint">سبد شما خالی است. برای شروع روی «افزودن مورد» بزنید.</string>
+    <string name="cart_add_item">افزودن مورد</string>
+    <string name="cart_item_name_hint">مورد</string>
+    <string name="cart_item_expression_hint">قیمت (مثلاً 2 × 3.50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">حذف مورد</string>
+    <string name="cart_subtotal_label">جمع جزء</string>
+    <string name="cart_total_label">مجموع</string>
+    <string name="cart_fee_line">کارمزد: %s%%</string>
+    <string name="cart_menu_save">ذخیره</string>
+    <string name="cart_menu_save_as">ذخیره با نام…</string>
+    <string name="cart_menu_load">بارگذاری</string>
+    <string name="cart_menu_export">خروجی به فایل</string>
+    <string name="cart_menu_import">ورودی از فایل</string>
+    <string name="cart_menu_clear">پاک کردن</string>
+    <string name="cart_share_option_text">متن ساده</string>
+    <string name="cart_share_option_text_desc">خلاصهٔ قالب‌بندی‌شده که می‌توانید در چت یا برنامهٔ یادداشت بچسبانید.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">فایل صفحه‌گسترده با یک ردیف برای هر مورد.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">سند قابل چاپ به سبک رسید.</string>
+    <string name="cart_save_name_hint">نام سبد</string>
+    <string name="cart_default_saved_name">سبد من</string>
+    <string name="cart_saved_toast">با نام «%s» ذخیره شد</string>
+    <string name="cart_no_saved">هنوز سبدی ذخیره نشده است.</string>
+    <string name="cart_rename">تغییر نام</string>
+    <string name="cart_rename_title">تغییر نام سبد</string>
+    <string name="cart_delete_confirm">«%s» حذف شود؟</string>
+    <string name="cart_delete_confirm_button">حذف</string>
+    <string name="cart_clear_confirm">همهٔ موارد از سبد فعلی حذف شوند؟</string>
+    <string name="cart_clear_confirm_button">پاک کردن</string>
+    <string name="cart_clear_items_only">فقط پاک کردن موارد</string>
+    <string name="cart_clear_items_only_desc">همهٔ ردیف‌ها را از سبد حذف می‌کند اما ارزهای فعلی و سمت کارمزد را نگه می‌دارد.</string>
+    <string name="cart_clear_reset_all">بازنشانی سبد</string>
+    <string name="cart_clear_reset_all_desc">همهٔ ردیف‌ها را حذف کرده و ارز مبدأ / مقصد و سمت کارمزد را از صفحهٔ اصلی دوباره می‌گیرد.</string>
+    <string name="cart_export_ok">سبد صادر شد.</string>
+    <string name="cart_export_error">خروجی ناموفق بود: %s</string>
+    <string name="cart_import_ok">سبد وارد شد.</string>
+    <string name="cart_import_error">ورودی ناموفق بود: %s</string>
+    <string name="cart_share_empty">سبد خالی است — چیزی برای اشتراک‌گذاری نیست.</string>
+    <string name="cart_save_empty">سبد خالی است — چیزی برای ذخیره نیست.</string>
+    <string name="cart_share_default_title">سبد</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">جمع جزء: %1$s %2$s</string>
+    <string name="cart_share_converted">تبدیل‌شده: %1$s %2$s</string>
+    <string name="cart_share_fees">کارمزد: %s%%</string>
+    <string name="cart_share_total">مجموع: %1$s %2$s</string>
+    <string name="cart_unsaved_title">تغییرات ذخیره‌نشده</string>
+    <string name="cart_unsaved_message">تغییرات ذخیره‌نشده دارید. می‌خواهید چه کنید؟</string>
+    <string name="cart_unsaved_save">ذخیره</string>
+    <string name="cart_unsaved_save_as">ذخیره به‌عنوان جدید</string>
+    <string name="cart_unsaved_discard">نادیده گرفتن تغییرات</string>
+    <string name="cart_unsaved_continue">ادامه</string>
 </resources>

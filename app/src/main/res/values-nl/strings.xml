@@ -28,4 +28,71 @@
     <string name="quick_conversions_fees_applied">Toegepaste kosten: %s</string>
     <string name="tooltip_filter_starred">Toon alleen favoriete valuta\'s.</string>
     <string name="currency_dropdown_api_hint">Ontbreekt er iets? Verschillende dataproviders bieden verschillende valuta\'s aan. Ga naar de instellingen om een andere te proberen! 🤗</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Koersen van %1$s</string>
+    <string name="offline_banner_no_data">Offline • Nog geen koersen in cache</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Meest recente wisselkoers voor je laatst gebruikte valutapaar.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Per %s</string>
+    <string name="widget_footer_empty">Open de app om koersen te laden.</string>
+    <string name="widget_no_rate">Koers niet beschikbaar</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Winkelwagen</string>
+    <string name="cart_empty_hint">Je winkelwagen is leeg. Tik op ‘Artikel toevoegen’ om te beginnen.</string>
+    <string name="cart_add_item">Artikel toevoegen</string>
+    <string name="cart_item_name_hint">Artikel</string>
+    <string name="cart_item_expression_hint">Prijs (bijv. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Artikel verwijderen</string>
+    <string name="cart_subtotal_label">Subtotaal</string>
+    <string name="cart_total_label">Totaal</string>
+    <string name="cart_fee_line">Kosten: %s%%</string>
+    <string name="cart_menu_save">Opslaan</string>
+    <string name="cart_menu_save_as">Opslaan als…</string>
+    <string name="cart_menu_load">Laden</string>
+    <string name="cart_menu_export">Exporteren naar bestand</string>
+    <string name="cart_menu_import">Importeren uit bestand</string>
+    <string name="cart_menu_clear">Wissen</string>
+    <string name="cart_share_option_text">Platte tekst</string>
+    <string name="cart_share_option_text_desc">Opgemaakte samenvatting die je in een chat of notitie-app kunt plakken.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Spreadsheetbestand met één rij per artikel.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Afdrukbaar document in bonstijl.</string>
+    <string name="cart_save_name_hint">Naam winkelwagen</string>
+    <string name="cart_default_saved_name">Mijn winkelwagen</string>
+    <string name="cart_saved_toast">Opgeslagen als ‘%s’</string>
+    <string name="cart_no_saved">Nog geen opgeslagen winkelwagens.</string>
+    <string name="cart_rename">Naam wijzigen</string>
+    <string name="cart_rename_title">Winkelwagen hernoemen</string>
+    <string name="cart_delete_confirm">‘%s’ verwijderen?</string>
+    <string name="cart_delete_confirm_button">Verwijderen</string>
+    <string name="cart_clear_confirm">Alle artikelen uit de huidige winkelwagen verwijderen?</string>
+    <string name="cart_clear_confirm_button">Wissen</string>
+    <string name="cart_clear_items_only">Alleen artikelen wissen</string>
+    <string name="cart_clear_items_only_desc">Verwijdert alle regels uit de winkelwagen maar behoudt de huidige valuta\'s en kostenzijde.</string>
+    <string name="cart_clear_reset_all">Winkelwagen resetten</string>
+    <string name="cart_clear_reset_all_desc">Verwijdert alle regels en haalt de basis-/doelvaluta en de kostenzijde opnieuw op van het hoofdscherm.</string>
+    <string name="cart_export_ok">Winkelwagen geëxporteerd.</string>
+    <string name="cart_export_error">Exporteren mislukt: %s</string>
+    <string name="cart_import_ok">Winkelwagen geïmporteerd.</string>
+    <string name="cart_import_error">Importeren mislukt: %s</string>
+    <string name="cart_share_empty">Winkelwagen is leeg — niets om te delen.</string>
+    <string name="cart_save_empty">Winkelwagen is leeg — niets om op te slaan.</string>
+    <string name="cart_share_default_title">Winkelwagen</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Subtotaal: %1$s %2$s</string>
+    <string name="cart_share_converted">Omgerekend: %1$s %2$s</string>
+    <string name="cart_share_fees">Kosten: %s%%</string>
+    <string name="cart_share_total">Totaal: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Niet-opgeslagen wijzigingen</string>
+    <string name="cart_unsaved_message">Je hebt niet-opgeslagen wijzigingen. Wat wil je doen?</string>
+    <string name="cart_unsaved_save">Opslaan</string>
+    <string name="cart_unsaved_save_as">Opslaan als nieuw</string>
+    <string name="cart_unsaved_discard">Wijzigingen negeren</string>
+    <string name="cart_unsaved_continue">Doorgaan</string>
 </resources>

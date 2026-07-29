@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">Uygulanan ücretler: %s</string>
     <string name="tooltip_filter_starred">Sadece favori para birimlerini göster.</string>
     <string name="currency_dropdown_api_hint">Eksik bir şey mi var? Farklı veri sağlayıcıları farklı para birimleri sunar. Başka bir tane denemek için ayarlara gidin!\u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Çevrimdışı • Kurlar: %1$s</string>
+    <string name="offline_banner_no_data">Çevrimdışı • Henüz önbelleğe alınmış kur yok</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Son kullandığınız para birimi çifti için en güncel dönüşüm kuru.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">%s tarihi itibarıyla</string>
+    <string name="widget_footer_empty">Kurları yüklemek için uygulamayı açın.</string>
+    <string name="widget_no_rate">Kur mevcut değil</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Alışveriş sepeti</string>
+    <string name="cart_empty_hint">Sepetiniz boş. Başlamak için "Öğe ekle"ye dokunun.</string>
+    <string name="cart_add_item">Öğe ekle</string>
+    <string name="cart_item_name_hint">Öğe</string>
+    <string name="cart_item_expression_hint">Fiyat (ör. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Öğeyi sil</string>
+    <string name="cart_subtotal_label">Ara toplam</string>
+    <string name="cart_total_label">Toplam</string>
+    <string name="cart_fee_line">Ücretler: %%%s</string>
+    <string name="cart_menu_save">Kaydet</string>
+    <string name="cart_menu_save_as">Farklı kaydet…</string>
+    <string name="cart_menu_load">Yükle</string>
+    <string name="cart_menu_export">Dosyaya aktar</string>
+    <string name="cart_menu_import">Dosyadan içe aktar</string>
+    <string name="cart_menu_clear">Temizle</string>
+    <string name="cart_share_option_text">Düz metin</string>
+    <string name="cart_share_option_text_desc">Bir sohbete veya not uygulamasına yapıştırabileceğiniz biçimlendirilmiş özet.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Her öğe için bir satır içeren elektronik tablo dosyası.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Fiş biçiminde yazdırılabilir belge.</string>
+    <string name="cart_save_name_hint">Sepet adı</string>
+    <string name="cart_default_saved_name">Sepetim</string>
+    <string name="cart_saved_toast">"%s" olarak kaydedildi</string>
+    <string name="cart_no_saved">Henüz kaydedilmiş sepet yok.</string>
+    <string name="cart_rename">Yeniden adlandır</string>
+    <string name="cart_rename_title">Sepeti yeniden adlandır</string>
+    <string name="cart_delete_confirm">"%s" silinsin mi?</string>
+    <string name="cart_delete_confirm_button">Sil</string>
+    <string name="cart_clear_confirm">Mevcut sepetteki tüm öğeler kaldırılsın mı?</string>
+    <string name="cart_clear_confirm_button">Temizle</string>
+    <string name="cart_clear_items_only">Yalnızca öğeleri temizle</string>
+    <string name="cart_clear_items_only_desc">Sepetteki tüm satırları kaldırır, ancak mevcut para birimlerini ve ücret tarafını korur.</string>
+    <string name="cart_clear_reset_all">Sepeti sıfırla</string>
+    <string name="cart_clear_reset_all_desc">Tüm satırları kaldırır ve temel/hedef para birimini ile ücret tarafını ana ekrandan yeniden alır.</string>
+    <string name="cart_export_ok">Sepet dışa aktarıldı.</string>
+    <string name="cart_export_error">Dışa aktarma başarısız: %s</string>
+    <string name="cart_import_ok">Sepet içe aktarıldı.</string>
+    <string name="cart_import_error">İçe aktarma başarısız: %s</string>
+    <string name="cart_share_empty">Sepet boş — paylaşılacak bir şey yok.</string>
+    <string name="cart_save_empty">Sepet boş — kaydedilecek bir şey yok.</string>
+    <string name="cart_share_default_title">Sepet</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Ara toplam: %1$s %2$s</string>
+    <string name="cart_share_converted">Dönüştürülmüş: %1$s %2$s</string>
+    <string name="cart_share_fees">Ücretler: %%%s</string>
+    <string name="cart_share_total">Toplam: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Kaydedilmemiş değişiklikler</string>
+    <string name="cart_unsaved_message">Kaydedilmemiş değişiklikleriniz var. Ne yapmak istersiniz?</string>
+    <string name="cart_unsaved_save">Kaydet</string>
+    <string name="cart_unsaved_save_as">Yeni olarak kaydet</string>
+    <string name="cart_unsaved_discard">Değişiklikleri sil</string>
+    <string name="cart_unsaved_continue">Devam et</string>
 </resources>

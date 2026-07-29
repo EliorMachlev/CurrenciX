@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">الرسوم المطبقة: %s</string>
     <string name="tooltip_filter_starred">إظهار العملات المميزة بنجمة فقط.</string>
     <string name="currency_dropdown_api_hint">شيء مفقود؟ يقدم موفرو البيانات المختلفون عملات مختلفة. انتقل إلى الإعدادات لتجربة مصدر أخر! 🤗</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">غير متصل • الأسعار من %1$s</string>
+    <string name="offline_banner_no_data">غير متصل • لا توجد أسعار مخزنة بعد</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">أحدث سعر تحويل لآخر زوج عملات استخدمته.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">بتاريخ %s</string>
+    <string name="widget_footer_empty">افتح التطبيق لتحميل الأسعار.</string>
+    <string name="widget_no_rate">السعر غير متاح</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">سلة التسوق</string>
+    <string name="cart_empty_hint">سلتك فارغة. اضغط على «إضافة عنصر» للبدء.</string>
+    <string name="cart_add_item">إضافة عنصر</string>
+    <string name="cart_item_name_hint">العنصر</string>
+    <string name="cart_item_expression_hint">السعر (مثلاً 2 × 3.50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">حذف العنصر</string>
+    <string name="cart_subtotal_label">المجموع الفرعي</string>
+    <string name="cart_total_label">الإجمالي</string>
+    <string name="cart_fee_line">الرسوم: %s%%</string>
+    <string name="cart_menu_save">حفظ</string>
+    <string name="cart_menu_save_as">حفظ باسم…</string>
+    <string name="cart_menu_load">تحميل</string>
+    <string name="cart_menu_export">تصدير إلى ملف</string>
+    <string name="cart_menu_import">استيراد من ملف</string>
+    <string name="cart_menu_clear">مسح</string>
+    <string name="cart_share_option_text">نص عادي</string>
+    <string name="cart_share_option_text_desc">ملخص منسق يمكنك لصقه في محادثة أو تطبيق ملاحظات.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">ملف جدول بيانات بصف واحد لكل عنصر.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">مستند قابل للطباعة بنمط الإيصال.</string>
+    <string name="cart_save_name_hint">اسم السلة</string>
+    <string name="cart_default_saved_name">سلتي</string>
+    <string name="cart_saved_toast">تم الحفظ باسم «%s»</string>
+    <string name="cart_no_saved">لا توجد سلال محفوظة بعد.</string>
+    <string name="cart_rename">إعادة تسمية</string>
+    <string name="cart_rename_title">إعادة تسمية السلة</string>
+    <string name="cart_delete_confirm">حذف «%s»؟</string>
+    <string name="cart_delete_confirm_button">حذف</string>
+    <string name="cart_clear_confirm">إزالة جميع العناصر من السلة الحالية؟</string>
+    <string name="cart_clear_confirm_button">مسح</string>
+    <string name="cart_clear_items_only">مسح العناصر فقط</string>
+    <string name="cart_clear_items_only_desc">يزيل جميع الصفوف من السلة مع الاحتفاظ بالعملات الحالية وجانب الرسوم.</string>
+    <string name="cart_clear_reset_all">إعادة تعيين السلة</string>
+    <string name="cart_clear_reset_all_desc">يزيل جميع الصفوف ويعيد جلب العملة الأساسية / الوجهة وجانب الرسوم من الشاشة الرئيسية.</string>
+    <string name="cart_export_ok">تم تصدير السلة.</string>
+    <string name="cart_export_error">فشل التصدير: %s</string>
+    <string name="cart_import_ok">تم استيراد السلة.</string>
+    <string name="cart_import_error">فشل الاستيراد: %s</string>
+    <string name="cart_share_empty">السلة فارغة — لا شيء للمشاركة.</string>
+    <string name="cart_save_empty">السلة فارغة — لا شيء للحفظ.</string>
+    <string name="cart_share_default_title">السلة</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">المجموع الفرعي: %1$s %2$s</string>
+    <string name="cart_share_converted">المحوَّل: %1$s %2$s</string>
+    <string name="cart_share_fees">الرسوم: %s%%</string>
+    <string name="cart_share_total">الإجمالي: %1$s %2$s</string>
+    <string name="cart_unsaved_title">تغييرات غير محفوظة</string>
+    <string name="cart_unsaved_message">لديك تغييرات غير محفوظة. ماذا تريد أن تفعل؟</string>
+    <string name="cart_unsaved_save">حفظ</string>
+    <string name="cart_unsaved_save_as">حفظ كجديد</string>
+    <string name="cart_unsaved_discard">تجاهل التغييرات</string>
+    <string name="cart_unsaved_continue">متابعة</string>
 </resources>

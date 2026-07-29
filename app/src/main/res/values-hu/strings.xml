@@ -22,4 +22,70 @@
     <string name="quick_conversions_no_rates">Az árfolyamok még nincsenek betöltve.</string>
     <string name="quick_conversions_fees_applied">Alkalmazott díjak: %s</string>
     <string name="tooltip_filter_starred">Csak a kedvenc valuták megjelenítése.</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Árfolyamok innen: %1$s</string>
+    <string name="offline_banner_no_data">Offline • Még nincsenek gyorsítótárazott árfolyamok</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">A legutóbb használt pénznempár legfrissebb átváltási árfolyama.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Ekkori állapot: %s</string>
+    <string name="widget_footer_empty">Nyisd meg az alkalmazást az árfolyamok betöltéséhez.</string>
+    <string name="widget_no_rate">Árfolyam nem elérhető</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Bevásárlókosár</string>
+    <string name="cart_empty_hint">A kosarad üres. Koppints a „Tétel hozzáadása" gombra a kezdéshez.</string>
+    <string name="cart_add_item">Tétel hozzáadása</string>
+    <string name="cart_item_name_hint">Tétel</string>
+    <string name="cart_item_expression_hint">Ár (pl. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Tétel törlése</string>
+    <string name="cart_subtotal_label">Részösszeg</string>
+    <string name="cart_total_label">Összesen</string>
+    <string name="cart_fee_line">Díjak: %s%%</string>
+    <string name="cart_menu_save">Mentés</string>
+    <string name="cart_menu_save_as">Mentés másként…</string>
+    <string name="cart_menu_load">Betöltés</string>
+    <string name="cart_menu_export">Exportálás fájlba</string>
+    <string name="cart_menu_import">Importálás fájlból</string>
+    <string name="cart_menu_clear">Törlés</string>
+    <string name="cart_share_option_text">Egyszerű szöveg</string>
+    <string name="cart_share_option_text_desc">Formázott összegzés, amit beilleszthetsz csevegésbe vagy jegyzetalkalmazásba.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Táblázatfájl, tételenként egy sorral.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Nyomtatható, blokk stílusú dokumentum.</string>
+    <string name="cart_save_name_hint">Kosár neve</string>
+    <string name="cart_default_saved_name">Kosaram</string>
+    <string name="cart_saved_toast">Mentve „%s" néven</string>
+    <string name="cart_no_saved">Még nincsenek mentett kosarak.</string>
+    <string name="cart_rename">Átnevezés</string>
+    <string name="cart_rename_title">Kosár átnevezése</string>
+    <string name="cart_delete_confirm">Törlöd a következőt: „%s"?</string>
+    <string name="cart_delete_confirm_button">Törlés</string>
+    <string name="cart_clear_confirm">Eltávolítasz minden tételt az aktuális kosárból?</string>
+    <string name="cart_clear_confirm_button">Törlés</string>
+    <string name="cart_clear_items_only">Csak tételek törlése</string>
+    <string name="cart_clear_items_only_desc">Minden sort eltávolít a kosárból, de megőrzi az aktuális pénznemeket és a díjak oldalát.</string>
+    <string name="cart_clear_reset_all">Kosár visszaállítása</string>
+    <string name="cart_clear_reset_all_desc">Minden sort eltávolít, és újra beolvassa az alap/cél pénznemet és a díjak oldalát a főképernyőről.</string>
+    <string name="cart_export_ok">Kosár exportálva.</string>
+    <string name="cart_export_error">Az exportálás sikertelen: %s</string>
+    <string name="cart_import_ok">Kosár importálva.</string>
+    <string name="cart_import_error">Az importálás sikertelen: %s</string>
+    <string name="cart_share_empty">A kosár üres — nincs mit megosztani.</string>
+    <string name="cart_save_empty">A kosár üres — nincs mit menteni.</string>
+    <string name="cart_share_default_title">Kosár</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Részösszeg: %1$s %2$s</string>
+    <string name="cart_share_converted">Átváltva: %1$s %2$s</string>
+    <string name="cart_share_fees">Díjak: %s%%</string>
+    <string name="cart_share_total">Összesen: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Mentetlen módosítások</string>
+    <string name="cart_unsaved_message">Mentetlen módosításaid vannak. Mit szeretnél tenni?</string>
+    <string name="cart_unsaved_save">Mentés</string>
+    <string name="cart_unsaved_save_as">Mentés újként</string>
+    <string name="cart_unsaved_discard">Módosítások elvetése</string>
+    <string name="cart_unsaved_continue">Folytatás</string>
 </resources>

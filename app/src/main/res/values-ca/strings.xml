@@ -28,4 +28,71 @@
     <string name="quick_conversions_fees_applied">Comissions aplicades: %s</string>
     <string name="tooltip_filter_starred">Mostra només les monedes preferides.</string>
     <string name="currency_dropdown_api_hint">Us falta res? Els diversos proveïdors de dades ofereixen divises diferents. Aneu a la configuració per a provar-ne d\'altres! 🤗</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Sense connexió • Taxes del %1$s</string>
+    <string name="offline_banner_no_data">Sense connexió • Encara no hi ha taxes en cau</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Última taxa de conversió per al teu últim parell de monedes utilitzat.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">A data de %s</string>
+    <string name="widget_footer_empty">Obre l\'aplicació per carregar les taxes.</string>
+    <string name="widget_no_rate">Taxa no disponible</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Cistella de la compra</string>
+    <string name="cart_empty_hint">La cistella és buida. Toca «Afegeix article» per començar.</string>
+    <string name="cart_add_item">Afegeix article</string>
+    <string name="cart_item_name_hint">Article</string>
+    <string name="cart_item_expression_hint">Preu (p. ex. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Suprimeix article</string>
+    <string name="cart_subtotal_label">Subtotal</string>
+    <string name="cart_total_label">Total</string>
+    <string name="cart_fee_line">Comissions: %s%%</string>
+    <string name="cart_menu_save">Desa</string>
+    <string name="cart_menu_save_as">Anomena i desa…</string>
+    <string name="cart_menu_load">Carrega</string>
+    <string name="cart_menu_export">Exporta a fitxer</string>
+    <string name="cart_menu_import">Importa des de fitxer</string>
+    <string name="cart_menu_clear">Buida</string>
+    <string name="cart_share_option_text">Text sense format</string>
+    <string name="cart_share_option_text_desc">Resum amb format per enganxar en un xat o en una app de notes.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Fitxer de full de càlcul amb una fila per article.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Document imprimible en estil rebut.</string>
+    <string name="cart_save_name_hint">Nom de la cistella</string>
+    <string name="cart_default_saved_name">La meva cistella</string>
+    <string name="cart_saved_toast">Desada com a «%s»</string>
+    <string name="cart_no_saved">Encara no hi ha cistelles desades.</string>
+    <string name="cart_rename">Reanomena</string>
+    <string name="cart_rename_title">Reanomena la cistella</string>
+    <string name="cart_delete_confirm">Voleu suprimir «%s»?</string>
+    <string name="cart_delete_confirm_button">Suprimeix</string>
+    <string name="cart_clear_confirm">Voleu eliminar tots els articles de la cistella actual?</string>
+    <string name="cart_clear_confirm_button">Buida</string>
+    <string name="cart_clear_items_only">Buida només els articles</string>
+    <string name="cart_clear_items_only_desc">Elimina totes les files de la cistella però manté les monedes i el costat de comissions actuals.</string>
+    <string name="cart_clear_reset_all">Reinicia la cistella</string>
+    <string name="cart_clear_reset_all_desc">Elimina totes les files i torna a obtenir la moneda base/destinació i el costat de comissions de la pantalla principal.</string>
+    <string name="cart_export_ok">Cistella exportada.</string>
+    <string name="cart_export_error">L\'exportació ha fallat: %s</string>
+    <string name="cart_import_ok">Cistella importada.</string>
+    <string name="cart_import_error">La importació ha fallat: %s</string>
+    <string name="cart_share_empty">La cistella és buida — no hi ha res per compartir.</string>
+    <string name="cart_save_empty">La cistella és buida — no hi ha res per desar.</string>
+    <string name="cart_share_default_title">Cistella</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
+    <string name="cart_share_converted">Convertit: %1$s %2$s</string>
+    <string name="cart_share_fees">Comissions: %s%%</string>
+    <string name="cart_share_total">Total: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Canvis no desats</string>
+    <string name="cart_unsaved_message">Hi ha canvis no desats. Què vols fer?</string>
+    <string name="cart_unsaved_save">Desa</string>
+    <string name="cart_unsaved_save_as">Desa com a nou</string>
+    <string name="cart_unsaved_discard">Descarta els canvis</string>
+    <string name="cart_unsaved_continue">Continua</string>
 </resources>

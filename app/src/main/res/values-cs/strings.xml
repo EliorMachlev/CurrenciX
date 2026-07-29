@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">Použité poplatky: %s</string>
     <string name="tooltip_filter_starred">Zobrazit pouze oblíbené měny.</string>
     <string name="currency_dropdown_api_hint">Chybí tu něco? Různí poskytovatelé dat poskytují různé měny. Zajděte do nastavení a vyzkoušejte jiného!\u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Kurzy z %1$s</string>
+    <string name="offline_banner_no_data">Offline • Zatím žádné uložené kurzy</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Nejnovější směnný kurz pro naposledy použitou dvojici měn.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Ke dni %s</string>
+    <string name="widget_footer_empty">Otevřete aplikaci a načtěte kurzy.</string>
+    <string name="widget_no_rate">Kurz není k dispozici</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Košík</string>
+    <string name="cart_empty_hint">Košík je prázdný. Klepněte na „Přidat položku“ pro začátek.</string>
+    <string name="cart_add_item">Přidat položku</string>
+    <string name="cart_item_name_hint">Položka</string>
+    <string name="cart_item_expression_hint">Cena (např. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Smazat položku</string>
+    <string name="cart_subtotal_label">Mezisoučet</string>
+    <string name="cart_total_label">Celkem</string>
+    <string name="cart_fee_line">Poplatky: %s%%</string>
+    <string name="cart_menu_save">Uložit</string>
+    <string name="cart_menu_save_as">Uložit jako…</string>
+    <string name="cart_menu_load">Načíst</string>
+    <string name="cart_menu_export">Exportovat do souboru</string>
+    <string name="cart_menu_import">Importovat ze souboru</string>
+    <string name="cart_menu_clear">Vymazat</string>
+    <string name="cart_share_option_text">Prostý text</string>
+    <string name="cart_share_option_text_desc">Formátované shrnutí, které lze vložit do chatu nebo poznámek.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Tabulkový soubor s jedním řádkem na položku.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Tisknutelný dokument ve stylu účtenky.</string>
+    <string name="cart_save_name_hint">Název košíku</string>
+    <string name="cart_default_saved_name">Můj košík</string>
+    <string name="cart_saved_toast">Uloženo jako „%s“</string>
+    <string name="cart_no_saved">Zatím žádné uložené košíky.</string>
+    <string name="cart_rename">Přejmenovat</string>
+    <string name="cart_rename_title">Přejmenovat košík</string>
+    <string name="cart_delete_confirm">Smazat „%s“?</string>
+    <string name="cart_delete_confirm_button">Smazat</string>
+    <string name="cart_clear_confirm">Odstranit všechny položky z aktuálního košíku?</string>
+    <string name="cart_clear_confirm_button">Vymazat</string>
+    <string name="cart_clear_items_only">Vymazat pouze položky</string>
+    <string name="cart_clear_items_only_desc">Odstraní všechny řádky z košíku, ale zachová aktuální měny a stranu poplatků.</string>
+    <string name="cart_clear_reset_all">Resetovat košík</string>
+    <string name="cart_clear_reset_all_desc">Odstraní všechny řádky a znovu načte základní / cílovou měnu a stranu poplatků z hlavní obrazovky.</string>
+    <string name="cart_export_ok">Košík byl exportován.</string>
+    <string name="cart_export_error">Export selhal: %s</string>
+    <string name="cart_import_ok">Košík byl importován.</string>
+    <string name="cart_import_error">Import selhal: %s</string>
+    <string name="cart_share_empty">Košík je prázdný — není co sdílet.</string>
+    <string name="cart_save_empty">Košík je prázdný — není co uložit.</string>
+    <string name="cart_share_default_title">Košík</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Mezisoučet: %1$s %2$s</string>
+    <string name="cart_share_converted">Převedeno: %1$s %2$s</string>
+    <string name="cart_share_fees">Poplatky: %s%%</string>
+    <string name="cart_share_total">Celkem: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Neuložené změny</string>
+    <string name="cart_unsaved_message">Máte neuložené změny. Co chcete udělat?</string>
+    <string name="cart_unsaved_save">Uložit</string>
+    <string name="cart_unsaved_save_as">Uložit jako nový</string>
+    <string name="cart_unsaved_discard">Zahodit změny</string>
+    <string name="cart_unsaved_continue">Pokračovat</string>
 </resources>

@@ -25,4 +25,70 @@
     <string name="quick_conversions_fees_applied">Εφαρμοσμένες χρεώσεις: %s</string>
     <string name="tooltip_filter_starred">Εμφάνιση μόνο αγαπημένων νομισμάτων.</string>
     <string name="currency_dropdown_api_hint">Κάτι λείπει; Διαφορετικοί πάροχοι δεδομένων προσφέρουν διαφορετικά νομίσματα. Μεταβείτε στις ρυθμίσεις για να δοκιμάσετε έναν άλλο!\u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Εκτός σύνδεσης • Ισοτιμίες από %1$s</string>
+    <string name="offline_banner_no_data">Εκτός σύνδεσης • Δεν υπάρχουν ακόμη αποθηκευμένες ισοτιμίες</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Πιο πρόσφατη ισοτιμία για το τελευταίο ζεύγος νομισμάτων που χρησιμοποιήσατε.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Από %s</string>
+    <string name="widget_footer_empty">Ανοίξτε την εφαρμογή για να φορτώσετε τις ισοτιμίες.</string>
+    <string name="widget_no_rate">Η ισοτιμία δεν είναι διαθέσιμη</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Καλάθι αγορών</string>
+    <string name="cart_empty_hint">Το καλάθι σας είναι άδειο. Πατήστε «Προσθήκη αντικειμένου» για να ξεκινήσετε.</string>
+    <string name="cart_add_item">Προσθήκη αντικειμένου</string>
+    <string name="cart_item_name_hint">Αντικείμενο</string>
+    <string name="cart_item_expression_hint">Τιμή (π.χ. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Διαγραφή αντικειμένου</string>
+    <string name="cart_subtotal_label">Μερικό σύνολο</string>
+    <string name="cart_total_label">Σύνολο</string>
+    <string name="cart_fee_line">Χρεώσεις: %s%%</string>
+    <string name="cart_menu_save">Αποθήκευση</string>
+    <string name="cart_menu_save_as">Αποθήκευση ως…</string>
+    <string name="cart_menu_load">Φόρτωση</string>
+    <string name="cart_menu_export">Εξαγωγή σε αρχείο</string>
+    <string name="cart_menu_import">Εισαγωγή από αρχείο</string>
+    <string name="cart_menu_clear">Εκκαθάριση</string>
+    <string name="cart_share_option_text">Απλό κείμενο</string>
+    <string name="cart_share_option_text_desc">Μορφοποιημένη σύνοψη που μπορείτε να επικολλήσετε σε συνομιλία ή εφαρμογή σημειώσεων.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Αρχείο υπολογιστικού φύλλου με μία γραμμή ανά αντικείμενο.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Εκτυπώσιμο έγγραφο σε στυλ απόδειξης.</string>
+    <string name="cart_save_name_hint">Όνομα καλαθιού</string>
+    <string name="cart_default_saved_name">Το καλάθι μου</string>
+    <string name="cart_saved_toast">Αποθηκεύτηκε ως «%s»</string>
+    <string name="cart_no_saved">Δεν υπάρχουν αποθηκευμένα καλάθια ακόμη.</string>
+    <string name="cart_rename">Μετονομασία</string>
+    <string name="cart_rename_title">Μετονομασία καλαθιού</string>
+    <string name="cart_delete_confirm">Διαγραφή του «%s»;</string>
+    <string name="cart_delete_confirm_button">Διαγραφή</string>
+    <string name="cart_clear_confirm">Αφαίρεση όλων των αντικειμένων από το τρέχον καλάθι;</string>
+    <string name="cart_clear_confirm_button">Εκκαθάριση</string>
+    <string name="cart_clear_items_only">Εκκαθάριση μόνο αντικειμένων</string>
+    <string name="cart_clear_items_only_desc">Αφαιρεί κάθε γραμμή από το καλάθι, αλλά διατηρεί τα τρέχοντα νομίσματα και την πλευρά των χρεώσεων.</string>
+    <string name="cart_clear_reset_all">Επαναφορά καλαθιού</string>
+    <string name="cart_clear_reset_all_desc">Αφαιρεί κάθε γραμμή και επαναφέρει το βασικό/νόμισμα προορισμού και την πλευρά χρεώσεων από την κύρια οθόνη.</string>
+    <string name="cart_export_ok">Το καλάθι εξήχθη.</string>
+    <string name="cart_export_error">Η εξαγωγή απέτυχε: %s</string>
+    <string name="cart_import_ok">Το καλάθι εισήχθη.</string>
+    <string name="cart_import_error">Η εισαγωγή απέτυχε: %s</string>
+    <string name="cart_share_empty">Το καλάθι είναι άδειο — τίποτα προς κοινοποίηση.</string>
+    <string name="cart_save_empty">Το καλάθι είναι άδειο — τίποτα προς αποθήκευση.</string>
+    <string name="cart_share_default_title">Καλάθι</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Μερικό σύνολο: %1$s %2$s</string>
+    <string name="cart_share_converted">Μετατροπή: %1$s %2$s</string>
+    <string name="cart_share_fees">Χρεώσεις: %s%%</string>
+    <string name="cart_share_total">Σύνολο: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Μη αποθηκευμένες αλλαγές</string>
+    <string name="cart_unsaved_message">Έχετε μη αποθηκευμένες αλλαγές. Τι θα θέλατε να κάνετε;</string>
+    <string name="cart_unsaved_save">Αποθήκευση</string>
+    <string name="cart_unsaved_save_as">Αποθήκευση ως νέο</string>
+    <string name="cart_unsaved_discard">Απόρριψη αλλαγών</string>
+    <string name="cart_unsaved_continue">Συνέχεια</string>
 </resources>

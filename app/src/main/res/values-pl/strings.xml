@@ -25,4 +25,70 @@
     <string name="quick_conversions_fees_applied">Zastosowane opłaty: %s</string>
     <string name="tooltip_filter_starred">Pokaż tylko polubione waluty.</string>
     <string name="currency_dropdown_api_hint">Czegoś brakuje? Różni dostawcy danych oferują różne waluty. Przejdź do ustawień, aby wypróbować innego dostawcę!\u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Kursy z %1$s</string>
+    <string name="offline_banner_no_data">Offline • Brak zapisanych kursów</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Najnowszy kurs dla ostatnio używanej pary walut.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Stan na %s</string>
+    <string name="widget_footer_empty">Otwórz aplikację, aby pobrać kursy.</string>
+    <string name="widget_no_rate">Kurs niedostępny</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Koszyk</string>
+    <string name="cart_empty_hint">Koszyk jest pusty. Dotknij „Dodaj pozycję”, aby rozpocząć.</string>
+    <string name="cart_add_item">Dodaj pozycję</string>
+    <string name="cart_item_name_hint">Pozycja</string>
+    <string name="cart_item_expression_hint">Cena (np. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Usuń pozycję</string>
+    <string name="cart_subtotal_label">Suma częściowa</string>
+    <string name="cart_total_label">Razem</string>
+    <string name="cart_fee_line">Opłaty: %s%%</string>
+    <string name="cart_menu_save">Zapisz</string>
+    <string name="cart_menu_save_as">Zapisz jako…</string>
+    <string name="cart_menu_load">Wczytaj</string>
+    <string name="cart_menu_export">Eksportuj do pliku</string>
+    <string name="cart_menu_import">Importuj z pliku</string>
+    <string name="cart_menu_clear">Wyczyść</string>
+    <string name="cart_share_option_text">Zwykły tekst</string>
+    <string name="cart_share_option_text_desc">Sformatowane podsumowanie do wklejenia w czacie lub notatniku.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Plik arkusza z jednym wierszem na pozycję.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Dokument do druku w stylu paragonu.</string>
+    <string name="cart_save_name_hint">Nazwa koszyka</string>
+    <string name="cart_default_saved_name">Mój koszyk</string>
+    <string name="cart_saved_toast">Zapisano jako „%s”</string>
+    <string name="cart_no_saved">Brak zapisanych koszyków.</string>
+    <string name="cart_rename">Zmień nazwę</string>
+    <string name="cart_rename_title">Zmień nazwę koszyka</string>
+    <string name="cart_delete_confirm">Usunąć „%s”?</string>
+    <string name="cart_delete_confirm_button">Usuń</string>
+    <string name="cart_clear_confirm">Usunąć wszystkie pozycje z bieżącego koszyka?</string>
+    <string name="cart_clear_confirm_button">Wyczyść</string>
+    <string name="cart_clear_items_only">Wyczyść tylko pozycje</string>
+    <string name="cart_clear_items_only_desc">Usuwa wszystkie wiersze z koszyka, ale zachowuje bieżące waluty i stronę opłat.</string>
+    <string name="cart_clear_reset_all">Zresetuj koszyk</string>
+    <string name="cart_clear_reset_all_desc">Usuwa wszystkie wiersze i ponownie pobiera walutę bazową / docelową oraz stronę opłat z ekranu głównego.</string>
+    <string name="cart_export_ok">Koszyk wyeksportowany.</string>
+    <string name="cart_export_error">Eksport nie powiódł się: %s</string>
+    <string name="cart_import_ok">Koszyk zaimportowany.</string>
+    <string name="cart_import_error">Import nie powiódł się: %s</string>
+    <string name="cart_share_empty">Koszyk jest pusty — nie ma czego udostępnić.</string>
+    <string name="cart_save_empty">Koszyk jest pusty — nie ma czego zapisać.</string>
+    <string name="cart_share_default_title">Koszyk</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Suma częściowa: %1$s %2$s</string>
+    <string name="cart_share_converted">Przeliczone: %1$s %2$s</string>
+    <string name="cart_share_fees">Opłaty: %s%%</string>
+    <string name="cart_share_total">Razem: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Niezapisane zmiany</string>
+    <string name="cart_unsaved_message">Masz niezapisane zmiany. Co chcesz zrobić?</string>
+    <string name="cart_unsaved_save">Zapisz</string>
+    <string name="cart_unsaved_save_as">Zapisz jako nowy</string>
+    <string name="cart_unsaved_discard">Odrzuć zmiany</string>
+    <string name="cart_unsaved_continue">Kontynuuj</string>
 </resources>

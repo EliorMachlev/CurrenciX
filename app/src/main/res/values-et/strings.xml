@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">Rakendatud tasud: %s</string>
     <string name="tooltip_filter_starred">Näita vaid lemmikuks märgitud valuutasid.</string>
     <string name="currency_dropdown_api_hint">Midagi on puudu? Erinevad teenusepakkujad näitavad vahetuskursse erinevate valuutade jaoks. Ava seadistused ning vali mõni muu teenusepakkuja! 🤗</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Võrguühenduseta • Kursid alates %1$s</string>
+    <string name="offline_banner_no_data">Võrguühenduseta • Salvestatud kursse veel pole</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Viimane vahetuskurss teie viimati kasutatud valuutapaari jaoks.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Seisuga %s</string>
+    <string name="widget_footer_empty">Kursside laadimiseks avage rakendus.</string>
+    <string name="widget_no_rate">Kurss pole saadaval</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Ostukorv</string>
+    <string name="cart_empty_hint">Teie ostukorv on tühi. Alustamiseks puudutage „Lisa toode".</string>
+    <string name="cart_add_item">Lisa toode</string>
+    <string name="cart_item_name_hint">Toode</string>
+    <string name="cart_item_expression_hint">Hind (nt 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Kustuta toode</string>
+    <string name="cart_subtotal_label">Vahesumma</string>
+    <string name="cart_total_label">Kokku</string>
+    <string name="cart_fee_line">Tasud: %s%%</string>
+    <string name="cart_menu_save">Salvesta</string>
+    <string name="cart_menu_save_as">Salvesta kui…</string>
+    <string name="cart_menu_load">Laadi</string>
+    <string name="cart_menu_export">Ekspordi faili</string>
+    <string name="cart_menu_import">Impordi failist</string>
+    <string name="cart_menu_clear">Tühjenda</string>
+    <string name="cart_share_option_text">Lihttekst</string>
+    <string name="cart_share_option_text_desc">Vormindatud kokkuvõte, mida saab kleepida vestlusse või märkmerakendusse.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Tabelifail, mille igal real on üks toode.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Prinditav tšekilaadne dokument.</string>
+    <string name="cart_save_name_hint">Ostukorvi nimi</string>
+    <string name="cart_default_saved_name">Minu ostukorv</string>
+    <string name="cart_saved_toast">Salvestatud nimega „%s"</string>
+    <string name="cart_no_saved">Salvestatud ostukorve veel pole.</string>
+    <string name="cart_rename">Nimeta ümber</string>
+    <string name="cart_rename_title">Nimeta ostukorv ümber</string>
+    <string name="cart_delete_confirm">Kas kustutada „%s"?</string>
+    <string name="cart_delete_confirm_button">Kustuta</string>
+    <string name="cart_clear_confirm">Kas eemaldada kõik tooted praegusest ostukorvist?</string>
+    <string name="cart_clear_confirm_button">Tühjenda</string>
+    <string name="cart_clear_items_only">Tühjenda ainult tooted</string>
+    <string name="cart_clear_items_only_desc">Eemaldab ostukorvist kõik read, kuid säilitab praegused valuutad ja tasude poole.</string>
+    <string name="cart_clear_reset_all">Lähtesta ostukorv</string>
+    <string name="cart_clear_reset_all_desc">Eemaldab kõik read ning võtab lähte- ja sihtvaluuta ning tasude poole uuesti põhikuvalt.</string>
+    <string name="cart_export_ok">Ostukorv eksporditud.</string>
+    <string name="cart_export_error">Eksport ebaõnnestus: %s</string>
+    <string name="cart_import_ok">Ostukorv imporditud.</string>
+    <string name="cart_import_error">Import ebaõnnestus: %s</string>
+    <string name="cart_share_empty">Ostukorv on tühi — pole midagi jagada.</string>
+    <string name="cart_save_empty">Ostukorv on tühi — pole midagi salvestada.</string>
+    <string name="cart_share_default_title">Ostukorv</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Vahesumma: %1$s %2$s</string>
+    <string name="cart_share_converted">Konverteeritud: %1$s %2$s</string>
+    <string name="cart_share_fees">Tasud: %s%%</string>
+    <string name="cart_share_total">Kokku: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Salvestamata muudatused</string>
+    <string name="cart_unsaved_message">Teil on salvestamata muudatusi. Mida soovite teha?</string>
+    <string name="cart_unsaved_save">Salvesta</string>
+    <string name="cart_unsaved_save_as">Salvesta uuena</string>
+    <string name="cart_unsaved_discard">Loobu muudatustest</string>
+    <string name="cart_unsaved_continue">Jätka</string>
 </resources>

@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">প্রযোজ্য ফি: %s</string>
     <string name="tooltip_filter_starred">শুধুমাত্র তারকাচিহ্নিত মুদ্রা দেখান।</string>
     <string name="currency_dropdown_api_hint">কোনকিছু পাওয়া যাচ্ছে না? ভিন্ন তথ্য সরবরাহকারী ভিন্ন ভিন্ন অর্থ দেখায়। পছন্দসমূহে গিয়ে আরেকটা চেষ্টা করে দেখো! 🤗</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">অফলাইন • %1$s থেকে রেট</string>
+    <string name="offline_banner_no_data">অফলাইন • এখনও কোনো ক্যাশে করা রেট নেই</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়ের সাম্প্রতিক বিনিময় হার।</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">%s অনুযায়ী</string>
+    <string name="widget_footer_empty">রেট লোড করতে অ্যাপ খুলুন।</string>
+    <string name="widget_no_rate">রেট উপলব্ধ নেই</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">শপিং কার্ট</string>
+    <string name="cart_empty_hint">আপনার কার্ট খালি। শুরু করতে "আইটেম যোগ করুন" আলতো চাপুন।</string>
+    <string name="cart_add_item">আইটেম যোগ করুন</string>
+    <string name="cart_item_name_hint">আইটেম</string>
+    <string name="cart_item_expression_hint">দাম (যেমন 2 × 3.50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">আইটেম মুছুন</string>
+    <string name="cart_subtotal_label">উপমোট</string>
+    <string name="cart_total_label">মোট</string>
+    <string name="cart_fee_line">ফি: %s%%</string>
+    <string name="cart_menu_save">সংরক্ষণ</string>
+    <string name="cart_menu_save_as">এই নামে সংরক্ষণ…</string>
+    <string name="cart_menu_load">লোড করুন</string>
+    <string name="cart_menu_export">ফাইলে রপ্তানি</string>
+    <string name="cart_menu_import">ফাইল থেকে আমদানি</string>
+    <string name="cart_menu_clear">পরিষ্কার করুন</string>
+    <string name="cart_share_option_text">সাধারণ টেক্সট</string>
+    <string name="cart_share_option_text_desc">চ্যাট বা নোট অ্যাপে পেস্ট করার জন্য ফরম্যাট করা সারসংক্ষেপ।</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">প্রতিটি আইটেমের জন্য এক সারিসহ স্প্রেডশিট ফাইল।</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">প্রিন্টযোগ্য রসিদ-শৈলীর নথি।</string>
+    <string name="cart_save_name_hint">কার্টের নাম</string>
+    <string name="cart_default_saved_name">আমার কার্ট</string>
+    <string name="cart_saved_toast">"%s" নামে সংরক্ষিত</string>
+    <string name="cart_no_saved">এখনও কোনো সংরক্ষিত কার্ট নেই।</string>
+    <string name="cart_rename">নাম পরিবর্তন</string>
+    <string name="cart_rename_title">কার্টের নাম পরিবর্তন করুন</string>
+    <string name="cart_delete_confirm">"%s" মুছবেন?</string>
+    <string name="cart_delete_confirm_button">মুছুন</string>
+    <string name="cart_clear_confirm">বর্তমান কার্ট থেকে সমস্ত আইটেম সরাবেন?</string>
+    <string name="cart_clear_confirm_button">পরিষ্কার করুন</string>
+    <string name="cart_clear_items_only">শুধু আইটেম পরিষ্কার করুন</string>
+    <string name="cart_clear_items_only_desc">কার্ট থেকে প্রতিটি সারি সরায় কিন্তু বর্তমান মুদ্রা ও ফি সাইড রাখে।</string>
+    <string name="cart_clear_reset_all">কার্ট রিসেট করুন</string>
+    <string name="cart_clear_reset_all_desc">প্রতিটি সারি সরায় এবং মূল স্ক্রিন থেকে বেস/গন্তব্য মুদ্রা ও ফি সাইড পুনরায় নেয়।</string>
+    <string name="cart_export_ok">কার্ট রপ্তানি হয়েছে।</string>
+    <string name="cart_export_error">রপ্তানি ব্যর্থ: %s</string>
+    <string name="cart_import_ok">কার্ট আমদানি হয়েছে।</string>
+    <string name="cart_import_error">আমদানি ব্যর্থ: %s</string>
+    <string name="cart_share_empty">কার্ট খালি — শেয়ার করার কিছু নেই।</string>
+    <string name="cart_save_empty">কার্ট খালি — সংরক্ষণ করার কিছু নেই।</string>
+    <string name="cart_share_default_title">কার্ট</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">উপমোট: %1$s %2$s</string>
+    <string name="cart_share_converted">রূপান্তরিত: %1$s %2$s</string>
+    <string name="cart_share_fees">ফি: %s%%</string>
+    <string name="cart_share_total">মোট: %1$s %2$s</string>
+    <string name="cart_unsaved_title">অসংরক্ষিত পরিবর্তন</string>
+    <string name="cart_unsaved_message">আপনার অসংরক্ষিত পরিবর্তন রয়েছে। আপনি কী করতে চান?</string>
+    <string name="cart_unsaved_save">সংরক্ষণ</string>
+    <string name="cart_unsaved_save_as">নতুন হিসেবে সংরক্ষণ</string>
+    <string name="cart_unsaved_discard">পরিবর্তন বাতিল করুন</string>
+    <string name="cart_unsaved_continue">চালিয়ে যান</string>
 </resources>

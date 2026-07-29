@@ -33,4 +33,70 @@
 
     <string name="tooltip_filter_starred">നക്ഷത്രമുള്ള കറൻസികൾ മാത്രം കാണിക്കുക.</string>
     <string name="currency_dropdown_api_hint">എന്തെങ്കിലും കാണാനില്ലേ? വ്യത്യസ്ത ഡാറ്റ ദാതാക്കൾ വ്യത്യസ്ത കറൻസികൾ വാഗ്ദാനം ചെയ്യുന്നു. മറ്റൊന്ന് പരീക്ഷിക്കാൻ ക്രമീകരണങ്ങളിലേക്ക് പോകുക!\u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">ഓഫ്‌ലൈൻ • %1$s മുതലുള്ള നിരക്കുകൾ</string>
+    <string name="offline_banner_no_data">ഓഫ്‌ലൈൻ • കാഷെ ചെയ്ത നിരക്കുകൾ ഇതുവരെയില്ല</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">നിങ്ങൾ അവസാനം ഉപയോഗിച്ച കറൻസി ജോഡിക്കുള്ള ഏറ്റവും പുതിയ വിനിമയ നിരക്ക്.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">%s പ്രകാരം</string>
+    <string name="widget_footer_empty">നിരക്കുകൾ ലോഡുചെയ്യാൻ ആപ്പ് തുറക്കുക.</string>
+    <string name="widget_no_rate">നിരക്ക് ലഭ്യമല്ല</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">ഷോപ്പിംഗ് കാർട്ട്</string>
+    <string name="cart_empty_hint">നിങ്ങളുടെ കാർട്ട് ശൂന്യമാണ്. തുടങ്ങാൻ "ഇനം ചേർക്കുക" ടാപ്പ് ചെയ്യുക.</string>
+    <string name="cart_add_item">ഇനം ചേർക്കുക</string>
+    <string name="cart_item_name_hint">ഇനം</string>
+    <string name="cart_item_expression_hint">വില (ഉദാ. 2 × 3.50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">ഇനം ഇല്ലാതാക്കുക</string>
+    <string name="cart_subtotal_label">ഉപത്തുക</string>
+    <string name="cart_total_label">ആകെ</string>
+    <string name="cart_fee_line">ഫീസുകൾ: %s%%</string>
+    <string name="cart_menu_save">സംരക്ഷിക്കുക</string>
+    <string name="cart_menu_save_as">ഇപ്രകാരം സംരക്ഷിക്കുക…</string>
+    <string name="cart_menu_load">ലോഡുചെയ്യുക</string>
+    <string name="cart_menu_export">ഫയലിലേക്ക് കയറ്റുമതി ചെയ്യുക</string>
+    <string name="cart_menu_import">ഫയലിൽ നിന്ന് ഇറക്കുമതി ചെയ്യുക</string>
+    <string name="cart_menu_clear">മായ്ക്കുക</string>
+    <string name="cart_share_option_text">പ്ലെയിൻ ടെക്സ്റ്റ്</string>
+    <string name="cart_share_option_text_desc">ചാറ്റിലേക്കോ നോട്ട്സ് ആപ്പിലേക്കോ ഒട്ടിക്കാവുന്ന ഫോർമാറ്റ് ചെയ്ത സംഗ്രഹം.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">ഒരു ഇനത്തിന് ഒരു വരി വീതമുള്ള സ്പ്രെഡ്ഷീറ്റ് ഫയൽ.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">പ്രിന്റ് ചെയ്യാവുന്ന രസീത് ശൈലിയിലുള്ള രേഖ.</string>
+    <string name="cart_save_name_hint">കാർട്ടിന്റെ പേര്</string>
+    <string name="cart_default_saved_name">എന്റെ കാർട്ട്</string>
+    <string name="cart_saved_toast">"%s" എന്ന പേരിൽ സംരക്ഷിച്ചു</string>
+    <string name="cart_no_saved">സംരക്ഷിച്ച കാർട്ടുകൾ ഇതുവരെയില്ല.</string>
+    <string name="cart_rename">പേരുമാറ്റുക</string>
+    <string name="cart_rename_title">കാർട്ടിന്റെ പേരുമാറ്റുക</string>
+    <string name="cart_delete_confirm">"%s" ഇല്ലാതാക്കണോ?</string>
+    <string name="cart_delete_confirm_button">ഇല്ലാതാക്കുക</string>
+    <string name="cart_clear_confirm">നിലവിലെ കാർട്ടിൽ നിന്ന് എല്ലാ ഇനങ്ങളും നീക്കംചെയ്യണോ?</string>
+    <string name="cart_clear_confirm_button">മായ്ക്കുക</string>
+    <string name="cart_clear_items_only">ഇനങ്ങൾ മാത്രം മായ്ക്കുക</string>
+    <string name="cart_clear_items_only_desc">കാർട്ടിലെ എല്ലാ വരികളും നീക്കംചെയ്യുന്നു എന്നാൽ നിലവിലെ കറൻസികളും ഫീസ് സൈഡും നിലനിർത്തുന്നു.</string>
+    <string name="cart_clear_reset_all">കാർട്ട് പുനഃസജ്ജമാക്കുക</string>
+    <string name="cart_clear_reset_all_desc">എല്ലാ വരികളും നീക്കംചെയ്ത് പ്രധാന സ്ക്രീനിൽ നിന്ന് ബേസ്/ഡെസ്റ്റിനേഷൻ കറൻസിയും ഫീസ് സൈഡും വീണ്ടും എടുക്കുന്നു.</string>
+    <string name="cart_export_ok">കാർട്ട് കയറ്റുമതി ചെയ്തു.</string>
+    <string name="cart_export_error">കയറ്റുമതി പരാജയപ്പെട്ടു: %s</string>
+    <string name="cart_import_ok">കാർട്ട് ഇറക്കുമതി ചെയ്തു.</string>
+    <string name="cart_import_error">ഇറക്കുമതി പരാജയപ്പെട്ടു: %s</string>
+    <string name="cart_share_empty">കാർട്ട് ശൂന്യമാണ് — പങ്കിടാൻ ഒന്നുമില്ല.</string>
+    <string name="cart_save_empty">കാർട്ട് ശൂന്യമാണ് — സംരക്ഷിക്കാൻ ഒന്നുമില്ല.</string>
+    <string name="cart_share_default_title">കാർട്ട്</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">ഉപത്തുക: %1$s %2$s</string>
+    <string name="cart_share_converted">പരിവർത്തനം ചെയ്തത്: %1$s %2$s</string>
+    <string name="cart_share_fees">ഫീസുകൾ: %s%%</string>
+    <string name="cart_share_total">ആകെ: %1$s %2$s</string>
+    <string name="cart_unsaved_title">സംരക്ഷിക്കാത്ത മാറ്റങ്ങൾ</string>
+    <string name="cart_unsaved_message">നിങ്ങൾക്ക് സംരക്ഷിക്കാത്ത മാറ്റങ്ങളുണ്ട്. നിങ്ങൾ എന്ത് ചെയ്യാൻ ആഗ്രഹിക്കുന്നു?</string>
+    <string name="cart_unsaved_save">സംരക്ഷിക്കുക</string>
+    <string name="cart_unsaved_save_as">പുതിയതായി സംരക്ഷിക്കുക</string>
+    <string name="cart_unsaved_discard">മാറ്റങ്ങൾ ഉപേക്ഷിക്കുക</string>
+    <string name="cart_unsaved_continue">തുടരുക</string>
 </resources>

@@ -22,4 +22,70 @@
     <string name="quick_conversions_no_rates">Gengi hefur ekki verið hlaðið enn.</string>
     <string name="quick_conversions_fees_applied">Beitt gjöld: %s</string>
     <string name="tooltip_filter_starred">Sýna aðeins eftirlæti.</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Ónettengt • Gengi frá %1$s</string>
+    <string name="offline_banner_no_data">Ónettengt • Ekkert vistað gengi enn</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Nýjasta umreikningsgengi fyrir síðast notaða gjaldmiðlaparið.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Frá %s</string>
+    <string name="widget_footer_empty">Opnaðu forritið til að hlaða gengi.</string>
+    <string name="widget_no_rate">Gengi ekki tiltækt</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Innkaupakarfa</string>
+    <string name="cart_empty_hint">Karfan þín er tóm. Ýttu á „Bæta við hlut" til að byrja.</string>
+    <string name="cart_add_item">Bæta við hlut</string>
+    <string name="cart_item_name_hint">Hlutur</string>
+    <string name="cart_item_expression_hint">Verð (t.d. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Eyða hlut</string>
+    <string name="cart_subtotal_label">Milliupphæð</string>
+    <string name="cart_total_label">Samtals</string>
+    <string name="cart_fee_line">Gjöld: %s%%</string>
+    <string name="cart_menu_save">Vista</string>
+    <string name="cart_menu_save_as">Vista sem…</string>
+    <string name="cart_menu_load">Hlaða</string>
+    <string name="cart_menu_export">Flytja út í skrá</string>
+    <string name="cart_menu_import">Flytja inn úr skrá</string>
+    <string name="cart_menu_clear">Hreinsa</string>
+    <string name="cart_share_option_text">Hreinn texti</string>
+    <string name="cart_share_option_text_desc">Sniðin samantekt sem þú getur límt inn í spjall eða minnisforrit.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Töflureiknisskrá með einni línu á hlut.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Prentanlegt kvittanaskjal.</string>
+    <string name="cart_save_name_hint">Nafn körfu</string>
+    <string name="cart_default_saved_name">Karfan mín</string>
+    <string name="cart_saved_toast">Vistað sem „%s"</string>
+    <string name="cart_no_saved">Engar vistaðar körfur enn.</string>
+    <string name="cart_rename">Endurnefna</string>
+    <string name="cart_rename_title">Endurnefna körfu</string>
+    <string name="cart_delete_confirm">Eyða „%s"?</string>
+    <string name="cart_delete_confirm_button">Eyða</string>
+    <string name="cart_clear_confirm">Fjarlægja alla hluti úr núverandi körfu?</string>
+    <string name="cart_clear_confirm_button">Hreinsa</string>
+    <string name="cart_clear_items_only">Hreinsa aðeins hluti</string>
+    <string name="cart_clear_items_only_desc">Fjarlægir allar línur úr körfunni en heldur núverandi gjaldmiðlum og gjaldahlið.</string>
+    <string name="cart_clear_reset_all">Endurstilla körfu</string>
+    <string name="cart_clear_reset_all_desc">Fjarlægir allar línur og sækir aftur grunn- / ákvörðunargjaldmiðil og gjaldahlið úr aðalskjánum.</string>
+    <string name="cart_export_ok">Karfa flutt út.</string>
+    <string name="cart_export_error">Útflutningur mistókst: %s</string>
+    <string name="cart_import_ok">Karfa flutt inn.</string>
+    <string name="cart_import_error">Innflutningur mistókst: %s</string>
+    <string name="cart_share_empty">Karfan er tóm — ekkert til að deila.</string>
+    <string name="cart_save_empty">Karfan er tóm — ekkert til að vista.</string>
+    <string name="cart_share_default_title">Karfa</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Milliupphæð: %1$s %2$s</string>
+    <string name="cart_share_converted">Umreiknað: %1$s %2$s</string>
+    <string name="cart_share_fees">Gjöld: %s%%</string>
+    <string name="cart_share_total">Samtals: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Óvistaðar breytingar</string>
+    <string name="cart_unsaved_message">Þú ert með óvistaðar breytingar. Hvað viltu gera?</string>
+    <string name="cart_unsaved_save">Vista</string>
+    <string name="cart_unsaved_save_as">Vista sem nýtt</string>
+    <string name="cart_unsaved_discard">Henda breytingum</string>
+    <string name="cart_unsaved_continue">Halda áfram</string>
 </resources>

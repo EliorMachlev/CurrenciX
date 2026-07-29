@@ -25,4 +25,70 @@
     <string name="quick_conversions_fees_applied">Aplikitaj kotizoj: %s</string>
     <string name="tooltip_filter_starred">Montri nur stelumitajn valutojn.</string>
     <string name="currency_dropdown_api_hint">Io mankas? Aliaj datumprovizantoj ofertas malsamajn valutojn. Iru al la agordoj por provi alian!\u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Senreta • Kursoj de %1$s</string>
+    <string name="offline_banner_no_data">Senreta • Ankoraŭ neniuj kaŝmemorigitaj kursoj</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Plej lasta konverta kurso por via laste uzita valuta paro.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Ekde %s</string>
+    <string name="widget_footer_empty">Malfermu la aplikaĵon por ŝargi kursojn.</string>
+    <string name="widget_no_rate">Kurso nedisponebla</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Aĉetkorbo</string>
+    <string name="cart_empty_hint">Via korbo estas malplena. Tuŝetu "Aldoni eron" por komenci.</string>
+    <string name="cart_add_item">Aldoni eron</string>
+    <string name="cart_item_name_hint">Ero</string>
+    <string name="cart_item_expression_hint">Prezo (ekz. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Forigi eron</string>
+    <string name="cart_subtotal_label">Subtotalo</string>
+    <string name="cart_total_label">Totalo</string>
+    <string name="cart_fee_line">Kotizoj: %s%%</string>
+    <string name="cart_menu_save">Konservi</string>
+    <string name="cart_menu_save_as">Konservi kiel…</string>
+    <string name="cart_menu_load">Ŝargi</string>
+    <string name="cart_menu_export">Eksporti al dosiero</string>
+    <string name="cart_menu_import">Importi el dosiero</string>
+    <string name="cart_menu_clear">Vakigi</string>
+    <string name="cart_share_option_text">Plata teksto</string>
+    <string name="cart_share_option_text_desc">Formatita resumo, kiun vi povas alglui en babilejo aŭ notaplikaĵo.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Kalkultabela dosiero kun unu vico po ero.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Presebla dokumento kvitanc-stila.</string>
+    <string name="cart_save_name_hint">Nomo de korbo</string>
+    <string name="cart_default_saved_name">Mia korbo</string>
+    <string name="cart_saved_toast">Konservita kiel "%s"</string>
+    <string name="cart_no_saved">Ankoraŭ neniuj konservitaj korboj.</string>
+    <string name="cart_rename">Renomi</string>
+    <string name="cart_rename_title">Renomi korbon</string>
+    <string name="cart_delete_confirm">Ĉu forigi "%s"?</string>
+    <string name="cart_delete_confirm_button">Forigi</string>
+    <string name="cart_clear_confirm">Ĉu forigi ĉiujn erojn el la nuna korbo?</string>
+    <string name="cart_clear_confirm_button">Vakigi</string>
+    <string name="cart_clear_items_only">Vakigi nur erojn</string>
+    <string name="cart_clear_items_only_desc">Forigas ĉiun vicon el la korbo, sed konservas la aktualajn valutojn kaj la flankon de kotizoj.</string>
+    <string name="cart_clear_reset_all">Restarigi korbon</string>
+    <string name="cart_clear_reset_all_desc">Forigas ĉiun vicon kaj reprenas la baz-/celvaluton kaj la flankon de kotizoj el la ĉefa ekrano.</string>
+    <string name="cart_export_ok">Korbo eksportita.</string>
+    <string name="cart_export_error">Eksporto malsukcesis: %s</string>
+    <string name="cart_import_ok">Korbo importita.</string>
+    <string name="cart_import_error">Importo malsukcesis: %s</string>
+    <string name="cart_share_empty">Korbo estas malplena — nenio por dividi.</string>
+    <string name="cart_save_empty">Korbo estas malplena — nenio por konservi.</string>
+    <string name="cart_share_default_title">Korbo</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Subtotalo: %1$s %2$s</string>
+    <string name="cart_share_converted">Konvertita: %1$s %2$s</string>
+    <string name="cart_share_fees">Kotizoj: %s%%</string>
+    <string name="cart_share_total">Totalo: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Nekonservitaj ŝanĝoj</string>
+    <string name="cart_unsaved_message">Vi havas nekonservitajn ŝanĝojn. Kion vi ŝatus fari?</string>
+    <string name="cart_unsaved_save">Konservi</string>
+    <string name="cart_unsaved_save_as">Konservi kiel novan</string>
+    <string name="cart_unsaved_discard">Forĵeti ŝanĝojn</string>
+    <string name="cart_unsaved_continue">Daŭrigi</string>
 </resources>
