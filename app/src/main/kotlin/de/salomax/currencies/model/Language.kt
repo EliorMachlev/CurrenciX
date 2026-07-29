@@ -51,13 +51,37 @@ enum class Language(
     companion object {
         private val isoMapping: Map<String, Language> = entries.associateBy(Language::iso)
 
+        // Android's Locale.getLanguage() returns the *legacy* ISO 639-1 code
+        // for a handful of locales (iw/in/ji), regardless of whether the app
+        // stored the modern BCP-47 tag (he/id/yi). This enum keys off the
+        // modern codes so the ISO strings match the values-* folder names for
+        // every other locale — map the legacy variants back before lookup.
+        private val legacyLanguageAliases =
+            mapOf(
+                "iw" to "he",
+                "in" to "id",
+                "ji" to "yi",
+            )
+
+        private fun canonicalize(isoValue: String?): String? {
+            if (isoValue == null) return null
+            val (lang, rest) =
+                isoValue
+                    .split(REGION_SEPARATOR, limit = 2)
+                    .let { it[0] to it.getOrNull(1) }
+            val canonicalLang = legacyLanguageAliases[lang] ?: lang
+            return if (rest != null) "$canonicalLang$REGION_SEPARATOR$rest" else canonicalLang
+        }
+
         private fun String.stripRegion(): String = substringBefore(REGION_SEPARATOR)
 
-        fun byIso(isoValue: String?): Language? =
-            isoMapping[isoValue]
+        fun byIso(isoValue: String?): Language? {
+            val canonical = canonicalize(isoValue)
+            return isoMapping[canonical]
                 // either the resource string has no country, or the given locale has none:
                 // use only language without country
-                ?: isoMapping.mapKeys { it.key.stripRegion() }[isoValue?.stripRegion()]
+                ?: isoMapping.mapKeys { it.key.stripRegion() }[canonical?.stripRegion()]
+        }
     }
 
     fun nativeName(context: Context): String =
