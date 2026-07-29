@@ -662,7 +662,7 @@ class MainActivity : BaseActivity() {
      * swap currencies
      */
     fun toggleEvent(
-        @Suppress("UNUSED_PARAMETER") view: View,
+        @Suppress("UNUSED_PARAMETER") view: View?,
     ) {
         val from = spinnerFrom.selectedItemPosition
         val to = spinnerTo.selectedItemPosition
