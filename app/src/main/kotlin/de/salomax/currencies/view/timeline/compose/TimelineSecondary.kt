@@ -26,7 +26,6 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toDp
 import de.salomax.currencies.R
 import de.salomax.currencies.model.Rate
 import de.salomax.currencies.viewmodel.timeline.TimelineViewModel
