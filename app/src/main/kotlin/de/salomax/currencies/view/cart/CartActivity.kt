@@ -23,12 +23,13 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import de.salomax.currencies.R
+import de.salomax.currencies.model.CartItem
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.SavedCart
@@ -49,6 +50,7 @@ import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.util.toPdfBytes
 import de.salomax.currencies.view.BaseActivity
 import de.salomax.currencies.view.cart.compose.CartEmptyHint
+import de.salomax.currencies.view.cart.compose.CartItemsList
 import de.salomax.currencies.view.cart.compose.SavedCartsList
 import de.salomax.currencies.view.compose.AppTheme
 import de.salomax.currencies.view.main.spinner.SearchableSpinner
@@ -99,11 +101,17 @@ private fun String.sanitizeForFilename(): String =
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
 
+// Grace window on outside taps before closing the keypad: a tap that lands on
+// another row's expression must run through Compose's click handler first so
+// it can swap the active id — otherwise we'd close, then re-open with an
+// unwanted flicker.
+private const val OUTSIDE_TAP_DEBOUNCE_MS = 40L
+
 class CartActivity : BaseActivity() {
     private lateinit var viewModel: CartViewModel
     private lateinit var exporter: CartExporter
 
-    private lateinit var recycler: RecyclerView
+    private lateinit var itemsView: ComposeView
     private lateinit var subtotalLabel: TextView
     private lateinit var subtotalExtra: View
     private lateinit var subtotalExtraLabel: TextView
@@ -120,23 +128,31 @@ class CartActivity : BaseActivity() {
     private lateinit var emptyHint: ComposeView
     private lateinit var addButton: MaterialButton
 
-    private lateinit var adapter: CartItemAdapter
-
     // Cached haptic setting so per-tap handlers don't need to touch prefs.
     private var hapticEnabled = false
 
-    // Slide-up keypad state — behaves like a soft IME. `activeExprField` is
-    // the row's price EditText the keypad is currently editing; the taps
-    // route through `activeCalculatorState`, and every state change is
-    // mirrored back into the field's text.
+    // Slide-up keypad state — behaves like a soft IME. The keypad edits the
+    // row identified by [activeItemId]; taps route through
+    // [activeCalculatorState] and every state change is mirrored into
+    // [liveExpression], which the composable row observes for its display.
     private lateinit var keypadContainer: ViewGroup
     private lateinit var keypadRegular: View
     private lateinit var keypadExtended: View
     private lateinit var contentColumn: View
     private var activeCalculatorState: CalculatorInputState? = null
-    private var activeExprField: EditText? = null
+    private val activeItemId = MutableLiveData<String?>(null)
+    private val liveExpression = MutableLiveData("")
     private var activeStateObserver: Observer<String?>? = null
     private var keypadBackCallback: OnBackPressedCallback? = null
+
+    // Pending, un-debounced name edits from the composable rows. Flushed
+    // synchronously by [flushPendingCommits] before any save/share/snapshot.
+    private val pendingNames = mutableMapOf<String, String>()
+
+    // LiveData sources bridged into the Compose list. Kept as fields so
+    // observeAsState in the list survives cart re-emissions.
+    private val itemsLive = MediatorLiveData<List<CartItem>>().apply { value = emptyList() }
+    private val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
     private lateinit var exportLauncher: ActivityResultLauncher<String>
     private lateinit var importLauncher: ActivityResultLauncher<Array<String>>
@@ -153,7 +169,7 @@ class CartActivity : BaseActivity() {
         this.viewModel = ViewModelProvider(this)[CartViewModel::class.java]
         this.exporter = CartExporter(this)
 
-        this.recycler = findViewById(R.id.cart_items)
+        this.itemsView = findViewById(R.id.cart_items)
         this.subtotalLabel = findViewById(R.id.cart_subtotal_value)
         this.subtotalExtra = findViewById(R.id.cart_subtotal_extra)
         this.subtotalExtraLabel = findViewById(R.id.cart_subtotal_extra_label)
@@ -178,13 +194,6 @@ class CartActivity : BaseActivity() {
         this.keypadExtended = findViewById(R.id.cart_keypad_extended)
         this.contentColumn = findViewById(R.id.cart_content)
 
-        adapter =
-            CartItemAdapter(
-                onChange = viewModel::updateItem,
-                onDelete = viewModel::removeItem,
-                onEditExpression = { field, _ -> openKeypadFor(field) },
-            )
-
         // Registered before the keypad callback so the keypad's (which is
         // added second) wins when it's enabled. When the keypad is closed
         // and there are unsaved edits, we prompt instead of finishing.
@@ -198,8 +207,27 @@ class CartActivity : BaseActivity() {
             object : OnBackPressedCallback(false) {
                 override fun handleOnBackPressed() = closeKeypad()
             }.also { onBackPressedDispatcher.addCallback(this, it) }
-        recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = adapter
+        itemsView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        itemsView.setContent {
+            CartItemsList(
+                itemsSource = itemsLive,
+                currencySource = currencyLive,
+                activeItemIdSource = activeItemId,
+                activeExpressionSource = liveExpression,
+                onNameCommit = ::commitName,
+                onNamePending = { id, name -> pendingNames[id] = name },
+                onExpressionTap = { item ->
+                    itemsView.hapticTap(hapticEnabled)
+                    openKeypadFor(item.id, item.expression)
+                },
+                onDelete = { id ->
+                    itemsView.hapticTap(hapticEnabled)
+                    if (activeItemId.value == id) closeKeypad()
+                    pendingNames.remove(id)
+                    viewModel.removeItem(id)
+                },
+            )
+        }
 
         addButton.setOnClickListener {
             it.hapticTap(hapticEnabled)
@@ -279,16 +307,20 @@ class CartActivity : BaseActivity() {
     private fun observe() {
         viewModel.isHapticFeedbackEnabled.observe(this) {
             hapticEnabled = it
-            adapter.setHapticEnabled(it)
         }
         viewModel.isExtendedKeypadEnabled.observe(this) { extended ->
             keypadRegular.visibility = if (extended) View.GONE else View.VISIBLE
             keypadExtended.visibility = if (extended) View.VISIBLE else View.GONE
         }
         viewModel.getCurrentCart().observe(this) { cart ->
-            adapter.setCurrency(cart.currency)
-            adapter.submitList(cart.items.toList())
+            currencyLive.value = cart.currency
+            itemsLive.value = cart.items.toList()
             emptyHint.visibility = if (cart.items.isEmpty()) View.VISIBLE else View.GONE
+            // A cart load can retire the item the keypad was bound to; drop
+            // that binding so the keypad doesn't linger over a missing row.
+            val currentIds = cart.items.map { it.id }.toSet()
+            pendingNames.keys.retainAll(currentIds)
+            activeItemId.value?.let { if (it !in currentIds) closeKeypad() }
             updateFeeVisuals()
         }
         viewModel.getBaseCurrency().observe(this) { spinnerFrom.setSelection(it) }
@@ -430,7 +462,7 @@ class CartActivity : BaseActivity() {
         ) { name ->
             // "Save as" always creates a fresh entry so users can keep
             // multiple snapshots of the same cart under different names.
-            adapter.flushPendingCommits()
+            flushPendingCommits()
             viewModel.saveCurrentAs(name)
             showSnackbar(getString(R.string.cart_saved_toast, name))
             onSaved()
@@ -443,7 +475,7 @@ class CartActivity : BaseActivity() {
      */
     private fun saveOrPromptForName(onSaved: () -> Unit = {}) {
         if (guardEmptyForSave()) return
-        adapter.flushPendingCommits()
+        flushPendingCommits()
         if (viewModel.saveCurrent()) {
             val name =
                 viewModel
@@ -597,7 +629,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun launchExport() {
-        adapter.flushPendingCommits()
+        flushPendingCommits()
         val name =
             viewModel
                 .getCurrentCart()
@@ -702,7 +734,7 @@ class CartActivity : BaseActivity() {
     // rows so the top-level overflow menu stays short. Flush + empty-guard run
     // once up-front so an empty cart never surfaces a picker it can't act on.
     private fun showShareDialog() {
-        adapter.flushPendingCommits()
+        flushPendingCommits()
         val snapshot = viewModel.snapshotForShare()
         if (snapshot == null) {
             showSnackbar(getString(R.string.cart_share_empty))
@@ -802,26 +834,31 @@ class CartActivity : BaseActivity() {
     // ------------------------------------------------------------------
 
     /**
-     * Show the keypad for [field], seeding a fresh [CalculatorInputState]
-     * with its current text and mirroring every state change back into the
-     * field. Called with the currently-focused row's price EditText.
+     * Show the keypad for the row identified by [itemId], seeding a fresh
+     * [CalculatorInputState] with [seedExpression] and mirroring every state
+     * change into [liveExpression] — the composable row observes that
+     * LiveData for its inline display.
      */
-    fun openKeypadFor(field: EditText) {
+    fun openKeypadFor(
+        itemId: String,
+        seedExpression: String,
+    ) {
         hideSystemIme()
         detachActiveField()
-        val state = CalculatorInputState().apply { seedExpression(field.text?.toString().orEmpty()) }
-        val observer = Observer<String?> { field.setText(state.toExpressionString()) }
+        val state = CalculatorInputState().apply { seedExpression(seedExpression) }
+        liveExpression.value = state.toExpressionString().ifEmpty { seedExpression }
+        val observer = Observer<String?> { liveExpression.value = state.toExpressionString() }
         state.baseValueText.observeForever(observer)
         state.calculationValueText.observeForever(observer)
         activeCalculatorState = state
-        activeExprField = field
+        activeItemId.value = itemId
         activeStateObserver = observer
         showKeypad()
     }
 
-    /** Hide the keypad and unbind whichever field was being edited. */
+    /** Hide the keypad and unbind whichever row was being edited. */
     fun closeKeypad() {
-        if (activeExprField == null && keypadContainer.visibility == View.GONE) return
+        if (activeItemId.value == null && keypadContainer.visibility == View.GONE) return
         detachActiveField()
         hideKeypad()
     }
@@ -887,34 +924,40 @@ class CartActivity : BaseActivity() {
             state.baseValueText.removeObserver(observer)
             state.calculationValueText.removeObserver(observer)
         }
+        // Commit the current keypad expression to the VM so the row's
+        // persisted value matches what the user just typed.
+        val id = activeItemId.value
+        if (id != null) {
+            val expression = liveExpression.value.orEmpty()
+            commitExpression(id, expression)
+        }
         activeCalculatorState = null
-        activeExprField = null
+        activeItemId.value = null
         activeStateObserver = null
+        liveExpression.value = ""
     }
 
     /**
      * Route outside-taps to close the keypad. Taps *inside* the keypad
-     * (button presses) and taps on the currently-editing field itself pass
-     * through unchanged; a tap on any other row's price field will fall
-     * through to that field's click handler, which calls [openKeypadFor]
-     * again and swaps the active state without a visible close/open flicker.
+     * (button presses) pass through unchanged; a tap on another row's
+     * expression will fall through to its Compose click handler, which
+     * re-opens [openKeypadFor] and swaps the active state without a visible
+     * close/open flicker. The delayed check guards that swap.
      */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN && keypadContainer.visibility == View.VISIBLE) {
+            val x = ev.rawX.toInt()
+            val y = ev.rawY.toInt()
             val keypadRect = Rect().also(keypadContainer::getGlobalVisibleRect)
-            if (!keypadRect.contains(ev.rawX.toInt(), ev.rawY.toInt()) &&
-                !isTouchOnActiveField(ev)
-            ) {
-                keypadContainer.post {
-                    // If the touched view was another expr field, its click
-                    // handler has already swapped `activeExprField` by now.
-                    // Only close if we're still bound to the previous field.
-                    if (activeExprField == null) return@post
-                    val stillOn = activeExprField
-                    keypadContainer.postDelayed({
-                        if (activeExprField === stillOn) closeKeypad()
-                    }, 40)
-                }
+            val itemsRect = Rect().also(itemsView::getGlobalVisibleRect)
+            // Ignore taps inside the keypad (button presses) and inside the
+            // items list — those are handled by Compose click handlers which
+            // may swap the active row without ever wanting the keypad closed.
+            if (!keypadRect.contains(x, y) && !itemsRect.contains(x, y)) {
+                val stillOn = activeItemId.value
+                keypadContainer.postDelayed({
+                    if (activeItemId.value == stillOn && stillOn != null) closeKeypad()
+                }, OUTSIDE_TAP_DEBOUNCE_MS)
             }
         }
         return super.dispatchTouchEvent(ev)
@@ -926,10 +969,37 @@ class CartActivity : BaseActivity() {
         imm.hideSoftInputFromWindow(token, 0)
     }
 
-    private fun isTouchOnActiveField(ev: MotionEvent): Boolean {
-        val field = activeExprField ?: return false
-        val r = Rect().also(field::getGlobalVisibleRect)
-        return r.contains(ev.rawX.toInt(), ev.rawY.toInt())
+    // Cancel every row's pending debounce and push its current buffer to the
+    // view model synchronously. Must run before any snapshot/save/share so a
+    // freshly-typed name or a pending keypad expression doesn't get lost.
+    private fun flushPendingCommits() {
+        activeItemId.value?.let { id ->
+            commitExpression(id, liveExpression.value.orEmpty())
+        }
+        val snapshot = pendingNames.toMap()
+        pendingNames.clear()
+        snapshot.forEach { (id, name) -> commitName(id, name) }
+    }
+
+    private fun commitName(
+        id: String,
+        name: String,
+    ) {
+        pendingNames.remove(id)
+        val current = itemsLive.value?.firstOrNull { it.id == id } ?: return
+        if (current.name == name) return
+        viewModel.updateItem(id, name, current.expression)
+    }
+
+    private fun commitExpression(
+        id: String,
+        expression: String,
+    ) {
+        val current = itemsLive.value?.firstOrNull { it.id == id } ?: return
+        val effectiveName = pendingNames[id] ?: current.name
+        if (current.name == effectiveName && current.expression == expression) return
+        pendingNames.remove(id)
+        viewModel.updateItem(id, effectiveName, expression)
     }
 
     // ------------------------------------------------------------------
