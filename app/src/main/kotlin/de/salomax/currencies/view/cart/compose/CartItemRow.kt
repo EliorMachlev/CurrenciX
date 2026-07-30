@@ -2,23 +2,23 @@ package de.salomax.currencies.view.cart.compose
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,7 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -40,17 +40,10 @@ import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
 
-// Debounce so the persistence pump doesn't fire on every keystroke — the
-// user typing a long item name would otherwise write once per character.
 private const val NAME_EDIT_DEBOUNCE_MS = 300L
-
-// Row previews only need two decimals; keeps the inline slot tidy even for a
-// long-scale intermediate value.
 private const val ROW_PREVIEW_SCALE = 2
+private val FIELD_MIN_HEIGHT = 28.dp
 
-private const val EXPRESSION_MIN_HEIGHT_DP = 40
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongParameterList")
 fun CartItemRow(
@@ -112,7 +105,6 @@ private fun rowBorder(isActive: Boolean): BorderStroke =
         BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NameField(
     initial: String,
@@ -138,15 +130,34 @@ private fun NameField(
         onCommit(text)
         lastCommitted = text
     }
-    TextField(
-        value = text,
-        onValueChange = { text = it },
-        placeholder = { Text(stringResource(id = R.string.cart_item_name_hint)) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        colors = transparentTextFieldColors(),
-        modifier = Modifier.fillMaxWidth(),
-    )
+    val textStyle =
+        LocalTextStyle.current.merge(
+            MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+        )
+    val hintColor = MaterialTheme.colorScheme.onSurfaceVariant
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = FIELD_MIN_HEIGHT),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        BasicTextField(
+            value = text,
+            onValueChange = { text = it },
+            singleLine = true,
+            textStyle = textStyle,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        if (text.isEmpty()) {
+            Text(
+                text = stringResource(id = R.string.cart_item_name_hint),
+                style = textStyle.copy(color = hintColor),
+            )
+        }
+    }
 }
 
 @Composable
@@ -154,14 +165,13 @@ private fun ExpressionField(
     text: String,
     onTap: () -> Unit,
 ) {
-    Row(
+    Box(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = EXPRESSION_MIN_HEIGHT_DP.dp)
-                .clickable(onClick = onTap)
-                .padding(vertical = dimensionResource(id = R.dimen.margin1x)),
-        verticalAlignment = Alignment.CenterVertically,
+                .defaultMinSize(minHeight = FIELD_MIN_HEIGHT)
+                .clickable(onClick = onTap),
+        contentAlignment = Alignment.CenterStart,
     ) {
         Text(
             text = text.ifBlank { stringResource(id = R.string.cart_item_expression_hint) },
@@ -172,7 +182,6 @@ private fun ExpressionField(
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 },
-            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -200,15 +209,3 @@ private fun ValuePreview(
                 .padding(top = dimensionResource(id = R.dimen.margin1x)),
     )
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun transparentTextFieldColors() =
-    TextFieldDefaults.colors(
-        focusedContainerColor = Color.Transparent,
-        unfocusedContainerColor = Color.Transparent,
-        disabledContainerColor = Color.Transparent,
-        focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
-        disabledIndicatorColor = Color.Transparent,
-    )
