@@ -104,11 +104,21 @@ fun TimelineChart(
 
     val rangeProvider =
         remember(minValue, maxValue) {
-            if (minValue != null && maxValue != null && minValue < maxValue) {
-                val pad = (maxValue - minValue) * Y_AXIS_PADDING
-                CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
-            } else {
-                CartesianLayerRangeProvider.auto()
+            when {
+                minValue != null && maxValue != null && minValue < maxValue -> {
+                    val pad = (maxValue - minValue) * Y_AXIS_PADDING
+                    CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
+                }
+                // Constant series (e.g. AUD → AUD, all rates = 1.0). auto()
+                // stretches to [0, 1], which puts the top Y-axis label at the
+                // layer boundary and overflows above the chart region. Pin a
+                // symmetric ±FLAT_SERIES_PADDING band around the value so the
+                // chart shows a centered flat line with a bounded axis.
+                minValue != null && maxValue != null -> {
+                    val pad = FLAT_SERIES_PADDING.coerceAtLeast(kotlin.math.abs(minValue) * Y_AXIS_PADDING)
+                    CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
+                }
+                else -> CartesianLayerRangeProvider.auto()
             }
         }
 
@@ -284,6 +294,7 @@ private fun stripYear(pattern: String): String = pattern.replace("/yy", "").repl
 
 private const val HIGHLIGHT_ALPHA = 0.4f
 private const val Y_AXIS_PADDING = 0.05
+private const val FLAT_SERIES_PADDING = 0.01
 private const val X_AXIS_LABEL_ROTATION = 0f
 private const val X_AXIS_TARGET_LABEL_COUNT = 7
 private const val Y_AXIS_TARGET_LABEL_COUNT = 6
