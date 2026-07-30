@@ -3,181 +3,97 @@ package de.salomax.currencies.view.main.spinner
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.view.View
-import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import de.salomax.currencies.R
 import de.salomax.currencies.model.Rate
+import de.salomax.currencies.util.DECIMAL_PLACES_DEFAULT
+import de.salomax.currencies.view.compose.AppTheme
 import de.salomax.currencies.viewmodel.main.MainViewModel
 import de.salomax.currencies.viewmodel.preference.PreferenceViewModel
 import java.math.BigDecimal
 
 class SearchableSpinnerDialog(
-    context: Context,
-) : AppCompatDialogFragment(),
-    SearchView.OnQueryTextListener {
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var prefViewModel: PreferenceViewModel
-
-    private var filterStarredButton: ImageButton? = null
-    private var searchView: SearchView? = null
-    private var listView: RecyclerView? = null
-
+    @Suppress("UNUSED_PARAMETER") context: Context,
+) : AppCompatDialogFragment() {
     var onRateClicked: ((Rate, Int) -> Unit)? = null
 
-    private var adapter: SearchableSpinnerDialogAdapter = SearchableSpinnerDialogAdapter(context)
+    // Backed by MutableState so Compose recomposes when callers push new
+    // conversion-preview inputs (rate/sum) from outside the composition.
+    private val currentRateState = mutableStateOf<Rate?>(null)
+    private val currentSumState = mutableStateOf(BigDecimal.ONE)
 
     fun setCurrentRate(currentRate: Rate) {
-        adapter.setCurrentRate(currentRate)
+        currentRateState.value = currentRate
     }
 
     fun setCurrentSum(currentSum: BigDecimal) {
-        adapter.setCurrentSum(currentSum)
+        currentSumState.value = currentSum
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val view = View.inflate(context, R.layout.searchable_spinner_dialog, null)
-
-        this.mainViewModel =
+        val mainViewModel =
             ViewModelProvider(
                 this,
                 MainViewModel.Factory(requireActivity().application, true),
             )[MainViewModel::class.java]
-        this.prefViewModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
+        val prefViewModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
 
-        // listView
-        listView = view.findViewById(R.id.listView)
-        listView?.layoutManager = LinearLayoutManager(context)
-        listView?.adapter = adapter
-        adapter.onRateClicked = { rate: Rate, position: Int ->
-            onRateClicked?.invoke(rate, position)
-            dismiss()
-        }
-        adapter.onStarClicked = {
-            mainViewModel.toggleCurrencyStar(it.currency)
-        }
+        val composeView =
+            ComposeView(requireContext()).apply {
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                setContent {
+                    AppTheme {
+                        val rates by mainViewModel.getExchangeRates().observeAsState()
+                        val stars by mainViewModel.getStarredCurrencies().observeAsState(initial = emptyList())
+                        val filterStarred by mainViewModel.isFilterStarredEnabled().observeAsState(initial = false)
+                        val previewEnabled by prefViewModel.isPreviewConversionEnabled().observeAsState(initial = false)
+                        val decimalPlaces by mainViewModel.getDecimalPlaces().observeAsState()
 
-        // drag-to-reorder for starred rows (long-press to drag)
-        val dragCallback =
-            object : ItemTouchHelper.Callback() {
-                override fun isLongPressDragEnabled(): Boolean = true
+                        val baseRate = currentRateState.value
+                        val conversion =
+                            if (previewEnabled && baseRate != null) {
+                                CurrencyPickerConversion(
+                                    baseRate = baseRate,
+                                    baseSum = currentSumState.value,
+                                    decimalPlaces = decimalPlaces ?: DECIMAL_PLACES_DEFAULT,
+                                )
+                            } else {
+                                null
+                            }
 
-                override fun isItemViewSwipeEnabled(): Boolean = false
-
-                override fun getMovementFlags(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                ): Int {
-                    val pos = viewHolder.bindingAdapterPosition
-                    return if (adapter.isDraggable(pos)) {
-                        makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
-                    } else {
-                        0
+                        SearchableCurrencyPicker(
+                            rates = rates?.rates.orEmpty(),
+                            stars = stars,
+                            filterStarred = filterStarred,
+                            conversion = conversion,
+                            onRateClicked = { rate ->
+                                onRateClicked?.invoke(rate, rates?.rates?.indexOf(rate) ?: -1)
+                                dismiss()
+                            },
+                            onStarClicked = { mainViewModel.toggleCurrencyStar(it.currency) },
+                            onToggleStarredFilter = { mainViewModel.toggleStarredActive() },
+                            onStarredOrderChanged = { mainViewModel.setStarredCurrencyOrder(it) },
+                        )
                     }
                 }
-
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder,
-                ): Boolean =
-                    adapter.moveItem(
-                        viewHolder.bindingAdapterPosition,
-                        target.bindingAdapterPosition,
-                    )
-
-                override fun canDropOver(
-                    recyclerView: RecyclerView,
-                    current: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder,
-                ): Boolean = adapter.isDraggable(target.bindingAdapterPosition)
-
-                override fun onSwiped(
-                    viewHolder: RecyclerView.ViewHolder,
-                    direction: Int,
-                ) = Unit
-
-                override fun clearView(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                ) {
-                    super.clearView(recyclerView, viewHolder)
-                    mainViewModel.setStarredCurrencyOrder(adapter.getCurrentStarredOrder())
-                }
             }
-        ItemTouchHelper(dragCallback).attachToRecyclerView(listView)
 
-        // searchView
-        searchView = view.findViewById(R.id.searchView)
-        searchView?.setOnQueryTextListener(this)
-        searchView?.clearFocus()
-
-        // filter starred
-        filterStarredButton = view.findViewById(R.id.btn_toggle_fav)
-        filterStarredButton?.setOnClickListener {
-            mainViewModel.toggleStarredActive()
-        }
-        mainViewModel.isFilterStarredEnabled().observe(this) { enabled ->
-            filterStarredButton?.setImageDrawable(
-                if (enabled) {
-                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_on)
-                } else {
-                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_off)
-                },
-            )
-        }
-        mainViewModel.isFilterStarredEnabled().observe(this) {
-            adapter.filterStarred(it)
-        }
-
-        // rates
-        mainViewModel.getExchangeRates().observe(this) {
-            adapter.setRates(it?.rates)
-        }
-        // stars
-        mainViewModel.getStarredCurrencies().observe(this) {
-            adapter.setStars(it)
-        }
-        //  conversion preview
-        prefViewModel.isPreviewConversionEnabled().observe(this) {
-            adapter.setPreviewConversionEnabled(it)
-        }
-        // decimal accuracy
-        mainViewModel.getDecimalPlaces().observe(this) {
-            adapter.setDecimalPlaces(it)
-        }
-
-        // build dialog
         return AlertDialog
             .Builder(requireContext())
             .setNegativeButton(getString(android.R.string.cancel), null)
-            .setView(view)
+            .setView(composeView)
             .create()
     }
 
-    override fun onQueryTextChange(query: String?): Boolean {
-        adapter.filter(query)
-        return true
-    }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        searchView?.clearFocus()
-        return true
-    }
-
-    // intentionally close dialog on orientation change. else it's a real mess to restore the
-    // adapter. really not worth the effort!
     override fun onPause() {
         super.onPause()
-        // needs to be done manually, as this fragment/adapter seems to get re-used. the filter won't get reset
-        adapter.reset()
+        // Close on config change; state restore across rotation isn't worth the complexity.
         dismiss()
     }
 }

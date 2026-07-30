@@ -1,0 +1,397 @@
+package de.salomax.currencies.view.main.spinner
+
+import android.content.Context
+import android.widget.ImageView
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import de.salomax.currencies.R
+import de.salomax.currencies.model.Currency
+import de.salomax.currencies.model.Rate
+import de.salomax.currencies.util.DECIMAL_PLACES_DEFAULT
+import de.salomax.currencies.util.hasAppendedCurrencySymbol
+import de.salomax.currencies.util.stripRtlMark
+import de.salomax.currencies.util.toHumanReadableNumber
+import java.math.BigDecimal
+import java.math.MathContext
+
+private const val FLAG_WIDTH_DP = 24
+private const val FLAG_HEIGHT_DP = 17
+private const val ROW_MIN_HEIGHT_DP = 56
+private const val DRAG_ELEVATION_ALPHA = 0.85f
+private const val API_HINT_ALPHA = 0.7f
+
+internal data class CurrencyPickerConversion(
+    val baseRate: Rate,
+    val baseSum: BigDecimal,
+    val decimalPlaces: Int = DECIMAL_PLACES_DEFAULT,
+)
+
+@Composable
+internal fun SearchableCurrencyPicker(
+    rates: List<Rate>,
+    stars: List<Currency>,
+    filterStarred: Boolean,
+    conversion: CurrencyPickerConversion?,
+    onRateClicked: (Rate) -> Unit,
+    onStarClicked: (Rate) -> Unit,
+    onToggleStarredFilter: () -> Unit,
+    onStarredOrderChanged: (List<Currency>) -> Unit,
+) {
+    var query by remember { mutableStateOf("") }
+    val padH = dimensionResource(id = R.dimen.margin2x)
+    val ctx = LocalContext.current
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        SearchBar(
+            query = query,
+            onQueryChange = { query = it },
+            filterStarred = filterStarred,
+            onToggleStarredFilter = onToggleStarredFilter,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = padH, vertical = dimensionResource(id = R.dimen.margin1x)),
+        )
+        val filtered =
+            remember(rates, stars, filterStarred, query) {
+                buildOrderedList(ctx, rates, stars, filterStarred, query)
+            }
+        val allowReorder = query.isEmpty() && !filterStarred
+        // Local mutable copy is only used while a drag is active so item swaps
+        // can be reflected instantly without waiting for the caller's LiveData
+        // round-trip. On drag end we push the new order upstream.
+        val displayItems = remember(filtered) { filtered.toMutableStateList() }
+        CurrencyList(
+            items = displayItems,
+            stars = stars,
+            conversion = conversion,
+            allowReorder = allowReorder,
+            onRateClicked = onRateClicked,
+            onStarClicked = onStarClicked,
+            onDragEnded = {
+                if (allowReorder) {
+                    onStarredOrderChanged(collectStarredOrder(displayItems, stars))
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun SearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    filterStarred: Boolean,
+    onToggleStarredFilter: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = onQueryChange,
+            singleLine = true,
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+            trailingIcon = {
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = { onQueryChange("") }) {
+                        Icon(Icons.Filled.Clear, contentDescription = null)
+                    }
+                }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            modifier = Modifier.weight(1f),
+        )
+        IconButton(
+            onClick = onToggleStarredFilter,
+            modifier = Modifier.padding(start = dimensionResource(id = R.dimen.margin1x)),
+        ) {
+            Icon(
+                imageVector = if (filterStarred) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                contentDescription = stringResource(id = R.string.tooltip_filter_starred),
+                tint =
+                    if (filterStarred) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+            )
+        }
+    }
+}
+
+@Composable
+private fun CurrencyList(
+    items: SnapshotStateList<Rate>,
+    stars: List<Currency>,
+    conversion: CurrencyPickerConversion?,
+    allowReorder: Boolean,
+    onRateClicked: (Rate) -> Unit,
+    onStarClicked: (Rate) -> Unit,
+    onDragEnded: () -> Unit,
+) {
+    var draggingIndex by remember { mutableStateOf<Int?>(null) }
+    var dragOffsetY by remember { mutableStateOf(0f) }
+    val density = LocalDensity.current
+    val rowHeightPx = with(density) { ROW_MIN_HEIGHT_DP.dp.toPx() }
+
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
+            val isStarred = stars.contains(rate.currency)
+            val isDragging = draggingIndex == index
+            CurrencyRow(
+                rate = rate,
+                isStarred = isStarred,
+                conversion = conversion,
+                onClick = { onRateClicked(rate) },
+                onStarClick = { onStarClicked(rate) },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .graphicsLayer {
+                            if (isDragging) {
+                                translationY = dragOffsetY
+                                alpha = DRAG_ELEVATION_ALPHA
+                            }
+                        }.then(
+                            if (allowReorder && isStarred) {
+                                Modifier.pointerInput(items.size, index) {
+                                    detectDragGesturesAfterLongPress(
+                                        onDragStart = {
+                                            draggingIndex = index
+                                            dragOffsetY = 0f
+                                        },
+                                        onDragEnd = {
+                                            draggingIndex = null
+                                            dragOffsetY = 0f
+                                            onDragEnded()
+                                        },
+                                        onDragCancel = {
+                                            draggingIndex = null
+                                            dragOffsetY = 0f
+                                        },
+                                        onDrag = { change, dragAmount ->
+                                            change.consume()
+                                            dragOffsetY += dragAmount.y
+                                            val current = draggingIndex ?: return@detectDragGesturesAfterLongPress
+                                            val steps = (dragOffsetY / rowHeightPx).toInt()
+                                            if (steps != 0) {
+                                                val target = (current + steps).coerceIn(0, items.lastIndex)
+                                                if (target != current && stars.contains(items[target].currency)) {
+                                                    val moved = items.removeAt(current)
+                                                    items.add(target, moved)
+                                                    draggingIndex = target
+                                                    dragOffsetY -= steps * rowHeightPx
+                                                }
+                                            }
+                                        },
+                                    )
+                                }
+                            } else {
+                                Modifier
+                            },
+                        ),
+            )
+        }
+        item(key = "api_hint") {
+            ApiHintRow()
+        }
+    }
+}
+
+@Composable
+private fun CurrencyRow(
+    rate: Rate,
+    isStarred: Boolean,
+    conversion: CurrencyPickerConversion?,
+    onClick: () -> Unit,
+    onStarClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val ctx = LocalContext.current
+    Row(
+        modifier =
+            modifier
+                .heightIn(min = ROW_MIN_HEIGHT_DP.dp)
+                .clickable(onClick = onClick)
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.margin2x),
+                    vertical = dimensionResource(id = R.dimen.margin1x),
+                ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CurrencyFlag(rate.currency)
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.margin2x)))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = rate.currency.iso4217Alpha(),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = rate.currency.fullName(ctx),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            if (conversion != null) {
+                Text(
+                    text = buildConversionText(ctx, rate, conversion),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        IconButton(onClick = onStarClick) {
+            Icon(
+                imageVector = if (isStarred) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                contentDescription = null,
+                tint =
+                    if (isStarred) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+            )
+        }
+    }
+}
+
+@Composable
+private fun CurrencyFlag(currency: Currency) {
+    AndroidView(
+        factory = { ctx: Context ->
+            ImageView(ctx).apply {
+                adjustViewBounds = true
+                contentDescription = null
+            }
+        },
+        update = { iv -> iv.setImageDrawable(currency.flag(iv.context)) },
+        modifier =
+            Modifier
+                .size(width = FLAG_WIDTH_DP.dp, height = FLAG_HEIGHT_DP.dp)
+                .clip(RoundedCornerShape(2.dp)),
+    )
+}
+
+@Composable
+private fun ApiHintRow() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        HorizontalDivider()
+        Text(
+            text = stringResource(id = R.string.currency_dropdown_api_hint),
+            style = MaterialTheme.typography.labelMedium,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = dimensionResource(id = R.dimen.margin2x),
+                        vertical = dimensionResource(id = R.dimen.margin1x),
+                    ).alpha(API_HINT_ALPHA),
+        )
+    }
+}
+
+private fun buildOrderedList(
+    context: Context,
+    rates: List<Rate>,
+    stars: List<Currency>,
+    filterStarred: Boolean,
+    query: String,
+): List<Rate> {
+    val filtered =
+        rates
+            .filter { rate ->
+                if (query.isNotEmpty()) {
+                    rate.currency.fullName(context).contains(query, ignoreCase = true) ||
+                        rate.currency.iso4217Alpha().contains(query, ignoreCase = true)
+                } else {
+                    true
+                }
+            }.filter { if (filterStarred) stars.contains(it.currency) else true }
+    val starred = stars.mapNotNull { code -> filtered.find { it.currency == code } }
+    val rest = filtered.filterNot { stars.contains(it.currency) }
+    return starred + rest
+}
+
+private fun collectStarredOrder(
+    items: List<Rate>,
+    stars: List<Currency>,
+): List<Currency> {
+    val visible = items.map { it.currency }.filter { stars.contains(it) }
+    val missing = stars.filterNot { visible.contains(it) }
+    return visible + missing
+}
+
+private fun buildConversionText(
+    context: Context,
+    item: Rate,
+    conversion: CurrencyPickerConversion,
+): String {
+    val sum = if (conversion.baseSum.compareTo(BigDecimal.ZERO) == 0) BigDecimal.ONE else conversion.baseSum
+    val sourceSymbol = conversion.baseRate.currency.symbol() ?: ""
+    val source = sum.toHumanReadableNumber(context, decimalPlaces = conversion.decimalPlaces, trim = true)
+    val destinationSymbol = item.currency.symbol() ?: ""
+    val destination =
+        sum
+            .divide(conversion.baseRate.value, MathContext.DECIMAL128)
+            .multiply(item.value)
+            .toHumanReadableNumber(context, decimalPlaces = conversion.decimalPlaces, trim = true)
+    val appended = hasAppendedCurrencySymbol(context)
+    val left = formatAmount(source, sourceSymbol, appended)
+    val right = formatAmount(destination, destinationSymbol, appended)
+    return "$left = $right".stripRtlMark().trim()
+}
+
+private fun formatAmount(
+    amount: String,
+    symbol: String,
+    appended: Boolean,
+): String =
+    when {
+        symbol.isEmpty() -> amount
+        appended -> "$amount $symbol"
+        else -> "$symbol $amount"
+    }
