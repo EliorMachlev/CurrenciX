@@ -32,7 +32,7 @@ fun buildQuickConversionRows(
     originalPrefix: String,
 ): List<QuickConversionsRow> {
     val baseRate = rates.rates?.find { it.currency == from }?.value ?: return emptyList()
-    val destRate = rates.rates?.find { it.currency == to }?.value ?: return emptyList()
+    val destRate = rates.rates.find { it.currency == to }?.value ?: return emptyList()
     val hasFees = feeStack.hasFees()
     val fromIso = from.iso4217Alpha()
     val toIso = to.iso4217Alpha()

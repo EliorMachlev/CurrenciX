@@ -55,6 +55,6 @@ private fun ChangelogSectionEntry(section: ChangelogSection) {
 
 private fun renderBullet(raw: CharSequence): AnnotatedString {
     val html = "&#8226;&nbsp; $raw"
-    val spanned = HtmlCompat.fromHtml(html.toString(), HtmlCompat.FROM_HTML_MODE_COMPACT)
+    val spanned = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)
     return AnnotatedString(spanned.toString())
 }
