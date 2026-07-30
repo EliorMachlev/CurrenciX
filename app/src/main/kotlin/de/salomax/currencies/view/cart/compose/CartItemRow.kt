@@ -42,7 +42,7 @@ import kotlinx.coroutines.delay
 
 private const val NAME_EDIT_DEBOUNCE_MS = 300L
 private const val ROW_PREVIEW_SCALE = 2
-private val FIELD_MIN_HEIGHT = 28.dp
+private val FIELD_MIN_HEIGHT = 48.dp
 
 @Composable
 @Suppress("LongParameterList")
