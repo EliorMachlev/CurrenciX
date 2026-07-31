@@ -196,6 +196,12 @@ private fun CurrencyList(
     // a prior dialog's scroll offset over and the list opens mid-scroll.
     val listState = remember { LazyListState() }
 
+    // Don't compose the LazyColumn until we have real items. LazyListState
+    // created against an empty list can end up in a stale position when items
+    // arrive later; deferring creation guarantees the first layout uses the
+    // final data and lands at index 0.
+    if (items.isEmpty()) return
+
     LazyColumn(state = listState, modifier = modifier) {
         itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
             val isStarred = stars.contains(rate.currency)
@@ -209,6 +215,11 @@ private fun CurrencyList(
                 modifier =
                     Modifier
                         .fillMaxWidth()
+                        // animateItem gives us the smooth reorder animation
+                        // that RecyclerView's ItemAnimator provided for free
+                        // pre-compose (notifyItemMoved). Without it, the row
+                        // swaps mid-drag look like snap-redraws.
+                        .animateItem()
                         .graphicsLayer {
                             if (isDragging) {
                                 translationY = dragOffsetY
@@ -216,7 +227,7 @@ private fun CurrencyList(
                             }
                         }.then(
                             if (allowReorder && isStarred) {
-                                Modifier.pointerInput(items.size, index) {
+                                Modifier.pointerInput(allowReorder, index) {
                                     detectDragGesturesAfterLongPress(
                                         onDragStart = {
                                             draggingIndex = index
