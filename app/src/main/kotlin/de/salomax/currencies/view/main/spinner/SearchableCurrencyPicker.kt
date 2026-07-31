@@ -195,6 +195,17 @@ private fun CurrencyList(
     // scoped to the current composition — otherwise the saveable state carries
     // a prior dialog's scroll offset over and the list opens mid-scroll.
     val listState = remember { LazyListState() }
+    // LazyColumn with keys auto-preserves the visible item when the underlying
+    // list reorders. Rates and stars arrive from separate LiveData sources, so
+    // the first paint uses one ordering and the second paint reorders (starred
+    // pulled to the top) — that reorder scrolls the previously-visible row off
+    // the top, leaving the list opening mid- or bottom-scroll. Force index 0
+    // the first time items populate, keyed on isEmpty so it also re-fires when
+    // a search clears.
+    val hasItems = items.isNotEmpty()
+    LaunchedEffect(hasItems) {
+        if (hasItems) listState.scrollToItem(0)
+    }
 
     LazyColumn(state = listState, modifier = modifier) {
         itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
