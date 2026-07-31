@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -190,8 +191,12 @@ private fun CurrencyList(
     var dragOffsetY by remember { mutableStateOf(0f) }
     val density = LocalDensity.current
     val rowHeightPx = with(density) { ROW_MIN_HEIGHT_DP.dp.toPx() }
+    // Plain remember (not rememberLazyListState) so the scroll position is
+    // scoped to the current composition — otherwise the saveable state carries
+    // a prior dialog's scroll offset over and the list opens mid-scroll.
+    val listState = remember { LazyListState() }
 
-    LazyColumn(modifier = modifier) {
+    LazyColumn(state = listState, modifier = modifier) {
         itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
             val isStarred = stars.contains(rate.currency)
             val isDragging = draggingIndex == index
