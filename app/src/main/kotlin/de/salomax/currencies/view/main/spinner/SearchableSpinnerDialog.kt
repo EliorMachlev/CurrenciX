@@ -50,7 +50,15 @@ class SearchableSpinnerDialog(
                 setContent {
                     AppTheme {
                         val rates by mainViewModel.getExchangeRates().observeAsState()
-                        val stars by mainViewModel.getStarredCurrencies().observeAsState(initial = emptyList())
+                        // No initial value — we must know when stars has actually
+                        // emitted. If we defaulted to emptyList, the picker would
+                        // render rates in raw order on the first frame, then
+                        // reorder (starred → top) once stars arrived. LazyColumn's
+                        // key-based scroll preservation reacts to that reorder by
+                        // holding the previously visible row on screen, which
+                        // pushes index 0 off the top and opens the picker mid- or
+                        // bottom-scroll. Wait for both sources, render once.
+                        val stars by mainViewModel.getStarredCurrencies().observeAsState()
                         val filterStarred by mainViewModel.isFilterStarredEnabled().observeAsState(initial = false)
                         val previewEnabled by prefViewModel.isPreviewConversionEnabled().observeAsState(initial = false)
                         val decimalPlaces by mainViewModel.getDecimalPlaces().observeAsState()
@@ -67,9 +75,10 @@ class SearchableSpinnerDialog(
                                 null
                             }
 
+                        val ready = rates != null && stars != null
                         SearchableCurrencyPicker(
-                            rates = rates?.rates.orEmpty(),
-                            stars = stars,
+                            rates = if (ready) rates?.rates.orEmpty() else emptyList(),
+                            stars = stars.orEmpty(),
                             filterStarred = filterStarred,
                             conversion = conversion,
                             onRateClicked = { rate ->
