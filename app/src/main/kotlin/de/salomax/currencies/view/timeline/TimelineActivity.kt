@@ -6,12 +6,12 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.map
 import androidx.window.layout.FoldingFeature
@@ -50,6 +50,11 @@ class TimelineActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Wrap the Compose surface in an XML root with fitsSystemWindows="true"
+        // so edge-to-edge (targetSdk 35+) doesn't draw the chart behind the
+        // ActionBar / status bar. Mirrors the pattern used by every other
+        // activity in this app.
+        setContentView(R.layout.activity_timeline)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
@@ -84,7 +89,7 @@ class TimelineActivity : BaseActivity() {
         val axisColor =
             Color(MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0))
 
-        setContent {
+        findViewById<ComposeView>(R.id.timeline_compose).setContent {
             val feature by remember { foldingFeatureState }
             TimelineScreen(
                 model = timelineModel,
