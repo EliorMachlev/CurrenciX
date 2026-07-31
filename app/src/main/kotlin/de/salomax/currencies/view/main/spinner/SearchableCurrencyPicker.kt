@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -27,12 +28,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -83,7 +85,7 @@ internal fun SearchableCurrencyPicker(
     val padH = dimensionResource(id = R.dimen.margin2x)
     val ctx = LocalContext.current
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(
             query = query,
             onQueryChange = { query = it },
@@ -99,15 +101,23 @@ internal fun SearchableCurrencyPicker(
                 buildOrderedList(ctx, rates, stars, filterStarred, query)
             }
         val allowReorder = query.isEmpty() && !filterStarred
-        // Local mutable copy is only used while a drag is active so item swaps
-        // can be reflected instantly without waiting for the caller's LiveData
-        // round-trip. On drag end we push the new order upstream.
-        val displayItems = remember(filtered) { filtered.toMutableStateList() }
+        // Stable SnapshotStateList across recompositions so LazyColumn keeps its
+        // scroll/animation state when stars LiveData round-trips after a drag.
+        // Rebuilding on every `filtered` change (previously via remember(filtered))
+        // handed LazyColumn a new items collection and caused a visible refresh.
+        val displayItems = remember { mutableStateListOf<Rate>() }
+        LaunchedEffect(filtered) {
+            if (displayItems != filtered) {
+                displayItems.clear()
+                displayItems.addAll(filtered)
+            }
+        }
         CurrencyList(
             items = displayItems,
             stars = stars,
             conversion = conversion,
             allowReorder = allowReorder,
+            modifier = Modifier.weight(1f).fillMaxWidth(),
             onRateClicked = onRateClicked,
             onStarClicked = onStarClicked,
             onDragEnded = {
@@ -165,11 +175,13 @@ private fun SearchBar(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun CurrencyList(
     items: SnapshotStateList<Rate>,
     stars: List<Currency>,
     conversion: CurrencyPickerConversion?,
     allowReorder: Boolean,
+    modifier: Modifier = Modifier,
     onRateClicked: (Rate) -> Unit,
     onStarClicked: (Rate) -> Unit,
     onDragEnded: () -> Unit,
@@ -179,7 +191,7 @@ private fun CurrencyList(
     val density = LocalDensity.current
     val rowHeightPx = with(density) { ROW_MIN_HEIGHT_DP.dp.toPx() }
 
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    LazyColumn(modifier = modifier) {
         itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
             val isStarred = stars.contains(rate.currency)
             val isDragging = draggingIndex == index
