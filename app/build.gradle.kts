@@ -132,9 +132,8 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
-    // Pin material3 explicitly (newer than the BOM ships) — keeps regular
-    // MaterialTheme; not switching to MaterialExpressiveTheme this round.
-    implementation("androidx.compose.material3:material3:1.5.0-alpha25")
+    // Pin material3 to latest stable (newer than the BOM ships).
+    implementation("androidx.compose.material3:material3:1.4.0")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.runtime:runtime")
     implementation("androidx.compose.runtime:runtime-livedata")
