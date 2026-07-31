@@ -215,11 +215,15 @@ private fun CurrencyList(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        // animateItem gives us the smooth reorder animation
-                        // that RecyclerView's ItemAnimator provided for free
-                        // pre-compose (notifyItemMoved). Without it, the row
-                        // swaps mid-drag look like snap-redraws.
-                        .animateItem()
+                        // animateItem gives the "make way" animation to rows
+                        // being displaced by a drag (RecyclerView's ItemAnimator
+                        // did this via notifyItemMoved). Skip it on the actively
+                        // dragged row — its position is already being translated
+                        // via graphicsLayer.translationY, and animating the
+                        // layout on top of that draws the row at (layoutPos +
+                        // translationY), which visibly overlaps its neighbor
+                        // mid-swap.
+                        .then(if (isDragging) Modifier else Modifier.animateItem())
                         .graphicsLayer {
                             if (isDragging) {
                                 translationY = dragOffsetY
