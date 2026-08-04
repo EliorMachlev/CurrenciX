@@ -42,10 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -142,6 +144,7 @@ private fun SearchBar(
     onToggleStarredFilter: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboard = LocalSoftwareKeyboardController.current
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -159,7 +162,13 @@ private fun SearchBar(
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    // AlertDialog-hosted ComposeView doesn't reliably raise
+                    // the IME on focus by itself; explicitly ask the keyboard
+                    // controller to show whenever the field gains focus.
+                    .onFocusChanged { if (it.isFocused) keyboard?.show() },
         )
         IconButton(
             onClick = onToggleStarredFilter,

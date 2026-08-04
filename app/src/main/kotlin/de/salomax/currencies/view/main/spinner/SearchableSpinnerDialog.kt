@@ -103,13 +103,14 @@ class SearchableSpinnerDialog(
 
     override fun onStart() {
         super.onStart()
-        // AlertDialog windows default to a soft-input mode that leaves the
-        // Compose TextField unable to raise the IME on tap; explicitly opt
-        // into RESIZE so tapping the search field opens the keyboard.
-        dialog?.window?.setSoftInputMode(
-            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE,
-        )
+        // AlertDialog theme sets FLAG_ALT_FOCUSABLE_IM, which routes IME to
+        // the underlying window instead of this dialog — Compose TextField
+        // taps then can't raise the keyboard. Clear that flag and opt into
+        // RESIZE so tapping the search field opens the IME.
+        dialog?.window?.apply {
+            clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
     }
 
     override fun onPause() {
