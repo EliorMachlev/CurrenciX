@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -206,6 +207,11 @@ private fun CurrencyList(
         itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
             val isStarred = stars.contains(rate.currency)
             val isDragging = draggingIndex == index
+            // Read the row's live index from inside the long-running pointerInput
+            // block without restarting it. Keying pointerInput on `index` would
+            // tear the gesture down every time a swap changes the row's position,
+            // cancelling drags after a single step.
+            val currentIndex by rememberUpdatedState(index)
             CurrencyRow(
                 rate = rate,
                 isStarred = isStarred,
@@ -231,10 +237,10 @@ private fun CurrencyList(
                             }
                         }.then(
                             if (allowReorder && isStarred) {
-                                Modifier.pointerInput(allowReorder, index) {
+                                Modifier.pointerInput(allowReorder) {
                                     detectDragGesturesAfterLongPress(
                                         onDragStart = {
-                                            draggingIndex = index
+                                            draggingIndex = currentIndex
                                             dragOffsetY = 0f
                                         },
                                         onDragEnd = {
