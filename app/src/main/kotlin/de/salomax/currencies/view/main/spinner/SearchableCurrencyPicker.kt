@@ -29,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
@@ -103,23 +102,17 @@ internal fun SearchableCurrencyPicker(
         val allowReorder = query.isEmpty() && !filterStarred
         // Starred rates in the user-defined order, filtered by query. Held in
         // a SnapshotStateList so the drag gesture can mutate it in place on
-        // drop without rebuilding the whole picker. Initialized synchronously
-        // so the first frame already contains favorites — otherwise LazyList
-        // anchors to the first non-starred key and the picker opens scrolled
-        // past the favorites section.
+        // drop without rebuilding the whole picker. Keyed on the inputs so the
+        // list is populated synchronously on the first frame that has data —
+        // an async LaunchedEffect fill would render an empty favorites section
+        // first, and LazyList's key-anchored scroll would then hold the first
+        // non-starred key at the top when favorites arrived on the next frame.
         val starredDisplay =
-            remember {
+            remember(rates, stars, query) {
                 mutableStateListOf<Rate>().apply {
                     addAll(buildStarredList(ctx, rates, stars, query))
                 }
             }
-        LaunchedEffect(rates, stars, query) {
-            val next = buildStarredList(ctx, rates, stars, query)
-            if (starredDisplay.toList() != next) {
-                starredDisplay.clear()
-                starredDisplay.addAll(next)
-            }
-        }
         val nonStarredFiltered =
             remember(rates, stars, filterStarred, query) {
                 if (filterStarred) emptyList() else buildNonStarredList(ctx, rates, stars, query)
