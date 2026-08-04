@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,6 +66,11 @@ private const val FLAG_HEIGHT_DP = 17
 private const val ROW_MIN_HEIGHT_DP = 56
 private const val DRAG_ELEVATION_ALPHA = 0.85f
 private const val API_HINT_ALPHA = 0.7f
+
+// 1.dp so the anchor is guaranteed to be laid out as a real item and picked
+// up by LazyColumn's first-visible-item tracking. Zero would let Compose skip
+// it and the key-preservation would fall through to the first real row.
+private const val TOP_ANCHOR_HEIGHT_DP = 1
 
 internal data class CurrencyPickerConversion(
     val baseRate: Rate,
@@ -221,7 +227,7 @@ private fun CurrencyList(
         // scrolls to follow it (the "auto-scroll" the user saw). With this
         // anchor present at the top, LazyList tracks the anchor's stable key
         // and the reorder below it doesn't trigger any scroll drift.
-        item(key = "top_anchor") { Spacer(Modifier.fillMaxWidth().padding(0.dp)) }
+        item(key = "top_anchor") { Spacer(Modifier.fillMaxWidth().height(TOP_ANCHOR_HEIGHT_DP.dp)) }
         itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
             val isStarred = stars.contains(rate.currency)
             val isDragging = draggingIndex == index
@@ -281,8 +287,15 @@ private fun CurrencyList(
                                                 s in items.indices &&
                                                 t in items.indices
                                             ) {
-                                                val moved = items.removeAt(s)
-                                                items.add(t, moved)
+                                                // Batch removeAt + add so LazyColumn sees a
+                                                // single atomic reorder — a two-step mutation
+                                                // briefly changes list size and can move the
+                                                // first-visible-item's key mid-frame, which
+                                                // triggers scroll compensation.
+                                                Snapshot.withMutableSnapshot {
+                                                    val moved = items.removeAt(s)
+                                                    items.add(t, moved)
+                                                }
                                             }
                                             draggingIndex = null
                                             targetIndex = null
