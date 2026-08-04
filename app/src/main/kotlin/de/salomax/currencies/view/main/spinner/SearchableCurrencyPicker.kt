@@ -379,35 +379,46 @@ private fun CurrencyRow(
     modifier: Modifier = Modifier,
 ) {
     val ctx = LocalContext.current
+    // Row-level clickable used to wrap flag + text + star, so a rapid tap
+    // that landed just outside the 48dp IconButton fell through to the row
+    // and dismissed the dialog. Split the click regions: the flag+text area
+    // is the dismiss-on-select target, the star's own IconButton is a
+    // separate target that only toggles. Drag modifier still lives on the
+    // outer Row via `modifier`.
     Row(
-        modifier =
-            modifier
-                .heightIn(min = ROW_MIN_HEIGHT_DP.dp)
-                .clickable(onClick = onClick)
-                .padding(
-                    horizontal = dimensionResource(id = R.dimen.margin2x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
-                ),
+        modifier = modifier.heightIn(min = ROW_MIN_HEIGHT_DP.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CurrencyFlag(rate.currency)
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.margin2x)))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = rate.currency.iso4217Alpha(),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                text = rate.currency.fullName(ctx),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            if (conversion != null) {
+        Row(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .clickable(onClick = onClick)
+                    .padding(
+                        horizontal = dimensionResource(id = R.dimen.margin2x),
+                        vertical = dimensionResource(id = R.dimen.margin1x),
+                    ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CurrencyFlag(rate.currency)
+            Spacer(Modifier.size(dimensionResource(id = R.dimen.margin2x)))
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = buildConversionText(ctx, rate, conversion),
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = rate.currency.iso4217Alpha(),
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Text(
+                    text = rate.currency.fullName(ctx),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                if (conversion != null) {
+                    Text(
+                        text = buildConversionText(ctx, rate, conversion),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
         IconButton(onClick = onStarClick) {
