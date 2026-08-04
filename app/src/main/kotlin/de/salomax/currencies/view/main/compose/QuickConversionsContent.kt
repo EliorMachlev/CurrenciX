@@ -22,14 +22,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import de.salomax.currencies.R
@@ -65,56 +68,61 @@ fun QuickConversionsContent(
 ) {
     val padH = dimensionResource(id = R.dimen.margin2x)
     val padT = dimensionResource(id = R.dimen.margin2x)
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(start = padH, end = padH, top = padT),
-    ) {
-        QuickConversionsHeader(
-            from = from,
-            to = to,
-            feeSide = feeSide,
-            showFeeSideButton = showFeeSideButton,
-            onSwap = onSwap,
-            onSwapLongPress = onSwapLongPress,
-            onToggleFeeSide = onToggleFeeSide,
-            onFeeSideLongPress = onFeeSideLongPress,
-        )
-        if (feeInfoText != null) {
-            Spacer(Modifier.height(dimensionResource(id = R.dimen.margin1x)))
-            Text(
-                text = feeInfoText,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.Center,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .alpha(FEE_INFO_ALPHA),
-            )
-        }
-        Spacer(Modifier.height(dimensionResource(id = R.dimen.margin2x)))
-        HorizontalDivider()
+    // Math reads left-to-right in every locale. Force LTR for the whole
+    // dialog so "from | swap | to" and "amount = amount" rows don't mirror
+    // under RTL layout.
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(vertical = dimensionResource(id = R.dimen.margin1x)),
+                    .padding(start = padH, end = padH, top = padT),
         ) {
-            if (rows.isEmpty()) {
+            QuickConversionsHeader(
+                from = from,
+                to = to,
+                feeSide = feeSide,
+                showFeeSideButton = showFeeSideButton,
+                onSwap = onSwap,
+                onSwapLongPress = onSwapLongPress,
+                onToggleFeeSide = onToggleFeeSide,
+                onFeeSideLongPress = onFeeSideLongPress,
+            )
+            if (feeInfoText != null) {
+                Spacer(Modifier.height(dimensionResource(id = R.dimen.margin1x)))
                 Text(
-                    text = emptyText,
+                    text = feeInfoText,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(top = dimensionResource(id = R.dimen.margin2x)),
+                            .alpha(FEE_INFO_ALPHA),
                 )
-            } else {
-                rows.forEach { row ->
-                    QuickConversionsRowUi(row)
+            }
+            Spacer(Modifier.height(dimensionResource(id = R.dimen.margin2x)))
+            HorizontalDivider()
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(vertical = dimensionResource(id = R.dimen.margin1x)),
+            ) {
+                if (rows.isEmpty()) {
+                    Text(
+                        text = emptyText,
+                        textAlign = TextAlign.Center,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = dimensionResource(id = R.dimen.margin2x)),
+                    )
+                } else {
+                    rows.forEach { row ->
+                        QuickConversionsRowUi(row)
+                    }
                 }
             }
         }
