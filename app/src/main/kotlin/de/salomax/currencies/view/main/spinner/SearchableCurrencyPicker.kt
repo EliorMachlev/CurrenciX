@@ -103,11 +103,19 @@ internal fun SearchableCurrencyPicker(
         val allowReorder = query.isEmpty() && !filterStarred
         // Starred rates in the user-defined order, filtered by query. Held in
         // a SnapshotStateList so the drag gesture can mutate it in place on
-        // drop without rebuilding the whole picker.
-        val starredDisplay = remember { mutableStateListOf<Rate>() }
+        // drop without rebuilding the whole picker. Initialized synchronously
+        // so the first frame already contains favorites — otherwise LazyList
+        // anchors to the first non-starred key and the picker opens scrolled
+        // past the favorites section.
+        val starredDisplay =
+            remember {
+                mutableStateListOf<Rate>().apply {
+                    addAll(buildStarredList(ctx, rates, stars, query))
+                }
+            }
         LaunchedEffect(rates, stars, query) {
             val next = buildStarredList(ctx, rates, stars, query)
-            if (starredDisplay != next) {
+            if (starredDisplay.toList() != next) {
                 starredDisplay.clear()
                 starredDisplay.addAll(next)
             }
