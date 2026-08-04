@@ -255,16 +255,27 @@ private fun CurrencyList(
                                         onDrag = { change, dragAmount ->
                                             change.consume()
                                             dragOffsetY += dragAmount.y
-                                            val current = draggingIndex ?: return@detectDragGesturesAfterLongPress
-                                            val steps = (dragOffsetY / rowHeightPx).toInt()
-                                            if (steps != 0) {
-                                                val target = (current + steps).coerceIn(0, items.lastIndex)
-                                                if (target != current && stars.contains(items[target].currency)) {
-                                                    val moved = items.removeAt(current)
-                                                    items.add(target, moved)
-                                                    draggingIndex = target
-                                                    dragOffsetY -= steps * rowHeightPx
-                                                }
+                                            // Perform swaps one adjacent step at a time. In-place
+                                            // element swap preserves the list length: LazyColumn
+                                            // sees a stable item count and doesn't compensate its
+                                            // scroll anchor the way removeAt+add would (which
+                                            // showed up as the list "auto-scrolling" during drag).
+                                            while (true) {
+                                                val current = draggingIndex ?: break
+                                                val direction =
+                                                    when {
+                                                        dragOffsetY >= rowHeightPx -> 1
+                                                        dragOffsetY <= -rowHeightPx -> -1
+                                                        else -> break
+                                                    }
+                                                val target = current + direction
+                                                if (target !in items.indices) break
+                                                if (!stars.contains(items[target].currency)) break
+                                                val moved = items[current]
+                                                items[current] = items[target]
+                                                items[target] = moved
+                                                draggingIndex = target
+                                                dragOffsetY -= direction * rowHeightPx
                                             }
                                         },
                                     )
