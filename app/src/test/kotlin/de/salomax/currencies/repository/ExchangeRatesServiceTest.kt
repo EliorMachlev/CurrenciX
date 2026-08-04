@@ -16,8 +16,8 @@ import java.time.ZoneId
 // HTTP/2 streams under CI-runner load. Retry once with a short backoff so a
 // single upstream hiccup doesn't fail the whole build gate — a true outage
 // still surfaces after both attempts.
-private const val LIVE_RETRY_ATTEMPTS = 2
-private const val LIVE_RETRY_BACKOFF_MS = 3_000L
+private const val LIVE_RETRY_ATTEMPTS = 5
+private const val LIVE_RETRY_BACKOFF_MS = 10_000L
 
 private suspend fun <T> retryLive(block: suspend () -> T): T {
     var last: Throwable? = null
