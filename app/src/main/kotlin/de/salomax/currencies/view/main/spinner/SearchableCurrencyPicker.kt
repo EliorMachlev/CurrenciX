@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
@@ -36,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -189,6 +191,33 @@ private fun SearchBar(
 }
 
 @Composable
+private fun KeepAtTopOnFavoritesAppear(
+    listState: LazyListState,
+    starredCount: Int,
+) {
+    // The starred list identity changes on every rates/stars/query update
+    // (remember(rates, stars, query) rebuilds it), so we can't key the effect
+    // on the list itself without losing prev-count tracking across changes.
+    // Wrap the count in rememberUpdatedState so snapshotFlow reads the fresh
+    // value on each recomposition instead of a captured stale one.
+    val currentCount by rememberUpdatedState(starredCount)
+    LaunchedEffect(listState) {
+        var prevCount = -1
+        var prevAtTop = true
+        snapshotFlow {
+            currentCount to
+                (listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0)
+        }.collect { (count, atTop) ->
+            if (prevCount == 0 && count > 0 && prevAtTop) {
+                listState.scrollToItem(0)
+            }
+            prevCount = count
+            prevAtTop = atTop
+        }
+    }
+}
+
+@Composable
 @Suppress("LongParameterList")
 private fun CurrencyList(
     starredItems: SnapshotStateList<Rate>,
@@ -204,6 +233,12 @@ private fun CurrencyList(
     // scoped to the current composition — otherwise the saveable state carries
     // a prior dialog's scroll offset over and the list opens mid-scroll.
     val listState = remember { LazyListState() }
+    // When the favorites slot appears at index 0 (empty → non-empty), LazyList
+    // key-preservation keeps the previously-first-visible non-starred key at
+    // the viewport top, pushing the new favorites section above the fold. If
+    // the user was already scrolled to the top, snap back to the top so the
+    // freshly-added favorite is what they see.
+    KeepAtTopOnFavoritesAppear(listState = listState, starredCount = starredItems.size)
     if (starredItems.isEmpty() && nonStarredItems.isEmpty()) return
 
     LazyColumn(state = listState, modifier = modifier) {
