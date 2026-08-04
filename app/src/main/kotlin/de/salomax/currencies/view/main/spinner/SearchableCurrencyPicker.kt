@@ -189,6 +189,7 @@ private fun CurrencyList(
     onDragEnded: () -> Unit,
 ) {
     var draggingIndex by remember { mutableStateOf<Int?>(null) }
+    var targetIndex by remember { mutableStateOf<Int?>(null) }
     var dragOffsetY by remember { mutableStateOf(0f) }
     val density = LocalDensity.current
     val rowHeightPx = with(density) { ROW_MIN_HEIGHT_DP.dp.toPx() }
@@ -203,7 +204,24 @@ private fun CurrencyList(
     // final data and lands at index 0.
     if (items.isEmpty()) return
 
+    // Contiguous starred prefix — drag target is clamped to this range so
+    // the user can't shuffle a favorite into the unstarred section.
+    val starredLastIndex =
+        remember(items, stars) {
+            var i = 0
+            while (i < items.size && stars.contains(items[i].currency)) i++
+            i - 1
+        }
+
     LazyColumn(state = listState, modifier = modifier) {
+        // Zero-height key anchor at index 0. LazyColumn preserves scroll by
+        // pinning the first-visible item's key at the same y across item
+        // reorders. Without an anchor, that first-visible key is often the
+        // dragged row itself — so as its position changes, LazyList silently
+        // scrolls to follow it (the "auto-scroll" the user saw). With this
+        // anchor present at the top, LazyList tracks the anchor's stable key
+        // and the reorder below it doesn't trigger any scroll drift.
+        item(key = "top_anchor") { Spacer(Modifier.fillMaxWidth().padding(0.dp)) }
         itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
             val isStarred = stars.contains(rate.currency)
             val isDragging = draggingIndex == index
@@ -212,6 +230,21 @@ private fun CurrencyList(
             // tear the gesture down every time a swap changes the row's position,
             // cancelling drags after a single step.
             val currentIndex by rememberUpdatedState(index)
+            // Visual translation for the "make way" effect. The list itself
+            // isn't mutated during drag — instead the dragged row follows the
+            // finger and rows in the [source, target] range shift by one row
+            // to open the gap. The single mutation happens on drag end, so
+            // LazyColumn sees exactly one keyed reorder event (and the top
+            // anchor above swallows any scroll compensation).
+            val src = draggingIndex
+            val tgt = targetIndex
+            val translation =
+                when {
+                    isDragging -> dragOffsetY
+                    src != null && tgt != null && src < tgt && index in (src + 1)..tgt -> -rowHeightPx
+                    src != null && tgt != null && src > tgt && index in tgt until src -> rowHeightPx
+                    else -> 0f
+                }
             CurrencyRow(
                 rate = rate,
                 isStarred = isStarred,
@@ -221,69 +254,49 @@ private fun CurrencyList(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        // animateItem gives the "make way" animation to rows
-                        // being displaced by a drag (RecyclerView's ItemAnimator
-                        // did this via notifyItemMoved). Skip it on the actively
-                        // dragged row — its position is already being translated
-                        // via graphicsLayer.translationY, and animating the
-                        // layout on top of that draws the row at (layoutPos +
-                        // translationY), which visibly overlaps its neighbor
-                        // mid-swap.
-                        .then(if (isDragging) Modifier else Modifier.animateItem())
+                        // animateItem handles reorder animations for changes
+                        // that come from outside a drag (star toggles, list
+                        // refresh). Skip it during active drag — we run our
+                        // own translation and animateItem on top of that
+                        // would double-move rows.
+                        .then(if (draggingIndex != null) Modifier else Modifier.animateItem())
                         .graphicsLayer {
-                            if (isDragging) {
-                                translationY = dragOffsetY
-                                alpha = DRAG_ELEVATION_ALPHA
-                            }
+                            translationY = translation
+                            if (isDragging) alpha = DRAG_ELEVATION_ALPHA
                         }.then(
                             if (allowReorder && isStarred) {
                                 Modifier.pointerInput(allowReorder) {
                                     detectDragGesturesAfterLongPress(
                                         onDragStart = {
                                             draggingIndex = currentIndex
+                                            targetIndex = currentIndex
                                             dragOffsetY = 0f
                                         },
                                         onDragEnd = {
+                                            val s = draggingIndex
+                                            val t = targetIndex
+                                            if (s != null && t != null && s != t &&
+                                                s in items.indices && t in items.indices
+                                            ) {
+                                                val moved = items.removeAt(s)
+                                                items.add(t, moved)
+                                            }
                                             draggingIndex = null
+                                            targetIndex = null
                                             dragOffsetY = 0f
                                             onDragEnded()
                                         },
                                         onDragCancel = {
                                             draggingIndex = null
+                                            targetIndex = null
                                             dragOffsetY = 0f
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
                                             dragOffsetY += dragAmount.y
-                                            // Perform swaps one adjacent step at a time using
-                                            // in-place element assignment (keeps list length
-                                            // stable). After each swap, counter LazyColumn's
-                                            // key-anchored scroll compensation: because the
-                                            // dragged row's key moves N rows down/up, LazyList
-                                            // auto-updates firstVisibleItemIndex to keep that
-                                            // key visible at the same y — which reads as the
-                                            // list "auto-scrolling" during drag. dispatchRawDelta
-                                            // by the row height in the opposite direction
-                                            // restores the viewport so displaced rows stay put
-                                            // and only the dragged row visually moves.
-                                            while (true) {
-                                                val current = draggingIndex ?: break
-                                                val direction =
-                                                    when {
-                                                        dragOffsetY >= rowHeightPx -> 1
-                                                        dragOffsetY <= -rowHeightPx -> -1
-                                                        else -> break
-                                                    }
-                                                val target = current + direction
-                                                if (target !in items.indices) break
-                                                if (!stars.contains(items[target].currency)) break
-                                                val moved = items[current]
-                                                items[current] = items[target]
-                                                items[target] = moved
-                                                draggingIndex = target
-                                                dragOffsetY -= direction * rowHeightPx
-                                                listState.dispatchRawDelta(-direction * rowHeightPx)
-                                            }
+                                            val s = draggingIndex ?: return@detectDragGesturesAfterLongPress
+                                            val delta = kotlin.math.round(dragOffsetY / rowHeightPx).toInt()
+                                            targetIndex = (s + delta).coerceIn(0, starredLastIndex)
                                         },
                                     )
                                 }
