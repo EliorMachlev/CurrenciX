@@ -3,6 +3,7 @@ package de.salomax.currencies.view.main.spinner
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.compose.runtime.getValue
@@ -98,6 +99,17 @@ class SearchableSpinnerDialog(
             .setNegativeButton(getString(android.R.string.cancel), null)
             .setView(composeView)
             .create()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // AlertDialog windows default to a soft-input mode that leaves the
+        // Compose TextField unable to raise the IME on tap; explicitly opt
+        // into RESIZE so tapping the search field opens the keyboard.
+        dialog?.window?.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE,
+        )
     }
 
     override fun onPause() {
