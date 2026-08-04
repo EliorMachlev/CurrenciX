@@ -255,11 +255,17 @@ private fun CurrencyList(
                                         onDrag = { change, dragAmount ->
                                             change.consume()
                                             dragOffsetY += dragAmount.y
-                                            // Perform swaps one adjacent step at a time. In-place
-                                            // element swap preserves the list length: LazyColumn
-                                            // sees a stable item count and doesn't compensate its
-                                            // scroll anchor the way removeAt+add would (which
-                                            // showed up as the list "auto-scrolling" during drag).
+                                            // Perform swaps one adjacent step at a time using
+                                            // in-place element assignment (keeps list length
+                                            // stable). After each swap, counter LazyColumn's
+                                            // key-anchored scroll compensation: because the
+                                            // dragged row's key moves N rows down/up, LazyList
+                                            // auto-updates firstVisibleItemIndex to keep that
+                                            // key visible at the same y — which reads as the
+                                            // list "auto-scrolling" during drag. dispatchRawDelta
+                                            // by the row height in the opposite direction
+                                            // restores the viewport so displaced rows stay put
+                                            // and only the dragged row visually moves.
                                             while (true) {
                                                 val current = draggingIndex ?: break
                                                 val direction =
@@ -276,6 +282,7 @@ private fun CurrencyList(
                                                 items[target] = moved
                                                 draggingIndex = target
                                                 dragOffsetY -= direction * rowHeightPx
+                                                listState.dispatchRawDelta(-direction * rowHeightPx)
                                             }
                                         },
                                     )
