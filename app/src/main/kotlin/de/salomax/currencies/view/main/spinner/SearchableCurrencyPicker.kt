@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -32,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,11 +67,6 @@ private const val ROW_MIN_HEIGHT_DP = 56
 private const val DRAG_ELEVATION_ALPHA = 0.85f
 private const val API_HINT_ALPHA = 0.7f
 
-// 1.dp so the anchor is guaranteed to be laid out as a real item and picked
-// up by LazyColumn's first-visible-item tracking. Zero would let Compose skip
-// it and the key-preservation would fall through to the first real row.
-private const val TOP_ANCHOR_HEIGHT_DP = 1
-
 internal data class CurrencyPickerConversion(
     val baseRate: Rate,
     val baseSum: BigDecimal,
@@ -105,25 +99,25 @@ internal fun SearchableCurrencyPicker(
                     .fillMaxWidth()
                     .padding(horizontal = padH, vertical = dimensionResource(id = R.dimen.margin1x)),
         )
-        val filtered =
-            remember(rates, stars, filterStarred, query) {
-                buildOrderedList(ctx, rates, stars, filterStarred, query)
-            }
         val allowReorder = query.isEmpty() && !filterStarred
-        // Stable SnapshotStateList across recompositions so LazyColumn keeps its
-        // scroll/animation state when stars LiveData round-trips after a drag.
-        // Rebuilding on every `filtered` change (previously via remember(filtered))
-        // handed LazyColumn a new items collection and caused a visible refresh.
-        val displayItems = remember { mutableStateListOf<Rate>() }
-        LaunchedEffect(filtered) {
-            if (displayItems != filtered) {
-                displayItems.clear()
-                displayItems.addAll(filtered)
+        // Starred rates in the user-defined order, filtered by query. Held in
+        // a SnapshotStateList so the drag gesture can mutate it in place on
+        // drop without rebuilding the whole picker.
+        val starredDisplay = remember { mutableStateListOf<Rate>() }
+        LaunchedEffect(rates, stars, query) {
+            val next = buildStarredList(ctx, rates, stars, query)
+            if (starredDisplay != next) {
+                starredDisplay.clear()
+                starredDisplay.addAll(next)
             }
         }
+        val nonStarredFiltered =
+            remember(rates, stars, filterStarred, query) {
+                if (filterStarred) emptyList() else buildNonStarredList(ctx, rates, stars, query)
+            }
         CurrencyList(
-            items = displayItems,
-            stars = stars,
+            starredItems = starredDisplay,
+            nonStarredItems = nonStarredFiltered,
             conversion = conversion,
             allowReorder = allowReorder,
             modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -131,7 +125,7 @@ internal fun SearchableCurrencyPicker(
             onStarClicked = onStarClicked,
             onDragEnded = {
                 if (allowReorder) {
-                    onStarredOrderChanged(collectStarredOrder(displayItems, stars))
+                    onStarredOrderChanged(collectStarredOrder(starredDisplay, stars))
                 }
             },
         )
@@ -186,11 +180,61 @@ private fun SearchBar(
 @Composable
 @Suppress("LongParameterList")
 private fun CurrencyList(
-    items: SnapshotStateList<Rate>,
-    stars: List<Currency>,
+    starredItems: SnapshotStateList<Rate>,
+    nonStarredItems: List<Rate>,
     conversion: CurrencyPickerConversion?,
     allowReorder: Boolean,
     modifier: Modifier = Modifier,
+    onRateClicked: (Rate) -> Unit,
+    onStarClicked: (Rate) -> Unit,
+    onDragEnded: () -> Unit,
+) {
+    // Plain remember (not rememberLazyListState) so the scroll position is
+    // scoped to the current composition — otherwise the saveable state carries
+    // a prior dialog's scroll offset over and the list opens mid-scroll.
+    val listState = remember { LazyListState() }
+    if (starredItems.isEmpty() && nonStarredItems.isEmpty()) return
+
+    LazyColumn(state = listState, modifier = modifier) {
+        // Favorites live in a single lazy slot as a non-lazy Column. That
+        // sidesteps LazyList's key-anchored scroll preservation entirely for
+        // the drag: the drag mutation happens inside the Column, and
+        // LazyColumn just sees one item slot ("favorites") whose contents
+        // recompose.
+        if (starredItems.isNotEmpty()) {
+            item(key = "favorites") {
+                FavoritesSection(
+                    items = starredItems,
+                    conversion = conversion,
+                    allowReorder = allowReorder,
+                    onRateClicked = onRateClicked,
+                    onStarClicked = onStarClicked,
+                    onDragEnded = onDragEnded,
+                )
+            }
+        }
+        items(items = nonStarredItems, key = { it.currency.name }) { rate ->
+            CurrencyRow(
+                rate = rate,
+                isStarred = false,
+                conversion = conversion,
+                onClick = { onRateClicked(rate) },
+                onStarClick = { onStarClicked(rate) },
+                modifier = Modifier.fillMaxWidth().animateItem(),
+            )
+        }
+        item(key = "api_hint") {
+            ApiHintRow()
+        }
+    }
+}
+
+@Composable
+@Suppress("LongParameterList")
+private fun FavoritesSection(
+    items: SnapshotStateList<Rate>,
+    conversion: CurrencyPickerConversion?,
+    allowReorder: Boolean,
     onRateClicked: (Rate) -> Unit,
     onStarClicked: (Rate) -> Unit,
     onDragEnded: () -> Unit,
@@ -200,131 +244,81 @@ private fun CurrencyList(
     var dragOffsetY by remember { mutableStateOf(0f) }
     val density = LocalDensity.current
     val rowHeightPx = with(density) { ROW_MIN_HEIGHT_DP.dp.toPx() }
-    // Plain remember (not rememberLazyListState) so the scroll position is
-    // scoped to the current composition — otherwise the saveable state carries
-    // a prior dialog's scroll offset over and the list opens mid-scroll.
-    val listState = remember { LazyListState() }
 
-    // Don't compose the LazyColumn until we have real items. LazyListState
-    // created against an empty list can end up in a stale position when items
-    // arrive later; deferring creation guarantees the first layout uses the
-    // final data and lands at index 0.
-    if (items.isEmpty()) return
-
-    // Contiguous starred prefix — drag target is clamped to this range so
-    // the user can't shuffle a favorite into the unstarred section.
-    val starredLastIndex =
-        remember(items, stars) {
-            var i = 0
-            while (i < items.size && stars.contains(items[i].currency)) i++
-            i - 1
-        }
-
-    LazyColumn(state = listState, modifier = modifier) {
-        // Zero-height key anchor at index 0. LazyColumn preserves scroll by
-        // pinning the first-visible item's key at the same y across item
-        // reorders. Without an anchor, that first-visible key is often the
-        // dragged row itself — so as its position changes, LazyList silently
-        // scrolls to follow it (the "auto-scroll" the user saw). With this
-        // anchor present at the top, LazyList tracks the anchor's stable key
-        // and the reorder below it doesn't trigger any scroll drift.
-        item(key = "top_anchor") { Spacer(Modifier.fillMaxWidth().height(TOP_ANCHOR_HEIGHT_DP.dp)) }
-        itemsIndexed(items = items, key = { _, rate -> rate.currency.name }) { index, rate ->
-            val isStarred = stars.contains(rate.currency)
-            val isDragging = draggingIndex == index
-            // Read the row's live index from inside the long-running pointerInput
-            // block without restarting it. Keying pointerInput on `index` would
-            // tear the gesture down every time a swap changes the row's position,
-            // cancelling drags after a single step.
-            val currentIndex by rememberUpdatedState(index)
-            // Visual translation for the "make way" effect. The list itself
-            // isn't mutated during drag — instead the dragged row follows the
-            // finger and rows in the [source, target] range shift by one row
-            // to open the gap. The single mutation happens on drag end, so
-            // LazyColumn sees exactly one keyed reorder event (and the top
-            // anchor above swallows any scroll compensation).
-            val src = draggingIndex
-            val tgt = targetIndex
-            val translation =
-                when {
-                    isDragging -> dragOffsetY
-                    src != null && tgt != null && src < tgt && index in (src + 1)..tgt -> -rowHeightPx
-                    src != null && tgt != null && src > tgt && index in tgt until src -> rowHeightPx
-                    else -> 0f
-                }
-            CurrencyRow(
-                rate = rate,
-                isStarred = isStarred,
-                conversion = conversion,
-                onClick = { onRateClicked(rate) },
-                onStarClick = { onStarClicked(rate) },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        // animateItem handles reorder animations for changes
-                        // that come from outside a drag (star toggles, list
-                        // refresh). Skip it during active drag — we run our
-                        // own translation and animateItem on top of that
-                        // would double-move rows.
-                        .then(if (draggingIndex != null) Modifier else Modifier.animateItem())
-                        .graphicsLayer {
-                            translationY = translation
-                            if (isDragging) alpha = DRAG_ELEVATION_ALPHA
-                        }.then(
-                            if (allowReorder && isStarred) {
-                                Modifier.pointerInput(allowReorder) {
-                                    detectDragGesturesAfterLongPress(
-                                        onDragStart = {
-                                            draggingIndex = currentIndex
-                                            targetIndex = currentIndex
-                                            dragOffsetY = 0f
-                                        },
-                                        onDragEnd = {
-                                            val s = draggingIndex
-                                            val t = targetIndex
-                                            if (s != null &&
-                                                t != null &&
-                                                s != t &&
-                                                s in items.indices &&
-                                                t in items.indices
-                                            ) {
-                                                // Batch removeAt + add so LazyColumn sees a
-                                                // single atomic reorder — a two-step mutation
-                                                // briefly changes list size and can move the
-                                                // first-visible-item's key mid-frame, which
-                                                // triggers scroll compensation.
-                                                Snapshot.withMutableSnapshot {
-                                                    val moved = items.removeAt(s)
-                                                    items.add(t, moved)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        items.forEachIndexed { index, rate ->
+            key(rate.currency.name) {
+                val isDragging = draggingIndex == index
+                val currentIndex by rememberUpdatedState(index)
+                val src = draggingIndex
+                val tgt = targetIndex
+                val translation =
+                    when {
+                        isDragging -> dragOffsetY
+                        src != null && tgt != null && src < tgt && index in (src + 1)..tgt -> -rowHeightPx
+                        src != null && tgt != null && src > tgt && index in tgt until src -> rowHeightPx
+                        else -> 0f
+                    }
+                CurrencyRow(
+                    rate = rate,
+                    isStarred = true,
+                    conversion = conversion,
+                    onClick = { onRateClicked(rate) },
+                    onStarClick = { onStarClicked(rate) },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .graphicsLayer {
+                                translationY = translation
+                                if (isDragging) alpha = DRAG_ELEVATION_ALPHA
+                            }.then(
+                                if (allowReorder) {
+                                    Modifier.pointerInput(allowReorder) {
+                                        detectDragGesturesAfterLongPress(
+                                            onDragStart = {
+                                                draggingIndex = currentIndex
+                                                targetIndex = currentIndex
+                                                dragOffsetY = 0f
+                                            },
+                                            onDragEnd = {
+                                                val s = draggingIndex
+                                                val t = targetIndex
+                                                if (s != null &&
+                                                    t != null &&
+                                                    s != t &&
+                                                    s in items.indices &&
+                                                    t in items.indices
+                                                ) {
+                                                    Snapshot.withMutableSnapshot {
+                                                        val moved = items.removeAt(s)
+                                                        items.add(t, moved)
+                                                    }
                                                 }
-                                            }
-                                            draggingIndex = null
-                                            targetIndex = null
-                                            dragOffsetY = 0f
-                                            onDragEnded()
-                                        },
-                                        onDragCancel = {
-                                            draggingIndex = null
-                                            targetIndex = null
-                                            dragOffsetY = 0f
-                                        },
-                                        onDrag = { change, dragAmount ->
-                                            change.consume()
-                                            dragOffsetY += dragAmount.y
-                                            val s = draggingIndex ?: return@detectDragGesturesAfterLongPress
-                                            val delta = kotlin.math.round(dragOffsetY / rowHeightPx).toInt()
-                                            targetIndex = (s + delta).coerceIn(0, starredLastIndex)
-                                        },
-                                    )
-                                }
-                            } else {
-                                Modifier
-                            },
-                        ),
-            )
-        }
-        item(key = "api_hint") {
-            ApiHintRow()
+                                                draggingIndex = null
+                                                targetIndex = null
+                                                dragOffsetY = 0f
+                                                onDragEnded()
+                                            },
+                                            onDragCancel = {
+                                                draggingIndex = null
+                                                targetIndex = null
+                                                dragOffsetY = 0f
+                                            },
+                                            onDrag = { change, dragAmount ->
+                                                change.consume()
+                                                dragOffsetY += dragAmount.y
+                                                val s = draggingIndex ?: return@detectDragGesturesAfterLongPress
+                                                val delta = kotlin.math.round(dragOffsetY / rowHeightPx).toInt()
+                                                targetIndex = (s + delta).coerceIn(0, items.lastIndex)
+                                            },
+                                        )
+                                    }
+                                } else {
+                                    Modifier
+                                },
+                            ),
+                )
+            }
         }
     }
 }
@@ -420,27 +414,34 @@ private fun ApiHintRow() {
     }
 }
 
-private fun buildOrderedList(
+private fun matchesQuery(
+    context: Context,
+    rate: Rate,
+    query: String,
+): Boolean =
+    query.isEmpty() ||
+        rate.currency.fullName(context).contains(query, ignoreCase = true) ||
+        rate.currency.iso4217Alpha().contains(query, ignoreCase = true)
+
+private fun buildStarredList(
     context: Context,
     rates: List<Rate>,
     stars: List<Currency>,
-    filterStarred: Boolean,
     query: String,
-): List<Rate> {
-    val filtered =
-        rates
-            .filter { rate ->
-                if (query.isNotEmpty()) {
-                    rate.currency.fullName(context).contains(query, ignoreCase = true) ||
-                        rate.currency.iso4217Alpha().contains(query, ignoreCase = true)
-                } else {
-                    true
-                }
-            }.filter { if (filterStarred) stars.contains(it.currency) else true }
-    val starred = stars.mapNotNull { code -> filtered.find { it.currency == code } }
-    val rest = filtered.filterNot { stars.contains(it.currency) }
-    return starred + rest
-}
+): List<Rate> =
+    stars
+        .mapNotNull { code -> rates.find { it.currency == code } }
+        .filter { matchesQuery(context, it, query) }
+
+private fun buildNonStarredList(
+    context: Context,
+    rates: List<Rate>,
+    stars: List<Currency>,
+    query: String,
+): List<Rate> =
+    rates
+        .filterNot { stars.contains(it.currency) }
+        .filter { matchesQuery(context, it, query) }
 
 private fun collectStarredOrder(
     items: List<Rate>,
