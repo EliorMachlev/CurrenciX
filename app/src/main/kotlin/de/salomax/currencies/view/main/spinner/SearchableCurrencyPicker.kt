@@ -275,8 +275,11 @@ private fun CurrencyList(
                                         onDragEnd = {
                                             val s = draggingIndex
                                             val t = targetIndex
-                                            if (s != null && t != null && s != t &&
-                                                s in items.indices && t in items.indices
+                                            if (s != null &&
+                                                t != null &&
+                                                s != t &&
+                                                s in items.indices &&
+                                                t in items.indices
                                             ) {
                                                 val moved = items.removeAt(s)
                                                 items.add(t, moved)
