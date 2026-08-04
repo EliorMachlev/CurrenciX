@@ -70,15 +70,9 @@ class NorgesBankTimelineXmlParser(
         )
     }
 
-    private fun buildNokSeries(): Map<LocalDate, Rate> {
-        val series = mutableMapOf<LocalDate, Rate>()
-        var currentDate = startDate
-        while (!currentDate.isAfter(endDate)) {
-            series[currentDate] = Rate(Currency.NOK, BigDecimal.ONE)
-            currentDate = currentDate.plusDays(1)
-        }
-        return series
-    }
+    private fun buildNokSeries(): Map<LocalDate, Rate> =
+        dateSequence(startDate, endDate)
+            .associateWith { Rate(Currency.NOK, BigDecimal.ONE) }
 
     private fun mergeRates(): MutableMap<LocalDate, Rate> {
         val rates = mutableMapOf<LocalDate, Rate>()

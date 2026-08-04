@@ -10,6 +10,7 @@ import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.BankOfIsraelObservation
 import de.salomax.currencies.model.adapter.BankOfIsraelRatesAdapter
 import de.salomax.currencies.model.adapter.BankOfIsraelSdmxParser
+import de.salomax.currencies.model.adapter.NO_DATA_ERROR
 import de.salomax.currencies.model.adapter.addFokFromDkkIfMissing
 import de.salomax.currencies.util.HttpClientProvider
 import de.salomax.currencies.util.fetch
@@ -22,7 +23,6 @@ import java.time.LocalDate
 private const val SDMX_BASE_URL =
     "https://edge.boi.gov.il/FusionEdgeServer/sdmx/v2/data/dataflow/BOI.STATISTICS/EXR/1.0"
 private const val SDMX_FORMAT = "sdmx-json"
-private const val NO_DATA_ERROR = "No data found."
 
 // Bank of Israel quotes JPY per 100 units and LBP per 10 units in both the
 // PublicApi and SDMX feeds; every other currency is quoted per single unit.

@@ -10,6 +10,7 @@ import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.BankRossiiCurrencyCodesXmlParser
 import de.salomax.currencies.model.adapter.BankRossiiRatesXmlParser
 import de.salomax.currencies.model.adapter.BankRossiiTimelineXmlParser
+import de.salomax.currencies.model.adapter.dateSequence
 import de.salomax.currencies.util.HttpClientProvider
 import de.salomax.currencies.util.fetch
 import java.math.BigDecimal
@@ -118,12 +119,8 @@ class BankRossii : ApiProvider.Api() {
         startDate: LocalDate,
         endDate: LocalDate,
     ): Timeline {
-        val rubMap = LinkedHashMap<LocalDate, Rate>()
-        var currentDate = startDate
-        while (!currentDate.isAfter(endDate)) {
-            rubMap[currentDate] = Rate(Currency.RUB, BigDecimal.ONE)
-            currentDate = currentDate.plusDays(1)
-        }
+        val rubMap: Map<LocalDate, Rate> =
+            dateSequence(startDate, endDate).associateWith { Rate(Currency.RUB, BigDecimal.ONE) }
         return Timeline(
             success = true,
             error = null,

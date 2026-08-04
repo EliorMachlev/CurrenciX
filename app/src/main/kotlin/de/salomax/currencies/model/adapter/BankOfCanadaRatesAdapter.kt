@@ -50,7 +50,7 @@ internal class BankOfCanadaRatesAdapter {
         val rates = mutableListOf<Rate>()
 
         if (reader.peek() == JsonReader.Token.END_ARRAY) {
-            errorMessage = "No data found."
+            errorMessage = NO_DATA_ERROR
         } else {
             date = readObservationRates(reader, rates)
         }

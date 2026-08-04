@@ -41,7 +41,7 @@ internal class BankOfIsraelRatesAdapter {
 
         return ExchangeRates(
             success = rates.isNotEmpty(),
-            error = if (rates.isEmpty()) "No data found." else null,
+            error = if (rates.isEmpty()) NO_DATA_ERROR else null,
             base = Currency.ILS,
             date = date,
             rates = rates,

@@ -1,7 +1,5 @@
 package de.salomax.currencies.view.main.compose
 
-import android.content.Context
-import android.widget.ImageView
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,22 +20,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.FeeSide
+import de.salomax.currencies.view.compose.CurrencyFlagImage
+import de.salomax.currencies.view.compose.LtrBox
 
 private const val FLAG_SIZE_DP = 28
 private const val FEE_INFO_ALPHA = 0.7f
@@ -71,7 +67,7 @@ fun QuickConversionsContent(
     // Math reads left-to-right in every locale. Force LTR for the whole
     // dialog so "from | swap | to" and "amount = amount" rows don't mirror
     // under RTL layout.
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    LtrBox {
         Column(
             modifier =
                 Modifier
@@ -210,16 +206,8 @@ private fun CurrencyBadge(currency: Currency?) {
         return
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        AndroidView(
-            factory = { ctx: Context ->
-                ImageView(ctx).apply {
-                    adjustViewBounds = true
-                    contentDescription = null
-                }
-            },
-            update = { iv ->
-                iv.setImageDrawable(currency.flag(iv.context))
-            },
+        CurrencyFlagImage(
+            currency = currency,
             modifier = Modifier.size(FLAG_SIZE_DP.dp),
         )
         Spacer(Modifier.size(dimensionResource(id = R.dimen.margin1x)))

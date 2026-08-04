@@ -6,6 +6,7 @@ import de.salomax.currencies.model.Rate
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
 
@@ -78,3 +79,19 @@ internal fun XmlPullParser.norgesBankUnitMultiplier(): Int =
 // and timeline adapters so a shape change is edited in one place.
 internal const val BANK_OF_CANADA_ISO_START: Int = 2
 internal const val BANK_OF_CANADA_ISO_END: Int = 5
+
+// Error string that every provider/adapter surfaces when a well-formed
+// upstream response contained no usable rates. Hoisted so the wording is
+// edited in one place.
+internal const val NO_DATA_ERROR: String = "No data found."
+
+// Lazily produces every day in [start, endInclusive]. Used by providers and
+// timeline parsers that synthesise a flat-rate series (RUB/RUB, NOK/NOK,
+// DKK/FOK peg) across a range without a while-loop at each call site.
+internal fun dateSequence(
+    start: LocalDate,
+    endInclusive: LocalDate,
+): Sequence<LocalDate> =
+    generateSequence(start) { current ->
+        if (current.isBefore(endInclusive)) current.plusDays(1) else null
+    }

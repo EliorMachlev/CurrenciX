@@ -54,7 +54,7 @@ internal class BankOfCanadaTimelineAdapter(
 
         if (reader.peek() == JsonReader.Token.END_ARRAY) {
             // no data
-            errorMessage = "No data found."
+            errorMessage = NO_DATA_ERROR
         } else {
             while (reader.hasNext() && reader.peek() != JsonReader.Token.END_ARRAY) {
                 convertObservation(reader)?.let { rates.put(it.first, it.second) }

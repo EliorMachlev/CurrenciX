@@ -1,7 +1,6 @@
 package de.salomax.currencies.view.main.spinner
 
 import android.content.Context
-import android.widget.ImageView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -50,14 +48,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.Rate
@@ -65,11 +60,14 @@ import de.salomax.currencies.util.DECIMAL_PLACES_DEFAULT
 import de.salomax.currencies.util.hasAppendedCurrencySymbol
 import de.salomax.currencies.util.stripRtlMark
 import de.salomax.currencies.util.toHumanReadableNumber
+import de.salomax.currencies.view.compose.CurrencyFlagImage
+import de.salomax.currencies.view.compose.LtrBox
 import java.math.BigDecimal
 import java.math.MathContext
 
 private const val FLAG_WIDTH_DP = 24
 private const val FLAG_HEIGHT_DP = 17
+private const val FLAG_CORNER_RADIUS_DP = 2
 private const val ROW_MIN_HEIGHT_DP = 56
 private const val DRAG_ELEVATION_ALPHA = 0.85f
 private const val API_HINT_ALPHA = 0.7f
@@ -416,9 +414,7 @@ private fun CurrencyRow(
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (conversion != null) {
-                    // Math reads left-to-right in every locale — force LTR so
-                    // "1 $ = 3.70 ₪" isn't visually mirrored under RTL layout.
-                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    LtrBox {
                         Text(
                             text = buildConversionText(ctx, rate, conversion),
                             style = MaterialTheme.typography.bodyMedium,
@@ -445,18 +441,12 @@ private fun CurrencyRow(
 
 @Composable
 private fun CurrencyFlag(currency: Currency) {
-    AndroidView(
-        factory = { ctx: Context ->
-            ImageView(ctx).apply {
-                adjustViewBounds = true
-                contentDescription = null
-            }
-        },
-        update = { iv -> iv.setImageDrawable(currency.flag(iv.context)) },
+    CurrencyFlagImage(
+        currency = currency,
         modifier =
             Modifier
                 .size(width = FLAG_WIDTH_DP.dp, height = FLAG_HEIGHT_DP.dp)
-                .clip(RoundedCornerShape(2.dp)),
+                .clip(RoundedCornerShape(FLAG_CORNER_RADIUS_DP.dp)),
     )
 }
 
