@@ -85,9 +85,7 @@ internal const val BANK_OF_CANADA_ISO_END: Int = 5
 // edited in one place.
 internal const val NO_DATA_ERROR: String = "No data found."
 
-// Lazily produces every day in [start, endInclusive]. Used by providers and
-// timeline parsers that synthesise a flat-rate series (RUB/RUB, NOK/NOK,
-// DKK/FOK peg) across a range without a while-loop at each call site.
+// Lazily yields every day in [start, endInclusive].
 internal fun dateSequence(
     start: LocalDate,
     endInclusive: LocalDate,

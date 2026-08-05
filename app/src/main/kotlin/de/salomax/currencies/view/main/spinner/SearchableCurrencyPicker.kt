@@ -61,7 +61,7 @@ import de.salomax.currencies.util.hasAppendedCurrencySymbol
 import de.salomax.currencies.util.stripRtlMark
 import de.salomax.currencies.util.toHumanReadableNumber
 import de.salomax.currencies.view.compose.CurrencyFlagImage
-import de.salomax.currencies.view.compose.LtrBox
+import de.salomax.currencies.view.compose.Ltr
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -414,7 +414,7 @@ private fun CurrencyRow(
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (conversion != null) {
-                    LtrBox {
+                    Ltr {
                         Text(
                             text = buildConversionText(ctx, rate, conversion),
                             style = MaterialTheme.typography.bodyMedium,

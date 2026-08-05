@@ -2,7 +2,6 @@ package de.salomax.currencies.view.timeline
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -10,9 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
@@ -42,6 +39,7 @@ import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import de.salomax.currencies.util.stripTimePattern
+import de.salomax.currencies.view.compose.Ltr
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -258,10 +256,10 @@ fun TimelineChart(
     // Rebuild the host when the series length changes: Vico's scroll/marker state
     // caches the previous point count and crashes when the dataset shrinks.
     key(data.size) {
-        // Force LTR: Vico maps touch x-coordinates against the host's layout direction,
-        // so under an RTL locale (e.g. Hebrew) the scrub marker mirrors to the wrong
-        // side of the finger and clamps to the left edge.
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        // Vico maps touch x-coordinates against the host's layout direction, so
+        // under an RTL locale (e.g. Hebrew) the scrub marker mirrors to the
+        // wrong side of the finger and clamps to the left edge.
+        Ltr {
             CartesianChartHost(
                 modifier = Modifier.fillMaxSize(),
                 chart =

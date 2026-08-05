@@ -119,8 +119,8 @@ class BankRossii : ApiProvider.Api() {
         startDate: LocalDate,
         endDate: LocalDate,
     ): Timeline {
-        val rubMap: Map<LocalDate, Rate> =
-            dateSequence(startDate, endDate).associateWith { Rate(Currency.RUB, BigDecimal.ONE) }
+        val rubRate = Rate(Currency.RUB, BigDecimal.ONE)
+        val rubMap = dateSequence(startDate, endDate).associateWith { rubRate }
         return Timeline(
             success = true,
             error = null,

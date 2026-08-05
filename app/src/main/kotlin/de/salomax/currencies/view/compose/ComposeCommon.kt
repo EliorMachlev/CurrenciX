@@ -9,9 +9,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import de.salomax.currencies.model.Currency
 
-// Renders a Currency's flag drawable via an ImageView. Callers supply the
-// Modifier chain (size, clip) so the same primitive works for the picker's
-// small rounded thumbnail and the quick-conversions header's larger square.
+// The picker needs a small rounded thumbnail, the quick-conversions header a
+// larger square, and the chart layer wants none of that — so size + clip stay
+// in the caller's Modifier chain rather than being baked in here.
 @Composable
 fun CurrencyFlagImage(
     currency: Currency,
@@ -29,11 +29,11 @@ fun CurrencyFlagImage(
     )
 }
 
-// Forces left-to-right layout for the wrapped content. Math and currency
-// conversion previews read L→R in every locale — under RTL the operator would
-// visually flip which is confusing.
+// Forces left-to-right layout for the wrapped content. Math previews and the
+// Vico chart's touch coordinates read L→R in every locale; under an RTL app
+// locale they would otherwise mirror.
 @Composable
-fun LtrBox(content: @Composable () -> Unit) {
+fun Ltr(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         content()
     }

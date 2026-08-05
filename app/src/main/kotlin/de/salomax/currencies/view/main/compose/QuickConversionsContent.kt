@@ -33,7 +33,7 @@ import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.view.compose.CurrencyFlagImage
-import de.salomax.currencies.view.compose.LtrBox
+import de.salomax.currencies.view.compose.Ltr
 
 private const val FLAG_SIZE_DP = 28
 private const val FEE_INFO_ALPHA = 0.7f
@@ -67,7 +67,7 @@ fun QuickConversionsContent(
     // Math reads left-to-right in every locale. Force LTR for the whole
     // dialog so "from | swap | to" and "amount = amount" rows don't mirror
     // under RTL layout.
-    LtrBox {
+    Ltr {
         Column(
             modifier =
                 Modifier
