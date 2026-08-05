@@ -167,10 +167,15 @@ fun TimelineChart(
                     monthChangeIndices += i
                 }
             }
+            // FitStrategy.Fixed keeps dashes at the configured Dp regardless of the
+            // drawn length. Default (Resize) shrinks dashes proportionally to length
+            // and made the week-view month-change line render as tiny dots while the
+            // same code produced normal-length dashes on the month/year views.
             val dashedShape =
                 DashedShape(
                     dashLength = DASH_LENGTH.dp,
                     gapLength = DASH_GAP_LENGTH.dp,
+                    fitStrategy = DashedShape.FitStrategy.Fixed,
                 )
             monthChangeIndices.forEach { idx ->
                 add(
