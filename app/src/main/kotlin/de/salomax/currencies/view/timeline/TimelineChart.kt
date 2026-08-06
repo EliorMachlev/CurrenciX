@@ -34,7 +34,6 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.common.DashedShape
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
@@ -151,10 +150,14 @@ fun TimelineChart(
 
     val decorations =
         buildList {
-            // Dashed verticals at year and month boundaries. Suppress the month
-            // lines on the year view (heuristic: >90 data points) since ~12 of them
-            // just add noise. Year boundaries always imply month boundaries, so
-            // skip the month line at the same index to avoid stacking two colors.
+            // Solid verticals at year and month boundaries. Suppress the month lines
+            // on the year view (heuristic: >90 data points) since ~12 of them just
+            // add noise. Year boundaries always imply month boundaries, so skip the
+            // month line at the same index to avoid stacking two colors.
+            //
+            // Solid (not dashed) because vico's DashedShape renders inconsistently on
+            // vertical lines across chart contexts (weekly vs monthly view), even
+            // with FitStrategy.Fixed and whole-pixel x-snapping.
             val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
             val yearChangeIndices = mutableListOf<Int>()
             val monthChangeIndices = mutableListOf<Int>()
@@ -167,16 +170,6 @@ fun TimelineChart(
                     monthChangeIndices += i
                 }
             }
-            // FitStrategy.Fixed keeps dashes at the configured Dp regardless of the
-            // drawn length. Default (Resize) shrinks dashes proportionally to length
-            // and made the week-view month-change line render as tiny dots while the
-            // same code produced normal-length dashes on the month/year views.
-            val dashedShape =
-                DashedShape(
-                    dashLength = DASH_LENGTH.dp,
-                    gapLength = DASH_GAP_LENGTH.dp,
-                    fitStrategy = DashedShape.FitStrategy.Fixed,
-                )
             monthChangeIndices.forEach { idx ->
                 add(
                     VerticalLine(
@@ -185,7 +178,6 @@ fun TimelineChart(
                             LineComponent(
                                 fill = Fill(MONTH_CHANGE_COLOR),
                                 thickness = CHART_LINE_THICKNESS_DP.dp,
-                                shape = dashedShape,
                             ),
                     ),
                 )
@@ -198,7 +190,6 @@ fun TimelineChart(
                             LineComponent(
                                 fill = Fill(YEAR_CHANGE_COLOR),
                                 thickness = CHART_LINE_THICKNESS_DP.dp,
-                                shape = dashedShape,
                             ),
                     ),
                 )
@@ -302,8 +293,6 @@ private const val X_AXIS_LABEL_ROTATION = 0f
 private const val X_AXIS_TARGET_LABEL_COUNT = 7
 private const val Y_AXIS_TARGET_LABEL_COUNT = 6
 private const val MARKER_DECIMAL_COUNT = 5
-private const val DASH_LENGTH = 4f
-private const val DASH_GAP_LENGTH = 4f
 private const val YEAR_VIEW_MIN_POINTS = 90
 private const val AXIS_LABEL_FONT_SIZE_SP = 12
 private const val CHART_LINE_THICKNESS_DP = 1
@@ -322,13 +311,9 @@ private class VerticalLine(
     override fun drawUnderLayers(context: CartesianDrawingContext) {
         with(context) {
             val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
-            val rawCanvasX =
+            val canvasX =
                 baseCanvasX +
                     ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
-            // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
-            // across two pixels at ~50% alpha each, which reads as tiny dots in views
-            // where xSpacing pushes the boundary off-grid (weekly view).
-            val canvasX = kotlin.math.round(rawCanvasX)
             if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
             line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
         }
