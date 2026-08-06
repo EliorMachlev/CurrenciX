@@ -311,9 +311,13 @@ private class VerticalLine(
     override fun drawUnderLayers(context: CartesianDrawingContext) {
         with(context) {
             val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
-            val canvasX =
+            val rawCanvasX =
                 baseCanvasX +
                     ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
+            // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
+            // per scanline, which reads as a jagged column on the weekly view where
+            // xSpacing pushes the boundary off-grid.
+            val canvasX = kotlin.math.round(rawCanvasX)
             if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
             line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
         }
