@@ -9,7 +9,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,6 +34,7 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.common.DashedShape
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
@@ -167,11 +167,41 @@ fun TimelineChart(
                     monthChangeIndices += i
                 }
             }
+            // FitStrategy.Fixed keeps dashes at the configured Dp regardless of the
+            // drawn length. Default (Resize) shrinks dashes proportionally to length
+            // and made the week-view month-change line render as tiny dots while the
+            // same code produced normal-length dashes on the month/year views.
+            val dashedShape =
+                DashedShape(
+                    dashLength = DASH_LENGTH.dp,
+                    gapLength = DASH_GAP_LENGTH.dp,
+                    fitStrategy = DashedShape.FitStrategy.Fixed,
+                )
             monthChangeIndices.forEach { idx ->
-                add(VerticalLine(x = idx.toDouble(), color = MONTH_CHANGE_COLOR))
+                add(
+                    VerticalLine(
+                        x = idx.toDouble(),
+                        line =
+                            LineComponent(
+                                fill = Fill(MONTH_CHANGE_COLOR),
+                                thickness = CHART_LINE_THICKNESS_DP.dp,
+                                shape = dashedShape,
+                            ),
+                    ),
+                )
             }
             yearChangeIndices.forEach { idx ->
-                add(VerticalLine(x = idx.toDouble(), color = YEAR_CHANGE_COLOR))
+                add(
+                    VerticalLine(
+                        x = idx.toDouble(),
+                        line =
+                            LineComponent(
+                                fill = Fill(YEAR_CHANGE_COLOR),
+                                thickness = CHART_LINE_THICKNESS_DP.dp,
+                                shape = dashedShape,
+                            ),
+                    ),
+                )
             }
             if (baseline != null) {
                 add(
@@ -285,14 +315,9 @@ private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
 // by HorizontalAxis (see HorizontalAxis.kt in vico:compose): the parent forces
 // LTR so layoutDirectionMultiplier is 1 and getStart(isLtr) == layerBounds.left.
-//
-// Dashes are drawn manually rather than via LineComponent+DashedShape because
-// vico's DashedShape produces visually different dash sizes on vertical lines
-// depending on chart context (weekly vs monthly view), even with FitStrategy.Fixed.
-// Drawing rects ourselves gives identical dashes across all views.
 private class VerticalLine(
     private val x: Double,
-    private val color: Color,
+    private val line: LineComponent,
 ) : Decoration {
     override fun drawUnderLayers(context: CartesianDrawingContext) {
         with(context) {
@@ -301,16 +326,7 @@ private class VerticalLine(
                 baseCanvasX +
                     ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
             if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
-            val dashPx = DASH_LENGTH.dp.pixels
-            val gapPx = DASH_GAP_LENGTH.dp.pixels
-            val halfThickness = CHART_LINE_THICKNESS_DP.dp.pixels / 2f
-            val paint = Paint().apply { this.color = this@VerticalLine.color }
-            var y = layerBounds.top
-            while (y < layerBounds.bottom) {
-                val segEnd = kotlin.math.min(y + dashPx, layerBounds.bottom)
-                canvas.drawRect(canvasX - halfThickness, y, canvasX + halfThickness, segEnd, paint)
-                y += dashPx + gapPx
-            }
+            line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
         }
     }
 }
