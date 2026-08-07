@@ -12,12 +12,6 @@ fun main() {
 }
 
 private class FastlaneToResource {
-
-    companion object {
-        private const val SEMVER_MAJOR_MULTIPLIER = 10_000
-        private const val SEMVER_MINOR_MULTIPLIER = 100
-    }
-
     fun run() {
         // read all fastlane changelogs
         File("fastlane/metadata/android")
@@ -26,7 +20,8 @@ private class FastlaneToResource {
     }
 
     private fun File.getChangelogs() {
-        this.listFiles { f -> f.name == "changelogs" }
+        this
+            .listFiles { f -> f.name == "changelogs" }
             ?.forEach { changelog ->
                 val language = changelog.path.substringBeforeLast('/').substringAfterLast('/')
                 changelog.listFiles().createChangelogsForLanguage(language)
@@ -35,12 +30,13 @@ private class FastlaneToResource {
 
     private fun Array<File>?.createChangelogsForLanguage(language: String) {
         val languageDir =
-            if (language == "en-US")
+            if (language == "en-US") {
                 "values"
-            else if (language.matches("[a-z]{2}-[A-Z]{2}".toRegex()))
+            } else if (language.matches("[a-z]{2}-[A-Z]{2}".toRegex())) {
                 "values-${language.substringBefore('-')}-r${language.substringAfter('-')}"
-            else
+            } else {
                 "values-$language"
+            }
         val targetFile = File("app/src/main/res/$languageDir/changelog.xml")
         targetFile.parentFile.mkdirs()
         val fileWriter = FileWriter(targetFile, Charset.forName("UTF-8"), false)
@@ -62,8 +58,9 @@ private class FastlaneToResource {
                 write("    <string-array name=\"changelog_$major.$minor.$patch\">\n")
                 write(file.readLines().createVersionChangelog())
                 write("    </string-array>\n")
-                if (index != this@createChangelogsForLanguage.size - 1)
+                if (index != this@createChangelogsForLanguage.size - 1) {
                     write("\n")
+                }
                 flush()
             }
         }
@@ -73,17 +70,18 @@ private class FastlaneToResource {
             flush()
             close()
         }
-
     }
 
     private fun List<String>.createVersionChangelog(): String {
         val sb = StringBuilder()
         for (entry in this) {
-            val escaped = entry.removePrefix("- ")
-                .replace("'", "\\'")
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
+            val escaped =
+                entry
+                    .removePrefix("- ")
+                    .replace("'", "\\'")
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
             sb.appendLine("        <item>$escaped</item>")
         }
         return sb.toString()

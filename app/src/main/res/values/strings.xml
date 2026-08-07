@@ -7,6 +7,8 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="info_date_latest">Rates as of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
     <string name="info_date_historical">Historical rates of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
+    <string name="offline_banner_with_date">Offline • Rates from %1$s</string>
+    <string name="offline_banner_no_data">Offline • No cached rates yet</string>
     <string name="copied_to_clipboard">Copied &lt;b>%s&lt;/b> to clipboard</string>
 
     <string name="historical_rates_dialog_title">Historical rates</string>
@@ -40,6 +42,13 @@
     <string name="tooltip_filter_starred">Show only starred currencies.</string>
     <string name="currency_dropdown_api_hint">Something missing? Different data providers offer different currencies. Go to the settings to try another one!\u00A0\uD83E\uDD17</string>
 
+    <!-- Home-screen widget -->
+    <string name="widget_description">Latest conversion rate for your last-used currency pair.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">As of %s</string>
+    <string name="widget_footer_empty">Open the app to load rates.</string>
+    <string name="widget_no_rate">Rate unavailable</string>
+
     <!-- Shopping cart -->
     <string name="cart_title">Shopping cart</string>
     <string name="cart_empty_hint">Your cart is empty. Tap “Add item” to start.</string>
@@ -57,6 +66,12 @@
     <string name="cart_menu_export">Export to file</string>
     <string name="cart_menu_import">Import from file</string>
     <string name="cart_menu_clear">Clear</string>
+    <string name="cart_share_option_text">Plain text</string>
+    <string name="cart_share_option_text_desc">Formatted summary you can paste into a chat or notes app.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Spreadsheet file with one row per item.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Printable receipt-style document.</string>
     <string name="cart_save_name_hint">Cart name</string>
     <string name="cart_default_saved_name">My cart</string>
     <string name="cart_saved_toast">Saved as “%s”</string>

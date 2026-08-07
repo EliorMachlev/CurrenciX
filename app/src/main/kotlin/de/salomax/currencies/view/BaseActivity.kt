@@ -15,15 +15,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 abstract class BaseActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // pure black — night mode itself is set once in CurrenciesApplication
         // so this setTheme call resolves against the correct night qualifier.
         setTheme(
-            if (Database(this).isPureBlackEnabled())
+            if (Database(this).isPureBlackEnabled()) {
                 R.style.AppTheme_PureBlack
-            else
+            } else {
                 R.style.AppTheme
+            },
         )
 
         super.onCreate(savedInstanceState)
@@ -42,11 +42,6 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     /**
-     * Subscribe to [FoldingFeature] changes for the current window and forward
-     * the first feature (if any) to [onFeature] whenever it changes. Handles
-     * the lifecycle-aware collection so subclasses only supply the reaction.
-     */
-    /**
      * Build a [Snackbar] anchored to the shared `snackbar_top_position` view.
      * Passing `this` as the theme context (vs. an anchor View) skips the
      * ActionBar-overlay theme walk that trips over Material3-only attributes.
@@ -58,17 +53,24 @@ abstract class BaseActivity : AppCompatActivity() {
         duration: Int = Snackbar.LENGTH_SHORT,
     ): Snackbar = Snackbar.make(this, findViewById(R.id.snackbar_top_position), message, duration)
 
+    /**
+     * Subscribe to [FoldingFeature] changes for the current window and forward
+     * the first feature (if any) to [onFeature] whenever it changes. Handles
+     * the lifecycle-aware collection so subclasses only supply the reaction.
+     */
     protected fun observeFoldingFeature(onFeature: (FoldingFeature) -> Unit) {
         lifecycleScope.launch(Dispatchers.Main) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                WindowInfoTracker.getOrCreate(this@BaseActivity)
+                WindowInfoTracker
+                    .getOrCreate(this@BaseActivity)
                     .windowLayoutInfo(this@BaseActivity)
                     .collect { info ->
-                        info.displayFeatures.filterIsInstance(FoldingFeature::class.java)
-                            .firstOrNull()?.let(onFeature)
+                        info.displayFeatures
+                            .filterIsInstance(FoldingFeature::class.java)
+                            .firstOrNull()
+                            ?.let(onFeature)
                     }
             }
         }
     }
-
 }

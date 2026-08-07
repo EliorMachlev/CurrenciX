@@ -28,4 +28,71 @@
     <string name="error_invalid_api_key">HTTP 401 – Kontrollera din API-nyckel.</string>
     <string name="error_unsupported_timeline">Tidslinjesdata stöds inte med detta API.</string>
     <string name="currency_dropdown_api_hint">Saknas något? Olika dataleverantörer tillhandahåller olika valutor. Gå till inställningarna och prova en annan! 🤗</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Kurser från %1$s</string>
+    <string name="offline_banner_no_data">Offline • Inga cachade kurser ännu</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Senaste växelkurs för ditt senast använda valutapar.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Per %s</string>
+    <string name="widget_footer_empty">Öppna appen för att läsa in kurser.</string>
+    <string name="widget_no_rate">Kurs ej tillgänglig</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Kundvagn</string>
+    <string name="cart_empty_hint">Din kundvagn är tom. Tryck på ”Lägg till artikel” för att börja.</string>
+    <string name="cart_add_item">Lägg till artikel</string>
+    <string name="cart_item_name_hint">Artikel</string>
+    <string name="cart_item_expression_hint">Pris (t.ex. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Ta bort artikel</string>
+    <string name="cart_subtotal_label">Delsumma</string>
+    <string name="cart_total_label">Totalt</string>
+    <string name="cart_fee_line">Avgifter: %s%%</string>
+    <string name="cart_menu_save">Spara</string>
+    <string name="cart_menu_save_as">Spara som…</string>
+    <string name="cart_menu_load">Läs in</string>
+    <string name="cart_menu_export">Exportera till fil</string>
+    <string name="cart_menu_import">Importera från fil</string>
+    <string name="cart_menu_clear">Rensa</string>
+    <string name="cart_share_option_text">Vanlig text</string>
+    <string name="cart_share_option_text_desc">Formaterad sammanfattning som du kan klistra in i en chatt eller anteckningsapp.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Kalkylarksfil med en rad per artikel.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Utskrivbart dokument i kvittostil.</string>
+    <string name="cart_save_name_hint">Kundvagnens namn</string>
+    <string name="cart_default_saved_name">Min kundvagn</string>
+    <string name="cart_saved_toast">Sparad som ”%s”</string>
+    <string name="cart_no_saved">Inga sparade kundvagnar än.</string>
+    <string name="cart_rename">Byt namn</string>
+    <string name="cart_rename_title">Byt namn på kundvagn</string>
+    <string name="cart_delete_confirm">Ta bort ”%s”?</string>
+    <string name="cart_delete_confirm_button">Ta bort</string>
+    <string name="cart_clear_confirm">Ta bort alla artiklar från den aktuella kundvagnen?</string>
+    <string name="cart_clear_confirm_button">Rensa</string>
+    <string name="cart_clear_items_only">Rensa endast artiklar</string>
+    <string name="cart_clear_items_only_desc">Tar bort alla rader från kundvagnen men behåller aktuella valutor och avgiftssida.</string>
+    <string name="cart_clear_reset_all">Återställ kundvagn</string>
+    <string name="cart_clear_reset_all_desc">Tar bort alla rader och hämtar bas-/målvaluta och avgiftssida på nytt från huvudskärmen.</string>
+    <string name="cart_export_ok">Kundvagn exporterad.</string>
+    <string name="cart_export_error">Exporten misslyckades: %s</string>
+    <string name="cart_import_ok">Kundvagn importerad.</string>
+    <string name="cart_import_error">Importen misslyckades: %s</string>
+    <string name="cart_share_empty">Kundvagnen är tom — inget att dela.</string>
+    <string name="cart_save_empty">Kundvagnen är tom — inget att spara.</string>
+    <string name="cart_share_default_title">Kundvagn</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Delsumma: %1$s %2$s</string>
+    <string name="cart_share_converted">Omräknat: %1$s %2$s</string>
+    <string name="cart_share_fees">Avgifter: %s%%</string>
+    <string name="cart_share_total">Totalt: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Osparade ändringar</string>
+    <string name="cart_unsaved_message">Du har osparade ändringar. Vad vill du göra?</string>
+    <string name="cart_unsaved_save">Spara</string>
+    <string name="cart_unsaved_save_as">Spara som ny</string>
+    <string name="cart_unsaved_discard">Kassera ändringar</string>
+    <string name="cart_unsaved_continue">Fortsätt</string>
 </resources>

@@ -1,13 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.awaitResult
-import com.github.kittinunf.fuel.moshi.moshiDeserializerOf
-import com.github.kittinunf.result.Result
-import com.github.kittinunf.result.map
-import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -16,49 +9,33 @@ import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.FrankfurterAppRatesAdapter
 import de.salomax.currencies.model.adapter.FrankfurterAppTimelineAdapter
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class FerEe : ApiProvider.Api() {
-
     override val name = "Fer.ee"
 
-    override fun descriptionShort(context: Context) =
-        context.getText(R.string.api_ferEe_descriptionShort)
+    override fun descriptionShort(context: Context) = context.getText(R.string.api_ferEe_descriptionShort)
 
-    override fun getDescriptionLong(context: Context) =
-        context.getText(R.string.api_ferEe_descriptionFull)
+    override fun getDescriptionLong(context: Context) = context.getText(R.string.api_ferEe_descriptionFull)
 
-    override fun descriptionUpdateInterval(context: Context) =
-        context.getText(R.string.api_ferEe_descriptionUpdateInterval)
+    override fun descriptionUpdateInterval(context: Context) = context.getText(R.string.api_ferEe_descriptionUpdateInterval)
 
-    override fun descriptionHint(context: Context) =
-        null
+    override fun descriptionHint(context: Context) = null
 
     override val baseUrl = "https://api.fer.ee"
 
-    override suspend fun getRates(context: Context?, date: LocalDate?): Result<ExchangeRates, FuelError> {
-        // Currency conversions are done relatively to each other - so it basically doesn't matter
-        // which base is used here. However, Euro is a strong currency, preventing rounding errors.
+    override suspend fun getRates(
+        context: Context?,
+        date: LocalDate?,
+    ): Result<ExchangeRates> {
         val base = Currency.EUR
-        val dateString =
-            if (date != null) date.format(DateTimeFormatter.ISO_LOCAL_DATE) else "latest"
+        val datePart = date?.format(ISO_DATE) ?: "latest"
+        val adapter =
+            moshi {
+                add(FrankfurterAppRatesAdapter(base))
+                add(SHARED_LOCAL_DATE_ADAPTER)
+            }.adapter(ExchangeRates::class.java)
 
-        return Fuel.get(
-            baseUrl +
-                    "/$dateString" +
-                    "?base=$base"
-        ).awaitResult(
-            moshiDeserializerOf(
-                Moshi.Builder()
-                    .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                    .apply {
-                        add(FrankfurterAppRatesAdapter(base))
-                        add(SHARED_LOCAL_DATE_ADAPTER)
-                    }
-                    .build()
-                    .adapter(ExchangeRates::class.java)
-            )
-        )
+        return fetchJson(context, "$baseUrl/$datePart?base=$base", name, adapter)
     }
 
     override suspend fun getTimeline(
@@ -66,38 +43,21 @@ class FerEe : ApiProvider.Api() {
         base: Currency,
         symbol: Currency,
         startDate: LocalDate,
-        endDate: LocalDate
-    ): Result<Timeline, FuelError> {
-        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
-        val parameterBase = base.apiCodeOrDkkForFok()
-        val parameterSymbol = symbol.apiCodeOrDkkForFok()
+        endDate: LocalDate,
+    ): Result<Timeline> {
+        val adapter =
+            moshi {
+                add(FrankfurterAppRatesAdapter(base))
+                add(SHARED_LOCAL_DATE_ADAPTER)
+                add(FrankfurterAppTimelineAdapter(symbol))
+            }.adapter(Timeline::class.java)
 
-        return Fuel.get(
-            "$baseUrl/" +
-                startDate.format(dateFormatter) +
-                ".." +
-                endDate.format(dateFormatter) +
-                "?base=$parameterBase" +
-                "&symbols=$parameterSymbol"
-        ).awaitResult(
-            moshiDeserializerOf(
-                Moshi.Builder()
-                    .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                    .apply {
-                        add(FrankfurterAppRatesAdapter(base))
-                        add(SHARED_LOCAL_DATE_ADAPTER)
-                        add(FrankfurterAppTimelineAdapter(symbol))
-                    }
-                    .build()
-                    .adapter(Timeline::class.java)
-            )
-        ).map { timeline ->
-            when (base) {
-                // change dkk base back to fok, if needed
-                Currency.FOK -> timeline.copy(base = base.iso4217Alpha())
-                else -> timeline
-            }
+        val url =
+            "$baseUrl/${startDate.format(ISO_DATE)}..${endDate.format(ISO_DATE)}" +
+                "?base=${base.apiCodeOrDkkForFok()}&symbols=${symbol.apiCodeOrDkkForFok()}"
+
+        return fetchJson(context, url, name, adapter).map { timeline ->
+            if (base == Currency.FOK) timeline.copy(base = base.iso4217Alpha()) else timeline
         }
     }
-
 }

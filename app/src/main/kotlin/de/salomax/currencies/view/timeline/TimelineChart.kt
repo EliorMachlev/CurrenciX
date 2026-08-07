@@ -2,7 +2,6 @@ package de.salomax.currencies.view.timeline
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -10,9 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
@@ -27,7 +24,6 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvi
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatrick.vico.compose.cartesian.decoration.Decoration
-import com.patrykandpatrick.vico.compose.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -37,11 +33,11 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.common.DashedShape
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import de.salomax.currencies.util.stripTimePattern
+import de.salomax.currencies.view.compose.Ltr
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -54,6 +50,12 @@ fun TimelineChart(
     showYAxisLive: LiveData<Boolean>,
     highlightExtremesLive: LiveData<Boolean>,
     dateFormatLive: LiveData<String>,
+    // Scrub-aware highlight values from the viewmodel. Passing these in (rather
+    // than deriving from `entries`) keeps the red/blue highlight lines aligned
+    // with the MIN/MAX readouts when the user scrubs, since the readouts also
+    // apply the scrub filter.
+    highlightMinLive: LiveData<Double?>,
+    highlightMaxLive: LiveData<Double?>,
     lineColor: Color,
     baselineColor: Color,
     axisColor: Color,
@@ -64,10 +66,13 @@ fun TimelineChart(
     val showXAxis by showXAxisLive.observeAsState(initial = true)
     val showYAxis by showYAxisLive.observeAsState(initial = true)
     val highlightExtremes by highlightExtremesLive.observeAsState(initial = true)
+    val highlightMin by highlightMinLive.observeAsState()
+    val highlightMax by highlightMaxLive.observeAsState()
     val dateFormat by dateFormatLive.observeAsState(initial = DEFAULT_DATE_FORMAT)
-    val axisDateFormatter = remember(dateFormat) {
-        DateTimeFormatter.ofPattern(stripYear(stripTimePattern(dateFormat)))
-    }
+    val axisDateFormatter =
+        remember(dateFormat) {
+            DateTimeFormatter.ofPattern(stripYear(stripTimePattern(dateFormat)))
+        }
 
     val data = entries.orEmpty()
     val modelProducer = remember { CartesianChartModelProducer() }
@@ -88,173 +93,208 @@ fun TimelineChart(
     // data.indices while the model is transitioning to a smaller series. Returning a
     // blank string throws IllegalStateException, so clamp to the valid range and fall
     // back to a non-blank placeholder when the series is empty.
-    val bottomAxisValueFormatter = remember(data, axisDateFormatter) {
-        CartesianValueFormatter { _, value, _ ->
-            val lastIdx = data.size - 1
-            if (lastIdx < 0) {
-                AXIS_LABEL_EMPTY_PLACEHOLDER
-            } else {
-                val idx = value.toInt().coerceIn(0, lastIdx)
-                data[idx].first.format(axisDateFormatter)
+    val bottomAxisValueFormatter =
+        remember(data, axisDateFormatter) {
+            CartesianValueFormatter { _, value, _ ->
+                val lastIdx = data.size - 1
+                if (lastIdx < 0) {
+                    AXIS_LABEL_EMPTY_PLACEHOLDER
+                } else {
+                    val idx = value.toInt().coerceIn(0, lastIdx)
+                    data[idx].first.format(axisDateFormatter)
+                }
             }
         }
-    }
 
-    val rangeProvider = remember(minValue, maxValue) {
-        if (minValue != null && maxValue != null && minValue < maxValue) {
-            val pad = (maxValue - minValue) * Y_AXIS_PADDING
-            CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
-        } else {
-            CartesianLayerRangeProvider.auto()
-        }
-    }
-
-    val markerListener = remember(data, onScrub) {
-        object : CartesianMarkerVisibilityListener {
-            override fun onShown(
-                marker: CartesianMarker,
-                targets: List<CartesianMarker.Target>,
-            ) {
-                val idx = targets.firstOrNull()?.x?.toInt() ?: return
-                onScrub(data.getOrNull(idx)?.first)
-            }
-
-            override fun onHidden(marker: CartesianMarker) {
-                onScrub(null)
+    val rangeProvider =
+        remember(minValue, maxValue) {
+            when {
+                minValue != null && maxValue != null && minValue < maxValue -> {
+                    val pad = (maxValue - minValue) * Y_AXIS_PADDING
+                    CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
+                }
+                // Constant series (e.g. AUD → AUD, all rates = 1.0). auto()
+                // stretches to [0, 1], which puts the top Y-axis label at the
+                // layer boundary and overflows above the chart region. Pin a
+                // symmetric ±FLAT_SERIES_PADDING band around the value so the
+                // chart shows a centered flat line with a bounded axis.
+                minValue != null && maxValue != null -> {
+                    val pad = FLAT_SERIES_PADDING.coerceAtLeast(kotlin.math.abs(minValue) * Y_AXIS_PADDING)
+                    CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
+                }
+                else -> CartesianLayerRangeProvider.auto()
             }
         }
-    }
+
+    val markerListener =
+        remember(data, onScrub) {
+            object : CartesianMarkerVisibilityListener {
+                override fun onShown(
+                    marker: CartesianMarker,
+                    targets: List<CartesianMarker.Target>,
+                ) {
+                    val idx = targets.firstOrNull()?.x?.toInt() ?: return
+                    onScrub(data.getOrNull(idx)?.first)
+                }
+
+                override fun onHidden(marker: CartesianMarker) {
+                    onScrub(null)
+                }
+            }
+        }
 
     val axisLabelStyle = TextStyle(color = axisColor, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp)
 
-    val markerValueFormatter = remember {
-        DefaultCartesianMarker.ValueFormatter.default(decimalCount = MARKER_DECIMAL_COUNT)
-    }
-    val marker = rememberDefaultCartesianMarker(
-        label = rememberTextComponent(style = axisLabelStyle),
-        valueFormatter = markerValueFormatter,
-    )
+    val markerValueFormatter =
+        remember {
+            DefaultCartesianMarker.ValueFormatter.default(decimalCount = MARKER_DECIMAL_COUNT)
+        }
+    val marker =
+        rememberDefaultCartesianMarker(
+            label = rememberTextComponent(style = axisLabelStyle),
+            valueFormatter = markerValueFormatter,
+        )
 
-    val decorations = buildList {
-        // Dashed verticals at year and month boundaries. Suppress the month
-        // lines on the year view (heuristic: >90 data points) since ~12 of them
-        // just add noise. Year boundaries always imply month boundaries, so
-        // skip the month line at the same index to avoid stacking two colors.
-        val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
-        val yearChangeIndices = mutableListOf<Int>()
-        val monthChangeIndices = mutableListOf<Int>()
-        for (i in 1 until data.size) {
-            val prev = data[i - 1].first
-            val curr = data[i].first
-            if (prev.year != curr.year) {
-                yearChangeIndices += i
-            } else if (showMonthChangeLines && prev.monthValue != curr.monthValue) {
-                monthChangeIndices += i
+    // Solid verticals at year and month boundaries. Suppress the month lines
+    // on the year view (heuristic: >90 data points) since ~12 of them just
+    // add noise. Year boundaries always imply month boundaries, so skip the
+    // month line at the same index to avoid stacking two colors.
+    //
+    // Solid (not dashed) because vico's DashedShape renders inconsistently on
+    // vertical lines across chart contexts (weekly vs monthly view), even
+    // with FitStrategy.Fixed and whole-pixel x-snapping.
+    val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
+    val yearChangeIndices =
+        remember(data) {
+            mutableListOf<Int>().apply {
+                for (i in 1 until data.size) {
+                    if (data[i - 1].first.year != data[i].first.year) add(i)
+                }
             }
         }
-        val dashedShape = DashedShape(
-            dashLength = DASH_LENGTH.dp,
-            gapLength = DASH_GAP_LENGTH.dp,
-        )
-        monthChangeIndices.forEach { idx ->
-            add(
-                VerticalLine(
-                    x = idx.toDouble(),
-                    line = LineComponent(
-                        fill = Fill(MONTH_CHANGE_COLOR),
-                        thickness = CHART_LINE_THICKNESS_DP.dp,
-                        shape = dashedShape,
+    val monthChangeIndices =
+        remember(data, showMonthChangeLines) {
+            mutableListOf<Int>().apply {
+                if (!showMonthChangeLines) return@apply
+                for (i in 1 until data.size) {
+                    val prev = data[i - 1].first
+                    val curr = data[i].first
+                    if (prev.year == curr.year && prev.monthValue != curr.monthValue) add(i)
+                }
+            }
+        }
+
+    val decorations =
+        buildList {
+            monthChangeIndices.forEach { idx ->
+                add(
+                    VerticalLine(
+                        x = idx.toDouble(),
+                        line =
+                            LineComponent(
+                                fill = Fill(MONTH_CHANGE_COLOR),
+                                thickness = CHART_LINE_THICKNESS_DP.dp,
+                            ),
                     ),
                 )
-            )
-        }
-        yearChangeIndices.forEach { idx ->
-            add(
-                VerticalLine(
-                    x = idx.toDouble(),
-                    line = LineComponent(
-                        fill = Fill(YEAR_CHANGE_COLOR),
-                        thickness = CHART_LINE_THICKNESS_DP.dp,
-                        shape = dashedShape,
+            }
+            yearChangeIndices.forEach { idx ->
+                add(
+                    VerticalLine(
+                        x = idx.toDouble(),
+                        line =
+                            LineComponent(
+                                fill = Fill(YEAR_CHANGE_COLOR),
+                                thickness = CHART_LINE_THICKNESS_DP.dp,
+                            ),
                     ),
                 )
-            )
-        }
-        if (baseline != null) {
-            add(
-                HorizontalLine(
-                    y = { baseline },
-                    line = LineComponent(fill = Fill(baselineColor), thickness = CHART_LINE_THICKNESS_DP.dp),
+            }
+            if (baseline != null) {
+                add(
+                    HorizontalLineUnder(
+                        y = baseline,
+                        line = LineComponent(fill = Fill(baselineColor), thickness = CHART_LINE_THICKNESS_DP.dp),
+                    ),
                 )
-            )
-        }
-        if (highlightExtremes && minValue != null && maxValue != null && minValue != maxValue) {
-            val maxFill = Fill(lineColor.copy(alpha = HIGHLIGHT_ALPHA))
-            val minFill = Fill(MIN_LINE_COLOR.copy(alpha = HIGHLIGHT_ALPHA))
-            add(
-                HorizontalLine(
-                    y = { minValue },
-                    line = LineComponent(fill = minFill, thickness = CHART_LINE_THICKNESS_DP.dp),
+            }
+            val hMin = highlightMin
+            val hMax = highlightMax
+            if (highlightExtremes && hMin != null && hMax != null && hMin != hMax) {
+                val maxFill = Fill(lineColor.copy(alpha = HIGHLIGHT_ALPHA))
+                val minFill = Fill(MIN_LINE_COLOR.copy(alpha = HIGHLIGHT_ALPHA))
+                add(
+                    HorizontalLineUnder(
+                        y = hMin,
+                        line = LineComponent(fill = minFill, thickness = CHART_LINE_THICKNESS_DP.dp),
+                    ),
                 )
-            )
-            add(
-                HorizontalLine(
-                    y = { maxValue },
-                    line = LineComponent(fill = maxFill, thickness = CHART_LINE_THICKNESS_DP.dp),
+                add(
+                    HorizontalLineUnder(
+                        y = hMax,
+                        line = LineComponent(fill = maxFill, thickness = CHART_LINE_THICKNESS_DP.dp),
+                    ),
                 )
-            )
+            }
         }
-    }
 
     val yAxisItemPlacer = remember { VerticalAxis.ItemPlacer.count(count = { Y_AXIS_TARGET_LABEL_COUNT }) }
-    val startAxis = VerticalAxis.rememberStart(
-        label = if (showYAxis) rememberAxisLabelComponent(style = axisLabelStyle) else null,
-        guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
-        itemPlacer = yAxisItemPlacer,
-    )
-    val axisItemPlacer = remember(data.size) {
-        // Aligned placer emits labels at 0, spacing, 2*spacing, … up to n-1, so the
-        // label count is floor((n-1)/spacing) + 1. To cap at exactly
-        // X_AXIS_TARGET_LABEL_COUNT (never one over), pick the smallest spacing that
-        // fits (count-1) hops across (n-1) values: ceil((n-1) / (count-1)). For a
-        // 365-point year this gives spacing=61 → 7 labels instead of spacing=52 → 8.
-        val span = (data.size - 1).coerceAtLeast(1)
-        val spacing = ((span + X_AXIS_TARGET_LABEL_COUNT - 2) / (X_AXIS_TARGET_LABEL_COUNT - 1))
-            .coerceAtLeast(1)
-        HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
-    }
-    val bottomAxis = HorizontalAxis.rememberBottom(
-        label = if (showXAxis) rememberAxisLabelComponent(style = axisLabelStyle) else null,
-        guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
-        valueFormatter = bottomAxisValueFormatter,
-        labelRotationDegrees = X_AXIS_LABEL_ROTATION,
-        itemPlacer = axisItemPlacer,
-    )
+    val startAxis =
+        VerticalAxis.rememberStart(
+            label = if (showYAxis) rememberAxisLabelComponent(style = axisLabelStyle) else null,
+            guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
+            itemPlacer = yAxisItemPlacer,
+        )
+    val axisItemPlacer =
+        remember(data.size, yearChangeIndices, monthChangeIndices) {
+            // Aligned placer emits labels at 0, spacing, 2*spacing, … up to n-1, so the
+            // label count is floor((n-1)/spacing) + 1. To cap at exactly
+            // X_AXIS_TARGET_LABEL_COUNT (never one over), pick the smallest spacing that
+            // fits (count-1) hops across (n-1) values: ceil((n-1) / (count-1)). For a
+            // 365-point year this gives spacing=61 → 7 labels instead of spacing=52 → 8.
+            val span = (data.size - 1).coerceAtLeast(1)
+            val spacing =
+                ((span + X_AXIS_TARGET_LABEL_COUNT - 2) / (X_AXIS_TARGET_LABEL_COUNT - 1))
+                    .coerceAtLeast(1)
+            val aligned = HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
+            val skipX = (yearChangeIndices + monthChangeIndices).map { it.toDouble() }.toSet()
+            if (skipX.isEmpty()) aligned else SuppressGuidelineItemPlacer(aligned, skipX)
+        }
+    val bottomAxis =
+        HorizontalAxis.rememberBottom(
+            label = if (showXAxis) rememberAxisLabelComponent(style = axisLabelStyle) else null,
+            guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
+            valueFormatter = bottomAxisValueFormatter,
+            labelRotationDegrees = X_AXIS_LABEL_ROTATION,
+            itemPlacer = axisItemPlacer,
+        )
 
     // Rebuild the host when the series length changes: Vico's scroll/marker state
     // caches the previous point count and crashes when the dataset shrinks.
     key(data.size) {
-        // Force LTR: Vico maps touch x-coordinates against the host's layout direction,
-        // so under an RTL locale (e.g. Hebrew) the scrub marker mirrors to the wrong
-        // side of the finger and clamps to the left edge.
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        // Vico maps touch x-coordinates against the host's layout direction, so
+        // under an RTL locale (e.g. Hebrew) the scrub marker mirrors to the
+        // wrong side of the finger and clamps to the left edge.
+        Ltr {
             CartesianChartHost(
                 modifier = Modifier.fillMaxSize(),
-                chart = rememberCartesianChart(
-                    rememberLineCartesianLayer(
-                        lineProvider = LineCartesianLayer.LineProvider.series(
-                            LineCartesianLayer.rememberLine(
-                                fill = LineCartesianLayer.LineFill.single(Fill(lineColor))
-                            )
+                chart =
+                    rememberCartesianChart(
+                        rememberLineCartesianLayer(
+                            lineProvider =
+                                LineCartesianLayer.LineProvider.series(
+                                    LineCartesianLayer.rememberLine(
+                                        fill = LineCartesianLayer.LineFill.single(Fill(lineColor)),
+                                    ),
+                                ),
+                            rangeProvider = rangeProvider,
                         ),
-                        rangeProvider = rangeProvider,
+                        startAxis = startAxis,
+                        bottomAxis = bottomAxis,
+                        marker = marker,
+                        markerVisibilityListener = markerListener,
+                        decorations = decorations,
                     ),
-                    startAxis = startAxis,
-                    bottomAxis = bottomAxis,
-                    marker = marker,
-                    markerVisibilityListener = markerListener,
-                    decorations = decorations,
-                ),
                 modelProducer = modelProducer,
                 scrollState = rememberVicoScrollState(scrollEnabled = false),
             )
@@ -264,17 +304,15 @@ fun TimelineChart(
 
 internal const val DEFAULT_DATE_FORMAT = "dd/MM/yy"
 
-private fun stripYear(pattern: String): String =
-    pattern.replace("/yy", "").replace("yy/", "")
+private fun stripYear(pattern: String): String = pattern.replace("/yy", "").replace("yy/", "")
 
 private const val HIGHLIGHT_ALPHA = 0.4f
 private const val Y_AXIS_PADDING = 0.05
+private const val FLAT_SERIES_PADDING = 0.01
 private const val X_AXIS_LABEL_ROTATION = 0f
 private const val X_AXIS_TARGET_LABEL_COUNT = 7
 private const val Y_AXIS_TARGET_LABEL_COUNT = 6
 private const val MARKER_DECIMAL_COUNT = 5
-private const val DASH_LENGTH = 4f
-private const val DASH_GAP_LENGTH = 4f
 private const val YEAR_VIEW_MIN_POINTS = 90
 private const val AXIS_LABEL_FONT_SIZE_SP = 12
 private const val CHART_LINE_THICKNESS_DP = 1
@@ -293,10 +331,58 @@ private class VerticalLine(
     override fun drawUnderLayers(context: CartesianDrawingContext) {
         with(context) {
             val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
-            val canvasX = baseCanvasX +
-                ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
+            val rawCanvasX =
+                baseCanvasX +
+                    ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
+            // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
+            // per scanline, which reads as a jagged column when xSpacing pushes the
+            // boundary off-grid.
+            val canvasX = kotlin.math.round(rawCanvasX)
             if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
             line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
         }
+    }
+}
+
+// Vico's HorizontalLine draws in drawOverLayers, painting the min/max highlight
+// on top of the chart line. Mirror its y mapping in drawUnderLayers so the
+// highlights sit behind the chart line, consistent with the vertical change
+// lines (which are also under-layer by user preference).
+private class HorizontalLineUnder(
+    private val y: Double,
+    private val line: LineComponent,
+) : Decoration {
+    override fun drawUnderLayers(context: CartesianDrawingContext) {
+        with(context) {
+            val yRange = ranges.getYRange(null)
+            val canvasY =
+                layerBounds.bottom -
+                    ((y - yRange.minY) / yRange.length).toFloat() * layerBounds.height
+            line.drawHorizontal(this, layerBounds.left, layerBounds.right, canvasY)
+        }
+    }
+}
+
+// Wraps a HorizontalAxis.ItemPlacer to suppress ticks and guidelines at [skipX]
+// x-values while leaving labels intact. Fixes a paint-order bug in the week
+// view: spacing=1 puts a dashed vertical guideline on every data point, and
+// vico draws guidelines after decoration.drawUnderLayers, so a guideline at
+// the same x as a change line overpaints the solid line with a dashed one.
+// Filtering the change indices out of getLineValues stops the overpaint at
+// the source; labels (dates on the axis) still render at every index.
+private class SuppressGuidelineItemPlacer(
+    private val delegate: HorizontalAxis.ItemPlacer,
+    private val skipX: Set<Double>,
+) : HorizontalAxis.ItemPlacer by delegate {
+    override fun getLineValues(
+        context: CartesianDrawingContext,
+        visibleXRange: ClosedFloatingPointRange<Double>,
+        fullXRange: ClosedFloatingPointRange<Double>,
+        maxLabelWidth: Float,
+    ): List<Double>? {
+        val base =
+            delegate.getLineValues(context, visibleXRange, fullXRange, maxLabelWidth)
+                ?: delegate.getLabelValues(context, visibleXRange, fullXRange, maxLabelWidth)
+        return base.filterNot { it in skipX }
     }
 }

@@ -22,4 +22,70 @@
     <string name="quick_conversions_no_rates">Nilai tukar belum dimuat.</string>
     <string name="quick_conversions_fees_applied">Biaya yang diterapkan: %s</string>
     <string name="tooltip_filter_starred">Tampilkan hanya mata uang yang dibintangi.</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Luring • Kurs dari %1$s</string>
+    <string name="offline_banner_no_data">Luring • Belum ada kurs tersimpan</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Kurs konversi terbaru untuk pasangan mata uang yang terakhir digunakan.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Per %s</string>
+    <string name="widget_footer_empty">Buka aplikasi untuk memuat kurs.</string>
+    <string name="widget_no_rate">Kurs tidak tersedia</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Keranjang belanja</string>
+    <string name="cart_empty_hint">Keranjang Anda kosong. Ketuk "Tambah item" untuk memulai.</string>
+    <string name="cart_add_item">Tambah item</string>
+    <string name="cart_item_name_hint">Item</string>
+    <string name="cart_item_expression_hint">Harga (mis. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Hapus item</string>
+    <string name="cart_subtotal_label">Subtotal</string>
+    <string name="cart_total_label">Total</string>
+    <string name="cart_fee_line">Biaya: %s%%</string>
+    <string name="cart_menu_save">Simpan</string>
+    <string name="cart_menu_save_as">Simpan sebagai…</string>
+    <string name="cart_menu_load">Muat</string>
+    <string name="cart_menu_export">Ekspor ke file</string>
+    <string name="cart_menu_import">Impor dari file</string>
+    <string name="cart_menu_clear">Bersihkan</string>
+    <string name="cart_share_option_text">Teks biasa</string>
+    <string name="cart_share_option_text_desc">Ringkasan terformat yang bisa Anda tempel ke obrolan atau aplikasi catatan.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Berkas spreadsheet dengan satu baris per item.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Dokumen bergaya struk yang dapat dicetak.</string>
+    <string name="cart_save_name_hint">Nama keranjang</string>
+    <string name="cart_default_saved_name">Keranjang saya</string>
+    <string name="cart_saved_toast">Disimpan sebagai "%s"</string>
+    <string name="cart_no_saved">Belum ada keranjang tersimpan.</string>
+    <string name="cart_rename">Ganti nama</string>
+    <string name="cart_rename_title">Ganti nama keranjang</string>
+    <string name="cart_delete_confirm">Hapus "%s"?</string>
+    <string name="cart_delete_confirm_button">Hapus</string>
+    <string name="cart_clear_confirm">Hapus semua item dari keranjang saat ini?</string>
+    <string name="cart_clear_confirm_button">Bersihkan</string>
+    <string name="cart_clear_items_only">Bersihkan hanya item</string>
+    <string name="cart_clear_items_only_desc">Menghapus setiap baris dari keranjang tetapi mempertahankan mata uang dan sisi biaya saat ini.</string>
+    <string name="cart_clear_reset_all">Setel ulang keranjang</string>
+    <string name="cart_clear_reset_all_desc">Menghapus setiap baris dan mengambil ulang mata uang dasar / tujuan serta sisi biaya dari layar utama.</string>
+    <string name="cart_export_ok">Keranjang diekspor.</string>
+    <string name="cart_export_error">Ekspor gagal: %s</string>
+    <string name="cart_import_ok">Keranjang diimpor.</string>
+    <string name="cart_import_error">Impor gagal: %s</string>
+    <string name="cart_share_empty">Keranjang kosong — tidak ada yang dibagikan.</string>
+    <string name="cart_save_empty">Keranjang kosong — tidak ada yang disimpan.</string>
+    <string name="cart_share_default_title">Keranjang</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
+    <string name="cart_share_converted">Dikonversi: %1$s %2$s</string>
+    <string name="cart_share_fees">Biaya: %s%%</string>
+    <string name="cart_share_total">Total: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Perubahan belum disimpan</string>
+    <string name="cart_unsaved_message">Anda memiliki perubahan yang belum disimpan. Apa yang ingin Anda lakukan?</string>
+    <string name="cart_unsaved_save">Simpan</string>
+    <string name="cart_unsaved_save_as">Simpan sebagai baru</string>
+    <string name="cart_unsaved_discard">Buang perubahan</string>
+    <string name="cart_unsaved_continue">Lanjutkan</string>
 </resources>

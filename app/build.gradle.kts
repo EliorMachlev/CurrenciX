@@ -1,8 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
-import java.util.Properties
-import java.io.FileInputStream
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -47,13 +47,19 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            // Only apply the release signing config when a keystore is
+            // actually present — CI's F-Droid reproducibility job builds
+            // release unsigned and would otherwise fail
+            // validateSigningRelease with "Keystore file not set".
+            if (getSecret("KEYSTORE_FILE") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {
@@ -110,30 +116,38 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
     implementation("androidx.window:window:1.5.1")
     implementation("com.google.android.material:material:1.14.0")
-    // downloader
-    val fuelVersion = "2.3.1"
-    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-android:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-moshi:$fuelVersion")
+    // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
+    // interceptor is wired up in HttpClientProvider; provider modules call
+    // the shared instance via the HttpClientProvider.fetch extension.
+    val okHttpVersion = "4.12.0"
+    implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
     // math (v5 releases use incompatible license to fdroid: noinspection GradleDependency)
     implementation("org.mariuszgromada.math:MathParser.org-mXparser:4.4.3")
-    // compose (needed to host the Vico chart via ComposeView)
+    // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
     val composeBomVersion = "2026.06.01"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
+    // Pin material3 to latest stable (newer than the BOM ships).
+    implementation("androidx.compose.material3:material3:1.4.0")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.runtime:runtime")
     implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.activity:activity-compose:1.11.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
     // charts
     val vicoVersion = "3.2.3"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
     // crypto: BouncyCastle provides pure-Java Argon2id, used by BackupManager
     // for password-based backup encryption (quantum-resistant KDF).
     implementation("org.bouncycastle:bcprov-jdk18on:1.85")
+    // logging: Timber routes to a rotating file tree written under filesDir/logs.
+    // Local-only — no remote crash / analytics sink.
+    implementation("com.jakewharton.timber:timber:5.0.1")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
@@ -170,9 +184,11 @@ tasks.register("checkVersion") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode
         val correctVersionCode: Int = generateVersionCode(android.defaultConfig.versionName!!)
-        if (versionCode != correctVersionCode) throw GradleException(
-            "versionCode and versionName don't match: versionCode should be $correctVersionCode. Is $versionCode."
-        )
+        if (versionCode != correctVersionCode) {
+            throw GradleException(
+                "versionCode and versionName don't match: versionCode should be $correctVersionCode. Is $versionCode.",
+            )
+        }
     }
 }
 tasks.findByName("assemble")!!.dependsOn(tasks.findByName("checkVersion")!!)
@@ -184,11 +200,12 @@ tasks.register("checkFastlaneChangelog") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode
         val changelogFile: File =
-            file("$rootDir/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt")
-        if (!changelogFile.exists())
+            file("$rootDir/fastlane/metadata/android/en-US/changelogs/$versionCode.txt")
+        if (!changelogFile.exists()) {
             throw GradleException(
-                "Fastlane changelog missing: expecting file '$changelogFile'"
+                "Fastlane changelog missing: expecting file '$changelogFile'",
             )
+        }
     }
 }
 tasks.findByName("build")!!.dependsOn(tasks.findByName("checkFastlaneChangelog")!!)
@@ -199,8 +216,8 @@ tasks.findByName("build")!!.dependsOn(tasks.findByName("checkFastlaneChangelog")
  * @param semVer e.g. 1.3.1
  * @return e.g. 10301 (-> 1 03 01)
  */
-fun generateVersionCode(semVer: String): Int {
-    return semVer.split('.')
+fun generateVersionCode(semVer: String): Int =
+    semVer
+        .split('.')
         .map { Integer.parseInt(it) }
         .reduce { sum, value -> sum * 100 + value }
-}

@@ -15,36 +15,37 @@ import java.time.LocalDate
 @Suppress("unused", "UNUSED_PARAMETER")
 internal class InforEuroTimelineAdapter(
     private val startDate: LocalDate,
-    private val endDate: LocalDate
+    private val endDate: LocalDate,
 ) {
-
     private val base: String = Currency.EUR.iso4217Alpha()
 
     @Synchronized
     @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): Timeline = reader.readArrayOrError(
-        onError = ::errorResponse
-    ) { r ->
-        val rates = buildMap {
-            while (r.hasNext()) {
-                processEntry(r, this)
-            }
+    fun fromJson(reader: JsonReader): Timeline =
+        reader.readArrayOrError(
+            onError = ::errorResponse,
+        ) { r ->
+            val rates =
+                buildMap {
+                    while (r.hasNext()) {
+                        processEntry(r, this)
+                    }
+                }
+            Timeline(
+                success = rates.isNotEmpty(),
+                error = null,
+                base = base,
+                startDate = startDate,
+                endDate = endDate,
+                rates = rates.toSortedMap(compareBy { it }),
+                provider = ApiProvider.INFOR_EURO,
+            )
         }
-        Timeline(
-            success = rates.isNotEmpty(),
-            error = null,
-            base = base,
-            startDate = startDate,
-            endDate = endDate,
-            rates = rates.toSortedMap(compareBy { it }),
-            provider = ApiProvider.INFOR_EURO
-        )
-    }
 
     private fun processEntry(
         reader: JsonReader,
-        rates: MutableMap<LocalDate, Rate>
+        rates: MutableMap<LocalDate, Rate>,
     ) {
         reader.beginObject()
         var currencyIso: Currency? = null
@@ -74,21 +75,24 @@ internal class InforEuroTimelineAdapter(
         }
     }
 
-    private fun errorResponse(message: String?): Timeline = Timeline(
-        success = false,
-        error = message,
-        base = base,
-        startDate = null,
-        endDate = null,
-        rates = null,
-        provider = ApiProvider.INFOR_EURO
-    )
+    private fun errorResponse(message: String?): Timeline =
+        Timeline(
+            success = false,
+            error = message,
+            base = base,
+            startDate = null,
+            endDate = null,
+            rates = null,
+            provider = ApiProvider.INFOR_EURO,
+        )
 
     @Synchronized
     @ToJson
     @Throws(IOException::class)
-    fun toJson(writer: JsonWriter, value: Timeline) {
+    fun toJson(
+        writer: JsonWriter,
+        value: Timeline,
+    ) {
         writer.nullValue()
     }
-
 }

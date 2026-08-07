@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">已应用费用：%s</string>
     <string name="tooltip_filter_starred">仅显示收藏的货币。</string>
     <string name="currency_dropdown_api_hint">没找到需要的汇率？不同的数据来源提供数量不同的货币汇率。尝试在设置里换换来源！ 🤗</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">离线 • 汇率来自 %1$s</string>
+    <string name="offline_banner_no_data">离线 • 尚无缓存汇率</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">显示您上次使用的货币对的最新汇率。</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">截至 %s</string>
+    <string name="widget_footer_empty">打开应用以加载汇率。</string>
+    <string name="widget_no_rate">汇率不可用</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">购物车</string>
+    <string name="cart_empty_hint">购物车为空。点按"添加项目"开始。</string>
+    <string name="cart_add_item">添加项目</string>
+    <string name="cart_item_name_hint">项目</string>
+    <string name="cart_item_expression_hint">价格(例如 2 × 3.50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">删除项目</string>
+    <string name="cart_subtotal_label">小计</string>
+    <string name="cart_total_label">合计</string>
+    <string name="cart_fee_line">手续费:%s%%</string>
+    <string name="cart_menu_save">保存</string>
+    <string name="cart_menu_save_as">另存为…</string>
+    <string name="cart_menu_load">载入</string>
+    <string name="cart_menu_export">导出到文件</string>
+    <string name="cart_menu_import">从文件导入</string>
+    <string name="cart_menu_clear">清空</string>
+    <string name="cart_share_option_text">纯文本</string>
+    <string name="cart_share_option_text_desc">可粘贴到聊天或笔记应用的格式化摘要。</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">每个项目占一行的电子表格文件。</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">可打印的收据样式文档。</string>
+    <string name="cart_save_name_hint">购物车名称</string>
+    <string name="cart_default_saved_name">我的购物车</string>
+    <string name="cart_saved_toast">已保存为"%s"</string>
+    <string name="cart_no_saved">尚无已保存的购物车。</string>
+    <string name="cart_rename">重命名</string>
+    <string name="cart_rename_title">重命名购物车</string>
+    <string name="cart_delete_confirm">删除"%s"?</string>
+    <string name="cart_delete_confirm_button">删除</string>
+    <string name="cart_clear_confirm">从当前购物车中移除所有项目?</string>
+    <string name="cart_clear_confirm_button">清空</string>
+    <string name="cart_clear_items_only">仅清空项目</string>
+    <string name="cart_clear_items_only_desc">移除购物车中的所有行,但保留当前货币和手续费方向。</string>
+    <string name="cart_clear_reset_all">重置购物车</string>
+    <string name="cart_clear_reset_all_desc">移除所有行,并从主屏幕重新获取基准/目标货币以及手续费方向。</string>
+    <string name="cart_export_ok">购物车已导出。</string>
+    <string name="cart_export_error">导出失败:%s</string>
+    <string name="cart_import_ok">购物车已导入。</string>
+    <string name="cart_import_error">导入失败:%s</string>
+    <string name="cart_share_empty">购物车为空 — 无内容可分享。</string>
+    <string name="cart_save_empty">购物车为空 — 无内容可保存。</string>
+    <string name="cart_share_default_title">购物车</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">小计:%1$s %2$s</string>
+    <string name="cart_share_converted">已换算:%1$s %2$s</string>
+    <string name="cart_share_fees">手续费:%s%%</string>
+    <string name="cart_share_total">合计:%1$s %2$s</string>
+    <string name="cart_unsaved_title">未保存的更改</string>
+    <string name="cart_unsaved_message">您有未保存的更改。您想如何处理?</string>
+    <string name="cart_unsaved_save">保存</string>
+    <string name="cart_unsaved_save_as">另存为新的</string>
+    <string name="cart_unsaved_discard">放弃更改</string>
+    <string name="cart_unsaved_continue">继续</string>
 </resources>

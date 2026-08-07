@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">Phí đã áp dụng: %s</string>
     <string name="tooltip_filter_starred">Chỉ hiện đơn vị tiền tệ nào được gắn sao.</string>
     <string name="currency_dropdown_api_hint">Có thứ gì bị thiếu à? Những nhà cung cấp dữ liệu khác nhau sẽ có các tiền tệ khác nhau. Hãy đến cài đặt để thử nhà cung cấp khác! 🤗</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Ngoại tuyến • Tỷ giá từ %1$s</string>
+    <string name="offline_banner_no_data">Ngoại tuyến • Chưa có tỷ giá được lưu</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Tỷ giá quy đổi mới nhất cho cặp tiền tệ bạn dùng gần đây nhất.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Tính đến %s</string>
+    <string name="widget_footer_empty">Mở ứng dụng để tải tỷ giá.</string>
+    <string name="widget_no_rate">Không có tỷ giá</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Giỏ hàng</string>
+    <string name="cart_empty_hint">Giỏ hàng của bạn trống. Nhấn "Thêm mục" để bắt đầu.</string>
+    <string name="cart_add_item">Thêm mục</string>
+    <string name="cart_item_name_hint">Mục</string>
+    <string name="cart_item_expression_hint">Giá (ví dụ 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Xoá mục</string>
+    <string name="cart_subtotal_label">Tạm tính</string>
+    <string name="cart_total_label">Tổng</string>
+    <string name="cart_fee_line">Phí: %s%%</string>
+    <string name="cart_menu_save">Lưu</string>
+    <string name="cart_menu_save_as">Lưu thành…</string>
+    <string name="cart_menu_load">Tải</string>
+    <string name="cart_menu_export">Xuất ra tệp</string>
+    <string name="cart_menu_import">Nhập từ tệp</string>
+    <string name="cart_menu_clear">Xoá sạch</string>
+    <string name="cart_share_option_text">Văn bản thuần</string>
+    <string name="cart_share_option_text_desc">Bản tóm tắt có định dạng, bạn có thể dán vào ứng dụng chat hoặc ghi chú.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Tệp bảng tính với mỗi mục một hàng.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Tài liệu kiểu hoá đơn có thể in.</string>
+    <string name="cart_save_name_hint">Tên giỏ hàng</string>
+    <string name="cart_default_saved_name">Giỏ hàng của tôi</string>
+    <string name="cart_saved_toast">Đã lưu với tên "%s"</string>
+    <string name="cart_no_saved">Chưa có giỏ hàng nào được lưu.</string>
+    <string name="cart_rename">Đổi tên</string>
+    <string name="cart_rename_title">Đổi tên giỏ hàng</string>
+    <string name="cart_delete_confirm">Xoá "%s"?</string>
+    <string name="cart_delete_confirm_button">Xoá</string>
+    <string name="cart_clear_confirm">Xoá tất cả mục khỏi giỏ hàng hiện tại?</string>
+    <string name="cart_clear_confirm_button">Xoá sạch</string>
+    <string name="cart_clear_items_only">Chỉ xoá các mục</string>
+    <string name="cart_clear_items_only_desc">Xoá mọi hàng khỏi giỏ nhưng giữ nguyên tiền tệ hiện tại và phía áp phí.</string>
+    <string name="cart_clear_reset_all">Đặt lại giỏ hàng</string>
+    <string name="cart_clear_reset_all_desc">Xoá mọi hàng và lấy lại tiền tệ gốc / đích và phía áp phí từ màn hình chính.</string>
+    <string name="cart_export_ok">Đã xuất giỏ hàng.</string>
+    <string name="cart_export_error">Xuất thất bại: %s</string>
+    <string name="cart_import_ok">Đã nhập giỏ hàng.</string>
+    <string name="cart_import_error">Nhập thất bại: %s</string>
+    <string name="cart_share_empty">Giỏ hàng trống — không có gì để chia sẻ.</string>
+    <string name="cart_save_empty">Giỏ hàng trống — không có gì để lưu.</string>
+    <string name="cart_share_default_title">Giỏ hàng</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Tạm tính: %1$s %2$s</string>
+    <string name="cart_share_converted">Đã quy đổi: %1$s %2$s</string>
+    <string name="cart_share_fees">Phí: %s%%</string>
+    <string name="cart_share_total">Tổng: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Thay đổi chưa lưu</string>
+    <string name="cart_unsaved_message">Bạn có những thay đổi chưa lưu. Bạn muốn làm gì?</string>
+    <string name="cart_unsaved_save">Lưu</string>
+    <string name="cart_unsaved_save_as">Lưu thành mới</string>
+    <string name="cart_unsaved_discard">Bỏ thay đổi</string>
+    <string name="cart_unsaved_continue">Tiếp tục</string>
 </resources>

@@ -14,31 +14,36 @@ import java.math.BigDecimal
  * Also removes some unwanted values and adds some wanted ones.
  */
 @Suppress("unused", "UNUSED_PARAMETER")
-internal class FrankfurterAppRatesAdapter(private val base: Currency) {
-
+internal class FrankfurterAppRatesAdapter(
+    private val base: Currency,
+) {
     @Synchronized
     @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): List<Rate> = buildList {
-        reader.beginObject()
-        // convert
-        while (reader.hasNext()) {
-            val name: String = reader.nextName()
-            val value: BigDecimal = BigDecimal(reader.nextString())
-            Currency.fromString(name)?.let { add(Rate(it, value)) }
+    fun fromJson(reader: JsonReader): List<Rate> =
+        buildList {
+            reader.beginObject()
+            // convert
+            while (reader.hasNext()) {
+                val name: String = reader.nextName()
+                val value: BigDecimal = BigDecimal(reader.nextString())
+                Currency.fromString(name)?.let { add(Rate(it, value)) }
+            }
+            reader.endObject()
+            // add base - but only if it's missing in the api response!
+            if (none { rate -> rate.currency == base }) {
+                add(Rate(base, BigDecimal.ONE))
+            }
+            addFokFromDkkIfMissing()
         }
-        reader.endObject()
-        // add base - but only if it's missing in the api response!
-        if (none { rate -> rate.currency == base })
-            add(Rate(base, BigDecimal.ONE))
-        addFokFromDkkIfMissing()
-    }
 
     @Synchronized
     @ToJson
     @Throws(IOException::class)
-    fun toJson(writer: JsonWriter, value: List<Rate>?) {
+    fun toJson(
+        writer: JsonWriter,
+        value: List<Rate>?,
+    ) {
         writer.nullValue()
     }
-
 }

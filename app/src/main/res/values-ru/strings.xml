@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">Применённые комиссии: %s</string>
     <string name="tooltip_filter_starred">Показывать только избранные валюты.</string>
     <string name="currency_dropdown_api_hint">Чего-то не хватает? Разные поставщики данных предлагают разные валюты. Зайдите в настройки и попробуйте другого! 🤗</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Офлайн • Курсы от %1$s</string>
+    <string name="offline_banner_no_data">Офлайн • Кэшированных курсов ещё нет</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Последний курс конвертации для недавно использованной пары валют.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">На %s</string>
+    <string name="widget_footer_empty">Откройте приложение, чтобы загрузить курсы.</string>
+    <string name="widget_no_rate">Курс недоступен</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Корзина</string>
+    <string name="cart_empty_hint">Корзина пуста. Нажмите «Добавить позицию», чтобы начать.</string>
+    <string name="cart_add_item">Добавить позицию</string>
+    <string name="cart_item_name_hint">Позиция</string>
+    <string name="cart_item_expression_hint">Цена (например, 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Удалить позицию</string>
+    <string name="cart_subtotal_label">Промежуточный итог</string>
+    <string name="cart_total_label">Итого</string>
+    <string name="cart_fee_line">Комиссия: %s%%</string>
+    <string name="cart_menu_save">Сохранить</string>
+    <string name="cart_menu_save_as">Сохранить как…</string>
+    <string name="cart_menu_load">Загрузить</string>
+    <string name="cart_menu_export">Экспорт в файл</string>
+    <string name="cart_menu_import">Импорт из файла</string>
+    <string name="cart_menu_clear">Очистить</string>
+    <string name="cart_share_option_text">Обычный текст</string>
+    <string name="cart_share_option_text_desc">Форматированная сводка для вставки в чат или заметки.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Табличный файл с одной строкой на позицию.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Печатный документ в стиле чека.</string>
+    <string name="cart_save_name_hint">Название корзины</string>
+    <string name="cart_default_saved_name">Моя корзина</string>
+    <string name="cart_saved_toast">Сохранено как «%s»</string>
+    <string name="cart_no_saved">Сохранённых корзин пока нет.</string>
+    <string name="cart_rename">Переименовать</string>
+    <string name="cart_rename_title">Переименовать корзину</string>
+    <string name="cart_delete_confirm">Удалить «%s»?</string>
+    <string name="cart_delete_confirm_button">Удалить</string>
+    <string name="cart_clear_confirm">Удалить все позиции из текущей корзины?</string>
+    <string name="cart_clear_confirm_button">Очистить</string>
+    <string name="cart_clear_items_only">Только очистить позиции</string>
+    <string name="cart_clear_items_only_desc">Удаляет все строки из корзины, но сохраняет текущие валюты и сторону комиссии.</string>
+    <string name="cart_clear_reset_all">Сбросить корзину</string>
+    <string name="cart_clear_reset_all_desc">Удаляет все строки и заново подтягивает базовую / целевую валюту и сторону комиссии с главного экрана.</string>
+    <string name="cart_export_ok">Корзина экспортирована.</string>
+    <string name="cart_export_error">Ошибка экспорта: %s</string>
+    <string name="cart_import_ok">Корзина импортирована.</string>
+    <string name="cart_import_error">Ошибка импорта: %s</string>
+    <string name="cart_share_empty">Корзина пуста — нечего отправить.</string>
+    <string name="cart_save_empty">Корзина пуста — нечего сохранять.</string>
+    <string name="cart_share_default_title">Корзина</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Промежуточный итог: %1$s %2$s</string>
+    <string name="cart_share_converted">Конвертировано: %1$s %2$s</string>
+    <string name="cart_share_fees">Комиссия: %s%%</string>
+    <string name="cart_share_total">Итого: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Несохранённые изменения</string>
+    <string name="cart_unsaved_message">У вас есть несохранённые изменения. Что вы хотите сделать?</string>
+    <string name="cart_unsaved_save">Сохранить</string>
+    <string name="cart_unsaved_save_as">Сохранить как новую</string>
+    <string name="cart_unsaved_discard">Отменить изменения</string>
+    <string name="cart_unsaved_continue">Продолжить</string>
 </resources>

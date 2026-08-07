@@ -12,13 +12,15 @@ enum class Operator(
     val hardware: Char,
     val apply: MainViewModel.() -> Unit,
 ) {
-    PLUS  ("+", '+', MainViewModel::addition),
-    MINUS ("−", '-', MainViewModel::subtraction),
-    TIMES ("×", '*', MainViewModel::multiplication),
-    DIVIDE("÷", '/', MainViewModel::division);
+    PLUS("+", '+', MainViewModel::addition),
+    MINUS("−", '-', MainViewModel::subtraction),
+    TIMES("×", '*', MainViewModel::multiplication),
+    DIVIDE("÷", '/', MainViewModel::division),
+    ;
 
     companion object {
         fun fromDisplay(label: String): Operator? = entries.firstOrNull { it.display == label }
+
         fun fromHardware(char: Char): Operator? = entries.firstOrNull { it.hardware == char }
     }
 }

@@ -19,23 +19,16 @@
             android:layout_height="wrap_content"
             android:elevation="10dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/cart_items"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/margin1x"
-            android:paddingVertical="@dimen/margin1x" />
+            android:layout_weight="1" />
 
-        <TextView
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/cart_empty_hint"
-            style="@style/TextAppearance.Material3.BodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin3x"
-            android:gravity="center"
-            android:text="@string/cart_empty_hint"
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton

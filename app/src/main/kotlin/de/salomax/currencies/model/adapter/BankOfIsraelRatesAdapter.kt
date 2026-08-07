@@ -16,7 +16,6 @@ import java.time.OffsetDateTime
 
 @Suppress("unused", "UNUSED_PARAMETER")
 internal class BankOfIsraelRatesAdapter {
-
     @Synchronized
     @FromJson
     @Throws(IOException::class)
@@ -42,7 +41,7 @@ internal class BankOfIsraelRatesAdapter {
 
         return ExchangeRates(
             success = rates.isNotEmpty(),
-            error = if (rates.isEmpty()) "No data found." else null,
+            error = if (rates.isEmpty()) NO_DATA_ERROR else null,
             base = Currency.ILS,
             date = date,
             rates = rates,
@@ -50,7 +49,10 @@ internal class BankOfIsraelRatesAdapter {
         )
     }
 
-    private fun readEntries(reader: JsonReader, rates: MutableList<Rate>): LocalDate? {
+    private fun readEntries(
+        reader: JsonReader,
+        rates: MutableList<Rate>,
+    ): LocalDate? {
         var latestDate: LocalDate? = null
         reader.beginArray()
         while (reader.hasNext()) {
@@ -83,16 +85,22 @@ internal class BankOfIsraelRatesAdapter {
         reader.endObject()
 
         val currency = code?.let(Currency::fromString)
-        val rate = if (currency != null && value != null && value.signum() > 0)
-            Rate(currency, unit.divide(value, MathContext.DECIMAL128))
-        else null
+        val rate =
+            if (currency != null && value != null && value.signum() > 0) {
+                Rate(currency, unit.divide(value, MathContext.DECIMAL128))
+            } else {
+                null
+            }
         return rate to date
     }
 
     @Synchronized
     @ToJson
     @Throws(IOException::class)
-    fun toJson(writer: JsonWriter, value: ExchangeRates?) {
+    fun toJson(
+        writer: JsonWriter,
+        value: ExchangeRates?,
+    ) {
         writer.nullValue()
     }
 }

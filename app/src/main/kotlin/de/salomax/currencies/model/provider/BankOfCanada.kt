@@ -1,12 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.awaitResult
-import com.github.kittinunf.fuel.moshi.moshiDeserializerOf
-import com.github.kittinunf.result.Result
-import com.squareup.moshi.Moshi
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -15,52 +9,42 @@ import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.BankOfCanadaRatesAdapter
 import de.salomax.currencies.model.adapter.BankOfCanadaTimelineAdapter
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-class BankOfCanada: ApiProvider.Api() {
-
+class BankOfCanada : ApiProvider.Api() {
     override val name = "Bank of Canada"
 
-    override fun descriptionShort(context: Context) =
-        context.getText(R.string.api_bankOfCanada_descriptionShort)
+    override fun descriptionShort(context: Context) = context.getText(R.string.api_bankOfCanada_descriptionShort)
 
-    override fun getDescriptionLong(context: Context) =
-        context.getText(R.string.api_bankOfCanada_descriptionFull)
+    override fun getDescriptionLong(context: Context) = context.getText(R.string.api_bankOfCanada_descriptionFull)
 
-    override fun descriptionUpdateInterval(context: Context) =
-        context.getText(R.string.api_bankOfCanada_descriptionUpdateInterval)
+    override fun descriptionUpdateInterval(context: Context) = context.getText(R.string.api_bankOfCanada_descriptionUpdateInterval)
 
-    override fun descriptionHint(context: Context) =
-        null
+    override fun descriptionHint(context: Context) = null
 
     override val baseUrl = "https://www.bankofcanada.ca/valet"
 
-    override suspend fun getRates(context: Context?, date: LocalDate?): Result<ExchangeRates, FuelError> {
+    override suspend fun getRates(
+        context: Context?,
+        date: LocalDate?,
+    ): Result<ExchangeRates> {
+        // `recent=1` returns just the latest observation; a start/end range asks
+        // for the historical window ending on the requested date.
+        val dateQuery =
+            if (date == null) {
+                "recent=1"
+            } else {
+                "start_date=${date.minusDays(TIMELINE_LOOKBACK_DAYS).format(ISO_DATE)}" +
+                    "&end_date=${date.format(ISO_DATE)}"
+            }
+        val adapter =
+            moshi { add(BankOfCanadaRatesAdapter()) }
+                .adapter(ExchangeRates::class.java)
 
-        // As this API doesn't return results for nonwork days, get the last seven days.
-        // The latest available values will be used.
-        val formattedDateStart = date?.minusDays(TIMELINE_LOOKBACK_DAYS)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val formattedDateEnd = date?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val dateString =
-            // latest
-            if (date == null) "recent=1"
-            // historical
-            else "start_date=$formattedDateStart&end_date=$formattedDateEnd"
-
-        return Fuel.get(
-            baseUrl +
-                    "/observations/group/FX_RATES_DAILY_CURRENT/json" +
-                    "?$dateString" +
-                    "&order_dir=desc"
-        ).awaitResult(
-            moshiDeserializerOf(
-                Moshi.Builder()
-                    .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                    .add(BankOfCanadaRatesAdapter())
-                    .build()
-                    .adapter(ExchangeRates::class.java)
-
-            )
+        return fetchJson(
+            context,
+            "$baseUrl/observations/group/FX_RATES_DAILY_CURRENT/json?$dateQuery&order_dir=desc",
+            name,
+            adapter,
         )
     }
 
@@ -69,30 +53,19 @@ class BankOfCanada: ApiProvider.Api() {
         base: Currency,
         symbol: Currency,
         startDate: LocalDate,
-        endDate: LocalDate
-    ): Result<Timeline, FuelError> {
-        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
-        val parameterBase = base.apiCodeOrDkkForFok()
-        val parameterSymbol = symbol.apiCodeOrDkkForFok()
+        endDate: LocalDate,
+    ): Result<Timeline> {
+        val adapter =
+            moshi { add(BankOfCanadaTimelineAdapter(base, symbol)) }
+                .adapter(Timeline::class.java)
 
-        return Fuel.get(
-            baseUrl +
-                    "/observations" +
-                    "/FX${parameterBase}CAD,FX${parameterSymbol}CAD" +
-                    "/json" +
-                    // "?recent_years=1" +
-                    "?start_date=${startDate.format(dateFormatter)}" +
-                    "&end_date=${endDate.format(dateFormatter)}" +
-                    "&order_dir=asc"
-        ).awaitResult(
-            moshiDeserializerOf(
-                Moshi.Builder()
-                    .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
-                    .add(BankOfCanadaTimelineAdapter(base, symbol))
-                    .build()
-                    .adapter(Timeline::class.java)
-            )
-        )
+        val url =
+            "$baseUrl/observations/" +
+                "FX${base.apiCodeOrDkkForFok()}CAD,FX${symbol.apiCodeOrDkkForFok()}CAD/json" +
+                "?start_date=${startDate.format(ISO_DATE)}" +
+                "&end_date=${endDate.format(ISO_DATE)}" +
+                "&order_dir=asc"
+
+        return fetchJson(context, url, name, adapter)
     }
-
 }

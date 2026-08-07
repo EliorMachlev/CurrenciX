@@ -30,9 +30,9 @@ updates:
       moshi:
         patterns:
           - "com.squareup.moshi:*"
-      fuel:
+      okhttp:
         patterns:
-          - "com.github.kittinunf.fuel:*"
+          - "com.squareup.okhttp3:*"
       test-dependencies:
         dependency-type: "development"
         patterns:

@@ -29,4 +29,70 @@
     <string name="quick_conversions_fees_applied">Angewendete Gebühren: %s</string>
     <string name="tooltip_filter_starred">Nur favorisierte Währungen anzeigen.</string>
     <string name="currency_dropdown_api_hint">Fehlt etwas? Unterschiedliche Datenquellen bieten unterschiedliche Währungen an. In die Einstellungen gehen, um eine andere auszuprobieren!\u00A0\uD83E\uDD17</string>
+
+    <string name="offline_banner_with_date">Offline • Kurse vom %1$s</string>
+    <string name="offline_banner_no_data">Offline • Noch keine zwischengespeicherten Kurse</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Aktueller Umrechnungskurs für dein zuletzt verwendetes Währungspaar.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Stand %s</string>
+    <string name="widget_footer_empty">App öffnen, um Kurse zu laden.</string>
+    <string name="widget_no_rate">Kurs nicht verfügbar</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Warenkorb</string>
+    <string name="cart_empty_hint">Dein Warenkorb ist leer. Auf „Artikel hinzufügen“ tippen, um zu beginnen.</string>
+    <string name="cart_add_item">Artikel hinzufügen</string>
+    <string name="cart_item_name_hint">Artikel</string>
+    <string name="cart_item_expression_hint">Preis (z. B. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Artikel löschen</string>
+    <string name="cart_subtotal_label">Zwischensumme</string>
+    <string name="cart_total_label">Gesamt</string>
+    <string name="cart_fee_line">Gebühren: %s%%</string>
+    <string name="cart_menu_save">Speichern</string>
+    <string name="cart_menu_save_as">Speichern unter…</string>
+    <string name="cart_menu_load">Laden</string>
+    <string name="cart_menu_export">In Datei exportieren</string>
+    <string name="cart_menu_import">Aus Datei importieren</string>
+    <string name="cart_menu_clear">Leeren</string>
+    <string name="cart_share_option_text">Klartext</string>
+    <string name="cart_share_option_text_desc">Formatierte Zusammenfassung zum Einfügen in einen Chat oder eine Notiz-App.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Tabellendatei mit einer Zeile pro Artikel.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Druckbares Dokument im Beleg-Stil.</string>
+    <string name="cart_save_name_hint">Warenkorb-Name</string>
+    <string name="cart_default_saved_name">Mein Warenkorb</string>
+    <string name="cart_saved_toast">Gespeichert als „%s“</string>
+    <string name="cart_no_saved">Noch keine gespeicherten Warenkörbe.</string>
+    <string name="cart_rename">Umbenennen</string>
+    <string name="cart_rename_title">Warenkorb umbenennen</string>
+    <string name="cart_delete_confirm">„%s“ löschen?</string>
+    <string name="cart_delete_confirm_button">Löschen</string>
+    <string name="cart_clear_confirm">Alle Artikel aus dem aktuellen Warenkorb entfernen?</string>
+    <string name="cart_clear_confirm_button">Leeren</string>
+    <string name="cart_clear_items_only">Nur Artikel leeren</string>
+    <string name="cart_clear_items_only_desc">Entfernt alle Zeilen, behält aber die aktuellen Währungen und die Gebührenseite.</string>
+    <string name="cart_clear_reset_all">Warenkorb zurücksetzen</string>
+    <string name="cart_clear_reset_all_desc">Entfernt alle Zeilen und holt Basis-/Zielwährung und Gebührenseite erneut vom Hauptbildschirm.</string>
+    <string name="cart_export_ok">Warenkorb exportiert.</string>
+    <string name="cart_export_error">Export fehlgeschlagen: %s</string>
+    <string name="cart_import_ok">Warenkorb importiert.</string>
+    <string name="cart_import_error">Import fehlgeschlagen: %s</string>
+    <string name="cart_share_empty">Warenkorb ist leer – nichts zu teilen.</string>
+    <string name="cart_save_empty">Warenkorb ist leer – nichts zu speichern.</string>
+    <string name="cart_share_default_title">Warenkorb</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Zwischensumme: %1$s %2$s</string>
+    <string name="cart_share_converted">Umgerechnet: %1$s %2$s</string>
+    <string name="cart_share_fees">Gebühren: %s%%</string>
+    <string name="cart_share_total">Gesamt: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Ungespeicherte Änderungen</string>
+    <string name="cart_unsaved_message">Es gibt ungespeicherte Änderungen. Was möchtest du tun?</string>
+    <string name="cart_unsaved_save">Speichern</string>
+    <string name="cart_unsaved_save_as">Als neu speichern</string>
+    <string name="cart_unsaved_discard">Änderungen verwerfen</string>
+    <string name="cart_unsaved_continue">Weiter</string>
 </resources>

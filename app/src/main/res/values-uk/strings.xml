@@ -29,4 +29,69 @@
     <string name="quick_conversions_fees_applied">Застосовані комісії: %s</string>
     <string name="tooltip_filter_starred">Показувати лише обрані валюти.</string>
     <string name="currency_dropdown_api_hint">Чогось не вистачає? Різні постачальники даних пропонують різні валюти. Перейдіть до налаштувань, щоб спробувати іншого!\u00A0\uD83E\uDD17</string>
+    <string name="offline_banner_with_date">Офлайн • Курси від %1$s</string>
+    <string name="offline_banner_no_data">Офлайн • Кешованих курсів ще немає</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Останній курс конвертації для нещодавно використаної пари валют.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Станом на %s</string>
+    <string name="widget_footer_empty">Відкрийте застосунок, щоб завантажити курси.</string>
+    <string name="widget_no_rate">Курс недоступний</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Кошик</string>
+    <string name="cart_empty_hint">Кошик порожній. Натисніть «Додати позицію», щоб почати.</string>
+    <string name="cart_add_item">Додати позицію</string>
+    <string name="cart_item_name_hint">Позиція</string>
+    <string name="cart_item_expression_hint">Ціна (наприклад, 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Видалити позицію</string>
+    <string name="cart_subtotal_label">Проміжний підсумок</string>
+    <string name="cart_total_label">Разом</string>
+    <string name="cart_fee_line">Комісія: %s%%</string>
+    <string name="cart_menu_save">Зберегти</string>
+    <string name="cart_menu_save_as">Зберегти як…</string>
+    <string name="cart_menu_load">Завантажити</string>
+    <string name="cart_menu_export">Експорт у файл</string>
+    <string name="cart_menu_import">Імпорт з файлу</string>
+    <string name="cart_menu_clear">Очистити</string>
+    <string name="cart_share_option_text">Звичайний текст</string>
+    <string name="cart_share_option_text_desc">Форматоване резюме для вставки в чат чи нотатки.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Табличний файл з одним рядком на позицію.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Друкований документ у вигляді чека.</string>
+    <string name="cart_save_name_hint">Назва кошика</string>
+    <string name="cart_default_saved_name">Мій кошик</string>
+    <string name="cart_saved_toast">Збережено як «%s»</string>
+    <string name="cart_no_saved">Збережених кошиків ще немає.</string>
+    <string name="cart_rename">Перейменувати</string>
+    <string name="cart_rename_title">Перейменувати кошик</string>
+    <string name="cart_delete_confirm">Видалити «%s»?</string>
+    <string name="cart_delete_confirm_button">Видалити</string>
+    <string name="cart_clear_confirm">Видалити всі позиції з поточного кошика?</string>
+    <string name="cart_clear_confirm_button">Очистити</string>
+    <string name="cart_clear_items_only">Очистити лише позиції</string>
+    <string name="cart_clear_items_only_desc">Видаляє всі рядки з кошика, але залишає поточні валюти та бік комісії.</string>
+    <string name="cart_clear_reset_all">Скинути кошик</string>
+    <string name="cart_clear_reset_all_desc">Видаляє всі рядки й повторно підтягує базову / цільову валюту та бік комісії з головного екрана.</string>
+    <string name="cart_export_ok">Кошик експортовано.</string>
+    <string name="cart_export_error">Помилка експорту: %s</string>
+    <string name="cart_import_ok">Кошик імпортовано.</string>
+    <string name="cart_import_error">Помилка імпорту: %s</string>
+    <string name="cart_share_empty">Кошик порожній — нічого поширювати.</string>
+    <string name="cart_save_empty">Кошик порожній — нічого зберігати.</string>
+    <string name="cart_share_default_title">Кошик</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Проміжний підсумок: %1$s %2$s</string>
+    <string name="cart_share_converted">Конвертовано: %1$s %2$s</string>
+    <string name="cart_share_fees">Комісія: %s%%</string>
+    <string name="cart_share_total">Разом: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Незбережені зміни</string>
+    <string name="cart_unsaved_message">У вас є незбережені зміни. Що ви хочете зробити?</string>
+    <string name="cart_unsaved_save">Зберегти</string>
+    <string name="cart_unsaved_save_as">Зберегти як новий</string>
+    <string name="cart_unsaved_discard">Скасувати зміни</string>
+    <string name="cart_unsaved_continue">Продовжити</string>
 </resources>

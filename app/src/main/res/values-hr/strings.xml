@@ -28,4 +28,70 @@
     <string name="quick_conversions_fees_applied">Primijenjene naknade: %s</string>
     <string name="tooltip_filter_starred">Prikaži samo označene valute.</string>
     <string name="currency_dropdown_api_hint">Nešto nedostaje? Drugi pružatelji podataka nude podatke za druge valute. U postavkama možete odabrati nekog drugog pružatelja!\u00A0\uD83E\uDD17</string>
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Izvanmrežno • Tečajevi od %1$s</string>
+    <string name="offline_banner_no_data">Izvanmrežno • Još nema spremljenih tečajeva</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Najnoviji tečaj za posljednje korišteni par valuta.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Na dan %s</string>
+    <string name="widget_footer_empty">Otvorite aplikaciju za učitavanje tečajeva.</string>
+    <string name="widget_no_rate">Tečaj nije dostupan</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Košarica</string>
+    <string name="cart_empty_hint">Košarica je prazna. Dodirnite „Dodaj stavku“ za početak.</string>
+    <string name="cart_add_item">Dodaj stavku</string>
+    <string name="cart_item_name_hint">Stavka</string>
+    <string name="cart_item_expression_hint">Cijena (npr. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Izbriši stavku</string>
+    <string name="cart_subtotal_label">Međuzbroj</string>
+    <string name="cart_total_label">Ukupno</string>
+    <string name="cart_fee_line">Naknade: %s%%</string>
+    <string name="cart_menu_save">Spremi</string>
+    <string name="cart_menu_save_as">Spremi kao…</string>
+    <string name="cart_menu_load">Učitaj</string>
+    <string name="cart_menu_export">Izvezi u datoteku</string>
+    <string name="cart_menu_import">Uvezi iz datoteke</string>
+    <string name="cart_menu_clear">Očisti</string>
+    <string name="cart_share_option_text">Obični tekst</string>
+    <string name="cart_share_option_text_desc">Oblikovani sažetak za lijepljenje u razgovor ili bilješke.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Proračunska datoteka s jednim retkom po stavci.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Ispisivi dokument u obliku računa.</string>
+    <string name="cart_save_name_hint">Naziv košarice</string>
+    <string name="cart_default_saved_name">Moja košarica</string>
+    <string name="cart_saved_toast">Spremljeno kao „%s“</string>
+    <string name="cart_no_saved">Još nema spremljenih košarica.</string>
+    <string name="cart_rename">Preimenuj</string>
+    <string name="cart_rename_title">Preimenuj košaricu</string>
+    <string name="cart_delete_confirm">Izbrisati „%s“?</string>
+    <string name="cart_delete_confirm_button">Izbriši</string>
+    <string name="cart_clear_confirm">Ukloniti sve stavke iz trenutne košarice?</string>
+    <string name="cart_clear_confirm_button">Očisti</string>
+    <string name="cart_clear_items_only">Očisti samo stavke</string>
+    <string name="cart_clear_items_only_desc">Uklanja sve retke iz košarice, ali zadržava trenutne valute i stranu naknada.</string>
+    <string name="cart_clear_reset_all">Resetiraj košaricu</string>
+    <string name="cart_clear_reset_all_desc">Uklanja sve retke i ponovno preuzima osnovnu / ciljnu valutu i stranu naknada s glavnog zaslona.</string>
+    <string name="cart_export_ok">Košarica izvezena.</string>
+    <string name="cart_export_error">Izvoz nije uspio: %s</string>
+    <string name="cart_import_ok">Košarica uvezena.</string>
+    <string name="cart_import_error">Uvoz nije uspio: %s</string>
+    <string name="cart_share_empty">Košarica je prazna — nema što dijeliti.</string>
+    <string name="cart_save_empty">Košarica je prazna — nema što spremiti.</string>
+    <string name="cart_share_default_title">Košarica</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Međuzbroj: %1$s %2$s</string>
+    <string name="cart_share_converted">Preračunato: %1$s %2$s</string>
+    <string name="cart_share_fees">Naknade: %s%%</string>
+    <string name="cart_share_total">Ukupno: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Nespremljene promjene</string>
+    <string name="cart_unsaved_message">Imate nespremljene promjene. Što želite učiniti?</string>
+    <string name="cart_unsaved_save">Spremi</string>
+    <string name="cart_unsaved_save_as">Spremi kao novu</string>
+    <string name="cart_unsaved_discard">Odbaci promjene</string>
+    <string name="cart_unsaved_continue">Nastavi</string>
 </resources>

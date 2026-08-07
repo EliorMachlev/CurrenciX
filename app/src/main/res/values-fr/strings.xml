@@ -28,4 +28,71 @@
     <string name="quick_conversions_fees_applied">Frais appliqués : %s</string>
     <string name="tooltip_filter_starred">Afficher uniquement les devises étoilées.</string>
     <string name="currency_dropdown_api_hint">Quelque chose manque? Différents fournisseurs de données proposent différentes devises. Allez dans les paramètres pour en essayer un autre ! 🤗</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Hors ligne • Taux du %1$s</string>
+    <string name="offline_banner_no_data">Hors ligne • Aucun taux en cache</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Dernier taux de conversion pour votre dernière paire de devises utilisée.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Au %s</string>
+    <string name="widget_footer_empty">Ouvrez l\'application pour charger les taux.</string>
+    <string name="widget_no_rate">Taux indisponible</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Panier</string>
+    <string name="cart_empty_hint">Votre panier est vide. Appuyez sur « Ajouter un article » pour commencer.</string>
+    <string name="cart_add_item">Ajouter un article</string>
+    <string name="cart_item_name_hint">Article</string>
+    <string name="cart_item_expression_hint">Prix (par ex. 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Supprimer l\'article</string>
+    <string name="cart_subtotal_label">Sous-total</string>
+    <string name="cart_total_label">Total</string>
+    <string name="cart_fee_line">Frais : %s%%</string>
+    <string name="cart_menu_save">Enregistrer</string>
+    <string name="cart_menu_save_as">Enregistrer sous…</string>
+    <string name="cart_menu_load">Charger</string>
+    <string name="cart_menu_export">Exporter vers un fichier</string>
+    <string name="cart_menu_import">Importer depuis un fichier</string>
+    <string name="cart_menu_clear">Vider</string>
+    <string name="cart_share_option_text">Texte brut</string>
+    <string name="cart_share_option_text_desc">Résumé formaté à coller dans une discussion ou une appli de notes.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Fichier tableur avec une ligne par article.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Document imprimable de type reçu.</string>
+    <string name="cart_save_name_hint">Nom du panier</string>
+    <string name="cart_default_saved_name">Mon panier</string>
+    <string name="cart_saved_toast">Enregistré sous « %s »</string>
+    <string name="cart_no_saved">Aucun panier enregistré.</string>
+    <string name="cart_rename">Renommer</string>
+    <string name="cart_rename_title">Renommer le panier</string>
+    <string name="cart_delete_confirm">Supprimer « %s » ?</string>
+    <string name="cart_delete_confirm_button">Supprimer</string>
+    <string name="cart_clear_confirm">Retirer tous les articles du panier actuel ?</string>
+    <string name="cart_clear_confirm_button">Vider</string>
+    <string name="cart_clear_items_only">Vider les articles uniquement</string>
+    <string name="cart_clear_items_only_desc">Supprime toutes les lignes du panier mais conserve les devises et le côté des frais actuels.</string>
+    <string name="cart_clear_reset_all">Réinitialiser le panier</string>
+    <string name="cart_clear_reset_all_desc">Supprime toutes les lignes et récupère à nouveau la devise source/cible et le côté des frais depuis l\'écran principal.</string>
+    <string name="cart_export_ok">Panier exporté.</string>
+    <string name="cart_export_error">Échec de l\'export : %s</string>
+    <string name="cart_import_ok">Panier importé.</string>
+    <string name="cart_import_error">Échec de l\'import : %s</string>
+    <string name="cart_share_empty">Le panier est vide — rien à partager.</string>
+    <string name="cart_save_empty">Le panier est vide — rien à enregistrer.</string>
+    <string name="cart_share_default_title">Panier</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Sous-total : %1$s %2$s</string>
+    <string name="cart_share_converted">Converti : %1$s %2$s</string>
+    <string name="cart_share_fees">Frais : %s%%</string>
+    <string name="cart_share_total">Total : %1$s %2$s</string>
+    <string name="cart_unsaved_title">Modifications non enregistrées</string>
+    <string name="cart_unsaved_message">Vous avez des modifications non enregistrées. Que souhaitez-vous faire ?</string>
+    <string name="cart_unsaved_save">Enregistrer</string>
+    <string name="cart_unsaved_save_as">Enregistrer comme nouveau</string>
+    <string name="cart_unsaved_discard">Abandonner les modifications</string>
+    <string name="cart_unsaved_continue">Continuer</string>
 </resources>

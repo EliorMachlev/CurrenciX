@@ -1,14 +1,16 @@
 package de.salomax.currencies.util
 
 import android.content.Context
+import android.text.Spanned
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.text.HtmlCompat
 import de.salomax.currencies.R
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
-import java.util.*
+import java.util.Locale
 
 private const val SYMBOL_DETECTION_VALUE = 1.23
 private const val THOUSANDS_GROUP_SIZE = 3
@@ -43,6 +45,19 @@ private val NUMERIC_INPUT_REGEX = Regex("[0-9,.\\s]+")
 private val WHITESPACE_REGEX = Regex("\\s+")
 
 /**
+ * Parse HTML markup with `FROM_HTML_MODE_LEGACY` — the only mode used across
+ * this app for lightweight `<b>`/`<br>` snippets in string resources.
+ * Consolidates ~10 call sites that all repeated the same enum argument.
+ */
+fun CharSequence?.fromHtmlLegacy(): Spanned = HtmlCompat.fromHtml(this?.toString().orEmpty(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+/**
+ * Rounds a monetary [BigDecimal] to [scale] decimal places using banker's
+ * rounding (HALF_EVEN) — the app-wide convention for money-facing values.
+ */
+fun BigDecimal.roundForDisplay(scale: Int): BigDecimal = setScale(scale, RoundingMode.HALF_EVEN)
+
+/**
  * Wrap [s] in Unicode LTR isolate (U+2066 … U+2069) so an "<amount> <currency>"
  * chunk stays glued together as one LTR unit inside an RTL paragraph — otherwise
  * the neutral space between number and currency gets absorbed by the RTL run and
@@ -66,10 +81,15 @@ fun String.stripRtlMark(): String = replace(RTL_MARK, "")
  * - system=af & app=system-default -> en (as there's no af localization it falls back to en)
  */
 fun getLocale(context: Context): Locale {
-    return AppCompatDelegate.getApplicationLocales()[0] ?: Locale.of(
-        context.getString(R.string.locale_language),
-        context.getString(R.string.locale_country)
-    )
+    val fromDelegate = AppCompatDelegate.getApplicationLocales()[0]
+    if (fromDelegate != null) return fromDelegate
+    val language = context.getString(R.string.locale_language)
+    val country = context.getString(R.string.locale_country)
+    return Locale
+        .Builder()
+        .setLanguage(language)
+        .apply { if (country.isNotEmpty()) setRegion(country) }
+        .build()
 }
 
 /**
@@ -83,16 +103,12 @@ private fun getDecimalSymbols(context: Context): DecimalFormatSymbols {
 /**
  * Returns the decimal separator character for the localization that is active in the app.
  */
-fun getDecimalSeparator(context: Context): String {
-    return getDecimalSymbols(context).decimalSeparator.toString()
-}
+fun getDecimalSeparator(context: Context): String = getDecimalSymbols(context).decimalSeparator.toString()
 
 /**
  * Returns the grouping separator character for the localization that is active in the app.
  */
-fun getGroupingSeparator(context: Context): String {
-    return getDecimalSymbols(context).groupingSeparator.toString()
-}
+fun getGroupingSeparator(context: Context): String = getDecimalSymbols(context).groupingSeparator.toString()
 
 /**
  * True, when the currency symbol should be placed after the value for the current locale.
@@ -118,12 +134,11 @@ fun BigDecimal.toHumanReadableNumber(
     decimalPlaces: Int? = null,
     showPositiveSign: Boolean = false,
     suffix: String? = null,
-    trim: Boolean = false
-): String {
-    return this
+    trim: Boolean = false,
+): String =
+    this
         .toPlainString()
         .toHumanReadableNumber(context, decimalPlaces, showPositiveSign, suffix, trim)
-}
 
 /**
  * Changes "12345678.12" to "12 345 678.12"
@@ -136,33 +151,41 @@ fun String.toHumanReadableNumber(
     decimalPlaces: Int? = null,
     showPositiveSign: Boolean = false,
     suffix: String? = null,
-    trim: Boolean = false
+    trim: Boolean = false,
 ): String {
-    val formatted = this
-        .let { roundIfNeeded(it, decimalPlaces) }
-        .let { if (trim) trimTrailingZeros(it) else it }
-        .let { applyGrouping(it, context) }
-        .replace("-", "- ")
+    val formatted =
+        this
+            .let { roundIfNeeded(it, decimalPlaces) }
+            .let { if (trim) trimTrailingZeros(it) else it }
+            .let { applyGrouping(it, context) }
+            .replace("-", "- ")
     return buildString {
-        if (showPositiveSign && isNonNegative(this@toHumanReadableNumber))
+        if (showPositiveSign && isNonNegative(this@toHumanReadableNumber)) {
             append("+ ")
+        }
         append(formatted)
         if (suffix != null) append(" $suffix")
     }
 }
 
-private fun roundIfNeeded(value: String, decimalPlaces: Int?): String {
+private fun roundIfNeeded(
+    value: String,
+    decimalPlaces: Int?,
+): String {
     if (decimalPlaces == null) return value
     // also converts scientific to natural (123456789.123 instead of 1.23456789E8)
-    return value.toBigDecimal()
-        .setScale(decimalPlaces, RoundingMode.HALF_EVEN)
+    return value
+        .toBigDecimal()
+        .roundForDisplay(decimalPlaces)
         .toPlainString()
 }
 
-private fun trimTrailingZeros(value: String): String =
-    value.replace(TRAILING_ZEROS_REGEX, "")
+private fun trimTrailingZeros(value: String): String = value.replace(TRAILING_ZEROS_REGEX, "")
 
-private fun applyGrouping(value: String, context: Context): String {
+private fun applyGrouping(
+    value: String,
+    context: Context,
+): String {
     if (!value.contains('.')) return value.groupNumbers(context)
     val (intPart, fracPart) = value.split('.', limit = 2).let { it[0] to it[1] }
     return intPart.groupNumbers(context) + getDecimalSeparator(context) + fracPart
@@ -177,11 +200,14 @@ private fun String.groupNumbers(context: Context): String {
     val separator = getGroupingSeparator(context)
     val sb = StringBuilder(this.length * 2)
     for ((i, c) in this.reversed().withIndex()) {
-        if (i % THOUSANDS_GROUP_SIZE == 0 && i != 0)
+        if (i % THOUSANDS_GROUP_SIZE == 0 && i != 0) {
             sb.append(separator)
+        }
         sb.append(c)
     }
-    return sb.toString().reversed()
+    return sb
+        .toString()
+        .reversed()
         .replace("-$separator", "-")
 }
 

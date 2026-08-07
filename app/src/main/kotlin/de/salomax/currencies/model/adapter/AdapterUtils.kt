@@ -6,6 +6,7 @@ import de.salomax.currencies.model.Rate
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
 
@@ -15,7 +16,7 @@ import kotlin.math.pow
 // the error message to [onError].
 internal inline fun <T> JsonReader.readArrayOrError(
     onError: (String?) -> T,
-    onArray: (JsonReader) -> T
+    onArray: (JsonReader) -> T,
 ): T {
     if (peek() != JsonReader.Token.BEGIN_ARRAY) return onError(readErrorMessage())
     beginArray()
@@ -30,8 +31,11 @@ internal fun JsonReader.readErrorMessage(): String? {
     beginObject()
     var message: String? = null
     while (hasNext()) {
-        if (nextName() == "message") message = nextString()
-        else skipValue()
+        if (nextName() == "message") {
+            message = nextString()
+        } else {
+            skipValue()
+        }
     }
     endObject()
     return message
@@ -57,18 +61,37 @@ internal fun MutableList<Rate>.addFokFromDkkIfMissing() {
 // Namespace-unaware XmlPullParser bound to [inputStream]. The five XML
 // parsers all want this exact configuration.
 internal fun newXmlPullParser(inputStream: InputStream): XmlPullParser =
-    XmlPullParserFactory.newInstance()
-        .apply { isNamespaceAware = false }.newPullParser()
+    XmlPullParserFactory
+        .newInstance()
+        .apply { isNamespaceAware = false }
+        .newPullParser()
         .apply { setInput(inputStream, null) }
 
 // Norges Bank encodes the currency's decimal scale as UNIT_MULT (an integer
 // exponent). Missing/invalid values fall back to 1 (10^0).
 internal fun XmlPullParser.norgesBankUnitMultiplier(): Int =
-    getAttributeValue(null, "UNIT_MULT")?.toIntOrNull()
+    getAttributeValue(null, "UNIT_MULT")
+        ?.toIntOrNull()
         ?.let { 10.0.pow(it).toInt() } ?: 1
 
 // BankOfCanada quotes series names as "FX<iso>CAD" (e.g. "FXUSDCAD"); the
 // currency ISO-4217 alpha code lives at indices [2, 5). Shared by the rates
 // and timeline adapters so a shape change is edited in one place.
-internal const val BANK_OF_CANADA_ISO_START: Int = 2
-internal const val BANK_OF_CANADA_ISO_END: Int = 5
+private const val BANK_OF_CANADA_ISO_START: Int = 2
+private const val BANK_OF_CANADA_ISO_END: Int = 5
+
+internal fun String.bankOfCanadaIso(): String = substring(BANK_OF_CANADA_ISO_START, BANK_OF_CANADA_ISO_END)
+
+// Error string that every provider/adapter surfaces when a well-formed
+// upstream response contained no usable rates. Hoisted so the wording is
+// edited in one place.
+internal const val NO_DATA_ERROR: String = "No data found."
+
+// Lazily yields every day in [start, endInclusive].
+internal fun dateSequence(
+    start: LocalDate,
+    endInclusive: LocalDate,
+): Sequence<LocalDate> =
+    generateSequence(start) { current ->
+        if (current.isBefore(endInclusive)) current.plusDays(1) else null
+    }

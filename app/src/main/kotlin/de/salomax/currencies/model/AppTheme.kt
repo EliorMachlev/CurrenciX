@@ -16,22 +16,25 @@ enum class AppTheme(
     val nightMode: Int,
     val isPureBlack: Boolean,
 ) {
-    LIGHT      (0, AppCompatDelegate.MODE_NIGHT_NO,            false),
-    DARK       (1, AppCompatDelegate.MODE_NIGHT_YES,           false),
-    OLED       (2, AppCompatDelegate.MODE_NIGHT_YES,           true),
-    SYSTEM     (3, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, false),
-    SYSTEM_OLED(4, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, true);
+    LIGHT(0, AppCompatDelegate.MODE_NIGHT_NO, false),
+    DARK(1, AppCompatDelegate.MODE_NIGHT_YES, false),
+    OLED(2, AppCompatDelegate.MODE_NIGHT_YES, true),
+    SYSTEM(3, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, false),
+    SYSTEM_OLED(4, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, true),
+    ;
 
     /** True when this theme currently renders dark under [config]. */
-    fun isDarkActive(config: Configuration): Boolean = when (nightMode) {
-        AppCompatDelegate.MODE_NIGHT_YES -> true
-        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM ->
-            (config.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        else -> false
-    }
+    fun isDarkActive(config: Configuration): Boolean =
+        when (nightMode) {
+            AppCompatDelegate.MODE_NIGHT_YES -> true
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM ->
+                (config.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            else -> false
+        }
 
     companion object {
         val DEFAULT = SYSTEM
+
         fun fromId(id: Int): AppTheme = entries.firstOrNull { it.id == id } ?: DEFAULT
     }
 }

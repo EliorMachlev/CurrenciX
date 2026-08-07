@@ -7,12 +7,15 @@ import java.math.RoundingMode
 private val SIGNIFICANT_THRESHOLD = BigDecimal("0.01")
 private val PERCENT_MULTIPLIER = BigDecimal("100")
 
-fun calculateDifference(old: BigDecimal?, new: BigDecimal?): BigDecimal? {
-    return if (old == null || new == null || old.compareTo(BigDecimal.ZERO) == 0)
+fun calculateDifference(
+    old: BigDecimal?,
+    new: BigDecimal?,
+): BigDecimal? =
+    if (old == null || new == null || old.compareTo(BigDecimal.ZERO) == 0) {
         null
-    else
+    } else {
         (new - old).divide(old, MathContext.DECIMAL128) * PERCENT_MULTIPLIER
-}
+    }
 
 // A multiplicative fee stack of 1.0 means "no fees apply". Centralised so the
 // main screen, quick-conversions dialog, and cart all gate on the same
@@ -26,9 +29,10 @@ fun BigDecimal.isNeutralFeeStack(): Boolean = compareTo(BigDecimal.ONE) == 0
 fun BigDecimal.feePercentDelta(
     scale: Int = 2,
     roundingMode: RoundingMode = RoundingMode.HALF_EVEN,
-): BigDecimal = subtract(BigDecimal.ONE)
-    .multiply(PERCENT_MULTIPLIER, MathContext.DECIMAL128)
-    .setScale(scale, roundingMode)
+): BigDecimal =
+    subtract(BigDecimal.ONE)
+        .multiply(PERCENT_MULTIPLIER, MathContext.DECIMAL128)
+        .setScale(scale, roundingMode)
 
 fun BigDecimal.getSignificantDecimalPlaces(significantNumbers: Int = 2): Int {
     if (this.abs() >= SIGNIFICANT_THRESHOLD) {

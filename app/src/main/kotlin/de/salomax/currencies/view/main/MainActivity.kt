@@ -20,10 +20,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.window.layout.FoldingFeature
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
@@ -31,10 +31,12 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import de.salomax.currencies.R
 import de.salomax.currencies.model.Currency
 import de.salomax.currencies.model.ExchangeRates
+import de.salomax.currencies.model.FeeSide
 import de.salomax.currencies.model.Rate
 import de.salomax.currencies.repository.Database
-import de.salomax.currencies.model.FeeSide
+import de.salomax.currencies.util.NetworkStatusLiveData
 import de.salomax.currencies.util.feePercentDelta
+import de.salomax.currencies.util.fromHtmlLegacy
 import de.salomax.currencies.util.getDecimalSeparator
 import de.salomax.currencies.util.hapticTap
 import de.salomax.currencies.util.isNeutralFeeStack
@@ -72,11 +74,11 @@ private const val FEE_BADGE_DECIMAL_PLACES = 2
 private const val AMOUNT_DECIMAL_PLACES = 2
 
 class MainActivity : BaseActivity() {
-
     private lateinit var viewModel: MainViewModel
     private lateinit var preferenceModel: PreferenceViewModel
 
     private var hapticEnabled = false
+
     // Cached date pattern so the frequently-fired `observeExchangeRates`
     // handler doesn't hit SharedPreferences on the main thread on every rate
     // emission. Kept in sync via the `getDateFormat()` LiveData below.
@@ -85,6 +87,12 @@ class MainActivity : BaseActivity() {
     private lateinit var refreshIndicator: LinearProgressIndicator
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private var menuItemRefresh: MenuItem? = null
+
+    private lateinit var offlineBanner: MaterialCardView
+    private lateinit var offlineBannerText: TextView
+    private var isOnline: Boolean = true
+    private var latestRatesDate: LocalDate? = null
+    private var latestRatesTime: LocalTime? = null
 
     private lateinit var tvCalculations: TextView
     private lateinit var tvFrom: TextView
@@ -123,6 +131,8 @@ class MainActivity : BaseActivity() {
         this.tvOriginalValue = findViewById(R.id.textOriginalValue)
         this.tvFeeBadge = findViewById(R.id.textFeeBadge)
         this.btnFeeSide = findViewById(R.id.btn_fee_side)
+        this.offlineBanner = findViewById(R.id.offlineBanner)
+        this.offlineBannerText = findViewById(R.id.offlineBannerText)
 
         // swipe-to-refresh: color scheme (not accessible in xml)
         swipeRefresh.setColorSchemeColors(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
@@ -144,20 +154,43 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.settings -> { startActivity(Intent(this, PreferenceActivity::class.java)); true }
-            R.id.fees -> { startActivity(PreferenceActivity.feesIntent(this)); true }
-            R.id.change_api -> { showApiProviderPicker(); true }
-            R.id.refresh -> { viewModel.forceUpdateExchangeRate(); true }
-            R.id.share -> { shareCurrentConversion(); true }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
+            R.id.settings -> {
+                startActivity(Intent(this, PreferenceActivity::class.java))
+                true
+            }
+            R.id.fees -> {
+                startActivity(PreferenceActivity.feesIntent(this))
+                true
+            }
+            R.id.change_api -> {
+                showApiProviderPicker()
+                true
+            }
+            R.id.refresh -> {
+                viewModel.forceUpdateExchangeRate()
+                true
+            }
+            R.id.share -> {
+                shareCurrentConversion()
+                true
+            }
             R.id.timeline -> openTimelineActivity()
-            R.id.quick_conversions -> { openQuickConversionsDialog(); true }
-            R.id.date_picker -> { openHistoricalDatePicker(); true }
-            R.id.cart -> { startActivity(Intent(this, CartActivity::class.java)); true }
+            R.id.quick_conversions -> {
+                openQuickConversionsDialog()
+                true
+            }
+            R.id.date_picker -> {
+                openHistoricalDatePicker()
+                true
+            }
+            R.id.cart -> {
+                startActivity(Intent(this, CartActivity::class.java))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
-    }
 
     private fun showApiProviderPicker() {
         showProviderPickerDialog(
@@ -171,10 +204,11 @@ class MainActivity : BaseActivity() {
         if (conversion.isBlank()) return
         val footer = buildShareFooter(viewModel.getExchangeRates().value)
         val text = if (footer != null) "$conversion\n-- $footer" else conversion
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, text)
-        }
+        val intent =
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, text)
+            }
         startActivity(Intent.createChooser(intent, null))
     }
 
@@ -190,7 +224,10 @@ class MainActivity : BaseActivity() {
     // stripped from the pattern first so users on "date-only" don't see a
     // trailing "00:00". RTL marks injected by some locale formatters are
     // stripped so a right-side timestamp stays flush with the label.
-    private fun formatRatesTimestamp(date: LocalDate?, time: LocalTime?): String? {
+    private fun formatRatesTimestamp(
+        date: LocalDate?,
+        time: LocalTime?,
+    ): String? {
         if (date == null) return null
         val pattern = if (time != null) dateFormatPattern else stripTimePattern(dateFormatPattern)
         val temporal = if (time != null) date.atTime(time) else date
@@ -209,9 +246,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun openHistoricalDatePicker() {
-        val startDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-            .apply { this.set(HISTORICAL_MIN_YEAR, Calendar.JANUARY, 1) }
-            .timeInMillis
+        val startDate =
+            Calendar
+                .getInstance(TimeZone.getTimeZone("UTC"))
+                .apply { this.set(HISTORICAL_MIN_YEAR, Calendar.JANUARY, 1) }
+                .timeInMillis
         val layout = layoutInflater.inflate(R.layout.main_dialog_historical_rates, null)
         val toggle: SwitchMaterial = layout.findViewById(R.id.toggle)
         val datePicker: DatePicker = layout.findViewById(R.id.date_picker)
@@ -233,22 +272,32 @@ class MainActivity : BaseActivity() {
             setOnCheckedChangeListener { _, enabled -> showDatePicker(enabled) }
             isChecked = historicalDate != null
         }
-        AlertDialog.Builder(this)
+        AlertDialog
+            .Builder(this)
             .setTitle(R.string.historical_rates_dialog_title)
             .setView(layout)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 viewModel.setHistoricalDate(
-                    if (toggle.isChecked) LocalDate.of(
-                        datePicker.year, datePicker.month + 1, datePicker.dayOfMonth
-                    ) else null
+                    if (toggle.isChecked) {
+                        LocalDate.of(
+                            datePicker.year,
+                            datePicker.month + 1,
+                            datePicker.dayOfMonth,
+                        )
+                    } else {
+                        null
+                    },
                 )
-            }
-            .setNegativeButton(android.R.string.cancel, null)
+            }.setNegativeButton(android.R.string.cancel, null)
             .create()
             .show()
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?,
+    ) {
         super.onCreateContextMenu(menu, v, menuInfo)
         when (v.id) {
             R.id.textFrom -> {
@@ -272,18 +321,21 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    private fun clipboardManager(): ClipboardManager =
-        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
     private fun clipboardHasNumber(): Boolean {
         val clipboard = clipboardManager()
-        return clipboard.hasPrimaryClip()
-            && clipboard.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true
-            && clipboardNumber() != null
+        return clipboard.hasPrimaryClip() &&
+            clipboard.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true &&
+            clipboardNumber() != null
     }
 
     private fun clipboardNumber(): Number? =
-        clipboardManager().primaryClip?.getItemAt(0)?.text?.toNumber()
+        clipboardManager()
+            .primaryClip
+            ?.getItemAt(0)
+            ?.text
+            ?.toNumber()
 
     private fun setListeners() {
         // long click on delete
@@ -331,10 +383,7 @@ class MainActivity : BaseActivity() {
 
     private fun copyToClipboard(copyText: String) {
         clipboardManager().setPrimaryClip(ClipData.newPlainText(null, copyText))
-        val message = HtmlCompat.fromHtml(
-            getString(R.string.copied_to_clipboard, copyText),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
+        val message = getString(R.string.copied_to_clipboard, copyText).fromHtmlLegacy()
         snackbar(message)
             .setBackgroundTint(MaterialColors.getColor(this, R.attr.colorPrimary, null))
             .setTextColor(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
@@ -369,13 +418,35 @@ class MainActivity : BaseActivity() {
         viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
         viewModel.getOriginalValue().observe(this) { observeOriginalValue(it) }
         viewModel.getTotalStack().observe(this) { observeTotalStack(it) }
+        NetworkStatusLiveData(this).observe(this) { online ->
+            isOnline = online
+            renderOfflineBanner()
+        }
+    }
+
+    private fun renderOfflineBanner() {
+        if (isOnline) {
+            offlineBanner.visibility = View.GONE
+            return
+        }
+        val date = latestRatesDate
+        offlineBannerText.text =
+            if (date != null) {
+                getString(R.string.offline_banner_with_date, formatRatesTimestamp(date, latestRatesTime).orEmpty())
+            } else {
+                getString(R.string.offline_banner_no_data)
+            }
+        offlineBanner.visibility = View.VISIBLE
     }
 
     private fun observeFeeSide(side: FeeSide?) {
         val effective = side ?: FeeSide.ORIGINAL
         btnFeeSide.setImageResource(
-            if (effective == FeeSide.CONVERTED) R.drawable.ic_fee_side_converted
-            else R.drawable.ic_fee_side_original
+            if (effective == FeeSide.CONVERTED) {
+                R.drawable.ic_fee_side_converted
+            } else {
+                R.drawable.ic_fee_side_original
+            },
         )
     }
 
@@ -387,12 +458,13 @@ class MainActivity : BaseActivity() {
             return
         }
         btnFeeSide.visibility = View.VISIBLE
-        tvFeeBadge.text = effective.feePercentDelta(FEE_BADGE_DECIMAL_PLACES).toHumanReadableNumber(
-            this,
-            showPositiveSign = true,
-            suffix = "%",
-            trim = true,
-        )
+        tvFeeBadge.text =
+            effective.feePercentDelta(FEE_BADGE_DECIMAL_PLACES).toHumanReadableNumber(
+                this,
+                showPositiveSign = true,
+                suffix = "%",
+                trim = true,
+            )
         tvFeeBadge.visibility = View.VISIBLE
     }
 
@@ -404,7 +476,12 @@ class MainActivity : BaseActivity() {
         renderFeeAmount(tvOriginalValue, R.string.fee_original_value_prefix, value, viewModel.getDestinationCurrency().value)
     }
 
-    private fun renderFeeAmount(target: TextView, prefixRes: Int, value: BigDecimal?, currency: Currency?) {
+    private fun renderFeeAmount(
+        target: TextView,
+        prefixRes: Int,
+        value: BigDecimal?,
+        currency: Currency?,
+    ) {
         if (value == null) {
             target.visibility = View.GONE
             return
@@ -415,30 +492,36 @@ class MainActivity : BaseActivity() {
     }
 
     private fun observeExchangeRates(rates: ExchangeRates?) {
+        latestRatesDate = rates?.date
+        latestRatesTime = rates?.time
+        renderOfflineBanner()
         rates?.let {
             val date = it.date
             val dateString = formatRatesTimestamp(date, it.time)
             val providerString = it.provider?.getName()
             tvInfoDate.text =
-                if (dateString != null && providerString != null)
-                    HtmlCompat.fromHtml(
-                        getString(
-                            if (viewModel.getHistoricalDate() != null)
-                                R.string.info_date_historical
-                            else
-                                R.string.info_date_latest,
-                            dateString,
-                            providerString
-                        ),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
-                else null
-            val isStaleOrHistorical = date?.isBefore(LocalDate.now().minusDays(STALE_RATES_DAYS)) == true
-                || viewModel.getHistoricalDate() != null
-            val infoColor = if (isStaleOrHistorical)
-                MaterialColors.getColor(this, R.attr.colorError, null)
-            else
-                getTextColorSecondary()
+                if (dateString != null && providerString != null) {
+                    getString(
+                        if (viewModel.getHistoricalDate() != null) {
+                            R.string.info_date_historical
+                        } else {
+                            R.string.info_date_latest
+                        },
+                        dateString,
+                        providerString,
+                    ).fromHtmlLegacy()
+                } else {
+                    null
+                }
+            val isStaleOrHistorical =
+                date?.isBefore(LocalDate.now().minusDays(STALE_RATES_DAYS)) == true ||
+                    viewModel.getHistoricalDate() != null
+            val infoColor =
+                if (isStaleOrHistorical) {
+                    MaterialColors.getColor(this, R.attr.colorError, null)
+                } else {
+                    getTextColorSecondary()
+                }
             listOf(tvInfoDate, tvInfoConversion).forEach { tv -> tv.setTextColor(infoColor) }
             findViewById<ImageView>(R.id.iconHistorical).visibility =
                 if (viewModel.getHistoricalDate() != null) View.VISIBLE else View.GONE
@@ -450,10 +533,9 @@ class MainActivity : BaseActivity() {
     private fun showErrorSnackbar(message: String?) {
         message ?: return
         snackbar(
-            HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY),
+            message.fromHtmlLegacy(),
             Snackbar.LENGTH_INDEFINITE,
-        )
-            .setBackgroundTint(MaterialColors.getColor(this, R.attr.colorError, null))
+        ).setBackgroundTint(MaterialColors.getColor(this, R.attr.colorError, null))
             .setTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))
             .setActionTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))
             .setAction(android.R.string.ok) { }
@@ -476,7 +558,12 @@ class MainActivity : BaseActivity() {
     // Look up the current-cache rate value for [currency]; null when rates
     // haven't loaded yet or the currency isn't in the response.
     private fun findRateFor(currency: Currency): BigDecimal? =
-        viewModel.getExchangeRates().value?.rates?.find { it.currency == currency }?.value
+        viewModel
+            .getExchangeRates()
+            .value
+            ?.rates
+            ?.find { it.currency == currency }
+            ?.value
 
     private fun observeKeypadState(extendedEnabled: Boolean) {
         val keypadRegular = findViewById<View>(R.id.keypad)
@@ -527,12 +614,17 @@ class MainActivity : BaseActivity() {
      */
     fun calculationEvent(view: View) {
         haptic(view)
-        Operator.fromDisplay((view as AppCompatButton).text.toString())
-            ?.apply?.invoke(viewModel)
+        Operator
+            .fromDisplay((view as AppCompatButton).text.toString())
+            ?.apply
+            ?.invoke(viewModel)
     }
 
     // capture hardware keyboard input
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+    override fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent?,
+    ): Boolean {
         // IMPORTANT: can't work with simple keyCodes here, as depending on the keyboard
         // configuration, wrong values will be returned (e.g. KEYCODE_8 instead of KEYCODE_PLUS).
         val key = event?.keyCharacterMap?.get(keyCode, event.metaState)?.let { Char(it) }
@@ -541,7 +633,10 @@ class MainActivity : BaseActivity() {
 
     private fun handleCharKey(key: Char?): Boolean {
         key ?: return false
-        Operator.fromHardware(key)?.let { it.apply(viewModel); return true }
+        Operator.fromHardware(key)?.let {
+            it.apply(viewModel)
+            return true
+        }
         when {
             key.isDigit() -> viewModel.addNumber(key.toString())
             key == '.' || key == ',' -> viewModel.addDecimal()
@@ -550,6 +645,10 @@ class MainActivity : BaseActivity() {
         return true
     }
 
+    // Hardware-keyboard input path: KEYCODE_BACK from a physical keyboard is
+    // not the same as the gesture-back the GestureBackNavigation lint flags,
+    // so route it through onBackPressedDispatcher explicitly.
+    @Suppress("GestureBackNavigation")
     private fun handleControlKey(keyCode: Int): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_DEL -> viewModel.delete()
@@ -562,7 +661,9 @@ class MainActivity : BaseActivity() {
     /*
      * swap currencies
      */
-    fun toggleEvent(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun toggleEvent(
+        @Suppress("UNUSED_PARAMETER") view: View?,
+    ) {
         val from = spinnerFrom.selectedItemPosition
         val to = spinnerTo.selectedItemPosition
         spinnerFrom.setSelection(to)
@@ -572,18 +673,21 @@ class MainActivity : BaseActivity() {
     private fun prepareFoldableLayoutChanges() {
         observeFoldingFeature { feature ->
             val root = findViewById<LinearLayout>(R.id.main_root)
-            root.orientation = when {
-                feature.state == FoldingFeature.State.FLAT -> flatOrientation()
-                feature.orientation == FoldingFeature.Orientation.VERTICAL -> LinearLayout.HORIZONTAL
-                else -> LinearLayout.VERTICAL
-            }
+            root.orientation =
+                when {
+                    feature.state == FoldingFeature.State.FLAT -> flatOrientation()
+                    feature.orientation == FoldingFeature.Orientation.VERTICAL -> LinearLayout.HORIZONTAL
+                    else -> LinearLayout.VERTICAL
+                }
         }
     }
 
     private fun flatOrientation(): Int {
         val cfg = resources.configuration
-        return if (cfg.screenHeightDp >= cfg.screenWidthDp) LinearLayout.VERTICAL
-        else LinearLayout.HORIZONTAL
+        return if (cfg.screenHeightDp >= cfg.screenWidthDp) {
+            LinearLayout.VERTICAL
+        } else {
+            LinearLayout.HORIZONTAL
+        }
     }
-
 }

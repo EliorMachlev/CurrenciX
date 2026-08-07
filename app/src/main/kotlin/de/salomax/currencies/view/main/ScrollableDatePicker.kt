@@ -7,18 +7,17 @@ import android.widget.DatePicker
 
 @Suppress("unused")
 class ScrollableDatePicker : DatePicker {
-
     constructor(context: Context) :
-            super(context)
+        super(context)
 
     constructor(context: Context, attrs: AttributeSet) :
-            super(context, attrs)
+        super(context, attrs)
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) :
-            super(context, attrs, defStyle)
+        super(context, attrs, defStyle)
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int, defStyleRes: Int) :
-            super(context, attrs, defStyle, defStyleRes)
+        super(context, attrs, defStyle, defStyleRes)
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         val parentView = parent

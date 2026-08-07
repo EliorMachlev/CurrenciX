@@ -18,8 +18,14 @@ private const val CART_FILE_TYPE = "cart"
 
 sealed class CartFileResult {
     data object Success : CartFileResult()
-    data class Loaded(val cart: SavedCart) : CartFileResult()
-    data class Failure(val message: String) : CartFileResult()
+
+    data class Loaded(
+        val cart: SavedCart,
+    ) : CartFileResult()
+
+    data class Failure(
+        val message: String,
+    ) : CartFileResult()
 }
 
 /**
@@ -27,17 +33,22 @@ sealed class CartFileResult {
  * Plaintext JSON — cart data isn't secret, and keeping it readable lets a
  * user peek at the file with any text editor.
  */
-class CartExporter(private val context: Context) {
-
-    fun export(uri: Uri, cart: SavedCart): CartFileResult {
+class CartExporter(
+    private val context: Context,
+) {
+    fun export(
+        uri: Uri,
+        cart: SavedCart,
+    ): CartFileResult {
         return try {
-            val root = JSONObject().apply {
-                put(BACKUP_KEY_VERSION, CART_FILE_SCHEMA_VERSION)
-                put(BACKUP_KEY_APP, BACKUP_APP_ID)
-                put(CART_FILE_KEY_TYPE, CART_FILE_TYPE)
-                put(BACKUP_KEY_CREATED_AT, Instant.now().toString())
-                put(CART_FILE_KEY_PAYLOAD, serializeCart(cart))
-            }
+            val root =
+                JSONObject().apply {
+                    put(BACKUP_KEY_VERSION, CART_FILE_SCHEMA_VERSION)
+                    put(BACKUP_KEY_APP, BACKUP_APP_ID)
+                    put(CART_FILE_KEY_TYPE, CART_FILE_TYPE)
+                    put(BACKUP_KEY_CREATED_AT, Instant.now().toString())
+                    put(CART_FILE_KEY_PAYLOAD, serializeCart(cart))
+                }
             val bytes = root.toString(2).toByteArray(Charsets.UTF_8)
             context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
                 ?: return CartFileResult.Failure("Could not open output stream")
@@ -51,8 +62,9 @@ class CartExporter(private val context: Context) {
 
     fun import(uri: Uri): CartFileResult {
         return try {
-            val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                ?: return CartFileResult.Failure("Could not open input stream")
+            val bytes =
+                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    ?: return CartFileResult.Failure("Could not open input stream")
             val root = JSONObject(String(bytes, Charsets.UTF_8))
             val version = root.optInt(BACKUP_KEY_VERSION, -1)
             if (version != CART_FILE_SCHEMA_VERSION) {
@@ -64,8 +76,9 @@ class CartExporter(private val context: Context) {
             if (type != CART_FILE_TYPE) {
                 return CartFileResult.Failure("Not a cart file")
             }
-            val cart = parseCart(root.optJSONObject(CART_FILE_KEY_PAYLOAD))
-                ?: return CartFileResult.Failure("Malformed cart payload")
+            val cart =
+                parseCart(root.optJSONObject(CART_FILE_KEY_PAYLOAD))
+                    ?: return CartFileResult.Failure("Malformed cart payload")
             CartFileResult.Loaded(cart)
         } catch (e: IOException) {
             CartFileResult.Failure(e.localizedMessage ?: "I/O error")

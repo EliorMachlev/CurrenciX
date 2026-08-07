@@ -28,4 +28,71 @@
     <string name="quick_conversions_fees_applied">Anvendte gebyrer: %s</string>
     <string name="tooltip_filter_starred">Vis kun stjernemarkeret valutaer.</string>
     <string name="currency_dropdown_api_hint">Noget der mangler? Forskellige dataudbydere tilbyder forskellige valutaer. Gå til indstillingerne for at prøve en anden! 🤗</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Kurser fra %1$s</string>
+    <string name="offline_banner_no_data">Offline • Ingen cachede kurser endnu</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Seneste omregningskurs for dit senest brugte valutapar.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Pr. %s</string>
+    <string name="widget_footer_empty">Åbn appen for at indlæse kurser.</string>
+    <string name="widget_no_rate">Kurs ikke tilgængelig</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Indkøbskurv</string>
+    <string name="cart_empty_hint">Din kurv er tom. Tryk på “Tilføj vare” for at komme i gang.</string>
+    <string name="cart_add_item">Tilføj vare</string>
+    <string name="cart_item_name_hint">Vare</string>
+    <string name="cart_item_expression_hint">Pris (fx 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Slet vare</string>
+    <string name="cart_subtotal_label">Subtotal</string>
+    <string name="cart_total_label">I alt</string>
+    <string name="cart_fee_line">Gebyrer: %s%%</string>
+    <string name="cart_menu_save">Gem</string>
+    <string name="cart_menu_save_as">Gem som…</string>
+    <string name="cart_menu_load">Indlæs</string>
+    <string name="cart_menu_export">Eksportér til fil</string>
+    <string name="cart_menu_import">Importér fra fil</string>
+    <string name="cart_menu_clear">Ryd</string>
+    <string name="cart_share_option_text">Almindelig tekst</string>
+    <string name="cart_share_option_text_desc">Formateret oversigt, du kan indsætte i en chat eller notat-app.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Regnearkfil med én række pr. vare.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Udskriveligt dokument i kvitteringsstil.</string>
+    <string name="cart_save_name_hint">Navn på kurv</string>
+    <string name="cart_default_saved_name">Min kurv</string>
+    <string name="cart_saved_toast">Gemt som “%s”</string>
+    <string name="cart_no_saved">Ingen gemte kurve endnu.</string>
+    <string name="cart_rename">Omdøb</string>
+    <string name="cart_rename_title">Omdøb kurv</string>
+    <string name="cart_delete_confirm">Slet “%s”?</string>
+    <string name="cart_delete_confirm_button">Slet</string>
+    <string name="cart_clear_confirm">Fjern alle varer fra den aktuelle kurv?</string>
+    <string name="cart_clear_confirm_button">Ryd</string>
+    <string name="cart_clear_items_only">Ryd kun varer</string>
+    <string name="cart_clear_items_only_desc">Fjerner alle rækker fra kurven, men bevarer de aktuelle valutaer og gebyrside.</string>
+    <string name="cart_clear_reset_all">Nulstil kurv</string>
+    <string name="cart_clear_reset_all_desc">Fjerner alle rækker og henter basis-/målvaluta og gebyrside fra hovedskærmen igen.</string>
+    <string name="cart_export_ok">Kurv eksporteret.</string>
+    <string name="cart_export_error">Eksport mislykkedes: %s</string>
+    <string name="cart_import_ok">Kurv importeret.</string>
+    <string name="cart_import_error">Import mislykkedes: %s</string>
+    <string name="cart_share_empty">Kurven er tom — intet at dele.</string>
+    <string name="cart_save_empty">Kurven er tom — intet at gemme.</string>
+    <string name="cart_share_default_title">Kurv</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
+    <string name="cart_share_converted">Omregnet: %1$s %2$s</string>
+    <string name="cart_share_fees">Gebyrer: %s%%</string>
+    <string name="cart_share_total">I alt: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Ikke-gemte ændringer</string>
+    <string name="cart_unsaved_message">Du har ikke-gemte ændringer. Hvad vil du gøre?</string>
+    <string name="cart_unsaved_save">Gem</string>
+    <string name="cart_unsaved_save_as">Gem som ny</string>
+    <string name="cart_unsaved_discard">Kassér ændringer</string>
+    <string name="cart_unsaved_continue">Fortsæt</string>
 </resources>

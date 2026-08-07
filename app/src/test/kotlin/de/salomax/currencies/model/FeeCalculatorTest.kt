@@ -7,14 +7,19 @@ import java.math.BigDecimal
 import java.math.MathContext
 
 class FeeCalculatorTest {
-
     private fun bd(s: String) = BigDecimal(s)
 
-    private fun globalExchange(id: String, percent: String, markup: Boolean = true) =
-        Fee.GlobalExchange(id = id, percent = bd(percent), isMarkup = markup)
+    private fun globalExchange(
+        id: String,
+        percent: String,
+        markup: Boolean = true,
+    ) = Fee.GlobalExchange(id = id, percent = bd(percent), isMarkup = markup)
 
-    private fun globalBank(id: String, percent: String, markup: Boolean = true) =
-        Fee.GlobalBank(id = id, percent = bd(percent), isMarkup = markup)
+    private fun globalBank(
+        id: String,
+        percent: String,
+        markup: Boolean = true,
+    ) = Fee.GlobalBank(id = id, percent = bd(percent), isMarkup = markup)
 
     private fun pair(
         id: String,
@@ -32,7 +37,11 @@ class FeeCalculatorTest {
         bothWays = bothWays,
     )
 
-    private fun near(expected: String, actual: BigDecimal, tolerance: String = "0.000001") {
+    private fun near(
+        expected: String,
+        actual: BigDecimal,
+        tolerance: String = "0.000001",
+    ) {
         val diff = (bd(expected) - actual).abs()
         assertTrue(
             "expected ~$expected but got $actual",
@@ -73,8 +82,12 @@ class FeeCalculatorTest {
         val fees = listOf(pair("p", "3", from = "USD", to = "EUR"))
         near("1.03", FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR))
         // reverse: no match, back to identity
-        assertEquals(0, FeeCalculator.totalStack(fees, Currency.EUR, Currency.USD)
-            .compareTo(BigDecimal.ONE))
+        assertEquals(
+            0,
+            FeeCalculator
+                .totalStack(fees, Currency.EUR, Currency.USD)
+                .compareTo(BigDecimal.ONE),
+        )
     }
 
     @Test
@@ -86,10 +99,18 @@ class FeeCalculatorTest {
     @Test
     fun `null currency yields no specific-pair matches`() {
         val fees = listOf(pair("p", "3", from = "USD", to = "EUR"))
-        assertEquals(0, FeeCalculator.totalStack(fees, null, Currency.EUR)
-            .compareTo(BigDecimal.ONE))
-        assertEquals(0, FeeCalculator.totalStack(fees, Currency.USD, null)
-            .compareTo(BigDecimal.ONE))
+        assertEquals(
+            0,
+            FeeCalculator
+                .totalStack(fees, null, Currency.EUR)
+                .compareTo(BigDecimal.ONE),
+        )
+        assertEquals(
+            0,
+            FeeCalculator
+                .totalStack(fees, Currency.USD, null)
+                .compareTo(BigDecimal.ONE),
+        )
     }
 
     @Test
@@ -110,11 +131,12 @@ class FeeCalculatorTest {
 
     @Test
     fun `applicableFees filters specific pairs but keeps globals`() {
-        val fees = listOf(
-            globalExchange("g", "2"),
-            pair("p1", "1", from = "USD", to = "EUR"),
-            pair("p2", "1", from = "GBP", to = "JPY"),
-        )
+        val fees =
+            listOf(
+                globalExchange("g", "2"),
+                pair("p1", "1", from = "USD", to = "EUR"),
+                pair("p2", "1", from = "GBP", to = "JPY"),
+            )
         val applicable = FeeCalculator.applicableFees(fees, Currency.USD, Currency.EUR)
         assertEquals(2, applicable.size)
         assertTrue(applicable.any { it.id == "g" })

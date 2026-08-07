@@ -28,4 +28,71 @@
     <string name="quick_conversions_fees_applied">Taxas aplicadas: %s</string>
     <string name="tooltip_filter_starred">Mostrar apenas moedas marcadas com estrela.</string>
     <string name="currency_dropdown_api_hint">Está faltando algo? Diferentes provedores de dados oferecem diferentes moedas. Vá para as configurações para tentar outro! 🤗</string>
+
+    <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
+    <string name="offline_banner_with_date">Offline • Cotações de %1$s</string>
+    <string name="offline_banner_no_data">Offline • Nenhuma cotação em cache</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Última cotação de conversão para o seu par de moedas mais recente.</string>
+    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
+    <string name="widget_footer_date">Em %s</string>
+    <string name="widget_footer_empty">Abra o app para carregar as cotações.</string>
+    <string name="widget_no_rate">Cotação indisponível</string>
+
+    <!-- Shopping cart -->
+    <string name="cart_title">Carrinho de compras</string>
+    <string name="cart_empty_hint">Seu carrinho está vazio. Toque em “Adicionar item” para começar.</string>
+    <string name="cart_add_item">Adicionar item</string>
+    <string name="cart_item_name_hint">Item</string>
+    <string name="cart_item_expression_hint">Preço (ex.: 2 × 3,50)</string>
+    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_delete_item">Excluir item</string>
+    <string name="cart_subtotal_label">Subtotal</string>
+    <string name="cart_total_label">Total</string>
+    <string name="cart_fee_line">Tarifas: %s%%</string>
+    <string name="cart_menu_save">Salvar</string>
+    <string name="cart_menu_save_as">Salvar como…</string>
+    <string name="cart_menu_load">Carregar</string>
+    <string name="cart_menu_export">Exportar para arquivo</string>
+    <string name="cart_menu_import">Importar de arquivo</string>
+    <string name="cart_menu_clear">Limpar</string>
+    <string name="cart_share_option_text">Texto simples</string>
+    <string name="cart_share_option_text_desc">Resumo formatado para colar em um chat ou app de notas.</string>
+    <string name="cart_share_option_csv">CSV</string>
+    <string name="cart_share_option_csv_desc">Arquivo de planilha com uma linha por item.</string>
+    <string name="cart_share_option_pdf">PDF</string>
+    <string name="cart_share_option_pdf_desc">Documento imprimível em estilo recibo.</string>
+    <string name="cart_save_name_hint">Nome do carrinho</string>
+    <string name="cart_default_saved_name">Meu carrinho</string>
+    <string name="cart_saved_toast">Salvo como “%s”</string>
+    <string name="cart_no_saved">Nenhum carrinho salvo ainda.</string>
+    <string name="cart_rename">Renomear</string>
+    <string name="cart_rename_title">Renomear carrinho</string>
+    <string name="cart_delete_confirm">Excluir “%s”?</string>
+    <string name="cart_delete_confirm_button">Excluir</string>
+    <string name="cart_clear_confirm">Remover todos os itens do carrinho atual?</string>
+    <string name="cart_clear_confirm_button">Limpar</string>
+    <string name="cart_clear_items_only">Limpar apenas itens</string>
+    <string name="cart_clear_items_only_desc">Remove todas as linhas do carrinho, mas mantém as moedas e o lado das tarifas atuais.</string>
+    <string name="cart_clear_reset_all">Redefinir carrinho</string>
+    <string name="cart_clear_reset_all_desc">Remove todas as linhas e busca novamente a moeda base/destino e o lado das tarifas na tela principal.</string>
+    <string name="cart_export_ok">Carrinho exportado.</string>
+    <string name="cart_export_error">Falha na exportação: %s</string>
+    <string name="cart_import_ok">Carrinho importado.</string>
+    <string name="cart_import_error">Falha na importação: %s</string>
+    <string name="cart_share_empty">Carrinho vazio — nada para compartilhar.</string>
+    <string name="cart_save_empty">Carrinho vazio — nada para salvar.</string>
+    <string name="cart_share_default_title">Carrinho</string>
+    <string name="cart_share_header">%1$s (%2$s)</string>
+    <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
+    <string name="cart_share_converted">Convertido: %1$s %2$s</string>
+    <string name="cart_share_fees">Tarifas: %s%%</string>
+    <string name="cart_share_total">Total: %1$s %2$s</string>
+    <string name="cart_unsaved_title">Alterações não salvas</string>
+    <string name="cart_unsaved_message">Você tem alterações não salvas. O que deseja fazer?</string>
+    <string name="cart_unsaved_save">Salvar</string>
+    <string name="cart_unsaved_save_as">Salvar como novo</string>
+    <string name="cart_unsaved_discard">Descartar alterações</string>
+    <string name="cart_unsaved_continue">Continuar</string>
 </resources>

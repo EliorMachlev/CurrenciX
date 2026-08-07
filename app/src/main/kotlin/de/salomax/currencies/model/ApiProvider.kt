@@ -1,13 +1,10 @@
 package de.salomax.currencies.model
 
 import android.content.Context
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.result.Result
 import com.squareup.moshi.JsonClass
 import de.salomax.currencies.model.provider.BankOfCanada
 import de.salomax.currencies.model.provider.BankOfIsrael
 import de.salomax.currencies.model.provider.BankRossii
-import de.salomax.currencies.model.provider.FerEe
 import de.salomax.currencies.model.provider.FrankfurterApp
 import de.salomax.currencies.model.provider.InforEuro
 import de.salomax.currencies.model.provider.NorgesBank
@@ -26,10 +23,11 @@ private const val ID_BANK_OF_ISRAEL = 8
 @JsonClass(generateAdapter = false) // see https://stackoverflow.com/a/64085370/421140
 enum class ApiProvider(
     val id: Int, // safer ordinal; DON'T CHANGE!
-    private val implementation: Api
+    private val implementation: Api,
 ) {
     // EXCHANGERATE_HOST(0, "https://api.exchangerate.host"), // removed, as API was shut down
     FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp()),
+
     // FER_EE(2, FerEe()), // deactivated: API returns HTTP 422 most of the time with no response
     //   from developers — see https://github.com/narorolib/fer/issues/6
     INFOR_EURO(ID_INFOR_EURO, InforEuro()),
@@ -37,62 +35,66 @@ enum class ApiProvider(
     BANK_ROSSII(ID_BANK_ROSSII, BankRossii()),
     BANK_OF_CANADA(ID_BANK_OF_CANADA, BankOfCanada()),
     OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates()),
-    BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael());
+    BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael()),
+    ;
 
     companion object {
-        fun fromId(value: Int): ApiProvider = entries.firstOrNull { it.id == value }
-            // this is our fallback, e.g. if an API is removed from the app
-            ?: BANK_OF_ISRAEL
+        fun fromId(value: Int): ApiProvider =
+            entries.firstOrNull { it.id == value }
+                // this is our fallback, e.g. if an API is removed from the app
+                ?: BANK_OF_ISRAEL
     }
 
-    fun getName(): CharSequence =
-        this.implementation.name
+    fun getName(): CharSequence = this.implementation.name
 
-    fun getDescriptionShort(context: Context): CharSequence =
-        this.implementation.descriptionShort(context)
+    fun getDescriptionShort(context: Context): CharSequence = this.implementation.descriptionShort(context)
 
-    fun getDescriptionLong(context: Context): CharSequence =
-        this.implementation.getDescriptionLong(context)
+    fun getDescriptionLong(context: Context): CharSequence = this.implementation.getDescriptionLong(context)
 
-    fun getDescriptionUpdateInterval(context: Context): CharSequence =
-        this.implementation.descriptionUpdateInterval(context)
+    fun getDescriptionUpdateInterval(context: Context): CharSequence = this.implementation.descriptionUpdateInterval(context)
 
-    fun getHint(context: Context): CharSequence? =
-        this.implementation.descriptionHint(context)
+    fun getHint(context: Context): CharSequence? = this.implementation.descriptionHint(context)
 
     // Host portion of [baseUrl], used to prewarm DNS at app start.
-    fun getHost(): String? =
-        runCatching { URI(this.implementation.baseUrl).host }.getOrNull()
+    fun getHost(): String? = runCatching { URI(this.implementation.baseUrl).host }.getOrNull()
 
-    suspend fun getRates(context: Context?, date: LocalDate?): Result<ExchangeRates, FuelError> =
-        this.implementation.getRates(context, date)
+    suspend fun getRates(
+        context: Context?,
+        date: LocalDate?,
+    ): Result<ExchangeRates> = this.implementation.getRates(context, date)
 
     suspend fun getTimeline(
         context: Context?,
         base: Currency,
         symbol: Currency,
         startDate: LocalDate,
-        endDate: LocalDate
-    ): Result<Timeline, FuelError> {
-        return this.implementation.getTimeline(context, base, symbol, startDate, endDate)
-    }
+        endDate: LocalDate,
+    ): Result<Timeline> = this.implementation.getTimeline(context, base, symbol, startDate, endDate)
 
     abstract class Api {
         abstract val name: String
+
         abstract fun descriptionShort(context: Context): CharSequence
+
         abstract fun getDescriptionLong(context: Context): CharSequence
+
         abstract fun descriptionUpdateInterval(context: Context): CharSequence
+
         abstract fun descriptionHint(context: Context): CharSequence?
 
         abstract val baseUrl: String
-        abstract suspend fun getRates(context: Context?, date: LocalDate?): Result<ExchangeRates, FuelError>
+
+        abstract suspend fun getRates(
+            context: Context?,
+            date: LocalDate?,
+        ): Result<ExchangeRates>
+
         abstract suspend fun getTimeline(
             context: Context?,
             base: Currency,
             symbol: Currency,
             startDate: LocalDate,
-            endDate: LocalDate
-        ): Result<Timeline, FuelError>
+            endDate: LocalDate,
+        ): Result<Timeline>
     }
-
 }

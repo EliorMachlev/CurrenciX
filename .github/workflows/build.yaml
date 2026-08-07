@@ -3,10 +3,51 @@ on:
   push:
     branches:
       - master
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
+env:
+  # Disable class data sharing across all JVMs the build spawns (Gradle daemon,
+  # forked lint analyzer, test workers). Without this, JDK 21 prints
+  # "Sharing is only supported for boot loader classes because bootstrap
+  # classpath has been appended" from every lint analysis run — noise, not
+  # an error. JDK_JAVA_OPTIONS is honored by the java launcher and, unlike
+  # JAVA_TOOL_OPTIONS, does not itself print a "Picked up..." banner.
+  JDK_JAVA_OPTIONS: -Xshare:off
 jobs:
   build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Flavor matrix — both fdroid and play must pass independently so a
+        # play-only regression can't slip through by riding on a green fdroid job
+        # (and vice versa).
+        flavor: [Fdroid, Play]
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - name: Setup java environment
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
+
+      - name: Spotless (ktlint)
+        run: ./gradlew spotlessCheck
+
+      - name: Lint, test and build the debug apk (${{ matrix.flavor }})
+        run: ./gradlew lint${{ matrix.flavor }}Debug test${{ matrix.flavor }}DebugUnitTest assemble${{ matrix.flavor }}Debug
+
+  fdroid-release-build:
+    # F-Droid reproducibility guard: the fdroid release APK must build unsigned
+    # in CI, so we catch any breakage of the reproducible build path before it
+    # blocks an F-Droid release.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -21,5 +62,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
 
-      - name: Lint, test and build the debug apk
-        run: ./gradlew check assembleDebug
+      - name: Assemble fdroid release (unsigned)
+        run: ./gradlew assembleFdroidRelease
+
+      - name: Upload fdroid release APK
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: fdroid-release-apk
+          path: app/build/outputs/apk/fdroid/release/*.apk
+          retention-days: 14
+          if-no-files-found: warn

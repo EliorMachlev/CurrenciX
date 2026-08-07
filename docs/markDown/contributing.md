@@ -45,6 +45,7 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 - Kotlin only (no Java in `app/` or `helpers/`).
 - Follow existing patterns — MVVM, Repository, LiveData.
 - Run `./gradlew detekt` locally before opening a PR. CI will fail on Detekt findings.
+- Run `./gradlew spotlessCheck` — CI will fail on formatting drift. Use `./gradlew spotlessApply` to auto-fix.
 - Avoid `java.lang.*` qualifiers (Kotlin imports these automatically).
 - Avoid swallowed exceptions: always use the caught exception variable in the catch block.
 
@@ -52,6 +53,7 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 
 - [ ] `./gradlew check assembleDebug` passes locally
 - [ ] No new Detekt warnings
+- [ ] `./gradlew spotlessCheck` is clean
 - [ ] If adding a dependency: check F-Droid licence compatibility
 - [ ] `mXparser` must remain at 4.4.3 — v5+ is not F-Droid compatible
 

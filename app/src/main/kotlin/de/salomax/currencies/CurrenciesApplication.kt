@@ -3,16 +3,27 @@ package de.salomax.currencies
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import de.salomax.currencies.repository.Database
+import de.salomax.currencies.util.FileLoggingTree
+import timber.log.Timber
 import java.net.InetAddress
 import kotlin.concurrent.thread
 
 class CurrenciesApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
+        installLogging()
         applyNightMode()
         warmSharedPreferences()
         prewarmProviderDns()
+    }
+
+    // Debug builds also get a console tree so `adb logcat` mirrors what the
+    // file tree captures. Release builds are file-only — no remote sink.
+    private fun installLogging() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+        Timber.plant(FileLoggingTree(filesDir))
     }
 
     // Apply the persisted day/night mode before any Activity is created, so
@@ -47,5 +58,4 @@ class CurrenciesApplication : Application() {
             runCatching { InetAddress.getAllByName(host) }
         }
     }
-
 }

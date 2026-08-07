@@ -1,11 +1,6 @@
 package de.salomax.currencies.model.provider
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.ResponseDeserializable
-import com.github.kittinunf.fuel.core.awaitResult
-import com.github.kittinunf.result.Result
 import de.salomax.currencies.R
 import de.salomax.currencies.model.ApiProvider
 import de.salomax.currencies.model.Currency
@@ -13,53 +8,43 @@ import de.salomax.currencies.model.ExchangeRates
 import de.salomax.currencies.model.Timeline
 import de.salomax.currencies.model.adapter.NorgesBankRatesXmlParser
 import de.salomax.currencies.model.adapter.NorgesBankTimelineXmlParser
-import java.io.InputStream
+import de.salomax.currencies.util.HttpClientProvider
+import de.salomax.currencies.util.fetch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-class NorgesBank: ApiProvider.Api() {
+private const val SDMX_FORMAT_QS = "&format=sdmx-compact-2.1"
 
+class NorgesBank : ApiProvider.Api() {
     override val name = "Norges Bank"
 
-    override fun descriptionShort(context: Context) =
-        context.getText(R.string.api_norgesBank_descriptionShort)
+    override fun descriptionShort(context: Context) = context.getText(R.string.api_norgesBank_descriptionShort)
 
-    override fun getDescriptionLong(context: Context) =
-        context.getText(R.string.api_norgesBank_descriptionFull)
+    override fun getDescriptionLong(context: Context) = context.getText(R.string.api_norgesBank_descriptionFull)
 
-    override fun descriptionUpdateInterval(context: Context) =
-        context.getText(R.string.api_norgesBank_descriptionUpdateInterval)
+    override fun descriptionUpdateInterval(context: Context) = context.getText(R.string.api_norgesBank_descriptionUpdateInterval)
 
-    override fun descriptionHint(context: Context) =
-        context.getText(R.string.api_norgesBank_hint)
+    override fun descriptionHint(context: Context) = context.getText(R.string.api_norgesBank_hint)
 
     override val baseUrl = "https://data.norges-bank.no/api"
 
-    override suspend fun getRates(context: Context?, date: LocalDate?): Result<ExchangeRates, FuelError> {
-        // As this API doesn't return results for non-work days, get the last seven days.
-        // The latest available values will be used.
-        val formattedDateStart = date?.minusDays(TIMELINE_LOOKBACK_DAYS)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val formattedDateEnd = date?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val dateString =
-            // latest
-            if (date == null) "?lastNObservations=1"
-            // historical
-            else "?StartPeriod=$formattedDateStart&EndPeriod=$formattedDateEnd"
-
-        return Fuel.get(
-            baseUrl +
-                    "/data" +
-                    "/EXR" +
-                    "/B..NOK.SP" +
-                    dateString +
-                    "&format=sdmx-compact-2.1"
-        ).awaitResult(
-            object : ResponseDeserializable<ExchangeRates> {
-                override fun deserialize(inputStream: InputStream): ExchangeRates {
-                    return NorgesBankRatesXmlParser().parse(inputStream, date ?: LocalDate.now())
-                }
+    override suspend fun getRates(
+        context: Context?,
+        date: LocalDate?,
+    ): Result<ExchangeRates> {
+        val dateQuery =
+            if (date == null) {
+                "?lastNObservations=1"
+            } else {
+                "?StartPeriod=${date.minusDays(TIMELINE_LOOKBACK_DAYS).format(ISO_DATE)}" +
+                    "&EndPeriod=${date.format(ISO_DATE)}"
             }
-        )
+
+        return HttpClientProvider.fetch(
+            context,
+            "$baseUrl/data/EXR/B..NOK.SP$dateQuery$SDMX_FORMAT_QS",
+        ) { body ->
+            NorgesBankRatesXmlParser().parse(body.byteStream(), date ?: LocalDate.now())
+        }
     }
 
     override suspend fun getTimeline(
@@ -67,30 +52,21 @@ class NorgesBank: ApiProvider.Api() {
         base: Currency,
         symbol: Currency,
         startDate: LocalDate,
-        endDate: LocalDate
-    ): Result<Timeline, FuelError> {
-        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+        endDate: LocalDate,
+    ): Result<Timeline> {
         val parameterBase = base.apiCodeOrDkkForFok()
         val parameterSymbol = symbol.apiCodeOrDkkForFok()
-
         // if we request NOK->NOK, the response would be empty. Add EUR in that case.
         val eur = if (base == Currency.NOK && symbol == Currency.NOK) "EUR" else ""
-        // call API
-        return Fuel.get(
-            baseUrl +
-                    "/data" +
-                    "/EXR" +
-                    "/B.$parameterBase+$parameterSymbol+$eur.NOK.SP" +
-                    "?StartPeriod=${dateFormatter.format(startDate)}" +
-                    "&EndPeriod=${dateFormatter.format(endDate)}" +
-                    "&format=sdmx-compact-2.1"
-        ).awaitResult(
-            object : ResponseDeserializable<Timeline> {
-                override fun deserialize(inputStream: InputStream): Timeline {
-                    return NorgesBankTimelineXmlParser(base, symbol, startDate, endDate).parse(inputStream)
-                }
-            }
-        )
-    }
 
+        val url =
+            "$baseUrl/data/EXR/B.$parameterBase+$parameterSymbol+$eur.NOK.SP" +
+                "?StartPeriod=${startDate.format(ISO_DATE)}" +
+                "&EndPeriod=${endDate.format(ISO_DATE)}" +
+                SDMX_FORMAT_QS
+
+        return HttpClientProvider.fetch(context, url) { body ->
+            NorgesBankTimelineXmlParser(base, symbol, startDate, endDate).parse(body.byteStream())
+        }
+    }
 }
