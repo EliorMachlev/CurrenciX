@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvi
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatrick.vico.compose.cartesian.decoration.Decoration
-import com.patrykandpatrick.vico.compose.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -51,6 +50,12 @@ fun TimelineChart(
     showYAxisLive: LiveData<Boolean>,
     highlightExtremesLive: LiveData<Boolean>,
     dateFormatLive: LiveData<String>,
+    // Scrub-aware highlight values from the viewmodel. Passing these in (rather
+    // than deriving from `entries`) keeps the red/blue highlight lines aligned
+    // with the MIN/MAX readouts when the user scrubs, since the readouts also
+    // apply the scrub filter.
+    highlightMinLive: LiveData<Double?>,
+    highlightMaxLive: LiveData<Double?>,
     lineColor: Color,
     baselineColor: Color,
     axisColor: Color,
@@ -61,6 +66,8 @@ fun TimelineChart(
     val showXAxis by showXAxisLive.observeAsState(initial = true)
     val showYAxis by showYAxisLive.observeAsState(initial = true)
     val highlightExtremes by highlightExtremesLive.observeAsState(initial = true)
+    val highlightMin by highlightMinLive.observeAsState()
+    val highlightMax by highlightMaxLive.observeAsState()
     val dateFormat by dateFormatLive.observeAsState(initial = DEFAULT_DATE_FORMAT)
     val axisDateFormatter =
         remember(dateFormat) {
@@ -205,24 +212,26 @@ fun TimelineChart(
             }
             if (baseline != null) {
                 add(
-                    HorizontalLine(
-                        y = { baseline },
+                    HorizontalLineUnder(
+                        y = baseline,
                         line = LineComponent(fill = Fill(baselineColor), thickness = CHART_LINE_THICKNESS_DP.dp),
                     ),
                 )
             }
-            if (highlightExtremes && minValue != null && maxValue != null && minValue != maxValue) {
+            val hMin = highlightMin
+            val hMax = highlightMax
+            if (highlightExtremes && hMin != null && hMax != null && hMin != hMax) {
                 val maxFill = Fill(lineColor.copy(alpha = HIGHLIGHT_ALPHA))
                 val minFill = Fill(MIN_LINE_COLOR.copy(alpha = HIGHLIGHT_ALPHA))
                 add(
                     HorizontalLineUnder(
-                        y = minValue,
+                        y = hMin,
                         line = LineComponent(fill = minFill, thickness = CHART_LINE_THICKNESS_DP.dp),
                     ),
                 )
                 add(
                     HorizontalLineUnder(
-                        y = maxValue,
+                        y = hMax,
                         line = LineComponent(fill = maxFill, thickness = CHART_LINE_THICKNESS_DP.dp),
                     ),
                 )

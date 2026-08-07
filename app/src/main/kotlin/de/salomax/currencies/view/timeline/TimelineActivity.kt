@@ -100,6 +100,10 @@ class TimelineActivity : BaseActivity() {
                         timelineModel.getRates().map { rates ->
                             rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
                         }
+                    val highlightMinLive =
+                        timelineModel.getRatesMin().map { it.first?.value?.toDouble() }
+                    val highlightMaxLive =
+                        timelineModel.getRatesMax().map { it.first?.value?.toDouble() }
                     TimelineChart(
                         entriesLive = entriesLive,
                         showGridLive = db.isChartGridEnabled(),
@@ -107,6 +111,8 @@ class TimelineActivity : BaseActivity() {
                         showYAxisLive = db.isChartYAxisLabelEnabled(),
                         highlightExtremesLive = db.isChartHighlightExtremesEnabled(),
                         dateFormatLive = db.getDateFormat(),
+                        highlightMinLive = highlightMinLive,
+                        highlightMaxLive = highlightMaxLive,
                         lineColor = lineColor,
                         baselineColor = axisColor,
                         axisColor = axisColor,
