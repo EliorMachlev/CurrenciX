@@ -12,11 +12,6 @@ fun main() {
 }
 
 private class FastlaneToResource {
-    companion object {
-        private const val SEMVER_MAJOR_MULTIPLIER = 10_000
-        private const val SEMVER_MINOR_MULTIPLIER = 100
-    }
-
     fun run() {
         // read all fastlane changelogs
         File("fastlane/metadata/android")

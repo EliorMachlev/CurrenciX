@@ -16,11 +16,6 @@ fun main() {
 }
 
 private class ResourceToFastlane {
-    companion object {
-        private const val SEMVER_MAJOR_MULTIPLIER = 10_000
-        private const val SEMVER_MINOR_MULTIPLIER = 100
-    }
-
     fun run() {
         File("app/src/de.salomax.helpers.currencies.main/res")
             // language directory
