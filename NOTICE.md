@@ -5,6 +5,7 @@
 - Upstream project: <https://github.com/sal0max/currencies>
 - Upstream copyright: © 2020 Maximilian Salomon
 - Upstream license: GNU General Public License v3.0 or later (see [`COPYING`](COPYING))
+- **Fork base commit**: [`2a4fde25`](https://github.com/sal0max/currencies/commit/2a4fde257ead7f65ca8bf411bb3890f59ba3890b) — "fix typo" by Maximilian Salomon, 2025-07-21 (one commit past upstream tag `1.23.0`)
 
 ## Modifications by the fork
 
