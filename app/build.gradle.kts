@@ -64,7 +64,11 @@ android {
         }
         debug {
             applicationIdSuffix = ".debug"
-            versionNameSuffix = " [DEBUG]"
+            // CI passes -PdebugCommitSha=<short-sha> so each debug APK's
+            // versionName encodes exactly which commit it was built from
+            // (e.g. "1.23.0-abc1234"). Local builds keep the "[DEBUG]" tag.
+            val commitSha = project.findProperty("debugCommitSha") as String?
+            versionNameSuffix = if (commitSha != null) "-$commitSha" else " [DEBUG]"
         }
     }
 
