@@ -1,6 +1,7 @@
 package de.salomax.currencies.view.timeline.compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -170,20 +171,25 @@ internal fun TimelineSecondary(
             Box(modifier = Modifier.height(CONTENT_PADDING * 2))
         }
 
-        rows.forEach { row ->
-            if (row.visible) {
-                TimelineStatsRow(
-                    label = row.label,
-                    labelWidth = labelWidth,
-                    value = row.value,
-                    date = row.date,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+        // Distribute max/avg/min evenly in the remaining vertical space instead of
+        // stacking them at the top with a single flex spacer above the segmented
+        // button — the row otherwise reads as top-aligned with a large gap below.
+        Column(
+            modifier = Modifier.weight(1f).fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            rows.forEach { row ->
+                if (row.visible) {
+                    TimelineStatsRow(
+                        label = row.label,
+                        labelWidth = labelWidth,
+                        value = row.value,
+                        date = row.date,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             }
         }
-
-        // Push the segmented button to the bottom of the column.
-        Box(modifier = Modifier.weight(1f, fill = true))
 
         PeriodSegmentedButtons(
             selected = selectedPeriod,
