@@ -215,14 +215,14 @@ fun TimelineChart(
                 val maxFill = Fill(lineColor.copy(alpha = HIGHLIGHT_ALPHA))
                 val minFill = Fill(MIN_LINE_COLOR.copy(alpha = HIGHLIGHT_ALPHA))
                 add(
-                    HorizontalLine(
-                        y = { minValue },
+                    HorizontalLineUnder(
+                        y = minValue,
                         line = LineComponent(fill = minFill, thickness = CHART_LINE_THICKNESS_DP.dp),
                     ),
                 )
                 add(
-                    HorizontalLine(
-                        y = { maxValue },
+                    HorizontalLineUnder(
+                        y = maxValue,
                         line = LineComponent(fill = maxFill, thickness = CHART_LINE_THICKNESS_DP.dp),
                     ),
                 )
@@ -331,6 +331,25 @@ private class VerticalLine(
             val canvasX = kotlin.math.round(rawCanvasX)
             if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
             line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
+        }
+    }
+}
+
+// Vico's HorizontalLine draws in drawOverLayers, painting the min/max highlight
+// on top of the chart line. Mirror its y mapping in drawUnderLayers so the
+// highlights sit behind the chart line, consistent with the vertical change
+// lines (which are also under-layer by user preference).
+private class HorizontalLineUnder(
+    private val y: Double,
+    private val line: LineComponent,
+) : Decoration {
+    override fun drawUnderLayers(context: CartesianDrawingContext) {
+        with(context) {
+            val yRange = ranges.getYRange(null)
+            val canvasY =
+                layerBounds.bottom -
+                    ((y - yRange.minY) / yRange.length).toFloat() * layerBounds.height
+            line.drawHorizontal(this, layerBounds.left, layerBounds.right, canvasY)
         }
     }
 }
