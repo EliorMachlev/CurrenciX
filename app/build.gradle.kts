@@ -43,6 +43,16 @@ android {
                 keyPassword = getSecret("KEYSTORE_KEY_PASSWORD")
             }
         }
+        // Shared debug keystore checked into the repo so debug APKs built on
+        // any machine (CI or local) share a signature and can upgrade cleanly
+        // instead of tripping INSTALL_FAILED_UPDATE_INCOMPATIBLE. Credentials
+        // are the Android SDK defaults — non-secret by design.
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
