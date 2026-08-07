@@ -148,28 +148,37 @@ fun TimelineChart(
             valueFormatter = markerValueFormatter,
         )
 
-    val decorations =
-        buildList {
-            // Solid verticals at year and month boundaries. Suppress the month lines
-            // on the year view (heuristic: >90 data points) since ~12 of them just
-            // add noise. Year boundaries always imply month boundaries, so skip the
-            // month line at the same index to avoid stacking two colors.
-            //
-            // Solid (not dashed) because vico's DashedShape renders inconsistently on
-            // vertical lines across chart contexts (weekly vs monthly view), even
-            // with FitStrategy.Fixed and whole-pixel x-snapping.
-            val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
-            val yearChangeIndices = mutableListOf<Int>()
-            val monthChangeIndices = mutableListOf<Int>()
-            for (i in 1 until data.size) {
-                val prev = data[i - 1].first
-                val curr = data[i].first
-                if (prev.year != curr.year) {
-                    yearChangeIndices += i
-                } else if (showMonthChangeLines && prev.monthValue != curr.monthValue) {
-                    monthChangeIndices += i
+    // Solid verticals at year and month boundaries. Suppress the month lines
+    // on the year view (heuristic: >90 data points) since ~12 of them just
+    // add noise. Year boundaries always imply month boundaries, so skip the
+    // month line at the same index to avoid stacking two colors.
+    //
+    // Solid (not dashed) because vico's DashedShape renders inconsistently on
+    // vertical lines across chart contexts (weekly vs monthly view), even
+    // with FitStrategy.Fixed and whole-pixel x-snapping.
+    val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
+    val yearChangeIndices =
+        remember(data) {
+            mutableListOf<Int>().apply {
+                for (i in 1 until data.size) {
+                    if (data[i - 1].first.year != data[i].first.year) add(i)
                 }
             }
+        }
+    val monthChangeIndices =
+        remember(data, showMonthChangeLines) {
+            mutableListOf<Int>().apply {
+                if (!showMonthChangeLines) return@apply
+                for (i in 1 until data.size) {
+                    val prev = data[i - 1].first
+                    val curr = data[i].first
+                    if (prev.year == curr.year && prev.monthValue != curr.monthValue) add(i)
+                }
+            }
+        }
+
+    val decorations =
+        buildList {
             monthChangeIndices.forEach { idx ->
                 add(
                     VerticalLine(
@@ -228,7 +237,7 @@ fun TimelineChart(
             itemPlacer = yAxisItemPlacer,
         )
     val axisItemPlacer =
-        remember(data.size) {
+        remember(data.size, yearChangeIndices, monthChangeIndices) {
             // Aligned placer emits labels at 0, spacing, 2*spacing, … up to n-1, so the
             // label count is floor((n-1)/spacing) + 1. To cap at exactly
             // X_AXIS_TARGET_LABEL_COUNT (never one over), pick the smallest spacing that
@@ -238,7 +247,9 @@ fun TimelineChart(
             val spacing =
                 ((span + X_AXIS_TARGET_LABEL_COUNT - 2) / (X_AXIS_TARGET_LABEL_COUNT - 1))
                     .coerceAtLeast(1)
-            HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
+            val aligned = HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
+            val skipX = (yearChangeIndices + monthChangeIndices).map { it.toDouble() }.toSet()
+            if (skipX.isEmpty()) aligned else SuppressGuidelineItemPlacer(aligned, skipX)
         }
     val bottomAxis =
         HorizontalAxis.rememberBottom(
@@ -304,17 +315,11 @@ private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
 // by HorizontalAxis (see HorizontalAxis.kt in vico:compose): the parent forces
 // LTR so layoutDirectionMultiplier is 1 and getStart(isLtr) == layerBounds.left.
-//
-// Drawn over layers, not under: when the x-axis guideline spacing lands on the
-// same data index as the change line (week view, where every point gets a
-// guideline), a dashed guideline drawn on top of an underlayer vertical chops
-// the solid line into dashes. Painting over the guidelines keeps the line
-// visually solid across every zoom level.
 private class VerticalLine(
     private val x: Double,
     private val line: LineComponent,
 ) : Decoration {
-    override fun drawOverLayers(context: CartesianDrawingContext) {
+    override fun drawUnderLayers(context: CartesianDrawingContext) {
         with(context) {
             val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
             val rawCanvasX =
@@ -327,5 +332,29 @@ private class VerticalLine(
             if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
             line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
         }
+    }
+}
+
+// Wraps a HorizontalAxis.ItemPlacer to suppress ticks and guidelines at [skipX]
+// x-values while leaving labels intact. Fixes a paint-order bug in the week
+// view: spacing=1 puts a dashed vertical guideline on every data point, and
+// vico draws guidelines after decoration.drawUnderLayers, so a guideline at
+// the same x as a change line overpaints the solid line with a dashed one.
+// Filtering the change indices out of getLineValues stops the overpaint at
+// the source; labels (dates on the axis) still render at every index.
+private class SuppressGuidelineItemPlacer(
+    private val delegate: HorizontalAxis.ItemPlacer,
+    private val skipX: Set<Double>,
+) : HorizontalAxis.ItemPlacer by delegate {
+    override fun getLineValues(
+        context: CartesianDrawingContext,
+        visibleXRange: ClosedFloatingPointRange<Double>,
+        fullXRange: ClosedFloatingPointRange<Double>,
+        maxLabelWidth: Float,
+    ): List<Double>? {
+        val base =
+            delegate.getLineValues(context, visibleXRange, fullXRange, maxLabelWidth)
+                ?: delegate.getLabelValues(context, visibleXRange, fullXRange, maxLabelWidth)
+        return base.filterNot { it in skipX }
     }
 }
