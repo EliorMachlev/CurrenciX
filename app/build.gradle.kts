@@ -119,7 +119,7 @@ dependencies {
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
     // the shared instance via the HttpClientProvider.fetch extension.
-    val okHttpVersion = "4.12.0"
+    val okHttpVersion = "5.4.0"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     val moshiVersion = "1.15.2"
