@@ -15,10 +15,11 @@ Follow the guidance in those files. If a docs update is needed, edit the relevan
 
 ## Code-shape defaults
 
-When touching code, always look for and apply these where possible:
+When touching code (especially during refactors), always look for and apply these where possible:
 
-- **Extract functions** for any block that's non-trivial or reused — even once, if it clarifies intent.
+- **Extract functions** for any block that's non-trivial, used in 2+ places, or is a discrete action likely to be reused in a future change — even a small helper is worth it if it clarifies intent or unlocks reuse.
 - **Deduplicate**: identical or near-identical logic in two places should become one helper (top-level `internal` fun, extension, or shared util in `model/adapter/AdapterUtils.kt` / similar).
-- **Hoist to variables/constants**: repeated expressions become locals; repeated literals (URLs, date patterns, magic numbers, keys) become named `const val` or `val` at file/package scope.
+- **Hoist to variables/constants/enums**: repeated expressions become locals; repeated literals (URLs, date patterns, magic numbers, keys) become named `const val` or `val` at file/package scope; a fixed set of related string/int values becomes an `enum class` or sealed hierarchy instead of stringly-typed code.
+- **Always think about reusability, performance, and security** when making changes — favor shapes that can be reused, avoid unnecessary work on hot paths, and don't introduce injection / auth / data-exposure regressions.
 
 Do this in-line with whatever task you're doing — don't gate it behind a separate "refactor" ask.
