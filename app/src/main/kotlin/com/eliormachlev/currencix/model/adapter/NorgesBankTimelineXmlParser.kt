@@ -4,11 +4,11 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
+import org.xmlpull.v1.XmlPullParser
 
 class NorgesBankTimelineXmlParser(
     val base: Currency,

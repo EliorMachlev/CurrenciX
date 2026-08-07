@@ -1,11 +1,11 @@
 package com.eliormachlev.currencix.model.adapter
 
 import com.squareup.moshi.JsonReader
-import okio.buffer
-import okio.source
 import java.io.InputStream
 import java.math.BigDecimal
 import java.time.LocalDate
+import okio.buffer
+import okio.source
 
 // One "official fixing" observation from the Bank of Israel SDMX-JSON feed.
 // `rawValue` is quoted as ILS per [BankOfIsrael.UNIT_PER_CURRENCY]-many foreign

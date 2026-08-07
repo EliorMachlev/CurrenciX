@@ -3,8 +3,8 @@ package com.eliormachlev.currencix.model
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import com.squareup.moshi.JsonClass
 import com.eliormachlev.currencix.R
+import com.squareup.moshi.JsonClass
 
 // Unicode bidi controls used to force LTR display of an RTL currency symbol
 // (embedding form: LRE + PDF). The isolate form (FSI + PDI) is theoretically

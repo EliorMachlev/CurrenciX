@@ -25,8 +25,8 @@ import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.view.main.MainActivity
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.widget.LongSummaryPreference
-import timber.log.Timber
 import java.util.Calendar
+import timber.log.Timber
 
 // Sentinel returned by ApiProvider.fromId when the stored value is unknown /
 // unset; the pref layer treats this as "use the default provider".

@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import com.google.android.material.materialswitch.MaterialSwitch
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
+import com.google.android.material.materialswitch.MaterialSwitch
 
 class GraphOptionsDialog : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

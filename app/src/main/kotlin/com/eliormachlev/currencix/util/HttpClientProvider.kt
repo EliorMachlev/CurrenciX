@@ -1,12 +1,12 @@
 package com.eliormachlev.currencix.util
 
 import android.content.Context
+import java.io.File
+import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 private const val CACHE_DIR = "http-cache"
 private const val CACHE_SIZE_BYTES = 5L * 1024L * 1024L

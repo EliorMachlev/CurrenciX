@@ -1,13 +1,13 @@
 package com.eliormachlev.currencix.model.provider
 
 import android.content.Context
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.adapter.LocalDateAdapter
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.fetch
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.io.IOException
 import java.time.format.DateTimeFormatter
 

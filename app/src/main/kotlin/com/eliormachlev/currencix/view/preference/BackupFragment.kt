@@ -18,11 +18,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputLayout
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupManager
 import com.eliormachlev.currencix.repository.BackupResult
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 
 // Preference row keys — leading __ marks them as UI-only (not persisted).
 private const val PREF_KEY_EXPORT = "__backup_export"

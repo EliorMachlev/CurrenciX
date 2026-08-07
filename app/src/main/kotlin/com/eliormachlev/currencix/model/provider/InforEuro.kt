@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.model.provider
 
 import android.content.Context
-import com.squareup.moshi.JsonAdapter
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
@@ -10,6 +9,7 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.InforEuroRatesAdapter
 import com.eliormachlev.currencix.model.adapter.InforEuroTimelineAdapter
+import com.squareup.moshi.JsonAdapter
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate

@@ -33,12 +33,12 @@ import com.eliormachlev.currencix.util.SharedPreferenceStringLiveData
 import com.eliormachlev.currencix.util.toLocalDate
 import com.eliormachlev.currencix.util.toMillis
 import com.eliormachlev.currencix.view.widget.CurrencyWidget
+import java.time.LocalDate
+import java.util.UUID
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
-import java.time.LocalDate
-import java.util.UUID
 
 private const val LEGACY_FEE_KEY = "_fee"
 private const val LEGACY_FEE_STR_KEY = "_fee_str"

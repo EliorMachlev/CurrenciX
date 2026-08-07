@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.model
 
 import android.content.Context
-import com.squareup.moshi.JsonClass
 import com.eliormachlev.currencix.model.provider.BankOfCanada
 import com.eliormachlev.currencix.model.provider.BankOfIsrael
 import com.eliormachlev.currencix.model.provider.BankRossii
@@ -9,6 +8,7 @@ import com.eliormachlev.currencix.model.provider.FrankfurterApp
 import com.eliormachlev.currencix.model.provider.InforEuro
 import com.eliormachlev.currencix.model.provider.NorgesBank
 import com.eliormachlev.currencix.model.provider.OpenExchangerates
+import com.squareup.moshi.JsonClass
 import java.net.URI
 import java.time.LocalDate
 

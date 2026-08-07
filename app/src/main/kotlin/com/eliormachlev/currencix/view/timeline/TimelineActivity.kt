@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.map
 import androidx.window.layout.FoldingFeature
-import com.google.android.material.color.MaterialColors
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.repository.Database
@@ -24,6 +23,7 @@ import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.preference.GraphOptionsDialog
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
+import com.google.android.material.color.MaterialColors
 import java.time.format.DateTimeFormatter
 
 class TimelineActivity : BaseActivity() {

@@ -15,10 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.ListPreference
-import com.google.android.material.radiobutton.MaterialRadioButton
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import com.google.android.material.radiobutton.MaterialRadioButton
 
 // Matches AdapterView.INVALID_POSITION / ListPreference contract for
 // findIndexOfValue: -1 means "not found".

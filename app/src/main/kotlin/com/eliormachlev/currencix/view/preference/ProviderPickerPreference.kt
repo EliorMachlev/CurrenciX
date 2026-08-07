@@ -10,9 +10,9 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.ListPreference
-import com.google.android.material.radiobutton.MaterialRadioButton
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.google.android.material.radiobutton.MaterialRadioButton
 
 /**
  * Shows the API provider picker as a standalone dialog.

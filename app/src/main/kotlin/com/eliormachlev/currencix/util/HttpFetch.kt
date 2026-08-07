@@ -1,6 +1,9 @@
 package com.eliormachlev.currencix.util
 
 import android.content.Context
+import java.io.IOException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -9,9 +12,6 @@ import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
-import java.io.IOException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /**
  * Thrown when a request completed but returned a non-2xx status. Distinct

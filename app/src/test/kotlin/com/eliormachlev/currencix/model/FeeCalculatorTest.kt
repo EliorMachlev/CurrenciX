@@ -1,10 +1,10 @@
 package com.eliormachlev.currencix.model
 
+import java.math.BigDecimal
+import java.math.MathContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.math.BigDecimal
-import java.math.MathContext
 
 class FeeCalculatorTest {
     private fun bd(s: String) = BigDecimal(s)
