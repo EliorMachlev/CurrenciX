@@ -10,7 +10,7 @@ plugins {
     // AGP 9 — only its .kts checker runs, leaving app/src/main/kotlin unlinted).
     // apply=false at root so the base plugin doesn't collide with the manual
     // clean task below; each subproject opts in.
-    id("com.diffplug.spotless") version "7.0.2" apply false
+    id("com.diffplug.spotless") version "8.9.0" apply false
 }
 
 // ktlint CLI pinned so Spotless updates don't silently bump the underlying
