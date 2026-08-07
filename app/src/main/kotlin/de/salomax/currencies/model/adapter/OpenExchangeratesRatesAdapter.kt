@@ -17,7 +17,6 @@ import java.time.ZoneId
 
 @Suppress("unused", "UNUSED_PARAMETER")
 internal class OpenExchangeratesRatesAdapter {
-    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "UNUSED_VALUE")
     @Synchronized
     @FromJson
     @Throws(IOException::class)

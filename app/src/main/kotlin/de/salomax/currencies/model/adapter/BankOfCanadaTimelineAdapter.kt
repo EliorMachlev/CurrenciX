@@ -102,7 +102,7 @@ internal class BankOfCanadaTimelineAdapter(
         reader: JsonReader,
         name: String,
     ): Pair<Currency?, BigDecimal> {
-        val currency = Currency.fromString(name.substring(BANK_OF_CANADA_ISO_START, BANK_OF_CANADA_ISO_END))
+        val currency = Currency.fromString(name.bankOfCanadaIso())
         reader.beginObject()
         reader.skipName() // always "v"
         val value = BigDecimal(reader.nextString())

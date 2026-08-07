@@ -77,8 +77,10 @@ internal fun XmlPullParser.norgesBankUnitMultiplier(): Int =
 // BankOfCanada quotes series names as "FX<iso>CAD" (e.g. "FXUSDCAD"); the
 // currency ISO-4217 alpha code lives at indices [2, 5). Shared by the rates
 // and timeline adapters so a shape change is edited in one place.
-internal const val BANK_OF_CANADA_ISO_START: Int = 2
-internal const val BANK_OF_CANADA_ISO_END: Int = 5
+private const val BANK_OF_CANADA_ISO_START: Int = 2
+private const val BANK_OF_CANADA_ISO_END: Int = 5
+
+internal fun String.bankOfCanadaIso(): String = substring(BANK_OF_CANADA_ISO_START, BANK_OF_CANADA_ISO_END)
 
 // Error string that every provider/adapter surfaces when a well-formed
 // upstream response contained no usable rates. Hoisted so the wording is
