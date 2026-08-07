@@ -7,10 +7,20 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.window.layout.FoldingFeature
 import de.salomax.currencies.util.hasAppendedCurrencySymbol
 import de.salomax.currencies.util.toHumanReadableNumber
 import java.math.BigDecimal
+
+// Shared timeline typography/spacing so a design tweak lands in one place instead
+// of drifting across TimelineChartCard, TimelineSecondary, and TimelineStatsRow.
+
+internal val TIMELINE_CONTENT_PADDING = 16.dp
+internal val TIMELINE_DATE_FONT_SIZE = 12.sp
+internal val TIMELINE_RATE_VALUE_FONT_SIZE = 18.sp
+internal const val TIMELINE_DATE_LETTER_SPACING_EM = 0.075f
 
 // Row/Column split rules used by both the foldable observer and the initial
 // (pre-foldable-info) layout choice. Boolean because the two variants are

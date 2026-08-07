@@ -36,12 +36,8 @@ import java.time.format.DateTimeFormatter
 
 private const val TEXT_WIDTH_PADDING_FACTOR = 1.25f
 private const val RATE_DIFF_DECIMALS = 2
-private val CONTENT_PADDING = 16.dp
-private val ROW_VERTICAL_SPACING = 8.dp
+private val CONTENT_PADDING = TIMELINE_CONTENT_PADDING
 private val DIVIDER_THICKNESS = 0.75.dp
-private val PAST_DATE_LETTER_SPACING_EM = 0.075f
-private val RATE_FONT_SIZE = 18.sp
-private val DATE_FONT_SIZE = 12.sp
 private val DIFF_FONT_SIZE = 20.sp
 
 private data class StatRowData(
@@ -100,8 +96,8 @@ internal fun TimelineSecondary(
                             ?.key
                             ?.format(formatter)
                             .orEmpty(),
-                    fontSize = DATE_FONT_SIZE,
-                    letterSpacing = PAST_DATE_LETTER_SPACING_EM.sp,
+                    fontSize = TIMELINE_DATE_FONT_SIZE,
+                    letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
                     color = secondaryColor,
                 )
                 if (pastRate != null) {
@@ -113,7 +109,7 @@ internal fun TimelineSecondary(
                                 pastRate.currency.symbol(),
                                 ratePast.second,
                             ),
-                        fontSize = RATE_FONT_SIZE,
+                        fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
                     )
                 }
             }
@@ -128,8 +124,8 @@ internal fun TimelineSecondary(
                             ?.key
                             ?.format(formatter)
                             .orEmpty(),
-                    fontSize = DATE_FONT_SIZE,
-                    letterSpacing = PAST_DATE_LETTER_SPACING_EM.sp,
+                    fontSize = TIMELINE_DATE_FONT_SIZE,
+                    letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
                     color = secondaryColor,
                 )
                 if (currentRate != null) {
@@ -141,7 +137,7 @@ internal fun TimelineSecondary(
                                 currentRate.currency.symbol(),
                                 rateCurrent.second,
                             ),
-                        fontSize = RATE_FONT_SIZE,
+                        fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
                     )
                 }
             }

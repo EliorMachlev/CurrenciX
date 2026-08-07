@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import de.salomax.currencies.util.fromHtmlLegacy
 
-private val CHART_PADDING = 16.dp
+private val CHART_PADDING = TIMELINE_CONTENT_PADDING
 private val PROVIDER_FONT_SIZE = 12.sp
 private const val PROVIDER_ALPHA = 0.5f
 

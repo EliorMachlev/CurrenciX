@@ -26,13 +26,10 @@ private val DOT_STROKE_WIDTH = 1.dp
 private val DOT_DASH_ON = 1.dp
 private val DOT_DASH_OFF = 4.dp
 private val ROW_VERTICAL_PADDING = 2.dp
-private val VALUE_START_PADDING = 16.dp
+private val VALUE_START_PADDING = TIMELINE_CONTENT_PADDING
 private val DOT_HORIZONTAL_PADDING = 8.dp
-private val DATE_START_PADDING = 16.dp
+private val DATE_START_PADDING = TIMELINE_CONTENT_PADDING
 private val LABEL_FONT_SIZE = 14.sp
-private val VALUE_FONT_SIZE = 18.sp
-private val DATE_FONT_SIZE = 12.sp
-private const val DATE_LETTER_SPACING_EM = 0.075f
 
 @Composable
 @Suppress("LongParameterList")
@@ -55,7 +52,7 @@ internal fun TimelineStatsRow(
         )
         Text(
             text = value ?: AnnotatedString(""),
-            fontSize = VALUE_FONT_SIZE,
+            fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
             fontWeight = FontWeight.Normal,
             modifier = Modifier.padding(start = VALUE_START_PADDING),
         )
@@ -68,8 +65,8 @@ internal fun TimelineStatsRow(
             )
             Text(
                 text = date,
-                fontSize = DATE_FONT_SIZE,
-                letterSpacing = DATE_LETTER_SPACING_EM.sp,
+                fontSize = TIMELINE_DATE_FONT_SIZE,
+                letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.End,
                 modifier = Modifier.padding(start = DATE_START_PADDING),
