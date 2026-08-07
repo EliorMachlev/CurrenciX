@@ -116,9 +116,9 @@
             android:title="@string/sourcecode_title" />
         <Preference
             android:icon="@drawable/ic_code"
-            android:key="@string/upstream_key"
-            android:summary="@string/upstream_summary"
-            android:title="@string/upstream_title" />
+            android:key="@string/credits_key"
+            android:summary="@string/credits_summary"
+            android:title="@string/credits_title" />
         <Preference
             android:icon="@drawable/ic_donate"
             android:key="@string/donate_key"

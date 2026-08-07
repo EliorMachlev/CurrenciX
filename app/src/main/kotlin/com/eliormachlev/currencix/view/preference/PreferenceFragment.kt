@@ -37,7 +37,6 @@ private const val UNKNOWN_PROVIDER_ID = -1
 private const val FLAVOR_PLAY = "play"
 
 private const val URL_SOURCE_CODE = "https://github.com/EliorMachlev/currencies"
-private const val URL_UPSTREAM_SOURCE = "https://github.com/sal0max/currencies"
 private const val URL_DONATE = "https://www.paypal.com/donate?hosted_button_id=2JCY7E99V9DGC"
 private const val URL_PLAY_MARKET = "market://details?id=com.eliormachlev.currencix"
 private const val URL_PLAY_WEB = "https://play.google.com/store/apps/details?id=com.eliormachlev.currencix"
@@ -196,9 +195,9 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 true
             }
         }
-        findPreference<Preference>(getString(R.string.upstream_key))?.apply {
+        findPreference<Preference>(getString(R.string.credits_key))?.apply {
             setOnPreferenceClickListener {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(URL_UPSTREAM_SOURCE)))
+                CreditsDialog().show(childFragmentManager, null)
                 true
             }
         }
