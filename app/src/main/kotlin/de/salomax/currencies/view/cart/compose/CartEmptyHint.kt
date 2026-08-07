@@ -1,6 +1,5 @@
 package de.salomax.currencies.view.cart.compose
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -16,19 +15,15 @@ import de.salomax.currencies.view.compose.AppTheme
 @Composable
 fun CartEmptyHint() {
     AppTheme {
-        Box(
+        Text(
+            text = stringResource(id = R.string.cart_empty_hint),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(dimensionResource(id = R.dimen.margin3x)),
-        ) {
-            Text(
-                text = stringResource(id = R.string.cart_empty_hint),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
+        )
     }
 }

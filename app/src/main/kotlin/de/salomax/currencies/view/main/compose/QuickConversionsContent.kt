@@ -244,14 +244,15 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                 )
             }
         }
-        Box(modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.margin2x))) {
-            Text(
-                text = "=",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Unspecified,
-                modifier = Modifier.alpha(EQ_ALPHA),
-            )
-        }
+        Text(
+            text = "=",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Unspecified,
+            modifier =
+                Modifier
+                    .padding(horizontal = dimensionResource(id = R.dimen.margin2x))
+                    .alpha(EQ_ALPHA),
+        )
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start,
