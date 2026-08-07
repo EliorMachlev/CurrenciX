@@ -43,6 +43,16 @@ android {
                 keyPassword = getSecret("KEYSTORE_KEY_PASSWORD")
             }
         }
+        // Shared debug keystore checked into the repo so debug APKs built on
+        // any machine (CI or local) share a signature and can upgrade cleanly
+        // instead of tripping INSTALL_FAILED_UPDATE_INCOMPATIBLE. Credentials
+        // are the Android SDK defaults — non-secret by design.
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
@@ -64,7 +74,11 @@ android {
         }
         debug {
             applicationIdSuffix = ".debug"
-            versionNameSuffix = " [DEBUG]"
+            // CI passes -PdebugCommitSha=<short-sha> so each debug APK's
+            // versionName encodes exactly which commit it was built from
+            // (e.g. "1.23.0-abc1234"). Local builds keep the "[DEBUG]" tag.
+            val commitSha = project.findProperty("debugCommitSha") as String?
+            versionNameSuffix = if (commitSha != null) "-$commitSha" else " [DEBUG]"
         }
     }
 

@@ -25,12 +25,16 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
 
+      - name: Compute short SHA
+        id: sha
+        run: echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Build fdroid debug APK
-        run: ./gradlew assembleFdroidDebug
+        run: ./gradlew assembleFdroidDebug -PdebugCommitSha=${{ steps.sha.outputs.short }}
 
       - name: Upload APK
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: currencies-fdroid-debug-${{ github.sha }}
+          name: currencies-fdroid-debug-${{ steps.sha.outputs.short }}
           path: app/build/outputs/apk/fdroid/debug/*.apk
           if-no-files-found: error
