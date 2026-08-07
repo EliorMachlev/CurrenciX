@@ -304,19 +304,25 @@ private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
 // by HorizontalAxis (see HorizontalAxis.kt in vico:compose): the parent forces
 // LTR so layoutDirectionMultiplier is 1 and getStart(isLtr) == layerBounds.left.
+//
+// Drawn over layers, not under: when the x-axis guideline spacing lands on the
+// same data index as the change line (week view, where every point gets a
+// guideline), a dashed guideline drawn on top of an underlayer vertical chops
+// the solid line into dashes. Painting over the guidelines keeps the line
+// visually solid across every zoom level.
 private class VerticalLine(
     private val x: Double,
     private val line: LineComponent,
 ) : Decoration {
-    override fun drawUnderLayers(context: CartesianDrawingContext) {
+    override fun drawOverLayers(context: CartesianDrawingContext) {
         with(context) {
             val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
             val rawCanvasX =
                 baseCanvasX +
                     ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
             // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
-            // per scanline, which reads as a jagged column on the weekly view where
-            // xSpacing pushes the boundary off-grid.
+            // per scanline, which reads as a jagged column when xSpacing pushes the
+            // boundary off-grid.
             val canvasX = kotlin.math.round(rawCanvasX)
             if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
             line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
