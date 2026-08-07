@@ -2,7 +2,7 @@
 
 **Currencies** is a simple, privacy-focused Android currency converter designed as a travel companion rather than a financial trading tool.
 
-- **Package**: `de.salomax.currencies`
+- **Package**: `com.eliormachlev.currencix`
 - **Min SDK**: 26 (Android 8.0 Oreo)
 - **Target SDK**: 37 (Android 15)
 - **License**: GNU General Public License v3+

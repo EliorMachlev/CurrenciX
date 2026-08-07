@@ -1,1 +1,1 @@
--keep class de.salomax.currencies.R$array { public *** changelog_*; }
+-keep class com.eliormachlev.currencix.R$array { public *** changelog_*; }

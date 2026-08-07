@@ -17,16 +17,16 @@ kotlin {
 }
 
 base {
-    archivesName.set("de.salomax.currencies-v12300")
+    archivesName.set("com.eliormachlev.currencix-v12300")
 }
 
 android {
-    namespace = "de.salomax.currencies"
+    namespace = "com.eliormachlev.currencix"
     compileSdk = 37
     buildToolsVersion = "37.0.0"
 
     defaultConfig {
-        applicationId = "de.salomax.currencies"
+        applicationId = "com.eliormachlev.currencix"
         minSdk = 26
         targetSdk = 37
         // SemVer
