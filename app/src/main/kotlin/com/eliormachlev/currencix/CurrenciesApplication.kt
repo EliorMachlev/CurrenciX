@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.FileLoggingTree
+import timber.log.Timber
 import java.net.InetAddress
 import kotlin.concurrent.thread
-import timber.log.Timber
 
 class CurrenciesApplication : Application() {
     override fun onCreate() {

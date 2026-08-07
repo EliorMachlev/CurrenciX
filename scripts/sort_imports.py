@@ -14,6 +14,17 @@ import sys
 import pathlib
 
 
+TRAILING_PREFIXES = ("java.", "javax.", "kotlin.")
+
+
+def _sort_key(imp: str) -> tuple[int, str]:
+    body = imp[len("import ") :].lstrip()
+    for idx, prefix in enumerate(TRAILING_PREFIXES, start=1):
+        if body.startswith(prefix):
+            return (idx, imp)
+    return (0, imp)
+
+
 def sort_imports_in_file(path: pathlib.Path) -> bool:
     lines = path.read_text().splitlines()
     start = end = None
@@ -26,7 +37,7 @@ def sort_imports_in_file(path: pathlib.Path) -> bool:
         return False
     block = lines[start : end + 1]
     imports = [ln for ln in block if ln.startswith("import ")]
-    sorted_imports = sorted(imports)
+    sorted_imports = sorted(imports, key=_sort_key)
     if block == sorted_imports:
         return False
     new_lines = lines[:start] + sorted_imports + lines[end + 1 :]

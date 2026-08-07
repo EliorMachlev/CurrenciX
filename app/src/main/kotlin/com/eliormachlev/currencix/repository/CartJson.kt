@@ -3,10 +3,10 @@ package com.eliormachlev.currencix.repository
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.SavedCart
-import java.util.UUID
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.UUID
 
 // Wire keys for on-disk cart JSON. Kept top-level (not nested inside
 // [Database]) so [CartExporter] can share the same serde for the file

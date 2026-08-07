@@ -5,6 +5,11 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Base64
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator
+import org.bouncycastle.crypto.params.Argon2Parameters
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.GeneralSecurityException
@@ -15,11 +20,6 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
-import org.bouncycastle.crypto.generators.Argon2BytesGenerator
-import org.bouncycastle.crypto.params.Argon2Parameters
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 
 // Backup schema version. Bump when the on-disk format changes in a
 // non-backwards-compatible way; readers must reject unknown versions.

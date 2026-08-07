@@ -3,12 +3,12 @@ package com.eliormachlev.currencix.model.adapter
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.squareup.moshi.JsonReader
+import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
-import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlPullParserFactory
 
 // Both InforEuro endpoints return a JSON array on success and an
 // { "message": "..." } object on failure. Peek at the token: on an array,

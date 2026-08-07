@@ -1,13 +1,13 @@
 package com.eliormachlev.currencix.util
 
 import android.util.Log
+import timber.log.Timber
 import java.io.File
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
-import timber.log.Timber
 
 private const val LOG_DIR = "logs"
 private const val CURRENT_LOG = "app.log"

@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.model.adapter
 
-import java.io.InputStream
 import org.xmlpull.v1.XmlPullParser
+import java.io.InputStream
 
 class BankRossiiCurrencyCodesXmlParser {
     private val items = mutableMapOf<String, String>()

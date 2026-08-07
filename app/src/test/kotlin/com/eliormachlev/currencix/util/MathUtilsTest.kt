@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.util
 
-import java.math.BigDecimal
-import java.math.RoundingMode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -9,6 +7,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @RunWith(MockitoJUnitRunner::class)
 class MathUtilsTest {
