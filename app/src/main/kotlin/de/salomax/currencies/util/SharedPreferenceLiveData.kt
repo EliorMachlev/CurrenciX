@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package de.salomax.currencies.util
 
 import android.content.SharedPreferences
@@ -67,17 +65,6 @@ class SharedPreferenceBooleanLiveData(
     ): Boolean = sharedPrefs.getBoolean(key, defValue)
 }
 
-class SharedPreferenceFloatLiveData(
-    sharedPrefs: SharedPreferences,
-    key: String,
-    defValue: Float,
-) : SharedPreferenceLiveData<Float>(sharedPrefs, key, defValue) {
-    override fun getValueFromPreferences(
-        key: String,
-        defValue: Float,
-    ): Float = sharedPrefs.getFloat(key, defValue)
-}
-
 class SharedPreferenceLongLiveData(
     sharedPrefs: SharedPreferences,
     key: String,
@@ -88,44 +75,3 @@ class SharedPreferenceLongLiveData(
         defValue: Long,
     ): Long = sharedPrefs.getLong(key, defValue)
 }
-
-class SharedPreferenceStringSetLiveData(
-    sharedPrefs: SharedPreferences,
-    key: String,
-    defValue: Set<String>,
-) : SharedPreferenceLiveData<Set<String>>(sharedPrefs, key, defValue) {
-    override fun getValueFromPreferences(
-        key: String,
-        defValue: Set<String>,
-    ): Set<String> = sharedPrefs.getStringSet(key, defValue) as Set<String>
-}
-
-fun SharedPreferences.intLiveData(
-    key: String,
-    defValue: Int,
-): SharedPreferenceLiveData<Int> = SharedPreferenceIntLiveData(this, key, defValue)
-
-fun SharedPreferences.stringLiveData(
-    key: String,
-    defValue: String,
-): SharedPreferenceLiveData<String?> = SharedPreferenceStringLiveData(this, key, defValue)
-
-fun SharedPreferences.booleanLiveData(
-    key: String,
-    defValue: Boolean,
-): SharedPreferenceLiveData<Boolean> = SharedPreferenceBooleanLiveData(this, key, defValue)
-
-fun SharedPreferences.floatLiveData(
-    key: String,
-    defValue: Float,
-): SharedPreferenceLiveData<Float> = SharedPreferenceFloatLiveData(this, key, defValue)
-
-fun SharedPreferences.longLiveData(
-    key: String,
-    defValue: Long,
-): SharedPreferenceLiveData<Long> = SharedPreferenceLongLiveData(this, key, defValue)
-
-fun SharedPreferences.stringSetLiveData(
-    key: String,
-    defValue: Set<String>,
-): SharedPreferenceLiveData<Set<String>> = SharedPreferenceStringSetLiveData(this, key, defValue)
