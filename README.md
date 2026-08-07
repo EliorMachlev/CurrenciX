@@ -1,9 +1,9 @@
-# Currencies
+# CurrenciX
 
 <!-- badges -->
 <div align="right">
    <a href="https://translate.codeberg.org/engage/currencies/"><img alt="translation status" height="20" src="https://translate.codeberg.org/widgets/currencies/-/svg-badge.svg"></a>
-   <img alt="build status" height="20" src="https://github.com/sal0max/currencies/actions/workflows/build.yaml/badge.svg">
+   <img alt="build status" height="20" src="https://github.com/EliorMachlev/currencies/actions/workflows/build.yaml/badge.svg">
 </div>
 
 <!-- logo -->
@@ -11,15 +11,10 @@
    <img alt="Logo" height="200" src="art/ic_launcher/ic_launcher_foreground.svg">
 </div>
 
-**Currencies** is a [simple](https://en.wikipedia.org/wiki/KISS_principle) and straightforward currency converter.
+**CurrenciX** is a [simple](https://en.wikipedia.org/wiki/KISS_principle) and straightforward currency converter.
 It is **not** intended to be used for realtime financial business, rather to be a handy companion e.g., on vacations.
 
-<!-- buttons -->
-<div align="center">
-   <a href="https://play.google.com/store/apps/details?id=de.salomax.currencies"><img alt="Get it on Google Play" height="75" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"></a>
-   <a href="https://f-droid.org/packages/de.salomax.currencies/"><img alt="Get it on F-Droid" height="75" src="https://f-droid.org/badge/get-it-on.png"></a>
-   <a href="https://www.paypal.com/donate?hosted_button_id=2JCY7E99V9DGC"><img alt="Donate with PayPal" height="75" src="https://raw.githubusercontent.com/aha999/DonateButtons/master/Paypal.png"></a>
-</div>
+CurrenciX is a fork of the upstream [Currencies](https://github.com/sal0max/currencies) app by Maximilian Salomon; the upstream project is distributed on Google Play and F-Droid under its original branding.
 
 ## Features
 
@@ -35,7 +30,7 @@ It is **not** intended to be used for realtime financial business, rather to be 
 * Historical rates: You can use rates from prior dates.
 * A major feature is the included calculator. Useful e.g., if you want to split up a restaurant bill.
 * Fee calculator: optionally add a customizable foreign exchange fee to all calculations.
-* **Currencies** is written for Android in Kotlin, targeting Android 13 and supporting light and dark themes.
+* **CurrenciX** is written for Android in Kotlin, targeting Android 13 and supporting light and dark themes.
 * The app is ad-free and doesn't spy on the user.
 
 ## Screenshots

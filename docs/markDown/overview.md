@@ -1,6 +1,6 @@
-# Currencies — Overview
+# CurrenciX — Overview
 
-**Currencies** is a simple, privacy-focused Android currency converter designed as a travel companion rather than a financial trading tool.
+**CurrenciX** is a simple, privacy-focused Android currency converter designed as a travel companion rather than a financial trading tool. It is a fork of the upstream [Currencies](https://github.com/sal0max/currencies) app by Maximilian Salomon.
 
 - **Package**: `com.eliormachlev.currencix`
 - **Min SDK**: 26 (Android 8.0 Oreo)
@@ -30,10 +30,7 @@ Convert between 30–160+ world currencies using live exchange rates fetched fro
 
 ## Distribution
 
-| Store | Link |
-|---|---|
-| Google Play | `play.google.com/store/apps/details?id=de.salomax.currencies` |
-| F-Droid | `f-droid.org/packages/de.salomax.currencies/` |
+CurrenciX is built from source in this repository; there is no public store listing. The upstream **Currencies** app by Maximilian Salomon is available on Google Play (`play.google.com/store/apps/details?id=de.salomax.currencies`) and F-Droid (`f-droid.org/packages/de.salomax.currencies/`) under its original package name.
 
 The `fdroid` build flavor excludes any Play-Store-specific APIs and is reproducible.
 

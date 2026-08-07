@@ -1,6 +1,6 @@
 # Exchange Rate Providers
 
-Currencies supports multiple exchange-rate data sources. The active provider is selected in **Settings → Exchange rate provider**. Switching takes effect on the next refresh.
+CurrenciX supports multiple exchange-rate data sources. The active provider is selected in **Settings → Exchange rate provider**. Switching takes effect on the next refresh.
 
 ## Comparison
 
@@ -29,7 +29,7 @@ When a historical date is selected in the app, the provider's history endpoint i
 
 ## Provider Implementation
 
-Each provider is implemented as an object inside `app/src/main/kotlin/de/salomax/currencies/model/provider/`. They all conform to the `Api` abstract interface defined in `ApiProvider.kt`:
+Each provider is implemented as an object inside `app/src/main/kotlin/com/eliormachlev/currencix/model/provider/`. They all conform to the `Api` abstract interface defined in `ApiProvider.kt`:
 
 ```kotlin
 abstract fun getRates(base: Currency, date: LocalDate?): Call<ExchangeRates?>
