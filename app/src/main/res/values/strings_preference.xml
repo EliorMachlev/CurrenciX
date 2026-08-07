@@ -147,6 +147,9 @@
     <string name="sourcecode_key" translatable="false">KEY_SOURCECODE</string>
     <string name="sourcecode_title">Source code</string>
     <string name="sourcecode_summary">This app is open source. Go to the code repository to open issues, find out how to contribute or just have a look at the sources.</string>
+    <string name="upstream_key" translatable="false">KEY_UPSTREAM</string>
+    <string name="upstream_title">Original project</string>
+    <string name="upstream_summary">CurrenciX is a fork of Currencies by Maximilian Salomon. Tap to visit the original project.</string>
     <string name="donate_key" translatable="false">KEY_DONATE</string>
     <string name="donate_title">Support the developer</string>
     <string name="donate_summary">Donate via PayPal</string>
@@ -157,5 +160,5 @@
     <string name="changelog_key" translatable="false">KEY_CHANGELOG</string>
     <string name="title_changelog">Changelog</string>
     <string name="version_key" translatable="false">KEY_ABOUT</string>
-    <string name="version_summary" translatable="false" tools:ignore="PluralsCandidate">© 2020-%1$s Maximilian Salomon</string>
+    <string name="version_summary" translatable="false" tools:ignore="PluralsCandidate">© 2020-%1$s Maximilian Salomon · CurrenciX fork © 2026 Elior Machlev · GPL-3.0-or-later</string>
 </resources>
