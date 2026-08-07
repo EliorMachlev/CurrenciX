@@ -154,6 +154,7 @@ class TimelineViewModel(
 
             addSource(dbLiveItems) {
                 rates = it?.rates?.entries?.last()
+                update()
             }
 
             addSource(getDecimalPlaces()) {
