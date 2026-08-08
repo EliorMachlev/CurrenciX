@@ -250,13 +250,11 @@ class MainActivity : BaseActivity() {
         base: Currency,
         dest: Currency,
     ): String? {
-        viewModel.getTrueCost().value?.let { trueCost ->
-            return getString(R.string.fee_true_cost_prefix) +
-                ltrIsolate("${trueCost.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)} ${base.iso4217Alpha()}")
+        viewModel.getTrueCost().value?.let {
+            return buildFeeAmountLine(R.string.fee_true_cost_prefix, it, base)
         }
-        viewModel.getOriginalValue().value?.let { originalValue ->
-            return getString(R.string.fee_original_value_prefix) +
-                ltrIsolate("${originalValue.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)} ${dest.iso4217Alpha()}")
+        viewModel.getOriginalValue().value?.let {
+            return buildFeeAmountLine(R.string.fee_original_value_prefix, it, dest)
         }
         return null
     }
@@ -535,9 +533,20 @@ class MainActivity : BaseActivity() {
             target.visibility = View.GONE
             return
         }
-        val amount = value.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)
-        target.text = getString(prefixRes) + ltrIsolate("$amount ${currency?.iso4217Alpha().orEmpty()}")
+        target.text = buildFeeAmountLine(prefixRes, value, currency)
         target.visibility = View.VISIBLE
+    }
+
+    // "<prefix><amount> <ISO>" with the amount+ISO isolated LTR so a
+    // right-aligned prefix in an RTL locale doesn't flip the number/code
+    // pair. Shared by the on-screen fee annotations and the share sheet.
+    private fun buildFeeAmountLine(
+        prefixRes: Int,
+        value: BigDecimal,
+        currency: Currency?,
+    ): String {
+        val amount = value.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)
+        return getString(prefixRes) + ltrIsolate("$amount ${currency?.iso4217Alpha().orEmpty()}")
     }
 
     private fun observeExchangeRates(rates: ExchangeRates?) {
