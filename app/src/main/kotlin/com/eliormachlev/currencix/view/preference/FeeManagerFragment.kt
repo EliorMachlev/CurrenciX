@@ -396,7 +396,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         ctx: Context,
         onClick: () -> Unit,
     ): ImageButton =
-        ImageButton(ctx, null, com.google.android.material.R.attr.borderlessButtonStyle).apply {
+        ImageButton(ctx, null, androidx.appcompat.R.attr.borderlessButtonStyle).apply {
             setImageResource(R.drawable.ic_edit)
             contentDescription = getString(R.string.fee_edit_percent)
             setOnClickListener { onClick() }
@@ -417,7 +417,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             ta.recycle()
             setOnClickListener { onClick() }
             addView(
-                ImageButton(ctx, null, com.google.android.material.R.attr.borderlessButtonStyle).apply {
+                ImageButton(ctx, null, androidx.appcompat.R.attr.borderlessButtonStyle).apply {
                     setImageResource(R.drawable.ic_add)
                     isClickable = false
                 },
