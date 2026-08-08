@@ -407,9 +407,11 @@ class Database(
     fun getActiveExchangeIdBlocking(): String? = prefs.getString(keyActiveExchangeId, null)
 
     fun setActiveExchangeId(id: String?) {
-        prefs.edit().apply {
-            if (id == null) remove(keyActiveExchangeId) else putString(keyActiveExchangeId, id)
-        }.apply()
+        prefs
+            .edit()
+            .apply {
+                if (id == null) remove(keyActiveExchangeId) else putString(keyActiveExchangeId, id)
+            }.apply()
     }
 
     fun getActiveBankId(): LiveData<String?> = SharedPreferenceStringLiveData(prefs, keyActiveBankId, null)
@@ -417,9 +419,11 @@ class Database(
     fun getActiveBankIdBlocking(): String? = prefs.getString(keyActiveBankId, null)
 
     fun setActiveBankId(id: String?) {
-        prefs.edit().apply {
-            if (id == null) remove(keyActiveBankId) else putString(keyActiveBankId, id)
-        }.apply()
+        prefs
+            .edit()
+            .apply {
+                if (id == null) remove(keyActiveBankId) else putString(keyActiveBankId, id)
+            }.apply()
     }
 
     private fun parseFeeSide(raw: String?): FeeSide =

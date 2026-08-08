@@ -100,8 +100,9 @@ object FeeCalculator {
         activeId: String?,
     ): List<T> {
         if (candidates.isEmpty()) return emptyList()
-        val chosen = activeId?.let { id -> candidates.firstOrNull { it.id == id } }
-            ?: candidates.first()
+        val chosen =
+            activeId?.let { id -> candidates.firstOrNull { it.id == id } }
+                ?: candidates.first()
         return listOf(chosen)
     }
 }

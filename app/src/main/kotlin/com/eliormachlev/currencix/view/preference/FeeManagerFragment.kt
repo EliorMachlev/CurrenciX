@@ -80,16 +80,18 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
         screen.addPreference(buildFeeSidePreference(ctx))
 
-        activeExchangePref = buildActivePickerPreference(
-            ctx = ctx,
-            key = PREF_KEY_ACTIVE_EXCHANGE,
-            titleRes = R.string.fee_active_exchange_title,
-        )
-        activeBankPref = buildActivePickerPreference(
-            ctx = ctx,
-            key = PREF_KEY_ACTIVE_BANK,
-            titleRes = R.string.fee_active_bank_title,
-        )
+        activeExchangePref =
+            buildActivePickerPreference(
+                ctx = ctx,
+                key = PREF_KEY_ACTIVE_EXCHANGE,
+                titleRes = R.string.fee_active_exchange_title,
+            )
+        activeBankPref =
+            buildActivePickerPreference(
+                ctx = ctx,
+                key = PREF_KEY_ACTIVE_BANK,
+                titleRes = R.string.fee_active_bank_title,
+            )
         screen.addPreference(activeExchangePref)
         screen.addPreference(activeBankPref)
 
@@ -376,8 +378,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         return "$name  ·  $percent"
     }
 
-    private fun displayNameOf(fee: Fee): String =
-        fee.name.ifBlank { getString(R.string.fee_untitled) }
+    private fun displayNameOf(fee: Fee): String = fee.name.ifBlank { getString(R.string.fee_untitled) }
 
     private fun <T : Fee> populate(
         category: PreferenceCategory,
@@ -578,9 +579,15 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false)
 
         listOf(
-            nameLabel, nameInput,
-            fromLabel, fromButton, toLabel, toButton,
-            bothWays, percentLabel, percentInput,
+            nameLabel,
+            nameInput,
+            fromLabel,
+            fromButton,
+            toLabel,
+            toButton,
+            bothWays,
+            percentLabel,
+            percentInput,
         ).forEach { container.addView(it) }
         addSignToggleWithTopMargin(container, signToggle.view)
         container.addView(activeCheckbox)
