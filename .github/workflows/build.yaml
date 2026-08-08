@@ -43,15 +43,22 @@ jobs:
 
       - name: Lint, test and build the debug apk (${{ matrix.flavor }})
         env:
-          # Populated only for pull_request events — empty on push/dispatch.
-          # The gradle debug buildType reads -PprUrl into BuildConfig.PR_URL
-          # so the in-app "Release notes" entry deep-links to the PR the APK
-          # was built from.
+          # PR_URL is populated only for pull_request events — empty on
+          # push/dispatch. Gradle reads it into BuildConfig.PR_URL so the
+          # in-app "Release notes" entry deep-links to the PR the APK was
+          # built from.
           PR_URL: ${{ github.event.pull_request.html_url }}
+          # For PR events use the PR head SHA (the actual commit the code
+          # came from, not the merge commit github.sha refers to). For push
+          # events fall back to github.sha directly.
+          COMMIT_SHA_FULL: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           ARGS=()
           if [ -n "$PR_URL" ]; then
             ARGS+=("-PprUrl=$PR_URL")
+          fi
+          if [ -n "$COMMIT_SHA_FULL" ]; then
+            ARGS+=("-PdebugCommitSha=${COMMIT_SHA_FULL:0:7}")
           fi
           ./gradlew "${ARGS[@]}" lint${{ matrix.flavor }}Debug test${{ matrix.flavor }}DebugUnitTest assemble${{ matrix.flavor }}Debug
 
