@@ -107,8 +107,14 @@ class SearchableSpinnerDialog(
         // the underlying window instead of this dialog — Compose TextField
         // taps then can't raise the keyboard. Clear that flag and opt into
         // RESIZE so tapping the search field opens the IME.
+        //
+        // SOFT_INPUT_ADJUST_RESIZE is deprecated for Activity windows (the
+        // platform derives it from the activity theme) but remains the
+        // supported way to set the mode on Dialog windows, which have no
+        // theme-driven equivalent.
         dialog?.window?.apply {
             clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+            @Suppress("DEPRECATION")
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
     }

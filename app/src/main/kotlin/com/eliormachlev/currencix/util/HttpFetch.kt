@@ -74,8 +74,7 @@ suspend fun <T> HttpClientProvider.fetch(
             val response = client(context).newCall(request).await()
             response.use {
                 if (!it.isSuccessful) throw ApiHttpError(it.code)
-                val body = it.body ?: throw IOException("Empty response body")
-                parse(body)
+                parse(it.body)
             }
         }
     }
