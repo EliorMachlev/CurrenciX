@@ -23,3 +23,12 @@ When touching code (especially during refactors), always look for and apply thes
 - **Always think about reusability, performance, and security** when making changes — favor shapes that can be reused, avoid unnecessary work on hot paths, and don't introduce injection / auth / data-exposure regressions.
 
 Do this in-line with whatever task you're doing — don't gate it behind a separate "refactor" ask.
+
+## Import ordering
+
+Spotless (ktlint) enforces `ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,^`. When adding an import, place it so the file stays in this order:
+
+1. All non-`java` / non-`javax` / non-`kotlin` imports, in strict alphabetical order (so `androidx.compose.*` comes before `androidx.core.*` — do not group by prefix beyond that).
+2. Then `java.*`, then `javax.*`, then `kotlin.*` — each group alphabetical.
+
+Add the new import in the right slot the first time; do not rely on a follow-up spotlessApply pass in CI.
