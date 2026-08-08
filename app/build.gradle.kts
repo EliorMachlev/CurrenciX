@@ -71,6 +71,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // Release builds never carry PR context — the in-app "Release
+            // notes" entry deep-links to the GitHub release for the shipped
+            // versionName. Field must exist so debug/release share a shape.
+            buildConfigField("String", "PR_URL", "\"\"")
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -79,6 +83,12 @@ android {
             // (e.g. "1.23.0-abc1234"). Local builds keep the "[DEBUG]" tag.
             val commitSha = project.findProperty("debugCommitSha") as String?
             versionNameSuffix = if (commitSha != null) "-$commitSha" else " [DEBUG]"
+            // CI passes -PprUrl=<pr html_url> for pull_request builds so the
+            // in-app "Release notes" entry can deep-link back to the exact PR
+            // the APK was built from. Empty string = no PR context (local /
+            // master builds); the client falls back to the repo pulls page.
+            val prUrl = project.findProperty("prUrl") as String? ?: ""
+            buildConfigField("String", "PR_URL", "\"$prUrl\"")
         }
     }
 
