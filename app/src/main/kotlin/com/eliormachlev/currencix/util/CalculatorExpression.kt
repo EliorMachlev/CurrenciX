@@ -14,6 +14,22 @@ const val OPERATOR_DIVIDE = "\u00F7" // ÷
 val OPERATOR_REGEX =
     Regex("[$OPERATOR_PLUS$OPERATOR_MINUS$OPERATOR_MULTIPLY$OPERATOR_DIVIDE]")
 
+// Returned whenever the expression can't be evaluated (parse error, division
+// by zero, unbalanced parens, …). Keeps the UI contract stable across parser
+// swaps.
+private const val FALLBACK_RESULT = "0"
+
+// Neutral operand appended when the user hasn't finished typing the trailing
+// token — e.g. `5+` becomes `5+0`, `5×` becomes `5×1`, `5.` becomes `5.0`.
+private val TRAILING_TOKEN_PADDING: Map<Char, Char> =
+    mapOf(
+        '+' to '0',
+        '-' to '0',
+        '*' to '1',
+        '/' to '1',
+        '.' to '0',
+    )
+
 private val SMART_PERCENT_REGEX =
     Regex("""(\d+(?:\.\d+)?)([+\-])(\d+(?:\.\d+)?)%""")
 
@@ -25,35 +41,41 @@ private val SMART_PERCENT_REGEX =
  * Returns `"0"` on a malformed expression or a division by zero.
  */
 fun String.evaluateCalculatorExpression(): String {
-    var s =
-        this
-            .replace(" ", "")
-            .replace(OPERATOR_MINUS, "-")
-            .replace(OPERATOR_MULTIPLY, "*")
-            .replace(OPERATOR_DIVIDE, "/")
-    // smart percentage: A+B% = A+(A*B/100), A-B% = A-(A*B/100)
-    s =
-        s.replace(SMART_PERCENT_REGEX) { m ->
-            "${m.groupValues[1]}${m.groupValues[2]}(${m.groupValues[1]}*${m.groupValues[3]}/100)"
-        }
-    // simple percentage: B% = B/100
-    s = s.replace("%", "/100")
-    // fill, if last character is an operator
-    when (s.trim().last()) {
-        '/' -> s += "1"
-        '*' -> s += "1"
-        '+' -> s += "0"
-        '-' -> s += "0"
-        '.' -> s += "0"
-    }
+    val normalised =
+        normaliseGlyphsToAscii()
+            .expandPercent()
+            .padTrailingToken()
     // EvalEx.evaluate() throws checked ParseException/EvaluationException
     // (parse errors, unbalanced parens, division by zero, …). Every failure
-    // mode collapses to "0" — same contract the UI relied on with mXparser.
-    val result =
-        try {
-            Expression(s).evaluate().numberValue
-        } catch (_: Exception) {
-            return "0"
-        }
-    return result.stripTrailingZeros().toPlainString()
+    // collapses to FALLBACK_RESULT — same contract the UI relied on with
+    // mXparser.
+    return try {
+        Expression(normalised)
+            .evaluate()
+            .numberValue
+            .stripTrailingZeros()
+            .toPlainString()
+    } catch (_: Exception) {
+        FALLBACK_RESULT
+    }
+}
+
+private fun String.normaliseGlyphsToAscii(): String =
+    this
+        .replace(" ", "")
+        .replace(OPERATOR_MINUS, "-")
+        .replace(OPERATOR_MULTIPLY, "*")
+        .replace(OPERATOR_DIVIDE, "/")
+
+// `A+B%` → `A+(A*B/100)`, `A-B%` → `A-(A*B/100)`, standalone `B%` → `B/100`.
+// The smart-percent rewrite has to run before the simple `%` → `/100` sweep,
+// otherwise the anchor digits get consumed first.
+private fun String.expandPercent(): String =
+    replace(SMART_PERCENT_REGEX) { m ->
+        "${m.groupValues[1]}${m.groupValues[2]}(${m.groupValues[1]}*${m.groupValues[3]}/100)"
+    }.replace("%", "/100")
+
+private fun String.padTrailingToken(): String {
+    val neutral = TRAILING_TOKEN_PADDING[trim().lastOrNull()] ?: return this
+    return this + neutral
 }
