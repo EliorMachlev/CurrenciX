@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.core.view.WindowCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -105,17 +106,14 @@ class SearchableSpinnerDialog(
         super.onStart()
         // AlertDialog theme sets FLAG_ALT_FOCUSABLE_IM, which routes IME to
         // the underlying window instead of this dialog — Compose TextField
-        // taps then can't raise the keyboard. Clear that flag and opt into
-        // RESIZE so tapping the search field opens the IME.
-        //
-        // SOFT_INPUT_ADJUST_RESIZE is deprecated for Activity windows (the
-        // platform derives it from the activity theme) but remains the
-        // supported way to set the mode on Dialog windows, which have no
-        // theme-driven equivalent.
+        // taps then can't raise the keyboard. Clear that flag so this window
+        // receives IME focus, and opt out of automatic window-inset fitting
+        // so IME insets are dispatched to Compose (Modifier.imePadding on
+        // the picker root then absorbs them). This replaces the deprecated
+        // setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE) call.
         dialog?.window?.apply {
             clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-            @Suppress("DEPRECATION")
-            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            WindowCompat.setDecorFitsSystemWindows(this, false)
         }
     }
 
