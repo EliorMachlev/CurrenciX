@@ -51,11 +51,11 @@ private const val SIGN_TOGGLE_TEXT_SIZE_SP = 20f
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
 
-// Trailing/leading icon buttons in picker rows. 40dp total with 10dp padding
-// yields a ~20dp visible glyph — smaller than the default 24dp icon so it
-// doesn't overpower the row's text.
-private const val ROW_ICON_BUTTON_SIZE_DP = 40f
-private const val ROW_ICON_PADDING_DP = 10f
+// Trailing/leading icon buttons in picker rows. 48dp total with 12dp padding
+// yields a 24dp visible glyph — matches the Material3 IconButton dimensions
+// used by the saved-carts list so all in-app row-affordance icons look alike.
+private const val ROW_ICON_BUTTON_SIZE_DP = 48f
+private const val ROW_ICON_PADDING_DP = 12f
 
 // Arrows used in the "specific pair" summary.
 private const val ARROW_ONE_WAY = "\u2192"
