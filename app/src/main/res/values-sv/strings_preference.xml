@@ -127,4 +127,10 @@
     <string name="backup_password_prompt_title">Ange lösenord</string>
     <string name="backup_password_wrong">Lösenordet dekrypterade inte filen. Försök igen.</string>
     <string name="backup_password_too_short">Lösenordet måste vara minst %1$d tecken</string>
+    <string name="credits_title">Erkännanden</string>
+    <string name="credits_summary">Attributioner, licens och tredjepartsbibliotek</string>
+    <string name="title_credits">Erkännanden</string>
+    <string name="credits_section_project">Projekt</string>
+    <string name="credits_section_license">Licens</string>
+    <string name="credits_section_libraries">Tredjepartsbibliotek</string>
 </resources>

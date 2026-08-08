@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">Passwort eingeben</string>
     <string name="backup_password_wrong">Mit dem Passwort ließ sich die Datei nicht entschlüsseln. Versuche es erneut.</string>
     <string name="backup_password_too_short">Das Passwort muss mindestens %1$d Zeichen lang sein</string>
+    <string name="credits_title">Danksagungen</string>
+    <string name="credits_summary">Erwähnungen, Lizenz und Bibliotheken von Drittanbietern</string>
+    <string name="title_credits">Danksagungen</string>
+    <string name="credits_section_project">Projekt</string>
+    <string name="credits_section_license">Lizenz</string>
+    <string name="credits_section_libraries">Bibliotheken von Drittanbietern</string>
 </resources>

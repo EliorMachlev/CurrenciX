@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">Voer wachtwoord in</string>
     <string name="backup_password_wrong">Het wachtwoord kon dit bestand niet ontsleutelen. Probeer het opnieuw.</string>
     <string name="backup_password_too_short">Het wachtwoord moet minstens %1$d tekens bevatten</string>
+    <string name="credits_title">Met dank aan</string>
+    <string name="credits_summary">Vermeldingen, licentie en bibliotheken van derden</string>
+    <string name="title_credits">Met dank aan</string>
+    <string name="credits_section_project">Project</string>
+    <string name="credits_section_license">Licentie</string>
+    <string name="credits_section_libraries">Bibliotheken van derden</string>
 </resources>

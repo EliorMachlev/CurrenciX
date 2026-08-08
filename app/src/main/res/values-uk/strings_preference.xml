@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">Введіть пароль</string>
     <string name="backup_password_wrong">Пароль не розшифрував цей файл. Спробуйте ще раз.</string>
     <string name="backup_password_too_short">Пароль має містити щонайменше %1$d символів</string>
+    <string name="credits_title">Подяки</string>
+    <string name="credits_summary">Атрибуції, ліцензія та сторонні бібліотеки</string>
+    <string name="title_credits">Подяки</string>
+    <string name="credits_section_project">Проєкт</string>
+    <string name="credits_section_license">Ліцензія</string>
+    <string name="credits_section_libraries">Сторонні бібліотеки</string>
 </resources>

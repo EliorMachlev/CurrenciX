@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">輸入密碼</string>
     <string name="backup_password_wrong">此密碼無法解密該檔案,請再試一次。</string>
     <string name="backup_password_too_short">密碼長度至少須為 %1$d 個字元</string>
+    <string name="credits_title">致謝</string>
+    <string name="credits_summary">署名、授權和第三方函式庫</string>
+    <string name="title_credits">致謝</string>
+    <string name="credits_section_project">專案</string>
+    <string name="credits_section_license">授權</string>
+    <string name="credits_section_libraries">第三方函式庫</string>
 </resources>

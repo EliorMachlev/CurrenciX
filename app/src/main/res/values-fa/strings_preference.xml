@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">گذرواژه را وارد کنید</string>
     <string name="backup_password_wrong">گذرواژه نتوانست این فایل را رمزگشایی کند. دوباره تلاش کنید.</string>
     <string name="backup_password_too_short">گذرواژه باید دست‌کم %1$d نویسه باشد</string>
+    <string name="credits_title">سپاسگزاری</string>
+    <string name="credits_summary">قدردانی‌ها، مجوز و کتابخانه‌های شخص ثالث</string>
+    <string name="title_credits">سپاسگزاری</string>
+    <string name="credits_section_project">پروژه</string>
+    <string name="credits_section_license">مجوز</string>
+    <string name="credits_section_libraries">کتابخانه‌های شخص ثالث</string>
 </resources>

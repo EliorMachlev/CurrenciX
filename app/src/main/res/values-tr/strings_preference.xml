@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">Parolayı gir</string>
     <string name="backup_password_wrong">Parola dosyanın şifresini çözemedi. Tekrar dene.</string>
     <string name="backup_password_too_short">Parola en az %1$d karakter olmalı</string>
+    <string name="credits_title">Katkıda Bulunanlar</string>
+    <string name="credits_summary">Atıflar, lisans ve üçüncü taraf kütüphaneler</string>
+    <string name="title_credits">Katkıda Bulunanlar</string>
+    <string name="credits_section_project">Proje</string>
+    <string name="credits_section_license">Lisans</string>
+    <string name="credits_section_libraries">Üçüncü taraf kütüphaneler</string>
 </resources>

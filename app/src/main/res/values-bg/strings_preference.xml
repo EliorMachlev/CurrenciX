@@ -122,4 +122,10 @@
     <string name="backup_password_prompt_title">Въведи парола</string>
     <string name="backup_password_wrong">Паролата не дешифрира този файл. Опитай отново.</string>
     <string name="backup_password_too_short">Паролата трябва да е поне %1$d знака</string>
+    <string name="credits_title">Заслуги</string>
+    <string name="credits_summary">Признания, лиценз и библиотеки на трети страни</string>
+    <string name="title_credits">Заслуги</string>
+    <string name="credits_section_project">Проект</string>
+    <string name="credits_section_license">Лиценз</string>
+    <string name="credits_section_libraries">Библиотеки на трети страни</string>
 </resources>

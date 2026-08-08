@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">Saisir le mot de passe</string>
     <string name="backup_password_wrong">Le mot de passe n\'a pas permis de déchiffrer ce fichier. Réessaie.</string>
     <string name="backup_password_too_short">Le mot de passe doit contenir au moins %1$d caractères</string>
+    <string name="credits_title">Crédits</string>
+    <string name="credits_summary">Attributions, licence et bibliothèques tierces</string>
+    <string name="title_credits">Crédits</string>
+    <string name="credits_section_project">Projet</string>
+    <string name="credits_section_license">Licence</string>
+    <string name="credits_section_libraries">Bibliothèques tierces</string>
 </resources>

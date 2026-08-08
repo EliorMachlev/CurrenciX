@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">പാസ്‌വേഡ് നൽകുക</string>
     <string name="backup_password_wrong">പാസ്‌വേഡിന് ഈ ഫയൽ ഡീക്രിപ്റ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.</string>
     <string name="backup_password_too_short">പാസ്‌വേഡ് കുറഞ്ഞത് %1$d പ്രതീകങ്ങൾ ഉണ്ടായിരിക്കണം</string>
+    <string name="credits_title">അംഗീകാരങ്ങൾ</string>
+    <string name="credits_summary">ആട്രിബ്യൂഷനുകൾ, ലൈസൻസ്, മൂന്നാം കക്ഷി ലൈബ്രറികൾ</string>
+    <string name="title_credits">അംഗീകാരങ്ങൾ</string>
+    <string name="credits_section_project">പദ്ധതി</string>
+    <string name="credits_section_license">ലൈസൻസ്</string>
+    <string name="credits_section_libraries">മൂന്നാം കക്ഷി ലൈബ്രറികൾ</string>
 </resources>

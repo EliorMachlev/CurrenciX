@@ -122,4 +122,10 @@
     <string name="backup_password_prompt_title">Sláðu inn lykilorð</string>
     <string name="backup_password_wrong">Lykilorðið afkóðaði ekki þessa skrá. Reyndu aftur.</string>
     <string name="backup_password_too_short">Lykilorð verður að vera minnst %1$d stafir</string>
+    <string name="credits_title">Þakkir</string>
+    <string name="credits_summary">Tilvísanir, leyfi og söfn þriðja aðila</string>
+    <string name="title_credits">Þakkir</string>
+    <string name="credits_section_project">Verkefni</string>
+    <string name="credits_section_license">Leyfi</string>
+    <string name="credits_section_libraries">Söfn þriðja aðila</string>
 </resources>

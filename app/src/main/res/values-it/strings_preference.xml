@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">Inserisci la password</string>
     <string name="backup_password_wrong">La password non ha decifrato questo file. Riprova.</string>
     <string name="backup_password_too_short">La password deve avere almeno %1$d caratteri</string>
+    <string name="credits_title">Crediti</string>
+    <string name="credits_summary">Attribuzioni, licenza e librerie di terze parti</string>
+    <string name="title_credits">Crediti</string>
+    <string name="credits_section_project">Progetto</string>
+    <string name="credits_section_license">Licenza</string>
+    <string name="credits_section_libraries">Librerie di terze parti</string>
 </resources>

@@ -126,4 +126,10 @@
     <string name="backup_password_prompt_title">Εισαγωγή κωδικού</string>
     <string name="backup_password_wrong">Ο κωδικός δεν αποκρυπτογράφησε το αρχείο. Δοκίμασε ξανά.</string>
     <string name="backup_password_too_short">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρες</string>
+    <string name="credits_title">Συντελεστές</string>
+    <string name="credits_summary">Αναφορές, άδεια χρήσης και βιβλιοθήκες τρίτων</string>
+    <string name="title_credits">Συντελεστές</string>
+    <string name="credits_section_project">Έργο</string>
+    <string name="credits_section_license">Άδεια</string>
+    <string name="credits_section_libraries">Βιβλιοθήκες τρίτων</string>
 </resources>
