@@ -5,9 +5,15 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.StyleSpan
+import android.util.TypedValue
 import android.view.ContextMenu
 import android.view.KeyEvent
 import android.view.Menu
@@ -111,7 +117,7 @@ class MainActivity : BaseActivity() {
 
         // general layout
         setContentView(R.layout.activity_main)
-        title = null
+        title = buildWordmarkTitle()
 
         // model
         this.viewModel = ViewModelProvider(this)[MainViewModel::class.java]
@@ -690,4 +696,19 @@ class MainActivity : BaseActivity() {
             LinearLayout.HORIZONTAL
         }
     }
+
+    private fun buildWordmarkTitle(): CharSequence {
+        val text = getString(R.string.app_name)
+        val sizePx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            WORDMARK_TITLE_SP,
+            resources.displayMetrics,
+        ).toInt()
+        return SpannableString(text).apply {
+            setSpan(AbsoluteSizeSpan(sizePx), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(StyleSpan(Typeface.BOLD), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
 }
+
+private const val WORDMARK_TITLE_SP = 24f
