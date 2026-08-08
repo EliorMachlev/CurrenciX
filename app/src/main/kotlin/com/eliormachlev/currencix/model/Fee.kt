@@ -6,18 +6,26 @@ import java.math.BigDecimal
  * A single fee entry that can be stacked with others when converting
  * currencies. All entries store the [percent] as a positive number;
  * whether the fee is added or subtracted is controlled by [isMarkup].
+ *
+ * Every fee carries a user-facing [name] (may be empty for legacy entries)
+ * and an [isActive] flag that lets the user temporarily skip it without
+ * deleting the entry.
  */
 sealed class Fee {
     abstract val id: String
+    abstract val name: String
     abstract val percent: BigDecimal
     abstract val isMarkup: Boolean
+    abstract val isActive: Boolean
     abstract val type: FeeType
 
     /** Applies to every conversion, no matter which currencies are involved. */
     data class GlobalExchange(
         override val id: String,
+        override val name: String,
         override val percent: BigDecimal,
         override val isMarkup: Boolean,
+        override val isActive: Boolean = true,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_EXCHANGE
     }
@@ -25,8 +33,10 @@ sealed class Fee {
     /** Bank / card fee that also applies to every conversion. */
     data class GlobalBank(
         override val id: String,
+        override val name: String,
         override val percent: BigDecimal,
         override val isMarkup: Boolean,
+        override val isActive: Boolean = true,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_BANK
     }
@@ -37,11 +47,13 @@ sealed class Fee {
      */
     data class SpecificPair(
         override val id: String,
+        override val name: String,
         override val percent: BigDecimal,
         override val isMarkup: Boolean,
         val from: String,
         val to: String,
         val bothWays: Boolean,
+        override val isActive: Boolean = true,
     ) : Fee() {
         override val type: FeeType get() = FeeType.SPECIFIC_PAIR
     }

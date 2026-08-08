@@ -35,9 +35,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigDecimal
 import java.util.UUID
 
-// Preference key for the "fee side" row — the leading __ marks it as
-// UI-only state that's ignored by the settings back-up/restore pipeline.
+// Preference keys for UI-only rows. The leading __ marks them as ignored by
+// the settings back-up/restore pipeline.
 private const val PREF_KEY_FEE_SIDE = "__fee_side"
+private const val PREF_KEY_ACTIVE_EXCHANGE = "__active_exchange"
+private const val PREF_KEY_ACTIVE_BANK = "__active_bank"
 
 // Sign-toggle button geometry (dp) and text size (sp).
 private const val SIGN_TOGGLE_BUTTON_HEIGHT_DP = 56f
@@ -51,9 +53,19 @@ private const val FLAG_INLINE_HEIGHT_SP = 14f
 private const val ARROW_ONE_WAY = "\u2192"
 private const val ARROW_BOTH_WAYS = "\u2194"
 
+// Summary parts separator, e.g. "USD → EUR · Inactive".
+private const val SUMMARY_SEPARATOR = "  ·  "
+
+// Show the active-picker row only when the user has a real choice to make
+// (i.e. ≥2 entries in the category). With 0 or 1 entries the FeeCalculator
+// fallback picks the sole entry (or nothing), so the picker adds no value.
+private const val MIN_ENTRIES_FOR_PICKER = 2
+
 class FeeManagerFragment : PreferenceFragmentCompat() {
     private lateinit var db: Database
 
+    private lateinit var activeExchangePref: Preference
+    private lateinit var activeBankPref: Preference
     private lateinit var categoryExchange: PreferenceCategory
     private lateinit var categoryBank: PreferenceCategory
     private lateinit var categoryPair: PreferenceCategory
@@ -67,6 +79,19 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val screen: PreferenceScreen = preferenceManager.createPreferenceScreen(ctx)
 
         screen.addPreference(buildFeeSidePreference(ctx))
+
+        activeExchangePref = buildActivePickerPreference(
+            ctx = ctx,
+            key = PREF_KEY_ACTIVE_EXCHANGE,
+            titleRes = R.string.fee_active_exchange_title,
+        )
+        activeBankPref = buildActivePickerPreference(
+            ctx = ctx,
+            key = PREF_KEY_ACTIVE_BANK,
+            titleRes = R.string.fee_active_bank_title,
+        )
+        screen.addPreference(activeExchangePref)
+        screen.addPreference(activeBankPref)
 
         categoryExchange = addCategory(screen, ctx, R.string.fee_section_global_exchange)
         categoryBank = addCategory(screen, ctx, R.string.fee_section_global_bank)
@@ -183,22 +208,52 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 .show()
     }
 
+    private fun buildActivePickerPreference(
+        ctx: Context,
+        key: String,
+        titleRes: Int,
+    ): Preference =
+        Preference(ctx).apply {
+            this.key = key
+            title = getString(titleRes)
+            isIconSpaceReserved = false
+            isVisible = false // populated when fees load
+        }
+
     private fun renderFees(fees: List<Fee>) {
+        val activeExchangeId = db.getActiveExchangeIdBlocking()
+        val activeBankId = db.getActiveBankIdBlocking()
+
         populate(
             category = categoryExchange,
             entries = fees.filterIsInstance<Fee.GlobalExchange>(),
             summaryFor = { null },
             onAdd = {
-                showPercentSignDialog(existing = null) { percent, isMarkup ->
-                    db.addFee(Fee.GlobalExchange(UUID.randomUUID().toString(), percent, isMarkup))
+                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
+                    db.addFee(
+                        Fee.GlobalExchange(
+                            id = UUID.randomUUID().toString(),
+                            name = name,
+                            percent = percent,
+                            isMarkup = isMarkup,
+                            isActive = isActive,
+                        ),
+                    )
                 }
             },
             onEdit = { fee ->
-                showPercentSignDialog(
+                showGlobalFeeDialog(
                     existing = fee,
                     onDelete = { db.deleteFee(fee.id) },
-                ) { percent, isMarkup ->
-                    db.updateFee(fee.copy(percent = percent, isMarkup = isMarkup))
+                ) { name, percent, isMarkup, isActive ->
+                    db.updateFee(
+                        fee.copy(
+                            name = name,
+                            percent = percent,
+                            isMarkup = isMarkup,
+                            isActive = isActive,
+                        ),
+                    )
                 }
             },
         )
@@ -207,16 +262,31 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             entries = fees.filterIsInstance<Fee.GlobalBank>(),
             summaryFor = { null },
             onAdd = {
-                showPercentSignDialog(existing = null) { percent, isMarkup ->
-                    db.addFee(Fee.GlobalBank(UUID.randomUUID().toString(), percent, isMarkup))
+                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
+                    db.addFee(
+                        Fee.GlobalBank(
+                            id = UUID.randomUUID().toString(),
+                            name = name,
+                            percent = percent,
+                            isMarkup = isMarkup,
+                            isActive = isActive,
+                        ),
+                    )
                 }
             },
             onEdit = { fee ->
-                showPercentSignDialog(
+                showGlobalFeeDialog(
                     existing = fee,
                     onDelete = { db.deleteFee(fee.id) },
-                ) { percent, isMarkup ->
-                    db.updateFee(fee.copy(percent = percent, isMarkup = isMarkup))
+                ) { name, percent, isMarkup, isActive ->
+                    db.updateFee(
+                        fee.copy(
+                            name = name,
+                            percent = percent,
+                            isMarkup = isMarkup,
+                            isActive = isActive,
+                        ),
+                    )
                 }
             },
         )
@@ -238,7 +308,76 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 }
             },
         )
+
+        renderActivePicker(
+            preference = activeExchangePref,
+            entries = fees.filterIsInstance<Fee.GlobalExchange>(),
+            activeId = activeExchangeId,
+            onPicked = { id -> db.setActiveExchangeId(id) },
+        )
+        renderActivePicker(
+            preference = activeBankPref,
+            entries = fees.filterIsInstance<Fee.GlobalBank>(),
+            activeId = activeBankId,
+            onPicked = { id -> db.setActiveBankId(id) },
+        )
     }
+
+    private fun <T : Fee> renderActivePicker(
+        preference: Preference,
+        entries: List<T>,
+        activeId: String?,
+        onPicked: (String) -> Unit,
+    ) {
+        val activeEntries = entries.filter { it.isActive }
+        if (activeEntries.size < MIN_ENTRIES_FOR_PICKER) {
+            preference.isVisible = false
+            return
+        }
+        preference.isVisible = true
+
+        val explicit = activeId?.let { id -> activeEntries.firstOrNull { it.id == id } }
+        val effective = explicit ?: activeEntries.first()
+        val displayName = displayNameOf(effective)
+        preference.summary =
+            if (explicit == null) getString(R.string.fee_active_auto, displayName) else displayName
+
+        preference.setOnPreferenceClickListener {
+            showActivePickerDialog(activeEntries, effective.id, preference.title.toString()) { picked ->
+                onPicked(picked)
+                renderActivePicker(preference, entries, picked, onPicked)
+            }
+            true
+        }
+    }
+
+    private fun <T : Fee> showActivePickerDialog(
+        entries: List<T>,
+        currentId: String,
+        title: String,
+        onPicked: (String) -> Unit,
+    ) {
+        val ctx = requireContext()
+        val labels = entries.map { formatEntryForPicker(it) }.toTypedArray()
+        val currentIndex = entries.indexOfFirst { it.id == currentId }.coerceAtLeast(0)
+
+        MaterialAlertDialogBuilder(ctx)
+            .setTitle(title)
+            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
+                onPicked(entries[which].id)
+                dialog.dismiss()
+            }.setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun formatEntryForPicker(fee: Fee): String {
+        val percent = formatPercent(fee.percent, fee.isMarkup)
+        val name = displayNameOf(fee)
+        return "$name  ·  $percent"
+    }
+
+    private fun displayNameOf(fee: Fee): String =
+        fee.name.ifBlank { getString(R.string.fee_untitled) }
 
     private fun <T : Fee> populate(
         category: PreferenceCategory,
@@ -261,8 +400,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             entries.forEach { fee ->
                 category.addPreference(
                     Preference(ctx).apply {
-                        title = formatPercent(fee.percent, fee.isMarkup)
-                        summary = summaryFor(fee)
+                        title = formatFeeTitle(fee)
+                        summary = buildFeeSummary(summaryFor(fee), fee.isActive)
                         isIconSpaceReserved = false
                         setOnPreferenceClickListener {
                             onEdit(fee)
@@ -284,6 +423,24 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         )
     }
 
+    private fun formatFeeTitle(fee: Fee): CharSequence {
+        val percent = formatPercent(fee.percent, fee.isMarkup)
+        return if (fee.name.isBlank()) percent else "${fee.name}  ·  $percent"
+    }
+
+    private fun buildFeeSummary(
+        base: CharSequence?,
+        isActive: Boolean,
+    ): CharSequence? {
+        val inactive = if (!isActive) getString(R.string.fee_inactive_marker) else null
+        return when {
+            base == null && inactive == null -> null
+            base == null -> inactive
+            inactive == null -> base
+            else -> SpannableStringBuilder(base).append(SUMMARY_SEPARATOR).append(inactive)
+        }
+    }
+
     private fun formatPercent(
         percent: BigDecimal,
         isMarkup: Boolean,
@@ -297,23 +454,51 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         return "$sign ${percent.toHumanReadableNumber(requireContext(), suffix = "%")}"
     }
 
-    private fun showPercentSignDialog(
+    private fun buildNameInput(
+        ctx: Context,
+        initial: String?,
+    ): EditText =
+        EditText(ctx).apply {
+            hint = getString(R.string.fee_edit_name_hint)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
+            if (initial != null) setText(initial)
+        }
+
+    private fun buildActiveCheckbox(
+        ctx: Context,
+        initial: Boolean,
+    ): CheckBox =
+        CheckBox(ctx).apply {
+            text = getString(R.string.fee_edit_active)
+            isChecked = initial
+        }
+
+    private fun showGlobalFeeDialog(
         existing: Fee?,
         onDelete: (() -> Unit)? = null,
-        onConfirm: (BigDecimal, Boolean) -> Unit,
+        onConfirm: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> Unit,
     ) {
         val ctx = requireContext()
         val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
         val container = paddedDialogContainer(ctx, topPadding = padV)
+
+        val nameLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_name) }
+        val nameInput = buildNameInput(ctx, existing?.name)
+        val percentLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_percent) }
         val percentInput =
             EditText(ctx).apply {
-                hint = getString(R.string.fee_edit_percent)
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 if (existing != null) setText(existing.percent.toPlainString())
             }
         val signGroup = buildSignToggle(ctx, existing?.isMarkup)
+        val activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false)
+
+        container.addView(nameLabel)
+        container.addView(nameInput)
+        container.addView(percentLabel)
         container.addView(percentInput)
         addSignToggleWithTopMargin(container, signGroup.view)
+        container.addView(activeCheckbox)
 
         MaterialAlertDialogBuilder(ctx)
             .setTitle(R.string.fee_edit_percent)
@@ -322,7 +507,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 val percent =
                     percentInput.text.toString().toBigDecimalOrNull()
                         ?: BigDecimal.ZERO
-                onConfirm(percent.abs(), signGroup.isMarkup())
+                onConfirm(
+                    nameInput.text.toString().trim(),
+                    percent.abs(),
+                    signGroup.isMarkup(),
+                    activeCheckbox.isChecked,
+                )
             }.setNegativeButton(android.R.string.cancel, null)
             .withDeleteButton(onDelete)
             .show()
@@ -341,6 +531,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         var pickedTo: String? = existing?.to
         val placeholder = getString(R.string.fee_pair_pick_currency)
 
+        val nameLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_name) }
+        val nameInput = buildNameInput(ctx, existing?.name)
         val fromLabel = TextView(ctx).apply { text = getString(R.string.fee_pair_from) }
         val fromButton =
             MaterialButton(
@@ -383,10 +575,15 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 if (existing != null) setText(existing.percent.toPlainString())
             }
         val signToggle = buildSignToggle(ctx, existing?.isMarkup)
+        val activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false)
 
-        listOf(fromLabel, fromButton, toLabel, toButton, bothWays, percentLabel, percentInput)
-            .forEach { container.addView(it) }
+        listOf(
+            nameLabel, nameInput,
+            fromLabel, fromButton, toLabel, toButton,
+            bothWays, percentLabel, percentInput,
+        ).forEach { container.addView(it) }
         addSignToggleWithTopMargin(container, signToggle.view)
+        container.addView(activeCheckbox)
 
         MaterialAlertDialogBuilder(ctx)
             .setTitle(R.string.fee_section_specific_pair)
@@ -401,11 +598,13 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 onConfirm(
                     Fee.SpecificPair(
                         id = existing?.id ?: UUID.randomUUID().toString(),
+                        name = nameInput.text.toString().trim(),
                         percent = percent.abs(),
                         isMarkup = signToggle.isMarkup(),
                         from = from,
                         to = to,
                         bothWays = bothWays.isChecked,
+                        isActive = activeCheckbox.isChecked,
                     ),
                 )
             }.setNegativeButton(android.R.string.cancel, null)

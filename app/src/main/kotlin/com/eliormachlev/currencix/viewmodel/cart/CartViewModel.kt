@@ -39,17 +39,27 @@ class CartViewModel(
     // without a suspend hop.
     private var lastFees: List<Fee> = emptyList()
     private var lastRates: ExchangeRates? = null
+    private var lastActiveExchangeId: String? = db.getActiveExchangeIdBlocking()
+    private var lastActiveBankId: String? = db.getActiveBankIdBlocking()
     private val feesObserver = Observer<List<Fee>> { lastFees = it }
     private val ratesObserver = Observer<ExchangeRates?> { lastRates = it }
+    private val activeExchange: LiveData<String?> = db.getActiveExchangeId()
+    private val activeBank: LiveData<String?> = db.getActiveBankId()
+    private val activeExchangeObserver = Observer<String?> { lastActiveExchangeId = it }
+    private val activeBankObserver = Observer<String?> { lastActiveBankId = it }
 
     init {
         fees.observeForever(feesObserver)
         rates.observeForever(ratesObserver)
+        activeExchange.observeForever(activeExchangeObserver)
+        activeBank.observeForever(activeBankObserver)
     }
 
     override fun onCleared() {
         fees.removeObserver(feesObserver)
         rates.removeObserver(ratesObserver)
+        activeExchange.removeObserver(activeExchangeObserver)
+        activeBank.removeObserver(activeBankObserver)
         super.onCleared()
     }
 
@@ -304,7 +314,7 @@ class CartViewModel(
     fun currentFeeStack(): BigDecimal {
         val cart = current.value ?: return BigDecimal.ONE
         val (base, dest) = cart.resolvedPair()
-        return FeeCalculator.totalStack(lastFees, base, dest)
+        return FeeCalculator.totalStack(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
     }
 
     /** Snapshot used by the "Share" flow — computed against the latest fees & rates. */
@@ -314,7 +324,7 @@ class CartViewModel(
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
         val (base, dest) = cart.resolvedPair()
-        val stack = FeeCalculator.totalStack(lastFees, base, dest)
+        val stack = FeeCalculator.totalStack(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
         val converted = convertAmount(subtotal, base, dest, lastRates)
         val total = applyFeeSide(converted, stack, cart.feeSide)
         return CartSnapshot(
@@ -395,7 +405,7 @@ class CartViewModel(
         val (base, dest) = cart.resolvedPair()
         val subtotal = subtotalOf(cart)
         val converted = convertAmount(subtotal, base, dest, rates)
-        val stack = FeeCalculator.totalStack(feeList, base, dest)
+        val stack = FeeCalculator.totalStack(feeList, base, dest, lastActiveExchangeId, lastActiveBankId)
         return applyFeeSide(converted, stack, side)
     }
 
