@@ -13,13 +13,29 @@ class FeeCalculatorTest {
         id: String,
         percent: String,
         markup: Boolean = true,
-    ) = Fee.GlobalExchange(id = id, percent = bd(percent), isMarkup = markup)
+        isActive: Boolean = true,
+        name: String = "",
+    ) = Fee.GlobalExchange(
+        id = id,
+        name = name,
+        percent = bd(percent),
+        isMarkup = markup,
+        isActive = isActive,
+    )
 
     private fun globalBank(
         id: String,
         percent: String,
         markup: Boolean = true,
-    ) = Fee.GlobalBank(id = id, percent = bd(percent), isMarkup = markup)
+        isActive: Boolean = true,
+        name: String = "",
+    ) = Fee.GlobalBank(
+        id = id,
+        name = name,
+        percent = bd(percent),
+        isMarkup = markup,
+        isActive = isActive,
+    )
 
     private fun pair(
         id: String,
@@ -28,13 +44,17 @@ class FeeCalculatorTest {
         to: String,
         bothWays: Boolean = false,
         markup: Boolean = true,
+        isActive: Boolean = true,
+        name: String = "",
     ) = Fee.SpecificPair(
         id = id,
+        name = name,
         percent = bd(percent),
         isMarkup = markup,
         from = from,
         to = to,
         bothWays = bothWays,
+        isActive = isActive,
     )
 
     private fun near(
@@ -149,5 +169,95 @@ class FeeCalculatorTest {
         val stack = FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR)
         // 1 + 0.1/100 = 1.001 exactly
         assertEquals(0, stack.round(MathContext.DECIMAL128).compareTo(bd("1.001")))
+    }
+
+    @Test
+    fun `inactive fees are skipped entirely`() {
+        val fees =
+            listOf(
+                globalExchange("g", "2", isActive = false),
+                globalBank("b", "1", isActive = false),
+                pair("p", "3", from = "USD", to = "EUR", isActive = false),
+            )
+        assertEquals(
+            0,
+            FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR).compareTo(BigDecimal.ONE),
+        )
+    }
+
+    @Test
+    fun `active picker selects one of several global exchange fees`() {
+        val fees =
+            listOf(
+                globalExchange("wise", "2"),
+                globalExchange("revolut", "5"),
+            )
+        // Wise picked → 1.02 (not multiplicative 1.02 * 1.05 = 1.071)
+        near("1.02", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "wise"))
+        near("1.05", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "revolut"))
+    }
+
+    @Test
+    fun `active picker falls back to first active when id is null`() {
+        val fees =
+            listOf(
+                globalExchange("wise", "2"),
+                globalExchange("revolut", "5"),
+            )
+        near("1.02", FeeCalculator.totalStack(fees, null, null, activeExchangeId = null))
+    }
+
+    @Test
+    fun `active picker skips inactive matches then falls back`() {
+        val fees =
+            listOf(
+                globalExchange("wise", "2", isActive = false),
+                globalExchange("revolut", "5"),
+            )
+        // Picking the inactive one still falls through to the first *active* entry.
+        near("1.05", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "wise"))
+    }
+
+    @Test
+    fun `active picker id that doesn't exist falls back to first active`() {
+        val fees =
+            listOf(
+                globalExchange("wise", "2"),
+                globalExchange("revolut", "5"),
+            )
+        near("1.02", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "ghost"))
+    }
+
+    @Test
+    fun `single active bank picker independent of exchange picker`() {
+        val fees =
+            listOf(
+                globalExchange("wise", "2"),
+                globalExchange("revolut", "5"),
+                globalBank("chase", "1"),
+                globalBank("amex", "3"),
+            )
+        // wise (1.02) * amex (1.03) = 1.0506
+        near(
+            "1.0506",
+            FeeCalculator.totalStack(
+                fees,
+                null,
+                null,
+                activeExchangeId = "wise",
+                activeBankId = "amex",
+            ),
+        )
+    }
+
+    @Test
+    fun `specific-pair fees still stack together regardless of picker`() {
+        val fees =
+            listOf(
+                pair("p1", "2", from = "USD", to = "EUR"),
+                pair("p2", "1", from = "USD", to = "EUR"),
+            )
+        // both apply: 1.02 * 1.01 = 1.0302
+        near("1.0302", FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR))
     }
 }

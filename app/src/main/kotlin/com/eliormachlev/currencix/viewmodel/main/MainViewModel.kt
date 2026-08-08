@@ -80,6 +80,8 @@ class MainViewModel(
     // fees
     private val fees: LiveData<List<Fee>>
     private val feeSide: LiveData<FeeSide>
+    private val activeExchangeId: LiveData<String?>
+    private val activeBankId: LiveData<String?>
 
     // Background timeline prefetcher: fires whenever the selected base/target
     // resolves (including cold-start defaults) so the graph screen paints
@@ -126,6 +128,8 @@ class MainViewModel(
 
         fees = db.getFees()
         feeSide = db.getFeeSide()
+        activeExchangeId = db.getActiveExchangeId()
+        activeBankId = db.getActiveBankId()
 
         //
         exchangeRates =
@@ -449,6 +453,8 @@ class MainViewModel(
             var destinationCurrency: Currency? = null
             var feeList: List<Fee>? = null
             var side: FeeSide? = null
+            var exchangeId: String? = null
+            var bankId: String? = null
 
             init {
                 // rates changed
@@ -481,6 +487,15 @@ class MainViewModel(
                     side = it
                     calculateResult()
                 }
+                // active picker changed
+                addSource(activeExchangeId) {
+                    exchangeId = it
+                    calculateResult()
+                }
+                addSource(activeBankId) {
+                    bankId = it
+                    calculateResult()
+                }
             }
 
             private fun calculateResult() {
@@ -502,6 +517,8 @@ class MainViewModel(
                                         feeList.orEmpty(),
                                         baseCurrency,
                                         destinationCurrency,
+                                        exchangeId,
+                                        bankId,
                                     )
                                 if (stack.compareTo(BigDecimal.ZERO) == 0) {
                                     fair
@@ -523,7 +540,14 @@ class MainViewModel(
     internal fun feeStackFor(
         base: Currency?,
         dest: Currency?,
-    ): BigDecimal = FeeCalculator.totalStack(fees.value.orEmpty(), base, dest)
+    ): BigDecimal =
+        FeeCalculator.totalStack(
+            fees.value.orEmpty(),
+            base,
+            dest,
+            activeExchangeId.value,
+            activeBankId.value,
+        )
 
     /**
      * The combined multiplicative fee factor for the current pair.
@@ -535,6 +559,8 @@ class MainViewModel(
             var feeList: List<Fee>? = null
             var base: Currency? = null
             var dest: Currency? = null
+            var exchangeId: String? = null
+            var bankId: String? = null
 
             init {
                 addSource(fees) {
@@ -549,10 +575,18 @@ class MainViewModel(
                     dest = it
                     update()
                 }
+                addSource(activeExchangeId) {
+                    exchangeId = it
+                    update()
+                }
+                addSource(activeBankId) {
+                    bankId = it
+                    update()
+                }
             }
 
             private fun update() {
-                this.value = FeeCalculator.totalStack(feeList.orEmpty(), base, dest)
+                this.value = FeeCalculator.totalStack(feeList.orEmpty(), base, dest, exchangeId, bankId)
             }
         }
 

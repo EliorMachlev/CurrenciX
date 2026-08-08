@@ -14,6 +14,17 @@ import com.eliormachlev.currencix.R
 const val CHOICE_DESC_ALPHA = 0.7f
 
 /**
+ * Apply the platform ripple background used by every clickable row inside
+ * our dialog bodies and preference-picker sheets. Extracted so every row —
+ * choice rows, add rows, trailing icon buttons — reads from the same source.
+ */
+fun View.applySelectableRowBackground() {
+    val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
+    background = ta.getDrawable(0)
+    ta.recycle()
+}
+
+/**
  * Vertical LinearLayout with the standard dialog horizontal padding — the
  * common shape used for the "custom view" body of choice-picker and
  * fee-editor dialogs across cart and preferences.
@@ -31,15 +42,17 @@ fun paddedDialogContainer(
 
 /**
  * Build a clickable "title + one-line explainer" row for a picker dialog.
- * Optional [leadingView] (e.g. a RadioButton) sits left of the text column;
- * text column expands to fill remaining width when present, otherwise takes
- * the full row.
+ * Optional [leadingView] (e.g. a RadioButton) sits left of the text column
+ * and optional [trailingView] (e.g. an edit icon with its own click listener)
+ * sits right. The text column expands to fill remaining width when either
+ * side view is present, otherwise takes the full row.
  */
 fun choiceExplainerRow(
     ctx: Context,
     title: CharSequence,
     description: CharSequence,
     leadingView: View? = null,
+    trailingView: View? = null,
     onClick: () -> Unit,
 ): LinearLayout {
     val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
@@ -49,9 +62,7 @@ fun choiceExplainerRow(
             gravity = Gravity.CENTER_VERTICAL
             setPadding(0, padV, 0, padV)
             isClickable = true
-            val ta = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
-            background = ta.getDrawable(0)
-            ta.recycle()
+            applySelectableRowBackground()
             setOnClickListener { onClick() }
         }
     if (leadingView != null) row.addView(leadingView)
@@ -72,8 +83,9 @@ fun choiceExplainerRow(
                 },
             )
         }
+    val hasSideView = leadingView != null || trailingView != null
     val textLp =
-        if (leadingView != null) {
+        if (hasSideView) {
             LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         } else {
             LinearLayout.LayoutParams(
@@ -82,5 +94,6 @@ fun choiceExplainerRow(
             )
         }
     row.addView(textCol, textLp)
+    if (trailingView != null) row.addView(trailingView)
     return row
 }

@@ -7,10 +7,12 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
@@ -24,6 +26,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.applySelectableRowBackground
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
@@ -35,9 +38,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigDecimal
 import java.util.UUID
 
-// Preference key for the "fee side" row — the leading __ marks it as
-// UI-only state that's ignored by the settings back-up/restore pipeline.
+// Preference keys for UI-only rows. The leading __ marks them as ignored by
+// the settings back-up/restore pipeline.
 private const val PREF_KEY_FEE_SIDE = "__fee_side"
+private const val PREF_KEY_GLOBAL_EXCHANGE = "__global_exchange"
+private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 
 // Sign-toggle button geometry (dp) and text size (sp).
 private const val SIGN_TOGGLE_BUTTON_HEIGHT_DP = 56f
@@ -47,15 +52,24 @@ private const val SIGN_TOGGLE_TEXT_SIZE_SP = 20f
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
 
+// Trailing/leading icon buttons in picker rows. 48dp total with 12dp padding
+// yields a 24dp visible glyph — matches the Material3 IconButton dimensions
+// used by the saved-carts list so all in-app row-affordance icons look alike.
+private const val ROW_ICON_BUTTON_SIZE_DP = 48f
+private const val ROW_ICON_PADDING_DP = 12f
+
 // Arrows used in the "specific pair" summary.
 private const val ARROW_ONE_WAY = "\u2192"
 private const val ARROW_BOTH_WAYS = "\u2194"
 
+// Summary parts separator, e.g. "USD → EUR · Inactive".
+private const val SUMMARY_SEPARATOR = "  ·  "
+
 class FeeManagerFragment : PreferenceFragmentCompat() {
     private lateinit var db: Database
 
-    private lateinit var categoryExchange: PreferenceCategory
-    private lateinit var categoryBank: PreferenceCategory
+    private lateinit var globalExchangePref: Preference
+    private lateinit var globalBankPref: Preference
     private lateinit var categoryPair: PreferenceCategory
 
     override fun onCreatePreferences(
@@ -68,8 +82,16 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
         screen.addPreference(buildFeeSidePreference(ctx))
 
-        categoryExchange = addCategory(screen, ctx, R.string.fee_section_global_exchange)
-        categoryBank = addCategory(screen, ctx, R.string.fee_section_global_bank)
+        globalExchangePref =
+            buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_EXCHANGE, R.string.fee_section_global_exchange)
+        globalBankPref =
+            buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_BANK, R.string.fee_section_global_bank)
+        // Wrap each selector in its own category so the section header is
+        // visible on the top-level screen; without it users can't tell the
+        // exchange row from the bank/card row without opening the dialog.
+        addCategory(screen, ctx, R.string.fee_section_global_exchange).addPreference(globalExchangePref)
+        addCategory(screen, ctx, R.string.fee_section_global_bank).addPreference(globalBankPref)
+
         categoryPair = addCategory(screen, ctx, R.string.fee_section_specific_pair)
 
         preferenceScreen = screen
@@ -183,41 +205,42 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 .show()
     }
 
+    private fun buildGlobalSelectorPreference(
+        ctx: Context,
+        key: String,
+        titleRes: Int,
+    ): Preference =
+        Preference(ctx).apply {
+            this.key = key
+            title = getString(titleRes)
+            isIconSpaceReserved = false
+        }
+
     private fun renderFees(fees: List<Fee>) {
-        populate(
-            category = categoryExchange,
+        renderGlobalCategory(
+            pref = globalExchangePref,
             entries = fees.filterIsInstance<Fee.GlobalExchange>(),
-            summaryFor = { null },
-            onAdd = {
-                showPercentSignDialog(existing = null) { percent, isMarkup ->
-                    db.addFee(Fee.GlobalExchange(UUID.randomUUID().toString(), percent, isMarkup))
-                }
+            sectionTitleRes = R.string.fee_section_global_exchange,
+            getActiveId = db::getActiveExchangeIdBlocking,
+            setActiveId = db::setActiveExchangeId,
+            create = { name, percent, isMarkup, isActive ->
+                Fee.GlobalExchange(UUID.randomUUID().toString(), name, percent, isMarkup, isActive)
             },
-            onEdit = { fee ->
-                showPercentSignDialog(
-                    existing = fee,
-                    onDelete = { db.deleteFee(fee.id) },
-                ) { percent, isMarkup ->
-                    db.updateFee(fee.copy(percent = percent, isMarkup = isMarkup))
-                }
+            update = { existing, name, percent, isMarkup, isActive ->
+                existing.copy(name = name, percent = percent, isMarkup = isMarkup, isActive = isActive)
             },
         )
-        populate(
-            category = categoryBank,
+        renderGlobalCategory(
+            pref = globalBankPref,
             entries = fees.filterIsInstance<Fee.GlobalBank>(),
-            summaryFor = { null },
-            onAdd = {
-                showPercentSignDialog(existing = null) { percent, isMarkup ->
-                    db.addFee(Fee.GlobalBank(UUID.randomUUID().toString(), percent, isMarkup))
-                }
+            sectionTitleRes = R.string.fee_section_global_bank,
+            getActiveId = db::getActiveBankIdBlocking,
+            setActiveId = db::setActiveBankId,
+            create = { name, percent, isMarkup, isActive ->
+                Fee.GlobalBank(UUID.randomUUID().toString(), name, percent, isMarkup, isActive)
             },
-            onEdit = { fee ->
-                showPercentSignDialog(
-                    existing = fee,
-                    onDelete = { db.deleteFee(fee.id) },
-                ) { percent, isMarkup ->
-                    db.updateFee(fee.copy(percent = percent, isMarkup = isMarkup))
-                }
+            update = { existing, name, percent, isMarkup, isActive ->
+                existing.copy(name = name, percent = percent, isMarkup = isMarkup, isActive = isActive)
             },
         )
         populate(
@@ -240,6 +263,200 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         )
     }
 
+    /**
+     * Wire one global-fee category (exchange or bank/card) into its selector
+     * row. Callers supply the category-typed [create]/[update] factories so
+     * the sealed-class copy stays type-safe without a `when` on [Fee].
+     */
+    private fun <T : Fee> renderGlobalCategory(
+        pref: Preference,
+        entries: List<T>,
+        sectionTitleRes: Int,
+        getActiveId: () -> String?,
+        setActiveId: (String) -> Unit,
+        create: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> T,
+        update: (existing: T, name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> T,
+    ) {
+        renderGlobalSelector(
+            pref = pref,
+            entries = entries,
+            activeId = getActiveId(),
+            sectionTitleRes = sectionTitleRes,
+            onPicked = setActiveId,
+            onAdd = {
+                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
+                    val fee = create(name, percent, isMarkup, isActive)
+                    db.addFee(fee)
+                    if (getActiveId() == null) setActiveId(fee.id)
+                }
+            },
+            onEdit = { fee ->
+                showGlobalFeeDialog(
+                    existing = fee,
+                    onDelete = { db.deleteFee(fee.id) },
+                ) { name, percent, isMarkup, isActive ->
+                    db.updateFee(update(fee, name, percent, isMarkup, isActive))
+                }
+            },
+        )
+    }
+
+    private fun <T : Fee> renderGlobalSelector(
+        pref: Preference,
+        entries: List<T>,
+        activeId: String?,
+        sectionTitleRes: Int,
+        onPicked: (String) -> Unit,
+        onAdd: () -> Unit,
+        onEdit: (T) -> Unit,
+    ) {
+        val sectionTitle = getString(sectionTitleRes)
+        val active = entries.filter { it.isActive }
+        val effective = active.firstOrNull { it.id == activeId } ?: active.firstOrNull()
+
+        if (effective == null) {
+            // Section title already appears as the category header above the
+            // row; use the empty-state message as the row title to avoid
+            // repeating it.
+            pref.title = getString(R.string.fee_empty)
+            pref.summary = null
+        } else {
+            pref.title = displayNameOf(effective)
+            pref.summary = formatFeeDescription(effective)
+        }
+        pref.setOnPreferenceClickListener {
+            showGlobalPickerDialog(
+                entries = entries,
+                effectiveId = effective?.id,
+                title = sectionTitle,
+                onPicked = { picked ->
+                    onPicked(picked)
+                    // Re-render immediately; underlying LiveData will also fire but this
+                    // avoids a visible lag while the picker dialog dismisses.
+                    renderGlobalSelector(pref, entries, picked, sectionTitleRes, onPicked, onAdd, onEdit)
+                },
+                onAdd = onAdd,
+                onEdit = onEdit,
+            )
+            true
+        }
+    }
+
+    private fun <T : Fee> showGlobalPickerDialog(
+        entries: List<T>,
+        effectiveId: String?,
+        title: String,
+        onPicked: (String) -> Unit,
+        onAdd: () -> Unit,
+        onEdit: (T) -> Unit,
+    ) {
+        val ctx = requireContext()
+        val container = paddedDialogContainer(ctx)
+        val dialogHolder = arrayOfNulls<AlertDialog>(1)
+        val radios = mutableListOf<RadioButton>()
+
+        entries.forEachIndexed { index, fee ->
+            val radio =
+                RadioButton(ctx).apply {
+                    isChecked = fee.id == effectiveId
+                    isClickable = false
+                }
+            radios += radio
+            val editButton =
+                buildEditIconButton(ctx) {
+                    dialogHolder[0]?.dismiss()
+                    onEdit(fee)
+                }
+            container.addView(
+                choiceExplainerRow(
+                    ctx = ctx,
+                    title = displayNameOf(fee),
+                    description = formatFeeDescription(fee),
+                    leadingView = radio,
+                    trailingView = editButton,
+                ) {
+                    radios.forEachIndexed { i, r -> r.isChecked = i == index }
+                    onPicked(fee.id)
+                    dialogHolder[0]?.dismiss()
+                },
+            )
+        }
+
+        container.addView(
+            buildAddRow(ctx) {
+                dialogHolder[0]?.dismiss()
+                onAdd()
+            },
+        )
+
+        dialogHolder[0] =
+            MaterialAlertDialogBuilder(ctx)
+                .setTitle(title)
+                .setView(container)
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+    }
+
+    private fun buildEditIconButton(
+        ctx: Context,
+        onClick: () -> Unit,
+    ): View = buildRowIcon(ctx, R.drawable.ic_edit, getString(R.string.fee_edit_percent), onClick)
+
+    private fun buildAddRow(
+        ctx: Context,
+        onClick: () -> Unit,
+    ): View {
+        val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
+        return LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, padV, 0, padV)
+            isClickable = true
+            applySelectableRowBackground()
+            setOnClickListener { onClick() }
+            addView(buildRowIcon(ctx, R.drawable.ic_add, null, onClick = null))
+            addView(
+                TextView(ctx).apply {
+                    text = getString(R.string.fee_add)
+                    setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+                },
+                LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f),
+            )
+        }
+    }
+
+    private fun buildRowIcon(
+        ctx: Context,
+        iconRes: Int,
+        contentDesc: String?,
+        onClick: (() -> Unit)?,
+    ): ImageView {
+        val sizePx = ROW_ICON_BUTTON_SIZE_DP.dpToPx().toInt()
+        val padPx = ROW_ICON_PADDING_DP.dpToPx().toInt()
+        return ImageView(ctx).apply {
+            setImageResource(iconRes)
+            setPadding(padPx, padPx, padPx, padPx)
+            contentDescription = contentDesc
+            layoutParams = LinearLayout.LayoutParams(sizePx, sizePx)
+            if (onClick != null) {
+                applySelectableRowBackground()
+                isClickable = true
+                isFocusable = true
+                setOnClickListener { onClick() }
+            }
+        }
+    }
+
+    private fun formatFeeDescription(fee: Fee): CharSequence {
+        val percent = formatPercent(fee.percent, fee.isMarkup)
+        if (fee.isActive) return percent
+        return SpannableStringBuilder(percent)
+            .append(SUMMARY_SEPARATOR)
+            .append(getString(R.string.fee_inactive_marker))
+    }
+
+    private fun displayNameOf(fee: Fee): String = fee.name.ifBlank { getString(R.string.fee_untitled) }
+
     private fun <T : Fee> populate(
         category: PreferenceCategory,
         entries: List<T>,
@@ -261,8 +478,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             entries.forEach { fee ->
                 category.addPreference(
                     Preference(ctx).apply {
-                        title = formatPercent(fee.percent, fee.isMarkup)
-                        summary = summaryFor(fee)
+                        title = formatFeeTitle(fee)
+                        summary = buildFeeSummary(summaryFor(fee), fee.isActive)
                         isIconSpaceReserved = false
                         setOnPreferenceClickListener {
                             onEdit(fee)
@@ -284,6 +501,24 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         )
     }
 
+    private fun formatFeeTitle(fee: Fee): CharSequence {
+        val percent = formatPercent(fee.percent, fee.isMarkup)
+        return if (fee.name.isBlank()) percent else "${fee.name}  ·  $percent"
+    }
+
+    private fun buildFeeSummary(
+        base: CharSequence?,
+        isActive: Boolean,
+    ): CharSequence? {
+        val inactive = if (!isActive) getString(R.string.fee_inactive_marker) else null
+        return when {
+            base == null && inactive == null -> null
+            base == null -> inactive
+            inactive == null -> base
+            else -> SpannableStringBuilder(base).append(SUMMARY_SEPARATOR).append(inactive)
+        }
+    }
+
     private fun formatPercent(
         percent: BigDecimal,
         isMarkup: Boolean,
@@ -297,23 +532,51 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         return "$sign ${percent.toHumanReadableNumber(requireContext(), suffix = "%")}"
     }
 
-    private fun showPercentSignDialog(
+    private fun buildNameInput(
+        ctx: Context,
+        initial: String?,
+    ): EditText =
+        EditText(ctx).apply {
+            hint = getString(R.string.fee_edit_name_hint)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
+            if (initial != null) setText(initial)
+        }
+
+    private fun buildActiveCheckbox(
+        ctx: Context,
+        initial: Boolean,
+    ): CheckBox =
+        CheckBox(ctx).apply {
+            text = getString(R.string.fee_edit_active)
+            isChecked = initial
+        }
+
+    private fun showGlobalFeeDialog(
         existing: Fee?,
         onDelete: (() -> Unit)? = null,
-        onConfirm: (BigDecimal, Boolean) -> Unit,
+        onConfirm: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> Unit,
     ) {
         val ctx = requireContext()
         val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
         val container = paddedDialogContainer(ctx, topPadding = padV)
+
+        val nameLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_name) }
+        val nameInput = buildNameInput(ctx, existing?.name)
+        val percentLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_percent) }
         val percentInput =
             EditText(ctx).apply {
-                hint = getString(R.string.fee_edit_percent)
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 if (existing != null) setText(existing.percent.toPlainString())
             }
         val signGroup = buildSignToggle(ctx, existing?.isMarkup)
+        val activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false)
+
+        container.addView(nameLabel)
+        container.addView(nameInput)
+        container.addView(percentLabel)
         container.addView(percentInput)
         addSignToggleWithTopMargin(container, signGroup.view)
+        container.addView(activeCheckbox)
 
         MaterialAlertDialogBuilder(ctx)
             .setTitle(R.string.fee_edit_percent)
@@ -322,7 +585,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 val percent =
                     percentInput.text.toString().toBigDecimalOrNull()
                         ?: BigDecimal.ZERO
-                onConfirm(percent.abs(), signGroup.isMarkup())
+                onConfirm(
+                    nameInput.text.toString().trim(),
+                    percent.abs(),
+                    signGroup.isMarkup(),
+                    activeCheckbox.isChecked,
+                )
             }.setNegativeButton(android.R.string.cancel, null)
             .withDeleteButton(onDelete)
             .show()
@@ -341,36 +609,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         var pickedTo: String? = existing?.to
         val placeholder = getString(R.string.fee_pair_pick_currency)
 
+        val nameLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_name) }
+        val nameInput = buildNameInput(ctx, existing?.name)
         val fromLabel = TextView(ctx).apply { text = getString(R.string.fee_pair_from) }
-        val fromButton =
-            MaterialButton(
-                ctx,
-                null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle,
-            ).apply {
-                applyCurrencyIcon(this, pickedFrom, placeholder, ctx)
-                setOnClickListener {
-                    openCurrencyPicker { iso ->
-                        pickedFrom = iso
-                        applyCurrencyIcon(this, iso, placeholder, ctx)
-                    }
-                }
-            }
+        val fromButton = buildCurrencyPickerButton(ctx, pickedFrom, placeholder) { pickedFrom = it }
         val toLabel = TextView(ctx).apply { text = getString(R.string.fee_pair_to) }
-        val toButton =
-            MaterialButton(
-                ctx,
-                null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle,
-            ).apply {
-                applyCurrencyIcon(this, pickedTo, placeholder, ctx)
-                setOnClickListener {
-                    openCurrencyPicker { iso ->
-                        pickedTo = iso
-                        applyCurrencyIcon(this, iso, placeholder, ctx)
-                    }
-                }
-            }
+        val toButton = buildCurrencyPickerButton(ctx, pickedTo, placeholder) { pickedTo = it }
         val bothWays =
             CheckBox(ctx).apply {
                 text = getString(R.string.fee_pair_both_ways)
@@ -383,10 +627,21 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 if (existing != null) setText(existing.percent.toPlainString())
             }
         val signToggle = buildSignToggle(ctx, existing?.isMarkup)
+        val activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false)
 
-        listOf(fromLabel, fromButton, toLabel, toButton, bothWays, percentLabel, percentInput)
-            .forEach { container.addView(it) }
+        listOf(
+            nameLabel,
+            nameInput,
+            fromLabel,
+            fromButton,
+            toLabel,
+            toButton,
+            bothWays,
+            percentLabel,
+            percentInput,
+        ).forEach { container.addView(it) }
         addSignToggleWithTopMargin(container, signToggle.view)
+        container.addView(activeCheckbox)
 
         MaterialAlertDialogBuilder(ctx)
             .setTitle(R.string.fee_section_specific_pair)
@@ -401,11 +656,13 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 onConfirm(
                     Fee.SpecificPair(
                         id = existing?.id ?: UUID.randomUUID().toString(),
+                        name = nameInput.text.toString().trim(),
                         percent = percent.abs(),
                         isMarkup = signToggle.isMarkup(),
                         from = from,
                         to = to,
                         bothWays = bothWays.isChecked,
+                        isActive = activeCheckbox.isChecked,
                     ),
                 )
             }.setNegativeButton(android.R.string.cancel, null)
@@ -443,11 +700,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val btnWidth = SIGN_TOGGLE_BUTTON_WIDTH_DP.dpToPx().toInt()
 
         fun makeButton(labelRes: Int): MaterialButton =
-            MaterialButton(
-                ctx,
-                null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle,
-            ).apply {
+            outlinedMaterialButton(ctx).apply {
                 id = View.generateViewId()
                 text = getString(labelRes)
                 textSize = SIGN_TOGGLE_TEXT_SIZE_SP
@@ -461,6 +714,29 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         group.check(if (initialMarkup == false) btnMinus.id else btnPlus.id)
         return SignToggle(group, btnPlus.id, btnMinus.id)
     }
+
+    private fun outlinedMaterialButton(ctx: Context): MaterialButton =
+        MaterialButton(
+            ctx,
+            null,
+            com.google.android.material.R.attr.materialButtonOutlinedStyle,
+        )
+
+    private fun buildCurrencyPickerButton(
+        ctx: Context,
+        initial: String?,
+        placeholder: String,
+        onPicked: (String) -> Unit,
+    ): MaterialButton =
+        outlinedMaterialButton(ctx).apply {
+            applyCurrencyIcon(this, initial, placeholder, ctx)
+            setOnClickListener {
+                openCurrencyPicker { iso ->
+                    applyCurrencyIcon(this, iso, placeholder, ctx)
+                    onPicked(iso)
+                }
+            }
+        }
 
     private fun openCurrencyPicker(onPicked: (String) -> Unit) {
         val dialog = SearchableSpinnerDialog(requireContext())

@@ -28,6 +28,11 @@
     <string name="fee_side_summary_original">Displayed converted amount stays at mid-market; fees are shown separately as \"true cost\".</string>
     <string name="fee_side_summary_converted">Fees are baked into the displayed converted amount.</string>
     <string name="fee_empty">No fees yet</string>
+    <string name="fee_edit_name">Name</string>
+    <string name="fee_edit_name_hint">e.g. Wise, Revolut, Chase</string>
+    <string name="fee_edit_active">Active</string>
+    <string name="fee_inactive_marker">Inactive</string>
+    <string name="fee_untitled">Untitled</string>
     <string name="previewConversion_key" translatable="false">KEY_PREVIEW_CONVERSION</string>
     <string name="previewConversion_title">Conversion preview</string>
     <string name="previewConversion_summary">Show the current conversion for each rate in the currency picker.</string>
