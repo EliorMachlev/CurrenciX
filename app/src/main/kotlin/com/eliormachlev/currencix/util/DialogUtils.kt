@@ -14,6 +14,17 @@ import com.eliormachlev.currencix.R
 const val CHOICE_DESC_ALPHA = 0.7f
 
 /**
+ * Apply the platform ripple background used by every clickable row inside
+ * our dialog bodies and preference-picker sheets. Extracted so every row —
+ * choice rows, add rows, trailing icon buttons — reads from the same source.
+ */
+fun View.applySelectableRowBackground() {
+    val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
+    background = ta.getDrawable(0)
+    ta.recycle()
+}
+
+/**
  * Vertical LinearLayout with the standard dialog horizontal padding — the
  * common shape used for the "custom view" body of choice-picker and
  * fee-editor dialogs across cart and preferences.
@@ -51,9 +62,7 @@ fun choiceExplainerRow(
             gravity = Gravity.CENTER_VERTICAL
             setPadding(0, padV, 0, padV)
             isClickable = true
-            val ta = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
-            background = ta.getDrawable(0)
-            ta.recycle()
+            applySelectableRowBackground()
             setOnClickListener { onClick() }
         }
     if (leadingView != null) row.addView(leadingView)

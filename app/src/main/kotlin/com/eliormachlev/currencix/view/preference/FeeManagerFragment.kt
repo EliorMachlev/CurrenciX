@@ -26,6 +26,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.applySelectableRowBackground
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
@@ -216,76 +217,30 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
 
     private fun renderFees(fees: List<Fee>) {
-        renderGlobalSelector(
+        renderGlobalCategory(
             pref = globalExchangePref,
             entries = fees.filterIsInstance<Fee.GlobalExchange>(),
-            activeId = db.getActiveExchangeIdBlocking(),
             sectionTitleRes = R.string.fee_section_global_exchange,
-            onPicked = { id -> db.setActiveExchangeId(id) },
-            onAdd = {
-                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
-                    val fee =
-                        Fee.GlobalExchange(
-                            id = UUID.randomUUID().toString(),
-                            name = name,
-                            percent = percent,
-                            isMarkup = isMarkup,
-                            isActive = isActive,
-                        )
-                    db.addFee(fee)
-                    if (db.getActiveExchangeIdBlocking() == null) db.setActiveExchangeId(fee.id)
-                }
+            getActiveId = db::getActiveExchangeIdBlocking,
+            setActiveId = db::setActiveExchangeId,
+            create = { name, percent, isMarkup, isActive ->
+                Fee.GlobalExchange(UUID.randomUUID().toString(), name, percent, isMarkup, isActive)
             },
-            onEdit = { fee ->
-                showGlobalFeeDialog(
-                    existing = fee,
-                    onDelete = { db.deleteFee(fee.id) },
-                ) { name, percent, isMarkup, isActive ->
-                    db.updateFee(
-                        fee.copy(
-                            name = name,
-                            percent = percent,
-                            isMarkup = isMarkup,
-                            isActive = isActive,
-                        ),
-                    )
-                }
+            update = { existing, name, percent, isMarkup, isActive ->
+                existing.copy(name = name, percent = percent, isMarkup = isMarkup, isActive = isActive)
             },
         )
-        renderGlobalSelector(
+        renderGlobalCategory(
             pref = globalBankPref,
             entries = fees.filterIsInstance<Fee.GlobalBank>(),
-            activeId = db.getActiveBankIdBlocking(),
             sectionTitleRes = R.string.fee_section_global_bank,
-            onPicked = { id -> db.setActiveBankId(id) },
-            onAdd = {
-                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
-                    val fee =
-                        Fee.GlobalBank(
-                            id = UUID.randomUUID().toString(),
-                            name = name,
-                            percent = percent,
-                            isMarkup = isMarkup,
-                            isActive = isActive,
-                        )
-                    db.addFee(fee)
-                    if (db.getActiveBankIdBlocking() == null) db.setActiveBankId(fee.id)
-                }
+            getActiveId = db::getActiveBankIdBlocking,
+            setActiveId = db::setActiveBankId,
+            create = { name, percent, isMarkup, isActive ->
+                Fee.GlobalBank(UUID.randomUUID().toString(), name, percent, isMarkup, isActive)
             },
-            onEdit = { fee ->
-                showGlobalFeeDialog(
-                    existing = fee,
-                    onDelete = { db.deleteFee(fee.id) },
-                ) { name, percent, isMarkup, isActive ->
-                    db.updateFee(
-                        fee.copy(
-                            name = name,
-                            percent = percent,
-                            isMarkup = isMarkup,
-                            isActive = isActive,
-                        ),
-                    )
-                }
+            update = { existing, name, percent, isMarkup, isActive ->
+                existing.copy(name = name, percent = percent, isMarkup = isMarkup, isActive = isActive)
             },
         )
         populate(
@@ -303,6 +258,44 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                     onDelete = { db.deleteFee(fee.id) },
                 ) { updated ->
                     db.updateFee(updated.copy(id = fee.id))
+                }
+            },
+        )
+    }
+
+    /**
+     * Wire one global-fee category (exchange or bank/card) into its selector
+     * row. Callers supply the category-typed [create]/[update] factories so
+     * the sealed-class copy stays type-safe without a `when` on [Fee].
+     */
+    private fun <T : Fee> renderGlobalCategory(
+        pref: Preference,
+        entries: List<T>,
+        sectionTitleRes: Int,
+        getActiveId: () -> String?,
+        setActiveId: (String) -> Unit,
+        create: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> T,
+        update: (existing: T, name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> T,
+    ) {
+        renderGlobalSelector(
+            pref = pref,
+            entries = entries,
+            activeId = getActiveId(),
+            sectionTitleRes = sectionTitleRes,
+            onPicked = setActiveId,
+            onAdd = {
+                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
+                    val fee = create(name, percent, isMarkup, isActive)
+                    db.addFee(fee)
+                    if (getActiveId() == null) setActiveId(fee.id)
+                }
+            },
+            onEdit = { fee ->
+                showGlobalFeeDialog(
+                    existing = fee,
+                    onDelete = { db.deleteFee(fee.id) },
+                ) { name, percent, isMarkup, isActive ->
+                    db.updateFee(update(fee, name, percent, isMarkup, isActive))
                 }
             },
         )
@@ -419,9 +412,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(0, padV, 0, padV)
             isClickable = true
-            val ta = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
-            background = ta.getDrawable(0)
-            ta.recycle()
+            applySelectableRowBackground()
             setOnClickListener { onClick() }
             addView(buildRowIcon(ctx, R.drawable.ic_add, null, onClick = null))
             addView(
@@ -448,9 +439,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             contentDescription = contentDesc
             layoutParams = LinearLayout.LayoutParams(sizePx, sizePx)
             if (onClick != null) {
-                val ta = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
-                background = ta.getDrawable(0)
-                ta.recycle()
+                applySelectableRowBackground()
                 isClickable = true
                 isFocusable = true
                 setOnClickListener { onClick() }
@@ -623,35 +612,9 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val nameLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_name) }
         val nameInput = buildNameInput(ctx, existing?.name)
         val fromLabel = TextView(ctx).apply { text = getString(R.string.fee_pair_from) }
-        val fromButton =
-            MaterialButton(
-                ctx,
-                null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle,
-            ).apply {
-                applyCurrencyIcon(this, pickedFrom, placeholder, ctx)
-                setOnClickListener {
-                    openCurrencyPicker { iso ->
-                        pickedFrom = iso
-                        applyCurrencyIcon(this, iso, placeholder, ctx)
-                    }
-                }
-            }
+        val fromButton = buildCurrencyPickerButton(ctx, pickedFrom, placeholder) { pickedFrom = it }
         val toLabel = TextView(ctx).apply { text = getString(R.string.fee_pair_to) }
-        val toButton =
-            MaterialButton(
-                ctx,
-                null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle,
-            ).apply {
-                applyCurrencyIcon(this, pickedTo, placeholder, ctx)
-                setOnClickListener {
-                    openCurrencyPicker { iso ->
-                        pickedTo = iso
-                        applyCurrencyIcon(this, iso, placeholder, ctx)
-                    }
-                }
-            }
+        val toButton = buildCurrencyPickerButton(ctx, pickedTo, placeholder) { pickedTo = it }
         val bothWays =
             CheckBox(ctx).apply {
                 text = getString(R.string.fee_pair_both_ways)
@@ -737,11 +700,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val btnWidth = SIGN_TOGGLE_BUTTON_WIDTH_DP.dpToPx().toInt()
 
         fun makeButton(labelRes: Int): MaterialButton =
-            MaterialButton(
-                ctx,
-                null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle,
-            ).apply {
+            outlinedMaterialButton(ctx).apply {
                 id = View.generateViewId()
                 text = getString(labelRes)
                 textSize = SIGN_TOGGLE_TEXT_SIZE_SP
@@ -755,6 +714,29 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         group.check(if (initialMarkup == false) btnMinus.id else btnPlus.id)
         return SignToggle(group, btnPlus.id, btnMinus.id)
     }
+
+    private fun outlinedMaterialButton(ctx: Context): MaterialButton =
+        MaterialButton(
+            ctx,
+            null,
+            com.google.android.material.R.attr.materialButtonOutlinedStyle,
+        )
+
+    private fun buildCurrencyPickerButton(
+        ctx: Context,
+        initial: String?,
+        placeholder: String,
+        onPicked: (String) -> Unit,
+    ): MaterialButton =
+        outlinedMaterialButton(ctx).apply {
+            applyCurrencyIcon(this, initial, placeholder, ctx)
+            setOnClickListener {
+                openCurrencyPicker { iso ->
+                    applyCurrencyIcon(this, iso, placeholder, ctx)
+                    onPicked(iso)
+                }
+            }
+        }
 
     private fun openCurrencyPicker(onPicked: (String) -> Unit) {
         val dialog = SearchableSpinnerDialog(requireContext())
