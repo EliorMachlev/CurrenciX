@@ -49,11 +49,11 @@ jobs:
           # was built from.
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          ARGS=""
+          ARGS=()
           if [ -n "$PR_URL" ]; then
-            ARGS="-PprUrl=$PR_URL"
+            ARGS+=("-PprUrl=$PR_URL")
           fi
-          ./gradlew $ARGS lint${{ matrix.flavor }}Debug test${{ matrix.flavor }}DebugUnitTest assemble${{ matrix.flavor }}Debug
+          ./gradlew "${ARGS[@]}" lint${{ matrix.flavor }}Debug test${{ matrix.flavor }}DebugUnitTest assemble${{ matrix.flavor }}Debug
 
   fdroid-release-build:
     # F-Droid reproducibility guard: the fdroid release APK must build unsigned
