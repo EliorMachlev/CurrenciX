@@ -1,7 +1,7 @@
 # CurrenciX
 
 <div align="right">
-   <img alt="build status" height="20" src="https://github.com/EliorMachlev/currencies/actions/workflows/build.yaml/badge.svg">
+   <img alt="build status" height="20" src="https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml/badge.svg">
 </div>
 
 <div align="center">

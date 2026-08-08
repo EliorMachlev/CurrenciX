@@ -7,7 +7,7 @@ private val PROJECT_CREDITS =
         Credit(
             title = "CurrenciX",
             subtitle = "Fork by Elior Machlev",
-            url = "https://github.com/EliorMachlev/currencies",
+            url = "https://github.com/EliorMachlev/CurrenciX",
         ),
         Credit(
             title = "Currencies",
