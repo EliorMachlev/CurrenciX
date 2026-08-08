@@ -209,8 +209,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun shareCurrentConversion() {
-        val conversion = tvInfoConversion.text?.toString().orEmpty()
-        if (conversion.isBlank()) return
+        val conversion = buildShareConversion() ?: return
         val footer = buildShareFooter(viewModel.getExchangeRates().value)
         val text = if (footer != null) "$conversion\n-- $footer" else conversion
         val intent =
@@ -219,6 +218,47 @@ class MainActivity : BaseActivity() {
                 putExtra(Intent.EXTRA_TEXT, text)
             }
         startActivity(Intent.createChooser(intent, null))
+    }
+
+    // Compose the shared conversion line from the on-screen values so it
+    // honors the currently typed amount and the active fee stack (matching
+    // what the user sees), rather than the "1 base ≈ result" info footer
+    // which is always unit-scaled and fee-free.
+    private fun buildShareConversion(): String? {
+        val base = viewModel.getBaseCurrency().value ?: return null
+        val dest = viewModel.getDestinationCurrency().value ?: return null
+        val rates = viewModel.getExchangeRates().value?.rates ?: return null
+        if (rates.none { it.currency == base } || rates.none { it.currency == dest }) return null
+        val amount = viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ZERO
+        val result = viewModel.getResultAsNumber().value ?: BigDecimal.ZERO
+        val places = viewModel.getDecimalPlaces().value ?: AMOUNT_DECIMAL_PLACES
+        val main =
+            getString(
+                R.string.info_conversion,
+                amount.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
+                base.iso4217Alpha(),
+                result.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
+                dest.iso4217Alpha(),
+            )
+        val extra = buildShareFeeExtra(base, dest)
+        return if (extra != null) "$main\n$extra" else main
+    }
+
+    // "True cost" (ORIGINAL side) or "Original value" (CONVERTED side) line —
+    // mirrors the small annotation shown under the result when a fee applies.
+    private fun buildShareFeeExtra(
+        base: Currency,
+        dest: Currency,
+    ): String? {
+        viewModel.getTrueCost().value?.let { trueCost ->
+            return getString(R.string.fee_true_cost_prefix) +
+                ltrIsolate("${trueCost.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)} ${base.iso4217Alpha()}")
+        }
+        viewModel.getOriginalValue().value?.let { originalValue ->
+            return getString(R.string.fee_original_value_prefix) +
+                ltrIsolate("${originalValue.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)} ${dest.iso4217Alpha()}")
+        }
+        return null
     }
 
     private fun buildShareFooter(rates: ExchangeRates?): String? {
