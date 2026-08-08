@@ -14,6 +14,7 @@ import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.text.style.TypefaceSpan
 import android.util.TypedValue
 import android.view.ContextMenu
 import android.view.KeyEvent
@@ -710,6 +711,7 @@ class MainActivity : BaseActivity() {
                 ).toInt()
         return SpannableString(text).apply {
             setSpan(AbsoluteSizeSpan(sizePx), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(TypefaceSpan(WORDMARK_TITLE_FONT_FAMILY), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             setSpan(StyleSpan(Typeface.BOLD), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             if (BuildConfig.DEBUG) {
                 setSpan(
@@ -723,4 +725,8 @@ class MainActivity : BaseActivity() {
     }
 }
 
-private const val WORDMARK_TITLE_SP = 24f
+private const val WORDMARK_TITLE_SP = 26f
+// sans-serif-black is Android's heaviest built-in font family (weight 900).
+// Combined with StyleSpan(BOLD), it gives the wordmark a distinct logo weight
+// without shipping a custom font asset.
+private const val WORDMARK_TITLE_FONT_FAMILY = "sans-serif-black"
