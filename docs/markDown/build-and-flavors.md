@@ -57,7 +57,9 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 ### Calculator
 
-The calculator expression evaluator is hand-rolled in `util/CalculatorExpression.kt` — a small `BigDecimal` recursive-descent parser handling `+ − × ÷`, unary sign, parentheses, and percent shortcuts. No third-party math library, so no license-compatibility footgun.
+| Dependency | Version | Note |
+|---|---|---|
+| `com.ezylang:EvalEx` | 3.7.0 | Apache-2.0, BigDecimal-native. Replaced mXparser (v5+ dual license isn't F-Droid compatible). |
 
 ### Charts
 

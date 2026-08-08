@@ -48,6 +48,11 @@ private val LIBRARY_CREDITS =
             url = "https://github.com/JakeWharton/timber",
         ),
         Credit(
+            title = "EvalEx",
+            subtitle = "Math expression evaluator — Udo Klimaschewski",
+            url = "https://github.com/ezylang/EvalEx",
+        ),
+        Credit(
             title = "Bouncy Castle",
             subtitle = "Cryptography provider",
             url = "https://www.bouncycastle.org/",

@@ -154,10 +154,10 @@ dependencies {
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
-    // math: the calculator expression evaluator is hand-rolled in
-    // util/CalculatorExpression.kt (BigDecimal recursive-descent, ~50 lines).
-    // No third-party math dep so we don't inherit an F-Droid-incompatible
-    // license like mXparser v5+.
+    // math: EvalEx (Apache-2.0) evaluates the calculator expression. Replaced
+    // mXparser 4.4.3, which was pinned because its v5+ dual license isn't
+    // F-Droid compatible. EvalEx is actively maintained and BigDecimal-native.
+    implementation("com.ezylang:EvalEx:3.7.0")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
     val composeBomVersion = "2026.06.01"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
