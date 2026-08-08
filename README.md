@@ -1,37 +1,35 @@
 # CurrenciX
 
-<!-- badges -->
 <div align="right">
-   <a href="https://translate.codeberg.org/engage/currencies/"><img alt="translation status" height="20" src="https://translate.codeberg.org/widgets/currencies/-/svg-badge.svg"></a>
    <img alt="build status" height="20" src="https://github.com/EliorMachlev/currencies/actions/workflows/build.yaml/badge.svg">
 </div>
 
-<!-- logo -->
 <div align="center">
    <img alt="Logo" height="200" src="art/ic_launcher/ic_launcher_foreground.svg">
 </div>
 
-**CurrenciX** is a [simple](https://en.wikipedia.org/wiki/KISS_principle) and straightforward currency converter.
-It is **not** intended to be used for realtime financial business, rather to be a handy companion e.g., on vacations.
+**CurrenciX** is a [simple](https://en.wikipedia.org/wiki/KISS_principle) currency converter — a handy travel companion, not a tool for realtime financial business.
 
-CurrenciX is a fork of the upstream [Currencies](https://github.com/sal0max/currencies) app by Maximilian Salomon; the upstream project is distributed on Google Play and F-Droid under its original branding.
+It's a fork of [Currencies](https://github.com/sal0max/currencies) by Maximilian Salomon. See [NOTICE.md](NOTICE.md) for a summary of what changed in the fork.
 
 ## Features
 
-* The app supports all relevant currencies. You can choose between several exchange rate providers:
-   * [frankfurter.app](https://frankfurter.app/) with **over 30 currencies**, provided by the European Central Bank
-   * [OpenExchangerates](https://openexchangerates.org/): contains **over 160 currencies**, with hourly updates
-   * [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en): provides the European Commission’s official monthly accounting rates for the euro and **over 150 corresponding conversion rates**
-   * [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) provides about 23 currency rates of the Canadian Central Bank
-   * The Norwegian Central Bank [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) lists some 40 exchange rates
-   * The Russian Central Bank [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) gives probably the most reliable data of exchange rates to Russian Ruble. Some 44 exchange rates are listed
-* The UI is simple and pure Material 3 Design.
-* Exchange rate history: Check out the chart for the past year, to see how the currencies have developed.
-* Historical rates: You can use rates from prior dates.
-* A major feature is the included calculator. Useful e.g., if you want to split up a restaurant bill.
-* Fee calculator: optionally add a customizable foreign exchange fee to all calculations.
-* **CurrenciX** is written for Android in Kotlin, targeting Android 13 and supporting light and dark themes.
-* The app is ad-free and doesn't spy on the user.
+* Multiple exchange rate providers to choose from:
+   * [frankfurter.app](https://frankfurter.app/) — 30+ currencies, provided by the European Central Bank
+   * [OpenExchangerates](https://openexchangerates.org/) — 160+ currencies with hourly updates (requires a free API key)
+   * [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) — the European Commission's monthly accounting rates for 150+ pairs
+   * [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) — ~23 CAD rates
+   * [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) (Norway) — ~40 rates
+   * [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) (Russia) — ~44 rates against the Ruble
+* Built-in calculator for on-the-fly conversions (e.g. splitting a restaurant bill).
+* Fee manager: global exchange/bank fees plus per-pair overrides — see the "true cost" alongside the mid-market rate.
+* Rate-history chart with configurable overlays (grid, axis labels, min/max highlights).
+* Historical rates: convert against rates from any prior date.
+* Encrypted local backup & restore of settings.
+* Material 3 UI with light, dark, and OLED themes.
+* Ad-free and telemetry-free.
+
+Written in Kotlin, min SDK 26 (Android 8.0), targeting current Android.
 
 ## Screenshots
 
@@ -42,13 +40,10 @@ CurrenciX is a fork of the upstream [Currencies](https://github.com/sal0max/curr
 
 ## Development
 
-Check out [CONTRIBUTING.md](CONTRIBUTING.md), if you are interested in participating.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Deeper docs — architecture, build flavors, CI/CD, security — live in [`docs/markDown/`](docs/markDown/).
 
 ## License
 
-Copyright 2020 Maximilian Salomon (upstream Currencies).
-CurrenciX fork © 2026 Elior Machlev — modifications summarised in [NOTICE.md](NOTICE.md).
+Copyright © 2020 Maximilian Salomon (upstream Currencies) · CurrenciX fork © 2026 Elior Machlev.
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with this program. If not, see [http://www.gnu.org/licenses](http://www.gnu.org/licenses/).
+Licensed under [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html).
