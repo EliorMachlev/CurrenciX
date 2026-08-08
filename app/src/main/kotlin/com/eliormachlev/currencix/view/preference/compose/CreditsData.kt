@@ -48,11 +48,6 @@ private val LIBRARY_CREDITS =
             url = "https://github.com/JakeWharton/timber",
         ),
         Credit(
-            title = "mXparser",
-            subtitle = "Math expression parser",
-            url = "https://mathparser.org/",
-        ),
-        Credit(
             title = "Bouncy Castle",
             subtitle = "Cryptography provider",
             url = "https://www.bouncycastle.org/",

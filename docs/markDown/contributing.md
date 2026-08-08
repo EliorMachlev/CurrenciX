@@ -54,7 +54,6 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 - [ ] No new Detekt warnings
 - [ ] `./gradlew spotlessCheck` is clean
 - [ ] If adding a dependency: check F-Droid licence compatibility
-- [ ] `mXparser` must remain at 4.4.3 — v5+ is not F-Droid compatible
 
 ### Commit Message Convention
 

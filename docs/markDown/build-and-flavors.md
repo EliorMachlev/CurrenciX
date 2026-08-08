@@ -57,9 +57,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 ### Calculator
 
-| Dependency | Version | Note |
-|---|---|---|
-| `org.mariuszgromada.math:MathParser.org-mXparser` | **4.4.3** | Pinned — v5+ has an F-Droid-incompatible licence |
+The calculator expression evaluator is hand-rolled in `util/CalculatorExpression.kt` — a small `BigDecimal` recursive-descent parser handling `+ − × ÷`, unary sign, parentheses, and percent shortcuts. No third-party math library, so no license-compatibility footgun.
 
 ### Charts
 

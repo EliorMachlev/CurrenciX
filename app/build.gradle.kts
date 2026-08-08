@@ -154,8 +154,10 @@ dependencies {
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
-    // math (v5 releases use incompatible license to fdroid: noinspection GradleDependency)
-    implementation("org.mariuszgromada.math:MathParser.org-mXparser:4.4.3")
+    // math: the calculator expression evaluator is hand-rolled in
+    // util/CalculatorExpression.kt (BigDecimal recursive-descent, ~50 lines).
+    // No third-party math dep so we don't inherit an F-Droid-incompatible
+    // license like mXparser v5+.
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
     val composeBomVersion = "2026.06.01"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
