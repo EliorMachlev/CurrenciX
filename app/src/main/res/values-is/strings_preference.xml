@@ -97,10 +97,6 @@
     <string name="category_about">Um forritið</string>
     <string name="disclaimer_title">Fyrirvari</string>
     <string name="disclaimer_summary">Þrátt fyrir að forritið sé vel skrifað og prófað er <b>engin trygging fyrir því að gögnin sem það sýnir séu rétt</b>. Gengin eru gefin upp af þriðju aðilum og forritið getur ekki gefið nein loforð um að gögnin séu rétt.\nAð auki geta vextirnir sem gefnir eru upp verið frábrugðnir þeim sem bankinn þinn notar.\nAð lokum: Mistök gerast. Treystu aldrei neinum í blindni! En samt vertu viss um að ég hefði ekki gefið út þetta forrit ef ég hefði verið í nokkrum vafa um að það virki eins og ætlað er.</string>
-
-
-    <string name="donate_title">Styðja höfundinn</string>
-    <string name="donate_summary">Framlag í gegnum PayPal</string>
     <string name="rate_title">Meta forritið</string>
     <string name="rate_summary">Það má hjálpa öðrum að finna forritið. Smelltu hingað til að gefa forritinu einkunn á Google Play.</string>
     <string name="category_versioninfo">Útgáfuupplýsingar</string>
@@ -126,4 +122,10 @@
     <string name="backup_password_prompt_title">Sláðu inn lykilorð</string>
     <string name="backup_password_wrong">Lykilorðið afkóðaði ekki þessa skrá. Reyndu aftur.</string>
     <string name="backup_password_too_short">Lykilorð verður að vera minnst %1$d stafir</string>
+    <string name="credits_title">Þakkir</string>
+    <string name="credits_summary">Tilvísanir, leyfi og söfn þriðja aðila</string>
+    <string name="title_credits">Þakkir</string>
+    <string name="credits_section_project">Verkefni</string>
+    <string name="credits_section_license">Leyfi</string>
+    <string name="credits_section_libraries">Söfn þriðja aðila</string>
 </resources>

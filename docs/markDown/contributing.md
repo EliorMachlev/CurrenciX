@@ -5,7 +5,6 @@
 | Type | Accepted? |
 |---|---|
 | Bug fixes | Yes |
-| Translations | Yes — via Weblate |
 | New exchange rate providers | Discuss first |
 | New features | Discuss first |
 | Refactors | Discuss first |
@@ -14,7 +13,7 @@ The project favours simplicity. Large feature additions are unlikely to be merge
 
 ## Translations
 
-Translations are managed on [Weblate](https://translate.codeberg.org/engage/currencies/). Do **not** open PRs that edit string resource XML files directly — translate through the Weblate interface.
+The fork inherits translations for 20+ languages from upstream Currencies but doesn't yet run its own translation workflow. If you'd like to contribute a translation, open an issue first so we can coordinate.
 
 ## Code Contributions
 

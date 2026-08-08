@@ -13,7 +13,7 @@ Only the latest release is actively supported with security fixes.
 
 Please **do not** open a public GitHub Issue for security vulnerabilities.
 
-Report vulnerabilities privately via [GitHub's private vulnerability reporting](https://github.com/EliorMachlev/currencies/security/advisories/new).
+Report vulnerabilities privately via [GitHub's private vulnerability reporting](https://github.com/EliorMachlev/CurrenciX/security/advisories/new).
 
 Include:
 - Description of the vulnerability

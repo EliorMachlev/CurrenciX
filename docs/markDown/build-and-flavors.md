@@ -42,7 +42,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 |---|---|
 | `androidx.appcompat:appcompat` | 1.7.1 |
 | `androidx.lifecycle:lifecycle-*` | 2.11.0 |
-| `androidx.constraintlayout:constraintlayout` | 2.2.1 |
+| `androidx.constraintlayout:constraintlayout` | 2.2.2 |
 | `com.google.android.material:material` | 1.14.0 |
 | `androidx.window:window` | 1.5.1 |
 
@@ -50,10 +50,10 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Dependency | Version |
 |---|---|
-| `com.squareup.okhttp3:okhttp` | 4.12.0 |
-| `com.squareup.okhttp3:logging-interceptor` | 4.12.0 |
+| `com.squareup.okhttp3:okhttp` | 5.4.0 |
+| `com.squareup.okhttp3:logging-interceptor` | 5.4.0 |
 | `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
-| `com.google.devtools.ksp:*` | 2.3.9 |
+| `com.google.devtools.ksp:*` | 2.3.10 |
 
 ### Calculator
 
@@ -65,7 +65,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Dependency | Version |
 |---|---|
-| `com.robinhood.spark:spark` | 1.2.0 |
+| `com.patrykandpatrick.vico:compose` | 3.2.3 |
 
 ### Testing
 

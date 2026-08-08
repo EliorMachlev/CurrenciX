@@ -103,8 +103,6 @@
     <string name="disclaimer_summary">Mặc dù ứng dụng này được viết ra và thử nghiệm rất kỹ, <b>nhưng không có đảm bảo là dữ liệu nó hiển thị là đúng</b>. Tỉ lệ chuyển đổi được bên thứ ba cung cấp và ứng dụng này không thể hứa rằng dữ liệu là đúng và được cập nhật.\nThêm nữa, tỉ lệ được cung cấp - nếu vẫn đúng - có thể khác so với tỉ lệ của ngân hàng của bạn.\nCuối cùng: Lỗi lầm thường xảy ra. Đừng bao giờ tin tưởng mù quáng bất kỳ ai! Nhưng bạn vẫn cứ yên tâm là tôi đã không phát hành ứng dụng này nếu tôi nghi ngờ là nó không hoạt động như mong muốn.</string>
     <string name="sourcecode_title">Mã nguồn</string>
     <string name="sourcecode_summary">Ứng dụng này là mã nguồn mở. Hãy đến kho chứa mã nguồn để tạo vấn đề, tìm cách đóng góp hoặc xem mã nguồn.</string>
-    <string name="donate_title">Hỗ trợ nhà phát triển</string>
-    <string name="donate_summary">Ủng hộ qua PayPal</string>
     <string name="rate_title">Đánh giá ứng dụng này</string>
     <string name="rate_summary">Nếu bạn muốn, bạn có thể giúp những người khác khám phá ra Currencies. Hãy nhấn vào đây để đánh giá ứng dụng trên Google Play.</string>
     <string name="category_versioninfo">Thông tin phiên bản</string>
@@ -130,4 +128,10 @@
     <string name="backup_password_prompt_title">Nhập mật khẩu</string>
     <string name="backup_password_wrong">Mật khẩu không giải mã được tệp này. Hãy thử lại.</string>
     <string name="backup_password_too_short">Mật khẩu phải có ít nhất %1$d ký tự</string>
+    <string name="credits_title">Ghi công</string>
+    <string name="credits_summary">Ghi nhận, giấy phép và thư viện của bên thứ ba</string>
+    <string name="title_credits">Ghi công</string>
+    <string name="credits_section_project">Dự án</string>
+    <string name="credits_section_license">Giấy phép</string>
+    <string name="credits_section_libraries">Thư viện của bên thứ ba</string>
 </resources>

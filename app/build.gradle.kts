@@ -17,16 +17,16 @@ kotlin {
 }
 
 base {
-    archivesName.set("de.salomax.currencies-v12300")
+    archivesName.set("com.eliormachlev.currencix-v12300")
 }
 
 android {
-    namespace = "de.salomax.currencies"
+    namespace = "com.eliormachlev.currencix"
     compileSdk = 37
     buildToolsVersion = "37.0.0"
 
     defaultConfig {
-        applicationId = "de.salomax.currencies"
+        applicationId = "com.eliormachlev.currencix"
         minSdk = 26
         targetSdk = 37
         // SemVer
@@ -71,14 +71,29 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // Release builds never carry PR or commit context — the in-app
+            // "Release notes" entry deep-links to the GitHub release for the
+            // shipped versionName. Fields must exist so debug/release share
+            // a shape.
+            buildConfigField("String", "PR_URL", "\"\"")
+            buildConfigField("String", "COMMIT_SHA", "\"\"")
         }
         debug {
             applicationIdSuffix = ".debug"
-            // CI passes -PdebugCommitSha=<short-sha> so each debug APK's
-            // versionName encodes exactly which commit it was built from
-            // (e.g. "1.23.0-abc1234"). Local builds keep the "[DEBUG]" tag.
-            val commitSha = project.findProperty("debugCommitSha") as String?
+            // Commit SHA sourced from -PdebugCommitSha (CI passes it) or, as
+            // a fallback, the local git HEAD short SHA so a locally-built APK
+            // still knows which commit it came from. versionName encodes the
+            // SHA (e.g. "1.23.0-abc1234"); if git isn't available, keep the
+            // "[DEBUG]" tag.
+            val commitSha = (project.findProperty("debugCommitSha") as String?) ?: gitShortSha()
             versionNameSuffix = if (commitSha != null) "-$commitSha" else " [DEBUG]"
+            buildConfigField("String", "COMMIT_SHA", "\"${commitSha ?: ""}\"")
+            // CI passes -PprUrl=<pr html_url> for pull_request builds so the
+            // in-app "Release notes" entry can deep-link back to the exact PR
+            // the APK was built from. When absent the client falls back to
+            // the commit URL, and finally to the repo pulls page.
+            val prUrl = project.findProperty("prUrl") as String? ?: ""
+            buildConfigField("String", "PR_URL", "\"$prUrl\"")
         }
     }
 
@@ -175,6 +190,26 @@ dependencies {
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:$junitVersion")
     testImplementation("com.code-intelligence:jazzer-junit:0.30.0")
 }
+
+// Best-effort short git SHA for the currently checked-out HEAD. Returns null
+// if git isn't installed, the repo isn't a git checkout, or the command
+// fails for any reason — callers treat that as "no commit context".
+fun gitShortSha(): String? =
+    try {
+        val proc =
+            ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+                .directory(rootDir)
+                .redirectErrorStream(true)
+                .start()
+        proc.waitFor()
+        proc.inputStream
+            .bufferedReader()
+            .readLine()
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+    } catch (_: Exception) {
+        null
+    }
 
 fun getSecret(key: String): String? {
     val secretsFile: File = rootProject.file("secrets.properties")

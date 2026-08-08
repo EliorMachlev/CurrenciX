@@ -147,9 +147,13 @@
     <string name="sourcecode_key" translatable="false">KEY_SOURCECODE</string>
     <string name="sourcecode_title">Source code</string>
     <string name="sourcecode_summary">This app is open source. Go to the code repository to open issues, find out how to contribute or just have a look at the sources.</string>
-    <string name="donate_key" translatable="false">KEY_DONATE</string>
-    <string name="donate_title">Support the developer</string>
-    <string name="donate_summary">Donate via PayPal</string>
+    <string name="credits_key" translatable="false">KEY_CREDITS</string>
+    <string name="credits_title">Credits</string>
+    <string name="credits_summary">Attributions, license, and third-party libraries</string>
+    <string name="title_credits">Credits</string>
+    <string name="credits_section_project">Project</string>
+    <string name="credits_section_license">License</string>
+    <string name="credits_section_libraries">Third-party libraries</string>
     <string name="rate_key" translatable="false">KEY_RATE</string>
     <string name="rate_title">Rate this app</string>
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app on Google Play.</string>
@@ -157,5 +161,5 @@
     <string name="changelog_key" translatable="false">KEY_CHANGELOG</string>
     <string name="title_changelog">Changelog</string>
     <string name="version_key" translatable="false">KEY_ABOUT</string>
-    <string name="version_summary" translatable="false" tools:ignore="PluralsCandidate">© 2020-%1$s Maximilian Salomon</string>
+    <string name="version_summary" translatable="false" tools:ignore="PluralsCandidate">© 2020-%1$s Maximilian Salomon · CurrenciX fork © 2026 Elior Machlev · GPL-3.0-or-later</string>
 </resources>

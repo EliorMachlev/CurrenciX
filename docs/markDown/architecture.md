@@ -1,6 +1,6 @@
 # Architecture
 
-Currencies follows **MVVM** (Model-View-ViewModel) with a Repository layer, implemented in Kotlin with AndroidX Lifecycle components.
+CurrenciX follows **MVVM** (Model-View-ViewModel) with a Repository layer, implemented in Kotlin with AndroidX Lifecycle components.
 
 ## Layer Overview
 
@@ -32,7 +32,7 @@ Currencies follows **MVVM** (Model-View-ViewModel) with a Repository layer, impl
 ## Source Layout
 
 ```
-app/src/main/kotlin/de/salomax/currencies/
+app/src/main/kotlin/com/eliormachlev/currencix/
 ├── CurrenciesApplication.kt   # Application subclass — prewarms provider DNS at startup
 ├── model/
 │   ├── ApiProvider.kt          # Enum of 6 providers + abstract Api interface

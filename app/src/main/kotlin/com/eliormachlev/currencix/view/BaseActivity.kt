@@ -1,0 +1,76 @@
+package com.eliormachlev.currencix.view
+
+import android.graphics.Color
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoTracker
+import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.repository.Database
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+abstract class BaseActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // pure black — night mode itself is set once in CurrenciesApplication
+        // so this setTheme call resolves against the correct night qualifier.
+        setTheme(
+            if (Database(this).isPureBlackEnabled()) {
+                R.style.AppTheme_PureBlack
+            } else {
+                R.style.AppTheme
+            },
+        )
+
+        super.onCreate(savedInstanceState)
+    }
+
+    /**
+     * Resolve `?android:attr/textColorSecondary` against `AppTheme` explicitly —
+     * used where the current context's own theme lookup would return the wrong
+     * color (e.g. inside snackbars/dialogs styled with a different overlay).
+     */
+    protected fun getTextColorSecondary(): Int {
+        val a = theme.obtainStyledAttributes(R.style.AppTheme, intArrayOf(android.R.attr.textColorSecondary))
+        val color = a.getColor(0, Color.TRANSPARENT)
+        a.recycle()
+        return color
+    }
+
+    /**
+     * Build a [Snackbar] anchored to the shared `snackbar_top_position` view.
+     * Passing `this` as the theme context (vs. an anchor View) skips the
+     * ActionBar-overlay theme walk that trips over Material3-only attributes.
+     * Callers apply their own tints / actions / duration on the returned
+     * builder — this only centralises the anchor-lookup boilerplate.
+     */
+    protected fun snackbar(
+        message: CharSequence,
+        duration: Int = Snackbar.LENGTH_SHORT,
+    ): Snackbar = Snackbar.make(this, findViewById(R.id.snackbar_top_position), message, duration)
+
+    /**
+     * Subscribe to [FoldingFeature] changes for the current window and forward
+     * the first feature (if any) to [onFeature] whenever it changes. Handles
+     * the lifecycle-aware collection so subclasses only supply the reaction.
+     */
+    protected fun observeFoldingFeature(onFeature: (FoldingFeature) -> Unit) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                WindowInfoTracker
+                    .getOrCreate(this@BaseActivity)
+                    .windowLayoutInfo(this@BaseActivity)
+                    .collect { info ->
+                        info.displayFeatures
+                            .filterIsInstance(FoldingFeature::class.java)
+                            .firstOrNull()
+                            ?.let(onFeature)
+                    }
+            }
+        }
+    }
+}

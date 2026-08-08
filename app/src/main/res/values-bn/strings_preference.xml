@@ -101,8 +101,6 @@
     <string name="disclaimer_summary">যদিও অ্যাপটি ভালোভাবে লিখা ও পরীক্ষা করা, <b>এর কোন নিশ্চয়তা নেই যে উপাত্ত এখানে দেখানো হয়েছে তা সঠিক</b>। এই বিনিময় হার তৃতীয় পক্ষদ্বারা উৎপাদিত এবং এই অ্যাপ নিশ্চিত করতে পারবে না যে সেগুলো সত্য বা হালনাগাদকৃত \nযোগ করা যায় যে, বিনিময় হারগুলো – সঠিক হলেও – তোমার ব্যাংকের ব্যবহৃত হার থেকে আলাদা হতে পারে।\nসবশেষে: ভুল হয়। অন্ধভাবে কাউকে বিশ্বাস করবে না! এটা বলার পরেও, নিশ্চিত থাকো এই অ্যাপটি ঠিকভাবে কাজ করা নিয়ে কোন দ্বিধা থাকলে এই অ্যাপ আমি প্রকাশ করতাম না।</string>
     <string name="sourcecode_title">কোড উৎস</string>
     <string name="sourcecode_summary">এই অ্যাপটি মুক্ত উৎস। কোড ভাণ্ডারে গিয়ে কোন সমস্যা জানাতে পারো, কিভাবে অবদান রাখতে হয় জানতে পারো বা শুধু উৎস দেখতে পারো।</string>
-    <string name="donate_title">তৈরিকারককে সহায়তা করো</string>
-    <string name="donate_summary">পেপালে অনুদান দাও</string>
     <string name="rate_title">এই অ্যাপ পর্যালোচনা করো</string>
     <string name="rate_summary">তুমি চাইলে, অন্যদেরকে কারেন্সি অ্যাপটি সম্পর্কে জানতে সহায়তা করতে পারো। গুগল প্লেতে অ্যাপটি পর্যালোচনা জমা দিতে এখানে টিপ দাও।</string>
     <string name="category_versioninfo">সংস্করণ তথ্যা</string>
@@ -128,4 +126,10 @@
     <string name="backup_password_prompt_title">পাসওয়ার্ড লিখুন</string>
     <string name="backup_password_wrong">পাসওয়ার্ড এই ফাইল ডিক্রিপ্ট করতে পারেনি। আবার চেষ্টা করুন।</string>
     <string name="backup_password_too_short">পাসওয়ার্ড অন্তত %1$d অক্ষরের হতে হবে</string>
+    <string name="credits_title">কৃতিত্ব</string>
+    <string name="credits_summary">স্বীকৃতি, লাইসেন্স এবং তৃতীয় পক্ষের লাইব্রেরি</string>
+    <string name="title_credits">কৃতিত্ব</string>
+    <string name="credits_section_project">প্রকল্প</string>
+    <string name="credits_section_license">লাইসেন্স</string>
+    <string name="credits_section_libraries">তৃতীয় পক্ষের লাইব্রেরি</string>
 </resources>

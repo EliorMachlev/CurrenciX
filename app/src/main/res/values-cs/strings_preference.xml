@@ -101,8 +101,6 @@
     <string name="disclaimer_summary">Přestože je aplikace velmi důkladně napsaná a otestovaná, <b>není zaručeno, že údaje, které zobrazuje, jsou správné</b>. Směnné kurzy jsou poskytovány třetí stranou a tato aplikace nemůže vůbec slíbit, že údaje jsou pravdivé a aktuální.\nKromě toho se poskytované kurzy – i když jsou správné – mohou lišit od kurzů používaných vaší bankou.\nA nakonec: Chyby se stávají. Nikdy nikomu slepě nevěřte! Jak ale již bylo řečeno, můžete si být jisti, že bych tuto aplikaci nevydal, kdybych měl jakékoli pochybnosti o tom, že funguje tak, jak má.</string>
     <string name="sourcecode_title">Zdrojový kód</string>
     <string name="sourcecode_summary">Tato aplikace je open source. Pro nahlášení problémů, přispění do kódu nebo jeho prosté prohlédnutí přejděte do jejího repozitáře.</string>
-    <string name="donate_title">Podpořit vývojáře</string>
-    <string name="donate_summary">Přispět pomocí PayPalu</string>
     <string name="rate_title">Ohodnotit tuto aplikaci</string>
     <string name="rate_summary">Pokud chcete, můžete ostatním pomoci objevit Currencies. Klepněte sem a ohodnoťte aplikaci v Google Play.</string>
     <string name="category_versioninfo">Info o verzi</string>
@@ -128,4 +126,10 @@
     <string name="backup_password_prompt_title">Zadej heslo</string>
     <string name="backup_password_wrong">Heslem se soubor nepodařilo dešifrovat. Zkus to znovu.</string>
     <string name="backup_password_too_short">Heslo musí mít alespoň %1$d znaků</string>
+    <string name="credits_title">Poděkování</string>
+    <string name="credits_summary">Uznání, licence a knihovny třetích stran</string>
+    <string name="title_credits">Poděkování</string>
+    <string name="credits_section_project">Projekt</string>
+    <string name="credits_section_license">Licence</string>
+    <string name="credits_section_libraries">Knihovny třetích stran</string>
 </resources>

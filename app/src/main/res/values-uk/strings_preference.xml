@@ -101,8 +101,6 @@
     <string name="disclaimer_summary">Незважаючи на те, що програма дуже ретельно написана та протестована, <b>немає жодної гарантії, що дані, які вона показує, правильні</b>. Курси обміну надає третя сторона, і ця програма не може гарантувати, що дані правдиві та актуальні.\nКрім того, надані курси (якщо правильні) можуть відрізнятися від тих, які використовує ваш банк.\nЗрештою: помилки трапляються. Ніколи нікому сліпо не вірте! З огляду на це, будьте впевнені, я б не випускав цю програму, якби мав сумніви, що вона працює належним чином.</string>
     <string name="sourcecode_title">Вихідний код</string>
     <string name="sourcecode_summary">Цей додаток має відкритий вихідний код. Перейдіть до репозиторію коду, щоб повідомити про проблеми, дізнатися, як зробити внесок, або просто переглянути джерела.</string>
-    <string name="donate_title">Підтримати розробника</string>
-    <string name="donate_summary">Пожертвування через PayPal</string>
     <string name="rate_title">Оцініть цей додаток</string>
     <string name="rate_summary">Якщо хочете, ви можете допомогти іншим відкрити для себе Currencies. Натисніть тут, щоб оцінити додаток у Google Play.</string>
     <string name="category_versioninfo">Інформація про версію</string>
@@ -128,4 +126,10 @@
     <string name="backup_password_prompt_title">Введіть пароль</string>
     <string name="backup_password_wrong">Пароль не розшифрував цей файл. Спробуйте ще раз.</string>
     <string name="backup_password_too_short">Пароль має містити щонайменше %1$d символів</string>
+    <string name="credits_title">Подяки</string>
+    <string name="credits_summary">Атрибуції, ліцензія та сторонні бібліотеки</string>
+    <string name="title_credits">Подяки</string>
+    <string name="credits_section_project">Проєкт</string>
+    <string name="credits_section_license">Ліцензія</string>
+    <string name="credits_section_libraries">Сторонні бібліотеки</string>
 </resources>

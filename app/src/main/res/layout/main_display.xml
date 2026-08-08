@@ -169,7 +169,7 @@
 
         <!-- top main_display ********************************************* -->
 
-        <de.salomax.currencies.view.main.spinner.SearchableSpinner
+        <com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
             android:id="@+id/spinnerFrom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -219,7 +219,7 @@
 
         <!-- bottom main_display ****************************************** -->
 
-        <de.salomax.currencies.view.main.spinner.SearchableSpinner
+        <com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
             android:id="@+id/spinnerTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
