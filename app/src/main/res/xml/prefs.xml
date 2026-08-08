@@ -120,11 +120,6 @@
             android:summary="@string/credits_summary"
             android:title="@string/credits_title" />
         <Preference
-            android:icon="@drawable/ic_donate"
-            android:key="@string/donate_key"
-            android:summary="@string/donate_summary"
-            android:title="@string/donate_title" />
-        <Preference
             android:icon="@drawable/ic_rate"
             android:key="@string/rate_key"
             android:summary="@string/rate_summary"

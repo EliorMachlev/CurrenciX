@@ -101,8 +101,6 @@
     <string name="disclaimer_summary">虽然该应用程序的编写和测试非常彻底，但<b>不保证其显示的数据是正确的</b>。汇率是由第三方提供的，这个应用程序不能保证数据是真实和最新的。\n此外，所提供的汇率—即使正确—也可能与你的银行所使用的汇率不同。\n最后：错误时有发生。永远不要盲目地相信任何人! 既然如此，请放心，如果我对这个应用程序有任何不放心，我就不会发布它。</string>
     <string name="sourcecode_title">源代码</string>
     <string name="sourcecode_summary">这个应用是开源的。可以前往仓库提出问题，看看怎么一起参与或仅仅是看看代码。</string>
-    <string name="donate_title">支持开发人员</string>
-    <string name="donate_summary">通过 PayPal 捐赠</string>
     <string name="rate_title">评价此应用</string>
     <string name="rate_summary">如果您喜欢此应用，还可以帮助他人发现 Currencies。点击此处在 Google Play 上对应用评价。</string>
     <string name="category_versioninfo">版本信息</string>

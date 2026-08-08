@@ -97,10 +97,6 @@
     <string name="category_about">Sobre esta app</string>
     <string name="disclaimer_title">Renúncia de responsabilidade</string>
     <string name="disclaimer_summary">Embora a aplicação seja cuidadosamente escrita e testada, <b>não há garantias de que os dados que mostra sejam correctos</b>. As taxas de câmbio são fornecidas por um terceiro e esta aplicação não pode fazer qualquer promessa de que os dados são verdadeiros e atualizados.\nAlém disso, as taxas fornecidas - ainda que correctas - podem variar em relação às utilizadas pelo seu banco.\nPor último: os erros acontecem. Nunca confie cegamente em ninguém! Dito isto, fique descansado que eu não teria divulgado esta aplicação se tivesse tido alguma dúvida de que funciona como pretendido.</string>
-
-
-    <string name="donate_title">Apoiar o programador</string>
-    <string name="donate_summary">Doar via PayPal</string>
     <string name="rate_title">Classifique esta app</string>
     <string name="rate_summary">Se desejar, pode ajudar outros a descobrir Currencies. Clique aqui para avaliar a aplicação no Google Play.</string>
     <string name="category_versioninfo">Informação da versão</string>

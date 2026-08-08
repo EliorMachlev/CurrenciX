@@ -97,10 +97,6 @@
     <string name="category_about">Om denne appen</string>
     <string name="disclaimer_title">Ansvarsfraskrivelse</string>
     <string name="disclaimer_summary">Selv om programmet er nøye skrevet og testet, <b>er det ingen garanti for at dataen som vises er riktig</b>. Vekslingskursene tilbys av en tredjepart, og dette programmet kan ikke på noe vis love at dataen er sannferdig eller oppdatert.\nSelv om dataen skulle være riktig kan det fremdeles hende at din bank bruker en annen kurs.\nTil sist. Feil skjer. Aldri stol blindt på noen. Når det er sagt ville jeg ikke sluppet programmet hvis jeg var i tvil om at det fungerte som tiltenkt.</string>
-
-
-    <string name="donate_title">Støtt utvikleren</string>
-    <string name="donate_summary">Doner via PayPal</string>
     <string name="rate_title">Vurder programmet</string>
     <string name="rate_summary">Hjelp andre å oppdage Currencies. Klikk her for å vurdere programmet på Google Play.</string>
 

@@ -154,9 +154,6 @@
     <string name="credits_section_project">Project</string>
     <string name="credits_section_license">License</string>
     <string name="credits_section_libraries">Third-party libraries</string>
-    <string name="donate_key" translatable="false">KEY_DONATE</string>
-    <string name="donate_title">Support the developer</string>
-    <string name="donate_summary">Donate via PayPal</string>
     <string name="rate_key" translatable="false">KEY_RATE</string>
     <string name="rate_title">Rate this app</string>
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app on Google Play.</string>

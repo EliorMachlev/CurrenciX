@@ -40,7 +40,6 @@ private const val URL_REPO = "https://github.com/EliorMachlev/currencies"
 private const val URL_RELEASES_TAG = "$URL_REPO/releases/tag/v"
 private const val URL_PULLS = "$URL_REPO/pulls"
 private const val URL_COMMIT = "$URL_REPO/commit/"
-private const val URL_DONATE = "https://www.paypal.com/donate?hosted_button_id=2JCY7E99V9DGC"
 private const val URL_PLAY_MARKET = "market://details?id=com.eliormachlev.currencix"
 private const val URL_PLAY_WEB = "https://play.google.com/store/apps/details?id=com.eliormachlev.currencix"
 
@@ -214,14 +213,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(getString(R.string.credits_key))?.apply {
             setOnPreferenceClickListener {
                 CreditsDialog().show(childFragmentManager, null)
-                true
-            }
-        }
-        findPreference<Preference>(getString(R.string.donate_key))?.apply {
-            @Suppress("KotlinConstantConditions")
-            isVisible = BuildConfig.FLAVOR != FLAVOR_PLAY
-            setOnPreferenceClickListener {
-                startActivity(createIntent(URL_DONATE))
                 true
             }
         }
