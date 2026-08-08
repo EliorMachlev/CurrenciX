@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
@@ -51,6 +51,12 @@ private const val SIGN_TOGGLE_TEXT_SIZE_SP = 20f
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
 
+// Trailing/leading icon buttons in picker rows. 40dp total with 10dp padding
+// yields a ~20dp visible glyph — smaller than the default 24dp icon so it
+// doesn't overpower the row's text.
+private const val ROW_ICON_BUTTON_SIZE_DP = 40f
+private const val ROW_ICON_PADDING_DP = 10f
+
 // Arrows used in the "specific pair" summary.
 private const val ARROW_ONE_WAY = "\u2192"
 private const val ARROW_BOTH_WAYS = "\u2194"
@@ -79,8 +85,11 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_EXCHANGE, R.string.fee_section_global_exchange)
         globalBankPref =
             buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_BANK, R.string.fee_section_global_bank)
-        screen.addPreference(globalExchangePref)
-        screen.addPreference(globalBankPref)
+        // Wrap each selector in its own category so the section header is
+        // visible on the top-level screen; without it users can't tell the
+        // exchange row from the bank/card row without opening the dialog.
+        addCategory(screen, ctx, R.string.fee_section_global_exchange).addPreference(globalExchangePref)
+        addCategory(screen, ctx, R.string.fee_section_global_bank).addPreference(globalBankPref)
 
         categoryPair = addCategory(screen, ctx, R.string.fee_section_specific_pair)
 
@@ -313,8 +322,11 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val effective = active.firstOrNull { it.id == activeId } ?: active.firstOrNull()
 
         if (effective == null) {
-            pref.title = sectionTitle
-            pref.summary = getString(R.string.fee_empty)
+            // Section title already appears as the category header above the
+            // row; use the empty-state message as the row title to avoid
+            // repeating it.
+            pref.title = getString(R.string.fee_empty)
+            pref.summary = null
         } else {
             pref.title = displayNameOf(effective)
             pref.summary = formatFeeDescription(effective)
@@ -395,12 +407,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     private fun buildEditIconButton(
         ctx: Context,
         onClick: () -> Unit,
-    ): ImageButton =
-        ImageButton(ctx, null, androidx.appcompat.R.attr.borderlessButtonStyle).apply {
-            setImageResource(R.drawable.ic_edit)
-            contentDescription = getString(R.string.fee_edit_percent)
-            setOnClickListener { onClick() }
-        }
+    ): View = buildRowIcon(ctx, R.drawable.ic_edit, getString(R.string.fee_edit_percent), onClick)
 
     private fun buildAddRow(
         ctx: Context,
@@ -416,12 +423,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             background = ta.getDrawable(0)
             ta.recycle()
             setOnClickListener { onClick() }
-            addView(
-                ImageButton(ctx, null, androidx.appcompat.R.attr.borderlessButtonStyle).apply {
-                    setImageResource(R.drawable.ic_add)
-                    isClickable = false
-                },
-            )
+            addView(buildRowIcon(ctx, R.drawable.ic_add, null, onClick = null))
             addView(
                 TextView(ctx).apply {
                     text = getString(R.string.fee_add)
@@ -429,6 +431,30 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 },
                 LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f),
             )
+        }
+    }
+
+    private fun buildRowIcon(
+        ctx: Context,
+        iconRes: Int,
+        contentDesc: String?,
+        onClick: (() -> Unit)?,
+    ): ImageView {
+        val sizePx = ROW_ICON_BUTTON_SIZE_DP.dpToPx().toInt()
+        val padPx = ROW_ICON_PADDING_DP.dpToPx().toInt()
+        return ImageView(ctx).apply {
+            setImageResource(iconRes)
+            setPadding(padPx, padPx, padPx, padPx)
+            contentDescription = contentDesc
+            layoutParams = LinearLayout.LayoutParams(sizePx, sizePx)
+            if (onClick != null) {
+                val ta = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
+                background = ta.getDrawable(0)
+                ta.recycle()
+                isClickable = true
+                isFocusable = true
+                setOnClickListener { onClick() }
+            }
         }
     }
 
