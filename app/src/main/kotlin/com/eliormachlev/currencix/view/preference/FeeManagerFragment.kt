@@ -7,10 +7,12 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
@@ -38,8 +40,8 @@ import java.util.UUID
 // Preference keys for UI-only rows. The leading __ marks them as ignored by
 // the settings back-up/restore pipeline.
 private const val PREF_KEY_FEE_SIDE = "__fee_side"
-private const val PREF_KEY_ACTIVE_EXCHANGE = "__active_exchange"
-private const val PREF_KEY_ACTIVE_BANK = "__active_bank"
+private const val PREF_KEY_GLOBAL_EXCHANGE = "__global_exchange"
+private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 
 // Sign-toggle button geometry (dp) and text size (sp).
 private const val SIGN_TOGGLE_BUTTON_HEIGHT_DP = 56f
@@ -56,18 +58,11 @@ private const val ARROW_BOTH_WAYS = "\u2194"
 // Summary parts separator, e.g. "USD → EUR · Inactive".
 private const val SUMMARY_SEPARATOR = "  ·  "
 
-// Show the active-picker row only when the user has a real choice to make
-// (i.e. ≥2 entries in the category). With 0 or 1 entries the FeeCalculator
-// fallback picks the sole entry (or nothing), so the picker adds no value.
-private const val MIN_ENTRIES_FOR_PICKER = 2
-
 class FeeManagerFragment : PreferenceFragmentCompat() {
     private lateinit var db: Database
 
-    private lateinit var activeExchangePref: Preference
-    private lateinit var activeBankPref: Preference
-    private lateinit var categoryExchange: PreferenceCategory
-    private lateinit var categoryBank: PreferenceCategory
+    private lateinit var globalExchangePref: Preference
+    private lateinit var globalBankPref: Preference
     private lateinit var categoryPair: PreferenceCategory
 
     override fun onCreatePreferences(
@@ -80,23 +75,13 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
         screen.addPreference(buildFeeSidePreference(ctx))
 
-        activeExchangePref =
-            buildActivePickerPreference(
-                ctx = ctx,
-                key = PREF_KEY_ACTIVE_EXCHANGE,
-                titleRes = R.string.fee_active_exchange_title,
-            )
-        activeBankPref =
-            buildActivePickerPreference(
-                ctx = ctx,
-                key = PREF_KEY_ACTIVE_BANK,
-                titleRes = R.string.fee_active_bank_title,
-            )
-        screen.addPreference(activeExchangePref)
-        screen.addPreference(activeBankPref)
+        globalExchangePref =
+            buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_EXCHANGE, R.string.fee_section_global_exchange)
+        globalBankPref =
+            buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_BANK, R.string.fee_section_global_bank)
+        screen.addPreference(globalExchangePref)
+        screen.addPreference(globalBankPref)
 
-        categoryExchange = addCategory(screen, ctx, R.string.fee_section_global_exchange)
-        categoryBank = addCategory(screen, ctx, R.string.fee_section_global_bank)
         categoryPair = addCategory(screen, ctx, R.string.fee_section_specific_pair)
 
         preferenceScreen = screen
@@ -210,7 +195,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 .show()
     }
 
-    private fun buildActivePickerPreference(
+    private fun buildGlobalSelectorPreference(
         ctx: Context,
         key: String,
         titleRes: Int,
@@ -219,28 +204,27 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             this.key = key
             title = getString(titleRes)
             isIconSpaceReserved = false
-            isVisible = false // populated when fees load
         }
 
     private fun renderFees(fees: List<Fee>) {
-        val activeExchangeId = db.getActiveExchangeIdBlocking()
-        val activeBankId = db.getActiveBankIdBlocking()
-
-        populate(
-            category = categoryExchange,
+        renderGlobalSelector(
+            pref = globalExchangePref,
             entries = fees.filterIsInstance<Fee.GlobalExchange>(),
-            summaryFor = { null },
+            activeId = db.getActiveExchangeIdBlocking(),
+            sectionTitleRes = R.string.fee_section_global_exchange,
+            onPicked = { id -> db.setActiveExchangeId(id) },
             onAdd = {
                 showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
-                    db.addFee(
+                    val fee =
                         Fee.GlobalExchange(
                             id = UUID.randomUUID().toString(),
                             name = name,
                             percent = percent,
                             isMarkup = isMarkup,
                             isActive = isActive,
-                        ),
-                    )
+                        )
+                    db.addFee(fee)
+                    if (db.getActiveExchangeIdBlocking() == null) db.setActiveExchangeId(fee.id)
                 }
             },
             onEdit = { fee ->
@@ -259,21 +243,24 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 }
             },
         )
-        populate(
-            category = categoryBank,
+        renderGlobalSelector(
+            pref = globalBankPref,
             entries = fees.filterIsInstance<Fee.GlobalBank>(),
-            summaryFor = { null },
+            activeId = db.getActiveBankIdBlocking(),
+            sectionTitleRes = R.string.fee_section_global_bank,
+            onPicked = { id -> db.setActiveBankId(id) },
             onAdd = {
                 showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
-                    db.addFee(
+                    val fee =
                         Fee.GlobalBank(
                             id = UUID.randomUUID().toString(),
                             name = name,
                             percent = percent,
                             isMarkup = isMarkup,
                             isActive = isActive,
-                        ),
-                    )
+                        )
+                    db.addFee(fee)
+                    if (db.getActiveBankIdBlocking() == null) db.setActiveBankId(fee.id)
                 }
             },
             onEdit = { fee ->
@@ -310,72 +297,144 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 }
             },
         )
-
-        renderActivePicker(
-            preference = activeExchangePref,
-            entries = fees.filterIsInstance<Fee.GlobalExchange>(),
-            activeId = activeExchangeId,
-            onPicked = { id -> db.setActiveExchangeId(id) },
-        )
-        renderActivePicker(
-            preference = activeBankPref,
-            entries = fees.filterIsInstance<Fee.GlobalBank>(),
-            activeId = activeBankId,
-            onPicked = { id -> db.setActiveBankId(id) },
-        )
     }
 
-    private fun <T : Fee> renderActivePicker(
-        preference: Preference,
+    private fun <T : Fee> renderGlobalSelector(
+        pref: Preference,
         entries: List<T>,
         activeId: String?,
+        sectionTitleRes: Int,
         onPicked: (String) -> Unit,
+        onAdd: () -> Unit,
+        onEdit: (T) -> Unit,
     ) {
-        val activeEntries = entries.filter { it.isActive }
-        if (activeEntries.size < MIN_ENTRIES_FOR_PICKER) {
-            preference.isVisible = false
-            return
+        val sectionTitle = getString(sectionTitleRes)
+        val active = entries.filter { it.isActive }
+        val effective = active.firstOrNull { it.id == activeId } ?: active.firstOrNull()
+
+        if (effective == null) {
+            pref.title = sectionTitle
+            pref.summary = getString(R.string.fee_empty)
+        } else {
+            pref.title = displayNameOf(effective)
+            pref.summary = formatFeeDescription(effective)
         }
-        preference.isVisible = true
-
-        val explicit = activeId?.let { id -> activeEntries.firstOrNull { it.id == id } }
-        val effective = explicit ?: activeEntries.first()
-        val displayName = displayNameOf(effective)
-        preference.summary =
-            if (explicit == null) getString(R.string.fee_active_auto, displayName) else displayName
-
-        preference.setOnPreferenceClickListener {
-            showActivePickerDialog(activeEntries, effective.id, preference.title.toString()) { picked ->
-                onPicked(picked)
-                renderActivePicker(preference, entries, picked, onPicked)
-            }
+        pref.setOnPreferenceClickListener {
+            showGlobalPickerDialog(
+                entries = entries,
+                effectiveId = effective?.id,
+                title = sectionTitle,
+                onPicked = { picked ->
+                    onPicked(picked)
+                    // Re-render immediately; underlying LiveData will also fire but this
+                    // avoids a visible lag while the picker dialog dismisses.
+                    renderGlobalSelector(pref, entries, picked, sectionTitleRes, onPicked, onAdd, onEdit)
+                },
+                onAdd = onAdd,
+                onEdit = onEdit,
+            )
             true
         }
     }
 
-    private fun <T : Fee> showActivePickerDialog(
+    private fun <T : Fee> showGlobalPickerDialog(
         entries: List<T>,
-        currentId: String,
+        effectiveId: String?,
         title: String,
         onPicked: (String) -> Unit,
+        onAdd: () -> Unit,
+        onEdit: (T) -> Unit,
     ) {
         val ctx = requireContext()
-        val labels = entries.map { formatEntryForPicker(it) }.toTypedArray()
-        val currentIndex = entries.indexOfFirst { it.id == currentId }.coerceAtLeast(0)
+        val container = paddedDialogContainer(ctx)
+        val dialogHolder = arrayOfNulls<AlertDialog>(1)
+        val radios = mutableListOf<RadioButton>()
 
-        MaterialAlertDialogBuilder(ctx)
-            .setTitle(title)
-            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
-                onPicked(entries[which].id)
-                dialog.dismiss()
-            }.setNegativeButton(android.R.string.cancel, null)
-            .show()
+        entries.forEachIndexed { index, fee ->
+            val radio =
+                RadioButton(ctx).apply {
+                    isChecked = fee.id == effectiveId
+                    isClickable = false
+                }
+            radios += radio
+            val editButton = buildEditIconButton(ctx) {
+                dialogHolder[0]?.dismiss()
+                onEdit(fee)
+            }
+            container.addView(
+                choiceExplainerRow(
+                    ctx = ctx,
+                    title = displayNameOf(fee),
+                    description = formatFeeDescription(fee),
+                    leadingView = radio,
+                    trailingView = editButton,
+                ) {
+                    radios.forEachIndexed { i, r -> r.isChecked = i == index }
+                    onPicked(fee.id)
+                    dialogHolder[0]?.dismiss()
+                },
+            )
+        }
+
+        container.addView(buildAddRow(ctx) {
+            dialogHolder[0]?.dismiss()
+            onAdd()
+        })
+
+        dialogHolder[0] =
+            MaterialAlertDialogBuilder(ctx)
+                .setTitle(title)
+                .setView(container)
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
     }
 
-    private fun formatEntryForPicker(fee: Fee): String {
+    private fun buildEditIconButton(
+        ctx: Context,
+        onClick: () -> Unit,
+    ): ImageButton =
+        ImageButton(ctx, null, com.google.android.material.R.attr.borderlessButtonStyle).apply {
+            setImageResource(R.drawable.ic_edit)
+            contentDescription = getString(R.string.fee_edit_percent)
+            setOnClickListener { onClick() }
+        }
+
+    private fun buildAddRow(
+        ctx: Context,
+        onClick: () -> Unit,
+    ): View {
+        val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
+        return LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, padV, 0, padV)
+            isClickable = true
+            val ta = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
+            background = ta.getDrawable(0)
+            ta.recycle()
+            setOnClickListener { onClick() }
+            addView(
+                ImageButton(ctx, null, com.google.android.material.R.attr.borderlessButtonStyle).apply {
+                    setImageResource(R.drawable.ic_add)
+                    isClickable = false
+                },
+            )
+            addView(
+                TextView(ctx).apply {
+                    text = getString(R.string.fee_add)
+                    setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+                },
+                LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f),
+            )
+        }
+    }
+
+    private fun formatFeeDescription(fee: Fee): CharSequence {
         val percent = formatPercent(fee.percent, fee.isMarkup)
-        val name = displayNameOf(fee)
-        return "$name  ·  $percent"
+        if (fee.isActive) return percent
+        return SpannableStringBuilder(percent)
+            .append(SUMMARY_SEPARATOR)
+            .append(getString(R.string.fee_inactive_marker))
     }
 
     private fun displayNameOf(fee: Fee): String = fee.name.ifBlank { getString(R.string.fee_untitled) }

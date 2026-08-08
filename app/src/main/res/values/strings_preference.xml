@@ -33,10 +33,6 @@
     <string name="fee_edit_active">Active</string>
     <string name="fee_inactive_marker">Inactive</string>
     <string name="fee_untitled">Untitled</string>
-    <string name="fee_active_exchange_title">Active exchange</string>
-    <string name="fee_active_bank_title">Active bank/card</string>
-    <string name="fee_active_none">None</string>
-    <string name="fee_active_auto">%s (auto)</string>
     <string name="previewConversion_key" translatable="false">KEY_PREVIEW_CONVERSION</string>
     <string name="previewConversion_title">Conversion preview</string>
     <string name="previewConversion_summary">Show the current conversion for each rate in the currency picker.</string>

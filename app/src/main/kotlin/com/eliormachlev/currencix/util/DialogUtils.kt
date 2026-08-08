@@ -31,15 +31,17 @@ fun paddedDialogContainer(
 
 /**
  * Build a clickable "title + one-line explainer" row for a picker dialog.
- * Optional [leadingView] (e.g. a RadioButton) sits left of the text column;
- * text column expands to fill remaining width when present, otherwise takes
- * the full row.
+ * Optional [leadingView] (e.g. a RadioButton) sits left of the text column
+ * and optional [trailingView] (e.g. an edit icon with its own click listener)
+ * sits right. The text column expands to fill remaining width when either
+ * side view is present, otherwise takes the full row.
  */
 fun choiceExplainerRow(
     ctx: Context,
     title: CharSequence,
     description: CharSequence,
     leadingView: View? = null,
+    trailingView: View? = null,
     onClick: () -> Unit,
 ): LinearLayout {
     val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
@@ -72,8 +74,9 @@ fun choiceExplainerRow(
                 },
             )
         }
+    val hasSideView = leadingView != null || trailingView != null
     val textLp =
-        if (leadingView != null) {
+        if (hasSideView) {
             LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         } else {
             LinearLayout.LayoutParams(
@@ -82,5 +85,6 @@ fun choiceExplainerRow(
             )
         }
     row.addView(textCol, textLp)
+    if (trailingView != null) row.addView(trailingView)
     return row
 }
