@@ -699,11 +699,13 @@ class MainActivity : BaseActivity() {
 
     private fun buildWordmarkTitle(): CharSequence {
         val text = getString(R.string.app_name)
-        val sizePx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP,
-            WORDMARK_TITLE_SP,
-            resources.displayMetrics,
-        ).toInt()
+        val sizePx =
+            TypedValue
+                .applyDimension(
+                    TypedValue.COMPLEX_UNIT_SP,
+                    WORDMARK_TITLE_SP,
+                    resources.displayMetrics,
+                ).toInt()
         return SpannableString(text).apply {
             setSpan(AbsoluteSizeSpan(sizePx), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             setSpan(StyleSpan(Typeface.BOLD), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
