@@ -726,6 +726,7 @@ class MainActivity : BaseActivity() {
 }
 
 private const val WORDMARK_TITLE_SP = 26f
+
 // sans-serif-black is Android's heaviest built-in font family (weight 900).
 // Combined with StyleSpan(BOLD), it gives the wordmark a distinct logo weight
 // without shipping a custom font asset.
