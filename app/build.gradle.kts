@@ -202,7 +202,11 @@ fun gitShortSha(): String? =
                 .redirectErrorStream(true)
                 .start()
         proc.waitFor()
-        proc.inputStream.bufferedReader().readLine()?.trim()?.takeIf { it.isNotBlank() }
+        proc.inputStream
+            .bufferedReader()
+            .readLine()
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
     } catch (_: Exception) {
         null
     }
