@@ -37,10 +37,6 @@ updates:
         dependency-type: "development"
         patterns:
           - "*"
-    ignore:
-      # Pinned in code: mXparser v5 has an fdroid-incompatible license
-      - dependency-name: "org.mariuszgromada.math:MathParser.org-mXparser"
-        versions: [">=5.0.0"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

@@ -59,7 +59,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Dependency | Version | Note |
 |---|---|---|
-| `org.mariuszgromada.math:MathParser.org-mXparser` | **4.4.3** | Pinned — v5+ has an F-Droid-incompatible licence |
+| `com.ezylang:EvalEx` | 3.7.0 | Apache-2.0, BigDecimal-native. Replaced mXparser (v5+ dual license isn't F-Droid compatible). |
 
 ### Charts
 

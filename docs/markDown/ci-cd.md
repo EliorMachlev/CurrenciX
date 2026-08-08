@@ -75,8 +75,6 @@ Configured in `.github/dependabot.yml` with weekly Monday schedule.
 - Test dependencies
 - All GitHub Actions (single PR)
 
-**Pinned dependency:** `MathParser.org-mXparser` is ignored at v5+ due to licence incompatibility with F-Droid.
-
 ## Permission Model
 
 All workflows use `permissions: contents: read` by default. Additional permissions are granted only when needed:
