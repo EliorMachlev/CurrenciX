@@ -357,10 +357,11 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                     isClickable = false
                 }
             radios += radio
-            val editButton = buildEditIconButton(ctx) {
-                dialogHolder[0]?.dismiss()
-                onEdit(fee)
-            }
+            val editButton =
+                buildEditIconButton(ctx) {
+                    dialogHolder[0]?.dismiss()
+                    onEdit(fee)
+                }
             container.addView(
                 choiceExplainerRow(
                     ctx = ctx,
@@ -376,10 +377,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             )
         }
 
-        container.addView(buildAddRow(ctx) {
-            dialogHolder[0]?.dismiss()
-            onAdd()
-        })
+        container.addView(
+            buildAddRow(ctx) {
+                dialogHolder[0]?.dismiss()
+                onAdd()
+            },
+        )
 
         dialogHolder[0] =
             MaterialAlertDialogBuilder(ctx)
