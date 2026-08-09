@@ -293,6 +293,7 @@ class Database(
     private val keyChartXAxisLabel = "_chartXAxisLabel"
     private val keyChartYAxisLabel = "_chartYAxisLabel"
     private val keyChartHighlightExtremes = "_chartHighlightExtremes"
+    private val keyChartHighlightPeriodChange = "_chartHighlightPeriodChange"
     private val keyDateFormat = "_dateFormat"
     private val defaultDateFormat = "dd/MM/yy HH:mm"
     private val keyCartCurrentJson = "_cart_current_json"
@@ -617,6 +618,15 @@ class Database(
     fun isChartHighlightExtremesEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyChartHighlightExtremes, true)
 
     fun isChartHighlightExtremesEnabledBlocking(): Boolean = prefs.getBoolean(keyChartHighlightExtremes, true)
+
+    fun setChartHighlightPeriodChangeEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean(keyChartHighlightPeriodChange, enabled).apply()
+    }
+
+    fun isChartHighlightPeriodChangeEnabled(): LiveData<Boolean> =
+        SharedPreferenceBooleanLiveData(prefs, keyChartHighlightPeriodChange, true)
+
+    fun isChartHighlightPeriodChangeEnabledBlocking(): Boolean = prefs.getBoolean(keyChartHighlightPeriodChange, true)
 
     fun setDateFormat(pattern: String) {
         prefs.edit().putString(keyDateFormat, pattern).apply()

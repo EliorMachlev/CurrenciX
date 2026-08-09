@@ -39,4 +39,12 @@
         android:text="@string/graph_highlight_extremes_title"
         android:textAppearance="?attr/textAppearanceBodyLarge" />
 
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/switch_highlight_period_change"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/margin1x"
+        android:text="@string/graph_highlight_period_change_title"
+        android:textAppearance="?attr/textAppearanceBodyLarge" />
+
 </LinearLayout>
