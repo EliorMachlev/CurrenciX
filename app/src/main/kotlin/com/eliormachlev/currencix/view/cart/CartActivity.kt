@@ -23,6 +23,8 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -145,6 +147,12 @@ class CartActivity : BaseActivity() {
     private var activeStateObserver: Observer<String?>? = null
     private var keypadBackCallback: OnBackPressedCallback? = null
 
+    // Tracks the last observed IME visibility so the WindowInsets listener
+    // only reacts to rising edges — a name-field focus that opens the system
+    // keyboard should dismiss the app keypad, but repeated inset dispatches
+    // while the IME is already visible shouldn't retrigger `closeKeypad`.
+    private var systemImeVisible = false
+
     // Pending, un-debounced name edits from the composable rows. Flushed
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
     private val pendingNames = mutableMapOf<String, String>()
@@ -193,6 +201,19 @@ class CartActivity : BaseActivity() {
         this.keypadRegular = findViewById(R.id.cart_keypad_regular)
         this.keypadExtended = findViewById(R.id.cart_keypad_extended)
         this.contentColumn = findViewById(R.id.cart_content)
+
+        // Only one keyboard should be visible at a time: if the system IME
+        // rises (e.g. the user tapped a row's name field while the app keypad
+        // was open), dismiss the app keypad. The reverse direction is already
+        // handled inside `openKeypadFor`, which calls `hideSystemIme`.
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.cart_root)) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            if (imeVisible && !systemImeVisible && keypadContainer.visibility == View.VISIBLE) {
+                closeKeypad()
+            }
+            systemImeVisible = imeVisible
+            insets
+        }
 
         // Registered before the keypad callback so the keypad's (which is
         // added second) wins when it's enabled. When the keypad is closed
