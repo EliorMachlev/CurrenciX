@@ -215,7 +215,7 @@ private fun PeriodSegmentedButtons(
                 onClick = { onSelected(period) },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = labels.size),
             ) {
-                Text(label)
+                Text(label.replaceFirstChar { it.titlecase() })
             }
         }
     }
