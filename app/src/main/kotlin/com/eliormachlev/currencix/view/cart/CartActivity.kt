@@ -874,10 +874,11 @@ class CartActivity : BaseActivity() {
             .translationY(0f)
             .setDuration(KEYPAD_ANIM_MS)
             .start()
-        // Mirror the system-IME resize behaviour: pad the content column by the
-        // keypad's height so the totals card slides above it instead of being
-        // hidden underneath.
-        setContentBottomInsetToKeypad()
+        // Leave the totals card / add-item button pinned to the bottom of the
+        // screen (behind the keypad) and only inset the items list so its
+        // Compose content stops at the keypad's top edge instead of rendering
+        // underneath. Keeps the summary from being pushed above the keypad.
+        setItemsBottomInsetForKeypad()
     }
 
     private fun hideKeypad() {
@@ -889,32 +890,36 @@ class CartActivity : BaseActivity() {
             .setDuration(KEYPAD_ANIM_MS)
             .withEndAction { keypadContainer.visibility = View.GONE }
             .start()
-        contentColumn.setPadding(
-            contentColumn.paddingLeft,
-            contentColumn.paddingTop,
-            contentColumn.paddingRight,
-            0,
-        )
+        setItemsBottomInset(0)
     }
 
-    private fun setContentBottomInsetToKeypad() {
+    private fun setItemsBottomInsetForKeypad() {
         val apply = {
-            val h =
+            val keypadH =
                 keypadContainer.height.takeIf { it > 0 }
                     ?: keypadContainer.layoutParams.height
-            contentColumn.setPadding(
-                contentColumn.paddingLeft,
-                contentColumn.paddingTop,
-                contentColumn.paddingRight,
-                h,
-            )
+            // keypad is anchored to the bottom of cart_root; cart_content fills
+            // the same area, so its own height is our reference. The overlap
+            // is the amount by which the items view extends behind the keypad
+            // once the fixed footer (add button + totals card) has taken its
+            // own space at the bottom.
+            val overlap = itemsView.bottom - (contentColumn.height - keypadH)
+            setItemsBottomInset(overlap.coerceAtLeast(0))
         }
-        // If the keypad hasn't laid out yet (first open), wait one pass.
-        if (keypadContainer.height > 0) {
+        if (keypadContainer.height > 0 && itemsView.height > 0) {
             apply()
         } else {
             keypadContainer.post(apply)
         }
+    }
+
+    private fun setItemsBottomInset(bottom: Int) {
+        itemsView.setPadding(
+            itemsView.paddingLeft,
+            itemsView.paddingTop,
+            itemsView.paddingRight,
+            bottom,
+        )
     }
 
     private fun detachActiveField() {
