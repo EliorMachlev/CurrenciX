@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
+import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.view.compose.AppTheme
@@ -30,12 +31,22 @@ class SearchableSpinnerDialog(
     private val currentRateState = mutableStateOf<Rate?>(null)
     private val currentSumState = mutableStateOf(BigDecimal.ONE)
 
+    // Currency that must not be selectable in this picker instance — grey
+    // out and disable clicks on the matching row. Used to prevent picking
+    // the same currency as the opposite side of the pair (main screen, cart,
+    // and fee-manager specific-pair pickers).
+    private val disabledCurrencyState = mutableStateOf<Currency?>(null)
+
     fun setCurrentRate(currentRate: Rate) {
         currentRateState.value = currentRate
     }
 
     fun setCurrentSum(currentSum: BigDecimal) {
         currentSumState.value = currentSum
+    }
+
+    fun setDisabledCurrency(currency: Currency?) {
+        disabledCurrencyState.value = currency
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -83,6 +94,7 @@ class SearchableSpinnerDialog(
                             stars = stars.orEmpty(),
                             filterStarred = filterStarred,
                             conversion = conversion,
+                            disabledCurrency = disabledCurrencyState.value,
                             onRateClicked = { rate ->
                                 onRateClicked?.invoke(rate, rates?.rates?.indexOf(rate) ?: -1)
                                 dismiss()

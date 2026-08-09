@@ -96,6 +96,13 @@ class SearchableSpinner : AppCompatSpinner {
         spinnerDialog.setCurrentSum(currentSum)
     }
 
+    // Currency that should be greyed out and unselectable in this spinner's
+    // picker — used to keep the two sides of a pair distinct. Callers push
+    // the opposite side's current selection whenever it changes.
+    fun setDisabledCurrency(currency: Currency?) {
+        spinnerDialog.setDisabledCurrency(currency)
+    }
+
     private fun findActivity(context: Context?): FragmentActivity? =
         when (context) {
             is FragmentActivity -> context
