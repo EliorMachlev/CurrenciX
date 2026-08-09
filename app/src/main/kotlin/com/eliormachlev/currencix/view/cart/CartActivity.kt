@@ -23,6 +23,8 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -145,6 +147,9 @@ class CartActivity : BaseActivity() {
     private var activeStateObserver: Observer<String?>? = null
     private var keypadBackCallback: OnBackPressedCallback? = null
 
+    // Rising-edge latch for the IME-visibility guard; see [installImeVisibilityGuard].
+    private var systemImeVisible = false
+
     // Pending, un-debounced name edits from the composable rows. Flushed
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
     private val pendingNames = mutableMapOf<String, String>()
@@ -193,6 +198,7 @@ class CartActivity : BaseActivity() {
         this.keypadRegular = findViewById(R.id.cart_keypad_regular)
         this.keypadExtended = findViewById(R.id.cart_keypad_extended)
         this.contentColumn = findViewById(R.id.cart_content)
+        installImeVisibilityGuard()
 
         // Registered before the keypad callback so the keypad's (which is
         // added second) wins when it's enabled. When the keypad is closed
@@ -833,6 +839,31 @@ class CartActivity : BaseActivity() {
     // targets below.
     // ------------------------------------------------------------------
 
+    // Only one keyboard should be visible at a time. `openKeypadFor` calls
+    // `hideSystemIme` when opening the app keypad; this listener handles the
+    // reverse — when the system IME rises (e.g. a row's name field takes
+    // focus while the app keypad is open), dismiss the app keypad. Rising-edge
+    // tracking via [systemImeVisible] avoids retriggering `closeKeypad` on
+    // redundant inset dispatches while the IME stays visible.
+    //
+    // Installing our own listener on cart_root disables its `fitsSystemWindows`
+    // auto-padding (that's how the view API works — a custom listener takes
+    // over), so we re-apply the system-bar insets as padding ourselves. Without
+    // this the toolbar slides under the status bar.
+    private fun installImeVisibilityGuard() {
+        val root = findViewById<View>(R.id.cart_root)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            if (imeVisible && !systemImeVisible && keypadContainer.visibility == View.VISIBLE) {
+                closeKeypad()
+            }
+            systemImeVisible = imeVisible
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+    }
+
     /**
      * Show the keypad for the row identified by [itemId], seeding a fresh
      * [CalculatorInputState] with [seedExpression] and mirroring every state
@@ -874,10 +905,11 @@ class CartActivity : BaseActivity() {
             .translationY(0f)
             .setDuration(KEYPAD_ANIM_MS)
             .start()
-        // Mirror the system-IME resize behaviour: pad the content column by the
-        // keypad's height so the totals card slides above it instead of being
-        // hidden underneath.
-        setContentBottomInsetToKeypad()
+        // Leave the totals card / add-item button pinned to the bottom of the
+        // screen (behind the keypad) and only inset the items list so its
+        // Compose content stops at the keypad's top edge instead of rendering
+        // underneath. Keeps the summary from being pushed above the keypad.
+        setItemsBottomInsetForKeypad()
     }
 
     private fun hideKeypad() {
@@ -889,32 +921,36 @@ class CartActivity : BaseActivity() {
             .setDuration(KEYPAD_ANIM_MS)
             .withEndAction { keypadContainer.visibility = View.GONE }
             .start()
-        contentColumn.setPadding(
-            contentColumn.paddingLeft,
-            contentColumn.paddingTop,
-            contentColumn.paddingRight,
-            0,
-        )
+        setItemsBottomInset(0)
     }
 
-    private fun setContentBottomInsetToKeypad() {
+    private fun setItemsBottomInsetForKeypad() {
         val apply = {
-            val h =
+            val keypadH =
                 keypadContainer.height.takeIf { it > 0 }
                     ?: keypadContainer.layoutParams.height
-            contentColumn.setPadding(
-                contentColumn.paddingLeft,
-                contentColumn.paddingTop,
-                contentColumn.paddingRight,
-                h,
-            )
+            // keypad is anchored to the bottom of cart_root; cart_content fills
+            // the same area, so its own height is our reference. The overlap
+            // is the amount by which the items view extends behind the keypad
+            // once the fixed footer (add button + totals card) has taken its
+            // own space at the bottom.
+            val overlap = itemsView.bottom - (contentColumn.height - keypadH)
+            setItemsBottomInset(overlap.coerceAtLeast(0))
         }
-        // If the keypad hasn't laid out yet (first open), wait one pass.
-        if (keypadContainer.height > 0) {
+        if (keypadContainer.height > 0 && itemsView.height > 0) {
             apply()
         } else {
             keypadContainer.post(apply)
         }
+    }
+
+    private fun setItemsBottomInset(bottom: Int) {
+        itemsView.setPadding(
+            itemsView.paddingLeft,
+            itemsView.paddingTop,
+            itemsView.paddingRight,
+            bottom,
+        )
     }
 
     private fun detachActiveField() {
