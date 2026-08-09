@@ -147,10 +147,7 @@ class CartActivity : BaseActivity() {
     private var activeStateObserver: Observer<String?>? = null
     private var keypadBackCallback: OnBackPressedCallback? = null
 
-    // Tracks the last observed IME visibility so the WindowInsets listener
-    // only reacts to rising edges — a name-field focus that opens the system
-    // keyboard should dismiss the app keypad, but repeated inset dispatches
-    // while the IME is already visible shouldn't retrigger `closeKeypad`.
+    // Rising-edge latch for the IME-visibility guard; see [installImeVisibilityGuard].
     private var systemImeVisible = false
 
     // Pending, un-debounced name edits from the composable rows. Flushed
@@ -201,19 +198,7 @@ class CartActivity : BaseActivity() {
         this.keypadRegular = findViewById(R.id.cart_keypad_regular)
         this.keypadExtended = findViewById(R.id.cart_keypad_extended)
         this.contentColumn = findViewById(R.id.cart_content)
-
-        // Only one keyboard should be visible at a time: if the system IME
-        // rises (e.g. the user tapped a row's name field while the app keypad
-        // was open), dismiss the app keypad. The reverse direction is already
-        // handled inside `openKeypadFor`, which calls `hideSystemIme`.
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.cart_root)) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            if (imeVisible && !systemImeVisible && keypadContainer.visibility == View.VISIBLE) {
-                closeKeypad()
-            }
-            systemImeVisible = imeVisible
-            insets
-        }
+        installImeVisibilityGuard()
 
         // Registered before the keypad callback so the keypad's (which is
         // added second) wins when it's enabled. When the keypad is closed
@@ -853,6 +838,23 @@ class CartActivity : BaseActivity() {
     // `closeKeypad`; every keypad button routes through the reflection
     // targets below.
     // ------------------------------------------------------------------
+
+    // Only one keyboard should be visible at a time. `openKeypadFor` calls
+    // `hideSystemIme` when opening the app keypad; this listener handles the
+    // reverse — when the system IME rises (e.g. a row's name field takes
+    // focus while the app keypad is open), dismiss the app keypad. Rising-edge
+    // tracking via [systemImeVisible] avoids retriggering `closeKeypad` on
+    // redundant inset dispatches while the IME stays visible.
+    private fun installImeVisibilityGuard() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.cart_root)) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            if (imeVisible && !systemImeVisible && keypadContainer.visibility == View.VISIBLE) {
+                closeKeypad()
+            }
+            systemImeVisible = imeVisible
+            insets
+        }
+    }
 
     /**
      * Show the keypad for the row identified by [itemId], seeding a fresh
