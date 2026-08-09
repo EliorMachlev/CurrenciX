@@ -845,13 +845,21 @@ class CartActivity : BaseActivity() {
     // focus while the app keypad is open), dismiss the app keypad. Rising-edge
     // tracking via [systemImeVisible] avoids retriggering `closeKeypad` on
     // redundant inset dispatches while the IME stays visible.
+    //
+    // Installing our own listener on cart_root disables its `fitsSystemWindows`
+    // auto-padding (that's how the view API works — a custom listener takes
+    // over), so we re-apply the system-bar insets as padding ourselves. Without
+    // this the toolbar slides under the status bar.
     private fun installImeVisibilityGuard() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.cart_root)) { _, insets ->
+        val root = findViewById<View>(R.id.cart_root)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
             val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
             if (imeVisible && !systemImeVisible && keypadContainer.visibility == View.VISIBLE) {
                 closeKeypad()
             }
             systemImeVisible = imeVisible
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
     }
