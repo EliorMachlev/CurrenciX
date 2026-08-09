@@ -585,48 +585,52 @@ class Database(
         SharedPreferenceStringLiveData(prefs, keyDecimalPlaces, "2")
             .map { (it ?: "2").toIntOrNull()?.coerceIn(0, 6) ?: 2 }
 
-    // graph options
+    // graph options — all default to true (feature-on) so opting out is explicit.
 
-    fun setChartGridEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(keyChartGrid, enabled).apply()
-    }
+    private fun setBool(
+        key: String,
+        value: Boolean,
+    ) = prefs.edit().putBoolean(key, value).apply()
 
-    fun isChartGridEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyChartGrid, true)
+    private fun boolLive(
+        key: String,
+        default: Boolean,
+    ): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, key, default)
 
-    fun isChartGridEnabledBlocking(): Boolean = prefs.getBoolean(keyChartGrid, true)
+    private fun boolBlocking(
+        key: String,
+        default: Boolean,
+    ): Boolean = prefs.getBoolean(key, default)
 
-    fun setChartXAxisLabelEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(keyChartXAxisLabel, enabled).apply()
-    }
+    fun setChartGridEnabled(enabled: Boolean) = setBool(keyChartGrid, enabled)
 
-    fun isChartXAxisLabelEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyChartXAxisLabel, true)
+    fun isChartGridEnabled(): LiveData<Boolean> = boolLive(keyChartGrid, true)
 
-    fun isChartXAxisLabelEnabledBlocking(): Boolean = prefs.getBoolean(keyChartXAxisLabel, true)
+    fun isChartGridEnabledBlocking(): Boolean = boolBlocking(keyChartGrid, true)
 
-    fun setChartYAxisLabelEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(keyChartYAxisLabel, enabled).apply()
-    }
+    fun setChartXAxisLabelEnabled(enabled: Boolean) = setBool(keyChartXAxisLabel, enabled)
 
-    fun isChartYAxisLabelEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyChartYAxisLabel, true)
+    fun isChartXAxisLabelEnabled(): LiveData<Boolean> = boolLive(keyChartXAxisLabel, true)
 
-    fun isChartYAxisLabelEnabledBlocking(): Boolean = prefs.getBoolean(keyChartYAxisLabel, true)
+    fun isChartXAxisLabelEnabledBlocking(): Boolean = boolBlocking(keyChartXAxisLabel, true)
 
-    fun setChartHighlightExtremesEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(keyChartHighlightExtremes, enabled).apply()
-    }
+    fun setChartYAxisLabelEnabled(enabled: Boolean) = setBool(keyChartYAxisLabel, enabled)
 
-    fun isChartHighlightExtremesEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyChartHighlightExtremes, true)
+    fun isChartYAxisLabelEnabled(): LiveData<Boolean> = boolLive(keyChartYAxisLabel, true)
 
-    fun isChartHighlightExtremesEnabledBlocking(): Boolean = prefs.getBoolean(keyChartHighlightExtremes, true)
+    fun isChartYAxisLabelEnabledBlocking(): Boolean = boolBlocking(keyChartYAxisLabel, true)
 
-    fun setChartHighlightPeriodChangeEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(keyChartHighlightPeriodChange, enabled).apply()
-    }
+    fun setChartHighlightExtremesEnabled(enabled: Boolean) = setBool(keyChartHighlightExtremes, enabled)
 
-    fun isChartHighlightPeriodChangeEnabled(): LiveData<Boolean> =
-        SharedPreferenceBooleanLiveData(prefs, keyChartHighlightPeriodChange, true)
+    fun isChartHighlightExtremesEnabled(): LiveData<Boolean> = boolLive(keyChartHighlightExtremes, true)
 
-    fun isChartHighlightPeriodChangeEnabledBlocking(): Boolean = prefs.getBoolean(keyChartHighlightPeriodChange, true)
+    fun isChartHighlightExtremesEnabledBlocking(): Boolean = boolBlocking(keyChartHighlightExtremes, true)
+
+    fun setChartHighlightPeriodChangeEnabled(enabled: Boolean) = setBool(keyChartHighlightPeriodChange, enabled)
+
+    fun isChartHighlightPeriodChangeEnabled(): LiveData<Boolean> = boolLive(keyChartHighlightPeriodChange, true)
+
+    fun isChartHighlightPeriodChangeEnabledBlocking(): Boolean = boolBlocking(keyChartHighlightPeriodChange, true)
 
     fun setDateFormat(pattern: String) {
         prefs.edit().putString(keyDateFormat, pattern).apply()

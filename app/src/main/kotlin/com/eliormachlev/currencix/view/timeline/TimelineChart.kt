@@ -189,30 +189,8 @@ fun TimelineChart(
     val decorations =
         buildList {
             if (highlightPeriodChange) {
-                monthChangeIndices.forEach { idx ->
-                    add(
-                        VerticalLine(
-                            x = idx.toDouble(),
-                            line =
-                                LineComponent(
-                                    fill = Fill(MONTH_CHANGE_COLOR),
-                                    thickness = CHART_LINE_THICKNESS_DP.dp,
-                                ),
-                        ),
-                    )
-                }
-                yearChangeIndices.forEach { idx ->
-                    add(
-                        VerticalLine(
-                            x = idx.toDouble(),
-                            line =
-                                LineComponent(
-                                    fill = Fill(YEAR_CHANGE_COLOR),
-                                    thickness = CHART_LINE_THICKNESS_DP.dp,
-                                ),
-                        ),
-                    )
-                }
+                addPeriodChangeLines(monthChangeIndices, MONTH_CHANGE_COLOR)
+                addPeriodChangeLines(yearChangeIndices, YEAR_CHANGE_COLOR)
             }
             if (baseline != null) {
                 add(
@@ -329,6 +307,20 @@ private const val AXIS_LABEL_EMPTY_PLACEHOLDER = "—"
 private val MIN_LINE_COLOR = Color(0xFFE53935)
 private val YEAR_CHANGE_COLOR = Color(0xFF1E88E5)
 private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
+
+private fun MutableList<Decoration>.addPeriodChangeLines(
+    indices: List<Int>,
+    color: Color,
+) {
+    indices.forEach { idx ->
+        add(
+            VerticalLine(
+                x = idx.toDouble(),
+                line = LineComponent(fill = Fill(color), thickness = CHART_LINE_THICKNESS_DP.dp),
+            ),
+        )
+    }
+}
 
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
 // by HorizontalAxis (see HorizontalAxis.kt in vico:compose): the parent forces
