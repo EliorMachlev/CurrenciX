@@ -603,12 +603,16 @@ class MainActivity : BaseActivity() {
 
     private fun observeBaseCurrency(currency: Currency?) {
         spinnerFrom.setSelection(currency)
+        // Whatever's picked on the base side must not be pickable on the
+        // destination side — grey it out in the "to" picker.
+        spinnerTo.setDisabledCurrency(currency)
         currency ?: return
         findRateFor(currency)?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
     }
 
     private fun observeDestinationCurrency(currency: Currency?) {
         spinnerTo.setSelection(currency)
+        spinnerFrom.setDisabledCurrency(currency)
         currency ?: return
         findRateFor(currency)?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
     }

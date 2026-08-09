@@ -329,8 +329,16 @@ class CartActivity : BaseActivity() {
             activeItemId.value?.let { if (it !in currentIds) closeKeypad() }
             updateFeeVisuals()
         }
-        viewModel.getBaseCurrency().observe(this) { spinnerFrom.setSelection(it) }
-        viewModel.getDestinationCurrency().observe(this) { spinnerTo.setSelection(it) }
+        viewModel.getBaseCurrency().observe(this) {
+            spinnerFrom.setSelection(it)
+            // Keep the two sides distinct — grey out whatever's picked on
+            // the base side inside the destination picker.
+            spinnerTo.setDisabledCurrency(it)
+        }
+        viewModel.getDestinationCurrency().observe(this) {
+            spinnerTo.setSelection(it)
+            spinnerFrom.setDisabledCurrency(it)
+        }
         viewModel.getSubtotal().observe(this) { value ->
             subtotalLabel.text = formatAmount(value, viewModel.getBaseCurrency().value)
             updateFeeExtras()

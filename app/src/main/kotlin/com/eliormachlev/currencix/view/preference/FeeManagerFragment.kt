@@ -612,9 +612,24 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val nameLabel = TextView(ctx).apply { text = getString(R.string.fee_edit_name) }
         val nameInput = buildNameInput(ctx, existing?.name)
         val fromLabel = TextView(ctx).apply { text = getString(R.string.fee_pair_from) }
-        val fromButton = buildCurrencyPickerButton(ctx, pickedFrom, placeholder) { pickedFrom = it }
+        val fromButton =
+            buildCurrencyPickerButton(
+                ctx,
+                pickedFrom,
+                placeholder,
+                // Opposite side's current pick — greyed out in this picker so
+                // the user can't save a same-currency specific-pair fee (e.g.
+                // AUD → AUD is meaningless).
+                disabled = { pickedTo },
+            ) { pickedFrom = it }
         val toLabel = TextView(ctx).apply { text = getString(R.string.fee_pair_to) }
-        val toButton = buildCurrencyPickerButton(ctx, pickedTo, placeholder) { pickedTo = it }
+        val toButton =
+            buildCurrencyPickerButton(
+                ctx,
+                pickedTo,
+                placeholder,
+                disabled = { pickedFrom },
+            ) { pickedTo = it }
         val bothWays =
             CheckBox(ctx).apply {
                 text = getString(R.string.fee_pair_both_ways)
@@ -726,20 +741,28 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         ctx: Context,
         initial: String?,
         placeholder: String,
+        disabled: () -> String? = { null },
         onPicked: (String) -> Unit,
     ): MaterialButton =
         outlinedMaterialButton(ctx).apply {
             applyCurrencyIcon(this, initial, placeholder, ctx)
             setOnClickListener {
-                openCurrencyPicker { iso ->
+                // Resolve the disabled side lazily at click time so a "from"
+                // picked *after* the button was built still greys out inside
+                // the "to" picker (and vice-versa).
+                openCurrencyPicker(disabled = disabled()?.let(Currency::fromString)) { iso ->
                     applyCurrencyIcon(this, iso, placeholder, ctx)
                     onPicked(iso)
                 }
             }
         }
 
-    private fun openCurrencyPicker(onPicked: (String) -> Unit) {
+    private fun openCurrencyPicker(
+        disabled: Currency? = null,
+        onPicked: (String) -> Unit,
+    ) {
         val dialog = SearchableSpinnerDialog(requireContext())
+        dialog.setDisabledCurrency(disabled)
         dialog.onRateClicked = { rate, _ -> onPicked(rate.currency.iso4217Alpha()) }
         dialog.show(parentFragmentManager, null)
     }

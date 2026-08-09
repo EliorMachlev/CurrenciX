@@ -73,6 +73,12 @@ private const val ROW_MIN_HEIGHT_DP = 56
 private const val DRAG_ELEVATION_ALPHA = 0.85f
 private const val API_HINT_ALPHA = 0.7f
 
+// Alpha for a currency row that can't be picked in the current context
+// (e.g. it's already selected on the opposite side of the same pair, so
+// picking it here would produce a same-currency conversion). Same weight as
+// [API_HINT_ALPHA] so disabled rows read as ambient, not error.
+private const val DISABLED_ROW_ALPHA = 0.4f
+
 internal data class CurrencyPickerConversion(
     val baseRate: Rate,
     val baseSum: BigDecimal,
@@ -80,11 +86,13 @@ internal data class CurrencyPickerConversion(
 )
 
 @Composable
+@Suppress("LongParameterList")
 internal fun SearchableCurrencyPicker(
     rates: List<Rate>,
     stars: List<Currency>,
     filterStarred: Boolean,
     conversion: CurrencyPickerConversion?,
+    disabledCurrency: Currency?,
     onRateClicked: (Rate) -> Unit,
     onStarClicked: (Rate) -> Unit,
     onToggleStarredFilter: () -> Unit,
@@ -128,6 +136,7 @@ internal fun SearchableCurrencyPicker(
             nonStarredItems = nonStarredFiltered,
             conversion = conversion,
             allowReorder = allowReorder,
+            disabledCurrency = disabledCurrency,
             modifier = Modifier.weight(1f).fillMaxWidth(),
             onRateClicked = onRateClicked,
             onStarClicked = onStarClicked,
@@ -226,6 +235,7 @@ private fun CurrencyList(
     nonStarredItems: List<Rate>,
     conversion: CurrencyPickerConversion?,
     allowReorder: Boolean,
+    disabledCurrency: Currency?,
     modifier: Modifier = Modifier,
     onRateClicked: (Rate) -> Unit,
     onStarClicked: (Rate) -> Unit,
@@ -255,6 +265,7 @@ private fun CurrencyList(
                     items = starredItems,
                     conversion = conversion,
                     allowReorder = allowReorder,
+                    disabledCurrency = disabledCurrency,
                     onRateClicked = onRateClicked,
                     onStarClicked = onStarClicked,
                     onDragEnded = onDragEnded,
@@ -266,6 +277,7 @@ private fun CurrencyList(
                 rate = rate,
                 isStarred = false,
                 conversion = conversion,
+                isDisabled = rate.currency == disabledCurrency,
                 onClick = { onRateClicked(rate) },
                 onStarClick = { onStarClicked(rate) },
                 modifier = Modifier.fillMaxWidth().animateItem(),
@@ -283,6 +295,7 @@ private fun FavoritesSection(
     items: SnapshotStateList<Rate>,
     conversion: CurrencyPickerConversion?,
     allowReorder: Boolean,
+    disabledCurrency: Currency?,
     onRateClicked: (Rate) -> Unit,
     onStarClicked: (Rate) -> Unit,
     onDragEnded: () -> Unit,
@@ -311,6 +324,7 @@ private fun FavoritesSection(
                     rate = rate,
                     isStarred = true,
                     conversion = conversion,
+                    isDisabled = rate.currency == disabledCurrency,
                     onClick = { onRateClicked(rate) },
                     onStarClick = { onStarClicked(rate) },
                     modifier =
@@ -372,10 +386,12 @@ private fun FavoritesSection(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun CurrencyRow(
     rate: Rate,
     isStarred: Boolean,
     conversion: CurrencyPickerConversion?,
+    isDisabled: Boolean,
     onClick: () -> Unit,
     onStarClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -386,7 +402,10 @@ private fun CurrencyRow(
     // and dismissed the dialog. Split the click regions: the flag+text area
     // is the dismiss-on-select target, the star's own IconButton is a
     // separate target that only toggles. Drag modifier still lives on the
-    // outer Row via `modifier`.
+    // outer Row via `modifier`. When [isDisabled] the flag+text region is
+    // greyed and unclickable (typically because the same currency is already
+    // selected on the opposite side of the pair), but the star toggle stays
+    // interactive — favoriting is independent of picker selection.
     Row(
         modifier = modifier.heightIn(min = ROW_MIN_HEIGHT_DP.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -395,7 +414,8 @@ private fun CurrencyRow(
             modifier =
                 Modifier
                     .weight(1f)
-                    .clickable(onClick = onClick)
+                    .clickable(enabled = !isDisabled, onClick = onClick)
+                    .alpha(if (isDisabled) DISABLED_ROW_ALPHA else 1f)
                     .padding(
                         horizontal = dimensionResource(id = R.dimen.margin2x),
                         vertical = dimensionResource(id = R.dimen.margin1x),

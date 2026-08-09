@@ -197,6 +197,7 @@ class MainViewModel(
             object : MediatorLiveData<Currency?>() {
                 var destination: Currency? = null
                 var rates: ExchangeRates? = null
+                var base: Currency? = null
 
                 init {
                     addSource(destinationCurrency) {
@@ -207,14 +208,30 @@ class MainViewModel(
                         rates = it
                         update()
                     }
+                    // Cross-observe the resolved base so a stale-prefs
+                    // collision (both sides pointing at the same currency on
+                    // first read after an install/migration/import) is
+                    // corrected to a distinct fallback on the destination
+                    // side. The grey-out picker prevents users from ever
+                    // creating this state; this is the belt-and-braces
+                    // safety net for state loaded from disk.
+                    addSource(currentBaseCurrency) {
+                        base = it
+                        update()
+                    }
                 }
 
                 private fun update() {
+                    val available = rates?.rates ?: return
+                    val stored = available.find { it.currency == destination }?.currency
+                    val fallback = available.firstOrNull()?.currency
+                    val picked = stored ?: fallback
                     this.value =
-                        // last used is present in the current currency set
-                        rates?.rates?.find { it.currency == destination }?.currency
-                            // not present, so just return the first of the set
-                            ?: rates?.rates?.firstOrNull()?.currency
+                        if (picked != null && picked == base) {
+                            available.firstOrNull { it.currency != base }?.currency ?: picked
+                        } else {
+                            picked
+                        }
                 }
             }
 
