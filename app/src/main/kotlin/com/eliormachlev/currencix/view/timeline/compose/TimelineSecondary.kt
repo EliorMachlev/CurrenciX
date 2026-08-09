@@ -33,7 +33,6 @@ import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 private const val TEXT_WIDTH_PADDING_FACTOR = 1.25f
 private const val RATE_DIFF_DECIMALS = 2
@@ -216,7 +215,7 @@ private fun PeriodSegmentedButtons(
                 onClick = { onSelected(period) },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = labels.size),
             ) {
-                Text(label.replaceFirstChar { it.titlecase(Locale.getDefault()) })
+                Text(label.replaceFirstChar { it.titlecase() })
             }
         }
     }
