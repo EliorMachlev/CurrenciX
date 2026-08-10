@@ -200,38 +200,16 @@ fun TimelineChart(
                 addPeriodChangeLines(yearChangeIndices, YEAR_CHANGE_COLOR)
             }
             if (currentScrubIndex != null) {
-                add(
-                    VerticalLineOver(
-                        x = currentScrubIndex.toDouble(),
-                        line = LineComponent(fill = Fill(scrubLineColor), thickness = CHART_LINE_THICKNESS_DP.dp),
-                    ),
-                )
+                add(VerticalLineOver(x = currentScrubIndex.toDouble(), line = chartLine(scrubLineColor)))
             }
             if (baseline != null) {
-                add(
-                    HorizontalLineUnder(
-                        y = baseline,
-                        line = LineComponent(fill = Fill(baselineColor), thickness = CHART_LINE_THICKNESS_DP.dp),
-                    ),
-                )
+                add(HorizontalLineUnder(y = baseline, line = chartLine(baselineColor)))
             }
             val hMin = highlightMin
             val hMax = highlightMax
             if (highlightExtremes && hMin != null && hMax != null && hMin != hMax) {
-                val maxFill = Fill(lineColor.copy(alpha = HIGHLIGHT_ALPHA))
-                val minFill = Fill(MIN_LINE_COLOR.copy(alpha = HIGHLIGHT_ALPHA))
-                add(
-                    HorizontalLineUnder(
-                        y = hMin,
-                        line = LineComponent(fill = minFill, thickness = CHART_LINE_THICKNESS_DP.dp),
-                    ),
-                )
-                add(
-                    HorizontalLineUnder(
-                        y = hMax,
-                        line = LineComponent(fill = maxFill, thickness = CHART_LINE_THICKNESS_DP.dp),
-                    ),
-                )
+                add(HorizontalLineUnder(y = hMin, line = chartLine(MIN_LINE_COLOR, HIGHLIGHT_ALPHA)))
+                add(HorizontalLineUnder(y = hMax, line = chartLine(lineColor, HIGHLIGHT_ALPHA)))
             }
         }
 
@@ -328,13 +306,19 @@ private fun MutableList<Decoration>.addPeriodChangeLines(
     color: Color,
 ) {
     indices.forEach { idx ->
-        add(
-            VerticalLine(
-                x = idx.toDouble(),
-                line = LineComponent(fill = Fill(color), thickness = CHART_LINE_THICKNESS_DP.dp),
-            ),
-        )
+        add(VerticalLine(x = idx.toDouble(), line = chartLine(color)))
     }
+}
+
+// Common shape for every decoration in this chart: a thin solid line component
+// tinted with `color` (optionally at reduced `alpha`). Every call site used to
+// spell out the same LineComponent/Fill/thickness triple.
+private fun chartLine(
+    color: Color,
+    alpha: Float = 1f,
+): LineComponent {
+    val tinted = if (alpha == 1f) color else color.copy(alpha = alpha)
+    return LineComponent(fill = Fill(tinted), thickness = CHART_LINE_THICKNESS_DP.dp)
 }
 
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
