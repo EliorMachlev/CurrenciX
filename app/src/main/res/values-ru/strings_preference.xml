@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Показывать метки значений курса слева от графика.</string>
     <string name="graph_highlight_extremes_title">Выделять минимум и максимум</string>
     <string name="graph_highlight_extremes_summary">Накладывать опорные линии на самые низкие и самые высокие курсы в видимом диапазоне.</string>
+    <string name="graph_highlight_period_change_title">Выделить смену года/месяца</string>
+    <string name="graph_highlight_period_change_summary">Рисовать вертикальные линии там, где на графике меняется год или месяц.</string>
     <!-- languages -->
     <string name="language_title">Язык приложения</string>
     <string name="language_ar">Арабский</string>

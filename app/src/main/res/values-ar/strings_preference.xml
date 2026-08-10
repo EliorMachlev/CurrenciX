@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">إظهار عناوين قيم السعر على الجانب الأيسر من الرسم البياني.</string>
     <string name="graph_highlight_extremes_title">تمييز الحد الأدنى والأقصى</string>
     <string name="graph_highlight_extremes_summary">تراكب خطوط مرجعية عند أدنى وأعلى الأسعار في النطاق المرئي.</string>
+    <string name="graph_highlight_period_change_title">إبراز تغيّر السنة/الشهر</string>
+    <string name="graph_highlight_period_change_summary">رسم خطوط إرشادية عمودية عند تغيّر السنة أو الشهر في المخطط.</string>
     <!-- languages -->
     <string name="language_title">لغة التطبيق</string>
     <string name="language_ar">العربية</string>

@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Kursbeschriftungen an der linken Seite des Diagramms anzeigen.</string>
     <string name="graph_highlight_extremes_title">Min. und Max. hervorheben</string>
     <string name="graph_highlight_extremes_summary">Referenzlinien beim niedrigsten und höchsten Kurs im sichtbaren Bereich einblenden.</string>
+    <string name="graph_highlight_period_change_title">Jahres-/Monatswechsel hervorheben</string>
+    <string name="graph_highlight_period_change_summary">Vertikale Hilfslinien zeichnen, wenn sich Jahr oder Monat im Diagramm ändern.</string>
     <!-- languages -->
     <string name="language_title">App-Sprache</string>
     <string name="language_ar">Arabisch</string>

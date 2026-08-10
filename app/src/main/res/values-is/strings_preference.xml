@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Sýna gengismerkingar vinstra megin á grafinu.</string>
     <string name="graph_highlight_extremes_title">Auðkenna lág. og hám.</string>
     <string name="graph_highlight_extremes_summary">Leggja viðmiðunarlínur yfir lægstu og hæstu gildin á sýnilega bilinu.</string>
+    <string name="graph_highlight_period_change_title">Auðkenna breytingu á ári/mánuði</string>
+    <string name="graph_highlight_period_change_summary">Teikna lóðréttar leiðbeiningarlínur þar sem árið eða mánuðurinn breytist á grafinu.</string>
     <!-- languages -->
     <string name="language_title">Tungumál forrits</string>
     <string name="language_ar">Arabíska</string>

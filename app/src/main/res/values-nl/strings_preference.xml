@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Toon koerslabels aan de linkerkant van de grafiek.</string>
     <string name="graph_highlight_extremes_title">Min. en max. markeren</string>
     <string name="graph_highlight_extremes_summary">Referentielijnen weergeven bij de laagste en hoogste koersen in het zichtbare bereik.</string>
+    <string name="graph_highlight_period_change_title">Jaar-/maandwissel markeren</string>
+    <string name="graph_highlight_period_change_summary">Verticale hulplijnen tekenen op de plaatsen waar het jaar of de maand in de grafiek verandert.</string>
     <!-- languages -->
     <string name="language_title">App taal</string>
     <string name="language_ar">Arabisch</string>
