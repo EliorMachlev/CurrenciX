@@ -6,7 +6,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -60,6 +62,7 @@ fun TimelineChart(
     lineColor: Color,
     baselineColor: Color,
     axisColor: Color,
+    scrubLineColor: Color,
     onScrub: (LocalDate?) -> Unit,
 ) {
     val entries by entriesLive.observeAsState()
@@ -128,6 +131,7 @@ fun TimelineChart(
             }
         }
 
+    var scrubIndex by remember { mutableStateOf<Int?>(null) }
     val markerListener =
         remember(data, onScrub) {
             object : CartesianMarkerVisibilityListener {
@@ -136,10 +140,12 @@ fun TimelineChart(
                     targets: List<CartesianMarker.Target>,
                 ) {
                     val idx = targets.firstOrNull()?.x?.toInt() ?: return
+                    scrubIndex = idx
                     onScrub(data.getOrNull(idx)?.first)
                 }
 
                 override fun onHidden(marker: CartesianMarker) {
+                    scrubIndex = null
                     onScrub(null)
                 }
             }
@@ -186,11 +192,20 @@ fun TimelineChart(
             }
         }
 
+    val currentScrubIndex = scrubIndex
     val decorations =
         buildList {
             if (highlightPeriodChange) {
                 addPeriodChangeLines(monthChangeIndices, MONTH_CHANGE_COLOR)
                 addPeriodChangeLines(yearChangeIndices, YEAR_CHANGE_COLOR)
+            }
+            if (currentScrubIndex != null) {
+                add(
+                    VerticalLineOver(
+                        x = currentScrubIndex.toDouble(),
+                        line = LineComponent(fill = Fill(scrubLineColor), thickness = CHART_LINE_THICKNESS_DP.dp),
+                    ),
+                )
             }
             if (baseline != null) {
                 add(
@@ -325,23 +340,40 @@ private fun MutableList<Decoration>.addPeriodChangeLines(
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
 // by HorizontalAxis (see HorizontalAxis.kt in vico:compose): the parent forces
 // LTR so layoutDirectionMultiplier is 1 and getStart(isLtr) == layerBounds.left.
+private fun CartesianDrawingContext.drawVerticalAtX(
+    x: Double,
+    line: LineComponent,
+) {
+    val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
+    val rawCanvasX =
+        baseCanvasX +
+            ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
+    // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
+    // per scanline, which reads as a jagged column when xSpacing pushes the
+    // boundary off-grid.
+    val canvasX = kotlin.math.round(rawCanvasX)
+    if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
+    line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
+}
+
 private class VerticalLine(
     private val x: Double,
     private val line: LineComponent,
 ) : Decoration {
     override fun drawUnderLayers(context: CartesianDrawingContext) {
-        with(context) {
-            val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
-            val rawCanvasX =
-                baseCanvasX +
-                    ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
-            // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
-            // per scanline, which reads as a jagged column when xSpacing pushes the
-            // boundary off-grid.
-            val canvasX = kotlin.math.round(rawCanvasX)
-            if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
-            line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
-        }
+        context.drawVerticalAtX(x, line)
+    }
+}
+
+// Scrub-line variant: paints atop the chart line so the finger indicator is
+// legible against the plotted series (the min/max/period-change lines sit
+// under the layers as static reference geometry).
+private class VerticalLineOver(
+    private val x: Double,
+    private val line: LineComponent,
+) : Decoration {
+    override fun drawOverLayers(context: CartesianDrawingContext) {
+        context.drawVerticalAtX(x, line)
     }
 }
 

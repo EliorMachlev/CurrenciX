@@ -88,6 +88,7 @@ class TimelineActivity : BaseActivity() {
         val lineColor = Color(MaterialColors.getColor(this, R.attr.colorPrimary, 0))
         val axisColor =
             Color(MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0))
+        val scrubLineColor = Color(MaterialColors.getColor(this, R.attr.colorTertiary, 0))
 
         findViewById<ComposeView>(R.id.timeline_compose).setContent {
             val feature by remember { foldingFeatureState }
@@ -117,6 +118,7 @@ class TimelineActivity : BaseActivity() {
                         lineColor = lineColor,
                         baselineColor = axisColor,
                         axisColor = axisColor,
+                        scrubLineColor = scrubLineColor,
                         onScrub = { date -> timelineModel.setPastDate(date) },
                     )
                 },
