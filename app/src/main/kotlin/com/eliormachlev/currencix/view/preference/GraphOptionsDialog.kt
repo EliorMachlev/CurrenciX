@@ -38,6 +38,12 @@ class GraphOptionsDialog : AppCompatDialogFragment() {
             db::isChartHighlightExtremesEnabledBlocking,
             db::setChartHighlightExtremesEnabled,
         )
+        bindSwitch(
+            view,
+            R.id.switch_highlight_period_change,
+            db::isChartHighlightPeriodChangeEnabledBlocking,
+            db::setChartHighlightPeriodChangeEnabled,
+        )
 
         return AlertDialog
             .Builder(requireContext())

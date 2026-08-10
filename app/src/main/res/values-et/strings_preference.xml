@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Kuva kursisildid graafiku vasakul küljel.</string>
     <string name="graph_highlight_extremes_title">Rõhuta min. ja max.</string>
     <string name="graph_highlight_extremes_summary">Aseta viitejooned nähtava vahemiku madalaimatele ja kõrgeimatele kurssidele.</string>
+    <string name="graph_highlight_period_change_title">Rõhuta aasta/kuu vahetust</string>
+    <string name="graph_highlight_period_change_summary">Joonista graafikule vertikaalsed abijooned kohtadesse, kus aasta või kuu vahetub.</string>
     <!-- languages -->
     <string name="language_title">Rakenduse keel</string>
     <string name="language_ar">araabia keel</string>

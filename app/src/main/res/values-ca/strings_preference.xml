@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Mostra etiquetes de valor de canvi a la banda esquerra del gràfic.</string>
     <string name="graph_highlight_extremes_title">Ressalta mín. i màx.</string>
     <string name="graph_highlight_extremes_summary">Superposa línies de referència als tipus més baix i més alt visibles.</string>
+    <string name="graph_highlight_period_change_title">Ressalta el canvi d\'any/mes</string>
+    <string name="graph_highlight_period_change_summary">Dibuixa línies guia verticals on canvia l\'any o el mes al gràfic.</string>
     <!-- languages -->
     <string name="language_title">Idioma de l\'aplicació</string>
     <string name="language_ar">Àrab</string>

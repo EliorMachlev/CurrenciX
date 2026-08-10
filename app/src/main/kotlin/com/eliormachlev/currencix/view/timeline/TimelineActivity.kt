@@ -110,6 +110,7 @@ class TimelineActivity : BaseActivity() {
                         showXAxisLive = db.isChartXAxisLabelEnabled(),
                         showYAxisLive = db.isChartYAxisLabelEnabled(),
                         highlightExtremesLive = db.isChartHighlightExtremesEnabled(),
+                        highlightPeriodChangeLive = db.isChartHighlightPeriodChangeEnabled(),
                         dateFormatLive = db.getDateFormat(),
                         highlightMinLive = highlightMinLive,
                         highlightMaxLive = highlightMaxLive,

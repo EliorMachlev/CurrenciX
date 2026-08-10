@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Árfolyam értékek megjelenítése a diagram bal oldalán.</string>
     <string name="graph_highlight_extremes_title">Min. és max. kiemelése</string>
     <string name="graph_highlight_extremes_summary">Referenciavonalak átfedése a látható tartomány legalacsonyabb és legmagasabb árfolyamainál.</string>
+    <string name="graph_highlight_period_change_title">Év-/hónapváltás kiemelése</string>
+    <string name="graph_highlight_period_change_summary">Függőleges segédvonalak rajzolása a diagramon ott, ahol az év vagy a hónap változik.</string>
     <!-- languages -->
     <string name="language_title">Az alkalmazás nyelve</string>
     <string name="language_da">Dán</string>

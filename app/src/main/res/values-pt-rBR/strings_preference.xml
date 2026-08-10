@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Mostrar rótulos de valor de câmbio no lado esquerdo do gráfico.</string>
     <string name="graph_highlight_extremes_title">Destacar mín. e máx.</string>
     <string name="graph_highlight_extremes_summary">Sobrepor linhas de referência nas taxas mais baixas e mais altas do intervalo visível.</string>
+    <string name="graph_highlight_period_change_title">Destacar mudança de ano/mês</string>
+    <string name="graph_highlight_period_change_summary">Desenhar linhas verticais de referência onde o ano ou o mês muda ao longo do gráfico.</string>
     <!-- languages -->
     <string name="language_title">Idioma do app</string>
     <string name="language_da">Dinamarquês</string>

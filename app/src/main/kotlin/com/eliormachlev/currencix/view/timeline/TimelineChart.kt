@@ -49,6 +49,7 @@ fun TimelineChart(
     showXAxisLive: LiveData<Boolean>,
     showYAxisLive: LiveData<Boolean>,
     highlightExtremesLive: LiveData<Boolean>,
+    highlightPeriodChangeLive: LiveData<Boolean>,
     dateFormatLive: LiveData<String>,
     // Scrub-aware highlight values from the viewmodel. Passing these in (rather
     // than deriving from `entries`) keeps the red/blue highlight lines aligned
@@ -66,6 +67,7 @@ fun TimelineChart(
     val showXAxis by showXAxisLive.observeAsState(initial = true)
     val showYAxis by showYAxisLive.observeAsState(initial = true)
     val highlightExtremes by highlightExtremesLive.observeAsState(initial = true)
+    val highlightPeriodChange by highlightPeriodChangeLive.observeAsState(initial = true)
     val highlightMin by highlightMinLive.observeAsState()
     val highlightMax by highlightMaxLive.observeAsState()
     val dateFormat by dateFormatLive.observeAsState(initial = DEFAULT_DATE_FORMAT)
@@ -186,29 +188,9 @@ fun TimelineChart(
 
     val decorations =
         buildList {
-            monthChangeIndices.forEach { idx ->
-                add(
-                    VerticalLine(
-                        x = idx.toDouble(),
-                        line =
-                            LineComponent(
-                                fill = Fill(MONTH_CHANGE_COLOR),
-                                thickness = CHART_LINE_THICKNESS_DP.dp,
-                            ),
-                    ),
-                )
-            }
-            yearChangeIndices.forEach { idx ->
-                add(
-                    VerticalLine(
-                        x = idx.toDouble(),
-                        line =
-                            LineComponent(
-                                fill = Fill(YEAR_CHANGE_COLOR),
-                                thickness = CHART_LINE_THICKNESS_DP.dp,
-                            ),
-                    ),
-                )
+            if (highlightPeriodChange) {
+                addPeriodChangeLines(monthChangeIndices, MONTH_CHANGE_COLOR)
+                addPeriodChangeLines(yearChangeIndices, YEAR_CHANGE_COLOR)
             }
             if (baseline != null) {
                 add(
@@ -246,7 +228,7 @@ fun TimelineChart(
             itemPlacer = yAxisItemPlacer,
         )
     val axisItemPlacer =
-        remember(data.size, yearChangeIndices, monthChangeIndices) {
+        remember(data.size, yearChangeIndices, monthChangeIndices, highlightPeriodChange) {
             // Aligned placer emits labels at 0, spacing, 2*spacing, … up to n-1, so the
             // label count is floor((n-1)/spacing) + 1. To cap at exactly
             // X_AXIS_TARGET_LABEL_COUNT (never one over), pick the smallest spacing that
@@ -257,7 +239,12 @@ fun TimelineChart(
                 ((span + X_AXIS_TARGET_LABEL_COUNT - 2) / (X_AXIS_TARGET_LABEL_COUNT - 1))
                     .coerceAtLeast(1)
             val aligned = HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
-            val skipX = (yearChangeIndices + monthChangeIndices).map { it.toDouble() }.toSet()
+            val skipX =
+                if (highlightPeriodChange) {
+                    (yearChangeIndices + monthChangeIndices).map { it.toDouble() }.toSet()
+                } else {
+                    emptySet()
+                }
             if (skipX.isEmpty()) aligned else SuppressGuidelineItemPlacer(aligned, skipX)
         }
     val bottomAxis =
@@ -320,6 +307,20 @@ private const val AXIS_LABEL_EMPTY_PLACEHOLDER = "—"
 private val MIN_LINE_COLOR = Color(0xFFE53935)
 private val YEAR_CHANGE_COLOR = Color(0xFF1E88E5)
 private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
+
+private fun MutableList<Decoration>.addPeriodChangeLines(
+    indices: List<Int>,
+    color: Color,
+) {
+    indices.forEach { idx ->
+        add(
+            VerticalLine(
+                x = idx.toDouble(),
+                line = LineComponent(fill = Fill(color), thickness = CHART_LINE_THICKNESS_DP.dp),
+            ),
+        )
+    }
+}
 
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
 // by HorizontalAxis (see HorizontalAxis.kt in vico:compose): the parent forces

@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Visa kursetiketter till vänster i diagrammet.</string>
     <string name="graph_highlight_extremes_title">Markera min. och max.</string>
     <string name="graph_highlight_extremes_summary">Lägg referenslinjer över lägsta och högsta kurserna i det synliga intervallet.</string>
+    <string name="graph_highlight_period_change_title">Markera års-/månadsbyte</string>
+    <string name="graph_highlight_period_change_summary">Rita lodräta hjälplinjer där året eller månaden ändras i diagrammet.</string>
     <!-- languages -->
     <string name="language_title">Appspråk</string>
     <string name="language_ar">Arabiska</string>

@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">চার্টের বাম দিকে রেট মানের লেবেল দেখান।</string>
     <string name="graph_highlight_extremes_title">সর্বনিম্ন এবং সর্বোচ্চ হাইলাইট করুন</string>
     <string name="graph_highlight_extremes_summary">দৃশ্যমান পরিসরে সর্বনিম্ন এবং সর্বোচ্চ রেটে রেফারেন্স লাইন প্রদর্শন করুন।</string>
+    <string name="graph_highlight_period_change_title">বছর/মাস পরিবর্তন হাইলাইট করুন</string>
+    <string name="graph_highlight_period_change_summary">চার্ট জুড়ে যেখানে বছর বা মাস পরিবর্তন হয় সেখানে উল্লম্ব গাইড লাইন আঁকুন।</string>
     <!-- languages -->
     <string name="language_title">অ্যাপ ভাষা</string>
     <string name="language_ar">আরবি</string>

@@ -53,6 +53,8 @@
     <string name="graph_y_axis_summary">Pokaż etykiety wartości kursu po lewej stronie wykresu.</string>
     <string name="graph_highlight_extremes_title">Wyróżnij min. i maks.</string>
     <string name="graph_highlight_extremes_summary">Nałóż linie odniesienia na najniższe i najwyższe kursy w widocznym zakresie.</string>
+    <string name="graph_highlight_period_change_title">Wyróżnij zmianę roku/miesiąca</string>
+    <string name="graph_highlight_period_change_summary">Rysuj pionowe linie pomocnicze w miejscach, w których zmienia się rok lub miesiąc na wykresie.</string>
     <!-- languages -->
     <string name="language_title">Język aplikacji</string>
     <string name="language_ar">Arabski</string>
