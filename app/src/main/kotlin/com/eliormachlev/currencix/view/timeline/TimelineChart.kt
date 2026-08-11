@@ -135,14 +135,24 @@ fun TimelineChart(
     val markerListener =
         remember(data, onScrub) {
             object : CartesianMarkerVisibilityListener {
-                override fun onShown(
-                    marker: CartesianMarker,
-                    targets: List<CartesianMarker.Target>,
-                ) {
+                private fun update(targets: List<CartesianMarker.Target>) {
                     val idx = targets.firstOrNull()?.x?.toInt() ?: return
                     scrubIndex = idx
                     onScrub(data.getOrNull(idx)?.first)
                 }
+
+                override fun onShown(
+                    marker: CartesianMarker,
+                    targets: List<CartesianMarker.Target>,
+                ) = update(targets)
+
+                // Fires while the finger drags across the plot; without this
+                // the scrub line and rate label freeze at the initial press
+                // position instead of following the finger.
+                override fun onUpdated(
+                    marker: CartesianMarker,
+                    targets: List<CartesianMarker.Target>,
+                ) = update(targets)
 
                 override fun onHidden(marker: CartesianMarker) {
                     scrubIndex = null

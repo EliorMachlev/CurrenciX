@@ -88,7 +88,10 @@ class TimelineActivity : BaseActivity() {
         val lineColor = Color(MaterialColors.getColor(this, R.attr.colorPrimary, 0))
         val axisColor =
             Color(MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0))
-        val scrubLineColor = Color(MaterialColors.getColor(this, R.attr.colorTertiary, 0))
+        // colorOnSurface (text-on-background) keeps the scrub line visually
+        // distinct from the green primary (max highlight), red min line, and
+        // the blue/purple period-change verticals on every theme.
+        val scrubLineColor = Color(MaterialColors.getColor(this, R.attr.colorOnSurface, 0))
 
         findViewById<ComposeView>(R.id.timeline_compose).setContent {
             val feature by remember { foldingFeatureState }
