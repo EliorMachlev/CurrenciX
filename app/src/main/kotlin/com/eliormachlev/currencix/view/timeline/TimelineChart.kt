@@ -183,21 +183,14 @@ fun TimelineChart(
     // with FitStrategy.Fixed and whole-pixel x-snapping.
     val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
     val yearChangeIndices =
-        remember(data) {
-            mutableListOf<Int>().apply {
-                for (i in 1 until data.size) {
-                    if (data[i - 1].first.year != data[i].first.year) add(i)
-                }
-            }
-        }
+        remember(data) { data.boundaryIndices { prev, curr -> prev.year != curr.year } }
     val monthChangeIndices =
         remember(data, showMonthChangeLines) {
-            mutableListOf<Int>().apply {
-                if (!showMonthChangeLines) return@apply
-                for (i in 1 until data.size) {
-                    val prev = data[i - 1].first
-                    val curr = data[i].first
-                    if (prev.year == curr.year && prev.monthValue != curr.monthValue) add(i)
+            if (!showMonthChangeLines) {
+                emptyList()
+            } else {
+                data.boundaryIndices { prev, curr ->
+                    prev.year == curr.year && prev.monthValue != curr.monthValue
                 }
             }
         }
@@ -310,6 +303,17 @@ private const val AXIS_LABEL_EMPTY_PLACEHOLDER = "—"
 private val MIN_LINE_COLOR = Color(0xFFE53935)
 private val YEAR_CHANGE_COLOR = Color(0xFF1E88E5)
 private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
+
+// Walks the series and returns every index `i` where the (i-1, i) date pair
+// satisfies the predicate — used to locate year and month change boundaries.
+private inline fun List<Pair<LocalDate, Float>>.boundaryIndices(
+    isBoundary: (prev: LocalDate, curr: LocalDate) -> Boolean,
+): List<Int> =
+    buildList {
+        for (i in 1 until this@boundaryIndices.size) {
+            if (isBoundary(this@boundaryIndices[i - 1].first, this@boundaryIndices[i].first)) add(i)
+        }
+    }
 
 private fun MutableList<Decoration>.addPeriodChangeLines(
     indices: List<Int>,
