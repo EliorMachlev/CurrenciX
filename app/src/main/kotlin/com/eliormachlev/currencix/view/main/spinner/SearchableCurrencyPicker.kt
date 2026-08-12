@@ -59,6 +59,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
+import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
@@ -489,34 +490,47 @@ private fun ApiHintRow() {
     }
 }
 
+// [normalizedQuery] must already be [normalizeForSearch]-ed by the caller —
+// filter passes iterate rates and call this once per row, so re-normalizing
+// the query per row would be pure waste.
 private fun matchesQuery(
     context: Context,
     rate: Rate,
-    query: String,
+    normalizedQuery: String,
 ): Boolean =
-    query.isEmpty() ||
-        rate.currency.fullName(context).contains(query, ignoreCase = true) ||
-        rate.currency.iso4217Alpha().contains(query, ignoreCase = true)
+    normalizedQuery.isEmpty() ||
+        rate.currency
+            .fullName(context)
+            .normalizeForSearch()
+            .contains(normalizedQuery) ||
+        rate.currency
+            .iso4217Alpha()
+            .normalizeForSearch()
+            .contains(normalizedQuery)
 
 private fun buildStarredList(
     context: Context,
     rates: List<Rate>,
     stars: List<Currency>,
     query: String,
-): List<Rate> =
-    stars
+): List<Rate> {
+    val normalizedQuery = query.normalizeForSearch()
+    return stars
         .mapNotNull { code -> rates.find { it.currency == code } }
-        .filter { matchesQuery(context, it, query) }
+        .filter { matchesQuery(context, it, normalizedQuery) }
+}
 
 private fun buildNonStarredList(
     context: Context,
     rates: List<Rate>,
     stars: List<Currency>,
     query: String,
-): List<Rate> =
-    rates
+): List<Rate> {
+    val normalizedQuery = query.normalizeForSearch()
+    return rates
         .filterNot { stars.contains(it.currency) }
-        .filter { matchesQuery(context, it, query) }
+        .filter { matchesQuery(context, it, normalizedQuery) }
+}
 
 private fun collectStarredOrder(
     items: List<Rate>,
