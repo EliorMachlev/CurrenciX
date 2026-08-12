@@ -268,9 +268,12 @@ class TimelineViewModel(
     // Range-wide extremes for the on-chart reference lines: intentionally
     // ignore the scrub position so the horizontal min/max lines stay anchored
     // to the visible period's absolute extremes while the finger drags.
-    fun getRatesRangeMin(): LiveData<Double?> = extremeLiveData(pickMax = false, respectScrub = false).map { it.first?.value?.toDouble() }
+    fun getRatesRangeMin(): LiveData<Double?> = rangeExtreme(pickMax = false)
 
-    fun getRatesRangeMax(): LiveData<Double?> = extremeLiveData(pickMax = true, respectScrub = false).map { it.first?.value?.toDouble() }
+    fun getRatesRangeMax(): LiveData<Double?> = rangeExtreme(pickMax = true)
+
+    private fun rangeExtreme(pickMax: Boolean): LiveData<Double?> =
+        extremeLiveData(pickMax = pickMax, respectScrub = false).map { it.first?.value?.toDouble() }
 
     private fun extremeLiveData(
         pickMax: Boolean,
