@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.ListPreference
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
+import com.eliormachlev.currencix.util.containsNormalized
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.google.android.material.radiobutton.MaterialRadioButton
 
@@ -178,9 +179,9 @@ class LanguagePickerPreference : ListPreference {
             context: Context,
             query: String,
         ): Boolean {
-            if (localizedName(context).contains(query, ignoreCase = true)) return true
+            if (localizedName(context).containsNormalized(query)) return true
             if (this == Language.SYSTEM) return false
-            return nativeName(context).contains(query, ignoreCase = true)
+            return nativeName(context).containsNormalized(query)
         }
 
         internal class ViewHolder {

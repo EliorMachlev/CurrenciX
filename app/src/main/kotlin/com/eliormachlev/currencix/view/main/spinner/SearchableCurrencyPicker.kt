@@ -58,6 +58,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
+import com.eliormachlev.currencix.util.containsNormalized
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -495,8 +496,8 @@ private fun matchesQuery(
     query: String,
 ): Boolean =
     query.isEmpty() ||
-        rate.currency.fullName(context).contains(query, ignoreCase = true) ||
-        rate.currency.iso4217Alpha().contains(query, ignoreCase = true)
+        rate.currency.fullName(context).containsNormalized(query) ||
+        rate.currency.iso4217Alpha().containsNormalized(query)
 
 private fun buildStarredList(
     context: Context,

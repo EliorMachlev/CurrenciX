@@ -9,6 +9,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
+import java.text.Normalizer
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -44,6 +45,12 @@ private val NUMERIC_INPUT_REGEX = Regex("[0-9,.\\s]+")
 // handing the string to NumberFormat.parse.
 private val WHITESPACE_REGEX = Regex("\\s+")
 
+// Unicode "Mark, Nonspacing" — combining diacritics that sit between/on top of
+// base letters (Hebrew niqqud, Arabic tashkeel, Latin accents after NFD, etc.).
+// Stripped for diacritic-insensitive substring search in language/currency
+// pickers so typing base letters keeps matching endonyms written with marks.
+private val NONSPACING_MARK_REGEX = Regex("\\p{Mn}+")
+
 /**
  * Parse HTML markup with `FROM_HTML_MODE_LEGACY` — the only mode used across
  * this app for lightweight `<b>`/`<br>` snippets in string resources.
@@ -69,6 +76,23 @@ fun ltrIsolate(s: String): String = "$LTR_ISOLATE$s$POP_DIRECTIONAL_ISOLATE"
  * Removes any Unicode RTL mark (U+200F) from the string.
  */
 fun String.stripRtlMark(): String = replace(RTL_MARK, "")
+
+/**
+ * Decomposes to NFD and drops combining diacritic marks so substring search
+ * matches base letters regardless of niqqud / tashkeel / accents.
+ */
+fun String.stripDiacritics(): String = Normalizer.normalize(this, Normalizer.Form.NFD).replace(NONSPACING_MARK_REGEX, "")
+
+/**
+ * Diacritic-insensitive `contains`: normalizes both sides via
+ * [stripDiacritics] before comparing. Case-insensitive by default so it's
+ * a drop-in replacement for `contains(query, ignoreCase = true)` in
+ * user-facing pickers.
+ */
+fun String.containsNormalized(
+    query: CharSequence,
+    ignoreCase: Boolean = true,
+): Boolean = stripDiacritics().contains(query.toString().stripDiacritics(), ignoreCase = ignoreCase)
 
 /**
  * Return the *used* Locale, based on the currently active resource folder,
