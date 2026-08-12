@@ -6,7 +6,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -60,6 +62,7 @@ fun TimelineChart(
     lineColor: Color,
     baselineColor: Color,
     axisColor: Color,
+    scrubLineColor: Color,
     onScrub: (LocalDate?) -> Unit,
 ) {
     val entries by entriesLive.observeAsState()
@@ -128,18 +131,31 @@ fun TimelineChart(
             }
         }
 
+    var scrubIndex by remember { mutableStateOf<Int?>(null) }
     val markerListener =
         remember(data, onScrub) {
             object : CartesianMarkerVisibilityListener {
-                override fun onShown(
-                    marker: CartesianMarker,
-                    targets: List<CartesianMarker.Target>,
-                ) {
+                private fun update(targets: List<CartesianMarker.Target>) {
                     val idx = targets.firstOrNull()?.x?.toInt() ?: return
+                    scrubIndex = idx
                     onScrub(data.getOrNull(idx)?.first)
                 }
 
+                override fun onShown(
+                    marker: CartesianMarker,
+                    targets: List<CartesianMarker.Target>,
+                ) = update(targets)
+
+                // Fires while the finger drags across the plot; without this
+                // the scrub line and rate label freeze at the initial press
+                // position instead of following the finger.
+                override fun onUpdated(
+                    marker: CartesianMarker,
+                    targets: List<CartesianMarker.Target>,
+                ) = update(targets)
+
                 override fun onHidden(marker: CartesianMarker) {
+                    scrubIndex = null
                     onScrub(null)
                 }
             }
@@ -167,56 +183,36 @@ fun TimelineChart(
     // with FitStrategy.Fixed and whole-pixel x-snapping.
     val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
     val yearChangeIndices =
-        remember(data) {
-            mutableListOf<Int>().apply {
-                for (i in 1 until data.size) {
-                    if (data[i - 1].first.year != data[i].first.year) add(i)
-                }
-            }
-        }
+        remember(data) { data.boundaryIndices { prev, curr -> prev.year != curr.year } }
     val monthChangeIndices =
         remember(data, showMonthChangeLines) {
-            mutableListOf<Int>().apply {
-                if (!showMonthChangeLines) return@apply
-                for (i in 1 until data.size) {
-                    val prev = data[i - 1].first
-                    val curr = data[i].first
-                    if (prev.year == curr.year && prev.monthValue != curr.monthValue) add(i)
+            if (!showMonthChangeLines) {
+                emptyList()
+            } else {
+                data.boundaryIndices { prev, curr ->
+                    prev.year == curr.year && prev.monthValue != curr.monthValue
                 }
             }
         }
 
+    val currentScrubIndex = scrubIndex
     val decorations =
         buildList {
             if (highlightPeriodChange) {
                 addPeriodChangeLines(monthChangeIndices, MONTH_CHANGE_COLOR)
                 addPeriodChangeLines(yearChangeIndices, YEAR_CHANGE_COLOR)
             }
+            if (currentScrubIndex != null) {
+                add(VerticalLineOver(x = currentScrubIndex.toDouble(), line = chartLine(scrubLineColor)))
+            }
             if (baseline != null) {
-                add(
-                    HorizontalLineUnder(
-                        y = baseline,
-                        line = LineComponent(fill = Fill(baselineColor), thickness = CHART_LINE_THICKNESS_DP.dp),
-                    ),
-                )
+                add(HorizontalLineUnder(y = baseline, line = chartLine(baselineColor)))
             }
             val hMin = highlightMin
             val hMax = highlightMax
             if (highlightExtremes && hMin != null && hMax != null && hMin != hMax) {
-                val maxFill = Fill(lineColor.copy(alpha = HIGHLIGHT_ALPHA))
-                val minFill = Fill(MIN_LINE_COLOR.copy(alpha = HIGHLIGHT_ALPHA))
-                add(
-                    HorizontalLineUnder(
-                        y = hMin,
-                        line = LineComponent(fill = minFill, thickness = CHART_LINE_THICKNESS_DP.dp),
-                    ),
-                )
-                add(
-                    HorizontalLineUnder(
-                        y = hMax,
-                        line = LineComponent(fill = maxFill, thickness = CHART_LINE_THICKNESS_DP.dp),
-                    ),
-                )
+                add(HorizontalLineUnder(y = hMin, line = chartLine(MIN_LINE_COLOR, HIGHLIGHT_ALPHA)))
+                add(HorizontalLineUnder(y = hMax, line = chartLine(lineColor, HIGHLIGHT_ALPHA)))
             }
         }
 
@@ -308,40 +304,72 @@ private val MIN_LINE_COLOR = Color(0xFFE53935)
 private val YEAR_CHANGE_COLOR = Color(0xFF1E88E5)
 private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
 
+// Walks the series and returns every index `i` where the (i-1, i) date pair
+// satisfies the predicate — used to locate year and month change boundaries.
+private inline fun List<Pair<LocalDate, Float>>.boundaryIndices(isBoundary: (prev: LocalDate, curr: LocalDate) -> Boolean): List<Int> =
+    buildList {
+        for (i in 1 until this@boundaryIndices.size) {
+            if (isBoundary(this@boundaryIndices[i - 1].first, this@boundaryIndices[i].first)) add(i)
+        }
+    }
+
 private fun MutableList<Decoration>.addPeriodChangeLines(
     indices: List<Int>,
     color: Color,
 ) {
     indices.forEach { idx ->
-        add(
-            VerticalLine(
-                x = idx.toDouble(),
-                line = LineComponent(fill = Fill(color), thickness = CHART_LINE_THICKNESS_DP.dp),
-            ),
-        )
+        add(VerticalLine(x = idx.toDouble(), line = chartLine(color)))
     }
+}
+
+// Common shape for every decoration in this chart: a thin solid line component
+// tinted with `color` (optionally at reduced `alpha`). Every call site used to
+// spell out the same LineComponent/Fill/thickness triple.
+private fun chartLine(
+    color: Color,
+    alpha: Float = 1f,
+): LineComponent {
+    val tinted = if (alpha == 1f) color else color.copy(alpha = alpha)
+    return LineComponent(fill = Fill(tinted), thickness = CHART_LINE_THICKNESS_DP.dp)
 }
 
 // Vico 3.2.3 ships HorizontalLine but no VerticalLine. Mirror the x mapping used
 // by HorizontalAxis (see HorizontalAxis.kt in vico:compose): the parent forces
 // LTR so layoutDirectionMultiplier is 1 and getStart(isLtr) == layerBounds.left.
+private fun CartesianDrawingContext.drawVerticalAtX(
+    x: Double,
+    line: LineComponent,
+) {
+    val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
+    val rawCanvasX =
+        baseCanvasX +
+            ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
+    // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
+    // per scanline, which reads as a jagged column when xSpacing pushes the
+    // boundary off-grid.
+    val canvasX = kotlin.math.round(rawCanvasX)
+    if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
+    line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
+}
+
 private class VerticalLine(
     private val x: Double,
     private val line: LineComponent,
 ) : Decoration {
     override fun drawUnderLayers(context: CartesianDrawingContext) {
-        with(context) {
-            val baseCanvasX = layerBounds.left - scroll + layerDimensions.startPadding
-            val rawCanvasX =
-                baseCanvasX +
-                    ((x - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
-            // Snap to whole pixel: a 1-px-thick line at a fractional x is anti-aliased
-            // per scanline, which reads as a jagged column when xSpacing pushes the
-            // boundary off-grid.
-            val canvasX = kotlin.math.round(rawCanvasX)
-            if (canvasX < layerBounds.left || canvasX > layerBounds.right) return
-            line.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
-        }
+        context.drawVerticalAtX(x, line)
+    }
+}
+
+// Scrub-line variant: paints atop the chart line so the finger indicator is
+// legible against the plotted series (the min/max/period-change lines sit
+// under the layers as static reference geometry).
+private class VerticalLineOver(
+    private val x: Double,
+    private val line: LineComponent,
+) : Decoration {
+    override fun drawOverLayers(context: CartesianDrawingContext) {
+        context.drawVerticalAtX(x, line)
     }
 }
 
