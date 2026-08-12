@@ -261,11 +261,21 @@ class TimelineViewModel(
             }
         }
 
-    fun getRatesMin(): LiveData<Triple<Rate?, LocalDate?, Int>> = extremeLiveData(pickMax = false)
+    fun getRatesMin(): LiveData<Triple<Rate?, LocalDate?, Int>> = extremeLiveData(pickMax = false, respectScrub = true)
 
-    fun getRatesMax(): LiveData<Triple<Rate?, LocalDate?, Int>> = extremeLiveData(pickMax = true)
+    fun getRatesMax(): LiveData<Triple<Rate?, LocalDate?, Int>> = extremeLiveData(pickMax = true, respectScrub = true)
 
-    private fun extremeLiveData(pickMax: Boolean): LiveData<Triple<Rate?, LocalDate?, Int>> =
+    // Range-wide extremes for the on-chart reference lines: intentionally
+    // ignore the scrub position so the horizontal min/max lines stay anchored
+    // to the visible period's absolute extremes while the finger drags.
+    fun getRatesRangeMin(): LiveData<Double?> = extremeLiveData(pickMax = false, respectScrub = false).map { it.first?.value?.toDouble() }
+
+    fun getRatesRangeMax(): LiveData<Double?> = extremeLiveData(pickMax = true, respectScrub = false).map { it.first?.value?.toDouble() }
+
+    private fun extremeLiveData(
+        pickMax: Boolean,
+        respectScrub: Boolean,
+    ): LiveData<Triple<Rate?, LocalDate?, Int>> =
         MediatorLiveData<Triple<Rate?, LocalDate?, Int>>().apply {
             var scrubDate: LocalDate? = null
             var rates: Set<Map.Entry<LocalDate, Rate?>>? = null
@@ -289,9 +299,11 @@ class TimelineViewModel(
                 update()
             }
 
-            addSource(scrubDateLiveData) {
-                scrubDate = it
-                update()
+            if (respectScrub) {
+                addSource(scrubDateLiveData) {
+                    scrubDate = it
+                    update()
+                }
             }
 
             addSource(getDecimalPlaces()) {

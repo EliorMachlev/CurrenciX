@@ -104,10 +104,11 @@ class TimelineActivity : BaseActivity() {
                         timelineModel.getRates().map { rates ->
                             rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
                         }
-                    val highlightMinLive =
-                        timelineModel.getRatesMin().map { it.first?.value?.toDouble() }
-                    val highlightMaxLive =
-                        timelineModel.getRatesMax().map { it.first?.value?.toDouble() }
+                    // Range extremes (scrub-independent) so the chart's min/max
+                    // reference lines stay pinned to the visible period's
+                    // absolute low/high while the finger drags.
+                    val highlightMinLive = timelineModel.getRatesRangeMin()
+                    val highlightMaxLive = timelineModel.getRatesRangeMax()
                     TimelineChart(
                         entriesLive = entriesLive,
                         showGridLive = db.isChartGridEnabled(),
