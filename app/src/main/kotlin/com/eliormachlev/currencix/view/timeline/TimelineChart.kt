@@ -306,9 +306,7 @@ private val MONTH_CHANGE_COLOR = Color(0xFF8E24AA)
 
 // Walks the series and returns every index `i` where the (i-1, i) date pair
 // satisfies the predicate — used to locate year and month change boundaries.
-private inline fun List<Pair<LocalDate, Float>>.boundaryIndices(
-    isBoundary: (prev: LocalDate, curr: LocalDate) -> Boolean,
-): List<Int> =
+private inline fun List<Pair<LocalDate, Float>>.boundaryIndices(isBoundary: (prev: LocalDate, curr: LocalDate) -> Boolean): List<Int> =
     buildList {
         for (i in 1 until this@boundaryIndices.size) {
             if (isBoundary(this@boundaryIndices[i - 1].first, this@boundaryIndices[i].first)) add(i)
