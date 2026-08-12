@@ -26,7 +26,8 @@ jobs:
           distribution: temurin
       - name: Install detekt CLI
         run: |
-          curl -sSLo detekt-cli.zip \
+          curl -fsSL --retry 5 --retry-all-errors --retry-delay 3 \
+            -o detekt-cli.zip \
             "https://github.com/detekt/detekt/releases/download/v${DETEKT_VERSION}/detekt-cli-${DETEKT_VERSION}.zip"
           unzip -q detekt-cli.zip
           echo "$PWD/detekt-cli-${DETEKT_VERSION}/bin" >> "$GITHUB_PATH"
