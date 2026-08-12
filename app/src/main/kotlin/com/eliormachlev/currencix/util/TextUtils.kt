@@ -84,15 +84,13 @@ fun String.stripRtlMark(): String = replace(RTL_MARK, "")
 fun String.stripDiacritics(): String = Normalizer.normalize(this, Normalizer.Form.NFD).replace(NONSPACING_MARK_REGEX, "")
 
 /**
- * Diacritic-insensitive `contains`: normalizes both sides via
- * [stripDiacritics] before comparing. Case-insensitive by default so it's
- * a drop-in replacement for `contains(query, ignoreCase = true)` in
- * user-facing pickers.
+ * Canonical form for diacritic- and case-insensitive substring search:
+ * strip combining marks (see [stripDiacritics]) then lowercase. Both the
+ * query and each candidate string must go through this before comparing
+ * with plain `contains`; call sites should normalize the query **once**
+ * per filter pass so N candidates don't each re-normalize it.
  */
-fun String.containsNormalized(
-    query: CharSequence,
-    ignoreCase: Boolean = true,
-): Boolean = stripDiacritics().contains(query.toString().stripDiacritics(), ignoreCase = ignoreCase)
+fun String.normalizeForSearch(): String = stripDiacritics().lowercase()
 
 /**
  * Return the *used* Locale, based on the currently active resource folder,

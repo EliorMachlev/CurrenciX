@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.ListPreference
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
-import com.eliormachlev.currencix.util.containsNormalized
+import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.google.android.material.radiobutton.MaterialRadioButton
 
@@ -119,7 +119,7 @@ class LanguagePickerPreference : ListPreference {
         override fun getItemId(position: Int): Long = getItem(position).hashCode().toLong()
 
         fun filter(query: String?) {
-            val q = query?.trim().orEmpty()
+            val q = query?.trim().orEmpty().normalizeForSearch()
             languages =
                 if (q.isEmpty()) {
                     allLanguages
@@ -175,13 +175,15 @@ class LanguagePickerPreference : ListPreference {
             return view!!
         }
 
+        // [normalizedQuery] must already be [normalizeForSearch]-ed by the caller
+        // so N language rows don't each re-normalize the query string.
         private fun Language.matches(
             context: Context,
-            query: String,
+            normalizedQuery: String,
         ): Boolean {
-            if (localizedName(context).containsNormalized(query)) return true
+            if (localizedName(context).normalizeForSearch().contains(normalizedQuery)) return true
             if (this == Language.SYSTEM) return false
-            return nativeName(context).containsNormalized(query)
+            return nativeName(context).normalizeForSearch().contains(normalizedQuery)
         }
 
         internal class ViewHolder {
