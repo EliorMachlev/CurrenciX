@@ -248,7 +248,12 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         url: String,
     ) {
         findPreference<Preference>(getString(keyRes))?.setOnPreferenceClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            } catch (e: ActivityNotFoundException) {
+                // No browser installed — nothing to fall back to for a doc URL.
+                Timber.tag("PreferenceFragment").d(e, "No activity to handle %s", url)
+            }
             true
         }
     }
