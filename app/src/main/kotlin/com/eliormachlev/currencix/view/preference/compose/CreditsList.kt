@@ -81,6 +81,13 @@ private fun CreditRow(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        credit.license?.let { spdx ->
+            Text(
+                text = stringResource(id = R.string.credit_license_prefix, spdx),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         Text(
             text = credit.url,
             style = MaterialTheme.typography.bodySmall,

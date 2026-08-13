@@ -17,10 +17,10 @@
         android:layout_height="17dp"
         android:layout_gravity="center"
         android:layout_marginTop="1dp"
+        android:importantForAccessibility="no"
         android:scaleType="fitXY"
         android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
         app:shapeAppearanceOverlay="@style/AppTheme.FlagRoundedCorners"
-        tools:ignore="ContentDescription"
         tools:src="@drawable/flag_sb" />
 
     <TextView

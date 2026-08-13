@@ -151,17 +151,27 @@
     <!-- about -->
     <string name="category_about">About this app</string>
     <string name="disclaimer_title">Disclaimer</string>
-    <string name="disclaimer_summary">Although the app is very thoroughly written and tested, <b>there is no guarantee that the data it shows is correct</b>. The exchange rates are provided by a third party and this app can\'t make no promise whatsoever that the data is true and up-to-date.\nAdditionally, the rates provided – still if correct – may vary from the ones used by your bank.\nLastly: Mistakes happen. Never blindly trust anyone! That being said, rest assured I wouldn\'t have released this app if I\'ve had any doubt that it works as intended.</string>
+    <string name="disclaimer_summary">Exchange rates shown are <b>indicative only</b>. They come from third-party providers, may be delayed or wrong, and <b>must not</b> be used for trading, hedging, invoicing, or any decision where an accurate or executable rate is required. See the Terms of Service for the full disclaimer.\nRates provided – even if correct – may differ from those used by your bank.\nLastly: mistakes happen. Never blindly trust any single source.</string>
+    <string name="privacy_policy_key" translatable="false">KEY_PRIVACY_POLICY</string>
+    <string name="privacy_policy_title">Privacy policy</string>
+    <string name="privacy_policy_summary">CurrenciX does not collect personal data. Read the full policy.</string>
+    <string name="terms_of_service_key" translatable="false">KEY_TERMS_OF_SERVICE</string>
+    <string name="terms_of_service_title">Terms of service</string>
+    <string name="terms_of_service_summary">Terms of use, warranty disclaimer, and rate-accuracy notice.</string>
+    <string name="accessibility_statement_key" translatable="false">KEY_ACCESSIBILITY_STATEMENT</string>
+    <string name="accessibility_statement_title">Accessibility</string>
+    <string name="accessibility_statement_summary">Accessibility statement, applicable standards, and how to report barriers.</string>
     <string name="sourcecode_key" translatable="false">KEY_SOURCECODE</string>
     <string name="sourcecode_title">Source code</string>
     <string name="sourcecode_summary">This app is open source. Go to the code repository to open issues, find out how to contribute or just have a look at the sources.</string>
     <string name="credits_key" translatable="false">KEY_CREDITS</string>
-    <string name="credits_title">Credits</string>
-    <string name="credits_summary">Attributions, license, and third-party libraries</string>
-    <string name="title_credits">Credits</string>
+    <string name="credits_title">Open-source licences &amp; credits</string>
+    <string name="credits_summary">Attributions, licence, and third-party libraries with SPDX identifiers</string>
+    <string name="title_credits">Open-source licences</string>
     <string name="credits_section_project">Project</string>
-    <string name="credits_section_license">License</string>
+    <string name="credits_section_license">Licence</string>
     <string name="credits_section_libraries">Third-party libraries</string>
+    <string name="credit_license_prefix" translatable="false">SPDX: %1$s</string>
     <string name="rate_key" translatable="false">KEY_RATE</string>
     <string name="rate_title">Rate this app</string>
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app on Google Play.</string>
