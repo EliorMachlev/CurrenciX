@@ -101,8 +101,6 @@
     <string name="category_about">O ovoj aplikaciji</string>
     <string name="disclaimer_title">Izjava o odricanju od odgovornosti</string>
     <string name="disclaimer_summary">Iako je aplikacija izrađena i provjerena s velikom pažnjom, <b>ne jamčimo da su podaci koje prikazuje točni</b>. Tečajevi se prikupljaju od trećih strana i ova aplikacija ni na koji način ne može obećati da će ti podaci biti istiniti i ažurni.\nDodatno, tečajne liste koje pružamo – iako možda točne – mogu se razlikovati od onih kojima se koristi vaša banka.\nNa kraju krajeva: pogreške se događaju. Nemojte nikome slijepo vjerovati! Međutim, možete biti sigurni da ovu aplikaciju ne bih objavio da ne vjerujem da ona funkcionira kako bi trebala.</string>
-    <string name="sourcecode_title">Izvorni kod</string>
-    <string name="sourcecode_summary">Ova aplikacija otvorenog je koda. Posjetite repozitorij izvornog koda kako biste prijavili probleme, saznali kako doprinijeti razvoju ili jednostavno pregledali izvorni kod.</string>
     <string name="rate_title">Ocijenite ovu aplikaciju</string>
     <string name="rate_summary">Ako to želite, možete pomoći drugima da otkriju ovu aplikaciju. Ovdje kliknite kako biste je ocijenili na Trgovini Play.</string>
     <string name="category_versioninfo">Podaci o inačici</string>

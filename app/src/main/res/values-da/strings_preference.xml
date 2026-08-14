@@ -102,8 +102,6 @@
     <string name="category_about">Om denne app</string>
     <string name="disclaimer_title">Ansvarsfraskrivelse</string>
 
-    <string name="sourcecode_title">Kildekode</string>
-    <string name="sourcecode_summary">Denne app er open source. Gå til kodedatabasen for at anmelde problemer, finde ud af, hvordan du bidrager, eller bare se på kilderne.</string>
     <string name="rate_title">Bedøm denne app</string>
     <string name="rate_summary">Hvis du vil, kan du hjælpe andre med at finde Valutaer. Klik her for at bedømme appen på Google Play.</string>
     <string name="category_versioninfo">Versioninformation</string>

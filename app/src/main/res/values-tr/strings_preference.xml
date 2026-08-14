@@ -101,8 +101,6 @@
     <string name="category_about">Uygulama hakkında</string>
     <string name="disclaimer_title">Sorumluluk Reddi</string>
     <string name="disclaimer_summary">Uygulama derin bir yazılım sürecinden geçip test edilmiş olsa dahi <b>gösterilen verilerin doğru olduğu garanti edilmez</b>. Döviz kurları üçüncü taraflarca sağlanır ve bu uygulama hiçbir şekilde bu kurların doğru veya güncel olduğunu vadetmez.\nBuna ek olarak sağlanan kurlar doğru olsa dahi bankanızda kullanılan kurlara göre farklılık gösterebilir.\nSon olarak, hatalar her daim gerçekleşebilir. Kimseye körü körüne güvenme! Yine de belirtmek isterim ki, eğer düzgün çalışmayacağını düşünseydim bu uygulamayı asla yayınlamazdım.</string>
-    <string name="sourcecode_title">Kaynak kodu</string>
-    <string name="sourcecode_summary">Bu uygulama açık kaynaklıdır. Sorun açmak için kod deposuna gidin, nasıl katkıda bulunacağınızı öğrenin veya yalnızca kaynaklara bir göz atın.</string>
     <string name="rate_title">Uygulamayı puanla</string>
     <string name="rate_summary">Eğer hoşuna gittiyse başka insanların da Currencies\'i keşfetmesini sağlayabilirsin. Uygulamayı Google Play üzerinden puanlamak için buraya tıkla.</string>
     <string name="category_versioninfo">Sürüm bilgisi</string>

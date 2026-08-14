@@ -101,8 +101,6 @@
     <string name="category_about">Quant a aquesta aplicació</string>
     <string name="disclaimer_title">Avís d\'exempció de responsabilitat</string>
     <string name="disclaimer_summary">Tot i que l\'aplicació ha sigut programada curosament i verificada, <b>no es garanteix que les dades que es mostren siguin correctes</b>. Al ser els tipus de canvi proveïts per tercers, no es pot assegurar que les seves dades siguin correctes i actualitzades.\nAddicionalment, els tipus que es mostren –tot i ser correctes– poden diferir dels utilitzats pel vostre banc.\nPer acabar, tothom pot cometre errors així que no confieu cegament en ningú! Això dit, si aquesta aplicació ha sigut publicada és perquè es té la certesa que funciona tal com es pretenia.</string>
-    <string name="sourcecode_title">Codi font</string>
-    <string name="sourcecode_summary">Aquesta aplicació és de codi obert. Accediu al repositori per obrir incidències, descobrir com contribuir o consultar el codi font.</string>
     <string name="rate_title">Valoreu l\'aplicació</string>
     <string name="rate_summary">Podeu ajudar a altres persones a descobrir Currencies. Toqueu aquí per a puntuar l\'aplicació a Google Play.</string>
     <string name="category_versioninfo">Informació de la versió</string>
