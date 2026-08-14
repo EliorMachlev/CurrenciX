@@ -1,10 +1,11 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.URL_DOCS_BASE
+import com.eliormachlev.currencix.util.URL_REPO
 
-private const val URL_REPO = "https://github.com/EliorMachlev/CurrenciX"
-private const val URL_DOCS_BASE = "$URL_REPO/blob/master/docs/markDown/"
 private const val URL_PRIVACY_POLICY = "${URL_DOCS_BASE}privacy-policy.md"
 private const val URL_TERMS_OF_SERVICE = "${URL_DOCS_BASE}terms-of-service.md"
 private const val URL_ACCESSIBILITY_STATEMENT = "${URL_DOCS_BASE}accessibility-statement.md"
@@ -113,38 +114,31 @@ private val LIBRARY_CREDITS =
         ),
     )
 
-fun creditsSections(context: Context): List<CreditsSection> {
-    val legal =
-        listOf(
-            Credit(
-                title = context.getString(R.string.credit_privacy_policy_title),
-                subtitle = context.getString(R.string.credit_privacy_policy_subtitle),
-                url = URL_PRIVACY_POLICY,
+fun creditsSections(context: Context): List<CreditsSection> =
+    listOf(
+        CreditsSection(
+            R.string.credits_section_legal,
+            listOf(
+                context.credit(R.string.credit_privacy_policy_title, R.string.credit_privacy_policy_subtitle, URL_PRIVACY_POLICY),
+                context.credit(R.string.credit_terms_of_service_title, R.string.credit_terms_of_service_subtitle, URL_TERMS_OF_SERVICE),
+                context.credit(R.string.credit_accessibility_title, R.string.credit_accessibility_subtitle, URL_ACCESSIBILITY_STATEMENT),
             ),
-            Credit(
-                title = context.getString(R.string.credit_terms_of_service_title),
-                subtitle = context.getString(R.string.credit_terms_of_service_subtitle),
-                url = URL_TERMS_OF_SERVICE,
-            ),
-            Credit(
-                title = context.getString(R.string.credit_accessibility_title),
-                subtitle = context.getString(R.string.credit_accessibility_subtitle),
-                url = URL_ACCESSIBILITY_STATEMENT,
-            ),
-        )
-    val source =
-        listOf(
-            Credit(
-                title = context.getString(R.string.credit_source_title),
-                subtitle = context.getString(R.string.credit_source_subtitle),
-                url = URL_REPO,
-            ),
-        )
-    return listOf(
-        CreditsSection(R.string.credits_section_legal, legal),
-        CreditsSection(R.string.credits_section_source, source),
+        ),
+        CreditsSection(
+            R.string.credits_section_source,
+            listOf(context.credit(R.string.credit_source_title, R.string.credit_source_subtitle, URL_REPO)),
+        ),
         CreditsSection(R.string.credits_section_project, PROJECT_CREDITS),
         CreditsSection(R.string.credits_section_license, LICENSE_CREDITS),
         CreditsSection(R.string.credits_section_libraries, LIBRARY_CREDITS),
     )
-}
+
+private fun Context.credit(
+    @StringRes titleRes: Int,
+    @StringRes subtitleRes: Int,
+    url: String,
+) = Credit(
+    title = getString(titleRes),
+    subtitle = getString(subtitleRes),
+    url = url,
+)

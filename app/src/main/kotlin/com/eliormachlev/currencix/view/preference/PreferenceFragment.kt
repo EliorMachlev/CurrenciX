@@ -22,6 +22,7 @@ import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
+import com.eliormachlev.currencix.util.URL_REPO
 import com.eliormachlev.currencix.view.main.MainActivity
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.widget.LongSummaryPreference
@@ -36,7 +37,6 @@ private const val UNKNOWN_PROVIDER_ID = -1
 // instead of the "rate on Play" entry.
 private const val FLAVOR_PLAY = "play"
 
-private const val URL_REPO = "https://github.com/EliorMachlev/CurrenciX"
 private const val URL_RELEASES_TAG = "$URL_REPO/releases/tag/v"
 private const val URL_PULLS = "$URL_REPO/pulls"
 private const val URL_COMMIT = "$URL_REPO/commit/"
