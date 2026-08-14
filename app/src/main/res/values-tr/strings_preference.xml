@@ -132,4 +132,20 @@
     <string name="credits_section_project">Proje</string>
     <string name="credits_section_license">Lisans</string>
     <string name="credits_section_libraries">Üçüncü taraf kütüphaneler</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Erişilebilirlik beyanı</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA hedefi; engelleri nasıl bildireceğinize dair bilgiler.</string>
+    <string name="credit_privacy_policy_title">Gizlilik politikası</string>
+    <string name="credit_privacy_policy_subtitle">Hiçbir kişisel veri toplanmaz. Her yargı bölgesi için tam duruş.</string>
+    <string name="credit_source_title">Kaynak kodu</string>
+    <string name="credit_source_subtitle">GitHub\'da açık kaynak — katkıda bulunun veya bir sorun bildirin.</string>
+    <string name="credit_terms_of_service_title">Hizmet şartları</string>
+    <string name="credit_terms_of_service_subtitle">Kullanım şartları, garanti reddi, kur doğruluğu bildirimi.</string>
+    <string name="credits_section_legal">Yasal</string>
+    <string name="credits_section_source">Kaynak</string>
+    <string name="fee_edit_active">Etkin</string>
+    <string name="fee_edit_name">Ad</string>
+    <string name="fee_edit_name_hint">örn. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Pasif</string>
+    <string name="fee_untitled">Adsız</string>
 </resources>

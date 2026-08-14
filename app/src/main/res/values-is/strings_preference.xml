@@ -130,4 +130,23 @@
     <string name="credits_section_project">Verkefni</string>
     <string name="credits_section_license">Leyfi</string>
     <string name="credits_section_libraries">Söfn þriðja aðila</string>
+    <string name="api_open_exchangerates_api_key_title">Open Exchangerates API-lykill</string>
+    <string name="api_open_exchangerates_api_key_message">Til að nota þessa uppsprettu þarftu að búa til þinn eigin API-lykil.\n\nFarðu á https://openexchangerates.org/signup/free og búðu til ókeypis reikning.\nAð lokum skaltu bara búa til nýtt App ID inni á stjórnborðinu þínu og slá það hér inn:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>API-lykill nauðsynlegur</i></string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Yfirlýsing um aðgengi</string>
+    <string name="credit_accessibility_subtitle">Markmið WCAG 2.1 AA; hvernig á að tilkynna hindranir.</string>
+    <string name="credit_privacy_policy_title">Persónuverndarstefna</string>
+    <string name="credit_privacy_policy_subtitle">Engum persónugreinanlegum gögnum er safnað. Fullt yfirlit eftir lögsögu.</string>
+    <string name="credit_source_title">Frumkóði</string>
+    <string name="credit_source_subtitle">Opinn frumkóði á GitHub — leggðu til eða opnaðu mál.</string>
+    <string name="credit_terms_of_service_title">Þjónustuskilmálar</string>
+    <string name="credit_terms_of_service_subtitle">Notkunarskilmálar, fyrirvari um ábyrgð, tilkynning um nákvæmni gengis.</string>
+    <string name="credits_section_legal">Lagalegt</string>
+    <string name="credits_section_source">Frumkóði</string>
+    <string name="fee_edit_active">Virkt</string>
+    <string name="fee_edit_name">Nafn</string>
+    <string name="fee_edit_name_hint">t.d. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Óvirkt</string>
+    <string name="fee_untitled">Án titils</string>
 </resources>

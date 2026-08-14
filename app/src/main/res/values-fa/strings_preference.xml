@@ -132,4 +132,20 @@
     <string name="credits_section_project">پروژه</string>
     <string name="credits_section_license">مجوز</string>
     <string name="credits_section_libraries">کتابخانه‌های شخص ثالث</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">بیانیه دسترس‌پذیری</string>
+    <string name="credit_accessibility_subtitle">هدف WCAG 2.1 AA؛ چگونگی گزارش موانع.</string>
+    <string name="credit_privacy_policy_title">سیاست حریم خصوصی</string>
+    <string name="credit_privacy_policy_subtitle">هیچ داده‌ی شخصی جمع‌آوری نمی‌شود. وضعیت کامل به تفکیک حوزه قضایی.</string>
+    <string name="credit_source_title">کد منبع</string>
+    <string name="credit_source_subtitle">متن‌باز در گیت‌هاب — مشارکت کنید یا مشکلی را گزارش دهید.</string>
+    <string name="credit_terms_of_service_title">شرایط خدمات</string>
+    <string name="credit_terms_of_service_subtitle">شرایط استفاده، سلب ضمانت، اطلاعیه دقت نرخ‌ها.</string>
+    <string name="credits_section_legal">حقوقی</string>
+    <string name="credits_section_source">منبع</string>
+    <string name="fee_edit_active">فعال</string>
+    <string name="fee_edit_name">نام</string>
+    <string name="fee_edit_name_hint">مانند Wise، Revolut، Chase</string>
+    <string name="fee_inactive_marker">غیرفعال</string>
+    <string name="fee_untitled">بدون‌عنوان</string>
 </resources>

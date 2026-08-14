@@ -130,4 +130,27 @@
     <string name="credits_section_project">Prosjekt</string>
     <string name="credits_section_license">Lisens</string>
     <string name="credits_section_libraries">Tredjepartsbiblioteker</string>
+    <string name="api_open_exchangerates_api_key_title">Open Exchangerates API-nøkkel</string>
+    <string name="api_open_exchangerates_api_key_message">For å bruke denne kilden må du opprette din personlige API-nøkkel.\n\nFor å gjøre det, gå til https://openexchangerates.org/signup/free og opprett en gratis konto.\nGenerer til slutt en ny App-ID i Dashbordet ditt og skriv den inn her:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>API-nøkkel kreves</i></string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="category_versioninfo">Versjonsinformasjon</string>
+    <string name="credit_accessibility_title">Tilgjengelighetserklæring</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA-mål; hvordan rapportere hindringer.</string>
+    <string name="credit_privacy_policy_title">Personvernerklæring</string>
+    <string name="credit_privacy_policy_subtitle">Ingen personopplysninger samles inn. Full oversikt per jurisdiksjon.</string>
+    <string name="credit_source_title">Kildekode</string>
+    <string name="credit_source_subtitle">Åpen kildekode på GitHub — bidra eller åpne en sak.</string>
+    <string name="credit_terms_of_service_title">Vilkår for tjenesten</string>
+    <string name="credit_terms_of_service_subtitle">Bruksvilkår, garantifraskrivelse, merknad om kursnøyaktighet.</string>
+    <string name="credits_section_legal">Juridisk</string>
+    <string name="credits_section_source">Kilde</string>
+    <string name="fee_edit_active">Aktiv</string>
+    <string name="fee_edit_name">Navn</string>
+    <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Inaktiv</string>
+    <string name="fee_untitled">Uten navn</string>
+    <string name="language_ru">Russisk</string>
+    <string name="language_zh_CN">Kinesisk (forenklet)</string>
+    <string name="title_changelog">Endringslogg</string>
 </resources>

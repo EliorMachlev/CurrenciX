@@ -95,4 +95,6 @@
     <string name="cart_unsaved_save_as">Salva come nuovo</string>
     <string name="cart_unsaved_discard">Annulla modifiche</string>
     <string name="cart_unsaved_continue">Continua</string>
+    <string name="a11y_delete">Elimina</string>
+    <string name="a11y_historical_rate">Tasso storico</string>
 </resources>

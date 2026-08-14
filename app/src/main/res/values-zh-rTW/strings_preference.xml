@@ -132,4 +132,20 @@
     <string name="credits_section_project">專案</string>
     <string name="credits_section_license">授權</string>
     <string name="credits_section_libraries">第三方函式庫</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">無障礙聲明</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA 目標；如何回報障礙。</string>
+    <string name="credit_privacy_policy_title">隱私權政策</string>
+    <string name="credit_privacy_policy_subtitle">不會蒐集任何個人資料。依各司法管轄區的完整說明。</string>
+    <string name="credit_source_title">原始碼</string>
+    <string name="credit_source_subtitle">GitHub 上開放原始碼 — 歡迎貢獻或提出問題。</string>
+    <string name="credit_terms_of_service_title">服務條款</string>
+    <string name="credit_terms_of_service_subtitle">使用條款、免責聲明、匯率準確性說明。</string>
+    <string name="credits_section_legal">法律</string>
+    <string name="credits_section_source">原始碼</string>
+    <string name="fee_edit_active">啟用</string>
+    <string name="fee_edit_name">名稱</string>
+    <string name="fee_edit_name_hint">例如：Wise、Revolut、Chase</string>
+    <string name="fee_inactive_marker">未啟用</string>
+    <string name="fee_untitled">未命名</string>
 </resources>

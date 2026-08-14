@@ -132,4 +132,20 @@
     <string name="credits_section_project">Projet</string>
     <string name="credits_section_license">Licence</string>
     <string name="credits_section_libraries">Bibliothèques tierces</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Déclaration d\'accessibilité</string>
+    <string name="credit_accessibility_subtitle">Cible WCAG 2.1 AA ; comment signaler des obstacles.</string>
+    <string name="credit_privacy_policy_title">Politique de confidentialité</string>
+    <string name="credit_privacy_policy_subtitle">Aucune donnée personnelle n\'est collectée. Position complète par juridiction.</string>
+    <string name="credit_source_title">Code source</string>
+    <string name="credit_source_subtitle">Code source ouvert sur GitHub — contribuez ou ouvrez un ticket.</string>
+    <string name="credit_terms_of_service_title">Conditions d\'utilisation</string>
+    <string name="credit_terms_of_service_subtitle">Conditions d\'utilisation, clause de non-garantie, avis sur la précision des taux.</string>
+    <string name="credits_section_legal">Mentions légales</string>
+    <string name="credits_section_source">Source</string>
+    <string name="fee_edit_active">Actif</string>
+    <string name="fee_edit_name">Nom</string>
+    <string name="fee_edit_name_hint">p. ex. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Inactif</string>
+    <string name="fee_untitled">Sans titre</string>
 </resources>

@@ -128,4 +128,25 @@
     <string name="credits_section_project">פרויקט</string>
     <string name="credits_section_license">רישיון</string>
     <string name="credits_section_libraries">ספריות צד שלישי</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">הצהרת נגישות</string>
+    <string name="credit_accessibility_subtitle">יעד WCAG 2.1 AA; איך לדווח על חסמים.</string>
+    <string name="credit_privacy_policy_title">מדיניות פרטיות</string>
+    <string name="credit_privacy_policy_subtitle">לא נאסף מידע אישי. פירוט מלא לפי תחום שיפוט.</string>
+    <string name="credit_source_title">קוד מקור</string>
+    <string name="credit_source_subtitle">קוד פתוח ב-GitHub — תרמו או פתחו דיווח.</string>
+    <string name="credit_terms_of_service_title">תנאי שימוש</string>
+    <string name="credit_terms_of_service_subtitle">תנאי שימוש, הסתייגות מאחריות, הודעה על דיוק השערים.</string>
+    <string name="credits_section_legal">משפטי</string>
+    <string name="credits_section_source">מקור</string>
+    <string name="fee_edit_active">פעיל</string>
+    <string name="fee_edit_name">שם</string>
+    <string name="fee_edit_name_hint">לדוגמה Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">לא פעיל</string>
+    <string name="fee_untitled">ללא כותרת</string>
+    <string name="language_da">דנית</string>
+    <string name="language_en_GB">אנגלית (בריטניה)</string>
+    <string name="language_et">אסטונית</string>
+    <string name="language_fa">פרסית</string>
+    <string name="language_zh_TW">סינית מסורתית</string>
 </resources>

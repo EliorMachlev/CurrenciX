@@ -134,4 +134,20 @@
     <string name="credits_section_project">Dự án</string>
     <string name="credits_section_license">Giấy phép</string>
     <string name="credits_section_libraries">Thư viện của bên thứ ba</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Tuyên bố về khả năng truy cập</string>
+    <string name="credit_accessibility_subtitle">Mục tiêu WCAG 2.1 AA; cách báo cáo các rào cản.</string>
+    <string name="credit_privacy_policy_title">Chính sách bảo mật</string>
+    <string name="credit_privacy_policy_subtitle">Không thu thập dữ liệu cá nhân nào. Chi tiết đầy đủ theo từng khu vực pháp lý.</string>
+    <string name="credit_source_title">Mã nguồn</string>
+    <string name="credit_source_subtitle">Mã nguồn mở trên GitHub — hãy đóng góp hoặc gửi vấn đề.</string>
+    <string name="credit_terms_of_service_title">Điều khoản dịch vụ</string>
+    <string name="credit_terms_of_service_subtitle">Điều khoản sử dụng, tuyên bố miễn trừ bảo hành, thông báo về độ chính xác của tỷ giá.</string>
+    <string name="credits_section_legal">Pháp lý</string>
+    <string name="credits_section_source">Nguồn</string>
+    <string name="fee_edit_active">Đang hoạt động</string>
+    <string name="fee_edit_name">Tên</string>
+    <string name="fee_edit_name_hint">ví dụ: Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Không hoạt động</string>
+    <string name="fee_untitled">Không có tiêu đề</string>
 </resources>

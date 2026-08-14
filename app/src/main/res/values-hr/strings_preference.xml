@@ -132,4 +132,20 @@
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licenca</string>
     <string name="credits_section_libraries">Biblioteke trećih strana</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Izjava o pristupačnosti</string>
+    <string name="credit_accessibility_subtitle">Cilj WCAG 2.1 AA; kako prijaviti prepreke.</string>
+    <string name="credit_privacy_policy_title">Pravila privatnosti</string>
+    <string name="credit_privacy_policy_subtitle">Ne prikupljaju se osobni podaci. Cjelovit pregled po jurisdikciji.</string>
+    <string name="credit_source_title">Izvorni kod</string>
+    <string name="credit_source_subtitle">Otvoreni kod na GitHubu — doprinesite ili otvorite prijavu.</string>
+    <string name="credit_terms_of_service_title">Uvjeti pružanja usluge</string>
+    <string name="credit_terms_of_service_subtitle">Uvjeti korištenja, izjava o odricanju od jamstva, obavijest o točnosti tečajeva.</string>
+    <string name="credits_section_legal">Pravno</string>
+    <string name="credits_section_source">Izvor</string>
+    <string name="fee_edit_active">Aktivno</string>
+    <string name="fee_edit_name">Naziv</string>
+    <string name="fee_edit_name_hint">npr. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Neaktivno</string>
+    <string name="fee_untitled">Bez naziva</string>
 </resources>

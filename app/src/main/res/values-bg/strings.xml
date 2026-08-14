@@ -88,4 +88,12 @@
     <string name="cart_unsaved_save_as">Запази като нова</string>
     <string name="cart_unsaved_discard">Отхвърли промените</string>
     <string name="cart_unsaved_continue">Продължи</string>
+    <string name="a11y_delete">Изтрий</string>
+    <string name="a11y_historical_rate">Исторически курс</string>
+    <string name="currency_dropdown_api_hint">Липсва нещо? Различните доставчици на данни предлагат различни валути. Отиди в настройките и опитай друг!\u00A0\uD83E\uDD17</string>
+    <string name="error_empty_response">Сървърът няма данни за тази заявка.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Моля, провери своя API ключ.</string>
+    <string name="error_no_api_key">Трябва да зададеш валиден API ключ, за да използваш този източник.</string>
+    <string name="error_try_another_api">Все пак, в настройките има и други доставчици на данни, от които можеш да избираш. Просто опитай!</string>
+    <string name="error_unsupported_timeline">Данните за график не се поддържат от този API.</string>
 </resources>

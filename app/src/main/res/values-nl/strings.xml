@@ -27,6 +27,8 @@
     <string name="quick_conversions_no_rates">Koersen zijn nog niet geladen.</string>
     <string name="quick_conversions_fees_applied">Toegepaste kosten: %s</string>
     <string name="tooltip_filter_starred">Toon alleen favoriete valuta\'s.</string>
+    <string name="a11y_delete">Verwijderen</string>
+    <string name="a11y_historical_rate">Historische koers</string>
     <string name="currency_dropdown_api_hint">Ontbreekt er iets? Verschillende dataproviders bieden verschillende valuta\'s aan. Ga naar de instellingen om een andere te proberen! 🤗</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>

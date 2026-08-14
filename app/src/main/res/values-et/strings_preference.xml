@@ -132,4 +132,20 @@
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Litsents</string>
     <string name="credits_section_libraries">Kolmandate osapoolte teegid</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Ligipääsetavuse avaldus</string>
+    <string name="credit_accessibility_subtitle">Sihttase WCAG 2.1 AA; kuidas teatada takistustest.</string>
+    <string name="credit_privacy_policy_title">Privaatsuspõhimõtted</string>
+    <string name="credit_privacy_policy_subtitle">Isikuandmeid ei koguta. Täielik ülevaade jurisdiktsioonide kaupa.</string>
+    <string name="credit_source_title">Lähtekood</string>
+    <string name="credit_source_subtitle">Avatud lähtekoodiga GitHubis — panusta või ava probleem.</string>
+    <string name="credit_terms_of_service_title">Kasutustingimused</string>
+    <string name="credit_terms_of_service_subtitle">Kasutustingimused, garantii lahtiütlus, kursside täpsuse teave.</string>
+    <string name="credits_section_legal">Õiguslik</string>
+    <string name="credits_section_source">Lähtekood</string>
+    <string name="fee_edit_active">Aktiivne</string>
+    <string name="fee_edit_name">Nimi</string>
+    <string name="fee_edit_name_hint">nt Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Mitteaktiivne</string>
+    <string name="fee_untitled">Nimetu</string>
 </resources>

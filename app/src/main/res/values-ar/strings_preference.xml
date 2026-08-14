@@ -132,4 +132,20 @@
     <string name="credits_section_project">المشروع</string>
     <string name="credits_section_license">الترخيص</string>
     <string name="credits_section_libraries">المكتبات الخارجية</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">بيان إمكانية الوصول</string>
+    <string name="credit_accessibility_subtitle">الهدف WCAG 2.1 AA؛ كيفية الإبلاغ عن العوائق.</string>
+    <string name="credit_privacy_policy_title">سياسة الخصوصية</string>
+    <string name="credit_privacy_policy_subtitle">لا يتم جمع أي بيانات شخصية. الموقف الكامل لكل ولاية قضائية.</string>
+    <string name="credit_source_title">الكود المصدري</string>
+    <string name="credit_source_subtitle">مفتوح المصدر على GitHub — ساهم أو افتح مشكلة.</string>
+    <string name="credit_terms_of_service_title">شروط الخدمة</string>
+    <string name="credit_terms_of_service_subtitle">شروط الاستخدام، إخلاء المسؤولية عن الضمان، إشعار دقة الأسعار.</string>
+    <string name="credits_section_legal">قانوني</string>
+    <string name="credits_section_source">المصدر</string>
+    <string name="fee_edit_active">نشط</string>
+    <string name="fee_edit_name">الاسم</string>
+    <string name="fee_edit_name_hint">مثال: Wise، Revolut، Chase</string>
+    <string name="fee_inactive_marker">غير نشط</string>
+    <string name="fee_untitled">بدون عنوان</string>
 </resources>

@@ -98,4 +98,6 @@
     <string name="cart_unsaved_save_as">പുതിയതായി സംരക്ഷിക്കുക</string>
     <string name="cart_unsaved_discard">മാറ്റങ്ങൾ ഉപേക്ഷിക്കുക</string>
     <string name="cart_unsaved_continue">തുടരുക</string>
+    <string name="a11y_delete">നീക്കംചെയ്യുക</string>
+    <string name="a11y_historical_rate">ചരിത്ര നിരക്ക്</string>
 </resources>

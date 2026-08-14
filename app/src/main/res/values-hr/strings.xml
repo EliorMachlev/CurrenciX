@@ -94,4 +94,6 @@
     <string name="cart_unsaved_save_as">Spremi kao novu</string>
     <string name="cart_unsaved_discard">Odbaci promjene</string>
     <string name="cart_unsaved_continue">Nastavi</string>
+    <string name="a11y_delete">Izbriši</string>
+    <string name="a11y_historical_rate">Povijesni tečaj</string>
 </resources>

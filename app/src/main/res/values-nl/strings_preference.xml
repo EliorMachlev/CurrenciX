@@ -132,4 +132,20 @@
     <string name="credits_section_project">Project</string>
     <string name="credits_section_license">Licentie</string>
     <string name="credits_section_libraries">Bibliotheken van derden</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Toegankelijkheidsverklaring</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA-doel; hoe belemmeringen te melden.</string>
+    <string name="credit_privacy_policy_title">Privacybeleid</string>
+    <string name="credit_privacy_policy_subtitle">Er worden geen persoonsgegevens verzameld. Volledige houding per jurisdictie.</string>
+    <string name="credit_source_title">Broncode</string>
+    <string name="credit_source_subtitle">Open source op GitHub — draag bij of open een issue.</string>
+    <string name="credit_terms_of_service_title">Servicevoorwaarden</string>
+    <string name="credit_terms_of_service_subtitle">Gebruiksvoorwaarden, garantievrijwaring, kennisgeving over koersnauwkeurigheid.</string>
+    <string name="credits_section_legal">Juridisch</string>
+    <string name="credits_section_source">Bron</string>
+    <string name="fee_edit_active">Actief</string>
+    <string name="fee_edit_name">Naam</string>
+    <string name="fee_edit_name_hint">bijv. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Inactief</string>
+    <string name="fee_untitled">Naamloos</string>
 </resources>

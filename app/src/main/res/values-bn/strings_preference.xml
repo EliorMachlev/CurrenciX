@@ -132,4 +132,21 @@
     <string name="credits_section_project">প্রকল্প</string>
     <string name="credits_section_license">লাইসেন্স</string>
     <string name="credits_section_libraries">তৃতীয় পক্ষের লাইব্রেরি</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">অ্যাক্সেসিবিলিটি বিবৃতি</string>
+    <string name="credit_accessibility_subtitle">লক্ষ্য WCAG 2.1 AA; কীভাবে বাধা রিপোর্ট করবেন।</string>
+    <string name="credit_privacy_policy_title">গোপনীয়তা নীতি</string>
+    <string name="credit_privacy_policy_subtitle">কোনো ব্যক্তিগত তথ্য সংগ্রহ করা হয় না। প্রতিটি এখতিয়ারের সম্পূর্ণ অবস্থান।</string>
+    <string name="credit_source_title">সোর্স কোড</string>
+    <string name="credit_source_subtitle">GitHub-এ ওপেন সোর্স — অবদান রাখুন বা সমস্যা খুলুন।</string>
+    <string name="credit_terms_of_service_title">পরিষেবার শর্তাবলী</string>
+    <string name="credit_terms_of_service_subtitle">ব্যবহারের শর্তাবলী, ওয়ারেন্টি অস্বীকৃতি, হারের নির্ভুলতা নোটিশ।</string>
+    <string name="credits_section_legal">আইনি</string>
+    <string name="credits_section_source">সোর্স</string>
+    <string name="fee_edit_active">সক্রিয়</string>
+    <string name="fee_edit_name">নাম</string>
+    <string name="fee_edit_name_hint">যেমন Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">নিষ্ক্রিয়</string>
+    <string name="fee_untitled">শিরোনামহীন</string>
+    <string name="language_he">হিব্রু</string>
 </resources>

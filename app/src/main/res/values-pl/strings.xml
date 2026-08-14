@@ -24,6 +24,11 @@
     <string name="quick_conversions_no_rates">Kursy nie zostały jeszcze załadowane.</string>
     <string name="quick_conversions_fees_applied">Zastosowane opłaty: %s</string>
     <string name="tooltip_filter_starred">Pokaż tylko polubione waluty.</string>
+    <string name="a11y_delete">Usuń</string>
+    <string name="a11y_historical_rate">Kurs historyczny</string>
+    <string name="error_invalid_api_key">HTTP 401 – Sprawdź swój klucz API.</string>
+    <string name="error_no_api_key">Aby korzystać z tego źródła, należy ustawić prawidłowy klucz API.</string>
+    <string name="error_unsupported_timeline">Dane osi czasu nie są obsługiwane przez to API.</string>
     <string name="currency_dropdown_api_hint">Czegoś brakuje? Różni dostawcy danych oferują różne waluty. Przejdź do ustawień, aby wypróbować innego dostawcę!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Kursy z %1$s</string>

@@ -132,4 +132,20 @@
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licence</string>
     <string name="credits_section_libraries">Knihovny třetích stran</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Prohlášení o přístupnosti</string>
+    <string name="credit_accessibility_subtitle">Cíl WCAG 2.1 AA; jak nahlásit překážky.</string>
+    <string name="credit_privacy_policy_title">Zásady ochrany soukromí</string>
+    <string name="credit_privacy_policy_subtitle">Nesbírají se žádné osobní údaje. Plné stanovisko podle jurisdikce.</string>
+    <string name="credit_source_title">Zdrojový kód</string>
+    <string name="credit_source_subtitle">Otevřený zdrojový kód na GitHubu — přispějte nebo nahlaste problém.</string>
+    <string name="credit_terms_of_service_title">Podmínky služby</string>
+    <string name="credit_terms_of_service_subtitle">Podmínky použití, prohlášení o vyloučení záruky, upozornění o přesnosti kurzů.</string>
+    <string name="credits_section_legal">Právní</string>
+    <string name="credits_section_source">Zdroj</string>
+    <string name="fee_edit_active">Aktivní</string>
+    <string name="fee_edit_name">Název</string>
+    <string name="fee_edit_name_hint">např. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Neaktivní</string>
+    <string name="fee_untitled">Bez názvu</string>
 </resources>

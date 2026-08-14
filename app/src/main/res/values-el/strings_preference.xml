@@ -132,4 +132,20 @@
     <string name="credits_section_project">Έργο</string>
     <string name="credits_section_license">Άδεια</string>
     <string name="credits_section_libraries">Βιβλιοθήκες τρίτων</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Δήλωση προσβασιμότητας</string>
+    <string name="credit_accessibility_subtitle">Στόχος WCAG 2.1 AA· πώς να αναφέρετε εμπόδια.</string>
+    <string name="credit_privacy_policy_title">Πολιτική απορρήτου</string>
+    <string name="credit_privacy_policy_subtitle">Δεν συλλέγονται προσωπικά δεδομένα. Πλήρης στάση ανά δικαιοδοσία.</string>
+    <string name="credit_source_title">Πηγαίος κώδικας</string>
+    <string name="credit_source_subtitle">Ανοιχτού κώδικα στο GitHub — συνεισφέρετε ή ανοίξτε ένα ζήτημα.</string>
+    <string name="credit_terms_of_service_title">Όροι χρήσης</string>
+    <string name="credit_terms_of_service_subtitle">Όροι χρήσης, αποποίηση εγγύησης, ειδοποίηση ακρίβειας ισοτιμιών.</string>
+    <string name="credits_section_legal">Νομικά</string>
+    <string name="credits_section_source">Πηγή</string>
+    <string name="fee_edit_active">Ενεργή</string>
+    <string name="fee_edit_name">Όνομα</string>
+    <string name="fee_edit_name_hint">π.χ. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Ανενεργή</string>
+    <string name="fee_untitled">Χωρίς τίτλο</string>
 </resources>

@@ -129,4 +129,23 @@
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licencja</string>
     <string name="credits_section_libraries">Biblioteki innych firm</string>
+    <string name="api_open_exchangerates_api_key_title">Klucz API Open Exchangerates</string>
+    <string name="api_open_exchangerates_api_key_message">Aby korzystać z tego źródła, musisz utworzyć swój osobisty klucz API.\n\nAby to zrobić, przejdź do https://openexchangerates.org/signup/free i załóż darmowe konto.\nNa koniec po prostu wygeneruj nowy App ID w swoim panelu i wprowadź go tutaj:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>Wymagany klucz API</i></string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Deklaracja dostępności</string>
+    <string name="credit_accessibility_subtitle">Cel WCAG 2.1 AA; jak zgłaszać bariery.</string>
+    <string name="credit_privacy_policy_title">Polityka prywatności</string>
+    <string name="credit_privacy_policy_subtitle">Nie zbieramy żadnych danych osobowych. Pełne stanowisko dla każdej jurysdykcji.</string>
+    <string name="credit_source_title">Kod źródłowy</string>
+    <string name="credit_source_subtitle">Otwarte źródło na GitHubie — wnieś wkład lub zgłoś problem.</string>
+    <string name="credit_terms_of_service_title">Warunki korzystania z usługi</string>
+    <string name="credit_terms_of_service_subtitle">Warunki użytkowania, wyłączenie odpowiedzialności, informacja o dokładności kursów.</string>
+    <string name="credits_section_legal">Prawne</string>
+    <string name="credits_section_source">Źródło</string>
+    <string name="fee_edit_active">Aktywne</string>
+    <string name="fee_edit_name">Nazwa</string>
+    <string name="fee_edit_name_hint">np. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Nieaktywne</string>
+    <string name="fee_untitled">Bez nazwy</string>
 </resources>

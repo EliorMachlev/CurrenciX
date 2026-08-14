@@ -130,4 +130,26 @@
     <string name="credits_section_project">Proyek</string>
     <string name="credits_section_license">Lisensi</string>
     <string name="credits_section_libraries">Pustaka pihak ketiga</string>
+    <string name="api_open_exchangerates_api_key_title">Kunci API Open Exchangerates</string>
+    <string name="api_open_exchangerates_api_key_message">Untuk menggunakan Sumber ini, Anda harus membuat Kunci API pribadi.\n\nUntuk melakukannya, kunjungi https://openexchangerates.org/signup/free dan buat akun gratis.\nTerakhir, buat App ID baru di Dasbor Anda dan masukkan di sini:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>Kunci API diperlukan</i></string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="category_versioninfo">Info versi</string>
+    <string name="credit_accessibility_title">Pernyataan aksesibilitas</string>
+    <string name="credit_accessibility_subtitle">Target WCAG 2.1 AA; cara melaporkan hambatan.</string>
+    <string name="credit_privacy_policy_title">Kebijakan privasi</string>
+    <string name="credit_privacy_policy_subtitle">Tidak ada data pribadi yang dikumpulkan. Rincian lengkap per yurisdiksi.</string>
+    <string name="credit_source_title">Kode sumber</string>
+    <string name="credit_source_subtitle">Sumber terbuka di GitHub — berkontribusi atau buka isu.</string>
+    <string name="credit_terms_of_service_title">Ketentuan layanan</string>
+    <string name="credit_terms_of_service_subtitle">Ketentuan penggunaan, penafian jaminan, pemberitahuan akurasi nilai tukar.</string>
+    <string name="credits_section_legal">Hukum</string>
+    <string name="credits_section_source">Sumber</string>
+    <string name="fee_edit_active">Aktif</string>
+    <string name="fee_edit_name">Nama</string>
+    <string name="fee_edit_name_hint">mis. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Nonaktif</string>
+    <string name="fee_untitled">Tanpa judul</string>
+    <string name="language_zh_CN">Tionghoa (Sederhana)</string>
+    <string name="title_changelog">Catatan perubahan</string>
 </resources>

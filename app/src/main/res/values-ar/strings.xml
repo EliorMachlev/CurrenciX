@@ -94,4 +94,6 @@
     <string name="cart_unsaved_save_as">حفظ كجديد</string>
     <string name="cart_unsaved_discard">تجاهل التغييرات</string>
     <string name="cart_unsaved_continue">متابعة</string>
+    <string name="a11y_delete">حذف</string>
+    <string name="a11y_historical_rate">سعر سابق</string>
 </resources>

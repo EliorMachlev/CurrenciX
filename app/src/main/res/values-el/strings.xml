@@ -91,4 +91,9 @@
     <string name="cart_unsaved_save_as">Αποθήκευση ως νέο</string>
     <string name="cart_unsaved_discard">Απόρριψη αλλαγών</string>
     <string name="cart_unsaved_continue">Συνέχεια</string>
+    <string name="a11y_delete">Διαγραφή</string>
+    <string name="a11y_historical_rate">Ιστορική ισοτιμία</string>
+    <string name="error_invalid_api_key">HTTP 401 – Ελέγξτε το κλειδί API σας.</string>
+    <string name="error_no_api_key">Πρέπει να οριστεί έγκυρο κλειδί API για να χρησιμοποιήσετε αυτήν την πηγή.</string>
+    <string name="error_unsupported_timeline">Τα δεδομένα χρονογραμμής δεν υποστηρίζονται από αυτό το API.</string>
 </resources>

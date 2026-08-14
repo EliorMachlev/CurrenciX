@@ -132,4 +132,20 @@
     <string name="credits_section_project">Проект</string>
     <string name="credits_section_license">Лицензия</string>
     <string name="credits_section_libraries">Сторонние библиотеки</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Заявление о доступности</string>
+    <string name="credit_accessibility_subtitle">Цель WCAG 2.1 AA; как сообщать о препятствиях.</string>
+    <string name="credit_privacy_policy_title">Политика конфиденциальности</string>
+    <string name="credit_privacy_policy_subtitle">Персональные данные не собираются. Полная позиция по каждой юрисдикции.</string>
+    <string name="credit_source_title">Исходный код</string>
+    <string name="credit_source_subtitle">Открытый исходный код на GitHub — внесите вклад или сообщите о проблеме.</string>
+    <string name="credit_terms_of_service_title">Условия использования</string>
+    <string name="credit_terms_of_service_subtitle">Условия использования, отказ от гарантий, уведомление о точности курсов.</string>
+    <string name="credits_section_legal">Правовая информация</string>
+    <string name="credits_section_source">Исходный код</string>
+    <string name="fee_edit_active">Активна</string>
+    <string name="fee_edit_name">Название</string>
+    <string name="fee_edit_name_hint">напр., Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Неактивна</string>
+    <string name="fee_untitled">Без названия</string>
 </resources>

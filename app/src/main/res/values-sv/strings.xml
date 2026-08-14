@@ -22,6 +22,8 @@
     <string name="quick_conversions_no_rates">Kurserna har inte laddats än.</string>
     <string name="quick_conversions_fees_applied">Tillämpade avgifter: %s</string>
     <string name="tooltip_filter_starred">Visa endast favoritvalutor.</string>
+    <string name="a11y_delete">Ta bort</string>
+    <string name="a11y_historical_rate">Historisk kurs</string>
     <string name="error_empty_response">Servern har ingen data för denna förfrågan.</string>
     <string name="error_try_another_api">Men det finns andra dataleverantörer som du kan välja på i inställningarna. Prova!</string>
     <string name="error_no_api_key">En giltig API-nyckel måste ha angetts för att kunna använda denna källa.</string>
