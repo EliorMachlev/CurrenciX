@@ -1,13 +1,20 @@
 package com.eliormachlev.currencix.view.preference.compose
 
+import android.content.Context
 import com.eliormachlev.currencix.R
+
+private const val URL_REPO = "https://github.com/EliorMachlev/CurrenciX"
+private const val URL_DOCS_BASE = "$URL_REPO/blob/master/docs/markDown/"
+private const val URL_PRIVACY_POLICY = "${URL_DOCS_BASE}privacy-policy.md"
+private const val URL_TERMS_OF_SERVICE = "${URL_DOCS_BASE}terms-of-service.md"
+private const val URL_ACCESSIBILITY_STATEMENT = "${URL_DOCS_BASE}accessibility-statement.md"
 
 private val PROJECT_CREDITS =
     listOf(
         Credit(
             title = "CurrenciX",
             subtitle = "Fork by Elior Machlev",
-            url = "https://github.com/EliorMachlev/CurrenciX",
+            url = URL_REPO,
         ),
         Credit(
             title = "Currencies",
@@ -106,9 +113,38 @@ private val LIBRARY_CREDITS =
         ),
     )
 
-val CREDITS_SECTIONS: List<CreditsSection> =
-    listOf(
+fun creditsSections(context: Context): List<CreditsSection> {
+    val legal =
+        listOf(
+            Credit(
+                title = context.getString(R.string.credit_privacy_policy_title),
+                subtitle = context.getString(R.string.credit_privacy_policy_subtitle),
+                url = URL_PRIVACY_POLICY,
+            ),
+            Credit(
+                title = context.getString(R.string.credit_terms_of_service_title),
+                subtitle = context.getString(R.string.credit_terms_of_service_subtitle),
+                url = URL_TERMS_OF_SERVICE,
+            ),
+            Credit(
+                title = context.getString(R.string.credit_accessibility_title),
+                subtitle = context.getString(R.string.credit_accessibility_subtitle),
+                url = URL_ACCESSIBILITY_STATEMENT,
+            ),
+        )
+    val source =
+        listOf(
+            Credit(
+                title = context.getString(R.string.credit_source_title),
+                subtitle = context.getString(R.string.credit_source_subtitle),
+                url = URL_REPO,
+            ),
+        )
+    return listOf(
+        CreditsSection(R.string.credits_section_legal, legal),
+        CreditsSection(R.string.credits_section_source, source),
         CreditsSection(R.string.credits_section_project, PROJECT_CREDITS),
         CreditsSection(R.string.credits_section_license, LICENSE_CREDITS),
         CreditsSection(R.string.credits_section_libraries, LIBRARY_CREDITS),
     )
+}

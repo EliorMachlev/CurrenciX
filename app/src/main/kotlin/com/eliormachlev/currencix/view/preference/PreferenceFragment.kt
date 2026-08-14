@@ -40,10 +40,6 @@ private const val URL_REPO = "https://github.com/EliorMachlev/CurrenciX"
 private const val URL_RELEASES_TAG = "$URL_REPO/releases/tag/v"
 private const val URL_PULLS = "$URL_REPO/pulls"
 private const val URL_COMMIT = "$URL_REPO/commit/"
-private const val URL_DOCS_BASE = "$URL_REPO/blob/master/docs/markDown/"
-private const val URL_PRIVACY_POLICY = "${URL_DOCS_BASE}privacy-policy.md"
-private const val URL_TERMS_OF_SERVICE = "${URL_DOCS_BASE}terms-of-service.md"
-private const val URL_ACCESSIBILITY_STATEMENT = "${URL_DOCS_BASE}accessibility-statement.md"
 private const val URL_PLAY_MARKET = "market://details?id=com.eliormachlev.currencix"
 private const val URL_PLAY_WEB = "https://play.google.com/store/apps/details?id=com.eliormachlev.currencix"
 
@@ -208,10 +204,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupAboutPreferences() {
-        openUrlOnClick(R.string.privacy_policy_key, URL_PRIVACY_POLICY)
-        openUrlOnClick(R.string.terms_of_service_key, URL_TERMS_OF_SERVICE)
-        openUrlOnClick(R.string.accessibility_statement_key, URL_ACCESSIBILITY_STATEMENT)
-        openUrlOnClick(R.string.sourcecode_key, URL_REPO)
         findPreference<Preference>(getString(R.string.credits_key))?.apply {
             setOnPreferenceClickListener {
                 CreditsDialog().show(childFragmentManager, null)
@@ -240,21 +232,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(getString(R.string.version_key))?.apply {
             title = BuildConfig.VERSION_NAME
             summary = getString(R.string.version_summary, Calendar.getInstance().get(Calendar.YEAR).toString())
-        }
-    }
-
-    private fun openUrlOnClick(
-        keyRes: Int,
-        url: String,
-    ) {
-        findPreference<Preference>(getString(keyRes))?.setOnPreferenceClickListener {
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-            } catch (e: ActivityNotFoundException) {
-                // No browser installed — nothing to fall back to for a doc URL.
-                Timber.tag("PreferenceFragment").d(e, "No activity to handle %s", url)
-            }
-            true
         }
     }
 
