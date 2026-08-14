@@ -133,7 +133,6 @@
     <string name="api_open_exchangerates_api_key_title">Open Exchangerates API-kulcs</string>
     <string name="api_open_exchangerates_api_key_message">Ennek a forrásnak a használatához létre kell hoznod a saját API-kulcsodat.\n\nEhhez látogass el a https://openexchangerates.org/signup/free oldalra, és hozz létre egy ingyenes fiókot.\nVégül egyszerűen hozz létre egy új App ID-t a vezérlőpulton, és írd be ide:</string>
     <string name="api_open_exchangerates_api_key_missing"><i>API-kulcs szükséges</i></string>
-    <string name="api_refreshPeriod_title">Frissítési időköz</string>
     <string name="backup_default_filename">currencies-backup.json</string>
     <string name="category_versioninfo">Verzióinformáció</string>
     <string name="credit_accessibility_title">Akadálymentességi nyilatkozat</string>
