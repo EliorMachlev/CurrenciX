@@ -35,7 +35,7 @@ fun CreditsList(sections: List<CreditsSection>) {
                 if (index > 0) Spacer(Modifier.height(vertical))
                 SectionHeader(text = stringResource(id = section.headerRes))
             }
-            items(items = section.entries, key = { it.url }) { credit ->
+            items(items = section.entries, key = { "${section.headerRes}-${it.url}" }) { credit ->
                 CreditRow(
                     credit = credit,
                     onClick = {
