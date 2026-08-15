@@ -123,7 +123,6 @@ fun QuickConversionsContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun QuickConversionsHeader(
     from: Currency?,
@@ -146,16 +145,9 @@ private fun QuickConversionsHeader(
         ) {
             CurrencyBadge(currency = from)
         }
-        Box(
-            modifier =
-                Modifier
-                    .size(ICON_BUTTON_SIZE_DP.dp)
-                    .padding(horizontal = dimensionResource(id = R.dimen.margin1x))
-                    .combinedClickable(
-                        onClick = onSwap,
-                        onLongClick = onSwapLongPress,
-                    ),
-            contentAlignment = Alignment.Center,
+        LongPressIconButton(
+            onClick = onSwap,
+            onLongClick = onSwapLongPress,
         ) {
             Icon(
                 imageVector = Icons.Filled.SwapHoriz,
@@ -170,15 +162,9 @@ private fun QuickConversionsHeader(
                 } else {
                     R.drawable.ic_fee_side_original_horizontal
                 }
-            Box(
-                modifier =
-                    Modifier
-                        .size(ICON_BUTTON_SIZE_DP.dp)
-                        .combinedClickable(
-                            onClick = onToggleFeeSide,
-                            onLongClick = onFeeSideLongPress,
-                        ),
-                contentAlignment = Alignment.Center,
+            LongPressIconButton(
+                onClick = onToggleFeeSide,
+                onLongClick = onFeeSideLongPress,
             ) {
                 Icon(
                     painter = painterResource(id = iconRes),
@@ -194,6 +180,32 @@ private fun QuickConversionsHeader(
         ) {
             CurrencyBadge(currency = to)
         }
+    }
+}
+
+// Shared shape for the header's swap and fee-side icon buttons: a 48dp
+// clickable region (WCAG 2.1 AA target size) with long-press support. Keeps
+// the .size and .combinedClickable chained together so no intermediate
+// padding can shrink the click target below 48dp.
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun LongPressIconButton(
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier =
+            modifier
+                .size(ICON_BUTTON_SIZE_DP.dp)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                ),
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
     }
 }
 

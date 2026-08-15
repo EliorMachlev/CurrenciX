@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -65,7 +66,6 @@ internal fun TimelineSecondary(
     val secondaryColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     val pastRate = ratePast?.first?.value
-    val currentRate = rateCurrent?.first?.value
 
     val maxLabel = stringResource(R.string.rate_max)
     val avgLabel = stringResource(R.string.rate_average)
@@ -88,59 +88,20 @@ internal fun TimelineSecondary(
     ) {
         // Past / diff-% / current row
         Box(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.align(Alignment.CenterStart)) {
-                Text(
-                    text =
-                        ratePast
-                            ?.first
-                            ?.key
-                            ?.format(formatter)
-                            .orEmpty(),
-                    fontSize = TIMELINE_DATE_FONT_SIZE,
-                    letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
-                    color = secondaryColor,
-                )
-                if (pastRate != null) {
-                    Text(
-                        text =
-                            combineValueAndSymbol(
-                                context,
-                                pastRate.value,
-                                pastRate.currency.symbol(),
-                                ratePast.second,
-                            ),
-                        fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier.align(Alignment.CenterEnd),
+            DatedRateColumn(
+                dated = ratePast,
+                horizontalAlignment = Alignment.Start,
+                formatter = formatter,
+                secondaryColor = secondaryColor,
+                modifier = Modifier.align(Alignment.CenterStart),
+            )
+            DatedRateColumn(
+                dated = rateCurrent,
                 horizontalAlignment = Alignment.End,
-            ) {
-                Text(
-                    text =
-                        rateCurrent
-                            ?.first
-                            ?.key
-                            ?.format(formatter)
-                            .orEmpty(),
-                    fontSize = TIMELINE_DATE_FONT_SIZE,
-                    letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
-                    color = secondaryColor,
-                )
-                if (currentRate != null) {
-                    Text(
-                        text =
-                            combineValueAndSymbol(
-                                context,
-                                currentRate.value,
-                                currentRate.currency.symbol(),
-                                rateCurrent.second,
-                            ),
-                        fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
-                    )
-                }
-            }
+                formatter = formatter,
+                secondaryColor = secondaryColor,
+                modifier = Modifier.align(Alignment.CenterEnd),
+            )
             if (diffPercent != null) {
                 // rate_diff_positive resolves to a darker green (#1B7343) on
                 // the cream light theme and back to dollarBill (#85BB65) on
@@ -221,6 +182,35 @@ private fun PeriodSegmentedButtons(
             ) {
                 Text(label.replaceFirstChar { it.titlecase() })
             }
+        }
+    }
+}
+
+@Composable
+private fun DatedRateColumn(
+    dated: Pair<Map.Entry<LocalDate, Rate?>?, Int>?,
+    horizontalAlignment: Alignment.Horizontal,
+    formatter: DateTimeFormatter,
+    secondaryColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val rate = dated?.first?.value
+    Column(
+        modifier = modifier,
+        horizontalAlignment = horizontalAlignment,
+    ) {
+        Text(
+            text = dated?.first?.key?.format(formatter).orEmpty(),
+            fontSize = TIMELINE_DATE_FONT_SIZE,
+            letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
+            color = secondaryColor,
+        )
+        if (rate != null) {
+            Text(
+                text = combineValueAndSymbol(context, rate.value, rate.currency.symbol(), dated.second),
+                fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
+            )
         }
     }
 }
