@@ -138,7 +138,7 @@
     <string name="credit_privacy_policy_title">Политика конфиденциальности</string>
     <string name="credit_privacy_policy_subtitle">Персональные данные не собираются. Полная позиция по каждой юрисдикции.</string>
     <string name="credit_source_title">Исходный код</string>
-    <string name="credit_source_subtitle">Открытый исходный код на GitHub — внесите вклад или сообщите о проблеме.</string>
+    <string name="credit_source_subtitle">Открытый исходный код на GitHub — внесите вклад кодом или сообщите о проблеме.</string>
     <string name="credit_terms_of_service_title">Условия использования</string>
     <string name="credit_terms_of_service_subtitle">Условия использования, отказ от гарантий, уведомление о точности курсов.</string>
     <string name="credits_section_legal">Правовая информация</string>

@@ -138,7 +138,7 @@
     <string name="credit_privacy_policy_title">গোপনীয়তা নীতি</string>
     <string name="credit_privacy_policy_subtitle">কোনো ব্যক্তিগত তথ্য সংগ্রহ করা হয় না। প্রতিটি এখতিয়ারের সম্পূর্ণ অবস্থান।</string>
     <string name="credit_source_title">সোর্স কোড</string>
-    <string name="credit_source_subtitle">GitHub-এ ওপেন সোর্স — অবদান রাখুন বা সমস্যা খুলুন।</string>
+    <string name="credit_source_subtitle">GitHub-এ ওপেন সোর্স — কোড অবদান রাখুন বা সমস্যা খুলুন।</string>
     <string name="credit_terms_of_service_title">পরিষেবার শর্তাবলী</string>
     <string name="credit_terms_of_service_subtitle">ব্যবহারের শর্তাবলী, ওয়ারেন্টি অস্বীকৃতি, হারের নির্ভুলতা নোটিশ।</string>
     <string name="credits_section_legal">আইনি</string>

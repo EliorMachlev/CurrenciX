@@ -139,7 +139,7 @@
     <string name="credit_privacy_policy_title">Integritetspolicy</string>
     <string name="credit_privacy_policy_subtitle">Inga personuppgifter samlas in. Fullständig hållning per jurisdiktion.</string>
     <string name="credit_source_title">Källkod</string>
-    <string name="credit_source_subtitle">Öppen källkod på GitHub — bidra eller öppna ett ärende.</string>
+    <string name="credit_source_subtitle">Öppen källkod på GitHub — bidra med kod eller öppna ett ärende.</string>
     <string name="credit_terms_of_service_title">Användarvillkor</string>
     <string name="credit_terms_of_service_subtitle">Användarvillkor, garantifriskrivning, meddelande om kursnoggrannhet.</string>
     <string name="credits_section_legal">Juridik</string>

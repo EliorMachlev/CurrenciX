@@ -138,7 +138,7 @@
     <string name="credit_privacy_policy_title">Zásady ochrany soukromí</string>
     <string name="credit_privacy_policy_subtitle">Nesbírají se žádné osobní údaje. Plné stanovisko podle jurisdikce.</string>
     <string name="credit_source_title">Zdrojový kód</string>
-    <string name="credit_source_subtitle">Otevřený zdrojový kód na GitHubu — přispějte nebo nahlaste problém.</string>
+    <string name="credit_source_subtitle">Otevřený zdrojový kód na GitHubu — přispějte kódem nebo nahlaste problém.</string>
     <string name="credit_terms_of_service_title">Podmínky služby</string>
     <string name="credit_terms_of_service_subtitle">Podmínky použití, prohlášení o vyloučení záruky, upozornění o přesnosti kurzů.</string>
     <string name="credits_section_legal">Právní</string>

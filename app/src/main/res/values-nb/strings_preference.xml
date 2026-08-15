@@ -140,7 +140,7 @@
     <string name="credit_privacy_policy_title">Personvernerklæring</string>
     <string name="credit_privacy_policy_subtitle">Ingen personopplysninger samles inn. Full oversikt per jurisdiksjon.</string>
     <string name="credit_source_title">Kildekode</string>
-    <string name="credit_source_subtitle">Åpen kildekode på GitHub — bidra eller åpne en sak.</string>
+    <string name="credit_source_subtitle">Åpen kildekode på GitHub — bidra med kode eller åpne en sak.</string>
     <string name="credit_terms_of_service_title">Vilkår for tjenesten</string>
     <string name="credit_terms_of_service_subtitle">Bruksvilkår, garantifraskrivelse, merknad om kursnøyaktighet.</string>
     <string name="credits_section_legal">Juridisk</string>
