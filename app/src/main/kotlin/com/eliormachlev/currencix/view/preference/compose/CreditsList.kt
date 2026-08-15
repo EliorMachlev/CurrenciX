@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 
@@ -55,7 +57,10 @@ private fun SectionHeader(text: String) {
         text = text,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(bottom = 4.dp),
+        // TalkBack exposes headings so users can jump between sections; without
+        // this the "Project / Legal / Source / Libraries" separators are read
+        // as ordinary body text and become invisible for section navigation.
+        modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
     )
 }
 
@@ -69,7 +74,11 @@ private fun CreditRow(
             Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .padding(vertical = 8.dp),
+                .padding(vertical = 8.dp)
+                // Title + subtitle + optional SPDX + URL should read as one
+                // focus stop; without this TalkBack lands on each Text
+                // separately and forces four swipes per credit.
+                .semantics(mergeDescendants = true) {},
     ) {
         Text(
             text = credit.title,
