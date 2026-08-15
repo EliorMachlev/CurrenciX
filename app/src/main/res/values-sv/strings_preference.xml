@@ -101,9 +101,9 @@
     <!-- about -->
     <string name="category_about">Om appen</string>
     <string name="disclaimer_title">Ansvarsfriskrivelse</string>
-    <string name="disclaimer_summary">Visade valutakurser är <b>endast vägledande</b>. De kommer från tredjepartsleverantörer, kan vara försenade eller felaktiga, och <b>får inte</b> användas för handel, hedging, fakturering eller något beslut där en exakt eller genomförbar kurs krävs. Se användarvillkoren för den fullständiga ansvarsfriskrivelsen.\nAngivna kurser – även om de är korrekta – kan skilja sig från de som används av din bank.\nSlutligen: misstag händer. Lita aldrig blint på någon enskild källa.</string>
+    <string name="disclaimer_summary">Visade valutakurser är <b>endast vägledande</b>. De kommer från tredjepartsleverantörer, kan vara försenade eller felaktiga, och <b>får inte</b> användas för handel, hedging, fakturering eller något beslut där en exakt eller genomförbar kurs krävs. Se användarvillkoren för den fullständiga ansvarsfriskrivelsen.\nAngivna kurser – även om de är korrekta – kan skilja sig från de som används av din bank.\nSlutligen: misstag händer. Lita aldrig blint på någon enskild källa.\nDenna app är helt gratis och öppen källkod. Om du hittar en version med prislapp eller annonser är den falsk — avinstallera den omedelbart.</string>
     <string name="rate_title">Betygssätt appen</string>
-    <string name="rate_summary">Om du vill så kan du bidra till att fler upptäcker Currencies. Tryck här för att betygssätta appen på Google Play.</string>
+    <string name="rate_summary">Om du vill så kan du bidra till att fler upptäcker Currencies. Tryck här för att betygssätta appen.</string>
     <string name="category_versioninfo">Info om version</string>
     <string name="title_changelog">Ändringslogg</string>
     <string name="backup_title">Säkerhetskopiera och återställ</string>

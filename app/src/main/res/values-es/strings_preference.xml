@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">Acerca de esta aplicación</string>
     <string name="disclaimer_title">Exención de responsabilidad</string>
-    <string name="disclaimer_summary">Los tipos de cambio mostrados son <b>solo indicativos</b>. Provienen de proveedores externos, pueden estar retrasados o ser incorrectos, y <b>no deben</b> utilizarse para operaciones, cobertura, facturación ni ninguna decisión en la que se requiera un tipo preciso o ejecutable. Consulta los Términos del Servicio para ver el descargo de responsabilidad completo.\nLos tipos proporcionados – incluso si son correctos – pueden diferir de los utilizados por tu banco.\nPor último: los errores ocurren. Nunca confíes ciegamente en una única fuente.</string>
+    <string name="disclaimer_summary">Los tipos de cambio mostrados son <b>solo indicativos</b>. Provienen de proveedores externos, pueden estar retrasados o ser incorrectos, y <b>no deben</b> utilizarse para operaciones, cobertura, facturación ni ninguna decisión en la que se requiera un tipo preciso o ejecutable. Consulta los Términos del Servicio para ver el descargo de responsabilidad completo.\nLos tipos proporcionados – incluso si son correctos – pueden diferir de los utilizados por tu banco.\nPor último: los errores ocurren. Nunca confíes ciegamente en una única fuente.\nEsta aplicación es totalmente gratuita y de código abierto. Si encuentras una versión con precio o con anuncios, es falsa — desinstálala de inmediato.</string>
     <string name="rate_title">Califica esta aplicación</string>
-    <string name="rate_summary">Si quieres, puedes ayudar a otros a descubrir Currencies. Haz clic aquí para valorar la aplicación en Google Play.</string>
+    <string name="rate_summary">Si quieres, puedes ayudar a otros a descubrir Currencies. Haz clic aquí para valorar la aplicación.</string>
     <string name="category_versioninfo">Información de la versión</string>
     <string name="title_changelog">Registro de cambios</string>
     <string name="backup_title">Copia de seguridad y restauración</string>

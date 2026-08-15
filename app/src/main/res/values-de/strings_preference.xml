@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">Über diese App</string>
     <string name="disclaimer_title">Haftungsausschluss</string>
-    <string name="disclaimer_summary">Angezeigte Wechselkurse sind <b>nur indikativ</b>. Sie stammen von Drittanbietern, können verzögert oder falsch sein und <b>dürfen nicht</b> für Handel, Absicherung, Rechnungsstellung oder Entscheidungen verwendet werden, bei denen ein exakter oder ausführbarer Kurs erforderlich ist. Den vollständigen Haftungsausschluss findest du in den Nutzungsbedingungen.\nBereitgestellte Kurse – selbst wenn sie korrekt sind – können von denen abweichen, die deine Bank nutzt.\nZum Schluss: Fehler passieren. Vertraue niemals blind einer einzelnen Quelle.</string>
+    <string name="disclaimer_summary">Angezeigte Wechselkurse sind <b>nur indikativ</b>. Sie stammen von Drittanbietern, können verzögert oder falsch sein und <b>dürfen nicht</b> für Handel, Absicherung, Rechnungsstellung oder Entscheidungen verwendet werden, bei denen ein exakter oder ausführbarer Kurs erforderlich ist. Den vollständigen Haftungsausschluss findest du in den Nutzungsbedingungen.\nBereitgestellte Kurse – selbst wenn sie korrekt sind – können von denen abweichen, die deine Bank nutzt.\nZum Schluss: Fehler passieren. Vertraue niemals blind einer einzelnen Quelle.\nDiese App ist völlig kostenlos und Open Source. Wenn du eine Version mit Preis oder Werbung findest, ist sie gefälscht — deinstalliere sie sofort.</string>
     <string name="rate_title">Diese App bewerten</string>
-    <string name="rate_summary">Wenn du möchtest, kannst du helfen, dass noch mehr Leute Currencies entdecken. Klicke hier, um die App auf Google Play zu bewerten.</string>
+    <string name="rate_summary">Wenn du möchtest, kannst du helfen, dass noch mehr Leute Currencies entdecken. Klicke hier, um die App zu bewerten.</string>
     <string name="category_versioninfo">Versionsinfo</string>
     <string name="title_changelog">Änderungsprotokoll</string>
     <string name="backup_title">Sichern &amp; Wiederherstellen</string>

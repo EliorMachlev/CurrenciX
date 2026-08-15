@@ -98,9 +98,9 @@
     <!-- about -->
     <string name="category_about">Tentang aplikasi ini</string>
     <string name="disclaimer_title">Peringatan</string>
-    <string name="disclaimer_summary">Nilai tukar yang ditampilkan <b>hanya bersifat indikatif</b>. Nilai tersebut berasal dari penyedia pihak ketiga, mungkin tertunda atau salah, dan <b>tidak boleh</b> digunakan untuk perdagangan, lindung nilai, penagihan, atau keputusan apa pun yang memerlukan nilai tukar yang akurat atau dapat dieksekusi. Lihat Ketentuan Layanan untuk penafian selengkapnya.\nNilai tukar yang diberikan – meskipun benar – mungkin berbeda dari yang digunakan oleh bank Anda.\nTerakhir: kesalahan bisa terjadi. Jangan pernah mempercayai satu sumber pun secara buta.</string>
+    <string name="disclaimer_summary">Nilai tukar yang ditampilkan <b>hanya bersifat indikatif</b>. Nilai tersebut berasal dari penyedia pihak ketiga, mungkin tertunda atau salah, dan <b>tidak boleh</b> digunakan untuk perdagangan, lindung nilai, penagihan, atau keputusan apa pun yang memerlukan nilai tukar yang akurat atau dapat dieksekusi. Lihat Ketentuan Layanan untuk penafian selengkapnya.\nNilai tukar yang diberikan – meskipun benar – mungkin berbeda dari yang digunakan oleh bank Anda.\nTerakhir: kesalahan bisa terjadi. Jangan pernah mempercayai satu sumber pun secara buta.\nAplikasi ini sepenuhnya gratis dan sumber terbuka. Jika Anda menemukan versi berbayar atau berisi iklan, itu palsu — segera hapus instalasinya.</string>
     <string name="rate_title">Nilai aplikasi ini</string>
-    <string name="rate_summary">Jika Anda mau, Anda dapat membantu orang lain menemukan Currencies. Klik di sini untuk menilai aplikasi di Google Play.</string>
+    <string name="rate_summary">Jika Anda mau, Anda dapat membantu orang lain menemukan Currencies. Klik di sini untuk menilai aplikasi.</string>
 
 
     <string name="backup_title">Cadangkan &amp; Pulihkan</string>

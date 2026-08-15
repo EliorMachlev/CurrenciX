@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">Quant a aquesta aplicació</string>
     <string name="disclaimer_title">Avís d\'exempció de responsabilitat</string>
-    <string name="disclaimer_summary">Els tipus de canvi mostrats són <b>només indicatius</b>. Provenen de proveïdors externs, poden estar retardats o ser incorrectes, i <b>no s\'han</b> d\'utilitzar per a operacions, cobertures, facturació ni cap decisió en què es requereixi un tipus precís o executable. Consulteu els Termes del Servei per veure el descàrrec de responsabilitat complet.\nEls tipus proporcionats – encara que siguin correctes – poden diferir dels utilitzats pel vostre banc.\nPer últim: els errors passen. Mai no confieu cegament en una única font.</string>
+    <string name="disclaimer_summary">Els tipus de canvi mostrats són <b>només indicatius</b>. Provenen de proveïdors externs, poden estar retardats o ser incorrectes, i <b>no s\'han</b> d\'utilitzar per a operacions, cobertures, facturació ni cap decisió en què es requereixi un tipus precís o executable. Consulteu els Termes del Servei per veure el descàrrec de responsabilitat complet.\nEls tipus proporcionats – encara que siguin correctes – poden diferir dels utilitzats pel vostre banc.\nPer últim: els errors passen. Mai no confieu cegament en una única font.\nAquesta aplicació és totalment gratuïta i de codi obert. Si trobeu una versió amb preu o amb anuncis, és falsa — desinstal·leu-la immediatament.</string>
     <string name="rate_title">Valoreu l\'aplicació</string>
-    <string name="rate_summary">Podeu ajudar a altres persones a descobrir Currencies. Toqueu aquí per a puntuar l\'aplicació a Google Play.</string>
+    <string name="rate_summary">Podeu ajudar a altres persones a descobrir Currencies. Toqueu aquí per a puntuar l\'aplicació.</string>
     <string name="category_versioninfo">Informació de la versió</string>
     <string name="title_changelog">Registre de canvis</string>
     <string name="backup_title">Còpia de seguretat i restauració</string>

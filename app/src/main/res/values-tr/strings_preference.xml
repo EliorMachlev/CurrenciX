@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">Uygulama hakkında</string>
     <string name="disclaimer_title">Sorumluluk Reddi</string>
-    <string name="disclaimer_summary">Gösterilen döviz kurları <b>yalnızca bilgi amaçlıdır</b>. Üçüncü taraf sağlayıcılardan gelirler, gecikmiş veya hatalı olabilirler ve doğru veya uygulanabilir bir kurun gerektiği ticaret, hedging, faturalama veya herhangi bir karar için <b>kullanılmamalıdır</b>. Tam sorumluluk reddi için Hizmet Şartları\'na bakın.\nSağlanan kurlar – doğru olsalar bile – bankanızın kullandığı kurlardan farklı olabilir.\nSon olarak: hatalar olur. Hiçbir tek kaynağa asla körü körüne güvenmeyin.</string>
+    <string name="disclaimer_summary">Gösterilen döviz kurları <b>yalnızca bilgi amaçlıdır</b>. Üçüncü taraf sağlayıcılardan gelirler, gecikmiş veya hatalı olabilirler ve doğru veya uygulanabilir bir kurun gerektiği ticaret, hedging, faturalama veya herhangi bir karar için <b>kullanılmamalıdır</b>. Tam sorumluluk reddi için Hizmet Şartları\'na bakın.\nSağlanan kurlar – doğru olsalar bile – bankanızın kullandığı kurlardan farklı olabilir.\nSon olarak: hatalar olur. Hiçbir tek kaynağa asla körü körüne güvenmeyin.\nBu uygulama tamamen ücretsiz ve açık kaynaklıdır. Ücretli veya reklam içeren bir sürüm bulursanız sahtedir — hemen kaldırın.</string>
     <string name="rate_title">Uygulamayı puanla</string>
-    <string name="rate_summary">Eğer hoşuna gittiyse başka insanların da Currencies\'i keşfetmesini sağlayabilirsin. Uygulamayı Google Play üzerinden puanlamak için buraya tıkla.</string>
+    <string name="rate_summary">Eğer hoşuna gittiyse başka insanların da Currencies\'i keşfetmesini sağlayabilirsin. Uygulamayı puanlamak için buraya tıkla.</string>
     <string name="category_versioninfo">Sürüm bilgisi</string>
     <string name="title_changelog">Değişiklik günlüğü</string>
     <string name="backup_title">Yedekle ve geri yükle</string>

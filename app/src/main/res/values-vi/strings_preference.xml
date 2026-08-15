@@ -102,9 +102,9 @@
     <!-- about -->
     <string name="category_about">Giới thiệu về ứng dụng</string>
     <string name="disclaimer_title">Miễn trừ trách nhiệm</string>
-    <string name="disclaimer_summary">Tỷ giá hối đoái được hiển thị <b>chỉ mang tính tham khảo</b>. Chúng đến từ các nhà cung cấp bên thứ ba, có thể bị chậm trễ hoặc sai, và <b>không được</b> dùng cho giao dịch, phòng ngừa rủi ro, lập hóa đơn hay bất kỳ quyết định nào yêu cầu tỷ giá chính xác hoặc có thể thực hiện. Xem Điều khoản dịch vụ để biết tuyên bố miễn trừ trách nhiệm đầy đủ.\nTỷ giá được cung cấp – ngay cả khi chính xác – có thể khác với tỷ giá mà ngân hàng của bạn sử dụng.\nCuối cùng: sai lầm luôn xảy ra. Đừng bao giờ tin tưởng mù quáng vào bất kỳ nguồn đơn lẻ nào.</string>
+    <string name="disclaimer_summary">Tỷ giá hối đoái được hiển thị <b>chỉ mang tính tham khảo</b>. Chúng đến từ các nhà cung cấp bên thứ ba, có thể bị chậm trễ hoặc sai, và <b>không được</b> dùng cho giao dịch, phòng ngừa rủi ro, lập hóa đơn hay bất kỳ quyết định nào yêu cầu tỷ giá chính xác hoặc có thể thực hiện. Xem Điều khoản dịch vụ để biết tuyên bố miễn trừ trách nhiệm đầy đủ.\nTỷ giá được cung cấp – ngay cả khi chính xác – có thể khác với tỷ giá mà ngân hàng của bạn sử dụng.\nCuối cùng: sai lầm luôn xảy ra. Đừng bao giờ tin tưởng mù quáng vào bất kỳ nguồn đơn lẻ nào.\nỨng dụng này hoàn toàn miễn phí và mã nguồn mở. Nếu bạn thấy một phiên bản có giá hoặc quảng cáo, đó là giả — hãy gỡ cài đặt ngay lập tức.</string>
     <string name="rate_title">Đánh giá ứng dụng này</string>
-    <string name="rate_summary">Nếu bạn muốn, bạn có thể giúp những người khác khám phá ra Currencies. Hãy nhấn vào đây để đánh giá ứng dụng trên Google Play.</string>
+    <string name="rate_summary">Nếu bạn muốn, bạn có thể giúp những người khác khám phá ra Currencies. Hãy nhấn vào đây để đánh giá ứng dụng.</string>
     <string name="category_versioninfo">Thông tin phiên bản</string>
     <string name="title_changelog">Nhật ký thay đổi</string>
     <string name="backup_title">Sao lưu &amp; khôi phục</string>

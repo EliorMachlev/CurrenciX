@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">O ovoj aplikaciji</string>
     <string name="disclaimer_title">Izjava o odricanju od odgovornosti</string>
-    <string name="disclaimer_summary">Prikazani tečajevi su <b>samo informativni</b>. Dolaze od pružatelja trećih strana, mogu biti odgođeni ili netočni te se <b>ne smiju</b> koristiti za trgovanje, zaštitu od rizika, izdavanje računa ili bilo koju odluku za koju je potreban točan ili izvršiv tečaj. Puno odricanje od odgovornosti pogledajte u Uvjetima korištenja.\nDostavljeni tečajevi – čak i ako su točni – mogu se razlikovati od onih koje koristi vaša banka.\nI za kraj: pogreške se događaju. Nikada slijepo ne vjerujte nijednom pojedinačnom izvoru.</string>
+    <string name="disclaimer_summary">Prikazani tečajevi su <b>samo informativni</b>. Dolaze od pružatelja trećih strana, mogu biti odgođeni ili netočni te se <b>ne smiju</b> koristiti za trgovanje, zaštitu od rizika, izdavanje računa ili bilo koju odluku za koju je potreban točan ili izvršiv tečaj. Puno odricanje od odgovornosti pogledajte u Uvjetima korištenja.\nDostavljeni tečajevi – čak i ako su točni – mogu se razlikovati od onih koje koristi vaša banka.\nI za kraj: pogreške se događaju. Nikada slijepo ne vjerujte nijednom pojedinačnom izvoru.\nOva aplikacija je potpuno besplatna i otvorenog koda. Ako pronađete verziju s cijenom ili oglasima, ona je lažna — odmah je deinstalirajte.</string>
     <string name="rate_title">Ocijenite ovu aplikaciju</string>
-    <string name="rate_summary">Ako to želite, možete pomoći drugima da otkriju ovu aplikaciju. Ovdje kliknite kako biste je ocijenili na Trgovini Play.</string>
+    <string name="rate_summary">Ako to želite, možete pomoći drugima da otkriju ovu aplikaciju. Ovdje kliknite kako biste je ocijenili.</string>
     <string name="category_versioninfo">Podaci o inačici</string>
     <string name="title_changelog">Povijest izmjena</string>
     <string name="backup_title">Sigurnosna kopija i vraćanje</string>

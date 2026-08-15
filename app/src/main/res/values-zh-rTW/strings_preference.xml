@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">關於這個 App</string>
     <string name="disclaimer_title">免責聲明</string>
-    <string name="disclaimer_summary">顯示的匯率<b>僅供參考</b>。它們來自第三方提供者，可能有延遲或錯誤，<b>不得</b>用於交易、避險、開立發票，或任何需要準確或可執行匯率的決策。完整免責聲明請參閱《服務條款》。\n所提供的匯率 – 即使正確 – 也可能與您往來的銀行所使用的匯率不同。\n最後：錯誤在所難免。切勿盲目相信任何單一來源。</string>
+    <string name="disclaimer_summary">顯示的匯率<b>僅供參考</b>。它們來自第三方提供者，可能有延遲或錯誤，<b>不得</b>用於交易、避險、開立發票，或任何需要準確或可執行匯率的決策。完整免責聲明請參閱《服務條款》。\n所提供的匯率 – 即使正確 – 也可能與您往來的銀行所使用的匯率不同。\n最後：錯誤在所難免。切勿盲目相信任何單一來源。\n本應用程式完全免費且開放原始碼。若您發現付費版本或含有廣告的版本，那是偽造的 — 請立即解除安裝。</string>
     <string name="rate_title">為此應用程式評分</string>
-    <string name="rate_summary">如果您喜歡的話，您可以幫忙其他人發現 Currencies。按這裡在 Google Play 為這個應用程式評分。</string>
+    <string name="rate_summary">如果您喜歡的話，您可以幫忙其他人發現 Currencies。按這裡為這個應用程式評分。</string>
     <string name="category_versioninfo">版本資訊</string>
     <string name="title_changelog">更新日誌</string>
     <string name="backup_title">備份與還原</string>

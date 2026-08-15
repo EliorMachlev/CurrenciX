@@ -151,7 +151,7 @@
     <!-- about -->
     <string name="category_about">About this app</string>
     <string name="disclaimer_title">Disclaimer</string>
-    <string name="disclaimer_summary">Exchange rates shown are <b>indicative only</b>. They come from third-party providers, may be delayed or wrong, and <b>must not</b> be used for trading, hedging, invoicing, or any decision where an accurate or executable rate is required. See the Terms of Service for the full disclaimer.\nRates provided – even if correct – may differ from those used by your bank.\nLastly: mistakes happen. Never blindly trust any single source.</string>
+    <string name="disclaimer_summary">Exchange rates shown are <b>indicative only</b>. They come from third-party providers, may be delayed or wrong, and <b>must not</b> be used for trading, hedging, invoicing, or any decision where an accurate or executable rate is required. See the Terms of Service for the full disclaimer.\nRates provided – even if correct – may differ from those used by your bank.\nLastly: mistakes happen. Never blindly trust any single source.\nThis app is fully free and open source. If you find a version with a price tag or ads, it is fake — uninstall it immediately.</string>
     <string name="credits_key" translatable="false">KEY_CREDITS</string>
     <string name="credits_title">About, legal &amp; open-source</string>
     <string name="credits_summary">Privacy policy, terms of service, accessibility, source code, and third-party library licences</string>
@@ -172,7 +172,7 @@
     <string name="credit_source_subtitle">Open source on GitHub — contribute or open an issue.</string>
     <string name="rate_key" translatable="false">KEY_RATE</string>
     <string name="rate_title">Rate this app</string>
-    <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app on Google Play.</string>
+    <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app.</string>
     <string name="category_versioninfo">Version info</string>
     <string name="changelog_key" translatable="false">KEY_CHANGELOG</string>
     <string name="title_changelog">Changelog</string>

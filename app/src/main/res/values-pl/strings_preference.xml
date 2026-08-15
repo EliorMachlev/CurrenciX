@@ -97,9 +97,9 @@
     <!-- about -->
     <string name="category_about">O tej aplikacji</string>
     <string name="disclaimer_title">Ostrzeżenie</string>
-    <string name="disclaimer_summary">Wyświetlane kursy wymiany mają <b>charakter wyłącznie orientacyjny</b>. Pochodzą od zewnętrznych dostawców, mogą być opóźnione lub błędne i <b>nie mogą</b> być używane do handlu, hedgingu, fakturowania ani żadnej decyzji, w której wymagany jest dokładny lub wykonalny kurs. Pełne oświadczenie znajduje się w Warunkach świadczenia usług.\nPodane kursy – nawet jeśli są prawidłowe – mogą różnić się od tych stosowanych przez Twój bank.\nNa koniec: błędy się zdarzają. Nigdy nie ufaj ślepo żadnemu pojedynczemu źródłu.</string>
+    <string name="disclaimer_summary">Wyświetlane kursy wymiany mają <b>charakter wyłącznie orientacyjny</b>. Pochodzą od zewnętrznych dostawców, mogą być opóźnione lub błędne i <b>nie mogą</b> być używane do handlu, hedgingu, fakturowania ani żadnej decyzji, w której wymagany jest dokładny lub wykonalny kurs. Pełne oświadczenie znajduje się w Warunkach świadczenia usług.\nPodane kursy – nawet jeśli są prawidłowe – mogą różnić się od tych stosowanych przez Twój bank.\nNa koniec: błędy się zdarzają. Nigdy nie ufaj ślepo żadnemu pojedynczemu źródłu.\nTa aplikacja jest całkowicie darmowa i otwartoźródłowa. Jeśli znajdziesz wersję z ceną lub reklamami, jest fałszywa — natychmiast ją odinstaluj.</string>
     <string name="rate_title">Oceń tę aplikację</string>
-    <string name="rate_summary">Jeśli chcesz, możesz pomóc innym w odkrywaniu aplikacji Currencies. Kliknij tutaj, aby ocenić aplikację w Google Play.</string>
+    <string name="rate_summary">Jeśli chcesz, możesz pomóc innym w odkrywaniu aplikacji Currencies. Kliknij tutaj, aby ocenić aplikację.</string>
     <string name="category_versioninfo">Informacje o werski</string>
     <string name="title_changelog">Dziennik zmian</string>
     <string name="backup_title">Kopia zapasowa i przywracanie</string>

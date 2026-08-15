@@ -103,7 +103,7 @@
     <string name="disclaimer_title">Ansvarsfraskrivelse</string>
 
     <string name="rate_title">Bedøm denne app</string>
-    <string name="rate_summary">Hvis du vil, kan du hjælpe andre med at finde Valutaer. Klik her for at bedømme appen på Google Play.</string>
+    <string name="rate_summary">Hvis du vil, kan du hjælpe andre med at finde Valutaer. Klik her for at bedømme appen.</string>
     <string name="category_versioninfo">Versioninformation</string>
     <string name="title_changelog">Ændringslog</string>
     <string name="backup_title">Sikkerhedskopi og gendannelse</string>
@@ -144,7 +144,7 @@
     <string name="credit_terms_of_service_subtitle">Brugsvilkår, garantifraskrivelse, meddelelse om kursnøjagtighed.</string>
     <string name="credits_section_legal">Juridisk</string>
     <string name="credits_section_source">Kilde</string>
-    <string name="disclaimer_summary">Viste valutakurser er <b>kun vejledende</b>. De kommer fra tredjepartsudbydere, kan være forsinkede eller forkerte, og <b>må ikke</b> bruges til handel, hedging, fakturering eller nogen beslutning, hvor der kræves en nøjagtig eller eksekverbar kurs. Se servicevilkårene for den fulde ansvarsfraskrivelse.\nDe leverede kurser kan – selv hvis de er korrekte – afvige fra dem, din bank bruger.\nTil sidst: fejl sker. Stol aldrig blindt på nogen enkelt kilde.</string>
+    <string name="disclaimer_summary">Viste valutakurser er <b>kun vejledende</b>. De kommer fra tredjepartsudbydere, kan være forsinkede eller forkerte, og <b>må ikke</b> bruges til handel, hedging, fakturering eller nogen beslutning, hvor der kræves en nøjagtig eller eksekverbar kurs. Se servicevilkårene for den fulde ansvarsfraskrivelse.\nDe leverede kurser kan – selv hvis de er korrekte – afvige fra dem, din bank bruger.\nTil sidst: fejl sker. Stol aldrig blindt på nogen enkelt kilde.\nDenne app er helt gratis og open source. Hvis du finder en version med en pris eller reklamer, er den falsk — afinstaller den straks.</string>
     <string name="fee_edit_active">Aktiv</string>
     <string name="fee_edit_name">Navn</string>
     <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>

@@ -151,13 +151,13 @@
     <string name="credits_section_legal">Jura</string>
     <string name="credits_section_source">Fonto</string>
     <string name="disclaimer_title">Malgarantio</string>
-    <string name="disclaimer_summary">Montritaj kurzoj estas <b>nur indikaj</b>. Ili venas de triaj provizantoj, povas esti prokrastitaj aŭ malĝustaj, kaj <b>ne devas</b> esti uzataj por komerco, kovrado, fakturado aŭ ajna decido, kie preciza aŭ efektivigebla kurzo estas postulata. Vidu la servkondiĉojn por la plena malgarantio.\nDonitaj kurzoj – eĉ se ĝustaj – povas malsami de tiuj uzataj de via banko.\nFine: eraroj okazas. Neniam blinde fidu al iu ajn sola fonto.</string>
+    <string name="disclaimer_summary">Montritaj kurzoj estas <b>nur indikaj</b>. Ili venas de triaj provizantoj, povas esti prokrastitaj aŭ malĝustaj, kaj <b>ne devas</b> esti uzataj por komerco, kovrado, fakturado aŭ ajna decido, kie preciza aŭ efektivigebla kurzo estas postulata. Vidu la servkondiĉojn por la plena malgarantio.\nDonitaj kurzoj – eĉ se ĝustaj – povas malsami de tiuj uzataj de via banko.\nFine: eraroj okazas. Neniam blinde fidu al iu ajn sola fonto.\nĈi tiu aplikaĵo estas tute senpaga kaj malfermitkoda. Se vi trovas version kun prezo aŭ reklamoj, ĝi estas falsa — malinstalu ĝin tuj.</string>
     <string name="fee_edit_active">Aktiva</string>
     <string name="fee_edit_name">Nomo</string>
     <string name="fee_edit_name_hint">ekz. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Neaktiva</string>
     <string name="fee_untitled">Sennomita</string>
     <string name="rate_title">Taksi ĉi tiun aplikaĵon</string>
-    <string name="rate_summary">Se vi volas, vi povas helpi aliajn malkovri Currencies. Alklaku ĉi tie por taksi la aplikaĵon en Google Play.</string>
+    <string name="rate_summary">Se vi volas, vi povas helpi aliajn malkovri Currencies. Alklaku ĉi tie por taksi la aplikaĵon.</string>
     <string name="title_changelog">Ŝanĝoprotokolo</string>
 </resources>

@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">Over deze app</string>
     <string name="disclaimer_title">Ontkenning</string>
-    <string name="disclaimer_summary">Weergegeven wisselkoersen zijn <b>slechts indicatief</b>. Ze komen van externe aanbieders, kunnen vertraagd of onjuist zijn, en <b>mogen niet</b> worden gebruikt voor handel, hedging, facturering of enige beslissing waarbij een nauwkeurige of uitvoerbare koers vereist is. Zie de Servicevoorwaarden voor de volledige disclaimer.\nVerstrekte koersen – zelfs indien correct – kunnen afwijken van de koersen die uw bank hanteert.\nTot slot: fouten gebeuren. Vertrouw nooit blindelings op één enkele bron.</string>
+    <string name="disclaimer_summary">Weergegeven wisselkoersen zijn <b>slechts indicatief</b>. Ze komen van externe aanbieders, kunnen vertraagd of onjuist zijn, en <b>mogen niet</b> worden gebruikt voor handel, hedging, facturering of enige beslissing waarbij een nauwkeurige of uitvoerbare koers vereist is. Zie de Servicevoorwaarden voor de volledige disclaimer.\nVerstrekte koersen – zelfs indien correct – kunnen afwijken van de koersen die uw bank hanteert.\nTot slot: fouten gebeuren. Vertrouw nooit blindelings op één enkele bron.\nDeze app is volledig gratis en open source. Als je een versie met een prijs of advertenties tegenkomt, is die vals — verwijder hem onmiddellijk.</string>
     <string name="rate_title">Beoordeel deze app</string>
-    <string name="rate_summary">Als je wilt, kun je anderen helpen valuta\'s te ontdekken. Klik hier om de app te beoordelen op Google Play.</string>
+    <string name="rate_summary">Als je wilt, kun je anderen helpen valuta\'s te ontdekken. Klik hier om de app te beoordelen.</string>
     <string name="category_versioninfo">Versie-informatie</string>
     <string name="title_changelog">Wijzigingsoverzicht</string>
     <string name="backup_title">Back-up en herstel</string>

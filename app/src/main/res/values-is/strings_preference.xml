@@ -98,9 +98,9 @@
     <!-- about -->
     <string name="category_about">Um forritið</string>
     <string name="disclaimer_title">Fyrirvari</string>
-    <string name="disclaimer_summary">Gengin sem birt eru eru <b>eingöngu til viðmiðunar</b>. Þau koma frá þriðju aðilum, geta verið sein á ferðinni eða röng og <b>má ekki</b> nota til viðskipta, áhættuvarnar, reikningagerðar eða til nokkurrar ákvörðunar þar sem nákvæmt eða framkvæmanlegt gengi er krafist. Sjá þjónustuskilmála fyrir fullan fyrirvara.\nUppgefið gengi – jafnvel þótt það sé rétt – kann að vera frábrugðið því sem bankinn þinn notar.\nAð lokum: mistök gerast. Treystu aldrei neinum einstökum heimildum í blindni.</string>
+    <string name="disclaimer_summary">Gengin sem birt eru eru <b>eingöngu til viðmiðunar</b>. Þau koma frá þriðju aðilum, geta verið sein á ferðinni eða röng og <b>má ekki</b> nota til viðskipta, áhættuvarnar, reikningagerðar eða til nokkurrar ákvörðunar þar sem nákvæmt eða framkvæmanlegt gengi er krafist. Sjá þjónustuskilmála fyrir fullan fyrirvara.\nUppgefið gengi – jafnvel þótt það sé rétt – kann að vera frábrugðið því sem bankinn þinn notar.\nAð lokum: mistök gerast. Treystu aldrei neinum einstökum heimildum í blindni.\nÞetta forrit er algjörlega ókeypis og með opinn frumkóða. Ef þú finnur útgáfu með verðmiða eða auglýsingum er hún fölsuð — fjarlægðu hana strax.</string>
     <string name="rate_title">Meta forritið</string>
-    <string name="rate_summary">Það má hjálpa öðrum að finna forritið. Smelltu hingað til að gefa forritinu einkunn á Google Play.</string>
+    <string name="rate_summary">Það má hjálpa öðrum að finna forritið. Smelltu hingað til að gefa forritinu einkunn.</string>
     <string name="category_versioninfo">Útgáfuupplýsingar</string>
     <string name="title_changelog">Breytingarskrá</string>
     <string name="backup_title">Öryggisafrit og endurheimt</string>

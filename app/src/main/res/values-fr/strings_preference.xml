@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">À propos de cette application</string>
     <string name="disclaimer_title">Exclusion de responsabilité</string>
-    <string name="disclaimer_summary">Les taux de change affichés sont <b>fournis à titre indicatif uniquement</b>. Ils proviennent de fournisseurs tiers, peuvent être retardés ou erronés, et <b>ne doivent pas</b> être utilisés pour le trading, la couverture, la facturation ou toute décision nécessitant un taux exact ou exécutable. Consultez les Conditions d\'utilisation pour l\'avertissement complet.\nLes taux fournis – même s\'ils sont corrects – peuvent différer de ceux utilisés par votre banque.\nEnfin : des erreurs arrivent. Ne faites jamais aveuglément confiance à une seule source.</string>
+    <string name="disclaimer_summary">Les taux de change affichés sont <b>fournis à titre indicatif uniquement</b>. Ils proviennent de fournisseurs tiers, peuvent être retardés ou erronés, et <b>ne doivent pas</b> être utilisés pour le trading, la couverture, la facturation ou toute décision nécessitant un taux exact ou exécutable. Consultez les Conditions d\'utilisation pour l\'avertissement complet.\nLes taux fournis – même s\'ils sont corrects – peuvent différer de ceux utilisés par votre banque.\nEnfin : des erreurs arrivent. Ne faites jamais aveuglément confiance à une seule source.\nCette application est entièrement gratuite et open source. Si vous trouvez une version payante ou avec des publicités, elle est fausse — désinstallez-la immédiatement.</string>
     <string name="rate_title">Notez cette application</string>
-    <string name="rate_summary">Si vous le souhaitez, vous pouvez aider d\'autres personnes à découvrir Currencies. Cliquez ici pour évaluer l\'application sur Google Play.</string>
+    <string name="rate_summary">Si vous le souhaitez, vous pouvez aider d\'autres personnes à découvrir Currencies. Cliquez ici pour évaluer l\'application.</string>
     <string name="category_versioninfo">Informations sur les versions</string>
     <string name="title_changelog">Journal des modifications</string>
     <string name="backup_title">Sauvegarder et restaurer</string>

@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">Di questa app</string>
     <string name="disclaimer_title">L\'esclusione di responsabilità</string>
-    <string name="disclaimer_summary">I tassi di cambio mostrati sono <b>solo indicativi</b>. Provengono da fornitori terzi, possono essere in ritardo o errati e <b>non devono</b> essere usati per trading, copertura, fatturazione o qualsiasi decisione per cui sia richiesto un tasso accurato o eseguibile. Consulta i Termini di servizio per il testo completo dell\'esclusione di responsabilità.\nI tassi forniti – anche se corretti – possono differire da quelli utilizzati dalla tua banca.\nInfine: gli errori capitano. Non fidarti mai ciecamente di una singola fonte.</string>
+    <string name="disclaimer_summary">I tassi di cambio mostrati sono <b>solo indicativi</b>. Provengono da fornitori terzi, possono essere in ritardo o errati e <b>non devono</b> essere usati per trading, copertura, fatturazione o qualsiasi decisione per cui sia richiesto un tasso accurato o eseguibile. Consulta i Termini di servizio per il testo completo dell\'esclusione di responsabilità.\nI tassi forniti – anche se corretti – possono differire da quelli utilizzati dalla tua banca.\nInfine: gli errori capitano. Non fidarti mai ciecamente di una singola fonte.\nQuesta app è completamente gratuita e open source. Se trovi una versione a pagamento o con annunci, è falsa — disinstallala immediatamente.</string>
     <string name="rate_title">Valuta questa applicazione</string>
-    <string name="rate_summary">Se vuoi, puoi aiutare gli altri a scoprire Currencies. Clicca qui per votare l\'app su Google Play.</string>
+    <string name="rate_summary">Se vuoi, puoi aiutare gli altri a scoprire Currencies. Clicca qui per votare l\'app.</string>
     <string name="category_versioninfo">Informazioni della versione</string>
     <string name="title_changelog">Registro dei cambiamenti</string>
     <string name="backup_title">Backup e ripristino</string>

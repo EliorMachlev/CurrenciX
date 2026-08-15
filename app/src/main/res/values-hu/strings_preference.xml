@@ -98,9 +98,9 @@
     <!-- about -->
     <string name="category_about">Erről az alkalmazásról</string>
     <string name="disclaimer_title">Jogi nyilatkozat</string>
-    <string name="disclaimer_summary">A megjelenített árfolyamok <b>csak tájékoztató jellegűek</b>. Harmadik felektől származnak, késleltetettek vagy hibásak lehetnek, és <b>nem használhatók</b> kereskedésre, fedezésre, számlázásra vagy bármely olyan döntéshez, amelyhez pontos vagy végrehajtható árfolyamra van szükség. A teljes jogi nyilatkozatot lásd a Szolgáltatási feltételekben.\nA megadott árfolyamok – még ha helyesek is – eltérhetnek a bankod által használtaktól.\nVégül: hibák előfordulnak. Soha ne bízz vakon egyetlen forrásban sem.</string>
+    <string name="disclaimer_summary">A megjelenített árfolyamok <b>csak tájékoztató jellegűek</b>. Harmadik felektől származnak, késleltetettek vagy hibásak lehetnek, és <b>nem használhatók</b> kereskedésre, fedezésre, számlázásra vagy bármely olyan döntéshez, amelyhez pontos vagy végrehajtható árfolyamra van szükség. A teljes jogi nyilatkozatot lásd a Szolgáltatási feltételekben.\nA megadott árfolyamok – még ha helyesek is – eltérhetnek a bankod által használtaktól.\nVégül: hibák előfordulnak. Soha ne bízz vakon egyetlen forrásban sem.\nEz az alkalmazás teljesen ingyenes és nyílt forráskódú. Ha árcédulával vagy hirdetésekkel ellátott verziót találsz, az hamis — azonnal távolítsd el.</string>
     <string name="rate_title">Értékeld az alkalmazást</string>
-    <string name="rate_summary">Ha szeretnéd, segíthetsz másoknak felfedezni a Currencies-t. Kattints ide az alkalmazás értékeléséhez a Google Play-en.</string>
+    <string name="rate_summary">Ha szeretnéd, segíthetsz másoknak felfedezni a Currencies-t. Kattints ide az alkalmazás értékeléséhez.</string>
 
 
     <string name="backup_title">Biztonsági mentés és visszaállítás</string>

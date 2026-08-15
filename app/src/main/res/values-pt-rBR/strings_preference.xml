@@ -98,9 +98,9 @@
     <!-- about -->
     <string name="category_about">Sobre esta app</string>
     <string name="disclaimer_title">Renúncia de responsabilidade</string>
-    <string name="disclaimer_summary">As taxas de câmbio exibidas são <b>meramente indicativas</b>. Elas vêm de provedores terceirizados, podem estar atrasadas ou incorretas e <b>não devem</b> ser usadas para negociação, hedge, faturamento ou qualquer decisão em que uma taxa precisa ou executável seja necessária. Consulte os Termos de Serviço para o aviso legal completo.\nAs taxas fornecidas – mesmo que corretas – podem diferir daquelas usadas pelo seu banco.\nPor fim: erros acontecem. Nunca confie cegamente em qualquer fonte única.</string>
+    <string name="disclaimer_summary">As taxas de câmbio exibidas são <b>meramente indicativas</b>. Elas vêm de provedores terceirizados, podem estar atrasadas ou incorretas e <b>não devem</b> ser usadas para negociação, hedge, faturamento ou qualquer decisão em que uma taxa precisa ou executável seja necessária. Consulte os Termos de Serviço para o aviso legal completo.\nAs taxas fornecidas – mesmo que corretas – podem diferir daquelas usadas pelo seu banco.\nPor fim: erros acontecem. Nunca confie cegamente em qualquer fonte única.\nEste aplicativo é totalmente gratuito e de código aberto. Se você encontrar uma versão paga ou com anúncios, ela é falsa — desinstale-a imediatamente.</string>
     <string name="rate_title">Classifique esta app</string>
-    <string name="rate_summary">Se desejar, pode ajudar outros a descobrir Currencies. Clique aqui para avaliar a aplicação no Google Play.</string>
+    <string name="rate_summary">Se desejar, pode ajudar outros a descobrir Currencies. Clique aqui para avaliar a aplicação.</string>
     <string name="category_versioninfo">Informação da versão</string>
     <string name="title_changelog">Registro de alterações</string>
     <string name="backup_title">Backup e restauração</string>

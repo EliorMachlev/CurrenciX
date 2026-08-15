@@ -100,9 +100,9 @@
     <!-- about -->
     <string name="category_about">Teave selle rakenduse kohta</string>
     <string name="disclaimer_title">Lahtiütlus vastutusest</string>
-    <string name="disclaimer_summary">Kuvatavad vahetuskursid on <b>ainult orienteeruvad</b>. Need pärinevad kolmandate osapoolte teenustest, võivad olla hilinenud või valed ning <b>neid ei tohi</b> kasutada kauplemiseks, maandamiseks, arveldamiseks ega ühegi otsuse tegemiseks, kus on vaja täpset või tehingukõlblikku kurssi. Täieliku lahtiütluse leiad kasutustingimustest.\nPakutavad kursid – isegi kui need on õiged – võivad erineda sinu panga kasutatavatest.\nJa viimaseks: vigu juhtub. Ära usalda kunagi pimesi ühtki üksikut allikat.</string>
+    <string name="disclaimer_summary">Kuvatavad vahetuskursid on <b>ainult orienteeruvad</b>. Need pärinevad kolmandate osapoolte teenustest, võivad olla hilinenud või valed ning <b>neid ei tohi</b> kasutada kauplemiseks, maandamiseks, arveldamiseks ega ühegi otsuse tegemiseks, kus on vaja täpset või tehingukõlblikku kurssi. Täieliku lahtiütluse leiad kasutustingimustest.\nPakutavad kursid – isegi kui need on õiged – võivad erineda sinu panga kasutatavatest.\nJa viimaseks: vigu juhtub. Ära usalda kunagi pimesi ühtki üksikut allikat.\nSee rakendus on täiesti tasuta ja avatud lähtekoodiga. Kui leiad hinnasildiga või reklaame sisaldava versiooni, on see võlts — desinstalli see kohe.</string>
     <string name="rate_title">Hinda seda rakendust</string>
-    <string name="rate_summary">Kui soovid, et ka teised kasutajad leiaks selle rakenduse, siis klõpsi siin ja hinda seda Google Plays.</string>
+    <string name="rate_summary">Kui soovid, et ka teised kasutajad leiaks selle rakenduse, siis klõpsi siin ja hinda seda.</string>
     <string name="category_versioninfo">Versiooniteave</string>
     <string name="title_changelog">Muudatuste logi</string>
     <string name="backup_title">Varundamine ja taastamine</string>
