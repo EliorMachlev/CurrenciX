@@ -5,4 +5,12 @@
     <!-- pure black -->
     <color name="colorBackgroundPureBlack">@android:color/black</color>
     <color name="displayOverlayPureBlack">@null</color>
+
+    <!-- M3 error tone 80 for dark surfaces: ~7:1 on #333331. -->
+    <color name="app_error">#F2B8B5</color>
+
+    <!-- On dark surfaces the lighter dollarBill green already exceeds AA;
+         override so the same semantic slot points at the tone that works
+         for the current theme. -->
+    <color name="rate_diff_positive">@color/dollarBill</color>
 </resources>

@@ -142,7 +142,11 @@ internal fun TimelineSecondary(
                 }
             }
             if (diffPercent != null) {
-                val positiveColor = colorResource(R.color.dollarBill)
+                // rate_diff_positive resolves to a darker green (#1B7343) on
+                // the cream light theme and back to dollarBill (#85BB65) on
+                // dark — dollarBill alone was ~2:1 on cream and failed AA for
+                // text-sized diff values.
+                val positiveColor = colorResource(R.color.rate_diff_positive)
                 val negativeColor = MaterialTheme.colorScheme.error
                 Text(
                     text = formatRateDiff(context, diffPercent, RATE_DIFF_DECIMALS),

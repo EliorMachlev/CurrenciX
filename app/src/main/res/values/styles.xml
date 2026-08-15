@@ -37,10 +37,10 @@
         <item name="colorTertiaryContainer">?attr/colorPrimary</item>
         <item name="colorOnTertiaryContainer">?attr/colorOnPrimary</item>
 
-        <item name="colorError">@android:color/holo_red_light</item>
+        <item name="colorError">@color/app_error</item>
         <item name="colorOnError">@android:color/white</item>
         <item name="colorErrorContainer">?attr/colorOnError</item>
-        <item name="colorOnErrorContainer">@android:color/holo_red_dark</item>
+        <item name="colorOnErrorContainer">?attr/colorError</item>
 
         <item name="colorSurface">?android:attr/colorBackground</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>

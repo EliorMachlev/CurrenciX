@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
@@ -36,10 +37,10 @@ import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.Ltr
 
 private const val FLAG_SIZE_DP = 28
-private const val FEE_INFO_ALPHA = 0.7f
 private const val EQ_ALPHA = 0.5f
-private const val ROW_LABEL_ALPHA = 0.7f
-private const val ICON_BUTTON_SIZE_DP = 40
+// Bumped from 40dp to hit WCAG 2.1 AA "target size" (48×48). Applies to the
+// header swap and fee-side toggle — the two icon-only actions in this dialog.
+private const val ICON_BUTTON_SIZE_DP = 48
 
 data class QuickConversionsRow(
     val amountFromText: String,
@@ -91,10 +92,7 @@ fun QuickConversionsContent(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .alpha(FEE_INFO_ALPHA),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             Spacer(Modifier.height(dimensionResource(id = R.dimen.margin2x)))
@@ -224,7 +222,10 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = dimensionResource(id = R.dimen.margin1x)),
+                .padding(vertical = dimensionResource(id = R.dimen.margin1x))
+                // Merge so TalkBack reads "$FROM equals $TO" as one item rather
+                // than swiping through five separate text nodes per row.
+                .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -240,7 +241,6 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                     text = row.trueCostText,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.alpha(ROW_LABEL_ALPHA),
                 )
             }
         }
@@ -266,7 +266,6 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                     text = row.originalValueText,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.alpha(ROW_LABEL_ALPHA),
                 )
             }
         }
