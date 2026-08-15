@@ -38,6 +38,7 @@ import com.eliormachlev.currencix.view.compose.Ltr
 
 private const val FLAG_SIZE_DP = 28
 private const val EQ_ALPHA = 0.5f
+
 // Bumped from 40dp to hit WCAG 2.1 AA "target size" (48×48). Applies to the
 // header swap and fee-side toggle — the two icon-only actions in this dialog.
 private const val ICON_BUTTON_SIZE_DP = 48

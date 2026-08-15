@@ -201,7 +201,12 @@ private fun DatedRateColumn(
         horizontalAlignment = horizontalAlignment,
     ) {
         Text(
-            text = dated?.first?.key?.format(formatter).orEmpty(),
+            text =
+                dated
+                    ?.first
+                    ?.key
+                    ?.format(formatter)
+                    .orEmpty(),
             fontSize = TIMELINE_DATE_FONT_SIZE,
             letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
             color = secondaryColor,
