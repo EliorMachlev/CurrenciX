@@ -98,9 +98,9 @@
     <!-- about -->
     <string name="category_about">Om denne appen</string>
     <string name="disclaimer_title">Ansvarsfraskrivelse</string>
-    <string name="disclaimer_summary">Selv om programmet er nøye skrevet og testet, <b>er det ingen garanti for at dataen som vises er riktig</b>. Vekslingskursene tilbys av en tredjepart, og dette programmet kan ikke på noe vis love at dataen er sannferdig eller oppdatert.\nSelv om dataen skulle være riktig kan det fremdeles hende at din bank bruker en annen kurs.\nTil sist. Feil skjer. Aldri stol blindt på noen. Når det er sagt ville jeg ikke sluppet programmet hvis jeg var i tvil om at det fungerte som tiltenkt.</string>
+    <string name="disclaimer_summary">Vekslingskursene som vises er <b>kun veiledende</b>. De kommer fra tredjepartsleverandører, kan være forsinkede eller feil, og <b>må ikke</b> brukes til handel, sikring, fakturering eller noen beslutning der en nøyaktig eller gjennomførbar kurs er påkrevd. Se vilkårene for tjenesten for den fullstendige ansvarsfraskrivelsen.\nOppgitte kurser – selv om de er korrekte – kan avvike fra dem banken din bruker.\nTil sist: feil skjer. Aldri stol blindt på en enkelt kilde.\nDenne appen er helt gratis og åpen kildekode. Hvis du finner en versjon med prislapp eller reklame, er den falsk — avinstaller den umiddelbart.</string>
     <string name="rate_title">Vurder programmet</string>
-    <string name="rate_summary">Hjelp andre å oppdage Currencies. Klikk her for å vurdere programmet på Google Play.</string>
+    <string name="rate_summary">Hjelp andre å oppdage Currencies. Klikk her for å vurdere programmet.</string>
 
 
     <string name="backup_title">Sikkerhetskopi og gjenoppretting</string>
@@ -124,10 +124,33 @@
     <string name="backup_password_prompt_title">Skriv inn passord</string>
     <string name="backup_password_wrong">Passordet klarte ikke å dekryptere denne filen. Prøv igjen.</string>
     <string name="backup_password_too_short">Passordet må være minst %1$d tegn</string>
-    <string name="credits_title">Bidragsytere</string>
-    <string name="credits_summary">Tilskrivninger, lisens og tredjepartsbiblioteker</string>
-    <string name="title_credits">Bidragsytere</string>
+    <string name="credits_title">Om, juridisk og åpen kildekode</string>
+    <string name="credits_summary">Personvernerklæring, vilkår for bruk, tilgjengelighet, kildekode og lisenser for tredjepartsbiblioteker</string>
+    <string name="title_credits">Om, juridisk og åpen kildekode</string>
     <string name="credits_section_project">Prosjekt</string>
     <string name="credits_section_license">Lisens</string>
     <string name="credits_section_libraries">Tredjepartsbiblioteker</string>
+    <string name="api_open_exchangerates_api_key_title">Open Exchangerates API-nøkkel</string>
+    <string name="api_open_exchangerates_api_key_message">For å bruke denne kilden må du opprette din personlige API-nøkkel.\n\nFor å gjøre det, gå til https://openexchangerates.org/signup/free og opprett en gratis konto.\nGenerer til slutt en ny App-ID i Dashbordet ditt og skriv den inn her:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>API-nøkkel kreves</i></string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="category_versioninfo">Versjonsinformasjon</string>
+    <string name="credit_accessibility_title">Tilgjengelighetserklæring</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA-mål; hvordan rapportere hindringer.</string>
+    <string name="credit_privacy_policy_title">Personvernerklæring</string>
+    <string name="credit_privacy_policy_subtitle">Ingen personopplysninger samles inn. Full oversikt per jurisdiksjon.</string>
+    <string name="credit_source_title">Kildekode</string>
+    <string name="credit_source_subtitle">Åpen kildekode på GitHub — bidra med kode eller åpne en sak.</string>
+    <string name="credit_terms_of_service_title">Vilkår for tjenesten</string>
+    <string name="credit_terms_of_service_subtitle">Bruksvilkår, garantifraskrivelse, merknad om kursnøyaktighet.</string>
+    <string name="credits_section_legal">Juridisk</string>
+    <string name="credits_section_source">Kilde</string>
+    <string name="fee_edit_active">Aktiv</string>
+    <string name="fee_edit_name">Navn</string>
+    <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Inaktiv</string>
+    <string name="fee_untitled">Uten navn</string>
+    <string name="language_ru">Russisk</string>
+    <string name="language_zh_CN">Kinesisk (forenklet)</string>
+    <string name="title_changelog">Endringslogg</string>
 </resources>

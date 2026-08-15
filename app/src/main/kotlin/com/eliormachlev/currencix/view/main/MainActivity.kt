@@ -28,6 +28,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.window.layout.FoldingFeature
@@ -494,6 +495,20 @@ class MainActivity : BaseActivity() {
             } else {
                 R.drawable.ic_fee_side_original
             },
+        )
+        // TalkBack ignores src changes on ImageButton; without a stateDescription
+        // the button always reads "Fee side" and users can't tell whether they
+        // just flipped to "original" or "converted". ViewCompat is used because
+        // View.setStateDescription is API 30+ and minSdk is 26.
+        ViewCompat.setStateDescription(
+            btnFeeSide,
+            getString(
+                if (effective == FeeSide.CONVERTED) {
+                    R.string.fee_side_converted
+                } else {
+                    R.string.fee_side_original
+                },
+            ),
         )
     }
 

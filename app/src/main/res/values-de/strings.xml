@@ -95,4 +95,6 @@
     <string name="cart_unsaved_save_as">Als neu speichern</string>
     <string name="cart_unsaved_discard">Änderungen verwerfen</string>
     <string name="cart_unsaved_continue">Weiter</string>
+    <string name="a11y_delete">Löschen</string>
+    <string name="a11y_historical_rate">Historischer Kurs</string>
 </resources>

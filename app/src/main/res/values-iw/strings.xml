@@ -94,4 +94,6 @@
     <string name="cart_unsaved_save_as">שמירה כחדש</string>
     <string name="cart_unsaved_discard">מחיקת השינויים</string>
     <string name="cart_unsaved_continue">המשך</string>
+    <string name="a11y_delete">מחיקה</string>
+    <string name="a11y_historical_rate">שער היסטורי</string>
 </resources>

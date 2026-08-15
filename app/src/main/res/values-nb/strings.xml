@@ -22,6 +22,14 @@
     <string name="quick_conversions_no_rates">Kursene er ikke lastet inn ennå.</string>
     <string name="quick_conversions_fees_applied">Anvendte gebyrer: %s</string>
     <string name="tooltip_filter_starred">Vis kun favorittvalutaer.</string>
+    <string name="a11y_delete">Slett</string>
+    <string name="a11y_historical_rate">Historisk kurs</string>
+    <string name="currency_dropdown_api_hint">Mangler noe? Ulike datatilbydere støtter ulike valutaer. Gå til innstillingene for å prøve en annen!\u00A0\uD83E\uDD17</string>
+    <string name="error_empty_response">Serveren har ingen data for denne forespørselen.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Vennligst sjekk API-nøkkelen din.</string>
+    <string name="error_no_api_key">En gyldig API-nøkkel må angis for å bruke denne kilden.</string>
+    <string name="error_try_another_api">Det finnes imidlertid andre datatilbydere du kan velge blant i innstillingene. Bare prøv!</string>
+    <string name="error_unsupported_timeline">Tidslinjedata støttes ikke av denne API-en.</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Frakoblet • Kurser fra %1$s</string>

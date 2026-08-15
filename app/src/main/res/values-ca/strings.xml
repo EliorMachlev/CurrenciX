@@ -95,4 +95,6 @@
     <string name="cart_unsaved_save_as">Desa com a nou</string>
     <string name="cart_unsaved_discard">Descarta els canvis</string>
     <string name="cart_unsaved_continue">Continua</string>
+    <string name="a11y_delete">Suprimeix</string>
+    <string name="a11y_historical_rate">Cotització històrica</string>
 </resources>

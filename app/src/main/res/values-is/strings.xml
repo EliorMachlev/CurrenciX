@@ -88,4 +88,12 @@
     <string name="cart_unsaved_save_as">Vista sem nýtt</string>
     <string name="cart_unsaved_discard">Henda breytingum</string>
     <string name="cart_unsaved_continue">Halda áfram</string>
+    <string name="a11y_delete">Eyða</string>
+    <string name="a11y_historical_rate">Sögulegt gengi</string>
+    <string name="currency_dropdown_api_hint">Vantar eitthvað? Mismunandi gagnaveitur bjóða upp á mismunandi gjaldmiðla. Farðu í stillingar og prófaðu aðra!\u00A0\uD83E\uDD17</string>
+    <string name="error_empty_response">Þjónninn hefur engin gögn fyrir þessa beiðni.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Athugaðu API-lykilinn þinn.</string>
+    <string name="error_no_api_key">Gilt API-lykil þarf að stilla til að nota þessa uppsprettu.</string>
+    <string name="error_try_another_api">Það eru þó aðrar gagnaveitur sem þú getur valið um í stillingunum. Prófaðu bara!</string>
+    <string name="error_unsupported_timeline">Tímalínugögn eru ekki studd af þessu API.</string>
 </resources>

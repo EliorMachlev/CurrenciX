@@ -91,4 +91,9 @@
     <string name="cart_unsaved_save_as">Konservi kiel novan</string>
     <string name="cart_unsaved_discard">Forĵeti ŝanĝojn</string>
     <string name="cart_unsaved_continue">Daŭrigi</string>
+    <string name="a11y_delete">Forigi</string>
+    <string name="a11y_historical_rate">Historia kurzo</string>
+    <string name="error_invalid_api_key">HTTP 401 – Bonvolu kontroli vian API-ŝlosilon.</string>
+    <string name="error_no_api_key">Valida API-ŝlosilo devas esti agordita por uzi ĉi tiun fonton.</string>
+    <string name="error_unsupported_timeline">Templiniaj datumoj ne estas subtenataj de ĉi tiu API.</string>
 </resources>

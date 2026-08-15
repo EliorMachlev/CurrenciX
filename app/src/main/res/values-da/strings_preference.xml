@@ -102,10 +102,8 @@
     <string name="category_about">Om denne app</string>
     <string name="disclaimer_title">Ansvarsfraskrivelse</string>
 
-    <string name="sourcecode_title">Kildekode</string>
-    <string name="sourcecode_summary">Denne app er open source. Gå til kodedatabasen for at anmelde problemer, finde ud af, hvordan du bidrager, eller bare se på kilderne.</string>
     <string name="rate_title">Bedøm denne app</string>
-    <string name="rate_summary">Hvis du vil, kan du hjælpe andre med at finde Valutaer. Klik her for at bedømme appen på Google Play.</string>
+    <string name="rate_summary">Hvis du vil, kan du hjælpe andre med at finde Valutaer. Klik her for at bedømme appen.</string>
     <string name="category_versioninfo">Versioninformation</string>
     <string name="title_changelog">Ændringslog</string>
     <string name="backup_title">Sikkerhedskopi og gendannelse</string>
@@ -129,10 +127,27 @@
     <string name="backup_password_prompt_title">Indtast adgangskode</string>
     <string name="backup_password_wrong">Adgangskoden kunne ikke dekryptere filen. Prøv igen.</string>
     <string name="backup_password_too_short">Adgangskoden skal være mindst %1$d tegn</string>
-    <string name="credits_title">Anerkendelser</string>
-    <string name="credits_summary">Tilskrivninger, licens og tredjepartsbiblioteker</string>
-    <string name="title_credits">Anerkendelser</string>
+    <string name="credits_title">Om, juridisk &amp; open source</string>
+    <string name="credits_summary">Privatlivspolitik, servicevilkår, tilgængelighed, kildekode og licenser for tredjepartsbiblioteker</string>
+    <string name="title_credits">Om, juridisk &amp; open source</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licens</string>
     <string name="credits_section_libraries">Tredjepartsbiblioteker</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Tilgængelighedserklæring</string>
+    <string name="credit_accessibility_subtitle">Mål: WCAG 2.1 AA; sådan rapporterer du barrierer.</string>
+    <string name="credit_privacy_policy_title">Privatlivspolitik</string>
+    <string name="credit_privacy_policy_subtitle">Der indsamles ingen personlige data. Fuld holdning pr. jurisdiktion.</string>
+    <string name="credit_source_title">Kildekode</string>
+    <string name="credit_source_subtitle">Open source på GitHub — bidrag med kode eller opret et problem.</string>
+    <string name="credit_terms_of_service_title">Servicevilkår</string>
+    <string name="credit_terms_of_service_subtitle">Brugsvilkår, garantifraskrivelse, meddelelse om kursnøjagtighed.</string>
+    <string name="credits_section_legal">Juridisk</string>
+    <string name="credits_section_source">Kilde</string>
+    <string name="disclaimer_summary">Viste valutakurser er <b>kun vejledende</b>. De kommer fra tredjepartsudbydere, kan være forsinkede eller forkerte, og <b>må ikke</b> bruges til handel, hedging, fakturering eller nogen beslutning, hvor der kræves en nøjagtig eller eksekverbar kurs. Se servicevilkårene for den fulde ansvarsfraskrivelse.\nDe leverede kurser kan – selv hvis de er korrekte – afvige fra dem, din bank bruger.\nTil sidst: fejl sker. Stol aldrig blindt på nogen enkelt kilde.\nDenne app er helt gratis og open source. Hvis du finder en version med en pris eller reklamer, er den falsk — afinstaller den straks.</string>
+    <string name="fee_edit_active">Aktiv</string>
+    <string name="fee_edit_name">Navn</string>
+    <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Inaktiv</string>
+    <string name="fee_untitled">Uden titel</string>
 </resources>

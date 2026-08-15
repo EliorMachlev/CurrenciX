@@ -4,6 +4,12 @@
     <string name="app_name_alt" translatable="false" tools:keep="@string/app_name_alt">Sorten</string>
 
     <string name="desc_toggle_currencies">toggle currencies</string>
+    <string name="a11y_delete">Delete</string>
+    <string name="a11y_historical_rate">Historical rate</string>
+    <string name="a11y_search_currencies">Search currencies</string>
+    <string name="a11y_clear_search">Clear search</string>
+    <string name="a11y_cart_item_name">Item name</string>
+    <string name="a11y_chart_summary">Exchange rate history chart. Statistics — minimum, average, maximum, and current rate — are shown below.</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="info_date_latest">Rates as of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
     <string name="info_date_historical">Historical rates of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>

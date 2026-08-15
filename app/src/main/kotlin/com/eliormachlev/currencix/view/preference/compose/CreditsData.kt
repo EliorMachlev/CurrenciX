@@ -1,13 +1,21 @@
 package com.eliormachlev.currencix.view.preference.compose
 
+import android.content.Context
+import androidx.annotation.StringRes
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.URL_DOCS_BASE
+import com.eliormachlev.currencix.util.URL_REPO
+
+private const val URL_PRIVACY_POLICY = "${URL_DOCS_BASE}privacy-policy.md"
+private const val URL_TERMS_OF_SERVICE = "${URL_DOCS_BASE}terms-of-service.md"
+private const val URL_ACCESSIBILITY_STATEMENT = "${URL_DOCS_BASE}accessibility-statement.md"
 
 private val PROJECT_CREDITS =
     listOf(
         Credit(
             title = "CurrenciX",
             subtitle = "Fork by Elior Machlev",
-            url = "https://github.com/EliorMachlev/CurrenciX",
+            url = URL_REPO,
         ),
         Credit(
             title = "Currencies",
@@ -25,48 +33,112 @@ private val LICENSE_CREDITS =
         ),
     )
 
+// Runtime dependencies of the app — kept in sync with app/build.gradle.kts.
+// SPDX identifiers per each project's declared licence. The CI-generated SBOM
+// is the machine-readable source of truth; this list is the user-facing
+// attribution surface required by Apache-2.0 §4(d), MIT notice clause, and
+// similar terms in the other permissive licences below.
 private val LIBRARY_CREDITS =
     listOf(
+        Credit(
+            title = "AndroidX",
+            subtitle = "Jetpack (core, appcompat, lifecycle, preference, window, activity, constraintlayout, swiperefreshlayout) — Google",
+            url = "https://developer.android.com/jetpack/androidx",
+            license = "Apache-2.0",
+        ),
+        Credit(
+            title = "Jetpack Compose",
+            subtitle = "UI toolkit + Material 3 — Google",
+            url = "https://developer.android.com/jetpack/compose",
+            license = "Apache-2.0",
+        ),
+        Credit(
+            title = "Material Components for Android",
+            subtitle = "Material Design components — Google",
+            url = "https://github.com/material-components/material-components-android",
+            license = "Apache-2.0",
+        ),
         Credit(
             title = "Vico",
             subtitle = "Charting — Patryk & Patrick",
             url = "https://github.com/patrykandpatrick/vico",
+            license = "Apache-2.0",
         ),
         Credit(
             title = "OkHttp",
             subtitle = "HTTP client — Square",
             url = "https://square.github.io/okhttp/",
+            license = "Apache-2.0",
         ),
         Credit(
             title = "Moshi",
             subtitle = "JSON parser — Square",
             url = "https://github.com/square/moshi",
+            license = "Apache-2.0",
         ),
         Credit(
             title = "Timber",
             subtitle = "Logging — Jake Wharton",
             url = "https://github.com/JakeWharton/timber",
+            license = "Apache-2.0",
         ),
         Credit(
             title = "EvalEx",
             subtitle = "Math expression evaluator — Udo Klimaschewski",
             url = "https://github.com/ezylang/EvalEx",
+            license = "Apache-2.0",
         ),
         Credit(
             title = "Bouncy Castle",
-            subtitle = "Cryptography provider",
+            subtitle = "Cryptography provider (Argon2id + AES-GCM for backup encryption)",
             url = "https://www.bouncycastle.org/",
+            license = "MIT",
         ),
         Credit(
-            title = "Material Components",
-            subtitle = "Android UI — Google",
-            url = "https://github.com/material-components/material-components-android",
+            title = "Kotlin",
+            subtitle = "Language runtime + standard library — JetBrains",
+            url = "https://kotlinlang.org/",
+            license = "Apache-2.0",
+        ),
+        Credit(
+            title = "kotlinx.coroutines",
+            subtitle = "Async primitives — JetBrains (transitive)",
+            url = "https://github.com/Kotlin/kotlinx.coroutines",
+            license = "Apache-2.0",
+        ),
+        Credit(
+            title = "Okio",
+            subtitle = "I/O primitives — Square (transitive via OkHttp / Moshi)",
+            url = "https://square.github.io/okio/",
+            license = "Apache-2.0",
         ),
     )
 
-val CREDITS_SECTIONS: List<CreditsSection> =
+fun creditsSections(context: Context): List<CreditsSection> =
     listOf(
+        CreditsSection(
+            R.string.credits_section_legal,
+            listOf(
+                context.credit(R.string.credit_privacy_policy_title, R.string.credit_privacy_policy_subtitle, URL_PRIVACY_POLICY),
+                context.credit(R.string.credit_terms_of_service_title, R.string.credit_terms_of_service_subtitle, URL_TERMS_OF_SERVICE),
+                context.credit(R.string.credit_accessibility_title, R.string.credit_accessibility_subtitle, URL_ACCESSIBILITY_STATEMENT),
+            ),
+        ),
+        CreditsSection(
+            R.string.credits_section_source,
+            listOf(context.credit(R.string.credit_source_title, R.string.credit_source_subtitle, URL_REPO)),
+        ),
         CreditsSection(R.string.credits_section_project, PROJECT_CREDITS),
         CreditsSection(R.string.credits_section_license, LICENSE_CREDITS),
         CreditsSection(R.string.credits_section_libraries, LIBRARY_CREDITS),
     )
+
+private fun Context.credit(
+    @StringRes titleRes: Int,
+    @StringRes subtitleRes: Int,
+    url: String,
+) = Credit(
+    title = getString(titleRes),
+    subtitle = getString(subtitleRes),
+    url = url,
+)

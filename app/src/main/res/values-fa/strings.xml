@@ -94,4 +94,7 @@
     <string name="cart_unsaved_save_as">ذخیره به‌عنوان جدید</string>
     <string name="cart_unsaved_discard">نادیده گرفتن تغییرات</string>
     <string name="cart_unsaved_continue">ادامه</string>
+    <string name="a11y_delete">حذف</string>
+    <string name="a11y_historical_rate">نرخ گذشته</string>
+    <string name="error_unsupported_timeline">داده‌های خط زمانی توسط این API پشتیبانی نمی‌شود.</string>
 </resources>

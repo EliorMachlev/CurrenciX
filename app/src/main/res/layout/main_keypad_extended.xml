@@ -128,14 +128,14 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/a11y_delete"
             android:longClickable="true"
             android:onClick="deleteEvent"
             android:src="@drawable/ic_backspace"
             app:layout_constraintBottom_toBottomOf="@+id/btn_4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_6"
-            app:layout_constraintTop_toTopOf="@+id/btn_4"
-            tools:ignore="ContentDescription" />
+            app:layout_constraintTop_toTopOf="@+id/btn_4" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_4"

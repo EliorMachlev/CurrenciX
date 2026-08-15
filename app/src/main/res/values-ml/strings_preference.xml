@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">ഈ ആപ്പിനെക്കുറിച്ച്</string>
     <string name="disclaimer_title">നിരാകരണം</string>
-    <string name="disclaimer_summary">ഈ ആപ്പ് വളരെ സൂക്ഷ്മമായി എഴുതി പരീക്ഷിച്ചിട്ടുണ്ടെങ്കിലും, <b>അത് കാണിക്കുന്ന ഡാറ്റ ശരിയാണെന്ന് ഒരു ഉറപ്പുമില്ല</b>. വിനിമയ നിരക്കുകൾ ഒരു മൂന്നാം കക്ഷിയാൽ നൽകപ്പെടുന്നു, ഈ ആപ്പിന് ഡാറ്റ ശരിയാണെന്നും കാലാനുസൃതമാണെന്നും ഉറപ്പു നൽകാൻ കഴിയില്ല.\nകൂടാതെ, നൽകിയ നിരക്കുകൾ - ശരിയാണെങ്കിലും - നിങ്ങളുടെ ബാങ്ക് ഉപയോഗിക്കുന്നവയിൽ നിന്ന് വ്യത്യാസപ്പെട്ടേക്കാം.\nഅവസാനമായി: തെറ്റുകൾ സംഭവിക്കാം. ആരെയും അന്ധമായി വിശ്വസിക്കരുത്! എന്നിരുന്നാലും, ഈ ആപ്പ് ഉദ്ദേശിച്ചതുപോലെ പ്രവർത്തിക്കുന്നു എന്ന് സംശയമുണ്ടെങ്കിൽ ഞാൻ ഇത് പുറത്തിറക്കുമായിരുന്നില്ല.</string>
-    <string name="sourcecode_title">സോഴ്‌സ് കോഡ്</string>
-    <string name="sourcecode_summary">ഈ ആപ്പ് ഓപ്പൺ സോഴ്‌സ് ആണ്. ഇഷ്യൂകൾ തുറക്കാനും, സംഭാവന ചെയ്യുന്നതെങ്ങനെയെന്നറിയാനും, അല്ലെങ്കിൽ സോഴ്‌സുകൾ ഒന്നു കാണാനുമായി കോഡ് റെപ്പോസിറ്ററിയിലേക്ക് പോകുക.</string>
+    <string name="disclaimer_summary">കാണിക്കുന്ന വിനിമയ നിരക്കുകൾ <b>സൂചനാ ആവശ്യത്തിന് മാത്രമുള്ളവയാണ്</b>. അവ മൂന്നാം കക്ഷി ദാതാക്കളിൽ നിന്നാണ് വരുന്നത്, വൈകിയതോ തെറ്റായതോ ആയേക്കാം, കൂടാതെ ട്രേഡിംഗ്, ഹെഡ്ജിംഗ്, ഇൻവോയ്‌സിംഗ്, അല്ലെങ്കിൽ കൃത്യമോ നടപ്പിലാക്കാവുന്നതോ ആയ നിരക്ക് ആവശ്യമായ ഏതെങ്കിലും തീരുമാനത്തിനായി അവ <b>ഉപയോഗിക്കാൻ പാടില്ല</b>. പൂർണ്ണമായ നിരാകരണത്തിന് സേവന നിബന്ധനകൾ കാണുക.\nനൽകിയ നിരക്കുകൾ – ശരിയാണെങ്കിൽ പോലും – നിങ്ങളുടെ ബാങ്ക് ഉപയോഗിക്കുന്നവയിൽ നിന്ന് വ്യത്യാസപ്പെട്ടേക്കാം.\nഅവസാനമായി: തെറ്റുകൾ സംഭവിക്കാം. ഒരൊറ്റ ഉറവിടത്തെയും ഒരിക്കലും അന്ധമായി വിശ്വസിക്കരുത്.\nഈ ആപ്പ് പൂർണ്ണമായും സൗജന്യവും ഓപ്പൺ സോഴ്‌സുമാണ്. വിലയോ പരസ്യങ്ങളോ ഉള്ള ഒരു പതിപ്പ് കണ്ടെത്തിയാൽ അത് വ്യാജമാണ് — ഉടനെ അൺഇൻസ്റ്റാൾ ചെയ്യുക.</string>
     <string name="rate_title">ഈ ആപ്പ് റേറ്റ് ചെയ്യുക</string>
-    <string name="rate_summary">നിങ്ങൾക്ക് താൽപ്പര്യമുണ്ടെങ്കിൽ, മറ്റുള്ളവർക്ക് Currencies കണ്ടെത്താൻ നിങ്ങൾക്ക് സഹായിക്കാം. Google Play-യിൽ ആപ്പ് റേറ്റ് ചെയ്യാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക.</string>
+    <string name="rate_summary">നിങ്ങൾക്ക് താൽപ്പര്യമുണ്ടെങ്കിൽ, മറ്റുള്ളവർക്ക് Currencies കണ്ടെത്താൻ നിങ്ങൾക്ക് സഹായിക്കാം. ആപ്പ് റേറ്റ് ചെയ്യാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക.</string>
     <string name="category_versioninfo">പതിപ്പ് വിവരം</string>
     <string name="title_changelog">മാറ്റങ്ങളുടെ ചരിത്രം</string>
     <string name="backup_title">ബാക്കപ്പും പുനഃസ്ഥാപനവും</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">പാസ്‌വേഡ് നൽകുക</string>
     <string name="backup_password_wrong">പാസ്‌വേഡിന് ഈ ഫയൽ ഡീക്രിപ്റ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.</string>
     <string name="backup_password_too_short">പാസ്‌വേഡ് കുറഞ്ഞത് %1$d പ്രതീകങ്ങൾ ഉണ്ടായിരിക്കണം</string>
-    <string name="credits_title">അംഗീകാരങ്ങൾ</string>
-    <string name="credits_summary">ആട്രിബ്യൂഷനുകൾ, ലൈസൻസ്, മൂന്നാം കക്ഷി ലൈബ്രറികൾ</string>
-    <string name="title_credits">അംഗീകാരങ്ങൾ</string>
+    <string name="credits_title">വിവരങ്ങൾ, നിയമപരം &amp; ഓപ്പൺ സോഴ്‌സ്</string>
+    <string name="credits_summary">സ്വകാര്യതാ നയം, സേവന നിബന്ധനകൾ, പ്രവേശനക്ഷമത, സോഴ്‌സ് കോഡ്, മൂന്നാം കക്ഷി ലൈബ്രറി ലൈസൻസുകൾ</string>
+    <string name="title_credits">വിവരങ്ങൾ, നിയമപരം &amp; ഓപ്പൺ സോഴ്‌സ്</string>
     <string name="credits_section_project">പദ്ധതി</string>
     <string name="credits_section_license">ലൈസൻസ്</string>
     <string name="credits_section_libraries">മൂന്നാം കക്ഷി ലൈബ്രറികൾ</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">പ്രാപ്യതാ പ്രഖ്യാപനം</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA ലക്ഷ്യം; തടസ്സങ്ങൾ റിപ്പോർട്ട് ചെയ്യേണ്ട വിധം.</string>
+    <string name="credit_privacy_policy_title">സ്വകാര്യതാ നയം</string>
+    <string name="credit_privacy_policy_subtitle">വ്യക്തിഗത വിവരങ്ങളൊന്നും ശേഖരിക്കുന്നില്ല. അധികാരപരിധി തിരിച്ചുള്ള പൂർണ്ണ വിവരങ്ങൾ.</string>
+    <string name="credit_source_title">സോഴ്സ് കോഡ്</string>
+    <string name="credit_source_subtitle">GitHub-ൽ ഓപ്പൺ സോഴ്സ് — കോഡ് സംഭാവന ചെയ്യുക അല്ലെങ്കിൽ ഒരു പ്രശ്നം തുറക്കുക.</string>
+    <string name="credit_terms_of_service_title">സേവന നിബന്ധനകൾ</string>
+    <string name="credit_terms_of_service_subtitle">ഉപയോഗ നിബന്ധനകൾ, വാറന്റി നിരാകരണം, നിരക്ക് കൃത്യതാ അറിയിപ്പ്.</string>
+    <string name="credits_section_legal">നിയമപരം</string>
+    <string name="credits_section_source">സോഴ്സ്</string>
+    <string name="fee_edit_active">സജീവം</string>
+    <string name="fee_edit_name">പേര്</string>
+    <string name="fee_edit_name_hint">ഉദാ. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">നിഷ്ക്രിയം</string>
+    <string name="fee_untitled">തലക്കെട്ടില്ലാത്തത്</string>
 </resources>

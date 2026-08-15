@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">Об этом приложении</string>
     <string name="disclaimer_title">Отказ от ответственности</string>
-    <string name="disclaimer_summary">Не смотря на то, что это приложение очень тщательно разрабатывается и тестируется, <b>нет никаких гарантий, что отображаемые им данные верны</b>. Обменные курсы предоставляются третьей стороной и данное приложение не может гарантировать, что данные верны и обновлены.\nДополнительно, предоставляемые курсы (если они верны) – всё ещё могут отличаться от используемых вашим банком.\nИ наконец: Ошибки случаются. Никогда слепо не доверяйте кому-либо! Учитывая это, будьте уверены, что я бы не выпустил это приложение, если бы у меня были сомнения в том, что оно работает так, как задумано.</string>
-    <string name="sourcecode_title">Исходный код</string>
-    <string name="sourcecode_summary">Это приложение с открытым исходным кодом. Перейдите в репозиторий кода, чтобы сообщить об ошибках, узнать, как внести свой вклад, или просто взглянуть на исходники.</string>
+    <string name="disclaimer_summary">Отображаемые обменные курсы носят <b>исключительно ориентировочный характер</b>. Они предоставляются сторонними поставщиками, могут быть задержаны или ошибочны и <b>не должны</b> использоваться для торговли, хеджирования, выставления счетов или любых решений, где требуется точный или исполнимый курс. Полный отказ от ответственности см. в Условиях обслуживания.\nПредоставленные курсы – даже если они верны – могут отличаться от тех, которые использует ваш банк.\nИ наконец: ошибки случаются. Никогда слепо не доверяйте ни одному источнику.\nЭто приложение полностью бесплатное и с открытым исходным кодом. Если вы нашли платную версию или версию с рекламой, она поддельная — немедленно удалите её.</string>
     <string name="rate_title">Оценить это приложение</string>
-    <string name="rate_summary">Если вам всё понравилось, то вы можете помочь другим узнать о Currencies. Нажмите здесь, чтобы оценить приложение в Google Play.</string>
+    <string name="rate_summary">Если вам всё понравилось, то вы можете помочь другим узнать о Currencies. Нажмите здесь, чтобы оценить приложение.</string>
     <string name="category_versioninfo">Информация о версии</string>
     <string name="title_changelog">История изменений</string>
     <string name="backup_title">Резервное копирование и восстановление</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">Введите пароль</string>
     <string name="backup_password_wrong">Пароль не расшифровал файл. Попробуйте ещё раз.</string>
     <string name="backup_password_too_short">Пароль должен содержать не менее %1$d символов</string>
-    <string name="credits_title">Благодарности</string>
-    <string name="credits_summary">Упоминания, лицензия и сторонние библиотеки</string>
-    <string name="title_credits">Благодарности</string>
+    <string name="credits_title">О приложении, юридическая информация и открытый исходный код</string>
+    <string name="credits_summary">Политика конфиденциальности, условия обслуживания, доступность, исходный код и лицензии сторонних библиотек</string>
+    <string name="title_credits">О приложении, юридическая информация и открытый исходный код</string>
     <string name="credits_section_project">Проект</string>
     <string name="credits_section_license">Лицензия</string>
     <string name="credits_section_libraries">Сторонние библиотеки</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Заявление о доступности</string>
+    <string name="credit_accessibility_subtitle">Цель WCAG 2.1 AA; как сообщать о препятствиях.</string>
+    <string name="credit_privacy_policy_title">Политика конфиденциальности</string>
+    <string name="credit_privacy_policy_subtitle">Персональные данные не собираются. Полная позиция по каждой юрисдикции.</string>
+    <string name="credit_source_title">Исходный код</string>
+    <string name="credit_source_subtitle">Открытый исходный код на GitHub — внесите вклад кодом или сообщите о проблеме.</string>
+    <string name="credit_terms_of_service_title">Условия использования</string>
+    <string name="credit_terms_of_service_subtitle">Условия использования, отказ от гарантий, уведомление о точности курсов.</string>
+    <string name="credits_section_legal">Правовая информация</string>
+    <string name="credits_section_source">Исходный код</string>
+    <string name="fee_edit_active">Активна</string>
+    <string name="fee_edit_name">Название</string>
+    <string name="fee_edit_name_hint">напр., Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Неактивна</string>
+    <string name="fee_untitled">Без названия</string>
 </resources>

@@ -88,4 +88,12 @@
     <string name="cart_unsaved_save_as">Simpan sebagai baru</string>
     <string name="cart_unsaved_discard">Buang perubahan</string>
     <string name="cart_unsaved_continue">Lanjutkan</string>
+    <string name="a11y_delete">Hapus</string>
+    <string name="a11y_historical_rate">Nilai tukar historis</string>
+    <string name="currency_dropdown_api_hint">Ada yang kurang? Penyedia data yang berbeda menawarkan mata uang yang berbeda. Buka pengaturan untuk mencoba yang lain!\u00A0\uD83E\uDD17</string>
+    <string name="error_empty_response">Server tidak memiliki data untuk permintaan ini.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Silakan periksa Kunci API Anda.</string>
+    <string name="error_no_api_key">Kunci API yang valid harus disetel untuk menggunakan Sumber ini.</string>
+    <string name="error_try_another_api">Namun, ada penyedia data lain yang dapat Anda pilih di pengaturan. Cobalah!</string>
+    <string name="error_unsupported_timeline">Data timeline tidak didukung oleh API ini.</string>
 </resources>

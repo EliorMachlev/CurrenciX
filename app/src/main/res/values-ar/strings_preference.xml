@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">عن هذا التطبيق</string>
     <string name="disclaimer_title">تنصل</string>
-    <string name="disclaimer_summary">على الرغم من أنه تمت كتابة التطبيق واختباره بدقة شديدة ، <b> لا يوجد ضمان بأن البيانات التي يعرضها صحيحة </b>. يتم توفير أسعار الصرف من قبل طرف ثالث ولا يمكن لهذا التطبيق أن يقدم أي وعد على الإطلاق بأن البيانات صحيحة وحديثة.\nبالإضافة إلى ذلك ، قد تختلف الأسعار المقدمة - إذا كانت صحيحة - عن تلك المستخدمة من قبل البنك الذي تتعامل معه.\nأخيرًا: الأخطاء تحدث. لا تثق بأي شخص بشكل أعمى! ومع ذلك ، كن مطمئنًا أنني لم أكن لأطلق هذا التطبيق إذا كان لدي أي شك في أنه يعمل على النحو المنشود.</string>
-    <string name="sourcecode_title">مصدر الكود</string>
-    <string name="sourcecode_summary">هذا التطبيق مفتوح المصدر. انتقل إلى مستودع التعليمات البرمجية لفتح المشكلات، واكتشف كيفية المساهمة أو قم فقط بإلقاء نظرة على المصادر.</string>
+    <string name="disclaimer_summary">أسعار الصرف المعروضة <b>إرشادية فقط</b>. فهي مقدَّمة من مزوّدين خارجيين وقد تكون متأخرة أو خاطئة، و<b>يجب ألا</b> تُستخدم للتداول أو التحوّط أو إصدار الفواتير أو أي قرار يتطلب سعرًا دقيقًا أو قابلًا للتنفيذ. راجع شروط الخدمة للاطلاع على إخلاء المسؤولية الكامل.\nقد تختلف الأسعار المقدَّمة – حتى إن كانت صحيحة – عن تلك التي يستخدمها البنك الذي تتعامل معه.\nأخيرًا: الأخطاء تحدث. لا تثق أبدًا وبشكل أعمى بأي مصدر واحد.\nهذا التطبيق مجاني تمامًا ومفتوح المصدر. إذا وجدت نسخة بسعر أو تحتوي على إعلانات، فهي مزيفة — احذفها فورًا.</string>
     <string name="rate_title">قيم هذا التطبيق</string>
-    <string name="rate_summary">إذا كنت ترغب في ذلك ، يمكنك مساعدة الآخرين في اكتشاف العملات. انقر هنا لتقييم التطبيق على Google Play.</string>
+    <string name="rate_summary">إذا كنت ترغب في ذلك ، يمكنك مساعدة الآخرين في اكتشاف العملات. انقر هنا لتقييم التطبيق.</string>
     <string name="category_versioninfo">معلومات الإصدار</string>
     <string name="title_changelog">سجل التغيير</string>
     <string name="backup_title">النسخ الاحتياطي والاستعادة</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">أدخل كلمة المرور</string>
     <string name="backup_password_wrong">كلمة المرور لم تفكّ تشفير هذا الملف. حاول مرة أخرى.</string>
     <string name="backup_password_too_short">يجب ألا تقل كلمة المرور عن %1$d أحرف</string>
-    <string name="credits_title">الشكر والتقدير</string>
-    <string name="credits_summary">المصادر والترخيص والمكتبات الخارجية</string>
-    <string name="title_credits">الشكر والتقدير</string>
+    <string name="credits_title">حول التطبيق، معلومات قانونية &amp; مفتوح المصدر</string>
+    <string name="credits_summary">سياسة الخصوصية، شروط الخدمة، إمكانية الوصول، الشيفرة المصدرية، وتراخيص المكتبات الخارجية</string>
+    <string name="title_credits">حول التطبيق، معلومات قانونية &amp; مفتوح المصدر</string>
     <string name="credits_section_project">المشروع</string>
     <string name="credits_section_license">الترخيص</string>
     <string name="credits_section_libraries">المكتبات الخارجية</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">بيان إمكانية الوصول</string>
+    <string name="credit_accessibility_subtitle">الهدف WCAG 2.1 AA؛ كيفية الإبلاغ عن العوائق.</string>
+    <string name="credit_privacy_policy_title">سياسة الخصوصية</string>
+    <string name="credit_privacy_policy_subtitle">لا يتم جمع أي بيانات شخصية. الموقف الكامل لكل ولاية قضائية.</string>
+    <string name="credit_source_title">الكود المصدري</string>
+    <string name="credit_source_subtitle">مفتوح المصدر على GitHub — ساهم أو افتح مشكلة.</string>
+    <string name="credit_terms_of_service_title">شروط الخدمة</string>
+    <string name="credit_terms_of_service_subtitle">شروط الاستخدام، إخلاء المسؤولية عن الضمان، إشعار دقة الأسعار.</string>
+    <string name="credits_section_legal">قانوني</string>
+    <string name="credits_section_source">المصدر</string>
+    <string name="fee_edit_active">نشط</string>
+    <string name="fee_edit_name">الاسم</string>
+    <string name="fee_edit_name_hint">مثال: Wise، Revolut، Chase</string>
+    <string name="fee_inactive_marker">غير نشط</string>
+    <string name="fee_untitled">بدون عنوان</string>
 </resources>

@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">Σχετικά με την εφαρμογή</string>
     <string name="disclaimer_title">Αποποίηση ευθυνών</string>
-    <string name="disclaimer_summary">Αν και η εφαρμογή είναι πολύ προσεκτικά γραμμένη και δοκιμασμένη, <b>δεν υπάρχει καμία εγγύηση ότι τα δεδομένα που εμφανίζει είναι σωστά</b>. Οι συναλλαγματικές ισοτιμίες παρέχονται από τρίτο μέρος και αυτή η εφαρμογή δεν μπορεί να υποσχεθεί ότι τα δεδομένα είναι αληθή και ενημερωμένα.\nΕπιπλέον, τα επιτόκια που παρέχονται – ακόμα αν είναι σωστά – ενδέχεται να διαφέρουν από αυτά που χρησιμοποιεί η τράπεζά σας.\nΛάθη συμβαίνουν. Μην εμπιστεύεσαι ποτέ κανέναν τυφλά! Τούτου λεχθέντος, να είστε βέβαιοι ότι δεν θα είχα κυκλοφορήσει αυτήν την εφαρμογή εάν είχα οποιαδήποτε αμφιβολία ότι λειτουργεί όπως έπρεπε.</string>
-    <string name="sourcecode_title">Πηγαίος κώδικας</string>
-    <string name="sourcecode_summary">Αυτή η εφαρμογή είναι ανοιχτού κώδικα. Μεταβείτε στο αποθετήριο κώδικα για να ανοίξετε θέματα, μάθετε πώς να συνεισφέρετε ή απλώς ρίξτε μια ματιά στις πηγές.</string>
+    <string name="disclaimer_summary">Οι συναλλαγματικές ισοτιμίες που εμφανίζονται είναι <b>μόνο ενδεικτικές</b>. Προέρχονται από τρίτους παρόχους, ενδέχεται να είναι καθυστερημένες ή λανθασμένες και <b>δεν πρέπει</b> να χρησιμοποιούνται για συναλλαγές, αντιστάθμιση κινδύνου, τιμολόγηση ή οποιαδήποτε απόφαση όπου απαιτείται ακριβής ή εκτελέσιμη ισοτιμία. Δείτε τους Όρους Υπηρεσίας για την πλήρη αποποίηση ευθύνης.\nΟι παρεχόμενες ισοτιμίες – ακόμη κι αν είναι σωστές – ενδέχεται να διαφέρουν από αυτές που χρησιμοποιεί η τράπεζά σας.\nΤέλος: λάθη συμβαίνουν. Μην εμπιστεύεστε ποτέ τυφλά καμία μεμονωμένη πηγή.\nΑυτή η εφαρμογή είναι εντελώς δωρεάν και ανοιχτού κώδικα. Αν βρείτε μια έκδοση με τιμή ή διαφημίσεις, είναι ψεύτικη — απεγκαταστήστε την αμέσως.</string>
     <string name="rate_title">Αξιολόγηση της εφαρμογής</string>
-    <string name="rate_summary">Αν θέλετε, μπορείτε να βοηθήσετε και άλλους να ανακαλύψουν την εφαρμογή. Πατήστε εδώ για να την αξιολογήσετε στο Google Play.</string>
+    <string name="rate_summary">Αν θέλετε, μπορείτε να βοηθήσετε και άλλους να ανακαλύψουν την εφαρμογή. Πατήστε εδώ για να την αξιολογήσετε.</string>
     <string name="category_versioninfo">Πληροφορίες έκδοσης</string>
     <string name="title_changelog">Αρχείο αλλαγών</string>
     <string name="backup_title">Αντίγραφο ασφαλείας &amp; επαναφορά</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">Εισαγωγή κωδικού</string>
     <string name="backup_password_wrong">Ο κωδικός δεν αποκρυπτογράφησε το αρχείο. Δοκίμασε ξανά.</string>
     <string name="backup_password_too_short">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρες</string>
-    <string name="credits_title">Συντελεστές</string>
-    <string name="credits_summary">Αναφορές, άδεια χρήσης και βιβλιοθήκες τρίτων</string>
-    <string name="title_credits">Συντελεστές</string>
+    <string name="credits_title">Σχετικά, νομικά &amp; ανοιχτού κώδικα</string>
+    <string name="credits_summary">Πολιτική απορρήτου, όροι υπηρεσίας, προσβασιμότητα, πηγαίος κώδικας και άδειες βιβλιοθηκών τρίτων</string>
+    <string name="title_credits">Σχετικά, νομικά &amp; ανοιχτού κώδικα</string>
     <string name="credits_section_project">Έργο</string>
     <string name="credits_section_license">Άδεια</string>
     <string name="credits_section_libraries">Βιβλιοθήκες τρίτων</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Δήλωση προσβασιμότητας</string>
+    <string name="credit_accessibility_subtitle">Στόχος WCAG 2.1 AA· πώς να αναφέρετε εμπόδια.</string>
+    <string name="credit_privacy_policy_title">Πολιτική απορρήτου</string>
+    <string name="credit_privacy_policy_subtitle">Δεν συλλέγονται προσωπικά δεδομένα. Πλήρης στάση ανά δικαιοδοσία.</string>
+    <string name="credit_source_title">Πηγαίος κώδικας</string>
+    <string name="credit_source_subtitle">Ανοιχτού κώδικα στο GitHub — συνεισφέρετε κώδικα ή ανοίξτε ένα ζήτημα.</string>
+    <string name="credit_terms_of_service_title">Όροι χρήσης</string>
+    <string name="credit_terms_of_service_subtitle">Όροι χρήσης, αποποίηση εγγύησης, ειδοποίηση ακρίβειας ισοτιμιών.</string>
+    <string name="credits_section_legal">Νομικά</string>
+    <string name="credits_section_source">Πηγή</string>
+    <string name="fee_edit_active">Ενεργή</string>
+    <string name="fee_edit_name">Όνομα</string>
+    <string name="fee_edit_name_hint">π.χ. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Ανενεργή</string>
+    <string name="fee_untitled">Χωρίς τίτλο</string>
 </resources>

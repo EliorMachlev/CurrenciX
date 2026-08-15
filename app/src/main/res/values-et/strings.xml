@@ -94,4 +94,6 @@
     <string name="cart_unsaved_save_as">Salvesta uuena</string>
     <string name="cart_unsaved_discard">Loobu muudatustest</string>
     <string name="cart_unsaved_continue">Jätka</string>
+    <string name="a11y_delete">Kustuta</string>
+    <string name="a11y_historical_rate">Varasem kurss</string>
 </resources>

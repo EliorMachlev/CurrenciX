@@ -94,4 +94,6 @@
     <string name="cart_unsaved_save_as">Uložit jako nový</string>
     <string name="cart_unsaved_discard">Zahodit změny</string>
     <string name="cart_unsaved_continue">Pokračovat</string>
+    <string name="a11y_delete">Smazat</string>
+    <string name="a11y_historical_rate">Historický kurz</string>
 </resources>

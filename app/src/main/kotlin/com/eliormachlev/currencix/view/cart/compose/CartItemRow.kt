@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
@@ -135,6 +137,7 @@ private fun NameField(
             MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
         )
     val hintColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val fieldLabel = stringResource(id = R.string.a11y_cart_item_name)
     Box(
         modifier =
             Modifier
@@ -149,7 +152,14 @@ private fun NameField(
             textStyle = textStyle,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier.fillMaxWidth(),
+            // BasicTextField has no visible label and the hint disappears once
+            // the user types, leaving TalkBack focused on an unlabelled field.
+            // Attach a persistent contentDescription so it always announces as
+            // "Item name".
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .semantics { contentDescription = fieldLabel },
         )
         if (text.isEmpty()) {
             Text(

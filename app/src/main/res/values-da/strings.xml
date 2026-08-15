@@ -95,4 +95,6 @@
     <string name="cart_unsaved_save_as">Gem som ny</string>
     <string name="cart_unsaved_discard">Kassér ændringer</string>
     <string name="cart_unsaved_continue">Fortsæt</string>
+    <string name="a11y_delete">Slet</string>
+    <string name="a11y_historical_rate">Historisk kurs</string>
 </resources>

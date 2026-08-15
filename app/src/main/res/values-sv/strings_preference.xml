@@ -101,11 +101,9 @@
     <!-- about -->
     <string name="category_about">Om appen</string>
     <string name="disclaimer_title">Ansvarsfriskrivelse</string>
-    <string name="disclaimer_summary">Trots att appen är noggrant kodad och testat, så <b>finns det inga garantier för att den data som visas är korrekt</b>. Valutakurserna tillhandahålls av tredje part och denna app kan inte ge några som helst löften om att visad data är riktig och uppdaterad.\nVidare kan kurserna som tillhandahålls – om korrekta – skilja sig från de som används av din bank.\nTill sist: Fel inträffar. Lita aldrig blint på någon! Med det sagt, så kan du lita på att jag aldrig hade släppt appen om jag hade haft minsta tvekan om huruvida den fungerar om tänkt.</string>
-    <string name="sourcecode_title">Källkod</string>
-    <string name="sourcecode_summary">Denna app är öppen källkod. Gå till källkodsförrådet nedan för att öppna ärenden, få reda på hur man bidrar eller ta en titt på källkoden.</string>
+    <string name="disclaimer_summary">Visade valutakurser är <b>endast vägledande</b>. De kommer från tredjepartsleverantörer, kan vara försenade eller felaktiga, och <b>får inte</b> användas för handel, hedging, fakturering eller något beslut där en exakt eller genomförbar kurs krävs. Se användarvillkoren för den fullständiga ansvarsfriskrivelsen.\nAngivna kurser – även om de är korrekta – kan skilja sig från de som används av din bank.\nSlutligen: misstag händer. Lita aldrig blint på någon enskild källa.\nDenna app är helt gratis och öppen källkod. Om du hittar en version med prislapp eller annonser är den falsk — avinstallera den omedelbart.</string>
     <string name="rate_title">Betygssätt appen</string>
-    <string name="rate_summary">Om du vill så kan du bidra till att fler upptäcker Currencies. Tryck här för att betygssätta appen på Google Play.</string>
+    <string name="rate_summary">Om du vill så kan du bidra till att fler upptäcker Currencies. Tryck här för att betygssätta appen.</string>
     <string name="category_versioninfo">Info om version</string>
     <string name="title_changelog">Ändringslogg</string>
     <string name="backup_title">Säkerhetskopiera och återställ</string>
@@ -129,10 +127,26 @@
     <string name="backup_password_prompt_title">Ange lösenord</string>
     <string name="backup_password_wrong">Lösenordet dekrypterade inte filen. Försök igen.</string>
     <string name="backup_password_too_short">Lösenordet måste vara minst %1$d tecken</string>
-    <string name="credits_title">Erkännanden</string>
-    <string name="credits_summary">Attributioner, licens och tredjepartsbibliotek</string>
-    <string name="title_credits">Erkännanden</string>
+    <string name="credits_title">Om, juridiskt &amp; öppen källkod</string>
+    <string name="credits_summary">Integritetspolicy, användarvillkor, tillgänglighet, källkod och licenser för tredjepartsbibliotek</string>
+    <string name="title_credits">Om, juridiskt &amp; öppen källkod</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licens</string>
     <string name="credits_section_libraries">Tredjepartsbibliotek</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Tillgänglighetsredogörelse</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA-mål; hur man rapporterar hinder.</string>
+    <string name="credit_privacy_policy_title">Integritetspolicy</string>
+    <string name="credit_privacy_policy_subtitle">Inga personuppgifter samlas in. Fullständig hållning per jurisdiktion.</string>
+    <string name="credit_source_title">Källkod</string>
+    <string name="credit_source_subtitle">Öppen källkod på GitHub — bidra med kod eller öppna ett ärende.</string>
+    <string name="credit_terms_of_service_title">Användarvillkor</string>
+    <string name="credit_terms_of_service_subtitle">Användarvillkor, garantifriskrivning, meddelande om kursnoggrannhet.</string>
+    <string name="credits_section_legal">Juridik</string>
+    <string name="credits_section_source">Källa</string>
+    <string name="fee_edit_active">Aktiv</string>
+    <string name="fee_edit_name">Namn</string>
+    <string name="fee_edit_name_hint">t.ex. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Inaktiv</string>
+    <string name="fee_untitled">Namnlös</string>
 </resources>

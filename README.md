@@ -42,6 +42,14 @@ Written in Kotlin, min SDK 26 (Android 8.0), targeting current Android.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Deeper docs — architecture, build flavors, CI/CD, security — live in [`docs/markDown/`](docs/markDown/).
 
+## Legal & compliance
+
+- [Privacy Policy](docs/markDown/privacy-policy.md) — the app collects no personal data; see the policy for the per-jurisdiction posture (GDPR, UK GDPR, CCPA family, LGPD, PIPEDA, APPI, POPIA, PDPA, PIPL, Australia Privacy Act, Israeli PPL incl. Amendment 13, COPPA, ePrivacy).
+- [Terms of Service](docs/markDown/terms-of-service.md) — usage terms, warranty disclaimer, rate-accuracy notice. Governed by the laws of Israel.
+- [Accessibility Statement](docs/markDown/accessibility-statement.md) — WCAG 2.1 AA target covering IS 5568, EN 301 549 / EAA, ADA / §508.
+- [Compliance Posture](docs/markDown/compliance-posture.md) — applicability under EU AI Act, DSA/DMA, financial-services regimes, EAR / EU Dual-Use, EU CRA, Play Data Safety, F-Droid.
+- [SECURITY.md](SECURITY.md) — vulnerability reporting, coordinated disclosure, support period, SBOM.
+
 ## License
 
 Copyright © 2020 Maximilian Salomon (upstream Currencies) · CurrenciX fork © 2026 Elior Machlev.

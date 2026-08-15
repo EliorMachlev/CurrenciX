@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">O této aplikaci</string>
     <string name="disclaimer_title">Odmítnutí odpovědnosti</string>
-    <string name="disclaimer_summary">Přestože je aplikace velmi důkladně napsaná a otestovaná, <b>není zaručeno, že údaje, které zobrazuje, jsou správné</b>. Směnné kurzy jsou poskytovány třetí stranou a tato aplikace nemůže vůbec slíbit, že údaje jsou pravdivé a aktuální.\nKromě toho se poskytované kurzy – i když jsou správné – mohou lišit od kurzů používaných vaší bankou.\nA nakonec: Chyby se stávají. Nikdy nikomu slepě nevěřte! Jak ale již bylo řečeno, můžete si být jisti, že bych tuto aplikaci nevydal, kdybych měl jakékoli pochybnosti o tom, že funguje tak, jak má.</string>
-    <string name="sourcecode_title">Zdrojový kód</string>
-    <string name="sourcecode_summary">Tato aplikace je open source. Pro nahlášení problémů, přispění do kódu nebo jeho prosté prohlédnutí přejděte do jejího repozitáře.</string>
+    <string name="disclaimer_summary">Zobrazené směnné kurzy jsou <b>pouze orientační</b>. Pocházejí od poskytovatelů třetích stran, mohou být opožděné nebo chybné a <b>nesmí</b> být použity pro obchodování, zajištění, fakturaci ani jakékoli rozhodnutí, u něhož je vyžadován přesný nebo proveditelný kurz. Úplné vyloučení odpovědnosti naleznete v Podmínkách služby.\nPoskytnuté kurzy – i když jsou správné – se mohou lišit od kurzů používaných vaší bankou.\nA nakonec: chyby se stávají. Nikdy slepě nedůvěřujte žádnému jedinému zdroji.\nTato aplikace je zcela zdarma a s otevřeným zdrojovým kódem. Pokud najdete verzi s cenovkou nebo reklamami, je falešná — okamžitě ji odinstalujte.</string>
     <string name="rate_title">Ohodnotit tuto aplikaci</string>
-    <string name="rate_summary">Pokud chcete, můžete ostatním pomoci objevit Currencies. Klepněte sem a ohodnoťte aplikaci v Google Play.</string>
+    <string name="rate_summary">Pokud chcete, můžete ostatním pomoci objevit Currencies. Klepněte sem a ohodnoťte aplikaci.</string>
     <string name="category_versioninfo">Info o verzi</string>
     <string name="title_changelog">Seznam změn</string>
     <string name="backup_title">Zálohování a obnovení</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">Zadej heslo</string>
     <string name="backup_password_wrong">Heslem se soubor nepodařilo dešifrovat. Zkus to znovu.</string>
     <string name="backup_password_too_short">Heslo musí mít alespoň %1$d znaků</string>
-    <string name="credits_title">Poděkování</string>
-    <string name="credits_summary">Uznání, licence a knihovny třetích stran</string>
-    <string name="title_credits">Poděkování</string>
+    <string name="credits_title">O aplikaci, právní informace &amp; open-source</string>
+    <string name="credits_summary">Zásady ochrany osobních údajů, podmínky služby, přístupnost, zdrojový kód a licence knihoven třetích stran</string>
+    <string name="title_credits">O aplikaci, právní informace &amp; open-source</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licence</string>
     <string name="credits_section_libraries">Knihovny třetích stran</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Prohlášení o přístupnosti</string>
+    <string name="credit_accessibility_subtitle">Cíl WCAG 2.1 AA; jak nahlásit překážky.</string>
+    <string name="credit_privacy_policy_title">Zásady ochrany soukromí</string>
+    <string name="credit_privacy_policy_subtitle">Nesbírají se žádné osobní údaje. Plné stanovisko podle jurisdikce.</string>
+    <string name="credit_source_title">Zdrojový kód</string>
+    <string name="credit_source_subtitle">Otevřený zdrojový kód na GitHubu — přispějte kódem nebo nahlaste problém.</string>
+    <string name="credit_terms_of_service_title">Podmínky služby</string>
+    <string name="credit_terms_of_service_subtitle">Podmínky použití, prohlášení o vyloučení záruky, upozornění o přesnosti kurzů.</string>
+    <string name="credits_section_legal">Právní</string>
+    <string name="credits_section_source">Zdroj</string>
+    <string name="fee_edit_active">Aktivní</string>
+    <string name="fee_edit_name">Název</string>
+    <string name="fee_edit_name_hint">např. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Neaktivní</string>
+    <string name="fee_untitled">Bez názvu</string>
 </resources>

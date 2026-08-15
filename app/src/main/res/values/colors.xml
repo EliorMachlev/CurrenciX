@@ -10,6 +10,17 @@
    <color name="color_keypad_operators">@color/color_primary</color>
    <color name="color_keypad_delete">?attr/colorError</color>
 
+   <!-- WCAG AA-compliant error red for text/icon usage on the light background
+        (#FAF7F2). Material 3 error tone 40 (#B3261E) hits ~6:1 contrast; the
+        old holo_red_light (#FF4444) sat at ~3.2:1 and failed AA for text. -->
+   <color name="app_error">#B3261E</color>
+
+   <!-- Positive rate-diff colour. dollarBill green (#85BB65) is ~2:1 on the
+        cream light background — fails AA for text. Use a darker green here so
+        the "+ 12 %" percent stays legible; values-night overrides back to
+        dollarBill where the lighter tone reads correctly on dark. -->
+   <color name="rate_diff_positive">#1B7343</color>
+
    <!-- light -->
    <color name="displayOverlay">#26808080</color>
    <color name="colorBackground">@color/dirtyWhite</color>

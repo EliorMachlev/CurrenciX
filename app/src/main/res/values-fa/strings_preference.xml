@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">درباره ی این برنامه</string>
     <string name="disclaimer_title">توجه</string>
-    <string name="disclaimer_summary">اگرچه برنامه کاملاً نوشته و آزمایش شده است، <b>هیچ تضمینی وجود ندارد که داده‌هایی که نشان می‌دهد صحیح باشند</b>. نرخ ارز توسط شخص ثالث ارائه می شود و این برنامه نمی تواند هیچ قولی مبنی بر واقعی بودن و به روز بودن داده ها بدهد.\nعلاوه بر این، نرخ‌های ارائه‌شده - هنوز هم اگر درست باشد - ممکن است با نرخ‌هایی که بانک شما استفاده می‌کند متفاوت باشد.\nدر آخر: اشتباهات اتفاق می افتد. هرگز کورکورانه به کسی اعتماد نکن! همانطور که گفته شد، مطمئن باشید اگر شک داشتم که این برنامه همانطور که در نظر گرفته شده کار می کند، من این برنامه را منتشر نمی کردم.</string>
-    <string name="sourcecode_title">کد منبع</string>
-    <string name="sourcecode_summary">این برنامه متن باز است. برای باز کردن مسائل به مخزن کد بروید، نحوه مشارکت را بیابید یا فقط نگاهی به منابع بیندازید.</string>
+    <string name="disclaimer_summary">نرخ‌های ارز نمایش داده شده <b>تنها جنبهٔ اطلاعاتی دارند</b>. آن‌ها از سوی ارائه‌دهندگان شخص ثالث تأمین می‌شوند، ممکن است با تأخیر یا نادرست باشند و <b>نباید</b> برای معامله، پوشش ریسک، صدور فاکتور یا هر تصمیمی که نیاز به نرخ دقیق یا قابل اجرا دارد استفاده شوند. برای متن کامل سلب مسئولیت به شرایط استفاده مراجعه کنید.\nنرخ‌های ارائه‌شده – حتی اگر درست باشند – ممکن است با نرخ‌هایی که بانک شما به کار می‌برد متفاوت باشند.\nدر پایان: اشتباه پیش می‌آید. هرگز به یک منبع تنها کورکورانه اعتماد نکنید.\nاین برنامه کاملاً رایگان و متن‌باز است. اگر نسخه‌ای با قیمت یا حاوی تبلیغات پیدا کردید، جعلی است — بلافاصله آن را حذف کنید.</string>
     <string name="rate_title">به این برنامه امتیاز دهید</string>
-    <string name="rate_summary">اگر مایل هستید، می توانید به دیگران کمک کنید تا ارزها را کشف کنند. برای امتیاز دادن به برنامه در Google Play اینجا را کلیک کنید.</string>
+    <string name="rate_summary">اگر مایل هستید، می توانید به دیگران کمک کنید تا ارزها را کشف کنند. برای امتیاز دادن به برنامه اینجا را کلیک کنید.</string>
     <string name="category_versioninfo">اطلاعات نسخه</string>
     <string name="title_changelog">تغییرات</string>
     <string name="backup_title">پشتیبان‌گیری و بازیابی</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">گذرواژه را وارد کنید</string>
     <string name="backup_password_wrong">گذرواژه نتوانست این فایل را رمزگشایی کند. دوباره تلاش کنید.</string>
     <string name="backup_password_too_short">گذرواژه باید دست‌کم %1$d نویسه باشد</string>
-    <string name="credits_title">سپاسگزاری</string>
-    <string name="credits_summary">قدردانی‌ها، مجوز و کتابخانه‌های شخص ثالث</string>
-    <string name="title_credits">سپاسگزاری</string>
+    <string name="credits_title">درباره، حقوقی و متن‌باز</string>
+    <string name="credits_summary">سیاست حریم خصوصی، شرایط استفاده، دسترس‌پذیری، کد منبع و مجوزهای کتابخانه‌های شخص ثالث</string>
+    <string name="title_credits">درباره، حقوقی و متن‌باز</string>
     <string name="credits_section_project">پروژه</string>
     <string name="credits_section_license">مجوز</string>
     <string name="credits_section_libraries">کتابخانه‌های شخص ثالث</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">بیانیه دسترس‌پذیری</string>
+    <string name="credit_accessibility_subtitle">هدف WCAG 2.1 AA؛ چگونگی گزارش موانع.</string>
+    <string name="credit_privacy_policy_title">سیاست حریم خصوصی</string>
+    <string name="credit_privacy_policy_subtitle">هیچ داده‌ی شخصی جمع‌آوری نمی‌شود. وضعیت کامل به تفکیک حوزه قضایی.</string>
+    <string name="credit_source_title">کد منبع</string>
+    <string name="credit_source_subtitle">متن‌باز در گیت‌هاب — مشارکت کنید یا مشکلی را گزارش دهید.</string>
+    <string name="credit_terms_of_service_title">شرایط خدمات</string>
+    <string name="credit_terms_of_service_subtitle">شرایط استفاده، سلب ضمانت، اطلاعیه دقت نرخ‌ها.</string>
+    <string name="credits_section_legal">حقوقی</string>
+    <string name="credits_section_source">منبع</string>
+    <string name="fee_edit_active">فعال</string>
+    <string name="fee_edit_name">نام</string>
+    <string name="fee_edit_name_hint">مانند Wise، Revolut، Chase</string>
+    <string name="fee_inactive_marker">غیرفعال</string>
+    <string name="fee_untitled">بدون‌عنوان</string>
 </resources>

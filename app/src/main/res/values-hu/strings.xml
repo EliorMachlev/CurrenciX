@@ -88,4 +88,12 @@
     <string name="cart_unsaved_save_as">Mentés újként</string>
     <string name="cart_unsaved_discard">Módosítások elvetése</string>
     <string name="cart_unsaved_continue">Folytatás</string>
+    <string name="a11y_delete">Törlés</string>
+    <string name="a11y_historical_rate">Múltbéli árfolyam</string>
+    <string name="currency_dropdown_api_hint">Hiányzik valami? A különböző adatszolgáltatók különböző valutákat kínálnak. Nyisd meg a beállításokat, és próbálj ki egy másikat!\u00A0\uD83E\uDD17</string>
+    <string name="error_empty_response">A szervernek nincs adata ehhez a kéréshez.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Kérjük, ellenőrizd az API-kulcsot.</string>
+    <string name="error_no_api_key">Ennek a forrásnak a használatához érvényes API-kulcsot kell megadni.</string>
+    <string name="error_try_another_api">A beállításokban azonban más adatszolgáltatók közül is választhatsz. Csak próbáld ki!</string>
+    <string name="error_unsupported_timeline">Idővonal-adatokat ez az API nem támogat.</string>
 </resources>

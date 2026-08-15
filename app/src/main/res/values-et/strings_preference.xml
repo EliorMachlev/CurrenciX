@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">Teave selle rakenduse kohta</string>
     <string name="disclaimer_title">Lahtiütlus vastutusest</string>
-    <string name="disclaimer_summary">Kuigi see rakendus on läbimõeldult kirjutatud ja põhjalikult testitud, siis <b>puudub igasugune garantii, et kuvatavad andmed on korrektsed</b>. vahetuskursid laaditakse kolmandate osapoolete teenustest ja rakendusel pole võimalust kontrollida, et need andmed on õiged ja uuendatud.\nLisaks palun arvesta, et kuigi kuvatavad vahetuskursid on korrektsed, siis ei pruugi need olla täpselt samad, mida sinu pank kasutab.\nKokkuvõtteks: vigu juhtub. Ära usalda pimesi kedagi! Aga samas, ma poleks ju seda rakendust avaldanud, kui ta ei teeks seda, mida ta on mõeldud tegema.</string>
-    <string name="sourcecode_title">Lähtekood</string>
-    <string name="sourcecode_summary">See rakendus põhineb avatud lähtekoodil. Vaata meie lähtekoodi hoidlat, kui soovid lisada veateateid, teha ettepanekuid või kaastööd, aga ka lihtsalt lätekoodi uurimiseks.</string>
+    <string name="disclaimer_summary">Kuvatavad vahetuskursid on <b>ainult orienteeruvad</b>. Need pärinevad kolmandate osapoolte teenustest, võivad olla hilinenud või valed ning <b>neid ei tohi</b> kasutada kauplemiseks, maandamiseks, arveldamiseks ega ühegi otsuse tegemiseks, kus on vaja täpset või tehingukõlblikku kurssi. Täieliku lahtiütluse leiad kasutustingimustest.\nPakutavad kursid – isegi kui need on õiged – võivad erineda sinu panga kasutatavatest.\nJa viimaseks: vigu juhtub. Ära usalda kunagi pimesi ühtki üksikut allikat.\nSee rakendus on täiesti tasuta ja avatud lähtekoodiga. Kui leiad hinnasildiga või reklaame sisaldava versiooni, on see võlts — desinstalli see kohe.</string>
     <string name="rate_title">Hinda seda rakendust</string>
-    <string name="rate_summary">Kui soovid, et ka teised kasutajad leiaks selle rakenduse, siis klõpsi siin ja hinda seda Google Plays.</string>
+    <string name="rate_summary">Kui soovid, et ka teised kasutajad leiaks selle rakenduse, siis klõpsi siin ja hinda seda.</string>
     <string name="category_versioninfo">Versiooniteave</string>
     <string name="title_changelog">Muudatuste logi</string>
     <string name="backup_title">Varundamine ja taastamine</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">Sisesta parool</string>
     <string name="backup_password_wrong">Parool ei avanud selle faili krüptot. Proovi uuesti.</string>
     <string name="backup_password_too_short">Parool peab olema vähemalt %1$d märki</string>
-    <string name="credits_title">Autorid</string>
-    <string name="credits_summary">Omistused, litsents ja kolmandate osapoolte teegid</string>
-    <string name="title_credits">Autorid</string>
+    <string name="credits_title">Teave, õiguslik ja avatud lähtekood</string>
+    <string name="credits_summary">Privaatsuspõhimõtted, kasutustingimused, ligipääsetavus, lähtekood ja kolmandate osapoolte teekide litsentsid</string>
+    <string name="title_credits">Teave, õiguslik ja avatud lähtekood</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Litsents</string>
     <string name="credits_section_libraries">Kolmandate osapoolte teegid</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Ligipääsetavuse avaldus</string>
+    <string name="credit_accessibility_subtitle">Sihttase WCAG 2.1 AA; kuidas teatada takistustest.</string>
+    <string name="credit_privacy_policy_title">Privaatsuspõhimõtted</string>
+    <string name="credit_privacy_policy_subtitle">Isikuandmeid ei koguta. Täielik ülevaade jurisdiktsioonide kaupa.</string>
+    <string name="credit_source_title">Lähtekood</string>
+    <string name="credit_source_subtitle">Avatud lähtekoodiga GitHubis — panusta või ava probleem.</string>
+    <string name="credit_terms_of_service_title">Kasutustingimused</string>
+    <string name="credit_terms_of_service_subtitle">Kasutustingimused, garantii lahtiütlus, kursside täpsuse teave.</string>
+    <string name="credits_section_legal">Õiguslik</string>
+    <string name="credits_section_source">Lähtekood</string>
+    <string name="fee_edit_active">Aktiivne</string>
+    <string name="fee_edit_name">Nimi</string>
+    <string name="fee_edit_name_hint">nt Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Mitteaktiivne</string>
+    <string name="fee_untitled">Nimetu</string>
 </resources>

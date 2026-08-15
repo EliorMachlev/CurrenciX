@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">À propos de cette application</string>
     <string name="disclaimer_title">Exclusion de responsabilité</string>
-    <string name="disclaimer_summary">Bien que l\'appli soit très minutieusement écrite et testée, <b>il n\'y a aucune garantie que les données qu\'elle affiche soient correctes</b>. Les taux de change sont fournis par une tierce partie et cette application ne peut pas promettre que les données sont vraies et à jour.\nEn outre, les taux fournis – même s\'ils sont corrects – peuvent varier de ceux utilisés par votre banque.\nNe faites jamais aveuglément confiance à qui que ce soit ! Ceci étant dit, soyez assuré que je n\'aurais pas sorti cette application si j\'avais eu le moindre doute sur son fonctionnement.</string>
-    <string name="sourcecode_title">Code source</string>
-    <string name="sourcecode_summary">Cette application est open source. Accédez au référentiel de code pour ouvrir des tickets, découvrir comment contribuer ou simplement consulter les sources.</string>
+    <string name="disclaimer_summary">Les taux de change affichés sont <b>fournis à titre indicatif uniquement</b>. Ils proviennent de fournisseurs tiers, peuvent être retardés ou erronés, et <b>ne doivent pas</b> être utilisés pour le trading, la couverture, la facturation ou toute décision nécessitant un taux exact ou exécutable. Consultez les Conditions d\'utilisation pour l\'avertissement complet.\nLes taux fournis – même s\'ils sont corrects – peuvent différer de ceux utilisés par votre banque.\nEnfin : des erreurs arrivent. Ne faites jamais aveuglément confiance à une seule source.\nCette application est entièrement gratuite et open source. Si vous trouvez une version payante ou avec des publicités, elle est fausse — désinstallez-la immédiatement.</string>
     <string name="rate_title">Notez cette application</string>
-    <string name="rate_summary">Si vous le souhaitez, vous pouvez aider d\'autres personnes à découvrir Currencies. Cliquez ici pour évaluer l\'application sur Google Play.</string>
+    <string name="rate_summary">Si vous le souhaitez, vous pouvez aider d\'autres personnes à découvrir Currencies. Cliquez ici pour évaluer l\'application.</string>
     <string name="category_versioninfo">Informations sur les versions</string>
     <string name="title_changelog">Journal des modifications</string>
     <string name="backup_title">Sauvegarder et restaurer</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">Saisir le mot de passe</string>
     <string name="backup_password_wrong">Le mot de passe n\'a pas permis de déchiffrer ce fichier. Réessaie.</string>
     <string name="backup_password_too_short">Le mot de passe doit contenir au moins %1$d caractères</string>
-    <string name="credits_title">Crédits</string>
-    <string name="credits_summary">Attributions, licence et bibliothèques tierces</string>
-    <string name="title_credits">Crédits</string>
+    <string name="credits_title">À propos, mentions légales &amp; open source</string>
+    <string name="credits_summary">Politique de confidentialité, conditions d\'utilisation, accessibilité, code source et licences des bibliothèques tierces</string>
+    <string name="title_credits">À propos, mentions légales &amp; open source</string>
     <string name="credits_section_project">Projet</string>
     <string name="credits_section_license">Licence</string>
     <string name="credits_section_libraries">Bibliothèques tierces</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Déclaration d\'accessibilité</string>
+    <string name="credit_accessibility_subtitle">Cible WCAG 2.1 AA ; comment signaler des obstacles.</string>
+    <string name="credit_privacy_policy_title">Politique de confidentialité</string>
+    <string name="credit_privacy_policy_subtitle">Aucune donnée personnelle n\'est collectée. Position complète par juridiction.</string>
+    <string name="credit_source_title">Code source</string>
+    <string name="credit_source_subtitle">Code source ouvert sur GitHub — contribuez ou ouvrez un ticket.</string>
+    <string name="credit_terms_of_service_title">Conditions d\'utilisation</string>
+    <string name="credit_terms_of_service_subtitle">Conditions d\'utilisation, clause de non-garantie, avis sur la précision des taux.</string>
+    <string name="credits_section_legal">Mentions légales</string>
+    <string name="credits_section_source">Source</string>
+    <string name="fee_edit_active">Actif</string>
+    <string name="fee_edit_name">Nom</string>
+    <string name="fee_edit_name_hint">p. ex. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Inactif</string>
+    <string name="fee_untitled">Sans titre</string>
 </resources>

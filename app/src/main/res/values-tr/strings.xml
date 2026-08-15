@@ -27,6 +27,8 @@
     <string name="quick_conversions_no_rates">Kurlar henüz yüklenmedi.</string>
     <string name="quick_conversions_fees_applied">Uygulanan ücretler: %s</string>
     <string name="tooltip_filter_starred">Sadece favori para birimlerini göster.</string>
+    <string name="a11y_delete">Sil</string>
+    <string name="a11y_historical_rate">Geçmiş kur</string>
     <string name="currency_dropdown_api_hint">Eksik bir şey mi var? Farklı veri sağlayıcıları farklı para birimleri sunar. Başka bir tane denemek için ayarlara gidin!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Çevrimdışı • Kurlar: %1$s</string>

@@ -11,10 +11,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -254,13 +258,21 @@ fun TimelineChart(
 
     // Rebuild the host when the series length changes: Vico's scroll/marker state
     // caches the previous point count and crashes when the dataset shrinks.
+    val chartSummary = stringResource(id = R.string.a11y_chart_summary)
     key(data.size) {
         // Vico maps touch x-coordinates against the host's layout direction, so
         // under an RTL locale (e.g. Hebrew) the scrub marker mirrors to the
         // wrong side of the finger and clamps to the left edge.
         Ltr {
             CartesianChartHost(
-                modifier = Modifier.fillMaxSize(),
+                // Vico exposes no data to accessibility services, so a screen
+                // reader that lands on the host only hears "chart". Provide a
+                // summary that points to the accessible readout below (past,
+                // current, min, avg, max) rather than reading raw data points.
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .semantics { contentDescription = chartSummary },
                 chart =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(

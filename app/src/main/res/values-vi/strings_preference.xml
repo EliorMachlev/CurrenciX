@@ -102,11 +102,9 @@
     <!-- about -->
     <string name="category_about">Giới thiệu về ứng dụng</string>
     <string name="disclaimer_title">Miễn trừ trách nhiệm</string>
-    <string name="disclaimer_summary">Mặc dù ứng dụng này được viết ra và thử nghiệm rất kỹ, <b>nhưng không có đảm bảo là dữ liệu nó hiển thị là đúng</b>. Tỉ lệ chuyển đổi được bên thứ ba cung cấp và ứng dụng này không thể hứa rằng dữ liệu là đúng và được cập nhật.\nThêm nữa, tỉ lệ được cung cấp - nếu vẫn đúng - có thể khác so với tỉ lệ của ngân hàng của bạn.\nCuối cùng: Lỗi lầm thường xảy ra. Đừng bao giờ tin tưởng mù quáng bất kỳ ai! Nhưng bạn vẫn cứ yên tâm là tôi đã không phát hành ứng dụng này nếu tôi nghi ngờ là nó không hoạt động như mong muốn.</string>
-    <string name="sourcecode_title">Mã nguồn</string>
-    <string name="sourcecode_summary">Ứng dụng này là mã nguồn mở. Hãy đến kho chứa mã nguồn để tạo vấn đề, tìm cách đóng góp hoặc xem mã nguồn.</string>
+    <string name="disclaimer_summary">Tỷ giá hối đoái được hiển thị <b>chỉ mang tính tham khảo</b>. Chúng đến từ các nhà cung cấp bên thứ ba, có thể bị chậm trễ hoặc sai, và <b>không được</b> dùng cho giao dịch, phòng ngừa rủi ro, lập hóa đơn hay bất kỳ quyết định nào yêu cầu tỷ giá chính xác hoặc có thể thực hiện. Xem Điều khoản dịch vụ để biết tuyên bố miễn trừ trách nhiệm đầy đủ.\nTỷ giá được cung cấp – ngay cả khi chính xác – có thể khác với tỷ giá mà ngân hàng của bạn sử dụng.\nCuối cùng: sai lầm luôn xảy ra. Đừng bao giờ tin tưởng mù quáng vào bất kỳ nguồn đơn lẻ nào.\nỨng dụng này hoàn toàn miễn phí và mã nguồn mở. Nếu bạn thấy một phiên bản có giá hoặc quảng cáo, đó là giả — hãy gỡ cài đặt ngay lập tức.</string>
     <string name="rate_title">Đánh giá ứng dụng này</string>
-    <string name="rate_summary">Nếu bạn muốn, bạn có thể giúp những người khác khám phá ra Currencies. Hãy nhấn vào đây để đánh giá ứng dụng trên Google Play.</string>
+    <string name="rate_summary">Nếu bạn muốn, bạn có thể giúp những người khác khám phá ra Currencies. Hãy nhấn vào đây để đánh giá ứng dụng.</string>
     <string name="category_versioninfo">Thông tin phiên bản</string>
     <string name="title_changelog">Nhật ký thay đổi</string>
     <string name="backup_title">Sao lưu &amp; khôi phục</string>
@@ -130,10 +128,26 @@
     <string name="backup_password_prompt_title">Nhập mật khẩu</string>
     <string name="backup_password_wrong">Mật khẩu không giải mã được tệp này. Hãy thử lại.</string>
     <string name="backup_password_too_short">Mật khẩu phải có ít nhất %1$d ký tự</string>
-    <string name="credits_title">Ghi công</string>
-    <string name="credits_summary">Ghi nhận, giấy phép và thư viện của bên thứ ba</string>
-    <string name="title_credits">Ghi công</string>
+    <string name="credits_title">Giới thiệu, pháp lý &amp; mã nguồn mở</string>
+    <string name="credits_summary">Chính sách bảo mật, điều khoản dịch vụ, trợ năng, mã nguồn và giấy phép thư viện của bên thứ ba</string>
+    <string name="title_credits">Giới thiệu, pháp lý &amp; mã nguồn mở</string>
     <string name="credits_section_project">Dự án</string>
     <string name="credits_section_license">Giấy phép</string>
     <string name="credits_section_libraries">Thư viện của bên thứ ba</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Tuyên bố về khả năng truy cập</string>
+    <string name="credit_accessibility_subtitle">Mục tiêu WCAG 2.1 AA; cách báo cáo các rào cản.</string>
+    <string name="credit_privacy_policy_title">Chính sách bảo mật</string>
+    <string name="credit_privacy_policy_subtitle">Không thu thập dữ liệu cá nhân nào. Chi tiết đầy đủ theo từng khu vực pháp lý.</string>
+    <string name="credit_source_title">Mã nguồn</string>
+    <string name="credit_source_subtitle">Mã nguồn mở trên GitHub — hãy đóng góp hoặc gửi vấn đề.</string>
+    <string name="credit_terms_of_service_title">Điều khoản dịch vụ</string>
+    <string name="credit_terms_of_service_subtitle">Điều khoản sử dụng, tuyên bố miễn trừ bảo hành, thông báo về độ chính xác của tỷ giá.</string>
+    <string name="credits_section_legal">Pháp lý</string>
+    <string name="credits_section_source">Nguồn</string>
+    <string name="fee_edit_active">Đang hoạt động</string>
+    <string name="fee_edit_name">Tên</string>
+    <string name="fee_edit_name_hint">ví dụ: Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Không hoạt động</string>
+    <string name="fee_untitled">Không có tiêu đề</string>
 </resources>

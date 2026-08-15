@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">Uygulama hakkında</string>
     <string name="disclaimer_title">Sorumluluk Reddi</string>
-    <string name="disclaimer_summary">Uygulama derin bir yazılım sürecinden geçip test edilmiş olsa dahi <b>gösterilen verilerin doğru olduğu garanti edilmez</b>. Döviz kurları üçüncü taraflarca sağlanır ve bu uygulama hiçbir şekilde bu kurların doğru veya güncel olduğunu vadetmez.\nBuna ek olarak sağlanan kurlar doğru olsa dahi bankanızda kullanılan kurlara göre farklılık gösterebilir.\nSon olarak, hatalar her daim gerçekleşebilir. Kimseye körü körüne güvenme! Yine de belirtmek isterim ki, eğer düzgün çalışmayacağını düşünseydim bu uygulamayı asla yayınlamazdım.</string>
-    <string name="sourcecode_title">Kaynak kodu</string>
-    <string name="sourcecode_summary">Bu uygulama açık kaynaklıdır. Sorun açmak için kod deposuna gidin, nasıl katkıda bulunacağınızı öğrenin veya yalnızca kaynaklara bir göz atın.</string>
+    <string name="disclaimer_summary">Gösterilen döviz kurları <b>yalnızca bilgi amaçlıdır</b>. Üçüncü taraf sağlayıcılardan gelirler, gecikmiş veya hatalı olabilirler ve doğru veya uygulanabilir bir kurun gerektiği ticaret, hedging, faturalama veya herhangi bir karar için <b>kullanılmamalıdır</b>. Tam sorumluluk reddi için Hizmet Şartları\'na bakın.\nSağlanan kurlar – doğru olsalar bile – bankanızın kullandığı kurlardan farklı olabilir.\nSon olarak: hatalar olur. Hiçbir tek kaynağa asla körü körüne güvenmeyin.\nBu uygulama tamamen ücretsiz ve açık kaynaklıdır. Ücretli veya reklam içeren bir sürüm bulursanız sahtedir — hemen kaldırın.</string>
     <string name="rate_title">Uygulamayı puanla</string>
-    <string name="rate_summary">Eğer hoşuna gittiyse başka insanların da Currencies\'i keşfetmesini sağlayabilirsin. Uygulamayı Google Play üzerinden puanlamak için buraya tıkla.</string>
+    <string name="rate_summary">Eğer hoşuna gittiyse başka insanların da Currencies\'i keşfetmesini sağlayabilirsin. Uygulamayı puanlamak için buraya tıkla.</string>
     <string name="category_versioninfo">Sürüm bilgisi</string>
     <string name="title_changelog">Değişiklik günlüğü</string>
     <string name="backup_title">Yedekle ve geri yükle</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">Parolayı gir</string>
     <string name="backup_password_wrong">Parola dosyanın şifresini çözemedi. Tekrar dene.</string>
     <string name="backup_password_too_short">Parola en az %1$d karakter olmalı</string>
-    <string name="credits_title">Katkıda Bulunanlar</string>
-    <string name="credits_summary">Atıflar, lisans ve üçüncü taraf kütüphaneler</string>
-    <string name="title_credits">Katkıda Bulunanlar</string>
+    <string name="credits_title">Hakkında, yasal &amp; açık kaynak</string>
+    <string name="credits_summary">Gizlilik politikası, hizmet şartları, erişilebilirlik, kaynak kodu ve üçüncü taraf kütüphane lisansları</string>
+    <string name="title_credits">Hakkında, yasal &amp; açık kaynak</string>
     <string name="credits_section_project">Proje</string>
     <string name="credits_section_license">Lisans</string>
     <string name="credits_section_libraries">Üçüncü taraf kütüphaneler</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Erişilebilirlik beyanı</string>
+    <string name="credit_accessibility_subtitle">WCAG 2.1 AA hedefi; engelleri nasıl bildireceğinize dair bilgiler.</string>
+    <string name="credit_privacy_policy_title">Gizlilik politikası</string>
+    <string name="credit_privacy_policy_subtitle">Hiçbir kişisel veri toplanmaz. Her yargı bölgesi için tam duruş.</string>
+    <string name="credit_source_title">Kaynak kodu</string>
+    <string name="credit_source_subtitle">GitHub\'da açık kaynak — katkıda bulunun veya bir sorun bildirin.</string>
+    <string name="credit_terms_of_service_title">Hizmet şartları</string>
+    <string name="credit_terms_of_service_subtitle">Kullanım şartları, garanti reddi, kur doğruluğu bildirimi.</string>
+    <string name="credits_section_legal">Yasal</string>
+    <string name="credits_section_source">Kaynak</string>
+    <string name="fee_edit_active">Etkin</string>
+    <string name="fee_edit_name">Ad</string>
+    <string name="fee_edit_name_hint">örn. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Pasif</string>
+    <string name="fee_untitled">Adsız</string>
 </resources>

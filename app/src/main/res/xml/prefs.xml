@@ -111,11 +111,6 @@
             android:title="@string/disclaimer_title" />
         <Preference
             android:icon="@drawable/ic_code"
-            android:key="@string/sourcecode_key"
-            android:summary="@string/sourcecode_summary"
-            android:title="@string/sourcecode_title" />
-        <Preference
-            android:icon="@drawable/ic_code"
             android:key="@string/credits_key"
             android:summary="@string/credits_summary"
             android:title="@string/credits_title" />

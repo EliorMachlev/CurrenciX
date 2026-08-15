@@ -27,6 +27,8 @@
     <string name="quick_conversions_no_rates">Курсы ещё не загружены.</string>
     <string name="quick_conversions_fees_applied">Применённые комиссии: %s</string>
     <string name="tooltip_filter_starred">Показывать только избранные валюты.</string>
+    <string name="a11y_delete">Удалить</string>
+    <string name="a11y_historical_rate">Исторический курс</string>
     <string name="currency_dropdown_api_hint">Чего-то не хватает? Разные поставщики данных предлагают разные валюты. Зайдите в настройки и попробуйте другого! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсы от %1$s</string>

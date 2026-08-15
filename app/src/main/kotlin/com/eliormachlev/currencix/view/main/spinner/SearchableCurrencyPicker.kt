@@ -52,6 +52,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
@@ -167,11 +168,20 @@ private fun SearchBar(
             value = query,
             onValueChange = onQueryChange,
             singleLine = true,
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+            placeholder = { Text(text = stringResource(id = R.string.a11y_search_currencies)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = stringResource(id = R.string.a11y_search_currencies),
+                )
+            },
             trailingIcon = {
                 if (query.isNotEmpty()) {
                     IconButton(onClick = { onQueryChange("") }) {
-                        Icon(Icons.Filled.Clear, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = stringResource(id = R.string.a11y_clear_search),
+                        )
                     }
                 }
             },
@@ -420,7 +430,12 @@ private fun CurrencyRow(
                     .padding(
                         horizontal = dimensionResource(id = R.dimen.margin2x),
                         vertical = dimensionResource(id = R.dimen.margin1x),
-                    ),
+                    )
+                    // TalkBack would otherwise announce ISO code, full name, and
+                    // preview conversion as three separate focus stops, forcing
+                    // the user to swipe three times per row. Merge into one node
+                    // so the whole row speaks as a single item.
+                    .semantics(mergeDescendants = true) {},
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CurrencyFlag(rate.currency)

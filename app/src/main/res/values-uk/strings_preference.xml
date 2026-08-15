@@ -100,11 +100,9 @@
     <!-- about -->
     <string name="category_about">Про цей додаток</string>
     <string name="disclaimer_title">Відмова від відповідальності</string>
-    <string name="disclaimer_summary">Незважаючи на те, що програма дуже ретельно написана та протестована, <b>немає жодної гарантії, що дані, які вона показує, правильні</b>. Курси обміну надає третя сторона, і ця програма не може гарантувати, що дані правдиві та актуальні.\nКрім того, надані курси (якщо правильні) можуть відрізнятися від тих, які використовує ваш банк.\nЗрештою: помилки трапляються. Ніколи нікому сліпо не вірте! З огляду на це, будьте впевнені, я б не випускав цю програму, якби мав сумніви, що вона працює належним чином.</string>
-    <string name="sourcecode_title">Вихідний код</string>
-    <string name="sourcecode_summary">Цей додаток має відкритий вихідний код. Перейдіть до репозиторію коду, щоб повідомити про проблеми, дізнатися, як зробити внесок, або просто переглянути джерела.</string>
+    <string name="disclaimer_summary">Показані обмінні курси є <b>лише орієнтовними</b>. Вони надходять від сторонніх постачальників, можуть бути затримані або помилковими та <b>не повинні</b> використовуватися для торгівлі, хеджування, виставлення рахунків або будь-якого рішення, де потрібен точний або виконуваний курс. Повне застереження див. в Умовах обслуговування.\nНадані курси – навіть якщо вони правильні – можуть відрізнятися від тих, які використовує ваш банк.\nІ нарешті: помилки трапляються. Ніколи сліпо не довіряйте жодному окремому джерелу.\nЦей додаток повністю безкоштовний і з відкритим кодом. Якщо ви знайшли версію з ціною або рекламою, вона підробна — негайно видаліть її.</string>
     <string name="rate_title">Оцініть цей додаток</string>
-    <string name="rate_summary">Якщо хочете, ви можете допомогти іншим відкрити для себе Currencies. Натисніть тут, щоб оцінити додаток у Google Play.</string>
+    <string name="rate_summary">Якщо хочете, ви можете допомогти іншим відкрити для себе Currencies. Натисніть тут, щоб оцінити додаток.</string>
     <string name="category_versioninfo">Інформація про версію</string>
     <string name="title_changelog">Історія змін</string>
     <string name="backup_title">Резервне копіювання та відновлення</string>
@@ -128,10 +126,26 @@
     <string name="backup_password_prompt_title">Введіть пароль</string>
     <string name="backup_password_wrong">Пароль не розшифрував цей файл. Спробуйте ще раз.</string>
     <string name="backup_password_too_short">Пароль має містити щонайменше %1$d символів</string>
-    <string name="credits_title">Подяки</string>
-    <string name="credits_summary">Атрибуції, ліцензія та сторонні бібліотеки</string>
-    <string name="title_credits">Подяки</string>
+    <string name="credits_title">Про додаток, юридична інформація &amp; відкритий код</string>
+    <string name="credits_summary">Політика конфіденційності, умови обслуговування, доступність, вихідний код і ліцензії сторонніх бібліотек</string>
+    <string name="title_credits">Про додаток, юридична інформація &amp; відкритий код</string>
     <string name="credits_section_project">Проєкт</string>
     <string name="credits_section_license">Ліцензія</string>
     <string name="credits_section_libraries">Сторонні бібліотеки</string>
+    <string name="backup_default_filename">currencies-backup.json</string>
+    <string name="credit_accessibility_title">Заява про доступність</string>
+    <string name="credit_accessibility_subtitle">Ціль WCAG 2.1 AA; як повідомляти про перешкоди.</string>
+    <string name="credit_privacy_policy_title">Політика конфіденційності</string>
+    <string name="credit_privacy_policy_subtitle">Персональні дані не збираються. Повна позиція для кожної юрисдикції.</string>
+    <string name="credit_source_title">Вихідний код</string>
+    <string name="credit_source_subtitle">Відкритий код на GitHub — зробіть внесок кодом або створіть питання.</string>
+    <string name="credit_terms_of_service_title">Умови надання послуг</string>
+    <string name="credit_terms_of_service_subtitle">Умови використання, відмова від гарантій, повідомлення про точність курсів.</string>
+    <string name="credits_section_legal">Правова інформація</string>
+    <string name="credits_section_source">Джерело</string>
+    <string name="fee_edit_active">Активна</string>
+    <string name="fee_edit_name">Назва</string>
+    <string name="fee_edit_name_hint">напр. Wise, Revolut, Chase</string>
+    <string name="fee_inactive_marker">Неактивна</string>
+    <string name="fee_untitled">Без назви</string>
 </resources>
