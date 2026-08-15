@@ -100,7 +100,7 @@
     <!-- about -->
     <string name="category_about">Quant a aquesta aplicació</string>
     <string name="disclaimer_title">Avís d\'exempció de responsabilitat</string>
-    <string name="disclaimer_summary">Tot i que l\'aplicació ha sigut programada curosament i verificada, <b>no es garanteix que les dades que es mostren siguin correctes</b>. Al ser els tipus de canvi proveïts per tercers, no es pot assegurar que les seves dades siguin correctes i actualitzades.\nAddicionalment, els tipus que es mostren –tot i ser correctes– poden diferir dels utilitzats pel vostre banc.\nPer acabar, tothom pot cometre errors així que no confieu cegament en ningú! Això dit, si aquesta aplicació ha sigut publicada és perquè es té la certesa que funciona tal com es pretenia.</string>
+    <string name="disclaimer_summary">Els tipus de canvi mostrats són <b>només indicatius</b>. Provenen de proveïdors externs, poden estar retardats o ser incorrectes, i <b>no s\'han</b> d\'utilitzar per a operacions, cobertures, facturació ni cap decisió en què es requereixi un tipus precís o executable. Consulteu els Termes del Servei per veure el descàrrec de responsabilitat complet.\nEls tipus proporcionats – encara que siguin correctes – poden diferir dels utilitzats pel vostre banc.\nPer últim: els errors passen. Mai no confieu cegament en una única font.</string>
     <string name="rate_title">Valoreu l\'aplicació</string>
     <string name="rate_summary">Podeu ajudar a altres persones a descobrir Currencies. Toqueu aquí per a puntuar l\'aplicació a Google Play.</string>
     <string name="category_versioninfo">Informació de la versió</string>
@@ -126,9 +126,9 @@
     <string name="backup_password_prompt_title">Introdueix la contrasenya</string>
     <string name="backup_password_wrong">La contrasenya no ha desxifrat el fitxer. Torna-ho a provar.</string>
     <string name="backup_password_too_short">La contrasenya ha de tenir com a mínim %1$d caràcters</string>
-    <string name="credits_title">Crèdits</string>
-    <string name="credits_summary">Atribucions, llicència i biblioteques de tercers</string>
-    <string name="title_credits">Crèdits</string>
+    <string name="credits_title">Sobre, legal &amp; codi obert</string>
+    <string name="credits_summary">Política de privadesa, termes del servei, accessibilitat, codi font i llicències de biblioteques de tercers</string>
+    <string name="title_credits">Sobre, legal &amp; codi obert</string>
     <string name="credits_section_project">Projecte</string>
     <string name="credits_section_license">Llicència</string>
     <string name="credits_section_libraries">Biblioteques de tercers</string>

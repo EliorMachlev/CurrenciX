@@ -100,7 +100,7 @@
     <!-- about -->
     <string name="category_about">关于此应用</string>
     <string name="disclaimer_title">免责声明</string>
-    <string name="disclaimer_summary">虽然该应用程序的编写和测试非常彻底，但<b>不保证其显示的数据是正确的</b>。汇率是由第三方提供的，这个应用程序不能保证数据是真实和最新的。\n此外，所提供的汇率—即使正确—也可能与你的银行所使用的汇率不同。\n最后：错误时有发生。永远不要盲目地相信任何人! 既然如此，请放心，如果我对这个应用程序有任何不放心，我就不会发布它。</string>
+    <string name="disclaimer_summary">显示的汇率<b>仅供参考</b>。它们来自第三方提供商，可能存在延迟或错误，<b>不得</b>用于交易、对冲、开票或任何需要准确或可执行汇率的决策。请参阅《服务条款》以获取完整免责声明。\n所提供的汇率 – 即使正确 – 也可能与您的银行所使用的汇率不同。\n最后：错误时有发生。切勿盲目相信任何单一来源。</string>
     <string name="rate_title">评价此应用</string>
     <string name="rate_summary">如果您喜欢此应用，还可以帮助他人发现 Currencies。点击此处在 Google Play 上对应用评价。</string>
     <string name="category_versioninfo">版本信息</string>
@@ -126,9 +126,9 @@
     <string name="backup_password_prompt_title">输入密码</string>
     <string name="backup_password_wrong">此密码无法解密该文件,请重试。</string>
     <string name="backup_password_too_short">密码长度至少为 %1$d 个字符</string>
-    <string name="credits_title">致谢</string>
-    <string name="credits_summary">署名、许可证和第三方库</string>
-    <string name="title_credits">致谢</string>
+    <string name="credits_title">关于、法律信息和开源</string>
+    <string name="credits_summary">隐私政策、服务条款、无障碍功能、源代码以及第三方库许可证</string>
+    <string name="title_credits">关于、法律信息和开源</string>
     <string name="credits_section_project">项目</string>
     <string name="credits_section_license">许可证</string>
     <string name="credits_section_libraries">第三方库</string>

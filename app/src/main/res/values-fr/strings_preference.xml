@@ -100,7 +100,7 @@
     <!-- about -->
     <string name="category_about">À propos de cette application</string>
     <string name="disclaimer_title">Exclusion de responsabilité</string>
-    <string name="disclaimer_summary">Bien que l\'appli soit très minutieusement écrite et testée, <b>il n\'y a aucune garantie que les données qu\'elle affiche soient correctes</b>. Les taux de change sont fournis par une tierce partie et cette application ne peut pas promettre que les données sont vraies et à jour.\nEn outre, les taux fournis – même s\'ils sont corrects – peuvent varier de ceux utilisés par votre banque.\nNe faites jamais aveuglément confiance à qui que ce soit ! Ceci étant dit, soyez assuré que je n\'aurais pas sorti cette application si j\'avais eu le moindre doute sur son fonctionnement.</string>
+    <string name="disclaimer_summary">Les taux de change affichés sont <b>fournis à titre indicatif uniquement</b>. Ils proviennent de fournisseurs tiers, peuvent être retardés ou erronés, et <b>ne doivent pas</b> être utilisés pour le trading, la couverture, la facturation ou toute décision nécessitant un taux exact ou exécutable. Consultez les Conditions d\'utilisation pour l\'avertissement complet.\nLes taux fournis – même s\'ils sont corrects – peuvent différer de ceux utilisés par votre banque.\nEnfin : des erreurs arrivent. Ne faites jamais aveuglément confiance à une seule source.</string>
     <string name="rate_title">Notez cette application</string>
     <string name="rate_summary">Si vous le souhaitez, vous pouvez aider d\'autres personnes à découvrir Currencies. Cliquez ici pour évaluer l\'application sur Google Play.</string>
     <string name="category_versioninfo">Informations sur les versions</string>
@@ -126,9 +126,9 @@
     <string name="backup_password_prompt_title">Saisir le mot de passe</string>
     <string name="backup_password_wrong">Le mot de passe n\'a pas permis de déchiffrer ce fichier. Réessaie.</string>
     <string name="backup_password_too_short">Le mot de passe doit contenir au moins %1$d caractères</string>
-    <string name="credits_title">Crédits</string>
-    <string name="credits_summary">Attributions, licence et bibliothèques tierces</string>
-    <string name="title_credits">Crédits</string>
+    <string name="credits_title">À propos, mentions légales &amp; open source</string>
+    <string name="credits_summary">Politique de confidentialité, conditions d\'utilisation, accessibilité, code source et licences des bibliothèques tierces</string>
+    <string name="title_credits">À propos, mentions légales &amp; open source</string>
     <string name="credits_section_project">Projet</string>
     <string name="credits_section_license">Licence</string>
     <string name="credits_section_libraries">Bibliothèques tierces</string>

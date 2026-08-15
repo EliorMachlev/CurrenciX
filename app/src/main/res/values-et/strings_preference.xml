@@ -100,7 +100,7 @@
     <!-- about -->
     <string name="category_about">Teave selle rakenduse kohta</string>
     <string name="disclaimer_title">Lahtiütlus vastutusest</string>
-    <string name="disclaimer_summary">Kuigi see rakendus on läbimõeldult kirjutatud ja põhjalikult testitud, siis <b>puudub igasugune garantii, et kuvatavad andmed on korrektsed</b>. vahetuskursid laaditakse kolmandate osapoolete teenustest ja rakendusel pole võimalust kontrollida, et need andmed on õiged ja uuendatud.\nLisaks palun arvesta, et kuigi kuvatavad vahetuskursid on korrektsed, siis ei pruugi need olla täpselt samad, mida sinu pank kasutab.\nKokkuvõtteks: vigu juhtub. Ära usalda pimesi kedagi! Aga samas, ma poleks ju seda rakendust avaldanud, kui ta ei teeks seda, mida ta on mõeldud tegema.</string>
+    <string name="disclaimer_summary">Kuvatavad vahetuskursid on <b>ainult orienteeruvad</b>. Need pärinevad kolmandate osapoolte teenustest, võivad olla hilinenud või valed ning <b>neid ei tohi</b> kasutada kauplemiseks, maandamiseks, arveldamiseks ega ühegi otsuse tegemiseks, kus on vaja täpset või tehingukõlblikku kurssi. Täieliku lahtiütluse leiad kasutustingimustest.\nPakutavad kursid – isegi kui need on õiged – võivad erineda sinu panga kasutatavatest.\nJa viimaseks: vigu juhtub. Ära usalda kunagi pimesi ühtki üksikut allikat.</string>
     <string name="rate_title">Hinda seda rakendust</string>
     <string name="rate_summary">Kui soovid, et ka teised kasutajad leiaks selle rakenduse, siis klõpsi siin ja hinda seda Google Plays.</string>
     <string name="category_versioninfo">Versiooniteave</string>
@@ -126,9 +126,9 @@
     <string name="backup_password_prompt_title">Sisesta parool</string>
     <string name="backup_password_wrong">Parool ei avanud selle faili krüptot. Proovi uuesti.</string>
     <string name="backup_password_too_short">Parool peab olema vähemalt %1$d märki</string>
-    <string name="credits_title">Autorid</string>
-    <string name="credits_summary">Omistused, litsents ja kolmandate osapoolte teegid</string>
-    <string name="title_credits">Autorid</string>
+    <string name="credits_title">Teave, õiguslik ja avatud lähtekood</string>
+    <string name="credits_summary">Privaatsuspõhimõtted, kasutustingimused, ligipääsetavus, lähtekood ja kolmandate osapoolte teekide litsentsid</string>
+    <string name="title_credits">Teave, õiguslik ja avatud lähtekood</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Litsents</string>
     <string name="credits_section_libraries">Kolmandate osapoolte teegid</string>

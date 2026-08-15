@@ -100,7 +100,7 @@
     <!-- about -->
     <string name="category_about">O ovoj aplikaciji</string>
     <string name="disclaimer_title">Izjava o odricanju od odgovornosti</string>
-    <string name="disclaimer_summary">Iako je aplikacija izrađena i provjerena s velikom pažnjom, <b>ne jamčimo da su podaci koje prikazuje točni</b>. Tečajevi se prikupljaju od trećih strana i ova aplikacija ni na koji način ne može obećati da će ti podaci biti istiniti i ažurni.\nDodatno, tečajne liste koje pružamo – iako možda točne – mogu se razlikovati od onih kojima se koristi vaša banka.\nNa kraju krajeva: pogreške se događaju. Nemojte nikome slijepo vjerovati! Međutim, možete biti sigurni da ovu aplikaciju ne bih objavio da ne vjerujem da ona funkcionira kako bi trebala.</string>
+    <string name="disclaimer_summary">Prikazani tečajevi su <b>samo informativni</b>. Dolaze od pružatelja trećih strana, mogu biti odgođeni ili netočni te se <b>ne smiju</b> koristiti za trgovanje, zaštitu od rizika, izdavanje računa ili bilo koju odluku za koju je potreban točan ili izvršiv tečaj. Puno odricanje od odgovornosti pogledajte u Uvjetima korištenja.\nDostavljeni tečajevi – čak i ako su točni – mogu se razlikovati od onih koje koristi vaša banka.\nI za kraj: pogreške se događaju. Nikada slijepo ne vjerujte nijednom pojedinačnom izvoru.</string>
     <string name="rate_title">Ocijenite ovu aplikaciju</string>
     <string name="rate_summary">Ako to želite, možete pomoći drugima da otkriju ovu aplikaciju. Ovdje kliknite kako biste je ocijenili na Trgovini Play.</string>
     <string name="category_versioninfo">Podaci o inačici</string>
@@ -126,9 +126,9 @@
     <string name="backup_password_prompt_title">Unesi lozinku</string>
     <string name="backup_password_wrong">Lozinka nije dešifrirala ovu datoteku. Pokušaj ponovno.</string>
     <string name="backup_password_too_short">Lozinka mora imati najmanje %1$d znakova</string>
-    <string name="credits_title">Zasluge</string>
-    <string name="credits_summary">Priznanja, licenca i biblioteke trećih strana</string>
-    <string name="title_credits">Zasluge</string>
+    <string name="credits_title">O aplikaciji, pravno i otvoreni kod</string>
+    <string name="credits_summary">Pravila privatnosti, uvjeti korištenja, pristupačnost, izvorni kod i licence biblioteka trećih strana</string>
+    <string name="title_credits">O aplikaciji, pravno i otvoreni kod</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licenca</string>
     <string name="credits_section_libraries">Biblioteke trećih strana</string>

@@ -96,7 +96,7 @@
     <!-- about -->
     <string name="category_about">על היישומון הזה</string>
     <string name="disclaimer_title">כתב ויתור</string>
-    <string name="disclaimer_summary">אף על פי שהיישומון נכתב ונבדק בקפידה רבה, <b>אין כל אחריות שהנתונים המוצגים בו נכונים</b>. שערי החליפין מסופקים על ידי צד שלישי והיישומון אינו יכול להבטיח בשום צורה שהנתונים נכונים ומעודכנים.\nבנוסף, השערים המסופקים – גם אם הם נכונים – עשויים להיות שונים מאלה שהבנק שלך משתמש בהם.\nולסיום: טעויות קורות. אף פעם אל תסמכו על אף אחד באופן עיוור! עם זאת, לא הייתי משחרר את היישומון אילו הייתי מפקפק שהוא פועל כמצופה.</string>
+    <string name="disclaimer_summary">שערי החליפין המוצגים הם <b>לצורך התרשמות בלבד</b>. הם מגיעים מספקים חיצוניים, עלולים להיות מעוכבים או שגויים, ו<b>אין להשתמש</b> בהם למסחר, גידור, הפקת חשבוניות או כל החלטה שבה נדרש שער מדויק או בר-ביצוע. לפירוט המלא של ההסתייגות עיינו בתנאי השירות.\nהשערים המסופקים – גם אם הם נכונים – עשויים להיות שונים מאלה שהבנק שלך משתמש בהם.\nולסיום: טעויות קורות. לעולם אל תסמכו באופן עיוור על אף מקור יחיד.</string>
     <string name="rate_title">דירוג היישומון</string>
     <string name="rate_summary">לבחירתך, אפשר לסייע לאחרים להיחשף ליישומון. לחיצה כאן תוביל אותך לדירוג ב־Google Play.</string>
     <string name="category_versioninfo">פרטי גרסה</string>
@@ -122,9 +122,9 @@
     <string name="backup_password_prompt_title">הזן סיסמה</string>
     <string name="backup_password_wrong">הסיסמה לא הצליחה לפענח את הקובץ. נסה שוב.</string>
     <string name="backup_password_too_short">הסיסמה חייבת להכיל לפחות %1$d תווים</string>
-    <string name="credits_title">קרדיטים</string>
-    <string name="credits_summary">ייחוסים, רישיון וספריות צד שלישי</string>
-    <string name="title_credits">קרדיטים</string>
+    <string name="credits_title">אודות, משפטי וקוד פתוח</string>
+    <string name="credits_summary">מדיניות פרטיות, תנאי שימוש, נגישות, קוד מקור ורישיונות של ספריות צד שלישי</string>
+    <string name="title_credits">אודות, משפטי וקוד פתוח</string>
     <string name="credits_section_project">פרויקט</string>
     <string name="credits_section_license">רישיון</string>
     <string name="credits_section_libraries">ספריות צד שלישי</string>

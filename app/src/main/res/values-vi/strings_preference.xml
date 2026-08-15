@@ -102,7 +102,7 @@
     <!-- about -->
     <string name="category_about">Giới thiệu về ứng dụng</string>
     <string name="disclaimer_title">Miễn trừ trách nhiệm</string>
-    <string name="disclaimer_summary">Mặc dù ứng dụng này được viết ra và thử nghiệm rất kỹ, <b>nhưng không có đảm bảo là dữ liệu nó hiển thị là đúng</b>. Tỉ lệ chuyển đổi được bên thứ ba cung cấp và ứng dụng này không thể hứa rằng dữ liệu là đúng và được cập nhật.\nThêm nữa, tỉ lệ được cung cấp - nếu vẫn đúng - có thể khác so với tỉ lệ của ngân hàng của bạn.\nCuối cùng: Lỗi lầm thường xảy ra. Đừng bao giờ tin tưởng mù quáng bất kỳ ai! Nhưng bạn vẫn cứ yên tâm là tôi đã không phát hành ứng dụng này nếu tôi nghi ngờ là nó không hoạt động như mong muốn.</string>
+    <string name="disclaimer_summary">Tỷ giá hối đoái được hiển thị <b>chỉ mang tính tham khảo</b>. Chúng đến từ các nhà cung cấp bên thứ ba, có thể bị chậm trễ hoặc sai, và <b>không được</b> dùng cho giao dịch, phòng ngừa rủi ro, lập hóa đơn hay bất kỳ quyết định nào yêu cầu tỷ giá chính xác hoặc có thể thực hiện. Xem Điều khoản dịch vụ để biết tuyên bố miễn trừ trách nhiệm đầy đủ.\nTỷ giá được cung cấp – ngay cả khi chính xác – có thể khác với tỷ giá mà ngân hàng của bạn sử dụng.\nCuối cùng: sai lầm luôn xảy ra. Đừng bao giờ tin tưởng mù quáng vào bất kỳ nguồn đơn lẻ nào.</string>
     <string name="rate_title">Đánh giá ứng dụng này</string>
     <string name="rate_summary">Nếu bạn muốn, bạn có thể giúp những người khác khám phá ra Currencies. Hãy nhấn vào đây để đánh giá ứng dụng trên Google Play.</string>
     <string name="category_versioninfo">Thông tin phiên bản</string>
@@ -128,9 +128,9 @@
     <string name="backup_password_prompt_title">Nhập mật khẩu</string>
     <string name="backup_password_wrong">Mật khẩu không giải mã được tệp này. Hãy thử lại.</string>
     <string name="backup_password_too_short">Mật khẩu phải có ít nhất %1$d ký tự</string>
-    <string name="credits_title">Ghi công</string>
-    <string name="credits_summary">Ghi nhận, giấy phép và thư viện của bên thứ ba</string>
-    <string name="title_credits">Ghi công</string>
+    <string name="credits_title">Giới thiệu, pháp lý &amp; mã nguồn mở</string>
+    <string name="credits_summary">Chính sách bảo mật, điều khoản dịch vụ, trợ năng, mã nguồn và giấy phép thư viện của bên thứ ba</string>
+    <string name="title_credits">Giới thiệu, pháp lý &amp; mã nguồn mở</string>
     <string name="credits_section_project">Dự án</string>
     <string name="credits_section_license">Giấy phép</string>
     <string name="credits_section_libraries">Thư viện của bên thứ ba</string>

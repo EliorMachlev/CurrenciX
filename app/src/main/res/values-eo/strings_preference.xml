@@ -127,9 +127,9 @@
     <string name="backup_password_prompt_title">Enigu pasvorton</string>
     <string name="backup_password_wrong">La pasvorto ne malĉifris ĉi tiun dosieron. Provu denove.</string>
     <string name="backup_password_too_short">La pasvorto devas havi almenaŭ %1$d signojn</string>
-    <string name="credits_title">Dankoj</string>
-    <string name="credits_summary">Atribuoj, permesilo kaj triapartaj bibliotekoj</string>
-    <string name="title_credits">Dankoj</string>
+    <string name="credits_title">Pri, jura &amp; malfermitkoda</string>
+    <string name="credits_summary">Privateca politiko, servkondiĉoj, alirebleco, fontkodo kaj permesiloj de triapartaj bibliotekoj</string>
+    <string name="title_credits">Pri, jura &amp; malfermitkoda</string>
     <string name="credits_section_project">Projekto</string>
     <string name="credits_section_license">Permesilo</string>
     <string name="credits_section_libraries">Triapartaj bibliotekoj</string>

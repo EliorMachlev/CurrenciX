@@ -97,7 +97,7 @@
     <!-- about -->
     <string name="category_about">O tej aplikacji</string>
     <string name="disclaimer_title">Ostrzeżenie</string>
-    <string name="disclaimer_summary">Mimo tego że aplikacja jest poddawana ścisłym testom, <b>nie możemy zagwarantować że podane dane mogą być zgodne z prawdą.</b> Kursy walut są podawane przez zewnętrznego dostawcę usługi, a ta nie jest w stanie zagwarantować aktualności tych danych.\nDodatkowo, podane kursy - nawet jeżeli prawidłowe, mogą się różnić od tych stosowanych przez Twój bank.\nNa sam koniec: błędy się zdarzają. Nigdy nie ufaj nikomu bezgranicznie. Mówiąc to, mam na myśli że nie wydałbym tej aplikacji gdybym miał złe przeczucie co do jej poprawnego działania.</string>
+    <string name="disclaimer_summary">Wyświetlane kursy wymiany mają <b>charakter wyłącznie orientacyjny</b>. Pochodzą od zewnętrznych dostawców, mogą być opóźnione lub błędne i <b>nie mogą</b> być używane do handlu, hedgingu, fakturowania ani żadnej decyzji, w której wymagany jest dokładny lub wykonalny kurs. Pełne oświadczenie znajduje się w Warunkach świadczenia usług.\nPodane kursy – nawet jeśli są prawidłowe – mogą różnić się od tych stosowanych przez Twój bank.\nNa koniec: błędy się zdarzają. Nigdy nie ufaj ślepo żadnemu pojedynczemu źródłu.</string>
     <string name="rate_title">Oceń tę aplikację</string>
     <string name="rate_summary">Jeśli chcesz, możesz pomóc innym w odkrywaniu aplikacji Currencies. Kliknij tutaj, aby ocenić aplikację w Google Play.</string>
     <string name="category_versioninfo">Informacje o werski</string>
@@ -123,9 +123,9 @@
     <string name="backup_password_prompt_title">Wpisz hasło</string>
     <string name="backup_password_wrong">Hasło nie odszyfrowało tego pliku. Spróbuj ponownie.</string>
     <string name="backup_password_too_short">Hasło musi mieć co najmniej %1$d znaków</string>
-    <string name="credits_title">Podziękowania</string>
-    <string name="credits_summary">Atrybucje, licencja i biblioteki innych firm</string>
-    <string name="title_credits">Podziękowania</string>
+    <string name="credits_title">Informacje, kwestie prawne i open-source</string>
+    <string name="credits_summary">Polityka prywatności, warunki świadczenia usług, dostępność, kod źródłowy i licencje bibliotek innych firm</string>
+    <string name="title_credits">Informacje, kwestie prawne i open-source</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licencja</string>
     <string name="credits_section_libraries">Biblioteki innych firm</string>

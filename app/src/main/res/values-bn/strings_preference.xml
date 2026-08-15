@@ -34,7 +34,7 @@
     <string name="haptic_feedback_title">হ্যাপটিক ফিডব্যাক</string>
     <string name="haptic_feedback_summary">কী চাপলে কম্পন\nসিস্টেম সেটিং অনুসরণ করে</string>
     <string name="date_format_title">তারিখ ও সময়ের ফরম্যাট</string>
-    <string name="category_appearance">অবয়ব</string>
+    <string name="category_appearance">অবয়ব</string>
     <string name="system_default">সিস্টেম ডিফল্ট</string>
     <string name="theme_title">নকশা</string>
     <string name="theme_option_light">আলো</string>
@@ -58,7 +58,7 @@
     <!-- languages -->
     <string name="language_title">অ্যাপ ভাষা</string>
     <string name="language_ar">আরবি</string>
-    <string name="language_bg">বুলগেরীয়</string>
+    <string name="language_bg">বুলগেরীয়</string>
     <string name="language_bn">বাংলা</string>
     <string name="language_ca">কাতালান</string>
     <string name="language_cs">চেক</string>
@@ -68,41 +68,41 @@
     <string name="language_en">ইংরেজি</string>
     <string name="language_en_GB">ইংরেজি (যুক্তরাজ্য)</string>
     <string name="language_eo">এস্পেরান্তো</string>
-    <string name="language_es">স্পেনীয়</string>
+    <string name="language_es">স্পেনীয়</string>
     <string name="language_et">এস্তোনীয়</string>
     <string name="language_fa">ফারসি</string>
     <string name="language_fr">ফরাসি</string>
-    <string name="language_hr">ক্রোয়েসীয়</string>
-    <string name="language_hu">হানগেরীয়</string>
-    <string name="language_id">ইন্দোনেশীয়</string>
-    <string name="language_is">আইসল্যান্ডীয়</string>
-    <string name="language_it">ইতালীয়</string>
+    <string name="language_hr">ক্রোয়েসীয়</string>
+    <string name="language_hu">হানগেরীয়</string>
+    <string name="language_id">ইন্দোনেশীয়</string>
+    <string name="language_is">আইসল্যান্ডীয়</string>
+    <string name="language_it">ইতালীয়</string>
 
-    <string name="language_nb">নরওয়জীয়</string>
+    <string name="language_nb">নরওয়জীয়</string>
     <string name="language_nl">ওলন্দাজ</string>
     <string name="language_pl">পোলিশ</string>
     <string name="language_pt_BR">পর্তুগিজ</string>
     <string name="language_ru">রুশ</string>
     <string name="language_sv">সুইডিশ</string>
     <string name="language_tr">তুর্কি</string>
-    <string name="language_uk">ইউক্রেনীয়</string>
-    <string name="language_vi">ভিয়েতনামীয়</string>
+    <string name="language_uk">ইউক্রেনীয়</string>
+    <string name="language_vi">ভিয়েতনামীয়</string>
     <string name="language_zh_CN">চীনা (সহজকৃত)</string>
     <string name="language_zh_TW">চীনা (সাধারণ)</string>
     <!-- api -->
-    <string name="category_api">বিনিময় হার</string>
+    <string name="category_api">বিনিময় হার</string>
     <string name="api_title">উপাত্ত সরবরাহকারী</string>
     <string name="api_open_exchangerates_api_key_title">ওপেন এক্সচেঞ্জরেট এপিআই কি(চাবি)</string>
-    <string name="api_open_exchangerates_api_key_message">এই উৎসটি ব্যবহার করতে, তোমার একটি ব্যক্তিগত এপিআই চাবি বানাতে হবে।\n\nসেটি করার জন্য, https://openexchangerates.org/signup/free গিয়ে একটি নতুন অ্যাকাউন্ট খুলো।\nসবশেষে, অ্যাপ আইডি উৎপাদন করো পারো ড্যাশবোর্ডে এবং এখানে তা দাও:</string>
-    <string name="api_open_exchangerates_api_key_missing"><i>এপিআই চাবি প্রয়োজন</i></string>
+    <string name="api_open_exchangerates_api_key_message">এই উৎসটি ব্যবহার করতে, তোমার একটি ব্যক্তিগত এপিআই চাবি বানাতে হবে।\n\nসেটি করার জন্য, https://openexchangerates.org/signup/free গিয়ে একটি নতুন অ্যাকাউন্ট খুলো।\nসবশেষে, অ্যাপ আইডি উৎপাদন করো পারো ড্যাশবোর্ডে এবং এখানে তা দাও:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>এপিআই চাবি প্রয়োজন</i></string>
     <string name="api_about_title">%s সম্পর্কে</string>
     <string name="api_refreshPeriod_title">হালনাগাদ কাল</string>
     <!-- about -->
     <string name="category_about">এই অ্যাপ সম্পর্কে</string>
     <string name="disclaimer_title">বিশেষ বিজ্ঞপ্তি</string>
-    <string name="disclaimer_summary">যদিও অ্যাপটি ভালোভাবে লিখা ও পরীক্ষা করা, <b>এর কোন নিশ্চয়তা নেই যে উপাত্ত এখানে দেখানো হয়েছে তা সঠিক</b>। এই বিনিময় হার তৃতীয় পক্ষদ্বারা উৎপাদিত এবং এই অ্যাপ নিশ্চিত করতে পারবে না যে সেগুলো সত্য বা হালনাগাদকৃত \nযোগ করা যায় যে, বিনিময় হারগুলো – সঠিক হলেও – তোমার ব্যাংকের ব্যবহৃত হার থেকে আলাদা হতে পারে।\nসবশেষে: ভুল হয়। অন্ধভাবে কাউকে বিশ্বাস করবে না! এটা বলার পরেও, নিশ্চিত থাকো এই অ্যাপটি ঠিকভাবে কাজ করা নিয়ে কোন দ্বিধা থাকলে এই অ্যাপ আমি প্রকাশ করতাম না।</string>
+    <string name="disclaimer_summary">প্রদর্শিত বিনিময় হার <b>শুধুমাত্র নির্দেশক</b>। এগুলো তৃতীয় পক্ষের সরবরাহকারী থেকে আসে, বিলম্বিত বা ভুল হতে পারে, এবং ট্রেডিং, হেজিং, চালান তৈরি, বা এমন কোনো সিদ্ধান্তের জন্য <b>ব্যবহার করা উচিত নয়</b> যেখানে সঠিক বা কার্যকর হারের প্রয়োজন। সম্পূর্ণ দায়বদ্ধতা অস্বীকৃতির জন্য পরিষেবার শর্তাবলী দেখো।\nপ্রদত্ত হারগুলো – সঠিক হলেও – তোমার ব্যাংকের ব্যবহৃত হার থেকে আলাদা হতে পারে।\nশেষে: ভুল হয়। কখনোই অন্ধভাবে কোনো একক উৎসের ওপর বিশ্বাস করবে না।</string>
     <string name="rate_title">এই অ্যাপ পর্যালোচনা করো</string>
-    <string name="rate_summary">তুমি চাইলে, অন্যদেরকে কারেন্সি অ্যাপটি সম্পর্কে জানতে সহায়তা করতে পারো। গুগল প্লেতে অ্যাপটি পর্যালোচনা জমা দিতে এখানে টিপ দাও।</string>
+    <string name="rate_summary">তুমি চাইলে, অন্যদেরকে কারেন্সি অ্যাপটি সম্পর্কে জানতে সহায়তা করতে পারো। গুগল প্লেতে অ্যাপটি পর্যালোচনা জমা দিতে এখানে টিপ দাও।</string>
     <string name="category_versioninfo">সংস্করণ তথ্যা</string>
     <string name="title_changelog">পরিবর্তনসূচি</string>
     <string name="backup_title">ব্যাকআপ ও পুনরুদ্ধার</string>
@@ -126,9 +126,9 @@
     <string name="backup_password_prompt_title">পাসওয়ার্ড লিখুন</string>
     <string name="backup_password_wrong">পাসওয়ার্ড এই ফাইল ডিক্রিপ্ট করতে পারেনি। আবার চেষ্টা করুন।</string>
     <string name="backup_password_too_short">পাসওয়ার্ড অন্তত %1$d অক্ষরের হতে হবে</string>
-    <string name="credits_title">কৃতিত্ব</string>
-    <string name="credits_summary">স্বীকৃতি, লাইসেন্স এবং তৃতীয় পক্ষের লাইব্রেরি</string>
-    <string name="title_credits">কৃতিত্ব</string>
+    <string name="credits_title">সম্পর্কে, আইনি &amp; ওপেন-সোর্স</string>
+    <string name="credits_summary">গোপনীয়তা নীতি, পরিষেবার শর্তাবলী, অ্যাক্সেসিবিলিটি, সোর্স কোড এবং তৃতীয় পক্ষের লাইব্রেরির লাইসেন্স</string>
+    <string name="title_credits">সম্পর্কে, আইনি &amp; ওপেন-সোর্স</string>
     <string name="credits_section_project">প্রকল্প</string>
     <string name="credits_section_license">লাইসেন্স</string>
     <string name="credits_section_libraries">তৃতীয় পক্ষের লাইব্রেরি</string>
