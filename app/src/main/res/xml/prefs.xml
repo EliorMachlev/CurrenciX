@@ -17,14 +17,10 @@
             android:title="@string/previewConversion_title"
             app:defaultValue="false" />
 
-        <ListPreference
-            android:defaultValue="0"
-            android:entries="@array/keyboard_type_names"
-            android:entryValues="@array/keyboard_type_values"
+        <Preference
             android:icon="@drawable/ic_keyboard_extended"
             android:key="@string/keyboard_key"
-            android:title="@string/keyboard_title"
-            app:useSimpleSummaryProvider="true" />
+            android:title="@string/keyboard_title" />
 
         <ListPreference
             android:defaultValue="2"
