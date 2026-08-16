@@ -29,8 +29,8 @@
     <string name="keyboard_title">键盘</string>
     <string name="keyboard_option_default">默认</string>
     <string name="keyboard_option_expanded">扩展</string>
-    <string name="keyboard_summary_default">仅数字——紧凑的计算器键盘。</string>
-    <string name="keyboard_summary_expanded">添加 ± 和运算符键,可直接在金额上进行计算。</string>
+    <string name="keyboard_summary_default">数字、小数分隔符和运算符 (+ − × ÷)。</string>
+    <string name="keyboard_summary_expanded">添加 00、000 与 % 键,更快输入大额金额和百分比。</string>
     <string name="decimal_places_title">小数精度</string>
     <string name="decimal_places_summary">转换值显示的小数位数。</string>
     <string name="haptic_feedback_title">触感反馈</string>

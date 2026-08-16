@@ -29,8 +29,8 @@
     <string name="keyboard_title">Klawiatura</string>
     <string name="keyboard_option_default">Domyślna</string>
     <string name="keyboard_option_expanded">Rozszerzona</string>
-    <string name="keyboard_summary_default">Tylko cyfry — kompaktowa klawiatura kalkulatora.</string>
-    <string name="keyboard_summary_expanded">Dodaje klawisze ± i operatorów, aby móc liczyć bezpośrednio na kwocie.</string>
+    <string name="keyboard_summary_default">Cyfry, separator dziesiętny i operatory (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Dodaje klawisze 00, 000 i % dla szybszego wprowadzania dużych kwot i procentów.</string>
     <string name="decimal_places_title">Dokładność dziesiętna</string>
     <string name="decimal_places_summary">Liczba miejsc dziesiętnych wyświetlanych dla przeliczonych wartości.</string>
     <string name="haptic_feedback_title">Wibracje dotykowe</string>

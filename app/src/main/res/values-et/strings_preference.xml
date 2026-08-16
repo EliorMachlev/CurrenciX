@@ -29,8 +29,8 @@
     <string name="keyboard_title">Klaviatuur</string>
     <string name="keyboard_option_default">Vaikimisi</string>
     <string name="keyboard_option_expanded">Laiendatud</string>
-    <string name="keyboard_summary_default">Ainult numbrid — kalkulaatori kompaktne klaviatuur.</string>
-    <string name="keyboard_summary_expanded">Lisab ± ja operaatoriklahvid, et saaksid arvutada otse summast.</string>
+    <string name="keyboard_summary_default">Numbrid, kümnendkohaeraldaja ja operaatorid (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Lisab klahvid 00, 000 ja % suurte summade ja protsentide kiiremaks sisestamiseks.</string>
     <string name="decimal_places_title">Kümnendtäpsus</string>
     <string name="decimal_places_summary">Kuvatavate kümnendkohtade arv teisendatud väärtustel.</string>
     <string name="haptic_feedback_title">Haptiline tagasiside</string>

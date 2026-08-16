@@ -29,8 +29,8 @@
     <string name="keyboard_title">Клавиатура</string>
     <string name="keyboard_option_default">По подразбиране</string>
     <string name="keyboard_option_expanded">Разширена</string>
-    <string name="keyboard_summary_default">Само цифри — компактната клавиатура на калкулатора.</string>
-    <string name="keyboard_summary_expanded">Добавя ± и клавиши за операции, за да смятате направо върху сумата.</string>
+    <string name="keyboard_summary_default">Цифри, десетичен разделител и оператори (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Добавя клавишите 00, 000 и % за по-бързо въвеждане на големи суми и проценти.</string>
     <string name="decimal_places_title">Десетична точност</string>
     <string name="decimal_places_summary">Брой десетични знаци, показвани за конвертираните стойности.</string>
     <string name="haptic_feedback_title">Тактилна обратна връзка</string>

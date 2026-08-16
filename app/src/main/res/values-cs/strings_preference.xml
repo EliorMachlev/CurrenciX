@@ -29,8 +29,8 @@
     <string name="keyboard_title">Klávesnice</string>
     <string name="keyboard_option_default">Výchozí</string>
     <string name="keyboard_option_expanded">Rozšířená</string>
-    <string name="keyboard_summary_default">Pouze čísla — kompaktní klávesnice kalkulačky.</string>
-    <string name="keyboard_summary_expanded">Přidává ± a klávesy operátorů, abyste mohli počítat přímo nad částkou.</string>
+    <string name="keyboard_summary_default">Číslice, oddělovač desetinných míst a operátory (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Přidává klávesy 00, 000 a % pro rychlejší zadávání velkých částek a procent.</string>
     <string name="decimal_places_title">Desetinná přesnost</string>
     <string name="decimal_places_summary">Počet desetinných míst zobrazených u převedených hodnot.</string>
     <string name="haptic_feedback_title">Haptická odezva</string>

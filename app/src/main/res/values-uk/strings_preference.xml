@@ -29,8 +29,8 @@
     <string name="keyboard_title">Клавіатура</string>
     <string name="keyboard_option_default">За замовчуванням</string>
     <string name="keyboard_option_expanded">Розширена</string>
-    <string name="keyboard_summary_default">Лише цифри — компактна клавіатура калькулятора.</string>
-    <string name="keyboard_summary_expanded">Додає клавіші ± та операторів, щоб можна було рахувати просто на сумі.</string>
+    <string name="keyboard_summary_default">Цифри, десятковий роздільник та оператори (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Додає клавіші 00, 000 та % для швидшого введення великих сум і відсотків.</string>
     <string name="decimal_places_title">Десяткова точність</string>
     <string name="decimal_places_summary">Кількість десяткових знаків, що показуються для конвертованих значень.</string>
     <string name="haptic_feedback_title">Тактильний відгук</string>

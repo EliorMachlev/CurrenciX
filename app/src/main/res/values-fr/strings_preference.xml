@@ -29,8 +29,8 @@
     <string name="keyboard_title">Clavier</string>
     <string name="keyboard_option_default">Par défaut</string>
     <string name="keyboard_option_expanded">Étendu</string>
-    <string name="keyboard_summary_default">Chiffres uniquement — le clavier compact de la calculatrice.</string>
-    <string name="keyboard_summary_expanded">Ajoute les touches ± et opérateurs pour calculer directement sur le montant.</string>
+    <string name="keyboard_summary_default">Chiffres, séparateur décimal et opérateurs (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Ajoute les touches 00, 000 et % pour saisir plus vite les montants élevés et les pourcentages.</string>
     <string name="decimal_places_title">Précision décimale</string>
     <string name="decimal_places_summary">Nombre de décimales à afficher pour les valeurs converties.</string>
     <string name="haptic_feedback_title">Retour haptique</string>

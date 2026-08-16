@@ -29,8 +29,8 @@
     <string name="keyboard_title">Klavaro</string>
     <string name="keyboard_option_default">Implicita</string>
     <string name="keyboard_option_expanded">Etendita</string>
-    <string name="keyboard_summary_default">Nur ciferoj — la kompakta klavaro de la kalkulilo.</string>
-    <string name="keyboard_summary_expanded">Aldonas la klavojn ± kaj operaciilojn por kalkuli rekte sur la sumo.</string>
+    <string name="keyboard_summary_default">Ciferoj, dekuma disigilo kaj operaciiloj (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Aldonas klavojn 00, 000 kaj % por pli rapida enigo de grandaj sumoj kaj procentoj.</string>
     <string name="decimal_places_title">Decimala precizeco</string>
     <string name="decimal_places_summary">Nombro de decimalaj lokoj montrataj por konvertitaj valoroj.</string>
     <string name="haptic_feedback_title">Hapta reago</string>

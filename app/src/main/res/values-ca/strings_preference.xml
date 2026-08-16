@@ -29,8 +29,8 @@
     <string name="keyboard_title">Teclat</string>
     <string name="keyboard_option_default">Per defecte</string>
     <string name="keyboard_option_expanded">Expandit</string>
-    <string name="keyboard_summary_default">Només nombres — el teclat compacte de la calculadora.</string>
-    <string name="keyboard_summary_expanded">Afegeix les tecles ± i d\'operadors perquè puguis calcular directament sobre l\'import.</string>
+    <string name="keyboard_summary_default">Xifres, separador decimal i operadors (+ − × ÷).</string>
+    <string name="keyboard_summary_expanded">Afegeix les tecles 00, 000 i % per introduir més ràpidament imports grans i percentatges.</string>
     <string name="decimal_places_title">Precisió decimal</string>
     <string name="decimal_places_summary">Nombre de decimals a mostrar per als valors convertits.</string>
     <string name="haptic_feedback_title">Resposta tàctil</string>
