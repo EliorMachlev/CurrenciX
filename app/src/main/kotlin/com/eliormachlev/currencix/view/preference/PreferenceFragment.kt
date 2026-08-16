@@ -26,6 +26,7 @@ import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.URL_REPO
+import com.eliormachlev.currencix.util.asPreferenceSummary
 import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.view.main.MainActivity
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
@@ -149,7 +150,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private fun summaryForKeyboardType(type: Int): CharSequence {
         val options = keyboardOptions()
         val option = options.firstOrNull { it.first == type }?.second ?: options.first().second
-        return "${option.title}\n${option.description}"
+        return option.asPreferenceSummary()
     }
 
     private fun showKeyboardPickerDialog(onPicked: (Int) -> Unit) {

@@ -112,6 +112,13 @@ data class ChoiceOption(
 )
 
 /**
+ * Two-line summary suitable for a Preference row that mirrors a
+ * [showChoiceExplainerDialog] entry — keeps the row and the picker option
+ * visually and textually aligned.
+ */
+fun ChoiceOption.asPreferenceSummary(): CharSequence = "$title\n$description"
+
+/**
  * Radio-list picker dialog where every option carries a short explainer under
  * its title. Shared by the fee-side preference and the keyboard-style
  * preference so both single-choice pickers with descriptive options render
