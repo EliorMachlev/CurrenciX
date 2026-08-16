@@ -29,8 +29,8 @@
     <string name="keyboard_title">���盤</string>
     <string name="keyboard_option_default">預設</string>
     <string name="keyboard_option_expanded">擴展</string>
-    <string name="keyboard_summary_default">數字、小數分隔符與運算子 (+ − × ÷)。</string>
-    <string name="keyboard_summary_expanded">新增 00、000 與 % 鍵,更快輸入較大金額與百分比。</string>
+    <string name="keyboard_summary_default">標準計算機鍵盤。</string>
+    <string name="keyboard_summary_expanded">新增額外的快捷鍵,加快輸入速度。</string>
     <string name="decimal_places_title">小數精度</string>
     <string name="decimal_places_summary">轉換數值顯示的小數位數。</string>
     <string name="haptic_feedback_title">觸覺回饋</string>

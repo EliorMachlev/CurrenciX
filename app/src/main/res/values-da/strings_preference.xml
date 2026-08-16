@@ -30,8 +30,8 @@
     <string name="keyboard_title">Tastatur</string>
     <string name="keyboard_option_default">Standard</string>
     <string name="keyboard_option_expanded">Udvidet</string>
-    <string name="keyboard_summary_default">Cifre, decimaltegn og operatorer (+ − × ÷).</string>
-    <string name="keyboard_summary_expanded">Tilføjer 00-, 000- og %-taster til hurtigere indtastning af store beløb og procenter.</string>
+    <string name="keyboard_summary_default">Standardtastatur til lommeregner.</string>
+    <string name="keyboard_summary_expanded">Tilføjer ekstra genvejstaster for hurtigere indtastning.</string>
     <string name="decimal_places_title">Decimalnøjagtighed</string>
     <string name="decimal_places_summary">Antal decimaler, der vises for konverterede værdier.</string>
     <string name="haptic_feedback_title">Haptisk feedback</string>

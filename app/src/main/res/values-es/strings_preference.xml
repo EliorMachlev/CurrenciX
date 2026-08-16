@@ -29,8 +29,8 @@
     <string name="keyboard_title">Teclado</string>
     <string name="keyboard_option_default">Predeterminado</string>
     <string name="keyboard_option_expanded">Expandido</string>
-    <string name="keyboard_summary_default">Dígitos, separador decimal y operadores (+ − × ÷).</string>
-    <string name="keyboard_summary_expanded">Añade las teclas 00, 000 y % para introducir más rápido importes grandes y porcentajes.</string>
+    <string name="keyboard_summary_default">Teclado estándar de la calculadora.</string>
+    <string name="keyboard_summary_expanded">Añade teclas de acceso rápido adicionales para introducir datos más rápido.</string>
     <string name="decimal_places_title">Precisión decimal</string>
     <string name="decimal_places_summary">Número de decimales a mostrar en los valores convertidos.</string>
     <string name="haptic_feedback_title">Vibración táctil</string>

@@ -29,8 +29,8 @@
     <string name="keyboard_title">Klavye</string>
     <string name="keyboard_option_default">Varsayılan</string>
     <string name="keyboard_option_expanded">Genişletilmiş</string>
-    <string name="keyboard_summary_default">Rakamlar, ondalık ayırıcı ve işlem tuşları (+ − × ÷).</string>
-    <string name="keyboard_summary_expanded">Büyük tutarları ve yüzdeleri daha hızlı girmek için 00, 000 ve % tuşlarını ekler.</string>
+    <string name="keyboard_summary_default">Standart hesap makinesi tuş takımı.</string>
+    <string name="keyboard_summary_expanded">Daha hızlı giriş için ek kısayol tuşları ekler.</string>
     <string name="decimal_places_title">Ondalık doğruluk</string>
     <string name="decimal_places_summary">Dönüştürülmüş değerler için gösterilecek ondalık basamak sayısı.</string>
     <string name="haptic_feedback_title">Dokunsal geri bildirim</string>

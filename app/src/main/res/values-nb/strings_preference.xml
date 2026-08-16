@@ -29,8 +29,8 @@
     <string name="keyboard_title">Tastatur</string>
     <string name="keyboard_option_default">Standard</string>
     <string name="keyboard_option_expanded">Utvidet</string>
-    <string name="keyboard_summary_default">Sifre, desimaltegn og operatorer (+ − × ÷).</string>
-    <string name="keyboard_summary_expanded">Legger til 00-, 000- og %-taster for raskere inntasting av store beløp og prosenter.</string>
+    <string name="keyboard_summary_default">Standard kalkulatortastatur.</string>
+    <string name="keyboard_summary_expanded">Legger til flere hurtigtaster for raskere inntasting.</string>
     <string name="decimal_places_title">Desimalpresisjon</string>
     <string name="decimal_places_summary">Antall desimaler som vises for konverterte verdier.</string>
     <string name="haptic_feedback_title">Haptisk tilbakemelding</string>

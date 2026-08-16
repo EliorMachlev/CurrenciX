@@ -29,8 +29,8 @@
     <string name="keyboard_title">Tangentbord</string>
     <string name="keyboard_option_default">Standard</string>
     <string name="keyboard_option_expanded">Ut��kad</string>
-    <string name="keyboard_summary_default">Siffror, decimaltecken och operatorer (+ − × ÷).</string>
-    <string name="keyboard_summary_expanded">Lägger till 00-, 000- och %-tangenter för snabbare inmatning av stora belopp och procent.</string>
+    <string name="keyboard_summary_default">Standardtangentbord för miniräknare.</string>
+    <string name="keyboard_summary_expanded">Lägger till extra genvägstangenter för snabbare inmatning.</string>
     <string name="decimal_places_title">Decimalnoggrannhet</string>
     <string name="decimal_places_summary">Antal decimaler som visas för konverterade värden.</string>
     <string name="haptic_feedback_title">Haptisk återkoppling</string>

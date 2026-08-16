@@ -29,8 +29,8 @@
     <string name="keyboard_title">لوحة المفاتيح</string>
     <string name="keyboard_option_default">افتراضي</string>
     <string name="keyboard_option_expanded">موسّعة</string>
-    <string name="keyboard_summary_default">الأرقام والفاصلة العشرية والعمليات (+ − × ÷).</string>
-    <string name="keyboard_summary_expanded">يضيف مفاتيح 00 و000 و٪ لإدخال المبالغ الكبيرة والنسب المئوية بسرعة.</string>
+    <string name="keyboard_summary_default">لوحة مفاتيح الحاسبة القياسية.</string>
+    <string name="keyboard_summary_expanded">يضيف مفاتيح اختصار إضافية لإدخال أسرع.</string>
     <string name="decimal_places_title">دقة عشرية</string>
     <string name="decimal_places_summary">عدد المنازل العشرية المعروضة للقيم المحولة.</string>
     <string name="haptic_feedback_title">اهتزاز اللمس</string>
