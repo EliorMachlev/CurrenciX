@@ -29,6 +29,8 @@
     <string name="keyboard_title">കീബോർഡ്</string>
     <string name="keyboard_option_default">സ്ഥിരസ്ഥിതി</string>
     <string name="keyboard_option_expanded">വിപുലീകൃതം</string>
+    <string name="keyboard_summary_default">അക്കങ്ങൾ മാത്രം — സങ്ക്ഷിപ്ത കാൽക്കുലേറ്റർ കീപ്പാഡ്.</string>
+    <string name="keyboard_summary_expanded">± ഉം ഓപ്പറേറ്റർ കീകളും ചേർത്ത്, തുകയിൽ നേരിട്ട് കണക്കുകൂട്ടാം.</string>
     <string name="decimal_places_title">ദശാംശ കൃത്യത</string>
     <string name="decimal_places_summary">പരിവർത്തനം ചെയ്ത മൂല്യങ്ങൾക്ക് കാണിക്കേണ്ട ദശാംശ സ്ഥാനങ്ങളുടെ എണ്ണം.</string>
     <string name="haptic_feedback_title">ഹാപ്റ്റിക് ഫീഡ്‌ബാക്ക്</string>

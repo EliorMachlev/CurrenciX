@@ -29,6 +29,8 @@
     <string name="keyboard_title">Tastatur</string>
     <string name="keyboard_option_default">Standard</string>
     <string name="keyboard_option_expanded">Erweitert</string>
+    <string name="keyboard_summary_default">Nur Zahlen — die kompakte Rechnertastatur.</string>
+    <string name="keyboard_summary_expanded">Fügt ± und Operatortasten hinzu, damit du direkt am Betrag rechnen kannst.</string>
     <string name="decimal_places_title">Dezimalgenauigkeit</string>
     <string name="decimal_places_summary">Anzahl der Nachkommastellen bei umgerechneten Werten.</string>
     <string name="haptic_feedback_title">Haptisches Feedback</string>

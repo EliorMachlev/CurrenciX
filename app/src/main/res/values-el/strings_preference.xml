@@ -29,6 +29,8 @@
     <string name="keyboard_title">Πληκτρολόγιο</string>
     <string name="keyboard_option_default">Προεπιλογή</string>
     <string name="keyboard_option_expanded">Αναπτυγμένο</string>
+    <string name="keyboard_summary_default">Μόνο αριθμοί — το συμπαγές πληκτρολόγιο αριθμομηχανής.</string>
+    <string name="keyboard_summary_expanded">Προσθέτει τα πλήκτρα ± και τελεστών, ώστε να υπολογίζετε απευθείας πάνω στο ποσό.</string>
     <string name="decimal_places_title">Δεκαδική ακρίβεια</string>
     <string name="decimal_places_summary">Αριθμός δεκαδικών ψηφίων που εμφανίζονται για τις μετατραπείσες τιμές.</string>
     <string name="haptic_feedback_title">Απτική ανάδραση</string>

@@ -29,6 +29,8 @@
     <string name="keyboard_title">Toetsenbord</string>
     <string name="keyboard_option_default">Standaard</string>
     <string name="keyboard_option_expanded">Uitgebreid</string>
+    <string name="keyboard_summary_default">Alleen cijfers — het compacte rekenmachinetoetsenbord.</string>
+    <string name="keyboard_summary_expanded">Voegt ± en operatortoetsen toe zodat je direct op het bedrag kunt rekenen.</string>
     <string name="decimal_places_title">Decimale nauwkeurigheid</string>
     <string name="decimal_places_summary">Aantal decimalen dat wordt getoond bij geconverteerde waarden.</string>
     <string name="haptic_feedback_title">Haptische feedback</string>

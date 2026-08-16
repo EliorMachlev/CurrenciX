@@ -29,6 +29,8 @@
     <string name="keyboard_title">Billentyűzet</string>
     <string name="keyboard_option_default">Alapértelmezett</string>
     <string name="keyboard_option_expanded">Kibővített</string>
+    <string name="keyboard_summary_default">Csak számok — a kompakt számológép-billentyűzet.</string>
+    <string name="keyboard_summary_expanded">Hozzáad ± és műveleti gombokat, hogy közvetlenül az összegen számolhass.</string>
     <string name="decimal_places_title">Tizedes pontosság</string>
     <string name="decimal_places_summary">A megjelenített tizedesjegyek száma az átváltott értékeknél.</string>
     <string name="haptic_feedback_title">Haptikus visszajelzés</string>

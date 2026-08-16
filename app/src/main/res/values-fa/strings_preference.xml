@@ -29,6 +29,8 @@
     <string name="keyboard_title">صفحه‌کلید</string>
     <string name="keyboard_option_default">پیش‌فرض</string>
     <string name="keyboard_option_expanded">گسترده</string>
+    <string name="keyboard_summary_default">فقط اعداد — صفحه‌کلید فشرده ماشین‌حساب.</string>
+    <string name="keyboard_summary_expanded">کلیدهای ± و عملگرها را اضافه می‌کند تا مستقیماً روی مبلغ محاسبه کنید.</string>
     <string name="decimal_places_title">دقت اعشار</string>
     <string name="decimal_places_summary">تعداد ارقام اعشاری نمایش‌داده‌شده برای مقادیر تبدیل‌شده.</string>
     <string name="haptic_feedback_title">بازخورد لمسی</string>

@@ -29,6 +29,8 @@
     <string name="keyboard_title">Lyklaborð</string>
     <string name="keyboard_option_default">Sjálfgefið</string>
     <string name="keyboard_option_expanded">Stækkað</string>
+    <string name="keyboard_summary_default">Aðeins tölur — samþjappaða reiknivélarlyklaborðið.</string>
+    <string name="keyboard_summary_expanded">Bætir við ± og aðgerðatökkum svo þú getir reiknað beint á upphæðina.</string>
     <string name="decimal_places_title">Tugabrotanákvæmni</string>
     <string name="decimal_places_summary">Fjöldi aukastafa sem birtast fyrir umbreytt gildi.</string>
     <string name="haptic_feedback_title">Haptísk endurgjöf</string>

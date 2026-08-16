@@ -29,6 +29,8 @@
     <string name="keyboard_title">Tastiera</string>
     <string name="keyboard_option_default">Predefinito</string>
     <string name="keyboard_option_expanded">Espansa</string>
+    <string name="keyboard_summary_default">Solo numeri — la tastiera compatta della calcolatrice.</string>
+    <string name="keyboard_summary_expanded">Aggiunge i tasti ± e degli operatori per calcolare direttamente sull\'importo.</string>
     <string name="decimal_places_title">Precisione decimale</string>
     <string name="decimal_places_summary">Numero di decimali da mostrare per i valori convertiti.</string>
     <string name="haptic_feedback_title">Feedback tattile</string>
