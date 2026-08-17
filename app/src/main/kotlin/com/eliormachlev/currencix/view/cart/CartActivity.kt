@@ -36,6 +36,7 @@ import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
+import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.buildCartShareChooser
@@ -44,6 +45,7 @@ import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.paddedDialogContainer
+import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toCsv
@@ -145,6 +147,7 @@ class CartActivity : BaseActivity() {
     private val activeItemId = MutableLiveData<String?>(null)
     private val liveExpression = MutableLiveData("")
     private var activeStateObserver: Observer<String?>? = null
+    private var activeParenObserver: Observer<Char>? = null
     private var keypadBackCallback: OnBackPressedCallback? = null
 
     // Rising-edge latch for the IME-visibility guard; see [installImeVisibilityGuard].
@@ -889,11 +892,18 @@ class CartActivity : BaseActivity() {
         val observer = Observer<String?> { liveExpression.value = state.toExpressionString() }
         state.baseValueText.observeForever(observer)
         state.calculationValueText.observeForever(observer)
+        val parenObserver = Observer<Char> { next -> parenButton()?.paintParenCycle(next) }
+        state.nextParen.observeForever(parenObserver)
         activeCalculatorState = state
         activeItemId.value = itemId
         activeStateObserver = observer
+        activeParenObserver = parenObserver
         showKeypad()
     }
+
+    // The `()` cycle-toggle key on the extended keypad. Absent from the basic
+    // layout, so callers must tolerate null.
+    private fun parenButton(): AppCompatButton? = keypadExtended.findViewById(R.id.btn_parens)
 
     /** Hide the keypad and unbind whichever row was being edited. */
     fun closeKeypad() {
@@ -968,6 +978,13 @@ class CartActivity : BaseActivity() {
             state.baseValueText.removeObserver(observer)
             state.calculationValueText.removeObserver(observer)
         }
+        val parenObserver = activeParenObserver
+        if (state != null && parenObserver != null) {
+            state.nextParen.removeObserver(parenObserver)
+        }
+        // Reset the paren button to its rest state — `(` is the only sensible
+        // next glyph when no field is being edited.
+        parenButton()?.paintParenCycle('(')
         // Commit the current keypad expression to the VM so the row's
         // persisted value matches what the user just typed.
         val id = activeItemId.value
@@ -978,6 +995,7 @@ class CartActivity : BaseActivity() {
         activeCalculatorState = null
         activeItemId.value = null
         activeStateObserver = null
+        activeParenObserver = null
         liveExpression.value = ""
     }
 
@@ -1063,6 +1081,13 @@ class CartActivity : BaseActivity() {
 
     fun calculationEvent(view: View) = keypadEvent(view) { it.addOperator((view as AppCompatButton).text.toString()) }
 
+    // Cycle-toggle: dispatches to open or close paren based on the *current*
+    // state's next-paren hint (same rule the button's highlight is drawn from).
+    fun parensEvent(view: View) =
+        keypadEvent(view) { state ->
+            if (state.nextParen.value == ')') state.addCloseParen() else state.addOpenParen()
+        }
+
     // Every keypad button does the same two-step: haptic tap on the button,
     // then forward the action to whichever row's calculator state is active.
     private inline fun keypadEvent(
@@ -1086,16 +1111,16 @@ class CartActivity : BaseActivity() {
 private fun CalculatorInputState.seedExpression(expression: String) {
     val trimmed = expression.trim()
     if (trimmed.isEmpty()) return
-    if (!trimmed.contains(OPERATOR_REGEX)) {
+    if (!trimmed.contains(CALC_TOKEN_REGEX)) {
         replayDigits(trimmed)
         return
     }
-    // Split on operator boundaries while keeping operators as separate
-    // tokens — mirrors how the state serialises them back out.
+    // Split on operator/paren boundaries while keeping each structural token
+    // as its own entry — mirrors how the state serialises them back out.
     val tokens = mutableListOf<String>()
     val buf = StringBuilder()
     trimmed.forEach { ch ->
-        if (ch.toString().matches(OPERATOR_REGEX)) {
+        if (ch.toString().matches(CALC_TOKEN_REGEX)) {
             if (buf.isNotBlank()) tokens += buf.toString().trim()
             tokens += ch.toString()
             buf.clear()
@@ -1108,7 +1133,12 @@ private fun CalculatorInputState.seedExpression(expression: String) {
     // the first operator and the calculation row afterwards — so every
     // operand goes through the same path.
     tokens.forEach { token ->
-        if (token.matches(OPERATOR_REGEX)) addOperator(token) else replayDigits(token)
+        when {
+            token == "(" -> addOpenParen()
+            token == ")" -> addCloseParen()
+            token.matches(OPERATOR_REGEX) -> addOperator(token)
+            else -> replayDigits(token)
+        }
     }
 }
 
