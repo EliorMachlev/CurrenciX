@@ -29,6 +29,8 @@
     <string name="keyboard_title">键盘</string>
     <string name="keyboard_option_default">默认</string>
     <string name="keyboard_option_expanded">扩展</string>
+    <string name="keyboard_summary_default">标准计算器键盘。</string>
+    <string name="keyboard_summary_expanded">添加额外的快捷键,加快输入速度。</string>
     <string name="decimal_places_title">小数精度</string>
     <string name="decimal_places_summary">转换值显示的小数位数。</string>
     <string name="haptic_feedback_title">触感反馈</string>

@@ -26,10 +26,13 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.ChoiceOption
 import com.eliormachlev.currencix.util.applySelectableRowBackground
+import com.eliormachlev.currencix.util.asPreferenceSummary
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
+import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.google.android.material.button.MaterialButton
@@ -128,14 +131,18 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         )
     }
 
-    private fun feeSideLabels(side: FeeSide): Pair<String, String> =
+    private fun feeSideOption(side: FeeSide): ChoiceOption =
         when (side) {
             FeeSide.CONVERTED ->
-                getString(R.string.fee_side_converted) to
-                    getString(R.string.fee_side_summary_converted)
+                ChoiceOption(
+                    getString(R.string.fee_side_converted),
+                    getString(R.string.fee_side_summary_converted),
+                )
             else ->
-                getString(R.string.fee_side_original) to
-                    getString(R.string.fee_side_summary_original)
+                ChoiceOption(
+                    getString(R.string.fee_side_original),
+                    getString(R.string.fee_side_summary_original),
+                )
         }
 
     override fun onViewCreated(
@@ -160,49 +167,21 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             }
         }
 
-    private fun formatFeeSideSummary(side: FeeSide): CharSequence {
-        val (name, desc) = feeSideLabels(side)
-        return "$name\n$desc"
-    }
+    private fun formatFeeSideSummary(side: FeeSide): CharSequence = feeSideOption(side).asPreferenceSummary()
 
     private fun showFeeSideDialog(onPicked: (FeeSide) -> Unit) {
-        val ctx = requireContext()
-        val sides = arrayOf(FeeSide.ORIGINAL, FeeSide.CONVERTED)
+        val sides = listOf(FeeSide.ORIGINAL, FeeSide.CONVERTED)
         val current = db.getFeeSideBlocking()
-
-        val container = paddedDialogContainer(ctx)
-        val radios = mutableListOf<RadioButton>()
-        val dialogHolder = arrayOfNulls<AlertDialog>(1)
-
-        sides.forEachIndexed { index, side ->
-            val radio =
-                RadioButton(ctx).apply {
-                    isChecked = side == current
-                    isClickable = false
-                }
-            radios += radio
-            val (titleText, descText) = feeSideLabels(side)
-            container.addView(
-                choiceExplainerRow(
-                    ctx = ctx,
-                    title = titleText,
-                    description = descText,
-                    leadingView = radio,
-                ) {
-                    radios.forEachIndexed { i, r -> r.isChecked = i == index }
-                    db.setFeeSide(side)
-                    onPicked(side)
-                    dialogHolder[0]?.dismiss()
-                },
-            )
+        showChoiceExplainerDialog(
+            ctx = requireContext(),
+            titleRes = R.string.fee_side_label,
+            options = sides.map(::feeSideOption),
+            selectedIndex = sides.indexOf(current).coerceAtLeast(0),
+        ) { index ->
+            val side = sides[index]
+            db.setFeeSide(side)
+            onPicked(side)
         }
-
-        dialogHolder[0] =
-            MaterialAlertDialogBuilder(ctx)
-                .setTitle(R.string.fee_side_label)
-                .setView(container)
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
     }
 
     private fun buildGlobalSelectorPreference(

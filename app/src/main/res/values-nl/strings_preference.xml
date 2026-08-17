@@ -29,6 +29,8 @@
     <string name="keyboard_title">Toetsenbord</string>
     <string name="keyboard_option_default">Standaard</string>
     <string name="keyboard_option_expanded">Uitgebreid</string>
+    <string name="keyboard_summary_default">Standaard rekenmachinetoetsenbord.</string>
+    <string name="keyboard_summary_expanded">Voegt extra sneltoetsen toe voor snellere invoer.</string>
     <string name="decimal_places_title">Decimale nauwkeurigheid</string>
     <string name="decimal_places_summary">Aantal decimalen dat wordt getoond bij geconverteerde waarden.</string>
     <string name="haptic_feedback_title">Haptische feedback</string>

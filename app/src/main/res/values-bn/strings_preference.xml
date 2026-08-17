@@ -29,6 +29,8 @@
     <string name="keyboard_title">কীবোর্ড</string>
     <string name="keyboard_option_default">ডিফল্ট</string>
     <string name="keyboard_option_expanded">প্রসারিত</string>
+    <string name="keyboard_summary_default">আদর্শ ক্যালকুলেটর কীপ্যাড।</string>
+    <string name="keyboard_summary_expanded">দ্রুত ইনপুটের জন্য অতিরিক্ত শর্টকাট কী যোগ করে।</string>
     <string name="decimal_places_title">দশমিক নির্ভুলতা</string>
     <string name="decimal_places_summary">রূপান্তরিত মানের জন্য প্রদর্শিত দশমিক স্থানের সংখ্যা।</string>
     <string name="haptic_feedback_title">হ্যাপটিক ফিডব্যাক</string>

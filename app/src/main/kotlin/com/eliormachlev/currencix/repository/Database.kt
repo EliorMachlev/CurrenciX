@@ -52,6 +52,7 @@ private const val NO_HISTORICAL_DATE = -1L
 // Public keyboard-type sentinels shared by every consumer of [Database.getKeyboardType]
 // so the "basic vs extended" split is stated in exactly one place.
 const val KEYBOARD_TYPE_BASIC = 0
+const val KEYBOARD_TYPE_EXPANDED = 1
 
 class Database(
     private val context: Context,
@@ -562,6 +563,8 @@ class Database(
     }
 
     fun getKeyboardType(): LiveData<Int> = SharedPreferenceIntLiveData(prefs, keyKeyboardType, KEYBOARD_TYPE_BASIC)
+
+    fun getKeyboardTypeBlocking(): Int = prefs.getInt(keyKeyboardType, KEYBOARD_TYPE_BASIC)
 
     // haptic feedback
 

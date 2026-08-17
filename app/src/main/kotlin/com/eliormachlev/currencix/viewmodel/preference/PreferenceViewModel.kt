@@ -100,6 +100,8 @@ class PreferenceViewModel(
         db.setKeyboardType(type)
     }
 
+    fun getKeyboardTypeBlocking(): Int = db.getKeyboardTypeBlocking()
+
     fun setHapticFeedbackEnabled(enabled: Boolean) {
         db.setHapticFeedbackEnabled(enabled)
     }

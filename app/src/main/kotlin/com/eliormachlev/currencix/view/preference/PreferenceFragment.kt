@@ -19,10 +19,15 @@ import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
+import com.eliormachlev.currencix.util.ChoiceOption
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.URL_REPO
+import com.eliormachlev.currencix.util.asPreferenceSummary
+import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.view.main.MainActivity
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.widget.LongSummaryPreference
@@ -113,6 +118,55 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
     }
 
+    // Two-option picker rebuilt as a title-plus-explainer dialog (matching the
+    // Fee-side preference) so each option carries a short description instead
+    // of being a bare radio list.
+    private fun setupKeyboardPreference() {
+        val pref = findPreference<Preference>(getString(R.string.keyboard_key)) ?: return
+        pref.summary = summaryForKeyboardType(viewModel.getKeyboardTypeBlocking())
+        pref.setOnPreferenceClickListener {
+            showKeyboardPickerDialog { picked ->
+                viewModel.setKeyboardType(picked)
+                pref.summary = summaryForKeyboardType(picked)
+            }
+            true
+        }
+    }
+
+    private fun keyboardOptions(): List<Pair<Int, ChoiceOption>> =
+        listOf(
+            KEYBOARD_TYPE_BASIC to
+                ChoiceOption(
+                    getString(R.string.keyboard_option_default),
+                    getString(R.string.keyboard_summary_default),
+                ),
+            KEYBOARD_TYPE_EXPANDED to
+                ChoiceOption(
+                    getString(R.string.keyboard_option_expanded),
+                    getString(R.string.keyboard_summary_expanded),
+                ),
+        )
+
+    private fun summaryForKeyboardType(type: Int): CharSequence {
+        val options = keyboardOptions()
+        val option = options.firstOrNull { it.first == type }?.second ?: options.first().second
+        return option.asPreferenceSummary()
+    }
+
+    private fun showKeyboardPickerDialog(onPicked: (Int) -> Unit) {
+        val options = keyboardOptions()
+        val current = viewModel.getKeyboardTypeBlocking()
+        val selectedIndex = options.indexOfFirst { it.first == current }.coerceAtLeast(0)
+        showChoiceExplainerDialog(
+            ctx = requireContext(),
+            titleRes = R.string.keyboard_title,
+            options = options.map { it.second },
+            selectedIndex = selectedIndex,
+        ) { index ->
+            onPicked(options[index].first)
+        }
+    }
+
     private fun setupDisplayPreferences() {
         findPreference<SwitchPreferenceCompat>(getString(R.string.previewConversion_key))?.apply {
             setOnPreferenceChangeListener { _, newValue ->
@@ -120,12 +174,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 true
             }
         }
-        findPreference<ListPreference>(getString(R.string.keyboard_key))?.apply {
-            setOnPreferenceChangeListener { _, newValue ->
-                viewModel.setKeyboardType(newValue.toString().toIntOrNull() ?: 0)
-                true
-            }
-        }
+        setupKeyboardPreference()
         findPreference<ListPreference>(getString(R.string.decimal_places_key))?.apply {
             setOnPreferenceChangeListener { _, newValue ->
                 viewModel.setDecimalPlaces(

@@ -5,8 +5,12 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.RadioButton
 import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import com.eliormachlev.currencix.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 // Alpha used for the secondary explainer line beneath each choice-row title —
 // keeps the description visually subordinate to the title. Shared by the
@@ -96,4 +100,66 @@ fun choiceExplainerRow(
     row.addView(textCol, textLp)
     if (trailingView != null) row.addView(trailingView)
     return row
+}
+
+/**
+ * One entry in a [showChoiceExplainerDialog] — a title plus a one-line
+ * explainer of what picking it does.
+ */
+data class ChoiceOption(
+    val title: CharSequence,
+    val description: CharSequence,
+)
+
+/**
+ * Two-line summary suitable for a Preference row that mirrors a
+ * [showChoiceExplainerDialog] entry — keeps the row and the picker option
+ * visually and textually aligned.
+ */
+fun ChoiceOption.asPreferenceSummary(): CharSequence = "$title\n$description"
+
+/**
+ * Radio-list picker dialog where every option carries a short explainer under
+ * its title. Shared by the fee-side preference and the keyboard-style
+ * preference so both single-choice pickers with descriptive options render
+ * and behave identically.
+ */
+fun showChoiceExplainerDialog(
+    ctx: Context,
+    @StringRes titleRes: Int,
+    options: List<ChoiceOption>,
+    selectedIndex: Int,
+    onPicked: (Int) -> Unit,
+) {
+    val container = paddedDialogContainer(ctx)
+    val radios = mutableListOf<RadioButton>()
+    val dialogHolder = arrayOfNulls<AlertDialog>(1)
+
+    options.forEachIndexed { index, option ->
+        val radio =
+            RadioButton(ctx).apply {
+                isChecked = index == selectedIndex
+                isClickable = false
+            }
+        radios += radio
+        container.addView(
+            choiceExplainerRow(
+                ctx = ctx,
+                title = option.title,
+                description = option.description,
+                leadingView = radio,
+            ) {
+                radios.forEachIndexed { i, r -> r.isChecked = i == index }
+                onPicked(index)
+                dialogHolder[0]?.dismiss()
+            },
+        )
+    }
+
+    dialogHolder[0] =
+        MaterialAlertDialogBuilder(ctx)
+            .setTitle(titleRes)
+            .setView(container)
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
 }
