@@ -783,6 +783,10 @@ class MainViewModel(
 
     internal fun closeParen() = input.addCloseParen()
 
+    // Cycle-toggle for the shared `()` keypad button — inserts whichever
+    // glyph is currently highlighted.
+    internal fun applyNextParen() = input.applyNextParen()
+
     // Which paren the cycle-toggle keypad button should insert next — drives
     // the bold/green vs grey highlight on the two-glyph `()` button.
     internal fun nextParen(): LiveData<Char> = input.nextParen

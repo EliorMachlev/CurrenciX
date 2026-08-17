@@ -706,7 +706,7 @@ class MainActivity : BaseActivity() {
      */
     fun parensEvent(view: View) {
         haptic(view)
-        if (viewModel.nextParen().value == ')') viewModel.closeParen() else viewModel.openParen()
+        viewModel.applyNextParen()
     }
 
     // capture hardware keyboard input

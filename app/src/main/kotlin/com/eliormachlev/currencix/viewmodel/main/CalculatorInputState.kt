@@ -154,6 +154,15 @@ internal class CalculatorInputState {
         }
     }
 
+    // Cycle-toggle entry point for the shared `()` keypad button — dispatches
+    // to open/close using the same rule the button's highlight is drawn from,
+    // so pressing the button always inserts whichever glyph is highlighted.
+    // Recomputes fresh instead of reading `nextParen.value` so the dispatch
+    // stays correct even when the LiveData has no observers attached yet.
+    fun applyNextParen() {
+        if (nextParenFor(_calculationValueText.value) == ')') addCloseParen() else addOpenParen()
+    }
+
     fun addOperator(operator: String) {
         if (isInCalculationMode()) {
             val current = _calculationValueText.value!!

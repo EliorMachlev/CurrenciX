@@ -212,6 +212,27 @@ class CalculatorInputStateTest {
     }
 
     @Test
+    fun `applyNextParen cycles open then close then open`() {
+        val s = state()
+        // no calc yet → next=`(` → inserts `(`
+        s.applyNextParen()
+        assertEquals(PAREN_OPEN, s.calc)
+        // still `(` (no value inside yet, close not offered) → inserts another `(`
+        s.applyNextParen()
+        assertEquals(PAREN_OPEN + PAREN_OPEN, s.calc)
+        s.addNumber("3")
+        // now closable → inserts `)`
+        s.applyNextParen()
+        assertEquals("${PAREN_OPEN}${PAREN_OPEN}3$PAREN_CLOSE", s.calc)
+        // still one unclosed `(` and last is `)` → close again
+        s.applyNextParen()
+        assertEquals("${PAREN_OPEN}${PAREN_OPEN}3$PAREN_CLOSE$PAREN_CLOSE", s.calc)
+        // balanced → cycles back to `(`
+        s.applyNextParen()
+        assertEquals("${PAREN_OPEN}${PAREN_OPEN}3$PAREN_CLOSE$PAREN_CLOSE $OPERATOR_MULTIPLY $PAREN_OPEN", s.calc)
+    }
+
+    @Test
     fun `delete inside parenthesised expression keeps calc mode alive`() {
         val s = state()
         s.addOpenParen()

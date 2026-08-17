@@ -1081,12 +1081,7 @@ class CartActivity : BaseActivity() {
 
     fun calculationEvent(view: View) = keypadEvent(view) { it.addOperator((view as AppCompatButton).text.toString()) }
 
-    // Cycle-toggle: dispatches to open or close paren based on the *current*
-    // state's next-paren hint (same rule the button's highlight is drawn from).
-    fun parensEvent(view: View) =
-        keypadEvent(view) { state ->
-            if (state.nextParen.value == ')') state.addCloseParen() else state.addOpenParen()
-        }
+    fun parensEvent(view: View) = keypadEvent(view) { it.applyNextParen() }
 
     // Every keypad button does the same two-step: haptic tap on the button,
     // then forward the action to whichever row's calculator state is active.
