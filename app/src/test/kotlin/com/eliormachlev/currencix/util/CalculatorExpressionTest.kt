@@ -51,4 +51,24 @@ class CalculatorExpressionTest {
         listOf(OPERATOR_PLUS, OPERATOR_MINUS, OPERATOR_MULTIPLY, OPERATOR_DIVIDE)
             .forEach { assert(it.matches(OPERATOR_REGEX)) { "expected $it to match OPERATOR_REGEX" } }
     }
+
+    @Test
+    fun `parenthesised expression respects grouping`() {
+        assertEquals("108", "(100 ${OPERATOR_PLUS} 20) ${OPERATOR_MULTIPLY} 0.9".evaluateCalculatorExpression())
+    }
+
+    @Test
+    fun `unclosed parens are auto-closed at eval time`() {
+        // half-typed `(1+2` evaluates as `(1+2)` = 3 instead of falling back
+        assertEquals("3", "(1 ${OPERATOR_PLUS} 2".evaluateCalculatorExpression())
+        // multiple missing closers all get padded
+        assertEquals("6", "((1 ${OPERATOR_PLUS} 2) ${OPERATOR_MULTIPLY} 2".evaluateCalculatorExpression())
+    }
+
+    @Test
+    fun `calc token regex matches parens as well as operators`() {
+        assertEquals(true, "(".contains(CALC_TOKEN_REGEX))
+        assertEquals(true, ")".contains(CALC_TOKEN_REGEX))
+        assertEquals(true, OPERATOR_PLUS.contains(CALC_TOKEN_REGEX))
+    }
 }

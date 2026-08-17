@@ -5,6 +5,8 @@ import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
 import com.eliormachlev.currencix.util.OPERATOR_MINUS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
 import com.eliormachlev.currencix.util.OPERATOR_PLUS
+import com.eliormachlev.currencix.util.PAREN_CLOSE
+import com.eliormachlev.currencix.util.PAREN_OPEN
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -159,6 +161,65 @@ class CalculatorInputStateTest {
         s.addDecimal() // calc = "4 + 2."
         s.addOperator(OPERATOR_DIVIDE) // calc = "4 + 2 ÷ "
         assertEquals("4 $OPERATOR_PLUS 2 $OPERATOR_DIVIDE ", s.calc)
+    }
+
+    @Test
+    fun `open paren from zero base enters calc mode with just paren`() {
+        val s = state()
+        s.addOpenParen()
+        assertTrue(s.isInCalculationMode())
+        assertEquals(PAREN_OPEN, s.calc)
+        // no value inside yet — closing is not offered, cycle still shows `(`
+        assertEquals('(', s.nextParen.value)
+    }
+
+    @Test
+    fun `open paren after value inserts implicit multiplication`() {
+        val s = state()
+        s.addNumber("5")
+        s.addOpenParen()
+        assertEquals("5 $OPERATOR_MULTIPLY $PAREN_OPEN", s.calc)
+    }
+
+    @Test
+    fun `open paren after operator appends cleanly`() {
+        val s = state()
+        s.addNumber("5")
+        s.addOperator(OPERATOR_PLUS)
+        s.addOpenParen()
+        assertEquals("5 $OPERATOR_PLUS $PAREN_OPEN", s.calc)
+    }
+
+    @Test
+    fun `close paren is offered once expression is closable`() {
+        val s = state()
+        s.addOpenParen()
+        s.addNumber("2")
+        assertEquals(')', s.nextParen.value)
+        s.addCloseParen()
+        assertEquals("${PAREN_OPEN}2$PAREN_CLOSE", s.calc)
+        // once balanced, next cycles back to `(`
+        assertEquals('(', s.nextParen.value)
+    }
+
+    @Test
+    fun `close paren is ignored when nothing to close`() {
+        val s = state()
+        s.addNumber("2")
+        s.addOperator(OPERATOR_PLUS)
+        s.addCloseParen() // no unclosed `(` — should no-op
+        assertEquals("2 $OPERATOR_PLUS ", s.calc)
+    }
+
+    @Test
+    fun `delete inside parenthesised expression keeps calc mode alive`() {
+        val s = state()
+        s.addOpenParen()
+        s.addNumber("5")
+        s.delete()
+        // "5" gone, only `(` remains — but a paren counts as calc structure
+        assertTrue(s.isInCalculationMode())
+        assertEquals(PAREN_OPEN, s.calc)
     }
 
     @Test

@@ -461,6 +461,10 @@ class MainActivity : BaseActivity() {
         viewModel.getCurrentBaseValueAsNumber().observe(this) { spinnerTo.setCurrentSum(it) }
         viewModel.getResultAsNumber().observe(this) { spinnerFrom.setCurrentSum(it) }
         viewModel.isExtendedKeypadEnabled.observe(this) { observeKeypadState(it) }
+        viewModel.nextParen().observe(this) { next ->
+            val btn = findViewById<AppCompatButton>(R.id.btn_parens) ?: return@observe
+            renderParenButton(btn, next)
+        }
         viewModel.isHapticFeedbackEnabled.observe(this) { hapticEnabled = it }
         viewModel.getFeeSide().observe(this) { observeFeeSide(it) }
         viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
@@ -697,6 +701,39 @@ class MainActivity : BaseActivity() {
             ?.invoke(viewModel)
     }
 
+    /*
+     * keyboard: parentheses (cycle-toggle between `(` and `)`)
+     */
+    fun parensEvent(view: View) {
+        haptic(view)
+        if (viewModel.nextParen().value == ')') viewModel.closeParen() else viewModel.openParen()
+    }
+
+    // Repaint the `()` button so the glyph that *will* be inserted next lights
+    // up in bold + operator-green and the other sits in a muted secondary tone
+    // — the "which paren is armed" hint the issue asks for.
+    private fun renderParenButton(
+        button: AppCompatButton,
+        next: Char,
+    ) {
+        val activeColor = getColor(R.color.color_keypad_operators)
+        val mutedColor = resolveThemeColor(android.R.attr.textColorSecondary)
+        val activeIndex = if (next == '(') 0 else 1
+        val mutedIndex = 1 - activeIndex
+        button.text =
+            SpannableString(PAREN_BUTTON_LABEL).apply {
+                setSpan(ForegroundColorSpan(activeColor), activeIndex, activeIndex + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                setSpan(StyleSpan(Typeface.BOLD), activeIndex, activeIndex + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                setSpan(ForegroundColorSpan(mutedColor), mutedIndex, mutedIndex + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+    }
+
+    private fun resolveThemeColor(attr: Int): Int {
+        val tv = TypedValue()
+        theme.resolveAttribute(attr, tv, true)
+        return if (tv.resourceId != 0) getColor(tv.resourceId) else tv.data
+    }
+
     // capture hardware keyboard input
     override fun onKeyDown(
         keyCode: Int,
@@ -717,6 +754,8 @@ class MainActivity : BaseActivity() {
         when {
             key.isDigit() -> viewModel.addNumber(key.toString())
             key == '.' || key == ',' -> viewModel.addDecimal()
+            key == '(' -> viewModel.openParen()
+            key == ')' -> viewModel.closeParen()
             else -> return false
         }
         return true
@@ -792,6 +831,10 @@ class MainActivity : BaseActivity() {
         }
     }
 }
+
+// Both glyphs are drawn — one bold+green, one grey — so the button always
+// shows the pair while hinting which one will be inserted next.
+private const val PAREN_BUTTON_LABEL = "()"
 
 private const val WORDMARK_TITLE_SP = 26f
 
