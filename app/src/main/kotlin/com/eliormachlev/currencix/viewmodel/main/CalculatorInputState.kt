@@ -7,6 +7,7 @@ import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.PAREN_CLOSE
 import com.eliormachlev.currencix.util.PAREN_OPEN
+import com.eliormachlev.currencix.util.unclosedParens
 
 /**
  * Holds the mutable keypad state — the lower "base" row and the optional upper
@@ -27,21 +28,17 @@ internal class CalculatorInputState {
     val baseValueText: LiveData<String?> = _baseValueText
     val calculationValueText: LiveData<String?> = _calculationValueText
 
-    // Which glyph the paren-cycle button should insert next — `(` while the
-    // expression is either empty or in a position where an operand may start,
-    // `)` once there is an unclosed `(` and the trailing token is value-like.
-    // Seeded with `(` up-front and driven from `setCalc` (not `Transformations.map`
-    // or `MediatorLiveData.addSource`) so the value stays current even when no
-    // observer is attached — otherwise the button's XML `textColor` leaves both
-    // glyphs painted green at rest before the first observation.
-    private val _nextParen = MutableLiveData('(')
+    // Driven from `setCalc` (not `LiveData.map` / `MediatorLiveData.addSource`)
+    // so the value stays current even without an active observer — otherwise
+    // the button's XML `textColor` paints both glyphs green at rest and unit
+    // tests reading `.value` see null.
+    private val _nextParen = MutableLiveData(nextParenFor(null))
     val nextParen: LiveData<Char> = _nextParen
 
-    // Single write path for the calculation row so `_nextParen` never lags —
-    // every mutation must go through here.
     private fun setCalc(value: String?) {
         _calculationValueText.value = value
-        _nextParen.value = nextParenFor(value)
+        val newParen = nextParenFor(value)
+        if (_nextParen.value != newParen) _nextParen.value = newParen
     }
 
     fun isInCalculationMode(): Boolean = _calculationValueText.value.isNullOrBlank().not()
@@ -156,7 +153,7 @@ internal class CalculatorInputState {
         // a completed value — refuse `(` -> `()` or `5+` -> `5+)` so unbalanced
         // junk never enters the expression
         val trimmed = current.trimEnd()
-        if (unclosedParens(current) > 0 && isCompletedValueTail(trimmed.lastOrNull())) {
+        if (current.unclosedParens() > 0 && isCompletedValueTail(trimmed.lastOrNull())) {
             setCalc(trimmed + PAREN_CLOSE)
         }
     }
@@ -164,10 +161,8 @@ internal class CalculatorInputState {
     // Cycle-toggle entry point for the shared `()` keypad button — dispatches
     // to open/close using the same rule the button's highlight is drawn from,
     // so pressing the button always inserts whichever glyph is highlighted.
-    // Recomputes fresh instead of reading `nextParen.value` so the dispatch
-    // stays correct even when the LiveData has no observers attached yet.
     fun applyNextParen() {
-        if (nextParenFor(_calculationValueText.value) == ')') addCloseParen() else addOpenParen()
+        if (_nextParen.value == ')') addCloseParen() else addOpenParen()
     }
 
     fun addOperator(operator: String) {
@@ -195,7 +190,7 @@ internal class CalculatorInputState {
 
     private fun nextParenFor(calc: String?): Char {
         if (calc.isNullOrBlank()) return '('
-        val canClose = unclosedParens(calc) > 0 && isCompletedValueTail(calc.trimEnd().lastOrNull())
+        val canClose = calc.unclosedParens() > 0 && isCompletedValueTail(calc.trimEnd().lastOrNull())
         return if (canClose) ')' else '('
     }
 
@@ -210,6 +205,4 @@ internal class CalculatorInputState {
     private fun isValueContinuationTail(c: Char?): Boolean = isCompletedValueTail(c) || c == '.'
 
     private fun withImplicitMultBeforeOpen(prefix: String): String = "$prefix $OPERATOR_MULTIPLY $PAREN_OPEN"
-
-    private fun unclosedParens(s: String): Int = s.count { it == '(' } - s.count { it == ')' }
 }

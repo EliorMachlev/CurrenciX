@@ -106,6 +106,18 @@ private fun String.padTrailingToken(): String {
 // have already been normalised to ASCII) and appends the missing `)`s so a
 // half-typed expression still evaluates instead of collapsing to FALLBACK.
 private fun String.closeUnbalancedParens(): String {
-    val missing = count { it == '(' } - count { it == ')' }
+    val missing = unclosedParens()
     return if (missing > 0) this + ")".repeat(missing) else this
 }
+
+// Balance-count of `(` minus `)`. Positive = `(`s waiting to be closed;
+// negative = extra `)`s (rejected upstream, so callers can treat <=0 as
+// "already balanced"). One-pass fold keeps it cheap on the keystroke path.
+internal fun String.unclosedParens(): Int =
+    fold(0) { n, c ->
+        when (c) {
+            '(' -> n + 1
+            ')' -> n - 1
+            else -> n
+        }
+    }
