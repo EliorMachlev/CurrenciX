@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.viewmodel.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
@@ -31,9 +30,19 @@ internal class CalculatorInputState {
     // Which glyph the paren-cycle button should insert next — `(` while the
     // expression is either empty or in a position where an operand may start,
     // `)` once there is an unclosed `(` and the trailing token is value-like.
-    // Derived from calculationValueText so the button lights up automatically
-    // as the user types, without a separate counter to keep in sync.
-    val nextParen: LiveData<Char> = _calculationValueText.map { nextParenFor(it) }
+    // Seeded with `(` up-front and driven from `setCalc` (not `Transformations.map`
+    // or `MediatorLiveData.addSource`) so the value stays current even when no
+    // observer is attached — otherwise the button's XML `textColor` leaves both
+    // glyphs painted green at rest before the first observation.
+    private val _nextParen = MutableLiveData('(')
+    val nextParen: LiveData<Char> = _nextParen
+
+    // Single write path for the calculation row so `_nextParen` never lags —
+    // every mutation must go through here.
+    private fun setCalc(value: String?) {
+        _calculationValueText.value = value
+        _nextParen.value = nextParenFor(value)
+    }
 
     fun isInCalculationMode(): Boolean = _calculationValueText.value.isNullOrBlank().not()
 
@@ -45,16 +54,16 @@ internal class CalculatorInputState {
                 // last input was "0": replace it with any other number
                 lastToken == "0" -> {
                     if (value != "0" && value != "00" && value != "000") {
-                        _calculationValueText.value = current.trim().dropLast(1) + value
+                        setCalc(current.trim().dropLast(1) + value)
                     }
                 }
                 // last input was an operator: collapse "00"/"000" down to "0"
                 current.split(" ").last().isEmpty() &&
                     (value == "00" || value == "000") -> {
-                    _calculationValueText.value = current + "0"
+                    setCalc(current + "0")
                 }
                 else -> {
-                    _calculationValueText.value = current + value
+                    setCalc(current + value)
                 }
             }
         } else {
@@ -76,12 +85,11 @@ internal class CalculatorInputState {
 
     fun addPercent() {
         if (!isInCalculationMode()) {
-            _calculationValueText.value = _baseValueText.value
+            setCalc(_baseValueText.value)
         }
         val current = _calculationValueText.value?.trim() ?: return
         if (current.isNotEmpty() && (current.last().isDigit() || current.last() == '.')) {
-            _calculationValueText.value =
-                if (current.last() == '.') current.dropLast(1) + "%" else current + "%"
+            setCalc(if (current.last() == '.') current.dropLast(1) + "%" else current + "%")
         }
     }
 
@@ -91,7 +99,7 @@ internal class CalculatorInputState {
             if (!current.substringAfterLast(" ").contains(".")) {
                 // if last char is not a number: add 0 first
                 val prefix = if (!current.trim().last().isDigit()) current + "0" else current
-                _calculationValueText.value = "$prefix."
+                setCalc("$prefix.")
             }
         } else {
             val current = _baseValueText.value!!
@@ -108,8 +116,7 @@ internal class CalculatorInputState {
             if (next.isNotEmpty() && next.last().isDigit()) next = next.trim()
             // drop back to base row only once no operator or paren remains —
             // otherwise `(5)` deleting to `(` would collapse and lose the paren
-            _calculationValueText.value =
-                if (!next.contains(CALC_TOKEN_REGEX)) null else next
+            setCalc(if (!next.contains(CALC_TOKEN_REGEX)) null else next)
         } else {
             val current = _baseValueText.value!!
             if (current.length > 1) {
@@ -122,7 +129,7 @@ internal class CalculatorInputState {
 
     fun clear() {
         _baseValueText.value = "0"
-        _calculationValueText.value = null
+        setCalc(null)
     }
 
     fun addOpenParen() {
@@ -130,16 +137,16 @@ internal class CalculatorInputState {
             // seed calc row from base like operators do; drop base "0" so the
             // user gets a clean `(` instead of `0 × (`
             val base = _baseValueText.value.orEmpty()
-            _calculationValueText.value =
-                if (base.isEmpty() || base == "0") PAREN_OPEN else withImplicitMultBeforeOpen(base)
+            setCalc(if (base.isEmpty() || base == "0") PAREN_OPEN else withImplicitMultBeforeOpen(base))
             return
         }
         val current = _calculationValueText.value!!
         val trimmed = current.trimEnd()
         // after a value-continuation token (digit, `)`, `%`, `.`) insert an
         // implicit multiplication so EvalEx sees `5*(...)` instead of parse error
-        _calculationValueText.value =
-            if (isValueContinuationTail(trimmed.lastOrNull())) withImplicitMultBeforeOpen(trimmed) else current + PAREN_OPEN
+        setCalc(
+            if (isValueContinuationTail(trimmed.lastOrNull())) withImplicitMultBeforeOpen(trimmed) else current + PAREN_OPEN,
+        )
     }
 
     fun addCloseParen() {
@@ -150,7 +157,7 @@ internal class CalculatorInputState {
         // junk never enters the expression
         val trimmed = current.trimEnd()
         if (unclosedParens(current) > 0 && isCompletedValueTail(trimmed.lastOrNull())) {
-            _calculationValueText.value = trimmed + PAREN_CLOSE
+            setCalc(trimmed + PAREN_CLOSE)
         }
     }
 
@@ -170,19 +177,19 @@ internal class CalculatorInputState {
             when {
                 // already an operator at the end: swap it
                 lastChar.toString().matches(OPERATOR_REGEX) -> {
-                    _calculationValueText.value = current.trim().dropLast(1) + "$operator "
+                    setCalc(current.trim().dropLast(1) + "$operator ")
                 }
                 // trailing '.': drop it, then append operator
                 lastChar == '.' -> {
-                    _calculationValueText.value = current.trim().dropLast(1) + " $operator "
+                    setCalc(current.trim().dropLast(1) + " $operator ")
                 }
                 else -> {
-                    _calculationValueText.value = current.trim() + " $operator "
+                    setCalc(current.trim() + " $operator ")
                 }
             }
         } else {
             // switch to calculation mode, seeded from the base row
-            _calculationValueText.value = _baseValueText.value + " $operator "
+            setCalc(_baseValueText.value + " $operator ")
         }
     }
 
