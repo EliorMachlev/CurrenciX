@@ -167,6 +167,17 @@ class CartViewModel(
         mutate { cart -> cart.copy(items = cart.items.filter { it.id != id }) }
     }
 
+    fun togglePinned(id: String) {
+        mutate { cart ->
+            cart.copy(
+                items =
+                    cart.items.map {
+                        if (it.id == id) it.copy(pinned = !it.pinned) else it
+                    },
+            )
+        }
+    }
+
     fun setBaseCurrency(currency: Currency) {
         mutate { it.copy(currency = currency.iso4217Alpha()) }
     }

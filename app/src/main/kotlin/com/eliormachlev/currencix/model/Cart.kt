@@ -5,11 +5,16 @@ package com.eliormachlev.currencix.model
  * [expression] like `"1.99"`, `"2 × 3.50"`, or `"10 + 5%"`. The expression
  * is stored verbatim so the user can re-edit it — evaluation happens at
  * display time via `String.evaluateCalculatorExpression()`.
+ *
+ * [pinned] items float to the top of the list at render time (sort happens
+ * in the composable, not in storage) so the user's underlying insertion /
+ * reorder order is preserved when they toggle pins on and off.
  */
 data class CartItem(
     val id: String,
     val name: String,
     val expression: String,
+    val pinned: Boolean = false,
 )
 
 /**

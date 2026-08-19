@@ -244,6 +244,10 @@ class CartActivity : BaseActivity() {
                     itemsView.hapticTap(hapticEnabled)
                     openKeypadFor(item.id, item.expression)
                 },
+                onTogglePin = { id ->
+                    itemsView.hapticTap(hapticEnabled)
+                    viewModel.togglePinned(id)
+                },
                 onDelete = { id ->
                     itemsView.hapticTap(hapticEnabled)
                     if (activeItemId.value == id) closeKeypad()

@@ -21,6 +21,7 @@ internal const val CART_KEY_FEE_SIDE = "feeSide"
 internal const val CART_ITEM_KEY_ID = "id"
 internal const val CART_ITEM_KEY_NAME = "name"
 internal const val CART_ITEM_KEY_EXPR = "expression"
+internal const val CART_ITEM_KEY_PINNED = "pinned"
 
 internal fun serializeCart(cart: SavedCart): JSONObject =
     JSONObject().apply {
@@ -43,6 +44,9 @@ private fun serializeCartItem(item: CartItem): JSONObject =
         put(CART_ITEM_KEY_ID, item.id)
         put(CART_ITEM_KEY_NAME, item.name)
         put(CART_ITEM_KEY_EXPR, item.expression)
+        // Only write the pin flag when set — keeps legacy-shape parity for
+        // unpinned rows and shrinks the on-disk payload for typical carts.
+        if (item.pinned) put(CART_ITEM_KEY_PINNED, true)
     }
 
 internal fun parseCart(obj: JSONObject?): SavedCart? {
@@ -82,6 +86,9 @@ private fun parseCartItem(obj: JSONObject?): CartItem? {
         id = obj.optString(CART_ITEM_KEY_ID, "").ifEmpty { UUID.randomUUID().toString() },
         name = obj.optString(CART_ITEM_KEY_NAME, ""),
         expression = obj.optString(CART_ITEM_KEY_EXPR, ""),
+        // Legacy payloads pre-pin default to false (matches the class-level
+        // default) so an old cart on disk round-trips as unpinned.
+        pinned = obj.optBoolean(CART_ITEM_KEY_PINNED, false),
     )
 }
 
