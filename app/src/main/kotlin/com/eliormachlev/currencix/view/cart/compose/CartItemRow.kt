@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,11 +58,13 @@ fun CartItemRow(
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
     onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    dragHandleModifier: Modifier = Modifier,
 ) {
     val displayedExpression = if (isActive) liveExpression.orEmpty() else item.expression
     OutlinedCard(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.margin1x)),
         border = rowBorder(isActive),
@@ -74,6 +77,7 @@ fun CartItemRow(
                     .padding(dimensionResource(id = R.dimen.margin1x)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            DragHandle(modifier = dragHandleModifier)
             Column(modifier = Modifier.weight(1f)) {
                 NameField(
                     initial = item.name,
@@ -97,6 +101,16 @@ fun CartItemRow(
             }
         }
     }
+}
+
+@Composable
+private fun DragHandle(modifier: Modifier = Modifier) {
+    Icon(
+        imageVector = Icons.Filled.DragHandle,
+        contentDescription = stringResource(id = R.string.cart_reorder_item),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.padding(end = dimensionResource(id = R.dimen.margin1x)),
+    )
 }
 
 @Composable

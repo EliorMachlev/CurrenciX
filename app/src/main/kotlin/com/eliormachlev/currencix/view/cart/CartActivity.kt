@@ -235,6 +235,18 @@ class CartActivity : BaseActivity() {
                     pendingNames.remove(id)
                     viewModel.removeItem(id)
                 },
+                onReorder = { fromId, toId ->
+                    itemsView.hapticTap(hapticEnabled)
+                    viewModel.reorderItem(fromId, toId)
+                },
+                onReorderStart = {
+                    // A drag doesn't interact well with a floating keypad — the
+                    // row being edited would slide out from under the caret.
+                    // Commit the current edit and close before the gesture takes
+                    // over the visible list.
+                    itemsView.hapticTap(hapticEnabled)
+                    closeKeypad()
+                },
             )
         }
 
