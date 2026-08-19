@@ -42,7 +42,7 @@ fun CartItemsList(
         ) {
             items(items = items, key = { it.id }) { item ->
                 val isActive = item.id == activeId
-                CartItemRow(
+                SwipeableCartItemRow(
                     item = item,
                     currency = currency,
                     isActive = isActive,
@@ -51,6 +51,7 @@ fun CartItemsList(
                     onNamePending = { onNamePending(item.id, it) },
                     onExpressionTap = { onExpressionTap(item) },
                     onDelete = { onDelete(item.id) },
+                    modifier = Modifier.animateItem(),
                 )
             }
         }
