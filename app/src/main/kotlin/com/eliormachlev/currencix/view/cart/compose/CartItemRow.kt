@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CardDefaults
@@ -79,8 +80,10 @@ fun SwipeableCartItemRow(
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
+    onTogglePin: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
+    dragHandleModifier: Modifier = Modifier,
 ) {
     val dismissState =
         rememberSwipeToDismissBoxState(
@@ -108,7 +111,9 @@ fun SwipeableCartItemRow(
             onNameCommit = onNameCommit,
             onNamePending = onNamePending,
             onExpressionTap = onExpressionTap,
+            onTogglePin = onTogglePin,
             onDelete = onDelete,
+            dragHandleModifier = dragHandleModifier,
         )
     }
 }
@@ -150,11 +155,13 @@ fun CartItemRow(
     onExpressionTap: () -> Unit,
     onTogglePin: () -> Unit,
     onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    dragHandleModifier: Modifier = Modifier,
 ) {
     val displayedExpression = if (isActive) liveExpression.orEmpty() else item.expression
     OutlinedCard(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.margin1x)),
         border = rowBorder(isActive),
@@ -167,6 +174,7 @@ fun CartItemRow(
                     .padding(dimensionResource(id = R.dimen.margin1x)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            DragHandle(modifier = dragHandleModifier)
             PinToggle(pinned = item.pinned, onToggle = onTogglePin)
             Column(modifier = Modifier.weight(1f)) {
                 NameField(
@@ -217,6 +225,16 @@ private fun PinToggle(
                 },
         )
     }
+}
+
+@Composable
+private fun DragHandle(modifier: Modifier = Modifier) {
+    Icon(
+        imageVector = Icons.Filled.DragHandle,
+        contentDescription = stringResource(id = R.string.cart_reorder_item),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.padding(end = dimensionResource(id = R.dimen.margin1x)),
+    )
 }
 
 @Composable

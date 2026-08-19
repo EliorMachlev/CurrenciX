@@ -65,6 +65,7 @@
     <string name="cart_delete_item">Delete item</string>
     <string name="cart_pin_item">Pin item to top</string>
     <string name="cart_unpin_item">Unpin item</string>
+    <string name="cart_reorder_item">Reorder item</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
     <string name="cart_fee_line">Fees: %s%%</string>

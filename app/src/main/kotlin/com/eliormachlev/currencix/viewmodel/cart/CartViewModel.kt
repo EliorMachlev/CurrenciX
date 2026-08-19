@@ -178,6 +178,29 @@ class CartViewModel(
         }
     }
 
+    /**
+     * Move the item identified by [fromId] to the current position of [toId].
+     * No-op if either id is missing or the ids are the same — the caller (a
+     * drag-reorder gesture) is expected to fire this even when the user
+     * releases without moving, and we don't want to churn the LiveData or
+     * disk write on a no-op.
+     */
+    fun reorderItem(
+        fromId: String,
+        toId: String,
+    ) {
+        if (fromId == toId) return
+        mutate { cart ->
+            val fromIdx = cart.items.indexOfFirst { it.id == fromId }
+            val toIdx = cart.items.indexOfFirst { it.id == toId }
+            if (fromIdx < 0 || toIdx < 0) return@mutate cart
+            val reordered = cart.items.toMutableList()
+            val moved = reordered.removeAt(fromIdx)
+            reordered.add(toIdx, moved)
+            cart.copy(items = reordered)
+        }
+    }
+
     fun setBaseCurrency(currency: Currency) {
         mutate { it.copy(currency = currency.iso4217Alpha()) }
     }
