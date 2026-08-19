@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.view.main.spinner
 
 import android.content.Context
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +45,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -64,7 +62,11 @@ import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
+import com.eliormachlev.currencix.view.compose.DRAG_REORDER_ACTIVE_ALPHA
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.dragReorderHandle
+import com.eliormachlev.currencix.view.compose.rememberDragReorderState
+import com.eliormachlev.currencix.view.compose.translationYFor
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -72,7 +74,6 @@ private const val FLAG_WIDTH_DP = 24
 private const val FLAG_HEIGHT_DP = 17
 private const val FLAG_CORNER_RADIUS_DP = 2
 private const val ROW_MIN_HEIGHT_DP = 56
-private const val DRAG_ELEVATION_ALPHA = 0.85f
 private const val API_HINT_ALPHA = 0.7f
 
 // Alpha for a currency row that can't be picked in the current context
@@ -311,26 +312,12 @@ private fun FavoritesSection(
     onStarClicked: (Rate) -> Unit,
     onDragEnded: () -> Unit,
 ) {
-    var draggingIndex by remember { mutableStateOf<Int?>(null) }
-    var targetIndex by remember { mutableStateOf<Int?>(null) }
-    var dragOffsetY by remember { mutableStateOf(0f) }
-    val density = LocalDensity.current
-    val rowHeightPx = with(density) { ROW_MIN_HEIGHT_DP.dp.toPx() }
+    val drag = rememberDragReorderState()
+    val rowHeightPx = with(LocalDensity.current) { ROW_MIN_HEIGHT_DP.dp.toPx() }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         items.forEachIndexed { index, rate ->
             key(rate.currency.name) {
-                val isDragging = draggingIndex == index
-                val currentIndex by rememberUpdatedState(index)
-                val src = draggingIndex
-                val tgt = targetIndex
-                val translation =
-                    when {
-                        isDragging -> dragOffsetY
-                        src != null && tgt != null && src < tgt && index in (src + 1)..tgt -> -rowHeightPx
-                        src != null && tgt != null && src > tgt && index in tgt until src -> rowHeightPx
-                        else -> 0f
-                    }
                 CurrencyRow(
                     rate = rate,
                     isStarred = true,
@@ -342,50 +329,24 @@ private fun FavoritesSection(
                         Modifier
                             .fillMaxWidth()
                             .graphicsLayer {
-                                translationY = translation
-                                if (isDragging) alpha = DRAG_ELEVATION_ALPHA
+                                translationY = drag.translationYFor(index, rowHeightPx)
+                                if (drag.draggingIndex == index) alpha = DRAG_REORDER_ACTIVE_ALPHA
                             }.then(
                                 if (allowReorder) {
-                                    Modifier.pointerInput(allowReorder) {
-                                        detectDragGesturesAfterLongPress(
-                                            onDragStart = {
-                                                draggingIndex = currentIndex
-                                                targetIndex = currentIndex
-                                                dragOffsetY = 0f
-                                            },
-                                            onDragEnd = {
-                                                val s = draggingIndex
-                                                val t = targetIndex
-                                                if (s != null &&
-                                                    t != null &&
-                                                    s != t &&
-                                                    s in items.indices &&
-                                                    t in items.indices
-                                                ) {
-                                                    Snapshot.withMutableSnapshot {
-                                                        val moved = items.removeAt(s)
-                                                        items.add(t, moved)
-                                                    }
-                                                }
-                                                draggingIndex = null
-                                                targetIndex = null
-                                                dragOffsetY = 0f
-                                                onDragEnded()
-                                            },
-                                            onDragCancel = {
-                                                draggingIndex = null
-                                                targetIndex = null
-                                                dragOffsetY = 0f
-                                            },
-                                            onDrag = { change, dragAmount ->
-                                                change.consume()
-                                                dragOffsetY += dragAmount.y
-                                                val s = draggingIndex ?: return@detectDragGesturesAfterLongPress
-                                                val delta = kotlin.math.round(dragOffsetY / rowHeightPx).toInt()
-                                                targetIndex = (s + delta).coerceIn(0, items.lastIndex)
-                                            },
-                                        )
-                                    }
+                                    Modifier.dragReorderHandle(
+                                        state = drag,
+                                        index = index,
+                                        key = rate.currency.name,
+                                        rowHeightPx = rowHeightPx,
+                                        itemCount = { items.size },
+                                        onCommit = { from, to ->
+                                            Snapshot.withMutableSnapshot {
+                                                val moved = items.removeAt(from)
+                                                items.add(to, moved)
+                                            }
+                                            onDragEnded()
+                                        },
+                                    )
                                 } else {
                                     Modifier
                                 },

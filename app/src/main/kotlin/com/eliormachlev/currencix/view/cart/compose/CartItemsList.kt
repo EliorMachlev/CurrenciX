@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.cart.compose
 
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,12 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
@@ -22,33 +17,16 @@ import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.DRAG_REORDER_ACTIVE_ALPHA
+import com.eliormachlev.currencix.view.compose.dragReorderHandle
+import com.eliormachlev.currencix.view.compose.rememberDragReorderState
+import com.eliormachlev.currencix.view.compose.translationYFor
 
 // Nominal row height used to translate finger travel into "how many rows have
 // I dragged past". Cart rows aren't uniform (name + expression + preview), but
 // this gives a good-enough delta for a snap-to-slot reorder feel; the actual
 // list re-lays out via LazyColumn animateItem() once the drop commits.
 private val REORDER_ROW_HEIGHT = 96.dp
-private const val REORDER_DRAG_ALPHA = 0.85f
-
-// State bag for an in-progress drag. Kept as a single class (rather than four
-// loose `mutableStateOf`s) so per-frame `dragOffsetY` writes stay scoped to
-// the draw-phase `graphicsLayer` lambda instead of invalidating every row's
-// composition. Reads inside a `graphicsLayer { ... }` block subscribe at the
-// draw layer, not the composition layer — the classic Compose "read state
-// late" perf trick.
-private class DragState {
-    var draggingId by mutableStateOf<String?>(null)
-    var draggingIndex by mutableStateOf<Int?>(null)
-    var targetIndex by mutableStateOf<Int?>(null)
-    var offsetY by mutableStateOf(0f)
-
-    fun reset() {
-        draggingId = null
-        draggingIndex = null
-        targetIndex = null
-        offsetY = 0f
-    }
-}
 
 @Composable
 @Suppress("LongParameterList")
@@ -71,12 +49,14 @@ fun CartItemsList(
         val liveExpression by activeExpressionSource.observeAsState(initial = "")
 
         val rowHeightPx = with(LocalDensity.current) { REORDER_ROW_HEIGHT.toPx() }
-        val drag = remember { DragState() }
+        val drag = rememberDragReorderState()
 
-        // Drop the drag if the item disappears (delete, cart reload) mid-gesture.
+        // Drop the drag if the dragged row disappears mid-gesture (delete,
+        // cart reload) — the pointer input can't cancel itself when its item
+        // is removed from the LazyColumn.
         LaunchedEffect(items) {
-            val id = drag.draggingId ?: return@LaunchedEffect
-            if (items.none { it.id == id }) drag.reset()
+            val src = drag.draggingIndex ?: return@LaunchedEffect
+            if (src !in items.indices) drag.reset()
         }
 
         LazyColumn(
@@ -101,70 +81,22 @@ fun CartItemsList(
                     modifier =
                         Modifier
                             .animateItem()
-                            // Reading DragState fields inside this lambda keeps
-                            // per-frame drag updates in the draw phase — rows
-                            // don't recompose, they just re-draw at a new Y.
                             .graphicsLayer {
-                                val isDragging = drag.draggingId == item.id
-                                translationY = dragTranslationY(drag, index, rowHeightPx, isDragging)
-                                if (isDragging) alpha = REORDER_DRAG_ALPHA
+                                translationY = drag.translationYFor(index, rowHeightPx)
+                                if (drag.draggingIndex == index) alpha = DRAG_REORDER_ACTIVE_ALPHA
                             },
                     dragHandleModifier =
-                        Modifier.pointerInput(item.id) {
-                            detectDragGesturesAfterLongPress(
-                                onDragStart = {
-                                    onReorderStart()
-                                    drag.draggingId = item.id
-                                    drag.draggingIndex = index
-                                    drag.targetIndex = index
-                                    drag.offsetY = 0f
-                                },
-                                onDragEnd = {
-                                    val movedId = drag.draggingId
-                                    val src = drag.draggingIndex
-                                    val dst = drag.targetIndex
-                                    if (movedId != null &&
-                                        src != null &&
-                                        dst != null &&
-                                        src != dst &&
-                                        dst in items.indices
-                                    ) {
-                                        onReorder(movedId, items[dst].id)
-                                    }
-                                    drag.reset()
-                                },
-                                onDragCancel = { drag.reset() },
-                                onDrag = { change, dragAmount ->
-                                    change.consume()
-                                    drag.offsetY += dragAmount.y
-                                    val src = drag.draggingIndex ?: return@detectDragGesturesAfterLongPress
-                                    val delta = kotlin.math.round(drag.offsetY / rowHeightPx).toInt()
-                                    drag.targetIndex = (src + delta).coerceIn(0, items.lastIndex)
-                                },
-                            )
-                        },
+                        Modifier.dragReorderHandle(
+                            state = drag,
+                            index = index,
+                            key = item.id,
+                            rowHeightPx = rowHeightPx,
+                            itemCount = { items.size },
+                            onStart = onReorderStart,
+                            onCommit = { from, to -> onReorder(items[from].id, items[to].id) },
+                        ),
                 )
             }
         }
-    }
-}
-
-// How far a row at [index] should be shifted while another row is being
-// dragged. The dragged row itself follows the finger (dragOffsetY); every row
-// between old and new slots slides one row-height in the opposite direction
-// to open the gap.
-private fun dragTranslationY(
-    drag: DragState,
-    index: Int,
-    rowHeightPx: Float,
-    isDragging: Boolean,
-): Float {
-    if (isDragging) return drag.offsetY
-    val src = drag.draggingIndex ?: return 0f
-    val dst = drag.targetIndex ?: return 0f
-    return when {
-        src < dst && index in (src + 1)..dst -> -rowHeightPx
-        src > dst && index in dst until src -> rowHeightPx
-        else -> 0f
     }
 }
