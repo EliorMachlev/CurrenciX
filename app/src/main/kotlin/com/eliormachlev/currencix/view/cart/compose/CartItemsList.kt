@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.LiveData
@@ -24,6 +25,7 @@ fun CartItemsList(
     onNameCommit: (id: String, name: String) -> Unit,
     onNamePending: (id: String, name: String) -> Unit,
     onExpressionTap: (item: CartItem) -> Unit,
+    onTogglePin: (id: String) -> Unit,
     onDelete: (id: String) -> Unit,
 ) {
     AppTheme {
@@ -31,6 +33,10 @@ fun CartItemsList(
         val currency by currencySource.observeAsState(initial = "")
         val activeId by activeItemIdSource.observeAsState()
         val liveExpression by activeExpressionSource.observeAsState(initial = "")
+        // Sort pinned-first at render time so the underlying storage order is
+        // preserved when the user toggles pins on and off. `sortedByDescending`
+        // is stable, so items within each partition keep their relative order.
+        val displayItems = remember(items) { items.sortedByDescending { it.pinned } }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -40,7 +46,7 @@ fun CartItemsList(
                     vertical = dimensionResource(id = R.dimen.margin1x),
                 ),
         ) {
-            items(items = items, key = { it.id }) { item ->
+            items(items = displayItems, key = { it.id }) { item ->
                 val isActive = item.id == activeId
                 CartItemRow(
                     item = item,
@@ -50,6 +56,7 @@ fun CartItemsList(
                     onNameCommit = { onNameCommit(item.id, it) },
                     onNamePending = { onNamePending(item.id, it) },
                     onExpressionTap = { onExpressionTap(item) },
+                    onTogglePin = { onTogglePin(item.id) },
                     onDelete = { onDelete(item.id) },
                 )
             }

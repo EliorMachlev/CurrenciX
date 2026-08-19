@@ -12,6 +12,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,6 +58,7 @@ fun CartItemRow(
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
+    onTogglePin: () -> Unit,
     onDelete: () -> Unit,
 ) {
     val displayedExpression = if (isActive) liveExpression.orEmpty() else item.expression
@@ -74,6 +77,7 @@ fun CartItemRow(
                     .padding(dimensionResource(id = R.dimen.margin1x)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            PinToggle(pinned = item.pinned, onToggle = onTogglePin)
             Column(modifier = Modifier.weight(1f)) {
                 NameField(
                     initial = item.name,
@@ -96,6 +100,32 @@ fun CartItemRow(
                 )
             }
         }
+    }
+}
+
+// Pin affordance — filled heart when pinned (primary tint), empty heart
+// otherwise (onSurfaceVariant tint). Same drawable pair the currency
+// picker uses for its favorites toggle, so users read the two the same
+// way. Lives on the row's leading edge, opposite the delete button.
+@Composable
+private fun PinToggle(
+    pinned: Boolean,
+    onToggle: () -> Unit,
+) {
+    IconButton(onClick = onToggle) {
+        Icon(
+            imageVector = if (pinned) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription =
+                stringResource(
+                    id = if (pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
+                ),
+            tint =
+                if (pinned) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+        )
     }
 }
 
