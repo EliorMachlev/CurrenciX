@@ -123,6 +123,20 @@
             app:layout_constraintStart_toEndOf="@id/btn_9"
             app:layout_constraintTop_toTopOf="@+id/btn_7" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_parens"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:onClick="parensEvent"
+            android:text="()"
+            android:textAppearance="@style/AppTheme.TextAppearance.Keypad"
+            android:textColor="@color/color_keypad_operators"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_6"
+            app:layout_constraintTop_toTopOf="@+id/btn_6" />
+
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_delete"
             android:layout_width="0dp"
@@ -132,10 +146,10 @@
             android:longClickable="true"
             android:onClick="deleteEvent"
             android:src="@drawable/ic_backspace"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_4"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_000"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_6"
-            app:layout_constraintTop_toTopOf="@+id/btn_4" />
+            app:layout_constraintStart_toEndOf="@id/btn_000"
+            app:layout_constraintTop_toTopOf="@+id/btn_000" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_4"
@@ -172,7 +186,7 @@
             android:text="6"
             android:textAppearance="@style/AppTheme.TextAppearance.Keypad"
             app:layout_constraintBottom_toBottomOf="@id/btn_4"
-            app:layout_constraintEnd_toStartOf="@id/btn_delete"
+            app:layout_constraintEnd_toStartOf="@id/btn_parens"
             app:layout_constraintStart_toEndOf="@id/btn_5"
             app:layout_constraintTop_toTopOf="@id/btn_4" />
 
@@ -211,7 +225,7 @@
             android:text="3"
             android:textAppearance="@style/AppTheme.TextAppearance.Keypad"
             app:layout_constraintBottom_toBottomOf="@+id/btn_1"
-            app:layout_constraintEnd_toStartOf="@id/btn_delete"
+            app:layout_constraintEnd_toStartOf="@id/btn_decimal"
             app:layout_constraintStart_toEndOf="@id/btn_2"
             app:layout_constraintTop_toTopOf="@+id/btn_1" />
 
@@ -250,7 +264,7 @@
             android:text="000"
             android:textAppearance="@style/AppTheme.TextAppearance.Keypad"
             app:layout_constraintBottom_toBottomOf="@+id/btn_0"
-            app:layout_constraintEnd_toStartOf="@+id/btn_decimal"
+            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
             app:layout_constraintStart_toEndOf="@+id/btn_00"
             app:layout_constraintTop_toTopOf="@+id/btn_0" />
 
@@ -262,9 +276,9 @@
             android:onClick="decimalEvent"
             android:text="."
             android:textAppearance="@style/AppTheme.TextAppearance.Keypad"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_0"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btn_000"
-            app:layout_constraintTop_toTopOf="@+id/btn_0" />
+            app:layout_constraintStart_toEndOf="@+id/btn_3"
+            app:layout_constraintTop_toTopOf="@+id/btn_1" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

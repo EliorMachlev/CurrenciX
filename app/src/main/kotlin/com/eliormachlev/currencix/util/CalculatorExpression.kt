@@ -11,6 +11,12 @@ const val OPERATOR_MINUS = "\u2212" // − (minus sign, not hyphen)
 const val OPERATOR_MULTIPLY = "\u00D7" // ×
 const val OPERATOR_DIVIDE = "\u00F7" // ÷
 
+// Parentheses use plain ASCII in both display and evaluator — no glyph
+// normalisation needed. Kept as constants so the paren-cycle button, the
+// state-machine, and the auto-close padder all agree on the same character.
+const val PAREN_OPEN = "("
+const val PAREN_CLOSE = ")"
+
 // Single source of truth pairing each display glyph with the ASCII operator
 // EvalEx understands. Drives both [OPERATOR_REGEX] and [normaliseGlyphsToAscii]
 // so adding an operator is a one-line change instead of three coordinated ones.
@@ -25,6 +31,11 @@ private val DISPLAY_TO_ASCII: Map<String, String> =
     )
 
 val OPERATOR_REGEX = Regex("[${DISPLAY_TO_ASCII.keys.joinToString("")}]")
+
+// Any character that means "the calculation row still has structure worth
+// keeping" — operators plus parentheses. Used by delete() to decide whether a
+// trimmed calc string can drop back to base row, or must stay in calc mode.
+val CALC_TOKEN_REGEX = Regex("[${DISPLAY_TO_ASCII.keys.joinToString("")}()]")
 
 // Returned whenever the expression can't be evaluated (parse error, division
 // by zero, unbalanced parens, …). Keeps the UI contract stable across parser
@@ -57,6 +68,7 @@ fun String.evaluateCalculatorExpression(): String {
         normaliseGlyphsToAscii()
             .expandPercent()
             .padTrailingToken()
+            .closeUnbalancedParens()
     // EvalEx.evaluate() throws checked ParseException/EvaluationException
     // (parse errors, unbalanced parens, division by zero, …). Every failure
     // collapses to FALLBACK_RESULT — same contract the UI relied on with
@@ -89,3 +101,23 @@ private fun String.padTrailingToken(): String {
     val neutral = TRAILING_TOKEN_PADDING[trim().lastOrNull()] ?: return this
     return this + neutral
 }
+
+// Auto-close support: `(1+2` evaluates as `(1+2)`. Counts unclosed `(` (that
+// have already been normalised to ASCII) and appends the missing `)`s so a
+// half-typed expression still evaluates instead of collapsing to FALLBACK.
+private fun String.closeUnbalancedParens(): String {
+    val missing = unclosedParens()
+    return if (missing > 0) this + ")".repeat(missing) else this
+}
+
+// Balance-count of `(` minus `)`. Positive = `(`s waiting to be closed;
+// negative = extra `)`s (rejected upstream, so callers can treat <=0 as
+// "already balanced"). One-pass fold keeps it cheap on the keystroke path.
+internal fun String.unclosedParens(): Int =
+    fold(0) { n, c ->
+        when (c) {
+            '(' -> n + 1
+            ')' -> n - 1
+            else -> n
+        }
+    }

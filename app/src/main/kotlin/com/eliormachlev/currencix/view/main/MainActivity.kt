@@ -46,6 +46,7 @@ import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
+import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
@@ -461,6 +462,9 @@ class MainActivity : BaseActivity() {
         viewModel.getCurrentBaseValueAsNumber().observe(this) { spinnerTo.setCurrentSum(it) }
         viewModel.getResultAsNumber().observe(this) { spinnerFrom.setCurrentSum(it) }
         viewModel.isExtendedKeypadEnabled.observe(this) { observeKeypadState(it) }
+        viewModel.nextParen().observe(this) { next ->
+            findViewById<AppCompatButton>(R.id.btn_parens)?.paintParenCycle(next)
+        }
         viewModel.isHapticFeedbackEnabled.observe(this) { hapticEnabled = it }
         viewModel.getFeeSide().observe(this) { observeFeeSide(it) }
         viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
@@ -697,6 +701,14 @@ class MainActivity : BaseActivity() {
             ?.invoke(viewModel)
     }
 
+    /*
+     * keyboard: parentheses (cycle-toggle between `(` and `)`)
+     */
+    fun parensEvent(view: View) {
+        haptic(view)
+        viewModel.applyNextParen()
+    }
+
     // capture hardware keyboard input
     override fun onKeyDown(
         keyCode: Int,
@@ -717,6 +729,8 @@ class MainActivity : BaseActivity() {
         when {
             key.isDigit() -> viewModel.addNumber(key.toString())
             key == '.' || key == ',' -> viewModel.addDecimal()
+            key == '(' -> viewModel.openParen()
+            key == ')' -> viewModel.closeParen()
             else -> return false
         }
         return true
