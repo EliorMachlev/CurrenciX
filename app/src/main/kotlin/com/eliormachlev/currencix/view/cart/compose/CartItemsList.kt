@@ -19,6 +19,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
+import com.eliormachlev.currencix.view.compose.onBackgroundTap
 import com.eliormachlev.currencix.view.compose.rememberDragReorderState
 
 // Nominal row height used to translate finger travel into "how many rows have
@@ -41,6 +42,7 @@ fun CartItemsList(
     onDelete: (id: String) -> Unit,
     onReorder: (fromId: String, toId: String) -> Unit,
     onReorderStart: () -> Unit,
+    onBackgroundTap: () -> Unit,
 ) {
     AppTheme {
         val items by itemsSource.observeAsState(initial = emptyList())
@@ -63,8 +65,14 @@ fun CartItemsList(
             if (src !in displayItems.indices) drag.reset()
         }
 
+        // Rows consume taps on the expression, pin toggle, and name field;
+        // anything left over (blank space below the last row, blank card
+        // padding on a row) dismisses whatever keyboard is up.
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .onBackgroundTap(onBackgroundTap),
             contentPadding =
                 PaddingValues(
                     horizontal = dimensionResource(id = R.dimen.margin1x),
