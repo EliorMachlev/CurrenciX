@@ -266,6 +266,7 @@ class CartActivity : BaseActivity() {
                     itemsView.hapticTap(hapticEnabled)
                     closeKeypad()
                 },
+                onBackgroundTap = ::dismissKeyboards,
             )
         }
 
@@ -1044,30 +1045,28 @@ class CartActivity : BaseActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
-    // Extended-detector for outside taps: closes the app keypad when it's
-    // up, and symmetrically dismisses the system IME when a name field is
-    // focused. In both cases "outside" means "not on a row" (rows own their
-    // own click handlers — a row tap may swap the active field instead of
-    // closing) and, for the app-keypad case, "not on the keypad itself".
+    // Outside-tap detector for regions that live *outside* the items
+    // ComposeView (toolbar area, totals card / add-item button when the IME
+    // is up and the keypad is down). Taps *inside* the items view — including
+    // the blank space below the last row — are handled by the composable-side
+    // background-tap detector in [CartItemsList], which knows exactly which
+    // taps rows consumed. This handler keeps a short debounce on the keypad
+    // path so a tap that lands just outside the ComposeView on a row that's
+    // about to swap active state doesn't close prematurely.
     private fun handleOutsideTap(ev: MotionEvent) {
         val x = ev.rawX.toInt()
         val y = ev.rawY.toInt()
         val itemsRect = Rect().also(itemsView::getGlobalVisibleRect)
+        if (itemsRect.contains(x, y)) return
         if (keypadContainer.visibility == View.VISIBLE) {
             val keypadRect = Rect().also(keypadContainer::getGlobalVisibleRect)
-            if (!keypadRect.contains(x, y) && !itemsRect.contains(x, y)) {
-                val stillOn = activeItemId.value
-                keypadContainer.postDelayed({
-                    if (activeItemId.value == stillOn && stillOn != null) closeKeypad()
-                }, OUTSIDE_TAP_DEBOUNCE_MS)
-            }
-        } else if (systemImeVisible && !itemsRect.contains(x, y)) {
-            // A name field has focus (system IME is up). Match the app
-            // keypad's outside-tap behaviour so both keyboards dismiss the
-            // same way — tap the totals card / add button / blank area and
-            // the IME goes down and the field loses focus.
-            hideSystemIme()
-            currentFocus?.clearFocus()
+            if (keypadRect.contains(x, y)) return
+            val stillOn = activeItemId.value
+            keypadContainer.postDelayed({
+                if (activeItemId.value == stillOn && stillOn != null) closeKeypad()
+            }, OUTSIDE_TAP_DEBOUNCE_MS)
+        } else if (systemImeVisible) {
+            dismissKeyboards()
         }
     }
 
@@ -1139,6 +1138,18 @@ class CartActivity : BaseActivity() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
         val token = currentFocus?.windowToken ?: window.decorView.windowToken ?: return
         imm.hideSoftInputFromWindow(token, 0)
+    }
+
+    // Single "get rid of whichever keyboard is up" entry point, shared by the
+    // outside-tap detector in [dispatchTouchEvent] and the composable-side
+    // background-tap detector inside [CartItemsList]. Both keyboards are
+    // handled together so callers don't need to know which one is visible.
+    private fun dismissKeyboards() {
+        if (keypadContainer.visibility == View.VISIBLE) closeKeypad()
+        if (systemImeVisible) {
+            hideSystemIme()
+            currentFocus?.clearFocus()
+        }
     }
 
     // Cancel every row's pending debounce and push its current buffer to the

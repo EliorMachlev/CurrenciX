@@ -1,5 +1,7 @@
 package com.eliormachlev.currencix.view.cart.compose
 
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
@@ -41,6 +44,7 @@ fun CartItemsList(
     onDelete: (id: String) -> Unit,
     onReorder: (fromId: String, toId: String) -> Unit,
     onReorderStart: () -> Unit,
+    onBackgroundTap: () -> Unit,
 ) {
     AppTheme {
         val items by itemsSource.observeAsState(initial = emptyList())
@@ -63,41 +67,58 @@ fun CartItemsList(
             if (src !in displayItems.indices) drag.reset()
         }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding =
-                PaddingValues(
-                    horizontal = dimensionResource(id = R.dimen.margin1x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
-                ),
+        // Background tap detector: any tap that no row (or child of a row)
+        // consumes falls through to this pointerInput. Rows already consume
+        // taps on the expression, pin toggle, and name field — what remains
+        // are taps on the empty area below the last row or on a row's own
+        // blank card padding, both of which should dismiss the app keypad /
+        // system IME. Compose's gesture arbitration handles the "did any
+        // child consume?" question for us so the activity doesn't have to
+        // guess by coordinates.
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = { onBackgroundTap() })
+                    },
         ) {
-            itemsIndexed(items = displayItems, key = { _, it -> it.id }) { index, item ->
-                val isActive = item.id == activeId
-                SwipeableCartItemRow(
-                    item = item,
-                    currency = currency,
-                    isActive = isActive,
-                    liveExpression = if (isActive) liveExpression else null,
-                    onNameCommit = { onNameCommit(item.id, it) },
-                    onNamePending = { onNamePending(item.id, it) },
-                    onExpressionTap = { onExpressionTap(item) },
-                    onTogglePin = { onTogglePin(item.id) },
-                    onDelete = { onDelete(item.id) },
-                    modifier =
-                        Modifier
-                            .animateItem()
-                            .dragReorderGraphics(drag, index, rowHeightPx),
-                    dragHandleModifier =
-                        Modifier.dragReorderHandle(
-                            state = drag,
-                            index = index,
-                            key = item.id,
-                            rowHeightPx = rowHeightPx,
-                            itemCount = { displayItems.size },
-                            onStart = onReorderStart,
-                            onCommit = { from, to -> onReorder(displayItems[from].id, displayItems[to].id) },
-                        ),
-                )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding =
+                    PaddingValues(
+                        horizontal = dimensionResource(id = R.dimen.margin1x),
+                        vertical = dimensionResource(id = R.dimen.margin1x),
+                    ),
+            ) {
+                itemsIndexed(items = displayItems, key = { _, it -> it.id }) { index, item ->
+                    val isActive = item.id == activeId
+                    SwipeableCartItemRow(
+                        item = item,
+                        currency = currency,
+                        isActive = isActive,
+                        liveExpression = if (isActive) liveExpression else null,
+                        onNameCommit = { onNameCommit(item.id, it) },
+                        onNamePending = { onNamePending(item.id, it) },
+                        onExpressionTap = { onExpressionTap(item) },
+                        onTogglePin = { onTogglePin(item.id) },
+                        onDelete = { onDelete(item.id) },
+                        modifier =
+                            Modifier
+                                .animateItem()
+                                .dragReorderGraphics(drag, index, rowHeightPx),
+                        dragHandleModifier =
+                            Modifier.dragReorderHandle(
+                                state = drag,
+                                index = index,
+                                key = item.id,
+                                rowHeightPx = rowHeightPx,
+                                itemCount = { displayItems.size },
+                                onStart = onReorderStart,
+                                onCommit = { from, to -> onReorder(displayItems[from].id, displayItems[to].id) },
+                            ),
+                    )
+                }
             }
         }
     }
