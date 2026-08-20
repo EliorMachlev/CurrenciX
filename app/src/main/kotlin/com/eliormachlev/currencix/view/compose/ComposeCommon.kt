@@ -1,6 +1,12 @@
 package com.eliormachlev.currencix.view.compose
 
 import android.widget.ImageView
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -36,5 +42,28 @@ fun CurrencyFlagImage(
 fun Ltr(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         content()
+    }
+}
+
+// Filled-vs-outlined heart IconButton used for the picker's star toggle and
+// the cart's pin toggle. Same drawable pair, same tint semantics, so both
+// sites read the same way to users.
+@Composable
+fun FavoriteToggleIcon(
+    active: Boolean,
+    contentDescription: String?,
+    onClick: () -> Unit,
+) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = if (active) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = contentDescription,
+            tint =
+                if (active) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+        )
     }
 }

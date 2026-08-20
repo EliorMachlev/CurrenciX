@@ -1,24 +1,30 @@
 package com.eliormachlev.currencix.view.cart.compose
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -39,12 +46,92 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
 
 private const val NAME_EDIT_DEBOUNCE_MS = 300L
 private const val ROW_PREVIEW_SCALE = 2
 private val FIELD_MIN_HEIGHT = 48.dp
+
+// Distance from the trailing edge to the trashcan icon when the row slides.
+// Matches Material's SwipeToDismiss sample so the icon reads as "emerging"
+// from the row rather than pinned to the screen edge.
+private val SWIPE_ICON_TRAILING_PADDING = 24.dp
+
+/**
+ * Wrap [CartItemRow] in a Material3 [SwipeToDismissBox] so a trailing-edge
+ * swipe (right-to-left in LTR, left-to-right in RTL) reveals a red delete
+ * background and, past the dismissal threshold, calls [onDelete] — the
+ * same code path the explicit delete button uses. Rows in edit mode
+ * ([isActive]) reject the gesture so the user can't wipe out a row
+ * while typing into it; the existing button is left in place as an
+ * always-available fallback.
+ */
+@Composable
+@Suppress("LongParameterList")
+fun SwipeableCartItemRow(
+    item: CartItem,
+    currency: String,
+    isActive: Boolean,
+    liveExpression: String?,
+    onNameCommit: (String) -> Unit,
+    onNamePending: (String) -> Unit,
+    onExpressionTap: () -> Unit,
+    onTogglePin: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    dragHandleModifier: Modifier = Modifier,
+) {
+    val dismissState = rememberSwipeToDismissBoxState()
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) onDelete()
+    }
+    SwipeToDismissBox(
+        state = dismissState,
+        backgroundContent = { SwipeDeleteBackground(dismissState) },
+        enableDismissFromStartToEnd = false,
+        enableDismissFromEndToStart = !isActive,
+        modifier = modifier,
+    ) {
+        CartItemRow(
+            item = item,
+            currency = currency,
+            isActive = isActive,
+            liveExpression = liveExpression,
+            onNameCommit = onNameCommit,
+            onNamePending = onNamePending,
+            onExpressionTap = onExpressionTap,
+            onTogglePin = onTogglePin,
+            dragHandleModifier = dragHandleModifier,
+        )
+    }
+}
+
+@Composable
+private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
+    // Only paint the background once the swipe is active — otherwise the
+    // OutlinedCard's ambient background would show red rectangles behind
+    // every row at rest.
+    val active = state.dismissDirection == SwipeToDismissBoxValue.EndToStart
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(dimensionResource(id = R.dimen.margin1x))
+                .background(if (active) MaterialTheme.colorScheme.error else Color.Transparent),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
+        if (active) {
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = stringResource(id = R.string.cart_delete_item),
+                tint = MaterialTheme.colorScheme.onError,
+                modifier = Modifier.padding(end = SWIPE_ICON_TRAILING_PADDING),
+            )
+        }
+    }
+}
 
 @Composable
 @Suppress("LongParameterList")
@@ -56,12 +143,14 @@ fun CartItemRow(
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
-    onDelete: () -> Unit,
+    onTogglePin: () -> Unit,
+    modifier: Modifier = Modifier,
+    dragHandleModifier: Modifier = Modifier,
 ) {
     val displayedExpression = if (isActive) liveExpression.orEmpty() else item.expression
     OutlinedCard(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.margin1x)),
         border = rowBorder(isActive),
@@ -74,6 +163,7 @@ fun CartItemRow(
                     .padding(dimensionResource(id = R.dimen.margin1x)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            DragHandle(modifier = dragHandleModifier)
             Column(modifier = Modifier.weight(1f)) {
                 NameField(
                     initial = item.name,
@@ -89,14 +179,26 @@ fun CartItemRow(
                     currency = currency,
                 )
             }
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = stringResource(id = R.string.cart_delete_item),
-                )
-            }
+            FavoriteToggleIcon(
+                active = item.pinned,
+                contentDescription =
+                    stringResource(
+                        id = if (item.pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
+                    ),
+                onClick = onTogglePin,
+            )
         }
     }
+}
+
+@Composable
+private fun DragHandle(modifier: Modifier = Modifier) {
+    Icon(
+        imageVector = Icons.Filled.DragHandle,
+        contentDescription = stringResource(id = R.string.cart_reorder_item),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.padding(end = dimensionResource(id = R.dimen.margin1x)),
+    )
 }
 
 @Composable

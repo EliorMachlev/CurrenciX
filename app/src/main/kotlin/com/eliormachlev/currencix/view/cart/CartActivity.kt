@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -111,6 +112,11 @@ private const val KEYPAD_ANIM_MS = 180L
 // unwanted flicker.
 private const val OUTSIDE_TAP_DEBOUNCE_MS = 40L
 
+// Fraction of the keypad container's height a drag-down must clear before
+// release commits the dismissal. Below this we snap back — matches the
+// behaviour of Material bottom sheets.
+private const val KEYPAD_DRAG_DISMISS_FRACTION = 0.35f
+
 class CartActivity : BaseActivity() {
     private lateinit var viewModel: CartViewModel
     private lateinit var exporter: CartExporter
@@ -152,6 +158,15 @@ class CartActivity : BaseActivity() {
 
     // Rising-edge latch for the IME-visibility guard; see [installImeVisibilityGuard].
     private var systemImeVisible = false
+
+    // Drag-to-dismiss state — only meaningful once ACTION_DOWN lands inside
+    // the keypad and the pointer travels far enough downward to cross
+    // [touchSlop]. [keypadDragStartY] is null when no candidate gesture is
+    // being tracked; [keypadDragActive] flips true once slop is crossed and
+    // the child buttons have been sent an ACTION_CANCEL.
+    private var keypadDragStartY: Float? = null
+    private var keypadDragActive = false
+    private val touchSlop: Int by lazy { ViewConfiguration.get(this).scaledTouchSlop }
 
     // Pending, un-debounced name edits from the composable rows. Flushed
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
@@ -229,11 +244,27 @@ class CartActivity : BaseActivity() {
                     itemsView.hapticTap(hapticEnabled)
                     openKeypadFor(item.id, item.expression)
                 },
+                onTogglePin = { id ->
+                    itemsView.hapticTap(hapticEnabled)
+                    viewModel.togglePinned(id)
+                },
                 onDelete = { id ->
                     itemsView.hapticTap(hapticEnabled)
                     if (activeItemId.value == id) closeKeypad()
                     pendingNames.remove(id)
                     viewModel.removeItem(id)
+                },
+                onReorder = { fromId, toId ->
+                    itemsView.hapticTap(hapticEnabled)
+                    viewModel.reorderItem(fromId, toId)
+                },
+                onReorderStart = {
+                    // A drag doesn't interact well with a floating keypad — the
+                    // row being edited would slide out from under the caret.
+                    // Commit the current edit and close before the gesture takes
+                    // over the visible list.
+                    itemsView.hapticTap(hapticEnabled)
+                    closeKeypad()
                 },
             )
         }
@@ -1000,29 +1031,108 @@ class CartActivity : BaseActivity() {
     }
 
     /**
-     * Route outside-taps to close the keypad. Taps *inside* the keypad
-     * (button presses) pass through unchanged; a tap on another row's
-     * expression will fall through to its Compose click handler, which
-     * re-opens [openKeypadFor] and swaps the active state without a visible
-     * close/open flicker. The delayed check guards that swap.
+     * Route outside-taps to close whichever keyboard is up (app keypad or
+     * system IME) and, when a drag starts inside the keypad, convert it into
+     * a slide-down dismissal. Taps *inside* the keypad (button presses) pass
+     * through unchanged; a tap on another row's expression falls through to
+     * its Compose click handler, which re-opens [openKeypadFor] and swaps the
+     * active state without a visible close/open flicker.
      */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.action == MotionEvent.ACTION_DOWN && keypadContainer.visibility == View.VISIBLE) {
-            val x = ev.rawX.toInt()
-            val y = ev.rawY.toInt()
+        if (keypadContainer.visibility == View.VISIBLE && handleKeypadDrag(ev)) return true
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) handleOutsideTap(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
+    // Extended-detector for outside taps: closes the app keypad when it's
+    // up, and symmetrically dismisses the system IME when a name field is
+    // focused. In both cases "outside" means "not on a row" (rows own their
+    // own click handlers — a row tap may swap the active field instead of
+    // closing) and, for the app-keypad case, "not on the keypad itself".
+    private fun handleOutsideTap(ev: MotionEvent) {
+        val x = ev.rawX.toInt()
+        val y = ev.rawY.toInt()
+        val itemsRect = Rect().also(itemsView::getGlobalVisibleRect)
+        if (keypadContainer.visibility == View.VISIBLE) {
             val keypadRect = Rect().also(keypadContainer::getGlobalVisibleRect)
-            val itemsRect = Rect().also(itemsView::getGlobalVisibleRect)
-            // Ignore taps inside the keypad (button presses) and inside the
-            // items list — those are handled by Compose click handlers which
-            // may swap the active row without ever wanting the keypad closed.
             if (!keypadRect.contains(x, y) && !itemsRect.contains(x, y)) {
                 val stillOn = activeItemId.value
                 keypadContainer.postDelayed({
                     if (activeItemId.value == stillOn && stillOn != null) closeKeypad()
                 }, OUTSIDE_TAP_DEBOUNCE_MS)
             }
+        } else if (systemImeVisible && !itemsRect.contains(x, y)) {
+            // A name field has focus (system IME is up). Match the app
+            // keypad's outside-tap behaviour so both keyboards dismiss the
+            // same way — tap the totals card / add button / blank area and
+            // the IME goes down and the field loses focus.
+            hideSystemIme()
+            currentFocus?.clearFocus()
         }
-        return super.dispatchTouchEvent(ev)
+    }
+
+    /**
+     * Vertical drag-to-dismiss: once a downward gesture starting inside the
+     * keypad crosses touch slop, steal it from the buttons (by dispatching
+     * ACTION_CANCEL), track the finger via [ViewGroup.setTranslationY], and
+     * either commit the dismiss ([KEYPAD_DRAG_DISMISS_FRACTION]) or snap back
+     * on release. Returns true once the gesture has been intercepted so the
+     * activity's super-dispatch is skipped for the rest of the stream.
+     */
+    private fun handleKeypadDrag(ev: MotionEvent): Boolean {
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                val rect = Rect().also(keypadContainer::getGlobalVisibleRect)
+                if (rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                    keypadDragStartY = ev.rawY
+                    keypadDragActive = false
+                }
+                return false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val start = keypadDragStartY ?: return false
+                val delta = ev.rawY - start
+                if (!keypadDragActive && delta > touchSlop) {
+                    keypadDragActive = true
+                    // Cancel the child press so no button fires when the
+                    // finger lifts — from here on the gesture is a drag.
+                    val cancel = MotionEvent.obtain(ev).also { it.action = MotionEvent.ACTION_CANCEL }
+                    super.dispatchTouchEvent(cancel)
+                    cancel.recycle()
+                }
+                if (keypadDragActive) {
+                    keypadContainer.translationY = delta.coerceAtLeast(0f)
+                    return true
+                }
+                return false
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (!keypadDragActive) {
+                    keypadDragStartY = null
+                    return false
+                }
+                val dragged = keypadContainer.translationY
+                val threshold = keypadContainer.height * KEYPAD_DRAG_DISMISS_FRACTION
+                if (dragged >= threshold) {
+                    // closeKeypad → hideKeypad animates from the current
+                    // translationY (which we just set) back down to full
+                    // height, so the release picks up exactly where the
+                    // finger left off.
+                    closeKeypad()
+                } else {
+                    keypadContainer.animate().cancel()
+                    keypadContainer
+                        .animate()
+                        .translationY(0f)
+                        .setDuration(KEYPAD_ANIM_MS)
+                        .start()
+                }
+                keypadDragActive = false
+                keypadDragStartY = null
+                return true
+            }
+            else -> return false
+        }
     }
 
     private fun hideSystemIme() {
