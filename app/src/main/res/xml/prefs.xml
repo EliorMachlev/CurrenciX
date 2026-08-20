@@ -26,6 +26,7 @@
             android:defaultValue="2"
             android:entries="@array/decimal_places_values"
             android:entryValues="@array/decimal_places_values"
+            android:icon="@drawable/ic_numbers"
             android:key="@string/decimal_places_key"
             android:summary="@string/decimal_places_summary"
             android:title="@string/decimal_places_title"
@@ -33,6 +34,7 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
+            android:icon="@drawable/ic_vibration"
             android:key="@string/haptic_feedback_key"
             android:summary="@string/haptic_feedback_summary"
             android:title="@string/haptic_feedback_title" />
@@ -41,10 +43,12 @@
             android:defaultValue="dd/MM/yy HH:mm"
             android:entries="@array/date_format_names"
             android:entryValues="@array/date_format_values"
+            android:icon="@drawable/ic_event"
             android:key="@string/date_format_key"
             android:title="@string/date_format_title" />
 
         <Preference
+            android:icon="@drawable/ic_backup"
             android:key="@string/backup_key"
             android:summary="@string/backup_summary"
             android:title="@string/backup_title" />
@@ -76,15 +80,18 @@
         <EditTextPreference
             android:dialogMessage="@string/api_open_exchangerates_api_key_message"
             android:dialogTitle="@string/api_open_exchangerates_api_key_title"
+            android:icon="@drawable/ic_key"
             app:dialogLayout="@layout/preference_dialog_api_key"
             android:key="@string/api_open_exchangerates_id_key"
             android:title="@string/api_open_exchangerates_api_key_title"
             app:useSimpleSummaryProvider="true" />
         <com.eliormachlev.currencix.widget.LongSummaryPreference
+            android:icon="@drawable/ic_info"
             android:key="@string/key_apiProvider"
             android:selectable="false"
             android:title="@string/api_about_title" />
         <com.eliormachlev.currencix.widget.LongSummaryPreference
+            android:icon="@drawable/ic_schedule"
             android:key="@string/key_refreshPeriod"
             android:selectable="false"
             android:title="@string/api_refreshPeriod_title" />
@@ -102,6 +109,7 @@
 
     <PreferenceCategory android:title="@string/category_about">
         <com.eliormachlev.currencix.widget.LongSummaryPreference
+            android:icon="@drawable/ic_gavel"
             android:selectable="false"
             android:summary="@string/disclaimer_summary"
             android:title="@string/disclaimer_title" />
@@ -125,6 +133,7 @@
             android:key="@string/changelog_key"
             android:title="@string/title_changelog" />
         <Preference
+            android:icon="@drawable/ic_tag"
             android:key="@string/version_key"
             android:selectable="false"
             android:summary="@string/version_summary"
