@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -104,7 +103,6 @@ fun SwipeableCartItemRow(
             onNamePending = onNamePending,
             onExpressionTap = onExpressionTap,
             onTogglePin = onTogglePin,
-            onDelete = onDelete,
             dragHandleModifier = dragHandleModifier,
         )
     }
@@ -146,7 +144,6 @@ fun CartItemRow(
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
     onTogglePin: () -> Unit,
-    onDelete: () -> Unit,
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 ) {
@@ -167,14 +164,6 @@ fun CartItemRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             DragHandle(modifier = dragHandleModifier)
-            FavoriteToggleIcon(
-                active = item.pinned,
-                contentDescription =
-                    stringResource(
-                        id = if (item.pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
-                    ),
-                onClick = onTogglePin,
-            )
             Column(modifier = Modifier.weight(1f)) {
                 NameField(
                     initial = item.name,
@@ -190,12 +179,14 @@ fun CartItemRow(
                     currency = currency,
                 )
             }
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = stringResource(id = R.string.cart_delete_item),
-                )
-            }
+            FavoriteToggleIcon(
+                active = item.pinned,
+                contentDescription =
+                    stringResource(
+                        id = if (item.pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
+                    ),
+                onClick = onTogglePin,
+            )
         }
     }
 }
