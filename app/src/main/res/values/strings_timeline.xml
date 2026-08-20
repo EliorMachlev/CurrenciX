@@ -4,6 +4,7 @@
     <string name="data_provider">Data by &lt;b>%s&lt;/b></string>
 
     <string name="rate_average">avg</string>
+    <string name="rate_median">med</string>
     <string name="rate_min">min</string>
     <string name="rate_max">max</string>
 
