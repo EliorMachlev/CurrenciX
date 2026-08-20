@@ -84,17 +84,10 @@ fun SwipeableCartItemRow(
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 ) {
-    val dismissState =
-        rememberSwipeToDismissBoxState(
-            confirmValueChange = { target ->
-                if (target == SwipeToDismissBoxValue.EndToStart) {
-                    onDelete()
-                    true
-                } else {
-                    false
-                }
-            },
-        )
+    val dismissState = rememberSwipeToDismissBoxState()
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) onDelete()
+    }
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = { SwipeDeleteBackground(dismissState) },
