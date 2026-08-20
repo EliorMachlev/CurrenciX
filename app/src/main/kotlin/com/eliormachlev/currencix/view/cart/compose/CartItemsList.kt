@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
@@ -18,10 +17,9 @@ import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.compose.AppTheme
-import com.eliormachlev.currencix.view.compose.DRAG_REORDER_ACTIVE_ALPHA
+import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
 import com.eliormachlev.currencix.view.compose.rememberDragReorderState
-import com.eliormachlev.currencix.view.compose.translationYFor
 
 // Nominal row height used to translate finger travel into "how many rows have
 // I dragged past". Cart rows aren't uniform (name + expression + preview), but
@@ -49,24 +47,20 @@ fun CartItemsList(
         val currency by currencySource.observeAsState(initial = "")
         val activeId by activeItemIdSource.observeAsState()
         val liveExpression by activeExpressionSource.observeAsState(initial = "")
-        // Sort pinned-first at render time so the underlying storage order is
-        // preserved when the user toggles pins on and off. `sortedByDescending`
-        // is stable, so items within each partition keep their relative order.
-        // Dragging operates on this display list; drops that cross the pin
-        // boundary re-sort into the pinned block on next composition, so a
-        // pinned row visually snaps back after a downward drag — the user
-        // has to unpin first to move it out of the pinned section.
-        val displayItems = remember(items) { items.sortedByDescending { it.pinned } }
+        // Display pinned-first while preserving storage order within each
+        // partition. Drag operates on this list; dropping a pinned row into
+        // the unpinned section snaps back on the next composition — user must
+        // unpin first to move it out.
+        val displayItems = remember(items) { items.filter { it.pinned } + items.filterNot { it.pinned } }
 
         val rowHeightPx = with(LocalDensity.current) { REORDER_ROW_HEIGHT.toPx() }
         val drag = rememberDragReorderState()
 
-        // Drop the drag if the dragged row disappears mid-gesture (delete,
-        // cart reload) — the pointer input can't cancel itself when its item
-        // is removed from the LazyColumn.
-        LaunchedEffect(items) {
+        // Drop the drag if the list shrinks past the dragged index (delete,
+        // cart reload) — the pointer input can't cancel itself.
+        LaunchedEffect(displayItems.size) {
             val src = drag.draggingIndex ?: return@LaunchedEffect
-            if (src !in items.indices) drag.reset()
+            if (src !in displayItems.indices) drag.reset()
         }
 
         LazyColumn(
@@ -92,10 +86,7 @@ fun CartItemsList(
                     modifier =
                         Modifier
                             .animateItem()
-                            .graphicsLayer {
-                                translationY = drag.translationYFor(index, rowHeightPx)
-                                if (drag.draggingIndex == index) alpha = DRAG_REORDER_ACTIVE_ALPHA
-                            },
+                            .dragReorderGraphics(drag, index, rowHeightPx),
                     dragHandleModifier =
                         Modifier.dragReorderHandle(
                             state = drag,

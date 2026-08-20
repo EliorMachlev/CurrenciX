@@ -153,47 +153,38 @@ class CartViewModel(
         name: String,
         expression: String,
     ) {
-        mutate { cart ->
-            cart.copy(
-                items =
-                    cart.items.map {
-                        if (it.id == id) it.copy(name = name, expression = expression) else it
-                    },
-            )
-        }
+        mutateItem(id) { it.copy(name = name, expression = expression) }
     }
 
     fun removeItem(id: String) {
-        mutate { cart -> cart.copy(items = cart.items.filter { it.id != id }) }
-    }
-
-    fun togglePinned(id: String) {
         mutate { cart ->
-            cart.copy(
-                items =
-                    cart.items.map {
-                        if (it.id == id) it.copy(pinned = !it.pinned) else it
-                    },
-            )
+            val filtered = cart.items.filter { it.id != id }
+            if (filtered.size == cart.items.size) cart else cart.copy(items = filtered)
         }
     }
 
-    /**
-     * Move the item identified by [fromId] to the current position of [toId].
-     * No-op if either id is missing or the ids are the same — the caller (a
-     * drag-reorder gesture) is expected to fire this even when the user
-     * releases without moving, and we don't want to churn the LiveData or
-     * disk write on a no-op.
-     */
+    fun togglePinned(id: String) {
+        mutateItem(id) { it.copy(pinned = !it.pinned) }
+    }
+
+    // Move [fromId] to the current position of [toId]. No-op on same id, missing
+    // id, or same slot — the drag-reorder gesture fires this even on a release
+    // without movement, and we don't want to churn the LiveData or disk write.
     fun reorderItem(
         fromId: String,
         toId: String,
     ) {
         if (fromId == toId) return
         mutate { cart ->
-            val fromIdx = cart.items.indexOfFirst { it.id == fromId }
-            val toIdx = cart.items.indexOfFirst { it.id == toId }
-            if (fromIdx < 0 || toIdx < 0) return@mutate cart
+            var fromIdx = -1
+            var toIdx = -1
+            cart.items.forEachIndexed { i, item ->
+                when (item.id) {
+                    fromId -> fromIdx = i
+                    toId -> toIdx = i
+                }
+            }
+            if (fromIdx < 0 || toIdx < 0 || fromIdx == toIdx) return@mutate cart
             val reordered = cart.items.toMutableList()
             val moved = reordered.removeAt(fromIdx)
             reordered.add(toIdx, moved)
@@ -378,9 +369,33 @@ class CartViewModel(
     }
 
     private fun mutate(transform: (SavedCart) -> SavedCart) {
-        val next = transform(current.value ?: emptyCart())
+        val prev = current.value ?: emptyCart()
+        val next = transform(prev)
+        // Identity short-circuit: callers that decide the mutation is a no-op
+        // return the same instance (`return@mutate cart`) to skip the LiveData
+        // emission and disk write.
+        if (next === prev) return
         current.value = next
         db.setCurrentCart(next)
+    }
+
+    private inline fun mutateItem(
+        id: String,
+        crossinline transform: (CartItem) -> CartItem,
+    ) {
+        mutate { cart ->
+            var changed = false
+            val items =
+                cart.items.map {
+                    if (it.id == id) {
+                        changed = true
+                        transform(it)
+                    } else {
+                        it
+                    }
+                }
+            if (changed) cart.copy(items = items) else cart
+        }
     }
 
     // Every cold start begins with a fresh cart that inherits the main

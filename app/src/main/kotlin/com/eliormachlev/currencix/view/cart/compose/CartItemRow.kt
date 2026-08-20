@@ -15,8 +15,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DragHandle
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +47,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
 
@@ -175,7 +174,14 @@ fun CartItemRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             DragHandle(modifier = dragHandleModifier)
-            PinToggle(pinned = item.pinned, onToggle = onTogglePin)
+            FavoriteToggleIcon(
+                active = item.pinned,
+                contentDescription =
+                    stringResource(
+                        id = if (item.pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
+                    ),
+                onClick = onTogglePin,
+            )
             Column(modifier = Modifier.weight(1f)) {
                 NameField(
                     initial = item.name,
@@ -198,32 +204,6 @@ fun CartItemRow(
                 )
             }
         }
-    }
-}
-
-// Pin affordance — filled heart when pinned (primary tint), empty heart
-// otherwise (onSurfaceVariant tint). Same drawable pair the currency
-// picker uses for its favorites toggle, so users read the two the same
-// way. Lives on the row's leading edge, opposite the delete button.
-@Composable
-private fun PinToggle(
-    pinned: Boolean,
-    onToggle: () -> Unit,
-) {
-    IconButton(onClick = onToggle) {
-        Icon(
-            imageVector = if (pinned) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-            contentDescription =
-                stringResource(
-                    id = if (pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
-                ),
-            tint =
-                if (pinned) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-        )
     }
 }
 

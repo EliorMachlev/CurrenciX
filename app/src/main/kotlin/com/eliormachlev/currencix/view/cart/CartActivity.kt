@@ -1120,6 +1120,7 @@ class CartActivity : BaseActivity() {
                     // finger left off.
                     closeKeypad()
                 } else {
+                    keypadContainer.animate().cancel()
                     keypadContainer
                         .animate()
                         .translationY(0f)

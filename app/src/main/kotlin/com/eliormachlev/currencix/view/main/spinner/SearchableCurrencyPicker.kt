@@ -44,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -62,11 +61,11 @@ import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
-import com.eliormachlev.currencix.view.compose.DRAG_REORDER_ACTIVE_ALPHA
+import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
 import com.eliormachlev.currencix.view.compose.rememberDragReorderState
-import com.eliormachlev.currencix.view.compose.translationYFor
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -328,10 +327,8 @@ private fun FavoritesSection(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .graphicsLayer {
-                                translationY = drag.translationYFor(index, rowHeightPx)
-                                if (drag.draggingIndex == index) alpha = DRAG_REORDER_ACTIVE_ALPHA
-                            }.then(
+                            .dragReorderGraphics(drag, index, rowHeightPx)
+                            .then(
                                 if (allowReorder) {
                                     Modifier.dragReorderHandle(
                                         state = drag,
@@ -422,18 +419,11 @@ private fun CurrencyRow(
                 }
             }
         }
-        IconButton(onClick = onStarClick) {
-            Icon(
-                imageVector = if (isStarred) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                contentDescription = null,
-                tint =
-                    if (isStarred) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
-            )
-        }
+        FavoriteToggleIcon(
+            active = isStarred,
+            contentDescription = null,
+            onClick = onStarClick,
+        )
     }
 }
 

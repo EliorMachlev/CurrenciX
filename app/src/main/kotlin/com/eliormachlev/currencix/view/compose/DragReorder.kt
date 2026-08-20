@@ -6,19 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 
-// Shared alpha for a row that's actively being dragged; keeps the "picked-up"
-// affordance consistent across the two long-press reorder sites (cart items,
-// starred currencies).
-const val DRAG_REORDER_ACTIVE_ALPHA = 0.85f
+private const val DRAG_REORDER_ACTIVE_ALPHA = 0.85f
 
-/**
- * State bag for a long-press-to-drag reorder gesture. Kept as a class (rather
- * than four loose `mutableStateOf`s at call sites) so field reads inside a
- * `graphicsLayer { ... }` lambda stay in the draw phase — rows don't
- * recompose while the finger moves at 60 Hz, they just re-draw at a new Y.
- */
+// State bag for a long-press-to-drag reorder gesture. Kept as a class (rather
+// than three loose `mutableStateOf`s at call sites) so field reads inside a
+// `graphicsLayer { ... }` lambda stay in the draw phase — rows don't recompose
+// while the finger moves at 60 Hz, they just re-draw at a new Y.
 class DragReorderState {
     var draggingIndex by mutableStateOf<Int?>(null)
     var targetIndex by mutableStateOf<Int?>(null)
@@ -36,19 +32,29 @@ class DragReorderState {
 @Composable
 fun rememberDragReorderState(): DragReorderState = remember { DragReorderState() }
 
-/**
- * Vertical translation for the row at [index], given the current drag state.
- * The dragged row itself follows the finger (offsetY); every row between the
- * source and target slots slides one row-height in the opposite direction to
- * open the gap. Callers should invoke this from inside a `graphicsLayer` lambda
- * so state reads land in the draw phase.
- */
-fun DragReorderState.translationYFor(
+// Draw-phase modifier: shifts and dims the row at [index] to match the drag
+// state. When no drag is in progress this is a no-op modifier (the layer isn't
+// composed at all), so idle rows pay nothing.
+fun Modifier.dragReorderGraphics(
+    state: DragReorderState,
+    index: Int,
+    rowHeightPx: Float,
+): Modifier =
+    if (!state.isActive) {
+        this
+    } else {
+        graphicsLayer {
+            translationY = state.translationYFor(index, rowHeightPx)
+            if (state.draggingIndex == index) alpha = DRAG_REORDER_ACTIVE_ALPHA
+        }
+    }
+
+private fun DragReorderState.translationYFor(
     index: Int,
     rowHeightPx: Float,
 ): Float {
-    if (draggingIndex == index) return offsetY
     val src = draggingIndex ?: return 0f
+    if (src == index) return offsetY
     val dst = targetIndex ?: return 0f
     return when {
         src < dst && index in (src + 1)..dst -> -rowHeightPx
