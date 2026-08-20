@@ -15,7 +15,7 @@ import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import java.math.BigDecimal
 import java.math.MathContext
@@ -92,7 +92,7 @@ class CartViewModel(
      * shows the same layout the user picked.
      */
     val isExtendedKeypadEnabled: LiveData<Boolean> =
-        db.getKeyboardType().map { it != KEYBOARD_TYPE_BASIC }
+        db.getKeyboardType().map { it == KEYBOARD_TYPE_EXPANDED }
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()

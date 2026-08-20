@@ -9,8 +9,11 @@ import android.graphics.Typeface
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputType
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
@@ -21,7 +24,9 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -39,6 +44,10 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
+import com.eliormachlev.currencix.util.CalculatorInputFilter
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
@@ -84,6 +93,16 @@ private const val CTX_MENU_COPY_TO = 2
 private const val FEE_BADGE_DECIMAL_PLACES = 2
 private const val AMOUNT_DECIMAL_PLACES = 2
 
+// System-IME input flags for the calculator field. `textVisiblePassword`
+// nudges most IMEs (Gboard, SwiftKey) into a symbols-friendly layout with
+// digits and operators reachable without switching pages, and it also
+// disables autocorrect/autocap. `CalculatorInputFilter` still enforces the
+// exact allow-list after the IME commits.
+private const val SYSTEM_IME_INPUT_TYPE =
+    InputType.TYPE_CLASS_TEXT or
+        InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or
+        InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
 class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var preferenceModel: PreferenceViewModel
@@ -106,8 +125,19 @@ class MainActivity : BaseActivity() {
     private var latestRatesTime: LocalTime? = null
 
     private lateinit var tvCalculations: TextView
-    private lateinit var tvFrom: TextView
+    private lateinit var tvFrom: EditText
     private lateinit var tvTo: TextView
+
+    // Guards the base-value writeback observer from stomping on characters the
+    // user is actively typing on the system keyboard: our own setText() call
+    // to reflect the formatted value would otherwise re-fire the TextWatcher
+    // and replay it, garbling the input.
+    private var muteFromWriteback = false
+
+    // True while `KEYBOARD_TYPE_SYSTEM` is selected — the EditText is the
+    // source of truth so the base-value writeback observer skips it entirely,
+    // even for updates that originate elsewhere (currency swap, rate refresh).
+    private var isSystemKeyboardMode = false
     private lateinit var spinnerFrom: SearchableSpinner
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var tvInfoConversion: TextView
@@ -396,9 +426,9 @@ class MainActivity : BaseActivity() {
         }
 
         // long click on input "from"
-        registerForContextMenu(findViewById<LinearLayout>(R.id.textFrom))
+        registerForContextMenu(tvFrom)
         // long click on input "to"
-        registerForContextMenu(findViewById<LinearLayout>(R.id.textTo))
+        registerForContextMenu(tvTo)
 
         // spinners: listen for changes
         spinnerFrom.onItemSelectedListener = rateSpinnerListener(viewModel::setBaseCurrency)
@@ -454,14 +484,21 @@ class MainActivity : BaseActivity() {
             swipeRefresh.isEnabled = isRefreshing.not()
             menuItemRefresh?.isEnabled = isRefreshing.not()
         }
-        viewModel.getCurrentBaseValueFormatted().observe(this) { tvFrom.text = it }
+        viewModel.getCurrentBaseValueFormatted().observe(this) { formatted ->
+            // In SYSTEM-keyboard mode the EditText is the source of truth for
+            // what the user is typing; skip the formatted-value writeback so
+            // we don't overwrite in-progress input — including reformats
+            // triggered by a currency swap or rate refresh mid-entry.
+            if (isSystemKeyboardMode || muteFromWriteback) return@observe
+            setFromTextMuted(formatted ?: "")
+        }
         viewModel.getResultFormatted().observe(this) { tvTo.text = it }
         viewModel.getCalculationInputFormatted().observe(this) { tvCalculations.text = it }
         viewModel.getBaseCurrency().observe(this) { observeBaseCurrency(it) }
         viewModel.getDestinationCurrency().observe(this) { observeDestinationCurrency(it) }
         viewModel.getCurrentBaseValueAsNumber().observe(this) { spinnerTo.setCurrentSum(it) }
         viewModel.getResultAsNumber().observe(this) { spinnerFrom.setCurrentSum(it) }
-        viewModel.isExtendedKeypadEnabled.observe(this) { observeKeypadState(it) }
+        viewModel.keyboardType.observe(this) { observeKeyboardType(it) }
         viewModel.nextParen().observe(this) { next ->
             findViewById<AppCompatButton>(R.id.btn_parens)?.paintParenCycle(next)
         }
@@ -646,15 +683,102 @@ class MainActivity : BaseActivity() {
             ?.find { it.currency == currency }
             ?.value
 
-    private fun observeKeypadState(extendedEnabled: Boolean) {
+    private fun observeKeyboardType(type: Int) {
         val keypadRegular = findViewById<View>(R.id.keypad)
         val keypadExtended = findViewById<View>(R.id.keypad_extended)
-        keypadRegular.visibility = if (extendedEnabled) View.GONE else View.VISIBLE
-        keypadExtended.visibility = if (extendedEnabled) View.VISIBLE else View.GONE
+        keypadRegular.visibility = if (type == KEYBOARD_TYPE_BASIC) View.VISIBLE else View.GONE
+        keypadExtended.visibility = if (type == KEYBOARD_TYPE_EXPANDED) View.VISIBLE else View.GONE
         val separator = getDecimalSeparator(this)
         keypadExtended.findViewById<TextView>(R.id.btn_decimal).text = separator
         keypadRegular.findViewById<TextView>(R.id.btn_decimal).text = separator
+        configureFromEditText(type)
     }
+
+    // Toggles [tvFrom] between "readonly TextView-like" (basic/expanded keypad
+    // modes) and "focusable EditText that raises the system IME" (system mode).
+    // Runtime flags mirror the XML defaults so mode swaps are reversible.
+    private fun configureFromEditText(type: Int) {
+        isSystemKeyboardMode = type == KEYBOARD_TYPE_SYSTEM
+        // Detach first so seed-setText below doesn't accidentally clear the
+        // state via a stale watcher call.
+        tvFrom.removeTextChangedListener(systemKeyboardWatcher)
+        if (isSystemKeyboardMode) {
+            tvFrom.isFocusable = true
+            tvFrom.isFocusableInTouchMode = true
+            tvFrom.isCursorVisible = true
+            tvFrom.showSoftInputOnFocus = true
+            tvFrom.setRawInputType(SYSTEM_IME_INPUT_TYPE)
+            tvFrom.filters = arrayOf(CalculatorInputFilter())
+            // Seed with the current typed expression (display glyphs → ASCII)
+            // so switching mode mid-entry doesn't lose the user's work.
+            val seed = viewModel.currentTypedExpression()
+            setFromTextMuted(seed)
+            tvFrom.setSelection(tvFrom.text?.length ?: 0)
+            tvFrom.addTextChangedListener(systemKeyboardWatcher)
+        } else {
+            tvFrom.isCursorVisible = false
+            tvFrom.showSoftInputOnFocus = false
+            tvFrom.isFocusable = false
+            tvFrom.isFocusableInTouchMode = false
+            tvFrom.setRawInputType(InputType.TYPE_NULL)
+            tvFrom.filters = emptyArray()
+            hideSystemIme()
+            // Restore the formatted display now that the writeback observer
+            // is authoritative again.
+            setFromTextMuted(viewModel.getCurrentBaseValueFormatted().value.orEmpty())
+        }
+    }
+
+    // Programmatic setText that suppresses both the base-value observer
+    // writeback and the system-IME watcher re-entry — used for seeding the
+    // field and restoring the formatted display on mode swaps.
+    private fun setFromTextMuted(text: CharSequence) {
+        val alreadyMuted = muteFromWriteback
+        muteFromWriteback = true
+        try {
+            tvFrom.setText(text)
+        } finally {
+            if (!alreadyMuted) muteFromWriteback = false
+        }
+    }
+
+    private fun hideSystemIme() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(tvFrom.windowToken, 0)
+    }
+
+    // On every EditText mutation while system-IME mode is active, rebuild
+    // the calculator state from the new text — same char-routing the hardware
+    // keyboard uses. Simpler than diffing insert vs. delete positions and
+    // correct for pastes / mid-string edits too.
+    private val systemKeyboardWatcher =
+        object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int,
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int,
+            ) = Unit
+
+            override fun afterTextChanged(s: Editable?) {
+                if (muteFromWriteback) return
+                val text = s?.toString().orEmpty()
+                muteFromWriteback = true
+                try {
+                    viewModel.clear()
+                    text.forEach { handleCharKey(it) }
+                } finally {
+                    muteFromWriteback = false
+                }
+            }
+        }
 
     private fun haptic(view: View) = view.hapticTap(hapticEnabled)
 
@@ -731,6 +855,7 @@ class MainActivity : BaseActivity() {
             key == '.' || key == ',' -> viewModel.addDecimal()
             key == '(' -> viewModel.openParen()
             key == ')' -> viewModel.closeParen()
+            key == '%' -> viewModel.addPercent()
             else -> return false
         }
         return true

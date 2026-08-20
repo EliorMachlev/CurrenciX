@@ -84,7 +84,9 @@ fun String.evaluateCalculatorExpression(): String {
     }
 }
 
-private fun String.normaliseGlyphsToAscii(): String =
+// Exposed to the system-IME seed path so a state already holding display glyphs
+// like `5 − 3` can be re-typed into an EditText as ASCII `5-3`.
+internal fun String.normaliseGlyphsToAscii(): String =
     DISPLAY_TO_ASCII.entries.fold(replace(" ", "")) { acc, (glyph, ascii) ->
         acc.replace(glyph, ascii)
     }

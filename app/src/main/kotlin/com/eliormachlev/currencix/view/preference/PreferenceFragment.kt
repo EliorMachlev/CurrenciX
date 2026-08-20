@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
 import com.eliormachlev.currencix.util.ChoiceOption
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
@@ -144,6 +145,11 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 ChoiceOption(
                     getString(R.string.keyboard_option_expanded),
                     getString(R.string.keyboard_summary_expanded),
+                ),
+            KEYBOARD_TYPE_SYSTEM to
+                ChoiceOption(
+                    getString(R.string.keyboard_option_system),
+                    getString(R.string.keyboard_summary_system),
                 ),
         )
 
