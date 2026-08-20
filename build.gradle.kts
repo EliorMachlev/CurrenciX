@@ -4,7 +4,7 @@ plugins {
     id("com.android.application") version "9.3.1" apply false
     id("org.jetbrains.kotlin.jvm") version "2.4.10" apply false
     // dependency-update-checker
-    id("com.github.ben-manes.versions") version "0.60.0"
+    id("io.github.ben-manes.versions") version "0.60.0"
     // Spotless drives ktlint (chosen over the org.jlleitschuh.gradle.ktlint
     // plugin because that plugin's Android source-set hook does not fire under
     // AGP 9 — only its .kts checker runs, leaving app/src/main/kotlin unlinted).
