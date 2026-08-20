@@ -1045,14 +1045,9 @@ class CartActivity : BaseActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
-    // Outside-tap detector for regions that live *outside* the items
-    // ComposeView (toolbar area, totals card / add-item button when the IME
-    // is up and the keypad is down). Taps *inside* the items view — including
-    // the blank space below the last row — are handled by the composable-side
-    // background-tap detector in [CartItemsList], which knows exactly which
-    // taps rows consumed. This handler keeps a short debounce on the keypad
-    // path so a tap that lands just outside the ComposeView on a row that's
-    // about to swap active state doesn't close prematurely.
+    // Only owns taps outside the items ComposeView (toolbar, totals card,
+    // add-item button when the IME is up). Taps inside the items view are
+    // resolved by Compose in [CartItemsList] via onBackgroundTap.
     private fun handleOutsideTap(ev: MotionEvent) {
         val x = ev.rawX.toInt()
         val y = ev.rawY.toInt()
@@ -1140,10 +1135,6 @@ class CartActivity : BaseActivity() {
         imm.hideSoftInputFromWindow(token, 0)
     }
 
-    // Single "get rid of whichever keyboard is up" entry point, shared by the
-    // outside-tap detector in [dispatchTouchEvent] and the composable-side
-    // background-tap detector inside [CartItemsList]. Both keyboards are
-    // handled together so callers don't need to know which one is visible.
     private fun dismissKeyboards() {
         if (keypadContainer.visibility == View.VISIBLE) closeKeypad()
         if (systemImeVisible) {
