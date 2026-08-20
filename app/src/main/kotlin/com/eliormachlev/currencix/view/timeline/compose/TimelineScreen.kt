@@ -41,6 +41,7 @@ internal fun TimelineScreen(
             val diffPercent by model.getRatesDifferencePercent().observeAsState()
             val ratesMax by model.getRatesMax().observeAsState()
             val ratesAvg by model.getRatesAverage().observeAsState()
+            val ratesMed by model.getRatesMedian().observeAsState()
             val ratesMin by model.getRatesMin().observeAsState()
 
             val period =
@@ -66,6 +67,7 @@ internal fun TimelineScreen(
                     diffPercent = diffPercent,
                     ratesMax = ratesMax,
                     ratesAvg = ratesAvg,
+                    ratesMed = ratesMed,
                     ratesMin = ratesMin,
                     formatter = formatter,
                     selectedPeriod = period.value,

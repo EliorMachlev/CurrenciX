@@ -37,6 +37,23 @@ private fun Set<Map.Entry<LocalDate, Rate?>>.fromScrub(scrubDate: LocalDate?): L
         this.filter { !it.key.isBefore(scrubDate) }
     }
 
+private val TWO = BigDecimal(2)
+
+private fun averageOf(values: List<BigDecimal>): BigDecimal =
+    values
+        .fold(BigDecimal.ZERO, BigDecimal::add)
+        .divide(BigDecimal(values.size), MathContext.DECIMAL128)
+
+private fun medianOf(values: List<BigDecimal>): BigDecimal {
+    val sorted = values.sorted()
+    val mid = sorted.size / 2
+    return if (sorted.size % 2 == 1) {
+        sorted[mid]
+    } else {
+        sorted[mid - 1].add(sorted[mid]).divide(TWO, MathContext.DECIMAL128)
+    }
+}
+
 class TimelineViewModel(
     private val app: Application,
     private var base: Currency,
@@ -223,7 +240,14 @@ class TimelineViewModel(
             }
         }
 
-    fun getRatesAverage(): LiveData<Pair<Rate?, Int>> =
+    fun getRatesAverage(): LiveData<Pair<Rate?, Int>> = aggregateLiveData(::averageOf)
+
+    fun getRatesMedian(): LiveData<Pair<Rate?, Int>> = aggregateLiveData(::medianOf)
+
+    // Shared MediatorLiveData scaffolding for range-wide statistics that reduce
+    // the visible-range value set to a single [Rate]. The reducer receives a
+    // non-empty list; an empty range short-circuits to null before it runs.
+    private fun aggregateLiveData(reducer: (List<BigDecimal>) -> BigDecimal): LiveData<Pair<Rate?, Int>> =
         MediatorLiveData<Pair<Rate?, Int>>().apply {
             var scrubDate: LocalDate? = null
             var rates: Set<Map.Entry<LocalDate, Rate?>>? = null
@@ -233,16 +257,13 @@ class TimelineViewModel(
                     rates
                         ?.fromScrub(scrubDate)
                         ?.mapNotNull { entry -> entry.value?.value }
-                val avg: Rate? =
+                val aggregate: Rate? =
                     if (values.isNullOrEmpty()) {
                         null
                     } else {
-                        values
-                            .fold(BigDecimal.ZERO, BigDecimal::add)
-                            .divide(BigDecimal(values.size), MathContext.DECIMAL128)
-                            .let { Rate(target, it) }
+                        Rate(target, reducer(values))
                     }
-                this.value = Pair(avg, decimalPlaces)
+                this.value = Pair(aggregate, decimalPlaces)
             }
 
             addSource(dbLiveItems) {

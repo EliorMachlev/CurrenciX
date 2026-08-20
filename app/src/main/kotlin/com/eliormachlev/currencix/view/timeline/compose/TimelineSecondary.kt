@@ -56,6 +56,7 @@ internal fun TimelineSecondary(
     diffPercent: BigDecimal?,
     ratesMax: Triple<Rate?, LocalDate?, Int>?,
     ratesAvg: Pair<Rate?, Int>?,
+    ratesMed: Pair<Rate?, Int>?,
     ratesMin: Triple<Rate?, LocalDate?, Int>?,
     formatter: DateTimeFormatter,
     selectedPeriod: TimelineViewModel.Period,
@@ -69,16 +70,18 @@ internal fun TimelineSecondary(
 
     val maxLabel = stringResource(R.string.rate_max)
     val avgLabel = stringResource(R.string.rate_average)
+    val medLabel = stringResource(R.string.rate_median)
     val minLabel = stringResource(R.string.rate_min)
 
     val rows =
         listOf(
             statRow(context, maxLabel, ratesMax?.first, ratesMax?.second, ratesMax?.third, formatter),
             statRow(context, avgLabel, ratesAvg?.first, null, ratesAvg?.second, formatter),
+            statRow(context, medLabel, ratesMed?.first, null, ratesMed?.second, formatter),
             statRow(context, minLabel, ratesMin?.first, ratesMin?.second, ratesMin?.third, formatter),
         )
 
-    val labelWidth = maxLabelWidth(listOf(maxLabel, avgLabel, minLabel))
+    val labelWidth = maxLabelWidth(listOf(maxLabel, avgLabel, medLabel, minLabel))
 
     Column(
         modifier =
