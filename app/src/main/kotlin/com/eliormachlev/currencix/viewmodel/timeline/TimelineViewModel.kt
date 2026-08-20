@@ -44,8 +44,6 @@ private fun averageOf(values: List<BigDecimal>): BigDecimal =
         .fold(BigDecimal.ZERO, BigDecimal::add)
         .divide(BigDecimal(values.size), MathContext.DECIMAL128)
 
-// Standard definition: sort, take the middle value, or the mean of the two
-// middle values when the count is even.
 private fun medianOf(values: List<BigDecimal>): BigDecimal {
     val sorted = values.sorted()
     val mid = sorted.size / 2
