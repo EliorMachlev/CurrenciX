@@ -6,11 +6,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
@@ -130,6 +130,7 @@ class MainActivity : BaseActivity() {
     // source of truth so the base-value writeback observer skips it entirely,
     // even for updates that originate elsewhere (currency swap, rate refresh).
     private var isSystemKeyboardMode = false
+    private var lastKeyboardTypeApplied: Int? = null
     private lateinit var spinnerFrom: SearchableSpinner
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var tvInfoConversion: TextView
@@ -687,21 +688,22 @@ class MainActivity : BaseActivity() {
         configureFromEditText(type)
     }
 
-    // Toggles [tvFrom] between "readonly TextView-like" (basic/expanded keypad
-    // modes) and "focusable EditText that raises the system IME" (system mode).
     // Runtime flags mirror the XML defaults so mode swaps are reversible.
     private fun configureFromEditText(type: Int) {
-        isSystemKeyboardMode = type == KEYBOARD_TYPE_SYSTEM
+        val wantsSystem = type == KEYBOARD_TYPE_SYSTEM
+        if (wantsSystem == isSystemKeyboardMode && lastKeyboardTypeApplied != null) return
+        isSystemKeyboardMode = wantsSystem
+        lastKeyboardTypeApplied = type
         // Detach first so seed-setText below doesn't accidentally clear the
         // state via a stale watcher call.
         tvFrom.removeTextChangedListener(systemKeyboardWatcher)
-        if (isSystemKeyboardMode) {
+        if (wantsSystem) {
             tvFrom.isFocusable = true
             tvFrom.isFocusableInTouchMode = true
             tvFrom.isCursorVisible = true
             tvFrom.showSoftInputOnFocus = true
             tvFrom.keyListener = CalculatorKeyListener
-            scrollViewTextFrom.setBackgroundResource(R.drawable.bg_system_keyboard_input)
+            scrollViewTextFrom.background = systemKeyboardInputBackground()
             // Seed with the current typed expression (display glyphs → ASCII)
             // so switching mode mid-entry doesn't lose the user's work.
             val seed = viewModel.currentTypedExpression()
@@ -715,8 +717,8 @@ class MainActivity : BaseActivity() {
             tvFrom.showSoftInputOnFocus = false
             tvFrom.isFocusable = false
             tvFrom.isFocusableInTouchMode = false
+            // Also clears inputType to TYPE_NULL — no separate reset needed.
             tvFrom.keyListener = null
-            tvFrom.setRawInputType(InputType.TYPE_NULL)
             scrollViewTextFrom.background = null
             detachSystemImeTapOpener()
             hideSystemIme()
@@ -725,6 +727,13 @@ class MainActivity : BaseActivity() {
             setFromTextMuted(viewModel.getCurrentBaseValueFormatted().value ?: "")
         }
     }
+
+    private var cachedSystemKeyboardBackground: Drawable? = null
+
+    private fun systemKeyboardInputBackground(): Drawable =
+        cachedSystemKeyboardBackground ?: getDrawable(R.drawable.bg_system_keyboard_input)!!.also {
+            cachedSystemKeyboardBackground = it
+        }
 
     // The EditText itself is `wrap_content` — an empty field has a near-zero
     // tap target — so we also arm the surrounding HorizontalScrollView.
