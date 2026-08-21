@@ -725,7 +725,7 @@ class MainActivity : BaseActivity() {
             hideSystemIme()
             // Restore the formatted display now that the writeback observer
             // is authoritative again.
-            setFromTextMuted(viewModel.getCurrentBaseValueFormatted().value.orEmpty())
+            setFromTextMuted(viewModel.getCurrentBaseValueFormatted().value ?: "")
         }
     }
 
