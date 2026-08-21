@@ -227,7 +227,6 @@
                 android:lines="1"
                 android:longClickable="true"
                 android:padding="@dimen/margin2x"
-                android:showSoftInputOnFocus="false"
                 android:textDirection="ltr"
                 tools:ignore="LabelFor"
                 tools:text="$ 13.99" />
