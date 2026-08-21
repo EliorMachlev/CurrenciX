@@ -14,5 +14,4 @@ fun Activity.hideSoftInputFrom(view: View) {
     imm()?.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-private fun Context.imm(): InputMethodManager? =
-    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+private fun Context.imm(): InputMethodManager? = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager

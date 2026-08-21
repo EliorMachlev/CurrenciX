@@ -977,8 +977,7 @@ class CartActivity : BaseActivity() {
                 .setView(container)
                 .setPositiveButton(R.string.cart_edit_expression_confirm) { _, _ ->
                     commitExpression(itemId, editor.text.toString().asciiToDisplayGlyphs())
-                }
-                .setNegativeButton(android.R.string.cancel, null)
+                }.setNegativeButton(android.R.string.cancel, null)
                 .create()
         dialog.setOnDismissListener { activeItemId.value = null }
         dialog.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
