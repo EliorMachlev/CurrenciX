@@ -733,6 +733,10 @@ class MainActivity : BaseActivity() {
     // writeback and the system-IME watcher re-entry — used for seeding the
     // field and restoring the formatted display on mode swaps.
     private fun setFromTextMuted(text: CharSequence) {
+        // Skip no-op writes — setText with an identical string still fires
+        // the TextWatcher on some Android versions, which would trigger a
+        // full clear+replay in `systemKeyboardWatcher` for zero benefit.
+        if (tvFrom.text?.toString() == text.toString()) return
         val alreadyMuted = muteFromWriteback
         muteFromWriteback = true
         try {
