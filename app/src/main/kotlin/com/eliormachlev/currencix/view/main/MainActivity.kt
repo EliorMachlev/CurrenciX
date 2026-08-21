@@ -24,7 +24,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
@@ -49,14 +48,17 @@ import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
 import com.eliormachlev.currencix.util.CalculatorInputFilter
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
+import com.eliormachlev.currencix.util.SYSTEM_IME_CALCULATOR_INPUT_TYPE
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticTap
+import com.eliormachlev.currencix.util.hideSoftInputFrom
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
+import com.eliormachlev.currencix.util.showSoftInputOn
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -93,16 +95,6 @@ private const val CTX_MENU_COPY_TO = 2
 private const val FEE_BADGE_DECIMAL_PLACES = 2
 private const val AMOUNT_DECIMAL_PLACES = 2
 
-// System-IME input flags for the calculator field. `textVisiblePassword`
-// nudges most IMEs (Gboard, SwiftKey) into a symbols-friendly layout with
-// digits and operators reachable without switching pages, and it also
-// disables autocorrect/autocap. `CalculatorInputFilter` still enforces the
-// exact allow-list after the IME commits.
-private const val SYSTEM_IME_INPUT_TYPE =
-    InputType.TYPE_CLASS_TEXT or
-        InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or
-        InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-
 class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var preferenceModel: PreferenceViewModel
@@ -126,6 +118,7 @@ class MainActivity : BaseActivity() {
 
     private lateinit var tvCalculations: TextView
     private lateinit var tvFrom: EditText
+    private lateinit var scrollViewTextFrom: View
     private lateinit var tvTo: TextView
 
     // Guards the base-value writeback observer from stomping on characters the
@@ -163,6 +156,7 @@ class MainActivity : BaseActivity() {
         this.swipeRefresh = findViewById(R.id.swipeRefresh)
         this.tvCalculations = findViewById(R.id.textCalculations)
         this.tvFrom = findViewById(R.id.textFrom)
+        this.scrollViewTextFrom = findViewById(R.id.scrollViewTextFrom)
         this.tvTo = findViewById(R.id.textTo)
         this.spinnerFrom = findViewById(R.id.spinnerFrom)
         this.spinnerTo = findViewById(R.id.spinnerTo)
@@ -707,7 +701,7 @@ class MainActivity : BaseActivity() {
             tvFrom.isFocusableInTouchMode = true
             tvFrom.isCursorVisible = true
             tvFrom.showSoftInputOnFocus = true
-            tvFrom.setRawInputType(SYSTEM_IME_INPUT_TYPE)
+            tvFrom.setRawInputType(SYSTEM_IME_CALCULATOR_INPUT_TYPE)
             tvFrom.filters = arrayOf(CalculatorInputFilter())
             // Seed with the current typed expression (display glyphs → ASCII)
             // so switching mode mid-entry doesn't lose the user's work.
@@ -715,6 +709,8 @@ class MainActivity : BaseActivity() {
             setFromTextMuted(seed)
             tvFrom.setSelection(tvFrom.text?.length ?: 0)
             tvFrom.addTextChangedListener(systemKeyboardWatcher)
+            attachSystemImeTapOpener()
+            showSystemImeOnField()
         } else {
             tvFrom.isCursorVisible = false
             tvFrom.showSoftInputOnFocus = false
@@ -722,11 +718,34 @@ class MainActivity : BaseActivity() {
             tvFrom.isFocusableInTouchMode = false
             tvFrom.setRawInputType(InputType.TYPE_NULL)
             tvFrom.filters = emptyArray()
+            detachSystemImeTapOpener()
             hideSystemIme()
             // Restore the formatted display now that the writeback observer
             // is authoritative again.
             setFromTextMuted(viewModel.getCurrentBaseValueFormatted().value ?: "")
         }
+    }
+
+    // The EditText itself is `wrap_content` — an empty field has a near-zero
+    // tap target — so we also arm the surrounding HorizontalScrollView.
+    private fun attachSystemImeTapOpener() {
+        tvFrom.setOnClickListener(systemImeOpener)
+        scrollViewTextFrom.setOnClickListener(systemImeOpener)
+    }
+
+    private fun detachSystemImeTapOpener() {
+        tvFrom.setOnClickListener(null)
+        scrollViewTextFrom.apply {
+            setOnClickListener(null)
+            isClickable = false
+        }
+    }
+
+    private val systemImeOpener = View.OnClickListener { showSystemImeOnField() }
+
+    private fun showSystemImeOnField() {
+        tvFrom.setSelection(tvFrom.text?.length ?: 0)
+        showSoftInputOn(tvFrom)
     }
 
     // Programmatic setText that suppresses both the base-value observer
@@ -746,10 +765,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun hideSystemIme() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(tvFrom.windowToken, 0)
-    }
+    private fun hideSystemIme() = hideSoftInputFrom(tvFrom)
 
     // On every EditText mutation while system-IME mode is active, rebuild
     // the calculator state from the new text — same char-routing the hardware

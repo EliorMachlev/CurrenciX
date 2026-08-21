@@ -91,6 +91,14 @@ internal fun String.normaliseGlyphsToAscii(): String =
         acc.replace(glyph, ascii)
     }
 
+// Reverse of [normaliseGlyphsToAscii]. Used when a system-IME commit (which
+// produces ASCII operators via [CalculatorInputFilter]) needs to be stored
+// alongside display-glyph expressions the app-keypad path already writes.
+internal fun String.asciiToDisplayGlyphs(): String =
+    DISPLAY_TO_ASCII.entries.fold(this) { acc, (glyph, ascii) ->
+        acc.replace(ascii, glyph)
+    }
+
 // `A+B%` → `A+(A*B/100)`, `A-B%` → `A-(A*B/100)`, standalone `B%` → `B/100`.
 // The smart-percent rewrite has to run before the simple `%` → `/100` sweep,
 // otherwise the anchor digits get consumed first.

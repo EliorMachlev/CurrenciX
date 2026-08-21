@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
@@ -37,14 +38,21 @@ import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
+import com.eliormachlev.currencix.util.CalculatorInputFilter
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
+import com.eliormachlev.currencix.util.SYSTEM_IME_CALCULATOR_INPUT_TYPE
+import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
+import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.paddedDialogContainer
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
@@ -63,6 +71,7 @@ import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.SimpleDateFormat
@@ -140,6 +149,10 @@ class CartActivity : BaseActivity() {
 
     // Cached haptic setting so per-tap handlers don't need to touch prefs.
     private var hapticEnabled = false
+
+    // Mirrors the keyboard-type preference so row-tap handlers decide
+    // between the in-app keypad and a system-IME dialog without a pref read.
+    private var currentKeyboardType: Int = KEYBOARD_TYPE_BASIC
 
     // Slide-up keypad state — behaves like a soft IME. The keypad edits the
     // row identified by [activeItemId]; taps route through
@@ -349,7 +362,9 @@ class CartActivity : BaseActivity() {
         viewModel.isHapticFeedbackEnabled.observe(this) {
             hapticEnabled = it
         }
-        viewModel.isExtendedKeypadEnabled.observe(this) { extended ->
+        viewModel.keyboardType.observe(this) { type ->
+            currentKeyboardType = type
+            val extended = type == KEYBOARD_TYPE_EXPANDED
             keypadRegular.visibility = if (extended) View.GONE else View.VISIBLE
             keypadExtended.visibility = if (extended) View.VISIBLE else View.GONE
         }
@@ -912,11 +927,18 @@ class CartActivity : BaseActivity() {
      * [CalculatorInputState] with [seedExpression] and mirroring every state
      * change into [liveExpression] — the composable row observes that
      * LiveData for its inline display.
+     *
+     * In `KEYBOARD_TYPE_SYSTEM` mode there is no in-app keypad to raise;
+     * we open a dialog that hosts an EditText and defers to the system IME.
      */
     fun openKeypadFor(
         itemId: String,
         seedExpression: String,
     ) {
+        if (currentKeyboardType == KEYBOARD_TYPE_SYSTEM) {
+            openSystemImeEditorFor(itemId, seedExpression)
+            return
+        }
         hideSystemIme()
         detachActiveField()
         val state = CalculatorInputState().apply { seedExpression(seedExpression) }
@@ -931,6 +953,37 @@ class CartActivity : BaseActivity() {
         activeStateObserver = observer
         activeParenObserver = parenObserver
         showKeypad()
+    }
+
+    // System-IME editor: no in-app keypad, no `activeCalculatorState`.
+    // Committed value is converted back to display glyphs so it round-trips
+    // through [seedExpression] the same way in-app-keypad edits do.
+    private fun openSystemImeEditorFor(
+        itemId: String,
+        seedExpression: String,
+    ) {
+        activeItemId.value = itemId
+        val editor =
+            EditText(this).apply {
+                setRawInputType(SYSTEM_IME_CALCULATOR_INPUT_TYPE)
+                filters = arrayOf(CalculatorInputFilter())
+                setText(seedExpression.normaliseGlyphsToAscii())
+                setSelection(text.length)
+            }
+        val container = paddedDialogContainer(this).apply { addView(editor) }
+        val dialog =
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.cart_edit_expression_title)
+                .setView(container)
+                .setPositiveButton(R.string.cart_edit_expression_confirm) { _, _ ->
+                    commitExpression(itemId, editor.text.toString().asciiToDisplayGlyphs())
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .create()
+        dialog.setOnDismissListener { activeItemId.value = null }
+        dialog.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        dialog.show()
+        editor.requestFocus()
     }
 
     // The `()` cycle-toggle key on the extended keypad. Absent from the basic

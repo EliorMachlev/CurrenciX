@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.util
 
 import android.text.InputFilter
+import android.text.InputType
 import android.text.Spanned
 
 // Every character the system-IME calculator input allows through. Digits,
@@ -9,6 +10,17 @@ import android.text.Spanned
 // the routing path in `MainActivity.handleCharKey`, and the picker-summary
 // string agree on the same allow-list.
 const val CALCULATOR_ALLOWED_CHARS = "0123456789.,+-*/%()"
+
+// System-IME input flags for calculator fields. `textVisiblePassword` nudges
+// most IMEs (Gboard, SwiftKey) into a symbols-friendly layout with digits and
+// operators reachable without switching pages, and it also disables
+// autocorrect/autocap. Shared by the main screen and the cart editor so both
+// summon the same layout. [CalculatorInputFilter] still enforces the exact
+// allow-list after the IME commits.
+const val SYSTEM_IME_CALCULATOR_INPUT_TYPE: Int =
+    InputType.TYPE_CLASS_TEXT or
+        InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or
+        InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
 
 /**
  * Rejects any character outside [CALCULATOR_ALLOWED_CHARS] before it lands

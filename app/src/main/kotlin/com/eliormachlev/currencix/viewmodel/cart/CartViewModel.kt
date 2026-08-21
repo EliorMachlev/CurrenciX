@@ -87,12 +87,13 @@ class CartViewModel(
     fun getFeeSide(): LiveData<FeeSide> = feeSideLive
 
     /**
-     * Whether the extended calculator keypad is enabled in settings. Same
-     * source of truth as the main screen so the cart's slide-up keypad
-     * shows the same layout the user picked.
+     * Currently-selected keyboard type. Same source of truth as the main
+     * screen so the cart's slide-up keypad shows the same layout the user
+     * picked, and cart taps route to the system IME when that pref is on.
      */
+    val keyboardType: LiveData<Int> = db.getKeyboardType()
     val isExtendedKeypadEnabled: LiveData<Boolean> =
-        db.getKeyboardType().map { it == KEYBOARD_TYPE_EXPANDED }
+        keyboardType.map { it == KEYBOARD_TYPE_EXPANDED }
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
