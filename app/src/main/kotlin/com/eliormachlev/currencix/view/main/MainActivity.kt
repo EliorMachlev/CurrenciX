@@ -46,9 +46,8 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
-import com.eliormachlev.currencix.util.CalculatorInputFilter
+import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
-import com.eliormachlev.currencix.util.SYSTEM_IME_CALCULATOR_INPUT_TYPE
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getDecimalSeparator
@@ -701,8 +700,8 @@ class MainActivity : BaseActivity() {
             tvFrom.isFocusableInTouchMode = true
             tvFrom.isCursorVisible = true
             tvFrom.showSoftInputOnFocus = true
-            tvFrom.setRawInputType(SYSTEM_IME_CALCULATOR_INPUT_TYPE)
-            tvFrom.filters = arrayOf(CalculatorInputFilter())
+            tvFrom.keyListener = CalculatorKeyListener
+            scrollViewTextFrom.setBackgroundResource(R.drawable.bg_system_keyboard_input)
             // Seed with the current typed expression (display glyphs → ASCII)
             // so switching mode mid-entry doesn't lose the user's work.
             val seed = viewModel.currentTypedExpression()
@@ -716,8 +715,9 @@ class MainActivity : BaseActivity() {
             tvFrom.showSoftInputOnFocus = false
             tvFrom.isFocusable = false
             tvFrom.isFocusableInTouchMode = false
+            tvFrom.keyListener = null
             tvFrom.setRawInputType(InputType.TYPE_NULL)
-            tvFrom.filters = emptyArray()
+            scrollViewTextFrom.background = null
             detachSystemImeTapOpener()
             hideSystemIme()
             // Restore the formatted display now that the writeback observer

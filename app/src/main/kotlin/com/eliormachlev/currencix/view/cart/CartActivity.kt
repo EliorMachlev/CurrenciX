@@ -43,9 +43,8 @@ import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
-import com.eliormachlev.currencix.util.CalculatorInputFilter
+import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
-import com.eliormachlev.currencix.util.SYSTEM_IME_CALCULATOR_INPUT_TYPE
 import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.choiceExplainerRow
@@ -965,8 +964,7 @@ class CartActivity : BaseActivity() {
         activeItemId.value = itemId
         val editor =
             EditText(this).apply {
-                setRawInputType(SYSTEM_IME_CALCULATOR_INPUT_TYPE)
-                filters = arrayOf(CalculatorInputFilter())
+                keyListener = CalculatorKeyListener
                 setText(seedExpression.normaliseGlyphsToAscii())
                 setSelection(text.length)
             }
