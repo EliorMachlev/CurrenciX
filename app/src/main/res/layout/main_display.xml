@@ -194,26 +194,48 @@
              scrollViewTrueCost is currently visible — anchoring its bottom
              to the guideline instead of chaining to trueCost keeps it from
              re-centring when the fee hint toggles. -->
+        <!-- fillViewport stretches the EditText to the visible width when its
+             content is short — combined with android:gravity="end" the number
+             stays right-aligned but taps anywhere in the bordered area (only
+             shown in system-keyboard mode) hit the EditText and open the IME
+             via its default focus behavior. -->
         <HorizontalScrollView
             android:id="@+id/scrollViewTextFrom"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:fillViewport="true"
             android:scrollbars="none"
             app:layout_constraintBottom_toTopOf="@id/guideline_display"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/spinnerFrom"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+            <!-- EditText (not TextView) so the same field can either display
+                 formatted output for the custom keypads OR accept IME input
+                 when the "System keyboard" pref is picked. Defaults are TextView-
+                 shaped (no focus, no cursor, no background, no soft-input) and
+                 MainActivity flips the input flags at runtime when the pref
+                 changes. -->
+            <EditText
                 android:id="@+id/textFrom"
                 style="@style/TextAppearance.Material3.TitleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:autofillHints="off"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="end|center_vertical"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="none"
                 android:lines="1"
                 android:longClickable="true"
                 android:padding="@dimen/margin2x"
                 android:textDirection="ltr"
+                tools:ignore="LabelFor"
                 tools:text="$ 13.99" />
         </HorizontalScrollView>
 

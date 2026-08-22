@@ -29,8 +29,10 @@
     <string name="keyboard_title">Klávesnice</string>
     <string name="keyboard_option_default">Výchozí</string>
     <string name="keyboard_option_expanded">Rozšířená</string>
+    <string name="keyboard_option_system">Systémová klávesnice</string>
     <string name="keyboard_summary_default">Standardní klávesnice kalkulačky.</string>
     <string name="keyboard_summary_expanded">Přidává další klávesové zkratky pro rychlejší zadávání.</string>
+    <string name="keyboard_summary_system">Používá klávesnici vašeho zařízení. Přijímá číslice, desetinnou čárku, běžné aritmetické operátory a závorky.</string>
     <string name="decimal_places_title">Desetinná přesnost</string>
     <string name="decimal_places_summary">Počet desetinných míst zobrazených u převedených hodnot.</string>
     <string name="haptic_feedback_title">Haptická odezva</string>

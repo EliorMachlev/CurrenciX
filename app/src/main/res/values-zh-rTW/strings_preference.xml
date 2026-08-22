@@ -26,11 +26,13 @@
     <string name="fee_empty">尚無手續費</string>
     <string name="previewConversion_title">匯率預覽</string>
     <string name="previewConversion_summary">在選擇貨幣頁面顯示目前匯率</string>
-    <string name="keyboard_title">���盤</string>
+    <string name="keyboard_title">鍵盤</string>
     <string name="keyboard_option_default">預設</string>
     <string name="keyboard_option_expanded">擴展</string>
+    <string name="keyboard_option_system">系統鍵盤</string>
     <string name="keyboard_summary_default">標準計算機鍵盤。</string>
     <string name="keyboard_summary_expanded">新增額外的快捷鍵,加快輸入速度。</string>
+    <string name="keyboard_summary_system">使用您裝置的鍵盤。接受數字、小數點、常用算術運算子及括號。</string>
     <string name="decimal_places_title">小數精度</string>
     <string name="decimal_places_summary">轉換數值顯示的小數位數。</string>
     <string name="haptic_feedback_title">觸覺回饋</string>

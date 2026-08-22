@@ -26,10 +26,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -37,9 +39,13 @@ import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
+import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.feePercentDelta
@@ -141,6 +147,10 @@ class CartActivity : BaseActivity() {
     // Cached haptic setting so per-tap handlers don't need to touch prefs.
     private var hapticEnabled = false
 
+    // Mirrors the keyboard-type preference so row-tap handlers decide
+    // between the in-app keypad and a system-IME dialog without a pref read.
+    private var currentKeyboardType: Int = KEYBOARD_TYPE_BASIC
+
     // Slide-up keypad state — behaves like a soft IME. The keypad edits the
     // row identified by [activeItemId]; taps route through
     // [activeCalculatorState] and every state change is mirrored into
@@ -176,6 +186,12 @@ class CartActivity : BaseActivity() {
     // observeAsState in the list survives cart re-emissions.
     private val itemsLive = MediatorLiveData<List<CartItem>>().apply { value = emptyList() }
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
+
+    // Pre-mapped boolean the composable list consumes — keeps the KEYBOARD_TYPE_*
+    // constants out of the view layer.
+    private val isSystemKeyboardModeLive: LiveData<Boolean> by lazy {
+        viewModel.keyboardType.map { it == KEYBOARD_TYPE_SYSTEM }
+    }
 
     private lateinit var exportLauncher: ActivityResultLauncher<String>
     private lateinit var importLauncher: ActivityResultLauncher<Array<String>>
@@ -238,12 +254,14 @@ class CartActivity : BaseActivity() {
                 currencySource = currencyLive,
                 activeItemIdSource = activeItemId,
                 activeExpressionSource = liveExpression,
+                isSystemKeyboardModeSource = isSystemKeyboardModeLive,
                 onNameCommit = ::commitName,
                 onNamePending = { id, name -> pendingNames[id] = name },
                 onExpressionTap = { item ->
                     itemsView.hapticTap(hapticEnabled)
                     openKeypadFor(item.id, item.expression)
                 },
+                onExpressionChange = ::onInlineExpressionChanged,
                 onTogglePin = { id ->
                     itemsView.hapticTap(hapticEnabled)
                     viewModel.togglePinned(id)
@@ -349,7 +367,9 @@ class CartActivity : BaseActivity() {
         viewModel.isHapticFeedbackEnabled.observe(this) {
             hapticEnabled = it
         }
-        viewModel.isExtendedKeypadEnabled.observe(this) { extended ->
+        viewModel.keyboardType.observe(this) { type ->
+            currentKeyboardType = type
+            val extended = type == KEYBOARD_TYPE_EXPANDED
             keypadRegular.visibility = if (extended) View.GONE else View.VISIBLE
             keypadExtended.visibility = if (extended) View.VISIBLE else View.GONE
         }
@@ -912,11 +932,23 @@ class CartActivity : BaseActivity() {
      * [CalculatorInputState] with [seedExpression] and mirroring every state
      * change into [liveExpression] — the composable row observes that
      * LiveData for its inline display.
+     *
+     * In `KEYBOARD_TYPE_SYSTEM` mode there is no in-app keypad to raise; the
+     * row itself hosts an EditText once it becomes active, so we just seed
+     * [liveExpression] and flip [activeItemId] — the composable does the rest
+     * (focus request + IME show).
      */
     fun openKeypadFor(
         itemId: String,
         seedExpression: String,
     ) {
+        if (currentKeyboardType == KEYBOARD_TYPE_SYSTEM) {
+            if (activeItemId.value == itemId) return
+            detachActiveField()
+            liveExpression.value = seedExpression
+            activeItemId.value = itemId
+            return
+        }
         hideSystemIme()
         detachActiveField()
         val state = CalculatorInputState().apply { seedExpression(seedExpression) }
@@ -931,6 +963,19 @@ class CartActivity : BaseActivity() {
         activeStateObserver = observer
         activeParenObserver = parenObserver
         showKeypad()
+    }
+
+    // Bridge each keystroke from the row's inline EditText (ASCII) back into
+    // [liveExpression] (display glyphs) so the row's preview + eventual commit
+    // see the same round-tripped form the in-app keypad produces.
+    private fun onInlineExpressionChanged(
+        id: String,
+        ascii: String,
+    ) {
+        if (activeItemId.value != id) return
+        val glyphs = ascii.asciiToDisplayGlyphs()
+        if (liveExpression.value == glyphs) return
+        liveExpression.value = glyphs
     }
 
     // The `()` cycle-toggle key on the extended keypad. Absent from the basic
@@ -1136,7 +1181,14 @@ class CartActivity : BaseActivity() {
     }
 
     private fun dismissKeyboards() {
-        if (keypadContainer.visibility == View.VISIBLE) closeKeypad()
+        // closeKeypad already detaches for the in-app keypad; the else branch
+        // covers system-IME mode (no keypad) so the active row's typed value
+        // commits and its EditText tears down.
+        if (keypadContainer.visibility == View.VISIBLE) {
+            closeKeypad()
+        } else if (activeItemId.value != null) {
+            detachActiveField()
+        }
         if (systemImeVisible) {
             hideSystemIme()
             currentFocus?.clearFocus()

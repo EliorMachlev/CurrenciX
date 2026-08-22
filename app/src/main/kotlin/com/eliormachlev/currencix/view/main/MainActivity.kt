@@ -6,11 +6,14 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.os.Bundle
+import android.text.Editable
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
@@ -22,6 +25,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.DatePicker
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -39,15 +43,21 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
+import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticTap
+import com.eliormachlev.currencix.util.hideSoftInputFrom
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
+import com.eliormachlev.currencix.util.showSoftInputOn
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -106,8 +116,21 @@ class MainActivity : BaseActivity() {
     private var latestRatesTime: LocalTime? = null
 
     private lateinit var tvCalculations: TextView
-    private lateinit var tvFrom: TextView
+    private lateinit var tvFrom: EditText
+    private lateinit var scrollViewTextFrom: View
     private lateinit var tvTo: TextView
+
+    // Guards the base-value writeback observer from stomping on characters the
+    // user is actively typing on the system keyboard: our own setText() call
+    // to reflect the formatted value would otherwise re-fire the TextWatcher
+    // and replay it, garbling the input.
+    private var muteFromWriteback = false
+
+    // True while `KEYBOARD_TYPE_SYSTEM` is selected — the EditText is the
+    // source of truth so the base-value writeback observer skips it entirely,
+    // even for updates that originate elsewhere (currency swap, rate refresh).
+    private var isSystemKeyboardMode = false
+    private var lastKeyboardTypeApplied: Int? = null
     private lateinit var spinnerFrom: SearchableSpinner
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var tvInfoConversion: TextView
@@ -133,6 +156,7 @@ class MainActivity : BaseActivity() {
         this.swipeRefresh = findViewById(R.id.swipeRefresh)
         this.tvCalculations = findViewById(R.id.textCalculations)
         this.tvFrom = findViewById(R.id.textFrom)
+        this.scrollViewTextFrom = findViewById(R.id.scrollViewTextFrom)
         this.tvTo = findViewById(R.id.textTo)
         this.spinnerFrom = findViewById(R.id.spinnerFrom)
         this.spinnerTo = findViewById(R.id.spinnerTo)
@@ -396,9 +420,9 @@ class MainActivity : BaseActivity() {
         }
 
         // long click on input "from"
-        registerForContextMenu(findViewById<LinearLayout>(R.id.textFrom))
+        registerForContextMenu(tvFrom)
         // long click on input "to"
-        registerForContextMenu(findViewById<LinearLayout>(R.id.textTo))
+        registerForContextMenu(tvTo)
 
         // spinners: listen for changes
         spinnerFrom.onItemSelectedListener = rateSpinnerListener(viewModel::setBaseCurrency)
@@ -454,14 +478,21 @@ class MainActivity : BaseActivity() {
             swipeRefresh.isEnabled = isRefreshing.not()
             menuItemRefresh?.isEnabled = isRefreshing.not()
         }
-        viewModel.getCurrentBaseValueFormatted().observe(this) { tvFrom.text = it }
+        viewModel.getCurrentBaseValueFormatted().observe(this) { formatted ->
+            // In SYSTEM-keyboard mode the EditText is the source of truth for
+            // what the user is typing; skip the formatted-value writeback so
+            // we don't overwrite in-progress input — including reformats
+            // triggered by a currency swap or rate refresh mid-entry.
+            if (isSystemKeyboardMode || muteFromWriteback) return@observe
+            setFromTextMuted(formatted ?: "")
+        }
         viewModel.getResultFormatted().observe(this) { tvTo.text = it }
         viewModel.getCalculationInputFormatted().observe(this) { tvCalculations.text = it }
         viewModel.getBaseCurrency().observe(this) { observeBaseCurrency(it) }
         viewModel.getDestinationCurrency().observe(this) { observeDestinationCurrency(it) }
         viewModel.getCurrentBaseValueAsNumber().observe(this) { spinnerTo.setCurrentSum(it) }
         viewModel.getResultAsNumber().observe(this) { spinnerFrom.setCurrentSum(it) }
-        viewModel.isExtendedKeypadEnabled.observe(this) { observeKeypadState(it) }
+        viewModel.keyboardType.observe(this) { observeKeyboardType(it) }
         viewModel.nextParen().observe(this) { next ->
             findViewById<AppCompatButton>(R.id.btn_parens)?.paintParenCycle(next)
         }
@@ -646,15 +677,137 @@ class MainActivity : BaseActivity() {
             ?.find { it.currency == currency }
             ?.value
 
-    private fun observeKeypadState(extendedEnabled: Boolean) {
+    private fun observeKeyboardType(type: Int) {
         val keypadRegular = findViewById<View>(R.id.keypad)
         val keypadExtended = findViewById<View>(R.id.keypad_extended)
-        keypadRegular.visibility = if (extendedEnabled) View.GONE else View.VISIBLE
-        keypadExtended.visibility = if (extendedEnabled) View.VISIBLE else View.GONE
+        keypadRegular.visibility = if (type == KEYBOARD_TYPE_BASIC) View.VISIBLE else View.GONE
+        keypadExtended.visibility = if (type == KEYBOARD_TYPE_EXPANDED) View.VISIBLE else View.GONE
         val separator = getDecimalSeparator(this)
         keypadExtended.findViewById<TextView>(R.id.btn_decimal).text = separator
         keypadRegular.findViewById<TextView>(R.id.btn_decimal).text = separator
+        configureFromEditText(type)
     }
+
+    // Runtime flags mirror the XML defaults so mode swaps are reversible.
+    private fun configureFromEditText(type: Int) {
+        val wantsSystem = type == KEYBOARD_TYPE_SYSTEM
+        if (wantsSystem == isSystemKeyboardMode && lastKeyboardTypeApplied != null) return
+        isSystemKeyboardMode = wantsSystem
+        lastKeyboardTypeApplied = type
+        // Detach first so seed-setText below doesn't accidentally clear the
+        // state via a stale watcher call.
+        tvFrom.removeTextChangedListener(systemKeyboardWatcher)
+        if (wantsSystem) {
+            tvFrom.isFocusable = true
+            tvFrom.isFocusableInTouchMode = true
+            tvFrom.isCursorVisible = true
+            tvFrom.showSoftInputOnFocus = true
+            tvFrom.keyListener = CalculatorKeyListener
+            scrollViewTextFrom.background = systemKeyboardInputBackground()
+            // Seed with the current typed expression (display glyphs → ASCII)
+            // so switching mode mid-entry doesn't lose the user's work.
+            val seed = viewModel.currentTypedExpression()
+            setFromTextMuted(seed)
+            tvFrom.setSelection(tvFrom.text?.length ?: 0)
+            tvFrom.addTextChangedListener(systemKeyboardWatcher)
+            attachSystemImeTapOpener()
+            showSystemImeOnField()
+        } else {
+            tvFrom.isCursorVisible = false
+            tvFrom.showSoftInputOnFocus = false
+            tvFrom.isFocusable = false
+            tvFrom.isFocusableInTouchMode = false
+            // Also clears inputType to TYPE_NULL — no separate reset needed.
+            tvFrom.keyListener = null
+            scrollViewTextFrom.background = null
+            detachSystemImeTapOpener()
+            hideSystemIme()
+            // Restore the formatted display now that the writeback observer
+            // is authoritative again.
+            setFromTextMuted(viewModel.getCurrentBaseValueFormatted().value ?: "")
+        }
+    }
+
+    private var cachedSystemKeyboardBackground: Drawable? = null
+
+    private fun systemKeyboardInputBackground(): Drawable =
+        cachedSystemKeyboardBackground ?: getDrawable(R.drawable.bg_system_keyboard_input)!!.also {
+            cachedSystemKeyboardBackground = it
+        }
+
+    // The EditText itself is `wrap_content` — an empty field has a near-zero
+    // tap target — so we also arm the surrounding HorizontalScrollView.
+    private fun attachSystemImeTapOpener() {
+        tvFrom.setOnClickListener(systemImeOpener)
+        scrollViewTextFrom.setOnClickListener(systemImeOpener)
+    }
+
+    private fun detachSystemImeTapOpener() {
+        tvFrom.setOnClickListener(null)
+        scrollViewTextFrom.apply {
+            setOnClickListener(null)
+            isClickable = false
+        }
+    }
+
+    private val systemImeOpener = View.OnClickListener { showSystemImeOnField() }
+
+    private fun showSystemImeOnField() {
+        tvFrom.setSelection(tvFrom.text?.length ?: 0)
+        showSoftInputOn(tvFrom)
+    }
+
+    // Programmatic setText that suppresses both the base-value observer
+    // writeback and the system-IME watcher re-entry — used for seeding the
+    // field and restoring the formatted display on mode swaps.
+    private fun setFromTextMuted(text: CharSequence) {
+        // Skip no-op writes — setText with an identical string still fires
+        // the TextWatcher on some Android versions, which would trigger a
+        // full clear+replay in `systemKeyboardWatcher` for zero benefit.
+        if (tvFrom.text?.toString() == text.toString()) return
+        val alreadyMuted = muteFromWriteback
+        muteFromWriteback = true
+        try {
+            tvFrom.setText(text)
+        } finally {
+            if (!alreadyMuted) muteFromWriteback = false
+        }
+    }
+
+    private fun hideSystemIme() = hideSoftInputFrom(tvFrom)
+
+    // On every EditText mutation while system-IME mode is active, rebuild
+    // the calculator state from the new text — same char-routing the hardware
+    // keyboard uses. Simpler than diffing insert vs. delete positions and
+    // correct for pastes / mid-string edits too.
+    private val systemKeyboardWatcher =
+        object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int,
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int,
+            ) = Unit
+
+            override fun afterTextChanged(s: Editable?) {
+                if (muteFromWriteback) return
+                val text = s?.toString().orEmpty()
+                muteFromWriteback = true
+                try {
+                    viewModel.clear()
+                    text.forEach { handleCharKey(it) }
+                } finally {
+                    muteFromWriteback = false
+                }
+            }
+        }
 
     private fun haptic(view: View) = view.hapticTap(hapticEnabled)
 
@@ -731,6 +884,7 @@ class MainActivity : BaseActivity() {
             key == '.' || key == ',' -> viewModel.addDecimal()
             key == '(' -> viewModel.openParen()
             key == ')' -> viewModel.closeParen()
+            key == '%' -> viewModel.addPercent()
             else -> return false
         }
         return true

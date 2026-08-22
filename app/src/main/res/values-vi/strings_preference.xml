@@ -28,13 +28,15 @@
     <string name="previewConversion_summary">Hiện việc chuyển đổi hiện tại cho mỗi tỉ lệ ở trình chọn tiền tệ.</string>
     <string name="keyboard_title">Bàn phím</string>
     <string name="keyboard_option_default">Mặc định</string>
-    <string name="keyboard_option_expanded">M��� rộng</string>
+    <string name="keyboard_option_expanded">Mở rộng</string>
+    <string name="keyboard_option_system">Bàn phím hệ thống</string>
     <string name="keyboard_summary_default">Bàn phím máy tính chuẩn.</string>
     <string name="keyboard_summary_expanded">Thêm các phím tắt bổ sung để nhập nhanh hơn.</string>
+    <string name="keyboard_summary_system">Sử dụng bàn phím của thiết bị. Chấp nhận chữ số, dấu thập phân, các toán tử số học thông dụng và dấu ngoặc.</string>
     <string name="decimal_places_title">Độ chính xác thập phân</string>
     <string name="decimal_places_summary">Số chữ số thập phân hiển thị cho các giá trị đã chuyển đổi.</string>
     <string name="haptic_feedback_title">Phản hồi xúc giác</string>
-    <string name="haptic_feedback_summary">Rung khi nhấn phím\nTheo cài đặt hệ th���ng</string>
+    <string name="haptic_feedback_summary">Rung khi nhấn phím\nTheo cài đặt hệ thống</string>
     <string name="date_format_title">Định dạng ngày và giờ</string>
     <string name="category_appearance">Ngoại hình</string>
     <string name="system_default">Theo chế độ mặc định của hệ thống</string>

@@ -50,9 +50,10 @@ private const val LEGACY_FEE_ENABLED_KEY = "_feeEnabled"
 private const val NO_HISTORICAL_DATE = -1L
 
 // Public keyboard-type sentinels shared by every consumer of [Database.getKeyboardType]
-// so the "basic vs extended" split is stated in exactly one place.
+// so the "basic vs extended vs system-IME" split is stated in exactly one place.
 const val KEYBOARD_TYPE_BASIC = 0
 const val KEYBOARD_TYPE_EXPANDED = 1
+const val KEYBOARD_TYPE_SYSTEM = 2
 
 class Database(
     private val context: Context,

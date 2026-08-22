@@ -84,9 +84,19 @@ fun String.evaluateCalculatorExpression(): String {
     }
 }
 
-private fun String.normaliseGlyphsToAscii(): String =
+// Exposed to the system-IME seed path so a state already holding display glyphs
+// like `5 − 3` can be re-typed into an EditText as ASCII `5-3`.
+internal fun String.normaliseGlyphsToAscii(): String =
     DISPLAY_TO_ASCII.entries.fold(replace(" ", "")) { acc, (glyph, ascii) ->
         acc.replace(glyph, ascii)
+    }
+
+// Reverse of [normaliseGlyphsToAscii]. Used when a system-IME commit (which
+// produces ASCII operators via [CalculatorInputFilter]) needs to be stored
+// alongside display-glyph expressions the app-keypad path already writes.
+internal fun String.asciiToDisplayGlyphs(): String =
+    DISPLAY_TO_ASCII.entries.fold(this) { acc, (glyph, ascii) ->
+        acc.replace(ascii, glyph)
     }
 
 // `A+B%` → `A+(A*B/100)`, `A-B%` → `A-(A*B/100)`, standalone `B%` → `B/100`.

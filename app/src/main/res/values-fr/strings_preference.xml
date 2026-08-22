@@ -29,8 +29,10 @@
     <string name="keyboard_title">Clavier</string>
     <string name="keyboard_option_default">Par défaut</string>
     <string name="keyboard_option_expanded">Étendu</string>
+    <string name="keyboard_option_system">Clavier système</string>
     <string name="keyboard_summary_default">Clavier de calculatrice standard.</string>
     <string name="keyboard_summary_expanded">Ajoute des touches de raccourci supplémentaires pour une saisie plus rapide.</string>
+    <string name="keyboard_summary_system">Utilise le clavier de votre appareil. Accepte les chiffres, la virgule décimale, les opérateurs arithmétiques courants et les parenthèses.</string>
     <string name="decimal_places_title">Précision décimale</string>
     <string name="decimal_places_summary">Nombre de décimales à afficher pour les valeurs converties.</string>
     <string name="haptic_feedback_title">Retour haptique</string>

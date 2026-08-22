@@ -19,7 +19,7 @@ import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
 import com.eliormachlev.currencix.util.OPERATOR_MINUS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
@@ -30,6 +30,7 @@ import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
+import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import java.math.BigDecimal
 import java.math.MathContext
@@ -64,7 +65,8 @@ class MainViewModel(
 
     // ui
     private var isUpdating: LiveData<Boolean> = repository.isUpdating()
-    val isExtendedKeypadEnabled: LiveData<Boolean> = db.getKeyboardType().map { it != KEYBOARD_TYPE_BASIC }
+    val keyboardType: LiveData<Int> = db.getKeyboardType()
+    val isExtendedKeypadEnabled: LiveData<Boolean> = keyboardType.map { it == KEYBOARD_TYPE_EXPANDED }
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
     private val decimalPlaces: LiveData<Int> = db.getDecimalPlaces()
 
@@ -786,6 +788,18 @@ class MainViewModel(
     // Cycle-toggle for the shared `()` keypad button — inserts whichever
     // glyph is currently highlighted.
     internal fun applyNextParen() = input.applyNextParen()
+
+    // Raw as-typed expression for seeding the system-IME EditText on mode
+    // switch. Display glyphs (× ÷ −) are normalised back to ASCII so the seed
+    // matches what the user's keyboard produces. An untouched state (base
+    // still "0", no calc row) seeds as empty — otherwise the leading "0"
+    // gets prepended to the next keystroke and the EditText drifts out of
+    // sync with the calculator state.
+    internal fun currentTypedExpression(): String {
+        input.calculationValueText.value?.let { return it.normaliseGlyphsToAscii() }
+        val base = input.baseValueText.value.orEmpty()
+        return if (base == "0") "" else base.normaliseGlyphsToAscii()
+    }
 
     // Which paren the cycle-toggle keypad button should insert next — drives
     // the bold/green vs grey highlight on the two-glyph `()` button.
