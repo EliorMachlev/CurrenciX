@@ -28,7 +28,7 @@
     <string name="previewConversion_summary">Visa konvertering för varje valuta i valutaväljaren.</string>
     <string name="keyboard_title">Tangentbord</string>
     <string name="keyboard_option_default">Standard</string>
-    <string name="keyboard_option_expanded">Ut��kad</string>
+    <string name="keyboard_option_expanded">Utökad</string>
     <string name="keyboard_option_system">Systemtangentbord</string>
     <string name="keyboard_summary_default">Standardtangentbord för miniräknare.</string>
     <string name="keyboard_summary_expanded">Lägger till extra genvägstangenter för snabbare inmatning.</string>
