@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.cart.compose
 
-import android.content.Context
-import android.view.inputmethod.InputMethodManager
+import android.app.Activity
 import android.widget.EditText
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -54,6 +53,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.roundForDisplay
+import com.eliormachlev.currencix.util.showSoftInputOn
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
@@ -320,11 +320,9 @@ private fun ExpressionField(
     }
 }
 
-// System-keyboard mode: host a real EditText inside the row so tapping the
-// value focuses a field the IME can attach to — same [CalculatorKeyListener]
-// the main screen uses, so the IME opens in numpad mode and math operators
-// pass through. [initial] arrives in display-glyph form (× ÷); the field
-// works in ASCII (* /) and callers convert back on commit.
+// [initial] arrives in display-glyph form (× ÷); the EditText works in ASCII
+// (* /) so the numpad IME's keys pass through, and callers convert back on
+// commit — matches how [openSystemImeEditorFor]'s dialog used to round-trip.
 @Composable
 private fun ExpressionEditor(
     initial: String,
@@ -333,6 +331,7 @@ private fun ExpressionEditor(
     val onChangeState = rememberUpdatedState(onChange)
     val textColorArgb = MaterialTheme.colorScheme.onSurface.toArgb()
     val hint = stringResource(id = R.string.cart_item_expression_hint)
+    val asciiInitial = remember(initial) { initial.normaliseGlyphsToAscii() }
     Box(
         modifier =
             Modifier
@@ -349,24 +348,22 @@ private fun ExpressionEditor(
                     isSingleLine = true
                     setTextColor(textColorArgb)
                     this.hint = hint
-                    setText(initial.normaliseGlyphsToAscii())
+                    setText(asciiInitial)
                     setSelection(text.length)
                     doAfterTextChanged { editable ->
                         onChangeState.value(editable?.toString().orEmpty())
                     }
                     // Post so requestFocus lands after the view is attached to
                     // the window — otherwise showSoftInput is a no-op.
-                    post {
-                        requestFocus()
-                        (ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
-                            ?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
-                    }
+                    post { (ctx as? Activity)?.showSoftInputOn(this) }
                 }
             },
             update = { et ->
-                val incoming = initial.normaliseGlyphsToAscii()
-                if (!et.isFocused && et.text.toString() != incoming) {
-                    et.setText(incoming)
+                // Skip while user is typing so keystrokes aren't overwritten
+                // by our own glyph→ASCII round-trip echoing back through
+                // liveExpression.
+                if (!et.isFocused && et.text.toString() != asciiInitial) {
+                    et.setText(asciiInitial)
                     et.setSelection(et.text.length)
                 }
             },

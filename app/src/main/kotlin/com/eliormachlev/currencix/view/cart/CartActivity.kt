@@ -26,10 +26,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -185,6 +187,12 @@ class CartActivity : BaseActivity() {
     private val itemsLive = MediatorLiveData<List<CartItem>>().apply { value = emptyList() }
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
+    // Pre-mapped boolean the composable list consumes — keeps the KEYBOARD_TYPE_*
+    // constants out of the view layer.
+    private val isSystemKeyboardModeLive: LiveData<Boolean> by lazy {
+        viewModel.keyboardType.map { it == KEYBOARD_TYPE_SYSTEM }
+    }
+
     private lateinit var exportLauncher: ActivityResultLauncher<String>
     private lateinit var importLauncher: ActivityResultLauncher<Array<String>>
 
@@ -246,7 +254,7 @@ class CartActivity : BaseActivity() {
                 currencySource = currencyLive,
                 activeItemIdSource = activeItemId,
                 activeExpressionSource = liveExpression,
-                keyboardTypeSource = viewModel.keyboardType,
+                isSystemKeyboardModeSource = isSystemKeyboardModeLive,
                 onNameCommit = ::commitName,
                 onNamePending = { id, name -> pendingNames[id] = name },
                 onExpressionTap = { item ->
@@ -965,7 +973,9 @@ class CartActivity : BaseActivity() {
         ascii: String,
     ) {
         if (activeItemId.value != id) return
-        liveExpression.value = ascii.asciiToDisplayGlyphs()
+        val glyphs = ascii.asciiToDisplayGlyphs()
+        if (liveExpression.value == glyphs) return
+        liveExpression.value = glyphs
     }
 
     // The `()` cycle-toggle key on the extended keypad. Absent from the basic
@@ -1171,15 +1181,17 @@ class CartActivity : BaseActivity() {
     }
 
     private fun dismissKeyboards() {
-        if (keypadContainer.visibility == View.VISIBLE) closeKeypad()
+        // closeKeypad already detaches for the in-app keypad; the else branch
+        // covers system-IME mode (no keypad) so the active row's typed value
+        // commits and its EditText tears down.
+        if (keypadContainer.visibility == View.VISIBLE) {
+            closeKeypad()
+        } else if (activeItemId.value != null) {
+            detachActiveField()
+        }
         if (systemImeVisible) {
             hideSystemIme()
             currentFocus?.clearFocus()
-        }
-        // System-keyboard mode edits inline (no in-app keypad); detach so the
-        // active row's typed value commits and its EditText tears down.
-        if (activeItemId.value != null && currentKeyboardType == KEYBOARD_TYPE_SYSTEM) {
-            detachActiveField()
         }
     }
 

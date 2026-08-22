@@ -16,8 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
@@ -37,7 +35,7 @@ fun CartItemsList(
     currencySource: LiveData<String>,
     activeItemIdSource: LiveData<String?>,
     activeExpressionSource: LiveData<String>,
-    keyboardTypeSource: LiveData<Int>,
+    isSystemKeyboardModeSource: LiveData<Boolean>,
     onNameCommit: (id: String, name: String) -> Unit,
     onNamePending: (id: String, name: String) -> Unit,
     onExpressionTap: (item: CartItem) -> Unit,
@@ -53,8 +51,7 @@ fun CartItemsList(
         val currency by currencySource.observeAsState(initial = "")
         val activeId by activeItemIdSource.observeAsState()
         val liveExpression by activeExpressionSource.observeAsState(initial = "")
-        val keyboardType by keyboardTypeSource.observeAsState(initial = KEYBOARD_TYPE_BASIC)
-        val isSystemKeyboardMode = keyboardType == KEYBOARD_TYPE_SYSTEM
+        val isSystemKeyboardMode by isSystemKeyboardModeSource.observeAsState(initial = false)
         // Display pinned-first while preserving storage order within each
         // partition. Drag operates on this list; dropping a pinned row into
         // the unpinned section snaps back on the next composition — user must
