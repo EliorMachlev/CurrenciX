@@ -29,8 +29,10 @@
     <string name="keyboard_title">Teclado</string>
     <string name="keyboard_option_default">Predeterminado</string>
     <string name="keyboard_option_expanded">Expandido</string>
+    <string name="keyboard_option_system">Teclado del sistema</string>
     <string name="keyboard_summary_default">Teclado estándar de la calculadora.</string>
     <string name="keyboard_summary_expanded">Añade teclas de acceso rápido adicionales para introducir datos más rápido.</string>
+    <string name="keyboard_summary_system">Usa el teclado del dispositivo. Acepta dígitos, coma decimal, operadores aritméticos habituales y paréntesis.</string>
     <string name="decimal_places_title">Precisión decimal</string>
     <string name="decimal_places_summary">Número de decimales a mostrar en los valores convertidos.</string>
     <string name="haptic_feedback_title">Vibración táctil</string>

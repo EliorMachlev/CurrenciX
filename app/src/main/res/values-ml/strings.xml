@@ -49,6 +49,8 @@
     <string name="cart_add_item">ഇനം ചേർക്കുക</string>
     <string name="cart_item_name_hint">ഇനം</string>
     <string name="cart_item_expression_hint">വില (ഉദാ. 2 × 3.50)</string>
+    <string name="cart_edit_expression_title">വില</string>
+    <string name="cart_edit_expression_confirm">സംരക്ഷിക്കുക</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">ഇനം ഇല്ലാതാക്കുക</string>
     <string name="cart_subtotal_label">ഉപത്തുക</string>

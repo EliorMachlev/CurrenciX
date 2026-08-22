@@ -45,6 +45,8 @@
     <string name="cart_add_item">إضافة عنصر</string>
     <string name="cart_item_name_hint">العنصر</string>
     <string name="cart_item_expression_hint">السعر (مثلاً 2 × 3.50)</string>
+    <string name="cart_edit_expression_title">السعر</string>
+    <string name="cart_edit_expression_confirm">حفظ</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">حذف العنصر</string>
     <string name="cart_subtotal_label">المجموع الفرعي</string>

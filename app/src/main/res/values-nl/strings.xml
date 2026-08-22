@@ -48,6 +48,8 @@
     <string name="cart_add_item">Artikel toevoegen</string>
     <string name="cart_item_name_hint">Artikel</string>
     <string name="cart_item_expression_hint">Prijs (bijv. 2 × 3,50)</string>
+    <string name="cart_edit_expression_title">Prijs</string>
+    <string name="cart_edit_expression_confirm">Opslaan</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">Artikel verwijderen</string>
     <string name="cart_subtotal_label">Subtotaal</string>

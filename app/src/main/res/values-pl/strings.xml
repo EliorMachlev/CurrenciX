@@ -47,6 +47,8 @@
     <string name="cart_add_item">Dodaj pozycję</string>
     <string name="cart_item_name_hint">Pozycja</string>
     <string name="cart_item_expression_hint">Cena (np. 2 × 3,50)</string>
+    <string name="cart_edit_expression_title">Cena</string>
+    <string name="cart_edit_expression_confirm">Zapisz</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">Usuń pozycję</string>
     <string name="cart_subtotal_label">Suma częściowa</string>
