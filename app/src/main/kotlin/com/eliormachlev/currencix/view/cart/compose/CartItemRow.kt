@@ -1,5 +1,8 @@
 package com.eliormachlev.currencix.view.cart.compose
 
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,11 +33,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -42,8 +47,12 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.widget.doAfterTextChanged
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.util.CalculatorKeyListener
+import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
@@ -74,10 +83,12 @@ fun SwipeableCartItemRow(
     item: CartItem,
     currency: String,
     isActive: Boolean,
+    isSystemKeyboardMode: Boolean,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
+    onExpressionChange: (String) -> Unit,
     onTogglePin: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -98,10 +109,12 @@ fun SwipeableCartItemRow(
             item = item,
             currency = currency,
             isActive = isActive,
+            isSystemKeyboardMode = isSystemKeyboardMode,
             liveExpression = liveExpression,
             onNameCommit = onNameCommit,
             onNamePending = onNamePending,
             onExpressionTap = onExpressionTap,
+            onExpressionChange = onExpressionChange,
             onTogglePin = onTogglePin,
             dragHandleModifier = dragHandleModifier,
         )
@@ -139,10 +152,12 @@ fun CartItemRow(
     item: CartItem,
     currency: String,
     isActive: Boolean,
+    isSystemKeyboardMode: Boolean,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
+    onExpressionChange: (String) -> Unit,
     onTogglePin: () -> Unit,
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
@@ -170,10 +185,17 @@ fun CartItemRow(
                     onCommit = onNameCommit,
                     onPending = onNamePending,
                 )
-                ExpressionField(
-                    text = displayedExpression,
-                    onTap = onExpressionTap,
-                )
+                if (isActive && isSystemKeyboardMode) {
+                    ExpressionEditor(
+                        initial = displayedExpression,
+                        onChange = onExpressionChange,
+                    )
+                } else {
+                    ExpressionField(
+                        text = displayedExpression,
+                        onTap = onExpressionTap,
+                    )
+                }
                 ValuePreview(
                     item = item.copy(expression = displayedExpression),
                     currency = currency,
@@ -294,6 +316,61 @@ private fun ExpressionField(
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 },
+        )
+    }
+}
+
+// System-keyboard mode: host a real EditText inside the row so tapping the
+// value focuses a field the IME can attach to — same [CalculatorKeyListener]
+// the main screen uses, so the IME opens in numpad mode and math operators
+// pass through. [initial] arrives in display-glyph form (× ÷); the field
+// works in ASCII (* /) and callers convert back on commit.
+@Composable
+private fun ExpressionEditor(
+    initial: String,
+    onChange: (String) -> Unit,
+) {
+    val onChangeState = rememberUpdatedState(onChange)
+    val textColorArgb = MaterialTheme.colorScheme.onSurface.toArgb()
+    val hint = stringResource(id = R.string.cart_item_expression_hint)
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = FIELD_MIN_HEIGHT),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        AndroidView(
+            factory = { ctx ->
+                EditText(ctx).apply {
+                    keyListener = CalculatorKeyListener
+                    background = null
+                    setPadding(0, 0, 0, 0)
+                    isSingleLine = true
+                    setTextColor(textColorArgb)
+                    this.hint = hint
+                    setText(initial.normaliseGlyphsToAscii())
+                    setSelection(text.length)
+                    doAfterTextChanged { editable ->
+                        onChangeState.value(editable?.toString().orEmpty())
+                    }
+                    // Post so requestFocus lands after the view is attached to
+                    // the window — otherwise showSoftInput is a no-op.
+                    post {
+                        requestFocus()
+                        (ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+                            ?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+                    }
+                }
+            },
+            update = { et ->
+                val incoming = initial.normaliseGlyphsToAscii()
+                if (!et.isFocused && et.text.toString() != incoming) {
+                    et.setText(incoming)
+                    et.setSelection(et.text.length)
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

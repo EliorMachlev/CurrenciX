@@ -11,7 +11,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
-import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
@@ -43,7 +42,6 @@ import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
-import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
@@ -51,7 +49,6 @@ import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
-import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.paddedDialogContainer
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
@@ -70,7 +67,6 @@ import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.SimpleDateFormat
@@ -250,12 +246,14 @@ class CartActivity : BaseActivity() {
                 currencySource = currencyLive,
                 activeItemIdSource = activeItemId,
                 activeExpressionSource = liveExpression,
+                keyboardTypeSource = viewModel.keyboardType,
                 onNameCommit = ::commitName,
                 onNamePending = { id, name -> pendingNames[id] = name },
                 onExpressionTap = { item ->
                     itemsView.hapticTap(hapticEnabled)
                     openKeypadFor(item.id, item.expression)
                 },
+                onExpressionChange = ::onInlineExpressionChanged,
                 onTogglePin = { id ->
                     itemsView.hapticTap(hapticEnabled)
                     viewModel.togglePinned(id)
@@ -927,15 +925,20 @@ class CartActivity : BaseActivity() {
      * change into [liveExpression] — the composable row observes that
      * LiveData for its inline display.
      *
-     * In `KEYBOARD_TYPE_SYSTEM` mode there is no in-app keypad to raise;
-     * we open a dialog that hosts an EditText and defers to the system IME.
+     * In `KEYBOARD_TYPE_SYSTEM` mode there is no in-app keypad to raise; the
+     * row itself hosts an EditText once it becomes active, so we just seed
+     * [liveExpression] and flip [activeItemId] — the composable does the rest
+     * (focus request + IME show).
      */
     fun openKeypadFor(
         itemId: String,
         seedExpression: String,
     ) {
         if (currentKeyboardType == KEYBOARD_TYPE_SYSTEM) {
-            openSystemImeEditorFor(itemId, seedExpression)
+            if (activeItemId.value == itemId) return
+            detachActiveField()
+            liveExpression.value = seedExpression
+            activeItemId.value = itemId
             return
         }
         hideSystemIme()
@@ -954,33 +957,15 @@ class CartActivity : BaseActivity() {
         showKeypad()
     }
 
-    // System-IME editor: no in-app keypad, no `activeCalculatorState`.
-    // Committed value is converted back to display glyphs so it round-trips
-    // through [seedExpression] the same way in-app-keypad edits do.
-    private fun openSystemImeEditorFor(
-        itemId: String,
-        seedExpression: String,
+    // Bridge each keystroke from the row's inline EditText (ASCII) back into
+    // [liveExpression] (display glyphs) so the row's preview + eventual commit
+    // see the same round-tripped form the in-app keypad produces.
+    private fun onInlineExpressionChanged(
+        id: String,
+        ascii: String,
     ) {
-        activeItemId.value = itemId
-        val editor =
-            EditText(this).apply {
-                keyListener = CalculatorKeyListener
-                setText(seedExpression.normaliseGlyphsToAscii())
-                setSelection(text.length)
-            }
-        val container = paddedDialogContainer(this).apply { addView(editor) }
-        val dialog =
-            MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.cart_edit_expression_title)
-                .setView(container)
-                .setPositiveButton(R.string.cart_edit_expression_confirm) { _, _ ->
-                    commitExpression(itemId, editor.text.toString().asciiToDisplayGlyphs())
-                }.setNegativeButton(android.R.string.cancel, null)
-                .create()
-        dialog.setOnDismissListener { activeItemId.value = null }
-        dialog.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        dialog.show()
-        editor.requestFocus()
+        if (activeItemId.value != id) return
+        liveExpression.value = ascii.asciiToDisplayGlyphs()
     }
 
     // The `()` cycle-toggle key on the extended keypad. Absent from the basic
@@ -1190,6 +1175,11 @@ class CartActivity : BaseActivity() {
         if (systemImeVisible) {
             hideSystemIme()
             currentFocus?.clearFocus()
+        }
+        // System-keyboard mode edits inline (no in-app keypad); detach so the
+        // active row's typed value commits and its EditText tears down.
+        if (activeItemId.value != null && currentKeyboardType == KEYBOARD_TYPE_SYSTEM) {
+            detachActiveField()
         }
     }
 

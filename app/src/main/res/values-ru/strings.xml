@@ -47,8 +47,6 @@
     <string name="cart_add_item">Добавить позицию</string>
     <string name="cart_item_name_hint">Позиция</string>
     <string name="cart_item_expression_hint">Цена (например, 2 × 3,50)</string>
-    <string name="cart_edit_expression_title">Цена</string>
-    <string name="cart_edit_expression_confirm">Сохранить</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">Удалить позицию</string>
     <string name="cart_subtotal_label">Промежуточный итог</string>

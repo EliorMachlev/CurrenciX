@@ -42,8 +42,6 @@
     <string name="cart_add_item">Aldoni eron</string>
     <string name="cart_item_name_hint">Ero</string>
     <string name="cart_item_expression_hint">Prezo (ekz. 2 × 3,50)</string>
-    <string name="cart_edit_expression_title">Prezo</string>
-    <string name="cart_edit_expression_confirm">Konservi</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">Forigi eron</string>
     <string name="cart_subtotal_label">Subtotalo</string>

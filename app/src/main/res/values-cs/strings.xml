@@ -45,8 +45,6 @@
     <string name="cart_add_item">Přidat položku</string>
     <string name="cart_item_name_hint">Položka</string>
     <string name="cart_item_expression_hint">Cena (např. 2 × 3,50)</string>
-    <string name="cart_edit_expression_title">Cena</string>
-    <string name="cart_edit_expression_confirm">Uložit</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">Smazat položku</string>
     <string name="cart_subtotal_label">Mezisoučet</string>

@@ -46,8 +46,6 @@
     <string name="cart_add_item">Ajouter un article</string>
     <string name="cart_item_name_hint">Article</string>
     <string name="cart_item_expression_hint">Prix (par ex. 2 × 3,50)</string>
-    <string name="cart_edit_expression_title">Prix</string>
-    <string name="cart_edit_expression_confirm">Enregistrer</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
     <string name="cart_delete_item">Supprimer l\'article</string>
     <string name="cart_subtotal_label">Sous-total</string>
