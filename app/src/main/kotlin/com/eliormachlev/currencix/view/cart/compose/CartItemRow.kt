@@ -53,6 +53,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.roundForDisplay
+import com.eliormachlev.currencix.util.setTextAndCursorToEnd
 import com.eliormachlev.currencix.util.showSoftInputOn
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
@@ -348,8 +349,7 @@ private fun ExpressionEditor(
                     isSingleLine = true
                     setTextColor(textColorArgb)
                     this.hint = hint
-                    setText(asciiInitial)
-                    setSelection(text.length)
+                    setTextAndCursorToEnd(asciiInitial)
                     doAfterTextChanged { editable ->
                         onChangeState.value(editable?.toString().orEmpty())
                     }
@@ -361,11 +361,9 @@ private fun ExpressionEditor(
             update = { et ->
                 // Skip while user is typing so keystrokes aren't overwritten
                 // by our own glyph→ASCII round-trip echoing back through
-                // liveExpression.
-                if (!et.isFocused && et.text.toString() != asciiInitial) {
-                    et.setText(asciiInitial)
-                    et.setSelection(et.text.length)
-                }
+                // liveExpression. The extension itself no-ops on unchanged
+                // text, so re-emits of the same value cost nothing.
+                if (!et.isFocused) et.setTextAndCursorToEnd(asciiInitial)
             },
             modifier = Modifier.fillMaxWidth(),
         )

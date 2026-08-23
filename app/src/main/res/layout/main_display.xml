@@ -178,16 +178,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/scrollViewTextFrom" />
 
-        <TextView
+        <!-- EditText (not TextView) so this same field can display the
+             formatted expression preview for the custom keypads OR accept
+             raw IME input when the "System keyboard" pref is picked.
+             Defaults are TextView-shaped and MainActivity flips the input
+             flags at runtime when the pref changes. -->
+        <EditText
             android:id="@+id/textCalculations"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autofillHints="off"
+            android:background="@null"
+            android:cursorVisible="false"
             android:ellipsize="start"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:importantForAutofill="no"
+            android:includeFontPadding="false"
+            android:inputType="none"
             android:paddingHorizontal="@dimen/margin2x"
             android:singleLine="true"
             android:textDirection="ltr"
             app:layout_constraintBottom_toTopOf="@id/scrollViewTextFrom"
             app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="LabelFor"
             tools:text="13 + 0.99" />
 
         <!-- textFrom sits centred in the top half regardless of whether
