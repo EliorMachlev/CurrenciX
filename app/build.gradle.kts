@@ -133,7 +133,7 @@ dependencies {
     // kotlin
     implementation("androidx.core:core-ktx:1.19.0")
     // support libs
-    val appCompatVersion = "1.7.1"
+    val appCompatVersion = "1.8.0"
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
     implementation("androidx.appcompat:appcompat-resources:$appCompatVersion")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
@@ -159,7 +159,7 @@ dependencies {
     // F-Droid compatible. EvalEx is actively maintained and BigDecimal-native.
     implementation("com.ezylang:EvalEx:3.7.0")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
-    val composeBomVersion = "2026.06.01"
+    val composeBomVersion = "2026.08.00"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
