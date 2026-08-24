@@ -171,7 +171,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
     // charts
-    val vicoVersion = "3.2.3"
+    val vicoVersion = "3.3.0"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
     // crypto: BouncyCastle provides pure-Java Argon2id, used by BackupManager
     // for password-based backup encryption (quantum-resistant KDF).
