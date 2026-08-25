@@ -197,6 +197,7 @@
             android:includeFontPadding="false"
             android:inputType="none"
             android:paddingHorizontal="@dimen/margin2x"
+            android:paddingVertical="@dimen/margin1x"
             android:singleLine="true"
             android:textDirection="ltr"
             app:layout_constraintBottom_toTopOf="@id/scrollViewTextFrom"
