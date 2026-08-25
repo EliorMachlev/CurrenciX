@@ -190,7 +190,6 @@
             android:autofillHints="off"
             android:background="@null"
             android:cursorVisible="false"
-            android:drawablePadding="@dimen/margin1x"
             android:ellipsize="start"
             android:focusable="false"
             android:focusableInTouchMode="false"
