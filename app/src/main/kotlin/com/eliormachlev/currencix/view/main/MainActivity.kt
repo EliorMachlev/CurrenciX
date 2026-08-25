@@ -711,7 +711,6 @@ class MainActivity : BaseActivity() {
             tvCalculations.isCursorVisible = true
             tvCalculations.showSoftInputOnFocus = true
             tvCalculations.keyListener = CalculatorKeyListener
-            tvCalculations.background = systemKeyboardInputBackground()
             // Seed with the current typed expression (display glyphs → ASCII)
             // so switching mode mid-entry doesn't lose the user's work.
             setCalculationsTextMuted(viewModel.currentTypedExpression())
@@ -724,7 +723,6 @@ class MainActivity : BaseActivity() {
             tvCalculations.isFocusableInTouchMode = false
             // Also clears inputType to TYPE_NULL — no separate reset needed.
             tvCalculations.keyListener = null
-            tvCalculations.background = null
             hideSystemIme()
             // Restore the pretty formatted preview now that the writeback
             // observer is authoritative again.
@@ -732,12 +730,26 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private var cachedSystemKeyboardBackground: Drawable? = null
+    private var cachedSystemKeyboardIcon: Drawable? = null
 
-    private fun systemKeyboardInputBackground(): Drawable =
-        cachedSystemKeyboardBackground ?: getDrawable(R.drawable.bg_system_keyboard_input)!!.also {
-            cachedSystemKeyboardBackground = it
+    private fun systemKeyboardIcon(): Drawable =
+        cachedSystemKeyboardIcon ?: getDrawable(R.drawable.ic_keyboard_extended)!!.also {
+            cachedSystemKeyboardIcon = it
         }
+
+    // Show the keyboard glyph as a start-compound drawable while system-IME
+    // mode is active and the field is empty, so the user has a visible tap
+    // target instead of a bare caret. Cleared as soon as text appears (or on
+    // mode-swap back to the custom keypads).
+    private fun updateSystemKeyboardIcon() {
+        val icon =
+            if (isSystemKeyboardMode && tvCalculations.text.isNullOrEmpty()) {
+                systemKeyboardIcon()
+            } else {
+                null
+            }
+        tvCalculations.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
+    }
 
     private fun showSystemImeOnField() {
         tvCalculations.setSelection(tvCalculations.text?.length ?: 0)
@@ -753,6 +765,7 @@ class MainActivity : BaseActivity() {
         muteCalculationsWriteback = true
         try {
             tvCalculations.setTextAndCursorToEnd(text)
+            updateSystemKeyboardIcon()
         } finally {
             if (!alreadyMuted) muteCalculationsWriteback = false
         }
