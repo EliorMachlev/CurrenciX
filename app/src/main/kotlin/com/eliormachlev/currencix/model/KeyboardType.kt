@@ -1,17 +1,15 @@
 package com.eliormachlev.currencix.model
 
 /**
- * Persisted keyboard-picker preference. [prefValue] is the stable SharedPreferences
- * int (kept explicit so old installs continue to deserialize into the same
- * option — never reorder entries or reassign existing values).
+ * Persisted keyboard-picker preference. Serialized to SharedPreferences by
+ * [ordinal], so entries here must not be reordered — append new ones at the
+ * end.
  */
-enum class KeyboardType(
-    val prefValue: Int,
-) {
-    BASIC(0),
-    EXPANDED(1),
-    SYSTEM_NUMPAD(2),
-    SYSTEM_FULL(3),
+enum class KeyboardType {
+    BASIC,
+    EXPANDED,
+    SYSTEM_NUMPAD,
+    SYSTEM_FULL,
     ;
 
     // Either system-IME variant hosts the inline EditText that owns the
@@ -22,6 +20,6 @@ enum class KeyboardType(
     companion object {
         val DEFAULT: KeyboardType = BASIC
 
-        fun fromPrefValue(value: Int): KeyboardType = entries.firstOrNull { it.prefValue == value } ?: DEFAULT
+        fun fromOrdinal(value: Int): KeyboardType = entries.getOrNull(value) ?: DEFAULT
     }
 }

@@ -553,14 +553,14 @@ class Database(
     // keyboard type
 
     fun setKeyboardType(type: KeyboardType) {
-        prefs.edit().putInt(keyKeyboardType, type.prefValue).apply()
+        prefs.edit().putInt(keyKeyboardType, type.ordinal).apply()
     }
 
     fun getKeyboardType(): LiveData<KeyboardType> =
-        SharedPreferenceIntLiveData(prefs, keyKeyboardType, KeyboardType.DEFAULT.prefValue)
-            .map { KeyboardType.fromPrefValue(it) }
+        SharedPreferenceIntLiveData(prefs, keyKeyboardType, KeyboardType.DEFAULT.ordinal)
+            .map { KeyboardType.fromOrdinal(it) }
 
-    fun getKeyboardTypeBlocking(): KeyboardType = KeyboardType.fromPrefValue(prefs.getInt(keyKeyboardType, KeyboardType.DEFAULT.prefValue))
+    fun getKeyboardTypeBlocking(): KeyboardType = KeyboardType.fromOrdinal(prefs.getInt(keyKeyboardType, KeyboardType.DEFAULT.ordinal))
 
     // haptic feedback
 
