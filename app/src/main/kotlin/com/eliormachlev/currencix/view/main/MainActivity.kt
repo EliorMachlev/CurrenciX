@@ -41,12 +41,9 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.FeeSide
+import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM_FULL
-import com.eliormachlev.currencix.repository.isSystemKeyboardType
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.feePercentDelta
@@ -127,12 +124,12 @@ class MainActivity : BaseActivity() {
     // replay it, garbling the input.
     private var muteCalculationsWriteback = false
 
-    // True while `KEYBOARD_TYPE_SYSTEM` is selected — the calculations
+    // True while either system-IME variant is selected — the calculations
     // EditText is the source of truth for the typed expression, so the
     // formatted-preview observer skips it entirely (even for updates that
     // originate elsewhere: currency swap, rate refresh, mid-entry reformat).
     private var isSystemKeyboardMode = false
-    private var lastKeyboardTypeApplied: Int? = null
+    private var lastKeyboardTypeApplied: KeyboardType? = null
     private lateinit var spinnerFrom: SearchableSpinner
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var tvInfoConversion: TextView
@@ -686,11 +683,11 @@ class MainActivity : BaseActivity() {
             ?.find { it.currency == currency }
             ?.value
 
-    private fun observeKeyboardType(type: Int) {
+    private fun observeKeyboardType(type: KeyboardType) {
         val keypadRegular = findViewById<View>(R.id.keypad)
         val keypadExtended = findViewById<View>(R.id.keypad_extended)
-        keypadRegular.visibility = if (type == KEYBOARD_TYPE_BASIC) View.VISIBLE else View.GONE
-        keypadExtended.visibility = if (type == KEYBOARD_TYPE_EXPANDED) View.VISIBLE else View.GONE
+        keypadRegular.visibility = if (type == KeyboardType.BASIC) View.VISIBLE else View.GONE
+        keypadExtended.visibility = if (type == KeyboardType.EXPANDED) View.VISIBLE else View.GONE
         val separator = getDecimalSeparator(this)
         keypadExtended.findViewById<TextView>(R.id.btn_decimal).text = separator
         keypadRegular.findViewById<TextView>(R.id.btn_decimal).text = separator
@@ -701,9 +698,9 @@ class MainActivity : BaseActivity() {
     // Compare by the exact type (not just `wantsSystem`) so a switch between
     // the numpad and full-text sub-variants refreshes the KeyListener + IME
     // class instead of no-oping.
-    private fun configureCalculationsEditText(type: Int) {
+    private fun configureCalculationsEditText(type: KeyboardType) {
         if (lastKeyboardTypeApplied == type) return
-        val wantsSystem = type.isSystemKeyboardType()
+        val wantsSystem = type.isSystem
         isSystemKeyboardMode = wantsSystem
         lastKeyboardTypeApplied = type
         // Detach first so seed-setText below doesn't accidentally clear the
@@ -734,8 +731,8 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun keyListenerFor(type: Int) =
-        if (type == KEYBOARD_TYPE_SYSTEM_FULL) {
+    private fun keyListenerFor(type: KeyboardType) =
+        if (type == KeyboardType.SYSTEM_FULL) {
             CalculatorKeyListener.FULL_TEXT
         } else {
             CalculatorKeyListener.NUMPAD

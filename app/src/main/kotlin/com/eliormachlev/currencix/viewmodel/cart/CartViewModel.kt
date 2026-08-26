@@ -13,9 +13,9 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.FeeSide
+import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import java.math.BigDecimal
 import java.math.MathContext
@@ -91,9 +91,9 @@ class CartViewModel(
      * screen so the cart's slide-up keypad shows the same layout the user
      * picked, and cart taps route to the system IME when that pref is on.
      */
-    val keyboardType: LiveData<Int> = db.getKeyboardType()
+    val keyboardType: LiveData<KeyboardType> = db.getKeyboardType()
     val isExtendedKeypadEnabled: LiveData<Boolean> =
-        keyboardType.map { it == KEYBOARD_TYPE_EXPANDED }
+        keyboardType.map { it == KeyboardType.EXPANDED }
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()

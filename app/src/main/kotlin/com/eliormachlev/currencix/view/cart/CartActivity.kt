@@ -36,13 +36,10 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.FeeSide
+import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM_FULL
-import com.eliormachlev.currencix.repository.isSystemKeyboardType
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
@@ -150,7 +147,7 @@ class CartActivity : BaseActivity() {
 
     // Mirrors the keyboard-type preference so row-tap handlers decide
     // between the in-app keypad and a system-IME dialog without a pref read.
-    private var currentKeyboardType: Int = KEYBOARD_TYPE_BASIC
+    private var currentKeyboardType: KeyboardType = KeyboardType.DEFAULT
 
     // Slide-up keypad state — behaves like a soft IME. The keypad edits the
     // row identified by [activeItemId]; taps route through
@@ -188,18 +185,18 @@ class CartActivity : BaseActivity() {
     private val itemsLive = MediatorLiveData<List<CartItem>>().apply { value = emptyList() }
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
-    // Pre-mapped boolean the composable list consumes — keeps the KEYBOARD_TYPE_*
-    // constants out of the view layer. Either system-IME variant (numpad or
+    // Pre-mapped boolean the composable list consumes — keeps the KeyboardType
+    // enum out of the view layer. Either system-IME variant (numpad or
     // full-text) counts, since both host the EditText inline on the row.
     private val isSystemKeyboardModeLive: LiveData<Boolean> by lazy {
-        viewModel.keyboardType.map { it.isSystemKeyboardType() }
+        viewModel.keyboardType.map { it.isSystem }
     }
 
     // Mirrors the sub-variant so the composable row can pick the right
     // CalculatorKeyListener (numpad vs full-text IME) when it inflates the
     // inline EditText.
     private val useFullTextImeLive: LiveData<Boolean> by lazy {
-        viewModel.keyboardType.map { it == KEYBOARD_TYPE_SYSTEM_FULL }
+        viewModel.keyboardType.map { it == KeyboardType.SYSTEM_FULL }
     }
 
     private lateinit var exportLauncher: ActivityResultLauncher<String>
@@ -379,7 +376,7 @@ class CartActivity : BaseActivity() {
         }
         viewModel.keyboardType.observe(this) { type ->
             currentKeyboardType = type
-            val extended = type == KEYBOARD_TYPE_EXPANDED
+            val extended = type == KeyboardType.EXPANDED
             keypadRegular.visibility = if (extended) View.GONE else View.VISIBLE
             keypadExtended.visibility = if (extended) View.VISIBLE else View.GONE
         }
@@ -952,7 +949,7 @@ class CartActivity : BaseActivity() {
         itemId: String,
         seedExpression: String,
     ) {
-        if (currentKeyboardType.isSystemKeyboardType()) {
+        if (currentKeyboardType.isSystem) {
             if (activeItemId.value == itemId) return
             detachActiveField()
             liveExpression.value = seedExpression

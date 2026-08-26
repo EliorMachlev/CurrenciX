@@ -19,10 +19,7 @@ import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM_FULL
+import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.util.ChoiceOption
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
@@ -135,37 +132,37 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun keyboardOptions(): List<Pair<Int, ChoiceOption>> =
+    private fun keyboardOptions(): List<Pair<KeyboardType, ChoiceOption>> =
         listOf(
-            KEYBOARD_TYPE_BASIC to
+            KeyboardType.BASIC to
                 ChoiceOption(
                     getString(R.string.keyboard_option_default),
                     getString(R.string.keyboard_summary_default),
                 ),
-            KEYBOARD_TYPE_EXPANDED to
+            KeyboardType.EXPANDED to
                 ChoiceOption(
                     getString(R.string.keyboard_option_expanded),
                     getString(R.string.keyboard_summary_expanded),
                 ),
-            KEYBOARD_TYPE_SYSTEM to
+            KeyboardType.SYSTEM_NUMPAD to
                 ChoiceOption(
                     getString(R.string.keyboard_option_system),
                     getString(R.string.keyboard_summary_system),
                 ),
-            KEYBOARD_TYPE_SYSTEM_FULL to
+            KeyboardType.SYSTEM_FULL to
                 ChoiceOption(
                     getString(R.string.keyboard_option_system_full),
                     getString(R.string.keyboard_summary_system_full),
                 ),
         )
 
-    private fun summaryForKeyboardType(type: Int): CharSequence {
+    private fun summaryForKeyboardType(type: KeyboardType): CharSequence {
         val options = keyboardOptions()
         val option = options.firstOrNull { it.first == type }?.second ?: options.first().second
         return option.asPreferenceSummary()
     }
 
-    private fun showKeyboardPickerDialog(onPicked: (Int) -> Unit) {
+    private fun showKeyboardPickerDialog(onPicked: (KeyboardType) -> Unit) {
         val options = keyboardOptions()
         val current = viewModel.getKeyboardTypeBlocking()
         val selectedIndex = options.indexOfFirst { it.first == current }.coerceAtLeast(0)

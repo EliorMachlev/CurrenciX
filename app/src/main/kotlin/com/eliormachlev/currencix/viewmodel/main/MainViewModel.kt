@@ -17,9 +17,9 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.FeeSide
+import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
 import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
 import com.eliormachlev.currencix.util.OPERATOR_MINUS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
@@ -65,8 +65,8 @@ class MainViewModel(
 
     // ui
     private var isUpdating: LiveData<Boolean> = repository.isUpdating()
-    val keyboardType: LiveData<Int> = db.getKeyboardType()
-    val isExtendedKeypadEnabled: LiveData<Boolean> = keyboardType.map { it == KEYBOARD_TYPE_EXPANDED }
+    val keyboardType: LiveData<KeyboardType> = db.getKeyboardType()
+    val isExtendedKeypadEnabled: LiveData<Boolean> = keyboardType.map { it == KeyboardType.EXPANDED }
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
     private val decimalPlaces: LiveData<Int> = db.getDecimalPlaces()
 

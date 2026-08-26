@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
+import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
@@ -96,11 +97,11 @@ class PreferenceViewModel(
         db.setPreviewConversionEnabled(enabled)
     }
 
-    fun setKeyboardType(type: Int) {
+    fun setKeyboardType(type: KeyboardType) {
         db.setKeyboardType(type)
     }
 
-    fun getKeyboardTypeBlocking(): Int = db.getKeyboardTypeBlocking()
+    fun getKeyboardTypeBlocking(): KeyboardType = db.getKeyboardTypeBlocking()
 
     fun setHapticFeedbackEnabled(enabled: Boolean) {
         db.setHapticFeedbackEnabled(enabled)
