@@ -36,6 +36,7 @@ fun CartItemsList(
     activeItemIdSource: LiveData<String?>,
     activeExpressionSource: LiveData<String>,
     isSystemKeyboardModeSource: LiveData<Boolean>,
+    useFullTextImeSource: LiveData<Boolean>,
     onNameCommit: (id: String, name: String) -> Unit,
     onNamePending: (id: String, name: String) -> Unit,
     onExpressionTap: (item: CartItem) -> Unit,
@@ -52,6 +53,7 @@ fun CartItemsList(
         val activeId by activeItemIdSource.observeAsState()
         val liveExpression by activeExpressionSource.observeAsState(initial = "")
         val isSystemKeyboardMode by isSystemKeyboardModeSource.observeAsState(initial = false)
+        val useFullTextIme by useFullTextImeSource.observeAsState(initial = false)
         // Display pinned-first while preserving storage order within each
         // partition. Drag operates on this list; dropping a pinned row into
         // the unpinned section snaps back on the next composition — user must
@@ -89,6 +91,7 @@ fun CartItemsList(
                     currency = currency,
                     isActive = isActive,
                     isSystemKeyboardMode = isSystemKeyboardMode,
+                    useFullTextIme = useFullTextIme,
                     liveExpression = if (isActive) liveExpression else null,
                     onNameCommit = { onNameCommit(item.id, it) },
                     onNamePending = { onNamePending(item.id, it) },

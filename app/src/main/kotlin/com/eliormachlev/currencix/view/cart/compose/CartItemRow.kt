@@ -85,6 +85,7 @@ fun SwipeableCartItemRow(
     currency: String,
     isActive: Boolean,
     isSystemKeyboardMode: Boolean,
+    useFullTextIme: Boolean,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
@@ -111,6 +112,7 @@ fun SwipeableCartItemRow(
             currency = currency,
             isActive = isActive,
             isSystemKeyboardMode = isSystemKeyboardMode,
+            useFullTextIme = useFullTextIme,
             liveExpression = liveExpression,
             onNameCommit = onNameCommit,
             onNamePending = onNamePending,
@@ -154,6 +156,7 @@ fun CartItemRow(
     currency: String,
     isActive: Boolean,
     isSystemKeyboardMode: Boolean,
+    useFullTextIme: Boolean,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
@@ -189,6 +192,7 @@ fun CartItemRow(
                 if (isActive && isSystemKeyboardMode) {
                     ExpressionEditor(
                         initial = displayedExpression,
+                        useFullTextIme = useFullTextIme,
                         onChange = onExpressionChange,
                     )
                 } else {
@@ -327,12 +331,14 @@ private fun ExpressionField(
 @Composable
 private fun ExpressionEditor(
     initial: String,
+    useFullTextIme: Boolean,
     onChange: (String) -> Unit,
 ) {
     val onChangeState = rememberUpdatedState(onChange)
     val textColorArgb = MaterialTheme.colorScheme.onSurface.toArgb()
     val hint = stringResource(id = R.string.cart_item_expression_hint)
     val asciiInitial = remember(initial) { initial.normaliseGlyphsToAscii() }
+    val listener = if (useFullTextIme) CalculatorKeyListener.FULL_TEXT else CalculatorKeyListener.NUMPAD
     Box(
         modifier =
             Modifier
@@ -343,7 +349,7 @@ private fun ExpressionEditor(
         AndroidView(
             factory = { ctx ->
                 EditText(ctx).apply {
-                    keyListener = CalculatorKeyListener
+                    keyListener = listener
                     background = null
                     setPadding(0, 0, 0, 0)
                     isSingleLine = true
@@ -359,6 +365,9 @@ private fun ExpressionEditor(
                 }
             },
             update = { et ->
+                // Refresh the listener so a mid-session preference flip
+                // (numpad ↔ full-text IME) takes effect on the live row.
+                if (et.keyListener !== listener) et.keyListener = listener
                 // Skip while user is typing so keystrokes aren't overwritten
                 // by our own glyph→ASCII round-trip echoing back through
                 // liveExpression. The extension itself no-ops on unchanged

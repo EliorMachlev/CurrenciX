@@ -45,7 +45,8 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM_FULL
+import com.eliormachlev.currencix.repository.isSystemKeyboardType
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.feePercentDelta
@@ -697,9 +698,12 @@ class MainActivity : BaseActivity() {
     }
 
     // Runtime flags mirror the XML defaults so mode swaps are reversible.
+    // Compare by the exact type (not just `wantsSystem`) so a switch between
+    // the numpad and full-text sub-variants refreshes the KeyListener + IME
+    // class instead of no-oping.
     private fun configureCalculationsEditText(type: Int) {
-        val wantsSystem = type == KEYBOARD_TYPE_SYSTEM
-        if (wantsSystem == isSystemKeyboardMode && lastKeyboardTypeApplied != null) return
+        if (lastKeyboardTypeApplied == type) return
+        val wantsSystem = type.isSystemKeyboardType()
         isSystemKeyboardMode = wantsSystem
         lastKeyboardTypeApplied = type
         // Detach first so seed-setText below doesn't accidentally clear the
@@ -710,7 +714,7 @@ class MainActivity : BaseActivity() {
             tvCalculations.isFocusableInTouchMode = true
             tvCalculations.isCursorVisible = true
             tvCalculations.showSoftInputOnFocus = true
-            tvCalculations.keyListener = CalculatorKeyListener
+            tvCalculations.keyListener = keyListenerFor(type)
             // Seed with the current typed expression (display glyphs → ASCII)
             // so switching mode mid-entry doesn't lose the user's work.
             setCalculationsTextMuted(viewModel.currentTypedExpression())
@@ -729,6 +733,13 @@ class MainActivity : BaseActivity() {
             setCalculationsTextMuted(viewModel.getCalculationInputFormatted().value ?: "")
         }
     }
+
+    private fun keyListenerFor(type: Int) =
+        if (type == KEYBOARD_TYPE_SYSTEM_FULL) {
+            CalculatorKeyListener.FULL_TEXT
+        } else {
+            CalculatorKeyListener.NUMPAD
+        }
 
     private var cachedSystemKeyboardIcon: Drawable? = null
 

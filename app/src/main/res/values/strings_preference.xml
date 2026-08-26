@@ -40,10 +40,12 @@
     <string name="keyboard_title">Keyboard</string>
     <string name="keyboard_option_default">Default</string>
     <string name="keyboard_option_expanded">Expanded</string>
-    <string name="keyboard_option_system">System keyboard</string>
+    <string name="keyboard_option_system">System keyboard (numpad)</string>
+    <string name="keyboard_option_system_full">System keyboard (full)</string>
     <string name="keyboard_summary_default">Standard calculator keypad.</string>
     <string name="keyboard_summary_expanded">Adds extra shortcut keys for faster entry.</string>
-    <string name="keyboard_summary_system">Uses your device\'s keyboard. Accepts digits, decimal point, common arithmetic operators, and parentheses.</string>
+    <string name="keyboard_summary_system">Uses your device\'s numeric keypad. Accepts digits, decimal point, common arithmetic operators, and parentheses.</string>
+    <string name="keyboard_summary_system_full">Uses your device\'s full text keyboard. Accepts digits, decimal point, common arithmetic operators, and parentheses.</string>
     <string name="decimal_places_key" translatable="false">KEY_DECIMAL_PLACES</string>
     <string name="decimal_places_title">Decimal accuracy</string>
     <string name="decimal_places_summary">Number of decimal places to show for converted values.</string>

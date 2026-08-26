@@ -41,7 +41,8 @@ import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_BASIC
 import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_EXPANDED
-import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM
+import com.eliormachlev.currencix.repository.KEYBOARD_TYPE_SYSTEM_FULL
+import com.eliormachlev.currencix.repository.isSystemKeyboardType
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
@@ -188,9 +189,17 @@ class CartActivity : BaseActivity() {
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
     // Pre-mapped boolean the composable list consumes — keeps the KEYBOARD_TYPE_*
-    // constants out of the view layer.
+    // constants out of the view layer. Either system-IME variant (numpad or
+    // full-text) counts, since both host the EditText inline on the row.
     private val isSystemKeyboardModeLive: LiveData<Boolean> by lazy {
-        viewModel.keyboardType.map { it == KEYBOARD_TYPE_SYSTEM }
+        viewModel.keyboardType.map { it.isSystemKeyboardType() }
+    }
+
+    // Mirrors the sub-variant so the composable row can pick the right
+    // CalculatorKeyListener (numpad vs full-text IME) when it inflates the
+    // inline EditText.
+    private val useFullTextImeLive: LiveData<Boolean> by lazy {
+        viewModel.keyboardType.map { it == KEYBOARD_TYPE_SYSTEM_FULL }
     }
 
     private lateinit var exportLauncher: ActivityResultLauncher<String>
@@ -255,6 +264,7 @@ class CartActivity : BaseActivity() {
                 activeItemIdSource = activeItemId,
                 activeExpressionSource = liveExpression,
                 isSystemKeyboardModeSource = isSystemKeyboardModeLive,
+                useFullTextImeSource = useFullTextImeLive,
                 onNameCommit = ::commitName,
                 onNamePending = { id, name -> pendingNames[id] = name },
                 onExpressionTap = { item ->
@@ -933,7 +943,7 @@ class CartActivity : BaseActivity() {
      * change into [liveExpression] — the composable row observes that
      * LiveData for its inline display.
      *
-     * In `KEYBOARD_TYPE_SYSTEM` mode there is no in-app keypad to raise; the
+     * In either system-IME mode there is no in-app keypad to raise; the
      * row itself hosts an EditText once it becomes active, so we just seed
      * [liveExpression] and flip [activeItemId] — the composable does the rest
      * (focus request + IME show).
@@ -942,7 +952,7 @@ class CartActivity : BaseActivity() {
         itemId: String,
         seedExpression: String,
     ) {
-        if (currentKeyboardType == KEYBOARD_TYPE_SYSTEM) {
+        if (currentKeyboardType.isSystemKeyboardType()) {
             if (activeItemId.value == itemId) return
             detachActiveField()
             liveExpression.value = seedExpression

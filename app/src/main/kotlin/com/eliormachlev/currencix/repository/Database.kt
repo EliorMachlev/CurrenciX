@@ -54,6 +54,12 @@ private const val NO_HISTORICAL_DATE = -1L
 const val KEYBOARD_TYPE_BASIC = 0
 const val KEYBOARD_TYPE_EXPANDED = 1
 const val KEYBOARD_TYPE_SYSTEM = 2
+const val KEYBOARD_TYPE_SYSTEM_FULL = 3
+
+// Either system-IME variant (numpad or full-text) counts as "system keyboard"
+// mode for the field-configuration, IME-visibility, and preview-writeback
+// branches that don't care about the sub-variant.
+fun Int.isSystemKeyboardType(): Boolean = this == KEYBOARD_TYPE_SYSTEM || this == KEYBOARD_TYPE_SYSTEM_FULL
 
 class Database(
     private val context: Context,
