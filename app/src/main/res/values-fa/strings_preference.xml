@@ -29,10 +29,12 @@
     <string name="keyboard_title">صفحه‌کلید</string>
     <string name="keyboard_option_default">پیش‌فرض</string>
     <string name="keyboard_option_expanded">گسترده</string>
-    <string name="keyboard_option_system">صفحه‌کلید سیستم</string>
+    <string name="keyboard_option_system">صفحه‌کلید سیستم (عددی)</string>
+    <string name="keyboard_option_system_full">صفحه‌کلید سیستم (کامل)</string>
     <string name="keyboard_summary_default">صفحه‌کلید استاندارد ماشین‌حساب.</string>
     <string name="keyboard_summary_expanded">کلیدهای میان‌بر بیشتری برای ورود سریع‌تر اضافه می‌کند.</string>
-    <string name="keyboard_summary_system">از صفحه‌کلید دستگاه شما استفاده می‌کند. ارقام، ممیز اعشار، عملگرهای حسابی رایج و پرانتزها را می‌پذیرد.</string>
+    <string name="keyboard_summary_system">از صفحه‌کلید عددی دستگاه شما استفاده می‌کند. ارقام، ممیز اعشار، عملگرهای حسابی رایج و پرانتزها را می‌پذیرد.</string>
+    <string name="keyboard_summary_system_full">از صفحه‌کلید متنی کامل دستگاه شما استفاده می‌کند. ارقام، ممیز اعشار، عملگرهای حسابی رایج و پرانتزها را می‌پذیرد.</string>
     <string name="decimal_places_title">دقت اعشار</string>
     <string name="decimal_places_summary">تعداد ارقام اعشاری نمایش‌داده‌شده برای مقادیر تبدیل‌شده.</string>
     <string name="haptic_feedback_title">بازخورد لمسی</string>

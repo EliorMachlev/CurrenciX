@@ -29,10 +29,12 @@
     <string name="keyboard_title">Tastiera</string>
     <string name="keyboard_option_default">Predefinito</string>
     <string name="keyboard_option_expanded">Espansa</string>
-    <string name="keyboard_option_system">Tastiera di sistema</string>
+    <string name="keyboard_option_system">Tastiera di sistema (tastierino numerico)</string>
+    <string name="keyboard_option_system_full">Tastiera di sistema (completa)</string>
     <string name="keyboard_summary_default">Tastiera standard della calcolatrice.</string>
     <string name="keyboard_summary_expanded">Aggiunge tasti di scelta rapida in più per digitare più velocemente.</string>
-    <string name="keyboard_summary_system">Usa la tastiera del dispositivo. Accetta cifre, virgola decimale, operatori aritmetici comuni e parentesi.</string>
+    <string name="keyboard_summary_system">Usa il tastierino numerico del dispositivo. Accetta cifre, virgola decimale, operatori aritmetici comuni e parentesi.</string>
+    <string name="keyboard_summary_system_full">Usa la tastiera testuale completa del dispositivo. Accetta cifre, virgola decimale, operatori aritmetici comuni e parentesi.</string>
     <string name="decimal_places_title">Precisione decimale</string>
     <string name="decimal_places_summary">Numero di decimali da mostrare per i valori convertiti.</string>
     <string name="haptic_feedback_title">Feedback tattile</string>

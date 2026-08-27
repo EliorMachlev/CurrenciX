@@ -29,10 +29,12 @@
     <string name="keyboard_title">键盘</string>
     <string name="keyboard_option_default">默认</string>
     <string name="keyboard_option_expanded">扩展</string>
-    <string name="keyboard_option_system">系统键盘</string>
+    <string name="keyboard_option_system">系统键盘（数字键盘）</string>
+    <string name="keyboard_option_system_full">系统键盘（完整）</string>
     <string name="keyboard_summary_default">标准计算器键盘。</string>
     <string name="keyboard_summary_expanded">添加额外的快捷键,加快输入速度。</string>
-    <string name="keyboard_summary_system">使用您设备的键盘。接受数字、小数点、常用算术运算符和括号。</string>
+    <string name="keyboard_summary_system">使用您设备的数字键盘。接受数字、小数点、常用算术运算符和括号。</string>
+    <string name="keyboard_summary_system_full">使用您设备的完整文本键盘。接受数字、小数点、常用算术运算符和括号。</string>
     <string name="decimal_places_title">小数精度</string>
     <string name="decimal_places_summary">转换值显示的小数位数。</string>
     <string name="haptic_feedback_title">触感反馈</string>

@@ -29,10 +29,12 @@
     <string name="keyboard_title">Tipkovnica</string>
     <string name="keyboard_option_default">Zadano</string>
     <string name="keyboard_option_expanded">Proširena</string>
-    <string name="keyboard_option_system">Tipkovnica sustava</string>
+    <string name="keyboard_option_system">Tipkovnica sustava (brojčana)</string>
+    <string name="keyboard_option_system_full">Tipkovnica sustava (potpuna)</string>
     <string name="keyboard_summary_default">Standardna tipkovnica kalkulatora.</string>
     <string name="keyboard_summary_expanded">Dodaje dodatne tipke prečaca za brži unos.</string>
-    <string name="keyboard_summary_system">Koristi tipkovnicu vašeg uređaja. Prihvaća znamenke, decimalni zarez, uobičajene aritmetičke operatore i zagrade.</string>
+    <string name="keyboard_summary_system">Koristi brojčanu tipkovnicu vašeg uređaja. Prihvaća znamenke, decimalni zarez, uobičajene aritmetičke operatore i zagrade.</string>
+    <string name="keyboard_summary_system_full">Koristi potpunu tekstualnu tipkovnicu vašeg uređaja. Prihvaća znamenke, decimalni zarez, uobičajene aritmetičke operatore i zagrade.</string>
     <string name="decimal_places_title">Decimalna preciznost</string>
     <string name="decimal_places_summary">Broj decimala prikazanih za pretvorene vrijednosti.</string>
     <string name="haptic_feedback_title">Haptička povratna informacija</string>

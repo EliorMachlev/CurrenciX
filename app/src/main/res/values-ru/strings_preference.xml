@@ -29,10 +29,12 @@
     <string name="keyboard_title">Клавиатура</string>
     <string name="keyboard_option_default">По умолчанию</string>
     <string name="keyboard_option_expanded">Расширенная</string>
-    <string name="keyboard_option_system">Системная клавиатура</string>
+    <string name="keyboard_option_system">Системная клавиатура (цифровая)</string>
+    <string name="keyboard_option_system_full">Системная клавиатура (полная)</string>
     <string name="keyboard_summary_default">Стандартная клавиатура калькулятора.</string>
     <string name="keyboard_summary_expanded">Добавляет дополнительные клавиши быстрого ввода.</string>
-    <string name="keyboard_summary_system">Использует клавиатуру вашего устройства. Принимает цифры, десятичный разделитель, распространённые арифметические операторы и скобки.</string>
+    <string name="keyboard_summary_system">Использует цифровую клавиатуру вашего устройства. Принимает цифры, десятичный разделитель, распространённые арифметические операторы и скобки.</string>
+    <string name="keyboard_summary_system_full">Использует полную текстовую клавиатуру вашего устройства. Принимает цифры, десятичный разделитель, распространённые арифметические операторы и скобки.</string>
     <string name="decimal_places_title">Точность десятичных</string>
     <string name="decimal_places_summary">Количество десятичных знаков, отображаемых для конвертированных значений.</string>
     <string name="haptic_feedback_title">Тактильный отклик</string>

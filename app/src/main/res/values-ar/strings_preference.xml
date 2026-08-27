@@ -29,10 +29,12 @@
     <string name="keyboard_title">لوحة المفاتيح</string>
     <string name="keyboard_option_default">افتراضي</string>
     <string name="keyboard_option_expanded">موسّعة</string>
-    <string name="keyboard_option_system">لوحة مفاتيح النظام</string>
+    <string name="keyboard_option_system">لوحة مفاتيح النظام (لوحة أرقام)</string>
+    <string name="keyboard_option_system_full">لوحة مفاتيح النظام (كاملة)</string>
     <string name="keyboard_summary_default">لوحة مفاتيح الحاسبة القياسية.</string>
     <string name="keyboard_summary_expanded">يضيف مفاتيح اختصار إضافية لإدخال أسرع.</string>
-    <string name="keyboard_summary_system">يستخدم لوحة مفاتيح جهازك. يقبل الأرقام والفاصلة العشرية والعوامل الحسابية الشائعة والأقواس.</string>
+    <string name="keyboard_summary_system">يستخدم لوحة الأرقام لجهازك. يقبل الأرقام والفاصلة العشرية والعوامل الحسابية الشائعة والأقواس.</string>
+    <string name="keyboard_summary_system_full">يستخدم لوحة المفاتيح النصية الكاملة لجهازك. يقبل الأرقام والفاصلة العشرية والعوامل الحسابية الشائعة والأقواس.</string>
     <string name="decimal_places_title">دقة عشرية</string>
     <string name="decimal_places_summary">عدد المنازل العشرية المعروضة للقيم المحولة.</string>
     <string name="haptic_feedback_title">اهتزاز اللمس</string>

@@ -29,10 +29,12 @@
     <string name="keyboard_title">Teclat</string>
     <string name="keyboard_option_default">Per defecte</string>
     <string name="keyboard_option_expanded">Expandit</string>
-    <string name="keyboard_option_system">Teclat del sistema</string>
+    <string name="keyboard_option_system">Teclat del sistema (numèric)</string>
+    <string name="keyboard_option_system_full">Teclat del sistema (complet)</string>
     <string name="keyboard_summary_default">Teclat estàndard de la calculadora.</string>
     <string name="keyboard_summary_expanded">Afegeix tecles de drecera addicionals per introduir dades més ràpid.</string>
-    <string name="keyboard_summary_system">Utilitza el teclat del dispositiu. Accepta dígits, coma decimal, operadors aritmètics habituals i parèntesis.</string>
+    <string name="keyboard_summary_system">Utilitza el teclat numèric del dispositiu. Accepta dígits, coma decimal, operadors aritmètics habituals i parèntesis.</string>
+    <string name="keyboard_summary_system_full">Utilitza el teclat de text complet del dispositiu. Accepta dígits, coma decimal, operadors aritmètics habituals i parèntesis.</string>
     <string name="decimal_places_title">Precisió decimal</string>
     <string name="decimal_places_summary">Nombre de decimals a mostrar per als valors convertits.</string>
     <string name="haptic_feedback_title">Resposta tàctil</string>

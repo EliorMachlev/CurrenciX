@@ -29,10 +29,12 @@
     <string name="keyboard_title">Bàn phím</string>
     <string name="keyboard_option_default">Mặc định</string>
     <string name="keyboard_option_expanded">Mở rộng</string>
-    <string name="keyboard_option_system">Bàn phím hệ thống</string>
+    <string name="keyboard_option_system">Bàn phím hệ thống (số)</string>
+    <string name="keyboard_option_system_full">Bàn phím hệ thống (đầy đủ)</string>
     <string name="keyboard_summary_default">Bàn phím máy tính chuẩn.</string>
     <string name="keyboard_summary_expanded">Thêm các phím tắt bổ sung để nhập nhanh hơn.</string>
-    <string name="keyboard_summary_system">Sử dụng bàn phím của thiết bị. Chấp nhận chữ số, dấu thập phân, các toán tử số học thông dụng và dấu ngoặc.</string>
+    <string name="keyboard_summary_system">Sử dụng bàn phím số của thiết bị. Chấp nhận chữ số, dấu thập phân, các toán tử số học thông dụng và dấu ngoặc.</string>
+    <string name="keyboard_summary_system_full">Sử dụng bàn phím văn bản đầy đủ của thiết bị. Chấp nhận chữ số, dấu thập phân, các toán tử số học thông dụng và dấu ngoặc.</string>
     <string name="decimal_places_title">Độ chính xác thập phân</string>
     <string name="decimal_places_summary">Số chữ số thập phân hiển thị cho các giá trị đã chuyển đổi.</string>
     <string name="haptic_feedback_title">Phản hồi xúc giác</string>
