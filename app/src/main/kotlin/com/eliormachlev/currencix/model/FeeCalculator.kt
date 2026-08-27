@@ -17,8 +17,7 @@ data class SideStacks(
     /** Product of both sides — the aggregate multiplicative impact on the rate. */
     val combined: BigDecimal = original.multiply(converted, MathContext.DECIMAL128)
 
-    fun isNeutral(): Boolean =
-        original.compareTo(BigDecimal.ONE) == 0 && converted.compareTo(BigDecimal.ONE) == 0
+    fun isNeutral(): Boolean = original.compareTo(BigDecimal.ONE) == 0 && converted.compareTo(BigDecimal.ONE) == 0
 
     companion object {
         val NEUTRAL = SideStacks(BigDecimal.ONE, BigDecimal.ONE)

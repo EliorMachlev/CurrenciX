@@ -687,6 +687,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
                 alpha = CHOICE_DESC_ALPHA
             }
+
         fun refresh() {
             val opt = feeSideOption(picked)
             titleView.text = opt.title
