@@ -711,7 +711,7 @@ class MainActivity : BaseActivity() {
             tvCalculations.isFocusableInTouchMode = true
             tvCalculations.isCursorVisible = true
             tvCalculations.showSoftInputOnFocus = true
-            tvCalculations.keyListener = keyListenerFor(type)
+            tvCalculations.keyListener = CalculatorKeyListener.forKeyboardType(type)
             // Seed with the current typed expression (display glyphs → ASCII)
             // so switching mode mid-entry doesn't lose the user's work.
             setCalculationsTextMuted(viewModel.currentTypedExpression())
@@ -730,13 +730,6 @@ class MainActivity : BaseActivity() {
             setCalculationsTextMuted(viewModel.getCalculationInputFormatted().value ?: "")
         }
     }
-
-    private fun keyListenerFor(type: KeyboardType) =
-        if (type == KeyboardType.SYSTEM_FULL) {
-            CalculatorKeyListener.FULL_TEXT
-        } else {
-            CalculatorKeyListener.NUMPAD
-        }
 
     private var cachedSystemKeyboardIcon: Drawable? = null
 

@@ -42,6 +42,7 @@ import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
+import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
@@ -185,18 +186,12 @@ class CartActivity : BaseActivity() {
     private val itemsLive = MediatorLiveData<List<CartItem>>().apply { value = emptyList() }
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
-    // Pre-mapped boolean the composable list consumes — keeps the KeyboardType
-    // enum out of the view layer. Either system-IME variant (numpad or
-    // full-text) counts, since both host the EditText inline on the row.
-    private val isSystemKeyboardModeLive: LiveData<Boolean> by lazy {
-        viewModel.keyboardType.map { it.isSystem }
-    }
-
-    // Mirrors the sub-variant so the composable row can pick the right
-    // CalculatorKeyListener (numpad vs full-text IME) when it inflates the
-    // inline EditText.
-    private val useFullTextImeLive: LiveData<Boolean> by lazy {
-        viewModel.keyboardType.map { it == KeyboardType.SYSTEM_FULL }
+    // Single signal for the compose row: non-null iff a system-IME variant is
+    // selected, and *which* CalculatorKeyListener to attach to the inline
+    // EditText. Collapses the "should host inline editor?" + "which IME class?"
+    // decisions into one.
+    private val keyListenerLive: LiveData<CalculatorKeyListener?> by lazy {
+        viewModel.keyboardType.map { CalculatorKeyListener.forKeyboardType(it) }
     }
 
     private lateinit var exportLauncher: ActivityResultLauncher<String>
@@ -260,8 +255,7 @@ class CartActivity : BaseActivity() {
                 currencySource = currencyLive,
                 activeItemIdSource = activeItemId,
                 activeExpressionSource = liveExpression,
-                isSystemKeyboardModeSource = isSystemKeyboardModeLive,
-                useFullTextImeSource = useFullTextImeLive,
+                keyListenerSource = keyListenerLive,
                 onNameCommit = ::commitName,
                 onNamePending = { id, name -> pendingNames[id] = name },
                 onExpressionTap = { item ->

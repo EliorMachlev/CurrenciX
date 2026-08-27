@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.util
 
 import android.text.InputType
 import android.text.method.NumberKeyListener
+import com.eliormachlev.currencix.model.KeyboardType
 
 // Single source of truth for the calculator allow-list. Shared with
 // `MainActivity.handleCharKey` so hardware and IME paths agree.
@@ -38,5 +39,15 @@ class CalculatorKeyListener private constructor(
 
         // Full text IME (letter keyboard); still filtered to the allow-list.
         val FULL_TEXT: CalculatorKeyListener = CalculatorKeyListener(FULL_TEXT_INPUT_TYPE)
+
+        // Non-null iff [type] is a system-IME variant — callers can treat the
+        // returned value as both a "should host the inline EditText" flag and
+        // the listener to attach, avoiding parallel signals.
+        fun forKeyboardType(type: KeyboardType): CalculatorKeyListener? =
+            when (type) {
+                KeyboardType.SYSTEM_NUMPAD -> NUMPAD
+                KeyboardType.SYSTEM_FULL -> FULL_TEXT
+                KeyboardType.BASIC, KeyboardType.EXPANDED -> null
+            }
     }
 }
