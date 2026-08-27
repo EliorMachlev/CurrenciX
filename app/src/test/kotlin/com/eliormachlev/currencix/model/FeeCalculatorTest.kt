@@ -15,12 +15,14 @@ class FeeCalculatorTest {
         markup: Boolean = true,
         isActive: Boolean = true,
         name: String = "",
+        feeSide: FeeSide = FeeSide.ORIGINAL,
     ) = Fee.GlobalExchange(
         id = id,
         name = name,
         percent = bd(percent),
         isMarkup = markup,
         isActive = isActive,
+        feeSide = feeSide,
     )
 
     private fun globalBank(
@@ -29,12 +31,14 @@ class FeeCalculatorTest {
         markup: Boolean = true,
         isActive: Boolean = true,
         name: String = "",
+        feeSide: FeeSide = FeeSide.ORIGINAL,
     ) = Fee.GlobalBank(
         id = id,
         name = name,
         percent = bd(percent),
         isMarkup = markup,
         isActive = isActive,
+        feeSide = feeSide,
     )
 
     private fun pair(
@@ -46,6 +50,7 @@ class FeeCalculatorTest {
         markup: Boolean = true,
         isActive: Boolean = true,
         name: String = "",
+        feeSide: FeeSide = FeeSide.ORIGINAL,
     ) = Fee.SpecificPair(
         id = id,
         name = name,
@@ -55,6 +60,7 @@ class FeeCalculatorTest {
         to = to,
         bothWays = bothWays,
         isActive = isActive,
+        feeSide = feeSide,
     )
 
     private fun near(
@@ -69,74 +75,70 @@ class FeeCalculatorTest {
         )
     }
 
+    private fun combined(
+        fees: List<Fee>,
+        base: Currency?,
+        dest: Currency?,
+        activeExchangeId: String? = null,
+        activeBankId: String? = null,
+    ): BigDecimal =
+        FeeCalculator
+            .sideStacks(fees, base, dest, activeExchangeId, activeBankId)
+            .combined
+
     @Test
     fun `empty fee list returns identity stack`() {
-        val stack = FeeCalculator.totalStack(emptyList(), Currency.USD, Currency.EUR)
+        val stack = combined(emptyList(), Currency.USD, Currency.EUR)
         assertEquals(0, stack.compareTo(BigDecimal.ONE))
     }
 
     @Test
     fun `global exchange markup applies to any pair`() {
         val fees = listOf(globalExchange("g", "2"))
-        val stack = FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR)
-        near("1.02", stack)
+        near("1.02", combined(fees, Currency.USD, Currency.EUR))
     }
 
     @Test
     fun `global fees multiply together`() {
         val fees = listOf(globalExchange("g", "2"), globalBank("b", "1"))
-        val stack = FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR)
         // 1.02 * 1.01 = 1.0302
-        near("1.0302", stack)
+        near("1.0302", combined(fees, Currency.USD, Currency.EUR))
     }
 
     @Test
     fun `discount (isMarkup=false) subtracts`() {
         val fees = listOf(globalExchange("g", "5", markup = false))
-        val stack = FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR)
-        near("0.95", stack)
+        near("0.95", combined(fees, Currency.USD, Currency.EUR))
     }
 
     @Test
     fun `specific pair matches only its direction by default`() {
         val fees = listOf(pair("p", "3", from = "USD", to = "EUR"))
-        near("1.03", FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR))
+        near("1.03", combined(fees, Currency.USD, Currency.EUR))
         // reverse: no match, back to identity
         assertEquals(
             0,
-            FeeCalculator
-                .totalStack(fees, Currency.EUR, Currency.USD)
-                .compareTo(BigDecimal.ONE),
+            combined(fees, Currency.EUR, Currency.USD).compareTo(BigDecimal.ONE),
         )
     }
 
     @Test
     fun `specific pair with bothWays matches reverse direction`() {
         val fees = listOf(pair("p", "3", from = "USD", to = "EUR", bothWays = true))
-        near("1.03", FeeCalculator.totalStack(fees, Currency.EUR, Currency.USD))
+        near("1.03", combined(fees, Currency.EUR, Currency.USD))
     }
 
     @Test
     fun `null currency yields no specific-pair matches`() {
         val fees = listOf(pair("p", "3", from = "USD", to = "EUR"))
-        assertEquals(
-            0,
-            FeeCalculator
-                .totalStack(fees, null, Currency.EUR)
-                .compareTo(BigDecimal.ONE),
-        )
-        assertEquals(
-            0,
-            FeeCalculator
-                .totalStack(fees, Currency.USD, null)
-                .compareTo(BigDecimal.ONE),
-        )
+        assertEquals(0, combined(fees, null, Currency.EUR).compareTo(BigDecimal.ONE))
+        assertEquals(0, combined(fees, Currency.USD, null).compareTo(BigDecimal.ONE))
     }
 
     @Test
     fun `null currency does not suppress global fees`() {
         val fees = listOf(globalExchange("g", "2"))
-        near("1.02", FeeCalculator.totalStack(fees, null, null))
+        near("1.02", combined(fees, null, null))
     }
 
     @Test
@@ -166,7 +168,7 @@ class FeeCalculatorTest {
     @Test
     fun `high precision preserved via DECIMAL128`() {
         val fees = listOf(globalExchange("g", "0.1"))
-        val stack = FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR)
+        val stack = combined(fees, Currency.USD, Currency.EUR)
         // 1 + 0.1/100 = 1.001 exactly
         assertEquals(0, stack.round(MathContext.DECIMAL128).compareTo(bd("1.001")))
     }
@@ -179,10 +181,7 @@ class FeeCalculatorTest {
                 globalBank("b", "1", isActive = false),
                 pair("p", "3", from = "USD", to = "EUR", isActive = false),
             )
-        assertEquals(
-            0,
-            FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR).compareTo(BigDecimal.ONE),
-        )
+        assertEquals(0, combined(fees, Currency.USD, Currency.EUR).compareTo(BigDecimal.ONE))
     }
 
     @Test
@@ -193,8 +192,8 @@ class FeeCalculatorTest {
                 globalExchange("revolut", "5"),
             )
         // Wise picked → 1.02 (not multiplicative 1.02 * 1.05 = 1.071)
-        near("1.02", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "wise"))
-        near("1.05", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "revolut"))
+        near("1.02", combined(fees, null, null, activeExchangeId = "wise"))
+        near("1.05", combined(fees, null, null, activeExchangeId = "revolut"))
     }
 
     @Test
@@ -204,7 +203,7 @@ class FeeCalculatorTest {
                 globalExchange("wise", "2"),
                 globalExchange("revolut", "5"),
             )
-        near("1.02", FeeCalculator.totalStack(fees, null, null, activeExchangeId = null))
+        near("1.02", combined(fees, null, null, activeExchangeId = null))
     }
 
     @Test
@@ -215,7 +214,7 @@ class FeeCalculatorTest {
                 globalExchange("revolut", "5"),
             )
         // Picking the inactive one still falls through to the first *active* entry.
-        near("1.05", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "wise"))
+        near("1.05", combined(fees, null, null, activeExchangeId = "wise"))
     }
 
     @Test
@@ -225,7 +224,7 @@ class FeeCalculatorTest {
                 globalExchange("wise", "2"),
                 globalExchange("revolut", "5"),
             )
-        near("1.02", FeeCalculator.totalStack(fees, null, null, activeExchangeId = "ghost"))
+        near("1.02", combined(fees, null, null, activeExchangeId = "ghost"))
     }
 
     @Test
@@ -240,13 +239,7 @@ class FeeCalculatorTest {
         // wise (1.02) * amex (1.03) = 1.0506
         near(
             "1.0506",
-            FeeCalculator.totalStack(
-                fees,
-                null,
-                null,
-                activeExchangeId = "wise",
-                activeBankId = "amex",
-            ),
+            combined(fees, null, null, activeExchangeId = "wise", activeBankId = "amex"),
         )
     }
 
@@ -258,6 +251,48 @@ class FeeCalculatorTest {
                 pair("p2", "1", from = "USD", to = "EUR"),
             )
         // both apply: 1.02 * 1.01 = 1.0302
-        near("1.0302", FeeCalculator.totalStack(fees, Currency.USD, Currency.EUR))
+        near("1.0302", combined(fees, Currency.USD, Currency.EUR))
+    }
+
+    @Test
+    fun `fees split into per-side stacks by their feeSide`() {
+        val fees =
+            listOf(
+                globalExchange("orig", "2", feeSide = FeeSide.ORIGINAL),
+                globalBank("conv", "3", feeSide = FeeSide.CONVERTED),
+            )
+        val sides = FeeCalculator.sideStacks(fees, Currency.USD, Currency.EUR)
+        near("1.02", sides.original)
+        near("1.03", sides.converted)
+        near("1.0506", sides.combined)
+    }
+
+    @Test
+    fun `all-original fees leave converted side neutral and vice-versa`() {
+        val original =
+            listOf(
+                globalExchange("g", "2", feeSide = FeeSide.ORIGINAL),
+                pair("p", "1", from = "USD", to = "EUR", feeSide = FeeSide.ORIGINAL),
+            )
+        val sidesOriginal = FeeCalculator.sideStacks(original, Currency.USD, Currency.EUR)
+        near("1.0302", sidesOriginal.original)
+        assertEquals(0, sidesOriginal.converted.compareTo(BigDecimal.ONE))
+
+        val converted =
+            listOf(
+                globalExchange("g", "2", feeSide = FeeSide.CONVERTED),
+                pair("p", "1", from = "USD", to = "EUR", feeSide = FeeSide.CONVERTED),
+            )
+        val sidesConverted = FeeCalculator.sideStacks(converted, Currency.USD, Currency.EUR)
+        assertEquals(0, sidesConverted.original.compareTo(BigDecimal.ONE))
+        near("1.0302", sidesConverted.converted)
+    }
+
+    @Test
+    fun `SideStacks NEUTRAL and isNeutral`() {
+        assertTrue(SideStacks.NEUTRAL.isNeutral())
+        assertTrue(SideStacks(BigDecimal.ONE, BigDecimal.ONE).isNeutral())
+        assertTrue(!SideStacks(bd("1.01"), BigDecimal.ONE).isNeutral())
+        assertTrue(!SideStacks(BigDecimal.ONE, bd("0.99")).isNeutral())
     }
 }

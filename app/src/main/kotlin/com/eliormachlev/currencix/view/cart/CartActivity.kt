@@ -20,7 +20,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -35,7 +34,6 @@ import androidx.lifecycle.map
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
-import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
@@ -139,7 +137,6 @@ class CartActivity : BaseActivity() {
     private lateinit var spinnerFrom: SearchableSpinner
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var swapButton: ImageButton
-    private lateinit var feeSideButton: AppCompatImageButton
     private lateinit var emptyHint: ComposeView
     private lateinit var addButton: MaterialButton
 
@@ -222,7 +219,6 @@ class CartActivity : BaseActivity() {
         this.spinnerFrom = findViewById(R.id.cart_spinner_from)
         this.spinnerTo = findViewById(R.id.cart_spinner_to)
         this.swapButton = findViewById(R.id.cart_swap)
-        this.feeSideButton = findViewById(R.id.cart_btn_fee_side)
         this.emptyHint =
             findViewById<ComposeView>(R.id.cart_empty_hint).apply {
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -299,12 +295,7 @@ class CartActivity : BaseActivity() {
             it.hapticTap(hapticEnabled)
             viewModel.swapCurrencies()
         }
-        feeSideButton.setOnClickListener {
-            it.hapticTap(hapticEnabled)
-            val current = viewModel.getFeeSide().value ?: FeeSide.ORIGINAL
-            viewModel.setFeeSide(current.toggled())
-        }
-        feeSideButton.setOnLongClickListener {
+        swapButton.setOnLongClickListener {
             it.hapticTap(hapticEnabled)
             startActivity(PreferenceActivity.feesIntent(this))
             true
@@ -404,17 +395,6 @@ class CartActivity : BaseActivity() {
             updateFeeExtras()
         }
         viewModel.getFees().observe(this) { updateFeeVisuals() }
-        viewModel.getFeeSide().observe(this) { side ->
-            val effective = side ?: FeeSide.ORIGINAL
-            feeSideButton.setImageResource(
-                if (effective == FeeSide.CONVERTED) {
-                    R.drawable.ic_fee_side_converted_horizontal
-                } else {
-                    R.drawable.ic_fee_side_original_horizontal
-                },
-            )
-            updateFeeExtras()
-        }
         viewModel.getExchangeRates().observe(this) { rates ->
             // Feed the same rate list the spinner shows on the main screen so
             // its picker shows flags, ISO codes, and (when enabled) preview
@@ -440,49 +420,68 @@ class CartActivity : BaseActivity() {
     private fun updateFeeLine() {
         // Compute the stack directly from currencies + fees so the arrow /
         // percentage show even when the cart is empty (matches main screen).
-        val stack = viewModel.currentFeeStack()
-        if (stack.isNeutralFeeStack()) {
+        val combined = viewModel.currentSideStacks().combined
+        if (combined.isNeutralFeeStack()) {
             feeLine.visibility = View.GONE
-            feeSideButton.visibility = View.GONE
             return
         }
-        feeLine.text = getString(R.string.cart_fee_line, stack.toFeePercentDisplay())
+        feeLine.text = getString(R.string.cart_fee_line, combined.toFeePercentDisplay())
         feeLine.visibility = View.VISIBLE
-        feeSideButton.visibility = View.VISIBLE
     }
 
     /**
-     * When fees apply, expose the "other side" of the fee so users can see both:
-     * fee-side ORIGINAL keeps subtotal at mid-market → show subtotal-after-fee in
-     * the base currency ("True cost"); fee-side CONVERTED bakes fees into total
-     * → show total-before-fee in the destination currency ("Original value").
+     * Show the "other side" of each per-side fee so users can see both anchor
+     * values: ORIGINAL-side fees inflate the subtotal in the base currency
+     * ("True cost"); CONVERTED-side fees discount the total in the destination
+     * currency ("Original value"). Either or both rows may be visible.
      */
     private fun updateFeeExtras() {
-        val stack = viewModel.currentFeeStack()
+        val stacks = viewModel.currentSideStacks()
+        renderFeeExtraRow(
+            container = subtotalExtra,
+            labelView = subtotalExtraLabel,
+            valueView = subtotalExtraValue,
+            prefixRes = R.string.fee_true_cost_prefix,
+            stack = stacks.original,
+            base = viewModel.getSubtotal().value,
+            currency = viewModel.getBaseCurrency().value,
+        )
+        renderFeeExtraRow(
+            container = totalExtra,
+            labelView = totalExtraLabel,
+            valueView = totalExtraValue,
+            prefixRes = R.string.fee_original_value_prefix,
+            stack = stacks.converted,
+            base = viewModel.getTotal().value,
+            currency = viewModel.getDestinationCurrency().value,
+        )
+    }
+
+    // A "true cost" / "original value" row: hidden when the [stack] is
+    // trivial, otherwise `base * stack` rendered in [currency] with the
+    // per-side percent appended so users see both magnitude and rate.
+    private fun renderFeeExtraRow(
+        container: View,
+        labelView: TextView,
+        valueView: TextView,
+        prefixRes: Int,
+        stack: BigDecimal,
+        base: BigDecimal?,
+        currency: Currency?,
+    ) {
         if (stack.isNeutralFeeStack()) {
-            subtotalExtra.visibility = View.GONE
-            totalExtra.visibility = View.GONE
+            container.visibility = View.GONE
             return
         }
-        val side = viewModel.getFeeSide().value ?: FeeSide.ORIGINAL
-        when (side) {
-            FeeSide.ORIGINAL -> {
-                val subtotal = viewModel.getSubtotal().value ?: BigDecimal.ZERO
-                val withFee = subtotal.multiply(stack, MathContext.DECIMAL128)
-                subtotalExtraLabel.text = stripLabelSeparator(getString(R.string.fee_true_cost_prefix))
-                subtotalExtraValue.text = formatAmount(withFee, viewModel.getBaseCurrency().value)
-                subtotalExtra.visibility = View.VISIBLE
-                totalExtra.visibility = View.GONE
-            }
-            FeeSide.CONVERTED -> {
-                val total = viewModel.getTotal().value ?: BigDecimal.ZERO
-                val fair = total.multiply(stack, MathContext.DECIMAL128)
-                totalExtraLabel.text = stripLabelSeparator(getString(R.string.fee_original_value_prefix))
-                totalExtraValue.text = formatAmount(fair, viewModel.getDestinationCurrency().value)
-                totalExtra.visibility = View.VISIBLE
-                subtotalExtra.visibility = View.GONE
-            }
-        }
+        val adjusted = (base ?: BigDecimal.ZERO).multiply(stack, MathContext.DECIMAL128)
+        labelView.text = stripLabelSeparator(getString(prefixRes))
+        valueView.text =
+            getString(
+                R.string.cart_fee_extra_value,
+                formatAmount(adjusted, currency),
+                stack.toFeePercentDisplay(),
+            )
+        container.visibility = View.VISIBLE
     }
 
     // Existing prefix strings end with a locale-specific ": " / " : " / "：" for
@@ -890,8 +889,9 @@ class CartActivity : BaseActivity() {
                     getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso),
                 )
             }
-            if (!snapshot.feeStack.isNeutralFeeStack()) {
-                appendLine(getString(R.string.cart_share_fees, snapshot.feeStack.toFeePercentDisplay()))
+            val combinedStack = snapshot.sideStacks.combined
+            if (!combinedStack.isNeutralFeeStack()) {
+                appendLine(getString(R.string.cart_share_fees, combinedStack.toFeePercentDisplay()))
             }
             append(getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
         }

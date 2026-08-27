@@ -7,17 +7,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.FeeSide
+import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.util.feePercentDelta
+import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsContent
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsRow
 import com.eliormachlev.currencix.view.main.compose.buildQuickConversionRows
-import com.eliormachlev.currencix.view.main.compose.hasFees
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import java.math.RoundingMode
@@ -40,22 +41,19 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
                         val from by viewModel.getBaseCurrency().observeAsState()
                         val to by viewModel.getDestinationCurrency().observeAsState()
                         val rates by viewModel.getExchangeRates().observeAsState()
-                        val side by viewModel.getFeeSide().observeAsState(FeeSide.ORIGINAL)
-                        // Read `.value` so a fees change triggers recomposition —
-                        // feeStackFor() is the actual data source but doesn't
-                        // participate in snapshot reads.
+                        // Fees are read as an observable so a fees change
+                        // recomposes; the actual stack derivation lives in
+                        // sideStacksFor() which isn't itself snapshot-observed.
                         val fees = viewModel.getFees().observeAsState().value
 
-                        val stack =
-                            if (from != null && to != null) {
-                                // fees participates in the key so a change forces re-eval
-                                @Suppress("UNUSED_EXPRESSION")
-                                fees
-                                viewModel.feeStackFor(from!!, to!!)
-                            } else {
-                                java.math.BigDecimal.ZERO
+                        val stacks =
+                            remember(from, to, fees) {
+                                if (from != null && to != null) {
+                                    viewModel.sideStacksFor(from, to)
+                                } else {
+                                    SideStacks.NEUTRAL
+                                }
                             }
-                        val hasFees = stack.hasFees()
                         val rows: List<QuickConversionsRow> =
                             if (from != null && to != null && rates != null) {
                                 buildQuickConversionRows(
@@ -63,18 +61,18 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
                                     from = from!!,
                                     to = to!!,
                                     rates = rates!!,
-                                    feeStack = stack,
-                                    feeSide = side,
+                                    sideStacks = stacks,
                                     truePrefix = truePrefix,
                                     originalPrefix = originalPrefix,
                                 )
                             } else {
                                 emptyList()
                             }
+                        val combined = stacks.combined
                         val feeInfoText =
-                            if (hasFees) {
+                            if (!combined.isNeutralFeeStack()) {
                                 val percent =
-                                    stack.feePercentDelta(
+                                    combined.feePercentDelta(
                                         FEE_PERCENT_DECIMAL_PLACES,
                                         RoundingMode.HALF_UP,
                                     )
@@ -89,17 +87,11 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
                         QuickConversionsContent(
                             from = from,
                             to = to,
-                            feeSide = side,
-                            showFeeSideButton = hasFees,
                             feeInfoText = feeInfoText,
                             rows = rows,
                             emptyText = emptyText,
                             onSwap = { (activity as? MainActivity)?.toggleEvent(null) },
                             onSwapLongPress = { openFeesSettings(ctx) },
-                            onToggleFeeSide = {
-                                viewModel.setFeeSide(side.toggled())
-                            },
-                            onFeeSideLongPress = { openFeesSettings(ctx) },
                         )
                     }
                 }

@@ -26,9 +26,9 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.CHOICE_DESC_ALPHA
 import com.eliormachlev.currencix.util.ChoiceOption
 import com.eliormachlev.currencix.util.applySelectableRowBackground
-import com.eliormachlev.currencix.util.asPreferenceSummary
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
@@ -43,7 +43,6 @@ import java.util.UUID
 
 // Preference keys for UI-only rows. The leading __ marks them as ignored by
 // the settings back-up/restore pipeline.
-private const val PREF_KEY_FEE_SIDE = "__fee_side"
 private const val PREF_KEY_GLOBAL_EXCHANGE = "__global_exchange"
 private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 
@@ -82,8 +81,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         db = Database(requireContext())
         val ctx = preferenceManager.context
         val screen: PreferenceScreen = preferenceManager.createPreferenceScreen(ctx)
-
-        screen.addPreference(buildFeeSidePreference(ctx))
 
         globalExchangePref =
             buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_EXCHANGE, R.string.fee_section_global_exchange)
@@ -153,37 +150,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         activity?.title = getString(R.string.fee_manager_title)
     }
 
-    private fun buildFeeSidePreference(ctx: Context): Preference =
-        Preference(ctx).apply {
-            key = PREF_KEY_FEE_SIDE
-            title = getString(R.string.fee_side_label)
-            isIconSpaceReserved = false
-            summary = formatFeeSideSummary(db.getFeeSideBlocking())
-            setOnPreferenceClickListener {
-                showFeeSideDialog { newSide ->
-                    summary = formatFeeSideSummary(newSide)
-                }
-                true
-            }
-        }
-
-    private fun formatFeeSideSummary(side: FeeSide): CharSequence = feeSideOption(side).asPreferenceSummary()
-
-    private fun showFeeSideDialog(onPicked: (FeeSide) -> Unit) {
-        val sides = listOf(FeeSide.ORIGINAL, FeeSide.CONVERTED)
-        val current = db.getFeeSideBlocking()
-        showChoiceExplainerDialog(
-            ctx = requireContext(),
-            titleRes = R.string.fee_side_label,
-            options = sides.map(::feeSideOption),
-            selectedIndex = sides.indexOf(current).coerceAtLeast(0),
-        ) { index ->
-            val side = sides[index]
-            db.setFeeSide(side)
-            onPicked(side)
-        }
-    }
-
     private fun buildGlobalSelectorPreference(
         ctx: Context,
         key: String,
@@ -202,11 +168,17 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             sectionTitleRes = R.string.fee_section_global_exchange,
             getActiveId = db::getActiveExchangeIdBlocking,
             setActiveId = db::setActiveExchangeId,
-            create = { name, percent, isMarkup, isActive ->
-                Fee.GlobalExchange(UUID.randomUUID().toString(), name, percent, isMarkup, isActive)
+            create = { name, percent, isMarkup, isActive, feeSide ->
+                Fee.GlobalExchange(UUID.randomUUID().toString(), name, percent, isMarkup, isActive, feeSide)
             },
-            update = { existing, name, percent, isMarkup, isActive ->
-                existing.copy(name = name, percent = percent, isMarkup = isMarkup, isActive = isActive)
+            update = { existing, name, percent, isMarkup, isActive, feeSide ->
+                existing.copy(
+                    name = name,
+                    percent = percent,
+                    isMarkup = isMarkup,
+                    isActive = isActive,
+                    feeSide = feeSide,
+                )
             },
         )
         renderGlobalCategory(
@@ -215,11 +187,17 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             sectionTitleRes = R.string.fee_section_global_bank,
             getActiveId = db::getActiveBankIdBlocking,
             setActiveId = db::setActiveBankId,
-            create = { name, percent, isMarkup, isActive ->
-                Fee.GlobalBank(UUID.randomUUID().toString(), name, percent, isMarkup, isActive)
+            create = { name, percent, isMarkup, isActive, feeSide ->
+                Fee.GlobalBank(UUID.randomUUID().toString(), name, percent, isMarkup, isActive, feeSide)
             },
-            update = { existing, name, percent, isMarkup, isActive ->
-                existing.copy(name = name, percent = percent, isMarkup = isMarkup, isActive = isActive)
+            update = { existing, name, percent, isMarkup, isActive, feeSide ->
+                existing.copy(
+                    name = name,
+                    percent = percent,
+                    isMarkup = isMarkup,
+                    isActive = isActive,
+                    feeSide = feeSide,
+                )
             },
         )
         populate(
@@ -253,8 +231,15 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         sectionTitleRes: Int,
         getActiveId: () -> String?,
         setActiveId: (String) -> Unit,
-        create: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> T,
-        update: (existing: T, name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> T,
+        create: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean, feeSide: FeeSide) -> T,
+        update: (
+            existing: T,
+            name: String,
+            percent: BigDecimal,
+            isMarkup: Boolean,
+            isActive: Boolean,
+            feeSide: FeeSide,
+        ) -> T,
     ) {
         renderGlobalSelector(
             pref = pref,
@@ -263,8 +248,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             sectionTitleRes = sectionTitleRes,
             onPicked = setActiveId,
             onAdd = {
-                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive ->
-                    val fee = create(name, percent, isMarkup, isActive)
+                showGlobalFeeDialog(existing = null) { name, percent, isMarkup, isActive, feeSide ->
+                    val fee = create(name, percent, isMarkup, isActive, feeSide)
                     db.addFee(fee)
                     if (getActiveId() == null) setActiveId(fee.id)
                 }
@@ -273,8 +258,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 showGlobalFeeDialog(
                     existing = fee,
                     onDelete = { db.deleteFee(fee.id) },
-                ) { name, percent, isMarkup, isActive ->
-                    db.updateFee(update(fee, name, percent, isMarkup, isActive))
+                ) { name, percent, isMarkup, isActive, feeSide ->
+                    db.updateFee(update(fee, name, percent, isMarkup, isActive, feeSide))
                 }
             },
         )
@@ -533,7 +518,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     private fun showGlobalFeeDialog(
         existing: Fee?,
         onDelete: (() -> Unit)? = null,
-        onConfirm: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean) -> Unit,
+        onConfirm: (name: String, percent: BigDecimal, isMarkup: Boolean, isActive: Boolean, feeSide: FeeSide) -> Unit,
     ) {
         val ctx = requireContext()
         val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
@@ -548,6 +533,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 if (existing != null) setText(existing.percent.toPlainString())
             }
         val signGroup = buildSignToggle(ctx, existing?.isMarkup)
+        val feeSideChooser = buildFeeSideChooser(ctx, existing?.feeSide ?: FeeSide.ORIGINAL)
         val activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false)
 
         container.addView(nameLabel)
@@ -555,6 +541,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         container.addView(percentLabel)
         container.addView(percentInput)
         addSignToggleWithTopMargin(container, signGroup.view)
+        container.addView(feeSideChooser.view)
         container.addView(activeCheckbox)
 
         MaterialAlertDialogBuilder(ctx)
@@ -569,6 +556,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                     percent.abs(),
                     signGroup.isMarkup(),
                     activeCheckbox.isChecked,
+                    feeSideChooser.current(),
                 )
             }.setNegativeButton(android.R.string.cancel, null)
             .withDeleteButton(onDelete)
@@ -621,6 +609,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 if (existing != null) setText(existing.percent.toPlainString())
             }
         val signToggle = buildSignToggle(ctx, existing?.isMarkup)
+        val feeSideChooser = buildFeeSideChooser(ctx, existing?.feeSide ?: FeeSide.ORIGINAL)
         val activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false)
 
         listOf(
@@ -635,6 +624,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             percentInput,
         ).forEach { container.addView(it) }
         addSignToggleWithTopMargin(container, signToggle.view)
+        container.addView(feeSideChooser.view)
         container.addView(activeCheckbox)
 
         MaterialAlertDialogBuilder(ctx)
@@ -657,6 +647,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                         to = to,
                         bothWays = bothWays.isChecked,
                         isActive = activeCheckbox.isChecked,
+                        feeSide = feeSideChooser.current(),
                     ),
                 )
             }.setNegativeButton(android.R.string.cancel, null)
@@ -669,6 +660,63 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             setNeutralButton(R.string.fee_delete) { _, _ -> onDelete() }
         }
         return this
+    }
+
+    /**
+     * Inline fee-side picker for the edit dialogs. Shows the currently-picked
+     * side (title + one-line explainer) as a tappable row; opening the picker
+     * reuses the same choice-explainer dialog as the app-wide preference
+     * pickers so users see identical wording for each option.
+     */
+    private data class FeeSideChooser(
+        val view: View,
+        val current: () -> FeeSide,
+    )
+
+    private fun buildFeeSideChooser(
+        ctx: Context,
+        initial: FeeSide,
+    ): FeeSideChooser {
+        var picked = initial
+        val titleView =
+            TextView(ctx).apply {
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+            }
+        val descView =
+            TextView(ctx).apply {
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
+                alpha = CHOICE_DESC_ALPHA
+            }
+        fun refresh() {
+            val opt = feeSideOption(picked)
+            titleView.text = opt.title
+            descView.text = opt.description
+        }
+        refresh()
+
+        val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
+        val row =
+            LinearLayout(ctx).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(0, padV, 0, padV)
+                isClickable = true
+                applySelectableRowBackground()
+                addView(titleView)
+                addView(descView)
+                setOnClickListener {
+                    val sides = listOf(FeeSide.ORIGINAL, FeeSide.CONVERTED)
+                    showChoiceExplainerDialog(
+                        ctx = ctx,
+                        titleRes = R.string.fee_side_label,
+                        options = sides.map(::feeSideOption),
+                        selectedIndex = sides.indexOf(picked).coerceAtLeast(0),
+                    ) { index ->
+                        picked = sides[index]
+                        refresh()
+                    }
+                }
+            }
+        return FeeSideChooser(row, { picked })
     }
 
     /**

@@ -87,9 +87,10 @@ private fun CartSnapshot.drawSnapshot(
         canvas.drawText("${convertedSubtotal.toCartExportString()} ${destinationCurrency.iso4217Alpha()}", rightX, y, bodyRight)
         y += LINE_HEIGHT_PT
     }
-    if (!feeStack.isNeutralFeeStack()) {
+    val combinedStack = sideStacks.combined
+    if (!combinedStack.isNeutralFeeStack()) {
         canvas.drawText("Fees", PAGE_MARGIN_PT, y, bodyPaint)
-        canvas.drawText("${feeStack.feePercentDelta().toPlainString()}%", rightX, y, bodyRight)
+        canvas.drawText("${combinedStack.feePercentDelta().toPlainString()}%", rightX, y, bodyRight)
         y += LINE_HEIGHT_PT
     }
 

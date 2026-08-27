@@ -25,14 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
-import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.Ltr
 
@@ -40,7 +38,7 @@ private const val FLAG_SIZE_DP = 28
 private const val EQ_ALPHA = 0.5f
 
 // Bumped from 40dp to hit WCAG 2.1 AA "target size" (48×48). Applies to the
-// header swap and fee-side toggle — the two icon-only actions in this dialog.
+// header swap button — the only icon-only action in this dialog.
 private const val ICON_BUTTON_SIZE_DP = 48
 
 data class QuickConversionsRow(
@@ -54,15 +52,11 @@ data class QuickConversionsRow(
 fun QuickConversionsContent(
     from: Currency?,
     to: Currency?,
-    feeSide: FeeSide,
-    showFeeSideButton: Boolean,
     feeInfoText: String?,
     rows: List<QuickConversionsRow>,
     emptyText: String,
     onSwap: () -> Unit,
     onSwapLongPress: () -> Unit,
-    onToggleFeeSide: () -> Unit,
-    onFeeSideLongPress: () -> Unit,
 ) {
     val padH = dimensionResource(id = R.dimen.margin2x)
     val padT = dimensionResource(id = R.dimen.margin2x)
@@ -79,12 +73,8 @@ fun QuickConversionsContent(
             QuickConversionsHeader(
                 from = from,
                 to = to,
-                feeSide = feeSide,
-                showFeeSideButton = showFeeSideButton,
                 onSwap = onSwap,
                 onSwapLongPress = onSwapLongPress,
-                onToggleFeeSide = onToggleFeeSide,
-                onFeeSideLongPress = onFeeSideLongPress,
             )
             if (feeInfoText != null) {
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.margin1x)))
@@ -128,12 +118,8 @@ fun QuickConversionsContent(
 private fun QuickConversionsHeader(
     from: Currency?,
     to: Currency?,
-    feeSide: FeeSide,
-    showFeeSideButton: Boolean,
     onSwap: () -> Unit,
     onSwapLongPress: () -> Unit,
-    onToggleFeeSide: () -> Unit,
-    onFeeSideLongPress: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -156,24 +142,6 @@ private fun QuickConversionsHeader(
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
-        if (showFeeSideButton) {
-            val iconRes =
-                if (feeSide == FeeSide.CONVERTED) {
-                    R.drawable.ic_fee_side_converted_horizontal
-                } else {
-                    R.drawable.ic_fee_side_original_horizontal
-                }
-            LongPressIconButton(
-                onClick = onToggleFeeSide,
-                onLongClick = onFeeSideLongPress,
-            ) {
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = stringResource(id = R.string.fee_side_label),
-                    tint = MaterialTheme.colorScheme.error,
-                )
-            }
-        }
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.Start,
@@ -184,10 +152,10 @@ private fun QuickConversionsHeader(
     }
 }
 
-// Shared shape for the header's swap and fee-side icon buttons: a 48dp
-// clickable region (WCAG 2.1 AA target size) with long-press support. Keeps
-// the .size and .combinedClickable chained together so no intermediate
-// padding can shrink the click target below 48dp.
+// Shared shape for the header's swap icon button: a 48dp clickable region
+// (WCAG 2.1 AA target size) with long-press support. Keeps the .size and
+// .combinedClickable chained together so no intermediate padding can shrink
+// the click target below 48dp.
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LongPressIconButton(

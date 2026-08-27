@@ -33,8 +33,9 @@ fun CartSnapshot.toCsv(
         if (isConverting) {
             append(csvRow("Converted (${destinationCurrency.iso4217Alpha()})", "", convertedSubtotal.toCartExportString()))
         }
-        if (!feeStack.isNeutralFeeStack()) {
-            append(csvRow("Fees (${feeStack.feePercentDelta().toPlainString()}%)", "", ""))
+        val combinedStack = sideStacks.combined
+        if (!combinedStack.isNeutralFeeStack()) {
+            append(csvRow("Fees (${combinedStack.feePercentDelta().toPlainString()}%)", "", ""))
         }
         append(csvRow("Total (${destinationCurrency.iso4217Alpha()})", "", total.toCartExportString()))
     }
