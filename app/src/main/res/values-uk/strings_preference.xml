@@ -29,8 +29,12 @@
     <string name="keyboard_title">Клавіатура</string>
     <string name="keyboard_option_default">За замовчуванням</string>
     <string name="keyboard_option_expanded">Розширена</string>
+    <string name="keyboard_option_system">Клавіатура системи (цифрова)</string>
+    <string name="keyboard_option_system_full">Клавіатура системи (повна)</string>
     <string name="keyboard_summary_default">Стандартна клавіатура калькулятора.</string>
     <string name="keyboard_summary_expanded">Додає додаткові клавіші швидкого введення.</string>
+    <string name="keyboard_summary_system">Використовує цифрову клавіатуру вашого пристрою. Приймає цифри, десятковий роздільник, поширені арифметичні оператори та дужки.</string>
+    <string name="keyboard_summary_system_full">Використовує повну текстову клавіатуру вашого пристрою. Приймає цифри, десятковий роздільник, поширені арифметичні оператори та дужки.</string>
     <string name="decimal_places_title">Десяткова точність</string>
     <string name="decimal_places_summary">Кількість десяткових знаків, що показуються для конвертованих значень.</string>
     <string name="haptic_feedback_title">Тактильний відгук</string>

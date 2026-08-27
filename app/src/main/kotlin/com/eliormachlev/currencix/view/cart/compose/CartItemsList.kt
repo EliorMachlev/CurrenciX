@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
@@ -35,9 +36,11 @@ fun CartItemsList(
     currencySource: LiveData<String>,
     activeItemIdSource: LiveData<String?>,
     activeExpressionSource: LiveData<String>,
+    keyListenerSource: LiveData<CalculatorKeyListener?>,
     onNameCommit: (id: String, name: String) -> Unit,
     onNamePending: (id: String, name: String) -> Unit,
     onExpressionTap: (item: CartItem) -> Unit,
+    onExpressionChange: (id: String, expression: String) -> Unit,
     onTogglePin: (id: String) -> Unit,
     onDelete: (id: String) -> Unit,
     onReorder: (fromId: String, toId: String) -> Unit,
@@ -49,6 +52,7 @@ fun CartItemsList(
         val currency by currencySource.observeAsState(initial = "")
         val activeId by activeItemIdSource.observeAsState()
         val liveExpression by activeExpressionSource.observeAsState(initial = "")
+        val keyListener by keyListenerSource.observeAsState()
         // Display pinned-first while preserving storage order within each
         // partition. Drag operates on this list; dropping a pinned row into
         // the unpinned section snaps back on the next composition — user must
@@ -85,10 +89,12 @@ fun CartItemsList(
                     item = item,
                     currency = currency,
                     isActive = isActive,
+                    keyListener = keyListener,
                     liveExpression = if (isActive) liveExpression else null,
                     onNameCommit = { onNameCommit(item.id, it) },
                     onNamePending = { onNamePending(item.id, it) },
                     onExpressionTap = { onExpressionTap(item) },
+                    onExpressionChange = { onExpressionChange(item.id, it) },
                     onTogglePin = { onTogglePin(item.id) },
                     onDelete = { onDelete(item.id) },
                     modifier =

@@ -29,8 +29,12 @@
     <string name="keyboard_title">Πληκτρολόγιο</string>
     <string name="keyboard_option_default">Προεπιλογή</string>
     <string name="keyboard_option_expanded">Αναπτυγμένο</string>
+    <string name="keyboard_option_system">Πληκτρολόγιο συστήματος (αριθμητικό)</string>
+    <string name="keyboard_option_system_full">Πληκτρολόγιο συστήματος (πλήρες)</string>
     <string name="keyboard_summary_default">Τυπικό πληκτρολόγιο αριθμομηχανής.</string>
     <string name="keyboard_summary_expanded">Προσθέτει επιπλέον πλήκτρα συντόμευσης για ταχύτερη εισαγωγή.</string>
+    <string name="keyboard_summary_system">Χρησιμοποιεί το αριθμητικό πληκτρολόγιο της συσκευής σας. Δέχεται ψηφία, υποδιαστολή, κοινούς αριθμητικούς τελεστές και παρενθέσεις.</string>
+    <string name="keyboard_summary_system_full">Χρησιμοποιεί το πλήρες πληκτρολόγιο κειμένου της συσκευής σας. Δέχεται ψηφία, υποδιαστολή, κοινούς αριθμητικούς τελεστές και παρενθέσεις.</string>
     <string name="decimal_places_title">Δεκαδική ακρίβεια</string>
     <string name="decimal_places_summary">Αριθμός δεκαδικών ψηφίων που εμφανίζονται για τις μετατραπείσες τιμές.</string>
     <string name="haptic_feedback_title">Απτική ανάδραση</string>

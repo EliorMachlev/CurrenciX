@@ -29,8 +29,12 @@
     <string name="keyboard_title">Klaviatuur</string>
     <string name="keyboard_option_default">Vaikimisi</string>
     <string name="keyboard_option_expanded">Laiendatud</string>
+    <string name="keyboard_option_system">Süsteemi klaviatuur (numbriline)</string>
+    <string name="keyboard_option_system_full">Süsteemi klaviatuur (täielik)</string>
     <string name="keyboard_summary_default">Kalkulaatori standardklaviatuur.</string>
     <string name="keyboard_summary_expanded">Lisab täiendavaid kiirklahve kiiremaks sisestamiseks.</string>
+    <string name="keyboard_summary_system">Kasutab seadme numbriklaviatuuri. Aktsepteerib numbreid, kümnendkohta, tavalisi aritmeetikatehteid ja sulge.</string>
+    <string name="keyboard_summary_system_full">Kasutab seadme täielikku tekstiklaviatuuri. Aktsepteerib numbreid, kümnendkohta, tavalisi aritmeetikatehteid ja sulge.</string>
     <string name="decimal_places_title">Kümnendtäpsus</string>
     <string name="decimal_places_summary">Kuvatavate kümnendkohtade arv teisendatud väärtustel.</string>
     <string name="haptic_feedback_title">Haptiline tagasiside</string>

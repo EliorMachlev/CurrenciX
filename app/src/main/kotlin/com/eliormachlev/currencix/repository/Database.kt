@@ -12,6 +12,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.FeeType
+import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Timeline
@@ -48,11 +49,6 @@ private const val LEGACY_FEE_ENABLED_KEY = "_feeEnabled"
 // -1L is used because it can't collide with any real epoch millis (1970-01-01
 // stores as 0L; anything after is positive).
 private const val NO_HISTORICAL_DATE = -1L
-
-// Public keyboard-type sentinels shared by every consumer of [Database.getKeyboardType]
-// so the "basic vs extended" split is stated in exactly one place.
-const val KEYBOARD_TYPE_BASIC = 0
-const val KEYBOARD_TYPE_EXPANDED = 1
 
 class Database(
     private val context: Context,
@@ -556,15 +552,15 @@ class Database(
 
     // keyboard type
 
-    fun setKeyboardType(type: Int) {
-        prefs.apply {
-            edit().putInt(keyKeyboardType, type).apply()
-        }
+    fun setKeyboardType(type: KeyboardType) {
+        prefs.edit().putInt(keyKeyboardType, type.ordinal).apply()
     }
 
-    fun getKeyboardType(): LiveData<Int> = SharedPreferenceIntLiveData(prefs, keyKeyboardType, KEYBOARD_TYPE_BASIC)
+    fun getKeyboardType(): LiveData<KeyboardType> =
+        SharedPreferenceIntLiveData(prefs, keyKeyboardType, KeyboardType.DEFAULT.ordinal)
+            .map { KeyboardType.fromOrdinal(it) }
 
-    fun getKeyboardTypeBlocking(): Int = prefs.getInt(keyKeyboardType, KEYBOARD_TYPE_BASIC)
+    fun getKeyboardTypeBlocking(): KeyboardType = KeyboardType.fromOrdinal(prefs.getInt(keyKeyboardType, KeyboardType.DEFAULT.ordinal))
 
     // haptic feedback
 

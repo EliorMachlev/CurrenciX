@@ -29,8 +29,12 @@
     <string name="keyboard_title">Klawiatura</string>
     <string name="keyboard_option_default">Domyślna</string>
     <string name="keyboard_option_expanded">Rozszerzona</string>
+    <string name="keyboard_option_system">Klawiatura systemowa (numeryczna)</string>
+    <string name="keyboard_option_system_full">Klawiatura systemowa (pełna)</string>
     <string name="keyboard_summary_default">Standardowa klawiatura kalkulatora.</string>
     <string name="keyboard_summary_expanded">Dodaje dodatkowe klawisze skrótów dla szybszego wprowadzania.</string>
+    <string name="keyboard_summary_system">Używa klawiatury numerycznej urządzenia. Akceptuje cyfry, separator dziesiętny, popularne operatory arytmetyczne i nawiasy.</string>
+    <string name="keyboard_summary_system_full">Używa pełnej klawiatury tekstowej urządzenia. Akceptuje cyfry, separator dziesiętny, popularne operatory arytmetyczne i nawiasy.</string>
     <string name="decimal_places_title">Dokładność dziesiętna</string>
     <string name="decimal_places_summary">Liczba miejsc dziesiętnych wyświetlanych dla przeliczonych wartości.</string>
     <string name="haptic_feedback_title">Wibracje dotykowe</string>

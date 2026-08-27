@@ -1,5 +1,7 @@
 package com.eliormachlev.currencix.view.cart.compose
 
+import android.app.Activity
+import android.widget.EditText
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,11 +32,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -42,9 +46,15 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.widget.doAfterTextChanged
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.util.CalculatorKeyListener
+import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.roundForDisplay
+import com.eliormachlev.currencix.util.setTextAndCursorToEnd
+import com.eliormachlev.currencix.util.showSoftInputOn
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
@@ -74,10 +84,12 @@ fun SwipeableCartItemRow(
     item: CartItem,
     currency: String,
     isActive: Boolean,
+    keyListener: CalculatorKeyListener?,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
+    onExpressionChange: (String) -> Unit,
     onTogglePin: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -98,10 +110,12 @@ fun SwipeableCartItemRow(
             item = item,
             currency = currency,
             isActive = isActive,
+            keyListener = keyListener,
             liveExpression = liveExpression,
             onNameCommit = onNameCommit,
             onNamePending = onNamePending,
             onExpressionTap = onExpressionTap,
+            onExpressionChange = onExpressionChange,
             onTogglePin = onTogglePin,
             dragHandleModifier = dragHandleModifier,
         )
@@ -139,10 +153,12 @@ fun CartItemRow(
     item: CartItem,
     currency: String,
     isActive: Boolean,
+    keyListener: CalculatorKeyListener?,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
+    onExpressionChange: (String) -> Unit,
     onTogglePin: () -> Unit,
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
@@ -170,10 +186,18 @@ fun CartItemRow(
                     onCommit = onNameCommit,
                     onPending = onNamePending,
                 )
-                ExpressionField(
-                    text = displayedExpression,
-                    onTap = onExpressionTap,
-                )
+                if (isActive && keyListener != null) {
+                    ExpressionEditor(
+                        initial = displayedExpression,
+                        keyListener = keyListener,
+                        onChange = onExpressionChange,
+                    )
+                } else {
+                    ExpressionField(
+                        text = displayedExpression,
+                        onTap = onExpressionTap,
+                    )
+                }
                 ValuePreview(
                     item = item.copy(expression = displayedExpression),
                     currency = currency,
@@ -294,6 +318,59 @@ private fun ExpressionField(
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 },
+        )
+    }
+}
+
+// [initial] arrives in display-glyph form (× ÷); the EditText works in ASCII
+// (* /) so the numpad IME's keys pass through, and callers convert back on
+// commit — matches how [openSystemImeEditorFor]'s dialog used to round-trip.
+@Composable
+private fun ExpressionEditor(
+    initial: String,
+    keyListener: CalculatorKeyListener,
+    onChange: (String) -> Unit,
+) {
+    val onChangeState = rememberUpdatedState(onChange)
+    val textColorArgb = MaterialTheme.colorScheme.onSurface.toArgb()
+    val hint = stringResource(id = R.string.cart_item_expression_hint)
+    val asciiInitial = remember(initial) { initial.normaliseGlyphsToAscii() }
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = FIELD_MIN_HEIGHT),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        AndroidView(
+            factory = { ctx ->
+                EditText(ctx).apply {
+                    this.keyListener = keyListener
+                    background = null
+                    setPadding(0, 0, 0, 0)
+                    isSingleLine = true
+                    setTextColor(textColorArgb)
+                    this.hint = hint
+                    setTextAndCursorToEnd(asciiInitial)
+                    doAfterTextChanged { editable ->
+                        onChangeState.value(editable?.toString().orEmpty())
+                    }
+                    // Post so requestFocus lands after the view is attached to
+                    // the window — otherwise showSoftInput is a no-op.
+                    post { (ctx as? Activity)?.showSoftInputOn(this) }
+                }
+            },
+            update = { et ->
+                // Refresh the listener so a mid-session preference flip
+                // (numpad ↔ full-text IME) takes effect on the live row.
+                if (et.keyListener !== keyListener) et.keyListener = keyListener
+                // Skip while user is typing so keystrokes aren't overwritten
+                // by our own glyph→ASCII round-trip echoing back through
+                // liveExpression. The extension itself no-ops on unchanged
+                // text, so re-emits of the same value cost nothing.
+                if (!et.isFocused) et.setTextAndCursorToEnd(asciiInitial)
+            },
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

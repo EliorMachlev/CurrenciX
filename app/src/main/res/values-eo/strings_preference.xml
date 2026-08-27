@@ -29,8 +29,12 @@
     <string name="keyboard_title">Klavaro</string>
     <string name="keyboard_option_default">Implicita</string>
     <string name="keyboard_option_expanded">Etendita</string>
+    <string name="keyboard_option_system">Sistema klavaro (nombra)</string>
+    <string name="keyboard_option_system_full">Sistema klavaro (plena)</string>
     <string name="keyboard_summary_default">Norma kalkulila klavaro.</string>
     <string name="keyboard_summary_expanded">Aldonas kromajn ŝparklavojn por pli rapida enigo.</string>
+    <string name="keyboard_summary_system">Uzas la nombran klavaron de via aparato. Akceptas ciferojn, decimalpunkton, kutimajn aritmetikajn operatorojn kaj krampojn.</string>
+    <string name="keyboard_summary_system_full">Uzas la plenan tekstan klavaron de via aparato. Akceptas ciferojn, decimalpunkton, kutimajn aritmetikajn operatorojn kaj krampojn.</string>
     <string name="decimal_places_title">Decimala precizeco</string>
     <string name="decimal_places_summary">Nombro de decimalaj lokoj montrataj por konvertitaj valoroj.</string>
     <string name="haptic_feedback_title">Hapta reago</string>
