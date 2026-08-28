@@ -1,12 +1,10 @@
 package com.eliormachlev.currencix.util
 
-import android.content.Context
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.util.TypedValue
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.eliormachlev.currencix.R
@@ -32,10 +30,4 @@ fun TextView.paintParenCycle(next: Char) {
             setSpan(StyleSpan(Typeface.BOLD), activeIndex, activeIndex + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             setSpan(ForegroundColorSpan(mutedColor), mutedIndex, mutedIndex + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-}
-
-private fun Context.resolveThemeColor(attr: Int): Int {
-    val tv = TypedValue()
-    theme.resolveAttribute(attr, tv, true)
-    return if (tv.resourceId != 0) ContextCompat.getColor(this, tv.resourceId) else tv.data
 }

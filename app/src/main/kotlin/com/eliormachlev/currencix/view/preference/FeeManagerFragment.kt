@@ -32,6 +32,7 @@ import com.eliormachlev.currencix.util.applySelectableRowBackground
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
+import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
@@ -59,6 +60,11 @@ private const val FLAG_INLINE_HEIGHT_SP = 14f
 // used by the saved-carts list so all in-app row-affordance icons look alike.
 private const val ROW_ICON_BUTTON_SIZE_DP = 48f
 private const val ROW_ICON_PADDING_DP = 12f
+
+// Minimum tap-target for the leading radio in the fee picker. Matches the
+// Material accessibility guidance (WCAG 2.5.5) so the radio can be tapped
+// independently of the row's edit affordance without missing.
+private const val RADIO_MIN_TOUCH_DP = 48f
 
 // Arrows used in the "specific pair" summary.
 private const val ARROW_ONE_WAY = "\u2192"
@@ -318,30 +324,32 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val container = paddedDialogContainer(ctx)
         val dialogHolder = arrayOfNulls<AlertDialog>(1)
         val radios = mutableListOf<RadioButton>()
+        // Opaque muted colour for the inactive-state cue. Paired with the
+        // existing "Inactive" text marker so state is not conveyed by colour
+        // alone (WCAG 1.4.1); using a theme-resolved colour keeps the AA
+        // contrast target on light/dark/OLED.
+        val mutedColor = ctx.resolveThemeColor(com.google.android.material.R.attr.colorOnSurfaceVariant)
+        val editActionLabel = getString(R.string.fee_edit_percent)
 
         entries.forEachIndexed { index, fee ->
             val radio =
-                RadioButton(ctx).apply {
-                    isChecked = fee.id == effectiveId
-                    isClickable = false
+                buildPickerRadio(ctx, checked = fee.id == effectiveId) {
+                    radios.forEachIndexed { i, r -> r.isChecked = i == index }
+                    onPicked(fee.id)
+                    dialogHolder[0]?.dismiss()
                 }
             radios += radio
-            val editButton =
-                buildEditIconButton(ctx) {
-                    dialogHolder[0]?.dismiss()
-                    onEdit(fee)
-                }
             container.addView(
                 choiceExplainerRow(
                     ctx = ctx,
                     title = displayNameOf(fee),
                     description = formatFeeDescription(fee),
                     leadingView = radio,
-                    trailingView = editButton,
+                    textColor = if (fee.isActive) null else mutedColor,
+                    clickActionLabel = editActionLabel,
                 ) {
-                    radios.forEachIndexed { i, r -> r.isChecked = i == index }
-                    onPicked(fee.id)
                     dialogHolder[0]?.dismiss()
+                    onEdit(fee)
                 },
             )
         }
@@ -361,10 +369,21 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 .show()
     }
 
-    private fun buildEditIconButton(
+    private fun buildPickerRadio(
         ctx: Context,
+        checked: Boolean,
         onClick: () -> Unit,
-    ): View = buildRowIcon(ctx, R.drawable.ic_edit, getString(R.string.fee_edit_percent), onClick)
+    ): RadioButton {
+        val minTouchPx = RADIO_MIN_TOUCH_DP.dpToPx().toInt()
+        return RadioButton(ctx).apply {
+            isChecked = checked
+            isClickable = true
+            isFocusable = true
+            minWidth = minTouchPx
+            minHeight = minTouchPx
+            setOnClickListener { onClick() }
+        }
+    }
 
     private fun buildAddRow(
         ctx: Context,

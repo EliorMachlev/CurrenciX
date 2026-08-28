@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import com.eliormachlev.currencix.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -57,6 +60,8 @@ fun choiceExplainerRow(
     description: CharSequence,
     leadingView: View? = null,
     trailingView: View? = null,
+    @ColorInt textColor: Int? = null,
+    clickActionLabel: CharSequence? = null,
     onClick: () -> Unit,
 ): LinearLayout {
     val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
@@ -68,6 +73,14 @@ fun choiceExplainerRow(
             isClickable = true
             applySelectableRowBackground()
             setOnClickListener { onClick() }
+            if (clickActionLabel != null) {
+                ViewCompat.replaceAccessibilityAction(
+                    this,
+                    AccessibilityActionCompat.ACTION_CLICK,
+                    clickActionLabel,
+                    null,
+                )
+            }
         }
     if (leadingView != null) row.addView(leadingView)
     val textCol =
@@ -77,13 +90,17 @@ fun choiceExplainerRow(
                 TextView(ctx).apply {
                     text = title
                     setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+                    if (textColor != null) setTextColor(textColor)
                 },
             )
             addView(
                 TextView(ctx).apply {
                     text = description
                     setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
-                    alpha = CHOICE_DESC_ALPHA
+                    // Opaque muted colour is preferred over alpha for state cues
+                    // per the accessibility statement; only fall back to alpha
+                    // for the default (non-state) subordinate-line treatment.
+                    if (textColor != null) setTextColor(textColor) else alpha = CHOICE_DESC_ALPHA
                 },
             )
         }
