@@ -418,14 +418,16 @@ class CartActivity : BaseActivity() {
     }
 
     private fun updateFeeLine() {
-        // Compute the stack directly from currencies + fees so the arrow /
-        // percentage show even when the cart is empty (matches main screen).
-        val combined = viewModel.currentSideStacks().combined
-        if (combined.isNeutralFeeStack()) {
+        // Only surface the combined percent when *both* sides carry a fee —
+        // otherwise the per-side annotation block already spells out the same
+        // number ("Fee: +2%") and this row is a duplicate.
+        val stacks = viewModel.currentSideStacks()
+        val bothSides = !stacks.original.isNeutralFeeStack() && !stacks.converted.isNeutralFeeStack()
+        if (!bothSides) {
             feeLine.visibility = View.GONE
             return
         }
-        feeLine.text = getString(R.string.cart_fee_line, combined.toFeePercentDisplay())
+        feeLine.text = getString(R.string.cart_fee_line, stacks.combined.toFeePercentDisplay())
         feeLine.visibility = View.VISIBLE
     }
 
