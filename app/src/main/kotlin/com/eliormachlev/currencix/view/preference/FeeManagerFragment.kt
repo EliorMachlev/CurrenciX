@@ -40,6 +40,7 @@ import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.materialswitch.MaterialSwitch
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -232,7 +233,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             sectionTitleRes = sectionTitleRes,
             onPicked = setActiveId,
             onAdd = {
-                showGlobalFeeDialog(existing = null) { draft ->
+                showGlobalFeeDialog(titleRes = sectionTitleRes, existing = null) { draft ->
                     val fee = create(draft)
                     db.addFee(fee)
                     if (getActiveId() == null) setActiveId(fee.id)
@@ -240,6 +241,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             },
             onEdit = { fee ->
                 showGlobalFeeDialog(
+                    titleRes = sectionTitleRes,
                     existing = fee,
                     onDelete = { db.deleteFee(fee.id) },
                 ) { draft -> db.updateFee(update(fee, draft)) }
@@ -508,11 +510,11 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             if (initial != null) setText(initial.toPlainString())
         }
 
-    private fun buildActiveCheckbox(
+    private fun buildActiveSwitch(
         ctx: Context,
         initial: Boolean,
-    ): CheckBox =
-        CheckBox(ctx).apply {
+    ): MaterialSwitch =
+        MaterialSwitch(ctx).apply {
             text = getString(R.string.fee_edit_active)
             isChecked = initial
         }
@@ -546,7 +548,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val percentInput: EditText,
         val signToggle: SignToggle,
         val feeSideChooser: FeeSideChooser,
-        val activeCheckbox: CheckBox,
+        val activeSwitch: MaterialSwitch,
     ) {
         fun toDraft(): FeeDraft =
             FeeDraft(
@@ -557,7 +559,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                         .toBigDecimalOrNull()
                         ?.abs() ?: BigDecimal.ZERO,
                 isMarkup = signToggle.isMarkup(),
-                isActive = activeCheckbox.isChecked,
+                isActive = activeSwitch.isChecked,
                 feeSide = feeSideChooser.current(),
             )
     }
@@ -571,27 +573,29 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             percentInput = buildPercentInput(ctx, existing?.percent),
             signToggle = buildSignToggle(ctx, existing?.isMarkup),
             feeSideChooser = buildFeeSideChooser(ctx, existing?.feeSide ?: FeeSide.ORIGINAL),
-            activeCheckbox = buildActiveCheckbox(ctx, existing?.isActive != false),
+            activeSwitch = buildActiveSwitch(ctx, existing?.isActive != false),
         )
 
     /**
-     * Append the meta section — sign toggle, fee-side chooser, active switch —
-     * to a dialog's container. Shared so both fee-editor dialogs render the
+     * Append the sign toggle + fee-side header + fee-side chooser to a
+     * dialog's container. Shared so both fee-editor dialogs render this
      * trailing block identically.
      */
-    private fun addFeeMetaViews(
+    private fun addSignAndFeeSideViews(
         container: LinearLayout,
+        ctx: Context,
         inputs: SharedFeeInputs,
     ) {
         addSignToggleWithTopMargin(container, inputs.signToggle.view)
+        container.addView(sectionLabel(ctx, R.string.fee_side_label))
         container.addView(inputs.feeSideChooser.view)
-        container.addView(inputs.activeCheckbox)
     }
 
     private fun buildEditorContainer(ctx: Context): LinearLayout =
         paddedDialogContainer(ctx, topPadding = resources.getDimensionPixelSize(R.dimen.margin2x))
 
     private fun showGlobalFeeDialog(
+        @StringRes titleRes: Int,
         existing: Fee?,
         onDelete: (() -> Unit)? = null,
         onConfirm: (FeeDraft) -> Unit,
@@ -600,14 +604,15 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val container = buildEditorContainer(ctx)
         val inputs = buildSharedFeeInputs(ctx, existing)
 
+        container.addView(inputs.activeSwitch)
         container.addView(sectionLabel(ctx, R.string.fee_edit_name))
         container.addView(inputs.nameInput)
         container.addView(sectionLabel(ctx, R.string.fee_edit_percent))
         container.addView(inputs.percentInput)
-        addFeeMetaViews(container, inputs)
+        addSignAndFeeSideViews(container, ctx, inputs)
 
         MaterialAlertDialogBuilder(ctx)
-            .setTitle(R.string.fee_edit_percent)
+            .setTitle(titleRes)
             .setView(container)
             .setPositiveButton(android.R.string.ok) { _, _ -> onConfirm(inputs.toDraft()) }
             .setNegativeButton(android.R.string.cancel, null)
@@ -651,6 +656,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 isChecked = existing?.bothWays == true
             }
 
+        container.addView(inputs.activeSwitch)
         container.addView(sectionLabel(ctx, R.string.fee_edit_name))
         container.addView(inputs.nameInput)
         container.addView(sectionLabel(ctx, R.string.fee_pair_from))
@@ -660,7 +666,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         container.addView(bothWays)
         container.addView(sectionLabel(ctx, R.string.fee_edit_percent))
         container.addView(inputs.percentInput)
-        addFeeMetaViews(container, inputs)
+        addSignAndFeeSideViews(container, ctx, inputs)
 
         MaterialAlertDialogBuilder(ctx)
             .setTitle(R.string.fee_section_specific_pair)
