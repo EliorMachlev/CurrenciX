@@ -525,6 +525,36 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     ): TextView = TextView(ctx).apply { text = getString(res) }
 
     /**
+     * Append a section label followed by its associated view. Used by both
+     * fee-editor dialogs, which are entirely a stack of labelled-input pairs.
+     */
+    private fun LinearLayout.addLabeled(
+        @StringRes labelRes: Int,
+        view: View,
+    ) {
+        addView(sectionLabel(context, labelRes))
+        addView(view)
+    }
+
+    /**
+     * Build the [MaterialAlertDialogBuilder] shared by the two fee-editor
+     * dialogs — title, body view, cancel, and optional delete. Callers append
+     * their own positive button (each dialog handles OK differently) and call
+     * `show()`.
+     */
+    private fun feeEditorDialog(
+        ctx: Context,
+        @StringRes titleRes: Int,
+        container: View,
+        onDelete: (() -> Unit)?,
+    ): MaterialAlertDialogBuilder =
+        MaterialAlertDialogBuilder(ctx)
+            .setTitle(titleRes)
+            .setView(container)
+            .setNegativeButton(android.R.string.cancel, null)
+            .withDeleteButton(onDelete)
+
+    /**
      * Snapshot of the fields shared between the global-fee and specific-pair
      * edit dialogs. Threading a struct instead of five positional args keeps
      * the create/update lambdas in [renderGlobalCategory] readable and avoids
@@ -583,12 +613,10 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
      */
     private fun addSignAndFeeSideViews(
         container: LinearLayout,
-        ctx: Context,
         inputs: SharedFeeInputs,
     ) {
         addSignToggleWithTopMargin(container, inputs.signToggle.view)
-        container.addView(sectionLabel(ctx, R.string.fee_side_label))
-        container.addView(inputs.feeSideChooser.view)
+        container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view)
     }
 
     private fun buildEditorContainer(ctx: Context): LinearLayout =
@@ -605,18 +633,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val inputs = buildSharedFeeInputs(ctx, existing)
 
         container.addView(inputs.activeSwitch)
-        container.addView(sectionLabel(ctx, R.string.fee_edit_name))
-        container.addView(inputs.nameInput)
-        container.addView(sectionLabel(ctx, R.string.fee_edit_percent))
-        container.addView(inputs.percentInput)
-        addSignAndFeeSideViews(container, ctx, inputs)
+        container.addLabeled(R.string.fee_edit_name, inputs.nameInput)
+        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
+        addSignAndFeeSideViews(container, inputs)
 
-        MaterialAlertDialogBuilder(ctx)
-            .setTitle(titleRes)
-            .setView(container)
+        feeEditorDialog(ctx, titleRes, container, onDelete)
             .setPositiveButton(android.R.string.ok) { _, _ -> onConfirm(inputs.toDraft()) }
-            .setNegativeButton(android.R.string.cancel, null)
-            .withDeleteButton(onDelete)
             .show()
     }
 
@@ -657,20 +679,14 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             }
 
         container.addView(inputs.activeSwitch)
-        container.addView(sectionLabel(ctx, R.string.fee_edit_name))
-        container.addView(inputs.nameInput)
-        container.addView(sectionLabel(ctx, R.string.fee_pair_from))
-        container.addView(fromButton)
-        container.addView(sectionLabel(ctx, R.string.fee_pair_to))
-        container.addView(toButton)
+        container.addLabeled(R.string.fee_edit_name, inputs.nameInput)
+        container.addLabeled(R.string.fee_pair_from, fromButton)
+        container.addLabeled(R.string.fee_pair_to, toButton)
         container.addView(bothWays)
-        container.addView(sectionLabel(ctx, R.string.fee_edit_percent))
-        container.addView(inputs.percentInput)
-        addSignAndFeeSideViews(container, ctx, inputs)
+        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
+        addSignAndFeeSideViews(container, inputs)
 
-        MaterialAlertDialogBuilder(ctx)
-            .setTitle(R.string.fee_section_specific_pair)
-            .setView(container)
+        feeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val from = pickedFrom ?: return@setPositiveButton
                 val to = pickedTo ?: return@setPositiveButton
@@ -688,9 +704,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                         feeSide = draft.feeSide,
                     ),
                 )
-            }.setNegativeButton(android.R.string.cancel, null)
-            .withDeleteButton(onDelete)
-            .show()
+            }.show()
     }
 
     private fun MaterialAlertDialogBuilder.withDeleteButton(onDelete: (() -> Unit)?): MaterialAlertDialogBuilder {
