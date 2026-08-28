@@ -563,7 +563,9 @@ class MainActivity : BaseActivity() {
         stack: BigDecimal?,
     ): String {
         val amount = value.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)
-        val line = getString(prefixRes) + ltrIsolate("$amount ${currency?.iso4217Alpha().orEmpty()}")
+        val marker = currency?.symbolOrIso().orEmpty()
+        val amountWithMarker = if (marker.isEmpty()) amount else "$amount $marker"
+        val line = getString(prefixRes) + ltrIsolate(amountWithMarker)
         if (stack == null || stack.isNeutralFeeStack()) return line
         val percent =
             stack
@@ -629,6 +631,10 @@ class MainActivity : BaseActivity() {
         // Whatever's picked on the base side must not be pickable on the
         // destination side — grey it out in the "to" picker.
         spinnerTo.setDisabledCurrency(currency)
+        // Fee-line renderer reads the currency synchronously; re-run so a late
+        // arrival (e.g. process restart, DB load after trueCost fires) still
+        // paints the "$" marker.
+        observeTrueCost(viewModel.getTrueCost().value)
         currency ?: return
         findRateFor(currency)?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
     }
@@ -636,6 +642,7 @@ class MainActivity : BaseActivity() {
     private fun observeDestinationCurrency(currency: Currency?) {
         spinnerTo.setSelection(currency)
         spinnerFrom.setDisabledCurrency(currency)
+        observeOriginalValue(viewModel.getOriginalValue().value)
         currency ?: return
         findRateFor(currency)?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
     }

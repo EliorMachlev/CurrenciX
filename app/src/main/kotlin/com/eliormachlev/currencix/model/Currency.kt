@@ -433,6 +433,12 @@ enum class Currency(
             ?.let { if (it.hasRtlChar()) it.wrapLtr() else it }
 
     /**
+     * Preferred display marker for UI: the currency symbol when known,
+     * otherwise the ISO alpha code as a fallback (e.g. "$" for USD, "CHF" for CHF).
+     */
+    fun symbolOrIso(): String = symbol() ?: iso4217Alpha
+
+    /**
      * https://en.wikipedia.org/wiki/Bidirectional_text#Table_of_possible_BiDi_character_types
      */
     private fun String.wrapLtr(): String {

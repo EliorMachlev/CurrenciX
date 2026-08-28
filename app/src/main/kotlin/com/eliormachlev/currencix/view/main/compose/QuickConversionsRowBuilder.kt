@@ -31,6 +31,8 @@ fun buildQuickConversionRows(
     val hasConvertedFee = !sideStacks.converted.isNeutralFeeStack()
     val fromIso = from.iso4217Alpha()
     val toIso = to.iso4217Alpha()
+    val fromMarker = from.symbolOrIso()
+    val toMarker = to.symbolOrIso()
     return QUICK_AMOUNTS.map { amountStr ->
         val amt = BigDecimal(amountStr)
         val fair = amt.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
@@ -43,13 +45,13 @@ fun buildQuickConversionRows(
         val trueCost =
             if (hasOriginalFee) {
                 val actual = amt.multiply(sideStacks.original, MathContext.DECIMAL128)
-                truePrefix + ltrIsolate("${actual.formatForRow(ctx)} $fromIso")
+                truePrefix + ltrIsolate("${actual.formatForRow(ctx)} $fromMarker")
             } else {
                 null
             }
         val originalValue =
             if (hasConvertedFee) {
-                originalPrefix + ltrIsolate("${fair.formatForRow(ctx)} $toIso")
+                originalPrefix + ltrIsolate("${fair.formatForRow(ctx)} $toMarker")
             } else {
                 null
             }

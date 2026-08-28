@@ -499,8 +499,8 @@ class CartActivity : BaseActivity() {
             (value ?: BigDecimal.ZERO)
                 .cartScale()
                 .toHumanReadableNumber(this, decimalPlaces = CART_DISPLAY_SCALE)
-        val iso = currency?.iso4217Alpha()
-        return if (iso.isNullOrEmpty()) amount else "$amount $iso"
+        val marker = currency?.symbolOrIso()
+        return if (marker.isNullOrEmpty()) amount else "$amount $marker"
     }
 
     // Round to the two-decimal "money" scale used across the cart UI. Extracted
