@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
@@ -60,7 +59,6 @@ fun choiceExplainerRow(
     description: CharSequence,
     leadingView: View? = null,
     trailingView: View? = null,
-    @ColorInt textColor: Int? = null,
     clickActionLabel: CharSequence? = null,
     onClick: () -> Unit,
 ): LinearLayout {
@@ -90,17 +88,13 @@ fun choiceExplainerRow(
                 TextView(ctx).apply {
                     text = title
                     setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
-                    if (textColor != null) setTextColor(textColor)
                 },
             )
             addView(
                 TextView(ctx).apply {
                     text = description
                     setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
-                    // Opaque muted colour is preferred over alpha for state cues
-                    // per the accessibility statement; only fall back to alpha
-                    // for the default (non-state) subordinate-line treatment.
-                    if (textColor != null) setTextColor(textColor) else alpha = CHOICE_DESC_ALPHA
+                    alpha = CHOICE_DESC_ALPHA
                 },
             )
         }

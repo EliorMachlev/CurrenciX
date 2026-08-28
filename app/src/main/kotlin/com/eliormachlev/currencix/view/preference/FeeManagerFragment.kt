@@ -29,11 +29,11 @@ import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.CHOICE_DESC_ALPHA
 import com.eliormachlev.currencix.util.ChoiceOption
+import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.util.applySelectableRowBackground
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
-import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
@@ -300,11 +300,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val container = paddedDialogContainer(ctx)
         val dialogHolder = arrayOfNulls<AlertDialog>(1)
         val radios = mutableListOf<RadioButton>()
-        // Opaque muted colour for the inactive-state cue. Paired with the
-        // existing "Inactive" text marker so state is not conveyed by colour
-        // alone (WCAG 1.4.1); using a theme-resolved colour keeps the AA
-        // contrast target on light/dark/OLED.
-        val mutedColor = ctx.resolveThemeColor(com.google.android.material.R.attr.colorOnSurfaceVariant)
         val editActionLabel = getString(R.string.fee_edit_percent)
 
         entries.forEachIndexed { index, fee ->
@@ -315,19 +310,22 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                     dialogHolder[0]?.dismiss()
                 }
             radios += radio
-            container.addView(
+            val row =
                 choiceExplainerRow(
                     ctx = ctx,
                     title = displayNameOf(fee),
                     description = formatFeeDescription(fee),
                     leadingView = radio,
-                    textColor = if (fee.isActive) null else mutedColor,
                     clickActionLabel = editActionLabel,
                 ) {
                     dialogHolder[0]?.dismiss()
                     onEdit(fee)
-                },
-            )
+                }
+            // Dim inactive rows to match the disabled-currency treatment in
+            // the currency picker. The "Inactive" text marker in the summary
+            // keeps state non-colour-only for WCAG 1.4.1.
+            if (!fee.isActive) row.alpha = DISABLED_ROW_ALPHA
+            container.addView(row)
         }
 
         container.addView(

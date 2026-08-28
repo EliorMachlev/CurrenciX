@@ -56,6 +56,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
+import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.util.stripRtlMark
@@ -74,12 +75,6 @@ private const val FLAG_HEIGHT_DP = 17
 private const val FLAG_CORNER_RADIUS_DP = 2
 private const val ROW_MIN_HEIGHT_DP = 56
 private const val API_HINT_ALPHA = 0.7f
-
-// Alpha for a currency row that can't be picked in the current context
-// (e.g. it's already selected on the opposite side of the same pair, so
-// picking it here would produce a same-currency conversion). Same weight as
-// [API_HINT_ALPHA] so disabled rows read as ambient, not error.
-private const val DISABLED_ROW_ALPHA = 0.4f
 
 internal data class CurrencyPickerConversion(
     val baseRate: Rate,
