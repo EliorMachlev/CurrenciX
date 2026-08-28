@@ -12,11 +12,12 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
-import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
+import com.eliormachlev.currencix.util.isNeutralFeeStack
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -78,14 +79,6 @@ class CartViewModel(
 
     fun getExchangeRates(): LiveData<ExchangeRates?> = rates
 
-    // Per-cart fee side: new carts inherit the app-wide default (via
-    // emptyCart) so the user's usual choice carries in from the main
-    // screen, but once the cart exists the toggle mutates its own state
-    // and the main-screen preference is left alone.
-    private val feeSideLive: LiveData<FeeSide> = current.map { it.feeSide }
-
-    fun getFeeSide(): LiveData<FeeSide> = feeSideLive
-
     /**
      * Currently-selected keyboard type. Same source of truth as the main
      * screen so the cart's slide-up keypad shows the same layout the user
@@ -97,8 +90,6 @@ class CartViewModel(
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
-
-    fun setFeeSide(side: FeeSide) = mutate { it.copy(feeSide = side) }
 
     fun getBaseCurrency(): LiveData<Currency> = current.map { resolveCurrency(it.currency) }
 
@@ -113,19 +104,14 @@ class CartViewModel(
 
     /**
      * Total in the destination currency: subtotal → converted at cached rates
-     * → adjusted by the fee stack according to the selected [FeeSide].
+     * → reduced by the CONVERTED-side fee stack. ORIGINAL-side fees don't
+     * change the displayed total; they surface separately as "true cost" on
+     * the base side.
      */
     fun getTotal(): LiveData<BigDecimal> =
         MediatorLiveData<BigDecimal>().apply {
             val recompute = {
-                val cart = current.value
-                value =
-                    totalOf(
-                        cart,
-                        fees.value.orEmpty(),
-                        rates.value,
-                        cart?.feeSide ?: FeeSide.ORIGINAL,
-                    )
+                value = totalOf(current.value, fees.value.orEmpty(), rates.value)
             }
             addSource(current) { recompute() }
             addSource(fees) { recompute() }
@@ -216,10 +202,9 @@ class CartViewModel(
 
     /**
      * Reset the cart back to a fresh, main-screen-seeded state: no items and
-     * currencies + fee side re-pulled from the app-wide defaults. Preserves
-     * the cart's id/name so a subsequent "Save" still targets the same
-     * persisted entry — this is a content reset, not a "delete and start
-     * over".
+     * currencies re-pulled from the app-wide defaults. Preserves the cart's
+     * id/name so a subsequent "Save" still targets the same persisted
+     * entry — this is a content reset, not a "delete and start over".
      */
     fun resetToMainDefaults() {
         val cur = current.value ?: return
@@ -229,7 +214,6 @@ class CartViewModel(
                 items = emptyList(),
                 currency = fresh.currency,
                 destinationCurrency = fresh.destinationCurrency,
-                feeSide = fresh.feeSide,
             )
         current.value = next
         db.setCurrentCart(next)
@@ -304,8 +288,7 @@ class CartViewModel(
         return cur.items != saved.items ||
             cur.name != saved.name ||
             cur.currency != saved.currency ||
-            cur.destinationCurrency != saved.destinationCurrency ||
-            cur.feeSide != saved.feeSide
+            cur.destinationCurrency != saved.destinationCurrency
     }
 
     /** Rename a saved cart in place. No-op if the id isn't found. */
@@ -333,14 +316,14 @@ class CartViewModel(
     }
 
     /**
-     * The multiplicative fee stack for the current base/destination pair.
-     * Doesn't depend on cart items, so the UI can show the fee arrow /
-     * percentage even for an empty cart (same shape as the main screen).
+     * Per-side fee stacks for the current base/destination pair. Doesn't
+     * depend on cart items, so the UI can show inline fee annotations even
+     * for an empty cart (same shape as the main screen).
      */
-    fun currentFeeStack(): BigDecimal {
-        val cart = current.value ?: return BigDecimal.ONE
+    fun currentSideStacks(): SideStacks {
+        val cart = current.value ?: return SideStacks.NEUTRAL
         val (base, dest) = cart.resolvedPair()
-        return FeeCalculator.totalStack(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
+        return FeeCalculator.sideStacks(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
     }
 
     /** Snapshot used by the "Share" flow — computed against the latest fees & rates. */
@@ -350,20 +333,19 @@ class CartViewModel(
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
         val (base, dest) = cart.resolvedPair()
-        val stack = FeeCalculator.totalStack(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
+        val stacks = FeeCalculator.sideStacks(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
         val converted = convertAmount(subtotal, base, dest, lastRates)
-        val total = applyFeeSide(converted, stack, cart.feeSide)
+        val total = applyConvertedStack(converted, stacks.converted)
         return CartSnapshot(
             cart,
             evaluated,
             subtotal,
             converted,
-            stack,
+            stacks,
             total,
             lastFees,
             base,
             dest,
-            cart.feeSide,
             providerName = lastRates?.provider?.getName()?.toString(),
             ratesDate = lastRates?.date,
         )
@@ -400,9 +382,9 @@ class CartViewModel(
     }
 
     // Every cold start begins with a fresh cart that inherits the main
-    // screen's currency pair and fee side. Within the same process (e.g. the
-    // user backs out of the cart and re-opens it) we keep the working cart
-    // so nothing they typed is lost.
+    // screen's currency pair. Within the same process (e.g. the user backs
+    // out of the cart and re-opens it) we keep the working cart so nothing
+    // they typed is lost.
     private fun loadCurrentOrEmpty(): SavedCart {
         if (!coldStartConsumed) {
             coldStartConsumed = true
@@ -433,10 +415,6 @@ class CartViewModel(
             destinationCurrency = dest.takeIf { it != null && it != base },
             items = emptyList(),
             createdAt = System.currentTimeMillis(),
-            // Seed the fee-side from the app-wide default so a fresh cart
-            // matches whatever the user has on the main screen. Subsequent
-            // toggles mutate only the cart, keeping the two independent.
-            feeSide = db.getFeeSideBlocking(),
         )
     }
 
@@ -449,14 +427,13 @@ class CartViewModel(
         cart: SavedCart?,
         feeList: List<Fee>,
         rates: ExchangeRates?,
-        side: FeeSide,
     ): BigDecimal {
         cart ?: return BigDecimal.ZERO
         val (base, dest) = cart.resolvedPair()
         val subtotal = subtotalOf(cart)
         val converted = convertAmount(subtotal, base, dest, rates)
-        val stack = FeeCalculator.totalStack(feeList, base, dest, lastActiveExchangeId, lastActiveBankId)
-        return applyFeeSide(converted, stack, side)
+        val stacks = FeeCalculator.sideStacks(feeList, base, dest, lastActiveExchangeId, lastActiveBankId)
+        return applyConvertedStack(converted, stacks.converted)
     }
 
     // A cart's persisted currency pair, resolved once (both ISO strings become
@@ -469,21 +446,18 @@ class CartViewModel(
     }
 
     /**
-     * Fold [stack] into [converted] according to [side]. Mirrors main-screen
-     * semantics exactly: ORIGINAL keeps the destination fair (the fee is
-     * surfaced as "true cost" on the input side, not baked into the total),
-     * CONVERTED divides — the fee reduces what you'd actually receive.
+     * Fold the CONVERTED-side [convertedStack] into [converted]. A neutral
+     * stack (no CONVERTED-side fees) leaves the destination amount alone;
+     * otherwise divide so the fee reduces what you'd actually receive.
+     * ORIGINAL-side fees don't participate here — they surface as "true
+     * cost" on the input side instead.
      */
-    private fun applyFeeSide(
+    private fun applyConvertedStack(
         converted: BigDecimal,
-        stack: BigDecimal,
-        side: FeeSide,
+        convertedStack: BigDecimal,
     ): BigDecimal {
-        if (stack.compareTo(BigDecimal.ZERO) == 0) return converted
-        return when (side) {
-            FeeSide.ORIGINAL -> converted
-            FeeSide.CONVERTED -> converted.divide(stack, MathContext.DECIMAL128)
-        }
+        if (convertedStack.isNeutralFeeStack()) return converted
+        return converted.divide(convertedStack, MathContext.DECIMAL128)
     }
 
     /**
@@ -526,13 +500,13 @@ data class CartSnapshot(
     val subtotal: BigDecimal,
     /** Subtotal after currency conversion, before fees. Equals [subtotal] when base == dest. */
     val convertedSubtotal: BigDecimal,
-    val feeStack: BigDecimal,
+    /** Per-side fee stacks for the current base/destination pair. */
+    val sideStacks: SideStacks,
     /** Final displayed total in the destination currency. */
     val total: BigDecimal,
     val fees: List<Fee>,
     val baseCurrency: Currency,
     val destinationCurrency: Currency,
-    val feeSide: FeeSide,
     /** Name of the exchange-rate provider that produced the current rates (e.g. "Frankfurter App"). */
     val providerName: String? = null,
     /** Date the exchange rates were published by the provider. */

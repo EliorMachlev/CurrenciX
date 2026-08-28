@@ -19,9 +19,9 @@
     <string name="fee_pair_from">Iz</string>
     <string name="fee_pair_to">U</string>
     <string name="fee_pair_pick_currency">Odaberi valutu</string>
-    <string name="fee_true_cost_prefix">"Stvarna cijena: "</string>
-    <string name="fee_original_value_prefix">"Izvorni iznos: "</string>
-    <string name="fee_side_summary_original">Prikazani preračunati iznos ostaje po srednjem tržišnom tečaju; provizije se prikazuju odvojeno kao \"stvarna cijena\".</string>
+    <string name="fee_true_cost_prefix">"Naknada za konverziju: "</string>
+    <string name="fee_original_value_prefix">"Naknada za umanjenje: "</string>
+    <string name="fee_side_summary_original">Prikazani preračunati iznos ostaje po srednjem tržišnom tečaju; provizije se prikazuju odvojeno kao \"Naknada za konverziju\".</string>
     <string name="fee_side_summary_converted">Provizije su uključene u prikazani preračunati iznos.</string>
     <string name="fee_empty">Još nema provizija</string>
     <string name="previewConversion_title">Pretpregled konverzije</string>

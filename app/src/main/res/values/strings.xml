@@ -69,6 +69,7 @@
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
     <string name="cart_fee_line">Fees: %s%%</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_menu_save">Save</string>
     <string name="cart_menu_save_as">Save as…</string>
     <string name="cart_menu_load">Load</string>

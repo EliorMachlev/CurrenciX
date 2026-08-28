@@ -17,6 +17,7 @@ sealed class Fee {
     abstract val percent: BigDecimal
     abstract val isMarkup: Boolean
     abstract val isActive: Boolean
+    abstract val feeSide: FeeSide
     abstract val type: FeeType
 
     /** Applies to every conversion, no matter which currencies are involved. */
@@ -26,6 +27,7 @@ sealed class Fee {
         override val percent: BigDecimal,
         override val isMarkup: Boolean,
         override val isActive: Boolean = true,
+        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_EXCHANGE
     }
@@ -37,6 +39,7 @@ sealed class Fee {
         override val percent: BigDecimal,
         override val isMarkup: Boolean,
         override val isActive: Boolean = true,
+        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_BANK
     }
@@ -54,6 +57,7 @@ sealed class Fee {
         val to: String,
         val bothWays: Boolean,
         override val isActive: Boolean = true,
+        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.SPECIFIC_PAIR
     }
@@ -78,19 +82,13 @@ enum class FeeType(
 }
 
 /**
- * Which side of the conversion the fee applies to.
- * - [ORIGINAL]: the displayed converted amount is the mid-market value; the
- *   fee only informs an additional "true cost" indicator on the input side.
- * - [CONVERTED]: the fee is baked into the displayed converted amount.
+ * Which side of the conversion a fee applies to.
+ * - [ORIGINAL]: the fee inflates the input-side "true cost"; the displayed
+ *   converted amount is left at the mid-market value.
+ * - [CONVERTED]: the fee is baked into the displayed converted amount; the
+ *   pre-fee "original value" is surfaced separately when needed.
  */
 enum class FeeSide {
     ORIGINAL,
     CONVERTED,
-    ;
-
-    fun toggled(): FeeSide =
-        when (this) {
-            ORIGINAL -> CONVERTED
-            CONVERTED -> ORIGINAL
-        }
 }

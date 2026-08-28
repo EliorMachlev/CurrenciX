@@ -279,7 +279,6 @@ class Database(
     private val keyTheme = "_theme"
     private val keyPureBlackEnabled = "_pureBlackEnabled"
     private val keyFeesJson = "_fees_json"
-    private val keyFeeSide = "_fee_side"
     private val keyActiveExchangeId = "_active_exchange_id"
     private val keyActiveBankId = "_active_bank_id"
     private val keyPreviewConversionEnabled = "_previewConversionEnabled"
@@ -386,16 +385,6 @@ class Database(
         writeFees(next)
     }
 
-    fun getFeeSide(): LiveData<FeeSide> =
-        SharedPreferenceStringLiveData(prefs, keyFeeSide, FeeSide.ORIGINAL.name)
-            .map { raw -> parseFeeSide(raw) }
-
-    fun getFeeSideBlocking(): FeeSide = parseFeeSide(prefs.getString(keyFeeSide, FeeSide.ORIGINAL.name))
-
-    fun setFeeSide(side: FeeSide) {
-        prefs.edit().putString(keyFeeSide, side.name).apply()
-    }
-
     // Active-picker IDs — which single named exchange / bank-or-card entry
     // participates in the fee stack. `null` means "no explicit pick"; the
     // FeeCalculator falls back to the first active entry of that category.
@@ -423,10 +412,6 @@ class Database(
                 if (id == null) remove(keyActiveBankId) else putString(keyActiveBankId, id)
             }.apply()
     }
-
-    private fun parseFeeSide(raw: String?): FeeSide =
-        runCatching { FeeSide.valueOf(raw ?: FeeSide.ORIGINAL.name) }
-            .getOrDefault(FeeSide.ORIGINAL)
 
     private fun writeFees(list: List<Fee>) {
         prefs.edit().putString(keyFeesJson, serializeFeeList(list)).apply()
@@ -493,6 +478,7 @@ class Database(
             obj.put("percent", fee.percent.toPlainString())
             obj.put("isMarkup", fee.isMarkup)
             obj.put("isActive", fee.isActive)
+            obj.put("feeSide", fee.feeSide.name)
             obj.put("type", fee.type.wire)
             if (fee is Fee.SpecificPair) {
                 obj.put("from", fee.from)
@@ -503,6 +489,10 @@ class Database(
         }
         return arr.toString()
     }
+
+    private fun parseFeeSideOrDefault(raw: String?): FeeSide =
+        runCatching { FeeSide.valueOf(raw ?: FeeSide.ORIGINAL.name) }
+            .getOrDefault(FeeSide.ORIGINAL)
 
     private fun parseFeeList(json: String): List<Fee> =
         try {
@@ -522,9 +512,12 @@ class Database(
         // Pre-name/isActive rows default to active so legacy configurations
         // continue to apply after upgrade.
         val isActive = obj.optBoolean("isActive", true)
+        // Rows written before the per-fee-side field existed fall back to
+        // ORIGINAL so their behaviour is unchanged after upgrade.
+        val feeSide = parseFeeSideOrDefault(obj.optString("feeSide", ""))
         return when (FeeType.fromWire(obj.optString("type"))) {
-            FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isMarkup, isActive)
-            FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isMarkup, isActive)
+            FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isMarkup, isActive, feeSide)
+            FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isMarkup, isActive, feeSide)
             FeeType.SPECIFIC_PAIR ->
                 Fee.SpecificPair(
                     id = id,
@@ -535,6 +528,7 @@ class Database(
                     to = obj.optString("to", ""),
                     bothWays = obj.optBoolean("bothWays", false),
                     isActive = isActive,
+                    feeSide = feeSide,
                 )
             null -> null
         }

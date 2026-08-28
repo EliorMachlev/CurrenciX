@@ -32,7 +32,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.window.layout.FoldingFeature
@@ -40,7 +39,6 @@ import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.repository.Database
@@ -89,8 +87,8 @@ private const val CTX_MENU_COPY_FROM = 0
 private const val CTX_MENU_PASTE_FROM = 1
 private const val CTX_MENU_COPY_TO = 2
 
-// fee badge / true-cost formatting
-private const val FEE_BADGE_DECIMAL_PLACES = 2
+// fee true-cost / percent formatting
+private const val FEE_PERCENT_DECIMAL_PLACES = 2
 private const val AMOUNT_DECIMAL_PLACES = 2
 
 class MainActivity : BaseActivity() {
@@ -136,8 +134,6 @@ class MainActivity : BaseActivity() {
     private lateinit var tvInfoDate: TextView
     private lateinit var tvTrueCost: TextView
     private lateinit var tvOriginalValue: TextView
-    private lateinit var tvFeeBadge: TextView
-    private lateinit var btnFeeSide: AppCompatImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,8 +158,6 @@ class MainActivity : BaseActivity() {
         this.tvInfoDate = findViewById(R.id.textInfoDate)
         this.tvTrueCost = findViewById(R.id.textTrueCost)
         this.tvOriginalValue = findViewById(R.id.textOriginalValue)
-        this.tvFeeBadge = findViewById(R.id.textFeeBadge)
-        this.btnFeeSide = findViewById(R.id.btn_fee_side)
         this.offlineBanner = findViewById(R.id.offlineBanner)
         this.offlineBannerText = findViewById(R.id.offlineBannerText)
 
@@ -268,19 +262,23 @@ class MainActivity : BaseActivity() {
         return if (extra != null) "$main\n$extra" else main
     }
 
-    // "True cost" (ORIGINAL side) or "Original value" (CONVERTED side) line —
-    // mirrors the small annotation shown under the result when a fee applies.
+    // Small annotation line(s) shown under the shared result: "True cost" on
+    // the ORIGINAL side, "Original value" on the CONVERTED side. Either or
+    // both may apply, so callers get them joined with a newline.
     private fun buildShareFeeExtra(
         base: Currency,
         dest: Currency,
     ): String? {
-        viewModel.getTrueCost().value?.let {
-            return buildFeeAmountLine(R.string.fee_true_cost_prefix, it, base)
-        }
-        viewModel.getOriginalValue().value?.let {
-            return buildFeeAmountLine(R.string.fee_original_value_prefix, it, dest)
-        }
-        return null
+        val stacks = viewModel.getSideStacks().value
+        val trueCost =
+            viewModel.getTrueCost().value?.let {
+                buildFeeAmountLine(R.string.fee_true_cost_prefix, it, base, stacks?.original)
+            }
+        val originalValue =
+            viewModel.getOriginalValue().value?.let {
+                buildFeeAmountLine(R.string.fee_original_value_prefix, it, dest, stacks?.converted)
+            }
+        return listOfNotNull(trueCost, originalValue).takeIf { it.isNotEmpty() }?.joinToString("\n")
     }
 
     private fun buildShareFooter(rates: ExchangeRates?): String? {
@@ -438,15 +436,7 @@ class MainActivity : BaseActivity() {
             swipeRefresh.isRefreshing = false
         }
 
-        // fee-side toggle
-        btnFeeSide.setOnClickListener {
-            haptic(it)
-            val current = viewModel.getFeeSide().value ?: FeeSide.ORIGINAL
-            viewModel.setFeeSide(current.toggled())
-        }
-        btnFeeSide.setOnLongClickListener { openFeesSettings(it) }
-
-        // long-press on the main swap arrow also opens the Fees settings,
+        // long-press on the main swap arrow opens the Fees settings,
         // mirroring the swap arrow inside the quick-conversions dialog.
         findViewById<View>(R.id.btn_toggle).setOnLongClickListener { openFeesSettings(it) }
     }
@@ -503,10 +493,8 @@ class MainActivity : BaseActivity() {
             findViewById<AppCompatButton>(R.id.btn_parens)?.paintParenCycle(next)
         }
         viewModel.isHapticFeedbackEnabled.observe(this) { hapticEnabled = it }
-        viewModel.getFeeSide().observe(this) { observeFeeSide(it) }
         viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
         viewModel.getOriginalValue().observe(this) { observeOriginalValue(it) }
-        viewModel.getTotalStack().observe(this) { observeTotalStack(it) }
         NetworkStatusLiveData(this).observe(this) { online ->
             isOnline = online
             renderOfflineBanner()
@@ -528,55 +516,24 @@ class MainActivity : BaseActivity() {
         offlineBanner.visibility = View.VISIBLE
     }
 
-    private fun observeFeeSide(side: FeeSide?) {
-        val effective = side ?: FeeSide.ORIGINAL
-        btnFeeSide.setImageResource(
-            if (effective == FeeSide.CONVERTED) {
-                R.drawable.ic_fee_side_converted
-            } else {
-                R.drawable.ic_fee_side_original
-            },
-        )
-        // TalkBack ignores src changes on ImageButton; without a stateDescription
-        // the button always reads "Fee side" and users can't tell whether they
-        // just flipped to "original" or "converted". ViewCompat is used because
-        // View.setStateDescription is API 30+ and minSdk is 26.
-        ViewCompat.setStateDescription(
-            btnFeeSide,
-            getString(
-                if (effective == FeeSide.CONVERTED) {
-                    R.string.fee_side_converted
-                } else {
-                    R.string.fee_side_original
-                },
-            ),
-        )
-    }
-
-    private fun observeTotalStack(stack: BigDecimal?) {
-        val effective = stack ?: BigDecimal.ONE
-        if (effective.isNeutralFeeStack()) {
-            tvFeeBadge.visibility = View.GONE
-            btnFeeSide.visibility = View.GONE
-            return
-        }
-        btnFeeSide.visibility = View.VISIBLE
-        tvFeeBadge.text =
-            effective.feePercentDelta(FEE_BADGE_DECIMAL_PLACES).toHumanReadableNumber(
-                this,
-                showPositiveSign = true,
-                suffix = "%",
-                trim = true,
-            )
-        tvFeeBadge.visibility = View.VISIBLE
-    }
-
     private fun observeTrueCost(value: BigDecimal?) {
-        renderFeeAmount(tvTrueCost, R.string.fee_true_cost_prefix, value, viewModel.getBaseCurrency().value)
+        renderFeeAmount(
+            target = tvTrueCost,
+            prefixRes = R.string.fee_true_cost_prefix,
+            value = value,
+            currency = viewModel.getBaseCurrency().value,
+            stack = viewModel.getSideStacks().value?.original,
+        )
     }
 
     private fun observeOriginalValue(value: BigDecimal?) {
-        renderFeeAmount(tvOriginalValue, R.string.fee_original_value_prefix, value, viewModel.getDestinationCurrency().value)
+        renderFeeAmount(
+            target = tvOriginalValue,
+            prefixRes = R.string.fee_original_value_prefix,
+            value = value,
+            currency = viewModel.getDestinationCurrency().value,
+            stack = viewModel.getSideStacks().value?.converted,
+        )
     }
 
     private fun renderFeeAmount(
@@ -584,25 +541,37 @@ class MainActivity : BaseActivity() {
         prefixRes: Int,
         value: BigDecimal?,
         currency: Currency?,
+        stack: BigDecimal?,
     ) {
         if (value == null) {
             target.visibility = View.GONE
             return
         }
-        target.text = buildFeeAmountLine(prefixRes, value, currency)
+        target.text = buildFeeAmountLine(prefixRes, value, currency, stack)
         target.visibility = View.VISIBLE
     }
 
-    // "<prefix><amount> <ISO>" with the amount+ISO isolated LTR so a
-    // right-aligned prefix in an RTL locale doesn't flip the number/code
-    // pair. Shared by the on-screen fee annotations and the share sheet.
+    // "<prefix><amount> <ISO> (<sign><pct>%)" with the amount+ISO isolated LTR
+    // so a right-aligned prefix in an RTL locale doesn't flip the number/code
+    // pair. The percent tail is omitted when the [stack] is trivial (no fee on
+    // this side) or unknown. Shared by the on-screen fee annotations and the
+    // share sheet.
     private fun buildFeeAmountLine(
         prefixRes: Int,
         value: BigDecimal,
         currency: Currency?,
+        stack: BigDecimal?,
     ): String {
         val amount = value.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)
-        return getString(prefixRes) + ltrIsolate("$amount ${currency?.iso4217Alpha().orEmpty()}")
+        val marker = currency?.symbolOrIso().orEmpty()
+        val amountWithMarker = if (marker.isEmpty()) amount else "$amount $marker"
+        val line = getString(prefixRes) + ltrIsolate(amountWithMarker)
+        if (stack == null || stack.isNeutralFeeStack()) return line
+        val percent =
+            stack
+                .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
+                .toHumanReadableNumber(this, showPositiveSign = true, suffix = "%", trim = true)
+        return "$line ${ltrIsolate("($percent)")}"
     }
 
     private fun observeExchangeRates(rates: ExchangeRates?) {
@@ -662,6 +631,10 @@ class MainActivity : BaseActivity() {
         // Whatever's picked on the base side must not be pickable on the
         // destination side — grey it out in the "to" picker.
         spinnerTo.setDisabledCurrency(currency)
+        // Fee-line renderer reads the currency synchronously; re-run so a late
+        // arrival (e.g. process restart, DB load after trueCost fires) still
+        // paints the "$" marker.
+        observeTrueCost(viewModel.getTrueCost().value)
         currency ?: return
         findRateFor(currency)?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
     }
@@ -669,6 +642,7 @@ class MainActivity : BaseActivity() {
     private fun observeDestinationCurrency(currency: Currency?) {
         spinnerTo.setSelection(currency)
         spinnerFrom.setDisabledCurrency(currency)
+        observeOriginalValue(viewModel.getOriginalValue().value)
         currency ?: return
         findRateFor(currency)?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
     }

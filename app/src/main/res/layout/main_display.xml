@@ -58,41 +58,6 @@
             app:layout_constraintTop_toTopOf="@+id/guideline_display"
             app:tint="?attr/colorOnPrimary" />
 
-        <!-- fee side toggle ********************************************** -->
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_fee_side"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin1x"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/fee_side_label"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:src="@drawable/ic_fee_side_original"
-            app:layout_constraintBottom_toBottomOf="@id/btn_toggle"
-            app:layout_constraintStart_toEndOf="@id/btn_toggle"
-            app:layout_constraintTop_toTopOf="@id/btn_toggle"
-            app:tint="?attr/colorError" />
-
-        <!-- overall fee badge ******************************************** -->
-
-        <TextView
-            android:id="@+id/textFeeBadge"
-            style="@style/TextAppearance.Material3.LabelSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin1x"
-            android:accessibilityLiveRegion="polite"
-            android:textColor="?attr/colorError"
-            android:textDirection="ltr"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/btn_fee_side"
-            app:layout_constraintStart_toEndOf="@id/btn_fee_side"
-            app:layout_constraintTop_toTopOf="@id/btn_fee_side"
-            tools:text="+3.02%"
-            tools:visibility="visible" />
-
         <!-- true cost hint *********************************************** -->
 
         <!-- Hangs directly under textFrom so it reads as "input + fee note".

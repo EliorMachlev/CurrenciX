@@ -36,9 +36,4 @@ data class SavedCart(
     val items: List<CartItem>,
     val createdAt: Long,
     val destinationCurrency: String? = null,
-    // Which side of the conversion the fee stack is applied to. Persisted
-    // per cart so each saved snapshot round-trips its own fee direction
-    // through save/load and export/import, independent of any app-wide
-    // default the user may have changed since.
-    val feeSide: FeeSide = FeeSide.ORIGINAL,
 )
