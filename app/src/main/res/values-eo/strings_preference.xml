@@ -19,9 +19,9 @@
     <string name="fee_pair_from">De</string>
     <string name="fee_pair_to">Al</string>
     <string name="fee_pair_pick_currency">Elekti valuton</string>
-    <string name="fee_true_cost_prefix">"Vera kosto: "</string>
-    <string name="fee_original_value_prefix">"Originala valoro: "</string>
-    <string name="fee_side_summary_original">La montrata konvertita sumo restas ĉe la mez-merkata kurzo; kotizoj estas montrataj aparte kiel \"vera kosto\".</string>
+    <string name="fee_true_cost_prefix">"Konverta kotizo: "</string>
+    <string name="fee_original_value_prefix">"Redukta kotizo: "</string>
+    <string name="fee_side_summary_original">La montrata konvertita sumo restas ĉe la mez-merkata kurzo; kotizoj estas montrataj aparte kiel \"Konverta kotizo\".</string>
     <string name="fee_side_summary_converted">Kotizoj estas inkluzivitaj en la montrata konvertita sumo.</string>
     <string name="fee_empty">Neniuj kotizoj ankoraŭ</string>
     <string name="previewConversion_title">Antaŭrigardo de konvertiĝo</string>
