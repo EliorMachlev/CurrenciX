@@ -453,7 +453,7 @@ class MainViewModel(
      * UI can render inline fee annotations near each currency and derive the
      * "true cost" / "original value" companion rows.
      */
-    private val sideStacks =
+    private val sideStacks: MediatorLiveData<SideStacks> =
         object : MediatorLiveData<SideStacks>() {
             var feeList: List<Fee>? = null
             var base: Currency? = null
