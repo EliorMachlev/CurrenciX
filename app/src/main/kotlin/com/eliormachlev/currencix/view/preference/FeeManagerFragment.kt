@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.annotation.DimenRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
@@ -117,24 +118,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 title = getString(titleRes)
                 isIconSpaceReserved = false
             }.also(screen::addPreference)
-
-    // Extra clearance below the EditText so its text-selection handle doesn't
-    // drop onto the sign toggle.
-    private fun addSignToggleWithTopMargin(
-        container: LinearLayout,
-        signToggle: View,
-    ) {
-        container.addView(
-            signToggle,
-            LinearLayout
-                .LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                ).apply {
-                    topMargin = resources.getDimensionPixelSize(R.dimen.margin4x)
-                },
-        )
-    }
 
     private fun feeSideOption(side: FeeSide): ChoiceOption =
         when (side) {
@@ -527,13 +510,61 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     /**
      * Append a section label followed by its associated view. Used by both
      * fee-editor dialogs, which are entirely a stack of labelled-input pairs.
+     * [topGapRes] adds a top margin to the label — pass when the caller wants
+     * to break the visual flow before a new section (e.g. the fee-side block
+     * after the numeric row).
      */
     private fun LinearLayout.addLabeled(
         @StringRes labelRes: Int,
         view: View,
+        @DimenRes topGapRes: Int? = null,
     ) {
-        addView(sectionLabel(context, labelRes))
+        val label = sectionLabel(context, labelRes)
+        if (topGapRes != null) {
+            addView(
+                label,
+                LinearLayout
+                    .LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ).apply { topMargin = resources.getDimensionPixelSize(topGapRes) },
+            )
+        } else {
+            addView(label)
+        }
         addView(view)
+    }
+
+    /**
+     * Combine the sign toggle and percent input into a single horizontal row
+     * so the +/− sits inline with the numeric field. The row's layout
+     * direction is pinned to LTR in both LTR and RTL locales — the sign is a
+     * mathematical prefix to the number, not a directional element, so it
+     * always belongs at the physical left of the value.
+     */
+    private fun buildPercentRow(
+        ctx: Context,
+        inputs: SharedFeeInputs,
+    ): LinearLayout {
+        val gap = resources.getDimensionPixelSize(R.dimen.margin2x)
+        return LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            layoutDirection = View.LAYOUT_DIRECTION_LTR
+            addView(
+                inputs.signToggle.view,
+                LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                ),
+            )
+            addView(
+                inputs.percentInput,
+                LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
+                    marginStart = gap
+                },
+            )
+        }
     }
 
     /**
@@ -606,19 +637,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             activeSwitch = buildActiveSwitch(ctx, existing?.isActive != false),
         )
 
-    /**
-     * Append the sign toggle + fee-side header + fee-side chooser to a
-     * dialog's container. Shared so both fee-editor dialogs render this
-     * trailing block identically.
-     */
-    private fun addSignAndFeeSideViews(
-        container: LinearLayout,
-        inputs: SharedFeeInputs,
-    ) {
-        addSignToggleWithTopMargin(container, inputs.signToggle.view)
-        container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view)
-    }
-
     private fun buildEditorContainer(ctx: Context): LinearLayout =
         paddedDialogContainer(ctx, topPadding = resources.getDimensionPixelSize(R.dimen.margin2x))
 
@@ -634,8 +652,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
         container.addView(inputs.activeSwitch)
         container.addLabeled(R.string.fee_edit_name, inputs.nameInput)
-        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
-        addSignAndFeeSideViews(container, inputs)
+        container.addLabeled(R.string.fee_edit_percent, buildPercentRow(ctx, inputs))
+        container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
 
         feeEditorDialog(ctx, titleRes, container, onDelete)
             .setPositiveButton(android.R.string.ok) { _, _ -> onConfirm(inputs.toDraft()) }
@@ -683,8 +701,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         container.addLabeled(R.string.fee_pair_from, fromButton)
         container.addLabeled(R.string.fee_pair_to, toButton)
         container.addView(bothWays)
-        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
-        addSignAndFeeSideViews(container, inputs)
+        container.addLabeled(R.string.fee_edit_percent, buildPercentRow(ctx, inputs))
+        container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
 
         feeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete)
             .setPositiveButton(android.R.string.ok) { _, _ ->
