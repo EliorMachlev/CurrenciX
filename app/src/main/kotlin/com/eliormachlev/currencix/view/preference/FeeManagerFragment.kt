@@ -54,11 +54,10 @@ private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
 
-// Vertical break between logical sections of the fee-editor dialog
-// (percent → fee-side, and in the specific-pair dialog also before
-// Both directions / Percent). Named so intent survives future dimen
-// renames.
-private val FEE_EDITOR_SECTION_GAP = R.dimen.margin4x
+// Vertical break applied uniformly between every section of the fee-editor
+// dialog (Active switch, Name, per-dialog middle rows, Percent, Fee side).
+// Named so intent survives future dimen renames.
+private val FEE_EDITOR_SECTION_GAP = R.dimen.margin2x
 
 // Fee percent field: signed decimals in [-100, 100] with at most
 // FEE_PERCENT_MAX_INT_DIGITS before and FEE_PERCENT_MAX_FRACTION_DIGITS
@@ -766,20 +765,20 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
     /**
      * Stack the shared prefix (active switch + name), any dialog-specific
-     * [middle] rows, then the shared suffix (percent + fee-side block with a
-     * top gap) into a fee-editor container. Both editor dialogs use this so
-     * the field order — and the gap before the fee-side header — stays in
-     * sync automatically.
+     * [middle] rows, then the shared suffix (percent + fee-side) into a
+     * fee-editor container. Every section transition gets the same
+     * [FEE_EDITOR_SECTION_GAP] so the rhythm reads evenly top-to-bottom;
+     * callers only need to apply the same gap to any rows they add in
+     * [middle].
      */
     private fun LinearLayout.addFeeEditorLayout(
         inputs: SharedFeeInputs,
-        @DimenRes percentTopGapRes: Int? = null,
         middle: LinearLayout.() -> Unit = {},
     ) {
         addView(inputs.activeSwitch)
-        addLabeled(R.string.fee_edit_name, inputs.nameInput)
+        addLabeled(R.string.fee_edit_name, inputs.nameInput, topGapRes = FEE_EDITOR_SECTION_GAP)
         middle()
-        addLabeled(R.string.fee_edit_percent, inputs.percentInput.view, topGapRes = percentTopGapRes)
+        addLabeled(R.string.fee_edit_percent, inputs.percentInput.view, topGapRes = FEE_EDITOR_SECTION_GAP)
         addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = FEE_EDITOR_SECTION_GAP)
     }
 
@@ -831,9 +830,9 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             ) { pickedTo = it }
         val bothWays = buildSwitch(ctx, R.string.fee_pair_both_ways, existing?.bothWays == true)
 
-        container.addFeeEditorLayout(inputs, percentTopGapRes = FEE_EDITOR_SECTION_GAP) {
-            addLabeled(R.string.fee_pair_from, fromButton)
-            addLabeled(R.string.fee_pair_to, toButton)
+        container.addFeeEditorLayout(inputs) {
+            addLabeled(R.string.fee_pair_from, fromButton, topGapRes = FEE_EDITOR_SECTION_GAP)
+            addLabeled(R.string.fee_pair_to, toButton, topGapRes = FEE_EDITOR_SECTION_GAP)
             addView(bothWays, topGapLayoutParams(FEE_EDITOR_SECTION_GAP))
         }
 
