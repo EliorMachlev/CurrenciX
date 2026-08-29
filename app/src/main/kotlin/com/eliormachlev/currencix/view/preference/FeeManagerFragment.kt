@@ -383,20 +383,33 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun formatFeeDescription(fee: Fee): CharSequence {
-        val percent = formatPercent(fee.percent, fee.isMarkup)
-        if (fee.isActive) return percent
-        return SpannableStringBuilder(percent)
-            .append(SUMMARY_SEPARATOR)
-            .append(getString(R.string.fee_inactive_marker))
-    }
+    private fun formatFeeDescription(fee: Fee): CharSequence = withInactiveMarker(formatPercent(fee.percent, fee.isMarkup), fee.isActive)
+
+    /**
+     * Append the "Inactive" text marker after [base] when [isActive] is false.
+     * Shared by the fee-selector row summary and the specific-pair category
+     * summary so both surfaces spell out inactive state identically — the
+     * marker is what keeps the reduced-alpha row WCAG 1.4.1 compliant (state
+     * not conveyed by colour alone).
+     */
+    private fun withInactiveMarker(
+        base: CharSequence,
+        isActive: Boolean,
+    ): CharSequence =
+        if (isActive) {
+            base
+        } else {
+            SpannableStringBuilder(base)
+                .append(SUMMARY_SEPARATOR)
+                .append(getString(R.string.fee_inactive_marker))
+        }
 
     private fun displayNameOf(fee: Fee): String = fee.name.ifBlank { getString(R.string.fee_untitled) }
 
     private fun <T : Fee> populate(
         category: PreferenceCategory,
         entries: List<T>,
-        summaryFor: (T) -> CharSequence?,
+        summaryFor: (T) -> CharSequence,
         onAdd: () -> Unit,
         onEdit: (T) -> Unit,
     ) {
@@ -415,7 +428,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 category.addPreference(
                     Preference(ctx).apply {
                         title = formatFeeTitle(fee)
-                        summary = buildFeeSummary(summaryFor(fee), fee.isActive)
+                        summary = withInactiveMarker(summaryFor(fee), fee.isActive)
                         isIconSpaceReserved = false
                         setOnPreferenceClickListener {
                             onEdit(fee)
@@ -439,20 +452,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
     private fun formatFeeTitle(fee: Fee): CharSequence {
         val percent = formatPercent(fee.percent, fee.isMarkup)
-        return if (fee.name.isBlank()) percent else "${fee.name}  ·  $percent"
-    }
-
-    private fun buildFeeSummary(
-        base: CharSequence?,
-        isActive: Boolean,
-    ): CharSequence? {
-        val inactive = if (!isActive) getString(R.string.fee_inactive_marker) else null
-        return when {
-            base == null && inactive == null -> null
-            base == null -> inactive
-            inactive == null -> base
-            else -> SpannableStringBuilder(base).append(SUMMARY_SEPARATOR).append(inactive)
-        }
+        return if (fee.name.isBlank()) percent else "${fee.name}$SUMMARY_SEPARATOR$percent"
     }
 
     private fun formatPercent(
@@ -611,6 +611,24 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     private fun buildEditorContainer(ctx: Context): LinearLayout =
         paddedDialogContainer(ctx, topPadding = resources.getDimensionPixelSize(R.dimen.margin2x))
 
+    /**
+     * Stack the shared prefix (active switch + name), any dialog-specific
+     * [middle] rows, then the shared suffix (percent + fee-side block with a
+     * top gap) into a fee-editor container. Both editor dialogs use this so
+     * the field order — and the gap before the fee-side header — stays in
+     * sync automatically.
+     */
+    private fun LinearLayout.addFeeEditorLayout(
+        inputs: SharedFeeInputs,
+        middle: LinearLayout.() -> Unit = {},
+    ) {
+        addView(inputs.activeSwitch)
+        addLabeled(R.string.fee_edit_name, inputs.nameInput)
+        middle()
+        addLabeled(R.string.fee_edit_percent, inputs.percentInput)
+        addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
+    }
+
     private fun showGlobalFeeDialog(
         @StringRes titleRes: Int,
         existing: Fee?,
@@ -620,11 +638,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val ctx = requireContext()
         val container = buildEditorContainer(ctx)
         val inputs = buildSharedFeeInputs(ctx, existing)
-
-        container.addView(inputs.activeSwitch)
-        container.addLabeled(R.string.fee_edit_name, inputs.nameInput)
-        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
-        container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
+        container.addFeeEditorLayout(inputs)
 
         feeEditorDialog(ctx, titleRes, container, onDelete)
             .setPositiveButton(android.R.string.ok) { _, _ -> onConfirm(inputs.toDraft()) }
@@ -667,34 +681,44 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 isChecked = existing?.bothWays == true
             }
 
-        container.addView(inputs.activeSwitch)
-        container.addLabeled(R.string.fee_edit_name, inputs.nameInput)
-        container.addLabeled(R.string.fee_pair_from, fromButton)
-        container.addLabeled(R.string.fee_pair_to, toButton)
-        container.addView(bothWays)
-        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
-        container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
+        container.addFeeEditorLayout(inputs) {
+            addLabeled(R.string.fee_pair_from, fromButton)
+            addLabeled(R.string.fee_pair_to, toButton)
+            addView(bothWays)
+        }
 
         feeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val from = pickedFrom ?: return@setPositiveButton
                 val to = pickedTo ?: return@setPositiveButton
-                val draft = inputs.toDraft()
                 onConfirm(
-                    Fee.SpecificPair(
+                    inputs.toDraft().toSpecificPair(
                         id = existing?.id ?: UUID.randomUUID().toString(),
-                        name = draft.name,
-                        percent = draft.percent,
-                        isMarkup = draft.isMarkup,
                         from = from,
                         to = to,
                         bothWays = bothWays.isChecked,
-                        isActive = draft.isActive,
-                        feeSide = draft.feeSide,
                     ),
                 )
             }.show()
     }
+
+    private fun FeeDraft.toSpecificPair(
+        id: String,
+        from: String,
+        to: String,
+        bothWays: Boolean,
+    ): Fee.SpecificPair =
+        Fee.SpecificPair(
+            id = id,
+            name = name,
+            percent = percent,
+            isMarkup = isMarkup,
+            from = from,
+            to = to,
+            bothWays = bothWays,
+            isActive = isActive,
+            feeSide = feeSide,
+        )
 
     private fun MaterialAlertDialogBuilder.withDeleteButton(onDelete: (() -> Unit)?): MaterialAlertDialogBuilder {
         if (onDelete != null) {
