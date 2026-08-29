@@ -60,14 +60,18 @@ private const val FLAG_INLINE_HEIGHT_SP = 14f
 private val FEE_EDITOR_SECTION_GAP = R.dimen.margin4x
 
 // Fee percent field: signed decimal percents in [-100, 100]. Sign toggles
-// markup vs discount downstream; abs value is stored on the model.
+// markup vs discount downstream; abs value is stored on the model. Both
+// ASCII "." and the current locale's decimal separator are accepted so
+// numeric keypads in comma-decimal locales (de, fr, ru, …) still work.
 private val FEE_PERCENT_RANGE = BigDecimal("-100")..BigDecimal("100")
-private const val FEE_PERCENT_ALLOWED_CHARS = "+-.0123456789"
-private val FEE_PERCENT_FORMAT = Regex("^[+-]?\\d*\\.?\\d*$")
+private const val FEE_PERCENT_DIGITS = "+-.,0123456789"
+private val FEE_PERCENT_FORMAT = Regex("^[+-]?\\d*[.,]?\\d*$")
+
+private fun String.normalizeDecimalSeparator(): String = replace(',', '.')
 
 // Rejects edits that would leave the field outside FEE_PERCENT_RANGE.
-// Empty / trailing sign / trailing dot pass as intermediate typing states
-// (e.g. "-", "1.") since they aren't yet parseable as a decimal.
+// Empty / trailing sign / trailing separator pass as intermediate typing
+// states (e.g. "-", "1.", "1,") since they aren't yet parseable.
 private val feePercentRangeFilter =
     InputFilter { source, start, end, dest, dstart, dend ->
         val result =
@@ -76,9 +80,9 @@ private val feePercentRangeFilter =
                 dest.substring(dend)
         when {
             !FEE_PERCENT_FORMAT.matches(result) -> ""
-            result.isEmpty() || result.last() in "+-." -> null
+            result.isEmpty() || result.last() in "+-.," -> null
             else -> {
-                val value = result.toBigDecimalOrNull()
+                val value = result.normalizeDecimalSeparator().toBigDecimalOrNull()
                 if (value != null && value in FEE_PERCENT_RANGE) null else ""
             }
         }
@@ -539,7 +543,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     ): PercentInput {
         val editText =
             EditText(ctx).apply {
-                keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_ALLOWED_CHARS)
+                keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_DIGITS)
                 filters = arrayOf(feePercentRangeFilter)
                 if (initialSigned != null) setText(initialSigned.toPlainString())
             }
@@ -663,6 +667,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             val parsed =
                 percentInput.editText.text
                     .toString()
+                    .normalizeDecimalSeparator()
                     .toBigDecimalOrNull() ?: BigDecimal.ZERO
             return FeeDraft(
                 name = nameInput.text.toString().trim(),
