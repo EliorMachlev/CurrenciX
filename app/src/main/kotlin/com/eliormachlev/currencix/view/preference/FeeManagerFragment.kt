@@ -505,20 +505,51 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
 
     /**
-     * Numeric percent field. Signed decimal input in [-100, 100]; a leading
-     * "−" flips the fee from markup to discount, unsigned defaults to markup.
-     * [initialSigned] is the value carrying its own sign — callers compose it
-     * from the model's separate abs-percent / isMarkup fields.
+     * Numeric percent field with a "%" glyph pinned to the physical left of
+     * the input (LTR *or* RTL locale). Signed decimal input in [-100, 100];
+     * a leading "−" flips the fee from markup to discount, unsigned defaults
+     * to markup. [initialSigned] is the value carrying its own sign —
+     * callers compose it from the model's separate abs-percent / isMarkup
+     * fields. Returned bundle exposes both the row [view] to add to the
+     * layout and the raw [editText] for reading text back at confirm time.
      */
     private fun buildPercentInput(
         ctx: Context,
         initialSigned: BigDecimal?,
-    ): EditText =
-        EditText(ctx).apply {
-            keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_ALLOWED_CHARS)
-            filters = arrayOf(feePercentRangeFilter)
-            if (initialSigned != null) setText(initialSigned.toPlainString())
-        }
+    ): PercentInput {
+        val editText =
+            EditText(ctx).apply {
+                keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_ALLOWED_CHARS)
+                filters = arrayOf(feePercentRangeFilter)
+                if (initialSigned != null) setText(initialSigned.toPlainString())
+            }
+        val prefix =
+            TextView(ctx).apply { text = "%" }
+        val row =
+            LinearLayout(ctx).apply {
+                orientation = LinearLayout.HORIZONTAL
+                // Pin "%" to the physical left even in RTL locales.
+                layoutDirection = View.LAYOUT_DIRECTION_LTR
+                addView(
+                    prefix,
+                    LinearLayout
+                        .LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ).apply { marginEnd = resources.getDimensionPixelSize(R.dimen.margin1x) },
+                )
+                addView(
+                    editText,
+                    LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f),
+                )
+            }
+        return PercentInput(row, editText)
+    }
+
+    private data class PercentInput(
+        val view: View,
+        val editText: EditText,
+    )
 
     private fun buildActiveSwitch(
         ctx: Context,
@@ -603,12 +634,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
      */
     private data class SharedFeeInputs(
         val nameInput: EditText,
-        val percentInput: EditText,
+        val percentInput: PercentInput,
         val feeSideChooser: FeeSideChooser,
         val activeSwitch: MaterialSwitch,
     ) {
         fun toDraft(): FeeDraft {
-            val parsed = percentInput.text.toString().toBigDecimalOrNull() ?: BigDecimal.ZERO
+            val parsed = percentInput.editText.text.toString().toBigDecimalOrNull() ?: BigDecimal.ZERO
             return FeeDraft(
                 name = nameInput.text.toString().trim(),
                 percent = parsed.abs(),
@@ -652,7 +683,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         addView(inputs.activeSwitch)
         addLabeled(R.string.fee_edit_name, inputs.nameInput)
         middle()
-        addLabeled(R.string.fee_edit_percent, inputs.percentInput, topGapRes = percentTopGapRes)
+        addLabeled(R.string.fee_edit_percent, inputs.percentInput.view, topGapRes = percentTopGapRes)
         addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
     }
 
