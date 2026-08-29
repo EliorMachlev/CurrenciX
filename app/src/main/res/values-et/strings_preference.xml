@@ -6,9 +6,9 @@
     <string name="fee_title">Valuutavahetuse teenustasu</string>
     <string name="fee_summary">Halda vahetus-, panga-/kaarditasusid ja konkreetsete valuutapaaride tasusid</string>
     <string name="fee_manager_title">Teenustasud</string>
-    <string name="fee_side_label">Teenustasu pool</string>
-    <string name="fee_side_original">Algne</string>
-    <string name="fee_side_converted">Konverteeritud</string>
+    <string name="fee_side_label">Teenustasu tüüp</string>
+    <string name="fee_side_original">Konverteerimistasu</string>
+    <string name="fee_side_converted">Konverteeritud tasu</string>
     <string name="fee_section_global_exchange">Üldine vahetustasu</string>
     <string name="fee_section_global_bank">Üldine panga-/kaarditasu</string>
     <string name="fee_section_specific_pair">Konkreetse valuutapaari vahetustasu</string>

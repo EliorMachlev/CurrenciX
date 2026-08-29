@@ -6,9 +6,9 @@
     <string name="fee_title">Utländsk transaktionsavgift</string>
     <string name="fee_summary">Hantera växlings-, bank-/kortavgifter och avgifter för specifika valutapar</string>
     <string name="fee_manager_title">Avgifter</string>
-    <string name="fee_side_label">Avgiftssida</string>
-    <string name="fee_side_original">Original</string>
-    <string name="fee_side_converted">Konverterad</string>
+    <string name="fee_side_label">Avgiftstyp</string>
+    <string name="fee_side_original">Konverteringsavgift</string>
+    <string name="fee_side_converted">Konverterad avgift</string>
     <string name="fee_section_global_exchange">Global växlingsavgift</string>
     <string name="fee_section_global_bank">Global bank-/kortavgift</string>
     <string name="fee_section_specific_pair">Växlingsavgift för specifikt valutapar</string>

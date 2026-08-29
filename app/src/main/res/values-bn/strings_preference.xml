@@ -6,9 +6,9 @@
     <string name="fee_title">বিদেশি লেনদেন ফি</string>
     <string name="fee_summary">বিনিময়, ব্যাংক/কার্ড এবং নির্দিষ্ট জোড়ার ফি পরিচালনা করো</string>
     <string name="fee_manager_title">ফি</string>
-    <string name="fee_side_label">ফি এর দিক</string>
-    <string name="fee_side_original">মূল</string>
-    <string name="fee_side_converted">রূপান্তরিত</string>
+    <string name="fee_side_label">ফি এর ধরন</string>
+    <string name="fee_side_original">রূপান্তর ফি</string>
+    <string name="fee_side_converted">রূপান্তরিত ফি</string>
     <string name="fee_section_global_exchange">বিশ্বব্যাপী বিনিময় ফি</string>
     <string name="fee_section_global_bank">বিশ্বব্যাপী ব্যাংক/কার্ড ফি</string>
     <string name="fee_section_specific_pair">নির্দিষ্ট মুদ্রা জোড়ার বিনিময় ফি</string>

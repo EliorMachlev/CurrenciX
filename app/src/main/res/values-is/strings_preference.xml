@@ -6,9 +6,9 @@
     <string name="fee_title">Gjaldeyrisviðskiptagjald</string>
     <string name="fee_summary">Umsjón með skipti-, banka-/kortagjöldum og gjöldum fyrir tiltekin gjaldmiðlapör</string>
     <string name="fee_manager_title">Gjöld</string>
-    <string name="fee_side_label">Hlið gjalds</string>
-    <string name="fee_side_original">Upprunalegt</string>
-    <string name="fee_side_converted">Umreiknað</string>
+    <string name="fee_side_label">Tegund gjalds</string>
+    <string name="fee_side_original">Umbreytingargjald</string>
+    <string name="fee_side_converted">Umreiknað gjald</string>
     <string name="fee_section_global_exchange">Almennt skiptigjald</string>
     <string name="fee_section_global_bank">Almennt banka-/kortagjald</string>
     <string name="fee_section_specific_pair">Skiptigjald fyrir tiltekið gjaldmiðlapar</string>

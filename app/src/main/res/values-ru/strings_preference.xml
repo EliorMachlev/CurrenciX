@@ -6,9 +6,9 @@
     <string name="fee_title">Комиссия за международный перевод</string>
     <string name="fee_summary">Управление комиссиями обмена, банка/карты и по конкретным парам валют</string>
     <string name="fee_manager_title">Комиссии</string>
-    <string name="fee_side_label">Сторона комиссии</string>
-    <string name="fee_side_original">Исходная</string>
-    <string name="fee_side_converted">Конвертированная</string>
+    <string name="fee_side_label">Тип комиссии</string>
+    <string name="fee_side_original">Комиссия за конвертацию</string>
+    <string name="fee_side_converted">Конвертированная комиссия</string>
     <string name="fee_section_global_exchange">Общая комиссия за обмен</string>
     <string name="fee_section_global_bank">Общая комиссия банка/карты</string>
     <string name="fee_section_specific_pair">Комиссия за обмен конкретной пары валют</string>

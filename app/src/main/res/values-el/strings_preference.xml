@@ -6,9 +6,9 @@
     <string name="fee_title">Προμήθεια συναλλαγής εξωτερικού</string>
     <string name="fee_summary">Διαχείριση προμηθειών συναλλάγματος, τράπεζας/κάρτας και ανά ζεύγος νομισμάτων</string>
     <string name="fee_manager_title">Προμήθειες</string>
-    <string name="fee_side_label">Πλευρά προμήθειας</string>
-    <string name="fee_side_original">Αρχικό</string>
-    <string name="fee_side_converted">Μετατραπέν</string>
+    <string name="fee_side_label">Τύπος προμήθειας</string>
+    <string name="fee_side_original">Προμήθεια μετατροπής</string>
+    <string name="fee_side_converted">Μετατραπείσα προμήθεια</string>
     <string name="fee_section_global_exchange">Καθολική προμήθεια συναλλάγματος</string>
     <string name="fee_section_global_bank">Καθολική προμήθεια τράπεζας/κάρτας</string>
     <string name="fee_section_specific_pair">Προμήθεια συγκεκριμένου ζεύγους νομισμάτων</string>

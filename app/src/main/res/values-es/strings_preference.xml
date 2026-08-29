@@ -6,9 +6,9 @@
     <string name="fee_title">Comisión por transacción extranjera</string>
     <string name="fee_summary">Administra comisiones de cambio, banco/tarjeta y específicas por par</string>
     <string name="fee_manager_title">Comisiones</string>
-    <string name="fee_side_label">Lado de la comisión</string>
-    <string name="fee_side_original">Original</string>
-    <string name="fee_side_converted">Convertido</string>
+    <string name="fee_side_label">Tipo de comisión</string>
+    <string name="fee_side_original">Comisión de conversión</string>
+    <string name="fee_side_converted">Comisión convertida</string>
     <string name="fee_section_global_exchange">Comisión global de cambio</string>
     <string name="fee_section_global_bank">Comisión global de banco/tarjeta</string>
     <string name="fee_section_specific_pair">Comisión de cambio de par específico</string>

@@ -6,9 +6,9 @@
     <string name="fee_title">Frais de transaction à l\'étranger</string>
     <string name="fee_summary">Gérer les frais de change, de banque/carte et spécifiques à une paire</string>
     <string name="fee_manager_title">Frais</string>
-    <string name="fee_side_label">Côté des frais</string>
-    <string name="fee_side_original">Original</string>
-    <string name="fee_side_converted">Converti</string>
+    <string name="fee_side_label">Type de frais</string>
+    <string name="fee_side_original">Frais de conversion</string>
+    <string name="fee_side_converted">Frais convertis</string>
     <string name="fee_section_global_exchange">Frais de change globaux</string>
     <string name="fee_section_global_bank">Frais bancaires/de carte globaux</string>
     <string name="fee_section_specific_pair">Frais de change pour une paire spécifique</string>

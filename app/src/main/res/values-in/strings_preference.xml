@@ -6,9 +6,9 @@
     <string name="fee_title">Biaya transaksi luar negeri</string>
     <string name="fee_summary">Kelola biaya penukaran, bank/kartu, dan biaya pasangan mata uang tertentu</string>
     <string name="fee_manager_title">Biaya</string>
-    <string name="fee_side_label">Sisi biaya</string>
-    <string name="fee_side_original">Asli</string>
-    <string name="fee_side_converted">Dikonversi</string>
+    <string name="fee_side_label">Jenis biaya</string>
+    <string name="fee_side_original">Biaya konversi</string>
+    <string name="fee_side_converted">Biaya dikonversi</string>
     <string name="fee_section_global_exchange">Biaya penukaran global</string>
     <string name="fee_section_global_bank">Biaya bank/kartu global</string>
     <string name="fee_section_specific_pair">Biaya penukaran pasangan mata uang tertentu</string>

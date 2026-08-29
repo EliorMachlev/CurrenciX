@@ -6,9 +6,9 @@
     <string name="fee_title">Comissió per transacció amb l’estranger</string>
     <string name="fee_summary">Gestiona comissions de canvi, banc/targeta i específiques per parell</string>
     <string name="fee_manager_title">Comissions</string>
-    <string name="fee_side_label">Costat de la comissió</string>
-    <string name="fee_side_original">Original</string>
-    <string name="fee_side_converted">Convertit</string>
+    <string name="fee_side_label">Tipus de comissió</string>
+    <string name="fee_side_original">Comissió de conversió</string>
+    <string name="fee_side_converted">Comissió convertida</string>
     <string name="fee_section_global_exchange">Comissió global de canvi</string>
     <string name="fee_section_global_bank">Comissió global de banc/targeta</string>
     <string name="fee_section_specific_pair">Comissió per parell de monedes específic</string>

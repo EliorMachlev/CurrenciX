@@ -6,9 +6,9 @@
     <string name="fee_title">Такса за чуждестранна транзакция</string>
     <string name="fee_summary">Управление на обменни, банкови/картови такси и такси за конкретни валутни двойки</string>
     <string name="fee_manager_title">Такси</string>
-    <string name="fee_side_label">Страна на таксата</string>
-    <string name="fee_side_original">Оригинална</string>
-    <string name="fee_side_converted">Конвертирана</string>
+    <string name="fee_side_label">Тип на таксата</string>
+    <string name="fee_side_original">Такса за конвертиране</string>
+    <string name="fee_side_converted">Конвертирана такса</string>
     <string name="fee_section_global_exchange">Глобална обменна такса</string>
     <string name="fee_section_global_bank">Глобална банкова/картова такса</string>
     <string name="fee_section_specific_pair">Такса за конкретна валутна двойка</string>
