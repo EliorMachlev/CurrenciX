@@ -2,9 +2,11 @@ package com.eliormachlev.currencix.view.preference
 
 import android.content.Context
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.method.DigitsKeyListener
 import android.text.style.ImageSpan
 import android.util.TypedValue
 import android.view.Gravity
@@ -50,6 +52,28 @@ private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
+
+// Fee percent field: whole-number percents in [-100, 100]. Sign toggles
+// markup vs discount downstream; abs value is stored on the model.
+private val FEE_PERCENT_RANGE = -100..100
+private const val FEE_PERCENT_ALLOWED_CHARS = "+-0123456789"
+private val FEE_PERCENT_FORMAT = Regex("^[+-]?\\d+$")
+
+// Rejects edits that would leave the field outside FEE_PERCENT_RANGE.
+// Empty and a lone sign are allowed as intermediate typing states.
+private val feePercentRangeFilter =
+    InputFilter { source, start, end, dest, dstart, dend ->
+        val result =
+            dest.substring(0, dstart) +
+                source.subSequence(start, end) +
+                dest.substring(dend)
+        when {
+            result.isEmpty() || result == "+" || result == "-" -> null
+            !FEE_PERCENT_FORMAT.matches(result) -> ""
+            result.toIntOrNull() in FEE_PERCENT_RANGE -> null
+            else -> ""
+        }
+    }
 
 // Trailing/leading icon buttons in picker rows. 48dp total with 12dp padding
 // yields a 24dp visible glyph — matches the Material3 IconButton dimensions
@@ -478,21 +502,20 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
 
     /**
-     * Numeric percent field. Signed input is allowed so a leading "−" flips
-     * the fee from markup to discount; unsigned input defaults to markup.
+     * Numeric percent field. Signed integer input in [-100, 100]; a leading
+     * "−" flips the fee from markup to discount, unsigned defaults to markup.
      * [initialSigned] is the value carrying its own sign — callers compose it
-     * from the model's separate abs-percent / isMarkup fields.
+     * from the model's separate abs-percent / isMarkup fields. setText runs
+     * before filters are attached so a legacy decimal value still displays.
      */
     private fun buildPercentInput(
         ctx: Context,
         initialSigned: BigDecimal?,
     ): EditText =
         EditText(ctx).apply {
-            inputType =
-                InputType.TYPE_CLASS_NUMBER or
-                InputType.TYPE_NUMBER_FLAG_DECIMAL or
-                InputType.TYPE_NUMBER_FLAG_SIGNED
+            keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_ALLOWED_CHARS)
             if (initialSigned != null) setText(initialSigned.toPlainString())
+            filters = arrayOf(feePercentRangeFilter)
         }
 
     private fun buildActiveSwitch(
