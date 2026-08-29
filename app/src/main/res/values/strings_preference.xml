@@ -8,9 +8,9 @@
     <string name="fee_summary">Manage exchange, bank/card, and pair-specific fees</string>
     <!-- fee manager -->
     <string name="fee_manager_title">Fees</string>
-    <string name="fee_side_label">Fee side</string>
-    <string name="fee_side_original">Original</string>
-    <string name="fee_side_converted">Converted</string>
+    <string name="fee_side_label">Fee type</string>
+    <string name="fee_side_original">Conversion fee</string>
+    <string name="fee_side_converted">Converted fee</string>
     <string name="fee_section_global_exchange">Global exchange fee</string>
     <string name="fee_section_global_bank">Global bank/card fee</string>
     <string name="fee_section_specific_pair">Specific currency exchange fee</string>
