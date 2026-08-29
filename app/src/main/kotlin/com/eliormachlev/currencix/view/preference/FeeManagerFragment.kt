@@ -121,15 +121,13 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val ctx = preferenceManager.context
         val screen: PreferenceScreen = preferenceManager.createPreferenceScreen(ctx)
 
-        globalExchangePref =
-            buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_EXCHANGE, R.string.fee_section_global_exchange)
-        globalBankPref =
-            buildGlobalSelectorPreference(ctx, PREF_KEY_GLOBAL_BANK, R.string.fee_section_global_bank)
         // Wrap each selector in its own category so the section header is
         // visible on the top-level screen; without it users can't tell the
         // exchange row from the bank/card row without opening the dialog.
-        addCategory(screen, ctx, R.string.fee_section_global_exchange).addPreference(globalExchangePref)
-        addCategory(screen, ctx, R.string.fee_section_global_bank).addPreference(globalBankPref)
+        globalExchangePref =
+            addGlobalSelectorSection(screen, ctx, PREF_KEY_GLOBAL_EXCHANGE, R.string.fee_section_global_exchange)
+        globalBankPref =
+            addGlobalSelectorSection(screen, ctx, PREF_KEY_GLOBAL_BANK, R.string.fee_section_global_bank)
 
         categoryPair = addCategory(screen, ctx, R.string.fee_section_specific_pair)
 
@@ -171,16 +169,21 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         activity?.title = getString(R.string.fee_manager_title)
     }
 
-    private fun buildGlobalSelectorPreference(
+    private fun addGlobalSelectorSection(
+        screen: PreferenceScreen,
         ctx: Context,
         key: String,
         titleRes: Int,
-    ): Preference =
-        Preference(ctx).apply {
-            this.key = key
-            title = getString(titleRes)
-            isIconSpaceReserved = false
-        }
+    ): Preference {
+        val pref =
+            Preference(ctx).apply {
+                this.key = key
+                title = getString(titleRes)
+                isIconSpaceReserved = false
+            }
+        addCategory(screen, ctx, titleRes).addPreference(pref)
+        return pref
+    }
 
     private fun renderFees(fees: List<Fee>) {
         renderGlobalCategory(
@@ -189,7 +192,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             sectionTitleRes = R.string.fee_section_global_exchange,
             getActiveId = db::getActiveExchangeIdBlocking,
             setActiveId = db::setActiveExchangeId,
-            create = { d -> Fee.GlobalExchange(UUID.randomUUID().toString(), d.name, d.percent, d.isMarkup, d.isActive, d.feeSide) },
+            create = { it.toGlobalExchange() },
             update = feeUpdater(),
         )
         renderGlobalCategory(
@@ -198,7 +201,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             sectionTitleRes = R.string.fee_section_global_bank,
             getActiveId = db::getActiveBankIdBlocking,
             setActiveId = db::setActiveBankId,
-            create = { d -> Fee.GlobalBank(UUID.randomUUID().toString(), d.name, d.percent, d.isMarkup, d.isActive, d.feeSide) },
+            create = { it.toGlobalBank() },
             update = feeUpdater(),
         )
         populate(
@@ -621,22 +624,26 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             ).apply { topMargin = resources.getDimensionPixelSize(topGapRes) }
 
     /**
-     * Build the [MaterialAlertDialogBuilder] shared by the two fee-editor
-     * dialogs — title, body view, cancel, and optional delete. Callers append
-     * their own positive button (each dialog handles OK differently) and call
-     * `show()`.
+     * Show the fee-editor dialog shared by both editors — title, body view,
+     * cancel, optional delete, and OK. [onOk] is invoked when the user
+     * confirms; use `return@showFeeEditorDialog` to bail without dismissing
+     * data flow (e.g. when required inputs aren't filled in yet).
      */
-    private fun feeEditorDialog(
+    private fun showFeeEditorDialog(
         ctx: Context,
         @StringRes titleRes: Int,
         container: View,
         onDelete: (() -> Unit)?,
-    ): MaterialAlertDialogBuilder =
+        onOk: () -> Unit,
+    ) {
         MaterialAlertDialogBuilder(ctx)
             .setTitle(titleRes)
             .setView(container)
             .setNegativeButton(android.R.string.cancel, null)
             .withDeleteButton(onDelete)
+            .setPositiveButton(android.R.string.ok) { _, _ -> onOk() }
+            .show()
+    }
 
     /**
      * Snapshot of the fields shared between the global-fee and specific-pair
@@ -727,9 +734,9 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val inputs = buildSharedFeeInputs(ctx, existing)
         container.addFeeEditorLayout(inputs)
 
-        feeEditorDialog(ctx, titleRes, container, onDelete)
-            .setPositiveButton(android.R.string.ok) { _, _ -> onConfirm(inputs.toDraft()) }
-            .show()
+        showFeeEditorDialog(ctx, titleRes, container, onDelete) {
+            onConfirm(inputs.toDraft())
+        }
     }
 
     private fun showSpecificPairDialog(
@@ -770,20 +777,39 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             addView(bothWays, topGapLayoutParams(FEE_EDITOR_SECTION_GAP))
         }
 
-        feeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                val from = pickedFrom ?: return@setPositiveButton
-                val to = pickedTo ?: return@setPositiveButton
-                onConfirm(
-                    inputs.toDraft().toSpecificPair(
-                        id = existing?.id ?: UUID.randomUUID().toString(),
-                        from = from,
-                        to = to,
-                        bothWays = bothWays.isChecked,
-                    ),
-                )
-            }.show()
+        showFeeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete) {
+            val from = pickedFrom ?: return@showFeeEditorDialog
+            val to = pickedTo ?: return@showFeeEditorDialog
+            onConfirm(
+                inputs.toDraft().toSpecificPair(
+                    id = existing?.id ?: UUID.randomUUID().toString(),
+                    from = from,
+                    to = to,
+                    bothWays = bothWays.isChecked,
+                ),
+            )
+        }
     }
+
+    private fun FeeDraft.toGlobalExchange(): Fee.GlobalExchange =
+        Fee.GlobalExchange(
+            id = UUID.randomUUID().toString(),
+            name = name,
+            percent = percent,
+            isMarkup = isMarkup,
+            isActive = isActive,
+            feeSide = feeSide,
+        )
+
+    private fun FeeDraft.toGlobalBank(): Fee.GlobalBank =
+        Fee.GlobalBank(
+            id = UUID.randomUUID().toString(),
+            name = name,
+            percent = percent,
+            isMarkup = isMarkup,
+            isActive = isActive,
+            feeSide = feeSide,
+        )
 
     private fun FeeDraft.toSpecificPair(
         id: String,
