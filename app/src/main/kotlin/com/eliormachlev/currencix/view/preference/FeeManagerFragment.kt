@@ -621,12 +621,13 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
      */
     private fun LinearLayout.addFeeEditorLayout(
         inputs: SharedFeeInputs,
+        @DimenRes percentTopGapRes: Int? = null,
         middle: LinearLayout.() -> Unit = {},
     ) {
         addView(inputs.activeSwitch)
         addLabeled(R.string.fee_edit_name, inputs.nameInput)
         middle()
-        addLabeled(R.string.fee_edit_percent, inputs.percentInput)
+        addLabeled(R.string.fee_edit_percent, inputs.percentInput, topGapRes = percentTopGapRes)
         addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
     }
 
@@ -682,7 +683,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 isChecked = existing?.bothWays == true
             }
 
-        container.addFeeEditorLayout(inputs) {
+        container.addFeeEditorLayout(inputs, percentTopGapRes = R.dimen.margin4x) {
             addLabeled(R.string.fee_pair_from, fromButton)
             addLabeled(R.string.fee_pair_to, toButton)
             addView(bothWays, topGapLayoutParams(R.dimen.margin4x))
