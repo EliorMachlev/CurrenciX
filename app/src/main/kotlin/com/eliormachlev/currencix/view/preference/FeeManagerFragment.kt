@@ -16,6 +16,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.DimenRes
 import androidx.annotation.StringRes
@@ -58,6 +59,12 @@ private const val FLAG_INLINE_HEIGHT_SP = 14f
 // dialog (Active switch, Name, per-dialog middle rows, Percent, Fee side).
 // Named so intent survives future dimen renames.
 private val FEE_EDITOR_SECTION_GAP = R.dimen.margin2x
+
+// Fraction of screen width the fee-editor dialog stretches to. Default
+// AlertDialog width is ~10dp-margin narrower on most devices, which pushes
+// the Fee-side radio row into wrapping; 0.95 keeps a hairline margin but
+// buys enough room to fit the row on typical phones.
+private const val FEE_EDITOR_DIALOG_WIDTH_FRACTION = 0.95f
 
 // Fee percent field: signed decimals in [-100, 100] with at most
 // FEE_PERCENT_MAX_INT_DIGITS before and FEE_PERCENT_MAX_FRACTION_DIGITS
@@ -688,6 +695,11 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
      * cancel, optional delete, and OK. [onOk] is invoked when the user
      * confirms; use `return@showFeeEditorDialog` to bail without dismissing
      * data flow (e.g. when required inputs aren't filled in yet).
+     *
+     * The body is wrapped in a [ScrollView] so overflowing rows (e.g. the
+     * fee-side explainer on short screens) stay reachable, and the dialog
+     * window is widened to [FEE_EDITOR_DIALOG_WIDTH_FRACTION] of screen
+     * width so we get more horizontal room before rows have to wrap.
      */
     private fun showFeeEditorDialog(
         ctx: Context,
@@ -696,13 +708,17 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         onDelete: (() -> Unit)?,
         onOk: () -> Unit,
     ) {
-        MaterialAlertDialogBuilder(ctx)
-            .setTitle(titleRes)
-            .setView(container)
-            .setNegativeButton(android.R.string.cancel, null)
-            .withDeleteButton(onDelete)
-            .setPositiveButton(android.R.string.ok) { _, _ -> onOk() }
-            .show()
+        val scroll = ScrollView(ctx).apply { addView(container) }
+        val dialog =
+            MaterialAlertDialogBuilder(ctx)
+                .setTitle(titleRes)
+                .setView(scroll)
+                .setNegativeButton(android.R.string.cancel, null)
+                .withDeleteButton(onDelete)
+                .setPositiveButton(android.R.string.ok) { _, _ -> onOk() }
+                .show()
+        val width = (ctx.resources.displayMetrics.widthPixels * FEE_EDITOR_DIALOG_WIDTH_FRACTION).toInt()
+        dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     /**
