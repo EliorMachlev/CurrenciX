@@ -59,13 +59,17 @@ private const val FLAG_INLINE_HEIGHT_SP = 14f
 // renames.
 private val FEE_EDITOR_SECTION_GAP = R.dimen.margin4x
 
-// Fee percent field: signed decimal percents in [-100, 100]. Sign toggles
-// markup vs discount downstream; abs value is stored on the model. Both
-// ASCII "." and the current locale's decimal separator are accepted so
-// numeric keypads in comma-decimal locales (de, fr, ru, …) still work.
+// Fee percent field: signed decimal percents in [-100, 100] with up to
+// FEE_PERCENT_MAX_FRACTION_DIGITS digits after the separator. Sign
+// toggles markup vs discount downstream; abs value is stored on the
+// model. Both ASCII "." and the current locale's decimal separator are
+// accepted so numeric keypads in comma-decimal locales (de, fr, ru, …)
+// still work.
 private val FEE_PERCENT_RANGE = BigDecimal("-100")..BigDecimal("100")
+private const val FEE_PERCENT_MAX_FRACTION_DIGITS = 3
 private const val FEE_PERCENT_DIGITS = "+-.,0123456789"
-private val FEE_PERCENT_FORMAT = Regex("^[+-]?\\d*[.,]?\\d*$")
+private val FEE_PERCENT_FORMAT =
+    Regex("^[+-]?\\d*(?:[.,]\\d{0,$FEE_PERCENT_MAX_FRACTION_DIGITS})?$")
 
 private fun String.normalizeDecimalSeparator(): String = replace(',', '.')
 
@@ -532,7 +536,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
 
     /**
-     * Numeric percent field with a "%" glyph pinned to the physical left of
+     * Numeric percent field with a "%" glyph pinned to the physical right of
      * the input (LTR *or* RTL locale). Signed decimal input in [-100, 100];
      * a leading "−" flips the fee from markup to discount, unsigned defaults
      * to markup. [initialSigned] is the value carrying its own sign —
@@ -550,24 +554,25 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 filters = arrayOf(feePercentRangeFilter)
                 if (initialSigned != null) setText(initialSigned.toPlainString())
             }
-        val prefix =
+        val suffix =
             TextView(ctx).apply { text = "%" }
         val row =
             LinearLayout(ctx).apply {
                 orientation = LinearLayout.HORIZONTAL
-                // Pin "%" to the physical left even in RTL locales.
+                // Pin "%" to the physical right even in RTL locales.
                 layoutDirection = View.LAYOUT_DIRECTION_LTR
                 addView(
-                    prefix,
+                    editText,
                     LinearLayout
-                        .LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ).apply { marginEnd = resources.getDimensionPixelSize(R.dimen.margin1x) },
+                        .LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                        .apply { marginEnd = resources.getDimensionPixelSize(R.dimen.margin1x) },
                 )
                 addView(
-                    editText,
-                    LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f),
+                    suffix,
+                    LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ),
                 )
             }
         return PercentInput(row, editText)
