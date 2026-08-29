@@ -505,8 +505,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
      * Numeric percent field. Signed integer input in [-100, 100]; a leading
      * "−" flips the fee from markup to discount, unsigned defaults to markup.
      * [initialSigned] is the value carrying its own sign — callers compose it
-     * from the model's separate abs-percent / isMarkup fields. setText runs
-     * before filters are attached so a legacy decimal value still displays.
+     * from the model's separate abs-percent / isMarkup fields.
      */
     private fun buildPercentInput(
         ctx: Context,
@@ -514,8 +513,8 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     ): EditText =
         EditText(ctx).apply {
             keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_ALLOWED_CHARS)
-            if (initialSigned != null) setText(initialSigned.toPlainString())
             filters = arrayOf(feePercentRangeFilter)
+            if (initialSigned != null) setText(initialSigned.toPlainString())
         }
 
     private fun buildActiveSwitch(
