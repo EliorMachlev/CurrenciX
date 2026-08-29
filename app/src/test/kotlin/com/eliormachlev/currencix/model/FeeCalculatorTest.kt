@@ -185,6 +185,23 @@ class FeeCalculatorTest {
     }
 
     @Test
+    fun `mixed active and inactive fees keep only the active ones`() {
+        val fees =
+            listOf(
+                globalExchange("on", "2"),
+                globalExchange("off", "5", isActive = false),
+                pair("pOn", "3", from = "USD", to = "EUR"),
+                pair("pOff", "4", from = "USD", to = "EUR", isActive = false),
+            )
+        val applicable = FeeCalculator.applicableFees(fees, Currency.USD, Currency.EUR)
+        assertEquals(2, applicable.size)
+        assertTrue(applicable.any { it.id == "on" })
+        assertTrue(applicable.any { it.id == "pOn" })
+        // 1.02 * 1.03 = 1.0506 — off / pOff must not participate
+        near("1.0506", combined(fees, Currency.USD, Currency.EUR))
+    }
+
+    @Test
     fun `active picker selects one of several global exchange fees`() {
         val fees =
             listOf(

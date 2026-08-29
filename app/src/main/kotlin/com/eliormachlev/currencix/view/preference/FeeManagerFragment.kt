@@ -186,9 +186,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             getActiveId = db::getActiveExchangeIdBlocking,
             setActiveId = db::setActiveExchangeId,
             create = { d -> Fee.GlobalExchange(UUID.randomUUID().toString(), d.name, d.percent, d.isMarkup, d.isActive, d.feeSide) },
-            update = { existing, d ->
-                existing.copy(name = d.name, percent = d.percent, isMarkup = d.isMarkup, isActive = d.isActive, feeSide = d.feeSide)
-            },
+            update = feeUpdater(),
         )
         renderGlobalCategory(
             pref = globalBankPref,
@@ -197,9 +195,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             getActiveId = db::getActiveBankIdBlocking,
             setActiveId = db::setActiveBankId,
             create = { d -> Fee.GlobalBank(UUID.randomUUID().toString(), d.name, d.percent, d.isMarkup, d.isActive, d.feeSide) },
-            update = { existing, d ->
-                existing.copy(name = d.name, percent = d.percent, isMarkup = d.isMarkup, isActive = d.isActive, feeSide = d.feeSide)
-            },
+            update = feeUpdater(),
         )
         populate(
             category = categoryPair,
@@ -220,6 +216,24 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             },
         )
     }
+
+    /**
+     * Update lambda shared by every category. [Fee.withEditableFields] is
+     * defined per-subclass to `copy` and return its own concrete type, so
+     * the cast back to [T] is safe (unchecked warning is the price of Kotlin
+     * not having a "Self" type on sealed hierarchies).
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Fee> feeUpdater(): (T, FeeDraft) -> T =
+        { existing, d ->
+            existing.withEditableFields(
+                name = d.name,
+                percent = d.percent,
+                isMarkup = d.isMarkup,
+                isActive = d.isActive,
+                feeSide = d.feeSide,
+            ) as T
+        }
 
     /**
      * Wire one global-fee category (exchange or bank/card) into its selector
@@ -557,21 +571,13 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val editText: EditText,
     )
 
-    private fun buildActiveSwitch(
+    private fun buildSwitch(
         ctx: Context,
+        @StringRes labelRes: Int,
         initial: Boolean,
     ): MaterialSwitch =
         MaterialSwitch(ctx).apply {
-            text = getString(R.string.fee_edit_active)
-            isChecked = initial
-        }
-
-    private fun buildBothWaysSwitch(
-        ctx: Context,
-        initial: Boolean,
-    ): MaterialSwitch =
-        MaterialSwitch(ctx).apply {
-            text = getString(R.string.fee_pair_both_ways)
+            text = getString(labelRes)
             isChecked = initial
         }
 
@@ -678,7 +684,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             nameInput = buildNameInput(ctx, existing?.name),
             percentInput = buildPercentInput(ctx, existing?.signedPercent()),
             feeSideChooser = buildFeeSideChooser(ctx, existing?.feeSide ?: FeeSide.ORIGINAL),
-            activeSwitch = buildActiveSwitch(ctx, existing?.isActive != false),
+            activeSwitch = buildSwitch(ctx, R.string.fee_edit_active, existing?.isActive != false),
         )
 
     private fun Fee.signedPercent(): BigDecimal = if (isMarkup) percent else percent.negate()
@@ -751,7 +757,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 placeholder,
                 disabled = { pickedFrom },
             ) { pickedTo = it }
-        val bothWays = buildBothWaysSwitch(ctx, existing?.bothWays == true)
+        val bothWays = buildSwitch(ctx, R.string.fee_pair_both_ways, existing?.bothWays == true)
 
         container.addFeeEditorLayout(inputs, percentTopGapRes = FEE_EDITOR_SECTION_GAP) {
             addLabeled(R.string.fee_pair_from, fromButton)

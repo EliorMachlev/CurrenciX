@@ -20,6 +20,21 @@ sealed class Fee {
     abstract val feeSide: FeeSide
     abstract val type: FeeType
 
+    /**
+     * Return a copy with the fields the editor UI exposes overwritten,
+     * preserving each subclass's non-editable fields (e.g. SpecificPair's
+     * [SpecificPair.from]/[SpecificPair.to]/[SpecificPair.bothWays]). Dispatches
+     * to the concrete `copy` so the runtime type is preserved without the
+     * fragment having to `when` over the sealed hierarchy.
+     */
+    abstract fun withEditableFields(
+        name: String,
+        percent: BigDecimal,
+        isMarkup: Boolean,
+        isActive: Boolean,
+        feeSide: FeeSide,
+    ): Fee
+
     /** Applies to every conversion, no matter which currencies are involved. */
     data class GlobalExchange(
         override val id: String,
@@ -30,6 +45,21 @@ sealed class Fee {
         override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_EXCHANGE
+
+        override fun withEditableFields(
+            name: String,
+            percent: BigDecimal,
+            isMarkup: Boolean,
+            isActive: Boolean,
+            feeSide: FeeSide,
+        ): GlobalExchange =
+            copy(
+                name = name,
+                percent = percent,
+                isMarkup = isMarkup,
+                isActive = isActive,
+                feeSide = feeSide,
+            )
     }
 
     /** Bank / card fee that also applies to every conversion. */
@@ -42,6 +72,21 @@ sealed class Fee {
         override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_BANK
+
+        override fun withEditableFields(
+            name: String,
+            percent: BigDecimal,
+            isMarkup: Boolean,
+            isActive: Boolean,
+            feeSide: FeeSide,
+        ): GlobalBank =
+            copy(
+                name = name,
+                percent = percent,
+                isMarkup = isMarkup,
+                isActive = isActive,
+                feeSide = feeSide,
+            )
     }
 
     /**
@@ -60,6 +105,21 @@ sealed class Fee {
         override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.SPECIFIC_PAIR
+
+        override fun withEditableFields(
+            name: String,
+            percent: BigDecimal,
+            isMarkup: Boolean,
+            isActive: Boolean,
+            feeSide: FeeSide,
+        ): SpecificPair =
+            copy(
+                name = name,
+                percent = percent,
+                isMarkup = isMarkup,
+                isActive = isActive,
+                feeSide = feeSide,
+            )
     }
 }
 
