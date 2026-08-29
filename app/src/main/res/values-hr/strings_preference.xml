@@ -6,9 +6,9 @@
     <string name="fee_title">Provizija za inozemne transakcije</string>
     <string name="fee_summary">Upravljanje mjenjačkim, bankovnim/kartičnim provizijama i onima za pojedine parove</string>
     <string name="fee_manager_title">Provizije</string>
-    <string name="fee_side_label">Strana provizije</string>
-    <string name="fee_side_original">Izvorna</string>
-    <string name="fee_side_converted">Preračunata</string>
+    <string name="fee_side_label">Vrsta naknade</string>
+    <string name="fee_side_original">Naknada za konverziju</string>
+    <string name="fee_side_converted">Preračunata naknada</string>
     <string name="fee_section_global_exchange">Globalna mjenjačka provizija</string>
     <string name="fee_section_global_bank">Globalna bankovna/kartična provizija</string>
     <string name="fee_section_specific_pair">Provizija za određeni valutni par</string>

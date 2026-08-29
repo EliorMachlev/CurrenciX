@@ -6,9 +6,9 @@
     <string name="fee_title">Buitenlandse transactiekosten</string>
     <string name="fee_summary">Beheer wissel-, bank-/kaartkosten en kosten voor specifieke valutaparen</string>
     <string name="fee_manager_title">Kosten</string>
-    <string name="fee_side_label">Kant van de kosten</string>
-    <string name="fee_side_original">Origineel</string>
-    <string name="fee_side_converted">Geconverteerd</string>
+    <string name="fee_side_label">Type kosten</string>
+    <string name="fee_side_original">Conversiekosten</string>
+    <string name="fee_side_converted">Geconverteerde kosten</string>
     <string name="fee_section_global_exchange">Globale wisselkosten</string>
     <string name="fee_section_global_bank">Globale bank-/kaartkosten</string>
     <string name="fee_section_specific_pair">Wisselkosten voor specifiek valutapaar</string>

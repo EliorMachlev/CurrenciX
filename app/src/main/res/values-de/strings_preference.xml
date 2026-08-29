@@ -6,9 +6,9 @@
     <string name="fee_title">Fremdwährungsgebühr</string>
     <string name="fee_summary">Wechsel-, Bank-/Karten- und paarspezifische Gebühren verwalten</string>
     <string name="fee_manager_title">Gebühren</string>
-    <string name="fee_side_label">Gebührenseite</string>
-    <string name="fee_side_original">Ursprünglich</string>
-    <string name="fee_side_converted">Umgerechnet</string>
+    <string name="fee_side_label">Gebührentyp</string>
+    <string name="fee_side_original">Umrechnungsgebühr</string>
+    <string name="fee_side_converted">Umgerechnete Gebühr</string>
     <string name="fee_section_global_exchange">Globale Wechselgebühr</string>
     <string name="fee_section_global_bank">Globale Bank-/Kartengebühr</string>
     <string name="fee_section_specific_pair">Gebühr für spezifisches Währungspaar</string>

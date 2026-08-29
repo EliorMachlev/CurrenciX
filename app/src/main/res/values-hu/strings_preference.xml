@@ -6,9 +6,9 @@
     <string name="fee_title">Devizatranzakciós díj</string>
     <string name="fee_summary">Váltási, banki/kártya- és pénznempár-specifikus díjak kezelése</string>
     <string name="fee_manager_title">Díjak</string>
-    <string name="fee_side_label">Díj oldala</string>
-    <string name="fee_side_original">Eredeti</string>
-    <string name="fee_side_converted">Átváltott</string>
+    <string name="fee_side_label">Díj típusa</string>
+    <string name="fee_side_original">Átváltási díj</string>
+    <string name="fee_side_converted">Átváltott díj</string>
     <string name="fee_section_global_exchange">Globális váltási díj</string>
     <string name="fee_section_global_bank">Globális banki/kártyadíj</string>
     <string name="fee_section_specific_pair">Adott pénznempár váltási díja</string>

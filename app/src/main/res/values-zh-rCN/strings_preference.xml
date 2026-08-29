@@ -6,9 +6,9 @@
     <string name="fee_title">外汇交易手续费</string>
     <string name="fee_summary">管理汇兑、银行/银行卡以及特定货币对的手续费</string>
     <string name="fee_manager_title">手续费</string>
-    <string name="fee_side_label">手续费一侧</string>
-    <string name="fee_side_original">原始</string>
-    <string name="fee_side_converted">已换算</string>
+    <string name="fee_side_label">手续费类型</string>
+    <string name="fee_side_original">换算手续费</string>
+    <string name="fee_side_converted">已换算手续费</string>
     <string name="fee_section_global_exchange">全局汇兑手续费</string>
     <string name="fee_section_global_bank">全局银行/银行卡手续费</string>
     <string name="fee_section_specific_pair">特定货币对汇兑手续费</string>

@@ -9,6 +9,8 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import com.eliormachlev.currencix.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -57,6 +59,7 @@ fun choiceExplainerRow(
     description: CharSequence,
     leadingView: View? = null,
     trailingView: View? = null,
+    clickActionLabel: CharSequence? = null,
     onClick: () -> Unit,
 ): LinearLayout {
     val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
@@ -68,6 +71,14 @@ fun choiceExplainerRow(
             isClickable = true
             applySelectableRowBackground()
             setOnClickListener { onClick() }
+            if (clickActionLabel != null) {
+                ViewCompat.replaceAccessibilityAction(
+                    this,
+                    AccessibilityActionCompat.ACTION_CLICK,
+                    clickActionLabel,
+                    null,
+                )
+            }
         }
     if (leadingView != null) row.addView(leadingView)
     val textCol =

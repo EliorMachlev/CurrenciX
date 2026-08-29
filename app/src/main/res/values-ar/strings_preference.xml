@@ -6,9 +6,9 @@
     <string name="fee_title">رسوم المعاملات الخارجية</string>
     <string name="fee_summary">إدارة رسوم الصرف والبنك/البطاقة والرسوم الخاصة بأزواج العملات</string>
     <string name="fee_manager_title">الرسوم</string>
-    <string name="fee_side_label">جانب الرسوم</string>
-    <string name="fee_side_original">الأصلي</string>
-    <string name="fee_side_converted">المحوَّل</string>
+    <string name="fee_side_label">نوع الرسوم</string>
+    <string name="fee_side_original">رسوم التحويل</string>
+    <string name="fee_side_converted">رسوم محوَّلة</string>
     <string name="fee_section_global_exchange">رسوم الصرف العامة</string>
     <string name="fee_section_global_bank">رسوم البنك/البطاقة العامة</string>
     <string name="fee_section_specific_pair">رسوم صرف زوج عملات محدد</string>

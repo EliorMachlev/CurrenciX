@@ -6,9 +6,9 @@
     <string name="fee_title">کارمزد تراکنش‌های خارجی</string>
     <string name="fee_summary">مدیریت کارمزدهای تبدیل، بانک/کارت و جفت‌ارزهای خاص</string>
     <string name="fee_manager_title">کارمزدها</string>
-    <string name="fee_side_label">سمت کارمزد</string>
-    <string name="fee_side_original">اصلی</string>
-    <string name="fee_side_converted">تبدیل‌شده</string>
+    <string name="fee_side_label">نوع کارمزد</string>
+    <string name="fee_side_original">کارمزد تبدیل</string>
+    <string name="fee_side_converted">کارمزد تبدیل‌شده</string>
     <string name="fee_section_global_exchange">کارمزد کلی تبدیل</string>
     <string name="fee_section_global_bank">کارمزد کلی بانک/کارت</string>
     <string name="fee_section_specific_pair">کارمزد تبدیل جفت‌ارز خاص</string>

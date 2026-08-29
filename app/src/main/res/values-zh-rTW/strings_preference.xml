@@ -6,9 +6,9 @@
     <string name="fee_title">外匯手續費</string>
     <string name="fee_summary">管理匯兌、銀行/信用卡以及特定貨幣對的手續費</string>
     <string name="fee_manager_title">手續費</string>
-    <string name="fee_side_label">手續費一側</string>
-    <string name="fee_side_original">原始</string>
-    <string name="fee_side_converted">已換算</string>
+    <string name="fee_side_label">手續費類型</string>
+    <string name="fee_side_original">換算手續費</string>
+    <string name="fee_side_converted">已換算手續費</string>
     <string name="fee_section_global_exchange">全域匯兌手續費</string>
     <string name="fee_section_global_bank">全域銀行/信用卡手續費</string>
     <string name="fee_section_specific_pair">特定貨幣對匯兌手續費</string>

@@ -6,9 +6,9 @@
     <string name="fee_title">Valutagebyr</string>
     <string name="fee_summary">Administrer veksel-, bank-/kortgebyrer og gebyrer for spesifikke valutapar</string>
     <string name="fee_manager_title">Gebyrer</string>
-    <string name="fee_side_label">Gebyrside</string>
-    <string name="fee_side_original">Original</string>
-    <string name="fee_side_converted">Konvertert</string>
+    <string name="fee_side_label">Gebyrtype</string>
+    <string name="fee_side_original">Konverteringsgebyr</string>
+    <string name="fee_side_converted">Konvertert gebyr</string>
     <string name="fee_section_global_exchange">Globalt vekslingsgebyr</string>
     <string name="fee_section_global_bank">Globalt bank-/kortgebyr</string>
     <string name="fee_section_specific_pair">Vekslingsgebyr for spesifikt valutapar</string>

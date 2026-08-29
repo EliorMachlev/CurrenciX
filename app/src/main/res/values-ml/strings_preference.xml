@@ -6,9 +6,9 @@
     <string name="fee_title">വിദേശ ഇടപാട് ഫീസ്</string>
     <string name="fee_summary">വിനിമയ, ബാങ്ക്/കാർഡ്, കറൻസി ജോഡി അടിസ്ഥാനത്തിലുള്ള ഫീസുകൾ കൈകാര്യം ചെയ്യുക</string>
     <string name="fee_manager_title">ഫീസുകൾ</string>
-    <string name="fee_side_label">ഫീസ് വശം</string>
-    <string name="fee_side_original">യഥാർത്ഥം</string>
-    <string name="fee_side_converted">പരിവർത്തിതം</string>
+    <string name="fee_side_label">ഫീസിന്റെ തരം</string>
+    <string name="fee_side_original">പരിവർത്തന ഫീസ്</string>
+    <string name="fee_side_converted">പരിവർത്തിത ഫീസ്</string>
     <string name="fee_section_global_exchange">ആഗോള വിനിമയ ഫീസ്</string>
     <string name="fee_section_global_bank">ആഗോള ബാങ്ക്/കാർഡ് ഫീസ്</string>
     <string name="fee_section_specific_pair">നിർദ്ദിഷ്ട കറൻസി ജോഡിയുടെ വിനിമയ ഫീസ്</string>

@@ -6,9 +6,9 @@
     <string name="fee_title">Opłata za transakcję zagraniczną</string>
     <string name="fee_summary">Zarządzaj opłatami wymiany, bankowymi/kartowymi oraz specyficznymi dla par walut</string>
     <string name="fee_manager_title">Opłaty</string>
-    <string name="fee_side_label">Strona opłaty</string>
-    <string name="fee_side_original">Oryginalna</string>
-    <string name="fee_side_converted">Przeliczona</string>
+    <string name="fee_side_label">Typ opłaty</string>
+    <string name="fee_side_original">Opłata za przewalutowanie</string>
+    <string name="fee_side_converted">Przeliczona opłata</string>
     <string name="fee_section_global_exchange">Globalna opłata za wymianę</string>
     <string name="fee_section_global_bank">Globalna opłata bankowa/kartowa</string>
     <string name="fee_section_specific_pair">Opłata za wymianę dla określonej pary walut</string>

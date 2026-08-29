@@ -6,9 +6,9 @@
     <string name="fee_title">Döviz işlem ücreti</string>
     <string name="fee_summary">Kur, banka/kart ve belirli para birimi çiftlerine özel ücretleri yönet</string>
     <string name="fee_manager_title">Ücretler</string>
-    <string name="fee_side_label">Ücret tarafı</string>
-    <string name="fee_side_original">Orijinal</string>
-    <string name="fee_side_converted">Dönüştürülmüş</string>
+    <string name="fee_side_label">Ücret türü</string>
+    <string name="fee_side_original">Dönüşüm ücreti</string>
+    <string name="fee_side_converted">Dönüştürülmüş ücret</string>
     <string name="fee_section_global_exchange">Genel kur ücreti</string>
     <string name="fee_section_global_bank">Genel banka/kart ücreti</string>
     <string name="fee_section_specific_pair">Belirli para birimi çifti için kur ücreti</string>

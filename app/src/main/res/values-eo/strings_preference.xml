@@ -6,9 +6,9 @@
     <string name="fee_title">Eksterlanda transakcia kotizo</string>
     <string name="fee_summary">Administri interŝanĝajn, bankajn/kartajn kaj para-specifajn kotizojn</string>
     <string name="fee_manager_title">Kotizoj</string>
-    <string name="fee_side_label">Flanko de la kotizo</string>
-    <string name="fee_side_original">Originala</string>
-    <string name="fee_side_converted">Konvertita</string>
+    <string name="fee_side_label">Speco de kotizo</string>
+    <string name="fee_side_original">Konverta kotizo</string>
+    <string name="fee_side_converted">Konvertita kotizo</string>
     <string name="fee_section_global_exchange">Ĝenerala interŝanĝa kotizo</string>
     <string name="fee_section_global_bank">Ĝenerala banka/karta kotizo</string>
     <string name="fee_section_specific_pair">Kotizo por specifa valuta paro</string>

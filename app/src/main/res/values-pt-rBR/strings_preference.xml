@@ -6,9 +6,9 @@
     <string name="fee_title">Taxa de transação estrangeira</string>
     <string name="fee_summary">Gerencie taxas de câmbio, banco/cartão e específicas por par de moedas</string>
     <string name="fee_manager_title">Taxas</string>
-    <string name="fee_side_label">Lado da taxa</string>
-    <string name="fee_side_original">Original</string>
-    <string name="fee_side_converted">Convertido</string>
+    <string name="fee_side_label">Tipo de taxa</string>
+    <string name="fee_side_original">Taxa de conversão</string>
+    <string name="fee_side_converted">Taxa convertida</string>
     <string name="fee_section_global_exchange">Taxa global de câmbio</string>
     <string name="fee_section_global_bank">Taxa global de banco/cartão</string>
     <string name="fee_section_specific_pair">Taxa de câmbio para par específico</string>

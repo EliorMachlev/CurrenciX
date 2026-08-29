@@ -6,9 +6,9 @@
     <string name="fee_title">Poplatek za zahraniční transakci</string>
     <string name="fee_summary">Spravujte směnné, bankovní/kartové a specifické poplatky pro měnové páry</string>
     <string name="fee_manager_title">Poplatky</string>
-    <string name="fee_side_label">Strana poplatku</string>
-    <string name="fee_side_original">Původní</string>
-    <string name="fee_side_converted">Převedená</string>
+    <string name="fee_side_label">Typ poplatku</string>
+    <string name="fee_side_original">Poplatek za konverzi</string>
+    <string name="fee_side_converted">Převedený poplatek</string>
     <string name="fee_section_global_exchange">Globální směnný poplatek</string>
     <string name="fee_section_global_bank">Globální bankovní/kartový poplatek</string>
     <string name="fee_section_specific_pair">Poplatek pro konkrétní měnový pár</string>
