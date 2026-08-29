@@ -50,10 +50,12 @@ import java.util.UUID
 private const val PREF_KEY_GLOBAL_EXCHANGE = "__global_exchange"
 private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 
-// Sign-toggle button geometry (dp) and text size (sp).
-private const val SIGN_TOGGLE_BUTTON_HEIGHT_DP = 56f
-private const val SIGN_TOGGLE_BUTTON_WIDTH_DP = 80f
-private const val SIGN_TOGGLE_TEXT_SIZE_SP = 20f
+// Sign-toggle button geometry (dp) and text size (sp). Sized to sit inline
+// with the percent EditText — height matches the 48dp WCAG touch-target
+// minimum, width is just enough for the glyph.
+private const val SIGN_TOGGLE_BUTTON_HEIGHT_DP = 48f
+private const val SIGN_TOGGLE_BUTTON_WIDTH_DP = 48f
+private const val SIGN_TOGGLE_TEXT_SIZE_SP = 16f
 
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
