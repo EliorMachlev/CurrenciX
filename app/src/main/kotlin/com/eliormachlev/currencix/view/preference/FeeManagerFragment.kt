@@ -53,6 +53,12 @@ private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
 
+// Vertical break between logical sections of the fee-editor dialog
+// (percent → fee-side, and in the specific-pair dialog also before
+// Both directions / Percent). Named so intent survives future dimen
+// renames.
+private val FEE_EDITOR_SECTION_GAP = R.dimen.margin4x
+
 // Fee percent field: signed decimal percents in [-100, 100]. Sign toggles
 // markup vs discount downstream; abs value is stored on the model.
 private val FEE_PERCENT_RANGE = BigDecimal("-100")..BigDecimal("100")
@@ -560,6 +566,15 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             isChecked = initial
         }
 
+    private fun buildBothWaysSwitch(
+        ctx: Context,
+        initial: Boolean,
+    ): MaterialSwitch =
+        MaterialSwitch(ctx).apply {
+            text = getString(R.string.fee_pair_both_ways)
+            isChecked = initial
+        }
+
     private fun sectionLabel(
         ctx: Context,
         @StringRes res: Int,
@@ -687,7 +702,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         addLabeled(R.string.fee_edit_name, inputs.nameInput)
         middle()
         addLabeled(R.string.fee_edit_percent, inputs.percentInput.view, topGapRes = percentTopGapRes)
-        addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
+        addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = FEE_EDITOR_SECTION_GAP)
     }
 
     private fun showGlobalFeeDialog(
@@ -736,16 +751,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 placeholder,
                 disabled = { pickedFrom },
             ) { pickedTo = it }
-        val bothWays =
-            MaterialSwitch(ctx).apply {
-                text = getString(R.string.fee_pair_both_ways)
-                isChecked = existing?.bothWays == true
-            }
+        val bothWays = buildBothWaysSwitch(ctx, existing?.bothWays == true)
 
-        container.addFeeEditorLayout(inputs, percentTopGapRes = R.dimen.margin4x) {
+        container.addFeeEditorLayout(inputs, percentTopGapRes = FEE_EDITOR_SECTION_GAP) {
             addLabeled(R.string.fee_pair_from, fromButton)
             addLabeled(R.string.fee_pair_to, toButton)
-            addView(bothWays, topGapLayoutParams(R.dimen.margin4x))
+            addView(bothWays, topGapLayoutParams(FEE_EDITOR_SECTION_GAP))
         }
 
         feeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete)
