@@ -43,6 +43,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import java.math.BigDecimal
+import java.text.DecimalFormatSymbols
 import java.util.UUID
 
 // Preference keys for UI-only rows. The leading __ marks them as ignored by
@@ -59,37 +60,77 @@ private const val FLAG_INLINE_HEIGHT_SP = 14f
 // renames.
 private val FEE_EDITOR_SECTION_GAP = R.dimen.margin4x
 
-// Fee percent field: signed decimal percents in [-100, 100] with up to
-// FEE_PERCENT_MAX_FRACTION_DIGITS digits after the separator. Sign
-// toggles markup vs discount downstream; abs value is stored on the
-// model. Both ASCII "." and the current locale's decimal separator are
-// accepted so numeric keypads in comma-decimal locales (de, fr, ru, …)
-// still work.
+// Fee percent field: signed decimals in [-100, 100] with at most
+// FEE_PERCENT_MAX_INT_DIGITS before and FEE_PERCENT_MAX_FRACTION_DIGITS
+// after the decimal separator. Sign toggles markup vs discount downstream;
+// abs value is stored on the model. The current locale's decimal separator
+// is what actually appears in the field, but both "." and "," in typed or
+// pasted input are auto-normalized to it so keyboards / spreadsheet paste
+// from other locales still work.
 private val FEE_PERCENT_RANGE = BigDecimal("-100")..BigDecimal("100")
+private const val FEE_PERCENT_MAX_INT_DIGITS = 3
 private const val FEE_PERCENT_MAX_FRACTION_DIGITS = 3
 private const val FEE_PERCENT_DIGITS = "+-.,0123456789"
-private val FEE_PERCENT_FORMAT =
-    Regex("^[+-]?\\d*(?:[.,]\\d{0,$FEE_PERCENT_MAX_FRACTION_DIGITS})?$")
 
-private fun String.normalizeDecimalSeparator(): String = replace(',', '.')
+private val feePercentSeparator: Char
+    get() = DecimalFormatSymbols.getInstance().decimalSeparator
 
-// Rejects edits that would leave the field outside FEE_PERCENT_RANGE.
-// Empty / trailing sign / trailing separator pass as intermediate typing
-// states (e.g. "-", "1.", "1,") since they aren't yet parseable.
-private val feePercentRangeFilter =
-    InputFilter { source, start, end, dest, dstart, dend ->
-        val result =
-            dest.substring(0, dstart) +
-                source.subSequence(start, end) +
-                dest.substring(dend)
-        when {
-            !FEE_PERCENT_FORMAT.matches(result) -> ""
-            result.isEmpty() || result.last() in "+-.," -> null
-            else -> {
-                val value = result.normalizeDecimalSeparator().toBigDecimalOrNull()
-                if (value != null && value in FEE_PERCENT_RANGE) null else ""
+private fun feePercentFormat(sep: Char): Regex =
+    Regex(
+        "^[+-]?\\d{0,$FEE_PERCENT_MAX_INT_DIGITS}" +
+            "(?:\\Q$sep\\E\\d{0,$FEE_PERCENT_MAX_FRACTION_DIGITS})?$",
+    )
+
+private fun String.normalizeSeparatorsTo(sep: Char): String =
+    if (none { it == '.' || it == ',' }) {
+        this
+    } else {
+        buildString(length) {
+            for (c in this@normalizeSeparatorsTo) {
+                append(if (c == '.' || c == ',') sep else c)
             }
         }
+    }
+
+/**
+ * Rejects edits that would push the field outside FEE_PERCENT_RANGE or
+ * over the digit budget. "." and "," in the incoming source are first
+ * normalized to the current locale's separator so users can type either.
+ * If the resulting text would exceed the digit budget (typical on paste
+ * of e.g. "1234.5678"), we trim characters off the end of the pasted
+ * source until it fits — so paste is graceful instead of silently
+ * rejected. Empty / trailing sign / trailing separator pass as
+ * intermediate typing states (e.g. "-", "1,") since they aren't yet
+ * parseable as a number.
+ */
+private val feePercentInputFilter =
+    InputFilter { source, start, end, dest, dstart, dend ->
+        val sep = feePercentSeparator
+        val format = feePercentFormat(sep)
+        val intermediateChars = "+-$sep"
+        val before = dest.subSequence(0, dstart).toString()
+        val after = dest.subSequence(dend, dest.length).toString()
+        val original = source.subSequence(start, end).toString()
+        var trimmed = original.normalizeSeparatorsTo(sep)
+
+        while (true) {
+            val result = before + trimmed + after
+            val ok =
+                when {
+                    !format.matches(result) -> false
+                    result.isEmpty() || result.last() in intermediateChars -> true
+                    else ->
+                        result
+                            .replace(sep, '.')
+                            .toBigDecimalOrNull()
+                            ?.let { it in FEE_PERCENT_RANGE } == true
+                }
+            if (ok) return@InputFilter if (trimmed == original) null else trimmed
+            if (trimmed.isEmpty()) return@InputFilter ""
+            trimmed = trimmed.dropLast(1)
+        }
+        @Suppress("UNREACHABLE_CODE")
+        null
     }
 
 // Trailing/leading icon buttons in picker rows. 48dp total with 12dp padding
@@ -548,11 +589,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         ctx: Context,
         initialSigned: BigDecimal?,
     ): PercentInput {
+        val sep = feePercentSeparator
         val editText =
             EditText(ctx).apply {
                 keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_DIGITS)
-                filters = arrayOf(feePercentRangeFilter)
-                if (initialSigned != null) setText(initialSigned.toPlainString())
+                filters = arrayOf(feePercentInputFilter)
+                if (initialSigned != null) setText(initialSigned.toPlainString().replace('.', sep))
             }
         val suffix =
             TextView(ctx).apply { text = "%" }
@@ -679,7 +721,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             val parsed =
                 percentInput.editText.text
                     .toString()
-                    .normalizeDecimalSeparator()
+                    .replace(feePercentSeparator, '.')
                     .toBigDecimalOrNull() ?: BigDecimal.ZERO
             return FeeDraft(
                 name = nameInput.text.toString().trim(),
