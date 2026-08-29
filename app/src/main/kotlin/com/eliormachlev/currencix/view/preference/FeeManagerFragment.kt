@@ -10,7 +10,6 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -524,19 +523,21 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     ) {
         val label = sectionLabel(context, labelRes)
         if (topGapRes != null) {
-            addView(
-                label,
-                LinearLayout
-                    .LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ).apply { topMargin = resources.getDimensionPixelSize(topGapRes) },
-            )
+            addView(label, topGapLayoutParams(topGapRes))
         } else {
             addView(label)
         }
         addView(view)
     }
+
+    private fun LinearLayout.topGapLayoutParams(
+        @DimenRes topGapRes: Int,
+    ): LinearLayout.LayoutParams =
+        LinearLayout
+            .LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            ).apply { topMargin = resources.getDimensionPixelSize(topGapRes) }
 
     /**
      * Build the [MaterialAlertDialogBuilder] shared by the two fee-editor
@@ -676,7 +677,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 disabled = { pickedFrom },
             ) { pickedTo = it }
         val bothWays =
-            CheckBox(ctx).apply {
+            MaterialSwitch(ctx).apply {
                 text = getString(R.string.fee_pair_both_ways)
                 isChecked = existing?.bothWays == true
             }
@@ -684,7 +685,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         container.addFeeEditorLayout(inputs) {
             addLabeled(R.string.fee_pair_from, fromButton)
             addLabeled(R.string.fee_pair_to, toButton)
-            addView(bothWays)
+            addView(bothWays, topGapLayoutParams(R.dimen.margin4x))
         }
 
         feeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete)
