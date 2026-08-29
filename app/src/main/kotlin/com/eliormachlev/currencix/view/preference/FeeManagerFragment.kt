@@ -639,7 +639,10 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val activeSwitch: MaterialSwitch,
     ) {
         fun toDraft(): FeeDraft {
-            val parsed = percentInput.editText.text.toString().toBigDecimalOrNull() ?: BigDecimal.ZERO
+            val parsed =
+                percentInput.editText.text
+                    .toString()
+                    .toBigDecimalOrNull() ?: BigDecimal.ZERO
             return FeeDraft(
                 name = nameInput.text.toString().trim(),
                 percent = parsed.abs(),
