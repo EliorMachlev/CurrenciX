@@ -39,7 +39,6 @@ import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import java.math.BigDecimal
@@ -49,13 +48,6 @@ import java.util.UUID
 // the settings back-up/restore pipeline.
 private const val PREF_KEY_GLOBAL_EXCHANGE = "__global_exchange"
 private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
-
-// Sign-toggle button geometry (dp) and text size (sp). Sized to sit inline
-// with the percent EditText — height matches the 48dp WCAG touch-target
-// minimum, width is just enough for the glyph.
-private const val SIGN_TOGGLE_BUTTON_HEIGHT_DP = 48f
-private const val SIGN_TOGGLE_BUTTON_WIDTH_DP = 48f
-private const val SIGN_TOGGLE_TEXT_SIZE_SP = 16f
 
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
@@ -486,13 +478,22 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             if (initial != null) setText(initial)
         }
 
+    /**
+     * Numeric percent field. Signed input is allowed so a leading "−" flips
+     * the fee from markup to discount; unsigned input defaults to markup.
+     * [initialSigned] is the value carrying its own sign — callers compose it
+     * from the model's separate abs-percent / isMarkup fields.
+     */
     private fun buildPercentInput(
         ctx: Context,
-        initial: BigDecimal?,
+        initialSigned: BigDecimal?,
     ): EditText =
         EditText(ctx).apply {
-            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            if (initial != null) setText(initial.toPlainString())
+            inputType =
+                InputType.TYPE_CLASS_NUMBER or
+                InputType.TYPE_NUMBER_FLAG_DECIMAL or
+                InputType.TYPE_NUMBER_FLAG_SIGNED
+            if (initialSigned != null) setText(initialSigned.toPlainString())
         }
 
     private fun buildActiveSwitch(
@@ -538,38 +539,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     }
 
     /**
-     * Combine the sign toggle and percent input into a single horizontal row
-     * so the +/− sits inline with the numeric field. The row's layout
-     * direction is pinned to LTR in both LTR and RTL locales — the sign is a
-     * mathematical prefix to the number, not a directional element, so it
-     * always belongs at the physical left of the value.
-     */
-    private fun buildPercentRow(
-        ctx: Context,
-        inputs: SharedFeeInputs,
-    ): LinearLayout {
-        val gap = resources.getDimensionPixelSize(R.dimen.margin2x)
-        return LinearLayout(ctx).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            layoutDirection = View.LAYOUT_DIRECTION_LTR
-            addView(
-                inputs.signToggle.view,
-                LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                ),
-            )
-            addView(
-                inputs.percentInput,
-                LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
-                    marginStart = gap
-                },
-            )
-        }
-    }
-
-    /**
      * Build the [MaterialAlertDialogBuilder] shared by the two fee-editor
      * dialogs — title, body view, cancel, and optional delete. Callers append
      * their own positive button (each dialog handles OK differently) and call
@@ -609,22 +578,21 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     private data class SharedFeeInputs(
         val nameInput: EditText,
         val percentInput: EditText,
-        val signToggle: SignToggle,
         val feeSideChooser: FeeSideChooser,
         val activeSwitch: MaterialSwitch,
     ) {
-        fun toDraft(): FeeDraft =
-            FeeDraft(
+        fun toDraft(): FeeDraft {
+            val parsed = percentInput.text.toString().toBigDecimalOrNull() ?: BigDecimal.ZERO
+            return FeeDraft(
                 name = nameInput.text.toString().trim(),
-                percent =
-                    percentInput.text
-                        .toString()
-                        .toBigDecimalOrNull()
-                        ?.abs() ?: BigDecimal.ZERO,
-                isMarkup = signToggle.isMarkup(),
+                percent = parsed.abs(),
+                // Zero has no sign meaning — treat as markup so the default
+                // for a blank/zero field matches the previous +/-toggle default.
+                isMarkup = parsed.signum() >= 0,
                 isActive = activeSwitch.isChecked,
                 feeSide = feeSideChooser.current(),
             )
+        }
     }
 
     private fun buildSharedFeeInputs(
@@ -633,11 +601,12 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     ): SharedFeeInputs =
         SharedFeeInputs(
             nameInput = buildNameInput(ctx, existing?.name),
-            percentInput = buildPercentInput(ctx, existing?.percent),
-            signToggle = buildSignToggle(ctx, existing?.isMarkup),
+            percentInput = buildPercentInput(ctx, existing?.signedPercent()),
             feeSideChooser = buildFeeSideChooser(ctx, existing?.feeSide ?: FeeSide.ORIGINAL),
             activeSwitch = buildActiveSwitch(ctx, existing?.isActive != false),
         )
+
+    private fun Fee.signedPercent(): BigDecimal = if (isMarkup) percent else percent.negate()
 
     private fun buildEditorContainer(ctx: Context): LinearLayout =
         paddedDialogContainer(ctx, topPadding = resources.getDimensionPixelSize(R.dimen.margin2x))
@@ -654,7 +623,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
         container.addView(inputs.activeSwitch)
         container.addLabeled(R.string.fee_edit_name, inputs.nameInput)
-        container.addLabeled(R.string.fee_edit_percent, buildPercentRow(ctx, inputs))
+        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
         container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
 
         feeEditorDialog(ctx, titleRes, container, onDelete)
@@ -703,7 +672,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         container.addLabeled(R.string.fee_pair_from, fromButton)
         container.addLabeled(R.string.fee_pair_to, toButton)
         container.addView(bothWays)
-        container.addLabeled(R.string.fee_edit_percent, buildPercentRow(ctx, inputs))
+        container.addLabeled(R.string.fee_edit_percent, inputs.percentInput)
         container.addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = R.dimen.margin4x)
 
         feeEditorDialog(ctx, R.string.fee_section_specific_pair, container, onDelete)
@@ -790,44 +759,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 }
             }
         return FeeSideChooser(row, { picked })
-    }
-
-    /**
-     * Two-button +/− toggle group. The wrapper hides the "is minus selected?"
-     * predicate behind [SignToggle.isMarkup] so callers don't reach into the
-     * button ids directly. Selection defaults to + unless [initialMarkup] is
-     * explicitly false.
-     */
-    private data class SignToggle(
-        val view: MaterialButtonToggleGroup,
-        val plusId: Int,
-        val minusId: Int,
-    ) {
-        fun isMarkup(): Boolean = view.checkedButtonId != minusId
-    }
-
-    private fun buildSignToggle(
-        ctx: Context,
-        initialMarkup: Boolean?,
-    ): SignToggle {
-        val group = MaterialButtonToggleGroup(ctx).apply { isSingleSelection = true }
-        val btnHeight = SIGN_TOGGLE_BUTTON_HEIGHT_DP.dpToPx().toInt()
-        val btnWidth = SIGN_TOGGLE_BUTTON_WIDTH_DP.dpToPx().toInt()
-
-        fun makeButton(labelRes: Int): MaterialButton =
-            outlinedMaterialButton(ctx).apply {
-                id = View.generateViewId()
-                text = getString(labelRes)
-                textSize = SIGN_TOGGLE_TEXT_SIZE_SP
-                insetTop = 0
-                insetBottom = 0
-            }
-        val btnPlus = makeButton(R.string.fee_edit_sign_positive)
-        val btnMinus = makeButton(R.string.fee_edit_sign_negative)
-        group.addView(btnPlus, LinearLayout.LayoutParams(btnWidth, btnHeight))
-        group.addView(btnMinus, LinearLayout.LayoutParams(btnWidth, btnHeight))
-        group.check(if (initialMarkup == false) btnMinus.id else btnPlus.id)
-        return SignToggle(group, btnPlus.id, btnMinus.id)
     }
 
     private fun outlinedMaterialButton(ctx: Context): MaterialButton =
