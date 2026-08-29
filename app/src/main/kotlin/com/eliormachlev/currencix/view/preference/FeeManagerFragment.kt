@@ -81,16 +81,46 @@ private fun feePercentFormat(sep: Char): Regex =
             "(?:\\Q$sep\\E\\d{0,$FEE_PERCENT_MAX_FRACTION_DIGITS})?$",
     )
 
-private fun String.normalizeSeparatorsTo(sep: Char): String =
-    if (none { it == '.' || it == ',' }) {
-        this
-    } else {
-        buildString(length) {
-            for (c in this@normalizeSeparatorsTo) {
-                append(if (c == '.' || c == ',') sep else c)
+// String.replace(char, char) returns the receiver unchanged when no
+// replacement happened, so the two-step version allocates only when a
+// non-locale separator was actually present.
+private fun String.normalizeSeparatorsTo(sep: Char): String = replace('.', sep).replace(',', sep)
+
+// Parses text as typed in the field back to BigDecimal by first pulling
+// the locale separator back to ASCII "." (which is all BigDecimal
+// understands). Shared by the filter's range check and the confirm-time
+// draft build.
+private fun String.toFeePercentOrNull(sep: Char): BigDecimal? = replace(sep, '.').toBigDecimalOrNull()
+
+/**
+ * Longest prefix of [normalized] that, when placed between [before] and
+ * [after], yields a valid fee-percent field. Returns `null` when even the
+ * empty prefix is invalid (never happens from a valid starting state, but
+ * keeps the caller total). Drives the graceful paste-truncation: e.g.
+ * "1234.5678" collapses to "123.567" instead of being rejected outright.
+ */
+private fun firstAcceptableTrim(
+    normalized: String,
+    before: String,
+    after: String,
+    sep: Char,
+): String? {
+    val format = feePercentFormat(sep)
+    val intermediateChars = "+-$sep"
+    var candidate = normalized
+    while (true) {
+        val result = before + candidate + after
+        val ok =
+            when {
+                !format.matches(result) -> false
+                result.isEmpty() || result.last() in intermediateChars -> true
+                else -> result.toFeePercentOrNull(sep)?.let { it in FEE_PERCENT_RANGE } == true
             }
-        }
+        if (ok) return candidate
+        if (candidate.isEmpty()) return null
+        candidate = candidate.dropLast(1)
     }
+}
 
 /**
  * Rejects edits that would push the field outside FEE_PERCENT_RANGE or
@@ -106,31 +136,15 @@ private fun String.normalizeSeparatorsTo(sep: Char): String =
 private val feePercentInputFilter =
     InputFilter { source, start, end, dest, dstart, dend ->
         val sep = feePercentSeparator
-        val format = feePercentFormat(sep)
-        val intermediateChars = "+-$sep"
         val before = dest.subSequence(0, dstart).toString()
         val after = dest.subSequence(dend, dest.length).toString()
         val original = source.subSequence(start, end).toString()
-        var trimmed = original.normalizeSeparatorsTo(sep)
-
-        while (true) {
-            val result = before + trimmed + after
-            val ok =
-                when {
-                    !format.matches(result) -> false
-                    result.isEmpty() || result.last() in intermediateChars -> true
-                    else ->
-                        result
-                            .replace(sep, '.')
-                            .toBigDecimalOrNull()
-                            ?.let { it in FEE_PERCENT_RANGE } == true
-                }
-            if (ok) return@InputFilter if (trimmed == original) null else trimmed
-            if (trimmed.isEmpty()) return@InputFilter ""
-            trimmed = trimmed.dropLast(1)
+        val normalized = original.normalizeSeparatorsTo(sep)
+        when (val accepted = firstAcceptableTrim(normalized, before, after, sep)) {
+            null -> ""
+            original -> null
+            else -> accepted
         }
-        @Suppress("UNREACHABLE_CODE")
-        null
     }
 
 // Trailing/leading icon buttons in picker rows. 48dp total with 12dp padding
@@ -721,8 +735,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             val parsed =
                 percentInput.editText.text
                     .toString()
-                    .replace(feePercentSeparator, '.')
-                    .toBigDecimalOrNull() ?: BigDecimal.ZERO
+                    .toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO
             return FeeDraft(
                 name = nameInput.text.toString().trim(),
                 percent = parsed.abs(),
