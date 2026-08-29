@@ -53,14 +53,15 @@ private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 // Flag glyph height for inline flag spans (sp so it scales with body text).
 private const val FLAG_INLINE_HEIGHT_SP = 14f
 
-// Fee percent field: whole-number percents in [-100, 100]. Sign toggles
+// Fee percent field: signed decimal percents in [-100, 100]. Sign toggles
 // markup vs discount downstream; abs value is stored on the model.
-private val FEE_PERCENT_RANGE = -100..100
-private const val FEE_PERCENT_ALLOWED_CHARS = "+-0123456789"
-private val FEE_PERCENT_FORMAT = Regex("^[+-]?\\d+$")
+private val FEE_PERCENT_RANGE = BigDecimal("-100")..BigDecimal("100")
+private const val FEE_PERCENT_ALLOWED_CHARS = "+-.0123456789"
+private val FEE_PERCENT_FORMAT = Regex("^[+-]?\\d*\\.?\\d*$")
 
 // Rejects edits that would leave the field outside FEE_PERCENT_RANGE.
-// Empty and a lone sign are allowed as intermediate typing states.
+// Empty / trailing sign / trailing dot pass as intermediate typing states
+// (e.g. "-", "1.") since they aren't yet parseable as a decimal.
 private val feePercentRangeFilter =
     InputFilter { source, start, end, dest, dstart, dend ->
         val result =
@@ -68,10 +69,12 @@ private val feePercentRangeFilter =
                 source.subSequence(start, end) +
                 dest.substring(dend)
         when {
-            result.isEmpty() || result == "+" || result == "-" -> null
             !FEE_PERCENT_FORMAT.matches(result) -> ""
-            result.toIntOrNull() in FEE_PERCENT_RANGE -> null
-            else -> ""
+            result.isEmpty() || result.last() in "+-." -> null
+            else -> {
+                val value = result.toBigDecimalOrNull()
+                if (value != null && value in FEE_PERCENT_RANGE) null else ""
+            }
         }
     }
 
@@ -502,7 +505,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
 
     /**
-     * Numeric percent field. Signed integer input in [-100, 100]; a leading
+     * Numeric percent field. Signed decimal input in [-100, 100]; a leading
      * "−" flips the fee from markup to discount, unsigned defaults to markup.
      * [initialSigned] is the value carrying its own sign — callers compose it
      * from the model's separate abs-percent / isMarkup fields.
