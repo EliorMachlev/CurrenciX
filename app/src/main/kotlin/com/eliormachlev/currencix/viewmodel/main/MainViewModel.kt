@@ -26,6 +26,7 @@ import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
 import com.eliormachlev.currencix.util.OPERATOR_PLUS
 import com.eliormachlev.currencix.util.combineWith
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
+import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
@@ -562,75 +563,54 @@ class MainViewModel(
             activeBankId.value,
         )
 
-    /**
-     * The additional "true cost" on the input side: `input * originalStack`.
-     * `null` when no ORIGINAL-side fee applies (stack is trivial).
-     */
-    private val trueCost =
-        object : MediatorLiveData<BigDecimal?>() {
-            var amount: BigDecimal = BigDecimal.ZERO
-            var originalStack: BigDecimal = BigDecimal.ONE
-
-            init {
-                addSource(getCurrentBaseValueAsNumber()) {
-                    amount = it ?: BigDecimal.ZERO
-                    update()
-                }
-                addSource(sideStacks) {
-                    originalStack = it?.original ?: BigDecimal.ONE
-                    update()
-                }
-            }
-
-            private fun update() {
-                this.value =
-                    if (originalStack.compareTo(BigDecimal.ONE) == 0) {
-                        null
-                    } else {
-                        amount.multiply(originalStack, MathContext.DECIMAL128)
-                    }
+    // `source * multiplier(stack)` gated on the stack being non-trivial; null
+    // otherwise. Bridges every per-side fee derivation onto one shape so
+    // "raw total" and "signed delta" vs "abs delta" callers share a pipeline.
+    private fun feeSideLiveData(
+        source: LiveData<BigDecimal>,
+        stackSelector: (SideStacks) -> BigDecimal,
+        multiplier: (BigDecimal) -> BigDecimal,
+    ): LiveData<BigDecimal?> =
+        source.combineWith(sideStacks) { value, sides ->
+            val stack = sides?.let(stackSelector) ?: BigDecimal.ONE
+            if (stack.isNeutralFeeStack()) {
+                null
+            } else {
+                (value ?: BigDecimal.ZERO).multiply(multiplier(stack), MathContext.DECIMAL128)
             }
         }
 
     /**
-     * See [trueCost].
+     * The additional "true cost" on the input side: `input * originalStack`.
+     * `null` when no ORIGINAL-side fee applies.
      */
+    private val trueCost: LiveData<BigDecimal?> =
+        feeSideLiveData(getCurrentBaseValueAsNumber(), { it.original }) { it }
+
     internal fun getTrueCost(): LiveData<BigDecimal?> = trueCost
 
     /**
      * The undiscounted (pre-fee) destination amount: `result * convertedStack`.
-     * `null` when no CONVERTED-side fee applies (stack is trivial).
+     * `null` when no CONVERTED-side fee applies.
      */
-    private val originalValue =
-        object : MediatorLiveData<BigDecimal?>() {
-            var resultVal: BigDecimal = BigDecimal.ZERO
-            var convertedStack: BigDecimal = BigDecimal.ONE
+    private val originalValue: LiveData<BigDecimal?> =
+        feeSideLiveData(getResultAsNumber(), { it.converted }) { it }
 
-            init {
-                addSource(getResultAsNumber()) {
-                    resultVal = it ?: BigDecimal.ZERO
-                    update()
-                }
-                addSource(sideStacks) {
-                    convertedStack = it?.converted ?: BigDecimal.ONE
-                    update()
-                }
-            }
-
-            private fun update() {
-                this.value =
-                    if (convertedStack.compareTo(BigDecimal.ONE) == 0) {
-                        null
-                    } else {
-                        resultVal.multiply(convertedStack, MathContext.DECIMAL128)
-                    }
-            }
-        }
-
-    /**
-     * See [originalValue].
-     */
     internal fun getOriginalValue(): LiveData<BigDecimal?> = originalValue
+
+    // Magnitude of the ORIGINAL-side fee in the input currency. The percent
+    // tail rendered alongside carries the sign, so we `.abs()` at source to
+    // stop every consumer from repeating it.
+    private val originalFeeAmount: LiveData<BigDecimal?> =
+        feeSideLiveData(getCurrentBaseValueAsNumber(), { it.original }) { it.feeStackDelta().abs() }
+
+    internal fun getOriginalFeeAmount(): LiveData<BigDecimal?> = originalFeeAmount
+
+    // See [originalFeeAmount] — same rationale, converted side.
+    private val convertedFeeAmount: LiveData<BigDecimal?> =
+        feeSideLiveData(getResultAsNumber(), { it.converted }) { it.feeStackDelta().abs() }
+
+    internal fun getConvertedFeeAmount(): LiveData<BigDecimal?> = convertedFeeAmount
 
     /**
      * Per-side fee stacks for the current pair.

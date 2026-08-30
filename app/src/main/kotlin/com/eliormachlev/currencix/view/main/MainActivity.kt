@@ -134,6 +134,8 @@ class MainActivity : BaseActivity() {
     private lateinit var tvInfoDate: TextView
     private lateinit var tvTrueCost: TextView
     private lateinit var tvOriginalValue: TextView
+    private lateinit var tvOriginalFeeAmount: TextView
+    private lateinit var tvConvertedFeeAmount: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,6 +160,8 @@ class MainActivity : BaseActivity() {
         this.tvInfoDate = findViewById(R.id.textInfoDate)
         this.tvTrueCost = findViewById(R.id.textTrueCost)
         this.tvOriginalValue = findViewById(R.id.textOriginalValue)
+        this.tvOriginalFeeAmount = findViewById(R.id.textOriginalFeeAmount)
+        this.tvConvertedFeeAmount = findViewById(R.id.textConvertedFeeAmount)
         this.offlineBanner = findViewById(R.id.offlineBanner)
         this.offlineBannerText = findViewById(R.id.offlineBannerText)
 
@@ -262,23 +266,28 @@ class MainActivity : BaseActivity() {
         return if (extra != null) "$main\n$extra" else main
     }
 
-    // Small annotation line(s) shown under the shared result: "True cost" on
-    // the ORIGINAL side, "Original value" on the CONVERTED side. Either or
-    // both may apply, so callers get them joined with a newline.
+    // Small annotation line(s) shown under the shared result. Order matches
+    // the on-screen layout: ORIGINAL side surfaces fee then cost-with-fee;
+    // CONVERTED side surfaces value-before-fee then reduction-fee.
     private fun buildShareFeeExtra(
         base: Currency,
         dest: Currency,
     ): String? {
         val stacks = viewModel.getSideStacks().value
-        val trueCost =
-            viewModel.getTrueCost().value?.let {
-                buildFeeAmountLine(R.string.fee_true_cost_prefix, it, base, stacks?.original)
-            }
-        val originalValue =
-            viewModel.getOriginalValue().value?.let {
-                buildFeeAmountLine(R.string.fee_original_value_prefix, it, dest, stacks?.converted)
-            }
-        return listOfNotNull(trueCost, originalValue).takeIf { it.isNotEmpty() }?.joinToString("\n")
+
+        fun line(
+            prefixRes: Int,
+            value: BigDecimal?,
+            currency: Currency,
+            stack: BigDecimal?,
+        ): String? = value?.let { buildFeeAmountLine(prefixRes, it, currency, stack) }
+        return listOfNotNull(
+            line(R.string.fee_true_cost_prefix, viewModel.getOriginalFeeAmount().value, base, stacks?.original),
+            line(R.string.fee_cost_with_fee_prefix, viewModel.getTrueCost().value, base, null),
+            line(R.string.fee_value_before_fee_prefix, viewModel.getOriginalValue().value, dest, null),
+            line(R.string.fee_original_value_prefix, viewModel.getConvertedFeeAmount().value, dest, stacks?.converted),
+        ).takeIf { it.isNotEmpty() }
+            ?.joinToString("\n")
     }
 
     private fun buildShareFooter(rates: ExchangeRates?): String? {
@@ -495,6 +504,8 @@ class MainActivity : BaseActivity() {
         viewModel.isHapticFeedbackEnabled.observe(this) { hapticEnabled = it }
         viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
         viewModel.getOriginalValue().observe(this) { observeOriginalValue(it) }
+        viewModel.getOriginalFeeAmount().observe(this) { observeOriginalFeeAmount(it) }
+        viewModel.getConvertedFeeAmount().observe(this) { observeConvertedFeeAmount(it) }
         NetworkStatusLiveData(this).observe(this) { online ->
             isOnline = online
             renderOfflineBanner()
@@ -516,9 +527,32 @@ class MainActivity : BaseActivity() {
         offlineBanner.visibility = View.VISIBLE
     }
 
+    // Cost-with-fee and value-before-fee are companion rows to the
+    // conversion/reduction-fee lines, which already carry the percent tail.
+    // Passing null stack suppresses the duplicate.
     private fun observeTrueCost(value: BigDecimal?) {
         renderFeeAmount(
             target = tvTrueCost,
+            prefixRes = R.string.fee_cost_with_fee_prefix,
+            value = value,
+            currency = viewModel.getBaseCurrency().value,
+            stack = null,
+        )
+    }
+
+    private fun observeOriginalValue(value: BigDecimal?) {
+        renderFeeAmount(
+            target = tvOriginalValue,
+            prefixRes = R.string.fee_value_before_fee_prefix,
+            value = value,
+            currency = viewModel.getDestinationCurrency().value,
+            stack = null,
+        )
+    }
+
+    private fun observeOriginalFeeAmount(value: BigDecimal?) {
+        renderFeeAmount(
+            target = tvOriginalFeeAmount,
             prefixRes = R.string.fee_true_cost_prefix,
             value = value,
             currency = viewModel.getBaseCurrency().value,
@@ -526,9 +560,9 @@ class MainActivity : BaseActivity() {
         )
     }
 
-    private fun observeOriginalValue(value: BigDecimal?) {
+    private fun observeConvertedFeeAmount(value: BigDecimal?) {
         renderFeeAmount(
-            target = tvOriginalValue,
+            target = tvConvertedFeeAmount,
             prefixRes = R.string.fee_original_value_prefix,
             value = value,
             currency = viewModel.getDestinationCurrency().value,
@@ -635,6 +669,7 @@ class MainActivity : BaseActivity() {
         // arrival (e.g. process restart, DB load after trueCost fires) still
         // paints the "$" marker.
         observeTrueCost(viewModel.getTrueCost().value)
+        observeOriginalFeeAmount(viewModel.getOriginalFeeAmount().value)
         currency ?: return
         findRateFor(currency)?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
     }
@@ -643,6 +678,7 @@ class MainActivity : BaseActivity() {
         spinnerTo.setSelection(currency)
         spinnerFrom.setDisabledCurrency(currency)
         observeOriginalValue(viewModel.getOriginalValue().value)
+        observeConvertedFeeAmount(viewModel.getConvertedFeeAmount().value)
         currency ?: return
         findRateFor(currency)?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
     }

@@ -22,8 +22,7 @@ fun buildQuickConversionRows(
     to: Currency,
     rates: ExchangeRates,
     sideStacks: SideStacks,
-    truePrefix: String,
-    originalPrefix: String,
+    costWithFeePrefix: String,
 ): List<QuickConversionsRow> {
     val baseRate = rates.rates?.find { it.currency == from }?.value ?: return emptyList()
     val destRate = rates.rates.find { it.currency == to }?.value ?: return emptyList()
@@ -32,7 +31,6 @@ fun buildQuickConversionRows(
     val fromIso = from.iso4217Alpha()
     val toIso = to.iso4217Alpha()
     val fromMarker = from.symbolOrIso()
-    val toMarker = to.symbolOrIso()
     return QUICK_AMOUNTS.map { amountStr ->
         val amt = BigDecimal(amountStr)
         val fair = amt.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
@@ -42,24 +40,17 @@ fun buildQuickConversionRows(
             } else {
                 fair
             }
-        val trueCost =
+        val costWithFee =
             if (hasOriginalFee) {
                 val actual = amt.multiply(sideStacks.original, MathContext.DECIMAL128)
-                truePrefix + ltrIsolate("${actual.formatForRow(ctx)} $fromMarker")
-            } else {
-                null
-            }
-        val originalValue =
-            if (hasConvertedFee) {
-                originalPrefix + ltrIsolate("${fair.formatForRow(ctx)} $toMarker")
+                costWithFeePrefix + ltrIsolate("${actual.formatForRow(ctx)} $fromMarker")
             } else {
                 null
             }
         QuickConversionsRow(
             amountFromText = "$amountStr $fromIso",
             amountToText = "${displayed.formatForRow(ctx)} $toIso",
-            trueCostText = trueCost,
-            originalValueText = originalValue,
+            costWithFeeText = costWithFee,
         )
     }
 }

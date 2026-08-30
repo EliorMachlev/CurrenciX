@@ -58,11 +58,38 @@
             app:layout_constraintTop_toTopOf="@+id/guideline_display"
             app:tint="?attr/colorOnPrimary" />
 
-        <!-- true cost hint *********************************************** -->
+        <!-- fee-amount + cost-with-fee hints ***************************** -->
 
-        <!-- Hangs directly under textFrom so it reads as "input + fee note".
-             textFrom's constraints are independent of this view, so toggling
+        <!-- Fee amount hangs directly under textFrom, cost-with-fee under it.
+             textFrom's constraints are independent of both, so toggling
              visibility here doesn't shift the input row. -->
+        <HorizontalScrollView
+            android:id="@+id/scrollViewOriginalFeeAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin2x"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/spinnerFrom"
+            app:layout_constraintTop_toBottomOf="@id/scrollViewTextFrom">
+
+            <TextView
+                android:id="@+id/textOriginalFeeAmount"
+                style="@style/TextAppearance.Material3.TitleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:accessibilityLiveRegion="polite"
+                android:lines="1"
+                android:textColor="?attr/colorError"
+                android:textDirection="ltr"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="Conversion fee: 0.25 USD (+ 0.5 %)"
+                tools:visibility="visible" />
+
+        </HorizontalScrollView>
+
         <HorizontalScrollView
             android:id="@+id/scrollViewTrueCost"
             android:layout_width="0dp"
@@ -71,7 +98,7 @@
             android:scrollbars="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/spinnerFrom"
-            app:layout_constraintTop_toBottomOf="@id/scrollViewTextFrom">
+            app:layout_constraintTop_toBottomOf="@id/scrollViewOriginalFeeAmount">
 
             <TextView
                 android:id="@+id/textTrueCost"
@@ -85,7 +112,7 @@
                 android:textDirection="ltr"
                 android:textSize="12sp"
                 android:visibility="gone"
-                tools:text="True cost: 102.20 EUR"
+                tools:text="Cost with fee: 50.25 USD (+ 0.5 %)"
                 tools:visibility="visible" />
 
         </HorizontalScrollView>
@@ -249,16 +276,43 @@
                 tools:text="€ 383.99" />
         </HorizontalScrollView>
 
-        <!-- Hangs directly above textTo so it reads as "fee note + total".
-             textTo's constraints are independent of this view, so toggling
+        <!-- Value-before-fee sits above reduction-fee, both stacked above
+             textTo. textTo's constraints are independent of both, so toggling
              visibility here doesn't shift the total row. -->
+        <HorizontalScrollView
+            android:id="@+id/scrollViewConvertedFeeAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin2x"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@id/scrollViewTextTo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/spinnerTo">
+
+            <TextView
+                android:id="@+id/textConvertedFeeAmount"
+                style="@style/TextAppearance.Material3.TitleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:accessibilityLiveRegion="polite"
+                android:lines="1"
+                android:textColor="?attr/colorError"
+                android:textDirection="ltr"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="Reduction fee: 0.50 EUR (− 0.5 %)"
+                tools:visibility="visible" />
+
+        </HorizontalScrollView>
+
         <HorizontalScrollView
             android:id="@+id/scrollViewOriginalValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin2x"
             android:scrollbars="none"
-            app:layout_constraintBottom_toTopOf="@id/scrollViewTextTo"
+            app:layout_constraintBottom_toTopOf="@id/scrollViewConvertedFeeAmount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/spinnerTo">
 
@@ -274,7 +328,7 @@
                 android:textDirection="ltr"
                 android:textSize="12sp"
                 android:visibility="gone"
-                tools:text="Original value: 100.00 EUR"
+                tools:text="Value before fee: 100.00 EUR"
                 tools:visibility="visible" />
 
         </HorizontalScrollView>

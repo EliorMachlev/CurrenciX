@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.view.main.compose.QuickConversionsRow
 import com.eliormachlev.currencix.view.main.compose.buildQuickConversionRows
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import java.math.BigDecimal
 import java.math.RoundingMode
 
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
@@ -29,8 +30,7 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val ctx = requireContext()
         val viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        val truePrefix = getString(R.string.fee_true_cost_prefix)
-        val originalPrefix = getString(R.string.fee_original_value_prefix)
+        val costWithFeePrefix = getString(R.string.fee_cost_with_fee_prefix)
         val emptyText = getString(R.string.quick_conversions_no_rates)
 
         val view =
@@ -62,28 +62,12 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
                                     to = to!!,
                                     rates = rates!!,
                                     sideStacks = stacks,
-                                    truePrefix = truePrefix,
-                                    originalPrefix = originalPrefix,
+                                    costWithFeePrefix = costWithFeePrefix,
                                 )
                             } else {
                                 emptyList()
                             }
-                        val combined = stacks.combined
-                        val feeInfoText =
-                            if (!combined.isNeutralFeeStack()) {
-                                val percent =
-                                    combined.feePercentDelta(
-                                        FEE_PERCENT_DECIMAL_PLACES,
-                                        RoundingMode.HALF_UP,
-                                    )
-                                val sign = if (percent.signum() >= 0) "+" else ""
-                                getString(
-                                    R.string.quick_conversions_fees_applied,
-                                    "$sign$percent%",
-                                )
-                            } else {
-                                null
-                            }
+                        val feeInfoText = buildFeeInfoText(stacks.original, stacks.converted)
                         QuickConversionsContent(
                             from = from,
                             to = to,
@@ -107,5 +91,31 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
 
     private fun openFeesSettings(ctx: Context) {
         startActivity(PreferenceActivity.feesIntent(ctx))
+    }
+
+    // Split the top-of-dialog "fees applied" line by side so users see which
+    // is the conversion (ORIGINAL) fee vs the reduction (CONVERTED) fee,
+    // instead of a single combined percentage that hides the breakdown.
+    private fun buildFeeInfoText(
+        original: BigDecimal,
+        converted: BigDecimal,
+    ): String? {
+        val parts =
+            listOfNotNull(
+                feeSegment(original, R.string.quick_conversions_fee_conversion),
+                feeSegment(converted, R.string.quick_conversions_fee_reduction),
+            )
+        if (parts.isEmpty()) return null
+        return getString(R.string.quick_conversions_fees_applied, parts.joinToString(", "))
+    }
+
+    private fun feeSegment(
+        stack: BigDecimal,
+        templateRes: Int,
+    ): String? {
+        if (stack.isNeutralFeeStack()) return null
+        val percent = stack.feePercentDelta(FEE_PERCENT_DECIMAL_PLACES, RoundingMode.HALF_UP)
+        val sign = if (percent.signum() >= 0) "+" else ""
+        return getString(templateRes, "$sign$percent%")
     }
 }

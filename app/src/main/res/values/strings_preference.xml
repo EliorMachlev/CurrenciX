@@ -25,6 +25,8 @@
     <string name="fee_pair_pick_currency">Select currency</string>
     <string name="fee_true_cost_prefix">"Conversion fee: "</string>
     <string name="fee_original_value_prefix">"Reduction fee: "</string>
+    <string name="fee_cost_with_fee_prefix">"Cost with fee: "</string>
+    <string name="fee_value_before_fee_prefix">"Value before fee: "</string>
     <string name="fee_side_summary_original">Displayed converted amount stays at mid-market; fees are shown separately as \"Conversion fee\".</string>
     <string name="fee_side_summary_converted">Fees are baked into the displayed converted amount.</string>
     <string name="fee_empty">No fees yet</string>

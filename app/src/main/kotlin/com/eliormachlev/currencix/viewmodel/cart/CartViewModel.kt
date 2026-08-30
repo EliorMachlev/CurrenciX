@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.map
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -16,10 +15,7 @@ import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.evaluateCalculatorExpression
-import com.eliormachlev.currencix.util.isNeutralFeeStack
 import java.math.BigDecimal
-import java.math.MathContext
 import java.time.LocalDate
 import java.util.UUID
 
@@ -27,40 +23,14 @@ class CartViewModel(
     app: Application,
 ) : AndroidViewModel(app) {
     private val db = Database(app)
+    private val ratesCache = CartRatesCache(db)
 
     // The session cart. Backed by the `_cart_current_json` pref, so it
     // survives process death but can be cleared explicitly.
     private val current: MutableLiveData<SavedCart> = MutableLiveData(loadCurrentOrEmpty())
 
-    private val fees: LiveData<List<Fee>> = db.getFees()
-    private val rates: LiveData<ExchangeRates?> = db.getExchangeRates()
-
-    // Cache the last-known fee list and rates so synchronous callers (share
-    // text, fee line rendering) can reflect the same totals the UI shows
-    // without a suspend hop.
-    private var lastFees: List<Fee> = emptyList()
-    private var lastRates: ExchangeRates? = null
-    private var lastActiveExchangeId: String? = db.getActiveExchangeIdBlocking()
-    private var lastActiveBankId: String? = db.getActiveBankIdBlocking()
-    private val feesObserver = Observer<List<Fee>> { lastFees = it }
-    private val ratesObserver = Observer<ExchangeRates?> { lastRates = it }
-    private val activeExchange: LiveData<String?> = db.getActiveExchangeId()
-    private val activeBank: LiveData<String?> = db.getActiveBankId()
-    private val activeExchangeObserver = Observer<String?> { lastActiveExchangeId = it }
-    private val activeBankObserver = Observer<String?> { lastActiveBankId = it }
-
-    init {
-        fees.observeForever(feesObserver)
-        rates.observeForever(ratesObserver)
-        activeExchange.observeForever(activeExchangeObserver)
-        activeBank.observeForever(activeBankObserver)
-    }
-
     override fun onCleared() {
-        fees.removeObserver(feesObserver)
-        rates.removeObserver(ratesObserver)
-        activeExchange.removeObserver(activeExchangeObserver)
-        activeBank.removeObserver(activeBankObserver)
+        ratesCache.clear()
         super.onCleared()
     }
 
@@ -75,9 +45,9 @@ class CartViewModel(
      */
     fun getSavedCartsSnapshot(): List<SavedCart> = db.getSavedCartsBlocking()
 
-    fun getFees(): LiveData<List<Fee>> = fees
+    fun getFees(): LiveData<List<Fee>> = ratesCache.fees
 
-    fun getExchangeRates(): LiveData<ExchangeRates?> = rates
+    fun getExchangeRates(): LiveData<ExchangeRates?> = ratesCache.rates
 
     /**
      * Currently-selected keyboard type. Same source of truth as the main
@@ -91,16 +61,41 @@ class CartViewModel(
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
 
-    fun getBaseCurrency(): LiveData<Currency> = current.map { resolveCurrency(it.currency) }
+    // Memoize the derived LiveData instances. Returning a fresh instance from
+    // each getter left synchronous `.value` reads at null (the caller's instance
+    // has no active observer, so its MediatorLiveData never advances) — which
+    // silently zeroed the fee-extra rows even though the observed instance had
+    // the right value.
+    private val baseCurrencyLive: LiveData<Currency> by lazy { current.map { resolveCurrency(it.currency) } }
+    private val destinationCurrencyLive: LiveData<Currency> by lazy {
+        current.map { resolveCurrency(it.destinationCurrency ?: it.currency) }
+    }
+    private val subtotalLive: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
+    private val totalLive: LiveData<BigDecimal> by lazy {
+        MediatorLiveData<BigDecimal>().apply {
+            val recompute = {
+                value =
+                    totalOf(
+                        current.value,
+                        ratesCache.fees.value.orEmpty(),
+                        ratesCache.rates.value,
+                        ratesCache.lastActiveExchangeId,
+                        ratesCache.lastActiveBankId,
+                    )
+            }
+            addSource(current) { recompute() }
+            addSource(ratesCache.fees) { recompute() }
+            addSource(ratesCache.rates) { recompute() }
+        }
+    }
+
+    fun getBaseCurrency(): LiveData<Currency> = baseCurrencyLive
 
     /** Destination for the running total. Falls back to base when unset. */
-    fun getDestinationCurrency(): LiveData<Currency> =
-        current.map {
-            resolveCurrency(it.destinationCurrency ?: it.currency)
-        }
+    fun getDestinationCurrency(): LiveData<Currency> = destinationCurrencyLive
 
     /** Subtotal from summing every item's evaluated expression in the base currency. */
-    fun getSubtotal(): LiveData<BigDecimal> = current.map { subtotalOf(it) }
+    fun getSubtotal(): LiveData<BigDecimal> = subtotalLive
 
     /**
      * Total in the destination currency: subtotal → converted at cached rates
@@ -108,15 +103,7 @@ class CartViewModel(
      * change the displayed total; they surface separately as "true cost" on
      * the base side.
      */
-    fun getTotal(): LiveData<BigDecimal> =
-        MediatorLiveData<BigDecimal>().apply {
-            val recompute = {
-                value = totalOf(current.value, fees.value.orEmpty(), rates.value)
-            }
-            addSource(current) { recompute() }
-            addSource(fees) { recompute() }
-            addSource(rates) { recompute() }
-        }
+    fun getTotal(): LiveData<BigDecimal> = totalLive
 
     fun addItem(
         name: String,
@@ -323,7 +310,13 @@ class CartViewModel(
     fun currentSideStacks(): SideStacks {
         val cart = current.value ?: return SideStacks.NEUTRAL
         val (base, dest) = cart.resolvedPair()
-        return FeeCalculator.sideStacks(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
+        return FeeCalculator.sideStacks(
+            ratesCache.lastFees,
+            base,
+            dest,
+            ratesCache.lastActiveExchangeId,
+            ratesCache.lastActiveBankId,
+        )
     }
 
     /** Snapshot used by the "Share" flow — computed against the latest fees & rates. */
@@ -333,8 +326,15 @@ class CartViewModel(
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
         val (base, dest) = cart.resolvedPair()
-        val stacks = FeeCalculator.sideStacks(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
-        val converted = convertAmount(subtotal, base, dest, lastRates)
+        val stacks =
+            FeeCalculator.sideStacks(
+                ratesCache.lastFees,
+                base,
+                dest,
+                ratesCache.lastActiveExchangeId,
+                ratesCache.lastActiveBankId,
+            )
+        val converted = convertAmount(subtotal, base, dest, ratesCache.lastRates)
         val total = applyConvertedStack(converted, stacks.converted)
         return CartSnapshot(
             cart,
@@ -343,11 +343,15 @@ class CartViewModel(
             converted,
             stacks,
             total,
-            lastFees,
+            ratesCache.lastFees,
             base,
             dest,
-            providerName = lastRates?.provider?.getName()?.toString(),
-            ratesDate = lastRates?.date,
+            providerName =
+                ratesCache.lastRates
+                    ?.provider
+                    ?.getName()
+                    ?.toString(),
+            ratesDate = ratesCache.lastRates?.date,
         )
     }
 
@@ -417,80 +421,6 @@ class CartViewModel(
             createdAt = System.currentTimeMillis(),
         )
     }
-
-    private fun subtotalOf(cart: SavedCart?): BigDecimal {
-        cart ?: return BigDecimal.ZERO
-        return cart.items.fold(BigDecimal.ZERO) { acc, item -> acc + evaluateItem(item) }
-    }
-
-    private fun totalOf(
-        cart: SavedCart?,
-        feeList: List<Fee>,
-        rates: ExchangeRates?,
-    ): BigDecimal {
-        cart ?: return BigDecimal.ZERO
-        val (base, dest) = cart.resolvedPair()
-        val subtotal = subtotalOf(cart)
-        val converted = convertAmount(subtotal, base, dest, rates)
-        val stacks = FeeCalculator.sideStacks(feeList, base, dest, lastActiveExchangeId, lastActiveBankId)
-        return applyConvertedStack(converted, stacks.converted)
-    }
-
-    // A cart's persisted currency pair, resolved once (both ISO strings become
-    // [Currency]s) with the "unset destination collapses to base" fallback. Every
-    // pipeline stage — fee stack, share snapshot, total math — needs this shape.
-    private fun SavedCart.resolvedPair(): Pair<Currency, Currency> {
-        val base = resolveCurrency(currency)
-        val dest = destinationCurrency?.let { resolveCurrency(it) } ?: base
-        return base to dest
-    }
-
-    /**
-     * Fold the CONVERTED-side [convertedStack] into [converted]. A neutral
-     * stack (no CONVERTED-side fees) leaves the destination amount alone;
-     * otherwise divide so the fee reduces what you'd actually receive.
-     * ORIGINAL-side fees don't participate here — they surface as "true
-     * cost" on the input side instead.
-     */
-    private fun applyConvertedStack(
-        converted: BigDecimal,
-        convertedStack: BigDecimal,
-    ): BigDecimal {
-        if (convertedStack.isNeutralFeeStack()) return converted
-        return converted.divide(convertedStack, MathContext.DECIMAL128)
-    }
-
-    /**
-     * Persisted ISO codes are strings, so unknown values (legacy carts,
-     * imported files) can slip through and return `null` from
-     * [Currency.fromString]. Fall back to USD in that case so downstream
-     * math and UI stay non-null instead of exploding on an edge case.
-     */
-    private fun resolveCurrency(iso: String): Currency = Currency.fromString(iso) ?: Currency.USD
-
-    /**
-     * Convert [amount] from [base] to [dest] using cached rates. Returns
-     * [amount] unchanged when base == dest or when the pair's rate is
-     * missing — the latter avoids showing "0" while rates trickle in.
-     */
-    private fun convertAmount(
-        amount: BigDecimal,
-        base: Currency,
-        dest: Currency,
-        rates: ExchangeRates?,
-    ): BigDecimal {
-        if (base == dest) return amount
-        val baseRate = rates?.rates?.find { it.currency == base }?.value ?: return amount
-        val destRate = rates.rates.find { it.currency == dest }?.value ?: return amount
-        return amount.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
-    }
-}
-
-fun evaluateItem(item: CartItem): BigDecimal {
-    val raw = item.expression.trim()
-    if (raw.isEmpty()) return BigDecimal.ZERO
-    return runCatching { raw.evaluateCalculatorExpression().toBigDecimal() }
-        .getOrDefault(BigDecimal.ZERO)
 }
 
 data class CartSnapshot(

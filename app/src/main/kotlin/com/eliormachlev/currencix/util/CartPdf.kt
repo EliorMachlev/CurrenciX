@@ -73,18 +73,18 @@ private fun CartSnapshot.drawSnapshot(
     evaluatedItems.forEach { (item, value) ->
         val label = item.name.ifBlank { item.expression }
         canvas.drawText(label, PAGE_MARGIN_PT, y, bodyPaint)
-        canvas.drawText(value.toCartExportString(), rightX, y, bodyRight)
+        canvas.drawText(value.toCartDisplayString(), rightX, y, bodyRight)
         y += LINE_HEIGHT_PT
     }
 
     y += SECTION_GAP_PT
     canvas.drawText("Subtotal", PAGE_MARGIN_PT, y, headerPaint.apply { textAlign = Paint.Align.LEFT })
-    canvas.drawText("${subtotal.toCartExportString()} ${baseCurrency.iso4217Alpha()}", rightX, y, bodyRight)
+    canvas.drawText("${subtotal.toCartDisplayString()} ${baseCurrency.iso4217Alpha()}", rightX, y, bodyRight)
     y += LINE_HEIGHT_PT
 
     if (isConverting) {
         canvas.drawText("Converted", PAGE_MARGIN_PT, y, bodyPaint)
-        canvas.drawText("${convertedSubtotal.toCartExportString()} ${destinationCurrency.iso4217Alpha()}", rightX, y, bodyRight)
+        canvas.drawText("${convertedSubtotal.toCartDisplayString()} ${destinationCurrency.iso4217Alpha()}", rightX, y, bodyRight)
         y += LINE_HEIGHT_PT
     }
     val combinedStack = sideStacks.combined
@@ -97,7 +97,7 @@ private fun CartSnapshot.drawSnapshot(
     y += SECTION_GAP_PT
     canvas.drawText("Total", PAGE_MARGIN_PT, y, headerPaint.apply { textAlign = Paint.Align.LEFT })
     canvas.drawText(
-        "${total.toCartExportString()} ${destinationCurrency.iso4217Alpha()}",
+        "${total.toCartDisplayString()} ${destinationCurrency.iso4217Alpha()}",
         rightX,
         y,
         paint(BODY_TEXT_SIZE, bold = true).apply { textAlign = Paint.Align.RIGHT },

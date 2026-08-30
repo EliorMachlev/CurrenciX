@@ -44,8 +44,7 @@ private const val ICON_BUTTON_SIZE_DP = 48
 data class QuickConversionsRow(
     val amountFromText: String,
     val amountToText: String,
-    val trueCostText: String?,
-    val originalValueText: String?,
+    val costWithFeeText: String?,
 )
 
 @Composable
@@ -205,7 +204,7 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                 .fillMaxWidth()
                 .padding(vertical = dimensionResource(id = R.dimen.margin1x))
                 // Merge so TalkBack reads "$FROM equals $TO" as one item rather
-                // than swiping through five separate text nodes per row.
+                // than swiping through several separate text nodes per row.
                 .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -217,9 +216,9 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                 text = row.amountFromText,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            if (row.trueCostText != null) {
+            if (row.costWithFeeText != null) {
                 Text(
-                    text = row.trueCostText,
+                    text = row.costWithFeeText,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -242,13 +241,6 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                 text = row.amountToText,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            if (row.originalValueText != null) {
-                Text(
-                    text = row.originalValueText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
         }
     }
 }
