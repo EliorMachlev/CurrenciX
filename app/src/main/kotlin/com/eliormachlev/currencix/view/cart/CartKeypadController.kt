@@ -190,8 +190,10 @@ class CartKeypadController(
     }
 
     // Route each keypad button press through the currently-active state, with
-    // a haptic tap on the button that fired.
-    fun forwardKeypadAction(
+    // a haptic tap on the button that fired. Internal because
+    // [CalculatorInputState] is module-scoped — callers are all in the same
+    // module (the reflection targets on [CartActivity]).
+    internal fun forwardKeypadAction(
         view: View,
         action: (CalculatorInputState) -> Unit,
     ) {
