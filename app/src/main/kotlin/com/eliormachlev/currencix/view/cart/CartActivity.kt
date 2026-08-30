@@ -11,7 +11,6 @@ import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatButton
 import androidx.compose.ui.platform.ComposeView
@@ -26,20 +25,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.map
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
-import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
-import com.eliormachlev.currencix.util.feeStackDelta
-import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.hapticTap
-import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
-import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
@@ -48,8 +42,6 @@ import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
 import com.google.android.material.button.MaterialButton
-import java.math.BigDecimal
-import java.math.MathContext
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
@@ -71,23 +63,9 @@ class CartActivity : BaseActivity() {
     private lateinit var fileIo: CartFileIo
     private lateinit var shareCoordinator: CartShareCoordinator
     private lateinit var saveLoadCoordinator: CartSaveLoadCoordinator
+    private lateinit var footerBinding: CartFooterBinding
 
     private lateinit var itemsView: ComposeView
-    private lateinit var subtotalLabel: TextView
-    private lateinit var subtotalExtra: View
-    private lateinit var subtotalExtraLabel: TextView
-    private lateinit var subtotalExtraValue: TextView
-    private lateinit var subtotalFee: View
-    private lateinit var subtotalFeeLabel: TextView
-    private lateinit var subtotalFeeValue: TextView
-    private lateinit var feeLine: TextView
-    private lateinit var totalLabel: TextView
-    private lateinit var totalExtra: View
-    private lateinit var totalExtraLabel: TextView
-    private lateinit var totalExtraValue: TextView
-    private lateinit var totalFee: View
-    private lateinit var totalFeeLabel: TextView
-    private lateinit var totalFeeValue: TextView
     private lateinit var spinnerFrom: SearchableSpinner
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var swapButton: ImageButton
@@ -180,21 +158,12 @@ class CartActivity : BaseActivity() {
             )
 
         this.itemsView = findViewById(R.id.cart_items)
-        this.subtotalLabel = findViewById(R.id.cart_subtotal_value)
-        this.subtotalExtra = findViewById(R.id.cart_subtotal_extra)
-        this.subtotalExtraLabel = findViewById(R.id.cart_subtotal_extra_label)
-        this.subtotalExtraValue = findViewById(R.id.cart_subtotal_extra_value)
-        this.subtotalFee = findViewById(R.id.cart_subtotal_fee)
-        this.subtotalFeeLabel = findViewById(R.id.cart_subtotal_fee_label)
-        this.subtotalFeeValue = findViewById(R.id.cart_subtotal_fee_value)
-        this.feeLine = findViewById(R.id.cart_fee_line)
-        this.totalLabel = findViewById(R.id.cart_total_value)
-        this.totalExtra = findViewById(R.id.cart_total_extra)
-        this.totalExtraLabel = findViewById(R.id.cart_total_extra_label)
-        this.totalExtraValue = findViewById(R.id.cart_total_extra_value)
-        this.totalFee = findViewById(R.id.cart_total_fee)
-        this.totalFeeLabel = findViewById(R.id.cart_total_fee_label)
-        this.totalFeeValue = findViewById(R.id.cart_total_fee_value)
+        this.footerBinding =
+            CartFooterBinding(
+                root = findViewById(R.id.cart_root),
+                ctx = this,
+                viewModel = viewModel,
+            )
         this.spinnerFrom = findViewById(R.id.cart_spinner_from)
         this.spinnerTo = findViewById(R.id.cart_spinner_to)
         this.swapButton = findViewById(R.id.cart_swap)
@@ -344,7 +313,7 @@ class CartActivity : BaseActivity() {
             val currentIds = cart.items.map { it.id }.toSet()
             pendingNames.keys.retainAll(currentIds)
             activeItemId.value?.let { if (it !in currentIds) closeKeypad() }
-            updateFeeVisuals()
+            footerBinding.refreshFeeAnnotations()
         }
         viewModel.getBaseCurrency().observe(this) {
             spinnerFrom.setSelection(it)
@@ -356,15 +325,9 @@ class CartActivity : BaseActivity() {
             spinnerTo.setSelection(it)
             spinnerFrom.setDisabledCurrency(it)
         }
-        viewModel.getSubtotal().observe(this) { value ->
-            subtotalLabel.text = formatAmount(value, viewModel.getBaseCurrency().value)
-            updateFeeExtras()
-        }
-        viewModel.getTotal().observe(this) { value ->
-            totalLabel.text = formatAmount(value, viewModel.getDestinationCurrency().value)
-            updateFeeExtras()
-        }
-        viewModel.getFees().observe(this) { updateFeeVisuals() }
+        viewModel.getSubtotal().observe(this) { footerBinding.onSubtotalChanged(it) }
+        viewModel.getTotal().observe(this) { footerBinding.onTotalChanged(it) }
+        viewModel.getFees().observe(this) { footerBinding.refreshFeeAnnotations() }
         viewModel.getExchangeRates().observe(this) { rates ->
             // Feed the same rate list the spinner shows on the main screen so
             // its picker shows flags, ISO codes, and (when enabled) preview
@@ -375,131 +338,9 @@ class CartActivity : BaseActivity() {
             // adapter, which drops the previous selection unless we re-set it.
             spinnerFrom.setSelection(viewModel.getBaseCurrency().value)
             spinnerTo.setSelection(viewModel.getDestinationCurrency().value)
-            updateFeeLine()
+            footerBinding.refreshFeeAnnotations()
         }
     }
-
-    // Both the arrow/percentage line and the "other side" total need to re-run
-    // whenever fees or the cart's currencies change — bundle so callers don't
-    // have to know which slot depends on what.
-    private fun updateFeeVisuals() {
-        updateFeeLine()
-        updateFeeExtras()
-    }
-
-    private fun updateFeeLine() {
-        // Only surface the combined percent when *both* sides carry a fee —
-        // otherwise the per-side annotation block already spells out the same
-        // number ("Fee: +2%") and this row is a duplicate.
-        val stacks = viewModel.currentSideStacks()
-        val bothSides = !stacks.original.isNeutralFeeStack() && !stacks.converted.isNeutralFeeStack()
-        if (!bothSides) {
-            feeLine.visibility = View.GONE
-            return
-        }
-        feeLine.text = getString(R.string.cart_fee_line, stacks.combined.toCartFeePercentDisplay())
-        feeLine.visibility = View.VISIBLE
-    }
-
-    /**
-     * Show both anchor values for each per-side fee: the fee amount itself
-     * ("Conversion fee" / "Reduction fee") and the effective total-with-fee /
-     * pre-fee value ("Cost with fee" / "Value before fee"). Ordering matches
-     * the on-screen layout: fee then cost-with-fee on ORIGINAL; value-before-
-     * fee then reduction-fee on CONVERTED. Either or both blocks may hide.
-     */
-    private fun updateFeeExtras() {
-        val stacks = viewModel.currentSideStacks()
-        renderFeeExtraRow(
-            container = subtotalFee,
-            labelView = subtotalFeeLabel,
-            valueView = subtotalFeeValue,
-            prefixRes = R.string.fee_true_cost_prefix,
-            stack = stacks.original,
-            base = viewModel.getSubtotal().value,
-            currency = viewModel.getBaseCurrency().value,
-            mode = FeeRowMode.DELTA,
-        )
-        renderFeeExtraRow(
-            container = subtotalExtra,
-            labelView = subtotalExtraLabel,
-            valueView = subtotalExtraValue,
-            prefixRes = R.string.fee_cost_with_fee_prefix,
-            stack = stacks.original,
-            base = viewModel.getSubtotal().value,
-            currency = viewModel.getBaseCurrency().value,
-            mode = FeeRowMode.TOTAL,
-        )
-        renderFeeExtraRow(
-            container = totalExtra,
-            labelView = totalExtraLabel,
-            valueView = totalExtraValue,
-            prefixRes = R.string.fee_value_before_fee_prefix,
-            stack = stacks.converted,
-            base = viewModel.getTotal().value,
-            currency = viewModel.getDestinationCurrency().value,
-            mode = FeeRowMode.TOTAL,
-        )
-        renderFeeExtraRow(
-            container = totalFee,
-            labelView = totalFeeLabel,
-            valueView = totalFeeValue,
-            prefixRes = R.string.fee_original_value_prefix,
-            stack = stacks.converted,
-            base = viewModel.getTotal().value,
-            currency = viewModel.getDestinationCurrency().value,
-            mode = FeeRowMode.DELTA,
-        )
-    }
-
-    // Hidden when the [stack] is trivial. TOTAL renders `base * stack` (the
-    // effective with-fee cost or pre-fee value); DELTA renders `|base *
-    // (stack - 1)|` (the fee magnitude — the percent tail already carries
-    // the sign so we avoid a double negative). Only DELTA rows show the
-    // percent — TOTAL rows sit next to a DELTA row that already spells it
-    // out, so restating it here would just be a duplicate.
-    private fun renderFeeExtraRow(
-        container: View,
-        labelView: TextView,
-        valueView: TextView,
-        prefixRes: Int,
-        stack: BigDecimal,
-        base: BigDecimal?,
-        currency: Currency?,
-        mode: FeeRowMode,
-    ) {
-        if (stack.isNeutralFeeStack()) {
-            container.visibility = View.GONE
-            return
-        }
-        val multiplier =
-            when (mode) {
-                FeeRowMode.TOTAL -> stack
-                FeeRowMode.DELTA -> stack.feeStackDelta()
-            }
-        val raw = (base ?: BigDecimal.ZERO).multiply(multiplier, MathContext.DECIMAL128)
-        val adjusted = if (mode == FeeRowMode.DELTA) raw.abs() else raw
-        labelView.text = stripLabelSeparator(getString(prefixRes))
-        val amountText = formatAmount(adjusted, currency)
-        valueView.text =
-            when (mode) {
-                FeeRowMode.TOTAL -> amountText
-                FeeRowMode.DELTA -> getString(R.string.cart_fee_extra_value, amountText, stack.toCartFeePercentDisplay())
-            }
-        container.visibility = View.VISIBLE
-    }
-
-    private enum class FeeRowMode { TOTAL, DELTA }
-
-    // Existing prefix strings end with a locale-specific ": " / " : " / "：" for
-    // inline use. When we're showing them as a standalone left-aligned label,
-    // strip the trailing separator so it doesn't dangle before the right column.
-    private fun stripLabelSeparator(text: String): String = text.trimEnd(' ', '\u00A0', ':', '：')
-
-    private fun formatAmount(
-        value: BigDecimal?,
-        currency: Currency?,
-    ): String = formatCartAmount(value, currency)
 
     private fun confirmClear() {
         showCartChoiceExplainerDialog(
