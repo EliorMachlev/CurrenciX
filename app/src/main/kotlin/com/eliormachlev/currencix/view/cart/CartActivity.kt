@@ -39,22 +39,21 @@ import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
-import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.choiceExplainerRow
-import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.feeStackDelta
+import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.paddedDialogContainer
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
-import com.eliormachlev.currencix.util.roundForDisplay
+import com.eliormachlev.currencix.util.toCartDisplayString
+import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.util.toCsv
-import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.util.toPdfBytes
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
@@ -72,12 +71,6 @@ import java.math.MathContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-// Decimal places for cart display; matches the main-screen convention where
-// "money-facing" values render to two places by default. Aliased onto the
-// shared export scale so on-screen numbers and exported artefacts always
-// round identically.
-private const val CART_DISPLAY_SCALE = CART_EXPORT_DISPLAY_SCALE
 
 // Suffix used when SAF asks for a suggested filename.
 private const val EXPORT_FILE_MIME = "application/json"
@@ -440,7 +433,7 @@ class CartActivity : BaseActivity() {
             feeLine.visibility = View.GONE
             return
         }
-        feeLine.text = getString(R.string.cart_fee_line, stacks.combined.toFeePercentDisplay())
+        feeLine.text = getString(R.string.cart_fee_line, stacks.combined.toCartFeePercentDisplay())
         feeLine.visibility = View.VISIBLE
     }
 
@@ -527,7 +520,7 @@ class CartActivity : BaseActivity() {
         valueView.text =
             when (mode) {
                 FeeRowMode.TOTAL -> amountText
-                FeeRowMode.DELTA -> getString(R.string.cart_fee_extra_value, amountText, stack.toFeePercentDisplay())
+                FeeRowMode.DELTA -> getString(R.string.cart_fee_extra_value, amountText, stack.toCartFeePercentDisplay())
             }
         container.visibility = View.VISIBLE
     }
@@ -542,27 +535,7 @@ class CartActivity : BaseActivity() {
     private fun formatAmount(
         value: BigDecimal?,
         currency: Currency?,
-    ): String {
-        val amount =
-            (value ?: BigDecimal.ZERO)
-                .cartScale()
-                .toHumanReadableNumber(this, decimalPlaces = CART_DISPLAY_SCALE)
-        val marker = currency?.symbolOrIso()
-        return if (marker.isNullOrEmpty()) amount else "$amount $marker"
-    }
-
-    // Round to the two-decimal "money" scale used across the cart UI. Extracted
-    // so display, share text, and fee-percent all pin to the same rounding.
-    private fun BigDecimal.cartScale(): BigDecimal = roundForDisplay(CART_DISPLAY_SCALE)
-
-    // Rounded, plain string in the cart's display scale — the form used
-    // wherever we drop a number into shared text (share sheet).
-    private fun BigDecimal.toCartDisplayString(): String = cartScale().toPlainString()
-
-    // Percentage delta of the fee stack ("2.50" for a 1.025 stack), pinned to
-    // the cart's display scale. Shared by the on-screen fee line and the
-    // "Fees:" row in shared text.
-    private fun BigDecimal.toFeePercentDisplay(): String = feePercentDelta(CART_DISPLAY_SCALE).toPlainString()
+    ): String = formatCartAmount(value, currency)
 
     // Fallback to the localised "My cart" name when the user hasn't given
     // the cart one. Shared by Save-as, Rename, and Export.
@@ -941,7 +914,7 @@ class CartActivity : BaseActivity() {
             }
             val combinedStack = snapshot.sideStacks.combined
             if (!combinedStack.isNeutralFeeStack()) {
-                appendLine(getString(R.string.cart_share_fees, combinedStack.toFeePercentDisplay()))
+                appendLine(getString(R.string.cart_share_fees, combinedStack.toCartFeePercentDisplay()))
             }
             append(getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
         }

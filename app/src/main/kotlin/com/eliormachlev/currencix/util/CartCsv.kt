@@ -26,18 +26,18 @@ fun CartSnapshot.toCsv(
         append(csvRow("", ""))
         append(csvRow("Item", "Expression", "Value (${baseCurrency.iso4217Alpha()})"))
         evaluatedItems.forEach { (item, value) ->
-            append(csvRow(item.name, item.expression, value.toCartExportString()))
+            append(csvRow(item.name, item.expression, value.toCartDisplayString()))
         }
         append(csvRow("", "", ""))
-        append(csvRow("Subtotal", "", subtotal.toCartExportString()))
+        append(csvRow("Subtotal", "", subtotal.toCartDisplayString()))
         if (isConverting) {
-            append(csvRow("Converted (${destinationCurrency.iso4217Alpha()})", "", convertedSubtotal.toCartExportString()))
+            append(csvRow("Converted (${destinationCurrency.iso4217Alpha()})", "", convertedSubtotal.toCartDisplayString()))
         }
         val combinedStack = sideStacks.combined
         if (!combinedStack.isNeutralFeeStack()) {
             append(csvRow("Fees (${combinedStack.feePercentDelta().toPlainString()}%)", "", ""))
         }
-        append(csvRow("Total (${destinationCurrency.iso4217Alpha()})", "", total.toCartExportString()))
+        append(csvRow("Total (${destinationCurrency.iso4217Alpha()})", "", total.toCartDisplayString()))
     }
 
 private fun csvRow(vararg cells: String): String =

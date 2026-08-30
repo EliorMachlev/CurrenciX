@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.util
 
 import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
-import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -37,6 +36,3 @@ fun CartSnapshot.cartExportMeta(generatedAt: LocalDateTime): List<Pair<CartExpor
         ratesDate?.let { add(CartExportField.RATES_DATE to it.toString()) }
         add(CartExportField.EXPORTED_AT to generatedAt.format(CART_EXPORT_TIMESTAMP_FORMAT))
     }
-
-/** Rounded, plain-string form of a monetary value at [CART_EXPORT_DISPLAY_SCALE]. */
-fun BigDecimal.toCartExportString(): String = roundForDisplay(CART_EXPORT_DISPLAY_SCALE).toPlainString()
