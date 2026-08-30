@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view.cart
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,8 +15,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.compose.runtime.mutableStateListOf
@@ -37,7 +34,6 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
-import com.eliormachlev.currencix.repository.CartFileResult
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
@@ -45,12 +41,14 @@ import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.feeStackDelta
+import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.paddedDialogContainer
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
+import com.eliormachlev.currencix.util.sanitizeForFilename
 import com.eliormachlev.currencix.util.toCartDisplayString
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.util.toCsv
@@ -68,37 +66,11 @@ import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
 import com.google.android.material.button.MaterialButton
 import java.math.BigDecimal
 import java.math.MathContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
-// Suffix used when SAF asks for a suggested filename.
-private const val EXPORT_FILE_MIME = "application/json"
-private const val EXPORT_FILE_EXT = ".json"
-
-// Filename-safe timestamp used both as the JSON-export suffix and as the
-// fallback name for share artefacts (CSV/PDF) when a cart has no user name.
-// Stateless formatter, no need to instantiate per call.
-private val FILENAME_TIMESTAMP: SimpleDateFormat = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US)
-
-private fun filenameTimestampNow(): String = FILENAME_TIMESTAMP.format(Date())
 
 private const val CSV_MIME = "text/csv"
 private const val CSV_EXT = ".csv"
 private const val PDF_MIME = "application/pdf"
 private const val PDF_EXT = ".pdf"
-
-// Chars that can trip up FileProvider / OSes when embedded in a filename.
-// Collapsed to a single underscore so a cart named "Café / July 2026" becomes
-// "Café_July_2026", not "Café___July_2026".
-private val FILENAME_UNSAFE = Regex("""[\\/:*?"<>|\p{Cntrl}]+""")
-private val FILENAME_WHITESPACE = Regex("""\s+""")
-
-private fun String.sanitizeForFilename(): String =
-    replace(FILENAME_UNSAFE, "_")
-        .replace(FILENAME_WHITESPACE, "_")
-        .trim('_', '.')
-        .ifBlank { "cart" }
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
@@ -117,6 +89,7 @@ private const val KEYPAD_DRAG_DISMISS_FRACTION = 0.35f
 class CartActivity : BaseActivity() {
     private lateinit var viewModel: CartViewModel
     private lateinit var exporter: CartExporter
+    private lateinit var fileIo: CartFileIo
 
     private lateinit var itemsView: ComposeView
     private lateinit var subtotalLabel: TextView
@@ -191,9 +164,6 @@ class CartActivity : BaseActivity() {
         viewModel.keyboardType.map { CalculatorKeyListener.forKeyboardType(it) }
     }
 
-    private lateinit var exportLauncher: ActivityResultLauncher<String>
-    private lateinit var importLauncher: ActivityResultLauncher<Array<String>>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
@@ -205,6 +175,14 @@ class CartActivity : BaseActivity() {
 
         this.viewModel = ViewModelProvider(this)[CartViewModel::class.java]
         this.exporter = CartExporter(this)
+        this.fileIo =
+            CartFileIo(
+                activity = this,
+                viewModel = viewModel,
+                exporter = exporter,
+                flushPendingCommits = ::flushPendingCommits,
+                snackbar = ::showSnackbar,
+            )
 
         this.itemsView = findViewById(R.id.cart_items)
         this.subtotalLabel = findViewById(R.id.cart_subtotal_value)
@@ -307,15 +285,6 @@ class CartActivity : BaseActivity() {
             true
         }
 
-        exportLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.CreateDocument(EXPORT_FILE_MIME),
-            ) { uri -> uri?.let(::doExport) }
-        importLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.OpenDocument(),
-            ) { uri -> uri?.let(::doImport) }
-
         observe()
     }
 
@@ -347,11 +316,11 @@ class CartActivity : BaseActivity() {
                 true
             }
             R.id.cart_export -> {
-                launchExport()
+                fileIo.launchExport()
                 true
             }
             R.id.cart_import -> {
-                launchImport()
+                fileIo.launchImport()
                 true
             }
             R.id.cart_clear -> {
@@ -718,54 +687,6 @@ class CartActivity : BaseActivity() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()
         dialog.show()
-    }
-
-    private fun launchExport() {
-        flushPendingCommits()
-        val name =
-            viewModel
-                .getCurrentCart()
-                .value
-                ?.name
-                ?.ifBlank { null } ?: "cart"
-        exportLauncher.launch("$name-${filenameTimestampNow()}$EXPORT_FILE_EXT")
-    }
-
-    private fun launchImport() {
-        importLauncher.launch(arrayOf(EXPORT_FILE_MIME))
-    }
-
-    private fun doExport(uri: Uri) {
-        val cart = viewModel.getCurrentCart().value ?: return
-        // Copy so the exported file always has a real name, even if the
-        // user hasn't gone through Save-as yet.
-        val toExport =
-            cart.copy(
-                name = cart.name.orDefaultCartName(),
-                createdAt = System.currentTimeMillis(),
-            )
-        when (val res = exporter.export(uri, toExport)) {
-            is CartFileResult.Success -> showSnackbar(getString(R.string.cart_export_ok))
-            is CartFileResult.Failure ->
-                showSnackbar(
-                    getString(R.string.cart_export_error, res.message),
-                )
-            is CartFileResult.Loaded -> Unit
-        }
-    }
-
-    private fun doImport(uri: Uri) {
-        when (val res = exporter.import(uri)) {
-            is CartFileResult.Loaded -> {
-                viewModel.setCurrent(res.cart)
-                showSnackbar(getString(R.string.cart_import_ok))
-            }
-            is CartFileResult.Failure ->
-                showSnackbar(
-                    getString(R.string.cart_import_error, res.message),
-                )
-            is CartFileResult.Success -> Unit
-        }
     }
 
     private fun confirmClear() {
