@@ -4,7 +4,6 @@ import android.content.Context
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.SideStacks
-import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -17,20 +16,13 @@ private const val ROW_DEFAULT_DECIMALS = 2
 private const val ROW_SMALL_AMOUNT_DECIMALS = 4
 private val ROW_SMALL_AMOUNT_THRESHOLD: BigDecimal = BigDecimal.ONE
 
-data class FeeRowPrefixes(
-    val fee: String,
-    val costWithFee: String,
-    val valueBeforeFee: String,
-    val reduction: String,
-)
-
 fun buildQuickConversionRows(
     ctx: Context,
     from: Currency,
     to: Currency,
     rates: ExchangeRates,
     sideStacks: SideStacks,
-    prefixes: FeeRowPrefixes,
+    costWithFeePrefix: String,
 ): List<QuickConversionsRow> {
     val baseRate = rates.rates?.find { it.currency == from }?.value ?: return emptyList()
     val destRate = rates.rates.find { it.currency == to }?.value ?: return emptyList()
@@ -39,9 +31,6 @@ fun buildQuickConversionRows(
     val fromIso = from.iso4217Alpha()
     val toIso = to.iso4217Alpha()
     val fromMarker = from.symbolOrIso()
-    val toMarker = to.symbolOrIso()
-    val originalDelta = sideStacks.original.feeStackDelta()
-    val convertedDelta = sideStacks.converted.feeStackDelta()
     return QUICK_AMOUNTS.map { amountStr ->
         val amt = BigDecimal(amountStr)
         val fair = amt.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
@@ -51,40 +40,17 @@ fun buildQuickConversionRows(
             } else {
                 fair
             }
-        val originalFee =
-            if (hasOriginalFee) {
-                val fee = amt.multiply(originalDelta, MathContext.DECIMAL128).abs()
-                prefixes.fee + ltrIsolate("${fee.formatForRow(ctx)} $fromMarker")
-            } else {
-                null
-            }
         val costWithFee =
             if (hasOriginalFee) {
                 val actual = amt.multiply(sideStacks.original, MathContext.DECIMAL128)
-                prefixes.costWithFee + ltrIsolate("${actual.formatForRow(ctx)} $fromMarker")
-            } else {
-                null
-            }
-        val valueBeforeFee =
-            if (hasConvertedFee) {
-                prefixes.valueBeforeFee + ltrIsolate("${fair.formatForRow(ctx)} $toMarker")
-            } else {
-                null
-            }
-        val convertedFee =
-            if (hasConvertedFee) {
-                val fee = displayed.multiply(convertedDelta, MathContext.DECIMAL128).abs()
-                prefixes.reduction + ltrIsolate("${fee.formatForRow(ctx)} $toMarker")
+                costWithFeePrefix + ltrIsolate("${actual.formatForRow(ctx)} $fromMarker")
             } else {
                 null
             }
         QuickConversionsRow(
             amountFromText = "$amountStr $fromIso",
             amountToText = "${displayed.formatForRow(ctx)} $toIso",
-            originalFeeText = originalFee,
             costWithFeeText = costWithFee,
-            valueBeforeFeeText = valueBeforeFee,
-            convertedFeeText = convertedFee,
         )
     }
 }

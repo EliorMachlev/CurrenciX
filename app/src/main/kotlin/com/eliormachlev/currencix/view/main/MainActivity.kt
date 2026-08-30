@@ -283,8 +283,8 @@ class MainActivity : BaseActivity() {
         ): String? = value?.let { buildFeeAmountLine(prefixRes, it, currency, stack) }
         return listOfNotNull(
             line(R.string.fee_true_cost_prefix, viewModel.getOriginalFeeAmount().value, base, stacks?.original),
-            line(R.string.fee_cost_with_fee_prefix, viewModel.getTrueCost().value, base, stacks?.original),
-            line(R.string.fee_value_before_fee_prefix, viewModel.getOriginalValue().value, dest, stacks?.converted),
+            line(R.string.fee_cost_with_fee_prefix, viewModel.getTrueCost().value, base, null),
+            line(R.string.fee_value_before_fee_prefix, viewModel.getOriginalValue().value, dest, null),
             line(R.string.fee_original_value_prefix, viewModel.getConvertedFeeAmount().value, dest, stacks?.converted),
         ).takeIf { it.isNotEmpty() }
             ?.joinToString("\n")
@@ -527,13 +527,16 @@ class MainActivity : BaseActivity() {
         offlineBanner.visibility = View.VISIBLE
     }
 
+    // Cost-with-fee and value-before-fee are companion rows to the
+    // conversion/reduction-fee lines, which already carry the percent tail.
+    // Passing null stack suppresses the duplicate.
     private fun observeTrueCost(value: BigDecimal?) {
         renderFeeAmount(
             target = tvTrueCost,
             prefixRes = R.string.fee_cost_with_fee_prefix,
             value = value,
             currency = viewModel.getBaseCurrency().value,
-            stack = viewModel.getSideStacks().value?.original,
+            stack = null,
         )
     }
 
@@ -543,7 +546,7 @@ class MainActivity : BaseActivity() {
             prefixRes = R.string.fee_value_before_fee_prefix,
             value = value,
             currency = viewModel.getDestinationCurrency().value,
-            stack = viewModel.getSideStacks().value?.converted,
+            stack = null,
         )
     }
 

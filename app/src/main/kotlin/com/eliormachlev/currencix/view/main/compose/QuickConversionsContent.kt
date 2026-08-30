@@ -44,10 +44,7 @@ private const val ICON_BUTTON_SIZE_DP = 48
 data class QuickConversionsRow(
     val amountFromText: String,
     val amountToText: String,
-    val originalFeeText: String?,
     val costWithFeeText: String?,
-    val valueBeforeFeeText: String?,
-    val convertedFeeText: String?,
 )
 
 @Composable
@@ -207,7 +204,7 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                 .fillMaxWidth()
                 .padding(vertical = dimensionResource(id = R.dimen.margin1x))
                 // Merge so TalkBack reads "$FROM equals $TO" as one item rather
-                // than swiping through five separate text nodes per row.
+                // than swiping through several separate text nodes per row.
                 .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -219,13 +216,6 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
                 text = row.amountFromText,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            if (row.originalFeeText != null) {
-                Text(
-                    text = row.originalFeeText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
             if (row.costWithFeeText != null) {
                 Text(
                     text = row.costWithFeeText,
@@ -247,20 +237,6 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start,
         ) {
-            if (row.valueBeforeFeeText != null) {
-                Text(
-                    text = row.valueBeforeFeeText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-            if (row.convertedFeeText != null) {
-                Text(
-                    text = row.convertedFeeText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
             Text(
                 text = row.amountToText,
                 style = MaterialTheme.typography.bodyLarge,
