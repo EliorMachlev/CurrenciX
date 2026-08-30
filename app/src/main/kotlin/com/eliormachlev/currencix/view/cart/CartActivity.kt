@@ -498,7 +498,9 @@ class CartActivity : BaseActivity() {
     // Hidden when the [stack] is trivial. TOTAL renders `base * stack` (the
     // effective with-fee cost or pre-fee value); DELTA renders `|base *
     // (stack - 1)|` (the fee magnitude — the percent tail already carries
-    // the sign so we avoid a double negative).
+    // the sign so we avoid a double negative). Only DELTA rows show the
+    // percent — TOTAL rows sit next to a DELTA row that already spells it
+    // out, so restating it here would just be a duplicate.
     private fun renderFeeExtraRow(
         container: View,
         labelView: TextView,
@@ -521,12 +523,12 @@ class CartActivity : BaseActivity() {
         val raw = (base ?: BigDecimal.ZERO).multiply(multiplier, MathContext.DECIMAL128)
         val adjusted = if (mode == FeeRowMode.DELTA) raw.abs() else raw
         labelView.text = stripLabelSeparator(getString(prefixRes))
+        val amountText = formatAmount(adjusted, currency)
         valueView.text =
-            getString(
-                R.string.cart_fee_extra_value,
-                formatAmount(adjusted, currency),
-                stack.toFeePercentDisplay(),
-            )
+            when (mode) {
+                FeeRowMode.TOTAL -> amountText
+                FeeRowMode.DELTA -> getString(R.string.cart_fee_extra_value, amountText, stack.toFeePercentDisplay())
+            }
         container.visibility = View.VISIBLE
     }
 
