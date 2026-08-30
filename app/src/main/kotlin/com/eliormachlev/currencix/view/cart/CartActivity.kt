@@ -10,13 +10,10 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.ViewCompat
@@ -31,7 +28,6 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.KeyboardType
-import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CalculatorKeyListener
@@ -47,8 +43,6 @@ import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
-import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
-import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
@@ -76,6 +70,7 @@ class CartActivity : BaseActivity() {
     private lateinit var exporter: CartExporter
     private lateinit var fileIo: CartFileIo
     private lateinit var shareCoordinator: CartShareCoordinator
+    private lateinit var saveLoadCoordinator: CartSaveLoadCoordinator
 
     private lateinit var itemsView: ComposeView
     private lateinit var subtotalLabel: TextView
@@ -176,6 +171,13 @@ class CartActivity : BaseActivity() {
                 flushPendingCommits = ::flushPendingCommits,
                 snackbar = ::showSnackbar,
             )
+        this.saveLoadCoordinator =
+            CartSaveLoadCoordinator(
+                activity = this,
+                viewModel = viewModel,
+                flushPendingCommits = ::flushPendingCommits,
+                snackbar = ::showSnackbar,
+            )
 
         this.itemsView = findViewById(R.id.cart_items)
         this.subtotalLabel = findViewById(R.id.cart_subtotal_value)
@@ -214,7 +216,7 @@ class CartActivity : BaseActivity() {
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() = attemptClose()
+                override fun handleOnBackPressed() = saveLoadCoordinator.attemptClose()
             },
         )
         keypadBackCallback =
@@ -289,7 +291,7 @@ class CartActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when (item.itemId) {
             android.R.id.home -> {
-                attemptClose()
+                saveLoadCoordinator.attemptClose()
                 true
             }
             R.id.cart_share -> {
@@ -297,15 +299,15 @@ class CartActivity : BaseActivity() {
                 true
             }
             R.id.cart_save -> {
-                saveOrPromptForName()
+                saveLoadCoordinator.saveOrPromptForName()
                 true
             }
             R.id.cart_save_as -> {
-                showSaveAsDialog()
+                saveLoadCoordinator.showSaveAsDialog()
                 true
             }
             R.id.cart_load -> {
-                showLoadDialog()
+                saveLoadCoordinator.showLoadDialog()
                 true
             }
             R.id.cart_export -> {
@@ -498,189 +500,6 @@ class CartActivity : BaseActivity() {
         value: BigDecimal?,
         currency: Currency?,
     ): String = formatCartAmount(value, currency)
-
-    // Fallback to the localised "My cart" name when the user hasn't given
-    // the cart one. Shared by Save-as, Rename, and Export.
-    private fun String.orDefaultCartName(): String = ifBlank { getString(R.string.cart_default_saved_name) }
-
-    private fun showSaveAsDialog(onSaved: () -> Unit = {}) {
-        if (guardEmptyForSave()) return
-        showNameInputDialog(
-            titleRes = R.string.cart_menu_save_as,
-            initial =
-                viewModel
-                    .getCurrentCart()
-                    .value
-                    ?.name
-                    .orEmpty(),
-        ) { name ->
-            // "Save as" always creates a fresh entry so users can keep
-            // multiple snapshots of the same cart under different names.
-            flushPendingCommits()
-            viewModel.saveCurrentAs(name)
-            showSnackbar(getString(R.string.cart_saved_toast, name))
-            onSaved()
-        }
-    }
-
-    /**
-     * "Save" menu action — overwrites the current saved cart in-place. Falls
-     * back to Save-as when there's nothing to overwrite (never saved yet).
-     */
-    private fun saveOrPromptForName(onSaved: () -> Unit = {}) {
-        if (guardEmptyForSave()) return
-        flushPendingCommits()
-        if (viewModel.saveCurrent()) {
-            val name =
-                viewModel
-                    .getCurrentCart()
-                    .value
-                    ?.name
-                    .orEmpty()
-            showSnackbar(getString(R.string.cart_saved_toast, name))
-            onSaved()
-        } else {
-            showSaveAsDialog(onSaved = onSaved)
-        }
-    }
-
-    // Shared "one-line text input" dialog for cart name prompts (Save-as,
-    // Rename). Blank input collapses to the localised default cart name so
-    // every entry point produces a nameable, findable saved cart.
-    private fun showNameInputDialog(
-        titleRes: Int,
-        initial: String,
-        onOk: (String) -> Unit,
-    ) {
-        val input =
-            EditText(this).apply {
-                hint = getString(R.string.cart_save_name_hint)
-                setText(initial)
-            }
-        AlertDialog
-            .Builder(this)
-            .setTitle(titleRes)
-            .setView(input)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                onOk(
-                    input.text
-                        .toString()
-                        .trim()
-                        .orDefaultCartName(),
-                )
-            }.setNegativeButton(android.R.string.cancel, null)
-            .show()
-    }
-
-    // Refuse to persist an empty cart — matches Share's "nothing to share"
-    // guard so both write paths behave consistently. Returns true when the
-    // caller should abort.
-    private fun guardEmptyForSave(): Boolean {
-        val items = viewModel.getCurrentCart().value?.items
-        if (items.isNullOrEmpty()) {
-            showSnackbar(getString(R.string.cart_save_empty))
-            return true
-        }
-        return false
-    }
-
-    /**
-     * Gate a destructive action (switching carts, closing the screen) behind
-     * an unsaved-changes prompt. Presents Save (overwrite — only when the
-     * cart has a persisted counterpart), Save as (new entry), Continue
-     * (discard), and Cancel (abort). Each save path invokes [action] after
-     * the write completes.
-     */
-    private fun confirmUnsavedThen(action: () -> Unit) {
-        // An empty cart has nothing worth saving, so skip the prompt entirely
-        // even if a persisted counterpart differs — the destructive action
-        // would just replace an empty working set with something else.
-        val items = viewModel.getCurrentCart().value?.items
-        if (items.isNullOrEmpty() || !viewModel.hasUnsavedChanges()) {
-            action()
-            return
-        }
-        val canOverwrite =
-            viewModel
-                .getCurrentCart()
-                .value
-                ?.id
-                ?.isNotEmpty() == true
-        val options = mutableListOf<Pair<String, () -> Unit>>()
-        if (canOverwrite) {
-            options += getString(R.string.cart_unsaved_save) to { saveOrPromptForName(action) }
-        }
-        options += getString(R.string.cart_unsaved_save_as) to { showSaveAsDialog(onSaved = action) }
-        options += getString(R.string.cart_unsaved_discard) to {
-            viewModel.discardChanges()
-            action()
-        }
-        options += getString(R.string.cart_unsaved_continue) to action
-        AlertDialog
-            .Builder(this)
-            .setTitle(R.string.cart_unsaved_title)
-            .setItems(options.map { it.first }.toTypedArray()) { _, which ->
-                options[which].second.invoke()
-            }.setNegativeButton(android.R.string.cancel, null)
-            .show()
-    }
-
-    private fun attemptClose() = confirmUnsavedThen { finish() }
-
-    private fun showLoadDialog() {
-        val initial = viewModel.getSavedCartsSnapshot()
-        if (initial.isEmpty()) {
-            showSnackbar(getString(R.string.cart_no_saved))
-            return
-        }
-        val saved = mutableStateListOf<SavedCart>().apply { addAll(initial) }
-        lateinit var dialog: AlertDialog
-        val composeView =
-            ComposeView(this).apply {
-                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
-                setContent {
-                    AppTheme {
-                        SavedCartsList(
-                            items = saved,
-                            onPick = { cart ->
-                                dialog.dismiss()
-                                confirmUnsavedThen { viewModel.loadSaved(cart.id) }
-                            },
-                            onRename = { cart ->
-                                showNameInputDialog(
-                                    titleRes = R.string.cart_rename_title,
-                                    initial = cart.name,
-                                ) { name ->
-                                    viewModel.renameSaved(cart.id, name)
-                                    val idx = saved.indexOfFirst { it.id == cart.id }
-                                    if (idx >= 0) saved[idx] = cart.copy(name = name)
-                                }
-                            },
-                            onDelete = { cart ->
-                                AlertDialog
-                                    .Builder(this@CartActivity)
-                                    .setTitle(cart.name.ifBlank { cart.id.take(8) })
-                                    .setMessage(getString(R.string.cart_delete_confirm, cart.name))
-                                    .setPositiveButton(R.string.cart_delete_confirm_button) { _, _ ->
-                                        viewModel.deleteSaved(cart.id)
-                                        saved.removeAll { it.id == cart.id }
-                                        if (saved.isEmpty()) dialog.dismiss()
-                                    }.setNegativeButton(android.R.string.cancel, null)
-                                    .show()
-                            },
-                        )
-                    }
-                }
-            }
-        dialog =
-            AlertDialog
-                .Builder(this)
-                .setTitle(R.string.cart_menu_load)
-                .setView(composeView)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create()
-        dialog.show()
-    }
 
     private fun confirmClear() {
         showCartChoiceExplainerDialog(
