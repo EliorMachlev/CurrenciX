@@ -101,7 +101,7 @@
     <string name="graph_highlight_period_change_key" translatable="false">KEY_GRAPH_HIGHLIGHT_PERIOD_CHANGE</string>
     <string name="graph_highlight_period_change_title">Highlight year/month change</string>
     <string name="graph_highlight_period_change_summary">Draw vertical guide lines where the year or month changes across the chart.</string>
-    <string name="category_appearance">Appearance</string>
+    <string name="category_appearance">Look &amp; Feel</string>
     <string name="system_default">System default</string>
     <string name="theme_key" translatable="false">KEY_THEME</string>
     <string name="theme_title">Design</string>

@@ -10,13 +10,6 @@
             android:summary="@string/fee_summary"
             android:title="@string/fee_title" />
 
-        <SwitchPreferenceCompat
-            android:icon="@drawable/ic_conversion_preview"
-            android:key="@string/previewConversion_key"
-            android:summary="@string/previewConversion_summary"
-            android:title="@string/previewConversion_title"
-            app:defaultValue="false" />
-
         <Preference
             android:icon="@drawable/ic_keyboard_extended"
             android:key="@string/keyboard_key"
@@ -32,21 +25,6 @@
             android:title="@string/decimal_places_title"
             app:useSimpleSummaryProvider="true" />
 
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:icon="@drawable/ic_vibration"
-            android:key="@string/haptic_feedback_key"
-            android:summary="@string/haptic_feedback_summary"
-            android:title="@string/haptic_feedback_title" />
-
-        <ListPreference
-            android:defaultValue="dd/MM/yy HH:mm"
-            android:entries="@array/date_format_names"
-            android:entryValues="@array/date_format_values"
-            android:icon="@drawable/ic_event"
-            android:key="@string/date_format_key"
-            android:title="@string/date_format_title" />
-
         <Preference
             android:icon="@drawable/ic_backup"
             android:key="@string/backup_key"
@@ -54,24 +32,8 @@
             android:title="@string/backup_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/category_appearance"
+    <PreferenceCategory android:title="@string/category_api"
         app:allowDividerAbove="false">
-        <ListPreference
-            android:defaultValue="3"
-            android:entries="@array/theme_names"
-            android:entryValues="@array/theme_values"
-            android:icon="@drawable/ic_theme"
-            android:key="@string/theme_key"
-            android:title="@string/theme_title"
-            app:useSimpleSummaryProvider="true" />
-        <com.eliormachlev.currencix.view.preference.LanguagePickerPreference
-            android:icon="@drawable/ic_language"
-            android:key="@string/language_key"
-            android:title="@string/language_title" />
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/category_api">
         <com.eliormachlev.currencix.view.preference.ProviderPickerPreference
             android:icon="@drawable/ic_data_provider"
             android:key="@string/api_key"
@@ -95,6 +57,42 @@
             android:key="@string/key_refreshPeriod"
             android:selectable="false"
             android:title="@string/api_refreshPeriod_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/category_appearance"
+        app:allowDividerAbove="false">
+        <ListPreference
+            android:defaultValue="3"
+            android:entries="@array/theme_names"
+            android:entryValues="@array/theme_values"
+            android:icon="@drawable/ic_theme"
+            android:key="@string/theme_key"
+            android:title="@string/theme_title"
+            app:useSimpleSummaryProvider="true" />
+        <com.eliormachlev.currencix.view.preference.LanguagePickerPreference
+            android:icon="@drawable/ic_language"
+            android:key="@string/language_key"
+            android:title="@string/language_title" />
+        <ListPreference
+            android:defaultValue="dd/MM/yy HH:mm"
+            android:entries="@array/date_format_names"
+            android:entryValues="@array/date_format_values"
+            android:icon="@drawable/ic_event"
+            android:key="@string/date_format_key"
+            android:title="@string/date_format_title" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:icon="@drawable/ic_vibration"
+            android:key="@string/haptic_feedback_key"
+            android:summary="@string/haptic_feedback_summary"
+            android:title="@string/haptic_feedback_title" />
+        <SwitchPreferenceCompat
+            android:icon="@drawable/ic_conversion_preview"
+            android:key="@string/previewConversion_key"
+            android:summary="@string/previewConversion_summary"
+            android:title="@string/previewConversion_title"
+            app:defaultValue="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
