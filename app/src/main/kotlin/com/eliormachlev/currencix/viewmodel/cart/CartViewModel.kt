@@ -91,24 +91,17 @@ class CartViewModel(
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
 
-    fun getBaseCurrency(): LiveData<Currency> = current.map { resolveCurrency(it.currency) }
-
-    /** Destination for the running total. Falls back to base when unset. */
-    fun getDestinationCurrency(): LiveData<Currency> =
-        current.map {
-            resolveCurrency(it.destinationCurrency ?: it.currency)
-        }
-
-    /** Subtotal from summing every item's evaluated expression in the base currency. */
-    fun getSubtotal(): LiveData<BigDecimal> = current.map { subtotalOf(it) }
-
-    /**
-     * Total in the destination currency: subtotal → converted at cached rates
-     * → reduced by the CONVERTED-side fee stack. ORIGINAL-side fees don't
-     * change the displayed total; they surface separately as "true cost" on
-     * the base side.
-     */
-    fun getTotal(): LiveData<BigDecimal> =
+    // Memoize the derived LiveData instances. Returning a fresh instance from
+    // each getter left synchronous `.value` reads at null (the caller's instance
+    // has no active observer, so its MediatorLiveData never advances) — which
+    // silently zeroed the fee-extra rows even though the observed instance had
+    // the right value.
+    private val baseCurrency: LiveData<Currency> by lazy { current.map { resolveCurrency(it.currency) } }
+    private val destinationCurrency: LiveData<Currency> by lazy {
+        current.map { resolveCurrency(it.destinationCurrency ?: it.currency) }
+    }
+    private val subtotal: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
+    private val total: LiveData<BigDecimal> by lazy {
         MediatorLiveData<BigDecimal>().apply {
             val recompute = {
                 value = totalOf(current.value, fees.value.orEmpty(), rates.value)
@@ -117,6 +110,23 @@ class CartViewModel(
             addSource(fees) { recompute() }
             addSource(rates) { recompute() }
         }
+    }
+
+    fun getBaseCurrency(): LiveData<Currency> = baseCurrency
+
+    /** Destination for the running total. Falls back to base when unset. */
+    fun getDestinationCurrency(): LiveData<Currency> = destinationCurrency
+
+    /** Subtotal from summing every item's evaluated expression in the base currency. */
+    fun getSubtotal(): LiveData<BigDecimal> = subtotal
+
+    /**
+     * Total in the destination currency: subtotal → converted at cached rates
+     * → reduced by the CONVERTED-side fee stack. ORIGINAL-side fees don't
+     * change the displayed total; they surface separately as "true cost" on
+     * the base side.
+     */
+    fun getTotal(): LiveData<BigDecimal> = total
 
     fun addItem(
         name: String,
