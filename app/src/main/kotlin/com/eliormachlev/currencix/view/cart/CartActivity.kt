@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.cart
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
@@ -38,21 +37,13 @@ import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
-import com.eliormachlev.currencix.util.buildCartShareChooser
-import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.feeStackDelta
-import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
-import com.eliormachlev.currencix.util.paddedDialogContainer
 import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
-import com.eliormachlev.currencix.util.sanitizeForFilename
-import com.eliormachlev.currencix.util.toCartDisplayString
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
-import com.eliormachlev.currencix.util.toCsv
-import com.eliormachlev.currencix.util.toPdfBytes
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
@@ -60,17 +51,11 @@ import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
-import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
 import com.google.android.material.button.MaterialButton
 import java.math.BigDecimal
 import java.math.MathContext
-
-private const val CSV_MIME = "text/csv"
-private const val CSV_EXT = ".csv"
-private const val PDF_MIME = "application/pdf"
-private const val PDF_EXT = ".pdf"
 
 // Duration of the slide-in / slide-out animation for the cart keypad.
 private const val KEYPAD_ANIM_MS = 180L
@@ -90,6 +75,7 @@ class CartActivity : BaseActivity() {
     private lateinit var viewModel: CartViewModel
     private lateinit var exporter: CartExporter
     private lateinit var fileIo: CartFileIo
+    private lateinit var shareCoordinator: CartShareCoordinator
 
     private lateinit var itemsView: ComposeView
     private lateinit var subtotalLabel: TextView
@@ -180,6 +166,13 @@ class CartActivity : BaseActivity() {
                 activity = this,
                 viewModel = viewModel,
                 exporter = exporter,
+                flushPendingCommits = ::flushPendingCommits,
+                snackbar = ::showSnackbar,
+            )
+        this.shareCoordinator =
+            CartShareCoordinator(
+                activity = this,
+                viewModel = viewModel,
                 flushPendingCommits = ::flushPendingCommits,
                 snackbar = ::showSnackbar,
             )
@@ -300,7 +293,7 @@ class CartActivity : BaseActivity() {
                 true
             }
             R.id.cart_share -> {
-                showShareDialog()
+                shareCoordinator.show()
                 true
             }
             R.id.cart_save -> {
@@ -690,155 +683,21 @@ class CartActivity : BaseActivity() {
     }
 
     private fun confirmClear() {
-        showChoiceExplainerDialog(
+        showCartChoiceExplainerDialog(
             titleRes = R.string.cart_menu_clear,
             choices =
                 listOf(
-                    ChoiceRow(
+                    CartChoice(
                         R.string.cart_clear_items_only,
                         R.string.cart_clear_items_only_desc,
                     ) { viewModel.clearItems() },
-                    ChoiceRow(
+                    CartChoice(
                         R.string.cart_clear_reset_all,
                         R.string.cart_clear_reset_all_desc,
                     ) { viewModel.resetToMainDefaults() },
                 ),
         )
     }
-
-    // Shared "title + one-line explainer per option" picker. Mirrors the
-    // preference-screen fee-side dialog so users get the same shape of
-    // guidance in the cart's destructive flows.
-    private data class ChoiceRow(
-        val title: Int,
-        val description: Int,
-        val onPick: () -> Unit,
-    )
-
-    private fun showChoiceExplainerDialog(
-        titleRes: Int,
-        choices: List<ChoiceRow>,
-    ) {
-        val padV = resources.getDimensionPixelSize(R.dimen.margin2x)
-        val container = paddedDialogContainer(this, topPadding = padV)
-        val dialogHolder = arrayOfNulls<AlertDialog>(1)
-        choices.forEach { choice ->
-            container.addView(
-                choiceExplainerRow(
-                    ctx = this,
-                    title = getString(choice.title),
-                    description = getString(choice.description),
-                ) {
-                    choice.onPick()
-                    dialogHolder[0]?.dismiss()
-                },
-            )
-        }
-        dialogHolder[0] =
-            AlertDialog
-                .Builder(this)
-                .setTitle(titleRes)
-                .setView(container)
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
-    }
-
-    // Single "Share" entry point — presents plain-text / CSV / PDF as picker
-    // rows so the top-level overflow menu stays short. Flush + empty-guard run
-    // once up-front so an empty cart never surfaces a picker it can't act on.
-    private fun showShareDialog() {
-        flushPendingCommits()
-        val snapshot = viewModel.snapshotForShare()
-        if (snapshot == null) {
-            showSnackbar(getString(R.string.cart_share_empty))
-            return
-        }
-        showChoiceExplainerDialog(
-            titleRes = R.string.menu_share,
-            choices =
-                listOf(
-                    ChoiceRow(
-                        R.string.cart_share_option_text,
-                        R.string.cart_share_option_text_desc,
-                    ) { shareCartAsText(snapshot) },
-                    ChoiceRow(
-                        R.string.cart_share_option_csv,
-                        R.string.cart_share_option_csv_desc,
-                    ) { shareCartAsCsv(snapshot) },
-                    ChoiceRow(
-                        R.string.cart_share_option_pdf,
-                        R.string.cart_share_option_pdf_desc,
-                    ) { shareCartAsPdf(snapshot) },
-                ),
-        )
-    }
-
-    private fun shareCartAsText(snapshot: CartSnapshot) {
-        val text = buildShareText(snapshot)
-        val intent =
-            Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, text)
-            }
-        startActivity(Intent.createChooser(intent, null))
-    }
-
-    private fun shareCartAsCsv(snapshot: CartSnapshot) {
-        val title = shareTitle(snapshot)
-        val chooser =
-            buildCartShareChooser(
-                context = this,
-                filename = shareFilename(title, CSV_EXT),
-                mimeType = CSV_MIME,
-                bytes = snapshot.toCsv(title = title).toByteArray(Charsets.UTF_8),
-            )
-        startActivity(chooser)
-    }
-
-    private fun shareCartAsPdf(snapshot: CartSnapshot) {
-        val title = shareTitle(snapshot)
-        val chooser =
-            buildCartShareChooser(
-                context = this,
-                filename = shareFilename(title, PDF_EXT),
-                mimeType = PDF_MIME,
-                bytes = snapshot.toPdfBytes(title = title),
-            )
-        startActivity(chooser)
-    }
-
-    // Cart name if the user has one (from Save-as), otherwise a phone-local
-    // timestamp so the artefact still has an identifying handle.
-    private fun shareTitle(snapshot: CartSnapshot): String = snapshot.cart.name.ifBlank { filenameTimestampNow() }
-
-    private fun shareFilename(
-        title: String,
-        extension: String,
-    ): String = title.sanitizeForFilename() + extension
-
-    private fun buildShareText(snapshot: CartSnapshot): String =
-        buildString {
-            val baseIso = snapshot.baseCurrency.iso4217Alpha()
-            val destIso = snapshot.destinationCurrency.iso4217Alpha()
-            val name = snapshot.cart.name.ifBlank { getString(R.string.cart_share_default_title) }
-            appendLine(getString(R.string.cart_share_header, name, baseIso))
-            snapshot.evaluatedItems.forEach { (item, value) ->
-                val label = item.name.ifBlank { item.expression }
-                appendLine("• $label: ${value.toCartDisplayString()}")
-            }
-            appendLine("—")
-            appendLine(getString(R.string.cart_share_subtotal, snapshot.subtotal.toCartDisplayString(), baseIso))
-            if (snapshot.isConverting) {
-                appendLine(
-                    getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso),
-                )
-            }
-            val combinedStack = snapshot.sideStacks.combined
-            if (!combinedStack.isNeutralFeeStack()) {
-                appendLine(getString(R.string.cart_share_fees, combinedStack.toCartFeePercentDisplay()))
-            }
-            append(getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
-        }
 
     // ------------------------------------------------------------------
     // Slide-up keypad — behaves like a soft IME. A value field taps calls
