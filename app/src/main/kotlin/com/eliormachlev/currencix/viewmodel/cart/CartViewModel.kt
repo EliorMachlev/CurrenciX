@@ -66,12 +66,12 @@ class CartViewModel(
     // has no active observer, so its MediatorLiveData never advances) — which
     // silently zeroed the fee-extra rows even though the observed instance had
     // the right value.
-    private val baseCurrency: LiveData<Currency> by lazy { current.map { resolveCurrency(it.currency) } }
-    private val destinationCurrency: LiveData<Currency> by lazy {
+    private val baseCurrencyLive: LiveData<Currency> by lazy { current.map { resolveCurrency(it.currency) } }
+    private val destinationCurrencyLive: LiveData<Currency> by lazy {
         current.map { resolveCurrency(it.destinationCurrency ?: it.currency) }
     }
-    private val subtotal: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
-    private val total: LiveData<BigDecimal> by lazy {
+    private val subtotalLive: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
+    private val totalLive: LiveData<BigDecimal> by lazy {
         MediatorLiveData<BigDecimal>().apply {
             val recompute = {
                 value =
@@ -89,13 +89,13 @@ class CartViewModel(
         }
     }
 
-    fun getBaseCurrency(): LiveData<Currency> = baseCurrency
+    fun getBaseCurrency(): LiveData<Currency> = baseCurrencyLive
 
     /** Destination for the running total. Falls back to base when unset. */
-    fun getDestinationCurrency(): LiveData<Currency> = destinationCurrency
+    fun getDestinationCurrency(): LiveData<Currency> = destinationCurrencyLive
 
     /** Subtotal from summing every item's evaluated expression in the base currency. */
-    fun getSubtotal(): LiveData<BigDecimal> = subtotal
+    fun getSubtotal(): LiveData<BigDecimal> = subtotalLive
 
     /**
      * Total in the destination currency: subtotal → converted at cached rates
@@ -103,7 +103,7 @@ class CartViewModel(
      * change the displayed total; they surface separately as "true cost" on
      * the base side.
      */
-    fun getTotal(): LiveData<BigDecimal> = total
+    fun getTotal(): LiveData<BigDecimal> = totalLive
 
     fun addItem(
         name: String,
