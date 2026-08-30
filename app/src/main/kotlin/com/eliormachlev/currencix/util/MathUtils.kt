@@ -22,6 +22,12 @@ fun calculateDifference(
 // predicate instead of open-coding `compareTo(BigDecimal.ONE) == 0`.
 fun BigDecimal.isNeutralFeeStack(): Boolean = compareTo(BigDecimal.ONE) == 0
 
+// Additive delta of a multiplicative fee stack: `stack - 1`. Signed —
+// positive for a markup, negative for a discount. `base * delta` gives the
+// fee amount itself; used by both the money-facing renderers and the
+// percent-facing [feePercentDelta].
+fun BigDecimal.feeStackDelta(): BigDecimal = subtract(BigDecimal.ONE)
+
 // Convert a multiplicative fee stack (e.g. `1.025`) to its percentage delta
 // (e.g. `2.50`). Callers vary the rounding mode: HALF_EVEN for money-facing
 // totals (main, cart), HALF_UP for user-visible "fees applied" labels that
@@ -30,7 +36,7 @@ fun BigDecimal.feePercentDelta(
     scale: Int = 2,
     roundingMode: RoundingMode = RoundingMode.HALF_EVEN,
 ): BigDecimal =
-    subtract(BigDecimal.ONE)
+    feeStackDelta()
         .multiply(PERCENT_MULTIPLIER, MathContext.DECIMAL128)
         .setScale(scale, roundingMode)
 

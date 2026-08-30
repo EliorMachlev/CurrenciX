@@ -111,7 +111,33 @@
                 android:textDirection="ltr"
                 android:visibility="gone" />
 
-            <!-- "True cost" in the base currency: shown only for fee-side ORIGINAL. -->
+            <!-- ORIGINAL-side rows: fee amount first, cost-with-fee under it. -->
+            <LinearLayout
+                android:id="@+id/cart_subtotal_fee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/cart_subtotal_fee_label"
+                    style="@style/TextAppearance.Material3.LabelSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="?attr/colorError"
+                    tools:text="Conversion fee" />
+
+                <TextView
+                    android:id="@+id/cart_subtotal_fee_value"
+                    style="@style/TextAppearance.Material3.LabelSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorError"
+                    android:textDirection="ltr"
+                    tools:text="0.25 USD (+ 0.5 %)" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/cart_subtotal_extra"
                 android:layout_width="match_parent"
@@ -126,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="?attr/colorError"
-                    tools:text="True cost" />
+                    tools:text="Cost with fee" />
 
                 <TextView
                     android:id="@+id/cart_subtotal_extra_value"
@@ -135,10 +161,10 @@
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorError"
                     android:textDirection="ltr"
-                    tools:text="150.00 USD" />
+                    tools:text="150.00 USD (+ 0.5 %)" />
             </LinearLayout>
 
-            <!-- "Original value" in the destination currency: shown only for fee-side CONVERTED. -->
+            <!-- CONVERTED-side rows: value-before-fee first, reduction-fee under it. -->
             <LinearLayout
                 android:id="@+id/cart_total_extra"
                 android:layout_width="match_parent"
@@ -153,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="?attr/colorError"
-                    tools:text="Original value" />
+                    tools:text="Value before fee" />
 
                 <TextView
                     android:id="@+id/cart_total_extra_value"
@@ -162,7 +188,33 @@
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorError"
                     android:textDirection="ltr"
-                    tools:text="100.00 EUR" />
+                    tools:text="100.00 EUR (+ 0.5 %)" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cart_total_fee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/cart_total_fee_label"
+                    style="@style/TextAppearance.Material3.LabelSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="?attr/colorError"
+                    tools:text="Reduction fee" />
+
+                <TextView
+                    android:id="@+id/cart_total_fee_value"
+                    style="@style/TextAppearance.Material3.LabelSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorError"
+                    android:textDirection="ltr"
+                    tools:text="0.50 EUR (− 0.5 %)" />
             </LinearLayout>
 
             <LinearLayout

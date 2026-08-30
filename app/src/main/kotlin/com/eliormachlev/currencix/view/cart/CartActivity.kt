@@ -46,6 +46,7 @@ import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.feePercentDelta
+import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.paddedDialogContainer
@@ -129,11 +130,17 @@ class CartActivity : BaseActivity() {
     private lateinit var subtotalExtra: View
     private lateinit var subtotalExtraLabel: TextView
     private lateinit var subtotalExtraValue: TextView
+    private lateinit var subtotalFee: View
+    private lateinit var subtotalFeeLabel: TextView
+    private lateinit var subtotalFeeValue: TextView
     private lateinit var feeLine: TextView
     private lateinit var totalLabel: TextView
     private lateinit var totalExtra: View
     private lateinit var totalExtraLabel: TextView
     private lateinit var totalExtraValue: TextView
+    private lateinit var totalFee: View
+    private lateinit var totalFeeLabel: TextView
+    private lateinit var totalFeeValue: TextView
     private lateinit var spinnerFrom: SearchableSpinner
     private lateinit var spinnerTo: SearchableSpinner
     private lateinit var swapButton: ImageButton
@@ -211,11 +218,17 @@ class CartActivity : BaseActivity() {
         this.subtotalExtra = findViewById(R.id.cart_subtotal_extra)
         this.subtotalExtraLabel = findViewById(R.id.cart_subtotal_extra_label)
         this.subtotalExtraValue = findViewById(R.id.cart_subtotal_extra_value)
+        this.subtotalFee = findViewById(R.id.cart_subtotal_fee)
+        this.subtotalFeeLabel = findViewById(R.id.cart_subtotal_fee_label)
+        this.subtotalFeeValue = findViewById(R.id.cart_subtotal_fee_value)
         this.feeLine = findViewById(R.id.cart_fee_line)
         this.totalLabel = findViewById(R.id.cart_total_value)
         this.totalExtra = findViewById(R.id.cart_total_extra)
         this.totalExtraLabel = findViewById(R.id.cart_total_extra_label)
         this.totalExtraValue = findViewById(R.id.cart_total_extra_value)
+        this.totalFee = findViewById(R.id.cart_total_fee)
+        this.totalFeeLabel = findViewById(R.id.cart_total_fee_label)
+        this.totalFeeValue = findViewById(R.id.cart_total_fee_value)
         this.spinnerFrom = findViewById(R.id.cart_spinner_from)
         this.spinnerTo = findViewById(R.id.cart_spinner_to)
         this.swapButton = findViewById(R.id.cart_swap)
@@ -432,36 +445,60 @@ class CartActivity : BaseActivity() {
     }
 
     /**
-     * Show the "other side" of each per-side fee so users can see both anchor
-     * values: ORIGINAL-side fees inflate the subtotal in the base currency
-     * ("True cost"); CONVERTED-side fees discount the total in the destination
-     * currency ("Original value"). Either or both rows may be visible.
+     * Show both anchor values for each per-side fee: the fee amount itself
+     * ("Conversion fee" / "Reduction fee") and the effective total-with-fee /
+     * pre-fee value ("Cost with fee" / "Value before fee"). Ordering matches
+     * the on-screen layout: fee then cost-with-fee on ORIGINAL; value-before-
+     * fee then reduction-fee on CONVERTED. Either or both blocks may hide.
      */
     private fun updateFeeExtras() {
         val stacks = viewModel.currentSideStacks()
         renderFeeExtraRow(
-            container = subtotalExtra,
-            labelView = subtotalExtraLabel,
-            valueView = subtotalExtraValue,
+            container = subtotalFee,
+            labelView = subtotalFeeLabel,
+            valueView = subtotalFeeValue,
             prefixRes = R.string.fee_true_cost_prefix,
             stack = stacks.original,
             base = viewModel.getSubtotal().value,
             currency = viewModel.getBaseCurrency().value,
+            mode = FeeRowMode.DELTA,
+        )
+        renderFeeExtraRow(
+            container = subtotalExtra,
+            labelView = subtotalExtraLabel,
+            valueView = subtotalExtraValue,
+            prefixRes = R.string.fee_cost_with_fee_prefix,
+            stack = stacks.original,
+            base = viewModel.getSubtotal().value,
+            currency = viewModel.getBaseCurrency().value,
+            mode = FeeRowMode.TOTAL,
         )
         renderFeeExtraRow(
             container = totalExtra,
             labelView = totalExtraLabel,
             valueView = totalExtraValue,
+            prefixRes = R.string.fee_value_before_fee_prefix,
+            stack = stacks.converted,
+            base = viewModel.getTotal().value,
+            currency = viewModel.getDestinationCurrency().value,
+            mode = FeeRowMode.TOTAL,
+        )
+        renderFeeExtraRow(
+            container = totalFee,
+            labelView = totalFeeLabel,
+            valueView = totalFeeValue,
             prefixRes = R.string.fee_original_value_prefix,
             stack = stacks.converted,
             base = viewModel.getTotal().value,
             currency = viewModel.getDestinationCurrency().value,
+            mode = FeeRowMode.DELTA,
         )
     }
 
-    // A "true cost" / "original value" row: hidden when the [stack] is
-    // trivial, otherwise `base * stack` rendered in [currency] with the
-    // per-side percent appended so users see both magnitude and rate.
+    // Hidden when the [stack] is trivial. TOTAL renders `base * stack` (the
+    // effective with-fee cost or pre-fee value); DELTA renders `|base *
+    // (stack - 1)|` (the fee magnitude — the percent tail already carries
+    // the sign so we avoid a double negative).
     private fun renderFeeExtraRow(
         container: View,
         labelView: TextView,
@@ -470,12 +507,19 @@ class CartActivity : BaseActivity() {
         stack: BigDecimal,
         base: BigDecimal?,
         currency: Currency?,
+        mode: FeeRowMode,
     ) {
         if (stack.isNeutralFeeStack()) {
             container.visibility = View.GONE
             return
         }
-        val adjusted = (base ?: BigDecimal.ZERO).multiply(stack, MathContext.DECIMAL128)
+        val multiplier =
+            when (mode) {
+                FeeRowMode.TOTAL -> stack
+                FeeRowMode.DELTA -> stack.feeStackDelta()
+            }
+        val raw = (base ?: BigDecimal.ZERO).multiply(multiplier, MathContext.DECIMAL128)
+        val adjusted = if (mode == FeeRowMode.DELTA) raw.abs() else raw
         labelView.text = stripLabelSeparator(getString(prefixRes))
         valueView.text =
             getString(
@@ -485,6 +529,8 @@ class CartActivity : BaseActivity() {
             )
         container.visibility = View.VISIBLE
     }
+
+    private enum class FeeRowMode { TOTAL, DELTA }
 
     // Existing prefix strings end with a locale-specific ": " / " : " / "：" for
     // inline use. When we're showing them as a standalone left-aligned label,
