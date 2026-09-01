@@ -2,8 +2,11 @@ package com.eliormachlev.currencix.viewmodel.cart
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.FeeCalculator
+import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.repository.Database
 
 /**
@@ -53,3 +56,8 @@ class CartRatesCache(
         activeBank.removeObserver(activeBankObserver)
     }
 }
+
+fun CartRatesCache.sideStacksFor(
+    base: Currency?,
+    dest: Currency?,
+): SideStacks = FeeCalculator.sideStacks(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)

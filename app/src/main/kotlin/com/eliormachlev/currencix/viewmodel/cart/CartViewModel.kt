@@ -10,7 +10,6 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
-import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.SideStacks
@@ -310,13 +309,7 @@ class CartViewModel(
     fun currentSideStacks(): SideStacks {
         val cart = current.value ?: return SideStacks.NEUTRAL
         val (base, dest) = cart.resolvedPair()
-        return FeeCalculator.sideStacks(
-            ratesCache.lastFees,
-            base,
-            dest,
-            ratesCache.lastActiveExchangeId,
-            ratesCache.lastActiveBankId,
-        )
+        return ratesCache.sideStacksFor(base, dest)
     }
 
     /** Snapshot used by the "Share" flow — computed against the latest fees & rates. */
@@ -326,14 +319,7 @@ class CartViewModel(
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
         val (base, dest) = cart.resolvedPair()
-        val stacks =
-            FeeCalculator.sideStacks(
-                ratesCache.lastFees,
-                base,
-                dest,
-                ratesCache.lastActiveExchangeId,
-                ratesCache.lastActiveBankId,
-            )
+        val stacks = ratesCache.sideStacksFor(base, dest)
         val converted = convertAmount(subtotal, base, dest, ratesCache.lastRates)
         val total = applyConvertedStack(converted, stacks.converted)
         return CartSnapshot(
