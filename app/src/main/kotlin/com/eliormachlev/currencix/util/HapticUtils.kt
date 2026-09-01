@@ -151,6 +151,20 @@ fun Preference.setOnHapticClickListener(onClick: () -> Unit) {
 }
 
 /**
+ * [Preference.setOnPreferenceChangeListener] that first fires a haptic tap on
+ * the hosting Activity, then runs [onChange]. Always returns `true` so the
+ * new value is persisted — the callers we have here uniformly want that; if
+ * a future site needs conditional persistence, wire the raw listener directly.
+ */
+fun Preference.setOnHapticChangeListener(onChange: (newValue: Any?) -> Unit) {
+    setOnPreferenceChangeListener { _, newValue ->
+        (context as? Activity)?.hapticTap()
+        onChange(newValue)
+        true
+    }
+}
+
+/**
  * Compose analogue of [Modifier.clickable] that also fires a keyboard-tap
  * haptic on click, honouring the user's preference and battery-saver state.
  */

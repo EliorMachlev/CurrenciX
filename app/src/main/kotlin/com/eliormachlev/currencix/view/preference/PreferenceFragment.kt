@@ -27,6 +27,7 @@ import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.asPreferenceSummary
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.releaseNotesUrl
+import com.eliormachlev.currencix.util.setOnHapticChangeListener
 import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.view.main.MainActivity
@@ -167,48 +168,33 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupDisplayPreferences() {
-        findPreference<SwitchPreferenceCompat>(getString(R.string.previewConversion_key))?.apply {
-            setOnPreferenceChangeListener { _, newValue ->
-                requireActivity().hapticTap()
+        findPreference<SwitchPreferenceCompat>(getString(R.string.previewConversion_key))
+            ?.setOnHapticChangeListener { newValue ->
                 viewModel.setPreviewConversionEnabled(newValue.toString().toBoolean())
-                true
             }
-        }
         setupKeyboardPreference()
-        findPreference<ListPreference>(getString(R.string.decimal_places_key))?.apply {
-            setOnPreferenceChangeListener { _, newValue ->
-                requireActivity().hapticTap()
+        findPreference<ListPreference>(getString(R.string.decimal_places_key))
+            ?.setOnHapticChangeListener { newValue ->
                 viewModel.setDecimalPlaces(
                     (newValue.toString().toIntOrNull() ?: DECIMAL_PLACES_DEFAULT)
                         .coerceIn(DECIMAL_PLACES_MIN, DECIMAL_PLACES_MAX),
                 )
-                true
             }
-        }
-        findPreference<SwitchPreferenceCompat>(getString(R.string.haptic_feedback_key))?.apply {
-            setOnPreferenceChangeListener { _, newValue ->
-                requireActivity().hapticTap()
+        findPreference<SwitchPreferenceCompat>(getString(R.string.haptic_feedback_key))
+            ?.setOnHapticChangeListener { newValue ->
                 viewModel.setHapticFeedbackEnabled(newValue.toString().toBoolean())
-                true
             }
-        }
-        findPreference<ListPreference>(getString(R.string.theme_key))?.apply {
-            setOnPreferenceChangeListener { _, newValue ->
-                requireActivity().hapticTap()
+        findPreference<ListPreference>(getString(R.string.theme_key))
+            ?.setOnHapticChangeListener { newValue ->
                 val theme = AppTheme.fromId(newValue.toString().toInt())
                 if (viewModel.setTheme(theme)) {
                     rebuildActivityStack()
                 }
-                true
             }
-        }
-        findPreference<LanguagePickerPreference>(getString(R.string.language_key))?.apply {
-            setOnPreferenceChangeListener { _, newValue ->
-                requireActivity().hapticTap()
+        findPreference<LanguagePickerPreference>(getString(R.string.language_key))
+            ?.setOnHapticChangeListener { newValue ->
                 viewModel.setLanguage(newValue.toString())
-                true
             }
-        }
         findPreference<ListPreference>(getString(R.string.date_format_key))?.apply {
             summaryProvider = Preference.SummaryProvider<ListPreference> { pref -> pref.value }
         }
@@ -217,10 +203,8 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private fun setupApiPreferences() {
         val apiKeyPref = findPreference<EditTextPreference>(getString(R.string.api_open_exchangerates_id_key))
         apiKeyPref?.apply {
-            setOnPreferenceChangeListener { _, newValue ->
-                requireActivity().hapticTap()
+            setOnHapticChangeListener { newValue ->
                 viewModel.setOpenExchangeratesApiKey(newValue.toString().trim())
-                true
             }
             dialogMessage = getText(R.string.api_open_exchangerates_api_key_message)
         }
@@ -234,12 +218,10 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             val providers = ApiProvider.entries
             entries = providers.map { it.getName() }.toTypedArray()
             entryValues = providers.map { it.id.toString() }.toTypedArray()
-            setOnPreferenceChangeListener { _, newValue ->
-                requireActivity().hapticTap()
+            setOnHapticChangeListener { newValue ->
                 val provider = ApiProvider.fromId(newValue.toString().toIntOrNull() ?: UNKNOWN_PROVIDER_ID)
                 viewModel.setApiProvider(provider)
                 apiKeyPref?.isVisible = provider == ApiProvider.OPEN_EXCHANGERATES
-                true
             }
             if (entry == null) {
                 val defaultProvider = ApiProvider.fromId(UNKNOWN_PROVIDER_ID)
