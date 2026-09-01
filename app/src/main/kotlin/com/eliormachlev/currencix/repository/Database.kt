@@ -41,10 +41,6 @@ import timber.log.Timber
 import java.time.LocalDate
 import java.util.UUID
 
-private const val LEGACY_FEE_KEY = "_fee"
-private const val LEGACY_FEE_STR_KEY = "_fee_str"
-private const val LEGACY_FEE_ENABLED_KEY = "_feeEnabled"
-
 // Sentinel for "no historical date stored" in the millis-since-epoch pref.
 // -1L is used because it can't collide with any real epoch millis (1970-01-01
 // stores as 0L; anything after is positive).
@@ -356,31 +352,23 @@ class Database(
 
     // fees
 
-    fun getFees(): LiveData<List<Fee>> {
-        migrateLegacyFeeIfNeeded()
-        return SharedPreferenceStringLiveData(prefs, keyFeesJson, "[]")
+    fun getFees(): LiveData<List<Fee>> =
+        SharedPreferenceStringLiveData(prefs, keyFeesJson, "[]")
             .map { parseFeeList(it ?: "[]") }
-    }
 
-    fun getFeesBlocking(): List<Fee> {
-        migrateLegacyFeeIfNeeded()
-        return parseFeeList(prefs.getString(keyFeesJson, "[]") ?: "[]")
-    }
+    fun getFeesBlocking(): List<Fee> = parseFeeList(prefs.getString(keyFeesJson, "[]") ?: "[]")
 
     fun addFee(fee: Fee) {
-        migrateLegacyFeeIfNeeded()
         val next = getFeesBlocking() + fee
         writeFees(next)
     }
 
     fun updateFee(fee: Fee) {
-        migrateLegacyFeeIfNeeded()
         val next = getFeesBlocking().map { if (it.id == fee.id) fee else it }
         writeFees(next)
     }
 
     fun deleteFee(id: String) {
-        migrateLegacyFeeIfNeeded()
         val next = getFeesBlocking().filter { it.id != id }
         writeFees(next)
     }
@@ -415,58 +403,6 @@ class Database(
 
     private fun writeFees(list: List<Fee>) {
         prefs.edit().putString(keyFeesJson, serializeFeeList(list)).apply()
-    }
-
-    /**
-     * Migrate the legacy single-fee representation into the new [Fee] list.
-     * Runs at most once (the presence of the [keyFeesJson] key marks completion).
-     * The old markup direction is preserved: an enabled fee becomes a
-     * [Fee.GlobalExchange] with `isMarkup=true`; a disabled fee migrates to
-     * an empty list.
-     */
-    private fun migrateLegacyFeeIfNeeded() {
-        if (prefs.contains(keyFeesJson)) return
-        if (!prefs.contains(LEGACY_FEE_STR_KEY) && !prefs.contains(LEGACY_FEE_KEY)) {
-            // no legacy data at all: initialize with empty list
-            prefs
-                .edit()
-                .putString(keyFeesJson, "[]")
-                .remove(LEGACY_FEE_ENABLED_KEY)
-                .remove(LEGACY_FEE_STR_KEY)
-                .remove(LEGACY_FEE_KEY)
-                .apply()
-            return
-        }
-        val enabled = prefs.getBoolean(LEGACY_FEE_ENABLED_KEY, false)
-        val migrated =
-            if (enabled) {
-                val legacyStr = prefs.getString(LEGACY_FEE_STR_KEY, null)
-                val legacyFloat = runCatching { prefs.getFloat(LEGACY_FEE_KEY, Float.NaN) }.getOrNull()
-                val percent =
-                    legacyStr?.toBigDecimalOrNull()
-                        ?: legacyFloat?.takeIf { !it.isNaN() }?.toString()?.toBigDecimalOrNull()
-                if (percent != null) {
-                    listOf(
-                        Fee.GlobalExchange(
-                            id = UUID.randomUUID().toString(),
-                            name = "",
-                            percent = percent,
-                            isMarkup = true,
-                        ),
-                    )
-                } else {
-                    emptyList()
-                }
-            } else {
-                emptyList()
-            }
-        prefs
-            .edit()
-            .putString(keyFeesJson, serializeFeeList(migrated))
-            .remove(LEGACY_FEE_ENABLED_KEY)
-            .remove(LEGACY_FEE_STR_KEY)
-            .remove(LEGACY_FEE_KEY)
-            .apply()
     }
 
     private fun serializeFeeList(list: List<Fee>): String {
