@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +11,7 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.hapticTap
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +29,19 @@ abstract class BaseActivity : AppCompatActivity() {
         )
 
         super.onCreate(savedInstanceState)
+    }
+
+    /**
+     * Fires a haptic tap whenever the options-menu overflow opens. Individual
+     * item selection still fires its own tap from `onOptionsItemSelected`, so
+     * this only covers the "open the menu" gesture that would otherwise be silent.
+     */
+    override fun onMenuOpened(
+        featureId: Int,
+        menu: Menu,
+    ): Boolean {
+        hapticTap()
+        return super.onMenuOpened(featureId, menu)
     }
 
     /**

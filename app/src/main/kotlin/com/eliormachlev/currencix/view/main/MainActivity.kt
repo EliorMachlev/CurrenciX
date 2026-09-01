@@ -452,6 +452,12 @@ class MainActivity : BaseActivity() {
         // long-press on the main swap arrow opens the Fees settings,
         // mirroring the swap arrow inside the quick-conversions dialog.
         findViewById<View>(R.id.btn_toggle).setOnLongClickListener { openFeesSettings(it) }
+
+        // In system-keyboard mode `tvCalculations` becomes the tap target that
+        // opens the IME; every other tap in the app vibrates, so this one
+        // should too. Gated on the mode flag because the field isn't tappable
+        // when the custom keypads are in use.
+        tvCalculations.setOnClickListener { v -> if (isSystemKeyboardMode) v.hapticTap() }
     }
 
     private fun openFeesSettings(source: View): Boolean {

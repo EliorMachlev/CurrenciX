@@ -51,6 +51,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.util.hapticOnFocus
 import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.setTextAndCursorToEnd
@@ -285,6 +286,7 @@ private fun NameField(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .hapticOnFocus()
                     .semantics { contentDescription = fieldLabel },
         )
         if (text.isEmpty()) {

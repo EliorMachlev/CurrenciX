@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -205,6 +206,22 @@ fun rememberHapticOnClick(onClick: () -> Unit): () -> Unit {
         }
     }
 }
+
+/**
+ * Fires a keyboard-tap haptic the moment the modified node gains focus.
+ * Use on text fields (BasicTextField, etc.) so tap-to-edit feels the same
+ * as tap-to-click, honouring the user's preference and battery-saver state.
+ */
+fun Modifier.hapticOnFocus(): Modifier =
+    composed {
+        val ctx = LocalContext.current
+        val haptic = LocalHapticFeedback.current
+        onFocusChanged { state ->
+            if (state.isFocused && ctx.shouldHaptic()) {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            }
+        }
+    }
 
 /**
  * Compose analogue of [Modifier.combinedClickable] with the same
