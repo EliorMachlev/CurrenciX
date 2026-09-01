@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.paddedDialogContainer
-import com.eliormachlev.currencix.util.wireHapticButtons
+import com.eliormachlev.currencix.util.showWithHapticButtons
 
 /**
  * Shared "title + one-line explainer per option" picker used by every
@@ -44,6 +44,5 @@ fun AppCompatActivity.showCartChoiceExplainerDialog(
             .setTitle(titleRes)
             .setView(container)
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
-            .also { it.wireHapticButtons() }
+            .showWithHapticButtons()
 }

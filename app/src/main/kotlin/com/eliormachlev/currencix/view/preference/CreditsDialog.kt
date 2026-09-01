@@ -6,7 +6,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.compose.ui.platform.ComposeView
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.util.wireHapticButtons
+import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.preference.compose.CreditsList
 import com.eliormachlev.currencix.view.preference.compose.creditsSections
@@ -28,7 +28,6 @@ class CreditsDialog : AppCompatDialogFragment() {
             .setPositiveButton(android.R.string.ok, null)
             .setTitle(R.string.title_credits)
             .setView(view)
-            .create()
-            .apply { wireHapticButtons() }
+            .createWithHapticButtons()
     }
 }

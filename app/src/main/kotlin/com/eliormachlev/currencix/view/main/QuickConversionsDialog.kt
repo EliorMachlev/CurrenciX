@@ -13,9 +13,9 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.SideStacks
+import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.isNeutralFeeStack
-import com.eliormachlev.currencix.util.wireHapticButtons
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsContent
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsRow
@@ -87,8 +87,7 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
             .setTitle(R.string.quick_conversions_title)
             .setView(view)
             .setPositiveButton(android.R.string.ok, null)
-            .create()
-            .apply { wireHapticButtons() }
+            .createWithHapticButtons()
     }
 
     private fun openFeesSettings(ctx: Context) {

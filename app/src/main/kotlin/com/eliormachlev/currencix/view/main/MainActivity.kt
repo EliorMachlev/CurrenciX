@@ -55,6 +55,7 @@ import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
 import com.eliormachlev.currencix.util.setTextAndCursorToEnd
 import com.eliormachlev.currencix.util.showSoftInputOn
+import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -369,9 +370,7 @@ class MainActivity : BaseActivity() {
                     },
                 )
             }.setNegativeButton(android.R.string.cancel, null)
-            .create()
-            .apply { wireHapticButtons() }
-            .show()
+            .showWithHapticButtons()
     }
 
     override fun onCreateContextMenu(

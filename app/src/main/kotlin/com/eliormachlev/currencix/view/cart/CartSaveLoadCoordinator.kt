@@ -9,7 +9,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.SavedCart
-import com.eliormachlev.currencix.util.wireHapticButtons
+import com.eliormachlev.currencix.util.createWithHapticButtons
+import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
@@ -108,8 +109,7 @@ class CartSaveLoadCoordinator(
                                         saved.removeAll { it.id == cart.id }
                                         if (saved.isEmpty()) dialog.dismiss()
                                     }.setNegativeButton(android.R.string.cancel, null)
-                                    .show()
-                                    .also { it.wireHapticButtons() }
+                                    .showWithHapticButtons()
                             },
                         )
                     }
@@ -121,8 +121,7 @@ class CartSaveLoadCoordinator(
                 .setTitle(R.string.cart_menu_load)
                 .setView(composeView)
                 .setNegativeButton(android.R.string.cancel, null)
-                .create()
-                .apply { wireHapticButtons() }
+                .createWithHapticButtons()
         dialog.show()
     }
 
@@ -176,8 +175,7 @@ class CartSaveLoadCoordinator(
             .setItems(options.map { it.first }.toTypedArray()) { _, which ->
                 options[which].second.invoke()
             }.setNegativeButton(android.R.string.cancel, null)
-            .show()
-            .also { it.wireHapticButtons() }
+            .showWithHapticButtons()
     }
 
     // Shared "one-line text input" dialog for cart name prompts (Save-as,
@@ -205,7 +203,6 @@ class CartSaveLoadCoordinator(
                         .ifBlank { activity.getString(R.string.cart_default_saved_name) },
                 )
             }.setNegativeButton(android.R.string.cancel, null)
-            .show()
-            .also { it.wireHapticButtons() }
+            .showWithHapticButtons()
     }
 }

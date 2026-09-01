@@ -17,9 +17,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.ListPreference
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
-import com.eliormachlev.currencix.util.hapticTap
+import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.util.normalizeForSearch
-import com.eliormachlev.currencix.util.wireHapticButtons
+import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.google.android.material.radiobutton.MaterialRadioButton
 
@@ -75,8 +75,7 @@ class LanguagePickerPreference : ListPreference {
                 .setTitle(R.string.language_title)
                 .setView(view)
                 .setNegativeButton(android.R.string.cancel, null)
-                .create()
-                .apply { wireHapticButtons() }
+                .createWithHapticButtons()
         adapter.onLanguageClicked = { language: Language ->
             callChangeListener(language.iso)
             dialog.dismiss()
@@ -158,8 +157,7 @@ class LanguagePickerPreference : ListPreference {
             holder.run {
                 val language = languages[position]
                 // register clicks
-                parentView?.setOnClickListener {
-                    it.hapticTap()
+                parentView?.setOnHapticClickListener {
                     onLanguageClicked?.invoke(language)
                 }
                 // check current active language

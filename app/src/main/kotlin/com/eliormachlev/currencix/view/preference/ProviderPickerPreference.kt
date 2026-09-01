@@ -12,8 +12,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.ListPreference
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
-import com.eliormachlev.currencix.util.hapticTap
-import com.eliormachlev.currencix.util.wireHapticButtons
+import com.eliormachlev.currencix.util.createWithHapticButtons
+import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.google.android.material.radiobutton.MaterialRadioButton
 
 /**
@@ -35,8 +35,7 @@ internal fun showProviderPickerDialog(
             .setSingleChoiceItems(adapter, current?.let { ApiProvider.entries.indexOf(it) } ?: -1, null)
             .setTitle(R.string.api_title)
             .setNegativeButton(android.R.string.cancel, null)
-            .create()
-            .apply { wireHapticButtons() }
+            .createWithHapticButtons()
     adapter.onProviderClicked = { provider ->
         onSelected(provider)
         dialog.dismiss()
@@ -114,8 +113,7 @@ internal class ProviderPickerDialogAdapter(
         holder.run {
             val provider = providers[position]
             // register clicks
-            parentView?.setOnClickListener {
-                it.hapticTap()
+            parentView?.setOnHapticClickListener {
                 onProviderClicked?.invoke(provider)
             }
             // check current active api provider

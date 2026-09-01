@@ -90,7 +90,7 @@ fun Activity.hapticTap() {
  * OnShowListener, so a plain [AlertDialog.setOnShowListener] is safe.
  */
 @SuppressLint("ClickableViewAccessibility")
-fun AlertDialog.wireHapticButtons() {
+private fun AlertDialog.wireHapticButtons() {
     fun applyNow() {
         listOf(
             AlertDialog.BUTTON_POSITIVE,
@@ -104,6 +104,29 @@ fun AlertDialog.wireHapticButtons() {
         }
     }
     if (isShowing) applyNow() else setOnShowListener { applyNow() }
+}
+
+/**
+ * Build the dialog and wire haptics onto its buttons in one call. Covers both
+ * [AlertDialog.Builder] and [com.google.android.material.dialog.MaterialAlertDialogBuilder]
+ * (which extends it) so every dialog show-site in the app collapses to a
+ * single terminal call instead of repeating `.show().also { it.wireHapticButtons() }`.
+ */
+fun AlertDialog.Builder.showWithHapticButtons(): AlertDialog = show().also { it.wireHapticButtons() }
+
+/** [showWithHapticButtons] counterpart for sites that want the dialog created but not yet shown. */
+fun AlertDialog.Builder.createWithHapticButtons(): AlertDialog = create().apply { wireHapticButtons() }
+
+/**
+ * [View.setOnClickListener] plus a haptic tap on the source view before the
+ * click callback runs. Use at every click-listener site in the app so the
+ * "vibrate then dispatch" pattern lives in one place.
+ */
+fun View.setOnHapticClickListener(onClick: (View) -> Unit) {
+    setOnClickListener { v ->
+        v.hapticTap()
+        onClick(v)
+    }
 }
 
 /**
