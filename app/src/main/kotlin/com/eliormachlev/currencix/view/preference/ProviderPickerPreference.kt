@@ -13,6 +13,7 @@ import androidx.preference.ListPreference
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.util.createWithHapticButtons
+import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.google.android.material.radiobutton.MaterialRadioButton
 
@@ -59,6 +60,7 @@ class ProviderPickerPreference : ListPreference {
 
     // open dialog
     override fun onClick() {
+        (context as? Activity)?.hapticTap()
         showProviderPickerDialog(
             context = context,
             current = ApiProvider.fromId(value.toInt()),

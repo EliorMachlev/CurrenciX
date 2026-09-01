@@ -18,6 +18,7 @@ import androidx.preference.ListPreference
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.util.createWithHapticButtons
+import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
@@ -64,6 +65,7 @@ class LanguagePickerPreference : ListPreference {
 
     // open dialog
     override fun onClick() {
+        (context as? Activity)?.hapticTap()
         val view =
             LayoutInflater
                 .from(context)
