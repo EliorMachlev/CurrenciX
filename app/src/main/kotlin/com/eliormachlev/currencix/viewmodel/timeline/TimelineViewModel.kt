@@ -24,7 +24,6 @@ import java.time.LocalDate
 import kotlin.math.min
 
 private const val DEFAULT_DECIMAL_PLACES = 3
-private const val WEEK_DAYS = 7L
 private const val SIGNIFICANT_DIGITS = 3
 private const val MAX_DECIMAL_PLACES = 7
 
@@ -72,6 +71,14 @@ class TimelineViewModel(
         WEEK,
         MONTH,
         YEAR,
+        ;
+
+        fun startDate(today: LocalDate = LocalDate.now()): LocalDate =
+            when (this) {
+                WEEK -> today.minusWeeks(1)
+                MONTH -> today.minusMonths(1)
+                YEAR -> today.minusYears(1)
+            }
     }
 
     private var repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
@@ -114,12 +121,7 @@ class TimelineViewModel(
 
             // selected time period
             addSource(periodLiveData) {
-                startDate =
-                    when (it) {
-                        Period.WEEK -> LocalDate.now().minusDays(WEEK_DAYS)
-                        Period.MONTH -> LocalDate.now().minusMonths(1)
-                        else -> LocalDate.now().minusYears(1)
-                    }
+                startDate = it.startDate()
                 update()
             }
         }

@@ -18,6 +18,7 @@ import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SideStacks
+import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
@@ -190,7 +191,7 @@ class MainViewModel(
                 private fun update() {
                     this.value =
                         // last used is present in the current currency set
-                        rates?.rates?.find { it.currency == base }?.currency
+                        rates?.rateFor(base)?.currency
                             // not present, so just return the first of the set
                             ?: rates?.rates?.firstOrNull()?.currency
                 }
@@ -339,9 +340,9 @@ class MainViewModel(
             fun update() {
                 if (exchangeRates != null && baseCurrency != null && destinationCurrency != null) {
                     // base currency
-                    val baseValue = exchangeRates!!.rates?.find { it.currency == baseCurrency }?.value
+                    val baseValue = exchangeRates!!.rateFor(baseCurrency)?.value
                     // target currency
-                    val destinationValue = exchangeRates!!.rates?.find { it.currency == destinationCurrency }?.value
+                    val destinationValue = exchangeRates!!.rateFor(destinationCurrency)?.value
                     val destinationValueCalculated =
                         baseValue?.let {
                             destinationValue?.divide(it, MathContext.DECIMAL128)
@@ -529,8 +530,8 @@ class MainViewModel(
 
             private fun calculateResult() {
                 val amount: BigDecimal = baseValue?.toBigDecimal() ?: BigDecimal.ZERO
-                val baseRate = rates?.rates?.find { it.currency == baseCurrency } ?: return
-                val destinationRate = rates?.rates?.find { it.currency == destinationCurrency } ?: return
+                val baseRate = rates?.rateFor(baseCurrency) ?: return
+                val destinationRate = rates?.rateFor(destinationCurrency) ?: return
                 val fair =
                     amount
                         .divide(baseRate.value, MathContext.DECIMAL128)

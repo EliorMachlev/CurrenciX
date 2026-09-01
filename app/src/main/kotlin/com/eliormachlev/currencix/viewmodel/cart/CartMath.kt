@@ -6,6 +6,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import java.math.BigDecimal
@@ -79,8 +80,8 @@ internal fun convertAmount(
     rates: ExchangeRates?,
 ): BigDecimal {
     if (base == dest) return amount
-    val baseRate = rates?.rates?.find { it.currency == base }?.value ?: return amount
-    val destRate = rates.rates.find { it.currency == dest }?.value ?: return amount
+    val baseRate = rates?.rateFor(base)?.value ?: return amount
+    val destRate = rates.rateFor(dest)?.value ?: return amount
     return amount.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
 }
 

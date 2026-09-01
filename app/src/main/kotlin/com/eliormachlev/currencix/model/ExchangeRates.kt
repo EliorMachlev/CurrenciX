@@ -15,3 +15,5 @@ data class ExchangeRates(
     @Transient val time: LocalTime? = null,
     @Transient val provider: ApiProvider? = null,
 )
+
+fun ExchangeRates.rateFor(currency: Currency?): Rate? = currency?.let { c -> rates?.firstOrNull { it.currency == c } }
