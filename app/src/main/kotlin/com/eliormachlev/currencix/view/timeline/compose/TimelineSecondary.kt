@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -180,7 +181,7 @@ private fun PeriodSegmentedButtons(
         labels.forEachIndexed { index, (period, label) ->
             SegmentedButton(
                 selected = period == selected,
-                onClick = { onSelected(period) },
+                onClick = rememberHapticOnClick { onSelected(period) },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = labels.size),
             ) {
                 Text(label.replaceFirstChar { it.titlecase() })

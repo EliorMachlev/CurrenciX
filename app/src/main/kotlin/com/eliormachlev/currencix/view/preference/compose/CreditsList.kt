@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.hapticClickable
 
 @Composable
 fun CreditsList(sections: List<CreditsSection>) {
@@ -73,7 +73,7 @@ private fun CreditRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .hapticClickable(onClick = onClick)
                 .padding(vertical = 8.dp)
                 // Title + subtitle + optional SPDX + URL should read as one
                 // focus stop; without this TalkBack lands on each Text

@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.util.wireHapticButtons
 import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
@@ -108,6 +109,7 @@ class CartSaveLoadCoordinator(
                                         if (saved.isEmpty()) dialog.dismiss()
                                     }.setNegativeButton(android.R.string.cancel, null)
                                     .show()
+                                    .also { it.wireHapticButtons() }
                             },
                         )
                     }
@@ -120,6 +122,7 @@ class CartSaveLoadCoordinator(
                 .setView(composeView)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()
+                .apply { wireHapticButtons() }
         dialog.show()
     }
 
@@ -174,6 +177,7 @@ class CartSaveLoadCoordinator(
                 options[which].second.invoke()
             }.setNegativeButton(android.R.string.cancel, null)
             .show()
+            .also { it.wireHapticButtons() }
     }
 
     // Shared "one-line text input" dialog for cart name prompts (Save-as,
@@ -202,5 +206,6 @@ class CartSaveLoadCoordinator(
                 )
             }.setNegativeButton(android.R.string.cancel, null)
             .show()
+            .also { it.wireHapticButtons() }
     }
 }

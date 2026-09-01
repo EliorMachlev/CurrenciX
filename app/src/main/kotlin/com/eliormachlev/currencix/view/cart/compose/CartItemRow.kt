@@ -4,7 +4,6 @@ import android.app.Activity
 import android.widget.EditText
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +50,7 @@ import androidx.core.widget.doAfterTextChanged
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.CalculatorKeyListener
+import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.setTextAndCursorToEnd
@@ -306,7 +306,7 @@ private fun ExpressionField(
             Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = FIELD_MIN_HEIGHT)
-                .clickable(onClick = onTap),
+                .hapticClickable(onClick = onTap),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(

@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 
 // The picker needs a small rounded thumbnail, the quick-conversions header a
 // larger square, and the chart layer wants none of that — so size + clip stay
@@ -70,7 +71,7 @@ fun FavoriteToggleIcon(
     contentDescription: String?,
     onClick: () -> Unit,
 ) {
-    IconButton(onClick = onClick) {
+    IconButton(onClick = rememberHapticOnClick(onClick)) {
         Icon(
             imageVector = if (active) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             contentDescription = contentDescription,

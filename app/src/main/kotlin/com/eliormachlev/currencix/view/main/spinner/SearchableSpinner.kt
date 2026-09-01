@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.util.hapticTap
 import java.math.BigDecimal
 
 // Matches AdapterView.INVALID_POSITION; used when there's no rate for the
@@ -73,7 +74,10 @@ class SearchableSpinner : AppCompatSpinner {
             // else show dialog, if this spinner is backed by an adapter
             !spinnerDialog.isVisible -> {
                 val fm = findActivity(mContext)?.supportFragmentManager
-                if (fm != null) spinnerDialog.show(fm, null)
+                if (fm != null) {
+                    hapticTap()
+                    spinnerDialog.show(fm, null)
+                }
                 true
             }
             // else do nothing

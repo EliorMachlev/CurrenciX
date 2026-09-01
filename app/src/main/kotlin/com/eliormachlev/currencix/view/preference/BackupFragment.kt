@@ -21,6 +21,7 @@ import androidx.preference.PreferenceScreen
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupManager
 import com.eliormachlev.currencix.repository.BackupResult
+import com.eliormachlev.currencix.util.wireHapticButtons
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 
@@ -188,6 +189,7 @@ class BackupFragment : PreferenceFragmentCompat() {
                 pendingExportPassword = password
                 launchExport()
             }.show()
+            .also { it.wireHapticButtons() }
     }
 
     private fun launchExport() {
@@ -273,6 +275,7 @@ class BackupFragment : PreferenceFragmentCompat() {
                 val password = extractCharArray(passwordInput)
                 confirmAndImport(uri, password)
             }.show()
+            .also { it.wireHapticButtons() }
     }
 
     private fun confirmAndImport(
@@ -287,6 +290,7 @@ class BackupFragment : PreferenceFragmentCompat() {
             }.setPositiveButton(R.string.backup_import_confirm_positive) { _, _ ->
                 runImport(uri, password)
             }.show()
+            .also { it.wireHapticButtons() }
     }
 
     private fun runImport(

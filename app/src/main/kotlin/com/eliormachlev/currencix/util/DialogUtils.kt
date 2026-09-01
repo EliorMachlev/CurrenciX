@@ -70,7 +70,10 @@ fun choiceExplainerRow(
             setPadding(0, padV, 0, padV)
             isClickable = true
             applySelectableRowBackground()
-            setOnClickListener { onClick() }
+            setOnClickListener {
+                it.hapticTap()
+                onClick()
+            }
             if (clickActionLabel != null) {
                 ViewCompat.replaceAccessibilityAction(
                     this,
@@ -173,4 +176,5 @@ fun showChoiceExplainerDialog(
             .setView(container)
             .setNegativeButton(android.R.string.cancel, null)
             .show()
+            .also { it.wireHapticButtons() }
 }

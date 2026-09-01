@@ -25,6 +25,7 @@ import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.asPreferenceSummary
+import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.view.main.MainActivity
@@ -73,6 +74,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private fun setupGraphOptionsPreference() {
         findPreference<Preference>(getString(R.string.graph_options_key))?.apply {
             setOnPreferenceClickListener {
+                requireActivity().hapticTap()
                 GraphOptionsDialog().show(childFragmentManager, null)
                 true
             }
@@ -92,6 +94,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         factory: () -> Fragment,
     ) {
         findPreference<Preference>(getString(keyRes))?.setOnPreferenceClickListener {
+            requireActivity().hapticTap()
             parentFragmentManager
                 .beginTransaction()
                 .replace(R.id.preferences_fragment, factory())
@@ -108,6 +111,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         val pref = findPreference<Preference>(getString(R.string.keyboard_key)) ?: return
         pref.summary = summaryForKeyboardType(viewModel.getKeyboardTypeBlocking())
         pref.setOnPreferenceClickListener {
+            requireActivity().hapticTap()
             showKeyboardPickerDialog { picked ->
                 viewModel.setKeyboardType(picked)
                 pref.summary = summaryForKeyboardType(picked)
@@ -163,6 +167,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private fun setupDisplayPreferences() {
         findPreference<SwitchPreferenceCompat>(getString(R.string.previewConversion_key))?.apply {
             setOnPreferenceChangeListener { _, newValue ->
+                requireActivity().hapticTap()
                 viewModel.setPreviewConversionEnabled(newValue.toString().toBoolean())
                 true
             }
@@ -170,6 +175,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         setupKeyboardPreference()
         findPreference<ListPreference>(getString(R.string.decimal_places_key))?.apply {
             setOnPreferenceChangeListener { _, newValue ->
+                requireActivity().hapticTap()
                 viewModel.setDecimalPlaces(
                     (newValue.toString().toIntOrNull() ?: DECIMAL_PLACES_DEFAULT)
                         .coerceIn(DECIMAL_PLACES_MIN, DECIMAL_PLACES_MAX),
@@ -179,12 +185,14 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
         findPreference<SwitchPreferenceCompat>(getString(R.string.haptic_feedback_key))?.apply {
             setOnPreferenceChangeListener { _, newValue ->
+                requireActivity().hapticTap()
                 viewModel.setHapticFeedbackEnabled(newValue.toString().toBoolean())
                 true
             }
         }
         findPreference<ListPreference>(getString(R.string.theme_key))?.apply {
             setOnPreferenceChangeListener { _, newValue ->
+                requireActivity().hapticTap()
                 val theme = AppTheme.fromId(newValue.toString().toInt())
                 if (viewModel.setTheme(theme)) {
                     rebuildActivityStack()
@@ -194,6 +202,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
         findPreference<LanguagePickerPreference>(getString(R.string.language_key))?.apply {
             setOnPreferenceChangeListener { _, newValue ->
+                requireActivity().hapticTap()
                 viewModel.setLanguage(newValue.toString())
                 true
             }
@@ -207,6 +216,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         val apiKeyPref = findPreference<EditTextPreference>(getString(R.string.api_open_exchangerates_id_key))
         apiKeyPref?.apply {
             setOnPreferenceChangeListener { _, newValue ->
+                requireActivity().hapticTap()
                 viewModel.setOpenExchangeratesApiKey(newValue.toString().trim())
                 true
             }
@@ -223,6 +233,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             entries = providers.map { it.getName() }.toTypedArray()
             entryValues = providers.map { it.id.toString() }.toTypedArray()
             setOnPreferenceChangeListener { _, newValue ->
+                requireActivity().hapticTap()
                 val provider = ApiProvider.fromId(newValue.toString().toIntOrNull() ?: UNKNOWN_PROVIDER_ID)
                 viewModel.setApiProvider(provider)
                 apiKeyPref?.isVisible = provider == ApiProvider.OPEN_EXCHANGERATES
@@ -248,6 +259,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private fun setupAboutPreferences() {
         findPreference<Preference>(getString(R.string.credits_key))?.apply {
             setOnPreferenceClickListener {
+                requireActivity().hapticTap()
                 CreditsDialog().show(childFragmentManager, null)
                 true
             }
@@ -256,6 +268,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             @Suppress("KotlinConstantConditions")
             isVisible = BuildConfig.FLAVOR == FLAVOR_PLAY
             setOnPreferenceClickListener {
+                requireActivity().hapticTap()
                 try {
                     startActivity(createIntent(URL_PLAY_MARKET))
                 } catch (e: ActivityNotFoundException) {
@@ -267,6 +280,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
         findPreference<Preference>(getString(R.string.changelog_key))?.apply {
             setOnPreferenceClickListener {
+                requireActivity().hapticTap()
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(releaseNotesUrl())))
                 true
             }
