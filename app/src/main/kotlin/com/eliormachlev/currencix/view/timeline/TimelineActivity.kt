@@ -18,7 +18,6 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.preference.GraphOptionsDialog
@@ -142,9 +141,8 @@ class TimelineActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        hapticTap()
-        return when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             R.id.toggle -> {
                 timelineModel.toggleCurrencies()
                 true
@@ -155,7 +153,6 @@ class TimelineActivity : BaseActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
 
     private fun readCurrencyExtra(
         key: String,
