@@ -369,7 +369,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             pref.title = displayNameOf(effective)
             pref.summary = formatFeeDescription(effective)
         }
-        pref.setOnPreferenceClickListener {
+        pref.setOnHapticClickListener {
             showGlobalPickerDialog(
                 entries = entries,
                 effectiveId = effective?.id,
@@ -383,7 +383,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 onAdd = onAdd,
                 onEdit = onEdit,
             )
-            true
         }
     }
 
@@ -556,10 +555,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                         title = formatFeeTitle(fee)
                         summary = withInactiveMarker(summaryFor(fee), fee.isActive)
                         isIconSpaceReserved = false
-                        setOnPreferenceClickListener {
-                            onEdit(fee)
-                            true
-                        }
+                        setOnHapticClickListener { onEdit(fee) }
                     },
                 )
             }
@@ -568,10 +564,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             Preference(ctx).apply {
                 title = getString(R.string.fee_add)
                 setIcon(R.drawable.ic_add)
-                setOnPreferenceClickListener {
-                    onAdd()
-                    true
-                }
+                setOnHapticClickListener(onAdd)
             },
         )
     }

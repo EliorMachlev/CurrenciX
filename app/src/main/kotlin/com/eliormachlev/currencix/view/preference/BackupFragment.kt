@@ -21,6 +21,7 @@ import androidx.preference.PreferenceScreen
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupManager
 import com.eliormachlev.currencix.repository.BackupResult
+import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -132,10 +133,7 @@ class BackupFragment : PreferenceFragmentCompat() {
             title = getString(titleRes)
             summary = getString(summaryRes)
             isIconSpaceReserved = false
-            setOnPreferenceClickListener {
-                onClick()
-                true
-            }
+            setOnHapticClickListener(onClick)
         }
 
     /**
