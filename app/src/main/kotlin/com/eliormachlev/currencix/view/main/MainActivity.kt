@@ -186,8 +186,9 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean =
-        when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        hapticTap()
+        return when (item.itemId) {
             R.id.settings -> {
                 startActivity(Intent(this, PreferenceActivity::class.java))
                 true
@@ -223,6 +224,7 @@ class MainActivity : BaseActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
 
     private fun showApiProviderPicker() {
         showProviderPickerDialog(
@@ -391,6 +393,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
+        hapticTap()
         when (item.itemId) {
             CTX_MENU_COPY_FROM -> copyToClipboard(findViewById<TextView>(R.id.textFrom).text.toString())
             CTX_MENU_PASTE_FROM -> {

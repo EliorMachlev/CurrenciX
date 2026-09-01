@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -42,20 +41,6 @@ abstract class BaseActivity : AppCompatActivity() {
     ): Boolean {
         hapticTap()
         return super.onMenuOpened(featureId, menu)
-    }
-
-    /**
-     * Central haptic for every menu-item tap (options menu, context menu,
-     * submenu). Fires before the framework dispatches to
-     * [onOptionsItemSelected] / [onContextItemSelected], so subclasses no
-     * longer need to call `hapticTap()` at the top of those overrides.
-     */
-    override fun onMenuItemSelected(
-        featureId: Int,
-        item: MenuItem,
-    ): Boolean {
-        hapticTap()
-        return super.onMenuItemSelected(featureId, item)
     }
 
     /**
