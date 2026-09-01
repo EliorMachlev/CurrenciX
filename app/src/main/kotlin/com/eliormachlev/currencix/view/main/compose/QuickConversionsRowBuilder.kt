@@ -4,6 +4,7 @@ import android.content.Context
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.SideStacks
+import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -24,8 +25,8 @@ fun buildQuickConversionRows(
     sideStacks: SideStacks,
     costWithFeePrefix: String,
 ): List<QuickConversionsRow> {
-    val baseRate = rates.rates?.find { it.currency == from }?.value ?: return emptyList()
-    val destRate = rates.rates.find { it.currency == to }?.value ?: return emptyList()
+    val baseRate = rates.rateFor(from)?.value ?: return emptyList()
+    val destRate = rates.rateFor(to)?.value ?: return emptyList()
     val hasOriginalFee = !sideStacks.original.isNeutralFeeStack()
     val hasConvertedFee = !sideStacks.converted.isNeutralFeeStack()
     val fromIso = from.iso4217Alpha()
