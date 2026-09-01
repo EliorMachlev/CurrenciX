@@ -37,7 +37,9 @@ import com.eliormachlev.currencix.util.applySelectableRowBackground
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
+import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.eliormachlev.currencix.util.showChoiceExplainerDialog
+import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.google.android.material.button.MaterialButton
@@ -367,7 +369,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             pref.title = displayNameOf(effective)
             pref.summary = formatFeeDescription(effective)
         }
-        pref.setOnPreferenceClickListener {
+        pref.setOnHapticClickListener {
             showGlobalPickerDialog(
                 entries = entries,
                 effectiveId = effective?.id,
@@ -381,7 +383,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 onAdd = onAdd,
                 onEdit = onEdit,
             )
-            true
         }
     }
 
@@ -437,7 +438,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 .setTitle(title)
                 .setView(container)
                 .setNegativeButton(android.R.string.cancel, null)
-                .show()
+                .showWithHapticButtons()
     }
 
     private fun buildPickerRadio(
@@ -452,7 +453,9 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             isFocusable = true
             minWidth = minTouchPx
             minHeight = minTouchPx
-            setOnClickListener { onClick() }
+            setOnHapticClickListener {
+                onClick()
+            }
         }
     }
 
@@ -467,7 +470,9 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             setPadding(0, padV, 0, padV)
             isClickable = true
             applySelectableRowBackground()
-            setOnClickListener { onClick() }
+            setOnHapticClickListener {
+                onClick()
+            }
             addView(buildRowIcon(ctx, R.drawable.ic_add, null, onClick = null))
             addView(
                 TextView(ctx).apply {
@@ -496,7 +501,9 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 applySelectableRowBackground()
                 isClickable = true
                 isFocusable = true
-                setOnClickListener { onClick() }
+                setOnHapticClickListener {
+                    onClick()
+                }
             }
         }
     }
@@ -548,10 +555,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                         title = formatFeeTitle(fee)
                         summary = withInactiveMarker(summaryFor(fee), fee.isActive)
                         isIconSpaceReserved = false
-                        setOnPreferenceClickListener {
-                            onEdit(fee)
-                            true
-                        }
+                        setOnHapticClickListener { onEdit(fee) }
                     },
                 )
             }
@@ -560,10 +564,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             Preference(ctx).apply {
                 title = getString(R.string.fee_add)
                 setIcon(R.drawable.ic_add)
-                setOnPreferenceClickListener {
-                    onAdd()
-                    true
-                }
+                setOnHapticClickListener(onAdd)
             },
         )
     }
@@ -716,7 +717,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .withDeleteButton(onDelete)
                 .setPositiveButton(android.R.string.ok) { _, _ -> onOk() }
-                .show()
+                .showWithHapticButtons()
         val width = (ctx.resources.displayMetrics.widthPixels * FEE_EDITOR_DIALOG_WIDTH_FRACTION).toInt()
         dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
@@ -953,7 +954,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 applySelectableRowBackground()
                 addView(titleView)
                 addView(descView)
-                setOnClickListener {
+                setOnHapticClickListener {
                     val sides = listOf(FeeSide.ORIGINAL, FeeSide.CONVERTED)
                     showChoiceExplainerDialog(
                         ctx = ctx,
@@ -985,7 +986,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     ): MaterialButton =
         outlinedMaterialButton(ctx).apply {
             applyCurrencyIcon(this, initial, placeholder, ctx)
-            setOnClickListener {
+            setOnHapticClickListener {
                 // Resolve the disabled side lazily at click time so a "from"
                 // picked *after* the button was built still greys out inside
                 // the "to" picker (and vice-versa).

@@ -7,6 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.createWithHapticButtons
+import com.eliormachlev.currencix.util.hapticTap
 import com.google.android.material.materialswitch.MaterialSwitch
 
 class GraphOptionsDialog : AppCompatDialogFragment() {
@@ -50,7 +52,7 @@ class GraphOptionsDialog : AppCompatDialogFragment() {
             .setTitle(R.string.category_graph_options)
             .setView(view)
             .setPositiveButton(android.R.string.ok, null)
-            .create()
+            .createWithHapticButtons()
     }
 
     private fun bindSwitch(
@@ -61,7 +63,10 @@ class GraphOptionsDialog : AppCompatDialogFragment() {
     ) {
         root.findViewById<MaterialSwitch>(id).apply {
             isChecked = getter()
-            setOnCheckedChangeListener { _, checked -> setter(checked) }
+            setOnCheckedChangeListener { view, checked ->
+                view.hapticTap()
+                setter(checked)
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
+import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
@@ -111,7 +112,7 @@ class SearchableSpinnerDialog(
             .Builder(requireContext())
             .setNegativeButton(getString(android.R.string.cancel), null)
             .setView(composeView)
-            .create()
+            .createWithHapticButtons()
     }
 
     override fun onStart() {

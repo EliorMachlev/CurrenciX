@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.cart.compose
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +22,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 
 private const val ROW_MIN_HEIGHT_DP = 48
 
@@ -57,7 +58,7 @@ private fun SavedCartRow(
             Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = ROW_MIN_HEIGHT_DP.dp)
-                .clickable(onClick = onPick)
+                .hapticClickable(onClick = onPick)
                 .padding(horizontal = dimensionResource(id = R.dimen.margin2x)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -69,13 +70,13 @@ private fun SavedCartRow(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
-        IconButton(onClick = onRename) {
+        IconButton(onClick = rememberHapticOnClick(onRename)) {
             Icon(
                 imageVector = Icons.Filled.Edit,
                 contentDescription = stringResource(id = R.string.cart_rename),
             )
         }
-        IconButton(onClick = onDelete) {
+        IconButton(onClick = rememberHapticOnClick(onDelete)) {
             Icon(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = stringResource(id = R.string.cart_delete_item),

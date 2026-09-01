@@ -53,7 +53,7 @@
     <string name="decimal_places_summary">Number of decimal places to show for converted values.</string>
     <string name="haptic_feedback_key" translatable="false">KEY_HAPTIC_FEEDBACK</string>
     <string name="haptic_feedback_title">Haptic feedback</string>
-    <string name="haptic_feedback_summary">Vibrate on key press\nFollows system setting</string>
+    <string name="haptic_feedback_summary">Vibrate on taps across the app\nFollows system setting\nAutomatically disabled in battery saver</string>
     <string name="date_format_key" translatable="false">KEY_DATE_FORMAT</string>
     <string name="date_format_title">Date and Time format</string>
     <!-- backup -->

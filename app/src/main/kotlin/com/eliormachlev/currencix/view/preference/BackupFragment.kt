@@ -21,6 +21,8 @@ import androidx.preference.PreferenceScreen
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupManager
 import com.eliormachlev.currencix.repository.BackupResult
+import com.eliormachlev.currencix.util.setOnHapticClickListener
+import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 
@@ -131,10 +133,7 @@ class BackupFragment : PreferenceFragmentCompat() {
             title = getString(titleRes)
             summary = getString(summaryRes)
             isIconSpaceReserved = false
-            setOnPreferenceClickListener {
-                onClick()
-                true
-            }
+            setOnHapticClickListener(onClick)
         }
 
     /**
@@ -187,7 +186,7 @@ class BackupFragment : PreferenceFragmentCompat() {
                     }
                 pendingExportPassword = password
                 launchExport()
-            }.show()
+            }.showWithHapticButtons()
     }
 
     private fun launchExport() {
@@ -272,7 +271,7 @@ class BackupFragment : PreferenceFragmentCompat() {
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val password = extractCharArray(passwordInput)
                 confirmAndImport(uri, password)
-            }.show()
+            }.showWithHapticButtons()
     }
 
     private fun confirmAndImport(
@@ -286,7 +285,7 @@ class BackupFragment : PreferenceFragmentCompat() {
                 password?.fill('\u0000')
             }.setPositiveButton(R.string.backup_import_confirm_positive) { _, _ ->
                 runImport(uri, password)
-            }.show()
+            }.showWithHapticButtons()
     }
 
     private fun runImport(

@@ -55,6 +55,7 @@ import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.rateSpinnerListener
 import com.eliormachlev.currencix.util.setTextAndCursorToEnd
 import com.eliormachlev.currencix.util.showSoftInputOn
+import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -185,8 +186,9 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean =
-        when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        hapticTap()
+        return when (item.itemId) {
             R.id.settings -> {
                 startActivity(Intent(this, PreferenceActivity::class.java))
                 true
@@ -222,6 +224,7 @@ class MainActivity : BaseActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
 
     private fun showApiProviderPicker() {
         showProviderPickerDialog(
@@ -367,8 +370,7 @@ class MainActivity : BaseActivity() {
                     },
                 )
             }.setNegativeButton(android.R.string.cancel, null)
-            .create()
-            .show()
+            .showWithHapticButtons()
     }
 
     override fun onCreateContextMenu(
@@ -391,6 +393,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
+        hapticTap()
         when (item.itemId) {
             CTX_MENU_COPY_FROM -> copyToClipboard(findViewById<TextView>(R.id.textFrom).text.toString())
             CTX_MENU_PASTE_FROM -> {
@@ -424,6 +427,7 @@ class MainActivity : BaseActivity() {
         // long click on delete
         arrayOf<View>(findViewById(R.id.keypad), findViewById(R.id.keypad_extended)).forEach {
             it.findViewById<AppCompatImageButton>(R.id.btn_delete).setOnLongClickListener {
+                it.hapticTap(hapticEnabled)
                 viewModel.clear()
                 true
             }
@@ -448,6 +452,12 @@ class MainActivity : BaseActivity() {
         // long-press on the main swap arrow opens the Fees settings,
         // mirroring the swap arrow inside the quick-conversions dialog.
         findViewById<View>(R.id.btn_toggle).setOnLongClickListener { openFeesSettings(it) }
+
+        // In system-keyboard mode `tvCalculations` becomes the tap target that
+        // opens the IME; every other tap in the app vibrates, so this one
+        // should too. Gated on the mode flag because the field isn't tappable
+        // when the custom keypads are in use.
+        tvCalculations.setOnClickListener { v -> if (isSystemKeyboardMode) v.hapticTap() }
     }
 
     private fun openFeesSettings(source: View): Boolean {

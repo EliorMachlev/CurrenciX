@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.view.main.compose
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.Ltr
 
@@ -155,7 +154,6 @@ private fun QuickConversionsHeader(
 // (WCAG 2.1 AA target size) with long-press support. Keeps the .size and
 // .combinedClickable chained together so no intermediate padding can shrink
 // the click target below 48dp.
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LongPressIconButton(
     onClick: () -> Unit,
@@ -167,7 +165,7 @@ private fun LongPressIconButton(
         modifier =
             modifier
                 .size(ICON_BUTTON_SIZE_DP.dp)
-                .combinedClickable(
+                .hapticCombinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),

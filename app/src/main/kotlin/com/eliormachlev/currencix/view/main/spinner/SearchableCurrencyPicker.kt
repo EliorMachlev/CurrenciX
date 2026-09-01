@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.main.spinner
 
 import android.content.Context
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,8 +56,10 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
+import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.normalizeForSearch
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
@@ -172,7 +173,7 @@ private fun SearchBar(
             },
             trailingIcon = {
                 if (query.isNotEmpty()) {
-                    IconButton(onClick = { onQueryChange("") }) {
+                    IconButton(onClick = rememberHapticOnClick { onQueryChange("") }) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
                             contentDescription = stringResource(id = R.string.a11y_clear_search),
@@ -190,7 +191,7 @@ private fun SearchBar(
                     .onFocusChanged { if (it.isFocused) keyboard?.show() },
         )
         IconButton(
-            onClick = onToggleStarredFilter,
+            onClick = rememberHapticOnClick(onToggleStarredFilter),
             modifier = Modifier.padding(start = dimensionResource(id = R.dimen.margin1x)),
         ) {
             Icon(
@@ -378,7 +379,7 @@ private fun CurrencyRow(
             modifier =
                 Modifier
                     .weight(1f)
-                    .clickable(enabled = !isDisabled, onClick = onClick)
+                    .hapticClickable(enabled = !isDisabled, onClick = onClick)
                     .alpha(if (isDisabled) DISABLED_ROW_ALPHA else 1f)
                     .padding(
                         horizontal = dimensionResource(id = R.dimen.margin2x),

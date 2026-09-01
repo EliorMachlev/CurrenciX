@@ -198,8 +198,9 @@ class CartActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean =
-        when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        hapticTap()
+        return when (item.itemId) {
             android.R.id.home -> {
                 saveLoadCoordinator.attemptClose()
                 true
@@ -234,6 +235,7 @@ class CartActivity : BaseActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
 
     private fun observe() {
         viewModel.isHapticFeedbackEnabled.observe(this) {

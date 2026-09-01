@@ -502,6 +502,8 @@ class Database(
 
     fun isHapticFeedbackEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyHapticFeedback, true)
 
+    fun isHapticFeedbackEnabledBlocking(): Boolean = prefs.getBoolean(keyHapticFeedback, true)
+
     // decimal places
 
     fun setDecimalPlaces(places: Int) {
