@@ -73,8 +73,10 @@ private fun CreditRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .hapticClickable(onClick = onClick)
-                .padding(vertical = 8.dp)
+                .hapticClickable(
+                    onClickLabel = stringResource(id = R.string.a11y_action_open),
+                    onClick = onClick,
+                ).padding(vertical = 8.dp)
                 // Title + subtitle + optional SPDX + URL should read as one
                 // focus stop; without this TalkBack lands on each Text
                 // separately and forces four swipes per credit.

@@ -379,8 +379,11 @@ private fun CurrencyRow(
             modifier =
                 Modifier
                     .weight(1f)
-                    .hapticClickable(enabled = !isDisabled, onClick = onClick)
-                    .alpha(if (isDisabled) DISABLED_ROW_ALPHA else 1f)
+                    .hapticClickable(
+                        enabled = !isDisabled,
+                        onClickLabel = stringResource(id = R.string.a11y_action_select),
+                        onClick = onClick,
+                    ).alpha(if (isDisabled) DISABLED_ROW_ALPHA else 1f)
                     .padding(
                         horizontal = dimensionResource(id = R.dimen.margin2x),
                         vertical = dimensionResource(id = R.dimen.margin1x),

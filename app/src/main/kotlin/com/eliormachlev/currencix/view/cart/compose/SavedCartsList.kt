@@ -58,8 +58,10 @@ private fun SavedCartRow(
             Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = ROW_MIN_HEIGHT_DP.dp)
-                .hapticClickable(onClick = onPick)
-                .padding(horizontal = dimensionResource(id = R.dimen.margin2x)),
+                .hapticClickable(
+                    onClickLabel = stringResource(id = R.string.a11y_action_load),
+                    onClick = onPick,
+                ).padding(horizontal = dimensionResource(id = R.dimen.margin2x)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
