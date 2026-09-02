@@ -16,7 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.fromHtmlLegacy
+import com.google.android.material.color.MaterialColors
 
 private val CHART_PADDING = TIMELINE_CONTENT_PADDING
 private val PROVIDER_FONT_SIZE = 12.sp
@@ -52,7 +54,7 @@ internal fun TimelineChartCard(
                 factory = { ctx ->
                     TextView(ctx).apply {
                         typeface = android.graphics.Typeface.MONOSPACE
-                        setTextColor(android.graphics.Color.parseColor("#FF6060"))
+                        setTextColor(MaterialColors.getColor(ctx, R.attr.colorError, 0))
                         gravity = android.view.Gravity.CENTER_VERTICAL
                     }
                 },

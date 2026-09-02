@@ -417,7 +417,11 @@ private fun CurrencyRow(
         }
         FavoriteToggleIcon(
             active = isStarred,
-            contentDescription = null,
+            contentDescription =
+                stringResource(
+                    id = if (isStarred) R.string.a11y_unstar_currency else R.string.a11y_star_currency,
+                    rate.currency.iso4217Alpha(),
+                ),
             onClick = onStarClick,
         )
     }

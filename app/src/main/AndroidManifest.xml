@@ -26,9 +26,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.preference.PreferenceActivity" />
-        <activity android:name=".view.timeline.TimelineActivity" />
-        <activity android:name=".view.cart.CartActivity" />
+        <activity
+            android:name=".view.preference.PreferenceActivity"
+            android:label="@string/title_preferences" />
+        <activity
+            android:name=".view.timeline.TimelineActivity"
+            android:label="@string/menu_timeline" />
+        <activity
+            android:name=".view.cart.CartActivity"
+            android:label="@string/cart_title" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
