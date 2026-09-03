@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Oko 160 tečajeva\nIzvor: Kombinacija više pouzdanih izvora podataka.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Ažurira se svakoga sata.</string>
     <string name="api_openExchangeRates_hint">Prije početka uporabe ovog izvora morate izraditi svoj osobni API ključ!</string>
+    <string name="api_bankOfCanada_name">Kanadska banka</string>
+    <string name="api_bankOfIsrael_name">Izraelska banka</string>
+    <string name="api_bankRossii_name">Ruska banka</string>
+    <string name="api_norgesBank_name">Norveška banka</string>
 </resources>

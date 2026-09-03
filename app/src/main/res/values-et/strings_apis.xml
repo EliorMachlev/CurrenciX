@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Umbes 160 valuuta vahetuskursid\nAndmeallikas: mitme usaldusväärse allika kombinatsioon.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Andmed uuenevad kord tunnis.</string>
     <string name="api_openExchangeRates_hint">Selle andmeallika kasutamiseks peab sul olema isiklik liidestuse tunnus (API key)!</string>
+    <string name="api_bankOfCanada_name">Kanada keskpank</string>
+    <string name="api_bankOfIsrael_name">Iisraeli keskpank</string>
+    <string name="api_bankRossii_name">Venemaa Pank</string>
+    <string name="api_norgesBank_name">Norra keskpank</string>
 </resources>

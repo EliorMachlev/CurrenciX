@@ -12,6 +12,7 @@ import java.time.LocalDate
 
 class FrankfurterApp : ApiProvider.Api() {
     override val name = "Frankfurter.app"
+    override val nameRes = R.string.api_frankfurterApp_name
 
     override fun descriptionShort(context: Context) = context.getText(R.string.api_frankfurterApp_descriptionShort)
 

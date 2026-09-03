@@ -9,4 +9,8 @@
     <string name="api_ferEe_descriptionUpdateInterval">Nilai tukar diperbarui setiap hari kerja.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> memantau nilai valas yang dipublikasikan oleh Bank Sentral Eropa (European Central Bank).\n<b>Sekitar 30 mata uang tersedia.</b></string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Data diperbarui sekitar pukul 16.00 CET setiap hari kerja.</string>
+    <string name="api_bankOfCanada_name">Bank Kanada</string>
+    <string name="api_bankOfIsrael_name">Bank Israel</string>
+    <string name="api_bankRossii_name">Bank Rusia</string>
+    <string name="api_norgesBank_name">Bank Norwegia</string>
 </resources>

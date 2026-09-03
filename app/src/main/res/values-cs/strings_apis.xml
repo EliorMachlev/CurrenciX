@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Okolo 160 kurzů\nZdroj: Kombinace několika spolehlivých poskytovatelů.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Hodinové aktualizace.</string>
     <string name="api_openExchangeRates_hint">Abyste mohli využívat tento zdroj, musíte si vytvořit osobní klíč API!</string>
+    <string name="api_bankOfCanada_name">Kanadská centrální banka</string>
+    <string name="api_bankOfIsrael_name">Izraelská centrální banka</string>
+    <string name="api_bankRossii_name">Ruská centrální banka</string>
+    <string name="api_norgesBank_name">Norská centrální banka</string>
 </resources>

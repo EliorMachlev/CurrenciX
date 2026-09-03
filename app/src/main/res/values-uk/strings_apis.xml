@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Близько 160 курсів валют\nДжерело: поєднання кількох надійних постачальників.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Дані оновлюються щогодини.</string>
     <string name="api_openExchangeRates_hint">Щоб використовувати це джерело, ви повинні створити свій особистий ключ API!</string>
+    <string name="api_bankOfCanada_name">Банк Канади</string>
+    <string name="api_bankOfIsrael_name">Банк Ізраїлю</string>
+    <string name="api_bankRossii_name">Банк Росії</string>
+    <string name="api_norgesBank_name">Банк Норвегії</string>
 </resources>

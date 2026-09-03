@@ -37,4 +37,8 @@
     <string name="api_openExchangeRates_descriptionShort">כ־160 שערי חליפין\nמקור: שילוב של מספר ספקים אמינים.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">עדכונים שעתיים.</string>
     <string name="api_openExchangeRates_hint">כדי להשתמש במקור זה, יש ליצור API Key אישי!</string>
+    <string name="api_bankOfCanada_name">בנק קנדה</string>
+    <string name="api_bankOfIsrael_name">בנק ישראל</string>
+    <string name="api_bankRossii_name">בנק רוסיה</string>
+    <string name="api_norgesBank_name">בנק נורווגיה</string>
 </resources>

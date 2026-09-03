@@ -6,4 +6,8 @@
     <string name="api_exchangerateHost_descriptionUpdateInterval">Gengi eru uppfærð um miðnætti UTC alla virka daga.</string>
     <string name="api_ferEe_descriptionUpdateInterval">Gengi eru uppfærð alla virka daga.</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Gengi eru uppfærð um 16:00 CET alla virka daga.</string>
+    <string name="api_bankOfCanada_name">Kanadabanki</string>
+    <string name="api_bankOfIsrael_name">Ísraelsbanki</string>
+    <string name="api_bankRossii_name">Rússneski seðlabankinn</string>
+    <string name="api_norgesBank_name">Norski seðlabankinn</string>
 </resources>

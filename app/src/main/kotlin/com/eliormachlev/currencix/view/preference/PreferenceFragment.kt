@@ -216,7 +216,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
         findPreference<ProviderPickerPreference>(getString(R.string.api_key))?.apply {
             val providers = ApiProvider.entries
-            entries = providers.map { it.getName() }.toTypedArray()
+            entries = providers.map { it.getName(requireContext()) }.toTypedArray()
             entryValues = providers.map { it.id.toString() }.toTypedArray()
             setOnHapticChangeListener { newValue ->
                 val provider = ApiProvider.fromId(newValue.toString().toIntOrNull() ?: UNKNOWN_PROVIDER_ID)
@@ -232,7 +232,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
         viewModel.getApiProvider().observe(this) {
             findPreference<LongSummaryPreference>(getString(R.string.key_apiProvider))?.apply {
-                title = resources.getString(R.string.api_about_title, it.getName())
+                title = resources.getString(R.string.api_about_title, it.getName(requireContext()))
                 summary = it.getDescriptionLong(context)
             }
             findPreference<LongSummaryPreference>(getString(R.string.key_refreshPeriod))?.summary =

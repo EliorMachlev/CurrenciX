@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">约 160 种汇率\n来源：多家可靠提供者的组合。</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">每小时更新。</string>
     <string name="api_openExchangeRates_hint">要使用此源，您必须创建您的个人 API 密钥！</string>
+    <string name="api_bankOfCanada_name">加拿大银行</string>
+    <string name="api_bankOfIsrael_name">以色列银行</string>
+    <string name="api_bankRossii_name">俄罗斯银行</string>
+    <string name="api_norgesBank_name">挪威银行</string>
 </resources>

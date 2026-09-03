@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Provider display names. Locales are free to translate central-bank
+         names (Bank of Israel, Bank of Canada, …) into their own official
+         form; pure product/brand names (Frankfurter.app, Fer.ee, InforEuro,
+         Open Exchangerates) should stay verbatim across locales. -->
+    <string name="api_bankOfCanada_name">Bank of Canada</string>
+    <string name="api_bankOfIsrael_name">Bank of Israel</string>
+    <string name="api_bankRossii_name">Bank Rossii</string>
+    <string name="api_ferEe_name" translatable="false">Fer.ee</string>
+    <string name="api_frankfurterApp_name" translatable="false">Frankfurter.app</string>
+    <string name="api_inforEuro_name" translatable="false">InforEuro</string>
+    <string name="api_norgesBank_name">Norges Bank</string>
+    <string name="api_openExchangeRates_name" translatable="false">Open Exchangerates</string>
+
     <string name="api_bankOfCanada_descriptionFull">Daily average exchange rates of the <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>About 23 currencies are included.</b></string>
     <string name="api_bankOfCanada_descriptionShort">About 23 exchange rates\nSource: Central Bank of Canada</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">The rates are published once each business day by 16:30 ET</string>

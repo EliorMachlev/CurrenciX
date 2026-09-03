@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">حوالي 160 سعر الصرف\nالمصدر: مزيج من مقدمي خدمات موثوقين متعددين.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">تحديثات كل ساعة.</string>
     <string name="api_openExchangeRates_hint">لاستخدام هذا المصدر، عليك إنشاء مفتاح API الشخصي الخاص بك!</string>
+    <string name="api_bankOfCanada_name">بنك كندا</string>
+    <string name="api_bankOfIsrael_name">بنك إسرائيل</string>
+    <string name="api_bankRossii_name">بنك روسيا</string>
+    <string name="api_norgesBank_name">بنك النرويج</string>
 </resources>

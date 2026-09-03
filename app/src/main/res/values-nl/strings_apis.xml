@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Ongeveer 160 wisselkoersen\nBron: Combinatie van meerdere betrouwbare aanbieders.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Elk uur updates.</string>
     <string name="api_openExchangeRates_hint">Om deze bron te gebruiken moet u een persoonlijke API sleutel aanmaken!</string>
+    <string name="api_bankOfCanada_name">Bank van Canada</string>
+    <string name="api_bankOfIsrael_name">Bank van Israël</string>
+    <string name="api_bankRossii_name">Bank van Rusland</string>
+    <string name="api_norgesBank_name">Bank van Noorwegen</string>
 </resources>

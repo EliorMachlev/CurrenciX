@@ -36,4 +36,8 @@
     <string name="api_openExchangeRates_descriptionShort">ഏകദേശം 160 വിനിമയ നിരക്കുകൾ\nഉറവിടം: ഒന്നിലധികം വിശ്വസനീയമായ ദാതാക്കളുടെ സംയോജനം.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">മണിക്കൂറിലൊരിക്കൽ അപ്ഡേറ്റുകൾ.</string>
     <string name="api_openExchangeRates_hint">ഈ ഉറവിടം ഉപയോഗിക്കാൻ, നിങ്ങളുടെ വ്യക്തിഗത API കീ സൃഷ്ടിക്കണം!</string>
+    <string name="api_bankOfCanada_name">ബാങ്ക് ഓഫ് കാനഡ</string>
+    <string name="api_bankOfIsrael_name">ബാങ്ക് ഓഫ് ഇസ്രായേൽ</string>
+    <string name="api_bankRossii_name">ബാങ്ക് ഓഫ് റഷ്യ</string>
+    <string name="api_norgesBank_name">ബാങ്ക് ഓഫ് നോർവേ</string>
 </resources>

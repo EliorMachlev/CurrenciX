@@ -9,4 +9,8 @@
     <string name="api_ferEe_descriptionUpdateInterval">Vekslingskursene oppdateres hver arbeidsdag.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> sporer referansekursene (forex) som publisert av den Europeiske sentralbanken.\n<b>Ca. 30 valutaer.</b></string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Dataen oppdateres ~16.00 CET hver dag.</string>
+    <string name="api_bankOfCanada_name">Canadas sentralbank</string>
+    <string name="api_bankOfIsrael_name">Israels sentralbank</string>
+    <string name="api_bankRossii_name">Russlands sentralbank</string>
+    <string name="api_norgesBank_name">Norges Bank</string>
 </resources>

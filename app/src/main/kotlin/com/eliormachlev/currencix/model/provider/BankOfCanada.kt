@@ -12,6 +12,7 @@ import java.time.LocalDate
 
 class BankOfCanada : ApiProvider.Api() {
     override val name = "Bank of Canada"
+    override val nameRes = R.string.api_bankOfCanada_name
 
     override fun descriptionShort(context: Context) = context.getText(R.string.api_bankOfCanada_descriptionShort)
 

@@ -15,6 +15,7 @@ private const val HTTP_UNAUTHORIZED = 401
 
 class OpenExchangerates : ApiProvider.Api() {
     override val name = "Open Exchangerates"
+    override val nameRes = R.string.api_openExchangeRates_name
 
     override fun descriptionShort(context: Context) = context.getText(R.string.api_openExchangeRates_descriptionShort)
 

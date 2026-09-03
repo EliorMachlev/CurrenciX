@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">حدود 160 نرخ ارز\nمنبع: ترکیبی از چندین ارائه دهنده قابل اعتماد.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">به روز رسانی ساعتی.</string>
     <string name="api_openExchangeRates_hint">برای استفاده از این منبع، باید کلید API شخصی خود را ایجاد کنید!</string>
+    <string name="api_bankOfCanada_name">بانک کانادا</string>
+    <string name="api_bankOfIsrael_name">بانک اسرائیل</string>
+    <string name="api_bankRossii_name">بانک روسیه</string>
+    <string name="api_norgesBank_name">بانک نروژ</string>
 </resources>
