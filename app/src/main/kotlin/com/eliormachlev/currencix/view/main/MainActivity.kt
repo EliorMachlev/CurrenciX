@@ -653,8 +653,8 @@ class MainActivity : BaseActivity() {
             findViewById<ImageView>(R.id.iconHistorical).visibility =
                 if (viewModel.getHistoricalDate() != null) View.VISIBLE else View.GONE
         }
-        spinnerFrom.setRates(rates?.rates)
-        spinnerTo.setRates(rates?.rates)
+        spinnerFrom.setRates(rates?.rates, viewModel.getBaseCurrency().value)
+        spinnerTo.setRates(rates?.rates, viewModel.getDestinationCurrency().value)
     }
 
     private fun showErrorSnackbar(message: String?) {

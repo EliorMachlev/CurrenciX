@@ -89,6 +89,19 @@ class SearchableSpinner : AppCompatSpinner {
         adapter.setRates(rates)
     }
 
+    // Repopulate the adapter and immediately restore [selection]. setRates
+    // alone drops the previous selection; without re-applying, AbsSpinner
+    // auto-picks position 0 on the next layout pass and its onItemSelected
+    // callback clobbers any persisted currency. If [selection] isn't in the
+    // new rate set (provider dropped it), the fallback to position 0 stands.
+    fun setRates(
+        rates: List<Rate>?,
+        selection: Currency?,
+    ) {
+        setRates(rates)
+        setSelection(selection)
+    }
+
     //  conversion preview
     fun setCurrentRate(currentRate: Rate) {
         // set in dialog
