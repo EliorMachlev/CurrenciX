@@ -269,12 +269,8 @@ class CartActivity : BaseActivity() {
             // Feed the same rate list the spinner shows on the main screen so
             // its picker shows flags, ISO codes, and (when enabled) preview
             // conversions.
-            spinnerFrom.setRates(rates?.rates)
-            spinnerTo.setRates(rates?.rates)
-            // Re-apply the saved base/dest selections: setRates rebuilds the
-            // adapter, which drops the previous selection unless we re-set it.
-            spinnerFrom.setSelection(viewModel.getBaseCurrency().value)
-            spinnerTo.setSelection(viewModel.getDestinationCurrency().value)
+            spinnerFrom.setRates(rates?.rates, viewModel.getBaseCurrency().value)
+            spinnerTo.setRates(rates?.rates, viewModel.getDestinationCurrency().value)
             footerBinding.refreshFeeAnnotations()
         }
     }
