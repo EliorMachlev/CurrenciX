@@ -17,6 +17,7 @@ import java.time.ZoneOffset
 
 class InforEuro : ApiProvider.Api() {
     override val name = "InforEuro"
+    override val nameRes = R.string.api_inforEuro_name
 
     override fun descriptionShort(context: Context) = context.getText(R.string.api_inforEuro_descriptionShort)
 

@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Unos 160 tipos de cambio\nFuente: Combinación de múltiples proveedores fiables.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Actualizaciones cada hora.</string>
     <string name="api_openExchangeRates_hint">Para utilizar esta Fuente, ¡tiene que crear su Clave API personal!</string>
+    <string name="api_bankOfCanada_name">Banco de Canadá</string>
+    <string name="api_bankOfIsrael_name">Banco de Israel</string>
+    <string name="api_bankRossii_name">Banco de Rusia</string>
+    <string name="api_norgesBank_name">Banco de Noruega</string>
 </resources>

@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Ungefähr 160 Wechselkurse\nQuelle: Kombination aus mehreren zuverlässigen Quellen.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Stündliche Updates.</string>
     <string name="api_openExchangeRates_hint">Um diese Quelle zu nutzen, muss zuerst ein persönlicher API-Schlüssel erstellt werden!</string>
+    <string name="api_bankOfCanada_name">Bank of Canada</string>
+    <string name="api_bankOfIsrael_name">Bank of Israel</string>
+    <string name="api_bankRossii_name">Russische Zentralbank</string>
+    <string name="api_norgesBank_name">Norges Bank</string>
 </resources>

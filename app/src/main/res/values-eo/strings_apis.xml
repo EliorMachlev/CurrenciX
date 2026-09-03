@@ -4,4 +4,8 @@
     <string name="api_bankOfIsrael_descriptionShort">Ĉirkaŭ 14 valutkurzoj\nFonto: Centra Banko de Israelo</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Reprezentaj kurzoj estas publikigitaj unufoje ĉiun labortagon ĉirkaŭ la 15:30 israela tempo.</string>
     <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> fontas la valutajn kurzoj el diversaj financaj datumprovizantoj kaj bankoj, inkluzive de la Eŭropa Centra Banko. Ĉiuj kurzoj-datumoj estas liveritaj en mezpunkto-datumoj. Mezpunktaj kurzoj estas determinitaj kalkulante la mezan kurzon de Bid and Ask.\n<b>Proksime 160 valutoj estas inkluzivitaj.</b></string>
+    <string name="api_bankOfCanada_name">Banko de Kanado</string>
+    <string name="api_bankOfIsrael_name">Banko de Israelo</string>
+    <string name="api_bankRossii_name">Banko de Rusio</string>
+    <string name="api_norgesBank_name">Banko de Norvegio</string>
 </resources>

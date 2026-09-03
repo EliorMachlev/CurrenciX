@@ -11,4 +11,8 @@
     <string name="api_frankfurterApp_descriptionUpdateInterval">Az adatok minden munkanapon 16:00 CET körül frissülnek.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_hu"><b>InforEuro</b></a> a világ pénznemei közötti átváltási számításokat segíti. Az alkalmazás az Európai Bizottság euróra vonatkozó hivatalos havi elszámolási árfolyamán és az annak megfelelő átváltási árfolyamokon alapul, melyeket a költségvetési rendelet 19. cikkével összhangban a Bizottság számvitelért felelős tisztviselője határoz meg.\nEzek az átváltási árfolyamok használatosak az Európai Bizottság által szervezett üléseken, interjúkon stb. részt vevő külső személyeknek térítendő utazási, napidíj- vagy egyéb költségek kiszámítására.\n<b>Körülbelül 150 pénznemet tartalmaz.</b></string>
     <string name="api_inforEuro_descriptionUpdateInterval">A feltüntetett árfolyamok az előző hónap utolsó előtti napján érvényes, az Európai Központi Bank által megadott piaci árfolyamok, vagy – a rendelkezésre állástól függően – a küldöttségek vagy más források által az említett dátumhoz közeli időpontokban megadott árfolyamok.</string>
+    <string name="api_bankOfCanada_name">Kanadai Központi Bank</string>
+    <string name="api_bankOfIsrael_name">Izraeli Központi Bank</string>
+    <string name="api_bankRossii_name">Oroszországi Központi Bank</string>
+    <string name="api_norgesBank_name">Norvégiai Központi Bank</string>
 </resources>

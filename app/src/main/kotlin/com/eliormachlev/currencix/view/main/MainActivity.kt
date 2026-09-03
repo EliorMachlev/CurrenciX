@@ -295,7 +295,7 @@ class MainActivity : BaseActivity() {
 
     private fun buildShareFooter(rates: ExchangeRates?): String? {
         if (rates == null) return null
-        val providerName = rates.provider?.getName() ?: return null
+        val providerName = rates.provider?.getName(this) ?: return null
         val dateString = formatRatesTimestamp(rates.date, rates.time) ?: return null
         return getString(R.string.share_footer, providerName, dateString)
     }
@@ -625,7 +625,7 @@ class MainActivity : BaseActivity() {
         rates?.let {
             val date = it.date
             val dateString = formatRatesTimestamp(date, it.time)
-            val providerString = it.provider?.getName()
+            val providerString = it.provider?.getName(this)
             tvInfoDate.text =
                 if (dateString != null && providerString != null) {
                     getString(

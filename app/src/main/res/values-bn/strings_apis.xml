@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">প্রায় ১৬০টি বিনিময় হার\nউৎস: কতিপয় নির্ভরযোগ্য সরবরাহকারীর সংমিশ্রণে।</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">ঘণ্টাপ্রতি হালনাগাদ।</string>
     <string name="api_openExchangeRates_hint">এই উৎসটি ব্যবহার করতে তোমার ব্যক্তিগত এপিআই কি(চাবি) বানাতে হবে!</string>
+    <string name="api_bankOfCanada_name">ব্যাংক অফ কানাডা</string>
+    <string name="api_bankOfIsrael_name">ব্যাংক অফ ইসরায়েল</string>
+    <string name="api_bankRossii_name">ব্যাংক অফ রাশিয়া</string>
+    <string name="api_norgesBank_name">ব্যাংক অফ নরওয়ে</string>
 </resources>

@@ -155,7 +155,7 @@ class TimelineViewModel(
 
     fun getProvider(): LiveData<CharSequence?> =
         dbLiveItems.map {
-            it?.provider?.getName()
+            it?.provider?.getName(app)
         }
 
     fun getRates(): LiveData<Map<LocalDate, Rate>?> =

@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.model
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.eliormachlev.currencix.model.provider.BankOfCanada
 import com.eliormachlev.currencix.model.provider.BankOfIsrael
 import com.eliormachlev.currencix.model.provider.BankRossii
@@ -45,7 +46,7 @@ enum class ApiProvider(
                 ?: BANK_OF_ISRAEL
     }
 
-    fun getName(): CharSequence = this.implementation.name
+    fun getName(context: Context): CharSequence = context.getText(this.implementation.nameRes)
 
     fun getDescriptionShort(context: Context): CharSequence = this.implementation.descriptionShort(context)
 
@@ -72,7 +73,16 @@ enum class ApiProvider(
     ): Result<Timeline> = this.implementation.getTimeline(context, base, symbol, startDate, endDate)
 
     abstract class Api {
+        // Stable English identifier used for log/error tags — never shown to
+        // users; keep in ASCII so backend log grep stays predictable.
         abstract val name: String
+
+        // Localized display name shown in the UI (provider picker, share
+        // footer, timeline attribution). Central-bank providers translate;
+        // pure product brands (Frankfurter.app, Fer.ee, …) fall back to the
+        // base-locale string.
+        @get:StringRes
+        abstract val nameRes: Int
 
         abstract fun descriptionShort(context: Context): CharSequence
 

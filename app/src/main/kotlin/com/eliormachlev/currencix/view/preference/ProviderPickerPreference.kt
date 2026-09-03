@@ -121,7 +121,7 @@ internal class ProviderPickerDialogAdapter(
             // check current active api provider
             radioButton?.isChecked = (provider == selectedItem)
             // fill text
-            textProviderName?.text = provider.getName()
+            textProviderName?.text = provider.getName(context)
             textDesc?.text = provider.getDescriptionShort(context)
             textHint?.visibility = provider.getHint(context)?.let {
                 textHint?.text = it

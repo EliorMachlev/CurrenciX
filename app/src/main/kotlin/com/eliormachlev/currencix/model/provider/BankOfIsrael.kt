@@ -36,6 +36,7 @@ private fun unitFor(currency: String): BigDecimal = UNIT_PER_CURRENCY[currency] 
 
 class BankOfIsrael : ApiProvider.Api() {
     override val name = "Bank of Israel"
+    override val nameRes = R.string.api_bankOfIsrael_name
 
     override fun descriptionShort(context: Context) = context.getText(R.string.api_bankOfIsrael_descriptionShort)
 

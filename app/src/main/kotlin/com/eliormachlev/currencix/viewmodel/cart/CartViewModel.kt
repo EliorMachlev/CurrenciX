@@ -335,7 +335,7 @@ class CartViewModel(
             providerName =
                 ratesCache.lastRates
                     ?.provider
-                    ?.getName()
+                    ?.getName(getApplication())
                     ?.toString(),
             ratesDate = ratesCache.lastRates?.date,
         )

@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Khoảng 160 tỉ lệ chuyển đổi.\nNguồn: Kết hợp nhiều nhà cung cấp đáng tin cậy.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Cập nhật hàng giờ.</string>
     <string name="api_openExchangeRates_hint">Để sử dụng Nguồn này, bạn phải tạo mã API cá nhân!</string>
+    <string name="api_bankOfCanada_name">Ngân hàng Canada</string>
+    <string name="api_bankOfIsrael_name">Ngân hàng Israel</string>
+    <string name="api_bankRossii_name">Ngân hàng Nga</string>
+    <string name="api_norgesBank_name">Ngân hàng Na Uy</string>
 </resources>

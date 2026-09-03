@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Unes 160 taxes de canvi.\nFont: Combinació de diferents proveïdors de confiança.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Actualitzacions cada hora.</string>
     <string name="api_openExchangeRates_hint">Heu de crear una clau API personal per a utilitzar aquesta font.</string>
+    <string name="api_bankOfCanada_name">Banc del Canadà</string>
+    <string name="api_bankOfIsrael_name">Banc d\'Israel</string>
+    <string name="api_bankRossii_name">Banc de Rússia</string>
+    <string name="api_norgesBank_name">Banc de Noruega</string>
 </resources>

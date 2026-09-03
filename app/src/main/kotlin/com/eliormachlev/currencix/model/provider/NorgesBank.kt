@@ -16,6 +16,7 @@ private const val SDMX_FORMAT_QS = "&format=sdmx-compact-2.1"
 
 class NorgesBank : ApiProvider.Api() {
     override val name = "Norges Bank"
+    override val nameRes = R.string.api_norgesBank_name
 
     override fun descriptionShort(context: Context) = context.getText(R.string.api_norgesBank_descriptionShort)
 

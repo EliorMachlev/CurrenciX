@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Yaklaşık 160 döviz kuru\nKaynak: Birden fazla güvenilir sağlayıcının birleşimi.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Saatlik güncellemeler.</string>
     <string name="api_openExchangeRates_hint">Bu kaynağı kullanmak için kişisel API anahtarınızı oluşturmanız gerekir!</string>
+    <string name="api_bankOfCanada_name">Kanada Merkez Bankası</string>
+    <string name="api_bankOfIsrael_name">İsrail Merkez Bankası</string>
+    <string name="api_bankRossii_name">Rusya Merkez Bankası</string>
+    <string name="api_norgesBank_name">Norveç Merkez Bankası</string>
 </resources>

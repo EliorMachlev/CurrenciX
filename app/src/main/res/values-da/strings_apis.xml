@@ -29,4 +29,8 @@
 
 
 
+    <string name="api_bankOfCanada_name">Canadas nationalbank</string>
+    <string name="api_bankOfIsrael_name">Israels Nationalbank</string>
+    <string name="api_bankRossii_name">Ruslands centralbank</string>
+    <string name="api_norgesBank_name">Norges Bank</string>
 </resources>

@@ -28,4 +28,8 @@
     <string name="api_openExchangeRates_descriptionShort">Circa 160 tassi di cambio\nFonte: Combinazione di più fornitori affidabili.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Aggiornamenti orari.</string>
     <string name="api_openExchangeRates_hint">Per utilizzare questa fonte, è necessario creare una chiave API personale!</string>
+    <string name="api_bankOfCanada_name">Banca del Canada</string>
+    <string name="api_bankOfIsrael_name">Banca d\'Israele</string>
+    <string name="api_bankRossii_name">Banca di Russia</string>
+    <string name="api_norgesBank_name">Banca di Norvegia</string>
 </resources>

@@ -27,6 +27,7 @@ private val RUB_CODE: String = Currency.RUB.iso4217Alpha()
 
 class BankRossii : ApiProvider.Api() {
     override val name = "Bank Rossii"
+    override val nameRes = R.string.api_bankRossii_name
 
     override fun descriptionShort(context: Context) = context.getText(R.string.api_bankRossii_descriptionShort)
 
