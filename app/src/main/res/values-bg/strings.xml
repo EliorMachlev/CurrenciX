@@ -96,4 +96,19 @@
     <string name="error_no_api_key">Трябва да зададеш валиден API ключ, за да използваш този източник.</string>
     <string name="error_try_another_api">Все пак, в настройките има и други доставчици на данни, от които можеш да избираш. Просто опитай!</string>
     <string name="error_unsupported_timeline">Данните за график не се поддържат от този API.</string>
+    <string name="a11y_search_currencies">Търсене на валути</string>
+    <string name="a11y_clear_search">Изчисти търсенето</string>
+    <string name="a11y_cart_item_name">Име на артикула</string>
+    <string name="a11y_chart_summary">Диаграма на историческите валутни курсове. Статистиките — минимум, среден, максимум и текущ курс — са показани по-долу.</string>
+    <string name="a11y_star_currency">Отбележи със звезда %1$s</string>
+    <string name="a11y_unstar_currency">Премахни звездата от %1$s</string>
+    <string name="a11y_action_select">Избери</string>
+    <string name="a11y_action_load">Зареди</string>
+    <string name="a11y_action_open">Отвори</string>
+    <string name="quick_conversions_fee_conversion">конверсия %s</string>
+    <string name="quick_conversions_fee_reduction">намаление %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Закачи най-горе</string>
+    <string name="cart_unpin_item">Откачи артикула</string>
+    <string name="cart_reorder_item">Пренареди артикула</string>
 </resources>

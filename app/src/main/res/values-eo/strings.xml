@@ -96,4 +96,19 @@
     <string name="error_invalid_api_key">HTTP 401 – Bonvolu kontroli vian API-ŝlosilon.</string>
     <string name="error_no_api_key">Valida API-ŝlosilo devas esti agordita por uzi ĉi tiun fonton.</string>
     <string name="error_unsupported_timeline">Templiniaj datumoj ne estas subtenataj de ĉi tiu API.</string>
+    <string name="a11y_search_currencies">Serĉi valutojn</string>
+    <string name="a11y_clear_search">Vakigi serĉon</string>
+    <string name="a11y_cart_item_name">Nomo de artikolo</string>
+    <string name="a11y_chart_summary">Diagramo de historio de kurzoj. Statistikoj — minimumo, mezumo, maksimumo, kaj nuna kurzo — montriĝas sube.</string>
+    <string name="a11y_star_currency">Steligi %1$s</string>
+    <string name="a11y_unstar_currency">Malsteligi %1$s</string>
+    <string name="a11y_action_select">Elekti</string>
+    <string name="a11y_action_load">Ŝargi</string>
+    <string name="a11y_action_open">Malfermi</string>
+    <string name="quick_conversions_fee_conversion">konvertado %s</string>
+    <string name="quick_conversions_fee_reduction">redukto %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Alpingli artikolon supre</string>
+    <string name="cart_unpin_item">Depingli artikolon</string>
+    <string name="cart_reorder_item">Reordigi artikolon</string>
 </resources>

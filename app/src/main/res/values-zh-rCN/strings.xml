@@ -96,4 +96,19 @@
     <string name="cart_unsaved_save_as">另存为新的</string>
     <string name="cart_unsaved_discard">放弃更改</string>
     <string name="cart_unsaved_continue">继续</string>
+    <string name="a11y_search_currencies">搜索货币</string>
+    <string name="a11y_clear_search">清除搜索</string>
+    <string name="a11y_cart_item_name">商品名称</string>
+    <string name="a11y_chart_summary">汇率历史走势图。以下显示统计信息 — 最低、平均、最高和当前汇率。</string>
+    <string name="a11y_star_currency">收藏 %1$s</string>
+    <string name="a11y_unstar_currency">取消收藏 %1$s</string>
+    <string name="a11y_action_select">选择</string>
+    <string name="a11y_action_load">加载</string>
+    <string name="a11y_action_open">打开</string>
+    <string name="quick_conversions_fee_conversion">转换 %s</string>
+    <string name="quick_conversions_fee_reduction">减免 %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">置顶</string>
+    <string name="cart_unpin_item">取消置顶</string>
+    <string name="cart_reorder_item">重新排序</string>
 </resources>

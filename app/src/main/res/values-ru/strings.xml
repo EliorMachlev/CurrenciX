@@ -96,4 +96,19 @@
     <string name="cart_unsaved_save_as">Сохранить как новую</string>
     <string name="cart_unsaved_discard">Отменить изменения</string>
     <string name="cart_unsaved_continue">Продолжить</string>
+    <string name="a11y_search_currencies">Поиск валют</string>
+    <string name="a11y_clear_search">Очистить поиск</string>
+    <string name="a11y_cart_item_name">Название позиции</string>
+    <string name="a11y_chart_summary">График истории обменного курса. Статистика — минимум, среднее, максимум и текущий курс — показана ниже.</string>
+    <string name="a11y_star_currency">Отметить %1$s звёздочкой</string>
+    <string name="a11y_unstar_currency">Убрать звёздочку с %1$s</string>
+    <string name="a11y_action_select">Выбрать</string>
+    <string name="a11y_action_load">Загрузить</string>
+    <string name="a11y_action_open">Открыть</string>
+    <string name="quick_conversions_fee_conversion">конвертация %s</string>
+    <string name="quick_conversions_fee_reduction">уменьшение %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Закрепить сверху</string>
+    <string name="cart_unpin_item">Открепить</string>
+    <string name="cart_reorder_item">Изменить порядок</string>
 </resources>

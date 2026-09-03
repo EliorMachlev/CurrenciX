@@ -97,4 +97,19 @@
     <string name="cart_unsaved_continue">Continua</string>
     <string name="a11y_delete">Suprimeix</string>
     <string name="a11y_historical_rate">Cotització històrica</string>
+    <string name="a11y_search_currencies">Cerca divises</string>
+    <string name="a11y_clear_search">Neteja la cerca</string>
+    <string name="a11y_cart_item_name">Nom de l\'article</string>
+    <string name="a11y_chart_summary">Gràfic històric del tipus de canvi. Les estadístiques — mínim, mitjana, màxim i tipus actual — es mostren a sota.</string>
+    <string name="a11y_star_currency">Marca %1$s amb estrella</string>
+    <string name="a11y_unstar_currency">Treu l\'estrella de %1$s</string>
+    <string name="a11y_action_select">Selecciona</string>
+    <string name="a11y_action_load">Carrega</string>
+    <string name="a11y_action_open">Obre</string>
+    <string name="quick_conversions_fee_conversion">conversió %s</string>
+    <string name="quick_conversions_fee_reduction">reducció %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Fixa a dalt</string>
+    <string name="cart_unpin_item">Desfixa l\'article</string>
+    <string name="cart_reorder_item">Reordena l\'article</string>
 </resources>

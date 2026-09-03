@@ -96,4 +96,19 @@
     <string name="cart_unsaved_continue">চালিয়ে যান</string>
     <string name="a11y_delete">মুছুন</string>
     <string name="a11y_historical_rate">ঐতিহাসিক হার</string>
+    <string name="a11y_search_currencies">মুদ্রা অনুসন্ধান</string>
+    <string name="a11y_clear_search">অনুসন্ধান সাফ করুন</string>
+    <string name="a11y_cart_item_name">আইটেমের নাম</string>
+    <string name="a11y_chart_summary">বিনিময় হারের ইতিহাসের চার্ট। পরিসংখ্যান — সর্বনিম্ন, গড়, সর্বোচ্চ এবং বর্তমান হার — নিচে দেখানো হয়েছে।</string>
+    <string name="a11y_star_currency">%1$s কে তারা দিন</string>
+    <string name="a11y_unstar_currency">%1$s থেকে তারা সরান</string>
+    <string name="a11y_action_select">নির্বাচন</string>
+    <string name="a11y_action_load">লোড করুন</string>
+    <string name="a11y_action_open">খুলুন</string>
+    <string name="quick_conversions_fee_conversion">রূপান্তর %s</string>
+    <string name="quick_conversions_fee_reduction">হ্রাস %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">শীর্ষে পিন করুন</string>
+    <string name="cart_unpin_item">পিন সরান</string>
+    <string name="cart_reorder_item">পুনর্বিন্যাস করুন</string>
 </resources>

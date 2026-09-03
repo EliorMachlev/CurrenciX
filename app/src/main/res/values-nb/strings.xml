@@ -97,4 +97,19 @@
     <string name="cart_unsaved_save_as">Lagre som ny</string>
     <string name="cart_unsaved_discard">Forkast endringer</string>
     <string name="cart_unsaved_continue">Fortsett</string>
+    <string name="a11y_search_currencies">Søk etter valutaer</string>
+    <string name="a11y_clear_search">Tøm søk</string>
+    <string name="a11y_cart_item_name">Varenavn</string>
+    <string name="a11y_chart_summary">Diagram over valutakurshistorikk. Statistikk — minimum, gjennomsnitt, maksimum og gjeldende kurs — vises nedenfor.</string>
+    <string name="a11y_star_currency">Stjernemerk %1$s</string>
+    <string name="a11y_unstar_currency">Fjern stjerne fra %1$s</string>
+    <string name="a11y_action_select">Velg</string>
+    <string name="a11y_action_load">Last inn</string>
+    <string name="a11y_action_open">Åpne</string>
+    <string name="quick_conversions_fee_conversion">konvertering %s</string>
+    <string name="quick_conversions_fee_reduction">reduksjon %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Fest øverst</string>
+    <string name="cart_unpin_item">Løsne vare</string>
+    <string name="cart_reorder_item">Endre rekkefølge</string>
 </resources>

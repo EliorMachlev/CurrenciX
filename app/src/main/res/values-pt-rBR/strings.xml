@@ -97,4 +97,19 @@
     <string name="cart_unsaved_save_as">Salvar como novo</string>
     <string name="cart_unsaved_discard">Descartar alterações</string>
     <string name="cart_unsaved_continue">Continuar</string>
+    <string name="a11y_search_currencies">Pesquisar moedas</string>
+    <string name="a11y_clear_search">Limpar pesquisa</string>
+    <string name="a11y_cart_item_name">Nome do item</string>
+    <string name="a11y_chart_summary">Gráfico do histórico da taxa de câmbio. As estatísticas — mínima, média, máxima e taxa atual — são exibidas abaixo.</string>
+    <string name="a11y_star_currency">Marcar %1$s com estrela</string>
+    <string name="a11y_unstar_currency">Remover estrela de %1$s</string>
+    <string name="a11y_action_select">Selecionar</string>
+    <string name="a11y_action_load">Carregar</string>
+    <string name="a11y_action_open">Abrir</string>
+    <string name="quick_conversions_fee_conversion">conversão %s</string>
+    <string name="quick_conversions_fee_reduction">redução %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Fixar no topo</string>
+    <string name="cart_unpin_item">Desfixar item</string>
+    <string name="cart_reorder_item">Reordenar item</string>
 </resources>

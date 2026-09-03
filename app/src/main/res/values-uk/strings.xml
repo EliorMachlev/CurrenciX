@@ -96,4 +96,19 @@
     <string name="cart_unsaved_save_as">Зберегти як новий</string>
     <string name="cart_unsaved_discard">Скасувати зміни</string>
     <string name="cart_unsaved_continue">Продовжити</string>
+    <string name="a11y_search_currencies">Пошук валют</string>
+    <string name="a11y_clear_search">Очистити пошук</string>
+    <string name="a11y_cart_item_name">Назва позиції</string>
+    <string name="a11y_chart_summary">Графік історії обмінного курсу. Статистика — мінімум, середнє, максимум і поточний курс — показана нижче.</string>
+    <string name="a11y_star_currency">Позначити %1$s зіркою</string>
+    <string name="a11y_unstar_currency">Прибрати зірку з %1$s</string>
+    <string name="a11y_action_select">Вибрати</string>
+    <string name="a11y_action_load">Завантажити</string>
+    <string name="a11y_action_open">Відкрити</string>
+    <string name="quick_conversions_fee_conversion">конвертація %s</string>
+    <string name="quick_conversions_fee_reduction">зменшення %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Закріпити зверху</string>
+    <string name="cart_unpin_item">Відкріпити</string>
+    <string name="cart_reorder_item">Змінити порядок</string>
 </resources>

@@ -96,4 +96,19 @@
     <string name="cart_unsaved_continue">Nastavi</string>
     <string name="a11y_delete">Izbriši</string>
     <string name="a11y_historical_rate">Povijesni tečaj</string>
+    <string name="a11y_search_currencies">Traži valute</string>
+    <string name="a11y_clear_search">Očisti pretragu</string>
+    <string name="a11y_cart_item_name">Naziv stavke</string>
+    <string name="a11y_chart_summary">Grafikon povijesti tečajeva. Statistika — minimum, prosjek, maksimum i trenutni tečaj — prikazana je ispod.</string>
+    <string name="a11y_star_currency">Označi %1$s zvjezdicom</string>
+    <string name="a11y_unstar_currency">Ukloni zvjezdicu s %1$s</string>
+    <string name="a11y_action_select">Odaberi</string>
+    <string name="a11y_action_load">Učitaj</string>
+    <string name="a11y_action_open">Otvori</string>
+    <string name="quick_conversions_fee_conversion">konverzija %s</string>
+    <string name="quick_conversions_fee_reduction">smanjenje %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Prikvači na vrh</string>
+    <string name="cart_unpin_item">Otkvači stavku</string>
+    <string name="cart_reorder_item">Presloži stavku</string>
 </resources>

@@ -96,4 +96,19 @@
     <string name="cart_unsaved_continue">Pokračovat</string>
     <string name="a11y_delete">Smazat</string>
     <string name="a11y_historical_rate">Historický kurz</string>
+    <string name="a11y_search_currencies">Hledat měny</string>
+    <string name="a11y_clear_search">Vymazat hledání</string>
+    <string name="a11y_cart_item_name">Název položky</string>
+    <string name="a11y_chart_summary">Graf historie směnného kurzu. Statistiky — minimum, průměr, maximum a aktuální kurz — jsou uvedeny níže.</string>
+    <string name="a11y_star_currency">Přidat hvězdičku k %1$s</string>
+    <string name="a11y_unstar_currency">Odebrat hvězdičku z %1$s</string>
+    <string name="a11y_action_select">Vybrat</string>
+    <string name="a11y_action_load">Načíst</string>
+    <string name="a11y_action_open">Otevřít</string>
+    <string name="quick_conversions_fee_conversion">konverze %s</string>
+    <string name="quick_conversions_fee_reduction">snížení %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Připnout nahoru</string>
+    <string name="cart_unpin_item">Odepnout položku</string>
+    <string name="cart_reorder_item">Přeuspořádat položku</string>
 </resources>

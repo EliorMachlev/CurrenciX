@@ -96,4 +96,19 @@
     <string name="cart_unsaved_save_as">Yeni olarak kaydet</string>
     <string name="cart_unsaved_discard">Değişiklikleri sil</string>
     <string name="cart_unsaved_continue">Devam et</string>
+    <string name="a11y_search_currencies">Para birimlerini ara</string>
+    <string name="a11y_clear_search">Aramayı temizle</string>
+    <string name="a11y_cart_item_name">Öğe adı</string>
+    <string name="a11y_chart_summary">Döviz kuru geçmişi grafiği. İstatistikler — minimum, ortalama, maksimum ve mevcut kur — aşağıda gösterilmiştir.</string>
+    <string name="a11y_star_currency">%1$s öğesini yıldızla</string>
+    <string name="a11y_unstar_currency">%1$s öğesinden yıldızı kaldır</string>
+    <string name="a11y_action_select">Seç</string>
+    <string name="a11y_action_load">Yükle</string>
+    <string name="a11y_action_open">Aç</string>
+    <string name="quick_conversions_fee_conversion">dönüşüm %s</string>
+    <string name="quick_conversions_fee_reduction">indirim %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Öğeyi üste sabitle</string>
+    <string name="cart_unpin_item">Sabitlemeyi kaldır</string>
+    <string name="cart_reorder_item">Öğeyi yeniden sırala</string>
 </resources>
