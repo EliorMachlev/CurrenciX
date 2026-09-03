@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Para birimi seç</string>
     <string name="fee_true_cost_prefix">"Dönüşüm ücreti: "</string>
     <string name="fee_original_value_prefix">"İndirim ücreti: "</string>
+    <string name="fee_cost_with_fee_prefix">"Ücretli maliyet: "</string>
+    <string name="fee_value_before_fee_prefix">"Ücret öncesi değer: "</string>
     <string name="fee_side_summary_original">Gösterilen dönüştürülmüş tutar orta piyasa kurunda kalır; ücretler ayrı olarak \"Dönüşüm ücreti\" şeklinde gösterilir.</string>
     <string name="fee_side_summary_converted">Ücretler gösterilen dönüştürülmüş tutara dahil edilmiştir.</string>
     <string name="fee_empty">Henüz ücret yok</string>

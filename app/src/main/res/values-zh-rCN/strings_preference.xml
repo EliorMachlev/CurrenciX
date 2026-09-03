@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">选择货币</string>
     <string name="fee_true_cost_prefix">"换算费："</string>
     <string name="fee_original_value_prefix">"扣减费："</string>
+    <string name="fee_cost_with_fee_prefix">"含手续费成本："</string>
+    <string name="fee_value_before_fee_prefix">"扣手续费前金额："</string>
     <string name="fee_side_summary_original">显示的换算金额保持中间市场汇率；手续费单独显示为\"换算费\"。</string>
     <string name="fee_side_summary_converted">手续费已计入显示的换算金额中。</string>
     <string name="fee_empty">暂无手续费</string>

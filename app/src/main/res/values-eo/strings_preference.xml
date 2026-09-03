@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Elekti valuton</string>
     <string name="fee_true_cost_prefix">"Konverta kotizo: "</string>
     <string name="fee_original_value_prefix">"Redukta kotizo: "</string>
+    <string name="fee_cost_with_fee_prefix">"Kosto kun kotizo: "</string>
+    <string name="fee_value_before_fee_prefix">"Valoro antaŭ kotizo: "</string>
     <string name="fee_side_summary_original">La montrata konvertita sumo restas ĉe la mez-merkata kurzo; kotizoj estas montrataj aparte kiel \"Konverta kotizo\".</string>
     <string name="fee_side_summary_converted">Kotizoj estas inkluzivitaj en la montrata konvertita sumo.</string>
     <string name="fee_empty">Neniuj kotizoj ankoraŭ</string>

@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Selecionar moeda</string>
     <string name="fee_true_cost_prefix">"Taxa de conversão: "</string>
     <string name="fee_original_value_prefix">"Taxa de redução: "</string>
+    <string name="fee_cost_with_fee_prefix">"Custo com taxa: "</string>
+    <string name="fee_value_before_fee_prefix">"Valor antes da taxa: "</string>
     <string name="fee_side_summary_original">O valor convertido exibido permanece na taxa média de mercado; as taxas são mostradas separadamente como \"Taxa de conversão\".</string>
     <string name="fee_side_summary_converted">As taxas estão incluídas no valor convertido exibido.</string>
     <string name="fee_empty">Ainda não há taxas</string>

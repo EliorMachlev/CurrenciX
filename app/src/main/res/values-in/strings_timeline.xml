@@ -3,6 +3,7 @@
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> ke &lt;b>%2$s&lt;/b></string>
     <string name="data_provider">Data dari &lt;b>%s&lt;/b></string>
     <string name="rate_average">rata-rata</string>
+    <string name="rate_median">median</string>
     <string name="rate_min">terendah</string>
     <string name="rate_max">tertinggi</string>
     <string name="year">tahun</string>

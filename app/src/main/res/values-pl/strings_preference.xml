@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Wybierz walutę</string>
     <string name="fee_true_cost_prefix">"Opłata za konwersję: "</string>
     <string name="fee_original_value_prefix">"Opłata za pomniejszenie: "</string>
+    <string name="fee_cost_with_fee_prefix">"Koszt z prowizją: "</string>
+    <string name="fee_value_before_fee_prefix">"Wartość przed prowizją: "</string>
     <string name="fee_side_summary_original">Wyświetlana przeliczona kwota pozostaje po średnim kursie rynkowym; opłaty są pokazywane osobno jako \"Opłata za konwersję\".</string>
     <string name="fee_side_summary_converted">Opłaty są uwzględnione w wyświetlanej przeliczonej kwocie.</string>
     <string name="fee_empty">Brak opłat</string>

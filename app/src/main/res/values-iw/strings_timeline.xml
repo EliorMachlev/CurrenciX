@@ -4,6 +4,7 @@
     <string name="data_provider">נתונים בחסות &lt;b>%s&lt;/b></string>
 
     <string name="rate_average">ממוצע</string>
+    <string name="rate_median">חציון</string>
     <string name="rate_min">מינימום</string>
     <string name="rate_max">מקסימום</string>
 

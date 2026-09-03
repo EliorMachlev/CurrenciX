@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Выбрать валюту</string>
     <string name="fee_true_cost_prefix">"Комиссия за конвертацию: "</string>
     <string name="fee_original_value_prefix">"Комиссия за списание: "</string>
+    <string name="fee_cost_with_fee_prefix">"Стоимость с комиссией: "</string>
+    <string name="fee_value_before_fee_prefix">"Сумма до комиссии: "</string>
     <string name="fee_side_summary_original">Отображаемая конвертированная сумма остаётся по среднерыночному курсу; комиссии показываются отдельно как \"Комиссия за конвертацию\".</string>
     <string name="fee_side_summary_converted">Комиссии уже включены в отображаемую конвертированную сумму.</string>
     <string name="fee_empty">Комиссий пока нет</string>

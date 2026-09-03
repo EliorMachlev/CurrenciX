@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Vali valuuta</string>
     <string name="fee_true_cost_prefix">"Konverteerimistasu: "</string>
     <string name="fee_original_value_prefix">"Vähendustasu: "</string>
+    <string name="fee_cost_with_fee_prefix">"Hind koos tasuga: "</string>
+    <string name="fee_value_before_fee_prefix">"Väärtus enne tasu: "</string>
     <string name="fee_side_summary_original">Kuvatav konverteeritud summa jääb keskturukursile; teenustasud kuvatakse eraldi kui \"Konverteerimistasu\".</string>
     <string name="fee_side_summary_converted">Teenustasud on kuvatavasse konverteeritud summasse juba arvestatud.</string>
     <string name="fee_empty">Teenustasusid veel pole</string>

@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Избери валута</string>
     <string name="fee_true_cost_prefix">"Такса за конвертиране: "</string>
     <string name="fee_original_value_prefix">"Такса за приспадане: "</string>
+    <string name="fee_cost_with_fee_prefix">"Цена с такса: "</string>
+    <string name="fee_value_before_fee_prefix">"Стойност преди такса: "</string>
     <string name="fee_side_summary_original">Показаната конвертирана сума остава на средния пазарен курс; таксите се показват отделно като \"Такса за конвертиране\".</string>
     <string name="fee_side_summary_converted">Таксите са включени в показаната конвертирана сума.</string>
     <string name="fee_empty">Все още няма такси</string>

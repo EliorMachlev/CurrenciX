@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">انتخاب ارز</string>
     <string name="fee_true_cost_prefix">"کارمزد تبدیل: "</string>
     <string name="fee_original_value_prefix">"کارمزد کاهش: "</string>
+    <string name="fee_cost_with_fee_prefix">"هزینه با کارمزد: "</string>
+    <string name="fee_value_before_fee_prefix">"مقدار پیش از کارمزد: "</string>
     <string name="fee_side_summary_original">مبلغ تبدیل‌شده نمایش داده شده در نرخ میانگین بازار می‌ماند؛ کارمزدها به‌طور جداگانه به‌عنوان \"کارمزد تبدیل\" نشان داده می‌شوند.</string>
     <string name="fee_side_summary_converted">کارمزدها در مبلغ تبدیل‌شده نمایش داده شده لحاظ شده‌اند.</string>
     <string name="fee_empty">هنوز کارمزدی وجود ندارد</string>
