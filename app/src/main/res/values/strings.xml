@@ -10,6 +10,11 @@
     <string name="a11y_clear_search">Clear search</string>
     <string name="a11y_cart_item_name">Item name</string>
     <string name="a11y_chart_summary">Exchange rate history chart. Statistics — minimum, average, maximum, and current rate — are shown below.</string>
+    <string name="a11y_star_currency">Star %1$s</string>
+    <string name="a11y_unstar_currency">Unstar %1$s</string>
+    <string name="a11y_action_select">Select</string>
+    <string name="a11y_action_load">Load</string>
+    <string name="a11y_action_open">Open</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="info_date_latest">Rates as of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
     <string name="info_date_historical">Historical rates of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>

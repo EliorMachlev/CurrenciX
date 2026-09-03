@@ -168,15 +168,19 @@ fun Preference.setOnHapticChangeListener(onChange: (newValue: Any?) -> Unit) {
 /**
  * Compose analogue of [Modifier.clickable] that also fires a keyboard-tap
  * haptic on click, honouring the user's preference and battery-saver state.
+ * [onClickLabel] is surfaced to TalkBack as the "double-tap to X" verb; pass
+ * a translated action string ("Select", "Load", …) at row-tap sites so the
+ * screen reader announces what activating the row does.
  */
 fun Modifier.hapticClickable(
     enabled: Boolean = true,
+    onClickLabel: String? = null,
     onClick: () -> Unit,
 ): Modifier =
     composed {
         val ctx = LocalContext.current
         val haptic = LocalHapticFeedback.current
-        clickable(enabled = enabled) {
+        clickable(enabled = enabled, onClickLabel = onClickLabel) {
             if (ctx.shouldHaptic()) {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
             }
