@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Vyberte měnu</string>
     <string name="fee_true_cost_prefix">"Poplatek za konverzi: "</string>
     <string name="fee_original_value_prefix">"Poplatek za snížení: "</string>
+    <string name="fee_cost_with_fee_prefix">"Cena s poplatkem: "</string>
+    <string name="fee_value_before_fee_prefix">"Hodnota před poplatkem: "</string>
     <string name="fee_side_summary_original">Zobrazená převedená částka zůstává ve středním tržním kurzu; poplatky jsou zobrazeny samostatně jako \"Poplatek za konverzi\".</string>
     <string name="fee_side_summary_converted">Poplatky jsou zahrnuty v zobrazené převedené částce.</string>
     <string name="fee_empty">Zatím žádné poplatky</string>

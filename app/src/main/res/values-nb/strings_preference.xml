@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Velg valuta</string>
     <string name="fee_true_cost_prefix">"Konverteringsgebyr: "</string>
     <string name="fee_original_value_prefix">"Reduksjonsgebyr: "</string>
+    <string name="fee_cost_with_fee_prefix">"Pris med gebyr: "</string>
+    <string name="fee_value_before_fee_prefix">"Verdi før gebyr: "</string>
     <string name="fee_side_summary_original">Det viste konverterte beløpet holder seg til midtkurs; gebyrer vises separat som \"Konverteringsgebyr\".</string>
     <string name="fee_side_summary_converted">Gebyrer er inkludert i det viste konverterte beløpet.</string>
     <string name="fee_empty">Ingen gebyrer ennå</string>

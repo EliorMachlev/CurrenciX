@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Válassz pénznemet</string>
     <string name="fee_true_cost_prefix">"Átváltási díj: "</string>
     <string name="fee_original_value_prefix">"Levonási díj: "</string>
+    <string name="fee_cost_with_fee_prefix">"Költség díjjal: "</string>
+    <string name="fee_value_before_fee_prefix">"Érték díj előtt: "</string>
     <string name="fee_side_summary_original">A megjelenített átváltott összeg a középárfolyamon marad; a díjak külön jelennek meg \"Átváltási díj\" néven.</string>
     <string name="fee_side_summary_converted">A díjak bele vannak számítva a megjelenített átváltott összegbe.</string>
     <string name="fee_empty">Még nincsenek díjak</string>

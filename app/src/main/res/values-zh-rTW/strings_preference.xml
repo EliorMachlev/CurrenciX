@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">選擇貨幣</string>
     <string name="fee_true_cost_prefix">"換算費："</string>
     <string name="fee_original_value_prefix">"扣減費："</string>
+    <string name="fee_cost_with_fee_prefix">"含手續費成本："</string>
+    <string name="fee_value_before_fee_prefix">"扣手續費前金額："</string>
     <string name="fee_side_summary_original">顯示的換算金額維持在中間市場匯率；手續費會單獨顯示為\"換算費\"。</string>
     <string name="fee_side_summary_converted">手續費已計入顯示的換算金額中。</string>
     <string name="fee_empty">尚無手續費</string>

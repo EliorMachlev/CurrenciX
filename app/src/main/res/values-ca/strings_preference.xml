@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Selecciona moneda</string>
     <string name="fee_true_cost_prefix">"Comissió de conversió: "</string>
     <string name="fee_original_value_prefix">"Comissió de reducció: "</string>
+    <string name="fee_cost_with_fee_prefix">"Cost amb comissió: "</string>
+    <string name="fee_value_before_fee_prefix">"Valor abans de la comissió: "</string>
     <string name="fee_side_summary_original">L\'import convertit mostrat es manté al canvi mitjà de mercat; les comissions es mostren per separat com a \"Comissió de conversió\".</string>
     <string name="fee_side_summary_converted">Les comissions s\'inclouen dins de l\'import convertit mostrat.</string>
     <string name="fee_empty">Encara no hi ha comissions</string>

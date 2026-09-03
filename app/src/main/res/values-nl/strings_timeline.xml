@@ -3,6 +3,7 @@
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> naar &lt;b>%2$s&lt;/b></string>
     <string name="data_provider">Gegevens per &lt;b>%s&lt;/b></string>
     <string name="rate_average">gem</string>
+    <string name="rate_median">mediaan</string>
     <string name="rate_min">min</string>
     <string name="rate_max">max</string>
     <string name="year">jaar</string>

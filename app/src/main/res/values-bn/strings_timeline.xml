@@ -3,6 +3,7 @@
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> থেকে &lt;b>%2$s&lt;/b> পর্যন্ত</string>
     <string name="data_provider">&lt;b>%s&lt;/b> প্রদত্ত তথ্য</string>
     <string name="rate_average">গড়</string>
+    <string name="rate_median">মধ্যক</string>
     <string name="rate_min">সর্বনিম্ন</string>
     <string name="rate_max">সর্বোচ্চ</string>
     <string name="year">বছর</string>

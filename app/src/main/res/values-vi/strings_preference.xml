@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Chọn tiền tệ</string>
     <string name="fee_true_cost_prefix">"Phí chuyển đổi: "</string>
     <string name="fee_original_value_prefix">"Phí khấu trừ: "</string>
+    <string name="fee_cost_with_fee_prefix">"Chi phí kèm phí: "</string>
+    <string name="fee_value_before_fee_prefix">"Giá trị trước phí: "</string>
     <string name="fee_side_summary_original">Số tiền chuyển đổi hiển thị giữ ở tỷ giá thị trường trung bình; phí được hiển thị riêng dưới dạng \"Phí chuyển đổi\".</string>
     <string name="fee_side_summary_converted">Phí đã được tính sẵn trong số tiền chuyển đổi hiển thị.</string>
     <string name="fee_empty">Chưa có phí nào</string>

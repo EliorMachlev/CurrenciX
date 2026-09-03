@@ -3,6 +3,7 @@
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> σε &lt;b>%2$s&lt;/b></string>
     <string name="data_provider">Δεδομένα από &lt;b>%s&lt;/b></string>
     <string name="rate_average">Μ.Ο.</string>
+    <string name="rate_median">διάμ.</string>
     <string name="rate_min">Ελάχ.</string>
     <string name="rate_max">Μέγ.</string>
     <string name="year">έτος</string>

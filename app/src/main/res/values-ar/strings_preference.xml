@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">اختر عملة</string>
     <string name="fee_true_cost_prefix">"رسوم التحويل: "</string>
     <string name="fee_original_value_prefix">"رسوم الخصم: "</string>
+    <string name="fee_cost_with_fee_prefix">"التكلفة مع الرسوم: "</string>
+    <string name="fee_value_before_fee_prefix">"القيمة قبل الرسوم: "</string>
     <string name="fee_side_summary_original">يبقى المبلغ المحوَّل المعروض بسعر السوق الأوسط؛ وتُعرض الرسوم بشكل منفصل باسم \"رسوم التحويل\".</string>
     <string name="fee_side_summary_converted">الرسوم مضمَّنة في المبلغ المحوَّل المعروض.</string>
     <string name="fee_empty">لا توجد رسوم بعد</string>

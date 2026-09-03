@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Επιλέξτε νόμισμα</string>
     <string name="fee_true_cost_prefix">"Προμήθεια μετατροπής: "</string>
     <string name="fee_original_value_prefix">"Προμήθεια μείωσης: "</string>
+    <string name="fee_cost_with_fee_prefix">"Κόστος με χρέωση: "</string>
+    <string name="fee_value_before_fee_prefix">"Αξία πριν τη χρέωση: "</string>
     <string name="fee_side_summary_original">Το εμφανιζόμενο μετατραπέν ποσό παραμένει στη μέση τιμή αγοράς· οι προμήθειες εμφανίζονται ξεχωριστά ως \"Προμήθεια μετατροπής\".</string>
     <string name="fee_side_summary_converted">Οι προμήθειες περιλαμβάνονται στο εμφανιζόμενο μετατραπέν ποσό.</string>
     <string name="fee_empty">Δεν υπάρχουν ακόμη προμήθειες</string>

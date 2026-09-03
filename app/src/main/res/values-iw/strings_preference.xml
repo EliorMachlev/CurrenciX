@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">בחר מטבע</string>
     <string name="fee_true_cost_prefix">"דמי המרה: "</string>
     <string name="fee_original_value_prefix">"דמי הפחתה: "</string>
+    <string name="fee_cost_with_fee_prefix">"עלות עם עמלה: "</string>
+    <string name="fee_value_before_fee_prefix">"ערך לפני עמלה: "</string>
     <string name="fee_side_summary_original">הסכום המומר המוצג נשאר בשער היציג; העמלות מוצגות בנפרד בתור \"דמי המרה\".</string>
     <string name="fee_side_summary_converted">העמלות כלולות בסכום המומר המוצג.</string>
     <string name="fee_empty">אין עמלות עדיין</string>

@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Pilih mata uang</string>
     <string name="fee_true_cost_prefix">"Biaya konversi: "</string>
     <string name="fee_original_value_prefix">"Biaya pengurangan: "</string>
+    <string name="fee_cost_with_fee_prefix">"Biaya termasuk komisi: "</string>
+    <string name="fee_value_before_fee_prefix">"Nilai sebelum biaya: "</string>
     <string name="fee_side_summary_original">Jumlah konversi yang ditampilkan tetap pada kurs tengah pasar; biaya ditampilkan terpisah sebagai \"Biaya konversi\".</string>
     <string name="fee_side_summary_converted">Biaya sudah termasuk dalam jumlah konversi yang ditampilkan.</string>
     <string name="fee_empty">Belum ada biaya</string>

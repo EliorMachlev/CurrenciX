@@ -3,6 +3,7 @@
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> к &lt;b>%2$s&lt;/b></string>
     <string name="data_provider">Данные на &lt;b>%s&lt;/b></string>
     <string name="rate_average">средний</string>
+    <string name="rate_median">медиана</string>
     <string name="rate_min">мин</string>
     <string name="rate_max">макс</string>
     <string name="year">год</string>

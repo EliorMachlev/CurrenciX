@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Selecteer valuta</string>
     <string name="fee_true_cost_prefix">"Conversiekosten: "</string>
     <string name="fee_original_value_prefix">"Aftrekkosten: "</string>
+    <string name="fee_cost_with_fee_prefix">"Prijs met kosten: "</string>
+    <string name="fee_value_before_fee_prefix">"Waarde vóór kosten: "</string>
     <string name="fee_side_summary_original">Het weergegeven geconverteerde bedrag blijft op de middenkoers; kosten worden apart weergegeven als \"Conversiekosten\".</string>
     <string name="fee_side_summary_converted">Kosten zijn verwerkt in het weergegeven geconverteerde bedrag.</string>
     <string name="fee_empty">Nog geen kosten</string>

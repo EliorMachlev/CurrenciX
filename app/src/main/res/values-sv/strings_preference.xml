@@ -21,6 +21,8 @@
     <string name="fee_pair_pick_currency">Välj valuta</string>
     <string name="fee_true_cost_prefix">"Växlingsavgift: "</string>
     <string name="fee_original_value_prefix">"Avdragsavgift: "</string>
+    <string name="fee_cost_with_fee_prefix">"Kostnad med avgift: "</string>
+    <string name="fee_value_before_fee_prefix">"Värde före avgift: "</string>
     <string name="fee_side_summary_original">Det visade konverterade beloppet är kvar till mittkursen; avgifter visas separat som \"Växlingsavgift\".</string>
     <string name="fee_side_summary_converted">Avgifter är inräknade i det visade konverterade beloppet.</string>
     <string name="fee_empty">Inga avgifter ännu</string>
