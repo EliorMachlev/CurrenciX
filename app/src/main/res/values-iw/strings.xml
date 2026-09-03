@@ -96,4 +96,19 @@
     <string name="cart_unsaved_continue">המשך</string>
     <string name="a11y_delete">מחיקה</string>
     <string name="a11y_historical_rate">שער היסטורי</string>
+    <string name="a11y_search_currencies">חיפוש מטבעות</string>
+    <string name="a11y_clear_search">נקה חיפוש</string>
+    <string name="a11y_cart_item_name">שם פריט</string>
+    <string name="a11y_chart_summary">תרשים היסטוריית שערי חליפין. סטטיסטיקות — מינימום, ממוצע, מקסימום ושער נוכחי — מוצגות למטה.</string>
+    <string name="a11y_star_currency">סמן את %1$s בכוכב</string>
+    <string name="a11y_unstar_currency">הסר כוכב מ־%1$s</string>
+    <string name="a11y_action_select">בחר</string>
+    <string name="a11y_action_load">טען</string>
+    <string name="a11y_action_open">פתח</string>
+    <string name="quick_conversions_fee_conversion">המרה %s</string>
+    <string name="quick_conversions_fee_reduction">הפחתה %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">הצמד לראש הרשימה</string>
+    <string name="cart_unpin_item">בטל הצמדה</string>
+    <string name="cart_reorder_item">סדר מחדש</string>
 </resources>

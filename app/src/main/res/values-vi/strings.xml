@@ -96,4 +96,19 @@
     <string name="cart_unsaved_save_as">Lưu thành mới</string>
     <string name="cart_unsaved_discard">Bỏ thay đổi</string>
     <string name="cart_unsaved_continue">Tiếp tục</string>
+    <string name="a11y_search_currencies">Tìm tiền tệ</string>
+    <string name="a11y_clear_search">Xóa tìm kiếm</string>
+    <string name="a11y_cart_item_name">Tên mục</string>
+    <string name="a11y_chart_summary">Biểu đồ lịch sử tỷ giá hối đoái. Thống kê — tối thiểu, trung bình, tối đa và tỷ giá hiện tại — được hiển thị bên dưới.</string>
+    <string name="a11y_star_currency">Gắn sao %1$s</string>
+    <string name="a11y_unstar_currency">Bỏ sao %1$s</string>
+    <string name="a11y_action_select">Chọn</string>
+    <string name="a11y_action_load">Tải</string>
+    <string name="a11y_action_open">Mở</string>
+    <string name="quick_conversions_fee_conversion">chuyển đổi %s</string>
+    <string name="quick_conversions_fee_reduction">giảm %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Ghim lên đầu</string>
+    <string name="cart_unpin_item">Bỏ ghim</string>
+    <string name="cart_reorder_item">Sắp xếp lại</string>
 </resources>

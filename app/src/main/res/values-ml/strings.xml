@@ -100,4 +100,19 @@
     <string name="cart_unsaved_continue">തുടരുക</string>
     <string name="a11y_delete">നീക്കംചെയ്യുക</string>
     <string name="a11y_historical_rate">ചരിത്ര നിരക്ക്</string>
+    <string name="a11y_search_currencies">കറൻസികൾ തിരയുക</string>
+    <string name="a11y_clear_search">തിരയൽ മായ്ക്കുക</string>
+    <string name="a11y_cart_item_name">ഇനത്തിന്റെ പേര്</string>
+    <string name="a11y_chart_summary">വിനിമയ നിരക്കിന്റെ ചരിത്ര ചാർട്ട്. സ്ഥിതിവിവരക്കണക്കുകൾ — കുറഞ്ഞത്, ശരാശരി, കൂടിയത്, ഇപ്പോഴത്തെ നിരക്ക് — താഴെ കാണിച്ചിരിക്കുന്നു.</string>
+    <string name="a11y_star_currency">%1$s നക്ഷത്രം ചേർക്കുക</string>
+    <string name="a11y_unstar_currency">%1$s നക്ഷത്രം നീക്കുക</string>
+    <string name="a11y_action_select">തിരഞ്ഞെടുക്കുക</string>
+    <string name="a11y_action_load">ലോഡ് ചെയ്യുക</string>
+    <string name="a11y_action_open">തുറക്കുക</string>
+    <string name="quick_conversions_fee_conversion">പരിവർത്തനം %s</string>
+    <string name="quick_conversions_fee_reduction">കുറവ് %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">മുകളിലേക്ക് പിൻ ചെയ്യുക</string>
+    <string name="cart_unpin_item">പിൻ നീക്കുക</string>
+    <string name="cart_reorder_item">പുനഃക്രമീകരിക്കുക</string>
 </resources>

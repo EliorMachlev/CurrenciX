@@ -97,4 +97,19 @@
     <string name="a11y_delete">حذف</string>
     <string name="a11y_historical_rate">نرخ گذشته</string>
     <string name="error_unsupported_timeline">داده‌های خط زمانی توسط این API پشتیبانی نمی‌شود.</string>
+    <string name="a11y_search_currencies">جستجوی ارزها</string>
+    <string name="a11y_clear_search">پاک کردن جستجو</string>
+    <string name="a11y_cart_item_name">نام مورد</string>
+    <string name="a11y_chart_summary">نمودار تاریخچه نرخ ارز. آمار — کمینه، میانگین، بیشینه و نرخ کنونی — در پایین نشان داده شده است.</string>
+    <string name="a11y_star_currency">ستاره‌دار کردن %1$s</string>
+    <string name="a11y_unstar_currency">حذف ستاره از %1$s</string>
+    <string name="a11y_action_select">انتخاب</string>
+    <string name="a11y_action_load">بارگذاری</string>
+    <string name="a11y_action_open">باز کردن</string>
+    <string name="quick_conversions_fee_conversion">تبدیل %s</string>
+    <string name="quick_conversions_fee_reduction">کاهش %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">پین کردن در بالا</string>
+    <string name="cart_unpin_item">حذف پین</string>
+    <string name="cart_reorder_item">تغییر ترتیب</string>
 </resources>

@@ -96,4 +96,19 @@
     <string name="error_no_api_key">Gilt API-lykil þarf að stilla til að nota þessa uppsprettu.</string>
     <string name="error_try_another_api">Það eru þó aðrar gagnaveitur sem þú getur valið um í stillingunum. Prófaðu bara!</string>
     <string name="error_unsupported_timeline">Tímalínugögn eru ekki studd af þessu API.</string>
+    <string name="a11y_search_currencies">Leita að gjaldmiðlum</string>
+    <string name="a11y_clear_search">Hreinsa leit</string>
+    <string name="a11y_cart_item_name">Vöruheiti</string>
+    <string name="a11y_chart_summary">Línurit yfir gengissögu. Tölfræði — lágmark, meðaltal, hámark og núverandi gengi — er sýnd að neðan.</string>
+    <string name="a11y_star_currency">Stjörnumerkja %1$s</string>
+    <string name="a11y_unstar_currency">Fjarlægja stjörnu af %1$s</string>
+    <string name="a11y_action_select">Velja</string>
+    <string name="a11y_action_load">Hlaða</string>
+    <string name="a11y_action_open">Opna</string>
+    <string name="quick_conversions_fee_conversion">umbreyting %s</string>
+    <string name="quick_conversions_fee_reduction">lækkun %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Festa efst</string>
+    <string name="cart_unpin_item">Losa festingu</string>
+    <string name="cart_reorder_item">Endurraða atriði</string>
 </resources>

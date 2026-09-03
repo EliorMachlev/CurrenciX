@@ -97,4 +97,19 @@
     <string name="cart_unsaved_continue">Continua</string>
     <string name="a11y_delete">Elimina</string>
     <string name="a11y_historical_rate">Tasso storico</string>
+    <string name="a11y_search_currencies">Cerca valute</string>
+    <string name="a11y_clear_search">Cancella ricerca</string>
+    <string name="a11y_cart_item_name">Nome articolo</string>
+    <string name="a11y_chart_summary">Grafico dello storico dei tassi di cambio. Le statistiche — minimo, media, massimo e tasso attuale — sono mostrate sotto.</string>
+    <string name="a11y_star_currency">Aggiungi stella a %1$s</string>
+    <string name="a11y_unstar_currency">Rimuovi stella da %1$s</string>
+    <string name="a11y_action_select">Seleziona</string>
+    <string name="a11y_action_load">Carica</string>
+    <string name="a11y_action_open">Apri</string>
+    <string name="quick_conversions_fee_conversion">conversione %s</string>
+    <string name="quick_conversions_fee_reduction">riduzione %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Fissa in cima</string>
+    <string name="cart_unpin_item">Rimuovi fissaggio</string>
+    <string name="cart_reorder_item">Riordina articolo</string>
 </resources>

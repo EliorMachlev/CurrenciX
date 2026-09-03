@@ -96,4 +96,19 @@
     <string name="cart_unsaved_continue">Jätka</string>
     <string name="a11y_delete">Kustuta</string>
     <string name="a11y_historical_rate">Varasem kurss</string>
+    <string name="a11y_search_currencies">Otsi valuutasid</string>
+    <string name="a11y_clear_search">Tühjenda otsing</string>
+    <string name="a11y_cart_item_name">Toote nimi</string>
+    <string name="a11y_chart_summary">Vahetuskursi ajaloo graafik. Statistika — miinimum, keskmine, maksimum ja praegune kurss — kuvatakse allpool.</string>
+    <string name="a11y_star_currency">Märgi %1$s tärniga</string>
+    <string name="a11y_unstar_currency">Eemalda tärn %1$s pealt</string>
+    <string name="a11y_action_select">Vali</string>
+    <string name="a11y_action_load">Laadi</string>
+    <string name="a11y_action_open">Ava</string>
+    <string name="quick_conversions_fee_conversion">konversioon %s</string>
+    <string name="quick_conversions_fee_reduction">vähendus %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Kinnita üles</string>
+    <string name="cart_unpin_item">Vabasta kinnitus</string>
+    <string name="cart_reorder_item">Muuda järjekorda</string>
 </resources>

@@ -96,4 +96,19 @@
     <string name="cart_unsaved_continue">متابعة</string>
     <string name="a11y_delete">حذف</string>
     <string name="a11y_historical_rate">سعر سابق</string>
+    <string name="a11y_search_currencies">ابحث عن العملات</string>
+    <string name="a11y_clear_search">امسح البحث</string>
+    <string name="a11y_cart_item_name">اسم العنصر</string>
+    <string name="a11y_chart_summary">مخطط سجل أسعار الصرف. الإحصائيات — الحد الأدنى والمتوسط والحد الأقصى والسعر الحالي — معروضة أدناه.</string>
+    <string name="a11y_star_currency">ضع نجمة على %1$s</string>
+    <string name="a11y_unstar_currency">أزل النجمة من %1$s</string>
+    <string name="a11y_action_select">اختيار</string>
+    <string name="a11y_action_load">تحميل</string>
+    <string name="a11y_action_open">فتح</string>
+    <string name="quick_conversions_fee_conversion">تحويل %s</string>
+    <string name="quick_conversions_fee_reduction">خصم %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">ثبّت العنصر في الأعلى</string>
+    <string name="cart_unpin_item">إلغاء تثبيت العنصر</string>
+    <string name="cart_reorder_item">إعادة ترتيب العنصر</string>
 </resources>

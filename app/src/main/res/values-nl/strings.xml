@@ -97,4 +97,19 @@
     <string name="cart_unsaved_save_as">Opslaan als nieuw</string>
     <string name="cart_unsaved_discard">Wijzigingen negeren</string>
     <string name="cart_unsaved_continue">Doorgaan</string>
+    <string name="a11y_search_currencies">Zoek valuta\'s</string>
+    <string name="a11y_clear_search">Zoekopdracht wissen</string>
+    <string name="a11y_cart_item_name">Itemnaam</string>
+    <string name="a11y_chart_summary">Grafiek van wisselkoersgeschiedenis. Statistieken — minimum, gemiddelde, maximum en huidige koers — worden hieronder weergegeven.</string>
+    <string name="a11y_star_currency">%1$s markeren met ster</string>
+    <string name="a11y_unstar_currency">Ster verwijderen bij %1$s</string>
+    <string name="a11y_action_select">Selecteer</string>
+    <string name="a11y_action_load">Laad</string>
+    <string name="a11y_action_open">Open</string>
+    <string name="quick_conversions_fee_conversion">conversie %s</string>
+    <string name="quick_conversions_fee_reduction">verlaging %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Bovenaan vastmaken</string>
+    <string name="cart_unpin_item">Losmaken</string>
+    <string name="cart_reorder_item">Volgorde wijzigen</string>
 </resources>

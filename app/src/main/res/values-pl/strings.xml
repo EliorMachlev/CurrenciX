@@ -96,4 +96,19 @@
     <string name="cart_unsaved_save_as">Zapisz jako nowy</string>
     <string name="cart_unsaved_discard">Odrzuć zmiany</string>
     <string name="cart_unsaved_continue">Kontynuuj</string>
+    <string name="a11y_search_currencies">Wyszukaj waluty</string>
+    <string name="a11y_clear_search">Wyczyść wyszukiwanie</string>
+    <string name="a11y_cart_item_name">Nazwa pozycji</string>
+    <string name="a11y_chart_summary">Wykres historii kursu wymiany. Statystyki — minimum, średnia, maksimum i bieżący kurs — są pokazane poniżej.</string>
+    <string name="a11y_star_currency">Oznacz %1$s gwiazdką</string>
+    <string name="a11y_unstar_currency">Usuń gwiazdkę z %1$s</string>
+    <string name="a11y_action_select">Wybierz</string>
+    <string name="a11y_action_load">Wczytaj</string>
+    <string name="a11y_action_open">Otwórz</string>
+    <string name="quick_conversions_fee_conversion">konwersja %s</string>
+    <string name="quick_conversions_fee_reduction">obniżka %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Przypnij na górze</string>
+    <string name="cart_unpin_item">Odepnij element</string>
+    <string name="cart_reorder_item">Zmień kolejność</string>
 </resources>

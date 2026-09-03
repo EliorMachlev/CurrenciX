@@ -96,4 +96,19 @@
     <string name="error_no_api_key">Kunci API yang valid harus disetel untuk menggunakan Sumber ini.</string>
     <string name="error_try_another_api">Namun, ada penyedia data lain yang dapat Anda pilih di pengaturan. Cobalah!</string>
     <string name="error_unsupported_timeline">Data timeline tidak didukung oleh API ini.</string>
+    <string name="a11y_search_currencies">Cari mata uang</string>
+    <string name="a11y_clear_search">Hapus pencarian</string>
+    <string name="a11y_cart_item_name">Nama item</string>
+    <string name="a11y_chart_summary">Grafik riwayat nilai tukar. Statistik — minimum, rata-rata, maksimum, dan nilai tukar saat ini — ditampilkan di bawah.</string>
+    <string name="a11y_star_currency">Bintangi %1$s</string>
+    <string name="a11y_unstar_currency">Hapus bintang %1$s</string>
+    <string name="a11y_action_select">Pilih</string>
+    <string name="a11y_action_load">Muat</string>
+    <string name="a11y_action_open">Buka</string>
+    <string name="quick_conversions_fee_conversion">konversi %s</string>
+    <string name="quick_conversions_fee_reduction">potongan %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Sematkan ke atas</string>
+    <string name="cart_unpin_item">Lepas sematan</string>
+    <string name="cart_reorder_item">Susun ulang</string>
 </resources>

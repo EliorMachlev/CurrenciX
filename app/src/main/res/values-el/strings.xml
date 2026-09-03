@@ -96,4 +96,19 @@
     <string name="error_invalid_api_key">HTTP 401 – Ελέγξτε το κλειδί API σας.</string>
     <string name="error_no_api_key">Πρέπει να οριστεί έγκυρο κλειδί API για να χρησιμοποιήσετε αυτήν την πηγή.</string>
     <string name="error_unsupported_timeline">Τα δεδομένα χρονογραμμής δεν υποστηρίζονται από αυτό το API.</string>
+    <string name="a11y_search_currencies">Αναζήτηση νομισμάτων</string>
+    <string name="a11y_clear_search">Καθαρισμός αναζήτησης</string>
+    <string name="a11y_cart_item_name">Όνομα στοιχείου</string>
+    <string name="a11y_chart_summary">Γράφημα ιστορικού συναλλαγματικής ισοτιμίας. Οι στατιστικές — ελάχιστο, μέσο, μέγιστο και τρέχουσα ισοτιμία — εμφανίζονται παρακάτω.</string>
+    <string name="a11y_star_currency">Επισήμανση %1$s</string>
+    <string name="a11y_unstar_currency">Αφαίρεση επισήμανσης από %1$s</string>
+    <string name="a11y_action_select">Επιλογή</string>
+    <string name="a11y_action_load">Φόρτωση</string>
+    <string name="a11y_action_open">Άνοιγμα</string>
+    <string name="quick_conversions_fee_conversion">μετατροπή %s</string>
+    <string name="quick_conversions_fee_reduction">μείωση %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Καρφίτσωμα στην κορυφή</string>
+    <string name="cart_unpin_item">Ξεκαρφίτσωμα στοιχείου</string>
+    <string name="cart_reorder_item">Αναδιάταξη στοιχείου</string>
 </resources>

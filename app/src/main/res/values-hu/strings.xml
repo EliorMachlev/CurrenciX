@@ -96,4 +96,19 @@
     <string name="error_no_api_key">Ennek a forrásnak a használatához érvényes API-kulcsot kell megadni.</string>
     <string name="error_try_another_api">A beállításokban azonban más adatszolgáltatók közül is választhatsz. Csak próbáld ki!</string>
     <string name="error_unsupported_timeline">Idővonal-adatokat ez az API nem támogat.</string>
+    <string name="a11y_search_currencies">Pénznemek keresése</string>
+    <string name="a11y_clear_search">Keresés törlése</string>
+    <string name="a11y_cart_item_name">Tétel neve</string>
+    <string name="a11y_chart_summary">Árfolyam-előzmények grafikonja. A statisztikák — minimum, átlag, maximum és aktuális árfolyam — lent láthatók.</string>
+    <string name="a11y_star_currency">%1$s csillagozása</string>
+    <string name="a11y_unstar_currency">%1$s csillag eltávolítása</string>
+    <string name="a11y_action_select">Kiválasztás</string>
+    <string name="a11y_action_load">Betöltés</string>
+    <string name="a11y_action_open">Megnyitás</string>
+    <string name="quick_conversions_fee_conversion">átváltás %s</string>
+    <string name="quick_conversions_fee_reduction">csökkentés %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Rögzítés felülre</string>
+    <string name="cart_unpin_item">Rögzítés megszüntetése</string>
+    <string name="cart_reorder_item">Tétel átrendezése</string>
 </resources>

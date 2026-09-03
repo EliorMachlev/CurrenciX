@@ -97,4 +97,19 @@
     <string name="cart_unsaved_save_as">Spara som ny</string>
     <string name="cart_unsaved_discard">Kassera ändringar</string>
     <string name="cart_unsaved_continue">Fortsätt</string>
+    <string name="a11y_search_currencies">Sök valutor</string>
+    <string name="a11y_clear_search">Rensa sökning</string>
+    <string name="a11y_cart_item_name">Artikelnamn</string>
+    <string name="a11y_chart_summary">Diagram över växelkurshistorik. Statistik — minimum, medel, maximum och aktuell kurs — visas nedan.</string>
+    <string name="a11y_star_currency">Stjärnmärk %1$s</string>
+    <string name="a11y_unstar_currency">Ta bort stjärna från %1$s</string>
+    <string name="a11y_action_select">Välj</string>
+    <string name="a11y_action_load">Läs in</string>
+    <string name="a11y_action_open">Öppna</string>
+    <string name="quick_conversions_fee_conversion">konvertering %s</string>
+    <string name="quick_conversions_fee_reduction">minskning %s</string>
+    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
+    <string name="cart_pin_item">Fäst överst</string>
+    <string name="cart_unpin_item">Ta bort fästning</string>
+    <string name="cart_reorder_item">Ändra ordning</string>
 </resources>
