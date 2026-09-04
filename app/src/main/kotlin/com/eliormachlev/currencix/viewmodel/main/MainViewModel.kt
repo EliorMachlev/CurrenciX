@@ -17,6 +17,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.KeyboardType
+import com.eliormachlev.currencix.model.SideFees
 import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
@@ -450,13 +451,13 @@ class MainViewModel(
 
     // ===============================
 
-    /**
-     * Per-side multiplicative fee stacks for the current pair. Exposed so the
-     * UI can render inline fee annotations near each currency and derive the
-     * "true cost" / "original value" companion rows.
-     */
-    private val sideStacks: MediatorLiveData<SideStacks> =
-        object : MediatorLiveData<SideStacks>() {
+    // Fan-in helper: combines fees + current pair + single-select picks into
+    // one derived value. Both sideStacks and sideFees use it since they only
+    // differ in the final calculator call.
+    private fun <T> pairFeeMediator(
+        compute: (List<Fee>?, Currency?, Currency?, String?, String?) -> T,
+    ): MediatorLiveData<T> =
+        object : MediatorLiveData<T>() {
             var feeList: List<Fee>? = null
             var base: Currency? = null
             var dest: Currency? = null
@@ -487,9 +488,28 @@ class MainViewModel(
             }
 
             private fun update() {
-                val next = FeeCalculator.sideStacks(feeList.orEmpty(), base, dest, exchangeId, bankId)
+                val next = compute(feeList, base, dest, exchangeId, bankId)
                 if (next != value) value = next
             }
+        }
+
+    /**
+     * Per-side multiplicative fee stacks for the current pair. Exposed so the
+     * UI can render inline fee annotations near each currency and derive the
+     * "true cost" / "original value" companion rows.
+     */
+    private val sideStacks: MediatorLiveData<SideStacks> =
+        pairFeeMediator { list, base, dest, exchangeId, bankId ->
+            FeeCalculator.sideStacks(list.orEmpty(), base, dest, exchangeId, bankId)
+        }
+
+    /**
+     * The concrete fees behind [sideStacks] — used by the UI to annotate the
+     * fee chip with each fee's name.
+     */
+    private val sideFees: MediatorLiveData<SideFees> =
+        pairFeeMediator { list, base, dest, exchangeId, bankId ->
+            FeeCalculator.sideFees(list.orEmpty(), base, dest, exchangeId, bankId)
         }
 
     /**
@@ -617,6 +637,12 @@ class MainViewModel(
      * Per-side fee stacks for the current pair.
      */
     internal fun getSideStacks(): LiveData<SideStacks> = sideStacks
+
+    /**
+     * Concrete per-side fees for the current pair — parallel to [getSideStacks],
+     * exposes the fee entries so the UI can render names.
+     */
+    internal fun getSideFees(): LiveData<SideFees> = sideFees
 
     /**
      * the total destination value, as BigDecimal (internal is string)

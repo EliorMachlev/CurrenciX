@@ -57,7 +57,9 @@ import androidx.fragment.app.FragmentManager
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.model.SideFees
 import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.feePercentDelta
@@ -114,6 +116,9 @@ private const val FEE_PERCENT_DECIMAL_PLACES = 2
 // Bullet separator between "when" and provider name in the footer.
 private const val FOOTER_SEPARATOR = " · "
 
+// Comma-space between multiple fee names in the fee chip ("Wise, Chase +2.5%").
+private const val FEE_NAME_SEPARATOR = ", "
+
 // Under this age we show a relative label ("12h ago") instead of the date.
 private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
@@ -160,6 +165,7 @@ internal fun MainDisplay(
     val rates by viewModel.getExchangeRates().observeAsState()
     val isUpdating by viewModel.isUpdating().observeAsState(false)
     val sideStacks by viewModel.getSideStacks().observeAsState()
+    val sideFees by viewModel.getSideFees().observeAsState()
     val historicalDate by viewModel.getHistoricalLiveDate().observeAsState()
 
     HeroCard(
@@ -170,6 +176,7 @@ internal fun MainDisplay(
         rates = rates,
         isUpdating = isUpdating,
         sideStacks = sideStacks,
+        sideFees = sideFees,
         historicalDate = historicalDate,
         dateFormatPattern = dateFormatPattern,
         onPillFromClick = {
@@ -200,6 +207,7 @@ private fun HeroCard(
     rates: ExchangeRates?,
     isUpdating: Boolean,
     sideStacks: SideStacks?,
+    sideFees: SideFees?,
     historicalDate: LocalDate?,
     dateFormatPattern: String,
     onPillFromClick: () -> Unit,
@@ -231,12 +239,14 @@ private fun HeroCard(
                 text = baseFormatted,
                 onLongClick = { if (baseFormatted.isNotEmpty()) callbacks.onCopy(baseFormatted) },
                 originalStack = sideStacks?.original,
+                originalFees = sideFees?.original.orEmpty(),
                 onFeeChipClick = callbacks.onOpenFees,
             )
             AmountDivider()
             AmountToRow(
                 text = resultFormatted,
                 convertedStack = sideStacks?.converted,
+                convertedFees = sideFees?.converted.orEmpty(),
                 onLongClick = { if (resultFormatted.isNotEmpty()) callbacks.onCopy(resultFormatted) },
                 onFeeChipClick = callbacks.onOpenFees,
             )
@@ -347,6 +357,7 @@ private fun AmountHero(
     text: String,
     onLongClick: () -> Unit,
     originalStack: BigDecimal?,
+    originalFees: List<Fee>,
     onFeeChipClick: () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
@@ -369,7 +380,7 @@ private fun AmountHero(
             )
             BlinkingCursor()
         }
-        FeeChipRow(stack = originalStack, onClick = onFeeChipClick)
+        FeeChipRow(stack = originalStack, fees = originalFees, onClick = onFeeChipClick)
     }
 }
 
@@ -413,6 +424,7 @@ private fun AmountDivider() {
 private fun AmountToRow(
     text: String,
     convertedStack: BigDecimal?,
+    convertedFees: List<Fee>,
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
@@ -430,13 +442,14 @@ private fun AmountToRow(
                     .fillMaxWidth()
                     .combinedClickable(onClick = {}, onLongClick = onLongClick),
         )
-        FeeChipRow(stack = convertedStack, onClick = onFeeChipClick)
+        FeeChipRow(stack = convertedStack, fees = convertedFees, onClick = onFeeChipClick)
     }
 }
 
 @Composable
 private fun FeeChipRow(
     stack: BigDecimal?,
+    fees: List<Fee>,
     onClick: () -> Unit,
 ) {
     if (stack == null || stack.compareTo(BigDecimal.ONE) == 0) return
@@ -445,13 +458,14 @@ private fun FeeChipRow(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
     ) {
-        FeeChip(stack, onClick)
+        FeeChip(stack, fees, onClick)
     }
 }
 
 @Composable
 private fun FeeChip(
     stack: BigDecimal,
+    fees: List<Fee>,
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -460,6 +474,17 @@ private fun FeeChip(
             stack
                 .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
                 .toHumanReadableNumber(context, showPositiveSign = true, suffix = "%", trim = true)
+        }
+    val namesText =
+        remember(fees) {
+            fees.mapNotNull { it.name.trim().takeIf(String::isNotEmpty) }
+                .joinToString(FEE_NAME_SEPARATOR)
+        }
+    val label =
+        if (namesText.isEmpty()) {
+            stringResource(R.string.fee_chip_label, percentText)
+        } else {
+            "$namesText $percentText"
         }
     val bg = Amber.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
     Row(
@@ -471,10 +496,12 @@ private fun FeeChip(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.fee_chip_label, percentText),
+            text = label,
             fontSize = FEE_CHIP_TEXT_SIZE,
             fontWeight = FontWeight.Medium,
             color = Amber,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
