@@ -35,11 +35,18 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <include
-        layout="@layout/main_display"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/mainDisplayHost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
         android:id="@+id/keypad"

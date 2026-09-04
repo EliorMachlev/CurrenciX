@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--
+    Throw-away parent inflated by MainActivity solely to instantiate the
+    widgets below with their XML-defined styles/attrs. Each child is
+    immediately detached from this ConstraintLayout and re-parented into the
+    MainDisplay Compose composable via `AndroidView(factory = { existingView })`.
+    The parent (and its constraint attributes on children) is discarded — do
+    not add positioning here; the Compose layout owns positioning.
+--><androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_display">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/snackbar_top_position"
@@ -333,5 +333,4 @@
 
         </HorizontalScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

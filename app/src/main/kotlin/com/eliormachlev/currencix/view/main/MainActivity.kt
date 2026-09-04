@@ -16,6 +16,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
@@ -58,6 +59,8 @@ import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.CartActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
+import com.eliormachlev.currencix.view.main.compose.MainDisplay
+import com.eliormachlev.currencix.view.main.compose.MainDisplayViews
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
@@ -134,6 +137,13 @@ class MainActivity : BaseActivity() {
     private lateinit var tvOriginalFeeAmount: TextView
     private lateinit var tvConvertedFeeAmount: TextView
 
+    // Widgets inflated from `main_display.xml` and re-parented into the
+    // `MainDisplay` Compose composable. Kept as strong Activity references so
+    // `findViewById` on the activity window still resolves them and so their
+    // click listeners / observers survive re-composition of AndroidView hosts.
+    private lateinit var btnToggle: View
+    private lateinit var iconHistorical: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -145,22 +155,18 @@ class MainActivity : BaseActivity() {
         this.viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         this.preferenceModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
 
-        // views
-        this.refreshIndicator = findViewById(R.id.refreshIndicator)
+        // views owned directly by activity_main.xml
         this.swipeRefresh = findViewById(R.id.swipeRefresh)
-        this.tvCalculations = findViewById(R.id.textCalculations)
-        this.tvFrom = findViewById(R.id.textFrom)
-        this.tvTo = findViewById(R.id.textTo)
-        this.spinnerFrom = findViewById(R.id.spinnerFrom)
-        this.spinnerTo = findViewById(R.id.spinnerTo)
-        this.tvInfoConversion = findViewById(R.id.textInfoConversion)
-        this.tvInfoDate = findViewById(R.id.textInfoDate)
-        this.tvTrueCost = findViewById(R.id.textTrueCost)
-        this.tvOriginalValue = findViewById(R.id.textOriginalValue)
-        this.tvOriginalFeeAmount = findViewById(R.id.textOriginalFeeAmount)
-        this.tvConvertedFeeAmount = findViewById(R.id.textConvertedFeeAmount)
         this.offlineBanner = findViewById(R.id.offlineBanner)
         this.offlineBannerText = findViewById(R.id.offlineBannerText)
+
+        // Inflate the main-display widgets into a throw-away ConstraintLayout,
+        // extract each, detach from that parent, and hand them to the Compose
+        // `MainDisplay` container via `AndroidView(factory = { existingView })`.
+        // Doing this synchronously in `onCreate` avoids racing the ComposeView's
+        // first composition — the widgets exist and are held as activity fields
+        // before any observer wires up.
+        installMainDisplay()
 
         // swipe-to-refresh: color scheme (not accessible in xml)
         swipeRefresh.setColorSchemeColors(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
@@ -391,14 +397,14 @@ class MainActivity : BaseActivity() {
     override fun onContextItemSelected(item: MenuItem): Boolean {
         hapticTap()
         when (item.itemId) {
-            CTX_MENU_COPY_FROM -> copyToClipboard(findViewById<TextView>(R.id.textFrom).text.toString())
+            CTX_MENU_COPY_FROM -> copyToClipboard(tvFrom.text.toString())
             CTX_MENU_PASTE_FROM -> {
                 clipboardNumber()?.let { viewModel.paste(it) }
                 // Preview observer is muted in system mode, so mirror the
                 // fresh expression into the EditText ourselves.
                 if (isSystemKeyboardMode) setCalculationsTextMuted(viewModel.currentTypedExpression())
             }
-            CTX_MENU_COPY_TO -> copyToClipboard(findViewById<TextView>(R.id.textTo).text.toString())
+            CTX_MENU_COPY_TO -> copyToClipboard(tvTo.text.toString())
         }
         return true
     }
@@ -447,7 +453,7 @@ class MainActivity : BaseActivity() {
 
         // long-press on the main swap arrow opens the Fees settings,
         // mirroring the swap arrow inside the quick-conversions dialog.
-        findViewById<View>(R.id.btn_toggle).setOnLongClickListener { openFeesSettings(it) }
+        btnToggle.setOnLongClickListener { openFeesSettings(it) }
 
         // In system-keyboard mode `tvCalculations` becomes the tap target that
         // opens the IME; every other tap in the app vibrates, so this one
@@ -646,7 +652,7 @@ class MainActivity : BaseActivity() {
                     getTextColorSecondary()
                 }
             listOf(tvInfoDate, tvInfoConversion).forEach { tv -> tv.setTextColor(infoColor) }
-            findViewById<ImageView>(R.id.iconHistorical).visibility =
+            iconHistorical.visibility =
                 if (viewModel.getHistoricalDate() != null) View.VISIBLE else View.GONE
         }
         spinnerFrom.setRates(rates?.rates, viewModel.getBaseCurrency().value)
@@ -951,6 +957,81 @@ class MainActivity : BaseActivity() {
             LinearLayout.VERTICAL
         } else {
             LinearLayout.HORIZONTAL
+        }
+    }
+
+    private fun installMainDisplay() {
+        val displayRoot = layoutInflater.inflate(R.layout.main_display, null, false) as ViewGroup
+
+        // Inner text widgets addressed by observers / listeners.
+        this.refreshIndicator = displayRoot.findViewById(R.id.refreshIndicator)
+        this.tvCalculations = displayRoot.findViewById(R.id.textCalculations)
+        this.tvFrom = displayRoot.findViewById(R.id.textFrom)
+        this.tvTo = displayRoot.findViewById(R.id.textTo)
+        this.spinnerFrom = displayRoot.findViewById(R.id.spinnerFrom)
+        this.spinnerTo = displayRoot.findViewById(R.id.spinnerTo)
+        this.tvInfoConversion = displayRoot.findViewById(R.id.textInfoConversion)
+        this.tvInfoDate = displayRoot.findViewById(R.id.textInfoDate)
+        this.tvTrueCost = displayRoot.findViewById(R.id.textTrueCost)
+        this.tvOriginalValue = displayRoot.findViewById(R.id.textOriginalValue)
+        this.tvOriginalFeeAmount = displayRoot.findViewById(R.id.textOriginalFeeAmount)
+        this.tvConvertedFeeAmount = displayRoot.findViewById(R.id.textConvertedFeeAmount)
+        this.btnToggle = displayRoot.findViewById(R.id.btn_toggle)
+        this.iconHistorical = displayRoot.findViewById(R.id.iconHistorical)
+
+        // Wrapper views hosted directly as AndroidViews inside Compose.
+        val snackbarHost: View = displayRoot.findViewById(R.id.snackbar_top_position)
+        val scrollViewTextFrom: View = displayRoot.findViewById(R.id.scrollViewTextFrom)
+        val scrollViewTextTo: View = displayRoot.findViewById(R.id.scrollViewTextTo)
+        val scrollViewOriginalFeeAmount: View = displayRoot.findViewById(R.id.scrollViewOriginalFeeAmount)
+        val scrollViewTrueCost: View = displayRoot.findViewById(R.id.scrollViewTrueCost)
+        val scrollViewOriginalValue: View = displayRoot.findViewById(R.id.scrollViewOriginalValue)
+        val scrollViewConvertedFeeAmount: View = displayRoot.findViewById(R.id.scrollViewConvertedFeeAmount)
+
+        // Detach each view from the throw-away ConstraintLayout so Compose can
+        // adopt it as an AndroidView. The inner text widgets are lifted out via
+        // their scrollView / row wrappers, so we only detach the top-level
+        // widgets Compose will host.
+        listOf(
+            snackbarHost,
+            refreshIndicator,
+            btnToggle,
+            spinnerFrom,
+            spinnerTo,
+            tvCalculations,
+            scrollViewTextFrom,
+            scrollViewTextTo,
+            scrollViewOriginalFeeAmount,
+            scrollViewTrueCost,
+            scrollViewOriginalValue,
+            scrollViewConvertedFeeAmount,
+            iconHistorical,
+            tvInfoConversion,
+            tvInfoDate,
+        ).forEach { (it.parent as? ViewGroup)?.removeView(it) }
+
+        val views =
+            MainDisplayViews(
+                snackbarHost = snackbarHost,
+                refreshIndicator = refreshIndicator,
+                btnToggle = btnToggle,
+                spinnerFrom = spinnerFrom,
+                spinnerTo = spinnerTo,
+                textCalculations = tvCalculations,
+                scrollViewTextFrom = scrollViewTextFrom,
+                scrollViewTextTo = scrollViewTextTo,
+                scrollViewOriginalFeeAmount = scrollViewOriginalFeeAmount,
+                scrollViewTrueCost = scrollViewTrueCost,
+                scrollViewOriginalValue = scrollViewOriginalValue,
+                scrollViewConvertedFeeAmount = scrollViewConvertedFeeAmount,
+                iconHistorical = iconHistorical,
+                textInfoConversion = tvInfoConversion,
+                textInfoDate = tvInfoDate,
+            )
+
+        findViewById<ComposeView>(R.id.mainDisplayHost).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent { AppTheme { MainDisplay(views) } }
         }
     }
 
