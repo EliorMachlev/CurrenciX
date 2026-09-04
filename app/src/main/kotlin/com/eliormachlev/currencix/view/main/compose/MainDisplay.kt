@@ -33,8 +33,16 @@ private val CARD_RADIUS: Dp = 16.dp
 private val CARD_MARGIN: Dp = 8.dp
 private val CARD_PADDING: Dp = 8.dp
 private val FAB_START_MARGIN: Dp = 40.dp
-private val INFO_FOOTER_HORIZONTAL: Dp = 16.dp
-private val INFO_FOOTER_VERTICAL: Dp = 8.dp
+
+// Matches `android:padding="@dimen/margin2x"` on textFrom/textTo — the
+// currency-value glyphs sit this far inside their scroll-view wrapper.
+private val CURRENCY_TEXT_PADDING: Dp = 16.dp
+
+// Anchor the info footer's right edge to the same X as the currency values:
+// `CARD_PADDING` matches the horizontal padding BottomHalf adds around its
+// content, `CURRENCY_TEXT_PADDING` matches the textview's own end padding.
+private val FOOTER_END_PADDING: Dp = CARD_PADDING + CURRENCY_TEXT_PADDING
+private val FOOTER_BOTTOM_PADDING: Dp = 8.dp
 
 // The XML guideline sat at 45%; the top half hosts the "from" side and the
 // bottom half is slightly taller to fit the rate footer at the bottom.
@@ -113,6 +121,15 @@ internal fun MainDisplay(
             factory = { views.snackbarHost },
             modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
         )
+
+        // Anchored to the card's absolute bottom-right so its text right edge
+        // lines up with the currency-value text right edge (same X).
+        InfoFooter(
+            views,
+            Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = FOOTER_END_PADDING, bottom = FOOTER_BOTTOM_PADDING),
+        )
     }
 }
 
@@ -144,40 +161,36 @@ private fun BottomHalf(
     views: MainDisplayViews,
     modifier: Modifier,
 ) {
-    Box(modifier) {
-        Column(
-            Modifier.fillMaxWidth().align(Alignment.TopStart),
-            verticalArrangement = Arrangement.Top,
+    Column(
+        modifier,
+        verticalArrangement = Arrangement.Top,
+    ) {
+        AndroidView(
+            factory = { views.scrollViewOriginalValue },
+            modifier = Modifier.align(Alignment.End),
+        )
+        AndroidView(
+            factory = { views.scrollViewConvertedFeeAmount },
+            modifier = Modifier.align(Alignment.End),
+        )
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            AndroidView(factory = { views.spinnerTo })
             AndroidView(
-                factory = { views.scrollViewOriginalValue },
-                modifier = Modifier.align(Alignment.End),
-            )
-            AndroidView(
-                factory = { views.scrollViewConvertedFeeAmount },
-                modifier = Modifier.align(Alignment.End),
-            )
-            Row(
-                Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                AndroidView(factory = { views.spinnerTo })
-                AndroidView(
-                    factory = { views.scrollViewTextTo },
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            AndroidView(
-                factory = { views.scrollViewOriginalFeeAmount },
-                modifier = Modifier.align(Alignment.End),
-            )
-            AndroidView(
-                factory = { views.scrollViewTrueCost },
-                modifier = Modifier.align(Alignment.End),
+                factory = { views.scrollViewTextTo },
+                modifier = Modifier.weight(1f),
             )
         }
-
-        InfoFooter(views, Modifier.align(Alignment.BottomEnd).padding(horizontal = INFO_FOOTER_HORIZONTAL, vertical = INFO_FOOTER_VERTICAL))
+        AndroidView(
+            factory = { views.scrollViewOriginalFeeAmount },
+            modifier = Modifier.align(Alignment.End),
+        )
+        AndroidView(
+            factory = { views.scrollViewTrueCost },
+            modifier = Modifier.align(Alignment.End),
+        )
     }
 }
 
