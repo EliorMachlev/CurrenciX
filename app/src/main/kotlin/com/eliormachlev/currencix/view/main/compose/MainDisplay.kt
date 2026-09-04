@@ -61,7 +61,6 @@ import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
-import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -402,8 +401,8 @@ private fun AmountToRow(
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
-    val convertedStack = sideStacks?.converted
-    val hasFee = convertedStack != null && !convertedStack.isNeutralFeeStack()
+    val hasFee = sideStacks != null && !sideStacks.isNeutral()
+    val combinedStack = sideStacks?.combined
     Column(Modifier.fillMaxWidth()) {
         Text(
             text = text,
@@ -418,13 +417,13 @@ private fun AmountToRow(
                     .fillMaxWidth()
                     .combinedClickable(onClick = {}, onLongClick = onLongClick),
         )
-        if (hasFee) {
+        if (hasFee && combinedStack != null) {
             Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
-                FeeChip(convertedStack, onFeeChipClick)
+                FeeChip(combinedStack, onFeeChipClick)
             }
         }
     }
@@ -564,12 +563,23 @@ private fun TimestampText(
     dateFormatPattern: String,
     isHistorical: Boolean,
 ) {
+    val context = LocalContext.current
     val date = rates?.date ?: return
-    val text = remember(date, rates.time, dateFormatPattern) { formatTimestamp(date, rates.time, dateFormatPattern) }
+    val dateText = remember(date, rates.time, dateFormatPattern) { formatTimestamp(date, rates.time, dateFormatPattern) }
+    val provider = rates.provider?.getName(context)?.toString()
+    val text =
+        if (provider.isNullOrEmpty()) {
+            dateText
+        } else {
+            val resId = if (isHistorical) R.string.info_date_historical else R.string.info_date_latest
+            stringResource(resId, dateText, provider).fromHtmlLegacy().toString()
+        }
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
         color = if (isHistorical) Brass else MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
