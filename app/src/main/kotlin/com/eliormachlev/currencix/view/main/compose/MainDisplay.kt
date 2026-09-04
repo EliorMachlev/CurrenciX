@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.text.format.DateUtils
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -72,6 +73,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 // Hero-card visual metrics — mirror the v1 Fluid Converter mockup.
@@ -108,6 +110,12 @@ private val FEE_CHIP_TEXT_SIZE = 11.sp
 // big pairs (USD→EUR ≈ 0.93).
 private const val FOOTER_RATE_DECIMAL_PLACES = 4
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
+
+// Bullet separator between "when" and provider name in the footer.
+private const val FOOTER_SEPARATOR = " · "
+
+// Under this age we show a relative label ("12h ago") instead of the date.
+private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
 private const val CURSOR_BLINK_MILLIS = 500
 private const val LIVE_DOT_PULSE_MILLIS = 1000
@@ -565,15 +573,12 @@ private fun TimestampText(
 ) {
     val context = LocalContext.current
     val date = rates?.date ?: return
-    val dateText = remember(date, rates.time, dateFormatPattern) { formatTimestamp(date, rates.time, dateFormatPattern) }
-    val provider = rates.provider?.getName(context)?.toString()
-    val text =
-        if (provider.isNullOrEmpty()) {
-            dateText
-        } else {
-            val resId = if (isHistorical) R.string.info_date_historical else R.string.info_date_latest
-            stringResource(resId, dateText, provider).fromHtmlLegacy().toString()
+    val whenText =
+        remember(date, rates.time, dateFormatPattern) {
+            formatWhen(context, date, rates.time, dateFormatPattern)
         }
+    val provider = rates.provider?.getName(context)?.toString()
+    val text = if (provider.isNullOrEmpty()) whenText else "$whenText$FOOTER_SEPARATOR$provider"
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
@@ -583,11 +588,32 @@ private fun TimestampText(
     )
 }
 
-private fun formatTimestamp(
+/**
+ * Compact "when" label — relative time ("12h ago") if the timestamp is within
+ * the last 24h and includes a wall-clock time, otherwise the formatted date.
+ */
+private fun formatWhen(
+    context: Context,
     date: LocalDate,
     time: LocalTime?,
     pattern: String,
 ): String {
+    if (time != null) {
+        val millis =
+            date
+                .atTime(time)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        val now = System.currentTimeMillis()
+        val delta = now - millis
+        if (delta in 0 until RELATIVE_TIME_WINDOW_MS) {
+            return DateUtils
+                .getRelativeTimeSpanString(millis, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)
+                .toString()
+                .stripRtlMark()
+        }
+    }
     val effective = if (time != null) pattern else stripTimePattern(pattern)
     val temporal = if (time != null) date.atTime(time) else date
     return DateTimeFormatter.ofPattern(effective).format(temporal).stripRtlMark()
