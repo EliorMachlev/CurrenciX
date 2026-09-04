@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -451,7 +452,7 @@ private fun FeeChip(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = context.getString(R.string.fee_chip_label, percentText),
+            text = stringResource(R.string.fee_chip_label, percentText),
             fontSize = FEE_CHIP_TEXT_SIZE,
             fontWeight = FontWeight.Medium,
             color = Amber,
