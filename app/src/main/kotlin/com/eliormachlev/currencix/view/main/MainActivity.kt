@@ -1,30 +1,24 @@
 package com.eliormachlev.currencix.view.main
 
 import android.content.ClipData
-import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.ContextMenu
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.sp
@@ -35,33 +29,25 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.KeyboardType
-import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticTap
-import com.eliormachlev.currencix.util.hideSoftInputFrom
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.paintParenCycle
-import com.eliormachlev.currencix.util.rateSpinnerListener
-import com.eliormachlev.currencix.util.setTextAndCursorToEnd
-import com.eliormachlev.currencix.util.showSoftInputOn
 import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.util.toNumber
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.CartActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.main.compose.MainDisplay
-import com.eliormachlev.currencix.view.main.compose.MainDisplayViews
-import com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
+import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
 import com.eliormachlev.currencix.view.timeline.TimelineActivity
@@ -70,7 +56,6 @@ import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.math.BigDecimal
@@ -79,17 +64,16 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 private const val HISTORICAL_MIN_YEAR = 2010
-private const val STALE_RATES_DAYS = 3L
 private const val MAX_ERROR_TEXT_LINES = 20
 
-// context-menu item ids for the from/to text views
-private const val CTX_MENU_COPY_FROM = 0
-private const val CTX_MENU_PASTE_FROM = 1
-private const val CTX_MENU_COPY_TO = 2
-
-// fee true-cost / percent formatting
+// fee true-cost / percent formatting for the share-sheet extra
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
 private const val AMOUNT_DECIMAL_PLACES = 2
+
+// Default date pattern used before the user-configured pattern LiveData emits.
+private const val DEFAULT_DATE_PATTERN = "dd/MM/yy HH:mm"
+
+private const val WORDMARK_TITLE_SP = 26f
 
 class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
@@ -97,12 +81,11 @@ class MainActivity : BaseActivity() {
 
     private var hapticEnabled = false
 
-    // Cached date pattern so the frequently-fired `observeExchangeRates`
-    // handler doesn't hit SharedPreferences on the main thread on every rate
-    // emission. Kept in sync via the `getDateFormat()` LiveData below.
-    private var dateFormatPattern: String = "dd/MM/yy HH:mm"
+    // Cached date pattern shared with the share-sheet and offline-banner
+    // formatters. Compose reads the same pattern via observeAsState so its
+    // rate-footer stays in sync without needing a push from here.
+    private var dateFormatPattern: String = DEFAULT_DATE_PATTERN
 
-    private lateinit var refreshIndicator: LinearProgressIndicator
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private var menuItemRefresh: MenuItem? = null
 
@@ -111,38 +94,6 @@ class MainActivity : BaseActivity() {
     private var isOnline: Boolean = true
     private var latestRatesDate: LocalDate? = null
     private var latestRatesTime: LocalTime? = null
-
-    private lateinit var tvCalculations: EditText
-    private lateinit var tvFrom: EditText
-    private lateinit var tvTo: TextView
-
-    // Guards the expression-preview observer from stomping on characters the
-    // user is actively typing on the system keyboard: our own setText() call
-    // for seeding / mode-swap would otherwise re-fire the TextWatcher and
-    // replay it, garbling the input.
-    private var muteCalculationsWriteback = false
-
-    // True while either system-IME variant is selected — the calculations
-    // EditText is the source of truth for the typed expression, so the
-    // formatted-preview observer skips it entirely (even for updates that
-    // originate elsewhere: currency swap, rate refresh, mid-entry reformat).
-    private var isSystemKeyboardMode = false
-    private var lastKeyboardTypeApplied: KeyboardType? = null
-    private lateinit var spinnerFrom: SearchableSpinner
-    private lateinit var spinnerTo: SearchableSpinner
-    private lateinit var tvInfoConversion: TextView
-    private lateinit var tvInfoDate: TextView
-    private lateinit var tvTrueCost: TextView
-    private lateinit var tvOriginalValue: TextView
-    private lateinit var tvOriginalFeeAmount: TextView
-    private lateinit var tvConvertedFeeAmount: TextView
-
-    // Widgets inflated from `main_display.xml` and re-parented into the
-    // `MainDisplay` Compose composable. Kept as strong Activity references so
-    // `findViewById` on the activity window still resolves them and so their
-    // click listeners / observers survive re-composition of AndroidView hosts.
-    private lateinit var btnToggle: View
-    private lateinit var iconHistorical: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,12 +111,7 @@ class MainActivity : BaseActivity() {
         this.offlineBanner = findViewById(R.id.offlineBanner)
         this.offlineBannerText = findViewById(R.id.offlineBannerText)
 
-        // Inflate the main-display widgets into a throw-away ConstraintLayout,
-        // extract each, detach from that parent, and hand them to the Compose
-        // `MainDisplay` container via `AndroidView(factory = { existingView })`.
-        // Doing this synchronously in `onCreate` avoids racing the ComposeView's
-        // first composition — the widgets exist and are held as activity fields
-        // before any observer wires up.
+        // hero card (pills + amount hero + amount to + rate footer)
         installMainDisplay()
 
         // swipe-to-refresh: color scheme (not accessible in xml)
@@ -375,55 +321,7 @@ class MainActivity : BaseActivity() {
             .showWithHapticButtons()
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View,
-        menuInfo: ContextMenu.ContextMenuInfo?,
-    ) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        when (v.id) {
-            R.id.textFrom -> {
-                menu.add(0, CTX_MENU_COPY_FROM, 0, android.R.string.copy)
-                val paste = menu.add(0, CTX_MENU_PASTE_FROM, 0, android.R.string.paste)
-                // only show "paste" when applicable
-                paste.isVisible = clipboardHasNumber()
-            }
-            R.id.textTo -> {
-                menu.add(0, CTX_MENU_COPY_TO, 0, android.R.string.copy)
-            }
-        }
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        hapticTap()
-        when (item.itemId) {
-            CTX_MENU_COPY_FROM -> copyToClipboard(tvFrom.text.toString())
-            CTX_MENU_PASTE_FROM -> {
-                clipboardNumber()?.let { viewModel.paste(it) }
-                // Preview observer is muted in system mode, so mirror the
-                // fresh expression into the EditText ourselves.
-                if (isSystemKeyboardMode) setCalculationsTextMuted(viewModel.currentTypedExpression())
-            }
-            CTX_MENU_COPY_TO -> copyToClipboard(tvTo.text.toString())
-        }
-        return true
-    }
-
     private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
-    private fun clipboardHasNumber(): Boolean {
-        val clipboard = clipboardManager()
-        return clipboard.hasPrimaryClip() &&
-            clipboard.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true &&
-            clipboardNumber() != null
-    }
-
-    private fun clipboardNumber(): Number? =
-        clipboardManager()
-            .primaryClip
-            ?.getItemAt(0)
-            ?.text
-            ?.toNumber()
 
     private fun setListeners() {
         // long click on delete
@@ -435,40 +333,18 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        // long click on input "from"
-        registerForContextMenu(tvFrom)
-        // long click on input "to"
-        registerForContextMenu(tvTo)
-
-        // spinners: listen for changes
-        spinnerFrom.onItemSelectedListener = rateSpinnerListener(viewModel::setBaseCurrency)
-        spinnerTo.onItemSelectedListener = rateSpinnerListener(viewModel::setDestinationCurrency)
-
         // swipe to refresh
         swipeRefresh.setOnRefreshListener {
-            // update
             viewModel.forceUpdateExchangeRate()
             swipeRefresh.isRefreshing = false
         }
-
-        // long-press on the main swap arrow opens the Fees settings,
-        // mirroring the swap arrow inside the quick-conversions dialog.
-        btnToggle.setOnLongClickListener { openFeesSettings(it) }
-
-        // In system-keyboard mode `tvCalculations` becomes the tap target that
-        // opens the IME; every other tap in the app vibrates, so this one
-        // should too. Gated on the mode flag because the field isn't tappable
-        // when the custom keypads are in use.
-        tvCalculations.setOnClickListener { v -> if (isSystemKeyboardMode) v.hapticTap() }
     }
 
-    private fun openFeesSettings(source: View): Boolean {
-        haptic(source)
+    private fun openFeesSettings() {
         startActivity(PreferenceActivity.feesIntent(this))
-        return true
     }
 
-    private fun copyToClipboard(copyText: String) {
+    private fun copyToClipboard(copyText: CharSequence) {
         clipboardManager().setPrimaryClip(ClipData.newPlainText(null, copyText))
         val message = getString(R.string.copied_to_clipboard, copyText).fromHtmlLegacy()
         snackbar(message)
@@ -480,44 +356,23 @@ class MainActivity : BaseActivity() {
     private fun observe() {
         Database(this).getDateFormat().observe(this) { pattern ->
             dateFormatPattern = pattern
-            // Re-render the rates footer so a pattern change from Settings
-            // takes effect immediately without waiting for the next refresh.
-            observeExchangeRates(viewModel.getExchangeRates().value)
+            renderOfflineBanner()
         }
-        viewModel.ratesInformationFooter.observe(this) { tvInfoConversion.text = it }
-        viewModel.getExchangeRates().observe(this) { observeExchangeRates(it) }
+        viewModel.getExchangeRates().observe(this) { rates ->
+            latestRatesDate = rates?.date
+            latestRatesTime = rates?.time
+            renderOfflineBanner()
+        }
         viewModel.getError().observe(this) { showErrorSnackbar(it) }
         viewModel.isUpdating().observe(this) { isRefreshing ->
-            refreshIndicator.visibility = if (isRefreshing) View.VISIBLE else View.GONE
             swipeRefresh.isEnabled = isRefreshing.not()
             menuItemRefresh?.isEnabled = isRefreshing.not()
         }
-        viewModel.getCurrentBaseValueFormatted().observe(this) { formatted ->
-            tvFrom.setTextAndCursorToEnd(formatted ?: "")
-        }
-        viewModel.getResultFormatted().observe(this) { tvTo.text = it }
-        viewModel.getCalculationInputFormatted().observe(this) { formatted ->
-            // In SYSTEM-keyboard mode `tvCalculations` is the EditText the
-            // user is actively typing into; the pretty-formatted preview
-            // would clobber the raw text and jump the cursor. Skip the
-            // writeback entirely — including reformats from a currency swap
-            // or rate refresh mid-entry.
-            if (isSystemKeyboardMode || muteCalculationsWriteback) return@observe
-            setCalculationsTextMuted(formatted ?: "")
-        }
-        viewModel.getBaseCurrency().observe(this) { observeBaseCurrency(it) }
-        viewModel.getDestinationCurrency().observe(this) { observeDestinationCurrency(it) }
-        viewModel.getCurrentBaseValueAsNumber().observe(this) { spinnerTo.setCurrentSum(it) }
-        viewModel.getResultAsNumber().observe(this) { spinnerFrom.setCurrentSum(it) }
         viewModel.keyboardType.observe(this) { observeKeyboardType(it) }
         viewModel.nextParen().observe(this) { next ->
             findViewById<AppCompatButton>(R.id.btn_parens)?.paintParenCycle(next)
         }
         viewModel.isHapticFeedbackEnabled.observe(this) { hapticEnabled = it }
-        viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
-        viewModel.getOriginalValue().observe(this) { observeOriginalValue(it) }
-        viewModel.getOriginalFeeAmount().observe(this) { observeOriginalFeeAmount(it) }
-        viewModel.getConvertedFeeAmount().observe(this) { observeConvertedFeeAmount(it) }
         NetworkStatusLiveData(this).observe(this) { online ->
             isOnline = online
             renderOfflineBanner()
@@ -539,69 +394,10 @@ class MainActivity : BaseActivity() {
         offlineBanner.visibility = View.VISIBLE
     }
 
-    // Cost-with-fee and value-before-fee are companion rows to the
-    // conversion/reduction-fee lines, which already carry the percent tail.
-    // Passing null stack suppresses the duplicate.
-    private fun observeTrueCost(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvTrueCost,
-            prefixRes = R.string.fee_cost_with_fee_prefix,
-            value = value,
-            currency = viewModel.getBaseCurrency().value,
-            stack = null,
-        )
-    }
-
-    private fun observeOriginalValue(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvOriginalValue,
-            prefixRes = R.string.fee_value_before_fee_prefix,
-            value = value,
-            currency = viewModel.getDestinationCurrency().value,
-            stack = null,
-        )
-    }
-
-    private fun observeOriginalFeeAmount(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvOriginalFeeAmount,
-            prefixRes = R.string.fee_true_cost_prefix,
-            value = value,
-            currency = viewModel.getBaseCurrency().value,
-            stack = viewModel.getSideStacks().value?.original,
-        )
-    }
-
-    private fun observeConvertedFeeAmount(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvConvertedFeeAmount,
-            prefixRes = R.string.fee_original_value_prefix,
-            value = value,
-            currency = viewModel.getDestinationCurrency().value,
-            stack = viewModel.getSideStacks().value?.converted,
-        )
-    }
-
-    private fun renderFeeAmount(
-        target: TextView,
-        prefixRes: Int,
-        value: BigDecimal?,
-        currency: Currency?,
-        stack: BigDecimal?,
-    ) {
-        if (value == null) {
-            target.visibility = View.GONE
-            return
-        }
-        target.text = buildFeeAmountLine(prefixRes, value, currency, stack)
-        target.visibility = View.VISIBLE
-    }
-
     // "<prefix><amount> <ISO> (<sign><pct>%)" with the amount+ISO isolated LTR
     // so a right-aligned prefix in an RTL locale doesn't flip the number/code
     // pair. The percent tail is omitted when the [stack] is trivial (no fee on
-    // this side) or unknown. Shared by the on-screen fee annotations and the
-    // share sheet.
+    // this side) or unknown. Used by the share sheet's extra fee lines.
     private fun buildFeeAmountLine(
         prefixRes: Int,
         value: BigDecimal,
@@ -620,45 +416,6 @@ class MainActivity : BaseActivity() {
         return "$line ${ltrIsolate("($percent)")}"
     }
 
-    private fun observeExchangeRates(rates: ExchangeRates?) {
-        latestRatesDate = rates?.date
-        latestRatesTime = rates?.time
-        renderOfflineBanner()
-        rates?.let {
-            val date = it.date
-            val dateString = formatRatesTimestamp(date, it.time)
-            val providerString = it.provider?.getName(this)
-            tvInfoDate.text =
-                if (dateString != null && providerString != null) {
-                    getString(
-                        if (viewModel.getHistoricalDate() != null) {
-                            R.string.info_date_historical
-                        } else {
-                            R.string.info_date_latest
-                        },
-                        dateString,
-                        providerString,
-                    ).fromHtmlLegacy()
-                } else {
-                    null
-                }
-            val isStaleOrHistorical =
-                date?.isBefore(LocalDate.now().minusDays(STALE_RATES_DAYS)) == true ||
-                    viewModel.getHistoricalDate() != null
-            val infoColor =
-                if (isStaleOrHistorical) {
-                    MaterialColors.getColor(this, R.attr.colorError, null)
-                } else {
-                    getTextColorSecondary()
-                }
-            listOf(tvInfoDate, tvInfoConversion).forEach { tv -> tv.setTextColor(infoColor) }
-            iconHistorical.visibility =
-                if (viewModel.getHistoricalDate() != null) View.VISIBLE else View.GONE
-        }
-        spinnerFrom.setRates(rates?.rates, viewModel.getBaseCurrency().value)
-        spinnerTo.setRates(rates?.rates, viewModel.getDestinationCurrency().value)
-    }
-
     private fun showErrorSnackbar(message: String?) {
         message ?: return
         snackbar(
@@ -672,166 +429,20 @@ class MainActivity : BaseActivity() {
             .show()
     }
 
-    private fun observeBaseCurrency(currency: Currency?) {
-        spinnerFrom.setSelection(currency)
-        // Whatever's picked on the base side must not be pickable on the
-        // destination side — grey it out in the "to" picker.
-        spinnerTo.setDisabledCurrency(currency)
-        // Fee-line renderer reads the currency synchronously; re-run so a late
-        // arrival (e.g. process restart, DB load after trueCost fires) still
-        // paints the "$" marker.
-        observeTrueCost(viewModel.getTrueCost().value)
-        observeOriginalFeeAmount(viewModel.getOriginalFeeAmount().value)
-        currency ?: return
-        findRateFor(currency)?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
-    }
-
-    private fun observeDestinationCurrency(currency: Currency?) {
-        spinnerTo.setSelection(currency)
-        spinnerFrom.setDisabledCurrency(currency)
-        observeOriginalValue(viewModel.getOriginalValue().value)
-        observeConvertedFeeAmount(viewModel.getConvertedFeeAmount().value)
-        currency ?: return
-        findRateFor(currency)?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
-    }
-
-    // Look up the current-cache rate value for [currency]; null when rates
-    // haven't loaded yet or the currency isn't in the response.
-    private fun findRateFor(currency: Currency): BigDecimal? =
-        viewModel
-            .getExchangeRates()
-            .value
-            ?.rates
-            ?.find { it.currency == currency }
-            ?.value
-
+    // System-keyboard modes (SYSTEM_NUMPAD, SYSTEM_FULL) fall back to the
+    // BASIC on-screen keypad until Phase 2b's follow-up wires an in-Compose
+    // EditText — otherwise a user with a system-mode preference would see
+    // both keypads hidden and have no way to type.
     private fun observeKeyboardType(type: KeyboardType) {
+        val effective = if (type.isSystem) KeyboardType.BASIC else type
         val keypadRegular = findViewById<View>(R.id.keypad)
         val keypadExtended = findViewById<View>(R.id.keypad_extended)
-        keypadRegular.visibility = if (type == KeyboardType.BASIC) View.VISIBLE else View.GONE
-        keypadExtended.visibility = if (type == KeyboardType.EXPANDED) View.VISIBLE else View.GONE
+        keypadRegular.visibility = if (effective == KeyboardType.BASIC) View.VISIBLE else View.GONE
+        keypadExtended.visibility = if (effective == KeyboardType.EXPANDED) View.VISIBLE else View.GONE
         val separator = getDecimalSeparator(this)
         keypadExtended.findViewById<TextView>(R.id.btn_decimal).text = separator
         keypadRegular.findViewById<TextView>(R.id.btn_decimal).text = separator
-        configureCalculationsEditText(type)
     }
-
-    // Runtime flags mirror the XML defaults so mode swaps are reversible.
-    // Compare by the exact type (not just `wantsSystem`) so a switch between
-    // the numpad and full-text sub-variants refreshes the KeyListener + IME
-    // class instead of no-oping.
-    private fun configureCalculationsEditText(type: KeyboardType) {
-        if (lastKeyboardTypeApplied == type) return
-        val wantsSystem = type.isSystem
-        isSystemKeyboardMode = wantsSystem
-        lastKeyboardTypeApplied = type
-        // Detach first so seed-setText below doesn't accidentally clear the
-        // state via a stale watcher call.
-        tvCalculations.removeTextChangedListener(systemKeyboardWatcher)
-        if (wantsSystem) {
-            tvCalculations.isFocusable = true
-            tvCalculations.isFocusableInTouchMode = true
-            tvCalculations.isCursorVisible = true
-            tvCalculations.showSoftInputOnFocus = true
-            tvCalculations.keyListener = CalculatorKeyListener.forKeyboardType(type)
-            // Seed with the current typed expression (display glyphs → ASCII)
-            // so switching mode mid-entry doesn't lose the user's work.
-            setCalculationsTextMuted(viewModel.currentTypedExpression())
-            tvCalculations.addTextChangedListener(systemKeyboardWatcher)
-            showSystemImeOnField()
-        } else {
-            tvCalculations.isCursorVisible = false
-            tvCalculations.showSoftInputOnFocus = false
-            tvCalculations.isFocusable = false
-            tvCalculations.isFocusableInTouchMode = false
-            // Also clears inputType to TYPE_NULL — no separate reset needed.
-            tvCalculations.keyListener = null
-            hideSystemIme()
-            // Restore the pretty formatted preview now that the writeback
-            // observer is authoritative again.
-            setCalculationsTextMuted(viewModel.getCalculationInputFormatted().value ?: "")
-        }
-    }
-
-    private var cachedSystemKeyboardIcon: Drawable? = null
-
-    private fun systemKeyboardIcon(): Drawable =
-        cachedSystemKeyboardIcon ?: getDrawable(R.drawable.ic_keyboard_extended)!!.also {
-            cachedSystemKeyboardIcon = it
-        }
-
-    // Show the keyboard glyph as a start-compound drawable while system-IME
-    // mode is active and the field is empty, so the user has a visible tap
-    // target instead of a bare caret. Cleared as soon as text appears (or on
-    // mode-swap back to the custom keypads).
-    private fun updateSystemKeyboardIcon() {
-        val icon =
-            if (isSystemKeyboardMode && tvCalculations.text.isNullOrEmpty()) {
-                systemKeyboardIcon()
-            } else {
-                null
-            }
-        tvCalculations.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
-    }
-
-    private fun showSystemImeOnField() {
-        tvCalculations.setSelection(tvCalculations.text?.length ?: 0)
-        showSoftInputOn(tvCalculations)
-    }
-
-    // Programmatic setText that suppresses the system-IME watcher re-entry —
-    // used for the pretty-preview observer, paste, mode swaps, and the
-    // watcher's own reconcile. `alreadyMuted` preserves the outer mute when
-    // called from inside afterTextChanged.
-    private fun setCalculationsTextMuted(text: CharSequence) {
-        val alreadyMuted = muteCalculationsWriteback
-        muteCalculationsWriteback = true
-        try {
-            tvCalculations.setTextAndCursorToEnd(text)
-            updateSystemKeyboardIcon()
-        } finally {
-            if (!alreadyMuted) muteCalculationsWriteback = false
-        }
-    }
-
-    private fun hideSystemIme() = hideSoftInputFrom(tvCalculations)
-
-    // On every EditText mutation while system-IME mode is active, rebuild
-    // the calculator state from the new text — same char-routing the hardware
-    // keyboard uses. Simpler than diffing insert vs. delete positions and
-    // correct for pastes / mid-string edits too.
-    private val systemKeyboardWatcher =
-        object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int,
-            ) = Unit
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int,
-            ) = Unit
-
-            override fun afterTextChanged(s: Editable?) {
-                if (muteCalculationsWriteback) return
-                val text = s?.toString().orEmpty()
-                muteCalculationsWriteback = true
-                try {
-                    viewModel.clear()
-                    text.forEach { handleCharKey(it) }
-                    // Reconcile the visible text with the calculator's canonical
-                    // form so shortcuts round-trip: e.g. `()` after a number
-                    // becomes `*(`, matching what the custom keypads produce.
-                    setCalculationsTextMuted(viewModel.currentTypedExpression())
-                } finally {
-                    muteCalculationsWriteback = false
-                }
-            }
-        }
 
     private fun haptic(view: View) = view.hapticTap(hapticEnabled)
 
@@ -928,15 +539,18 @@ class MainActivity : BaseActivity() {
     }
 
     /*
-     * swap currencies
+     * swap currencies — invoked by QuickConversionsDialog and by the pure-
+     * Compose swap FAB (via callbacks). The Compose FAB calls the underlying
+     * viewModel setters directly and does not route through here.
      */
     fun toggleEvent(
         @Suppress("UNUSED_PARAMETER") view: View?,
     ) {
-        val from = spinnerFrom.selectedItemPosition
-        val to = spinnerTo.selectedItemPosition
-        spinnerFrom.setSelection(to)
-        spinnerTo.setSelection(from)
+        val from = viewModel.getBaseCurrency().value ?: return
+        val to = viewModel.getDestinationCurrency().value ?: return
+        if (from == to) return
+        viewModel.setBaseCurrency(to)
+        viewModel.setDestinationCurrency(from)
     }
 
     private fun prepareFoldableLayoutChanges() {
@@ -961,77 +575,25 @@ class MainActivity : BaseActivity() {
     }
 
     private fun installMainDisplay() {
-        val displayRoot = layoutInflater.inflate(R.layout.main_display, null, false) as ViewGroup
-
-        // Inner text widgets addressed by observers / listeners.
-        this.refreshIndicator = displayRoot.findViewById(R.id.refreshIndicator)
-        this.tvCalculations = displayRoot.findViewById(R.id.textCalculations)
-        this.tvFrom = displayRoot.findViewById(R.id.textFrom)
-        this.tvTo = displayRoot.findViewById(R.id.textTo)
-        this.spinnerFrom = displayRoot.findViewById(R.id.spinnerFrom)
-        this.spinnerTo = displayRoot.findViewById(R.id.spinnerTo)
-        this.tvInfoConversion = displayRoot.findViewById(R.id.textInfoConversion)
-        this.tvInfoDate = displayRoot.findViewById(R.id.textInfoDate)
-        this.tvTrueCost = displayRoot.findViewById(R.id.textTrueCost)
-        this.tvOriginalValue = displayRoot.findViewById(R.id.textOriginalValue)
-        this.tvOriginalFeeAmount = displayRoot.findViewById(R.id.textOriginalFeeAmount)
-        this.tvConvertedFeeAmount = displayRoot.findViewById(R.id.textConvertedFeeAmount)
-        this.btnToggle = displayRoot.findViewById(R.id.btn_toggle)
-        this.iconHistorical = displayRoot.findViewById(R.id.iconHistorical)
-
-        // Wrapper views hosted directly as AndroidViews inside Compose.
-        val snackbarHost: View = displayRoot.findViewById(R.id.snackbar_top_position)
-        val scrollViewTextFrom: View = displayRoot.findViewById(R.id.scrollViewTextFrom)
-        val scrollViewTextTo: View = displayRoot.findViewById(R.id.scrollViewTextTo)
-        val scrollViewOriginalFeeAmount: View = displayRoot.findViewById(R.id.scrollViewOriginalFeeAmount)
-        val scrollViewTrueCost: View = displayRoot.findViewById(R.id.scrollViewTrueCost)
-        val scrollViewOriginalValue: View = displayRoot.findViewById(R.id.scrollViewOriginalValue)
-        val scrollViewConvertedFeeAmount: View = displayRoot.findViewById(R.id.scrollViewConvertedFeeAmount)
-
-        // Detach each view from the throw-away ConstraintLayout so Compose can
-        // adopt it as an AndroidView. The inner text widgets are lifted out via
-        // their scrollView / row wrappers, so we only detach the top-level
-        // widgets Compose will host.
-        listOf(
-            snackbarHost,
-            refreshIndicator,
-            btnToggle,
-            spinnerFrom,
-            spinnerTo,
-            tvCalculations,
-            scrollViewTextFrom,
-            scrollViewTextTo,
-            scrollViewOriginalFeeAmount,
-            scrollViewTrueCost,
-            scrollViewOriginalValue,
-            scrollViewConvertedFeeAmount,
-            iconHistorical,
-            tvInfoConversion,
-            tvInfoDate,
-        ).forEach { (it.parent as? ViewGroup)?.removeView(it) }
-
-        val views =
-            MainDisplayViews(
-                snackbarHost = snackbarHost,
-                refreshIndicator = refreshIndicator,
-                btnToggle = btnToggle,
-                spinnerFrom = spinnerFrom,
-                spinnerTo = spinnerTo,
-                textCalculations = tvCalculations,
-                scrollViewTextFrom = scrollViewTextFrom,
-                scrollViewTextTo = scrollViewTextTo,
-                scrollViewOriginalFeeAmount = scrollViewOriginalFeeAmount,
-                scrollViewTrueCost = scrollViewTrueCost,
-                scrollViewOriginalValue = scrollViewOriginalValue,
-                scrollViewConvertedFeeAmount = scrollViewConvertedFeeAmount,
-                iconHistorical = iconHistorical,
-                textInfoConversion = tvInfoConversion,
-                textInfoDate = tvInfoDate,
+        val callbacks =
+            MainDisplayCallbacks(
+                onCopy = ::copyToClipboard,
+                onOpenFees = ::openFeesSettings,
+                onSwapLongPress = ::openFeesSettings,
             )
-
         findViewById<ComposeView>(R.id.mainDisplayHost).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent { AppTheme { MainDisplay(views) } }
+            setContent {
+                AppTheme {
+                    val pattern by Database(context).getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
+                    MainDisplay(
+                        viewModel = viewModel,
+                        fragmentManager = supportFragmentManager,
+                        callbacks = callbacks,
+                        dateFormatPattern = pattern,
+                    )
+                }
+            }
         }
     }
 
@@ -1055,5 +617,3 @@ class MainActivity : BaseActivity() {
             }
     }
 }
-
-private const val WORDMARK_TITLE_SP = 26f

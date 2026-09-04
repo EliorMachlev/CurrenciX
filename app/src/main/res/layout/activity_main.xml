@@ -35,6 +35,14 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Zero-size anchor for snackbars — BaseActivity.snackbar() positions
+         them above this View so they float over the hero card area rather
+         than the keypad. -->
+    <View
+        android:id="@+id/snackbar_top_position"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"

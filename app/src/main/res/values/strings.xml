@@ -21,6 +21,7 @@
     <string name="offline_banner_with_date">Offline • Rates from %1$s</string>
     <string name="offline_banner_no_data">Offline • No cached rates yet</string>
     <string name="copied_to_clipboard">Copied &lt;b>%s&lt;/b> to clipboard</string>
+    <string name="fee_chip_label">%1$s fee</string>
 
     <string name="historical_rates_dialog_title">Historical rates</string>
     <string name="historical_rates_dialog_toggle">Use exchange rates of a specific date. Disable, to always take the most recent ones.</string>
