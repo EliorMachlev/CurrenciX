@@ -484,7 +484,7 @@ private fun FeeChip(
         if (namesText.isEmpty()) {
             stringResource(R.string.fee_chip_label, percentText)
         } else {
-            "$namesText $percentText"
+            "$percentText$FOOTER_SEPARATOR$namesText"
         }
     val bg = Amber.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
     Row(
