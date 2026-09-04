@@ -37,7 +37,7 @@ val WordmarkX =
         fontSize = 26.sp,
         fontWeight = FontWeight.Normal,
         letterSpacing = 0.em,
-        geometricTransform = TextGeometricTransform(skewX = -0.05f),
+        textGeometricTransform = TextGeometricTransform(skewX = -0.05f),
     )
 
 val SerifSymbol =
