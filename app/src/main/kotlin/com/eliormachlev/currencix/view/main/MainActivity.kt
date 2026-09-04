@@ -5,20 +5,12 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.os.Bundle
 import android.text.Editable
-import android.text.SpannableString
-import android.text.Spanned
 import android.text.TextWatcher
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
-import android.text.style.TypefaceSpan
-import android.util.TypedValue
 import android.view.ContextMenu
 import android.view.KeyEvent
 import android.view.Menu
@@ -32,10 +24,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.window.layout.FoldingFeature
-import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
@@ -62,6 +56,8 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.util.toNumber
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.CartActivity
+import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
@@ -143,7 +139,7 @@ class MainActivity : BaseActivity() {
 
         // general layout
         setContentView(R.layout.activity_main)
-        title = buildWordmarkTitle()
+        installComposeWordmarkTitle()
 
         // model
         this.viewModel = ViewModelProvider(this)[MainViewModel::class.java]
@@ -958,34 +954,25 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun buildWordmarkTitle(): CharSequence {
-        val text = getString(R.string.app_name)
-        val sizePx =
-            TypedValue
-                .applyDimension(
-                    TypedValue.COMPLEX_UNIT_SP,
-                    WORDMARK_TITLE_SP,
-                    resources.displayMetrics,
-                ).toInt()
-        return SpannableString(text).apply {
-            setSpan(AbsoluteSizeSpan(sizePx), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(TypefaceSpan(WORDMARK_TITLE_FONT_FAMILY), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(StyleSpan(Typeface.BOLD), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            if (BuildConfig.DEBUG) {
-                setSpan(
-                    ForegroundColorSpan(getColor(android.R.color.holo_red_light)),
-                    0,
-                    length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                )
+    // Swap the AppCompat ActionBar title for a ComposeView that renders the
+    // Wordmark composable ("Currenci" in Inter SemiBold + a leaning italic X
+    // in Instrument Serif). Uses the ActionBar customView slot so the action
+    // items (chart, cart, timeline, overflow) still lay out normally on the
+    // trailing edge.
+    private fun installComposeWordmarkTitle() {
+        val bar = supportActionBar ?: return
+        bar.setDisplayShowTitleEnabled(false)
+        bar.setDisplayShowCustomEnabled(true)
+        bar.customView =
+            ComposeView(this).apply {
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                setContent {
+                    AppTheme {
+                        Wordmark(fontSize = WORDMARK_TITLE_SP.sp)
+                    }
+                }
             }
-        }
     }
 }
 
 private const val WORDMARK_TITLE_SP = 26f
-
-// sans-serif-black is Android's heaviest built-in font family (weight 900).
-// Combined with StyleSpan(BOLD), it gives the wordmark a distinct logo weight
-// without shipping a custom font asset.
-private const val WORDMARK_TITLE_FONT_FAMILY = "sans-serif-black"
