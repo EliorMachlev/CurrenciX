@@ -230,11 +230,13 @@ private fun HeroCard(
             AmountHero(
                 text = baseFormatted,
                 onLongClick = { if (baseFormatted.isNotEmpty()) callbacks.onCopy(baseFormatted) },
+                originalStack = sideStacks?.original,
+                onFeeChipClick = callbacks.onOpenFees,
             )
             AmountDivider()
             AmountToRow(
                 text = resultFormatted,
-                sideStacks = sideStacks,
+                convertedStack = sideStacks?.converted,
                 onLongClick = { if (resultFormatted.isNotEmpty()) callbacks.onCopy(resultFormatted) },
                 onFeeChipClick = callbacks.onOpenFees,
             )
@@ -344,25 +346,30 @@ private fun SwapFab(
 private fun AmountHero(
     text: String,
     onLongClick: () -> Unit,
+    originalStack: BigDecimal?,
+    onFeeChipClick: () -> Unit,
 ) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .combinedClickable(onClick = {}, onLongClick = onLongClick),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End,
-    ) {
-        Text(
-            text = text,
-            fontSize = AMOUNT_HERO_SIZE,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f, fill = false),
-        )
-        BlinkingCursor()
+    Column(Modifier.fillMaxWidth()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .combinedClickable(onClick = {}, onLongClick = onLongClick),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End,
+        ) {
+            Text(
+                text = text,
+                fontSize = AMOUNT_HERO_SIZE,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            BlinkingCursor()
+        }
+        FeeChipRow(stack = originalStack, onClick = onFeeChipClick)
     }
 }
 
@@ -405,12 +412,10 @@ private fun AmountDivider() {
 @Composable
 private fun AmountToRow(
     text: String,
-    sideStacks: SideStacks?,
+    convertedStack: BigDecimal?,
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
-    val hasFee = sideStacks != null && !sideStacks.isNeutral()
-    val combinedStack = sideStacks?.combined
     Column(Modifier.fillMaxWidth()) {
         Text(
             text = text,
@@ -425,15 +430,22 @@ private fun AmountToRow(
                     .fillMaxWidth()
                     .combinedClickable(onClick = {}, onLongClick = onLongClick),
         )
-        if (hasFee && combinedStack != null) {
-            Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                FeeChip(combinedStack, onFeeChipClick)
-            }
-        }
+        FeeChipRow(stack = convertedStack, onClick = onFeeChipClick)
+    }
+}
+
+@Composable
+private fun FeeChipRow(
+    stack: BigDecimal?,
+    onClick: () -> Unit,
+) {
+    if (stack == null || stack.compareTo(BigDecimal.ONE) == 0) return
+    Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        FeeChip(stack, onClick)
     }
 }
 
