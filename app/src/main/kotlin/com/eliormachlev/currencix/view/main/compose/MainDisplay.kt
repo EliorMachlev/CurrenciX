@@ -33,6 +33,15 @@ private val CARD_RADIUS: Dp = 16.dp
 private val CARD_MARGIN: Dp = 8.dp
 private val CARD_PADDING: Dp = 8.dp
 private val FAB_START_MARGIN: Dp = 40.dp
+private val FAB_SIZE: Dp = 56.dp
+private val FAB_GAP: Dp = 8.dp
+
+// Push the spinner (flag + ISO code) start past the FAB's right edge so the
+// currency labels don't render behind it. The FAB is anchored in the outer
+// BoxWithConstraints at `CARD_MARGIN + FAB_START_MARGIN` from screen; the
+// spinner sits inside TopHalf/BottomHalf which are already inset by
+// `CARD_PADDING`, so subtract that to avoid double-counting.
+private val SPINNER_START_PADDING: Dp = FAB_START_MARGIN + FAB_SIZE + FAB_GAP - CARD_PADDING
 
 // Matches `android:padding="@dimen/margin2x"` on textFrom/textTo — the
 // currency-value glyphs sit this far inside their scroll-view wrapper.
@@ -147,7 +156,10 @@ private fun TopHalf(
             Modifier.fillMaxWidth().align(Alignment.BottomStart).wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AndroidView(factory = { views.spinnerFrom })
+            AndroidView(
+                factory = { views.spinnerFrom },
+                modifier = Modifier.padding(start = SPINNER_START_PADDING),
+            )
             AndroidView(
                 factory = { views.scrollViewTextFrom },
                 modifier = Modifier.weight(1f),
@@ -177,7 +189,10 @@ private fun BottomHalf(
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AndroidView(factory = { views.spinnerTo })
+            AndroidView(
+                factory = { views.spinnerTo },
+                modifier = Modifier.padding(start = SPINNER_START_PADDING),
+            )
             AndroidView(
                 factory = { views.scrollViewTextTo },
                 modifier = Modifier.weight(1f),
