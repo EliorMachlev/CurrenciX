@@ -95,7 +95,7 @@ private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 20.dp
 private val AMOUNT_DIVIDER_MARGIN_TOP: Dp = 12.dp
 private val AMOUNT_DIVIDER_MARGIN_BOTTOM: Dp = 10.dp
-private val FEE_CHIP_TOP_GAP: Dp = 6.dp
+private val FEE_CHIP_TOP_GAP: Dp = 2.dp
 private val RATE_FOOTER_TOP_MARGIN: Dp = 14.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 12.dp
 private val LIVE_DOT_SIZE: Dp = 6.dp
@@ -118,7 +118,7 @@ private const val FINAL_VALUE_DECIMAL_PLACES = 2
 
 // Horizontal gap between the fee-equation row elements (operator glyphs,
 // amber chip, red final-value pill).
-private val FEE_ROW_PILL_GAP: Dp = 6.dp
+private val FEE_ROW_PILL_GAP: Dp = 4.dp
 
 // Operator glyphs joining the big value, fee chip, and final-value pill
 // into a readable equation. Uses U+2212 (minus) rather than a hyphen so the
@@ -584,12 +584,11 @@ private fun FeeAboveRow(
 }
 
 // Everything that renders below the big value once the fee chip decision
-// has been made above. Four cases:
+// has been made above. Three cases:
 //   - No fee (op null): render nothing.
 //   - Fee active but big value is 0: chip alone, no operator, no pill.
-//   - PLUS with meaningful value: `+` on its own row (bridging the big
-//     value above and the chip below), then `[chip] = [pill]` on the next
-//     row so the chip and its final value sit together.
+//   - PLUS with meaningful value: single row `+ [chip] = [pill]` — `+` and
+//     `=` share the same baseline so the equation reads left-to-right.
 //   - MINUS with meaningful value: chip already lives in FeeAboveRow, so
 //     this row is just `= [pill]`.
 @Composable
@@ -607,17 +606,12 @@ private fun FeeEquationTail(
         FeeRowRightAligned { FeeChip(stack, fees, onClick) }
         return
     }
-    if (op == FeeOp.PLUS) {
-        FeeRowRightAligned { FeeOperator(OP_PLUS) }
-        FeeRowRightAligned {
+    FeeRowRightAligned {
+        if (op == FeeOp.PLUS) {
+            FeeOperator(OP_PLUS)
             FeeChip(stack, fees, onClick)
-            if (finalValue != null) {
-                FeeOperator(OP_EQUALS)
-                FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
-            }
         }
-    } else if (finalValue != null) {
-        FeeRowRightAligned {
+        if (finalValue != null) {
             FeeOperator(OP_EQUALS)
             FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
         }
