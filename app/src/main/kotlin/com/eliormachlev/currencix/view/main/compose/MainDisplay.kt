@@ -483,7 +483,7 @@ private fun AmountHero(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .horizontalScroll(rememberScrollState()),
+                        .horizontalScroll(rememberEndAnchoredScrollState(text)),
             )
             BlinkingCursor()
         }
@@ -520,7 +520,7 @@ private fun MathLine(text: String?) {
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .horizontalScroll(rememberScrollState()),
+                        .horizontalScroll(rememberEndAnchoredScrollState(text)),
             )
         }
     }
@@ -597,7 +597,7 @@ private fun AmountToRow(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .horizontalScroll(rememberScrollState()),
+                        .horizontalScroll(rememberEndAnchoredScrollState(text)),
             )
         }
         FeeEquationTail(
@@ -737,6 +737,18 @@ private fun Modifier.maxWidthFraction(fraction: Float): Modifier =
         val placeable = measurable.measure(constraints.copy(maxWidth = capped))
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
+
+// A ScrollState that snaps to the end whenever [key] changes or the content
+// grows, so freshly typed digits stay visible without the user having to
+// scroll. User drags between changes are preserved.
+@Composable
+private fun rememberEndAnchoredScrollState(key: Any?): ScrollState {
+    val state = rememberScrollState()
+    LaunchedEffect(key, state.maxValue) {
+        state.scrollTo(state.maxValue)
+    }
+    return state
+}
 
 // A ScrollState that lets the user drag the content freely, and — after
 // [PILL_AUTO_SCROLL_IDLE_MILLIS] with no drag interaction — resumes an
