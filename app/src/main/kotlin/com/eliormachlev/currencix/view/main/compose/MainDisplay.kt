@@ -456,10 +456,13 @@ private fun AmountHero(
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
                 textAlign = TextAlign.End,
                 style = TIGHT_TEXT_STYLE,
-                modifier = Modifier.weight(1f, fill = false),
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .basicMarquee(iterations = Int.MAX_VALUE),
             )
             BlinkingCursor()
         }
@@ -547,19 +550,27 @@ private fun AmountToRow(
         if (op == FeeOp.MINUS && meaningful) {
             FeeAboveRow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
         }
-        Text(
-            text = text,
-            fontSize = AMOUNT_TO_SIZE,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.End,
+        Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .combinedClickable(onClick = {}, onLongClick = onLongClick),
-        )
+            horizontalArrangement = Arrangement.End,
+        ) {
+            Text(
+                text = text,
+                fontSize = AMOUNT_TO_SIZE,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                softWrap = false,
+                textAlign = TextAlign.End,
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .basicMarquee(iterations = Int.MAX_VALUE),
+            )
+        }
         FeeEquationTail(
             op = op,
             stack = stack,
