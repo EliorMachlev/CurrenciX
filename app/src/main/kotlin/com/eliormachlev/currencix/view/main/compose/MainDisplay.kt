@@ -405,10 +405,11 @@ private fun AmountHero(
     currency: Currency?,
     onFeeChipClick: () -> Unit,
 ) {
-    val op = feeOpFor(stack, bigValue, otherValue)
+    val op = feeOpFor(stack)
+    val meaningful = bigValue.isMeaningful()
     Column(Modifier.fillMaxWidth()) {
         MathLine(mathText)
-        if (op == FeeOp.MINUS) {
+        if (op == FeeOp.MINUS && meaningful) {
             FeeAboveRow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
         }
         Row(
@@ -430,16 +431,15 @@ private fun AmountHero(
             )
             BlinkingCursor()
         }
-        if (op != null && otherValue != null) {
-            FeeBelowRow(
-                op = op,
-                stack = stack!!,
-                fees = fees,
-                finalValue = otherValue,
-                currency = currency,
-                onClick = onFeeChipClick,
-            )
-        }
+        FeeEquationTail(
+            op = op,
+            stack = stack,
+            fees = fees,
+            meaningful = meaningful,
+            finalValue = otherValue,
+            currency = currency,
+            onClick = onFeeChipClick,
+        )
     }
 }
 
@@ -447,7 +447,7 @@ private fun AmountHero(
 private fun MathLine(text: String?) {
     if (text.isNullOrEmpty()) return
     Text(
-        text = text,
+        text = "$text $OP_EQUALS",
         fontSize = MATH_LINE_TEXT_SIZE,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
@@ -507,9 +507,10 @@ private fun AmountToRow(
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
-    val op = feeOpFor(stack, bigValue, otherValue)
+    val op = feeOpFor(stack)
+    val meaningful = bigValue.isMeaningful()
     Column(Modifier.fillMaxWidth()) {
-        if (op == FeeOp.MINUS) {
+        if (op == FeeOp.MINUS && meaningful) {
             FeeAboveRow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
         }
         Text(
@@ -525,40 +526,39 @@ private fun AmountToRow(
                     .fillMaxWidth()
                     .combinedClickable(onClick = {}, onLongClick = onLongClick),
         )
-        if (op != null && otherValue != null) {
-            FeeBelowRow(
-                op = op,
-                stack = stack!!,
-                fees = fees,
-                finalValue = otherValue,
-                currency = currency,
-                onClick = onFeeChipClick,
-            )
-        }
+        FeeEquationTail(
+            op = op,
+            stack = stack,
+            fees = fees,
+            meaningful = meaningful,
+            finalValue = otherValue,
+            currency = currency,
+            onClick = onFeeChipClick,
+        )
     }
 }
 
-// PLUS means the fee is added to the big value to reach the final (other)
-// value — reads as `big + fee = other`. MINUS means the fee is subtracted.
-// Picked purely on which of big/other is larger, so the equation is always
-// arithmetically consistent regardless of which side (original/converted)
-// or which direction the underlying stack points.
+// PLUS means the net fee stack is a markup (>1) and adds to the big value to
+// reach the final; MINUS means it's a markdown (<1) and subtracts. Derived
+// from the stack alone (not from the value comparison) so the chip still
+// renders when the big value is zero — the sign reflects the fee's own
+// direction, not a value delta.
 private enum class FeeOp { PLUS, MINUS }
 
-private fun feeOpFor(
-    stack: BigDecimal?,
-    bigValue: BigDecimal?,
-    otherValue: BigDecimal?,
-): FeeOp? {
-    if (stack == null || stack.compareTo(BigDecimal.ONE) == 0) return null
-    if (bigValue == null || otherValue == null) return null
-    val cmp = otherValue.compareTo(bigValue)
+private fun feeOpFor(stack: BigDecimal?): FeeOp? {
+    if (stack == null) return null
+    val cmp = stack.compareTo(BigDecimal.ONE)
     return when {
         cmp > 0 -> FeeOp.PLUS
         cmp < 0 -> FeeOp.MINUS
         else -> null
     }
 }
+
+// True only when the big value is a real amount worth showing the equation
+// closure for. If it's zero, `= 0` is uninformative, so we drop the operator
+// and pill and just show the chip alone.
+private fun BigDecimal?.isMeaningful(): Boolean = this != null && this.signum() != 0
 
 // Rendered above the big value when the fee subtracts from it — user reads
 // "amber chip minus, applied to value below, equals final pill".
@@ -580,30 +580,64 @@ private fun FeeAboveRow(
     }
 }
 
-// Rendered below the big value. For PLUS the whole equation lives here:
-// `+ [amber chip] = [red pill]`. For MINUS the amber chip has already been
-// placed above, so this row is just `= [red pill]`.
+// Everything that renders below the big value once the fee chip decision
+// has been made above. Three cases:
+//   - No fee (op null): render nothing.
+//   - Fee active but big value is 0: chip alone, no operator, no pill.
+//   - PLUS with meaningful value: `+ [chip]` on its own row, then `= [pill]`
+//     below — mirrors MINUS's three-row layout so the two directions read
+//     symmetrically around the big value.
+//   - MINUS with meaningful value: chip already lives in FeeAboveRow, so
+//     this row is just `= [pill]`.
 @Composable
-private fun FeeBelowRow(
-    op: FeeOp,
-    stack: BigDecimal,
+private fun FeeEquationTail(
+    op: FeeOp?,
+    stack: BigDecimal?,
     fees: List<Fee>,
-    finalValue: BigDecimal,
+    meaningful: Boolean,
+    finalValue: BigDecimal?,
     currency: Currency?,
     onClick: () -> Unit,
 ) {
+    if (op == null || stack == null) return
+    if (!meaningful) {
+        FeeChipOnlyRow(stack = stack, fees = fees, onClick = onClick)
+        return
+    }
+    if (op == FeeOp.PLUS) {
+        FeeRowRightAligned {
+            FeeOperator(OP_PLUS)
+            FeeChip(stack, fees, onClick)
+        }
+    }
+    if (finalValue != null) {
+        FeeRowRightAligned {
+            FeeOperator(OP_EQUALS)
+            FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+        }
+    }
+}
+
+@Composable
+private fun FeeChipOnlyRow(
+    stack: BigDecimal,
+    fees: List<Fee>,
+    onClick: () -> Unit,
+) {
+    FeeRowRightAligned { FeeChip(stack, fees, onClick) }
+}
+
+// Right-aligned row with a leading vertical gap — shared by every below-the-
+// big-value fee row so their spacing stays consistent.
+@Composable
+private fun FeeRowRightAligned(content: @Composable () -> Unit) {
     Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (op == FeeOp.PLUS) {
-            FeeOperator(OP_PLUS)
-            FeeChip(stack, fees, onClick)
-        }
-        FeeOperator(OP_EQUALS)
-        FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+        content()
     }
 }
 
