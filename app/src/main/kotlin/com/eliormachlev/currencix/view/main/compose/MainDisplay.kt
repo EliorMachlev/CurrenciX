@@ -41,6 +41,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -605,17 +606,17 @@ private fun FeeAboveRow(
     }
 }
 
-// Everything that renders below the big value once the fee chip decision
-// has been made above. Three cases:
-//   - No fee (op null): render nothing.
-//   - Fee active but big value is 0: chip alone, no operator, no pill.
-//   - PLUS with meaningful value: `+` sits on its own line, vertically
-//     bridging the big value above and the chip below, but is X-aligned
-//     with `=` (both live in a Column between chip and pill so the
-//     operators share a column while chip and pill stay bottom-aligned
-//     with the `=`).
-//   - MINUS with meaningful value: chip already lives in FeeAboveRow, so
-//     this row is just `= [pill]`.
+// Below-the-big-value fee row. Always renders the full markup shape
+// (chip + operator column + pill) so the divider position below never
+// jumps when fee state or value magnitude changes — visibility per
+// element is controlled with alpha, only the ink appears/disappears.
+//
+// Visibility rules:
+//   - Chip: visible for MARKUP; invisible for MARKDOWN (its chip lives
+//     above the big value) and when there is no fee.
+//   - "+" operator: visible only for MARKUP with a meaningful value.
+//   - "=" and pill: visible whenever the equation has a meaningful
+//     value and a computed final, regardless of markup/markdown.
 @Composable
 private fun FeeEquationTail(
     op: FeeOp?,
@@ -626,31 +627,36 @@ private fun FeeEquationTail(
     currency: Currency?,
     onClick: () -> Unit,
 ) {
-    if (op == null || stack == null) return
-    if (!meaningful) {
-        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
-        return
-    }
-    if (op == FeeOp.PLUS) {
-        FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
-            FeeChip(stack, fees, onClick)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
-            ) {
-                FeeOperator(OP_PLUS)
-                if (finalValue != null) FeeOperator(OP_EQUALS)
-            }
-            if (finalValue != null) {
-                FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
-            }
+    val chipVisible = op == FeeOp.PLUS
+    val plusVisible = op == FeeOp.PLUS && meaningful && finalValue != null
+    val equalsVisible = op != null && meaningful && finalValue != null
+    val displayStack = stack ?: BigDecimal.ONE
+    val displayFinal = finalValue ?: BigDecimal.ZERO
+    val displayClick = if (op != null) onClick else ({})
+    FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
+        Reserved(chipVisible) { FeeChip(displayStack, fees, displayClick) }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
+        ) {
+            Reserved(plusVisible) { FeeOperator(OP_PLUS) }
+            Reserved(equalsVisible) { FeeOperator(OP_EQUALS) }
         }
-    } else if (finalValue != null) {
-        FeeRowRightAligned {
-            FeeOperator(OP_EQUALS)
-            FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+        Reserved(equalsVisible) {
+            FinalValueChip(value = displayFinal, currency = currency, onClick = displayClick)
         }
     }
+}
+
+// Wraps [content] so it always takes its natural layout size but only
+// paints ink when [visible]. Used to keep the fee-row footprint stable
+// while individual glyphs / chips fade in and out with state.
+@Composable
+private fun Reserved(
+    visible: Boolean,
+    content: @Composable () -> Unit,
+) {
+    Box(Modifier.alpha(if (visible) 1f else 0f)) { content() }
 }
 
 // Right-aligned row with a leading vertical gap — shared by every below-the-
