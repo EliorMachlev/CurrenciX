@@ -603,7 +603,7 @@ private fun FeeAboveRow(
             horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FeeChip(stack, fees, onClick)
+            FeeChip(stack, fees, onClick, modifier = Modifier.weight(1f, fill = false))
             FeeOperator(OP_MINUS)
         }
     }
@@ -628,7 +628,7 @@ private fun FeeEquationTail(
     val showEquation = meaningful && finalValue != null
     if (op == FeeOp.PLUS) {
         FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
-            FeeChip(stack, fees, onClick)
+            FeeChip(stack, fees, onClick, modifier = Modifier.weight(1f, fill = false))
             Column(
                 modifier = if (showEquation) Modifier else Modifier.zeroWidthKeepHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -647,7 +647,7 @@ private fun FeeEquationTail(
             FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
         }
     } else {
-        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
+        FeeRowRightAligned { FeeChip(stack, fees, onClick, modifier = Modifier.weight(1f, fill = false)) }
     }
 }
 
@@ -761,6 +761,7 @@ private fun FeeChip(
     stack: BigDecimal,
     fees: List<Fee>,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val percentText =
@@ -775,31 +776,44 @@ private fun FeeChip(
                 .mapNotNull { it.name.trim().takeIf(String::isNotEmpty) }
                 .joinToString(FEE_NAME_SEPARATOR)
         }
-    val label =
-        if (namesText.isEmpty()) {
-            stringResource(R.string.fee_chip_label, percentText)
-        } else {
-            "$percentText$FOOTER_SEPARATOR$namesText"
-        }
     val bg = Amber.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
     Row(
-        Modifier
+        modifier
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(bg)
             .clickable(onClick = onClick)
             .padding(horizontal = 10.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = label,
-            fontSize = FEE_CHIP_TEXT_SIZE,
-            fontWeight = FontWeight.Medium,
-            color = Amber,
-            maxLines = 1,
-            softWrap = false,
-            modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-        )
+        if (namesText.isEmpty()) {
+            FeeChipText(text = stringResource(R.string.fee_chip_label, percentText))
+        } else {
+            FeeChipText(text = percentText)
+            FeeChipText(
+                text = "$FOOTER_SEPARATOR$namesText",
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .basicMarquee(iterations = Int.MAX_VALUE),
+            )
+        }
     }
+}
+
+@Composable
+private fun FeeChipText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        fontSize = FEE_CHIP_TEXT_SIZE,
+        fontWeight = FontWeight.Medium,
+        color = Amber,
+        maxLines = 1,
+        softWrap = false,
+        modifier = modifier,
+    )
 }
 
 @Composable
