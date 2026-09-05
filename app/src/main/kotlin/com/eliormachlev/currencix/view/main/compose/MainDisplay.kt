@@ -470,17 +470,11 @@ private fun FeeChip(
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    // Additive sum of the individual fees' signed percents — matches how the
-    // fee-editor screen lists them and the user's mental model ("100% + 100%
-    // = 200%"), even though the underlying rate math still compounds.
     val percentText =
-        remember(fees, stack) {
-            val signedSum =
-                fees.fold(BigDecimal.ZERO) { acc, fee ->
-                    acc + if (fee.isMarkup) fee.percent else fee.percent.negate()
-                }
-            val effective = if (fees.isEmpty()) stack.feePercentDelta(FEE_PERCENT_DECIMAL_PLACES) else signedSum
-            effective.toHumanReadableNumber(context, showPositiveSign = true, suffix = "%", trim = true)
+        remember(stack) {
+            stack
+                .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
+                .toHumanReadableNumber(context, showPositiveSign = true, suffix = "%", trim = true)
         }
     val namesText =
         remember(fees) {
