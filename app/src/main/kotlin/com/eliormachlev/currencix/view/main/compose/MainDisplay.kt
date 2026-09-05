@@ -173,10 +173,12 @@ private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
 
-// Cap the amber fee chip at a fraction of its parent row so the `=` and the
-// red final-value pill always have visible room to render even when the fee
-// name is long enough to marquee.
-private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.6f
+// Cap the amber fee chip and the red final-value pill at a fraction of their
+// parent row so neither can push the other off-screen when its content is
+// long enough to marquee. Both fractions sum to <1 so `=` and inter-item
+// gaps always have room too.
+private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.5f
+private const val FINAL_VALUE_MAX_WIDTH_FRACTION = 0.42f
 
 /**
  * Callbacks the [MainDisplay] emits back to the hosting Activity. Copy hits
@@ -740,6 +742,7 @@ private fun FinalValueChip(
     val bg = errorColor.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
     Row(
         Modifier
+            .maxWidthFraction(FINAL_VALUE_MAX_WIDTH_FRACTION)
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(bg)
             .clickable(onClick = onClick)
