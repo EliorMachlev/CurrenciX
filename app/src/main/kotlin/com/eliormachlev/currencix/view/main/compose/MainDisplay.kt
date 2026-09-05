@@ -469,19 +469,21 @@ private fun AmountHero(
 
 @Composable
 private fun MathLine(text: String?) {
-    if (text.isNullOrEmpty()) return
-    Text(
-        text = "$text $OP_EQUALS",
-        fontSize = MATH_LINE_TEXT_SIZE,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        textAlign = TextAlign.End,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(bottom = MATH_LINE_BOTTOM_GAP),
-    )
+    val hasMath = !text.isNullOrEmpty()
+    Reserved(hasMath) {
+        Text(
+            text = if (hasMath) "$text $OP_EQUALS" else " ",
+            fontSize = MATH_LINE_TEXT_SIZE,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.End,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = MATH_LINE_BOTTOM_GAP),
+        )
+    }
 }
 
 @Composable
@@ -606,17 +608,11 @@ private fun FeeAboveRow(
     }
 }
 
-// Below-the-big-value fee row. Always renders the full markup shape
-// (chip + operator column + pill) so the divider position below never
-// jumps when fee state or value magnitude changes — visibility per
-// element is controlled with alpha, only the ink appears/disappears.
-//
-// Visibility rules:
-//   - Chip: visible for MARKUP; invisible for MARKDOWN (its chip lives
-//     above the big value) and when there is no fee.
-//   - "+" operator: visible only for MARKUP with a meaningful value.
-//   - "=" and pill: visible whenever the equation has a meaningful
-//     value and a computed final, regardless of markup/markdown.
+// Below-the-big-value fee row. Chip, `=` and pill are added / removed
+// with fee state, but the `+` slot in the operator column is always
+// reserved so the vertical rhythm above the equation doesn't shift
+// as the user types (`+` only paints ink for meaningful MARKUP; its
+// layout footprint is always there).
 @Composable
 private fun FeeEquationTail(
     op: FeeOp?,
@@ -627,30 +623,36 @@ private fun FeeEquationTail(
     currency: Currency?,
     onClick: () -> Unit,
 ) {
-    val chipVisible = op == FeeOp.PLUS
-    val plusVisible = op == FeeOp.PLUS && meaningful && finalValue != null
-    val equalsVisible = op != null && meaningful && finalValue != null
-    val displayStack = stack ?: BigDecimal.ONE
-    val displayFinal = finalValue ?: BigDecimal.ZERO
-    val displayClick = if (op != null) onClick else ({})
-    FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
-        Reserved(chipVisible) { FeeChip(displayStack, fees, displayClick) }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
-        ) {
-            Reserved(plusVisible) { FeeOperator(OP_PLUS) }
-            Reserved(equalsVisible) { FeeOperator(OP_EQUALS) }
+    if (op == null || stack == null) return
+    if (!meaningful) {
+        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
+        return
+    }
+    if (op == FeeOp.PLUS) {
+        FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
+            FeeChip(stack, fees, onClick)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
+            ) {
+                Reserved(finalValue != null) { FeeOperator(OP_PLUS) }
+                if (finalValue != null) FeeOperator(OP_EQUALS)
+            }
+            if (finalValue != null) {
+                FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+            }
         }
-        Reserved(equalsVisible) {
-            FinalValueChip(value = displayFinal, currency = currency, onClick = displayClick)
+    } else if (finalValue != null) {
+        FeeRowRightAligned {
+            FeeOperator(OP_EQUALS)
+            FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
         }
     }
 }
 
 // Wraps [content] so it always takes its natural layout size but only
-// paints ink when [visible]. Used to keep the fee-row footprint stable
-// while individual glyphs / chips fade in and out with state.
+// paints ink when [visible]. Used sparingly to hold a fixed slot open
+// (math line, `+` operator) while its glyph fades in/out with state.
 @Composable
 private fun Reserved(
     visible: Boolean,
