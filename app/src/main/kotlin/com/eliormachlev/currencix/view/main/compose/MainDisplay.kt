@@ -69,6 +69,7 @@ import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.theme.Amber
 import com.eliormachlev.currencix.view.compose.theme.Brass
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
@@ -568,15 +569,17 @@ private fun FeeAboveRow(
     fees: List<Fee>,
     onClick: () -> Unit,
 ) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(bottom = FEE_CHIP_TOP_GAP),
-        horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        FeeChip(stack, fees, onClick)
-        FeeOperator(OP_MINUS)
+    Ltr {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = FEE_CHIP_TOP_GAP),
+            horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FeeChip(stack, fees, onClick)
+            FeeOperator(OP_MINUS)
+        }
     }
 }
 
@@ -584,9 +587,9 @@ private fun FeeAboveRow(
 // has been made above. Three cases:
 //   - No fee (op null): render nothing.
 //   - Fee active but big value is 0: chip alone, no operator, no pill.
-//   - PLUS with meaningful value: `+ [chip]` on its own row, then `= [pill]`
-//     below — mirrors MINUS's three-row layout so the two directions read
-//     symmetrically around the big value.
+//   - PLUS with meaningful value: single row `+ [chip] = [pill]` — the "+"
+//     sits between the big value above and the chip in reading order, then
+//     "= [pill]" closes the equation on the same row.
 //   - MINUS with meaningful value: chip already lives in FeeAboveRow, so
 //     this row is just `= [pill]`.
 @Composable
@@ -601,43 +604,36 @@ private fun FeeEquationTail(
 ) {
     if (op == null || stack == null) return
     if (!meaningful) {
-        FeeChipOnlyRow(stack = stack, fees = fees, onClick = onClick)
+        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
         return
     }
-    if (op == FeeOp.PLUS) {
-        FeeRowRightAligned {
+    FeeRowRightAligned {
+        if (op == FeeOp.PLUS) {
             FeeOperator(OP_PLUS)
             FeeChip(stack, fees, onClick)
         }
-    }
-    if (finalValue != null) {
-        FeeRowRightAligned {
+        if (finalValue != null) {
             FeeOperator(OP_EQUALS)
             FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
         }
     }
 }
 
-@Composable
-private fun FeeChipOnlyRow(
-    stack: BigDecimal,
-    fees: List<Fee>,
-    onClick: () -> Unit,
-) {
-    FeeRowRightAligned { FeeChip(stack, fees, onClick) }
-}
-
 // Right-aligned row with a leading vertical gap — shared by every below-the-
-// big-value fee row so their spacing stays consistent.
+// big-value fee row so their spacing stays consistent. Wrapped in [Ltr] so
+// operator glyphs sit visually to the left of the chip/pill even under an
+// RTL app locale (math notation reads L→R everywhere).
 @Composable
 private fun FeeRowRightAligned(content: @Composable () -> Unit) {
     Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        content()
+    Ltr {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            content()
+        }
     }
 }
 
