@@ -95,7 +95,7 @@ private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 20.dp
 private val AMOUNT_DIVIDER_MARGIN_TOP: Dp = 12.dp
 private val AMOUNT_DIVIDER_MARGIN_BOTTOM: Dp = 10.dp
-private val FEE_CHIP_TOP_GAP: Dp = 2.dp
+private val FEE_CHIP_TOP_GAP: Dp = 0.dp
 private val RATE_FOOTER_TOP_MARGIN: Dp = 14.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 12.dp
 private val LIVE_DOT_SIZE: Dp = 6.dp
@@ -124,7 +124,7 @@ private val FEE_ROW_PILL_GAP: Dp = 4.dp
 // markup case. Wider than a bare line height so the "+" isn't jammed
 // against the "=" but centers between the big value above and the chip
 // baseline below.
-private val FEE_OP_STACK_GAP: Dp = 10.dp
+private val FEE_OP_STACK_GAP: Dp = 4.dp
 
 // Operator glyphs joining the big value, fee chip, and final-value pill
 // into a readable equation. Uses U+2212 (minus) rather than a hyphen so the
