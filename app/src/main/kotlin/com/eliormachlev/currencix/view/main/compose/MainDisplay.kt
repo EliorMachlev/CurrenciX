@@ -504,7 +504,7 @@ private fun FeeChip(
             color = Amber,
             maxLines = 1,
             softWrap = false,
-            modifier = Modifier.basicMarquee(),
+            modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
         )
     }
 }
