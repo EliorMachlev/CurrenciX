@@ -633,7 +633,7 @@ private fun FeeEquationTail(
                 verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
             ) {
                 Reserved(showEquation) { FeeOperator(OP_PLUS) }
-                if (showEquation) FeeOperator(OP_EQUALS)
+                Reserved(showEquation) { FeeOperator(OP_EQUALS) }
             }
             if (showEquation && finalValue != null) {
                 FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
