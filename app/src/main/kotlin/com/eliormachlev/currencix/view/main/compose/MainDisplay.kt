@@ -13,6 +13,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -469,11 +470,17 @@ private fun FeeChip(
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    // Additive sum of the individual fees' signed percents — matches how the
+    // fee-editor screen lists them and the user's mental model ("100% + 100%
+    // = 200%"), even though the underlying rate math still compounds.
     val percentText =
-        remember(stack) {
-            stack
-                .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
-                .toHumanReadableNumber(context, showPositiveSign = true, suffix = "%", trim = true)
+        remember(fees, stack) {
+            val signedSum =
+                fees.fold(BigDecimal.ZERO) { acc, fee ->
+                    acc + if (fee.isMarkup) fee.percent else fee.percent.negate()
+                }
+            val effective = if (fees.isEmpty()) stack.feePercentDelta(FEE_PERCENT_DECIMAL_PLACES) else signedSum
+            effective.toHumanReadableNumber(context, showPositiveSign = true, suffix = "%", trim = true)
         }
     val namesText =
         remember(fees) {
@@ -502,7 +509,8 @@ private fun FeeChip(
             fontWeight = FontWeight.Medium,
             color = Amber,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            softWrap = false,
+            modifier = Modifier.basicMarquee(),
         )
     }
 }
