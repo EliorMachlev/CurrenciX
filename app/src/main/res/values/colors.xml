@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <!-- https://www.schemecolor.com/dollar-bill-color-scheme.php -->
-   <color name="dirtyWhite">#FAF7F2</color>
-   <color name="blackOlive">#333331</color>
-   <color name="dollarBill">#85BB65</color>
+   <!-- Brand palette. Kept in sync with Compose tokens in
+        view/compose/theme/Color.kt — paper for light, ink for dark, bill
+        green as primary, brass as accent. -->
+   <color name="paperBg">#F3EEE5</color>
+   <color name="paperSurface">#EFE8DB</color>
+   <color name="inkBg">#131311</color>
+   <color name="inkSurface">#1F1E1C</color>
+   <color name="billGreen">#85BB65</color>
+   <color name="billGreenInk">#0F2A05</color>
+   <color name="brass">#B8985B</color>
+
+   <!-- Legacy aliases kept for XML that still references the old names.
+        Point them at the brand palette so nothing regresses. -->
+   <color name="dirtyWhite">@color/paperBg</color>
+   <color name="blackOlive">@color/inkBg</color>
+   <color name="dollarBill">@color/billGreen</color>
    <color name="seaGreen">#228d57</color>
 
-   <color name="color_primary">@color/dollarBill</color>
+   <color name="color_primary">@color/billGreen</color>
    <color name="color_keypad_operators">@color/color_primary</color>
    <color name="color_keypad_delete">?attr/colorError</color>
 
-   <!-- WCAG AA-compliant error red for text/icon usage on the light background
-        (#FAF7F2). Material 3 error tone 40 (#B3261E) hits ~6:1 contrast; the
-        old holo_red_light (#FF4444) sat at ~3.2:1 and failed AA for text. -->
+   <!-- WCAG AA-compliant error red for text/icon usage on the paper
+        background. Material 3 error tone 40 (#B3261E) hits ~6:1 contrast. -->
    <color name="app_error">#B3261E</color>
 
-   <!-- Positive rate-diff colour. dollarBill green (#85BB65) is ~2:1 on the
-        cream light background — fails AA for text. Use a darker green here so
-        the "+ 12 %" percent stays legible; values-night overrides back to
-        dollarBill where the lighter tone reads correctly on dark. -->
+   <!-- Positive rate-diff colour. billGreen (#85BB65) is ~2:1 on the paper
+        background — fails AA for text. Use a darker green so "+ 12 %" stays
+        legible; values-night overrides back to billGreen for dark surfaces. -->
    <color name="rate_diff_positive">#1B7343</color>
 
    <!-- light -->
    <color name="displayOverlay">#26808080</color>
-   <color name="colorBackground">@color/dirtyWhite</color>
+   <color name="colorBackground">@color/paperBg</color>
    <!-- pure black (equals light in light mode) -->
    <color name="displayOverlayPureBlack">@color/displayOverlay</color>
    <color name="colorBackgroundPureBlack">@color/colorBackground</color>

@@ -25,6 +25,20 @@ data class SideStacks(
 }
 
 /**
+ * Fees that actually participate in the current pair, split by [FeeSide].
+ * Companion to [SideStacks] — same partition, but keeping the concrete entries
+ * so the UI can annotate the fee chip with names (e.g. "Wise, Chase +2.5%").
+ */
+data class SideFees(
+    val original: List<Fee>,
+    val converted: List<Fee>,
+) {
+    companion object {
+        val EMPTY = SideFees(emptyList(), emptyList())
+    }
+}
+
+/**
  * Pure fee-stacking math. Extracted from MainViewModel so it can be exercised
  * without an Android [android.app.Application] context.
  *
@@ -97,13 +111,29 @@ object FeeCalculator {
         activeExchangeId: String? = null,
         activeBankId: String? = null,
     ): SideStacks {
+        val fees = sideFees(all, base, dest, activeExchangeId, activeBankId)
+        return SideStacks(stackFactor(fees.original), stackFactor(fees.converted))
+    }
+
+    /**
+     * Same resolution as [sideStacks] but returns the concrete [Fee] entries
+     * per side instead of collapsing them into multiplicative factors. Used by
+     * the UI to render fee names alongside percentages.
+     */
+    fun sideFees(
+        all: List<Fee>,
+        base: Currency?,
+        dest: Currency?,
+        activeExchangeId: String? = null,
+        activeBankId: String? = null,
+    ): SideFees {
         val applicable = applicableFees(all, base, dest)
         val chosen =
             applicable.filterIsInstance<Fee.SpecificPair>() +
                 pickActive(applicable.filterIsInstance<Fee.GlobalExchange>(), activeExchangeId) +
                 pickActive(applicable.filterIsInstance<Fee.GlobalBank>(), activeBankId)
         val (originals, converteds) = chosen.partition { it.feeSide == FeeSide.ORIGINAL }
-        return SideStacks(stackFactor(originals), stackFactor(converteds))
+        return SideFees(originals, converteds)
     }
 
     /**
