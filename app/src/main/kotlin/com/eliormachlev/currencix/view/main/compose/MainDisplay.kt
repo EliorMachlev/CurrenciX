@@ -12,10 +12,12 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -81,6 +84,10 @@ import com.eliormachlev.currencix.view.compose.theme.Amber
 import com.eliormachlev.currencix.view.compose.theme.Brass
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -177,8 +184,16 @@ private const val FEE_CHIP_BG_ALPHA = 0.15f
 // Cap the amber fee chip at a fraction of its parent row so it can never grow
 // past that even when nothing else competes; the red final-value pill is
 // weighted instead so it absorbs whatever row space the chip leaves free
-// (up to its own natural width, then marquees).
+// (up to its own natural width, then scrolls).
 private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.5f
+
+// Pill auto-scroll: after this long without a user drag on a scrollable pill,
+// resume an automatic ping-pong scroll so overflowing content can still be
+// read passively.
+private const val PILL_AUTO_SCROLL_IDLE_MILLIS = 10_000L
+private const val PILL_AUTO_SCROLL_TRIP_MILLIS = 6000
+private const val PILL_AUTO_SCROLL_RETURN_MILLIS = 1200
+private const val PILL_AUTO_SCROLL_DWELL_MILLIS = 1500L
 
 /**
  * Callbacks the [MainDisplay] emits back to the hosting Activity. Copy hits
@@ -718,6 +733,44 @@ private fun Modifier.maxWidthFraction(fraction: Float): Modifier =
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
 
+// A ScrollState that lets the user drag the content freely, and — after
+// [PILL_AUTO_SCROLL_IDLE_MILLIS] with no drag interaction — resumes an
+// automatic end↔start scroll loop so overflowing pill content stays
+// discoverable without requiring the user to interact.
+@Composable
+private fun rememberIdleAutoScrollState(): ScrollState {
+    val state = rememberScrollState()
+    LaunchedEffect(state) {
+        val restart = MutableStateFlow(0L)
+        launch {
+            state.interactionSource.interactions.collect { interaction ->
+                if (interaction is DragInteraction.Start ||
+                    interaction is DragInteraction.Stop ||
+                    interaction is DragInteraction.Cancel
+                ) {
+                    restart.value = restart.value + 1L
+                }
+            }
+        }
+        restart.collectLatest {
+            delay(PILL_AUTO_SCROLL_IDLE_MILLIS)
+            while (state.maxValue > 0) {
+                state.animateScrollTo(
+                    value = state.maxValue,
+                    animationSpec = tween(PILL_AUTO_SCROLL_TRIP_MILLIS, easing = LinearEasing),
+                )
+                delay(PILL_AUTO_SCROLL_DWELL_MILLIS)
+                state.animateScrollTo(
+                    value = 0,
+                    animationSpec = tween(PILL_AUTO_SCROLL_RETURN_MILLIS, easing = LinearEasing),
+                )
+                delay(PILL_AUTO_SCROLL_DWELL_MILLIS)
+            }
+        }
+    }
+    return state
+}
+
 // Right-aligned row with a leading vertical gap — shared by every below-the-
 // big-value fee row so their spacing stays consistent. Wrapped in [Ltr] so
 // operator glyphs sit visually to the left of the chip/pill even under an
@@ -785,7 +838,7 @@ private fun FinalValueChip(
             color = errorColor,
             maxLines = 1,
             softWrap = false,
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            modifier = Modifier.horizontalScroll(rememberIdleAutoScrollState()),
         )
     }
 }
@@ -843,7 +896,7 @@ private fun FeeChip(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .horizontalScroll(rememberScrollState()),
+                        .horizontalScroll(rememberIdleAutoScrollState()),
             )
         }
     }
