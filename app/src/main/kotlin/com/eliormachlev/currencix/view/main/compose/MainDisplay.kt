@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -629,6 +630,7 @@ private fun FeeEquationTail(
         FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
             FeeChip(stack, fees, onClick)
             Column(
+                modifier = if (showEquation) Modifier else Modifier.zeroWidthKeepHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
             ) {
@@ -659,6 +661,15 @@ private fun Reserved(
 ) {
     Box(Modifier.alpha(if (visible) 1f else 0f)) { content() }
 }
+
+// Measures children at their natural size but reports zero width to the
+// parent — vertical rhythm above is preserved while the sibling to the
+// right can flush against the edge as if this node weren't there.
+private fun Modifier.zeroWidthKeepHeight(): Modifier =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        layout(0, placeable.height) { placeable.place(0, 0) }
+    }
 
 // Right-aligned row with a leading vertical gap — shared by every below-the-
 // big-value fee row so their spacing stays consistent. Wrapped in [Ltr] so
