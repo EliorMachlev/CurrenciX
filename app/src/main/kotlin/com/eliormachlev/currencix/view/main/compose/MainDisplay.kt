@@ -587,8 +587,11 @@ private fun FeeAboveRow(
 // has been made above. Three cases:
 //   - No fee (op null): render nothing.
 //   - Fee active but big value is 0: chip alone, no operator, no pill.
-//   - PLUS with meaningful value: single row `+ [chip] = [pill]` — `+` and
-//     `=` share the same baseline so the equation reads left-to-right.
+//   - PLUS with meaningful value: `+` sits on its own line, vertically
+//     bridging the big value above and the chip below, but is X-aligned
+//     with `=` (both live in a Column between chip and pill so the
+//     operators share a column while chip and pill stay bottom-aligned
+//     with the `=`).
 //   - MINUS with meaningful value: chip already lives in FeeAboveRow, so
 //     this row is just `= [pill]`.
 @Composable
@@ -606,12 +609,19 @@ private fun FeeEquationTail(
         FeeRowRightAligned { FeeChip(stack, fees, onClick) }
         return
     }
-    FeeRowRightAligned {
-        if (op == FeeOp.PLUS) {
-            FeeOperator(OP_PLUS)
+    if (op == FeeOp.PLUS) {
+        FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
             FeeChip(stack, fees, onClick)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                FeeOperator(OP_PLUS)
+                if (finalValue != null) FeeOperator(OP_EQUALS)
+            }
+            if (finalValue != null) {
+                FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+            }
         }
-        if (finalValue != null) {
+    } else if (finalValue != null) {
+        FeeRowRightAligned {
             FeeOperator(OP_EQUALS)
             FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
         }
@@ -623,13 +633,16 @@ private fun FeeEquationTail(
 // operator glyphs sit visually to the left of the chip/pill even under an
 // RTL app locale (math notation reads L→R everywhere).
 @Composable
-private fun FeeRowRightAligned(content: @Composable () -> Unit) {
+private fun FeeRowRightAligned(
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    content: @Composable () -> Unit,
+) {
     Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
     Ltr {
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = verticalAlignment,
         ) {
             content()
         }
