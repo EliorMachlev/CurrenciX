@@ -173,12 +173,11 @@ private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
 
-// Cap the amber fee chip and the red final-value pill at a fraction of their
-// parent row so neither can push the other off-screen when its content is
-// long enough to marquee. Both fractions sum to <1 so `=` and inter-item
-// gaps always have room too.
+// Cap the amber fee chip at a fraction of its parent row so it can never grow
+// past that even when nothing else competes; the red final-value pill is
+// weighted instead so it absorbs whatever row space the chip leaves free
+// (up to its own natural width, then marquees).
 private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.5f
-private const val FINAL_VALUE_MAX_WIDTH_FRACTION = 0.42f
 
 /**
  * Callbacks the [MainDisplay] emits back to the hosting Activity. Copy hits
@@ -611,7 +610,7 @@ private fun FeeAboveRow(
             horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FeeChip(stack, fees, onClick, modifier = Modifier.weight(1f, fill = false))
+            FeeChip(stack, fees, onClick)
             FeeOperator(OP_MINUS)
         }
     }
@@ -636,7 +635,7 @@ private fun FeeEquationTail(
     val showEquation = meaningful && finalValue != null
     if (op == FeeOp.PLUS) {
         FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
-            FeeChip(stack, fees, onClick, modifier = Modifier.weight(1f, fill = false))
+            FeeChip(stack, fees, onClick)
             Column(
                 modifier = if (showEquation) Modifier else Modifier.zeroWidthKeepHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -646,16 +645,26 @@ private fun FeeEquationTail(
                 Reserved(showEquation) { FeeOperator(OP_EQUALS) }
             }
             if (showEquation && finalValue != null) {
-                FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+                FinalValueChip(
+                    value = finalValue,
+                    currency = currency,
+                    onClick = onClick,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
             }
         }
     } else if (showEquation && finalValue != null) {
         FeeRowRightAligned {
             FeeOperator(OP_EQUALS)
-            FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+            FinalValueChip(
+                value = finalValue,
+                currency = currency,
+                onClick = onClick,
+                modifier = Modifier.weight(1f, fill = false),
+            )
         }
     } else {
-        FeeRowRightAligned { FeeChip(stack, fees, onClick, modifier = Modifier.weight(1f, fill = false)) }
+        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
     }
 }
 
@@ -726,6 +735,7 @@ private fun FinalValueChip(
     value: BigDecimal,
     currency: Currency?,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val symbolAppended = remember(context) { hasAppendedCurrencySymbol(context) }
@@ -741,8 +751,7 @@ private fun FinalValueChip(
     val errorColor = MaterialTheme.colorScheme.error
     val bg = errorColor.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
     Row(
-        Modifier
-            .maxWidthFraction(FINAL_VALUE_MAX_WIDTH_FRACTION)
+        modifier
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(bg)
             .clickable(onClick = onClick)
