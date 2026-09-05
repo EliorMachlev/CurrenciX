@@ -483,18 +483,26 @@ private fun AmountHero(
 private fun MathLine(text: String?) {
     val hasMath = !text.isNullOrEmpty()
     Reserved(hasMath) {
-        Text(
-            text = if (hasMath) "$text $OP_EQUALS" else " ",
-            fontSize = MATH_LINE_TEXT_SIZE,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.End,
+        Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(bottom = MATH_LINE_BOTTOM_GAP),
-        )
+            horizontalArrangement = Arrangement.End,
+        ) {
+            Text(
+                text = if (hasMath) "$text $OP_EQUALS" else " ",
+                fontSize = MATH_LINE_TEXT_SIZE,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                softWrap = false,
+                textAlign = TextAlign.End,
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .horizontalScroll(rememberScrollState()),
+            )
+        }
     }
 }
 
