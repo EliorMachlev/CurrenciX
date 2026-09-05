@@ -788,9 +788,9 @@ private fun FeeChip(
         if (namesText.isEmpty()) {
             FeeChipText(text = stringResource(R.string.fee_chip_label, percentText))
         } else {
-            FeeChipText(text = percentText)
+            FeeChipText(text = "$percentText$FOOTER_SEPARATOR")
             FeeChipText(
-                text = "$FOOTER_SEPARATOR$namesText",
+                text = namesText,
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
