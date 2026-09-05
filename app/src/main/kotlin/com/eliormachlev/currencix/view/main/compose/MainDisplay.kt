@@ -173,6 +173,11 @@ private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
 
+// Cap the amber fee chip at a fraction of its parent row so the `=` and the
+// red final-value pill always have visible room to render even when the fee
+// name is long enough to marquee.
+private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.6f
+
 /**
  * Callbacks the [MainDisplay] emits back to the hosting Activity. Copy hits
  * the Activity so it can reach the clipboard + snackbar helpers; the fees
@@ -672,6 +677,16 @@ private fun Modifier.zeroWidthKeepHeight(): Modifier =
         layout(0, placeable.height) { placeable.place(0, 0) }
     }
 
+// Caps the child's max width at [fraction] of the parent's max width so it
+// never grows past that fraction even when nothing else in the parent row
+// competes for horizontal space.
+private fun Modifier.maxWidthFraction(fraction: Float): Modifier =
+    layout { measurable, constraints ->
+        val capped = (constraints.maxWidth * fraction).toInt()
+        val placeable = measurable.measure(constraints.copy(maxWidth = capped))
+        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+    }
+
 // Right-aligned row with a leading vertical gap — shared by every below-the-
 // big-value fee row so their spacing stays consistent. Wrapped in [Ltr] so
 // operator glyphs sit visually to the left of the chip/pill even under an
@@ -780,6 +795,7 @@ private fun FeeChip(
     val bg = Amber.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
     Row(
         modifier
+            .maxWidthFraction(FEE_CHIP_MAX_WIDTH_FRACTION)
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(bg)
             .clickable(onClick = onClick)
