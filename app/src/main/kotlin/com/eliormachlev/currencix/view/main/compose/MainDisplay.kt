@@ -120,6 +120,12 @@ private const val FINAL_VALUE_DECIMAL_PLACES = 2
 // amber chip, red final-value pill).
 private val FEE_ROW_PILL_GAP: Dp = 4.dp
 
+// Vertical gap inside the operator stack (Column of "+" over "=") for the
+// markup case. Wider than a bare line height so the "+" isn't jammed
+// against the "=" but centers between the big value above and the chip
+// baseline below.
+private val FEE_OP_STACK_GAP: Dp = 10.dp
+
 // Operator glyphs joining the big value, fee chip, and final-value pill
 // into a readable equation. Uses U+2212 (minus) rather than a hyphen so the
 // glyph stays visually balanced with the "+".
@@ -423,6 +429,7 @@ private fun AmountHero(
             Text(
                 text = text,
                 fontSize = AMOUNT_HERO_SIZE,
+                lineHeight = AMOUNT_HERO_SIZE,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
@@ -612,7 +619,10 @@ private fun FeeEquationTail(
     if (op == FeeOp.PLUS) {
         FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
             FeeChip(stack, fees, onClick)
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
+            ) {
                 FeeOperator(OP_PLUS)
                 if (finalValue != null) FeeOperator(OP_EQUALS)
             }
