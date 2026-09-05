@@ -624,10 +624,7 @@ private fun FeeEquationTail(
     onClick: () -> Unit,
 ) {
     if (op == null || stack == null) return
-    if (!meaningful) {
-        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
-        return
-    }
+    val showEquation = meaningful && finalValue != null
     if (op == FeeOp.PLUS) {
         FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
             FeeChip(stack, fees, onClick)
@@ -635,18 +632,20 @@ private fun FeeEquationTail(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
             ) {
-                Reserved(finalValue != null) { FeeOperator(OP_PLUS) }
-                if (finalValue != null) FeeOperator(OP_EQUALS)
+                Reserved(showEquation) { FeeOperator(OP_PLUS) }
+                if (showEquation) FeeOperator(OP_EQUALS)
             }
-            if (finalValue != null) {
+            if (showEquation && finalValue != null) {
                 FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
             }
         }
-    } else if (finalValue != null) {
+    } else if (showEquation && finalValue != null) {
         FeeRowRightAligned {
             FeeOperator(OP_EQUALS)
             FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
         }
+    } else {
+        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
     }
 }
 
