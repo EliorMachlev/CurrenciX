@@ -477,7 +477,8 @@ private fun FeeChip(
         }
     val namesText =
         remember(fees) {
-            fees.mapNotNull { it.name.trim().takeIf(String::isNotEmpty) }
+            fees
+                .mapNotNull { it.name.trim().takeIf(String::isNotEmpty) }
                 .joinToString(FEE_NAME_SEPARATOR)
         }
     val label =

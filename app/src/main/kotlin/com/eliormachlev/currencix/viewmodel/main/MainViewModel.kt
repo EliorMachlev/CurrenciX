@@ -454,9 +454,7 @@ class MainViewModel(
     // Fan-in helper: combines fees + current pair + single-select picks into
     // one derived value. Both sideStacks and sideFees use it since they only
     // differ in the final calculator call.
-    private fun <T> pairFeeMediator(
-        compute: (List<Fee>?, Currency?, Currency?, String?, String?) -> T,
-    ): MediatorLiveData<T> =
+    private fun <T> pairFeeMediator(compute: (List<Fee>?, Currency?, Currency?, String?, String?) -> T): MediatorLiveData<T> =
         object : MediatorLiveData<T>() {
             var feeList: List<Fee>? = null
             var base: Currency? = null
