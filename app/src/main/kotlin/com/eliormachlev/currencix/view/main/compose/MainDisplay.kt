@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -189,9 +190,13 @@ private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.5f
 
 // Pill auto-scroll: after this long without a user drag on a scrollable pill,
 // resume an automatic ping-pong scroll so overflowing content can still be
-// read passively.
+// read passively. Trip time is computed per-state from the scroll distance
+// and a fixed dp/second speed so pills with different content lengths visually
+// scroll at the same pace instead of racing (short trips would look slow at
+// a fixed millis budget and long trips would race by).
 private const val PILL_AUTO_SCROLL_IDLE_MILLIS = 10_000L
-private const val PILL_AUTO_SCROLL_TRIP_MILLIS = 6000
+private const val PILL_AUTO_SCROLL_SPEED_DP_PER_S = 30f
+private const val PILL_AUTO_SCROLL_MIN_TRIP_MILLIS = 1500
 private const val PILL_AUTO_SCROLL_RETURN_MILLIS = 1200
 private const val PILL_AUTO_SCROLL_DWELL_MILLIS = 1500L
 
@@ -740,7 +745,8 @@ private fun Modifier.maxWidthFraction(fraction: Float): Modifier =
 @Composable
 private fun rememberIdleAutoScrollState(): ScrollState {
     val state = rememberScrollState()
-    LaunchedEffect(state) {
+    val pxPerMs = PILL_AUTO_SCROLL_SPEED_DP_PER_S * LocalDensity.current.density / 1000f
+    LaunchedEffect(state, pxPerMs) {
         val restart = MutableStateFlow(0L)
         launch {
             state.interactionSource.interactions.collect { interaction ->
@@ -755,9 +761,10 @@ private fun rememberIdleAutoScrollState(): ScrollState {
         restart.collectLatest {
             delay(PILL_AUTO_SCROLL_IDLE_MILLIS)
             while (state.maxValue > 0) {
+                val trip = (state.maxValue / pxPerMs).toInt().coerceAtLeast(PILL_AUTO_SCROLL_MIN_TRIP_MILLIS)
                 state.animateScrollTo(
                     value = state.maxValue,
-                    animationSpec = tween(PILL_AUTO_SCROLL_TRIP_MILLIS, easing = LinearEasing),
+                    animationSpec = tween(trip, easing = LinearEasing),
                 )
                 delay(PILL_AUTO_SCROLL_DWELL_MILLIS)
                 state.animateScrollTo(
