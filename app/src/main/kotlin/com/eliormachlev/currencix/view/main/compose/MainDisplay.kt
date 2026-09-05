@@ -138,9 +138,10 @@ private val MATH_LINE_TEXT_SIZE = 14.sp
 // the visual gap between the number and whatever renders right below it.
 private val TIGHT_TEXT_STYLE = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
 
-// Rounding hint for the final-value pill amount — 2 places matches the
-// result formatting default and keeps the pill legible even with cents.
-private const val FINAL_VALUE_DECIMAL_PLACES = 2
+// Fallback rounding for the final-value pill amount when the user's
+// decimal-places preference hasn't loaded yet — matches the ViewModel's
+// own default seed for the result formatter.
+private const val FINAL_VALUE_DECIMAL_PLACES_FALLBACK = 2
 
 // Horizontal gap between the fee-equation row elements (operator glyphs,
 // amber chip, red final-value pill).
@@ -242,6 +243,7 @@ internal fun MainDisplay(
     val resultNumber by viewModel.getResultAsNumber().observeAsState()
     val trueCost by viewModel.getTrueCost().observeAsState()
     val originalValue by viewModel.getOriginalValue().observeAsState()
+    val decimalPlaces by viewModel.getDecimalPlaces().observeAsState(FINAL_VALUE_DECIMAL_PLACES_FALLBACK)
 
     HeroCard(
         baseCurrency = baseCurrency,
@@ -258,6 +260,7 @@ internal fun MainDisplay(
         originalOther = trueCost,
         convertedBig = resultNumber,
         convertedOther = originalValue,
+        decimalPlaces = decimalPlaces,
         dateFormatPattern = dateFormatPattern,
         onPillFromClick = {
             openCurrencyPicker(context, viewModel, fragmentManager, PickSide.FROM, baseCurrency, destCurrency, rates)
@@ -294,6 +297,7 @@ private fun HeroCard(
     originalOther: BigDecimal?,
     convertedBig: BigDecimal?,
     convertedOther: BigDecimal?,
+    decimalPlaces: Int,
     dateFormatPattern: String,
     onPillFromClick: () -> Unit,
     onPillToClick: () -> Unit,
@@ -329,6 +333,7 @@ private fun HeroCard(
                 bigValue = originalBig,
                 otherValue = originalOther,
                 currency = baseCurrency,
+                decimalPlaces = decimalPlaces,
                 onFeeChipClick = callbacks.onOpenFees,
             )
             AmountDivider()
@@ -339,6 +344,7 @@ private fun HeroCard(
                 bigValue = convertedBig,
                 otherValue = convertedOther,
                 currency = destCurrency,
+                decimalPlaces = decimalPlaces,
                 onLongClick = { if (resultFormatted.isNotEmpty()) callbacks.onCopy(resultFormatted) },
                 onFeeChipClick = callbacks.onOpenFees,
             )
@@ -454,6 +460,7 @@ private fun AmountHero(
     bigValue: BigDecimal?,
     otherValue: BigDecimal?,
     currency: Currency?,
+    decimalPlaces: Int,
     onFeeChipClick: () -> Unit,
 ) {
     val op = feeOpFor(stack)
@@ -494,6 +501,7 @@ private fun AmountHero(
             meaningful = meaningful,
             finalValue = otherValue,
             currency = currency,
+            decimalPlaces = decimalPlaces,
             onClick = onFeeChipClick,
         )
     }
@@ -570,6 +578,7 @@ private fun AmountToRow(
     bigValue: BigDecimal?,
     otherValue: BigDecimal?,
     currency: Currency?,
+    decimalPlaces: Int,
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
@@ -607,6 +616,7 @@ private fun AmountToRow(
             meaningful = meaningful,
             finalValue = otherValue,
             currency = currency,
+            decimalPlaces = decimalPlaces,
             onClick = onFeeChipClick,
         )
     }
@@ -669,6 +679,7 @@ private fun FeeEquationTail(
     meaningful: Boolean,
     finalValue: BigDecimal?,
     currency: Currency?,
+    decimalPlaces: Int,
     onClick: () -> Unit,
 ) {
     if (op == null || stack == null) return
@@ -688,6 +699,7 @@ private fun FeeEquationTail(
                 FinalValueChip(
                     value = finalValue,
                     currency = currency,
+                    decimalPlaces = decimalPlaces,
                     onClick = onClick,
                     modifier = Modifier.weight(1f, fill = false),
                 )
@@ -699,6 +711,7 @@ private fun FeeEquationTail(
             FinalValueChip(
                 value = finalValue,
                 currency = currency,
+                decimalPlaces = decimalPlaces,
                 onClick = onClick,
                 modifier = Modifier.weight(1f, fill = false),
             )
@@ -826,6 +839,7 @@ private fun FeeOperator(glyph: String) {
 private fun FinalValueChip(
     value: BigDecimal,
     currency: Currency?,
+    decimalPlaces: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -833,9 +847,9 @@ private fun FinalValueChip(
     val symbolAppended = remember(context) { hasAppendedCurrencySymbol(context) }
     val symbol = currency?.symbol()
     val label =
-        remember(value, symbol, symbolAppended) {
+        remember(value, symbol, symbolAppended, decimalPlaces) {
             formatWithSymbol(
-                value.toHumanReadableNumber(context, trim = true, decimalPlaces = FINAL_VALUE_DECIMAL_PLACES),
+                value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces),
                 symbol,
                 symbolAppended,
             )
