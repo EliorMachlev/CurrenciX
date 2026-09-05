@@ -13,9 +13,9 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -462,7 +463,7 @@ private fun AmountHero(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .basicMarquee(iterations = Int.MAX_VALUE),
+                        .horizontalScroll(rememberScrollState()),
             )
             BlinkingCursor()
         }
@@ -568,7 +569,7 @@ private fun AmountToRow(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .basicMarquee(iterations = Int.MAX_VALUE),
+                        .horizontalScroll(rememberScrollState()),
             )
         }
         FeeEquationTail(
@@ -776,7 +777,7 @@ private fun FinalValueChip(
             color = errorColor,
             maxLines = 1,
             softWrap = false,
-            modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
         )
     }
 }
@@ -834,7 +835,7 @@ private fun FeeChip(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .basicMarquee(iterations = Int.MAX_VALUE),
+                        .horizontalScroll(rememberScrollState()),
             )
         }
     }
