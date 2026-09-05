@@ -48,9 +48,13 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,6 +69,7 @@ import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
+import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -271,6 +276,7 @@ private fun HeroCard(
                 originalFees = sideFees?.original.orEmpty(),
                 beforeValue = originalBefore,
                 afterValue = originalAfter,
+                currency = baseCurrency,
                 onFeeChipClick = callbacks.onOpenFees,
             )
             AmountDivider()
@@ -280,6 +286,7 @@ private fun HeroCard(
                 convertedFees = sideFees?.converted.orEmpty(),
                 beforeValue = convertedBefore,
                 afterValue = convertedAfter,
+                currency = destCurrency,
                 onLongClick = { if (resultFormatted.isNotEmpty()) callbacks.onCopy(resultFormatted) },
                 onFeeChipClick = callbacks.onOpenFees,
             )
@@ -394,6 +401,7 @@ private fun AmountHero(
     originalFees: List<Fee>,
     beforeValue: BigDecimal?,
     afterValue: BigDecimal?,
+    currency: Currency?,
     onFeeChipClick: () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
@@ -422,6 +430,7 @@ private fun AmountHero(
             fees = originalFees,
             beforeValue = beforeValue,
             afterValue = afterValue,
+            currency = currency,
             onClick = onFeeChipClick,
         )
     }
@@ -487,6 +496,7 @@ private fun AmountToRow(
     convertedFees: List<Fee>,
     beforeValue: BigDecimal?,
     afterValue: BigDecimal?,
+    currency: Currency?,
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
@@ -509,6 +519,7 @@ private fun AmountToRow(
             fees = convertedFees,
             beforeValue = beforeValue,
             afterValue = afterValue,
+            currency = currency,
             onClick = onFeeChipClick,
         )
     }
@@ -520,6 +531,7 @@ private fun FeeChipRow(
     fees: List<Fee>,
     beforeValue: BigDecimal?,
     afterValue: BigDecimal?,
+    currency: Currency?,
     onClick: () -> Unit,
 ) {
     if (stack == null || stack.compareTo(BigDecimal.ONE) == 0) return
@@ -530,7 +542,7 @@ private fun FeeChipRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (beforeValue != null && afterValue != null) {
-            BeforeAfterChip(before = beforeValue, after = afterValue, onClick = onClick)
+            BeforeAfterChip(before = beforeValue, after = afterValue, currency = currency, onClick = onClick)
         }
         FeeChip(stack, fees, onClick)
     }
@@ -540,14 +552,31 @@ private fun FeeChipRow(
 private fun BeforeAfterChip(
     before: BigDecimal,
     after: BigDecimal,
+    currency: Currency?,
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    val symbolAppended = remember(context) { hasAppendedCurrencySymbol(context) }
+    val symbol = currency?.symbol()
     val label =
-        remember(before, after) {
-            val b = before.toHumanReadableNumber(context, trim = true, decimalPlaces = BEFORE_AFTER_DECIMAL_PLACES)
-            val a = after.toHumanReadableNumber(context, trim = true, decimalPlaces = BEFORE_AFTER_DECIMAL_PLACES)
-            "$b$BEFORE_AFTER_SEPARATOR$a"
+        remember(before, after, symbol, symbolAppended) {
+            val b =
+                formatWithSymbol(
+                    before.toHumanReadableNumber(context, trim = true, decimalPlaces = BEFORE_AFTER_DECIMAL_PLACES),
+                    symbol,
+                    symbolAppended,
+                )
+            val a =
+                formatWithSymbol(
+                    after.toHumanReadableNumber(context, trim = true, decimalPlaces = BEFORE_AFTER_DECIMAL_PLACES),
+                    symbol,
+                    symbolAppended,
+                )
+            buildAnnotatedString {
+                withStyle(SpanStyle(textDecoration = TextDecoration.LineThrough)) { append(b) }
+                append(BEFORE_AFTER_SEPARATOR)
+                append(a)
+            }
         }
     val errorColor = MaterialTheme.colorScheme.error
     val bg = errorColor.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
@@ -570,6 +599,20 @@ private fun BeforeAfterChip(
         )
     }
 }
+
+// Locale-aware "$symbol number" / "number $symbol" — mirrors the ViewModel's
+// buildBoldNumberWithSymbol so the pill never disagrees with the main
+// amount display on which side the symbol lands.
+private fun formatWithSymbol(
+    number: String,
+    symbol: String?,
+    appended: Boolean,
+): String =
+    when {
+        symbol.isNullOrEmpty() -> number
+        appended -> "$number $symbol"
+        else -> "$symbol $number"
+    }
 
 @Composable
 private fun FeeChip(
