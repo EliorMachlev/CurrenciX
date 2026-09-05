@@ -48,6 +48,8 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -111,6 +113,11 @@ private val AMOUNT_HERO_SIZE = 52.sp
 private val AMOUNT_TO_SIZE = 34.sp
 private val FEE_CHIP_TEXT_SIZE = 11.sp
 private val MATH_LINE_TEXT_SIZE = 14.sp
+
+// Applied to the big-value texts so Android's default font padding
+// (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
+// the visual gap between the number and whatever renders right below it.
+private val TIGHT_TEXT_STYLE = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
 
 // Rounding hint for the final-value pill amount — 2 places matches the
 // result formatting default and keeps the pill legible even with cents.
@@ -435,6 +442,7 @@ private fun AmountHero(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.End,
+                style = TIGHT_TEXT_STYLE,
                 modifier = Modifier.weight(1f, fill = false),
             )
             BlinkingCursor()
