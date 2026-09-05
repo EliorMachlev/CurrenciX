@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -98,6 +99,12 @@ private val PILLS_ROW_BOTTOM_GAP: Dp = 20.dp
 private val AMOUNT_DIVIDER_MARGIN_TOP: Dp = 12.dp
 private val AMOUNT_DIVIDER_MARGIN_BOTTOM: Dp = 10.dp
 private val FEE_CHIP_TOP_GAP: Dp = 0.dp
+
+// Visual lift applied to fee rows so they render on top of the big
+// value's font descender space (which is empty ink). Cheating layout
+// via [Modifier.offset] keeps the divider below in place while pulling
+// the fee cluster closer to the number above.
+private val FEE_ROW_LIFT: Dp = 12.dp
 private val RATE_FOOTER_TOP_MARGIN: Dp = 14.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 12.dp
 private val LIVE_DOT_SIZE: Dp = 6.dp
@@ -655,10 +662,11 @@ private fun FeeRowRightAligned(
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     content: @Composable () -> Unit,
 ) {
-    Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
     Ltr {
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .offset(y = -FEE_ROW_LIFT),
             horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
             verticalAlignment = verticalAlignment,
         ) {
