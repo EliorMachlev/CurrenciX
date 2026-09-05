@@ -584,12 +584,12 @@ private fun FeeAboveRow(
 }
 
 // Everything that renders below the big value once the fee chip decision
-// has been made above. Three cases:
+// has been made above. Four cases:
 //   - No fee (op null): render nothing.
 //   - Fee active but big value is 0: chip alone, no operator, no pill.
-//   - PLUS with meaningful value: single row `+ [chip] = [pill]` — the "+"
-//     sits between the big value above and the chip in reading order, then
-//     "= [pill]" closes the equation on the same row.
+//   - PLUS with meaningful value: `+` on its own row (bridging the big
+//     value above and the chip below), then `[chip] = [pill]` on the next
+//     row so the chip and its final value sit together.
 //   - MINUS with meaningful value: chip already lives in FeeAboveRow, so
 //     this row is just `= [pill]`.
 @Composable
@@ -607,12 +607,17 @@ private fun FeeEquationTail(
         FeeRowRightAligned { FeeChip(stack, fees, onClick) }
         return
     }
-    FeeRowRightAligned {
-        if (op == FeeOp.PLUS) {
-            FeeOperator(OP_PLUS)
+    if (op == FeeOp.PLUS) {
+        FeeRowRightAligned { FeeOperator(OP_PLUS) }
+        FeeRowRightAligned {
             FeeChip(stack, fees, onClick)
+            if (finalValue != null) {
+                FeeOperator(OP_EQUALS)
+                FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
+            }
         }
-        if (finalValue != null) {
+    } else if (finalValue != null) {
+        FeeRowRightAligned {
             FeeOperator(OP_EQUALS)
             FinalValueChip(value = finalValue, currency = currency, onClick = onClick)
         }
