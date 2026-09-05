@@ -80,6 +80,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 // Hero-card visual metrics — mirror the v1 Fluid Converter mockup.
+private val MATH_LINE_BOTTOM_GAP: Dp = 2.dp
 private val CARD_OUTER_MARGIN: Dp = 16.dp
 private val CARD_RADIUS: Dp = 28.dp
 private val CARD_PADDING: Dp = 20.dp
@@ -107,6 +108,17 @@ private val CHEVRON_SIZE: Dp = 14.dp
 private val AMOUNT_HERO_SIZE = 52.sp
 private val AMOUNT_TO_SIZE = 34.sp
 private val FEE_CHIP_TEXT_SIZE = 11.sp
+private val MATH_LINE_TEXT_SIZE = 14.sp
+
+// Rounding hint for the before/after pill amounts — 2 places matches the
+// result formatting default and keeps the pill legible even with cents.
+private const val BEFORE_AFTER_DECIMAL_PLACES = 2
+
+// Horizontal gap between the red before/after pill and the amber fee chip.
+private val FEE_ROW_PILL_GAP: Dp = 6.dp
+
+// Glyph joining before/after values in the red pill ("148.50 → 150.00").
+private const val BEFORE_AFTER_SEPARATOR = " → "
 
 // Rounding hint for the info-conversion mid-rate in the footer. Four places
 // keeps small majors (e.g. JPY→USD ≈ 0.0067) legible without over-precisioning
@@ -168,6 +180,11 @@ internal fun MainDisplay(
     val sideStacks by viewModel.getSideStacks().observeAsState()
     val sideFees by viewModel.getSideFees().observeAsState()
     val historicalDate by viewModel.getHistoricalLiveDate().observeAsState()
+    val mathText by viewModel.getCalculationInputFormatted().observeAsState()
+    val baseValueNumber by viewModel.getCurrentBaseValueAsNumber().observeAsState()
+    val resultNumber by viewModel.getResultAsNumber().observeAsState()
+    val trueCost by viewModel.getTrueCost().observeAsState()
+    val originalValue by viewModel.getOriginalValue().observeAsState()
 
     HeroCard(
         baseCurrency = baseCurrency,
@@ -179,6 +196,11 @@ internal fun MainDisplay(
         sideStacks = sideStacks,
         sideFees = sideFees,
         historicalDate = historicalDate,
+        mathText = mathText,
+        originalBefore = baseValueNumber,
+        originalAfter = trueCost,
+        convertedBefore = originalValue,
+        convertedAfter = resultNumber,
         dateFormatPattern = dateFormatPattern,
         onPillFromClick = {
             openCurrencyPicker(context, viewModel, fragmentManager, PickSide.FROM, baseCurrency, destCurrency, rates)
@@ -210,6 +232,11 @@ private fun HeroCard(
     sideStacks: SideStacks?,
     sideFees: SideFees?,
     historicalDate: LocalDate?,
+    mathText: String?,
+    originalBefore: BigDecimal?,
+    originalAfter: BigDecimal?,
+    convertedBefore: BigDecimal?,
+    convertedAfter: BigDecimal?,
     dateFormatPattern: String,
     onPillFromClick: () -> Unit,
     onPillToClick: () -> Unit,
@@ -238,9 +265,12 @@ private fun HeroCard(
             Spacer(Modifier.height(PILLS_ROW_BOTTOM_GAP))
             AmountHero(
                 text = baseFormatted,
+                mathText = mathText,
                 onLongClick = { if (baseFormatted.isNotEmpty()) callbacks.onCopy(baseFormatted) },
                 originalStack = sideStacks?.original,
                 originalFees = sideFees?.original.orEmpty(),
+                beforeValue = originalBefore,
+                afterValue = originalAfter,
                 onFeeChipClick = callbacks.onOpenFees,
             )
             AmountDivider()
@@ -248,6 +278,8 @@ private fun HeroCard(
                 text = resultFormatted,
                 convertedStack = sideStacks?.converted,
                 convertedFees = sideFees?.converted.orEmpty(),
+                beforeValue = convertedBefore,
+                afterValue = convertedAfter,
                 onLongClick = { if (resultFormatted.isNotEmpty()) callbacks.onCopy(resultFormatted) },
                 onFeeChipClick = callbacks.onOpenFees,
             )
@@ -356,12 +388,16 @@ private fun SwapFab(
 @Composable
 private fun AmountHero(
     text: String,
+    mathText: String?,
     onLongClick: () -> Unit,
     originalStack: BigDecimal?,
     originalFees: List<Fee>,
+    beforeValue: BigDecimal?,
+    afterValue: BigDecimal?,
     onFeeChipClick: () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
+        MathLine(mathText)
         Row(
             Modifier
                 .fillMaxWidth()
@@ -381,8 +417,31 @@ private fun AmountHero(
             )
             BlinkingCursor()
         }
-        FeeChipRow(stack = originalStack, fees = originalFees, onClick = onFeeChipClick)
+        FeeChipRow(
+            stack = originalStack,
+            fees = originalFees,
+            beforeValue = beforeValue,
+            afterValue = afterValue,
+            onClick = onFeeChipClick,
+        )
     }
+}
+
+@Composable
+private fun MathLine(text: String?) {
+    if (text.isNullOrEmpty()) return
+    Text(
+        text = text,
+        fontSize = MATH_LINE_TEXT_SIZE,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        textAlign = TextAlign.End,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = MATH_LINE_BOTTOM_GAP),
+    )
 }
 
 @Composable
@@ -426,6 +485,8 @@ private fun AmountToRow(
     text: String,
     convertedStack: BigDecimal?,
     convertedFees: List<Fee>,
+    beforeValue: BigDecimal?,
+    afterValue: BigDecimal?,
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
@@ -443,7 +504,13 @@ private fun AmountToRow(
                     .fillMaxWidth()
                     .combinedClickable(onClick = {}, onLongClick = onLongClick),
         )
-        FeeChipRow(stack = convertedStack, fees = convertedFees, onClick = onFeeChipClick)
+        FeeChipRow(
+            stack = convertedStack,
+            fees = convertedFees,
+            beforeValue = beforeValue,
+            afterValue = afterValue,
+            onClick = onFeeChipClick,
+        )
     }
 }
 
@@ -451,15 +518,56 @@ private fun AmountToRow(
 private fun FeeChipRow(
     stack: BigDecimal?,
     fees: List<Fee>,
+    beforeValue: BigDecimal?,
+    afterValue: BigDecimal?,
     onClick: () -> Unit,
 ) {
     if (stack == null || stack.compareTo(BigDecimal.ONE) == 0) return
     Spacer(Modifier.height(FEE_CHIP_TOP_GAP))
     Row(
         Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End,
+        horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (beforeValue != null && afterValue != null) {
+            BeforeAfterChip(before = beforeValue, after = afterValue, onClick = onClick)
+        }
         FeeChip(stack, fees, onClick)
+    }
+}
+
+@Composable
+private fun BeforeAfterChip(
+    before: BigDecimal,
+    after: BigDecimal,
+    onClick: () -> Unit,
+) {
+    val context = LocalContext.current
+    val label =
+        remember(before, after) {
+            val b = before.toHumanReadableNumber(context, trim = true, decimalPlaces = BEFORE_AFTER_DECIMAL_PLACES)
+            val a = after.toHumanReadableNumber(context, trim = true, decimalPlaces = BEFORE_AFTER_DECIMAL_PLACES)
+            "$b$BEFORE_AFTER_SEPARATOR$a"
+        }
+    val errorColor = MaterialTheme.colorScheme.error
+    val bg = errorColor.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
+    Row(
+        Modifier
+            .clip(RoundedCornerShape(PILL_RADIUS))
+            .background(bg)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 10.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            fontSize = FEE_CHIP_TEXT_SIZE,
+            fontWeight = FontWeight.Medium,
+            color = errorColor,
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+        )
     }
 }
 
