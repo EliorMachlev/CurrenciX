@@ -579,6 +579,7 @@ class MainActivity : BaseActivity() {
             MainDisplayCallbacks(
                 onCopy = ::copyToClipboard,
                 onOpenFees = ::openFeesSettings,
+                onOpenProvider = ::showApiProviderPicker,
                 onSwapLongPress = ::openFeesSettings,
             )
         findViewById<ComposeView>(R.id.mainDisplayHost).apply {

@@ -175,7 +175,7 @@ private const val FEE_NAME_SEPARATOR = ", "
 // Under this age we show a relative label ("12h ago") instead of the date.
 private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
-private const val CURSOR_BLINK_MILLIS = 500
+private const val CURSOR_BLINK_MILLIS = 800
 private const val LIVE_DOT_PULSE_MILLIS = 1000
 private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 
@@ -210,6 +210,7 @@ private const val PILL_AUTO_SCROLL_DWELL_MILLIS = 1500L
 internal data class MainDisplayCallbacks(
     val onCopy: (CharSequence) -> Unit,
     val onOpenFees: () -> Unit,
+    val onOpenProvider: () -> Unit,
     val onSwapLongPress: () -> Unit,
 )
 
@@ -356,6 +357,7 @@ private fun HeroCard(
                 isUpdating = isUpdating,
                 historicalDate = historicalDate,
                 dateFormatPattern = dateFormatPattern,
+                onProviderClick = callbacks.onOpenProvider,
             )
         }
     }
@@ -778,11 +780,16 @@ private fun rememberEndAnchoredScrollState(key: Any?): ScrollState {
 // A ScrollState that lets the user drag the content freely, and — after
 // [PILL_AUTO_SCROLL_IDLE_MILLIS] with no drag interaction — resumes an
 // automatic end↔start scroll loop so overflowing pill content stays
-// discoverable without requiring the user to interact.
+// discoverable without requiring the user to interact. When [resetKey]
+// changes, the scroll snaps back to the start so a fresh value renders
+// from its leading digit.
 @Composable
-private fun rememberIdleAutoScrollState(): ScrollState {
+private fun rememberIdleAutoScrollState(resetKey: Any? = null): ScrollState {
     val state = rememberScrollState()
     val pxPerMs = PILL_AUTO_SCROLL_SPEED_DP_PER_S * LocalDensity.current.density / 1000f
+    LaunchedEffect(resetKey) {
+        state.scrollTo(0)
+    }
     LaunchedEffect(state, pxPerMs) {
         val restart = MutableStateFlow(0L)
         launch {
@@ -883,7 +890,7 @@ private fun FinalValueChip(
             color = errorColor,
             maxLines = 1,
             softWrap = false,
-            modifier = Modifier.horizontalScroll(rememberIdleAutoScrollState()),
+            modifier = Modifier.horizontalScroll(rememberIdleAutoScrollState(resetKey = value)),
         )
     }
 }
@@ -971,6 +978,7 @@ private fun RateFooter(
     isUpdating: Boolean,
     historicalDate: LocalDate?,
     dateFormatPattern: String,
+    onProviderClick: () -> Unit,
 ) {
     Column {
         Box(
@@ -996,6 +1004,7 @@ private fun RateFooter(
                 rates = rates,
                 dateFormatPattern = dateFormatPattern,
                 isHistorical = historicalDate != null,
+                onProviderClick = onProviderClick,
             )
         }
     }
@@ -1066,6 +1075,7 @@ private fun TimestampText(
     rates: ExchangeRates?,
     dateFormatPattern: String,
     isHistorical: Boolean,
+    onProviderClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val date = rates?.date ?: return
@@ -1081,6 +1091,7 @@ private fun TimestampText(
         color = if (isHistorical) Brass else MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.clickable(onClick = onProviderClick),
     )
 }
 
