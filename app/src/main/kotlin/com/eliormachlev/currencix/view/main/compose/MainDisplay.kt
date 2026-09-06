@@ -490,7 +490,7 @@ private fun AmountHero(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .horizontalScroll(rememberEndAnchoredScrollState(text)),
+                        .horizontalScroll(rememberStartAnchoredScrollState(text)),
             )
             BlinkingCursor()
         }
@@ -606,7 +606,7 @@ private fun AmountToRow(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .horizontalScroll(rememberEndAnchoredScrollState(text)),
+                        .horizontalScroll(rememberStartAnchoredScrollState(text)),
             )
         }
         FeeEquationTail(
@@ -751,9 +751,21 @@ private fun Modifier.maxWidthFraction(fraction: Float): Modifier =
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
 
+// A ScrollState that snaps back to the start whenever [key] changes, so a
+// fresh number always renders from its leading digit. Drags between changes
+// are preserved.
+@Composable
+private fun rememberStartAnchoredScrollState(key: Any?): ScrollState {
+    val state = rememberScrollState()
+    LaunchedEffect(key) {
+        state.scrollTo(0)
+    }
+    return state
+}
+
 // A ScrollState that snaps to the end whenever [key] changes or the content
-// grows, so freshly typed digits stay visible without the user having to
-// scroll. User drags between changes are preserved.
+// grows, so the freshest characters stay visible. Drags between changes are
+// preserved.
 @Composable
 private fun rememberEndAnchoredScrollState(key: Any?): ScrollState {
     val state = rememberScrollState()
