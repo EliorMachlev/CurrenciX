@@ -175,7 +175,7 @@ private const val FEE_NAME_SEPARATOR = ", "
 // Under this age we show a relative label ("12h ago") instead of the date.
 private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
-private const val CURSOR_BLINK_MILLIS = 800
+private const val CURSOR_BLINK_MILLIS = 1200
 private const val LIVE_DOT_PULSE_MILLIS = 1000
 private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 
