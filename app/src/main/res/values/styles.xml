@@ -21,21 +21,21 @@
         <item name="android:colorBackground">?attr/colorBackground</item>
         <item name="colorOnBackground">?android:attr/colorForeground</item>
 
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorOnPrimary">@color/blackOlive</item>
+        <item name="colorPrimary">@color/billGreen</item>
+        <item name="colorOnPrimary">@color/billGreenInk</item>
         <item name="colorPrimaryContainer">?attr/colorPrimary</item>
         <item name="colorOnPrimaryContainer">?attr/colorOnPrimary</item>
         <item name="colorPrimaryInverse">?attr/colorPrimary</item>
 
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
-        <item name="colorSecondaryContainer">?attr/colorPrimary</item>
-        <item name="colorOnSecondaryContainer">?attr/colorOnPrimary</item>
+        <item name="colorSecondary">@color/brass</item>
+        <item name="colorOnSecondary">@color/billGreenInk</item>
+        <item name="colorSecondaryContainer">?attr/colorSecondary</item>
+        <item name="colorOnSecondaryContainer">?attr/colorOnSecondary</item>
 
         <item name="colorTertiary">?attr/colorSecondary</item>
         <item name="colorOnTertiary">?attr/colorOnSecondary</item>
-        <item name="colorTertiaryContainer">?attr/colorPrimary</item>
-        <item name="colorOnTertiaryContainer">?attr/colorOnPrimary</item>
+        <item name="colorTertiaryContainer">?attr/colorSecondary</item>
+        <item name="colorOnTertiaryContainer">?attr/colorOnSecondary</item>
 
         <item name="colorError">@color/app_error</item>
         <item name="colorOnError">@android:color/white</item>
