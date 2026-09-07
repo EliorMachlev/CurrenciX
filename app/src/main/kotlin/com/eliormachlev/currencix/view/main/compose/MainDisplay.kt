@@ -106,8 +106,14 @@ private val FLAG_SIZE: Dp = 28.dp
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 20.dp
-private val AMOUNT_DIVIDER_MARGIN_TOP: Dp = 12.dp
-private val AMOUNT_DIVIDER_MARGIN_BOTTOM: Dp = 10.dp
+
+// Breathing room above the tinted "you get" band that hosts the
+// converted-amount cluster (chip + amount + pill).
+private val AMOUNT_BAND_TOP_GAP: Dp = 14.dp
+
+// Interior padding and corner rounding for the "you get" band itself.
+private val AMOUNT_BAND_PADDING: Dp = 12.dp
+private val AMOUNT_BAND_RADIUS: Dp = 20.dp
 
 // Vertical gaps between the fee chip (above the amount) and the amount
 // itself, and between the amount and the red final-value pill (below).
@@ -321,7 +327,7 @@ private fun HeroCard(
                 decimalPlaces = decimalPlaces,
                 onFeeChipClick = callbacks.onOpenFees,
             )
-            AmountDivider()
+            Spacer(Modifier.height(AMOUNT_BAND_TOP_GAP))
             AmountToRow(
                 text = resultFormatted,
                 stack = sideStacks?.converted,
@@ -541,18 +547,6 @@ private fun BlinkingCursor() {
 }
 
 @Composable
-private fun AmountDivider() {
-    Spacer(Modifier.height(AMOUNT_DIVIDER_MARGIN_TOP))
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(MaterialTheme.colorScheme.outlineVariant),
-    )
-    Spacer(Modifier.height(AMOUNT_DIVIDER_MARGIN_BOTTOM))
-}
-
-@Composable
 private fun AmountToRow(
     text: String,
     stack: BigDecimal?,
@@ -566,7 +560,13 @@ private fun AmountToRow(
 ) {
     val hasFee = stack.hasFee()
     val showPill = hasFee && bigValue.isMeaningful() && otherValue != null
-    Column(Modifier.fillMaxWidth()) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(AMOUNT_BAND_RADIUS))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .padding(AMOUNT_BAND_PADDING),
+    ) {
         if (hasFee) ChipAbove(stack = stack!!, fees = fees, onClick = onFeeChipClick)
         Row(
             modifier =
@@ -578,8 +578,8 @@ private fun AmountToRow(
             Text(
                 text = text,
                 fontSize = AMOUNT_TO_SIZE,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 softWrap = false,
                 textAlign = TextAlign.End,
