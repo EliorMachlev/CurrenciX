@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.DatePicker
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
@@ -202,6 +203,28 @@ class MainActivity : BaseActivity() {
         drawerToggle.syncState()
         navigationView.setNavigationItemSelectedListener(::onDrawerItemSelected)
         drawerItemRefresh = navigationView.menu.findItem(R.id.nav_refresh)
+
+        // Route the system back gesture to close the drawer only while it's
+        // open; disabled otherwise so back falls through to the default
+        // dispatcher (finish activity).
+        val closeDrawerCallback =
+            object : OnBackPressedCallback(false) {
+                override fun handleOnBackPressed() {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                }
+            }
+        onBackPressedDispatcher.addCallback(this, closeDrawerCallback)
+        drawerLayout.addDrawerListener(
+            object : DrawerLayout.SimpleDrawerListener() {
+                override fun onDrawerOpened(drawerView: View) {
+                    closeDrawerCallback.isEnabled = true
+                }
+
+                override fun onDrawerClosed(drawerView: View) {
+                    closeDrawerCallback.isEnabled = false
+                }
+            },
+        )
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -212,15 +235,6 @@ class MainActivity : BaseActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (::drawerToggle.isInitialized) drawerToggle.onConfigurationChanged(newConfig)
-    }
-
-    override fun onBackPressed() {
-        if (::drawerLayout.isInitialized && drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-            return
-        }
-        @Suppress("DEPRECATION")
-        super.onBackPressed()
     }
 
     private fun showApiProviderPicker() {

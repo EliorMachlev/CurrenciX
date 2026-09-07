@@ -499,9 +499,9 @@ private fun AmountHero(
             )
             BlinkingCursor()
         }
-        if (showPill) {
+        if (showPill && otherValue != null) {
             PillBelow(
-                value = otherValue!!,
+                value = otherValue,
                 currency = currency,
                 decimalPlaces = decimalPlaces,
                 onClick = onFeeChipClick,
@@ -604,9 +604,9 @@ private fun AmountToRow(
                         .horizontalScroll(rememberStartAnchoredScrollState(text)),
             )
         }
-        if (showPill) {
+        if (showPill && otherValue != null) {
             PillBelow(
-                value = otherValue!!,
+                value = otherValue,
                 currency = currency,
                 decimalPlaces = decimalPlaces,
                 onClick = onFeeChipClick,
