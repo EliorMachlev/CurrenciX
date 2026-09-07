@@ -17,8 +17,6 @@
     <string name="fee_add">Add fee</string>
     <string name="fee_delete">Delete</string>
     <string name="fee_edit_percent">Percent</string>
-    <string name="fee_edit_sign_positive" translatable="false">+</string>
-    <string name="fee_edit_sign_negative" translatable="false">−</string>
     <string name="fee_pair_both_ways">Both directions</string>
     <string name="fee_pair_from">From</string>
     <string name="fee_pair_to">To</string>

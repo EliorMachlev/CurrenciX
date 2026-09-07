@@ -87,13 +87,13 @@ object FeeCalculator {
 
     /**
      * Multiplicative stack factor for a subset of fees:
-     * `product over subset of (1 +/- percent/100)`.
+     * `product over subset of (1 + percent/100)`.
      */
     fun stackFactor(subset: List<Fee>): BigDecimal {
         var acc = BigDecimal.ONE
         subset.forEach { fee ->
             val delta = fee.percent.divide(PERCENTAGE_DIVISOR, MathContext.DECIMAL128)
-            val factor = if (fee.isMarkup) BigDecimal.ONE + delta else BigDecimal.ONE - delta
+            val factor = BigDecimal.ONE + delta
             acc = acc.multiply(factor, MathContext.DECIMAL128)
         }
         return acc

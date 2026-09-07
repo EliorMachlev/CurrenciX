@@ -412,7 +412,6 @@ class Database(
             obj.put("id", fee.id)
             obj.put("name", fee.name)
             obj.put("percent", fee.percent.toPlainString())
-            obj.put("isMarkup", fee.isMarkup)
             obj.put("isActive", fee.isActive)
             obj.put("feeSide", fee.feeSide.name)
             obj.put("type", fee.type.wire)
@@ -444,22 +443,16 @@ class Database(
         val id = obj.optString("id", "").ifEmpty { UUID.randomUUID().toString() }
         val name = obj.optString("name", "")
         val percent = obj.optString("percent", "0").toBigDecimalOrNull() ?: return null
-        val isMarkup = obj.optBoolean("isMarkup", true)
-        // Pre-name/isActive rows default to active so legacy configurations
-        // continue to apply after upgrade.
         val isActive = obj.optBoolean("isActive", true)
-        // Rows written before the per-fee-side field existed fall back to
-        // ORIGINAL so their behaviour is unchanged after upgrade.
         val feeSide = parseFeeSideOrDefault(obj.optString("feeSide", ""))
         return when (FeeType.fromWire(obj.optString("type"))) {
-            FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isMarkup, isActive, feeSide)
-            FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isMarkup, isActive, feeSide)
+            FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isActive, feeSide)
+            FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isActive, feeSide)
             FeeType.SPECIFIC_PAIR ->
                 Fee.SpecificPair(
                     id = id,
                     name = name,
                     percent = percent,
-                    isMarkup = isMarkup,
                     from = obj.optString("from", ""),
                     to = obj.optString("to", ""),
                     bothWays = obj.optBoolean("bothWays", false),

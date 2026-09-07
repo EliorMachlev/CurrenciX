@@ -4,8 +4,8 @@ import java.math.BigDecimal
 
 /**
  * A single fee entry that can be stacked with others when converting
- * currencies. All entries store the [percent] as a positive number;
- * whether the fee is added or subtracted is controlled by [isMarkup].
+ * currencies. All entries store the [percent] as a positive markup — real
+ * exchange fees always inflate the cost, never reduce it.
  *
  * Every fee carries a user-facing [name] (may be empty for legacy entries)
  * and an [isActive] flag that lets the user temporarily skip it without
@@ -15,7 +15,6 @@ sealed class Fee {
     abstract val id: String
     abstract val name: String
     abstract val percent: BigDecimal
-    abstract val isMarkup: Boolean
     abstract val isActive: Boolean
     abstract val feeSide: FeeSide
     abstract val type: FeeType
@@ -30,7 +29,6 @@ sealed class Fee {
     abstract fun withEditableFields(
         name: String,
         percent: BigDecimal,
-        isMarkup: Boolean,
         isActive: Boolean,
         feeSide: FeeSide,
     ): Fee
@@ -40,7 +38,6 @@ sealed class Fee {
         override val id: String,
         override val name: String,
         override val percent: BigDecimal,
-        override val isMarkup: Boolean,
         override val isActive: Boolean = true,
         override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
@@ -49,14 +46,12 @@ sealed class Fee {
         override fun withEditableFields(
             name: String,
             percent: BigDecimal,
-            isMarkup: Boolean,
             isActive: Boolean,
             feeSide: FeeSide,
         ): GlobalExchange =
             copy(
                 name = name,
                 percent = percent,
-                isMarkup = isMarkup,
                 isActive = isActive,
                 feeSide = feeSide,
             )
@@ -67,7 +62,6 @@ sealed class Fee {
         override val id: String,
         override val name: String,
         override val percent: BigDecimal,
-        override val isMarkup: Boolean,
         override val isActive: Boolean = true,
         override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
@@ -76,14 +70,12 @@ sealed class Fee {
         override fun withEditableFields(
             name: String,
             percent: BigDecimal,
-            isMarkup: Boolean,
             isActive: Boolean,
             feeSide: FeeSide,
         ): GlobalBank =
             copy(
                 name = name,
                 percent = percent,
-                isMarkup = isMarkup,
                 isActive = isActive,
                 feeSide = feeSide,
             )
@@ -97,7 +89,6 @@ sealed class Fee {
         override val id: String,
         override val name: String,
         override val percent: BigDecimal,
-        override val isMarkup: Boolean,
         val from: String,
         val to: String,
         val bothWays: Boolean,
@@ -109,14 +100,12 @@ sealed class Fee {
         override fun withEditableFields(
             name: String,
             percent: BigDecimal,
-            isMarkup: Boolean,
             isActive: Boolean,
             feeSide: FeeSide,
         ): SpecificPair =
             copy(
                 name = name,
                 percent = percent,
-                isMarkup = isMarkup,
                 isActive = isActive,
                 feeSide = feeSide,
             )

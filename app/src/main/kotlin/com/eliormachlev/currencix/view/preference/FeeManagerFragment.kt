@@ -68,24 +68,23 @@ private val FEE_EDITOR_SECTION_GAP = R.dimen.margin2x
 // buys enough room to fit the row on typical phones.
 private const val FEE_EDITOR_DIALOG_WIDTH_FRACTION = 0.95f
 
-// Fee percent field: signed decimals in [-100, 100] with at most
+// Fee percent field: unsigned decimals in [0, 100] with at most
 // FEE_PERCENT_MAX_INT_DIGITS before and FEE_PERCENT_MAX_FRACTION_DIGITS
-// after the decimal separator. Sign toggles markup vs discount downstream;
-// abs value is stored on the model. The current locale's decimal separator
-// is what actually appears in the field, but both "." and "," in typed or
+// after the decimal separator. The current locale's decimal separator is
+// what actually appears in the field, but both "." and "," in typed or
 // pasted input are auto-normalized to it so keyboards / spreadsheet paste
 // from other locales still work.
-private val FEE_PERCENT_RANGE = BigDecimal("-100")..BigDecimal("100")
+private val FEE_PERCENT_RANGE = BigDecimal.ZERO..BigDecimal("100")
 private const val FEE_PERCENT_MAX_INT_DIGITS = 3
 private const val FEE_PERCENT_MAX_FRACTION_DIGITS = 3
-private const val FEE_PERCENT_DIGITS = "+-.,0123456789"
+private const val FEE_PERCENT_DIGITS = ".,0123456789"
 
 private val feePercentSeparator: Char
     get() = DecimalFormatSymbols.getInstance().decimalSeparator
 
 private fun feePercentFormat(sep: Char): Regex =
     Regex(
-        "^[+-]?\\d{0,$FEE_PERCENT_MAX_INT_DIGITS}" +
+        "^\\d{0,$FEE_PERCENT_MAX_INT_DIGITS}" +
             "(?:\\Q$sep\\E\\d{0,$FEE_PERCENT_MAX_FRACTION_DIGITS})?$",
     )
 
@@ -114,14 +113,13 @@ private fun firstAcceptableTrim(
     sep: Char,
 ): String? {
     val format = feePercentFormat(sep)
-    val intermediateChars = "+-$sep"
     var candidate = normalized
     while (true) {
         val result = before + candidate + after
         val ok =
             when {
                 !format.matches(result) -> false
-                result.isEmpty() || result.last() in intermediateChars -> true
+                result.isEmpty() || result.last() == sep -> true
                 else -> result.toFeePercentOrNull(sep)?.let { it in FEE_PERCENT_RANGE } == true
             }
         if (ok) return candidate
@@ -137,9 +135,8 @@ private fun firstAcceptableTrim(
  * If the resulting text would exceed the digit budget (typical on paste
  * of e.g. "1234.5678"), we trim characters off the end of the pasted
  * source until it fits — so paste is graceful instead of silently
- * rejected. Empty / trailing sign / trailing separator pass as
- * intermediate typing states (e.g. "-", "1,") since they aren't yet
- * parseable as a number.
+ * rejected. Empty / trailing separator pass as intermediate typing states
+ * (e.g. "1,") since they aren't yet parseable as a number.
  */
 private val feePercentInputFilter =
     InputFilter { source, start, end, dest, dstart, dend ->
@@ -303,7 +300,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             existing.withEditableFields(
                 name = d.name,
                 percent = d.percent,
-                isMarkup = d.isMarkup,
                 isActive = d.isActive,
                 feeSide = d.feeSide,
             ) as T
@@ -508,7 +504,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun formatFeeDescription(fee: Fee): CharSequence = withInactiveMarker(formatPercent(fee.percent, fee.isMarkup), fee.isActive)
+    private fun formatFeeDescription(fee: Fee): CharSequence = withInactiveMarker(formatPercent(fee.percent), fee.isActive)
 
     /**
      * Append the "Inactive" text marker after [base] when [isActive] is false.
@@ -570,22 +566,11 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     }
 
     private fun formatFeeTitle(fee: Fee): CharSequence {
-        val percent = formatPercent(fee.percent, fee.isMarkup)
+        val percent = formatPercent(fee.percent)
         return if (fee.name.isBlank()) percent else "${fee.name}$SUMMARY_SEPARATOR$percent"
     }
 
-    private fun formatPercent(
-        percent: BigDecimal,
-        isMarkup: Boolean,
-    ): String {
-        val sign =
-            if (isMarkup) {
-                getString(R.string.fee_edit_sign_positive)
-            } else {
-                getString(R.string.fee_edit_sign_negative)
-            }
-        return "$sign ${percent.toHumanReadableNumber(requireContext(), suffix = "%")}"
-    }
+    private fun formatPercent(percent: BigDecimal): String = percent.toHumanReadableNumber(requireContext(), suffix = "%")
 
     private fun buildNameInput(
         ctx: Context,
@@ -599,23 +584,21 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
     /**
      * Numeric percent field with a "%" glyph pinned to the physical right of
-     * the input (LTR *or* RTL locale). Signed decimal input in [-100, 100];
-     * a leading "−" flips the fee from markup to discount, unsigned defaults
-     * to markup. [initialSigned] is the value carrying its own sign —
-     * callers compose it from the model's separate abs-percent / isMarkup
-     * fields. Returned bundle exposes both the row [view] to add to the
-     * layout and the raw [editText] for reading text back at confirm time.
+     * the input (LTR *or* RTL locale). Unsigned decimal input in [0, 100];
+     * all fees are markups. Returned bundle exposes both the row [view] to
+     * add to the layout and the raw [editText] for reading text back at
+     * confirm time.
      */
     private fun buildPercentInput(
         ctx: Context,
-        initialSigned: BigDecimal?,
+        initial: BigDecimal?,
     ): PercentInput {
         val sep = feePercentSeparator
         val editText =
             EditText(ctx).apply {
                 keyListener = DigitsKeyListener.getInstance(FEE_PERCENT_DIGITS)
                 filters = arrayOf(feePercentInputFilter)
-                if (initialSigned != null) setText(initialSigned.toPlainString().replace('.', sep))
+                if (initial != null) setText(initial.toPlainString().replace('.', sep))
             }
         val suffix =
             TextView(ctx).apply { text = "%" }
@@ -731,7 +714,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     private data class FeeDraft(
         val name: String,
         val percent: BigDecimal,
-        val isMarkup: Boolean,
         val isActive: Boolean,
         val feeSide: FeeSide,
     )
@@ -754,10 +736,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                     .toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO
             return FeeDraft(
                 name = nameInput.text.toString().trim(),
-                percent = parsed.abs(),
-                // Zero has no sign meaning — treat as markup so the default
-                // for a blank/zero field matches the previous +/-toggle default.
-                isMarkup = parsed.signum() >= 0,
+                percent = parsed,
                 isActive = activeSwitch.isChecked,
                 feeSide = feeSideChooser.current(),
             )
@@ -770,12 +749,10 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     ): SharedFeeInputs =
         SharedFeeInputs(
             nameInput = buildNameInput(ctx, existing?.name),
-            percentInput = buildPercentInput(ctx, existing?.signedPercent()),
+            percentInput = buildPercentInput(ctx, existing?.percent),
             feeSideChooser = buildFeeSideChooser(ctx, existing?.feeSide ?: FeeSide.ORIGINAL),
             activeSwitch = buildSwitch(ctx, R.string.fee_edit_active, existing?.isActive != false),
         )
-
-    private fun Fee.signedPercent(): BigDecimal = if (isMarkup) percent else percent.negate()
 
     private fun buildEditorContainer(ctx: Context): LinearLayout =
         paddedDialogContainer(ctx, topPadding = resources.getDimensionPixelSize(R.dimen.margin2x))
@@ -872,7 +849,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             id = UUID.randomUUID().toString(),
             name = name,
             percent = percent,
-            isMarkup = isMarkup,
             isActive = isActive,
             feeSide = feeSide,
         )
@@ -882,7 +858,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             id = UUID.randomUUID().toString(),
             name = name,
             percent = percent,
-            isMarkup = isMarkup,
             isActive = isActive,
             feeSide = feeSide,
         )
@@ -897,7 +872,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             id = id,
             name = name,
             percent = percent,
-            isMarkup = isMarkup,
             from = from,
             to = to,
             bothWays = bothWays,

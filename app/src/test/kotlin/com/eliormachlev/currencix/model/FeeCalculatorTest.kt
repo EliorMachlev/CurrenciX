@@ -12,7 +12,6 @@ class FeeCalculatorTest {
     private fun globalExchange(
         id: String,
         percent: String,
-        markup: Boolean = true,
         isActive: Boolean = true,
         name: String = "",
         feeSide: FeeSide = FeeSide.ORIGINAL,
@@ -20,7 +19,6 @@ class FeeCalculatorTest {
         id = id,
         name = name,
         percent = bd(percent),
-        isMarkup = markup,
         isActive = isActive,
         feeSide = feeSide,
     )
@@ -28,7 +26,6 @@ class FeeCalculatorTest {
     private fun globalBank(
         id: String,
         percent: String,
-        markup: Boolean = true,
         isActive: Boolean = true,
         name: String = "",
         feeSide: FeeSide = FeeSide.ORIGINAL,
@@ -36,7 +33,6 @@ class FeeCalculatorTest {
         id = id,
         name = name,
         percent = bd(percent),
-        isMarkup = markup,
         isActive = isActive,
         feeSide = feeSide,
     )
@@ -47,7 +43,6 @@ class FeeCalculatorTest {
         from: String,
         to: String,
         bothWays: Boolean = false,
-        markup: Boolean = true,
         isActive: Boolean = true,
         name: String = "",
         feeSide: FeeSide = FeeSide.ORIGINAL,
@@ -55,7 +50,6 @@ class FeeCalculatorTest {
         id = id,
         name = name,
         percent = bd(percent),
-        isMarkup = markup,
         from = from,
         to = to,
         bothWays = bothWays,
@@ -103,12 +97,6 @@ class FeeCalculatorTest {
         val fees = listOf(globalExchange("g", "2"), globalBank("b", "1"))
         // 1.02 * 1.01 = 1.0302
         near("1.0302", combined(fees, Currency.USD, Currency.EUR))
-    }
-
-    @Test
-    fun `discount (isMarkup=false) subtracts`() {
-        val fees = listOf(globalExchange("g", "5", markup = false))
-        near("0.95", combined(fees, Currency.USD, Currency.EUR))
     }
 
     @Test
