@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,6 +52,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -153,16 +153,13 @@ private val CHIP_TO_FINAL_GAP: Dp = 2.dp
 // Framed "final cost" box that wraps the hero final. The label sits ON
 // the top border (fieldset-legend style) — the label paints a strip of the
 // card's surface color behind itself so the border appears to break for
-// the text and resume after it.
-private val FINAL_BOX_BORDER_WIDTH: Dp = 1.5.dp
+// the text and resume after it. Vertical centering of the label on the
+// border stroke is done at measure time in [FinalCostBox] using the label's
+// actual rendered height, so there's no static half-height constant here.
+private val FINAL_BOX_BORDER_WIDTH: Dp = 1.dp
 private val FINAL_BOX_CORNER_RADIUS: Dp = 14.dp
 private val FINAL_BOX_HORIZONTAL_PADDING: Dp = 12.dp
 private val FINAL_BOX_VERTICAL_PADDING: Dp = 8.dp
-private val FINAL_LABEL_TEXT_SIZE = 11.sp
-
-// Half the label's rendered height. The border box is padded down by this
-// amount so its top edge lines up with the label's vertical center.
-private val FINAL_LABEL_HALF_HEIGHT: Dp = 8.dp
 
 // How far the label sits from the box's leading corner along the top border.
 private val FINAL_LABEL_START_INSET: Dp = 14.dp
@@ -171,7 +168,6 @@ private val FINAL_LABEL_START_INSET: Dp = 14.dp
 // masked strip is a bit wider than the text on each side — creates the
 // visible "gap" in the border.
 private val FINAL_LABEL_MASK_PADDING: Dp = 6.dp
-private const val FINAL_BOX_BORDER_ALPHA = 0.55f
 
 // Applied to the big-value texts so Android's default font padding
 // (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
@@ -548,54 +544,64 @@ private fun AmountHero(
 // wraps the big number; the "Final cost" label sits on top of the border
 // at the leading edge, painted over a surface-colored strip so the border
 // visually breaks for the text and resumes after it (fieldset legend).
+// A custom [Layout] measures the label's real height and offsets the box
+// down by half of it so the top border stroke lands on the label's
+// vertical center — no static "half height" guess.
 @Composable
 private fun FinalCostBox(
     text: String,
     onLongClick: () -> Unit,
 ) {
-    val borderColor = MaterialTheme.colorScheme.error.copy(alpha = FINAL_BOX_BORDER_ALPHA)
+    val borderColor = MaterialTheme.colorScheme.outline
     val surfaceColor = MaterialTheme.colorScheme.surface
-    Box(Modifier.fillMaxWidth()) {
-        // The border box itself. Padded down by the label's half-height so
-        // the top border line falls under the label's vertical center.
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .padding(top = FINAL_LABEL_HALF_HEIGHT)
-                .border(
-                    width = FINAL_BOX_BORDER_WIDTH,
-                    color = borderColor,
-                    shape = RoundedCornerShape(FINAL_BOX_CORNER_RADIUS),
-                ).padding(
-                    horizontal = FINAL_BOX_HORIZONTAL_PADDING,
-                    vertical = FINAL_BOX_VERTICAL_PADDING,
-                ),
-        ) {
-            AmountRow(
-                text = text,
-                fontSize = AMOUNT_HERO_SIZE,
-                fontWeight = FontWeight.Medium,
-                cursorHeight = null,
-                onLongClick = onLongClick,
-            )
-        }
-        // Label — pinned to top-start of the wrapper (which coincides with
-        // the border's top edge because of the offset above). The surface-
-        // colored background overpaints the border strip beneath the text.
-        Text(
-            text = stringResource(R.string.hero_final_cost_label),
-            fontSize = FINAL_LABEL_TEXT_SIZE,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            style = TIGHT_TEXT_STYLE,
-            modifier =
+    val borderWidthPx = with(LocalDensity.current) { FINAL_BOX_BORDER_WIDTH.roundToPx() }
+    val labelInsetPx = with(LocalDensity.current) { FINAL_LABEL_START_INSET.roundToPx() }
+    Layout(
+        modifier = Modifier.fillMaxWidth(),
+        content = {
+            Box(
                 Modifier
-                    .align(Alignment.TopStart)
-                    .offset(x = FINAL_LABEL_START_INSET)
-                    .background(surfaceColor)
-                    .padding(horizontal = FINAL_LABEL_MASK_PADDING),
-        )
+                    .fillMaxWidth()
+                    .border(
+                        width = FINAL_BOX_BORDER_WIDTH,
+                        color = borderColor,
+                        shape = RoundedCornerShape(FINAL_BOX_CORNER_RADIUS),
+                    ).padding(
+                        horizontal = FINAL_BOX_HORIZONTAL_PADDING,
+                        vertical = FINAL_BOX_VERTICAL_PADDING,
+                    ),
+            ) {
+                AmountRow(
+                    text = text,
+                    fontSize = AMOUNT_HERO_SIZE,
+                    fontWeight = FontWeight.Medium,
+                    cursorHeight = null,
+                    onLongClick = onLongClick,
+                )
+            }
+            Text(
+                text = stringResource(R.string.hero_final_cost_label),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                modifier =
+                    Modifier
+                        .background(surfaceColor)
+                        .padding(horizontal = FINAL_LABEL_MASK_PADDING),
+            )
+        },
+    ) { measurables, constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val labelPlaceable = measurables[1].measure(loose)
+        val boxPlaceable = measurables[0].measure(constraints)
+        val labelHalf = labelPlaceable.height / 2
+        val boxTop = (labelHalf - borderWidthPx / 2).coerceAtLeast(0)
+        val width = constraints.maxWidth
+        val height = boxTop + boxPlaceable.height
+        layout(width, height) {
+            boxPlaceable.place(0, boxTop)
+            labelPlaceable.placeRelative(labelInsetPx, 0)
+        }
     }
 }
 
