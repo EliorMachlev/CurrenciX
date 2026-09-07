@@ -99,21 +99,21 @@ import java.time.format.DateTimeFormatter
 private val MATH_LINE_BOTTOM_GAP: Dp = 2.dp
 private val CARD_OUTER_MARGIN: Dp = 16.dp
 private val CARD_RADIUS: Dp = 28.dp
-private val CARD_PADDING: Dp = 20.dp
+private val CARD_PADDING: Dp = 16.dp
 private val PILL_RADIUS: Dp = 999.dp
 private val PILL_HEIGHT: Dp = 44.dp
 private val PILL_HORIZONTAL_PADDING: Dp = 14.dp
 private val FLAG_SIZE: Dp = 28.dp
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val PILLS_ROW_GAP: Dp = 8.dp
-private val PILLS_ROW_BOTTOM_GAP: Dp = 20.dp
+private val PILLS_ROW_BOTTOM_GAP: Dp = 12.dp
 
 // Breathing room above the tinted "you get" band that hosts the
 // converted-amount cluster (chip + amount + pill).
-private val AMOUNT_BAND_TOP_GAP: Dp = 14.dp
+private val AMOUNT_BAND_TOP_GAP: Dp = 8.dp
 
 // Interior padding and corner rounding for the "you get" band itself.
-private val AMOUNT_BAND_PADDING: Dp = 12.dp
+private val AMOUNT_BAND_PADDING: Dp = 10.dp
 private val AMOUNT_BAND_RADIUS: Dp = 20.dp
 
 // Vertical gaps between the fee chip (above the amount) and the amount
@@ -121,8 +121,8 @@ private val AMOUNT_BAND_RADIUS: Dp = 20.dp
 private val CHIP_TO_AMOUNT_GAP: Dp = 4.dp
 private val AMOUNT_TO_PILL_GAP: Dp = 6.dp
 
-private val RATE_FOOTER_TOP_MARGIN: Dp = 14.dp
-private val RATE_FOOTER_PADDING_TOP: Dp = 12.dp
+private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
+private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
 private val LIVE_DOT_SIZE: Dp = 6.dp
 private val CURSOR_WIDTH: Dp = 2.dp
 private val CURSOR_HEIGHT: Dp = 44.dp
