@@ -7,6 +7,7 @@
     <string name="offline_banner_with_date">לא מקוון • שערים מתאריך %1$s</string>
     <string name="offline_banner_no_data">לא מקוון • אין עדיין שערים שמורים</string>
     <string name="copied_to_clipboard">&lt;b>%s&lt;/b> הועתק ללוח הגזירים</string>
+    <string name="hero_final_cost_label">עלות סופית</string>
     <string name="historical_rates_dialog_title">שערי עבר</string>
     <string name="historical_rates_dialog_toggle">שימוש בשערי חליפין בתאריך מסוים. כשמושבת ייעשה שימוש רק בעדכניים.</string>
     <string name="error">שגיאה: %s</string>

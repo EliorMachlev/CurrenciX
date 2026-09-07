@@ -14,6 +14,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -147,6 +148,17 @@ private val MATH_LINE_TEXT_SIZE = 14.sp
 // one vertical equation without doubling the card height.
 private val SUBTOTAL_TO_CHIP_GAP: Dp = 4.dp
 private val CHIP_TO_FINAL_GAP: Dp = 2.dp
+
+// Framed "final cost" box that wraps the hero final — thin error-tinted
+// border with a small label above. Gives the fee-adjusted total a clear
+// visual identity so "what does 121.2 mean?" is unmistakable.
+private val FINAL_BOX_BORDER_WIDTH: Dp = 1.5.dp
+private val FINAL_BOX_CORNER_RADIUS: Dp = 14.dp
+private val FINAL_BOX_HORIZONTAL_PADDING: Dp = 12.dp
+private val FINAL_BOX_VERTICAL_PADDING: Dp = 8.dp
+private val FINAL_LABEL_TO_BOX_GAP: Dp = 2.dp
+private val FINAL_LABEL_TEXT_SIZE = 11.sp
+private const val FINAL_BOX_BORDER_ALPHA = 0.55f
 
 // Applied to the big-value texts so Android's default font padding
 // (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
@@ -514,12 +526,48 @@ private fun AmountHero(
             Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
             ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
             Spacer(Modifier.height(CHIP_TO_FINAL_GAP))
+            FinalCostBox(text = finalText, onLongClick = onFinalLongClick)
+        }
+    }
+}
+
+// Framed hero for the fee-adjusted final. Renders a small "Final cost"
+// label leading edge, then a thin-bordered rounded box wrapping the big
+// number. Only appears when a fee is applied (i.e. the subtotal is NOT
+// the final).
+@Composable
+private fun FinalCostBox(
+    text: String,
+    onLongClick: () -> Unit,
+) {
+    val borderColor = MaterialTheme.colorScheme.error.copy(alpha = FINAL_BOX_BORDER_ALPHA)
+    Column(Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.hero_final_cost_label),
+            fontSize = FINAL_LABEL_TEXT_SIZE,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+        )
+        Spacer(Modifier.height(FINAL_LABEL_TO_BOX_GAP))
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .border(
+                    width = FINAL_BOX_BORDER_WIDTH,
+                    color = borderColor,
+                    shape = RoundedCornerShape(FINAL_BOX_CORNER_RADIUS),
+                ).padding(
+                    horizontal = FINAL_BOX_HORIZONTAL_PADDING,
+                    vertical = FINAL_BOX_VERTICAL_PADDING,
+                ),
+        ) {
             AmountRow(
-                text = finalText,
+                text = text,
                 fontSize = AMOUNT_HERO_SIZE,
                 fontWeight = FontWeight.Medium,
                 cursorHeight = null,
-                onLongClick = onFinalLongClick,
+                onLongClick = onLongClick,
             )
         }
     }
