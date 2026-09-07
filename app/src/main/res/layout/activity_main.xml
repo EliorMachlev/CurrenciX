@@ -43,11 +43,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp" />
 
+    <!-- Weights below (27 : 20) trim the keypad to ~85% of its previous
+         portrait row height (was a straight 1:1 split with the hero card),
+         so the amount hero has more room to breathe on tall phones without
+         starving the keypad targets. -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="27">
 
         <androidx.compose.ui.platform.ComposeView
             android:id="@+id/mainDisplayHost"
@@ -61,14 +65,14 @@
         layout="@layout/main_keypad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="20" />
 
     <include
         android:id="@+id/keypad_extended"
         layout="@layout/main_keypad_extended"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="20"
         android:visibility="gone"
         tools:ignore="DuplicateIncludedIds" />
 
