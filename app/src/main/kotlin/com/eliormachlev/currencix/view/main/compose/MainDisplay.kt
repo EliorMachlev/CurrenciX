@@ -61,6 +61,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentManager
@@ -126,16 +127,26 @@ private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
 private val LIVE_DOT_SIZE: Dp = 6.dp
 private val CURSOR_WIDTH: Dp = 2.dp
 private val CURSOR_HEIGHT: Dp = 44.dp
+private val CURSOR_HEIGHT_SUBTOTAL: Dp = 26.dp
 private val FLAG_GAP: Dp = 10.dp
 private val CHEVRON_GAP: Dp = 4.dp
 private val CHEVRON_SIZE: Dp = 14.dp
 
 // Amount-hero / amount-to display sizes. One-off, not part of the Typography
-// scale (Material3 would try to apply them elsewhere).
+// scale (Material3 would try to apply them elsewhere). AMOUNT_SUBTOTAL_SIZE
+// renders the pre-fee subtotal in the top hero (medium weight, sits above
+// the fee chip); the fee-adjusted final claims AMOUNT_HERO_SIZE below.
 private val AMOUNT_HERO_SIZE = 52.sp
+private val AMOUNT_SUBTOTAL_SIZE = 28.sp
 private val AMOUNT_TO_SIZE = 34.sp
 private val FEE_CHIP_TEXT_SIZE = 11.sp
 private val MATH_LINE_TEXT_SIZE = 14.sp
+
+// Gap between the medium subtotal row and the fee chip that follows it,
+// and between the fee chip and the hero final. Tuned so the three read as
+// one vertical equation without doubling the card height.
+private val SUBTOTAL_TO_CHIP_GAP: Dp = 4.dp
+private val CHIP_TO_FINAL_GAP: Dp = 2.dp
 
 // Applied to the big-value texts so Android's default font padding
 // (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
@@ -247,12 +258,19 @@ internal fun MainDisplay(
 
     val baseFull = baseFormatted?.toString().orEmpty()
     val resultFull = resultFormatted?.toString().orEmpty()
+    // trueCost is the fee-adjusted final in the source currency. Format it the
+    // same way as the typed subtotal (compact for long values, symbol on the
+    // locale-appropriate side) so the two amounts read as a matching pair.
+    val originalFinalFormatted =
+        formatMoneyForDisplay(context, trueCost, baseCurrency, decimalPlaces) ?: baseFull
     HeroCard(
         baseCurrency = baseCurrency,
         destCurrency = destCurrency,
         baseFormatted = compactAmountOrFull(context, baseFull, baseValueNumber, baseCurrency),
+        originalFinalFormatted = originalFinalFormatted,
         resultFormatted = compactAmountOrFull(context, resultFull, resultNumber, destCurrency),
         baseCopyText = baseFull,
+        originalFinalCopyText = originalFinalFormatted,
         resultCopyText = resultFull,
         rates = rates,
         isUpdating = isUpdating,
@@ -290,8 +308,10 @@ private fun HeroCard(
     baseCurrency: Currency?,
     destCurrency: Currency?,
     baseFormatted: String,
+    originalFinalFormatted: String,
     resultFormatted: String,
     baseCopyText: String,
+    originalFinalCopyText: String,
     resultCopyText: String,
     rates: ExchangeRates?,
     isUpdating: Boolean,
@@ -331,15 +351,17 @@ private fun HeroCard(
             )
             Spacer(Modifier.height(PILLS_ROW_BOTTOM_GAP))
             AmountHero(
-                text = baseFormatted,
+                subtotalText = baseFormatted,
+                finalText = originalFinalFormatted,
                 mathText = mathText,
-                onLongClick = { if (baseCopyText.isNotEmpty()) callbacks.onCopy(baseCopyText) },
+                onSubtotalLongClick = { if (baseCopyText.isNotEmpty()) callbacks.onCopy(baseCopyText) },
+                onFinalLongClick = {
+                    if (originalFinalCopyText.isNotEmpty()) callbacks.onCopy(originalFinalCopyText)
+                },
                 stack = sideStacks?.original,
                 fees = sideFees?.original.orEmpty(),
                 bigValue = originalBig,
                 otherValue = originalOther,
-                currency = baseCurrency,
-                decimalPlaces = decimalPlaces,
                 onFeeChipClick = callbacks.onOpenFees,
             )
             Spacer(Modifier.height(AMOUNT_BAND_TOP_GAP))
@@ -457,56 +479,87 @@ private fun SwapFab(
     }
 }
 
+// AmountHero — chain layout with three tiers when a fee is present:
+//   math line (top, small)   "60 + 60 ="
+//   subtotal (medium, cursor) "₪ 120"
+//   fee chip (small)          "+ 1% · Max Executive"
+//   final (big, hero)         "₪ 121.2"
+// When there's no fee the subtotal IS the final, so we collapse to the
+// classic single-hero layout to keep the card compact.
 @Composable
 private fun AmountHero(
-    text: String,
+    subtotalText: String,
+    finalText: String,
     mathText: String?,
-    onLongClick: () -> Unit,
+    onSubtotalLongClick: () -> Unit,
+    onFinalLongClick: () -> Unit,
     stack: BigDecimal?,
     fees: List<Fee>,
     bigValue: BigDecimal?,
     otherValue: BigDecimal?,
-    currency: Currency?,
-    decimalPlaces: Int,
     onFeeChipClick: () -> Unit,
 ) {
     val hasFee = stack.hasFee()
-    val showPill = hasFee && bigValue.isMeaningful() && otherValue != null
+    val showChain = hasFee && bigValue.isMeaningful() && otherValue != null
     Column(Modifier.fillMaxWidth()) {
         MathLine(mathText)
-        if (hasFee) ChipAbove(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .combinedClickable(onClick = {}, onLongClick = onLongClick),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End,
-        ) {
-            Text(
-                text = text,
+        AmountRow(
+            text = subtotalText,
+            fontSize = if (showChain) AMOUNT_SUBTOTAL_SIZE else AMOUNT_HERO_SIZE,
+            fontWeight = FontWeight.Medium,
+            cursorHeight = if (showChain) CURSOR_HEIGHT_SUBTOTAL else CURSOR_HEIGHT,
+            onLongClick = onSubtotalLongClick,
+        )
+        if (showChain) {
+            Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+            ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
+            Spacer(Modifier.height(CHIP_TO_FINAL_GAP))
+            AmountRow(
+                text = finalText,
                 fontSize = AMOUNT_HERO_SIZE,
-                lineHeight = AMOUNT_HERO_SIZE,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                softWrap = false,
-                textAlign = TextAlign.End,
-                style = TIGHT_TEXT_STYLE,
-                modifier =
-                    Modifier
-                        .weight(1f, fill = false)
-                        .horizontalScroll(rememberStartAnchoredScrollState(text)),
-            )
-            BlinkingCursor()
-        }
-        if (showPill && otherValue != null) {
-            PillBelow(
-                value = otherValue,
-                currency = currency,
-                decimalPlaces = decimalPlaces,
-                onClick = onFeeChipClick,
+                cursorHeight = null,
+                onLongClick = onFinalLongClick,
             )
         }
+    }
+}
+
+// Right-aligned amount row shared by the subtotal and final tiers. When
+// [cursorHeight] is non-null a blinking primary-colored cursor renders to
+// the right of the number (the subtotal is the one being typed; the derived
+// final never carries a cursor).
+@Composable
+private fun AmountRow(
+    text: String,
+    fontSize: TextUnit,
+    fontWeight: FontWeight,
+    cursorHeight: Dp?,
+    onLongClick: () -> Unit,
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .combinedClickable(onClick = {}, onLongClick = onLongClick),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End,
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize,
+            lineHeight = fontSize,
+            fontWeight = fontWeight,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            softWrap = false,
+            textAlign = TextAlign.End,
+            style = TIGHT_TEXT_STYLE,
+            modifier =
+                Modifier
+                    .weight(1f, fill = false)
+                    .horizontalScroll(rememberStartAnchoredScrollState(text)),
+        )
+        if (cursorHeight != null) BlinkingCursor(height = cursorHeight)
     }
 }
 
@@ -538,7 +591,7 @@ private fun MathLine(text: String?) {
 }
 
 @Composable
-private fun BlinkingCursor() {
+private fun BlinkingCursor(height: Dp = CURSOR_HEIGHT) {
     val transition = rememberInfiniteTransition(label = "cursor")
     val alpha by transition.animateFloat(
         initialValue = 1f,
@@ -555,7 +608,7 @@ private fun BlinkingCursor() {
         Modifier
             .padding(start = 6.dp)
             .width(CURSOR_WIDTH)
-            .height(CURSOR_HEIGHT)
+            .height(height)
             .graphicsLayer { this.alpha = alpha }
             .background(primary),
     )
@@ -638,6 +691,26 @@ private fun ChipAbove(
             Modifier
                 .fillMaxWidth()
                 .padding(bottom = CHIP_TO_AMOUNT_GAP),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FeeChip(stack, fees, onClick)
+        }
+    }
+}
+
+// Same as [ChipAbove] but sits between the subtotal and the hero final in
+// the top card, so it takes no bottom padding of its own — the surrounding
+// column adds symmetric spacers instead.
+@Composable
+private fun ChipBelow(
+    stack: BigDecimal,
+    fees: List<Fee>,
+    onClick: () -> Unit,
+) {
+    Ltr {
+        Row(
+            Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -816,6 +889,24 @@ private fun compactAmountOrFull(
 ): String {
     val compact = value?.toCompactHumanReadableNumber(context) ?: return full
     return formatWithSymbol(compact, currency?.symbol(), hasAppendedCurrencySymbol(context))
+}
+
+// Full-formatting path for a derived money [value] (no ViewModel-supplied
+// pre-formatted string available). Prefers the compact form for very long
+// values, falls back to the standard grouped decimal, then prepends /
+// appends the currency symbol per locale. Returns null when [value] is
+// null so callers can substitute a fallback.
+private fun formatMoneyForDisplay(
+    context: Context,
+    value: BigDecimal?,
+    currency: Currency?,
+    decimalPlaces: Int,
+): String? {
+    if (value == null) return null
+    val body =
+        value.toCompactHumanReadableNumber(context)
+            ?: value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces)
+    return formatWithSymbol(body, currency?.symbol(), hasAppendedCurrencySymbol(context))
 }
 
 // Locale-aware "$symbol number" / "number $symbol" — mirrors the ViewModel's
