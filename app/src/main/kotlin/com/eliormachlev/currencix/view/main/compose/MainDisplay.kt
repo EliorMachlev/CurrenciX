@@ -77,6 +77,7 @@ import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
+import com.eliormachlev.currencix.util.toCompactHumanReadableNumber
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.theme.Amber
@@ -244,11 +245,15 @@ internal fun MainDisplay(
     val originalValue by viewModel.getOriginalValue().observeAsState()
     val decimalPlaces by viewModel.getDecimalPlaces().observeAsState(FINAL_VALUE_DECIMAL_PLACES_FALLBACK)
 
+    val baseFull = baseFormatted?.toString().orEmpty()
+    val resultFull = resultFormatted?.toString().orEmpty()
     HeroCard(
         baseCurrency = baseCurrency,
         destCurrency = destCurrency,
-        baseFormatted = baseFormatted?.toString().orEmpty(),
-        resultFormatted = resultFormatted?.toString().orEmpty(),
+        baseFormatted = compactAmountOrFull(context, baseFull, baseValueNumber, baseCurrency),
+        resultFormatted = compactAmountOrFull(context, resultFull, resultNumber, destCurrency),
+        baseCopyText = baseFull,
+        resultCopyText = resultFull,
         rates = rates,
         isUpdating = isUpdating,
         sideStacks = sideStacks,
@@ -286,6 +291,8 @@ private fun HeroCard(
     destCurrency: Currency?,
     baseFormatted: String,
     resultFormatted: String,
+    baseCopyText: String,
+    resultCopyText: String,
     rates: ExchangeRates?,
     isUpdating: Boolean,
     sideStacks: SideStacks?,
@@ -326,7 +333,7 @@ private fun HeroCard(
             AmountHero(
                 text = baseFormatted,
                 mathText = mathText,
-                onLongClick = { if (baseFormatted.isNotEmpty()) callbacks.onCopy(baseFormatted) },
+                onLongClick = { if (baseCopyText.isNotEmpty()) callbacks.onCopy(baseCopyText) },
                 stack = sideStacks?.original,
                 fees = sideFees?.original.orEmpty(),
                 bigValue = originalBig,
@@ -344,7 +351,7 @@ private fun HeroCard(
                 otherValue = convertedOther,
                 currency = destCurrency,
                 decimalPlaces = decimalPlaces,
-                onLongClick = { if (resultFormatted.isNotEmpty()) callbacks.onCopy(resultFormatted) },
+                onLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
                 onFeeChipClick = callbacks.onOpenFees,
             )
             Spacer(Modifier.height(RATE_FOOTER_TOP_MARGIN))
@@ -769,11 +776,10 @@ private fun FinalValueChip(
     val symbol = currency?.symbol()
     val label =
         remember(value, symbol, symbolAppended, decimalPlaces) {
-            formatWithSymbol(
-                value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces),
-                symbol,
-                symbolAppended,
-            )
+            val body =
+                value.toCompactHumanReadableNumber(context)
+                    ?: value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces)
+            formatWithSymbol(body, symbol, symbolAppended)
         }
     val errorColor = MaterialTheme.colorScheme.error
     val bg = errorColor.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
@@ -795,6 +801,21 @@ private fun FinalValueChip(
             modifier = Modifier.horizontalScroll(rememberIdleAutoScrollState(resetKey = value)),
         )
     }
+}
+
+// Displayable version of a full grouped amount ("310,500,000,000,000 ILS"),
+// folded into compact form ("310.5T ILS") once the integer part crosses the
+// K/M/B/T/Q threshold. Falls back to [full] when the value is null or short
+// enough to stay legible as-is; the ViewModel's raw string is still what
+// long-press-copy delivers, so precision isn't lost on the clipboard side.
+private fun compactAmountOrFull(
+    context: Context,
+    full: String,
+    value: BigDecimal?,
+    currency: Currency?,
+): String {
+    val compact = value?.toCompactHumanReadableNumber(context) ?: return full
+    return formatWithSymbol(compact, currency?.symbol(), hasAppendedCurrencySymbol(context))
 }
 
 // Locale-aware "$symbol number" / "number $symbol" — mirrors the ViewModel's
