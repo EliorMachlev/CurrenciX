@@ -18,8 +18,6 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -38,11 +36,9 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
-import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
-import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
@@ -53,6 +49,8 @@ import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.main.compose.MainDisplay
 import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
+import com.eliormachlev.currencix.view.main.compose.MainKeypad
+import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
 import com.eliormachlev.currencix.view.timeline.TimelineActivity
@@ -84,8 +82,6 @@ private const val WORDMARK_TITLE_SP = 26f
 class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var preferenceModel: PreferenceViewModel
-
-    private var hapticEnabled = false
 
     // Cached date pattern shared with the share-sheet and offline-banner
     // formatters. Compose reads the same pattern via observeAsState so its
@@ -124,6 +120,11 @@ class MainActivity : BaseActivity() {
 
         // hero card (pills + amount hero + amount to + rate footer)
         installMainDisplay()
+
+        // compose-based keypad below the hero card. Owns its own row heights
+        // so growing the hero card never expands / clips the keys, and vice
+        // versa.
+        installKeypad()
 
         // hamburger drawer — leading edge holds every menu action (with icons);
         // the trailing toolbar still shows the four highest-frequency shortcuts.
@@ -387,15 +388,6 @@ class MainActivity : BaseActivity() {
     private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
     private fun setListeners() {
-        // long click on delete
-        arrayOf<View>(findViewById(R.id.keypad), findViewById(R.id.keypad_extended)).forEach {
-            it.findViewById<AppCompatImageButton>(R.id.btn_delete).setOnLongClickListener {
-                it.hapticTap(hapticEnabled)
-                viewModel.clear()
-                true
-            }
-        }
-
         // swipe to refresh
         swipeRefresh.setOnRefreshListener {
             viewModel.forceUpdateExchangeRate()
@@ -431,11 +423,6 @@ class MainActivity : BaseActivity() {
             swipeRefresh.isEnabled = isRefreshing.not()
             drawerItemRefresh?.isEnabled = isRefreshing.not()
         }
-        viewModel.keyboardType.observe(this) { observeKeyboardType(it) }
-        viewModel.nextParen().observe(this) { next ->
-            findViewById<AppCompatButton>(R.id.btn_parens)?.paintParenCycle(next)
-        }
-        viewModel.isHapticFeedbackEnabled.observe(this) { hapticEnabled = it }
         NetworkStatusLiveData(this).observe(this) { online ->
             isOnline = online
             renderOfflineBanner()
@@ -490,74 +477,6 @@ class MainActivity : BaseActivity() {
             .setAction(android.R.string.ok) { }
             .setTextMaxLines(MAX_ERROR_TEXT_LINES)
             .show()
-    }
-
-    // System-keyboard modes (SYSTEM_NUMPAD, SYSTEM_FULL) fall back to the
-    // BASIC on-screen keypad until Phase 2b's follow-up wires an in-Compose
-    // EditText — otherwise a user with a system-mode preference would see
-    // both keypads hidden and have no way to type.
-    private fun observeKeyboardType(type: KeyboardType) {
-        val effective = if (type.isSystem) KeyboardType.BASIC else type
-        val keypadRegular = findViewById<View>(R.id.keypad)
-        val keypadExtended = findViewById<View>(R.id.keypad_extended)
-        keypadRegular.visibility = if (effective == KeyboardType.BASIC) View.VISIBLE else View.GONE
-        keypadExtended.visibility = if (effective == KeyboardType.EXPANDED) View.VISIBLE else View.GONE
-        val separator = getDecimalSeparator(this)
-        keypadExtended.findViewById<TextView>(R.id.btn_decimal).text = separator
-        keypadRegular.findViewById<TextView>(R.id.btn_decimal).text = separator
-    }
-
-    private fun haptic(view: View) = view.hapticTap(hapticEnabled)
-
-    /*
-     * keyboard: number input
-     */
-    fun numberEvent(view: View) {
-        haptic(view)
-        viewModel.addNumber((view as AppCompatButton).text.toString())
-    }
-
-    /*
-     * keyboard: add decimal point
-     */
-    fun decimalEvent(view: View) {
-        haptic(view)
-        viewModel.addDecimal()
-    }
-
-    /*
-     * keyboard: delete
-     */
-    fun deleteEvent(view: View) {
-        haptic(view)
-        viewModel.delete()
-    }
-
-    /*
-     * keyboard: percentage
-     */
-    fun percentEvent(view: View) {
-        haptic(view)
-        viewModel.addPercent()
-    }
-
-    /*
-     * keyboard: do some calculations
-     */
-    fun calculationEvent(view: View) {
-        haptic(view)
-        Operator
-            .fromDisplay((view as AppCompatButton).text.toString())
-            ?.apply
-            ?.invoke(viewModel)
-    }
-
-    /*
-     * keyboard: parentheses (cycle-toggle between `(` and `)`)
-     */
-    fun parensEvent(view: View) {
-        haptic(view)
-        viewModel.applyNextParen()
     }
 
     // capture hardware keyboard input
@@ -655,6 +574,39 @@ class MainActivity : BaseActivity() {
                         fragmentManager = supportFragmentManager,
                         callbacks = callbacks,
                         dateFormatPattern = pattern,
+                    )
+                }
+            }
+        }
+    }
+
+    // Wire the Compose keypad. Callbacks talk to the viewModel directly — the
+    // haptic tap is applied inside MainKeypad's hapticCombinedClickable, so we
+    // do NOT re-fire haptics here. System-IME variants surface no on-screen
+    // keypad, so we collapse them to BASIC for the fallback layout while the
+    // IME provides the actual input path.
+    private fun installKeypad() {
+        val callbacks =
+            MainKeypadCallbacks(
+                onDigit = viewModel::addNumber,
+                onDecimal = viewModel::addDecimal,
+                onOperator = { op -> op.apply(viewModel) },
+                onPercent = viewModel::addPercent,
+                onParens = viewModel::applyNextParen,
+                onDelete = viewModel::delete,
+                onDeleteLong = viewModel::clear,
+            )
+        findViewById<ComposeView>(R.id.keypadHost).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    val kbType by viewModel.keyboardType.observeAsState(KeyboardType.DEFAULT)
+                    val nextParen by viewModel.nextParen().observeAsState('(')
+                    val effective = if (kbType.isSystem) KeyboardType.BASIC else kbType
+                    MainKeypad(
+                        keyboardType = effective,
+                        nextParen = nextParen,
+                        callbacks = callbacks,
                     )
                 }
             }

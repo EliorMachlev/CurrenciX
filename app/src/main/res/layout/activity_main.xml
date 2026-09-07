@@ -49,17 +49,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp" />
 
-        <!-- Weights below (27 : 20) trim the keypad to ~85% of its previous
-             portrait row height (was a straight 1:1 split with the hero card),
-             so the amount hero has more room to breathe on tall phones without
-             starving the keypad targets. The card content also scrolls
-             (see MainDisplay.HeroCard) so a fee-active layout never clips even
-             on shorter screens. -->
+        <!-- Display takes every dp the keypad doesn't need. The keypad's own
+             ComposeView is wrap_content with fixed row heights (see MainKeypad)
+             so the hero card never has to fight it for space. -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="27">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <androidx.compose.ui.platform.ComposeView
                 android:id="@+id/mainDisplayHost"
@@ -68,21 +65,10 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <include
-            android:id="@+id/keypad"
-            layout="@layout/main_keypad"
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/keypadHost"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="20" />
-
-        <include
-            android:id="@+id/keypad_extended"
-            layout="@layout/main_keypad_extended"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="20"
-            android:visibility="gone"
-            tools:ignore="DuplicateIncludedIds" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

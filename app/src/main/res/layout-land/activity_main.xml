@@ -16,7 +16,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -55,7 +55,7 @@
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/swipeRefresh"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1">
 
                 <androidx.compose.ui.platform.ComposeView
@@ -67,21 +67,11 @@
 
         </LinearLayout>
 
-        <include
-            android:id="@+id/keypad"
-            layout="@layout/main_keypad"
-            android:layout_width="match_parent"
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/keypadHost"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-
-        <include
-            android:id="@+id/keypad_extended"
-            layout="@layout/main_keypad_extended"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"
-            tools:ignore="DuplicateIncludedIds" />
 
     </LinearLayout>
 
