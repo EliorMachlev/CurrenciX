@@ -169,6 +169,14 @@ private const val CURSOR_BLINK_MILLIS = 1200
 private const val LIVE_DOT_PULSE_MILLIS = 1000
 private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 
+// Live/historical status pill in the footer — tinted background + dot +
+// label. Kept compact so it doesn't out-shout the rate text beside it.
+private const val LIVE_CHIP_BG_ALPHA = 0.18f
+private val LIVE_CHIP_HORIZONTAL_PADDING: Dp = 6.dp
+private val LIVE_CHIP_VERTICAL_PADDING: Dp = 2.dp
+private val LIVE_CHIP_DOT_GAP: Dp = 4.dp
+private val LIVE_CHIP_TEXT_SIZE = 10.sp
+
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
@@ -919,16 +927,46 @@ private fun LiveRate(
         } ?: return
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val dotColor = if (isHistorical) Brass else MaterialTheme.colorScheme.primary
-        LiveDot(color = dotColor, pulsing = isPulsing)
+        LiveChip(isHistorical = isHistorical, isPulsing = isPulsing)
         Text(
             text = rateText,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+// A small pill-shaped status marker for the rate footer: an animated
+// dot (still pulsing while updating) plus a compact LIVE / HIST label,
+// wrapped in a tinted background so it reads as a proper chip rather
+// than a lone dot.
+@Composable
+private fun LiveChip(
+    isHistorical: Boolean,
+    isPulsing: Boolean,
+) {
+    val accent = if (isHistorical) Brass else MaterialTheme.colorScheme.primary
+    val bg = accent.copy(alpha = LIVE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
+    val label = stringResource(if (isHistorical) R.string.hist_chip_label else R.string.live_chip_label)
+    Row(
+        Modifier
+            .clip(RoundedCornerShape(PILL_RADIUS))
+            .background(bg)
+            .padding(horizontal = LIVE_CHIP_HORIZONTAL_PADDING, vertical = LIVE_CHIP_VERTICAL_PADDING),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(LIVE_CHIP_DOT_GAP),
+    ) {
+        LiveDot(color = accent, pulsing = isPulsing)
+        Text(
+            text = label,
+            fontSize = LIVE_CHIP_TEXT_SIZE,
+            fontWeight = FontWeight.Bold,
+            color = accent,
+            maxLines = 1,
         )
     }
 }
