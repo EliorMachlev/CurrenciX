@@ -22,11 +22,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -110,13 +108,12 @@ private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 20.dp
 private val AMOUNT_DIVIDER_MARGIN_TOP: Dp = 12.dp
 private val AMOUNT_DIVIDER_MARGIN_BOTTOM: Dp = 10.dp
-private val FEE_CHIP_TOP_GAP: Dp = 0.dp
 
-// Visual lift applied to fee rows so they render on top of the big
-// value's font descender space (which is empty ink). Cheating layout
-// via [Modifier.offset] keeps the divider below in place while pulling
-// the fee cluster closer to the number above.
-private val FEE_ROW_LIFT: Dp = 12.dp
+// Vertical gaps between the fee chip (above the amount) and the amount
+// itself, and between the amount and the red final-value pill (below).
+private val CHIP_TO_AMOUNT_GAP: Dp = 4.dp
+private val AMOUNT_TO_PILL_GAP: Dp = 6.dp
+
 private val RATE_FOOTER_TOP_MARGIN: Dp = 14.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 12.dp
 private val LIVE_DOT_SIZE: Dp = 6.dp
@@ -143,21 +140,8 @@ private val TIGHT_TEXT_STYLE = TextStyle(platformStyle = PlatformTextStyle(inclu
 // own default seed for the result formatter.
 private const val FINAL_VALUE_DECIMAL_PLACES_FALLBACK = 2
 
-// Horizontal gap between the fee-equation row elements (operator glyphs,
-// amber chip, red final-value pill).
-private val FEE_ROW_PILL_GAP: Dp = 4.dp
-
-// Vertical gap inside the operator stack (Column of "+" over "=") for the
-// markup case. Wider than a bare line height so the "+" isn't jammed
-// against the "=" but centers between the big value above and the chip
-// baseline below.
-private val FEE_OP_STACK_GAP: Dp = 4.dp
-
-// Operator glyphs joining the big value, fee chip, and final-value pill
-// into a readable equation. Uses U+2212 (minus) rather than a hyphen so the
-// glyph stays visually balanced with the "+".
-private const val OP_PLUS = "+"
-private const val OP_MINUS = "\u2212"
+// Trailing glyph on the math line so a running expression reads as
+// "1+2+3=" rather than a bare list of operands.
 private const val OP_EQUALS = "="
 
 // Rounding hint for the info-conversion mid-rate in the footer. Four places
@@ -465,13 +449,11 @@ private fun AmountHero(
     decimalPlaces: Int,
     onFeeChipClick: () -> Unit,
 ) {
-    val op = feeOpFor(stack)
-    val meaningful = bigValue.isMeaningful()
+    val hasFee = stack.hasFee()
+    val showPill = hasFee && bigValue.isMeaningful() && otherValue != null
     Column(Modifier.fillMaxWidth()) {
         MathLine(mathText)
-        if (op == FeeOp.MINUS && meaningful) {
-            FeeAboveRow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-        }
+        if (hasFee) ChipAbove(stack = stack!!, fees = fees, onClick = onFeeChipClick)
         Row(
             Modifier
                 .fillMaxWidth()
@@ -496,16 +478,14 @@ private fun AmountHero(
             )
             BlinkingCursor()
         }
-        FeeEquationTail(
-            op = op,
-            stack = stack,
-            fees = fees,
-            meaningful = meaningful,
-            finalValue = otherValue,
-            currency = currency,
-            decimalPlaces = decimalPlaces,
-            onClick = onFeeChipClick,
-        )
+        if (showPill) {
+            PillBelow(
+                value = otherValue!!,
+                currency = currency,
+                decimalPlaces = decimalPlaces,
+                onClick = onFeeChipClick,
+            )
+        }
     }
 }
 
@@ -584,12 +564,10 @@ private fun AmountToRow(
     onLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
-    val op = feeOpFor(stack)
-    val meaningful = bigValue.isMeaningful()
+    val hasFee = stack.hasFee()
+    val showPill = hasFee && bigValue.isMeaningful() && otherValue != null
     Column(Modifier.fillMaxWidth()) {
-        if (op == FeeOp.MINUS && meaningful) {
-            FeeAboveRow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-        }
+        if (hasFee) ChipAbove(stack = stack!!, fees = fees, onClick = onFeeChipClick)
         Row(
             modifier =
                 Modifier
@@ -611,45 +589,31 @@ private fun AmountToRow(
                         .horizontalScroll(rememberStartAnchoredScrollState(text)),
             )
         }
-        FeeEquationTail(
-            op = op,
-            stack = stack,
-            fees = fees,
-            meaningful = meaningful,
-            finalValue = otherValue,
-            currency = currency,
-            decimalPlaces = decimalPlaces,
-            onClick = onFeeChipClick,
-        )
+        if (showPill) {
+            PillBelow(
+                value = otherValue!!,
+                currency = currency,
+                decimalPlaces = decimalPlaces,
+                onClick = onFeeChipClick,
+            )
+        }
     }
 }
 
-// PLUS means the net fee stack is a markup (>1) and adds to the big value to
-// reach the final; MINUS means it's a markdown (<1) and subtracts. Derived
-// from the stack alone (not from the value comparison) so the chip still
-// renders when the big value is zero — the sign reflects the fee's own
-// direction, not a value delta.
-private enum class FeeOp { PLUS, MINUS }
+// True when the fee stack is a real markup/markdown (not `1`, i.e. not
+// a no-op). Used to decide whether the amber chip should render at all.
+private fun BigDecimal?.hasFee(): Boolean = this != null && this.compareTo(BigDecimal.ONE) != 0
 
-private fun feeOpFor(stack: BigDecimal?): FeeOp? {
-    if (stack == null) return null
-    val cmp = stack.compareTo(BigDecimal.ONE)
-    return when {
-        cmp > 0 -> FeeOp.PLUS
-        cmp < 0 -> FeeOp.MINUS
-        else -> null
-    }
-}
-
-// True only when the big value is a real amount worth showing the equation
-// closure for. If it's zero, `= 0` is uninformative, so we drop the operator
-// and pill and just show the chip alone.
+// True only when the big value is a real amount worth showing the red
+// "after fee" pill for. If it's zero, the pill would read as `0` — not
+// useful — so we drop it and let the chip alone convey the fee.
 private fun BigDecimal?.isMeaningful(): Boolean = this != null && this.signum() != 0
 
-// Rendered above the big value when the fee subtracts from it — user reads
-// "amber chip minus, applied to value below, equals final pill".
+// Renders the amber fee chip above the amount, right-aligned. Chip alone,
+// no operator glyph — the layout (chip on top, amount below, red pill under)
+// visually implies the equation.
 @Composable
-private fun FeeAboveRow(
+private fun ChipAbove(
     stack: BigDecimal,
     fees: List<Fee>,
     onClick: () -> Unit,
@@ -658,74 +622,45 @@ private fun FeeAboveRow(
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(bottom = FEE_CHIP_TOP_GAP),
-            horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
+                .padding(bottom = CHIP_TO_AMOUNT_GAP),
+            horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             FeeChip(stack, fees, onClick)
-            FeeOperator(OP_MINUS)
         }
     }
 }
 
-// Below-the-big-value fee row. Chip, `=` and pill are added / removed
-// with fee state, but the `+` slot in the operator column is always
-// reserved so the vertical rhythm above the equation doesn't shift
-// as the user types (`+` only paints ink for meaningful MARKUP; its
-// layout footprint is always there).
+// Renders the red final-value pill below the amount, right-aligned. The
+// pill is allowed to grow leftward into whatever the amount row leaves
+// unclaimed (weight(1f, fill = false)).
 @Composable
-private fun FeeEquationTail(
-    op: FeeOp?,
-    stack: BigDecimal?,
-    fees: List<Fee>,
-    meaningful: Boolean,
-    finalValue: BigDecimal?,
+private fun PillBelow(
+    value: BigDecimal,
     currency: Currency?,
     decimalPlaces: Int,
     onClick: () -> Unit,
 ) {
-    if (op == null || stack == null) return
-    val showEquation = meaningful && finalValue != null
-    if (op == FeeOp.PLUS) {
-        FeeRowRightAligned(verticalAlignment = Alignment.Bottom) {
-            FeeChip(stack, fees, onClick)
-            Column(
-                modifier = if (showEquation) Modifier else Modifier.zeroWidthKeepHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(FEE_OP_STACK_GAP),
-            ) {
-                Reserved(showEquation) { FeeOperator(OP_PLUS) }
-                Reserved(showEquation) { FeeOperator(OP_EQUALS) }
-            }
-            if (showEquation && finalValue != null) {
-                FinalValueChip(
-                    value = finalValue,
-                    currency = currency,
-                    decimalPlaces = decimalPlaces,
-                    onClick = onClick,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-            }
-        }
-    } else if (showEquation && finalValue != null) {
-        FeeRowRightAligned {
-            FeeOperator(OP_EQUALS)
-            FinalValueChip(
-                value = finalValue,
-                currency = currency,
-                decimalPlaces = decimalPlaces,
-                onClick = onClick,
-                modifier = Modifier.weight(1f, fill = false),
-            )
-        }
-    } else {
-        FeeRowRightAligned { FeeChip(stack, fees, onClick) }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = AMOUNT_TO_PILL_GAP),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FinalValueChip(
+            value = value,
+            currency = currency,
+            decimalPlaces = decimalPlaces,
+            onClick = onClick,
+            modifier = Modifier.weight(1f, fill = false),
+        )
     }
 }
 
 // Wraps [content] so it always takes its natural layout size but only
 // paints ink when [visible]. Used sparingly to hold a fixed slot open
-// (math line, `+` operator) while its glyph fades in/out with state.
+// (math line) while its glyph fades in/out with state.
 @Composable
 private fun Reserved(
     visible: Boolean,
@@ -733,15 +668,6 @@ private fun Reserved(
 ) {
     Box(Modifier.alpha(if (visible) 1f else 0f)) { content() }
 }
-
-// Measures children at their natural size but reports zero width to the
-// parent — vertical rhythm above is preserved while the sibling to the
-// right can flush against the edge as if this node weren't there.
-private fun Modifier.zeroWidthKeepHeight(): Modifier =
-    layout { measurable, constraints ->
-        val placeable = measurable.measure(constraints)
-        layout(0, placeable.height) { placeable.place(0, 0) }
-    }
 
 // Caps the child's max width at [fraction] of the parent's max width so it
 // never grows past that fraction even when nothing else in the parent row
@@ -820,38 +746,6 @@ private fun rememberIdleAutoScrollState(resetKey: Any? = null): ScrollState {
         }
     }
     return state
-}
-
-// Right-aligned row with a leading vertical gap — shared by every below-the-
-// big-value fee row so their spacing stays consistent. Wrapped in [Ltr] so
-// operator glyphs sit visually to the left of the chip/pill even under an
-// RTL app locale (math notation reads L→R everywhere).
-@Composable
-private fun FeeRowRightAligned(
-    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Ltr {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .offset(y = -FEE_ROW_LIFT),
-            horizontalArrangement = Arrangement.spacedBy(FEE_ROW_PILL_GAP, Alignment.End),
-            verticalAlignment = verticalAlignment,
-        ) {
-            content()
-        }
-    }
-}
-
-@Composable
-private fun FeeOperator(glyph: String) {
-    Text(
-        text = glyph,
-        fontSize = FEE_CHIP_TEXT_SIZE,
-        fontWeight = FontWeight.Medium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
 }
 
 @Composable
