@@ -49,17 +49,17 @@
             android:layout_width="match_parent"
             android:layout_height="0dp" />
 
-        <!-- Weights below (5 : 3) give the hero card ~62.5% of the portrait
-             row height so the tinted "you get" band + rate footer always fit,
-             even with a fee stack expanding the card (chip above + pill below
-             the amount). Was 27:20 previously but that still clipped the last
-             line on the fee-active layout. Keypad rows stay comfortably above
-             the 48dp touch-target minimum. -->
+        <!-- Weights below (27 : 20) trim the keypad to ~85% of its previous
+             portrait row height (was a straight 1:1 split with the hero card),
+             so the amount hero has more room to breathe on tall phones without
+             starving the keypad targets. The card content also scrolls
+             (see MainDisplay.HeroCard) so a fee-active layout never clips even
+             on shorter screens. -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="5">
+            android:layout_weight="27">
 
             <androidx.compose.ui.platform.ComposeView
                 android:id="@+id/mainDisplayHost"
@@ -73,14 +73,14 @@
             layout="@layout/main_keypad"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3" />
+            android:layout_weight="20" />
 
         <include
             android:id="@+id/keypad_extended"
             layout="@layout/main_keypad_extended"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="20"
             android:visibility="gone"
             tools:ignore="DuplicateIncludedIds" />
 
