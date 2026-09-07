@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.view.View
 import android.widget.DatePicker
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
@@ -22,6 +24,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.sp
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.window.layout.FoldingFeature
@@ -56,6 +60,7 @@ import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.math.BigDecimal
@@ -87,7 +92,10 @@ class MainActivity : BaseActivity() {
     private var dateFormatPattern: String = DEFAULT_DATE_PATTERN
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
-    private var menuItemRefresh: MenuItem? = null
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var drawerToggle: ActionBarDrawerToggle
+    private var drawerItemRefresh: MenuItem? = null
 
     private lateinit var offlineBanner: MaterialCardView
     private lateinit var offlineBannerText: TextView
@@ -110,9 +118,15 @@ class MainActivity : BaseActivity() {
         this.swipeRefresh = findViewById(R.id.swipeRefresh)
         this.offlineBanner = findViewById(R.id.offlineBanner)
         this.offlineBannerText = findViewById(R.id.offlineBannerText)
+        this.drawerLayout = findViewById(R.id.main_drawer_layout)
+        this.navigationView = findViewById(R.id.main_navigation_view)
 
         // hero card (pills + amount hero + amount to + rate footer)
         installMainDisplay()
+
+        // hamburger drawer — leading edge holds every menu action (with icons);
+        // the trailing toolbar still shows the four highest-frequency shortcuts.
+        installNavigationDrawer()
 
         // swipe-to-refresh: color scheme (not accessible in xml)
         swipeRefresh.setColorSchemeColors(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
@@ -130,33 +144,13 @@ class MainActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
-        this.menuItemRefresh = menu.findItem(R.id.refresh)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (drawerToggle.onOptionsItemSelected(item)) return true
         hapticTap()
         return when (item.itemId) {
-            R.id.settings -> {
-                startActivity(Intent(this, PreferenceActivity::class.java))
-                true
-            }
-            R.id.fees -> {
-                startActivity(PreferenceActivity.feesIntent(this))
-                true
-            }
-            R.id.change_api -> {
-                showApiProviderPicker()
-                true
-            }
-            R.id.refresh -> {
-                viewModel.forceUpdateExchangeRate()
-                true
-            }
-            R.id.share -> {
-                shareCurrentConversion()
-                true
-            }
             R.id.timeline -> openTimelineActivity()
             R.id.quick_conversions -> {
                 openQuickConversionsDialog()
@@ -172,6 +166,61 @@ class MainActivity : BaseActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    // Every drawer entry defers to the same handler; refresh alone needs a
+    // gate against re-triggering while an update is already in flight.
+    private fun onDrawerItemSelected(item: MenuItem): Boolean {
+        hapticTap()
+        when (item.itemId) {
+            R.id.nav_timeline -> openTimelineActivity()
+            R.id.nav_cart -> startActivity(Intent(this, CartActivity::class.java))
+            R.id.nav_quick_conversions -> openQuickConversionsDialog()
+            R.id.nav_date_picker -> openHistoricalDatePicker()
+            R.id.nav_refresh -> viewModel.forceUpdateExchangeRate()
+            R.id.nav_share -> shareCurrentConversion()
+            R.id.nav_change_api -> showApiProviderPicker()
+            R.id.nav_fees -> startActivity(PreferenceActivity.feesIntent(this))
+            R.id.nav_settings -> startActivity(Intent(this, PreferenceActivity::class.java))
+            else -> return false
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    private fun installNavigationDrawer() {
+        drawerToggle =
+            ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                R.string.a11y_open_navigation_drawer,
+                R.string.a11y_close_navigation_drawer,
+            )
+        drawerLayout.addDrawerListener(drawerToggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+        drawerToggle.syncState()
+        navigationView.setNavigationItemSelectedListener(::onDrawerItemSelected)
+        drawerItemRefresh = navigationView.menu.findItem(R.id.nav_refresh)
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        if (::drawerToggle.isInitialized) drawerToggle.syncState()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (::drawerToggle.isInitialized) drawerToggle.onConfigurationChanged(newConfig)
+    }
+
+    override fun onBackPressed() {
+        if (::drawerLayout.isInitialized && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            return
+        }
+        @Suppress("DEPRECATION")
+        super.onBackPressed()
     }
 
     private fun showApiProviderPicker() {
@@ -366,7 +415,7 @@ class MainActivity : BaseActivity() {
         viewModel.getError().observe(this) { showErrorSnackbar(it) }
         viewModel.isUpdating().observe(this) { isRefreshing ->
             swipeRefresh.isEnabled = isRefreshing.not()
-            menuItemRefresh?.isEnabled = isRefreshing.not()
+            drawerItemRefresh?.isEnabled = isRefreshing.not()
         }
         viewModel.keyboardType.observe(this) { observeKeyboardType(it) }
         viewModel.nextParen().observe(this) { next ->

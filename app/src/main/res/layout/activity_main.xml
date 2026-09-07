@@ -1,79 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_root"
+    android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/offlineBanner"
+    <LinearLayout
+        android:id="@+id/main_root"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:visibility="gone"
-        app:cardBackgroundColor="?attr/colorErrorContainer"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        tools:visibility="visible">
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/offlineBannerText"
-            style="@style/TextAppearance.Material3.BodyMedium"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/offlineBanner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawablePadding="12dp"
-            android:gravity="center_vertical"
-            android:padding="12dp"
-            android:textColor="?attr/colorOnErrorContainer"
-            app:drawableStartCompat="@drawable/ic_cloud_off"
-            app:drawableTint="?attr/colorOnErrorContainer"
-            tools:text="Offline • Rates from 2 hours ago" />
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="?attr/colorErrorContainer"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            tools:visibility="visible">
 
-    </com.google.android.material.card.MaterialCardView>
+            <TextView
+                android:id="@+id/offlineBannerText"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="12dp"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:textColor="?attr/colorOnErrorContainer"
+                app:drawableStartCompat="@drawable/ic_cloud_off"
+                app:drawableTint="?attr/colorOnErrorContainer"
+                tools:text="Offline • Rates from 2 hours ago" />
 
-    <!-- Zero-size anchor for snackbars — BaseActivity.snackbar() positions
-         them above this View so they float over the hero card area rather
-         than the keypad. -->
-    <View
-        android:id="@+id/snackbar_top_position"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        </com.google.android.material.card.MaterialCardView>
 
-    <!-- Weights below (27 : 20) trim the keypad to ~85% of its previous
-         portrait row height (was a straight 1:1 split with the hero card),
-         so the amount hero has more room to breathe on tall phones without
-         starving the keypad targets. -->
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="27">
-
-        <androidx.compose.ui.platform.ComposeView
-            android:id="@+id/mainDisplayHost"
+        <!-- Zero-size anchor for snackbars — BaseActivity.snackbar() positions
+             them above this View so they float over the hero card area rather
+             than the keypad. -->
+        <View
+            android:id="@+id/snackbar_top_position"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp" />
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <!-- Weights below (27 : 20) trim the keypad to ~85% of its previous
+             portrait row height (was a straight 1:1 split with the hero card),
+             so the amount hero has more room to breathe on tall phones without
+             starving the keypad targets. -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="27">
 
-    <include
-        android:id="@+id/keypad"
-        layout="@layout/main_keypad"
-        android:layout_width="match_parent"
+            <androidx.compose.ui.platform.ComposeView
+                android:id="@+id/mainDisplayHost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <include
+            android:id="@+id/keypad"
+            layout="@layout/main_keypad"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="20" />
+
+        <include
+            android:id="@+id/keypad_extended"
+            layout="@layout/main_keypad_extended"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:visibility="gone"
+            tools:ignore="DuplicateIncludedIds" />
+
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/main_navigation_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="20" />
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/main_drawer" />
 
-    <include
-        android:id="@+id/keypad_extended"
-        layout="@layout/main_keypad_extended"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="20"
-        android:visibility="gone"
-        tools:ignore="DuplicateIncludedIds" />
-
-</LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
