@@ -15,8 +15,6 @@
     <string name="a11y_action_select">Select</string>
     <string name="a11y_action_load">Load</string>
     <string name="a11y_action_open">Open</string>
-    <string name="a11y_open_navigation_drawer">Open navigation drawer</string>
-    <string name="a11y_close_navigation_drawer">Close navigation drawer</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="info_date_latest">Rates as of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
     <string name="info_date_historical">Historical rates of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>

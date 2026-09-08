@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.view
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -56,16 +57,22 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     /**
-     * Build a [Snackbar] anchored to the shared `snackbar_top_position` view.
-     * Passing `this` as the theme context (vs. an anchor View) skips the
-     * ActionBar-overlay theme walk that trips over Material3-only attributes.
-     * Callers apply their own tints / actions / duration on the returned
-     * builder — this only centralises the anchor-lookup boilerplate.
+     * Build a [Snackbar] anchored to the shared `snackbar_top_position` view
+     * when the current layout exposes one; otherwise fall back to the window's
+     * content root (bottom of screen). Passing `this` as the theme context
+     * (vs. an anchor View) skips the ActionBar-overlay theme walk that trips
+     * over Material3-only attributes. Callers apply their own tints / actions /
+     * duration on the returned builder — this only centralises the anchor
+     * lookup.
      */
     protected fun snackbar(
         message: CharSequence,
         duration: Int = Snackbar.LENGTH_SHORT,
-    ): Snackbar = Snackbar.make(this, findViewById(R.id.snackbar_top_position), message, duration)
+    ): Snackbar {
+        val anchor: View =
+            findViewById(R.id.snackbar_top_position) ?: findViewById(android.R.id.content)
+        return Snackbar.make(this, anchor, message, duration)
+    }
 
     /**
      * Subscribe to [FoldingFeature] changes for the current window and forward

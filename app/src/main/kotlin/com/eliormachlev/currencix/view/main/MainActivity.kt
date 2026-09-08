@@ -4,25 +4,22 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.sp
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
@@ -42,10 +39,12 @@ import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.CartActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
+import com.eliormachlev.currencix.view.main.compose.DrawerAction
 import com.eliormachlev.currencix.view.main.compose.MainDisplay
 import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
+import com.eliormachlev.currencix.view.main.compose.MainScreen
 import com.eliormachlev.currencix.view.main.compose.showHistoricalDatePickerDialog
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
@@ -53,10 +52,9 @@ import com.eliormachlev.currencix.view.timeline.TimelineActivity
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
@@ -82,60 +80,62 @@ class MainActivity : BaseActivity() {
     // rate-footer stays in sync without needing a push from here.
     private var dateFormatPattern: String = DEFAULT_DATE_PATTERN
 
-    private lateinit var swipeRefresh: SwipeRefreshLayout
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
-    private lateinit var drawerToggle: ActionBarDrawerToggle
-    private var drawerItemRefresh: MenuItem? = null
+    // Drawer state hoisted to the Activity so the ActionBar home button can
+    // open it (see onOptionsItemSelected). Created eagerly — not remembered
+    // via rememberSaveable, so drawer-open state does not survive process
+    // death, but that matches user expectations for a modal drawer.
+    @OptIn(ExperimentalMaterial3Api::class)
+    private val drawerState = DrawerState(initialValue = DrawerValue.Closed)
 
-    private lateinit var offlineBanner: MaterialCardView
-    private lateinit var offlineBannerText: TextView
+    // State bridges Compose reads via observeAsState / mutableStateOf.
+    private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
+    private val offlineTextState = mutableStateOf<String?>(null)
     private var isOnline: Boolean = true
     private var latestRatesDate: LocalDate? = null
     private var latestRatesTime: LocalTime? = null
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // general layout
-        setContentView(R.layout.activity_main)
-        installComposeWordmarkTitle()
 
         // model
         this.viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         this.preferenceModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
 
-        // views owned directly by activity_main.xml
-        this.swipeRefresh = findViewById(R.id.swipeRefresh)
-        this.offlineBanner = findViewById(R.id.offlineBanner)
-        this.offlineBannerText = findViewById(R.id.offlineBannerText)
-        this.drawerLayout = findViewById(R.id.main_drawer_layout)
-        this.navigationView = findViewById(R.id.main_navigation_view)
+        // Compose owns the entire screen tree — no XML layout involved.
+        val composeHost =
+            ComposeView(this).apply {
+                fitsSystemWindows = true
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                setContent {
+                    AppTheme {
+                        val offlineText by offlineTextState
+                        val foldingFeature by foldingFeatureState
+                        val isUpdating by viewModel.isUpdating().observeAsState(false)
+                        MainScreen(
+                            drawerState = drawerState,
+                            offlineText = offlineText,
+                            isRefreshing = isUpdating,
+                            onRefresh = viewModel::forceUpdateExchangeRate,
+                            isRefreshDrawerEnabled = !isUpdating,
+                            onDrawerItem = ::onDrawerAction,
+                            foldingFeature = foldingFeature,
+                            displayContent = { MainDisplayContent() },
+                            keypadContent = { MainKeypadContent() },
+                        )
+                    }
+                }
+            }
+        setContentView(composeHost)
 
-        // hero card (pills + amount hero + amount to + rate footer)
-        installMainDisplay()
-
-        // compose-based keypad below the hero card. Owns its own row heights
-        // so growing the hero card never expands / clips the keys, and vice
-        // versa.
-        installKeypad()
-
-        // hamburger drawer — leading edge holds every menu action (with icons);
-        // the trailing toolbar still shows the four highest-frequency shortcuts.
-        installNavigationDrawer()
-
-        // swipe-to-refresh: color scheme (not accessible in xml)
-        swipeRefresh.setColorSchemeColors(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
-        swipeRefresh.setProgressBackgroundColorSchemeColor(MaterialColors.getColor(this, R.attr.colorPrimary, null))
-
-        // listeners & stuff
-        setListeners()
+        installComposeWordmarkTitle()
+        installHamburger()
 
         // heavy lifting
         observe()
 
         // foldable devices
-        prepareFoldableLayoutChanges()
+        observeFoldingFeature { feature -> foldingFeatureState.value = feature }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -143,8 +143,15 @@ class MainActivity : BaseActivity() {
         return true
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (drawerToggle.onOptionsItemSelected(item)) return true
+        if (item.itemId == android.R.id.home) {
+            hapticTap()
+            lifecycleScope.launch {
+                if (drawerState.isOpen) drawerState.close() else drawerState.open()
+            }
+            return true
+        }
         hapticTap()
         return when (item.itemId) {
             R.id.timeline -> openTimelineActivity()
@@ -164,72 +171,35 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    // Every drawer entry defers to the same handler; refresh alone needs a
-    // gate against re-triggering while an update is already in flight.
-    private fun onDrawerItemSelected(item: MenuItem): Boolean {
+    // Every drawer entry defers to a single handler; the Compose drawer
+    // auto-closes on click via ModalNavigationDrawer's dismissal semantics,
+    // so we only launch the destination here.
+    @OptIn(ExperimentalMaterial3Api::class)
+    private fun onDrawerAction(action: DrawerAction) {
         hapticTap()
-        when (item.itemId) {
-            R.id.nav_timeline -> openTimelineActivity()
-            R.id.nav_cart -> startActivity(Intent(this, CartActivity::class.java))
-            R.id.nav_quick_conversions -> openQuickConversionsDialog()
-            R.id.nav_date_picker -> openHistoricalDatePicker()
-            R.id.nav_refresh -> viewModel.forceUpdateExchangeRate()
-            R.id.nav_share -> shareCurrentConversion()
-            R.id.nav_change_api -> showApiProviderPicker()
-            R.id.nav_fees -> startActivity(PreferenceActivity.feesIntent(this))
-            R.id.nav_settings -> startActivity(Intent(this, PreferenceActivity::class.java))
-            else -> return false
+        lifecycleScope.launch { drawerState.close() }
+        when (action) {
+            DrawerAction.Timeline -> openTimelineActivity()
+            DrawerAction.Cart -> startActivity(Intent(this, CartActivity::class.java))
+            DrawerAction.QuickConversions -> openQuickConversionsDialog()
+            DrawerAction.DatePicker -> openHistoricalDatePicker()
+            DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
+            DrawerAction.Share -> shareCurrentConversion()
+            DrawerAction.ChangeApi -> showApiProviderPicker()
+            DrawerAction.Fees -> startActivity(PreferenceActivity.feesIntent(this))
+            DrawerAction.Settings -> startActivity(Intent(this, PreferenceActivity::class.java))
         }
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
     }
 
-    private fun installNavigationDrawer() {
-        drawerToggle =
-            ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                R.string.a11y_open_navigation_drawer,
-                R.string.a11y_close_navigation_drawer,
-            )
-        drawerLayout.addDrawerListener(drawerToggle)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-        drawerToggle.syncState()
-        navigationView.setNavigationItemSelectedListener(::onDrawerItemSelected)
-        drawerItemRefresh = navigationView.menu.findItem(R.id.nav_refresh)
-
-        // Route the system back gesture to close the drawer only while it's
-        // open; disabled otherwise so back falls through to the default
-        // dispatcher (finish activity).
-        val closeDrawerCallback =
-            object : OnBackPressedCallback(false) {
-                override fun handleOnBackPressed() {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
-            }
-        onBackPressedDispatcher.addCallback(this, closeDrawerCallback)
-        drawerLayout.addDrawerListener(
-            object : DrawerLayout.SimpleDrawerListener() {
-                override fun onDrawerOpened(drawerView: View) {
-                    closeDrawerCallback.isEnabled = true
-                }
-
-                override fun onDrawerClosed(drawerView: View) {
-                    closeDrawerCallback.isEnabled = false
-                }
-            },
-        )
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        if (::drawerToggle.isInitialized) drawerToggle.syncState()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        if (::drawerToggle.isInitialized) drawerToggle.onConfigurationChanged(newConfig)
+    // Swap the default up-arrow indicator for a hamburger — the Compose
+    // ModalNavigationDrawer has no built-in ActionBar toggle, so we drive it
+    // by hand from onOptionsItemSelected(android.R.id.home).
+    private fun installHamburger() {
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
     }
 
     private fun showApiProviderPicker() {
@@ -336,14 +306,6 @@ class MainActivity : BaseActivity() {
 
     private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    private fun setListeners() {
-        // swipe to refresh
-        swipeRefresh.setOnRefreshListener {
-            viewModel.forceUpdateExchangeRate()
-            swipeRefresh.isRefreshing = false
-        }
-    }
-
     private fun openFeesSettings() {
         startActivity(PreferenceActivity.feesIntent(this))
     }
@@ -360,37 +322,32 @@ class MainActivity : BaseActivity() {
     private fun observe() {
         Database(this).getDateFormat().observe(this) { pattern ->
             dateFormatPattern = pattern
-            renderOfflineBanner()
+            recomputeOfflineText()
         }
         viewModel.getExchangeRates().observe(this) { rates ->
             latestRatesDate = rates?.date
             latestRatesTime = rates?.time
-            renderOfflineBanner()
+            recomputeOfflineText()
         }
         viewModel.getError().observe(this) { showErrorSnackbar(it) }
-        viewModel.isUpdating().observe(this) { isRefreshing ->
-            swipeRefresh.isEnabled = isRefreshing.not()
-            drawerItemRefresh?.isEnabled = isRefreshing.not()
-        }
         NetworkStatusLiveData(this).observe(this) { online ->
             isOnline = online
-            renderOfflineBanner()
+            recomputeOfflineText()
         }
     }
 
-    private fun renderOfflineBanner() {
-        if (isOnline) {
-            offlineBanner.visibility = View.GONE
-            return
-        }
-        val date = latestRatesDate
-        offlineBannerText.text =
-            if (date != null) {
-                getString(R.string.offline_banner_with_date, formatRatesTimestamp(date, latestRatesTime).orEmpty())
+    private fun recomputeOfflineText() {
+        offlineTextState.value =
+            if (isOnline) {
+                null
             } else {
-                getString(R.string.offline_banner_no_data)
+                val date = latestRatesDate
+                if (date != null) {
+                    getString(R.string.offline_banner_with_date, formatRatesTimestamp(date, latestRatesTime).orEmpty())
+                } else {
+                    getString(R.string.offline_banner_no_data)
+                }
             }
-        offlineBanner.visibility = View.VISIBLE
     }
 
     // "<prefix><amount> <ISO> (<sign><pct>%)" with the amount+ISO isolated LTR
@@ -484,28 +441,10 @@ class MainActivity : BaseActivity() {
         viewModel.setDestinationCurrency(from)
     }
 
-    private fun prepareFoldableLayoutChanges() {
-        observeFoldingFeature { feature ->
-            val root = findViewById<LinearLayout>(R.id.main_root)
-            root.orientation =
-                when {
-                    feature.state == FoldingFeature.State.FLAT -> flatOrientation()
-                    feature.orientation == FoldingFeature.Orientation.VERTICAL -> LinearLayout.HORIZONTAL
-                    else -> LinearLayout.VERTICAL
-                }
-        }
-    }
-
-    private fun flatOrientation(): Int {
-        val cfg = resources.configuration
-        return if (cfg.screenHeightDp >= cfg.screenWidthDp) {
-            LinearLayout.VERTICAL
-        } else {
-            LinearLayout.HORIZONTAL
-        }
-    }
-
-    private fun installMainDisplay() {
+    // Hero display composable — inlined so it composes inside the MainScreen
+    // tree instead of being hosted on a standalone ComposeView.
+    @androidx.compose.runtime.Composable
+    private fun MainDisplayContent() {
         val callbacks =
             MainDisplayCallbacks(
                 onCopy = ::copyToClipboard,
@@ -513,28 +452,20 @@ class MainActivity : BaseActivity() {
                 onOpenProvider = ::showApiProviderPicker,
                 onSwapLongPress = ::openFeesSettings,
             )
-        findViewById<ComposeView>(R.id.mainDisplayHost).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                AppTheme {
-                    val pattern by Database(context).getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
-                    MainDisplay(
-                        viewModel = viewModel,
-                        fragmentManager = supportFragmentManager,
-                        callbacks = callbacks,
-                        dateFormatPattern = pattern,
-                    )
-                }
-            }
-        }
+        val pattern by Database(this).getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
+        MainDisplay(
+            viewModel = viewModel,
+            fragmentManager = supportFragmentManager,
+            callbacks = callbacks,
+            dateFormatPattern = pattern,
+        )
     }
 
-    // Wire the Compose keypad. Callbacks talk to the viewModel directly — the
-    // haptic tap is applied inside MainKeypad's hapticCombinedClickable, so we
-    // do NOT re-fire haptics here. System-IME variants surface no on-screen
-    // keypad, so we collapse them to BASIC for the fallback layout while the
-    // IME provides the actual input path.
-    private fun installKeypad() {
+    // Compose keypad. System-IME variants surface no on-screen keypad so we
+    // collapse them to BASIC for the fallback layout while the IME provides
+    // the actual input path.
+    @androidx.compose.runtime.Composable
+    private fun MainKeypadContent() {
         val callbacks =
             MainKeypadCallbacks(
                 onDigit = viewModel::addNumber,
@@ -545,21 +476,14 @@ class MainActivity : BaseActivity() {
                 onDelete = viewModel::delete,
                 onDeleteLong = viewModel::clear,
             )
-        findViewById<ComposeView>(R.id.keypadHost).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                AppTheme {
-                    val kbType by viewModel.keyboardType.observeAsState(KeyboardType.DEFAULT)
-                    val nextParen by viewModel.nextParen().observeAsState('(')
-                    val effective = if (kbType.isSystem) KeyboardType.BASIC else kbType
-                    MainKeypad(
-                        keyboardType = effective,
-                        nextParen = nextParen,
-                        callbacks = callbacks,
-                    )
-                }
-            }
-        }
+        val kbType by viewModel.keyboardType.observeAsState(KeyboardType.DEFAULT)
+        val nextParen by viewModel.nextParen().observeAsState('(')
+        val effective = if (kbType.isSystem) KeyboardType.BASIC else kbType
+        MainKeypad(
+            keyboardType = effective,
+            nextParen = nextParen,
+            callbacks = callbacks,
+        )
     }
 
     // Swap the AppCompat ActionBar title for a ComposeView that renders the
