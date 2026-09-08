@@ -823,7 +823,6 @@ private fun rememberIdleAutoScrollState(resetKey: Any? = null): ScrollState {
     return state
 }
 
-
 // Displayable version of a full grouped amount ("310,500,000,000,000 ILS"),
 // folded into compact form ("310.5T ILS") once the integer part crosses the
 // K/M/B/T/Q threshold. Falls back to [full] when the value is null or short
