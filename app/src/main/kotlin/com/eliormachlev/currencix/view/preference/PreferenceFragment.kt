@@ -6,274 +6,95 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.app.TaskStackBuilder
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.EditTextPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreferenceCompat
 import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.ApiProvider
-import com.eliormachlev.currencix.model.AppTheme
-import com.eliormachlev.currencix.model.KeyboardType
-import com.eliormachlev.currencix.util.ChoiceOption
-import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
-import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
-import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
-import com.eliormachlev.currencix.util.asPreferenceSummary
-import com.eliormachlev.currencix.util.hapticTap
-import com.eliormachlev.currencix.util.releaseNotesUrl
-import com.eliormachlev.currencix.util.setOnHapticChangeListener
-import com.eliormachlev.currencix.util.setOnHapticClickListener
-import com.eliormachlev.currencix.util.showChoiceExplainerDialog
+import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.MainActivity
+import com.eliormachlev.currencix.view.preference.compose.PreferenceScreen
+import com.eliormachlev.currencix.view.preference.compose.PreferenceScreenCallbacks
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import com.eliormachlev.currencix.widget.LongSummaryPreference
 import timber.log.Timber
-import java.util.Calendar
 
-// Sentinel returned by ApiProvider.fromId when the stored value is unknown /
-// unset; the pref layer treats this as "use the default provider".
-private const val UNKNOWN_PROVIDER_ID = -1
-
-// Build flavor served through Play; other flavors get the donation entry
-// instead of the "rate on Play" entry.
 private const val FLAVOR_PLAY = "play"
-
 private const val URL_PLAY_MARKET = "market://details?id=com.eliormachlev.currencix"
 private const val URL_PLAY_WEB = "https://play.google.com/store/apps/details?id=com.eliormachlev.currencix"
 
-@Suppress("unused")
-class PreferenceFragment : PreferenceFragmentCompat() {
+/**
+ * Compose-hosted preferences root. Replaces the old
+ * `PreferenceFragmentCompat`-backed implementation with a `ComposeView`
+ * rendering [PreferenceScreen], plus glue for the non-preference actions
+ * that still need fragment/intent machinery: pushing Fees/Backup fragments
+ * onto the container back-stack, opening the existing Credits and Graph
+ * dialogs, and firing external intents (Play, changelog).
+ */
+class PreferenceFragment : Fragment() {
     private lateinit var viewModel: PreferenceViewModel
 
-    override fun onViewCreated(
-        view: View,
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
-        activity?.setTitle(R.string.title_preferences)
-    }
-
-    // Every built-in DialogPreference (theme, decimal places, date format,
-    // API-key EditText) routes through this callback before its dialog opens.
-    // Custom pickers like LanguagePickerPreference / ProviderPickerPreference
-    // fire haptic in their own overridden onClick() instead.
-    override fun onDisplayPreferenceDialog(preference: Preference) {
-        requireActivity().hapticTap()
-        super.onDisplayPreferenceDialog(preference)
-    }
-
-    override fun onCreatePreferences(
-        savedInstanceState: Bundle?,
-        rootKey: String?,
-    ) {
-        setPreferencesFromResource(R.xml.prefs, rootKey)
+    ): View {
         viewModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
-        setupFeePreference()
-        setupBackupPreference()
-        setupDisplayPreferences()
-        setupGraphOptionsPreference()
-        setupApiPreferences()
-        setupAboutPreferences()
-    }
-
-    private fun setupGraphOptionsPreference() {
-        findPreference<Preference>(getString(R.string.graph_options_key))?.setOnHapticClickListener {
-            GraphOptionsDialog().show(childFragmentManager, null)
-        }
-    }
-
-    private fun setupFeePreference() {
-        pushFragmentOnClick(R.string.fee_key, ::FeeManagerFragment)
-    }
-
-    private fun setupBackupPreference() {
-        pushFragmentOnClick(R.string.backup_key, ::BackupFragment)
-    }
-
-    private fun pushFragmentOnClick(
-        keyRes: Int,
-        factory: () -> Fragment,
-    ) {
-        findPreference<Preference>(getString(keyRes))?.setOnHapticClickListener {
-            parentFragmentManager
-                .beginTransaction()
-                .replace(R.id.preferences_fragment, factory())
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    // Two-option picker rebuilt as a title-plus-explainer dialog (matching the
-    // Fee-side preference) so each option carries a short description instead
-    // of being a bare radio list.
-    private fun setupKeyboardPreference() {
-        val pref = findPreference<Preference>(getString(R.string.keyboard_key)) ?: return
-        pref.summary = summaryForKeyboardType(viewModel.getKeyboardTypeBlocking())
-        pref.setOnHapticClickListener {
-            showKeyboardPickerDialog { picked ->
-                viewModel.setKeyboardType(picked)
-                pref.summary = summaryForKeyboardType(picked)
+        activity?.setTitle(R.string.title_preferences)
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    PreferenceScreen(
+                        viewModel = viewModel,
+                        callbacks = buildCallbacks(),
+                    )
+                }
             }
         }
     }
 
-    private fun keyboardOptions(): List<Pair<KeyboardType, ChoiceOption>> =
-        listOf(
-            KeyboardType.BASIC to
-                ChoiceOption(
-                    getString(R.string.keyboard_option_default),
-                    getString(R.string.keyboard_summary_default),
-                ),
-            KeyboardType.EXPANDED to
-                ChoiceOption(
-                    getString(R.string.keyboard_option_expanded),
-                    getString(R.string.keyboard_summary_expanded),
-                ),
-            KeyboardType.SYSTEM_NUMPAD to
-                ChoiceOption(
-                    getString(R.string.keyboard_option_system),
-                    getString(R.string.keyboard_summary_system),
-                ),
-            KeyboardType.SYSTEM_FULL to
-                ChoiceOption(
-                    getString(R.string.keyboard_option_system_full),
-                    getString(R.string.keyboard_summary_system_full),
-                ),
+    private fun buildCallbacks(): PreferenceScreenCallbacks =
+        PreferenceScreenCallbacks(
+            onOpenFees = { pushFragment(::FeeManagerFragment) },
+            onOpenBackup = { pushFragment(::BackupFragment) },
+            onOpenGraphOptions = { GraphOptionsDialog().show(childFragmentManager, null) },
+            onOpenCredits = { CreditsDialog().show(childFragmentManager, null) },
+            onRateApp = ::openPlayStore,
+            onThemeRequiresRestart = ::rebuildActivityStack,
         )
 
-    private fun summaryForKeyboardType(type: KeyboardType): CharSequence {
-        val options = keyboardOptions()
-        val option = options.firstOrNull { it.first == type }?.second ?: options.first().second
-        return option.asPreferenceSummary()
+    private fun pushFragment(factory: () -> Fragment) {
+        parentFragmentManager
+            .beginTransaction()
+            .replace(R.id.preferences_fragment, factory())
+            .addToBackStack(null)
+            .commit()
     }
 
-    private fun showKeyboardPickerDialog(onPicked: (KeyboardType) -> Unit) {
-        val options = keyboardOptions()
-        val current = viewModel.getKeyboardTypeBlocking()
-        val selectedIndex = options.indexOfFirst { it.first == current }.coerceAtLeast(0)
-        showChoiceExplainerDialog(
-            ctx = requireContext(),
-            titleRes = R.string.keyboard_title,
-            options = options.map { it.second },
-            selectedIndex = selectedIndex,
-        ) { index ->
-            onPicked(options[index].first)
-        }
-    }
-
-    private fun setupDisplayPreferences() {
-        findPreference<SwitchPreferenceCompat>(getString(R.string.previewConversion_key))
-            ?.setOnHapticChangeListener { newValue ->
-                viewModel.setPreviewConversionEnabled(newValue.toString().toBoolean())
-            }
-        setupKeyboardPreference()
-        findPreference<ListPreference>(getString(R.string.decimal_places_key))
-            ?.setOnHapticChangeListener { newValue ->
-                viewModel.setDecimalPlaces(
-                    (newValue.toString().toIntOrNull() ?: DECIMAL_PLACES_DEFAULT)
-                        .coerceIn(DECIMAL_PLACES_MIN, DECIMAL_PLACES_MAX),
-                )
-            }
-        findPreference<SwitchPreferenceCompat>(getString(R.string.haptic_feedback_key))
-            ?.setOnHapticChangeListener { newValue ->
-                viewModel.setHapticFeedbackEnabled(newValue.toString().toBoolean())
-            }
-        findPreference<ListPreference>(getString(R.string.theme_key))
-            ?.setOnHapticChangeListener { newValue ->
-                val theme = AppTheme.fromId(newValue.toString().toInt())
-                if (viewModel.setTheme(theme)) {
-                    rebuildActivityStack()
-                }
-            }
-        findPreference<LanguagePickerPreference>(getString(R.string.language_key))
-            ?.setOnHapticChangeListener { newValue ->
-                viewModel.setLanguage(newValue.toString())
-            }
-        findPreference<ListPreference>(getString(R.string.date_format_key))?.apply {
-            summaryProvider = Preference.SummaryProvider<ListPreference> { pref -> pref.value }
+    private fun openPlayStore() {
+        @Suppress("KotlinConstantConditions")
+        if (BuildConfig.FLAVOR != FLAVOR_PLAY) return
+        try {
+            startActivity(playIntent(URL_PLAY_MARKET))
+        } catch (e: ActivityNotFoundException) {
+            Timber.tag("PreferenceFragment").d(e, "Play Store not available, opening browser")
+            startActivity(playIntent(URL_PLAY_WEB))
         }
     }
 
-    private fun setupApiPreferences() {
-        val apiKeyPref = findPreference<EditTextPreference>(getString(R.string.api_open_exchangerates_id_key))
-        apiKeyPref?.apply {
-            setOnHapticChangeListener { newValue ->
-                viewModel.setOpenExchangeratesApiKey(newValue.toString().trim())
-            }
-            dialogMessage = getText(R.string.api_open_exchangerates_api_key_message)
+    private fun playIntent(url: String): Intent =
+        Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+            addFlags(
+                Intent.FLAG_ACTIVITY_NO_HISTORY
+                    or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+                    or Intent.FLAG_ACTIVITY_NEW_DOCUMENT,
+            )
         }
-        viewModel.getOpenExchangeratesApiKey().observe(this) { id ->
-            apiKeyPref?.summaryProvider =
-                Preference.SummaryProvider<EditTextPreference> {
-                    if (id.isNullOrBlank()) getText(R.string.api_open_exchangerates_api_key_missing) else id
-                }
-        }
-        findPreference<ProviderPickerPreference>(getString(R.string.api_key))?.apply {
-            val providers = ApiProvider.entries
-            entries = providers.map { it.getName(requireContext()) }.toTypedArray()
-            entryValues = providers.map { it.id.toString() }.toTypedArray()
-            setOnHapticChangeListener { newValue ->
-                val provider = ApiProvider.fromId(newValue.toString().toIntOrNull() ?: UNKNOWN_PROVIDER_ID)
-                viewModel.setApiProvider(provider)
-                apiKeyPref?.isVisible = provider == ApiProvider.OPEN_EXCHANGERATES
-            }
-            if (entry == null) {
-                val defaultProvider = ApiProvider.fromId(UNKNOWN_PROVIDER_ID)
-                viewModel.setApiProvider(defaultProvider)
-                value = defaultProvider.id.toString()
-            }
-            apiKeyPref?.isVisible = ApiProvider.fromId(value.toIntOrNull() ?: UNKNOWN_PROVIDER_ID) == ApiProvider.OPEN_EXCHANGERATES
-        }
-        viewModel.getApiProvider().observe(this) {
-            findPreference<LongSummaryPreference>(getString(R.string.key_apiProvider))?.apply {
-                title = resources.getString(R.string.api_about_title, it.getName(requireContext()))
-                summary = it.getDescriptionLong(context)
-            }
-            findPreference<LongSummaryPreference>(getString(R.string.key_refreshPeriod))?.summary =
-                it.getDescriptionUpdateInterval(requireContext())
-        }
-    }
-
-    private fun setupAboutPreferences() {
-        findPreference<Preference>(getString(R.string.credits_key))?.setOnHapticClickListener {
-            CreditsDialog().show(childFragmentManager, null)
-        }
-        findPreference<Preference>(getString(R.string.rate_key))?.apply {
-            @Suppress("KotlinConstantConditions")
-            isVisible = BuildConfig.FLAVOR == FLAVOR_PLAY
-            setOnHapticClickListener {
-                try {
-                    startActivity(createIntent(URL_PLAY_MARKET))
-                } catch (e: ActivityNotFoundException) {
-                    Timber.tag("PreferenceFragment").d(e, "Play Store not available, opening browser")
-                    startActivity(createIntent(URL_PLAY_WEB))
-                }
-            }
-        }
-        findPreference<Preference>(getString(R.string.changelog_key))?.setOnHapticClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(releaseNotesUrl())))
-        }
-        findPreference<Preference>(getString(R.string.version_key))?.apply {
-            title = BuildConfig.VERSION_NAME
-            summary = getString(R.string.version_summary, Calendar.getInstance().get(Calendar.YEAR).toString())
-        }
-    }
-
-    private fun createIntent(url: String): Intent {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        intent.addFlags(
-            Intent.FLAG_ACTIVITY_NO_HISTORY
-                or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-                or Intent.FLAG_ACTIVITY_NEW_DOCUMENT,
-        )
-        return intent
-    }
 
     // Rebuild the MainActivity → PreferenceActivity stack and finish the
     // current activity so the pure-black theme is reapplied everywhere.

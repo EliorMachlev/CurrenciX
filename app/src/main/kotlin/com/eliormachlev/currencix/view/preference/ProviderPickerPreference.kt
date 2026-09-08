@@ -3,26 +3,24 @@ package com.eliormachlev.currencix.view.preference
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.preference.ListPreference
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.util.createWithHapticButtons
-import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.setOnHapticClickListener
 import com.google.android.material.radiobutton.MaterialRadioButton
 
 /**
- * Shows the API provider picker as a standalone dialog.
- *
- * Extracted so both [ProviderPickerPreference] (in the Settings screen) and
- * the main-menu shortcut can present the same picker without any Settings
- * chrome underneath.
+ * Standalone API provider picker used by the main-menu shortcut. The
+ * preferences screen has its own Compose-native picker
+ * (`view/preference/compose/ProviderPickerDialog.kt`); this XML-backed
+ * version is kept solely because MainActivity's menu-item entry still
+ * routes through it. Migrate + delete along with `row_provider_picker.xml`
+ * once MainActivity's picker call moves into Compose.
  */
 internal fun showProviderPickerDialog(
     context: Context,
@@ -42,33 +40,6 @@ internal fun showProviderPickerDialog(
         dialog.dismiss()
     }
     dialog.show()
-}
-
-@Suppress("unused")
-class ProviderPickerPreference : ListPreference {
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
-        super(context, attrs, defStyleAttr, defStyleRes)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
-        super(context, attrs, defStyleAttr)
-
-    constructor(context: Context, attrs: AttributeSet?) :
-        super(context, attrs)
-
-    constructor(context: Context) :
-        super(context)
-
-    // open dialog
-    override fun onClick() {
-        (context as? Activity)?.hapticTap()
-        showProviderPickerDialog(
-            context = context,
-            current = ApiProvider.fromId(value.toInt()),
-        ) { provider ->
-            callChangeListener(provider.id)
-            value = provider.id.toString()
-        }
-    }
 }
 
 /**

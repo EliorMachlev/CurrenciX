@@ -110,4 +110,18 @@ class PreferenceViewModel(
     fun setDecimalPlaces(places: Int) {
         db.setDecimalPlaces(places)
     }
+
+    fun getDecimalPlaces(): LiveData<Int> = db.getDecimalPlaces()
+
+    fun getKeyboardType(): LiveData<KeyboardType> = db.getKeyboardType()
+
+    fun isHapticFeedbackEnabled(): LiveData<Boolean> = db.isHapticFeedbackEnabled()
+
+    fun getDateFormat(): LiveData<String> = db.getDateFormat()
+
+    fun setDateFormat(pattern: String) {
+        db.setDateFormat(pattern)
+    }
+
+    fun getTheme(): AppTheme = db.getTheme()
 }
