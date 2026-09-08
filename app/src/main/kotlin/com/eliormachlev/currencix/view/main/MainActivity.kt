@@ -5,19 +5,15 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.icu.util.Calendar
-import android.icu.util.TimeZone
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.DatePicker
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -39,7 +35,6 @@ import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
-import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -51,6 +46,7 @@ import com.eliormachlev.currencix.view.main.compose.MainDisplay
 import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
+import com.eliormachlev.currencix.view.main.compose.showHistoricalDatePickerDialog
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
 import com.eliormachlev.currencix.view.timeline.TimelineActivity
@@ -61,13 +57,11 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.switchmaterial.SwitchMaterial
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-private const val HISTORICAL_MIN_YEAR = 2010
 private const val MAX_ERROR_TEXT_LINES = 20
 
 // fee true-cost / percent formatting for the share-sheet extra
@@ -333,50 +327,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun openHistoricalDatePicker() {
-        val startDate =
-            Calendar
-                .getInstance(TimeZone.getTimeZone("UTC"))
-                .apply { this.set(HISTORICAL_MIN_YEAR, Calendar.JANUARY, 1) }
-                .timeInMillis
-        val layout = layoutInflater.inflate(R.layout.main_dialog_historical_rates, null)
-        val toggle: SwitchMaterial = layout.findViewById(R.id.toggle)
-        val datePicker: DatePicker = layout.findViewById(R.id.date_picker)
-        val border: View = layout.findViewById(R.id.border)
-        val historicalDate = viewModel.getHistoricalDate()
-
-        fun showDatePicker(show: Boolean) {
-            datePicker.visibility = if (show) View.VISIBLE else View.GONE
-            border.visibility = if (show) View.VISIBLE else View.GONE
-        }
-        showDatePicker(historicalDate != null)
-        datePicker.apply {
-            minDate = startDate
-            maxDate = Calendar.getInstance().timeInMillis
-            firstDayOfWeek = Calendar.getInstance().firstDayOfWeek
-            historicalDate?.let { updateDate(it.year, it.monthValue - 1, it.dayOfMonth) }
-        }
-        toggle.apply {
-            setOnCheckedChangeListener { _, enabled -> showDatePicker(enabled) }
-            isChecked = historicalDate != null
-        }
-        AlertDialog
-            .Builder(this)
-            .setTitle(R.string.historical_rates_dialog_title)
-            .setView(layout)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                viewModel.setHistoricalDate(
-                    if (toggle.isChecked) {
-                        LocalDate.of(
-                            datePicker.year,
-                            datePicker.month + 1,
-                            datePicker.dayOfMonth,
-                        )
-                    } else {
-                        null
-                    },
-                )
-            }.setNegativeButton(android.R.string.cancel, null)
-            .showWithHapticButtons()
+        showHistoricalDatePickerDialog(
+            context = this,
+            initial = viewModel.getHistoricalDate(),
+            onPick = viewModel::setHistoricalDate,
+        )
     }
 
     private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
