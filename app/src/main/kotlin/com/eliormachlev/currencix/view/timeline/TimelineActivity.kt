@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.BaseActivity
+import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.preference.GraphOptionsDialog
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
@@ -51,11 +52,6 @@ class TimelineActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Wrap the Compose surface in an XML root with fitsSystemWindows="true"
-        // so edge-to-edge (targetSdk 35+) doesn't draw the chart behind the
-        // ActionBar / status bar. Mirrors the pattern used by every other
-        // activity in this app.
-        setContentView(R.layout.activity_timeline)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
@@ -94,40 +90,50 @@ class TimelineActivity : BaseActivity() {
         // the blue/purple period-change verticals on every theme.
         val scrubLineColor = Color(MaterialColors.getColor(this, R.attr.colorOnSurface, 0))
 
-        findViewById<ComposeView>(R.id.timeline_compose).setContent {
+        // Host Compose directly on a ComposeView with fitsSystemWindows=true so
+        // edge-to-edge (targetSdk 35+) still pads the chart below the ActionBar /
+        // status bar — same behaviour as the deleted activity_timeline.xml root.
+        val composeHost =
+            ComposeView(this).apply {
+                fitsSystemWindows = true
+            }
+        setContentView(composeHost)
+        composeHost.setContent {
             val feature by remember { foldingFeatureState }
-            TimelineScreen(
-                model = timelineModel,
-                formatter = formatter,
-                foldingFeature = feature,
-                chartContent = {
-                    val entriesLive =
-                        timelineModel.getRates().map { rates ->
-                            rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
-                        }
-                    // Range extremes (scrub-independent) so the chart's min/max
-                    // reference lines stay pinned to the visible period's
-                    // absolute low/high while the finger drags.
-                    val highlightMinLive = timelineModel.getRatesRangeMin()
-                    val highlightMaxLive = timelineModel.getRatesRangeMax()
-                    TimelineChart(
-                        entriesLive = entriesLive,
-                        showGridLive = db.isChartGridEnabled(),
-                        showXAxisLive = db.isChartXAxisLabelEnabled(),
-                        showYAxisLive = db.isChartYAxisLabelEnabled(),
-                        highlightExtremesLive = db.isChartHighlightExtremesEnabled(),
-                        highlightPeriodChangeLive = db.isChartHighlightPeriodChangeEnabled(),
-                        dateFormatLive = db.getDateFormat(),
-                        highlightMinLive = highlightMinLive,
-                        highlightMaxLive = highlightMaxLive,
-                        lineColor = lineColor,
-                        baselineColor = axisColor,
-                        axisColor = axisColor,
-                        scrubLineColor = scrubLineColor,
-                        onScrub = { date -> timelineModel.setPastDate(date) },
-                    )
-                },
-            )
+            AppTheme {
+                TimelineScreen(
+                    model = timelineModel,
+                    formatter = formatter,
+                    foldingFeature = feature,
+                    chartContent = {
+                        val entriesLive =
+                            timelineModel.getRates().map { rates ->
+                                rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
+                            }
+                        // Range extremes (scrub-independent) so the chart's min/max
+                        // reference lines stay pinned to the visible period's
+                        // absolute low/high while the finger drags.
+                        val highlightMinLive = timelineModel.getRatesRangeMin()
+                        val highlightMaxLive = timelineModel.getRatesRangeMax()
+                        TimelineChart(
+                            entriesLive = entriesLive,
+                            showGridLive = db.isChartGridEnabled(),
+                            showXAxisLive = db.isChartXAxisLabelEnabled(),
+                            showYAxisLive = db.isChartYAxisLabelEnabled(),
+                            highlightExtremesLive = db.isChartHighlightExtremesEnabled(),
+                            highlightPeriodChangeLive = db.isChartHighlightPeriodChangeEnabled(),
+                            dateFormatLive = db.getDateFormat(),
+                            highlightMinLive = highlightMinLive,
+                            highlightMaxLive = highlightMaxLive,
+                            lineColor = lineColor,
+                            baselineColor = axisColor,
+                            axisColor = axisColor,
+                            scrubLineColor = scrubLineColor,
+                            onScrub = { date -> timelineModel.setPastDate(date) },
+                        )
+                    },
+                )
+            }
         }
     }
 
