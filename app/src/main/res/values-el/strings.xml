@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Επιλογή</string>
     <string name="a11y_action_load">Φόρτωση</string>
     <string name="a11y_action_open">Άνοιγμα</string>
-    <string name="quick_conversions_fee_conversion">μετατροπή %s</string>
-    <string name="quick_conversions_fee_reduction">μείωση %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Καρφίτσωμα στην κορυφή</string>
     <string name="cart_unpin_item">Ξεκαρφίτσωμα στοιχείου</string>

@@ -16,7 +16,6 @@ sealed class Fee {
     abstract val name: String
     abstract val percent: BigDecimal
     abstract val isActive: Boolean
-    abstract val feeSide: FeeSide
     abstract val type: FeeType
 
     /**
@@ -30,7 +29,6 @@ sealed class Fee {
         name: String,
         percent: BigDecimal,
         isActive: Boolean,
-        feeSide: FeeSide,
     ): Fee
 
     /** Applies to every conversion, no matter which currencies are involved. */
@@ -39,7 +37,6 @@ sealed class Fee {
         override val name: String,
         override val percent: BigDecimal,
         override val isActive: Boolean = true,
-        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_EXCHANGE
 
@@ -47,13 +44,11 @@ sealed class Fee {
             name: String,
             percent: BigDecimal,
             isActive: Boolean,
-            feeSide: FeeSide,
         ): GlobalExchange =
             copy(
                 name = name,
                 percent = percent,
                 isActive = isActive,
-                feeSide = feeSide,
             )
     }
 
@@ -63,7 +58,6 @@ sealed class Fee {
         override val name: String,
         override val percent: BigDecimal,
         override val isActive: Boolean = true,
-        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_BANK
 
@@ -71,13 +65,11 @@ sealed class Fee {
             name: String,
             percent: BigDecimal,
             isActive: Boolean,
-            feeSide: FeeSide,
         ): GlobalBank =
             copy(
                 name = name,
                 percent = percent,
                 isActive = isActive,
-                feeSide = feeSide,
             )
     }
 
@@ -93,7 +85,6 @@ sealed class Fee {
         val to: String,
         val bothWays: Boolean,
         override val isActive: Boolean = true,
-        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.SPECIFIC_PAIR
 
@@ -101,13 +92,11 @@ sealed class Fee {
             name: String,
             percent: BigDecimal,
             isActive: Boolean,
-            feeSide: FeeSide,
         ): SpecificPair =
             copy(
                 name = name,
                 percent = percent,
                 isActive = isActive,
-                feeSide = feeSide,
             )
     }
 }
@@ -128,16 +117,4 @@ enum class FeeType(
     companion object {
         fun fromWire(wire: String?): FeeType? = entries.firstOrNull { it.wire == wire }
     }
-}
-
-/**
- * Which side of the conversion a fee applies to.
- * - [ORIGINAL]: the fee inflates the input-side "true cost"; the displayed
- *   converted amount is left at the mid-market value.
- * - [CONVERTED]: the fee is baked into the displayed converted amount; the
- *   pre-fee "original value" is surfaced separately when needed.
- */
-enum class FeeSide {
-    ORIGINAL,
-    CONVERTED,
 }

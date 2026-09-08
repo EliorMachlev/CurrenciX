@@ -106,8 +106,6 @@
     <string name="a11y_action_select">Selecciona</string>
     <string name="a11y_action_load">Carrega</string>
     <string name="a11y_action_open">Obre</string>
-    <string name="quick_conversions_fee_conversion">conversió %s</string>
-    <string name="quick_conversions_fee_reduction">reducció %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fixa a dalt</string>
     <string name="cart_unpin_item">Desfixa l\'article</string>

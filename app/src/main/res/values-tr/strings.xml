@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Seç</string>
     <string name="a11y_action_load">Yükle</string>
     <string name="a11y_action_open">Aç</string>
-    <string name="quick_conversions_fee_conversion">dönüşüm %s</string>
-    <string name="quick_conversions_fee_reduction">indirim %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Öğeyi üste sabitle</string>
     <string name="cart_unpin_item">Sabitlemeyi kaldır</string>

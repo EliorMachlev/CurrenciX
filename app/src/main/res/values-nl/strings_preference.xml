@@ -6,9 +6,6 @@
     <string name="fee_title">Buitenlandse transactiekosten</string>
     <string name="fee_summary">Beheer wissel-, bank-/kaartkosten en kosten voor specifieke valutaparen</string>
     <string name="fee_manager_title">Kosten</string>
-    <string name="fee_side_label">Type kosten</string>
-    <string name="fee_side_original">Conversiekosten</string>
-    <string name="fee_side_converted">Geconverteerde kosten</string>
     <string name="fee_section_global_exchange">Globale wisselkosten</string>
     <string name="fee_section_global_bank">Globale bank-/kaartkosten</string>
     <string name="fee_section_specific_pair">Wisselkosten voor specifiek valutapaar</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Naar</string>
     <string name="fee_pair_pick_currency">Selecteer valuta</string>
     <string name="fee_true_cost_prefix">"Conversiekosten: "</string>
-    <string name="fee_original_value_prefix">"Aftrekkosten: "</string>
     <string name="fee_cost_with_fee_prefix">"Prijs met kosten: "</string>
-    <string name="fee_value_before_fee_prefix">"Waarde vóór kosten: "</string>
-    <string name="fee_side_summary_original">Het weergegeven geconverteerde bedrag blijft op de middenkoers; kosten worden apart weergegeven als \"Conversiekosten\".</string>
-    <string name="fee_side_summary_converted">Kosten zijn verwerkt in het weergegeven geconverteerde bedrag.</string>
     <string name="fee_empty">Nog geen kosten</string>
     <string name="previewConversion_title">Conversie voorbeeld</string>
     <string name="previewConversion_summary">Toon de huidige conversie voor elke koers in de valutakiezer.</string>

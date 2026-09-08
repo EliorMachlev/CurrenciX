@@ -106,8 +106,6 @@
     <string name="a11y_action_select">Välj</string>
     <string name="a11y_action_load">Läs in</string>
     <string name="a11y_action_open">Öppna</string>
-    <string name="quick_conversions_fee_conversion">konvertering %s</string>
-    <string name="quick_conversions_fee_reduction">minskning %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fäst överst</string>
     <string name="cart_unpin_item">Ta bort fästning</string>

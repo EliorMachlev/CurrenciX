@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Kiválasztás</string>
     <string name="a11y_action_load">Betöltés</string>
     <string name="a11y_action_open">Megnyitás</string>
-    <string name="quick_conversions_fee_conversion">átváltás %s</string>
-    <string name="quick_conversions_fee_reduction">csökkentés %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Rögzítés felülre</string>
     <string name="cart_unpin_item">Rögzítés megszüntetése</string>

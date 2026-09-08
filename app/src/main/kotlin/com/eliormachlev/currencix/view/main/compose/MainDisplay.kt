@@ -72,8 +72,6 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.Rate
-import com.eliormachlev.currencix.model.SideFees
-import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
@@ -118,11 +116,6 @@ private val AMOUNT_BAND_TOP_GAP: Dp = 8.dp
 // Interior padding and corner rounding for the "you get" band itself.
 private val AMOUNT_BAND_PADDING: Dp = 10.dp
 private val AMOUNT_BAND_RADIUS: Dp = 20.dp
-
-// Vertical gaps between the fee chip (above the amount) and the amount
-// itself, and between the amount and the red final-value pill (below).
-private val CHIP_TO_AMOUNT_GAP: Dp = 4.dp
-private val AMOUNT_TO_PILL_GAP: Dp = 6.dp
 
 private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
@@ -267,14 +260,13 @@ internal fun MainDisplay(
     val resultFormatted by viewModel.getResultFormatted().observeAsState()
     val rates by viewModel.getExchangeRates().observeAsState()
     val isUpdating by viewModel.isUpdating().observeAsState(false)
-    val sideStacks by viewModel.getSideStacks().observeAsState()
-    val sideFees by viewModel.getSideFees().observeAsState()
+    val feeStack by viewModel.getFeeStack().observeAsState()
+    val activeFees by viewModel.getActiveFees().observeAsState()
     val historicalDate by viewModel.getHistoricalLiveDate().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()
     val baseValueNumber by viewModel.getCurrentBaseValueAsNumber().observeAsState()
     val resultNumber by viewModel.getResultAsNumber().observeAsState()
     val trueCost by viewModel.getTrueCost().observeAsState()
-    val originalValue by viewModel.getOriginalValue().observeAsState()
     val decimalPlaces by viewModel.getDecimalPlaces().observeAsState(FINAL_VALUE_DECIMAL_PLACES_FALLBACK)
 
     val baseFull = baseFormatted?.toString().orEmpty()
@@ -295,15 +287,12 @@ internal fun MainDisplay(
         resultCopyText = resultFull,
         rates = rates,
         isUpdating = isUpdating,
-        sideStacks = sideStacks,
-        sideFees = sideFees,
+        feeStack = feeStack,
+        activeFees = activeFees.orEmpty(),
         historicalDate = historicalDate,
         mathText = mathText,
         originalBig = baseValueNumber,
         originalOther = trueCost,
-        convertedBig = resultNumber,
-        convertedOther = originalValue,
-        decimalPlaces = decimalPlaces,
         dateFormatPattern = dateFormatPattern,
         onPillFromClick = {
             openCurrencyPicker(context, viewModel, fragmentManager, PickSide.FROM, baseCurrency, destCurrency, rates)
@@ -336,15 +325,12 @@ private fun HeroCard(
     resultCopyText: String,
     rates: ExchangeRates?,
     isUpdating: Boolean,
-    sideStacks: SideStacks?,
-    sideFees: SideFees?,
+    feeStack: BigDecimal?,
+    activeFees: List<Fee>,
     historicalDate: LocalDate?,
     mathText: String?,
     originalBig: BigDecimal?,
     originalOther: BigDecimal?,
-    convertedBig: BigDecimal?,
-    convertedOther: BigDecimal?,
-    decimalPlaces: Int,
     dateFormatPattern: String,
     onPillFromClick: () -> Unit,
     onPillToClick: () -> Unit,
@@ -379,8 +365,8 @@ private fun HeroCard(
                 onFinalLongClick = {
                     if (originalFinalCopyText.isNotEmpty()) callbacks.onCopy(originalFinalCopyText)
                 },
-                stack = sideStacks?.original,
-                fees = sideFees?.original.orEmpty(),
+                stack = feeStack,
+                fees = activeFees,
                 bigValue = originalBig,
                 otherValue = originalOther,
                 onFeeChipClick = callbacks.onOpenFees,
@@ -388,14 +374,7 @@ private fun HeroCard(
             Spacer(Modifier.height(AMOUNT_BAND_TOP_GAP))
             AmountToRow(
                 text = resultFormatted,
-                stack = sideStacks?.converted,
-                fees = sideFees?.converted.orEmpty(),
-                bigValue = convertedBig,
-                otherValue = convertedOther,
-                currency = destCurrency,
-                decimalPlaces = decimalPlaces,
                 onLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
-                onFeeChipClick = callbacks.onOpenFees,
             )
             Spacer(Modifier.height(RATE_FOOTER_TOP_MARGIN))
             RateFooter(
@@ -697,54 +676,31 @@ private fun BlinkingCursor(height: Dp = CURSOR_HEIGHT) {
 @Composable
 private fun AmountToRow(
     text: String,
-    stack: BigDecimal?,
-    fees: List<Fee>,
-    bigValue: BigDecimal?,
-    otherValue: BigDecimal?,
-    currency: Currency?,
-    decimalPlaces: Int,
     onLongClick: () -> Unit,
-    onFeeChipClick: () -> Unit,
 ) {
-    val hasFee = stack.hasFee()
-    val showPill = hasFee && bigValue.isMeaningful() && otherValue != null
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(AMOUNT_BAND_RADIUS))
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .padding(AMOUNT_BAND_PADDING),
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(AMOUNT_BAND_RADIUS))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .padding(AMOUNT_BAND_PADDING)
+                .combinedClickable(onClick = {}, onLongClick = onLongClick),
+        horizontalArrangement = Arrangement.End,
     ) {
-        if (hasFee) ChipAbove(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-        Row(
+        Text(
+            text = text,
+            fontSize = AMOUNT_TO_SIZE,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            softWrap = false,
+            textAlign = TextAlign.End,
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .combinedClickable(onClick = {}, onLongClick = onLongClick),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            Text(
-                text = text,
-                fontSize = AMOUNT_TO_SIZE,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                softWrap = false,
-                textAlign = TextAlign.End,
-                modifier =
-                    Modifier
-                        .weight(1f, fill = false)
-                        .horizontalScroll(rememberStartAnchoredScrollState(text)),
-            )
-        }
-        if (showPill && otherValue != null) {
-            PillBelow(
-                value = otherValue,
-                currency = currency,
-                decimalPlaces = decimalPlaces,
-                onClick = onFeeChipClick,
-            )
-        }
+                    .weight(1f, fill = false)
+                    .horizontalScroll(rememberStartAnchoredScrollState(text)),
+        )
     }
 }
 
@@ -757,31 +713,9 @@ private fun BigDecimal?.hasFee(): Boolean = this != null && this.compareTo(BigDe
 // useful — so we drop it and let the chip alone convey the fee.
 private fun BigDecimal?.isMeaningful(): Boolean = this != null && this.signum() != 0
 
-// Renders the amber fee chip above the amount, right-aligned. Chip alone,
-// no operator glyph — the layout (chip on top, amount below, red pill under)
-// visually implies the equation.
-@Composable
-private fun ChipAbove(
-    stack: BigDecimal,
-    fees: List<Fee>,
-    onClick: () -> Unit,
-) {
-    Ltr {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(bottom = CHIP_TO_AMOUNT_GAP),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            FeeChip(stack, fees, onClick)
-        }
-    }
-}
-
-// Same as [ChipAbove] but sits between the subtotal and the hero final in
-// the top card, so it takes no bottom padding of its own — the surrounding
-// column adds symmetric spacers instead.
+// Sits between the subtotal and the hero final in the top card, taking no
+// bottom padding of its own — the surrounding column adds symmetric spacers
+// instead.
 @Composable
 private fun ChipBelow(
     stack: BigDecimal,
@@ -796,33 +730,6 @@ private fun ChipBelow(
         ) {
             FeeChip(stack, fees, onClick)
         }
-    }
-}
-
-// Renders the red final-value pill below the amount, right-aligned. The
-// pill is allowed to grow leftward into whatever the amount row leaves
-// unclaimed (weight(1f, fill = false)).
-@Composable
-private fun PillBelow(
-    value: BigDecimal,
-    currency: Currency?,
-    decimalPlaces: Int,
-    onClick: () -> Unit,
-) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(top = AMOUNT_TO_PILL_GAP),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        FinalValueChip(
-            value = value,
-            currency = currency,
-            decimalPlaces = decimalPlaces,
-            onClick = onClick,
-            modifier = Modifier.weight(1f, fill = false),
-        )
     }
 }
 
@@ -916,45 +823,6 @@ private fun rememberIdleAutoScrollState(resetKey: Any? = null): ScrollState {
     return state
 }
 
-@Composable
-private fun FinalValueChip(
-    value: BigDecimal,
-    currency: Currency?,
-    decimalPlaces: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-    val symbolAppended = remember(context) { hasAppendedCurrencySymbol(context) }
-    val symbol = currency?.symbol()
-    val label =
-        remember(value, symbol, symbolAppended, decimalPlaces) {
-            val body =
-                value.toCompactHumanReadableNumber(context)
-                    ?: value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces)
-            formatWithSymbol(body, symbol, symbolAppended)
-        }
-    val errorColor = MaterialTheme.colorScheme.error
-    val bg = errorColor.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
-    Row(
-        modifier
-            .clip(RoundedCornerShape(PILL_RADIUS))
-            .background(bg)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = label,
-            fontSize = FEE_CHIP_TEXT_SIZE,
-            fontWeight = FontWeight.Medium,
-            color = errorColor,
-            maxLines = 1,
-            softWrap = false,
-            modifier = Modifier.horizontalScroll(rememberIdleAutoScrollState(resetKey = value)),
-        )
-    }
-}
 
 // Displayable version of a full grouped amount ("310,500,000,000,000 ILS"),
 // folded into compact form ("310.5T ILS") once the integer part crosses the

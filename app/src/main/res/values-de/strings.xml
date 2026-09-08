@@ -106,8 +106,6 @@
     <string name="a11y_action_select">Auswählen</string>
     <string name="a11y_action_load">Laden</string>
     <string name="a11y_action_open">Öffnen</string>
-    <string name="quick_conversions_fee_conversion">Umrechnung %s</string>
-    <string name="quick_conversions_fee_reduction">Reduktion %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Artikel oben anheften</string>
     <string name="cart_unpin_item">Artikel loslösen</string>

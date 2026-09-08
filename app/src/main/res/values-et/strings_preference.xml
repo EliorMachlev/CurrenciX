@@ -6,9 +6,6 @@
     <string name="fee_title">Valuutavahetuse teenustasu</string>
     <string name="fee_summary">Halda vahetus-, panga-/kaarditasusid ja konkreetsete valuutapaaride tasusid</string>
     <string name="fee_manager_title">Teenustasud</string>
-    <string name="fee_side_label">Teenustasu tüüp</string>
-    <string name="fee_side_original">Konverteerimistasu</string>
-    <string name="fee_side_converted">Konverteeritud tasu</string>
     <string name="fee_section_global_exchange">Üldine vahetustasu</string>
     <string name="fee_section_global_bank">Üldine panga-/kaarditasu</string>
     <string name="fee_section_specific_pair">Konkreetse valuutapaari vahetustasu</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Kuhu</string>
     <string name="fee_pair_pick_currency">Vali valuuta</string>
     <string name="fee_true_cost_prefix">"Konverteerimistasu: "</string>
-    <string name="fee_original_value_prefix">"Vähendustasu: "</string>
     <string name="fee_cost_with_fee_prefix">"Hind koos tasuga: "</string>
-    <string name="fee_value_before_fee_prefix">"Väärtus enne tasu: "</string>
-    <string name="fee_side_summary_original">Kuvatav konverteeritud summa jääb keskturukursile; teenustasud kuvatakse eraldi kui \"Konverteerimistasu\".</string>
-    <string name="fee_side_summary_converted">Teenustasud on kuvatavasse konverteeritud summasse juba arvestatud.</string>
     <string name="fee_empty">Teenustasusid veel pole</string>
     <string name="previewConversion_title">Konverteerimise eelvaade</string>
     <string name="previewConversion_summary">Näita valuutavalijas iga vääringu kohta viimast vahetuskurssi.</string>

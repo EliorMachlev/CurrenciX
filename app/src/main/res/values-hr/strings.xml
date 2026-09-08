@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Odaberi</string>
     <string name="a11y_action_load">Učitaj</string>
     <string name="a11y_action_open">Otvori</string>
-    <string name="quick_conversions_fee_conversion">konverzija %s</string>
-    <string name="quick_conversions_fee_reduction">smanjenje %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Prikvači na vrh</string>
     <string name="cart_unpin_item">Otkvači stavku</string>

@@ -6,9 +6,6 @@
     <string name="fee_title">Opłata za transakcję zagraniczną</string>
     <string name="fee_summary">Zarządzaj opłatami wymiany, bankowymi/kartowymi oraz specyficznymi dla par walut</string>
     <string name="fee_manager_title">Opłaty</string>
-    <string name="fee_side_label">Typ opłaty</string>
-    <string name="fee_side_original">Opłata za przewalutowanie</string>
-    <string name="fee_side_converted">Przeliczona opłata</string>
     <string name="fee_section_global_exchange">Globalna opłata za wymianę</string>
     <string name="fee_section_global_bank">Globalna opłata bankowa/kartowa</string>
     <string name="fee_section_specific_pair">Opłata za wymianę dla określonej pary walut</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Na</string>
     <string name="fee_pair_pick_currency">Wybierz walutę</string>
     <string name="fee_true_cost_prefix">"Opłata za konwersję: "</string>
-    <string name="fee_original_value_prefix">"Opłata za pomniejszenie: "</string>
     <string name="fee_cost_with_fee_prefix">"Koszt z prowizją: "</string>
-    <string name="fee_value_before_fee_prefix">"Wartość przed prowizją: "</string>
-    <string name="fee_side_summary_original">Wyświetlana przeliczona kwota pozostaje po średnim kursie rynkowym; opłaty są pokazywane osobno jako \"Opłata za konwersję\".</string>
-    <string name="fee_side_summary_converted">Opłaty są uwzględnione w wyświetlanej przeliczonej kwocie.</string>
     <string name="fee_empty">Brak opłat</string>
     <string name="previewConversion_title">Podgląd konwersji</string>
     <string name="previewConversion_summary">Pokaż obecny kurs w ekranie wyboru waluty.</string>

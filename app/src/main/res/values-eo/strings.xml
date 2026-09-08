@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Elekti</string>
     <string name="a11y_action_load">Ŝargi</string>
     <string name="a11y_action_open">Malfermi</string>
-    <string name="quick_conversions_fee_conversion">konvertado %s</string>
-    <string name="quick_conversions_fee_reduction">redukto %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Alpingli artikolon supre</string>
     <string name="cart_unpin_item">Depingli artikolon</string>

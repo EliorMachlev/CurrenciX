@@ -6,39 +6,6 @@ import java.math.MathContext
 private val PERCENTAGE_DIVISOR = BigDecimal("100")
 
 /**
- * Pair of multiplicative fee stacks, split by which [FeeSide] each fee is
- * pinned to. [original] inflates the input-side "true cost"; [converted] is
- * folded into the destination amount the user sees.
- */
-data class SideStacks(
-    val original: BigDecimal,
-    val converted: BigDecimal,
-) {
-    /** Product of both sides — the aggregate multiplicative impact on the rate. */
-    val combined: BigDecimal = original.multiply(converted, MathContext.DECIMAL128)
-
-    fun isNeutral(): Boolean = original.compareTo(BigDecimal.ONE) == 0 && converted.compareTo(BigDecimal.ONE) == 0
-
-    companion object {
-        val NEUTRAL = SideStacks(BigDecimal.ONE, BigDecimal.ONE)
-    }
-}
-
-/**
- * Fees that actually participate in the current pair, split by [FeeSide].
- * Companion to [SideStacks] — same partition, but keeping the concrete entries
- * so the UI can annotate the fee chip with names (e.g. "Wise, Chase +2.5%").
- */
-data class SideFees(
-    val original: List<Fee>,
-    val converted: List<Fee>,
-) {
-    companion object {
-        val EMPTY = SideFees(emptyList(), emptyList())
-    }
-}
-
-/**
  * Pure fee-stacking math. Extracted from MainViewModel so it can be exercised
  * without an Android [android.app.Application] context.
  *
@@ -48,8 +15,9 @@ data class SideFees(
  * Global exchange and global bank/card fees are **single-select**: at most one
  * of each participates in the stack, chosen by the picker IDs (falling back to
  * the first active entry of that category when the pick is unset or stale).
- * Specific-pair fees still stack together across every active match. Each fee
- * carries its own [FeeSide] which decides which of [SideStacks] it lands in.
+ * Specific-pair fees still stack together across every active match. Every fee
+ * behaves as a source-side markup — the resulting stack inflates the input-side
+ * "true cost" and leaves the displayed converted amount at the mid-market value.
  */
 object FeeCalculator {
     /**
@@ -100,41 +68,32 @@ object FeeCalculator {
     }
 
     /**
-     * Resolve which fees actually participate for the given pair (specific
-     * matches + single-select picks for global exchange/bank), then split them
-     * by [FeeSide] and return one multiplicative stack per side.
+     * Resolve the fees that actually participate for the given pair (specific
+     * matches + single-select picks for global exchange/bank).
      */
-    fun sideStacks(
+    fun activeFees(
         all: List<Fee>,
         base: Currency?,
         dest: Currency?,
         activeExchangeId: String? = null,
         activeBankId: String? = null,
-    ): SideStacks {
-        val fees = sideFees(all, base, dest, activeExchangeId, activeBankId)
-        return SideStacks(stackFactor(fees.original), stackFactor(fees.converted))
+    ): List<Fee> {
+        val applicable = applicableFees(all, base, dest)
+        return applicable.filterIsInstance<Fee.SpecificPair>() +
+            pickActive(applicable.filterIsInstance<Fee.GlobalExchange>(), activeExchangeId) +
+            pickActive(applicable.filterIsInstance<Fee.GlobalBank>(), activeBankId)
     }
 
     /**
-     * Same resolution as [sideStacks] but returns the concrete [Fee] entries
-     * per side instead of collapsing them into multiplicative factors. Used by
-     * the UI to render fee names alongside percentages.
+     * Multiplicative stack of every fee that participates for the given pair.
      */
-    fun sideFees(
+    fun feeStack(
         all: List<Fee>,
         base: Currency?,
         dest: Currency?,
         activeExchangeId: String? = null,
         activeBankId: String? = null,
-    ): SideFees {
-        val applicable = applicableFees(all, base, dest)
-        val chosen =
-            applicable.filterIsInstance<Fee.SpecificPair>() +
-                pickActive(applicable.filterIsInstance<Fee.GlobalExchange>(), activeExchangeId) +
-                pickActive(applicable.filterIsInstance<Fee.GlobalBank>(), activeBankId)
-        val (originals, converteds) = chosen.partition { it.feeSide == FeeSide.ORIGINAL }
-        return SideFees(originals, converteds)
-    }
+    ): BigDecimal = stackFactor(activeFees(all, base, dest, activeExchangeId, activeBankId))
 
     /**
      * Resolve the single-select choice: prefer the entry whose id matches

@@ -277,30 +277,24 @@ class MainActivity : BaseActivity() {
                 result.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
                 dest.iso4217Alpha(),
             )
-        val extra = buildShareFeeExtra(base, dest)
+        val extra = buildShareFeeExtra(base)
         return if (extra != null) "$main\n$extra" else main
     }
 
-    // Small annotation line(s) shown under the shared result. Order matches
-    // the on-screen layout: ORIGINAL side surfaces fee then cost-with-fee;
-    // CONVERTED side surfaces value-before-fee then reduction-fee.
-    private fun buildShareFeeExtra(
-        base: Currency,
-        dest: Currency,
-    ): String? {
-        val stacks = viewModel.getSideStacks().value
+    // Small annotation line(s) shown under the shared result: fee amount
+    // then cost-with-fee, both on the input side.
+    private fun buildShareFeeExtra(base: Currency): String? {
+        val stack = viewModel.getFeeStack().value
 
         fun line(
             prefixRes: Int,
             value: BigDecimal?,
             currency: Currency,
-            stack: BigDecimal?,
-        ): String? = value?.let { buildFeeAmountLine(prefixRes, it, currency, stack) }
+            stackForLine: BigDecimal?,
+        ): String? = value?.let { buildFeeAmountLine(prefixRes, it, currency, stackForLine) }
         return listOfNotNull(
-            line(R.string.fee_true_cost_prefix, viewModel.getOriginalFeeAmount().value, base, stacks?.original),
+            line(R.string.fee_true_cost_prefix, viewModel.getFeeAmount().value, base, stack),
             line(R.string.fee_cost_with_fee_prefix, viewModel.getTrueCost().value, base, null),
-            line(R.string.fee_value_before_fee_prefix, viewModel.getOriginalValue().value, dest, null),
-            line(R.string.fee_original_value_prefix, viewModel.getConvertedFeeAmount().value, dest, stacks?.converted),
         ).takeIf { it.isNotEmpty() }
             ?.joinToString("\n")
     }

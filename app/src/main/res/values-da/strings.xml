@@ -106,8 +106,6 @@
     <string name="a11y_action_select">Vælg</string>
     <string name="a11y_action_load">Indlæs</string>
     <string name="a11y_action_open">Åbn</string>
-    <string name="quick_conversions_fee_conversion">konvertering %s</string>
-    <string name="quick_conversions_fee_reduction">reduktion %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fastgør øverst</string>
     <string name="cart_unpin_item">Frigør vare</string>

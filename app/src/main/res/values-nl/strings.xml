@@ -106,8 +106,6 @@
     <string name="a11y_action_select">Selecteer</string>
     <string name="a11y_action_load">Laad</string>
     <string name="a11y_action_open">Open</string>
-    <string name="quick_conversions_fee_conversion">conversie %s</string>
-    <string name="quick_conversions_fee_reduction">verlaging %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Bovenaan vastmaken</string>
     <string name="cart_unpin_item">Losmaken</string>

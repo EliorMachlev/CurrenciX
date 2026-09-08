@@ -105,8 +105,6 @@
     <string name="a11y_action_select">নির্বাচন</string>
     <string name="a11y_action_load">লোড করুন</string>
     <string name="a11y_action_open">খুলুন</string>
-    <string name="quick_conversions_fee_conversion">রূপান্তর %s</string>
-    <string name="quick_conversions_fee_reduction">হ্রাস %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">শীর্ষে পিন করুন</string>
     <string name="cart_unpin_item">পিন সরান</string>

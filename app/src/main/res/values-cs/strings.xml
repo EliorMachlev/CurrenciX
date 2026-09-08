@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Vybrat</string>
     <string name="a11y_action_load">Načíst</string>
     <string name="a11y_action_open">Otevřít</string>
-    <string name="quick_conversions_fee_conversion">konverze %s</string>
-    <string name="quick_conversions_fee_reduction">snížení %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Připnout nahoru</string>
     <string name="cart_unpin_item">Odepnout položku</string>

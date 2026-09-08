@@ -28,17 +28,13 @@ import androidx.preference.PreferenceScreen
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
-import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.CHOICE_DESC_ALPHA
-import com.eliormachlev.currencix.util.ChoiceOption
 import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.util.applySelectableRowBackground
 import com.eliormachlev.currencix.util.choiceExplainerRow
 import com.eliormachlev.currencix.util.dpToPx
 import com.eliormachlev.currencix.util.paddedDialogContainer
 import com.eliormachlev.currencix.util.setOnHapticClickListener
-import com.eliormachlev.currencix.util.showChoiceExplainerDialog
 import com.eliormachlev.currencix.util.showWithHapticButtons
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
@@ -58,14 +54,13 @@ private const val PREF_KEY_GLOBAL_BANK = "__global_bank"
 private const val FLAG_INLINE_HEIGHT_SP = 14f
 
 // Vertical break applied uniformly between every section of the fee-editor
-// dialog (Active switch, Name, per-dialog middle rows, Percent, Fee side).
+// dialog (Active switch, Name, per-dialog middle rows, Percent).
 // Named so intent survives future dimen renames.
 private val FEE_EDITOR_SECTION_GAP = R.dimen.margin2x
 
 // Fraction of screen width the fee-editor dialog stretches to. Default
-// AlertDialog width is ~10dp-margin narrower on most devices, which pushes
-// the Fee-side radio row into wrapping; 0.95 keeps a hairline margin but
-// buys enough room to fit the row on typical phones.
+// AlertDialog width is ~10dp-margin narrower on most devices; 0.95 keeps a
+// hairline margin but buys enough room to fit the rows on typical phones.
 private const val FEE_EDITOR_DIALOG_WIDTH_FRACTION = 0.95f
 
 // Fee percent field: unsigned decimals in [0, 100] with at most
@@ -211,20 +206,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 isIconSpaceReserved = false
             }.also(screen::addPreference)
 
-    private fun feeSideOption(side: FeeSide): ChoiceOption =
-        when (side) {
-            FeeSide.CONVERTED ->
-                ChoiceOption(
-                    getString(R.string.fee_side_converted),
-                    getString(R.string.fee_side_summary_converted),
-                )
-            else ->
-                ChoiceOption(
-                    getString(R.string.fee_side_original),
-                    getString(R.string.fee_side_summary_original),
-                )
-        }
-
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -301,7 +282,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 name = d.name,
                 percent = d.percent,
                 isActive = d.isActive,
-                feeSide = d.feeSide,
             ) as T
         }
 
@@ -648,8 +628,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
      * Append a section label followed by its associated view. Used by both
      * fee-editor dialogs, which are entirely a stack of labelled-input pairs.
      * [topGapRes] adds a top margin to the label — pass when the caller wants
-     * to break the visual flow before a new section (e.g. the fee-side block
-     * after the numeric row).
+     * to break the visual flow before a new section.
      */
     private fun LinearLayout.addLabeled(
         @StringRes labelRes: Int,
@@ -680,10 +659,10 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
      * confirms; use `return@showFeeEditorDialog` to bail without dismissing
      * data flow (e.g. when required inputs aren't filled in yet).
      *
-     * The body is wrapped in a [ScrollView] so overflowing rows (e.g. the
-     * fee-side explainer on short screens) stay reachable, and the dialog
-     * window is widened to [FEE_EDITOR_DIALOG_WIDTH_FRACTION] of screen
-     * width so we get more horizontal room before rows have to wrap.
+     * The body is wrapped in a [ScrollView] so overflowing rows on short
+     * screens stay reachable, and the dialog window is widened to
+     * [FEE_EDITOR_DIALOG_WIDTH_FRACTION] of screen width so we get more
+     * horizontal room before rows have to wrap.
      */
     private fun showFeeEditorDialog(
         ctx: Context,
@@ -715,7 +694,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         val name: String,
         val percent: BigDecimal,
         val isActive: Boolean,
-        val feeSide: FeeSide,
     )
 
     /**
@@ -726,7 +704,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
     private data class SharedFeeInputs(
         val nameInput: EditText,
         val percentInput: PercentInput,
-        val feeSideChooser: FeeSideChooser,
         val activeSwitch: MaterialSwitch,
     ) {
         fun toDraft(): FeeDraft {
@@ -738,7 +715,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
                 name = nameInput.text.toString().trim(),
                 percent = parsed,
                 isActive = activeSwitch.isChecked,
-                feeSide = feeSideChooser.current(),
             )
         }
     }
@@ -750,7 +726,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         SharedFeeInputs(
             nameInput = buildNameInput(ctx, existing?.name),
             percentInput = buildPercentInput(ctx, existing?.percent),
-            feeSideChooser = buildFeeSideChooser(ctx, existing?.feeSide ?: FeeSide.ORIGINAL),
             activeSwitch = buildSwitch(ctx, R.string.fee_edit_active, existing?.isActive != false),
         )
 
@@ -759,7 +734,7 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
 
     /**
      * Stack the shared prefix (active switch + name), any dialog-specific
-     * [middle] rows, then the shared suffix (percent + fee-side) into a
+     * [middle] rows, then the shared suffix (percent) into a
      * fee-editor container. Every section transition gets the same
      * [FEE_EDITOR_SECTION_GAP] so the rhythm reads evenly top-to-bottom;
      * callers only need to apply the same gap to any rows they add in
@@ -773,7 +748,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
         addLabeled(R.string.fee_edit_name, inputs.nameInput, topGapRes = FEE_EDITOR_SECTION_GAP)
         middle()
         addLabeled(R.string.fee_edit_percent, inputs.percentInput.view, topGapRes = FEE_EDITOR_SECTION_GAP)
-        addLabeled(R.string.fee_side_label, inputs.feeSideChooser.view, topGapRes = FEE_EDITOR_SECTION_GAP)
     }
 
     private fun showGlobalFeeDialog(
@@ -850,7 +824,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             name = name,
             percent = percent,
             isActive = isActive,
-            feeSide = feeSide,
         )
 
     private fun FeeDraft.toGlobalBank(): Fee.GlobalBank =
@@ -859,7 +832,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             name = name,
             percent = percent,
             isActive = isActive,
-            feeSide = feeSide,
         )
 
     private fun FeeDraft.toSpecificPair(
@@ -876,7 +848,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             to = to,
             bothWays = bothWays,
             isActive = isActive,
-            feeSide = feeSide,
         )
 
     private fun MaterialAlertDialogBuilder.withDeleteButton(onDelete: (() -> Unit)?): MaterialAlertDialogBuilder {
@@ -884,64 +855,6 @@ class FeeManagerFragment : PreferenceFragmentCompat() {
             setNeutralButton(R.string.fee_delete) { _, _ -> onDelete() }
         }
         return this
-    }
-
-    /**
-     * Inline fee-side picker for the edit dialogs. Shows the currently-picked
-     * side (title + one-line explainer) as a tappable row; opening the picker
-     * reuses the same choice-explainer dialog as the app-wide preference
-     * pickers so users see identical wording for each option.
-     */
-    private data class FeeSideChooser(
-        val view: View,
-        val current: () -> FeeSide,
-    )
-
-    private fun buildFeeSideChooser(
-        ctx: Context,
-        initial: FeeSide,
-    ): FeeSideChooser {
-        var picked = initial
-        val titleView =
-            TextView(ctx).apply {
-                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
-            }
-        val descView =
-            TextView(ctx).apply {
-                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
-                alpha = CHOICE_DESC_ALPHA
-            }
-
-        fun refresh() {
-            val opt = feeSideOption(picked)
-            titleView.text = opt.title
-            descView.text = opt.description
-        }
-        refresh()
-
-        val padV = ctx.resources.getDimensionPixelSize(R.dimen.margin2x)
-        val row =
-            LinearLayout(ctx).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(0, padV, 0, padV)
-                isClickable = true
-                applySelectableRowBackground()
-                addView(titleView)
-                addView(descView)
-                setOnHapticClickListener {
-                    val sides = listOf(FeeSide.ORIGINAL, FeeSide.CONVERTED)
-                    showChoiceExplainerDialog(
-                        ctx = ctx,
-                        titleRes = R.string.fee_side_label,
-                        options = sides.map(::feeSideOption),
-                        selectedIndex = sides.indexOf(picked).coerceAtLeast(0),
-                    ) { index ->
-                        picked = sides[index]
-                        refresh()
-                    }
-                }
-            }
-        return FeeSideChooser(row, { picked })
     }
 
     private fun outlinedMaterialButton(ctx: Context): MaterialButton =

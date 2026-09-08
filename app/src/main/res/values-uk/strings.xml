@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Вибрати</string>
     <string name="a11y_action_load">Завантажити</string>
     <string name="a11y_action_open">Відкрити</string>
-    <string name="quick_conversions_fee_conversion">конвертація %s</string>
-    <string name="quick_conversions_fee_reduction">зменшення %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закріпити зверху</string>
     <string name="cart_unpin_item">Відкріпити</string>

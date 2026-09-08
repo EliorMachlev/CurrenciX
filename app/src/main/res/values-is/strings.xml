@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Velja</string>
     <string name="a11y_action_load">Hlaða</string>
     <string name="a11y_action_open">Opna</string>
-    <string name="quick_conversions_fee_conversion">umbreyting %s</string>
-    <string name="quick_conversions_fee_reduction">lækkun %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Festa efst</string>
     <string name="cart_unpin_item">Losa festingu</string>

@@ -105,8 +105,6 @@
     <string name="a11y_action_select">選擇</string>
     <string name="a11y_action_load">載入</string>
     <string name="a11y_action_open">開啟</string>
-    <string name="quick_conversions_fee_conversion">換算 %s</string>
-    <string name="quick_conversions_fee_reduction">減免 %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">置頂</string>
     <string name="cart_unpin_item">取消置頂</string>

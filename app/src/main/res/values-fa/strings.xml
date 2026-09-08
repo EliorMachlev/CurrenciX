@@ -106,8 +106,6 @@
     <string name="a11y_action_select">انتخاب</string>
     <string name="a11y_action_load">بارگذاری</string>
     <string name="a11y_action_open">باز کردن</string>
-    <string name="quick_conversions_fee_conversion">تبدیل %s</string>
-    <string name="quick_conversions_fee_reduction">کاهش %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">پین کردن در بالا</string>
     <string name="cart_unpin_item">حذف پین</string>

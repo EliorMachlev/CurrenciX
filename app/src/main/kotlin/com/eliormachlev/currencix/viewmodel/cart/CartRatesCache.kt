@@ -6,8 +6,8 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
-import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.repository.Database
+import java.math.BigDecimal
 
 /**
  * Owns the fee list, exchange rates, and active-exchange/bank ids the cart's
@@ -57,7 +57,7 @@ class CartRatesCache(
     }
 }
 
-fun CartRatesCache.sideStacksFor(
+fun CartRatesCache.feeStackFor(
     base: Currency?,
     dest: Currency?,
-): SideStacks = FeeCalculator.sideStacks(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
+): BigDecimal = FeeCalculator.feeStack(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)

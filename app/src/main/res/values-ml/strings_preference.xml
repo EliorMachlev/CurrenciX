@@ -6,9 +6,6 @@
     <string name="fee_title">വിദേശ ഇടപാട് ഫീസ്</string>
     <string name="fee_summary">വിനിമയ, ബാങ്ക്/കാർഡ്, കറൻസി ജോഡി അടിസ്ഥാനത്തിലുള്ള ഫീസുകൾ കൈകാര്യം ചെയ്യുക</string>
     <string name="fee_manager_title">ഫീസുകൾ</string>
-    <string name="fee_side_label">ഫീസിന്റെ തരം</string>
-    <string name="fee_side_original">പരിവർത്തന ഫീസ്</string>
-    <string name="fee_side_converted">പരിവർത്തിത ഫീസ്</string>
     <string name="fee_section_global_exchange">ആഗോള വിനിമയ ഫീസ്</string>
     <string name="fee_section_global_bank">ആഗോള ബാങ്ക്/കാർഡ് ഫീസ്</string>
     <string name="fee_section_specific_pair">നിർദ്ദിഷ്ട കറൻസി ജോഡിയുടെ വിനിമയ ഫീസ്</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">ലേക്ക്</string>
     <string name="fee_pair_pick_currency">കറൻസി തിരഞ്ഞെടുക്കുക</string>
     <string name="fee_true_cost_prefix">"പരിവർത്തന ഫീസ്: "</string>
-    <string name="fee_original_value_prefix">"കിഴിവ് ഫീസ്: "</string>
     <string name="fee_cost_with_fee_prefix">"ഫീസ് ഉൾപ്പെടെയുള്ള വില: "</string>
-    <string name="fee_value_before_fee_prefix">"ഫീസിന് മുൻപുള്ള മൂല്യം: "</string>
-    <string name="fee_side_summary_original">പ്രദർശിപ്പിച്ച പരിവർത്തിത തുക മധ്യ-വിപണി നിരക്കിൽ തുടരും; ഫീസുകൾ പ്രത്യേകമായി \"പരിവർത്തന ഫീസ്\" ആയി കാണിക്കുന്നു.</string>
-    <string name="fee_side_summary_converted">ഫീസുകൾ പ്രദർശിപ്പിച്ച പരിവർത്തിത തുകയിൽ ഉൾപ്പെടുത്തിയിരിക്കുന്നു.</string>
     <string name="fee_empty">ഇതുവരെ ഫീസുകളില്ല</string>
     <string name="previewConversion_title">പരിവർത്തന പ്രിവ്യൂ</string>
     <string name="previewConversion_summary">കറൻസി പിക്കറിൽ ഓരോ നിരക്കിന്റെയും നിലവിലെ പരിവർത്തനം കാണിക്കുക.</string>

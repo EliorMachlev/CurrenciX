@@ -106,8 +106,6 @@
     <string name="a11y_action_select">בחר</string>
     <string name="a11y_action_load">טען</string>
     <string name="a11y_action_open">פתח</string>
-    <string name="quick_conversions_fee_conversion">המרה %s</string>
-    <string name="quick_conversions_fee_reduction">הפחתה %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">הצמד לראש הרשימה</string>
     <string name="cart_unpin_item">בטל הצמדה</string>

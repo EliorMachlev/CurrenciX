@@ -105,8 +105,6 @@
     <string name="a11y_action_select">Chọn</string>
     <string name="a11y_action_load">Tải</string>
     <string name="a11y_action_open">Mở</string>
-    <string name="quick_conversions_fee_conversion">chuyển đổi %s</string>
-    <string name="quick_conversions_fee_reduction">giảm %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Ghim lên đầu</string>
     <string name="cart_unpin_item">Bỏ ghim</string>

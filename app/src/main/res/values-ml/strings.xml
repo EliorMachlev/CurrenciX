@@ -109,8 +109,6 @@
     <string name="a11y_action_select">തിരഞ്ഞെടുക്കുക</string>
     <string name="a11y_action_load">ലോഡ് ചെയ്യുക</string>
     <string name="a11y_action_open">തുറക്കുക</string>
-    <string name="quick_conversions_fee_conversion">പരിവർത്തനം %s</string>
-    <string name="quick_conversions_fee_reduction">കുറവ് %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">മുകളിലേക്ക് പിൻ ചെയ്യുക</string>
     <string name="cart_unpin_item">പിൻ നീക്കുക</string>
