@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.view.widget
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,8 +88,9 @@ private object CurrencyGlanceWidget : GlanceAppWidget() {
         val snapshot = readSnapshot(context)
         val rateLine = snapshot.rateLine(context)
         val footerLine = snapshot.footerLine(context)
+        val launchIntent = Intent(context, MainActivity::class.java)
         provideContent {
-            WidgetBody(rateLine = rateLine, footerLine = footerLine)
+            WidgetBody(rateLine = rateLine, footerLine = footerLine, launchIntent = launchIntent)
         }
     }
 }
@@ -97,6 +99,7 @@ private object CurrencyGlanceWidget : GlanceAppWidget() {
 private fun WidgetBody(
     rateLine: String,
     footerLine: String,
+    launchIntent: Intent,
 ) {
     GlanceTheme {
         Column(
@@ -104,7 +107,7 @@ private fun WidgetBody(
                 GlanceModifier
                     .fillMaxSize()
                     .background(imageProvider = ImageProvider(R.drawable.widget_background))
-                    .clickable(actionStartActivity(MainActivity::class.java))
+                    .clickable(actionStartActivity(launchIntent))
                     .padding(WIDGET_PADDING),
             verticalAlignment = Alignment.Vertical.CenterVertically,
         ) {
