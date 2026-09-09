@@ -27,6 +27,7 @@ import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 
 /**
@@ -57,7 +58,7 @@ fun CartScreen(
 ) {
     AppTheme {
         val items by itemsSource.observeAsState(initial = emptyList())
-        Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding())) {
             Column(Modifier.fillMaxSize()) {
                 Box(Modifier.fillMaxWidth().weight(1f)) {
                     CartItemsList(

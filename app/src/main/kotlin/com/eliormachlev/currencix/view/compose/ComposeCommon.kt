@@ -1,7 +1,13 @@
 package com.eliormachlev.currencix.view.compose
 
+import android.util.TypedValue
 import android.widget.ImageView
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -11,11 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import com.eliormachlev.currencix.model.Currency
@@ -64,6 +74,31 @@ fun Modifier.onBackgroundTap(onTap: () -> Unit): Modifier =
             detectTapGestures(onTap = { current() })
         }
     }
+
+// AppCompat's ActionBar overlays Compose content on API 35+ (edge-to-edge is
+// enforced and the ActionBar container draws with a status-bar top pad on top
+// of the setContentView area). Setting `fitsSystemWindows = true` on the
+// ComposeView doesn't push content down. This helper returns status-bar-top +
+// `?attr/actionBarSize` so screens can pad their Compose root and sit below
+// the toolbar. Applied on the three activities that host Compose directly:
+// MainActivity, CartActivity, TimelineActivity.
+@Composable
+fun rememberActionBarTopPadding(): Dp {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val statusBarTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val actionBarSizePx =
+        remember(context) {
+            val tv = TypedValue()
+            if (context.theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+                TypedValue.complexToDimensionPixelSize(tv.data, context.resources.displayMetrics)
+            } else {
+                0
+            }
+        }
+    val actionBarSizeDp = with(density) { actionBarSizePx.toDp() }
+    return statusBarTop + actionBarSizeDp
+}
 
 @Composable
 fun FavoriteToggleIcon(
