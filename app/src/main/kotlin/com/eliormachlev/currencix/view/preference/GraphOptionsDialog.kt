@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view.preference
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -21,6 +20,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.DialogFragment
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.createWithHapticButtons
@@ -34,7 +34,7 @@ private val DialogTopPadding = 8.dp
 private val DialogBottomPadding = 16.dp
 private val RowVerticalPadding = 8.dp
 
-class GraphOptionsDialog : AppCompatDialogFragment() {
+class GraphOptionsDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val db = Database(requireContext())
         val content =

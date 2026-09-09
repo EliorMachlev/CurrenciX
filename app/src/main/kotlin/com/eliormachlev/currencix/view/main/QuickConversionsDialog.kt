@@ -4,12 +4,12 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.createWithHapticButtons
@@ -26,7 +26,7 @@ import java.math.RoundingMode
 
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
 
-class QuickConversionsDialog : AppCompatDialogFragment() {
+class QuickConversionsDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val ctx = requireContext()
         val viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
