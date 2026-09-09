@@ -142,7 +142,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$livecycleVersion")
     implementation("androidx.window:window:1.5.1")
-    implementation("com.google.android.material:material:1.14.0")
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
     // the shared instance via the HttpClientProvider.fetch extension.

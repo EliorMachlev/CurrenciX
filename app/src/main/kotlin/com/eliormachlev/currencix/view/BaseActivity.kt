@@ -1,9 +1,7 @@
 package com.eliormachlev.currencix.view
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,7 +11,6 @@ import androidx.window.layout.WindowInfoTracker
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.hapticTap
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -42,36 +39,6 @@ abstract class BaseActivity : AppCompatActivity() {
     ): Boolean {
         hapticTap()
         return super.onMenuOpened(featureId, menu)
-    }
-
-    /**
-     * Resolve `?android:attr/textColorSecondary` against `AppTheme` explicitly —
-     * used where the current context's own theme lookup would return the wrong
-     * color (e.g. inside snackbars/dialogs styled with a different overlay).
-     */
-    protected fun getTextColorSecondary(): Int {
-        val a = theme.obtainStyledAttributes(R.style.AppTheme, intArrayOf(android.R.attr.textColorSecondary))
-        val color = a.getColor(0, Color.TRANSPARENT)
-        a.recycle()
-        return color
-    }
-
-    /**
-     * Build a [Snackbar] anchored to the shared `snackbar_top_position` view
-     * when the current layout exposes one; otherwise fall back to the window's
-     * content root (bottom of screen). Passing `this` as the theme context
-     * (vs. an anchor View) skips the ActionBar-overlay theme walk that trips
-     * over Material3-only attributes. Callers apply their own tints / actions /
-     * duration on the returned builder — this only centralises the anchor
-     * lookup.
-     */
-    protected fun snackbar(
-        message: CharSequence,
-        duration: Int = Snackbar.LENGTH_SHORT,
-    ): Snackbar {
-        val anchor: View =
-            findViewById(R.id.snackbar_top_position) ?: findViewById(android.R.id.content)
-        return Snackbar.make(this, anchor, message, duration)
     }
 
     /**

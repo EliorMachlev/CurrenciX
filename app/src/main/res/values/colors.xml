@@ -20,7 +20,7 @@
 
    <color name="color_primary">@color/billGreen</color>
    <color name="color_keypad_operators">@color/color_primary</color>
-   <color name="color_keypad_delete">?attr/colorError</color>
+   <color name="color_keypad_delete">@color/app_error</color>
 
    <!-- WCAG AA-compliant error red for text/icon usage on the paper
         background. Material 3 error tone 40 (#B3261E) hits ~6:1 contrast. -->

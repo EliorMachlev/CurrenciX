@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatRadioButton
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.util.setOnHapticClickListener
-import com.google.android.material.radiobutton.MaterialRadioButton
 
 /**
  * Standalone API provider picker used by the main-menu shortcut. The
@@ -105,7 +105,7 @@ internal class ProviderPickerDialogAdapter(
 
     internal class ViewHolder {
         var parentView: View? = null
-        var radioButton: MaterialRadioButton? = null
+        var radioButton: AppCompatRadioButton? = null
         var textProviderName: TextView? = null
         var textDesc: TextView? = null
         var textHint: TextView? = null

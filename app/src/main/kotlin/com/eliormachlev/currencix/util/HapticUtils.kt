@@ -108,10 +108,9 @@ private fun AlertDialog.wireHapticButtons() {
 }
 
 /**
- * Build the dialog and wire haptics onto its buttons in one call. Covers both
- * [AlertDialog.Builder] and [com.google.android.material.dialog.MaterialAlertDialogBuilder]
- * (which extends it) so every dialog show-site in the app collapses to a
- * single terminal call instead of repeating `.show().also { it.wireHapticButtons() }`.
+ * Build the dialog and wire haptics onto its buttons in one call — every
+ * dialog show-site in the app collapses to a single terminal call instead of
+ * repeating `.show().also { it.wireHapticButtons() }`.
  */
 fun AlertDialog.Builder.showWithHapticButtons(): AlertDialog = show().also { it.wireHapticButtons() }
 

@@ -9,6 +9,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,15 +53,11 @@ import com.eliormachlev.currencix.view.timeline.TimelineActivity
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-
-private const val MAX_ERROR_TEXT_LINES = 20
 
 // fee true-cost / percent formatting for the share-sheet extra
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
@@ -313,10 +310,7 @@ class MainActivity : BaseActivity() {
     private fun copyToClipboard(copyText: CharSequence) {
         clipboardManager().setPrimaryClip(ClipData.newPlainText(null, copyText))
         val message = getString(R.string.copied_to_clipboard, copyText).fromHtmlLegacy()
-        snackbar(message)
-            .setBackgroundTint(MaterialColors.getColor(this, R.attr.colorPrimary, null))
-            .setTextColor(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
-            .show()
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun observe() {
@@ -374,15 +368,7 @@ class MainActivity : BaseActivity() {
 
     private fun showErrorSnackbar(message: String?) {
         message ?: return
-        snackbar(
-            message.fromHtmlLegacy(),
-            Snackbar.LENGTH_INDEFINITE,
-        ).setBackgroundTint(MaterialColors.getColor(this, R.attr.colorError, null))
-            .setTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))
-            .setActionTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))
-            .setAction(android.R.string.ok) { }
-            .setTextMaxLines(MAX_ERROR_TEXT_LINES)
-            .show()
+        Toast.makeText(this, message.fromHtmlLegacy(), Toast.LENGTH_LONG).show()
     }
 
     // capture hardware keyboard input

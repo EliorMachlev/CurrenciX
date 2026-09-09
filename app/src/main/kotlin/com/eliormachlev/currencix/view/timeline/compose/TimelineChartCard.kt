@@ -13,12 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.fromHtmlLegacy
-import com.google.android.material.color.MaterialColors
 
 private val CHART_PADDING = TIMELINE_CONTENT_PADDING
 private val PROVIDER_FONT_SIZE = 12.sp
@@ -48,13 +47,14 @@ internal fun TimelineChartCard(
         }
 
         if (error != null) {
+            val errorColorArgb = MaterialTheme.colorScheme.error.toArgb()
             // AndroidView keeps the exact HTML rendering (bold spans etc.) that
             // fromHtmlLegacy produces — cheaper than porting the parser.
             AndroidView(
                 factory = { ctx ->
                     TextView(ctx).apply {
                         typeface = android.graphics.Typeface.MONOSPACE
-                        setTextColor(MaterialColors.getColor(ctx, R.attr.colorError, 0))
+                        setTextColor(errorColorArgb)
                         gravity = android.view.Gravity.CENTER_VERTICAL
                     }
                 },

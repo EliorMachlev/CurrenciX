@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.view.cart
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -241,6 +242,6 @@ class CartActivity : BaseActivity() {
     }
 
     private fun showSnackbar(message: String) {
-        snackbar(message).show()
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

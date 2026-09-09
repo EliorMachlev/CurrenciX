@@ -19,13 +19,13 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.hapticTap
+import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.preference.GraphOptionsDialog
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
-import com.google.android.material.color.MaterialColors
 import java.time.format.DateTimeFormatter
 
 class TimelineActivity : BaseActivity() {
@@ -82,13 +82,12 @@ class TimelineActivity : BaseActivity() {
 
         observeFoldingFeature { feature -> foldingFeatureState.value = feature }
 
-        val lineColor = Color(MaterialColors.getColor(this, R.attr.colorPrimary, 0))
-        val axisColor =
-            Color(MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0))
-        // colorOnSurface (text-on-background) keeps the scrub line visually
-        // distinct from the green primary (max highlight), red min line, and
-        // the blue/purple period-change verticals on every theme.
-        val scrubLineColor = Color(MaterialColors.getColor(this, R.attr.colorOnSurface, 0))
+        val lineColor = Color(resolveThemeColor(R.attr.colorPrimary))
+        val axisColor = Color(resolveThemeColor(android.R.attr.textColorSecondary))
+        // Text-on-background keeps the scrub line visually distinct from the
+        // green primary (max highlight), red min line, and the blue/purple
+        // period-change verticals on every theme.
+        val scrubLineColor = Color(resolveThemeColor(android.R.attr.textColorPrimary))
 
         // Host Compose directly on a ComposeView with fitsSystemWindows=true so
         // edge-to-edge (targetSdk 35+) still pads the chart below the ActionBar /
