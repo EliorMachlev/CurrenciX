@@ -270,7 +270,7 @@ private fun ApiSection(
                 title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
                 summary =
                     if (apiKey.isNullOrBlank()) {
-                        stringResource(id = R.string.api_open_exchangerates_api_key_missing).toString()
+                        stringResource(id = R.string.api_open_exchangerates_api_key_missing)
                     } else {
                         apiKey
                     },
