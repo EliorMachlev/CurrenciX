@@ -158,15 +158,15 @@ private fun FeeAnnotationRow(
         when (mode) {
             FeeRowMode.TOTAL -> amountText
             FeeRowMode.DELTA ->
-                context.getString(
-                    R.string.cart_fee_extra_value,
+                stringResource(
+                    id = R.string.cart_fee_extra_value,
                     amountText,
                     feeStack.toCartFeePercentDisplay(),
                 )
         }
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = stripLabelSeparator(context.getString(prefixRes)),
+            text = stripLabelSeparator(stringResource(id = prefixRes)),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.weight(1f),

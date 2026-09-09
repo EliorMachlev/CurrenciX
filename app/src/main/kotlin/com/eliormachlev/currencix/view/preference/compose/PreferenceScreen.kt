@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.text.HtmlCompat
@@ -79,7 +80,6 @@ fun PreferenceScreen(
     viewModel: PreferenceViewModel,
     callbacks: PreferenceScreenCallbacks,
 ) {
-    val context = LocalContext.current
     var openDialog by remember { mutableStateOf<OpenDialog?>(null) }
     val dismiss: () -> Unit = { openDialog = null }
 
@@ -144,16 +144,20 @@ fun PreferenceScreen(
     }
 
     when (openDialog) {
-        OpenDialog.Keyboard ->
+        OpenDialog.Keyboard -> {
+            val entries = KeyboardType.entries
+            val labels = entries.map { stringResource(id = keyboardLabelRes(it)) }
+            val descriptions = entries.map { stringResource(id = keyboardDescriptionRes(it)) }
             SingleChoiceExplainerPickerDialog(
                 title = stringResource(id = R.string.keyboard_title),
-                options = KeyboardType.entries,
+                options = entries,
                 selected = keyboardType,
-                label = { context.getString(keyboardLabelRes(it)) },
-                description = { context.getString(keyboardDescriptionRes(it)) },
+                label = { labels[entries.indexOf(it)] },
+                description = { descriptions[entries.indexOf(it)] },
                 onDismiss = dismiss,
                 onPicked = viewModel::setKeyboardType,
             )
+        }
         OpenDialog.DecimalPlaces ->
             SingleChoicePickerDialog(
                 title = stringResource(id = R.string.decimal_places_title),
@@ -163,20 +167,23 @@ fun PreferenceScreen(
                 onDismiss = dismiss,
                 onPicked = viewModel::setDecimalPlaces,
             )
-        OpenDialog.Theme ->
+        OpenDialog.Theme -> {
+            val themeEntries = AppTheme.entries.toList()
+            val themeLabels = themeEntries.map { stringResource(id = themeLabelRes(it)) }
             SingleChoicePickerDialog(
                 title = stringResource(id = R.string.theme_title),
-                options = AppTheme.entries.toList(),
+                options = themeEntries,
                 selected = theme,
-                label = { context.getString(themeLabelRes(it)) },
+                label = { themeLabels[themeEntries.indexOf(it)] },
                 onDismiss = dismiss,
                 onPicked = { picked ->
                     if (viewModel.setTheme(picked)) callbacks.onThemeRequiresRestart()
                 },
             )
+        }
         OpenDialog.DateFormat -> {
-            val patterns = context.resources.getStringArray(R.array.date_format_values).toList()
-            val names = context.resources.getStringArray(R.array.date_format_names).toList()
+            val patterns = stringArrayResource(id = R.array.date_format_values).toList()
+            val names = stringArrayResource(id = R.array.date_format_names).toList()
             SingleChoicePickerDialog(
                 title = stringResource(id = R.string.date_format_title),
                 options = patterns,
@@ -221,7 +228,6 @@ private fun GeneralSection(
     openKeyboardPicker: () -> Unit,
     openDecimalPlacesPicker: () -> Unit,
 ) {
-    val context = LocalContext.current
     PreferenceSection(text = stringResource(id = R.string.category_settings)) {
         PreferenceRow(
             title = stringResource(id = R.string.fee_title),
@@ -231,7 +237,7 @@ private fun GeneralSection(
         )
         PreferenceRow(
             title = stringResource(id = R.string.keyboard_title),
-            summary = context.getString(keyboardLabelRes(keyboardType)),
+            summary = stringResource(id = keyboardLabelRes(keyboardType)),
             iconRes = R.drawable.ic_keyboard_extended,
             onClick = openKeyboardPicker,
         )
@@ -310,7 +316,7 @@ private fun AppearanceSection(
     PreferenceSection(text = stringResource(id = R.string.category_appearance)) {
         PreferenceRow(
             title = stringResource(id = R.string.theme_title),
-            summary = context.getString(themeLabelRes(theme)),
+            summary = stringResource(id = themeLabelRes(theme)),
             iconRes = R.drawable.ic_theme,
             onClick = openThemePicker,
         )
@@ -357,11 +363,10 @@ private fun GraphSection(callbacks: PreferenceScreenCallbacks) {
 
 @Composable
 private fun AboutSection(callbacks: PreferenceScreenCallbacks) {
-    val context = LocalContext.current
+    val disclaimerHtml = stringResource(id = R.string.disclaimer_summary)
     val disclaimerAnnotated =
-        remember {
-            val html = context.getString(R.string.disclaimer_summary)
-            AnnotatedString(HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT).toString())
+        remember(disclaimerHtml) {
+            AnnotatedString(HtmlCompat.fromHtml(disclaimerHtml, HtmlCompat.FROM_HTML_MODE_COMPACT).toString())
         }
     PreferenceSection(text = stringResource(id = R.string.category_about)) {
         PreferenceRow(
@@ -398,7 +403,7 @@ private fun VersionSection(callbacks: PreferenceScreenCallbacks) {
         )
         PreferenceRow(
             title = BuildConfig.VERSION_NAME,
-            summary = context.getString(R.string.version_summary, Calendar.getInstance().get(Calendar.YEAR).toString()),
+            summary = stringResource(id = R.string.version_summary, Calendar.getInstance().get(Calendar.YEAR).toString()),
             iconRes = R.drawable.ic_tag,
         )
     }
