@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 
 enum class DrawerAction {
     Timeline,
@@ -128,8 +129,9 @@ private fun MainContent(
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
+    val rootModifier = Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding())
     if (shouldUseHorizontal(foldingFeature)) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = rootModifier) {
             Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
                 OfflineBannerSlot(offlineText)
                 DisplayArea(
@@ -142,7 +144,7 @@ private fun MainContent(
             Box(modifier = Modifier.weight(1f).fillMaxHeight()) { keypadContent() }
         }
     } else {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = rootModifier) {
             OfflineBannerSlot(offlineText)
             DisplayArea(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
