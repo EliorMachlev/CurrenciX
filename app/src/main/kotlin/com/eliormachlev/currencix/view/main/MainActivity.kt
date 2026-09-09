@@ -102,7 +102,6 @@ class MainActivity : BaseActivity() {
         // Compose owns the entire screen tree — no XML layout involved.
         val composeHost =
             ComposeView(this).apply {
-                fitsSystemWindows = true
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
                     AppTheme {

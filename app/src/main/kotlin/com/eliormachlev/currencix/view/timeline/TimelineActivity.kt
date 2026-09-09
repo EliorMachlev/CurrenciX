@@ -89,13 +89,7 @@ class TimelineActivity : BaseActivity() {
         // period-change verticals on every theme.
         val scrubLineColor = Color(resolveThemeColor(android.R.attr.textColorPrimary))
 
-        // Host Compose directly on a ComposeView with fitsSystemWindows=true so
-        // edge-to-edge (targetSdk 35+) still pads the chart below the ActionBar /
-        // status bar — same behaviour as the deleted activity_timeline.xml root.
-        val composeHost =
-            ComposeView(this).apply {
-                fitsSystemWindows = true
-            }
+        val composeHost = ComposeView(this)
         setContentView(composeHost)
         composeHost.setContent {
             val feature by remember { foldingFeatureState }

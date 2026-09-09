@@ -87,7 +87,6 @@ class CartActivity : BaseActivity() {
         // Compose owns the entire screen tree — no XML layout involved.
         setContentView(
             ComposeView(this).apply {
-                fitsSystemWindows = true
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
                     CartScreen(
