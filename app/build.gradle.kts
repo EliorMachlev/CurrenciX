@@ -168,6 +168,9 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
+    // glance: home-screen widget composed instead of RemoteViews-driven.
+    val glanceVersion = "1.1.1"
+    implementation("androidx.glance:glance-appwidget:$glanceVersion")
     // charts
     val vicoVersion = "3.3.0"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
