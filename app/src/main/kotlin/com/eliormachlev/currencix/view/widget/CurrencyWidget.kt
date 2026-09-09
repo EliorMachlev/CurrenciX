@@ -104,7 +104,7 @@ private fun WidgetBody(
                 GlanceModifier
                     .fillMaxSize()
                     .background(imageProvider = ImageProvider(R.drawable.widget_background))
-                    .clickable(actionStartActivity<MainActivity>())
+                    .clickable(actionStartActivity(MainActivity::class.java))
                     .padding(WIDGET_PADDING),
             verticalAlignment = Alignment.Vertical.CenterVertically,
         ) {
