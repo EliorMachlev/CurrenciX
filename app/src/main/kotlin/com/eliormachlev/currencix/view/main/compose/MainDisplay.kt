@@ -88,7 +88,6 @@ import com.eliormachlev.currencix.util.toCompactHumanReadableNumber
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.theme.Amber
-import com.eliormachlev.currencix.view.compose.theme.Brass
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.coroutines.delay
@@ -216,15 +215,6 @@ private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
 private const val CURSOR_BLINK_MILLIS = 1200
 
-// Rate-footer background tint applied when we're not on live data —
-// Brass for historical, error for offline — so the footer itself
-// carries the status signal (no dedicated chip + dot). Alpha kept
-// low so the timestamp text stays legible on top.
-private const val RATE_FOOTER_TINT_ALPHA = 0.15f
-private val RATE_FOOTER_TINT_RADIUS: Dp = 12.dp
-private val RATE_FOOTER_TINT_HORIZONTAL_PADDING: Dp = 10.dp
-private val RATE_FOOTER_TINT_VERTICAL_PADDING: Dp = 6.dp
-
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
@@ -273,7 +263,6 @@ internal fun MainDisplay(
     fragmentManager: FragmentManager,
     callbacks: MainDisplayCallbacks,
     dateFormatPattern: String,
-    isOffline: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -285,7 +274,6 @@ internal fun MainDisplay(
     val isUpdating by viewModel.isUpdating().observeAsState(false)
     val feeStack by viewModel.getFeeStack().observeAsState()
     val activeFees by viewModel.getActiveFees().observeAsState()
-    val historicalDate by viewModel.getHistoricalLiveDate().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()
     val baseValueNumber by viewModel.getCurrentBaseValueAsNumber().observeAsState()
     val resultNumber by viewModel.getResultAsNumber().observeAsState()
@@ -312,8 +300,6 @@ internal fun MainDisplay(
         isUpdating = isUpdating,
         feeStack = feeStack,
         activeFees = activeFees.orEmpty(),
-        historicalDate = historicalDate,
-        isOffline = isOffline,
         mathText = mathText,
         originalBig = baseValueNumber,
         originalOther = trueCost,
@@ -351,8 +337,6 @@ private fun HeroCard(
     isUpdating: Boolean,
     feeStack: BigDecimal?,
     activeFees: List<Fee>,
-    historicalDate: LocalDate?,
-    isOffline: Boolean,
     mathText: String?,
     originalBig: BigDecimal?,
     originalOther: BigDecimal?,
@@ -407,8 +391,6 @@ private fun HeroCard(
                 base = baseCurrency,
                 dest = destCurrency,
                 rates = rates,
-                historicalDate = historicalDate,
-                isOffline = isOffline,
                 dateFormatPattern = dateFormatPattern,
                 onProviderClick = callbacks.onOpenProvider,
             )
@@ -977,48 +959,14 @@ private fun FeeChipText(
     )
 }
 
-// Rate-freshness status. Offline outranks historical: if the device is
-// offline the chip should shout OFFLINE even when the user had also
-// pinned a past date, since stale/cached is the more actionable signal.
-private enum class RateStatus { LIVE, HISTORICAL, OFFLINE }
-
-private fun rateStatusOf(
-    historicalDate: LocalDate?,
-    isOffline: Boolean,
-): RateStatus =
-    when {
-        isOffline -> RateStatus.OFFLINE
-        historicalDate != null -> RateStatus.HISTORICAL
-        else -> RateStatus.LIVE
-    }
-
-// Background tint applied to the rate-footer row when we're not on
-// live data. Returns null in LIVE mode so the footer keeps its
-// original transparent-on-card appearance and never tints during
-// normal operation.
-@Composable
-private fun rateFooterTint(status: RateStatus): Color? {
-    val accent =
-        when (status) {
-            RateStatus.LIVE -> return null
-            RateStatus.HISTORICAL -> Brass
-            RateStatus.OFFLINE -> MaterialTheme.colorScheme.error
-        }
-    return accent.copy(alpha = RATE_FOOTER_TINT_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
-}
-
 @Composable
 private fun RateFooter(
     base: Currency?,
     dest: Currency?,
     rates: ExchangeRates?,
-    historicalDate: LocalDate?,
-    isOffline: Boolean,
     dateFormatPattern: String,
     onProviderClick: () -> Unit,
 ) {
-    val status = rateStatusOf(historicalDate, isOffline)
-    val tint = rateFooterTint(status)
     Column {
         Box(
             Modifier
@@ -1027,21 +975,8 @@ private fun RateFooter(
                 .background(MaterialTheme.colorScheme.outlineVariant),
         )
         Spacer(Modifier.height(RATE_FOOTER_PADDING_TOP))
-        val rowModifier =
-            if (tint == null) {
-                Modifier.fillMaxWidth()
-            } else {
-                Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(RATE_FOOTER_TINT_RADIUS))
-                    .background(tint)
-                    .padding(
-                        horizontal = RATE_FOOTER_TINT_HORIZONTAL_PADDING,
-                        vertical = RATE_FOOTER_TINT_VERTICAL_PADDING,
-                    )
-            }
         Row(
-            rowModifier,
+            Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -1049,7 +984,6 @@ private fun RateFooter(
             TimestampText(
                 rates = rates,
                 dateFormatPattern = dateFormatPattern,
-                status = status,
                 onProviderClick = onProviderClick,
             )
         }
@@ -1080,7 +1014,6 @@ private fun RateText(
 private fun TimestampText(
     rates: ExchangeRates?,
     dateFormatPattern: String,
-    status: RateStatus,
     onProviderClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -1091,16 +1024,10 @@ private fun TimestampText(
         }
     val provider = rates.provider?.getName(context)?.toString()
     val text = if (provider.isNullOrEmpty()) whenText else "$whenText$FOOTER_SEPARATOR$provider"
-    val color =
-        when (status) {
-            RateStatus.LIVE -> MaterialTheme.colorScheme.onSurfaceVariant
-            RateStatus.HISTORICAL -> Brass
-            RateStatus.OFFLINE -> MaterialTheme.colorScheme.error
-        }
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = color,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = Modifier.clickable(onClick = onProviderClick),

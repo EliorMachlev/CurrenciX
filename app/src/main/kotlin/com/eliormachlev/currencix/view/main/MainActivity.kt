@@ -41,6 +41,8 @@ import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.CartActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
+import com.eliormachlev.currencix.view.main.compose.BannerContent
+import com.eliormachlev.currencix.view.main.compose.BannerKind
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
 import com.eliormachlev.currencix.view.main.compose.MainDisplay
 import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
@@ -87,10 +89,11 @@ class MainActivity : BaseActivity() {
 
     // State bridges Compose reads via observeAsState / mutableStateOf.
     private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
-    private val offlineTextState = mutableStateOf<String?>(null)
+    private val bannerState = mutableStateOf<BannerContent?>(null)
     private var isOnline: Boolean = true
     private var latestRatesDate: LocalDate? = null
     private var latestRatesTime: LocalTime? = null
+    private var historicalDate: LocalDate? = null
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,7 +109,7 @@ class MainActivity : BaseActivity() {
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
                     AppTheme {
-                        val offlineText by offlineTextState
+                        val banner by bannerState
                         val foldingFeature by foldingFeatureState
                         val isUpdating by viewModel.isUpdating().observeAsState(false)
                         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -121,7 +124,7 @@ class MainActivity : BaseActivity() {
                         }
                         MainScreen(
                             drawerState = drawerState,
-                            offlineText = offlineText,
+                            banner = banner,
                             isRefreshing = isUpdating,
                             onRefresh = viewModel::forceUpdateExchangeRate,
                             isRefreshDrawerEnabled = !isUpdating,
@@ -325,31 +328,45 @@ class MainActivity : BaseActivity() {
     private fun observe() {
         Database(this).getDateFormat().observe(this) { pattern ->
             dateFormatPattern = pattern
-            recomputeOfflineText()
+            recomputeBanner()
         }
         viewModel.getExchangeRates().observe(this) { rates ->
             latestRatesDate = rates?.date
             latestRatesTime = rates?.time
-            recomputeOfflineText()
+            recomputeBanner()
+        }
+        viewModel.getHistoricalLiveDate().observe(this) { date ->
+            historicalDate = date
+            recomputeBanner()
         }
         viewModel.getError().observe(this) { showErrorSnackbar(it) }
         NetworkStatusLiveData(this).observe(this) { online ->
             isOnline = online
-            recomputeOfflineText()
+            recomputeBanner()
         }
     }
 
-    private fun recomputeOfflineText() {
-        offlineTextState.value =
-            if (isOnline) {
-                null
-            } else {
-                val date = latestRatesDate
-                if (date != null) {
-                    getString(R.string.offline_banner_with_date, formatRatesTimestamp(date, latestRatesTime).orEmpty())
-                } else {
-                    getString(R.string.offline_banner_no_data)
+    // Offline outranks historical: if the device has no network we shout
+    // OFFLINE even when the user had also pinned a past date, since stale
+    // rates are the more actionable signal.
+    private fun recomputeBanner() {
+        bannerState.value =
+            when {
+                !isOnline -> {
+                    val date = latestRatesDate
+                    val text =
+                        if (date != null) {
+                            getString(R.string.offline_banner_with_date, formatRatesTimestamp(date, latestRatesTime).orEmpty())
+                        } else {
+                            getString(R.string.offline_banner_no_data)
+                        }
+                    BannerContent(BannerKind.Offline, text)
                 }
+                historicalDate != null -> {
+                    val text = getString(R.string.historical_banner, formatRatesTimestamp(historicalDate, null).orEmpty())
+                    BannerContent(BannerKind.Historical, text)
+                }
+                else -> null
             }
     }
 
@@ -448,13 +465,11 @@ class MainActivity : BaseActivity() {
                 onSwapLongPress = ::openFeesSettings,
             )
         val pattern by Database(this).getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
-        val offlineText by offlineTextState
         MainDisplay(
             viewModel = viewModel,
             fragmentManager = supportFragmentManager,
             callbacks = callbacks,
             dateFormatPattern = pattern,
-            isOffline = offlineText != null,
         )
     }
 

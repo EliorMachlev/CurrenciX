@@ -20,6 +20,7 @@
     <string name="info_date_historical">Historical rates of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
     <string name="offline_banner_with_date">Offline • Rates from %1$s</string>
     <string name="offline_banner_no_data">Offline • No cached rates yet</string>
+    <string name="historical_banner">Historical • Rates from %1$s</string>
     <string name="copied_to_clipboard">Copied &lt;b>%s&lt;/b> to clipboard</string>
     <string name="fee_chip_label">%1$s fee</string>
     <string name="hero_final_cost_label">Final cost</string>

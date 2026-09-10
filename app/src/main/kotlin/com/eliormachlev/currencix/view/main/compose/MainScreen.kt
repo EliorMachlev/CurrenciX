@@ -28,6 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -50,11 +54,21 @@ enum class DrawerAction {
     Settings,
 }
 
-private val OfflineBannerMargin = 8.dp
-private val OfflineBannerPadding = 12.dp
-private val OfflineBannerIconSpacing = 12.dp
+private val StatusBannerMargin = 8.dp
+private val StatusBannerPadding = 12.dp
+private val StatusBannerIconSpacing = 12.dp
 private val DrawerItemPadding = 12.dp
 private val DrawerContentPadding = NavigationDrawerItemDefaults.ItemPadding
+
+// Two-state banner surfaced above the hero: OFFLINE (device has no network)
+// or HISTORICAL (user pinned a past date via the date picker). Offline wins
+// when both are true, since stale/cached is the more actionable signal.
+enum class BannerKind { Offline, Historical }
+
+data class BannerContent(
+    val kind: BannerKind,
+    val text: String,
+)
 
 private data class DrawerEntry(
     val action: DrawerAction,
@@ -88,7 +102,7 @@ private val SecondaryDrawerEntries =
 @Composable
 fun MainScreen(
     drawerState: DrawerState,
-    offlineText: String?,
+    banner: BannerContent?,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     isRefreshDrawerEnabled: Boolean,
@@ -109,7 +123,7 @@ fun MainScreen(
         },
     ) {
         MainContent(
-            offlineText = offlineText,
+            banner = banner,
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             foldingFeature = foldingFeature,
@@ -122,7 +136,7 @@ fun MainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainContent(
-    offlineText: String?,
+    banner: BannerContent?,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     foldingFeature: FoldingFeature?,
@@ -133,7 +147,7 @@ private fun MainContent(
     if (shouldUseHorizontal(foldingFeature)) {
         Row(modifier = rootModifier) {
             Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                OfflineBannerSlot(offlineText)
+                StatusBannerSlot(banner)
                 DisplayArea(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     isRefreshing = isRefreshing,
@@ -145,7 +159,7 @@ private fun MainContent(
         }
     } else {
         Column(modifier = rootModifier) {
-            OfflineBannerSlot(offlineText)
+            StatusBannerSlot(banner)
             DisplayArea(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 isRefreshing = isRefreshing,
@@ -192,37 +206,56 @@ private fun shouldUseHorizontal(feature: FoldingFeature?): Boolean {
 }
 
 @Composable
-private fun OfflineBannerSlot(text: String?) {
-    AnimatedVisibility(visible = text != null) {
-        OfflineBanner(text = text.orEmpty())
+private fun StatusBannerSlot(banner: BannerContent?) {
+    // Remember the last non-null banner so the outgoing card keeps its label
+    // and colors through the fade-out even after state flips to null.
+    var lastShown by remember { mutableStateOf<BannerContent?>(null) }
+    if (banner != null) lastShown = banner
+    AnimatedVisibility(visible = banner != null) {
+        lastShown?.let { StatusBanner(banner = it) }
     }
 }
 
 @Composable
-private fun OfflineBanner(text: String) {
+private fun StatusBanner(banner: BannerContent) {
+    val containerColor =
+        when (banner.kind) {
+            BannerKind.Offline -> MaterialTheme.colorScheme.errorContainer
+            BannerKind.Historical -> MaterialTheme.colorScheme.secondaryContainer
+        }
+    val contentColor =
+        when (banner.kind) {
+            BannerKind.Offline -> MaterialTheme.colorScheme.onErrorContainer
+            BannerKind.Historical -> MaterialTheme.colorScheme.onSecondaryContainer
+        }
+    val iconRes =
+        when (banner.kind) {
+            BannerKind.Offline -> R.drawable.ic_cloud_off
+            BannerKind.Historical -> R.drawable.ic_history
+        }
     Card(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(OfflineBannerMargin),
+                .padding(StatusBannerMargin),
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                containerColor = containerColor,
+                contentColor = contentColor,
             ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
-            modifier = Modifier.padding(OfflineBannerPadding),
+            modifier = Modifier.padding(StatusBannerPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(OfflineBannerIconSpacing),
+            horizontalArrangement = Arrangement.spacedBy(StatusBannerIconSpacing),
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_cloud_off),
+                painter = painterResource(iconRes),
                 contentDescription = null,
             )
             Text(
-                text = text,
+                text = banner.text,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
