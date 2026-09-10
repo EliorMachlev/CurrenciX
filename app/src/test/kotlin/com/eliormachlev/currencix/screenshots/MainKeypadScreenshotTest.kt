@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onRoot
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
