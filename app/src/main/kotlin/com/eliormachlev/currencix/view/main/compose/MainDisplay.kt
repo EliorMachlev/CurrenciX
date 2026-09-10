@@ -1064,7 +1064,12 @@ private fun LiveChip(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LIVE_CHIP_DOT_GAP),
     ) {
-        LiveDot(color = accent, pulsing = isPulsing)
+        // The dot breathes whenever we're in live mode so the chip reads as
+        // "always-on data". In historical mode it stays solid — no need to
+        // signal freshness for a rate the user pinned to a past date. The
+        // [isPulsing] param (currently mapped to `isUpdating`) is folded in
+        // so an active refresh still animates in the historical case.
+        LiveDot(color = accent, pulsing = !isHistorical || isPulsing)
         Text(
             text = label,
             fontSize = LIVE_CHIP_TEXT_SIZE,
