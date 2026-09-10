@@ -41,7 +41,7 @@ import com.eliormachlev.currencix.viewmodel.main.Operator
 // so the hero card can grow on tall phones without the keypad also expanding
 // (which is exactly what the old ConstraintLayout keypad did, and what pushed
 // the tinted "you get" band off-screen when the display had extra content).
-private val KEY_ROW_HEIGHT: Dp = 56.dp
+private val KEY_ROW_HEIGHT: Dp = 72.dp
 private val KEY_TEXT_SIZE = 26.sp
 private val KEYPAD_VERTICAL_PADDING: Dp = 4.dp
 private val KEYPAD_HORIZONTAL_PADDING: Dp = 4.dp

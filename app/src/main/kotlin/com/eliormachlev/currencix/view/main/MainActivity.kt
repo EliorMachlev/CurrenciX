@@ -10,17 +10,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
@@ -77,12 +78,12 @@ class MainActivity : BaseActivity() {
     // rate-footer stays in sync without needing a push from here.
     private var dateFormatPattern: String = DEFAULT_DATE_PATTERN
 
-    // Drawer state hoisted to the Activity so the ActionBar home button can
-    // open it (see onOptionsItemSelected). Created eagerly — not remembered
-    // via rememberSaveable, so drawer-open state does not survive process
-    // death, but that matches user expectations for a modal drawer.
-    @OptIn(ExperimentalMaterial3Api::class)
-    private val drawerState = DrawerState(initialValue = DrawerValue.Closed)
+    // ActionBar hamburger → compose drawer bridge. The drawer state lives
+    // inside composition (via rememberDrawerState) so its animation anchors
+    // are always current; composition assigns a toggle lambda into this field
+    // once it's ready, and the ActionBar home item invokes it. Nullable so we
+    // no-op if the click somehow races the first composition.
+    private var toggleDrawer: (() -> Unit)? = null
 
     // State bridges Compose reads via observeAsState / mutableStateOf.
     private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
@@ -108,13 +109,23 @@ class MainActivity : BaseActivity() {
                         val offlineText by offlineTextState
                         val foldingFeature by foldingFeatureState
                         val isUpdating by viewModel.isUpdating().observeAsState(false)
+                        val drawerState = rememberDrawerState(DrawerValue.Closed)
+                        val scope = rememberCoroutineScope()
+                        DisposableEffect(drawerState, scope) {
+                            toggleDrawer = {
+                                scope.launch {
+                                    if (drawerState.isOpen) drawerState.close() else drawerState.open()
+                                }
+                            }
+                            onDispose { toggleDrawer = null }
+                        }
                         MainScreen(
                             drawerState = drawerState,
                             offlineText = offlineText,
                             isRefreshing = isUpdating,
                             onRefresh = viewModel::forceUpdateExchangeRate,
                             isRefreshDrawerEnabled = !isUpdating,
-                            onDrawerItem = ::onDrawerAction,
+                            onDrawerItem = { action -> onDrawerAction(action) { scope.launch { drawerState.close() } } },
                             foldingFeature = foldingFeature,
                             displayContent = { MainDisplayContent() },
                             keypadContent = { MainKeypadContent() },
@@ -139,13 +150,10 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             hapticTap()
-            lifecycleScope.launch {
-                if (drawerState.isOpen) drawerState.close() else drawerState.open()
-            }
+            toggleDrawer?.invoke()
             return true
         }
         hapticTap()
@@ -167,13 +175,15 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    // Every drawer entry defers to a single handler; the Compose drawer
-    // auto-closes on click via ModalNavigationDrawer's dismissal semantics,
-    // so we only launch the destination here.
-    @OptIn(ExperimentalMaterial3Api::class)
-    private fun onDrawerAction(action: DrawerAction) {
+    // Every drawer entry defers to a single handler; [dismiss] closes the
+    // ModalNavigationDrawer via its composition-scoped state (passed in from
+    // setContent so we don't touch the drawer state from outside compose).
+    private fun onDrawerAction(
+        action: DrawerAction,
+        dismiss: () -> Unit,
+    ) {
         hapticTap()
-        lifecycleScope.launch { drawerState.close() }
+        dismiss()
         when (action) {
             DrawerAction.Timeline -> openTimelineActivity()
             DrawerAction.Cart -> startActivity(Intent(this, CartActivity::class.java))
