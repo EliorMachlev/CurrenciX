@@ -8,6 +8,7 @@ import android.text.format.DateUtils
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -42,11 +43,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -75,6 +79,8 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.fromHtmlLegacy
+import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
@@ -112,6 +118,17 @@ private val PILLS_ROW_BOTTOM_GAP: Dp = 12.dp
 // Breathing room above the tinted "you get" band that hosts the
 // converted-amount cluster (chip + amount + pill).
 private val AMOUNT_BAND_TOP_GAP: Dp = 8.dp
+
+// Ambient shadow under the hero card so it lifts off the background. Kept
+// modest — Material3 elevated cards usually sit at 1–3dp for the "resting"
+// affordance; anything higher starts to feel floaty over the dark keypad.
+private val CARD_ELEVATION: Dp = 3.dp
+
+// Swap FAB rotation animation — one 180° flip per tap. The counter drives
+// a target angle so successive taps keep spinning in the same direction
+// (never snap back), and animateFloatAsState handles the tween.
+private const val SWAP_FAB_ROTATION_STEP = 180f
+private const val SWAP_FAB_ROTATION_MILLIS = 320
 
 // Interior padding and corner rounding for the "you get" band itself.
 private val AMOUNT_BAND_PADDING: Dp = 10.dp
@@ -343,6 +360,7 @@ private fun HeroCard(
             .fillMaxWidth()
             .padding(horizontal = CARD_OUTER_MARGIN)
             .padding(top = CARD_OUTER_MARGIN)
+            .shadow(elevation = CARD_ELEVATION, shape = RoundedCornerShape(CARD_RADIUS))
             .clip(RoundedCornerShape(CARD_RADIUS))
             .background(MaterialTheme.colorScheme.surface)
             .padding(CARD_PADDING),
@@ -423,7 +441,7 @@ private fun CurrencyPill(
             .height(PILL_HEIGHT)
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .clickable(enabled = currency != null, onClick = onClick)
+            .hapticClickable(enabled = currency != null, onClick = onClick)
             .padding(horizontal = PILL_HORIZONTAL_PADDING),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -462,19 +480,34 @@ private fun SwapFab(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
+    var tapCount by remember { mutableIntStateOf(0) }
+    val rotation by animateFloatAsState(
+        targetValue = tapCount * SWAP_FAB_ROTATION_STEP,
+        animationSpec = tween(durationMillis = SWAP_FAB_ROTATION_MILLIS),
+        label = "swapFabRotation",
+    )
     Box(
         Modifier
             .size(SWAP_FAB_SIZE)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primary)
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
+            .hapticCombinedClickable(
+                onClick = {
+                    tapCount += 1
+                    onClick()
+                },
+                onLongClick = onLongClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = Icons.Filled.SwapHoriz,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.size(22.dp),
+            modifier =
+                Modifier
+                    .size(22.dp)
+                    .graphicsLayer { rotationZ = rotation },
         )
     }
 }
@@ -896,7 +929,7 @@ private fun FeeChip(
             .maxWidthFraction(FEE_CHIP_MAX_WIDTH_FRACTION)
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(bg)
-            .clickable(onClick = onClick)
+            .hapticClickable(onClick = onClick)
             .padding(horizontal = 10.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
