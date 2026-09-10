@@ -39,8 +39,14 @@ jobs:
       # `record` writes fresh PNGs (vs. `verify` which fails on diff). We
       # want fresh output every push so Claude can pull the latest render;
       # visual-regression gating is a future concern.
+      # `--tests "*.screenshots.*"` scopes the run to the screenshots
+      # package. Without it, the fuzzing tests (Jazzer-instrumented) also
+      # run under this task; Jazzer's bytecode hooks then leak into
+      # production classes loaded by Robolectric's sandbox and blow up
+      # with `NoClassDefFoundError: JazzerInternal` on the first call
+      # to any instrumented method (e.g. TextUtils.roundIfNeeded).
       - name: Record Roborazzi screenshots (fdroid debug)
-        run: ./gradlew :app:recordRoborazziFdroidDebug --stacktrace
+        run: ./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*" --stacktrace
 
       - name: Upload screenshots
         if: always()
