@@ -109,7 +109,13 @@ private val CARD_PADDING: Dp = 16.dp
 private val PILL_RADIUS: Dp = 999.dp
 private val PILL_HEIGHT: Dp = 44.dp
 private val PILL_HORIZONTAL_PADDING: Dp = 14.dp
-private val FLAG_SIZE: Dp = 28.dp
+
+// Rectangular flag matching the picker's 24×17 aspect; the pill height is
+// 44dp, so scaling up to 28×20 keeps the ratio and stays comfortably within
+// the pill.
+private val FLAG_WIDTH: Dp = 28.dp
+private val FLAG_HEIGHT: Dp = 20.dp
+private val FLAG_CORNER_RADIUS: Dp = 2.dp
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 12.dp
@@ -441,8 +447,8 @@ private fun CurrencyPill(
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .size(FLAG_SIZE)
-                        .clip(CircleShape),
+                        .size(width = FLAG_WIDTH, height = FLAG_HEIGHT)
+                        .clip(RoundedCornerShape(FLAG_CORNER_RADIUS)),
             )
             Spacer(Modifier.width(FLAG_GAP))
         }

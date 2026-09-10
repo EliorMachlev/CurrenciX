@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -39,7 +38,12 @@ import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 private val CHIP_HEIGHT: Dp = 44.dp
 private val CHIP_RADIUS: Dp = 999.dp
 private val CHIP_HORIZONTAL_PADDING: Dp = 14.dp
-private val FLAG_SIZE: Dp = 24.dp
+
+// Rectangular flag matching the picker's 24×17 aspect so both surfaces read
+// the same.
+private val FLAG_WIDTH: Dp = 24.dp
+private val FLAG_HEIGHT: Dp = 17.dp
+private val FLAG_CORNER_RADIUS: Dp = 2.dp
 private val FLAG_GAP: Dp = 10.dp
 private val CHEVRON_SIZE: Dp = 14.dp
 private val CHEVRON_GAP: Dp = 4.dp
@@ -81,8 +85,8 @@ fun CartCurrencyChip(
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .size(FLAG_SIZE)
-                        .clip(CircleShape),
+                        .size(width = FLAG_WIDTH, height = FLAG_HEIGHT)
+                        .clip(RoundedCornerShape(FLAG_CORNER_RADIUS)),
             )
             Spacer(Modifier.width(FLAG_GAP))
         }
