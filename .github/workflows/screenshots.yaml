@@ -48,4 +48,15 @@ jobs:
         with:
           name: screenshots-${{ steps.sha.outputs.short }}
           path: app/build/outputs/roborazzi/**/*.png
-          if-no-files-found: error
+          if-no-files-found: warn
+
+      # Test report ships the full stack trace when the Robolectric run
+      # blows up before writing PNGs — Gradle's console output truncates
+      # to "java.lang.RuntimeException at RoboMonitoringInstrumentation.java:102".
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: test-reports-${{ steps.sha.outputs.short }}
+          path: app/build/reports/tests/**
+          if-no-files-found: ignore
