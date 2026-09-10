@@ -275,6 +275,7 @@ internal fun MainDisplay(
     fragmentManager: FragmentManager,
     callbacks: MainDisplayCallbacks,
     dateFormatPattern: String,
+    isOffline: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -314,6 +315,7 @@ internal fun MainDisplay(
         feeStack = feeStack,
         activeFees = activeFees.orEmpty(),
         historicalDate = historicalDate,
+        isOffline = isOffline,
         mathText = mathText,
         originalBig = baseValueNumber,
         originalOther = trueCost,
@@ -352,6 +354,7 @@ private fun HeroCard(
     feeStack: BigDecimal?,
     activeFees: List<Fee>,
     historicalDate: LocalDate?,
+    isOffline: Boolean,
     mathText: String?,
     originalBig: BigDecimal?,
     originalOther: BigDecimal?,
@@ -408,6 +411,7 @@ private fun HeroCard(
                 rates = rates,
                 isUpdating = isUpdating,
                 historicalDate = historicalDate,
+                isOffline = isOffline,
                 dateFormatPattern = dateFormatPattern,
                 onProviderClick = callbacks.onOpenProvider,
             )
@@ -976,6 +980,21 @@ private fun FeeChipText(
     )
 }
 
+// Rate-freshness status. Offline outranks historical: if the device is
+// offline the chip should shout OFFLINE even when the user had also
+// pinned a past date, since stale/cached is the more actionable signal.
+private enum class RateStatus { LIVE, HISTORICAL, OFFLINE }
+
+private fun rateStatusOf(
+    historicalDate: LocalDate?,
+    isOffline: Boolean,
+): RateStatus =
+    when {
+        isOffline -> RateStatus.OFFLINE
+        historicalDate != null -> RateStatus.HISTORICAL
+        else -> RateStatus.LIVE
+    }
+
 @Composable
 private fun RateFooter(
     base: Currency?,
@@ -983,9 +1002,11 @@ private fun RateFooter(
     rates: ExchangeRates?,
     isUpdating: Boolean,
     historicalDate: LocalDate?,
+    isOffline: Boolean,
     dateFormatPattern: String,
     onProviderClick: () -> Unit,
 ) {
+    val status = rateStatusOf(historicalDate, isOffline)
     Column {
         Box(
             Modifier
@@ -1004,12 +1025,12 @@ private fun RateFooter(
                 dest = dest,
                 rates = rates,
                 isPulsing = isUpdating,
-                isHistorical = historicalDate != null,
+                status = status,
             )
             TimestampText(
                 rates = rates,
                 dateFormatPattern = dateFormatPattern,
-                isHistorical = historicalDate != null,
+                status = status,
                 onProviderClick = onProviderClick,
             )
         }
@@ -1022,7 +1043,7 @@ private fun LiveRate(
     dest: Currency?,
     rates: ExchangeRates?,
     isPulsing: Boolean,
-    isHistorical: Boolean,
+    status: RateStatus,
 ) {
     val context = LocalContext.current
     val rateText =
@@ -1033,7 +1054,7 @@ private fun LiveRate(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        LiveChip(isHistorical = isHistorical, isPulsing = isPulsing)
+        LiveChip(status = status, isPulsing = isPulsing)
         Text(
             text = rateText,
             style = MaterialTheme.typography.bodySmall,
@@ -1045,17 +1066,30 @@ private fun LiveRate(
 }
 
 // A small pill-shaped status marker for the rate footer: an animated
-// dot (still pulsing while updating) plus a compact LIVE / HIST label,
-// wrapped in a tinted background so it reads as a proper chip rather
-// than a lone dot.
+// dot plus a compact LIVE / HIST / OFFLINE label, wrapped in a tinted
+// background so it reads as a proper chip rather than a lone dot. The
+// dot breathes continuously in LIVE mode; HIST/OFFLINE stay solid unless
+// an active refresh is in flight, in which case the dot animates too.
 @Composable
 private fun LiveChip(
-    isHistorical: Boolean,
+    status: RateStatus,
     isPulsing: Boolean,
 ) {
-    val accent = if (isHistorical) Brass else MaterialTheme.colorScheme.primary
+    val accent =
+        when (status) {
+            RateStatus.LIVE -> MaterialTheme.colorScheme.primary
+            RateStatus.HISTORICAL -> Brass
+            RateStatus.OFFLINE -> MaterialTheme.colorScheme.error
+        }
     val bg = accent.copy(alpha = LIVE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
-    val label = stringResource(if (isHistorical) R.string.hist_chip_label else R.string.live_chip_label)
+    val label =
+        stringResource(
+            when (status) {
+                RateStatus.LIVE -> R.string.live_chip_label
+                RateStatus.HISTORICAL -> R.string.hist_chip_label
+                RateStatus.OFFLINE -> R.string.offline_chip_label
+            },
+        )
     Row(
         Modifier
             .clip(RoundedCornerShape(PILL_RADIUS))
@@ -1064,12 +1098,12 @@ private fun LiveChip(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LIVE_CHIP_DOT_GAP),
     ) {
-        // The dot breathes whenever we're in live mode so the chip reads as
-        // "always-on data". In historical mode it stays solid — no need to
-        // signal freshness for a rate the user pinned to a past date. The
-        // [isPulsing] param (currently mapped to `isUpdating`) is folded in
-        // so an active refresh still animates in the historical case.
-        LiveDot(color = accent, pulsing = !isHistorical || isPulsing)
+        // LIVE breathes continuously so the chip reads as "always-on data".
+        // HIST and OFFLINE stay solid — freshness is meaningless for a pinned
+        // past date or a device with no connectivity. The [isPulsing] param
+        // (currently mapped to `isUpdating`) is folded in so an active refresh
+        // still animates the dot in the non-LIVE cases.
+        LiveDot(color = accent, pulsing = status == RateStatus.LIVE || isPulsing)
         Text(
             text = label,
             fontSize = LIVE_CHIP_TEXT_SIZE,
@@ -1115,7 +1149,7 @@ private fun LiveDot(
 private fun TimestampText(
     rates: ExchangeRates?,
     dateFormatPattern: String,
-    isHistorical: Boolean,
+    status: RateStatus,
     onProviderClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -1126,10 +1160,16 @@ private fun TimestampText(
         }
     val provider = rates.provider?.getName(context)?.toString()
     val text = if (provider.isNullOrEmpty()) whenText else "$whenText$FOOTER_SEPARATOR$provider"
+    val color =
+        when (status) {
+            RateStatus.LIVE -> MaterialTheme.colorScheme.onSurfaceVariant
+            RateStatus.HISTORICAL -> Brass
+            RateStatus.OFFLINE -> MaterialTheme.colorScheme.error
+        }
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = if (isHistorical) Brass else MaterialTheme.colorScheme.onSurfaceVariant,
+        color = color,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = Modifier.clickable(onClick = onProviderClick),

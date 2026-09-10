@@ -448,11 +448,13 @@ class MainActivity : BaseActivity() {
                 onSwapLongPress = ::openFeesSettings,
             )
         val pattern by Database(this).getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
+        val offlineText by offlineTextState
         MainDisplay(
             viewModel = viewModel,
             fragmentManager = supportFragmentManager,
             callbacks = callbacks,
             dateFormatPattern = pattern,
+            isOffline = offlineText != null,
         )
     }
 

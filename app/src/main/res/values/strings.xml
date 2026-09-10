@@ -25,6 +25,7 @@
     <string name="hero_final_cost_label">Final cost</string>
     <string name="live_chip_label">LIVE</string>
     <string name="hist_chip_label">HIST</string>
+    <string name="offline_chip_label">OFFLINE</string>
 
     <string name="historical_rates_dialog_title">Historical rates</string>
     <string name="historical_rates_dialog_toggle">Use exchange rates of a specific date. Disable, to always take the most recent ones.</string>
