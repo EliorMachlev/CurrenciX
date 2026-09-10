@@ -136,7 +136,6 @@ private val AMOUNT_BAND_RADIUS: Dp = 20.dp
 
 private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
-private val LIVE_DOT_SIZE: Dp = 8.dp
 private val CURSOR_WIDTH: Dp = 2.dp
 private val CURSOR_HEIGHT: Dp = 44.dp
 private val CURSOR_HEIGHT_SUBTOTAL: Dp = 26.dp
@@ -216,16 +215,15 @@ private const val FEE_NAME_SEPARATOR = ", "
 private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
 private const val CURSOR_BLINK_MILLIS = 1200
-private const val LIVE_DOT_PULSE_MILLIS = 1000
-private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 
-// Live/historical status pill in the footer — tinted background + dot +
-// label. Kept compact so it doesn't out-shout the rate text beside it.
-private const val LIVE_CHIP_BG_ALPHA = 0.18f
-private val LIVE_CHIP_HORIZONTAL_PADDING: Dp = 10.dp
-private val LIVE_CHIP_VERTICAL_PADDING: Dp = 5.dp
-private val LIVE_CHIP_DOT_GAP: Dp = 6.dp
-private val LIVE_CHIP_TEXT_SIZE = 12.sp
+// Rate-footer background tint applied when we're not on live data —
+// Brass for historical, error for offline — so the footer itself
+// carries the status signal (no dedicated chip + dot). Alpha kept
+// low so the timestamp text stays legible on top.
+private const val RATE_FOOTER_TINT_ALPHA = 0.15f
+private val RATE_FOOTER_TINT_RADIUS: Dp = 12.dp
+private val RATE_FOOTER_TINT_HORIZONTAL_PADDING: Dp = 10.dp
+private val RATE_FOOTER_TINT_VERTICAL_PADDING: Dp = 6.dp
 
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
@@ -409,7 +407,6 @@ private fun HeroCard(
                 base = baseCurrency,
                 dest = destCurrency,
                 rates = rates,
-                isUpdating = isUpdating,
                 historicalDate = historicalDate,
                 isOffline = isOffline,
                 dateFormatPattern = dateFormatPattern,
@@ -995,18 +992,33 @@ private fun rateStatusOf(
         else -> RateStatus.LIVE
     }
 
+// Background tint applied to the rate-footer row when we're not on
+// live data. Returns null in LIVE mode so the footer keeps its
+// original transparent-on-card appearance and never tints during
+// normal operation.
+@Composable
+private fun rateFooterTint(status: RateStatus): Color? {
+    val accent =
+        when (status) {
+            RateStatus.LIVE -> return null
+            RateStatus.HISTORICAL -> Brass
+            RateStatus.OFFLINE -> MaterialTheme.colorScheme.error
+        }
+    return accent.copy(alpha = RATE_FOOTER_TINT_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
+}
+
 @Composable
 private fun RateFooter(
     base: Currency?,
     dest: Currency?,
     rates: ExchangeRates?,
-    isUpdating: Boolean,
     historicalDate: LocalDate?,
     isOffline: Boolean,
     dateFormatPattern: String,
     onProviderClick: () -> Unit,
 ) {
     val status = rateStatusOf(historicalDate, isOffline)
+    val tint = rateFooterTint(status)
     Column {
         Box(
             Modifier
@@ -1015,18 +1027,25 @@ private fun RateFooter(
                 .background(MaterialTheme.colorScheme.outlineVariant),
         )
         Spacer(Modifier.height(RATE_FOOTER_PADDING_TOP))
+        val rowModifier =
+            if (tint == null) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(RATE_FOOTER_TINT_RADIUS))
+                    .background(tint)
+                    .padding(
+                        horizontal = RATE_FOOTER_TINT_HORIZONTAL_PADDING,
+                        vertical = RATE_FOOTER_TINT_VERTICAL_PADDING,
+                    )
+            }
         Row(
-            Modifier.fillMaxWidth(),
+            rowModifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            LiveRate(
-                base = base,
-                dest = dest,
-                rates = rates,
-                isPulsing = isUpdating,
-                status = status,
-            )
+            RateText(base = base, dest = dest, rates = rates)
             TimestampText(
                 rates = rates,
                 dateFormatPattern = dateFormatPattern,
@@ -1038,110 +1057,22 @@ private fun RateFooter(
 }
 
 @Composable
-private fun LiveRate(
+private fun RateText(
     base: Currency?,
     dest: Currency?,
     rates: ExchangeRates?,
-    isPulsing: Boolean,
-    status: RateStatus,
 ) {
     val context = LocalContext.current
     val rateText =
         remember(base, dest, rates) {
             buildRateText(context, base, dest, rates)
         } ?: return
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        LiveChip(status = status, isPulsing = isPulsing)
-        Text(
-            text = rateText,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-// A small pill-shaped status marker for the rate footer: an animated
-// dot plus a compact LIVE / HIST / OFFLINE label, wrapped in a tinted
-// background so it reads as a proper chip rather than a lone dot. The
-// dot breathes continuously in LIVE mode; HIST/OFFLINE stay solid unless
-// an active refresh is in flight, in which case the dot animates too.
-@Composable
-private fun LiveChip(
-    status: RateStatus,
-    isPulsing: Boolean,
-) {
-    val accent =
-        when (status) {
-            RateStatus.LIVE -> MaterialTheme.colorScheme.primary
-            RateStatus.HISTORICAL -> Brass
-            RateStatus.OFFLINE -> MaterialTheme.colorScheme.error
-        }
-    val bg = accent.copy(alpha = LIVE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
-    val label =
-        stringResource(
-            when (status) {
-                RateStatus.LIVE -> R.string.live_chip_label
-                RateStatus.HISTORICAL -> R.string.hist_chip_label
-                RateStatus.OFFLINE -> R.string.offline_chip_label
-            },
-        )
-    Row(
-        Modifier
-            .clip(RoundedCornerShape(PILL_RADIUS))
-            .background(bg)
-            .padding(horizontal = LIVE_CHIP_HORIZONTAL_PADDING, vertical = LIVE_CHIP_VERTICAL_PADDING),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LIVE_CHIP_DOT_GAP),
-    ) {
-        // LIVE breathes continuously so the chip reads as "always-on data".
-        // HIST and OFFLINE stay solid — freshness is meaningless for a pinned
-        // past date or a device with no connectivity. The [isPulsing] param
-        // (currently mapped to `isUpdating`) is folded in so an active refresh
-        // still animates the dot in the non-LIVE cases.
-        LiveDot(color = accent, pulsing = status == RateStatus.LIVE || isPulsing)
-        Text(
-            text = label,
-            fontSize = LIVE_CHIP_TEXT_SIZE,
-            fontWeight = FontWeight.Bold,
-            color = accent,
-            maxLines = 1,
-        )
-    }
-}
-
-@Composable
-private fun LiveDot(
-    color: Color,
-    pulsing: Boolean,
-) {
-    val alpha =
-        if (pulsing) {
-            val transition = rememberInfiniteTransition(label = "livedot")
-            val v by transition.animateFloat(
-                initialValue = 1f,
-                targetValue = LIVE_DOT_PULSE_MIN_ALPHA,
-                animationSpec =
-                    infiniteRepeatable(
-                        animation = tween(durationMillis = LIVE_DOT_PULSE_MILLIS, easing = LinearEasing),
-                        repeatMode = RepeatMode.Reverse,
-                    ),
-                label = "livedotAlpha",
-            )
-            v
-        } else {
-            1f
-        }
-    Spacer(
-        Modifier
-            .size(LIVE_DOT_SIZE)
-            .graphicsLayer { this.alpha = alpha }
-            .clip(CircleShape)
-            .background(color),
+    Text(
+        text = rateText,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
