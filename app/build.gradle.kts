@@ -8,6 +8,10 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
     id("com.google.devtools.ksp") version "2.3.11"
+    // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
+    // used by the .github/workflows/screenshots.yaml job. Runs on top of
+    // Robolectric Native Graphics — no device or emulator required.
+    id("io.github.takahirom.roborazzi") version "1.74.0"
 }
 
 kotlin {
@@ -114,6 +118,10 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        // Robolectric (Roborazzi's rendering engine) needs merged resources +
+        // AndroidManifest on the JVM test classpath to instantiate Application
+        // and resolve @string / @color references at screenshot capture time.
+        unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.useJUnitPlatform()
         }
@@ -191,6 +199,16 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:$junitVersion")
     testImplementation("com.code-intelligence:jazzer-junit:0.30.0")
+    // screenshot testing — pure JVM path via Robolectric Native Graphics, so
+    // CI can render every Compose surface without an emulator. The vintage
+    // engine (already above) runs Robolectric's JUnit 4 test runner under
+    // useJUnitPlatform().
+    val roborazziVersion = "1.74.0"
+    testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
+    testImplementation("org.robolectric:robolectric:4.16")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
 // Best-effort short git SHA for the currently checked-out HEAD. Returns null
