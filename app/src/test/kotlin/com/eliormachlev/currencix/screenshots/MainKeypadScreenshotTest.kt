@@ -5,14 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onRoot
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.github.takahirom.roborazzi.captureRoboImage
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -23,12 +20,15 @@ import org.robolectric.annotation.GraphicsMode
 // keyboard-type modes across the two Compose themes. When this passes in
 // CI and the PNGs come back via `gh run download`, Phase B expands the
 // matrix to every screen × en/he × LIGHT/DARK/OLED.
+//
+// Uses the composable-form `captureRoboImage { … }` from roborazzi-compose
+// so no ActivityScenario / ComponentActivity manifest entry is required —
+// the app's real MainActivity would otherwise be resolved and fail to
+// start under Robolectric.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
 class MainKeypadScreenshotTest {
-    @get:Rule val composeRule = createComposeRule()
-
     private val callbacks =
         MainKeypadCallbacks(
             onDigit = {},
@@ -53,7 +53,7 @@ class MainKeypadScreenshotTest {
         type: KeyboardType,
         dark: Boolean,
     ) {
-        composeRule.setContent {
+        captureRoboImage("$SCREENSHOT_DIR/$name.png") {
             AppTheme(dark = dark) {
                 Box(
                     Modifier
@@ -68,7 +68,6 @@ class MainKeypadScreenshotTest {
                 }
             }
         }
-        composeRule.onRoot().captureRoboImage("$SCREENSHOT_DIR/$name.png")
     }
 
     companion object {
