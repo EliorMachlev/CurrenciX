@@ -136,7 +136,7 @@ private val AMOUNT_BAND_RADIUS: Dp = 20.dp
 
 private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
-private val LIVE_DOT_SIZE: Dp = 6.dp
+private val LIVE_DOT_SIZE: Dp = 8.dp
 private val CURSOR_WIDTH: Dp = 2.dp
 private val CURSOR_HEIGHT: Dp = 44.dp
 private val CURSOR_HEIGHT_SUBTOTAL: Dp = 26.dp
@@ -222,10 +222,10 @@ private const val LIVE_DOT_PULSE_MIN_ALPHA = 0.4f
 // Live/historical status pill in the footer — tinted background + dot +
 // label. Kept compact so it doesn't out-shout the rate text beside it.
 private const val LIVE_CHIP_BG_ALPHA = 0.18f
-private val LIVE_CHIP_HORIZONTAL_PADDING: Dp = 6.dp
-private val LIVE_CHIP_VERTICAL_PADDING: Dp = 2.dp
-private val LIVE_CHIP_DOT_GAP: Dp = 4.dp
-private val LIVE_CHIP_TEXT_SIZE = 10.sp
+private val LIVE_CHIP_HORIZONTAL_PADDING: Dp = 10.dp
+private val LIVE_CHIP_VERTICAL_PADDING: Dp = 5.dp
+private val LIVE_CHIP_DOT_GAP: Dp = 6.dp
+private val LIVE_CHIP_TEXT_SIZE = 12.sp
 
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
@@ -543,11 +543,15 @@ private fun AmountHero(
     val showChain = hasFee && bigValue.isMeaningful() && otherValue != null
     Column(Modifier.fillMaxWidth()) {
         MathLine(mathText)
+        // Subtotal always renders at the compact size — the "you get" band
+        // below (and the framed Final cost when a fee is active) carry the
+        // hero-sized answer role, so the input stays visually stable whether
+        // the fee chain is showing or not.
         AmountRow(
             text = subtotalText,
-            fontSize = if (showChain) AMOUNT_SUBTOTAL_SIZE else AMOUNT_HERO_SIZE,
+            fontSize = AMOUNT_SUBTOTAL_SIZE,
             fontWeight = FontWeight.Medium,
-            cursorHeight = if (showChain) CURSOR_HEIGHT_SUBTOTAL else CURSOR_HEIGHT,
+            cursorHeight = CURSOR_HEIGHT_SUBTOTAL,
             onLongClick = onSubtotalLongClick,
         )
         if (showChain) {
