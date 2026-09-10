@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -47,6 +50,11 @@ private val KEYPAD_VERTICAL_PADDING: Dp = 4.dp
 private val KEYPAD_HORIZONTAL_PADDING: Dp = 4.dp
 private val DELETE_ICON_SIZE: Dp = 24.dp
 
+// Matches the hero card's ambient shadow (see CARD_ELEVATION in MainDisplay).
+// Only the top corners are rounded; the bottom is flush with the screen edge.
+private val KEYPAD_ELEVATION: Dp = 3.dp
+private val KEYPAD_TOP_RADIUS: Dp = 24.dp
+
 // Bundled onClick callbacks — one struct so MainActivity can wire them once
 // and pass a stable reference down through recompositions.
 data class MainKeypadCallbacks(
@@ -68,10 +76,13 @@ fun MainKeypad(
 ) {
     val context = LocalContext.current
     val decimal = remember(context) { getDecimalSeparator(context) }
+    val shape = remember { RoundedCornerShape(topStart = KEYPAD_TOP_RADIUS, topEnd = KEYPAD_TOP_RADIUS) }
     Column(
         modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
+            .shadow(elevation = KEYPAD_ELEVATION, shape = shape)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = KEYPAD_HORIZONTAL_PADDING, vertical = KEYPAD_VERTICAL_PADDING),
         verticalArrangement = Arrangement.Center,
     ) {
