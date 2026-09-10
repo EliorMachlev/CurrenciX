@@ -182,7 +182,14 @@ private val FINAL_LABEL_MASK_PADDING: Dp = 6.dp
 // Applied to the big-value texts so Android's default font padding
 // (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
 // the visual gap between the number and whatever renders right below it.
-private val TIGHT_TEXT_STYLE = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+// `tnum` forces tabular (fixed-advance) digits so the amount doesn't jitter
+// horizontally as digits change (1→8, 3→4, …). Applies to Inter which
+// ships with a `tnum` feature.
+private val TIGHT_TEXT_STYLE =
+    TextStyle(
+        platformStyle = PlatformTextStyle(includeFontPadding = false),
+        fontFeatureSettings = "tnum",
+    )
 
 // Fallback rounding for the final-value pill amount when the user's
 // decimal-places preference hasn't loaded yet — matches the ViewModel's
@@ -729,6 +736,7 @@ private fun AmountToRow(
             maxLines = 1,
             softWrap = false,
             textAlign = TextAlign.End,
+            style = TIGHT_TEXT_STYLE,
             modifier =
                 Modifier
                     .weight(1f, fill = false)
