@@ -25,7 +25,7 @@ import org.robolectric.annotation.GraphicsMode
 // matrix to every screen × en/he × LIGHT/DARK/OLED.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
 class MainKeypadScreenshotTest {
     @get:Rule val composeRule = createComposeRule()
 
