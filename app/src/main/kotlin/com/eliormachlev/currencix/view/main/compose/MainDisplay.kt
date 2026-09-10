@@ -440,6 +440,7 @@ private fun CurrencyPill(
             .hapticClickable(enabled = currency != null, onClick = onClick)
             .padding(horizontal = PILL_HORIZONTAL_PADDING),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
         if (flagPainter != null) {
             Image(
