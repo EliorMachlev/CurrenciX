@@ -341,7 +341,7 @@ internal fun MainDisplay(
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
     val destCurrency by viewModel.getDestinationCurrency().observeAsState()
     val baseFormatted by viewModel.getCurrentBaseValueFormatted().observeAsState()
-    val resultFormatted by viewModel.getResultFormatted().observeAsState()
+    val resultFormatted by viewModel.getResultWithFeesFormatted().observeAsState()
     val rates by viewModel.getExchangeRates().observeAsState()
     val isUpdating by viewModel.isUpdating().observeAsState(false)
     val feeStack by viewModel.getFeeStack().observeAsState()

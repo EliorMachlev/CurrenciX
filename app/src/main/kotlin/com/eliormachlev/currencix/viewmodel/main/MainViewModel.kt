@@ -618,17 +618,47 @@ class MainViewModel(
             it?.toBigDecimalOrNull() ?: BigDecimal.ZERO
         }
 
+    // `result * feeStack` — the fee-adjusted destination value. When no fee
+    // applies, equals `result`. Used by the True Cost panel so users see the
+    // final out-of-pocket cost expressed in the destination currency
+    // (e.g. paying `$200` after fees ≈ `604.3 ILS`, not the fee-free `302.3`).
+    private val resultWithFees: LiveData<String> =
+        result.combineWith(feeStack) { r, s ->
+            val amount = r?.toBigDecimalOrNull() ?: return@combineWith null
+            val stack = s ?: BigDecimal.ONE
+            amount.multiply(stack, MathContext.DECIMAL128).toPlainString()
+        }
+
+    /**
+     * the fee-adjusted destination value, as BigDecimal — result × feeStack.
+     */
+    internal fun getResultWithFeesAsNumber(): LiveData<BigDecimal> =
+        resultWithFees.map {
+            it?.toBigDecimalOrNull() ?: BigDecimal.ZERO
+        }
+
     /**
      * the nicely formatted, total destination value including the currency symbol at the right position.
      */
-    internal fun getResultFormatted(): LiveData<SpannableStringBuilder> =
+    internal fun getResultFormatted(): LiveData<SpannableStringBuilder> = formattedDestinationAmount(result)
+
+    /**
+     * the nicely formatted, fee-adjusted destination value (True Cost).
+     */
+    internal fun getResultWithFeesFormatted(): LiveData<SpannableStringBuilder> = formattedDestinationAmount(resultWithFees)
+
+    // Formats a destination-currency numeric string ("302.3") into the hero's
+    // bold-number-plus-currency-symbol SpannableStringBuilder, tracking the
+    // active destination currency and decimal-places preference. Shared by
+    // the fair-conversion and true-cost pipelines so they format identically.
+    private fun formattedDestinationAmount(source: LiveData<String>): LiveData<SpannableStringBuilder> =
         object : MediatorLiveData<SpannableStringBuilder>() {
             var resultText: String? = null
             var currency: Currency? = null
             var places: Int = 2
 
             init {
-                addSource(result) {
+                addSource(source) {
                     resultText = it
                     update()
                 }
