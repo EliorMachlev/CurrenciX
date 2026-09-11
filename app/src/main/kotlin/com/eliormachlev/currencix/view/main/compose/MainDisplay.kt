@@ -436,12 +436,14 @@ private fun HeroCard(
             )
             Spacer(Modifier.height(PILLS_ROW_BOTTOM_GAP))
             AmountHero(
+                currency = baseCurrency,
                 subtotalParts = baseParts,
                 mathText = mathText,
                 onSubtotalLongClick = { if (baseCopyText.isNotEmpty()) callbacks.onCopy(baseCopyText) },
             )
             Spacer(Modifier.height(PANEL_STACK_GAP))
             AmountToRow(
+                currency = destCurrency,
                 resultParts = resultParts,
                 trueCostParts = trueCostParts,
                 stack = feeStack,
@@ -569,17 +571,19 @@ private fun SwapFab(
     }
 }
 
-// AmountHero — the "You pay" receipt panel. Renders only the running
+// AmountHero — the source-currency receipt panel. Renders only the running
 // calculator math line and the typed subtotal; the fee stamp + engraved
-// final live in the True Cost panel below (since real-world FX fees are
+// final live in the destination panel below (since real-world FX fees are
 // always charged on the post-conversion amount, not the source subtotal).
 @Composable
 private fun AmountHero(
+    currency: Currency?,
     subtotalParts: AmountParts,
     mathText: String?,
     onSubtotalLongClick: () -> Unit,
 ) {
-    ReceiptPanel(label = stringResource(R.string.hero_you_pay_label)) {
+    val context = LocalContext.current
+    ReceiptPanel(label = currency.panelLabel(context)) {
         Column(Modifier.fillMaxWidth()) {
             MathLine(mathText)
             ScrollingAmount(
@@ -807,6 +811,7 @@ private fun BlinkingCursor(height: Dp = CURSOR_HEIGHT) {
 // size — no stamp, no rule.
 @Composable
 private fun AmountToRow(
+    currency: Currency?,
     resultParts: AmountParts,
     trueCostParts: AmountParts,
     stack: BigDecimal?,
@@ -817,9 +822,10 @@ private fun AmountToRow(
     onTrueCostLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     val hasFee = stack.hasFee()
     val showChain = hasFee && bigValue.isMeaningful() && otherValue != null
-    ReceiptPanel(label = stringResource(R.string.hero_you_get_label)) {
+    ReceiptPanel(label = currency.panelLabel(context)) {
         Column(Modifier.fillMaxWidth()) {
             if (showChain) {
                 ScrollingAmount(
@@ -997,6 +1003,18 @@ internal data class AmountParts(
     val digits: String,
 ) {
     val full: String get() = if (symbol.isEmpty()) digits else "$symbol $digits"
+}
+
+// Receipt-panel legend for the given currency: localized full name +
+// "(ISO SYMBOL)" (or "(ISO)" when no symbol is defined). Returns an empty
+// string for a null currency so the panel renders without a label until
+// the pair resolves.
+private fun Currency?.panelLabel(context: Context): String {
+    val currency = this ?: return ""
+    val name = currency.fullName(context)
+    val iso = currency.iso4217Alpha()
+    val symbol = currency.symbol()
+    return if (symbol.isNullOrEmpty()) "$name ($iso)" else "$name ($iso $symbol)"
 }
 
 // Peel the currency symbol off a preformatted "$ 240.00" / "240.00 $"
