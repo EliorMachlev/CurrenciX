@@ -51,14 +51,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -177,10 +173,6 @@ private val AMOUNT_TO_SYMBOL_SIZE = AMOUNT_TO_SIZE * SYMBOL_SIZE_RATIO
 private const val SYMBOL_ALPHA = 0.65f
 private val SYMBOL_GAP: Dp = 6.dp
 
-// Width of the leading fade mask applied to the scrolling digits — long
-// enough to hint at truncated leading digits without hiding real content.
-private val AMOUNT_FADE_WIDTH: Dp = 20.dp
-
 // Gap between the medium subtotal row and the fee chip that follows it.
 // Tuned so the two read as one vertical equation without doubling the
 // card height.
@@ -284,7 +276,6 @@ private val FEE_STAMP_BORDER_WIDTH: Dp = 1.dp
 private val FEE_STAMP_HORIZONTAL_PADDING: Dp = 8.dp
 private val FEE_STAMP_VERTICAL_PADDING: Dp = 3.dp
 private val FEE_STAMP_INNER_GAP: Dp = 8.dp
-private val FEE_STAMP_FADE_WIDTH: Dp = 14.dp
 private val FEE_STAMP_LETTER_SPACING = 0.06.em
 private val FEE_STAMP_OP_GAP: Dp = 6.dp
 private const val FEE_STAMP_OP_PREFIX = "+"
@@ -760,7 +751,6 @@ private fun ScrollingAmount(
             modifier =
                 Modifier
                     .weight(1f, fill = false)
-                    .leadingFadeMask(AMOUNT_FADE_WIDTH)
                     .horizontalScroll(rememberStartAnchoredScrollState(parts.digits)),
         )
         if (cursorHeight != null) BlinkingCursor(height = cursorHeight)
@@ -1050,26 +1040,6 @@ private fun Modifier.guillocheBackground(): Modifier {
     }
 }
 
-// Fade the leading edge of the row so overflowing digits scroll under a
-// soft-mask instead of clipping hard at the panel edge. Uses DstIn against
-// a horizontal alpha ramp, which needs offscreen compositing to blend as
-// a proper mask rather than paint on top.
-private fun Modifier.leadingFadeMask(fadeWidth: Dp): Modifier =
-    graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-        .drawWithContent {
-            drawContent()
-            val fadePx = fadeWidth.toPx().coerceAtMost(size.width)
-            drawRect(
-                brush =
-                    Brush.horizontalGradient(
-                        colors = listOf(Color.Transparent, Color.Black),
-                        startX = 0f,
-                        endX = fadePx,
-                    ),
-                blendMode = BlendMode.DstIn,
-            )
-        }
-
 // Revenue-stamp for the fee row. Rectangular thin border, crimson ink,
 // monospaced uppercase — reads as an ink stamp pressed onto the receipt.
 // Percent stays pinned at the leading edge; the fee name is capped at
@@ -1124,7 +1094,6 @@ private fun FeeChip(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .leadingFadeMask(FEE_STAMP_FADE_WIDTH)
                         .horizontalScroll(rememberIdleAutoScrollState(namesText)),
             )
         }
