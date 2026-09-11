@@ -125,9 +125,10 @@ private val SWAP_FAB_SIZE: Dp = 44.dp
 private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 12.dp
 
-// Breathing room above the tinted "you get" band that hosts the
-// converted-amount cluster (chip + amount + pill).
-private val AMOUNT_BAND_TOP_GAP: Dp = 8.dp
+// Vertical gap between the two stacked receipt panels ("You pay" over
+// "You get"). Matches the mock's 18px so the labels breathe without
+// separating the panels into disconnected cards.
+private val PANEL_STACK_GAP: Dp = 14.dp
 
 // Ambient shadow under the hero card so it lifts off the background. Kept
 // modest — Material3 elevated cards usually sit at 1–3dp for the "resting"
@@ -139,10 +140,6 @@ private val CARD_ELEVATION: Dp = 3.dp
 // (never snap back), and animateFloatAsState handles the tween.
 private const val SWAP_FAB_ROTATION_STEP = 180f
 private const val SWAP_FAB_ROTATION_MILLIS = 320
-
-// Interior padding and corner rounding for the "you get" band itself.
-private val AMOUNT_BAND_PADDING: Dp = 10.dp
-private val AMOUNT_BAND_RADIUS: Dp = 20.dp
 
 private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
@@ -178,30 +175,37 @@ private val SYMBOL_GAP: Dp = 6.dp
 // enough to hint at truncated leading digits without hiding real content.
 private val AMOUNT_FADE_WIDTH: Dp = 20.dp
 
-// Gap between the medium subtotal row and the fee chip that follows it,
-// and between the fee chip and the hero final. Tuned so the three read as
-// one vertical equation without doubling the card height.
+// Gap between the medium subtotal row and the fee chip that follows it.
+// Tuned so the two read as one vertical equation without doubling the
+// card height.
 private val SUBTOTAL_TO_CHIP_GAP: Dp = 4.dp
-private val CHIP_TO_FINAL_GAP: Dp = 2.dp
 
-// Framed "final cost" box that wraps the hero final. The label sits ON
-// the top border (fieldset-legend style) — the label paints a strip of the
-// card's surface color behind itself so the border appears to break for
-// the text and resume after it. Vertical centering of the label on the
-// border stroke is done at measure time in [FinalCostBox] using the label's
+// The two hero panels share a fieldset-legend frame — "YOU PAY" and
+// "YOU GET" labels sit ON the top border. The label paints a strip of
+// the card's surface color behind itself so the border appears to break
+// for the text and resume after it. Vertical centering of the label on
+// the stroke is done at measure time in [ReceiptPanel] using the label's
 // actual rendered height, so there's no static half-height constant here.
-private val FINAL_BOX_BORDER_WIDTH: Dp = 1.dp
-private val FINAL_BOX_CORNER_RADIUS: Dp = 14.dp
-private val FINAL_BOX_HORIZONTAL_PADDING: Dp = 12.dp
-private val FINAL_BOX_VERTICAL_PADDING: Dp = 8.dp
+private val PANEL_BORDER_WIDTH: Dp = 1.dp
+private val PANEL_CORNER_RADIUS: Dp = 16.dp
+private val PANEL_HORIZONTAL_PADDING: Dp = 14.dp
+private val PANEL_VERTICAL_PADDING: Dp = 12.dp
 
-// How far the label sits from the box's leading corner along the top border.
-private val FINAL_LABEL_START_INSET: Dp = 14.dp
+// How far the legend sits from the panel's leading corner along the top
+// border, and the horizontal padding around the label's surface-colored
+// mask so it's a bit wider than the text on each side — that padding is
+// what makes the border look like it "breaks" for the legend.
+private val PANEL_LABEL_START_INSET: Dp = 14.dp
+private val PANEL_LABEL_MASK_PADDING: Dp = 6.dp
+private val PANEL_LABEL_LETTER_SPACING = 0.14.em
 
-// Horizontal padding on the label's surface-colored background so the
-// masked strip is a bit wider than the text on each side — creates the
-// visible "gap" in the border.
-private val FINAL_LABEL_MASK_PADDING: Dp = 6.dp
+// Thin receipt-rule between the fee stamp and the engraved final source,
+// rendered only when the fee chain is showing. Right-anchored and narrow
+// so it reads as a subtotal line on the receipt.
+private val PAY_RULE_HEIGHT: Dp = 1.dp
+private const val PAY_RULE_WIDTH_FRACTION = 0.6f
+private val PAY_RULE_TOP_GAP: Dp = 6.dp
+private val PAY_RULE_BOTTOM_GAP: Dp = 4.dp
 
 // Applied to the big-value texts so Android's default font padding
 // (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
@@ -423,7 +427,7 @@ private fun HeroCard(
                 otherValue = originalOther,
                 onFeeChipClick = callbacks.onOpenFees,
             )
-            Spacer(Modifier.height(AMOUNT_BAND_TOP_GAP))
+            Spacer(Modifier.height(PANEL_STACK_GAP))
             AmountToRow(
                 parts = resultParts,
                 onLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
@@ -545,13 +549,16 @@ private fun SwapFab(
     }
 }
 
-// AmountHero — chain layout with three tiers when a fee is present:
+// AmountHero — the "You pay" receipt panel. Renders the receipt-math
+// stack inside a fieldset-legend frame:
 //   math line (top, small)   "60 + 60 ="
 //   subtotal (medium, cursor) "₪ 120"
-//   fee chip (small)          "+ 1% · Max Executive"
-//   final (big, hero)         "₪ 121.2"
-// When there's no fee the subtotal IS the final, so we collapse to the
-// classic single-hero layout to keep the card compact.
+//   fee stamp (small)         "+ [1% MAX EXECUTIVE]"
+//   receipt rule              "──────"
+//   final (big, hero)         "₪ 121.20"
+// The stamp/rule/final chain only shows when a fee is active; without a
+// fee the subtotal alone sits inside the panel, and the "You get" panel
+// below carries the hero-sized answer.
 @Composable
 private fun AmountHero(
     subtotalParts: AmountParts,
@@ -567,78 +574,81 @@ private fun AmountHero(
 ) {
     val hasFee = stack.hasFee()
     val showChain = hasFee && bigValue.isMeaningful() && otherValue != null
-    Column(Modifier.fillMaxWidth()) {
-        MathLine(mathText)
-        // Subtotal always renders at the compact size — the "you get" band
-        // below (and the framed Final cost when a fee is active) carry the
-        // hero-sized answer role, so the input stays visually stable whether
-        // the fee chain is showing or not.
-        ScrollingAmount(
-            parts = subtotalParts,
-            digitsSize = AMOUNT_SUBTOTAL_SIZE,
-            symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
-            fontWeight = FontWeight.Medium,
-            cursorHeight = CURSOR_HEIGHT_SUBTOTAL,
-            onLongClick = onSubtotalLongClick,
-        )
-        if (showChain) {
-            Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-            ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-            Spacer(Modifier.height(CHIP_TO_FINAL_GAP))
-            FinalCostBox(parts = finalParts, onLongClick = onFinalLongClick)
+    ReceiptPanel(label = stringResource(R.string.hero_you_pay_label)) {
+        Column(Modifier.fillMaxWidth()) {
+            MathLine(mathText)
+            ScrollingAmount(
+                parts = subtotalParts,
+                digitsSize = AMOUNT_SUBTOTAL_SIZE,
+                symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
+                fontWeight = FontWeight.Medium,
+                cursorHeight = CURSOR_HEIGHT_SUBTOTAL,
+                onLongClick = onSubtotalLongClick,
+            )
+            if (showChain) {
+                Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+                ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
+                Spacer(Modifier.height(PAY_RULE_TOP_GAP))
+                PayRule()
+                Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
+                ScrollingAmount(
+                    parts = finalParts,
+                    digitsSize = AMOUNT_HERO_SIZE,
+                    symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
+                    fontWeight = FontWeight.Medium,
+                    cursorHeight = null,
+                    onLongClick = onFinalLongClick,
+                )
+            }
         }
     }
 }
 
-// Framed hero for the fee-adjusted final. A thin-bordered rounded box
-// wraps the big number; the "Final cost" label sits on top of the border
-// at the leading edge, painted over a surface-colored strip so the border
-// visually breaks for the text and resumes after it (fieldset legend).
+// Fieldset-legend framed panel shared by "You pay" and "You get". A
+// thin-bordered rounded box wraps the content; the [label] sits on top
+// of the border at the leading edge, painted over a surface-colored
+// strip so the border visually breaks for the text and resumes after it.
 // A custom [Layout] measures the label's real height and offsets the box
 // down by half of it so the top border stroke lands on the label's
 // vertical center — no static "half height" guess.
 @Composable
-private fun FinalCostBox(
-    parts: AmountParts,
-    onLongClick: () -> Unit,
+private fun ReceiptPanel(
+    label: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     val borderColor = MaterialTheme.colorScheme.outline
     val surfaceColor = MaterialTheme.colorScheme.surface
-    val borderWidthPx = with(LocalDensity.current) { FINAL_BOX_BORDER_WIDTH.roundToPx() }
-    val labelInsetPx = with(LocalDensity.current) { FINAL_LABEL_START_INSET.roundToPx() }
+    val borderWidthPx = with(LocalDensity.current) { PANEL_BORDER_WIDTH.roundToPx() }
+    val labelInsetPx = with(LocalDensity.current) { PANEL_LABEL_START_INSET.roundToPx() }
     Layout(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         content = {
             Box(
                 Modifier
                     .fillMaxWidth()
                     .border(
-                        width = FINAL_BOX_BORDER_WIDTH,
+                        width = PANEL_BORDER_WIDTH,
                         color = borderColor,
-                        shape = RoundedCornerShape(FINAL_BOX_CORNER_RADIUS),
+                        shape = RoundedCornerShape(PANEL_CORNER_RADIUS),
                     ).padding(
-                        horizontal = FINAL_BOX_HORIZONTAL_PADDING,
-                        vertical = FINAL_BOX_VERTICAL_PADDING,
+                        horizontal = PANEL_HORIZONTAL_PADDING,
+                        vertical = PANEL_VERTICAL_PADDING,
                     ),
             ) {
-                ScrollingAmount(
-                    parts = parts,
-                    digitsSize = AMOUNT_HERO_SIZE,
-                    symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
-                    fontWeight = FontWeight.Medium,
-                    cursorHeight = null,
-                    onLongClick = onLongClick,
-                )
+                content()
             }
             Text(
-                text = stringResource(R.string.hero_final_cost_label),
-                style = MaterialTheme.typography.labelSmall,
+                text = label.uppercase(),
+                fontSize = FEE_CHIP_TEXT_SIZE,
+                fontFamily = FontFamily.Monospace,
+                letterSpacing = PANEL_LABEL_LETTER_SPACING,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 modifier =
                     Modifier
                         .background(surfaceColor)
-                        .padding(horizontal = FINAL_LABEL_MASK_PADDING),
+                        .padding(horizontal = PANEL_LABEL_MASK_PADDING),
             )
         },
     ) { measurables, constraints ->
@@ -653,6 +663,24 @@ private fun FinalCostBox(
             boxPlaceable.place(0, boxTop)
             labelPlaceable.placeRelative(labelInsetPx, 0)
         }
+    }
+}
+
+// Thin receipt-rule between the fee stamp and the engraved final source.
+// Right-anchored at 60% width so it reads as a subtotal line — the same
+// place the human eye expects the running math to end on a receipt.
+@Composable
+private fun PayRule() {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        Spacer(
+            Modifier
+                .fillMaxWidth(PAY_RULE_WIDTH_FRACTION)
+                .height(PAY_RULE_HEIGHT)
+                .background(MaterialTheme.colorScheme.outline),
+        )
     }
 }
 
@@ -767,14 +795,7 @@ private fun AmountToRow(
     parts: AmountParts,
     onLongClick: () -> Unit,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(AMOUNT_BAND_RADIUS))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(AMOUNT_BAND_PADDING),
-    ) {
+    ReceiptPanel(label = stringResource(R.string.hero_you_get_label)) {
         ScrollingAmount(
             parts = parts,
             digitsSize = AMOUNT_TO_SIZE,
