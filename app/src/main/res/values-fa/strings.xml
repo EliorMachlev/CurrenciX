@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">دگرش ارز‌ها</string>
-    <string name="info_date_latest">نرخ‌ها تا &lt;b>%1$s&lt;/b> از &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">نرخ‌های گذشته‌ی &lt;b>%1$s&lt;/b> از &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">رونوشت &lt;b>%s&lt;/b> به کلیپ‌بورد</string>
     <string name="historical_rates_dialog_title">نزخ‌های گذشته</string>
     <string name="historical_rates_dialog_toggle">ار نرخ‌های تاریخ مشخصی بهره بگیرید. اگر می‌خواهید همیشه تازه ترین نرخ‌ها را بگیرید، این گزینه را خاموش کنید.</string>
@@ -49,7 +47,6 @@
     <string name="cart_delete_item">حذف مورد</string>
     <string name="cart_subtotal_label">جمع جزء</string>
     <string name="cart_total_label">مجموع</string>
-    <string name="cart_fee_line">کارمزد: %s%%</string>
     <string name="cart_menu_save">ذخیره</string>
     <string name="cart_menu_save_as">ذخیره با نام…</string>
     <string name="cart_menu_load">بارگذاری</string>
@@ -70,8 +67,6 @@
     <string name="cart_rename_title">تغییر نام سبد</string>
     <string name="cart_delete_confirm">«%s» حذف شود؟</string>
     <string name="cart_delete_confirm_button">حذف</string>
-    <string name="cart_clear_confirm">همهٔ موارد از سبد فعلی حذف شوند؟</string>
-    <string name="cart_clear_confirm_button">پاک کردن</string>
     <string name="cart_clear_items_only">فقط پاک کردن موارد</string>
     <string name="cart_clear_items_only_desc">همهٔ ردیف‌ها را از سبد حذف می‌کند اما ارزهای فعلی و سمت کارمزد را نگه می‌دارد.</string>
     <string name="cart_clear_reset_all">بازنشانی سبد</string>
@@ -89,13 +84,11 @@
     <string name="cart_share_fees">کارمزد: %s%%</string>
     <string name="cart_share_total">مجموع: %1$s %2$s</string>
     <string name="cart_unsaved_title">تغییرات ذخیره‌نشده</string>
-    <string name="cart_unsaved_message">تغییرات ذخیره‌نشده دارید. می‌خواهید چه کنید؟</string>
     <string name="cart_unsaved_save">ذخیره</string>
     <string name="cart_unsaved_save_as">ذخیره به‌عنوان جدید</string>
     <string name="cart_unsaved_discard">نادیده گرفتن تغییرات</string>
     <string name="cart_unsaved_continue">ادامه</string>
     <string name="a11y_delete">حذف</string>
-    <string name="a11y_historical_rate">نرخ گذشته</string>
     <string name="error_unsupported_timeline">داده‌های خط زمانی توسط این API پشتیبانی نمی‌شود.</string>
     <string name="a11y_search_currencies">جستجوی ارزها</string>
     <string name="a11y_clear_search">پاک کردن جستجو</string>

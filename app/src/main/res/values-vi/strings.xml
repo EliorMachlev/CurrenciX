@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">chuyển đơn vị tiền tệ</string>
-    <string name="info_date_latest">Tỷ giá vào &lt;b&gt;%1$s&lt;/b&gt;, được cung cấp bởi &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Tỷ giá trong quá khứ vào &lt;b&gt;%1$s&lt;/b&gt;, được cung cấp bởi &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Đã sao chép &lt;b&gt;%s&lt;/b&gt; vào bộ nhớ tạm</string>
     <string name="historical_rates_dialog_title">Tỷ giá trong quá khứ</string>
     <string name="historical_rates_dialog_toggle">Sử dụng tỷ giá hối đoái của một ngày cụ thể. Tắt cài đặt này để luôn sử dụng tỷ giá mới nhất.</string>
@@ -28,7 +26,6 @@
     <string name="quick_conversions_fees_applied">Phí đã áp dụng: %s</string>
     <string name="tooltip_filter_starred">Chỉ hiện đơn vị tiền tệ nào được gắn sao.</string>
     <string name="a11y_delete">Xóa</string>
-    <string name="a11y_historical_rate">Tỷ giá trong quá khứ</string>
     <string name="currency_dropdown_api_hint">Có thứ gì bị thiếu à? Những nhà cung cấp dữ liệu khác nhau sẽ có các tiền tệ khác nhau. Hãy đến cài đặt để thử nhà cung cấp khác! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Ngoại tuyến • Tỷ giá từ %1$s</string>
@@ -51,7 +48,6 @@
     <string name="cart_delete_item">Xoá mục</string>
     <string name="cart_subtotal_label">Tạm tính</string>
     <string name="cart_total_label">Tổng</string>
-    <string name="cart_fee_line">Phí: %s%%</string>
     <string name="cart_menu_save">Lưu</string>
     <string name="cart_menu_save_as">Lưu thành…</string>
     <string name="cart_menu_load">Tải</string>
@@ -72,8 +68,6 @@
     <string name="cart_rename_title">Đổi tên giỏ hàng</string>
     <string name="cart_delete_confirm">Xoá "%s"?</string>
     <string name="cart_delete_confirm_button">Xoá</string>
-    <string name="cart_clear_confirm">Xoá tất cả mục khỏi giỏ hàng hiện tại?</string>
-    <string name="cart_clear_confirm_button">Xoá sạch</string>
     <string name="cart_clear_items_only">Chỉ xoá các mục</string>
     <string name="cart_clear_items_only_desc">Xoá mọi hàng khỏi giỏ nhưng giữ nguyên tiền tệ hiện tại và phía áp phí.</string>
     <string name="cart_clear_reset_all">Đặt lại giỏ hàng</string>
@@ -91,7 +85,6 @@
     <string name="cart_share_fees">Phí: %s%%</string>
     <string name="cart_share_total">Tổng: %1$s %2$s</string>
     <string name="cart_unsaved_title">Thay đổi chưa lưu</string>
-    <string name="cart_unsaved_message">Bạn có những thay đổi chưa lưu. Bạn muốn làm gì?</string>
     <string name="cart_unsaved_save">Lưu</string>
     <string name="cart_unsaved_save_as">Lưu thành mới</string>
     <string name="cart_unsaved_discard">Bỏ thay đổi</string>

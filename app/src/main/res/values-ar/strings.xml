@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">تبديل العملات</string>
-    <string name="info_date_latest">الأسعار اعتبارًا من &lt;b&gt;%1$s&lt;/b&gt; بواسطة &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">الأسعار السابقة لـ &lt;b&gt;%1$s&lt;/b&gt; بواسطة &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">تم نسخ &lt;b&gt;%s&lt;/b&gt; إلى الحافظة</string>
     <string name="historical_rates_dialog_title">الأسعار السابقة</string>
     <string name="historical_rates_dialog_toggle">إستخدام أسعار الصرف في تاريخ محدد. أغلق، لإستخدام أحدث الأسعار.</string>
@@ -49,7 +47,6 @@
     <string name="cart_delete_item">حذف العنصر</string>
     <string name="cart_subtotal_label">المجموع الفرعي</string>
     <string name="cart_total_label">الإجمالي</string>
-    <string name="cart_fee_line">الرسوم: %s%%</string>
     <string name="cart_menu_save">حفظ</string>
     <string name="cart_menu_save_as">حفظ باسم…</string>
     <string name="cart_menu_load">تحميل</string>
@@ -70,8 +67,6 @@
     <string name="cart_rename_title">إعادة تسمية السلة</string>
     <string name="cart_delete_confirm">حذف «%s»؟</string>
     <string name="cart_delete_confirm_button">حذف</string>
-    <string name="cart_clear_confirm">إزالة جميع العناصر من السلة الحالية؟</string>
-    <string name="cart_clear_confirm_button">مسح</string>
     <string name="cart_clear_items_only">مسح العناصر فقط</string>
     <string name="cart_clear_items_only_desc">يزيل جميع الصفوف من السلة مع الاحتفاظ بالعملات الحالية وجانب الرسوم.</string>
     <string name="cart_clear_reset_all">إعادة تعيين السلة</string>
@@ -89,13 +84,11 @@
     <string name="cart_share_fees">الرسوم: %s%%</string>
     <string name="cart_share_total">الإجمالي: %1$s %2$s</string>
     <string name="cart_unsaved_title">تغييرات غير محفوظة</string>
-    <string name="cart_unsaved_message">لديك تغييرات غير محفوظة. ماذا تريد أن تفعل؟</string>
     <string name="cart_unsaved_save">حفظ</string>
     <string name="cart_unsaved_save_as">حفظ كجديد</string>
     <string name="cart_unsaved_discard">تجاهل التغييرات</string>
     <string name="cart_unsaved_continue">متابعة</string>
     <string name="a11y_delete">حذف</string>
-    <string name="a11y_historical_rate">سعر سابق</string>
     <string name="a11y_search_currencies">ابحث عن العملات</string>
     <string name="a11y_clear_search">امسح البحث</string>
     <string name="a11y_cart_item_name">اسم العنصر</string>

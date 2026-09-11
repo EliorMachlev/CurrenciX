@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">slå valutaer til/fra</string>
-    <string name="info_date_latest">Valutakurser fra &lt;b>%1$s&lt;/b> af &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Historiske valutakurser fra &lt;b>%1$s&lt;/b> af &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">Kopieret <b>%s</b> til udklipsholderen</string>
     <string name="historical_rates_dialog_title">Historiske valutakurser</string>
     <string name="historical_rates_dialog_toggle">Brug valutakurserne fra en specifik dato. Deaktiver for altid at bruge den nyeste kurs.</string>
@@ -50,7 +48,6 @@
     <string name="cart_delete_item">Slet vare</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">I alt</string>
-    <string name="cart_fee_line">Gebyrer: %s%%</string>
     <string name="cart_menu_save">Gem</string>
     <string name="cart_menu_save_as">Gem som…</string>
     <string name="cart_menu_load">Indlæs</string>
@@ -71,8 +68,6 @@
     <string name="cart_rename_title">Omdøb kurv</string>
     <string name="cart_delete_confirm">Slet “%s”?</string>
     <string name="cart_delete_confirm_button">Slet</string>
-    <string name="cart_clear_confirm">Fjern alle varer fra den aktuelle kurv?</string>
-    <string name="cart_clear_confirm_button">Ryd</string>
     <string name="cart_clear_items_only">Ryd kun varer</string>
     <string name="cart_clear_items_only_desc">Fjerner alle rækker fra kurven, men bevarer de aktuelle valutaer og gebyrside.</string>
     <string name="cart_clear_reset_all">Nulstil kurv</string>
@@ -90,13 +85,11 @@
     <string name="cart_share_fees">Gebyrer: %s%%</string>
     <string name="cart_share_total">I alt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Ikke-gemte ændringer</string>
-    <string name="cart_unsaved_message">Du har ikke-gemte ændringer. Hvad vil du gøre?</string>
     <string name="cart_unsaved_save">Gem</string>
     <string name="cart_unsaved_save_as">Gem som ny</string>
     <string name="cart_unsaved_discard">Kassér ændringer</string>
     <string name="cart_unsaved_continue">Fortsæt</string>
     <string name="a11y_delete">Slet</string>
-    <string name="a11y_historical_rate">Historisk kurs</string>
     <string name="a11y_search_currencies">Søg valutaer</string>
     <string name="a11y_clear_search">Ryd søgning</string>
     <string name="a11y_cart_item_name">Varenavn</string>

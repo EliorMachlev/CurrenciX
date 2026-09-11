@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">přepnout měny</string>
-    <string name="info_date_latest">Kurzy z &lt;b&gt;%1$s&lt;/b&gt; od &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Historické kurzy z &lt;b&gt;%1$s&lt;/b&gt; od &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Zkopírováno &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="historical_rates_dialog_title">Historické kurzy</string>
     <string name="historical_rates_dialog_toggle">Použít měnové kurzy ze specifického data. Zakažte pro používání nejnovějších.</string>
@@ -49,7 +47,6 @@
     <string name="cart_delete_item">Smazat položku</string>
     <string name="cart_subtotal_label">Mezisoučet</string>
     <string name="cart_total_label">Celkem</string>
-    <string name="cart_fee_line">Poplatky: %s%%</string>
     <string name="cart_menu_save">Uložit</string>
     <string name="cart_menu_save_as">Uložit jako…</string>
     <string name="cart_menu_load">Načíst</string>
@@ -70,8 +67,6 @@
     <string name="cart_rename_title">Přejmenovat košík</string>
     <string name="cart_delete_confirm">Smazat „%s“?</string>
     <string name="cart_delete_confirm_button">Smazat</string>
-    <string name="cart_clear_confirm">Odstranit všechny položky z aktuálního košíku?</string>
-    <string name="cart_clear_confirm_button">Vymazat</string>
     <string name="cart_clear_items_only">Vymazat pouze položky</string>
     <string name="cart_clear_items_only_desc">Odstraní všechny řádky z košíku, ale zachová aktuální měny a stranu poplatků.</string>
     <string name="cart_clear_reset_all">Resetovat košík</string>
@@ -89,13 +84,11 @@
     <string name="cart_share_fees">Poplatky: %s%%</string>
     <string name="cart_share_total">Celkem: %1$s %2$s</string>
     <string name="cart_unsaved_title">Neuložené změny</string>
-    <string name="cart_unsaved_message">Máte neuložené změny. Co chcete udělat?</string>
     <string name="cart_unsaved_save">Uložit</string>
     <string name="cart_unsaved_save_as">Uložit jako nový</string>
     <string name="cart_unsaved_discard">Zahodit změny</string>
     <string name="cart_unsaved_continue">Pokračovat</string>
     <string name="a11y_delete">Smazat</string>
-    <string name="a11y_historical_rate">Historický kurz</string>
     <string name="a11y_search_currencies">Hledat měny</string>
     <string name="a11y_clear_search">Vymazat hledání</string>
     <string name="a11y_cart_item_name">Název položky</string>

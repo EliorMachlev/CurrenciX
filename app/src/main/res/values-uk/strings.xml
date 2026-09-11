@@ -2,8 +2,6 @@
 <resources>
     <string name="desc_toggle_currencies">поміняти валюти місцями</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="info_date_latest">Курс станом на &lt;b>%1$s&lt;/b>, за даними &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Історичний курс на &lt;b>%1$s&lt;/b>, за даними &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">Скопійовано &lt;b&gt;%s&lt;/b&gt; до буфера обміну</string>
     <string name="historical_rates_dialog_title">Історичний курс</string>
     <string name="historical_rates_dialog_toggle">Використовувати курс валют на певну дату. Вимкніть, щоб завжди брати найновіші.</string>
@@ -29,7 +27,6 @@
     <string name="quick_conversions_fees_applied">Застосовані комісії: %s</string>
     <string name="tooltip_filter_starred">Показувати лише обрані валюти.</string>
     <string name="a11y_delete">Видалити</string>
-    <string name="a11y_historical_rate">Історичний курс</string>
     <string name="currency_dropdown_api_hint">Чогось не вистачає? Різні постачальники даних пропонують різні валюти. Перейдіть до налаштувань, щоб спробувати іншого!\u00A0\uD83E\uDD17</string>
     <string name="offline_banner_with_date">Офлайн • Курси від %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Кешованих курсів ще немає</string>
@@ -51,7 +48,6 @@
     <string name="cart_delete_item">Видалити позицію</string>
     <string name="cart_subtotal_label">Проміжний підсумок</string>
     <string name="cart_total_label">Разом</string>
-    <string name="cart_fee_line">Комісія: %s%%</string>
     <string name="cart_menu_save">Зберегти</string>
     <string name="cart_menu_save_as">Зберегти як…</string>
     <string name="cart_menu_load">Завантажити</string>
@@ -72,8 +68,6 @@
     <string name="cart_rename_title">Перейменувати кошик</string>
     <string name="cart_delete_confirm">Видалити «%s»?</string>
     <string name="cart_delete_confirm_button">Видалити</string>
-    <string name="cart_clear_confirm">Видалити всі позиції з поточного кошика?</string>
-    <string name="cart_clear_confirm_button">Очистити</string>
     <string name="cart_clear_items_only">Очистити лише позиції</string>
     <string name="cart_clear_items_only_desc">Видаляє всі рядки з кошика, але залишає поточні валюти та бік комісії.</string>
     <string name="cart_clear_reset_all">Скинути кошик</string>
@@ -91,7 +85,6 @@
     <string name="cart_share_fees">Комісія: %s%%</string>
     <string name="cart_share_total">Разом: %1$s %2$s</string>
     <string name="cart_unsaved_title">Незбережені зміни</string>
-    <string name="cart_unsaved_message">У вас є незбережені зміни. Що ви хочете зробити?</string>
     <string name="cart_unsaved_save">Зберегти</string>
     <string name="cart_unsaved_save_as">Зберегти як новий</string>
     <string name="cart_unsaved_discard">Скасувати зміни</string>

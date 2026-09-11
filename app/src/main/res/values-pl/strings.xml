@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">przełącz waluty</string>
-    <string name="info_date_latest">Kursy na dzień <b>%1$s</b> dostarczone przez <b>%2$s</b></string>
-    <string name="info_date_historical">Kursy historyczne na dzień <b>%1$s</b> dostarczone przez <b>%2$s</b></string>
     <string name="copied_to_clipboard">Skopiowano <b>%s</b> do schowka</string>
     <string name="historical_rates_dialog_title">Kursy historyczne</string>
     <string name="historical_rates_dialog_toggle">Użyj kursów wymiany z określonego okresu. Wyłącz, aby zawsze używać najnowszych dane.</string>
@@ -25,7 +23,6 @@
     <string name="quick_conversions_fees_applied">Zastosowane opłaty: %s</string>
     <string name="tooltip_filter_starred">Pokaż tylko polubione waluty.</string>
     <string name="a11y_delete">Usuń</string>
-    <string name="a11y_historical_rate">Kurs historyczny</string>
     <string name="error_invalid_api_key">HTTP 401 – Sprawdź swój klucz API.</string>
     <string name="error_no_api_key">Aby korzystać z tego źródła, należy ustawić prawidłowy klucz API.</string>
     <string name="error_unsupported_timeline">Dane osi czasu nie są obsługiwane przez to API.</string>
@@ -51,7 +48,6 @@
     <string name="cart_delete_item">Usuń pozycję</string>
     <string name="cart_subtotal_label">Suma częściowa</string>
     <string name="cart_total_label">Razem</string>
-    <string name="cart_fee_line">Opłaty: %s%%</string>
     <string name="cart_menu_save">Zapisz</string>
     <string name="cart_menu_save_as">Zapisz jako…</string>
     <string name="cart_menu_load">Wczytaj</string>
@@ -72,8 +68,6 @@
     <string name="cart_rename_title">Zmień nazwę koszyka</string>
     <string name="cart_delete_confirm">Usunąć „%s”?</string>
     <string name="cart_delete_confirm_button">Usuń</string>
-    <string name="cart_clear_confirm">Usunąć wszystkie pozycje z bieżącego koszyka?</string>
-    <string name="cart_clear_confirm_button">Wyczyść</string>
     <string name="cart_clear_items_only">Wyczyść tylko pozycje</string>
     <string name="cart_clear_items_only_desc">Usuwa wszystkie wiersze z koszyka, ale zachowuje bieżące waluty i stronę opłat.</string>
     <string name="cart_clear_reset_all">Zresetuj koszyk</string>
@@ -91,7 +85,6 @@
     <string name="cart_share_fees">Opłaty: %s%%</string>
     <string name="cart_share_total">Razem: %1$s %2$s</string>
     <string name="cart_unsaved_title">Niezapisane zmiany</string>
-    <string name="cart_unsaved_message">Masz niezapisane zmiany. Co chcesz zrobić?</string>
     <string name="cart_unsaved_save">Zapisz</string>
     <string name="cart_unsaved_save_as">Zapisz jako nowy</string>
     <string name="cart_unsaved_discard">Odrzuć zmiany</string>
