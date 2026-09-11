@@ -590,6 +590,10 @@ private fun AmountHero(
                 cursorHeight = CURSOR_HEIGHT_SUBTOTAL,
                 onLongClick = onSubtotalLongClick,
             )
+            // Mirrors the math-line reservation above so the subtotal
+            // sits at the panel's vertical center instead of the bottom
+            // when there's no math text to render.
+            MathLine(null)
         }
     }
 }
