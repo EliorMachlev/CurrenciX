@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.EaseInOutSine
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -258,6 +260,21 @@ private const val FEE_NAME_SEPARATOR = ", "
 private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
 private const val CURSOR_BLINK_MILLIS = 1200
+
+// Fade duration when engraved amounts (final source, You-get destination)
+// swap digits. Short enough that fast keystrokes just read as a subtle
+// blur rather than a laggy slide-in; long enough that a rate refresh
+// visibly "reads" as a change instead of a hard replace.
+private const val ENGRAVED_DIGITS_FADE_MILLIS = 160
+
+// Pulsing dot next to the footer timestamp. Signals that the rates in view
+// are live (the timestamp exists, we're not offline). Slow, low-contrast
+// pulse — deliberately more heartbeat than blinker.
+private const val LIVE_PULSE_MILLIS = 1400
+private val LIVE_PULSE_DOT_SIZE: Dp = 6.dp
+private val LIVE_PULSE_DOT_GAP: Dp = 6.dp
+private const val LIVE_PULSE_ALPHA_MIN = 0.35f
+private const val LIVE_PULSE_ALPHA_MAX = 1f
 
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
@@ -737,22 +754,33 @@ private fun ScrollingAmount(
                 modifier = Modifier.padding(end = SYMBOL_GAP),
             )
         }
-        Text(
-            text = parts.digits,
-            fontSize = digitsSize,
-            lineHeight = digitsSize,
-            fontWeight = fontWeight,
-            fontFamily = fontFamily,
-            color = color,
-            maxLines = 1,
-            softWrap = false,
-            textAlign = TextAlign.End,
-            style = TIGHT_TEXT_STYLE,
-            modifier =
-                Modifier
-                    .weight(1f, fill = false)
-                    .horizontalScroll(rememberStartAnchoredScrollState(parts.digits)),
-        )
+        val digitsText: @Composable (String) -> Unit = { value ->
+            Text(
+                text = value,
+                fontSize = digitsSize,
+                lineHeight = digitsSize,
+                fontWeight = fontWeight,
+                fontFamily = fontFamily,
+                color = color,
+                maxLines = 1,
+                softWrap = false,
+                textAlign = TextAlign.End,
+                style = TIGHT_TEXT_STYLE,
+                modifier = Modifier.horizontalScroll(rememberStartAnchoredScrollState(value)),
+            )
+        }
+        if (cursorHeight != null) {
+            // Typed input — direct render so the caret follows keystrokes
+            // without an inter-glyph crossfade.
+            Box(Modifier.weight(1f, fill = false)) { digitsText(parts.digits) }
+        } else {
+            Crossfade(
+                targetState = parts.digits,
+                modifier = Modifier.weight(1f, fill = false),
+                animationSpec = tween(durationMillis = ENGRAVED_DIGITS_FADE_MILLIS),
+                label = "engraved-digits",
+            ) { value -> digitsText(value) }
+        }
         if (cursorHeight != null) BlinkingCursor(height = cursorHeight)
     }
 }
@@ -771,10 +799,12 @@ private fun MathLine(text: String?) {
             Text(
                 text = if (hasMath) "$text $OP_EQUALS" else " ",
                 fontSize = MATH_LINE_TEXT_SIZE,
+                fontFamily = FontFamily.Monospace,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 softWrap = false,
                 textAlign = TextAlign.End,
+                style = TIGHT_TEXT_STYLE,
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
@@ -1183,13 +1213,44 @@ private fun TimestampText(
         }
     val provider = rates.provider?.getName(context)?.toString()
     val text = if (provider.isNullOrEmpty()) whenText else "$whenText$FOOTER_SEPARATOR$provider"
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable(onClick = onProviderClick),
+    ) {
+        LivePulseDot()
+        Spacer(Modifier.width(LIVE_PULSE_DOT_GAP))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+// Small primary-tinted dot that pulses its alpha slowly to signal that the
+// visible rates are live. Sits at the leading edge of the timestamp row.
+@Composable
+private fun LivePulseDot() {
+    val transition = rememberInfiniteTransition(label = "live-pulse")
+    val alpha by transition.animateFloat(
+        initialValue = LIVE_PULSE_ALPHA_MAX,
+        targetValue = LIVE_PULSE_ALPHA_MIN,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = LIVE_PULSE_MILLIS, easing = EaseInOutSine),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "live-pulse-alpha",
+    )
+    val color = MaterialTheme.colorScheme.primary
+    Spacer(
+        Modifier
+            .size(LIVE_PULSE_DOT_SIZE)
+            .graphicsLayer { this.alpha = alpha }
+            .clip(CircleShape)
+            .background(color),
     )
 }
 
