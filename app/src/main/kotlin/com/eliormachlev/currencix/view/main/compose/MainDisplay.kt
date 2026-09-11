@@ -50,8 +50,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -84,7 +88,6 @@ import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
-import com.eliormachlev.currencix.util.toCompactHumanReadableNumber
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.theme.Amber
@@ -157,6 +160,21 @@ private val AMOUNT_SUBTOTAL_SIZE = 28.sp
 private val AMOUNT_TO_SIZE = 34.sp
 private val FEE_CHIP_TEXT_SIZE = 11.sp
 private val MATH_LINE_TEXT_SIZE = 14.sp
+
+// Currency symbol renders at ~62% of the digits size so it reads as a
+// label riding alongside the number instead of competing with it.
+private const val SYMBOL_SIZE_RATIO = 0.62f
+private val AMOUNT_HERO_SYMBOL_SIZE = AMOUNT_HERO_SIZE * SYMBOL_SIZE_RATIO
+private val AMOUNT_SUBTOTAL_SYMBOL_SIZE = AMOUNT_SUBTOTAL_SIZE * SYMBOL_SIZE_RATIO
+private val AMOUNT_TO_SYMBOL_SIZE = AMOUNT_TO_SIZE * SYMBOL_SIZE_RATIO
+
+// Pinned-symbol dim so the number is the primary read.
+private const val SYMBOL_ALPHA = 0.65f
+private val SYMBOL_GAP: Dp = 6.dp
+
+// Width of the leading fade mask applied to the scrolling digits — long
+// enough to hint at truncated leading digits without hiding real content.
+private val AMOUNT_FADE_WIDTH: Dp = 20.dp
 
 // Gap between the medium subtotal row and the fee chip that follows it,
 // and between the fee chip and the hero final. Tuned so the three read as
@@ -282,25 +300,29 @@ internal fun MainDisplay(
     val activeFees by viewModel.getActiveFees().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()
     val baseValueNumber by viewModel.getCurrentBaseValueAsNumber().observeAsState()
-    val resultNumber by viewModel.getResultAsNumber().observeAsState()
     val trueCost by viewModel.getTrueCost().observeAsState()
     val decimalPlaces by viewModel.getDecimalPlaces().observeAsState(FINAL_VALUE_DECIMAL_PLACES_FALLBACK)
 
     val baseFull = baseFormatted?.toString().orEmpty()
     val resultFull = resultFormatted?.toString().orEmpty()
-    // trueCost is the fee-adjusted final in the source currency. Format it the
-    // same way as the typed subtotal (compact for long values, symbol on the
-    // locale-appropriate side) so the two amounts read as a matching pair.
-    val originalFinalFormatted =
+    // trueCost is the fee-adjusted final in the source currency; format with
+    // full digits (no K/M/B fold — the hero shows the entire number and
+    // scrolls horizontally when it overflows).
+    val originalFinalFull =
         formatMoneyForDisplay(context, trueCost, baseCurrency, decimalPlaces) ?: baseFull
+    // Split each formatted string into its (symbol, digits) parts so the
+    // symbol can be pinned outside the scrolling digits row.
+    val baseParts = remember(baseFull, baseCurrency) { splitAmount(context, baseFull, baseCurrency) }
+    val finalParts = remember(originalFinalFull, baseCurrency) { splitAmount(context, originalFinalFull, baseCurrency) }
+    val resultParts = remember(resultFull, destCurrency) { splitAmount(context, resultFull, destCurrency) }
     HeroCard(
         baseCurrency = baseCurrency,
         destCurrency = destCurrency,
-        baseFormatted = compactAmountOrFull(context, baseFull, baseValueNumber, baseCurrency),
-        originalFinalFormatted = originalFinalFormatted,
-        resultFormatted = compactAmountOrFull(context, resultFull, resultNumber, destCurrency),
+        baseParts = baseParts,
+        finalParts = finalParts,
+        resultParts = resultParts,
         baseCopyText = baseFull,
-        originalFinalCopyText = originalFinalFormatted,
+        originalFinalCopyText = originalFinalFull,
         resultCopyText = resultFull,
         rates = rates,
         isUpdating = isUpdating,
@@ -333,9 +355,9 @@ internal fun MainDisplay(
 private fun HeroCard(
     baseCurrency: Currency?,
     destCurrency: Currency?,
-    baseFormatted: String,
-    originalFinalFormatted: String,
-    resultFormatted: String,
+    baseParts: AmountParts,
+    finalParts: AmountParts,
+    resultParts: AmountParts,
     baseCopyText: String,
     originalFinalCopyText: String,
     resultCopyText: String,
@@ -374,8 +396,8 @@ private fun HeroCard(
             )
             Spacer(Modifier.height(PILLS_ROW_BOTTOM_GAP))
             AmountHero(
-                subtotalText = baseFormatted,
-                finalText = originalFinalFormatted,
+                subtotalParts = baseParts,
+                finalParts = finalParts,
                 mathText = mathText,
                 onSubtotalLongClick = { if (baseCopyText.isNotEmpty()) callbacks.onCopy(baseCopyText) },
                 onFinalLongClick = {
@@ -389,7 +411,7 @@ private fun HeroCard(
             )
             Spacer(Modifier.height(AMOUNT_BAND_TOP_GAP))
             AmountToRow(
-                text = resultFormatted,
+                parts = resultParts,
                 onLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
             )
             Spacer(Modifier.height(RATE_FOOTER_TOP_MARGIN))
@@ -518,8 +540,8 @@ private fun SwapFab(
 // classic single-hero layout to keep the card compact.
 @Composable
 private fun AmountHero(
-    subtotalText: String,
-    finalText: String,
+    subtotalParts: AmountParts,
+    finalParts: AmountParts,
     mathText: String?,
     onSubtotalLongClick: () -> Unit,
     onFinalLongClick: () -> Unit,
@@ -537,9 +559,10 @@ private fun AmountHero(
         // below (and the framed Final cost when a fee is active) carry the
         // hero-sized answer role, so the input stays visually stable whether
         // the fee chain is showing or not.
-        AmountRow(
-            text = subtotalText,
-            fontSize = AMOUNT_SUBTOTAL_SIZE,
+        ScrollingAmount(
+            parts = subtotalParts,
+            digitsSize = AMOUNT_SUBTOTAL_SIZE,
+            symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
             fontWeight = FontWeight.Medium,
             cursorHeight = CURSOR_HEIGHT_SUBTOTAL,
             onLongClick = onSubtotalLongClick,
@@ -548,7 +571,7 @@ private fun AmountHero(
             Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
             ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
             Spacer(Modifier.height(CHIP_TO_FINAL_GAP))
-            FinalCostBox(text = finalText, onLongClick = onFinalLongClick)
+            FinalCostBox(parts = finalParts, onLongClick = onFinalLongClick)
         }
     }
 }
@@ -562,7 +585,7 @@ private fun AmountHero(
 // vertical center — no static "half height" guess.
 @Composable
 private fun FinalCostBox(
-    text: String,
+    parts: AmountParts,
     onLongClick: () -> Unit,
 ) {
     val borderColor = MaterialTheme.colorScheme.outline
@@ -584,9 +607,10 @@ private fun FinalCostBox(
                         vertical = FINAL_BOX_VERTICAL_PADDING,
                     ),
             ) {
-                AmountRow(
-                    text = text,
-                    fontSize = AMOUNT_HERO_SIZE,
+                ScrollingAmount(
+                    parts = parts,
+                    digitsSize = AMOUNT_HERO_SIZE,
+                    symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
                     fontWeight = FontWeight.Medium,
                     cursorHeight = null,
                     onLongClick = onLongClick,
@@ -618,31 +642,47 @@ private fun FinalCostBox(
     }
 }
 
-// Right-aligned amount row shared by the subtotal and final tiers. When
-// [cursorHeight] is non-null a blinking primary-colored cursor renders to
-// the right of the number (the subtotal is the one being typed; the derived
-// final never carries a cursor).
+// Right-aligned amount row shared by the subtotal and final tiers. The
+// currency symbol is pinned on the leading edge outside the scrolling
+// digits, so `$ € ¥` stays visible while long numbers scroll horizontally
+// under a leading fade mask. When [cursorHeight] is non-null a blinking
+// primary-colored cursor renders after the number.
 @Composable
-private fun AmountRow(
-    text: String,
-    fontSize: TextUnit,
+private fun ScrollingAmount(
+    parts: AmountParts,
+    digitsSize: TextUnit,
+    symbolSize: TextUnit,
     fontWeight: FontWeight,
     cursorHeight: Dp?,
     onLongClick: () -> Unit,
 ) {
+    val color = MaterialTheme.colorScheme.onSurface
     Row(
         Modifier
             .fillMaxWidth()
             .combinedClickable(onClick = {}, onLongClick = onLongClick),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.End,
     ) {
+        if (parts.symbol.isNotEmpty()) {
+            Text(
+                text = parts.symbol,
+                fontSize = symbolSize,
+                lineHeight = digitsSize,
+                fontWeight = fontWeight,
+                color = color.copy(alpha = SYMBOL_ALPHA),
+                maxLines = 1,
+                softWrap = false,
+                style = TIGHT_TEXT_STYLE,
+                modifier = Modifier.padding(end = SYMBOL_GAP),
+            )
+        }
         Text(
-            text = text,
-            fontSize = fontSize,
-            lineHeight = fontSize,
+            text = parts.digits,
+            fontSize = digitsSize,
+            lineHeight = digitsSize,
             fontWeight = fontWeight,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = color,
             maxLines = 1,
             softWrap = false,
             textAlign = TextAlign.End,
@@ -650,7 +690,8 @@ private fun AmountRow(
             modifier =
                 Modifier
                     .weight(1f, fill = false)
-                    .horizontalScroll(rememberStartAnchoredScrollState(text)),
+                    .leadingFadeMask(AMOUNT_FADE_WIDTH)
+                    .horizontalScroll(rememberStartAnchoredScrollState(parts.digits)),
         )
         if (cursorHeight != null) BlinkingCursor(height = cursorHeight)
     }
@@ -709,32 +750,24 @@ private fun BlinkingCursor(height: Dp = CURSOR_HEIGHT) {
 
 @Composable
 private fun AmountToRow(
-    text: String,
+    parts: AmountParts,
     onLongClick: () -> Unit,
 ) {
-    Row(
+    Box(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(AMOUNT_BAND_RADIUS))
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(AMOUNT_BAND_PADDING)
-                .combinedClickable(onClick = {}, onLongClick = onLongClick),
-        horizontalArrangement = Arrangement.End,
+                .padding(AMOUNT_BAND_PADDING),
     ) {
-        Text(
-            text = text,
-            fontSize = AMOUNT_TO_SIZE,
+        ScrollingAmount(
+            parts = parts,
+            digitsSize = AMOUNT_TO_SIZE,
+            symbolSize = AMOUNT_TO_SYMBOL_SIZE,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            softWrap = false,
-            textAlign = TextAlign.End,
-            style = TIGHT_TEXT_STYLE,
-            modifier =
-                Modifier
-                    .weight(1f, fill = false)
-                    .horizontalScroll(rememberStartAnchoredScrollState(text)),
+            cursorHeight = null,
+            onLongClick = onLongClick,
         )
     }
 }
@@ -858,26 +891,10 @@ private fun rememberIdleAutoScrollState(resetKey: Any? = null): ScrollState {
     return state
 }
 
-// Displayable version of a full grouped amount ("310,500,000,000,000 ILS"),
-// folded into compact form ("310.5T ILS") once the integer part crosses the
-// K/M/B/T/Q threshold. Falls back to [full] when the value is null or short
-// enough to stay legible as-is; the ViewModel's raw string is still what
-// long-press-copy delivers, so precision isn't lost on the clipboard side.
-private fun compactAmountOrFull(
-    context: Context,
-    full: String,
-    value: BigDecimal?,
-    currency: Currency?,
-): String {
-    val compact = value?.toCompactHumanReadableNumber(context) ?: return full
-    return formatWithSymbol(compact, currency?.symbol(), hasAppendedCurrencySymbol(context))
-}
-
 // Full-formatting path for a derived money [value] (no ViewModel-supplied
-// pre-formatted string available). Prefers the compact form for very long
-// values, falls back to the standard grouped decimal, then prepends /
-// appends the currency symbol per locale. Returns null when [value] is
-// null so callers can substitute a fallback.
+// pre-formatted string available). Always renders full digits — the hero
+// scrolls long numbers horizontally instead of folding to K/M/B. Returns
+// null when [value] is null so callers can substitute a fallback.
 private fun formatMoneyForDisplay(
     context: Context,
     value: BigDecimal?,
@@ -885,9 +902,7 @@ private fun formatMoneyForDisplay(
     decimalPlaces: Int,
 ): String? {
     if (value == null) return null
-    val body =
-        value.toCompactHumanReadableNumber(context)
-            ?: value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces)
+    val body = value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces)
     return formatWithSymbol(body, currency?.symbol(), hasAppendedCurrencySymbol(context))
 }
 
@@ -904,6 +919,55 @@ private fun formatWithSymbol(
         appended -> "$number $symbol"
         else -> "$symbol $number"
     }
+
+// The pinned-symbol + scrolling-digits display shape needs the two parts
+// separated so the digits can scroll under a fade mask while the symbol
+// stays visible.  [full] holds the joined form for clipboard / copy paths.
+internal data class AmountParts(
+    val symbol: String,
+    val digits: String,
+) {
+    val full: String get() = if (symbol.isEmpty()) digits else "$symbol $digits"
+}
+
+// Peel the currency symbol off a preformatted "$ 240.00" / "240.00 $"
+// string. Locale decides which side the symbol was appended to; that
+// same decision is what we invert here.
+private fun splitAmount(
+    context: Context,
+    formatted: String,
+    currency: Currency?,
+): AmountParts {
+    val symbol = currency?.symbol().orEmpty()
+    if (symbol.isEmpty() || formatted.isEmpty()) return AmountParts("", formatted)
+    val digits =
+        if (hasAppendedCurrencySymbol(context)) {
+            formatted.removeSuffix(symbol).trimEnd()
+        } else {
+            formatted.removePrefix(symbol).trimStart()
+        }
+    return AmountParts(symbol, digits)
+}
+
+// Fade the leading edge of the row so overflowing digits scroll under a
+// soft-mask instead of clipping hard at the panel edge. Uses DstIn against
+// a horizontal alpha ramp, which needs offscreen compositing to blend as
+// a proper mask rather than paint on top.
+private fun Modifier.leadingFadeMask(fadeWidth: Dp): Modifier =
+    graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+        .drawWithContent {
+            drawContent()
+            val fadePx = fadeWidth.toPx().coerceAtMost(size.width)
+            drawRect(
+                brush =
+                    Brush.horizontalGradient(
+                        colors = listOf(Color.Transparent, Color.Black),
+                        startX = 0f,
+                        endX = fadePx,
+                    ),
+                blendMode = BlendMode.DstIn,
+            )
+        }
 
 @Composable
 private fun FeeChip(
