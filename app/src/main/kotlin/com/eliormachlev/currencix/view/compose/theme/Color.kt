@@ -10,6 +10,12 @@ val Brass = Color(0xFFB8985B)
 val Vermillion = Color(0xFFC1443A)
 val Amber = Color(0xFFE0A144)
 
+// Revenue-stamp crimson: darker than Vermillion so the fee "stamp" on
+// the hero receipt reads as ink pressed into paper rather than a bright
+// alert. Used for the fee-row stamp border/text; deliberately not part
+// of the Material color scheme so it stays a one-off signature accent.
+val Stamp = Color(0xFF8B3A3A)
+
 private val PaperBg = Color(0xFFF3EEE5)
 private val PaperSurface = Color(0xFFFFFFFF)
 private val PaperSurfaceHigh = Color(0xFFF7F3EC)

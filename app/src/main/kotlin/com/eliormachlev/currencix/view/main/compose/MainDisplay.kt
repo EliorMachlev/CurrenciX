@@ -67,12 +67,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentManager
 import com.eliormachlev.currencix.R
@@ -90,7 +92,7 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
-import com.eliormachlev.currencix.view.compose.theme.Amber
+import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.coroutines.delay
@@ -243,11 +245,23 @@ private const val CURSOR_BLINK_MILLIS = 1200
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
 
-// Cap the amber fee chip at a fraction of its parent row so it can never grow
-// past that even when nothing else competes; the red final-value pill is
-// weighted instead so it absorbs whatever row space the chip leaves free
-// (up to its own natural width, then scrolls).
+// Cap the crimson fee-stamp at a fraction of its parent row so it can
+// never grow past that even when nothing else competes; when the name
+// exceeds the cap it marquees inside the stamp under a leading fade.
 private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.5f
+
+// Fee-stamp shape metrics — a thin-bordered rectangle (small radius so
+// it reads as an ink stamp, not a pill) with pinned percent + marquee
+// name inside.
+private val FEE_STAMP_CORNER_RADIUS: Dp = 4.dp
+private val FEE_STAMP_BORDER_WIDTH: Dp = 1.dp
+private val FEE_STAMP_HORIZONTAL_PADDING: Dp = 8.dp
+private val FEE_STAMP_VERTICAL_PADDING: Dp = 3.dp
+private val FEE_STAMP_INNER_GAP: Dp = 8.dp
+private val FEE_STAMP_FADE_WIDTH: Dp = 14.dp
+private val FEE_STAMP_LETTER_SPACING = 0.06.em
+private val FEE_STAMP_OP_GAP: Dp = 6.dp
+private const val FEE_STAMP_OP_PREFIX = "+"
 
 // Pill auto-scroll: after this long without a user drag on a scrollable pill,
 // resume an automatic ping-pong scroll so overflowing content can still be
@@ -783,7 +797,8 @@ private fun BigDecimal?.isMeaningful(): Boolean = this != null && this.signum() 
 
 // Sits between the subtotal and the hero final in the top card, taking no
 // bottom padding of its own — the surrounding column adds symmetric spacers
-// instead.
+// instead. Renders as receipt math: a dim `+` operator outside the stamp,
+// then the crimson revenue-stamp with the percent + fee name inside it.
 @Composable
 private fun ChipBelow(
     stack: BigDecimal,
@@ -796,6 +811,14 @@ private fun ChipBelow(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            Text(
+                text = FEE_STAMP_OP_PREFIX,
+                fontSize = FEE_CHIP_TEXT_SIZE,
+                fontWeight = FontWeight.Medium,
+                fontFamily = FontFamily.Monospace,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(end = FEE_STAMP_OP_GAP),
+            )
             FeeChip(stack, fees, onClick)
         }
     }
@@ -969,6 +992,12 @@ private fun Modifier.leadingFadeMask(fadeWidth: Dp): Modifier =
             )
         }
 
+// Revenue-stamp for the fee row. Rectangular thin border, crimson ink,
+// monospaced uppercase — reads as an ink stamp pressed onto the receipt.
+// Percent stays pinned at the leading edge; the fee name is capped at
+// the stamp's max width and marquees inside a leading fade when it
+// overflows. No delta value on the row — the reader gets that from the
+// visible typed → engraved-final math below.
 @Composable
 private fun FeeChip(
     stack: BigDecimal,
@@ -981,34 +1010,44 @@ private fun FeeChip(
         remember(stack) {
             stack
                 .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
-                .toHumanReadableNumber(context, showPositiveSign = true, suffix = "%", trim = true)
+                .toHumanReadableNumber(context, suffix = "%", trim = true)
         }
     val namesText =
         remember(fees) {
             fees
                 .mapNotNull { it.name.trim().takeIf(String::isNotEmpty) }
                 .joinToString(FEE_NAME_SEPARATOR)
+                .uppercase()
         }
-    val bg = Amber.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surfaceVariant)
+    val bg = Stamp.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
     Row(
         modifier
             .maxWidthFraction(FEE_CHIP_MAX_WIDTH_FRACTION)
-            .clip(RoundedCornerShape(PILL_RADIUS))
+            .clip(RoundedCornerShape(FEE_STAMP_CORNER_RADIUS))
             .background(bg)
-            .hapticClickable(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 4.dp),
+            .border(
+                width = FEE_STAMP_BORDER_WIDTH,
+                color = Stamp,
+                shape = RoundedCornerShape(FEE_STAMP_CORNER_RADIUS),
+            ).hapticClickable(onClick = onClick)
+            .padding(
+                horizontal = FEE_STAMP_HORIZONTAL_PADDING,
+                vertical = FEE_STAMP_VERTICAL_PADDING,
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (namesText.isEmpty()) {
             FeeChipText(text = stringResource(R.string.fee_chip_label, percentText))
         } else {
-            FeeChipText(text = "$percentText$FOOTER_SEPARATOR")
+            FeeChipText(text = percentText)
+            Spacer(Modifier.width(FEE_STAMP_INNER_GAP))
             FeeChipText(
                 text = namesText,
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .horizontalScroll(rememberIdleAutoScrollState()),
+                        .leadingFadeMask(FEE_STAMP_FADE_WIDTH)
+                        .horizontalScroll(rememberIdleAutoScrollState(namesText)),
             )
         }
     }
@@ -1023,7 +1062,9 @@ private fun FeeChipText(
         text = text,
         fontSize = FEE_CHIP_TEXT_SIZE,
         fontWeight = FontWeight.Medium,
-        color = Amber,
+        fontFamily = FontFamily.Monospace,
+        letterSpacing = FEE_STAMP_LETTER_SPACING,
+        color = Stamp,
         maxLines = 1,
         softWrap = false,
         modifier = modifier,
