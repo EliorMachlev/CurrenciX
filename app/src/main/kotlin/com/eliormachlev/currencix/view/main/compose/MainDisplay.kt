@@ -235,11 +235,6 @@ private val TIGHT_TEXT_STYLE =
         fontFeatureSettings = "tnum",
     )
 
-// Fallback rounding for the final-value pill amount when the user's
-// decimal-places preference hasn't loaded yet — matches the ViewModel's
-// own default seed for the result formatter.
-private const val FINAL_VALUE_DECIMAL_PLACES_FALLBACK = 2
-
 // Trailing glyph on the math line so a running expression reads as
 // "1+2+3=" rather than a bare list of operands.
 private const val OP_EQUALS = "="
@@ -341,44 +336,41 @@ internal fun MainDisplay(
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
     val destCurrency by viewModel.getDestinationCurrency().observeAsState()
     val baseFormatted by viewModel.getCurrentBaseValueFormatted().observeAsState()
-    val resultFormatted by viewModel.getResultWithFeesFormatted().observeAsState()
+    val resultFairFormatted by viewModel.getResultFormatted().observeAsState()
+    val resultWithFeesFormatted by viewModel.getResultWithFeesFormatted().observeAsState()
     val rates by viewModel.getExchangeRates().observeAsState()
     val isUpdating by viewModel.isUpdating().observeAsState(false)
     val feeStack by viewModel.getFeeStack().observeAsState()
     val activeFees by viewModel.getActiveFees().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()
-    val baseValueNumber by viewModel.getCurrentBaseValueAsNumber().observeAsState()
-    val trueCost by viewModel.getTrueCost().observeAsState()
-    val decimalPlaces by viewModel.getDecimalPlaces().observeAsState(FINAL_VALUE_DECIMAL_PLACES_FALLBACK)
+    val resultFairNumber by viewModel.getResultAsNumber().observeAsState()
+    val resultWithFeesNumber by viewModel.getResultWithFeesAsNumber().observeAsState()
 
     val baseFull = baseFormatted?.toString().orEmpty()
-    val resultFull = resultFormatted?.toString().orEmpty()
-    // trueCost is the fee-adjusted final in the source currency; format with
-    // full digits (no K/M/B fold — the hero shows the entire number and
-    // scrolls horizontally when it overflows).
-    val originalFinalFull =
-        formatMoneyForDisplay(context, trueCost, baseCurrency, decimalPlaces) ?: baseFull
+    val resultFairFull = resultFairFormatted?.toString().orEmpty()
+    val resultWithFeesFull = resultWithFeesFormatted?.toString().orEmpty()
     // Split each formatted string into its (symbol, digits) parts so the
     // symbol can be pinned outside the scrolling digits row.
     val baseParts = remember(baseFull, baseCurrency) { splitAmount(context, baseFull, baseCurrency) }
-    val finalParts = remember(originalFinalFull, baseCurrency) { splitAmount(context, originalFinalFull, baseCurrency) }
-    val resultParts = remember(resultFull, destCurrency) { splitAmount(context, resultFull, destCurrency) }
+    val resultParts = remember(resultFairFull, destCurrency) { splitAmount(context, resultFairFull, destCurrency) }
+    val trueCostParts =
+        remember(resultWithFeesFull, destCurrency) { splitAmount(context, resultWithFeesFull, destCurrency) }
     HeroCard(
         baseCurrency = baseCurrency,
         destCurrency = destCurrency,
         baseParts = baseParts,
-        finalParts = finalParts,
         resultParts = resultParts,
+        trueCostParts = trueCostParts,
         baseCopyText = baseFull,
-        originalFinalCopyText = originalFinalFull,
-        resultCopyText = resultFull,
+        resultCopyText = resultFairFull,
+        trueCostCopyText = resultWithFeesFull,
         rates = rates,
         isUpdating = isUpdating,
         feeStack = feeStack,
         activeFees = activeFees.orEmpty(),
         mathText = mathText,
-        originalBig = baseValueNumber,
-        originalOther = trueCost,
+        resultFairNumber = resultFairNumber,
+        resultWithFeesNumber = resultWithFeesNumber,
         dateFormatPattern = dateFormatPattern,
         onPillFromClick = {
             openCurrencyPicker(context, viewModel, fragmentManager, PickSide.FROM, baseCurrency, destCurrency, rates)
@@ -404,18 +396,18 @@ private fun HeroCard(
     baseCurrency: Currency?,
     destCurrency: Currency?,
     baseParts: AmountParts,
-    finalParts: AmountParts,
     resultParts: AmountParts,
+    trueCostParts: AmountParts,
     baseCopyText: String,
-    originalFinalCopyText: String,
     resultCopyText: String,
+    trueCostCopyText: String,
     rates: ExchangeRates?,
     isUpdating: Boolean,
     feeStack: BigDecimal?,
     activeFees: List<Fee>,
     mathText: String?,
-    originalBig: BigDecimal?,
-    originalOther: BigDecimal?,
+    resultFairNumber: BigDecimal?,
+    resultWithFeesNumber: BigDecimal?,
     dateFormatPattern: String,
     onPillFromClick: () -> Unit,
     onPillToClick: () -> Unit,
@@ -445,22 +437,20 @@ private fun HeroCard(
             Spacer(Modifier.height(PILLS_ROW_BOTTOM_GAP))
             AmountHero(
                 subtotalParts = baseParts,
-                finalParts = finalParts,
                 mathText = mathText,
                 onSubtotalLongClick = { if (baseCopyText.isNotEmpty()) callbacks.onCopy(baseCopyText) },
-                onFinalLongClick = {
-                    if (originalFinalCopyText.isNotEmpty()) callbacks.onCopy(originalFinalCopyText)
-                },
-                stack = feeStack,
-                fees = activeFees,
-                bigValue = originalBig,
-                otherValue = originalOther,
-                onFeeChipClick = callbacks.onOpenFees,
             )
             Spacer(Modifier.height(PANEL_STACK_GAP))
             AmountToRow(
-                parts = resultParts,
-                onLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
+                resultParts = resultParts,
+                trueCostParts = trueCostParts,
+                stack = feeStack,
+                fees = activeFees,
+                bigValue = resultFairNumber,
+                otherValue = resultWithFeesNumber,
+                onResultLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
+                onTrueCostLongClick = { if (trueCostCopyText.isNotEmpty()) callbacks.onCopy(trueCostCopyText) },
+                onFeeChipClick = callbacks.onOpenFees,
             )
             Spacer(Modifier.height(RATE_FOOTER_TOP_MARGIN))
             RateFooter(
@@ -579,31 +569,16 @@ private fun SwapFab(
     }
 }
 
-// AmountHero — the "You pay" receipt panel. Renders the receipt-math
-// stack inside a fieldset-legend frame:
-//   math line (top, small)   "60 + 60 ="
-//   subtotal (medium, cursor) "₪ 120"
-//   fee stamp (small)         "+ [1% MAX EXECUTIVE]"
-//   receipt rule              "──────"
-//   final (big, hero)         "₪ 121.20"
-// The stamp/rule/final chain only shows when a fee is active; without a
-// fee the subtotal alone sits inside the panel, and the "You get" panel
-// below carries the hero-sized answer.
+// AmountHero — the "You pay" receipt panel. Renders only the running
+// calculator math line and the typed subtotal; the fee stamp + engraved
+// final live in the True Cost panel below (since real-world FX fees are
+// always charged on the post-conversion amount, not the source subtotal).
 @Composable
 private fun AmountHero(
     subtotalParts: AmountParts,
-    finalParts: AmountParts,
     mathText: String?,
     onSubtotalLongClick: () -> Unit,
-    onFinalLongClick: () -> Unit,
-    stack: BigDecimal?,
-    fees: List<Fee>,
-    bigValue: BigDecimal?,
-    otherValue: BigDecimal?,
-    onFeeChipClick: () -> Unit,
 ) {
-    val hasFee = stack.hasFee()
-    val showChain = hasFee && bigValue.isMeaningful() && otherValue != null
     ReceiptPanel(label = stringResource(R.string.hero_you_pay_label)) {
         Column(Modifier.fillMaxWidth()) {
             MathLine(mathText)
@@ -615,24 +590,6 @@ private fun AmountHero(
                 cursorHeight = CURSOR_HEIGHT_SUBTOTAL,
                 onLongClick = onSubtotalLongClick,
             )
-            if (showChain) {
-                Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-                ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-                Spacer(Modifier.height(PAY_RULE_TOP_GAP))
-                PayRule()
-                Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
-                Box(Modifier.guillocheBackground()) {
-                    ScrollingAmount(
-                        parts = finalParts,
-                        digitsSize = AMOUNT_HERO_SIZE,
-                        symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
-                        fontWeight = FontWeight.SemiBold,
-                        cursorHeight = null,
-                        onLongClick = onFinalLongClick,
-                        fontFamily = FontFamily.Serif,
-                    )
-                }
-            }
         }
     }
 }
@@ -838,21 +795,65 @@ private fun BlinkingCursor(height: Dp = CURSOR_HEIGHT) {
     )
 }
 
+// AmountToRow — the "True Cost" receipt panel. Mirrors the receipt-math
+// stack that used to live on the You-pay side, but on the destination
+// currency: fee-free result (small subtotal) → fee stamp → receipt rule
+// → engraved fee-adjusted final (hero, serif, guilloché-backed). Without
+// a fee, only the fair-conversion number renders at the medium hero
+// size — no stamp, no rule.
 @Composable
 private fun AmountToRow(
-    parts: AmountParts,
-    onLongClick: () -> Unit,
+    resultParts: AmountParts,
+    trueCostParts: AmountParts,
+    stack: BigDecimal?,
+    fees: List<Fee>,
+    bigValue: BigDecimal?,
+    otherValue: BigDecimal?,
+    onResultLongClick: () -> Unit,
+    onTrueCostLongClick: () -> Unit,
+    onFeeChipClick: () -> Unit,
 ) {
+    val hasFee = stack.hasFee()
+    val showChain = hasFee && bigValue.isMeaningful() && otherValue != null
     ReceiptPanel(label = stringResource(R.string.hero_you_get_label)) {
-        ScrollingAmount(
-            parts = parts,
-            digitsSize = AMOUNT_TO_SIZE,
-            symbolSize = AMOUNT_TO_SYMBOL_SIZE,
-            fontWeight = FontWeight.SemiBold,
-            cursorHeight = null,
-            onLongClick = onLongClick,
-            fontFamily = FontFamily.Serif,
-        )
+        Column(Modifier.fillMaxWidth()) {
+            if (showChain) {
+                ScrollingAmount(
+                    parts = resultParts,
+                    digitsSize = AMOUNT_SUBTOTAL_SIZE,
+                    symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
+                    fontWeight = FontWeight.Medium,
+                    cursorHeight = null,
+                    onLongClick = onResultLongClick,
+                )
+                Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+                ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
+                Spacer(Modifier.height(PAY_RULE_TOP_GAP))
+                PayRule()
+                Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
+                Box(Modifier.guillocheBackground()) {
+                    ScrollingAmount(
+                        parts = trueCostParts,
+                        digitsSize = AMOUNT_HERO_SIZE,
+                        symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
+                        fontWeight = FontWeight.SemiBold,
+                        cursorHeight = null,
+                        onLongClick = onTrueCostLongClick,
+                        fontFamily = FontFamily.Serif,
+                    )
+                }
+            } else {
+                ScrollingAmount(
+                    parts = resultParts,
+                    digitsSize = AMOUNT_TO_SIZE,
+                    symbolSize = AMOUNT_TO_SYMBOL_SIZE,
+                    fontWeight = FontWeight.SemiBold,
+                    cursorHeight = null,
+                    onLongClick = onResultLongClick,
+                    fontFamily = FontFamily.Serif,
+                )
+            }
+        }
     }
 }
 
@@ -983,35 +984,6 @@ private fun rememberIdleAutoScrollState(resetKey: Any? = null): ScrollState {
     }
     return state
 }
-
-// Full-formatting path for a derived money [value] (no ViewModel-supplied
-// pre-formatted string available). Always renders full digits — the hero
-// scrolls long numbers horizontally instead of folding to K/M/B. Returns
-// null when [value] is null so callers can substitute a fallback.
-private fun formatMoneyForDisplay(
-    context: Context,
-    value: BigDecimal?,
-    currency: Currency?,
-    decimalPlaces: Int,
-): String? {
-    if (value == null) return null
-    val body = value.toHumanReadableNumber(context, trim = true, decimalPlaces = decimalPlaces)
-    return formatWithSymbol(body, currency?.symbol(), hasAppendedCurrencySymbol(context))
-}
-
-// Locale-aware "$symbol number" / "number $symbol" — mirrors the ViewModel's
-// buildBoldNumberWithSymbol so the pill never disagrees with the main
-// amount display on which side the symbol lands.
-private fun formatWithSymbol(
-    number: String,
-    symbol: String?,
-    appended: Boolean,
-): String =
-    when {
-        symbol.isNullOrEmpty() -> number
-        appended -> "$number $symbol"
-        else -> "$symbol $number"
-    }
 
 // The pinned-symbol + scrolling-digits display shape needs the two parts
 // separated so the digits can scroll under a fade mask while the symbol
