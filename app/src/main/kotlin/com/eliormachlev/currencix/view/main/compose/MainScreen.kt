@@ -186,7 +186,14 @@ private fun DisplayArea(
         state = state,
         modifier = modifier,
     ) {
-        displayContent()
+        // Wrap in a vertical scroller so the hero card's natural height can
+        // exceed the weighted slot when the offline/historical banner steals
+        // space at the top — otherwise the RateFooter overflows behind the
+        // keypad. Also keeps the pull-to-refresh gesture reachable when the
+        // hero is compressed on shorter screens.
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            displayContent()
+        }
     }
 }
 
