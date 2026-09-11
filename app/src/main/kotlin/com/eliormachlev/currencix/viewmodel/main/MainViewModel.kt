@@ -622,8 +622,8 @@ class MainViewModel(
     // applies, equals `result`. Used by the True Cost panel so users see the
     // final out-of-pocket cost expressed in the destination currency
     // (e.g. paying `$200` after fees ≈ `604.3 ILS`, not the fee-free `302.3`).
-    private val resultWithFees: LiveData<String> =
-        result.combineWith(feeStack) { r, s ->
+    private val resultWithFees: LiveData<String?> =
+        result.combineWith<String, BigDecimal, String?>(feeStack) { r, s ->
             val amount = r?.toBigDecimalOrNull() ?: return@combineWith null
             val stack = s ?: BigDecimal.ONE
             amount.multiply(stack, MathContext.DECIMAL128).toPlainString()
@@ -651,7 +651,7 @@ class MainViewModel(
     // bold-number-plus-currency-symbol SpannableStringBuilder, tracking the
     // active destination currency and decimal-places preference. Shared by
     // the fair-conversion and true-cost pipelines so they format identically.
-    private fun formattedDestinationAmount(source: LiveData<String>): LiveData<SpannableStringBuilder> =
+    private fun formattedDestinationAmount(source: LiveData<out String?>): LiveData<SpannableStringBuilder> =
         object : MediatorLiveData<SpannableStringBuilder>() {
             var resultText: String? = null
             var currency: Currency? = null
