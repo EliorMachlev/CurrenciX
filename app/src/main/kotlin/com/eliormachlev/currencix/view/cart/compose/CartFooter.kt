@@ -48,11 +48,11 @@ private val SWAP_FAB_SIZE: Dp = 44.dp
 private val SWAP_ICON_SIZE: Dp = 22.dp
 
 /**
- * Cart footer — currency-pair header (chip / swap / chip), subtotal,
- * fee-annotation rows, then total. Ports the layout previously assembled
- * from `activity_cart.xml` + [CartFooterBinding], keeping the same
- * two-row fee equation (delta + total-with-fee) and the LTR-only
- * currency row so "from" stays left of "to" in every locale.
+ * Cart footer — currency-pair header (chip / swap / chip), subtotal in
+ * the base currency, a fee-delta annotation (destination side, hidden
+ * when neutral), then the fee-inflated total in the destination
+ * currency. LTR-only currency row keeps "from" left of "to" in every
+ * locale.
  */
 @Composable
 fun CartFooter(
@@ -63,6 +63,7 @@ fun CartFooter(
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
     val destCurrency by viewModel.getDestinationCurrency().observeAsState()
     val subtotal by viewModel.getSubtotal().observeAsState()
+    val convertedSubtotal by viewModel.getConvertedSubtotal().observeAsState()
     val total by viewModel.getTotal().observeAsState()
     // Fees and rates aren't rendered directly, but currentFeeStack() reads
     // from both — observing them here keeps the fee-annotation rows in sync
@@ -106,16 +107,8 @@ fun CartFooter(
         FeeAnnotationRow(
             prefixRes = R.string.fee_true_cost_prefix,
             feeStack = feeStack,
-            base = subtotal,
-            currency = baseCurrency,
-            mode = FeeRowMode.DELTA,
-        )
-        FeeAnnotationRow(
-            prefixRes = R.string.fee_cost_with_fee_prefix,
-            feeStack = feeStack,
-            base = subtotal,
-            currency = baseCurrency,
-            mode = FeeRowMode.TOTAL,
+            base = convertedSubtotal,
+            currency = destCurrency,
         )
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = TOTAL_TOP_GAP),
@@ -133,37 +126,27 @@ fun CartFooter(
     }
 }
 
-// Fee annotation row: hidden entirely when the stack is neutral. TOTAL renders
-// `base * stack`, DELTA renders `|base * (stack - 1)|` with the percent tail.
-// Mirrors renderFeeExtraRow in the old CartFooterBinding.
+// Delta row between the fee-free converted subtotal and the fee-inflated
+// Total. Hidden when the stack is neutral. Base + currency are on the
+// destination side because real-world FX fees are charged on the converted
+// amount, not the source subtotal.
 @Composable
 private fun FeeAnnotationRow(
     prefixRes: Int,
     feeStack: BigDecimal,
     base: BigDecimal?,
     currency: Currency?,
-    mode: FeeRowMode,
 ) {
     if (feeStack.isNeutralFeeStack()) return
     val context = LocalContext.current
-    val multiplier =
-        when (mode) {
-            FeeRowMode.TOTAL -> feeStack
-            FeeRowMode.DELTA -> feeStack.feeStackDelta()
-        }
-    val raw = (base ?: BigDecimal.ZERO).multiply(multiplier, MathContext.DECIMAL128)
-    val adjusted = if (mode == FeeRowMode.DELTA) raw.abs() else raw
-    val amountText = context.formatCartAmount(adjusted, currency)
+    val delta = (base ?: BigDecimal.ZERO).multiply(feeStack.feeStackDelta(), MathContext.DECIMAL128).abs()
+    val amountText = context.formatCartAmount(delta, currency)
     val valueText =
-        when (mode) {
-            FeeRowMode.TOTAL -> amountText
-            FeeRowMode.DELTA ->
-                stringResource(
-                    id = R.string.cart_fee_extra_value,
-                    amountText,
-                    feeStack.toCartFeePercentDisplay(),
-                )
-        }
+        stringResource(
+            id = R.string.cart_fee_extra_value,
+            amountText,
+            feeStack.toCartFeePercentDisplay(),
+        )
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stripLabelSeparator(stringResource(id = prefixRes)),
@@ -233,8 +216,6 @@ private fun SwapFab(
         )
     }
 }
-
-private enum class FeeRowMode { TOTAL, DELTA }
 
 // Existing prefix strings end with a locale-specific ": " / " : " / "：" for
 // inline use. Trim it here so the label sits flush left of the right column.

@@ -28,11 +28,11 @@ internal fun subtotalOf(cart: SavedCart?): BigDecimal {
 }
 
 /**
- * Total in the destination currency: subtotal → converted at [rates]. Fees
- * don't change the displayed total; they surface separately as "true cost"
- * on the base side.
+ * Sum every row after currency conversion, but before fees. This is the
+ * "fair" destination amount — the exchange result the user *would* pay if
+ * the pipeline stopped here.
  */
-internal fun totalOf(
+internal fun convertedSubtotalOf(
     cart: SavedCart?,
     rates: ExchangeRates?,
 ): BigDecimal {
@@ -40,6 +40,17 @@ internal fun totalOf(
     val (base, dest) = cart.resolvedPair()
     return convertAmount(subtotalOf(cart), base, dest, rates)
 }
+
+/**
+ * Total in the destination currency: subtotal → converted at [rates] →
+ * inflated by [feeStack]. Real-world FX fees are charged on the post-
+ * conversion amount, so the fee multiplies the destination-side value.
+ */
+internal fun totalOf(
+    cart: SavedCart?,
+    rates: ExchangeRates?,
+    feeStack: BigDecimal = BigDecimal.ONE,
+): BigDecimal = convertedSubtotalOf(cart, rates).multiply(feeStack, MathContext.DECIMAL128)
 
 /**
  * Persisted ISO codes are strings, so unknown values (legacy carts,

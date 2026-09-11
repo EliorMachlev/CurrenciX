@@ -14,6 +14,7 @@ import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalDate
 import java.util.UUID
 
@@ -69,13 +70,23 @@ class CartViewModel(
         current.map { resolveCurrency(it.destinationCurrency ?: it.currency) }
     }
     private val subtotalLive: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
-    private val totalLive: LiveData<BigDecimal> by lazy {
+    private val convertedSubtotalLive: LiveData<BigDecimal> by lazy {
         MediatorLiveData<BigDecimal>().apply {
             val recompute = {
-                value = totalOf(current.value, ratesCache.rates.value)
+                value = convertedSubtotalOf(current.value, ratesCache.rates.value)
             }
             addSource(current) { recompute() }
             addSource(ratesCache.rates) { recompute() }
+        }
+    }
+    private val totalLive: LiveData<BigDecimal> by lazy {
+        MediatorLiveData<BigDecimal>().apply {
+            val recompute = {
+                value = totalOf(current.value, ratesCache.rates.value, currentFeeStack())
+            }
+            addSource(current) { recompute() }
+            addSource(ratesCache.rates) { recompute() }
+            addSource(ratesCache.fees) { recompute() }
         }
     }
 
@@ -88,9 +99,18 @@ class CartViewModel(
     fun getSubtotal(): LiveData<BigDecimal> = subtotalLive
 
     /**
-     * Total in the destination currency: subtotal → converted at cached rates.
-     * Fees don't change the displayed total; they surface separately as "true
-     * cost" on the base side.
+     * Fee-free destination subtotal — subtotal after currency conversion but
+     * before the fee stack is applied. Used by the footer's fee-annotation
+     * row so the delta reads in destination units (where the fee is actually
+     * charged).
+     */
+    fun getConvertedSubtotal(): LiveData<BigDecimal> = convertedSubtotalLive
+
+    /**
+     * Total in the destination currency: subtotal → converted at cached
+     * rates → inflated by the fee stack. Real-world FX fees are charged on
+     * the post-conversion amount, so the fee lands here rather than on the
+     * base-side subtotal.
      */
     fun getTotal(): LiveData<BigDecimal> = totalLive
 
@@ -311,13 +331,14 @@ class CartViewModel(
         val (base, dest) = cart.resolvedPair()
         val feeStack = ratesCache.feeStackFor(base, dest)
         val converted = convertAmount(subtotal, base, dest, ratesCache.lastRates)
+        val total = converted.multiply(feeStack, MathContext.DECIMAL128)
         return CartSnapshot(
             cart,
             evaluated,
             subtotal,
             converted,
             feeStack,
-            converted,
+            total,
             ratesCache.lastFees,
             base,
             dest,
