@@ -50,14 +50,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
@@ -92,6 +97,7 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.theme.BillGreen
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -206,6 +212,22 @@ private val PAY_RULE_HEIGHT: Dp = 1.dp
 private const val PAY_RULE_WIDTH_FRACTION = 0.6f
 private val PAY_RULE_TOP_GAP: Dp = 6.dp
 private val PAY_RULE_BOTTOM_GAP: Dp = 4.dp
+
+// Guilloché plate — a stack of faint concentric ellipses drawn behind the
+// engraved final so the number reads as it's been pressed into a banknote
+// rosette. Ring geometry mirrors the design mock (30 rings, rx grows by
+// 6dp per ring from 30dp, ry grows by 4dp from 18dp). The center is
+// biased to the right so the plate anchors under the amount cluster (the
+// Row is right-aligned), and the color derives from the app's primary
+// BillGreen at very low opacity so it never fights the number.
+private const val GUILLOCHE_RING_COUNT = 30
+private val GUILLOCHE_BASE_RX: Dp = 30.dp
+private val GUILLOCHE_BASE_RY: Dp = 18.dp
+private val GUILLOCHE_STEP_RX: Dp = 6.dp
+private val GUILLOCHE_STEP_RY: Dp = 4.dp
+private val GUILLOCHE_STROKE_WIDTH: Dp = 0.6.dp
+private const val GUILLOCHE_CENTER_X_FRACTION = 0.72f
+private const val GUILLOCHE_CENTER_Y_FRACTION = 0.5f
 
 // Applied to the big-value texts so Android's default font padding
 // (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
@@ -591,14 +613,17 @@ private fun AmountHero(
                 Spacer(Modifier.height(PAY_RULE_TOP_GAP))
                 PayRule()
                 Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
-                ScrollingAmount(
-                    parts = finalParts,
-                    digitsSize = AMOUNT_HERO_SIZE,
-                    symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
-                    fontWeight = FontWeight.Medium,
-                    cursorHeight = null,
-                    onLongClick = onFinalLongClick,
-                )
+                Box(Modifier.guillocheBackground()) {
+                    ScrollingAmount(
+                        parts = finalParts,
+                        digitsSize = AMOUNT_HERO_SIZE,
+                        symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
+                        fontWeight = FontWeight.SemiBold,
+                        cursorHeight = null,
+                        onLongClick = onFinalLongClick,
+                        fontFamily = FontFamily.Serif,
+                    )
+                }
             }
         }
     }
@@ -697,6 +722,7 @@ private fun ScrollingAmount(
     fontWeight: FontWeight,
     cursorHeight: Dp?,
     onLongClick: () -> Unit,
+    fontFamily: FontFamily? = null,
 ) {
     val color = MaterialTheme.colorScheme.onSurface
     Row(
@@ -712,6 +738,7 @@ private fun ScrollingAmount(
                 fontSize = symbolSize,
                 lineHeight = digitsSize,
                 fontWeight = fontWeight,
+                fontFamily = fontFamily,
                 color = color.copy(alpha = SYMBOL_ALPHA),
                 maxLines = 1,
                 softWrap = false,
@@ -724,6 +751,7 @@ private fun ScrollingAmount(
             fontSize = digitsSize,
             lineHeight = digitsSize,
             fontWeight = fontWeight,
+            fontFamily = fontFamily,
             color = color,
             maxLines = 1,
             softWrap = false,
@@ -803,6 +831,7 @@ private fun AmountToRow(
             fontWeight = FontWeight.SemiBold,
             cursorHeight = null,
             onLongClick = onLongClick,
+            fontFamily = FontFamily.Serif,
         )
     }
 }
@@ -991,6 +1020,34 @@ private fun splitAmount(
             formatted.removePrefix(symbol).trimStart()
         }
     return AmountParts(symbol, digits)
+}
+
+// Guilloché plate — 30 concentric ellipses centered to the right of the
+// engraved final, drawn faintly in the primary bill-green so the number
+// reads as it's been engraved over a banknote's rosette. Ring geometry
+// mirrors the mock (rx=30+i·6, ry=18+i·4, cx=70% of width, cy=middle).
+// The stroke color derives from the theme so we get the right ink shade
+// for both paper and ink surfaces.
+@Composable
+private fun Modifier.guillocheBackground(): Modifier {
+    val ringColor =
+        BillGreen.copy(alpha = if (MaterialTheme.colorScheme.background.luminance() < 0.5f) 0.10f else 0.055f)
+    val strokeWidthPx = with(LocalDensity.current) { GUILLOCHE_STROKE_WIDTH.toPx() }
+    return drawBehind {
+        val cx = size.width * GUILLOCHE_CENTER_X_FRACTION
+        val cy = size.height * GUILLOCHE_CENTER_Y_FRACTION
+        val stroke = Stroke(width = strokeWidthPx)
+        repeat(GUILLOCHE_RING_COUNT) { i ->
+            val rx = GUILLOCHE_BASE_RX.toPx() + i * GUILLOCHE_STEP_RX.toPx()
+            val ry = GUILLOCHE_BASE_RY.toPx() + i * GUILLOCHE_STEP_RY.toPx()
+            drawOval(
+                color = ringColor,
+                topLeft = Offset(cx - rx, cy - ry),
+                size = Size(rx * 2, ry * 2),
+                style = stroke,
+            )
+        }
+    }
 }
 
 // Fade the leading edge of the row so overflowing digits scroll under a
