@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.EaseInOutSine
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -262,15 +261,6 @@ private const val CURSOR_BLINK_MILLIS = 1200
 // visibly "reads" as a change instead of a hard replace.
 private const val ENGRAVED_DIGITS_FADE_MILLIS = 160
 
-// Pulsing dot next to the footer timestamp. Signals that the rates in view
-// are live (the timestamp exists, we're not offline). Slow, low-contrast
-// pulse — deliberately more heartbeat than blinker.
-private const val LIVE_PULSE_MILLIS = 1400
-private val LIVE_PULSE_DOT_SIZE: Dp = 6.dp
-private val LIVE_PULSE_DOT_GAP: Dp = 6.dp
-private const val LIVE_PULSE_ALPHA_MIN = 0.35f
-private const val LIVE_PULSE_ALPHA_MAX = 1f
-
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
@@ -419,7 +409,7 @@ private fun HeroCard(
         modifier
             .fillMaxWidth()
             .padding(horizontal = CARD_OUTER_MARGIN)
-            .padding(top = CARD_OUTER_MARGIN)
+            .padding(vertical = CARD_OUTER_MARGIN)
             .shadow(elevation = CARD_ELEVATION, shape = RoundedCornerShape(CARD_RADIUS))
             .clip(RoundedCornerShape(CARD_RADIUS))
             .background(MaterialTheme.colorScheme.surface)
@@ -1207,44 +1197,13 @@ private fun TimestampText(
         }
     val provider = rates.provider?.getName(context)?.toString()
     val text = if (provider.isNullOrEmpty()) whenText else "$whenText$FOOTER_SEPARATOR$provider"
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = Modifier.clickable(onClick = onProviderClick),
-    ) {
-        LivePulseDot()
-        Spacer(Modifier.width(LIVE_PULSE_DOT_GAP))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-// Small primary-tinted dot that pulses its alpha slowly to signal that the
-// visible rates are live. Sits at the leading edge of the timestamp row.
-@Composable
-private fun LivePulseDot() {
-    val transition = rememberInfiniteTransition(label = "live-pulse")
-    val alpha by transition.animateFloat(
-        initialValue = LIVE_PULSE_ALPHA_MAX,
-        targetValue = LIVE_PULSE_ALPHA_MIN,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(durationMillis = LIVE_PULSE_MILLIS, easing = EaseInOutSine),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        label = "live-pulse-alpha",
-    )
-    val color = MaterialTheme.colorScheme.primary
-    Spacer(
-        Modifier
-            .size(LIVE_PULSE_DOT_SIZE)
-            .graphicsLayer { this.alpha = alpha }
-            .clip(CircleShape)
-            .background(color),
     )
 }
 
