@@ -409,7 +409,7 @@ private fun HeroCard(
         modifier
             .fillMaxWidth()
             .padding(horizontal = CARD_OUTER_MARGIN)
-            .padding(vertical = CARD_OUTER_MARGIN)
+            .padding(top = CARD_OUTER_MARGIN)
             .shadow(elevation = CARD_ELEVATION, shape = RoundedCornerShape(CARD_RADIUS))
             .clip(RoundedCornerShape(CARD_RADIUS))
             .background(MaterialTheme.colorScheme.surface)
