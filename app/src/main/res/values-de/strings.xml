@@ -2,8 +2,6 @@
 <resources>
     <string name="desc_toggle_currencies">tausche Währungen</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="info_date_latest">Kurse vom &lt;b>%1$s&lt;/b> via &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Historische Kurse vom &lt;b>%1$s&lt;/b> via &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; in die Zwischenablage kopiert</string>
     <string name="historical_rates_dialog_title">Historische Kurse</string>
     <string name="historical_rates_dialog_toggle">Wechselkurse eines spezifischen Datums verwenden. Deaktivieren, um immer die aktuellsten Kurse zu benutzen.</string>
@@ -50,7 +48,6 @@
     <string name="cart_delete_item">Artikel löschen</string>
     <string name="cart_subtotal_label">Zwischensumme</string>
     <string name="cart_total_label">Gesamt</string>
-    <string name="cart_fee_line">Gebühren: %s%%</string>
     <string name="cart_menu_save">Speichern</string>
     <string name="cart_menu_save_as">Speichern unter…</string>
     <string name="cart_menu_load">Laden</string>
@@ -71,8 +68,6 @@
     <string name="cart_rename_title">Warenkorb umbenennen</string>
     <string name="cart_delete_confirm">„%s“ löschen?</string>
     <string name="cart_delete_confirm_button">Löschen</string>
-    <string name="cart_clear_confirm">Alle Artikel aus dem aktuellen Warenkorb entfernen?</string>
-    <string name="cart_clear_confirm_button">Leeren</string>
     <string name="cart_clear_items_only">Nur Artikel leeren</string>
     <string name="cart_clear_items_only_desc">Entfernt alle Zeilen, behält aber die aktuellen Währungen und die Gebührenseite.</string>
     <string name="cart_clear_reset_all">Warenkorb zurücksetzen</string>
@@ -90,13 +85,11 @@
     <string name="cart_share_fees">Gebühren: %s%%</string>
     <string name="cart_share_total">Gesamt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Ungespeicherte Änderungen</string>
-    <string name="cart_unsaved_message">Es gibt ungespeicherte Änderungen. Was möchtest du tun?</string>
     <string name="cart_unsaved_save">Speichern</string>
     <string name="cart_unsaved_save_as">Als neu speichern</string>
     <string name="cart_unsaved_discard">Änderungen verwerfen</string>
     <string name="cart_unsaved_continue">Weiter</string>
     <string name="a11y_delete">Löschen</string>
-    <string name="a11y_historical_rate">Historischer Kurs</string>
     <string name="a11y_search_currencies">Währungen suchen</string>
     <string name="a11y_clear_search">Suche löschen</string>
     <string name="a11y_cart_item_name">Artikelname</string>
@@ -106,8 +99,6 @@
     <string name="a11y_action_select">Auswählen</string>
     <string name="a11y_action_load">Laden</string>
     <string name="a11y_action_open">Öffnen</string>
-    <string name="quick_conversions_fee_conversion">Umrechnung %s</string>
-    <string name="quick_conversions_fee_reduction">Reduktion %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Artikel oben anheften</string>
     <string name="cart_unpin_item">Artikel loslösen</string>

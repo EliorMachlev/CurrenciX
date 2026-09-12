@@ -6,9 +6,6 @@
     <string name="fee_title">Fremdwährungsgebühr</string>
     <string name="fee_summary">Wechsel-, Bank-/Karten- und paarspezifische Gebühren verwalten</string>
     <string name="fee_manager_title">Gebühren</string>
-    <string name="fee_side_label">Gebührentyp</string>
-    <string name="fee_side_original">Umrechnungsgebühr</string>
-    <string name="fee_side_converted">Umgerechnete Gebühr</string>
     <string name="fee_section_global_exchange">Globale Wechselgebühr</string>
     <string name="fee_section_global_bank">Globale Bank-/Kartengebühr</string>
     <string name="fee_section_specific_pair">Gebühr für spezifisches Währungspaar</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Nach</string>
     <string name="fee_pair_pick_currency">Währung auswählen</string>
     <string name="fee_true_cost_prefix">"Umrechnungsgebühr: "</string>
-    <string name="fee_original_value_prefix">"Abzugsgebühr: "</string>
     <string name="fee_cost_with_fee_prefix">"Preis mit Gebühr: "</string>
-    <string name="fee_value_before_fee_prefix">"Wert vor Gebühr: "</string>
-    <string name="fee_side_summary_original">Der angezeigte umgerechnete Betrag bleibt beim Mittelkurs; Gebühren werden separat als \"Umrechnungsgebühr\" angezeigt.</string>
-    <string name="fee_side_summary_converted">Gebühren sind bereits im angezeigten umgerechneten Betrag enthalten.</string>
     <string name="fee_empty">Noch keine Gebühren</string>
     <string name="previewConversion_title">Umrechnungsvorschau</string>
     <string name="previewConversion_summary">Im Währungsauswahldialog die aktuelle Umrechnung für jeden Kurs anzeigen.</string>

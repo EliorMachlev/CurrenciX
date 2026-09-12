@@ -12,9 +12,9 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
-import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.repository.Database
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalDate
 import java.util.UUID
 
@@ -70,21 +70,23 @@ class CartViewModel(
         current.map { resolveCurrency(it.destinationCurrency ?: it.currency) }
     }
     private val subtotalLive: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
+    private val convertedSubtotalLive: LiveData<BigDecimal> by lazy {
+        MediatorLiveData<BigDecimal>().apply {
+            val recompute = {
+                value = convertedSubtotalOf(current.value, ratesCache.rates.value)
+            }
+            addSource(current) { recompute() }
+            addSource(ratesCache.rates) { recompute() }
+        }
+    }
     private val totalLive: LiveData<BigDecimal> by lazy {
         MediatorLiveData<BigDecimal>().apply {
             val recompute = {
-                value =
-                    totalOf(
-                        current.value,
-                        ratesCache.fees.value.orEmpty(),
-                        ratesCache.rates.value,
-                        ratesCache.lastActiveExchangeId,
-                        ratesCache.lastActiveBankId,
-                    )
+                value = totalOf(current.value, ratesCache.rates.value, currentFeeStack())
             }
             addSource(current) { recompute() }
-            addSource(ratesCache.fees) { recompute() }
             addSource(ratesCache.rates) { recompute() }
+            addSource(ratesCache.fees) { recompute() }
         }
     }
 
@@ -97,10 +99,18 @@ class CartViewModel(
     fun getSubtotal(): LiveData<BigDecimal> = subtotalLive
 
     /**
-     * Total in the destination currency: subtotal → converted at cached rates
-     * → reduced by the CONVERTED-side fee stack. ORIGINAL-side fees don't
-     * change the displayed total; they surface separately as "true cost" on
-     * the base side.
+     * Fee-free destination subtotal — subtotal after currency conversion but
+     * before the fee stack is applied. Used by the footer's fee-annotation
+     * row so the delta reads in destination units (where the fee is actually
+     * charged).
+     */
+    fun getConvertedSubtotal(): LiveData<BigDecimal> = convertedSubtotalLive
+
+    /**
+     * Total in the destination currency: subtotal → converted at cached
+     * rates → inflated by the fee stack. Real-world FX fees are charged on
+     * the post-conversion amount, so the fee lands here rather than on the
+     * base-side subtotal.
      */
     fun getTotal(): LiveData<BigDecimal> = totalLive
 
@@ -302,14 +312,14 @@ class CartViewModel(
     }
 
     /**
-     * Per-side fee stacks for the current base/destination pair. Doesn't
-     * depend on cart items, so the UI can show inline fee annotations even
-     * for an empty cart (same shape as the main screen).
+     * Multiplicative fee stack for the current base/destination pair.
+     * Doesn't depend on cart items, so the UI can show inline fee annotations
+     * even for an empty cart (same shape as the main screen).
      */
-    fun currentSideStacks(): SideStacks {
-        val cart = current.value ?: return SideStacks.NEUTRAL
+    fun currentFeeStack(): BigDecimal {
+        val cart = current.value ?: return BigDecimal.ONE
         val (base, dest) = cart.resolvedPair()
-        return ratesCache.sideStacksFor(base, dest)
+        return ratesCache.feeStackFor(base, dest)
     }
 
     /** Snapshot used by the "Share" flow — computed against the latest fees & rates. */
@@ -319,15 +329,15 @@ class CartViewModel(
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
         val (base, dest) = cart.resolvedPair()
-        val stacks = ratesCache.sideStacksFor(base, dest)
+        val feeStack = ratesCache.feeStackFor(base, dest)
         val converted = convertAmount(subtotal, base, dest, ratesCache.lastRates)
-        val total = applyConvertedStack(converted, stacks.converted)
+        val total = converted.multiply(feeStack, MathContext.DECIMAL128)
         return CartSnapshot(
             cart,
             evaluated,
             subtotal,
             converted,
-            stacks,
+            feeStack,
             total,
             ratesCache.lastFees,
             base,
@@ -414,10 +424,10 @@ data class CartSnapshot(
     val evaluatedItems: List<Pair<CartItem, BigDecimal>>,
     /** Sum of evaluated items in the base currency. */
     val subtotal: BigDecimal,
-    /** Subtotal after currency conversion, before fees. Equals [subtotal] when base == dest. */
+    /** Subtotal after currency conversion. Equals [subtotal] when base == dest. */
     val convertedSubtotal: BigDecimal,
-    /** Per-side fee stacks for the current base/destination pair. */
-    val sideStacks: SideStacks,
+    /** Multiplicative fee stack for the current base/destination pair. */
+    val feeStack: BigDecimal,
     /** Final displayed total in the destination currency. */
     val total: BigDecimal,
     val fees: List<Fee>,

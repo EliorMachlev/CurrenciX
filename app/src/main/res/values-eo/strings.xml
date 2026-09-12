@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">baskuligi valutojn</string>
-    <string name="info_date_latest">Tarifoj de &lt;b>%1$s&lt;/b> je &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Historiaj tarifoj de &lt;b>%1$s&lt;/b> je &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">Kopiis &lt;b>%s&lt;/b> al tondujo</string>
     <string name="historical_rates_dialog_title">Historiaj tarifoj</string>
     <string name="historical_rates_dialog_toggle">Uzi kurzojn de specifa dato. Malebligi, por ĉiam preni la plej freŝajn.</string>
@@ -46,7 +44,6 @@
     <string name="cart_delete_item">Forigi eron</string>
     <string name="cart_subtotal_label">Subtotalo</string>
     <string name="cart_total_label">Totalo</string>
-    <string name="cart_fee_line">Kotizoj: %s%%</string>
     <string name="cart_menu_save">Konservi</string>
     <string name="cart_menu_save_as">Konservi kiel…</string>
     <string name="cart_menu_load">Ŝargi</string>
@@ -67,8 +64,6 @@
     <string name="cart_rename_title">Renomi korbon</string>
     <string name="cart_delete_confirm">Ĉu forigi "%s"?</string>
     <string name="cart_delete_confirm_button">Forigi</string>
-    <string name="cart_clear_confirm">Ĉu forigi ĉiujn erojn el la nuna korbo?</string>
-    <string name="cart_clear_confirm_button">Vakigi</string>
     <string name="cart_clear_items_only">Vakigi nur erojn</string>
     <string name="cart_clear_items_only_desc">Forigas ĉiun vicon el la korbo, sed konservas la aktualajn valutojn kaj la flankon de kotizoj.</string>
     <string name="cart_clear_reset_all">Restarigi korbon</string>
@@ -86,13 +81,11 @@
     <string name="cart_share_fees">Kotizoj: %s%%</string>
     <string name="cart_share_total">Totalo: %1$s %2$s</string>
     <string name="cart_unsaved_title">Nekonservitaj ŝanĝoj</string>
-    <string name="cart_unsaved_message">Vi havas nekonservitajn ŝanĝojn. Kion vi ŝatus fari?</string>
     <string name="cart_unsaved_save">Konservi</string>
     <string name="cart_unsaved_save_as">Konservi kiel novan</string>
     <string name="cart_unsaved_discard">Forĵeti ŝanĝojn</string>
     <string name="cart_unsaved_continue">Daŭrigi</string>
     <string name="a11y_delete">Forigi</string>
-    <string name="a11y_historical_rate">Historia kurzo</string>
     <string name="error_invalid_api_key">HTTP 401 – Bonvolu kontroli vian API-ŝlosilon.</string>
     <string name="error_no_api_key">Valida API-ŝlosilo devas esti agordita por uzi ĉi tiun fonton.</string>
     <string name="error_unsupported_timeline">Templiniaj datumoj ne estas subtenataj de ĉi tiu API.</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">Elekti</string>
     <string name="a11y_action_load">Ŝargi</string>
     <string name="a11y_action_open">Malfermi</string>
-    <string name="quick_conversions_fee_conversion">konvertado %s</string>
-    <string name="quick_conversions_fee_reduction">redukto %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Alpingli artikolon supre</string>
     <string name="cart_unpin_item">Depingli artikolon</string>

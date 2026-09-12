@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">zamijeni valute</string>
-    <string name="info_date_latest">Tečajevi na dan &lt;b&gt;%1$s&lt;/b&gt;, izvor: &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Arhiva tečaja na dan &lt;b&gt;%1$s&lt;/b&gt;, izvor: &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Iznos &lt;b&gt;%s&lt;/b&gt; kopiran u međuspremnik</string>
     <string name="historical_rates_dialog_title">Arhiva tečajeva</string>
     <string name="historical_rates_dialog_toggle">Arhiva tečajeva za određeni dan. Isključite ako želite trenutni tečaj.</string>
@@ -49,7 +47,6 @@
     <string name="cart_delete_item">Izbriši stavku</string>
     <string name="cart_subtotal_label">Međuzbroj</string>
     <string name="cart_total_label">Ukupno</string>
-    <string name="cart_fee_line">Naknade: %s%%</string>
     <string name="cart_menu_save">Spremi</string>
     <string name="cart_menu_save_as">Spremi kao…</string>
     <string name="cart_menu_load">Učitaj</string>
@@ -70,8 +67,6 @@
     <string name="cart_rename_title">Preimenuj košaricu</string>
     <string name="cart_delete_confirm">Izbrisati „%s“?</string>
     <string name="cart_delete_confirm_button">Izbriši</string>
-    <string name="cart_clear_confirm">Ukloniti sve stavke iz trenutne košarice?</string>
-    <string name="cart_clear_confirm_button">Očisti</string>
     <string name="cart_clear_items_only">Očisti samo stavke</string>
     <string name="cart_clear_items_only_desc">Uklanja sve retke iz košarice, ali zadržava trenutne valute i stranu naknada.</string>
     <string name="cart_clear_reset_all">Resetiraj košaricu</string>
@@ -89,13 +84,11 @@
     <string name="cart_share_fees">Naknade: %s%%</string>
     <string name="cart_share_total">Ukupno: %1$s %2$s</string>
     <string name="cart_unsaved_title">Nespremljene promjene</string>
-    <string name="cart_unsaved_message">Imate nespremljene promjene. Što želite učiniti?</string>
     <string name="cart_unsaved_save">Spremi</string>
     <string name="cart_unsaved_save_as">Spremi kao novu</string>
     <string name="cart_unsaved_discard">Odbaci promjene</string>
     <string name="cart_unsaved_continue">Nastavi</string>
     <string name="a11y_delete">Izbriši</string>
-    <string name="a11y_historical_rate">Povijesni tečaj</string>
     <string name="a11y_search_currencies">Traži valute</string>
     <string name="a11y_clear_search">Očisti pretragu</string>
     <string name="a11y_cart_item_name">Naziv stavke</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">Odaberi</string>
     <string name="a11y_action_load">Učitaj</string>
     <string name="a11y_action_open">Otvori</string>
-    <string name="quick_conversions_fee_conversion">konverzija %s</string>
-    <string name="quick_conversions_fee_reduction">smanjenje %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Prikvači na vrh</string>
     <string name="cart_unpin_item">Otkvači stavku</string>

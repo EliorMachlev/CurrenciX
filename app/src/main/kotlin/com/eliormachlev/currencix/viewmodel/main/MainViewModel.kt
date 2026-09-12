@@ -17,7 +17,6 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.KeyboardType
-import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
@@ -450,13 +449,11 @@ class MainViewModel(
 
     // ===============================
 
-    /**
-     * Per-side multiplicative fee stacks for the current pair. Exposed so the
-     * UI can render inline fee annotations near each currency and derive the
-     * "true cost" / "original value" companion rows.
-     */
-    private val sideStacks: MediatorLiveData<SideStacks> =
-        object : MediatorLiveData<SideStacks>() {
+    // Fan-in helper: combines fees + current pair + single-select picks into
+    // one derived value. Both feeStack and activeFees use it since they only
+    // differ in the final calculator call.
+    private fun <T> pairFeeMediator(compute: (List<Fee>?, Currency?, Currency?, String?, String?) -> T): MediatorLiveData<T> =
+        object : MediatorLiveData<T>() {
             var feeList: List<Fee>? = null
             var base: Currency? = null
             var dest: Currency? = null
@@ -487,15 +484,33 @@ class MainViewModel(
             }
 
             private fun update() {
-                val next = FeeCalculator.sideStacks(feeList.orEmpty(), base, dest, exchangeId, bankId)
+                val next = compute(feeList, base, dest, exchangeId, bankId)
                 if (next != value) value = next
             }
         }
 
     /**
-     * the total destination value — fair rate reduced by the CONVERTED-side
-     * fee stack (ORIGINAL-side fees don't touch the displayed result; they
-     * surface as "true cost" on the input side instead).
+     * Multiplicative fee stack for the current pair. Exposed so the UI can
+     * render inline fee annotations and derive the "true cost" companion row.
+     */
+    private val feeStack: MediatorLiveData<BigDecimal> =
+        pairFeeMediator { list, base, dest, exchangeId, bankId ->
+            FeeCalculator.feeStack(list.orEmpty(), base, dest, exchangeId, bankId)
+        }
+
+    /**
+     * The active fees participating in [feeStack] for the current pair —
+     * specific-pair matches plus the currently-picked single global
+     * exchange / bank-or-card entries.
+     */
+    private val activeFees: MediatorLiveData<List<Fee>> =
+        pairFeeMediator { list, base, dest, exchangeId, bankId ->
+            FeeCalculator.activeFees(list.orEmpty(), base, dest, exchangeId, bankId)
+        }
+
+    /**
+     * the total destination value — fees don't touch the displayed result;
+     * they surface as "true cost" on the input side instead.
      */
     private val result =
         object : MediatorLiveData<String>() {
@@ -503,7 +518,6 @@ class MainViewModel(
             var baseValue: String? = null
             var baseCurrency: Currency? = null
             var destinationCurrency: Currency? = null
-            var stacks: SideStacks = SideStacks.NEUTRAL
 
             init {
                 addSource(exchangeRates) {
@@ -522,10 +536,6 @@ class MainViewModel(
                     destinationCurrency = it
                     calculateResult()
                 }
-                addSource(sideStacks) {
-                    stacks = it ?: SideStacks.NEUTRAL
-                    calculateResult()
-                }
             }
 
             private fun calculateResult() {
@@ -536,27 +546,20 @@ class MainViewModel(
                     amount
                         .divide(baseRate.value, MathContext.DECIMAL128)
                         .multiply(destinationRate.value)
-                val convertedStack = stacks.converted
-                val displayed =
-                    if (convertedStack.isNeutralFeeStack()) {
-                        fair
-                    } else {
-                        fair.divide(convertedStack, MathContext.DECIMAL128)
-                    }
-                this.value = displayed.toPlainString()
+                this.value = fair.toPlainString()
             }
         }
 
     /**
-     * Per-side stacks for an arbitrary pair — used by ad-hoc UIs
+     * Fee stack for an arbitrary pair — used by ad-hoc UIs
      * (e.g. the quick-conversions popup) that need to apply fees outside
      * the main result pipeline.
      */
-    internal fun sideStacksFor(
+    internal fun feeStackFor(
         base: Currency?,
         dest: Currency?,
-    ): SideStacks =
-        FeeCalculator.sideStacks(
+    ): BigDecimal =
+        FeeCalculator.feeStack(
             fees.value.orEmpty(),
             base,
             dest,
@@ -565,58 +568,47 @@ class MainViewModel(
         )
 
     // `source * multiplier(stack)` gated on the stack being non-trivial; null
-    // otherwise. Bridges every per-side fee derivation onto one shape so
-    // "raw total" and "signed delta" vs "abs delta" callers share a pipeline.
-    private fun feeSideLiveData(
+    // otherwise. Bridges every fee-derivation onto one shape so "raw total"
+    // and "abs delta" callers share a pipeline.
+    private fun feeAmountLiveData(
         source: LiveData<BigDecimal>,
-        stackSelector: (SideStacks) -> BigDecimal,
         multiplier: (BigDecimal) -> BigDecimal,
     ): LiveData<BigDecimal?> =
-        source.combineWith(sideStacks) { value, sides ->
-            val stack = sides?.let(stackSelector) ?: BigDecimal.ONE
-            if (stack.isNeutralFeeStack()) {
+        source.combineWith(feeStack) { value, stack ->
+            val s = stack ?: BigDecimal.ONE
+            if (s.isNeutralFeeStack()) {
                 null
             } else {
-                (value ?: BigDecimal.ZERO).multiply(multiplier(stack), MathContext.DECIMAL128)
+                (value ?: BigDecimal.ZERO).multiply(multiplier(s), MathContext.DECIMAL128)
             }
         }
 
     /**
-     * The additional "true cost" on the input side: `input * originalStack`.
-     * `null` when no ORIGINAL-side fee applies.
+     * The additional "true cost" on the input side: `input * feeStack`.
+     * `null` when no fee applies.
      */
     private val trueCost: LiveData<BigDecimal?> =
-        feeSideLiveData(getCurrentBaseValueAsNumber(), { it.original }) { it }
+        feeAmountLiveData(getCurrentBaseValueAsNumber()) { it }
 
     internal fun getTrueCost(): LiveData<BigDecimal?> = trueCost
 
-    /**
-     * The undiscounted (pre-fee) destination amount: `result * convertedStack`.
-     * `null` when no CONVERTED-side fee applies.
-     */
-    private val originalValue: LiveData<BigDecimal?> =
-        feeSideLiveData(getResultAsNumber(), { it.converted }) { it }
+    // Magnitude of the fee in the input currency. The percent tail rendered
+    // alongside carries the sign, so we `.abs()` at source to stop every
+    // consumer from repeating it.
+    private val feeAmount: LiveData<BigDecimal?> =
+        feeAmountLiveData(getCurrentBaseValueAsNumber()) { it.feeStackDelta().abs() }
 
-    internal fun getOriginalValue(): LiveData<BigDecimal?> = originalValue
-
-    // Magnitude of the ORIGINAL-side fee in the input currency. The percent
-    // tail rendered alongside carries the sign, so we `.abs()` at source to
-    // stop every consumer from repeating it.
-    private val originalFeeAmount: LiveData<BigDecimal?> =
-        feeSideLiveData(getCurrentBaseValueAsNumber(), { it.original }) { it.feeStackDelta().abs() }
-
-    internal fun getOriginalFeeAmount(): LiveData<BigDecimal?> = originalFeeAmount
-
-    // See [originalFeeAmount] — same rationale, converted side.
-    private val convertedFeeAmount: LiveData<BigDecimal?> =
-        feeSideLiveData(getResultAsNumber(), { it.converted }) { it.feeStackDelta().abs() }
-
-    internal fun getConvertedFeeAmount(): LiveData<BigDecimal?> = convertedFeeAmount
+    internal fun getFeeAmount(): LiveData<BigDecimal?> = feeAmount
 
     /**
-     * Per-side fee stacks for the current pair.
+     * Multiplicative fee stack for the current pair.
      */
-    internal fun getSideStacks(): LiveData<SideStacks> = sideStacks
+    internal fun getFeeStack(): LiveData<BigDecimal> = feeStack
+
+    /**
+     * Active fees participating for the current pair.
+     */
+    internal fun getActiveFees(): LiveData<List<Fee>> = activeFees
 
     /**
      * the total destination value, as BigDecimal (internal is string)
@@ -626,17 +618,47 @@ class MainViewModel(
             it?.toBigDecimalOrNull() ?: BigDecimal.ZERO
         }
 
+    // `result * feeStack` — the fee-adjusted destination value. When no fee
+    // applies, equals `result`. Used by the True Cost panel so users see the
+    // final out-of-pocket cost expressed in the destination currency
+    // (e.g. paying `$200` after fees ≈ `604.3 ILS`, not the fee-free `302.3`).
+    private val resultWithFees: LiveData<String?> =
+        result.combineWith<String, BigDecimal, String?>(feeStack) { r, s ->
+            val amount = r?.toBigDecimalOrNull() ?: return@combineWith null
+            val stack = s ?: BigDecimal.ONE
+            amount.multiply(stack, MathContext.DECIMAL128).toPlainString()
+        }
+
+    /**
+     * the fee-adjusted destination value, as BigDecimal — result × feeStack.
+     */
+    internal fun getResultWithFeesAsNumber(): LiveData<BigDecimal> =
+        resultWithFees.map {
+            it?.toBigDecimalOrNull() ?: BigDecimal.ZERO
+        }
+
     /**
      * the nicely formatted, total destination value including the currency symbol at the right position.
      */
-    internal fun getResultFormatted(): LiveData<SpannableStringBuilder> =
+    internal fun getResultFormatted(): LiveData<SpannableStringBuilder> = formattedDestinationAmount(result)
+
+    /**
+     * the nicely formatted, fee-adjusted destination value (True Cost).
+     */
+    internal fun getResultWithFeesFormatted(): LiveData<SpannableStringBuilder> = formattedDestinationAmount(resultWithFees)
+
+    // Formats a destination-currency numeric string ("302.3") into the hero's
+    // bold-number-plus-currency-symbol SpannableStringBuilder, tracking the
+    // active destination currency and decimal-places preference. Shared by
+    // the fair-conversion and true-cost pipelines so they format identically.
+    private fun formattedDestinationAmount(source: LiveData<out String?>): LiveData<SpannableStringBuilder> =
         object : MediatorLiveData<SpannableStringBuilder>() {
             var resultText: String? = null
             var currency: Currency? = null
             var places: Int = 2
 
             init {
-                addSource(result) {
+                addSource(source) {
                     resultText = it
                     update()
                 }

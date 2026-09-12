@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">togliere le valute</string>
-    <string name="info_date_latest">Tassi del &lt;b&gt;%1$s&lt;/b&gt; tramite &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Tassi storici di &lt;b&gt;%1$s&lt;/b&gt; per &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Copiato &lt;b&gt;%s&lt;/b&gt; negli appunti</string>
     <string name="historical_rates_dialog_title">Tassi storici</string>
     <string name="historical_rates_dialog_toggle">Usa i tassi di cambio di una data specifica. Disabilita, per prendere sempre quelli più recenti.</string>
@@ -50,7 +48,6 @@
     <string name="cart_delete_item">Elimina articolo</string>
     <string name="cart_subtotal_label">Subtotale</string>
     <string name="cart_total_label">Totale</string>
-    <string name="cart_fee_line">Commissioni: %s%%</string>
     <string name="cart_menu_save">Salva</string>
     <string name="cart_menu_save_as">Salva con nome…</string>
     <string name="cart_menu_load">Carica</string>
@@ -71,8 +68,6 @@
     <string name="cart_rename_title">Rinomina carrello</string>
     <string name="cart_delete_confirm">Eliminare «%s»?</string>
     <string name="cart_delete_confirm_button">Elimina</string>
-    <string name="cart_clear_confirm">Rimuovere tutti gli articoli dal carrello attuale?</string>
-    <string name="cart_clear_confirm_button">Svuota</string>
     <string name="cart_clear_items_only">Svuota solo articoli</string>
     <string name="cart_clear_items_only_desc">Rimuove tutte le righe dal carrello ma mantiene le valute e il lato commissioni correnti.</string>
     <string name="cart_clear_reset_all">Reimposta carrello</string>
@@ -90,13 +85,11 @@
     <string name="cart_share_fees">Commissioni: %s%%</string>
     <string name="cart_share_total">Totale: %1$s %2$s</string>
     <string name="cart_unsaved_title">Modifiche non salvate</string>
-    <string name="cart_unsaved_message">Ci sono modifiche non salvate. Cosa vuoi fare?</string>
     <string name="cart_unsaved_save">Salva</string>
     <string name="cart_unsaved_save_as">Salva come nuovo</string>
     <string name="cart_unsaved_discard">Annulla modifiche</string>
     <string name="cart_unsaved_continue">Continua</string>
     <string name="a11y_delete">Elimina</string>
-    <string name="a11y_historical_rate">Tasso storico</string>
     <string name="a11y_search_currencies">Cerca valute</string>
     <string name="a11y_clear_search">Cancella ricerca</string>
     <string name="a11y_cart_item_name">Nome articolo</string>
@@ -106,8 +99,6 @@
     <string name="a11y_action_select">Seleziona</string>
     <string name="a11y_action_load">Carica</string>
     <string name="a11y_action_open">Apri</string>
-    <string name="quick_conversions_fee_conversion">conversione %s</string>
-    <string name="quick_conversions_fee_reduction">riduzione %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fissa in cima</string>
     <string name="cart_unpin_item">Rimuovi fissaggio</string>

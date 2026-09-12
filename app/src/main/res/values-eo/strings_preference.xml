@@ -6,9 +6,6 @@
     <string name="fee_title">Eksterlanda transakcia kotizo</string>
     <string name="fee_summary">Administri interŝanĝajn, bankajn/kartajn kaj para-specifajn kotizojn</string>
     <string name="fee_manager_title">Kotizoj</string>
-    <string name="fee_side_label">Speco de kotizo</string>
-    <string name="fee_side_original">Konverta kotizo</string>
-    <string name="fee_side_converted">Konvertita kotizo</string>
     <string name="fee_section_global_exchange">Ĝenerala interŝanĝa kotizo</string>
     <string name="fee_section_global_bank">Ĝenerala banka/karta kotizo</string>
     <string name="fee_section_specific_pair">Kotizo por specifa valuta paro</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Al</string>
     <string name="fee_pair_pick_currency">Elekti valuton</string>
     <string name="fee_true_cost_prefix">"Konverta kotizo: "</string>
-    <string name="fee_original_value_prefix">"Redukta kotizo: "</string>
     <string name="fee_cost_with_fee_prefix">"Kosto kun kotizo: "</string>
-    <string name="fee_value_before_fee_prefix">"Valoro antaŭ kotizo: "</string>
-    <string name="fee_side_summary_original">La montrata konvertita sumo restas ĉe la mez-merkata kurzo; kotizoj estas montrataj aparte kiel \"Konverta kotizo\".</string>
-    <string name="fee_side_summary_converted">Kotizoj estas inkluzivitaj en la montrata konvertita sumo.</string>
     <string name="fee_empty">Neniuj kotizoj ankoraŭ</string>
     <string name="previewConversion_title">Antaŭrigardo de konvertiĝo</string>
     <string name="previewConversion_summary">Montri la nunan konvertiĝon por ĉiu kurzo en la valutelektilo.</string>

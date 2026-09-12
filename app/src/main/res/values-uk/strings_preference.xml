@@ -6,9 +6,6 @@
     <string name="fee_title">Комісія за міжнародні транзакції</string>
     <string name="fee_summary">Керуйте комісіями обміну, банку/картки та специфічними для пар валют</string>
     <string name="fee_manager_title">Комісії</string>
-    <string name="fee_side_label">Тип комісії</string>
-    <string name="fee_side_original">Комісія за конвертацію</string>
-    <string name="fee_side_converted">Конвертована комісія</string>
     <string name="fee_section_global_exchange">Глобальна комісія за обмін</string>
     <string name="fee_section_global_bank">Глобальна комісія банку/картки</string>
     <string name="fee_section_specific_pair">Комісія за обмін конкретної пари валют</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">На</string>
     <string name="fee_pair_pick_currency">Виберіть валюту</string>
     <string name="fee_true_cost_prefix">"Комісія за конвертацію: "</string>
-    <string name="fee_original_value_prefix">"Комісія за зменшення: "</string>
     <string name="fee_cost_with_fee_prefix">"Вартість із комісією: "</string>
-    <string name="fee_value_before_fee_prefix">"Вартість до комісії: "</string>
-    <string name="fee_side_summary_original">Показана конвертована сума залишається за середнім ринковим курсом; комісії відображаються окремо як \"Комісія за конвертацію\".</string>
-    <string name="fee_side_summary_converted">Комісії вже враховані в показаній конвертованій сумі.</string>
     <string name="fee_empty">Комісій ще немає</string>
     <string name="previewConversion_title">Попередній перегляд обміну</string>
     <string name="previewConversion_summary">Показувати поточні ставки в списку валют.</string>

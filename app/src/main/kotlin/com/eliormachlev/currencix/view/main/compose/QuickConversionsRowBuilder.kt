@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view.main.compose
 import android.content.Context
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.ltrIsolate
@@ -22,35 +21,28 @@ fun buildQuickConversionRows(
     from: Currency,
     to: Currency,
     rates: ExchangeRates,
-    sideStacks: SideStacks,
+    feeStack: BigDecimal,
     costWithFeePrefix: String,
 ): List<QuickConversionsRow> {
     val baseRate = rates.rateFor(from)?.value ?: return emptyList()
     val destRate = rates.rateFor(to)?.value ?: return emptyList()
-    val hasOriginalFee = !sideStacks.original.isNeutralFeeStack()
-    val hasConvertedFee = !sideStacks.converted.isNeutralFeeStack()
+    val hasOriginalFee = !feeStack.isNeutralFeeStack()
     val fromIso = from.iso4217Alpha()
     val toIso = to.iso4217Alpha()
     val fromMarker = from.symbolOrIso()
     return QUICK_AMOUNTS.map { amountStr ->
         val amt = BigDecimal(amountStr)
         val fair = amt.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
-        val displayed =
-            if (hasConvertedFee) {
-                fair.divide(sideStacks.converted, MathContext.DECIMAL128)
-            } else {
-                fair
-            }
         val costWithFee =
             if (hasOriginalFee) {
-                val actual = amt.multiply(sideStacks.original, MathContext.DECIMAL128)
+                val actual = amt.multiply(feeStack, MathContext.DECIMAL128)
                 costWithFeePrefix + ltrIsolate("${actual.formatForRow(ctx)} $fromMarker")
             } else {
                 null
             }
         QuickConversionsRow(
             amountFromText = "$amountStr $fromIso",
-            amountToText = "${displayed.formatForRow(ctx)} $toIso",
+            amountToText = "${fair.formatForRow(ctx)} $toIso",
             costWithFeeText = costWithFee,
         )
     }

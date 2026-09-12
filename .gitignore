@@ -11,6 +11,9 @@ google-services.json
 .gradle/
 build/
 
+# Local artifacts (downloaded CI screenshot dumps, etc.)
+artifacts/
+
 # IntelliJ
 *.iml
 .idea/

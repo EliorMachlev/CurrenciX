@@ -4,15 +4,14 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.isNeutralFeeStack
@@ -27,7 +26,7 @@ import java.math.RoundingMode
 
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
 
-class QuickConversionsDialog : AppCompatDialogFragment() {
+class QuickConversionsDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val ctx = requireContext()
         val viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
@@ -44,15 +43,15 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
                         val rates by viewModel.getExchangeRates().observeAsState()
                         // Fees are read as an observable so a fees change
                         // recomposes; the actual stack derivation lives in
-                        // sideStacksFor() which isn't itself snapshot-observed.
+                        // feeStackFor() which isn't itself snapshot-observed.
                         val fees = viewModel.getFees().observeAsState().value
 
-                        val stacks =
+                        val feeStack: BigDecimal =
                             remember(from, to, fees) {
                                 if (from != null && to != null) {
-                                    viewModel.sideStacksFor(from, to)
+                                    viewModel.feeStackFor(from, to)
                                 } else {
-                                    SideStacks.NEUTRAL
+                                    BigDecimal.ONE
                                 }
                             }
                         val rows: List<QuickConversionsRow> =
@@ -62,13 +61,13 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
                                     from = from!!,
                                     to = to!!,
                                     rates = rates!!,
-                                    sideStacks = stacks,
+                                    feeStack = feeStack,
                                     costWithFeePrefix = costWithFeePrefix,
                                 )
                             } else {
                                 emptyList()
                             }
-                        val feeInfoText = buildFeeInfoText(stacks.original, stacks.converted)
+                        val feeInfoText = buildFeeInfoText(feeStack)
                         QuickConversionsContent(
                             from = from,
                             to = to,
@@ -94,29 +93,11 @@ class QuickConversionsDialog : AppCompatDialogFragment() {
         startActivity(PreferenceActivity.feesIntent(ctx))
     }
 
-    // Split the top-of-dialog "fees applied" line by side so users see which
-    // is the conversion (ORIGINAL) fee vs the reduction (CONVERTED) fee,
-    // instead of a single combined percentage that hides the breakdown.
-    private fun buildFeeInfoText(
-        original: BigDecimal,
-        converted: BigDecimal,
-    ): String? {
-        val parts =
-            listOfNotNull(
-                feeSegment(original, R.string.quick_conversions_fee_conversion),
-                feeSegment(converted, R.string.quick_conversions_fee_reduction),
-            )
-        if (parts.isEmpty()) return null
-        return getString(R.string.quick_conversions_fees_applied, parts.joinToString(", "))
-    }
-
-    private fun feeSegment(
-        stack: BigDecimal,
-        templateRes: Int,
-    ): String? {
+    // Top-of-dialog "fees applied" line — omitted when the stack is neutral.
+    private fun buildFeeInfoText(stack: BigDecimal): String? {
         if (stack.isNeutralFeeStack()) return null
         val percent = stack.feePercentDelta(FEE_PERCENT_DECIMAL_PLACES, RoundingMode.HALF_UP)
         val sign = if (percent.signum() >= 0) "+" else ""
-        return getString(templateRes, "$sign$percent%")
+        return getString(R.string.quick_conversions_fees_applied, "$sign$percent%")
     }
 }

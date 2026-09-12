@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">para birimlerini değiştir</string>
-    <string name="info_date_latest">&lt;b&gt;%1$s&lt;/b&gt; tarihli döviz kuru (&lt;b&gt;%2$s&lt;/b&gt;)</string>
-    <string name="info_date_historical">&lt;b&gt;%1$s&lt;/b&gt; tarihli döviz kuru (&lt;b&gt;%2$s&lt;/b&gt;)</string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; panoya kopyalandı</string>
     <string name="historical_rates_dialog_title">Geçmiş kurlar</string>
     <string name="historical_rates_dialog_toggle">Geçmiş bir tarihteki kur verilerini kullan. Her zaman en güncel verileri kullanmak istiyorsan devre dışı bırak.</string>
@@ -28,7 +26,6 @@
     <string name="quick_conversions_fees_applied">Uygulanan ücretler: %s</string>
     <string name="tooltip_filter_starred">Sadece favori para birimlerini göster.</string>
     <string name="a11y_delete">Sil</string>
-    <string name="a11y_historical_rate">Geçmiş kur</string>
     <string name="currency_dropdown_api_hint">Eksik bir şey mi var? Farklı veri sağlayıcıları farklı para birimleri sunar. Başka bir tane denemek için ayarlara gidin!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Çevrimdışı • Kurlar: %1$s</string>
@@ -51,7 +48,6 @@
     <string name="cart_delete_item">Öğeyi sil</string>
     <string name="cart_subtotal_label">Ara toplam</string>
     <string name="cart_total_label">Toplam</string>
-    <string name="cart_fee_line">Ücretler: %%%s</string>
     <string name="cart_menu_save">Kaydet</string>
     <string name="cart_menu_save_as">Farklı kaydet…</string>
     <string name="cart_menu_load">Yükle</string>
@@ -72,8 +68,6 @@
     <string name="cart_rename_title">Sepeti yeniden adlandır</string>
     <string name="cart_delete_confirm">"%s" silinsin mi?</string>
     <string name="cart_delete_confirm_button">Sil</string>
-    <string name="cart_clear_confirm">Mevcut sepetteki tüm öğeler kaldırılsın mı?</string>
-    <string name="cart_clear_confirm_button">Temizle</string>
     <string name="cart_clear_items_only">Yalnızca öğeleri temizle</string>
     <string name="cart_clear_items_only_desc">Sepetteki tüm satırları kaldırır, ancak mevcut para birimlerini ve ücret tarafını korur.</string>
     <string name="cart_clear_reset_all">Sepeti sıfırla</string>
@@ -91,7 +85,6 @@
     <string name="cart_share_fees">Ücretler: %%%s</string>
     <string name="cart_share_total">Toplam: %1$s %2$s</string>
     <string name="cart_unsaved_title">Kaydedilmemiş değişiklikler</string>
-    <string name="cart_unsaved_message">Kaydedilmemiş değişiklikleriniz var. Ne yapmak istersiniz?</string>
     <string name="cart_unsaved_save">Kaydet</string>
     <string name="cart_unsaved_save_as">Yeni olarak kaydet</string>
     <string name="cart_unsaved_discard">Değişiklikleri sil</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">Seç</string>
     <string name="a11y_action_load">Yükle</string>
     <string name="a11y_action_open">Aç</string>
-    <string name="quick_conversions_fee_conversion">dönüşüm %s</string>
-    <string name="quick_conversions_fee_reduction">indirim %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Öğeyi üste sabitle</string>
     <string name="cart_unpin_item">Sabitlemeyi kaldır</string>

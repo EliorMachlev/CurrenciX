@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">обърни валутите</string>
-    <string name="info_date_latest">Курс за &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Исторически курс от &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Стойността &lt;b&gt;%s&lt;/b&gt; е копирана в клипборда</string>
     <string name="historical_rates_dialog_title">Исторически курс</string>
     <string name="historical_rates_dialog_toggle">Използвай курс от определена дата. Изключи, за да се взима винаги най-новата стойност.</string>
@@ -43,7 +41,6 @@
     <string name="cart_delete_item">Изтрий артикул</string>
     <string name="cart_subtotal_label">Междинна сума</string>
     <string name="cart_total_label">Общо</string>
-    <string name="cart_fee_line">Такси: %s%%</string>
     <string name="cart_menu_save">Запази</string>
     <string name="cart_menu_save_as">Запази като…</string>
     <string name="cart_menu_load">Зареди</string>
@@ -64,8 +61,6 @@
     <string name="cart_rename_title">Преименуване на количка</string>
     <string name="cart_delete_confirm">Да се изтрие ли „%s"?</string>
     <string name="cart_delete_confirm_button">Изтрий</string>
-    <string name="cart_clear_confirm">Да се премахнат ли всички артикули от текущата количка?</string>
-    <string name="cart_clear_confirm_button">Изчисти</string>
     <string name="cart_clear_items_only">Изчисти само артикулите</string>
     <string name="cart_clear_items_only_desc">Премахва всички редове от количката, но запазва текущите валути и страната на таксите.</string>
     <string name="cart_clear_reset_all">Нулирай количката</string>
@@ -83,13 +78,11 @@
     <string name="cart_share_fees">Такси: %s%%</string>
     <string name="cart_share_total">Общо: %1$s %2$s</string>
     <string name="cart_unsaved_title">Незапазени промени</string>
-    <string name="cart_unsaved_message">Имате незапазени промени. Какво искате да направите?</string>
     <string name="cart_unsaved_save">Запази</string>
     <string name="cart_unsaved_save_as">Запази като нова</string>
     <string name="cart_unsaved_discard">Отхвърли промените</string>
     <string name="cart_unsaved_continue">Продължи</string>
     <string name="a11y_delete">Изтрий</string>
-    <string name="a11y_historical_rate">Исторически курс</string>
     <string name="currency_dropdown_api_hint">Липсва нещо? Различните доставчици на данни предлагат различни валути. Отиди в настройките и опитай друг!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">Сървърът няма данни за тази заявка.</string>
     <string name="error_invalid_api_key">HTTP 401 – Моля, провери своя API ключ.</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">Избери</string>
     <string name="a11y_action_load">Зареди</string>
     <string name="a11y_action_open">Отвори</string>
-    <string name="quick_conversions_fee_conversion">конверсия %s</string>
-    <string name="quick_conversions_fee_reduction">намаление %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закачи най-горе</string>
     <string name="cart_unpin_item">Откачи артикула</string>

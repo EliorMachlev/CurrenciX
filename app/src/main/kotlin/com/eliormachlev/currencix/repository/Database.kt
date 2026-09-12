@@ -10,7 +10,6 @@ import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
-import com.eliormachlev.currencix.model.FeeSide
 import com.eliormachlev.currencix.model.FeeType
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Rate
@@ -412,9 +411,7 @@ class Database(
             obj.put("id", fee.id)
             obj.put("name", fee.name)
             obj.put("percent", fee.percent.toPlainString())
-            obj.put("isMarkup", fee.isMarkup)
             obj.put("isActive", fee.isActive)
-            obj.put("feeSide", fee.feeSide.name)
             obj.put("type", fee.type.wire)
             if (fee is Fee.SpecificPair) {
                 obj.put("from", fee.from)
@@ -425,10 +422,6 @@ class Database(
         }
         return arr.toString()
     }
-
-    private fun parseFeeSideOrDefault(raw: String?): FeeSide =
-        runCatching { FeeSide.valueOf(raw ?: FeeSide.ORIGINAL.name) }
-            .getOrDefault(FeeSide.ORIGINAL)
 
     private fun parseFeeList(json: String): List<Fee> =
         try {
@@ -444,27 +437,19 @@ class Database(
         val id = obj.optString("id", "").ifEmpty { UUID.randomUUID().toString() }
         val name = obj.optString("name", "")
         val percent = obj.optString("percent", "0").toBigDecimalOrNull() ?: return null
-        val isMarkup = obj.optBoolean("isMarkup", true)
-        // Pre-name/isActive rows default to active so legacy configurations
-        // continue to apply after upgrade.
         val isActive = obj.optBoolean("isActive", true)
-        // Rows written before the per-fee-side field existed fall back to
-        // ORIGINAL so their behaviour is unchanged after upgrade.
-        val feeSide = parseFeeSideOrDefault(obj.optString("feeSide", ""))
         return when (FeeType.fromWire(obj.optString("type"))) {
-            FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isMarkup, isActive, feeSide)
-            FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isMarkup, isActive, feeSide)
+            FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isActive)
+            FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isActive)
             FeeType.SPECIFIC_PAIR ->
                 Fee.SpecificPair(
                     id = id,
                     name = name,
                     percent = percent,
-                    isMarkup = isMarkup,
                     from = obj.optString("from", ""),
                     to = obj.optString("to", ""),
                     bothWays = obj.optBoolean("bothWays", false),
                     isActive = isActive,
-                    feeSide = feeSide,
                 )
             null -> null
         }

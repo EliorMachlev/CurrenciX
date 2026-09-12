@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">切換貨幣</string>
-    <string name="info_date_latest">匯率更新於 &lt;b&gt;%1$s&lt;/b&gt; 來源 &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">歷史匯率日期 &lt;b&gt;%1$s&lt;/b&gt; 來源 &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">已經複製 &lt;b&gt;%s&lt;/b&gt; 到剪貼簿</string>
     <string name="historical_rates_dialog_title">歷史匯率</string>
     <string name="historical_rates_dialog_toggle">使用特定日期的匯率。關閉則一律顯示最新匯率</string>
@@ -28,7 +26,6 @@
     <string name="quick_conversions_fees_applied">已套用手續費：%s</string>
     <string name="tooltip_filter_starred">只顯示最愛的匯率</string>
     <string name="a11y_delete">刪除</string>
-    <string name="a11y_historical_rate">歷史匯率</string>
     <string name="currency_dropdown_api_hint">有東西不見了嗎？每個資料來源提供的數量不盡相同。請到設定去調整看看！\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">離線 • 匯率來自 %1$s</string>
@@ -51,7 +48,6 @@
     <string name="cart_delete_item">刪除項目</string>
     <string name="cart_subtotal_label">小計</string>
     <string name="cart_total_label">總計</string>
-    <string name="cart_fee_line">手續費:%s%%</string>
     <string name="cart_menu_save">儲存</string>
     <string name="cart_menu_save_as">另存為…</string>
     <string name="cart_menu_load">載入</string>
@@ -72,8 +68,6 @@
     <string name="cart_rename_title">重新命名購物車</string>
     <string name="cart_delete_confirm">刪除「%s」?</string>
     <string name="cart_delete_confirm_button">刪除</string>
-    <string name="cart_clear_confirm">從目前的購物車移除所有項目?</string>
-    <string name="cart_clear_confirm_button">清空</string>
     <string name="cart_clear_items_only">僅清空項目</string>
     <string name="cart_clear_items_only_desc">移除購物車中的所有列,但保留目前的貨幣和手續費方向。</string>
     <string name="cart_clear_reset_all">重設購物車</string>
@@ -91,7 +85,6 @@
     <string name="cart_share_fees">手續費:%s%%</string>
     <string name="cart_share_total">總計:%1$s %2$s</string>
     <string name="cart_unsaved_title">未儲存的變更</string>
-    <string name="cart_unsaved_message">您有未儲存的變更。您想如何處理?</string>
     <string name="cart_unsaved_save">儲存</string>
     <string name="cart_unsaved_save_as">另存為新的</string>
     <string name="cart_unsaved_discard">捨棄變更</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">選擇</string>
     <string name="a11y_action_load">載入</string>
     <string name="a11y_action_open">開啟</string>
-    <string name="quick_conversions_fee_conversion">換算 %s</string>
-    <string name="quick_conversions_fee_reduction">減免 %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">置頂</string>
     <string name="cart_unpin_item">取消置頂</string>

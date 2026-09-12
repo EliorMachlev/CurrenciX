@@ -2,8 +2,6 @@
 <resources>
     <string name="desc_toggle_currencies">കറൻസികൾ മാറ്റുക</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="info_date_latest">&lt;b>%1$s&lt;/b>-ലെ നിരക്കുകൾ, &lt;b>%2$s&lt;/b> നൽകിയത്</string>
-    <string name="info_date_historical">&lt;b>%1$s&lt;/b>-ന്റെ ചരിത്ര നിരക്കുകൾ, &lt;b>%2$s&lt;/b> നൽകിയത്</string>
     <string name="copied_to_clipboard">&lt;b>%s&lt;/b> ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി</string>
 
     <string name="historical_rates_dialog_title">ചരിത്ര നിരക്കുകൾ</string>
@@ -53,7 +51,6 @@
     <string name="cart_delete_item">ഇനം ഇല്ലാതാക്കുക</string>
     <string name="cart_subtotal_label">ഉപത്തുക</string>
     <string name="cart_total_label">ആകെ</string>
-    <string name="cart_fee_line">ഫീസുകൾ: %s%%</string>
     <string name="cart_menu_save">സംരക്ഷിക്കുക</string>
     <string name="cart_menu_save_as">ഇപ്രകാരം സംരക്ഷിക്കുക…</string>
     <string name="cart_menu_load">ലോഡുചെയ്യുക</string>
@@ -74,8 +71,6 @@
     <string name="cart_rename_title">കാർട്ടിന്റെ പേരുമാറ്റുക</string>
     <string name="cart_delete_confirm">"%s" ഇല്ലാതാക്കണോ?</string>
     <string name="cart_delete_confirm_button">ഇല്ലാതാക്കുക</string>
-    <string name="cart_clear_confirm">നിലവിലെ കാർട്ടിൽ നിന്ന് എല്ലാ ഇനങ്ങളും നീക്കംചെയ്യണോ?</string>
-    <string name="cart_clear_confirm_button">മായ്ക്കുക</string>
     <string name="cart_clear_items_only">ഇനങ്ങൾ മാത്രം മായ്ക്കുക</string>
     <string name="cart_clear_items_only_desc">കാർട്ടിലെ എല്ലാ വരികളും നീക്കംചെയ്യുന്നു എന്നാൽ നിലവിലെ കറൻസികളും ഫീസ് സൈഡും നിലനിർത്തുന്നു.</string>
     <string name="cart_clear_reset_all">കാർട്ട് പുനഃസജ്ജമാക്കുക</string>
@@ -93,13 +88,11 @@
     <string name="cart_share_fees">ഫീസുകൾ: %s%%</string>
     <string name="cart_share_total">ആകെ: %1$s %2$s</string>
     <string name="cart_unsaved_title">സംരക്ഷിക്കാത്ത മാറ്റങ്ങൾ</string>
-    <string name="cart_unsaved_message">നിങ്ങൾക്ക് സംരക്ഷിക്കാത്ത മാറ്റങ്ങളുണ്ട്. നിങ്ങൾ എന്ത് ചെയ്യാൻ ആഗ്രഹിക്കുന്നു?</string>
     <string name="cart_unsaved_save">സംരക്ഷിക്കുക</string>
     <string name="cart_unsaved_save_as">പുതിയതായി സംരക്ഷിക്കുക</string>
     <string name="cart_unsaved_discard">മാറ്റങ്ങൾ ഉപേക്ഷിക്കുക</string>
     <string name="cart_unsaved_continue">തുടരുക</string>
     <string name="a11y_delete">നീക്കംചെയ്യുക</string>
-    <string name="a11y_historical_rate">ചരിത്ര നിരക്ക്</string>
     <string name="a11y_search_currencies">കറൻസികൾ തിരയുക</string>
     <string name="a11y_clear_search">തിരയൽ മായ്ക്കുക</string>
     <string name="a11y_cart_item_name">ഇനത്തിന്റെ പേര്</string>
@@ -109,8 +102,6 @@
     <string name="a11y_action_select">തിരഞ്ഞെടുക്കുക</string>
     <string name="a11y_action_load">ലോഡ് ചെയ്യുക</string>
     <string name="a11y_action_open">തുറക്കുക</string>
-    <string name="quick_conversions_fee_conversion">പരിവർത്തനം %s</string>
-    <string name="quick_conversions_fee_reduction">കുറവ് %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">മുകളിലേക്ക് പിൻ ചെയ്യുക</string>
     <string name="cart_unpin_item">പിൻ നീക്കുക</string>

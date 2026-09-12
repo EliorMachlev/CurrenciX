@@ -5,13 +5,13 @@ import android.content.Context
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
@@ -24,7 +24,7 @@ import java.math.BigDecimal
 
 class SearchableSpinnerDialog(
     @Suppress("UNUSED_PARAMETER") context: Context,
-) : AppCompatDialogFragment() {
+) : DialogFragment() {
     var onRateClicked: ((Rate, Int) -> Unit)? = null
 
     // Backed by MutableState so Compose recomposes when callers push new

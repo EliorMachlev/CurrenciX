@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">মুদ্রা toggle</string>
-    <string name="info_date_latest">&lt;b&gt;%1$s&lt;/b&gt; এ বিনিময় হার &lt;b&gt;%2$s&lt;/b&gt; দ্বারা</string>
-    <string name="info_date_historical">ঐতিহাসক মূল্য &lt;b>%1$s&lt;/b> এর &lt;b>%2$s&lt;/b> দ্বারা</string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; ক্লিপবোর্ডে অনুলিপিত</string>
     <string name="historical_rates_dialog_title">ঐতিহাসক মূল্য</string>
     <string name="historical_rates_dialog_toggle">একটি নির্দিষ্ট তারিখের বিনিময় হার ব্যবহার করুন। অক্ষম করুন, সর্বদা সাম্প্রতিকতমগুলি নিতে।</string>
@@ -49,7 +47,6 @@
     <string name="cart_delete_item">আইটেম মুছুন</string>
     <string name="cart_subtotal_label">উপমোট</string>
     <string name="cart_total_label">মোট</string>
-    <string name="cart_fee_line">ফি: %s%%</string>
     <string name="cart_menu_save">সংরক্ষণ</string>
     <string name="cart_menu_save_as">এই নামে সংরক্ষণ…</string>
     <string name="cart_menu_load">লোড করুন</string>
@@ -70,8 +67,6 @@
     <string name="cart_rename_title">কার্টের নাম পরিবর্তন করুন</string>
     <string name="cart_delete_confirm">"%s" মুছবেন?</string>
     <string name="cart_delete_confirm_button">মুছুন</string>
-    <string name="cart_clear_confirm">বর্তমান কার্ট থেকে সমস্ত আইটেম সরাবেন?</string>
-    <string name="cart_clear_confirm_button">পরিষ্কার করুন</string>
     <string name="cart_clear_items_only">শুধু আইটেম পরিষ্কার করুন</string>
     <string name="cart_clear_items_only_desc">কার্ট থেকে প্রতিটি সারি সরায় কিন্তু বর্তমান মুদ্রা ও ফি সাইড রাখে।</string>
     <string name="cart_clear_reset_all">কার্ট রিসেট করুন</string>
@@ -89,13 +84,11 @@
     <string name="cart_share_fees">ফি: %s%%</string>
     <string name="cart_share_total">মোট: %1$s %2$s</string>
     <string name="cart_unsaved_title">অসংরক্ষিত পরিবর্তন</string>
-    <string name="cart_unsaved_message">আপনার অসংরক্ষিত পরিবর্তন রয়েছে। আপনি কী করতে চান?</string>
     <string name="cart_unsaved_save">সংরক্ষণ</string>
     <string name="cart_unsaved_save_as">নতুন হিসেবে সংরক্ষণ</string>
     <string name="cart_unsaved_discard">পরিবর্তন বাতিল করুন</string>
     <string name="cart_unsaved_continue">চালিয়ে যান</string>
     <string name="a11y_delete">মুছুন</string>
-    <string name="a11y_historical_rate">ঐতিহাসিক হার</string>
     <string name="a11y_search_currencies">মুদ্রা অনুসন্ধান</string>
     <string name="a11y_clear_search">অনুসন্ধান সাফ করুন</string>
     <string name="a11y_cart_item_name">আইটেমের নাম</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">নির্বাচন</string>
     <string name="a11y_action_load">লোড করুন</string>
     <string name="a11y_action_open">খুলুন</string>
-    <string name="quick_conversions_fee_conversion">রূপান্তর %s</string>
-    <string name="quick_conversions_fee_reduction">হ্রাস %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">শীর্ষে পিন করুন</string>
     <string name="cart_unpin_item">পিন সরান</string>

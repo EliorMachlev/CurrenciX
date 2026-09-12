@@ -235,6 +235,39 @@ private fun String.groupNumbers(context: Context): String {
 
 // *************************************************************************************************
 
+// Cut-off for switching to compact form (K/M/B/T/Q). 13 = trillion range, so
+// values under a trillion still render as grouped digits ("999,000,000,000")
+// and only genuinely-unreadable magnitudes fold into "1.2T"-style text.
+private const val COMPACT_MIN_INTEGER_DIGITS = 13
+private const val COMPACT_GROUP_STEP = 3
+private val COMPACT_SUFFIXES = arrayOf("K", "M", "B", "T", "Q")
+
+/**
+ * Compact form of a large number, e.g. 310_500_000_000_000 -> "310.5T".
+ * Returns null when the integer part has fewer than [COMPACT_MIN_INTEGER_DIGITS]
+ * digits, so callers can fall back to the regular grouped rendering.
+ */
+fun BigDecimal.toCompactHumanReadableNumber(
+    context: Context,
+    decimalPlaces: Int = 1,
+): String? {
+    val integerDigits =
+        this
+            .abs()
+            .toBigInteger()
+            .toString()
+            .length
+    if (integerDigits < COMPACT_MIN_INTEGER_DIGITS) return null
+    val group = ((integerDigits - 1) / COMPACT_GROUP_STEP).coerceAtMost(COMPACT_SUFFIXES.size)
+    val suffix = COMPACT_SUFFIXES[group - 1]
+    val divisor = BigDecimal.TEN.pow(group * COMPACT_GROUP_STEP)
+    val body =
+        this
+            .divide(divisor, decimalPlaces, RoundingMode.HALF_EVEN)
+            .toHumanReadableNumber(context, decimalPlaces = decimalPlaces, trim = true)
+    return "$body$suffix"
+}
+
 /**
  * Parses the given string to a number. Uses the default locale for thousands and decimal separators.
  * - Returns null, if invalid characters are found.

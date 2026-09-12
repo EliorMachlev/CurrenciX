@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">Valuták váltása</string>
-    <string name="info_date_latest">Az árfolyamok &lt;b&gt;%1$s&lt;/b&gt; napján érvényesek &lt;b&gt;%2$s&lt;/b&gt; által</string>
-    <string name="info_date_historical">Múltbéli árfolyamok &lt;b&gt;%1$s&lt;/b&gt; &lt;b&gt;%2$s&lt;/b&gt; által</string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; másolva a vágólapra</string>
     <string name="historical_rates_dialog_title">Múltbéli árfolyamok</string>
     <string name="historical_rates_dialog_toggle">Egy adott időpontra vonatkozó árfolyamok használata. Kikapcsolva mindig a legfrissebbeket veszi figyelembe.</string>
@@ -43,7 +41,6 @@
     <string name="cart_delete_item">Tétel törlése</string>
     <string name="cart_subtotal_label">Részösszeg</string>
     <string name="cart_total_label">Összesen</string>
-    <string name="cart_fee_line">Díjak: %s%%</string>
     <string name="cart_menu_save">Mentés</string>
     <string name="cart_menu_save_as">Mentés másként…</string>
     <string name="cart_menu_load">Betöltés</string>
@@ -64,8 +61,6 @@
     <string name="cart_rename_title">Kosár átnevezése</string>
     <string name="cart_delete_confirm">Törlöd a következőt: „%s"?</string>
     <string name="cart_delete_confirm_button">Törlés</string>
-    <string name="cart_clear_confirm">Eltávolítasz minden tételt az aktuális kosárból?</string>
-    <string name="cart_clear_confirm_button">Törlés</string>
     <string name="cart_clear_items_only">Csak tételek törlése</string>
     <string name="cart_clear_items_only_desc">Minden sort eltávolít a kosárból, de megőrzi az aktuális pénznemeket és a díjak oldalát.</string>
     <string name="cart_clear_reset_all">Kosár visszaállítása</string>
@@ -83,13 +78,11 @@
     <string name="cart_share_fees">Díjak: %s%%</string>
     <string name="cart_share_total">Összesen: %1$s %2$s</string>
     <string name="cart_unsaved_title">Mentetlen módosítások</string>
-    <string name="cart_unsaved_message">Mentetlen módosításaid vannak. Mit szeretnél tenni?</string>
     <string name="cart_unsaved_save">Mentés</string>
     <string name="cart_unsaved_save_as">Mentés újként</string>
     <string name="cart_unsaved_discard">Módosítások elvetése</string>
     <string name="cart_unsaved_continue">Folytatás</string>
     <string name="a11y_delete">Törlés</string>
-    <string name="a11y_historical_rate">Múltbéli árfolyam</string>
     <string name="currency_dropdown_api_hint">Hiányzik valami? A különböző adatszolgáltatók különböző valutákat kínálnak. Nyisd meg a beállításokat, és próbálj ki egy másikat!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">A szervernek nincs adata ehhez a kéréshez.</string>
     <string name="error_invalid_api_key">HTTP 401 – Kérjük, ellenőrizd az API-kulcsot.</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">Kiválasztás</string>
     <string name="a11y_action_load">Betöltés</string>
     <string name="a11y_action_open">Megnyitás</string>
-    <string name="quick_conversions_fee_conversion">átváltás %s</string>
-    <string name="quick_conversions_fee_reduction">csökkentés %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Rögzítés felülre</string>
     <string name="cart_unpin_item">Rögzítés megszüntetése</string>

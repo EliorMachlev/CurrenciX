@@ -1,0 +1,68 @@
+name: Screenshots
+
+# Renders every Compose surface with Roborazzi (JVM screenshot testing, no
+# emulator) and uploads the PNGs as an artifact so Claude can pull them via
+# `gh run download` and iterate on UI without a device round-trip. Runs on
+# any non-master branch push — same trigger shape as apk-artifact.yaml.
+on:
+  push:
+    branches-ignore:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  JDK_JAVA_OPTIONS: -Xshare:off
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup java environment
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+
+      - name: Compute short SHA
+        id: sha
+        run: echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      # `record` writes fresh PNGs (vs. `verify` which fails on diff). We
+      # want fresh output every push so Claude can pull the latest render;
+      # visual-regression gating is a future concern.
+      # `--tests "*.screenshots.*"` scopes the run to the screenshots
+      # package. Without it, the fuzzing tests (Jazzer-instrumented) also
+      # run under this task; Jazzer's bytecode hooks then leak into
+      # production classes loaded by Robolectric's sandbox and blow up
+      # with `NoClassDefFoundError: JazzerInternal` on the first call
+      # to any instrumented method (e.g. TextUtils.roundIfNeeded).
+      - name: Record Roborazzi screenshots (fdroid debug)
+        run: ./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*" --stacktrace
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: screenshots-${{ steps.sha.outputs.short }}
+          path: app/build/outputs/roborazzi/**/*.png
+          if-no-files-found: warn
+
+      # Test report ships the full stack trace when the Robolectric run
+      # blows up before writing PNGs — Gradle's console output truncates
+      # to "java.lang.RuntimeException at RoboMonitoringInstrumentation.java:102".
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: test-reports-${{ steps.sha.outputs.short }}
+          path: app/build/reports/tests/**
+          if-no-files-found: ignore

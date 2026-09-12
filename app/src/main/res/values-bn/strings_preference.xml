@@ -6,9 +6,6 @@
     <string name="fee_title">বিদেশি লেনদেন ফি</string>
     <string name="fee_summary">বিনিময়, ব্যাংক/কার্ড এবং নির্দিষ্ট জোড়ার ফি পরিচালনা করো</string>
     <string name="fee_manager_title">ফি</string>
-    <string name="fee_side_label">ফি এর ধরন</string>
-    <string name="fee_side_original">রূপান্তর ফি</string>
-    <string name="fee_side_converted">রূপান্তরিত ফি</string>
     <string name="fee_section_global_exchange">বিশ্বব্যাপী বিনিময় ফি</string>
     <string name="fee_section_global_bank">বিশ্বব্যাপী ব্যাংক/কার্ড ফি</string>
     <string name="fee_section_specific_pair">নির্দিষ্ট মুদ্রা জোড়ার বিনিময় ফি</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">প্রতি</string>
     <string name="fee_pair_pick_currency">মুদ্রা নির্বাচন করো</string>
     <string name="fee_true_cost_prefix">"রূপান্তর ফি: "</string>
-    <string name="fee_original_value_prefix">"কর্তন ফি: "</string>
     <string name="fee_cost_with_fee_prefix">"ফি সহ খরচ: "</string>
-    <string name="fee_value_before_fee_prefix">"ফির আগের মূল্য: "</string>
-    <string name="fee_side_summary_original">প্রদর্শিত রূপান্তরিত পরিমাণ মধ্য-বাজার হারে থাকে; ফি আলাদাভাবে \"রূপান্তর ফি\" হিসেবে দেখানো হয়।</string>
-    <string name="fee_side_summary_converted">ফি প্রদর্শিত রূপান্তরিত পরিমাণে অন্তর্ভুক্ত থাকে।</string>
     <string name="fee_empty">এখনো কোনো ফি নেই</string>
     <string name="previewConversion_title">রূপান্তরের প্রাকদর্শন</string>
     <string name="previewConversion_summary">অর্থ রূপান্তরের প্রত্যেকটি হার অর্থ নির্বাচকে দেখাও</string>

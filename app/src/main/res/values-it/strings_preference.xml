@@ -6,9 +6,6 @@
     <string name="fee_title">Commissione per transazioni estere</string>
     <string name="fee_summary">Gestisci commissioni di cambio, banca/carta e specifiche per coppia</string>
     <string name="fee_manager_title">Commissioni</string>
-    <string name="fee_side_label">Tipo di commissione</string>
-    <string name="fee_side_original">Commissione di conversione</string>
-    <string name="fee_side_converted">Commissione convertita</string>
     <string name="fee_section_global_exchange">Commissione di cambio globale</string>
     <string name="fee_section_global_bank">Commissione banca/carta globale</string>
     <string name="fee_section_specific_pair">Commissione per coppia di valute specifica</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">A</string>
     <string name="fee_pair_pick_currency">Seleziona valuta</string>
     <string name="fee_true_cost_prefix">"Commissione di conversione: "</string>
-    <string name="fee_original_value_prefix">"Commissione di riduzione: "</string>
     <string name="fee_cost_with_fee_prefix">"Costo con commissione: "</string>
-    <string name="fee_value_before_fee_prefix">"Valore prima della commissione: "</string>
-    <string name="fee_side_summary_original">L\'importo convertito mostrato resta al tasso medio di mercato; le commissioni sono mostrate separatamente come \"Commissione di conversione\".</string>
-    <string name="fee_side_summary_converted">Le commissioni sono già incluse nell\'importo convertito mostrato.</string>
     <string name="fee_empty">Ancora nessuna commissione</string>
     <string name="previewConversion_title">Anteprima di conversione</string>
     <string name="previewConversion_summary">Mostra la conversione corrente per ogni tasso nel selezionatore di valuta.</string>

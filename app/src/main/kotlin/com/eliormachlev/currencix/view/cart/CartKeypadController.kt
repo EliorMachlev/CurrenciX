@@ -1,102 +1,63 @@
 package com.eliormachlev.currencix.view.cart
 
 import android.content.Context
-import android.graphics.Rect
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
-import androidx.compose.ui.platform.ComposeView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
-import com.eliormachlev.currencix.util.hapticTap
-import com.eliormachlev.currencix.util.paintParenCycle
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
-
-// Duration of the slide-in / slide-out animation for the cart keypad.
-private const val KEYPAD_ANIM_MS = 180L
-
-// Grace window on outside taps before closing the keypad: a tap that lands on
-// another row's expression must run through Compose's click handler first so
-// it can swap the active id — otherwise we'd close, then re-open with an
-// unwanted flicker.
-private const val OUTSIDE_TAP_DEBOUNCE_MS = 40L
-
-// Fraction of the keypad container's height a drag-down must clear before
-// release commits the dismissal. Below this we snap back — matches the
-// behaviour of Material bottom sheets.
-private const val KEYPAD_DRAG_DISMISS_FRACTION = 0.35f
+import com.eliormachlev.currencix.viewmodel.main.Operator
 
 /**
- * Owns the slide-up cart keypad: view refs, active-row bookkeeping, IME
- * coordination, drag-to-dismiss, and the touch-dispatch overrides. The host
- * activity keeps the `android:onClick` reflection targets (LayoutInflater
- * resolves those against the Activity) and forwards each press through
- * [forwardKeypadAction].
+ * State holder for the cart's floating calculator keypad. All animation,
+ * drag-to-dismiss, back-press, and outside-tap handling now live in the
+ * Compose layer ([CartScreen] / [CartKeypadOverlay]); this class owns the
+ * per-row bookkeeping (which item is active, what expression buffer is being
+ * edited, when to commit) and the [MainKeypad] callback adapter that routes
+ * keypad presses into the active [CalculatorInputState].
  *
- * `activeItemId` and `liveExpression` are exposed for the compose row to
- * observe (active-row highlight + inline display), and [onExpressionCommit] is
- * invoked whenever a keypad session ends so the host can push the buffered
- * value into the view model.
+ * Split of concerns:
+ * - [activeItemId] / [liveExpression] — observed by the compose row for the
+ *   active-row highlight + inline display.
+ * - [keypadVisible] — observed by [CartKeypadOverlay] to slide the app keypad
+ *   in/out. Only true for in-app-keypad variants; system-IME variants leave
+ *   it false and the row hosts an EditText instead.
+ * - [keypadKeyboardType] / [keypadNextParen] — piped into the [MainKeypad]
+ *   composable so it renders the correct layout and paren glyph.
  */
 class CartKeypadController(
-    private val activity: AppCompatActivity,
-    private val itemsView: ComposeView,
-    keyboardType: LiveData<KeyboardType>,
-    private val hapticEnabled: () -> Boolean,
+    activity: AppCompatActivity,
+    private val keyboardType: LiveData<KeyboardType>,
     private val onExpressionCommit: (id: String, expression: String) -> Unit,
-    private val dispatchCancel: (MotionEvent) -> Unit,
 ) {
-    private val keypadContainer: ViewGroup = activity.findViewById(R.id.cart_keypad_container)
-    private val keypadRegular: View = activity.findViewById(R.id.cart_keypad_regular)
-    private val keypadExtended: View = activity.findViewById(R.id.cart_keypad_extended)
-    private val contentColumn: View = activity.findViewById(R.id.cart_content)
+    private val ctx: Context = activity
 
     val activeItemId = MutableLiveData<String?>(null)
     val liveExpression = MutableLiveData("")
+
+    // Consumed by CartKeypadOverlay's AnimatedVisibility for the slide.
+    val keypadVisible = mutableStateOf(false)
+
+    // Piped into MainKeypad composable for layout + paren glyph.
+    val keypadKeyboardType: LiveData<KeyboardType> get() = keyboardType
+    private val nextParenLive = MutableLiveData('(')
+    val keypadNextParen: LiveData<Char> get() = nextParenLive
 
     private var currentKeyboardType: KeyboardType = KeyboardType.DEFAULT
     private var activeCalculatorState: CalculatorInputState? = null
     private var activeStateObserver: Observer<String?>? = null
     private var activeParenObserver: Observer<Char>? = null
-    private val keypadBackCallback: OnBackPressedCallback
-
-    // Rising-edge latch for the IME-visibility guard; see [installImeVisibilityGuard].
-    private var systemImeVisible = false
-
-    // Drag-to-dismiss state — only meaningful once ACTION_DOWN lands inside
-    // the keypad and the pointer travels far enough downward to cross
-    // [touchSlop]. [keypadDragStartY] is null when no candidate gesture is
-    // being tracked; [keypadDragActive] flips true once slop is crossed and
-    // the child buttons have been sent an ACTION_CANCEL.
-    private var keypadDragStartY: Float? = null
-    private var keypadDragActive = false
-    private val touchSlop: Int by lazy { ViewConfiguration.get(activity).scaledTouchSlop }
 
     init {
-        installImeVisibilityGuard()
-        keypadBackCallback =
-            object : OnBackPressedCallback(false) {
-                override fun handleOnBackPressed() = closeKeypad()
-            }.also { activity.onBackPressedDispatcher.addCallback(activity, it) }
-        keyboardType.observe(activity) { type ->
-            currentKeyboardType = type
-            val extended = type == KeyboardType.EXPANDED
-            keypadRegular.visibility = if (extended) View.GONE else View.VISIBLE
-            keypadExtended.visibility = if (extended) View.VISIBLE else View.GONE
-        }
+        keyboardType.observe(activity) { type -> currentKeyboardType = type }
     }
 
     /**
@@ -128,20 +89,20 @@ class CartKeypadController(
         val observer = Observer<String?> { liveExpression.value = state.toExpressionString() }
         state.baseValueText.observeForever(observer)
         state.calculationValueText.observeForever(observer)
-        val parenObserver = Observer<Char> { next -> parenButton()?.paintParenCycle(next) }
+        val parenObserver = Observer<Char> { next -> nextParenLive.value = next }
         state.nextParen.observeForever(parenObserver)
         activeCalculatorState = state
         activeItemId.value = itemId
         activeStateObserver = observer
         activeParenObserver = parenObserver
-        showKeypad()
+        keypadVisible.value = true
     }
 
     /** Hide the keypad and unbind whichever row was being edited. */
     fun closeKeypad() {
-        if (activeItemId.value == null && keypadContainer.visibility == View.GONE) return
+        if (activeItemId.value == null && !keypadVisible.value) return
         detachActiveField()
-        hideKeypad()
+        keypadVisible.value = false
     }
 
     // Bridge each keystroke from the row's inline EditText (ASCII) back into
@@ -158,18 +119,12 @@ class CartKeypadController(
     }
 
     fun dismissKeyboards() {
-        // closeKeypad already detaches for the in-app keypad; the else branch
-        // covers system-IME mode (no keypad) so the active row's typed value
-        // commits and its EditText tears down.
-        if (keypadContainer.visibility == View.VISIBLE) {
+        if (keypadVisible.value) {
             closeKeypad()
         } else if (activeItemId.value != null) {
             detachActiveField()
         }
-        if (systemImeVisible) {
-            hideSystemIme()
-            activity.currentFocus?.clearFocus()
-        }
+        hideSystemIme()
     }
 
     /** Commit whichever expression is currently buffered on the active row. */
@@ -179,116 +134,20 @@ class CartKeypadController(
     }
 
     /**
-     * Called from the host activity's `dispatchTouchEvent`. Returns true when
-     * the event has been consumed (drag interception) so the caller should
-     * skip its `super.dispatchTouchEvent`.
+     * Callback bundle bound to the currently-active [CalculatorInputState].
+     * Each button press forwards through the active state (or no-ops when
+     * nothing is active). Passed straight into the [MainKeypad] composable.
      */
-    fun handleTouchEvent(ev: MotionEvent): Boolean {
-        if (keypadContainer.visibility == View.VISIBLE && handleKeypadDrag(ev)) return true
-        if (ev.actionMasked == MotionEvent.ACTION_DOWN) handleOutsideTap(ev)
-        return false
-    }
-
-    // Route each keypad button press through the currently-active state, with
-    // a haptic tap on the button that fired. Internal because
-    // [CalculatorInputState] is module-scoped — callers are all in the same
-    // module (the reflection targets on [CartActivity]).
-    internal fun forwardKeypadAction(
-        view: View,
-        action: (CalculatorInputState) -> Unit,
-    ) {
-        view.hapticTap(hapticEnabled())
-        activeCalculatorState?.let(action)
-    }
-
-    // Only one keyboard should be visible at a time. `openKeypadFor` calls
-    // `hideSystemIme` when opening the app keypad; this listener handles the
-    // reverse — when the system IME rises (e.g. a row's name field takes
-    // focus while the app keypad is open), dismiss the app keypad. Rising-edge
-    // tracking via [systemImeVisible] avoids retriggering `closeKeypad` on
-    // redundant inset dispatches while the IME stays visible.
-    //
-    // Installing our own listener on cart_root disables its `fitsSystemWindows`
-    // auto-padding (that's how the view API works — a custom listener takes
-    // over), so we re-apply the system-bar insets as padding ourselves. Without
-    // this the toolbar slides under the status bar.
-    private fun installImeVisibilityGuard() {
-        val root = activity.findViewById<View>(R.id.cart_root)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            if (imeVisible && !systemImeVisible && keypadContainer.visibility == View.VISIBLE) {
-                closeKeypad()
-            }
-            systemImeVisible = imeVisible
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
-            insets
-        }
-    }
-
-    // The `()` cycle-toggle key on the extended keypad. Absent from the basic
-    // layout, so callers must tolerate null.
-    private fun parenButton(): AppCompatButton? = keypadExtended.findViewById(R.id.btn_parens)
-
-    private fun showKeypad() {
-        keypadBackCallback.isEnabled = true
-        if (keypadContainer.visibility == View.VISIBLE) return
-        keypadContainer.visibility = View.VISIBLE
-        keypadContainer.translationY = keypadContainer.height.toFloat().takeIf { it > 0f }
-            ?: activity.resources.displayMetrics.heightPixels
-                .toFloat()
-        keypadContainer
-            .animate()
-            .translationY(0f)
-            .setDuration(KEYPAD_ANIM_MS)
-            .start()
-        // Leave the totals card / add-item button pinned to the bottom of the
-        // screen (behind the keypad) and only inset the items list so its
-        // Compose content stops at the keypad's top edge instead of rendering
-        // underneath. Keeps the summary from being pushed above the keypad.
-        setItemsBottomInsetForKeypad()
-    }
-
-    private fun hideKeypad() {
-        keypadBackCallback.isEnabled = false
-        if (keypadContainer.visibility != View.VISIBLE) return
-        keypadContainer
-            .animate()
-            .translationY(keypadContainer.height.toFloat())
-            .setDuration(KEYPAD_ANIM_MS)
-            .withEndAction { keypadContainer.visibility = View.GONE }
-            .start()
-        setItemsBottomInset(0)
-    }
-
-    private fun setItemsBottomInsetForKeypad() {
-        val apply = {
-            val keypadH =
-                keypadContainer.height.takeIf { it > 0 }
-                    ?: keypadContainer.layoutParams.height
-            // keypad is anchored to the bottom of cart_root; cart_content fills
-            // the same area, so its own height is our reference. The overlap
-            // is the amount by which the items view extends behind the keypad
-            // once the fixed footer (add button + totals card) has taken its
-            // own space at the bottom.
-            val overlap = itemsView.bottom - (contentColumn.height - keypadH)
-            setItemsBottomInset(overlap.coerceAtLeast(0))
-        }
-        if (keypadContainer.height > 0 && itemsView.height > 0) {
-            apply()
-        } else {
-            keypadContainer.post(apply)
-        }
-    }
-
-    private fun setItemsBottomInset(bottom: Int) {
-        itemsView.setPadding(
-            itemsView.paddingLeft,
-            itemsView.paddingTop,
-            itemsView.paddingRight,
-            bottom,
+    val keypadCallbacks =
+        com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks(
+            onDigit = { d -> activeCalculatorState?.addNumber(d) },
+            onDecimal = { activeCalculatorState?.addDecimal() },
+            onOperator = { op -> activeCalculatorState?.addOperator(op.display) },
+            onPercent = { activeCalculatorState?.addPercent() },
+            onParens = { activeCalculatorState?.applyNextParen() },
+            onDelete = { activeCalculatorState?.delete() },
+            onDeleteLong = { activeCalculatorState?.clear() },
         )
-    }
 
     private fun detachActiveField() {
         val state = activeCalculatorState
@@ -301,9 +160,7 @@ class CartKeypadController(
         if (state != null && parenObserver != null) {
             state.nextParen.removeObserver(parenObserver)
         }
-        // Reset the paren button to its rest state — `(` is the only sensible
-        // next glyph when no field is being edited.
-        parenButton()?.paintParenCycle('(')
+        nextParenLive.value = '('
         // Commit the current keypad expression to the VM so the row's
         // persisted value matches what the user just typed.
         val id = activeItemId.value
@@ -318,95 +175,22 @@ class CartKeypadController(
         liveExpression.value = ""
     }
 
-    // Only owns taps outside the items ComposeView (toolbar, totals card,
-    // add-item button when the IME is up). Taps inside the items view are
-    // resolved by Compose in [CartItemsList] via onBackgroundTap.
-    private fun handleOutsideTap(ev: MotionEvent) {
-        val x = ev.rawX.toInt()
-        val y = ev.rawY.toInt()
-        val itemsRect = Rect().also(itemsView::getGlobalVisibleRect)
-        if (itemsRect.contains(x, y)) return
-        if (keypadContainer.visibility == View.VISIBLE) {
-            val keypadRect = Rect().also(keypadContainer::getGlobalVisibleRect)
-            if (keypadRect.contains(x, y)) return
-            val stillOn = activeItemId.value
-            keypadContainer.postDelayed({
-                if (activeItemId.value == stillOn && stillOn != null) closeKeypad()
-            }, OUTSIDE_TAP_DEBOUNCE_MS)
-        } else if (systemImeVisible) {
-            dismissKeyboards()
-        }
-    }
-
-    /**
-     * Vertical drag-to-dismiss: once a downward gesture starting inside the
-     * keypad crosses touch slop, steal it from the buttons (by dispatching
-     * ACTION_CANCEL), track the finger via [ViewGroup.setTranslationY], and
-     * either commit the dismiss ([KEYPAD_DRAG_DISMISS_FRACTION]) or snap back
-     * on release. Returns true once the gesture has been intercepted so the
-     * activity's super-dispatch is skipped for the rest of the stream.
-     */
-    private fun handleKeypadDrag(ev: MotionEvent): Boolean {
-        when (ev.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                val rect = Rect().also(keypadContainer::getGlobalVisibleRect)
-                if (rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-                    keypadDragStartY = ev.rawY
-                    keypadDragActive = false
-                }
-                return false
-            }
-            MotionEvent.ACTION_MOVE -> {
-                val start = keypadDragStartY ?: return false
-                val delta = ev.rawY - start
-                if (!keypadDragActive && delta > touchSlop) {
-                    keypadDragActive = true
-                    // Cancel the child press so no button fires when the
-                    // finger lifts — from here on the gesture is a drag.
-                    val cancel = MotionEvent.obtain(ev).also { it.action = MotionEvent.ACTION_CANCEL }
-                    dispatchCancel(cancel)
-                    cancel.recycle()
-                }
-                if (keypadDragActive) {
-                    keypadContainer.translationY = delta.coerceAtLeast(0f)
-                    return true
-                }
-                return false
-            }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (!keypadDragActive) {
-                    keypadDragStartY = null
-                    return false
-                }
-                val dragged = keypadContainer.translationY
-                val threshold = keypadContainer.height * KEYPAD_DRAG_DISMISS_FRACTION
-                if (dragged >= threshold) {
-                    // closeKeypad → hideKeypad animates from the current
-                    // translationY (which we just set) back down to full
-                    // height, so the release picks up exactly where the
-                    // finger left off.
-                    closeKeypad()
-                } else {
-                    keypadContainer.animate().cancel()
-                    keypadContainer
-                        .animate()
-                        .translationY(0f)
-                        .setDuration(KEYPAD_ANIM_MS)
-                        .start()
-                }
-                keypadDragActive = false
-                keypadDragStartY = null
-                return true
-            }
-            else -> return false
-        }
-    }
+    // Suppress unused-parameter lint — Operator import kept in scope for the
+    // [keypadCallbacks] adapter without a static reference here.
+    @Suppress("unused")
+    private fun operatorTypeAnchor(): Operator = Operator.PLUS
 
     private fun hideSystemIme() {
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
+        val imm = ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
+        val activity = ctx as? AppCompatActivity ?: return
         val token = activity.currentFocus?.windowToken ?: activity.window.decorView.windowToken ?: return
         imm.hideSoftInputFromWindow(token, 0)
     }
+
+    // Retained so BaseActivity's own view lookup (unused after the migration)
+    // continues to compile; safe to delete once the cart has been QA'd.
+    @Suppress("unused")
+    private fun findRoot(activity: AppCompatActivity): View = activity.window.decorView
 }
 
 /**

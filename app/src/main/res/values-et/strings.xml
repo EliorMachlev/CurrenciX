@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">lülita vääringuid sisse/välja</string>
-    <string name="info_date_latest">Valuutakursid &lt;b>%1$s&lt;/b> seisuga teenusest &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Varasemad valuutakursid &lt;b>%1$s&lt;/b> seisuga teenusest &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">Kopeerisime &lt;b>%s&lt;/b> lõikelauale</string>
     <string name="historical_rates_dialog_title">Varasemad valuutakursid</string>
     <string name="historical_rates_dialog_toggle">Kasuta kindla kuupäeva vahetuskursse. Kui lülitad selle eelistuse välja, siis näitame vaid viimaseid kursse.</string>
@@ -49,7 +47,6 @@
     <string name="cart_delete_item">Kustuta toode</string>
     <string name="cart_subtotal_label">Vahesumma</string>
     <string name="cart_total_label">Kokku</string>
-    <string name="cart_fee_line">Tasud: %s%%</string>
     <string name="cart_menu_save">Salvesta</string>
     <string name="cart_menu_save_as">Salvesta kui…</string>
     <string name="cart_menu_load">Laadi</string>
@@ -70,8 +67,6 @@
     <string name="cart_rename_title">Nimeta ostukorv ümber</string>
     <string name="cart_delete_confirm">Kas kustutada „%s"?</string>
     <string name="cart_delete_confirm_button">Kustuta</string>
-    <string name="cart_clear_confirm">Kas eemaldada kõik tooted praegusest ostukorvist?</string>
-    <string name="cart_clear_confirm_button">Tühjenda</string>
     <string name="cart_clear_items_only">Tühjenda ainult tooted</string>
     <string name="cart_clear_items_only_desc">Eemaldab ostukorvist kõik read, kuid säilitab praegused valuutad ja tasude poole.</string>
     <string name="cart_clear_reset_all">Lähtesta ostukorv</string>
@@ -89,13 +84,11 @@
     <string name="cart_share_fees">Tasud: %s%%</string>
     <string name="cart_share_total">Kokku: %1$s %2$s</string>
     <string name="cart_unsaved_title">Salvestamata muudatused</string>
-    <string name="cart_unsaved_message">Teil on salvestamata muudatusi. Mida soovite teha?</string>
     <string name="cart_unsaved_save">Salvesta</string>
     <string name="cart_unsaved_save_as">Salvesta uuena</string>
     <string name="cart_unsaved_discard">Loobu muudatustest</string>
     <string name="cart_unsaved_continue">Jätka</string>
     <string name="a11y_delete">Kustuta</string>
-    <string name="a11y_historical_rate">Varasem kurss</string>
     <string name="a11y_search_currencies">Otsi valuutasid</string>
     <string name="a11y_clear_search">Tühjenda otsing</string>
     <string name="a11y_cart_item_name">Toote nimi</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">Vali</string>
     <string name="a11y_action_load">Laadi</string>
     <string name="a11y_action_open">Ava</string>
-    <string name="quick_conversions_fee_conversion">konversioon %s</string>
-    <string name="quick_conversions_fee_reduction">vähendus %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Kinnita üles</string>
     <string name="cart_unpin_item">Vabasta kinnitus</string>

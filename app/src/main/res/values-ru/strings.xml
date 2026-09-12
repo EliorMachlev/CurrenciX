@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">переключить валюты</string>
-    <string name="info_date_latest">Курсы валют на &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Исторические курсы валют на &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; скопировано в буфер обмена</string>
     <string name="historical_rates_dialog_title">Исторические курсы валют</string>
     <string name="historical_rates_dialog_toggle">Использовать обменные курсы от определённой даты. Отключите, чтобы всегда получать актуальные.</string>
@@ -28,7 +26,6 @@
     <string name="quick_conversions_fees_applied">Применённые комиссии: %s</string>
     <string name="tooltip_filter_starred">Показывать только избранные валюты.</string>
     <string name="a11y_delete">Удалить</string>
-    <string name="a11y_historical_rate">Исторический курс</string>
     <string name="currency_dropdown_api_hint">Чего-то не хватает? Разные поставщики данных предлагают разные валюты. Зайдите в настройки и попробуйте другого! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсы от %1$s</string>
@@ -51,7 +48,6 @@
     <string name="cart_delete_item">Удалить позицию</string>
     <string name="cart_subtotal_label">Промежуточный итог</string>
     <string name="cart_total_label">Итого</string>
-    <string name="cart_fee_line">Комиссия: %s%%</string>
     <string name="cart_menu_save">Сохранить</string>
     <string name="cart_menu_save_as">Сохранить как…</string>
     <string name="cart_menu_load">Загрузить</string>
@@ -72,8 +68,6 @@
     <string name="cart_rename_title">Переименовать корзину</string>
     <string name="cart_delete_confirm">Удалить «%s»?</string>
     <string name="cart_delete_confirm_button">Удалить</string>
-    <string name="cart_clear_confirm">Удалить все позиции из текущей корзины?</string>
-    <string name="cart_clear_confirm_button">Очистить</string>
     <string name="cart_clear_items_only">Только очистить позиции</string>
     <string name="cart_clear_items_only_desc">Удаляет все строки из корзины, но сохраняет текущие валюты и сторону комиссии.</string>
     <string name="cart_clear_reset_all">Сбросить корзину</string>
@@ -91,7 +85,6 @@
     <string name="cart_share_fees">Комиссия: %s%%</string>
     <string name="cart_share_total">Итого: %1$s %2$s</string>
     <string name="cart_unsaved_title">Несохранённые изменения</string>
-    <string name="cart_unsaved_message">У вас есть несохранённые изменения. Что вы хотите сделать?</string>
     <string name="cart_unsaved_save">Сохранить</string>
     <string name="cart_unsaved_save_as">Сохранить как новую</string>
     <string name="cart_unsaved_discard">Отменить изменения</string>
@@ -105,8 +98,6 @@
     <string name="a11y_action_select">Выбрать</string>
     <string name="a11y_action_load">Загрузить</string>
     <string name="a11y_action_open">Открыть</string>
-    <string name="quick_conversions_fee_conversion">конвертация %s</string>
-    <string name="quick_conversions_fee_reduction">уменьшение %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закрепить сверху</string>
     <string name="cart_unpin_item">Открепить</string>

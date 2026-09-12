@@ -21,7 +21,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.preference.Preference
 import com.eliormachlev.currencix.repository.Database
 
 /**
@@ -109,10 +108,9 @@ private fun AlertDialog.wireHapticButtons() {
 }
 
 /**
- * Build the dialog and wire haptics onto its buttons in one call. Covers both
- * [AlertDialog.Builder] and [com.google.android.material.dialog.MaterialAlertDialogBuilder]
- * (which extends it) so every dialog show-site in the app collapses to a
- * single terminal call instead of repeating `.show().also { it.wireHapticButtons() }`.
+ * Build the dialog and wire haptics onto its buttons in one call — every
+ * dialog show-site in the app collapses to a single terminal call instead of
+ * repeating `.show().also { it.wireHapticButtons() }`.
  */
 fun AlertDialog.Builder.showWithHapticButtons(): AlertDialog = show().also { it.wireHapticButtons() }
 
@@ -128,40 +126,6 @@ fun View.setOnHapticClickListener(onClick: (View) -> Unit) {
     setOnClickListener { v ->
         v.hapticTap()
         onClick(v)
-    }
-}
-
-/**
- * [Preference.setOnPreferenceClickListener] that first fires a haptic tap on
- * the hosting Activity, then runs [onClick]. Returns `true` from the listener
- * — the preference framework treats that as "handled, don't open the default
- * dialog", which is what every current call site wants (they open their own
- * dialog / navigate / push a fragment).
- *
- * For built-in [androidx.preference.DialogPreference] rows whose default
- * dialog SHOULD open, override
- * [androidx.preference.PreferenceFragmentCompat.onDisplayPreferenceDialog]
- * instead — that path fires haptic without short-circuiting the framework.
- */
-fun Preference.setOnHapticClickListener(onClick: () -> Unit) {
-    setOnPreferenceClickListener {
-        (context as? Activity)?.hapticTap()
-        onClick()
-        true
-    }
-}
-
-/**
- * [Preference.setOnPreferenceChangeListener] that first fires a haptic tap on
- * the hosting Activity, then runs [onChange]. Always returns `true` so the
- * new value is persisted — the callers we have here uniformly want that; if
- * a future site needs conditional persistence, wire the raw listener directly.
- */
-fun Preference.setOnHapticChangeListener(onChange: (newValue: Any?) -> Unit) {
-    setOnPreferenceChangeListener { _, newValue ->
-        (context as? Activity)?.hapticTap()
-        onChange(newValue)
-        true
     }
 }
 
