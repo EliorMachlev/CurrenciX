@@ -66,6 +66,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -146,6 +147,12 @@ private const val SWAP_FAB_ROTATION_MILLIS = 320
 
 private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
+private val STATUS_PILL_GAP: Dp = 8.dp
+private val STATUS_PILL_RADIUS: Dp = 999.dp
+private val STATUS_PILL_PADDING_H: Dp = 10.dp
+private val STATUS_PILL_PADDING_V: Dp = 4.dp
+private val STATUS_PILL_ICON_GAP: Dp = 6.dp
+private val STATUS_PILL_ICON_SIZE: Dp = 14.dp
 private val CURSOR_WIDTH: Dp = 2.dp
 private val CURSOR_HEIGHT: Dp = 44.dp
 private val CURSOR_HEIGHT_SUBTOTAL: Dp = 26.dp
@@ -320,6 +327,7 @@ internal fun MainDisplay(
     fragmentManager: FragmentManager,
     callbacks: MainDisplayCallbacks,
     dateFormatPattern: String,
+    banner: BannerContent?,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -362,6 +370,7 @@ internal fun MainDisplay(
         resultFairNumber = resultFairNumber,
         resultWithFeesNumber = resultWithFeesNumber,
         dateFormatPattern = dateFormatPattern,
+        banner = banner,
         onPillFromClick = {
             openCurrencyPicker(context, viewModel, fragmentManager, PickSide.FROM, baseCurrency, destCurrency, rates)
         },
@@ -399,6 +408,7 @@ private fun HeroCard(
     resultFairNumber: BigDecimal?,
     resultWithFeesNumber: BigDecimal?,
     dateFormatPattern: String,
+    banner: BannerContent?,
     onPillFromClick: () -> Unit,
     onPillToClick: () -> Unit,
     onSwapClick: () -> Unit,
@@ -450,6 +460,7 @@ private fun HeroCard(
                 dest = destCurrency,
                 rates = rates,
                 dateFormatPattern = dateFormatPattern,
+                banner = banner,
                 onProviderClick = callbacks.onOpenProvider,
             )
         }
@@ -1138,6 +1149,7 @@ private fun RateFooter(
     dest: Currency?,
     rates: ExchangeRates?,
     dateFormatPattern: String,
+    banner: BannerContent?,
     onProviderClick: () -> Unit,
 ) {
     Column {
@@ -1148,6 +1160,10 @@ private fun RateFooter(
                 .background(MaterialTheme.colorScheme.outlineVariant),
         )
         Spacer(Modifier.height(RATE_FOOTER_PADDING_TOP))
+        if (banner != null) {
+            StatusPill(banner)
+            Spacer(Modifier.height(STATUS_PILL_GAP))
+        }
         Row(
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -1160,6 +1176,51 @@ private fun RateFooter(
                 onProviderClick = onProviderClick,
             )
         }
+    }
+}
+
+// Compact tinted pill surfaced inside the RateFooter (above the rate +
+// timestamp row) when the app is showing offline or historical data. Keeps
+// the status visible without stealing a full-width slot above the hero.
+@Composable
+private fun StatusPill(banner: BannerContent) {
+    val containerColor =
+        when (banner.kind) {
+            BannerKind.Offline -> MaterialTheme.colorScheme.errorContainer
+            BannerKind.Historical -> MaterialTheme.colorScheme.secondaryContainer
+        }
+    val contentColor =
+        when (banner.kind) {
+            BannerKind.Offline -> MaterialTheme.colorScheme.onErrorContainer
+            BannerKind.Historical -> MaterialTheme.colorScheme.onSecondaryContainer
+        }
+    val iconRes =
+        when (banner.kind) {
+            BannerKind.Offline -> R.drawable.ic_cloud_off
+            BannerKind.Historical -> R.drawable.ic_history
+        }
+    Row(
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(STATUS_PILL_RADIUS))
+                .background(containerColor)
+                .padding(horizontal = STATUS_PILL_PADDING_H, vertical = STATUS_PILL_PADDING_V),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(STATUS_PILL_ICON_GAP),
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            tint = contentColor,
+            modifier = Modifier.size(STATUS_PILL_ICON_SIZE),
+        )
+        Text(
+            text = banner.text,
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

@@ -2,8 +2,6 @@ package com.eliormachlev.currencix.view.main.compose
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,13 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -28,11 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -54,15 +44,13 @@ enum class DrawerAction {
     Settings,
 }
 
-private val StatusBannerMargin = 8.dp
-private val StatusBannerPadding = 12.dp
-private val StatusBannerIconSpacing = 12.dp
 private val DrawerItemPadding = 12.dp
 private val DrawerContentPadding = NavigationDrawerItemDefaults.ItemPadding
 
-// Two-state banner surfaced above the hero: OFFLINE (device has no network)
-// or HISTORICAL (user pinned a past date via the date picker). Offline wins
-// when both are true, since stale/cached is the more actionable signal.
+// Two-state status shown inside the RateFooter: OFFLINE (device has no
+// network) or HISTORICAL (user pinned a past date via the date picker).
+// Offline wins when both are true, since stale/cached is the more actionable
+// signal.
 enum class BannerKind { Offline, Historical }
 
 data class BannerContent(
@@ -93,16 +81,16 @@ private val SecondaryDrawerEntries =
         DrawerEntry(DrawerAction.Settings, R.drawable.ic_settings, R.string.menu_settings),
     )
 
-// Compose replacement for the old activity_main.xml tree — hosts the offline
-// banner, pull-to-refresh, and side-by-side display/keypad, all wrapped by a
+// Compose replacement for the old activity_main.xml tree — hosts the
+// pull-to-refresh and side-by-side display/keypad, all wrapped by a
 // ModalNavigationDrawer. Content slots are hoisted so MainActivity keeps
 // direct control over the hero display + keypad composables (which own their
-// own ViewModel wiring).
+// own ViewModel wiring). Offline / historical status is rendered inside the
+// hero's RateFooter instead of stealing a full-width strip above the card.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     drawerState: DrawerState,
-    banner: BannerContent?,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     isRefreshDrawerEnabled: Boolean,
@@ -123,7 +111,6 @@ fun MainScreen(
         },
     ) {
         MainContent(
-            banner = banner,
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             foldingFeature = foldingFeature,
@@ -136,7 +123,6 @@ fun MainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainContent(
-    banner: BannerContent?,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     foldingFeature: FoldingFeature?,
@@ -146,20 +132,16 @@ private fun MainContent(
     val rootModifier = Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding())
     if (shouldUseHorizontal(foldingFeature)) {
         Row(modifier = rootModifier) {
-            Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                StatusBannerSlot(banner)
-                DisplayArea(
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                    isRefreshing = isRefreshing,
-                    onRefresh = onRefresh,
-                    displayContent = displayContent,
-                )
-            }
+            DisplayArea(
+                modifier = Modifier.weight(1f).fillMaxHeight(),
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                displayContent = displayContent,
+            )
             Box(modifier = Modifier.weight(1f).fillMaxHeight()) { keypadContent() }
         }
     } else {
         Column(modifier = rootModifier) {
-            StatusBannerSlot(banner)
             DisplayArea(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 isRefreshing = isRefreshing,
@@ -186,14 +168,7 @@ private fun DisplayArea(
         state = state,
         modifier = modifier,
     ) {
-        // Wrap in a vertical scroller so the hero card's natural height can
-        // exceed the weighted slot when the offline/historical banner steals
-        // space at the top — otherwise the RateFooter overflows behind the
-        // keypad. Also keeps the pull-to-refresh gesture reachable when the
-        // hero is compressed on shorter screens.
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            displayContent()
-        }
+        displayContent()
     }
 }
 
@@ -209,63 +184,6 @@ private fun shouldUseHorizontal(feature: FoldingFeature?): Boolean {
         feature.state == FoldingFeature.State.FLAT -> naturalHorizontal
         feature.orientation == FoldingFeature.Orientation.VERTICAL -> true
         else -> false
-    }
-}
-
-@Composable
-private fun StatusBannerSlot(banner: BannerContent?) {
-    // Remember the last non-null banner so the outgoing card keeps its label
-    // and colors through the fade-out even after state flips to null.
-    var lastShown by remember { mutableStateOf<BannerContent?>(null) }
-    if (banner != null) lastShown = banner
-    AnimatedVisibility(visible = banner != null) {
-        lastShown?.let { StatusBanner(banner = it) }
-    }
-}
-
-@Composable
-private fun StatusBanner(banner: BannerContent) {
-    val containerColor =
-        when (banner.kind) {
-            BannerKind.Offline -> MaterialTheme.colorScheme.errorContainer
-            BannerKind.Historical -> MaterialTheme.colorScheme.secondaryContainer
-        }
-    val contentColor =
-        when (banner.kind) {
-            BannerKind.Offline -> MaterialTheme.colorScheme.onErrorContainer
-            BannerKind.Historical -> MaterialTheme.colorScheme.onSecondaryContainer
-        }
-    val iconRes =
-        when (banner.kind) {
-            BannerKind.Offline -> R.drawable.ic_cloud_off
-            BannerKind.Historical -> R.drawable.ic_history
-        }
-    Card(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(StatusBannerMargin),
-        colors =
-            CardDefaults.cardColors(
-                containerColor = containerColor,
-                contentColor = contentColor,
-            ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-    ) {
-        Row(
-            modifier = Modifier.padding(StatusBannerPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(StatusBannerIconSpacing),
-        ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = null,
-            )
-            Text(
-                text = banner.text,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
     }
 }
 

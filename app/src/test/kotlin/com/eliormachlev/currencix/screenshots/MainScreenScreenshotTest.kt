@@ -11,8 +11,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.eliormachlev.currencix.view.main.compose.BannerContent
-import com.eliormachlev.currencix.view.main.compose.BannerKind
 import com.eliormachlev.currencix.view.main.compose.MainScreen
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,31 +19,20 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 // MainScreen is fully slot-based — no VM needed. We render placeholder
-// display/keypad content so we can focus on the banner + layout across
-// three canonical states: NORMAL (no banner), OFFLINE, HISTORICAL.
+// display/keypad content to focus on the layout shell. Offline/historical
+// state is now rendered inside the hero's RateFooter (see HeroCard tests),
+// not by MainScreen, so there is nothing extra to snapshot here.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
 class MainScreenScreenshotTest {
-    @Test fun mainScreenNormal() =
-        captureMatrix("main_screen_normal") { MainScreenPreview(banner = null) }
-
-    @Test fun mainScreenOffline() =
-        captureMatrix("main_screen_offline") {
-            MainScreenPreview(banner = BannerContent(BannerKind.Offline, "Offline — showing cached rates"))
-        }
-
-    @Test fun mainScreenHistorical() =
-        captureMatrix("main_screen_historical") {
-            MainScreenPreview(banner = BannerContent(BannerKind.Historical, "Rates for Jan 5, 2024"))
-        }
+    @Test fun mainScreenNormal() = captureMatrix("main_screen_normal") { MainScreenPreview() }
 }
 
 @Composable
-private fun MainScreenPreview(banner: BannerContent?) {
+private fun MainScreenPreview() {
     MainScreen(
         drawerState = rememberDrawerState(DrawerValue.Closed),
-        banner = banner,
         isRefreshing = false,
         onRefresh = {},
         isRefreshDrawerEnabled = true,

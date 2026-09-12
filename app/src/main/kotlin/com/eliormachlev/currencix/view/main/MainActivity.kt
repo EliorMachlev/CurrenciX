@@ -124,13 +124,12 @@ class MainActivity : BaseActivity() {
                         }
                         MainScreen(
                             drawerState = drawerState,
-                            banner = banner,
                             isRefreshing = isUpdating,
                             onRefresh = viewModel::forceUpdateExchangeRate,
                             isRefreshDrawerEnabled = !isUpdating,
                             onDrawerItem = { action -> onDrawerAction(action) { scope.launch { drawerState.close() } } },
                             foldingFeature = foldingFeature,
-                            displayContent = { MainDisplayContent() },
+                            displayContent = { MainDisplayContent(banner) },
                             keypadContent = { MainKeypadContent() },
                         )
                     }
@@ -456,7 +455,7 @@ class MainActivity : BaseActivity() {
     // Hero display composable — inlined so it composes inside the MainScreen
     // tree instead of being hosted on a standalone ComposeView.
     @androidx.compose.runtime.Composable
-    private fun MainDisplayContent() {
+    private fun MainDisplayContent(banner: BannerContent?) {
         val callbacks =
             MainDisplayCallbacks(
                 onCopy = ::copyToClipboard,
@@ -470,6 +469,7 @@ class MainActivity : BaseActivity() {
             fragmentManager = supportFragmentManager,
             callbacks = callbacks,
             dateFormatPattern = pattern,
+            banner = banner,
         )
     }
 
