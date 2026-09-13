@@ -73,21 +73,25 @@ fun BackupScreen(
                 ),
         ) {
             item(key = BackupSection.LOCAL) {
-                PreferenceSection(text = stringResource(id = R.string.backup_section_local)) {
-                    PreferenceRow(
-                        title = stringResource(id = R.string.backup_export_title),
-                        summary = stringResource(id = R.string.backup_export_summary),
-                        onClick = viewModel::openExportPasswordPrompt,
-                    )
+                SectionEnter(index = BackupSection.LOCAL.ordinal) {
+                    PreferenceSection(text = stringResource(id = R.string.backup_section_local)) {
+                        PreferenceRow(
+                            title = stringResource(id = R.string.backup_export_title),
+                            summary = stringResource(id = R.string.backup_export_summary),
+                            onClick = viewModel::openExportPasswordPrompt,
+                        )
+                    }
                 }
             }
             item(key = BackupSection.RESTORE) {
-                PreferenceSection(text = stringResource(id = R.string.backup_section_restore)) {
-                    PreferenceRow(
-                        title = stringResource(id = R.string.backup_import_title),
-                        summary = stringResource(id = R.string.backup_import_summary),
-                        onClick = onLaunchImport,
-                    )
+                SectionEnter(index = BackupSection.RESTORE.ordinal) {
+                    PreferenceSection(text = stringResource(id = R.string.backup_section_restore)) {
+                        PreferenceRow(
+                            title = stringResource(id = R.string.backup_import_title),
+                            summary = stringResource(id = R.string.backup_import_summary),
+                            onClick = onLaunchImport,
+                        )
+                    }
                 }
             }
         }

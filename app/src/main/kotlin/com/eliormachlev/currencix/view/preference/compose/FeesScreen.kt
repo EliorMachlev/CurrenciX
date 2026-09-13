@@ -99,27 +99,33 @@ fun FeesScreen(
                 ),
         ) {
             item(key = FeeSection.GLOBAL_EXCHANGE) {
-                GlobalFeeSection(
-                    kind = GlobalFeeKind.EXCHANGE,
-                    entries = globalExchange,
-                    activeId = activeExchangeId,
-                    onClick = { openPicker = GlobalFeeKind.EXCHANGE },
-                )
+                SectionEnter(index = FeeSection.GLOBAL_EXCHANGE.ordinal) {
+                    GlobalFeeSection(
+                        kind = GlobalFeeKind.EXCHANGE,
+                        entries = globalExchange,
+                        activeId = activeExchangeId,
+                        onClick = { openPicker = GlobalFeeKind.EXCHANGE },
+                    )
+                }
             }
             item(key = FeeSection.GLOBAL_BANK) {
-                GlobalFeeSection(
-                    kind = GlobalFeeKind.BANK,
-                    entries = globalBank,
-                    activeId = activeBankId,
-                    onClick = { openPicker = GlobalFeeKind.BANK },
-                )
+                SectionEnter(index = FeeSection.GLOBAL_BANK.ordinal) {
+                    GlobalFeeSection(
+                        kind = GlobalFeeKind.BANK,
+                        entries = globalBank,
+                        activeId = activeBankId,
+                        onClick = { openPicker = GlobalFeeKind.BANK },
+                    )
+                }
             }
             item(key = FeeSection.SPECIFIC_PAIR) {
-                SpecificPairSection(
-                    entries = specificPair,
-                    onEdit = { openEditor = EditorTarget(EditorKind.Pair, it) },
-                    onAdd = { openEditor = EditorTarget(EditorKind.Pair) },
-                )
+                SectionEnter(index = FeeSection.SPECIFIC_PAIR.ordinal) {
+                    SpecificPairSection(
+                        entries = specificPair,
+                        onEdit = { openEditor = EditorTarget(EditorKind.Pair, it) },
+                        onAdd = { openEditor = EditorTarget(EditorKind.Pair) },
+                    )
+                }
             }
         }
     }

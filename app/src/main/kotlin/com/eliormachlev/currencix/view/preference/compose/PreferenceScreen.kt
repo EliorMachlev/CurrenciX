@@ -103,42 +103,50 @@ fun PreferenceScreen(
                 ),
         ) {
             item(key = SettingsSection.GENERAL) {
-                GeneralSection(
-                    keyboardType = keyboardType,
-                    decimalPlaces = decimalPlaces,
-                    callbacks = callbacks,
-                    openKeyboardPicker = { openDialog = OpenDialog.Keyboard },
-                    openDecimalPlacesPicker = { openDialog = OpenDialog.DecimalPlaces },
-                )
+                SectionEnter(index = SettingsSection.GENERAL.ordinal) {
+                    GeneralSection(
+                        keyboardType = keyboardType,
+                        decimalPlaces = decimalPlaces,
+                        callbacks = callbacks,
+                        openKeyboardPicker = { openDialog = OpenDialog.Keyboard },
+                        openDecimalPlacesPicker = { openDialog = OpenDialog.DecimalPlaces },
+                    )
+                }
             }
             item(key = SettingsSection.API) {
-                ApiSection(
-                    provider = provider,
-                    apiKey = apiKey,
-                    openProviderPicker = { openDialog = OpenDialog.Provider },
-                    openApiKeyEditor = { openDialog = OpenDialog.ApiKey },
-                )
+                SectionEnter(index = SettingsSection.API.ordinal) {
+                    ApiSection(
+                        provider = provider,
+                        apiKey = apiKey,
+                        openProviderPicker = { openDialog = OpenDialog.Provider },
+                        openApiKeyEditor = { openDialog = OpenDialog.ApiKey },
+                    )
+                }
             }
             item(key = SettingsSection.APPEARANCE) {
-                AppearanceSection(
-                    theme = theme,
-                    language = language,
-                    dateFormat = dateFormat,
-                    hapticEnabled = hapticEnabled,
-                    previewEnabled = previewEnabled,
-                    onHapticChange = viewModel::setHapticFeedbackEnabled,
-                    onPreviewChange = viewModel::setPreviewConversionEnabled,
-                    openThemePicker = { openDialog = OpenDialog.Theme },
-                    openLanguagePicker = { openDialog = OpenDialog.Language },
-                    openDateFormatPicker = { openDialog = OpenDialog.DateFormat },
-                )
+                SectionEnter(index = SettingsSection.APPEARANCE.ordinal) {
+                    AppearanceSection(
+                        theme = theme,
+                        language = language,
+                        dateFormat = dateFormat,
+                        hapticEnabled = hapticEnabled,
+                        previewEnabled = previewEnabled,
+                        onHapticChange = viewModel::setHapticFeedbackEnabled,
+                        onPreviewChange = viewModel::setPreviewConversionEnabled,
+                        openThemePicker = { openDialog = OpenDialog.Theme },
+                        openLanguagePicker = { openDialog = OpenDialog.Language },
+                        openDateFormatPicker = { openDialog = OpenDialog.DateFormat },
+                    )
+                }
             }
-            item(key = SettingsSection.GRAPH) { GraphSection(callbacks = callbacks) }
+            item(key = SettingsSection.GRAPH) {
+                SectionEnter(index = SettingsSection.GRAPH.ordinal) { GraphSection(callbacks = callbacks) }
+            }
             item(key = SettingsSection.ABOUT) {
-                AboutSection(callbacks = callbacks)
+                SectionEnter(index = SettingsSection.ABOUT.ordinal) { AboutSection(callbacks = callbacks) }
             }
             item(key = SettingsSection.VERSION) {
-                VersionSection(callbacks = callbacks)
+                SectionEnter(index = SettingsSection.VERSION.ordinal) { VersionSection(callbacks = callbacks) }
             }
         }
     }

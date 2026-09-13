@@ -5,15 +5,20 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
@@ -71,6 +77,10 @@ private const val DEFAULT_DATE_PATTERN = "dd/MM/yy HH:mm"
 
 private const val WORDMARK_TITLE_SP = 26f
 
+// Matches Material's standard "medium container" motion duration — long
+// enough to read as a morph, short enough to feel responsive on the tap.
+private const val HAMBURGER_MORPH_MILLIS = 320
+
 class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var preferenceModel: PreferenceViewModel
@@ -86,6 +96,11 @@ class MainActivity : BaseActivity() {
     // once it's ready, and the ActionBar home item invokes it. Nullable so we
     // no-op if the click somehow races the first composition.
     private var toggleDrawer: (() -> Unit)? = null
+
+    // Morphing hamburger ↔ arrow indicator hosted on the ActionBar. The
+    // ActionBar customView slot only takes a Drawable, so we own it here and
+    // let composition push a 0..1 progress from the drawer state each frame.
+    private val drawerArrow: DrawerArrowDrawable by lazy { createDrawerArrow() }
 
     // State bridges Compose reads via observeAsState / mutableStateOf.
     private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
@@ -126,6 +141,14 @@ class MainActivity : BaseActivity() {
                                 }
                             }
                             onDispose { toggleDrawer = null }
+                        }
+                        val hamburgerProgress by animateFloatAsState(
+                            targetValue = if (drawerState.targetValue == DrawerValue.Open) 1f else 0f,
+                            animationSpec = tween(durationMillis = HAMBURGER_MORPH_MILLIS),
+                            label = "hamburgerMorph",
+                        )
+                        LaunchedEffect(hamburgerProgress) {
+                            drawerArrow.progress = hamburgerProgress
                         }
                         MainScreen(
                             drawerState = drawerState,
@@ -204,15 +227,31 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    // Swap the default up-arrow indicator for a hamburger — the Compose
-    // ModalNavigationDrawer has no built-in ActionBar toggle, so we drive it
-    // by hand from onOptionsItemSelected(android.R.id.home).
+    // Swap the default up-arrow indicator for a morphing hamburger — the
+    // Compose ModalNavigationDrawer has no built-in ActionBar toggle, so we
+    // drive the click by hand from onOptionsItemSelected(android.R.id.home)
+    // and the drawable's progress from the drawer state (see setContent).
     private fun installHamburger() {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_menu)
+            setHomeAsUpIndicator(drawerArrow)
         }
+    }
+
+    // Tinted to match the ActionBar icons (colorControlNormal). We resolve the
+    // attribute against the current theme rather than hardcoding — the value
+    // differs across light/dark/OLED.
+    private fun createDrawerArrow(): DrawerArrowDrawable {
+        val tv = TypedValue()
+        theme.resolveAttribute(androidx.appcompat.R.attr.colorControlNormal, tv, true)
+        val tint =
+            if (tv.resourceId != 0) {
+                ContextCompat.getColor(this, tv.resourceId)
+            } else {
+                tv.data
+            }
+        return DrawerArrowDrawable(this).apply { color = tint }
     }
 
     private fun showApiProviderPicker() {

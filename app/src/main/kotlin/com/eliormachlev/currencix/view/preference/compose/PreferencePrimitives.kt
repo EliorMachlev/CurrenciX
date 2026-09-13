@@ -1,6 +1,9 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +20,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -27,6 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import kotlinx.coroutines.delay
 
 // Grouped-card style, M3-Expressive settings look. Sections are rounded
 // surface-container blocks with a small primary-tinted header above; rows
@@ -185,3 +192,40 @@ fun PreferenceDivider(hasIcon: Boolean = true) {
 private const val DISABLED_ALPHA = 0.38f
 private const val DIVIDER_ALPHA = 0.5f
 private val DIVIDER_HEIGHT: Dp = 1.dp
+
+/**
+ * Wraps a preference section (or any grouped card) in a first-appearance
+ * fade + slide-up, staggered by [index] so a screen full of sections lands
+ * as a soft cascade rather than a jarring flash. Runs once per composition
+ * (keyed on the composable being entered), so scrolling in / out of view in
+ * a LazyColumn does not replay the animation.
+ */
+@Composable
+fun SectionEnter(
+    index: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        delay(index * SECTION_ENTER_STAGGER_MILLIS)
+        progress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = SECTION_ENTER_MILLIS, easing = FastOutSlowInEasing),
+        )
+    }
+    Box(
+        modifier =
+            modifier.graphicsLayer {
+                alpha = progress.value
+                translationY = (1f - progress.value) * SECTION_ENTER_TRANSLATION_PX
+            },
+    ) { content() }
+}
+
+// ~180ms between sections keeps the cascade legible on a six-section screen
+// without pushing the last card past the user's attention window. Total dwell
+// for the last section = index*180 + 360 = ~1260ms, still comfortable.
+private const val SECTION_ENTER_STAGGER_MILLIS: Long = 60
+private const val SECTION_ENTER_MILLIS: Int = 360
+private const val SECTION_ENTER_TRANSLATION_PX: Float = 32f

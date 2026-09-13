@@ -6,6 +6,8 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -45,6 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +59,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -269,6 +273,14 @@ private const val CURSOR_BLINK_MILLIS = 1200
 // blur rather than a laggy slide-in; long enough that a rate refresh
 // visibly "reads" as a change instead of a hard replace.
 private const val ENGRAVED_DIGITS_FADE_MILLIS = 160
+
+// First-appearance rise for the hero/subtotal digits — soft enough to
+// register as "landing" without slowing perceived responsiveness. The
+// per-change scale pulse (peak → 1.0) reads as an emphatic "updated".
+private const val HERO_ENTRANCE_MILLIS = 320
+private const val HERO_ENTRANCE_RISE_PX = 12f
+private const val HERO_EMPHASIS_MILLIS = 260
+private const val HERO_EMPHASIS_PEAK = 1.03f
 
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
@@ -690,6 +702,11 @@ private fun PayRule() {
 // digits, so `$ € ¥` stays visible while long numbers scroll horizontally
 // under a leading fade mask. When [cursorHeight] is non-null a blinking
 // primary-colored cursor renders after the number.
+//
+// Non-cursor path adds two subtle motion layers on top of the digit
+// crossfade: a first-appearance rise (alpha 0→1, translationY 12px→0) so
+// the amount lands rather than pops in, and a per-change scale emphasis
+// (1.0 → 1.03 → 1.0) that reads as a soft "value updated" pulse.
 @Composable
 private fun ScrollingAmount(
     parts: AmountParts,
@@ -742,9 +759,33 @@ private fun ScrollingAmount(
             // without an inter-glyph crossfade.
             Box(Modifier.weight(1f, fill = false)) { digitsText(parts.digits) }
         } else {
+            val entrance = remember { Animatable(0f) }
+            val emphasis = remember { Animatable(1f) }
+            var previousDigits by remember { mutableStateOf<String?>(null) }
+            LaunchedEffect(Unit) {
+                entrance.animateTo(1f, tween(HERO_ENTRANCE_MILLIS, easing = FastOutSlowInEasing))
+            }
+            LaunchedEffect(parts.digits) {
+                val prev = previousDigits
+                previousDigits = parts.digits
+                if (prev != null && prev != parts.digits) {
+                    emphasis.snapTo(HERO_EMPHASIS_PEAK)
+                    emphasis.animateTo(1f, tween(HERO_EMPHASIS_MILLIS, easing = FastOutSlowInEasing))
+                }
+            }
             Crossfade(
                 targetState = parts.digits,
-                modifier = Modifier.weight(1f, fill = false),
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .graphicsLayer {
+                            alpha = entrance.value
+                            translationY = (1f - entrance.value) * HERO_ENTRANCE_RISE_PX
+                            val s = emphasis.value
+                            scaleX = s
+                            scaleY = s
+                            transformOrigin = TransformOrigin(1f, 0.5f)
+                        },
                 animationSpec = tween(durationMillis = ENGRAVED_DIGITS_FADE_MILLIS),
                 label = "engraved-digits",
             ) { value -> digitsText(value) }
