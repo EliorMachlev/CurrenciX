@@ -528,10 +528,10 @@ class MainActivity : BaseActivity() {
     }
 
     // Swap the AppCompat ActionBar title for a ComposeView that renders the
-    // Wordmark composable ("Currenci" in Inter SemiBold + a leaning italic X
-    // in Instrument Serif). Uses the ActionBar customView slot so the action
-    // items (chart, cart, timeline, overflow) still lay out normally on the
-    // trailing edge.
+    // Wordmark composable ("Currenci×" in Space Grotesk — the final glyph is
+    // the multiplication sign, a semantic pun on conversion). Uses the
+    // ActionBar customView slot so the action items (chart, cart, timeline,
+    // overflow) still lay out normally on the trailing edge.
     private fun installComposeWordmarkTitle() {
         val bar = supportActionBar ?: return
         bar.setDisplayShowTitleEnabled(false)

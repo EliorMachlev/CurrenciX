@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.view.compose.theme
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.eliormachlev.currencix.R
 
@@ -13,10 +12,10 @@ val Inter =
         Font(R.font.inter_semibold, FontWeight.SemiBold),
     )
 
-// Instrument Serif Italic is bundled solo — the design uses it only for the
-// wordmark's leaning "X" and for currency-symbol ornaments. Loading upright
-// weights would ship ~250 KB per weight for glyphs we never render.
-val InstrumentSerif =
+// Space Grotesk carries the wordmark. Its wider proportions and geometric
+// terminals give "Currenci×" the identity Inter can't — Inter is our neutral
+// UI face precisely because it disappears, which is wrong for a logotype.
+val SpaceGrotesk =
     FontFamily(
-        Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
+        Font(R.font.space_grotesk_medium, FontWeight.Medium),
     )

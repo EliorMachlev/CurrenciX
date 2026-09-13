@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view.compose.theme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextGeometricTransform
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
@@ -26,22 +25,4 @@ val CurrenciXTypography =
         labelLarge = Base.copy(fontSize = 14.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.02.em, lineHeight = 20.sp),
         labelMedium = Base.copy(fontSize = 12.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.04.em, lineHeight = 16.sp),
         labelSmall = Base.copy(fontSize = 11.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.06.em, lineHeight = 14.sp),
-    )
-
-// Special-case styles the design uses in one place each — not part of the
-// Typography scale because Material3 would try to apply them everywhere.
-
-val WordmarkX =
-    TextStyle(
-        fontFamily = InstrumentSerif,
-        fontSize = 26.sp,
-        fontWeight = FontWeight.Normal,
-        letterSpacing = 0.em,
-        textGeometricTransform = TextGeometricTransform(skewX = -0.05f),
-    )
-
-val SerifSymbol =
-    TextStyle(
-        fontFamily = InstrumentSerif,
-        fontWeight = FontWeight.Normal,
     )
