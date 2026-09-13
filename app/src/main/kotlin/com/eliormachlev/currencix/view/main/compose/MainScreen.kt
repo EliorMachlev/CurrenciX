@@ -172,7 +172,20 @@ private fun DisplayArea(
         state = state,
         modifier = modifier,
     ) {
-        displayContent()
+        // PullToRefreshBox routes its drag detection through a
+        // NestedScrollConnection, so it only fires when the child dispatches
+        // vertical scroll. MainDisplay is otherwise a static composition —
+        // wrap it in a verticalScroll (with a modifier hoisted to fillMaxSize
+        // so short-content still consumes the top-edge gesture) so the pull
+        // is reachable regardless of hero size.
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+        ) {
+            displayContent()
+        }
     }
 }
 
