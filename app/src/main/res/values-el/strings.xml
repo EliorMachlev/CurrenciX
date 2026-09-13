@@ -26,6 +26,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Εκτός σύνδεσης • Ισοτιμίες από %1$s</string>
     <string name="offline_banner_no_data">Εκτός σύνδεσης • Δεν υπάρχουν ακόμη αποθηκευμένες ισοτιμίες</string>
+    <string name="unreachable_banner_with_date">Ο πάροχος δεν είναι διαθέσιμος • Ισοτιμίες από %1$s</string>
+    <string name="unreachable_banner_no_data">Ο πάροχος δεν είναι διαθέσιμος • Επανάληψη</string>
+    <string name="historical_banner">Ιστορικά • Ισοτιμίες από %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Πιο πρόσφατη ισοτιμία για το τελευταίο ζεύγος νομισμάτων που χρησιμοποιήσατε.</string>

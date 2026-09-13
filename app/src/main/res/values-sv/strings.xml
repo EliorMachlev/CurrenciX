@@ -31,6 +31,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Kurser från %1$s</string>
     <string name="offline_banner_no_data">Offline • Inga cachade kurser ännu</string>
+    <string name="unreachable_banner_with_date">Leverantören är otillgänglig • Kurser från %1$s</string>
+    <string name="unreachable_banner_no_data">Leverantören är otillgänglig • Försöker igen</string>
+    <string name="historical_banner">Historiskt • Kurser från %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Senaste växelkurs för ditt senast använda valutapar.</string>

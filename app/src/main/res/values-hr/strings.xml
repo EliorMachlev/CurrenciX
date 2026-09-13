@@ -29,6 +29,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Izvanmrežno • Tečajevi od %1$s</string>
     <string name="offline_banner_no_data">Izvanmrežno • Još nema spremljenih tečajeva</string>
+    <string name="unreachable_banner_with_date">Pružatelj nedostupan • Tečajevi od %1$s</string>
+    <string name="unreachable_banner_no_data">Pružatelj nedostupan • Ponovni pokušaj</string>
+    <string name="historical_banner">Povijesno • Tečajevi od %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Najnoviji tečaj za posljednje korišteni par valuta.</string>

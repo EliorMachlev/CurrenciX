@@ -30,6 +30,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсы от %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Кэшированных курсов ещё нет</string>
+    <string name="unreachable_banner_with_date">Провайдер недоступен • Курсы от %1$s</string>
+    <string name="unreachable_banner_no_data">Провайдер недоступен • Повтор</string>
+    <string name="historical_banner">Исторические • Курсы от %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Последний курс конвертации для недавно использованной пары валют.</string>

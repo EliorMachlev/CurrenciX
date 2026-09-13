@@ -30,6 +30,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Çevrimdışı • Kurlar: %1$s</string>
     <string name="offline_banner_no_data">Çevrimdışı • Henüz önbelleğe alınmış kur yok</string>
+    <string name="unreachable_banner_with_date">Sağlayıcıya ulaşılamıyor • %1$s tarihli kurlar</string>
+    <string name="unreachable_banner_no_data">Sağlayıcıya ulaşılamıyor • Yeniden deneniyor</string>
+    <string name="historical_banner">Geçmiş • %1$s tarihli kurlar</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Son kullandığınız para birimi çifti için en güncel dönüşüm kuru.</string>

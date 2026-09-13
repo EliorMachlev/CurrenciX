@@ -30,6 +30,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Tassi del %1$s</string>
     <string name="offline_banner_no_data">Offline • Nessun tasso in cache</string>
+    <string name="unreachable_banner_with_date">Fornitore irraggiungibile • Tassi del %1$s</string>
+    <string name="unreachable_banner_no_data">Fornitore irraggiungibile • Nuovo tentativo</string>
+    <string name="historical_banner">Storico • Tassi del %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Ultimo tasso di conversione per la tua ultima coppia di valute usata.</string>

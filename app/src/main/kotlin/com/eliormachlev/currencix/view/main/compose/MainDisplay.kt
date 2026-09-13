@@ -1163,7 +1163,7 @@ private fun RateFooter(
         )
         Spacer(Modifier.height(RATE_FOOTER_PADDING_TOP))
         if (banner != null) {
-            StatusPill(banner)
+            StatusPill(banner, Modifier.align(Alignment.CenterHorizontally))
             Spacer(Modifier.height(STATUS_PILL_GAP))
         }
         Row(
@@ -1186,7 +1186,10 @@ private fun RateFooter(
 // timestamp row) when the app is showing offline or historical data. Keeps
 // the status visible without stealing a full-width slot above the hero.
 @Composable
-private fun StatusPill(banner: BannerContent) {
+private fun StatusPill(
+    banner: BannerContent,
+    modifier: Modifier = Modifier,
+) {
     val containerColor =
         when (banner.kind) {
             BannerKind.Offline -> MaterialTheme.colorScheme.errorContainer
@@ -1207,7 +1210,7 @@ private fun StatusPill(banner: BannerContent) {
         }
     Row(
         modifier =
-            Modifier
+            modifier
                 .clip(RoundedCornerShape(STATUS_PILL_RADIUS))
                 .background(containerColor)
                 .padding(horizontal = STATUS_PILL_PADDING_H, vertical = STATUS_PILL_PADDING_V),

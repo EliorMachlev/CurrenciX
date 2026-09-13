@@ -23,6 +23,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Árfolyamok innen: %1$s</string>
     <string name="offline_banner_no_data">Offline • Még nincsenek gyorsítótárazott árfolyamok</string>
+    <string name="unreachable_banner_with_date">A szolgáltató nem elérhető • %1$s árfolyamai</string>
+    <string name="unreachable_banner_no_data">A szolgáltató nem elérhető • Újrapróbálkozás</string>
+    <string name="historical_banner">Múltbeli • %1$s árfolyamai</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">A legutóbb használt pénznempár legfrissebb átváltási árfolyama.</string>

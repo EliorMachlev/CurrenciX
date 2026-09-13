@@ -26,6 +26,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Senreta • Kursoj de %1$s</string>
     <string name="offline_banner_no_data">Senreta • Ankoraŭ neniuj kaŝmemorigitaj kursoj</string>
+    <string name="unreachable_banner_with_date">Provizanto neatingebla • Kursoj de %1$s</string>
+    <string name="unreachable_banner_no_data">Provizanto neatingebla • Reprovanta</string>
+    <string name="historical_banner">Historia • Kursoj de %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Plej lasta konverta kurso por via laste uzita valuta paro.</string>

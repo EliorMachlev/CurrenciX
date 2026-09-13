@@ -30,6 +30,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Kurser fra %1$s</string>
     <string name="offline_banner_no_data">Offline • Ingen cachede kurser endnu</string>
+    <string name="unreachable_banner_with_date">Udbyder utilgængelig • Kurser fra %1$s</string>
+    <string name="unreachable_banner_no_data">Udbyder utilgængelig • Prøver igen</string>
+    <string name="historical_banner">Historisk • Kurser fra %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Seneste omregningskurs for dit senest brugte valutapar.</string>

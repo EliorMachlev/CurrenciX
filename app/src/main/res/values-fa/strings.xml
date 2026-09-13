@@ -29,6 +29,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">آفلاین • نرخ‌ها از %1$s</string>
     <string name="offline_banner_no_data">آفلاین • هنوز نرخی ذخیره نشده است</string>
+    <string name="unreachable_banner_with_date">ارائه‌دهنده در دسترس نیست • نرخ‌ها از %1$s</string>
+    <string name="unreachable_banner_no_data">ارائه‌دهنده در دسترس نیست • تلاش مجدد</string>
+    <string name="historical_banner">تاریخی • نرخ‌ها از %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">آخرین نرخ تبدیل برای آخرین جفت‌ارز استفاده‌شده.</string>

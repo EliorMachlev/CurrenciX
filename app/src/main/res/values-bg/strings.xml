@@ -23,6 +23,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсове от %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Все още няма кеширани курсове</string>
+    <string name="unreachable_banner_with_date">Доставчикът е недостъпен • Курсове от %1$s</string>
+    <string name="unreachable_banner_no_data">Доставчикът е недостъпен • Повторен опит</string>
+    <string name="historical_banner">Историческо • Курсове от %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Последен обменен курс за последно използваната валутна двойка.</string>

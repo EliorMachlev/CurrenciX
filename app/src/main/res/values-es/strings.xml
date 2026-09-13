@@ -30,6 +30,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Sin conexión • Tarifas del %1$s</string>
     <string name="offline_banner_no_data">Sin conexión • Aún no hay tarifas en caché</string>
+    <string name="unreachable_banner_with_date">Proveedor no disponible • Tipos del %1$s</string>
+    <string name="unreachable_banner_no_data">Proveedor no disponible • Reintentando</string>
+    <string name="historical_banner">Histórico • Tipos del %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Última tasa de conversión para tu par de monedas más reciente.</string>

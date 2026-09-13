@@ -30,6 +30,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">离线 • 汇率来自 %1$s</string>
     <string name="offline_banner_no_data">离线 • 尚无缓存汇率</string>
+    <string name="unreachable_banner_with_date">无法连接服务商 • %1$s 的汇率</string>
+    <string name="unreachable_banner_no_data">无法连接服务商 • 重试中</string>
+    <string name="historical_banner">历史数据 • %1$s 的汇率</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">显示您上次使用的货币对的最新汇率。</string>

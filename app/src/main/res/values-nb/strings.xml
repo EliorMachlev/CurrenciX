@@ -31,6 +31,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Frakoblet • Kurser fra %1$s</string>
     <string name="offline_banner_no_data">Frakoblet • Ingen mellomlagrede kurser ennå</string>
+    <string name="unreachable_banner_with_date">Leverandøren er utilgjengelig • Kurser fra %1$s</string>
+    <string name="unreachable_banner_no_data">Leverandøren er utilgjengelig • Prøver igjen</string>
+    <string name="historical_banner">Historisk • Kurser fra %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Nyeste omregningskurs for det sist brukte valutaparet ditt.</string>

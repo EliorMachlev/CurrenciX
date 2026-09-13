@@ -29,6 +29,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">অফলাইন • %1$s থেকে রেট</string>
     <string name="offline_banner_no_data">অফলাইন • এখনও কোনো ক্যাশে করা রেট নেই</string>
+    <string name="unreachable_banner_with_date">প্রদানকারী পৌঁছানো যাচ্ছে না • %1$s থেকে রেট</string>
+    <string name="unreachable_banner_no_data">প্রদানকারী পৌঁছানো যাচ্ছে না • পুনরায় চেষ্টা</string>
+    <string name="historical_banner">ঐতিহাসিক • %1$s থেকে রেট</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়ের সাম্প্রতিক বিনিময় হার।</string>

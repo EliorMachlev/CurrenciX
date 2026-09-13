@@ -23,6 +23,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Luring • Kurs dari %1$s</string>
     <string name="offline_banner_no_data">Luring • Belum ada kurs tersimpan</string>
+    <string name="unreachable_banner_with_date">Penyedia tidak dapat dijangkau • Kurs dari %1$s</string>
+    <string name="unreachable_banner_no_data">Penyedia tidak dapat dijangkau • Mencoba lagi</string>
+    <string name="historical_banner">Historis • Kurs dari %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Kurs konversi terbaru untuk pasangan mata uang yang terakhir digunakan.</string>

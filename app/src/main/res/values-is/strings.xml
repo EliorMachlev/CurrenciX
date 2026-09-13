@@ -23,6 +23,9 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Ónettengt • Gengi frá %1$s</string>
     <string name="offline_banner_no_data">Ónettengt • Ekkert vistað gengi enn</string>
+    <string name="unreachable_banner_with_date">Veitandi ekki tiltækur • Gengi frá %1$s</string>
+    <string name="unreachable_banner_no_data">Veitandi ekki tiltækur • Reyni aftur</string>
+    <string name="historical_banner">Söguleg • Gengi frá %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Nýjasta umreikningsgengi fyrir síðast notaða gjaldmiðlaparið.</string>

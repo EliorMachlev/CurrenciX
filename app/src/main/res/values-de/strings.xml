@@ -30,6 +30,9 @@
 
     <string name="offline_banner_with_date">Offline • Kurse vom %1$s</string>
     <string name="offline_banner_no_data">Offline • Noch keine zwischengespeicherten Kurse</string>
+    <string name="unreachable_banner_with_date">Anbieter nicht erreichbar • Kurse vom %1$s</string>
+    <string name="unreachable_banner_no_data">Anbieter nicht erreichbar • Erneuter Versuch</string>
+    <string name="historical_banner">Historisch • Kurse vom %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Aktueller Umrechnungskurs für dein zuletzt verwendetes Währungspaar.</string>
