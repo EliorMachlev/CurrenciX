@@ -1019,12 +1019,23 @@ internal data class AmountParts(
 // "(ISO SYMBOL)" (or "(ISO)" when no symbol is defined). Returns an empty
 // string for a null currency so the panel renders without a label until
 // the pair resolves.
+//
+// The ISO+symbol chunk is wrapped in U+2066 LEFT-TO-RIGHT ISOLATE and
+// U+2069 POP DIRECTIONAL ISOLATE so the parens sit *outside* the isolated
+// LTR run. In an RTL paragraph (Hebrew, Arabic) the parens then take the
+// paragraph direction and mirror correctly — the reader's eye meets "("
+// first (right side) and ")" last (left side), instead of the default bidi
+// behaviour which left ")" glued to the RTL name.
+private const val LRI = "\u2066"
+private const val PDI = "\u2069"
+
 private fun Currency?.panelLabel(context: Context): String {
     val currency = this ?: return ""
     val name = currency.fullName(context)
     val iso = currency.iso4217Alpha()
     val symbol = currency.symbol()
-    return if (symbol.isNullOrEmpty()) "$name ($iso)" else "$name ($iso $symbol)"
+    val inner = if (symbol.isNullOrEmpty()) iso else "$iso $symbol"
+    return "$name ($LRI$inner$PDI)"
 }
 
 // Peel the currency symbol off a preformatted "$ 240.00" / "240.00 $"
