@@ -14,11 +14,13 @@ import android.widget.Toast
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -81,6 +83,23 @@ private const val WORDMARK_TITLE_SP = 26f
 // enough to read as a morph, short enough to feel responsive on the tap.
 private const val HAMBURGER_MORPH_MILLIS = 320
 
+// Isolated composable so per-frame progress reads only recompose this
+// (empty) node — hoisting the read into MainScreen's setContent forced
+// the whole tree to recompose per frame during the morph, showing as
+// visible chop on the drawer/main content.
+@Composable
+private fun DrawerArrowSync(
+    drawerState: DrawerState,
+    drawable: DrawerArrowDrawable,
+) {
+    val progress by animateFloatAsState(
+        targetValue = if (drawerState.targetValue == DrawerValue.Open) 1f else 0f,
+        animationSpec = tween(durationMillis = HAMBURGER_MORPH_MILLIS),
+        label = "hamburgerMorph",
+    )
+    SideEffect { drawable.progress = progress }
+}
+
 class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var preferenceModel: PreferenceViewModel
@@ -142,14 +161,7 @@ class MainActivity : BaseActivity() {
                             }
                             onDispose { toggleDrawer = null }
                         }
-                        val hamburgerProgress by animateFloatAsState(
-                            targetValue = if (drawerState.targetValue == DrawerValue.Open) 1f else 0f,
-                            animationSpec = tween(durationMillis = HAMBURGER_MORPH_MILLIS),
-                            label = "hamburgerMorph",
-                        )
-                        LaunchedEffect(hamburgerProgress) {
-                            drawerArrow.progress = hamburgerProgress
-                        }
+                        DrawerArrowSync(drawerState = drawerState, drawable = drawerArrow)
                         MainScreen(
                             drawerState = drawerState,
                             isRefreshing = isUpdating,
