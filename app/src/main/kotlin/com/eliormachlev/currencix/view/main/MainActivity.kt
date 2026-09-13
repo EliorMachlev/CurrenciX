@@ -94,6 +94,7 @@ class MainActivity : BaseActivity() {
     private var latestRatesDate: LocalDate? = null
     private var latestRatesTime: LocalTime? = null
     private var historicalDate: LocalDate? = null
+
     // True when the most recent refresh attempt failed (5xx, timeout, DNS,
     // etc.) while the device was online. Cleared once a new rates payload
     // arrives — a successful update is the definitive "provider is back".

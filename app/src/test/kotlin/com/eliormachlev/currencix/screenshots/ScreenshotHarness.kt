@@ -21,12 +21,18 @@ internal const val SCREENSHOT_DIR = "build/outputs/roborazzi"
 
 // Per-cell axes for the render matrix: BCP-47 language tag drives Locale +
 // LayoutDirection, ThemeMode drives dark palette + OLED background override.
-internal enum class Locale2(val tag: String, val dir: LayoutDirection) {
+internal enum class Locale2(
+    val tag: String,
+    val dir: LayoutDirection,
+) {
     EN("en", LayoutDirection.Ltr),
     HE("he", LayoutDirection.Rtl),
 }
 
-internal enum class ThemeMode(val dark: Boolean, val oled: Boolean) {
+internal enum class ThemeMode(
+    val dark: Boolean,
+    val oled: Boolean,
+) {
     LIGHT(dark = false, oled = false),
     DARK(dark = true, oled = false),
     OLED(dark = true, oled = true),

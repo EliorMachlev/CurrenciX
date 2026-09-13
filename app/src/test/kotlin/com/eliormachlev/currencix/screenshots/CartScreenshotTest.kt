@@ -2,10 +2,10 @@ package com.eliormachlev.currencix.screenshots
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.Modifier
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
 import com.eliormachlev.currencix.view.cart.compose.CartItemRow
-import androidx.compose.ui.Modifier
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -21,8 +21,7 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
 class CartScreenshotTest {
-    @Test fun cartEmpty() =
-        captureMatrix("cart_empty") { CartEmptyHint() }
+    @Test fun cartEmpty() = captureMatrix("cart_empty") { CartEmptyHint() }
 
     @Test fun cartItems() =
         captureMatrix("cart_items") {
