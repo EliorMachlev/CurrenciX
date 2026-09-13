@@ -1173,6 +1173,7 @@ private fun RateFooter(
             TimestampText(
                 rates = rates,
                 dateFormatPattern = dateFormatPattern,
+                showWhen = banner?.kind != BannerKind.Historical,
                 onProviderClick = onProviderClick,
             )
         }
@@ -1248,6 +1249,7 @@ private fun RateText(
 private fun TimestampText(
     rates: ExchangeRates?,
     dateFormatPattern: String,
+    showWhen: Boolean,
     onProviderClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -1257,7 +1259,13 @@ private fun TimestampText(
             formatWhen(context, date, rates.time, dateFormatPattern)
         }
     val provider = rates.provider?.getName(context)?.toString()
-    val text = if (provider.isNullOrEmpty()) whenText else "$whenText$FOOTER_SEPARATOR$provider"
+    val text =
+        when {
+            !showWhen -> provider.orEmpty()
+            provider.isNullOrEmpty() -> whenText
+            else -> "$whenText$FOOTER_SEPARATOR$provider"
+        }
+    if (text.isEmpty()) return
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
