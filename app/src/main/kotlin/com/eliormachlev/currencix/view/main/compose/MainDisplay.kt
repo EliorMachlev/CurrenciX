@@ -95,7 +95,9 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.theme.AmberContainer
 import com.eliormachlev.currencix.view.compose.theme.BillGreen
+import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -1173,7 +1175,7 @@ private fun RateFooter(
             TimestampText(
                 rates = rates,
                 dateFormatPattern = dateFormatPattern,
-                showWhen = banner?.kind != BannerKind.Historical,
+                showWhen = banner == null,
                 onProviderClick = onProviderClick,
             )
         }
@@ -1188,16 +1190,19 @@ private fun StatusPill(banner: BannerContent) {
     val containerColor =
         when (banner.kind) {
             BannerKind.Offline -> MaterialTheme.colorScheme.errorContainer
+            BannerKind.Unreachable -> AmberContainer
             BannerKind.Historical -> MaterialTheme.colorScheme.secondaryContainer
         }
     val contentColor =
         when (banner.kind) {
             BannerKind.Offline -> MaterialTheme.colorScheme.onErrorContainer
+            BannerKind.Unreachable -> OnAmberContainer
             BannerKind.Historical -> MaterialTheme.colorScheme.onSecondaryContainer
         }
     val iconRes =
         when (banner.kind) {
             BannerKind.Offline -> R.drawable.ic_cloud_off
+            BannerKind.Unreachable -> R.drawable.ic_sync_problem
             BannerKind.Historical -> R.drawable.ic_history
         }
     Row(

@@ -47,11 +47,15 @@ enum class DrawerAction {
 private val DrawerItemPadding = 12.dp
 private val DrawerContentPadding = NavigationDrawerItemDefaults.ItemPadding
 
-// Two-state status shown inside the RateFooter: OFFLINE (device has no
-// network) or HISTORICAL (user pinned a past date via the date picker).
-// Offline wins when both are true, since stale/cached is the more actionable
-// signal.
-enum class BannerKind { Offline, Historical }
+// Three-state status shown inside the RateFooter:
+//  - OFFLINE: device has no network
+//  - UNREACHABLE: online but the rate provider's endpoint failed (5xx,
+//    timeout, DNS, etc.) — user should know rates are stale even though
+//    the phone is technically online
+//  - HISTORICAL: user pinned a past date via the date picker
+// Ranking when several apply: Offline > Unreachable > Historical, since
+// each condition subsumes the "the rates aren't fresh" signal of the next.
+enum class BannerKind { Offline, Unreachable, Historical }
 
 data class BannerContent(
     val kind: BannerKind,

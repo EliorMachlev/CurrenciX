@@ -94,6 +94,10 @@ class MainActivity : BaseActivity() {
     private var latestRatesDate: LocalDate? = null
     private var latestRatesTime: LocalTime? = null
     private var historicalDate: LocalDate? = null
+    // True when the most recent refresh attempt failed (5xx, timeout, DNS,
+    // etc.) while the device was online. Cleared once a new rates payload
+    // arrives — a successful update is the definitive "provider is back".
+    private var lastRefreshFailed: Boolean = false
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -332,22 +336,33 @@ class MainActivity : BaseActivity() {
         viewModel.getExchangeRates().observe(this) { rates ->
             latestRatesDate = rates?.date
             latestRatesTime = rates?.time
+            // Fresh payload means the provider is reachable again.
+            if (rates != null) lastRefreshFailed = false
             recomputeBanner()
         }
         viewModel.getHistoricalLiveDate().observe(this) { date ->
             historicalDate = date
             recomputeBanner()
         }
-        viewModel.getError().observe(this) { showErrorSnackbar(it) }
+        viewModel.getError().observe(this) { message ->
+            showErrorSnackbar(message)
+            // Only treat as "provider unreachable" when the device itself
+            // has connectivity — otherwise the OFFLINE banner already tells
+            // the story.
+            if (!message.isNullOrEmpty() && isOnline) {
+                lastRefreshFailed = true
+                recomputeBanner()
+            }
+        }
         NetworkStatusLiveData(this).observe(this) { online ->
             isOnline = online
             recomputeBanner()
         }
     }
 
-    // Offline outranks historical: if the device has no network we shout
-    // OFFLINE even when the user had also pinned a past date, since stale
-    // rates are the more actionable signal.
+    // Ranking: Offline > Unreachable > Historical. Each condition subsumes
+    // the "rates aren't fresh" signal of the next, so the most actionable
+    // signal wins the pill.
     private fun recomputeBanner() {
         bannerState.value =
             when {
@@ -360,6 +375,19 @@ class MainActivity : BaseActivity() {
                             getString(R.string.offline_banner_no_data)
                         }
                     BannerContent(BannerKind.Offline, text)
+                }
+                lastRefreshFailed -> {
+                    val date = latestRatesDate
+                    val text =
+                        if (date != null) {
+                            getString(
+                                R.string.unreachable_banner_with_date,
+                                formatRatesTimestamp(date, latestRatesTime).orEmpty(),
+                            )
+                        } else {
+                            getString(R.string.unreachable_banner_no_data)
+                        }
+                    BannerContent(BannerKind.Unreachable, text)
                 }
                 historicalDate != null -> {
                     val text = getString(R.string.historical_banner, formatRatesTimestamp(historicalDate, null).orEmpty())

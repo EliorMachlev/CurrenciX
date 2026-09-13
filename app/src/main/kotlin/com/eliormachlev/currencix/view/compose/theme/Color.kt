@@ -10,6 +10,13 @@ val Brass = Color(0xFFB8985B)
 val Vermillion = Color(0xFFC1443A)
 val Amber = Color(0xFFE0A144)
 
+// Amber-tinted status pill used inside the RateFooter to flag that the
+// device is online but the rate provider's endpoint failed. Placed
+// between OFFLINE (red) and HISTORICAL (purple) in severity. Not part of
+// the ColorScheme so it stays one-off and consistent across light/dark.
+val AmberContainer = Color(0xFFFFE7B8)
+val OnAmberContainer = Color(0xFF3A2A08)
+
 // Revenue-stamp crimson: darker than Vermillion so the fee "stamp" on
 // the hero receipt reads as ink pressed into paper rather than a bright
 // alert. Used for the fee-row stamp border/text; deliberately not part
