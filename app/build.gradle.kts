@@ -130,6 +130,18 @@ android {
                 showStackTraces = true
                 showCauses = true
             }
+            // Jazzer's `@FuzzTest` (jazzer-junit) installs a JVM-wide
+            // ClassFileTransformer that injects `JazzerInternal` references
+            // into every class loaded after it. Robolectric's SandboxClassLoader
+            // then re-loads test/production classes in its own sandbox where
+            // `JazzerInternal` is not visible, and the injected calls blow up
+            // with `NoClassDefFoundError` inside our Roborazzi screenshot tests.
+            // Excluding FuzzTest keeps Jazzer's agent from attaching; when we
+            // want to run fuzz tests, they need their own task or a filter that
+            // includes only FuzzTest (see docs/markDown/build-and-flavors.md).
+            it.filter {
+                excludeTestsMatching("com.eliormachlev.currencix.FuzzTest")
+            }
         }
     }
 
