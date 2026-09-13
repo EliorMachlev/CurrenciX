@@ -865,6 +865,13 @@ private fun AmountToRow(
                     onLongClick = onResultLongClick,
                     fontFamily = FontFamily.Serif,
                 )
+                // Still surface the fee stamp when the user's amount is
+                // 0 (or missing) — the stamp signals that a fee is armed
+                // and will apply the moment they enter a real value.
+                if (hasFee) {
+                    Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+                    ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
+                }
             }
         }
     }
