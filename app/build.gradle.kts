@@ -205,6 +205,10 @@ dependencies {
     // logging: Timber routes to a rotating file tree written under filesDir/logs.
     // Local-only — no remote crash / analytics sink.
     implementation("com.jakewharton.timber:timber:5.0.1")
+    // leak detection: LeakCanary is debug-only and auto-installs via its own
+    // ContentProvider — no Application wiring needed. Safety net for the
+    // upcoming Phase 1–3 migrations; never shipped in release/F-Droid builds.
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
