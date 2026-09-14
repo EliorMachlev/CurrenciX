@@ -70,6 +70,12 @@ object HttpClientProvider {
         if (context != null) {
             val cacheDir = File(context.cacheDir, CACHE_DIR).apply { mkdirs() }
             builder.cache(Cache(cacheDir, CACHE_SIZE_BYTES))
+            // Chucker in-app HTTP inspector — a real interceptor in debug
+            // builds, a pass-through no-op in release. Only wired when we
+            // have a Context (background workers / unit tests hit the null
+            // path and don't need the inspector). Added last so its capture
+            // sees the fully-decorated request.
+            builder.addInterceptor(ChuckerInterceptorProvider.create(context))
         }
         return builder.build()
     }

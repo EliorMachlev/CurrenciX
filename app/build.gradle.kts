@@ -174,6 +174,14 @@ dependencies {
     val okHttpVersion = "5.5.0"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
+    // Chucker: in-app HTTP inspector for debug builds. The real library is
+    // wired only into debug via the ChuckerInterceptorProvider source-set
+    // split (src/debug vs src/release); release ships the library-no-op
+    // artifact so the class references still resolve at compile time but
+    // no UI / storage code is dragged into the shipped APK.
+    val chuckerVersion = "4.3.1"
+    debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:$chuckerVersion")
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
