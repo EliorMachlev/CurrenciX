@@ -86,7 +86,12 @@ private const val HAMBURGER_MORPH_MILLIS = 320
 // Isolated composable so per-frame progress reads only recompose this
 // (empty) node — hoisting the read into MainScreen's setContent forced
 // the whole tree to recompose per frame during the morph, showing as
-// visible chop on the drawer/main content.
+// visible chop on the drawer/main content. The `val current = progress`
+// line matters: it forces a snapshot read *during composition*, so the
+// State subscription is established and the composable actually
+// recomposes each frame while animateFloatAsState is running. Reading
+// `progress` only inside SideEffect's lambda would defer the read to
+// after composition (no subscription → no recomposition → no morph).
 @Composable
 private fun DrawerArrowSync(
     drawerState: DrawerState,
@@ -97,7 +102,8 @@ private fun DrawerArrowSync(
         animationSpec = tween(durationMillis = HAMBURGER_MORPH_MILLIS),
         label = "hamburgerMorph",
     )
-    SideEffect { drawable.progress = progress }
+    val current = progress
+    SideEffect { drawable.progress = current }
 }
 
 class MainActivity : BaseActivity() {
