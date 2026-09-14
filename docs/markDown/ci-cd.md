@@ -32,10 +32,13 @@ Runs on both PRs and pushes to `master`. Two jobs:
 ## Security Scans
 
 ### Detekt
-- Version: 1.23.7 (pinned via `DETEKT_VERSION` env var)
-- Inputs: `app/src`, `helpers/src`
+- Version: 1.23.8 (pinned in root `build.gradle.kts` via the `io.gitlab.arturbosch.detekt` Gradle plugin)
+- Config: `config/detekt/detekt.yml` (tuned to enforce the `CLAUDE.md` code-shape defaults; Compose idioms whitelisted)
+- Baseline: `config/detekt/baseline-<module>.xml` (one per subproject) — pre-existing violations are swallowed so enforcement is forward-only. Regenerate with `./gradlew detektBaseline`.
+- Inputs: `app/src`, `helpers/src` (`src/**/*.kt` per subproject)
 - JVM target: 21
-- Output: SARIF uploaded to GitHub Security tab + artifact retained 14 days
+- Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); a new finding above the baseline fails the build.
+- Output: SARIF uploaded to GitHub Security tab (per-module category) + HTML/XML artifact retained 14 days
 
 ### Qodana
 - Image: `qodana-jvm-community:2025.1`
