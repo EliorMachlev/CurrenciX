@@ -354,7 +354,6 @@ internal fun MainDisplay(
     val feeStack by viewModel.getFeeStack().observeAsState()
     val activeFees by viewModel.getActiveFees().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()
-    val resultFairNumber by viewModel.getResultAsNumber().observeAsState()
     val resultWithFeesNumber by viewModel.getResultWithFeesAsNumber().observeAsState()
 
     val baseFull = baseFormatted?.toString().orEmpty()
@@ -380,7 +379,6 @@ internal fun MainDisplay(
         feeStack = feeStack,
         activeFees = activeFees.orEmpty(),
         mathText = mathText,
-        resultFairNumber = resultFairNumber,
         resultWithFeesNumber = resultWithFeesNumber,
         dateFormatPattern = dateFormatPattern,
         banner = banner,
@@ -418,7 +416,6 @@ private fun HeroCard(
     feeStack: BigDecimal?,
     activeFees: List<Fee>,
     mathText: String?,
-    resultFairNumber: BigDecimal?,
     resultWithFeesNumber: BigDecimal?,
     dateFormatPattern: String,
     banner: BannerContent?,
@@ -461,7 +458,6 @@ private fun HeroCard(
                 trueCostParts = trueCostParts,
                 stack = feeStack,
                 fees = activeFees,
-                bigValue = resultFairNumber,
                 otherValue = resultWithFeesNumber,
                 onResultLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
                 onTrueCostLongClick = { if (trueCostCopyText.isNotEmpty()) callbacks.onCopy(trueCostCopyText) },
@@ -855,7 +851,6 @@ private fun AmountToRow(
     trueCostParts: AmountParts,
     stack: BigDecimal?,
     fees: List<Fee>,
-    bigValue: BigDecimal?,
     otherValue: BigDecimal?,
     onResultLongClick: () -> Unit,
     onTrueCostLongClick: () -> Unit,
@@ -863,7 +858,11 @@ private fun AmountToRow(
 ) {
     val context = LocalContext.current
     val hasFee = stack.hasFee()
-    val showChain = hasFee && bigValue.isMeaningful() && otherValue != null
+    // When a fee is armed we always render the full receipt chain (subtotal
+    // → chip → rule → fee-adjusted final), even if the input is 0. Showing
+    // "0 + 1% = 0" is intentional: the final slot stays present so the user
+    // sees the same visual anchor at any input.
+    val showChain = hasFee && otherValue != null
     ReceiptPanel(label = currency.panelLabel(context)) {
         Column(Modifier.fillMaxWidth()) {
             if (showChain) {
@@ -916,11 +915,6 @@ private fun AmountToRow(
 // True when the fee stack is a real markup/markdown (not `1`, i.e. not
 // a no-op). Used to decide whether the amber chip should render at all.
 private fun BigDecimal?.hasFee(): Boolean = this != null && this.compareTo(BigDecimal.ONE) != 0
-
-// True only when the big value is a real amount worth showing the red
-// "after fee" pill for. If it's zero, the pill would read as `0` — not
-// useful — so we drop it and let the chip alone convey the fee.
-private fun BigDecimal?.isMeaningful(): Boolean = this != null && this.signum() != 0
 
 // Sits between the subtotal and the hero final in the top card, taking no
 // bottom padding of its own — the surrounding column adds symmetric spacers
