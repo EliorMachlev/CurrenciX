@@ -179,6 +179,11 @@ dependencies {
     // logging: Timber routes to a rotating file tree written under filesDir/logs.
     // Local-only — no remote crash / analytics sink.
     implementation("com.jakewharton.timber:timber:5.0.1")
+    // perf: JankStats attaches per-Activity in debug builds and logs jank
+    // frames via Timber. Source-set split (src/debug vs src/release) means
+    // the release variant sees a no-op installer and this dep is stripped —
+    // zero overhead in shipped APKs. No telemetry sink.
+    debugImplementation("androidx.metrics:metrics-performance:1.0.0")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
