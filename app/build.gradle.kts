@@ -231,6 +231,10 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.16")
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.ui:ui-test-manifest")
+    // architecture: Konsist encodes MVVM layer boundaries as JUnit tests so
+    // Phase 1+ rewrites can't silently break the View / ViewModel / Repository
+    // / Model separation. Runs on the plain JVM (no Android / Robolectric).
+    testImplementation("com.lemonappdev:konsist:0.17.3")
 }
 
 // Best-effort short git SHA for the currently checked-out HEAD. Returns null
