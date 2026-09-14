@@ -263,7 +263,10 @@ class MainActivity : BaseActivity() {
             } else {
                 tv.data
             }
-        return DrawerArrowDrawable(this).apply { color = tint }
+        return DrawerArrowDrawable(this).apply {
+            color = tint
+            progress = 0f
+        }
     }
 
     private fun showApiProviderPicker() {

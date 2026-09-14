@@ -274,11 +274,10 @@ private const val CURSOR_BLINK_MILLIS = 1200
 // visibly "reads" as a change instead of a hard replace.
 private const val ENGRAVED_DIGITS_FADE_MILLIS = 160
 
-// First-appearance rise for the hero/subtotal digits — soft enough to
-// register as "landing" without slowing perceived responsiveness. The
-// per-change scale pulse (peak → 1.0) reads as an emphatic "updated".
-private const val HERO_ENTRANCE_MILLIS = 320
-private const val HERO_ENTRANCE_RISE_PX = 12f
+// Per-change scale pulse (peak → 1.0) reads as an emphatic "updated"
+// on top of the digit crossfade. No first-appearance ramp — an initial
+// alpha or translation would swallow the digits every time the hero
+// swaps branches (fee ↔ no-fee).
 private const val HERO_EMPHASIS_MILLIS = 260
 private const val HERO_EMPHASIS_PEAK = 1.03f
 
@@ -703,10 +702,12 @@ private fun PayRule() {
 // under a leading fade mask. When [cursorHeight] is non-null a blinking
 // primary-colored cursor renders after the number.
 //
-// Non-cursor path adds two subtle motion layers on top of the digit
-// crossfade: a first-appearance rise (alpha 0→1, translationY 12px→0) so
-// the amount lands rather than pops in, and a per-change scale emphasis
-// (1.0 → 1.03 → 1.0) that reads as a soft "value updated" pulse.
+// Non-cursor path adds a per-change scale emphasis (1.0 → 1.03 → 1.0) on
+// top of the digit crossfade — reads as a soft "value updated" pulse
+// without ever hiding the digits. No first-appearance animation: an
+// initial-alpha ramp would swallow the very first value the panel shows
+// (branch swaps between fee / no-fee reset the ScrollingAmount identity,
+// so an entrance animation reruns every time the fee stack flips).
 @Composable
 private fun ScrollingAmount(
     parts: AmountParts,
@@ -759,12 +760,8 @@ private fun ScrollingAmount(
             // without an inter-glyph crossfade.
             Box(Modifier.weight(1f, fill = false)) { digitsText(parts.digits) }
         } else {
-            val entrance = remember { Animatable(0f) }
             val emphasis = remember { Animatable(1f) }
             var previousDigits by remember { mutableStateOf<String?>(null) }
-            LaunchedEffect(Unit) {
-                entrance.animateTo(1f, tween(HERO_ENTRANCE_MILLIS, easing = FastOutSlowInEasing))
-            }
             LaunchedEffect(parts.digits) {
                 val prev = previousDigits
                 previousDigits = parts.digits
@@ -779,8 +776,6 @@ private fun ScrollingAmount(
                     Modifier
                         .weight(1f, fill = false)
                         .graphicsLayer {
-                            alpha = entrance.value
-                            translationY = (1f - entrance.value) * HERO_ENTRANCE_RISE_PX
                             val s = emphasis.value
                             scaleX = s
                             scaleY = s
