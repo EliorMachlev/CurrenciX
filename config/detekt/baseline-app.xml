@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:DragReorder.kt$src != null &amp;&amp; dst != null &amp;&amp; src != dst &amp;&amp; src in 0 until count &amp;&amp; dst in 0 until count</ID>
+    <ID>ComplexCondition:InforEuroTimelineAdapter.kt$InforEuroTimelineAdapter$currencyIso == null || value == null || dateStart == null || dateEnd == null</ID>
+    <ID>ComplexCondition:TimelineChart.kt$highlightExtremes &amp;&amp; hMin != null &amp;&amp; hMax != null &amp;&amp; hMin != hMax</ID>
+    <ID>CyclomaticComplexMethod:BankOfIsraelSdmxParser.kt$BankOfIsraelSdmxParser$fun parse(inputStream: InputStream): List&lt;BankOfIsraelObservation&gt;</ID>
+    <ID>CyclomaticComplexMethod:TimelineChart.kt$@Composable @Suppress("LongParameterList", "LongMethod") fun TimelineChart( entriesLive: LiveData&lt;List&lt;Pair&lt;LocalDate, Float&gt;&gt;?&gt;, showGridLive: LiveData&lt;Boolean&gt;, showXAxisLive: LiveData&lt;Boolean&gt;, showYAxisLive: LiveData&lt;Boolean&gt;, highlightExtremesLive: LiveData&lt;Boolean&gt;, highlightPeriodChangeLive: LiveData&lt;Boolean&gt;, dateFormatLive: LiveData&lt;String&gt;, // Scrub-aware highlight values from the viewmodel. Passing these in (rather // than deriving from `entries`) keeps the red/blue highlight lines aligned // with the MIN/MAX readouts when the user scrubs, since the readouts also // apply the scrub filter. highlightMinLive: LiveData&lt;Double?&gt;, highlightMaxLive: LiveData&lt;Double?&gt;, lineColor: Color, baselineColor: Color, axisColor: Color, scrubLineColor: Color, onScrub: (LocalDate?) -&gt; Unit, )</ID>
+    <ID>ExplicitItLambdaParameter:CartItemsList.kt${ _, it -&gt; it.id }</ID>
+    <ID>LargeClass:FeeManagerFragment.kt$FeeManagerFragment : PreferenceFragmentCompat</ID>
+    <ID>LargeClass:MainActivity.kt$MainActivity : BaseActivity</ID>
+    <ID>LongMethod:CartActivity.kt$CartActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:TimelineActivity.kt$TimelineActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>LongParameterList:BankRossii.kt$BankRossii$( context: Context?, code: String, startDate: LocalDate, endDate: LocalDate, id: String, ids: Map&lt;String, String&gt;, rubTimeline: Timeline, )</ID>
+    <ID>LongParameterList:CartFooterBinding.kt$CartFooterBinding$( container: View, labelView: TextView, valueView: TextView, @StringRes prefixRes: Int, stack: BigDecimal, base: BigDecimal?, currency: Currency?, mode: FeeRowMode, )</ID>
+    <ID>LongParameterList:FeeManagerFragment.kt$FeeManagerFragment$( entries: List&lt;T&gt;, effectiveId: String?, title: String, onPicked: (String) -&gt; Unit, onAdd: () -&gt; Unit, onEdit: (T) -&gt; Unit, )</ID>
+    <ID>LongParameterList:FeeManagerFragment.kt$FeeManagerFragment$( pref: Preference, entries: List&lt;T&gt;, activeId: String?, sectionTitleRes: Int, onPicked: (String) -&gt; Unit, onAdd: () -&gt; Unit, onEdit: (T) -&gt; Unit, )</ID>
+    <ID>LongParameterList:FeeManagerFragment.kt$FeeManagerFragment$( pref: Preference, entries: List&lt;T&gt;, sectionTitleRes: Int, getActiveId: () -&gt; String?, setActiveId: (String) -&gt; Unit, create: (FeeDraft) -&gt; T, update: (existing: T, FeeDraft) -&gt; T, )</ID>
+    <ID>LongParameterList:QuickConversionsRowBuilder.kt$( ctx: Context, from: Currency, to: Currency, rates: ExchangeRates, sideStacks: SideStacks, costWithFeePrefix: String, )</ID>
+    <ID>LongParameterList:TimelineSecondary.kt$( context: android.content.Context, label: String, rate: Rate?, date: LocalDate?, decimals: Int?, formatter: DateTimeFormatter, )</ID>
+    <ID>LoopWithTooManyJumpStatements:BankOfIsrael.kt$BankOfIsrael$for</ID>
+    <ID>LoopWithTooManyJumpStatements:BankOfIsraelSdmxParser.kt$BankOfIsraelSdmxParser$for</ID>
+    <ID>MagicNumber:CalculatorExpression.kt$3</ID>
+    <ID>MagicNumber:CartSaveLoadCoordinator.kt$CartSaveLoadCoordinator$8</ID>
+    <ID>MagicNumber:Database.kt$Database$6</ID>
+    <ID>MagicNumber:SavedCartsList.kt$8</ID>
+    <ID>MatchingDeclarationName:CartChoiceDialog.kt$CartChoice</ID>
+    <ID>MatchingDeclarationName:HttpFetch.kt$ApiHttpError : IOException</ID>
+    <ID>NestedBlockDepth:BackupManager.kt$BackupManager$private fun serializeEntry(value: Any?): JSONObject?</ID>
+    <ID>ReturnCount:BackupManager.kt$BackupManager$fun import( uri: Uri, password: CharArray? = null, ): BackupResult</ID>
+    <ID>ReturnCount:BankRossii.kt$BankRossii$override suspend fun getTimeline( context: Context?, base: Currency, symbol: Currency, startDate: LocalDate, endDate: LocalDate, ): Result&lt;Timeline&gt;</ID>
+    <ID>ReturnCount:CartExporter.kt$CartExporter$fun import(uri: Uri): CartFileResult</ID>
+    <ID>ReturnCount:CartKeypadController.kt$CartKeypadController$private fun handleKeypadDrag(ev: MotionEvent): Boolean</ID>
+    <ID>SwallowedException:BackupManager.kt$BackupManager$e: IOException</ID>
+    <ID>SwallowedException:BackupManager.kt$BackupManager$e: JSONException</ID>
+    <ID>SwallowedException:BackupManager.kt$BackupManager$e: WrongPasswordException</ID>
+    <ID>SwallowedException:BackupManager.kt$BackupManager$e: javax.crypto.AEADBadTagException</ID>
+    <ID>SwallowedException:CartJson.kt$e: JSONException</ID>
+    <ID>ThrowsCount:BackupManager.kt$BackupManager$private fun decryptNamespaces( encBlock: JSONObject, password: CharArray, ): JSONObject</ID>
+    <ID>TooManyFunctions:Database.kt$Database</ID>
+    <ID>TooManyFunctions:MainViewModel.kt$MainViewModel : AndroidViewModel</ID>
+    <ID>UnusedParameter:ExchangeRatesRepository.kt$ExchangeRatesRepository$symbol: Currency</ID>
+    <ID>UnusedPrivateProperty:TimelineSecondary.kt$val periods = TimelineViewModel.Period.entries</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -1,0 +1,171 @@
+# Detekt configuration for CurrenciX.
+#
+# Tuned to mechanically enforce the code-shape defaults in CLAUDE.md
+# (extract functions, dedupe, hoist constants, small helpers) while staying
+# out of the way of Jetpack Compose idioms and existing MVVM/Adapter code.
+#
+# See https://detekt.dev/docs/rules/ for the full rule catalogue. Only rules
+# we tune are overridden here; anything unlisted keeps its upstream default.
+
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+
+config:
+  validation: true
+  warningsAsErrors: false
+  # Rules configured but not part of the shipped upstream config; keeps
+  # detekt from failing config validation on our custom knobs.
+  checkExhaustiveness: false
+
+processors:
+  active: true
+
+console-reports:
+  active: true
+
+output-reports:
+  active: true
+
+comments:
+  active: true
+  # Compose previews and small helpers legitimately lack KDoc.
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false
+  UndocumentedPublicProperty:
+    active: false
+
+complexity:
+  active: true
+  # Mechanically enforces the "extract functions" default. 60 lines is
+  # generous enough for typical Compose screens/adapter binders while still
+  # catching genuine monoliths.
+  LongMethod:
+    active: true
+    threshold: 60
+  # "Hoist to variables/constants" — long signatures usually mean a params
+  # object or hoisted state is warranted.
+  LongParameterList:
+    active: true
+    functionThreshold: 6
+    constructorThreshold: 7
+    # @Composable functions routinely take many hoisted-state params; and
+    # data classes / value holders naturally list every field.
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    ignoreAnnotated:
+      - 'Composable'
+      - 'Preview'
+  ComplexCondition:
+    active: true
+    threshold: 4
+  NestedBlockDepth:
+    active: true
+    threshold: 4
+  # "Extract functions" for long methods; complements LongMethod on cyclomatic
+  # rather than line count.
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 15
+    ignoreSingleWhenExpression: true
+    ignoreSimpleWhenEntries: true
+  TooManyFunctions:
+    active: true
+    # Activities, ViewModels, adapters and the SharedPreferences-backed
+    # Database legitimately expose many small public functions that map 1:1
+    # to UI actions or persisted settings. Splitting them would fragment
+    # cohesive units.
+    thresholdInFiles: 40
+    thresholdInClasses: 40
+    thresholdInInterfaces: 20
+    thresholdInObjects: 30
+    thresholdInEnums: 20
+    ignorePrivate: true
+    ignoreOverridden: true
+    ignoreAnnotatedFunctions:
+      - 'Composable'
+      - 'Preview'
+
+exceptions:
+  active: true
+  # We use `catch (_: Exception)` in a couple of best-effort spots (e.g. git
+  # short-sha lookup) where the exception really is meant to be swallowed
+  # into a nullable fallback. Keep the rule on but allow the underscore idiom.
+  SwallowedException:
+    active: true
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+  TooGenericExceptionCaught:
+    active: true
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+
+naming:
+  active: true
+  # @Composable functions returning Unit are PascalCase by convention.
+  FunctionNaming:
+    active: true
+    ignoreAnnotated:
+      - 'Composable'
+  # Compose `val LocalFoo = compositionLocalOf { ... }` and similar top-level
+  # PascalCase properties are idiomatic.
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Z][_A-Z0-9]*'
+    propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
+    privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
+
+performance:
+  active: true
+
+potential-bugs:
+  active: true
+
+style:
+  active: true
+  # "Hoist repeated literals" — the whole point of enabling this on a real
+  # Android/Compose codebase is that dp/sp/percent/HTTP-status/time literals
+  # are ubiquitous and *not* the magic numbers we care about.
+  MagicNumber:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt']
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+      - '10'
+      - '100'
+      - '1000'
+    ignoreHashCodeFunction: true
+    ignorePropertyDeclaration: true
+    ignoreLocalVariableDeclaration: false
+    ignoreConstantDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: true
+    ignoreNamedArgument: true
+    ignoreEnums: true
+    ignoreRanges: false
+    ignoreExtensionFunctions: true
+  ReturnCount:
+    active: true
+    max: 3
+    excludedFunctions:
+      - 'equals'
+    excludeLabeled: false
+    excludeReturnFromLambda: true
+    excludeGuardClauses: true
+  # Compose files often have several top-level composables; large screens
+  # legitimately live in one file for co-location.
+  MaxLineLength:
+    active: true
+    maxLineLength: 140
+    excludePackageStatements: true
+    excludeImportStatements: true
+    excludeCommentStatements: false
+  # We opt into wildcard imports elsewhere; Spotless/ktlint owns formatting.
+  WildcardImport:
+    active: false
+  # Data-class copy is idiomatic; don't nudge people to newInstance().
+  DataClassContainsFunctions:
+    active: false
