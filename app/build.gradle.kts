@@ -217,6 +217,11 @@ dependencies {
     // ContentProvider — no Application wiring needed. Safety net for the
     // upcoming Phase 1–3 migrations; never shipped in release/F-Droid builds.
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+    // perf: JankStats attaches per-Activity in debug builds and logs jank
+    // frames via Timber. Source-set split (src/debug vs src/release) means
+    // the release variant sees a no-op installer and this dep is stripped —
+    // zero overhead in shipped APKs. No telemetry sink.
+    debugImplementation("androidx.metrics:metrics-performance:1.0.0")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
