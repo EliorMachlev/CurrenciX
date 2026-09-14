@@ -179,6 +179,13 @@ dependencies {
     // logging: Timber routes to a rotating file tree written under filesDir/logs.
     // Local-only — no remote crash / analytics sink.
     implementation("com.jakewharton.timber:timber:5.0.1")
+    // showkase: browsable @Preview gallery for debug builds. Runtime and the
+    // KSP processor are debug-scoped so nothing ships in release. The
+    // @ShowkaseRoot module + browser Activity live in src/debug/, which is
+    // where the KSP processor picks them up.
+    val showkaseVersion = "1.0.5"
+    debugImplementation("com.airbnb.android:showkase:$showkaseVersion")
+    kspDebug("com.airbnb.android:showkase-processor:$showkaseVersion")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
