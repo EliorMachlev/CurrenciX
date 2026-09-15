@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -25,15 +26,17 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.repository.persistence.PersistenceKey
+import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
+import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.KEY_RATES_BASE
 import com.eliormachlev.currencix.util.KEY_RATES_DATE
-import com.eliormachlev.currencix.util.PREFS_LAST_STATE
-import com.eliormachlev.currencix.util.PREFS_RATES
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.view.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.MathContext
@@ -50,10 +53,12 @@ private val FOOTER_FONT_SIZE = 11.sp
 
 /**
  * Home-screen widget rendering the last-used base → destination pair and the
- * cached conversion rate. Backed by the same SharedPreferences the app writes
- * to (rates + last_state), so there's no separate widget data source. Refresh
- * happens on the AppWidget update tick (see currency_widget_info.xml) and via
- * [CurrencyWidget.refreshWidgets], called after every successful rate insert.
+ * cached conversion rate. Backed by the same DataStore namespaces the app
+ * writes to (rates + last_state) via PersistenceKey, so there's no separate
+ * widget data source. Refresh happens on the AppWidget update tick (see
+ * currency_widget_info.xml) and via [WidgetRefreshBus], which the repository
+ * layer signals after every successful rate insert without importing this
+ * class (keeps the Konsist layer boundary intact).
  *
  * Migrated from RemoteViews to Glance: the receiver class name is unchanged so
  * the AndroidManifest entry still points here; the composable content lives in
@@ -63,14 +68,43 @@ private val FOOTER_FONT_SIZE = 11.sp
 class CurrencyWidget : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = CurrencyGlanceWidget
 
+    override fun onEnabled(context: Context?) {
+        super.onEnabled(context)
+        context?.let(::ensureRefreshBusBound)
+    }
+
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: android.appwidget.AppWidgetManager,
+        appWidgetIds: IntArray,
+    ) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        ensureRefreshBusBound(context)
+    }
+
     companion object {
-        // Widget refreshes are fire-and-forget from the repository — no caller
-        // awaits the result — so a single supervised scope owns the coroutine
-        // rather than pushing the suspend contract up into Database.
+        // Widget refreshes are fire-and-forget — no caller awaits the result —
+        // so a single supervised scope owns the coroutine rather than pushing
+        // a suspend contract into the repository layer. WidgetRefreshBus lets
+        // the repository signal "data changed" without importing this class,
+        // preserving the Konsist layer boundary (see WidgetRefreshBus).
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-        fun refreshWidgets(context: Context) {
-            scope.launch { CurrencyGlanceWidget.updateAll(context) }
+        @Volatile
+        private var busBound: Boolean = false
+
+        fun ensureRefreshBusBound(context: Context) {
+            if (busBound) return
+            synchronized(this) {
+                if (busBound) return
+                busBound = true
+                val appContext = context.applicationContext
+                scope.launch {
+                    WidgetRefreshBus.events.collectLatest {
+                        CurrencyGlanceWidget.updateAll(appContext)
+                    }
+                }
+            }
         }
     }
 }
@@ -78,7 +112,7 @@ class CurrencyWidget : GlanceAppWidgetReceiver() {
 /**
  * Glance composable body for [CurrencyWidget]. Reads the snapshot on the
  * suspend side of [provideGlance] so the composable receives plain strings and
- * doesn't touch SharedPreferences during recomposition.
+ * doesn't touch DataStore during recomposition.
  */
 private object CurrencyGlanceWidget : GlanceAppWidget() {
     override suspend fun provideGlance(
@@ -135,16 +169,16 @@ private fun WidgetBody(
 }
 
 private fun readSnapshot(context: Context): WidgetSnapshot {
-    val ratesPrefs = context.getSharedPreferences(PREFS_RATES, Context.MODE_PRIVATE)
-    val lastState = context.getSharedPreferences(PREFS_LAST_STATE, Context.MODE_PRIVATE)
-    val fromCode = lastState.getString(KEY_LAST_FROM, DEFAULT_FROM) ?: DEFAULT_FROM
-    val toCode = lastState.getString(KEY_LAST_TO, DEFAULT_TO) ?: DEFAULT_TO
+    val ratesPrefs = PersistenceKey.RATES.prefStore(context).snapshot()
+    val lastState = PersistenceKey.LAST_STATE.prefStore(context).snapshot()
+    val fromCode = lastState[stringPreferencesKey(KEY_LAST_FROM)] ?: DEFAULT_FROM
+    val toCode = lastState[stringPreferencesKey(KEY_LAST_TO)] ?: DEFAULT_TO
     val from = Currency.fromString(fromCode)
     val to = Currency.fromString(toCode)
-    val date = ratesPrefs.getString(KEY_RATES_DATE, null)
-    val baseCode = ratesPrefs.getString(KEY_RATES_BASE, null)
-    val fromRate = ratesPrefs.getString(fromCode, null)?.toBigDecimalOrNull()
-    val toRate = ratesPrefs.getString(toCode, null)?.toBigDecimalOrNull()
+    val date = ratesPrefs[stringPreferencesKey(KEY_RATES_DATE)]
+    val baseCode = ratesPrefs[stringPreferencesKey(KEY_RATES_BASE)]
+    val fromRate = ratesPrefs[stringPreferencesKey(fromCode)]?.toBigDecimalOrNull()
+    val toRate = ratesPrefs[stringPreferencesKey(toCode)]?.toBigDecimalOrNull()
     val converted =
         if (fromRate != null && toRate != null && fromRate.signum() != 0) {
             BigDecimal.ONE

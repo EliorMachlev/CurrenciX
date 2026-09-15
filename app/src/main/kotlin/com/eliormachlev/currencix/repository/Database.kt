@@ -1,10 +1,12 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.Currency
@@ -15,29 +17,23 @@ import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Timeline
+import com.eliormachlev.currencix.repository.persistence.PersistenceKey
+import com.eliormachlev.currencix.repository.persistence.PrefStore
+import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
+import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.KEY_RATES_BASE
 import com.eliormachlev.currencix.util.KEY_RATES_DATE
 import com.eliormachlev.currencix.util.KEY_RATES_PROVIDER
 import com.eliormachlev.currencix.util.KEY_RATES_TIME
 import com.eliormachlev.currencix.util.NO_PROVIDER_ID
-import com.eliormachlev.currencix.util.PREFS_APP
-import com.eliormachlev.currencix.util.PREFS_LAST_STATE
-import com.eliormachlev.currencix.util.PREFS_RATES
-import com.eliormachlev.currencix.util.PREFS_STARRED_CURRENCIES
-import com.eliormachlev.currencix.util.PREFS_TIMELINES
-import com.eliormachlev.currencix.util.SharedPreferenceBooleanLiveData
-import com.eliormachlev.currencix.util.SharedPreferenceExchangeRatesLiveData
-import com.eliormachlev.currencix.util.SharedPreferenceIntLiveData
-import com.eliormachlev.currencix.util.SharedPreferenceLongLiveData
-import com.eliormachlev.currencix.util.SharedPreferenceStringLiveData
 import com.eliormachlev.currencix.util.toLocalDate
 import com.eliormachlev.currencix.util.toMillis
-import com.eliormachlev.currencix.view.widget.CurrencyWidget
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
 import java.time.LocalDate
+import java.time.LocalTime
 import java.util.UUID
 
 // Sentinel for "no historical date stored" in the millis-since-epoch pref.
@@ -45,39 +41,103 @@ import java.util.UUID
 // stores as 0L; anything after is positive).
 private const val NO_HISTORICAL_DATE = -1L
 
+// Metadata keys inside the RATES namespace start with "_" to distinguish them
+// from currency-code entries (e.g. "USD", "EUR"). Matches the legacy
+// SharedPreferences layout so BackupManager exports keep round-tripping.
+private const val METADATA_KEY_PREFIX = "_"
+
+// LAST_STATE keys.
+private const val KEY_LAST_STATE_FROM = "_last_from"
+private const val KEY_LAST_STATE_TO = "_last_to"
+private const val KEY_IS_UPDATING = "_isUpdating"
+private const val KEY_HISTORICAL_DATE = "_historical_date"
+
+// STARRED_CURRENCIES keys.
+private const val KEY_STARS_ORDER = "_starsOrder"
+private const val KEY_STARRED_ENABLED = "_starredActive"
+
+// APP (prefs) keys.
+private const val KEY_API = "_api"
+private const val KEY_OPEN_EXCHANGERATES_API_KEY = "_api_openExchangeratesApiKey"
+private const val KEY_THEME = "_theme"
+private const val KEY_FEES_JSON = "_fees_json"
+private const val KEY_ACTIVE_EXCHANGE_ID = "_active_exchange_id"
+private const val KEY_ACTIVE_BANK_ID = "_active_bank_id"
+private const val KEY_PREVIEW_CONVERSION_ENABLED = "_previewConversionEnabled"
+private const val KEY_KEYBOARD_TYPE = "_keyboardType"
+private const val KEY_HAPTIC_FEEDBACK = "_hapticFeedback"
+private const val KEY_DECIMAL_PLACES = "_decimalPlaces"
+private const val KEY_CHART_GRID = "_chartGrid"
+private const val KEY_CHART_X_AXIS_LABEL = "_chartXAxisLabel"
+private const val KEY_CHART_Y_AXIS_LABEL = "_chartYAxisLabel"
+private const val KEY_CHART_HIGHLIGHT_EXTREMES = "_chartHighlightExtremes"
+private const val KEY_CHART_HIGHLIGHT_PERIOD_CHANGE = "_chartHighlightPeriodChange"
+private const val KEY_DATE_FORMAT = "_dateFormat"
+private const val DEFAULT_DATE_FORMAT = "dd/MM/yy HH:mm"
+private const val KEY_CART_CURRENT_JSON = "_cart_current_json"
+private const val KEY_CARTS_SAVED_JSON = "_carts_saved_json"
+
+private const val DEFAULT_FROM_CURRENCY = "USD"
+private const val DEFAULT_TO_CURRENCY = "EUR"
+
 class Database(
     private val context: Context,
 ) {
+    private val ratesStore: PrefStore = PersistenceKey.RATES.prefStore(context)
+    private val timelinesStore: PrefStore = PersistenceKey.TIMELINES.prefStore(context)
+    private val lastStateStore: PrefStore = PersistenceKey.LAST_STATE.prefStore(context)
+    private val starredStore: PrefStore = PersistenceKey.STARRED_CURRENCIES.prefStore(context)
+    private val appStore: PrefStore = PersistenceKey.APP.prefStore(context)
+
     /*
      * current exchange rates from api =============================================================
      */
-    private val prefsRates: SharedPreferences = context.getSharedPreferences(PREFS_RATES, MODE_PRIVATE)
 
     fun insertExchangeRates(items: ExchangeRates) {
         // don't insert null-values. this would clear the cache
-        if (items.date != null) {
-            prefsRates.apply {
-                val editor = edit()
-                // clear old values
-                editor.clear()
-                // apply new ones
-                editor.putString(KEY_RATES_DATE, items.date.toString())
-                editor.putString(KEY_RATES_TIME, items.time?.toString())
-                editor.putString(KEY_RATES_BASE, items.base?.iso4217Alpha())
-                editor.putInt(KEY_RATES_PROVIDER, items.provider?.id ?: NO_PROVIDER_ID)
-                items.rates?.forEach { rate ->
-                    editor.putString(rate.currency.iso4217Alpha(), rate.value.toPlainString())
-                }
-                // persist
-                editor.apply()
+        val date = items.date ?: return
+        ratesStore.edit {
+            clear()
+            this[stringPreferencesKey(KEY_RATES_DATE)] = date.toString()
+            items.time?.let { this[stringPreferencesKey(KEY_RATES_TIME)] = it.toString() }
+            items.base?.let { this[stringPreferencesKey(KEY_RATES_BASE)] = it.iso4217Alpha() }
+            this[intPreferencesKey(KEY_RATES_PROVIDER)] = items.provider?.id ?: NO_PROVIDER_ID
+            items.rates?.forEach { rate ->
+                this[stringPreferencesKey(rate.currency.iso4217Alpha())] = rate.value.toPlainString()
             }
-            CurrencyWidget.refreshWidgets(context)
         }
+        WidgetRefreshBus.signal()
     }
 
-    fun getExchangeRates(): LiveData<ExchangeRates?> = SharedPreferenceExchangeRatesLiveData(prefsRates)
+    fun getExchangeRates(): LiveData<ExchangeRates?> = ratesStore.mappedLiveData(::parseExchangeRates)
 
-    fun getDate(): LocalDate? = prefsRates.getString(KEY_RATES_DATE, null)?.let { LocalDate.parse(it) }
+    fun getDate(): LocalDate? =
+        ratesStore.snapshot()[stringPreferencesKey(KEY_RATES_DATE)]?.let { LocalDate.parse(it) }
+
+    private fun parseExchangeRates(prefs: Preferences): ExchangeRates? {
+        val baseString = prefs[stringPreferencesKey(KEY_RATES_BASE)] ?: return null
+        val dateString = prefs[stringPreferencesKey(KEY_RATES_DATE)] ?: return null
+        val rates =
+            prefs
+                .asMap()
+                .entries
+                .filter { (k, _) -> !k.name.startsWith(METADATA_KEY_PREFIX) }
+                .sortedBy { (k, _) -> k.name }
+                .mapNotNull { (k, v) ->
+                    val str = v as? String ?: return@mapNotNull null
+                    Currency.fromString(k.name)?.let { Rate(it, str.toBigDecimal()) }
+                }
+        if (rates.isEmpty()) return null
+        return ExchangeRates(
+            success = true,
+            error = null,
+            base = Currency.fromString(baseString),
+            date = LocalDate.parse(dateString),
+            time = prefs[stringPreferencesKey(KEY_RATES_TIME)]?.let { LocalTime.parse(it) },
+            rates = rates,
+            provider = ApiProvider.fromId(prefs[intPreferencesKey(KEY_RATES_PROVIDER)] ?: NO_PROVIDER_ID),
+        )
+    }
 
     /*
      * cached timelines ============================================================================
@@ -88,8 +148,6 @@ class Database(
      * flat {date -> plainString value} map (provider/base/symbol are already
      * in the key).
      */
-    private val prefsTimelines: SharedPreferences =
-        context.getSharedPreferences(PREFS_TIMELINES, MODE_PRIVATE)
 
     private fun timelineKey(
         providerId: Int,
@@ -103,7 +161,7 @@ class Database(
         symbol: Currency,
     ): Timeline? {
         val json =
-            prefsTimelines.getString(timelineKey(provider.id, base, symbol), null)
+            timelinesStore.snapshot()[stringPreferencesKey(timelineKey(provider.id, base, symbol))]
                 ?: return null
         return try {
             val obj = JSONObject(json)
@@ -140,268 +198,202 @@ class Database(
         rates.forEach { (date, rate) ->
             obj.put(date.toString(), rate.value.toPlainString())
         }
-        prefsTimelines
-            .edit()
-            .putString(timelineKey(provider.id, base, symbol), obj.toString())
-            .apply()
+        timelinesStore.edit {
+            this[stringPreferencesKey(timelineKey(provider.id, base, symbol))] = obj.toString()
+        }
     }
 
     /*
      * last state ==================================================================================
      */
-    private val prefsLastState: SharedPreferences = context.getSharedPreferences(PREFS_LAST_STATE, MODE_PRIVATE)
-
-    private val keyLastStateFrom = "_last_from"
-    private val keyLastStateTo = "_last_to"
-    private val keyIsUpdating = "_isUpdating"
-    private val keyHistoricalDate = "_historical_date"
 
     fun saveLastUsedRates(
         from: Currency?,
         to: Currency?,
     ) {
-        prefsLastState.apply {
-            from?.let { edit().putString(keyLastStateFrom, it.iso4217Alpha()).apply() }
-            to?.let { edit().putString(keyLastStateTo, it.iso4217Alpha()).apply() }
+        lastStateStore.edit {
+            from?.let { this[stringPreferencesKey(KEY_LAST_STATE_FROM)] = it.iso4217Alpha() }
+            to?.let { this[stringPreferencesKey(KEY_LAST_STATE_TO)] = it.iso4217Alpha() }
         }
-        CurrencyWidget.refreshWidgets(context)
+        WidgetRefreshBus.signal()
     }
 
     fun getLastBaseCurrency(): LiveData<Currency?> =
-        SharedPreferenceStringLiveData(prefsLastState, keyLastStateFrom, "USD")
-            .map { Currency.fromString(it!!) }
+        lastStateStore.mappedLiveData { prefs ->
+            Currency.fromString(prefs[stringPreferencesKey(KEY_LAST_STATE_FROM)] ?: DEFAULT_FROM_CURRENCY)
+        }
 
     fun getLastDestinationCurrency(): LiveData<Currency?> =
-        SharedPreferenceStringLiveData(prefsLastState, keyLastStateTo, "EUR")
-            .map { Currency.fromString(it!!) }
+        lastStateStore.mappedLiveData { prefs ->
+            Currency.fromString(prefs[stringPreferencesKey(KEY_LAST_STATE_TO)] ?: DEFAULT_TO_CURRENCY)
+        }
 
     // Synchronous readers for callers that can't wait for the LiveData to
     // become active (e.g. the cart's initial state, built before any
     // observer is attached).
-    fun getLastBaseCurrencyBlocking(): Currency? = Currency.fromString(prefsLastState.getString(keyLastStateFrom, "USD")!!)
+    fun getLastBaseCurrencyBlocking(): Currency? =
+        Currency.fromString(lastStateStore.snapshot()[stringPreferencesKey(KEY_LAST_STATE_FROM)] ?: DEFAULT_FROM_CURRENCY)
 
-    fun getLastDestinationCurrencyBlocking(): Currency? = Currency.fromString(prefsLastState.getString(keyLastStateTo, "EUR")!!)
+    fun getLastDestinationCurrencyBlocking(): Currency? =
+        Currency.fromString(lastStateStore.snapshot()[stringPreferencesKey(KEY_LAST_STATE_TO)] ?: DEFAULT_TO_CURRENCY)
 
     fun setUpdating(updating: Boolean) {
-        prefsLastState.edit().putBoolean(keyIsUpdating, updating).apply()
+        lastStateStore.edit { this[booleanPreferencesKey(KEY_IS_UPDATING)] = updating }
     }
 
-    fun isUpdating(): SharedPreferenceBooleanLiveData = SharedPreferenceBooleanLiveData(prefsLastState, keyIsUpdating, false)
+    fun isUpdating(): LiveData<Boolean> =
+        lastStateStore.mappedLiveData { it[booleanPreferencesKey(KEY_IS_UPDATING)] ?: false }
 
     fun setHistoricalDate(date: LocalDate?) {
-        prefsLastState.edit().putLong(keyHistoricalDate, date?.toMillis() ?: NO_HISTORICAL_DATE).apply()
+        lastStateStore.edit { this[longPreferencesKey(KEY_HISTORICAL_DATE)] = date?.toMillis() ?: NO_HISTORICAL_DATE }
     }
 
     fun getHistoricalLiveDate(): LiveData<LocalDate?> =
-        SharedPreferenceLongLiveData(prefsLastState, keyHistoricalDate, NO_HISTORICAL_DATE).map {
-            if (it == NO_HISTORICAL_DATE) {
-                null
-            } else {
-                it.toLocalDate()
-            }
+        lastStateStore.mappedLiveData { prefs ->
+            val v = prefs[longPreferencesKey(KEY_HISTORICAL_DATE)] ?: NO_HISTORICAL_DATE
+            if (v == NO_HISTORICAL_DATE) null else v.toLocalDate()
         }
 
     fun getHistoricalDate(): LocalDate? =
-        when (val date = prefsLastState.getLong(keyHistoricalDate, NO_HISTORICAL_DATE)) {
+        when (val v = lastStateStore.snapshot()[longPreferencesKey(KEY_HISTORICAL_DATE)] ?: NO_HISTORICAL_DATE) {
             NO_HISTORICAL_DATE -> null
-            else -> date.toLocalDate()
+            else -> v.toLocalDate()
         }
 
     /*
      * starred currencies ==========================================================================
      */
-    private val prefsStarredCurrencies: SharedPreferences =
-        context.getSharedPreferences(PREFS_STARRED_CURRENCIES, MODE_PRIVATE)
 
-    private val keyStars = "_stars"
-    private val keyStarsOrder = "_starsOrder"
-    private val keyStarredEnabled = "_starredActive"
-
-    private fun readOrderedStarCodes(): List<String> {
-        val stored = prefsStarredCurrencies.getString(keyStarsOrder, null)
-        if (stored != null) {
-            return if (stored.isEmpty()) emptyList() else stored.split(",")
-        }
-        // migrate legacy Set<String> to ordered CSV (alphabetical)
-        val legacy = prefsStarredCurrencies.getStringSet(keyStars, HashSet<String>())!!
-        return legacy.sorted()
+    private fun readOrderedStarCodes(prefs: Preferences): List<String> {
+        val stored = prefs[stringPreferencesKey(KEY_STARS_ORDER)] ?: return emptyList()
+        return if (stored.isEmpty()) emptyList() else stored.split(",")
     }
 
     private fun writeOrderedStarCodes(codes: List<String>) {
-        prefsStarredCurrencies
-            .edit()
-            .putString(keyStarsOrder, codes.joinToString(","))
-            .apply()
+        starredStore.edit { this[stringPreferencesKey(KEY_STARS_ORDER)] = codes.joinToString(",") }
     }
 
     fun toggleCurrencyStar(currency: Currency) {
         val code = currency.iso4217Alpha()
-        val current = readOrderedStarCodes()
+        val current = readOrderedStarCodes(starredStore.snapshot())
         val next = if (current.contains(code)) current.minus(code) else current.plus(code)
         writeOrderedStarCodes(next)
     }
 
     fun getStarredCurrencies(): LiveData<List<Currency>> =
-        SharedPreferenceStringLiveData(prefsStarredCurrencies, keyStarsOrder, null)
-            .map { _ ->
-                readOrderedStarCodes().mapNotNull { code -> Currency.fromString(code) }
-            }
+        starredStore.mappedLiveData { prefs ->
+            readOrderedStarCodes(prefs).mapNotNull { Currency.fromString(it) }
+        }
 
     fun setStarredCurrencyOrder(currencies: List<Currency>) {
         writeOrderedStarCodes(currencies.map { it.iso4217Alpha() })
     }
 
-    fun isFilterStarredEnabled(): SharedPreferenceBooleanLiveData =
-        SharedPreferenceBooleanLiveData(prefsStarredCurrencies, keyStarredEnabled, false)
+    fun isFilterStarredEnabled(): LiveData<Boolean> =
+        starredStore.mappedLiveData { it[booleanPreferencesKey(KEY_STARRED_ENABLED)] ?: false }
 
     fun toggleStarredActive() {
-        prefsStarredCurrencies.apply {
-            edit()
-                .putBoolean(
-                    keyStarredEnabled,
-                    prefsStarredCurrencies.getBoolean(keyStarredEnabled, false).not(),
-                ).apply()
+        starredStore.edit {
+            val current = this[booleanPreferencesKey(KEY_STARRED_ENABLED)] ?: false
+            this[booleanPreferencesKey(KEY_STARRED_ENABLED)] = !current
         }
     }
 
     /*
      * preferences =================================================================================
      */
-    private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_APP, MODE_PRIVATE)
-
-    private val keyApi = "_api"
-    private val keyOpenExchangeratesApiKey = "_api_openExchangeratesApiKey"
-    private val keyTheme = "_theme"
-    private val keyPureBlackEnabled = "_pureBlackEnabled"
-    private val keyFeesJson = "_fees_json"
-    private val keyActiveExchangeId = "_active_exchange_id"
-    private val keyActiveBankId = "_active_bank_id"
-    private val keyPreviewConversionEnabled = "_previewConversionEnabled"
-    private val keyKeyboardType = "_keyboardType"
-    private val keyHapticFeedback = "_hapticFeedback"
-    private val keyDecimalPlaces = "_decimalPlaces"
-    private val keyChartGrid = "_chartGrid"
-    private val keyChartXAxisLabel = "_chartXAxisLabel"
-    private val keyChartYAxisLabel = "_chartYAxisLabel"
-    private val keyChartHighlightExtremes = "_chartHighlightExtremes"
-    private val keyChartHighlightPeriodChange = "_chartHighlightPeriodChange"
-    private val keyDateFormat = "_dateFormat"
-    private val defaultDateFormat = "dd/MM/yy HH:mm"
-    private val keyCartCurrentJson = "_cart_current_json"
-    private val keyCartsSavedJson = "_carts_saved_json"
 
     // api
 
     fun setApiProvider(api: ApiProvider) {
-        prefs.apply {
-            edit().putInt(keyApi, api.id).apply()
-        }
+        appStore.edit { this[intPreferencesKey(KEY_API)] = api.id }
     }
 
-    fun getApiProvider(): ApiProvider = ApiProvider.fromId(prefs.getInt(keyApi, NO_PROVIDER_ID))
+    fun getApiProvider(): ApiProvider = ApiProvider.fromId(appStore.snapshot()[intPreferencesKey(KEY_API)] ?: NO_PROVIDER_ID)
 
     fun getApiProviderAsync(): LiveData<ApiProvider> =
-        SharedPreferenceIntLiveData(prefs, keyApi, NO_PROVIDER_ID).map {
-            ApiProvider.fromId(it)
-        }
+        appStore.mappedLiveData { ApiProvider.fromId(it[intPreferencesKey(KEY_API)] ?: NO_PROVIDER_ID) }
 
     fun setOpenExchangeRatesApiKey(id: String?) {
-        prefs.apply {
-            edit().putString(keyOpenExchangeratesApiKey, id).apply()
+        appStore.edit {
+            if (id == null) {
+                remove(stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY))
+            } else {
+                this[stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY)] = id
+            }
         }
     }
 
-    fun getOpenExchangeRatesApiKey(): String? = prefs.getString(keyOpenExchangeratesApiKey, null)
+    fun getOpenExchangeRatesApiKey(): String? = appStore.snapshot()[stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY)]
 
-    fun getOpenExchangeRatesApiKeyAsync(): LiveData<String?> = SharedPreferenceStringLiveData(prefs, keyOpenExchangeratesApiKey, null)
+    fun getOpenExchangeRatesApiKeyAsync(): LiveData<String?> =
+        appStore.mappedLiveData { it[stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY)] }
 
     // theme
 
     fun setTheme(theme: AppTheme) {
-        prefs.edit().putInt(keyTheme, theme.id).apply()
+        appStore.edit { this[intPreferencesKey(KEY_THEME)] = theme.id }
     }
 
-    /**
-     * Migrates the legacy separate pure-black boolean into the new unified
-     * value on first read after upgrade, then deletes the legacy key.
-     */
-    fun getTheme(): AppTheme {
-        migrateLegacyPureBlackIfNeeded()
-        return AppTheme.fromId(prefs.getInt(keyTheme, AppTheme.DEFAULT.id))
-    }
+    fun getTheme(): AppTheme = AppTheme.fromId(appStore.snapshot()[intPreferencesKey(KEY_THEME)] ?: AppTheme.DEFAULT.id)
 
     fun isPureBlackEnabled(): Boolean = getTheme().isPureBlack
-
-    private fun migrateLegacyPureBlackIfNeeded() {
-        if (!prefs.contains(keyPureBlackEnabled)) return
-        val wasPureBlack = prefs.getBoolean(keyPureBlackEnabled, false)
-        val editor = prefs.edit().remove(keyPureBlackEnabled)
-        if (wasPureBlack) {
-            val current = AppTheme.fromId(prefs.getInt(keyTheme, AppTheme.DEFAULT.id))
-            val migrated =
-                when (current) {
-                    AppTheme.DARK -> AppTheme.OLED
-                    AppTheme.SYSTEM -> AppTheme.SYSTEM_OLED
-                    else -> current // Light + OLED is meaningless — keep as Light.
-                }
-            editor.putInt(keyTheme, migrated.id)
-        }
-        editor.apply()
-    }
 
     // fees
 
     fun getFees(): LiveData<List<Fee>> =
-        SharedPreferenceStringLiveData(prefs, keyFeesJson, "[]")
-            .map { parseFeeList(it ?: "[]") }
+        appStore.mappedLiveData { parseFeeList(it[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]") }
 
-    fun getFeesBlocking(): List<Fee> = parseFeeList(prefs.getString(keyFeesJson, "[]") ?: "[]")
+    fun getFeesBlocking(): List<Fee> = parseFeeList(appStore.snapshot()[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]")
 
     fun addFee(fee: Fee) {
-        val next = getFeesBlocking() + fee
-        writeFees(next)
+        writeFees(getFeesBlocking() + fee)
     }
 
     fun updateFee(fee: Fee) {
-        val next = getFeesBlocking().map { if (it.id == fee.id) fee else it }
-        writeFees(next)
+        writeFees(getFeesBlocking().map { if (it.id == fee.id) fee else it })
     }
 
     fun deleteFee(id: String) {
-        val next = getFeesBlocking().filter { it.id != id }
-        writeFees(next)
+        writeFees(getFeesBlocking().filter { it.id != id })
     }
 
     // Active-picker IDs — which single named exchange / bank-or-card entry
     // participates in the fee stack. `null` means "no explicit pick"; the
     // FeeCalculator falls back to the first active entry of that category.
 
-    fun getActiveExchangeId(): LiveData<String?> = SharedPreferenceStringLiveData(prefs, keyActiveExchangeId, null)
+    fun getActiveExchangeId(): LiveData<String?> =
+        appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)] }
 
-    fun getActiveExchangeIdBlocking(): String? = prefs.getString(keyActiveExchangeId, null)
+    fun getActiveExchangeIdBlocking(): String? = appStore.snapshot()[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)]
 
     fun setActiveExchangeId(id: String?) {
-        prefs
-            .edit()
-            .apply {
-                if (id == null) remove(keyActiveExchangeId) else putString(keyActiveExchangeId, id)
-            }.apply()
+        appStore.edit {
+            if (id == null) {
+                remove(stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID))
+            } else {
+                this[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)] = id
+            }
+        }
     }
 
-    fun getActiveBankId(): LiveData<String?> = SharedPreferenceStringLiveData(prefs, keyActiveBankId, null)
+    fun getActiveBankId(): LiveData<String?> =
+        appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_BANK_ID)] }
 
-    fun getActiveBankIdBlocking(): String? = prefs.getString(keyActiveBankId, null)
+    fun getActiveBankIdBlocking(): String? = appStore.snapshot()[stringPreferencesKey(KEY_ACTIVE_BANK_ID)]
 
     fun setActiveBankId(id: String?) {
-        prefs
-            .edit()
-            .apply {
-                if (id == null) remove(keyActiveBankId) else putString(keyActiveBankId, id)
-            }.apply()
+        appStore.edit {
+            if (id == null) {
+                remove(stringPreferencesKey(KEY_ACTIVE_BANK_ID))
+            } else {
+                this[stringPreferencesKey(KEY_ACTIVE_BANK_ID)] = id
+            }
+        }
     }
 
     private fun writeFees(list: List<Fee>) {
-        prefs.edit().putString(keyFeesJson, serializeFeeList(list)).apply()
+        appStore.edit { this[stringPreferencesKey(KEY_FEES_JSON)] = serializeFeeList(list) }
     }
 
     private fun serializeFeeList(list: List<Fee>): String {
@@ -458,129 +450,126 @@ class Database(
     // preview conversion
 
     fun setPreviewConversionEnabled(enabled: Boolean) {
-        prefs.apply {
-            edit().putBoolean(keyPreviewConversionEnabled, enabled).apply()
-        }
+        appStore.edit { this[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] = enabled }
     }
 
-    fun isPreviewConversionEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyPreviewConversionEnabled, false)
+    fun isPreviewConversionEnabled(): LiveData<Boolean> =
+        appStore.mappedLiveData { it[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] ?: false }
 
     // keyboard type
 
     fun setKeyboardType(type: KeyboardType) {
-        prefs.edit().putInt(keyKeyboardType, type.ordinal).apply()
+        appStore.edit { this[intPreferencesKey(KEY_KEYBOARD_TYPE)] = type.ordinal }
     }
 
     fun getKeyboardType(): LiveData<KeyboardType> =
-        SharedPreferenceIntLiveData(prefs, keyKeyboardType, KeyboardType.DEFAULT.ordinal)
-            .map { KeyboardType.fromOrdinal(it) }
+        appStore.mappedLiveData { KeyboardType.fromOrdinal(it[intPreferencesKey(KEY_KEYBOARD_TYPE)] ?: KeyboardType.DEFAULT.ordinal) }
 
-    fun getKeyboardTypeBlocking(): KeyboardType = KeyboardType.fromOrdinal(prefs.getInt(keyKeyboardType, KeyboardType.DEFAULT.ordinal))
+    fun getKeyboardTypeBlocking(): KeyboardType =
+        KeyboardType.fromOrdinal(appStore.snapshot()[intPreferencesKey(KEY_KEYBOARD_TYPE)] ?: KeyboardType.DEFAULT.ordinal)
 
     // haptic feedback
 
     fun setHapticFeedbackEnabled(enabled: Boolean) {
-        prefs.apply {
-            edit().putBoolean(keyHapticFeedback, enabled).apply()
-        }
+        appStore.edit { this[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] = enabled }
     }
 
-    fun isHapticFeedbackEnabled(): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, keyHapticFeedback, true)
+    fun isHapticFeedbackEnabled(): LiveData<Boolean> =
+        appStore.mappedLiveData { it[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true }
 
-    fun isHapticFeedbackEnabledBlocking(): Boolean = prefs.getBoolean(keyHapticFeedback, true)
+    fun isHapticFeedbackEnabledBlocking(): Boolean =
+        appStore.snapshot()[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
 
     // decimal places
 
     fun setDecimalPlaces(places: Int) {
-        prefs.apply {
-            edit().putString(keyDecimalPlaces, places.toString()).apply()
-        }
+        // Historical shape kept: stored as String so old backups round-trip
+        // (the SharedPreferences preference-screen used to write via
+        // ListPreference which stringifies its value).
+        appStore.edit { this[stringPreferencesKey(KEY_DECIMAL_PLACES)] = places.toString() }
     }
 
     fun getDecimalPlaces(): LiveData<Int> =
-        SharedPreferenceStringLiveData(prefs, keyDecimalPlaces, "2")
-            .map { (it ?: "2").toIntOrNull()?.coerceIn(0, 6) ?: 2 }
+        appStore.mappedLiveData { (it[stringPreferencesKey(KEY_DECIMAL_PLACES)] ?: "2").toIntOrNull()?.coerceIn(0, 6) ?: 2 }
 
     // graph options — all default to true (feature-on) so opting out is explicit.
 
     private fun setBool(
         key: String,
         value: Boolean,
-    ) = prefs.edit().putBoolean(key, value).apply()
+    ) = appStore.edit { this[booleanPreferencesKey(key)] = value }
 
     private fun boolLive(
         key: String,
         default: Boolean,
-    ): LiveData<Boolean> = SharedPreferenceBooleanLiveData(prefs, key, default)
+    ): LiveData<Boolean> = appStore.mappedLiveData { it[booleanPreferencesKey(key)] ?: default }
 
     private fun boolBlocking(
         key: String,
         default: Boolean,
-    ): Boolean = prefs.getBoolean(key, default)
+    ): Boolean = appStore.snapshot()[booleanPreferencesKey(key)] ?: default
 
-    fun setChartGridEnabled(enabled: Boolean) = setBool(keyChartGrid, enabled)
+    fun setChartGridEnabled(enabled: Boolean) = setBool(KEY_CHART_GRID, enabled)
 
-    fun isChartGridEnabled(): LiveData<Boolean> = boolLive(keyChartGrid, true)
+    fun isChartGridEnabled(): LiveData<Boolean> = boolLive(KEY_CHART_GRID, true)
 
-    fun isChartGridEnabledBlocking(): Boolean = boolBlocking(keyChartGrid, true)
+    fun isChartGridEnabledBlocking(): Boolean = boolBlocking(KEY_CHART_GRID, true)
 
-    fun setChartXAxisLabelEnabled(enabled: Boolean) = setBool(keyChartXAxisLabel, enabled)
+    fun setChartXAxisLabelEnabled(enabled: Boolean) = setBool(KEY_CHART_X_AXIS_LABEL, enabled)
 
-    fun isChartXAxisLabelEnabled(): LiveData<Boolean> = boolLive(keyChartXAxisLabel, true)
+    fun isChartXAxisLabelEnabled(): LiveData<Boolean> = boolLive(KEY_CHART_X_AXIS_LABEL, true)
 
-    fun isChartXAxisLabelEnabledBlocking(): Boolean = boolBlocking(keyChartXAxisLabel, true)
+    fun isChartXAxisLabelEnabledBlocking(): Boolean = boolBlocking(KEY_CHART_X_AXIS_LABEL, true)
 
-    fun setChartYAxisLabelEnabled(enabled: Boolean) = setBool(keyChartYAxisLabel, enabled)
+    fun setChartYAxisLabelEnabled(enabled: Boolean) = setBool(KEY_CHART_Y_AXIS_LABEL, enabled)
 
-    fun isChartYAxisLabelEnabled(): LiveData<Boolean> = boolLive(keyChartYAxisLabel, true)
+    fun isChartYAxisLabelEnabled(): LiveData<Boolean> = boolLive(KEY_CHART_Y_AXIS_LABEL, true)
 
-    fun isChartYAxisLabelEnabledBlocking(): Boolean = boolBlocking(keyChartYAxisLabel, true)
+    fun isChartYAxisLabelEnabledBlocking(): Boolean = boolBlocking(KEY_CHART_Y_AXIS_LABEL, true)
 
-    fun setChartHighlightExtremesEnabled(enabled: Boolean) = setBool(keyChartHighlightExtremes, enabled)
+    fun setChartHighlightExtremesEnabled(enabled: Boolean) = setBool(KEY_CHART_HIGHLIGHT_EXTREMES, enabled)
 
-    fun isChartHighlightExtremesEnabled(): LiveData<Boolean> = boolLive(keyChartHighlightExtremes, true)
+    fun isChartHighlightExtremesEnabled(): LiveData<Boolean> = boolLive(KEY_CHART_HIGHLIGHT_EXTREMES, true)
 
-    fun isChartHighlightExtremesEnabledBlocking(): Boolean = boolBlocking(keyChartHighlightExtremes, true)
+    fun isChartHighlightExtremesEnabledBlocking(): Boolean = boolBlocking(KEY_CHART_HIGHLIGHT_EXTREMES, true)
 
-    fun setChartHighlightPeriodChangeEnabled(enabled: Boolean) = setBool(keyChartHighlightPeriodChange, enabled)
+    fun setChartHighlightPeriodChangeEnabled(enabled: Boolean) = setBool(KEY_CHART_HIGHLIGHT_PERIOD_CHANGE, enabled)
 
-    fun isChartHighlightPeriodChangeEnabled(): LiveData<Boolean> = boolLive(keyChartHighlightPeriodChange, true)
+    fun isChartHighlightPeriodChangeEnabled(): LiveData<Boolean> = boolLive(KEY_CHART_HIGHLIGHT_PERIOD_CHANGE, true)
 
-    fun isChartHighlightPeriodChangeEnabledBlocking(): Boolean = boolBlocking(keyChartHighlightPeriodChange, true)
+    fun isChartHighlightPeriodChangeEnabledBlocking(): Boolean = boolBlocking(KEY_CHART_HIGHLIGHT_PERIOD_CHANGE, true)
 
     fun setDateFormat(pattern: String) {
-        prefs.edit().putString(keyDateFormat, pattern).apply()
+        appStore.edit { this[stringPreferencesKey(KEY_DATE_FORMAT)] = pattern }
     }
 
     fun getDateFormat(): LiveData<String> =
-        SharedPreferenceStringLiveData(prefs, keyDateFormat, defaultDateFormat)
-            .map { it ?: defaultDateFormat }
+        appStore.mappedLiveData { it[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT }
 
-    fun getDateFormatBlocking(): String = prefs.getString(keyDateFormat, defaultDateFormat) ?: defaultDateFormat
+    fun getDateFormatBlocking(): String = appStore.snapshot()[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT
 
     // cart ==================================================================================
 
     fun getCurrentCart(): LiveData<SavedCart?> =
-        SharedPreferenceStringLiveData(prefs, keyCartCurrentJson, null)
-            .map { parseCart(it) }
+        appStore.mappedLiveData { parseCart(it[stringPreferencesKey(KEY_CART_CURRENT_JSON)]) }
 
-    fun getCurrentCartBlocking(): SavedCart? = parseCart(prefs.getString(keyCartCurrentJson, null))
+    fun getCurrentCartBlocking(): SavedCart? = parseCart(appStore.snapshot()[stringPreferencesKey(KEY_CART_CURRENT_JSON)])
 
     fun setCurrentCart(cart: SavedCart?) {
-        val editor = prefs.edit()
-        if (cart == null) {
-            editor.remove(keyCartCurrentJson)
-        } else {
-            editor.putString(keyCartCurrentJson, serializeCart(cart).toString())
+        appStore.edit {
+            if (cart == null) {
+                remove(stringPreferencesKey(KEY_CART_CURRENT_JSON))
+            } else {
+                this[stringPreferencesKey(KEY_CART_CURRENT_JSON)] = serializeCart(cart).toString()
+            }
         }
-        editor.apply()
     }
 
     fun getSavedCarts(): LiveData<List<SavedCart>> =
-        SharedPreferenceStringLiveData(prefs, keyCartsSavedJson, "[]")
-            .map { parseCartList(it) }
+        appStore.mappedLiveData { parseCartList(it[stringPreferencesKey(KEY_CARTS_SAVED_JSON)] ?: "[]") }
 
-    fun getSavedCartsBlocking(): List<SavedCart> = parseCartList(prefs.getString(keyCartsSavedJson, "[]"))
+    fun getSavedCartsBlocking(): List<SavedCart> =
+        parseCartList(appStore.snapshot()[stringPreferencesKey(KEY_CARTS_SAVED_JSON)] ?: "[]")
 
     fun saveCart(cart: SavedCart) {
         val existing = getSavedCartsBlocking()
@@ -598,6 +587,6 @@ class Database(
     }
 
     private fun writeSavedCarts(list: List<SavedCart>) {
-        prefs.edit().putString(keyCartsSavedJson, serializeCartList(list)).apply()
+        appStore.edit { this[stringPreferencesKey(KEY_CARTS_SAVED_JSON)] = serializeCartList(list) }
     }
 }

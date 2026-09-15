@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
@@ -75,7 +76,8 @@ class ExchangeRatesRepository(
                         .getRates(
                             apiProvider = db.getApiProvider(),
                             date = db.getHistoricalDate(),
-                            context,
+                            context = context,
+                            secrets = ApiSecrets(openExchangeRatesApiKey = db.getOpenExchangeRatesApiKey()),
                         ).processResponse(
                             start = start,
                             successFlag = { success },

@@ -8,7 +8,7 @@ import com.eliormachlev.currencix.repository.Database
 
 /**
  * Thin ViewModel over [Database] for the Compose fee-manager screen. All fee
- * state lives in SharedPreferences already; this exists so the composable can
+ * state lives in DataStore already; this exists so the composable can
  * observe LiveData without wiring the DB directly and can survive rotation
  * without re-reading through the DB constructor each recomposition.
  */
