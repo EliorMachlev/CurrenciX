@@ -11,19 +11,12 @@ import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
+import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 
 // Language.SYSTEM.iso — matches the enum value that means "follow system
 // locale" without pulling the enum into this file.
 private const val LANGUAGE_SYSTEM = "system"
-
-// #149 pilot: how long the StateFlow keeps collecting the upstream after the
-// last subscriber goes away. 5s covers config-change / navigation churn so we
-// don't re-cold-start the upstream on every recomposition/rebind.
-private const val STATE_FLOW_STOP_TIMEOUT_MS = 5_000L
 
 class PreferenceViewModel(
     private val app: Application,
@@ -31,22 +24,19 @@ class PreferenceViewModel(
     private val db = Database(app)
 
     val apiProvider: StateFlow<ApiProvider> =
-        db.getApiProviderFlow().stateInWhileSubscribed(db.getApiProvider())
+        db.getApiProviderFlow().stateInWhileSubscribed(viewModelScope, db.getApiProvider())
     val openExchangeratesApiKey: StateFlow<String?> =
-        db.getOpenExchangeRatesApiKeyFlow().stateInWhileSubscribed(db.getOpenExchangeRatesApiKey())
+        db.getOpenExchangeRatesApiKeyFlow().stateInWhileSubscribed(viewModelScope, db.getOpenExchangeRatesApiKey())
     val isPreviewConversionEnabled: StateFlow<Boolean> =
-        db.isPreviewConversionEnabledFlow().stateInWhileSubscribed(db.isPreviewConversionEnabledBlocking())
+        db.isPreviewConversionEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isPreviewConversionEnabledBlocking())
     val keyboardType: StateFlow<KeyboardType> =
-        db.getKeyboardTypeFlow().stateInWhileSubscribed(db.getKeyboardTypeBlocking())
+        db.getKeyboardTypeFlow().stateInWhileSubscribed(viewModelScope, db.getKeyboardTypeBlocking())
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
-        db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(db.isHapticFeedbackEnabledBlocking())
+        db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())
     val decimalPlaces: StateFlow<Int> =
-        db.getDecimalPlacesFlow().stateInWhileSubscribed(db.getDecimalPlacesBlocking())
+        db.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.getDecimalPlacesBlocking())
     val dateFormat: StateFlow<String> =
-        db.getDateFormatFlow().stateInWhileSubscribed(db.getDateFormatBlocking())
-
-    private fun <T> Flow<T>.stateInWhileSubscribed(initial: T): StateFlow<T> =
-        stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS), initial)
+        db.getDateFormatFlow().stateInWhileSubscribed(viewModelScope, db.getDateFormatBlocking())
 
     fun setApiProvider(api: ApiProvider) {
         persistAndRefreshRates { db.setApiProvider(api) }
