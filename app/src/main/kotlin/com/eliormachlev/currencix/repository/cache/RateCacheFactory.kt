@@ -53,7 +53,7 @@ private fun ttlFor(provider: ApiProvider): Long = PROVIDER_TTL_MS[provider] ?: R
  * OkHttp caches transport bytes, RateCache caches parsed domain objects.
  * Every hit that skips the parser is a hit that skips a moshi/XML pipeline.
  */
-object RateCacheFactory {
+internal object RateCacheFactory {
     /**
      * @param secretsSupplier resolved per fetch so provider secrets edited in
      *   Settings apply immediately without cache reconstruction. Called on the

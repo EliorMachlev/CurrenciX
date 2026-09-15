@@ -43,7 +43,7 @@ import kotlinx.coroutines.plus
  * future Room-backed implementation can be dropped in place of
  * [DiskJsonStore] with no changes to this class.
  */
-class RateCache<K : RateCacheKey, V : Any>(
+internal class RateCache<K : RateCacheKey, V : Any>(
     private val sourceOfTruth: SourceOfTruth<V>,
     private val fetcher: Fetcher<K, V>,
     private val memoryLru: MemoryLru<V> = MemoryLru(DEFAULT_MEMORY_ENTRIES),
