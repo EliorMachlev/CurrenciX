@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.util.feePercentDelta
@@ -45,7 +46,7 @@ class QuickConversionsDialog : DialogFragment() {
                         // Fees are read as an observable so a fees change
                         // recomposes; the actual stack derivation lives in
                         // feeStackFor() which isn't itself snapshot-observed.
-                        val fees = viewModel.getFees().observeAsState().value
+                        val fees by viewModel.getFees().collectAsStateWithLifecycle()
 
                         val feeStack: BigDecimal =
                             remember(from, to, fees) {

@@ -115,6 +115,27 @@ private val activeExchangeIdMapper: (Preferences) -> String? = {
 private val activeBankIdMapper: (Preferences) -> String? = {
     it[stringPreferencesKey(KEY_ACTIVE_BANK_ID)]
 }
+private val starredCurrenciesMapper: (Preferences) -> ImmutableList<Currency> = { prefs ->
+    readOrderedStarCodes(prefs).mapNotNull { Currency.fromString(it) }.toImmutableList()
+}
+private val filterStarredEnabledMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_STARRED_ENABLED)] ?: false
+}
+private val isUpdatingMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_IS_UPDATING)] ?: false
+}
+private val historicalLiveDateMapper: (Preferences) -> LocalDate? = { prefs ->
+    val v = prefs[longPreferencesKey(KEY_HISTORICAL_DATE)] ?: NO_HISTORICAL_DATE
+    if (v == NO_HISTORICAL_DATE) null else v.toLocalDate()
+}
+
+// Ordered-star-codes parsing lives at file scope so the mapper above (invoked
+// by both LiveData and Flow getters) can share it with the toggle/reorder
+// mutators without threading a Database instance through.
+private fun readOrderedStarCodes(prefs: Preferences): List<String> {
+    val stored = prefs[stringPreferencesKey(KEY_STARS_ORDER)] ?: return emptyList()
+    return if (stored.isEmpty()) emptyList() else stored.split(",")
+}
 
 // Fees JSON parsing lives at file scope so the mapper above (which is invoked
 // by both LiveData and Flow getters) can share it with the blocking accessor
@@ -311,17 +332,21 @@ class Database(
         lastStateStore.edit { this[booleanPreferencesKey(KEY_IS_UPDATING)] = updating }
     }
 
-    fun isUpdating(): LiveData<Boolean> = lastStateStore.mappedLiveData { it[booleanPreferencesKey(KEY_IS_UPDATING)] ?: false }
+    fun isUpdating(): LiveData<Boolean> = lastStateStore.mappedLiveData(isUpdatingMapper)
+
+    fun isUpdatingFlow(): Flow<Boolean> = lastStateStore.mappedFlow(isUpdatingMapper)
+
+    fun isUpdatingBlocking(): Boolean = isUpdatingMapper(lastStateStore.snapshot())
 
     fun setHistoricalDate(date: LocalDate?) {
         lastStateStore.edit { this[longPreferencesKey(KEY_HISTORICAL_DATE)] = date?.toMillis() ?: NO_HISTORICAL_DATE }
     }
 
-    fun getHistoricalLiveDate(): LiveData<LocalDate?> =
-        lastStateStore.mappedLiveData { prefs ->
-            val v = prefs[longPreferencesKey(KEY_HISTORICAL_DATE)] ?: NO_HISTORICAL_DATE
-            if (v == NO_HISTORICAL_DATE) null else v.toLocalDate()
-        }
+    fun getHistoricalLiveDate(): LiveData<LocalDate?> = lastStateStore.mappedLiveData(historicalLiveDateMapper)
+
+    fun getHistoricalLiveDateFlow(): Flow<LocalDate?> = lastStateStore.mappedFlow(historicalLiveDateMapper)
+
+    fun getHistoricalLiveDateBlocking(): LocalDate? = historicalLiveDateMapper(lastStateStore.snapshot())
 
     fun getHistoricalDate(): LocalDate? =
         when (val v = lastStateStore.snapshot()[longPreferencesKey(KEY_HISTORICAL_DATE)] ?: NO_HISTORICAL_DATE) {
@@ -332,11 +357,6 @@ class Database(
     /*
      * starred currencies ==========================================================================
      */
-
-    private fun readOrderedStarCodes(prefs: Preferences): List<String> {
-        val stored = prefs[stringPreferencesKey(KEY_STARS_ORDER)] ?: return emptyList()
-        return if (stored.isEmpty()) emptyList() else stored.split(",")
-    }
 
     private fun writeOrderedStarCodes(codes: List<String>) {
         starredStore.edit { this[stringPreferencesKey(KEY_STARS_ORDER)] = codes.joinToString(",") }
@@ -351,17 +371,21 @@ class Database(
 
     // ImmutableList so Compose stability inference can skip recomposition
     // when the collection identity changes but the content is equal (#161).
-    fun getStarredCurrencies(): LiveData<ImmutableList<Currency>> =
-        starredStore.mappedLiveData { prefs ->
-            readOrderedStarCodes(prefs).mapNotNull { Currency.fromString(it) }.toImmutableList()
-        }
+    fun getStarredCurrencies(): LiveData<ImmutableList<Currency>> = starredStore.mappedLiveData(starredCurrenciesMapper)
+
+    fun getStarredCurrenciesFlow(): Flow<ImmutableList<Currency>> = starredStore.mappedFlow(starredCurrenciesMapper)
+
+    fun getStarredCurrenciesBlocking(): ImmutableList<Currency> = starredCurrenciesMapper(starredStore.snapshot())
 
     fun setStarredCurrencyOrder(currencies: List<Currency>) {
         writeOrderedStarCodes(currencies.map { it.iso4217Alpha() })
     }
 
-    fun isFilterStarredEnabled(): LiveData<Boolean> =
-        starredStore.mappedLiveData { it[booleanPreferencesKey(KEY_STARRED_ENABLED)] ?: false }
+    fun isFilterStarredEnabled(): LiveData<Boolean> = starredStore.mappedLiveData(filterStarredEnabledMapper)
+
+    fun isFilterStarredEnabledFlow(): Flow<Boolean> = starredStore.mappedFlow(filterStarredEnabledMapper)
+
+    fun isFilterStarredEnabledBlocking(): Boolean = filterStarredEnabledMapper(starredStore.snapshot())
 
     fun toggleStarredActive() {
         starredStore.edit {

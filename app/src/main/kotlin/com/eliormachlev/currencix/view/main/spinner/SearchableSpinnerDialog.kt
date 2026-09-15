@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
-import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -67,18 +66,14 @@ class SearchableSpinnerDialog(
                 setContent {
                     AppTheme {
                         val rates by mainViewModel.getExchangeRates().observeAsState()
-                        // No initial value — we must know when stars has actually
-                        // emitted. If we defaulted to emptyList, the picker would
-                        // render rates in raw order on the first frame, then
-                        // reorder (starred → top) once stars arrived. LazyColumn's
-                        // key-based scroll preservation reacts to that reorder by
-                        // holding the previously visible row on screen, which
-                        // pushes index 0 off the top and opens the picker mid- or
-                        // bottom-scroll. Wait for both sources, render once.
-                        val stars by mainViewModel.getStarredCurrencies().observeAsState()
-                        val filterStarred by mainViewModel.isFilterStarredEnabled().observeAsState(initial = false)
+                        // StateFlow seeds are blocking snapshots of DataStore
+                        // (see #149), so `stars` carries the persisted list on
+                        // the very first frame — no empty→starred re-sort. The
+                        // ready gate below only needs to wait for `rates`.
+                        val stars by mainViewModel.getStarredCurrencies().collectAsStateWithLifecycle()
+                        val filterStarred by mainViewModel.isFilterStarredEnabled().collectAsStateWithLifecycle()
                         val previewEnabled by prefViewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
-                        val decimalPlaces by mainViewModel.getDecimalPlaces().observeAsState()
+                        val decimalPlaces by mainViewModel.getDecimalPlaces().collectAsStateWithLifecycle()
 
                         val baseRate = currentRateState.value
                         val conversion =
@@ -86,13 +81,13 @@ class SearchableSpinnerDialog(
                                 CurrencyPickerConversion(
                                     baseRate = baseRate,
                                     baseSum = currentSumState.value,
-                                    decimalPlaces = decimalPlaces ?: DECIMAL_PLACES_DEFAULT,
+                                    decimalPlaces = decimalPlaces,
                                 )
                             } else {
                                 null
                             }
 
-                        val ready = rates != null && stars != null
+                        val ready = rates != null
                         SearchableCurrencyPicker(
                             rates =
                                 if (ready) {
@@ -100,7 +95,7 @@ class SearchableSpinnerDialog(
                                 } else {
                                     persistentListOf()
                                 },
-                            stars = stars ?: persistentListOf(),
+                            stars = stars,
                             filterStarred = filterStarred,
                             conversion = conversion,
                             disabledCurrency = disabledCurrencyState.value,

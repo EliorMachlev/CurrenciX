@@ -10,7 +10,9 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
@@ -34,8 +36,11 @@ import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.Collator
@@ -63,16 +68,33 @@ class MainViewModel(
     // repository data
     private var dbLiveItems: LiveData<ExchangeRates?>
     private var exchangeRates: LiveData<ExchangeRates?>
-    private val starredLiveItems: LiveData<ImmutableList<Currency>>
-    private val onlyShowStarred: LiveData<Boolean>
-    private val liveError = repository.getError()
+
+    // Leaves migrated to `StateFlow` in #149; the `.asLiveData()` bridges below
+    // are for the `MediatorLiveData` compositions that still consume them
+    // (those compositions are deferred out of this migration per the plan's
+    // Molecule-deferral guidance).
+    private val starredLiveItems: StateFlow<ImmutableList<Currency>> =
+        db.getStarredCurrenciesFlow().stateInWhileSubscribed(viewModelScope, db.getStarredCurrenciesBlocking())
+    private val starredLiveItemsLive: LiveData<ImmutableList<Currency>> = starredLiveItems.asLiveData()
+    private val onlyShowStarred: StateFlow<Boolean> =
+        db.isFilterStarredEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isFilterStarredEnabledBlocking())
+    private val onlyShowStarredLive: LiveData<Boolean> = onlyShowStarred.asLiveData()
 
     // ui
-    private var isUpdating: LiveData<Boolean> = repository.isUpdating()
-    val keyboardType: LiveData<KeyboardType> = db.getKeyboardType()
-    val isExtendedKeypadEnabled: LiveData<Boolean> = keyboardType.map { it == KeyboardType.EXPANDED }
-    val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
-    private val decimalPlaces: LiveData<Int> = db.getDecimalPlaces()
+    private val isUpdating: StateFlow<Boolean> =
+        db.isUpdatingFlow().stateInWhileSubscribed(viewModelScope, db.isUpdatingBlocking())
+    val keyboardType: StateFlow<KeyboardType> =
+        db.getKeyboardTypeFlow().stateInWhileSubscribed(viewModelScope, db.getKeyboardTypeBlocking())
+    val isExtendedKeypadEnabled: StateFlow<Boolean> =
+        db
+            .getKeyboardTypeFlow()
+            .map { it == KeyboardType.EXPANDED }
+            .stateInWhileSubscribed(viewModelScope, db.getKeyboardTypeBlocking() == KeyboardType.EXPANDED)
+    val isHapticFeedbackEnabled: StateFlow<Boolean> =
+        db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())
+    private val decimalPlaces: StateFlow<Int> =
+        db.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.getDecimalPlacesBlocking())
+    private val decimalPlacesLive: LiveData<Int> = decimalPlaces.asLiveData()
 
     // number input
     private val input = CalculatorInputState()
@@ -83,10 +105,17 @@ class MainViewModel(
     private val currentBaseCurrency: LiveData<Currency?>
     private val currentDestinationCurrency: LiveData<Currency?>
 
-    // fees
-    private val fees: LiveData<ImmutableList<Fee>>
-    private val activeExchangeId: LiveData<String?>
-    private val activeBankId: LiveData<String?>
+    // Fees leaves migrated to `StateFlow`; `.asLiveData()` bridges feed the
+    // `pairFeeMediator` MediatorLiveData below (deferred per the plan).
+    private val fees: StateFlow<ImmutableList<Fee>> =
+        db.getFeesFlow().stateInWhileSubscribed(viewModelScope, db.getFeesBlocking())
+    private val feesLive: LiveData<ImmutableList<Fee>> = fees.asLiveData()
+    private val activeExchangeId: StateFlow<String?> =
+        db.getActiveExchangeIdFlow().stateInWhileSubscribed(viewModelScope, db.getActiveExchangeIdBlocking())
+    private val activeExchangeIdLive: LiveData<String?> = activeExchangeId.asLiveData()
+    private val activeBankId: StateFlow<String?> =
+        db.getActiveBankIdFlow().stateInWhileSubscribed(viewModelScope, db.getActiveBankIdBlocking())
+    private val activeBankIdLive: LiveData<String?> = activeBankId.asLiveData()
 
     // Background timeline prefetcher: fires whenever the selected base/target
     // resolves (including cold-start defaults) so the graph screen paints
@@ -128,14 +157,6 @@ class MainViewModel(
                 else -> db.getExchangeRates()
             }
 
-        starredLiveItems = db.getStarredCurrencies()
-        onlyShowStarred = db.isFilterStarredEnabled()
-
-        fees = db.getFees()
-        activeExchangeId = db.getActiveExchangeId()
-        activeBankId = db.getActiveBankId()
-
-        //
         exchangeRates =
             object : MediatorLiveData<ExchangeRates?>() {
                 var liveItems: ExchangeRates? = null
@@ -145,8 +166,8 @@ class MainViewModel(
                         liveItems = it
                         calc()
                     }
-                    addSource(starredLiveItems) { calc() }
-                    addSource(onlyShowStarred) { calc() }
+                    addSource(starredLiveItemsLive) { calc() }
+                    addSource(onlyShowStarredLive) { calc() }
                 }
 
                 private fun calc() {
@@ -266,7 +287,7 @@ class MainViewModel(
      * update the data, without checking the cache
      */
     internal fun forceUpdateExchangeRate() {
-        if (isUpdating.value != true) {
+        if (!isUpdating.value) {
             dbLiveItems = repository.getExchangeRates()
         }
     }
@@ -274,7 +295,7 @@ class MainViewModel(
     /**
      * all the currencies that the user has starred
      */
-    internal fun getStarredCurrencies(): LiveData<ImmutableList<Currency>> = starredLiveItems
+    internal fun getStarredCurrencies(): StateFlow<ImmutableList<Currency>> = starredLiveItems
 
     /**
      * persist the user's manual ordering of starred currencies
@@ -286,7 +307,7 @@ class MainViewModel(
     /**
      * whether the currencies should be filtered
      */
-    internal fun isFilterStarredEnabled(): LiveData<Boolean> = onlyShowStarred
+    internal fun isFilterStarredEnabled(): StateFlow<Boolean> = onlyShowStarred
 
     /**
      * switch the starred-filter on/off
@@ -303,19 +324,21 @@ class MainViewModel(
     }
 
     /**
-     * the error message, if present
+     * the error message, if present. Repository-owned LiveData — not migrated
+     * in the #149 leaf pass since the source of truth lives outside [Database]
+     * and only XML/Fragment code observes it.
      */
-    internal fun getError(): LiveData<String?> = liveError
+    internal fun getError(): LiveData<String?> = repository.getError()
 
     /**
      * if the app is updating the rates
      */
-    internal fun isUpdating(): LiveData<Boolean> = isUpdating
+    internal fun isUpdating(): StateFlow<Boolean> = isUpdating
 
     /**
      * all configured fees
      */
-    internal fun getFees(): LiveData<ImmutableList<Fee>> = fees
+    internal fun getFees(): StateFlow<ImmutableList<Fee>> = fees
 
     internal val ratesInformationFooter =
         object : MediatorLiveData<Spanned?>() {
@@ -463,7 +486,7 @@ class MainViewModel(
             var bankId: String? = null
 
             init {
-                addSource(fees) {
+                addSource(feesLive) {
                     feeList = it
                     update()
                 }
@@ -475,11 +498,11 @@ class MainViewModel(
                     dest = it
                     update()
                 }
-                addSource(activeExchangeId) {
+                addSource(activeExchangeIdLive) {
                     exchangeId = it
                     update()
                 }
-                addSource(activeBankId) {
+                addSource(activeBankIdLive) {
                     bankId = it
                     update()
                 }
@@ -564,7 +587,7 @@ class MainViewModel(
         dest: Currency?,
     ): BigDecimal =
         FeeCalculator.feeStack(
-            fees.value.orEmpty(),
+            fees.value,
             base,
             dest,
             activeExchangeId.value,
@@ -670,7 +693,7 @@ class MainViewModel(
                     currency = it
                     update()
                 }
-                addSource(decimalPlaces) {
+                addSource(decimalPlacesLive) {
                     places = it
                     update()
                 }
@@ -691,7 +714,7 @@ class MainViewModel(
     /**
      * the current decimal-places preference, for output-side rounding.
      */
-    internal fun getDecimalPlaces(): LiveData<Int> = decimalPlaces
+    internal fun getDecimalPlaces(): StateFlow<Int> = decimalPlaces
 
     /*
      * user input **********************************************************************************

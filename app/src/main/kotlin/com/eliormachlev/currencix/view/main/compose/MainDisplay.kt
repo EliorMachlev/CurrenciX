@@ -85,6 +85,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
@@ -353,7 +354,7 @@ internal fun MainDisplay(
     val resultFairFormatted by viewModel.getResultFormatted().observeAsState()
     val resultWithFeesFormatted by viewModel.getResultWithFeesFormatted().observeAsState()
     val rates by viewModel.getExchangeRates().observeAsState()
-    val isUpdating by viewModel.isUpdating().observeAsState(false)
+    val isUpdating by viewModel.isUpdating().collectAsStateWithLifecycle()
     val feeStack by viewModel.getFeeStack().observeAsState()
     val activeFees by viewModel.getActiveFees().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()

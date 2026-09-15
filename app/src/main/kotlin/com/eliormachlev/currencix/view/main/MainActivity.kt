@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
@@ -156,7 +157,7 @@ class MainActivity : BaseActivity() {
                     AppTheme {
                         val banner by bannerState
                         val foldingFeature by foldingFeatureState
-                        val isUpdating by viewModel.isUpdating().observeAsState(false)
+                        val isUpdating by viewModel.isUpdating().collectAsStateWithLifecycle()
                         val drawerState = rememberDrawerState(DrawerValue.Closed)
                         val scope = rememberCoroutineScope()
                         DisposableEffect(drawerState, scope) {
@@ -305,7 +306,7 @@ class MainActivity : BaseActivity() {
         if (rates.none { it.currency == base } || rates.none { it.currency == dest }) return null
         val amount = viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ZERO
         val result = viewModel.getResultAsNumber().value ?: BigDecimal.ZERO
-        val places = viewModel.getDecimalPlaces().value ?: AMOUNT_DECIMAL_PLACES
+        val places = viewModel.getDecimalPlaces().value
         val main =
             getString(
                 R.string.info_conversion,
@@ -577,7 +578,7 @@ class MainActivity : BaseActivity() {
                 onDelete = viewModel::delete,
                 onDeleteLong = viewModel::clear,
             )
-        val kbType by viewModel.keyboardType.observeAsState(KeyboardType.DEFAULT)
+        val kbType by viewModel.keyboardType.collectAsStateWithLifecycle()
         val nextParen by viewModel.nextParen().observeAsState('(')
         val effective = if (kbType.isSystem) KeyboardType.BASIC else kbType
         MainKeypad(
