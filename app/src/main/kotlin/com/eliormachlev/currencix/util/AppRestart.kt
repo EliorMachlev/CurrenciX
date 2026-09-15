@@ -18,7 +18,8 @@ import android.content.Intent
 fun restartApp(context: Context) {
     val packageManager = context.packageManager
     val intent =
-        packageManager.getLaunchIntentForPackage(context.packageName)
+        packageManager
+            .getLaunchIntentForPackage(context.packageName)
             ?.apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK) }
             ?: return
     context.startActivity(intent)

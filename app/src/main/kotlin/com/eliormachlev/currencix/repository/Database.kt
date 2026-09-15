@@ -136,8 +136,7 @@ class Database(
 
     fun getExchangeRates(): LiveData<ExchangeRates?> = ratesStore.mappedLiveData(::parseExchangeRates)
 
-    fun getDate(): LocalDate? =
-        ratesStore.snapshot()[stringPreferencesKey(KEY_RATES_DATE)]?.let { LocalDate.parse(it) }
+    fun getDate(): LocalDate? = ratesStore.snapshot()[stringPreferencesKey(KEY_RATES_DATE)]?.let { LocalDate.parse(it) }
 
     private fun parseExchangeRates(prefs: Preferences): ExchangeRates? {
         val baseString = prefs[stringPreferencesKey(KEY_RATES_BASE)] ?: return null
@@ -266,8 +265,7 @@ class Database(
         lastStateStore.edit { this[booleanPreferencesKey(KEY_IS_UPDATING)] = updating }
     }
 
-    fun isUpdating(): LiveData<Boolean> =
-        lastStateStore.mappedLiveData { it[booleanPreferencesKey(KEY_IS_UPDATING)] ?: false }
+    fun isUpdating(): LiveData<Boolean> = lastStateStore.mappedLiveData { it[booleanPreferencesKey(KEY_IS_UPDATING)] ?: false }
 
     fun setHistoricalDate(date: LocalDate?) {
         lastStateStore.edit { this[longPreferencesKey(KEY_HISTORICAL_DATE)] = date?.toMillis() ?: NO_HISTORICAL_DATE }
@@ -368,8 +366,7 @@ class Database(
 
     // fees
 
-    fun getFees(): LiveData<List<Fee>> =
-        appStore.mappedLiveData { parseFeeList(it[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]") }
+    fun getFees(): LiveData<List<Fee>> = appStore.mappedLiveData { parseFeeList(it[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]") }
 
     fun getFeesBlocking(): List<Fee> = parseFeeList(appStore.snapshot()[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]")
 
@@ -389,8 +386,7 @@ class Database(
     // participates in the fee stack. `null` means "no explicit pick"; the
     // FeeCalculator falls back to the first active entry of that category.
 
-    fun getActiveExchangeId(): LiveData<String?> =
-        appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)] }
+    fun getActiveExchangeId(): LiveData<String?> = appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)] }
 
     fun getActiveExchangeIdBlocking(): String? = appStore.snapshot()[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)]
 
@@ -404,8 +400,7 @@ class Database(
         }
     }
 
-    fun getActiveBankId(): LiveData<String?> =
-        appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_BANK_ID)] }
+    fun getActiveBankId(): LiveData<String?> = appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_BANK_ID)] }
 
     fun getActiveBankIdBlocking(): String? = appStore.snapshot()[stringPreferencesKey(KEY_ACTIVE_BANK_ID)]
 
@@ -509,8 +504,7 @@ class Database(
 
     fun isHapticFeedbackEnabledFlow(): Flow<Boolean> = appStore.mappedFlow(hapticFeedbackEnabledMapper)
 
-    fun isHapticFeedbackEnabledBlocking(): Boolean =
-        appStore.snapshot()[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
+    fun isHapticFeedbackEnabledBlocking(): Boolean = appStore.snapshot()[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
 
     // decimal places
 
@@ -586,8 +580,7 @@ class Database(
 
     // cart ==================================================================================
 
-    fun getCurrentCart(): LiveData<SavedCart?> =
-        appStore.mappedLiveData { parseCart(it[stringPreferencesKey(KEY_CART_CURRENT_JSON)]) }
+    fun getCurrentCart(): LiveData<SavedCart?> = appStore.mappedLiveData { parseCart(it[stringPreferencesKey(KEY_CART_CURRENT_JSON)]) }
 
     fun getCurrentCartBlocking(): SavedCart? = parseCart(appStore.snapshot()[stringPreferencesKey(KEY_CART_CURRENT_JSON)])
 
@@ -604,8 +597,7 @@ class Database(
     fun getSavedCarts(): LiveData<List<SavedCart>> =
         appStore.mappedLiveData { parseCartList(it[stringPreferencesKey(KEY_CARTS_SAVED_JSON)] ?: "[]") }
 
-    fun getSavedCartsBlocking(): List<SavedCart> =
-        parseCartList(appStore.snapshot()[stringPreferencesKey(KEY_CARTS_SAVED_JSON)] ?: "[]")
+    fun getSavedCartsBlocking(): List<SavedCart> = parseCartList(appStore.snapshot()[stringPreferencesKey(KEY_CARTS_SAVED_JSON)] ?: "[]")
 
     fun saveCart(cart: SavedCart) {
         val existing = getSavedCartsBlocking()

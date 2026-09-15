@@ -18,7 +18,10 @@ fun Application.installJankStats() {
 private class JankStatsLifecycleCallbacks : Application.ActivityLifecycleCallbacks {
     private val jankStatsByActivity = mutableMapOf<Activity, JankStats>()
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+    override fun onActivityCreated(
+        activity: Activity,
+        savedInstanceState: Bundle?,
+    ) = Unit
 
     override fun onActivityStarted(activity: Activity) = Unit
 
@@ -39,7 +42,10 @@ private class JankStatsLifecycleCallbacks : Application.ActivityLifecycleCallbac
 
     override fun onActivityStopped(activity: Activity) = Unit
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+    override fun onActivitySaveInstanceState(
+        activity: Activity,
+        outState: Bundle,
+    ) = Unit
 
     override fun onActivityDestroyed(activity: Activity) {
         jankStatsByActivity.remove(activity)

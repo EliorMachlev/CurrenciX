@@ -27,8 +27,7 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
 class PreferenceScreenScreenshotTest {
-    @Test fun preferenceScreen() =
-        captureMatrix("preference_screen") { PreferenceScreenPreview() }
+    @Test fun preferenceScreen() = captureMatrix("preference_screen") { PreferenceScreenPreview() }
 }
 
 @Composable
