@@ -6,9 +6,6 @@
     <string name="fee_title">Devizatranzakciós díj</string>
     <string name="fee_summary">Váltási, banki/kártya- és pénznempár-specifikus díjak kezelése</string>
     <string name="fee_manager_title">Díjak</string>
-    <string name="fee_side_label">Díj típusa</string>
-    <string name="fee_side_original">Átváltási díj</string>
-    <string name="fee_side_converted">Átváltott díj</string>
     <string name="fee_section_global_exchange">Globális váltási díj</string>
     <string name="fee_section_global_bank">Globális banki/kártyadíj</string>
     <string name="fee_section_specific_pair">Adott pénznempár váltási díja</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Ide</string>
     <string name="fee_pair_pick_currency">Válassz pénznemet</string>
     <string name="fee_true_cost_prefix">"Átváltási díj: "</string>
-    <string name="fee_original_value_prefix">"Levonási díj: "</string>
     <string name="fee_cost_with_fee_prefix">"Költség díjjal: "</string>
-    <string name="fee_value_before_fee_prefix">"Érték díj előtt: "</string>
-    <string name="fee_side_summary_original">A megjelenített átváltott összeg a középárfolyamon marad; a díjak külön jelennek meg \"Átváltási díj\" néven.</string>
-    <string name="fee_side_summary_converted">A díjak bele vannak számítva a megjelenített átváltott összegbe.</string>
     <string name="fee_empty">Még nincsenek díjak</string>
     <string name="previewConversion_title">Konverziós előnézet</string>
     <string name="previewConversion_summary">Az aktuális átváltás megjelenítése minden egyes árfolyamhoz a pénznemválasztóban.</string>

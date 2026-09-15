@@ -68,6 +68,7 @@ import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
 import com.eliormachlev.currencix.view.compose.rememberDragReorderState
+import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -86,8 +87,8 @@ internal data class CurrencyPickerConversion(
 @Composable
 @Suppress("LongParameterList")
 internal fun SearchableCurrencyPicker(
-    rates: List<Rate>,
-    stars: List<Currency>,
+    rates: ImmutableList<Rate>,
+    stars: ImmutableList<Currency>,
     filterStarred: Boolean,
     conversion: CurrencyPickerConversion?,
     disabledCurrency: Currency?,

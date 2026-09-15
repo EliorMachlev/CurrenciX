@@ -8,6 +8,10 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
     id("com.google.devtools.ksp") version "2.3.11"
+    // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
+    // used by the .github/workflows/screenshots.yaml job. Runs on top of
+    // Robolectric Native Graphics — no device or emulator required.
+    id("io.github.takahirom.roborazzi") version "1.74.0"
 }
 
 kotlin {
@@ -114,8 +118,30 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        // Robolectric (Roborazzi's rendering engine) needs merged resources +
+        // AndroidManifest on the JVM test classpath to instantiate Application
+        // and resolve @string / @color references at screenshot capture time.
+        unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.useJUnitPlatform()
+            it.testLogging {
+                events("failed")
+                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+                showStackTraces = true
+                showCauses = true
+            }
+            // Jazzer's `@FuzzTest` (jazzer-junit) installs a JVM-wide
+            // ClassFileTransformer that injects `JazzerInternal` references
+            // into every class loaded after it. Robolectric's SandboxClassLoader
+            // then re-loads test/production classes in its own sandbox where
+            // `JazzerInternal` is not visible, and the injected calls blow up
+            // with `NoClassDefFoundError` inside our Roborazzi screenshot tests.
+            // Excluding FuzzTest keeps Jazzer's agent from attaching; when we
+            // want to run fuzz tests, they need their own task or a filter that
+            // includes only FuzzTest (see docs/markDown/build-and-flavors.md).
+            it.filter {
+                excludeTestsMatching("com.eliormachlev.currencix.FuzzTest")
+            }
         }
     }
 
@@ -132,6 +158,16 @@ android {
 dependencies {
     // kotlin
     implementation("androidx.core:core-ktx:1.19.0")
+    // kotlinx.collections.immutable: exposes @Immutable persistent collection
+    // types (ImmutableList / PersistentList / ...) so Compose stability
+    // inference can skip recomposition of composables whose only "unstable"
+    // input was a plain `List<T>`. Adopted on Compose-facing state per #161.
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
+    // persistence: DataStore Preferences replaces SharedPreferences across every
+    // namespace (see repository/persistence/PersistenceKey.kt). The `-preferences`
+    // artifact pulls `datastore-preferences-core` transitively and provides the
+    // Android-aware `preferencesDataStore` delegate.
+    implementation("androidx.datastore:datastore-preferences:1.2.1")
     // support libs
     val appCompatVersion = "1.8.0"
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
@@ -141,16 +177,21 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$livecycleVersion")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
     implementation("androidx.window:window:1.5.1")
-    implementation("com.google.android.material:material:1.14.0")
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
     // the shared instance via the HttpClientProvider.fetch extension.
     val okHttpVersion = "5.5.0"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
+    // Chucker: in-app HTTP inspector for debug builds. The real library is
+    // wired only into debug via the ChuckerInterceptorProvider source-set
+    // split (src/debug vs src/release); release ships the library-no-op
+    // artifact so the class references still resolve at compile time but
+    // no UI / storage code is dragged into the shipped APK.
+    val chuckerVersion = "4.3.1"
+    debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:$chuckerVersion")
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
@@ -170,6 +211,14 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
+    // Bridges StateFlow → Compose (`collectAsStateWithLifecycle`), which is
+    // lifecycle-aware in a way `collectAsState` isn't: it pauses collection
+    // when the host goes to STOPPED and resumes on STARTED. Used by the
+    // StateFlow-based ViewModels (see #149 pilot in PreferenceViewModel).
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$livecycleVersion")
+    // glance: home-screen widget composed instead of RemoteViews-driven.
+    val glanceVersion = "1.1.1"
+    implementation("androidx.glance:glance-appwidget:$glanceVersion")
     // charts
     val vicoVersion = "3.3.0"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
@@ -179,6 +228,25 @@ dependencies {
     // logging: Timber routes to a rotating file tree written under filesDir/logs.
     // Local-only — no remote crash / analytics sink.
     implementation("com.jakewharton.timber:timber:5.0.1")
+    // leak detection: LeakCanary is debug-only and auto-installs via its own
+    // ContentProvider — no Application wiring needed. Safety net for the
+    // upcoming Phase 1–3 migrations; never shipped in release/F-Droid builds.
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+    // perf: JankStats attaches per-Activity in debug builds and logs jank
+    // frames via Timber. Source-set split (src/debug vs src/release) means
+    // the release variant sees a no-op installer and this dep is stripped —
+    // zero overhead in shipped APKs. No telemetry sink.
+    debugImplementation("androidx.metrics:metrics-performance:1.0.0")
+    // showkase: browsable @Preview gallery for debug builds. Runtime and the
+    // KSP processor are debug-scoped so nothing ships in release. The
+    // @ShowkaseRoot module + browser Activity live in src/debug/, which is
+    // where the KSP processor picks them up.
+    val showkaseVersion = "1.0.5"
+    debugImplementation("com.airbnb.android:showkase:$showkaseVersion")
+    kspDebug("com.airbnb.android:showkase-processor:$showkaseVersion")
+    // Needed for the @Preview annotation on PlaceholderPreview (and any
+    // future debug-only previews). Not shipped in release.
+    debugImplementation("androidx.compose.ui:ui-tooling-preview")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
@@ -191,6 +259,20 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:$junitVersion")
     testImplementation("com.code-intelligence:jazzer-junit:0.30.0")
+    // screenshot testing — pure JVM path via Robolectric Native Graphics, so
+    // CI can render every Compose surface without an emulator. The vintage
+    // engine (already above) runs Robolectric's JUnit 4 test runner under
+    // useJUnitPlatform().
+    val roborazziVersion = "1.74.0"
+    testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
+    testImplementation("org.robolectric:robolectric:4.16")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("androidx.compose.ui:ui-test-manifest")
+    // architecture: Konsist encodes MVVM layer boundaries as JUnit tests so
+    // Phase 1+ rewrites can't silently break the View / ViewModel / Repository
+    // / Model separation. Runs on the plain JVM (no Android / Robolectric).
+    testImplementation("com.lemonappdev:konsist:0.17.3")
 }
 
 // Best-effort short git SHA for the currently checked-out HEAD. Returns null

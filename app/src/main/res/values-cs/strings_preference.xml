@@ -6,9 +6,6 @@
     <string name="fee_title">Poplatek za zahraniční transakci</string>
     <string name="fee_summary">Spravujte směnné, bankovní/kartové a specifické poplatky pro měnové páry</string>
     <string name="fee_manager_title">Poplatky</string>
-    <string name="fee_side_label">Typ poplatku</string>
-    <string name="fee_side_original">Poplatek za konverzi</string>
-    <string name="fee_side_converted">Převedený poplatek</string>
     <string name="fee_section_global_exchange">Globální směnný poplatek</string>
     <string name="fee_section_global_bank">Globální bankovní/kartový poplatek</string>
     <string name="fee_section_specific_pair">Poplatek pro konkrétní měnový pár</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Na</string>
     <string name="fee_pair_pick_currency">Vyberte měnu</string>
     <string name="fee_true_cost_prefix">"Poplatek za konverzi: "</string>
-    <string name="fee_original_value_prefix">"Poplatek za snížení: "</string>
     <string name="fee_cost_with_fee_prefix">"Cena s poplatkem: "</string>
-    <string name="fee_value_before_fee_prefix">"Hodnota před poplatkem: "</string>
-    <string name="fee_side_summary_original">Zobrazená převedená částka zůstává ve středním tržním kurzu; poplatky jsou zobrazeny samostatně jako \"Poplatek za konverzi\".</string>
-    <string name="fee_side_summary_converted">Poplatky jsou zahrnuty v zobrazené převedené částce.</string>
     <string name="fee_empty">Zatím žádné poplatky</string>
     <string name="previewConversion_title">Náhled převodu</string>
     <string name="previewConversion_summary">Zobrazí aktuální převod u každého kurzu ve výběru měny.</string>

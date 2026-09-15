@@ -22,6 +22,9 @@ import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
 import com.eliormachlev.currencix.view.compose.onBackgroundTap
 import com.eliormachlev.currencix.view.compose.rememberDragReorderState
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 // Nominal row height used to translate finger travel into "how many rows have
 // I dragged past". Cart rows aren't uniform (name + expression + preview), but
@@ -32,7 +35,7 @@ private val REORDER_ROW_HEIGHT = 96.dp
 @Composable
 @Suppress("LongParameterList")
 fun CartItemsList(
-    itemsSource: LiveData<List<CartItem>>,
+    itemsSource: LiveData<ImmutableList<CartItem>>,
     currencySource: LiveData<String>,
     activeItemIdSource: LiveData<String?>,
     activeExpressionSource: LiveData<String>,
@@ -48,7 +51,7 @@ fun CartItemsList(
     onBackgroundTap: () -> Unit,
 ) {
     AppTheme {
-        val items by itemsSource.observeAsState(initial = emptyList())
+        val items by itemsSource.observeAsState(initial = persistentListOf())
         val currency by currencySource.observeAsState(initial = "")
         val activeId by activeItemIdSource.observeAsState()
         val liveExpression by activeExpressionSource.observeAsState(initial = "")
@@ -57,7 +60,8 @@ fun CartItemsList(
         // partition. Drag operates on this list; dropping a pinned row into
         // the unpinned section snaps back on the next composition — user must
         // unpin first to move it out.
-        val displayItems = remember(items) { items.filter { it.pinned } + items.filterNot { it.pinned } }
+        val displayItems =
+            remember(items) { (items.filter { it.pinned } + items.filterNot { it.pinned }).toImmutableList() }
 
         val rowHeightPx = with(LocalDensity.current) { REORDER_ROW_HEIGHT.toPx() }
         val drag = rememberDragReorderState()

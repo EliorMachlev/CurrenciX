@@ -6,9 +6,6 @@
     <string name="fee_title">Biaya transaksi luar negeri</string>
     <string name="fee_summary">Kelola biaya penukaran, bank/kartu, dan biaya pasangan mata uang tertentu</string>
     <string name="fee_manager_title">Biaya</string>
-    <string name="fee_side_label">Jenis biaya</string>
-    <string name="fee_side_original">Biaya konversi</string>
-    <string name="fee_side_converted">Biaya dikonversi</string>
     <string name="fee_section_global_exchange">Biaya penukaran global</string>
     <string name="fee_section_global_bank">Biaya bank/kartu global</string>
     <string name="fee_section_specific_pair">Biaya penukaran pasangan mata uang tertentu</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Ke</string>
     <string name="fee_pair_pick_currency">Pilih mata uang</string>
     <string name="fee_true_cost_prefix">"Biaya konversi: "</string>
-    <string name="fee_original_value_prefix">"Biaya pengurangan: "</string>
     <string name="fee_cost_with_fee_prefix">"Biaya termasuk komisi: "</string>
-    <string name="fee_value_before_fee_prefix">"Nilai sebelum biaya: "</string>
-    <string name="fee_side_summary_original">Jumlah konversi yang ditampilkan tetap pada kurs tengah pasar; biaya ditampilkan terpisah sebagai \"Biaya konversi\".</string>
-    <string name="fee_side_summary_converted">Biaya sudah termasuk dalam jumlah konversi yang ditampilkan.</string>
     <string name="fee_empty">Belum ada biaya</string>
     <string name="previewConversion_title">Pratinjau konversi</string>
     <string name="previewConversion_summary">Tampilkan konversi yang dilakukan untuk setiap nilai tukar pada pemilihan mata uang.</string>

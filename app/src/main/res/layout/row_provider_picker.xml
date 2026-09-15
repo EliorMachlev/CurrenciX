@@ -12,7 +12,7 @@
     android:paddingHorizontal="@dimen/margin2x"
     android:paddingVertical="@dimen/margin1x">
 
-    <com.google.android.material.radiobutton.MaterialRadioButton
+    <androidx.appcompat.widget.AppCompatRadioButton
         android:id="@+id/radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
 
     <TextView
         android:id="@+id/text"
-        style="@style/TextAppearance.Material3.TitleMedium"
+        style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textDirection="locale"
@@ -35,7 +35,7 @@
 
     <TextView
         android:id="@+id/text2"
-        style="@style/TextAppearance.Material3.BodyMedium"
+        style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="?android:textColorTertiary"
@@ -48,7 +48,7 @@
 
     <TextView
         android:id="@+id/text3"
-        style="@style/TextAppearance.Material3.BodyMedium"
+        style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="?android:textColorTertiary"

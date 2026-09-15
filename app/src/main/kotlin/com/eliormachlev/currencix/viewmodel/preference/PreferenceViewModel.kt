@@ -4,13 +4,15 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
+import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 
 // Language.SYSTEM.iso — matches the enum value that means "follow system
 // locale" without pulling the enum into this file.
@@ -20,15 +22,25 @@ class PreferenceViewModel(
     private val app: Application,
 ) : AndroidViewModel(app) {
     private val db = Database(app)
-    private var apiProvider: LiveData<ApiProvider> = db.getApiProviderAsync()
-    private var openExchangeratesApiKey: LiveData<String?> = db.getOpenExchangeRatesApiKeyAsync()
-    private var isPreviewConversionEnabled: LiveData<Boolean> = db.isPreviewConversionEnabled()
+
+    val apiProvider: StateFlow<ApiProvider> =
+        db.getApiProviderFlow().stateInWhileSubscribed(viewModelScope, db.getApiProvider())
+    val openExchangeratesApiKey: StateFlow<String?> =
+        db.getOpenExchangeRatesApiKeyFlow().stateInWhileSubscribed(viewModelScope, db.getOpenExchangeRatesApiKey())
+    val isPreviewConversionEnabled: StateFlow<Boolean> =
+        db.isPreviewConversionEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isPreviewConversionEnabledBlocking())
+    val keyboardType: StateFlow<KeyboardType> =
+        db.getKeyboardTypeFlow().stateInWhileSubscribed(viewModelScope, db.getKeyboardTypeBlocking())
+    val isHapticFeedbackEnabled: StateFlow<Boolean> =
+        db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())
+    val decimalPlaces: StateFlow<Int> =
+        db.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.getDecimalPlacesBlocking())
+    val dateFormat: StateFlow<String> =
+        db.getDateFormatFlow().stateInWhileSubscribed(viewModelScope, db.getDateFormatBlocking())
 
     fun setApiProvider(api: ApiProvider) {
         persistAndRefreshRates { db.setApiProvider(api) }
     }
-
-    fun getApiProvider(): LiveData<ApiProvider> = apiProvider
 
     fun setOpenExchangeratesApiKey(id: String) {
         persistAndRefreshRates { db.setOpenExchangeRatesApiKey(id) }
@@ -40,8 +52,6 @@ class PreferenceViewModel(
         persist()
         ExchangeRatesRepository(app).getExchangeRates()
     }
-
-    fun getOpenExchangeratesApiKey(): LiveData<String?> = openExchangeratesApiKey
 
     /**
      * Returns true when the caller must rebuild the activity stack to make
@@ -91,8 +101,6 @@ class PreferenceViewModel(
         }
     }
 
-    fun isPreviewConversionEnabled(): LiveData<Boolean> = isPreviewConversionEnabled
-
     fun setPreviewConversionEnabled(enabled: Boolean) {
         db.setPreviewConversionEnabled(enabled)
     }
@@ -110,4 +118,10 @@ class PreferenceViewModel(
     fun setDecimalPlaces(places: Int) {
         db.setDecimalPlaces(places)
     }
+
+    fun setDateFormat(pattern: String) {
+        db.setDateFormat(pattern)
+    }
+
+    fun getTheme(): AppTheme = db.getTheme()
 }

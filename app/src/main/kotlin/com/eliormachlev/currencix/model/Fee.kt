@@ -4,8 +4,8 @@ import java.math.BigDecimal
 
 /**
  * A single fee entry that can be stacked with others when converting
- * currencies. All entries store the [percent] as a positive number;
- * whether the fee is added or subtracted is controlled by [isMarkup].
+ * currencies. All entries store the [percent] as a positive markup — real
+ * exchange fees always inflate the cost, never reduce it.
  *
  * Every fee carries a user-facing [name] (may be empty for legacy entries)
  * and an [isActive] flag that lets the user temporarily skip it without
@@ -15,9 +15,7 @@ sealed class Fee {
     abstract val id: String
     abstract val name: String
     abstract val percent: BigDecimal
-    abstract val isMarkup: Boolean
     abstract val isActive: Boolean
-    abstract val feeSide: FeeSide
     abstract val type: FeeType
 
     /**
@@ -30,9 +28,7 @@ sealed class Fee {
     abstract fun withEditableFields(
         name: String,
         percent: BigDecimal,
-        isMarkup: Boolean,
         isActive: Boolean,
-        feeSide: FeeSide,
     ): Fee
 
     /** Applies to every conversion, no matter which currencies are involved. */
@@ -40,25 +36,19 @@ sealed class Fee {
         override val id: String,
         override val name: String,
         override val percent: BigDecimal,
-        override val isMarkup: Boolean,
         override val isActive: Boolean = true,
-        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_EXCHANGE
 
         override fun withEditableFields(
             name: String,
             percent: BigDecimal,
-            isMarkup: Boolean,
             isActive: Boolean,
-            feeSide: FeeSide,
         ): GlobalExchange =
             copy(
                 name = name,
                 percent = percent,
-                isMarkup = isMarkup,
                 isActive = isActive,
-                feeSide = feeSide,
             )
     }
 
@@ -67,25 +57,19 @@ sealed class Fee {
         override val id: String,
         override val name: String,
         override val percent: BigDecimal,
-        override val isMarkup: Boolean,
         override val isActive: Boolean = true,
-        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.GLOBAL_BANK
 
         override fun withEditableFields(
             name: String,
             percent: BigDecimal,
-            isMarkup: Boolean,
             isActive: Boolean,
-            feeSide: FeeSide,
         ): GlobalBank =
             copy(
                 name = name,
                 percent = percent,
-                isMarkup = isMarkup,
                 isActive = isActive,
-                feeSide = feeSide,
             )
     }
 
@@ -97,28 +81,22 @@ sealed class Fee {
         override val id: String,
         override val name: String,
         override val percent: BigDecimal,
-        override val isMarkup: Boolean,
         val from: String,
         val to: String,
         val bothWays: Boolean,
         override val isActive: Boolean = true,
-        override val feeSide: FeeSide = FeeSide.ORIGINAL,
     ) : Fee() {
         override val type: FeeType get() = FeeType.SPECIFIC_PAIR
 
         override fun withEditableFields(
             name: String,
             percent: BigDecimal,
-            isMarkup: Boolean,
             isActive: Boolean,
-            feeSide: FeeSide,
         ): SpecificPair =
             copy(
                 name = name,
                 percent = percent,
-                isMarkup = isMarkup,
                 isActive = isActive,
-                feeSide = feeSide,
             )
     }
 }
@@ -139,16 +117,4 @@ enum class FeeType(
     companion object {
         fun fromWire(wire: String?): FeeType? = entries.firstOrNull { it.wire == wire }
     }
-}
-
-/**
- * Which side of the conversion a fee applies to.
- * - [ORIGINAL]: the fee inflates the input-side "true cost"; the displayed
- *   converted amount is left at the mid-market value.
- * - [CONVERTED]: the fee is baked into the displayed converted amount; the
- *   pre-fee "original value" is surfaced separately when needed.
- */
-enum class FeeSide {
-    ORIGINAL,
-    CONVERTED,
 }
