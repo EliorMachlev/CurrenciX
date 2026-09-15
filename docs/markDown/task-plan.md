@@ -27,6 +27,9 @@ Guardrails first. These catch regressions in everything that follows.
 ## Phase 2 — Networking layer
 
 - **#158 Retrofit atop OkHttp** — one provider at a time. Chucker (#143) already available for debugging.
+  - Landed: Frankfurter (`FrankfurterApi` + shared `util/RetrofitProvider.kt`; reuses the OkHttp singleton from #163 so cache + rewrite interceptor still apply; `ApiHttpError` semantics preserved by `retrofitCall` translating `retrofit2.HttpException`).
+  - Next JSON providers, in order: OpenExchangerates → InforEuro → BankOfCanada → BankOfIsrael. Each is a separate PR (`feat(net): Retrofit for <provider> (#158)`).
+  - XML providers (NorgesBank, BankRossii) stay on raw OkHttp for now — Retrofit's converter story for SAX/XmlPullParser is thin. Revisit once every JSON provider is migrated.
 - **#163 OkHttp Cache audit** *(blocks #148 scoping)* — audit each provider's `Cache-Control` / `ETag` headers, wire `OkHttp.Cache` for cooperative providers, per-provider rewrite interceptor for the rest. Whatever HTTP handles shrinks #148's app-layer scope.
 
 ## Phase 3 — Data plumbing

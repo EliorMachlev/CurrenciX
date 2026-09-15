@@ -195,6 +195,14 @@ dependencies {
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
+    // Retrofit: type-safe HTTP interfaces layered on top of the shared OkHttp
+    // client (see util/RetrofitProvider.kt). Migrated one provider at a time
+    // starting with Frankfurter (#158) — subsequent JSON providers follow as
+    // separate PRs. converter-moshi reuses our existing Moshi adapters so
+    // custom (De)serializers keep working unchanged.
+    val retrofitVersion = "2.11.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     // math: EvalEx (Apache-2.0) evaluates the calculator expression. Replaced
     // mXparser 4.4.3, which was pinned because its v5+ dual license isn't
     // F-Droid compatible. EvalEx is actively maintained and BigDecimal-native.
