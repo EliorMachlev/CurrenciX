@@ -395,17 +395,17 @@ internal fun MainDisplay(
                 PickSide.TO,
             )
         },
-        onSwapClick = {
-            val newBase = destCurrency
-            val newDest = baseCurrency
-            if (newBase != null && newDest != null && newBase != newDest) {
-                viewModel.setBaseCurrency(newBase)
-                viewModel.setDestinationCurrency(newDest)
-            }
-        },
+        onSwapClick = { swapCurrencies(viewModel, baseCurrency, destCurrency) },
         callbacks = callbacks,
         modifier = modifier,
     )
+}
+
+private fun swapCurrencies(viewModel: MainViewModel, from: Currency?, to: Currency?) {
+    if (from != null && to != null && from != to) {
+        viewModel.setBaseCurrency(to)
+        viewModel.setDestinationCurrency(from)
+    }
 }
 
 @Composable
