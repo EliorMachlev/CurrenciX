@@ -44,13 +44,14 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import kotlinx.collections.immutable.ImmutableList
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 @Suppress("LongParameterList", "LongMethod")
 fun TimelineChart(
-    entriesLive: LiveData<List<Pair<LocalDate, Float>>?>,
+    entriesLive: LiveData<ImmutableList<Pair<LocalDate, Float>>?>,
     showGridLive: LiveData<Boolean>,
     showXAxisLive: LiveData<Boolean>,
     showYAxisLive: LiveData<Boolean>,

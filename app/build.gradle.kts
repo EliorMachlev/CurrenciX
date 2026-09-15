@@ -158,6 +158,11 @@ android {
 dependencies {
     // kotlin
     implementation("androidx.core:core-ktx:1.19.0")
+    // kotlinx.collections.immutable: exposes @Immutable persistent collection
+    // types (ImmutableList / PersistentList / ...) so Compose stability
+    // inference can skip recomposition of composables whose only "unstable"
+    // input was a plain `List<T>`. Adopted on Compose-facing state per #161.
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
     // persistence: DataStore Preferences replaces SharedPreferences across every
     // namespace (see repository/persistence/PersistenceKey.kt). The `-preferences`
     // artifact pulls `datastore-preferences-core` transitively and provides the

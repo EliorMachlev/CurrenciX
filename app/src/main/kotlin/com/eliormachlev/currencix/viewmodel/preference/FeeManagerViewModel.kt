@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.repository.Database
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * Thin ViewModel over [Database] for the Compose fee-manager screen. All fee
@@ -17,7 +18,7 @@ class FeeManagerViewModel(
 ) : AndroidViewModel(app) {
     private val db = Database(app)
 
-    fun getFees(): LiveData<List<Fee>> = db.getFees()
+    fun getFees(): LiveData<ImmutableList<Fee>> = db.getFees()
 
     fun getActiveExchangeId(): LiveData<String?> = db.getActiveExchangeId()
 

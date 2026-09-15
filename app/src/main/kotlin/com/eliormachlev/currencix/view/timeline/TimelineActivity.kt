@@ -26,6 +26,7 @@ import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.preference.GraphOptionsDialog
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
+import kotlinx.collections.immutable.toImmutableList
 import java.time.format.DateTimeFormatter
 
 class TimelineActivity : BaseActivity() {
@@ -101,7 +102,7 @@ class TimelineActivity : BaseActivity() {
                     chartContent = {
                         val entriesLive =
                             timelineModel.getRates().map { rates ->
-                                rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
+                                rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }?.toImmutableList()
                             }
                         // Range extremes (scrub-independent) so the chart's min/max
                         // reference lines stay pinned to the visible period's

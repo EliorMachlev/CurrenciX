@@ -28,6 +28,8 @@ import com.eliormachlev.currencix.util.KEY_RATES_TIME
 import com.eliormachlev.currencix.util.NO_PROVIDER_ID
 import com.eliormachlev.currencix.util.toLocalDate
 import com.eliormachlev.currencix.util.toMillis
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONException
@@ -303,9 +305,11 @@ class Database(
         writeOrderedStarCodes(next)
     }
 
-    fun getStarredCurrencies(): LiveData<List<Currency>> =
+    // ImmutableList so Compose stability inference can skip recomposition
+    // when the collection identity changes but the content is equal (#161).
+    fun getStarredCurrencies(): LiveData<ImmutableList<Currency>> =
         starredStore.mappedLiveData { prefs ->
-            readOrderedStarCodes(prefs).mapNotNull { Currency.fromString(it) }
+            readOrderedStarCodes(prefs).mapNotNull { Currency.fromString(it) }.toImmutableList()
         }
 
     fun setStarredCurrencyOrder(currencies: List<Currency>) {
@@ -366,7 +370,10 @@ class Database(
 
     // fees
 
-    fun getFees(): LiveData<List<Fee>> = appStore.mappedLiveData { parseFeeList(it[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]") }
+    // ImmutableList so Compose stability inference can skip recomposition
+    // when the collection identity changes but the content is equal (#161).
+    fun getFees(): LiveData<ImmutableList<Fee>> =
+        appStore.mappedLiveData { parseFeeList(it[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]").toImmutableList() }
 
     fun getFeesBlocking(): List<Fee> = parseFeeList(appStore.snapshot()[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]")
 

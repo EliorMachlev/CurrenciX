@@ -106,6 +106,8 @@ import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -378,7 +380,7 @@ internal fun MainDisplay(
         rates = rates,
         isUpdating = isUpdating,
         feeStack = feeStack,
-        activeFees = activeFees.orEmpty(),
+        activeFees = activeFees ?: persistentListOf(),
         mathText = mathText,
         resultWithFeesNumber = resultWithFeesNumber,
         dateFormatPattern = dateFormatPattern,
@@ -430,7 +432,7 @@ private fun HeroCard(
     rates: ExchangeRates?,
     isUpdating: Boolean,
     feeStack: BigDecimal?,
-    activeFees: List<Fee>,
+    activeFees: ImmutableList<Fee>,
     mathText: String?,
     resultWithFeesNumber: BigDecimal?,
     dateFormatPattern: String,
@@ -885,7 +887,7 @@ private fun AmountToRow(
     resultParts: AmountParts,
     trueCostParts: AmountParts,
     stack: BigDecimal?,
-    fees: List<Fee>,
+    fees: ImmutableList<Fee>,
     otherValue: BigDecimal?,
     onResultLongClick: () -> Unit,
     onTrueCostLongClick: () -> Unit,
@@ -958,7 +960,7 @@ private fun BigDecimal?.hasFee(): Boolean = this != null && this.compareTo(BigDe
 @Composable
 private fun ChipBelow(
     stack: BigDecimal,
-    fees: List<Fee>,
+    fees: ImmutableList<Fee>,
     onClick: () -> Unit,
 ) {
     Ltr {
@@ -1159,7 +1161,7 @@ private fun Modifier.guillocheBackground(): Modifier {
 @Composable
 private fun FeeChip(
     stack: BigDecimal,
-    fees: List<Fee>,
+    fees: ImmutableList<Fee>,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

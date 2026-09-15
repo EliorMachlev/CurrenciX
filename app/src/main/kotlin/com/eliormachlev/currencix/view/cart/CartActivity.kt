@@ -20,6 +20,9 @@ import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 class CartActivity : BaseActivity() {
     private lateinit var viewModel: CartViewModel
@@ -35,7 +38,7 @@ class CartActivity : BaseActivity() {
 
     // LiveData sources bridged into Compose. Kept as fields so observeAsState
     // in the list survives cart re-emissions.
-    private val itemsLive = MediatorLiveData<List<CartItem>>().apply { value = emptyList() }
+    private val itemsLive = MediatorLiveData<ImmutableList<CartItem>>().apply { value = persistentListOf() }
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
     // Single signal for the compose row: non-null iff a system-IME variant is
@@ -179,7 +182,7 @@ class CartActivity : BaseActivity() {
     private fun observe() {
         viewModel.getCurrentCart().observe(this) { cart ->
             currencyLive.value = cart.currency
-            itemsLive.value = cart.items.toList()
+            itemsLive.value = cart.items.toImmutableList()
             // A cart load can retire the item the keypad was bound to; drop
             // that binding so the keypad doesn't linger over a missing row.
             val currentIds = cart.items.map { it.id }.toSet()

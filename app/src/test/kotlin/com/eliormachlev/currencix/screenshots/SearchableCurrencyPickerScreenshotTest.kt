@@ -4,6 +4,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerConversion
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -51,7 +52,7 @@ class SearchableCurrencyPickerScreenshotTest {
 
     companion object {
         private val SAMPLE_RATES =
-            listOf(
+            persistentListOf(
                 Rate(Currency.USD, BigDecimal("1.00")),
                 Rate(Currency.EUR, BigDecimal("0.92")),
                 Rate(Currency.GBP, BigDecimal("0.79")),
@@ -62,7 +63,7 @@ class SearchableCurrencyPickerScreenshotTest {
                 Rate(Currency.CNY, BigDecimal("7.24")),
             )
 
-        private val SAMPLE_STARS = listOf(Currency.EUR, Currency.GBP)
+        private val SAMPLE_STARS = persistentListOf(Currency.EUR, Currency.GBP)
 
         private val SAMPLE_CONVERSION =
             CurrencyPickerConversion(

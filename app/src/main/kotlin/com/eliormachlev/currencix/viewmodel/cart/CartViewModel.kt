@@ -13,6 +13,7 @@ import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
+import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -44,7 +45,7 @@ class CartViewModel(
      */
     fun getSavedCartsSnapshot(): List<SavedCart> = db.getSavedCartsBlocking()
 
-    fun getFees(): LiveData<List<Fee>> = ratesCache.fees
+    fun getFees(): LiveData<ImmutableList<Fee>> = ratesCache.fees
 
     fun getExchangeRates(): LiveData<ExchangeRates?> = ratesCache.rates
 

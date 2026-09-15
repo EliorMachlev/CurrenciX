@@ -21,6 +21,8 @@ import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import java.math.BigDecimal
 
 class SearchableSpinnerDialog(
@@ -92,8 +94,13 @@ class SearchableSpinnerDialog(
 
                         val ready = rates != null && stars != null
                         SearchableCurrencyPicker(
-                            rates = if (ready) rates?.rates.orEmpty() else emptyList(),
-                            stars = stars.orEmpty(),
+                            rates =
+                                if (ready) {
+                                    rates?.rates.orEmpty().toImmutableList()
+                                } else {
+                                    persistentListOf()
+                                },
+                            stars = stars ?: persistentListOf(),
                             filterStarred = filterStarred,
                             conversion = conversion,
                             disabledCurrency = disabledCurrencyState.value,

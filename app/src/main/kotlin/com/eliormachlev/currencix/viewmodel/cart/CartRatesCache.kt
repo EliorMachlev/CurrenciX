@@ -7,6 +7,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.repository.Database
+import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
 
 /**
@@ -22,7 +23,7 @@ import java.math.BigDecimal
 class CartRatesCache(
     db: Database,
 ) {
-    val fees: LiveData<List<Fee>> = db.getFees()
+    val fees: LiveData<ImmutableList<Fee>> = db.getFees()
     val rates: LiveData<ExchangeRates?> = db.getExchangeRates()
 
     var lastFees: List<Fee> = emptyList()
@@ -37,7 +38,7 @@ class CartRatesCache(
     private val activeExchange: LiveData<String?> = db.getActiveExchangeId()
     private val activeBank: LiveData<String?> = db.getActiveBankId()
 
-    private val feesObserver = Observer<List<Fee>> { lastFees = it }
+    private val feesObserver = Observer<ImmutableList<Fee>> { lastFees = it }
     private val ratesObserver = Observer<ExchangeRates?> { lastRates = it }
     private val activeExchangeObserver = Observer<String?> { lastActiveExchangeId = it }
     private val activeBankObserver = Observer<String?> { lastActiveBankId = it }

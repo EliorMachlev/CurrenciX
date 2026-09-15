@@ -29,6 +29,8 @@ import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 /**
  * Root of the cart screen. Column-lays the items list (weighted, so it
@@ -42,7 +44,7 @@ fun CartScreen(
     viewModel: CartViewModel,
     fragmentManager: FragmentManager,
     keypad: CartKeypadController,
-    itemsSource: LiveData<List<CartItem>>,
+    itemsSource: LiveData<ImmutableList<CartItem>>,
     currencySource: LiveData<String>,
     keyListenerSource: LiveData<CalculatorKeyListener?>,
     onAddItem: () -> Unit,
@@ -57,7 +59,7 @@ fun CartScreen(
     onOpenFees: () -> Unit,
 ) {
     AppTheme {
-        val items by itemsSource.observeAsState(initial = emptyList())
+        val items by itemsSource.observeAsState(initial = persistentListOf())
         Box(Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding())) {
             Column(Modifier.fillMaxSize()) {
                 Box(Modifier.fillMaxWidth().weight(1f)) {

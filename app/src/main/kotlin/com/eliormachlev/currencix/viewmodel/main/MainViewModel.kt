@@ -34,6 +34,8 @@ import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.Collator
@@ -61,7 +63,7 @@ class MainViewModel(
     // repository data
     private var dbLiveItems: LiveData<ExchangeRates?>
     private var exchangeRates: LiveData<ExchangeRates?>
-    private val starredLiveItems: LiveData<List<Currency>>
+    private val starredLiveItems: LiveData<ImmutableList<Currency>>
     private val onlyShowStarred: LiveData<Boolean>
     private val liveError = repository.getError()
 
@@ -82,7 +84,7 @@ class MainViewModel(
     private val currentDestinationCurrency: LiveData<Currency?>
 
     // fees
-    private val fees: LiveData<List<Fee>>
+    private val fees: LiveData<ImmutableList<Fee>>
     private val activeExchangeId: LiveData<String?>
     private val activeBankId: LiveData<String?>
 
@@ -272,7 +274,7 @@ class MainViewModel(
     /**
      * all the currencies that the user has starred
      */
-    internal fun getStarredCurrencies(): LiveData<List<Currency>> = starredLiveItems
+    internal fun getStarredCurrencies(): LiveData<ImmutableList<Currency>> = starredLiveItems
 
     /**
      * persist the user's manual ordering of starred currencies
@@ -313,7 +315,7 @@ class MainViewModel(
     /**
      * all configured fees
      */
-    internal fun getFees(): LiveData<List<Fee>> = fees
+    internal fun getFees(): LiveData<ImmutableList<Fee>> = fees
 
     internal val ratesInformationFooter =
         object : MediatorLiveData<Spanned?>() {
@@ -501,11 +503,13 @@ class MainViewModel(
     /**
      * The active fees participating in [feeStack] for the current pair —
      * specific-pair matches plus the currently-picked single global
-     * exchange / bank-or-card entries.
+     * exchange / bank-or-card entries. Exposed as [ImmutableList] so Compose
+     * stability inference can skip recomposition of consumers when the
+     * derived list has equal content across emissions (#161).
      */
-    private val activeFees: MediatorLiveData<List<Fee>> =
+    private val activeFees: MediatorLiveData<ImmutableList<Fee>> =
         pairFeeMediator { list, base, dest, exchangeId, bankId ->
-            FeeCalculator.activeFees(list.orEmpty(), base, dest, exchangeId, bankId)
+            FeeCalculator.activeFees(list.orEmpty(), base, dest, exchangeId, bankId).toImmutableList()
         }
 
     /**
@@ -608,7 +612,7 @@ class MainViewModel(
     /**
      * Active fees participating for the current pair.
      */
-    internal fun getActiveFees(): LiveData<List<Fee>> = activeFees
+    internal fun getActiveFees(): LiveData<ImmutableList<Fee>> = activeFees
 
     /**
      * the total destination value, as BigDecimal (internal is string)

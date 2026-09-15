@@ -25,6 +25,9 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import com.eliormachlev.currencix.view.compose.AppTheme as AppComposeTheme
 
 // Sections match the three fee categories from the old
@@ -78,13 +81,13 @@ fun FeesScreen(
     viewModel: FeeManagerViewModel,
     onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
 ) {
-    val fees by viewModel.getFees().observeAsState(emptyList())
+    val fees by viewModel.getFees().observeAsState(persistentListOf())
     val activeExchangeId by viewModel.getActiveExchangeId().observeAsState()
     val activeBankId by viewModel.getActiveBankId().observeAsState()
 
-    val globalExchange = remember(fees) { fees.filterIsInstance<Fee.GlobalExchange>() }
-    val globalBank = remember(fees) { fees.filterIsInstance<Fee.GlobalBank>() }
-    val specificPair = remember(fees) { fees.filterIsInstance<Fee.SpecificPair>() }
+    val globalExchange = remember(fees) { fees.filterIsInstance<Fee.GlobalExchange>().toImmutableList() }
+    val globalBank = remember(fees) { fees.filterIsInstance<Fee.GlobalBank>().toImmutableList() }
+    val specificPair = remember(fees) { fees.filterIsInstance<Fee.SpecificPair>().toImmutableList() }
 
     var openPicker by remember { mutableStateOf<GlobalFeeKind?>(null) }
     var openEditor by remember { mutableStateOf<EditorTarget?>(null) }
@@ -133,8 +136,8 @@ fun FeesScreen(
 @Suppress("LongParameterList")
 private fun GlobalPickerHost(
     kind: GlobalFeeKind,
-    globalExchange: List<Fee.GlobalExchange>,
-    globalBank: List<Fee.GlobalBank>,
+    globalExchange: ImmutableList<Fee.GlobalExchange>,
+    globalBank: ImmutableList<Fee.GlobalBank>,
     activeExchangeId: String?,
     activeBankId: String?,
     viewModel: FeeManagerViewModel,
@@ -210,11 +213,11 @@ private fun EditorHost(
 @Composable
 @Suppress("LongParameterList")
 private fun FeesSectionsList(
-    globalExchange: List<Fee.GlobalExchange>,
+    globalExchange: ImmutableList<Fee.GlobalExchange>,
     activeExchangeId: String?,
-    globalBank: List<Fee.GlobalBank>,
+    globalBank: ImmutableList<Fee.GlobalBank>,
     activeBankId: String?,
-    specificPair: List<Fee.SpecificPair>,
+    specificPair: ImmutableList<Fee.SpecificPair>,
     onOpenPicker: (GlobalFeeKind) -> Unit,
     onOpenEditor: (EditorTarget) -> Unit,
 ) {
@@ -314,7 +317,7 @@ private fun adoptFirstGlobalAsActive(
 @Composable
 private fun <T : Fee> GlobalFeeSection(
     kind: GlobalFeeKind,
-    entries: List<T>,
+    entries: ImmutableList<T>,
     activeId: String?,
     onClick: () -> Unit,
 ) {
@@ -338,7 +341,7 @@ private fun <T : Fee> GlobalFeeSection(
 
 @Composable
 private fun SpecificPairSection(
-    entries: List<Fee.SpecificPair>,
+    entries: ImmutableList<Fee.SpecificPair>,
     onEdit: (Fee.SpecificPair) -> Unit,
     onAdd: () -> Unit,
 ) {
