@@ -239,6 +239,9 @@ dependencies {
     val showkaseVersion = "1.0.5"
     debugImplementation("com.airbnb.android:showkase:$showkaseVersion")
     kspDebug("com.airbnb.android:showkase-processor:$showkaseVersion")
+    // Needed for the @Preview annotation on PlaceholderPreview (and any
+    // future debug-only previews). Not shipped in release.
+    debugImplementation("androidx.compose.ui:ui-tooling-preview")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
