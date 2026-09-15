@@ -14,6 +14,9 @@ build/
 # Local artifacts (downloaded CI screenshot dumps, etc.)
 artifacts/
 
+# Claude Code local state (agent worktrees, etc.)
+.claude/worktrees/
+
 # IntelliJ
 *.iml
 .idea/
