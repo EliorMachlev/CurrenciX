@@ -7,7 +7,9 @@
          supportsRtl=false in main. Debug-only override keeps the app's
          opinion on debug builds without changing the release manifest.
     -->
-    <application tools:replace="android:supportsRtl">
+    <application
+        android:supportsRtl="false"
+        tools:replace="android:supportsRtl">
 
         <!--
              Showkase browser launcher — debug-only Activity that appears as
