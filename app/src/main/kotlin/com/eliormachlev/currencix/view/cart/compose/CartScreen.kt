@@ -84,24 +84,7 @@ fun CartScreen(
                         ) { CartEmptyHint() }
                     }
                 }
-                OutlinedButton(
-                    onClick = rememberHapticOnClick(onAddItem),
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = dimensionResource(id = R.dimen.margin2x),
-                                vertical = dimensionResource(id = R.dimen.margin1x),
-                            ),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.margin1x)),
-                    ) {
-                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                        Text(text = stringResource(id = R.string.cart_add_item))
-                    }
-                }
+                AddItemButton(onAddItem = onAddItem)
                 CartFooter(
                     viewModel = viewModel,
                     fragmentManager = fragmentManager,
@@ -112,6 +95,31 @@ fun CartScreen(
                 keypad = keypad,
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
+        }
+    }
+}
+
+// "Add item" outlined button — extracted from CartScreen so the screen body
+// stays under the LongMethod threshold. Wraps the icon+label row and the
+// haptic-click adapter so the caller only supplies the raw action.
+@Composable
+private fun AddItemButton(onAddItem: () -> Unit) {
+    OutlinedButton(
+        onClick = rememberHapticOnClick(onAddItem),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.margin2x),
+                    vertical = dimensionResource(id = R.dimen.margin1x),
+                ),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.margin1x)),
+        ) {
+            Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+            Text(text = stringResource(id = R.string.cart_add_item))
         }
     }
 }

@@ -16,33 +16,41 @@ private const val ROW_DEFAULT_DECIMALS = 2
 private const val ROW_SMALL_AMOUNT_DECIMALS = 4
 private val ROW_SMALL_AMOUNT_THRESHOLD: BigDecimal = BigDecimal.ONE
 
-fun buildQuickConversionRows(
-    ctx: Context,
-    from: Currency,
-    to: Currency,
-    rates: ExchangeRates,
-    feeStack: BigDecimal,
-    costWithFeePrefix: String,
-): List<QuickConversionsRow> {
-    val baseRate = rates.rateFor(from)?.value ?: return emptyList()
-    val destRate = rates.rateFor(to)?.value ?: return emptyList()
-    val hasOriginalFee = !feeStack.isNeutralFeeStack()
-    val fromIso = from.iso4217Alpha()
-    val toIso = to.iso4217Alpha()
-    val fromMarker = from.symbolOrIso()
+/**
+ * Bundle of everything [buildQuickConversionRows] needs to render its rows.
+ * Grouped as a data class so the row builder's signature stays short and the
+ * caller (the QuickConversions dialog) can pass a single snapshot instead of
+ * six positional arguments.
+ */
+data class QuickConversionRowInputs(
+    val ctx: Context,
+    val from: Currency,
+    val to: Currency,
+    val rates: ExchangeRates,
+    val feeStack: BigDecimal,
+    val costWithFeePrefix: String,
+)
+
+fun buildQuickConversionRows(inputs: QuickConversionRowInputs): List<QuickConversionsRow> {
+    val baseRate = inputs.rates.rateFor(inputs.from)?.value ?: return emptyList()
+    val destRate = inputs.rates.rateFor(inputs.to)?.value ?: return emptyList()
+    val hasOriginalFee = !inputs.feeStack.isNeutralFeeStack()
+    val fromIso = inputs.from.iso4217Alpha()
+    val toIso = inputs.to.iso4217Alpha()
+    val fromMarker = inputs.from.symbolOrIso()
     return QUICK_AMOUNTS.map { amountStr ->
         val amt = BigDecimal(amountStr)
         val fair = amt.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
         val costWithFee =
             if (hasOriginalFee) {
-                val actual = amt.multiply(feeStack, MathContext.DECIMAL128)
-                costWithFeePrefix + ltrIsolate("${actual.formatForRow(ctx)} $fromMarker")
+                val actual = amt.multiply(inputs.feeStack, MathContext.DECIMAL128)
+                inputs.costWithFeePrefix + ltrIsolate("${actual.formatForRow(inputs.ctx)} $fromMarker")
             } else {
                 null
             }
         QuickConversionsRow(
             amountFromText = "$amountStr $fromIso",
-            amountToText = "${fair.formatForRow(ctx)} $toIso",
+            amountToText = "${fair.formatForRow(inputs.ctx)} $toIso",
             costWithFeeText = costWithFee,
         )
     }

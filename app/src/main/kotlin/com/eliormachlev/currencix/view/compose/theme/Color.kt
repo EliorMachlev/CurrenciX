@@ -29,7 +29,6 @@ private val PaperSurfaceHigh = Color(0xFFF7F3EC)
 private val PaperSurfaceHigher = Color(0xFFEEE7DB)
 private val PaperInk = Color(0xFF1C1B1F)
 private val PaperInkMuted = Color(0xFF6B675F)
-private val PaperInkFaint = Color(0xFF98938A)
 private val PaperOutline = Color(0x1F1C1B1F)
 
 private val InkBg = Color(0xFF131311)
@@ -38,7 +37,6 @@ private val InkSurfaceHigh = Color(0xFF26251F)
 private val InkSurfaceHigher = Color(0xFF302E28)
 private val InkForeground = Color(0xFFEFEAE0)
 private val InkForegroundMuted = Color(0xFFA9A49A)
-private val InkForegroundFaint = Color(0xFF726E66)
 private val InkOutline = Color(0x33EFEAE0)
 
 val CurrenciXLightColors =

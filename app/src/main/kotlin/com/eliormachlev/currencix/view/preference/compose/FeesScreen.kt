@@ -90,96 +90,171 @@ fun FeesScreen(
     var openEditor by remember { mutableStateOf<EditorTarget?>(null) }
 
     AppComposeTheme {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding =
-                PaddingValues(
-                    horizontal = dimensionResource(id = R.dimen.margin2x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
-                ),
-        ) {
-            item(key = FeeSection.GLOBAL_EXCHANGE) {
-                SectionEnter(index = FeeSection.GLOBAL_EXCHANGE.ordinal) {
-                    GlobalFeeSection(
-                        kind = GlobalFeeKind.EXCHANGE,
-                        entries = globalExchange,
-                        activeId = activeExchangeId,
-                        onClick = { openPicker = GlobalFeeKind.EXCHANGE },
-                    )
-                }
-            }
-            item(key = FeeSection.GLOBAL_BANK) {
-                SectionEnter(index = FeeSection.GLOBAL_BANK.ordinal) {
-                    GlobalFeeSection(
-                        kind = GlobalFeeKind.BANK,
-                        entries = globalBank,
-                        activeId = activeBankId,
-                        onClick = { openPicker = GlobalFeeKind.BANK },
-                    )
-                }
-            }
-            item(key = FeeSection.SPECIFIC_PAIR) {
-                SectionEnter(index = FeeSection.SPECIFIC_PAIR.ordinal) {
-                    SpecificPairSection(
-                        entries = specificPair,
-                        onEdit = { openEditor = EditorTarget(EditorKind.Pair, it) },
-                        onAdd = { openEditor = EditorTarget(EditorKind.Pair) },
-                    )
-                }
-            }
-        }
+        FeesSectionsList(
+            globalExchange = globalExchange,
+            activeExchangeId = activeExchangeId,
+            globalBank = globalBank,
+            activeBankId = activeBankId,
+            specificPair = specificPair,
+            onOpenPicker = { openPicker = it },
+            onOpenEditor = { openEditor = it },
+        )
     }
 
     openPicker?.let { kind ->
-        val (entries, activeId) =
-            when (kind) {
-                GlobalFeeKind.EXCHANGE -> globalExchange to activeExchangeId
-                GlobalFeeKind.BANK -> globalBank to activeBankId
-            }
-        val active = entries.firstOrNull { it.isActive }
-        val effectiveId = activeId?.takeIf { id -> entries.any { it.id == id && it.isActive } } ?: active?.id
-        FeePickerDialog(
-            title = stringResource(id = kind.titleRes),
-            entries = entries,
-            effectiveId = effectiveId,
+        GlobalPickerHost(
+            kind = kind,
+            globalExchange = globalExchange,
+            globalBank = globalBank,
+            activeExchangeId = activeExchangeId,
+            activeBankId = activeBankId,
+            viewModel = viewModel,
             onDismiss = { openPicker = null },
-            onPicked = { picked ->
-                when (kind) {
-                    GlobalFeeKind.EXCHANGE -> viewModel.setActiveExchangeId(picked)
-                    GlobalFeeKind.BANK -> viewModel.setActiveBankId(picked)
-                }
-            },
-            onAdd = { openEditor = EditorTarget(EditorKind.Global(kind)) },
-            onEdit = { openEditor = EditorTarget(EditorKind.Global(kind), it) },
+            onOpenEditor = { openEditor = it },
         )
     }
 
     openEditor?.let { target ->
-        val kind = target.kind
-        val isPair = kind is EditorKind.Pair
-        val titleRes =
-            when (kind) {
-                is EditorKind.Global -> kind.globalKind.titleRes
-                EditorKind.Pair -> R.string.fee_section_specific_pair
-            }
-        FeeEditorDialog(
-            titleRes = titleRes,
-            existing = target.existing,
-            isPair = isPair,
-            onDismiss = { openEditor = null },
-            onConfirm = { draft ->
-                persistEditorConfirm(viewModel, target, draft)
-                openEditor = null
-            },
+        EditorHost(
+            target = target,
+            viewModel = viewModel,
             onPickCurrency = onPickCurrency,
-            onDelete =
-                target.existing?.let { existing ->
-                    {
-                        viewModel.deleteFee(existing.id)
-                        openEditor = null
-                    }
-                },
+            onDismiss = { openEditor = null },
         )
+    }
+}
+
+/**
+ * Resolves the picker dialog for whichever global fee kind is currently open,
+ * threading the right list + active-id into [FeePickerDialog]. Extracted so
+ * [FeesScreen] stays under the LongMethod threshold.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun GlobalPickerHost(
+    kind: GlobalFeeKind,
+    globalExchange: List<Fee.GlobalExchange>,
+    globalBank: List<Fee.GlobalBank>,
+    activeExchangeId: String?,
+    activeBankId: String?,
+    viewModel: FeeManagerViewModel,
+    onDismiss: () -> Unit,
+    onOpenEditor: (EditorTarget) -> Unit,
+) {
+    val (entries, activeId) =
+        when (kind) {
+            GlobalFeeKind.EXCHANGE -> globalExchange to activeExchangeId
+            GlobalFeeKind.BANK -> globalBank to activeBankId
+        }
+    val active = entries.firstOrNull { it.isActive }
+    val effectiveId = activeId?.takeIf { id -> entries.any { it.id == id && it.isActive } } ?: active?.id
+    FeePickerDialog(
+        title = stringResource(id = kind.titleRes),
+        entries = entries,
+        effectiveId = effectiveId,
+        onDismiss = onDismiss,
+        onPicked = { picked ->
+            when (kind) {
+                GlobalFeeKind.EXCHANGE -> viewModel.setActiveExchangeId(picked)
+                GlobalFeeKind.BANK -> viewModel.setActiveBankId(picked)
+            }
+        },
+        onAdd = { onOpenEditor(EditorTarget(EditorKind.Global(kind))) },
+        onEdit = { onOpenEditor(EditorTarget(EditorKind.Global(kind), it)) },
+    )
+}
+
+/**
+ * Hosts the fee editor dialog for the currently-open [target]. Splits out the
+ * title-lookup + delete-callback wiring so [FeesScreen] itself stays short.
+ */
+@Composable
+private fun EditorHost(
+    target: EditorTarget,
+    viewModel: FeeManagerViewModel,
+    onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val kind = target.kind
+    val isPair = kind is EditorKind.Pair
+    val titleRes =
+        when (kind) {
+            is EditorKind.Global -> kind.globalKind.titleRes
+            EditorKind.Pair -> R.string.fee_section_specific_pair
+        }
+    FeeEditorDialog(
+        titleRes = titleRes,
+        existing = target.existing,
+        isPair = isPair,
+        onDismiss = onDismiss,
+        onConfirm = { draft ->
+            persistEditorConfirm(viewModel, target, draft)
+            onDismiss()
+        },
+        onPickCurrency = onPickCurrency,
+        onDelete =
+            target.existing?.let { existing ->
+                {
+                    viewModel.deleteFee(existing.id)
+                    onDismiss()
+                }
+            },
+    )
+}
+
+/**
+ * The three-section LazyColumn body of [FeesScreen]. Extracted so the screen
+ * composable stays under the LongMethod threshold and this list-layout block
+ * is readable on its own without wading past the dialog state below.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun FeesSectionsList(
+    globalExchange: List<Fee.GlobalExchange>,
+    activeExchangeId: String?,
+    globalBank: List<Fee.GlobalBank>,
+    activeBankId: String?,
+    specificPair: List<Fee.SpecificPair>,
+    onOpenPicker: (GlobalFeeKind) -> Unit,
+    onOpenEditor: (EditorTarget) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding =
+            PaddingValues(
+                horizontal = dimensionResource(id = R.dimen.margin2x),
+                vertical = dimensionResource(id = R.dimen.margin1x),
+            ),
+    ) {
+        item(key = FeeSection.GLOBAL_EXCHANGE) {
+            SectionEnter(index = FeeSection.GLOBAL_EXCHANGE.ordinal) {
+                GlobalFeeSection(
+                    kind = GlobalFeeKind.EXCHANGE,
+                    entries = globalExchange,
+                    activeId = activeExchangeId,
+                    onClick = { onOpenPicker(GlobalFeeKind.EXCHANGE) },
+                )
+            }
+        }
+        item(key = FeeSection.GLOBAL_BANK) {
+            SectionEnter(index = FeeSection.GLOBAL_BANK.ordinal) {
+                GlobalFeeSection(
+                    kind = GlobalFeeKind.BANK,
+                    entries = globalBank,
+                    activeId = activeBankId,
+                    onClick = { onOpenPicker(GlobalFeeKind.BANK) },
+                )
+            }
+        }
+        item(key = FeeSection.SPECIFIC_PAIR) {
+            SectionEnter(index = FeeSection.SPECIFIC_PAIR.ordinal) {
+                SpecificPairSection(
+                    entries = specificPair,
+                    onEdit = { onOpenEditor(EditorTarget(EditorKind.Pair, it)) },
+                    onAdd = { onOpenEditor(EditorTarget(EditorKind.Pair)) },
+                )
+            }
+        }
     }
 }
 
@@ -212,16 +287,27 @@ private fun persistEditorConfirm(
                 EditorKind.Pair -> draft.toSpecificPair()
             }
         viewModel.addFee(created)
-        // First entry in a global category becomes the active one so the user
-        // sees their new fee reflected on the main screen without an extra tap.
-        if (target.kind is EditorKind.Global) {
-            when (target.kind.globalKind) {
-                GlobalFeeKind.EXCHANGE ->
-                    if (viewModel.getActiveExchangeId().value == null) viewModel.setActiveExchangeId(created.id)
-                GlobalFeeKind.BANK ->
-                    if (viewModel.getActiveBankId().value == null) viewModel.setActiveBankId(created.id)
-            }
-        }
+        adoptFirstGlobalAsActive(viewModel, target.kind, created.id)
+    }
+}
+
+/**
+ * If the newly-created fee is the first entry in its global category and no
+ * active-id is set yet, promote it to active so the main screen reflects the
+ * new fee without an extra tap. No-op for pair fees. Extracted from
+ * [persistEditorConfirm] to keep NestedBlockDepth under the detekt threshold.
+ */
+private fun adoptFirstGlobalAsActive(
+    viewModel: FeeManagerViewModel,
+    kind: EditorKind,
+    createdId: String,
+) {
+    if (kind !is EditorKind.Global) return
+    when (kind.globalKind) {
+        GlobalFeeKind.EXCHANGE ->
+            if (viewModel.getActiveExchangeId().value == null) viewModel.setActiveExchangeId(createdId)
+        GlobalFeeKind.BANK ->
+            if (viewModel.getActiveBankId().value == null) viewModel.setActiveBankId(createdId)
     }
 }
 

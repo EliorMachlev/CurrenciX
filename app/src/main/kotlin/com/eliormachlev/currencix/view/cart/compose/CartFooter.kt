@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentManager
@@ -91,38 +92,45 @@ fun CartFooter(
             onSwapClick = viewModel::swapCurrencies,
             onSwapLongPress = onOpenFees,
         )
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = ROW_TOP_GAP),
-        ) {
-            Text(
-                text = stringResource(id = R.string.cart_subtotal_label),
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.weight(1f),
-            )
-            Text(
-                text = context.formatCartAmount(subtotal, baseCurrency),
-                style = MaterialTheme.typography.titleSmall,
-            )
-        }
+        AmountRow(
+            topGap = ROW_TOP_GAP,
+            labelRes = R.string.cart_subtotal_label,
+            amount = context.formatCartAmount(subtotal, baseCurrency),
+            style = MaterialTheme.typography.titleSmall,
+        )
         FeeAnnotationRow(
             prefixRes = R.string.fee_true_cost_prefix,
             feeStack = feeStack,
             base = convertedSubtotal,
             currency = destCurrency,
         )
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = TOTAL_TOP_GAP),
-        ) {
-            Text(
-                text = stringResource(id = R.string.cart_total_label),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(1f),
-            )
-            Text(
-                text = context.formatCartAmount(total, destCurrency),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
+        AmountRow(
+            topGap = TOTAL_TOP_GAP,
+            labelRes = R.string.cart_total_label,
+            amount = context.formatCartAmount(total, destCurrency),
+            style = MaterialTheme.typography.titleLarge,
+        )
+    }
+}
+
+// Label + right-aligned amount, used for both the subtotal and total rows
+// so the two share label-weight, gap, and column layout without a copy-paste.
+@Composable
+private fun AmountRow(
+    topGap: Dp,
+    labelRes: Int,
+    amount: String,
+    style: TextStyle,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = topGap),
+    ) {
+        Text(
+            text = stringResource(id = labelRes),
+            style = style,
+            modifier = Modifier.weight(1f),
+        )
+        Text(text = amount, style = style)
     }
 }
 

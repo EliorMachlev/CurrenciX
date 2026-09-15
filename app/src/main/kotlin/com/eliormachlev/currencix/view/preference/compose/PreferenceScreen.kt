@@ -93,78 +93,137 @@ fun PreferenceScreen(
     val language = remember(provider) { Language.byIso(viewModel.getLanguage()) ?: Language.SYSTEM }
 
     AppComposeTheme {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding =
-                PaddingValues(
-                    horizontal = dimensionResource(id = R.dimen.margin2x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
-                ),
-        ) {
-            item(key = SettingsSection.GENERAL) {
-                SectionEnter(index = SettingsSection.GENERAL.ordinal) {
-                    GeneralSection(
-                        keyboardType = keyboardType,
-                        decimalPlaces = decimalPlaces,
-                        callbacks = callbacks,
-                        openKeyboardPicker = { openDialog = OpenDialog.Keyboard },
-                        openDecimalPlacesPicker = { openDialog = OpenDialog.DecimalPlaces },
-                    )
-                }
-            }
-            item(key = SettingsSection.API) {
-                SectionEnter(index = SettingsSection.API.ordinal) {
-                    ApiSection(
-                        provider = provider,
-                        apiKey = apiKey,
-                        openProviderPicker = { openDialog = OpenDialog.Provider },
-                        openApiKeyEditor = { openDialog = OpenDialog.ApiKey },
-                    )
-                }
-            }
-            item(key = SettingsSection.APPEARANCE) {
-                SectionEnter(index = SettingsSection.APPEARANCE.ordinal) {
-                    AppearanceSection(
-                        theme = theme,
-                        language = language,
-                        dateFormat = dateFormat,
-                        hapticEnabled = hapticEnabled,
-                        previewEnabled = previewEnabled,
-                        onHapticChange = viewModel::setHapticFeedbackEnabled,
-                        onPreviewChange = viewModel::setPreviewConversionEnabled,
-                        openThemePicker = { openDialog = OpenDialog.Theme },
-                        openLanguagePicker = { openDialog = OpenDialog.Language },
-                        openDateFormatPicker = { openDialog = OpenDialog.DateFormat },
-                    )
-                }
-            }
-            item(key = SettingsSection.GRAPH) {
-                SectionEnter(index = SettingsSection.GRAPH.ordinal) { GraphSection(callbacks = callbacks) }
-            }
-            item(key = SettingsSection.ABOUT) {
-                SectionEnter(index = SettingsSection.ABOUT.ordinal) { AboutSection(callbacks = callbacks) }
-            }
-            item(key = SettingsSection.VERSION) {
-                SectionEnter(index = SettingsSection.VERSION.ordinal) { VersionSection(callbacks = callbacks) }
-            }
-        }
+        PreferenceSectionsList(
+            viewModel = viewModel,
+            callbacks = callbacks,
+            provider = provider,
+            apiKey = apiKey,
+            decimalPlaces = decimalPlaces,
+            keyboardType = keyboardType,
+            hapticEnabled = hapticEnabled,
+            previewEnabled = previewEnabled,
+            dateFormat = dateFormat,
+            theme = theme,
+            language = language,
+            onOpenDialog = { openDialog = it },
+        )
     }
 
-    when (openDialog) {
-        OpenDialog.Keyboard -> {
-            val entries = KeyboardType.entries
-            val labels = entries.map { stringResource(id = keyboardLabelRes(it)) }
-            val descriptions = entries.map { stringResource(id = keyboardDescriptionRes(it)) }
-            SingleChoiceExplainerPickerDialog(
-                title = stringResource(id = R.string.keyboard_title),
-                options = entries,
-                selected = keyboardType,
-                label = { labels[entries.indexOf(it)] },
-                description = { descriptions[entries.indexOf(it)] },
-                onDismiss = dismiss,
-                onPicked = viewModel::setKeyboardType,
-            )
+    PreferenceDialogsHost(
+        openDialog = openDialog,
+        dismiss = dismiss,
+        viewModel = viewModel,
+        callbacks = callbacks,
+        provider = provider,
+        apiKey = apiKey,
+        decimalPlaces = decimalPlaces,
+        keyboardType = keyboardType,
+        dateFormat = dateFormat,
+        theme = theme,
+        language = language,
+    )
+}
+
+/**
+ * The six-section LazyColumn body of [PreferenceScreen]. Extracted so the
+ * top-level composable stays under the LongMethod threshold and the dialog
+ * host below can be read in isolation from the list layout.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun PreferenceSectionsList(
+    viewModel: PreferenceViewModel,
+    callbacks: PreferenceScreenCallbacks,
+    provider: ApiProvider?,
+    apiKey: String?,
+    decimalPlaces: Int,
+    keyboardType: KeyboardType,
+    hapticEnabled: Boolean,
+    previewEnabled: Boolean,
+    dateFormat: String,
+    theme: AppTheme,
+    language: Language,
+    onOpenDialog: (OpenDialog) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding =
+            PaddingValues(
+                horizontal = dimensionResource(id = R.dimen.margin2x),
+                vertical = dimensionResource(id = R.dimen.margin1x),
+            ),
+    ) {
+        item(key = SettingsSection.GENERAL) {
+            SectionEnter(index = SettingsSection.GENERAL.ordinal) {
+                GeneralSection(
+                    keyboardType = keyboardType,
+                    decimalPlaces = decimalPlaces,
+                    callbacks = callbacks,
+                    openKeyboardPicker = { onOpenDialog(OpenDialog.Keyboard) },
+                    openDecimalPlacesPicker = { onOpenDialog(OpenDialog.DecimalPlaces) },
+                )
+            }
         }
+        item(key = SettingsSection.API) {
+            SectionEnter(index = SettingsSection.API.ordinal) {
+                ApiSection(
+                    provider = provider,
+                    apiKey = apiKey,
+                    openProviderPicker = { onOpenDialog(OpenDialog.Provider) },
+                    openApiKeyEditor = { onOpenDialog(OpenDialog.ApiKey) },
+                )
+            }
+        }
+        item(key = SettingsSection.APPEARANCE) {
+            SectionEnter(index = SettingsSection.APPEARANCE.ordinal) {
+                AppearanceSection(
+                    theme = theme,
+                    language = language,
+                    dateFormat = dateFormat,
+                    hapticEnabled = hapticEnabled,
+                    previewEnabled = previewEnabled,
+                    onHapticChange = viewModel::setHapticFeedbackEnabled,
+                    onPreviewChange = viewModel::setPreviewConversionEnabled,
+                    openThemePicker = { onOpenDialog(OpenDialog.Theme) },
+                    openLanguagePicker = { onOpenDialog(OpenDialog.Language) },
+                    openDateFormatPicker = { onOpenDialog(OpenDialog.DateFormat) },
+                )
+            }
+        }
+        item(key = SettingsSection.GRAPH) {
+            SectionEnter(index = SettingsSection.GRAPH.ordinal) { GraphSection(callbacks = callbacks) }
+        }
+        item(key = SettingsSection.ABOUT) {
+            SectionEnter(index = SettingsSection.ABOUT.ordinal) { AboutSection(callbacks = callbacks) }
+        }
+        item(key = SettingsSection.VERSION) {
+            SectionEnter(index = SettingsSection.VERSION.ordinal) { VersionSection() }
+        }
+    }
+}
+
+/**
+ * Dispatches whichever picker/editor is currently open to its dialog composable.
+ * Extracted from [PreferenceScreen] so the screen body stays short and the
+ * dialog-selection `when` sits next to its own state.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun PreferenceDialogsHost(
+    openDialog: OpenDialog?,
+    dismiss: () -> Unit,
+    viewModel: PreferenceViewModel,
+    callbacks: PreferenceScreenCallbacks,
+    provider: ApiProvider?,
+    apiKey: String?,
+    decimalPlaces: Int,
+    keyboardType: KeyboardType,
+    dateFormat: String,
+    theme: AppTheme,
+    language: Language,
+) {
+    when (openDialog) {
+        OpenDialog.Keyboard -> KeyboardPickerDialog(keyboardType = keyboardType, dismiss = dismiss, viewModel = viewModel)
         OpenDialog.DecimalPlaces ->
             SingleChoicePickerDialog(
                 title = stringResource(id = R.string.decimal_places_title),
@@ -174,32 +233,8 @@ fun PreferenceScreen(
                 onDismiss = dismiss,
                 onPicked = viewModel::setDecimalPlaces,
             )
-        OpenDialog.Theme -> {
-            val themeEntries = AppTheme.entries.toList()
-            val themeLabels = themeEntries.map { stringResource(id = themeLabelRes(it)) }
-            SingleChoicePickerDialog(
-                title = stringResource(id = R.string.theme_title),
-                options = themeEntries,
-                selected = theme,
-                label = { themeLabels[themeEntries.indexOf(it)] },
-                onDismiss = dismiss,
-                onPicked = { picked ->
-                    if (viewModel.setTheme(picked)) callbacks.onThemeRequiresRestart()
-                },
-            )
-        }
-        OpenDialog.DateFormat -> {
-            val patterns = stringArrayResource(id = R.array.date_format_values).toList()
-            val names = stringArrayResource(id = R.array.date_format_names).toList()
-            SingleChoicePickerDialog(
-                title = stringResource(id = R.string.date_format_title),
-                options = patterns,
-                selected = dateFormat,
-                label = { pattern -> names.getOrNull(patterns.indexOf(pattern)) ?: pattern },
-                onDismiss = dismiss,
-                onPicked = viewModel::setDateFormat,
-            )
-        }
+        OpenDialog.Theme -> ThemePickerDialog(theme = theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
+        OpenDialog.DateFormat -> DateFormatPickerDialog(dateFormat = dateFormat, dismiss = dismiss, viewModel = viewModel)
         OpenDialog.Language ->
             LanguagePickerDialog(
                 selected = language,
@@ -225,6 +260,65 @@ fun PreferenceScreen(
             )
         null -> Unit
     }
+}
+
+@Composable
+private fun KeyboardPickerDialog(
+    keyboardType: KeyboardType,
+    dismiss: () -> Unit,
+    viewModel: PreferenceViewModel,
+) {
+    val entries = KeyboardType.entries
+    val labels = entries.map { stringResource(id = keyboardLabelRes(it)) }
+    val descriptions = entries.map { stringResource(id = keyboardDescriptionRes(it)) }
+    SingleChoiceExplainerPickerDialog(
+        title = stringResource(id = R.string.keyboard_title),
+        options = entries,
+        selected = keyboardType,
+        label = { labels[entries.indexOf(it)] },
+        description = { descriptions[entries.indexOf(it)] },
+        onDismiss = dismiss,
+        onPicked = viewModel::setKeyboardType,
+    )
+}
+
+@Composable
+private fun ThemePickerDialog(
+    theme: AppTheme,
+    dismiss: () -> Unit,
+    viewModel: PreferenceViewModel,
+    callbacks: PreferenceScreenCallbacks,
+) {
+    val themeEntries = AppTheme.entries.toList()
+    val themeLabels = themeEntries.map { stringResource(id = themeLabelRes(it)) }
+    SingleChoicePickerDialog(
+        title = stringResource(id = R.string.theme_title),
+        options = themeEntries,
+        selected = theme,
+        label = { themeLabels[themeEntries.indexOf(it)] },
+        onDismiss = dismiss,
+        onPicked = { picked ->
+            if (viewModel.setTheme(picked)) callbacks.onThemeRequiresRestart()
+        },
+    )
+}
+
+@Composable
+private fun DateFormatPickerDialog(
+    dateFormat: String,
+    dismiss: () -> Unit,
+    viewModel: PreferenceViewModel,
+) {
+    val patterns = stringArrayResource(id = R.array.date_format_values).toList()
+    val names = stringArrayResource(id = R.array.date_format_names).toList()
+    SingleChoicePickerDialog(
+        title = stringResource(id = R.string.date_format_title),
+        options = patterns,
+        selected = dateFormat,
+        label = { pattern -> names.getOrNull(patterns.indexOf(pattern)) ?: pattern },
+        onDismiss = dismiss,
+        onPicked = viewModel::setDateFormat,
+    )
 }
 
 @Composable
@@ -400,7 +494,7 @@ private fun AboutSection(callbacks: PreferenceScreenCallbacks) {
 }
 
 @Composable
-private fun VersionSection(callbacks: PreferenceScreenCallbacks) {
+private fun VersionSection() {
     val context = LocalContext.current
     PreferenceSection(text = stringResource(id = R.string.category_versioninfo)) {
         PreferenceRow(

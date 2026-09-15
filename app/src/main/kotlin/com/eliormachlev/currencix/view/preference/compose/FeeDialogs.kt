@@ -141,81 +141,127 @@ internal fun FeeEditorDialog(
             modifier = Modifier.fillMaxWidth(FEE_EDITOR_WIDTH_FRACTION),
             title = { Text(text = stringResource(id = titleRes)) },
             text = {
-                Column(
-                    modifier =
-                        Modifier
-                            .verticalScroll(rememberScrollState())
-                            .padding(top = FEE_EDITOR_INTERNAL_PADDING),
-                ) {
-                    LabeledSwitchRow(
-                        labelRes = R.string.fee_edit_active,
-                        checked = active,
-                        onCheckedChange = { active = it },
-                    )
-                    LabeledField(labelRes = R.string.fee_edit_name, topGap = FEE_EDITOR_SECTION_GAP) {
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                    if (isPair) {
-                        LabeledField(labelRes = R.string.fee_pair_from, topGap = FEE_EDITOR_SECTION_GAP) {
-                            CurrencyPickerButton(
-                                iso = from,
-                                onClick = {
-                                    onPickCurrency(to?.let(Currency::fromString)) { from = it }
-                                },
-                            )
-                        }
-                        LabeledField(labelRes = R.string.fee_pair_to, topGap = FEE_EDITOR_SECTION_GAP) {
-                            CurrencyPickerButton(
-                                iso = to,
-                                onClick = {
-                                    onPickCurrency(from?.let(Currency::fromString)) { to = it }
-                                },
-                            )
-                        }
-                        Spacer(Modifier.height(FEE_EDITOR_SECTION_GAP))
-                        LabeledSwitchRow(
-                            labelRes = R.string.fee_pair_both_ways,
-                            checked = bothWays,
-                            onCheckedChange = { bothWays = it },
-                        )
-                    }
-                    LabeledField(labelRes = R.string.fee_edit_percent, topGap = FEE_EDITOR_SECTION_GAP) {
-                        FeePercentField(
-                            value = percentText.value,
-                            onValueChange = { percentText.value = it },
-                        )
-                    }
-                }
+                FeeEditorDialogBody(
+                    name = name,
+                    onNameChange = { name = it },
+                    active = active,
+                    onActiveChange = { active = it },
+                    isPair = isPair,
+                    from = from,
+                    onFromChange = { from = it },
+                    to = to,
+                    onToChange = { to = it },
+                    bothWays = bothWays,
+                    onBothWaysChange = { bothWays = it },
+                    percentText = percentText.value,
+                    onPercentChange = { percentText.value = it },
+                    onPickCurrency = onPickCurrency,
+                )
             },
-            confirmButton = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (delete != null) {
-                        TextButton(onClick = delete) {
-                            Text(stringResource(id = R.string.fee_delete))
-                        }
-                    } else {
-                        Spacer(Modifier.width(0.dp))
-                    }
-                    Row {
-                        TextButton(onClick = cancel) {
-                            Text(stringResource(id = android.R.string.cancel))
-                        }
-                        TextButton(onClick = confirm) {
-                            Text(stringResource(id = android.R.string.ok))
-                        }
-                    }
-                }
-            },
+            confirmButton = { FeeEditorDialogFooter(delete = delete, cancel = cancel, confirm = confirm) },
         )
+    }
+}
+
+/**
+ * Body of [FeeEditorDialog] — active switch, name/percent fields, and the
+ * pair-only rows when [isPair] is true. Extracted so the dialog wrapper stays
+ * short and this form-heavy scroll column reads on its own.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun FeeEditorDialogBody(
+    name: String,
+    onNameChange: (String) -> Unit,
+    active: Boolean,
+    onActiveChange: (Boolean) -> Unit,
+    isPair: Boolean,
+    from: String?,
+    onFromChange: (String) -> Unit,
+    to: String?,
+    onToChange: (String) -> Unit,
+    bothWays: Boolean,
+    onBothWaysChange: (Boolean) -> Unit,
+    percentText: String,
+    onPercentChange: (String) -> Unit,
+    onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(top = FEE_EDITOR_INTERNAL_PADDING),
+    ) {
+        LabeledSwitchRow(
+            labelRes = R.string.fee_edit_active,
+            checked = active,
+            onCheckedChange = onActiveChange,
+        )
+        LabeledField(labelRes = R.string.fee_edit_name, topGap = FEE_EDITOR_SECTION_GAP) {
+            OutlinedTextField(
+                value = name,
+                onValueChange = onNameChange,
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        if (isPair) {
+            LabeledField(labelRes = R.string.fee_pair_from, topGap = FEE_EDITOR_SECTION_GAP) {
+                CurrencyPickerButton(
+                    iso = from,
+                    onClick = { onPickCurrency(to?.let(Currency::fromString), onFromChange) },
+                )
+            }
+            LabeledField(labelRes = R.string.fee_pair_to, topGap = FEE_EDITOR_SECTION_GAP) {
+                CurrencyPickerButton(
+                    iso = to,
+                    onClick = { onPickCurrency(from?.let(Currency::fromString), onToChange) },
+                )
+            }
+            Spacer(Modifier.height(FEE_EDITOR_SECTION_GAP))
+            LabeledSwitchRow(
+                labelRes = R.string.fee_pair_both_ways,
+                checked = bothWays,
+                onCheckedChange = onBothWaysChange,
+            )
+        }
+        LabeledField(labelRes = R.string.fee_edit_percent, topGap = FEE_EDITOR_SECTION_GAP) {
+            FeePercentField(value = percentText, onValueChange = onPercentChange)
+        }
+    }
+}
+
+/**
+ * Confirm-row footer for [FeeEditorDialog] — delete (only when editing) on
+ * the leading edge, cancel + ok on the trailing edge. Split out so the parent
+ * dialog stays below LongMethod threshold.
+ */
+@Composable
+private fun FeeEditorDialogFooter(
+    delete: (() -> Unit)?,
+    cancel: () -> Unit,
+    confirm: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (delete != null) {
+            TextButton(onClick = delete) {
+                Text(stringResource(id = R.string.fee_delete))
+            }
+        } else {
+            Spacer(Modifier.width(0.dp))
+        }
+        Row {
+            TextButton(onClick = cancel) {
+                Text(stringResource(id = android.R.string.cancel))
+            }
+            TextButton(onClick = confirm) {
+                Text(stringResource(id = android.R.string.ok))
+            }
+        }
     }
 }
 

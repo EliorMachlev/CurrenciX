@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -383,10 +384,16 @@ internal fun MainDisplay(
         dateFormatPattern = dateFormatPattern,
         banner = banner,
         onPillFromClick = {
-            openCurrencyPicker(context, viewModel, fragmentManager, PickSide.FROM, baseCurrency, destCurrency, rates)
+            openCurrencyPicker(
+                CurrencyPickerContext(context, viewModel, fragmentManager, baseCurrency, destCurrency, rates),
+                PickSide.FROM,
+            )
         },
         onPillToClick = {
-            openCurrencyPicker(context, viewModel, fragmentManager, PickSide.TO, baseCurrency, destCurrency, rates)
+            openCurrencyPicker(
+                CurrencyPickerContext(context, viewModel, fragmentManager, baseCurrency, destCurrency, rates),
+                PickSide.TO,
+            )
         },
         onSwapClick = {
             val newBase = destCurrency
@@ -402,6 +409,11 @@ internal fun MainDisplay(
 }
 
 @Composable
+// isUpdating is threaded through today so the caller can supply it without
+// a follow-up API change once the shimmer (#140 in task-plan.md) lands on
+// the hero digit slot. Kept live rather than dropped so the wire-up is a
+// pure Modifier addition, not another signature churn.
+@Suppress("UnusedParameter")
 private fun HeroCard(
     baseCurrency: Currency?,
     destCurrency: Currency?,
@@ -756,33 +768,52 @@ private fun ScrollingAmount(
             // without an inter-glyph crossfade.
             Box(Modifier.weight(1f, fill = false)) { digitsText(parts.digits) }
         } else {
-            val emphasis = remember { Animatable(1f) }
-            var previousDigits by remember { mutableStateOf<String?>(null) }
-            LaunchedEffect(parts.digits) {
-                val prev = previousDigits
-                previousDigits = parts.digits
-                if (prev != null && prev != parts.digits) {
-                    emphasis.snapTo(HERO_EMPHASIS_PEAK)
-                    emphasis.animateTo(1f, tween(HERO_EMPHASIS_MILLIS, easing = FastOutSlowInEasing))
-                }
-            }
-            Crossfade(
-                targetState = parts.digits,
-                modifier =
-                    Modifier
-                        .weight(1f, fill = false)
-                        .graphicsLayer {
-                            val s = emphasis.value
-                            scaleX = s
-                            scaleY = s
-                            transformOrigin = TransformOrigin(1f, 0.5f)
-                        },
-                animationSpec = tween(durationMillis = ENGRAVED_DIGITS_FADE_MILLIS),
-                label = "engraved-digits",
-            ) { value -> digitsText(value) }
+            EngravedDigitsCrossfade(digits = parts.digits, digitsText = digitsText)
         }
         if (cursorHeight != null) BlinkingCursor(height = cursorHeight)
     }
+}
+
+// TransformOrigin vertical pivot: 0.5 = middle of the glyph's box. Used so
+// the emphasis pulse scales the digits about their vertical center while
+// still anchoring horizontally to the right edge (Arrangement.End).
+private const val TRANSFORM_ORIGIN_CENTER = 0.5f
+
+/**
+ * Crossfade + emphasis-pulse render used by the non-typed
+ * (result / true-cost) side of [ScrollingAmount]. Split out so the parent
+ * stays short and the Modifier/animation stack for this branch reads on its
+ * own without wading past the typed-input path.
+ */
+@Composable
+private fun RowScope.EngravedDigitsCrossfade(
+    digits: String,
+    digitsText: @Composable (String) -> Unit,
+) {
+    val emphasis = remember { Animatable(1f) }
+    var previousDigits by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(digits) {
+        val prev = previousDigits
+        previousDigits = digits
+        if (prev != null && prev != digits) {
+            emphasis.snapTo(HERO_EMPHASIS_PEAK)
+            emphasis.animateTo(1f, tween(HERO_EMPHASIS_MILLIS, easing = FastOutSlowInEasing))
+        }
+    }
+    Crossfade(
+        targetState = digits,
+        modifier =
+            Modifier
+                .weight(1f, fill = false)
+                .graphicsLayer {
+                    val s = emphasis.value
+                    scaleX = s
+                    scaleY = s
+                    transformOrigin = TransformOrigin(1f, TRANSFORM_ORIGIN_CENTER)
+                },
+        animationSpec = tween(durationMillis = ENGRAVED_DIGITS_FADE_MILLIS),
+        label = "engraved-digits",
+    ) { value -> digitsText(value) }
 }
 
 @Composable
@@ -1312,7 +1343,7 @@ private fun TimestampText(
     val date = rates?.date ?: return
     val whenText =
         remember(date, rates.time, dateFormatPattern) {
-            formatWhen(context, date, rates.time, dateFormatPattern)
+            formatWhen(date, rates.time, dateFormatPattern)
         }
     val provider = rates.provider?.getName(context)?.toString()
     val text =
@@ -1337,7 +1368,6 @@ private fun TimestampText(
  * the last 24h and includes a wall-clock time, otherwise the formatted date.
  */
 private fun formatWhen(
-    context: Context,
     date: LocalDate,
     time: LocalTime?,
     pattern: String,
@@ -1382,44 +1412,53 @@ private fun buildRateText(
 
 private enum class PickSide { FROM, TO }
 
+/**
+ * Snapshot of the state the currency-picker needs. Bundled so the launcher
+ * function keeps a short signature and callers can pass the current view
+ * state in one shot.
+ */
+private data class CurrencyPickerContext(
+    val context: Context,
+    val viewModel: MainViewModel,
+    val fragmentManager: FragmentManager,
+    val baseCurrency: Currency?,
+    val destCurrency: Currency?,
+    val rates: ExchangeRates?,
+)
+
 private fun openCurrencyPicker(
-    context: Context,
-    viewModel: MainViewModel,
-    fragmentManager: FragmentManager,
+    ctx: CurrencyPickerContext,
     picking: PickSide,
-    baseCurrency: Currency?,
-    destCurrency: Currency?,
-    rates: ExchangeRates?,
 ) {
-    val disabled = if (picking == PickSide.FROM) destCurrency else baseCurrency
+    val disabled = if (picking == PickSide.FROM) ctx.destCurrency else ctx.baseCurrency
     // Reference-rate anchor for the picker's preview column: when picking the
     // FROM side, the fixed side is the current DEST currency (and vice versa).
     // The sum we're "converting" is likewise the OTHER side's current value.
     val referenceRate =
         if (picking == PickSide.FROM) {
-            destCurrency?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } }
+            ctx.destCurrency?.let { c -> ctx.rates?.rateFor(c)?.let { Rate(c, it.value) } }
         } else {
-            baseCurrency?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } }
+            ctx.baseCurrency?.let { c -> ctx.rates?.rateFor(c)?.let { Rate(c, it.value) } }
         }
     val referenceSum =
         if (picking == PickSide.FROM) {
-            viewModel.getResultAsNumber().value ?: BigDecimal.ONE
+            ctx.viewModel.getResultAsNumber().value ?: BigDecimal.ONE
         } else {
-            viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ONE
+            ctx.viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ONE
         }
-    SearchableSpinnerDialog(context)
+    SearchableSpinnerDialog(ctx.context)
         .apply {
             referenceRate?.let { setCurrentRate(it) }
             setCurrentSum(referenceSum)
             setDisabledCurrency(disabled)
             onRateClicked = { rate, _ ->
                 if (picking == PickSide.FROM) {
-                    viewModel.setBaseCurrency(rate.currency)
+                    ctx.viewModel.setBaseCurrency(rate.currency)
                 } else {
-                    viewModel.setDestinationCurrency(rate.currency)
+                    ctx.viewModel.setDestinationCurrency(rate.currency)
                 }
             }
-        }.show(fragmentManager, null)
+        }.show(ctx.fragmentManager, null)
 }
 
 // --- Small helpers ------------------------------------------------------------

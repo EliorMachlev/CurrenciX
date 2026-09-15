@@ -16,6 +16,7 @@ import com.eliormachlev.currencix.util.createWithHapticButtons
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.main.compose.QuickConversionRowInputs
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsContent
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsRow
 import com.eliormachlev.currencix.view.main.compose.buildQuickConversionRows
@@ -57,12 +58,14 @@ class QuickConversionsDialog : DialogFragment() {
                         val rows: List<QuickConversionsRow> =
                             if (from != null && to != null && rates != null) {
                                 buildQuickConversionRows(
-                                    ctx = ctx,
-                                    from = from!!,
-                                    to = to!!,
-                                    rates = rates!!,
-                                    feeStack = feeStack,
-                                    costWithFeePrefix = costWithFeePrefix,
+                                    QuickConversionRowInputs(
+                                        ctx = ctx,
+                                        from = from!!,
+                                        to = to!!,
+                                        rates = rates!!,
+                                        feeStack = feeStack,
+                                        costWithFeePrefix = costWithFeePrefix,
+                                    ),
                                 )
                             } else {
                                 emptyList()

@@ -64,37 +64,10 @@ fun BackupScreen(
     onImportConfirmed: (uri: android.net.Uri, password: CharArray?) -> Unit,
 ) {
     AppComposeTheme {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding =
-                PaddingValues(
-                    horizontal = dimensionResource(id = R.dimen.margin2x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
-                ),
-        ) {
-            item(key = BackupSection.LOCAL) {
-                SectionEnter(index = BackupSection.LOCAL.ordinal) {
-                    PreferenceSection(text = stringResource(id = R.string.backup_section_local)) {
-                        PreferenceRow(
-                            title = stringResource(id = R.string.backup_export_title),
-                            summary = stringResource(id = R.string.backup_export_summary),
-                            onClick = viewModel::openExportPasswordPrompt,
-                        )
-                    }
-                }
-            }
-            item(key = BackupSection.RESTORE) {
-                SectionEnter(index = BackupSection.RESTORE.ordinal) {
-                    PreferenceSection(text = stringResource(id = R.string.backup_section_restore)) {
-                        PreferenceRow(
-                            title = stringResource(id = R.string.backup_import_title),
-                            summary = stringResource(id = R.string.backup_import_summary),
-                            onClick = onLaunchImport,
-                        )
-                    }
-                }
-            }
-        }
+        BackupSectionsList(
+            onExportClick = viewModel::openExportPasswordPrompt,
+            onImportClick = onLaunchImport,
+        )
     }
 
     when (val dialog = viewModel.dialog) {
@@ -124,6 +97,49 @@ fun BackupScreen(
                 },
             )
         null -> Unit
+    }
+}
+
+/**
+ * Two-section preference list for the backup screen (Local export on top,
+ * Restore below). Extracted so [BackupScreen] stays under LongMethod and the
+ * list layout can be read without wading past the dialog dispatch below.
+ */
+@Composable
+private fun BackupSectionsList(
+    onExportClick: () -> Unit,
+    onImportClick: () -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding =
+            PaddingValues(
+                horizontal = dimensionResource(id = R.dimen.margin2x),
+                vertical = dimensionResource(id = R.dimen.margin1x),
+            ),
+    ) {
+        item(key = BackupSection.LOCAL) {
+            SectionEnter(index = BackupSection.LOCAL.ordinal) {
+                PreferenceSection(text = stringResource(id = R.string.backup_section_local)) {
+                    PreferenceRow(
+                        title = stringResource(id = R.string.backup_export_title),
+                        summary = stringResource(id = R.string.backup_export_summary),
+                        onClick = onExportClick,
+                    )
+                }
+            }
+        }
+        item(key = BackupSection.RESTORE) {
+            SectionEnter(index = BackupSection.RESTORE.ordinal) {
+                PreferenceSection(text = stringResource(id = R.string.backup_section_restore)) {
+                    PreferenceRow(
+                        title = stringResource(id = R.string.backup_import_title),
+                        summary = stringResource(id = R.string.backup_import_summary),
+                        onClick = onImportClick,
+                    )
+                }
+            }
+        }
     }
 }
 

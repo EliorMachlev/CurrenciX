@@ -32,6 +32,10 @@ private const val WORDMARK_X_SCALE = 1.35f
 private const val WORDMARK_REVEAL_MILLIS = 520
 private const val WORDMARK_TINT_MILLIS = 640
 
+// TransformOrigin vertical pivot: 0.5 = center of the glyph's box. Used so
+// the × grows outward from its optical middle rather than from the top.
+private const val TRANSFORM_ORIGIN_CENTER = 0.5f
+
 @Composable
 fun Wordmark(
     modifier: Modifier = Modifier,
@@ -73,7 +77,7 @@ fun Wordmark(
                     val s = xScale.value
                     scaleX = s
                     scaleY = s
-                    transformOrigin = TransformOrigin(0f, 0.5f)
+                    transformOrigin = TransformOrigin(0f, TRANSFORM_ORIGIN_CENTER)
                 },
         )
     }
