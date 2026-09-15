@@ -57,7 +57,7 @@ class OpenExchangerates : ApiProvider.Api() {
 
         val err = result.exceptionOrNull()
         return if (err is ApiHttpError && err.statusCode == HTTP_UNAUTHORIZED) {
-            Result.failure(Exception(context.getString(R.string.error_invalid_api_key)))
+            Result.failure(Exception(context?.getString(R.string.error_invalid_api_key)))
         } else {
             result
         }

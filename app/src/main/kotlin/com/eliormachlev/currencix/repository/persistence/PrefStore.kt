@@ -5,7 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.mutablePreferencesOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.CoroutineScope
@@ -106,7 +105,7 @@ class PrefStore internal constructor(
     fun edit(mutator: MutablePreferences.() -> Unit) {
         synchronized(cacheWriteLock) {
             val current = snapshot()
-            val next = mutablePreferencesOf().apply { putAll(current) }
+            val next = current.toMutablePreferences()
             next.mutator()
             cache.value = next
         }
@@ -121,7 +120,7 @@ class PrefStore internal constructor(
     suspend fun editAndAwait(mutator: MutablePreferences.() -> Unit) {
         synchronized(cacheWriteLock) {
             val current = snapshot()
-            val next = mutablePreferencesOf().apply { putAll(current) }
+            val next = current.toMutablePreferences()
             next.mutator()
             cache.value = next
         }
