@@ -206,6 +206,11 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
+    // Bridges StateFlow → Compose (`collectAsStateWithLifecycle`), which is
+    // lifecycle-aware in a way `collectAsState` isn't: it pauses collection
+    // when the host goes to STOPPED and resumes on STARTED. Used by the
+    // StateFlow-based ViewModels (see #149 pilot in PreferenceViewModel).
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$livecycleVersion")
     // glance: home-screen widget composed instead of RemoteViews-driven.
     val glanceVersion = "1.1.1"
     implementation("androidx.glance:glance-appwidget:$glanceVersion")
