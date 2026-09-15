@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <application>
+    <!--
+         Showkase's manifest declares supportsRtl=true; the app declares
+         supportsRtl=false in main. Debug-only override keeps the app's
+         opinion on debug builds without changing the release manifest.
+    -->
+    <application tools:replace="android:supportsRtl">
 
         <!--
              Showkase browser launcher — debug-only Activity that appears as
