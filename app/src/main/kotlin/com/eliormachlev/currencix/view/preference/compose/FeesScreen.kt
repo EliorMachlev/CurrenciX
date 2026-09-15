@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -21,12 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import com.eliormachlev.currencix.view.compose.AppTheme as AppComposeTheme
 
@@ -81,9 +80,9 @@ fun FeesScreen(
     viewModel: FeeManagerViewModel,
     onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
 ) {
-    val fees by viewModel.getFees().observeAsState(persistentListOf())
-    val activeExchangeId by viewModel.getActiveExchangeId().observeAsState()
-    val activeBankId by viewModel.getActiveBankId().observeAsState()
+    val fees by viewModel.fees.collectAsStateWithLifecycle()
+    val activeExchangeId by viewModel.activeExchangeId.collectAsStateWithLifecycle()
+    val activeBankId by viewModel.activeBankId.collectAsStateWithLifecycle()
 
     val globalExchange = remember(fees) { fees.filterIsInstance<Fee.GlobalExchange>().toImmutableList() }
     val globalBank = remember(fees) { fees.filterIsInstance<Fee.GlobalBank>().toImmutableList() }
@@ -308,9 +307,9 @@ private fun adoptFirstGlobalAsActive(
     if (kind !is EditorKind.Global) return
     when (kind.globalKind) {
         GlobalFeeKind.EXCHANGE ->
-            if (viewModel.getActiveExchangeId().value == null) viewModel.setActiveExchangeId(createdId)
+            if (viewModel.activeExchangeId.value == null) viewModel.setActiveExchangeId(createdId)
         GlobalFeeKind.BANK ->
-            if (viewModel.getActiveBankId().value == null) viewModel.setActiveBankId(createdId)
+            if (viewModel.activeBankId.value == null) viewModel.setActiveBankId(createdId)
     }
 }
 

@@ -106,6 +106,50 @@ private val decimalPlacesMapper: (Preferences) -> Int = {
 private val dateFormatMapper: (Preferences) -> String = {
     it[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT
 }
+private val feesMapper: (Preferences) -> ImmutableList<Fee> = {
+    parseFeeList(it[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]").toImmutableList()
+}
+private val activeExchangeIdMapper: (Preferences) -> String? = {
+    it[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)]
+}
+private val activeBankIdMapper: (Preferences) -> String? = {
+    it[stringPreferencesKey(KEY_ACTIVE_BANK_ID)]
+}
+
+// Fees JSON parsing lives at file scope so the mapper above (which is invoked
+// by both LiveData and Flow getters) can share it with the blocking accessor
+// and the fee mutators without threading a Database instance through.
+private fun parseFeeList(json: String): List<Fee> =
+    try {
+        val arr = JSONArray(json)
+        (0 until arr.length()).mapNotNull { i -> parseFeeEntry(arr.optJSONObject(i)) }
+    } catch (e: JSONException) {
+        Timber.tag("Database").w(e, "Malformed fee JSON, resetting")
+        emptyList()
+    }
+
+private fun parseFeeEntry(obj: JSONObject?): Fee? {
+    obj ?: return null
+    val id = obj.optString("id", "").ifEmpty { UUID.randomUUID().toString() }
+    val name = obj.optString("name", "")
+    val percent = obj.optString("percent", "0").toBigDecimalOrNull() ?: return null
+    val isActive = obj.optBoolean("isActive", true)
+    return when (FeeType.fromWire(obj.optString("type"))) {
+        FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isActive)
+        FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isActive)
+        FeeType.SPECIFIC_PAIR ->
+            Fee.SpecificPair(
+                id = id,
+                name = name,
+                percent = percent,
+                from = obj.optString("from", ""),
+                to = obj.optString("to", ""),
+                bothWays = obj.optBoolean("bothWays", false),
+                isActive = isActive,
+            )
+        null -> null
+    }
+}
 
 class Database(
     private val context: Context,
@@ -372,10 +416,11 @@ class Database(
 
     // ImmutableList so Compose stability inference can skip recomposition
     // when the collection identity changes but the content is equal (#161).
-    fun getFees(): LiveData<ImmutableList<Fee>> =
-        appStore.mappedLiveData { parseFeeList(it[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]").toImmutableList() }
+    fun getFees(): LiveData<ImmutableList<Fee>> = appStore.mappedLiveData(feesMapper)
 
-    fun getFeesBlocking(): List<Fee> = parseFeeList(appStore.snapshot()[stringPreferencesKey(KEY_FEES_JSON)] ?: "[]")
+    fun getFeesFlow(): Flow<ImmutableList<Fee>> = appStore.mappedFlow(feesMapper)
+
+    fun getFeesBlocking(): ImmutableList<Fee> = feesMapper(appStore.snapshot())
 
     fun addFee(fee: Fee) {
         writeFees(getFeesBlocking() + fee)
@@ -393,9 +438,11 @@ class Database(
     // participates in the fee stack. `null` means "no explicit pick"; the
     // FeeCalculator falls back to the first active entry of that category.
 
-    fun getActiveExchangeId(): LiveData<String?> = appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)] }
+    fun getActiveExchangeId(): LiveData<String?> = appStore.mappedLiveData(activeExchangeIdMapper)
 
-    fun getActiveExchangeIdBlocking(): String? = appStore.snapshot()[stringPreferencesKey(KEY_ACTIVE_EXCHANGE_ID)]
+    fun getActiveExchangeIdFlow(): Flow<String?> = appStore.mappedFlow(activeExchangeIdMapper)
+
+    fun getActiveExchangeIdBlocking(): String? = activeExchangeIdMapper(appStore.snapshot())
 
     fun setActiveExchangeId(id: String?) {
         appStore.edit {
@@ -407,9 +454,11 @@ class Database(
         }
     }
 
-    fun getActiveBankId(): LiveData<String?> = appStore.mappedLiveData { it[stringPreferencesKey(KEY_ACTIVE_BANK_ID)] }
+    fun getActiveBankId(): LiveData<String?> = appStore.mappedLiveData(activeBankIdMapper)
 
-    fun getActiveBankIdBlocking(): String? = appStore.snapshot()[stringPreferencesKey(KEY_ACTIVE_BANK_ID)]
+    fun getActiveBankIdFlow(): Flow<String?> = appStore.mappedFlow(activeBankIdMapper)
+
+    fun getActiveBankIdBlocking(): String? = activeBankIdMapper(appStore.snapshot())
 
     fun setActiveBankId(id: String?) {
         appStore.edit {
@@ -442,38 +491,6 @@ class Database(
             arr.put(obj)
         }
         return arr.toString()
-    }
-
-    private fun parseFeeList(json: String): List<Fee> =
-        try {
-            val arr = JSONArray(json)
-            (0 until arr.length()).mapNotNull { i -> parseFeeEntry(arr.optJSONObject(i)) }
-        } catch (e: JSONException) {
-            Timber.tag("Database").w(e, "Malformed fee JSON, resetting")
-            emptyList()
-        }
-
-    private fun parseFeeEntry(obj: JSONObject?): Fee? {
-        obj ?: return null
-        val id = obj.optString("id", "").ifEmpty { UUID.randomUUID().toString() }
-        val name = obj.optString("name", "")
-        val percent = obj.optString("percent", "0").toBigDecimalOrNull() ?: return null
-        val isActive = obj.optBoolean("isActive", true)
-        return when (FeeType.fromWire(obj.optString("type"))) {
-            FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isActive)
-            FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isActive)
-            FeeType.SPECIFIC_PAIR ->
-                Fee.SpecificPair(
-                    id = id,
-                    name = name,
-                    percent = percent,
-                    from = obj.optString("from", ""),
-                    to = obj.optString("to", ""),
-                    bothWays = obj.optBoolean("bothWays", false),
-                    isActive = isActive,
-                )
-            null -> null
-        }
     }
 
     // preview conversion
