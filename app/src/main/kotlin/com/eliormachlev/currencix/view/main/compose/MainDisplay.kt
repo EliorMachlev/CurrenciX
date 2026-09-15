@@ -401,7 +401,11 @@ internal fun MainDisplay(
     )
 }
 
-private fun swapCurrencies(viewModel: MainViewModel, from: Currency?, to: Currency?) {
+private fun swapCurrencies(
+    viewModel: MainViewModel,
+    from: Currency?,
+    to: Currency?,
+) {
     if (from != null && to != null && from != to) {
         viewModel.setBaseCurrency(to)
         viewModel.setDestinationCurrency(from)
