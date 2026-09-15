@@ -81,7 +81,7 @@ Each exchange-rate API returns a different JSON (or XML) schema. Rather than nor
 
 ### LiveData for Reactive UI
 
-ViewModels expose `LiveData<T>` streams. Activities observe them without holding references to the ViewModel, ensuring lifecycle-safety and no memory leaks. `SharedPreferenceLiveData` bridges SharedPreferences changes into the LiveData graph so preference changes propagate automatically.
+ViewModels expose `LiveData<T>` streams. Activities observe them without holding references to the ViewModel, ensuring lifecycle-safety and no memory leaks. Preference changes propagate automatically via `PrefStore.mappedLiveData { … }`, which bridges each DataStore namespace's `Flow<Preferences>` into a `LiveData<T>` so observers pick up writes without a manual re-read.
 
 ### Timeline chart auto-scales decimal places (ignores user preference)
 
@@ -101,7 +101,7 @@ Behavior preserved: dashed reference line at the last value, scrub-to-past-date 
 
 ### Graph options: user-tunable chart chrome
 
-Four `SharedPreferenceLiveData<Boolean>` streams — grid, X-axis labels, Y-axis labels, and highlight-extremes — flow from `Database` through the `TimelineActivity` into `TimelineChart`. All default to `true` so first-run appearance is unchanged. Inside the composable each toggle swaps a Vico component for `null` (e.g. `guideline = if (showGrid) rememberAxisGuidelineComponent() else null`); Vico treats `null` as "don't draw," so no branching in the layer definitions is needed.
+Four `LiveData<Boolean>` streams (backed by `PrefStore.mappedLiveData`) — grid, X-axis labels, Y-axis labels, and highlight-extremes — flow from `Database` through the `TimelineActivity` into `TimelineChart`. All default to `true` so first-run appearance is unchanged. Inside the composable each toggle swaps a Vico component for `null` (e.g. `guideline = if (showGrid) rememberAxisGuidelineComponent() else null`); Vico treats `null` as "don't draw," so no branching in the layer definitions is needed.
 
 ### Application subclass prewarms DNS for the selected provider
 

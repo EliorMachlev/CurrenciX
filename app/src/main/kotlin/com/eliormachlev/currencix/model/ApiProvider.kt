@@ -62,7 +62,8 @@ enum class ApiProvider(
     suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-    ): Result<ExchangeRates> = this.implementation.getRates(context, date)
+        secrets: ApiSecrets = ApiSecrets.EMPTY,
+    ): Result<ExchangeRates> = this.implementation.getRates(context, date, secrets)
 
     suspend fun getTimeline(
         context: Context?,
@@ -97,6 +98,7 @@ enum class ApiProvider(
         abstract suspend fun getRates(
             context: Context?,
             date: LocalDate?,
+            secrets: ApiSecrets,
         ): Result<ExchangeRates>
 
         abstract suspend fun getTimeline(

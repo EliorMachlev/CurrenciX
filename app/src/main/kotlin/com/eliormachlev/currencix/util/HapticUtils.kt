@@ -35,8 +35,8 @@ private fun Context.isInPowerSaveMode(): Boolean {
 
 /**
  * Resolve whether haptic feedback should currently fire: the user's preference
- * AND the device NOT being in battery-saver mode. Reads SharedPreferences on
- * the calling thread — fine for tap-time use.
+ * AND the device NOT being in battery-saver mode. Reads the persisted flag
+ * on the calling thread — fine for tap-time use.
  */
 private fun Context.shouldHaptic(): Boolean = Database(this).isHapticFeedbackEnabledBlocking() && !isInPowerSaveMode()
 
