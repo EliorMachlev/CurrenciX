@@ -11,6 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 // UI-redesign phases.
 @Preview
 @Composable
-private fun ShowkasePlaceholderPreview() {
+internal fun ShowkasePlaceholderPreview() {
     Text(text = "Showkase ready — add @Preview composables in src/main/")
 }
