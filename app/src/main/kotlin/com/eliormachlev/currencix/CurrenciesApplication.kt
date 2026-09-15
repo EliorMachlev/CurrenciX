@@ -5,17 +5,31 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.jank.installJankStats
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.FileLoggingTree
+import com.eliormachlev.currencix.worker.RateRefreshScheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.net.InetAddress
 import kotlin.concurrent.thread
 
 class CurrenciesApplication : Application() {
+    // Process-lifetime scope for the auto-refresh observer. SupervisorJob so
+    // a collector cancellation doesn't tear down the app-wide scope, and
+    // Default because the work is a single distinct-until-changed pref read
+    // plus a WorkManager enqueue — no IO on the hot path.
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     override fun onCreate() {
         super.onCreate()
         installLogging()
         installJankStats()
         applyNightMode()
         prewarmProviderDns()
+        observeAutoRefreshPreference()
     }
 
     // Debug builds also get a console tree so `adb logcat` mirrors what the
@@ -45,6 +59,32 @@ class CurrenciesApplication : Application() {
         thread(name = "dns-prewarm", isDaemon = true) {
             val host = Database(this).getApiProvider().getHost() ?: return@thread
             runCatching { InetAddress.getAllByName(host) }
+        }
+    }
+
+    // Observe the three inputs to the WorkManager schedule (opt-in flag,
+    // user interval override, current provider). Any change re-enqueues or
+    // cancels the periodic work — enqueueUniquePeriodicWork with UPDATE
+    // makes the reschedule race-free. Distinct-until-changed on the tuple
+    // avoids a redundant enqueue on every DataStore emit.
+    private fun observeAutoRefreshPreference() {
+        val db = Database(this)
+        appScope.launch {
+            combine(
+                db.isAutoRefreshEnabledFlow(),
+                db.getAutoRefreshIntervalMinutesOverrideFlow(),
+                db.getApiProviderFlow(),
+            ) { enabled, override, provider ->
+                Triple(enabled, override, provider)
+            }.distinctUntilChanged()
+                .collect { (enabled, override, provider) ->
+                    if (enabled) {
+                        val minutes = RateRefreshScheduler.effectiveIntervalMinutes(provider, override)
+                        RateRefreshScheduler.schedule(this@CurrenciesApplication, minutes)
+                    } else {
+                        RateRefreshScheduler.cancel(this@CurrenciesApplication)
+                    }
+                }
         }
     }
 }

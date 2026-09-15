@@ -37,6 +37,8 @@ class PreferenceViewModel(
         db.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.getDecimalPlacesBlocking())
     val dateFormat: StateFlow<String> =
         db.getDateFormatFlow().stateInWhileSubscribed(viewModelScope, db.getDateFormatBlocking())
+    val isAutoRefreshEnabled: StateFlow<Boolean> =
+        db.isAutoRefreshEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isAutoRefreshEnabledBlocking())
 
     fun setApiProvider(api: ApiProvider) {
         persistAndRefreshRates { db.setApiProvider(api) }
@@ -121,6 +123,13 @@ class PreferenceViewModel(
 
     fun setDateFormat(pattern: String) {
         db.setDateFormat(pattern)
+    }
+
+    // Auto-refresh toggle (#151). Persistence-only — the actual WorkManager
+    // schedule/cancel is driven from the Application observer so the source
+    // of truth is DataStore rather than the UI's imperative flow.
+    fun setAutoRefreshEnabled(enabled: Boolean) {
+        db.setAutoRefreshEnabled(enabled)
     }
 
     fun getTheme(): AppTheme = db.getTheme()

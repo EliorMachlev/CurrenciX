@@ -45,6 +45,9 @@
     <string name="haptic_feedback_key" translatable="false">KEY_HAPTIC_FEEDBACK</string>
     <string name="haptic_feedback_title">Haptic feedback</string>
     <string name="haptic_feedback_summary">Vibrate on taps across the app\nFollows system setting\nAutomatically disabled in battery saver</string>
+    <!-- auto-refresh (#151) -->
+    <string name="auto_refresh_title">Auto-refresh rates</string>
+    <string name="auto_refresh_summary">Refresh in the background at the provider-recommended cadence</string>
     <string name="date_format_key" translatable="false">KEY_DATE_FORMAT</string>
     <string name="date_format_title">Date and Time format</string>
     <!-- backup -->

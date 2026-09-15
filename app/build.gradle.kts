@@ -227,6 +227,10 @@ dependencies {
     // glance: home-screen widget composed instead of RemoteViews-driven.
     val glanceVersion = "1.1.1"
     implementation("androidx.glance:glance-appwidget:$glanceVersion")
+    // WorkManager: periodic background refresh of exchange rates (#151).
+    // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
+    // opt-in via Settings until #147 onboarding wires the hero opt-in.
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
     // charts
     val vicoVersion = "3.3.0"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")

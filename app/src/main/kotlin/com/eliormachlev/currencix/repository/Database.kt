@@ -80,6 +80,14 @@ private const val DEFAULT_DATE_FORMAT = "dd/MM/yy HH:mm"
 private const val KEY_CART_CURRENT_JSON = "_cart_current_json"
 private const val KEY_CARTS_SAVED_JSON = "_carts_saved_json"
 
+// Auto-refresh (#151): default OFF at first launch — opting-in is explicit
+// via Settings (until #147 onboarding lands the hero opt-in).
+private const val KEY_AUTO_REFRESH_ENABLED = "_autoRefreshEnabled"
+
+// Optional user override for the WorkManager refresh cadence. `null` means
+// "use the provider-recommended default"; a positive Int overrides it.
+private const val KEY_AUTO_REFRESH_INTERVAL_OVERRIDE = "_autoRefreshIntervalMinutesOverride"
+
 private const val DEFAULT_FROM_CURRENCY = "USD"
 private const val DEFAULT_TO_CURRENCY = "EUR"
 
@@ -123,6 +131,15 @@ private val filterStarredEnabledMapper: (Preferences) -> Boolean = {
 }
 private val isUpdatingMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_IS_UPDATING)] ?: false
+}
+private val autoRefreshEnabledMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_AUTO_REFRESH_ENABLED)] ?: false
+}
+private val autoRefreshIntervalOverrideMapper: (Preferences) -> Int? = {
+    // 0 sentinel means "no override" — DataStore has no `intOrNull` primitive
+    // and we want the pref backing store to keep working with plain Ints.
+    val v = it[intPreferencesKey(KEY_AUTO_REFRESH_INTERVAL_OVERRIDE)] ?: 0
+    if (v <= 0) null else v
 }
 private val historicalLiveDateMapper: (Preferences) -> LocalDate? = { prefs ->
     val v = prefs[longPreferencesKey(KEY_HISTORICAL_DATE)] ?: NO_HISTORICAL_DATE
@@ -516,6 +533,30 @@ class Database(
         }
         return arr.toString()
     }
+
+    // auto-refresh (#151) — WorkManager-driven background rate refresh, opt-in.
+
+    fun setAutoRefreshEnabled(enabled: Boolean) {
+        appStore.edit { this[booleanPreferencesKey(KEY_AUTO_REFRESH_ENABLED)] = enabled }
+    }
+
+    fun isAutoRefreshEnabledFlow(): Flow<Boolean> = appStore.mappedFlow(autoRefreshEnabledMapper)
+
+    fun isAutoRefreshEnabledBlocking(): Boolean = autoRefreshEnabledMapper(appStore.snapshot())
+
+    fun setAutoRefreshIntervalMinutesOverride(minutes: Int?) {
+        appStore.edit {
+            if (minutes == null || minutes <= 0) {
+                remove(intPreferencesKey(KEY_AUTO_REFRESH_INTERVAL_OVERRIDE))
+            } else {
+                this[intPreferencesKey(KEY_AUTO_REFRESH_INTERVAL_OVERRIDE)] = minutes
+            }
+        }
+    }
+
+    fun getAutoRefreshIntervalMinutesOverrideFlow(): Flow<Int?> = appStore.mappedFlow(autoRefreshIntervalOverrideMapper)
+
+    fun getAutoRefreshIntervalMinutesOverrideBlocking(): Int? = autoRefreshIntervalOverrideMapper(appStore.snapshot())
 
     // preview conversion
 

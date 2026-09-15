@@ -22,7 +22,12 @@ private const val TIMELINE_SUBDIR = "timeline"
 // staler than the OkHttp rewrite interceptor would (see
 // `ProviderCacheRewriteInterceptor.PROVIDER_CACHE_TTL_SECONDS`). Callers can
 // still override per-key via `RateCache`'s `ttlFor` constructor parameter.
-private val PROVIDER_TTL_MS: Map<ApiProvider, Long> =
+//
+// Also consumed by the WorkManager auto-refresh scheduler (#151) via
+// [providerRefreshIntervalMinutes] — the same cadence backs both the in-app
+// cache TTL and the background refresh, so a swap in one automatically
+// updates the other.
+internal val PROVIDER_TTL_MS: Map<ApiProvider, Long> =
     mapOf(
         // Hourly upstream; keep the app tier well below to avoid serving
         // last-hour data when the user explicitly refreshes.
@@ -40,6 +45,21 @@ private val PROVIDER_TTL_MS: Map<ApiProvider, Long> =
     )
 
 private fun ttlFor(provider: ApiProvider): Long = PROVIDER_TTL_MS[provider] ?: RateCache.DEFAULT_TTL_MS
+
+/**
+ * Provider-recommended background-refresh cadence, in minutes. Derived from
+ * [PROVIDER_TTL_MS] so the WorkManager job (#151) and the in-app cache TTL
+ * always agree on "how fresh do we consider this provider's data".
+ *
+ * Falls back to 60 min for providers not in the map. WorkManager's floor is
+ * 15 min; callers are responsible for coercing below that.
+ */
+internal fun providerRefreshIntervalMinutes(provider: ApiProvider): Long {
+    val ms = PROVIDER_TTL_MS[provider] ?: TimeUnit.MINUTES.toMillis(DEFAULT_REFRESH_INTERVAL_MINUTES)
+    return TimeUnit.MILLISECONDS.toMinutes(ms)
+}
+
+private const val DEFAULT_REFRESH_INTERVAL_MINUTES = 60L
 
 /**
  * Builders for the two [RateCache] shapes used by [com.eliormachlev.currencix

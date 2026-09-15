@@ -89,6 +89,7 @@ fun PreferenceScreen(
     val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
     val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
+    val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
     val theme = remember { viewModel.getTheme() }
     val language = remember(provider) { Language.byIso(viewModel.getLanguage()) ?: Language.SYSTEM }
 
@@ -105,6 +106,7 @@ fun PreferenceScreen(
             dateFormat = dateFormat,
             theme = theme,
             language = language,
+            autoRefreshEnabled = autoRefreshEnabled,
             onOpenDialog = { openDialog = it },
         )
     }
@@ -143,6 +145,7 @@ private fun PreferenceSectionsList(
     dateFormat: String,
     theme: AppTheme,
     language: Language,
+    autoRefreshEnabled: Boolean,
     onOpenDialog: (OpenDialog) -> Unit,
 ) {
     LazyColumn(
@@ -169,6 +172,8 @@ private fun PreferenceSectionsList(
                 ApiSection(
                     provider = provider,
                     apiKey = apiKey,
+                    autoRefreshEnabled = autoRefreshEnabled,
+                    onAutoRefreshChange = viewModel::setAutoRefreshEnabled,
                     openProviderPicker = { onOpenDialog(OpenDialog.Provider) },
                     openApiKeyEditor = { onOpenDialog(OpenDialog.ApiKey) },
                 )
@@ -361,6 +366,8 @@ private fun GeneralSection(
 private fun ApiSection(
     provider: ApiProvider?,
     apiKey: String?,
+    autoRefreshEnabled: Boolean,
+    onAutoRefreshChange: (Boolean) -> Unit,
     openProviderPicker: () -> Unit,
     openApiKeyEditor: () -> Unit,
 ) {
@@ -397,6 +404,17 @@ private fun ApiSection(
                 iconRes = R.drawable.ic_schedule,
             )
         }
+        // Auto-refresh (#151). Placed inside the API section since its
+        // cadence is derived from the currently-selected provider — the
+        // adjacent "refresh period" row above spells out what "recommended"
+        // means for the picked provider.
+        SwitchRow(
+            title = stringResource(id = R.string.auto_refresh_title),
+            summary = stringResource(id = R.string.auto_refresh_summary),
+            iconRes = R.drawable.ic_schedule,
+            checked = autoRefreshEnabled,
+            onCheckedChange = onAutoRefreshChange,
+        )
     }
 }
 

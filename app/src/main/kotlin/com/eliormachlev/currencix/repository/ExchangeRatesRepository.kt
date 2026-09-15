@@ -118,6 +118,33 @@ class ExchangeRatesRepository(
     }
 
     /**
+     * Suspend-only refresh path used by the WorkManager auto-refresh job
+     * (#151). Bypasses cache freshness via [RateCache.refresh], re-populates
+     * both cache tiers, and persists the result via [Database.insertExchangeRates]
+     * so LiveData subscribers (Compose UI, widget) see the fresh values on
+     * next launch. Returns a [Result] so the worker can distinguish
+     * transient network errors (→ retry) from success.
+     *
+     * Does *not* touch the "is updating" flag: this runs in the background
+     * with no UI visible, and the spinner in the hero card would flash on
+     * next foregrounding for no user-facing reason.
+     */
+    suspend fun refreshLatestRates(): Result<ExchangeRates> {
+        val provider = db.getApiProvider()
+        val historicalDate = db.getHistoricalDate()
+        val key =
+            RateCacheKey.RatesLatest(
+                providerId = provider.id,
+                baseIso = provider.baseCurrencyIso(),
+                date = historicalDate,
+            )
+        return ratesCache
+            .refresh(key)
+            .map { it.copy(provider = provider) }
+            .onSuccess { db.insertExchangeRates(it) }
+    }
+
+    /**
      * Gets and returns the timeline of the last year of the given base and target currency.
      *
      * Persists per-pair timelines and refreshes only the missing tail on each call, so
