@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -21,13 +20,13 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Language
-import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.releaseNotesUrl
@@ -83,13 +82,13 @@ fun PreferenceScreen(
     var openDialog by remember { mutableStateOf<OpenDialog?>(null) }
     val dismiss: () -> Unit = { openDialog = null }
 
-    val provider by viewModel.getApiProvider().observeAsState()
-    val apiKey by viewModel.getOpenExchangeratesApiKey().observeAsState()
-    val decimalPlaces by viewModel.getDecimalPlaces().observeAsState(DECIMAL_PLACES_DEFAULT)
-    val keyboardType by viewModel.getKeyboardType().observeAsState(KeyboardType.DEFAULT)
-    val hapticEnabled by viewModel.isHapticFeedbackEnabled().observeAsState(true)
-    val previewEnabled by viewModel.isPreviewConversionEnabled().observeAsState(false)
-    val dateFormat by viewModel.getDateFormat().observeAsState(DEFAULT_DATE_FORMAT)
+    val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
+    val apiKey by viewModel.openExchangeratesApiKey.collectAsStateWithLifecycle()
+    val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
+    val keyboardType by viewModel.keyboardType.collectAsStateWithLifecycle()
+    val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
+    val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
     val theme = remember { viewModel.getTheme() }
     val language = remember(provider) { Language.byIso(viewModel.getLanguage()) ?: Language.SYSTEM }
 
@@ -436,11 +435,6 @@ data class PreferenceScreenCallbacks(
     val onRateApp: () -> Unit,
     val onThemeRequiresRestart: () -> Unit,
 )
-
-// Shared iso-string date-format default — kept in sync with Database's own
-// default so observers before first emit render the same pattern the fallback
-// pref returns.
-private const val DEFAULT_DATE_FORMAT = "dd/MM/yy HH:mm"
 
 // Build flavor served through Play; other flavors hide the "rate on Play"
 // entry (donation flavor gets its own entry elsewhere).

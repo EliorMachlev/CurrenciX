@@ -21,7 +21,7 @@ Guardrails first. These catch regressions in everything that follows.
 ## Phase 1 — Data / state layer
 
 - **#150 DataStore migration** — namespace-by-namespace behind a `PersistenceKey` enum. Verify backup round-trip after each namespace. Kills `warmSharedPreferences()`. Inline a ~30-line `restartApp(context)` helper (`PackageManager.getLaunchIntentForPackage` + `exitProcess(0)`) and call it from the migration-complete hook and from `BackupManager.importArchive()` success — no ProcessPhoenix dep.
-- **#149 Molecule (LiveData → StateFlow)** — order: BackupViewModel → PreferenceViewModel → FeeManagerViewModel → MainViewModel. Land early so all subsequent UI (Phases 4–8) writes StateFlow-native, not LiveData that needs re-migration.
+- **#149 Molecule (LiveData → StateFlow)** — order: BackupViewModel → PreferenceViewModel → FeeManagerViewModel → MainViewModel. Land early so all subsequent UI (Phases 4–8) writes StateFlow-native, not LiveData that needs re-migration. **Pilot landed:** PreferenceViewModel migrated to `StateFlow` via `stateIn(WhileSubscribed(5s))` seeded from blocking `snapshot()` reads; Compose consumers switched to `collectAsStateWithLifecycle` via `lifecycle-runtime-compose`. Molecule itself is **not** adopted — plain `stateIn` covers the 1:1 fanout each VM does; revisit Molecule only if a VM starts composing multiple flows into derived UI state. Remaining VMs (Backup, FeeManager, Main) follow the same recipe.
 - **#161 kotlinx.collections.immutable** *(rides with #149)* — expose `ImmutableList<T>` on the state side of every StateFlow that carries a list, so Compose stability inference skips recomposition on unchanged content. Land in the same pass so types don't need a second migration.
 
 ## Phase 2 — Networking layer

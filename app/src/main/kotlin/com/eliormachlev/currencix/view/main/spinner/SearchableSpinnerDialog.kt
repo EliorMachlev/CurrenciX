@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
@@ -74,7 +75,7 @@ class SearchableSpinnerDialog(
                         // bottom-scroll. Wait for both sources, render once.
                         val stars by mainViewModel.getStarredCurrencies().observeAsState()
                         val filterStarred by mainViewModel.isFilterStarredEnabled().observeAsState(initial = false)
-                        val previewEnabled by prefViewModel.isPreviewConversionEnabled().observeAsState(initial = false)
+                        val previewEnabled by prefViewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
                         val decimalPlaces by mainViewModel.getDecimalPlaces().observeAsState()
 
                         val baseRate = currentRateState.value

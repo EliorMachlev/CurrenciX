@@ -28,6 +28,7 @@ import com.eliormachlev.currencix.util.KEY_RATES_TIME
 import com.eliormachlev.currencix.util.NO_PROVIDER_ID
 import com.eliormachlev.currencix.util.toLocalDate
 import com.eliormachlev.currencix.util.toMillis
+import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -79,6 +80,30 @@ private const val KEY_CARTS_SAVED_JSON = "_carts_saved_json"
 
 private const val DEFAULT_FROM_CURRENCY = "USD"
 private const val DEFAULT_TO_CURRENCY = "EUR"
+
+// Mappers shared by the LiveData and Flow getters for each preference so both
+// paths derive from a single source of truth (see #149 pilot).
+private val apiProviderMapper: (Preferences) -> ApiProvider = {
+    ApiProvider.fromId(it[intPreferencesKey(KEY_API)] ?: NO_PROVIDER_ID)
+}
+private val openExchangeratesApiKeyMapper: (Preferences) -> String? = {
+    it[stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY)]
+}
+private val previewConversionEnabledMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] ?: false
+}
+private val keyboardTypeMapper: (Preferences) -> KeyboardType = {
+    KeyboardType.fromOrdinal(it[intPreferencesKey(KEY_KEYBOARD_TYPE)] ?: KeyboardType.DEFAULT.ordinal)
+}
+private val hapticFeedbackEnabledMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
+}
+private val decimalPlacesMapper: (Preferences) -> Int = {
+    (it[stringPreferencesKey(KEY_DECIMAL_PLACES)] ?: "2").toIntOrNull()?.coerceIn(0, 6) ?: 2
+}
+private val dateFormatMapper: (Preferences) -> String = {
+    it[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT
+}
 
 class Database(
     private val context: Context,
@@ -311,8 +336,9 @@ class Database(
 
     fun getApiProvider(): ApiProvider = ApiProvider.fromId(appStore.snapshot()[intPreferencesKey(KEY_API)] ?: NO_PROVIDER_ID)
 
-    fun getApiProviderAsync(): LiveData<ApiProvider> =
-        appStore.mappedLiveData { ApiProvider.fromId(it[intPreferencesKey(KEY_API)] ?: NO_PROVIDER_ID) }
+    fun getApiProviderAsync(): LiveData<ApiProvider> = appStore.mappedLiveData(apiProviderMapper)
+
+    fun getApiProviderFlow(): Flow<ApiProvider> = appStore.mappedFlow(apiProviderMapper)
 
     fun setOpenExchangeRatesApiKey(id: String?) {
         appStore.edit {
@@ -326,8 +352,9 @@ class Database(
 
     fun getOpenExchangeRatesApiKey(): String? = appStore.snapshot()[stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY)]
 
-    fun getOpenExchangeRatesApiKeyAsync(): LiveData<String?> =
-        appStore.mappedLiveData { it[stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY)] }
+    fun getOpenExchangeRatesApiKeyAsync(): LiveData<String?> = appStore.mappedLiveData(openExchangeratesApiKeyMapper)
+
+    fun getOpenExchangeRatesApiKeyFlow(): Flow<String?> = appStore.mappedFlow(openExchangeratesApiKeyMapper)
 
     // theme
 
@@ -453,8 +480,11 @@ class Database(
         appStore.edit { this[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] = enabled }
     }
 
-    fun isPreviewConversionEnabled(): LiveData<Boolean> =
-        appStore.mappedLiveData { it[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] ?: false }
+    fun isPreviewConversionEnabled(): LiveData<Boolean> = appStore.mappedLiveData(previewConversionEnabledMapper)
+
+    fun isPreviewConversionEnabledFlow(): Flow<Boolean> = appStore.mappedFlow(previewConversionEnabledMapper)
+
+    fun isPreviewConversionEnabledBlocking(): Boolean = previewConversionEnabledMapper(appStore.snapshot())
 
     // keyboard type
 
@@ -462,8 +492,9 @@ class Database(
         appStore.edit { this[intPreferencesKey(KEY_KEYBOARD_TYPE)] = type.ordinal }
     }
 
-    fun getKeyboardType(): LiveData<KeyboardType> =
-        appStore.mappedLiveData { KeyboardType.fromOrdinal(it[intPreferencesKey(KEY_KEYBOARD_TYPE)] ?: KeyboardType.DEFAULT.ordinal) }
+    fun getKeyboardType(): LiveData<KeyboardType> = appStore.mappedLiveData(keyboardTypeMapper)
+
+    fun getKeyboardTypeFlow(): Flow<KeyboardType> = appStore.mappedFlow(keyboardTypeMapper)
 
     fun getKeyboardTypeBlocking(): KeyboardType =
         KeyboardType.fromOrdinal(appStore.snapshot()[intPreferencesKey(KEY_KEYBOARD_TYPE)] ?: KeyboardType.DEFAULT.ordinal)
@@ -474,8 +505,9 @@ class Database(
         appStore.edit { this[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] = enabled }
     }
 
-    fun isHapticFeedbackEnabled(): LiveData<Boolean> =
-        appStore.mappedLiveData { it[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true }
+    fun isHapticFeedbackEnabled(): LiveData<Boolean> = appStore.mappedLiveData(hapticFeedbackEnabledMapper)
+
+    fun isHapticFeedbackEnabledFlow(): Flow<Boolean> = appStore.mappedFlow(hapticFeedbackEnabledMapper)
 
     fun isHapticFeedbackEnabledBlocking(): Boolean =
         appStore.snapshot()[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
@@ -489,8 +521,11 @@ class Database(
         appStore.edit { this[stringPreferencesKey(KEY_DECIMAL_PLACES)] = places.toString() }
     }
 
-    fun getDecimalPlaces(): LiveData<Int> =
-        appStore.mappedLiveData { (it[stringPreferencesKey(KEY_DECIMAL_PLACES)] ?: "2").toIntOrNull()?.coerceIn(0, 6) ?: 2 }
+    fun getDecimalPlaces(): LiveData<Int> = appStore.mappedLiveData(decimalPlacesMapper)
+
+    fun getDecimalPlacesFlow(): Flow<Int> = appStore.mappedFlow(decimalPlacesMapper)
+
+    fun getDecimalPlacesBlocking(): Int = decimalPlacesMapper(appStore.snapshot())
 
     // graph options — all default to true (feature-on) so opting out is explicit.
 
@@ -543,8 +578,9 @@ class Database(
         appStore.edit { this[stringPreferencesKey(KEY_DATE_FORMAT)] = pattern }
     }
 
-    fun getDateFormat(): LiveData<String> =
-        appStore.mappedLiveData { it[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT }
+    fun getDateFormat(): LiveData<String> = appStore.mappedLiveData(dateFormatMapper)
+
+    fun getDateFormatFlow(): Flow<String> = appStore.mappedFlow(dateFormatMapper)
 
     fun getDateFormatBlocking(): String = appStore.snapshot()[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT
 
