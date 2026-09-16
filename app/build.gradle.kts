@@ -239,6 +239,10 @@ dependencies {
     // charts
     val vicoVersion = "3.3.0"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
+    // drag-to-reorder for LazyColumn (currency picker's Starred section, #142).
+    // Pinned to a stable tag so upstream drop-in changes can't move the API
+    // out from under us — see docs/markDown/contributing.md on version pins.
+    implementation("sh.calvin.reorderable:reorderable:3.1.0")
     // crypto: BouncyCastle provides pure-Java Argon2id, used by BackupManager
     // for password-based backup encryption (quantum-resistant KDF).
     implementation("org.bouncycastle:bcprov-jdk18on:1.85.2")
