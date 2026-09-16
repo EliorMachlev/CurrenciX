@@ -44,6 +44,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -56,10 +57,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -67,6 +70,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -342,6 +346,40 @@ internal data class MainDisplayCallbacks(
 )
 
 /**
+ * Bridge between the Activity's share flow and the in-composition hero card.
+ * The hero card assigns [doCapture] in a [DisposableEffect] once its
+ * `GraphicsLayer` is ready; the Activity awaits [capture] from a coroutine.
+ *
+ * Returns null when nothing has registered yet (activity in background,
+ * first composition still running) — the caller falls back to the text-only
+ * share in that case so the user never sees a dead tap.
+ */
+internal class HeroCaptureController {
+    var doCapture: (suspend () -> ImageBitmap?)? = null
+
+    suspend fun capture(): ImageBitmap? = doCapture?.invoke()
+}
+
+// Route the receiver's draw through a GraphicsLayer so [controller] can
+// snapshot the composed pixels later without a separate offscreen
+// composition. Recording on every draw means a capture triggered mid-tap
+// reflects the frame the user actually sees.
+@Composable
+private fun Modifier.heroCaptureLayer(controller: HeroCaptureController?): Modifier {
+    val graphicsLayer = rememberGraphicsLayer()
+    if (controller != null) {
+        DisposableEffect(controller, graphicsLayer) {
+            controller.doCapture = { graphicsLayer.toImageBitmap() }
+            onDispose { controller.doCapture = null }
+        }
+    }
+    return this.drawWithContent {
+        graphicsLayer.record { this@drawWithContent.drawContent() }
+        drawLayer(graphicsLayer)
+    }
+}
+
+/**
  * Pure-Compose replacement for the old `main_display.xml`. Renders the hero
  * card (currency pills + amount hero + amount to + rate footer). All state is
  * pulled from [viewModel] via [observeAsState]; the currency-picker dialog
@@ -356,6 +394,7 @@ internal fun MainDisplay(
     dateFormatPattern: String,
     banner: BannerContent?,
     modifier: Modifier = Modifier,
+    captureController: HeroCaptureController? = null,
 ) {
     val context = LocalContext.current
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
@@ -411,6 +450,7 @@ internal fun MainDisplay(
         onSwapClick = { swapCurrencies(viewModel, baseCurrency, destCurrency) },
         callbacks = callbacks,
         modifier = modifier,
+        captureController = captureController,
     )
 }
 
@@ -448,6 +488,7 @@ private fun HeroCard(
     onSwapClick: () -> Unit,
     callbacks: MainDisplayCallbacks,
     modifier: Modifier = Modifier,
+    captureController: HeroCaptureController? = null,
 ) {
     Box(
         modifier
@@ -457,6 +498,7 @@ private fun HeroCard(
             .shadow(elevation = CARD_ELEVATION, shape = RoundedCornerShape(CARD_RADIUS))
             .clip(RoundedCornerShape(CARD_RADIUS))
             .background(MaterialTheme.colorScheme.surface)
+            .heroCaptureLayer(captureController)
             .padding(CARD_PADDING),
     ) {
         Column(Modifier.fillMaxWidth()) {

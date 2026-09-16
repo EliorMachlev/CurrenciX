@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -37,6 +38,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
@@ -44,7 +46,10 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
+import com.eliormachlev.currencix.util.SHARE_IMAGES_SUBDIR
+import com.eliormachlev.currencix.util.buildShareChooser
 import com.eliormachlev.currencix.util.feePercentDelta
+import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
@@ -52,6 +57,7 @@ import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.util.toPngBytes
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.CartActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
@@ -63,6 +69,7 @@ import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.main.compose.BannerContent
 import com.eliormachlev.currencix.view.main.compose.BannerKind
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
+import com.eliormachlev.currencix.view.main.compose.HeroCaptureController
 import com.eliormachlev.currencix.view.main.compose.MainDisplay
 import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
@@ -84,6 +91,11 @@ import java.time.format.DateTimeFormatter
 // fee true-cost / percent formatting for the share-sheet extra
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
 private const val AMOUNT_DECIMAL_PLACES = 2
+
+// Hero-card snapshot chooser payload. MIME + extension pair kept together so
+// the file name and Intent's `type` never drift out of sync.
+private const val SHARE_IMAGE_MIME = "image/png"
+private const val SHARE_IMAGE_EXT = ".png"
 
 // Default date pattern used before the user-configured pattern LiveData emits.
 private const val DEFAULT_DATE_PATTERN = "dd/MM/yy HH:mm"
@@ -145,6 +157,11 @@ class MainActivity : BaseActivity() {
     // ActionBar customView slot only takes a Drawable, so we own it here and
     // let composition push a 0..1 progress from the drawer state each frame.
     private val drawerArrow: DrawerArrowDrawable by lazy { createDrawerArrow() }
+
+    // Bridges the Compose hero card's GraphicsLayer to the share intent. The
+    // hero card assigns its capture lambda on first composition; we invoke it
+    // from lifecycleScope when the Share drawer item fires.
+    private val heroCaptureController = HeroCaptureController()
 
     // State bridges Compose reads via observeAsState / mutableStateOf.
     private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
@@ -343,12 +360,35 @@ class MainActivity : BaseActivity() {
         val conversion = buildShareConversion() ?: return
         val footer = buildShareFooter(viewModel.getExchangeRates().value)
         val text = if (footer != null) "$conversion\n-- $footer" else conversion
-        val intent =
-            Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, text)
-            }
-        startActivity(Intent.createChooser(intent, null))
+        // Drawer just started closing when this fires; wait one frame so the
+        // closing animation doesn't leak into the snapshot. If the hero card
+        // hasn't registered yet (activity backgrounded, first composition
+        // still running), fall back to a text-only share so the tap is never
+        // a no-op.
+        lifecycleScope.launch {
+            withFrameNanos { }
+            val bitmap = heroCaptureController.capture()
+            val chooser =
+                if (bitmap != null) {
+                    buildShareChooser(
+                        context = this@MainActivity,
+                        subdir = SHARE_IMAGES_SUBDIR,
+                        filename = "currencix-${filenameTimestampNow()}$SHARE_IMAGE_EXT",
+                        mimeType = SHARE_IMAGE_MIME,
+                        bytes = bitmap.toPngBytes(),
+                        extraText = text,
+                    )
+                } else {
+                    Intent.createChooser(
+                        Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, text)
+                        },
+                        null,
+                    )
+                }
+            startActivity(chooser)
+        }
     }
 
     // Compose the shared conversion line from the on-screen values so it
@@ -616,6 +656,7 @@ class MainActivity : BaseActivity() {
             callbacks = callbacks,
             dateFormatPattern = pattern,
             banner = banner,
+            captureController = heroCaptureController,
         )
     }
 
