@@ -75,6 +75,10 @@
     <string name="backup_password_prompt_title">Enter password</string>
     <string name="backup_password_wrong">Password didn\'t decrypt this file. Try again.</string>
     <string name="backup_password_too_short">Password must be at least %1$d characters</string>
+    <string name="backup_password_show">Show password</string>
+    <string name="backup_password_hide">Hide password</string>
+    <!-- Trails the currently-selected data provider in the picker sheet. -->
+    <string name="provider_active_chip">Active</string>
     <!-- graph options -->
     <string name="category_graph_options">Graph options</string>
     <string name="graph_options_key" translatable="false">KEY_GRAPH_OPTIONS</string>
