@@ -65,19 +65,19 @@ private const val NAME_EDIT_DEBOUNCE_MS = 300L
 private const val ROW_PREVIEW_SCALE = 2
 private val FIELD_MIN_HEIGHT = 48.dp
 
-// Distance from the trailing edge to the trashcan icon when the row slides.
-// Matches Material's SwipeToDismiss sample so the icon reads as "emerging"
-// from the row rather than pinned to the screen edge.
-private val SWIPE_ICON_TRAILING_PADDING = 24.dp
+// Distance from the swipe-origin edge to the trashcan icon when the row
+// slides. Matches Material's SwipeToDismiss sample so the icon reads as
+// "emerging" from the row rather than pinned to the screen edge — applied
+// to whichever side the user is dragging from.
+private val SWIPE_ICON_EDGE_PADDING = 24.dp
 
 /**
- * Wrap [CartItemRow] in a Material3 [SwipeToDismissBox] so a trailing-edge
- * swipe (right-to-left in LTR, left-to-right in RTL) reveals a red delete
- * background and, past the dismissal threshold, calls [onDelete] — the
- * same code path the explicit delete button uses. Rows in edit mode
- * ([isActive]) reject the gesture so the user can't wipe out a row
- * while typing into it; the existing button is left in place as an
- * always-available fallback.
+ * Wrap [CartItemRow] in a Material3 [SwipeToDismissBox] so a swipe in either
+ * direction reveals a red delete background and, past the dismissal
+ * threshold, calls [onDelete] — the same code path the explicit delete
+ * button uses. Rows in edit mode ([isActive]) reject the gesture so the
+ * user can't wipe out a row while typing into it; the existing button is
+ * left in place as an always-available fallback.
  */
 @Composable
 @Suppress("LongParameterList")
@@ -96,14 +96,23 @@ fun SwipeableCartItemRow(
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 ) {
-    val dismissState = rememberSwipeToDismissBoxState()
-    LaunchedEffect(dismissState.currentValue) {
-        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) onDelete()
-    }
+    // confirmValueChange runs on the drag settle *before* currentValue
+    // updates, giving us a single-shot delete hook. Returning true lets the
+    // box animate out; the LazyList's animateItem() then handles the slide.
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = { value ->
+                val dismissed =
+                    value == SwipeToDismissBoxValue.StartToEnd ||
+                        value == SwipeToDismissBoxValue.EndToStart
+                if (dismissed) onDelete()
+                dismissed
+            },
+        )
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = { SwipeDeleteBackground(dismissState) },
-        enableDismissFromStartToEnd = false,
+        enableDismissFromStartToEnd = !isActive,
         enableDismissFromEndToStart = !isActive,
         modifier = modifier,
     ) {
@@ -128,21 +137,47 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
     // Only paint the background once the swipe is active — otherwise the
     // OutlinedCard's ambient background would show red rectangles behind
     // every row at rest.
-    val active = state.dismissDirection == SwipeToDismissBoxValue.EndToStart
+    val direction = state.dismissDirection
+    val active =
+        direction == SwipeToDismissBoxValue.StartToEnd ||
+            direction == SwipeToDismissBoxValue.EndToStart
+    // Anchor the trash icon on whichever edge the finger is dragging *from*
+    // (so it appears to emerge from under the row) rather than pinning it
+    // to a single side regardless of swipe direction.
+    val alignment =
+        if (direction == SwipeToDismissBoxValue.StartToEnd) {
+            Alignment.CenterStart
+        } else {
+            Alignment.CenterEnd
+        }
     Box(
         modifier =
             Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(id = R.dimen.margin1x))
                 .background(if (active) MaterialTheme.colorScheme.error else Color.Transparent),
-        contentAlignment = Alignment.CenterEnd,
+        contentAlignment = alignment,
     ) {
         if (active) {
             Icon(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = stringResource(id = R.string.cart_delete_item),
                 tint = MaterialTheme.colorScheme.onError,
-                modifier = Modifier.padding(end = SWIPE_ICON_TRAILING_PADDING),
+                modifier =
+                    Modifier.padding(
+                        start =
+                            if (direction == SwipeToDismissBoxValue.StartToEnd) {
+                                SWIPE_ICON_EDGE_PADDING
+                            } else {
+                                0.dp
+                            },
+                        end =
+                            if (direction == SwipeToDismissBoxValue.EndToStart) {
+                                SWIPE_ICON_EDGE_PADDING
+                            } else {
+                                0.dp
+                            },
+                    ),
             )
         }
     }
