@@ -172,6 +172,11 @@ dependencies {
     val appCompatVersion = "1.8.0"
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
     implementation("androidx.appcompat:appcompat-resources:$appCompatVersion")
+    // Splash screen: androidx compat wrapper around Android 12+ SplashScreen API.
+    // Closes the black-frame gap between launcher tap and first Compose frame,
+    // and hands off to the in-app wordmark reveal (#155). Pinned rather than
+    // dropped to the BOM default so upgrades are explicit.
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
     val livecycleVersion = "2.11.0"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$livecycleVersion")

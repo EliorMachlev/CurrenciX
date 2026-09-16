@@ -42,6 +42,17 @@ fun Wordmark(
     fontSize: TextUnit = 22.sp,
     color: Color = MaterialTheme.colorScheme.onBackground,
     accentColor: Color = MaterialTheme.colorScheme.primary,
+    // Gates the × reveal animation. When false the × is shown at its final
+    // scale immediately (no animation). This lets callers restart the
+    // reveal on cold start only, and avoids re-running it on config
+    // change / navigation returns. Also allows MainActivity to overlap the
+    // splash-screen exit animation with the in-Compose reveal (#155).
+    startReveal: Boolean = true,
+    // Invoked once the Wordmark has laid out its first frame. Used by the
+    // splash-screen hand-off in MainActivity to release
+    // setKeepOnScreenCondition — the splash holds until we're pixel-ready
+    // to run the reveal, then fades out over the reveal's opening frames.
+    onFirstFrame: () -> Unit = {},
 ) {
     val base =
         TextStyle(
@@ -50,12 +61,22 @@ fun Wordmark(
             fontWeight = FontWeight.Medium,
             letterSpacing = (-0.01).em,
         )
-    val xScale = remember { Animatable(0f) }
-    LaunchedEffect(Unit) {
-        xScale.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = WORDMARK_REVEAL_MILLIS, easing = LinearOutSlowInEasing),
-        )
+    // Initial value is the final scale when [startReveal] is false so the
+    // × is fully drawn immediately on config change / navigation returns.
+    val xScale = remember(startReveal) { Animatable(if (startReveal) 0f else 1f) }
+    val firstFrameCallback by rememberUpdatedState(onFirstFrame)
+    LaunchedEffect(startReveal) {
+        // Notify hosts we're on-screen before kicking off any animation —
+        // splash hand-off wants to release the keep-on-screen guard the
+        // moment the composable is mounted, so the platform's splash exit
+        // animation can overlap the reveal's opening frames.
+        firstFrameCallback()
+        if (startReveal) {
+            xScale.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = WORDMARK_REVEAL_MILLIS, easing = LinearOutSlowInEasing),
+            )
+        }
     }
     val tintTarget by rememberUpdatedState(if (xScale.value >= 1f) accentColor else color)
     val xColor by animateColorAsState(

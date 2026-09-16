@@ -29,6 +29,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
@@ -83,6 +85,14 @@ private const val WORDMARK_TITLE_SP = 26f
 // Matches Material's standard "medium container" motion duration — long
 // enough to read as a morph, short enough to feel responsive on the tap.
 private const val HAMBURGER_MORPH_MILLIS = 320
+
+// Splash → wordmark hand-off overlap (#155). The platform splash icon
+// fades out over this window while the Compose wordmark's × reveal
+// (WORDMARK_REVEAL_MILLIS = 520ms) is already running — a small overlap
+// hides the seam that would otherwise show if we waited for the icon to
+// disappear before starting the reveal. 150ms lands roughly at the reveal's
+// first-quarter frames, so the eye never catches a hard cut.
+private const val SPLASH_EXIT_FADE_MILLIS = 150L
 
 // Isolated composable so per-frame progress reads only recompose this
 // (empty) node — hoisting the read into MainScreen's setContent forced
@@ -141,8 +151,43 @@ class MainActivity : BaseActivity() {
     // arrives — a successful update is the definitive "provider is back".
     private var lastRefreshFailed: Boolean = false
 
+    // Splash-screen keep-on-screen gate (#155). Flipped to true by the
+    // wordmark's onFirstFrame callback so the platform splash holds until
+    // Compose is pixel-ready to run its reveal, then releases into the
+    // exit animation. Plain Boolean — the platform polls it from a pre-draw
+    // listener on the main thread, and the wordmark writes it from a
+    // LaunchedEffect (also main), so no snapshot state or volatility is
+    // needed.
+    private var firstContentReady: Boolean = false
+
+    // True only for the cold-start onCreate — recreations from config change
+    // or process-death restore skip the wordmark reveal so the affordance
+    // isn't repeated every rotation. Set once in onCreate and read from
+    // installComposeWordmarkTitle().
+    private var isColdStart: Boolean = false
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        // installSplashScreen() must run before super.onCreate() per the
+        // androidx docs — it swaps the launcher-splash theme (AppTheme.Splash)
+        // for postSplashScreenTheme (AppTheme) and installs the exit-animation
+        // listener. Keep the splash on-screen until Compose's first frame is
+        // ready, then hand off to the in-Compose wordmark reveal.
+        //
+        // Gate the animated reveal on savedInstanceState == null so config
+        // change / process death restore don't re-run the reveal — cold start
+        // is the only path that deserves the affordance.
+        isColdStart = savedInstanceState == null
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { !firstContentReady }
+        if (isColdStart) {
+            splashScreen.setOnExitAnimationListener(::fadeOutSplashIcon)
+        } else {
+            // No splash on warm restart — release the gate immediately so
+            // the keep-on-screen check never sees a stale `false`.
+            firstContentReady = true
+        }
+
         super.onCreate(savedInstanceState)
 
         // model
@@ -597,14 +642,42 @@ class MainActivity : BaseActivity() {
         val bar = supportActionBar ?: return
         bar.setDisplayShowTitleEnabled(false)
         bar.setDisplayShowCustomEnabled(true)
+        // Local snapshots so the setContent lambda captures the cold-start
+        // decision made once in onCreate rather than reading it lazily later.
+        val startReveal = isColdStart
         bar.customView =
             ComposeView(this).apply {
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
                     AppTheme {
-                        Wordmark(fontSize = WORDMARK_TITLE_SP.sp)
+                        Wordmark(
+                            fontSize = WORDMARK_TITLE_SP.sp,
+                            startReveal = startReveal,
+                            onFirstFrame = { firstContentReady = true },
+                        )
                     }
                 }
             }
+    }
+
+    // Splash exit-animation listener. Fades the platform splash icon over
+    // SPLASH_EXIT_FADE_MILLIS while the Compose wordmark's own × reveal
+    // (already started via LaunchedEffect on first frame — see Wordmark.kt)
+    // runs underneath. The overlap hides the seam that would otherwise
+    // appear if we waited for the icon to disappear before starting the
+    // reveal. Removes the SplashScreenView at the end so subsequent frames
+    // aren't overdrawn by the leftover splash surface.
+    //
+    // We fade only iconView (not the whole SplashScreenView) so the paper
+    // background stays solid underneath until removal — otherwise the
+    // Compose paper background would briefly show through a semi-transparent
+    // splash surface and read as a flash.
+    private fun fadeOutSplashIcon(provider: SplashScreenViewProvider) {
+        provider.iconView
+            .animate()
+            .alpha(0f)
+            .setDuration(SPLASH_EXIT_FADE_MILLIS)
+            .withEndAction { provider.remove() }
+            .start()
     }
 }
