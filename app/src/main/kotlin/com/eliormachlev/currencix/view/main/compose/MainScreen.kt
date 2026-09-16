@@ -14,22 +14,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.LedgerLabel
+import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 
 enum class DrawerAction {
@@ -45,7 +42,6 @@ enum class DrawerAction {
 }
 
 private val DrawerItemPadding = 12.dp
-private val DrawerContentPadding = NavigationDrawerItemDefaults.ItemPadding
 
 // Three-state status shown inside the RateFooter:
 //  - OFFLINE: device has no network
@@ -243,16 +239,16 @@ private fun DrawerRow(
     onClick: () -> Unit,
 ) {
     val label = stringResource(entry.titleRes)
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                painter = painterResource(entry.iconRes),
-                contentDescription = null,
+    LedgerRow(
+        onClick = { if (enabled) onClick() },
+        enabled = enabled,
+        label = {
+            LedgerLabel(
+                title = label,
+                iconRes = entry.iconRes,
+                enabled = enabled,
+                modifier = Modifier.weight(1f),
             )
         },
-        label = { Text(label) },
-        selected = false,
-        onClick = { if (enabled) onClick() },
-        modifier = Modifier.padding(DrawerContentPadding),
     )
 }

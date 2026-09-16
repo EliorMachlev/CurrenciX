@@ -4,56 +4,36 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.LedgerLabel
+import com.eliormachlev.currencix.view.compose.LedgerRow
+import com.eliormachlev.currencix.view.compose.LedgerSection
+import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import kotlinx.coroutines.delay
 
-// Grouped-card style, M3-Expressive settings look. Sections are rounded
-// surface-container blocks with a small primary-tinted header above; rows
-// inside are edge-to-edge without dividers so the shared background does the
-// grouping visually.
-private val SECTION_RADIUS: Dp = 20.dp
-private val SECTION_HEADER_HORIZONTAL: Dp = 24.dp
-private val SECTION_HEADER_TOP: Dp = 20.dp
-private val SECTION_HEADER_BOTTOM: Dp = 8.dp
-private val ROW_HORIZONTAL: Dp = 20.dp
-private val ROW_VERTICAL: Dp = 14.dp
-private val ROW_ICON_SIZE: Dp = 24.dp
-private val ROW_ICON_GAP: Dp = 20.dp
-private val TRAILING_GAP: Dp = 12.dp
+// Thin preference-flavoured wrapper around the shared ledger vocabulary in
+// `view/compose/Ledger.kt`. All list surfaces (Preferences, Fees, Backup,
+// picker, drawer) route through the same primitives so the "paper + brass"
+// look stays consistent — this file exists to keep the existing
+// PreferenceRow/PreferenceSection/SwitchRow call sites (and the screenshot
+// tests pinned to those names) working after the redesign.
 
 /**
- * Section grouping used by the Compose preferences screen. Wraps [content]
- * (typically a stack of [PreferenceRow] / [SwitchRow]) in a single rounded
- * surface-container-high card, and prefixes it with a tinted [text] header
- * marked as a TalkBack heading so users can jump between sections.
+ * Section grouping used by the Compose preferences screen. Thin alias over
+ * [LedgerSection] so the brass small-caps header + hairline-separated rows
+ * apply automatically. The section header is marked as a TalkBack heading
+ * so users can jump between sections.
  */
 @Composable
 fun PreferenceSection(
@@ -61,35 +41,15 @@ fun PreferenceSection(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Column(modifier.fillMaxWidth()) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-            modifier =
-                Modifier
-                    .padding(
-                        start = SECTION_HEADER_HORIZONTAL,
-                        end = SECTION_HEADER_HORIZONTAL,
-                        top = SECTION_HEADER_TOP,
-                        bottom = SECTION_HEADER_BOTTOM,
-                    ).semantics { heading() },
-        )
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(SECTION_RADIUS))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-        ) { content() }
-    }
+    LedgerSection(title = text, modifier = modifier) { content() }
 }
 
 /**
- * Basic preference row — leading icon (optional), [title] + optional [summary]
- * stacked, optional [trailing] slot for chevrons, values, switches. Whole row
- * is haptic-clickable when [onClick] is non-null; falls back to a static
- * (non-focusable in click semantics) row when null so info-only entries don't
- * pretend to be actionable.
+ * Preference row — leading icon (optional), [title] + optional [summary]
+ * stacked, optional [trailing] slot for chevrons, values, switches. Whole
+ * row is haptic-clickable when [onClick] is non-null; falls back to a
+ * static row when null so info-only entries don't pretend to be actionable.
+ * The paper hairline under the row is drawn by [LedgerRow] itself.
  */
 @Composable
 fun PreferenceRow(
@@ -101,41 +61,21 @@ fun PreferenceRow(
     onClick: (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
 ) {
-    val alpha = if (enabled) 1f else DISABLED_ALPHA
-    val base =
-        modifier
-            .fillMaxWidth()
-            .let { if (onClick != null) it.hapticClickable(enabled = enabled, onClick = onClick) else it }
-            .padding(horizontal = ROW_HORIZONTAL, vertical = ROW_VERTICAL)
-    Row(base, verticalAlignment = Alignment.CenterVertically) {
-        if (iconRes != null) {
-            Icon(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
-                modifier = Modifier.size(ROW_ICON_SIZE),
+    LedgerRow(
+        modifier = modifier,
+        onClick = onClick,
+        enabled = enabled,
+        label = {
+            LedgerLabel(
+                title = title,
+                summary = summary,
+                iconRes = iconRes,
+                enabled = enabled,
+                modifier = Modifier.weight(1f),
             )
-            Spacer(Modifier.width(ROW_ICON_GAP))
-        }
-        Column(Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
-            )
-            if (!summary.isNullOrBlank()) {
-                Text(
-                    text = summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
-                )
-            }
-        }
-        if (trailing != null) {
-            Spacer(Modifier.width(TRAILING_GAP))
-            Box(contentAlignment = Alignment.Center) { trailing() }
-        }
-    }
+        },
+        value = trailing?.let { slot -> { LedgerTrailing { slot() } } },
+    )
 }
 
 /**
@@ -172,26 +112,16 @@ fun SwitchRow(
 }
 
 /**
- * Thin divider between adjacent rows inside a [PreferenceSection]. Sits at
- * the row's start-icon indent so the leading rule aligns with the title
- * column and the icon strip stays visually clean.
+ * No-op divider kept for source compatibility with earlier callers. Ledger
+ * rows draw their own hairline internally; adjacent rows already inherit
+ * the paper rule, so an explicit divider is redundant. Left as a stub so a
+ * follow-up cleanup can remove all remaining call sites without churn here.
  */
+@Suppress("UnusedParameter")
 @Composable
 fun PreferenceDivider(hasIcon: Boolean = true) {
-    val startInset =
-        if (hasIcon) ROW_HORIZONTAL + ROW_ICON_SIZE + ROW_ICON_GAP else ROW_HORIZONTAL
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .padding(start = startInset, end = ROW_HORIZONTAL)
-            .height(DIVIDER_HEIGHT)
-            .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = DIVIDER_ALPHA)),
-    )
+    // Intentionally empty — ledger rows own their own hairline.
 }
-
-private const val DISABLED_ALPHA = 0.38f
-private const val DIVIDER_ALPHA = 0.5f
-private val DIVIDER_HEIGHT: Dp = 1.dp
 
 /**
  * Wraps a preference section (or any grouped card) in a first-appearance
@@ -216,12 +146,20 @@ fun SectionEnter(
     }
     Box(
         modifier =
-            modifier.graphicsLayer {
-                alpha = progress.value
-                translationY = (1f - progress.value) * SECTION_ENTER_TRANSLATION_PX
-            },
+            modifier
+                .fillMaxWidth()
+                .padding(bottom = SECTION_ENTER_BOTTOM_GAP)
+                .graphicsLayer {
+                    alpha = progress.value
+                    translationY = (1f - progress.value) * SECTION_ENTER_TRANSLATION_PX
+                },
     ) { content() }
 }
+
+// Extra breathing room between adjacent sections. With the grouped-card
+// backdrop gone the header brass is the primary separator; a small bottom
+// gap keeps consecutive sections from crowding each other's brass.
+private val SECTION_ENTER_BOTTOM_GAP: Dp = 4.dp
 
 // ~180ms between sections keeps the cascade legible on a six-section screen
 // without pushing the last card past the user's attention window. Total dwell

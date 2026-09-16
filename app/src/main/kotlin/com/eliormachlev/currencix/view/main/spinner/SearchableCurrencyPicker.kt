@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -67,6 +66,7 @@ import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dragReorderGraphics
 import com.eliormachlev.currencix.view.compose.dragReorderHandle
+import com.eliormachlev.currencix.view.compose.ledgerHairline
 import com.eliormachlev.currencix.view.compose.rememberDragReorderState
 import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
@@ -373,7 +373,7 @@ private fun CurrencyRow(
     // selected on the opposite side of the pair), but the star toggle stays
     // interactive — favoriting is independent of picker selection.
     Row(
-        modifier = modifier.heightIn(min = ROW_MIN_HEIGHT_DP.dp),
+        modifier = modifier.heightIn(min = ROW_MIN_HEIGHT_DP.dp).ledgerHairline(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
@@ -444,20 +444,20 @@ private fun CurrencyFlag(currency: Currency) {
 
 @Composable
 private fun ApiHintRow() {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        HorizontalDivider()
-        Text(
-            text = stringResource(id = R.string.currency_dropdown_api_hint),
-            style = MaterialTheme.typography.labelMedium,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = dimensionResource(id = R.dimen.margin2x),
-                        vertical = dimensionResource(id = R.dimen.margin1x),
-                    ).alpha(API_HINT_ALPHA),
-        )
-    }
+    Text(
+        text = stringResource(id = R.string.currency_dropdown_api_hint),
+        style = MaterialTheme.typography.labelMedium,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                // No sibling HorizontalDivider: the last CurrencyRow above already
+                // paints a hairline via [ledgerHairline]; adding another divider
+                // here would draw a double-line at the hint's leading edge.
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.margin2x),
+                    vertical = dimensionResource(id = R.dimen.margin1x),
+                ).alpha(API_HINT_ALPHA),
+    )
 }
 
 // [normalizedQuery] must already be [normalizeForSearch]-ed by the caller —
