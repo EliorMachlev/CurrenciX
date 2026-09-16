@@ -101,6 +101,7 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.shimmer
 import com.eliormachlev.currencix.view.compose.theme.AmberContainer
 import com.eliormachlev.currencix.view.compose.theme.BillGreen
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
@@ -285,6 +286,13 @@ private const val ENGRAVED_DIGITS_FADE_MILLIS = 160
 private const val HERO_EMPHASIS_MILLIS = 260
 private const val HERO_EMPHASIS_PEAK = 1.03f
 
+// Phase-offset the hero-final shimmer behind the subtotal's so the two
+// stacked digit slots don't tile identically during a rates refresh — the
+// eye reads the highlight cascading down the panel instead of two
+// synchronized bars. Half the period lands the second sweep at the
+// opposite side of its slot when the first crosses center.
+private const val HERO_SHIMMER_STAGGER_MILLIS = 600
+
 // Feathered background tint applied under the amber fee text. 15% of amber
 // composited over the pill's normal surface variant.
 private const val FEE_CHIP_BG_ALPHA = 0.15f
@@ -416,11 +424,6 @@ private fun swapCurrencies(
 }
 
 @Composable
-// isUpdating is threaded through today so the caller can supply it without
-// a follow-up API change once the shimmer (#140 in task-plan.md) lands on
-// the hero digit slot. Kept live rather than dropped so the wire-up is a
-// pure Modifier addition, not another signature churn.
-@Suppress("UnusedParameter")
 private fun HeroCard(
     baseCurrency: Currency?,
     destCurrency: Currency?,
@@ -478,6 +481,7 @@ private fun HeroCard(
                 stack = feeStack,
                 fees = activeFees,
                 otherValue = resultWithFeesNumber,
+                isUpdating = isUpdating,
                 onResultLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
                 onTrueCostLongClick = { if (trueCostCopyText.isNotEmpty()) callbacks.onCopy(trueCostCopyText) },
                 onFeeChipClick = callbacks.onOpenFees,
@@ -890,6 +894,7 @@ private fun AmountToRow(
     stack: BigDecimal?,
     fees: ImmutableList<Fee>,
     otherValue: BigDecimal?,
+    isUpdating: Boolean,
     onResultLongClick: () -> Unit,
     onTrueCostLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
@@ -904,49 +909,105 @@ private fun AmountToRow(
     ReceiptPanel(label = currency.panelLabel(context)) {
         Column(Modifier.fillMaxWidth()) {
             if (showChain) {
-                ScrollingAmount(
-                    parts = resultParts,
-                    digitsSize = AMOUNT_SUBTOTAL_SIZE,
-                    symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
-                    fontWeight = FontWeight.Medium,
-                    cursorHeight = null,
-                    onLongClick = onResultLongClick,
+                AmountToChain(
+                    resultParts = resultParts,
+                    trueCostParts = trueCostParts,
+                    stack = stack!!,
+                    fees = fees,
+                    isUpdating = isUpdating,
+                    onResultLongClick = onResultLongClick,
+                    onTrueCostLongClick = onTrueCostLongClick,
+                    onFeeChipClick = onFeeChipClick,
                 )
-                Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-                ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-                Spacer(Modifier.height(PAY_RULE_TOP_GAP))
-                PayRule()
-                Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
-                Box(Modifier.guillocheBackground()) {
-                    ScrollingAmount(
-                        parts = trueCostParts,
-                        digitsSize = AMOUNT_HERO_SIZE,
-                        symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
-                        fontWeight = FontWeight.SemiBold,
-                        cursorHeight = null,
-                        onLongClick = onTrueCostLongClick,
-                        fontFamily = FontFamily.Serif,
-                    )
-                }
             } else {
-                ScrollingAmount(
-                    parts = resultParts,
-                    digitsSize = AMOUNT_TO_SIZE,
-                    symbolSize = AMOUNT_TO_SYMBOL_SIZE,
-                    fontWeight = FontWeight.SemiBold,
-                    cursorHeight = null,
-                    onLongClick = onResultLongClick,
-                    fontFamily = FontFamily.Serif,
+                AmountToBare(
+                    resultParts = resultParts,
+                    stack = stack,
+                    fees = fees,
+                    hasFee = hasFee,
+                    isUpdating = isUpdating,
+                    onResultLongClick = onResultLongClick,
+                    onFeeChipClick = onFeeChipClick,
                 )
-                // Still surface the fee stamp when the user's amount is
-                // 0 (or missing) — the stamp signals that a fee is armed
-                // and will apply the moment they enter a real value.
-                if (hasFee) {
-                    Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-                    ChipBelow(stack = stack!!, fees = fees, onClick = onFeeChipClick)
-                }
             }
         }
+    }
+}
+
+// Full receipt chain rendered inside [AmountToRow] when a fee is armed and
+// a fee-adjusted result exists: fair subtotal → fee stamp → rule → engraved
+// fee-adjusted hero final. Extracted to keep [AmountToRow] under detekt's
+// LongMethod threshold once the shimmer wrapper landed.
+@Composable
+private fun AmountToChain(
+    resultParts: AmountParts,
+    trueCostParts: AmountParts,
+    stack: BigDecimal,
+    fees: ImmutableList<Fee>,
+    isUpdating: Boolean,
+    onResultLongClick: () -> Unit,
+    onTrueCostLongClick: () -> Unit,
+    onFeeChipClick: () -> Unit,
+) {
+    Box(Modifier.shimmer(enabled = isUpdating)) {
+        ScrollingAmount(
+            parts = resultParts,
+            digitsSize = AMOUNT_SUBTOTAL_SIZE,
+            symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
+            fontWeight = FontWeight.Medium,
+            cursorHeight = null,
+            onLongClick = onResultLongClick,
+        )
+    }
+    Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+    ChipBelow(stack = stack, fees = fees, onClick = onFeeChipClick)
+    Spacer(Modifier.height(PAY_RULE_TOP_GAP))
+    PayRule()
+    Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
+    Box(
+        Modifier
+            .guillocheBackground()
+            .shimmer(enabled = isUpdating, startDelayMillis = HERO_SHIMMER_STAGGER_MILLIS),
+    ) {
+        ScrollingAmount(
+            parts = trueCostParts,
+            digitsSize = AMOUNT_HERO_SIZE,
+            symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
+            fontWeight = FontWeight.SemiBold,
+            cursorHeight = null,
+            onLongClick = onTrueCostLongClick,
+            fontFamily = FontFamily.Serif,
+        )
+    }
+}
+
+// Fee-free destination render: single hero-sized fair conversion, plus the
+// fee stamp if a fee is armed against a 0/missing input (so the user sees
+// the fee will apply once they type something).
+@Composable
+private fun AmountToBare(
+    resultParts: AmountParts,
+    stack: BigDecimal?,
+    fees: ImmutableList<Fee>,
+    hasFee: Boolean,
+    isUpdating: Boolean,
+    onResultLongClick: () -> Unit,
+    onFeeChipClick: () -> Unit,
+) {
+    Box(Modifier.shimmer(enabled = isUpdating)) {
+        ScrollingAmount(
+            parts = resultParts,
+            digitsSize = AMOUNT_TO_SIZE,
+            symbolSize = AMOUNT_TO_SYMBOL_SIZE,
+            fontWeight = FontWeight.SemiBold,
+            cursorHeight = null,
+            onLongClick = onResultLongClick,
+            fontFamily = FontFamily.Serif,
+        )
+    }
+    if (hasFee && stack != null) {
+        Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+        ChipBelow(stack = stack, fees = fees, onClick = onFeeChipClick)
     }
 }
 
