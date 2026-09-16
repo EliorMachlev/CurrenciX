@@ -115,4 +115,19 @@
     <string name="cart_unsaved_save_as">Save as new</string>
     <string name="cart_unsaved_discard">Discard changes</string>
     <string name="cart_unsaved_continue">Continue</string>
+
+    <!-- First-run onboarding spotlight (#147) -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_finish">Got it</string>
+    <string name="onboarding_fee_title">Fees on the True Cost</string>
+    <string name="onboarding_fee_body">Tap here to add markups or discounts — they land on the destination side so the amount you read matches what you actually pay.</string>
+    <string name="onboarding_swap_title">Swap the pair</string>
+    <string name="onboarding_swap_body">Tap the swap button to flip base and destination. Long-press it to reset the amount.</string>
+    <string name="onboarding_autorefresh_title">Auto-refresh rates</string>
+    <string name="onboarding_autorefresh_body">Rates refresh when you open the app. Enable background refresh so they stay current between launches.</string>
+    <string name="onboarding_autorefresh_enable">Enable now</string>
+    <string name="pref_debug_reset_onboarding_title">Reset onboarding tour</string>
+    <string name="pref_debug_reset_onboarding_summary">Clears the first-run gate so the spotlight replays on next launch.</string>
+    <string name="pref_debug_reset_onboarding_toast">Onboarding will replay next launch.</string>
 </resources>

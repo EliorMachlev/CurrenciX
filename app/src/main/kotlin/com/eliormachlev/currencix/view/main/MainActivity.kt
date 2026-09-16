@@ -24,9 +24,13 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -51,6 +55,10 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.CartActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
+import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
+import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
+import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.main.compose.BannerContent
 import com.eliormachlev.currencix.view.main.compose.BannerKind
@@ -214,16 +222,19 @@ class MainActivity : BaseActivity() {
                             onDispose { toggleDrawer = null }
                         }
                         DrawerArrowSync(drawerState = drawerState, drawable = drawerArrow)
-                        MainScreen(
-                            drawerState = drawerState,
-                            isRefreshing = isUpdating,
-                            onRefresh = viewModel::forceUpdateExchangeRate,
-                            isRefreshDrawerEnabled = !isUpdating,
-                            onDrawerItem = { action -> onDrawerAction(action) { scope.launch { drawerState.close() } } },
-                            foldingFeature = foldingFeature,
-                            displayContent = { MainDisplayContent(banner) },
-                            keypadContent = { MainKeypadContent() },
-                        )
+                        ProvideOnboardingAnchors {
+                            MainScreen(
+                                drawerState = drawerState,
+                                isRefreshing = isUpdating,
+                                onRefresh = viewModel::forceUpdateExchangeRate,
+                                isRefreshDrawerEnabled = !isUpdating,
+                                onDrawerItem = { action -> onDrawerAction(action) { scope.launch { drawerState.close() } } },
+                                foldingFeature = foldingFeature,
+                                displayContent = { MainDisplayContent(banner) },
+                                keypadContent = { MainKeypadContent() },
+                            )
+                            OnboardingSpotlightHost()
+                        }
                     }
                 }
             }
@@ -605,6 +616,48 @@ class MainActivity : BaseActivity() {
             callbacks = callbacks,
             dateFormatPattern = pattern,
             banner = banner,
+        )
+    }
+
+    // First-run onboarding overlay (#147). Reads the persisted `hasSeenOnboarding`
+    // gate straight from Database (Compose scope owns the flow subscription) so
+    // the flip on Skip/Finish is written *and* recomposes this host in one
+    // step. `remember(this)` keys Database on the Activity so recreations get
+    // a fresh DataStore handle without leaking the previous one.
+    @androidx.compose.runtime.Composable
+    private fun OnboardingSpotlightHost() {
+        val context = LocalContext.current
+        val db = remember(context) { Database(context) }
+        val hasSeen by db.getHasSeenOnboardingFlow().collectAsStateWithLifecycle(
+            initialValue = db.getHasSeenOnboardingBlocking(),
+        )
+        if (hasSeen) return
+        val steps =
+            listOf(
+                SpotlightStep(
+                    anchor = OnboardingAnchor.FeeStamp,
+                    title = stringResource(R.string.onboarding_fee_title),
+                    body = stringResource(R.string.onboarding_fee_body),
+                ),
+                SpotlightStep(
+                    anchor = OnboardingAnchor.SwapFab,
+                    title = stringResource(R.string.onboarding_swap_title),
+                    body = stringResource(R.string.onboarding_swap_body),
+                ),
+                SpotlightStep(
+                    anchor = OnboardingAnchor.Hamburger,
+                    title = stringResource(R.string.onboarding_autorefresh_title),
+                    body = stringResource(R.string.onboarding_autorefresh_body),
+                    actionLabel = stringResource(R.string.onboarding_autorefresh_enable),
+                    onAction = { db.setAutoRefreshEnabled(true) },
+                ),
+            )
+        Spotlight(
+            steps = steps,
+            skipLabel = stringResource(R.string.onboarding_skip),
+            nextLabel = stringResource(R.string.onboarding_next),
+            finishLabel = stringResource(R.string.onboarding_finish),
+            onDismiss = { db.setHasSeenOnboarding(true) },
         )
     }
 

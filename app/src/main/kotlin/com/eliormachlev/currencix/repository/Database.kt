@@ -88,6 +88,12 @@ private const val KEY_AUTO_REFRESH_ENABLED = "_autoRefreshEnabled"
 // "use the provider-recommended default"; a positive Int overrides it.
 private const val KEY_AUTO_REFRESH_INTERVAL_OVERRIDE = "_autoRefreshIntervalMinutesOverride"
 
+// First-run onboarding gate (#147). Default `false` — the spotlight tour runs
+// on the very first cold-start, then flips to `true` on Skip/Finish so future
+// launches skip straight to the hero. Debug builds can flip it back via the
+// "Reset onboarding" preference so QA can replay the tour.
+private const val KEY_HAS_SEEN_ONBOARDING = "_hasSeenOnboarding"
+
 private const val DEFAULT_FROM_CURRENCY = "USD"
 private const val DEFAULT_TO_CURRENCY = "EUR"
 
@@ -140,6 +146,9 @@ private val autoRefreshIntervalOverrideMapper: (Preferences) -> Int? = {
     // and we want the pref backing store to keep working with plain Ints.
     val v = it[intPreferencesKey(KEY_AUTO_REFRESH_INTERVAL_OVERRIDE)] ?: 0
     if (v <= 0) null else v
+}
+private val hasSeenOnboardingMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_HAS_SEEN_ONBOARDING)] ?: false
 }
 private val historicalLiveDateMapper: (Preferences) -> LocalDate? = { prefs ->
     val v = prefs[longPreferencesKey(KEY_HISTORICAL_DATE)] ?: NO_HISTORICAL_DATE
@@ -557,6 +566,16 @@ class Database(
     fun getAutoRefreshIntervalMinutesOverrideFlow(): Flow<Int?> = appStore.mappedFlow(autoRefreshIntervalOverrideMapper)
 
     fun getAutoRefreshIntervalMinutesOverrideBlocking(): Int? = autoRefreshIntervalOverrideMapper(appStore.snapshot())
+
+    // onboarding (#147) — first-run spotlight tour gate.
+
+    fun setHasSeenOnboarding(seen: Boolean) {
+        appStore.edit { this[booleanPreferencesKey(KEY_HAS_SEEN_ONBOARDING)] = seen }
+    }
+
+    fun getHasSeenOnboardingFlow(): Flow<Boolean> = appStore.mappedFlow(hasSeenOnboardingMapper)
+
+    fun getHasSeenOnboardingBlocking(): Boolean = hasSeenOnboardingMapper(appStore.snapshot())
 
     // preview conversion
 

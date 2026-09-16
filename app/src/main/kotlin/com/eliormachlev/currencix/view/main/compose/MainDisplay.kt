@@ -101,6 +101,8 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
+import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
 import com.eliormachlev.currencix.view.compose.shimmer
 import com.eliormachlev.currencix.view.compose.theme.AmberContainer
 import com.eliormachlev.currencix.view.compose.theme.BillGreen
@@ -578,9 +580,11 @@ private fun SwapFab(
         animationSpec = tween(durationMillis = SWAP_FAB_ROTATION_MILLIS),
         label = "swapFabRotation",
     )
+    val anchor = rememberOnboardingAnchorModifier(OnboardingAnchor.SwapFab)
     Box(
         Modifier
             .size(SWAP_FAB_SIZE)
+            .then(anchor)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primary)
             .hapticCombinedClickable(
@@ -1025,6 +1029,7 @@ private fun ChipBelow(
     fees: ImmutableList<Fee>,
     onClick: () -> Unit,
 ) {
+    val anchor = rememberOnboardingAnchorModifier(OnboardingAnchor.FeeStamp)
     Ltr {
         Row(
             Modifier.fillMaxWidth(),
@@ -1039,7 +1044,7 @@ private fun ChipBelow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = FEE_STAMP_OP_GAP),
             )
-            FeeChip(stack, fees, onClick)
+            FeeChip(stack, fees, onClick, modifier = anchor)
         }
     }
 }

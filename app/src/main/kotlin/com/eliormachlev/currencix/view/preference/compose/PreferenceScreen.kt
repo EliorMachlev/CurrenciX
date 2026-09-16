@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Language
+import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.releaseNotesUrl
@@ -525,6 +527,22 @@ private fun VersionSection() {
             summary = stringResource(id = R.string.version_summary, Calendar.getInstance().get(Calendar.YEAR).toString()),
             iconRes = R.drawable.ic_tag,
         )
+        // Debug-only replay affordance for the first-run onboarding tour (#147)
+        // so QA can re-enter it without wiping app data. Gated on
+        // BuildConfig.DEBUG to keep the release preferences list unchanged.
+        @Suppress("KotlinConstantConditions")
+        if (BuildConfig.DEBUG) {
+            val resetToast = stringResource(id = R.string.pref_debug_reset_onboarding_toast)
+            PreferenceRow(
+                title = stringResource(id = R.string.pref_debug_reset_onboarding_title),
+                summary = stringResource(id = R.string.pref_debug_reset_onboarding_summary),
+                iconRes = R.drawable.ic_refresh,
+                onClick = {
+                    Database(context).setHasSeenOnboarding(false)
+                    Toast.makeText(context, resetToast, Toast.LENGTH_SHORT).show()
+                },
+            )
+        }
     }
     Text(
         text = "",
