@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -248,15 +250,65 @@ private fun FeesSectionsList(
                 )
             }
         }
-        item(key = FeeSection.SPECIFIC_PAIR) {
-            SectionEnter(index = FeeSection.SPECIFIC_PAIR.ordinal) {
-                SpecificPairSection(
-                    entries = specificPair,
-                    onEdit = { onOpenEditor(EditorTarget(EditorKind.Pair, it)) },
-                    onAdd = { onOpenEditor(EditorTarget(EditorKind.Pair)) },
-                )
-            }
+        specificPairSection(
+            entries = specificPair,
+            onEdit = { onOpenEditor(EditorTarget(EditorKind.Pair, it)) },
+            onAdd = { onOpenEditor(EditorTarget(EditorKind.Pair)) },
+        )
+    }
+}
+
+// Content keys for the specific-pair section rows that aren't the pair fees
+// themselves. Kept as constants so the LazyColumn's item slot table stays
+// stable across recompositions — LazyColumn diffs by key, so drifting keys
+// would defeat both slot recycling and animateItem() placement animations.
+private const val SPECIFIC_PAIR_HEADER_KEY = "specific-pair-header"
+private const val SPECIFIC_PAIR_EMPTY_KEY = "specific-pair-empty"
+private const val SPECIFIC_PAIR_ADD_KEY = "specific-pair-add"
+
+/**
+ * Expands the specific-pair section directly into the enclosing [LazyColumn]
+ * rather than nesting all rows inside a single `item {}`. Promoting each pair
+ * row to its own LazyColumn item is what lets [androidx.compose.foundation.lazy.LazyItemScope.animateItem]
+ * animate add / remove / reorder — inside a single item, individual rows are
+ * just Column children and don't participate in list animations. The header
+ * and the "add" affordance stay as fixed anchor items so only the pair-row
+ * cluster in the middle moves.
+ */
+private fun LazyListScope.specificPairSection(
+    entries: ImmutableList<Fee.SpecificPair>,
+    onEdit: (Fee.SpecificPair) -> Unit,
+    onAdd: () -> Unit,
+) {
+    item(key = SPECIFIC_PAIR_HEADER_KEY) {
+        SectionEnter(index = FeeSection.SPECIFIC_PAIR.ordinal) {
+            SpecificPairHeader()
         }
+    }
+    if (entries.isEmpty()) {
+        item(key = SPECIFIC_PAIR_EMPTY_KEY) {
+            PreferenceRow(
+                title = stringResource(id = R.string.fee_empty),
+                enabled = false,
+            )
+        }
+    } else {
+        items(items = entries, key = { it.id }) { fee ->
+            PreferenceRow(
+                modifier = Modifier.animateItem(),
+                title = pairRowTitle(fee),
+                summary = feeSummaryWithInactive(fee),
+                onClick = { onEdit(fee) },
+                trailing = { PairSummaryTrailing(fee = fee) },
+            )
+        }
+    }
+    item(key = SPECIFIC_PAIR_ADD_KEY) {
+        PreferenceRow(
+            title = stringResource(id = R.string.fee_add),
+            iconRes = R.drawable.ic_add,
+            onClick = onAdd,
+        )
     }
 }
 
@@ -338,33 +390,19 @@ private fun <T : Fee> GlobalFeeSection(
     }
 }
 
+/**
+ * Standalone header for the specific-pair section. The section body (pair
+ * rows + add row) is emitted as sibling LazyColumn items by
+ * [specificPairSection] so each pair row can host its own
+ * [androidx.compose.foundation.lazy.LazyItemScope.animateItem] placement
+ * animation — the whole section is intentionally not wrapped in a single
+ * grouping composable.
+ */
 @Composable
-private fun SpecificPairSection(
-    entries: ImmutableList<Fee.SpecificPair>,
-    onEdit: (Fee.SpecificPair) -> Unit,
-    onAdd: () -> Unit,
-) {
+private fun SpecificPairHeader() {
     PreferenceSection(text = stringResource(id = R.string.fee_section_specific_pair)) {
-        if (entries.isEmpty()) {
-            PreferenceRow(
-                title = stringResource(id = R.string.fee_empty),
-                enabled = false,
-            )
-        } else {
-            entries.forEach { fee ->
-                PreferenceRow(
-                    title = pairRowTitle(fee),
-                    summary = feeSummaryWithInactive(fee),
-                    onClick = { onEdit(fee) },
-                    trailing = { PairSummaryTrailing(fee = fee) },
-                )
-            }
-        }
-        PreferenceRow(
-            title = stringResource(id = R.string.fee_add),
-            iconRes = R.drawable.ic_add,
-            onClick = onAdd,
-        )
+        // Body rows are emitted as sibling LazyColumn items; the section
+        // primitive is reused only for its brass header + surrounding gap.
     }
 }
 
