@@ -10,7 +10,10 @@ permissions:
   contents: read
 
 env:
-  DETEKT_VERSION: "1.23.7"
+  # Disable class data sharing across all JVMs the build spawns; matches
+  # build.yaml. Without this, JDK 21 prints a "Sharing is only supported for
+  # boot loader classes..." banner from every forked worker.
+  JDK_JAVA_OPTIONS: -Xshare:off
 
 jobs:
   detekt:
@@ -24,33 +27,39 @@ jobs:
         with:
           java-version: 21
           distribution: temurin
-      - name: Install detekt CLI
-        run: |
-          curl -fsSL --retry 5 --retry-all-errors --retry-delay 3 \
-            -o detekt-cli.zip \
-            "https://github.com/detekt/detekt/releases/download/v${DETEKT_VERSION}/detekt-cli-${DETEKT_VERSION}.zip"
-          unzip -q detekt-cli.zip
-          echo "$PWD/detekt-cli-${DETEKT_VERSION}/bin" >> "$GITHUB_PATH"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+
+      # Enforced: no continue-on-error. Version is pinned in the root
+      # build.gradle.kts (io.gitlab.arturbosch.detekt) and config lives in
+      # config/detekt/detekt.yml. Pre-existing violations are swallowed by
+      # config/detekt/baseline.xml so enforcement is forward-only.
       - name: Run detekt
-        continue-on-error: true
-        run: |
-          detekt-cli \
-            --input app/src,helpers/src \
-            --config config/detekt.yml \
-            --report sarif:detekt-results.sarif \
-            --report txt:detekt-results.txt \
-            --jvm-target 21
+        run: ./gradlew detekt
+
       - name: Upload SARIF to code scanning
-        if: always() && hashFiles('detekt-results.sarif') != ''
+        if: always()
         uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
         with:
-          sarif_file: detekt-results.sarif
-          category: detekt
+          # detekt writes one SARIF per subproject; merge by uploading each
+          # under its own category so the code-scanning UI keeps them apart.
+          sarif_file: app/build/reports/detekt/detekt.sarif
+          category: detekt-app
+
+      - name: Upload helpers SARIF to code scanning
+        if: always() && hashFiles('helpers/build/reports/detekt/detekt.sarif') != ''
+        uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
+        with:
+          sarif_file: helpers/build/reports/detekt/detekt.sarif
+          category: detekt-helpers
+
       - name: Upload detekt report artifact
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: detekt-report
-          path: detekt-results.*
+          path: |
+            app/build/reports/detekt/
+            helpers/build/reports/detekt/
           retention-days: 14
           if-no-files-found: ignore

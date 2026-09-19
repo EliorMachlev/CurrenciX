@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+         Showkase's manifest declares supportsRtl=true; the app declares
+         supportsRtl=false in main. Debug-only override keeps the app's
+         opinion on debug builds without changing the release manifest.
+    -->
+    <application
+        android:supportsRtl="false"
+        tools:replace="android:supportsRtl">
+
+        <!--
+             Showkase browser launcher — debug-only Activity that appears as
+             a second app icon on the device (under the debug applicationId
+             suffix, so it never collides with the shipped app). Tapping it
+             launches the generated Showkase browser over the @Preview
+             composables registered via CurrenciXShowkaseRoot.
+        -->
+        <activity
+            android:name=".showkase.ShowkaseBrowserActivity"
+            android:exported="true"
+            android:label="CurrenciX Showkase">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+             Debug crash-report landing screen. The process-wide
+             UncaughtExceptionHandler installed by installDebugCrashReporter()
+             launches this activity in a fresh process after copying the
+             stack trace to the clipboard, so crashes are readable inside
+             the app instead of only via `adb logcat`. Runs in its own
+             :crash process so it survives the killProcess() call on the
+             crashed main process.
+        -->
+        <activity
+            android:name=".crash.CrashReportActivity"
+            android:exported="false"
+            android:process=":crash"
+            android:taskAffinity=""
+            android:excludeFromRecents="true" />
+
+    </application>
+
+</manifest>

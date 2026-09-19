@@ -12,7 +12,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import com.eliormachlev.currencix.R
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 // Alpha used for the secondary explainer line beneath each choice-row title —
 // keeps the description visually subordinate to the title. Shared by the
@@ -87,13 +86,13 @@ fun choiceExplainerRow(
             addView(
                 TextView(ctx).apply {
                     text = title
-                    setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+                    setTextAppearance(androidx.appcompat.R.style.TextAppearance_AppCompat_Subhead)
                 },
             )
             addView(
                 TextView(ctx).apply {
                     text = description
-                    setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
+                    setTextAppearance(androidx.appcompat.R.style.TextAppearance_AppCompat_Body1)
                     alpha = CHOICE_DESC_ALPHA
                 },
             )
@@ -168,7 +167,8 @@ fun showChoiceExplainerDialog(
     }
 
     dialogHolder[0] =
-        MaterialAlertDialogBuilder(ctx)
+        AlertDialog
+            .Builder(ctx)
             .setTitle(titleRes)
             .setView(container)
             .setNegativeButton(android.R.string.cancel, null)

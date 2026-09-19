@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Splash-screen theme for MainActivity. Inherits Theme.SplashScreen from
+    androidx.core:core-splashscreen so we get the API 31+ SplashScreen APIs
+    on every supported release (minSdk 26). The static wordmark drawable is
+    shown while the platform hosts the splash; once Compose is ready to
+    render its own animated reveal, MainActivity releases the keep-on-screen
+    condition and installs postSplashScreenTheme — the normal AppTheme —
+    which BaseActivity may further swap for AppTheme.PureBlack.
+
+    Only MainActivity uses this splash theme (see AndroidManifest.xml). The
+    other Activities keep AppTheme so navigating into them never re-shows the
+    launcher splash.
+-->
+<resources>
+    <style name="AppTheme.Splash" parent="Theme.SplashScreen">
+        <!-- Paper background matches the light AppTheme's colorBackground so
+             the seam between launcher-splash and Compose first frame is
+             invisible in light mode. -->
+        <item name="windowSplashScreenBackground">@color/paperBg</item>
+        <!-- Static brass-on-paper monogram; animated reveal happens in
+             Compose after setKeepOnScreenCondition releases. -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_wordmark</item>
+        <!-- Hand off to the real app theme once the splash exits. -->
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+</resources>

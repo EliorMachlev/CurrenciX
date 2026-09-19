@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.model.provider
 import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
@@ -42,6 +43,7 @@ class BankRossii : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
+        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val dateQuery = date?.let { "?date_req=${it.format(URL_DATE)}" } ?: ""
         return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateQuery") { body ->

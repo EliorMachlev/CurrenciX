@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.repository
 
 import android.content.Context
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
@@ -15,7 +16,8 @@ object ExchangeRatesService {
         apiProvider: ApiProvider,
         date: LocalDate? = null,
         context: Context? = null,
-    ): Result<ExchangeRates> = apiProvider.getRates(context, date)
+        secrets: ApiSecrets = ApiSecrets.EMPTY,
+    ): Result<ExchangeRates> = apiProvider.getRates(context, date, secrets)
 
     /**
      * Get the historic rates between the given base and symbol for [startDate]..[endDate]

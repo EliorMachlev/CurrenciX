@@ -3,12 +3,9 @@ package com.eliormachlev.currencix.viewmodel.cart
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.Fee
-import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
-import com.eliormachlev.currencix.util.isNeutralFeeStack
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -31,25 +28,29 @@ internal fun subtotalOf(cart: SavedCart?): BigDecimal {
 }
 
 /**
- * Total in the destination currency: subtotal → converted at [rates] →
- * reduced by the CONVERTED-side fee stack from [feeList]. ORIGINAL-side
- * fees don't change the displayed total; they surface separately as "true
- * cost" on the base side.
+ * Sum every row after currency conversion, but before fees. This is the
+ * "fair" destination amount — the exchange result the user *would* pay if
+ * the pipeline stopped here.
  */
-internal fun totalOf(
+internal fun convertedSubtotalOf(
     cart: SavedCart?,
-    feeList: List<Fee>,
     rates: ExchangeRates?,
-    activeExchangeId: String?,
-    activeBankId: String?,
 ): BigDecimal {
     cart ?: return BigDecimal.ZERO
     val (base, dest) = cart.resolvedPair()
-    val subtotal = subtotalOf(cart)
-    val converted = convertAmount(subtotal, base, dest, rates)
-    val stacks = FeeCalculator.sideStacks(feeList, base, dest, activeExchangeId, activeBankId)
-    return applyConvertedStack(converted, stacks.converted)
+    return convertAmount(subtotalOf(cart), base, dest, rates)
 }
+
+/**
+ * Total in the destination currency: subtotal → converted at [rates] →
+ * inflated by [feeStack]. Real-world FX fees are charged on the post-
+ * conversion amount, so the fee multiplies the destination-side value.
+ */
+internal fun totalOf(
+    cart: SavedCart?,
+    rates: ExchangeRates?,
+    feeStack: BigDecimal = BigDecimal.ONE,
+): BigDecimal = convertedSubtotalOf(cart, rates).multiply(feeStack, MathContext.DECIMAL128)
 
 /**
  * Persisted ISO codes are strings, so unknown values (legacy carts,
@@ -83,19 +84,4 @@ internal fun convertAmount(
     val baseRate = rates?.rateFor(base)?.value ?: return amount
     val destRate = rates.rateFor(dest)?.value ?: return amount
     return amount.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
-}
-
-/**
- * Fold the CONVERTED-side [convertedStack] into [converted]. A neutral
- * stack (no CONVERTED-side fees) leaves the destination amount alone;
- * otherwise divide so the fee reduces what you'd actually receive.
- * ORIGINAL-side fees don't participate here — they surface as "true cost"
- * on the input side instead.
- */
-internal fun applyConvertedStack(
-    converted: BigDecimal,
-    convertedStack: BigDecimal,
-): BigDecimal {
-    if (convertedStack.isNeutralFeeStack()) return converted
-    return converted.divide(convertedStack, MathContext.DECIMAL128)
 }

@@ -21,6 +21,33 @@ CurrenciX supports multiple exchange-rate data sources. The active provider is s
 | fer.ee | Persistent API instability |
 | exchangerate.host | API shutdown |
 
+## Cache behaviour
+
+Every rate-provider request goes through a shared `OkHttpClient` with an
+on-disk `Cache` (~5 MiB under `cacheDir/http-cache`). How each provider's
+responses are cached depends on the upstream headers it returns:
+
+| Provider | Host(s) | Cache mode | TTL | Rationale |
+|---|---|---|---|---|
+| Frankfurter.app | `api.frankfurter.dev` | Cooperative | Upstream `Cache-Control` | Publishes daily; upstream sends usable `max-age`. |
+| OpenExchangerates | `openexchangerates.org` | Cooperative | Upstream `Cache-Control` | Publishes hourly; upstream sends usable `max-age`. |
+| InforEuro | `ec.europa.eu` | Rewritten | 6 h (`21600s`) | Rates change on the first of the month — leisurely TTL is fine. |
+| Bank of Canada | `www.bankofcanada.ca` | Rewritten | 1 h (`3600s`) | Valet API sends `no-cache`; upstream cadence is business-day. |
+| Norges Bank | `data.norges-bank.no` | Rewritten | 1 h (`3600s`) | SDMX endpoint headers unreliable; business-day cadence. |
+| Bank Rossii | `www.cbr.ru` | Rewritten | 1 h (`3600s`) | XML feed omits usable cache headers; business-day cadence. |
+| Bank of Israel | `boi.org.il`, `edge.boi.gov.il` | Rewritten | 1 h (`3600s`) | PublicApi + SDMX endpoints omit usable cache headers; business-day cadence. |
+
+The "Rewritten" rows are handled by
+`util/ProviderCacheRewriteInterceptor.kt`, which stamps
+`Cache-Control: public, max-age=<TTL>` onto responses whose host matches a
+hand-picked allowlist. The allowlist exists so we never accidentally poison
+responses from unaudited hosts. Rewritten TTLs are deliberately *shorter* than
+each provider's publish cadence — an offline app never serves cache that
+outlives a working day.
+
+In debug builds, Chucker surfaces `X-From-Cache` / `X-Response-Source` on
+subsequent hits, which is the easiest way to confirm the cache is warm.
+
 ## Historical Rate Support
 
 All active providers support historical rates to varying degrees. Frankfurter.app data goes back to **2010-01-04** (ECB reference start date). Bank Rossii and InforEuro have their own historical archives.

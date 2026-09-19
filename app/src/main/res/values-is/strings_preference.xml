@@ -6,9 +6,6 @@
     <string name="fee_title">Gjaldeyrisviðskiptagjald</string>
     <string name="fee_summary">Umsjón með skipti-, banka-/kortagjöldum og gjöldum fyrir tiltekin gjaldmiðlapör</string>
     <string name="fee_manager_title">Gjöld</string>
-    <string name="fee_side_label">Tegund gjalds</string>
-    <string name="fee_side_original">Umbreytingargjald</string>
-    <string name="fee_side_converted">Umreiknað gjald</string>
     <string name="fee_section_global_exchange">Almennt skiptigjald</string>
     <string name="fee_section_global_bank">Almennt banka-/kortagjald</string>
     <string name="fee_section_specific_pair">Skiptigjald fyrir tiltekið gjaldmiðlapar</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Til</string>
     <string name="fee_pair_pick_currency">Veldu gjaldmiðil</string>
     <string name="fee_true_cost_prefix">"Umbreytingargjald: "</string>
-    <string name="fee_original_value_prefix">"Frádráttargjald: "</string>
     <string name="fee_cost_with_fee_prefix">"Verð með gjaldi: "</string>
-    <string name="fee_value_before_fee_prefix">"Verðmæti fyrir gjald: "</string>
-    <string name="fee_side_summary_original">Sýnd umreiknuð upphæð helst á miðgengi; gjöld eru sýnd sérstaklega sem \"Umbreytingargjald\".</string>
-    <string name="fee_side_summary_converted">Gjöld eru innifalin í sýndri umreiknaðri upphæð.</string>
     <string name="fee_empty">Engin gjöld ennþá</string>
     <string name="previewConversion_title">Skiptisforskoðun</string>
     <string name="previewConversion_summary">Sýna núverandi gjaldmiðlaskipti fyrir hvert gengi í gjaldeyrisvalinu.</string>

@@ -11,6 +11,12 @@ google-services.json
 .gradle/
 build/
 
+# Local artifacts (downloaded CI screenshot dumps, etc.)
+artifacts/
+
+# Claude Code local state (agent worktrees, etc.)
+.claude/worktrees/
+
 # IntelliJ
 *.iml
 .idea/
@@ -25,3 +31,6 @@ local.properties
 ._*
 .DS_Store
 Thumbs.db
+
+# npx skills tool leftover
+skills-lock.json

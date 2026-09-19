@@ -117,7 +117,7 @@ class CartShareCoordinator(
                     activity.getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso),
                 )
             }
-            val combinedStack = snapshot.sideStacks.combined
+            val combinedStack = snapshot.feeStack
             if (!combinedStack.isNeutralFeeStack()) {
                 appendLine(activity.getString(R.string.cart_share_fees, combinedStack.toCartFeePercentDisplay()))
             }

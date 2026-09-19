@@ -6,9 +6,6 @@
     <string name="fee_title">外汇交易手续费</string>
     <string name="fee_summary">管理汇兑、银行/银行卡以及特定货币对的手续费</string>
     <string name="fee_manager_title">手续费</string>
-    <string name="fee_side_label">手续费类型</string>
-    <string name="fee_side_original">换算手续费</string>
-    <string name="fee_side_converted">已换算手续费</string>
     <string name="fee_section_global_exchange">全局汇兑手续费</string>
     <string name="fee_section_global_bank">全局银行/银行卡手续费</string>
     <string name="fee_section_specific_pair">特定货币对汇兑手续费</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">到</string>
     <string name="fee_pair_pick_currency">选择货币</string>
     <string name="fee_true_cost_prefix">"换算费："</string>
-    <string name="fee_original_value_prefix">"扣减费："</string>
     <string name="fee_cost_with_fee_prefix">"含手续费成本："</string>
-    <string name="fee_value_before_fee_prefix">"扣手续费前金额："</string>
-    <string name="fee_side_summary_original">显示的换算金额保持中间市场汇率；手续费单独显示为\"换算费\"。</string>
-    <string name="fee_side_summary_converted">手续费已计入显示的换算金额中。</string>
     <string name="fee_empty">暂无手续费</string>
     <string name="previewConversion_title">预览</string>
     <string name="previewConversion_summary">在选择货币页面显示当前汇率。</string>
