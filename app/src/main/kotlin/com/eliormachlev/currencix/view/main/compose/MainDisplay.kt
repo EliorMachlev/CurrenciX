@@ -46,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -67,6 +68,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -356,9 +358,13 @@ internal data class MainDisplayCallbacks(
  * share in that case so the user never sees a dead tap.
  */
 internal class HeroCaptureController {
-    var doCapture: (suspend () -> ImageBitmap?)? = null
+    // Hold the layer reference directly (not a closure) so recomposition never
+    // clears it — an old-but-still-valid layer is always preferable to null,
+    // which would force the caller into the text-only fallback.
+    @Volatile
+    var graphicsLayer: GraphicsLayer? = null
 
-    suspend fun capture(): ImageBitmap? = doCapture?.invoke()
+    suspend fun capture(): ImageBitmap? = graphicsLayer?.toImageBitmap()
 }
 
 // Route the receiver's draw through a GraphicsLayer so [controller] can
@@ -368,11 +374,12 @@ internal class HeroCaptureController {
 @Composable
 private fun Modifier.heroCaptureLayer(controller: HeroCaptureController?): Modifier {
     val graphicsLayer = rememberGraphicsLayer()
+    // SideEffect (not DisposableEffect) so the reference is (re)published on
+    // every successful commit and never nulled out. Even if HeroCard leaves
+    // composition transiently (drawer close animation, banner swap), the
+    // controller keeps a usable layer for the pending share tap.
     if (controller != null) {
-        DisposableEffect(controller, graphicsLayer) {
-            controller.doCapture = { graphicsLayer.toImageBitmap() }
-            onDispose { controller.doCapture = null }
-        }
+        SideEffect { controller.graphicsLayer = graphicsLayer }
     }
     return this.drawWithContent {
         graphicsLayer.record { this@drawWithContent.drawContent() }

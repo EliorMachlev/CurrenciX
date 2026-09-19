@@ -84,6 +84,7 @@ import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
@@ -371,6 +372,9 @@ class MainActivity : BaseActivity() {
         lifecycleScope.launch(AndroidUiDispatcher.Main) {
             withFrameNanos { }
             val bitmap = heroCaptureController.capture()
+            if (bitmap == null) {
+                Timber.w("shareCurrentConversion: hero capture returned null, falling back to text share")
+            }
             val chooser =
                 if (bitmap != null) {
                     buildShareChooser(
