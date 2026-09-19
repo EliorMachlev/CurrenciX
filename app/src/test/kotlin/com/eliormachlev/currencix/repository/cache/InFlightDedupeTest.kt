@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.repository.cache
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
@@ -23,9 +24,18 @@ class InFlightDedupeTest {
             val invocations = AtomicInteger(0)
             val gate = CompletableDeferred<Unit>()
 
+            // UNDISPATCHED so each caller runs on this thread up to its first
+            // real suspension (`deferred.await()` inside `get`). Without it,
+            // the callers are merely scheduled on Dispatchers.Default and
+            // `gate.complete` below may fire before they arrive at the shared
+            // deferred — the first producer would then complete instantly,
+            // `invokeOnCompletion` would drop the map entry, and later callers
+            // would spawn their own fetch. Serializing the arrivals here
+            // guarantees the map contains the single shared deferred by the
+            // time we release the gate.
             val callers =
                 (1..CONCURRENT_CALLERS).map {
-                    scope.async {
+                    scope.async(start = CoroutineStart.UNDISPATCHED) {
                         dedupe.get(KEY, scope) {
                             invocations.incrementAndGet()
                             gate.await()
