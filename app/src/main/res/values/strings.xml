@@ -43,7 +43,9 @@
     <string name="menu_quick_conversions">Quick conversions</string>
     <string name="menu_historical_rates" translatable="false">@string/historical_rates_dialog_title</string>
     <string name="menu_share">Share</string>
-    <string name="share_footer">Based on %1$s, %2$s</string>
+    <string name="share_footer">Based on %1$s, %2$s, %3$s</string>
+    <string name="share_conversion_line">%1$s%2$s %3$s = %4$s%5$s %6$s</string>
+    <string name="share_fee_line">%1$s = %2$s%3$s %4$s</string>
 
     <string name="quick_conversions_title">Quick conversions</string>
     <string name="quick_conversions_no_rates">Rates not loaded yet.</string>

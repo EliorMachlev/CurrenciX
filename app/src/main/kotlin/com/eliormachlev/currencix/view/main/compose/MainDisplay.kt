@@ -504,9 +504,13 @@ private fun HeroCard(
             .padding(horizontal = CARD_OUTER_MARGIN)
             .padding(top = CARD_OUTER_MARGIN)
             .shadow(elevation = CARD_ELEVATION, shape = RoundedCornerShape(CARD_RADIUS))
+            // Capture layer wraps clip+background so the recorded bitmap
+            // contains the rounded surface and children — with the layer
+            // outside .background, the recording would only see the pills/text
+            // and the PNG would render on a transparent (→ black) canvas.
+            .heroCaptureLayer(captureController)
             .clip(RoundedCornerShape(CARD_RADIUS))
             .background(MaterialTheme.colorScheme.surface)
-            .heroCaptureLayer(captureController)
             .padding(CARD_PADDING),
     ) {
         Column(Modifier.fillMaxWidth()) {

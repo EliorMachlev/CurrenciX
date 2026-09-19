@@ -54,7 +54,6 @@ import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.util.isNeutralFeeStack
-import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -86,13 +85,21 @@ import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-// fee true-cost / percent formatting for the share-sheet extra
+// Fee-percent precision on the share fee-stamp line — matches the on-screen
+// FeeChip so shared text reads the same as the visible pill.
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
-private const val AMOUNT_DECIMAL_PLACES = 2
+
+// Rate footer line ("1 USD = 3.028 ILS") — matches the on-screen hero footer
+// precision (see FOOTER_RATE_DECIMAL_PLACES in MainDisplay.kt).
+private const val SHARE_RATE_DECIMAL_PLACES = 4
+
+// Fee-name joiner for the share fee stamp — matches the on-screen FeeChip.
+private const val SHARE_FEE_NAME_SEPARATOR = ", "
 
 // Hero-card snapshot chooser payload. MIME + extension pair kept together so
 // the file name and Intent's `type` never drift out of sync.
@@ -359,9 +366,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun shareCurrentConversion() {
-        val conversion = buildShareConversion() ?: return
-        val footer = buildShareFooter(viewModel.getExchangeRates().value)
-        val text = if (footer != null) "$conversion\n-- $footer" else conversion
+        val text = buildShareText() ?: return
         // Drawer just started closing when this fires; wait one frame so the
         // closing animation doesn't leak into the snapshot. If the hero card
         // hasn't registered yet (activity backgrounded, first composition
@@ -398,53 +403,115 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    // Compose the shared conversion line from the on-screen values so it
-    // honors the currently typed amount and the active fee stack (matching
-    // what the user sees), rather than the "1 base ≈ result" info footer
-    // which is always unit-scaled and fee-free.
-    private fun buildShareConversion(): String? {
+    // Assemble the share sheet's EXTRA_TEXT payload:
+    //   $50 USD = ₪151.4 ILS
+    //   +1% MAX = ₪152.91 ILS       (only when a fee stack is active)
+    //
+    //   -- Based on Bank of Israel, 18/09/26, $1 USD = ₪3.028 ILS
+    // Composed from the on-screen values so it honors the currently typed
+    // amount and the active fee stack (matching what the user sees).
+    private fun buildShareText(): String? {
         val base = viewModel.getBaseCurrency().value ?: return null
         val dest = viewModel.getDestinationCurrency().value ?: return null
-        val rates = viewModel.getExchangeRates().value?.rates ?: return null
-        if (rates.none { it.currency == base } || rates.none { it.currency == dest }) return null
+        val rates = viewModel.getExchangeRates().value ?: return null
+        val rateList = rates.rates
+        if (rateList.none { it.currency == base } || rateList.none { it.currency == dest }) return null
+        val places = viewModel.getDecimalPlaces().value
         val amount = viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ZERO
         val result = viewModel.getResultAsNumber().value ?: BigDecimal.ZERO
-        val places = viewModel.getDecimalPlaces().value
         val main =
-            getString(
-                R.string.info_conversion,
-                amount.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
-                base.iso4217Alpha(),
-                result.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
-                dest.iso4217Alpha(),
+            buildShareConversionLine(
+                base = base,
+                dest = dest,
+                baseAmount = amount.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
+                destAmount = result.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
             )
-        val extra = buildShareFeeExtra(base)
-        return if (extra != null) "$main\n$extra" else main
+        val feeLine = buildShareFeeLine(dest, places)
+        val footer = buildShareFooter(base, dest, rates) ?: return null
+        return buildString {
+            append(main)
+            if (feeLine != null) {
+                append('\n')
+                append(feeLine)
+            }
+            append("\n\n-- ")
+            append(footer)
+        }
     }
 
-    // Small annotation line(s) shown under the shared result: fee amount
-    // then cost-with-fee, both on the input side.
-    private fun buildShareFeeExtra(base: Currency): String? {
-        val stack = viewModel.getFeeStack().value
+    // "<baseSymbol><baseAmount> <baseIso> = <destSymbol><destAmount> <destIso>"
+    // — pulled into a helper so the fee line, main line, and the rate stamp in
+    // the footer all share one template (and thus one localization string).
+    private fun buildShareConversionLine(
+        base: Currency,
+        dest: Currency,
+        baseAmount: String,
+        destAmount: String,
+    ): String =
+        getString(
+            R.string.share_conversion_line,
+            base.symbolOrIso(),
+            baseAmount,
+            base.iso4217Alpha(),
+            dest.symbolOrIso(),
+            destAmount,
+            dest.iso4217Alpha(),
+        )
 
-        fun line(
-            prefixRes: Int,
-            value: BigDecimal?,
-            currency: Currency,
-            stackForLine: BigDecimal?,
-        ): String? = value?.let { buildFeeAmountLine(prefixRes, it, currency, stackForLine) }
-        return listOfNotNull(
-            line(R.string.fee_true_cost_prefix, viewModel.getFeeAmount().value, base, stack),
-            line(R.string.fee_cost_with_fee_prefix, viewModel.getTrueCost().value, base, null),
-        ).takeIf { it.isNotEmpty() }
-            ?.joinToString("\n")
+    // Fee stamp line beneath the main conversion. Mirrors the on-screen
+    // FeeChip: "<+pct> <NAMES> = <destSymbol><trueCost> <destIso>". Skipped
+    // when no fee stack is active, or when the destination true-cost is not
+    // yet computed.
+    private fun buildShareFeeLine(
+        dest: Currency,
+        places: Int,
+    ): String? {
+        val stack = viewModel.getFeeStack().value ?: return null
+        if (stack.isNeutralFeeStack()) return null
+        val trueCost = viewModel.getResultWithFeesAsNumber().value ?: return null
+        val percent =
+            stack
+                .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
+                .toHumanReadableNumber(this, showPositiveSign = true, suffix = "%", trim = true)
+        val names =
+            viewModel
+                .getActiveFees()
+                .value
+                .orEmpty()
+                .mapNotNull { it.name.trim().takeIf(String::isNotEmpty) }
+                .joinToString(SHARE_FEE_NAME_SEPARATOR)
+                .uppercase()
+        val stamp = if (names.isEmpty()) percent else "$percent $names"
+        return getString(
+            R.string.share_fee_line,
+            stamp,
+            dest.symbolOrIso(),
+            trueCost.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
+            dest.iso4217Alpha(),
+        )
     }
 
-    private fun buildShareFooter(rates: ExchangeRates?): String? {
-        if (rates == null) return null
+    // "Based on <provider>, <date>, <$1 base = <sym><rate> <destIso>>".
+    // The rate stamp reuses [buildShareConversionLine] so its format matches
+    // the main line exactly (symbol prefixes, spacing, ISO tail).
+    private fun buildShareFooter(
+        base: Currency,
+        dest: Currency,
+        rates: ExchangeRates,
+    ): String? {
         val providerName = rates.provider?.getName(this) ?: return null
         val dateString = formatRatesTimestamp(rates.date, rates.time) ?: return null
-        return getString(R.string.share_footer, providerName, dateString)
+        val baseValue = rates.rates.firstOrNull { it.currency == base }?.value ?: return null
+        val destValue = rates.rates.firstOrNull { it.currency == dest }?.value ?: return null
+        val perOne = destValue.divide(baseValue, MathContext.DECIMAL128)
+        val rateLine =
+            buildShareConversionLine(
+                base = base,
+                dest = dest,
+                baseAmount = "1",
+                destAmount = perOne.toHumanReadableNumber(this, trim = true, decimalPlaces = SHARE_RATE_DECIMAL_PLACES),
+            )
+        return getString(R.string.share_footer, providerName, dateString, rateLine)
     }
 
     // Combine [date] and optional [time] into a single formatted string using
@@ -560,28 +627,6 @@ class MainActivity : BaseActivity() {
                 }
                 else -> null
             }
-    }
-
-    // "<prefix><amount> <ISO> (<sign><pct>%)" with the amount+ISO isolated LTR
-    // so a right-aligned prefix in an RTL locale doesn't flip the number/code
-    // pair. The percent tail is omitted when the [stack] is trivial (no fee on
-    // this side) or unknown. Used by the share sheet's extra fee lines.
-    private fun buildFeeAmountLine(
-        prefixRes: Int,
-        value: BigDecimal,
-        currency: Currency?,
-        stack: BigDecimal?,
-    ): String {
-        val amount = value.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)
-        val marker = currency?.symbolOrIso().orEmpty()
-        val amountWithMarker = if (marker.isEmpty()) amount else "$amount $marker"
-        val line = getString(prefixRes) + ltrIsolate(amountWithMarker)
-        if (stack == null || stack.isNeutralFeeStack()) return line
-        val percent =
-            stack
-                .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
-                .toHumanReadableNumber(this, showPositiveSign = true, suffix = "%", trim = true)
-        return "$line ${ltrIsolate("($percent)")}"
     }
 
     private fun showErrorSnackbar(message: String?) {
