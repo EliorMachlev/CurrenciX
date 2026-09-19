@@ -31,3 +31,6 @@ local.properties
 ._*
 .DS_Store
 Thumbs.db
+
+# npx skills tool leftover
+skills-lock.json
