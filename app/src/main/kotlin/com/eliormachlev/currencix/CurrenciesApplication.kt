@@ -2,6 +2,7 @@ package com.eliormachlev.currencix
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.FileLoggingTree
@@ -25,6 +26,7 @@ class CurrenciesApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        installDebugCrashReporter()
         installLogging()
         installJankStats()
         applyNightMode()
