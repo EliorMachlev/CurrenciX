@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -364,8 +365,10 @@ class MainActivity : BaseActivity() {
         // closing animation doesn't leak into the snapshot. If the hero card
         // hasn't registered yet (activity backgrounded, first composition
         // still running), fall back to a text-only share so the tap is never
-        // a no-op.
-        lifecycleScope.launch {
+        // a no-op. AndroidUiDispatcher.Main provides the MonotonicFrameClock
+        // that withFrameNanos requires — lifecycleScope's Dispatchers.Main
+        // does not.
+        lifecycleScope.launch(AndroidUiDispatcher.Main) {
             withFrameNanos { }
             val bitmap = heroCaptureController.capture()
             val chooser =
