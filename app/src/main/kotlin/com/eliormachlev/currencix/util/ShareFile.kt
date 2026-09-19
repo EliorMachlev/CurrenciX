@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.util
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -54,6 +55,14 @@ internal fun buildShareChooser(
             putExtra(Intent.EXTRA_STREAM, uri)
             if (extraText != null) putExtra(Intent.EXTRA_TEXT, extraText)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            // Sharesheet runs in com.android.intentresolver — a separate
+            // process from ours. EXTRA_STREAM only grants URI access to the
+            // *target* app, not to the sharesheet itself, so the sheet fails
+            // to load a preview and the entry visually collapses to a bare
+            // text row. ClipData carries the grant to the sheet process too,
+            // so the image preview renders and the intent doesn't look like
+            // text-only to the user.
+            clipData = ClipData.newRawUri(null, uri)
         }
     return Intent.createChooser(sendIntent, null).apply {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
