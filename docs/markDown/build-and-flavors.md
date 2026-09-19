@@ -95,6 +95,28 @@ keyPassword=...
 
 A pre-build consistency check verifies that `versionName` and `versionCode` are in sync.
 
+## Baseline Profiles
+
+The `:baselineprofile` module (`com.android.test` + `androidx.baselineprofile`
+plugin) generates the baseline + startup profiles that `ProfileInstaller`
+hands to ART at install time. The generated `baseline-prof.txt` and
+`startup-prof.txt` live under
+`app/src/<flavor>Release/generated/baselineProfiles/` and are baked into the
+release APK/AAB automatically.
+
+Generation requires a connected device or emulator (API 28+, rooted / userdebug
+build). CI does not run this today — no emulator-based instrumentation job
+exists — so profiles are regenerated locally on demand:
+
+```bash
+# Requires an emulator or device with `adb root` available.
+./gradlew :app:generateFdroidReleaseBaselineProfile
+./gradlew :app:generatePlayReleaseBaselineProfile
+```
+
+Commit the regenerated `baseline-prof.txt` / `startup-prof.txt`. Re-run when
+hot paths shift materially (major redesign, new startup dependency).
+
 ## Known Issues
 
 ### Gradle deprecation: "Project object as dependency notation" (AGP bug)
