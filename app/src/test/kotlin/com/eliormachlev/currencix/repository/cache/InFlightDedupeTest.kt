@@ -22,32 +22,42 @@ class InFlightDedupeTest {
             val dedupe = InFlightDedupe<String>()
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
             val invocations = AtomicInteger(0)
-            val gate = CompletableDeferred<Unit>()
+            val producerRunning = CompletableDeferred<Unit>()
+            val releaseProducer = CompletableDeferred<Unit>()
 
-            // UNDISPATCHED so each caller runs on this thread up to its first
-            // real suspension (`deferred.await()` inside `get`). Without it,
-            // the callers are merely scheduled on Dispatchers.Default and
-            // `gate.complete` below may fire before they arrive at the shared
-            // deferred — the first producer would then complete instantly,
-            // `invokeOnCompletion` would drop the map entry, and later callers
-            // would spawn their own fetch. Serializing the arrivals here
-            // guarantees the map contains the single shared deferred by the
-            // time we release the gate.
-            val callers =
-                (1..CONCURRENT_CALLERS).map {
+            val producer: suspend () -> Result<String> = {
+                invocations.incrementAndGet()
+                // Signal that the producer is inside the critical section
+                // and hand back to the test. Because `releaseProducer` is
+                // awaited on the next line, the producer will not complete
+                // (and `invokeOnCompletion` will not clear the map entry)
+                // until the test explicitly releases it — that guarantee
+                // is what makes the arrival ordering below deterministic.
+                producerRunning.complete(Unit)
+                releaseProducer.await()
+                Result.success("payload")
+            }
+
+            // First caller kicks off the fetch on Dispatchers.Default. We
+            // then wait for the producer to actually be running so the
+            // in-flight map is guaranteed to hold the shared Deferred.
+            val first = scope.async { dedupe.get(KEY, scope, producer) }
+            producerRunning.await()
+
+            // With the producer parked, launch the remaining callers
+            // UNDISPATCHED so each runs on this thread up to its first real
+            // suspension (`deferred.await()` inside `get`). Every one of
+            // them observes the existing entry and awaits the same Deferred
+            // — no second producer is created.
+            val rest =
+                (2..CONCURRENT_CALLERS).map {
                     scope.async(start = CoroutineStart.UNDISPATCHED) {
-                        dedupe.get(KEY, scope) {
-                            invocations.incrementAndGet()
-                            gate.await()
-                            Result.success("payload")
-                        }
+                        dedupe.get(KEY, scope, producer)
                     }
                 }
 
-            // Release the single upstream fetch and confirm all callers see
-            // the same result while only one fetch actually ran.
-            gate.complete(Unit)
-            val results = callers.awaitAll()
+            releaseProducer.complete(Unit)
+            val results = listOf(first.await()) + rest.awaitAll()
 
             assertEquals(1, invocations.get())
             results.forEach { assertEquals("payload", it.getOrNull()) }
