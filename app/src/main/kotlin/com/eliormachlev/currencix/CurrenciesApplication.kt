@@ -1,6 +1,9 @@
 package com.eliormachlev.currencix
 
+import android.app.ActivityManager
 import android.app.Application
+import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
@@ -26,12 +29,36 @@ class CurrenciesApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // The debug crash reporter hosts CrashReportActivity in a `:crash`
+        // process (so it survives killProcess on the crashed main process).
+        // Android re-runs Application.onCreate for that new process too — but
+        // that process has WorkManager disabled and no need for logging,
+        // theme, DNS prewarm, or the auto-refresh observer. Skip everything
+        // except crash-reporter installation there.
         installDebugCrashReporter()
+        if (!isMainProcess()) return
         installLogging()
         installJankStats()
         applyNightMode()
         prewarmProviderDns()
         observeAutoRefreshPreference()
+    }
+
+    // True iff this Application instance is running in the app's main
+    // process (name == packageName, no `:suffix`). Falls back to true if we
+    // can't determine the process name — the observers are idempotent on the
+    // main process and rare on secondaries, so the false-positive risk is
+    // preferable to silently disabling auto-refresh.
+    private fun isMainProcess(): Boolean {
+        val name =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                Application.getProcessName()
+            } else {
+                val am = getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+                val pid = android.os.Process.myPid()
+                am?.runningAppProcesses?.firstOrNull { it.pid == pid }?.processName
+            }
+        return name == null || name == packageName
     }
 
     // Debug builds also get a console tree so `adb logcat` mirrors what the

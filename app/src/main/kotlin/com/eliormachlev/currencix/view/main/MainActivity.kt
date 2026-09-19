@@ -774,7 +774,15 @@ class MainActivity : BaseActivity() {
     // Compose paper background would briefly show through a semi-transparent
     // splash surface and read as a flash.
     private fun fadeOutSplashIcon(provider: SplashScreenViewProvider) {
-        provider.iconView
+        // Some OEM ROMs (observed on MIUI) return a null iconView from
+        // SplashScreenViewProvider.ViewImpl31 — nothing to fade in that case,
+        // just remove the splash surface directly so we don't NPE.
+        val icon = runCatching { provider.iconView }.getOrNull()
+        if (icon == null) {
+            provider.remove()
+            return
+        }
+        icon
             .animate()
             .alpha(0f)
             .setDuration(SPLASH_EXIT_FADE_MILLIS)
