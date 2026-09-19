@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Process
 import kotlin.system.exitProcess
 
@@ -21,6 +22,13 @@ import kotlin.system.exitProcess
 // undefined state, and Android will start a new process to host
 // CrashReportActivity anyway.
 fun Application.installDebugCrashReporter() {
+    // Robolectric shares the JVM with the Gradle test worker: the handler's
+    // `exitProcess` here would kill the worker with our CRASH_EXIT_CODE on
+    // the first uncaught exception thrown by any test coroutine, which
+    // Gradle surfaces as `finished with non-zero exit value 10` and hides
+    // every subsequent test failure detail. Skip installation under
+    // Robolectric so tests continue to fail loudly and cleanly.
+    if (Build.FINGERPRINT == ROBOLECTRIC_FINGERPRINT) return
     val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
         runCatching { reportCrash(throwable) }
@@ -48,3 +56,4 @@ private fun Context.copyToClipboard(text: String) {
 
 private const val CLIP_LABEL = "CurrenciX crash"
 private const val CRASH_EXIT_CODE = 10
+private const val ROBOLECTRIC_FINGERPRINT = "robolectric"
