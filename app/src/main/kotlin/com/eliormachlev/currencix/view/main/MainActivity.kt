@@ -493,7 +493,11 @@ class MainActivity : BaseActivity() {
 
     // "Based on <provider>, <date>, <$1 base = <sym><rate> <destIso>>".
     // The rate stamp reuses [buildShareConversionLine] so its format matches
-    // the main line exactly (symbol prefixes, spacing, ISO tail).
+    // the main line exactly (symbol prefixes, spacing, ISO tail). The rate
+    // tail is appended in Kotlin rather than added as a %3$s placeholder on
+    // `share_footer` so the 30+ existing translations don't need to grow an
+    // extra argument slot (lint's StringFormatMatches would otherwise reject
+    // the arg-count mismatch).
     private fun buildShareFooter(
         base: Currency,
         dest: Currency,
@@ -512,7 +516,7 @@ class MainActivity : BaseActivity() {
                 baseAmount = "1",
                 destAmount = perOne.toHumanReadableNumber(this, trim = true, decimalPlaces = SHARE_RATE_DECIMAL_PLACES),
             )
-        return getString(R.string.share_footer, providerName, dateString, rateLine)
+        return "${getString(R.string.share_footer, providerName, dateString)}, $rateLine"
     }
 
     // Combine [date] and optional [time] into a single formatted string using
