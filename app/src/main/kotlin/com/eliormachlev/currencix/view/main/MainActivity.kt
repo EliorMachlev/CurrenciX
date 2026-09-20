@@ -414,7 +414,7 @@ class MainActivity : BaseActivity() {
         val base = viewModel.getBaseCurrency().value ?: return null
         val dest = viewModel.getDestinationCurrency().value ?: return null
         val rates = viewModel.getExchangeRates().value ?: return null
-        val rateList = rates.rates
+        val rateList = rates.rates ?: return null
         if (rateList.none { it.currency == base } || rateList.none { it.currency == dest }) return null
         val places = viewModel.getDecimalPlaces().value
         val amount = viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ZERO
@@ -501,8 +501,9 @@ class MainActivity : BaseActivity() {
     ): String? {
         val providerName = rates.provider?.getName(this) ?: return null
         val dateString = formatRatesTimestamp(rates.date, rates.time) ?: return null
-        val baseValue = rates.rates.firstOrNull { it.currency == base }?.value ?: return null
-        val destValue = rates.rates.firstOrNull { it.currency == dest }?.value ?: return null
+        val rateList = rates.rates ?: return null
+        val baseValue = rateList.firstOrNull { it.currency == base }?.value ?: return null
+        val destValue = rateList.firstOrNull { it.currency == dest }?.value ?: return null
         val perOne = destValue.divide(baseValue, MathContext.DECIMAL128)
         val rateLine =
             buildShareConversionLine(
