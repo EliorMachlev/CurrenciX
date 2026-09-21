@@ -2,7 +2,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("com.android.application") version "9.3.2" apply false
-    id("com.android.test") version "9.3.2" apply false
+    id("com.android.test") version "9.4.1" apply false
     id("org.jetbrains.kotlin.jvm") version "2.4.10" apply false
     // Baseline-profile Gradle plugin — wired at :app (to consume generated
     // profiles) and :baselineprofile (to run the generator). Pinned to the
