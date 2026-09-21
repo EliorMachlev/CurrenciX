@@ -6,8 +6,8 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
-    id("com.google.devtools.ksp") version "2.3.11"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.20"
+    id("com.google.devtools.ksp") version "2.3.12"
     // Consumes the baseline + startup profiles emitted by :baselineprofile and
     // bakes them into the release AAB / APK for ProfileInstaller to hand to
     // ART at install time. Version pinned at the root build script.
