@@ -10,7 +10,7 @@ plugins {
     // :baselineprofile module so the generator + consumer stay in lockstep.
     id("androidx.baselineprofile") version "1.5.0" apply false
     // dependency-update-checker
-    id("io.github.ben-manes.versions") version "0.61.0"
+    id("io.github.ben-manes.versions") version "0.62.0"
     // Spotless drives ktlint (chosen over the org.jlleitschuh.gradle.ktlint
     // plugin because that plugin's Android source-set hook does not fire under
     // AGP 9 — only its .kts checker runs, leaving app/src/main/kotlin unlinted).
