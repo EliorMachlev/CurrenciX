@@ -168,7 +168,7 @@ dependencies {
     // F-Droid compatible. EvalEx is actively maintained and BigDecimal-native.
     implementation("com.ezylang:EvalEx:3.7.0")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
-    val composeBomVersion = "2026.08.00"
+    val composeBomVersion = "2026.09.00"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
