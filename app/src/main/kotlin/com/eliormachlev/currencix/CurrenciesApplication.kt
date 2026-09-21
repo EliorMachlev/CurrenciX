@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
+import com.eliormachlev.currencix.leaks.suppressKnownPlatformLeaks
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.FileLoggingTree
 import com.eliormachlev.currencix.worker.RateRefreshScheduler
@@ -39,6 +40,7 @@ class CurrenciesApplication : Application() {
         if (!isMainProcess()) return
         installLogging()
         installJankStats()
+        suppressKnownPlatformLeaks()
         applyNightMode()
         prewarmProviderDns()
         observeAutoRefreshPreference()
