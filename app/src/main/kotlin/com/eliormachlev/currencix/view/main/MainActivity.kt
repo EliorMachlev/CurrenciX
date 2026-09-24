@@ -77,7 +77,7 @@ import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainScreen
 import com.eliormachlev.currencix.view.main.compose.showHistoricalDatePickerDialog
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
-import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
+import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
 import com.eliormachlev.currencix.view.timeline.TimelineActivity
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
@@ -162,6 +162,13 @@ class MainActivity : BaseActivity() {
     // no-op if the click somehow races the first composition.
     private var toggleDrawer: (() -> Unit)? = null
 
+    // Composition-scoped opener for the Compose provider picker (LedgerBottomSheet).
+    // Set by a DisposableEffect inside setContent so any non-compose caller
+    // (drawer tap, rate-footer provider link) can trigger the sheet without
+    // owning its own state. Nullable so an early tap before first composition
+    // is a safe no-op.
+    private var openProviderPicker: (() -> Unit)? = null
+
     // Morphing hamburger ↔ arrow indicator hosted on the ActionBar. The
     // ActionBar customView slot only takes a Drawable, so we own it here and
     // let composition push a 0..1 progress from the drawer state each frame.
@@ -239,13 +246,18 @@ class MainActivity : BaseActivity() {
                         val isUpdating by viewModel.isUpdating().collectAsStateWithLifecycle()
                         val drawerState = rememberDrawerState(DrawerValue.Closed)
                         val scope = rememberCoroutineScope()
+                        var providerPickerVisible by remember { mutableStateOf(false) }
                         DisposableEffect(drawerState, scope) {
                             toggleDrawer = {
                                 scope.launch {
                                     if (drawerState.isOpen) drawerState.close() else drawerState.open()
                                 }
                             }
-                            onDispose { toggleDrawer = null }
+                            openProviderPicker = { providerPickerVisible = true }
+                            onDispose {
+                                toggleDrawer = null
+                                openProviderPicker = null
+                            }
                         }
                         DrawerArrowSync(drawerState = drawerState, drawable = drawerArrow)
                         ProvideOnboardingAnchors {
@@ -260,6 +272,14 @@ class MainActivity : BaseActivity() {
                                 keypadContent = { MainKeypadContent() },
                             )
                             OnboardingSpotlightHost()
+                        }
+                        if (providerPickerVisible) {
+                            val current by preferenceModel.apiProvider.collectAsStateWithLifecycle()
+                            ProviderPickerDialog(
+                                selected = current,
+                                onDismiss = { providerPickerVisible = false },
+                                onPicked = { provider -> preferenceModel.setApiProvider(provider) },
+                            )
                         }
                     }
                 }
@@ -359,10 +379,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showApiProviderPicker() {
-        showProviderPickerDialog(
-            context = this,
-            current = Database(this).getApiProvider(),
-        ) { provider -> preferenceModel.setApiProvider(provider) }
+        openProviderPicker?.invoke()
     }
 
     private fun shareCurrentConversion() {

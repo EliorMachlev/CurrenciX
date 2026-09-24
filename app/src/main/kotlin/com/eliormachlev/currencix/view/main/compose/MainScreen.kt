@@ -5,28 +5,33 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.view.compose.LedgerLabel
-import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 
 enum class DrawerAction {
@@ -41,7 +46,9 @@ enum class DrawerAction {
     Settings,
 }
 
-private val DrawerItemPadding = 12.dp
+private val DrawerOuterPadding = 12.dp
+private val DrawerGroupGap = 16.dp
+private val DrawerDisabledAlpha = 0.38f
 
 // Three-state status shown inside the RateFooter:
 //  - OFFLINE: device has no network
@@ -210,7 +217,7 @@ private fun DrawerContent(
             Modifier
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
-                .padding(vertical = DrawerItemPadding),
+                .padding(vertical = DrawerOuterPadding),
     ) {
         PrimaryDrawerEntries.forEach { entry ->
             DrawerRow(
@@ -219,9 +226,7 @@ private fun DrawerContent(
                 onClick = { onItemClick(entry.action) },
             )
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = DrawerItemPadding / 2),
-        )
+        Spacer(Modifier.height(DrawerGroupGap))
         SecondaryDrawerEntries.forEach { entry ->
             DrawerRow(
                 entry = entry,
@@ -232,6 +237,10 @@ private fun DrawerContent(
     }
 }
 
+// M3 nav drawer pills — no hairline between rows, rounded selectable
+// container, ripple + tonal focus wired via NavigationDrawerItem. `selected`
+// stays false (this drawer is action-oriented, no active destination) so
+// every row uses the same neutral surface.
 @Composable
 private fun DrawerRow(
     entry: DrawerEntry,
@@ -239,15 +248,23 @@ private fun DrawerRow(
     onClick: () -> Unit,
 ) {
     val label = stringResource(entry.titleRes)
-    LedgerRow(
+    val alpha = if (enabled) 1f else DrawerDisabledAlpha
+    NavigationDrawerItem(
+        selected = false,
         onClick = { if (enabled) onClick() },
-        enabled = enabled,
+        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+        icon = {
+            Icon(
+                painter = painterResource(id = entry.iconRes),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
+            )
+        },
         label = {
-            LedgerLabel(
-                title = label,
-                iconRes = entry.iconRes,
-                enabled = enabled,
-                modifier = Modifier.weight(1f),
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
             )
         },
     )
