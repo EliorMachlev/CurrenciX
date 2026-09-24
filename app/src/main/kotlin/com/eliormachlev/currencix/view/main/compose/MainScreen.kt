@@ -48,7 +48,7 @@ enum class DrawerAction {
 
 private val DrawerOuterPadding = 12.dp
 private val DrawerGroupGap = 16.dp
-private val DrawerDisabledAlpha = 0.38f
+private const val DRAWER_DISABLED_ALPHA = 0.38f
 
 // Three-state status shown inside the RateFooter:
 //  - OFFLINE: device has no network
@@ -248,7 +248,7 @@ private fun DrawerRow(
     onClick: () -> Unit,
 ) {
     val label = stringResource(entry.titleRes)
-    val alpha = if (enabled) 1f else DrawerDisabledAlpha
+    val alpha = if (enabled) 1f else DRAWER_DISABLED_ALPHA
     NavigationDrawerItem(
         selected = false,
         onClick = { if (enabled) onClick() },

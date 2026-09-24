@@ -1,18 +1,12 @@
 package com.eliormachlev.currencix.view.preference.compose
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,29 +16,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.LedgerActiveChip
+import com.eliormachlev.currencix.view.compose.LedgerRow
+import com.eliormachlev.currencix.view.compose.LedgerTrailing
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// Row visuals shared by both single-choice pickers so the two variants
-// (simple / explainer) stay in visual lockstep with the row layout used by
-// the compose choice-picker dialogs elsewhere in the app.
-private val ROW_HORIZONTAL_PADDING = 8.dp
-private val ROW_VERTICAL_PADDING = 12.dp
-private val RADIO_TEXT_GAP = 12.dp
-private const val DESCRIPTION_ALPHA = 0.7f
+// Small breather between the last picker row and the sheet edge so the final
+// LedgerRow (which has no divider) doesn't butt against the system nav.
+private val SHEET_BOTTOM_SPACE = 12.dp
 
 /**
- * Compose single-choice picker — one radio row per option, title only.
- * Selecting an option fires [onPicked] with its index and dismisses.
+ * Compose single-choice picker — one [LedgerRow] per option under a
+ * [LedgerBottomSheet]. The currently-selected option trails a [LedgerActiveChip]
+ * so the picker reads with the same "ink on paper" affordance as the rest of
+ * the ledger surfaces (see [ProviderPickerDialog]). Selecting an option fires
+ * [onPicked] and dismisses.
  */
 @Composable
 fun <T> SingleChoicePickerDialog(
@@ -55,30 +51,26 @@ fun <T> SingleChoicePickerDialog(
     onDismiss: () -> Unit,
     onPicked: (T) -> Unit,
 ) {
-    ChoiceDialogFrame(title = title, onDismiss = onDismiss) {
-        LazyColumn(Modifier.fillMaxWidth()) {
-            items(options) { option ->
-                ChoiceRow(
-                    checked = option == selected,
-                    onClick = {
-                        onPicked(option)
-                        onDismiss()
-                    },
-                ) {
-                    Text(
-                        text = label(option),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-            }
+    PickerSheet(title = title, onDismiss = onDismiss) {
+        options.forEachIndexed { index, option ->
+            PickerRow(
+                title = label(option),
+                description = null,
+                isSelected = option == selected,
+                isLast = index == options.lastIndex,
+                onClick = {
+                    onPicked(option)
+                    onDismiss()
+                },
+            )
         }
     }
 }
 
 /**
  * Compose single-choice picker with a descriptive second line under each
- * option — the "explainer" variant. Matches the old `showChoiceExplainerDialog`
- * shape used for the keyboard-type picker.
+ * option — the "explainer" variant. Same [LedgerBottomSheet] chrome as
+ * [SingleChoicePickerDialog], but each row stacks title + description.
  */
 @Composable
 fun <T> SingleChoiceExplainerPickerDialog(
@@ -90,29 +82,18 @@ fun <T> SingleChoiceExplainerPickerDialog(
     onDismiss: () -> Unit,
     onPicked: (T) -> Unit,
 ) {
-    ChoiceDialogFrame(title = title, onDismiss = onDismiss) {
-        LazyColumn(Modifier.fillMaxWidth()) {
-            items(options) { option ->
-                ChoiceRow(
-                    checked = option == selected,
-                    onClick = {
-                        onPicked(option)
-                        onDismiss()
-                    },
-                ) {
-                    Column {
-                        Text(
-                            text = label(option),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = description(option),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = DESCRIPTION_ALPHA),
-                        )
-                    }
-                }
-            }
+    PickerSheet(title = title, onDismiss = onDismiss) {
+        options.forEachIndexed { index, option ->
+            PickerRow(
+                title = label(option),
+                description = description(option),
+                isSelected = option == selected,
+                isLast = index == options.lastIndex,
+                onClick = {
+                    onPicked(option)
+                    onDismiss()
+                },
+            )
         }
     }
 }
@@ -184,51 +165,59 @@ fun TextEntryDialog(
 private val TEXT_ENTRY_MESSAGE_GAP = 12.dp
 private const val FOCUS_DELAY_MS = 50L
 
-/**
- * Frame shared by both single-choice picker dialogs: title + cancel button +
- * theme wrap. Keeps AlertDialog wiring in one spot so both simple/explainer
- * variants stay identical in chrome.
- */
+// Shared shell + row shape used by both picker variants (simple / explainer)
+// and by the language picker. Callers just describe rows; the sheet chrome,
+// active-chip, and terminal spacer are hoisted here so the three surfaces
+// stay in visual lockstep and any future picker (e.g. currency) can drop in.
+
 @Composable
-internal fun ChoiceDialogFrame(
+internal fun PickerSheet(
     title: String,
     onDismiss: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    val cancel = rememberHapticOnClick(onDismiss)
-    AppTheme {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(text = title) },
-            text = content,
-            confirmButton = {
-                TextButton(onClick = cancel) { Text(stringResource(id = android.R.string.cancel)) }
-            },
-        )
+    LedgerBottomSheet(title = title, onDismiss = onDismiss) {
+        content()
+        Spacer(Modifier.height(SHEET_BOTTOM_SPACE))
     }
 }
 
-/**
- * One radio + text row used inside a [ChoiceDialogFrame] body. Whole row is
- * haptic-clickable; the radio is presentational (isClickable=false) so tap
- * targets stay row-sized instead of the tiny circle.
- */
 @Composable
-internal fun ChoiceRow(
-    checked: Boolean,
+internal fun PickerRow(
+    title: String,
+    description: String?,
+    isSelected: Boolean,
+    isLast: Boolean,
     onClick: () -> Unit,
-    content: @Composable () -> Unit,
 ) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .hapticClickable(onClick = onClick)
-                .padding(horizontal = ROW_HORIZONTAL_PADDING, vertical = ROW_VERTICAL_PADDING),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(RADIO_TEXT_GAP),
-    ) {
-        RadioButton(selected = checked, onClick = null)
-        Column(Modifier.weight(1f)) { content() }
-    }
+    LedgerRow(
+        onClick = onClick,
+        showDivider = !isLast,
+        label = {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                if (!description.isNullOrBlank()) {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        value =
+            if (isSelected) {
+                {
+                    LedgerTrailing {
+                        LedgerActiveChip(text = stringResource(id = R.string.picker_active_chip))
+                    }
+                }
+            } else {
+                null
+            },
+    )
 }

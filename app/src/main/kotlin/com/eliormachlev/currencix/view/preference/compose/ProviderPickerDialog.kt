@@ -54,7 +54,7 @@ fun ProviderPickerDialog(
                     if (provider == selected) {
                         {
                             LedgerTrailing {
-                                LedgerActiveChip(text = stringResource(id = R.string.provider_active_chip))
+                                LedgerActiveChip(text = stringResource(id = R.string.picker_active_chip))
                             }
                         }
                     } else {

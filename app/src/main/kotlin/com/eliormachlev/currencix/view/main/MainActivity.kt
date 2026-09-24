@@ -239,50 +239,7 @@ class MainActivity : BaseActivity() {
         val composeHost =
             ComposeView(this).apply {
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-                setContent {
-                    AppTheme {
-                        val banner by bannerState
-                        val foldingFeature by foldingFeatureState
-                        val isUpdating by viewModel.isUpdating().collectAsStateWithLifecycle()
-                        val drawerState = rememberDrawerState(DrawerValue.Closed)
-                        val scope = rememberCoroutineScope()
-                        var providerPickerVisible by remember { mutableStateOf(false) }
-                        DisposableEffect(drawerState, scope) {
-                            toggleDrawer = {
-                                scope.launch {
-                                    if (drawerState.isOpen) drawerState.close() else drawerState.open()
-                                }
-                            }
-                            openProviderPicker = { providerPickerVisible = true }
-                            onDispose {
-                                toggleDrawer = null
-                                openProviderPicker = null
-                            }
-                        }
-                        DrawerArrowSync(drawerState = drawerState, drawable = drawerArrow)
-                        ProvideOnboardingAnchors {
-                            MainScreen(
-                                drawerState = drawerState,
-                                isRefreshing = isUpdating,
-                                onRefresh = viewModel::forceUpdateExchangeRate,
-                                isRefreshDrawerEnabled = !isUpdating,
-                                onDrawerItem = { action -> onDrawerAction(action) { scope.launch { drawerState.close() } } },
-                                foldingFeature = foldingFeature,
-                                displayContent = { MainDisplayContent(banner) },
-                                keypadContent = { MainKeypadContent() },
-                            )
-                            OnboardingSpotlightHost()
-                        }
-                        if (providerPickerVisible) {
-                            val current by preferenceModel.apiProvider.collectAsStateWithLifecycle()
-                            ProviderPickerDialog(
-                                selected = current,
-                                onDismiss = { providerPickerVisible = false },
-                                onPicked = { provider -> preferenceModel.setApiProvider(provider) },
-                            )
-                        }
-                    }
-                }
+                setContent { AppTheme { MainRoot() } }
             }
         setContentView(composeHost)
 
@@ -294,6 +251,55 @@ class MainActivity : BaseActivity() {
 
         // foldable devices
         observeFoldingFeature { feature -> foldingFeatureState.value = feature }
+    }
+
+    // Compose root — hoisted out of onCreate to keep the lifecycle method
+    // small (detekt LongMethod). Holds the drawer state, the picker-overlay
+    // flag, and the DisposableEffect that wires activity callbacks
+    // (toggleDrawer / openProviderPicker) into the compose tree.
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun MainRoot() {
+        val banner by bannerState
+        val foldingFeature by foldingFeatureState
+        val isUpdating by viewModel.isUpdating().collectAsStateWithLifecycle()
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        var providerPickerVisible by remember { mutableStateOf(false) }
+        DisposableEffect(drawerState, scope) {
+            toggleDrawer = {
+                scope.launch {
+                    if (drawerState.isOpen) drawerState.close() else drawerState.open()
+                }
+            }
+            openProviderPicker = { providerPickerVisible = true }
+            onDispose {
+                toggleDrawer = null
+                openProviderPicker = null
+            }
+        }
+        DrawerArrowSync(drawerState = drawerState, drawable = drawerArrow)
+        ProvideOnboardingAnchors {
+            MainScreen(
+                drawerState = drawerState,
+                isRefreshing = isUpdating,
+                onRefresh = viewModel::forceUpdateExchangeRate,
+                isRefreshDrawerEnabled = !isUpdating,
+                onDrawerItem = { action -> onDrawerAction(action) { scope.launch { drawerState.close() } } },
+                foldingFeature = foldingFeature,
+                displayContent = { MainDisplayContent(banner) },
+                keypadContent = { MainKeypadContent() },
+            )
+            OnboardingSpotlightHost()
+        }
+        if (providerPickerVisible) {
+            val current by preferenceModel.apiProvider.collectAsStateWithLifecycle()
+            ProviderPickerDialog(
+                selected = current,
+                onDismiss = { providerPickerVisible = false },
+                onPicked = { provider -> preferenceModel.setApiProvider(provider) },
+            )
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
