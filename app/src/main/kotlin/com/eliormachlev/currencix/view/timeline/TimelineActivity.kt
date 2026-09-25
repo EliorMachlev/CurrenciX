@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +24,7 @@ import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.compose.AppTheme
-import com.eliormachlev.currencix.view.preference.GraphOptionsDialog
+import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -46,6 +47,11 @@ class TimelineActivity : BaseActivity() {
 
     private lateinit var timelineModel: TimelineViewModel
     private var menuItemToggle: MenuItem? = null
+
+    // Wired from the setContent block below via DisposableEffect so the
+    // toolbar menu item can trigger the compose-hosted GraphOptionsSheet
+    // without threading state through the compose tree.
+    private var openGraphOptionsSheet: (() -> Unit)? = null
 
     // Foldable state is hoisted into a mutableState so the composable re-lays out
     // whenever WindowInfoTracker emits a new posture.
@@ -94,6 +100,11 @@ class TimelineActivity : BaseActivity() {
         setContentView(composeHost)
         composeHost.setContent {
             val feature by remember { foldingFeatureState }
+            var showGraphOptions by remember { mutableStateOf(false) }
+            DisposableEffect(Unit) {
+                openGraphOptionsSheet = { showGraphOptions = true }
+                onDispose { openGraphOptionsSheet = null }
+            }
             AppTheme {
                 TimelineScreen(
                     model = timelineModel,
@@ -127,6 +138,12 @@ class TimelineActivity : BaseActivity() {
                         )
                     },
                 )
+                if (showGraphOptions) {
+                    GraphOptionsSheet(
+                        db = db,
+                        onDismiss = { showGraphOptions = false },
+                    )
+                }
             }
         }
     }
@@ -150,7 +167,7 @@ class TimelineActivity : BaseActivity() {
                 true
             }
             R.id.graph_options -> {
-                GraphOptionsDialog().show(supportFragmentManager, null)
+                openGraphOptionsSheet?.invoke()
                 true
             }
             else -> super.onOptionsItemSelected(item)

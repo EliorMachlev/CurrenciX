@@ -66,6 +66,8 @@ private sealed interface OpenDialog {
     data object Provider : OpenDialog
 
     data object ApiKey : OpenDialog
+
+    data object GraphOptions : OpenDialog
 }
 
 /**
@@ -198,7 +200,7 @@ private fun PreferenceSectionsList(
             }
         }
         item(key = SettingsSection.GRAPH) {
-            SectionEnter(index = SettingsSection.GRAPH.ordinal) { GraphSection(callbacks = callbacks) }
+            SectionEnter(SettingsSection.GRAPH.ordinal) { GraphSection { onOpenDialog(OpenDialog.GraphOptions) } }
         }
         item(key = SettingsSection.ABOUT) {
             SectionEnter(index = SettingsSection.ABOUT.ordinal) { AboutSection(callbacks = callbacks) }
@@ -253,6 +255,11 @@ private fun PreferenceDialogsHost(
                 selected = provider,
                 onDismiss = dismiss,
                 onPicked = viewModel::setApiProvider,
+            )
+        OpenDialog.GraphOptions ->
+            GraphOptionsSheet(
+                db = Database(LocalContext.current),
+                onDismiss = dismiss,
             )
         OpenDialog.ApiKey ->
             TextEntryDialog(
@@ -471,13 +478,13 @@ private fun AppearanceSection(
 }
 
 @Composable
-private fun GraphSection(callbacks: PreferenceScreenCallbacks) {
+private fun GraphSection(openGraphOptions: () -> Unit) {
     PreferenceSection(text = stringResource(id = R.string.category_graph_options)) {
         PreferenceRow(
             title = stringResource(id = R.string.graph_options_title),
             summary = stringResource(id = R.string.graph_options_summary),
             iconRes = R.drawable.ic_tune,
-            onClick = callbacks.onOpenGraphOptions,
+            onClick = openGraphOptions,
         )
     }
 }
@@ -560,7 +567,6 @@ private fun VersionSection() {
 data class PreferenceScreenCallbacks(
     val onOpenFees: () -> Unit,
     val onOpenBackup: () -> Unit,
-    val onOpenGraphOptions: () -> Unit,
     val onOpenCredits: () -> Unit,
     val onRateApp: () -> Unit,
     val onThemeRequiresRestart: () -> Unit,
