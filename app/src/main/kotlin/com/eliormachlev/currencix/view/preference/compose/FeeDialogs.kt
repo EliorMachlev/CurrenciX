@@ -56,6 +56,7 @@ import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -98,6 +99,10 @@ internal const val SUMMARY_SEPARATOR = "  ·  "
  * specific-pair variant. Renders the active switch, name field, optional
  * pair rows (from / to / both-ways), and percent field. Delete is only
  * exposed when [onDelete] is non-null (i.e. editing an existing entry).
+ *
+ * Owns the currency-picker sheet state internally — from/to buttons flip
+ * [pickerState] on tap and the sheet renders as a sibling of the AlertDialog
+ * so callers don't have to thread a picker callback through the compose tree.
  */
 @Composable
 internal fun FeeEditorDialog(
@@ -106,7 +111,6 @@ internal fun FeeEditorDialog(
     isPair: Boolean,
     onDismiss: () -> Unit,
     onConfirm: (FeeDraft) -> Unit,
-    onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
     onDelete: (() -> Unit)? = null,
 ) {
     var name by rememberSaveable(existing?.id) { mutableStateOf(existing?.name.orEmpty()) }
@@ -116,18 +120,10 @@ internal fun FeeEditorDialog(
     var from by rememberSaveable(existing?.id) { mutableStateOf(pair?.from) }
     var to by rememberSaveable(existing?.id) { mutableStateOf(pair?.to) }
     var bothWays by rememberSaveable(existing?.id) { mutableStateOf(pair?.bothWays == true) }
-
+    var pickerState by remember { mutableStateOf<CurrencyPickerRequest?>(null) }
     val confirm =
         rememberHapticOnClick {
-            val draft =
-                FeeDraft(
-                    name = name.trim(),
-                    percent = percentText.value.toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
-                    isActive = active,
-                    from = from,
-                    to = to,
-                    bothWays = bothWays,
-                )
+            val draft = feeDraftOf(name, percentText.value, active, from, to, bothWays)
             if (isPair && (draft.from == null || draft.to == null)) return@rememberHapticOnClick
             onConfirm(draft)
         }
@@ -155,13 +151,42 @@ internal fun FeeEditorDialog(
                     onBothWaysChange = { bothWays = it },
                     percentText = percentText.value,
                     onPercentChange = { percentText.value = it },
-                    onPickCurrency = onPickCurrency,
+                    onPickCurrency = { d, cb -> pickerState = CurrencyPickerRequest(d, cb) },
                 )
             },
             confirmButton = { FeeEditorDialogFooter(delete = delete, cancel = cancel, confirm = confirm) },
         )
     }
+    FeeEditorPickerOverlay(request = pickerState, onDismiss = { pickerState = null })
 }
+
+// Sheet overlay for the from/to buttons — sibling of the AlertDialog (each is
+// its own Window composition), so both render layered without needing the
+// picker state to live above the dialog.
+@Composable
+private fun FeeEditorPickerOverlay(
+    request: CurrencyPickerRequest?,
+    onDismiss: () -> Unit,
+) {
+    request ?: return
+    CurrencyPickerSheet(
+        currentRate = null,
+        currentSum = BigDecimal.ONE,
+        disabledCurrency = request.disabled,
+        onRateClicked = { rate -> request.onPicked(rate.currency.iso4217Alpha()) },
+        onDismiss = onDismiss,
+    )
+}
+
+// Snapshot of a currency-picker request captured when the user taps a
+// from/to button — the sheet reads back [disabled] to grey out the opposite
+// side of the pair and calls [onPicked] with the chosen ISO. Held in the
+// dialog's own state so opening the sheet doesn't have to bubble up to
+// FeeManagerFragment.
+private data class CurrencyPickerRequest(
+    val disabled: Currency?,
+    val onPicked: (String) -> Unit,
+)
 
 /**
  * Body of [FeeEditorDialog] — active switch, name/percent fields, and the
@@ -467,6 +492,26 @@ internal data class FeeDraft(
     val to: String? = null,
     val bothWays: Boolean = false,
 )
+
+// Snapshot the editor's live field state into a [FeeDraft]. Kept plain (non-composable)
+// so the confirm click can build a draft without a recomposition round-trip.
+@Suppress("LongParameterList")
+private fun feeDraftOf(
+    name: String,
+    percentText: String,
+    active: Boolean,
+    from: String?,
+    to: String?,
+    bothWays: Boolean,
+): FeeDraft =
+    FeeDraft(
+        name = name.trim(),
+        percent = percentText.toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
+        isActive = active,
+        from = from,
+        to = to,
+        bothWays = bothWays,
+    )
 
 internal fun FeeDraft.toGlobalExchange(id: String? = null): Fee.GlobalExchange =
     Fee.GlobalExchange(

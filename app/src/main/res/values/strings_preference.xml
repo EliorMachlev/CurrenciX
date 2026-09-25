@@ -79,6 +79,8 @@
     <string name="backup_password_hide">Hide password</string>
     <!-- Trails the currently-selected option in a picker sheet (data provider, theme, keyboard, etc.). -->
     <string name="picker_active_chip">Active</string>
+    <!-- Header of the currency picker sheet (main hero pills, cart chips, fee-pair editor). -->
+    <string name="picker_currency_title">Currency</string>
     <!-- graph options -->
     <string name="category_graph_options">Graph options</string>
     <string name="graph_options_key" translatable="false">KEY_GRAPH_OPTIONS</string>

@@ -94,7 +94,6 @@ class CartActivity : BaseActivity() {
                 setContent {
                     CartScreen(
                         viewModel = viewModel,
-                        fragmentManager = supportFragmentManager,
                         keypad = keypad,
                         itemsSource = itemsLive,
                         currencySource = currencyLive,

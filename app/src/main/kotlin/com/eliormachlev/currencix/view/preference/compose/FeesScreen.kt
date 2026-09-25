@@ -73,15 +73,12 @@ internal sealed interface EditorKind {
  * PreferenceFragmentCompat-backed FeeManagerFragment. Observes fees via the
  * [viewModel]; opens per-category picker/editor dialogs via local state so a
  * single [FeeEditorDialog] instance is reused across categories. Currency
- * selection routes back through [onPickCurrency] because the shared
- * [com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog] is a
- * DialogFragment and needs the hosting fragment's FragmentManager.
+ * selection is fully compose-native — [FeeEditorDialog] hosts its own
+ * [com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet], so this
+ * screen doesn't need to thread a picker callback in.
  */
 @Composable
-fun FeesScreen(
-    viewModel: FeeManagerViewModel,
-    onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
-) {
+fun FeesScreen(viewModel: FeeManagerViewModel) {
     val fees by viewModel.fees.collectAsStateWithLifecycle()
     val activeExchangeId by viewModel.activeExchangeId.collectAsStateWithLifecycle()
     val activeBankId by viewModel.activeBankId.collectAsStateWithLifecycle()
@@ -122,7 +119,6 @@ fun FeesScreen(
         EditorHost(
             target = target,
             viewModel = viewModel,
-            onPickCurrency = onPickCurrency,
             onDismiss = { openEditor = null },
         )
     }
@@ -176,7 +172,6 @@ private fun GlobalPickerHost(
 private fun EditorHost(
     target: EditorTarget,
     viewModel: FeeManagerViewModel,
-    onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val kind = target.kind
@@ -195,7 +190,6 @@ private fun EditorHost(
             persistEditorConfirm(viewModel, target, draft)
             onDismiss()
         },
-        onPickCurrency = onPickCurrency,
         onDelete =
             target.existing?.let { existing ->
                 {

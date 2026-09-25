@@ -35,9 +35,15 @@ private val SHEET_TITLE_LETTER_SPACING = 0.14.em
 
 /**
  * Ledger-styled modal bottom sheet — [ModalBottomSheet] with a paper-toned
- * container, a brass small-caps title header, and a scrolling body slot that
- * inherits [ColumnScope] so callers can drop [com.eliormachlev.currencix.view.compose.LedgerRow]
+ * container, a brass small-caps title header, and a body slot that inherits
+ * [ColumnScope] so callers can drop [com.eliormachlev.currencix.view.compose.LedgerRow]
  * children in directly.
+ *
+ * Set [scrollableBody] = false when the caller's content already owns its own
+ * scroll (e.g. a [androidx.compose.foundation.lazy.LazyColumn]) — nesting two
+ * vertical scrollables would crash. Defaults to true so the common
+ * pick-a-value shape (short row list) still scrolls when the sheet is short
+ * of the screen edge.
  *
  * Replaces the stock AlertDialog-with-radio-rows shape for list-shaped choice
  * surfaces (data-provider picker, and any future picker that wants sheet
@@ -48,6 +54,7 @@ private val SHEET_TITLE_LETTER_SPACING = 0.14.em
 fun LedgerBottomSheet(
     title: String,
     onDismiss: () -> Unit,
+    scrollableBody: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -59,16 +66,15 @@ fun LedgerBottomSheet(
             contentColor = MaterialTheme.colorScheme.onSurface,
             tonalElevation = 0.dp,
         ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(
-                            horizontal = SHEET_HORIZONTAL_PADDING,
-                            vertical = SHEET_BOTTOM_PADDING,
-                        ),
-            ) {
+            val bodyModifier =
+                Modifier
+                    .fillMaxWidth()
+                    .then(if (scrollableBody) Modifier.verticalScroll(rememberScrollState()) else Modifier)
+                    .padding(
+                        horizontal = SHEET_HORIZONTAL_PADDING,
+                        vertical = SHEET_BOTTOM_PADDING,
+                    )
+            Column(modifier = bodyModifier) {
                 LedgerSheetTitle(title)
                 content()
             }

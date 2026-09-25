@@ -86,7 +86,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
@@ -109,7 +108,7 @@ import com.eliormachlev.currencix.view.compose.shimmer
 import com.eliormachlev.currencix.view.compose.theme.AmberContainer
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Stamp
-import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -367,15 +366,13 @@ private fun Modifier.heroCaptureLayer(controller: HeroCaptureController?): Modif
 
 /**
  * Pure-Compose replacement for the old `main_display.xml`. Renders the hero
- * card (currency pills + amount hero + amount to + rate footer). All state is
- * pulled from [viewModel] via [observeAsState]; the currency-picker dialog
- * ([SearchableSpinnerDialog]) is invoked with [fragmentManager] so behavior
- * matches the pre-Compose version.
+ * card (currency pills + amount hero + amount to + rate footer) and hosts the
+ * compose-native [CurrencyPickerSheet] as a sibling — no fragment machinery,
+ * so callers don't need to hand in a `FragmentManager`.
  */
 @Composable
 internal fun MainDisplay(
     viewModel: MainViewModel,
-    fragmentManager: FragmentManager,
     callbacks: MainDisplayCallbacks,
     dateFormatPattern: String,
     banner: BannerContent?,
@@ -404,6 +401,7 @@ internal fun MainDisplay(
     val resultParts = remember(resultFairFull, destCurrency) { splitAmount(context, resultFairFull, destCurrency) }
     val trueCostParts =
         remember(resultWithFeesFull, destCurrency) { splitAmount(context, resultWithFeesFull, destCurrency) }
+    var pickerSide by remember { mutableStateOf<PickSide?>(null) }
     HeroCard(
         baseCurrency = baseCurrency,
         destCurrency = destCurrency,
@@ -421,22 +419,66 @@ internal fun MainDisplay(
         resultWithFeesNumber = resultWithFeesNumber,
         dateFormatPattern = dateFormatPattern,
         banner = banner,
-        onPillFromClick = {
-            openCurrencyPicker(
-                CurrencyPickerContext(context, viewModel, fragmentManager, baseCurrency, destCurrency, rates),
-                PickSide.FROM,
-            )
-        },
-        onPillToClick = {
-            openCurrencyPicker(
-                CurrencyPickerContext(context, viewModel, fragmentManager, baseCurrency, destCurrency, rates),
-                PickSide.TO,
-            )
-        },
+        onPillFromClick = { pickerSide = PickSide.FROM },
+        onPillToClick = { pickerSide = PickSide.TO },
         onSwapClick = { swapCurrencies(viewModel, baseCurrency, destCurrency) },
         callbacks = callbacks,
         modifier = modifier,
         captureController = captureController,
+    )
+    pickerSide?.let { side ->
+        CurrencyPickerHost(
+            side = side,
+            viewModel = viewModel,
+            baseCurrency = baseCurrency,
+            destCurrency = destCurrency,
+            rates = rates,
+            onDismiss = { pickerSide = null },
+        )
+    }
+}
+
+/**
+ * Resolves the reference rate / sum / disabled currency for the picker sheet
+ * based on which side ([side]) the user tapped, and forwards the selection back
+ * to [viewModel]. Extracted so [MainDisplay] itself stays under the LongMethod
+ * threshold and the compute-then-render block reads on its own.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun CurrencyPickerHost(
+    side: PickSide,
+    viewModel: MainViewModel,
+    baseCurrency: Currency?,
+    destCurrency: Currency?,
+    rates: ExchangeRates?,
+    onDismiss: () -> Unit,
+) {
+    val disabled = if (side == PickSide.FROM) destCurrency else baseCurrency
+    // Reference-rate anchor for the picker's preview column: when picking the
+    // FROM side, the fixed side is the current DEST currency (and vice versa).
+    // The sum being "converted" is likewise the OTHER side's current value.
+    val referenceCurrency = if (side == PickSide.FROM) destCurrency else baseCurrency
+    val referenceRate =
+        referenceCurrency?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } }
+    val referenceSum =
+        if (side == PickSide.FROM) {
+            viewModel.getResultAsNumber().value ?: BigDecimal.ONE
+        } else {
+            viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ONE
+        }
+    CurrencyPickerSheet(
+        currentRate = referenceRate,
+        currentSum = referenceSum,
+        disabledCurrency = disabled,
+        onRateClicked = { rate ->
+            if (side == PickSide.FROM) {
+                viewModel.setBaseCurrency(rate.currency)
+            } else {
+                viewModel.setDestinationCurrency(rate.currency)
+            }
+        },
+        onDismiss = onDismiss,
     )
 }
 
@@ -1486,55 +1528,6 @@ private fun buildRateText(
 }
 
 private enum class PickSide { FROM, TO }
-
-/**
- * Snapshot of the state the currency-picker needs. Bundled so the launcher
- * function keeps a short signature and callers can pass the current view
- * state in one shot.
- */
-private data class CurrencyPickerContext(
-    val context: Context,
-    val viewModel: MainViewModel,
-    val fragmentManager: FragmentManager,
-    val baseCurrency: Currency?,
-    val destCurrency: Currency?,
-    val rates: ExchangeRates?,
-)
-
-private fun openCurrencyPicker(
-    ctx: CurrencyPickerContext,
-    picking: PickSide,
-) {
-    val disabled = if (picking == PickSide.FROM) ctx.destCurrency else ctx.baseCurrency
-    // Reference-rate anchor for the picker's preview column: when picking the
-    // FROM side, the fixed side is the current DEST currency (and vice versa).
-    // The sum we're "converting" is likewise the OTHER side's current value.
-    val referenceRate =
-        if (picking == PickSide.FROM) {
-            ctx.destCurrency?.let { c -> ctx.rates?.rateFor(c)?.let { Rate(c, it.value) } }
-        } else {
-            ctx.baseCurrency?.let { c -> ctx.rates?.rateFor(c)?.let { Rate(c, it.value) } }
-        }
-    val referenceSum =
-        if (picking == PickSide.FROM) {
-            ctx.viewModel.getResultAsNumber().value ?: BigDecimal.ONE
-        } else {
-            ctx.viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ONE
-        }
-    SearchableSpinnerDialog(ctx.context)
-        .apply {
-            referenceRate?.let { setCurrentRate(it) }
-            setCurrentSum(referenceSum)
-            setDisabledCurrency(disabled)
-            onRateClicked = { rate, _ ->
-                if (picking == PickSide.FROM) {
-                    ctx.viewModel.setBaseCurrency(rate.currency)
-                } else {
-                    ctx.viewModel.setDestinationCurrency(rate.currency)
-                }
-            }
-        }.show(ctx.fragmentManager, null)
-}
 
 // --- Small helpers ------------------------------------------------------------
 

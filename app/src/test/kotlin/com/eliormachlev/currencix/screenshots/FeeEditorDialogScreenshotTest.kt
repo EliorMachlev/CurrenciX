@@ -26,7 +26,6 @@ class FeeEditorDialogScreenshotTest {
                 isPair = false,
                 onDismiss = {},
                 onConfirm = {},
-                onPickCurrency = { _, _ -> },
                 onDelete = null,
             )
         }
@@ -39,7 +38,6 @@ class FeeEditorDialogScreenshotTest {
                 isPair = true,
                 onDismiss = {},
                 onConfirm = {},
-                onPickCurrency = { _, _ -> },
                 onDelete = {},
             )
         }

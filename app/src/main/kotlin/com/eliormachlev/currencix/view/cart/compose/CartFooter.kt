@@ -19,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,13 +30,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentManager
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import java.math.BigDecimal
 import java.math.MathContext
@@ -58,7 +63,6 @@ private val SWAP_ICON_SIZE: Dp = 22.dp
 @Composable
 fun CartFooter(
     viewModel: CartViewModel,
-    fragmentManager: FragmentManager,
     onOpenFees: () -> Unit,
 ) {
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
@@ -72,8 +76,56 @@ fun CartFooter(
     val fees by viewModel.getFees().observeAsState()
     val rates by viewModel.getExchangeRates().observeAsState()
     val feeStack = remember(fees, rates, baseCurrency, destCurrency) { viewModel.currentFeeStack() }
-    val context = LocalContext.current
 
+    var pickerSide by remember { mutableStateOf<CartPickSide?>(null) }
+    CartFooterCard(
+        baseCurrency = baseCurrency,
+        destCurrency = destCurrency,
+        subtotal = subtotal,
+        convertedSubtotal = convertedSubtotal,
+        total = total,
+        feeStack = feeStack,
+        onOpenFees = onOpenFees,
+        onBaseClick = { pickerSide = CartPickSide.FROM },
+        onDestClick = { pickerSide = CartPickSide.TO },
+        onSwapClick = viewModel::swapCurrencies,
+    )
+    pickerSide?.let { side ->
+        CartCurrencyPickerHost(
+            side = side,
+            baseCurrency = baseCurrency,
+            destCurrency = destCurrency,
+            subtotal = subtotal,
+            convertedSubtotal = convertedSubtotal,
+            rates = rates,
+            onBasePicked = viewModel::setBaseCurrency,
+            onDestPicked = viewModel::setDestinationCurrency,
+            onDismiss = { pickerSide = null },
+        )
+    }
+}
+
+/**
+ * Static presentation of the footer — currency row + subtotal + fee delta +
+ * total. Extracted from [CartFooter] so the parent can stay under the
+ * LongMethod threshold while the picker sheet + observed state stay hoisted
+ * where they belong (with the ViewModel).
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun CartFooterCard(
+    baseCurrency: Currency?,
+    destCurrency: Currency?,
+    subtotal: BigDecimal?,
+    convertedSubtotal: BigDecimal?,
+    total: BigDecimal?,
+    feeStack: BigDecimal,
+    onOpenFees: () -> Unit,
+    onBaseClick: () -> Unit,
+    onDestClick: () -> Unit,
+    onSwapClick: () -> Unit,
+) {
+    val context = LocalContext.current
     Column(
         modifier =
             Modifier
@@ -84,12 +136,11 @@ fun CartFooter(
                 .padding(FOOTER_PADDING),
     ) {
         CurrencyRow(
-            fragmentManager = fragmentManager,
             baseCurrency = baseCurrency,
             destCurrency = destCurrency,
-            onBasePicked = viewModel::setBaseCurrency,
-            onDestPicked = viewModel::setDestinationCurrency,
-            onSwapClick = viewModel::swapCurrencies,
+            onBaseClick = onBaseClick,
+            onDestClick = onDestClick,
+            onSwapClick = onSwapClick,
             onSwapLongPress = onOpenFees,
         )
         AmountRow(
@@ -111,6 +162,43 @@ fun CartFooter(
             style = MaterialTheme.typography.titleLarge,
         )
     }
+}
+
+private enum class CartPickSide { FROM, TO }
+
+/**
+ * Resolves the reference rate / sum / disabled currency for the picker sheet
+ * based on which side ([side]) the user tapped. Extracted so [CartFooter]
+ * itself stays under the LongMethod threshold and the compute-then-render
+ * block reads on its own — mirrors `CurrencyPickerHost` on the main hero.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun CartCurrencyPickerHost(
+    side: CartPickSide,
+    baseCurrency: Currency?,
+    destCurrency: Currency?,
+    subtotal: BigDecimal?,
+    convertedSubtotal: BigDecimal?,
+    rates: ExchangeRates?,
+    onBasePicked: (Currency) -> Unit,
+    onDestPicked: (Currency) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val disabled = if (side == CartPickSide.FROM) destCurrency else baseCurrency
+    val refCurrency = if (side == CartPickSide.FROM) destCurrency else baseCurrency
+    val refRate =
+        refCurrency?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } }
+    val refSum = (if (side == CartPickSide.FROM) convertedSubtotal else subtotal) ?: BigDecimal.ONE
+    CurrencyPickerSheet(
+        currentRate = refRate,
+        currentSum = refSum,
+        disabledCurrency = disabled,
+        onRateClicked = { rate ->
+            if (side == CartPickSide.FROM) onBasePicked(rate.currency) else onDestPicked(rate.currency)
+        },
+        onDismiss = onDismiss,
+    )
 }
 
 // Label + right-aligned amount, used for both the subtotal and total rows
@@ -172,11 +260,10 @@ private fun FeeAnnotationRow(
 
 @Composable
 private fun CurrencyRow(
-    fragmentManager: FragmentManager,
     baseCurrency: Currency?,
     destCurrency: Currency?,
-    onBasePicked: (Currency) -> Unit,
-    onDestPicked: (Currency) -> Unit,
+    onBaseClick: () -> Unit,
+    onDestClick: () -> Unit,
     onSwapClick: () -> Unit,
     onSwapLongPress: () -> Unit,
 ) {
@@ -186,18 +273,14 @@ private fun CurrencyRow(
         horizontalArrangement = Arrangement.spacedBy(CURRENCY_ROW_GAP),
     ) {
         CartCurrencyChip(
-            fragmentManager = fragmentManager,
             currency = baseCurrency,
-            disabledCurrency = destCurrency,
-            onCurrencyPicked = onBasePicked,
+            onClick = onBaseClick,
             modifier = Modifier.weight(1f),
         )
         SwapFab(onClick = onSwapClick, onLongClick = onSwapLongPress)
         CartCurrencyChip(
-            fragmentManager = fragmentManager,
             currency = destCurrency,
-            disabledCurrency = baseCurrency,
-            onCurrencyPicked = onDestPicked,
+            onClick = onDestClick,
             modifier = Modifier.weight(1f),
         )
     }

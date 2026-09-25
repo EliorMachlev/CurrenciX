@@ -732,7 +732,6 @@ class MainActivity : BaseActivity() {
         val pattern by Database(this).getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
         MainDisplay(
             viewModel = viewModel,
-            fragmentManager = supportFragmentManager,
             callbacks = callbacks,
             dateFormatPattern = pattern,
             banner = banner,

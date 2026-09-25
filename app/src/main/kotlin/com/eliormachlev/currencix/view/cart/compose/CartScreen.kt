@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
@@ -42,7 +41,6 @@ import kotlinx.collections.immutable.persistentListOf
 @Suppress("LongParameterList")
 fun CartScreen(
     viewModel: CartViewModel,
-    fragmentManager: FragmentManager,
     keypad: CartKeypadController,
     itemsSource: LiveData<ImmutableList<CartItem>>,
     currencySource: LiveData<String>,
@@ -89,7 +87,6 @@ fun CartScreen(
                 AddItemButton(onAddItem = onAddItem)
                 CartFooter(
                     viewModel = viewModel,
-                    fragmentManager = fragmentManager,
                     onOpenFees = onOpenFees,
                 )
             }

@@ -31,10 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentManager
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticClickable
-import com.eliormachlev.currencix.view.main.spinner.SearchableSpinnerDialog
 
 private val CHIP_HEIGHT: Dp = 44.dp
 private val CHIP_RADIUS: Dp = 999.dp
@@ -52,16 +50,14 @@ private val CHEVRON_GAP: Dp = 4.dp
 /**
  * Pill-style currency picker used in the cart footer, sized to match the
  * hero card's [CurrencyPill] on the main screen so both surfaces read the
- * same. Tapping opens the shared [SearchableSpinnerDialog] wired to the
- * cart's currency setters, with [disabledCurrency] greyed out so the two
- * sides of the pair stay distinct.
+ * same. Tapping fires [onClick]; the parent owns the picker sheet state so
+ * the two chips can share a single [com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet]
+ * host and thread in the reference rate + subtotal for the preview column.
  */
 @Composable
 fun CartCurrencyChip(
-    fragmentManager: FragmentManager,
     currency: Currency?,
-    disabledCurrency: Currency?,
-    onCurrencyPicked: (Currency) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -71,13 +67,8 @@ fun CartCurrencyChip(
             .height(CHIP_HEIGHT)
             .clip(RoundedCornerShape(CHIP_RADIUS))
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .hapticClickable(enabled = currency != null) {
-                SearchableSpinnerDialog(context)
-                    .apply {
-                        setDisabledCurrency(disabledCurrency)
-                        onRateClicked = { rate, _ -> onCurrencyPicked(rate.currency) }
-                    }.show(fragmentManager, null)
-            }.padding(horizontal = CHIP_HORIZONTAL_PADDING),
+            .hapticClickable(enabled = currency != null, onClick = onClick)
+            .padding(horizontal = CHIP_HORIZONTAL_PADDING),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
