@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.view.main.compose
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
@@ -81,6 +81,10 @@ fun HistoricalDatePickerSheet(
             )
         }
         HistoricalActionRow(
+            onNow = {
+                onPick(null)
+                onDismiss()
+            },
             onCancel = onDismiss,
             onConfirm = {
                 val picked =
@@ -89,7 +93,12 @@ fun HistoricalDatePickerSheet(
                     } else {
                         null
                     }
-                onPick(picked)
+                // Selecting today with historical-mode on is equivalent to
+                // turning historical off — the "latest" endpoint returns the
+                // same data. Collapse both to null so downstream refreshes
+                // hit the cheaper path and the banner clears.
+                val normalized = if (picked == LocalDate.now()) null else picked
+                onPick(normalized)
                 onDismiss()
             },
         )
@@ -126,6 +135,7 @@ private fun HistoricalToggleRow(
 
 @Composable
 private fun HistoricalActionRow(
+    onNow: () -> Unit,
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
 ) {
@@ -134,8 +144,15 @@ private fun HistoricalActionRow(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = SheetHorizontalPadding, vertical = ActionRowVerticalPadding),
-        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        // "Now" is the shortcut for "clear historical selection"; kept on the
+        // leading edge so it doesn't compete with the confirm buttons on the
+        // trailing edge for the primary tap target.
+        TextButton(onClick = onNow) {
+            Text(text = stringResource(id = R.string.historical_rates_dialog_now))
+        }
+        Spacer(modifier = Modifier.weight(1f))
         TextButton(onClick = onCancel) {
             Text(text = stringResource(id = android.R.string.cancel))
         }
