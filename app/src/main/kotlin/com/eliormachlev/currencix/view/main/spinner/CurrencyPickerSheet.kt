@@ -2,16 +2,14 @@ package com.eliormachlev.currencix.view.main.spinner
 
 import android.app.Application
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
@@ -23,15 +21,6 @@ import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import java.math.BigDecimal
-
-// Cap the sheet at ~90% of the screen so the paper background peeks above the
-// drag handle — matches the other ledger sheets, which never quite reach the
-// status bar even when their content wants to. Held as a fixed dp value
-// (screenHeightDp * fraction) rather than fillMaxHeight(fraction) so the
-// ModalBottomSheet resolves to a single Expanded anchor; a fractional
-// fillMaxHeight let the sheet flip between wrap-content and fill-screen anchors
-// on fast LazyColumn flings, which shows up as a visual "jump".
-private const val SHEET_HEIGHT_FRACTION = 0.9f
 
 // Distinct keys so this sheet's read-only MainViewModel and PreferenceViewModel
 // instances don't collide with the primary VMs the hosting screen may already
@@ -70,6 +59,10 @@ fun CurrencyPickerSheet(
         title = stringResource(id = R.string.picker_currency_title),
         onDismiss = onDismiss,
         scrollableBody = false,
+        // Start at the M3 half-height anchor; upward drag / list-scroll-past-top
+        // will expand it to full. Matches the pre-Compose SearchableSpinnerDialog
+        // proportions and the user's mental model for a searchable picker.
+        skipPartiallyExpanded = false,
     ) {
         val rates by mainViewModel.getExchangeRates().observeAsState()
         val stars by mainViewModel.getStarredCurrencies().collectAsStateWithLifecycle()
@@ -89,12 +82,16 @@ fun CurrencyPickerSheet(
             }
 
         val ready = rates != null
-        val sheetHeight = (LocalConfiguration.current.screenHeightDp * SHEET_HEIGHT_FRACTION).dp
+        // fillMaxHeight so the picker occupies the full expanded-anchor slot;
+        // at the partially-expanded anchor the M3 sheet clips this Column and
+        // the top portion is what shows. Nested-scroll then hands upward
+        // fling velocity from the LazyColumn to the sheet, which transitions
+        // to Expanded before the list starts consuming the drag.
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(sheetHeight),
+                    .fillMaxHeight(),
         ) {
             SearchableCurrencyPicker(
                 rates =

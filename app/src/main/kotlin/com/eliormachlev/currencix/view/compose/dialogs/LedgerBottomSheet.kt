@@ -45,6 +45,10 @@ private val SHEET_TITLE_LETTER_SPACING = 0.14.em
  * pick-a-value shape (short row list) still scrolls when the sheet is short
  * of the screen edge.
  *
+ * Set [skipPartiallyExpanded] = false to let the sheet settle at the M3
+ * half-height anchor first and expand to full on upward drag/scroll. The
+ * default (true) is right for short pickers that only need one anchor.
+ *
  * Replaces the stock AlertDialog-with-radio-rows shape for list-shaped choice
  * surfaces (data-provider picker, and any future picker that wants sheet
  * ergonomics — swipe-to-dismiss, drag handle, edge-to-edge with the nav bar).
@@ -55,9 +59,10 @@ fun LedgerBottomSheet(
     title: String,
     onDismiss: () -> Unit,
     scrollableBody: Boolean = true,
+    skipPartiallyExpanded: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     AppTheme {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
