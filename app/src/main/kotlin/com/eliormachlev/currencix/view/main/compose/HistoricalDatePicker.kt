@@ -1,10 +1,8 @@
 package com.eliormachlev.currencix.view.main.compose
 
-import android.content.Context
-import androidx.appcompat.app.AlertDialog
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -12,8 +10,10 @@ import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,75 +22,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.util.showWithHapticButtons
-import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Year
 import java.time.ZoneOffset
 
 private const val HISTORICAL_MIN_YEAR = 2010
-private val DialogHorizontalPadding = 24.dp
-private val DialogVerticalPadding = 16.dp
+private val SheetHorizontalPadding = 24.dp
+private val DatePickerVerticalPadding = 16.dp
 private val SwitchRowVerticalPadding = 8.dp
+private val ActionRowVerticalPadding = 8.dp
 
-// Compose port of the historical-rates AlertDialog (formerly
-// main_dialog_historical_rates.xml). Switch controls whether a historical date
-// is used; the M3 DatePicker below it fades in/out with the switch. On OK,
-// [onPick] fires with the selected LocalDate (or null if the switch is off).
-fun showHistoricalDatePickerDialog(
-    context: Context,
-    initial: LocalDate?,
-    onPick: (LocalDate?) -> Unit,
-) {
-    val state = HistoricalPickResult(initial)
-    val content =
-        ComposeView(context).apply {
-            setContent {
-                AppTheme {
-                    HistoricalDatePickerContent(
-                        initial = initial,
-                        onStateChange = state::update,
-                    )
-                }
-            }
-        }
-    AlertDialog
-        .Builder(context)
-        .setTitle(R.string.historical_rates_dialog_title)
-        .setView(content)
-        .setPositiveButton(android.R.string.ok) { _, _ -> onPick(state.snapshot()) }
-        .setNegativeButton(android.R.string.cancel, null)
-        .showWithHapticButtons()
-}
-
-private class HistoricalPickResult(
-    initial: LocalDate?,
-) {
-    private var enabled: Boolean = initial != null
-    private var date: LocalDate = initial ?: LocalDate.now()
-
-    fun update(
-        newEnabled: Boolean,
-        newDate: LocalDate,
-    ) {
-        enabled = newEnabled
-        date = newDate
-    }
-
-    fun snapshot(): LocalDate? = if (enabled) date else null
-}
-
+/**
+ * Compose-native historical-rates picker — a [LedgerBottomSheet] wrapping a
+ * switch (use-historical toggle) and the M3 [DatePicker] beneath it. Replaces
+ * the AlertDialog-hosted `showHistoricalDatePickerDialog` so callers no
+ * longer need a `Context`; the sheet renders OK/Cancel action buttons in its
+ * own footer, mirroring the AlertDialog semantics.
+ *
+ * On OK, [onPick] fires with the selected [LocalDate] (or null when the
+ * switch is off), then [onDismiss] closes the sheet.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HistoricalDatePickerContent(
+fun HistoricalDatePickerSheet(
     initial: LocalDate?,
-    onStateChange: (enabled: Boolean, date: LocalDate) -> Unit,
+    onPick: (LocalDate?) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     var enabled by remember { mutableStateOf(initial != null) }
     val datePickerState =
@@ -100,51 +64,89 @@ private fun HistoricalDatePickerContent(
             initialDisplayMode = DisplayMode.Picker,
             selectableDates = PastOrTodaySelectableDates,
         )
-    val haptics = LocalHapticFeedback.current
-    val selectedDate = datePickerState.selectedDateMillis?.toLocalDate() ?: LocalDate.now()
-
-    onStateChange(enabled, selectedDate)
-
-    Column {
-        Row(
-            modifier =
-                Modifier.padding(
-                    horizontal = DialogHorizontalPadding,
-                    vertical = SwitchRowVerticalPadding,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.historical_rates_dialog_toggle),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f),
-            )
-            Switch(
-                checked = enabled,
-                onCheckedChange = { new ->
-                    haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
-                    enabled = new
-                },
+    LedgerBottomSheet(
+        title = stringResource(id = R.string.historical_rates_dialog_title),
+        onDismiss = onDismiss,
+    ) {
+        HistoricalToggleRow(enabled = enabled, onEnabledChange = { enabled = it })
+        if (enabled) {
+            HorizontalDivider()
+            DatePicker(
+                state = datePickerState,
+                title = null,
+                headline = null,
+                showModeToggle = false,
+                colors = DatePickerDefaults.colors(),
+                modifier = Modifier.padding(vertical = DatePickerVerticalPadding),
             )
         }
-        AnimatedVisibility(visible = enabled) {
-            Column {
-                HorizontalDivider()
-                DatePicker(
-                    state = datePickerState,
-                    title = null,
-                    headline = null,
-                    showModeToggle = false,
-                    colors = DatePickerDefaults.colors(),
-                    modifier = Modifier.padding(vertical = DialogVerticalPadding),
-                )
-            }
+        HistoricalActionRow(
+            onCancel = onDismiss,
+            onConfirm = {
+                val picked =
+                    if (enabled) {
+                        datePickerState.selectedDateMillis?.toLocalDate() ?: LocalDate.now()
+                    } else {
+                        null
+                    }
+                onPick(picked)
+                onDismiss()
+            },
+        )
+    }
+}
+
+@Composable
+private fun HistoricalToggleRow(
+    enabled: Boolean,
+    onEnabledChange: (Boolean) -> Unit,
+) {
+    val haptics = LocalHapticFeedback.current
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = SheetHorizontalPadding, vertical = SwitchRowVerticalPadding),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.historical_rates_dialog_toggle),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(
+            checked = enabled,
+            onCheckedChange = { new ->
+                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                onEnabledChange(new)
+            },
+        )
+    }
+}
+
+@Composable
+private fun HistoricalActionRow(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = SheetHorizontalPadding, vertical = ActionRowVerticalPadding),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        TextButton(onClick = onCancel) {
+            Text(text = stringResource(id = android.R.string.cancel))
+        }
+        TextButton(onClick = onConfirm) {
+            Text(text = stringResource(id = android.R.string.ok))
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private object PastOrTodaySelectableDates : androidx.compose.material3.SelectableDates {
+private object PastOrTodaySelectableDates : SelectableDates {
     override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis <= System.currentTimeMillis()
 
     override fun isSelectableYear(year: Int): Boolean = year in HISTORICAL_MIN_YEAR..Year.now().value

@@ -70,12 +70,13 @@ import com.eliormachlev.currencix.view.main.compose.BannerContent
 import com.eliormachlev.currencix.view.main.compose.BannerKind
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
 import com.eliormachlev.currencix.view.main.compose.HeroCaptureController
+import com.eliormachlev.currencix.view.main.compose.HistoricalDatePickerSheet
 import com.eliormachlev.currencix.view.main.compose.MainDisplay
 import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainScreen
-import com.eliormachlev.currencix.view.main.compose.showHistoricalDatePickerDialog
+import com.eliormachlev.currencix.view.main.compose.QuickConversionsSheet
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
 import com.eliormachlev.currencix.view.timeline.TimelineActivity
@@ -173,6 +174,11 @@ class MainActivity : BaseActivity() {
     // set by a DisposableEffect in MainRoot so menu/drawer taps can open the
     // Compose-native sheet without owning its own state.
     private var openQuickConversions: (() -> Unit)? = null
+
+    // Same pattern for the historical-rates date picker sheet. Menu tap and
+    // drawer tap both go through this so the sheet's state stays inside
+    // MainRoot rather than requiring a Context/AlertDialog.
+    private var openHistoricalDatePicker: (() -> Unit)? = null
 
     // Morphing hamburger ↔ arrow indicator hosted on the ActionBar. The
     // ActionBar customView slot only takes a Drawable, so we own it here and
@@ -272,6 +278,7 @@ class MainActivity : BaseActivity() {
         val scope = rememberCoroutineScope()
         var providerPickerVisible by remember { mutableStateOf(false) }
         var quickConversionsVisible by remember { mutableStateOf(false) }
+        var historicalDatePickerVisible by remember { mutableStateOf(false) }
         DisposableEffect(drawerState, scope) {
             toggleDrawer = {
                 scope.launch {
@@ -280,10 +287,12 @@ class MainActivity : BaseActivity() {
             }
             openProviderPicker = { providerPickerVisible = true }
             openQuickConversions = { quickConversionsVisible = true }
+            openHistoricalDatePicker = { historicalDatePickerVisible = true }
             onDispose {
                 toggleDrawer = null
                 openProviderPicker = null
                 openQuickConversions = null
+                openHistoricalDatePicker = null
             }
         }
         DrawerArrowSync(drawerState = drawerState, drawable = drawerArrow)
@@ -300,11 +309,34 @@ class MainActivity : BaseActivity() {
             )
             OnboardingSpotlightHost()
         }
+        MainRootOverlays(
+            providerPickerVisible = providerPickerVisible,
+            dismissProviderPicker = { providerPickerVisible = false },
+            quickConversionsVisible = quickConversionsVisible,
+            dismissQuickConversions = { quickConversionsVisible = false },
+            historicalDatePickerVisible = historicalDatePickerVisible,
+            dismissHistoricalDatePicker = { historicalDatePickerVisible = false },
+        )
+    }
+
+    // Composition-scoped overlay host — the three sheets/dialogs MainRoot
+    // opens on top of MainScreen. Extracted so MainRoot itself stays under
+    // the detekt LongMethod threshold and the overlay wiring reads on its own.
+    @Composable
+    @Suppress("LongParameterList")
+    private fun MainRootOverlays(
+        providerPickerVisible: Boolean,
+        dismissProviderPicker: () -> Unit,
+        quickConversionsVisible: Boolean,
+        dismissQuickConversions: () -> Unit,
+        historicalDatePickerVisible: Boolean,
+        dismissHistoricalDatePicker: () -> Unit,
+    ) {
         if (providerPickerVisible) {
             val current by preferenceModel.apiProvider.collectAsStateWithLifecycle()
             ProviderPickerDialog(
                 selected = current,
-                onDismiss = { providerPickerVisible = false },
+                onDismiss = dismissProviderPicker,
                 onPicked = { provider -> preferenceModel.setApiProvider(provider) },
             )
         }
@@ -313,7 +345,14 @@ class MainActivity : BaseActivity() {
                 viewModel = viewModel,
                 onSwap = { toggleEvent(null) },
                 onOpenFees = ::openFeesSettings,
-                onDismiss = { quickConversionsVisible = false },
+                onDismiss = dismissQuickConversions,
+            )
+        }
+        if (historicalDatePickerVisible) {
+            HistoricalDatePickerSheet(
+                initial = viewModel.getHistoricalDate(),
+                onPick = viewModel::setHistoricalDate,
+                onDismiss = dismissHistoricalDatePicker,
             )
         }
     }
@@ -337,7 +376,7 @@ class MainActivity : BaseActivity() {
                 true
             }
             R.id.date_picker -> {
-                openHistoricalDatePicker()
+                openHistoricalDatePicker?.invoke()
                 true
             }
             R.id.cart -> {
@@ -361,7 +400,7 @@ class MainActivity : BaseActivity() {
             DrawerAction.Timeline -> openTimelineActivity()
             DrawerAction.Cart -> startActivity(Intent(this, CartActivity::class.java))
             DrawerAction.QuickConversions -> openQuickConversions?.invoke()
-            DrawerAction.DatePicker -> openHistoricalDatePicker()
+            DrawerAction.DatePicker -> openHistoricalDatePicker?.invoke()
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
             DrawerAction.Share -> shareCurrentConversion()
             DrawerAction.ChangeApi -> showApiProviderPicker()
@@ -578,14 +617,6 @@ class MainActivity : BaseActivity() {
         val to = viewModel.getDestinationCurrency().value ?: return false
         startActivity(TimelineActivity.newIntent(this, from, to))
         return true
-    }
-
-    private fun openHistoricalDatePicker() {
-        showHistoricalDatePickerDialog(
-            context = this,
-            initial = viewModel.getHistoricalDate(),
-            onPick = viewModel::setHistoricalDate,
-        )
     }
 
     private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
