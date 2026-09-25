@@ -169,6 +169,11 @@ class MainActivity : BaseActivity() {
     // is a safe no-op.
     private var openProviderPicker: (() -> Unit)? = null
 
+    // Same pattern as [openProviderPicker] for the quick-conversions sheet —
+    // set by a DisposableEffect in MainRoot so menu/drawer taps can open the
+    // Compose-native sheet without owning its own state.
+    private var openQuickConversions: (() -> Unit)? = null
+
     // Morphing hamburger ↔ arrow indicator hosted on the ActionBar. The
     // ActionBar customView slot only takes a Drawable, so we own it here and
     // let composition push a 0..1 progress from the drawer state each frame.
@@ -266,6 +271,7 @@ class MainActivity : BaseActivity() {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         var providerPickerVisible by remember { mutableStateOf(false) }
+        var quickConversionsVisible by remember { mutableStateOf(false) }
         DisposableEffect(drawerState, scope) {
             toggleDrawer = {
                 scope.launch {
@@ -273,9 +279,11 @@ class MainActivity : BaseActivity() {
                 }
             }
             openProviderPicker = { providerPickerVisible = true }
+            openQuickConversions = { quickConversionsVisible = true }
             onDispose {
                 toggleDrawer = null
                 openProviderPicker = null
+                openQuickConversions = null
             }
         }
         DrawerArrowSync(drawerState = drawerState, drawable = drawerArrow)
@@ -300,6 +308,14 @@ class MainActivity : BaseActivity() {
                 onPicked = { provider -> preferenceModel.setApiProvider(provider) },
             )
         }
+        if (quickConversionsVisible) {
+            QuickConversionsSheet(
+                viewModel = viewModel,
+                onSwap = { toggleEvent(null) },
+                onOpenFees = ::openFeesSettings,
+                onDismiss = { quickConversionsVisible = false },
+            )
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -317,7 +333,7 @@ class MainActivity : BaseActivity() {
         return when (item.itemId) {
             R.id.timeline -> openTimelineActivity()
             R.id.quick_conversions -> {
-                openQuickConversionsDialog()
+                openQuickConversions?.invoke()
                 true
             }
             R.id.date_picker -> {
@@ -344,7 +360,7 @@ class MainActivity : BaseActivity() {
         when (action) {
             DrawerAction.Timeline -> openTimelineActivity()
             DrawerAction.Cart -> startActivity(Intent(this, CartActivity::class.java))
-            DrawerAction.QuickConversions -> openQuickConversionsDialog()
+            DrawerAction.QuickConversions -> openQuickConversions?.invoke()
             DrawerAction.DatePicker -> openHistoricalDatePicker()
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
             DrawerAction.Share -> shareCurrentConversion()
@@ -557,10 +573,6 @@ class MainActivity : BaseActivity() {
         return DateTimeFormatter.ofPattern(pattern).format(temporal).stripRtlMark()
     }
 
-    private fun openQuickConversionsDialog() {
-        QuickConversionsDialog().show(supportFragmentManager, null)
-    }
-
     private fun openTimelineActivity(): Boolean {
         val from = viewModel.getBaseCurrency().value ?: return false
         val to = viewModel.getDestinationCurrency().value ?: return false
@@ -704,7 +716,7 @@ class MainActivity : BaseActivity() {
     }
 
     /*
-     * swap currencies — invoked by QuickConversionsDialog and by the pure-
+     * swap currencies — invoked by QuickConversionsSheet and by the pure-
      * Compose swap FAB (via callbacks). The Compose FAB calls the underlying
      * viewModel setters directly and does not route through here.
      */
