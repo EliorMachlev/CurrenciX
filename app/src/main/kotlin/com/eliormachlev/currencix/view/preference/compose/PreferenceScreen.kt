@@ -68,6 +68,8 @@ private sealed interface OpenDialog {
     data object ApiKey : OpenDialog
 
     data object GraphOptions : OpenDialog
+
+    data object Credits : OpenDialog
 }
 
 /**
@@ -203,7 +205,7 @@ private fun PreferenceSectionsList(
             SectionEnter(SettingsSection.GRAPH.ordinal) { GraphSection { onOpenDialog(OpenDialog.GraphOptions) } }
         }
         item(key = SettingsSection.ABOUT) {
-            SectionEnter(index = SettingsSection.ABOUT.ordinal) { AboutSection(callbacks = callbacks) }
+            SectionEnter(SettingsSection.ABOUT.ordinal) { AboutSection(callbacks) { onOpenDialog(OpenDialog.Credits) } }
         }
         item(key = SettingsSection.VERSION) {
             SectionEnter(index = SettingsSection.VERSION.ordinal) { VersionSection() }
@@ -261,6 +263,7 @@ private fun PreferenceDialogsHost(
                 db = Database(LocalContext.current),
                 onDismiss = dismiss,
             )
+        OpenDialog.Credits -> CreditsSheet(onDismiss = dismiss)
         OpenDialog.ApiKey ->
             TextEntryDialog(
                 title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
@@ -490,7 +493,10 @@ private fun GraphSection(openGraphOptions: () -> Unit) {
 }
 
 @Composable
-private fun AboutSection(callbacks: PreferenceScreenCallbacks) {
+private fun AboutSection(
+    callbacks: PreferenceScreenCallbacks,
+    openCreditsSheet: () -> Unit,
+) {
     val disclaimerHtml = stringResource(id = R.string.disclaimer_summary)
     val disclaimerAnnotated =
         remember(disclaimerHtml) {
@@ -506,7 +512,7 @@ private fun AboutSection(callbacks: PreferenceScreenCallbacks) {
             title = stringResource(id = R.string.credits_title),
             summary = stringResource(id = R.string.credits_summary),
             iconRes = R.drawable.ic_code,
-            onClick = callbacks.onOpenCredits,
+            onClick = openCreditsSheet,
         )
         @Suppress("KotlinConstantConditions")
         if (BuildConfig.FLAVOR == FLAVOR_PLAY) {
@@ -567,7 +573,6 @@ private fun VersionSection() {
 data class PreferenceScreenCallbacks(
     val onOpenFees: () -> Unit,
     val onOpenBackup: () -> Unit,
-    val onOpenCredits: () -> Unit,
     val onRateApp: () -> Unit,
     val onThemeRequiresRestart: () -> Unit,
 )

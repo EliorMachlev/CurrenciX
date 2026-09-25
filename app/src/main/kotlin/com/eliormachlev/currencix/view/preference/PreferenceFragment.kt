@@ -62,7 +62,6 @@ class PreferenceFragment : Fragment() {
         PreferenceScreenCallbacks(
             onOpenFees = { pushFragment(::FeeManagerFragment) },
             onOpenBackup = { pushFragment(::BackupFragment) },
-            onOpenCredits = { CreditsDialog().show(childFragmentManager, null) },
             onRateApp = ::openPlayStore,
             onThemeRequiresRestart = ::rebuildActivityStack,
         )
