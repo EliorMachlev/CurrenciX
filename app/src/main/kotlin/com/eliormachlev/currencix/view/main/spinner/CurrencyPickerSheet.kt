@@ -2,14 +2,16 @@ package com.eliormachlev.currencix.view.main.spinner
 
 import android.app.Application
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
@@ -24,7 +26,11 @@ import java.math.BigDecimal
 
 // Cap the sheet at ~90% of the screen so the paper background peeks above the
 // drag handle — matches the other ledger sheets, which never quite reach the
-// status bar even when their content wants to.
+// status bar even when their content wants to. Held as a fixed dp value
+// (screenHeightDp * fraction) rather than fillMaxHeight(fraction) so the
+// ModalBottomSheet resolves to a single Expanded anchor; a fractional
+// fillMaxHeight let the sheet flip between wrap-content and fill-screen anchors
+// on fast LazyColumn flings, which shows up as a visual "jump".
 private const val SHEET_HEIGHT_FRACTION = 0.9f
 
 // Distinct keys so this sheet's read-only MainViewModel and PreferenceViewModel
@@ -83,11 +89,12 @@ fun CurrencyPickerSheet(
             }
 
         val ready = rates != null
+        val sheetHeight = (LocalConfiguration.current.screenHeightDp * SHEET_HEIGHT_FRACTION).dp
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(SHEET_HEIGHT_FRACTION),
+                    .height(sheetHeight),
         ) {
             SearchableCurrencyPicker(
                 rates =
