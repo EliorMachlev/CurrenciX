@@ -115,9 +115,13 @@
     <string name="cart_share_total">Total: %1$s %2$s</string>
     <string name="cart_unsaved_title">Unsaved changes</string>
     <string name="cart_unsaved_save">Save</string>
+    <string name="cart_unsaved_save_desc">Overwrite the current saved cart with these changes.</string>
     <string name="cart_unsaved_save_as">Save as new</string>
+    <string name="cart_unsaved_save_as_desc">Keep the current saved cart untouched and save a copy under a different name.</string>
     <string name="cart_unsaved_discard">Discard changes</string>
+    <string name="cart_unsaved_discard_desc">Revert to the last saved version and continue.</string>
     <string name="cart_unsaved_continue">Continue</string>
+    <string name="cart_unsaved_continue_desc">Proceed with unsaved changes; you can save later.</string>
 
     <!-- First-run onboarding spotlight (#147) -->
     <string name="onboarding_skip">Skip</string>

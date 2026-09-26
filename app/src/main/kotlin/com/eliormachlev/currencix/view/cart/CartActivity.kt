@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +27,11 @@ import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
+import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
+import com.eliormachlev.currencix.view.cart.compose.CartNameInputDialog
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
+import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmDialog
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -45,10 +50,16 @@ class CartActivity : BaseActivity() {
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
     private val pendingNames = mutableMapOf<String, String>()
 
-    // Bridge for imperative callers (menu handlers, coordinators) to open the
-    // cart-choice sheet. Wired inside CartRoot's DisposableEffect; null when
-    // the compose tree isn't attached (initial construction, teardown).
+    // Bridges for imperative callers (menu handlers, coordinators) to open
+    // each overlay. Wired inside CartRoot's DisposableEffect; null when the
+    // compose tree isn't attached (initial construction, teardown). Kept as
+    // separate signals so the sheets/dialogs can stack (e.g. a delete-confirm
+    // dialog above the load-list sheet) without one closing the other.
     private var openCartChoice: ((CartChoiceRequest) -> Unit)? = null
+    private var openLoadList: (() -> Unit)? = null
+    private var openUnsavedChanges: ((CartUnsavedChangesRequest) -> Unit)? = null
+    private var openNameInput: ((CartNameInputRequest) -> Unit)? = null
+    private var openDeleteConfirm: ((CartDeleteConfirmRequest) -> Unit)? = null
 
     // LiveData sources bridged into Compose. Kept as fields so observeAsState
     // in the list survives cart re-emissions.
@@ -94,6 +105,10 @@ class CartActivity : BaseActivity() {
                 viewModel = viewModel,
                 flushPendingCommits = ::flushPendingCommits,
                 snackbar = ::showSnackbar,
+                showLoadList = { openLoadList?.invoke() },
+                showUnsavedChanges = { request -> openUnsavedChanges?.invoke(request) },
+                showNameInput = { request -> openNameInput?.invoke(request) },
+                showDeleteConfirm = { request -> openDeleteConfirm?.invoke(request) },
             )
         this.keypad =
             CartKeypadController(
@@ -184,13 +199,29 @@ class CartActivity : BaseActivity() {
     }
 
     // Compose root — holds the overlay state that imperative callers push into
-    // (via [openCartChoice]) and renders any active sheet on top of CartScreen.
+    // (via the openXxx fields) and renders CartScreen with a CartOverlays host
+    // on top. CartRoot itself only wires state → bridges so it stays under the
+    // detekt LongMethod threshold; overlay rendering is in CartOverlays.
     @Composable
     private fun CartRoot() {
         var cartChoiceRequest by remember { mutableStateOf<CartChoiceRequest?>(null) }
+        var loadListVisible by remember { mutableStateOf(false) }
+        var unsavedChangesRequest by remember { mutableStateOf<CartUnsavedChangesRequest?>(null) }
+        var nameInputRequest by remember { mutableStateOf<CartNameInputRequest?>(null) }
+        var deleteConfirmRequest by remember { mutableStateOf<CartDeleteConfirmRequest?>(null) }
         DisposableEffect(Unit) {
             openCartChoice = { request -> cartChoiceRequest = request }
-            onDispose { openCartChoice = null }
+            openLoadList = { loadListVisible = true }
+            openUnsavedChanges = { request -> unsavedChangesRequest = request }
+            openNameInput = { request -> nameInputRequest = request }
+            openDeleteConfirm = { request -> deleteConfirmRequest = request }
+            onDispose {
+                openCartChoice = null
+                openLoadList = null
+                openUnsavedChanges = null
+                openNameInput = null
+                openDeleteConfirm = null
+            }
         }
         CartScreen(
             viewModel = viewModel,
@@ -217,11 +248,82 @@ class CartActivity : BaseActivity() {
             onReorderStart = keypad::closeKeypad,
             onOpenFees = ::openFeesSettings,
         )
+        CartOverlays(
+            cartChoiceRequest = cartChoiceRequest,
+            dismissCartChoice = { cartChoiceRequest = null },
+            loadListVisible = loadListVisible,
+            dismissLoadList = { loadListVisible = false },
+            unsavedChangesRequest = unsavedChangesRequest,
+            dismissUnsavedChanges = { unsavedChangesRequest = null },
+            nameInputRequest = nameInputRequest,
+            dismissNameInput = { nameInputRequest = null },
+            deleteConfirmRequest = deleteConfirmRequest,
+            dismissDeleteConfirm = { deleteConfirmRequest = null },
+        )
+    }
+
+    // Compose overlay host — every sheet/dialog CartRoot can open sits here.
+    // Extracted so CartRoot stays under the detekt LongMethod threshold and
+    // overlay wiring reads as one block.
+    @Composable
+    @Suppress("LongParameterList")
+    private fun CartOverlays(
+        cartChoiceRequest: CartChoiceRequest?,
+        dismissCartChoice: () -> Unit,
+        loadListVisible: Boolean,
+        dismissLoadList: () -> Unit,
+        unsavedChangesRequest: CartUnsavedChangesRequest?,
+        dismissUnsavedChanges: () -> Unit,
+        nameInputRequest: CartNameInputRequest?,
+        dismissNameInput: () -> Unit,
+        deleteConfirmRequest: CartDeleteConfirmRequest?,
+        dismissDeleteConfirm: () -> Unit,
+    ) {
         cartChoiceRequest?.let { request ->
             CartChoiceSheet(
                 titleRes = request.titleRes,
                 options = request.options,
-                onDismiss = { cartChoiceRequest = null },
+                onDismiss = dismissCartChoice,
+            )
+        }
+        if (loadListVisible) {
+            CartLoadSheet(
+                viewModel = viewModel,
+                onPick = saveLoadCoordinator::onLoadPick,
+                onRename = saveLoadCoordinator::onLoadRename,
+                onDelete = saveLoadCoordinator::onLoadDelete,
+                onDismiss = dismissLoadList,
+            )
+        }
+        unsavedChangesRequest?.let { request ->
+            CartUnsavedChangesSheet(
+                canOverwrite = request.canOverwrite,
+                onSave = request.onSave,
+                onSaveAs = request.onSaveAs,
+                onDiscard = request.onDiscard,
+                onContinue = request.onContinue,
+                onDismiss = dismissUnsavedChanges,
+            )
+        }
+        nameInputRequest?.let { request ->
+            CartNameInputDialog(
+                titleRes = request.titleRes,
+                initial = request.initial,
+                onOk = request.onOk,
+                onDismiss = dismissNameInput,
+            )
+        }
+        deleteConfirmRequest?.let { request ->
+            LedgerConfirmDialog(
+                title = request.name,
+                message = stringResource(id = R.string.cart_delete_confirm, request.name),
+                confirmLabel = stringResource(id = R.string.cart_delete_confirm_button),
+                destructive = true,
+                onConfirm = {
+                    request.onConfirm()
+                    dismissDeleteConfirm()
+                },
+                onDismiss = dismissDeleteConfirm,
             )
         }
     }
