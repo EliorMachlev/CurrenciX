@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
@@ -52,12 +55,14 @@ import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogActions
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogFrame
+import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
 import java.util.UUID
 
+// Fee editor dialog: horizontal slice of the screen (95%) so wide rows
+// (currency buttons + bothWays label) don't get truncated on typical phones.
+private const val FEE_EDITOR_WIDTH_FRACTION = 0.95f
 private val FEE_EDITOR_SECTION_GAP: Dp = 16.dp
 private val FEE_EDITOR_LABEL_GAP: Dp = 4.dp
 private val FEE_EDITOR_INTERNAL_PADDING: Dp = 4.dp
@@ -96,8 +101,8 @@ internal const val SUMMARY_SEPARATOR = "  ·  "
  * exposed when [onDelete] is non-null (i.e. editing an existing entry).
  *
  * Owns the currency-picker sheet state internally — from/to buttons flip
- * [pickerState] on tap and the sheet renders as a sibling of the dialog so
- * callers don't have to thread a picker callback through the compose tree.
+ * [pickerState] on tap and the sheet renders as a sibling of the AlertDialog
+ * so callers don't have to thread a picker callback through the compose tree.
  */
 @Composable
 internal fun FeeEditorDialog(
@@ -124,39 +129,40 @@ internal fun FeeEditorDialog(
         }
     val cancel = rememberHapticOnClick(onDismiss)
     val delete = onDelete?.let { rememberHapticOnClick(it) }
-    val deleteLabel = stringResource(id = R.string.fee_delete)
 
-    LedgerDialogFrame(title = stringResource(id = titleRes), onDismiss = onDismiss) {
-        FeeEditorDialogBody(
-            name = name,
-            onNameChange = { name = it },
-            active = active,
-            onActiveChange = { active = it },
-            isPair = isPair,
-            from = from,
-            onFromChange = { from = it },
-            to = to,
-            onToChange = { to = it },
-            bothWays = bothWays,
-            onBothWaysChange = { bothWays = it },
-            percentText = percentText.value,
-            onPercentChange = { percentText.value = it },
-            onPickCurrency = { d, cb -> pickerState = CurrencyPickerRequest(d, cb) },
-        )
-        LedgerDialogActions(
-            confirmLabel = stringResource(id = android.R.string.ok),
-            onConfirm = confirm,
-            onCancel = cancel,
-            leadingDestructiveLabel = if (delete != null) deleteLabel else null,
-            onLeadingDestructive = delete,
+    AppTheme {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+            modifier = Modifier.fillMaxWidth(FEE_EDITOR_WIDTH_FRACTION),
+            title = { Text(text = stringResource(id = titleRes)) },
+            text = {
+                FeeEditorDialogBody(
+                    name = name,
+                    onNameChange = { name = it },
+                    active = active,
+                    onActiveChange = { active = it },
+                    isPair = isPair,
+                    from = from,
+                    onFromChange = { from = it },
+                    to = to,
+                    onToChange = { to = it },
+                    bothWays = bothWays,
+                    onBothWaysChange = { bothWays = it },
+                    percentText = percentText.value,
+                    onPercentChange = { percentText.value = it },
+                    onPickCurrency = { d, cb -> pickerState = CurrencyPickerRequest(d, cb) },
+                )
+            },
+            confirmButton = { FeeEditorDialogFooter(delete = delete, cancel = cancel, confirm = confirm) },
         )
     }
     FeeEditorPickerOverlay(request = pickerState, onDismiss = { pickerState = null })
 }
 
-// Sheet overlay for the from/to buttons — sibling of the dialog (each is its
-// own Window composition), so both render layered without needing the picker
-// state to live above the dialog.
+// Sheet overlay for the from/to buttons — sibling of the AlertDialog (each is
+// its own Window composition), so both render layered without needing the
+// picker state to live above the dialog.
 @Composable
 private fun FeeEditorPickerOverlay(
     request: CurrencyPickerRequest?,
@@ -246,6 +252,40 @@ private fun FeeEditorDialogBody(
         }
         LabeledField(labelRes = R.string.fee_edit_percent, topGap = FEE_EDITOR_SECTION_GAP) {
             FeePercentField(value = percentText, onValueChange = onPercentChange)
+        }
+    }
+}
+
+/**
+ * Confirm-row footer for [FeeEditorDialog] — delete (only when editing) on
+ * the leading edge, cancel + ok on the trailing edge. Split out so the parent
+ * dialog stays below LongMethod threshold.
+ */
+@Composable
+private fun FeeEditorDialogFooter(
+    delete: (() -> Unit)?,
+    cancel: () -> Unit,
+    confirm: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (delete != null) {
+            TextButton(onClick = delete) {
+                Text(stringResource(id = R.string.fee_delete))
+            }
+        } else {
+            Spacer(Modifier.width(0.dp))
+        }
+        Row {
+            TextButton(onClick = cancel) {
+                Text(stringResource(id = android.R.string.cancel))
+            }
+            TextButton(onClick = confirm) {
+                Text(stringResource(id = android.R.string.ok))
+            }
         }
     }
 }
@@ -347,30 +387,35 @@ internal fun <T : Fee> FeePickerDialog(
             onDismiss()
             onAdd()
         }
-    LedgerDialogFrame(title = title, onDismiss = onDismiss) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            entries.forEach { fee ->
-                PickerRow(
-                    fee = fee,
-                    checked = fee.id == effectiveId,
-                    onRadioClick = {
-                        onPicked(fee.id)
-                        onDismiss()
-                    },
-                    onEditClick = {
-                        onDismiss()
-                        onEdit(fee)
-                    },
-                )
-            }
-            if (entries.isNotEmpty()) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            AddRow(onClick = add)
-        }
-        LedgerDialogActions(
-            confirmLabel = stringResource(id = android.R.string.cancel),
-            onConfirm = cancel,
-            onCancel = cancel,
-            showConfirm = false,
+    AppTheme {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(text = title) },
+            text = {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    entries.forEach { fee ->
+                        PickerRow(
+                            fee = fee,
+                            checked = fee.id == effectiveId,
+                            onRadioClick = {
+                                onPicked(fee.id)
+                                onDismiss()
+                            },
+                            onEditClick = {
+                                onDismiss()
+                                onEdit(fee)
+                            },
+                        )
+                    }
+                    if (entries.isNotEmpty()) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    AddRow(onClick = add)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = cancel) {
+                    Text(stringResource(id = android.R.string.cancel))
+                }
+            },
         )
     }
 }
