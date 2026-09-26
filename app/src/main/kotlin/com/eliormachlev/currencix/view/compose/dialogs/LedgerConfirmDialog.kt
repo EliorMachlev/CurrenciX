@@ -217,8 +217,12 @@ internal fun LedgerDialogFrame(
 
 /**
  * Trailing action row — Cancel + Confirm text buttons, brass by default, error
- * tint for [destructive] confirms. Extracted so every dialog body drops this
- * shape in as a single call rather than re-wiring the row / haptics per site.
+ * tint for [destructive] confirms. Optional [leadingDestructiveLabel] +
+ * [onLeadingDestructive] surface a delete-shape action on the row's leading
+ * edge (e.g. the "Delete" button in the fee editor) so callers don't have to
+ * re-wire the split-row layout per site. Pass [showConfirm] = false for
+ * cancel-only footers (e.g. the fee picker's "close" bar). Extracted so every
+ * dialog body drops this shape in as a single call.
  */
 @Composable
 internal fun LedgerDialogActions(
@@ -226,20 +230,35 @@ internal fun LedgerDialogActions(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     destructive: Boolean = false,
+    leadingDestructiveLabel: String? = null,
+    onLeadingDestructive: (() -> Unit)? = null,
+    showConfirm: Boolean = true,
 ) {
     Spacer(Modifier.height(DIALOG_BODY_TO_ACTIONS_GAP))
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (leadingDestructiveLabel != null && onLeadingDestructive != null) {
+            TextButton(onClick = onLeadingDestructive) {
+                Text(
+                    text = leadingDestructiveLabel,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            Spacer(Modifier.weight(1f))
+        }
         TextButton(onClick = onCancel) {
             Text(stringResource(id = android.R.string.cancel))
         }
-        TextButton(onClick = onConfirm) {
-            Text(
-                text = confirmLabel,
-                color = if (destructive) MaterialTheme.colorScheme.error else Color.Unspecified,
-            )
+        if (showConfirm) {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = confirmLabel,
+                    color = if (destructive) MaterialTheme.colorScheme.error else Color.Unspecified,
+                )
+            }
         }
     }
 }
