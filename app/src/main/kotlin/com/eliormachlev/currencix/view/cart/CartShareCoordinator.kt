@@ -11,6 +11,8 @@ import com.eliormachlev.currencix.util.toCartDisplayString
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.util.toCsv
 import com.eliormachlev.currencix.util.toPdfBytes
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
 import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 
@@ -29,6 +31,7 @@ class CartShareCoordinator(
     private val viewModel: CartViewModel,
     private val flushPendingCommits: () -> Unit,
     private val snackbar: (String) -> Unit,
+    private val showChoice: (CartChoiceRequest) -> Unit,
 ) {
     fun show() {
         flushPendingCommits()
@@ -37,23 +40,25 @@ class CartShareCoordinator(
             snackbar(activity.getString(R.string.cart_share_empty))
             return
         }
-        activity.showCartChoiceExplainerDialog(
-            titleRes = R.string.menu_share,
-            choices =
-                listOf(
-                    CartChoice(
-                        R.string.cart_share_option_text,
-                        R.string.cart_share_option_text_desc,
-                    ) { shareAsText(snapshot) },
-                    CartChoice(
-                        R.string.cart_share_option_csv,
-                        R.string.cart_share_option_csv_desc,
-                    ) { shareAsCsv(snapshot) },
-                    CartChoice(
-                        R.string.cart_share_option_pdf,
-                        R.string.cart_share_option_pdf_desc,
-                    ) { shareAsPdf(snapshot) },
-                ),
+        showChoice(
+            CartChoiceRequest(
+                titleRes = R.string.menu_share,
+                options =
+                    listOf(
+                        CartChoiceOption(
+                            R.string.cart_share_option_text,
+                            R.string.cart_share_option_text_desc,
+                        ) { shareAsText(snapshot) },
+                        CartChoiceOption(
+                            R.string.cart_share_option_csv,
+                            R.string.cart_share_option_csv_desc,
+                        ) { shareAsCsv(snapshot) },
+                        CartChoiceOption(
+                            R.string.cart_share_option_pdf,
+                            R.string.cart_share_option_pdf_desc,
+                        ) { shareAsPdf(snapshot) },
+                    ),
+            ),
         )
     }
 

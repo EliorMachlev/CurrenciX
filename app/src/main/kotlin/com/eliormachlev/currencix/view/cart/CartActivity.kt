@@ -5,6 +5,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.LiveData
@@ -17,6 +23,9 @@ import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.view.BaseActivity
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
@@ -35,6 +44,11 @@ class CartActivity : BaseActivity() {
     // Pending, un-debounced name edits from the composable rows. Flushed
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
     private val pendingNames = mutableMapOf<String, String>()
+
+    // Bridge for imperative callers (menu handlers, coordinators) to open the
+    // cart-choice sheet. Wired inside CartRoot's DisposableEffect; null when
+    // the compose tree isn't attached (initial construction, teardown).
+    private var openCartChoice: ((CartChoiceRequest) -> Unit)? = null
 
     // LiveData sources bridged into Compose. Kept as fields so observeAsState
     // in the list survives cart re-emissions.
@@ -72,6 +86,7 @@ class CartActivity : BaseActivity() {
                 viewModel = viewModel,
                 flushPendingCommits = ::flushPendingCommits,
                 snackbar = ::showSnackbar,
+                showChoice = ::showCartChoice,
             )
         this.saveLoadCoordinator =
             CartSaveLoadCoordinator(
@@ -91,33 +106,7 @@ class CartActivity : BaseActivity() {
         setContentView(
             ComposeView(this).apply {
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-                setContent {
-                    CartScreen(
-                        viewModel = viewModel,
-                        keypad = keypad,
-                        itemsSource = itemsLive,
-                        currencySource = currencyLive,
-                        keyListenerSource = keyListenerLive,
-                        onAddItem = { viewModel.addItem(name = "", expression = "") },
-                        onNameCommit = ::commitName,
-                        onNamePending = { id, name -> pendingNames[id] = name },
-                        onExpressionTap = { item -> keypad.openKeypadFor(item.id, item.expression) },
-                        onExpressionChange = keypad::onInlineExpressionChanged,
-                        onTogglePin = viewModel::togglePinned,
-                        onDelete = { id ->
-                            if (keypad.activeItemId.value == id) keypad.closeKeypad()
-                            pendingNames.remove(id)
-                            viewModel.removeItem(id)
-                        },
-                        onReorder = viewModel::reorderItem,
-                        // A drag doesn't interact well with a floating keypad — the
-                        // row being edited would slide out from under the caret.
-                        // Commit the current edit and close before the gesture takes
-                        // over the visible list.
-                        onReorderStart = keypad::closeKeypad,
-                        onOpenFees = ::openFeesSettings,
-                    )
-                }
+                setContent { CartRoot() }
             },
         )
 
@@ -194,20 +183,69 @@ class CartActivity : BaseActivity() {
         startActivity(PreferenceActivity.feesIntent(this))
     }
 
+    // Compose root — holds the overlay state that imperative callers push into
+    // (via [openCartChoice]) and renders any active sheet on top of CartScreen.
+    @Composable
+    private fun CartRoot() {
+        var cartChoiceRequest by remember { mutableStateOf<CartChoiceRequest?>(null) }
+        DisposableEffect(Unit) {
+            openCartChoice = { request -> cartChoiceRequest = request }
+            onDispose { openCartChoice = null }
+        }
+        CartScreen(
+            viewModel = viewModel,
+            keypad = keypad,
+            itemsSource = itemsLive,
+            currencySource = currencyLive,
+            keyListenerSource = keyListenerLive,
+            onAddItem = { viewModel.addItem(name = "", expression = "") },
+            onNameCommit = ::commitName,
+            onNamePending = { id, name -> pendingNames[id] = name },
+            onExpressionTap = { item -> keypad.openKeypadFor(item.id, item.expression) },
+            onExpressionChange = keypad::onInlineExpressionChanged,
+            onTogglePin = viewModel::togglePinned,
+            onDelete = { id ->
+                if (keypad.activeItemId.value == id) keypad.closeKeypad()
+                pendingNames.remove(id)
+                viewModel.removeItem(id)
+            },
+            onReorder = viewModel::reorderItem,
+            // A drag doesn't interact well with a floating keypad — the
+            // row being edited would slide out from under the caret.
+            // Commit the current edit and close before the gesture takes
+            // over the visible list.
+            onReorderStart = keypad::closeKeypad,
+            onOpenFees = ::openFeesSettings,
+        )
+        cartChoiceRequest?.let { request ->
+            CartChoiceSheet(
+                titleRes = request.titleRes,
+                options = request.options,
+                onDismiss = { cartChoiceRequest = null },
+            )
+        }
+    }
+
+    private fun showCartChoice(request: CartChoiceRequest) {
+        openCartChoice?.invoke(request)
+    }
+
     private fun confirmClear() {
-        showCartChoiceExplainerDialog(
-            titleRes = R.string.cart_menu_clear,
-            choices =
-                listOf(
-                    CartChoice(
-                        R.string.cart_clear_items_only,
-                        R.string.cart_clear_items_only_desc,
-                    ) { viewModel.clearItems() },
-                    CartChoice(
-                        R.string.cart_clear_reset_all,
-                        R.string.cart_clear_reset_all_desc,
-                    ) { viewModel.resetToMainDefaults() },
-                ),
+        showCartChoice(
+            CartChoiceRequest(
+                titleRes = R.string.cart_menu_clear,
+                options =
+                    listOf(
+                        CartChoiceOption(
+                            R.string.cart_clear_items_only,
+                            R.string.cart_clear_items_only_desc,
+                        ) { viewModel.clearItems() },
+                        CartChoiceOption(
+                            R.string.cart_clear_reset_all,
+                            R.string.cart_clear_reset_all_desc,
+                        ) { viewModel.resetToMainDefaults() },
+                    ),
+            ),
         )
     }
 
