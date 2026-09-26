@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.model
 
 /**
- * Persisted keyboard-picker preference. Serialized to SharedPreferences by
+ * Persisted keyboard-picker preference. Serialized to DataStore by
  * [ordinal], so entries here must not be reordered — append new ones at the
  * end.
  */

@@ -6,9 +6,6 @@
     <string name="fee_title">Provizija za inozemne transakcije</string>
     <string name="fee_summary">Upravljanje mjenjačkim, bankovnim/kartičnim provizijama i onima za pojedine parove</string>
     <string name="fee_manager_title">Provizije</string>
-    <string name="fee_side_label">Vrsta naknade</string>
-    <string name="fee_side_original">Naknada za konverziju</string>
-    <string name="fee_side_converted">Preračunata naknada</string>
     <string name="fee_section_global_exchange">Globalna mjenjačka provizija</string>
     <string name="fee_section_global_bank">Globalna bankovna/kartična provizija</string>
     <string name="fee_section_specific_pair">Provizija za određeni valutni par</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">U</string>
     <string name="fee_pair_pick_currency">Odaberi valutu</string>
     <string name="fee_true_cost_prefix">"Naknada za konverziju: "</string>
-    <string name="fee_original_value_prefix">"Naknada za umanjenje: "</string>
     <string name="fee_cost_with_fee_prefix">"Cijena s naknadom: "</string>
-    <string name="fee_value_before_fee_prefix">"Vrijednost prije naknade: "</string>
-    <string name="fee_side_summary_original">Prikazani preračunati iznos ostaje po srednjem tržišnom tečaju; provizije se prikazuju odvojeno kao \"Naknada za konverziju\".</string>
-    <string name="fee_side_summary_converted">Provizije su uključene u prikazani preračunati iznos.</string>
     <string name="fee_empty">Još nema provizija</string>
     <string name="previewConversion_title">Pretpregled konverzije</string>
     <string name="previewConversion_summary">Prikazuje tečaj konverzije za svaku valutu u izborniku valuta.</string>

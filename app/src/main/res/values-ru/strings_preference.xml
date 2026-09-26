@@ -6,9 +6,6 @@
     <string name="fee_title">Комиссия за международный перевод</string>
     <string name="fee_summary">Управление комиссиями обмена, банка/карты и по конкретным парам валют</string>
     <string name="fee_manager_title">Комиссии</string>
-    <string name="fee_side_label">Тип комиссии</string>
-    <string name="fee_side_original">Комиссия за конвертацию</string>
-    <string name="fee_side_converted">Конвертированная комиссия</string>
     <string name="fee_section_global_exchange">Общая комиссия за обмен</string>
     <string name="fee_section_global_bank">Общая комиссия банка/карты</string>
     <string name="fee_section_specific_pair">Комиссия за обмен конкретной пары валют</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">В</string>
     <string name="fee_pair_pick_currency">Выбрать валюту</string>
     <string name="fee_true_cost_prefix">"Комиссия за конвертацию: "</string>
-    <string name="fee_original_value_prefix">"Комиссия за списание: "</string>
     <string name="fee_cost_with_fee_prefix">"Стоимость с комиссией: "</string>
-    <string name="fee_value_before_fee_prefix">"Сумма до комиссии: "</string>
-    <string name="fee_side_summary_original">Отображаемая конвертированная сумма остаётся по среднерыночному курсу; комиссии показываются отдельно как \"Комиссия за конвертацию\".</string>
-    <string name="fee_side_summary_converted">Комиссии уже включены в отображаемую конвертированную сумму.</string>
     <string name="fee_empty">Комиссий пока нет</string>
     <string name="previewConversion_title">Предпросмотр обменных курсов</string>
     <string name="previewConversion_summary">Показывать текущий обменный курс для каждой валюты в меню выбора валют.</string>

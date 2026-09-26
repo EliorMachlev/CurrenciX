@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,12 +20,14 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.hapticTap
+import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.BaseActivity
-import com.eliormachlev.currencix.view.preference.GraphOptionsDialog
+import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
-import com.google.android.material.color.MaterialColors
+import kotlinx.collections.immutable.toImmutableList
 import java.time.format.DateTimeFormatter
 
 class TimelineActivity : BaseActivity() {
@@ -45,17 +48,17 @@ class TimelineActivity : BaseActivity() {
     private lateinit var timelineModel: TimelineViewModel
     private var menuItemToggle: MenuItem? = null
 
+    // Wired from the setContent block below via DisposableEffect so the
+    // toolbar menu item can trigger the compose-hosted GraphOptionsSheet
+    // without threading state through the compose tree.
+    private var openGraphOptionsSheet: (() -> Unit)? = null
+
     // Foldable state is hoisted into a mutableState so the composable re-lays out
     // whenever WindowInfoTracker emits a new posture.
     private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Wrap the Compose surface in an XML root with fitsSystemWindows="true"
-        // so edge-to-edge (targetSdk 35+) doesn't draw the chart behind the
-        // ActionBar / status bar. Mirrors the pattern used by every other
-        // activity in this app.
-        setContentView(R.layout.activity_timeline)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
@@ -86,48 +89,62 @@ class TimelineActivity : BaseActivity() {
 
         observeFoldingFeature { feature -> foldingFeatureState.value = feature }
 
-        val lineColor = Color(MaterialColors.getColor(this, R.attr.colorPrimary, 0))
-        val axisColor =
-            Color(MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0))
-        // colorOnSurface (text-on-background) keeps the scrub line visually
-        // distinct from the green primary (max highlight), red min line, and
-        // the blue/purple period-change verticals on every theme.
-        val scrubLineColor = Color(MaterialColors.getColor(this, R.attr.colorOnSurface, 0))
+        val lineColor = Color(resolveThemeColor(R.attr.colorPrimary))
+        val axisColor = Color(resolveThemeColor(android.R.attr.textColorSecondary))
+        // Text-on-background keeps the scrub line visually distinct from the
+        // green primary (max highlight), red min line, and the blue/purple
+        // period-change verticals on every theme.
+        val scrubLineColor = Color(resolveThemeColor(android.R.attr.textColorPrimary))
 
-        findViewById<ComposeView>(R.id.timeline_compose).setContent {
+        val composeHost = ComposeView(this)
+        setContentView(composeHost)
+        composeHost.setContent {
             val feature by remember { foldingFeatureState }
-            TimelineScreen(
-                model = timelineModel,
-                formatter = formatter,
-                foldingFeature = feature,
-                chartContent = {
-                    val entriesLive =
-                        timelineModel.getRates().map { rates ->
-                            rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }
-                        }
-                    // Range extremes (scrub-independent) so the chart's min/max
-                    // reference lines stay pinned to the visible period's
-                    // absolute low/high while the finger drags.
-                    val highlightMinLive = timelineModel.getRatesRangeMin()
-                    val highlightMaxLive = timelineModel.getRatesRangeMax()
-                    TimelineChart(
-                        entriesLive = entriesLive,
-                        showGridLive = db.isChartGridEnabled(),
-                        showXAxisLive = db.isChartXAxisLabelEnabled(),
-                        showYAxisLive = db.isChartYAxisLabelEnabled(),
-                        highlightExtremesLive = db.isChartHighlightExtremesEnabled(),
-                        highlightPeriodChangeLive = db.isChartHighlightPeriodChangeEnabled(),
-                        dateFormatLive = db.getDateFormat(),
-                        highlightMinLive = highlightMinLive,
-                        highlightMaxLive = highlightMaxLive,
-                        lineColor = lineColor,
-                        baselineColor = axisColor,
-                        axisColor = axisColor,
-                        scrubLineColor = scrubLineColor,
-                        onScrub = { date -> timelineModel.setPastDate(date) },
+            var showGraphOptions by remember { mutableStateOf(false) }
+            DisposableEffect(Unit) {
+                openGraphOptionsSheet = { showGraphOptions = true }
+                onDispose { openGraphOptionsSheet = null }
+            }
+            AppTheme {
+                TimelineScreen(
+                    model = timelineModel,
+                    formatter = formatter,
+                    foldingFeature = feature,
+                    chartContent = {
+                        val entriesLive =
+                            timelineModel.getRates().map { rates ->
+                                rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }?.toImmutableList()
+                            }
+                        // Range extremes (scrub-independent) so the chart's min/max
+                        // reference lines stay pinned to the visible period's
+                        // absolute low/high while the finger drags.
+                        val highlightMinLive = timelineModel.getRatesRangeMin()
+                        val highlightMaxLive = timelineModel.getRatesRangeMax()
+                        TimelineChart(
+                            entriesLive = entriesLive,
+                            showGridLive = db.isChartGridEnabled(),
+                            showXAxisLive = db.isChartXAxisLabelEnabled(),
+                            showYAxisLive = db.isChartYAxisLabelEnabled(),
+                            highlightExtremesLive = db.isChartHighlightExtremesEnabled(),
+                            highlightPeriodChangeLive = db.isChartHighlightPeriodChangeEnabled(),
+                            dateFormatLive = db.getDateFormat(),
+                            highlightMinLive = highlightMinLive,
+                            highlightMaxLive = highlightMaxLive,
+                            lineColor = lineColor,
+                            baselineColor = axisColor,
+                            axisColor = axisColor,
+                            scrubLineColor = scrubLineColor,
+                            onScrub = { date -> timelineModel.setPastDate(date) },
+                        )
+                    },
+                )
+                if (showGraphOptions) {
+                    GraphOptionsSheet(
+                        db = db,
+                        onDismiss = { showGraphOptions = false },
                     )
-                },
-            )
+                }
+            }
         }
     }
 
@@ -150,7 +167,7 @@ class TimelineActivity : BaseActivity() {
                 true
             }
             R.id.graph_options -> {
-                GraphOptionsDialog().show(supportFragmentManager, null)
+                openGraphOptionsSheet?.invoke()
                 true
             }
             else -> super.onOptionsItemSelected(item)

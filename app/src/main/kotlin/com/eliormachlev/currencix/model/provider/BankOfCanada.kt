@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.model.provider
 import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
@@ -27,6 +28,7 @@ class BankOfCanada : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
+        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         // `recent=1` returns just the latest observation; a start/end range asks
         // for the historical window ending on the requested date.

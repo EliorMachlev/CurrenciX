@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +42,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -65,9 +62,10 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
-import com.eliormachlev.currencix.view.compose.dragReorderGraphics
-import com.eliormachlev.currencix.view.compose.dragReorderHandle
-import com.eliormachlev.currencix.view.compose.rememberDragReorderState
+import com.eliormachlev.currencix.view.compose.ledgerHairline
+import kotlinx.collections.immutable.ImmutableList
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -76,6 +74,14 @@ private const val FLAG_HEIGHT_DP = 17
 private const val FLAG_CORNER_RADIUS_DP = 2
 private const val ROW_MIN_HEIGHT_DP = 56
 private const val API_HINT_ALPHA = 0.7f
+private const val DRAG_ACTIVE_ALPHA = 0.85f
+
+// Prefix on LazyColumn keys for starred rows so a currency ISO can never
+// collide with a plain (non-starred) row's key while still living in the
+// same LazyColumn — the two sections share the parent list because the
+// sh.calvin reorderable library requires each draggable item to be a
+// LazyColumn `item()` in its own right.
+private const val STARRED_KEY_PREFIX = "starred_"
 
 internal data class CurrencyPickerConversion(
     val baseRate: Rate,
@@ -86,8 +92,8 @@ internal data class CurrencyPickerConversion(
 @Composable
 @Suppress("LongParameterList")
 internal fun SearchableCurrencyPicker(
-    rates: List<Rate>,
-    stars: List<Currency>,
+    rates: ImmutableList<Rate>,
+    stars: ImmutableList<Currency>,
     filterStarred: Boolean,
     conversion: CurrencyPickerConversion?,
     disabledCurrency: Currency?,
@@ -113,11 +119,12 @@ internal fun SearchableCurrencyPicker(
         )
         val allowReorder = query.isEmpty() && !filterStarred
         // Starred rates in the user-defined order, filtered by query. Held in
-        // a SnapshotStateList so the drag gesture can mutate it in place on
-        // drop without rebuilding the whole picker. Keyed on the inputs so the
-        // list is populated synchronously on the first frame that has data —
-        // an async LaunchedEffect fill would render an empty favorites section
-        // first, and LazyList's key-anchored scroll would then hold the first
+        // a SnapshotStateList so the sh.calvin reorderable `onMove` callback
+        // can mutate it in place as the finger crosses row midpoints without
+        // rebuilding the whole picker. Keyed on the inputs so the list is
+        // populated synchronously on the first frame that has data — an async
+        // LaunchedEffect fill would render an empty favorites section first,
+        // and LazyList's key-anchored scroll would then hold the first
         // non-starred key at the top when favorites arrived on the next frame.
         val starredDisplay =
             remember(rates, stars, query) {
@@ -236,7 +243,7 @@ private fun KeepAtTopOnFavoritesAppear(
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 private fun CurrencyList(
     starredItems: SnapshotStateList<Rate>,
     nonStarredItems: List<Rate>,
@@ -252,6 +259,23 @@ private fun CurrencyList(
     // scoped to the current composition — otherwise the saveable state carries
     // a prior dialog's scroll offset over and the list opens mid-scroll.
     val listState = remember { LazyListState() }
+    // sh.calvin's onMove fires as the finger crosses row midpoints and expects
+    // the caller to mutate the backing list synchronously. Keys map back to
+    // starredItems by ISO (see [STARRED_KEY_PREFIX]); the library only calls
+    // onMove for keys registered via ReorderableItem, so non-starred rows and
+    // api_hint aren't in the swap universe.
+    val reorderState =
+        rememberReorderableLazyListState(listState) { from, to ->
+            val fromIso = (from.key as? String)?.removePrefix(STARRED_KEY_PREFIX) ?: return@rememberReorderableLazyListState
+            val toIso = (to.key as? String)?.removePrefix(STARRED_KEY_PREFIX) ?: return@rememberReorderableLazyListState
+            val fromIndex = starredItems.indexOfFirst { it.currency.name == fromIso }
+            val toIndex = starredItems.indexOfFirst { it.currency.name == toIso }
+            if (fromIndex < 0 || toIndex < 0 || fromIndex == toIndex) return@rememberReorderableLazyListState
+            Snapshot.withMutableSnapshot {
+                val moved = starredItems.removeAt(fromIndex)
+                starredItems.add(toIndex, moved)
+            }
+        }
     // When the favorites slot appears at index 0 (empty → non-empty), LazyList
     // key-preservation keeps the previously-first-visible non-starred key at
     // the viewport top, pushing the new favorites section above the fold. If
@@ -261,21 +285,34 @@ private fun CurrencyList(
     if (starredItems.isEmpty() && nonStarredItems.isEmpty()) return
 
     LazyColumn(state = listState, modifier = modifier) {
-        // Favorites live in a single lazy slot as a non-lazy Column. That
-        // sidesteps LazyList's key-anchored scroll preservation entirely for
-        // the drag: the drag mutation happens inside the Column, and
-        // LazyColumn just sees one item slot ("favorites") whose contents
-        // recompose.
-        if (starredItems.isNotEmpty()) {
-            item(key = "favorites") {
-                FavoritesSection(
-                    items = starredItems,
+        items(items = starredItems, key = { STARRED_KEY_PREFIX + it.currency.name }) { rate ->
+            ReorderableItem(
+                state = reorderState,
+                key = STARRED_KEY_PREFIX + rate.currency.name,
+            ) { isDragging ->
+                CurrencyRow(
+                    rate = rate,
+                    isStarred = true,
                     conversion = conversion,
-                    allowReorder = allowReorder,
-                    disabledCurrency = disabledCurrency,
-                    onRateClicked = onRateClicked,
-                    onStarClicked = onStarClicked,
-                    onDragEnded = onDragEnded,
+                    isDisabled = rate.currency == disabledCurrency,
+                    onClick = { onRateClicked(rate) },
+                    onStarClick = { onStarClicked(rate) },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .then(
+                                if (allowReorder) {
+                                    // Long-press-to-drag preserves the row's
+                                    // regular tap → select gesture; commit on
+                                    // release so we only persist the settled
+                                    // order (not each mid-drag swap).
+                                    Modifier.longPressDraggableHandle(
+                                        onDragStopped = { onDragEnded() },
+                                    )
+                                } else {
+                                    Modifier
+                                },
+                            ).then(if (isDragging) Modifier.alpha(DRAG_ACTIVE_ALPHA) else Modifier),
                 )
             }
         }
@@ -292,60 +329,6 @@ private fun CurrencyList(
         }
         item(key = "api_hint") {
             ApiHintRow()
-        }
-    }
-}
-
-@Composable
-@Suppress("LongParameterList")
-private fun FavoritesSection(
-    items: SnapshotStateList<Rate>,
-    conversion: CurrencyPickerConversion?,
-    allowReorder: Boolean,
-    disabledCurrency: Currency?,
-    onRateClicked: (Rate) -> Unit,
-    onStarClicked: (Rate) -> Unit,
-    onDragEnded: () -> Unit,
-) {
-    val drag = rememberDragReorderState()
-    val rowHeightPx = with(LocalDensity.current) { ROW_MIN_HEIGHT_DP.dp.toPx() }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        items.forEachIndexed { index, rate ->
-            key(rate.currency.name) {
-                CurrencyRow(
-                    rate = rate,
-                    isStarred = true,
-                    conversion = conversion,
-                    isDisabled = rate.currency == disabledCurrency,
-                    onClick = { onRateClicked(rate) },
-                    onStarClick = { onStarClicked(rate) },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .dragReorderGraphics(drag, index, rowHeightPx)
-                            .then(
-                                if (allowReorder) {
-                                    Modifier.dragReorderHandle(
-                                        state = drag,
-                                        index = index,
-                                        key = rate.currency.name,
-                                        rowHeightPx = rowHeightPx,
-                                        itemCount = { items.size },
-                                        onCommit = { from, to ->
-                                            Snapshot.withMutableSnapshot {
-                                                val moved = items.removeAt(from)
-                                                items.add(to, moved)
-                                            }
-                                            onDragEnded()
-                                        },
-                                    )
-                                } else {
-                                    Modifier
-                                },
-                            ),
-                )
-            }
         }
     }
 }
@@ -372,7 +355,7 @@ private fun CurrencyRow(
     // selected on the opposite side of the pair), but the star toggle stays
     // interactive — favoriting is independent of picker selection.
     Row(
-        modifier = modifier.heightIn(min = ROW_MIN_HEIGHT_DP.dp),
+        modifier = modifier.heightIn(min = ROW_MIN_HEIGHT_DP.dp).ledgerHairline(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
@@ -443,20 +426,20 @@ private fun CurrencyFlag(currency: Currency) {
 
 @Composable
 private fun ApiHintRow() {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        HorizontalDivider()
-        Text(
-            text = stringResource(id = R.string.currency_dropdown_api_hint),
-            style = MaterialTheme.typography.labelMedium,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = dimensionResource(id = R.dimen.margin2x),
-                        vertical = dimensionResource(id = R.dimen.margin1x),
-                    ).alpha(API_HINT_ALPHA),
-        )
-    }
+    Text(
+        text = stringResource(id = R.string.currency_dropdown_api_hint),
+        style = MaterialTheme.typography.labelMedium,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                // No sibling HorizontalDivider: the last CurrencyRow above already
+                // paints a hairline via [ledgerHairline]; adding another divider
+                // here would draw a double-line at the hint's leading edge.
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.margin2x),
+                    vertical = dimensionResource(id = R.dimen.margin1x),
+                ).alpha(API_HINT_ALPHA),
+    )
 }
 
 // [normalizedQuery] must already be [normalizeForSearch]-ed by the caller —

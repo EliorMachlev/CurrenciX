@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name" translatable="false">CurrenciX</string>
-    <string name="app_name_alt" translatable="false" tools:keep="@string/app_name_alt">Sorten</string>
 
     <string name="desc_toggle_currencies">toggle currencies</string>
     <string name="a11y_delete">Delete</string>
-    <string name="a11y_historical_rate">Historical rate</string>
     <string name="a11y_search_currencies">Search currencies</string>
     <string name="a11y_clear_search">Clear search</string>
     <string name="a11y_cart_item_name">Item name</string>
@@ -16,14 +14,17 @@
     <string name="a11y_action_load">Load</string>
     <string name="a11y_action_open">Open</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="info_date_latest">Rates as of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Historical rates of &lt;b>%1$s&lt;/b> by &lt;b>%2$s&lt;/b></string>
     <string name="offline_banner_with_date">Offline • Rates from %1$s</string>
     <string name="offline_banner_no_data">Offline • No cached rates yet</string>
+    <string name="unreachable_banner_with_date">Provider unreachable • Rates from %1$s</string>
+    <string name="unreachable_banner_no_data">Provider unreachable • Retrying</string>
+    <string name="historical_banner">Historical • Rates from %1$s</string>
     <string name="copied_to_clipboard">Copied &lt;b>%s&lt;/b> to clipboard</string>
+    <string name="fee_chip_label">%1$s fee</string>
 
     <string name="historical_rates_dialog_title">Historical rates</string>
     <string name="historical_rates_dialog_toggle">Use exchange rates of a specific date. Disable, to always take the most recent ones.</string>
+    <string name="historical_rates_dialog_now">Now</string>
 
     <string name="error">Error: %s</string>
     <string name="error_generic">Unknown problem.</string>
@@ -44,12 +45,12 @@
     <string name="menu_historical_rates" translatable="false">@string/historical_rates_dialog_title</string>
     <string name="menu_share">Share</string>
     <string name="share_footer">Based on %1$s, %2$s</string>
+    <string name="share_conversion_line">%1$s%2$s %3$s = %4$s%5$s %6$s</string>
+    <string name="share_fee_line">%1$s = %2$s%3$s %4$s</string>
 
     <string name="quick_conversions_title">Quick conversions</string>
     <string name="quick_conversions_no_rates">Rates not loaded yet.</string>
     <string name="quick_conversions_fees_applied">Fees applied: %s</string>
-    <string name="quick_conversions_fee_conversion">conversion %s</string>
-    <string name="quick_conversions_fee_reduction">reduction %s</string>
     <string name="title_preferences" translatable="false">@string/menu_settings</string>
 
     <string name="tooltip_filter_starred">Show only starred currencies.</string>
@@ -75,7 +76,6 @@
     <string name="cart_reorder_item">Reorder item</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
-    <string name="cart_fee_line">Fees: %s%%</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_menu_save">Save</string>
     <string name="cart_menu_save_as">Save as…</string>
@@ -97,8 +97,6 @@
     <string name="cart_rename_title">Rename cart</string>
     <string name="cart_delete_confirm">Delete “%s”?</string>
     <string name="cart_delete_confirm_button">Delete</string>
-    <string name="cart_clear_confirm">Remove all items from the current cart?</string>
-    <string name="cart_clear_confirm_button">Clear</string>
     <string name="cart_clear_items_only">Clear items only</string>
     <string name="cart_clear_items_only_desc">Removes every row from the cart but keeps the current currencies and fees side.</string>
     <string name="cart_clear_reset_all">Reset cart</string>
@@ -116,9 +114,27 @@
     <string name="cart_share_fees">Fees: %s%%</string>
     <string name="cart_share_total">Total: %1$s %2$s</string>
     <string name="cart_unsaved_title">Unsaved changes</string>
-    <string name="cart_unsaved_message">You have unsaved changes. What would you like to do?</string>
     <string name="cart_unsaved_save">Save</string>
+    <string name="cart_unsaved_save_desc">Overwrite the current saved cart with these changes.</string>
     <string name="cart_unsaved_save_as">Save as new</string>
+    <string name="cart_unsaved_save_as_desc">Keep the current saved cart untouched and save a copy under a different name.</string>
     <string name="cart_unsaved_discard">Discard changes</string>
+    <string name="cart_unsaved_discard_desc">Revert to the last saved version and continue.</string>
     <string name="cart_unsaved_continue">Continue</string>
+    <string name="cart_unsaved_continue_desc">Proceed with unsaved changes; you can save later.</string>
+
+    <!-- First-run onboarding spotlight (#147) -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_finish">Got it</string>
+    <string name="onboarding_fee_title">Fees on the True Cost</string>
+    <string name="onboarding_fee_body">Tap here to add markups or discounts — they land on the destination side so the amount you read matches what you actually pay.</string>
+    <string name="onboarding_swap_title">Swap the pair</string>
+    <string name="onboarding_swap_body">Tap the swap button to flip base and destination. Long-press it to reset the amount.</string>
+    <string name="onboarding_autorefresh_title">Auto-refresh rates</string>
+    <string name="onboarding_autorefresh_body">Rates refresh when you open the app. Enable background refresh so they stay current between launches.</string>
+    <string name="onboarding_autorefresh_enable">Enable now</string>
+    <string name="pref_debug_reset_onboarding_title">Reset onboarding tour</string>
+    <string name="pref_debug_reset_onboarding_summary">Clears the first-run gate so the spotlight replays on next launch.</string>
+    <string name="pref_debug_reset_onboarding_toast">Onboarding will replay next launch.</string>
 </resources>

@@ -3,13 +3,17 @@ package com.eliormachlev.currencix.view.cart
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
-import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.widget.AppCompatButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -19,14 +23,20 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.hapticTap
-import com.eliormachlev.currencix.util.rateSpinnerListener
 import com.eliormachlev.currencix.view.BaseActivity
-import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
-import com.eliormachlev.currencix.view.cart.compose.CartItemsList
-import com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
+import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
+import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
+import com.eliormachlev.currencix.view.cart.compose.CartNameInputDialog
+import com.eliormachlev.currencix.view.cart.compose.CartScreen
+import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmDialog
 import com.eliormachlev.currencix.view.preference.PreferenceActivity
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
-import com.google.android.material.button.MaterialButton
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 class CartActivity : BaseActivity() {
     private lateinit var viewModel: CartViewModel
@@ -34,31 +44,30 @@ class CartActivity : BaseActivity() {
     private lateinit var fileIo: CartFileIo
     private lateinit var shareCoordinator: CartShareCoordinator
     private lateinit var saveLoadCoordinator: CartSaveLoadCoordinator
-    private lateinit var footerBinding: CartFooterBinding
     private lateinit var keypad: CartKeypadController
-
-    private lateinit var itemsView: ComposeView
-    private lateinit var spinnerFrom: SearchableSpinner
-    private lateinit var spinnerTo: SearchableSpinner
-    private lateinit var swapButton: ImageButton
-    private lateinit var emptyHint: ComposeView
-    private lateinit var addButton: MaterialButton
-
-    // Cached haptic setting so per-tap handlers don't need to touch prefs.
-    private var hapticEnabled = false
 
     // Pending, un-debounced name edits from the composable rows. Flushed
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
     private val pendingNames = mutableMapOf<String, String>()
 
-    // LiveData sources bridged into the Compose list. Kept as fields so
-    // observeAsState in the list survives cart re-emissions.
-    private val itemsLive = MediatorLiveData<List<CartItem>>().apply { value = emptyList() }
+    // Bridges for imperative callers (menu handlers, coordinators) to open
+    // each overlay. Wired inside CartRoot's DisposableEffect; null when the
+    // compose tree isn't attached (initial construction, teardown). Kept as
+    // separate signals so the sheets/dialogs can stack (e.g. a delete-confirm
+    // dialog above the load-list sheet) without one closing the other.
+    private var openCartChoice: ((CartChoiceRequest) -> Unit)? = null
+    private var openLoadList: (() -> Unit)? = null
+    private var openUnsavedChanges: ((CartUnsavedChangesRequest) -> Unit)? = null
+    private var openNameInput: ((CartNameInputRequest) -> Unit)? = null
+    private var openDeleteConfirm: ((CartDeleteConfirmRequest) -> Unit)? = null
+
+    // LiveData sources bridged into Compose. Kept as fields so observeAsState
+    // in the list survives cart re-emissions.
+    private val itemsLive = MediatorLiveData<ImmutableList<CartItem>>().apply { value = persistentListOf() }
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
     // Single signal for the compose row: non-null iff a system-IME variant is
-    // selected, and *which* CalculatorKeyListener to attach to the inline
-    // EditText. Collapses the "should host inline editor?" + "which IME class?"
+    // selected. Collapses the "should host inline editor?" + "which IME class?"
     // decisions into one.
     private val keyListenerLive: LiveData<CalculatorKeyListener?> by lazy {
         viewModel.keyboardType.map { CalculatorKeyListener.forKeyboardType(it) }
@@ -66,7 +75,6 @@ class CartActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cart)
         supportActionBar?.apply {
             title = getString(R.string.cart_title)
             setDisplayHomeAsUpEnabled(true)
@@ -89,6 +97,7 @@ class CartActivity : BaseActivity() {
                 viewModel = viewModel,
                 flushPendingCommits = ::flushPendingCommits,
                 snackbar = ::showSnackbar,
+                showChoice = ::showCartChoice,
             )
         this.saveLoadCoordinator =
             CartSaveLoadCoordinator(
@@ -96,99 +105,35 @@ class CartActivity : BaseActivity() {
                 viewModel = viewModel,
                 flushPendingCommits = ::flushPendingCommits,
                 snackbar = ::showSnackbar,
+                showLoadList = { openLoadList?.invoke() },
+                showUnsavedChanges = { request -> openUnsavedChanges?.invoke(request) },
+                showNameInput = { request -> openNameInput?.invoke(request) },
+                showDeleteConfirm = { request -> openDeleteConfirm?.invoke(request) },
+            )
+        this.keypad =
+            CartKeypadController(
+                activity = this,
+                keyboardType = viewModel.keyboardType,
+                onExpressionCommit = ::commitExpression,
             )
 
-        this.itemsView = findViewById(R.id.cart_items)
-        this.footerBinding =
-            CartFooterBinding(
-                root = findViewById(R.id.cart_root),
-                ctx = this,
-                viewModel = viewModel,
-            )
-        this.spinnerFrom = findViewById(R.id.cart_spinner_from)
-        this.spinnerTo = findViewById(R.id.cart_spinner_to)
-        this.swapButton = findViewById(R.id.cart_swap)
-        this.emptyHint =
-            findViewById<ComposeView>(R.id.cart_empty_hint).apply {
+        // Compose owns the entire screen tree — no XML layout involved.
+        setContentView(
+            ComposeView(this).apply {
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-                setContent { CartEmptyHint() }
-            }
-        this.addButton = findViewById(R.id.cart_add_item)
+                setContent { CartRoot() }
+            },
+        )
 
-        // Registered before the keypad controller's callback so the keypad's
-        // (added second) wins when enabled. When the keypad is closed and
-        // there are unsaved edits, we prompt instead of finishing.
+        // Registered so back-press first tries the save-prompt flow. The
+        // keypad's own BackHandler wins when it's up (BackHandler is
+        // registered later in composition than this activity-level callback).
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() = saveLoadCoordinator.attemptClose()
             },
         )
-        this.keypad =
-            CartKeypadController(
-                activity = this,
-                itemsView = itemsView,
-                keyboardType = viewModel.keyboardType,
-                hapticEnabled = { hapticEnabled },
-                onExpressionCommit = ::commitExpression,
-                dispatchCancel = ::superDispatchTouchEvent,
-            )
-        itemsView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        itemsView.setContent {
-            CartItemsList(
-                itemsSource = itemsLive,
-                currencySource = currencyLive,
-                activeItemIdSource = keypad.activeItemId,
-                activeExpressionSource = keypad.liveExpression,
-                keyListenerSource = keyListenerLive,
-                onNameCommit = ::commitName,
-                onNamePending = { id, name -> pendingNames[id] = name },
-                onExpressionTap = { item ->
-                    itemsView.hapticTap(hapticEnabled)
-                    keypad.openKeypadFor(item.id, item.expression)
-                },
-                onExpressionChange = keypad::onInlineExpressionChanged,
-                onTogglePin = { id ->
-                    itemsView.hapticTap(hapticEnabled)
-                    viewModel.togglePinned(id)
-                },
-                onDelete = { id ->
-                    itemsView.hapticTap(hapticEnabled)
-                    if (keypad.activeItemId.value == id) keypad.closeKeypad()
-                    pendingNames.remove(id)
-                    viewModel.removeItem(id)
-                },
-                onReorder = { fromId, toId ->
-                    itemsView.hapticTap(hapticEnabled)
-                    viewModel.reorderItem(fromId, toId)
-                },
-                onReorderStart = {
-                    // A drag doesn't interact well with a floating keypad — the
-                    // row being edited would slide out from under the caret.
-                    // Commit the current edit and close before the gesture takes
-                    // over the visible list.
-                    itemsView.hapticTap(hapticEnabled)
-                    keypad.closeKeypad()
-                },
-                onBackgroundTap = keypad::dismissKeyboards,
-            )
-        }
-
-        addButton.setOnClickListener {
-            it.hapticTap(hapticEnabled)
-            viewModel.addItem(name = "", expression = "")
-        }
-        spinnerFrom.onItemSelectedListener = rateSpinnerListener(viewModel::setBaseCurrency)
-        spinnerTo.onItemSelectedListener = rateSpinnerListener(viewModel::setDestinationCurrency)
-        swapButton.setOnClickListener {
-            it.hapticTap(hapticEnabled)
-            viewModel.swapCurrencies()
-        }
-        swapButton.setOnLongClickListener {
-            it.hapticTap(hapticEnabled)
-            startActivity(PreferenceActivity.feesIntent(this))
-            true
-        }
 
         observe()
     }
@@ -238,74 +183,172 @@ class CartActivity : BaseActivity() {
     }
 
     private fun observe() {
-        viewModel.isHapticFeedbackEnabled.observe(this) {
-            hapticEnabled = it
-        }
         viewModel.getCurrentCart().observe(this) { cart ->
             currencyLive.value = cart.currency
-            itemsLive.value = cart.items.toList()
-            emptyHint.visibility = if (cart.items.isEmpty()) View.VISIBLE else View.GONE
+            itemsLive.value = cart.items.toImmutableList()
             // A cart load can retire the item the keypad was bound to; drop
             // that binding so the keypad doesn't linger over a missing row.
             val currentIds = cart.items.map { it.id }.toSet()
             pendingNames.keys.retainAll(currentIds)
             keypad.activeItemId.value?.let { if (it !in currentIds) keypad.closeKeypad() }
-            footerBinding.refreshFeeAnnotations()
-        }
-        viewModel.getBaseCurrency().observe(this) {
-            spinnerFrom.setSelection(it)
-            // Keep the two sides distinct — grey out whatever's picked on
-            // the base side inside the destination picker.
-            spinnerTo.setDisabledCurrency(it)
-        }
-        viewModel.getDestinationCurrency().observe(this) {
-            spinnerTo.setSelection(it)
-            spinnerFrom.setDisabledCurrency(it)
-        }
-        viewModel.getSubtotal().observe(this) { footerBinding.onSubtotalChanged(it) }
-        viewModel.getTotal().observe(this) { footerBinding.onTotalChanged(it) }
-        viewModel.getFees().observe(this) { footerBinding.refreshFeeAnnotations() }
-        viewModel.getExchangeRates().observe(this) { rates ->
-            // Feed the same rate list the spinner shows on the main screen so
-            // its picker shows flags, ISO codes, and (when enabled) preview
-            // conversions.
-            spinnerFrom.setRates(rates?.rates, viewModel.getBaseCurrency().value)
-            spinnerTo.setRates(rates?.rates, viewModel.getDestinationCurrency().value)
-            footerBinding.refreshFeeAnnotations()
         }
     }
 
-    private fun confirmClear() {
-        showCartChoiceExplainerDialog(
-            titleRes = R.string.cart_menu_clear,
-            choices =
-                listOf(
-                    CartChoice(
-                        R.string.cart_clear_items_only,
-                        R.string.cart_clear_items_only_desc,
-                    ) { viewModel.clearItems() },
-                    CartChoice(
-                        R.string.cart_clear_reset_all,
-                        R.string.cart_clear_reset_all_desc,
-                    ) { viewModel.resetToMainDefaults() },
-                ),
+    private fun openFeesSettings() {
+        startActivity(PreferenceActivity.feesIntent(this))
+    }
+
+    // Compose root — holds the overlay state that imperative callers push into
+    // (via the openXxx fields) and renders CartScreen with a CartOverlays host
+    // on top. CartRoot itself only wires state → bridges so it stays under the
+    // detekt LongMethod threshold; overlay rendering is in CartOverlays.
+    @Composable
+    private fun CartRoot() {
+        var cartChoiceRequest by remember { mutableStateOf<CartChoiceRequest?>(null) }
+        var loadListVisible by remember { mutableStateOf(false) }
+        var unsavedChangesRequest by remember { mutableStateOf<CartUnsavedChangesRequest?>(null) }
+        var nameInputRequest by remember { mutableStateOf<CartNameInputRequest?>(null) }
+        var deleteConfirmRequest by remember { mutableStateOf<CartDeleteConfirmRequest?>(null) }
+        DisposableEffect(Unit) {
+            openCartChoice = { request -> cartChoiceRequest = request }
+            openLoadList = { loadListVisible = true }
+            openUnsavedChanges = { request -> unsavedChangesRequest = request }
+            openNameInput = { request -> nameInputRequest = request }
+            openDeleteConfirm = { request -> deleteConfirmRequest = request }
+            onDispose {
+                openCartChoice = null
+                openLoadList = null
+                openUnsavedChanges = null
+                openNameInput = null
+                openDeleteConfirm = null
+            }
+        }
+        CartScreen(
+            viewModel = viewModel,
+            keypad = keypad,
+            itemsSource = itemsLive,
+            currencySource = currencyLive,
+            keyListenerSource = keyListenerLive,
+            onAddItem = { viewModel.addItem(name = "", expression = "") },
+            onNameCommit = ::commitName,
+            onNamePending = { id, name -> pendingNames[id] = name },
+            onExpressionTap = { item -> keypad.openKeypadFor(item.id, item.expression) },
+            onExpressionChange = keypad::onInlineExpressionChanged,
+            onTogglePin = viewModel::togglePinned,
+            onDelete = { id ->
+                if (keypad.activeItemId.value == id) keypad.closeKeypad()
+                pendingNames.remove(id)
+                viewModel.removeItem(id)
+            },
+            onReorder = viewModel::reorderItem,
+            // A drag doesn't interact well with a floating keypad — the
+            // row being edited would slide out from under the caret.
+            // Commit the current edit and close before the gesture takes
+            // over the visible list.
+            onReorderStart = keypad::closeKeypad,
+            onOpenFees = ::openFeesSettings,
+        )
+        CartOverlays(
+            cartChoiceRequest = cartChoiceRequest,
+            dismissCartChoice = { cartChoiceRequest = null },
+            loadListVisible = loadListVisible,
+            dismissLoadList = { loadListVisible = false },
+            unsavedChangesRequest = unsavedChangesRequest,
+            dismissUnsavedChanges = { unsavedChangesRequest = null },
+            nameInputRequest = nameInputRequest,
+            dismissNameInput = { nameInputRequest = null },
+            deleteConfirmRequest = deleteConfirmRequest,
+            dismissDeleteConfirm = { deleteConfirmRequest = null },
         )
     }
 
-    // Route the activity's raw touch stream through the keypad controller so
-    // it can handle drag-to-dismiss (which needs to steal from the child
-    // buttons via ACTION_CANCEL) and outside-tap dismissal.
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (keypad.handleTouchEvent(ev)) return true
-        return super.dispatchTouchEvent(ev)
+    // Compose overlay host — every sheet/dialog CartRoot can open sits here.
+    // Extracted so CartRoot stays under the detekt LongMethod threshold and
+    // overlay wiring reads as one block.
+    @Composable
+    @Suppress("LongParameterList")
+    private fun CartOverlays(
+        cartChoiceRequest: CartChoiceRequest?,
+        dismissCartChoice: () -> Unit,
+        loadListVisible: Boolean,
+        dismissLoadList: () -> Unit,
+        unsavedChangesRequest: CartUnsavedChangesRequest?,
+        dismissUnsavedChanges: () -> Unit,
+        nameInputRequest: CartNameInputRequest?,
+        dismissNameInput: () -> Unit,
+        deleteConfirmRequest: CartDeleteConfirmRequest?,
+        dismissDeleteConfirm: () -> Unit,
+    ) {
+        cartChoiceRequest?.let { request ->
+            CartChoiceSheet(
+                titleRes = request.titleRes,
+                options = request.options,
+                onDismiss = dismissCartChoice,
+            )
+        }
+        if (loadListVisible) {
+            CartLoadSheet(
+                viewModel = viewModel,
+                onPick = saveLoadCoordinator::onLoadPick,
+                onRename = saveLoadCoordinator::onLoadRename,
+                onDelete = saveLoadCoordinator::onLoadDelete,
+                onDismiss = dismissLoadList,
+            )
+        }
+        unsavedChangesRequest?.let { request ->
+            CartUnsavedChangesSheet(
+                canOverwrite = request.canOverwrite,
+                onSave = request.onSave,
+                onSaveAs = request.onSaveAs,
+                onDiscard = request.onDiscard,
+                onContinue = request.onContinue,
+                onDismiss = dismissUnsavedChanges,
+            )
+        }
+        nameInputRequest?.let { request ->
+            CartNameInputDialog(
+                titleRes = request.titleRes,
+                initial = request.initial,
+                onOk = request.onOk,
+                onDismiss = dismissNameInput,
+            )
+        }
+        deleteConfirmRequest?.let { request ->
+            LedgerConfirmDialog(
+                title = request.name,
+                message = stringResource(id = R.string.cart_delete_confirm, request.name),
+                confirmLabel = stringResource(id = R.string.cart_delete_confirm_button),
+                destructive = true,
+                onConfirm = {
+                    request.onConfirm()
+                    dismissDeleteConfirm()
+                },
+                onDismiss = dismissDeleteConfirm,
+            )
+        }
     }
 
-    // Bridge for the keypad controller's drag-to-dismiss: it needs to send an
-    // ACTION_CANCEL through the activity's *super* dispatch chain (not our
-    // override, or we'd infinitely re-enter the drag handler). Kotlin doesn't
-    // allow `super.foo(...)` from inside a lambda, so we expose this helper.
-    private fun superDispatchTouchEvent(ev: MotionEvent) {
-        super.dispatchTouchEvent(ev)
+    private fun showCartChoice(request: CartChoiceRequest) {
+        openCartChoice?.invoke(request)
+    }
+
+    private fun confirmClear() {
+        showCartChoice(
+            CartChoiceRequest(
+                titleRes = R.string.cart_menu_clear,
+                options =
+                    listOf(
+                        CartChoiceOption(
+                            R.string.cart_clear_items_only,
+                            R.string.cart_clear_items_only_desc,
+                        ) { viewModel.clearItems() },
+                        CartChoiceOption(
+                            R.string.cart_clear_reset_all,
+                            R.string.cart_clear_reset_all_desc,
+                        ) { viewModel.resetToMainDefaults() },
+                    ),
+            ),
+        )
     }
 
     // Cancel every row's pending debounce and push its current buffer to the
@@ -339,26 +382,7 @@ class CartActivity : BaseActivity() {
         viewModel.updateItem(id, effectiveName, expression)
     }
 
-    // ------------------------------------------------------------------
-    // Keypad reflection targets. main_keypad.xml wires each button's
-    // android:onClick to these names — Android's LayoutInflater resolves
-    // them against the hosting Activity, so we mirror MainActivity's
-    // signatures here and forward to the controller's active state.
-    // ------------------------------------------------------------------
-
-    fun numberEvent(view: View) = keypad.forwardKeypadAction(view) { it.addNumber((view as AppCompatButton).text.toString()) }
-
-    fun decimalEvent(view: View) = keypad.forwardKeypadAction(view) { it.addDecimal() }
-
-    fun deleteEvent(view: View) = keypad.forwardKeypadAction(view) { it.delete() }
-
-    fun percentEvent(view: View) = keypad.forwardKeypadAction(view) { it.addPercent() }
-
-    fun calculationEvent(view: View) = keypad.forwardKeypadAction(view) { it.addOperator((view as AppCompatButton).text.toString()) }
-
-    fun parensEvent(view: View) = keypad.forwardKeypadAction(view) { it.applyNextParen() }
-
     private fun showSnackbar(message: String) {
-        snackbar(message).show()
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

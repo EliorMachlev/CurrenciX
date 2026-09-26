@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import java.time.format.DateTimeFormatter
 
@@ -30,7 +32,7 @@ internal fun TimelineScreen(
 ) {
     AppTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding()),
             color = MaterialTheme.colorScheme.background,
         ) {
             val isRefreshing by model.isUpdating().observeAsState(initial = false)

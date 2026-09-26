@@ -6,9 +6,6 @@
     <string name="fee_title">Frais de transaction à l\'étranger</string>
     <string name="fee_summary">Gérer les frais de change, de banque/carte et spécifiques à une paire</string>
     <string name="fee_manager_title">Frais</string>
-    <string name="fee_side_label">Type de frais</string>
-    <string name="fee_side_original">Frais de conversion</string>
-    <string name="fee_side_converted">Frais convertis</string>
     <string name="fee_section_global_exchange">Frais de change globaux</string>
     <string name="fee_section_global_bank">Frais bancaires/de carte globaux</string>
     <string name="fee_section_specific_pair">Frais de change pour une paire spécifique</string>
@@ -20,11 +17,7 @@
     <string name="fee_pair_to">Vers</string>
     <string name="fee_pair_pick_currency">Choisir une devise</string>
     <string name="fee_true_cost_prefix">"Frais de conversion : "</string>
-    <string name="fee_original_value_prefix">"Frais de réduction : "</string>
     <string name="fee_cost_with_fee_prefix">"Coût avec frais : "</string>
-    <string name="fee_value_before_fee_prefix">"Valeur avant frais : "</string>
-    <string name="fee_side_summary_original">Le montant converti affiché reste au taux du marché moyen ; les frais sont affichés séparément comme \"Frais de conversion\".</string>
-    <string name="fee_side_summary_converted">Les frais sont inclus dans le montant converti affiché.</string>
     <string name="fee_empty">Aucun frais pour le moment</string>
     <string name="previewConversion_title">Aperçu de la conversion</string>
     <string name="previewConversion_summary">Afficher la conversion actuelle pour chaque taux dans le sélecteur de devises.</string>
