@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -106,7 +105,11 @@ internal fun SearchableCurrencyPicker(
     val padH = dimensionResource(id = R.dimen.margin2x)
     val ctx = LocalContext.current
 
-    Column(modifier = Modifier.fillMaxSize().imePadding()) {
+    // ModalBottomSheet (LedgerBottomSheet's parent) already reacts to IME
+    // insets by resizing its window; a redundant imePadding here layers a
+    // second insets-driven animation on top and the whole picker visibly
+    // drifts up over the IME reveal duration.
+    Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(
             query = query,
             onQueryChange = { query = it },
