@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -96,19 +97,22 @@ fun SwipeableCartItemRow(
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 ) {
-    // confirmValueChange runs on the drag settle *before* currentValue
-    // updates, giving us a single-shot delete hook. Returning true lets the
-    // box animate out; the LazyList's animateItem() then handles the slide.
-    val dismissState =
-        rememberSwipeToDismissBoxState(
-            confirmValueChange = { value ->
-                val dismissed =
-                    value == SwipeToDismissBoxValue.StartToEnd ||
-                        value == SwipeToDismissBoxValue.EndToStart
-                if (dismissed) onDelete()
-                dismissed
-            },
-        )
+    // Observe currentValue rather than passing confirmValueChange (deprecated —
+    // the anchor set already excludes disallowed sides via
+    // enableDismissFromStart/EndTo…). onDelete removes the row from the source
+    // list, which drops this SwipeToDismissBox from composition and lets the
+    // LazyList's animateItem() handle the slide-out.
+    val dismissState = rememberSwipeToDismissBoxState()
+    val onDeleteState = rememberUpdatedState(onDelete)
+    LaunchedEffect(dismissState) {
+        snapshotFlow { dismissState.currentValue }.collect { value ->
+            if (value == SwipeToDismissBoxValue.StartToEnd ||
+                value == SwipeToDismissBoxValue.EndToStart
+            ) {
+                onDeleteState.value()
+            }
+        }
+    }
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = { SwipeDeleteBackground(dismissState) },
