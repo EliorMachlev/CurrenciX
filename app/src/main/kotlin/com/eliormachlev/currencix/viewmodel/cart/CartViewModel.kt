@@ -405,19 +405,28 @@ class CartViewModel(
         // Read the main-screen picks synchronously — the LiveData accessors
         // return null until observed, which is why an unobserved lookup here
         // used to fall back to USD even when the user was on a different pair.
-        val base =
-            db.getLastBaseCurrencyBlocking()?.iso4217Alpha()
-                ?: Currency.USD.iso4217Alpha()
-        val dest = db.getLastDestinationCurrencyBlocking()?.iso4217Alpha()
+        val base = db.getLastBaseCurrencyBlocking() ?: Currency.USD
+        val storedDest = db.getLastDestinationCurrencyBlocking()
+        // Enforce the "sides must differ" invariant that main's picker
+        // enforces interactively — if the stored destination collides with
+        // base (or is missing), fall back to a distinct currency so a fresh
+        // cart never opens on a same-side pair.
+        val dest = storedDest?.takeIf { it != base } ?: distinctFrom(base)
         return SavedCart(
             id = "",
             name = "",
-            currency = base,
-            destinationCurrency = dest.takeIf { it != null && it != base },
+            currency = base.iso4217Alpha(),
+            destinationCurrency = dest.iso4217Alpha(),
             items = emptyList(),
             createdAt = System.currentTimeMillis(),
         )
     }
+
+    // Belt-and-braces fallback for [emptyCart] — USD is the safe partner for
+    // any non-USD base; EUR steps in when USD is itself the base. Mirrors the
+    // "distinct fallback" main's destination LiveData applies when stored
+    // prefs collide.
+    private fun distinctFrom(base: Currency): Currency = if (base == Currency.USD) Currency.EUR else Currency.USD
 }
 
 data class CartSnapshot(
