@@ -122,12 +122,21 @@ private fun rememberDisplayItems(items: ImmutableList<CartItem>): SnapshotStateL
     val list = remember { mutableStateListOf<CartItem>() }
     LaunchedEffect(items) {
         val ordered = items.filter { it.pinned } + items.filterNot { it.pinned }
-        // Skip the churn on identity-preserving re-emits (our own ViewModel
-        // updates round-trip through here) so a mid-drag list emit doesn't
-        // wipe out the visual swap.
-        if (list.size != ordered.size || list.zip(ordered).any { (a, b) -> a.id != b.id }) {
+        val displayIds = list.mapTo(mutableSetOf()) { it.id }
+        val orderedIds = ordered.mapTo(mutableSetOf()) { it.id }
+        if (displayIds != orderedIds) {
+            // Real add / remove — take the source order wholesale.
             list.clear()
             list.addAll(ordered)
+            return@LaunchedEffect
+        }
+        // Same set of ids (possibly reordered mid-drag): refresh content in
+        // place per id so a name/expression edit propagates into the row
+        // without wiping the display's current order.
+        val byId = ordered.associateBy { it.id }
+        list.indices.forEach { i ->
+            val fresh = byId[list[i].id] ?: return@forEach
+            if (fresh != list[i]) list[i] = fresh
         }
     }
     return list
