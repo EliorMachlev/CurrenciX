@@ -585,16 +585,12 @@ private fun keyboardLabelRes(type: KeyboardType): Int =
     when (type) {
         KeyboardType.BASIC -> R.string.keyboard_option_default
         KeyboardType.EXPANDED -> R.string.keyboard_option_expanded
-        KeyboardType.SYSTEM_NUMPAD -> R.string.keyboard_option_system
-        KeyboardType.SYSTEM_FULL -> R.string.keyboard_option_system_full
     }
 
 private fun keyboardDescriptionRes(type: KeyboardType): Int =
     when (type) {
         KeyboardType.BASIC -> R.string.keyboard_summary_default
         KeyboardType.EXPANDED -> R.string.keyboard_summary_expanded
-        KeyboardType.SYSTEM_NUMPAD -> R.string.keyboard_summary_system
-        KeyboardType.SYSTEM_FULL -> R.string.keyboard_summary_system_full
     }
 
 private fun themeLabelRes(theme: AppTheme): Int =

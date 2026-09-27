@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
-import com.eliormachlev.currencix.util.asciiToDisplayGlyphs
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
 import com.eliormachlev.currencix.viewmodel.main.Operator
 
@@ -28,8 +27,7 @@ import com.eliormachlev.currencix.viewmodel.main.Operator
  * - [activeItemId] / [liveExpression] — observed by the compose row for the
  *   active-row highlight + inline display.
  * - [keypadVisible] — observed by [CartKeypadOverlay] to slide the app keypad
- *   in/out. Only true for in-app-keypad variants; system-IME variants leave
- *   it false and the row hosts an EditText instead.
+ *   in/out.
  * - [keypadKeyboardType] / [keypadNextParen] — piped into the [MainKeypad]
  *   composable so it renders the correct layout and paren glyph.
  */
@@ -51,37 +49,20 @@ class CartKeypadController(
     private val nextParenLive = MutableLiveData('(')
     val keypadNextParen: LiveData<Char> get() = nextParenLive
 
-    private var currentKeyboardType: KeyboardType = KeyboardType.DEFAULT
     private var activeCalculatorState: CalculatorInputState? = null
     private var activeStateObserver: Observer<String?>? = null
     private var activeParenObserver: Observer<Char>? = null
-
-    init {
-        keyboardType.observe(activity) { type -> currentKeyboardType = type }
-    }
 
     /**
      * Show the keypad for the row identified by [itemId], seeding a fresh
      * [CalculatorInputState] with [seedExpression] and mirroring every state
      * change into [liveExpression] — the composable row observes that
      * LiveData for its inline display.
-     *
-     * In either system-IME mode there is no in-app keypad to raise; the
-     * row itself hosts an EditText once it becomes active, so we just seed
-     * [liveExpression] and flip [activeItemId] — the composable does the rest
-     * (focus request + IME show).
      */
     fun openKeypadFor(
         itemId: String,
         seedExpression: String,
     ) {
-        if (currentKeyboardType.isSystem) {
-            if (activeItemId.value == itemId) return
-            detachActiveField()
-            liveExpression.value = seedExpression
-            activeItemId.value = itemId
-            return
-        }
         hideSystemIme()
         detachActiveField()
         val state = CalculatorInputState().apply { seedExpression(seedExpression) }
@@ -103,19 +84,6 @@ class CartKeypadController(
         if (activeItemId.value == null && !keypadVisible.value) return
         detachActiveField()
         keypadVisible.value = false
-    }
-
-    // Bridge each keystroke from the row's inline EditText (ASCII) back into
-    // [liveExpression] (display glyphs) so the row's preview + eventual commit
-    // see the same round-tripped form the in-app keypad produces.
-    fun onInlineExpressionChanged(
-        id: String,
-        ascii: String,
-    ) {
-        if (activeItemId.value != id) return
-        val glyphs = ascii.asciiToDisplayGlyphs()
-        if (liveExpression.value == glyphs) return
-        liveExpression.value = glyphs
     }
 
     fun dismissKeyboards() {

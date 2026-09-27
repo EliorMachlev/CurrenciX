@@ -44,7 +44,6 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.SHARE_IMAGES_SUBDIR
@@ -824,9 +823,8 @@ class MainActivity : BaseActivity() {
         )
     }
 
-    // Compose keypad. System-IME variants surface no on-screen keypad so we
-    // collapse them to BASIC for the fallback layout while the IME provides
-    // the actual input path.
+    // Compose keypad. The picker only offers in-app variants now, so the
+    // preference feeds straight into MainKeypad.
     @androidx.compose.runtime.Composable
     private fun MainKeypadContent() {
         val callbacks =
@@ -841,9 +839,8 @@ class MainActivity : BaseActivity() {
             )
         val kbType by viewModel.keyboardType.collectAsStateWithLifecycle()
         val nextParen by viewModel.nextParen().observeAsState('(')
-        val effective = if (kbType.isSystem) KeyboardType.BASIC else kbType
         MainKeypad(
-            keyboardType = effective,
+            keyboardType = kbType,
             nextParen = nextParen,
             callbacks = callbacks,
         )

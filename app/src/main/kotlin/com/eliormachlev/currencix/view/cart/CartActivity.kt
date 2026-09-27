@@ -14,14 +14,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.map
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.repository.CartExporter
-import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.view.BaseActivity
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
@@ -65,13 +62,6 @@ class CartActivity : BaseActivity() {
     // in the list survives cart re-emissions.
     private val itemsLive = MediatorLiveData<ImmutableList<CartItem>>().apply { value = persistentListOf() }
     private val currencyLive = MediatorLiveData<String>().apply { value = "" }
-
-    // Single signal for the compose row: non-null iff a system-IME variant is
-    // selected. Collapses the "should host inline editor?" + "which IME class?"
-    // decisions into one.
-    private val keyListenerLive: LiveData<CalculatorKeyListener?> by lazy {
-        viewModel.keyboardType.map { CalculatorKeyListener.forKeyboardType(it) }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -228,12 +218,10 @@ class CartActivity : BaseActivity() {
             keypad = keypad,
             itemsSource = itemsLive,
             currencySource = currencyLive,
-            keyListenerSource = keyListenerLive,
             onAddItem = { viewModel.addItem(name = "", expression = "") },
             onNameCommit = ::commitName,
             onNamePending = { id, name -> pendingNames[id] = name },
             onExpressionTap = { item -> keypad.openKeypadFor(item.id, item.expression) },
-            onExpressionChange = keypad::onInlineExpressionChanged,
             onTogglePin = viewModel::togglePinned,
             onDelete = { id ->
                 if (keypad.activeItemId.value == id) keypad.closeKeypad()

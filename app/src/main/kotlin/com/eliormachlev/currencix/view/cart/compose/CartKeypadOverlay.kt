@@ -70,9 +70,7 @@ private val GRIP_HEIGHT: Dp = 4.dp
 /**
  * Bottom-aligned floating calculator that slides up when a cart row's
  * expression field is tapped, and slides back down on: outside-tap, back
- * press, or drag-down-past-threshold. Only the in-app-keypad variants
- * surface this overlay — system-IME variants leave [CartKeypadController.keypadVisible]
- * false and the row hosts a real EditText instead.
+ * press, or drag-down-past-threshold.
  *
  * Auto-closes when the system IME becomes visible so we don't stack two keyboards.
  */
@@ -133,7 +131,7 @@ fun CartKeypadOverlay(
                         ),
             )
             MainKeypad(
-                keyboardType = if (keyboardType.isSystem) KeyboardType.BASIC else keyboardType,
+                keyboardType = keyboardType,
                 nextParen = nextParen,
                 callbacks = keypad.keypadCallbacks,
             )

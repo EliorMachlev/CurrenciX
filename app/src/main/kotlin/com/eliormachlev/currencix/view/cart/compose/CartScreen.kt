@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
-import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.AppTheme
@@ -44,12 +43,10 @@ fun CartScreen(
     keypad: CartKeypadController,
     itemsSource: LiveData<ImmutableList<CartItem>>,
     currencySource: LiveData<String>,
-    keyListenerSource: LiveData<CalculatorKeyListener?>,
     onAddItem: () -> Unit,
     onNameCommit: (id: String, name: String) -> Unit,
     onNamePending: (id: String, name: String) -> Unit,
     onExpressionTap: (item: CartItem) -> Unit,
-    onExpressionChange: (id: String, expression: String) -> Unit,
     onTogglePin: (id: String) -> Unit,
     onDelete: (id: String) -> Unit,
     onReorder: (fromId: String, toId: String) -> Unit,
@@ -66,11 +63,9 @@ fun CartScreen(
                         currencySource = currencySource,
                         activeItemIdSource = keypad.activeItemId,
                         activeExpressionSource = keypad.liveExpression,
-                        keyListenerSource = keyListenerSource,
                         onNameCommit = onNameCommit,
                         onNamePending = onNamePending,
                         onExpressionTap = onExpressionTap,
-                        onExpressionChange = onExpressionChange,
                         onTogglePin = onTogglePin,
                         onDelete = onDelete,
                         onReorder = onReorder,

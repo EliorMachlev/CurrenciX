@@ -64,12 +64,10 @@ private fun CartRowPreview(
         item = item,
         currency = currency,
         isActive = false,
-        keyListener = null,
         liveExpression = null,
         onNameCommit = {},
         onNamePending = {},
         onExpressionTap = {},
-        onExpressionChange = {},
         onTogglePin = {},
     )
 }
