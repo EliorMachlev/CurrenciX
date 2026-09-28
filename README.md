@@ -22,11 +22,13 @@ It's a fork of [Currencies](https://github.com/sal0max/currencies) by Maximilian
    * [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) (Norway) — ~40 rates
    * [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) (Russia) — ~44 rates against the Ruble
    * [Bank of Israel](https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/) — ~14 ILS rates
-* Built-in calculator for on-the-fly conversions (e.g. splitting a restaurant bill).
+* Built-in calculator for on-the-fly conversions.
+* Cart: a dedicated bill-splitting screen — a running list of items converted against a chosen currency pair.
 * Fee manager: global exchange/bank fees plus per-pair overrides — see the "true cost" alongside the mid-market rate.
 * Rate-history chart with configurable overlays (grid, axis labels, min/max highlights).
 * Historical rates: convert against rates from any prior date.
 * Encrypted local backup & restore of settings.
+* Optional background rate refresh and a home-screen widget.
 * Material 3 UI with light, dark, and OLED themes.
 * Ad-free and telemetry-free.
 

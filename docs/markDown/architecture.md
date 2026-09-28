@@ -23,9 +23,15 @@ CurrenciX follows **MVVM** (Model-View-ViewModel) with a Repository layer, imple
 └──────────────┬───────────────────────┘
                │ reads/writes
 ┌──────────────▼───────────────────────┐
+│   Cache Layer (repository/cache/)    │
+│  Memory (LRU) → Disk (JSON) → Network│
+│  Fetcher · RetryPolicy · InFlightDedupe│
+└──────────────┬───────────────────────┘
+               │ on cache miss
+┌──────────────▼───────────────────────┐
 │      Data / Persistence Layer        │
-│  ApiProvider (HTTP clients)          │
-│  Database (SharedPreferences)        │
+│  ApiProvider (Retrofit or raw OkHttp)│
+│  Database (DataStore Preferences)    │
 └──────────────────────────────────────┘
 ```
 
@@ -43,25 +49,25 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── adapter/                # Moshi / XML adapters per provider
 │   └── provider/               # HTTP implementations per provider
 ├── repository/
-│   ├── Database.kt             # Typed SharedPreferences wrapper
+│   ├── Database.kt             # Typed DataStore Preferences wrapper (5 namespaces)
 │   ├── ExchangeRatesRepository.kt
-│   └── ExchangeRatesService.kt # Singleton, coroutine-based fetch orchestration
+│   ├── ExchangeRatesService.kt # Singleton, coroutine-based fetch orchestration
+│   ├── BackupManager.kt        # Encrypted export/import — see security.md
+│   ├── cache/                  # Memory → disk → network rate cache (Store5-inspired, no Store5 dep)
+│   └── persistence/             # PersistenceKey enum, DataStore delegates, PrefStore helper
 ├── view/
-│   ├── main/                   # Converter screen (compose/ holds the Quick Conversions dialog content)
-│   ├── preference/             # Settings screen (compose/ holds the Credits list)
-│   ├── timeline/               # Chart screen (compose/ holds the full Compose timeline screen)
-│   ├── cart/                   # Bill-splitting calculator screen (compose/ holds item rows/lists)
-│   ├── compose/                # Shared Compose foundation: AppTheme, common components, drag-reorder
+│   ├── main/                   # Converter screen — full Compose (ComposeView built in code, no XML layout)
+│   ├── preference/             # Settings — XML Activity shell hosts Fragments that each return a ComposeView
+│   ├── timeline/               # Chart screen — full Compose
+│   ├── cart/                   # Bill-splitting calculator — full Compose
+│   ├── compose/                # Shared Compose foundation: theme, common components, drag-reorder, dialogs, onboarding
 │   └── BaseActivity.kt
 ├── viewmodel/
 │   ├── main/MainViewModel.kt   # 778 lines — core conversion + calculator logic
 │   ├── preference/
 │   ├── timeline/
 │   └── cart/                   # CartViewModel, CartMath, CartRatesCache
-└── util/                       # Date, math, text, LiveData helpers
-
-app/src/main/java/com/eliormachlev/currencix/
-└── widget/LongSummaryPreference.java   # Legacy AndroidX Preference subclass, not yet ported to Kotlin
+└── util/                       # Date, math, text, LiveData helpers, RetrofitProvider, HttpClientProvider
 
 helpers/src/main/kotlin/de/salomax/helpers/
 ├── changelog/
@@ -75,11 +81,21 @@ helpers/src/main/kotlin/de/salomax/helpers/
 
 ### Multiple API Providers via Enum + Abstract Interface
 
-`ApiProvider` is an enum whose entries each implement `Api`, an abstract interface exposing `getRates()` and `getTimeline()`. Switching provider at runtime is a single SharedPreferences write; no factory classes required.
+`ApiProvider` is an enum whose entries each implement `Api`, an abstract interface exposing `getRates()` and `getTimeline()`. Switching provider at runtime is a single DataStore write; no factory classes required.
 
-### SharedPreferences as the Only Persistence Layer
+### DataStore Preferences as the Persistence Layer
 
-The app has no SQLite database. All data (cached rates, starred currencies, user state, preferences, and the Cart's current + saved carts as JSON blobs) lives in namespaced SharedPreferences instances managed by `Database.kt`. This keeps the install size small and the data model simple. The one exception is user-initiated: Cart JSON can be exported to / imported from an external file via the Storage Access Framework (`CartFileIo.kt`), but that's a one-off file transfer, not an ongoing persistence layer.
+The app has no SQLite database. `SharedPreferences` has been fully migrated to **Jetpack DataStore Preferences**: all data (cached rates, starred currencies, user state, preferences, and the Cart's current + saved carts as JSON blobs) lives in 5 namespaced `DataStore<Preferences>` instances (`PersistenceKey`: `rates`, `timelines`, `last_state`, `starred_currencies`, `prefs`), managed by `Database.kt` and `repository/persistence/`. File names deliberately match the old SharedPreferences basenames so that exported backups round-trip across the migration. `PrefStore.mappedLiveData { … }` / `mappedFlow { … }` bridge each namespace's `Flow<Preferences>` into `LiveData<T>` / `Flow<T>` for observers, and `Database.getXxx()`-style synchronous accessors use `DataStore.snapshot()` where a blocking read is unavoidable (e.g. `CurrenciesApplication`'s startup DNS prewarm).
+
+The one exception to "DataStore only": Cart JSON can be exported to / imported from an external file via the Storage Access Framework (`CartFileIo.kt`), but that's a one-off user-initiated file transfer, not an ongoing persistence layer.
+
+### Three-tier rate cache: memory → disk → network
+
+`repository/cache/` implements a Fetcher / SourceOfTruth / Converter triad inspired by Store5's design (no Store5 dependency — sized for this codebase, ~300–400 lines total). `RateCache.get(key)` walks: an in-memory LRU tier, then a disk JSON tier (`DiskJsonStore`, atomic writes), then the network on a miss — with `InFlightDedupe` collapsing concurrent requests for the same key and `RetryPolicy` backing off transient failures. This sits above the OkHttp-level HTTP cache (`HttpClientProvider`'s 5 MiB disk cache of raw response bytes) — different tiers, different jobs: OkHttp caches transport bytes, `RateCache` caches parsed `ExchangeRates` / `Timeline` domain objects.
+
+### Networking: OkHttp shared client, Retrofit migrated provider-by-provider
+
+All providers share one `OkHttpClient` singleton (`HttpClientProvider`) with a disk cache and a per-provider `Cache-Control` rewrite interceptor. On top of that, providers are being migrated one at a time from raw OkHttp calls to Retrofit (`RetrofitProvider.retrofit(...)`, reusing the same shared `OkHttpClient` and `Moshi` instance) — Frankfurter is migrated; the rest still call OkHttp directly. `retrofitCall { ... }` translates Retrofit's `HttpException` into the same `ApiHttpError` the raw-OkHttp path throws, so `ExchangeRatesRepository`'s error handling doesn't need to know which transport a given provider uses.
 
 ### Moshi + Custom Adapters for Diverse API Formats
 
@@ -97,17 +113,17 @@ Why: the user preference (default 2) is tuned for the converter screen where amo
 
 Trade-off: users who explicitly raise or lower `decimal_places` in Settings will see that setting silently overridden on the chart. Intentional, but surprising — recorded here so future work doesn't "fix" it without weighing the readability cost.
 
-### Compose adoption: incremental, via ComposeView interop
+### Compose adoption: Main / Timeline / Cart are fully Compose; Preference is Compose-in-a-Fragment
 
-Compose is being adopted incrementally rather than as a full rewrite: Activities and Fragments remain XML-based shells (`activity_main.xml`, `activity_timeline.xml`, `activity_cart.xml`, `activity_preference.xml`, etc.), and individual screens or sub-components are ported to Compose one at a time, each hosted inside a `ComposeView` embedded in its XML layout. This pattern started with the timeline chart and has since spread to the rest of the timeline screen, the Quick Conversions dialog (main), the Credits list (preference), and the entire Cart (bill-splitting) screen.
+The Compose migration is largely done, not partial. `MainActivity`, `TimelineActivity`, and `CartActivity` each call `setContentView(composeHost)` with a `ComposeView` built directly in code — there is no `activity_main.xml`, `activity_timeline.xml`, or `activity_cart.xml` any more. `PreferenceActivity` is the one holdout: it still inflates `activity_preference.xml` and hosts Fragments via a `FragmentTransaction` (standard Android navigation), but each Fragment's `onCreateView` returns a `ComposeView` with its content as Compose (`PreferenceScreen.kt`, `FeesScreen.kt`, `BackupScreen.kt`, etc.) rather than the legacy `PreferenceFragmentCompat` XML-driven screens. So in practice every screen's *content* is Compose; only Preference keeps a thin XML/Fragment shell around it.
 
-Shared Compose foundation lives in `view/compose/`: `AppTheme.kt` (Material 3 theme, light/dark/OLED), `ComposeCommon.kt` (shared small components), and `DragReorder.kt` (drag-to-reorder list helper used by Cart's item list and elsewhere).
+Shared Compose foundation lives in `view/compose/`: `AppTheme.kt` (Material 3 theme, light/dark/OLED — the app dropped `com.google.android.material` in favor of Compose Material 3 + appcompat-only chrome), shared common components, drag-reorder, plus `dialogs/` and `onboarding/` subpackages.
 
 ### Timeline chart engine: Vico via Compose interop
 
 The timeline chart is rendered by [Vico](https://github.com/patrykandpatrick/vico) (`com.patrykandpatrick.vico:compose`), hosted inside a `ComposeView` embedded in the otherwise View-based XML layout (`timeline_chart.xml`). `TimelineChart.kt` is a `@Composable` that observes the ViewModel's `LiveData` streams via `observeAsState()` (bridged by `androidx.compose.runtime:runtime-livedata`) and drives a `CartesianChartHost` backed by a `CartesianChartModelProducer`.
 
-Why Vico over the previous engine (SparkView): SparkView is unmaintained and required a hand-rolled adapter, a manual dashed baseline `Paint`, and custom scrub handling. Vico ships all of that as first-class API (`HorizontalLine` decorations, `CartesianMarkerVisibilityListener`) and is actively developed. Cost: introduces Jetpack Compose to a View-only app (~2 MB APK growth from the Compose runtime + Vico).
+Why Vico over the previous engine (SparkView): SparkView is unmaintained and required a hand-rolled adapter, a manual dashed baseline `Paint`, and custom scrub handling. Vico ships all of that as first-class API (`HorizontalLine` decorations, `CartesianMarkerVisibilityListener`) and is actively developed. This was also the entry point that first introduced Jetpack Compose to what was then a View-only app; Compose has since become the primary UI toolkit (see above).
 
 Behavior preserved: dashed reference line at the last value, scrub-to-past-date via marker-shown callback, theme-aware colors resolved through `MaterialColors.getColor` and passed into the composable.
 
@@ -119,9 +135,17 @@ Four `LiveData<Boolean>` streams (backed by `PrefStore.mappedLiveData`) — grid
 
 `CurrenciesApplication` is registered via `android:name=".CurrenciesApplication"` on the manifest's `<application>` tag. Its only responsibility today is to resolve the currently-selected `ApiProvider`'s host on a background daemon thread during `onCreate()`, so the first exchange-rate request doesn't pay for DNS.
 
-The preference read (`Database(this).getApiProvider()`) and the `InetAddress.getAllByName(host)` call both run **inside** the background thread — SharedPreferences load and DNS resolution are both blocking I/O and neither belongs on the main thread during app startup. Failures (offline, DNS outage) are swallowed with `runCatching`; this is a best-effort warm-up, not a health check.
+The preference read (`Database(this).getApiProvider()`) and the `InetAddress.getAllByName(host)` call both run **inside** the background thread — DataStore's synchronous snapshot read and DNS resolution are both blocking I/O and neither belongs on the main thread during app startup. Failures (offline, DNS outage) are swallowed with `runCatching`; this is a best-effort warm-up, not a health check.
 
 `ApiProvider.getHost()` (a narrow accessor over the enum's `private implementation.baseUrl`) exposes only the hostname to callers, so the `Application` never touches the full base URL.
+
+### Background rate refresh via WorkManager
+
+`androidx.work:work-runtime-ktx` schedules periodic background refresh of exchange rates (provider-aware TTL — see `worker/RateRefreshScheduler.kt`). Off by default; opt-in via Settings.
+
+### Home-screen widget via Glance
+
+`view/widget/CurrencyWidget.kt` is an `AppWidgetProvider` whose content is composed with **Glance** (`androidx.glance:glance-appwidget`) rather than hand-rolled `RemoteViews`. `widget_currency.xml` remains as the widget's preview/initial-layout resource required by the App Widget framework, but the live content is Glance composables.
 
 ### Predictive back gesture
 

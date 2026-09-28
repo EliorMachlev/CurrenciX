@@ -41,8 +41,8 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 
 ### Code Style
 
-- New code should be Kotlin. One legacy Java file remains (`widget/LongSummaryPreference.java`) — don't add to it; port it if you're touching that area.
-- Follow existing patterns — MVVM, Repository, LiveData, with Compose (via `ComposeView`) for newer/migrated screens — see [architecture.md](architecture.md).
+- Kotlin only (no Java in `app/` or `helpers/`).
+- Follow existing patterns — MVVM, Repository, Compose UI (Main/Timeline/Cart are fully Compose; Preference is Compose-in-a-Fragment) — see [architecture.md](architecture.md). Konsist tests enforce the View / ViewModel / Repository / Model layer boundaries; a PR that breaks them fails `test<Flavor>DebugUnitTest`.
 - Detekt runs in CI as a standalone `detekt-cli` binary, not a Gradle task — there is no `./gradlew detekt`. To check locally, download the pinned CLI version (see `DETEKT_VERSION` in `.github/workflows/detekt.yaml`) and run `detekt-cli --input app/src,helpers/src --config config/detekt.yml --jvm-target 21`. CI will fail on Detekt findings.
 - Run `./gradlew spotlessCheck` — CI will fail on formatting drift. Use `./gradlew spotlessApply` to auto-fix.
 - Avoid `java.lang.*` qualifiers (Kotlin imports these automatically).
@@ -50,9 +50,10 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 
 ### Pull Request Checklist
 
-- [ ] `./gradlew check assembleDebug` passes locally
+- [ ] `./gradlew check assembleDebug` passes locally (includes Konsist architecture tests and Roborazzi screenshot verification)
 - [ ] No new Detekt warnings
 - [ ] `./gradlew spotlessCheck` is clean
+- [ ] If a Compose screen's visuals changed intentionally, re-record its screenshots: `./gradlew recordRoborazziFdroidDebug`
 - [ ] If adding a dependency: check F-Droid licence compatibility
 
 ### Commit Message Convention

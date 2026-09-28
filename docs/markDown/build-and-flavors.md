@@ -40,11 +40,23 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Dependency | Version |
 |---|---|
+| `androidx.core:core-ktx` | 1.19.0 |
 | `androidx.appcompat:appcompat` | 1.8.0 |
-| `androidx.lifecycle:lifecycle-*` | 2.11.0 |
+| `androidx.core:core-splashscreen` | 1.0.1 |
+| `androidx.lifecycle:lifecycle-*` (livedata/runtime/viewmodel/viewmodel-compose/runtime-compose) | 2.11.0 |
 | `androidx.constraintlayout:constraintlayout` | 2.2.2 |
-| `com.google.android.material:material` | 1.14.0 |
 | `androidx.window:window` | 1.5.1 |
+| `org.jetbrains.kotlinx:kotlinx-collections-immutable` | 0.4.0 |
+
+`com.google.android.material` has been **dropped** — the app is appcompat-only chrome plus Compose Material 3 now (see [architecture.md](architecture.md)).
+
+### Persistence
+
+| Dependency | Version |
+|---|---|
+| `androidx.datastore:datastore-preferences` | 1.2.1 |
+
+Replaces SharedPreferences across every namespace — see [architecture.md](architecture.md).
 
 ### Compose
 
@@ -55,9 +67,9 @@ Two flavors are defined in `app/build.gradle.kts`:
 | `androidx.compose.material:material-icons-extended` | via BOM |
 | `androidx.compose.ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
 | `androidx.activity:activity-compose` | 1.13.0 |
-| `androidx.lifecycle:lifecycle-viewmodel-compose` | 2.11.0 |
+| `sh.calvin.reorderable:reorderable` | 3.1.0 |
 
-Hosts the Vico chart plus the other UI surfaces migrated to Compose via `ComposeView` (see [architecture.md](architecture.md)).
+Hosts the Vico chart plus the rest of the app's UI — Main, Timeline, and Cart screens are fully Compose; Preference is Compose-in-a-Fragment (see [architecture.md](architecture.md)).
 
 ### HTTP & Serialisation
 
@@ -65,8 +77,12 @@ Hosts the Vico chart plus the other UI surfaces migrated to Compose via `Compose
 |---|---|
 | `com.squareup.okhttp3:okhttp` | 5.5.0 |
 | `com.squareup.okhttp3:logging-interceptor` | 5.5.0 |
+| `com.squareup.retrofit2:retrofit` | 2.11.0 |
+| `com.squareup.retrofit2:converter-moshi` | 2.11.0 |
 | `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
 | `com.google.devtools.ksp:*` | 2.3.11 |
+
+Retrofit is layered on the shared OkHttp client and is being adopted provider-by-provider (Frankfurter migrated first); other providers still call OkHttp directly — see [architecture.md](architecture.md).
 
 ### Calculator
 
@@ -80,12 +96,28 @@ Hosts the Vico chart plus the other UI surfaces migrated to Compose via `Compose
 |---|---|
 | `com.patrykandpatrick.vico:compose` | 3.3.0 |
 
+### Background & Widgets
+
+| Dependency | Version | Note |
+|---|---|---|
+| `androidx.work:work-runtime-ktx` | 2.10.0 | Periodic background rate refresh, off by default (opt-in via Settings) |
+| `androidx.glance:glance-appwidget` | 1.1.1 | Home-screen widget content, replacing hand-rolled `RemoteViews` |
+
 ### Crypto & Logging
 
 | Dependency | Version | Note |
 |---|---|---|
 | `org.bouncycastle:bcprov-jdk18on` | 1.85.2 | Pure-Java Argon2id for password-based backup encryption — see [security.md](security.md) |
 | `com.jakewharton.timber:timber` | 5.0.1 | Local-only rotating file log, no remote crash/analytics sink |
+| `com.github.chuckerteam.chucker:library` (debug) / `library-no-op` (release) | 4.3.1 | In-app HTTP inspector, debug-only via source-set split |
+
+### Debug Tooling (not shipped in release)
+
+| Dependency | Version | Note |
+|---|---|---|
+| `com.squareup.leakcanary:leakcanary-android` | 2.14 | Debug-only leak detection, auto-installs via its own `ContentProvider` |
+| `androidx.metrics:metrics-performance` | 1.0.0 | JankStats — per-Activity jank logging via Timber, debug-only |
+| `com.airbnb.android:showkase` (+ KSP processor) | 1.0.5 | Browsable `@Preview` gallery, debug-only |
 
 ### Testing
 
@@ -96,6 +128,12 @@ Hosts the Vico chart plus the other UI surfaces migrated to Compose via `Compose
 | `androidx.arch.core:core-testing` | 2.2.0 |
 | `org.junit.jupiter:junit-jupiter-*` | 6.1.3 |
 | `com.code-intelligence:jazzer-junit` | 0.30.0 (fuzz testing) |
+| `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.74.0 |
+| `org.robolectric:robolectric` | 4.16 |
+| `androidx.compose.ui:ui-test-junit4` / `ui-test-manifest` | via BOM |
+| `com.lemonappdev:konsist` | 0.17.3 |
+
+Roborazzi + Robolectric give pure-JVM screenshot testing for every Compose surface (no emulator needed), running under the existing `test<Flavor>DebugUnitTest` task via the JUnit vintage engine. Konsist encodes the View / ViewModel / Repository / Model layer boundaries as JUnit tests on the plain JVM, so a refactor can't silently break MVVM separation.
 
 ## Signing (Release)
 

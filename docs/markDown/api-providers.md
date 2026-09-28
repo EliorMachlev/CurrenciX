@@ -56,11 +56,11 @@ When a historical date is selected in the app, the provider's history endpoint i
 
 ## Provider Implementation
 
-Each provider is implemented as an object inside `app/src/main/kotlin/com/eliormachlev/currencix/model/provider/`. They all conform to the `Api` abstract interface defined in `ApiProvider.kt`:
+Each provider is implemented as a class inside `app/src/main/kotlin/com/eliormachlev/currencix/model/provider/`. They all conform to the `Api` abstract class defined in `ApiProvider.kt`:
 
 ```kotlin
-abstract fun getRates(base: Currency, date: LocalDate?): Call<ExchangeRates?>
-abstract fun getTimeline(base: Currency, quote: Currency): Call<Timeline?>
+abstract suspend fun getRates(context: Context?, date: LocalDate?, secrets: ApiSecrets): Result<ExchangeRates>
+abstract suspend fun getTimeline(context: Context?, base: Currency, symbol: Currency, startDate: LocalDate, endDate: LocalDate): Result<Timeline>
 ```
 
 Response parsing is handled by provider-specific Moshi adapters (`model/adapter/`) or SAX XML parsers (for Norges Bank and Bank Rossii, which return XML).
