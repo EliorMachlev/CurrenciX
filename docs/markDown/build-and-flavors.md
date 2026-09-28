@@ -165,18 +165,45 @@ hands to ART at install time. The generated `baseline-prof.txt` and
 `app/src/<flavor>Release/generated/baselineProfiles/` and are baked into the
 release APK/AAB automatically.
 
-Generation requires a connected device or emulator (API 28+, rooted / userdebug
-build). CI does not run this today — no emulator-based instrumentation job
-exists — so profiles are regenerated locally on demand:
+The generator drives real user journeys (`baselineprofile/.../Journeys.kt`):
+launch, type on the keypad, fling through the currency picker, and visit
+Timeline and Cart from the drawer. A startup-only collection produces
+`startup-prof.txt`, which also drives DEX layout; the full journey produces
+`baseline-prof.txt`. Journeys find elements by the app's `UiTestTags`
+(exposed as resource ids), never by visible text. `UiTags.kt` in the module
+mirrors them and must be kept in sync.
+
+Generation runs on a **Gradle Managed Device** (`pixel6Api34`, an API 34
+AOSP emulator that Gradle downloads and boots headless), so no physical
+device or manual emulator is needed. It does need hardware virtualization
+(KVM).
+
+- **CI:** `baseline-profile.yaml` generates both flavors' profiles and uploads
+  them as the `baseline-profiles` artifact. See [ci-cd.md](ci-cd.md).
+- **Locally:**
 
 ```bash
-# Requires an emulator or device with `adb root` available.
-./gradlew :app:generateFdroidReleaseBaselineProfile
-./gradlew :app:generatePlayReleaseBaselineProfile
+./gradlew :app:generateFdroidReleaseBaselineProfile :app:generatePlayReleaseBaselineProfile \
+  -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
 ```
 
 Commit the regenerated `baseline-prof.txt` / `startup-prof.txt`. Re-run when
 hot paths shift materially (major redesign, new startup dependency).
+
+### Frame-timing benchmarks
+
+`InteractionBenchmarks` (same module, same journeys) measures cold-start time
+and `FrameTimingMetric` for keypad typing, currency-picker scrolling and screen
+transitions, each with and without the baseline profile. Watch the P90/P99
+`frameDurationCpuMs` and any `frameOverrunMs > 0` (frames that missed their
+deadline, i.e. visible jank). CI runs them on the same emulator. Emulator
+numbers are for comparison and catching regressions, not absolute timings, so
+Macrobenchmark's emulator guard is suppressed.
+
+```bash
+./gradlew :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest \
+  -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
+```
 
 ## Known Issues
 

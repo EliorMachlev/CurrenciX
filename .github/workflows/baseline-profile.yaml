@@ -22,6 +22,12 @@ on:
 permissions:
   contents: read
 
+# Emulator time is expensive: a newer push to the same branch supersedes an
+# in-flight run.
+concurrency:
+  group: baseline-profile-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   # Matches build.yaml: silences the JDK 21 CDS banner in forked JVMs.
   JDK_JAVA_OPTIONS: -Xshare:off
@@ -54,7 +60,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Generate baseline profiles (fdroid + play)
-        run: ./gradlew ${GMD_GPU} :app:generateFdroidReleaseBaselineProfile :app:generatePlayReleaseBaselineProfile --stacktrace
+        run: ./gradlew "${GMD_GPU}" :app:generateFdroidReleaseBaselineProfile :app:generatePlayReleaseBaselineProfile --stacktrace
 
       # Uploaded before the benchmarks so a benchmark failure can't lose them.
       - name: Upload baseline profiles
@@ -65,7 +71,7 @@ jobs:
           if-no-files-found: error
 
       - name: Run frame-timing benchmarks (fdroid)
-        run: ./gradlew ${GMD_GPU} :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace
+        run: ./gradlew "${GMD_GPU}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace
 
       - name: Upload benchmark results
         if: always()

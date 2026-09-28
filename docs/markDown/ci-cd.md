@@ -9,6 +9,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `build.yaml` | Push → `master`, PR | Spotless, lint, test, build debug APK for both flavors (matrix) + fdroid release APK |
 | `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK and upload as artifact |
 | `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator) and upload the PNGs as an artifact — not a gate, nothing is verified |
+| `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles and run frame-timing benchmarks on an API 34 emulator; upload both as artifacts |
 | `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |
 | `codeql.yaml` | PR, push → `master`, weekly | GitHub CodeQL (Actions YAML) |
@@ -29,6 +30,15 @@ Runs on both PRs and pushes to `master`. Two jobs:
   - `test<Flavor>DebugUnitTest` — JUnit unit tests
   - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
 - **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and uploads it as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
+
+## Baseline Profiles & Benchmarks (`baseline-profile.yaml`)
+
+Boots a Gradle Managed Device (`pixel6Api34`, API 34 AOSP emulator, software GPU) on a KVM-enabled hosted runner, then:
+
+1. Generates the fdroid and play baseline + startup profiles, and uploads them as the `baseline-profiles` artifact *before* benchmarking so a benchmark failure can't lose them. Commit the files under `app/src/<flavor>Release/generated/baselineProfiles/` to ship them.
+2. Runs `InteractionBenchmarks` (startup time plus frame timing for typing, picker scrolling and screen transitions, each with and without the profile), and uploads `benchmarkData.json` as `benchmark-results`.
+
+Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` or the workflow itself changes on a non-master push, or on demand. See [build-and-flavors.md](build-and-flavors.md#baseline-profiles).
 
 ## Security Scans
 

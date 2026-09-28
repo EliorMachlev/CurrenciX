@@ -53,6 +53,7 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── ExchangeRatesRepository.kt
 │   ├── ExchangeRatesService.kt # Singleton, coroutine-based fetch orchestration
 │   ├── BackupManager.kt        # Encrypted export/import — see security.md
+│   ├── RefreshState.kt         # In-memory "refresh running" state + debounced indicators
 │   ├── cache/                  # Memory → disk → network rate cache (Store5-inspired, no Store5 dep)
 │   └── persistence/             # PersistenceKey enum, DataStore delegates, PrefStore helper
 ├── view/
@@ -60,7 +61,7 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── preference/             # Settings — XML Activity shell hosts Fragments that each return a ComposeView
 │   ├── timeline/               # Chart screen — full Compose
 │   ├── cart/                   # Bill-splitting calculator — full Compose
-│   ├── compose/                # Shared Compose foundation: theme, common components, drag-reorder, dialogs, onboarding
+│   ├── compose/                # Shared Compose foundation: theme (incl. Motion tokens), common components, UiTestTags, drag-reorder, dialogs, onboarding
 │   └── BaseActivity.kt
 ├── viewmodel/
 │   ├── main/MainViewModel.kt   # 778 lines — core conversion + calculator logic
@@ -116,6 +117,18 @@ Each exchange-rate API returns a different JSON (or XML) schema. Rather than nor
 
 ViewModels expose `LiveData<T>` streams. Activities observe them without holding references to the ViewModel, ensuring lifecycle-safety and no memory leaks. Preference changes propagate automatically via `PrefStore.mappedLiveData { … }`, which bridges each DataStore namespace's `Flow<Preferences>` into a `LiveData<T>` so observers pick up writes without a manual re-read.
 
+### Refresh state: in memory, debounced for display
+
+"A rate refresh is running" is transient UI state, so it lives in `repository/RefreshState.kt` in memory rather than in DataStore. The repository marks refreshes started and finished. The UI never shows the raw flag; it picks one of three views:
+
+| View | Behavior | Used by |
+|---|---|---|
+| `inFlight` | Raw truth | Logic: no double refresh, Timeline's swap-menu enablement |
+| `pullIndicator` | Immediate, held ≥ 400 ms | Pull-to-refresh spinner, drawer Refresh item |
+| `passiveIndicator` | Only after 150 ms, then held ≥ 400 ms | Digit shimmer, Timeline progress bar |
+
+The debounce is the `asRefreshIndicator` Flow operator, covered by `RefreshIndicatorTest`. A cached refresh therefore shows no shimmer at all, and a pull-to-refresh spinner never blinks shut.
+
 ### Timeline chart auto-scales decimal places (ignores user preference)
 
 The timeline screen's rate labels (min/max/avg/current/past) do **not** honor the global `decimal_places` preference from Settings. `TimelineViewModel.getDecimalPlaces()` derives the number of decimals from the visible data range: `(max − min).abs().getSignificantDecimalPlaces(3)`, capped at 7.
@@ -128,7 +141,23 @@ Trade-off: users who explicitly raise or lower `decimal_places` in Settings will
 
 The Compose migration is largely done, not partial. `MainActivity`, `TimelineActivity`, and `CartActivity` each call `setContentView(composeHost)` with a `ComposeView` built directly in code — there is no `activity_main.xml`, `activity_timeline.xml`, or `activity_cart.xml` any more. `PreferenceActivity` is the one holdout: it still inflates `activity_preference.xml` and hosts Fragments via a `FragmentTransaction` (standard Android navigation), but each Fragment's `onCreateView` returns a `ComposeView` with its content as Compose (`PreferenceScreen.kt`, `FeesScreen.kt`, `BackupScreen.kt`, etc.) rather than the legacy `PreferenceFragmentCompat` XML-driven screens. So in practice every screen's *content* is Compose; only Preference keeps a thin XML/Fragment shell around it.
 
-Shared Compose foundation lives in `view/compose/`: `AppTheme.kt` (Material 3 theme, light/dark/OLED — the app dropped `com.google.android.material` in favor of Compose Material 3 + appcompat-only chrome), shared common components, drag-reorder, plus `dialogs/` and `onboarding/` subpackages.
+Shared Compose foundation lives in `view/compose/`: `AppTheme.kt` (Material 3 theme, light/dark/OLED — the app dropped `com.google.android.material` in favor of Compose Material 3 + appcompat-only chrome), `theme/Motion.kt` (motion tokens, below), shared common components, drag-reorder, plus `dialogs/` and `onboarding/` subpackages.
+
+Every currency flag renders through `Currency.flagPainter()` (`painterResource` over `Currency.flagRes`), which parses each vector flag once, caches it app-wide, and draws it crisply at any size. Don't wrap flags in an `AndroidView`/`ImageView` or rasterise the `Drawable` to a bitmap. The currency picker's 190+ rows used to do the former, and it cost scroll smoothness.
+
+`UiTestTags` are stable semantics tags on the elements the `:baselineprofile` journeys drive (keypad keys, pills, drawer rows, picker list, onboarding Skip). They're exposed as resource ids via `testTagsAsResourceId` on `MainScreen` and on the popups that have their own window. They carry no visual meaning. Keep them in sync with `baselineprofile/.../UiTags.kt`.
+
+### Motion: shared tokens, springs for anything interruptible
+
+All UI timing comes from `view/compose/theme/Motion.kt`, so "make it snappier" is a one-file change. Durations sit on the Material 3 scale: short 150 ms (value fades), medium 220 ms (entrances, onboarding steps), long 400 ms (the launch wordmark only), and a 30 ms stagger. There are two springs: `snappy` for tap-driven motion (the swap button's flip) and `settle` for panels (the Cart keypad). Anything the user can re-trigger mid-flight uses a spring, because an interrupted spring keeps its velocity while a restarted tween visibly kinks. Content pacing (the loading shimmer, the rate pill's auto-scroll) isn't a transition and keeps its own constants.
+
+Rules the main screen follows:
+
+- **Typing is never animated.** The result digits crossfade and pulse only when they change from *outside* the keypad (a rate refresh, currency pick or fee toggle). `DigitsChangeOrigin` tells the two apart by whether the typed input changed since the last result change.
+- **Animated values are read in the draw phase** (`graphicsLayer { }`), so they redraw without recomposing. The ActionBar hamburger is driven from the drawer's actual offset through `snapshotFlow`, so it tracks a finger dragging the drawer.
+- **Nothing animates forever.** The input caret is a 500 ms on/off toggle, solid while typing. A continuous fade would request a frame on every vsync for as long as the screen is open.
+
+Screen-to-screen (Activity) transitions are XML animations (`res/anim/screen_*`, with timing in `res/values/motion.xml`), wired once in `BaseActivity`. The incoming screen slides a short way in and fades in over a stationary previous screen, and closing reverses that; the screen underneath never moves, so no window background shows at the edges. Android 14+ uses `overrideActivityTransition`, which also drives the predictive-back cross-activity animation. `MainActivity` opts out so the system app-launch animation is untouched.
 
 ### Timeline chart engine: Vico via Compose interop
 
@@ -160,7 +189,7 @@ The preference read (`Database(this).getApiProvider()`) and the `InetAddress.get
 
 ### Predictive back gesture
 
-Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<application>` tag. This is a global opt-in for the predictive back animation on Android 13+ (API 33). No per-screen `OnBackInvokedCallback` wiring is added — the app's existing back behavior is compatible with the default animated preview.
+Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<application>` tag. This is a global opt-in for the predictive back animation on Android 13+ (API 33). No per-screen `OnBackInvokedCallback` wiring is added — the app's existing back behavior is compatible with the default animated preview. Between activities, the custom screen transitions above are set through `overrideActivityTransition`, which is the API predictive back uses for custom cross-activity animations.
 
 ### Build Flavors: `play` vs `fdroid`
 
