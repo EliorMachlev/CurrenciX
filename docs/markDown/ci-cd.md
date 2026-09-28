@@ -8,6 +8,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 |---|---|---|
 | `build.yaml` | Push → `master`, PR | Spotless, lint, test, build debug APK for both flavors (matrix) + fdroid release APK |
 | `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK and upload as artifact |
+| `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator) and upload the PNGs as an artifact — not a gate, nothing is verified |
 | `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |
 | `codeql.yaml` | PR, push → `master`, weekly | GitHub CodeQL (Actions YAML) |
