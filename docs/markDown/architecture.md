@@ -13,7 +13,7 @@ CurrenciX follows **MVVM** (Model-View-ViewModel) with a Repository layer, imple
 ┌──────────────▼───────────────────────┐
 │           ViewModel Layer            │
 │  MainViewModel · TimelineViewModel   │
-│  PreferenceViewModel                 │
+│  PreferenceViewModel · CartViewModel │
 └──────────────┬───────────────────────┘
                │ calls
 ┌──────────────▼───────────────────────┐
@@ -35,7 +35,7 @@ CurrenciX follows **MVVM** (Model-View-ViewModel) with a Repository layer, imple
 app/src/main/kotlin/com/eliormachlev/currencix/
 ├── CurrenciesApplication.kt   # Application subclass — prewarms provider DNS at startup
 ├── model/
-│   ├── ApiProvider.kt          # Enum of 6 providers + abstract Api interface
+│   ├── ApiProvider.kt          # Enum of 7 active providers + abstract Api interface
 │   ├── Currency.kt             # 190+ ISO-4217 currencies with symbols & flags
 │   ├── ExchangeRates.kt        # Snapshot of rates for a base currency
 │   ├── Rate.kt                 # Single (currency, rate) pair
@@ -47,15 +47,21 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── ExchangeRatesRepository.kt
 │   └── ExchangeRatesService.kt # Singleton, coroutine-based fetch orchestration
 ├── view/
-│   ├── main/                   # Converter screen
-│   ├── preference/             # Settings screen
-│   ├── timeline/               # Chart screen
+│   ├── main/                   # Converter screen (compose/ holds the Quick Conversions dialog content)
+│   ├── preference/             # Settings screen (compose/ holds the Credits list)
+│   ├── timeline/               # Chart screen (compose/ holds the full Compose timeline screen)
+│   ├── cart/                   # Bill-splitting calculator screen (compose/ holds item rows/lists)
+│   ├── compose/                # Shared Compose foundation: AppTheme, common components, drag-reorder
 │   └── BaseActivity.kt
 ├── viewmodel/
-│   ├── main/MainViewModel.kt   # 631 lines — core conversion + calculator logic
+│   ├── main/MainViewModel.kt   # 778 lines — core conversion + calculator logic
 │   ├── preference/
-│   └── timeline/
+│   ├── timeline/
+│   └── cart/                   # CartViewModel, CartMath, CartRatesCache
 └── util/                       # Date, math, text, LiveData helpers
+
+app/src/main/java/com/eliormachlev/currencix/
+└── widget/LongSummaryPreference.java   # Legacy AndroidX Preference subclass, not yet ported to Kotlin
 
 helpers/src/main/kotlin/de/salomax/helpers/
 ├── changelog/
@@ -73,7 +79,7 @@ helpers/src/main/kotlin/de/salomax/helpers/
 
 ### SharedPreferences as the Only Persistence Layer
 
-The app has no SQLite database. All data (cached rates, starred currencies, user state, preferences) lives in namespaced SharedPreferences instances managed by `Database.kt`. This keeps the install size small and the data model simple.
+The app has no SQLite database. All data (cached rates, starred currencies, user state, preferences, and the Cart's current + saved carts as JSON blobs) lives in namespaced SharedPreferences instances managed by `Database.kt`. This keeps the install size small and the data model simple. The one exception is user-initiated: Cart JSON can be exported to / imported from an external file via the Storage Access Framework (`CartFileIo.kt`), but that's a one-off file transfer, not an ongoing persistence layer.
 
 ### Moshi + Custom Adapters for Diverse API Formats
 
@@ -90,6 +96,12 @@ The timeline screen's rate labels (min/max/avg/current/past) do **not** honor th
 Why: the user preference (default 2) is tuned for the converter screen where amounts are typed by hand. On the chart, a low-volatility pair like EUR↔USD moves in the 3rd–4th decimal, so a fixed 2-decimal display would render the min/max/avg identical and the chart's whole point would be lost. Auto-scaling keeps enough precision to show variation regardless of the pair.
 
 Trade-off: users who explicitly raise or lower `decimal_places` in Settings will see that setting silently overridden on the chart. Intentional, but surprising — recorded here so future work doesn't "fix" it without weighing the readability cost.
+
+### Compose adoption: incremental, via ComposeView interop
+
+Compose is being adopted incrementally rather than as a full rewrite: Activities and Fragments remain XML-based shells (`activity_main.xml`, `activity_timeline.xml`, `activity_cart.xml`, `activity_preference.xml`, etc.), and individual screens or sub-components are ported to Compose one at a time, each hosted inside a `ComposeView` embedded in its XML layout. This pattern started with the timeline chart and has since spread to the rest of the timeline screen, the Quick Conversions dialog (main), the Credits list (preference), and the entire Cart (bill-splitting) screen.
+
+Shared Compose foundation lives in `view/compose/`: `AppTheme.kt` (Material 3 theme, light/dark/OLED), `ComposeCommon.kt` (shared small components), and `DragReorder.kt` (drag-to-reorder list helper used by Cart's item list and elsewhere).
 
 ### Timeline chart engine: Vico via Compose interop
 

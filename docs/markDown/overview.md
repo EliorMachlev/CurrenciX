@@ -37,7 +37,7 @@ The `fdroid` build flavor excludes any Play-Store-specific APIs and is reproduci
 
 ## Privacy
 
-The app requests only the `INTERNET` permission. No analytics SDK, no crash reporter, no advertising ID access. Exchange rates are fetched directly from public central-bank or open-data APIs.
+The app requests only `INTERNET` and `ACCESS_NETWORK_STATE` (both normal, non-dangerous permissions). No analytics SDK, no crash reporter, no advertising ID access. Exchange rates are fetched directly from public central-bank or open-data APIs.
 
 ## Version Scheme
 
