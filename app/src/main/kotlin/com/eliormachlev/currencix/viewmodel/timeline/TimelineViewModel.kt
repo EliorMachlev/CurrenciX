@@ -9,12 +9,14 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
+import com.eliormachlev.currencix.repository.RefreshState
 import com.eliormachlev.currencix.util.calculateDifference
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
@@ -94,8 +96,10 @@ class TimelineViewModel(
     // error
     private val errorLiveData = repository.getError()
 
-    // updating
-    private var isUpdating = repository.isUpdating()
+    // updating — see RefreshState: the chart's progress bar is a passive
+    // indicator; menu enablement is logic, so it reads the raw state.
+    private val refreshIndicator: LiveData<Boolean> = RefreshState.passiveIndicator.asLiveData()
+    private val refreshInFlight: LiveData<Boolean> = RefreshState.inFlight.asLiveData()
 
     private val dbLiveItems: LiveData<Timeline?> by lazy {
         MediatorLiveData<Timeline?>().apply {
@@ -372,5 +376,9 @@ class TimelineViewModel(
 
     fun getError(): LiveData<String?> = errorLiveData
 
-    fun isUpdating(): LiveData<Boolean> = isUpdating
+    /** Chart progress bar: only for a refresh slow enough to notice. */
+    fun isRefreshing(): LiveData<Boolean> = refreshIndicator
+
+    /** Raw "a refresh is running" — for enabling actions, not for display. */
+    fun isRefreshInFlight(): LiveData<Boolean> = refreshInFlight
 }

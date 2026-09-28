@@ -35,7 +35,7 @@ internal fun TimelineScreen(
             modifier = Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding()),
             color = MaterialTheme.colorScheme.background,
         ) {
-            val isRefreshing by model.isUpdating().observeAsState(initial = false)
+            val isRefreshing by model.isRefreshing().observeAsState(initial = false)
             val error by model.getError().observeAsState()
             val provider by model.getProvider().observeAsState()
             val ratePast by model.getRatePast().observeAsState()

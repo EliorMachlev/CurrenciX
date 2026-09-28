@@ -80,7 +80,7 @@ class TimelineActivity : BaseActivity() {
         // Keep the ActionBar title in sync with the ViewModel.
         timelineModel.getTitle().observe(this) { title = it }
         // Enable/disable the swap-currencies menu item based on refresh state / errors.
-        timelineModel.isUpdating().observe(this) { isRefreshing ->
+        timelineModel.isRefreshInFlight().observe(this) { isRefreshing ->
             menuItemToggle?.isEnabled = !isRefreshing
         }
         timelineModel.getError().observe(this) { err ->

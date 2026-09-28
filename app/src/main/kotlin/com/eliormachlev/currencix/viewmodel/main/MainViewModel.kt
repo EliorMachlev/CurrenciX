@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
+import com.eliormachlev.currencix.repository.RefreshState
 import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
 import com.eliormachlev.currencix.util.OPERATOR_MINUS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
@@ -79,8 +80,11 @@ class MainViewModel(
     private val onlyShowStarredLive: LiveData<Boolean> = onlyShowStarred.asLiveData()
 
     // ui
-    private val isUpdating: StateFlow<Boolean> =
-        db.isUpdatingFlow().stateInWhileSubscribed(viewModelScope, db.isUpdatingBlocking())
+    // Refresh indicators — debounced for display; see RefreshState.
+    private val refreshSpinner: StateFlow<Boolean> =
+        RefreshState.pullIndicator.stateInWhileSubscribed(viewModelScope, false)
+    private val refreshShimmer: StateFlow<Boolean> =
+        RefreshState.passiveIndicator.stateInWhileSubscribed(viewModelScope, false)
     val isExpandedKeypadEnabled: StateFlow<Boolean> =
         db.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.getExpandedKeypadEnabledBlocking())
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
@@ -280,7 +284,7 @@ class MainViewModel(
      * update the data, without checking the cache
      */
     internal fun forceUpdateExchangeRate() {
-        if (!isUpdating.value) {
+        if (!RefreshState.inFlight.value) {
             dbLiveItems = repository.getExchangeRates()
         }
     }
@@ -324,9 +328,16 @@ class MainViewModel(
     internal fun getError(): LiveData<String?> = repository.getError()
 
     /**
-     * if the app is updating the rates
+     * Pull-to-refresh spinner state: up as soon as a rate refresh starts,
+     * held briefly so an instant refresh doesn't blink.
      */
-    internal fun isUpdating(): StateFlow<Boolean> = isUpdating
+    internal fun isRefreshing(): StateFlow<Boolean> = refreshSpinner
+
+    /**
+     * Passive "rates are updating" shimmer: only for a refresh slow enough
+     * to notice, so cached refreshes show nothing.
+     */
+    internal fun isRefreshShimmerVisible(): StateFlow<Boolean> = refreshShimmer
 
     /**
      * all configured fees

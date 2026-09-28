@@ -279,7 +279,7 @@ class MainActivity : BaseActivity() {
     private fun MainRoot() {
         val banner by bannerState
         val foldingFeature by foldingFeatureState
-        val isUpdating by viewModel.isUpdating().collectAsStateWithLifecycle()
+        val isUpdating by viewModel.isRefreshing().collectAsStateWithLifecycle()
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         var providerPickerVisible by remember { mutableStateOf(false) }

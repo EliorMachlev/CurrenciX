@@ -17,14 +17,10 @@ import com.eliormachlev.currencix.util.ApiHttpError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.time.LocalDate
-
-private const val MIN_UPDATE_DISPLAY_MS = 750L
 
 // How far back to keep timeline data. The UI only renders the last year, but a
 // small buffer avoids re-fetching when the sliding window shifts by a day.
@@ -45,7 +41,6 @@ class ExchangeRatesRepository(
     private val liveExchangeRates = db.getExchangeRates()
     private val liveTimeline = MutableLiveData<Timeline?>()
     private var liveError = MutableLiveData<String?>()
-    private var isUpdating = db.isUpdating()
 
     // In-house rate cache (#148): sits on top of the shared OkHttp Cache so
     // memory / disk tiers of *parsed* domain objects short-circuit the parse
@@ -102,12 +97,11 @@ class ExchangeRatesRepository(
                     date = historicalDate,
                 )
             ratesJob =
-                launchApiCall { start ->
+                launchApiCall {
                     ratesCache
                         .get(key)
                         .map { it.copy(provider = provider) }
                         .processResponse(
-                            start = start,
                             successFlag = { success },
                             errorMessage = { error },
                             onSuccess = { db.insertExchangeRates(it) },
@@ -191,7 +185,7 @@ class ExchangeRatesRepository(
                 )
 
             val job =
-                launchApiCall { start ->
+                launchApiCall {
                     // refresh() rather than get() — the repo does its own
                     // tail-merge against Database.getCachedTimeline, so
                     // serving a stale RateCache entry here would skip the
@@ -202,7 +196,6 @@ class ExchangeRatesRepository(
                         .refresh(cacheKey)
                         .map { it.copy(provider = provider) }
                         .processResponse(
-                            start = start,
                             successFlag = { success },
                             errorMessage = { error },
                             onSuccess = { fresh ->
@@ -248,14 +241,12 @@ class ExchangeRatesRepository(
         )
     }
 
-    private fun launchApiCall(block: suspend (start: Long) -> Unit): Job {
-        val start = System.currentTimeMillis()
-        db.setUpdating(true)
-        return CoroutineScope(Dispatchers.IO).launch { block(start) }
+    private fun launchApiCall(block: suspend () -> Unit): Job {
+        RefreshState.start()
+        return CoroutineScope(Dispatchers.IO).launch { block() }
     }
 
     private suspend fun <T : Any> Result<T>.processResponse(
-        start: Long,
         successFlag: T.() -> Boolean?,
         errorMessage: T.() -> String?,
         onSuccess: suspend (T) -> Unit,
@@ -265,7 +256,7 @@ class ExchangeRatesRepository(
         if (data != null && error == null) {
             val ok = data.successFlag()
             if (ok == null || ok == true) {
-                postIsUpdating(start)
+                RefreshState.finish()
                 onSuccess(data)
                 liveError.postValue(null)
             } else {
@@ -303,30 +294,9 @@ class ExchangeRatesRepository(
 
     fun getError(): LiveData<String?> = liveError
 
-    fun isUpdating(): LiveData<Boolean> = isUpdating
-
-    /*
-     * "update" for at least 750ms
-     */
-    private suspend fun postIsUpdating(start: Long) {
-        val now = System.currentTimeMillis()
-        if (now - start < MIN_UPDATE_DISPLAY_MS) {
-            db.setUpdating(true)
-
-            withContext(Dispatchers.Main) {
-                launch {
-                    delay(MIN_UPDATE_DISPLAY_MS - (now - start))
-                    db.setUpdating(false)
-                }
-            }
-        } else {
-            db.setUpdating(false)
-        }
-    }
-
     private fun postError(message: String?) {
         // disable progress bar
-        db.setUpdating(false)
+        RefreshState.finish()
 
         // post error
         var errorMessage = "<b>" + (message ?: R.string.error_api_error.text()) + "$EYES_SUFFIX</b>"

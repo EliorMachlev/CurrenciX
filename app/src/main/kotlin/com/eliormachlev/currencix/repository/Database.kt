@@ -51,7 +51,6 @@ private const val METADATA_KEY_PREFIX = "_"
 // LAST_STATE keys.
 private const val KEY_LAST_STATE_FROM = "_last_from"
 private const val KEY_LAST_STATE_TO = "_last_to"
-private const val KEY_IS_UPDATING = "_isUpdating"
 private const val KEY_HISTORICAL_DATE = "_historical_date"
 
 // STARRED_CURRENCIES keys.
@@ -133,9 +132,6 @@ private val starredCurrenciesMapper: (Preferences) -> ImmutableList<Currency> = 
 }
 private val filterStarredEnabledMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_STARRED_ENABLED)] ?: false
-}
-private val isUpdatingMapper: (Preferences) -> Boolean = {
-    it[booleanPreferencesKey(KEY_IS_UPDATING)] ?: false
 }
 private val autoRefreshEnabledMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_AUTO_REFRESH_ENABLED)] ?: false
@@ -361,16 +357,6 @@ class Database(
 
     fun getLastDestinationCurrencyBlocking(): Currency? =
         Currency.fromString(lastStateStore.snapshot()[stringPreferencesKey(KEY_LAST_STATE_TO)] ?: DEFAULT_TO_CURRENCY)
-
-    fun setUpdating(updating: Boolean) {
-        lastStateStore.edit { this[booleanPreferencesKey(KEY_IS_UPDATING)] = updating }
-    }
-
-    fun isUpdating(): LiveData<Boolean> = lastStateStore.mappedLiveData(isUpdatingMapper)
-
-    fun isUpdatingFlow(): Flow<Boolean> = lastStateStore.mappedFlow(isUpdatingMapper)
-
-    fun isUpdatingBlocking(): Boolean = isUpdatingMapper(lastStateStore.snapshot())
 
     fun setHistoricalDate(date: LocalDate?) {
         lastStateStore.edit { this[longPreferencesKey(KEY_HISTORICAL_DATE)] = date?.toMillis() ?: NO_HISTORICAL_DATE }

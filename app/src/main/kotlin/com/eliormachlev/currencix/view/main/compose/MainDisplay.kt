@@ -377,7 +377,7 @@ internal fun MainDisplay(
     val resultFairFormatted by viewModel.getResultFormatted().observeAsState()
     val resultWithFeesFormatted by viewModel.getResultWithFeesFormatted().observeAsState()
     val rates by viewModel.getExchangeRates().observeAsState()
-    val isUpdating by viewModel.isUpdating().collectAsStateWithLifecycle()
+    val isUpdating by viewModel.isRefreshShimmerVisible().collectAsStateWithLifecycle()
     val feeStack by viewModel.getFeeStack().observeAsState()
     val activeFees by viewModel.getActiveFees().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()
