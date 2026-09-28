@@ -379,7 +379,7 @@ class MainActivity : BaseActivity() {
                 true
             }
             R.id.cart -> {
-                startActivity(CartActivity.intent(this, viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+                openCartActivity()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -397,7 +397,7 @@ class MainActivity : BaseActivity() {
         dismiss()
         when (action) {
             DrawerAction.Timeline -> openTimelineActivity()
-            DrawerAction.Cart -> startActivity(CartActivity.intent(this, viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+            DrawerAction.Cart -> openCartActivity()
             DrawerAction.QuickConversions -> openQuickConversions?.invoke()
             DrawerAction.DatePicker -> openHistoricalDatePicker?.invoke()
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
@@ -617,6 +617,14 @@ class MainActivity : BaseActivity() {
         startActivity(TimelineActivity.newIntent(this, from, to))
         return true
     }
+
+    // Seeds the cart with the converter's current pair. Unlike the timeline,
+    // a null side is fine — CartViewModel.seedFromMain keeps the cart's own
+    // pair or resolves just the missing side.
+    private fun openCartActivity() =
+        startActivity(
+            CartActivity.intent(this, viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value),
+        )
 
     private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
