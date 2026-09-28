@@ -18,7 +18,6 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
@@ -40,7 +39,6 @@ import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.Collator
@@ -83,13 +81,8 @@ class MainViewModel(
     // ui
     private val isUpdating: StateFlow<Boolean> =
         db.isUpdatingFlow().stateInWhileSubscribed(viewModelScope, db.isUpdatingBlocking())
-    val keyboardType: StateFlow<KeyboardType> =
-        db.getKeyboardTypeFlow().stateInWhileSubscribed(viewModelScope, db.getKeyboardTypeBlocking())
     val isExtendedKeypadEnabled: StateFlow<Boolean> =
-        db
-            .getKeyboardTypeFlow()
-            .map { it == KeyboardType.EXPANDED }
-            .stateInWhileSubscribed(viewModelScope, db.getKeyboardTypeBlocking() == KeyboardType.EXPANDED)
+        db.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.getExpandedKeypadEnabledBlocking())
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
         db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())
     private val decimalPlaces: StateFlow<Int> =

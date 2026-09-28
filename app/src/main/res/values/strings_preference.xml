@@ -31,9 +31,6 @@
     <string name="previewConversion_summary">Show the current conversion for each rate in the currency picker.</string>
     <string name="keyboard_key" translatable="false">KEY_KEYBOARD</string>
     <string name="keyboard_title">Keyboard</string>
-    <string name="keyboard_option_default">Default</string>
-    <string name="keyboard_option_expanded">Expanded</string>
-    <string name="keyboard_summary_default">Standard calculator keypad.</string>
     <string name="keyboard_summary_expanded">Adds extra shortcut keys for faster entry.</string>
     <string name="decimal_places_key" translatable="false">KEY_DECIMAL_PLACES</string>
     <string name="decimal_places_title">Decimal accuracy</string>

@@ -837,10 +837,10 @@ class MainActivity : BaseActivity() {
                 onDelete = viewModel::delete,
                 onDeleteLong = viewModel::clear,
             )
-        val kbType by viewModel.keyboardType.collectAsStateWithLifecycle()
+        val isExpanded by viewModel.isExtendedKeypadEnabled.collectAsStateWithLifecycle()
         val nextParen by viewModel.nextParen().observeAsState('(')
         MainKeypad(
-            keyboardType = kbType,
+            isExpandedKeypad = isExpanded,
             nextParen = nextParen,
             callbacks = callbacks,
         )

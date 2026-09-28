@@ -22,9 +22,6 @@
     <string name="previewConversion_title">പരിവർത്തന പ്രിവ്യൂ</string>
     <string name="previewConversion_summary">കറൻസി പിക്കറിൽ ഓരോ നിരക്കിന്റെയും നിലവിലെ പരിവർത്തനം കാണിക്കുക.</string>
     <string name="keyboard_title">കീബോർഡ്</string>
-    <string name="keyboard_option_default">സ്ഥിരസ്ഥിതി</string>
-    <string name="keyboard_option_expanded">വിപുലീകൃതം</string>
-    <string name="keyboard_summary_default">സാധാരണ കാൽക്കുലേറ്റർ കീപ്പാഡ്.</string>
     <string name="keyboard_summary_expanded">വേഗത്തിലുള്ള ഇൻപുട്ടിനായി അധിക കുറുക്കുവഴി കീകൾ ചേർക്കുന്നു.</string>
     <string name="decimal_places_title">ദശാംശ കൃത്യത</string>
     <string name="decimal_places_summary">പരിവർത്തനം ചെയ്ത മൂല്യങ്ങൾക്ക് കാണിക്കേണ്ട ദശാംശ സ്ഥാനങ്ങളുടെ എണ്ണം.</string>

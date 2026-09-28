@@ -22,9 +22,6 @@
     <string name="previewConversion_title">Предпросмотр обменных курсов</string>
     <string name="previewConversion_summary">Показывать текущий обменный курс для каждой валюты в меню выбора валют.</string>
     <string name="keyboard_title">Клавиатура</string>
-    <string name="keyboard_option_default">По умолчанию</string>
-    <string name="keyboard_option_expanded">Расширенная</string>
-    <string name="keyboard_summary_default">Стандартная клавиатура калькулятора.</string>
     <string name="keyboard_summary_expanded">Добавляет дополнительные клавиши быстрого ввода.</string>
     <string name="decimal_places_title">Точность десятичных</string>
     <string name="decimal_places_summary">Количество десятичных знаков, отображаемых для конвертированных значений.</string>

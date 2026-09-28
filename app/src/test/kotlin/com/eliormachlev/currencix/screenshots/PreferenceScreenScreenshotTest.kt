@@ -57,10 +57,12 @@ private fun GeneralSectionPreview() {
             summary = stringResource(id = R.string.fee_summary),
             iconRes = R.drawable.ic_fee,
         )
-        PreferenceRow(
+        SwitchRow(
             title = stringResource(id = R.string.keyboard_title),
-            summary = stringResource(id = R.string.keyboard_option_default),
+            summary = stringResource(id = R.string.keyboard_summary_expanded),
             iconRes = R.drawable.ic_keyboard_extended,
+            checked = false,
+            onCheckedChange = {},
         )
         PreferenceRow(
             title = stringResource(id = R.string.decimal_places_title),

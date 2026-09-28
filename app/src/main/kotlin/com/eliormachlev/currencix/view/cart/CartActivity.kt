@@ -103,7 +103,7 @@ class CartActivity : BaseActivity() {
         this.keypad =
             CartKeypadController(
                 activity = this,
-                keyboardType = viewModel.keyboardType,
+                isExpandedKeypad = viewModel.isExtendedKeypadEnabled,
                 onExpressionCommit = ::commitExpression,
             )
 

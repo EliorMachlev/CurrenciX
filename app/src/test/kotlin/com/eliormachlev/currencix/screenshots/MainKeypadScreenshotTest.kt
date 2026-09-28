@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.screenshots
 
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import org.junit.Test
@@ -28,11 +27,11 @@ class MainKeypadScreenshotTest {
 
     @Test fun keypadBasic() =
         captureMatrix("keypad_basic") {
-            MainKeypad(keyboardType = KeyboardType.BASIC, nextParen = '(', callbacks = callbacks)
+            MainKeypad(isExpandedKeypad = false, nextParen = '(', callbacks = callbacks)
         }
 
     @Test fun keypadExpanded() =
         captureMatrix("keypad_expanded") {
-            MainKeypad(keyboardType = KeyboardType.EXPANDED, nextParen = '(', callbacks = callbacks)
+            MainKeypad(isExpandedKeypad = true, nextParen = '(', callbacks = callbacks)
         }
 }

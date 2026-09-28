@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.viewmodel.main.Operator
@@ -61,7 +60,7 @@ data class MainKeypadCallbacks(
 
 @Composable
 fun MainKeypad(
-    keyboardType: KeyboardType,
+    isExpandedKeypad: Boolean,
     nextParen: Char,
     callbacks: MainKeypadCallbacks,
     modifier: Modifier = Modifier,
@@ -75,7 +74,7 @@ fun MainKeypad(
             .padding(horizontal = KEYPAD_HORIZONTAL_PADDING, vertical = KEYPAD_VERTICAL_PADDING),
         verticalArrangement = Arrangement.Center,
     ) {
-        if (keyboardType == KeyboardType.EXPANDED) {
+        if (isExpandedKeypad) {
             ExpandedKeypadRows(decimal, nextParen, callbacks)
         } else {
             BasicKeypadRows(decimal, callbacks)

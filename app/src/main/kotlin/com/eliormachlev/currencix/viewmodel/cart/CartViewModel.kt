@@ -10,7 +10,6 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
 import kotlinx.collections.immutable.ImmutableList
@@ -50,13 +49,10 @@ class CartViewModel(
     fun getExchangeRates(): LiveData<ExchangeRates?> = ratesCache.rates
 
     /**
-     * Currently-selected keyboard type. Same source of truth as the main
-     * screen so the cart's slide-up keypad shows the same layout the user
-     * picked, and cart taps route to the system IME when that pref is on.
+     * Same source of truth as the main screen so the cart's slide-up keypad
+     * shows the same layout the user picked.
      */
-    val keyboardType: LiveData<KeyboardType> = db.getKeyboardType()
-    val isExtendedKeypadEnabled: LiveData<Boolean> =
-        keyboardType.map { it == KeyboardType.EXPANDED }
+    val isExtendedKeypadEnabled: LiveData<Boolean> = db.getExpandedKeypadEnabled()
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()

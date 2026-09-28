@@ -22,9 +22,6 @@
     <string name="previewConversion_title">Pratinjau konversi</string>
     <string name="previewConversion_summary">Tampilkan konversi yang dilakukan untuk setiap nilai tukar pada pemilihan mata uang.</string>
     <string name="keyboard_title">Keyboard</string>
-    <string name="keyboard_option_default">Bawaan</string>
-    <string name="keyboard_option_expanded">Diperluas</string>
-    <string name="keyboard_summary_default">Papan tombol kalkulator standar.</string>
     <string name="keyboard_summary_expanded">Menambahkan tombol pintasan tambahan agar input lebih cepat.</string>
     <string name="decimal_places_title">Akurasi desimal</string>
     <string name="decimal_places_summary">Jumlah tempat desimal yang ditampilkan untuk nilai yang dikonversi.</string>

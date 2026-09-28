@@ -22,9 +22,6 @@
     <string name="previewConversion_title">Previsão da conversão</string>
     <string name="previewConversion_summary">Mostrar a conversão atual para cada taxa no selecionador de moeda.</string>
     <string name="keyboard_title">Teclado</string>
-    <string name="keyboard_option_default">Padrão</string>
-    <string name="keyboard_option_expanded">Expandido</string>
-    <string name="keyboard_summary_default">Teclado padrão da calculadora.</string>
     <string name="keyboard_summary_expanded">Adiciona teclas de atalho adicionais para digitação mais rápida.</string>
     <string name="decimal_places_title">Precisão decimal</string>
     <string name="decimal_places_summary">Número de casas decimais mostradas para os valores convertidos.</string>

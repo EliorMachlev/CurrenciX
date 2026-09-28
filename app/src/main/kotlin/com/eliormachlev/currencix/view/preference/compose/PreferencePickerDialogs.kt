@@ -68,37 +68,6 @@ fun <T> SingleChoicePickerDialog(
 }
 
 /**
- * Compose single-choice picker with a descriptive second line under each
- * option — the "explainer" variant. Same [LedgerBottomSheet] chrome as
- * [SingleChoicePickerDialog], but each row stacks title + description.
- */
-@Composable
-fun <T> SingleChoiceExplainerPickerDialog(
-    title: String,
-    options: List<T>,
-    selected: T?,
-    label: (T) -> String,
-    description: (T) -> String,
-    onDismiss: () -> Unit,
-    onPicked: (T) -> Unit,
-) {
-    PickerSheet(title = title, onDismiss = onDismiss) {
-        options.forEachIndexed { index, option ->
-            PickerRow(
-                title = label(option),
-                description = description(option),
-                isSelected = option == selected,
-                isLast = index == options.lastIndex,
-                onClick = {
-                    onPicked(option)
-                    onDismiss()
-                },
-            )
-        }
-    }
-}
-
-/**
  * Compose text-entry dialog — an OutlinedTextField wrapped in the shared
  * [LedgerDialogFrame] with OK/Cancel actions. [message] shows above the
  * field when non-null. Focus + soft-keyboard is requested on show so the user

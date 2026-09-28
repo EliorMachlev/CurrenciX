@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
@@ -29,8 +28,8 @@ class PreferenceViewModel(
         db.getOpenExchangeRatesApiKeyFlow().stateInWhileSubscribed(viewModelScope, db.getOpenExchangeRatesApiKey())
     val isPreviewConversionEnabled: StateFlow<Boolean> =
         db.isPreviewConversionEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isPreviewConversionEnabledBlocking())
-    val keyboardType: StateFlow<KeyboardType> =
-        db.getKeyboardTypeFlow().stateInWhileSubscribed(viewModelScope, db.getKeyboardTypeBlocking())
+    val isExpandedKeypadEnabled: StateFlow<Boolean> =
+        db.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.getExpandedKeypadEnabledBlocking())
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
         db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())
     val decimalPlaces: StateFlow<Int> =
@@ -107,11 +106,11 @@ class PreferenceViewModel(
         db.setPreviewConversionEnabled(enabled)
     }
 
-    fun setKeyboardType(type: KeyboardType) {
-        db.setKeyboardType(type)
+    fun setExpandedKeypadEnabled(enabled: Boolean) {
+        db.setExpandedKeypadEnabled(enabled)
     }
 
-    fun getKeyboardTypeBlocking(): KeyboardType = db.getKeyboardTypeBlocking()
+    fun getExpandedKeypadEnabledBlocking(): Boolean = db.getExpandedKeypadEnabledBlocking()
 
     fun setHapticFeedbackEnabled(enabled: Boolean) {
         db.setHapticFeedbackEnabled(enabled)

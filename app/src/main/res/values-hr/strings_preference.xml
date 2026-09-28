@@ -22,9 +22,6 @@
     <string name="previewConversion_title">Pretpregled konverzije</string>
     <string name="previewConversion_summary">Prikazuje tečaj konverzije za svaku valutu u izborniku valuta.</string>
     <string name="keyboard_title">Tipkovnica</string>
-    <string name="keyboard_option_default">Zadano</string>
-    <string name="keyboard_option_expanded">Proširena</string>
-    <string name="keyboard_summary_default">Standardna tipkovnica kalkulatora.</string>
     <string name="keyboard_summary_expanded">Dodaje dodatne tipke prečaca za brži unos.</string>
     <string name="decimal_places_title">Decimalna preciznost</string>
     <string name="decimal_places_summary">Broj decimala prikazanih za pretvorene vrijednosti.</string>

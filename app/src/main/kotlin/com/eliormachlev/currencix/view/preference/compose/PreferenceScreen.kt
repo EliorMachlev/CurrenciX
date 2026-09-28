@@ -26,7 +26,6 @@ import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
@@ -53,8 +52,6 @@ private enum class SettingsSection {
 // closes whatever's open. Keeps dialog state out of every row and lets us
 // dismiss on rotation / back without individual saveable flags.
 private sealed interface OpenDialog {
-    data object Keyboard : OpenDialog
-
     data object DecimalPlaces : OpenDialog
 
     data object Theme : OpenDialog
@@ -91,7 +88,7 @@ fun PreferenceScreen(
     val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
     val apiKey by viewModel.openExchangeratesApiKey.collectAsStateWithLifecycle()
     val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
-    val keyboardType by viewModel.keyboardType.collectAsStateWithLifecycle()
+    val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
     val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
@@ -106,7 +103,7 @@ fun PreferenceScreen(
             provider = provider,
             apiKey = apiKey,
             decimalPlaces = decimalPlaces,
-            keyboardType = keyboardType,
+            expandedKeypadEnabled = expandedKeypadEnabled,
             hapticEnabled = hapticEnabled,
             previewEnabled = previewEnabled,
             dateFormat = dateFormat,
@@ -125,7 +122,6 @@ fun PreferenceScreen(
         provider = provider,
         apiKey = apiKey,
         decimalPlaces = decimalPlaces,
-        keyboardType = keyboardType,
         dateFormat = dateFormat,
         theme = theme,
         language = language,
@@ -145,7 +141,7 @@ private fun PreferenceSectionsList(
     provider: ApiProvider?,
     apiKey: String?,
     decimalPlaces: Int,
-    keyboardType: KeyboardType,
+    expandedKeypadEnabled: Boolean,
     hapticEnabled: Boolean,
     previewEnabled: Boolean,
     dateFormat: String,
@@ -165,10 +161,10 @@ private fun PreferenceSectionsList(
         item(key = SettingsSection.GENERAL) {
             SectionEnter(index = SettingsSection.GENERAL.ordinal) {
                 GeneralSection(
-                    keyboardType = keyboardType,
+                    expandedKeypadEnabled = expandedKeypadEnabled,
                     decimalPlaces = decimalPlaces,
                     callbacks = callbacks,
-                    openKeyboardPicker = { onOpenDialog(OpenDialog.Keyboard) },
+                    onExpandedKeypadChange = viewModel::setExpandedKeypadEnabled,
                     openDecimalPlacesPicker = { onOpenDialog(OpenDialog.DecimalPlaces) },
                 )
             }
@@ -228,13 +224,11 @@ private fun PreferenceDialogsHost(
     provider: ApiProvider?,
     apiKey: String?,
     decimalPlaces: Int,
-    keyboardType: KeyboardType,
     dateFormat: String,
     theme: AppTheme,
     language: Language,
 ) {
     when (openDialog) {
-        OpenDialog.Keyboard -> KeyboardPickerDialog(keyboardType = keyboardType, dismiss = dismiss, viewModel = viewModel)
         OpenDialog.DecimalPlaces ->
             SingleChoicePickerDialog(
                 title = stringResource(id = R.string.decimal_places_title),
@@ -280,26 +274,6 @@ private fun PreferenceDialogsHost(
 }
 
 @Composable
-private fun KeyboardPickerDialog(
-    keyboardType: KeyboardType,
-    dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
-) {
-    val entries = KeyboardType.entries
-    val labels = entries.map { stringResource(id = keyboardLabelRes(it)) }
-    val descriptions = entries.map { stringResource(id = keyboardDescriptionRes(it)) }
-    SingleChoiceExplainerPickerDialog(
-        title = stringResource(id = R.string.keyboard_title),
-        options = entries,
-        selected = keyboardType,
-        label = { labels[entries.indexOf(it)] },
-        description = { descriptions[entries.indexOf(it)] },
-        onDismiss = dismiss,
-        onPicked = viewModel::setKeyboardType,
-    )
-}
-
-@Composable
 private fun ThemePickerDialog(
     theme: AppTheme,
     dismiss: () -> Unit,
@@ -340,10 +314,10 @@ private fun DateFormatPickerDialog(
 
 @Composable
 private fun GeneralSection(
-    keyboardType: KeyboardType,
+    expandedKeypadEnabled: Boolean,
     decimalPlaces: Int,
     callbacks: PreferenceScreenCallbacks,
-    openKeyboardPicker: () -> Unit,
+    onExpandedKeypadChange: (Boolean) -> Unit,
     openDecimalPlacesPicker: () -> Unit,
 ) {
     PreferenceSection(text = stringResource(id = R.string.category_settings)) {
@@ -353,11 +327,12 @@ private fun GeneralSection(
             iconRes = R.drawable.ic_fee,
             onClick = callbacks.onOpenFees,
         )
-        PreferenceRow(
+        SwitchRow(
             title = stringResource(id = R.string.keyboard_title),
-            summary = stringResource(id = keyboardLabelRes(keyboardType)),
+            summary = stringResource(id = R.string.keyboard_summary_expanded),
             iconRes = R.drawable.ic_keyboard_extended,
-            onClick = openKeyboardPicker,
+            checked = expandedKeypadEnabled,
+            onCheckedChange = onExpandedKeypadChange,
         )
         PreferenceRow(
             title = stringResource(id = R.string.decimal_places_title),
@@ -580,18 +555,6 @@ data class PreferenceScreenCallbacks(
 // Build flavor served through Play; other flavors hide the "rate on Play"
 // entry (donation flavor gets its own entry elsewhere).
 private const val FLAVOR_PLAY = "play"
-
-private fun keyboardLabelRes(type: KeyboardType): Int =
-    when (type) {
-        KeyboardType.BASIC -> R.string.keyboard_option_default
-        KeyboardType.EXPANDED -> R.string.keyboard_option_expanded
-    }
-
-private fun keyboardDescriptionRes(type: KeyboardType): Int =
-    when (type) {
-        KeyboardType.BASIC -> R.string.keyboard_summary_default
-        KeyboardType.EXPANDED -> R.string.keyboard_summary_expanded
-    }
 
 private fun themeLabelRes(theme: AppTheme): Int =
     when (theme) {

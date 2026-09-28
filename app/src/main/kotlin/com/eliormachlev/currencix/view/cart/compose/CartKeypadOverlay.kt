@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 
@@ -80,7 +79,7 @@ fun CartKeypadOverlay(
     modifier: Modifier = Modifier,
 ) {
     val visible = keypad.keypadVisible.value
-    val keyboardType by keypad.keypadKeyboardType.observeAsState(KeyboardType.DEFAULT)
+    val isExpandedKeypad by keypad.isExpandedKeypad.observeAsState(false)
     val nextParen by keypad.keypadNextParen.observeAsState('(')
 
     val density = LocalDensity.current
@@ -131,7 +130,7 @@ fun CartKeypadOverlay(
                         ),
             )
             MainKeypad(
-                keyboardType = keyboardType,
+                isExpandedKeypad = isExpandedKeypad,
                 nextParen = nextParen,
                 callbacks = keypad.keypadCallbacks,
             )

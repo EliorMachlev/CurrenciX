@@ -13,7 +13,6 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeType
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Timeline
@@ -67,7 +66,7 @@ private const val KEY_FEES_JSON = "_fees_json"
 private const val KEY_ACTIVE_EXCHANGE_ID = "_active_exchange_id"
 private const val KEY_ACTIVE_BANK_ID = "_active_bank_id"
 private const val KEY_PREVIEW_CONVERSION_ENABLED = "_previewConversionEnabled"
-private const val KEY_KEYBOARD_TYPE = "_keyboardType"
+private const val KEY_EXPANDED_KEYPAD = "_expandedKeypad"
 private const val KEY_HAPTIC_FEEDBACK = "_hapticFeedback"
 private const val KEY_DECIMAL_PLACES = "_decimalPlaces"
 private const val KEY_CHART_GRID = "_chartGrid"
@@ -108,8 +107,8 @@ private val openExchangeratesApiKeyMapper: (Preferences) -> String? = {
 private val previewConversionEnabledMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] ?: false
 }
-private val keyboardTypeMapper: (Preferences) -> KeyboardType = {
-    KeyboardType.fromOrdinal(it[intPreferencesKey(KEY_KEYBOARD_TYPE)] ?: KeyboardType.DEFAULT.ordinal)
+private val expandedKeypadEnabledMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_EXPANDED_KEYPAD)] ?: false
 }
 private val hapticFeedbackEnabledMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
@@ -589,18 +588,17 @@ class Database(
 
     fun isPreviewConversionEnabledBlocking(): Boolean = previewConversionEnabledMapper(appStore.snapshot())
 
-    // keyboard type
+    // expanded keypad (boolean pref: true = expanded layout, false = basic/default)
 
-    fun setKeyboardType(type: KeyboardType) {
-        appStore.edit { this[intPreferencesKey(KEY_KEYBOARD_TYPE)] = type.ordinal }
+    fun setExpandedKeypadEnabled(enabled: Boolean) {
+        appStore.edit { this[booleanPreferencesKey(KEY_EXPANDED_KEYPAD)] = enabled }
     }
 
-    fun getKeyboardType(): LiveData<KeyboardType> = appStore.mappedLiveData(keyboardTypeMapper)
+    fun getExpandedKeypadEnabled(): LiveData<Boolean> = appStore.mappedLiveData(expandedKeypadEnabledMapper)
 
-    fun getKeyboardTypeFlow(): Flow<KeyboardType> = appStore.mappedFlow(keyboardTypeMapper)
+    fun getExpandedKeypadEnabledFlow(): Flow<Boolean> = appStore.mappedFlow(expandedKeypadEnabledMapper)
 
-    fun getKeyboardTypeBlocking(): KeyboardType =
-        KeyboardType.fromOrdinal(appStore.snapshot()[intPreferencesKey(KEY_KEYBOARD_TYPE)] ?: KeyboardType.DEFAULT.ordinal)
+    fun getExpandedKeypadEnabledBlocking(): Boolean = expandedKeypadEnabledMapper(appStore.snapshot())
 
     // haptic feedback
 

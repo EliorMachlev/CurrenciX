@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
@@ -28,12 +27,12 @@ import com.eliormachlev.currencix.viewmodel.main.Operator
  *   active-row highlight + inline display.
  * - [keypadVisible] — observed by [CartKeypadOverlay] to slide the app keypad
  *   in/out.
- * - [keypadKeyboardType] / [keypadNextParen] — piped into the [MainKeypad]
+ * - [isExpandedKeypad] / [keypadNextParen] — piped into the [MainKeypad]
  *   composable so it renders the correct layout and paren glyph.
  */
 class CartKeypadController(
     activity: AppCompatActivity,
-    private val keyboardType: LiveData<KeyboardType>,
+    val isExpandedKeypad: LiveData<Boolean>,
     private val onExpressionCommit: (id: String, expression: String) -> Unit,
 ) {
     private val ctx: Context = activity
@@ -44,8 +43,7 @@ class CartKeypadController(
     // Consumed by CartKeypadOverlay's AnimatedVisibility for the slide.
     val keypadVisible = mutableStateOf(false)
 
-    // Piped into MainKeypad composable for layout + paren glyph.
-    val keypadKeyboardType: LiveData<KeyboardType> get() = keyboardType
+    // Piped into MainKeypad composable for the paren glyph.
     private val nextParenLive = MutableLiveData('(')
     val keypadNextParen: LiveData<Char> get() = nextParenLive
 
