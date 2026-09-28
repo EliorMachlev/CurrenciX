@@ -41,9 +41,9 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 
 ### Code Style
 
-- Kotlin only (no Java in `app/` or `helpers/`).
-- Follow existing patterns — MVVM, Repository, LiveData.
-- Run `./gradlew detekt` locally before opening a PR. CI will fail on Detekt findings.
+- New code should be Kotlin. One legacy Java file remains (`widget/LongSummaryPreference.java`) — don't add to it; port it if you're touching that area.
+- Follow existing patterns — MVVM, Repository, LiveData, with Compose (via `ComposeView`) for newer/migrated screens — see [architecture.md](architecture.md).
+- Detekt runs in CI as a standalone `detekt-cli` binary, not a Gradle task — there is no `./gradlew detekt`. To check locally, download the pinned CLI version (see `DETEKT_VERSION` in `.github/workflows/detekt.yaml`) and run `detekt-cli --input app/src,helpers/src --config config/detekt.yml --jvm-target 21`. CI will fail on Detekt findings.
 - Run `./gradlew spotlessCheck` — CI will fail on formatting drift. Use `./gradlew spotlessApply` to auto-fix.
 - Avoid `java.lang.*` qualifiers (Kotlin imports these automatically).
 - Avoid swallowed exceptions: always use the caught exception variable in the catch block.

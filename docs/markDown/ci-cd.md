@@ -11,8 +11,8 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |
 | `codeql.yaml` | PR, push → `master`, weekly | GitHub CodeQL (Actions YAML) |
-| `semgrep.yaml` | PR, push → `master` | SAST security pattern scanning |
-| `gitleaks.yaml` | Weekly (Mon 07:00 UTC) | Secret / credential scanning |
+| `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC) | SAST security pattern scanning |
+| `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC) | Secret / credential scanning |
 | `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC) | Dependency vulnerability scan (CVSS ≥ 7) |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
 | `scorecard.yaml` | Push → `master`, weekly | OpenSSF Scorecard supply-chain score |
@@ -82,6 +82,7 @@ All workflows use `permissions: contents: read` by default. Additional permissio
 | Workflow | Extra permissions |
 |---|---|
 | `detekt.yaml` | `security-events: write` |
+| `qodana.yaml` | `security-events: write`, `pull-requests: write`, `checks: write` |
 | `codeql.yaml` | `security-events: write`, `actions: read` |
 | `scorecard.yaml` | `security-events: write`, `id-token: write` |
 | `dependency-review.yaml` | `pull-requests: write` |

@@ -7,7 +7,7 @@
 Every GitHub Actions `uses:` reference is pinned to a full 40-character commit SHA, with the human-readable tag preserved in a trailing comment:
 
 ```yaml
-uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 ```
 
 This prevents a compromised or reused tag from injecting malicious code into CI. Enforced by the Semgrep rule `yaml.github-actions.security.github-actions-mutable-action-tag` and verified by the OpenSSF Scorecard `Pinned-Dependencies` check.
@@ -28,7 +28,7 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 
 - Release signing credentials are stored in `secrets.properties` (gitignored) and referenced only at build time.
 - No API keys are stored in source code. OpenExchangerates key (if used) is expected as an environment variable or build config field.
-- Gitleaks scans the full repository weekly for accidental credential commits.
+- Gitleaks scans the full repository on every PR, every push to `master`, and weekly (Mon 07:00 UTC) for accidental credential commits.
 
 ## User-initiated Backup
 
@@ -51,13 +51,14 @@ Automatic Android backup remains disabled (`android:allowBackup="false"`) — us
 
 ## Runtime Permissions
 
-The app declares a single permission:
+The app declares two normal (non-dangerous) permissions:
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
-No location, contacts, storage, camera, or microphone access.
+`ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. No location, contacts, storage, camera, or microphone access.
 
 ## Network Security
 
@@ -76,7 +77,8 @@ Rationale: SharedPreferences contain the user's OpenExchangeRates API key (if an
 | Detekt | Kotlin source (app + helpers) | Every PR and master push |
 | Qodana JVM Community | Kotlin / Java | Every PR, master push, weekly |
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |
-| Semgrep | Security patterns | Every PR and master push |
+| Semgrep | Security patterns | Every PR, master push, weekly |
+| Gitleaks | Secret / credential scanning | Every PR, master push, weekly |
 
 ## OpenSSF Scorecard
 

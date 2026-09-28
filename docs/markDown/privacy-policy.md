@@ -17,7 +17,7 @@ CurrenciX is a currency-conversion app. It is designed to collect **no** persona
 
 **No account.** There is no login, no user account, no cloud sync, no server that CurrenciX operates.
 
-**Permissions.** The app requests only `android.permission.INTERNET`. Nothing else.
+**Permissions.** The app requests `android.permission.INTERNET` and `android.permission.ACCESS_NETWORK_STATE` — both normal permissions used only to fetch exchange rates and check connectivity beforehand. Nothing else.
 
 ## Categories of "personal data" processed (by us)
 
