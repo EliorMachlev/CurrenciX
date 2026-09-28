@@ -81,7 +81,7 @@ class MainViewModel(
     // ui
     private val isUpdating: StateFlow<Boolean> =
         db.isUpdatingFlow().stateInWhileSubscribed(viewModelScope, db.isUpdatingBlocking())
-    val isExtendedKeypadEnabled: StateFlow<Boolean> =
+    val isExpandedKeypadEnabled: StateFlow<Boolean> =
         db.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.getExpandedKeypadEnabledBlocking())
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
         db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())

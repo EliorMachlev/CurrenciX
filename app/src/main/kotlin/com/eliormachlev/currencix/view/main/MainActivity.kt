@@ -837,7 +837,7 @@ class MainActivity : BaseActivity() {
                 onDelete = viewModel::delete,
                 onDeleteLong = viewModel::clear,
             )
-        val isExpanded by viewModel.isExtendedKeypadEnabled.collectAsStateWithLifecycle()
+        val isExpanded by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
         val nextParen by viewModel.nextParen().observeAsState('(')
         MainKeypad(
             isExpandedKeypad = isExpanded,

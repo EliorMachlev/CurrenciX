@@ -34,3 +34,7 @@ Thumbs.db
 
 # npx skills tool leftover
 skills-lock.json
+
+# scratch design/proposal drops that aren't ready to commit
+art/logo-proposals/
+art/theme-proposals/

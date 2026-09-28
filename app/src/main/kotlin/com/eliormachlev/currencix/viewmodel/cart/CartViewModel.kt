@@ -52,7 +52,7 @@ class CartViewModel(
      * Same source of truth as the main screen so the cart's slide-up keypad
      * shows the same layout the user picked.
      */
-    val isExtendedKeypadEnabled: LiveData<Boolean> = db.getExpandedKeypadEnabled()
+    val isExpandedKeypadEnabled: LiveData<Boolean> = db.getExpandedKeypadEnabled()
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
@@ -189,14 +189,13 @@ class CartViewModel(
     }
 
     /**
-     * Reset the cart back to a fresh, main-screen-seeded state: no items and
-     * currencies re-pulled from [mainBase] / [mainDest] when supplied
-     * (delivered by the activity's intent extras), else from the persisted
-     * app-wide defaults. Preserves the cart's id/name so a subsequent "Save"
-     * still targets the same persisted entry — this is a content reset, not
-     * a "delete and start over".
+     * Wipe every item and re-seed the currency pair from [mainBase] / [mainDest]
+     * when supplied (delivered by the activity's intent extras), else from the
+     * persisted app-wide defaults. Preserves the cart's id/name so a subsequent
+     * "Save" still targets the same persisted entry — this is a content reset,
+     * not a "delete and start over".
      */
-    fun resetToMainDefaults(
+    fun clearCart(
         mainBase: Currency? = null,
         mainDest: Currency? = null,
     ) {
