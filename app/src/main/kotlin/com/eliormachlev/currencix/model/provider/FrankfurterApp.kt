@@ -10,8 +10,6 @@ import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.FrankfurterAppRatesAdapter
 import com.eliormachlev.currencix.model.adapter.FrankfurterAppTimelineAdapter
 import com.eliormachlev.currencix.model.provider.api.FrankfurterApi
-import com.eliormachlev.currencix.util.RetrofitProvider
-import com.eliormachlev.currencix.util.retrofitCall
 import java.time.LocalDate
 
 // Path segment sent to the /latest endpoint (versus an ISO-8601 date).
@@ -43,7 +41,7 @@ class FrankfurterApp : ApiProvider.Api() {
         val base = Currency.EUR
         val api = api(context, base, symbol = null)
         val datePath = date?.format(ISO_DATE) ?: LATEST_DATE_PATH
-        return retrofitCall {
+        return fetchRetrofit {
             api.getRates(datePath = datePath, base = base.toString())
         }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
     }
@@ -56,7 +54,7 @@ class FrankfurterApp : ApiProvider.Api() {
         endDate: LocalDate,
     ): Result<Timeline> {
         val api = api(context, base, symbol)
-        return retrofitCall {
+        return fetchRetrofit {
             api.getTimeline(
                 start = startDate.format(ISO_DATE),
                 end = endDate.format(ISO_DATE),
@@ -77,15 +75,13 @@ class FrankfurterApp : ApiProvider.Api() {
         context: Context?,
         base: Currency,
         symbol: Currency?,
-    ): FrankfurterApi {
-        val moshi =
+    ): FrankfurterApi =
+        retrofitApi(
+            context,
             moshi {
                 add(FrankfurterAppRatesAdapter(base))
                 add(SHARED_LOCAL_DATE_ADAPTER)
                 if (symbol != null) add(FrankfurterAppTimelineAdapter(symbol))
-            }
-        return RetrofitProvider
-            .retrofit(context, baseUrl, moshi)
-            .create(FrankfurterApi::class.java)
-    }
+            },
+        )
 }

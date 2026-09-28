@@ -82,7 +82,7 @@ Hosts the Vico chart plus the rest of the app's UI — Main, Timeline, and Cart 
 | `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
 | `com.google.devtools.ksp:*` | 2.3.11 |
 
-Retrofit is layered on the shared OkHttp client and is being adopted provider-by-provider (Frankfurter migrated first); other providers still call OkHttp directly — see [architecture.md](architecture.md).
+Retrofit is layered on the shared OkHttp client and serves every fixed-shape JSON endpoint; the XML and SDMX feeds stay on raw OkHttp by design — see [architecture.md](architecture.md).
 
 ### Calculator
 

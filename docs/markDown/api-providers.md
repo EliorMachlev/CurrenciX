@@ -63,4 +63,6 @@ abstract suspend fun getRates(context: Context?, date: LocalDate?, secrets: ApiS
 abstract suspend fun getTimeline(context: Context?, base: Currency, symbol: Currency, startDate: LocalDate, endDate: LocalDate): Result<Timeline>
 ```
 
-Response parsing is handled by provider-specific Moshi adapters (`model/adapter/`) or SAX XML parsers (for Norges Bank and Bank Rossii, which return XML).
+Response parsing is handled by provider-specific Moshi adapters (`model/adapter/`), SAX XML parsers (Norges Bank and Bank Rossii, which return XML), or `BankOfIsraelSdmxParser` (Bank of Israel's SDMX-JSON feed).
+
+Fixed-shape JSON endpoints are declared as Retrofit interfaces in `model/provider/api/`; the XML and SDMX feeds call the shared OkHttp client directly. See [architecture.md](architecture.md#networking-one-okhttp-client-retrofit-for-fixed-shape-json-raw-okhttp-for-the-rest) for why the split is permanent.

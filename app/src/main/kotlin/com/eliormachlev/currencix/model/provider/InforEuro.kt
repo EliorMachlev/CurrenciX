@@ -10,7 +10,7 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.InforEuroRatesAdapter
 import com.eliormachlev.currencix.model.adapter.InforEuroTimelineAdapter
-import com.squareup.moshi.JsonAdapter
+import com.eliormachlev.currencix.model.provider.api.InforEuroApi
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -36,12 +36,10 @@ class InforEuro : ApiProvider.Api() {
         @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val effective = date ?: LocalDate.now(ZoneOffset.UTC)
-        val adapter =
-            moshi { add(InforEuroRatesAdapter(effective)) }
-                .adapter(ExchangeRates::class.java)
-        val dateQuery = if (date != null) "?year=${date.year}&month=${date.monthValue}" else ""
+        // The adapter closes over the requested month, so it's built per request.
+        val api = retrofitApi<InforEuroApi>(context, moshi { add(InforEuroRatesAdapter(effective)) })
 
-        return fetchJson(context, "$baseUrl/monthly-rates$dateQuery", name, adapter)
+        return fetchRetrofit { api.getMonthlyRates(year = date?.year, month = date?.monthValue) }
             .map { it.copy(provider = ApiProvider.INFOR_EURO) }
     }
 
@@ -54,12 +52,10 @@ class InforEuro : ApiProvider.Api() {
     ): Result<Timeline> {
         // InforEuro needs 2 calls: the API only provides EUR <-> symbol, without changing the base.
         // So, we make 2 calls: EUR <-> base & EUR <-> symbol
-        val adapter =
-            moshi { add(InforEuroTimelineAdapter(startDate, endDate)) }
-                .adapter(Timeline::class.java)
+        val api = retrofitApi<InforEuroApi>(context, moshi { add(InforEuroTimelineAdapter(startDate, endDate)) })
 
-        val resultBase = fetchTimeline(context, base.apiCodeOrDkkForFok(), adapter)
-        val resultSymbol = fetchTimeline(context, symbol.apiCodeOrDkkForFok(), adapter)
+        val resultBase = fetchRetrofit { api.getCurrencyHistory(base.apiCodeOrDkkForFok()) }
+        val resultSymbol = fetchRetrofit { api.getCurrencyHistory(symbol.apiCodeOrDkkForFok()) }
 
         return when {
             resultBase.isFailure -> resultBase
@@ -80,10 +76,4 @@ class InforEuro : ApiProvider.Api() {
                 }
         }
     }
-
-    private suspend fun fetchTimeline(
-        context: Context?,
-        parameter: String,
-        adapter: JsonAdapter<Timeline>,
-    ): Result<Timeline> = fetchJson(context, "$baseUrl/currencies/$parameter", name, adapter)
 }

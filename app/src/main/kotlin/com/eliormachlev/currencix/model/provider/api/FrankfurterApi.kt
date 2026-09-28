@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.model.provider.api
 
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -18,13 +19,16 @@ import retrofit2.http.Query
  *
  * `datePath` accepts either `latest` or an ISO-8601 date; the timeline
  * variant expects a `<start>..<end>` range in a single path segment.
+ *
+ * Methods return [Response] so `fetchRetrofit` can apply the shared
+ * non-2xx / empty-body error contract.
  */
 internal interface FrankfurterApi {
     @GET("{datePath}")
     suspend fun getRates(
         @Path("datePath") datePath: String,
         @Query("base") base: String,
-    ): ExchangeRates
+    ): Response<ExchangeRates>
 
     @GET("{start}..{end}")
     suspend fun getTimeline(
@@ -32,5 +36,5 @@ internal interface FrankfurterApi {
         @Path("end") end: String,
         @Query("base") base: String,
         @Query("symbols") symbols: String,
-    ): Timeline
+    ): Response<Timeline>
 }

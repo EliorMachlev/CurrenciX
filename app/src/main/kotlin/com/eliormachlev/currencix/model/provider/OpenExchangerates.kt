@@ -8,10 +8,20 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.OpenExchangeratesRatesAdapter
+import com.eliormachlev.currencix.model.provider.api.OpenExchangeratesApi
 import com.eliormachlev.currencix.util.ApiHttpError
+import com.squareup.moshi.Moshi
 import java.time.LocalDate
 
 private const val HTTP_UNAUTHORIZED = 401
+
+// Compact JSON, and no unofficial / black-market rates — the fixed query
+// flags every request carries.
+private const val PRETTY_PRINT = false
+private const val SHOW_ALTERNATIVE = false
+
+// The rates adapter is stateless, so one Moshi serves every request.
+private val RATES_MOSHI: Moshi = moshi { add(OpenExchangeratesRatesAdapter()) }
 
 class OpenExchangerates : ApiProvider.Api() {
     override val name = "Open Exchangerates"
@@ -37,23 +47,15 @@ class OpenExchangerates : ApiProvider.Api() {
             return Result.failure(Exception(context?.getString(R.string.error_no_api_key)))
         }
 
-        val endpoint =
-            if (date != null) {
-                "/historical/${date.format(ISO_DATE)}.json"
-            } else {
-                "/latest.json"
-            }
-        val adapter =
-            moshi { add(OpenExchangeratesRatesAdapter()) }
-                .adapter(ExchangeRates::class.java)
-
+        val api = retrofitApi<OpenExchangeratesApi>(context, RATES_MOSHI)
         val result =
-            fetchJson(
-                context,
-                "$baseUrl$endpoint?app_id=$apiKey&prettyprint=false&show_alternative=false",
-                name,
-                adapter,
-            ).map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
+            fetchRetrofit {
+                if (date != null) {
+                    api.getHistorical(date.format(ISO_DATE), apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
+                } else {
+                    api.getLatest(apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
+                }
+            }.map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
 
         val err = result.exceptionOrNull()
         return if (err is ApiHttpError && err.statusCode == HTTP_UNAUTHORIZED) {

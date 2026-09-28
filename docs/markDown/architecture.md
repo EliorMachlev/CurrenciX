@@ -47,7 +47,7 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── Rate.kt                 # Single (currency, rate) pair
 │   ├── Timeline.kt             # Historical rate series
 │   ├── adapter/                # Moshi / XML adapters per provider
-│   └── provider/               # HTTP implementations per provider
+│   └── provider/               # HTTP implementations per provider (api/ holds the Retrofit interfaces)
 ├── repository/
 │   ├── Database.kt             # Typed DataStore Preferences wrapper (5 namespaces)
 │   ├── ExchangeRatesRepository.kt
@@ -93,9 +93,20 @@ The one exception to "DataStore only": Cart JSON can be exported to / imported f
 
 `repository/cache/` implements a Fetcher / SourceOfTruth / Converter triad inspired by Store5's design (no Store5 dependency — sized for this codebase, ~300–400 lines total). `RateCache.get(key)` walks: an in-memory LRU tier, then a disk JSON tier (`DiskJsonStore`, atomic writes), then the network on a miss — with `InFlightDedupe` collapsing concurrent requests for the same key and `RetryPolicy` backing off transient failures. This sits above the OkHttp-level HTTP cache (`HttpClientProvider`'s 5 MiB disk cache of raw response bytes) — different tiers, different jobs: OkHttp caches transport bytes, `RateCache` caches parsed `ExchangeRates` / `Timeline` domain objects.
 
-### Networking: OkHttp shared client, Retrofit migrated provider-by-provider
+### Networking: one OkHttp client; Retrofit for fixed-shape JSON, raw OkHttp for the rest
 
-All providers share one `OkHttpClient` singleton (`HttpClientProvider`) with a disk cache and a per-provider `Cache-Control` rewrite interceptor. On top of that, providers are being migrated one at a time from raw OkHttp calls to Retrofit (`RetrofitProvider.retrofit(...)`, reusing the same shared `OkHttpClient` and `Moshi` instance) — Frankfurter is migrated; the rest still call OkHttp directly. `retrofitCall { ... }` translates Retrofit's `HttpException` into the same `ApiHttpError` the raw-OkHttp path throws, so `ExchangeRatesRepository`'s error handling doesn't need to know which transport a given provider uses.
+All providers share one `OkHttpClient` singleton (`HttpClientProvider`) with a disk cache and a per-provider `Cache-Control` rewrite interceptor. Which API sits on top of it is decided per endpoint, by the shape of the payload:
+
+| Transport | Used for | Endpoints |
+|---|---|---|
+| **Retrofit** (`model/provider/api/*Api.kt`) | Fixed-shape JSON that a Moshi adapter decodes directly | Frankfurter, Open Exchange Rates, InforEuro, Bank of Canada, Bank of Israel `PublicApi` (latest rates) |
+| **Raw OkHttp** (`HttpClientProvider.fetch`) | Feeds parsed by hand off the byte stream | Norges Bank (SDMX XML), Bank Rossii (XML), Bank of Israel SDMX-JSON (historical rates + timeline) |
+
+The split is deliberate and permanent, not an unfinished migration. Retrofit's value is typed `@Path`/`@Query` binding plus converter-driven decoding. The raw-OkHttp feeds get the first but not the second: the XML ones go through SAX parsers, and Bank of Israel's SDMX-JSON is keyed by dimension-index tuples rather than a fixed schema, so `BankOfIsraelSdmxParser` walks it as a generic JSON tree. Wrapping those in Retrofit would only replace a query string.
+
+Both transports share one error contract, so `ExchangeRatesRepository`'s error handling never needs to know which a provider uses. Non-2xx responses become `ApiHttpError(statusCode)`, network failures propagate as their original exception types, and a body that decodes to `null` becomes an `IOException("<provider>: empty JSON")`. On the Retrofit side this lives in two helpers in `ProviderUtils.kt`: `retrofitApi<T>()` binds an interface to the provider's `baseUrl` on the shared client, and `fetchRetrofit { }` unwraps the call. The interfaces return `Response<T>` rather than the bare body because Retrofit's suspend adapter would otherwise throw an opaque `KotlinNullPointerException` on a null body. Adapters that bail out on a non-object payload must consume it first (`JsonReader.skipIfNotObject()`), since Retrofit's Moshi converter rejects a document with input left over.
+
+`ProviderRequestTest` pins the exact URL every provider sends and this error contract, on either transport, with no network. A provider that changes transport must not change what goes over the wire.
 
 ### Moshi + Custom Adapters for Diverse API Formats
 

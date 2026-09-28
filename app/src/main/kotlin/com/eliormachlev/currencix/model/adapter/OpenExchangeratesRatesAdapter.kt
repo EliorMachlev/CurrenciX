@@ -26,7 +26,7 @@ internal class OpenExchangeratesRatesAdapter {
         var time: LocalTime? = null
         var errorMessage: String? = null
 
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) return null
+        if (reader.skipIfNotObject()) return null
 
         val rates =
             buildList {
