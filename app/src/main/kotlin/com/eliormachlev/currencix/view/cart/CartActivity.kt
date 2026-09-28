@@ -288,29 +288,21 @@ class CartActivity : BaseActivity() {
             )
         }
         state.deleteConfirm?.let { request ->
-            LedgerConfirmDialog(
+            DestructiveConfirmDialog(
                 title = request.name,
                 message = stringResource(id = R.string.cart_delete_confirm, request.name),
                 confirmLabel = stringResource(id = R.string.cart_delete_confirm_button),
-                destructive = true,
-                onConfirm = {
-                    request.onConfirm()
-                    state.deleteConfirm = null
-                },
-                onDismiss = { state.deleteConfirm = null },
+                onConfirm = request.onConfirm,
+                onClose = { state.deleteConfirm = null },
             )
         }
         if (state.clearConfirmVisible) {
-            LedgerConfirmDialog(
+            DestructiveConfirmDialog(
                 title = stringResource(id = R.string.cart_menu_clear),
                 message = stringResource(id = R.string.cart_clear_confirm),
                 confirmLabel = stringResource(id = R.string.cart_clear_confirm_button),
-                destructive = true,
-                onConfirm = {
-                    viewModel.clearCart(mainBase, mainDest)
-                    state.clearConfirmVisible = false
-                },
-                onDismiss = { state.clearConfirmVisible = false },
+                onConfirm = { viewModel.clearCart(mainBase, mainDest) },
+                onClose = { state.clearConfirmVisible = false },
             )
         }
     }
@@ -402,6 +394,28 @@ private class PendingNameBuffer {
         return snapshot
     }
 }
+
+// The cart's destructive confirmations (delete a saved cart, clear the current
+// one) share one shape: confirming runs [onConfirm] and then closes the dialog
+// via [onClose], which dismissing also calls.
+@Composable
+private fun DestructiveConfirmDialog(
+    title: String,
+    message: String,
+    confirmLabel: String,
+    onConfirm: () -> Unit,
+    onClose: () -> Unit,
+) = LedgerConfirmDialog(
+    title = title,
+    message = message,
+    confirmLabel = confirmLabel,
+    destructive = true,
+    onConfirm = {
+        onConfirm()
+        onClose()
+    },
+    onDismiss = onClose,
+)
 
 // Overlay visibility bag for CartActivity — each field toggles one sheet or
 // dialog. Held in `remember` so mutations recompose CartOverlays without
