@@ -4,6 +4,7 @@ import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.Until
+import java.io.ByteArrayOutputStream
 
 /*
  * The user journeys shared by the baseline-profile generator and the
@@ -35,14 +36,17 @@ private const val CHART_SCRUB_TO_X = 0.8f
 private const val GESTURE_STEPS = 20
 private const val FLING_MARGIN_DIVISOR = 10
 private const val MAX_BACK_PRESSES = 3
+private const val MAX_DESCRIBED_VALUES = 40
 
-/** Cold path to the converter: launch, wait for the keypad, clear onboarding if shown. */
+/** Cold path to the converter: launch, clear onboarding if shown, wait for the keypad. */
 internal fun MacrobenchmarkScope.launchToConverter() {
     pressHome()
     startActivityAndWait()
-    awaitConverter()
+    // Onboarding first: its spotlight is a focusable popup, so while it's up
+    // it's the active window and can hide the converter from lookups.
     device.wait(Until.findObject(By.res(UiTags.ONBOARDING_SKIP)), ONBOARDING_TIMEOUT_MS)?.click()
     device.waitForIdle()
+    awaitConverter()
 }
 
 /** Types [keys] (digits) on the converter keypad, then deletes them again. */
@@ -84,8 +88,23 @@ internal fun MacrobenchmarkScope.visitFromDrawer(entryTag: String) {
 
 private fun MacrobenchmarkScope.awaitConverter() {
     check(device.wait(Until.hasObject(By.res(UiTags.KEY_DELETE)), UI_TIMEOUT_MS)) {
-        "converter keypad never appeared"
+        "converter keypad never appeared — ${describeScreen()}"
     }
+}
+
+// Failure context for CI logs: which apps are on screen and which resource
+// ids are exposed — enough to tell a missing tag from a wrong screen.
+private fun MacrobenchmarkScope.describeScreen(): String {
+    val xml = ByteArrayOutputStream().also { device.dumpWindowHierarchy(it) }.toString()
+
+    fun attr(name: String) =
+        Regex("""$name="([^"]+)"""")
+            .findAll(xml)
+            .map { it.groupValues[1] }
+            .distinct()
+            .take(MAX_DESCRIBED_VALUES)
+            .toList()
+    return "packages=${attr("package")} resource-ids=${attr("resource-id")} texts=${attr("text")}"
 }
 
 private fun MacrobenchmarkScope.openDrawer() {
