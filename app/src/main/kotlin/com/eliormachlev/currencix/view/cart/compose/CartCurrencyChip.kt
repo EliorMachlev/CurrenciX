@@ -1,8 +1,5 @@
 package com.eliormachlev.currencix.view.cart.compose
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,20 +16,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.view.compose.flagPainter
 
 private val CHIP_HEIGHT: Dp = 44.dp
 private val CHIP_RADIUS: Dp = 999.dp
@@ -60,8 +53,7 @@ fun CartCurrencyChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val flagPainter = remember(currency) { currency?.flag(context)?.let(::drawableToPainter) }
+    val flagPainter = currency?.flagPainter()
     Row(
         modifier
             .height(CHIP_HEIGHT)
@@ -100,14 +92,4 @@ fun CartCurrencyChip(
             modifier = Modifier.size(CHEVRON_SIZE),
         )
     }
-}
-
-private fun drawableToPainter(drawable: Drawable): Painter {
-    val w = drawable.intrinsicWidth.coerceAtLeast(1)
-    val h = drawable.intrinsicHeight.coerceAtLeast(1)
-    val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bmp)
-    drawable.setBounds(0, 0, w, h)
-    drawable.draw(canvas)
-    return BitmapPainter(bmp.asImageBitmap())
 }

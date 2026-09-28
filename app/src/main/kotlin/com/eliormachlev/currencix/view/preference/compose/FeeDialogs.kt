@@ -1,8 +1,5 @@
 package com.eliormachlev.currencix.view.preference.compose
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,9 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +51,7 @@ import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
 import java.util.UUID
@@ -567,10 +563,8 @@ internal fun feeSummaryWithInactive(fee: Fee): String {
  */
 @Composable
 internal fun InlineFlag(currency: Currency) {
-    val context = LocalContext.current
-    val drawable = remember(currency) { currency.flag(context) }
-    val painter = remember(drawable) { drawable.toBitmapPainter() }
-    val aspect = remember(drawable) { drawable.aspect() }
+    val painter = currency.flagPainter()
+    val aspect = painter.intrinsicSize.aspect()
     Box(
         modifier =
             Modifier
@@ -586,13 +580,5 @@ internal fun InlineFlag(currency: Currency) {
     }
 }
 
-private fun Drawable.toBitmapPainter(): Painter {
-    val w = intrinsicWidth.coerceAtLeast(1)
-    val h = intrinsicHeight.coerceAtLeast(1)
-    val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-    setBounds(0, 0, w, h)
-    draw(Canvas(bitmap))
-    return BitmapPainter(bitmap.asImageBitmap())
-}
-
-private fun Drawable.aspect(): Float = intrinsicWidth.toFloat() / intrinsicHeight.coerceAtLeast(1)
+// Width/height, guarding the degenerate sizes a painter can report.
+private fun Size.aspect(): Float = if (height > 0f && width > 0f) width / height else 1f

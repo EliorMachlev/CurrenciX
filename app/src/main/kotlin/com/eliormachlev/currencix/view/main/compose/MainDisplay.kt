@@ -1,9 +1,6 @@
 package com.eliormachlev.currencix.view.main.compose
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
@@ -58,12 +55,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
@@ -98,6 +92,7 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
 import com.eliormachlev.currencix.view.compose.shimmer
@@ -600,8 +595,7 @@ private fun CurrencyPill(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val flagPainter = remember(currency) { currency?.flag(context)?.let(::drawableToPainter) }
+    val flagPainter = currency?.flagPainter()
     Row(
         modifier
             .height(PILL_HEIGHT)
@@ -1570,18 +1564,6 @@ private fun buildRateText(
 private enum class PickSide { FROM, TO }
 
 // --- Small helpers ------------------------------------------------------------
-
-// Rasterise a legacy XML `Drawable` into a Compose `Painter` so the flag
-// assets keep working without a per-currency Compose-native rewrite.
-private fun drawableToPainter(drawable: Drawable): Painter {
-    val w = drawable.intrinsicWidth.coerceAtLeast(1)
-    val h = drawable.intrinsicHeight.coerceAtLeast(1)
-    val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bmp)
-    drawable.setBounds(0, 0, w, h)
-    drawable.draw(canvas)
-    return BitmapPainter(bmp.asImageBitmap())
-}
 
 // Composite two Colors — Compose has no `color-mix()` analog. Alpha of `this`
 // is used as the mix ratio; result is opaque against [background].

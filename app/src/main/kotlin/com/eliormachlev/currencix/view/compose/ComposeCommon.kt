@@ -2,7 +2,7 @@ package com.eliormachlev.currencix.view.compose
 
 import android.app.Activity
 import android.view.View
-import android.widget.ImageView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -20,32 +20,37 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.viewinterop.AndroidView
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 
+// Every flag in the app renders through this painter. painterResource parses
+// each vector flag once and caches it app-wide, and a vector painter draws
+// crisply at any size — unlike rasterising the Drawable to a bitmap at its
+// intrinsic size, which allocated per currency change and blurred when drawn
+// larger. It's also plain Compose: no embedded Android View per list row.
+@Composable
+fun Currency.flagPainter(): Painter = painterResource(flagRes)
+
 // The picker needs a small rounded thumbnail, the quick-conversions header a
 // larger square, and the chart layer wants none of that — so size + clip stay
-// in the caller's Modifier chain rather than being baked in here.
+// in the caller's Modifier chain rather than being baked in here. The default
+// ContentScale.Fit, centered, matches the ImageView this replaced.
 @Composable
 fun CurrencyFlagImage(
     currency: Currency,
     modifier: Modifier = Modifier,
 ) {
-    AndroidView(
-        factory = { ctx ->
-            ImageView(ctx).apply {
-                adjustViewBounds = true
-                contentDescription = null
-            }
-        },
-        update = { iv -> iv.setImageDrawable(currency.flag(iv.context)) },
+    Image(
+        painter = currency.flagPainter(),
+        contentDescription = null,
         modifier = modifier,
     )
 }
