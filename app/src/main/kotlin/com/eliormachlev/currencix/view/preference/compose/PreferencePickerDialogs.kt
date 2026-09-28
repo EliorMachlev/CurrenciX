@@ -4,32 +4,26 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogActions
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogFrame
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 // Small breather between the last picker row and the sheet edge so the final
 // LedgerRow (which has no divider) doesn't butt against the system nav.
@@ -68,11 +62,10 @@ fun <T> SingleChoicePickerDialog(
 }
 
 /**
- * Compose text-entry dialog — an OutlinedTextField wrapped in the shared
- * [LedgerDialogFrame] with OK/Cancel actions. [message] shows above the
- * field when non-null. Focus + soft-keyboard is requested on show so the user
- * can start typing immediately; the whole initial value is left in place so
- * an existing key can be edited without a full retype.
+ * Compose text-entry dialog — stock M3 [AlertDialog] chrome with an
+ * [OutlinedTextField]. [message] shows above the field when non-null.
+ * Matches the fee editor and cart save/rename dialog so form-shaped
+ * dialogs stay visually aligned across the app.
  */
 @Composable
 fun TextEntryDialog(
@@ -84,47 +77,48 @@ fun TextEntryDialog(
     singleLine: Boolean = true,
 ) {
     var text by rememberSaveable(initialText) { mutableStateOf(initialText) }
-    val focusRequester = remember { FocusRequester() }
-    val scope = rememberCoroutineScope()
-    val confirm = rememberHapticOnClick { onConfirm(text) }
+    val confirm =
+        rememberHapticOnClick {
+            onConfirm(text)
+        }
     val cancel = rememberHapticOnClick(onDismiss)
-    LedgerDialogFrame(title = title, onDismiss = onDismiss) {
-        if (!message.isNullOrBlank()) {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(TEXT_ENTRY_MESSAGE_GAP))
-        }
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            singleLine = singleLine,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
+    AppTheme {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(text = title) },
+            text = {
+                Column {
+                    if (!message.isNullOrBlank()) {
+                        Text(
+                            text = message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(Modifier.height(TEXT_ENTRY_MESSAGE_GAP))
+                    }
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        singleLine = singleLine,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = cancel) {
+                    Text(stringResource(id = android.R.string.cancel))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = confirm) {
+                    Text(stringResource(id = android.R.string.ok))
+                }
+            },
         )
-        LedgerDialogActions(
-            confirmLabel = stringResource(id = android.R.string.ok),
-            onConfirm = confirm,
-            onCancel = cancel,
-        )
-    }
-    // Dialog content composes the frame after opening, so the FocusRequester
-    // isn't attached synchronously — delay one frame before asking for focus,
-    // otherwise it silently no-ops on the first show.
-    LaunchedEffect(Unit) {
-        scope.launch {
-            delay(FOCUS_DELAY_MS)
-            runCatching { focusRequester.requestFocus() }
-        }
     }
 }
 
 private val TEXT_ENTRY_MESSAGE_GAP = 12.dp
-private const val FOCUS_DELAY_MS = 50L
 
 // Shared shell + row shape used by both picker variants (simple / explainer)
 // and by the language picker. Callers just describe rows; the sheet chrome,

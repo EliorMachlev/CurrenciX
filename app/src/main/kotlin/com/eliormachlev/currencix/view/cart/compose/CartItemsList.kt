@@ -110,27 +110,26 @@ fun CartItemsList(
  * preserving storage order within each partition. Drag operates on this list;
  * dropping a pinned row into the unpinned section snaps back on the next
  * source emit — user must unpin first to move it out.
+ *
+ * When the id set changes (add/remove/load), take the source order wholesale.
+ * When only content changed (name/expression edit mid-drag), refresh per-id
+ * in place so the display's current order isn't wiped.
  */
 @Composable
 private fun rememberDisplayItems(items: ImmutableList<CartItem>): SnapshotStateList<CartItem> {
     val list = remember { mutableStateListOf<CartItem>() }
     LaunchedEffect(items) {
-        val ordered = items.filter { it.pinned } + items.filterNot { it.pinned }
-        val displayIds = list.mapTo(mutableSetOf()) { it.id }
+        val ordered = items.sortedByDescending { it.pinned }
         val orderedIds = ordered.mapTo(mutableSetOf()) { it.id }
-        if (displayIds != orderedIds) {
-            // Real add / remove — take the source order wholesale.
+        if (list.mapTo(mutableSetOf()) { it.id } != orderedIds) {
             list.clear()
             list.addAll(ordered)
-            return@LaunchedEffect
-        }
-        // Same set of ids (possibly reordered mid-drag): refresh content in
-        // place per id so a name/expression edit propagates into the row
-        // without wiping the display's current order.
-        val byId = ordered.associateBy { it.id }
-        list.indices.forEach { i ->
-            val fresh = byId[list[i].id] ?: return@forEach
-            if (fresh != list[i]) list[i] = fresh
+        } else {
+            val byId = ordered.associateBy { it.id }
+            list.indices.forEach { i ->
+                val fresh = byId.getValue(list[i].id)
+                if (fresh != list[i]) list[i] = fresh
+            }
         }
     }
     return list
