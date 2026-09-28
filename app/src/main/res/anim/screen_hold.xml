@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The screen underneath stays put and fully opaque for the whole
+     transition. If it moved or faded too, the window background would show
+     through at the edges while the top screen is still translucent. -->
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/screen_transition_ms"
+    android:fromAlpha="1.0"
+    android:toAlpha="1.0" />

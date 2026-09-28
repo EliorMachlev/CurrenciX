@@ -154,6 +154,10 @@ private fun DrawerArrowSync(
 }
 
 class MainActivity : BaseActivity() {
+    // Launcher activity: the system's app-launch (splash) animation owns its
+    // entrance. The screens it opens still transition over it.
+    override val usesScreenTransition = false
+
     private lateinit var viewModel: MainViewModel
     private lateinit var preferenceModel: PreferenceViewModel
 
