@@ -54,7 +54,7 @@ class CartActivity : BaseActivity() {
 
     // Pending, un-debounced name edits from the composable rows. Flushed
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
-    private val pendingNames = mutableMapOf<String, String>()
+    private val pendingNames = PendingNameBuffer()
 
     // Bridges for imperative callers (menu handlers, coordinators) to open
     // each overlay. Wired inside CartRoot's DisposableEffect; null when the
@@ -192,8 +192,8 @@ class CartActivity : BaseActivity() {
             itemsLive.value = cart.items.toImmutableList()
             // A cart load can retire the item the keypad was bound to; drop
             // that binding so the keypad doesn't linger over a missing row.
-            val currentIds = cart.items.map { it.id }.toSet()
-            pendingNames.keys.retainAll(currentIds)
+            val currentIds = cart.items.mapTo(mutableSetOf()) { it.id }
+            pendingNames.retainAll(currentIds)
             keypad.activeItemId.value?.let { if (it !in currentIds) keypad.closeKeypad() }
         }
     }
@@ -231,7 +231,7 @@ class CartActivity : BaseActivity() {
             currencySource = currencyLive,
             onAddItem = { viewModel.addItem(name = "", expression = "") },
             onNameCommit = ::commitName,
-            onNamePending = { id, name -> pendingNames[id] = name },
+            onNamePending = pendingNames::put,
             onExpressionTap = { item -> keypad.openKeypadFor(item.id, item.expression) },
             onTogglePin = viewModel::togglePinned,
             onDelete = { id ->
@@ -328,9 +328,7 @@ class CartActivity : BaseActivity() {
     // freshly-typed name or a pending keypad expression doesn't get lost.
     private fun flushPendingCommits() {
         keypad.flushActiveExpression()
-        val snapshot = pendingNames.toMap()
-        pendingNames.clear()
-        snapshot.forEach { (id, name) -> commitName(id, name) }
+        pendingNames.drain().forEach { (id, name) -> commitName(id, name) }
     }
 
     private fun commitName(
@@ -371,6 +369,37 @@ class CartActivity : BaseActivity() {
                 mainBase?.let { putExtra(EXTRA_MAIN_BASE, it.iso4217Alpha()) }
                 mainDest?.let { putExtra(EXTRA_MAIN_DEST, it.iso4217Alpha()) }
             }
+    }
+}
+
+// Row-id → pending display name for un-debounced text edits. Encapsulated so
+// mutations read intentfully (put/remove/drain) instead of the raw MutableMap
+// operations that used to be scattered across the activity.
+private class PendingNameBuffer {
+    private val map = mutableMapOf<String, String>()
+
+    operator fun get(id: String): String? = map[id]
+
+    fun put(
+        id: String,
+        name: String,
+    ) {
+        map[id] = name
+    }
+
+    fun remove(id: String) {
+        map.remove(id)
+    }
+
+    fun retainAll(ids: Set<String>) {
+        map.keys.retainAll(ids)
+    }
+
+    /** Take a snapshot of every pending edit and clear the buffer in one shot. */
+    fun drain(): Map<String, String> {
+        val snapshot = map.toMap()
+        map.clear()
+        return snapshot
     }
 }
 

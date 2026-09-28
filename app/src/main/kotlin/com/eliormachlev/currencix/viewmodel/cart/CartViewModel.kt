@@ -35,6 +35,15 @@ class CartViewModel(
 
     fun getCurrentCart(): LiveData<SavedCart> = current
 
+    /** Display-safe name of the working cart. Empty string when unnamed / unset. */
+    fun currentCartName(): String = current.value?.name.orEmpty()
+
+    /** Whether the working cart has a persisted counterpart to overwrite. */
+    fun currentCartHasId(): Boolean = current.value?.id?.isNotEmpty() == true
+
+    /** Items on the working cart. Empty list when the cart is unset. */
+    fun currentCartItems(): List<CartItem> = current.value?.items.orEmpty()
+
     fun getSavedCarts(): LiveData<List<SavedCart>> = db.getSavedCarts()
 
     /**
@@ -342,11 +351,14 @@ class CartViewModel(
     fun snapshotForShare(): CartSnapshot? {
         val cart = current.value ?: return null
         if (cart.items.isEmpty()) return null
+        // Freeze fees + rates up front so a mid-flow refresh can't mix
+        // recomputed fees with the pre-refresh rate table.
+        val ratesSnapshot = ratesCache.snapshot()
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
         val (base, dest) = cart.resolvedPair()
-        val feeStack = ratesCache.feeStackFor(base, dest)
-        val converted = convertAmount(subtotal, base, dest, ratesCache.lastRates)
+        val feeStack = ratesSnapshot.feeStackFor(base, dest)
+        val converted = convertAmount(subtotal, base, dest, ratesSnapshot.rates)
         val total = converted.multiply(feeStack, MathContext.DECIMAL128)
         return CartSnapshot(
             cart,
@@ -355,15 +367,15 @@ class CartViewModel(
             converted,
             feeStack,
             total,
-            ratesCache.lastFees,
+            ratesSnapshot.fees,
             base,
             dest,
             providerName =
-                ratesCache.lastRates
+                ratesSnapshot.rates
                     ?.provider
                     ?.getName(getApplication())
                     ?.toString(),
-            ratesDate = ratesCache.lastRates?.date,
+            ratesDate = ratesSnapshot.rates?.date,
         )
     }
 
@@ -452,9 +464,7 @@ class CartViewModel(
     // USD/EUR only when no rates are cached (e.g. clean install before the
     // first refresh).
     private fun distinctFrom(base: Currency): Currency {
-        db.getExchangeRatesBlocking()?.rates?.forEach { rate ->
-            if (rate.currency != base) return rate.currency
-        }
+        db.getRateListBlocking().firstOrNull { it.currency != base }?.let { return it.currency }
         return if (base == Currency.USD) Currency.EUR else Currency.USD
     }
 }

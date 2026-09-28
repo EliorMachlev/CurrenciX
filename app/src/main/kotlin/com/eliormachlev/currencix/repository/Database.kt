@@ -230,6 +230,13 @@ class Database(
 
     fun getExchangeRatesBlocking(): ExchangeRates? = parseExchangeRates(ratesStore.snapshot())
 
+    /**
+     * Non-null accessor for the currently-cached rate list. Returns an empty
+     * list when no rates have been loaded yet (clean install, before the first
+     * refresh) so callers can skip null-navigation.
+     */
+    fun getRateListBlocking(): List<Rate> = getExchangeRatesBlocking()?.rates.orEmpty()
+
     fun getDate(): LocalDate? = ratesStore.snapshot()[stringPreferencesKey(KEY_RATES_DATE)]?.let { LocalDate.parse(it) }
 
     private fun parseExchangeRates(prefs: Preferences): ExchangeRates? {

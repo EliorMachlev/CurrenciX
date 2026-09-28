@@ -69,13 +69,7 @@ class CartSaveLoadCoordinator(
         if (guardEmptyForSave()) return
         flushPendingCommits()
         if (viewModel.saveCurrent()) {
-            val name =
-                viewModel
-                    .getCurrentCart()
-                    .value
-                    ?.name
-                    .orEmpty()
-            snackbar(activity.getString(R.string.cart_saved_toast, name))
+            snackbar(activity.getString(R.string.cart_saved_toast, viewModel.currentCartName()))
             onSaved()
         } else {
             showSaveAsDialog(onSaved = onSaved)
@@ -87,12 +81,7 @@ class CartSaveLoadCoordinator(
         showNameInput(
             CartNameInputRequest(
                 titleRes = R.string.cart_menu_save_as,
-                initial =
-                    viewModel
-                        .getCurrentCart()
-                        .value
-                        ?.name
-                        .orEmpty(),
+                initial = viewModel.currentCartName(),
             ) { name ->
                 // "Save as" always creates a fresh entry so users can keep
                 // multiple snapshots of the same cart under different names.
@@ -135,8 +124,7 @@ class CartSaveLoadCoordinator(
     // guard so both write paths behave consistently. Returns true when the
     // caller should abort.
     private fun guardEmptyForSave(): Boolean {
-        val items = viewModel.getCurrentCart().value?.items
-        if (items.isNullOrEmpty()) {
+        if (viewModel.currentCartItems().isEmpty()) {
             snackbar(activity.getString(R.string.cart_save_empty))
             return true
         }
@@ -153,20 +141,13 @@ class CartSaveLoadCoordinator(
         // An empty cart has nothing worth saving, so skip the prompt entirely
         // even if a persisted counterpart differs — the destructive action
         // would just replace an empty working set with something else.
-        val items = viewModel.getCurrentCart().value?.items
-        if (items.isNullOrEmpty() || !viewModel.hasUnsavedChanges()) {
+        if (viewModel.currentCartItems().isEmpty() || !viewModel.hasUnsavedChanges()) {
             action()
             return
         }
-        val canOverwrite =
-            viewModel
-                .getCurrentCart()
-                .value
-                ?.id
-                ?.isNotEmpty() == true
         showUnsavedChanges(
             CartUnsavedChangesRequest(
-                canOverwrite = canOverwrite,
+                canOverwrite = viewModel.currentCartHasId(),
                 onSave = { saveOrPromptForName(action) },
                 onSaveAs = { showSaveAsDialog(onSaved = action) },
                 onDiscard = {
