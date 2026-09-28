@@ -67,10 +67,6 @@
     <string name="cart_rename_title">Renomi korbon</string>
     <string name="cart_delete_confirm">Ĉu forigi "%s"?</string>
     <string name="cart_delete_confirm_button">Forigi</string>
-    <string name="cart_clear_items_only">Vakigi nur erojn</string>
-    <string name="cart_clear_items_only_desc">Forigas ĉiun vicon el la korbo, sed konservas la aktualajn valutojn kaj la flankon de kotizoj.</string>
-    <string name="cart_clear_reset_all">Restarigi korbon</string>
-    <string name="cart_clear_reset_all_desc">Forigas ĉiun vicon kaj reprenas la baz-/celvaluton kaj la flankon de kotizoj el la ĉefa ekrano.</string>
     <string name="cart_export_ok">Korbo eksportita.</string>
     <string name="cart_export_error">Eksporto malsukcesis: %s</string>
     <string name="cart_import_ok">Korbo importita.</string>

@@ -70,10 +70,6 @@
     <string name="cart_rename_title">Přejmenovat košík</string>
     <string name="cart_delete_confirm">Smazat „%s“?</string>
     <string name="cart_delete_confirm_button">Smazat</string>
-    <string name="cart_clear_items_only">Vymazat pouze položky</string>
-    <string name="cart_clear_items_only_desc">Odstraní všechny řádky z košíku, ale zachová aktuální měny a stranu poplatků.</string>
-    <string name="cart_clear_reset_all">Resetovat košík</string>
-    <string name="cart_clear_reset_all_desc">Odstraní všechny řádky a znovu načte základní / cílovou měnu a stranu poplatků z hlavní obrazovky.</string>
     <string name="cart_export_ok">Košík byl exportován.</string>
     <string name="cart_export_error">Export selhal: %s</string>
     <string name="cart_import_ok">Košík byl importován.</string>

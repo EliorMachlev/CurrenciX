@@ -64,10 +64,6 @@
     <string name="cart_rename_title">Ganti nama keranjang</string>
     <string name="cart_delete_confirm">Hapus "%s"?</string>
     <string name="cart_delete_confirm_button">Hapus</string>
-    <string name="cart_clear_items_only">Bersihkan hanya item</string>
-    <string name="cart_clear_items_only_desc">Menghapus setiap baris dari keranjang tetapi mempertahankan mata uang dan sisi biaya saat ini.</string>
-    <string name="cart_clear_reset_all">Setel ulang keranjang</string>
-    <string name="cart_clear_reset_all_desc">Menghapus setiap baris dan mengambil ulang mata uang dasar / tujuan serta sisi biaya dari layar utama.</string>
     <string name="cart_export_ok">Keranjang diekspor.</string>
     <string name="cart_export_error">Ekspor gagal: %s</string>
     <string name="cart_import_ok">Keranjang diimpor.</string>

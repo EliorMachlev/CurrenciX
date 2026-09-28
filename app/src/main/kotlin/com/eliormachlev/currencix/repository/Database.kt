@@ -228,6 +228,8 @@ class Database(
 
     fun getExchangeRates(): LiveData<ExchangeRates?> = ratesStore.mappedLiveData(::parseExchangeRates)
 
+    fun getExchangeRatesBlocking(): ExchangeRates? = parseExchangeRates(ratesStore.snapshot())
+
     fun getDate(): LocalDate? = ratesStore.snapshot()[stringPreferencesKey(KEY_RATES_DATE)]?.let { LocalDate.parse(it) }
 
     private fun parseExchangeRates(prefs: Preferences): ExchangeRates? {

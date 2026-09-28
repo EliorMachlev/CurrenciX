@@ -67,10 +67,6 @@
     <string name="cart_rename_title">Μετονομασία καλαθιού</string>
     <string name="cart_delete_confirm">Διαγραφή του «%s»;</string>
     <string name="cart_delete_confirm_button">Διαγραφή</string>
-    <string name="cart_clear_items_only">Εκκαθάριση μόνο αντικειμένων</string>
-    <string name="cart_clear_items_only_desc">Αφαιρεί κάθε γραμμή από το καλάθι, αλλά διατηρεί τα τρέχοντα νομίσματα και την πλευρά των χρεώσεων.</string>
-    <string name="cart_clear_reset_all">Επαναφορά καλαθιού</string>
-    <string name="cart_clear_reset_all_desc">Αφαιρεί κάθε γραμμή και επαναφέρει το βασικό/νόμισμα προορισμού και την πλευρά χρεώσεων από την κύρια οθόνη.</string>
     <string name="cart_export_ok">Το καλάθι εξήχθη.</string>
     <string name="cart_export_error">Η εξαγωγή απέτυχε: %s</string>
     <string name="cart_import_ok">Το καλάθι εισήχθη.</string>

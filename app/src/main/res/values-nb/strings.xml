@@ -72,10 +72,6 @@
     <string name="cart_rename_title">Gi handlekurven nytt navn</string>
     <string name="cart_delete_confirm">Slette «%s»?</string>
     <string name="cart_delete_confirm_button">Slett</string>
-    <string name="cart_clear_items_only">Tøm kun varer</string>
-    <string name="cart_clear_items_only_desc">Fjerner alle rader fra handlekurven, men beholder gjeldende valutaer og gebyrside.</string>
-    <string name="cart_clear_reset_all">Tilbakestill handlekurv</string>
-    <string name="cart_clear_reset_all_desc">Fjerner alle rader og henter basis-/målvaluta og gebyrside på nytt fra hovedskjermen.</string>
     <string name="cart_export_ok">Handlekurv eksportert.</string>
     <string name="cart_export_error">Eksport mislyktes: %s</string>
     <string name="cart_import_ok">Handlekurv importert.</string>

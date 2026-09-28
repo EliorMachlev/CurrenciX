@@ -70,10 +70,6 @@
     <string name="cart_rename_title">שינוי שם העגלה</string>
     <string name="cart_delete_confirm">למחוק את ״%s״?</string>
     <string name="cart_delete_confirm_button">מחיקה</string>
-    <string name="cart_clear_items_only">ניקוי פריטים בלבד</string>
-    <string name="cart_clear_items_only_desc">מסיר את כל השורות מהעגלה אך שומר על המטבעות ועל צד העמלות הנוכחיים.</string>
-    <string name="cart_clear_reset_all">איפוס העגלה</string>
-    <string name="cart_clear_reset_all_desc">מסיר את כל השורות וטוען מחדש את מטבע המקור/היעד ואת צד העמלות מהמסך הראשי.</string>
     <string name="cart_export_ok">העגלה יוצאה.</string>
     <string name="cart_export_error">הייצוא נכשל: %s</string>
     <string name="cart_import_ok">העגלה יובאה.</string>

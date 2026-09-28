@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Переименовать корзину</string>
     <string name="cart_delete_confirm">Удалить «%s»?</string>
     <string name="cart_delete_confirm_button">Удалить</string>
-    <string name="cart_clear_items_only">Только очистить позиции</string>
-    <string name="cart_clear_items_only_desc">Удаляет все строки из корзины, но сохраняет текущие валюты и сторону комиссии.</string>
-    <string name="cart_clear_reset_all">Сбросить корзину</string>
-    <string name="cart_clear_reset_all_desc">Удаляет все строки и заново подтягивает базовую / целевую валюту и сторону комиссии с главного экрана.</string>
     <string name="cart_export_ok">Корзина экспортирована.</string>
     <string name="cart_export_error">Ошибка экспорта: %s</string>
     <string name="cart_import_ok">Корзина импортирована.</string>

@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Omdøb kurv</string>
     <string name="cart_delete_confirm">Slet “%s”?</string>
     <string name="cart_delete_confirm_button">Slet</string>
-    <string name="cart_clear_items_only">Ryd kun varer</string>
-    <string name="cart_clear_items_only_desc">Fjerner alle rækker fra kurven, men bevarer de aktuelle valutaer og gebyrside.</string>
-    <string name="cart_clear_reset_all">Nulstil kurv</string>
-    <string name="cart_clear_reset_all_desc">Fjerner alle rækker og henter basis-/målvaluta og gebyrside fra hovedskærmen igen.</string>
     <string name="cart_export_ok">Kurv eksporteret.</string>
     <string name="cart_export_error">Eksport mislykkedes: %s</string>
     <string name="cart_import_ok">Kurv importeret.</string>

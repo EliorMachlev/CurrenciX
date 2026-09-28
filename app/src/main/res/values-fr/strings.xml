@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Renommer le panier</string>
     <string name="cart_delete_confirm">Supprimer « %s » ?</string>
     <string name="cart_delete_confirm_button">Supprimer</string>
-    <string name="cart_clear_items_only">Vider les articles uniquement</string>
-    <string name="cart_clear_items_only_desc">Supprime toutes les lignes du panier mais conserve les devises et le côté des frais actuels.</string>
-    <string name="cart_clear_reset_all">Réinitialiser le panier</string>
-    <string name="cart_clear_reset_all_desc">Supprime toutes les lignes et récupère à nouveau la devise source/cible et le côté des frais depuis l\'écran principal.</string>
     <string name="cart_export_ok">Panier exporté.</string>
     <string name="cart_export_error">Échec de l\'export : %s</string>
     <string name="cart_import_ok">Panier importé.</string>

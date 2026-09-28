@@ -70,10 +70,6 @@
     <string name="cart_rename_title">কার্টের নাম পরিবর্তন করুন</string>
     <string name="cart_delete_confirm">"%s" মুছবেন?</string>
     <string name="cart_delete_confirm_button">মুছুন</string>
-    <string name="cart_clear_items_only">শুধু আইটেম পরিষ্কার করুন</string>
-    <string name="cart_clear_items_only_desc">কার্ট থেকে প্রতিটি সারি সরায় কিন্তু বর্তমান মুদ্রা ও ফি সাইড রাখে।</string>
-    <string name="cart_clear_reset_all">কার্ট রিসেট করুন</string>
-    <string name="cart_clear_reset_all_desc">প্রতিটি সারি সরায় এবং মূল স্ক্রিন থেকে বেস/গন্তব্য মুদ্রা ও ফি সাইড পুনরায় নেয়।</string>
     <string name="cart_export_ok">কার্ট রপ্তানি হয়েছে।</string>
     <string name="cart_export_error">রপ্তানি ব্যর্থ: %s</string>
     <string name="cart_import_ok">কার্ট আমদানি হয়েছে।</string>

@@ -72,10 +72,6 @@
     <string name="cart_rename_title">Byt namn på kundvagn</string>
     <string name="cart_delete_confirm">Ta bort ”%s”?</string>
     <string name="cart_delete_confirm_button">Ta bort</string>
-    <string name="cart_clear_items_only">Rensa endast artiklar</string>
-    <string name="cart_clear_items_only_desc">Tar bort alla rader från kundvagnen men behåller aktuella valutor och avgiftssida.</string>
-    <string name="cart_clear_reset_all">Återställ kundvagn</string>
-    <string name="cart_clear_reset_all_desc">Tar bort alla rader och hämtar bas-/målvaluta och avgiftssida på nytt från huvudskärmen.</string>
     <string name="cart_export_ok">Kundvagn exporterad.</string>
     <string name="cart_export_error">Exporten misslyckades: %s</string>
     <string name="cart_import_ok">Kundvagn importerad.</string>

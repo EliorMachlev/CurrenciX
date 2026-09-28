@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Reanomena la cistella</string>
     <string name="cart_delete_confirm">Voleu suprimir «%s»?</string>
     <string name="cart_delete_confirm_button">Suprimeix</string>
-    <string name="cart_clear_items_only">Buida només els articles</string>
-    <string name="cart_clear_items_only_desc">Elimina totes les files de la cistella però manté les monedes i el costat de comissions actuals.</string>
-    <string name="cart_clear_reset_all">Reinicia la cistella</string>
-    <string name="cart_clear_reset_all_desc">Elimina totes les files i torna a obtenir la moneda base/destinació i el costat de comissions de la pantalla principal.</string>
     <string name="cart_export_ok">Cistella exportada.</string>
     <string name="cart_export_error">L\'exportació ha fallat: %s</string>
     <string name="cart_import_ok">Cistella importada.</string>

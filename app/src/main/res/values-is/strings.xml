@@ -64,10 +64,6 @@
     <string name="cart_rename_title">Endurnefna körfu</string>
     <string name="cart_delete_confirm">Eyða „%s"?</string>
     <string name="cart_delete_confirm_button">Eyða</string>
-    <string name="cart_clear_items_only">Hreinsa aðeins hluti</string>
-    <string name="cart_clear_items_only_desc">Fjarlægir allar línur úr körfunni en heldur núverandi gjaldmiðlum og gjaldahlið.</string>
-    <string name="cart_clear_reset_all">Endurstilla körfu</string>
-    <string name="cart_clear_reset_all_desc">Fjarlægir allar línur og sækir aftur grunn- / ákvörðunargjaldmiðil og gjaldahlið úr aðalskjánum.</string>
     <string name="cart_export_ok">Karfa flutt út.</string>
     <string name="cart_export_error">Útflutningur mistókst: %s</string>
     <string name="cart_import_ok">Karfa flutt inn.</string>

@@ -1,5 +1,7 @@
 package com.eliormachlev.currencix.view.cart
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -18,10 +20,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.util.hapticTap
 import com.eliormachlev.currencix.view.BaseActivity
-import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
 import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
@@ -43,6 +45,13 @@ class CartActivity : BaseActivity() {
     private lateinit var saveLoadCoordinator: CartSaveLoadCoordinator
     private lateinit var keypad: CartKeypadController
 
+    // Main's currently-visible currency pair, delivered via intent extras when
+    // Cart is opened from main. Used to seed a fresh cart and to re-seed on
+    // Clear, so the cart always mirrors what the user just saw on main
+    // (bypasses stored-prefs collisions).
+    private var mainBase: Currency? = null
+    private var mainDest: Currency? = null
+
     // Pending, un-debounced name edits from the composable rows. Flushed
     // synchronously by [flushPendingCommits] before any save/share/snapshot.
     private val pendingNames = mutableMapOf<String, String>()
@@ -57,6 +66,7 @@ class CartActivity : BaseActivity() {
     private var openUnsavedChanges: ((CartUnsavedChangesRequest) -> Unit)? = null
     private var openNameInput: ((CartNameInputRequest) -> Unit)? = null
     private var openDeleteConfirm: ((CartDeleteConfirmRequest) -> Unit)? = null
+    private var openClearConfirm: (() -> Unit)? = null
 
     // LiveData sources bridged into Compose. Kept as fields so observeAsState
     // in the list survives cart re-emissions.
@@ -71,7 +81,11 @@ class CartActivity : BaseActivity() {
             setDisplayShowHomeEnabled(true)
         }
 
+        mainBase = intent.getStringExtra(EXTRA_MAIN_BASE)?.let(Currency::fromString)
+        mainDest = intent.getStringExtra(EXTRA_MAIN_DEST)?.let(Currency::fromString)
+
         this.viewModel = ViewModelProvider(this)[CartViewModel::class.java]
+        viewModel.seedFromMain(mainBase, mainDest)
         this.exporter = CartExporter(this)
         this.fileIo =
             CartFileIo(
@@ -199,18 +213,21 @@ class CartActivity : BaseActivity() {
         var unsavedChangesRequest by remember { mutableStateOf<CartUnsavedChangesRequest?>(null) }
         var nameInputRequest by remember { mutableStateOf<CartNameInputRequest?>(null) }
         var deleteConfirmRequest by remember { mutableStateOf<CartDeleteConfirmRequest?>(null) }
+        var clearConfirmVisible by remember { mutableStateOf(false) }
         DisposableEffect(Unit) {
             openCartChoice = { request -> cartChoiceRequest = request }
             openLoadList = { loadListVisible = true }
             openUnsavedChanges = { request -> unsavedChangesRequest = request }
             openNameInput = { request -> nameInputRequest = request }
             openDeleteConfirm = { request -> deleteConfirmRequest = request }
+            openClearConfirm = { clearConfirmVisible = true }
             onDispose {
                 openCartChoice = null
                 openLoadList = null
                 openUnsavedChanges = null
                 openNameInput = null
                 openDeleteConfirm = null
+                openClearConfirm = null
             }
         }
         CartScreen(
@@ -247,6 +264,8 @@ class CartActivity : BaseActivity() {
             dismissNameInput = { nameInputRequest = null },
             deleteConfirmRequest = deleteConfirmRequest,
             dismissDeleteConfirm = { deleteConfirmRequest = null },
+            clearConfirmVisible = clearConfirmVisible,
+            dismissClearConfirm = { clearConfirmVisible = false },
         )
     }
 
@@ -266,6 +285,8 @@ class CartActivity : BaseActivity() {
         dismissNameInput: () -> Unit,
         deleteConfirmRequest: CartDeleteConfirmRequest?,
         dismissDeleteConfirm: () -> Unit,
+        clearConfirmVisible: Boolean,
+        dismissClearConfirm: () -> Unit,
     ) {
         cartChoiceRequest?.let { request ->
             CartChoiceSheet(
@@ -314,6 +335,19 @@ class CartActivity : BaseActivity() {
                 onDismiss = dismissDeleteConfirm,
             )
         }
+        if (clearConfirmVisible) {
+            LedgerConfirmDialog(
+                title = stringResource(id = R.string.cart_menu_clear),
+                message = stringResource(id = R.string.cart_clear_confirm),
+                confirmLabel = stringResource(id = R.string.cart_clear_confirm_button),
+                destructive = true,
+                onConfirm = {
+                    viewModel.resetToMainDefaults(mainBase, mainDest)
+                    dismissClearConfirm()
+                },
+                onDismiss = dismissClearConfirm,
+            )
+        }
     }
 
     private fun showCartChoice(request: CartChoiceRequest) {
@@ -321,22 +355,7 @@ class CartActivity : BaseActivity() {
     }
 
     private fun confirmClear() {
-        showCartChoice(
-            CartChoiceRequest(
-                titleRes = R.string.cart_menu_clear,
-                options =
-                    listOf(
-                        CartChoiceOption(
-                            R.string.cart_clear_items_only,
-                            R.string.cart_clear_items_only_desc,
-                        ) { viewModel.clearItems() },
-                        CartChoiceOption(
-                            R.string.cart_clear_reset_all,
-                            R.string.cart_clear_reset_all_desc,
-                        ) { viewModel.resetToMainDefaults() },
-                    ),
-            ),
-        )
+        openClearConfirm?.invoke()
     }
 
     // Cancel every row's pending debounce and push its current buffer to the
@@ -372,5 +391,20 @@ class CartActivity : BaseActivity() {
 
     private fun showSnackbar(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        private const val EXTRA_MAIN_BASE = "com.eliormachlev.currencix.cart.MAIN_BASE"
+        private const val EXTRA_MAIN_DEST = "com.eliormachlev.currencix.cart.MAIN_DEST"
+
+        fun intent(
+            context: Context,
+            mainBase: Currency?,
+            mainDest: Currency?,
+        ): Intent =
+            Intent(context, CartActivity::class.java).apply {
+                mainBase?.let { putExtra(EXTRA_MAIN_BASE, it.iso4217Alpha()) }
+                mainDest?.let { putExtra(EXTRA_MAIN_DEST, it.iso4217Alpha()) }
+            }
     }
 }

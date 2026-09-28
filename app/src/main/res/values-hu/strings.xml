@@ -64,10 +64,6 @@
     <string name="cart_rename_title">Kosár átnevezése</string>
     <string name="cart_delete_confirm">Törlöd a következőt: „%s"?</string>
     <string name="cart_delete_confirm_button">Törlés</string>
-    <string name="cart_clear_items_only">Csak tételek törlése</string>
-    <string name="cart_clear_items_only_desc">Minden sort eltávolít a kosárból, de megőrzi az aktuális pénznemeket és a díjak oldalát.</string>
-    <string name="cart_clear_reset_all">Kosár visszaállítása</string>
-    <string name="cart_clear_reset_all_desc">Minden sort eltávolít, és újra beolvassa az alap/cél pénznemet és a díjak oldalát a főképernyőről.</string>
     <string name="cart_export_ok">Kosár exportálva.</string>
     <string name="cart_export_error">Az exportálás sikertelen: %s</string>
     <string name="cart_import_ok">Kosár importálva.</string>

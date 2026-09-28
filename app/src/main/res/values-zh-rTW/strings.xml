@@ -71,10 +71,6 @@
     <string name="cart_rename_title">重新命名購物車</string>
     <string name="cart_delete_confirm">刪除「%s」?</string>
     <string name="cart_delete_confirm_button">刪除</string>
-    <string name="cart_clear_items_only">僅清空項目</string>
-    <string name="cart_clear_items_only_desc">移除購物車中的所有列,但保留目前的貨幣和手續費方向。</string>
-    <string name="cart_clear_reset_all">重設購物車</string>
-    <string name="cart_clear_reset_all_desc">移除所有列,並從主畫面重新取得基準/目標貨幣以及手續費方向。</string>
     <string name="cart_export_ok">購物車已匯出。</string>
     <string name="cart_export_error">匯出失敗:%s</string>
     <string name="cart_import_ok">購物車已匯入。</string>

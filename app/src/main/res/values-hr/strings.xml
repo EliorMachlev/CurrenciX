@@ -70,10 +70,6 @@
     <string name="cart_rename_title">Preimenuj košaricu</string>
     <string name="cart_delete_confirm">Izbrisati „%s“?</string>
     <string name="cart_delete_confirm_button">Izbriši</string>
-    <string name="cart_clear_items_only">Očisti samo stavke</string>
-    <string name="cart_clear_items_only_desc">Uklanja sve retke iz košarice, ali zadržava trenutne valute i stranu naknada.</string>
-    <string name="cart_clear_reset_all">Resetiraj košaricu</string>
-    <string name="cart_clear_reset_all_desc">Uklanja sve retke i ponovno preuzima osnovnu / ciljnu valutu i stranu naknada s glavnog zaslona.</string>
     <string name="cart_export_ok">Košarica izvezena.</string>
     <string name="cart_export_error">Izvoz nije uspio: %s</string>
     <string name="cart_import_ok">Košarica uvezena.</string>

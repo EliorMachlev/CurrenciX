@@ -74,10 +74,6 @@
     <string name="cart_rename_title">കാർട്ടിന്റെ പേരുമാറ്റുക</string>
     <string name="cart_delete_confirm">"%s" ഇല്ലാതാക്കണോ?</string>
     <string name="cart_delete_confirm_button">ഇല്ലാതാക്കുക</string>
-    <string name="cart_clear_items_only">ഇനങ്ങൾ മാത്രം മായ്ക്കുക</string>
-    <string name="cart_clear_items_only_desc">കാർട്ടിലെ എല്ലാ വരികളും നീക്കംചെയ്യുന്നു എന്നാൽ നിലവിലെ കറൻസികളും ഫീസ് സൈഡും നിലനിർത്തുന്നു.</string>
-    <string name="cart_clear_reset_all">കാർട്ട് പുനഃസജ്ജമാക്കുക</string>
-    <string name="cart_clear_reset_all_desc">എല്ലാ വരികളും നീക്കംചെയ്ത് പ്രധാന സ്ക്രീനിൽ നിന്ന് ബേസ്/ഡെസ്റ്റിനേഷൻ കറൻസിയും ഫീസ് സൈഡും വീണ്ടും എടുക്കുന്നു.</string>
     <string name="cart_export_ok">കാർട്ട് കയറ്റുമതി ചെയ്തു.</string>
     <string name="cart_export_error">കയറ്റുമതി പരാജയപ്പെട്ടു: %s</string>
     <string name="cart_import_ok">കാർട്ട് ഇറക്കുമതി ചെയ്തു.</string>

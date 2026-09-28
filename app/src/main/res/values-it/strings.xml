@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Rinomina carrello</string>
     <string name="cart_delete_confirm">Eliminare «%s»?</string>
     <string name="cart_delete_confirm_button">Elimina</string>
-    <string name="cart_clear_items_only">Svuota solo articoli</string>
-    <string name="cart_clear_items_only_desc">Rimuove tutte le righe dal carrello ma mantiene le valute e il lato commissioni correnti.</string>
-    <string name="cart_clear_reset_all">Reimposta carrello</string>
-    <string name="cart_clear_reset_all_desc">Rimuove tutte le righe e ripristina valuta di partenza/destinazione e lato commissioni dalla schermata principale.</string>
     <string name="cart_export_ok">Carrello esportato.</string>
     <string name="cart_export_error">Esportazione non riuscita: %s</string>
     <string name="cart_import_ok">Carrello importato.</string>

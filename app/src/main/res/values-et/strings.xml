@@ -70,10 +70,6 @@
     <string name="cart_rename_title">Nimeta ostukorv ümber</string>
     <string name="cart_delete_confirm">Kas kustutada „%s"?</string>
     <string name="cart_delete_confirm_button">Kustuta</string>
-    <string name="cart_clear_items_only">Tühjenda ainult tooted</string>
-    <string name="cart_clear_items_only_desc">Eemaldab ostukorvist kõik read, kuid säilitab praegused valuutad ja tasude poole.</string>
-    <string name="cart_clear_reset_all">Lähtesta ostukorv</string>
-    <string name="cart_clear_reset_all_desc">Eemaldab kõik read ning võtab lähte- ja sihtvaluuta ning tasude poole uuesti põhikuvalt.</string>
     <string name="cart_export_ok">Ostukorv eksporditud.</string>
     <string name="cart_export_error">Eksport ebaõnnestus: %s</string>
     <string name="cart_import_ok">Ostukorv imporditud.</string>

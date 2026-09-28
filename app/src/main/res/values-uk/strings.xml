@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Перейменувати кошик</string>
     <string name="cart_delete_confirm">Видалити «%s»?</string>
     <string name="cart_delete_confirm_button">Видалити</string>
-    <string name="cart_clear_items_only">Очистити лише позиції</string>
-    <string name="cart_clear_items_only_desc">Видаляє всі рядки з кошика, але залишає поточні валюти та бік комісії.</string>
-    <string name="cart_clear_reset_all">Скинути кошик</string>
-    <string name="cart_clear_reset_all_desc">Видаляє всі рядки й повторно підтягує базову / цільову валюту та бік комісії з головного екрана.</string>
     <string name="cart_export_ok">Кошик експортовано.</string>
     <string name="cart_export_error">Помилка експорту: %s</string>
     <string name="cart_import_ok">Кошик імпортовано.</string>

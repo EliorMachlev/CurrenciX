@@ -71,10 +71,6 @@
     <string name="cart_rename_title">重命名购物车</string>
     <string name="cart_delete_confirm">删除"%s"?</string>
     <string name="cart_delete_confirm_button">删除</string>
-    <string name="cart_clear_items_only">仅清空项目</string>
-    <string name="cart_clear_items_only_desc">移除购物车中的所有行,但保留当前货币和手续费方向。</string>
-    <string name="cart_clear_reset_all">重置购物车</string>
-    <string name="cart_clear_reset_all_desc">移除所有行,并从主屏幕重新获取基准/目标货币以及手续费方向。</string>
     <string name="cart_export_ok">购物车已导出。</string>
     <string name="cart_export_error">导出失败:%s</string>
     <string name="cart_import_ok">购物车已导入。</string>

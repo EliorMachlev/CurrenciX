@@ -379,7 +379,7 @@ class MainActivity : BaseActivity() {
                 true
             }
             R.id.cart -> {
-                startActivity(Intent(this, CartActivity::class.java))
+                startActivity(CartActivity.intent(this, viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -397,7 +397,7 @@ class MainActivity : BaseActivity() {
         dismiss()
         when (action) {
             DrawerAction.Timeline -> openTimelineActivity()
-            DrawerAction.Cart -> startActivity(Intent(this, CartActivity::class.java))
+            DrawerAction.Cart -> startActivity(CartActivity.intent(this, viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
             DrawerAction.QuickConversions -> openQuickConversions?.invoke()
             DrawerAction.DatePicker -> openHistoricalDatePicker?.invoke()
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()

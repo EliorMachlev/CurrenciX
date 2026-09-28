@@ -72,10 +72,6 @@
     <string name="cart_rename_title">Renomear carrinho</string>
     <string name="cart_delete_confirm">Excluir “%s”?</string>
     <string name="cart_delete_confirm_button">Excluir</string>
-    <string name="cart_clear_items_only">Limpar apenas itens</string>
-    <string name="cart_clear_items_only_desc">Remove todas as linhas do carrinho, mas mantém as moedas e o lado das tarifas atuais.</string>
-    <string name="cart_clear_reset_all">Redefinir carrinho</string>
-    <string name="cart_clear_reset_all_desc">Remove todas as linhas e busca novamente a moeda base/destino e o lado das tarifas na tela principal.</string>
     <string name="cart_export_ok">Carrinho exportado.</string>
     <string name="cart_export_error">Falha na exportação: %s</string>
     <string name="cart_import_ok">Carrinho importado.</string>

@@ -64,10 +64,6 @@
     <string name="cart_rename_title">Преименуване на количка</string>
     <string name="cart_delete_confirm">Да се изтрие ли „%s"?</string>
     <string name="cart_delete_confirm_button">Изтрий</string>
-    <string name="cart_clear_items_only">Изчисти само артикулите</string>
-    <string name="cart_clear_items_only_desc">Премахва всички редове от количката, но запазва текущите валути и страната на таксите.</string>
-    <string name="cart_clear_reset_all">Нулирай количката</string>
-    <string name="cart_clear_reset_all_desc">Премахва всички редове и повторно взема базовата/целевата валута и страната на таксите от главния екран.</string>
     <string name="cart_export_ok">Количката е експортирана.</string>
     <string name="cart_export_error">Експортът е неуспешен: %s</string>
     <string name="cart_import_ok">Количката е импортирана.</string>

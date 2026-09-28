@@ -72,10 +72,6 @@
     <string name="cart_rename_title">Winkelwagen hernoemen</string>
     <string name="cart_delete_confirm">‘%s’ verwijderen?</string>
     <string name="cart_delete_confirm_button">Verwijderen</string>
-    <string name="cart_clear_items_only">Alleen artikelen wissen</string>
-    <string name="cart_clear_items_only_desc">Verwijdert alle regels uit de winkelwagen maar behoudt de huidige valuta\'s en kostenzijde.</string>
-    <string name="cart_clear_reset_all">Winkelwagen resetten</string>
-    <string name="cart_clear_reset_all_desc">Verwijdert alle regels en haalt de basis-/doelvaluta en de kostenzijde opnieuw op van het hoofdscherm.</string>
     <string name="cart_export_ok">Winkelwagen geëxporteerd.</string>
     <string name="cart_export_error">Exporteren mislukt: %s</string>
     <string name="cart_import_ok">Winkelwagen geïmporteerd.</string>

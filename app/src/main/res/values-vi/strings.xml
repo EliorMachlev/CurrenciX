@@ -68,10 +68,6 @@
     <string name="cart_rename_title">Đổi tên giỏ hàng</string>
     <string name="cart_delete_confirm">Xoá "%s"?</string>
     <string name="cart_delete_confirm_button">Xoá</string>
-    <string name="cart_clear_items_only">Chỉ xoá các mục</string>
-    <string name="cart_clear_items_only_desc">Xoá mọi hàng khỏi giỏ nhưng giữ nguyên tiền tệ hiện tại và phía áp phí.</string>
-    <string name="cart_clear_reset_all">Đặt lại giỏ hàng</string>
-    <string name="cart_clear_reset_all_desc">Xoá mọi hàng và lấy lại tiền tệ gốc / đích và phía áp phí từ màn hình chính.</string>
     <string name="cart_export_ok">Đã xuất giỏ hàng.</string>
     <string name="cart_export_error">Xuất thất bại: %s</string>
     <string name="cart_import_ok">Đã nhập giỏ hàng.</string>

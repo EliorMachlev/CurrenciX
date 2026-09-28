@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Sepeti yeniden adlandır</string>
     <string name="cart_delete_confirm">"%s" silinsin mi?</string>
     <string name="cart_delete_confirm_button">Sil</string>
-    <string name="cart_clear_items_only">Yalnızca öğeleri temizle</string>
-    <string name="cart_clear_items_only_desc">Sepetteki tüm satırları kaldırır, ancak mevcut para birimlerini ve ücret tarafını korur.</string>
-    <string name="cart_clear_reset_all">Sepeti sıfırla</string>
-    <string name="cart_clear_reset_all_desc">Tüm satırları kaldırır ve temel/hedef para birimini ile ücret tarafını ana ekrandan yeniden alır.</string>
     <string name="cart_export_ok">Sepet dışa aktarıldı.</string>
     <string name="cart_export_error">Dışa aktarma başarısız: %s</string>
     <string name="cart_import_ok">Sepet içe aktarıldı.</string>

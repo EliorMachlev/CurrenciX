@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Warenkorb umbenennen</string>
     <string name="cart_delete_confirm">„%s“ löschen?</string>
     <string name="cart_delete_confirm_button">Löschen</string>
-    <string name="cart_clear_items_only">Nur Artikel leeren</string>
-    <string name="cart_clear_items_only_desc">Entfernt alle Zeilen, behält aber die aktuellen Währungen und die Gebührenseite.</string>
-    <string name="cart_clear_reset_all">Warenkorb zurücksetzen</string>
-    <string name="cart_clear_reset_all_desc">Entfernt alle Zeilen und holt Basis-/Zielwährung und Gebührenseite erneut vom Hauptbildschirm.</string>
     <string name="cart_export_ok">Warenkorb exportiert.</string>
     <string name="cart_export_error">Export fehlgeschlagen: %s</string>
     <string name="cart_import_ok">Warenkorb importiert.</string>

@@ -70,10 +70,6 @@
     <string name="cart_rename_title">تغییر نام سبد</string>
     <string name="cart_delete_confirm">«%s» حذف شود؟</string>
     <string name="cart_delete_confirm_button">حذف</string>
-    <string name="cart_clear_items_only">فقط پاک کردن موارد</string>
-    <string name="cart_clear_items_only_desc">همهٔ ردیف‌ها را از سبد حذف می‌کند اما ارزهای فعلی و سمت کارمزد را نگه می‌دارد.</string>
-    <string name="cart_clear_reset_all">بازنشانی سبد</string>
-    <string name="cart_clear_reset_all_desc">همهٔ ردیف‌ها را حذف کرده و ارز مبدأ / مقصد و سمت کارمزد را از صفحهٔ اصلی دوباره می‌گیرد.</string>
     <string name="cart_export_ok">سبد صادر شد.</string>
     <string name="cart_export_error">خروجی ناموفق بود: %s</string>
     <string name="cart_import_ok">سبد وارد شد.</string>

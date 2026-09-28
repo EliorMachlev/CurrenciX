@@ -188,26 +188,46 @@ class CartViewModel(
         }
     }
 
-    /** Clear the cart's items but keep the currency the user picked. */
-    fun clearItems() {
-        mutate { it.copy(items = emptyList()) }
-    }
-
     /**
      * Reset the cart back to a fresh, main-screen-seeded state: no items and
-     * currencies re-pulled from the app-wide defaults. Preserves the cart's
-     * id/name so a subsequent "Save" still targets the same persisted
-     * entry — this is a content reset, not a "delete and start over".
+     * currencies re-pulled from [mainBase] / [mainDest] when supplied
+     * (delivered by the activity's intent extras), else from the persisted
+     * app-wide defaults. Preserves the cart's id/name so a subsequent "Save"
+     * still targets the same persisted entry — this is a content reset, not
+     * a "delete and start over".
      */
-    fun resetToMainDefaults() {
+    fun resetToMainDefaults(
+        mainBase: Currency? = null,
+        mainDest: Currency? = null,
+    ) {
         val cur = current.value ?: return
-        val fresh = emptyCart()
+        val (base, dest) = resolveSeedPair(mainBase, mainDest)
         val next =
             cur.copy(
                 items = emptyList(),
-                currency = fresh.currency,
-                destinationCurrency = fresh.destinationCurrency,
+                currency = base.iso4217Alpha(),
+                destinationCurrency = dest.iso4217Alpha(),
             )
+        current.value = next
+        db.setCurrentCart(next)
+    }
+
+    /**
+     * Overlay main's currently-visible pair onto a fresh cart. Called by
+     * CartActivity when it opens with intent extras — trusts the caller's
+     * pair over what emptyCart() guessed from prefs, and skips the overwrite
+     * once the user has typed anything so we don't stomp their work.
+     */
+    fun seedFromMain(
+        mainBase: Currency?,
+        mainDest: Currency?,
+    ) {
+        if (mainBase == null && mainDest == null) return
+        val cur = current.value ?: return
+        if (cur.items.isNotEmpty()) return
+        val (base, dest) = resolveSeedPair(mainBase, mainDest)
+        val next = cur.copy(currency = base.iso4217Alpha(), destinationCurrency = dest.iso4217Alpha())
+        if (next == cur) return
         current.value = next
         db.setCurrentCart(next)
     }
@@ -398,16 +418,7 @@ class CartViewModel(
     }
 
     private fun emptyCart(): SavedCart {
-        // Read the main-screen picks synchronously — the LiveData accessors
-        // return null until observed, which is why an unobserved lookup here
-        // used to fall back to USD even when the user was on a different pair.
-        val base = db.getLastBaseCurrencyBlocking() ?: Currency.USD
-        val storedDest = db.getLastDestinationCurrencyBlocking()
-        // Enforce the "sides must differ" invariant that main's picker
-        // enforces interactively — if the stored destination collides with
-        // base (or is missing), fall back to a distinct currency so a fresh
-        // cart never opens on a same-side pair.
-        val dest = storedDest?.takeIf { it != base } ?: distinctFrom(base)
+        val (base, dest) = resolveSeedPair(null, null)
         return SavedCart(
             id = "",
             name = "",
@@ -418,11 +429,35 @@ class CartViewModel(
         )
     }
 
-    // Belt-and-braces fallback for [emptyCart] — USD is the safe partner for
-    // any non-USD base; EUR steps in when USD is itself the base. Mirrors the
-    // "distinct fallback" main's destination LiveData applies when stored
-    // prefs collide.
-    private fun distinctFrom(base: Currency): Currency = if (base == Currency.USD) Currency.EUR else Currency.USD
+    /**
+     * Pick a base/destination pair for a fresh cart. Prefers explicit values
+     * from the caller (intent extras from main), falls back to persisted
+     * prefs, and always enforces "sides must differ" via [distinctFrom].
+     */
+    private fun resolveSeedPair(
+        mainBase: Currency?,
+        mainDest: Currency?,
+    ): Pair<Currency, Currency> {
+        // Read the persisted picks synchronously — the LiveData accessors
+        // return null until observed, which is why an unobserved lookup here
+        // used to fall back to USD even when the user was on a different pair.
+        val base = mainBase ?: db.getLastBaseCurrencyBlocking() ?: Currency.USD
+        val proposedDest = mainDest ?: db.getLastDestinationCurrencyBlocking()
+        val dest = proposedDest?.takeIf { it != base } ?: distinctFrom(base)
+        return base to dest
+    }
+
+    // Belt-and-braces fallback for [emptyCart]. Prefer the first currency from
+    // the cached rates that isn't [base] — that way the pair we seed matches
+    // something the user's active provider actually quotes. Falls back to
+    // USD/EUR only when no rates are cached (e.g. clean install before the
+    // first refresh).
+    private fun distinctFrom(base: Currency): Currency {
+        db.getExchangeRatesBlocking()?.rates?.forEach { rate ->
+            if (rate.currency != base) return rate.currency
+        }
+        return if (base == Currency.USD) Currency.EUR else Currency.USD
+    }
 }
 
 data class CartSnapshot(

@@ -70,10 +70,6 @@
     <string name="cart_rename_title">إعادة تسمية السلة</string>
     <string name="cart_delete_confirm">حذف «%s»؟</string>
     <string name="cart_delete_confirm_button">حذف</string>
-    <string name="cart_clear_items_only">مسح العناصر فقط</string>
-    <string name="cart_clear_items_only_desc">يزيل جميع الصفوف من السلة مع الاحتفاظ بالعملات الحالية وجانب الرسوم.</string>
-    <string name="cart_clear_reset_all">إعادة تعيين السلة</string>
-    <string name="cart_clear_reset_all_desc">يزيل جميع الصفوف ويعيد جلب العملة الأساسية / الوجهة وجانب الرسوم من الشاشة الرئيسية.</string>
     <string name="cart_export_ok">تم تصدير السلة.</string>
     <string name="cart_export_error">فشل التصدير: %s</string>
     <string name="cart_import_ok">تم استيراد السلة.</string>

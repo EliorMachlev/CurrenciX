@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Zmień nazwę koszyka</string>
     <string name="cart_delete_confirm">Usunąć „%s”?</string>
     <string name="cart_delete_confirm_button">Usuń</string>
-    <string name="cart_clear_items_only">Wyczyść tylko pozycje</string>
-    <string name="cart_clear_items_only_desc">Usuwa wszystkie wiersze z koszyka, ale zachowuje bieżące waluty i stronę opłat.</string>
-    <string name="cart_clear_reset_all">Zresetuj koszyk</string>
-    <string name="cart_clear_reset_all_desc">Usuwa wszystkie wiersze i ponownie pobiera walutę bazową / docelową oraz stronę opłat z ekranu głównego.</string>
     <string name="cart_export_ok">Koszyk wyeksportowany.</string>
     <string name="cart_export_error">Eksport nie powiódł się: %s</string>
     <string name="cart_import_ok">Koszyk zaimportowany.</string>

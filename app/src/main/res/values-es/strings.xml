@@ -71,10 +71,6 @@
     <string name="cart_rename_title">Renombrar carrito</string>
     <string name="cart_delete_confirm">¿Eliminar «%s»?</string>
     <string name="cart_delete_confirm_button">Eliminar</string>
-    <string name="cart_clear_items_only">Vaciar solo artículos</string>
-    <string name="cart_clear_items_only_desc">Elimina todas las filas del carrito pero conserva las monedas y el lado de comisiones actuales.</string>
-    <string name="cart_clear_reset_all">Restablecer carrito</string>
-    <string name="cart_clear_reset_all_desc">Elimina todas las filas y vuelve a tomar la moneda base/destino y el lado de comisiones desde la pantalla principal.</string>
     <string name="cart_export_ok">Carrito exportado.</string>
     <string name="cart_export_error">Exportación fallida: %s</string>
     <string name="cart_import_ok">Carrito importado.</string>
