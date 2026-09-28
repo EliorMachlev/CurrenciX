@@ -63,6 +63,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -92,6 +93,7 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
@@ -583,9 +585,9 @@ private fun PillsRow(
         horizontalArrangement = Arrangement.spacedBy(PILLS_ROW_GAP),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CurrencyPill(currency = fromCurrency, onClick = onPillFromClick, modifier = Modifier.weight(1f))
+        CurrencyPill(currency = fromCurrency, onClick = onPillFromClick, modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_FROM))
         SwapFab(onClick = onSwapClick, onLongClick = onSwapLongPress)
-        CurrencyPill(currency = toCurrency, onClick = onPillToClick, modifier = Modifier.weight(1f))
+        CurrencyPill(currency = toCurrency, onClick = onPillToClick, modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_TO))
     }
 }
 

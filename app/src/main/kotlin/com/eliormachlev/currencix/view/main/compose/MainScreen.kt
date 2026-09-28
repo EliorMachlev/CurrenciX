@@ -27,11 +27,15 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 
 enum class DrawerAction {
@@ -108,6 +112,9 @@ fun MainScreen(
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
+        // Lets UiAutomator (the :baselineprofile journeys) find UiTestTags as
+        // view resource ids. Semantics only — nothing visual.
+        modifier = Modifier.semantics { testTagsAsResourceId = true },
         drawerContent = {
             ModalDrawerSheet {
                 DrawerContent(
@@ -252,7 +259,10 @@ private fun DrawerRow(
     NavigationDrawerItem(
         selected = false,
         onClick = { if (enabled) onClick() },
-        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+        modifier =
+            Modifier
+                .padding(NavigationDrawerItemDefaults.ItemPadding)
+                .testTag(UiTestTags.drawerEntry(entry.action.name)),
         icon = {
             Icon(
                 painter = painterResource(id = entry.iconRes),

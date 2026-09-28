@@ -38,6 +38,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -45,6 +48,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -167,7 +171,11 @@ private fun SpotlightContent(
                 // explicitly.
                 .pointerInput(step.anchor) {
                     detectTapGestures(onTap = { onAdvance() })
-                }.graphicsLayer { this.alpha = alpha },
+                }.graphicsLayer { this.alpha = alpha }
+                // Popup = its own window and semantics tree, so the flag set
+                // on MainScreen doesn't reach here; the :baselineprofile
+                // journeys need the skip button's tag to clear onboarding.
+                .semantics { testTagsAsResourceId = true },
     ) {
         ScrimWithSpotlight(anchorRect = anchorRect)
         TooltipCard(
@@ -296,7 +304,7 @@ private fun TooltipCard(
                 horizontalArrangement = Arrangement.spacedBy(BUTTON_ROW_GAP, Alignment.End),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(onClick = onSkip) { Text(skipLabel) }
+                TextButton(onClick = onSkip, modifier = Modifier.testTag(UiTestTags.ONBOARDING_SKIP)) { Text(skipLabel) }
                 // Inline action (e.g. "Enable now" on the auto-refresh step).
                 // Fires then dismisses; wired through onAction lambda.
                 step.actionLabel?.let { label ->

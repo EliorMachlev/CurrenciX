@@ -42,9 +42,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
@@ -61,6 +63,7 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.ledgerHairline
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableItem
@@ -287,7 +290,15 @@ private fun CurrencyList(
     KeepAtTopOnFavoritesAppear(listState = listState, starredCount = starredItems.size)
     if (starredItems.isEmpty() && nonStarredItems.isEmpty()) return
 
-    LazyColumn(state = listState, modifier = modifier) {
+    LazyColumn(
+        state = listState,
+        // The sheet is its own window, so it exposes its own test tags as
+        // resource ids for the :baselineprofile scroll journey.
+        modifier =
+            modifier
+                .semantics { testTagsAsResourceId = true }
+                .testTag(UiTestTags.CURRENCY_LIST),
+    ) {
         items(items = starredItems, key = { STARRED_KEY_PREFIX + it.currency.name }) { rate ->
             ReorderableItem(
                 state = reorderState,

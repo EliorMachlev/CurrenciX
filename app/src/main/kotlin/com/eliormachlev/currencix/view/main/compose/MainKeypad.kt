@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticCombinedClickable
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.viewmodel.main.Operator
 
 // Fixed row height keeps the keypad compact regardless of screen size. The
@@ -175,6 +177,7 @@ private fun KeyRow(content: @Composable RowScope.() -> Unit) {
 private fun RowScope.KeyCell(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
+    tag: String? = null,
     content: @Composable () -> Unit,
 ) {
     Box(
@@ -182,6 +185,7 @@ private fun RowScope.KeyCell(
             Modifier
                 .weight(1f)
                 .fillMaxSize()
+                .then(if (tag != null) Modifier.testTag(tag) else Modifier)
                 .hapticCombinedClickable(onClick = onClick, onLongClick = onLongClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -194,7 +198,7 @@ private fun RowScope.DigitKey(
     label: String,
     onClick: () -> Unit,
 ) {
-    KeyCell(onClick = onClick) {
+    KeyCell(onClick = onClick, tag = UiTestTags.key(label)) {
         Text(
             text = label,
             fontSize = KEY_TEXT_SIZE,
@@ -257,7 +261,7 @@ private fun RowScope.DeleteKey(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
-    KeyCell(onClick = onClick, onLongClick = onLongClick) {
+    KeyCell(onClick = onClick, onLongClick = onLongClick, tag = UiTestTags.KEY_DELETE) {
         Icon(
             painter = painterResource(id = R.drawable.ic_backspace),
             contentDescription = stringResource(id = R.string.a11y_delete),
