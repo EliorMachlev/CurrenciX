@@ -2,8 +2,6 @@ package com.eliormachlev.currencix.view.preference.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +18,7 @@ import com.eliormachlev.currencix.view.compose.LedgerLabel
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerSection
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import kotlinx.coroutines.delay
 
 // Thin preference-flavoured wrapper around the shared ledger vocabulary in
@@ -138,11 +137,8 @@ fun SectionEnter(
 ) {
     val progress = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
-        delay(index * SECTION_ENTER_STAGGER_MILLIS)
-        progress.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = SECTION_ENTER_MILLIS, easing = FastOutSlowInEasing),
-        )
+        delay(index * Motion.STAGGER_MILLIS)
+        progress.animateTo(targetValue = 1f, animationSpec = Motion.enter())
     }
     Box(
         modifier =
@@ -161,9 +157,8 @@ fun SectionEnter(
 // gap keeps consecutive sections from crowding each other's brass.
 private val SECTION_ENTER_BOTTOM_GAP: Dp = 4.dp
 
-// ~180ms between sections keeps the cascade legible on a six-section screen
-// without pushing the last card past the user's attention window. Total dwell
-// for the last section = index*180 + 360 = ~1260ms, still comfortable.
-private const val SECTION_ENTER_STAGGER_MILLIS: Long = 60
-private const val SECTION_ENTER_MILLIS: Int = 360
+// Timing comes from Motion: a MEDIUM entrance, STAGGER apart. On the
+// six-section Settings screen the last section lands at 5*30 + 220 = 370ms,
+// short enough that the cascade reads as polish rather than as the screen
+// loading.
 private const val SECTION_ENTER_TRANSLATION_PX: Float = 32f

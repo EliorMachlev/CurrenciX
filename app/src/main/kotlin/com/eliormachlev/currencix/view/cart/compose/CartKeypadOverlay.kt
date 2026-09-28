@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view.cart.compose
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -30,10 +31,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.eliormachlev.currencix.view.cart.CartKeypadController
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 
 @Composable
@@ -102,8 +105,10 @@ fun CartKeypadOverlay(
 
     AnimatedVisibility(
         visible = visible,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
+        // Motion.settle: a quick, bounce-free spring, so re-opening the keypad
+        // mid-slide reverses smoothly instead of restarting.
+        enter = slideInVertically(animationSpec = Motion.settle(IntOffset.VisibilityThreshold), initialOffsetY = { it }),
+        exit = slideOutVertically(animationSpec = Motion.settle(IntOffset.VisibilityThreshold), targetOffsetY = { it }),
         modifier = modifier,
     ) {
         Column(

@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.compose.onboarding
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -46,6 +45,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -61,10 +61,9 @@ private val CARD_RADIUS: Dp = 20.dp
 private val CARD_GAP_FROM_ANCHOR: Dp = 16.dp
 private val BUTTON_ROW_GAP: Dp = 8.dp
 
-// Fade timing chosen to feel deliberate but never gate a tap — the overlay
-// remains interactive even during the fade because the pointer-input handler
-// is attached above the alpha layer.
-private const val STEP_FADE_MILLIS = 220
+// Step fade uses Motion.enter(): deliberate but never gates a tap — the
+// overlay remains interactive even during the fade because the pointer-input
+// handler is attached above the alpha layer.
 
 // Hamburger anchor is synthesized: the ActionBar sits outside the Compose
 // tree so we can't measure it. This size + offset from the top-left of the
@@ -155,7 +154,7 @@ private fun SpotlightContent(
 ) {
     val alpha by animateFloatAsState(
         targetValue = 1f,
-        animationSpec = tween(STEP_FADE_MILLIS),
+        animationSpec = Motion.enter(),
         label = "spotlightFade",
     )
     Box(

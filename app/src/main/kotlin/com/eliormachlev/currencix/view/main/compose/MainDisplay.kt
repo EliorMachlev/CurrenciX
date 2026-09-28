@@ -7,13 +7,9 @@ import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -106,6 +102,7 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
 import com.eliormachlev.currencix.view.compose.shimmer
 import com.eliormachlev.currencix.view.compose.theme.AmberContainer
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
@@ -154,9 +151,9 @@ private val CARD_ELEVATION: Dp = 3.dp
 
 // Swap FAB rotation animation — one 180° flip per tap. The counter drives
 // a target angle so successive taps keep spinning in the same direction
-// (never snap back), and animateFloatAsState handles the tween.
+// (never snap back). A spring, so a second tap mid-flip carries the
+// current spin forward instead of restarting it.
 private const val SWAP_FAB_ROTATION_STEP = 180f
-private const val SWAP_FAB_ROTATION_MILLIS = 320
 
 private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
 private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
@@ -257,19 +254,18 @@ private const val FEE_NAME_SEPARATOR = ", "
 // Under this age we show a relative label ("12h ago") instead of the date.
 private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
 
-private const val CURSOR_BLINK_MILLIS = 1200
+// Caret blink half-period — the platform EditText's rate. A discrete on/off
+// toggle costs two frames per cycle; the old infinite fade asked for a new
+// frame on every vsync for as long as the main screen was open.
+private const val CURSOR_BLINK_MILLIS = 500L
 
-// Fade duration when engraved amounts (final source, You-get destination)
-// swap digits. Short enough that fast keystrokes just read as a subtle
-// blur rather than a laggy slide-in; long enough that a rate refresh
-// visibly "reads" as a change instead of a hard replace.
-private const val ENGRAVED_DIGITS_FADE_MILLIS = 160
-
-// Per-change scale pulse (peak → 1.0) reads as an emphatic "updated"
-// on top of the digit crossfade. No first-appearance ramp — an initial
-// alpha or translation would swallow the digits every time the hero
-// swaps branches (fee ↔ no-fee).
-private const val HERO_EMPHASIS_MILLIS = 260
+// Engraved amounts (the result side) animate only when they change from
+// outside the keypad — a rate refresh, a currency pick, a fee toggle. Then a
+// short crossfade plus a scale pulse (up to the peak, springing back) reads
+// as an emphatic "updated". Keystroke-driven changes render instantly, so
+// typing stays crisp at any speed instead of stacking fades and pulses.
+// No first-appearance ramp — an initial alpha or translation would swallow
+// the digits every time the hero swaps branches (fee ↔ no-fee).
 private const val HERO_EMPHASIS_PEAK = 1.03f
 
 // Phase-offset the hero-final shimmer behind the subtotal's so the two
@@ -558,6 +554,9 @@ private fun HeroCard(
                 fees = activeFees,
                 otherValue = resultWithFeesNumber,
                 isUpdating = isUpdating,
+                // Digits only: a new "from" currency changes the symbol, not
+                // the typed amount, so its result update still animates.
+                inputKey = baseParts.digits,
                 onResultLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
                 onTrueCostLongClick = { if (trueCostCopyText.isNotEmpty()) callbacks.onCopy(trueCostCopyText) },
                 onFeeChipClick = callbacks.onOpenFees,
@@ -651,7 +650,7 @@ private fun SwapFab(
     var tapCount by remember { mutableIntStateOf(0) }
     val rotation by animateFloatAsState(
         targetValue = tapCount * SWAP_FAB_ROTATION_STEP,
-        animationSpec = tween(durationMillis = SWAP_FAB_ROTATION_MILLIS),
+        animationSpec = Motion.snappy(),
         label = "swapFabRotation",
     )
     val anchor = rememberOnboardingAnchorModifier(OnboardingAnchor.SwapFab)
@@ -814,6 +813,9 @@ private fun ScrollingAmount(
     cursorHeight: Dp?,
     onLongClick: () -> Unit,
     fontFamily: FontFamily? = null,
+    // Result side only: the typed input these digits were computed from, so
+    // keystroke-driven changes can skip the "updated" animation.
+    inputKey: Any? = null,
 ) {
     val color = MaterialTheme.colorScheme.onSurface
     Row(
@@ -857,9 +859,9 @@ private fun ScrollingAmount(
             // without an inter-glyph crossfade.
             Box(Modifier.weight(1f, fill = false)) { digitsText(parts.digits) }
         } else {
-            EngravedDigitsCrossfade(digits = parts.digits, digitsText = digitsText)
+            EngravedDigitsCrossfade(digits = parts.digits, inputKey = inputKey, digitsText = digitsText)
         }
-        if (cursorHeight != null) BlinkingCursor(height = cursorHeight)
+        if (cursorHeight != null) BlinkingCursor(height = cursorHeight, restartKey = parts.digits)
     }
 }
 
@@ -869,24 +871,51 @@ private fun ScrollingAmount(
 private const val TRANSFORM_ORIGIN_CENTER = 0.5f
 
 /**
+ * Decides, once per digits change, whether the change came from outside the
+ * keypad. [isExternal] is true when the digits changed while the typed input
+ * stayed the same since the previous change (a rate refresh, currency pick,
+ * fee toggle); a keystroke changes the input first, so its result update
+ * reads as internal. The very first value is never external.
+ *
+ * Plain fields rather than snapshot state: they're written while composing
+ * and never observed, so they must not trigger recomposition.
+ */
+private class DigitsChangeOrigin(
+    private var inputAtLastChange: Any?,
+) {
+    private var seenFirst = false
+
+    fun isExternal(input: Any?): Boolean {
+        val external = seenFirst && input == inputAtLastChange
+        seenFirst = true
+        inputAtLastChange = input
+        return external
+    }
+}
+
+/**
  * Crossfade + emphasis-pulse render used by the non-typed
- * (result / true-cost) side of [ScrollingAmount]. Split out so the parent
- * stays short and the Modifier/animation stack for this branch reads on its
- * own without wading past the typed-input path.
+ * (result / true-cost) side of [ScrollingAmount]. Animates only changes that
+ * came from outside the keypad (see [DigitsChangeOrigin]); [inputKey] is the
+ * typed input the digits were computed from. Split out so the parent stays
+ * short and the Modifier/animation stack for this branch reads on its own
+ * without wading past the typed-input path.
  */
 @Composable
 private fun RowScope.EngravedDigitsCrossfade(
     digits: String,
+    inputKey: Any?,
     digitsText: @Composable (String) -> Unit,
 ) {
     val emphasis = remember { Animatable(1f) }
-    var previousDigits by remember { mutableStateOf<String?>(null) }
+    val origin = remember { DigitsChangeOrigin(inputKey) }
+    val animateChange = remember(digits) { origin.isExternal(inputKey) }
     LaunchedEffect(digits) {
-        val prev = previousDigits
-        previousDigits = digits
-        if (prev != null && prev != digits) {
-            emphasis.snapTo(HERO_EMPHASIS_PEAK)
-            emphasis.animateTo(1f, tween(HERO_EMPHASIS_MILLIS, easing = FastOutSlowInEasing))
+        if (animateChange) {
+            // Ease up, spring back — no snap, so a change landing mid-pulse
+            // continues from the current scale instead of jumping.
+            emphasis.animateTo(HERO_EMPHASIS_PEAK, tween(Motion.SHORT_MILLIS / 2))
+            emphasis.animateTo(1f, Motion.settle())
         }
     }
     Crossfade(
@@ -900,7 +929,7 @@ private fun RowScope.EngravedDigitsCrossfade(
                     scaleY = s
                     transformOrigin = TransformOrigin(1f, TRANSFORM_ORIGIN_CENTER)
                 },
-        animationSpec = tween(durationMillis = ENGRAVED_DIGITS_FADE_MILLIS),
+        animationSpec = if (animateChange) Motion.fadeShort() else snap(),
         label = "engraved-digits",
     ) { value -> digitsText(value) }
 }
@@ -935,25 +964,28 @@ private fun MathLine(text: String?) {
 }
 
 @Composable
-private fun BlinkingCursor(height: Dp = CURSOR_HEIGHT) {
-    val transition = rememberInfiniteTransition(label = "cursor")
-    val alpha by transition.animateFloat(
-        initialValue = 1f,
-        targetValue = 0f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(durationMillis = CURSOR_BLINK_MILLIS, easing = LinearEasing),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        label = "cursorAlpha",
-    )
+private fun BlinkingCursor(
+    height: Dp = CURSOR_HEIGHT,
+    restartKey: Any? = null,
+) {
+    // Solid while typing: every keystroke ([restartKey]) restarts the blink
+    // from "on", like a platform text field.
+    var visible by remember { mutableStateOf(true) }
+    LaunchedEffect(restartKey) {
+        visible = true
+        while (true) {
+            delay(CURSOR_BLINK_MILLIS)
+            visible = !visible
+        }
+    }
     val primary = MaterialTheme.colorScheme.primary
     Spacer(
         Modifier
             .padding(start = 6.dp)
             .width(CURSOR_WIDTH)
             .height(height)
-            .graphicsLayer { this.alpha = alpha }
+            // Read in the draw layer: a toggle redraws, never recomposes.
+            .graphicsLayer { this.alpha = if (visible) 1f else 0f }
             .background(primary),
     )
 }
@@ -973,6 +1005,7 @@ private fun AmountToRow(
     fees: ImmutableList<Fee>,
     otherValue: BigDecimal?,
     isUpdating: Boolean,
+    inputKey: Any?,
     onResultLongClick: () -> Unit,
     onTrueCostLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
@@ -993,6 +1026,7 @@ private fun AmountToRow(
                     stack = stack!!,
                     fees = fees,
                     isUpdating = isUpdating,
+                    inputKey = inputKey,
                     onResultLongClick = onResultLongClick,
                     onTrueCostLongClick = onTrueCostLongClick,
                     onFeeChipClick = onFeeChipClick,
@@ -1004,6 +1038,7 @@ private fun AmountToRow(
                     fees = fees,
                     hasFee = hasFee,
                     isUpdating = isUpdating,
+                    inputKey = inputKey,
                     onResultLongClick = onResultLongClick,
                     onFeeChipClick = onFeeChipClick,
                 )
@@ -1023,6 +1058,7 @@ private fun AmountToChain(
     stack: BigDecimal,
     fees: ImmutableList<Fee>,
     isUpdating: Boolean,
+    inputKey: Any?,
     onResultLongClick: () -> Unit,
     onTrueCostLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
@@ -1035,6 +1071,7 @@ private fun AmountToChain(
             fontWeight = FontWeight.Medium,
             cursorHeight = null,
             onLongClick = onResultLongClick,
+            inputKey = inputKey,
         )
     }
     Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
@@ -1053,6 +1090,7 @@ private fun AmountToChain(
             cursorHeight = null,
             onLongClick = onTrueCostLongClick,
             fontFamily = FontFamily.Serif,
+            inputKey = inputKey,
         )
     }
 }
@@ -1067,6 +1105,7 @@ private fun AmountToBare(
     fees: ImmutableList<Fee>,
     hasFee: Boolean,
     isUpdating: Boolean,
+    inputKey: Any?,
     onResultLongClick: () -> Unit,
     onFeeChipClick: () -> Unit,
 ) {
@@ -1079,6 +1118,7 @@ private fun AmountToBare(
             cursorHeight = null,
             onLongClick = onResultLongClick,
             fontFamily = FontFamily.Serif,
+            inputKey = inputKey,
         )
     }
     if (hasFee && stack != null) {

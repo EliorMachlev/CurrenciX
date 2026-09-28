@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.view.compose.theme
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
@@ -29,8 +28,6 @@ import androidx.compose.ui.unit.sp
 // change the box height an AnnotatedString glyph is measured in, so it
 // couldn't optically center on its own).
 private const val WORDMARK_X_SCALE = 1.35f
-private const val WORDMARK_REVEAL_MILLIS = 520
-private const val WORDMARK_TINT_MILLIS = 640
 
 // TransformOrigin vertical pivot: 0.5 = center of the glyph's box. Used so
 // the × grows outward from its optical middle rather than from the top.
@@ -74,14 +71,14 @@ fun Wordmark(
         if (startReveal) {
             xScale.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = WORDMARK_REVEAL_MILLIS, easing = LinearOutSlowInEasing),
+                animationSpec = Motion.flourish(),
             )
         }
     }
     val tintTarget by rememberUpdatedState(if (xScale.value >= 1f) accentColor else color)
     val xColor by animateColorAsState(
         targetValue = tintTarget,
-        animationSpec = tween(durationMillis = WORDMARK_TINT_MILLIS),
+        animationSpec = tween(durationMillis = Motion.LONG_MILLIS),
         label = "wordmarkXTint",
     )
     Row(

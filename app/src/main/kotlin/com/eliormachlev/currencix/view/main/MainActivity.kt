@@ -12,21 +12,20 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.ComposeView
@@ -64,6 +63,7 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.main.compose.BannerContent
 import com.eliormachlev.currencix.view.main.compose.BannerKind
@@ -111,39 +111,46 @@ private const val DEFAULT_DATE_PATTERN = "dd/MM/yy HH:mm"
 
 private const val WORDMARK_TITLE_SP = 26f
 
-// Matches Material's standard "medium container" motion duration — long
-// enough to read as a morph, short enough to feel responsive on the tap.
-private const val HAMBURGER_MORPH_MILLIS = 320
-
 // Splash → wordmark hand-off overlap (#155). The platform splash icon
 // fades out over this window while the Compose wordmark's × reveal
-// (WORDMARK_REVEAL_MILLIS = 520ms) is already running — a small overlap
-// hides the seam that would otherwise show if we waited for the icon to
-// disappear before starting the reveal. 150ms lands roughly at the reveal's
-// first-quarter frames, so the eye never catches a hard cut.
-private const val SPLASH_EXIT_FADE_MILLIS = 150L
+// (Motion.LONG_MILLIS) is already running — a small overlap hides the seam
+// that would otherwise show if we waited for the icon to disappear before
+// starting the reveal. Ending at the reveal's first quarter means the eye
+// never catches a hard cut; derived so it tracks any change to the reveal.
+private const val SPLASH_EXIT_FADE_MILLIS = Motion.LONG_MILLIS / 4L
 
-// Isolated composable so per-frame progress reads only recompose this
-// (empty) node — hoisting the read into MainScreen's setContent forced
-// the whole tree to recompose per frame during the morph, showing as
-// visible chop on the drawer/main content. The `val current = progress`
-// line matters: it forces a snapshot read *during composition*, so the
-// State subscription is established and the composable actually
-// recomposes each frame while animateFloatAsState is running. Reading
-// `progress` only inside SideEffect's lambda would defer the read to
-// after composition (no subscription → no recomposition → no morph).
+// Drives the ActionBar hamburger ↔ arrow morph from the drawer's actual
+// position, so the icon tracks a finger dragging the drawer and a fling's
+// real velocity instead of playing its own timed animation once the drawer
+// has picked a target. Offsets are collected in a coroutine and pushed into
+// the drawable (which just invalidates itself) — nothing recomposes per
+// frame.
+//
+// The sheet sits at -(its width) when closed and 0 when open (the app is
+// LTR-only, supportsRtl=false). Rather than hard-code the sheet width, learn
+// the closed offset as the smallest offset seen: the offset can never go
+// below it, and the drawer starts closed, so the first value already is it.
 @Composable
 private fun DrawerArrowSync(
     drawerState: DrawerState,
     drawable: DrawerArrowDrawable,
 ) {
-    val progress by animateFloatAsState(
-        targetValue = if (drawerState.targetValue == DrawerValue.Open) 1f else 0f,
-        animationSpec = tween(durationMillis = HAMBURGER_MORPH_MILLIS),
-        label = "hamburgerMorph",
-    )
-    val current = progress
-    SideEffect { drawable.progress = current }
+    LaunchedEffect(drawerState, drawable) {
+        var closedOffset = Float.NaN
+        snapshotFlow { drawerState.currentOffset }
+            .collect { offset ->
+                if (offset.isNaN()) return@collect // anchors not measured yet
+                closedOffset = if (closedOffset.isNaN()) offset else minOf(closedOffset, offset)
+                drawable.progress =
+                    if (closedOffset < 0f) {
+                        (1f - offset / closedOffset).coerceIn(0f, 1f)
+                    } else {
+                        // Restored straight into the open state: no closed
+                        // offset seen yet, so fall back to the settled value.
+                        if (drawerState.currentValue == DrawerValue.Open) 1f else 0f
+                    }
+            }
+    }
 }
 
 class MainActivity : BaseActivity() {
