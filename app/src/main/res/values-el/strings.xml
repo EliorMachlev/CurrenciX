@@ -111,4 +111,6 @@
     <string name="timeline_retry">Δοκιμάστε ξανά</string>
     <string name="timeline_change_provider">Αλλαγή παρόχου</string>
     <string name="recent_pair_switch">Εναλλαγή σε %1$s → %2$s</string>
+    <string name="cart_section_pinned">Καρφιτσωμένα</string>
+    <string name="cart_section_others">Άλλα στοιχεία</string>
 </resources>

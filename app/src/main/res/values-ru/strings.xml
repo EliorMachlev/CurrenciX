@@ -111,4 +111,6 @@
     <string name="timeline_retry">Повторить</string>
     <string name="timeline_change_provider">Сменить источник</string>
     <string name="recent_pair_switch">Переключиться на %1$s → %2$s</string>
+    <string name="cart_section_pinned">Закреплённые</string>
+    <string name="cart_section_others">Другие товары</string>
 </resources>

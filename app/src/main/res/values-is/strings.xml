@@ -111,4 +111,6 @@
     <string name="timeline_retry">Reyna aftur</string>
     <string name="timeline_change_provider">Skipta um veitu</string>
     <string name="recent_pair_switch">Skipta yfir í %1$s → %2$s</string>
+    <string name="cart_section_pinned">Fest</string>
+    <string name="cart_section_others">Önnur atriði</string>
 </resources>

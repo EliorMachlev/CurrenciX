@@ -81,6 +81,8 @@
     <string name="undo">Undo</string>
     <string name="timeline_retry">Try again</string>
     <string name="timeline_change_provider">Change provider</string>
+    <string name="cart_section_pinned">Pinned</string>
+    <string name="cart_section_others">Other items</string>
     <string name="cart_pin_item">Pin item to top</string>
     <string name="cart_unpin_item">Unpin item</string>
     <string name="cart_reorder_item">Reorder item</string>

@@ -19,22 +19,29 @@ class CartDragGroupTest {
     @Test
     fun `rows reorder within their own group`() {
         val list = rows("a*", "b*", "c", "d")
-        list.moveByLazyIndex(0, 1)
-        list.moveByLazyIndex(3, 2)
+        list.moveByKey("a", "b")
+        list.moveByKey("d", "c")
         assertEquals("b* a* d c", list.summary())
     }
 
     @Test
     fun `a pinned row can't pass below the last pinned one`() {
         val list = rows("a*", "b*", "c")
-        list.moveByLazyIndex(1, 2)
+        list.moveByKey("b", "c")
         assertEquals("a* b* c", list.summary())
     }
 
     @Test
     fun `an unpinned row can't pass above the last pinned one`() {
         val list = rows("a*", "c", "d")
-        list.moveByLazyIndex(1, 0)
+        list.moveByKey("c", "a")
         assertEquals("a* c d", list.summary())
+    }
+
+    @Test
+    fun `a section heading isn't a row to swap with`() {
+        val list = rows("a*", "c")
+        list.moveByKey("c", "section:others")
+        assertEquals("a* c", list.summary())
     }
 }

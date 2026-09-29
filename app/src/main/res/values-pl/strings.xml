@@ -111,4 +111,6 @@
     <string name="timeline_retry">Spróbuj ponownie</string>
     <string name="timeline_change_provider">Zmień dostawcę</string>
     <string name="recent_pair_switch">Przełącz na %1$s → %2$s</string>
+    <string name="cart_section_pinned">Przypięte</string>
+    <string name="cart_section_others">Pozostałe pozycje</string>
 </resources>

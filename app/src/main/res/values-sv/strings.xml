@@ -112,4 +112,6 @@
     <string name="timeline_retry">Försök igen</string>
     <string name="timeline_change_provider">Byt leverantör</string>
     <string name="recent_pair_switch">Byt till %1$s → %2$s</string>
+    <string name="cart_section_pinned">Fästa</string>
+    <string name="cart_section_others">Övriga varor</string>
 </resources>

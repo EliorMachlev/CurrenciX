@@ -111,4 +111,6 @@
     <string name="timeline_retry">ניסיון חוזר</string>
     <string name="timeline_change_provider">החלפת ספק</string>
     <string name="recent_pair_switch">מעבר אל %1$s → %2$s</string>
+    <string name="cart_section_pinned">מוצמדים</string>
+    <string name="cart_section_others">פריטים אחרים</string>
 </resources>

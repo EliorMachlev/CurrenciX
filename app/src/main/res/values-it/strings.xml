@@ -112,4 +112,6 @@
     <string name="timeline_retry">Riprova</string>
     <string name="timeline_change_provider">Cambia fornitore</string>
     <string name="recent_pair_switch">Passa a %1$s → %2$s</string>
+    <string name="cart_section_pinned">Fissati</string>
+    <string name="cart_section_others">Altri articoli</string>
 </resources>

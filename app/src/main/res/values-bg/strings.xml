@@ -111,4 +111,6 @@
     <string name="timeline_retry">Опитай отново</string>
     <string name="timeline_change_provider">Смяна на доставчика</string>
     <string name="recent_pair_switch">Превключване към %1$s → %2$s</string>
+    <string name="cart_section_pinned">Закачени</string>
+    <string name="cart_section_others">Други артикули</string>
 </resources>

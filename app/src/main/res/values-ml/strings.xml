@@ -115,4 +115,6 @@
     <string name="timeline_retry">വീണ്ടും ശ്രമിക്കുക</string>
     <string name="timeline_change_provider">ദാതാവിനെ മാറ്റുക</string>
     <string name="recent_pair_switch">%1$s → %2$s എന്നതിലേക്ക് മാറുക</string>
+    <string name="cart_section_pinned">പിൻ ചെയ്തവ</string>
+    <string name="cart_section_others">മറ്റ് ഇനങ്ങൾ</string>
 </resources>

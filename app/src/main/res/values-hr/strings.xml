@@ -111,4 +111,6 @@
     <string name="timeline_retry">Pokušaj ponovno</string>
     <string name="timeline_change_provider">Promijeni pružatelja</string>
     <string name="recent_pair_switch">Prebaci na %1$s → %2$s</string>
+    <string name="cart_section_pinned">Prikvačeno</string>
+    <string name="cart_section_others">Ostale stavke</string>
 </resources>

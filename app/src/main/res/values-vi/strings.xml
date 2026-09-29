@@ -108,4 +108,6 @@
     <string name="timeline_retry">Thử lại</string>
     <string name="timeline_change_provider">Đổi nhà cung cấp</string>
     <string name="recent_pair_switch">Chuyển sang %1$s → %2$s</string>
+    <string name="cart_section_pinned">Đã ghim</string>
+    <string name="cart_section_others">Mục khác</string>
 </resources>

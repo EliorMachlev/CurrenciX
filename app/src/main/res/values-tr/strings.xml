@@ -111,4 +111,6 @@
     <string name="timeline_retry">Tekrar dene</string>
     <string name="timeline_change_provider">Sağlayıcıyı değiştir</string>
     <string name="recent_pair_switch">%1$s → %2$s çiftine geç</string>
+    <string name="cart_section_pinned">Sabitlenenler</string>
+    <string name="cart_section_others">Diğer öğeler</string>
 </resources>

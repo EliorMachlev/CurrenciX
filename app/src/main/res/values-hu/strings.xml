@@ -111,4 +111,6 @@
     <string name="timeline_retry">Újrapróbálkozás</string>
     <string name="timeline_change_provider">Szolgáltató módosítása</string>
     <string name="recent_pair_switch">Váltás erre: %1$s → %2$s</string>
+    <string name="cart_section_pinned">Kitűzve</string>
+    <string name="cart_section_others">Egyéb tételek</string>
 </resources>

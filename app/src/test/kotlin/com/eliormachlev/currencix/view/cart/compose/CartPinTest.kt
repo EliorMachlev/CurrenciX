@@ -32,6 +32,8 @@ class CartPinTest {
 
     @get:Rule val rules: RuleChain = RuleChain.outerRule(registerActivityRule(ComponentActivity::class.java)).around(compose)
 
+    private fun string(id: Int) = ApplicationProvider.getApplicationContext<Application>().getString(id)
+
     @Test
     fun `pinning a row moves it to the top right away`() {
         val items =
@@ -59,7 +61,7 @@ class CartPinTest {
                 onBackgroundTap = {},
             )
         }
-        val pin = ApplicationProvider.getApplicationContext<Application>().getString(R.string.cart_pin_item)
+        val pin = string(R.string.cart_pin_item)
 
         // Bread is the second row; pin it.
         compose.onAllNodesWithContentDescription(pin)[1].performClick()
@@ -68,5 +70,8 @@ class CartPinTest {
         val bread = compose.onNodeWithText("Bread").getBoundsInRoot().top
         val apples = compose.onNodeWithText("Apples").getBoundsInRoot().top
         assertTrue("Bread should now be above Apples", bread < apples)
+        // …in its own section, headed apart from the rest.
+        compose.onNodeWithText(string(R.string.cart_section_pinned).uppercase()).assertExists()
+        compose.onNodeWithText(string(R.string.cart_section_others).uppercase()).assertExists()
     }
 }

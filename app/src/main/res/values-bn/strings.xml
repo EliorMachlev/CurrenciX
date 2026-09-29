@@ -111,4 +111,6 @@
     <string name="timeline_retry">আবার চেষ্টা করুন</string>
     <string name="timeline_change_provider">প্রদানকারী পরিবর্তন করুন</string>
     <string name="recent_pair_switch">%1$s → %2$s-এ যান</string>
+    <string name="cart_section_pinned">পিন করা</string>
+    <string name="cart_section_others">অন্যান্য আইটেম</string>
 </resources>

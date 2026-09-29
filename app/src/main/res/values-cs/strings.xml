@@ -111,4 +111,6 @@
     <string name="timeline_retry">Zkusit znovu</string>
     <string name="timeline_change_provider">Změnit poskytovatele</string>
     <string name="recent_pair_switch">Přepnout na %1$s → %2$s</string>
+    <string name="cart_section_pinned">Připnuté</string>
+    <string name="cart_section_others">Ostatní položky</string>
 </resources>

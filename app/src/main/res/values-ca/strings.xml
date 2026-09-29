@@ -112,4 +112,6 @@
     <string name="timeline_retry">Torna-ho a provar</string>
     <string name="timeline_change_provider">Canvia el proveïdor</string>
     <string name="recent_pair_switch">Canvia a %1$s → %2$s</string>
+    <string name="cart_section_pinned">Fixats</string>
+    <string name="cart_section_others">Altres articles</string>
 </resources>

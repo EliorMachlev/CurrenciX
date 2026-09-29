@@ -112,4 +112,6 @@
     <string name="timeline_retry">Prøv igjen</string>
     <string name="timeline_change_provider">Bytt leverandør</string>
     <string name="recent_pair_switch">Bytt til %1$s → %2$s</string>
+    <string name="cart_section_pinned">Festet</string>
+    <string name="cart_section_others">Andre varer</string>
 </resources>

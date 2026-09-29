@@ -111,4 +111,6 @@
     <string name="timeline_retry">Reprovi</string>
     <string name="timeline_change_provider">Ŝanĝi provizanton</string>
     <string name="recent_pair_switch">Ŝanĝi al %1$s → %2$s</string>
+    <string name="cart_section_pinned">Fiksitaj</string>
+    <string name="cart_section_others">Aliaj eroj</string>
 </resources>

@@ -175,7 +175,7 @@ Destructive actions don't ask first; they act and offer **Undo**: deleting a car
 
 Pinned rows sit above the rest. Storage keeps the user's own order, and the pinned-first order is only applied on screen (`CartItemsList`), so unpinning a row returns it to its old place. Pinning or unpinning re-sorts the list at once.
 
-A drag stays within the row's group: pinned rows reorder among themselves above the last pinned row, and unpinned rows below it. A row never swaps with one from the other group (`moveByLazyIndex`); to move a row across, pin or unpin it. On drop, `CartViewModel.commitDrag` moves only that row in storage (`afterDrop`), just before the next row of its group on screen, and every other row keeps its slot.
+Once something is pinned, the list shows two sections, **Pinned** and **Other items**, under the same brass headings as Settings (`LedgerSectionHeader`); with nothing pinned it's one plain list. Each section reorders on its own. A row never swaps with one from the other section (`moveByKey`, matched by key because the headings sit between rows), so to move a row across, pin or unpin it. On drop, `CartViewModel.commitDrag` moves only that row in storage (`afterDrop`), just before the next row of its section on screen, and every other row keeps its slot.
 
 ### Converter conveniences
 

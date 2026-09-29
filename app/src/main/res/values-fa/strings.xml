@@ -112,4 +112,6 @@
     <string name="timeline_retry">تلاش دوباره</string>
     <string name="timeline_change_provider">تغییر ارائه‌دهنده</string>
     <string name="recent_pair_switch">تغییر به %1$s → %2$s</string>
+    <string name="cart_section_pinned">سنجاق‌شده</string>
+    <string name="cart_section_others">موارد دیگر</string>
 </resources>

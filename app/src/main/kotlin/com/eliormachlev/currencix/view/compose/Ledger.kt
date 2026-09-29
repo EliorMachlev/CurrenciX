@@ -143,22 +143,34 @@ fun LedgerSection(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(modifier.fillMaxWidth()) {
-        Text(
-            text = title.uppercase(),
-            style = MaterialTheme.typography.labelMedium,
-            color = Brass,
-            letterSpacing = LEDGER_SECTION_HEADER_LETTER_SPACING,
-            modifier =
-                Modifier
-                    .padding(
-                        start = LEDGER_SECTION_HEADER_HORIZONTAL,
-                        end = LEDGER_SECTION_HEADER_HORIZONTAL,
-                        top = LEDGER_SECTION_HEADER_TOP,
-                        bottom = LEDGER_SECTION_HEADER_BOTTOM,
-                    ).semantics { heading() },
-        )
+        LedgerSectionHeader(title)
         content()
     }
+}
+
+/**
+ * The brass small-caps heading of a [LedgerSection], on its own — for lists
+ * that head their groups inline (the cart's Pinned / Other items).
+ */
+@Composable
+fun LedgerSectionHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = Brass,
+        letterSpacing = LEDGER_SECTION_HEADER_LETTER_SPACING,
+        modifier =
+            modifier
+                .padding(
+                    start = LEDGER_SECTION_HEADER_HORIZONTAL,
+                    end = LEDGER_SECTION_HEADER_HORIZONTAL,
+                    top = LEDGER_SECTION_HEADER_TOP,
+                    bottom = LEDGER_SECTION_HEADER_BOTTOM,
+                ).semantics { heading() },
+    )
 }
 
 /**

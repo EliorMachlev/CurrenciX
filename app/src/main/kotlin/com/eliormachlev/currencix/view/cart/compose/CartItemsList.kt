@@ -3,6 +3,8 @@ package com.eliormachlev.currencix.view.cart.compose
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -14,10 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.LedgerSectionHeader
 import com.eliormachlev.currencix.view.compose.onBackgroundTap
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -51,17 +55,40 @@ fun CartItemsList(
 
         // Local mirror the drag gesture mutates in-flight; ReorderableLazyList
         // needs a stable, mutable data source so the visual swap can settle
-        // before we round-trip through the ViewModel. The mirror re-syncs from
-        // storage whenever the source list identity changes.
+        // before we round-trip through the ViewModel (rememberDisplayItems).
         val displayItems = rememberDisplayItems(items)
 
         val lazyListState = rememberLazyListState()
         val reorderableState =
             rememberReorderableLazyListState(lazyListState) { from, to ->
-                // Delegate to a helper so the swap logic stays testable and
-                // out of the state factory's callback.
-                displayItems.moveByLazyIndex(from.index, to.index)
+                // By key: the section headings sit between rows, so lazy
+                // indices don't line up with the list's.
+                displayItems.moveByKey(from.key, to.key)
             }
+        val row: @Composable LazyItemScope.(CartItem) -> Unit = { item ->
+            // ReorderableItem applies `Modifier.animateItem()` internally
+            // via its `animateItemModifier` parameter, so add/remove/re-slot
+            // already animates without extra wiring at the call site.
+            ReorderableItem(reorderableState, key = item.id) { _ ->
+                val isActive = item.id == activeId
+                SwipeableCartItemRow(
+                    item = item,
+                    currency = currency,
+                    isActive = isActive,
+                    liveExpression = if (isActive) liveExpression else null,
+                    onNameCommit = { onNameCommit(item.id, it) },
+                    onNamePending = { onNamePending(item.id, it) },
+                    onExpressionTap = { onExpressionTap(item) },
+                    onTogglePin = { onTogglePin(item.id) },
+                    onDelete = { onDelete(item.id) },
+                    dragHandleModifier =
+                        Modifier.longPressDraggableHandle(
+                            onDragStarted = { onReorderStart() },
+                            onDragStopped = { commitDrag(displayItems, item.id, onReorder) },
+                        ),
+                )
+            }
+        }
 
         // Rows consume taps on the expression, pin toggle, and name field;
         // anything left over (blank space below the last row, blank card
@@ -78,32 +105,41 @@ fun CartItemsList(
                     vertical = dimensionResource(id = R.dimen.margin1x),
                 ),
         ) {
-            items(items = displayItems, key = { it.id }) { item ->
-                // ReorderableItem applies `Modifier.animateItem()` internally
-                // via its `animateItemModifier` parameter, so add/remove/re-slot
-                // already animates without extra wiring at the call site.
-                ReorderableItem(reorderableState, key = item.id) { _ ->
-                    val isActive = item.id == activeId
-                    SwipeableCartItemRow(
-                        item = item,
-                        currency = currency,
-                        isActive = isActive,
-                        liveExpression = if (isActive) liveExpression else null,
-                        onNameCommit = { onNameCommit(item.id, it) },
-                        onNamePending = { onNamePending(item.id, it) },
-                        onExpressionTap = { onExpressionTap(item) },
-                        onTogglePin = { onTogglePin(item.id) },
-                        onDelete = { onDelete(item.id) },
-                        dragHandleModifier =
-                            Modifier.longPressDraggableHandle(
-                                onDragStarted = { onReorderStart() },
-                                onDragStopped = { commitDrag(displayItems, item.id, onReorder) },
-                            ),
-                    )
-                }
-            }
+            cartSections(
+                rows = displayItems,
+                pinnedTitle = { stringResource(R.string.cart_section_pinned) },
+                othersTitle = { stringResource(R.string.cart_section_others) },
+                row = row,
+            )
         }
     }
+}
+
+// Section keys; distinct from item ids (UUIDs), so they never collide.
+private const val PINNED_HEADER_KEY = "section:pinned"
+private const val OTHERS_HEADER_KEY = "section:others"
+
+/**
+ * Pinned rows under a "Pinned" heading, then the rest — headed "Other items"
+ * only when there are pinned rows to set them apart from. With nothing
+ * pinned it's one plain list. Each section reorders on its own
+ * ([moveByKey]); pin or unpin a row to move it across.
+ */
+private fun LazyListScope.cartSections(
+    rows: List<CartItem>,
+    pinnedTitle: @Composable () -> String,
+    othersTitle: @Composable () -> String,
+    row: @Composable LazyItemScope.(CartItem) -> Unit,
+) {
+    val (pinned, others) = rows.partition { it.pinned }
+    if (pinned.isNotEmpty()) {
+        item(key = PINNED_HEADER_KEY) { LedgerSectionHeader(pinnedTitle(), Modifier.animateItem()) }
+        items(pinned, key = { it.id }, itemContent = row)
+        if (others.isNotEmpty()) {
+            item(key = OTHERS_HEADER_KEY) { LedgerSectionHeader(othersTitle(), Modifier.animateItem()) }
+        }
+    }
+    items(others, key = { it.id }, itemContent = row)
 }
 
 /**
@@ -138,14 +174,16 @@ private fun rememberDisplayItems(items: ImmutableList<CartItem>): SnapshotStateL
 // neither added, removed, pinned nor unpinned anything.
 private fun List<CartItem>.pinState(): Map<String, Boolean> = associate { it.id to it.pinned }
 
-// Moves the dragged row one slot as it passes a neighbour — only within its
-// own group: pinned rows stay above the last pinned one and unpinned rows
-// below it, so a row never swaps with one from the other group.
-internal fun SnapshotStateList<CartItem>.moveByLazyIndex(
-    from: Int,
-    to: Int,
+// Moves the dragged row ([fromKey]) to the slot of the row it passed
+// ([toKey]) — only within its own section: a pinned row never swaps with an
+// unpinned one. Keys that aren't rows (the headings) are ignored.
+internal fun SnapshotStateList<CartItem>.moveByKey(
+    fromKey: Any,
+    toKey: Any,
 ) {
-    if (from !in indices || to !in indices || from == to) return
+    val from = indexOfFirst { it.id == fromKey }
+    val to = indexOfFirst { it.id == toKey }
+    if (from < 0 || to < 0 || from == to) return
     if (this[from].pinned != this[to].pinned) return
     add(to, removeAt(from))
 }

@@ -111,4 +111,6 @@
     <string name="timeline_retry">Proovi uuesti</string>
     <string name="timeline_change_provider">Muuda teenusepakkujat</string>
     <string name="recent_pair_switch">Lülitu paarile %1$s → %2$s</string>
+    <string name="cart_section_pinned">Kinnitatud</string>
+    <string name="cart_section_others">Muud üksused</string>
 </resources>

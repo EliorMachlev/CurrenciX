@@ -111,4 +111,6 @@
     <string name="timeline_retry">إعادة المحاولة</string>
     <string name="timeline_change_provider">تغيير المزوّد</string>
     <string name="recent_pair_switch">التبديل إلى %1$s → %2$s</string>
+    <string name="cart_section_pinned">مثبّتة</string>
+    <string name="cart_section_others">عناصر أخرى</string>
 </resources>
