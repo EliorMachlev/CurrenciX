@@ -11,6 +11,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.afterDrop
 import com.eliormachlev.currencix.repository.Database
 import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
@@ -172,28 +173,19 @@ class CartViewModel(
         mutateItem(id) { it.copy(pinned = !it.pinned) }
     }
 
-    // Move [fromId] to the current position of [toId]. No-op on same id, missing
-    // id, or same slot — the drag-reorder gesture fires this even on a release
-    // without movement, and we don't want to churn the LiveData or disk write.
-    fun reorderItem(
-        fromId: String,
-        toId: String,
+    /**
+     * Applies a finished drag: [movedId] was dropped where it sits in
+     * [displayOrder], landing [pinned] or not (see [afterDrop]). A release
+     * without movement changes nothing and skips the write.
+     */
+    fun commitDrag(
+        displayOrder: List<String>,
+        movedId: String,
+        pinned: Boolean,
     ) {
-        if (fromId == toId) return
         mutate { cart ->
-            var fromIdx = -1
-            var toIdx = -1
-            cart.items.forEachIndexed { i, item ->
-                when (item.id) {
-                    fromId -> fromIdx = i
-                    toId -> toIdx = i
-                }
-            }
-            if (fromIdx < 0 || toIdx < 0 || fromIdx == toIdx) return@mutate cart
-            val reordered = cart.items.toMutableList()
-            val moved = reordered.removeAt(fromIdx)
-            reordered.add(toIdx, moved)
-            cart.copy(items = reordered)
+            val items = cart.items.afterDrop(displayOrder, movedId, pinned)
+            if (items == cart.items) cart else cart.copy(items = items)
         }
     }
 

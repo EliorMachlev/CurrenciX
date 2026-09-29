@@ -24,6 +24,12 @@ import kotlinx.collections.immutable.persistentListOf
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
+/**
+ * A finished drag: the rows' new order, the row that moved, and whether it
+ * landed in the pinned group ([landsPinned]).
+ */
+typealias CartDragCommit = (displayOrder: List<String>, movedId: String, pinned: Boolean) -> Unit
+
 @Composable
 @Suppress("LongParameterList")
 fun CartItemsList(
@@ -36,7 +42,7 @@ fun CartItemsList(
     onExpressionTap: (item: CartItem) -> Unit,
     onTogglePin: (id: String) -> Unit,
     onDelete: (id: String) -> Unit,
-    onReorder: (fromId: String, toId: String) -> Unit,
+    onReorder: CartDragCommit,
     onReorderStart: () -> Unit,
     onBackgroundTap: () -> Unit,
 ) {
@@ -94,9 +100,7 @@ fun CartItemsList(
                         dragHandleModifier =
                             Modifier.longPressDraggableHandle(
                                 onDragStarted = { onReorderStart() },
-                                onDragStopped = {
-                                    commitReorder(displayItems, items, onReorder)
-                                },
+                                onDragStopped = { commitDrag(displayItems, item.id, onReorder) },
                             ),
                     )
                 }
@@ -107,21 +111,19 @@ fun CartItemsList(
 
 /**
  * SnapshotStateList mirror of the storage list, ordered pinned-first while
- * preserving storage order within each partition. Drag operates on this list;
- * dropping a pinned row into the unpinned section snaps back on the next
- * source emit — user must unpin first to move it out.
+ * preserving storage order within each partition. Drag operates on this list.
  *
- * When the id set changes (add/remove/load), take the source order wholesale.
- * When only content changed (name/expression edit mid-drag), refresh per-id
- * in place so the display's current order isn't wiped.
+ * When the id set or the pinned set changes (add/remove/load, a pin toggle),
+ * take the source order wholesale, so a newly pinned row jumps to the top
+ * right away. When only content changed (name/expression edit mid-drag),
+ * refresh per-id in place so the display's current order isn't wiped.
  */
 @Composable
 private fun rememberDisplayItems(items: ImmutableList<CartItem>): SnapshotStateList<CartItem> {
     val list = remember { mutableStateListOf<CartItem>() }
     LaunchedEffect(items) {
         val ordered = items.sortedByDescending { it.pinned }
-        val orderedIds = ordered.mapTo(mutableSetOf()) { it.id }
-        if (list.mapTo(mutableSetOf()) { it.id } != orderedIds) {
+        if (list.pinState() != ordered.pinState()) {
             list.clear()
             list.addAll(ordered)
         } else {
@@ -135,6 +137,10 @@ private fun rememberDisplayItems(items: ImmutableList<CartItem>): SnapshotStateL
     return list
 }
 
+// Each id with whether it's pinned: equal before and after a change that
+// neither added, removed, pinned nor unpinned anything.
+private fun List<CartItem>.pinState(): Map<String, Boolean> = associate { it.id to it.pinned }
+
 private fun SnapshotStateList<CartItem>.moveByLazyIndex(
     from: Int,
     to: Int,
@@ -144,25 +150,29 @@ private fun SnapshotStateList<CartItem>.moveByLazyIndex(
 }
 
 /**
- * Compare the post-drag display order to the pre-drag source snapshot and
- * emit a single (from, to) move to the ViewModel. `toId` is the id of the
- * item that occupied the drop slot *before* the drag — the VM's
- * `reorderItem` then removes `fromId` from its old slot and inserts it at
- * the anchor's storage position, which reproduces the visual outcome for
- * both forward and backward drags. Skips the round-trip when the release
- * lands on the pickup slot (drag with no net movement).
+ * Whether [movedId], dropped where it sits in [order], belongs to the pinned
+ * group: above the last pinned row it's pinned, below it it isn't. Right at
+ * the boundary (just under the last pinned row) it keeps what it was, so
+ * pinned rows can still be reordered among themselves and unpinned ones
+ * can sit first in their group.
  */
-private fun commitReorder(
+internal fun landsPinned(
+    order: List<CartItem>,
+    movedId: String,
+): Boolean {
+    val index = order.indexOfFirst { it.id == movedId }
+    val moved = order.getOrNull(index) ?: return false
+    val pinnedOthers = order.count { it.pinned && it.id != movedId }
+    return index < pinnedOthers || (index == pinnedOthers && moved.pinned)
+}
+
+// Hands the order the drag left to the ViewModel, with the moved row's pin
+// following where it landed ([landsPinned]); the ViewModel skips no-ops.
+private fun commitDrag(
     displayItems: SnapshotStateList<CartItem>,
-    sourceItems: ImmutableList<CartItem>,
-    onReorder: (fromId: String, toId: String) -> Unit,
+    movedId: String,
+    onReorder: CartDragCommit,
 ) {
-    val before = (sourceItems.filter { it.pinned } + sourceItems.filterNot { it.pinned }).map { it.id }
-    val after = displayItems.map { it.id }
-    if (before.size != after.size || before == after) return
-    val newIdx = after.indices.firstOrNull { after[it] != before[it] } ?: return
-    val movedId = after[newIdx]
-    val anchorId = before[newIdx]
-    if (movedId == anchorId) return
-    onReorder(movedId, anchorId)
+    val order = displayItems.toList()
+    onReorder(order.map { it.id }, movedId, landsPinned(order, movedId))
 }

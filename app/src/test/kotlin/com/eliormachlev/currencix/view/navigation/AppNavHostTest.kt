@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.navigation
 
 import android.app.Application
-import android.content.ComponentName
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,17 +9,14 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.util.registerActivityRule
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
-import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.junit.runners.model.Statement
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 // Counts ViewModels created and cleared, to check per-screen scoping.
@@ -63,16 +59,9 @@ class AppNavHostTest {
     // The test Activity isn't in any manifest: register it before the compose
     // rule launches it.
     private val registerActivity =
-        TestRule { base, _ ->
-            object : Statement() {
-                override fun evaluate() {
-                    val app = ApplicationProvider.getApplicationContext<Application>()
-                    shadowOf(app.packageManager).addActivityIfNotPresent(ComponentName(app, NavHostTestActivity::class.java))
-                    ProbeViewModel.created = 0
-                    ProbeViewModel.cleared = 0
-                    base.evaluate()
-                }
-            }
+        registerActivityRule(NavHostTestActivity::class.java) {
+            ProbeViewModel.created = 0
+            ProbeViewModel.cleared = 0
         }
 
     private val compose = createAndroidComposeRule<NavHostTestActivity>()

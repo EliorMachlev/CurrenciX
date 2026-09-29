@@ -47,7 +47,7 @@ fun CartScreen(
     onExpressionTap: (item: CartItem) -> Unit,
     onTogglePin: (id: String) -> Unit,
     onDelete: (id: String) -> Unit,
-    onReorder: (fromId: String, toId: String) -> Unit,
+    onReorder: CartDragCommit,
     onReorderStart: () -> Unit,
     onOpenFees: () -> Unit,
     modifier: Modifier = Modifier,

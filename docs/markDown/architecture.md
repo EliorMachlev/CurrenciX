@@ -171,6 +171,12 @@ Toasts are gone. `AppSnackbar` (`view/compose/AppSnackbar.kt`) is owned by `Main
 
 Destructive actions don't ask first; they act and offer **Undo**: deleting a cart row (swipe or button) restores it at the same index (`CartViewModel.restoreItem`), Clear and Import restore the previous cart. Only deleting a *saved* cart, which Undo can't reach once you've left the sheet, still confirms. Copying an amount shows no message on Android 13+, where the system already confirms copies.
 
+### Cart pins and drag order
+
+Pinned rows sit above the rest. Storage keeps the user's own order, and the pinned-first order is only applied on screen (`CartItemsList`), so unpinning a row returns it to its old place. Pinning or unpinning re-sorts the list at once.
+
+A drag can cross the pinned boundary, and the pin follows where the row lands (`landsPinned`). Above the last pinned row it's pinned; below it, it isn't. Right at the boundary it keeps its state, so pinned rows can still be reordered among themselves. On drop, `CartViewModel.commitDrag` moves only that row in storage (`afterDrop`), just before the next row of its group on screen, and every other row keeps its slot.
+
 ### Converter conveniences
 
 - **Rate age**: the footer timestamp reads "5 min ago" / "Yesterday" while recent (within 24 h for providers with a time, 7 days for date-only ones) and ticks every minute; long-press shows the full date and time, tap still opens the provider picker.
