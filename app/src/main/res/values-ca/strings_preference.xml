@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">p. ex. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inactiva</string>
     <string name="fee_untitled">Sense títol</string>
+    <string name="dynamic_color_title">Colors del fons de pantalla</string>
+    <string name="dynamic_color_summary">Tenyeix l\'aplicació amb els colors del fons de pantalla (Material You)</string>
 </resources>

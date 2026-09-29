@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Καρφίτσωμα στην κορυφή</string>
     <string name="cart_unpin_item">Ξεκαρφίτσωμα στοιχείου</string>
     <string name="cart_reorder_item">Αναδιάταξη στοιχείου</string>
+    <string name="desc_navigate_up">Πλοήγηση προς τα πάνω</string>
+    <string name="desc_open_drawer">Άνοιγμα συρταριού πλοήγησης</string>
+    <string name="desc_close_drawer">Κλείσιμο συρταριού πλοήγησης</string>
+    <string name="desc_more_options">Περισσότερες επιλογές</string>
+    <string name="cart_item_deleted">Το στοιχείο διαγράφηκε</string>
+    <string name="cart_cleared">Το καλάθι αδειάστηκε</string>
+    <string name="undo">Αναίρεση</string>
+    <string name="timeline_retry">Δοκιμάστε ξανά</string>
+    <string name="timeline_change_provider">Αλλαγή παρόχου</string>
+    <string name="recent_pair_switch">Εναλλαγή σε %1$s → %2$s</string>
 </resources>

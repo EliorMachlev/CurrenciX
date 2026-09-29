@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">напр. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Неактивна</string>
     <string name="fee_untitled">Без назви</string>
+    <string name="dynamic_color_title">Кольори шпалер</string>
+    <string name="dynamic_color_summary">Забарвлювати застосунок у кольори шпалер (Material You)</string>
 </resources>

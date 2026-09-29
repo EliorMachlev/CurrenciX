@@ -33,6 +33,7 @@ class CartFileIo(
     private val exporter: CartExporter,
     private val flushPendingCommits: () -> Unit,
     private val snackbar: (String) -> Unit,
+    private val snackbarWithUndo: (message: String, undo: () -> Unit) -> Unit,
 ) {
     private val exportLauncher: ActivityResultLauncher<String> =
         activity.activityResultRegistry.register(
@@ -86,8 +87,10 @@ class CartFileIo(
     private fun doImport(uri: Uri) {
         when (val res = exporter.import(uri)) {
             is CartFileResult.Loaded -> {
+                // An import replaces the working cart wholesale; Undo puts it back.
+                val previous = viewModel.getCurrentCart().value
                 viewModel.setCurrent(res.cart)
-                snackbar(activity.getString(R.string.cart_import_ok))
+                snackbarWithUndo(activity.getString(R.string.cart_import_ok)) { previous?.let(viewModel::setCurrent) }
             }
             is CartFileResult.Failure ->
                 snackbar(activity.getString(R.string.cart_import_error, res.message))

@@ -22,6 +22,7 @@ import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
 import com.eliormachlev.currencix.view.cart.compose.CartNameInputDialog
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
 import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
+import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
@@ -46,7 +47,8 @@ fun CartRoute(
 ) {
     val activity = LocalActivity.current as ComponentActivity
     val viewModel: CartViewModel = viewModel()
-    val host = remember(viewModel) { CartHost(activity, viewModel, screen.mainBase, screen.mainDest, onBack) }
+    val snackbar = LocalAppSnackbar.current
+    val host = remember(viewModel) { CartHost(activity, snackbar, viewModel, screen.mainBase, screen.mainDest, onBack) }
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(host, lifecycleOwner) {
         viewModel.seedFromMain(screen.mainBase, screen.mainDest)
@@ -107,9 +109,8 @@ private fun cartMenu(host: CartHost): List<OverflowAction> {
             OverflowAction(load, R.drawable.ic_folder_open) { host.saveLoad.showLoadDialog() },
             OverflowAction(export, R.drawable.ic_upload) { host.fileIo.launchExport() },
             OverflowAction(import, R.drawable.ic_download) { host.fileIo.launchImport() },
-            OverflowAction(clear, R.drawable.ic_delete, destructive = true, separated = true) {
-                host.overlays.clearConfirmVisible = true
-            },
+            // No confirmation: Clear is undoable from the snackbar.
+            OverflowAction(clear, R.drawable.ic_delete, destructive = true, separated = true) { host.clearCart() },
         )
     }
 }
@@ -161,19 +162,10 @@ private fun CartOverlays(host: CartHost) {
             onClose = { state.deleteConfirm = null },
         )
     }
-    if (state.clearConfirmVisible) {
-        DestructiveConfirmDialog(
-            title = stringResource(id = R.string.cart_menu_clear),
-            message = stringResource(id = R.string.cart_clear_confirm),
-            confirmLabel = stringResource(id = R.string.cart_clear_confirm_button),
-            onConfirm = host::clearCart,
-            onClose = { state.clearConfirmVisible = false },
-        )
-    }
 }
 
-// The cart's destructive confirmations (delete a saved cart, clear the current
-// one) share one shape: confirming runs [onConfirm] and then closes the dialog
+// Confirmation for deleting a saved cart (which, unlike the working cart's
+// rows, has no Undo): confirming runs [onConfirm] and then closes the dialog
 // via [onClose], which dismissing also calls.
 @Composable
 private fun DestructiveConfirmDialog(

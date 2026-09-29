@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.cart
 
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,11 +7,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
+import com.eliormachlev.currencix.view.compose.AppSnackbar
+import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -29,7 +31,8 @@ import kotlinx.collections.immutable.toImmutableList
  * Clear re-seeds the cart with them.
  */
 class CartHost(
-    activity: ComponentActivity,
+    private val activity: ComponentActivity,
+    private val snackbar: AppSnackbar?,
     val viewModel: CartViewModel,
     private val mainBase: Currency?,
     private val mainDest: Currency?,
@@ -47,7 +50,13 @@ class CartHost(
     val itemsLive = MediatorLiveData<ImmutableList<CartItem>>().apply { value = persistentListOf() }
     val currencyLive = MediatorLiveData<String>().apply { value = "" }
 
-    private val toast: (String) -> Unit = { message -> Toast.makeText(activity, message, Toast.LENGTH_SHORT).show() }
+    private val toast: (String) -> Unit = { message -> snackbar.showOrToast(activity, message) }
+
+    // A destructive change the user can take back from the snackbar. Without
+    // a snackbar (outside the app shell) the change simply stands.
+    private val toastWithUndo: (String, () -> Unit) -> Unit = { message, undo ->
+        snackbar?.showWithUndo(message, activity.getString(R.string.undo), undo) ?: toast(message)
+    }
 
     val fileIo =
         CartFileIo(
@@ -56,6 +65,7 @@ class CartHost(
             exporter = CartExporter(activity),
             flushPendingCommits = ::flushPendingCommits,
             snackbar = toast,
+            snackbarWithUndo = toastWithUndo,
         )
     val shareCoordinator =
         CartShareCoordinator(
@@ -105,14 +115,33 @@ class CartHost(
         fileIo.unregister()
     }
 
-    fun clearCart() = viewModel.clearCart(mainBase, mainDest)
+    /** Empties the cart (re-seeded with the converter's pair); Undo restores it as it was. */
+    fun clearCart() {
+        flushPendingCommits()
+        val previous = viewModel.getCurrentCart().value ?: return
+        if (previous.items.isEmpty()) return
+        keypad.closeKeypad()
+        viewModel.clearCart(mainBase, mainDest)
+        toastWithUndo(activity.getString(R.string.cart_cleared)) { viewModel.setCurrent(previous) }
+    }
 
     fun addItem() = viewModel.addItem(name = "", expression = "")
 
+    /** Removes one row (button or swipe); Undo puts it back where it was. */
     fun deleteItem(id: String) {
         if (keypad.activeItemId.value == id) keypad.closeKeypad()
         pendingNames.remove(id)
+        val items =
+            viewModel
+                .getCurrentCart()
+                .value
+                ?.items
+                .orEmpty()
+        val index = items.indexOfFirst { it.id == id }
         viewModel.removeItem(id)
+        if (index < 0) return
+        val removed = items[index]
+        toastWithUndo(activity.getString(R.string.cart_item_deleted)) { viewModel.restoreItem(removed, index) }
     }
 
     fun onNamePending(
@@ -158,7 +187,6 @@ class CartOverlayState {
     var unsavedChanges by mutableStateOf<CartUnsavedChangesRequest?>(null)
     var nameInput by mutableStateOf<CartNameInputRequest?>(null)
     var deleteConfirm by mutableStateOf<CartDeleteConfirmRequest?>(null)
-    var clearConfirmVisible by mutableStateOf(false)
 }
 
 // Row-id → pending display name for un-debounced text edits. Encapsulated so

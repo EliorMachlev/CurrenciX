@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Закачи най-горе</string>
     <string name="cart_unpin_item">Откачи артикула</string>
     <string name="cart_reorder_item">Пренареди артикула</string>
+    <string name="desc_navigate_up">Навигиране нагоре</string>
+    <string name="desc_open_drawer">Отваряне на навигационното чекмедже</string>
+    <string name="desc_close_drawer">Затваряне на навигационното чекмедже</string>
+    <string name="desc_more_options">Още опции</string>
+    <string name="cart_item_deleted">Елементът е изтрит</string>
+    <string name="cart_cleared">Количката е изчистена</string>
+    <string name="undo">Отмяна</string>
+    <string name="timeline_retry">Опитай отново</string>
+    <string name="timeline_change_provider">Смяна на доставчика</string>
+    <string name="recent_pair_switch">Превключване към %1$s → %2$s</string>
 </resources>

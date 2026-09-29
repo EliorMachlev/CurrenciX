@@ -102,4 +102,14 @@
     <string name="cart_pin_item">Fastgør øverst</string>
     <string name="cart_unpin_item">Frigør vare</string>
     <string name="cart_reorder_item">Omarrangér vare</string>
+    <string name="desc_navigate_up">Naviger op</string>
+    <string name="desc_open_drawer">Åbn navigationsskuffen</string>
+    <string name="desc_close_drawer">Luk navigationsskuffen</string>
+    <string name="desc_more_options">Flere muligheder</string>
+    <string name="cart_item_deleted">Varen er slettet</string>
+    <string name="cart_cleared">Kurven er tømt</string>
+    <string name="undo">Fortryd</string>
+    <string name="timeline_retry">Prøv igen</string>
+    <string name="timeline_change_provider">Skift udbyder</string>
+    <string name="recent_pair_switch">Skift til %1$s → %2$s</string>
 </resources>

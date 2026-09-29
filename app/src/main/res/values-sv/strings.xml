@@ -102,4 +102,14 @@
     <string name="cart_pin_item">Fäst överst</string>
     <string name="cart_unpin_item">Ta bort fästning</string>
     <string name="cart_reorder_item">Ändra ordning</string>
+    <string name="desc_navigate_up">Navigera uppåt</string>
+    <string name="desc_open_drawer">Öppna navigeringslådan</string>
+    <string name="desc_close_drawer">Stäng navigeringslådan</string>
+    <string name="desc_more_options">Fler alternativ</string>
+    <string name="cart_item_deleted">Objektet har tagits bort</string>
+    <string name="cart_cleared">Varukorgen har tömts</string>
+    <string name="undo">Ångra</string>
+    <string name="timeline_retry">Försök igen</string>
+    <string name="timeline_change_provider">Byt leverantör</string>
+    <string name="recent_pair_switch">Byt till %1$s → %2$s</string>
 </resources>

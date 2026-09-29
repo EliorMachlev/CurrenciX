@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.main
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleOwner
@@ -11,6 +10,7 @@ import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
+import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.main.compose.BannerContent
 import com.eliormachlev.currencix.view.main.compose.BannerKind
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -39,7 +39,7 @@ internal fun formatRatesTimestamp(
 }
 
 /**
- * The converter's status line and error toasts. Tracks connectivity, the
+ * The converter's status line and error messages. Tracks connectivity, the
  * latest rates, the pinned historical date and refresh failures, and ranks
  * them into the one [banner] the hero card's rate footer shows.
  *
@@ -52,6 +52,7 @@ internal fun formatRatesTimestamp(
 class ConverterStatus(
     private val context: Context,
     private val viewModel: MainViewModel,
+    private val snackbar: AppSnackbar,
 ) {
     private val bannerState = mutableStateOf<BannerContent?>(null)
     val banner: State<BannerContent?> get() = bannerState
@@ -70,7 +71,11 @@ class ConverterStatus(
     // successful update is the definitive "provider is back".
     private var lastRefreshFailed = false
 
-    private var converterVisible = false
+    // How many compositions of the converter are on screen. Usually 0 or 1,
+    // but moving between the single and two-pane layouts briefly composes it
+    // in both, and the old one leaving mustn't mark it hidden.
+    private var visibleConverters = 0
+    private val converterVisible get() = visibleConverters > 0
     private var pendingError: String? = null
 
     fun observe(owner: LifecycleOwner) {
@@ -98,7 +103,7 @@ class ConverterStatus(
     }
 
     fun setConverterVisible(visible: Boolean) {
-        converterVisible = visible
+        visibleConverters = (visibleConverters + if (visible) 1 else -1).coerceAtLeast(0)
         if (visible) {
             pendingError?.let(::onError)
             pendingError = null
@@ -112,7 +117,7 @@ class ConverterStatus(
 
     private fun onError(message: String?) {
         if (message.isNullOrEmpty()) return
-        Toast.makeText(context, message.fromHtmlLegacy(), Toast.LENGTH_LONG).show()
+        snackbar.show(message.fromHtmlLegacy())
         // Only "provider unreachable" when the device itself is online —
         // otherwise the OFFLINE banner already tells the story.
         if (isOnline) {

@@ -76,4 +76,36 @@ class AppNavigatorTest {
 
         assertEquals(navigator.backStack.toList(), restored.backStack.toList())
     }
+
+    @Test
+    fun `replaceTop swaps the top screen without adding history`() {
+        val navigator = AppNavigator(listOf(Screen.Converter))
+        navigator.navigate(timeline)
+
+        navigator.replaceTop(cart)
+        assertEquals(listOf(Screen.Converter, cart), navigator.backStack)
+
+        navigator.pop()
+        assertEquals(listOf(Screen.Converter), navigator.backStack)
+    }
+
+    @Test
+    fun `replaceTop never replaces the converter and drops a lower copy of the new screen`() {
+        val navigator = AppNavigator(listOf(Screen.Converter))
+        navigator.replaceTop(timeline)
+        assertEquals(listOf(Screen.Converter), navigator.backStack)
+
+        navigator.navigate(timeline)
+        navigator.navigate(cart)
+        navigator.replaceTop(timeline)
+        assertEquals(listOf(Screen.Converter, timeline), navigator.backStack)
+    }
+
+    @Test
+    fun `only the timeline and the cart open beside the converter`() {
+        assertEquals(PaneRole.List, Screen.Converter.paneRole)
+        assertEquals(PaneRole.Detail, timeline.paneRole)
+        assertEquals(PaneRole.Detail, cart.paneRole)
+        listOf(Screen.Settings, Screen.Fees, Screen.Backup).forEach { assertNull(it.paneRole) }
+    }
 }

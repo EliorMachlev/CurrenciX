@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.timeline.compose
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
@@ -26,6 +26,7 @@ internal fun TimelineScreen(
     model: TimelineViewModel,
     formatter: DateTimeFormatter,
     foldingFeature: FoldingFeature?,
+    onChangeProvider: () -> Unit,
     modifier: Modifier = Modifier,
     chartContent: @Composable () -> Unit,
 ) {
@@ -50,15 +51,13 @@ internal fun TimelineScreen(
             val period =
                 remember { mutableStateOf(TimelineViewModel.Period.YEAR) }
 
-            val layout =
-                foldingFeature?.let { orientationFor(it) }
-                    ?: defaultLayoutFor(LocalConfiguration.current.orientation)
-
             val chartCard: @Composable (Modifier) -> Unit = { mod ->
                 TimelineChartCard(
                     isRefreshing = isRefreshing,
                     error = error,
                     provider = provider,
+                    onRetry = model::retry,
+                    onChangeProvider = onChangeProvider,
                     modifier = mod,
                     chart = chartContent,
                 )
@@ -79,17 +78,31 @@ internal fun TimelineScreen(
                 )
             }
 
-            if (layout == TimelineLayout.ROW) {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    chartCard(Modifier.weight(1f).fillMaxHeight())
-                    secondary(Modifier.weight(1f).fillMaxHeight())
-                }
-            } else {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    chartCard(Modifier.weight(1f).fillMaxWidth())
-                    secondary(Modifier.weight(1f).fillMaxWidth())
-                }
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                val layout = foldingFeature?.let { orientationFor(it) } ?: defaultLayoutFor(maxWidth > maxHeight)
+                TimelinePanes(layout, chartCard, secondary)
             }
+        }
+    }
+}
+
+// Chart and statistics side by side ([TimelineLayout.ROW]), or the chart
+// above taking whatever the compact statistics leave.
+@Composable
+private fun TimelinePanes(
+    layout: TimelineLayout,
+    chartCard: @Composable (Modifier) -> Unit,
+    secondary: @Composable (Modifier) -> Unit,
+) {
+    if (layout == TimelineLayout.ROW) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            chartCard(Modifier.weight(1f).fillMaxHeight())
+            secondary(Modifier.weight(1f).fillMaxHeight())
+        }
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            chartCard(Modifier.weight(1f).fillMaxWidth())
+            secondary(Modifier.fillMaxWidth())
         }
     }
 }

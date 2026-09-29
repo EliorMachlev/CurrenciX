@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">np. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Nieaktywne</string>
     <string name="fee_untitled">Bez nazwy</string>
+    <string name="dynamic_color_title">Kolory tapety</string>
+    <string name="dynamic_color_summary">Barwienie aplikacji kolorami tapety (Material You)</string>
 </resources>

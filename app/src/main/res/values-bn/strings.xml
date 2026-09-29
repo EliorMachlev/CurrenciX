@@ -101,4 +101,14 @@
     <string name="cart_pin_item">শীর্ষে পিন করুন</string>
     <string name="cart_unpin_item">পিন সরান</string>
     <string name="cart_reorder_item">পুনর্বিন্যাস করুন</string>
+    <string name="desc_navigate_up">উপরে যান</string>
+    <string name="desc_open_drawer">নেভিগেশন ড্রয়ার খুলুন</string>
+    <string name="desc_close_drawer">নেভিগেশন ড্রয়ার বন্ধ করুন</string>
+    <string name="desc_more_options">আরও বিকল্প</string>
+    <string name="cart_item_deleted">আইটেম মুছে ফেলা হয়েছে</string>
+    <string name="cart_cleared">কার্ট খালি করা হয়েছে</string>
+    <string name="undo">পূর্বাবস্থায় ফেরান</string>
+    <string name="timeline_retry">আবার চেষ্টা করুন</string>
+    <string name="timeline_change_provider">প্রদানকারী পরিবর্তন করুন</string>
+    <string name="recent_pair_switch">%1$s → %2$s-এ যান</string>
 </resources>

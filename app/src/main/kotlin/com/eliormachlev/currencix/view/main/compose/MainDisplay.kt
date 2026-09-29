@@ -29,9 +29,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -235,6 +241,7 @@ private const val FEE_NAME_SEPARATOR = ", "
 
 // Under this age we show a relative label ("12h ago") instead of the date.
 private const val RELATIVE_TIME_WINDOW_MS = 24L * 60L * 60L * 1000L
+private const val RELATIVE_DAYS_WINDOW_MS = 7L * RELATIVE_TIME_WINDOW_MS
 
 // Caret blink half-period — the platform EditText's rate. A discrete on/off
 // toggle costs two frames per cycle; the old infinite fade asked for a new
@@ -399,7 +406,7 @@ internal fun MainDisplay(
         banner = banner,
         onPillFromClick = { pickerSide = PickSide.FROM },
         onPillToClick = { pickerSide = PickSide.TO },
-        onSwapClick = { swapCurrencies(viewModel, baseCurrency, destCurrency) },
+        onSwapClick = viewModel::swapCurrencies,
         callbacks = callbacks,
         modifier = modifier,
         captureController = captureController,
@@ -457,18 +464,8 @@ private fun CurrencyPickerHost(
             }
         },
         onDismiss = onDismiss,
+        selectedCurrency = if (side == PickSide.FROM) baseCurrency else destCurrency,
     )
-}
-
-private fun swapCurrencies(
-    viewModel: MainViewModel,
-    from: Currency?,
-    to: Currency?,
-) {
-    if (from != null && to != null && from != to) {
-        viewModel.setBaseCurrency(to)
-        viewModel.setDestinationCurrency(from)
-    }
 }
 
 @Composable
@@ -1433,6 +1430,7 @@ private fun RateText(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TimestampText(
     rates: ExchangeRates?,
@@ -1442,10 +1440,16 @@ private fun TimestampText(
 ) {
     val context = LocalContext.current
     val date = rates?.date ?: return
-    val whenText =
-        remember(date, rates.time, dateFormatPattern) {
-            formatWhen(date, rates.time, dateFormatPattern)
+    // "12 min ago" goes stale on screen: tick once a minute while the label
+    // is relative, so it keeps telling the truth.
+    val now by produceState(System.currentTimeMillis(), date, rates.time) {
+        while (isRelative(date, rates.time, value)) {
+            delay(DateUtils.MINUTE_IN_MILLIS)
+            value = System.currentTimeMillis()
         }
+    }
+    val whenText = remember(date, rates.time, dateFormatPattern, now) { formatWhen(date, rates.time, dateFormatPattern, now) }
+    val fullText = remember(date, rates.time, dateFormatPattern) { formatFull(date, rates.time, dateFormatPattern) }
     val provider = rates.provider?.getName(context)?.toString()
     val text =
         when {
@@ -1454,41 +1458,65 @@ private fun TimestampText(
             else -> "$whenText$FOOTER_SEPARATOR$provider"
         }
     if (text.isEmpty()) return
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.clickable(onClick = onProviderClick),
-    )
+    // Tap: change provider. Long-press: the exact publication time.
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        tooltip = { PlainTooltip { Text(fullText) } },
+        state = rememberTooltipState(),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.clickable(onClick = onProviderClick),
+        )
+    }
 }
 
+private fun epochMillis(
+    date: LocalDate,
+    time: LocalTime?,
+): Long =
+    (time?.let(date::atTime) ?: date.atStartOfDay())
+        .atZone(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli()
+
+// Relative within a day when the provider gives a time ("12 min ago"), within
+// a week when it publishes dates only ("Today", "Yesterday", "3 days ago").
+private fun isRelative(
+    date: LocalDate,
+    time: LocalTime?,
+    now: Long,
+): Boolean = (now - epochMillis(date, time)) in 0 until (if (time != null) RELATIVE_TIME_WINDOW_MS else RELATIVE_DAYS_WINDOW_MS)
+
 /**
- * Compact "when" label — relative time ("12h ago") if the timestamp is within
- * the last 24h and includes a wall-clock time, otherwise the formatted date.
+ * Compact "when" label: relative ("12 min ago", "Yesterday") while recent
+ * — see [isRelative] — otherwise the formatted date.
  */
 private fun formatWhen(
     date: LocalDate,
     time: LocalTime?,
     pattern: String,
+    now: Long,
 ): String {
-    if (time != null) {
-        val millis =
-            date
-                .atTime(time)
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
-        val now = System.currentTimeMillis()
-        val delta = now - millis
-        if (delta in 0 until RELATIVE_TIME_WINDOW_MS) {
-            return DateUtils
-                .getRelativeTimeSpanString(millis, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)
-                .toString()
-                .stripRtlMark()
-        }
-    }
+    if (!isRelative(date, time, now)) return formatFull(date, time, pattern)
+    val resolution = if (time != null) DateUtils.MINUTE_IN_MILLIS else DateUtils.DAY_IN_MILLIS
+    return DateUtils
+        .getRelativeTimeSpanString(epochMillis(date, time), now, resolution, DateUtils.FORMAT_ABBREV_RELATIVE)
+        .toString()
+        .stripRtlMark()
+}
+
+// The timestamp in the user's date format — without the time part when the
+// provider only publishes dates.
+private fun formatFull(
+    date: LocalDate,
+    time: LocalTime?,
+    pattern: String,
+): String {
     val effective = if (time != null) pattern else stripTimePattern(pattern)
     val temporal = if (time != null) date.atTime(time) else date
     return DateTimeFormatter.ofPattern(effective).format(temporal).stripRtlMark()

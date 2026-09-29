@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Przypnij na górze</string>
     <string name="cart_unpin_item">Odepnij element</string>
     <string name="cart_reorder_item">Zmień kolejność</string>
+    <string name="desc_navigate_up">Przejdź wyżej</string>
+    <string name="desc_open_drawer">Otwórz panel nawigacji</string>
+    <string name="desc_close_drawer">Zamknij panel nawigacji</string>
+    <string name="desc_more_options">Więcej opcji</string>
+    <string name="cart_item_deleted">Usunięto pozycję</string>
+    <string name="cart_cleared">Wyczyszczono koszyk</string>
+    <string name="undo">Cofnij</string>
+    <string name="timeline_retry">Spróbuj ponownie</string>
+    <string name="timeline_change_provider">Zmień dostawcę</string>
+    <string name="recent_pair_switch">Przełącz na %1$s → %2$s</string>
 </resources>

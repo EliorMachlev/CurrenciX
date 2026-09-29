@@ -144,4 +144,6 @@
     <string name="fee_edit_name_hint">ví dụ: Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Không hoạt động</string>
     <string name="fee_untitled">Không có tiêu đề</string>
+    <string name="dynamic_color_title">Màu hình nền</string>
+    <string name="dynamic_color_summary">Tô màu ứng dụng theo màu hình nền (Material You)</string>
 </resources>

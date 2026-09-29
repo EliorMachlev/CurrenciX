@@ -163,4 +163,6 @@
     <string name="language_uk">Ucraniano</string>
     <string name="language_vi">Vietnamita</string>
     <string name="language_zh_CN">Chinês (Simplificado)</string>
+    <string name="dynamic_color_title">Cores do plano de fundo</string>
+    <string name="dynamic_color_summary">Colorir o app com as cores do seu plano de fundo (Material You)</string>
 </resources>

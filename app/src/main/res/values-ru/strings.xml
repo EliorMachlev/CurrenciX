@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Закрепить сверху</string>
     <string name="cart_unpin_item">Открепить</string>
     <string name="cart_reorder_item">Изменить порядок</string>
+    <string name="desc_navigate_up">Перейти вверх</string>
+    <string name="desc_open_drawer">Открыть панель навигации</string>
+    <string name="desc_close_drawer">Закрыть панель навигации</string>
+    <string name="desc_more_options">Другие параметры</string>
+    <string name="cart_item_deleted">Элемент удалён</string>
+    <string name="cart_cleared">Корзина очищена</string>
+    <string name="undo">Отменить</string>
+    <string name="timeline_retry">Повторить</string>
+    <string name="timeline_change_provider">Сменить источник</string>
+    <string name="recent_pair_switch">Переключиться на %1$s → %2$s</string>
 </resources>

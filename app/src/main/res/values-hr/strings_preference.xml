@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">npr. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Neaktivno</string>
     <string name="fee_untitled">Bez naziva</string>
+    <string name="dynamic_color_title">Boje pozadine</string>
+    <string name="dynamic_color_summary">Oboji aplikaciju bojama pozadine zaslona (Material You)</string>
 </resources>

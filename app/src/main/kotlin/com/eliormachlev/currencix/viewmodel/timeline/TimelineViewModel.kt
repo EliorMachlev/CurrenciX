@@ -138,6 +138,11 @@ class TimelineViewModel(
      */
     fun getCurrencyPair(): LiveData<Pair<Currency, Currency>?> = dbLiveItems.map { if (it == null) null else base to target }
 
+    /** Fetches the pair again — after an error, or once the provider changed. */
+    fun retry() {
+        repository.getTimeline(base, target)
+    }
+
     fun toggleCurrencies() {
         val tmp = base
         base = target

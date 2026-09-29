@@ -101,4 +101,14 @@
     <string name="cart_pin_item">ثبّت العنصر في الأعلى</string>
     <string name="cart_unpin_item">إلغاء تثبيت العنصر</string>
     <string name="cart_reorder_item">إعادة ترتيب العنصر</string>
+    <string name="desc_navigate_up">الانتقال إلى أعلى</string>
+    <string name="desc_open_drawer">فتح درج التنقل</string>
+    <string name="desc_close_drawer">إغلاق درج التنقل</string>
+    <string name="desc_more_options">خيارات إضافية</string>
+    <string name="cart_item_deleted">تم حذف العنصر</string>
+    <string name="cart_cleared">تم إفراغ السلة</string>
+    <string name="undo">تراجع</string>
+    <string name="timeline_retry">إعادة المحاولة</string>
+    <string name="timeline_change_provider">تغيير المزوّد</string>
+    <string name="recent_pair_switch">التبديل إلى %1$s → %2$s</string>
 </resources>

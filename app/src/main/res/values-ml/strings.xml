@@ -105,4 +105,14 @@
     <string name="cart_pin_item">മുകളിലേക്ക് പിൻ ചെയ്യുക</string>
     <string name="cart_unpin_item">പിൻ നീക്കുക</string>
     <string name="cart_reorder_item">പുനഃക്രമീകരിക്കുക</string>
+    <string name="desc_navigate_up">മുകളിലേക്ക് നാവിഗേറ്റ് ചെയ്യുക</string>
+    <string name="desc_open_drawer">നാവിഗേഷൻ ഡ്രോയർ തുറക്കുക</string>
+    <string name="desc_close_drawer">നാവിഗേഷൻ ഡ്രോയർ അടയ്ക്കുക</string>
+    <string name="desc_more_options">കൂടുതൽ ഓപ്ഷനുകൾ</string>
+    <string name="cart_item_deleted">ഇനം ഇല്ലാതാക്കി</string>
+    <string name="cart_cleared">കാർട്ട് ശൂന്യമാക്കി</string>
+    <string name="undo">പഴയപടിയാക്കുക</string>
+    <string name="timeline_retry">വീണ്ടും ശ്രമിക്കുക</string>
+    <string name="timeline_change_provider">ദാതാവിനെ മാറ്റുക</string>
+    <string name="recent_pair_switch">%1$s → %2$s എന്നതിലേക്ക് മാറുക</string>
 </resources>

@@ -1,7 +1,9 @@
 package com.eliormachlev.currencix.view.main.spinner
 
 import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -47,25 +50,32 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyCountries
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_DEFAULT
 import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
+import com.eliormachlev.currencix.util.getLocale
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.CurrencyChip
+import com.eliormachlev.currencix.view.compose.CurrencyChipGap
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
+import com.eliormachlev.currencix.view.compose.FlagCode
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.ledgerHairline
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.math.BigDecimal
 import java.math.MathContext
+import java.util.Locale
 
 private const val FLAG_WIDTH_DP = 24
 private const val FLAG_HEIGHT_DP = 17
@@ -73,6 +83,7 @@ private const val FLAG_CORNER_RADIUS_DP = 2
 private const val ROW_MIN_HEIGHT_DP = 56
 private const val API_HINT_ALPHA = 0.7f
 private const val DRAG_ACTIVE_ALPHA = 0.85f
+private const val RECENT_ICON_SIZE_DP = 20
 
 // Prefix on LazyColumn keys for starred rows so a currency ISO can never
 // collide with a plain (non-starred) row's key while still living in the
@@ -99,6 +110,7 @@ internal fun SearchableCurrencyPicker(
     onStarClicked: (Rate) -> Unit,
     onToggleStarredFilter: () -> Unit,
     onStarredOrderChanged: (List<Currency>) -> Unit,
+    recents: ImmutableList<Currency> = persistentListOf(),
 ) {
     var query by remember { mutableStateOf("") }
     val padH = dimensionResource(id = R.dimen.margin2x)
@@ -120,6 +132,14 @@ internal fun SearchableCurrencyPicker(
                     .padding(horizontal = padH, vertical = dimensionResource(id = R.dimen.margin1x)),
         )
         val allowReorder = query.isEmpty() && !filterStarred
+        if (allowReorder) {
+            RecentCurrenciesRow(
+                rates = remember(rates, recents) { recents.mapNotNull { c -> rates.find { it.currency == c } } },
+                onRateClicked = onRateClicked,
+                contentPadding = PaddingValues(horizontal = padH),
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin1x)),
+            )
+        }
         // Starred rates in the user-defined order, filtered by query. Held in
         // a SnapshotStateList so the sh.calvin reorderable `onMove` callback
         // can mutate it in place as the finger crosses row midpoints without
@@ -153,6 +173,40 @@ internal fun SearchableCurrencyPicker(
                 }
             },
         )
+    }
+}
+
+// Shortcuts to the currencies used last (from the converter's recent pairs),
+// shown while the list is unfiltered. Nothing is drawn when there are none.
+@Composable
+private fun RecentCurrenciesRow(
+    rates: List<Rate>,
+    onRateClicked: (Rate) -> Unit,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
+    if (rates.isEmpty()) return
+    val ctx = LocalContext.current
+    LazyRow(
+        modifier = modifier,
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(CurrencyChipGap),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        item(key = "icon") {
+            Icon(
+                painter = painterResource(R.drawable.ic_history),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(RECENT_ICON_SIZE_DP.dp),
+            )
+        }
+        items(rates, key = { it.currency.name }) { rate ->
+            CurrencyChip(
+                description = rate.currency.fullName(ctx),
+                onClick = { onRateClicked(rate) },
+            ) { FlagCode(rate.currency) }
+        }
     }
 }
 
@@ -454,33 +508,38 @@ private fun ApiHintRow() {
 
 // [normalizedQuery] must already be [normalizeForSearch]-ed by the caller —
 // filter passes iterate rates and call this once per row, so re-normalizing
-// the query per row would be pure waste.
+// the query per row would be pure waste. Matches the code, the name, or a
+// country that uses the currency ([CurrencyCountries]).
 private fun matchesQuery(
     context: Context,
+    locale: Locale,
     rate: Rate,
     normalizedQuery: String,
-): Boolean =
-    normalizedQuery.isEmpty() ||
-        rate.currency
-            .fullName(context)
-            .normalizeForSearch()
-            .contains(normalizedQuery) ||
-        rate.currency
-            .iso4217Alpha()
-            .normalizeForSearch()
-            .contains(normalizedQuery)
+): Boolean {
+    if (normalizedQuery.isEmpty()) return true
+    val currency = rate.currency
+    return currency.iso4217Alpha().normalizeForSearch().contains(normalizedQuery) ||
+        currency.fullName(context).normalizeForSearch().contains(normalizedQuery) ||
+        CurrencyCountries.searchText(currency, locale).contains(normalizedQuery)
+}
+
+// [rates] narrowed to [query]; the shared filter step of the two lists below.
+private fun List<Rate>.matching(
+    context: Context,
+    query: String,
+): List<Rate> {
+    val normalizedQuery = query.normalizeForSearch()
+    if (normalizedQuery.isEmpty()) return this
+    val locale = getLocale(context)
+    return filter { matchesQuery(context, locale, it, normalizedQuery) }
+}
 
 private fun buildStarredList(
     context: Context,
     rates: List<Rate>,
     stars: List<Currency>,
     query: String,
-): List<Rate> {
-    val normalizedQuery = query.normalizeForSearch()
-    return stars
-        .mapNotNull { code -> rates.find { it.currency == code } }
-        .filter { matchesQuery(context, it, normalizedQuery) }
-}
+): List<Rate> = stars.mapNotNull { code -> rates.find { it.currency == code } }.matching(context, query)
 
 private fun buildNonStarredList(
     context: Context,
@@ -488,10 +547,8 @@ private fun buildNonStarredList(
     stars: List<Currency>,
     query: String,
 ): List<Rate> {
-    val normalizedQuery = query.normalizeForSearch()
-    return rates
-        .filterNot { stars.contains(it.currency) }
-        .filter { matchesQuery(context, it, normalizedQuery) }
+    val starred = stars.toSet()
+    return rates.filterNot { it.currency in starred }.matching(context, query)
 }
 
 private fun collectStarredOrder(

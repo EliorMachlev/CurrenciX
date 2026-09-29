@@ -23,6 +23,13 @@ val OnAmberContainer = Color(0xFF3A2A08)
 // of the Material color scheme so it stays a one-off signature accent.
 val Stamp = Color(0xFF8B3A3A)
 
+// Brass-tinted containers for secondary emphasis (tonal buttons, the
+// selected segment). Unset, Material falls back to its default lavender.
+private val BrassContainerLight = Color(0xFFEFE3C8)
+private val BrassContainerDark = Color(0xFF4A3F26)
+private val OnBrassContainerLight = Color(0xFF251C08)
+private val OnBrassContainerDark = Color(0xFFF1E3C0)
+
 private val PaperBg = Color(0xFFF3EEE5)
 private val PaperSurface = Color(0xFFFFFFFF)
 private val PaperSurfaceHigh = Color(0xFFF7F3EC)
@@ -47,6 +54,8 @@ val CurrenciXLightColors =
         onPrimaryContainer = BillGreenInk,
         secondary = Brass,
         onSecondary = Color(0xFF251C08),
+        secondaryContainer = BrassContainerLight,
+        onSecondaryContainer = OnBrassContainerLight,
         background = PaperBg,
         onBackground = PaperInk,
         surface = PaperSurface,
@@ -70,6 +79,8 @@ val CurrenciXDarkColors =
         onPrimaryContainer = Color(0xFFCFE6BC),
         secondary = Brass,
         onSecondary = Color(0xFF251C08),
+        secondaryContainer = BrassContainerDark,
+        onSecondaryContainer = OnBrassContainerDark,
         background = InkBg,
         onBackground = InkForeground,
         surface = InkSurface,

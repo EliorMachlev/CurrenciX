@@ -5,16 +5,22 @@ import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
@@ -23,7 +29,11 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.view.cart.CartRoute
+import com.eliormachlev.currencix.view.compose.AppSnackbar
+import com.eliormachlev.currencix.view.compose.AppSnackbarHost
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
+import com.eliormachlev.currencix.view.compose.isDynamicColorSupported
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.main.compose.HeroCaptureController
 import com.eliormachlev.currencix.view.navigation.AppNavHost
@@ -68,6 +78,9 @@ class MainActivity : AppCompatActivity() {
 
     private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
 
+    // Messages from any screen, drawn over all of them (AppContent).
+    private val snackbar by lazy { AppSnackbar(lifecycleScope) }
+
     // Splash-screen keep-on-screen gate (#155). Flipped to true by the
     // wordmark's first frame so the platform splash holds until Compose is
     // pixel-ready to run its reveal, then releases into the exit animation.
@@ -90,7 +103,9 @@ class MainActivity : AppCompatActivity() {
         // Pure black is an XML theme variant — night mode itself is set once
         // in CurrenciesApplication, so this resolves against the right
         // night qualifier.
-        setTheme(if (Database(this).isPureBlackEnabled()) R.style.AppTheme_PureBlack else R.style.AppTheme)
+        val database = Database(this)
+        val pureBlack = database.isPureBlackEnabled()
+        setTheme(if (pureBlack) R.style.AppTheme_PureBlack else R.style.AppTheme)
         super.onCreate(savedInstanceState)
         // Compose owns the whole window, system bars included: the top bars
         // pad for the status bar, each screen for the navigation bar.
@@ -99,9 +114,16 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         converterHost = createConverterHost(revealPending = isColdStart)
 
-        val screenBackground = Color(resolveThemeColor(android.R.attr.colorBackground))
+        val themeBackground = Color(resolveThemeColor(android.R.attr.colorBackground))
         setContent {
-            AppTheme {
+            val dynamicColor by database
+                .isDynamicColorEnabledFlow()
+                .collectAsStateWithLifecycle(database.isDynamicColorEnabledBlocking())
+            AppTheme(dynamicColor = dynamicColor) {
+                // Wallpaper colors bring their own background — except pure
+                // black, which stays black whatever the palette.
+                val screenBackground =
+                    if (dynamicColor && isDynamicColorSupported && !pureBlack) MaterialTheme.colorScheme.background else themeBackground
                 CompositionLocalProvider(LocalScreenBackground provides screenBackground) {
                     AppContent()
                 }
@@ -119,26 +141,38 @@ class MainActivity : AppCompatActivity() {
             navigator = nav
             onDispose { navigator = null }
         }
-        AppNavHost(navigator = nav) { screen ->
-            when (screen) {
-                Screen.Converter -> ConverterRoute(host = converterHost, navigator = nav, foldingFeature = foldingFeature)
-                is Screen.Timeline -> TimelineRoute(screen = screen, onBack = nav::pop, foldingFeature = foldingFeature)
-                is Screen.Cart -> CartRoute(screen = screen, onBack = nav::pop, onOpenFees = { nav.navigate(Screen.Fees) })
-                Screen.Settings ->
-                    SettingsRoute(
-                        onBack = nav::pop,
-                        onOpenFees = { nav.navigate(Screen.Fees) },
-                        onOpenBackup = { nav.navigate(Screen.Backup) },
-                        onThemeRequiresRestart = ::recreate,
-                    )
-                Screen.Fees -> FeesRoute(onBack = nav::pop)
-                Screen.Backup -> BackupRoute(onBack = nav::pop)
+        CompositionLocalProvider(LocalAppSnackbar provides snackbar) {
+            Box(Modifier.fillMaxSize()) {
+                AppNavHost(navigator = nav) { screen -> Destination(screen, nav, foldingFeature) }
+                AppSnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
             }
         }
     }
 
+    @Composable
+    private fun Destination(
+        screen: Screen,
+        nav: AppNavigator,
+        foldingFeature: FoldingFeature?,
+    ) {
+        when (screen) {
+            Screen.Converter -> ConverterRoute(host = converterHost, navigator = nav, foldingFeature = foldingFeature)
+            is Screen.Timeline -> TimelineRoute(screen = screen, onBack = nav::pop, foldingFeature = foldingFeature)
+            is Screen.Cart -> CartRoute(screen = screen, onBack = nav::pop, onOpenFees = { nav.navigate(Screen.Fees) })
+            Screen.Settings ->
+                SettingsRoute(
+                    onBack = nav::pop,
+                    onOpenFees = { nav.navigate(Screen.Fees) },
+                    onOpenBackup = { nav.navigate(Screen.Backup) },
+                    onThemeRequiresRestart = ::recreate,
+                )
+            Screen.Fees -> FeesRoute(onBack = nav::pop)
+            Screen.Backup -> BackupRoute(onBack = nav::pop)
+        }
+    }
+
     private fun createConverterHost(revealPending: Boolean): ConverterHost {
-        val status = ConverterStatus(this, viewModel).also { it.observe(this) }
+        val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
         val heroCapture = HeroCaptureController()
         return ConverterHost(
             viewModel = viewModel,

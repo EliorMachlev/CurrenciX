@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Alpingli artikolon supre</string>
     <string name="cart_unpin_item">Depingli artikolon</string>
     <string name="cart_reorder_item">Reordigi artikolon</string>
+    <string name="desc_navigate_up">Navigi supren</string>
+    <string name="desc_open_drawer">Malfermi navigan tirkeston</string>
+    <string name="desc_close_drawer">Fermi navigan tirkeston</string>
+    <string name="desc_more_options">Pliaj opcioj</string>
+    <string name="cart_item_deleted">Ero forigita</string>
+    <string name="cart_cleared">Ĉaro malplenigita</string>
+    <string name="undo">Malfari</string>
+    <string name="timeline_retry">Reprovi</string>
+    <string name="timeline_change_provider">Ŝanĝi provizanton</string>
+    <string name="recent_pair_switch">Ŝanĝi al %1$s → %2$s</string>
 </resources>

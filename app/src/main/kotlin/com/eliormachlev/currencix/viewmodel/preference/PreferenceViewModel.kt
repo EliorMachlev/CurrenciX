@@ -32,6 +32,8 @@ class PreferenceViewModel(
         db.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.getExpandedKeypadEnabledBlocking())
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
         db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())
+    val isDynamicColorEnabled: StateFlow<Boolean> =
+        db.isDynamicColorEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isDynamicColorEnabledBlocking())
     val decimalPlaces: StateFlow<Int> =
         db.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.getDecimalPlacesBlocking())
     val dateFormat: StateFlow<String> =
@@ -114,6 +116,10 @@ class PreferenceViewModel(
 
     fun setHapticFeedbackEnabled(enabled: Boolean) {
         db.setHapticFeedbackEnabled(enabled)
+    }
+
+    fun setDynamicColorEnabled(enabled: Boolean) {
+        db.setDynamicColorEnabled(enabled)
     }
 
     fun setDecimalPlaces(places: Int) {

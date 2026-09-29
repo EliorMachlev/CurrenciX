@@ -1,6 +1,9 @@
 package com.eliormachlev.currencix.view.timeline
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,9 +45,13 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesi
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.Insets
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
+import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import kotlinx.collections.immutable.ImmutableList
+import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -167,15 +174,52 @@ fun TimelineChart(
         }
 
     val axisLabelStyle = TextStyle(color = axisColor, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp)
+    val indicatorRing = MaterialTheme.colorScheme.surface
 
-    val markerValueFormatter =
+    // Scrub bubble: "12/03/26 · 3.0714" above the finger, in Material's
+    // tooltip colors so it reads on any line or grid behind it.
+    val bubbleDateFormatter = remember(dateFormat) { DateTimeFormatter.ofPattern(stripTimePattern(dateFormat)) }
+    val bubbleNumberFormat =
         remember {
-            DefaultCartesianMarker.ValueFormatter.default(decimalCount = MARKER_DECIMAL_COUNT)
+            NumberFormat.getNumberInstance().apply {
+                minimumFractionDigits = MARKER_MIN_DECIMALS
+                maximumFractionDigits = MARKER_MAX_DECIMALS
+            }
         }
+    val markerValueFormatter =
+        remember(data, bubbleDateFormatter, bubbleNumberFormat) {
+            DefaultCartesianMarker.ValueFormatter { _, targets ->
+                val point =
+                    targets
+                        .firstOrNull()
+                        ?.x
+                        ?.toInt()
+                        ?.let(data::getOrNull)
+                if (point == null) {
+                    AXIS_LABEL_EMPTY_PLACEHOLDER
+                } else {
+                    "${point.first.format(bubbleDateFormatter)}$MARKER_SEPARATOR${bubbleNumberFormat.format(point.second)}"
+                }
+            }
+        }
+    val bubbleStyle = TextStyle(color = MaterialTheme.colorScheme.inverseOnSurface, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp)
     val marker =
         rememberDefaultCartesianMarker(
-            label = rememberTextComponent(style = axisLabelStyle),
+            label =
+                rememberTextComponent(
+                    style = bubbleStyle,
+                    padding = Insets(horizontal = MARKER_PADDING_H, vertical = MARKER_PADDING_V),
+                    background =
+                        rememberShapeComponent(
+                            fill = Fill(MaterialTheme.colorScheme.inverseSurface),
+                            shape = RoundedCornerShape(MARKER_CORNER),
+                        ),
+                ),
             valueFormatter = markerValueFormatter,
+            indicator = { color ->
+                ShapeComponent(fill = Fill(color), shape = CircleShape, strokeFill = Fill(indicatorRing), strokeThickness = MARKER_RING)
+            },
+            indicatorSize = MARKER_DOT,
         )
 
     // Solid verticals at year and month boundaries. Suppress the month lines
@@ -308,7 +352,14 @@ private const val FLAT_SERIES_PADDING = 0.01
 private const val X_AXIS_LABEL_ROTATION = 0f
 private const val X_AXIS_TARGET_LABEL_COUNT = 7
 private const val Y_AXIS_TARGET_LABEL_COUNT = 6
-private const val MARKER_DECIMAL_COUNT = 5
+private const val MARKER_MIN_DECIMALS = 2
+private const val MARKER_MAX_DECIMALS = 4
+private const val MARKER_SEPARATOR = "  ·  "
+private val MARKER_PADDING_H = 8.dp
+private val MARKER_PADDING_V = 4.dp
+private val MARKER_CORNER = 8.dp
+private val MARKER_DOT = 10.dp
+private val MARKER_RING = 2.dp
 private const val YEAR_VIEW_MIN_POINTS = 90
 private const val AXIS_LABEL_FONT_SIZE_SP = 12
 private const val CHART_LINE_THICKNESS_DP = 1

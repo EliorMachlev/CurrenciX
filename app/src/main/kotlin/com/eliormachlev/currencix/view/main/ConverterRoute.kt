@@ -3,7 +3,9 @@ package com.eliormachlev.currencix.view.main
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.widget.Toast
+import android.os.Build
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,17 +20,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.fromHtmlLegacy
+import com.eliormachlev.currencix.view.compose.AppSnackbar
+import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
+import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
@@ -40,15 +48,24 @@ import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainScreen
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsSheet
+import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
 import com.eliormachlev.currencix.view.navigation.AppNavigator
+import com.eliormachlev.currencix.view.navigation.LocalPaneRole
+import com.eliormachlev.currencix.view.navigation.PaneRole
 import com.eliormachlev.currencix.view.navigation.Screen
+import com.eliormachlev.currencix.view.navigation.paneRole
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 // Which of the converter's sheets / dialogs is open. Saved, so an open sheet
 // survives rotation.
 private enum class ConverterOverlay { ProviderPicker, QuickConversions, HistoricalDatePicker }
+
+private const val RECENT_PAIR_SETTLE_MILLIS = 2_000L
+private val RECENT_PAIRS_MARGIN = 16.dp
 
 /** The converter screen: top bar, drawer, hero card, keypad and their sheets. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +82,9 @@ internal fun ConverterRoute(
     var overlay by rememberSaveable { mutableStateOf<ConverterOverlay?>(null) }
     val startReveal = remember { host.takeWordmarkReveal() }
     ReportVisibleWhileComposed(host.status)
-    val destinations = remember(viewModel, navigator) { ConverterDestinations(viewModel, navigator) }
+    val paneRole = LocalPaneRole.current
+    val destinations = remember(viewModel, navigator, paneRole) { ConverterDestinations(viewModel, navigator, paneRole) }
+    if (paneRole == PaneRole.List) TimelineFollowsPair(viewModel, navigator)
     val onLeaveViaDrawer = rememberDrawerClosedOnReturn(drawerState)
     val onDrawerItem: (DrawerAction) -> Unit = { action ->
         scope.launch { drawerState.slideTo(DrawerValue.Closed) }
@@ -114,19 +133,31 @@ internal fun ConverterRoute(
 }
 
 // The screens the converter opens, with the arguments they take from it.
+// [paneRole] is the converter's pane in the two-pane layout (null otherwise).
 private class ConverterDestinations(
     private val viewModel: MainViewModel,
     private val navigator: AppNavigator,
+    private val paneRole: PaneRole?,
 ) {
     fun openTimeline() {
         val from = viewModel.getBaseCurrency().value ?: return
         val to = viewModel.getDestinationCurrency().value ?: return
-        navigator.navigate(Screen.Timeline(from, to))
+        openDetail(Screen.Timeline(from, to))
     }
 
     // A null side is fine here — CartViewModel.seedFromMain keeps the cart's
     // own pair or resolves just the missing side.
-    fun openCart() = navigator.navigate(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+    fun openCart() = openDetail(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+
+    // Beside the converter, a detail screen takes the detail pane's place
+    // rather than stacking on it: back then returns to the converter alone.
+    private fun openDetail(screen: Screen) {
+        if (paneRole == PaneRole.List && navigator.current.paneRole == PaneRole.Detail) {
+            navigator.replaceTop(screen)
+        } else {
+            navigator.navigate(screen)
+        }
+    }
 
     fun openFees() = navigator.navigate(Screen.Fees)
 
@@ -181,6 +212,22 @@ private fun rememberDrawerClosedOnReturn(drawerState: DrawerState): (DrawerActio
     return { action -> closeOnReturn = action.opensScreen }
 }
 
+// Beside the converter, the timeline charts whatever pair the converter
+// shows: changing the pair swaps the detail pane to the new pair's chart.
+@Composable
+private fun TimelineFollowsPair(
+    viewModel: MainViewModel,
+    navigator: AppNavigator,
+) {
+    val base = viewModel.getBaseCurrency().observeAsState().value
+    val dest = viewModel.getDestinationCurrency().observeAsState().value
+    LaunchedEffect(base, dest) {
+        val shown = navigator.current as? Screen.Timeline ?: return@LaunchedEffect
+        if (base == null || dest == null || base == dest) return@LaunchedEffect
+        if (shown.from != base || shown.to != dest) navigator.replaceTop(Screen.Timeline(base, dest))
+    }
+}
+
 // The converter is on screen for as long as it's composed: a screen pushed
 // over it leaves composition once its transition ends.
 @Composable
@@ -212,7 +259,7 @@ private fun ConverterOverlays(
         ConverterOverlay.QuickConversions ->
             QuickConversionsSheet(
                 viewModel = viewModel,
-                onSwap = { swapCurrencies(viewModel) },
+                onSwap = viewModel::swapCurrencies,
                 onOpenFees = onOpenFees,
                 onDismiss = onDismiss,
             )
@@ -234,6 +281,7 @@ private fun ConverterDisplay(
     onOpenProvider: () -> Unit,
 ) {
     val context = LocalContext.current
+    val snackbar = LocalAppSnackbar.current
     val banner by host.status.banner
     val database = remember(context) { Database(context) }
     val pattern by database.getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
@@ -241,7 +289,7 @@ private fun ConverterDisplay(
         viewModel = host.viewModel,
         callbacks =
             MainDisplayCallbacks(
-                onCopy = { text -> copyToClipboard(context, text) },
+                onCopy = { text -> copyToClipboard(context, text, snackbar) },
                 onOpenFees = onOpenFees,
                 onOpenProvider = onOpenProvider,
                 onSwapLongPress = onOpenFees,
@@ -249,6 +297,33 @@ private fun ConverterDisplay(
         dateFormatPattern = pattern,
         banner = banner,
         captureController = host.share.heroCapture,
+    )
+    ConverterRecentPairs(host.viewModel, database)
+}
+
+// One-tap chips for the pairs used before the one on screen. A pair counts
+// as "used" once it has stayed on screen for RECENT_PAIR_SETTLE_MILLIS, so
+// stepping through the picker doesn't fill the row with pass-throughs.
+@Composable
+private fun ConverterRecentPairs(
+    viewModel: MainViewModel,
+    database: Database,
+) {
+    val base = viewModel.getBaseCurrency().observeAsState().value
+    val dest = viewModel.getDestinationCurrency().observeAsState().value
+    val recents by database.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
+    val current = if (base != null && dest != null && base != dest) CurrencyPair(base, dest) else null
+    LaunchedEffect(current) {
+        current ?: return@LaunchedEffect
+        delay(RECENT_PAIR_SETTLE_MILLIS)
+        database.addRecentPair(current)
+    }
+    val others = remember(recents, current) { recents.filterNot { it.isSameCurrencies(current) }.toImmutableList() }
+    RecentPairsRow(
+        pairs = others,
+        onPick = viewModel::setCurrencyPair,
+        contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),
+        modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN),
     )
 }
 
@@ -314,21 +389,16 @@ private fun OnboardingSpotlightHost() {
     )
 }
 
-/** Swaps the converter's pair (the quick-conversions sheet's swap button). */
-internal fun swapCurrencies(viewModel: MainViewModel) {
-    val from = viewModel.getBaseCurrency().value ?: return
-    val to = viewModel.getDestinationCurrency().value ?: return
-    if (from == to) return
-    viewModel.setBaseCurrency(to)
-    viewModel.setDestinationCurrency(from)
-}
-
 private fun copyToClipboard(
     context: Context,
     text: CharSequence,
+    snackbar: AppSnackbar?,
 ) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
-    val message = context.getString(R.string.copied_to_clipboard, text).fromHtmlLegacy()
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    // Android 13+ confirms copies itself (with a preview); a second message
+    // on top of the system's would be noise.
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        snackbar.showOrToast(context, context.getString(R.string.copied_to_clipboard, text).fromHtmlLegacy())
+    }
 }

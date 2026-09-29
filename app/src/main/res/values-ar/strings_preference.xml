@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">مثال: Wise، Revolut، Chase</string>
     <string name="fee_inactive_marker">غير نشط</string>
     <string name="fee_untitled">بدون عنوان</string>
+    <string name="dynamic_color_title">ألوان الخلفية</string>
+    <string name="dynamic_color_summary">تلوين التطبيق بألوان خلفية الشاشة (Material You)</string>
 </resources>

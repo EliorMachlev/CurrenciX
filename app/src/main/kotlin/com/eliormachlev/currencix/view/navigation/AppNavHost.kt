@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 
@@ -61,7 +63,12 @@ fun AppNavHost(
         // view resource ids on every screen. Semantics only — nothing visual.
         modifier = modifier.semantics { testTagsAsResourceId = true },
     ) {
-        CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+        val isTwoPaneWindow = isTwoPaneWindow()
+        val twoPane = remember(isTwoPaneWindow) { TwoPaneSceneStrategy<Screen>(isTwoPaneWindow) }
+        CompositionLocalProvider(
+            LocalSharedTransitionScope provides this,
+            LocalTwoPaneWindow provides isTwoPaneWindow,
+        ) {
             NavDisplay(
                 backStack = navigator.backStack,
                 onBack = navigator::pop,
@@ -70,12 +77,13 @@ fun AppNavHost(
                         rememberSaveableStateHolderNavEntryDecorator(),
                         rememberViewModelStoreNavEntryDecorator(),
                     ),
+                sceneStrategies = listOf(twoPane, SinglePaneSceneStrategy()),
                 sharedTransitionScope = this,
                 transitionSpec = pushTransition(),
                 popTransitionSpec = popTransition(),
                 predictivePopTransitionSpec = predictivePopTransition(),
                 entryProvider = { screen ->
-                    NavEntry(screen) {
+                    NavEntry(screen, metadata = paneMetadata(screen.paneRole)) {
                         ScreenFrame(isLeavingTop = { navigator.isLeavingTop(screen) }) { content(screen) }
                     }
                 },

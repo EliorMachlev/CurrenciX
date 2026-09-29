@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">ഉദാ. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">നിഷ്ക്രിയം</string>
     <string name="fee_untitled">തലക്കെട്ടില്ലാത്തത്</string>
+    <string name="dynamic_color_title">വാൾപേപ്പർ നിറങ്ങൾ</string>
+    <string name="dynamic_color_summary">വാൾപേപ്പറിലെ നിറങ്ങൾ ആപ്പിന് നൽകുക (Material You)</string>
 </resources>

@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">مانند Wise، Revolut، Chase</string>
     <string name="fee_inactive_marker">غیرفعال</string>
     <string name="fee_untitled">بدون‌عنوان</string>
+    <string name="dynamic_color_title">رنگ‌های کاغذدیواری</string>
+    <string name="dynamic_color_summary">رنگ‌آمیزی برنامه با رنگ‌های کاغذدیواری (Material You)</string>
 </resources>

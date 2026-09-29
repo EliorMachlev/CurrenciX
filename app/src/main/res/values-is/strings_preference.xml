@@ -143,4 +143,6 @@
     <string name="fee_edit_name_hint">t.d. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Óvirkt</string>
     <string name="fee_untitled">Án titils</string>
+    <string name="dynamic_color_title">Litir veggfóðurs</string>
+    <string name="dynamic_color_summary">Lita forritið með litum veggfóðursins (Material You)</string>
 </resources>

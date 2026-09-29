@@ -143,4 +143,6 @@
     <string name="language_et">אסטונית</string>
     <string name="language_fa">פרסית</string>
     <string name="language_zh_TW">סינית מסורתית</string>
+    <string name="dynamic_color_title">צבעי הטפט</string>
+    <string name="dynamic_color_summary">צביעת האפליקציה בצבעי הטפט (Material You)</string>
 </resources>

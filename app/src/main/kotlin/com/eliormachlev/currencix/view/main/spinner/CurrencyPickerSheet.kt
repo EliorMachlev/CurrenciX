@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -15,9 +16,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.model.RecentPairs
+import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import java.math.BigDecimal
@@ -46,6 +50,7 @@ fun CurrencyPickerSheet(
     disabledCurrency: Currency?,
     onRateClicked: (Rate) -> Unit,
     onDismiss: () -> Unit,
+    selectedCurrency: Currency? = null,
 ) {
     val application = LocalContext.current.applicationContext as Application
     val mainViewModel: MainViewModel =
@@ -69,17 +74,10 @@ fun CurrencyPickerSheet(
         val filterStarred by mainViewModel.isFilterStarredEnabled().collectAsStateWithLifecycle()
         val previewEnabled by prefViewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
         val decimalPlaces by mainViewModel.getDecimalPlaces().collectAsStateWithLifecycle()
+        val recents = rememberRecentCurrencies(excluded = setOfNotNull(disabledCurrency, selectedCurrency))
 
         val conversion =
-            if (previewEnabled && currentRate != null) {
-                CurrencyPickerConversion(
-                    baseRate = currentRate,
-                    baseSum = currentSum,
-                    decimalPlaces = decimalPlaces,
-                )
-            } else {
-                null
-            }
+            currentRate?.takeIf { previewEnabled }?.let { CurrencyPickerConversion(it, currentSum, decimalPlaces) }
 
         val ready = rates != null
         // fillMaxHeight so the picker occupies the full expanded-anchor slot;
@@ -111,7 +109,25 @@ fun CurrencyPickerSheet(
                 onStarClicked = { mainViewModel.toggleCurrencyStar(it.currency) },
                 onToggleStarredFilter = { mainViewModel.toggleStarredActive() },
                 onStarredOrderChanged = { mainViewModel.setStarredCurrencyOrder(it) },
+                recents = recents,
             )
         }
+    }
+}
+
+// The recent pairs' currencies, most recent first, as picker shortcuts —
+// minus [excluded]: the currency already on this side and the one it can't
+// be (the other side).
+@Composable
+private fun rememberRecentCurrencies(excluded: Set<Currency>): ImmutableList<Currency> {
+    val context = LocalContext.current
+    val database = remember(context) { Database(context) }
+    val recentPairs by database.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
+    return remember(recentPairs, excluded) {
+        RecentPairs
+            .currencies(recentPairs)
+            .filterNot { it in excluded }
+            .take(RecentPairs.MAX)
+            .toImmutableList()
     }
 }

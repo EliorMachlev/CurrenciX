@@ -102,4 +102,14 @@
     <string name="cart_pin_item">Fixar no topo</string>
     <string name="cart_unpin_item">Desfixar item</string>
     <string name="cart_reorder_item">Reordenar item</string>
+    <string name="desc_navigate_up">Navegar para cima</string>
+    <string name="desc_open_drawer">Abrir gaveta de navegação</string>
+    <string name="desc_close_drawer">Fechar gaveta de navegação</string>
+    <string name="desc_more_options">Mais opções</string>
+    <string name="cart_item_deleted">Item excluído</string>
+    <string name="cart_cleared">Carrinho esvaziado</string>
+    <string name="undo">Desfazer</string>
+    <string name="timeline_retry">Tentar novamente</string>
+    <string name="timeline_change_provider">Mudar provedor</string>
+    <string name="recent_pair_switch">Mudar para %1$s → %2$s</string>
 </resources>

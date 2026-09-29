@@ -102,4 +102,14 @@
     <string name="cart_pin_item">Fixa a dalt</string>
     <string name="cart_unpin_item">Desfixa l\'article</string>
     <string name="cart_reorder_item">Reordena l\'article</string>
+    <string name="desc_navigate_up">Navega cap amunt</string>
+    <string name="desc_open_drawer">Obre el calaix de navegació</string>
+    <string name="desc_close_drawer">Tanca el calaix de navegació</string>
+    <string name="desc_more_options">Més opcions</string>
+    <string name="cart_item_deleted">S\'ha suprimit l\'element</string>
+    <string name="cart_cleared">S\'ha buidat el carretó</string>
+    <string name="undo">Desfés</string>
+    <string name="timeline_retry">Torna-ho a provar</string>
+    <string name="timeline_change_provider">Canvia el proveïdor</string>
+    <string name="recent_pair_switch">Canvia a %1$s → %2$s</string>
 </resources>

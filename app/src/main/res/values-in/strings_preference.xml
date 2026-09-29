@@ -146,4 +146,6 @@
     <string name="fee_untitled">Tanpa judul</string>
     <string name="language_zh_CN">Tionghoa (Sederhana)</string>
     <string name="title_changelog">Catatan perubahan</string>
+    <string name="dynamic_color_title">Warna wallpaper</string>
+    <string name="dynamic_color_summary">Warnai aplikasi dengan warna dari wallpaper Anda (Material You)</string>
 </resources>

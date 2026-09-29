@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Prikvači na vrh</string>
     <string name="cart_unpin_item">Otkvači stavku</string>
     <string name="cart_reorder_item">Presloži stavku</string>
+    <string name="desc_navigate_up">Kretanje prema gore</string>
+    <string name="desc_open_drawer">Otvori ladicu za navigaciju</string>
+    <string name="desc_close_drawer">Zatvori ladicu za navigaciju</string>
+    <string name="desc_more_options">Više opcija</string>
+    <string name="cart_item_deleted">Stavka izbrisana</string>
+    <string name="cart_cleared">Košarica ispražnjena</string>
+    <string name="undo">Poništi</string>
+    <string name="timeline_retry">Pokušaj ponovno</string>
+    <string name="timeline_change_provider">Promijeni pružatelja</string>
+    <string name="recent_pair_switch">Prebaci na %1$s → %2$s</string>
 </resources>

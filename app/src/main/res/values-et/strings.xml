@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Kinnita üles</string>
     <string name="cart_unpin_item">Vabasta kinnitus</string>
     <string name="cart_reorder_item">Muuda järjekorda</string>
+    <string name="desc_navigate_up">Liigu üles</string>
+    <string name="desc_open_drawer">Ava navigeerimissahtel</string>
+    <string name="desc_close_drawer">Sulge navigeerimissahtel</string>
+    <string name="desc_more_options">Rohkem valikuid</string>
+    <string name="cart_item_deleted">Üksus kustutatud</string>
+    <string name="cart_cleared">Ostukorv tühjendatud</string>
+    <string name="undo">Võta tagasi</string>
+    <string name="timeline_retry">Proovi uuesti</string>
+    <string name="timeline_change_provider">Muuda teenusepakkujat</string>
+    <string name="recent_pair_switch">Lülitu paarile %1$s → %2$s</string>
 </resources>

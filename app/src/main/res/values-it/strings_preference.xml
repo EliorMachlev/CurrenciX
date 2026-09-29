@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">es. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inattivo</string>
     <string name="fee_untitled">Senza titolo</string>
+    <string name="dynamic_color_title">Colori dello sfondo</string>
+    <string name="dynamic_color_summary">Colora l\'app con i colori dello sfondo (Material You)</string>
 </resources>

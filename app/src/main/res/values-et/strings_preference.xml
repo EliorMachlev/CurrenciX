@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">nt Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Mitteaktiivne</string>
     <string name="fee_untitled">Nimetu</string>
+    <string name="dynamic_color_title">Taustapildi värvid</string>
+    <string name="dynamic_color_summary">Värvi rakendus taustapildi värvidega (Material You)</string>
 </resources>

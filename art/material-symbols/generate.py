@@ -56,6 +56,8 @@ ICONS = {
     "ic_download": ("download", False),
     # timeline
     "ic_tune": ("tune", False),
+    "ic_trending_up": ("trending_up", False),
+    "ic_trending_down": ("trending_down", False),
     # settings
     "ic_keyboard_extended": ("calculate", False),
     "ic_numbers": ("decimal_increase", False),
@@ -64,6 +66,7 @@ ICONS = {
     "ic_info": ("info", False),
     "ic_schedule": ("schedule", False),
     "ic_theme": ("contrast", False),
+    "ic_palette": ("palette", False),
     "ic_language": ("language", False),
     "ic_event": ("event", False),
     "ic_vibration": ("mobile_vibrate", False),

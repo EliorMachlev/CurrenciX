@@ -10,10 +10,12 @@ import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeType
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.model.RecentPairs
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
@@ -52,6 +54,7 @@ private const val METADATA_KEY_PREFIX = "_"
 private const val KEY_LAST_STATE_FROM = "_last_from"
 private const val KEY_LAST_STATE_TO = "_last_to"
 private const val KEY_HISTORICAL_DATE = "_historical_date"
+private const val KEY_RECENT_PAIRS = "_recent_pairs"
 
 // STARRED_CURRENCIES keys.
 private const val KEY_STARS_ORDER = "_starsOrder"
@@ -67,6 +70,7 @@ private const val KEY_ACTIVE_BANK_ID = "_active_bank_id"
 private const val KEY_PREVIEW_CONVERSION_ENABLED = "_previewConversionEnabled"
 private const val KEY_EXPANDED_KEYPAD = "_expandedKeypad"
 private const val KEY_HAPTIC_FEEDBACK = "_hapticFeedback"
+private const val KEY_DYNAMIC_COLOR = "_dynamicColor"
 private const val KEY_DECIMAL_PLACES = "_decimalPlaces"
 private const val KEY_CHART_GRID = "_chartGrid"
 private const val KEY_CHART_X_AXIS_LABEL = "_chartXAxisLabel"
@@ -111,6 +115,9 @@ private val expandedKeypadEnabledMapper: (Preferences) -> Boolean = {
 }
 private val hapticFeedbackEnabledMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
+}
+private val dynamicColorEnabledMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_DYNAMIC_COLOR)] ?: false
 }
 private val decimalPlacesMapper: (Preferences) -> Int = {
     (it[stringPreferencesKey(KEY_DECIMAL_PLACES)] ?: "2").toIntOrNull()?.coerceIn(0, 6) ?: 2
@@ -348,6 +355,17 @@ class Database(
         lastStateStore.mappedLiveData { prefs ->
             Currency.fromString(prefs[stringPreferencesKey(KEY_LAST_STATE_TO)] ?: DEFAULT_TO_CURRENCY)
         }
+
+    /** Records [pair] as the most recent one (see [RecentPairs]). */
+    fun addRecentPair(pair: CurrencyPair) {
+        lastStateStore.edit {
+            val key = stringPreferencesKey(KEY_RECENT_PAIRS)
+            this[key] = RecentPairs.encode(RecentPairs.push(RecentPairs.decode(this[key]), pair))
+        }
+    }
+
+    fun getRecentPairsFlow(): Flow<List<CurrencyPair>> =
+        lastStateStore.mappedFlow { prefs -> RecentPairs.decode(prefs[stringPreferencesKey(KEY_RECENT_PAIRS)]) }
 
     // Synchronous readers for callers that can't wait for the LiveData to
     // become active (e.g. the cart's initial state, built before any
@@ -606,6 +624,16 @@ class Database(
     fun isHapticFeedbackEnabledFlow(): Flow<Boolean> = appStore.mappedFlow(hapticFeedbackEnabledMapper)
 
     fun isHapticFeedbackEnabledBlocking(): Boolean = appStore.snapshot()[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
+
+    // Material You: wallpaper-derived colors (Android 12+) instead of paper / ink
+
+    fun setDynamicColorEnabled(enabled: Boolean) {
+        appStore.edit { this[booleanPreferencesKey(KEY_DYNAMIC_COLOR)] = enabled }
+    }
+
+    fun isDynamicColorEnabledFlow(): Flow<Boolean> = appStore.mappedFlow(dynamicColorEnabledMapper)
+
+    fun isDynamicColorEnabledBlocking(): Boolean = dynamicColorEnabledMapper(appStore.snapshot())
 
     // decimal places
 

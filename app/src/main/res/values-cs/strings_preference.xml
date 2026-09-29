@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">např. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Neaktivní</string>
     <string name="fee_untitled">Bez názvu</string>
+    <string name="dynamic_color_title">Barvy tapety</string>
+    <string name="dynamic_color_summary">Obarvit aplikaci barvami tapety (Material You)</string>
 </resources>

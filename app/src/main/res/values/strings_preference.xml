@@ -36,6 +36,8 @@
     <string name="decimal_places_title">Decimal accuracy</string>
     <string name="decimal_places_summary">Number of decimal places to show for converted values.</string>
     <string name="haptic_feedback_key" translatable="false">KEY_HAPTIC_FEEDBACK</string>
+    <string name="dynamic_color_title">Wallpaper colors</string>
+    <string name="dynamic_color_summary">Tint the app with colors from your wallpaper (Material You)</string>
     <string name="haptic_feedback_title">Haptic feedback</string>
     <string name="haptic_feedback_summary">Vibrate on taps across the app\nFollows system setting\nAutomatically disabled in battery saver</string>
     <!-- auto-refresh (#151) -->

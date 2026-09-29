@@ -147,4 +147,6 @@
     <string name="language_ru">Russisk</string>
     <string name="language_zh_CN">Kinesisk (forenklet)</string>
     <string name="title_changelog">Endringslogg</string>
+    <string name="dynamic_color_title">Bakgrunnsfarger</string>
+    <string name="dynamic_color_summary">Farg appen med fargene fra bakgrunnsbildet (Material You)</string>
 </resources>

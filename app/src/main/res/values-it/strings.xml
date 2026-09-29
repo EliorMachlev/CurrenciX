@@ -102,4 +102,14 @@
     <string name="cart_pin_item">Fissa in cima</string>
     <string name="cart_unpin_item">Rimuovi fissaggio</string>
     <string name="cart_reorder_item">Riordina articolo</string>
+    <string name="desc_navigate_up">Torna su</string>
+    <string name="desc_open_drawer">Apri il riquadro di navigazione</string>
+    <string name="desc_close_drawer">Chiudi il riquadro di navigazione</string>
+    <string name="desc_more_options">Altre opzioni</string>
+    <string name="cart_item_deleted">Elemento eliminato</string>
+    <string name="cart_cleared">Carrello svuotato</string>
+    <string name="undo">Annulla</string>
+    <string name="timeline_retry">Riprova</string>
+    <string name="timeline_change_provider">Cambia fornitore</string>
+    <string name="recent_pair_switch">Passa a %1$s → %2$s</string>
 </resources>

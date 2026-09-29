@@ -171,4 +171,6 @@
     <string name="language_vi">Виетнамски</string>
     <string name="language_zh_CN">Китайски (опростен)</string>
     <string name="title_changelog">Дневник на промените</string>
+    <string name="dynamic_color_title">Цветове от тапета</string>
+    <string name="dynamic_color_summary">Оцветяване на приложението с цветовете на тапета (Material You)</string>
 </resources>

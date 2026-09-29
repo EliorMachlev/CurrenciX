@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -23,7 +22,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupResult
+import com.eliormachlev.currencix.view.compose.AppSnackbar
+import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
+import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.preference.compose.BackupScreen
 import com.eliormachlev.currencix.view.preference.compose.FeesScreen
 import com.eliormachlev.currencix.view.preference.compose.PreferenceScreen
@@ -78,11 +80,12 @@ fun FeesRoute(onBack: () -> Unit) {
 @Composable
 fun BackupRoute(onBack: () -> Unit) {
     val context = LocalContext.current
+    val snackbar = LocalAppSnackbar.current
     val viewModel: BackupViewModel = viewModel()
     val exportLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data ?: return@rememberLauncherForActivityResult
-            toast(context, exportResultMessage(context, viewModel.runExport(uri)))
+            snackbar.showOrToast(context, exportResultMessage(context, viewModel.runExport(uri)))
         }
     val importLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -93,7 +96,7 @@ fun BackupRoute(onBack: () -> Unit) {
             viewModel = viewModel,
             onLaunchExport = { exportLauncher.launch(backupDocumentIntent(context, Intent.ACTION_CREATE_DOCUMENT)) },
             onLaunchImport = { importLauncher.launch(backupDocumentIntent(context, Intent.ACTION_OPEN_DOCUMENT)) },
-            onImportConfirmed = { uri, password -> runImport(context, viewModel, uri, password) },
+            onImportConfirmed = { uri, password -> runImport(context, snackbar, viewModel, uri, password) },
         )
     }
 }
@@ -126,13 +129,14 @@ private fun backupDocumentIntent(
 
 private fun runImport(
     context: Context,
+    snackbar: AppSnackbar?,
     viewModel: BackupViewModel,
     uri: Uri,
     password: CharArray?,
 ) {
     when (val result = viewModel.runImport(uri, password)) {
-        is BackupResult.Success -> toast(context, context.getString(R.string.backup_import_success))
-        is BackupResult.Failure -> toast(context, context.getString(R.string.backup_import_failed, result.message))
+        is BackupResult.Success -> snackbar.showOrToast(context, context.getString(R.string.backup_import_success))
+        is BackupResult.Failure -> snackbar.showOrToast(context, context.getString(R.string.backup_import_failed, result.message))
         is BackupResult.PasswordRequired -> viewModel.promptPasswordRetry(uri)
         is BackupResult.WrongPassword -> viewModel.promptPasswordRetry(uri)
     }
@@ -150,11 +154,6 @@ private fun exportResultMessage(
         is BackupResult.WrongPassword,
         -> context.getString(R.string.backup_export_failed, "unexpected state")
     }
-
-private fun toast(
-    context: Context,
-    message: String,
-) = Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 
 private fun openPlayStore(context: Context) {
     @Suppress("KotlinConstantConditions")

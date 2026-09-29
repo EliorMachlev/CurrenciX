@@ -101,4 +101,14 @@
     <string name="cart_pin_item">置顶</string>
     <string name="cart_unpin_item">取消置顶</string>
     <string name="cart_reorder_item">重新排序</string>
+    <string name="desc_navigate_up">向上导航</string>
+    <string name="desc_open_drawer">打开抽屉式导航栏</string>
+    <string name="desc_close_drawer">关闭抽屉式导航栏</string>
+    <string name="desc_more_options">更多选项</string>
+    <string name="cart_item_deleted">已删除商品</string>
+    <string name="cart_cleared">已清空购物车</string>
+    <string name="undo">撤消</string>
+    <string name="timeline_retry">重试</string>
+    <string name="timeline_change_provider">更换数据源</string>
+    <string name="recent_pair_switch">切换到 %1$s → %2$s</string>
 </resources>

@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Закріпити зверху</string>
     <string name="cart_unpin_item">Відкріпити</string>
     <string name="cart_reorder_item">Змінити порядок</string>
+    <string name="desc_navigate_up">Перейти вгору</string>
+    <string name="desc_open_drawer">Відкрити панель навігації</string>
+    <string name="desc_close_drawer">Закрити панель навігації</string>
+    <string name="desc_more_options">Інші параметри</string>
+    <string name="cart_item_deleted">Елемент видалено</string>
+    <string name="cart_cleared">Кошик очищено</string>
+    <string name="undo">Скасувати</string>
+    <string name="timeline_retry">Повторити</string>
+    <string name="timeline_change_provider">Змінити джерело</string>
+    <string name="recent_pair_switch">Перейти до %1$s → %2$s</string>
 </resources>

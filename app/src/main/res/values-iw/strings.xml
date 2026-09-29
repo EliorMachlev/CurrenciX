@@ -101,4 +101,14 @@
     <string name="cart_pin_item">הצמד לראש הרשימה</string>
     <string name="cart_unpin_item">בטל הצמדה</string>
     <string name="cart_reorder_item">סדר מחדש</string>
+    <string name="desc_navigate_up">ניווט למעלה</string>
+    <string name="desc_open_drawer">פתיחת מגירת הניווט</string>
+    <string name="desc_close_drawer">סגירת מגירת הניווט</string>
+    <string name="desc_more_options">אפשרויות נוספות</string>
+    <string name="cart_item_deleted">הפריט נמחק</string>
+    <string name="cart_cleared">העגלה רוקנה</string>
+    <string name="undo">ביטול</string>
+    <string name="timeline_retry">ניסיון חוזר</string>
+    <string name="timeline_change_provider">החלפת ספק</string>
+    <string name="recent_pair_switch">מעבר אל %1$s → %2$s</string>
 </resources>

@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">π.χ. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Ανενεργή</string>
     <string name="fee_untitled">Χωρίς τίτλο</string>
+    <string name="dynamic_color_title">Χρώματα ταπετσαρίας</string>
+    <string name="dynamic_color_summary">Χρωματισμός της εφαρμογής με τα χρώματα της ταπετσαρίας (Material You)</string>
 </resources>

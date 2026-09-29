@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Festa efst</string>
     <string name="cart_unpin_item">Losa festingu</string>
     <string name="cart_reorder_item">Endurraða atriði</string>
+    <string name="desc_navigate_up">Fara upp</string>
+    <string name="desc_open_drawer">Opna leiðarskúffu</string>
+    <string name="desc_close_drawer">Loka leiðarskúffu</string>
+    <string name="desc_more_options">Fleiri valkostir</string>
+    <string name="cart_item_deleted">Atriði eytt</string>
+    <string name="cart_cleared">Karfa tæmd</string>
+    <string name="undo">Afturkalla</string>
+    <string name="timeline_retry">Reyna aftur</string>
+    <string name="timeline_change_provider">Skipta um veitu</string>
+    <string name="recent_pair_switch">Skipta yfir í %1$s → %2$s</string>
 </resources>

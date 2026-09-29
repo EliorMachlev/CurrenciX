@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">p. ej., Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inactiva</string>
     <string name="fee_untitled">Sin título</string>
+    <string name="dynamic_color_title">Colores del fondo de pantalla</string>
+    <string name="dynamic_color_summary">Colorear la app con los colores de tu fondo de pantalla (Material You)</string>
 </resources>

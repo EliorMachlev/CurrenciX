@@ -144,4 +144,6 @@
     <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Uden titel</string>
+    <string name="dynamic_color_title">Baggrundsfarver</string>
+    <string name="dynamic_color_summary">Farv appen med farverne fra din baggrund (Material You)</string>
 </resources>

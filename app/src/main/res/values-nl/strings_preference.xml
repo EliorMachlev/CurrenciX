@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">bijv. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inactief</string>
     <string name="fee_untitled">Naamloos</string>
+    <string name="dynamic_color_title">Achtergrondkleuren</string>
+    <string name="dynamic_color_summary">Kleur de app met de kleuren van je achtergrond (Material You)</string>
 </resources>

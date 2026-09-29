@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">例如：Wise、Revolut、Chase</string>
     <string name="fee_inactive_marker">未启用</string>
     <string name="fee_untitled">未命名</string>
+    <string name="dynamic_color_title">壁纸颜色</string>
+    <string name="dynamic_color_summary">使用壁纸中的颜色为应用着色 (Material You)</string>
 </resources>

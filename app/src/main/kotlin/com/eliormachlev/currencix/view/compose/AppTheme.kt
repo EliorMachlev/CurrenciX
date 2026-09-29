@@ -1,17 +1,36 @@
 package com.eliormachlev.currencix.view.compose
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXDarkColors
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXLightColors
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXShapes
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXTypography
+
+/** Material You (wallpaper) colors need Android 12. */
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
+val isDynamicColorSupported: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+/**
+ * Whether the enclosing [AppTheme] uses wallpaper colors, so an [AppTheme]
+ * nested inside it (a sheet, a dialog) keeps the same palette.
+ */
+val LocalDynamicColor = compositionLocalOf { false }
 
 // Single wrapper for every Compose surface in the app. Callers should never
 // instantiate their own MaterialTheme — hoist to this so palette / typography /
@@ -26,18 +45,27 @@ import com.eliormachlev.currencix.view.compose.theme.CurrenciXTypography
 // read L→R universally, and mirroring the pill / keypad / receipt geometry
 // makes those numbers harder to parse. Paired with `supportsRtl="false"` in
 // the manifest for any surviving XML surfaces.
+//
+// [dynamicColor] swaps the paper / ink palette for the wallpaper's (Material
+// You); ignored below Android 12. Brand accents that aren't scheme colors
+// (the fee stamp, status pills) stay as they are.
 @Composable
 fun AppTheme(
     dark: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = LocalDynamicColor.current,
     content: @Composable () -> Unit,
 ) {
-    val colors = if (dark) CurrenciXDarkColors else CurrenciXLightColors
+    val context = LocalContext.current
+    val colors = remember(context, dark, dynamicColor) { colorScheme(context, dark, dynamicColor) }
     MaterialTheme(
         colorScheme = colors,
         typography = CurrenciXTypography,
         shapes = CurrenciXShapes,
     ) {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        CompositionLocalProvider(
+            LocalLayoutDirection provides LayoutDirection.Ltr,
+            LocalDynamicColor provides dynamicColor,
+        ) {
             Surface(
                 color = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onSurface,
@@ -46,3 +74,15 @@ fun AppTheme(
         }
     }
 }
+
+private fun colorScheme(
+    context: Context,
+    dark: Boolean,
+    dynamicColor: Boolean,
+): ColorScheme =
+    when {
+        dynamicColor && isDynamicColorSupported ->
+            if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        dark -> CurrenciXDarkColors
+        else -> CurrenciXLightColors
+    }

@@ -102,4 +102,14 @@
     <string name="cart_pin_item">Bovenaan vastmaken</string>
     <string name="cart_unpin_item">Losmaken</string>
     <string name="cart_reorder_item">Volgorde wijzigen</string>
+    <string name="desc_navigate_up">Omhoog navigeren</string>
+    <string name="desc_open_drawer">Navigatiemenu openen</string>
+    <string name="desc_close_drawer">Navigatiemenu sluiten</string>
+    <string name="desc_more_options">Meer opties</string>
+    <string name="cart_item_deleted">Item verwijderd</string>
+    <string name="cart_cleared">Winkelwagen geleegd</string>
+    <string name="undo">Ongedaan maken</string>
+    <string name="timeline_retry">Opnieuw proberen</string>
+    <string name="timeline_change_provider">Andere provider kiezen</string>
+    <string name="recent_pair_switch">Overschakelen naar %1$s → %2$s</string>
 </resources>

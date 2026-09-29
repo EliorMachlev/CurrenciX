@@ -152,6 +152,22 @@ class CartViewModel(
         }
     }
 
+    /**
+     * Puts a removed [item] back at [index] (clamped to the list) — Undo for
+     * a delete. No-op if an item with its id is already there.
+     */
+    fun restoreItem(
+        item: CartItem,
+        index: Int,
+    ) {
+        mutate { cart ->
+            if (cart.items.any { it.id == item.id }) return@mutate cart
+            val items = cart.items.toMutableList()
+            items.add(index.coerceIn(0, items.size), item)
+            cart.copy(items = items)
+        }
+    }
+
     fun togglePinned(id: String) {
         mutateItem(id) { it.copy(pinned = !it.pinned) }
     }

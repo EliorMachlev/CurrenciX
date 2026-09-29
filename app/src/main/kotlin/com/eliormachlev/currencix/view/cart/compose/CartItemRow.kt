@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
@@ -144,6 +145,8 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
             Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(id = R.dimen.margin1x))
+                // Same corners as the card sliding off it.
+                .clip(CardDefaults.outlinedShape)
                 .background(if (active) MaterialTheme.colorScheme.error else Color.Transparent),
         contentAlignment = alignment,
     ) {

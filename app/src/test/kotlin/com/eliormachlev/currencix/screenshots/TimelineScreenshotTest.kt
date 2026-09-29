@@ -91,6 +91,8 @@ private fun TimelineChartCardPreview(
             isRefreshing = isRefreshing,
             error = error,
             provider = provider,
+            onRetry = {},
+            onChangeProvider = {},
             modifier = Modifier.fillMaxSize(),
             chart = {
                 // Placeholder in lieu of a real Vico chart — the card's

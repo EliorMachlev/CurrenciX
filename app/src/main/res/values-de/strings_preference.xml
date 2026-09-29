@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">z.\u00A0B. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Unbenannt</string>
+    <string name="dynamic_color_title">Hintergrundfarben</string>
+    <string name="dynamic_color_summary">App an die Farben des Hintergrundbilds anpassen (Material You)</string>
 </resources>

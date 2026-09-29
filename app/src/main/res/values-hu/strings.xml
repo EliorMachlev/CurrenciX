@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Rögzítés felülre</string>
     <string name="cart_unpin_item">Rögzítés megszüntetése</string>
     <string name="cart_reorder_item">Tétel átrendezése</string>
+    <string name="desc_navigate_up">Felfelé navigálás</string>
+    <string name="desc_open_drawer">Navigációs fiók megnyitása</string>
+    <string name="desc_close_drawer">Navigációs fiók bezárása</string>
+    <string name="desc_more_options">További lehetőségek</string>
+    <string name="cart_item_deleted">Tétel törölve</string>
+    <string name="cart_cleared">Kosár kiürítve</string>
+    <string name="undo">Visszavonás</string>
+    <string name="timeline_retry">Újrapróbálkozás</string>
+    <string name="timeline_change_provider">Szolgáltató módosítása</string>
+    <string name="recent_pair_switch">Váltás erre: %1$s → %2$s</string>
 </resources>

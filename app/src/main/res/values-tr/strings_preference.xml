@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">örn. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Pasif</string>
     <string name="fee_untitled">Adsız</string>
+    <string name="dynamic_color_title">Duvar kağıdı renkleri</string>
+    <string name="dynamic_color_summary">Uygulamayı duvar kağıdınızın renkleriyle renklendir (Material You)</string>
 </resources>

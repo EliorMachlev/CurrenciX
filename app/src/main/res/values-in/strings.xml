@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Sematkan ke atas</string>
     <string name="cart_unpin_item">Lepas sematan</string>
     <string name="cart_reorder_item">Susun ulang</string>
+    <string name="desc_navigate_up">Navigasi naik</string>
+    <string name="desc_open_drawer">Buka panel navigasi</string>
+    <string name="desc_close_drawer">Tutup panel navigasi</string>
+    <string name="desc_more_options">Opsi lainnya</string>
+    <string name="cart_item_deleted">Item dihapus</string>
+    <string name="cart_cleared">Keranjang dikosongkan</string>
+    <string name="undo">Urungkan</string>
+    <string name="timeline_retry">Coba lagi</string>
+    <string name="timeline_change_provider">Ganti penyedia</string>
+    <string name="recent_pair_switch">Beralih ke %1$s → %2$s</string>
 </resources>

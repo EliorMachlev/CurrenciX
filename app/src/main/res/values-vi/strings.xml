@@ -98,4 +98,14 @@
     <string name="cart_pin_item">Ghim lên đầu</string>
     <string name="cart_unpin_item">Bỏ ghim</string>
     <string name="cart_reorder_item">Sắp xếp lại</string>
+    <string name="desc_navigate_up">Điều hướng lên</string>
+    <string name="desc_open_drawer">Mở ngăn điều hướng</string>
+    <string name="desc_close_drawer">Đóng ngăn điều hướng</string>
+    <string name="desc_more_options">Tùy chọn khác</string>
+    <string name="cart_item_deleted">Đã xóa mục</string>
+    <string name="cart_cleared">Đã dọn sạch giỏ hàng</string>
+    <string name="undo">Hoàn tác</string>
+    <string name="timeline_retry">Thử lại</string>
+    <string name="timeline_change_provider">Đổi nhà cung cấp</string>
+    <string name="recent_pair_switch">Chuyển sang %1$s → %2$s</string>
 </resources>

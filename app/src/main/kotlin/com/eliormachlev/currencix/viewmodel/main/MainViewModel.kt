@@ -15,6 +15,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
@@ -786,6 +787,20 @@ class MainViewModel(
             currency,
         )
         prefetchTimeline(currentBaseCurrency.value, currency)
+    }
+
+    /** Sets both sides in one write, so neither side reads the other mid-change. */
+    internal fun setCurrencyPair(pair: CurrencyPair) {
+        if (pair.from == pair.to) return
+        db.saveLastUsedRates(pair.from, pair.to)
+        prefetchTimeline(pair.from, pair.to)
+    }
+
+    /** Flips base and destination (the swap button); no-op until both are known. */
+    internal fun swapCurrencies() {
+        val from = currentBaseCurrency.value ?: return
+        val to = currentDestinationCurrency.value ?: return
+        setCurrencyPair(CurrencyPair(from = to, to = from))
     }
 
     // Warm the timeline for the currently-selected pair in the background so

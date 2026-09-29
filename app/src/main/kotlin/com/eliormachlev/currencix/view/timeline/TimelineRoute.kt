@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.map
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.layout.FoldingFeature
@@ -50,7 +51,9 @@ import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
+import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
+import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
 import java.time.format.DateTimeFormatter
@@ -85,18 +88,20 @@ fun TimelineRoute(
     val pair by model.getCurrencyPair().observeAsState()
     val inFlight by model.isRefreshInFlight().observeAsState(false)
     val error by model.getError().observeAsState()
-    var showGraphOptions by rememberSaveable { mutableStateOf(false) }
+    var sheet by rememberSaveable { mutableStateOf<TimelineSheet?>(null) }
 
     // Small bar: the pair sits beside the back arrow, leaving the height to the chart.
     ScreenScaffold(
-        title = { TimelineTitle(pair) },
+        // The screen's own pair until the data (and any swap) has loaded, so
+        // the title is there while offline or still fetching.
+        title = { TimelineTitle(pair ?: (screen.from to screen.to)) },
         onBack = onBack,
         style = TopBarStyle.Small,
         actions = {
             TopBarAction(
                 icon = painterResource(R.drawable.ic_tune),
                 contentDescription = stringResource(R.string.graph_options_title),
-                onClick = { showGraphOptions = true },
+                onClick = { sheet = TimelineSheet.GraphOptions },
             )
             // Swapping re-fetches the pair; wait out a refresh or an error first.
             TopBarAction(
@@ -111,12 +116,39 @@ fun TimelineRoute(
             model = model,
             formatter = formatter,
             foldingFeature = foldingFeature,
+            onChangeProvider = { sheet = TimelineSheet.Provider },
             modifier = Modifier.fillMaxSize().padding(padding),
             chartContent = { TimelineChartContent(model, db) },
         )
     }
-    if (showGraphOptions) {
-        GraphOptionsSheet(db = db, onDismiss = { showGraphOptions = false })
+    TimelineSheets(sheet = sheet, db = db, onProviderPicked = { model.retry() }, onDismiss = { sheet = null })
+}
+
+// The sheets the timeline opens over itself.
+private enum class TimelineSheet { GraphOptions, Provider }
+
+@Composable
+private fun TimelineSheets(
+    sheet: TimelineSheet?,
+    db: Database,
+    onProviderPicked: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    when (sheet) {
+        TimelineSheet.GraphOptions -> GraphOptionsSheet(db = db, onDismiss = onDismiss)
+        TimelineSheet.Provider -> {
+            val preferences: PreferenceViewModel = viewModel()
+            val current by preferences.apiProvider.collectAsStateWithLifecycle()
+            ProviderPickerDialog(
+                selected = current,
+                onDismiss = onDismiss,
+                onPicked = { provider ->
+                    preferences.setApiProvider(provider)
+                    onProviderPicked()
+                },
+            )
+        }
+        null -> Unit
     }
 }
 

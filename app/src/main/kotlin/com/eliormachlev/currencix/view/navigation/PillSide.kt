@@ -24,17 +24,18 @@ private data class SharedPillKey(
  * its counterpart instead of fading with its screen. It follows the screen
  * transition, so the predictive back gesture scrubs it too.
  *
- * A plain [Modifier] outside the nav host (screenshot tests, previews) or
- * while no currency is set.
+ * A plain [Modifier] outside the nav host (screenshot tests, previews),
+ * while no currency is set, and on a two-pane window — where the converter
+ * and the cart sit side by side, so there's nothing to fly between.
  */
 @Composable
 fun sharedCurrencyPillModifier(
     side: PillSide,
     currency: Currency?,
 ): Modifier {
-    val sharedScope = LocalSharedTransitionScope.current
-    val visibilityScope = LocalScreenVisibilityScope.current
-    if (sharedScope == null || visibilityScope == null || currency == null) return Modifier
+    if (currency == null || LocalTwoPaneWindow.current) return Modifier
+    val sharedScope = LocalSharedTransitionScope.current ?: return Modifier
+    val visibilityScope = LocalScreenVisibilityScope.current ?: return Modifier
     return with(sharedScope) {
         Modifier.sharedBounds(
             sharedContentState = rememberSharedContentState(SharedPillKey(side, currency)),

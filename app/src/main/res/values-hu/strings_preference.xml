@@ -172,4 +172,6 @@
     <string name="language_vi">Vietnami</string>
     <string name="language_zh_CN">Kínai (egyszerűsített)</string>
     <string name="title_changelog">Változásnapló</string>
+    <string name="dynamic_color_title">Háttérkép színei</string>
+    <string name="dynamic_color_summary">Az alkalmazás színezése a háttérkép színeivel (Material You)</string>
 </resources>

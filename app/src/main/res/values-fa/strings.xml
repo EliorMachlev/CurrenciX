@@ -102,4 +102,14 @@
     <string name="cart_pin_item">پین کردن در بالا</string>
     <string name="cart_unpin_item">حذف پین</string>
     <string name="cart_reorder_item">تغییر ترتیب</string>
+    <string name="desc_navigate_up">پیمایش به بالا</string>
+    <string name="desc_open_drawer">باز کردن کشوی پیمایش</string>
+    <string name="desc_close_drawer">بستن کشوی پیمایش</string>
+    <string name="desc_more_options">گزینه‌های بیشتر</string>
+    <string name="cart_item_deleted">مورد حذف شد</string>
+    <string name="cart_cleared">سبد خالی شد</string>
+    <string name="undo">واگرد</string>
+    <string name="timeline_retry">تلاش دوباره</string>
+    <string name="timeline_change_provider">تغییر ارائه‌دهنده</string>
+    <string name="recent_pair_switch">تغییر به %1$s → %2$s</string>
 </resources>

@@ -31,6 +31,7 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.releaseNotesUrl
+import com.eliormachlev.currencix.view.compose.isDynamicColorSupported
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import java.util.Calendar
 import com.eliormachlev.currencix.view.compose.AppTheme as AppComposeTheme
@@ -90,6 +91,7 @@ fun PreferenceScreen(
     val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
     val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
+    val dynamicColorEnabled by viewModel.isDynamicColorEnabled.collectAsStateWithLifecycle()
     val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
     val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
@@ -105,6 +107,7 @@ fun PreferenceScreen(
             decimalPlaces = decimalPlaces,
             expandedKeypadEnabled = expandedKeypadEnabled,
             hapticEnabled = hapticEnabled,
+            dynamicColorEnabled = dynamicColorEnabled,
             previewEnabled = previewEnabled,
             dateFormat = dateFormat,
             theme = theme,
@@ -143,6 +146,7 @@ private fun PreferenceSectionsList(
     decimalPlaces: Int,
     expandedKeypadEnabled: Boolean,
     hapticEnabled: Boolean,
+    dynamicColorEnabled: Boolean,
     previewEnabled: Boolean,
     dateFormat: String,
     theme: AppTheme,
@@ -187,10 +191,8 @@ private fun PreferenceSectionsList(
                     theme = theme,
                     language = language,
                     dateFormat = dateFormat,
-                    hapticEnabled = hapticEnabled,
-                    previewEnabled = previewEnabled,
-                    onHapticChange = viewModel::setHapticFeedbackEnabled,
-                    onPreviewChange = viewModel::setPreviewConversionEnabled,
+                    toggles = AppearanceToggles(hapticEnabled, dynamicColorEnabled, previewEnabled),
+                    viewModel = viewModel,
                     openThemePicker = { onOpenDialog(OpenDialog.Theme) },
                     openLanguagePicker = { onOpenDialog(OpenDialog.Language) },
                     openDateFormatPicker = { onOpenDialog(OpenDialog.DateFormat) },
@@ -405,15 +407,20 @@ private fun ApiSection(
     }
 }
 
+// The Appearance section's switches.
+private data class AppearanceToggles(
+    val haptic: Boolean,
+    val dynamicColor: Boolean,
+    val preview: Boolean,
+)
+
 @Composable
 private fun AppearanceSection(
     theme: AppTheme,
     language: Language,
     dateFormat: String,
-    hapticEnabled: Boolean,
-    previewEnabled: Boolean,
-    onHapticChange: (Boolean) -> Unit,
-    onPreviewChange: (Boolean) -> Unit,
+    toggles: AppearanceToggles,
+    viewModel: PreferenceViewModel,
     openThemePicker: () -> Unit,
     openLanguagePicker: () -> Unit,
     openDateFormatPicker: () -> Unit,
@@ -426,6 +433,15 @@ private fun AppearanceSection(
             iconRes = R.drawable.ic_theme,
             onClick = openThemePicker,
         )
+        if (isDynamicColorSupported) {
+            SwitchRow(
+                title = stringResource(id = R.string.dynamic_color_title),
+                summary = stringResource(id = R.string.dynamic_color_summary),
+                iconRes = R.drawable.ic_palette,
+                checked = toggles.dynamicColor,
+                onCheckedChange = viewModel::setDynamicColorEnabled,
+            )
+        }
         PreferenceRow(
             title = stringResource(id = R.string.language_title),
             summary = language.localizedName(context),
@@ -442,15 +458,15 @@ private fun AppearanceSection(
             title = stringResource(id = R.string.haptic_feedback_title),
             summary = stringResource(id = R.string.haptic_feedback_summary),
             iconRes = R.drawable.ic_vibration,
-            checked = hapticEnabled,
-            onCheckedChange = onHapticChange,
+            checked = toggles.haptic,
+            onCheckedChange = viewModel::setHapticFeedbackEnabled,
         )
         SwitchRow(
             title = stringResource(id = R.string.previewConversion_title),
             summary = stringResource(id = R.string.previewConversion_summary),
             iconRes = R.drawable.ic_conversion_preview,
-            checked = previewEnabled,
-            onCheckedChange = onPreviewChange,
+            checked = toggles.preview,
+            onCheckedChange = viewModel::setPreviewConversionEnabled,
         )
     }
 }

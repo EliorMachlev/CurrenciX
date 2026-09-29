@@ -143,4 +143,6 @@
     <string name="fee_inactive_marker">নিষ্ক্রিয়</string>
     <string name="fee_untitled">শিরোনামহীন</string>
     <string name="language_he">হিব্রু</string>
+    <string name="dynamic_color_title">ওয়ালপেপারের রং</string>
+    <string name="dynamic_color_summary">ওয়ালপেপারের রং দিয়ে অ্যাপ রাঙান (Material You)</string>
 </resources>

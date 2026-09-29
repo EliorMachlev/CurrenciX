@@ -39,6 +39,17 @@ class AppNavigator internal constructor(
         }
     }
 
+    /**
+     * Swaps the top screen for [screen] without adding history — the detail
+     * pane following the converter's pair. A no-op on the converter.
+     */
+    fun replaceTop(screen: Screen) {
+        if (backStack.size <= 1 || current == screen) return
+        // A copy further down would share the new entry's saved state.
+        backStack.remove(screen)
+        backStack[backStack.lastIndex] = screen
+    }
+
     /** Leaves the current screen. A no-op on the converter, which only the system back can close. */
     fun pop() {
         if (backStack.size > 1) backStack.removeAt(backStack.lastIndex)

@@ -142,4 +142,6 @@
     <string name="fee_edit_name_hint">напр., Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Неактивна</string>
     <string name="fee_untitled">Без названия</string>
+    <string name="dynamic_color_title">Цвета обоев</string>
+    <string name="dynamic_color_summary">Окрашивать приложение в цвета обоев (Material You)</string>
 </resources>

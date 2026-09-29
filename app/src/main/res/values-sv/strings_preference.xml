@@ -143,4 +143,6 @@
     <string name="fee_edit_name_hint">t.ex. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Namnlös</string>
+    <string name="dynamic_color_title">Bakgrundsfärger</string>
+    <string name="dynamic_color_summary">Färglägg appen med färgerna från din bakgrundsbild (Material You)</string>
 </resources>

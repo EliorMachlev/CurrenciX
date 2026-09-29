@@ -101,4 +101,14 @@
     <string name="cart_pin_item">Připnout nahoru</string>
     <string name="cart_unpin_item">Odepnout položku</string>
     <string name="cart_reorder_item">Přeuspořádat položku</string>
+    <string name="desc_navigate_up">Přejít nahoru</string>
+    <string name="desc_open_drawer">Otevřít navigační panel</string>
+    <string name="desc_close_drawer">Zavřít navigační panel</string>
+    <string name="desc_more_options">Další možnosti</string>
+    <string name="cart_item_deleted">Položka smazána</string>
+    <string name="cart_cleared">Košík vyprázdněn</string>
+    <string name="undo">Vrátit zpět</string>
+    <string name="timeline_retry">Zkusit znovu</string>
+    <string name="timeline_change_provider">Změnit poskytovatele</string>
+    <string name="recent_pair_switch">Přepnout na %1$s → %2$s</string>
 </resources>

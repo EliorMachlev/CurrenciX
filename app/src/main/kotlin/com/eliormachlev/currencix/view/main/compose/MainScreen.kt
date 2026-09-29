@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.view.main.compose
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,7 +30,6 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -149,8 +149,27 @@ private fun MainContent(
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
-    val rootModifier = modifier.fillMaxSize()
-    if (shouldUseHorizontal(foldingFeature)) {
+    BoxWithConstraints(modifier.fillMaxSize()) {
+        MainContentLayout(
+            horizontal = shouldUseHorizontal(maxWidth >= maxHeight, foldingFeature),
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            displayContent = displayContent,
+            keypadContent = keypadContent,
+        )
+    }
+}
+
+@Composable
+private fun MainContentLayout(
+    horizontal: Boolean,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    displayContent: @Composable () -> Unit,
+    keypadContent: @Composable () -> Unit,
+) {
+    val rootModifier = Modifier.fillMaxSize()
+    if (horizontal) {
         Row(modifier = rootModifier) {
             DisplayArea(
                 modifier = Modifier.weight(1f).fillMaxHeight(),
@@ -205,20 +224,20 @@ private fun DisplayArea(
     }
 }
 
-// Portrait → Column; landscape → Row. A folded-open device with a VERTICAL
-// hinge (screen split left/right) always forces the Row layout so hero and
-// keypad end up on separate halves — matching the previous XML foldable code.
-@Composable
-private fun shouldUseHorizontal(feature: FoldingFeature?): Boolean {
-    val cfg = LocalConfiguration.current
-    val naturalHorizontal = cfg.screenWidthDp >= cfg.screenHeightDp
-    if (feature == null) return naturalHorizontal
-    return when {
-        feature.state == FoldingFeature.State.FLAT -> naturalHorizontal
+// Taller than wide → Column; wider → Row. Measured on the space the
+// converter gets, not the screen: beside the timeline on a tablet it's a
+// narrow pane even in landscape. A folded-open device with a VERTICAL hinge
+// (screen split left/right) always forces the Row layout so hero and keypad
+// end up on separate halves — matching the previous XML foldable code.
+private fun shouldUseHorizontal(
+    isLandscapeSpace: Boolean,
+    feature: FoldingFeature?,
+): Boolean =
+    when {
+        feature == null || feature.state == FoldingFeature.State.FLAT -> isLandscapeSpace
         feature.orientation == FoldingFeature.Orientation.VERTICAL -> true
         else -> false
     }
-}
 
 @Composable
 private fun DrawerContent(
