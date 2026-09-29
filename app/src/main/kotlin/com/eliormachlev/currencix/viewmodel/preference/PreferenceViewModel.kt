@@ -55,11 +55,11 @@ class PreferenceViewModel(
     }
 
     /**
-     * Returns true when the caller must rebuild the activity stack to make
-     * the change visible. `setDefaultNightMode` auto-recreates when the
+     * Returns true when the caller must recreate the Activity to make the
+     * change visible. `setDefaultNightMode` auto-recreates when the
      * night mode changes, but a pure-black-only flip (Dark ↔ OLED, or
      * System ↔ System-OLED while system is dark) keeps the same night mode,
-     * so `BaseActivity.setTheme` doesn't rerun on its own.
+     * so `MainActivity.setTheme` doesn't rerun on its own.
      */
     fun setTheme(theme: AppTheme): Boolean {
         val old = db.getTheme()

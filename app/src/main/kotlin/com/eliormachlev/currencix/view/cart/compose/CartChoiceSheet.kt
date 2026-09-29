@@ -30,7 +30,7 @@ data class CartChoiceOption(
 
 /**
  * Immutable payload for a "pick one branch" cart flow (Clear, Share). Held as
- * `mutableStateOf<CartChoiceRequest?>` on [com.eliormachlev.currencix.view.cart.CartActivity]
+ * `mutableStateOf<CartChoiceRequest?>` on [com.eliormachlev.currencix.view.cart.CartOverlayState]
  * so imperative callers (menu handlers, coordinators) can trigger the sheet
  * without wiring their own compose state.
  */

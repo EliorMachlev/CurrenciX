@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.view.cart
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.filenameTimestampNow
@@ -27,7 +27,7 @@ private const val PDF_EXT = ".pdf"
  * every option renders the same numbers even if the user keeps typing.
  */
 class CartShareCoordinator(
-    private val activity: AppCompatActivity,
+    private val context: Context,
     private val viewModel: CartViewModel,
     private val flushPendingCommits: () -> Unit,
     private val snackbar: (String) -> Unit,
@@ -37,7 +37,7 @@ class CartShareCoordinator(
         flushPendingCommits()
         val snapshot = viewModel.snapshotForShare()
         if (snapshot == null) {
-            snackbar(activity.getString(R.string.cart_share_empty))
+            snackbar(context.getString(R.string.cart_share_empty))
             return
         }
         showChoice(
@@ -69,31 +69,31 @@ class CartShareCoordinator(
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, text)
             }
-        activity.startActivity(Intent.createChooser(intent, null))
+        context.startActivity(Intent.createChooser(intent, null))
     }
 
     private fun shareAsCsv(snapshot: CartSnapshot) {
         val title = shareTitle(snapshot)
         val chooser =
             buildCartShareChooser(
-                context = activity,
+                context = context,
                 filename = shareFilename(title, CSV_EXT),
                 mimeType = CSV_MIME,
                 bytes = snapshot.toCsv(title = title).toByteArray(Charsets.UTF_8),
             )
-        activity.startActivity(chooser)
+        context.startActivity(chooser)
     }
 
     private fun shareAsPdf(snapshot: CartSnapshot) {
         val title = shareTitle(snapshot)
         val chooser =
             buildCartShareChooser(
-                context = activity,
+                context = context,
                 filename = shareFilename(title, PDF_EXT),
                 mimeType = PDF_MIME,
                 bytes = snapshot.toPdfBytes(title = title),
             )
-        activity.startActivity(chooser)
+        context.startActivity(chooser)
     }
 
     // Cart name if the user has one (from Save-as), otherwise a phone-local
@@ -109,23 +109,23 @@ class CartShareCoordinator(
         buildString {
             val baseIso = snapshot.baseCurrency.iso4217Alpha()
             val destIso = snapshot.destinationCurrency.iso4217Alpha()
-            val name = snapshot.cart.name.ifBlank { activity.getString(R.string.cart_share_default_title) }
-            appendLine(activity.getString(R.string.cart_share_header, name, baseIso))
+            val name = snapshot.cart.name.ifBlank { context.getString(R.string.cart_share_default_title) }
+            appendLine(context.getString(R.string.cart_share_header, name, baseIso))
             snapshot.evaluatedItems.forEach { (item, value) ->
                 val label = item.name.ifBlank { item.expression }
                 appendLine("• $label: ${value.toCartDisplayString()}")
             }
             appendLine("—")
-            appendLine(activity.getString(R.string.cart_share_subtotal, snapshot.subtotal.toCartDisplayString(), baseIso))
+            appendLine(context.getString(R.string.cart_share_subtotal, snapshot.subtotal.toCartDisplayString(), baseIso))
             if (snapshot.isConverting) {
                 appendLine(
-                    activity.getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso),
+                    context.getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso),
                 )
             }
             val combinedStack = snapshot.feeStack
             if (!combinedStack.isNeutralFeeStack()) {
-                appendLine(activity.getString(R.string.cart_share_fees, combinedStack.toCartFeePercentDisplay()))
+                appendLine(context.getString(R.string.cart_share_fees, combinedStack.toCartFeePercentDisplay()))
             }
-            append(activity.getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
+            append(context.getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
         }
 }

@@ -19,12 +19,7 @@ enum class OnboardingAnchor {
     FeeStamp,
     SwapFab,
 
-    /**
-     * The ActionBar hamburger sits outside the Compose tree, so the spotlight
-     * overlay synthesizes a fixed hint region for this anchor rather than
-     * reading real bounds from a modifier. Kept in the enum so the tour step
-     * can request it the same way as the in-tree anchors.
-     */
+    /** The converter top bar's drawer button. */
     Hamburger,
 }
 

@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -15,10 +13,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.view.compose.AppTheme
-import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import java.time.format.DateTimeFormatter
 
@@ -28,12 +26,15 @@ internal fun TimelineScreen(
     model: TimelineViewModel,
     formatter: DateTimeFormatter,
     foldingFeature: FoldingFeature?,
+    modifier: Modifier = Modifier,
     chartContent: @Composable () -> Unit,
 ) {
     AppTheme {
+        // Transparent: the screen frame paints the window background (true
+        // black on OLED), the same color the top bar above uses.
         Surface(
-            modifier = Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding()),
-            color = MaterialTheme.colorScheme.background,
+            modifier = modifier.fillMaxSize(),
+            color = Color.Transparent,
         ) {
             val isRefreshing by model.isRefreshing().observeAsState(initial = false)
             val error by model.getError().observeAsState()

@@ -25,7 +25,7 @@ private const val POP_DIRECTIONAL_ISOLATE = '\u2069'
 private const val RTL_MARK = "\u200F"
 
 // User-configurable decimal places for displayed conversion results.
-// Kept in one place so PreferenceFragment (writer) and the spinner list
+// Kept in one place so the Settings screen (writer) and the spinner list
 // (reader) can't drift on the allowed range or the fallback default.
 internal const val DECIMAL_PLACES_DEFAULT = 2
 internal const val DECIMAL_PLACES_MIN = 0

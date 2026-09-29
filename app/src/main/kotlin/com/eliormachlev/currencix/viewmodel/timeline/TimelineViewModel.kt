@@ -1,8 +1,6 @@
 package com.eliormachlev.currencix.viewmodel.timeline
 
 import android.app.Application
-import android.text.Spanned
-import android.text.SpannedString
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -11,14 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.repository.RefreshState
 import com.eliormachlev.currencix.util.calculateDifference
-import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
 import java.math.BigDecimal
 import java.math.MathContext
@@ -135,19 +131,12 @@ class TimelineViewModel(
      * getters for the various values ==============================================================
      */
 
-    fun getTitle(): LiveData<Spanned> =
-        dbLiveItems.map {
-            if (it == null) {
-                SpannedString("")
-            } else {
-                app
-                    .getString(
-                        R.string.activity_timeline_title,
-                        base.iso4217Alpha(),
-                        target.iso4217Alpha(),
-                    ).fromHtmlLegacy()
-            }
-        }
+    /**
+     * The pair on screen, for the title. Follows [toggleCurrencies]; null
+     * until the first timeline arrives, so the title doesn't flash the pair
+     * over an empty chart.
+     */
+    fun getCurrencyPair(): LiveData<Pair<Currency, Currency>?> = dbLiveItems.map { if (it == null) null else base to target }
 
     fun toggleCurrencies() {
         val tmp = base

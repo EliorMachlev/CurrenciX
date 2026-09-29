@@ -8,7 +8,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,7 +30,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -92,9 +90,9 @@ import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.CurrencyPill
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.UiTestTags
-import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
 import com.eliormachlev.currencix.view.compose.shimmer
@@ -103,6 +101,7 @@ import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
+import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -122,16 +121,7 @@ private val MATH_LINE_BOTTOM_GAP: Dp = 2.dp
 private val CARD_OUTER_MARGIN: Dp = 16.dp
 private val CARD_RADIUS: Dp = 28.dp
 private val CARD_PADDING: Dp = 16.dp
-private val PILL_RADIUS: Dp = 999.dp
-private val PILL_HEIGHT: Dp = 44.dp
-private val PILL_HORIZONTAL_PADDING: Dp = 14.dp
 
-// Rectangular flag matching the picker's 24×17 aspect; the pill height is
-// 44dp, so scaling up to 28×20 keeps the ratio and stays comfortably within
-// the pill.
-private val FLAG_WIDTH: Dp = 28.dp
-private val FLAG_HEIGHT: Dp = 20.dp
-private val FLAG_CORNER_RADIUS: Dp = 2.dp
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 12.dp
@@ -163,9 +153,6 @@ private val STATUS_PILL_ICON_SIZE: Dp = 14.dp
 private val CURSOR_WIDTH: Dp = 2.dp
 private val CURSOR_HEIGHT: Dp = 44.dp
 private val CURSOR_HEIGHT_SUBTOTAL: Dp = 26.dp
-private val FLAG_GAP: Dp = 10.dp
-private val CHEVRON_GAP: Dp = 4.dp
-private val CHEVRON_SIZE: Dp = 14.dp
 
 // Amount-hero / amount-to display sizes. One-off, not part of the Typography
 // scale (Material3 would try to apply them elsewhere). AMOUNT_SUBTOTAL_SIZE
@@ -585,55 +572,18 @@ private fun PillsRow(
         horizontalArrangement = Arrangement.spacedBy(PILLS_ROW_GAP),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CurrencyPill(currency = fromCurrency, onClick = onPillFromClick, modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_FROM))
-        SwapFab(onClick = onSwapClick, onLongClick = onSwapLongPress)
-        CurrencyPill(currency = toCurrency, onClick = onPillToClick, modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_TO))
-    }
-}
-
-@Composable
-private fun CurrencyPill(
-    currency: Currency?,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val flagPainter = currency?.flagPainter()
-    Row(
-        modifier
-            .height(PILL_HEIGHT)
-            .clip(RoundedCornerShape(PILL_RADIUS))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .hapticClickable(enabled = currency != null, onClick = onClick)
-            .padding(horizontal = PILL_HORIZONTAL_PADDING),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        if (flagPainter != null) {
-            Image(
-                painter = flagPainter,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(width = FLAG_WIDTH, height = FLAG_HEIGHT)
-                        .clip(RoundedCornerShape(FLAG_CORNER_RADIUS)),
-            )
-            Spacer(Modifier.width(FLAG_GAP))
-        }
-        Text(
-            text = currency?.iso4217Alpha().orEmpty(),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false),
+        CurrencyPill(
+            currency = fromCurrency,
+            side = PillSide.FROM,
+            onClick = onPillFromClick,
+            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_FROM),
         )
-        Spacer(Modifier.width(CHEVRON_GAP))
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowDown,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(CHEVRON_SIZE),
+        SwapFab(onClick = onSwapClick, onLongClick = onSwapLongPress)
+        CurrencyPill(
+            currency = toCurrency,
+            side = PillSide.TO,
+            onClick = onPillToClick,
+            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_TO),
         )
     }
 }

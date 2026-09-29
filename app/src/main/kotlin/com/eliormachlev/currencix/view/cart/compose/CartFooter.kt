@@ -39,7 +39,9 @@ import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
+import com.eliormachlev.currencix.view.compose.CurrencyPill
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
+import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import java.math.BigDecimal
 import java.math.MathContext
@@ -272,14 +274,16 @@ private fun CurrencyRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(CURRENCY_ROW_GAP),
     ) {
-        CartCurrencyChip(
+        CurrencyPill(
             currency = baseCurrency,
+            side = PillSide.FROM,
             onClick = onBaseClick,
             modifier = Modifier.weight(1f),
         )
         SwapFab(onClick = onSwapClick, onLongClick = onSwapLongPress)
-        CartCurrencyChip(
+        CurrencyPill(
             currency = destCurrency,
+            side = PillSide.TO,
             onClick = onDestClick,
             modifier = Modifier.weight(1f),
         )

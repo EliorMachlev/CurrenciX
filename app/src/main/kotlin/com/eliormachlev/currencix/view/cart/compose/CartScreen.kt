@@ -25,7 +25,6 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.AppTheme
-import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -52,10 +51,11 @@ fun CartScreen(
     onReorder: (fromId: String, toId: String) -> Unit,
     onReorderStart: () -> Unit,
     onOpenFees: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     AppTheme {
         val items by itemsSource.observeAsState(initial = persistentListOf())
-        Box(Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding())) {
+        Box(modifier.fillMaxSize()) {
             Column(Modifier.fillMaxSize()) {
                 Box(Modifier.fillMaxWidth().weight(1f)) {
                     CartItemsList(

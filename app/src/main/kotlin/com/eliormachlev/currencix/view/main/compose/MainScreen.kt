@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,22 +22,21 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.UiTestTags
-import com.eliormachlev.currencix.view.compose.rememberActionBarTopPadding
 
 enum class DrawerAction {
     Timeline,
@@ -92,9 +92,9 @@ private val SecondaryDrawerEntries =
         DrawerEntry(DrawerAction.Settings, R.drawable.ic_settings, R.string.menu_settings),
     )
 
-// Compose replacement for the old activity_main.xml tree — hosts the
-// pull-to-refresh and side-by-side display/keypad, all wrapped by a
-// ModalNavigationDrawer. Content slots are hoisted so MainActivity keeps
+// The converter screen: [topBar] over the pull-to-refresh hero display and
+// the keypad (side by side in landscape / on a vertical fold), all wrapped by
+// a ModalNavigationDrawer. Content slots are hoisted so ConverterRoute keeps
 // direct control over the hero display + keypad composables (which own their
 // own ViewModel wiring). Offline / historical status is rendered inside the
 // hero's RateFooter instead of stealing a full-width strip above the card.
@@ -102,6 +102,7 @@ private val SecondaryDrawerEntries =
 @Composable
 fun MainScreen(
     drawerState: DrawerState,
+    topBar: @Composable () -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     isRefreshDrawerEnabled: Boolean,
@@ -112,9 +113,6 @@ fun MainScreen(
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
-        // Lets UiAutomator (the :baselineprofile journeys) find UiTestTags as
-        // view resource ids. Semantics only — nothing visual.
-        modifier = Modifier.semantics { testTagsAsResourceId = true },
         drawerContent = {
             ModalDrawerSheet {
                 DrawerContent(
@@ -124,26 +122,31 @@ fun MainScreen(
             }
         },
     ) {
-        MainContent(
-            isRefreshing = isRefreshing,
-            onRefresh = onRefresh,
-            foldingFeature = foldingFeature,
-            displayContent = displayContent,
-            keypadContent = keypadContent,
-        )
+        // The drawer opens over the top bar, as Material 3 draws it.
+        Scaffold(topBar = topBar, containerColor = Color.Transparent) { padding ->
+            MainContent(
+                modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                foldingFeature = foldingFeature,
+                displayContent = displayContent,
+                keypadContent = keypadContent,
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainContent(
+    modifier: Modifier,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     foldingFeature: FoldingFeature?,
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
-    val rootModifier = Modifier.fillMaxSize().padding(top = rememberActionBarTopPadding())
+    val rootModifier = modifier.fillMaxSize()
     if (shouldUseHorizontal(foldingFeature)) {
         Row(modifier = rootModifier) {
             DisplayArea(

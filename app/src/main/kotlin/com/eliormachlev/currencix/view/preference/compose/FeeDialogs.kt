@@ -177,8 +177,8 @@ private fun FeeEditorPickerOverlay(
 // Snapshot of a currency-picker request captured when the user taps a
 // from/to button — the sheet reads back [disabled] to grey out the opposite
 // side of the pair and calls [onPicked] with the chosen ISO. Held in the
-// dialog's own state so opening the sheet doesn't have to bubble up to
-// FeeManagerFragment.
+// dialog's own state so opening the sheet doesn't have to bubble up to the
+// fees screen.
 private data class CurrencyPickerRequest(
     val disabled: Currency?,
     val onPicked: (String) -> Unit,

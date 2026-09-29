@@ -70,12 +70,12 @@ private sealed interface OpenDialog {
 }
 
 /**
- * Full preferences screen — Compose replacement for `prefs.xml` +
- * `PreferenceFragment`. Assembles six [PreferenceSection] cards from the
- * observed [PreferenceViewModel] state, opens picker dialogs via [OpenDialog]
- * state, and dispatches non-preference actions (opening fees, backup,
- * credits, changelog, rate) through the [callbacks] bag so the hosting
- * Fragment/Activity can wire fragment-pushes and intents.
+ * Full preferences screen — Compose replacement for the old `prefs.xml`.
+ * Assembles six [PreferenceSection] cards from the observed
+ * [PreferenceViewModel] state, opens picker dialogs via [OpenDialog] state,
+ * and dispatches non-preference actions (opening fees, backup, credits,
+ * changelog, rate) through the [callbacks] bag so the route
+ * (SettingsRoute) can wire navigation and intents.
  */
 @Composable
 fun PreferenceScreen(

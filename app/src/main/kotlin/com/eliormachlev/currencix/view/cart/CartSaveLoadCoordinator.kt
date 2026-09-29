@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.view.cart
 
+import android.content.Context
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
@@ -50,7 +50,7 @@ data class CartUnsavedChangesRequest(
  */
 @Suppress("LongParameterList")
 class CartSaveLoadCoordinator(
-    private val activity: AppCompatActivity,
+    private val context: Context,
     private val viewModel: CartViewModel,
     private val flushPendingCommits: () -> Unit,
     private val snackbar: (String) -> Unit,
@@ -58,8 +58,17 @@ class CartSaveLoadCoordinator(
     private val showUnsavedChanges: (CartUnsavedChangesRequest) -> Unit,
     private val showNameInput: (CartNameInputRequest) -> Unit,
     private val showDeleteConfirm: (CartDeleteConfirmRequest) -> Unit,
+    private val onClose: () -> Unit,
 ) {
-    fun attemptClose() = confirmUnsavedThen { activity.finish() }
+    /**
+     * Leaves the cart, first offering to save when it has unsaved edits.
+     * Back only routes here while [needsClosePrompt] — otherwise the back
+     * gesture pops the screen directly (with its predictive animation).
+     */
+    fun attemptClose() = confirmUnsavedThen(onClose)
+
+    /** Whether leaving now would ask about unsaved changes (see [confirmUnsavedThen]). */
+    fun needsClosePrompt(): Boolean = viewModel.currentCartItems().isNotEmpty() && viewModel.hasUnsavedChanges()
 
     /**
      * "Save" menu action — overwrites the current saved cart in-place. Falls
@@ -69,7 +78,7 @@ class CartSaveLoadCoordinator(
         if (guardEmptyForSave()) return
         flushPendingCommits()
         if (viewModel.saveCurrent()) {
-            snackbar(activity.getString(R.string.cart_saved_toast, viewModel.currentCartName()))
+            snackbar(context.getString(R.string.cart_saved_toast, viewModel.currentCartName()))
             onSaved()
         } else {
             showSaveAsDialog(onSaved = onSaved)
@@ -87,7 +96,7 @@ class CartSaveLoadCoordinator(
                 // multiple snapshots of the same cart under different names.
                 flushPendingCommits()
                 viewModel.saveCurrentAs(name)
-                snackbar(activity.getString(R.string.cart_saved_toast, name))
+                snackbar(context.getString(R.string.cart_saved_toast, name))
                 onSaved()
             },
         )
@@ -95,7 +104,7 @@ class CartSaveLoadCoordinator(
 
     fun showLoadDialog() {
         if (viewModel.getSavedCartsSnapshot().isEmpty()) {
-            snackbar(activity.getString(R.string.cart_no_saved))
+            snackbar(context.getString(R.string.cart_no_saved))
             return
         }
         showLoadList()
@@ -125,7 +134,7 @@ class CartSaveLoadCoordinator(
     // caller should abort.
     private fun guardEmptyForSave(): Boolean {
         if (viewModel.currentCartItems().isEmpty()) {
-            snackbar(activity.getString(R.string.cart_save_empty))
+            snackbar(context.getString(R.string.cart_save_empty))
             return true
         }
         return false
@@ -141,7 +150,7 @@ class CartSaveLoadCoordinator(
         // An empty cart has nothing worth saving, so skip the prompt entirely
         // even if a persisted counterpart differs — the destructive action
         // would just replace an empty working set with something else.
-        if (viewModel.currentCartItems().isEmpty() || !viewModel.hasUnsavedChanges()) {
+        if (!needsClosePrompt()) {
             action()
             return
         }

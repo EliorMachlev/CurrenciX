@@ -222,7 +222,8 @@ class CartViewModel(
 
     /**
      * Overlay main's currently-visible pair onto a fresh cart. Called by
-     * CartActivity when it opens with intent extras — trusts the caller's
+     * the cart screen with the pair the converter showed when it opened the
+     * cart — trusts the caller's
      * pair over what emptyCart() guessed from prefs, and skips the overwrite
      * once the user has typed anything so we don't stomp their work.
      */

@@ -8,33 +8,26 @@
 
     <style name="AppTheme.PureBlack" parent="BaseAppTheme.PureBlack" />
 
-    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight">
+    <!-- No ActionBar: every screen draws its own Compose top bar, and the
+         window is edge to edge (MainActivity.enableEdgeToEdge). -->
+    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- theme-dependant colors (different for light/dark/black) -->
         <item name="colorBackground">@color/colorBackground</item>
         <item name="colorDisplayOverlay">@color/displayOverlay</item>
 
-        <!-- Compose owns the visual palette (see view/compose/theme/Color.kt) —
-             the XML theme only needs enough to render the ActionBar / options
-             menu / options overflow, which read the AppCompat attrs below. -->
+        <!-- Compose owns the visual palette (see view/compose/theme/Color.kt).
+             The XML theme supplies the window background (painted behind
+             every screen, pure black included), the chart colors the
+             timeline resolves from it, and AppCompat widgets' defaults. -->
 
         <item name="android:colorBackground">?attr/colorBackground</item>
         <item name="colorPrimary">@color/billGreen</item>
         <item name="colorAccent">@color/brass</item>
 
-        <!-- "transparent" action bar -->
-        <item name="actionBarStyle">@style/AppTheme.ActionBar</item>
-
-        <!-- "transparent" status bar -->
-        <item name="colorPrimaryDark">?android:attr/colorBackground</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
-
-        <!-- remove color tint from overflow menu -->
-        <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu.Overflow</item>
-
         <!-- Keep theme-wide popupBackground transparent so the text-selection
              handle's PopupWindow doesn't render a white square behind the
-             handle drawable. Popup menus are handled by AppTheme.PopupMenu.Overflow
-             above, which sets its own background. -->
+             handle drawable. Menus are Compose DropdownMenus, which draw
+             their own surface. -->
         <item name="android:popupBackground">@android:color/transparent</item>
     </style>
 
@@ -42,17 +35,6 @@
         <!-- colors -->
         <item name="colorBackground">@color/colorBackgroundPureBlack</item>
         <item name="colorDisplayOverlay">@color/displayOverlayPureBlack</item>
-    </style>
-
-    <!-- make actionbar the same color as the background -->
-    <style name="AppTheme.ActionBar" parent="Widget.AppCompat.ActionBar.Solid">
-        <item name="background">?attr/colorBackground</item>
-        <item name="elevation">0dp</item>
-    </style>
-
-    <!-- make popup menu the same color as the background -->
-    <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <item name="android:popupBackground">?attr/colorBackground</item>
     </style>
 
 

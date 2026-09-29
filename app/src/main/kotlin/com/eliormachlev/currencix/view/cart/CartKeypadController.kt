@@ -1,9 +1,8 @@
 package com.eliormachlev.currencix.view.cart
 
+import android.app.Activity
 import android.content.Context
-import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -31,7 +30,7 @@ import com.eliormachlev.currencix.viewmodel.main.Operator
  *   composable so it renders the correct layout and paren glyph.
  */
 class CartKeypadController(
-    activity: AppCompatActivity,
+    activity: Activity,
     val isExpandedKeypad: LiveData<Boolean>,
     private val onExpressionCommit: (id: String, expression: String) -> Unit,
 ) {
@@ -148,15 +147,10 @@ class CartKeypadController(
 
     private fun hideSystemIme() {
         val imm = ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
-        val activity = ctx as? AppCompatActivity ?: return
+        val activity = ctx as? Activity ?: return
         val token = activity.currentFocus?.windowToken ?: activity.window.decorView.windowToken ?: return
         imm.hideSoftInputFromWindow(token, 0)
     }
-
-    // Retained so BaseActivity's own view lookup (unused after the migration)
-    // continues to compile; safe to delete once the cart has been QA'd.
-    @Suppress("unused")
-    private fun findRoot(activity: AppCompatActivity): View = activity.window.decorView
 }
 
 /**

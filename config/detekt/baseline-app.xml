@@ -8,15 +8,8 @@
     <ID>CyclomaticComplexMethod:BankOfIsraelSdmxParser.kt$BankOfIsraelSdmxParser$fun parse(inputStream: InputStream): List&lt;BankOfIsraelObservation&gt;</ID>
     <ID>CyclomaticComplexMethod:TimelineChart.kt$@Composable @Suppress("LongParameterList", "LongMethod") fun TimelineChart( entriesLive: LiveData&lt;ImmutableList&lt;Pair&lt;LocalDate, Float&gt;&gt;?&gt;, showGridLive: LiveData&lt;Boolean&gt;, showXAxisLive: LiveData&lt;Boolean&gt;, showYAxisLive: LiveData&lt;Boolean&gt;, highlightExtremesLive: LiveData&lt;Boolean&gt;, highlightPeriodChangeLive: LiveData&lt;Boolean&gt;, dateFormatLive: LiveData&lt;String&gt;, // Scrub-aware highlight values from the viewmodel. Passing these in (rather // than deriving from `entries`) keeps the red/blue highlight lines aligned // with the MIN/MAX readouts when the user scrubs, since the readouts also // apply the scrub filter. highlightMinLive: LiveData&lt;Double?&gt;, highlightMaxLive: LiveData&lt;Double?&gt;, lineColor: Color, baselineColor: Color, axisColor: Color, scrubLineColor: Color, onScrub: (LocalDate?) -&gt; Unit, )</ID>
     <ID>ExplicitItLambdaParameter:CartItemsList.kt${ _, it -&gt; it.id }</ID>
-    <ID>LargeClass:FeeManagerFragment.kt$FeeManagerFragment : PreferenceFragmentCompat</ID>
-    <ID>LargeClass:MainActivity.kt$MainActivity : BaseActivity</ID>
-    <ID>LongMethod:CartActivity.kt$CartActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
-    <ID>LongMethod:TimelineActivity.kt$TimelineActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
     <ID>LongParameterList:BankRossii.kt$BankRossii$( context: Context?, code: String, startDate: LocalDate, endDate: LocalDate, id: String, ids: Map&lt;String, String&gt;, rubTimeline: Timeline, )</ID>
     <ID>LongParameterList:CartFooterBinding.kt$CartFooterBinding$( container: View, labelView: TextView, valueView: TextView, @StringRes prefixRes: Int, stack: BigDecimal, base: BigDecimal?, currency: Currency?, mode: FeeRowMode, )</ID>
-    <ID>LongParameterList:FeeManagerFragment.kt$FeeManagerFragment$( entries: List&lt;T&gt;, effectiveId: String?, title: String, onPicked: (String) -&gt; Unit, onAdd: () -&gt; Unit, onEdit: (T) -&gt; Unit, )</ID>
-    <ID>LongParameterList:FeeManagerFragment.kt$FeeManagerFragment$( pref: Preference, entries: List&lt;T&gt;, activeId: String?, sectionTitleRes: Int, onPicked: (String) -&gt; Unit, onAdd: () -&gt; Unit, onEdit: (T) -&gt; Unit, )</ID>
-    <ID>LongParameterList:FeeManagerFragment.kt$FeeManagerFragment$( pref: Preference, entries: List&lt;T&gt;, sectionTitleRes: Int, getActiveId: () -&gt; String?, setActiveId: (String) -&gt; Unit, create: (FeeDraft) -&gt; T, update: (existing: T, FeeDraft) -&gt; T, )</ID>
     <ID>LongParameterList:QuickConversionsRowBuilder.kt$( ctx: Context, from: Currency, to: Currency, rates: ExchangeRates, sideStacks: SideStacks, costWithFeePrefix: String, )</ID>
     <ID>LongParameterList:TimelineSecondary.kt$( context: android.content.Context, label: String, rate: Rate?, date: LocalDate?, decimals: Int?, formatter: DateTimeFormatter, )</ID>
     <ID>LoopWithTooManyJumpStatements:BankOfIsrael.kt$BankOfIsrael$for</ID>

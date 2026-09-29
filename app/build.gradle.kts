@@ -238,6 +238,14 @@ dependencies {
     // when the host goes to STOPPED and resumes on STARTED. Used by the
     // StateFlow-based ViewModels (see #149 pilot in PreferenceViewModel).
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$livecycleVersion")
+    // Navigation 3: the whole app is one Activity; screens are NavDisplay
+    // entries over a Compose-owned back stack (view/navigation). The ViewModel
+    // decorator scopes each screen's ViewModel to its back-stack entry, so a
+    // popped screen's state is cleared exactly as a finished Activity's was.
+    val navigation3Version = "1.2.0"
+    implementation("androidx.navigation3:navigation3-runtime:$navigation3Version")
+    implementation("androidx.navigation3:navigation3-ui:$navigation3Version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:$livecycleVersion")
     // glance: home-screen widget composed instead of RemoteViews-driven.
     val glanceVersion = "1.1.1"
     implementation("androidx.glance:glance-appwidget:$glanceVersion")

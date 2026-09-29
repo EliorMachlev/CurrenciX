@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.view.compose
 
-import android.app.Activity
-import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material.icons.Icons
@@ -12,21 +10,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.rememberHapticOnClick
@@ -78,41 +70,6 @@ fun Modifier.onBackgroundTap(onTap: () -> Unit): Modifier =
             detectTapGestures(onTap = { current() })
         }
     }
-
-// Returns the vertical overlap (in dp) between AppCompat's ActionBar
-// container and the hosting ComposeView, so screens can pad their Compose
-// root by exactly that amount and sit flush below the toolbar. Measures the
-// bar's real laid-out bottom (rather than resolving `?attr/actionBarSize` +
-// status-bar insets by hand) so it stays correct across edge-to-edge, split
-// screen, and any theme that resizes the ActionBar. Applied on the three
-// activities that host Compose directly: MainActivity, CartActivity,
-// TimelineActivity.
-@Composable
-fun rememberActionBarTopPadding(): Dp {
-    val view = LocalView.current
-    val density = LocalDensity.current
-    var overlapPx by remember { mutableIntStateOf(0) }
-    DisposableEffect(view) {
-        val activity = view.context as? Activity
-        val actionBar = activity?.findViewById<View>(androidx.appcompat.R.id.action_bar_container)
-
-        fun recompute() {
-            if (actionBar == null || !view.isAttachedToWindow) return
-            val abLoc = IntArray(2).also(actionBar::getLocationInWindow)
-            val vLoc = IntArray(2).also(view::getLocationInWindow)
-            overlapPx = (abLoc[1] + actionBar.height - vLoc[1]).coerceAtLeast(0)
-        }
-        val listener = View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> recompute() }
-        view.addOnLayoutChangeListener(listener)
-        actionBar?.addOnLayoutChangeListener(listener)
-        recompute()
-        onDispose {
-            view.removeOnLayoutChangeListener(listener)
-            actionBar?.removeOnLayoutChangeListener(listener)
-        }
-    }
-    return with(density) { overlapPx.toDp() }
-}
 
 @Composable
 fun FavoriteToggleIcon(

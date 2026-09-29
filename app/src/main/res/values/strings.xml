@@ -3,6 +3,10 @@
     <string name="app_name" translatable="false">CurrenciX</string>
 
     <string name="desc_toggle_currencies">toggle currencies</string>
+    <string name="desc_navigate_up">Navigate up</string>
+    <string name="desc_open_drawer">Open navigation drawer</string>
+    <string name="desc_close_drawer">Close navigation drawer</string>
+    <string name="desc_more_options">More options</string>
     <string name="a11y_delete">Delete</string>
     <string name="a11y_search_currencies">Search currencies</string>
     <string name="a11y_clear_search">Clear search</string>

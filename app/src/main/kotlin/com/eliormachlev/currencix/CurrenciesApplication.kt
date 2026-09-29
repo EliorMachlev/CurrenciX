@@ -73,7 +73,7 @@ class CurrenciesApplication : Application() {
     }
 
     // Apply the persisted day/night mode before any Activity is created, so
-    // BaseActivity.setTheme(AppTheme_PureBlack) resolves against the correct
+    // MainActivity.setTheme(AppTheme_PureBlack) resolves against the correct
     // night qualifier on the very first frame. Otherwise the pure-black
     // background renders as the day-mode color until setDefaultNightMode
     // triggers a recreate. The read is synchronous by design — DataStore's

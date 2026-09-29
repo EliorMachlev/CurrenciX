@@ -1,4 +1,4 @@
-package com.eliormachlev.currencix.view.cart.compose
+package com.eliormachlev.currencix.view.compose
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,42 +25,45 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticClickable
-import com.eliormachlev.currencix.view.compose.flagPainter
+import com.eliormachlev.currencix.view.navigation.PillSide
+import com.eliormachlev.currencix.view.navigation.sharedCurrencyPillModifier
 
-private val CHIP_HEIGHT: Dp = 44.dp
-private val CHIP_RADIUS: Dp = 999.dp
-private val CHIP_HORIZONTAL_PADDING: Dp = 14.dp
+private val PILL_HEIGHT: Dp = 44.dp
+private val PILL_RADIUS: Dp = 999.dp
+private val PILL_HORIZONTAL_PADDING: Dp = 14.dp
 
-// Rectangular flag matching the picker's 24×17 aspect so both surfaces read
-// the same.
-private val FLAG_WIDTH: Dp = 24.dp
-private val FLAG_HEIGHT: Dp = 17.dp
+// Rectangular flag in the picker's 24×17 aspect, scaled to 28×20 so it sits
+// comfortably inside the 44dp pill.
+private val FLAG_WIDTH: Dp = 28.dp
+private val FLAG_HEIGHT: Dp = 20.dp
 private val FLAG_CORNER_RADIUS: Dp = 2.dp
 private val FLAG_GAP: Dp = 10.dp
 private val CHEVRON_SIZE: Dp = 14.dp
 private val CHEVRON_GAP: Dp = 4.dp
 
 /**
- * Pill-style currency picker used in the cart footer, sized to match the
- * hero card's [CurrencyPill] on the main screen so both surfaces read the
- * same. Tapping fires [onClick]; the parent owns the picker sheet state so
- * the two chips can share a single [com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet]
- * host and thread in the reference rate + subtotal for the preview column.
+ * The flag + ISO code + chevron pill that opens a currency picker. The
+ * converter's hero card and the cart footer both use it, and it's the shared
+ * element between them: opening the cart flies each pill from the converter
+ * into the matching cart pill, and back again on return (see
+ * [sharedCurrencyPillModifier] for when two pills count as the same one).
  */
 @Composable
-fun CartCurrencyChip(
+fun CurrencyPill(
     currency: Currency?,
+    side: PillSide,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val flagPainter = currency?.flagPainter()
     Row(
         modifier
-            .height(CHIP_HEIGHT)
-            .clip(RoundedCornerShape(CHIP_RADIUS))
+            .then(sharedCurrencyPillModifier(side, currency))
+            .height(PILL_HEIGHT)
+            .clip(RoundedCornerShape(PILL_RADIUS))
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .hapticClickable(enabled = currency != null, onClick = onClick)
-            .padding(horizontal = CHIP_HORIZONTAL_PADDING),
+            .padding(horizontal = PILL_HORIZONTAL_PADDING),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {

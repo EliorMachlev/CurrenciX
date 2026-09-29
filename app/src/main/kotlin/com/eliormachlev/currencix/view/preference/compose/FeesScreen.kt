@@ -69,8 +69,7 @@ internal sealed interface EditorKind {
 }
 
 /**
- * Full fee-manager screen — Compose replacement for the old
- * PreferenceFragmentCompat-backed FeeManagerFragment. Observes fees via the
+ * Full fee-manager screen. Observes fees via the
  * [viewModel]; opens per-category picker/editor dialogs via local state so a
  * single [FeeEditorDialog] instance is reused across categories. Currency
  * selection is fully compose-native — [FeeEditorDialog] hosts its own

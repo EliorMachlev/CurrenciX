@@ -11,6 +11,8 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
+import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
 import com.eliormachlev.currencix.view.main.compose.MainScreen
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,8 +33,18 @@ class MainScreenScreenshotTest {
 
 @Composable
 private fun MainScreenPreview() {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     MainScreen(
-        drawerState = rememberDrawerState(DrawerValue.Closed),
+        drawerState = drawerState,
+        topBar = {
+            ConverterTopBar(
+                drawerState = drawerState,
+                onToggleDrawer = {},
+                actions = ConverterTopBarActions(onTimeline = {}, onCart = {}, onQuickConversions = {}, onHistoricalRates = {}),
+                startReveal = false,
+                onFirstFrame = {},
+            )
+        },
         isRefreshing = false,
         onRefresh = {},
         isRefreshDrawerEnabled = true,

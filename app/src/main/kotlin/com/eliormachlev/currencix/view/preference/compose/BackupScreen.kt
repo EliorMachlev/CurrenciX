@@ -45,14 +45,11 @@ private enum class BackupSection {
 }
 
 /**
- * Full backup-and-restore screen — Compose replacement for the old
- * PreferenceFragmentCompat-backed BackupFragment. Renders two preference cards
- * and dispatches the active dialog off the [viewModel]'s dialog state. SAF
- * launcher fires and toast handling stay in the hosting Fragment because
- * ActivityResult contracts must be registered on a lifecycle owner and
- * [android.widget.Toast] wants a real Context anyway; the screen calls back
- * through [onLaunchExport] / [onLaunchImport] / [onImportConfirmed] once its
- * own dialog state has settled.
+ * Full backup-and-restore screen. Renders two preference cards and
+ * dispatches the active dialog off the [viewModel]'s dialog state. The
+ * document pickers and toasts live in the route (BackupRoute); the screen
+ * calls back through [onLaunchExport] / [onLaunchImport] /
+ * [onImportConfirmed] once its own dialog state has settled.
  */
 @Composable
 fun BackupScreen(

@@ -6,11 +6,10 @@
     shown while the platform hosts the splash; once Compose is ready to
     render its own animated reveal, MainActivity releases the keep-on-screen
     condition and installs postSplashScreenTheme — the normal AppTheme —
-    which BaseActivity may further swap for AppTheme.PureBlack.
+    which MainActivity may further swap for AppTheme.PureBlack.
 
-    Only MainActivity uses this splash theme (see AndroidManifest.xml). The
-    other Activities keep AppTheme so navigating into them never re-shows the
-    launcher splash.
+    MainActivity is the app's only Activity; every screen is a Compose
+    destination inside it, so the launcher splash shows once per launch.
 -->
 <resources>
     <style name="AppTheme.Splash" parent="Theme.SplashScreen">

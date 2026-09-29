@@ -42,7 +42,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -69,16 +68,9 @@ private val BUTTON_ROW_GAP: Dp = 8.dp
 // overlay remains interactive even during the fade because the pointer-input
 // handler is attached above the alpha layer.
 
-// Hamburger anchor is synthesized: the ActionBar sits outside the Compose
-// tree so we can't measure it. This size + offset from the top-left of the
-// window is a close-enough highlight for tour purposes across the phones we
-// target (matches the DrawerArrowDrawable's default hit-target).
-private val HAMBURGER_HINT_SIZE: Dp = 48.dp
-private val HAMBURGER_HINT_TOP: Dp = 12.dp
-
 /**
- * A single spotlight step: which anchor to highlight (may be null for the
- * hamburger, which is synthesized), the tooltip [title]/[body], and an
+ * A single spotlight step: which anchor to highlight, the tooltip
+ * [title]/[body], and an
  * optional inline action ([actionLabel]/[onAction]) rendered as an extra
  * button on the tooltip card. Used by [Spotlight] to drive the tour queue.
  */
@@ -120,12 +112,7 @@ fun Spotlight(
     var stepIndex by remember { mutableIntStateOf(0) }
     val step = steps.getOrNull(stepIndex) ?: return
     val registry = LocalOnboardingAnchors.current
-    val density = LocalDensity.current
-    val anchorRect =
-        when (step.anchor) {
-            OnboardingAnchor.Hamburger -> hamburgerHintRect(density)
-            else -> registry?.boundsOf(step.anchor)
-        }
+    val anchorRect = registry?.boundsOf(step.anchor)
     val advance = {
         if (stepIndex >= steps.lastIndex) onDismiss() else stepIndex += 1
     }
@@ -337,17 +324,3 @@ private fun cardOffset(
     val yPx = max(0, below)
     return IntOffset(0, yPx)
 }
-
-// Synthesizes the hamburger anchor rect. The ActionBar hamburger sits above
-// the Compose ComposeView so we can't measure it via a Modifier; instead we
-// paint a same-shape hint at the well-known top-left position.
-private fun hamburgerHintRect(density: Density): Rect =
-    with(density) {
-        val size = HAMBURGER_HINT_SIZE.toPx()
-        val top = HAMBURGER_HINT_TOP.toPx()
-        // Left edge inset by the same top margin so the halo doesn't touch
-        // the screen edge — reads as "toolbar affordance" rather than "system
-        // gesture area".
-        val left = top
-        Rect(left = left, top = top, right = left + size, bottom = top + size)
-    }
