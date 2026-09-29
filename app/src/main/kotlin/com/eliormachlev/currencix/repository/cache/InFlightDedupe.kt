@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.repository.cache
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.sync.Mutex
@@ -42,8 +43,12 @@ internal class InFlightDedupe<V : Any> {
         val deferred =
             mutex.withLock {
                 inflight[key.stableId]
+                    // LAZY: the fetch starts on the await below, after the
+                    // entry is registered and the lock released — so nobody
+                    // can see it running and still find the map empty, or
+                    // queue on the lock while it finishes and start a second.
                     ?: scope
-                        .async { producer() }
+                        .async(start = CoroutineStart.LAZY) { producer() }
                         .also { newDeferred ->
                             inflight[key.stableId] = newDeferred
                             // Detach in the completion handler; guarded by the
