@@ -29,25 +29,23 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-// The Material 3 top bars the pushed screens wear: medium (large title under
-// the actions) and small (what it collapses into, and what short screens get).
+// The Material 3 top bars the pushed screens wear: the timeline's small bar
+// (pair beside the back arrow) and the cart's medium one.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
 class TopBarsScreenshotTest {
-    @Test fun timelineBarMedium() = captureMatrix("top_bar_timeline_medium") { TimelineBar(TopBarStyle.Medium) }
-
-    @Test fun timelineBarSmall() = captureMatrix("top_bar_timeline_small") { TimelineBar(TopBarStyle.Small) }
+    @Test fun timelineBar() = captureMatrix("top_bar_timeline") { TimelineBar() }
 
     @Test fun cartBarMedium() = captureMatrix("top_bar_cart_medium") { CartBar() }
 }
 
 @Composable
-private fun TimelineBar(style: TopBarStyle) {
+private fun TimelineBar() {
     ScreenScaffold(
-        title = { TimelineTitle(Currency.EUR to Currency.USD) },
+        title = { TimelineTitle(Currency.USD to Currency.ILS) },
         onBack = {},
-        style = style,
+        style = TopBarStyle.Small,
         actions = {
             TopBarAction(painterResource(R.drawable.ic_tune), "Graph options", onClick = {})
             TopBarAction(painterResource(R.drawable.ic_shuffle), "Swap", onClick = {})

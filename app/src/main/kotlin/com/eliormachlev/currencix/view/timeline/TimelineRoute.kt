@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -42,6 +48,7 @@ import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
+import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
@@ -50,20 +57,22 @@ import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
 import java.time.format.DateTimeFormatter
 
-// Stand-ins for the two ISO codes while the localized "<b>%1$s</b> to
-// <b>%2$s</b>" title is parsed, so each code can be swapped for flag + code.
-// Private-use code points: no translation contains them.
-private const val FROM_TOKEN = ''
-private const val TO_TOKEN = ''
 private const val FLAG_FROM_ID = "flagFrom"
 private const val FLAG_TO_ID = "flagTo"
+private const val ARROW_ID = "arrow"
+
+// Breathing room in the title: an en space after each flag and around the
+// arrow, so the pieces don't run together.
+private const val FLAG_GAP = "\u2002"
+private const val TITLE_GAP = "\u2002"
 
 // Inline flag in the title, in the flag artwork's 24×17 aspect.
 private val TITLE_FLAG_WIDTH = 1.3.em
 private val TITLE_FLAG_HEIGHT = 0.92.em
 private val TITLE_FLAG_CORNER = 2.dp
+private val TITLE_ARROW_SIZE = 1.1.em
 
-/** Rate history for [screen]'s pair, under a top bar titled "🇪🇺 EUR to 🇺🇸 USD". */
+/** Rate history for [screen]'s pair, under a small top bar titled "🇺🇸 $ USD → 🇮🇱 ₪ ILS". */
 @Composable
 fun TimelineRoute(
     screen: Screen.Timeline,
@@ -80,9 +89,11 @@ fun TimelineRoute(
     val error by model.getError().observeAsState()
     var showGraphOptions by rememberSaveable { mutableStateOf(false) }
 
+    // Small bar: the pair sits beside the back arrow, leaving the height to the chart.
     ScreenScaffold(
         title = { TimelineTitle(pair) },
         onBack = onBack,
+        style = TopBarStyle.Small,
         actions = {
             TopBarAction(
                 icon = painterResource(R.drawable.ic_tune),
@@ -164,22 +175,22 @@ private class ChartPrefs(
     val dateFormat = db.getDateFormat()
 }
 
-// "🇪🇺 EUR to 🇺🇸 USD": the localized title with a flag before each code.
+// "🇺🇸 $ USD → 🇮🇱 ₪ ILS": each side's flag, symbol and code, joined by an
+// arrow — shorter than the localized "to", so the pair fits beside the back
+// arrow in a small bar. Screen readers still hear the localized sentence.
 @Composable
 internal fun TimelineTitle(pair: Pair<Currency, Currency>?) {
     val (from, to) = pair ?: return
-    val template = stringResource(R.string.activity_timeline_title, FROM_TOKEN, TO_TOKEN)
+    val spoken = AnnotatedString.fromHtml(stringResource(R.string.activity_timeline_title, from.iso4217Alpha(), to.iso4217Alpha())).text
+    val symbolColor = MaterialTheme.colorScheme.onSurfaceVariant
     val text =
-        remember(template, from, to) {
-            val plain = AnnotatedString.fromHtml(template).text
+        remember(from, to, symbolColor) {
             buildAnnotatedString {
-                plain.forEach { char ->
-                    when (char) {
-                        FROM_TOKEN -> appendFlaggedCode(FLAG_FROM_ID, from)
-                        TO_TOKEN -> appendFlaggedCode(FLAG_TO_ID, to)
-                        else -> append(char)
-                    }
-                }
+                appendSide(FLAG_FROM_ID, from, symbolColor)
+                append(TITLE_GAP)
+                appendInlineContent(ARROW_ID, alternateText = "→")
+                append(TITLE_GAP)
+                appendSide(FLAG_TO_ID, to, symbolColor)
             }
         }
     val flagFrom = from.flagPainter()
@@ -188,17 +199,40 @@ internal fun TimelineTitle(pair: Pair<Currency, Currency>?) {
         mapOf(
             FLAG_FROM_ID to inlineFlag { Image(flagFrom, contentDescription = null, modifier = it) },
             FLAG_TO_ID to inlineFlag { Image(flagTo, contentDescription = null, modifier = it) },
+            ARROW_ID to
+                InlineTextContent(Placeholder(TITLE_ARROW_SIZE, TITLE_ARROW_SIZE, PlaceholderVerticalAlign.TextCenter)) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = symbolColor,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                },
         )
-    Text(text = text, inlineContent = inlineContent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    Text(
+        text = text,
+        inlineContent = inlineContent,
+        style = MaterialTheme.typography.titleMedium,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.clearAndSetSemantics { contentDescription = spoken },
+    )
 }
 
-private fun AnnotatedString.Builder.appendFlaggedCode(
+// Flag, then the symbol (when the currency has one besides its code) in a
+// quieter tone, then the code in bold.
+private fun AnnotatedString.Builder.appendSide(
     flagId: String,
     currency: Currency,
+    symbolColor: Color,
 ) {
     val code = currency.iso4217Alpha()
     appendInlineContent(flagId, alternateText = code)
-    append(' ')
+    append(FLAG_GAP)
+    currency.symbol()?.takeIf { it != code }?.let { symbol ->
+        withStyle(SpanStyle(color = symbolColor)) { append(symbol) }
+        append(' ')
+    }
     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(code) }
 }
 
