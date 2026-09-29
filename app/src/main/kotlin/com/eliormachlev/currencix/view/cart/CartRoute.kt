@@ -6,14 +6,6 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.FileUpload
-import androidx.compose.material.icons.outlined.FolderOpen
-import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material.icons.outlined.SaveAs
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -109,13 +101,13 @@ private fun cartMenu(host: CartHost): List<OverflowAction> {
     val clear = stringResource(R.string.cart_menu_clear)
     return remember(host, share, save, saveAs, load, export, import, clear) {
         listOf(
-            OverflowAction(share, Icons.Outlined.Share) { host.shareCoordinator.show() },
-            OverflowAction(save, Icons.Outlined.Save) { host.saveLoad.saveOrPromptForName() },
-            OverflowAction(saveAs, Icons.Outlined.SaveAs) { host.saveLoad.showSaveAsDialog() },
-            OverflowAction(load, Icons.Outlined.FolderOpen) { host.saveLoad.showLoadDialog() },
-            OverflowAction(export, Icons.Outlined.FileUpload) { host.fileIo.launchExport() },
-            OverflowAction(import, Icons.Outlined.FileDownload) { host.fileIo.launchImport() },
-            OverflowAction(clear, Icons.Outlined.DeleteOutline, destructive = true, separated = true) {
+            OverflowAction(share, R.drawable.ic_share) { host.shareCoordinator.show() },
+            OverflowAction(save, R.drawable.ic_save) { host.saveLoad.saveOrPromptForName() },
+            OverflowAction(saveAs, R.drawable.ic_save_as) { host.saveLoad.showSaveAsDialog() },
+            OverflowAction(load, R.drawable.ic_folder_open) { host.saveLoad.showLoadDialog() },
+            OverflowAction(export, R.drawable.ic_upload) { host.fileIo.launchExport() },
+            OverflowAction(import, R.drawable.ic_download) { host.fileIo.launchImport() },
+            OverflowAction(clear, R.drawable.ic_delete, destructive = true, separated = true) {
                 host.overlays.clearConfirmVisible = true
             },
         )

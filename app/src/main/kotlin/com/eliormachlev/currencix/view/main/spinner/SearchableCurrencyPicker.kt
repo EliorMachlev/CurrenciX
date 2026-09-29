@@ -14,11 +14,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -180,7 +176,7 @@ private fun SearchBar(
             placeholder = { Text(text = stringResource(id = R.string.a11y_search_currencies)) },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Filled.Search,
+                    painter = painterResource(R.drawable.ic_search),
                     contentDescription = stringResource(id = R.string.a11y_search_currencies),
                 )
             },
@@ -188,7 +184,7 @@ private fun SearchBar(
                 if (query.isNotEmpty()) {
                     IconButton(onClick = rememberHapticOnClick { onQueryChange("") }) {
                         Icon(
-                            imageVector = Icons.Filled.Clear,
+                            painter = painterResource(R.drawable.ic_close),
                             contentDescription = stringResource(id = R.string.a11y_clear_search),
                         )
                     }
@@ -208,7 +204,7 @@ private fun SearchBar(
             modifier = Modifier.padding(start = dimensionResource(id = R.dimen.margin1x)),
         ) {
             Icon(
-                imageVector = if (filterStarred) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                painter = painterResource(if (filterStarred) R.drawable.ic_favorite_filled else R.drawable.ic_favorite),
                 contentDescription = stringResource(id = R.string.tooltip_filter_starred),
                 tint =
                     if (filterStarred) {

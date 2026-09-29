@@ -1,5 +1,7 @@
 package com.eliormachlev.currencix.view.main.compose
 
+import android.content.Context
+import android.graphics.Paint
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
@@ -20,10 +22,12 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
@@ -36,6 +40,13 @@ import com.eliormachlev.currencix.view.compose.theme.Wordmark
 
 private val WORDMARK_TITLE_SIZE = 26.sp
 private val DRAWER_ARROW_SIZE = 24.dp
+
+// The morphing hamburger, drawn to match the Material Symbols Rounded "menu"
+// the rest of the icons come from: 1.5 dp bars with round caps, 18 dp wide
+// end to end, with 3.75 dp of space between bars.
+private val DRAWER_BAR_THICKNESS = 1.5.dp
+private val DRAWER_BAR_LENGTH = 18.dp
+private val DRAWER_BAR_GAP = 3.75.dp
 
 /** The converter bar's shortcut actions — each also lives in the drawer. */
 @Immutable
@@ -110,7 +121,8 @@ fun ConverterTopBar(
 @Composable
 private fun DrawerArrowIcon(drawerState: DrawerState) {
     val context = LocalContext.current
-    val drawable = remember(context) { DrawerArrowDrawable(context) }
+    val density = LocalDensity.current
+    val drawable = remember(context, density) { symbolStyleDrawerArrow(context, density) }
     val progress = remember { mutableFloatStateOf(0f) }
     LaunchedEffect(drawerState) {
         var closedOffset = Float.NaN
@@ -136,3 +148,17 @@ private fun DrawerArrowIcon(drawerState: DrawerState) {
         drawIntoCanvas { canvas -> drawable.draw(canvas.nativeCanvas) }
     }
 }
+
+private fun symbolStyleDrawerArrow(
+    context: Context,
+    density: Density,
+): DrawerArrowDrawable =
+    DrawerArrowDrawable(context).apply {
+        with(density) {
+            barThickness = DRAWER_BAR_THICKNESS.toPx()
+            // Round caps reach half a bar past each end.
+            barLength = (DRAWER_BAR_LENGTH - DRAWER_BAR_THICKNESS).toPx()
+            gapSize = DRAWER_BAR_GAP.toPx()
+        }
+        paint.strokeCap = Paint.Cap.ROUND
+    }

@@ -228,7 +228,6 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     // Pin material3 to latest stable (newer than the BOM ships).
     implementation("androidx.compose.material3:material3:1.4.0")
-    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.runtime:runtime")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.activity:activity-compose:1.13.0")

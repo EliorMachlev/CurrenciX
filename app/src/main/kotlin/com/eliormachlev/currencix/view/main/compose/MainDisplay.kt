@@ -29,8 +29,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -616,7 +614,7 @@ private fun SwapFab(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            imageVector = Icons.Filled.SwapHoriz,
+            painter = painterResource(R.drawable.ic_swap_horiz),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onPrimary,
             modifier =

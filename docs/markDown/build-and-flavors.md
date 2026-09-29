@@ -64,7 +64,6 @@ Replaces SharedPreferences across every namespace — see [architecture.md](arch
 |---|---|
 | `androidx.compose:compose-bom` | 2026.08.00 |
 | `androidx.compose.material3:material3` | 1.4.0 (pinned newer than the BOM ships) |
-| `androidx.compose.material:material-icons-extended` | via BOM |
 | `androidx.compose.ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
 | `androidx.activity:activity-compose` | 1.13.0 |
 | `androidx.navigation3:navigation3-runtime` / `navigation3-ui` | 1.2.0 |

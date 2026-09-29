@@ -1,10 +1,8 @@
 package com.eliormachlev.currencix.view.compose
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,10 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
@@ -53,7 +51,7 @@ enum class TopBarStyle { Small, Medium }
 @Immutable
 data class OverflowAction(
     val label: String,
-    val icon: ImageVector,
+    @param:DrawableRes val icon: Int,
     val destructive: Boolean = false,
     // Draws a divider above this entry, to set a destructive action apart.
     val separated: Boolean = false,
@@ -136,7 +134,7 @@ private fun Color.takeOrElse(fallback: Color): Color = if (this == Color.Unspeci
 private fun BackButton(onBack: () -> Unit) {
     IconButton(onClick = rememberHapticOnClick(onBack)) {
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            painter = painterResource(R.drawable.ic_arrow_back),
             contentDescription = stringResource(R.string.desc_navigate_up),
         )
     }
@@ -169,7 +167,7 @@ fun TopBarOverflowMenu(
     var expanded by rememberSaveable { mutableStateOf(false) }
     val open = rememberHapticOnClick { expanded = true }
     IconButton(onClick = open, modifier = modifier) {
-        Icon(imageVector = Icons.Filled.MoreVert, contentDescription = stringResource(R.string.desc_more_options))
+        Icon(painter = painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.desc_more_options))
     }
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
         items.forEach { item ->
@@ -189,7 +187,7 @@ fun TopBarOverflowMenu(
                         color = if (item.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                     )
                 },
-                leadingIcon = { Icon(imageVector = item.icon, contentDescription = null, tint = tint) },
+                leadingIcon = { Icon(painter = painterResource(item.icon), contentDescription = null, tint = tint) },
                 onClick = rememberHapticOnClick(onClick),
             )
         }

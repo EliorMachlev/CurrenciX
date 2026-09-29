@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,7 +45,7 @@ private fun TimelineBar() {
         style = TopBarStyle.Small,
         actions = {
             TopBarAction(painterResource(R.drawable.ic_tune), "Graph options", onClick = {})
-            TopBarAction(painterResource(R.drawable.ic_shuffle), "Swap", onClick = {})
+            TopBarAction(painterResource(R.drawable.ic_swap_horiz), "Swap", onClick = {})
         },
         modifier = Modifier.height(BAR_PREVIEW_HEIGHT),
     ) { padding -> BodyStub(Modifier.padding(padding)) }
@@ -62,8 +59,8 @@ private fun CartBar() {
         actions = {
             TopBarOverflowMenu(
                 listOf(
-                    OverflowAction("Share", Icons.Outlined.Share) {},
-                    OverflowAction("Clear", Icons.Outlined.DeleteOutline, destructive = true, separated = true) {},
+                    OverflowAction("Share", R.drawable.ic_share) {},
+                    OverflowAction("Clear", R.drawable.ic_delete, destructive = true, separated = true) {},
                 ),
             )
         },

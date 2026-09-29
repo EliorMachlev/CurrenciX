@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -38,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -151,7 +149,7 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
     ) {
         if (active) {
             Icon(
-                imageVector = Icons.Filled.Delete,
+                painter = painterResource(R.drawable.ic_delete),
                 contentDescription = stringResource(id = R.string.cart_delete_item),
                 tint = MaterialTheme.colorScheme.onError,
                 modifier =
@@ -235,7 +233,7 @@ fun CartItemRow(
 @Composable
 private fun DragHandle(modifier: Modifier = Modifier) {
     Icon(
-        imageVector = Icons.Filled.DragHandle,
+        painter = painterResource(R.drawable.ic_drag_handle),
         contentDescription = stringResource(id = R.string.cart_reorder_item),
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = modifier.padding(end = dimensionResource(id = R.dimen.margin1x)),

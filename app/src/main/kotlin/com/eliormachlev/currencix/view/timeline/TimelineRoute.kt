@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -102,7 +100,7 @@ fun TimelineRoute(
             )
             // Swapping re-fetches the pair; wait out a refresh or an error first.
             TopBarAction(
-                icon = painterResource(R.drawable.ic_shuffle),
+                icon = painterResource(R.drawable.ic_swap_horiz),
                 contentDescription = stringResource(R.string.desc_toggle_currencies),
                 onClick = model::toggleCurrencies,
                 enabled = !inFlight && error == null,
@@ -202,7 +200,7 @@ internal fun TimelineTitle(pair: Pair<Currency, Currency>?) {
             ARROW_ID to
                 InlineTextContent(Placeholder(TITLE_ARROW_SIZE, TITLE_ARROW_SIZE, PlaceholderVerticalAlign.TextCenter)) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        painter = painterResource(R.drawable.ic_arrow_forward),
                         contentDescription = null,
                         tint = symbolColor,
                         modifier = Modifier.fillMaxSize(),
