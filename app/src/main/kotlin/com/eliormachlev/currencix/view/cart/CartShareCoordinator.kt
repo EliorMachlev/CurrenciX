@@ -15,6 +15,8 @@ import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
 import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
+import com.eliormachlev.currencix.viewmodel.cart.perPerson
 
 private const val CSV_MIME = "text/csv"
 private const val CSV_EXT = ".csv"
@@ -117,6 +119,9 @@ class CartShareCoordinator(
             }
             appendLine("—")
             appendLine(context.getString(R.string.cart_share_subtotal, snapshot.subtotal.toCartDisplayString(), baseIso))
+            snapshot.cart.extras.tipPercent?.let { percent ->
+                appendLine(context.getString(R.string.cart_share_tip, percent.toPlainString(), snapshot.tip.toCartDisplayString(), baseIso))
+            }
             if (snapshot.isConverting) {
                 appendLine(
                     context.getString(R.string.cart_share_converted, snapshot.convertedSubtotal.toCartDisplayString(), destIso),
@@ -127,5 +132,23 @@ class CartShareCoordinator(
                 appendLine(context.getString(R.string.cart_share_fees, combinedStack.toCartFeePercentDisplay()))
             }
             append(context.getString(R.string.cart_share_total, snapshot.total.toCartDisplayString(), destIso))
+            appendExtras(snapshot, destIso)
         }
+
+    // "Per person (÷3): …" and "Left in budget: …" / "Over budget: …" after the total.
+    private fun StringBuilder.appendExtras(
+        snapshot: CartSnapshot,
+        destIso: String,
+    ) {
+        val extras = snapshot.cart.extras
+        if (extras.splitWays > 1) {
+            val each = perPerson(snapshot.total, extras.splitWays).toCartDisplayString()
+            append('\n').append(context.getString(R.string.cart_share_per_person, extras.splitWays, each, destIso))
+        }
+        extras.budget?.let { budget ->
+            val left = budgetLeft(snapshot.total, budget)
+            val res = if (left.signum() < 0) R.string.cart_share_over_budget else R.string.cart_share_budget_left
+            append('\n').append(context.getString(res, left.abs().toCartDisplayString(), destIso))
+        }
+    }
 }

@@ -156,4 +156,12 @@
     <string name="title_changelog">Ŝanĝoprotokolo</string>
     <string name="dynamic_color_title">Ekranfonaj koloroj</string>
     <string name="dynamic_color_summary">Kolorigi la apon per la koloroj de via ekranfono (Material You)</string>
+    <string name="provider_group_free">Senpagaj</string>
+    <string name="provider_group_api_key">Bezonas API-ŝlosilon</string>
+    <string name="provider_main_chip">Ĉefa</string>
+    <string name="provider_cadence_hourly">Ĝisdatigo ĉiuhore</string>
+    <string name="provider_cadence_daily">Ĝisdatigo ĉiun labortagon</string>
+    <string name="provider_cadence_monthly">Ĝisdatigo unufoje monate</string>
+    <string name="fallback_provider_title">Rezerva provizanto</string>
+    <string name="fallback_provider_summary">%1$s · uzata, kiam %2$s ne atingeblas</string>
 </resources>

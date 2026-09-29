@@ -4,7 +4,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.SavedCart
-import com.eliormachlev.currencix.model.rateFor
+import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import java.math.BigDecimal
 import java.math.MathContext
@@ -27,10 +27,16 @@ internal fun subtotalOf(cart: SavedCart?): BigDecimal {
     return cart.items.fold(BigDecimal.ZERO) { acc, item -> acc + evaluateItem(item) }
 }
 
+/** The tip / tax on top of the items, in the base currency; zero without one. */
+internal fun tipOf(cart: SavedCart?): BigDecimal {
+    val percent = cart?.extras?.tipPercent ?: return BigDecimal.ZERO
+    return subtotalOf(cart).multiply(percent).divide(PERCENT, MathContext.DECIMAL128)
+}
+
 /**
- * Sum every row after currency conversion, but before fees. This is the
- * "fair" destination amount — the exchange result the user *would* pay if
- * the pipeline stopped here.
+ * Items plus tip / tax, converted, before fees — the "fair" destination
+ * amount the user *would* pay if the pipeline stopped here. The tip comes
+ * before fees: a card's FX fee is charged on everything paid, tip included.
  */
 internal fun convertedSubtotalOf(
     cart: SavedCart?,
@@ -38,8 +44,22 @@ internal fun convertedSubtotalOf(
 ): BigDecimal {
     cart ?: return BigDecimal.ZERO
     val (base, dest) = cart.resolvedPair()
-    return convertAmount(subtotalOf(cart), base, dest, rates)
+    return convertAmount(subtotalOf(cart) + tipOf(cart), base, dest, rates)
 }
+
+/** Each person's share of [total] when the cart splits it [ways] ways. */
+internal fun perPerson(
+    total: BigDecimal,
+    ways: Int,
+): BigDecimal = total.divide(BigDecimal(ways.coerceAtLeast(1)), MathContext.DECIMAL128)
+
+/** What's left of [budget] after [total]; negative when over. */
+internal fun budgetLeft(
+    total: BigDecimal,
+    budget: BigDecimal,
+): BigDecimal = budget - total
+
+private val PERCENT = BigDecimal(100)
 
 /**
  * Total in the destination currency: subtotal → converted at [rates] →
@@ -79,9 +99,4 @@ internal fun convertAmount(
     base: Currency,
     dest: Currency,
     rates: ExchangeRates?,
-): BigDecimal {
-    if (base == dest) return amount
-    val baseRate = rates?.rateFor(base)?.value ?: return amount
-    val destRate = rates.rateFor(dest)?.value ?: return amount
-    return amount.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
-}
+): BigDecimal = rates?.convert(amount, base, dest) ?: amount

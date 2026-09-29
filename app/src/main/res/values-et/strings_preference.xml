@@ -144,4 +144,12 @@
     <string name="fee_untitled">Nimetu</string>
     <string name="dynamic_color_title">Taustapildi värvid</string>
     <string name="dynamic_color_summary">Värvi rakendus taustapildi värvidega (Material You)</string>
+    <string name="provider_group_free">Tasuta</string>
+    <string name="provider_group_api_key">Vajab API-võtit</string>
+    <string name="provider_main_chip">Peamine</string>
+    <string name="provider_cadence_hourly">Uueneb iga tund</string>
+    <string name="provider_cadence_daily">Uueneb igal tööpäeval</string>
+    <string name="provider_cadence_monthly">Uueneb kord kuus</string>
+    <string name="fallback_provider_title">Varuteenusepakkuja</string>
+    <string name="fallback_provider_summary">%1$s · kasutatakse, kui %2$s pole kättesaadav</string>
 </resources>

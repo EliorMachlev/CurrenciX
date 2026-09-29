@@ -1,10 +1,12 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.app.Application
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerConversion
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
 import kotlinx.collections.immutable.persistentListOf
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -18,10 +20,12 @@ import java.math.BigDecimal
 // the "starred filter on" state that hides non-favorites.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class SearchableCurrencyPickerScreenshotTest {
+    @get:Rule val shots = ScreenshotRule()
+
     @Test fun currencyPickerAll() =
-        captureMatrix("currency_picker_all") {
+        shots.captureMatrix("currency_picker_all") {
             SearchableCurrencyPicker(
                 rates = SAMPLE_RATES,
                 stars = SAMPLE_STARS,
@@ -36,7 +40,7 @@ class SearchableCurrencyPickerScreenshotTest {
         }
 
     @Test fun currencyPickerStarredOnly() =
-        captureMatrix("currency_picker_starred") {
+        shots.captureMatrix("currency_picker_starred") {
             SearchableCurrencyPicker(
                 rates = SAMPLE_RATES,
                 stars = SAMPLE_STARS,

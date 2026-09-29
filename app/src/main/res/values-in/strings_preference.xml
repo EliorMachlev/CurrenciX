@@ -148,4 +148,12 @@
     <string name="title_changelog">Catatan perubahan</string>
     <string name="dynamic_color_title">Warna wallpaper</string>
     <string name="dynamic_color_summary">Warnai aplikasi dengan warna dari wallpaper Anda (Material You)</string>
+    <string name="provider_group_free">Gratis</string>
+    <string name="provider_group_api_key">Memerlukan kunci API</string>
+    <string name="provider_main_chip">Utama</string>
+    <string name="provider_cadence_hourly">Diperbarui setiap jam</string>
+    <string name="provider_cadence_daily">Diperbarui setiap hari kerja</string>
+    <string name="provider_cadence_monthly">Diperbarui sebulan sekali</string>
+    <string name="fallback_provider_title">Penyedia cadangan</string>
+    <string name="fallback_provider_summary">%1$s · digunakan jika %2$s tidak dapat dijangkau</string>
 </resources>

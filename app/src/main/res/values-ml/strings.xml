@@ -38,7 +38,7 @@
     <string name="historical_banner">ചരിത്രപരം • %1$s മുതലുള്ള നിരക്കുകൾ</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">നിങ്ങൾ അവസാനം ഉപയോഗിച്ച കറൻസി ജോഡിക്കുള്ള ഏറ്റവും പുതിയ വിനിമയ നിരക്ക്.</string>
+    <string name="widget_description">നിങ്ങൾ അവസാനം ഉപയോഗിച്ചതോ തിരഞ്ഞെടുക്കുന്നതോ ആയ കറൻസി ജോഡിയുടെ പുതിയ നിരക്കും 30 ദിവസത്തെ പ്രവണതയും.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s പ്രകാരം</string>
     <string name="widget_footer_empty">നിരക്കുകൾ ലോഡുചെയ്യാൻ ആപ്പ് തുറക്കുക.</string>
@@ -117,4 +117,34 @@
     <string name="recent_pair_switch">%1$s → %2$s എന്നതിലേക്ക് മാറുക</string>
     <string name="cart_section_pinned">പിൻ ചെയ്തവ</string>
     <string name="cart_section_others">മറ്റ് ഇനങ്ങൾ</string>
+    <string name="fallback_banner">%1$s ലഭ്യമല്ല • %2$s ഉപയോഗിക്കുന്നു</string>
+    <string name="process_text_label">കറൻസി മാറ്റുക</string>
+    <string name="selection_open_app">%1$s-ൽ തുറക്കുക</string>
+    <string name="selection_copy">പകർത്തുക</string>
+    <string name="selection_no_amount">“%1$s” എന്നതിൽ തുകയൊന്നും കണ്ടെത്തിയില്ല.</string>
+    <string name="selection_no_rates">വിനിമയ നിരക്കുകൾ ലോഡ് ചെയ്യാൻ %1$s ഒരിക്കൽ തുറക്കുക.</string>
+    <string name="selection_assumed_currency">ടെക്സ്റ്റിൽ കറൻസിയില്ല, അതിനാൽ %1$s ആയി വായിച്ചു.</string>
+    <string name="shortcut_pair_long">%1$s എന്നത് %2$s ആക്കുക</string>
+    <string name="widget_configure_title">വിജറ്റ്</string>
+    <string name="widget_follow_converter_title">കൺവെർട്ടറെ പിന്തുടരുക</string>
+    <string name="widget_follow_converter_summary">ആപ്പിൽ അവസാനം ഉപയോഗിച്ച ജോഡി കാണിക്കുക</string>
+    <string name="done">പൂർത്തിയായി</string>
+    <string name="cart_share_tip">ടിപ്പ് / നികുതി (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">ഒരാൾക്ക് (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">ബജറ്റിൽ ശേഷിക്കുന്നത്: %1$s %2$s</string>
+    <string name="cart_share_over_budget">ബജറ്റിന് മുകളിൽ: %1$s %2$s</string>
+    <string name="cart_menu_extras">പങ്കിടൽ, ടിപ്പ്, ബജറ്റ്</string>
+    <string name="cart_tip_label">ടിപ്പ് / നികുതി</string>
+    <string name="cart_tip_row">ടിപ്പ് / നികുതി (%1$s%%)</string>
+    <string name="cart_split_label">പങ്കിടുന്നവർ</string>
+    <string name="cart_split_decrease">കുറച്ച് ആളുകൾ</string>
+    <string name="cart_split_increase">കൂടുതൽ ആളുകൾ</string>
+    <string name="cart_per_person_row">ഒരാൾക്ക് (÷%1$d)</string>
+    <string name="cart_budget_label">ബജറ്റ്</string>
+    <string name="cart_budget_left_row">ബജറ്റിൽ ശേഷിക്കുന്നത്</string>
+    <string name="cart_over_budget_row">ബജറ്റിന് മുകളിൽ</string>
+    <string name="menu_scan_price">വില സ്കാൻ ചെയ്യുക</string>
+    <string name="scan_prices_title">കണ്ടെത്തിയ വിലകൾ</string>
+    <string name="scan_no_prices">ഫോട്ടോയിൽ വിലകളൊന്നും കണ്ടെത്തിയില്ല.</string>
+    <string name="scan_no_camera">ഫോട്ടോ എടുക്കാൻ ക്യാമറ ആപ്പില്ല.</string>
 </resources>

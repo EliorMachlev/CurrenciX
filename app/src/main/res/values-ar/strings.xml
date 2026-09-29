@@ -34,7 +34,7 @@
     <string name="historical_banner">بيانات تاريخية • أسعار من %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">أحدث سعر تحويل لآخر زوج عملات استخدمته.</string>
+    <string name="widget_description">أحدث سعر واتجاه 30 يومًا لآخر زوج عملات استخدمته، أو زوج تختاره.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">بتاريخ %s</string>
     <string name="widget_footer_empty">افتح التطبيق لتحميل الأسعار.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">التبديل إلى %1$s → %2$s</string>
     <string name="cart_section_pinned">مثبّتة</string>
     <string name="cart_section_others">عناصر أخرى</string>
+    <string name="fallback_banner">%1$s غير متاح • يتم استخدام %2$s</string>
+    <string name="process_text_label">تحويل العملة</string>
+    <string name="selection_open_app">فتح في %1$s</string>
+    <string name="selection_copy">نسخ</string>
+    <string name="selection_no_amount">لم يُعثر على مبلغ في “%1$s”.</string>
+    <string name="selection_no_rates">افتح %1$s مرة واحدة لتحميل أسعار الصرف.</string>
+    <string name="selection_assumed_currency">لا يحتوي النص على عملة، لذا قُرئ على أنه %1$s.</string>
+    <string name="shortcut_pair_long">تحويل %1$s إلى %2$s</string>
+    <string name="widget_configure_title">الأداة</string>
+    <string name="widget_follow_converter_title">متابعة المحوّل</string>
+    <string name="widget_follow_converter_summary">عرض الزوج الذي استخدمته آخر مرة في التطبيق</string>
+    <string name="done">تم</string>
+    <string name="cart_share_tip">البقشيش / الضريبة (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">للشخص (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">المتبقي من الميزانية: %1$s %2$s</string>
+    <string name="cart_share_over_budget">تجاوز الميزانية: %1$s %2$s</string>
+    <string name="cart_menu_extras">التقسيم والبقشيش والميزانية</string>
+    <string name="cart_tip_label">البقشيش / الضريبة</string>
+    <string name="cart_tip_row">البقشيش / الضريبة (%1$s%%)</string>
+    <string name="cart_split_label">التقسيم بين</string>
+    <string name="cart_split_decrease">أشخاص أقل</string>
+    <string name="cart_split_increase">أشخاص أكثر</string>
+    <string name="cart_per_person_row">للشخص (÷%1$d)</string>
+    <string name="cart_budget_label">الميزانية</string>
+    <string name="cart_budget_left_row">المتبقي من الميزانية</string>
+    <string name="cart_over_budget_row">تجاوز الميزانية</string>
+    <string name="menu_scan_price">مسح سعر</string>
+    <string name="scan_prices_title">الأسعار التي عُثر عليها</string>
+    <string name="scan_no_prices">لم يُعثر على أسعار في الصورة.</string>
+    <string name="scan_no_camera">لا يوجد تطبيق كاميرا لالتقاط الصورة.</string>
 </resources>

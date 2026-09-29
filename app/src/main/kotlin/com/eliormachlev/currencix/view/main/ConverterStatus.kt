@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleOwner
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.fromHtmlLegacy
@@ -66,6 +67,10 @@ class ConverterStatus(
     private var latestRatesTime: LocalTime? = null
     private var historicalDate: LocalDate? = null
 
+    // Set while the rates on screen came from the fallback provider:
+    // (main provider that failed, fallback that answered).
+    private var fallback: Pair<ApiProvider, ApiProvider>? = null
+
     // True when the most recent refresh failed (5xx, timeout, DNS, …) while
     // the device was online. Cleared once a new rates payload arrives — a
     // successful update is the definitive "provider is back".
@@ -86,6 +91,7 @@ class ConverterStatus(
         viewModel.getExchangeRates().observe(owner) { rates ->
             latestRatesDate = rates?.date
             latestRatesTime = rates?.time
+            fallback = rates?.fallbackFrom?.let { main -> rates.provider?.let { main to it } }
             if (rates != null) lastRefreshFailed = false
             recompute()
         }
@@ -126,15 +132,17 @@ class ConverterStatus(
         }
     }
 
-    // Ranking: Offline > Unreachable > Historical. Each condition subsumes
+    // Ranking: Offline > Unreachable > Fallback > Historical. Each condition subsumes
     // the "rates aren't fresh" signal of the next, so the most actionable
     // signal wins the pill.
     private fun recompute() {
+        val fallback = fallback
         bannerState.value =
             when {
                 !isOnline -> staleBanner(BannerKind.Offline, R.string.offline_banner_with_date, R.string.offline_banner_no_data)
                 lastRefreshFailed ->
                     staleBanner(BannerKind.Unreachable, R.string.unreachable_banner_with_date, R.string.unreachable_banner_no_data)
+                fallback != null -> fallbackBanner(fallback)
                 historicalDate != null ->
                     BannerContent(
                         BannerKind.Historical,
@@ -142,6 +150,12 @@ class ConverterStatus(
                     )
                 else -> null
             }
+    }
+
+    // "Bank of Israel unavailable • Using Frankfurter.app"
+    private fun fallbackBanner(providers: Pair<ApiProvider, ApiProvider>): BannerContent {
+        val (main, used) = providers
+        return BannerContent(BannerKind.Fallback, context.getString(R.string.fallback_banner, main.getName(context), used.getName(context)))
     }
 
     // Offline and unreachable read the same way: "…, last updated <date>",

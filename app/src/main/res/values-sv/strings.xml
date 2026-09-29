@@ -36,7 +36,7 @@
     <string name="historical_banner">Historiskt • Kurser från %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Senaste växelkurs för ditt senast använda valutapar.</string>
+    <string name="widget_description">Senaste kurs och 30-dagarstrend för ditt senast använda valutapar eller ett du väljer.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Per %s</string>
     <string name="widget_footer_empty">Öppna appen för att läsa in kurser.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Byt till %1$s → %2$s</string>
     <string name="cart_section_pinned">Fästa</string>
     <string name="cart_section_others">Övriga varor</string>
+    <string name="fallback_banner">%1$s är inte tillgänglig • Använder %2$s</string>
+    <string name="process_text_label">Konvertera valuta</string>
+    <string name="selection_open_app">Öppna i %1$s</string>
+    <string name="selection_copy">Kopiera</string>
+    <string name="selection_no_amount">Inget belopp hittades i ”%1$s”.</string>
+    <string name="selection_no_rates">Öppna %1$s en gång för att hämta växelkurser.</string>
+    <string name="selection_assumed_currency">Texten har ingen valuta, så den lästes som %1$s.</string>
+    <string name="shortcut_pair_long">Konvertera %1$s till %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Följ omräknaren</string>
+    <string name="widget_follow_converter_summary">Visa paret du senast använde i appen</string>
+    <string name="done">Klar</string>
+    <string name="cart_share_tip">Dricks / skatt (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Per person (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Kvar av budgeten: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Över budget: %1$s %2$s</string>
+    <string name="cart_menu_extras">Dela, dricks och budget</string>
+    <string name="cart_tip_label">Dricks / skatt</string>
+    <string name="cart_tip_row">Dricks / skatt (%1$s%%)</string>
+    <string name="cart_split_label">Dela mellan</string>
+    <string name="cart_split_decrease">Färre personer</string>
+    <string name="cart_split_increase">Fler personer</string>
+    <string name="cart_per_person_row">Per person (÷%1$d)</string>
+    <string name="cart_budget_label">Budget</string>
+    <string name="cart_budget_left_row">Kvar av budgeten</string>
+    <string name="cart_over_budget_row">Över budget</string>
+    <string name="menu_scan_price">Skanna ett pris</string>
+    <string name="scan_prices_title">Hittade priser</string>
+    <string name="scan_no_prices">Inga priser hittades på fotot.</string>
+    <string name="scan_no_camera">Ingen kameraapp för att ta fotot.</string>
 </resources>

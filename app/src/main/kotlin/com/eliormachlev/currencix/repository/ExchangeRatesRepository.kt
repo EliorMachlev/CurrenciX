@@ -88,24 +88,13 @@ class ExchangeRatesRepository(
      */
     fun getExchangeRates(): LiveData<ExchangeRates?> {
         if (ratesJob?.isActive != true) {
-            val provider = db.getApiProvider()
-            val historicalDate = db.getHistoricalDate()
-            val key =
-                RateCacheKey.RatesLatest(
-                    providerId = provider.id,
-                    baseIso = provider.baseCurrencyIso(),
-                    date = historicalDate,
-                )
             ratesJob =
                 launchApiCall {
-                    ratesCache
-                        .get(key)
-                        .map { it.copy(provider = provider) }
-                        .processResponse(
-                            successFlag = { success },
-                            errorMessage = { error },
-                            onSuccess = { db.insertExchangeRates(it) },
-                        )
+                    fetchRates(fresh = false).processResponse(
+                        successFlag = { success },
+                        errorMessage = { error },
+                        onSuccess = { db.insertExchangeRates(it) },
+                    )
                 }
         }
         return liveExchangeRates
@@ -123,19 +112,32 @@ class ExchangeRatesRepository(
      * with no UI visible, and the spinner in the hero card would flash on
      * next foregrounding for no user-facing reason.
      */
-    suspend fun refreshLatestRates(): Result<ExchangeRates> {
-        val provider = db.getApiProvider()
-        val historicalDate = db.getHistoricalDate()
+    suspend fun refreshLatestRates(): Result<ExchangeRates> = fetchRates(fresh = true).onSuccess { db.insertExchangeRates(it) }
+
+    // The main provider's rates; if it fails while online, the fallback's
+    // (Database.getFallbackProvider), marked with the main provider they
+    // stand in for. When both fail, the main provider's failure is the one
+    // reported. [fresh] bypasses the cache's freshness window.
+    private suspend fun fetchRates(fresh: Boolean): Result<ExchangeRates> {
+        val main = db.getApiProvider()
+        val result = loadRates(main, fresh)
+        if (!result.shouldTryFallback { success }) return result
+        val fallback = loadRates(db.getFallbackProvider(), fresh).map { it.copy(fallbackFrom = main) }
+        return if (fallback.isUsable { success }) fallback else result
+    }
+
+    private suspend fun loadRates(
+        provider: ApiProvider,
+        fresh: Boolean,
+    ): Result<ExchangeRates> {
         val key =
             RateCacheKey.RatesLatest(
                 providerId = provider.id,
                 baseIso = provider.baseCurrencyIso(),
-                date = historicalDate,
+                date = db.getHistoricalDate(),
             )
-        return ratesCache
-            .refresh(key)
-            .map { it.copy(provider = provider) }
-            .onSuccess { db.insertExchangeRates(it) }
+        val result = if (fresh) ratesCache.refresh(key) else ratesCache.get(key)
+        return result.map { it.copy(provider = provider) }
     }
 
     /**
@@ -156,65 +158,75 @@ class ExchangeRatesRepository(
         latestTimelineKey = key
         val existing = timelineJobs[key]
         if (existing?.isActive != true) {
-            val provider = db.getApiProvider()
-            val cached = db.getCachedTimeline(provider, base, symbol)
+            val main = db.getApiProvider()
             // Fast-paint: show cached data while the tail refresh runs. Gated on
             // latestTimelineKey so a prefetch for a stale pair can't paint over
             // whatever the user is currently looking at.
+            val cached = db.getCachedTimeline(main, base, symbol)
             if (cached != null && isCurrentTimelinePair(key)) liveTimeline.postValue(cached)
-
-            val today = LocalDate.now()
-            val windowStart = today.minusDays(TIMELINE_WINDOW_DAYS)
-            // Re-fetch the last cached day (in case it was preliminary) plus everything
-            // after it. If we have no cache, fetch the full window.
-            val fetchStart =
-                cached
-                    ?.rates
-                    ?.keys
-                    ?.lastOrNull()
-                    ?.let { maxOf(it, windowStart) }
-                    ?: windowStart
-
-            val cacheKey =
-                RateCacheKey.TimelineRange(
-                    providerId = provider.id,
-                    baseIso = base.iso4217Alpha(),
-                    symbolIso = symbol.iso4217Alpha(),
-                    startDate = fetchStart,
-                    endDate = today,
-                )
 
             val job =
                 launchApiCall {
-                    // refresh() rather than get() — the repo does its own
-                    // tail-merge against Database.getCachedTimeline, so
-                    // serving a stale RateCache entry here would skip the
-                    // missing-days fetch. We still benefit from RateCache's
-                    // retry-with-jitter + in-flight dedupe on the upstream
-                    // call itself.
-                    timelineCache
-                        .refresh(cacheKey)
-                        .map { it.copy(provider = provider) }
-                        .processResponse(
-                            successFlag = { success },
-                            errorMessage = { error },
-                            onSuccess = { fresh ->
-                                val merged = mergeTimeline(cached, fresh, base, symbol, windowStart)
-                                // Always persist — even for pairs the user has since navigated
-                                // away from, so switching back fast-paints from fresh cache.
-                                db.putCachedTimeline(merged, base, symbol)
-                                // Only notify the UI if this pair is still the one the user cares about.
-                                // postValue is safe from any thread — avoids spawning a
-                                // fire-and-forget CoroutineScope just to hop to Main.
-                                if (isCurrentTimelinePair(key)) {
-                                    liveTimeline.postValue(merged)
-                                }
-                            },
-                        )
+                    // Main provider first; the fallback when it fails while
+                    // online (its own cached window, not merged with the main's).
+                    var result = fetchTimeline(main, base, symbol)
+                    if (result.shouldTryFallback { success }) {
+                        val fallback = fetchTimeline(db.getFallbackProvider(), base, symbol)
+                        if (fallback.isUsable { success }) result = fallback
+                    }
+                    result.processResponse(
+                        successFlag = { success },
+                        errorMessage = { error },
+                        onSuccess = { merged ->
+                            // Only notify the UI if this pair is still the one the user cares about.
+                            // postValue is safe from any thread — avoids spawning a
+                            // fire-and-forget CoroutineScope just to hop to Main.
+                            if (isCurrentTimelinePair(key)) liveTimeline.postValue(merged)
+                        },
+                    )
                 }
             timelineJobs[key] = job
         }
         return liveTimeline
+    }
+
+    // [provider]'s timeline for the pair: the missing tail fetched and merged
+    // into its cached window, then persisted — even for pairs the user has
+    // since navigated away from, so switching back fast-paints from fresh
+    // cache. The result is the merged window.
+    private suspend fun fetchTimeline(
+        provider: ApiProvider,
+        base: Currency,
+        symbol: Currency,
+    ): Result<Timeline> {
+        val cached = db.getCachedTimeline(provider, base, symbol)
+        val today = LocalDate.now()
+        val windowStart = today.minusDays(TIMELINE_WINDOW_DAYS)
+        // Re-fetch the last cached day (in case it was preliminary) plus everything
+        // after it. If we have no cache, fetch the full window.
+        val fetchStart =
+            cached
+                ?.rates
+                ?.keys
+                ?.lastOrNull()
+                ?.let { maxOf(it, windowStart) }
+                ?: windowStart
+        val cacheKey =
+            RateCacheKey.TimelineRange(
+                providerId = provider.id,
+                baseIso = base.iso4217Alpha(),
+                symbolIso = symbol.iso4217Alpha(),
+                startDate = fetchStart,
+                endDate = today,
+            )
+        // refresh() rather than get() — the tail-merge against the cached
+        // window needs the missing days, which a stale RateCache entry would
+        // skip. RateCache still adds retry-with-jitter and in-flight dedupe.
+        return timelineCache.refresh(cacheKey).map { fresh ->
+            val tagged = fresh.copy(provider = provider)
+            if (tagged.success == false) return@map tagged
+            mergeTimeline(cached, tagged, base, symbol, windowStart).also { db.putCachedTimeline(it, base, symbol) }
+        }
     }
 
     private fun mergeTimeline(
@@ -240,6 +252,13 @@ class ExchangeRatesRepository(
             provider = fresh.provider ?: cached?.provider,
         )
     }
+
+    // Worth asking the fallback: the main provider failed, or answered with
+    // an error, while the device is online (offline, every provider fails).
+    private fun <T> Result<T>.shouldTryFallback(successFlag: T.() -> Boolean?): Boolean =
+        !isUsable(successFlag) && exceptionOrNull() !is UnknownHostException
+
+    private fun <T> Result<T>.isUsable(successFlag: T.() -> Boolean?): Boolean = getOrNull()?.successFlag() != false && isSuccess
 
     private fun launchApiCall(block: suspend () -> Unit): Job {
         RefreshState.start()

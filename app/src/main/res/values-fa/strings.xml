@@ -34,7 +34,7 @@
     <string name="historical_banner">تاریخی • نرخ‌ها از %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">آخرین نرخ تبدیل برای آخرین جفت‌ارز استفاده‌شده.</string>
+    <string name="widget_description">آخرین نرخ و روند ۳۰ روزه برای آخرین جفت ارزی که استفاده کردید یا جفتی که انتخاب می‌کنید.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">به تاریخ %s</string>
     <string name="widget_footer_empty">برای بارگیری نرخ‌ها برنامه را باز کنید.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">تغییر به %1$s → %2$s</string>
     <string name="cart_section_pinned">سنجاق‌شده</string>
     <string name="cart_section_others">موارد دیگر</string>
+    <string name="fallback_banner">%1$s در دسترس نیست • استفاده از %2$s</string>
+    <string name="process_text_label">تبدیل ارز</string>
+    <string name="selection_open_app">باز کردن در %1$s</string>
+    <string name="selection_copy">کپی</string>
+    <string name="selection_no_amount">هیچ مبلغی در «%1$s» پیدا نشد.</string>
+    <string name="selection_no_rates">یک بار %1$s را باز کنید تا نرخ‌ها بارگیری شوند.</string>
+    <string name="selection_assumed_currency">متن ارزی ندارد، بنابراین به‌عنوان %1$s خوانده شد.</string>
+    <string name="shortcut_pair_long">تبدیل %1$s به %2$s</string>
+    <string name="widget_configure_title">ابزارک</string>
+    <string name="widget_follow_converter_title">دنبال کردن مبدل</string>
+    <string name="widget_follow_converter_summary">نمایش جفتی که آخرین بار در برنامه استفاده کردید</string>
+    <string name="done">انجام شد</string>
+    <string name="cart_share_tip">انعام / مالیات (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">برای هر نفر (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">باقی‌مانده بودجه: %1$s %2$s</string>
+    <string name="cart_share_over_budget">بیش از بودجه: %1$s %2$s</string>
+    <string name="cart_menu_extras">تقسیم، انعام و بودجه</string>
+    <string name="cart_tip_label">انعام / مالیات</string>
+    <string name="cart_tip_row">انعام / مالیات (%1$s%%)</string>
+    <string name="cart_split_label">تقسیم بین</string>
+    <string name="cart_split_decrease">افراد کمتر</string>
+    <string name="cart_split_increase">افراد بیشتر</string>
+    <string name="cart_per_person_row">برای هر نفر (÷%1$d)</string>
+    <string name="cart_budget_label">بودجه</string>
+    <string name="cart_budget_left_row">باقی‌مانده بودجه</string>
+    <string name="cart_over_budget_row">بیش از بودجه</string>
+    <string name="menu_scan_price">اسکن قیمت</string>
+    <string name="scan_prices_title">قیمت‌های پیدا شده</string>
+    <string name="scan_no_prices">هیچ قیمتی در عکس پیدا نشد.</string>
+    <string name="scan_no_camera">هیچ برنامه دوربینی برای گرفتن عکس وجود ندارد.</string>
 </resources>

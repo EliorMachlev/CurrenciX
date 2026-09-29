@@ -35,7 +35,7 @@
     <string name="historical_banner">Historyczne • Kursy z %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Najnowszy kurs dla ostatnio używanej pary walut.</string>
+    <string name="widget_description">Najnowszy kurs i 30-dniowy trend ostatnio używanej pary walut lub wybranej przez Ciebie.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Stan na %s</string>
     <string name="widget_footer_empty">Otwórz aplikację, aby pobrać kursy.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Przełącz na %1$s → %2$s</string>
     <string name="cart_section_pinned">Przypięte</string>
     <string name="cart_section_others">Pozostałe pozycje</string>
+    <string name="fallback_banner">%1$s niedostępny • Używany jest %2$s</string>
+    <string name="process_text_label">Przelicz walutę</string>
+    <string name="selection_open_app">Otwórz w %1$s</string>
+    <string name="selection_copy">Kopiuj</string>
+    <string name="selection_no_amount">Nie znaleziono kwoty w „%1$s”.</string>
+    <string name="selection_no_rates">Otwórz %1$s raz, aby wczytać kursy walut.</string>
+    <string name="selection_assumed_currency">Tekst nie zawiera waluty, więc został odczytany jako %1$s.</string>
+    <string name="shortcut_pair_long">Przelicz %1$s na %2$s</string>
+    <string name="widget_configure_title">Widżet</string>
+    <string name="widget_follow_converter_title">Podążaj za przelicznikiem</string>
+    <string name="widget_follow_converter_summary">Pokaż parę ostatnio używaną w aplikacji</string>
+    <string name="done">Gotowe</string>
+    <string name="cart_share_tip">Napiwek / podatek (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Na osobę (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Pozostało w budżecie: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Ponad budżet: %1$s %2$s</string>
+    <string name="cart_menu_extras">Podział, napiwek i budżet</string>
+    <string name="cart_tip_label">Napiwek / podatek</string>
+    <string name="cart_tip_row">Napiwek / podatek (%1$s%%)</string>
+    <string name="cart_split_label">Podziel między</string>
+    <string name="cart_split_decrease">Mniej osób</string>
+    <string name="cart_split_increase">Więcej osób</string>
+    <string name="cart_per_person_row">Na osobę (÷%1$d)</string>
+    <string name="cart_budget_label">Budżet</string>
+    <string name="cart_budget_left_row">Pozostało w budżecie</string>
+    <string name="cart_over_budget_row">Ponad budżet</string>
+    <string name="menu_scan_price">Zeskanuj cenę</string>
+    <string name="scan_prices_title">Znalezione ceny</string>
+    <string name="scan_no_prices">Nie znaleziono cen na zdjęciu.</string>
+    <string name="scan_no_camera">Brak aplikacji aparatu do zrobienia zdjęcia.</string>
 </resources>

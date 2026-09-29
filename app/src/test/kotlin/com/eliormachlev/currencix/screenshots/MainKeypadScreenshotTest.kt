@@ -1,7 +1,9 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.app.Application
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -12,8 +14,10 @@ import org.robolectric.annotation.GraphicsMode
 // en/he × LIGHT/DARK/OLED matrix by the shared ScreenshotHarness.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class MainKeypadScreenshotTest {
+    @get:Rule val shots = ScreenshotRule()
+
     private val callbacks =
         MainKeypadCallbacks(
             onDigit = {},
@@ -26,12 +30,17 @@ class MainKeypadScreenshotTest {
         )
 
     @Test fun keypadBasic() =
-        captureMatrix("keypad_basic") {
+        shots.captureMatrix("keypad_basic") {
             MainKeypad(isExpandedKeypad = false, nextParen = '(', callbacks = callbacks)
         }
 
     @Test fun keypadExpanded() =
-        captureMatrix("keypad_expanded") {
+        shots.captureMatrix("keypad_expanded") {
+            MainKeypad(isExpandedKeypad = true, nextParen = '(', callbacks = callbacks)
+        }
+
+    @Test fun keypadExpandedLargeFont() =
+        shots.captureLargeFont("keypad_expanded") {
             MainKeypad(isExpandedKeypad = true, nextParen = '(', callbacks = callbacks)
         }
 }

@@ -144,4 +144,12 @@
     <string name="fee_untitled">Bez nazwy</string>
     <string name="dynamic_color_title">Kolory tapety</string>
     <string name="dynamic_color_summary">Barwienie aplikacji kolorami tapety (Material You)</string>
+    <string name="provider_group_free">Bezpłatni</string>
+    <string name="provider_group_api_key">Wymaga klucza API</string>
+    <string name="provider_main_chip">Główny</string>
+    <string name="provider_cadence_hourly">Aktualizacja co godzinę</string>
+    <string name="provider_cadence_daily">Aktualizacja w każdy dzień roboczy</string>
+    <string name="provider_cadence_monthly">Aktualizacja raz w miesiącu</string>
+    <string name="fallback_provider_title">Dostawca zapasowy</string>
+    <string name="fallback_provider_summary">%1$s · używany, gdy %2$s jest niedostępny</string>
 </resources>

@@ -144,4 +144,12 @@
     <string name="fee_untitled">Senza titolo</string>
     <string name="dynamic_color_title">Colori dello sfondo</string>
     <string name="dynamic_color_summary">Colora l\'app con i colori dello sfondo (Material You)</string>
+    <string name="provider_group_free">Gratuiti</string>
+    <string name="provider_group_api_key">Richiede una chiave API</string>
+    <string name="provider_main_chip">Principale</string>
+    <string name="provider_cadence_hourly">Aggiornato ogni ora</string>
+    <string name="provider_cadence_daily">Aggiornato ogni giorno lavorativo</string>
+    <string name="provider_cadence_monthly">Aggiornato una volta al mese</string>
+    <string name="fallback_provider_title">Fornitore di riserva</string>
+    <string name="fallback_provider_summary">%1$s · usato quando %2$s non è raggiungibile</string>
 </resources>

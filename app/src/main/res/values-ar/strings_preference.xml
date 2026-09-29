@@ -144,4 +144,12 @@
     <string name="fee_untitled">بدون عنوان</string>
     <string name="dynamic_color_title">ألوان الخلفية</string>
     <string name="dynamic_color_summary">تلوين التطبيق بألوان خلفية الشاشة (Material You)</string>
+    <string name="provider_group_free">مجاني</string>
+    <string name="provider_group_api_key">يتطلب مفتاح API</string>
+    <string name="provider_main_chip">الرئيسي</string>
+    <string name="provider_cadence_hourly">يتحدّث كل ساعة</string>
+    <string name="provider_cadence_daily">يتحدّث كل يوم عمل</string>
+    <string name="provider_cadence_monthly">يتحدّث مرة في الشهر</string>
+    <string name="fallback_provider_title">المزوّد الاحتياطي</string>
+    <string name="fallback_provider_summary">%1$s · يُستخدم عندما يتعذّر الوصول إلى %2$s</string>
 </resources>

@@ -144,4 +144,12 @@
     <string name="fee_untitled">未命名</string>
     <string name="dynamic_color_title">壁纸颜色</string>
     <string name="dynamic_color_summary">使用壁纸中的颜色为应用着色 (Material You)</string>
+    <string name="provider_group_free">免费</string>
+    <string name="provider_group_api_key">需要 API 密钥</string>
+    <string name="provider_main_chip">主要</string>
+    <string name="provider_cadence_hourly">每小时更新</string>
+    <string name="provider_cadence_daily">每个工作日更新</string>
+    <string name="provider_cadence_monthly">每月更新一次</string>
+    <string name="fallback_provider_title">备用数据源</string>
+    <string name="fallback_provider_summary">%1$s · 在无法连接 %2$s 时使用</string>
 </resources>

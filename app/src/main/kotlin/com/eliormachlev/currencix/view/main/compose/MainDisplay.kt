@@ -1370,19 +1370,20 @@ private fun StatusPill(
     val containerColor =
         when (banner.kind) {
             BannerKind.Offline -> MaterialTheme.colorScheme.errorContainer
-            BannerKind.Unreachable -> AmberContainer
+            BannerKind.Unreachable, BannerKind.Fallback -> AmberContainer
             BannerKind.Historical -> MaterialTheme.colorScheme.secondaryContainer
         }
     val contentColor =
         when (banner.kind) {
             BannerKind.Offline -> MaterialTheme.colorScheme.onErrorContainer
-            BannerKind.Unreachable -> OnAmberContainer
+            BannerKind.Unreachable, BannerKind.Fallback -> OnAmberContainer
             BannerKind.Historical -> MaterialTheme.colorScheme.onSecondaryContainer
         }
     val iconRes =
         when (banner.kind) {
             BannerKind.Offline -> R.drawable.ic_cloud_off
             BannerKind.Unreachable -> R.drawable.ic_sync_problem
+            BannerKind.Fallback -> R.drawable.ic_data_provider
             BannerKind.Historical -> R.drawable.ic_history
         }
     Row(

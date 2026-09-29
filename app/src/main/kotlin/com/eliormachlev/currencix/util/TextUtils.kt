@@ -133,6 +133,22 @@ fun getDecimalSeparator(context: Context): String = getDecimalSymbols(context).d
 fun getGroupingSeparator(context: Context): String = getDecimalSymbols(context).groupingSeparator.toString()
 
 /**
+ * [amount] with its currency [symbol] on the side the locale puts it
+ * ([appended]: after, as in "49,99 €"; otherwise before, as in "$ 49.99").
+ * No symbol, just the amount.
+ */
+fun withCurrencySymbol(
+    amount: String,
+    symbol: String,
+    appended: Boolean,
+): String =
+    when {
+        symbol.isEmpty() -> amount
+        appended -> "$amount $symbol"
+        else -> "$symbol $amount"
+    }
+
+/**
  * True, when the currency symbol should be placed after the value for the current locale.
  * False, when the currency symbol should be placed before the value.
  */

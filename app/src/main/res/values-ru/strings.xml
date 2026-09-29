@@ -35,7 +35,7 @@
     <string name="historical_banner">Исторические • Курсы от %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Последний курс конвертации для недавно использованной пары валют.</string>
+    <string name="widget_description">Последний курс и тренд за 30 дней для последней использованной валютной пары или выбранной вами.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">На %s</string>
     <string name="widget_footer_empty">Откройте приложение, чтобы загрузить курсы.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Переключиться на %1$s → %2$s</string>
     <string name="cart_section_pinned">Закреплённые</string>
     <string name="cart_section_others">Другие товары</string>
+    <string name="fallback_banner">%1$s недоступен • Используется %2$s</string>
+    <string name="process_text_label">Конвертировать валюту</string>
+    <string name="selection_open_app">Открыть в %1$s</string>
+    <string name="selection_copy">Копировать</string>
+    <string name="selection_no_amount">В «%1$s» не найдена сумма.</string>
+    <string name="selection_no_rates">Откройте %1$s один раз, чтобы загрузить курсы.</string>
+    <string name="selection_assumed_currency">В тексте нет валюты, поэтому он прочитан как %1$s.</string>
+    <string name="shortcut_pair_long">Конвертировать %1$s в %2$s</string>
+    <string name="widget_configure_title">Виджет</string>
+    <string name="widget_follow_converter_title">Следовать за конвертером</string>
+    <string name="widget_follow_converter_summary">Показывать пару, использованную в приложении последней</string>
+    <string name="done">Готово</string>
+    <string name="cart_share_tip">Чаевые / налог (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">На человека (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Осталось в бюджете: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Сверх бюджета: %1$s %2$s</string>
+    <string name="cart_menu_extras">Разделить, чаевые и бюджет</string>
+    <string name="cart_tip_label">Чаевые / налог</string>
+    <string name="cart_tip_row">Чаевые / налог (%1$s%%)</string>
+    <string name="cart_split_label">Разделить на</string>
+    <string name="cart_split_decrease">Меньше людей</string>
+    <string name="cart_split_increase">Больше людей</string>
+    <string name="cart_per_person_row">На человека (÷%1$d)</string>
+    <string name="cart_budget_label">Бюджет</string>
+    <string name="cart_budget_left_row">Осталось в бюджете</string>
+    <string name="cart_over_budget_row">Сверх бюджета</string>
+    <string name="menu_scan_price">Сканировать цену</string>
+    <string name="scan_prices_title">Найденные цены</string>
+    <string name="scan_no_prices">На фото не найдено цен.</string>
+    <string name="scan_no_camera">Нет приложения камеры, чтобы сделать фото.</string>
 </resources>

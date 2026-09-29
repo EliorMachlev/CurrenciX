@@ -35,7 +35,7 @@
     <string name="historical_banner">Histórico • Tipos del %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Última tasa de conversión para tu par de monedas más reciente.</string>
+    <string name="widget_description">Último tipo y tendencia de 30 días de tu último par de monedas o de uno que elijas.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">A fecha de %s</string>
     <string name="widget_footer_empty">Abre la app para cargar las tasas.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Cambiar a %1$s → %2$s</string>
     <string name="cart_section_pinned">Fijados</string>
     <string name="cart_section_others">Otros artículos</string>
+    <string name="fallback_banner">%1$s no disponible • Usando %2$s</string>
+    <string name="process_text_label">Convertir moneda</string>
+    <string name="selection_open_app">Abrir en %1$s</string>
+    <string name="selection_copy">Copiar</string>
+    <string name="selection_no_amount">No se encontró ningún importe en «%1$s».</string>
+    <string name="selection_no_rates">Abre %1$s una vez para cargar los tipos de cambio.</string>
+    <string name="selection_assumed_currency">El texto no tiene moneda, así que se leyó como %1$s.</string>
+    <string name="shortcut_pair_long">Convertir %1$s a %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Seguir al conversor</string>
+    <string name="widget_follow_converter_summary">Mostrar el par que usaste por última vez en la app</string>
+    <string name="done">Listo</string>
+    <string name="cart_share_tip">Propina / impuesto (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Por persona (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Queda en el presupuesto: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Por encima del presupuesto: %1$s %2$s</string>
+    <string name="cart_menu_extras">Dividir, propina y presupuesto</string>
+    <string name="cart_tip_label">Propina / impuesto</string>
+    <string name="cart_tip_row">Propina / impuesto (%1$s%%)</string>
+    <string name="cart_split_label">Dividir entre</string>
+    <string name="cart_split_decrease">Menos personas</string>
+    <string name="cart_split_increase">Más personas</string>
+    <string name="cart_per_person_row">Por persona (÷%1$d)</string>
+    <string name="cart_budget_label">Presupuesto</string>
+    <string name="cart_budget_left_row">Queda en el presupuesto</string>
+    <string name="cart_over_budget_row">Por encima del presupuesto</string>
+    <string name="menu_scan_price">Escanear un precio</string>
+    <string name="scan_prices_title">Precios encontrados</string>
+    <string name="scan_no_prices">No se encontraron precios en la foto.</string>
+    <string name="scan_no_camera">No hay ninguna app de cámara para hacer la foto.</string>
 </resources>

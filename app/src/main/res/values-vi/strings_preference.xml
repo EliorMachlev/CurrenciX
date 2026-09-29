@@ -146,4 +146,12 @@
     <string name="fee_untitled">Không có tiêu đề</string>
     <string name="dynamic_color_title">Màu hình nền</string>
     <string name="dynamic_color_summary">Tô màu ứng dụng theo màu hình nền (Material You)</string>
+    <string name="provider_group_free">Miễn phí</string>
+    <string name="provider_group_api_key">Cần khóa API</string>
+    <string name="provider_main_chip">Chính</string>
+    <string name="provider_cadence_hourly">Cập nhật mỗi giờ</string>
+    <string name="provider_cadence_daily">Cập nhật mỗi ngày làm việc</string>
+    <string name="provider_cadence_monthly">Cập nhật mỗi tháng một lần</string>
+    <string name="fallback_provider_title">Nhà cung cấp dự phòng</string>
+    <string name="fallback_provider_summary">%1$s · dùng khi không kết nối được %2$s</string>
 </resources>

@@ -144,4 +144,12 @@
     <string name="fee_untitled">Unbenannt</string>
     <string name="dynamic_color_title">Hintergrundfarben</string>
     <string name="dynamic_color_summary">App an die Farben des Hintergrundbilds anpassen (Material You)</string>
+    <string name="provider_group_free">Kostenlos</string>
+    <string name="provider_group_api_key">Benötigt einen API-Schlüssel</string>
+    <string name="provider_main_chip">Haupt</string>
+    <string name="provider_cadence_hourly">Stündlich aktualisiert</string>
+    <string name="provider_cadence_daily">An jedem Werktag aktualisiert</string>
+    <string name="provider_cadence_monthly">Einmal im Monat aktualisiert</string>
+    <string name="fallback_provider_title">Ersatzanbieter</string>
+    <string name="fallback_provider_summary">%1$s · wird verwendet, wenn %2$s nicht erreichbar ist</string>
 </resources>

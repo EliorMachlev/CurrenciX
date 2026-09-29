@@ -146,4 +146,12 @@
     <string name="fee_untitled">Uden titel</string>
     <string name="dynamic_color_title">Baggrundsfarver</string>
     <string name="dynamic_color_summary">Farv appen med farverne fra din baggrund (Material You)</string>
+    <string name="provider_group_free">Gratis</string>
+    <string name="provider_group_api_key">Kræver en API-nøgle</string>
+    <string name="provider_main_chip">Primær</string>
+    <string name="provider_cadence_hourly">Opdateres hver time</string>
+    <string name="provider_cadence_daily">Opdateres hver hverdag</string>
+    <string name="provider_cadence_monthly">Opdateres én gang om måneden</string>
+    <string name="fallback_provider_title">Reserveudbyder</string>
+    <string name="fallback_provider_summary">%1$s · bruges, når %2$s ikke kan nås</string>
 </resources>

@@ -24,6 +24,7 @@ import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
 import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.KEY_RATES_BASE
 import com.eliormachlev.currencix.util.KEY_RATES_DATE
+import com.eliormachlev.currencix.util.KEY_RATES_FALLBACK_FROM
 import com.eliormachlev.currencix.util.KEY_RATES_PROVIDER
 import com.eliormachlev.currencix.util.KEY_RATES_TIME
 import com.eliormachlev.currencix.util.NO_PROVIDER_ID
@@ -62,6 +63,7 @@ private const val KEY_STARRED_ENABLED = "_starredActive"
 
 // APP (prefs) keys.
 private const val KEY_API = "_api"
+private const val KEY_FALLBACK_API = "_fallbackApi"
 private const val KEY_OPEN_EXCHANGERATES_API_KEY = "_api_openExchangeratesApiKey"
 private const val KEY_THEME = "_theme"
 private const val KEY_FEES_JSON = "_fees_json"
@@ -222,6 +224,7 @@ class Database(
             items.time?.let { this[stringPreferencesKey(KEY_RATES_TIME)] = it.toString() }
             items.base?.let { this[stringPreferencesKey(KEY_RATES_BASE)] = it.iso4217Alpha() }
             this[intPreferencesKey(KEY_RATES_PROVIDER)] = items.provider?.id ?: NO_PROVIDER_ID
+            items.fallbackFrom?.let { this[intPreferencesKey(KEY_RATES_FALLBACK_FROM)] = it.id }
             items.rates?.forEach { rate ->
                 this[stringPreferencesKey(rate.currency.iso4217Alpha())] = rate.value.toPlainString()
             }
@@ -264,6 +267,7 @@ class Database(
             time = prefs[stringPreferencesKey(KEY_RATES_TIME)]?.let { LocalTime.parse(it) },
             rates = rates,
             provider = ApiProvider.fromId(prefs[intPreferencesKey(KEY_RATES_PROVIDER)] ?: NO_PROVIDER_ID),
+            fallbackFrom = prefs[intPreferencesKey(KEY_RATES_FALLBACK_FROM)]?.let(ApiProvider::fromId),
         )
     }
 
@@ -443,6 +447,24 @@ class Database(
     }
 
     fun getApiProvider(): ApiProvider = ApiProvider.fromId(appStore.snapshot()[intPreferencesKey(KEY_API)] ?: NO_PROVIDER_ID)
+
+    // Fallback provider: fetched when the main one fails. Stored as chosen;
+    // resolved against the current main provider on read, so a choice that
+    // became the main provider falls back to the default instead.
+
+    fun setFallbackProvider(api: ApiProvider) {
+        appStore.edit { this[intPreferencesKey(KEY_FALLBACK_API)] = api.id }
+    }
+
+    fun getFallbackProvider(): ApiProvider = resolveFallback(appStore.snapshot())
+
+    fun getFallbackProviderFlow(): Flow<ApiProvider> = appStore.mappedFlow(::resolveFallback)
+
+    private fun resolveFallback(prefs: Preferences): ApiProvider {
+        val main = apiProviderMapper(prefs)
+        val chosen = prefs[intPreferencesKey(KEY_FALLBACK_API)]?.let(ApiProvider::fromId)
+        return chosen?.takeIf { it != main } ?: ApiProvider.defaultFallback(main)
+    }
 
     fun getApiProviderAsync(): LiveData<ApiProvider> = appStore.mappedLiveData(apiProviderMapper)
 

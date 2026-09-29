@@ -145,4 +145,12 @@
     <string name="language_he">হিব্রু</string>
     <string name="dynamic_color_title">ওয়ালপেপারের রং</string>
     <string name="dynamic_color_summary">ওয়ালপেপারের রং দিয়ে অ্যাপ রাঙান (Material You)</string>
+    <string name="provider_group_free">বিনামূল্যে</string>
+    <string name="provider_group_api_key">API কী প্রয়োজন</string>
+    <string name="provider_main_chip">প্রধান</string>
+    <string name="provider_cadence_hourly">প্রতি ঘণ্টায় আপডেট হয়</string>
+    <string name="provider_cadence_daily">প্রতি কার্যদিবসে আপডেট হয়</string>
+    <string name="provider_cadence_monthly">মাসে একবার আপডেট হয়</string>
+    <string name="fallback_provider_title">বিকল্প প্রদানকারী</string>
+    <string name="fallback_provider_summary">%1$s · %2$s-এ পৌঁছানো না গেলে ব্যবহৃত হয়</string>
 </resources>

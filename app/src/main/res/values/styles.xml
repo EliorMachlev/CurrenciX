@@ -8,6 +8,15 @@
 
     <style name="AppTheme.PureBlack" parent="BaseAppTheme.PureBlack" />
 
+    <!-- Popups over other apps (text-selection "Convert currency"): no window
+         of their own to show, just the Compose sheet and its scrim. -->
+    <style name="AppTheme.Translucent" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <!-- No ActionBar: every screen draws its own Compose top bar, and the
          window is edge to edge (MainActivity.enableEdgeToEdge). -->
     <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">

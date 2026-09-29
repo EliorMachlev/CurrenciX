@@ -17,7 +17,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 | Flavor | Description |
 |---|---|
 | `fdroid` | F-Droid distribution — no Play Services dependency, fully open-source, reproducible |
-| `play` | Google Play distribution — may use Play-specific APIs |
+| `play` | Google Play distribution — may use Play-specific APIs. Today: the camera price scan (ML Kit text recognition, via Play services) |
 
 ### Common Gradle tasks
 

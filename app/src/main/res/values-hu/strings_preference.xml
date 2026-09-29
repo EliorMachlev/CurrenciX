@@ -174,4 +174,12 @@
     <string name="title_changelog">Változásnapló</string>
     <string name="dynamic_color_title">Háttérkép színei</string>
     <string name="dynamic_color_summary">Az alkalmazás színezése a háttérkép színeivel (Material You)</string>
+    <string name="provider_group_free">Ingyenes</string>
+    <string name="provider_group_api_key">API-kulcs szükséges</string>
+    <string name="provider_main_chip">Fő</string>
+    <string name="provider_cadence_hourly">Óránként frissül</string>
+    <string name="provider_cadence_daily">Minden munkanapon frissül</string>
+    <string name="provider_cadence_monthly">Havonta egyszer frissül</string>
+    <string name="fallback_provider_title">Tartalék szolgáltató</string>
+    <string name="fallback_provider_summary">%1$s · akkor használjuk, ha %2$s nem érhető el</string>
 </resources>

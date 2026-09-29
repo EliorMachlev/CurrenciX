@@ -32,7 +32,7 @@
     <string name="offline_banner_no_data">Ngoại tuyến • Chưa có tỷ giá được lưu</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Tỷ giá quy đổi mới nhất cho cặp tiền tệ bạn dùng gần đây nhất.</string>
+    <string name="widget_description">Tỷ giá mới nhất và xu hướng 30 ngày của cặp tiền tệ bạn dùng gần nhất hoặc cặp bạn chọn.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Tính đến %s</string>
     <string name="widget_footer_empty">Mở ứng dụng để tải tỷ giá.</string>
@@ -110,4 +110,34 @@
     <string name="recent_pair_switch">Chuyển sang %1$s → %2$s</string>
     <string name="cart_section_pinned">Đã ghim</string>
     <string name="cart_section_others">Mục khác</string>
+    <string name="fallback_banner">%1$s không khả dụng • Đang dùng %2$s</string>
+    <string name="process_text_label">Chuyển đổi tiền tệ</string>
+    <string name="selection_open_app">Mở trong %1$s</string>
+    <string name="selection_copy">Sao chép</string>
+    <string name="selection_no_amount">Không tìm thấy số tiền trong “%1$s”.</string>
+    <string name="selection_no_rates">Hãy mở %1$s một lần để tải tỷ giá.</string>
+    <string name="selection_assumed_currency">Văn bản không có tiền tệ nên được đọc là %1$s.</string>
+    <string name="shortcut_pair_long">Chuyển %1$s sang %2$s</string>
+    <string name="widget_configure_title">Tiện ích</string>
+    <string name="widget_follow_converter_title">Theo bộ chuyển đổi</string>
+    <string name="widget_follow_converter_summary">Hiện cặp bạn dùng gần nhất trong ứng dụng</string>
+    <string name="done">Xong</string>
+    <string name="cart_share_tip">Tiền boa / thuế (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Mỗi người (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Còn lại trong ngân sách: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Vượt ngân sách: %1$s %2$s</string>
+    <string name="cart_menu_extras">Chia, tiền boa và ngân sách</string>
+    <string name="cart_tip_label">Tiền boa / thuế</string>
+    <string name="cart_tip_row">Tiền boa / thuế (%1$s%%)</string>
+    <string name="cart_split_label">Chia cho</string>
+    <string name="cart_split_decrease">Ít người hơn</string>
+    <string name="cart_split_increase">Nhiều người hơn</string>
+    <string name="cart_per_person_row">Mỗi người (÷%1$d)</string>
+    <string name="cart_budget_label">Ngân sách</string>
+    <string name="cart_budget_left_row">Còn lại trong ngân sách</string>
+    <string name="cart_over_budget_row">Vượt ngân sách</string>
+    <string name="menu_scan_price">Quét giá</string>
+    <string name="scan_prices_title">Giá tìm thấy</string>
+    <string name="scan_no_prices">Không tìm thấy giá nào trong ảnh.</string>
+    <string name="scan_no_camera">Không có ứng dụng máy ảnh để chụp ảnh.</string>
 </resources>

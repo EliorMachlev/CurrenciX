@@ -144,4 +144,12 @@
     <string name="fee_untitled">Adsız</string>
     <string name="dynamic_color_title">Duvar kağıdı renkleri</string>
     <string name="dynamic_color_summary">Uygulamayı duvar kağıdınızın renkleriyle renklendir (Material You)</string>
+    <string name="provider_group_free">Ücretsiz</string>
+    <string name="provider_group_api_key">API anahtarı gerekir</string>
+    <string name="provider_main_chip">Ana</string>
+    <string name="provider_cadence_hourly">Saatte bir güncellenir</string>
+    <string name="provider_cadence_daily">Her iş günü güncellenir</string>
+    <string name="provider_cadence_monthly">Ayda bir güncellenir</string>
+    <string name="fallback_provider_title">Yedek sağlayıcı</string>
+    <string name="fallback_provider_summary">%1$s · %2$s erişilemediğinde kullanılır</string>
 </resources>

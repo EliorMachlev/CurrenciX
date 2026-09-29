@@ -145,4 +145,12 @@
     <string name="language_zh_TW">סינית מסורתית</string>
     <string name="dynamic_color_title">צבעי הטפט</string>
     <string name="dynamic_color_summary">צביעת האפליקציה בצבעי הטפט (Material You)</string>
+    <string name="provider_group_free">חינמיים</string>
+    <string name="provider_group_api_key">דורש מפתח API</string>
+    <string name="provider_main_chip">ראשי</string>
+    <string name="provider_cadence_hourly">מתעדכן כל שעה</string>
+    <string name="provider_cadence_daily">מתעדכן בכל יום עסקים</string>
+    <string name="provider_cadence_monthly">מתעדכן פעם בחודש</string>
+    <string name="fallback_provider_title">ספק גיבוי</string>
+    <string name="fallback_provider_summary">%1$s · בשימוש כש־%2$s לא זמין</string>
 </resources>

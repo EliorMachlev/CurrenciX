@@ -36,7 +36,7 @@
     <string name="historical_banner">Historisch • Koersen van %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Meest recente wisselkoers voor je laatst gebruikte valutapaar.</string>
+    <string name="widget_description">Laatste koers en trend over 30 dagen voor je laatst gebruikte valutapaar of een paar naar keuze.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Per %s</string>
     <string name="widget_footer_empty">Open de app om koersen te laden.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Overschakelen naar %1$s → %2$s</string>
     <string name="cart_section_pinned">Vastgezet</string>
     <string name="cart_section_others">Andere items</string>
+    <string name="fallback_banner">%1$s niet beschikbaar • %2$s wordt gebruikt</string>
+    <string name="process_text_label">Valuta omrekenen</string>
+    <string name="selection_open_app">Openen in %1$s</string>
+    <string name="selection_copy">Kopiëren</string>
+    <string name="selection_no_amount">Geen bedrag gevonden in ‘%1$s’.</string>
+    <string name="selection_no_rates">Open %1$s één keer om wisselkoersen te laden.</string>
+    <string name="selection_assumed_currency">De tekst heeft geen valuta, dus hij is gelezen als %1$s.</string>
+    <string name="shortcut_pair_long">%1$s omrekenen naar %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Omrekenaar volgen</string>
+    <string name="widget_follow_converter_summary">Het paar tonen dat je het laatst in de app gebruikte</string>
+    <string name="done">Klaar</string>
+    <string name="cart_share_tip">Fooi / belasting (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Per persoon (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Over van budget: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Boven budget: %1$s %2$s</string>
+    <string name="cart_menu_extras">Delen, fooi en budget</string>
+    <string name="cart_tip_label">Fooi / belasting</string>
+    <string name="cart_tip_row">Fooi / belasting (%1$s%%)</string>
+    <string name="cart_split_label">Delen door</string>
+    <string name="cart_split_decrease">Minder personen</string>
+    <string name="cart_split_increase">Meer personen</string>
+    <string name="cart_per_person_row">Per persoon (÷%1$d)</string>
+    <string name="cart_budget_label">Budget</string>
+    <string name="cart_budget_left_row">Over van budget</string>
+    <string name="cart_over_budget_row">Boven budget</string>
+    <string name="menu_scan_price">Prijs scannen</string>
+    <string name="scan_prices_title">Gevonden prijzen</string>
+    <string name="scan_no_prices">Geen prijzen gevonden op de foto.</string>
+    <string name="scan_no_camera">Geen camera-app om de foto te maken.</string>
 </resources>

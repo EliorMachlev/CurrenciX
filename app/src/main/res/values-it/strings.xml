@@ -35,7 +35,7 @@
     <string name="historical_banner">Storico • Tassi del %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Ultimo tasso di conversione per la tua ultima coppia di valute usata.</string>
+    <string name="widget_description">Ultimo tasso e andamento a 30 giorni della coppia di valute usata per ultima o di una a tua scelta.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Al %s</string>
     <string name="widget_footer_empty">Apri l\'app per caricare i tassi.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Passa a %1$s → %2$s</string>
     <string name="cart_section_pinned">Fissati</string>
     <string name="cart_section_others">Altri articoli</string>
+    <string name="fallback_banner">%1$s non disponibile • Uso di %2$s</string>
+    <string name="process_text_label">Converti valuta</string>
+    <string name="selection_open_app">Apri in %1$s</string>
+    <string name="selection_copy">Copia</string>
+    <string name="selection_no_amount">Nessun importo trovato in “%1$s”.</string>
+    <string name="selection_no_rates">Apri %1$s una volta per caricare i tassi di cambio.</string>
+    <string name="selection_assumed_currency">Il testo non indica una valuta, quindi è stato letto come %1$s.</string>
+    <string name="shortcut_pair_long">Converti %1$s in %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Segui il convertitore</string>
+    <string name="widget_follow_converter_summary">Mostra la coppia usata per ultima nell\'app</string>
+    <string name="done">Fine</string>
+    <string name="cart_share_tip">Mancia / tasse (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">A persona (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Rimasto nel budget: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Oltre il budget: %1$s %2$s</string>
+    <string name="cart_menu_extras">Dividi, mancia e budget</string>
+    <string name="cart_tip_label">Mancia / tasse</string>
+    <string name="cart_tip_row">Mancia / tasse (%1$s%%)</string>
+    <string name="cart_split_label">Dividi tra</string>
+    <string name="cart_split_decrease">Meno persone</string>
+    <string name="cart_split_increase">Più persone</string>
+    <string name="cart_per_person_row">A persona (÷%1$d)</string>
+    <string name="cart_budget_label">Budget</string>
+    <string name="cart_budget_left_row">Rimasto nel budget</string>
+    <string name="cart_over_budget_row">Oltre il budget</string>
+    <string name="menu_scan_price">Scansiona un prezzo</string>
+    <string name="scan_prices_title">Prezzi trovati</string>
+    <string name="scan_no_prices">Nessun prezzo trovato nella foto.</string>
+    <string name="scan_no_camera">Nessuna app fotocamera per scattare la foto.</string>
 </resources>

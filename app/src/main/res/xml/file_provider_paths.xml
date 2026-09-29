@@ -9,4 +9,8 @@
     <cache-path
         name="share-images"
         path="share-images/" />
+    <!-- The camera app writes the price-scan photo here (play flavor). -->
+    <cache-path
+        name="scans"
+        path="scans/" />
 </paths>

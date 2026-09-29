@@ -22,6 +22,7 @@
     <string name="offline_banner_no_data">Offline • No cached rates yet</string>
     <string name="unreachable_banner_with_date">Provider unreachable • Rates from %1$s</string>
     <string name="unreachable_banner_no_data">Provider unreachable • Retrying</string>
+    <string name="fallback_banner">%1$s unavailable • Using %2$s</string>
     <string name="historical_banner">Historical • Rates from %1$s</string>
     <string name="copied_to_clipboard">Copied &lt;b>%s&lt;/b> to clipboard</string>
     <string name="fee_chip_label">%1$s fee</string>
@@ -61,12 +62,34 @@
     <string name="tooltip_filter_starred">Show only starred currencies.</string>
     <string name="currency_dropdown_api_hint">Something missing? Different data providers offer different currencies. Go to the settings to try another one!\u00A0\uD83E\uDD17</string>
 
+    <!-- "Convert currency" in other apps' text-selection menu -->
+    <string name="process_text_label">Convert currency</string>
+    <string name="selection_open_app">Open in %1$s</string>
+    <string name="selection_copy">Copy</string>
+    <string name="selection_no_amount">No amount found in “%1$s”.</string>
+    <string name="selection_no_rates">Open %1$s once to load exchange rates.</string>
+    <string name="selection_assumed_currency">The text has no currency, so it was read as %1$s.</string>
+
+    <!-- Camera price scan (play flavor) -->
+    <string name="menu_scan_price">Scan a price</string>
+    <string name="scan_prices_title">Prices found</string>
+    <string name="scan_no_prices">No prices found in the photo.</string>
+    <string name="scan_no_camera">No camera app to take the photo.</string>
+
+    <!-- Launcher shortcuts -->
+    <string name="shortcut_pair_short" translatable="false">%1$s → %2$s</string>
+    <string name="shortcut_pair_long">Convert %1$s to %2$s</string>
+
     <!-- Home-screen widget -->
-    <string name="widget_description">Latest conversion rate for your last-used currency pair.</string>
+    <string name="widget_description">Latest rate and 30-day trend for your last-used currency pair, or one you pick.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">As of %s</string>
     <string name="widget_footer_empty">Open the app to load rates.</string>
     <string name="widget_no_rate">Rate unavailable</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Follow the converter</string>
+    <string name="widget_follow_converter_summary">Show the pair you last used in the app</string>
+    <string name="done">Done</string>
 
     <!-- Shopping cart -->
     <string name="cart_title">Shopping cart</string>
@@ -121,6 +144,20 @@
     <string name="cart_share_converted">Converted: %1$s %2$s</string>
     <string name="cart_share_fees">Fees: %s%%</string>
     <string name="cart_share_total">Total: %1$s %2$s</string>
+    <string name="cart_share_tip">Tip / tax (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Per person (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Left in budget: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Over budget: %1$s %2$s</string>
+    <string name="cart_menu_extras">Split, tip &amp; budget</string>
+    <string name="cart_tip_label">Tip / tax</string>
+    <string name="cart_tip_row">Tip / tax (%1$s%%)</string>
+    <string name="cart_split_label">Split between</string>
+    <string name="cart_split_decrease">Fewer people</string>
+    <string name="cart_split_increase">More people</string>
+    <string name="cart_per_person_row">Per person (÷%1$d)</string>
+    <string name="cart_budget_label">Budget</string>
+    <string name="cart_budget_left_row">Left in budget</string>
+    <string name="cart_over_budget_row">Over budget</string>
     <string name="cart_unsaved_title">Unsaved changes</string>
     <string name="cart_unsaved_save">Save</string>
     <string name="cart_unsaved_save_desc">Overwrite the current saved cart with these changes.</string>

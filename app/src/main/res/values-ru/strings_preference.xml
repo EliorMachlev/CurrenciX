@@ -144,4 +144,12 @@
     <string name="fee_untitled">Без названия</string>
     <string name="dynamic_color_title">Цвета обоев</string>
     <string name="dynamic_color_summary">Окрашивать приложение в цвета обоев (Material You)</string>
+    <string name="provider_group_free">Бесплатные</string>
+    <string name="provider_group_api_key">Нужен ключ API</string>
+    <string name="provider_main_chip">Основной</string>
+    <string name="provider_cadence_hourly">Обновляется каждый час</string>
+    <string name="provider_cadence_daily">Обновляется каждый рабочий день</string>
+    <string name="provider_cadence_monthly">Обновляется раз в месяц</string>
+    <string name="fallback_provider_title">Резервный источник</string>
+    <string name="fallback_provider_summary">%1$s · используется, когда %2$s недоступен</string>
 </resources>

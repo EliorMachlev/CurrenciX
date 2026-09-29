@@ -35,7 +35,7 @@
     <string name="historical_banner">历史数据 • %1$s 的汇率</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">显示您上次使用的货币对的最新汇率。</string>
+    <string name="widget_description">您最近使用的货币对或您所选货币对的最新汇率和 30 天走势。</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">截至 %s</string>
     <string name="widget_footer_empty">打开应用以加载汇率。</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">切换到 %1$s → %2$s</string>
     <string name="cart_section_pinned">已置顶</string>
     <string name="cart_section_others">其他商品</string>
+    <string name="fallback_banner">%1$s 不可用 • 正在使用 %2$s</string>
+    <string name="process_text_label">货币换算</string>
+    <string name="selection_open_app">在 %1$s 中打开</string>
+    <string name="selection_copy">复制</string>
+    <string name="selection_no_amount">未在“%1$s”中找到金额。</string>
+    <string name="selection_no_rates">请打开一次 %1$s 以加载汇率。</string>
+    <string name="selection_assumed_currency">文本中没有货币，因此按 %1$s 读取。</string>
+    <string name="shortcut_pair_long">将 %1$s 换算为 %2$s</string>
+    <string name="widget_configure_title">微件</string>
+    <string name="widget_follow_converter_title">跟随换算器</string>
+    <string name="widget_follow_converter_summary">显示您在应用中最近使用的货币对</string>
+    <string name="done">完成</string>
+    <string name="cart_share_tip">小费 / 税 (%1$s%%)：%2$s %3$s</string>
+    <string name="cart_share_per_person">每人 (÷%1$d)：%2$s %3$s</string>
+    <string name="cart_share_budget_left">预算剩余：%1$s %2$s</string>
+    <string name="cart_share_over_budget">超出预算：%1$s %2$s</string>
+    <string name="cart_menu_extras">分摊、小费和预算</string>
+    <string name="cart_tip_label">小费 / 税</string>
+    <string name="cart_tip_row">小费 / 税 (%1$s%%)</string>
+    <string name="cart_split_label">分摊人数</string>
+    <string name="cart_split_decrease">减少人数</string>
+    <string name="cart_split_increase">增加人数</string>
+    <string name="cart_per_person_row">每人 (÷%1$d)</string>
+    <string name="cart_budget_label">预算</string>
+    <string name="cart_budget_left_row">预算剩余</string>
+    <string name="cart_over_budget_row">超出预算</string>
+    <string name="menu_scan_price">扫描价格</string>
+    <string name="scan_prices_title">找到的价格</string>
+    <string name="scan_no_prices">照片中未找到价格。</string>
+    <string name="scan_no_camera">没有可用于拍照的相机应用。</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.view.cart.compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,6 +32,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
@@ -42,6 +45,8 @@ import com.eliormachlev.currencix.view.compose.CurrencyPill
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
+import com.eliormachlev.currencix.viewmodel.cart.perPerson
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -53,6 +58,7 @@ private val TOTAL_TOP_GAP: Dp = 8.dp
 private val CURRENCY_ROW_GAP: Dp = 8.dp
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val SWAP_ICON_SIZE: Dp = 22.dp
+private val EXTRA_ROW_GAP: Dp = 4.dp
 
 /**
  * Cart footer — currency-pair header (chip / swap / chip), subtotal in
@@ -65,12 +71,15 @@ private val SWAP_ICON_SIZE: Dp = 22.dp
 fun CartFooter(
     viewModel: CartViewModel,
     onOpenFees: () -> Unit,
+    onEditExtras: () -> Unit,
 ) {
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
     val destCurrency by viewModel.getDestinationCurrency().observeAsState()
     val subtotal by viewModel.getSubtotal().observeAsState()
     val convertedSubtotal by viewModel.getConvertedSubtotal().observeAsState()
     val total by viewModel.getTotal().observeAsState()
+    val extras by viewModel.getExtras().observeAsState()
+    val tip by viewModel.getTip().observeAsState()
     // Fees and rates aren't rendered directly, but currentFeeStack() reads
     // from both — observing them here keeps the fee-annotation rows in sync
     // when either source emits.
@@ -86,7 +95,10 @@ fun CartFooter(
         convertedSubtotal = convertedSubtotal,
         total = total,
         feeStack = feeStack,
+        extras = extras ?: CartExtras(),
+        tip = tip,
         onOpenFees = onOpenFees,
+        onEditExtras = onEditExtras,
         onBaseClick = { pickerSide = CartPickSide.FROM },
         onDestClick = { pickerSide = CartPickSide.TO },
         onSwapClick = viewModel::swapCurrencies,
@@ -114,14 +126,17 @@ fun CartFooter(
  */
 @Composable
 @Suppress("LongParameterList")
-private fun CartFooterCard(
+internal fun CartFooterCard(
     baseCurrency: Currency?,
     destCurrency: Currency?,
     subtotal: BigDecimal?,
     convertedSubtotal: BigDecimal?,
     total: BigDecimal?,
     feeStack: BigDecimal,
+    extras: CartExtras,
+    tip: BigDecimal?,
     onOpenFees: () -> Unit,
+    onEditExtras: () -> Unit,
     onBaseClick: () -> Unit,
     onDestClick: () -> Unit,
     onSwapClick: () -> Unit,
@@ -150,6 +165,13 @@ private fun CartFooterCard(
             amount = context.formatCartAmount(subtotal, baseCurrency),
             style = MaterialTheme.typography.titleSmall,
         )
+        extras.tipPercent?.let { percent ->
+            ExtraRow(
+                label = stringResource(R.string.cart_tip_row, percent.toPlainString()),
+                amount = "+" + context.formatCartAmount(tip, baseCurrency),
+                onClick = onEditExtras,
+            )
+        }
         FeeAnnotationRow(
             prefixRes = R.string.fee_true_cost_prefix,
             feeStack = feeStack,
@@ -162,6 +184,56 @@ private fun CartFooterCard(
             amount = context.formatCartAmount(total, destCurrency),
             style = MaterialTheme.typography.titleLarge,
         )
+        ExtrasBelowTotal(extras, total ?: BigDecimal.ZERO, destCurrency, onEditExtras)
+    }
+}
+
+// "Per person (÷3)" and "Left in budget" / "Over budget" under the total,
+// each only when set; tapping one edits them.
+@Composable
+private fun ExtrasBelowTotal(
+    extras: CartExtras,
+    total: BigDecimal,
+    currency: Currency?,
+    onEdit: () -> Unit,
+) {
+    val context = LocalContext.current
+    if (extras.splitWays > 1) {
+        ExtraRow(
+            label = stringResource(R.string.cart_per_person_row, extras.splitWays),
+            amount = context.formatCartAmount(perPerson(total, extras.splitWays), currency),
+            onClick = onEdit,
+        )
+    }
+    extras.budget?.let { budget ->
+        val left = budgetLeft(total, budget)
+        val over = left.signum() < 0
+        ExtraRow(
+            label = stringResource(if (over) R.string.cart_over_budget_row else R.string.cart_budget_left_row),
+            amount = context.formatCartAmount(left.abs(), currency),
+            onClick = onEdit,
+            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+// A small label + amount line for the cart's extras (tip, split, budget).
+@Composable
+private fun ExtraRow(
+    label: String,
+    amount: String,
+    onClick: () -> Unit,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(top = EXTRA_ROW_GAP),
+    ) {
+        Text(label, style = MaterialTheme.typography.labelMedium, color = color, modifier = Modifier.weight(1f))
+        Text(amount, style = MaterialTheme.typography.labelMedium, color = color)
     }
 }
 

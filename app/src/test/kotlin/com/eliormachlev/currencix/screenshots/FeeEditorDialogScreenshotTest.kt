@@ -1,8 +1,10 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.app.Application
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.view.preference.compose.FeeEditorDialog
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -16,10 +18,12 @@ import java.math.BigDecimal
 // bothWays=true toggle so we lock down the switched-on state too.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class FeeEditorDialogScreenshotTest {
+    @get:Rule val shots = ScreenshotRule()
+
     @Test fun feeEditorNewGlobal() =
-        captureMatrix("fee_editor_new_global") {
+        shots.captureMatrix("fee_editor_new_global") {
             FeeEditorDialog(
                 titleRes = R.string.fee_section_global_exchange,
                 existing = null,
@@ -31,7 +35,7 @@ class FeeEditorDialogScreenshotTest {
         }
 
     @Test fun feeEditorExistingPair() =
-        captureMatrix("fee_editor_existing_pair") {
+        shots.captureMatrix("fee_editor_existing_pair") {
             FeeEditorDialog(
                 titleRes = R.string.fee_section_specific_pair,
                 existing = SAMPLE_PAIR,

@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.app.Application
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.view.timeline.compose.TimelineChartCard
 import com.eliormachlev.currencix.view.timeline.compose.TimelineSecondary
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -31,10 +33,12 @@ import java.time.format.DateTimeFormatter
 // stats/period column (TimelineSecondary) with representative rates.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class TimelineScreenshotTest {
+    @get:Rule val shots = ScreenshotRule()
+
     @Test fun timelineChartCardIdle() =
-        captureMatrix("timeline_chart_card_idle") {
+        shots.captureMatrix("timeline_chart_card_idle") {
             TimelineChartCardPreview(
                 isRefreshing = false,
                 error = null,
@@ -43,7 +47,7 @@ class TimelineScreenshotTest {
         }
 
     @Test fun timelineChartCardRefreshing() =
-        captureMatrix("timeline_chart_card_refreshing") {
+        shots.captureMatrix("timeline_chart_card_refreshing") {
             TimelineChartCardPreview(
                 isRefreshing = true,
                 error = null,
@@ -52,7 +56,7 @@ class TimelineScreenshotTest {
         }
 
     @Test fun timelineChartCardError() =
-        captureMatrix("timeline_chart_card_error") {
+        shots.captureMatrix("timeline_chart_card_error") {
             TimelineChartCardPreview(
                 isRefreshing = false,
                 error = "<b>Network error</b><br/>Could not load historical rates.",
@@ -61,7 +65,26 @@ class TimelineScreenshotTest {
         }
 
     @Test fun timelineSecondary() =
-        captureMatrix("timeline_secondary") {
+        shots.captureMatrix("timeline_secondary") {
+            Column(modifier = Modifier.fillMaxSize()) {
+                TimelineSecondary(
+                    ratePast = SAMPLE_PAST_RATE_ENTRY to DECIMALS,
+                    rateCurrent = SAMPLE_CURRENT_RATE_ENTRY to DECIMALS,
+                    diffPercent = BigDecimal("2.37"),
+                    ratesMax = Triple(SAMPLE_MAX_RATE, SAMPLE_MAX_DATE, DECIMALS),
+                    ratesAvg = SAMPLE_AVG_RATE to DECIMALS,
+                    ratesMed = SAMPLE_MED_RATE to DECIMALS,
+                    ratesMin = Triple(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
+                    formatter = FORMATTER,
+                    selectedPeriod = TimelineViewModel.Period.YEAR,
+                    onPeriodSelected = {},
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+
+    @Test fun timelineSecondaryLargeFont() =
+        shots.captureLargeFont("timeline_secondary") {
             Column(modifier = Modifier.fillMaxSize()) {
                 TimelineSecondary(
                     ratePast = SAMPLE_PAST_RATE_ENTRY to DECIMALS,

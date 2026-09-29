@@ -729,6 +729,8 @@ class MainViewModel(
 
     internal fun paste(value: Number) = input.paste(value)
 
+    internal fun setAmount(value: BigDecimal) = input.setAmount(value)
+
     internal fun addPercent() = input.addPercent()
 
     internal fun addDecimal() = input.addDecimal()

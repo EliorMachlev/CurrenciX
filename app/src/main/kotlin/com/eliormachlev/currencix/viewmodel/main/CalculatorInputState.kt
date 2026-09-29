@@ -8,6 +8,7 @@ import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.PAREN_CLOSE
 import com.eliormachlev.currencix.util.PAREN_OPEN
 import com.eliormachlev.currencix.util.unclosedParens
+import java.math.BigDecimal
 
 /**
  * Holds the mutable keypad state — the lower "base" row and the optional upper
@@ -127,6 +128,12 @@ internal class CalculatorInputState {
     fun clear() {
         _baseValueText.value = "0"
         setCalc(null)
+    }
+
+    /** Replaces the input with [value] (any calculation is dropped) — an amount handed in from outside. */
+    fun setAmount(value: BigDecimal) {
+        setCalc(null)
+        _baseValueText.value = value.abs().stripTrailingZeros().toPlainString()
     }
 
     fun addOpenParen() {

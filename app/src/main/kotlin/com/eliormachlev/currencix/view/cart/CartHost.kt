@@ -184,6 +184,7 @@ class CartHost(
 class CartOverlayState {
     var cartChoice by mutableStateOf<CartChoiceRequest?>(null)
     var loadListVisible by mutableStateOf(false)
+    var extrasVisible by mutableStateOf(false)
     var unsavedChanges by mutableStateOf<CartUnsavedChangesRequest?>(null)
     var nameInput by mutableStateOf<CartNameInputRequest?>(null)
     var deleteConfirm by mutableStateOf<CartDeleteConfirmRequest?>(null)

@@ -2,6 +2,16 @@
 
 CurrenciX supports multiple exchange-rate data sources. The active provider is selected in **Settings → Exchange rate provider**. Switching takes effect on the next refresh.
 
+## Picker order
+
+The picker (`ProviderPickerDialog`) lists `ApiProvider.pickerOrder`: free providers under **Free**, then the ones that need a key under **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`: hourly, business-daily, monthly), then the more useful — wider coverage, steadier service — which is the enum's declaration order. Each row says how often it updates. Today that's: Frankfurter.app, Bank Rossii, Norges Bank, Bank of Canada, Bank of Israel, InforEuro; then OpenExchangerates. Reordering the enum is safe: only each entry's `id` is stored.
+
+## Fallback provider
+
+**Settings → Fallback provider** picks a second provider for when the main one fails. The picker greys out the main provider (it can't stand in for itself); unset, or set to what later became the main provider, it's the first free provider in the picker order that isn't the main one (`ApiProvider.defaultFallback`).
+
+When the main provider fails while the device is online (a timeout, an HTTP error, an error payload), `ExchangeRatesRepository` fetches from the fallback: rates and the timeline alike. Rates that came from the fallback are stored with the main provider they stand in for (`ExchangeRates.fallbackFrom`), so the converter shows "Bank of Israel unavailable • Using Frankfurter.app" and names the fallback as the source. If the fallback fails too, the main provider's error is the one reported. Offline, there's no point asking a second provider, so it isn't tried.
+
 ## Comparison
 
 | Provider | Currencies | Update freq | Base | Notes |

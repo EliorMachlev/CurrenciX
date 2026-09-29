@@ -28,7 +28,7 @@
     <string name="historical_banner">Söguleg • Gengi frá %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Nýjasta umreikningsgengi fyrir síðast notaða gjaldmiðlaparið.</string>
+    <string name="widget_description">Nýjasta gengi og 30 daga þróun fyrir síðast notaða gjaldmiðlaparið eða par sem þú velur.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Frá %s</string>
     <string name="widget_footer_empty">Opnaðu forritið til að hlaða gengi.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Skipta yfir í %1$s → %2$s</string>
     <string name="cart_section_pinned">Fest</string>
     <string name="cart_section_others">Önnur atriði</string>
+    <string name="fallback_banner">%1$s ekki tiltækt • Notar %2$s</string>
+    <string name="process_text_label">Umreikna gjaldmiðil</string>
+    <string name="selection_open_app">Opna í %1$s</string>
+    <string name="selection_copy">Afrita</string>
+    <string name="selection_no_amount">Engin upphæð fannst í „%1$s“.</string>
+    <string name="selection_no_rates">Opnaðu %1$s einu sinni til að sækja gengi.</string>
+    <string name="selection_assumed_currency">Textinn hefur engan gjaldmiðil, svo hann var lesinn sem %1$s.</string>
+    <string name="shortcut_pair_long">Umreikna %1$s í %2$s</string>
+    <string name="widget_configure_title">Græja</string>
+    <string name="widget_follow_converter_title">Fylgja umreiknaranum</string>
+    <string name="widget_follow_converter_summary">Sýna parið sem þú notaðir síðast í forritinu</string>
+    <string name="done">Lokið</string>
+    <string name="cart_share_tip">Þjórfé / skattur (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Á mann (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Eftir af fjárhagsáætlun: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Yfir fjárhagsáætlun: %1$s %2$s</string>
+    <string name="cart_menu_extras">Skipting, þjórfé og fjárhagsáætlun</string>
+    <string name="cart_tip_label">Þjórfé / skattur</string>
+    <string name="cart_tip_row">Þjórfé / skattur (%1$s%%)</string>
+    <string name="cart_split_label">Skipta á milli</string>
+    <string name="cart_split_decrease">Færri</string>
+    <string name="cart_split_increase">Fleiri</string>
+    <string name="cart_per_person_row">Á mann (÷%1$d)</string>
+    <string name="cart_budget_label">Fjárhagsáætlun</string>
+    <string name="cart_budget_left_row">Eftir af fjárhagsáætlun</string>
+    <string name="cart_over_budget_row">Yfir fjárhagsáætlun</string>
+    <string name="menu_scan_price">Skanna verð</string>
+    <string name="scan_prices_title">Verð sem fundust</string>
+    <string name="scan_no_prices">Engin verð fundust á myndinni.</string>
+    <string name="scan_no_camera">Ekkert myndavélarforrit til að taka myndina.</string>
 </resources>

@@ -165,4 +165,12 @@
     <string name="language_zh_CN">Chinês (Simplificado)</string>
     <string name="dynamic_color_title">Cores do plano de fundo</string>
     <string name="dynamic_color_summary">Colorir o app com as cores do seu plano de fundo (Material You)</string>
+    <string name="provider_group_free">Gratuitos</string>
+    <string name="provider_group_api_key">Requer uma chave de API</string>
+    <string name="provider_main_chip">Principal</string>
+    <string name="provider_cadence_hourly">Atualizado a cada hora</string>
+    <string name="provider_cadence_daily">Atualizado a cada dia útil</string>
+    <string name="provider_cadence_monthly">Atualizado uma vez por mês</string>
+    <string name="fallback_provider_title">Provedor reserva</string>
+    <string name="fallback_provider_summary">%1$s · usado quando o %2$s não está acessível</string>
 </resources>

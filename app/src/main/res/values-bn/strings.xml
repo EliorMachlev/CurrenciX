@@ -34,7 +34,7 @@
     <string name="historical_banner">ঐতিহাসিক • %1$s থেকে রেট</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়ের সাম্প্রতিক বিনিময় হার।</string>
+    <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়া বা আপনার বেছে নেওয়া জোড়ার সর্বশেষ হার ও ৩০ দিনের প্রবণতা।</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s অনুযায়ী</string>
     <string name="widget_footer_empty">রেট লোড করতে অ্যাপ খুলুন।</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">%1$s → %2$s-এ যান</string>
     <string name="cart_section_pinned">পিন করা</string>
     <string name="cart_section_others">অন্যান্য আইটেম</string>
+    <string name="fallback_banner">%1$s অনুপলব্ধ • %2$s ব্যবহার করা হচ্ছে</string>
+    <string name="process_text_label">মুদ্রা রূপান্তর</string>
+    <string name="selection_open_app">%1$s-এ খুলুন</string>
+    <string name="selection_copy">কপি করুন</string>
+    <string name="selection_no_amount">“%1$s”-এ কোনো পরিমাণ পাওয়া যায়নি।</string>
+    <string name="selection_no_rates">বিনিময় হার লোড করতে একবার %1$s খুলুন।</string>
+    <string name="selection_assumed_currency">লেখায় কোনো মুদ্রা নেই, তাই এটি %1$s হিসেবে পড়া হয়েছে।</string>
+    <string name="shortcut_pair_long">%1$s থেকে %2$s-এ রূপান্তর</string>
+    <string name="widget_configure_title">উইজেট</string>
+    <string name="widget_follow_converter_title">কনভার্টার অনুসরণ করুন</string>
+    <string name="widget_follow_converter_summary">অ্যাপে সর্বশেষ ব্যবহৃত জোড়াটি দেখান</string>
+    <string name="done">সম্পন্ন</string>
+    <string name="cart_share_tip">টিপ / কর (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">জনপ্রতি (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">বাজেটে বাকি: %1$s %2$s</string>
+    <string name="cart_share_over_budget">বাজেটের বেশি: %1$s %2$s</string>
+    <string name="cart_menu_extras">ভাগ, টিপ ও বাজেট</string>
+    <string name="cart_tip_label">টিপ / কর</string>
+    <string name="cart_tip_row">টিপ / কর (%1$s%%)</string>
+    <string name="cart_split_label">ভাগ করুন</string>
+    <string name="cart_split_decrease">কম লোক</string>
+    <string name="cart_split_increase">বেশি লোক</string>
+    <string name="cart_per_person_row">জনপ্রতি (÷%1$d)</string>
+    <string name="cart_budget_label">বাজেট</string>
+    <string name="cart_budget_left_row">বাজেটে বাকি</string>
+    <string name="cart_over_budget_row">বাজেটের বেশি</string>
+    <string name="menu_scan_price">দাম স্ক্যান করুন</string>
+    <string name="scan_prices_title">পাওয়া দাম</string>
+    <string name="scan_no_prices">ছবিতে কোনো দাম পাওয়া যায়নি।</string>
+    <string name="scan_no_camera">ছবি তোলার জন্য কোনো ক্যামেরা অ্যাপ নেই।</string>
 </resources>

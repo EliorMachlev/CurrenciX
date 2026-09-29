@@ -144,4 +144,12 @@
     <string name="fee_untitled">Sans titre</string>
     <string name="dynamic_color_title">Couleurs du fond d\'écran</string>
     <string name="dynamic_color_summary">Teinter l\'application avec les couleurs de votre fond d\'écran (Material You)</string>
+    <string name="provider_group_free">Gratuits</string>
+    <string name="provider_group_api_key">Nécessite une clé API</string>
+    <string name="provider_main_chip">Principal</string>
+    <string name="provider_cadence_hourly">Mis à jour toutes les heures</string>
+    <string name="provider_cadence_daily">Mis à jour chaque jour ouvré</string>
+    <string name="provider_cadence_monthly">Mis à jour une fois par mois</string>
+    <string name="fallback_provider_title">Fournisseur de secours</string>
+    <string name="fallback_provider_summary">%1$s · utilisé quand %2$s est injoignable</string>
 </resources>

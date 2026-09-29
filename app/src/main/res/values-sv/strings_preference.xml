@@ -145,4 +145,12 @@
     <string name="fee_untitled">Namnlös</string>
     <string name="dynamic_color_title">Bakgrundsfärger</string>
     <string name="dynamic_color_summary">Färglägg appen med färgerna från din bakgrundsbild (Material You)</string>
+    <string name="provider_group_free">Gratis</string>
+    <string name="provider_group_api_key">Kräver en API-nyckel</string>
+    <string name="provider_main_chip">Huvud</string>
+    <string name="provider_cadence_hourly">Uppdateras varje timme</string>
+    <string name="provider_cadence_daily">Uppdateras varje vardag</string>
+    <string name="provider_cadence_monthly">Uppdateras en gång i månaden</string>
+    <string name="fallback_provider_title">Reservleverantör</string>
+    <string name="fallback_provider_summary">%1$s · används när %2$s inte kan nås</string>
 </resources>

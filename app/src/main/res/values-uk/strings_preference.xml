@@ -144,4 +144,12 @@
     <string name="fee_untitled">Без назви</string>
     <string name="dynamic_color_title">Кольори шпалер</string>
     <string name="dynamic_color_summary">Забарвлювати застосунок у кольори шпалер (Material You)</string>
+    <string name="provider_group_free">Безкоштовні</string>
+    <string name="provider_group_api_key">Потрібен ключ API</string>
+    <string name="provider_main_chip">Основне</string>
+    <string name="provider_cadence_hourly">Оновлюється щогодини</string>
+    <string name="provider_cadence_daily">Оновлюється кожного робочого дня</string>
+    <string name="provider_cadence_monthly">Оновлюється раз на місяць</string>
+    <string name="fallback_provider_title">Резервне джерело</string>
+    <string name="fallback_provider_summary">%1$s · використовується, коли %2$s недоступне</string>
 </resources>

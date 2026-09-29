@@ -35,7 +35,7 @@
     <string name="historical_banner">Històric • Tipus del %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Última taxa de conversió per al teu últim parell de monedes utilitzat.</string>
+    <string name="widget_description">Darrer tipus i tendència de 30 dies del darrer parell de monedes que vas fer servir, o del que triïs.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">A data de %s</string>
     <string name="widget_footer_empty">Obre l\'aplicació per carregar les taxes.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Canvia a %1$s → %2$s</string>
     <string name="cart_section_pinned">Fixats</string>
     <string name="cart_section_others">Altres articles</string>
+    <string name="fallback_banner">%1$s no disponible • S\'utilitza %2$s</string>
+    <string name="process_text_label">Converteix la moneda</string>
+    <string name="selection_open_app">Obre a %1$s</string>
+    <string name="selection_copy">Copia</string>
+    <string name="selection_no_amount">No s\'ha trobat cap import a «%1$s».</string>
+    <string name="selection_no_rates">Obre %1$s un cop per carregar els tipus de canvi.</string>
+    <string name="selection_assumed_currency">El text no té moneda, així que s\'ha llegit com a %1$s.</string>
+    <string name="shortcut_pair_long">Converteix de %1$s a %2$s</string>
+    <string name="widget_configure_title">Giny</string>
+    <string name="widget_follow_converter_title">Segueix el convertidor</string>
+    <string name="widget_follow_converter_summary">Mostra el parell que vas fer servir per última vegada a l\'aplicació</string>
+    <string name="done">Fet</string>
+    <string name="cart_share_tip">Propina / impost (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Per persona (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Queda al pressupost: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Per sobre del pressupost: %1$s %2$s</string>
+    <string name="cart_menu_extras">Divideix, propina i pressupost</string>
+    <string name="cart_tip_label">Propina / impost</string>
+    <string name="cart_tip_row">Propina / impost (%1$s%%)</string>
+    <string name="cart_split_label">Divideix entre</string>
+    <string name="cart_split_decrease">Menys persones</string>
+    <string name="cart_split_increase">Més persones</string>
+    <string name="cart_per_person_row">Per persona (÷%1$d)</string>
+    <string name="cart_budget_label">Pressupost</string>
+    <string name="cart_budget_left_row">Queda al pressupost</string>
+    <string name="cart_over_budget_row">Per sobre del pressupost</string>
+    <string name="menu_scan_price">Escaneja un preu</string>
+    <string name="scan_prices_title">Preus trobats</string>
+    <string name="scan_no_prices">No s\'ha trobat cap preu a la foto.</string>
+    <string name="scan_no_camera">No hi ha cap aplicació de càmera per fer la foto.</string>
 </resources>

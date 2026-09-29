@@ -144,4 +144,12 @@
     <string name="fee_untitled">Bez naziva</string>
     <string name="dynamic_color_title">Boje pozadine</string>
     <string name="dynamic_color_summary">Oboji aplikaciju bojama pozadine zaslona (Material You)</string>
+    <string name="provider_group_free">Besplatni</string>
+    <string name="provider_group_api_key">Potreban je API ključ</string>
+    <string name="provider_main_chip">Glavni</string>
+    <string name="provider_cadence_hourly">Ažurira se svaki sat</string>
+    <string name="provider_cadence_daily">Ažurira se svaki radni dan</string>
+    <string name="provider_cadence_monthly">Ažurira se jednom mjesečno</string>
+    <string name="fallback_provider_title">Rezervni pružatelj</string>
+    <string name="fallback_provider_summary">%1$s · koristi se kada %2$s nije dostupan</string>
 </resources>

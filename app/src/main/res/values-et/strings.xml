@@ -34,7 +34,7 @@
     <string name="historical_banner">Ajalooline • Kursid alates %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Viimane vahetuskurss teie viimati kasutatud valuutapaari jaoks.</string>
+    <string name="widget_description">Viimase kasutatud või valitud valuutapaari viimane kurss ja 30 päeva trend.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Seisuga %s</string>
     <string name="widget_footer_empty">Kursside laadimiseks avage rakendus.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Lülitu paarile %1$s → %2$s</string>
     <string name="cart_section_pinned">Kinnitatud</string>
     <string name="cart_section_others">Muud üksused</string>
+    <string name="fallback_banner">%1$s pole saadaval • Kasutatakse %2$s</string>
+    <string name="process_text_label">Teisenda valuutat</string>
+    <string name="selection_open_app">Ava rakenduses %1$s</string>
+    <string name="selection_copy">Kopeeri</string>
+    <string name="selection_no_amount">Tekstist „%1$s“ ei leitud summat.</string>
+    <string name="selection_no_rates">Ava %1$s üks kord, et vahetuskursid laadida.</string>
+    <string name="selection_assumed_currency">Tekstis pole valuutat, seega loeti see kui %1$s.</string>
+    <string name="shortcut_pair_long">Teisenda %1$s → %2$s</string>
+    <string name="widget_configure_title">Vidin</string>
+    <string name="widget_follow_converter_title">Järgi konverterit</string>
+    <string name="widget_follow_converter_summary">Näita paari, mida rakenduses viimati kasutasid</string>
+    <string name="done">Valmis</string>
+    <string name="cart_share_tip">Jootraha / maks (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Inimese kohta (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Eelarvest alles: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Üle eelarve: %1$s %2$s</string>
+    <string name="cart_menu_extras">Jagamine, jootraha ja eelarve</string>
+    <string name="cart_tip_label">Jootraha / maks</string>
+    <string name="cart_tip_row">Jootraha / maks (%1$s%%)</string>
+    <string name="cart_split_label">Jaga</string>
+    <string name="cart_split_decrease">Vähem inimesi</string>
+    <string name="cart_split_increase">Rohkem inimesi</string>
+    <string name="cart_per_person_row">Inimese kohta (÷%1$d)</string>
+    <string name="cart_budget_label">Eelarve</string>
+    <string name="cart_budget_left_row">Eelarvest alles</string>
+    <string name="cart_over_budget_row">Üle eelarve</string>
+    <string name="menu_scan_price">Skanni hind</string>
+    <string name="scan_prices_title">Leitud hinnad</string>
+    <string name="scan_no_prices">Fotolt ei leitud hindu.</string>
+    <string name="scan_no_camera">Foto tegemiseks pole kaamerarakendust.</string>
 </resources>

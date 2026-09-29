@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.timeline.TimelineTitle
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -30,11 +32,13 @@ import org.robolectric.annotation.GraphicsMode
 // (pair beside the back arrow) and the cart's medium one.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class TopBarsScreenshotTest {
-    @Test fun timelineBar() = captureMatrix("top_bar_timeline") { TimelineBar() }
+    @get:Rule val shots = ScreenshotRule()
 
-    @Test fun cartBarMedium() = captureMatrix("top_bar_cart_medium") { CartBar() }
+    @Test fun timelineBar() = shots.captureMatrix("top_bar_timeline") { TimelineBar() }
+
+    @Test fun cartBarMedium() = shots.captureMatrix("top_bar_cart_medium") { CartBar() }
 }
 
 @Composable

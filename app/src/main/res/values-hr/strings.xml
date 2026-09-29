@@ -34,7 +34,7 @@
     <string name="historical_banner">Povijesno • Tečajevi od %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Najnoviji tečaj za posljednje korišteni par valuta.</string>
+    <string name="widget_description">Najnoviji tečaj i 30-dnevni trend za zadnji korišteni valutni par ili onaj koji odaberete.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Na dan %s</string>
     <string name="widget_footer_empty">Otvorite aplikaciju za učitavanje tečajeva.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Prebaci na %1$s → %2$s</string>
     <string name="cart_section_pinned">Prikvačeno</string>
     <string name="cart_section_others">Ostale stavke</string>
+    <string name="fallback_banner">%1$s nije dostupan • Koristi se %2$s</string>
+    <string name="process_text_label">Pretvori valutu</string>
+    <string name="selection_open_app">Otvori u aplikaciji %1$s</string>
+    <string name="selection_copy">Kopiraj</string>
+    <string name="selection_no_amount">U „%1$s” nije pronađen iznos.</string>
+    <string name="selection_no_rates">Jednom otvorite %1$s da biste učitali tečajeve.</string>
+    <string name="selection_assumed_currency">Tekst nema valutu, pa je pročitan kao %1$s.</string>
+    <string name="shortcut_pair_long">Pretvori %1$s u %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Prati pretvarač</string>
+    <string name="widget_follow_converter_summary">Prikaži par koji ste zadnji koristili u aplikaciji</string>
+    <string name="done">Gotovo</string>
+    <string name="cart_share_tip">Napojnica / porez (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Po osobi (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Preostalo u proračunu: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Iznad proračuna: %1$s %2$s</string>
+    <string name="cart_menu_extras">Podjela, napojnica i proračun</string>
+    <string name="cart_tip_label">Napojnica / porez</string>
+    <string name="cart_tip_row">Napojnica / porez (%1$s%%)</string>
+    <string name="cart_split_label">Podijeli na</string>
+    <string name="cart_split_decrease">Manje osoba</string>
+    <string name="cart_split_increase">Više osoba</string>
+    <string name="cart_per_person_row">Po osobi (÷%1$d)</string>
+    <string name="cart_budget_label">Proračun</string>
+    <string name="cart_budget_left_row">Preostalo u proračunu</string>
+    <string name="cart_over_budget_row">Iznad proračuna</string>
+    <string name="menu_scan_price">Skeniraj cijenu</string>
+    <string name="scan_prices_title">Pronađene cijene</string>
+    <string name="scan_no_prices">Na fotografiji nisu pronađene cijene.</string>
+    <string name="scan_no_camera">Nema aplikacije kamere za snimanje fotografije.</string>
 </resources>

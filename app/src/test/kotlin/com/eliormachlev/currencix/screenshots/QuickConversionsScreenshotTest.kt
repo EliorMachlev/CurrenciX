@@ -1,8 +1,10 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.app.Application
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsContent
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsRow
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -11,10 +13,12 @@ import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class QuickConversionsScreenshotTest {
+    @get:Rule val shots = ScreenshotRule()
+
     @Test fun quickConversionsPopulated() =
-        captureMatrix("quick_conversions_populated") {
+        shots.captureMatrix("quick_conversions_populated") {
             QuickConversionsContent(
                 from = Currency.USD,
                 to = Currency.EUR,
@@ -27,7 +31,7 @@ class QuickConversionsScreenshotTest {
         }
 
     @Test fun quickConversionsEmpty() =
-        captureMatrix("quick_conversions_empty") {
+        shots.captureMatrix("quick_conversions_empty") {
             QuickConversionsContent(
                 from = Currency.USD,
                 to = Currency.EUR,

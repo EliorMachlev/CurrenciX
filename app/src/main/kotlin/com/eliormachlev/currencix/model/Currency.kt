@@ -435,6 +435,9 @@ enum class Currency(
         this.symbol
             ?.let { if (it.hasRtlChar()) it.wrapLtr() else it }
 
+    /** The symbol as written, without the LTR wrapping [symbol] adds — for matching text. */
+    internal val plainSymbol: String? get() = this.symbol
+
     /**
      * Preferred display marker for UI: the currency symbol when known,
      * otherwise the ISO alpha code as a fallback (e.g. "$" for USD, "CHF" for CHF).

@@ -28,7 +28,7 @@
     <string name="historical_banner">Historis • Kurs dari %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Kurs konversi terbaru untuk pasangan mata uang yang terakhir digunakan.</string>
+    <string name="widget_description">Kurs terbaru dan tren 30 hari untuk pasangan mata uang terakhir Anda, atau yang Anda pilih.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Per %s</string>
     <string name="widget_footer_empty">Buka aplikasi untuk memuat kurs.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Beralih ke %1$s → %2$s</string>
     <string name="cart_section_pinned">Disematkan</string>
     <string name="cart_section_others">Item lainnya</string>
+    <string name="fallback_banner">%1$s tidak tersedia • Menggunakan %2$s</string>
+    <string name="process_text_label">Konversi mata uang</string>
+    <string name="selection_open_app">Buka di %1$s</string>
+    <string name="selection_copy">Salin</string>
+    <string name="selection_no_amount">Tidak ada jumlah yang ditemukan di “%1$s”.</string>
+    <string name="selection_no_rates">Buka %1$s sekali untuk memuat kurs.</string>
+    <string name="selection_assumed_currency">Teks tidak memiliki mata uang, jadi dibaca sebagai %1$s.</string>
+    <string name="shortcut_pair_long">Konversi %1$s ke %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Ikuti konverter</string>
+    <string name="widget_follow_converter_summary">Tampilkan pasangan yang terakhir Anda gunakan di aplikasi</string>
+    <string name="done">Selesai</string>
+    <string name="cart_share_tip">Tip / pajak (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Per orang (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Sisa anggaran: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Melebihi anggaran: %1$s %2$s</string>
+    <string name="cart_menu_extras">Bagi, tip &amp; anggaran</string>
+    <string name="cart_tip_label">Tip / pajak</string>
+    <string name="cart_tip_row">Tip / pajak (%1$s%%)</string>
+    <string name="cart_split_label">Bagi antara</string>
+    <string name="cart_split_decrease">Lebih sedikit orang</string>
+    <string name="cart_split_increase">Lebih banyak orang</string>
+    <string name="cart_per_person_row">Per orang (÷%1$d)</string>
+    <string name="cart_budget_label">Anggaran</string>
+    <string name="cart_budget_left_row">Sisa anggaran</string>
+    <string name="cart_over_budget_row">Melebihi anggaran</string>
+    <string name="menu_scan_price">Pindai harga</string>
+    <string name="scan_prices_title">Harga yang ditemukan</string>
+    <string name="scan_no_prices">Tidak ada harga yang ditemukan di foto.</string>
+    <string name="scan_no_camera">Tidak ada aplikasi kamera untuk mengambil foto.</string>
 </resources>

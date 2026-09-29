@@ -35,7 +35,7 @@
     <string name="historical_banner">Historique • Taux du %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Dernier taux de conversion pour votre dernière paire de devises utilisée.</string>
+    <string name="widget_description">Dernier taux et tendance sur 30 jours de votre dernière paire de devises, ou d\'une paire de votre choix.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Au %s</string>
     <string name="widget_footer_empty">Ouvrez l\'application pour charger les taux.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Passer à %1$s → %2$s</string>
     <string name="cart_section_pinned">Épinglés</string>
     <string name="cart_section_others">Autres articles</string>
+    <string name="fallback_banner">%1$s indisponible • %2$s utilisé</string>
+    <string name="process_text_label">Convertir la devise</string>
+    <string name="selection_open_app">Ouvrir dans %1$s</string>
+    <string name="selection_copy">Copier</string>
+    <string name="selection_no_amount">Aucun montant trouvé dans « %1$s ».</string>
+    <string name="selection_no_rates">Ouvrez %1$s une fois pour charger les taux de change.</string>
+    <string name="selection_assumed_currency">Le texte n\'indique aucune devise ; il a été lu comme %1$s.</string>
+    <string name="shortcut_pair_long">Convertir %1$s en %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Suivre le convertisseur</string>
+    <string name="widget_follow_converter_summary">Afficher la paire utilisée en dernier dans l\'application</string>
+    <string name="done">OK</string>
+    <string name="cart_share_tip">Pourboire / taxe (%1$s%%) : %2$s %3$s</string>
+    <string name="cart_share_per_person">Par personne (÷%1$d) : %2$s %3$s</string>
+    <string name="cart_share_budget_left">Reste du budget : %1$s %2$s</string>
+    <string name="cart_share_over_budget">Au-delà du budget : %1$s %2$s</string>
+    <string name="cart_menu_extras">Partage, pourboire et budget</string>
+    <string name="cart_tip_label">Pourboire / taxe</string>
+    <string name="cart_tip_row">Pourboire / taxe (%1$s%%)</string>
+    <string name="cart_split_label">Partager entre</string>
+    <string name="cart_split_decrease">Moins de personnes</string>
+    <string name="cart_split_increase">Plus de personnes</string>
+    <string name="cart_per_person_row">Par personne (÷%1$d)</string>
+    <string name="cart_budget_label">Budget</string>
+    <string name="cart_budget_left_row">Reste du budget</string>
+    <string name="cart_over_budget_row">Au-delà du budget</string>
+    <string name="menu_scan_price">Scanner un prix</string>
+    <string name="scan_prices_title">Prix trouvés</string>
+    <string name="scan_no_prices">Aucun prix trouvé sur la photo.</string>
+    <string name="scan_no_camera">Aucune application d\'appareil photo pour prendre la photo.</string>
 </resources>

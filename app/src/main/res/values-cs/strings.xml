@@ -34,7 +34,7 @@
     <string name="historical_banner">Historické • Kurzy z %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Nejnovější směnný kurz pro naposledy použitou dvojici měn.</string>
+    <string name="widget_description">Poslední kurz a 30denní vývoj pro naposledy použitou měnovou dvojici nebo pro vámi vybranou.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Ke dni %s</string>
     <string name="widget_footer_empty">Otevřete aplikaci a načtěte kurzy.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Přepnout na %1$s → %2$s</string>
     <string name="cart_section_pinned">Připnuté</string>
     <string name="cart_section_others">Ostatní položky</string>
+    <string name="fallback_banner">%1$s není k dispozici • Používá se %2$s</string>
+    <string name="process_text_label">Převést měnu</string>
+    <string name="selection_open_app">Otevřít v aplikaci %1$s</string>
+    <string name="selection_copy">Kopírovat</string>
+    <string name="selection_no_amount">V „%1$s“ nebyla nalezena žádná částka.</string>
+    <string name="selection_no_rates">Jednou otevřete %1$s, aby se načetly směnné kurzy.</string>
+    <string name="selection_assumed_currency">Text neobsahuje měnu, proto byl přečten jako %1$s.</string>
+    <string name="shortcut_pair_long">Převést %1$s na %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Sledovat převodník</string>
+    <string name="widget_follow_converter_summary">Zobrazit dvojici naposledy použitou v aplikaci</string>
+    <string name="done">Hotovo</string>
+    <string name="cart_share_tip">Spropitné / daň (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Na osobu (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Zbývá v rozpočtu: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Nad rozpočet: %1$s %2$s</string>
+    <string name="cart_menu_extras">Rozdělení, spropitné a rozpočet</string>
+    <string name="cart_tip_label">Spropitné / daň</string>
+    <string name="cart_tip_row">Spropitné / daň (%1$s%%)</string>
+    <string name="cart_split_label">Rozdělit mezi</string>
+    <string name="cart_split_decrease">Méně lidí</string>
+    <string name="cart_split_increase">Více lidí</string>
+    <string name="cart_per_person_row">Na osobu (÷%1$d)</string>
+    <string name="cart_budget_label">Rozpočet</string>
+    <string name="cart_budget_left_row">Zbývá v rozpočtu</string>
+    <string name="cart_over_budget_row">Nad rozpočet</string>
+    <string name="menu_scan_price">Naskenovat cenu</string>
+    <string name="scan_prices_title">Nalezené ceny</string>
+    <string name="scan_no_prices">Na fotce nebyly nalezeny žádné ceny.</string>
+    <string name="scan_no_camera">Není k dispozici aplikace fotoaparátu.</string>
 </resources>

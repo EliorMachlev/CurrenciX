@@ -144,4 +144,12 @@
     <string name="fee_untitled">Χωρίς τίτλο</string>
     <string name="dynamic_color_title">Χρώματα ταπετσαρίας</string>
     <string name="dynamic_color_summary">Χρωματισμός της εφαρμογής με τα χρώματα της ταπετσαρίας (Material You)</string>
+    <string name="provider_group_free">Δωρεάν</string>
+    <string name="provider_group_api_key">Απαιτεί κλειδί API</string>
+    <string name="provider_main_chip">Κύριος</string>
+    <string name="provider_cadence_hourly">Ενημερώνεται κάθε ώρα</string>
+    <string name="provider_cadence_daily">Ενημερώνεται κάθε εργάσιμη ημέρα</string>
+    <string name="provider_cadence_monthly">Ενημερώνεται μία φορά τον μήνα</string>
+    <string name="fallback_provider_title">Εφεδρικός πάροχος</string>
+    <string name="fallback_provider_summary">%1$s · χρησιμοποιείται όταν το %2$s δεν είναι προσβάσιμο</string>
 </resources>

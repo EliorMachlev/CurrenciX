@@ -8,7 +8,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 |---|---|---|
 | `build.yaml` | Push → `master`, PR | Spotless, lint, test, build debug APK for both flavors (matrix) + fdroid release APK |
 | `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK and upload as artifact |
-| `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator) and upload the PNGs as an artifact — not a gate, nothing is verified |
+| `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator), plus 200 % font-size captures of the densest screens, and upload the PNGs as an artifact — not a gate, nothing is verified. `ScreenshotRule` renders on a manual clock, so the suite takes about a minute; the job times out at 20 min so a capture that never settles fails fast |
 | `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles and run frame-timing benchmarks on an API 34 emulator; upload both as artifacts |
 | `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |

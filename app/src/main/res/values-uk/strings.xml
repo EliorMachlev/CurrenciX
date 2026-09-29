@@ -35,7 +35,7 @@
     <string name="historical_banner">Історичні • Курси від %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Останній курс конвертації для нещодавно використаної пари валют.</string>
+    <string name="widget_description">Останній курс і тренд за 30 днів для останньої використаної валютної пари або обраної вами.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Станом на %s</string>
     <string name="widget_footer_empty">Відкрийте застосунок, щоб завантажити курси.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Перейти до %1$s → %2$s</string>
     <string name="cart_section_pinned">Закріплені</string>
     <string name="cart_section_others">Інші товари</string>
+    <string name="fallback_banner">%1$s недоступний • Використовується %2$s</string>
+    <string name="process_text_label">Конвертувати валюту</string>
+    <string name="selection_open_app">Відкрити в %1$s</string>
+    <string name="selection_copy">Копіювати</string>
+    <string name="selection_no_amount">У «%1$s» не знайдено суми.</string>
+    <string name="selection_no_rates">Відкрийте %1$s один раз, щоб завантажити курси.</string>
+    <string name="selection_assumed_currency">У тексті немає валюти, тому його прочитано як %1$s.</string>
+    <string name="shortcut_pair_long">Конвертувати %1$s у %2$s</string>
+    <string name="widget_configure_title">Віджет</string>
+    <string name="widget_follow_converter_title">Стежити за конвертером</string>
+    <string name="widget_follow_converter_summary">Показувати пару, використану в застосунку останньою</string>
+    <string name="done">Готово</string>
+    <string name="cart_share_tip">Чайові / податок (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">На особу (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Залишок бюджету: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Понад бюджет: %1$s %2$s</string>
+    <string name="cart_menu_extras">Поділ, чайові та бюджет</string>
+    <string name="cart_tip_label">Чайові / податок</string>
+    <string name="cart_tip_row">Чайові / податок (%1$s%%)</string>
+    <string name="cart_split_label">Поділити на</string>
+    <string name="cart_split_decrease">Менше людей</string>
+    <string name="cart_split_increase">Більше людей</string>
+    <string name="cart_per_person_row">На особу (÷%1$d)</string>
+    <string name="cart_budget_label">Бюджет</string>
+    <string name="cart_budget_left_row">Залишок бюджету</string>
+    <string name="cart_over_budget_row">Понад бюджет</string>
+    <string name="menu_scan_price">Сканувати ціну</string>
+    <string name="scan_prices_title">Знайдені ціни</string>
+    <string name="scan_no_prices">На фото не знайдено цін.</string>
+    <string name="scan_no_camera">Немає застосунку камери, щоб зробити фото.</string>
 </resources>

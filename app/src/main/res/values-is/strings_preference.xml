@@ -145,4 +145,12 @@
     <string name="fee_untitled">Án titils</string>
     <string name="dynamic_color_title">Litir veggfóðurs</string>
     <string name="dynamic_color_summary">Lita forritið með litum veggfóðursins (Material You)</string>
+    <string name="provider_group_free">Ókeypis</string>
+    <string name="provider_group_api_key">Þarf API-lykil</string>
+    <string name="provider_main_chip">Aðal</string>
+    <string name="provider_cadence_hourly">Uppfært á klukkustundar fresti</string>
+    <string name="provider_cadence_daily">Uppfært hvern virkan dag</string>
+    <string name="provider_cadence_monthly">Uppfært einu sinni í mánuði</string>
+    <string name="fallback_provider_title">Varaveita</string>
+    <string name="fallback_provider_summary">%1$s · notað þegar ekki næst í %2$s</string>
 </resources>

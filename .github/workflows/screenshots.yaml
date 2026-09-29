@@ -19,6 +19,9 @@ env:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
+    # The suite records in about a minute on a manual clock (ScreenshotRule);
+    # a capture that never settles fails here instead of running for hours.
+    timeout-minutes: 20
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

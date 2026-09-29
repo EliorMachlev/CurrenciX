@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.content.FileProvider
@@ -15,12 +16,26 @@ import java.io.File
 // FileProvider config.
 internal const val CART_EXPORT_SUBDIR = "cart-exports"
 internal const val SHARE_IMAGES_SUBDIR = "share-images"
+internal const val SCANS_SUBDIR = "scans"
 
 private const val AUTHORITY_SUFFIX = ".fileprovider"
 
 // PNG compression is lossless — the "quality" arg is ignored by the PNG
 // encoder, but the API still requires it.
 private const val PNG_QUALITY = 100
+
+/**
+ * `<cacheDir>/<subdir>/<filename>` (the directory created if needed) and its
+ * FileProvider URI, for handing the file to another app.
+ */
+internal fun cacheFile(
+    context: Context,
+    subdir: String,
+    filename: String,
+): Pair<File, Uri> {
+    val file = File(File(context.cacheDir, subdir).apply { mkdirs() }, filename)
+    return file to FileProvider.getUriForFile(context, context.packageName + AUTHORITY_SUFFIX, file)
+}
 
 /**
  * Writes [bytes] into `<cacheDir>/<subdir>/<filename>` and returns an
@@ -41,14 +56,8 @@ internal fun buildShareChooser(
     bytes: ByteArray,
     extraText: String? = null,
 ): Intent {
-    val exportDir = File(context.cacheDir, subdir).apply { mkdirs() }
-    val outFile = File(exportDir, filename).apply { writeBytes(bytes) }
-    val uri =
-        FileProvider.getUriForFile(
-            context,
-            context.packageName + AUTHORITY_SUFFIX,
-            outFile,
-        )
+    val (outFile, uri) = cacheFile(context, subdir, filename)
+    outFile.writeBytes(bytes)
     val sendIntent =
         Intent(Intent.ACTION_SEND).apply {
             type = mimeType

@@ -9,6 +9,9 @@ internal const val KEY_RATES_DATE = "_date"
 internal const val KEY_RATES_TIME = "_time"
 internal const val KEY_RATES_PROVIDER = "_provider"
 
+// The main provider that failed, when these rates came from the fallback.
+internal const val KEY_RATES_FALLBACK_FROM = "_fallbackFrom"
+
 // Sentinel for "no API provider stored yet"; ApiProvider.fromId maps it to the
 // default provider. Kept as -1 to match previously persisted values.
 internal const val NO_PROVIDER_ID = -1

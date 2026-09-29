@@ -28,7 +28,7 @@
     <string name="historical_banner">Múltbeli • %1$s árfolyamai</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">A legutóbb használt pénznempár legfrissebb átváltási árfolyama.</string>
+    <string name="widget_description">A legutóbb használt vagy általad választott devizapár legfrissebb árfolyama és 30 napos trendje.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Ekkori állapot: %s</string>
     <string name="widget_footer_empty">Nyisd meg az alkalmazást az árfolyamok betöltéséhez.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">Váltás erre: %1$s → %2$s</string>
     <string name="cart_section_pinned">Kitűzve</string>
     <string name="cart_section_others">Egyéb tételek</string>
+    <string name="fallback_banner">%1$s nem érhető el • %2$s használatban</string>
+    <string name="process_text_label">Pénznem átváltása</string>
+    <string name="selection_open_app">Megnyitás itt: %1$s</string>
+    <string name="selection_copy">Másolás</string>
+    <string name="selection_no_amount">Nem található összeg ebben: „%1$s”.</string>
+    <string name="selection_no_rates">Nyisd meg egyszer a(z) %1$s alkalmazást az árfolyamok betöltéséhez.</string>
+    <string name="selection_assumed_currency">A szövegben nincs pénznem, ezért %1$s összegként értelmeztük.</string>
+    <string name="shortcut_pair_long">%1$s átváltása erre: %2$s</string>
+    <string name="widget_configure_title">Modul</string>
+    <string name="widget_follow_converter_title">A váltó követése</string>
+    <string name="widget_follow_converter_summary">Az alkalmazásban utoljára használt pár megjelenítése</string>
+    <string name="done">Kész</string>
+    <string name="cart_share_tip">Borravaló / adó (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Fejenként (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Maradt a keretből: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Kereten felül: %1$s %2$s</string>
+    <string name="cart_menu_extras">Felosztás, borravaló és keret</string>
+    <string name="cart_tip_label">Borravaló / adó</string>
+    <string name="cart_tip_row">Borravaló / adó (%1$s%%)</string>
+    <string name="cart_split_label">Felosztás</string>
+    <string name="cart_split_decrease">Kevesebb fő</string>
+    <string name="cart_split_increase">Több fő</string>
+    <string name="cart_per_person_row">Fejenként (÷%1$d)</string>
+    <string name="cart_budget_label">Keret</string>
+    <string name="cart_budget_left_row">Maradt a keretből</string>
+    <string name="cart_over_budget_row">Kereten felül</string>
+    <string name="menu_scan_price">Ár beolvasása</string>
+    <string name="scan_prices_title">Talált árak</string>
+    <string name="scan_no_prices">Nem található ár a fényképen.</string>
+    <string name="scan_no_camera">Nincs kameraalkalmazás a fénykép elkészítéséhez.</string>
 </resources>

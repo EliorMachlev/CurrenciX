@@ -1,11 +1,13 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.app.Application
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
 import com.eliormachlev.currencix.view.cart.compose.CartItemRow
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -19,19 +21,28 @@ import org.robolectric.annotation.GraphicsMode
 // are already covered by MainScreenScreenshotTest.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class CartScreenshotTest {
-    @Test fun cartEmpty() = captureMatrix("cart_empty") { CartEmptyHint() }
+    @get:Rule val shots = ScreenshotRule()
+
+    @Test fun cartEmpty() = shots.captureMatrix("cart_empty") { CartEmptyHint() }
 
     @Test fun cartItems() =
-        captureMatrix("cart_items") {
+        shots.captureMatrix("cart_items") {
+            Column(Modifier.fillMaxWidth()) {
+                SAMPLE_ITEMS.forEach { CartRowPreview(it, currency = "USD") }
+            }
+        }
+
+    @Test fun cartItemsLargeFont() =
+        shots.captureLargeFont("cart_items") {
             Column(Modifier.fillMaxWidth()) {
                 SAMPLE_ITEMS.forEach { CartRowPreview(it, currency = "USD") }
             }
         }
 
     @Test fun cartNoPriceItems() =
-        captureMatrix("cart_no_price_items") {
+        shots.captureMatrix("cart_no_price_items") {
             Column(Modifier.fillMaxWidth()) {
                 NO_PRICE_ITEMS.forEach { CartRowPreview(it, currency = "USD") }
             }

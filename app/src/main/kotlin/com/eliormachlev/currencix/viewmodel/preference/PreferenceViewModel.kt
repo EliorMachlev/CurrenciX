@@ -24,6 +24,8 @@ class PreferenceViewModel(
 
     val apiProvider: StateFlow<ApiProvider> =
         db.getApiProviderFlow().stateInWhileSubscribed(viewModelScope, db.getApiProvider())
+    val fallbackProvider: StateFlow<ApiProvider> =
+        db.getFallbackProviderFlow().stateInWhileSubscribed(viewModelScope, db.getFallbackProvider())
     val openExchangeratesApiKey: StateFlow<String?> =
         db.getOpenExchangeRatesApiKeyFlow().stateInWhileSubscribed(viewModelScope, db.getOpenExchangeRatesApiKey())
     val isPreviewConversionEnabled: StateFlow<Boolean> =
@@ -116,6 +118,10 @@ class PreferenceViewModel(
 
     fun setHapticFeedbackEnabled(enabled: Boolean) {
         db.setHapticFeedbackEnabled(enabled)
+    }
+
+    fun setFallbackProvider(provider: ApiProvider) {
+        db.setFallbackProvider(provider)
     }
 
     fun setDynamicColorEnabled(enabled: Boolean) {

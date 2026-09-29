@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.repository
 
+import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.SavedCart
 import org.json.JSONArray
@@ -16,6 +17,10 @@ internal const val CART_KEY_CURRENCY = "currency"
 internal const val CART_KEY_DEST_CURRENCY = "destinationCurrency"
 internal const val CART_KEY_ITEMS = "items"
 internal const val CART_KEY_CREATED_AT = "createdAt"
+internal const val CART_KEY_EXTRAS = "extras"
+internal const val CART_EXTRAS_KEY_TIP = "tipPercent"
+internal const val CART_EXTRAS_KEY_SPLIT = "splitWays"
+internal const val CART_EXTRAS_KEY_BUDGET = "budget"
 internal const val CART_ITEM_KEY_ID = "id"
 internal const val CART_ITEM_KEY_NAME = "name"
 internal const val CART_ITEM_KEY_EXPR = "expression"
@@ -28,6 +33,7 @@ internal fun serializeCart(cart: SavedCart): JSONObject =
         put(CART_KEY_CURRENCY, cart.currency)
         cart.destinationCurrency?.let { put(CART_KEY_DEST_CURRENCY, it) }
         put(CART_KEY_CREATED_AT, cart.createdAt)
+        if (!cart.extras.isDefault) put(CART_KEY_EXTRAS, serializeExtras(cart.extras))
         put(
             CART_KEY_ITEMS,
             JSONArray().apply {
@@ -35,6 +41,24 @@ internal fun serializeCart(cart: SavedCart): JSONObject =
             },
         )
     }
+
+// Amounts as plain strings, so no precision is lost to a JSON double.
+private fun serializeExtras(extras: CartExtras): JSONObject =
+    JSONObject().apply {
+        extras.tipPercent?.let { put(CART_EXTRAS_KEY_TIP, it.toPlainString()) }
+        if (extras.splitWays > 1) put(CART_EXTRAS_KEY_SPLIT, extras.splitWays)
+        extras.budget?.let { put(CART_EXTRAS_KEY_BUDGET, it.toPlainString()) }
+    }
+
+// Values out of range (a hand-edited or foreign file) fall back to "none".
+private fun parseExtras(obj: JSONObject?): CartExtras {
+    obj ?: return CartExtras()
+    return CartExtras(
+        tipPercent = obj.optString(CART_EXTRAS_KEY_TIP).toBigDecimalOrNull()?.takeIf { it.signum() > 0 },
+        splitWays = obj.optInt(CART_EXTRAS_KEY_SPLIT, 1).takeIf { it in 1..CartExtras.MAX_SPLIT } ?: 1,
+        budget = obj.optString(CART_EXTRAS_KEY_BUDGET).toBigDecimalOrNull()?.takeIf { it.signum() > 0 },
+    )
+}
 
 private fun serializeCartItem(item: CartItem): JSONObject =
     JSONObject().apply {
@@ -58,6 +82,7 @@ internal fun parseCart(obj: JSONObject?): SavedCart? {
         destinationCurrency = obj.optString(CART_KEY_DEST_CURRENCY, "").ifEmpty { null },
         items = items,
         createdAt = obj.optLong(CART_KEY_CREATED_AT, System.currentTimeMillis()),
+        extras = parseExtras(obj.optJSONObject(CART_KEY_EXTRAS)),
     )
 }
 

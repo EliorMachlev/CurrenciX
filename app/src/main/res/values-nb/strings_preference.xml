@@ -149,4 +149,12 @@
     <string name="title_changelog">Endringslogg</string>
     <string name="dynamic_color_title">Bakgrunnsfarger</string>
     <string name="dynamic_color_summary">Farg appen med fargene fra bakgrunnsbildet (Material You)</string>
+    <string name="provider_group_free">Gratis</string>
+    <string name="provider_group_api_key">Krever en API-nøkkel</string>
+    <string name="provider_main_chip">Hoved</string>
+    <string name="provider_cadence_hourly">Oppdateres hver time</string>
+    <string name="provider_cadence_daily">Oppdateres hver virkedag</string>
+    <string name="provider_cadence_monthly">Oppdateres én gang i måneden</string>
+    <string name="fallback_provider_title">Reserveleverandør</string>
+    <string name="fallback_provider_summary">%1$s · brukes når %2$s ikke kan nås</string>
 </resources>

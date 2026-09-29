@@ -144,4 +144,12 @@
     <string name="fee_untitled">തലക്കെട്ടില്ലാത്തത്</string>
     <string name="dynamic_color_title">വാൾപേപ്പർ നിറങ്ങൾ</string>
     <string name="dynamic_color_summary">വാൾപേപ്പറിലെ നിറങ്ങൾ ആപ്പിന് നൽകുക (Material You)</string>
+    <string name="provider_group_free">സൗജന്യം</string>
+    <string name="provider_group_api_key">API കീ ആവശ്യമാണ്</string>
+    <string name="provider_main_chip">പ്രധാനം</string>
+    <string name="provider_cadence_hourly">ഓരോ മണിക്കൂറിലും അപ്ഡേറ്റ് ചെയ്യും</string>
+    <string name="provider_cadence_daily">ഓരോ പ്രവൃത്തിദിനത്തിലും അപ്ഡേറ്റ് ചെയ്യും</string>
+    <string name="provider_cadence_monthly">മാസത്തിലൊരിക്കൽ അപ്ഡേറ്റ് ചെയ്യും</string>
+    <string name="fallback_provider_title">പകരം ദാതാവ്</string>
+    <string name="fallback_provider_summary">%1$s · %2$s ലഭ്യമല്ലാത്തപ്പോൾ ഉപയോഗിക്കുന്നു</string>
 </resources>

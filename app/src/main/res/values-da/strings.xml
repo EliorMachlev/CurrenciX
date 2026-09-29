@@ -35,7 +35,7 @@
     <string name="historical_banner">Historisk • Kurser fra %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Seneste omregningskurs for dit senest brugte valutapar.</string>
+    <string name="widget_description">Seneste kurs og 30-dages tendens for dit senest brugte valutapar eller et, du vælger.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Pr. %s</string>
     <string name="widget_footer_empty">Åbn appen for at indlæse kurser.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Skift til %1$s → %2$s</string>
     <string name="cart_section_pinned">Fastgjort</string>
     <string name="cart_section_others">Andre varer</string>
+    <string name="fallback_banner">%1$s er utilgængelig • Bruger %2$s</string>
+    <string name="process_text_label">Omregn valuta</string>
+    <string name="selection_open_app">Åbn i %1$s</string>
+    <string name="selection_copy">Kopiér</string>
+    <string name="selection_no_amount">Intet beløb fundet i “%1$s”.</string>
+    <string name="selection_no_rates">Åbn %1$s én gang for at hente valutakurser.</string>
+    <string name="selection_assumed_currency">Teksten har ingen valuta, så den blev læst som %1$s.</string>
+    <string name="shortcut_pair_long">Omregn %1$s til %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Følg omregneren</string>
+    <string name="widget_follow_converter_summary">Vis det par, du senest brugte i appen</string>
+    <string name="done">Færdig</string>
+    <string name="cart_share_tip">Drikkepenge / skat (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Pr. person (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Tilbage af budgettet: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Over budget: %1$s %2$s</string>
+    <string name="cart_menu_extras">Del, drikkepenge og budget</string>
+    <string name="cart_tip_label">Drikkepenge / skat</string>
+    <string name="cart_tip_row">Drikkepenge / skat (%1$s%%)</string>
+    <string name="cart_split_label">Del mellem</string>
+    <string name="cart_split_decrease">Færre personer</string>
+    <string name="cart_split_increase">Flere personer</string>
+    <string name="cart_per_person_row">Pr. person (÷%1$d)</string>
+    <string name="cart_budget_label">Budget</string>
+    <string name="cart_budget_left_row">Tilbage af budgettet</string>
+    <string name="cart_over_budget_row">Over budget</string>
+    <string name="menu_scan_price">Scan en pris</string>
+    <string name="scan_prices_title">Fundne priser</string>
+    <string name="scan_no_prices">Ingen priser fundet på billedet.</string>
+    <string name="scan_no_camera">Ingen kameraapp til at tage billedet.</string>
 </resources>

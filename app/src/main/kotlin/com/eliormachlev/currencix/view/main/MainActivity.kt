@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.compose.setContent
@@ -11,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
@@ -48,6 +50,8 @@ import com.eliormachlev.currencix.view.timeline.TimelineRoute
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 // Splash → wordmark hand-off overlap (#155). The platform splash icon
@@ -77,6 +81,10 @@ class MainActivity : AppCompatActivity() {
     private var navigator: AppNavigator? = null
 
     private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
+
+    // A pair / amount / screen an intent asked for (ConverterLaunch), applied
+    // once the navigator exists, then cleared.
+    private val launchRequest = mutableStateOf<ConverterLaunch.Request?>(null)
 
     // Messages from any screen, drawn over all of them (AppContent).
     private val snackbar by lazy { AppSnackbar(lifecycleScope) }
@@ -113,6 +121,8 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         converterHost = createConverterHost(revealPending = isColdStart)
+        // Only a fresh launch: a recreated Activity already applied it.
+        if (savedInstanceState == null) launchRequest.value = ConverterLaunch.parse(intent)
 
         val themeBackground = Color(resolveThemeColor(android.R.attr.colorBackground))
         setContent {
@@ -131,12 +141,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         observeFoldingFeature()
+        keepShortcutsInStep()
+    }
+
+    // Launcher shortcuts follow the recent pairs (AppShortcuts).
+    private fun keepShortcutsInStep() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            Database(applicationContext).getRecentPairsFlow().distinctUntilChanged().collect { recents ->
+                AppShortcuts.update(applicationContext, recents)
+            }
+        }
     }
 
     @Composable
     private fun AppContent() {
         val nav = rememberAppNavigator()
         val foldingFeature by foldingFeatureState
+        val request by launchRequest
+        LaunchedEffect(request, nav) {
+            request?.let { apply(it, nav) }
+            launchRequest.value = null
+        }
         DisposableEffect(nav) {
             navigator = nav
             onDispose { navigator = null }
@@ -146,6 +171,29 @@ class MainActivity : AppCompatActivity() {
                 AppNavHost(navigator = nav) { screen -> Destination(screen, nav, foldingFeature) }
                 AppSnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        ConverterLaunch.parse(intent)?.let { launchRequest.value = it }
+    }
+
+    // Converter on the asked-for pair (and amount), or the cart — over
+    // whatever was open, since the request came from outside the app.
+    private fun apply(
+        request: ConverterLaunch.Request,
+        nav: AppNavigator,
+    ) {
+        when (request) {
+            is ConverterLaunch.Request.Convert -> {
+                AppShortcuts.reportUsed(this, request.pair)
+                viewModel.setCurrencyPair(request.pair)
+                request.amount?.let(viewModel::setAmount)
+                nav.navigate(Screen.Converter)
+            }
+            ConverterLaunch.Request.OpenCart ->
+                nav.navigate(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
         }
     }
 

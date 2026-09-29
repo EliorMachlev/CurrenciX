@@ -1,5 +1,7 @@
 package com.eliormachlev.currencix.model
 
+import java.math.BigDecimal
+
 /**
  * One line in a shopping cart: a display [name] and a raw calculator
  * [expression] like `"1.99"`, `"2 × 3.50"`, or `"10 + 5%"`. The expression
@@ -61,4 +63,22 @@ data class SavedCart(
     val items: List<CartItem>,
     val createdAt: Long,
     val destinationCurrency: String? = null,
+    val extras: CartExtras = CartExtras(),
 )
+
+/**
+ * What a cart adds around its items: a [tipPercent] (tip or tax) on top of
+ * the prices, the total [splitWays] between people, and a [budget] in the
+ * destination currency to count down from. Defaults mean "none".
+ */
+data class CartExtras(
+    val tipPercent: BigDecimal? = null,
+    val splitWays: Int = 1,
+    val budget: BigDecimal? = null,
+) {
+    val isDefault: Boolean get() = this == CartExtras()
+
+    companion object {
+        const val MAX_SPLIT = 99
+    }
+}

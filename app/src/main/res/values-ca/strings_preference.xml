@@ -144,4 +144,12 @@
     <string name="fee_untitled">Sense títol</string>
     <string name="dynamic_color_title">Colors del fons de pantalla</string>
     <string name="dynamic_color_summary">Tenyeix l\'aplicació amb els colors del fons de pantalla (Material You)</string>
+    <string name="provider_group_free">Gratuïts</string>
+    <string name="provider_group_api_key">Cal una clau d\'API</string>
+    <string name="provider_main_chip">Principal</string>
+    <string name="provider_cadence_hourly">S\'actualitza cada hora</string>
+    <string name="provider_cadence_daily">S\'actualitza cada dia laborable</string>
+    <string name="provider_cadence_monthly">S\'actualitza un cop al mes</string>
+    <string name="fallback_provider_title">Proveïdor de reserva</string>
+    <string name="fallback_provider_summary">%1$s · s\'utilitza quan no es pot accedir a %2$s</string>
 </resources>

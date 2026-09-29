@@ -61,6 +61,7 @@ import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.util.withCurrencySymbol
 import com.eliormachlev.currencix.view.compose.CurrencyChip
 import com.eliormachlev.currencix.view.compose.CurrencyChipGap
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
@@ -575,18 +576,7 @@ private fun buildConversionText(
             .multiply(item.value)
             .toHumanReadableNumber(context, decimalPlaces = conversion.decimalPlaces, trim = true)
     val appended = hasAppendedCurrencySymbol(context)
-    val left = formatAmount(source, sourceSymbol, appended)
-    val right = formatAmount(destination, destinationSymbol, appended)
+    val left = withCurrencySymbol(source, sourceSymbol, appended)
+    val right = withCurrencySymbol(destination, destinationSymbol, appended)
     return "$left = $right".stripRtlMark().trim()
 }
-
-private fun formatAmount(
-    amount: String,
-    symbol: String,
-    appended: Boolean,
-): String =
-    when {
-        symbol.isEmpty() -> amount
-        appended -> "$amount $symbol"
-        else -> "$symbol $amount"
-    }

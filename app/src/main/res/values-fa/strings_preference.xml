@@ -144,4 +144,12 @@
     <string name="fee_untitled">بدون‌عنوان</string>
     <string name="dynamic_color_title">رنگ‌های کاغذدیواری</string>
     <string name="dynamic_color_summary">رنگ‌آمیزی برنامه با رنگ‌های کاغذدیواری (Material You)</string>
+    <string name="provider_group_free">رایگان</string>
+    <string name="provider_group_api_key">به کلید API نیاز دارد</string>
+    <string name="provider_main_chip">اصلی</string>
+    <string name="provider_cadence_hourly">به‌روزرسانی هر ساعت</string>
+    <string name="provider_cadence_daily">به‌روزرسانی هر روز کاری</string>
+    <string name="provider_cadence_monthly">به‌روزرسانی ماهی یک بار</string>
+    <string name="fallback_provider_title">ارائه‌دهنده جایگزین</string>
+    <string name="fallback_provider_summary">%1$s · وقتی %2$s در دسترس نیست استفاده می‌شود</string>
 </resources>

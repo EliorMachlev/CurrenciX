@@ -245,6 +245,12 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:$navigation3Version")
     implementation("androidx.navigation3:navigation3-ui:$navigation3Version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:$livecycleVersion")
+    // Camera price scan (play only): ML Kit on-device text recognition, the
+    // Play-services flavor so the model ships with Play services instead of
+    // the APK. F-Droid can't take proprietary Google code, so fdroid has no
+    // scanner (view/scan/FlavorTextReader.kt per flavor).
+    "playImplementation"("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
+
     // glance: home-screen widget composed instead of RemoteViews-driven.
     val glanceVersion = "1.1.1"
     implementation("androidx.glance:glance-appwidget:$glanceVersion")

@@ -144,4 +144,12 @@
     <string name="fee_untitled">Naamloos</string>
     <string name="dynamic_color_title">Achtergrondkleuren</string>
     <string name="dynamic_color_summary">Kleur de app met de kleuren van je achtergrond (Material You)</string>
+    <string name="provider_group_free">Gratis</string>
+    <string name="provider_group_api_key">Vereist een API-sleutel</string>
+    <string name="provider_main_chip">Hoofd</string>
+    <string name="provider_cadence_hourly">Elk uur bijgewerkt</string>
+    <string name="provider_cadence_daily">Elke werkdag bijgewerkt</string>
+    <string name="provider_cadence_monthly">Eén keer per maand bijgewerkt</string>
+    <string name="fallback_provider_title">Reserveprovider</string>
+    <string name="fallback_provider_summary">%1$s · gebruikt als %2$s niet bereikbaar is</string>
 </resources>

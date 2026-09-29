@@ -183,6 +183,21 @@ Once something is pinned, the list shows two sections, **Pinned** and **Other it
 - **Recent pairs**: a pair that stays on screen for 2 s is recorded (`RecentPairs`, newest first, at most 6, stored as `USD:ILS,EUR:USD` in `last_state`). A pair and its swap count as one. Chips under the hero card switch to the others in one tap, through `MainViewModel.setCurrencyPair`, which writes both sides at once (the swap button uses it too).
 - **Currency picker**: while the list is unfiltered, the recent pairs' currencies show as chips above it (minus the one on this side and the one it can't be). Search matches the code, the name, and **the countries that use the currency** ("Japan" → JPY, "Germany" → EUR), in the app's language and in English (`CurrencyCountries`, built once per language from the platform's locale data).
 
+### Outside the app: text selection, shortcuts, widget
+
+- **Convert currency** in any app's text-selection menu (`ConvertTextActivity`, `ACTION_PROCESS_TEXT`): a sheet over that app converting the selected price with the cached rates — instant, no network. `PriceParser` finds the amount and currency ("€49.99", "49,99 €", "USD 1,234.56"); a shared symbol ("$", "kr") prefers the user's own currencies, codes count only in capitals, and letter symbols only as whole words. The price converts into the converter's destination, or back into its base when it's already in the destination (`targetCurrency`). Copy, or open the converter on that pair and amount.
+- **Launcher shortcuts** (`AppShortcuts`): the top three recent pairs and the cart, kept in step with the recent pairs. Dynamic, since a static shortcut needs a fixed package name and the debug build's differs.
+- Both go through `ConverterLaunch`, the app's intents for "the converter on this pair / amount" and "the cart". MainActivity is exported, so every extra is validated and anything unreadable is dropped.
+- **Widget**: each widget follows the converter's pair by default or keeps a pair of its own (`WidgetConfigureActivity`, offered when placing it before Android 12 and from its reconfigure action after), stored in the widget's Glance state. From 260 dp wide it draws a 30-day trend line from the cached timeline (green rising, red falling). Tapping opens the converter on its pair.
+
+### Cart extras: tip / tax, split, budget
+
+A cart carries `CartExtras` (saved with it; older carts load without). **Tip / tax** is a percentage on top of the items, applied before fees since a card's FX fee is charged on everything paid; **split** shows each person's share of the total; **budget** (destination currency) shows what's left, or how far over in red. Edited in one sheet from the cart's menu or by tapping those footer rows, and included in the shared text.
+
+### Camera price scan (play only)
+
+The drawer's **Scan a price** takes a photo with the camera app (no camera permission of our own), reads its text on-device with ML Kit, and finds every price (`PriceParser.parseAll`, one per line). One price goes straight into the converter; several are offered in a sheet. ML Kit is proprietary, so it's a `playImplementation` behind `TextReader`: the play source set supplies one, fdroid supplies none, and there the entry isn't shown.
+
 ### Timeline states
 
 The statistics are a 2×2 grid (max/min, average/median) of tonal tiles, with "—" until data arrives, and the change since the start of the range as a signed percentage with a trend arrow ("−7.55 %", a true minus sign). Scrubbing the chart shows a bubble with the date and rate over the point. When the provider can't deliver a timeline, the chart card explains why and offers **Try again** and **Change provider** (the provider picker, which retries on pick) instead of an empty chart. The bar's title shows the requested pair right away, not only once data has loaded.
@@ -251,7 +266,7 @@ The preference read (`Database(this).getApiProvider()`) and the `InetAddress.get
 
 ### Home-screen widget via Glance
 
-`view/widget/CurrencyWidget.kt` is an `AppWidgetProvider` whose content is composed with **Glance** (`androidx.glance:glance-appwidget`) rather than hand-rolled `RemoteViews`. `widget_currency.xml` remains as the widget's preview/initial-layout resource required by the App Widget framework, but the live content is Glance composables.
+`view/widget/CurrencyWidget.kt` is an `AppWidgetProvider` whose content is composed with **Glance** (`androidx.glance:glance-appwidget`) rather than hand-rolled `RemoteViews`. `widget_currency.xml` remains as the widget's preview/initial-layout resource required by the App Widget framework, but the live content is Glance composables. Per-widget pairs and the trend line: see *Outside the app* above.
 
 ### Predictive back gesture
 
@@ -262,6 +277,7 @@ Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<ap
 | Dimension | `fdroid` | `play` |
 |---|---|---|
 | Play Services | None | Allowed |
+| Camera price scan | Not offered | ML Kit text recognition |
 | Reproducibility | Yes | No |
 | Distribution | F-Droid | Google Play |
 

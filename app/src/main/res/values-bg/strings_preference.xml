@@ -173,4 +173,12 @@
     <string name="title_changelog">Дневник на промените</string>
     <string name="dynamic_color_title">Цветове от тапета</string>
     <string name="dynamic_color_summary">Оцветяване на приложението с цветовете на тапета (Material You)</string>
+    <string name="provider_group_free">Безплатни</string>
+    <string name="provider_group_api_key">Изисква API ключ</string>
+    <string name="provider_main_chip">Основен</string>
+    <string name="provider_cadence_hourly">Обновява се всеки час</string>
+    <string name="provider_cadence_daily">Обновява се всеки работен ден</string>
+    <string name="provider_cadence_monthly">Обновява се веднъж месечно</string>
+    <string name="fallback_provider_title">Резервен доставчик</string>
+    <string name="fallback_provider_summary">%1$s · използва се, когато %2$s е недостъпен</string>
 </resources>

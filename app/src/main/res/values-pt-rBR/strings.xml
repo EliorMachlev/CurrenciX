@@ -36,7 +36,7 @@
     <string name="historical_banner">Histórico • Taxas de %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Última cotação de conversão para o seu par de moedas mais recente.</string>
+    <string name="widget_description">Taxa mais recente e tendência de 30 dias do par de moedas usado por último ou de um escolhido por você.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Em %s</string>
     <string name="widget_footer_empty">Abra o app para carregar as cotações.</string>
@@ -114,4 +114,34 @@
     <string name="recent_pair_switch">Mudar para %1$s → %2$s</string>
     <string name="cart_section_pinned">Fixados</string>
     <string name="cart_section_others">Outros itens</string>
+    <string name="fallback_banner">%1$s indisponível • Usando %2$s</string>
+    <string name="process_text_label">Converter moeda</string>
+    <string name="selection_open_app">Abrir no %1$s</string>
+    <string name="selection_copy">Copiar</string>
+    <string name="selection_no_amount">Nenhum valor encontrado em “%1$s”.</string>
+    <string name="selection_no_rates">Abra o %1$s uma vez para carregar as taxas de câmbio.</string>
+    <string name="selection_assumed_currency">O texto não tem moeda, então foi lido como %1$s.</string>
+    <string name="shortcut_pair_long">Converter %1$s em %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Seguir o conversor</string>
+    <string name="widget_follow_converter_summary">Mostrar o par usado por último no app</string>
+    <string name="done">Concluído</string>
+    <string name="cart_share_tip">Gorjeta / imposto (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Por pessoa (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Resta no orçamento: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Acima do orçamento: %1$s %2$s</string>
+    <string name="cart_menu_extras">Dividir, gorjeta e orçamento</string>
+    <string name="cart_tip_label">Gorjeta / imposto</string>
+    <string name="cart_tip_row">Gorjeta / imposto (%1$s%%)</string>
+    <string name="cart_split_label">Dividir entre</string>
+    <string name="cart_split_decrease">Menos pessoas</string>
+    <string name="cart_split_increase">Mais pessoas</string>
+    <string name="cart_per_person_row">Por pessoa (÷%1$d)</string>
+    <string name="cart_budget_label">Orçamento</string>
+    <string name="cart_budget_left_row">Resta no orçamento</string>
+    <string name="cart_over_budget_row">Acima do orçamento</string>
+    <string name="menu_scan_price">Escanear um preço</string>
+    <string name="scan_prices_title">Preços encontrados</string>
+    <string name="scan_no_prices">Nenhum preço encontrado na foto.</string>
+    <string name="scan_no_camera">Nenhum app de câmera para tirar a foto.</string>
 </resources>

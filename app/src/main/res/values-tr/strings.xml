@@ -35,7 +35,7 @@
     <string name="historical_banner">Geçmiş • %1$s tarihli kurlar</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Son kullandığınız para birimi çifti için en güncel dönüşüm kuru.</string>
+    <string name="widget_description">En son kullandığınız veya seçtiğiniz döviz çifti için güncel kur ve 30 günlük eğilim.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s tarihi itibarıyla</string>
     <string name="widget_footer_empty">Kurları yüklemek için uygulamayı açın.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">%1$s → %2$s çiftine geç</string>
     <string name="cart_section_pinned">Sabitlenenler</string>
     <string name="cart_section_others">Diğer öğeler</string>
+    <string name="fallback_banner">%1$s kullanılamıyor • %2$s kullanılıyor</string>
+    <string name="process_text_label">Para birimi dönüştür</string>
+    <string name="selection_open_app">%1$s ile aç</string>
+    <string name="selection_copy">Kopyala</string>
+    <string name="selection_no_amount">“%1$s” içinde tutar bulunamadı.</string>
+    <string name="selection_no_rates">Döviz kurlarını yüklemek için %1$s uygulamasını bir kez açın.</string>
+    <string name="selection_assumed_currency">Metinde para birimi yok, bu yüzden %1$s olarak okundu.</string>
+    <string name="shortcut_pair_long">%1$s birimini %2$s birimine dönüştür</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Dönüştürücüyü takip et</string>
+    <string name="widget_follow_converter_summary">Uygulamada en son kullandığınız çifti göster</string>
+    <string name="done">Bitti</string>
+    <string name="cart_share_tip">Bahşiş / vergi (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Kişi başı (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Bütçede kalan: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Bütçe aşıldı: %1$s %2$s</string>
+    <string name="cart_menu_extras">Bölüş, bahşiş ve bütçe</string>
+    <string name="cart_tip_label">Bahşiş / vergi</string>
+    <string name="cart_tip_row">Bahşiş / vergi (%1$s%%)</string>
+    <string name="cart_split_label">Bölüşen kişi</string>
+    <string name="cart_split_decrease">Daha az kişi</string>
+    <string name="cart_split_increase">Daha fazla kişi</string>
+    <string name="cart_per_person_row">Kişi başı (÷%1$d)</string>
+    <string name="cart_budget_label">Bütçe</string>
+    <string name="cart_budget_left_row">Bütçede kalan</string>
+    <string name="cart_over_budget_row">Bütçe aşıldı</string>
+    <string name="menu_scan_price">Fiyat tara</string>
+    <string name="scan_prices_title">Bulunan fiyatlar</string>
+    <string name="scan_no_prices">Fotoğrafta fiyat bulunamadı.</string>
+    <string name="scan_no_camera">Fotoğrafı çekmek için kamera uygulaması yok.</string>
 </resources>

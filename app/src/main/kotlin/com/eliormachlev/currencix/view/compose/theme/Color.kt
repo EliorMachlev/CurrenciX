@@ -30,6 +30,11 @@ private val BrassContainerDark = Color(0xFF4A3F26)
 private val OnBrassContainerLight = Color(0xFF251C08)
 private val OnBrassContainerDark = Color(0xFFF1E3C0)
 
+// Tertiary: the provider picker's warnings ("updated once a month",
+// "regular downtimes"). The fee stamp's crimson rather than Material's
+// default purple; lightened for ink.
+private val StampLight = Color(0xFFE8B4B4)
+
 private val PaperBg = Color(0xFFF3EEE5)
 private val PaperSurface = Color(0xFFFFFFFF)
 private val PaperSurfaceHigh = Color(0xFFF7F3EC)
@@ -56,6 +61,8 @@ val CurrenciXLightColors =
         onSecondary = Color(0xFF251C08),
         secondaryContainer = BrassContainerLight,
         onSecondaryContainer = OnBrassContainerLight,
+        tertiary = Stamp,
+        onTertiary = Color.White,
         background = PaperBg,
         onBackground = PaperInk,
         surface = PaperSurface,
@@ -81,6 +88,8 @@ val CurrenciXDarkColors =
         onSecondary = Color(0xFF251C08),
         secondaryContainer = BrassContainerDark,
         onSecondaryContainer = OnBrassContainerDark,
+        tertiary = StampLight,
+        onTertiary = Color(0xFF3A1010),
         background = InkBg,
         onBackground = InkForeground,
         surface = InkSurface,

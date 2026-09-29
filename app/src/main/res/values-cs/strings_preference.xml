@@ -144,4 +144,12 @@
     <string name="fee_untitled">Bez názvu</string>
     <string name="dynamic_color_title">Barvy tapety</string>
     <string name="dynamic_color_summary">Obarvit aplikaci barvami tapety (Material You)</string>
+    <string name="provider_group_free">Zdarma</string>
+    <string name="provider_group_api_key">Vyžaduje klíč API</string>
+    <string name="provider_main_chip">Hlavní</string>
+    <string name="provider_cadence_hourly">Aktualizace každou hodinu</string>
+    <string name="provider_cadence_daily">Aktualizace každý pracovní den</string>
+    <string name="provider_cadence_monthly">Aktualizace jednou měsíčně</string>
+    <string name="fallback_provider_title">Záložní poskytovatel</string>
+    <string name="fallback_provider_summary">%1$s · použije se, když %2$s není dostupný</string>
 </resources>

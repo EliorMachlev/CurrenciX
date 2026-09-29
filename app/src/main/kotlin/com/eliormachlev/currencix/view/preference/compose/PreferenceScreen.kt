@@ -63,6 +63,8 @@ private sealed interface OpenDialog {
 
     data object Provider : OpenDialog
 
+    data object FallbackProvider : OpenDialog
+
     data object ApiKey : OpenDialog
 
     data object GraphOptions : OpenDialog
@@ -87,6 +89,7 @@ fun PreferenceScreen(
     val dismiss: () -> Unit = { openDialog = null }
 
     val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
+    val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
     val apiKey by viewModel.openExchangeratesApiKey.collectAsStateWithLifecycle()
     val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
     val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
@@ -103,6 +106,7 @@ fun PreferenceScreen(
             viewModel = viewModel,
             callbacks = callbacks,
             provider = provider,
+            fallback = fallback,
             apiKey = apiKey,
             decimalPlaces = decimalPlaces,
             expandedKeypadEnabled = expandedKeypadEnabled,
@@ -142,6 +146,7 @@ private fun PreferenceSectionsList(
     viewModel: PreferenceViewModel,
     callbacks: PreferenceScreenCallbacks,
     provider: ApiProvider?,
+    fallback: ApiProvider,
     apiKey: String?,
     decimalPlaces: Int,
     expandedKeypadEnabled: Boolean,
@@ -177,10 +182,12 @@ private fun PreferenceSectionsList(
             SectionEnter(index = SettingsSection.API.ordinal) {
                 ApiSection(
                     provider = provider,
+                    fallback = fallback,
                     apiKey = apiKey,
                     autoRefreshEnabled = autoRefreshEnabled,
                     onAutoRefreshChange = viewModel::setAutoRefreshEnabled,
                     openProviderPicker = { onOpenDialog(OpenDialog.Provider) },
+                    openFallbackPicker = { onOpenDialog(OpenDialog.FallbackProvider) },
                     openApiKeyEditor = { onOpenDialog(OpenDialog.ApiKey) },
                 )
             }
@@ -254,6 +261,7 @@ private fun PreferenceDialogsHost(
                 onDismiss = dismiss,
                 onPicked = viewModel::setApiProvider,
             )
+        OpenDialog.FallbackProvider -> FallbackPickerDialog(viewModel, dismiss)
         OpenDialog.GraphOptions ->
             GraphOptionsSheet(
                 db = Database(LocalContext.current),
@@ -354,10 +362,12 @@ private fun GeneralSection(
 @Composable
 private fun ApiSection(
     provider: ApiProvider?,
+    fallback: ApiProvider,
     apiKey: String?,
     autoRefreshEnabled: Boolean,
     onAutoRefreshChange: (Boolean) -> Unit,
     openProviderPicker: () -> Unit,
+    openFallbackPicker: () -> Unit,
     openApiKeyEditor: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -368,6 +378,7 @@ private fun ApiSection(
             iconRes = R.drawable.ic_data_provider,
             onClick = openProviderPicker,
         )
+        FallbackProviderRow(main = provider, fallback = fallback, onClick = openFallbackPicker)
         if (provider == ApiProvider.OPEN_EXCHANGERATES) {
             PreferenceRow(
                 title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
@@ -413,6 +424,41 @@ private data class AppearanceToggles(
     val dynamicColor: Boolean,
     val preview: Boolean,
 )
+
+// "Fallback provider — Frankfurter.app · used when Bank of Israel can't be reached"
+@Composable
+private fun FallbackProviderRow(
+    main: ApiProvider?,
+    fallback: ApiProvider,
+    onClick: () -> Unit,
+) {
+    val context = LocalContext.current
+    PreferenceRow(
+        title = stringResource(id = R.string.fallback_provider_title),
+        summary =
+            main?.let { stringResource(R.string.fallback_provider_summary, fallback.getName(context), it.getName(context)) }
+                ?: fallback.getName(context).toString(),
+        iconRes = R.drawable.ic_sync_problem,
+        onClick = onClick,
+    )
+}
+
+// The fallback picker: the main provider is greyed out, since it can't stand in for itself.
+@Composable
+private fun FallbackPickerDialog(
+    viewModel: PreferenceViewModel,
+    onDismiss: () -> Unit,
+) {
+    val main by viewModel.apiProvider.collectAsStateWithLifecycle()
+    val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
+    ProviderPickerDialog(
+        selected = fallback,
+        onDismiss = onDismiss,
+        onPicked = viewModel::setFallbackProvider,
+        title = stringResource(id = R.string.fallback_provider_title),
+        unavailable = main,
+    )
+}
 
 @Composable
 private fun AppearanceSection(

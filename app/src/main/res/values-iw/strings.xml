@@ -34,7 +34,7 @@
     <string name="currency_dropdown_api_hint">משהו חסר? ספקי נתונים שונים מציעים מטבעות שונים. אפשר לגשת להגדרות ולנסות ספק אחר!\u00A0\uD83E\uDD17</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">שער ההמרה האחרון עבור צמד המטבעות האחרון בשימוש.</string>
+    <string name="widget_description">השער האחרון ומגמה של 30 יום לצמד המטבעות האחרון שבו השתמשת, או לצמד שבחרת.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">נכון לתאריך %s</string>
     <string name="widget_footer_empty">יש לפתוח את האפליקציה כדי לטעון שערים.</string>
@@ -113,4 +113,34 @@
     <string name="recent_pair_switch">מעבר אל %1$s → %2$s</string>
     <string name="cart_section_pinned">מוצמדים</string>
     <string name="cart_section_others">פריטים אחרים</string>
+    <string name="fallback_banner">%1$s לא זמין • נעשה שימוש ב־%2$s</string>
+    <string name="process_text_label">המרת מטבע</string>
+    <string name="selection_open_app">פתיחה ב־%1$s</string>
+    <string name="selection_copy">העתקה</string>
+    <string name="selection_no_amount">לא נמצא סכום ב„%1$s”.</string>
+    <string name="selection_no_rates">יש לפתוח את %1$s פעם אחת כדי לטעון שערי חליפין.</string>
+    <string name="selection_assumed_currency">בטקסט אין מטבע, ולכן הוא נקרא כ־%1$s.</string>
+    <string name="shortcut_pair_long">המרה מ־%1$s ל־%2$s</string>
+    <string name="widget_configure_title">ווידג׳ט</string>
+    <string name="widget_follow_converter_title">לעקוב אחרי הממיר</string>
+    <string name="widget_follow_converter_summary">הצגת הצמד האחרון שבו השתמשת באפליקציה</string>
+    <string name="done">סיום</string>
+    <string name="cart_share_tip">טיפ / מס (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">לאדם (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">נשאר בתקציב: %1$s %2$s</string>
+    <string name="cart_share_over_budget">חריגה מהתקציב: %1$s %2$s</string>
+    <string name="cart_menu_extras">חלוקה, טיפ ותקציב</string>
+    <string name="cart_tip_label">טיפ / מס</string>
+    <string name="cart_tip_row">טיפ / מס (%1$s%%)</string>
+    <string name="cart_split_label">חלוקה בין</string>
+    <string name="cart_split_decrease">פחות אנשים</string>
+    <string name="cart_split_increase">יותר אנשים</string>
+    <string name="cart_per_person_row">לאדם (÷%1$d)</string>
+    <string name="cart_budget_label">תקציב</string>
+    <string name="cart_budget_left_row">נשאר בתקציב</string>
+    <string name="cart_over_budget_row">חריגה מהתקציב</string>
+    <string name="menu_scan_price">סריקת מחיר</string>
+    <string name="scan_prices_title">מחירים שנמצאו</string>
+    <string name="scan_no_prices">לא נמצאו מחירים בתמונה.</string>
+    <string name="scan_no_camera">אין אפליקציית מצלמה לצילום התמונה.</string>
 </resources>

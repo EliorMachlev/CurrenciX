@@ -50,6 +50,7 @@ fun CartScreen(
     onReorder: CartDragCommit,
     onReorderStart: () -> Unit,
     onOpenFees: () -> Unit,
+    onEditExtras: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AppTheme {
@@ -82,6 +83,7 @@ fun CartScreen(
                 CartFooter(
                     viewModel = viewModel,
                     onOpenFees = onOpenFees,
+                    onEditExtras = onEditExtras,
                 )
             }
             CartKeypadOverlay(

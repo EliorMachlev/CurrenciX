@@ -28,6 +28,36 @@
             </intent-filter>
         </activity>
 
+        <!-- "Convert currency" in any app's text-selection menu. Own task and
+             translucent, so it floats over the calling app and leaves nothing
+             in Recents. -->
+        <activity
+            android:name=".view.convert.ConvertTextActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/process_text_label"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- The widget's pair: offered when a widget is placed (before Android 12)
+             and from its reconfigure action. Not launchable on its own. -->
+        <activity
+            android:name=".view.widget.WidgetConfigureActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme.Translucent">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

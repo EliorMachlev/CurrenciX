@@ -17,7 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
+import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
 import com.eliormachlev.currencix.view.cart.compose.CartNameInputDialog
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
@@ -84,6 +86,7 @@ fun CartRoute(
             // current edit and close before the gesture takes over the list.
             onReorderStart = host.keypad::closeKeypad,
             onOpenFees = onOpenFees,
+            onEditExtras = { host.overlays.extrasVisible = true },
             // With the window drawn edge to edge, the keyboard no longer
             // resizes it: lift the list and footer above the keyboard here.
             modifier = Modifier.padding(padding).consumeWindowInsets(padding).imePadding(),
@@ -101,9 +104,11 @@ private fun cartMenu(host: CartHost): List<OverflowAction> {
     val export = stringResource(R.string.cart_menu_export)
     val import = stringResource(R.string.cart_menu_import)
     val clear = stringResource(R.string.cart_menu_clear)
-    return remember(host, share, save, saveAs, load, export, import, clear) {
+    val extras = stringResource(R.string.cart_menu_extras)
+    return remember(host, share, extras, save, saveAs, load, export, import, clear) {
         listOf(
             OverflowAction(share, R.drawable.ic_share) { host.shareCoordinator.show() },
+            OverflowAction(extras, R.drawable.ic_split) { host.overlays.extrasVisible = true },
             OverflowAction(save, R.drawable.ic_save) { host.saveLoad.saveOrPromptForName() },
             OverflowAction(saveAs, R.drawable.ic_save_as) { host.saveLoad.showSaveAsDialog() },
             OverflowAction(load, R.drawable.ic_folder_open) { host.saveLoad.showLoadDialog() },
@@ -124,6 +129,19 @@ private fun CartOverlays(host: CartHost) {
             titleRes = request.titleRes,
             options = request.options,
             onDismiss = { state.cartChoice = null },
+        )
+    }
+    if (state.extrasVisible) {
+        val extras by host.viewModel.getExtras().observeAsState()
+        val destination by host.viewModel.getDestinationCurrency().observeAsState()
+        CartExtrasSheet(
+            initial = extras ?: CartExtras(),
+            destination = destination,
+            onDone = { edited ->
+                host.viewModel.setExtras(edited)
+                state.extrasVisible = false
+            },
+            onDismiss = { state.extrasVisible = false },
         )
     }
     if (state.loadListVisible) {
