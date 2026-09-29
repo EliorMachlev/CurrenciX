@@ -4,11 +4,13 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -61,12 +63,12 @@ internal fun ConverterRoute(
     val scope = rememberCoroutineScope()
     var overlay by rememberSaveable { mutableStateOf<ConverterOverlay?>(null) }
     val startReveal = remember { host.takeWordmarkReveal() }
-
     ReportVisibleWhileComposed(host.status)
-
     val destinations = remember(viewModel, navigator) { ConverterDestinations(viewModel, navigator) }
+    val onLeaveViaDrawer = rememberDrawerClosedOnReturn(drawerState)
     val onDrawerItem: (DrawerAction) -> Unit = { action ->
         scope.launch { drawerState.close() }
+        onLeaveViaDrawer(action)
         when (action) {
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
             DrawerAction.Share -> scope.launch { host.share.share() }
@@ -81,13 +83,7 @@ internal fun ConverterRoute(
                 ConverterTopBar(
                     drawerState = drawerState,
                     onToggleDrawer = { scope.launch { if (drawerState.isOpen) drawerState.close() else drawerState.open() } },
-                    actions =
-                        ConverterTopBarActions(
-                            onTimeline = destinations::openTimeline,
-                            onCart = destinations::openCart,
-                            onQuickConversions = { overlay = ConverterOverlay.QuickConversions },
-                            onHistoricalRates = { overlay = ConverterOverlay.HistoricalDatePicker },
-                        ),
+                    actions = destinations.topBarActions { overlay = it },
                     startReveal = startReveal,
                     onFirstFrame = host.onWordmarkFirstFrame,
                 )
@@ -135,6 +131,15 @@ private class ConverterDestinations(
 
     fun openSettings() = navigator.navigate(Screen.Settings)
 
+    /** The top bar's shortcuts: two screens and two sheets ([showOverlay]). */
+    fun topBarActions(showOverlay: (ConverterOverlay) -> Unit) =
+        ConverterTopBarActions(
+            onTimeline = ::openTimeline,
+            onCart = ::openCart,
+            onQuickConversions = { showOverlay(ConverterOverlay.QuickConversions) },
+            onHistoricalRates = { showOverlay(ConverterOverlay.HistoricalDatePicker) },
+        )
+
     /** A drawer entry that opens a screen or one of the converter's sheets ([showOverlay]). */
     fun open(
         action: DrawerAction,
@@ -151,6 +156,22 @@ private class ConverterDestinations(
             DrawerAction.Refresh, DrawerAction.Share -> Unit
         }
     }
+}
+
+// A drawer entry that opens another screen starts closing the drawer, but
+// the converter leaves composition before that animation ends — and would
+// come back with the drawer still open. Returns the hook to call with the
+// chosen entry; on return, the drawer is snapped shut.
+@Composable
+private fun rememberDrawerClosedOnReturn(drawerState: DrawerState): (DrawerAction) -> Unit {
+    var closeOnReturn by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (closeOnReturn) {
+            drawerState.snapTo(DrawerValue.Closed)
+            closeOnReturn = false
+        }
+    }
+    return { action -> closeOnReturn = action.opensScreen }
 }
 
 // The converter is on screen for as long as it's composed: a screen pushed

@@ -78,9 +78,15 @@ internal fun MacrobenchmarkScope.visitFromDrawer(entryTag: String) {
     checkNotNull(device.wait(Until.findObject(By.res(entryTag)), UI_TIMEOUT_MS)) {
         "drawer entry $entryTag never appeared"
     }.click()
-    // The converter's keypad disappears once the new screen covers it.
-    device.wait(Until.gone(By.res(UiTags.KEY_DELETE)), UI_TIMEOUT_MS)
+    // The converter's keypad disappears once the new screen has covered it
+    // (it leaves composition when the screen transition ends).
+    check(device.wait(Until.gone(By.res(UiTags.KEY_DELETE)), UI_TIMEOUT_MS)) {
+        "$entryTag never covered the converter — ${describeScreen()}"
+    }
     device.waitForIdle()
+    // Back from here must return to the converter, not leave the app: fail
+    // on the real cause (a crash, a screen that didn't open) if it's gone.
+    check(device.currentPackageName == targetPackage()) { "app left the foreground after opening $entryTag — ${describeScreen()}" }
     if (entryTag == UiTags.DRAWER_TIMELINE) scrubChart()
     device.pressBack()
     awaitConverter()

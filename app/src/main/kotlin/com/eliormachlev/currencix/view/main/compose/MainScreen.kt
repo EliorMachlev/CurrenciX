@@ -38,16 +38,19 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.UiTestTags
 
-enum class DrawerAction {
-    Timeline,
-    Cart,
+enum class DrawerAction(
+    /** Whether the entry opens another screen (rather than a sheet, or an action on the converter). */
+    val opensScreen: Boolean = false,
+) {
+    Timeline(opensScreen = true),
+    Cart(opensScreen = true),
     QuickConversions,
     DatePicker,
     Refresh,
     Share,
     ChangeApi,
-    Fees,
-    Settings,
+    Fees(opensScreen = true),
+    Settings(opensScreen = true),
 }
 
 private val DrawerOuterPadding = 12.dp

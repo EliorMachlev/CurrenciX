@@ -105,6 +105,18 @@ class MainActivitySmokeTest {
         back()
         assertOnConverter()
     }
+
+    @Test
+    fun `a screen opened from the drawer returns to a closed drawer`() {
+        openFromTopBar(R.string.desc_open_drawer)
+        compose.onNodeWithTag(UiTestTags.drawerEntry(DrawerAction.Timeline.name)).performClick()
+        settle()
+        compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertExists()
+
+        back()
+        // Open-drawer label means the drawer is shut (it reads "close" while open).
+        assertOnConverter()
+    }
 }
 
 // ~1 s at 60 fps: longer than any screen transition.
