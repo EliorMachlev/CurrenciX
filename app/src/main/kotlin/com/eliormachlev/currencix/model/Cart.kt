@@ -19,27 +19,27 @@ data class CartItem(
 
 /**
  * These items (storage order) after a drag dropped [movedId] where it sits
- * in [displayOrder] (the on-screen, pinned-first order), [pinned] or not.
- * Only the moved item changes place: it goes just before the next item of
- * its group on screen (or just after the previous one), so every other
- * item keeps its storage slot and unpinning still returns items to their
- * own order. Alone in its group, it keeps its slot. Unknown ids leave the
- * list unchanged.
+ * in [displayOrder] (the on-screen, pinned-first order). A drag stays within
+ * the row's group (pinned or not), so only its place changes: it goes just
+ * before the next row of its group on screen (or just after the previous
+ * one). Every other item keeps its storage slot, so unpinning still returns
+ * items to their own order. Unknown ids leave the list unchanged.
  */
 internal fun List<CartItem>.afterDrop(
     displayOrder: List<String>,
     movedId: String,
-    pinned: Boolean,
 ): List<CartItem> {
     val moved = firstOrNull { it.id == movedId } ?: return this
     val pinnedById = associate { it.id to it.pinned }
-    val group = displayOrder.filter { it == movedId || pinnedById[it] == pinned }
+    val group = displayOrder.filter { pinnedById[it] == moved.pinned }
+    // Already in that order (a release without movement): leave every slot alone.
+    if (group == filter { it.pinned == moved.pinned }.map { it.id }) return this
     val at = group.indexOf(movedId)
     val rest = filterNot { it.id == movedId }
     val next = group.getOrNull(at + 1)?.let { id -> rest.indexOfFirst { it.id == id } }?.takeIf { it >= 0 }
     val prev = group.getOrNull(at - 1)?.let { id -> rest.indexOfFirst { it.id == id } }?.takeIf { it >= 0 }
     val slot = next ?: prev?.plus(1) ?: indexOf(moved)
-    return rest.toMutableList().apply { add(slot.coerceIn(0, size), moved.copy(pinned = pinned)) }
+    return rest.toMutableList().apply { add(slot.coerceIn(0, size), moved) }
 }
 
 /**

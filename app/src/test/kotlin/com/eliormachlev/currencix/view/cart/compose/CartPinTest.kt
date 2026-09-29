@@ -54,7 +54,7 @@ class CartPinTest {
                     items.value = items.value!!.map { if (it.id == id) it.copy(pinned = !it.pinned) else it }.toImmutableList()
                 },
                 onDelete = {},
-                onReorder = { _, _, _ -> },
+                onReorder = { _, _ -> },
                 onReorderStart = {},
                 onBackgroundTap = {},
             )

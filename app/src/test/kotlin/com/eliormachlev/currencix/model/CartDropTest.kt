@@ -13,39 +13,34 @@ class CartDropTest {
     private fun List<CartItem>.summary() = joinToString(" ") { if (it.pinned) "${it.id}*" else it.id }
 
     @Test
-    fun `dropping an item into the pinned group pins it without moving the others`() {
-        // Storage: a b c*. On screen: c* a b. Drag b to the top.
-        val storage = listOf(item("a"), item("b"), item("c", pinned = true))
-        val after = storage.afterDrop(listOf("b", "c", "a"), movedId = "b", pinned = true)
-        assertEquals("a b* c*", after.summary())
+    fun `a pinned row reorders among the pinned ones`() {
+        // Storage: a* b* c. Drag a under b.
+        val storage = listOf(item("a", true), item("b", true), item("c"))
+        assertEquals("b* a* c", storage.afterDrop(listOf("b", "a", "c"), movedId = "a").summary())
     }
 
     @Test
-    fun `dragging a pinned item below the last pinned one unpins it`() {
-        // Storage: a* b* c d. On screen the same. Drag a between c and d.
-        val storage = listOf(item("a", true), item("b", true), item("c"), item("d"))
-        val after = storage.afterDrop(listOf("b", "c", "a", "d"), movedId = "a", pinned = false)
-        assertEquals("b* c a d", after.summary())
+    fun `only the moved row changes storage slot`() {
+        // Storage: x a* y z (a* shows first on screen). Drag z above y.
+        val storage = listOf(item("x"), item("a", true), item("y"), item("z"))
+        assertEquals("x a* z y", storage.afterDrop(listOf("a", "x", "z", "y"), movedId = "z").summary())
     }
 
     @Test
-    fun `unpinned items keep their own order when a pin moves between them`() {
-        // Storage: x a* y. On screen: a* x y. Unpin a by dropping it last.
+    fun `dropped last in its group, it goes after the previous row of the group`() {
+        val storage = listOf(item("x"), item("y"), item("a", true))
+        assertEquals("y x a*", storage.afterDrop(listOf("a", "y", "x"), movedId = "x").summary())
+    }
+
+    @Test
+    fun `a release without movement leaves the order as it was`() {
         val storage = listOf(item("x"), item("a", true), item("y"))
-        val after = storage.afterDrop(listOf("x", "y", "a"), movedId = "a", pinned = false)
-        assertEquals("x y a", after.summary())
-    }
-
-    @Test
-    fun `an item alone in its group keeps its storage slot`() {
-        val storage = listOf(item("a"), item("b", true), item("c"))
-        val after = storage.afterDrop(listOf("b", "a", "c"), movedId = "b", pinned = true)
-        assertEquals(storage, after)
+        assertSame(storage, storage.afterDrop(listOf("a", "x", "y"), movedId = "x"))
     }
 
     @Test
     fun `an unknown id changes nothing`() {
         val storage = listOf(item("a"), item("b"))
-        assertSame(storage, storage.afterDrop(listOf("a", "b"), movedId = "zzz", pinned = true))
+        assertSame(storage, storage.afterDrop(listOf("a", "b"), movedId = "zzz"))
     }
 }

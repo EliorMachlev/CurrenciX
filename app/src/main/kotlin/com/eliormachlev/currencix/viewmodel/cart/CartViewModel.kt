@@ -175,16 +175,15 @@ class CartViewModel(
 
     /**
      * Applies a finished drag: [movedId] was dropped where it sits in
-     * [displayOrder], landing [pinned] or not (see [afterDrop]). A release
-     * without movement changes nothing and skips the write.
+     * [displayOrder] (see [afterDrop]). A release without movement changes
+     * nothing and skips the write.
      */
     fun commitDrag(
         displayOrder: List<String>,
         movedId: String,
-        pinned: Boolean,
     ) {
         mutate { cart ->
-            val items = cart.items.afterDrop(displayOrder, movedId, pinned)
+            val items = cart.items.afterDrop(displayOrder, movedId)
             if (items == cart.items) cart else cart.copy(items = items)
         }
     }
