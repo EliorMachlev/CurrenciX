@@ -9,7 +9,8 @@ name: Baseline Profile
 # after UI hot paths change materially (a redesign, a new startup dependency).
 #
 # Heavy (tens of minutes of emulator time), so it runs only when the journeys
-# or this workflow change, or on demand.
+# or this workflow change, or on demand. The benchmarks are advisory on CI
+# (see their step); the profiles are the deliverable.
 on:
   push:
     branches-ignore:
@@ -70,7 +71,12 @@ jobs:
           path: app/src/*Release/generated/baselineProfiles/
           if-no-files-found: error
 
+      # Advisory: the software-GPU emulator doesn't report frame stats, so
+      # Macrobenchmark can fail to confirm launches here ("Unable to confirm
+      # activity launch completion"). Real numbers need a physical device or
+      # a GPU runner; profile generation above doesn't depend on this step.
       - name: Run frame-timing benchmarks (fdroid)
+        continue-on-error: true
         run: ./gradlew "${GMD_GPU}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace
 
       - name: Upload benchmark results

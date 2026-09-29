@@ -36,7 +36,7 @@ Runs on both PRs and pushes to `master`. Two jobs:
 Boots a Gradle Managed Device (`pixel6Api34`, API 34 AOSP emulator, software GPU) on a KVM-enabled hosted runner, then:
 
 1. Generates the fdroid and play baseline + startup profiles, and uploads them as the `baseline-profiles` artifact *before* benchmarking so a benchmark failure can't lose them. Commit the files under `app/src/<flavor>Release/generated/baselineProfiles/` to ship them.
-2. Runs `InteractionBenchmarks` (startup time plus frame timing for typing, picker scrolling and screen transitions, each with and without the profile), and uploads `benchmarkData.json` as `benchmark-results`.
+2. Runs `InteractionBenchmarks` (startup time plus frame timing for typing, picker scrolling and screen transitions, each with and without the profile), and uploads `benchmarkData.json` as `benchmark-results`. This step is advisory (`continue-on-error`): the software-GPU emulator doesn't report frame stats, so Macrobenchmark can fail to confirm launches there. Trust benchmark numbers from a physical device.
 
 Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` or the workflow itself changes on a non-master push, or on demand. See [build-and-flavors.md](build-and-flavors.md#baseline-profiles).
 
