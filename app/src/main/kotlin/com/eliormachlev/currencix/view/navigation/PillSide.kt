@@ -1,6 +1,8 @@
 package com.eliormachlev.currencix.view.navigation
 
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.eliormachlev.currencix.model.Currency
@@ -40,6 +42,11 @@ fun sharedCurrencyPillModifier(
             // Re-lays the pill out at each in-between size, so the flag and
             // code stay crisp instead of stretching.
             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+            // In step with the screen transition. The default (a soft spring)
+            // outlasts it and would keep the whole transition running on.
+            boundsTransform = { _, _ -> ScreenMotion.decelerate() },
+            enter = fadeIn(ScreenMotion.decelerate()),
+            exit = fadeOut(ScreenMotion.decelerate()),
         )
     }
 }

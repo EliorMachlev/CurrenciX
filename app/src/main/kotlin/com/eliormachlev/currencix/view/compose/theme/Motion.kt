@@ -23,19 +23,23 @@ import androidx.compose.animation.core.tween
  */
 internal object Motion {
     /** Small, direct feedback — e.g. a value fading to its new text. */
-    const val SHORT_MILLIS = 150
+    const val SHORT_MILLIS = 120
 
     /** Elements entering or leaving — Settings sections, onboarding steps. */
-    const val MEDIUM_MILLIS = 220
+    const val MEDIUM_MILLIS = 180
 
     /** Gap between successive items of a staggered entrance. */
-    const val STAGGER_MILLIS = 30L
+    const val STAGGER_MILLIS = 20L
 
     /** One-off flourish — the launch wordmark. */
-    const val LONG_MILLIS = 400
+    const val LONG_MILLIS = 320
 
     // Slight overshoot (~1–2%) — lively on a rotation, invisible on a fade.
     private const val SNAPPY_DAMPING = 0.8f
+
+    // Between Spring.StiffnessMedium (1500) and High: settles about a third
+    // sooner than Medium while still reading as a spring, not a snap.
+    private const val SPRING_STIFFNESS = 2500f
 
     /** Short fade for a value swapping in place. */
     fun <T> fadeShort(): TweenSpec<T> = tween(SHORT_MILLIS)
@@ -48,9 +52,9 @@ internal object Motion {
 
     /** Tap-driven motion (rotations, toggles): interruptible, a touch of overshoot. */
     fun <T> snappy(visibilityThreshold: T? = null): SpringSpec<T> =
-        spring(dampingRatio = SNAPPY_DAMPING, stiffness = Spring.StiffnessMedium, visibilityThreshold = visibilityThreshold)
+        spring(dampingRatio = SNAPPY_DAMPING, stiffness = SPRING_STIFFNESS, visibilityThreshold = visibilityThreshold)
 
     /** Panels and layout moves: interruptible, no overshoot (nothing may slide past its rest). */
     fun <T> settle(visibilityThreshold: T? = null): SpringSpec<T> =
-        spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium, visibilityThreshold = visibilityThreshold)
+        spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = SPRING_STIFFNESS, visibilityThreshold = visibilityThreshold)
 }

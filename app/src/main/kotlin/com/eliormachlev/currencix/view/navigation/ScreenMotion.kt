@@ -29,11 +29,11 @@ import androidx.navigationevent.NavigationEvent
  * gesture scrubs a dedicated transition frame by frame.
  */
 internal object ScreenMotion {
-    /** Whole-screen moves: between Motion.MEDIUM and Motion.LONG, a screen travels further than an element. */
-    const val TRANSITION_MILLIS = 250
+    /** Whole-screen moves: a little longer than Motion.MEDIUM, since a screen travels further than an element. */
+    const val TRANSITION_MILLIS = 200
 
     /** The incoming screen is legible before its slide settles. */
-    const val FADE_IN_MILLIS = 180
+    const val FADE_IN_MILLIS = 120
 
     /** Horizontal travel as a fraction of the width: 1/10, like the old 10% XML translate. */
     const val SLIDE_DIVISOR = 10
@@ -46,7 +46,7 @@ internal object ScreenMotion {
      * maps onto the swipe (0 → 1), and letting go plays the remainder at
      * this pace.
      */
-    const val PREDICTIVE_MILLIS = 300
+    const val PREDICTIVE_MILLIS = 220
 
     /** Material's predictive back shrink for the screen being swiped away. */
     const val PREDICTIVE_SCALE = 0.9f

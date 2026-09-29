@@ -5,6 +5,7 @@ import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -100,11 +101,14 @@ private fun ScreenFrame(
     content: @Composable () -> Unit,
 ) {
     val visibilityScope = LocalNavAnimatedContentScope.current
+    val rounds: (EnterExitState) -> Boolean = { state -> state == EnterExitState.PostExit && isLeavingTop() }
     val corner by visibilityScope.transition.animateDp(
-        transitionSpec = { ScreenMotion.gesture() },
+        // Snap when there's nothing to round: a tween from 0 to 0 would still
+        // run its full length and hold every screen transition open for it.
+        transitionSpec = { if (rounds(targetState)) ScreenMotion.gesture() else snap() },
         label = "screenCorner",
     ) { state ->
-        if (state == EnterExitState.PostExit && isLeavingTop()) ScreenMotion.PREDICTIVE_CORNER else 0.dp
+        if (rounds(state)) ScreenMotion.PREDICTIVE_CORNER else 0.dp
     }
     CompositionLocalProvider(LocalScreenVisibilityScope provides visibilityScope) {
         Box(

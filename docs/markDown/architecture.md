@@ -166,7 +166,7 @@ Every currency flag renders through `Currency.flagPainter()` (`painterResource` 
 
 ### Motion: shared tokens, springs for anything interruptible
 
-All UI timing comes from `view/compose/theme/Motion.kt`, so "make it snappier" is a one-file change. Durations sit on the Material 3 scale: short 150 ms (value fades), medium 220 ms (entrances, onboarding steps), long 400 ms (the launch wordmark only), and a 30 ms stagger. There are two springs: `snappy` for tap-driven motion (the swap button's flip) and `settle` for panels (the Cart keypad). Anything the user can re-trigger mid-flight uses a spring, because an interrupted spring keeps its velocity while a restarted tween visibly kinks. Content pacing (the loading shimmer, the rate pill's auto-scroll) isn't a transition and keeps its own constants.
+All UI timing comes from `view/compose/theme/Motion.kt`, so "make it snappier" is a one-file change. Durations sit on the Material 3 scale: short 120 ms (value fades), medium 180 ms (entrances, onboarding steps), long 320 ms (the launch wordmark only), and a 20 ms stagger — kept on the quick side of Material's ranges. There are two springs, both stiffer than Material's medium (2500): `snappy` for tap-driven motion (the swap button's flip) and `settle` for panels (the Cart keypad, and the drawer when the hamburger opens or closes it). Anything the user can re-trigger mid-flight uses a spring, because an interrupted spring keeps its velocity while a restarted tween visibly kinks. Content pacing (the loading shimmer, the rate pill's auto-scroll) isn't a transition and keeps its own constants.
 
 Rules the main screen follows:
 
@@ -178,11 +178,11 @@ Screen-to-screen transitions are Compose `ContentTransform`s in `view/navigation
 
 | Transition | New / returning screen | Screen leaving or covered |
 |---|---|---|
-| Open (`pushTransition`) | Slides in 1/10 of the width from the right, fades in over 180 ms | Sinks back to 97 % scale |
+| Open (`pushTransition`) | Slides in 1/10 of the width from the right, fades in over 120 ms | Sinks back to 97 % scale |
 | Back (`popTransition`) | Rises from 97 % back to full size | Slides 1/10 right and fades out |
 | Predictive back (`predictivePopTransition`) | Rises from 97 % as the finger moves | Shrinks to 90 %, drifts toward the swipe edge, rounds its corners (28 dp), fades only at the very end |
 
-Open and back take 250 ms (between medium and long, since a whole screen travels further than an element). The predictive transition is seeked by the gesture: its 300 ms timeline maps onto the swipe, so it's linear, and letting go plays the remainder. The rounded corners come from `ScreenFrame` in `AppNavHost`, which also paints the window background behind every screen so screens stay opaque while they overlap; the radius follows the screen transition and is read only when drawing.
+Open and back take 200 ms (a little longer than medium, since a whole screen travels further than an element). The predictive transition is seeked by the gesture: its 220 ms timeline maps onto the swipe, so it's linear, and letting go plays the remainder. The rounded corners come from `ScreenFrame` in `AppNavHost`, which also paints the window background behind every screen so screens stay opaque while they overlap; the radius follows the screen transition and is read only when drawing. Everything riding on a screen transition must finish within it — `AnimatedContent` keeps both screens up until the slowest animation ends — so the corner snaps when it has nothing to round, and the shared pills move on the transition's own 200 ms curve rather than the default spring.
 
 The converter's and the cart's currency pills (`CurrencyPill`) are shared elements (`sharedCurrencyPillModifier`): opening the cart flies each pill into the matching cart pill and back again on return, predictive back included. Two pills match only when they show the same currency on the same side, so a cart that keeps its own pair doesn't pull the converter's pills across the screen.
 

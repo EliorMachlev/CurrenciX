@@ -29,6 +29,7 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
@@ -67,7 +68,7 @@ internal fun ConverterRoute(
     val destinations = remember(viewModel, navigator) { ConverterDestinations(viewModel, navigator) }
     val onLeaveViaDrawer = rememberDrawerClosedOnReturn(drawerState)
     val onDrawerItem: (DrawerAction) -> Unit = { action ->
-        scope.launch { drawerState.close() }
+        scope.launch { drawerState.slideTo(DrawerValue.Closed) }
         onLeaveViaDrawer(action)
         when (action) {
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
@@ -82,7 +83,7 @@ internal fun ConverterRoute(
             topBar = {
                 ConverterTopBar(
                     drawerState = drawerState,
-                    onToggleDrawer = { scope.launch { if (drawerState.isOpen) drawerState.close() else drawerState.open() } },
+                    onToggleDrawer = { scope.launch { drawerState.toggle() } },
                     actions = destinations.topBarActions { overlay = it },
                     startReveal = startReveal,
                     onFirstFrame = host.onWordmarkFirstFrame,
@@ -157,6 +158,12 @@ private class ConverterDestinations(
         }
     }
 }
+
+// Opens / closes the drawer on the app's panel spring (Motion.settle) —
+// quicker than Material's own drawer motion, which open() / close() use.
+private suspend fun DrawerState.slideTo(value: DrawerValue) = animateTo(value, Motion.settle())
+
+private suspend fun DrawerState.toggle() = slideTo(if (isOpen) DrawerValue.Closed else DrawerValue.Open)
 
 // A drawer entry that opens another screen starts closing the drawer, but
 // the converter leaves composition before that animation ends — and would
