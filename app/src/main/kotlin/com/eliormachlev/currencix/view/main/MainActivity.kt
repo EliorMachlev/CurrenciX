@@ -34,10 +34,10 @@ import com.eliormachlev.currencix.view.cart.CartRoute
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.AppSnackbarHost
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.isDynamicColorSupported
 import com.eliormachlev.currencix.view.compose.theme.Motion
-import com.eliormachlev.currencix.view.main.compose.HeroCaptureController
 import com.eliormachlev.currencix.view.navigation.AppNavHost
 import com.eliormachlev.currencix.view.navigation.AppNavigator
 import com.eliormachlev.currencix.view.navigation.LocalScreenBackground
@@ -221,7 +221,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun createConverterHost(revealPending: Boolean): ConverterHost {
         val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
-        val heroCapture = HeroCaptureController()
+        val heroCapture = LayerCapture()
         return ConverterHost(
             viewModel = viewModel,
             preferenceModel = ViewModelProvider(this)[PreferenceViewModel::class.java],

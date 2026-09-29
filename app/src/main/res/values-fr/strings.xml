@@ -140,8 +140,4 @@
     <string name="cart_budget_label">Budget</string>
     <string name="cart_budget_left_row">Reste du budget</string>
     <string name="cart_over_budget_row">Au-delà du budget</string>
-    <string name="menu_scan_price">Scanner un prix</string>
-    <string name="scan_prices_title">Prix trouvés</string>
-    <string name="scan_no_prices">Aucun prix trouvé sur la photo.</string>
-    <string name="scan_no_camera">Aucune application d\'appareil photo pour prendre la photo.</string>
 </resources>

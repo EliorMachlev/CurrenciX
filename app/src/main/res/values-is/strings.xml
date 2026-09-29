@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Fjárhagsáætlun</string>
     <string name="cart_budget_left_row">Eftir af fjárhagsáætlun</string>
     <string name="cart_over_budget_row">Yfir fjárhagsáætlun</string>
-    <string name="menu_scan_price">Skanna verð</string>
-    <string name="scan_prices_title">Verð sem fundust</string>
-    <string name="scan_no_prices">Engin verð fundust á myndinni.</string>
-    <string name="scan_no_camera">Ekkert myndavélarforrit til að taka myndina.</string>
 </resources>

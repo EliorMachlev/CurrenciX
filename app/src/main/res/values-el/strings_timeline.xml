@@ -9,4 +9,7 @@
     <string name="year">έτος</string>
     <string name="month">μήνας</string>
     <string name="week">εβδομάδα</string>
+    <string name="timeline_five_years">5 έτη</string>
+    <string name="timeline_custom_range">Προσαρμοσμένο εύρος</string>
+    <string name="timeline_share">Κοινοποίηση γραφήματος</string>
 </resources>

@@ -22,9 +22,38 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.time.LocalDate
 
-// How far back to keep timeline data. The UI only renders the last year, but a
-// small buffer avoids re-fetching when the sliding window shifts by a day.
+// The default timeline fetch: the last year, plus a small buffer so the
+// sliding window shifting by a day doesn't re-fetch.
 private const val TIMELINE_WINDOW_DAYS = 400L
+
+// The furthest back a timeline goes (the 5-year view, and custom ranges);
+// cached history older than this is dropped.
+internal const val TIMELINE_MAX_YEARS = 10L
+
+// A cached timeline "starts at" the requested date if its first day is within
+// this of it: rates aren't published on weekends and holidays, so the first
+// observation is often a few days after the requested start.
+private const val HEAD_SLACK_DAYS = 7L
+
+/** The default start of a timeline fetch: a year back, with a buffer. */
+fun defaultTimelineSince(today: LocalDate = LocalDate.now()): LocalDate = today.minusDays(TIMELINE_WINDOW_DAYS)
+
+/**
+ * Where a timeline fetch starts, given what's cached ([cachedFirst] …
+ * [cachedLast]) and how far back it's wanted ([since]): the last cached day
+ * (re-fetched, in case it was preliminary) when the cache already reaches
+ * back far enough, otherwise [since] — the whole range again.
+ */
+internal fun timelineFetchStart(
+    since: LocalDate,
+    cachedFirst: LocalDate?,
+    cachedLast: LocalDate?,
+): LocalDate =
+    if (cachedFirst == null || cachedLast == null || cachedFirst.isAfter(since.plusDays(HEAD_SLACK_DAYS))) {
+        since
+    } else {
+        maxOf(cachedLast, since)
+    }
 
 // Non-breaking space + 👀 emoji, used as the trailing eyeballs on the bold
 // error message shown in the UI (rendered as HTML by the calling view).
@@ -150,13 +179,17 @@ class ExchangeRatesRepository(
     fun getTimeline(
         base: Currency,
         symbol: Currency,
+        since: LocalDate = defaultTimelineSince(),
     ): LiveData<Timeline?> {
         val key = timelineKey(base, symbol)
+        val start = maxOf(since, LocalDate.now().minusYears(TIMELINE_MAX_YEARS))
         // Record intent before any dedup check so rapid pair switches always
         // update the gate, even when the fetch itself is skipped due to an
         // in-flight job for the same pair.
         latestTimelineKey = key
-        val existing = timelineJobs[key]
+        // A fetch reaching further back isn't covered by one already running.
+        val jobKey = "$key|$start"
+        val existing = timelineJobs[jobKey]
         if (existing?.isActive != true) {
             val main = db.getApiProvider()
             // Fast-paint: show cached data while the tail refresh runs. Gated on
@@ -169,9 +202,9 @@ class ExchangeRatesRepository(
                 launchApiCall {
                     // Main provider first; the fallback when it fails while
                     // online (its own cached window, not merged with the main's).
-                    var result = fetchTimeline(main, base, symbol)
+                    var result = fetchTimeline(main, base, symbol, start)
                     if (result.shouldTryFallback { success }) {
-                        val fallback = fetchTimeline(db.getFallbackProvider(), base, symbol)
+                        val fallback = fetchTimeline(db.getFallbackProvider(), base, symbol, start)
                         if (fallback.isUsable { success }) result = fallback
                     }
                     result.processResponse(
@@ -185,7 +218,7 @@ class ExchangeRatesRepository(
                         },
                     )
                 }
-            timelineJobs[key] = job
+            timelineJobs[jobKey] = job
         }
         return liveTimeline
     }
@@ -198,19 +231,12 @@ class ExchangeRatesRepository(
         provider: ApiProvider,
         base: Currency,
         symbol: Currency,
+        since: LocalDate,
     ): Result<Timeline> {
         val cached = db.getCachedTimeline(provider, base, symbol)
         val today = LocalDate.now()
-        val windowStart = today.minusDays(TIMELINE_WINDOW_DAYS)
-        // Re-fetch the last cached day (in case it was preliminary) plus everything
-        // after it. If we have no cache, fetch the full window.
-        val fetchStart =
-            cached
-                ?.rates
-                ?.keys
-                ?.lastOrNull()
-                ?.let { maxOf(it, windowStart) }
-                ?: windowStart
+        val cachedDates = cached?.rates?.keys?.sorted()
+        val fetchStart = timelineFetchStart(since, cachedDates?.firstOrNull(), cachedDates?.lastOrNull())
         val cacheKey =
             RateCacheKey.TimelineRange(
                 providerId = provider.id,
@@ -225,7 +251,8 @@ class ExchangeRatesRepository(
         return timelineCache.refresh(cacheKey).map { fresh ->
             val tagged = fresh.copy(provider = provider)
             if (tagged.success == false) return@map tagged
-            mergeTimeline(cached, tagged, base, symbol, windowStart).also { db.putCachedTimeline(it, base, symbol) }
+            val keepFrom = today.minusYears(TIMELINE_MAX_YEARS)
+            mergeTimeline(cached, tagged, base, symbol, keepFrom).also { db.putCachedTimeline(it, base, symbol) }
         }
     }
 

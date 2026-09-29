@@ -28,7 +28,6 @@ ICONS = {
     # converter top bar + drawer
     "ic_timeline": ("show_chart", False),
     "ic_cart": ("shopping_cart", False),
-    "ic_scan": ("photo_camera", False),
     "ic_split": ("call_split", False),
     "ic_table": ("table_chart", False),
     "ic_history": ("history", False),

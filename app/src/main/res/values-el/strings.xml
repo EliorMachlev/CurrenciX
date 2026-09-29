@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Προϋπολογισμός</string>
     <string name="cart_budget_left_row">Απομένει στον προϋπολογισμό</string>
     <string name="cart_over_budget_row">Πάνω από τον προϋπολογισμό</string>
-    <string name="menu_scan_price">Σάρωση τιμής</string>
-    <string name="scan_prices_title">Τιμές που βρέθηκαν</string>
-    <string name="scan_no_prices">Δεν βρέθηκαν τιμές στη φωτογραφία.</string>
-    <string name="scan_no_camera">Δεν υπάρχει εφαρμογή κάμερας για τη λήψη της φωτογραφίας.</string>
 </resources>

@@ -139,8 +139,4 @@
     <string name="cart_budget_label">预算</string>
     <string name="cart_budget_left_row">预算剩余</string>
     <string name="cart_over_budget_row">超出预算</string>
-    <string name="menu_scan_price">扫描价格</string>
-    <string name="scan_prices_title">找到的价格</string>
-    <string name="scan_no_prices">照片中未找到价格。</string>
-    <string name="scan_no_camera">没有可用于拍照的相机应用。</string>
 </resources>

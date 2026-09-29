@@ -70,11 +70,6 @@
     <string name="selection_no_rates">Open %1$s once to load exchange rates.</string>
     <string name="selection_assumed_currency">The text has no currency, so it was read as %1$s.</string>
 
-    <!-- Camera price scan (play flavor) -->
-    <string name="menu_scan_price">Scan a price</string>
-    <string name="scan_prices_title">Prices found</string>
-    <string name="scan_no_prices">No prices found in the photo.</string>
-    <string name="scan_no_camera">No camera app to take the photo.</string>
 
     <!-- Launcher shortcuts -->
     <string name="shortcut_pair_short" translatable="false">%1$s → %2$s</string>

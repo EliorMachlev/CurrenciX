@@ -136,8 +136,4 @@
     <string name="cart_budget_label">Ngân sách</string>
     <string name="cart_budget_left_row">Còn lại trong ngân sách</string>
     <string name="cart_over_budget_row">Vượt ngân sách</string>
-    <string name="menu_scan_price">Quét giá</string>
-    <string name="scan_prices_title">Giá tìm thấy</string>
-    <string name="scan_no_prices">Không tìm thấy giá nào trong ảnh.</string>
-    <string name="scan_no_camera">Không có ứng dụng máy ảnh để chụp ảnh.</string>
 </resources>

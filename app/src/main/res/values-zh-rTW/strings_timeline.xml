@@ -9,4 +9,7 @@
     <string name="year">年線</string>
     <string name="month">月線</string>
     <string name="week">週線</string>
+    <string name="timeline_five_years">5 年</string>
+    <string name="timeline_custom_range">自訂範圍</string>
+    <string name="timeline_share">分享圖表</string>
 </resources>

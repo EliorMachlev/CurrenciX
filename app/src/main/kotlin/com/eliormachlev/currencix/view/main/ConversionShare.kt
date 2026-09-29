@@ -6,14 +6,11 @@ import androidx.compose.runtime.withFrameNanos
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.util.SHARE_IMAGES_SUBDIR
-import com.eliormachlev.currencix.util.buildShareChooser
+import com.eliormachlev.currencix.util.buildImageShareChooser
 import com.eliormachlev.currencix.util.feePercentDelta
-import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.util.toPngBytes
-import com.eliormachlev.currencix.view.main.compose.HeroCaptureController
+import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import timber.log.Timber
 import java.math.BigDecimal
@@ -32,8 +29,6 @@ private const val SHARE_FEE_NAME_SEPARATOR = ", "
 
 // Hero-card snapshot chooser payload. MIME + extension pair kept together so
 // the file name and Intent's `type` never drift out of sync.
-private const val SHARE_IMAGE_MIME = "image/png"
-private const val SHARE_IMAGE_EXT = ".png"
 private const val SHARE_TEXT_MIME = "text/plain"
 
 /**
@@ -43,7 +38,7 @@ private const val SHARE_TEXT_MIME = "text/plain"
 internal class ConversionShare(
     private val context: Context,
     private val viewModel: MainViewModel,
-    val heroCapture: HeroCaptureController,
+    val heroCapture: LayerCapture,
     private val status: ConverterStatus,
 ) {
     /**
@@ -60,14 +55,7 @@ internal class ConversionShare(
         if (bitmap == null) Timber.w("share: hero capture returned null, falling back to text share")
         val chooser =
             if (bitmap != null) {
-                buildShareChooser(
-                    context = context,
-                    subdir = SHARE_IMAGES_SUBDIR,
-                    filename = "currencix-${filenameTimestampNow()}$SHARE_IMAGE_EXT",
-                    mimeType = SHARE_IMAGE_MIME,
-                    bytes = bitmap.toPngBytes(),
-                    extraText = text,
-                )
+                buildImageShareChooser(context, bitmap, namePrefix = "currencix", text = text)
             } else {
                 Intent.createChooser(
                     Intent(Intent.ACTION_SEND).apply {

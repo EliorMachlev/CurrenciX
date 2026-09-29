@@ -140,8 +140,4 @@
     <string name="cart_budget_label">Pressupost</string>
     <string name="cart_budget_left_row">Queda al pressupost</string>
     <string name="cart_over_budget_row">Per sobre del pressupost</string>
-    <string name="menu_scan_price">Escaneja un preu</string>
-    <string name="scan_prices_title">Preus trobats</string>
-    <string name="scan_no_prices">No s\'ha trobat cap preu a la foto.</string>
-    <string name="scan_no_camera">No hi ha cap aplicació de càmera per fer la foto.</string>
 </resources>

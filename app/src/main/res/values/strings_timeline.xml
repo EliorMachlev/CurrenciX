@@ -11,4 +11,9 @@
     <string name="year">year</string>
     <string name="month">month</string>
     <string name="week">week</string>
+    <string name="timeline_five_years">5 years</string>
+    <string name="timeline_custom_range">Custom range</string>
+    <string name="timeline_range" translatable="false">%1$s – %2$s</string>
+    <string name="timeline_share">Share chart</string>
+    <string name="timeline_share_caption" translatable="false">%1$s → %2$s · %3$s – %4$s · %5$s</string>
 </resources>

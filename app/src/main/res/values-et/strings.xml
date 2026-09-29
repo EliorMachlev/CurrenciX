@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Eelarve</string>
     <string name="cart_budget_left_row">Eelarvest alles</string>
     <string name="cart_over_budget_row">Üle eelarve</string>
-    <string name="menu_scan_price">Skanni hind</string>
-    <string name="scan_prices_title">Leitud hinnad</string>
-    <string name="scan_no_prices">Fotolt ei leitud hindu.</string>
-    <string name="scan_no_camera">Foto tegemiseks pole kaamerarakendust.</string>
 </resources>

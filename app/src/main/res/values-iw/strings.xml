@@ -139,8 +139,4 @@
     <string name="cart_budget_label">תקציב</string>
     <string name="cart_budget_left_row">נשאר בתקציב</string>
     <string name="cart_over_budget_row">חריגה מהתקציב</string>
-    <string name="menu_scan_price">סריקת מחיר</string>
-    <string name="scan_prices_title">מחירים שנמצאו</string>
-    <string name="scan_no_prices">לא נמצאו מחירים בתמונה.</string>
-    <string name="scan_no_camera">אין אפליקציית מצלמה לצילום התמונה.</string>
 </resources>

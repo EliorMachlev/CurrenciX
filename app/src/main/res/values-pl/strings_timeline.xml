@@ -9,4 +9,7 @@
     <string name="year">rok</string>
     <string name="month">miesiąc</string>
     <string name="week">tydzień</string>
+    <string name="timeline_five_years">5 lat</string>
+    <string name="timeline_custom_range">Własny zakres</string>
+    <string name="timeline_share">Udostępnij wykres</string>
 </resources>

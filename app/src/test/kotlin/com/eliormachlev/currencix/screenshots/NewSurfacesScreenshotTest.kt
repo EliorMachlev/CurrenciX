@@ -9,7 +9,6 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.Rate
-import com.eliormachlev.currencix.util.ParsedPrice
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartFooterCard
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
@@ -17,7 +16,6 @@ import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
-import com.eliormachlev.currencix.view.scan.ScannedPricesSheet
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +26,7 @@ import org.robolectric.annotation.GraphicsMode
 import java.math.BigDecimal
 
 // The surfaces added with recent pairs, cart sections and extras, the
-// text-selection popup and the price scan. (Wallpaper colors aren't here:
+// text-selection popup. (Wallpaper colors aren't here:
 // Robolectric has no wallpaper palette, so they'd render as paper and ink.)
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -138,21 +136,6 @@ class NewSurfacesScreenshotTest {
                     ),
                 decimals = 2,
                 onOpen = {},
-                onDismiss = {},
-            )
-        }
-
-    @Test fun scannedPrices() =
-        shots.captureMatrix("scanned_prices") {
-            ScannedPricesSheet(
-                prices =
-                    listOf(
-                        ParsedPrice(BigDecimal("3.50"), Currency.EUR),
-                        ParsedPrice(BigDecimal("2.20"), Currency.EUR),
-                        ParsedPrice(BigDecimal("12"), null),
-                    ),
-                fallbackCurrency = Currency.USD,
-                onPick = {},
                 onDismiss = {},
             )
         }

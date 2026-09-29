@@ -11,4 +11,7 @@
     <string name="year">שנה</string>
     <string name="month">חודש</string>
     <string name="week">שבוע</string>
+    <string name="timeline_five_years">5 שנים</string>
+    <string name="timeline_custom_range">טווח מותאם אישית</string>
+    <string name="timeline_share">שיתוף התרשים</string>
 </resources>

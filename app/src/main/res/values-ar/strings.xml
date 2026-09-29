@@ -139,8 +139,4 @@
     <string name="cart_budget_label">الميزانية</string>
     <string name="cart_budget_left_row">المتبقي من الميزانية</string>
     <string name="cart_over_budget_row">تجاوز الميزانية</string>
-    <string name="menu_scan_price">مسح سعر</string>
-    <string name="scan_prices_title">الأسعار التي عُثر عليها</string>
-    <string name="scan_no_prices">لم يُعثر على أسعار في الصورة.</string>
-    <string name="scan_no_camera">لا يوجد تطبيق كاميرا لالتقاط الصورة.</string>
 </resources>

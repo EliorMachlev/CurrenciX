@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Bütçe</string>
     <string name="cart_budget_left_row">Bütçede kalan</string>
     <string name="cart_over_budget_row">Bütçe aşıldı</string>
-    <string name="menu_scan_price">Fiyat tara</string>
-    <string name="scan_prices_title">Bulunan fiyatlar</string>
-    <string name="scan_no_prices">Fotoğrafta fiyat bulunamadı.</string>
-    <string name="scan_no_camera">Fotoğrafı çekmek için kamera uygulaması yok.</string>
 </resources>

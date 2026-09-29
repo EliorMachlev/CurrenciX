@@ -9,4 +9,7 @@
     <string name="year">yıl</string>
     <string name="month">ay</string>
     <string name="week">hafta</string>
+    <string name="timeline_five_years">5 yıl</string>
+    <string name="timeline_custom_range">Özel aralık</string>
+    <string name="timeline_share">Grafiği paylaş</string>
 </resources>

@@ -16,9 +16,10 @@ import java.io.File
 // FileProvider config.
 internal const val CART_EXPORT_SUBDIR = "cart-exports"
 internal const val SHARE_IMAGES_SUBDIR = "share-images"
-internal const val SCANS_SUBDIR = "scans"
 
 private const val AUTHORITY_SUFFIX = ".fileprovider"
+private const val PNG_MIME = "image/png"
+private const val PNG_EXT = ".png"
 
 // PNG compression is lossless — the "quality" arg is ignored by the PNG
 // encoder, but the API still requires it.
@@ -79,9 +80,27 @@ internal fun buildShareChooser(
 }
 
 /**
- * Encode this [ImageBitmap] as PNG bytes. Colocated with the share helper
- * because the hero-snapshot flow is the only current caller and PNG is the
- * MIME the chooser advertises for it — keep the encode + wrap in one place.
+ * A share chooser for [image] as a PNG named `<namePrefix>-<timestamp>.png`,
+ * with [text] alongside — the snapshot shares (converter, timeline chart).
+ */
+internal fun buildImageShareChooser(
+    context: Context,
+    image: ImageBitmap,
+    namePrefix: String,
+    text: String?,
+): Intent =
+    buildShareChooser(
+        context = context,
+        subdir = SHARE_IMAGES_SUBDIR,
+        filename = "$namePrefix-${filenameTimestampNow()}$PNG_EXT",
+        mimeType = PNG_MIME,
+        bytes = image.toPngBytes(),
+        extraText = text,
+    )
+
+/**
+ * Encode this [ImageBitmap] as PNG bytes — what [buildImageShareChooser]
+ * attaches, so the encode and the MIME it advertises stay in one place.
  */
 internal fun ImageBitmap.toPngBytes(): ByteArray {
     val out = ByteArrayOutputStream()

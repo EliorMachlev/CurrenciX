@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.view.timeline
 
 import android.app.Application
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -43,8 +45,10 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.buildImageShareChooser
 import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.stripTimePattern
+import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarStyle
@@ -56,6 +60,7 @@ import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 private const val FLAG_FROM_ID = "flagFrom"
@@ -89,6 +94,8 @@ fun TimelineRoute(
     val inFlight by model.isRefreshInFlight().observeAsState(false)
     val error by model.getError().observeAsState()
     var sheet by rememberSaveable { mutableStateOf<TimelineSheet?>(null) }
+    val chartCapture = remember { LayerCapture() }
+    val scope = rememberCoroutineScope()
 
     // Small bar: the pair sits beside the back arrow, leaving the height to the chart.
     ScreenScaffold(
@@ -110,6 +117,12 @@ fun TimelineRoute(
                 onClick = model::toggleCurrencies,
                 enabled = !inFlight && error == null,
             )
+            TopBarAction(
+                icon = painterResource(R.drawable.ic_share),
+                contentDescription = stringResource(R.string.timeline_share),
+                onClick = { scope.launch { shareChart(context, chartCapture, model, formatter) } },
+                enabled = error == null,
+            )
         },
     ) { padding ->
         TimelineScreen(
@@ -118,10 +131,34 @@ fun TimelineRoute(
             foldingFeature = foldingFeature,
             onChangeProvider = { sheet = TimelineSheet.Provider },
             modifier = Modifier.fillMaxSize().padding(padding),
+            chartCapture = chartCapture,
             chartContent = { TimelineChartContent(model, db) },
         )
     }
     TimelineSheets(sheet = sheet, db = db, onProviderPicked = { model.retry() }, onDismiss = { sheet = null })
+}
+
+// The chart card as a PNG, captioned "USD → ILS · 29/09/25 – 29/09/26 ·
+// Bank of Israel". Nothing to share until the chart has been drawn.
+private suspend fun shareChart(
+    context: Context,
+    capture: LayerCapture,
+    model: TimelineViewModel,
+    formatter: DateTimeFormatter,
+) {
+    val image = capture.capture() ?: return
+    val (from, to) = model.getCurrencyPair().value ?: return
+    val span = model.span()
+    val caption =
+        context.getString(
+            R.string.timeline_share_caption,
+            from.iso4217Alpha(),
+            to.iso4217Alpha(),
+            span.start.format(formatter),
+            span.end.format(formatter),
+            model.getProvider().value ?: "",
+        )
+    context.startActivity(buildImageShareChooser(context, image, namePrefix = "currencix-chart", text = caption))
 }
 
 // The sheets the timeline opens over itself.

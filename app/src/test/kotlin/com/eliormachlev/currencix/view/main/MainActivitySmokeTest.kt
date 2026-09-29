@@ -22,7 +22,10 @@ import org.robolectric.annotation.Config
 // the real single-Activity shell: routes, top bars, per-screen ViewModels.
 // A plain Application: the real one starts WorkManager and rate refreshes.
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], application = Application::class)
+// A tall phone, so every drawer entry (Settings is the last) and settings row
+// is on screen: a tap on something below the fold misses, and scroll actions
+// don't finish on the manual clock.
+@Config(sdk = [34], application = Application::class, qualifiers = "w411dp-h1600dp")
 class MainActivitySmokeTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
@@ -96,7 +99,9 @@ class MainActivitySmokeTest {
         settle()
         compose.onNodeWithText(string(R.string.title_preferences)).assertExists()
 
-        compose.onNodeWithText(string(R.string.fee_manager_title), substring = true).performClick()
+        // The settings row itself ("Foreign transaction fee"): "Fees" alone
+        // also matches the converter's drawer entry.
+        compose.onNodeWithText(string(R.string.fee_title)).performClick()
         settle()
         compose.onNodeWithContentDescription(string(R.string.desc_navigate_up)).assertExists()
 

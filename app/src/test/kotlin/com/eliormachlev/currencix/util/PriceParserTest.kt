@@ -56,20 +56,4 @@ class PriceParserTest {
         assertPrice("42.5", null, "42.5")
         assertNull(parse("no price here"))
     }
-
-    @Test
-    fun `a photo's text gives one price per line, without repeats`() {
-        val menu =
-            """
-            Coffee        €3.50
-            Croissant     €2.20
-            Special today!
-            Coffee to go  €3.50
-            Total         €9.20
-            Table 12
-            """.trimIndent()
-        val prices = PriceParser.parseAll(menu)
-        assertEquals(listOf("3.50", "2.20", "9.20", "12").map(::BigDecimal), prices.map { it.amount })
-        assertEquals(listOf("3.50", "2.20", "9.20").map(::BigDecimal), PriceParser.parseAll(menu, requireCurrency = true).map { it.amount })
-    }
 }

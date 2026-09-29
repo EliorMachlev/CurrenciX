@@ -9,4 +9,7 @@
     <string name="year">godina</string>
     <string name="month">mjesec</string>
     <string name="week">tjedan</string>
+    <string name="timeline_five_years">5 godina</string>
+    <string name="timeline_custom_range">Prilagođeno razdoblje</string>
+    <string name="timeline_share">Podijeli grafikon</string>
 </resources>

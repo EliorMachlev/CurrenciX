@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Anggaran</string>
     <string name="cart_budget_left_row">Sisa anggaran</string>
     <string name="cart_over_budget_row">Melebihi anggaran</string>
-    <string name="menu_scan_price">Pindai harga</string>
-    <string name="scan_prices_title">Harga yang ditemukan</string>
-    <string name="scan_no_prices">Tidak ada harga yang ditemukan di foto.</string>
-    <string name="scan_no_camera">Tidak ada aplikasi kamera untuk mengambil foto.</string>
 </resources>

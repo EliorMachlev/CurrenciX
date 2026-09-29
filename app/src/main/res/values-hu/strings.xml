@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Keret</string>
     <string name="cart_budget_left_row">Maradt a keretből</string>
     <string name="cart_over_budget_row">Kereten felül</string>
-    <string name="menu_scan_price">Ár beolvasása</string>
-    <string name="scan_prices_title">Talált árak</string>
-    <string name="scan_no_prices">Nem található ár a fényképen.</string>
-    <string name="scan_no_camera">Nincs kameraalkalmazás a fénykép elkészítéséhez.</string>
 </resources>

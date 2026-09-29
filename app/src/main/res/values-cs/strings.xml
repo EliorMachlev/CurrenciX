@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Rozpočet</string>
     <string name="cart_budget_left_row">Zbývá v rozpočtu</string>
     <string name="cart_over_budget_row">Nad rozpočet</string>
-    <string name="menu_scan_price">Naskenovat cenu</string>
-    <string name="scan_prices_title">Nalezené ceny</string>
-    <string name="scan_no_prices">Na fotce nebyly nalezeny žádné ceny.</string>
-    <string name="scan_no_camera">Není k dispozici aplikace fotoaparátu.</string>
 </resources>

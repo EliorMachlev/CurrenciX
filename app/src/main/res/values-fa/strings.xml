@@ -140,8 +140,4 @@
     <string name="cart_budget_label">بودجه</string>
     <string name="cart_budget_left_row">باقی‌مانده بودجه</string>
     <string name="cart_over_budget_row">بیش از بودجه</string>
-    <string name="menu_scan_price">اسکن قیمت</string>
-    <string name="scan_prices_title">قیمت‌های پیدا شده</string>
-    <string name="scan_no_prices">هیچ قیمتی در عکس پیدا نشد.</string>
-    <string name="scan_no_camera">هیچ برنامه دوربینی برای گرفتن عکس وجود ندارد.</string>
 </resources>

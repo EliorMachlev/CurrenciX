@@ -139,8 +139,4 @@
     <string name="cart_budget_label">Proračun</string>
     <string name="cart_budget_left_row">Preostalo u proračunu</string>
     <string name="cart_over_budget_row">Iznad proračuna</string>
-    <string name="menu_scan_price">Skeniraj cijenu</string>
-    <string name="scan_prices_title">Pronađene cijene</string>
-    <string name="scan_no_prices">Na fotografiji nisu pronađene cijene.</string>
-    <string name="scan_no_camera">Nema aplikacije kamere za snimanje fotografije.</string>
 </resources>

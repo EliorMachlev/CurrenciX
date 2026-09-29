@@ -38,9 +38,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -52,15 +50,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.layer.GraphicsLayer
-import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -95,8 +88,10 @@ import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.CurrencyPill
+import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.UiTestTags
+import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
 import com.eliormachlev.currencix.view.compose.shimmer
@@ -311,45 +306,6 @@ internal data class MainDisplayCallbacks(
 )
 
 /**
- * Bridge between the Activity's share flow and the in-composition hero card.
- * The hero card assigns [doCapture] in a [DisposableEffect] once its
- * `GraphicsLayer` is ready; the Activity awaits [capture] from a coroutine.
- *
- * Returns null when nothing has registered yet (activity in background,
- * first composition still running) — the caller falls back to the text-only
- * share in that case so the user never sees a dead tap.
- */
-internal class HeroCaptureController {
-    // Hold the layer reference directly (not a closure) so recomposition never
-    // clears it — an old-but-still-valid layer is always preferable to null,
-    // which would force the caller into the text-only fallback.
-    @Volatile
-    var graphicsLayer: GraphicsLayer? = null
-
-    suspend fun capture(): ImageBitmap? = graphicsLayer?.toImageBitmap()
-}
-
-// Route the receiver's draw through a GraphicsLayer so [controller] can
-// snapshot the composed pixels later without a separate offscreen
-// composition. Recording on every draw means a capture triggered mid-tap
-// reflects the frame the user actually sees.
-@Composable
-private fun Modifier.heroCaptureLayer(controller: HeroCaptureController?): Modifier {
-    val graphicsLayer = rememberGraphicsLayer()
-    // SideEffect (not DisposableEffect) so the reference is (re)published on
-    // every successful commit and never nulled out. Even if HeroCard leaves
-    // composition transiently (drawer close animation, banner swap), the
-    // controller keeps a usable layer for the pending share tap.
-    if (controller != null) {
-        SideEffect { controller.graphicsLayer = graphicsLayer }
-    }
-    return this.drawWithContent {
-        graphicsLayer.record { this@drawWithContent.drawContent() }
-        drawLayer(graphicsLayer)
-    }
-}
-
-/**
  * Pure-Compose replacement for the old `main_display.xml`. Renders the hero
  * card (currency pills + amount hero + amount to + rate footer) and hosts the
  * compose-native [CurrencyPickerSheet] as a sibling — no fragment machinery,
@@ -362,7 +318,7 @@ internal fun MainDisplay(
     dateFormatPattern: String,
     banner: BannerContent?,
     modifier: Modifier = Modifier,
-    captureController: HeroCaptureController? = null,
+    captureController: LayerCapture? = null,
 ) {
     val context = LocalContext.current
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
@@ -491,7 +447,7 @@ private fun HeroCard(
     onSwapClick: () -> Unit,
     callbacks: MainDisplayCallbacks,
     modifier: Modifier = Modifier,
-    captureController: HeroCaptureController? = null,
+    captureController: LayerCapture? = null,
 ) {
     Box(
         modifier
@@ -503,7 +459,7 @@ private fun HeroCard(
             // contains the rounded surface and children — with the layer
             // outside .background, the recording would only see the pills/text
             // and the PNG would render on a transparent (→ black) canvas.
-            .heroCaptureLayer(captureController)
+            .captureInto(captureController)
             .clip(RoundedCornerShape(CARD_RADIUS))
             .background(MaterialTheme.colorScheme.surface)
             .padding(CARD_PADDING),

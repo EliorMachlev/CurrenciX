@@ -29,7 +29,6 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.ParsedPrice
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
@@ -39,7 +38,6 @@ import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
 import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.compose.theme.Motion
-import com.eliormachlev.currencix.view.convert.targetCurrency
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
@@ -57,10 +55,6 @@ import com.eliormachlev.currencix.view.navigation.PaneRole
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.paneRole
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
-import com.eliormachlev.currencix.view.scan.PriceScan
-import com.eliormachlev.currencix.view.scan.ScannedPricesSheet
-import com.eliormachlev.currencix.view.scan.rememberPriceScan
-import com.eliormachlev.currencix.view.scan.textReader
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
@@ -92,15 +86,12 @@ internal fun ConverterRoute(
     val destinations = remember(viewModel, navigator, paneRole) { ConverterDestinations(viewModel, navigator, paneRole) }
     if (paneRole == PaneRole.List) TimelineFollowsPair(viewModel, navigator)
     val onLeaveViaDrawer = rememberDrawerClosedOnReturn(drawerState)
-    // Constant per build: only the play flavor can read a photo's text.
-    val scan = if (textReader != null) converterPriceScan(viewModel) else null
     val onDrawerItem: (DrawerAction) -> Unit = { action ->
         scope.launch { drawerState.slideTo(DrawerValue.Closed) }
         onLeaveViaDrawer(action)
         when (action) {
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
             DrawerAction.Share -> scope.launch { host.share.share() }
-            DrawerAction.ScanPrice -> scan?.start()
             else -> destinations.open(action) { overlay = it }
         }
     }
@@ -194,7 +185,7 @@ private class ConverterDestinations(
             DrawerAction.ChangeApi -> showOverlay(ConverterOverlay.ProviderPicker)
             DrawerAction.Fees -> openFees()
             DrawerAction.Settings -> openSettings()
-            DrawerAction.Refresh, DrawerAction.Share, DrawerAction.ScanPrice -> Unit
+            DrawerAction.Refresh, DrawerAction.Share -> Unit
         }
     }
 }
@@ -219,48 +210,6 @@ private fun rememberDrawerClosedOnReturn(drawerState: DrawerState): (DrawerActio
         }
     }
     return { action -> closeOnReturn = action.opensScreen }
-}
-
-// The camera price scan: one price found goes straight into the converter;
-// several are offered in a sheet; none says so in the snackbar.
-@Composable
-private fun converterPriceScan(viewModel: MainViewModel): PriceScan {
-    val snackbar = LocalAppSnackbar.current
-    val context = LocalContext.current
-    val base = viewModel.getBaseCurrency().observeAsState().value
-    val dest = viewModel.getDestinationCurrency().observeAsState().value
-    var found by remember { mutableStateOf<List<ParsedPrice>?>(null) }
-    val scan =
-        rememberPriceScan(
-            preferred = listOfNotNull(base, dest),
-            onPrices = { prices -> if (prices.size == 1) takeScannedPrice(viewModel, prices.single()) else found = prices },
-            onMessage = { snackbar.showOrToast(context, it) },
-        )
-    found?.let { prices ->
-        ScannedPricesSheet(
-            prices = prices,
-            fallbackCurrency = base,
-            onPick = { takeScannedPrice(viewModel, it) },
-            onDismiss = { found = null },
-        )
-    }
-    return scan
-}
-
-// The price's currency becomes the base (converting into the usual target,
-// see targetCurrency) and its amount is typed in. A price with no currency
-// keeps the pair and just sets the amount.
-private fun takeScannedPrice(
-    viewModel: MainViewModel,
-    price: ParsedPrice,
-) {
-    val base = viewModel.getBaseCurrency().value
-    val dest = viewModel.getDestinationCurrency().value
-    val from = price.currency
-    if (from != null && base != null && dest != null) {
-        viewModel.setCurrencyPair(CurrencyPair(from, targetCurrency(from, base, dest)))
-    }
-    viewModel.setAmount(price.amount)
 }
 
 // Beside the converter, the timeline charts whatever pair the converter

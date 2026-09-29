@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.UiTestTags
-import com.eliormachlev.currencix.view.scan.textReader
 
 enum class DrawerAction(
     /** Whether the entry opens another screen (rather than a sheet, or an action on the converter). */
@@ -46,7 +45,6 @@ enum class DrawerAction(
     Timeline(opensScreen = true),
     Cart(opensScreen = true),
     QuickConversions,
-    ScanPrice,
     DatePicker,
     Refresh,
     Share,
@@ -81,13 +79,11 @@ private data class DrawerEntry(
     @param:StringRes val titleRes: Int,
 )
 
-// Scan a price only where this build can read text from a photo (play).
 private val PrimaryDrawerEntries =
-    listOfNotNull(
+    listOf(
         DrawerEntry(DrawerAction.Timeline, R.drawable.ic_timeline, R.string.menu_timeline),
         DrawerEntry(DrawerAction.Cart, R.drawable.ic_cart, R.string.cart_title),
         DrawerEntry(DrawerAction.QuickConversions, R.drawable.ic_table, R.string.menu_quick_conversions),
-        DrawerEntry(DrawerAction.ScanPrice, R.drawable.ic_scan, R.string.menu_scan_price).takeIf { textReader != null },
         DrawerEntry(DrawerAction.DatePicker, R.drawable.ic_history, R.string.menu_historical_rates),
         DrawerEntry(DrawerAction.Refresh, R.drawable.ic_refresh, R.string.menu_refresh),
         DrawerEntry(DrawerAction.Share, R.drawable.ic_share, R.string.menu_share),

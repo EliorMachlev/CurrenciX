@@ -9,4 +9,7 @@
     <string name="year">any</string>
     <string name="month">mes</string>
     <string name="week">setmana</string>
+    <string name="timeline_five_years">5 anys</string>
+    <string name="timeline_custom_range">Interval personalitzat</string>
+    <string name="timeline_share">Comparteix el gràfic</string>
 </resources>

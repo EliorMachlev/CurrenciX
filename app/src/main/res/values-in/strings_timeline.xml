@@ -9,4 +9,7 @@
     <string name="year">tahun</string>
     <string name="month">bulan</string>
     <string name="week">minggu</string>
+    <string name="timeline_five_years">5 tahun</string>
+    <string name="timeline_custom_range">Rentang khusus</string>
+    <string name="timeline_share">Bagikan grafik</string>
 </resources>

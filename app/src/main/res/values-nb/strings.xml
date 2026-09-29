@@ -140,8 +140,4 @@
     <string name="cart_budget_label">Budsjett</string>
     <string name="cart_budget_left_row">Igjen av budsjettet</string>
     <string name="cart_over_budget_row">Over budsjett</string>
-    <string name="menu_scan_price">Skann en pris</string>
-    <string name="scan_prices_title">Priser funnet</string>
-    <string name="scan_no_prices">Fant ingen priser på bildet.</string>
-    <string name="scan_no_camera">Ingen kameraapp for å ta bildet.</string>
 </resources>

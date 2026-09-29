@@ -51,26 +51,8 @@ object PriceParser {
         return ParsedPrice(amount, findCurrency(rest, preferred))
     }
 
-    /**
-     * Every price in [text], one per line at most (a photo of a menu or a
-     * receipt reads as one price per line), without repeats, in reading order.
-     * Lines without a currency count only when [requireCurrency] is false.
-     */
-    fun parseAll(
-        text: String,
-        preferred: List<Currency> = emptyList(),
-        requireCurrency: Boolean = false,
-    ): List<ParsedPrice> =
-        text
-            .lineSequence()
-            .mapNotNull { parse(it, preferred) }
-            .filter { !requireCurrency || it.currency != null }
-            .filter { it.amount.signum() > 0 }
-            .distinctBy { it.amount.stripTrailingZeros() to it.currency }
-            .toList()
-
     // Every currency's symbol, longest first so "R$" wins over "$" and "Fr."
-    // over "F". Built once: parsing a photo runs this for every line.
+    // over "F". Built once, not per parse.
     private val symbolMatchers: List<SymbolMatcher> by lazy {
         Currency.entries
             .mapNotNull { c -> c.plainSymbol?.let { SymbolMatcher(it, c) } }

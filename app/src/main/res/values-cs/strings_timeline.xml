@@ -9,4 +9,7 @@
     <string name="year">rok</string>
     <string name="month">měsíc</string>
     <string name="week">týden</string>
+    <string name="timeline_five_years">5 let</string>
+    <string name="timeline_custom_range">Vlastní rozsah</string>
+    <string name="timeline_share">Sdílet graf</string>
 </resources>

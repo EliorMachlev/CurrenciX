@@ -9,4 +9,7 @@
     <string name="year">år</string>
     <string name="month">måned</string>
     <string name="week">uge</string>
+    <string name="timeline_five_years">5 år</string>
+    <string name="timeline_custom_range">Tilpasset periode</string>
+    <string name="timeline_share">Del diagram</string>
 </resources>

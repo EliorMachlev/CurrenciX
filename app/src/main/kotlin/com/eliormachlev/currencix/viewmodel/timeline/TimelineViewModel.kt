@@ -14,6 +14,8 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.repository.RefreshState
+import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
+import com.eliormachlev.currencix.repository.defaultTimelineSince
 import com.eliormachlev.currencix.util.calculateDifference
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
 import java.math.BigDecimal
@@ -69,22 +71,43 @@ class TimelineViewModel(
         WEEK,
         MONTH,
         YEAR,
+        FIVE_YEARS,
+
+        /** The user's own dates ([setCustomRange]). */
+        CUSTOM,
         ;
 
-        fun startDate(today: LocalDate = LocalDate.now()): LocalDate =
+        /** Where this period starts, ending [today]; null for [CUSTOM], which has its own dates. */
+        fun startDate(today: LocalDate = LocalDate.now()): LocalDate? =
             when (this) {
                 WEEK -> today.minusWeeks(1)
                 MONTH -> today.minusMonths(1)
                 YEAR -> today.minusYears(1)
+                FIVE_YEARS -> today.minusYears(FIVE)
+                CUSTOM -> null
             }
+
+        private companion object {
+            const val FIVE = 5L
+        }
     }
+
+    /** The dates a [Period] covers: [start] to [end] (today, unless custom). */
+    data class Span(
+        val start: LocalDate,
+        val end: LocalDate,
+    )
 
     private var repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
 
     private var decimalPlaces = DEFAULT_DECIMAL_PLACES
 
-    // week/month/year
     private val periodLiveData = MutableLiveData(Period.YEAR)
+    private val customRangeLiveData = MutableLiveData<Span?>(null)
+
+    // How far back this screen has asked the repository for — a longer span
+    // fetches further back; a shorter one filters what's already there.
+    private var fetchedSince: LocalDate = defaultTimelineSince()
 
     // currently selected date
     private val scrubDateLiveData = MutableLiveData<LocalDate?>()
@@ -100,31 +123,39 @@ class TimelineViewModel(
     private val dbLiveItems: LiveData<Timeline?> by lazy {
         MediatorLiveData<Timeline?>().apply {
             var timeline: Timeline? = null
-            var startDate: LocalDate? = null
 
             fun update() {
+                val span = currentSpan()
                 this.value =
                     timeline?.copy(
-                        startDate = startDate,
-                        rates =
-                            timeline?.rates?.filter { entries ->
-                                !entries.key.isBefore(startDate)
-                            },
+                        startDate = span.start,
+                        rates = timeline?.rates?.filterKeys { !it.isBefore(span.start) && !it.isAfter(span.end) },
                     )
             }
 
-            // 1y timeline data - always call api - hard to find a decent caching strategy
-            addSource(repository.getTimeline(base, target)) {
+            addSource(repository.getTimeline(base, target, fetchedSince)) {
                 timeline = it
                 update()
             }
-
-            // selected time period
-            addSource(periodLiveData) {
-                startDate = it.startDate()
-                update()
-            }
+            addSource(periodLiveData) { update() }
+            addSource(customRangeLiveData) { update() }
         }
+    }
+
+    /** The dates on screen: the chosen period's, or the custom range. */
+    private fun currentSpan(today: LocalDate = LocalDate.now()): Span {
+        val period = periodLiveData.value ?: Period.YEAR
+        return period.startDate(today)?.let { Span(it, today) }
+            ?: customRangeLiveData.value
+            ?: Span(today.minusYears(1), today)
+    }
+
+    // Asks for older history when the span on screen starts before what's
+    // been fetched; a span within it needs no network.
+    private fun fetchCovering(span: Span) {
+        if (!span.start.isBefore(fetchedSince)) return
+        fetchedSince = span.start
+        repository.getTimeline(base, target, fetchedSince)
     }
 
     /*
@@ -140,7 +171,7 @@ class TimelineViewModel(
 
     /** Fetches the pair again — after an error, or once the provider changed. */
     fun retry() {
-        repository.getTimeline(base, target)
+        repository.getTimeline(base, target, fetchedSince)
     }
 
     fun toggleCurrencies() {
@@ -148,7 +179,7 @@ class TimelineViewModel(
         base = target
         target = tmp
         // call the api -- timeline live data is auto-updated everywhere where it is used
-        repository.getTimeline(base, target)
+        repository.getTimeline(base, target, fetchedSince)
     }
 
     fun getProvider(): LiveData<CharSequence?> =
@@ -356,8 +387,31 @@ class TimelineViewModel(
             }
         }
 
+    fun getPeriod(): LiveData<Period> = periodLiveData
+
+    /** The dates on screen right now (for the chart's share caption). */
+    fun span(): Span = currentSpan()
+
+    fun getCustomRange(): LiveData<Span?> = customRangeLiveData
+
+    /** A preset period; [Period.CUSTOM] goes through [setCustomRange]. */
     fun setTimePeriod(period: Period) {
-        periodLiveData.postValue(period)
+        if (period == Period.CUSTOM && customRangeLiveData.value == null) return
+        periodLiveData.value = period
+        fetchCovering(currentSpan())
+    }
+
+    /** Shows [start]…[end] (clamped to what the app keeps: [TIMELINE_MAX_YEARS]). */
+    fun setCustomRange(
+        start: LocalDate,
+        end: LocalDate,
+    ) {
+        val today = LocalDate.now()
+        val from = maxOf(minOf(start, end), today.minusYears(TIMELINE_MAX_YEARS))
+        val to = minOf(maxOf(start, end), today)
+        customRangeLiveData.value = Span(from, to)
+        periodLiveData.value = Period.CUSTOM
+        fetchCovering(Span(from, to))
     }
 
     fun setPastDate(date: LocalDate?) {

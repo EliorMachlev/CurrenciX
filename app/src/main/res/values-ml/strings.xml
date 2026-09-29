@@ -143,8 +143,4 @@
     <string name="cart_budget_label">ബജറ്റ്</string>
     <string name="cart_budget_left_row">ബജറ്റിൽ ശേഷിക്കുന്നത്</string>
     <string name="cart_over_budget_row">ബജറ്റിന് മുകളിൽ</string>
-    <string name="menu_scan_price">വില സ്കാൻ ചെയ്യുക</string>
-    <string name="scan_prices_title">കണ്ടെത്തിയ വിലകൾ</string>
-    <string name="scan_no_prices">ഫോട്ടോയിൽ വിലകളൊന്നും കണ്ടെത്തിയില്ല.</string>
-    <string name="scan_no_camera">ഫോട്ടോ എടുക്കാൻ ക്യാമറ ആപ്പില്ല.</string>
 </resources>

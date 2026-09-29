@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -37,9 +34,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Rate
-import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -77,8 +72,7 @@ internal fun TimelineSecondary(
     ratesMed: Pair<Rate?, Int>?,
     ratesMin: Triple<Rate?, LocalDate?, Int>?,
     formatter: DateTimeFormatter,
-    selectedPeriod: TimelineViewModel.Period,
-    onPeriodSelected: (TimelineViewModel.Period) -> Unit,
+    period: PeriodControl,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -146,37 +140,7 @@ internal fun TimelineSecondary(
         StatGrid(max = rows[0], min = rows[3], avg = rows[1], med = rows[2])
         Spacer(Modifier.height(CONTENT_PADDING))
 
-        PeriodSegmentedButtons(
-            selected = selectedPeriod,
-            onSelected = onPeriodSelected,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun PeriodSegmentedButtons(
-    selected: TimelineViewModel.Period,
-    onSelected: (TimelineViewModel.Period) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val periods = TimelineViewModel.Period.entries
-    val labels =
-        listOf(
-            TimelineViewModel.Period.WEEK to stringResource(R.string.week),
-            TimelineViewModel.Period.MONTH to stringResource(R.string.month),
-            TimelineViewModel.Period.YEAR to stringResource(R.string.year),
-        )
-    SingleChoiceSegmentedButtonRow(modifier = modifier) {
-        labels.forEachIndexed { index, (period, label) ->
-            SegmentedButton(
-                selected = period == selected,
-                onClick = rememberHapticOnClick { onSelected(period) },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = labels.size),
-            ) {
-                Text(label.replaceFirstChar { it.titlecase() })
-            }
-        }
+        TimelinePeriodControls(control = period, formatter = formatter, modifier = Modifier.fillMaxWidth())
     }
 }
 

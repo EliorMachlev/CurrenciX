@@ -9,4 +9,7 @@
     <string name="year">ár</string>
     <string name="month">mánuð</string>
     <string name="week">viku</string>
+    <string name="timeline_five_years">5 ár</string>
+    <string name="timeline_custom_range">Sérsniðið tímabil</string>
+    <string name="timeline_share">Deila grafi</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.view.timeline.compose.PeriodControl
 import com.eliormachlev.currencix.view.timeline.compose.TimelineChartCard
+import com.eliormachlev.currencix.view.timeline.compose.TimelinePeriodControls
 import com.eliormachlev.currencix.view.timeline.compose.TimelineSecondary
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import org.junit.Rule
@@ -64,6 +67,23 @@ class TimelineScreenshotTest {
             )
         }
 
+    // The period controls with a custom range chosen: no preset selected,
+    // the chip showing the dates.
+    @Test fun timelinePeriodCustom() =
+        shots.captureMatrix("timeline_period_custom") {
+            TimelinePeriodControls(
+                control =
+                    PeriodControl(
+                        TimelineViewModel.Period.CUSTOM,
+                        TimelineViewModel.Span(SAMPLE_MIN_DATE, SAMPLE_MAX_DATE),
+                        {},
+                        { _, _ -> },
+                    ),
+                formatter = FORMATTER,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
     @Test fun timelineSecondary() =
         shots.captureMatrix("timeline_secondary") {
             Column(modifier = Modifier.fillMaxSize()) {
@@ -76,8 +96,7 @@ class TimelineScreenshotTest {
                     ratesMed = SAMPLE_MED_RATE to DECIMALS,
                     ratesMin = Triple(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
                     formatter = FORMATTER,
-                    selectedPeriod = TimelineViewModel.Period.YEAR,
-                    onPeriodSelected = {},
+                    period = PeriodControl(TimelineViewModel.Period.YEAR, null, {}, { _, _ -> }),
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -95,8 +114,7 @@ class TimelineScreenshotTest {
                     ratesMed = SAMPLE_MED_RATE to DECIMALS,
                     ratesMin = Triple(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
                     formatter = FORMATTER,
-                    selectedPeriod = TimelineViewModel.Period.YEAR,
-                    onPeriodSelected = {},
+                    period = PeriodControl(TimelineViewModel.Period.YEAR, null, {}, { _, _ -> }),
                     modifier = Modifier.fillMaxSize(),
                 )
             }

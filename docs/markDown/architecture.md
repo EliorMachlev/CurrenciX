@@ -194,13 +194,11 @@ Once something is pinned, the list shows two sections, **Pinned** and **Other it
 
 A cart carries `CartExtras` (saved with it; older carts load without). **Tip / tax** is a percentage on top of the items, applied before fees since a card's FX fee is charged on everything paid; **split** shows each person's share of the total; **budget** (destination currency) shows what's left, or how far over in red. Edited in one sheet from the cart's menu or by tapping those footer rows, and included in the shared text.
 
-### Camera price scan (play only)
-
-The drawer's **Scan a price** takes a photo with the camera app (no camera permission of our own), reads its text on-device with ML Kit, and finds every price (`PriceParser.parseAll`, one per line). One price goes straight into the converter; several are offered in a sheet. ML Kit is proprietary, so it's a `playImplementation` behind `TextReader`: the play source set supplies one, fdroid supplies none, and there the entry isn't shown.
-
 ### Timeline states
 
 The statistics are a 2×2 grid (max/min, average/median) of tonal tiles, with "—" until data arrives, and the change since the start of the range as a signed percentage with a trend arrow ("−7.55 %", a true minus sign). Scrubbing the chart shows a bubble with the date and rate over the point. When the provider can't deliver a timeline, the chart card explains why and offers **Try again** and **Change provider** (the provider picker, which retries on pick) instead of an empty chart. The bar's title shows the requested pair right away, not only once data has loaded.
+
+Periods: week, month, year, **5 years**, and a **custom range** (Material's date-range picker, back to `TIMELINE_MAX_YEARS` = 10 years). The view model filters one cached window per pair and asks the repository for older history only when a span starts before what it has fetched (`fetchCovering`); the repository then fetches just the missing tail when the cache already reaches back far enough, or the whole span when it doesn't (`timelineFetchStart`), and keeps cached history up to 10 years instead of trimming it to the last year. **Share chart** (top bar) sends the chart card as a PNG, captioned with the pair, the dates and the source: the card draws through a `LayerCapture`, the same snapshot mechanism the converter's share uses for the hero card.
 
 ### Colors: paper and ink, or Material You
 
@@ -277,7 +275,6 @@ Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<ap
 | Dimension | `fdroid` | `play` |
 |---|---|---|
 | Play Services | None | Allowed |
-| Camera price scan | Not offered | ML Kit text recognition |
 | Reproducibility | Yes | No |
 | Distribution | F-Droid | Google Play |
 

@@ -9,4 +9,7 @@
     <string name="year">عام</string>
     <string name="month">شهر</string>
     <string name="week">أسبوع</string>
+    <string name="timeline_five_years">5 سنوات</string>
+    <string name="timeline_custom_range">نطاق مخصص</string>
+    <string name="timeline_share">مشاركة الرسم البياني</string>
 </resources>

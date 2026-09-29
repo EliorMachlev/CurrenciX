@@ -8,15 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.LayerCapture
+import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import java.time.format.DateTimeFormatter
 
@@ -28,6 +27,7 @@ internal fun TimelineScreen(
     foldingFeature: FoldingFeature?,
     onChangeProvider: () -> Unit,
     modifier: Modifier = Modifier,
+    chartCapture: LayerCapture? = null,
     chartContent: @Composable () -> Unit,
 ) {
     AppTheme {
@@ -48,8 +48,15 @@ internal fun TimelineScreen(
             val ratesMed by model.getRatesMedian().observeAsState()
             val ratesMin by model.getRatesMin().observeAsState()
 
+            val selectedPeriod by model.getPeriod().observeAsState(TimelineViewModel.Period.YEAR)
+            val customRange by model.getCustomRange().observeAsState()
             val period =
-                remember { mutableStateOf(TimelineViewModel.Period.YEAR) }
+                PeriodControl(
+                    selected = selectedPeriod,
+                    customRange = customRange,
+                    onPeriod = model::setTimePeriod,
+                    onCustomRange = model::setCustomRange,
+                )
 
             val chartCard: @Composable (Modifier) -> Unit = { mod ->
                 TimelineChartCard(
@@ -58,7 +65,7 @@ internal fun TimelineScreen(
                     provider = provider,
                     onRetry = model::retry,
                     onChangeProvider = onChangeProvider,
-                    modifier = mod,
+                    modifier = mod.captureInto(chartCapture),
                     chart = chartContent,
                 )
             }
@@ -72,8 +79,7 @@ internal fun TimelineScreen(
                     ratesMed = ratesMed,
                     ratesMin = ratesMin,
                     formatter = formatter,
-                    selectedPeriod = period.value,
-                    onPeriodSelected = onPeriodChange(period, model),
+                    period = period,
                     modifier = mod,
                 )
             }
@@ -106,12 +112,3 @@ private fun TimelinePanes(
         }
     }
 }
-
-private fun onPeriodChange(
-    period: MutableState<TimelineViewModel.Period>,
-    model: TimelineViewModel,
-): (TimelineViewModel.Period) -> Unit =
-    { next ->
-        period.value = next
-        model.setTimePeriod(next)
-    }

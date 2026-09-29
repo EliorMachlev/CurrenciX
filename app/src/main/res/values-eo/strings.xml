@@ -139,8 +139,7 @@
     <string name="cart_budget_label">Buĝeto</string>
     <string name="cart_budget_left_row">Restas en buĝeto</string>
     <string name="cart_over_budget_row">Super buĝeto</string>
-    <string name="menu_scan_price">Skani prezon</string>
-    <string name="scan_prices_title">Trovitaj prezoj</string>
-    <string name="scan_no_prices">Neniuj prezoj trovitaj en la foto.</string>
-    <string name="scan_no_camera">Neniu fotila apo por fari la foton.</string>
+    <string name="timeline_five_years">5 jaroj</string>
+    <string name="timeline_custom_range">Propra periodo</string>
+    <string name="timeline_share">Kunhavigi diagramon</string>
 </resources>

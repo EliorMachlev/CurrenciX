@@ -139,8 +139,4 @@
     <string name="cart_budget_label">বাজেট</string>
     <string name="cart_budget_left_row">বাজেটে বাকি</string>
     <string name="cart_over_budget_row">বাজেটের বেশি</string>
-    <string name="menu_scan_price">দাম স্ক্যান করুন</string>
-    <string name="scan_prices_title">পাওয়া দাম</string>
-    <string name="scan_no_prices">ছবিতে কোনো দাম পাওয়া যায়নি।</string>
-    <string name="scan_no_camera">ছবি তোলার জন্য কোনো ক্যামেরা অ্যাপ নেই।</string>
 </resources>
