@@ -42,7 +42,7 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 ### Code Style
 
 - Kotlin only (no Java in `app/` or `helpers/`).
-- Follow existing patterns — MVVM, Repository, Compose UI (Main/Timeline/Cart are fully Compose; Preference is Compose-in-a-Fragment) — see [architecture.md](architecture.md). Konsist tests enforce the View / ViewModel / Repository / Model layer boundaries; a PR that breaks them fails `test<Flavor>DebugUnitTest`.
+- Follow existing patterns — MVVM, Repository, Compose UI in a single Activity (new screens are a `Screen` key + a route in `AppNavHost`, not a new Activity) — see [architecture.md](architecture.md). Konsist tests enforce the View / ViewModel / Repository / Model layer boundaries; a PR that breaks them fails `test<Flavor>DebugUnitTest`.
 - Run `./gradlew detekt` locally before opening a PR. CI enforces it: any finding not already in `config/detekt/baseline-<module>.xml` fails the build (see [ci-cd.md](ci-cd.md#detekt)).
 - Run `./gradlew spotlessCheck` — CI will fail on formatting drift. Use `./gradlew spotlessApply` to auto-fix.
 - Avoid `java.lang.*` qualifiers (Kotlin imports these automatically).

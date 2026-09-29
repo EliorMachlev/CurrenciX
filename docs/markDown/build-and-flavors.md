@@ -67,9 +67,11 @@ Replaces SharedPreferences across every namespace — see [architecture.md](arch
 | `androidx.compose.material:material-icons-extended` | via BOM |
 | `androidx.compose.ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
 | `androidx.activity:activity-compose` | 1.13.0 |
+| `androidx.navigation3:navigation3-runtime` / `navigation3-ui` | 1.2.0 |
+| `androidx.lifecycle:lifecycle-viewmodel-navigation3` | 2.11.0 (per-screen ViewModel stores) |
 | `sh.calvin.reorderable:reorderable` | 3.1.0 |
 
-Hosts the Vico chart plus the rest of the app's UI — Main, Timeline, and Cart screens are fully Compose; Preference is Compose-in-a-Fragment (see [architecture.md](architecture.md)).
+Hosts the Vico chart plus the rest of the app's UI — every screen is Compose, in one Activity (see [architecture.md](architecture.md)).
 
 ### HTTP & Serialisation
 

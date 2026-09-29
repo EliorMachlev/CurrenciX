@@ -57,12 +57,12 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── cache/                  # Memory → disk → network rate cache (Store5-inspired, no Store5 dep)
 │   └── persistence/             # PersistenceKey enum, DataStore delegates, PrefStore helper
 ├── view/
-│   ├── main/                   # Converter screen — full Compose (ComposeView built in code, no XML layout)
-│   ├── preference/             # Settings — XML Activity shell hosts Fragments that each return a ComposeView
-│   ├── timeline/               # Chart screen — full Compose
-│   ├── cart/                   # Bill-splitting calculator — full Compose
-│   ├── compose/                # Shared Compose foundation: theme (incl. Motion tokens), common components, UiTestTags, drag-reorder, dialogs, onboarding
-│   └── BaseActivity.kt
+│   ├── main/                   # MainActivity (the only Activity) + the converter route
+│   ├── navigation/             # Screen keys, AppNavigator back stack, AppNavHost (Navigation 3), screen motion, shared pills
+│   ├── preference/             # Settings, Fees and Backup routes
+│   ├── timeline/               # Chart route
+│   ├── cart/                   # Bill-splitting calculator route
+│   └── compose/                # Shared Compose foundation: theme (incl. Motion tokens), top bars (ScreenScaffold), CurrencyPill, UiTestTags, drag-reorder, dialogs, onboarding
 ├── viewmodel/
 │   ├── main/MainViewModel.kt   # 778 lines — core conversion + calculator logic
 │   ├── preference/
@@ -115,7 +115,7 @@ Each exchange-rate API returns a different JSON (or XML) schema. Rather than nor
 
 ### LiveData for Reactive UI
 
-ViewModels expose `LiveData<T>` streams. Activities observe them without holding references to the ViewModel, ensuring lifecycle-safety and no memory leaks. Preference changes propagate automatically via `PrefStore.mappedLiveData { … }`, which bridges each DataStore namespace's `Flow<Preferences>` into a `LiveData<T>` so observers pick up writes without a manual re-read.
+ViewModels expose `LiveData<T>` streams. Screens observe them (`observeAsState`) without holding references to the ViewModel, ensuring lifecycle-safety and no memory leaks. Preference changes propagate automatically via `PrefStore.mappedLiveData { … }`, which bridges each DataStore namespace's `Flow<Preferences>` into a `LiveData<T>` so observers pick up writes without a manual re-read.
 
 ### Refresh state: in memory, debounced for display
 
@@ -137,15 +137,32 @@ Why: the user preference (default 2) is tuned for the converter screen where amo
 
 Trade-off: users who explicitly raise or lower `decimal_places` in Settings will see that setting silently overridden on the chart. Intentional, but surprising — recorded here so future work doesn't "fix" it without weighing the readability cost.
 
-### Compose adoption: Main / Timeline / Cart are fully Compose; Preference is Compose-in-a-Fragment
+### One Activity, Compose navigation (Navigation 3)
 
-The Compose migration is largely done, not partial. `MainActivity`, `TimelineActivity`, and `CartActivity` each call `setContentView(composeHost)` with a `ComposeView` built directly in code — there is no `activity_main.xml`, `activity_timeline.xml`, or `activity_cart.xml` any more. `PreferenceActivity` is the one holdout: it still inflates `activity_preference.xml` and hosts Fragments via a `FragmentTransaction` (standard Android navigation), but each Fragment's `onCreateView` returns a `ComposeView` with its content as Compose (`PreferenceScreen.kt`, `FeesScreen.kt`, `BackupScreen.kt`, etc.) rather than the legacy `PreferenceFragmentCompat` XML-driven screens. So in practice every screen's *content* is Compose; only Preference keeps a thin XML/Fragment shell around it.
+`MainActivity` is the app's only Activity. Every screen — converter, timeline, cart, settings, fees, backup — is a destination on one Compose back stack, so there are no Fragments, no XML layouts and no ActionBar (the theme is `Theme.AppCompat.DayNight.NoActionBar`, and the window is edge to edge).
+
+| Piece | Where | Job |
+|---|---|---|
+| `Screen` | `view/navigation/Screen.kt` | Sealed interface of destinations. Arguments live on the key (`Timeline(from, to)`, `Cart(mainBase, mainDest)`), so a screen can't open without them. Each encodes to one line (`timeline:EUR:USD`) for saved state. |
+| `AppNavigator` | `view/navigation/AppNavigator.kt` | Owns the back stack: `navigate` (pops back to a screen already on the stack instead of stacking a copy) and `pop`. The converter is always the bottom entry. Saved with the Activity's instance state, so rotation, a theme change (`recreate()`) and process death come back to the same screen. |
+| `AppNavHost` | `view/navigation/AppNavHost.kt` | `NavDisplay` from Navigation 3 inside a `SharedTransitionLayout`. Decorators give each entry its own saved-state holder and **its own `ViewModelStore`**: a screen's ViewModel lives exactly as long as its entry, as it did with one Activity per screen. |
+| Routes | `ConverterRoute`, `TimelineRoute`, `CartRoute`, `SettingsRoute` / `FeesRoute` / `BackupRoute` | Each wires one screen: its ViewModel, top bar, sheets and dialogs. |
+
+What the Activity keeps: the splash hand-off, the XML theme (pure black), foldable posture, hardware-keyboard input for the converter, and the Activity-scoped `MainViewModel` / `PreferenceViewModel`. `ConverterStatus` (banner + error toasts) observes for the Activity's lifetime but only shows errors while the converter is on screen — an error that arrives while another screen covers it is held until the user comes back, as when the converter was its own paused Activity.
+
+Things that used to lean on Activity plumbing now live in Compose: the cart's JSON import/export pickers register on the Activity's `ActivityResultRegistry` with fixed keys (so a result that outlives a recreation still reaches the cart), backup uses `rememberLauncherForActivityResult`, and the cart's unsaved-changes prompt is a `BackHandler` enabled only while there are unsaved edits — so an unchanged cart keeps the predictive back animation.
+
+`AppNavigatorTest` covers the key encoding and stack rules; `AppNavHostTest` covers push/pop, system back, per-screen ViewModel clearing and recreation; `MainActivitySmokeTest` walks the real routes (Robolectric).
+
+### Top bars: Material 3, per screen
+
+Each screen draws its own Compose top bar. The converter's (`ConverterTopBar`) is a small bar: the drawer button (the hamburger ↔ arrow morph, drawn from `DrawerArrowDrawable` and driven by the drawer's offset), the Currenci× wordmark, and four shortcut icons. The drawer opens over it. Every other screen uses `ScreenScaffold`: a **medium** bar (large title under the actions) that collapses into the small one as content scrolls under it, taking the raised surface tone once collapsed; short windows (a phone in landscape) always get the small bar. The timeline's title puts each currency's flag before its code; the cart's overflow menu (`TopBarOverflowMenu`) has icons, with Clear set apart in the error color.
 
 Shared Compose foundation lives in `view/compose/`: `AppTheme.kt` (Material 3 theme, light/dark/OLED — the app dropped `com.google.android.material` in favor of Compose Material 3 + appcompat-only chrome), `theme/Motion.kt` (motion tokens, below), shared common components, drag-reorder, plus `dialogs/` and `onboarding/` subpackages.
 
 Every currency flag renders through `Currency.flagPainter()` (`painterResource` over `Currency.flagRes`), which parses each vector flag once, caches it app-wide, and draws it crisply at any size. Don't wrap flags in an `AndroidView`/`ImageView` or rasterise the `Drawable` to a bitmap. The currency picker's 190+ rows used to do the former, and it cost scroll smoothness.
 
-`UiTestTags` are stable semantics tags on the elements the `:baselineprofile` journeys drive (keypad keys, pills, drawer rows, picker list, onboarding Skip). They're exposed as resource ids via `testTagsAsResourceId` on `MainScreen` and on the popups that have their own window. They carry no visual meaning. Keep them in sync with `baselineprofile/.../UiTags.kt`.
+`UiTestTags` are stable semantics tags on the elements the `:baselineprofile` journeys drive (keypad keys, pills, drawer rows, picker list, onboarding Skip). They're exposed as resource ids via `testTagsAsResourceId` on `AppNavHost` (every screen) and on the popups that have their own window. They carry no visual meaning. Keep them in sync with `baselineprofile/.../UiTags.kt`.
 
 ### Motion: shared tokens, springs for anything interruptible
 
@@ -154,10 +171,20 @@ All UI timing comes from `view/compose/theme/Motion.kt`, so "make it snappier" i
 Rules the main screen follows:
 
 - **Typing is never animated.** The result digits crossfade and pulse only when they change from *outside* the keypad (a rate refresh, currency pick or fee toggle). `DigitsChangeOrigin` tells the two apart by whether the typed input changed since the last result change.
-- **Animated values are read in the draw phase** (`graphicsLayer { }`), so they redraw without recomposing. The ActionBar hamburger is driven from the drawer's actual offset through `snapshotFlow`, so it tracks a finger dragging the drawer.
+- **Animated values are read in the draw phase** (`graphicsLayer { }`, `Canvas`), so they redraw without recomposing. The top bar's hamburger is driven from the drawer's actual offset through `snapshotFlow`, so it tracks a finger dragging the drawer.
 - **Nothing animates forever.** The input caret is a 500 ms on/off toggle, solid while typing. A continuous fade would request a frame on every vsync for as long as the screen is open.
 
-Screen-to-screen (Activity) transitions are XML animations (`res/anim/screen_*`, with timing in `res/values/motion.xml`), wired once in `BaseActivity`. The incoming screen slides a short way in and fades in over a stationary previous screen, and closing reverses that; the screen underneath never moves, so no window background shows at the edges. Android 14+ uses `overrideActivityTransition`, which also drives the predictive-back cross-activity animation. `MainActivity` opts out so the system app-launch animation is untouched.
+Screen-to-screen transitions are Compose `ContentTransform`s in `view/navigation/ScreenMotion.kt`, handed to `NavDisplay`:
+
+| Transition | New / returning screen | Screen leaving or covered |
+|---|---|---|
+| Open (`pushTransition`) | Slides in 1/10 of the width from the right, fades in over 180 ms | Sinks back to 97 % scale |
+| Back (`popTransition`) | Rises from 97 % back to full size | Slides 1/10 right and fades out |
+| Predictive back (`predictivePopTransition`) | Rises from 97 % as the finger moves | Shrinks to 90 %, drifts toward the swipe edge, rounds its corners (28 dp), fades only at the very end |
+
+Open and back take 250 ms (between medium and long, since a whole screen travels further than an element). The predictive transition is seeked by the gesture: its 300 ms timeline maps onto the swipe, so it's linear, and letting go plays the remainder. The rounded corners come from `ScreenFrame` in `AppNavHost`, which also paints the window background behind every screen so screens stay opaque while they overlap; the radius follows the screen transition and is read only when drawing.
+
+The converter's and the cart's currency pills (`CurrencyPill`) are shared elements (`sharedCurrencyPillModifier`): opening the cart flies each pill into the matching cart pill and back again on return, predictive back included. Two pills match only when they show the same currency on the same side, so a cart that keeps its own pair doesn't pull the converter's pills across the screen.
 
 ### Timeline chart engine: Vico via Compose interop
 
@@ -169,7 +196,7 @@ Behavior preserved: dashed reference line at the last value, scrub-to-past-date 
 
 ### Graph options: user-tunable chart chrome
 
-Four `LiveData<Boolean>` streams (backed by `PrefStore.mappedLiveData`) — grid, X-axis labels, Y-axis labels, and highlight-extremes — flow from `Database` through the `TimelineActivity` into `TimelineChart`. All default to `true` so first-run appearance is unchanged. Inside the composable each toggle swaps a Vico component for `null` (e.g. `guideline = if (showGrid) rememberAxisGuidelineComponent() else null`); Vico treats `null` as "don't draw," so no branching in the layer definitions is needed.
+Four `LiveData<Boolean>` streams (backed by `PrefStore.mappedLiveData`) — grid, X-axis labels, Y-axis labels, and highlight-extremes — flow from `Database` through `TimelineRoute` into `TimelineChart`. All default to `true` so first-run appearance is unchanged. Inside the composable each toggle swaps a Vico component for `null` (e.g. `guideline = if (showGrid) rememberAxisGuidelineComponent() else null`); Vico treats `null` as "don't draw," so no branching in the layer definitions is needed.
 
 ### Application subclass prewarms DNS for the selected provider
 
@@ -189,7 +216,7 @@ The preference read (`Database(this).getApiProvider()`) and the `InetAddress.get
 
 ### Predictive back gesture
 
-Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<application>` tag. This is a global opt-in for the predictive back animation on Android 13+ (API 33). No per-screen `OnBackInvokedCallback` wiring is added — the app's existing back behavior is compatible with the default animated preview. Between activities, the custom screen transitions above are set through `overrideActivityTransition`, which is the API predictive back uses for custom cross-activity animations.
+Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<application>` tag (Android 13+). Inside the app, `NavDisplay` handles the gesture itself and scrubs `predictivePopTransition` (above) with the swipe, shared pills included. On the converter, back leaves the app with the system's back-to-home animation. A screen that must intercept back only does so while it needs to (the cart, while it has unsaved edits), so every other back keeps the animated preview.
 
 ### Build Flavors: `play` vs `fdroid`
 
