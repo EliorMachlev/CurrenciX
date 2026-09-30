@@ -59,6 +59,12 @@ private val LIBRARY_CREDITS =
             license = "Apache-2.0",
         ),
         Credit(
+            title = "Material Symbols",
+            subtitle = "Icons (Rounded) — Google",
+            url = "https://fonts.google.com/icons",
+            license = "Apache-2.0",
+        ),
+        Credit(
             title = "Vico",
             subtitle = "Charting — Patryk & Patrick",
             url = "https://github.com/patrykandpatrick/vico",

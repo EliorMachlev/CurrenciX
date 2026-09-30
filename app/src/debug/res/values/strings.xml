@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings used by the debug-only crash reporter (CrashReportActivity). -->
+    <string name="crash_header">CurrenciX crashed — trace copied to clipboard</string>
+    <string name="crash_copy">Copy trace</string>
+    <string name="crash_copied">Trace copied to clipboard</string>
+    <string name="crash_restart">Restart app</string>
+</resources>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">zamijeni valute</string>
-    <string name="info_date_latest">Tečajevi na dan &lt;b&gt;%1$s&lt;/b&gt;, izvor: &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Arhiva tečaja na dan &lt;b&gt;%1$s&lt;/b&gt;, izvor: &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Iznos &lt;b&gt;%s&lt;/b&gt; kopiran u međuspremnik</string>
     <string name="historical_rates_dialog_title">Arhiva tečajeva</string>
     <string name="historical_rates_dialog_toggle">Arhiva tečajeva za određeni dan. Isključite ako želite trenutni tečaj.</string>
@@ -31,9 +29,12 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Izvanmrežno • Tečajevi od %1$s</string>
     <string name="offline_banner_no_data">Izvanmrežno • Još nema spremljenih tečajeva</string>
+    <string name="unreachable_banner_with_date">Pružatelj nedostupan • Tečajevi od %1$s</string>
+    <string name="unreachable_banner_no_data">Pružatelj nedostupan • Ponovni pokušaj</string>
+    <string name="historical_banner">Povijesno • Tečajevi od %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Najnoviji tečaj za posljednje korišteni par valuta.</string>
+    <string name="widget_description">Najnoviji tečaj i 30-dnevni trend za zadnji korišteni valutni par ili onaj koji odaberete.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Na dan %s</string>
     <string name="widget_footer_empty">Otvorite aplikaciju za učitavanje tečajeva.</string>
@@ -49,7 +50,6 @@
     <string name="cart_delete_item">Izbriši stavku</string>
     <string name="cart_subtotal_label">Međuzbroj</string>
     <string name="cart_total_label">Ukupno</string>
-    <string name="cart_fee_line">Naknade: %s%%</string>
     <string name="cart_menu_save">Spremi</string>
     <string name="cart_menu_save_as">Spremi kao…</string>
     <string name="cart_menu_load">Učitaj</string>
@@ -70,12 +70,6 @@
     <string name="cart_rename_title">Preimenuj košaricu</string>
     <string name="cart_delete_confirm">Izbrisati „%s“?</string>
     <string name="cart_delete_confirm_button">Izbriši</string>
-    <string name="cart_clear_confirm">Ukloniti sve stavke iz trenutne košarice?</string>
-    <string name="cart_clear_confirm_button">Očisti</string>
-    <string name="cart_clear_items_only">Očisti samo stavke</string>
-    <string name="cart_clear_items_only_desc">Uklanja sve retke iz košarice, ali zadržava trenutne valute i stranu naknada.</string>
-    <string name="cart_clear_reset_all">Resetiraj košaricu</string>
-    <string name="cart_clear_reset_all_desc">Uklanja sve retke i ponovno preuzima osnovnu / ciljnu valutu i stranu naknada s glavnog zaslona.</string>
     <string name="cart_export_ok">Košarica izvezena.</string>
     <string name="cart_export_error">Izvoz nije uspio: %s</string>
     <string name="cart_import_ok">Košarica uvezena.</string>
@@ -89,13 +83,11 @@
     <string name="cart_share_fees">Naknade: %s%%</string>
     <string name="cart_share_total">Ukupno: %1$s %2$s</string>
     <string name="cart_unsaved_title">Nespremljene promjene</string>
-    <string name="cart_unsaved_message">Imate nespremljene promjene. Što želite učiniti?</string>
     <string name="cart_unsaved_save">Spremi</string>
     <string name="cart_unsaved_save_as">Spremi kao novu</string>
     <string name="cart_unsaved_discard">Odbaci promjene</string>
     <string name="cart_unsaved_continue">Nastavi</string>
     <string name="a11y_delete">Izbriši</string>
-    <string name="a11y_historical_rate">Povijesni tečaj</string>
     <string name="a11y_search_currencies">Traži valute</string>
     <string name="a11y_clear_search">Očisti pretragu</string>
     <string name="a11y_cart_item_name">Naziv stavke</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">Odaberi</string>
     <string name="a11y_action_load">Učitaj</string>
     <string name="a11y_action_open">Otvori</string>
-    <string name="quick_conversions_fee_conversion">konverzija %s</string>
-    <string name="quick_conversions_fee_reduction">smanjenje %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Prikvači na vrh</string>
     <string name="cart_unpin_item">Otkvači stavku</string>
     <string name="cart_reorder_item">Presloži stavku</string>
+    <string name="desc_navigate_up">Kretanje prema gore</string>
+    <string name="desc_open_drawer">Otvori ladicu za navigaciju</string>
+    <string name="desc_close_drawer">Zatvori ladicu za navigaciju</string>
+    <string name="desc_more_options">Više opcija</string>
+    <string name="cart_item_deleted">Stavka izbrisana</string>
+    <string name="cart_cleared">Košarica ispražnjena</string>
+    <string name="undo">Poništi</string>
+    <string name="timeline_retry">Pokušaj ponovno</string>
+    <string name="timeline_change_provider">Promijeni pružatelja</string>
+    <string name="recent_pair_switch">Prebaci na %1$s → %2$s</string>
+    <string name="cart_section_pinned">Prikvačeno</string>
+    <string name="cart_section_others">Ostale stavke</string>
+    <string name="fallback_banner">%1$s nije dostupan • Koristi se %2$s</string>
+    <string name="process_text_label">Pretvori valutu</string>
+    <string name="selection_open_app">Otvori u aplikaciji %1$s</string>
+    <string name="selection_copy">Kopiraj</string>
+    <string name="selection_no_amount">U „%1$s” nije pronađen iznos.</string>
+    <string name="selection_no_rates">Jednom otvorite %1$s da biste učitali tečajeve.</string>
+    <string name="selection_assumed_currency">Tekst nema valutu, pa je pročitan kao %1$s.</string>
+    <string name="shortcut_pair_long">Pretvori %1$s u %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Prati pretvarač</string>
+    <string name="widget_follow_converter_summary">Prikaži par koji ste zadnji koristili u aplikaciji</string>
+    <string name="done">Gotovo</string>
+    <string name="cart_share_tip">Napojnica / porez (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Po osobi (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Preostalo u proračunu: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Iznad proračuna: %1$s %2$s</string>
+    <string name="cart_menu_extras">Podjela, napojnica i proračun</string>
+    <string name="cart_tip_label">Napojnica / porez</string>
+    <string name="cart_tip_row">Napojnica / porez (%1$s%%)</string>
+    <string name="cart_split_label">Podijeli na</string>
+    <string name="cart_split_decrease">Manje osoba</string>
+    <string name="cart_split_increase">Više osoba</string>
+    <string name="cart_per_person_row">Po osobi (÷%1$d)</string>
+    <string name="cart_budget_label">Proračun</string>
+    <string name="cart_budget_left_row">Preostalo u proračunu</string>
+    <string name="cart_over_budget_row">Iznad proračuna</string>
 </resources>

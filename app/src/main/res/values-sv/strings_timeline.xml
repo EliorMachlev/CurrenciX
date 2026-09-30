@@ -9,4 +9,8 @@
     <string name="year">år</string>
     <string name="month">månad</string>
     <string name="week">vecka</string>
+    <string name="timeline_five_years">5 år</string>
+    <string name="timeline_custom_range">Eget intervall</string>
+    <string name="timeline_share">Dela diagram</string>
+    <string name="timeline_no_rates">Inga kurser för dessa datum</string>
 </resources>

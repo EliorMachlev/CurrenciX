@@ -1,24 +1,41 @@
 package com.eliormachlev.currencix.view.timeline.compose
 
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.fromHtmlLegacy
-import com.google.android.material.color.MaterialColors
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 
 private val CHART_PADDING = TIMELINE_CONTENT_PADDING
 private val PROVIDER_FONT_SIZE = 12.sp
@@ -29,7 +46,10 @@ private const val PROVIDER_ALPHA = 0.5f
 internal fun TimelineChartCard(
     isRefreshing: Boolean,
     error: String?,
+    empty: Boolean,
     provider: CharSequence?,
+    onRetry: () -> Unit,
+    onChangeProvider: () -> Unit,
     modifier: Modifier = Modifier,
     chart: @Composable () -> Unit,
 ) {
@@ -47,28 +67,13 @@ internal fun TimelineChartCard(
             )
         }
 
-        if (error != null) {
-            // AndroidView keeps the exact HTML rendering (bold spans etc.) that
-            // fromHtmlLegacy produces — cheaper than porting the parser.
-            AndroidView(
-                factory = { ctx ->
-                    TextView(ctx).apply {
-                        typeface = android.graphics.Typeface.MONOSPACE
-                        setTextColor(MaterialColors.getColor(ctx, R.attr.colorError, 0))
-                        gravity = android.view.Gravity.CENTER_VERTICAL
-                    }
-                },
-                update = { it.text = error.fromHtmlLegacy() },
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(CHART_PADDING)
-                        .align(Alignment.Center),
-            )
-        } else {
-            Box(modifier = Modifier.fillMaxSize().padding(CHART_PADDING)) {
-                chart()
-            }
+        val content = Modifier.fillMaxSize().padding(CHART_PADDING)
+        when {
+            error != null -> TimelineErrorState(error, onRetry, onChangeProvider, content)
+            // No rates in the chosen dates (a weekend, before the provider's
+            // history): say so rather than leave the previous line up.
+            empty -> TimelineNotice(R.drawable.ic_event, AnnotatedString(stringResource(R.string.timeline_no_rates)), content)
+            else -> Box(content) { chart() }
         }
 
         if (provider != null) {
@@ -90,3 +95,58 @@ internal fun TimelineChartCard(
         }
     }
 }
+
+// No chart to show: the provider failed, or doesn't cover this pair. Says
+// why, and offers the two ways out — try again, or pick another provider.
+@Composable
+private fun TimelineErrorState(
+    message: String,
+    onRetry: () -> Unit,
+    onChangeProvider: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TimelineNotice(R.drawable.ic_sync_problem, remember(message) { AnnotatedString.fromHtml(message) }, modifier) {
+        Row(horizontalArrangement = Arrangement.spacedBy(NOTICE_GAP)) {
+            OutlinedButton(onClick = rememberHapticOnClick(onRetry)) { Text(stringResource(R.string.timeline_retry)) }
+            FilledTonalButton(onClick = rememberHapticOnClick(onChangeProvider)) {
+                Text(stringResource(R.string.timeline_change_provider))
+            }
+        }
+    }
+}
+
+// An icon and a line of text in place of the chart, with optional actions under them.
+@Composable
+private fun TimelineNotice(
+    @DrawableRes icon: Int,
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    actions: (@Composable () -> Unit)? = null,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(NOTICE_ICON_SIZE),
+        )
+        Spacer(Modifier.height(NOTICE_GAP))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+        if (actions != null) {
+            Spacer(Modifier.height(NOTICE_GAP))
+            actions()
+        }
+    }
+}
+
+private val NOTICE_ICON_SIZE = 40.dp
+private val NOTICE_GAP = 12.dp

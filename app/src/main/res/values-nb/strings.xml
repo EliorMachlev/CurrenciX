@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">Veksle valuta</string>
-    <string name="info_date_latest">Kurser fra &lt;b&gt;%1$s&lt;/b&gt; via &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Historiske priser på &lt;b&gt;%1$s&lt;/b&gt; med &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Kopierte &lt;b&gt;%s&lt;/b&gt; til utklippstavlen</string>
     <string name="historical_rates_dialog_title">Historiske priser</string>
     <string name="historical_rates_dialog_toggle">Bruk valutakurser for en bestemt dato. Deaktiver, for alltid å ta de nyeste.</string>
@@ -23,7 +21,6 @@
     <string name="quick_conversions_fees_applied">Anvendte gebyrer: %s</string>
     <string name="tooltip_filter_starred">Vis kun favorittvalutaer.</string>
     <string name="a11y_delete">Slett</string>
-    <string name="a11y_historical_rate">Historisk kurs</string>
     <string name="currency_dropdown_api_hint">Mangler noe? Ulike datatilbydere støtter ulike valutaer. Gå til innstillingene for å prøve en annen!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">Serveren har ingen data for denne forespørselen.</string>
     <string name="error_invalid_api_key">HTTP 401 – Vennligst sjekk API-nøkkelen din.</string>
@@ -34,9 +31,12 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Frakoblet • Kurser fra %1$s</string>
     <string name="offline_banner_no_data">Frakoblet • Ingen mellomlagrede kurser ennå</string>
+    <string name="unreachable_banner_with_date">Leverandøren er utilgjengelig • Kurser fra %1$s</string>
+    <string name="unreachable_banner_no_data">Leverandøren er utilgjengelig • Prøver igjen</string>
+    <string name="historical_banner">Historisk • Kurser fra %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Nyeste omregningskurs for det sist brukte valutaparet ditt.</string>
+    <string name="widget_description">Siste kurs og 30-dagers trend for valutaparet du sist brukte, eller et du velger.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Pr. %s</string>
     <string name="widget_footer_empty">Åpne appen for å laste kurser.</string>
@@ -52,7 +52,6 @@
     <string name="cart_delete_item">Slett vare</string>
     <string name="cart_subtotal_label">Delsum</string>
     <string name="cart_total_label">Totalt</string>
-    <string name="cart_fee_line">Gebyrer: %s%%</string>
     <string name="cart_menu_save">Lagre</string>
     <string name="cart_menu_save_as">Lagre som…</string>
     <string name="cart_menu_load">Last inn</string>
@@ -73,12 +72,6 @@
     <string name="cart_rename_title">Gi handlekurven nytt navn</string>
     <string name="cart_delete_confirm">Slette «%s»?</string>
     <string name="cart_delete_confirm_button">Slett</string>
-    <string name="cart_clear_confirm">Fjerne alle varer fra gjeldende handlekurv?</string>
-    <string name="cart_clear_confirm_button">Tøm</string>
-    <string name="cart_clear_items_only">Tøm kun varer</string>
-    <string name="cart_clear_items_only_desc">Fjerner alle rader fra handlekurven, men beholder gjeldende valutaer og gebyrside.</string>
-    <string name="cart_clear_reset_all">Tilbakestill handlekurv</string>
-    <string name="cart_clear_reset_all_desc">Fjerner alle rader og henter basis-/målvaluta og gebyrside på nytt fra hovedskjermen.</string>
     <string name="cart_export_ok">Handlekurv eksportert.</string>
     <string name="cart_export_error">Eksport mislyktes: %s</string>
     <string name="cart_import_ok">Handlekurv importert.</string>
@@ -92,7 +85,6 @@
     <string name="cart_share_fees">Gebyrer: %s%%</string>
     <string name="cart_share_total">Totalt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Ulagrede endringer</string>
-    <string name="cart_unsaved_message">Du har ulagrede endringer. Hva vil du gjøre?</string>
     <string name="cart_unsaved_save">Lagre</string>
     <string name="cart_unsaved_save_as">Lagre som ny</string>
     <string name="cart_unsaved_discard">Forkast endringer</string>
@@ -106,10 +98,46 @@
     <string name="a11y_action_select">Velg</string>
     <string name="a11y_action_load">Last inn</string>
     <string name="a11y_action_open">Åpne</string>
-    <string name="quick_conversions_fee_conversion">konvertering %s</string>
-    <string name="quick_conversions_fee_reduction">reduksjon %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fest øverst</string>
     <string name="cart_unpin_item">Løsne vare</string>
     <string name="cart_reorder_item">Endre rekkefølge</string>
+    <string name="desc_navigate_up">Naviger opp</string>
+    <string name="desc_open_drawer">Åpne navigasjonsskuffen</string>
+    <string name="desc_close_drawer">Lukk navigasjonsskuffen</string>
+    <string name="desc_more_options">Flere alternativer</string>
+    <string name="cart_item_deleted">Elementet er slettet</string>
+    <string name="cart_cleared">Handlekurven er tømt</string>
+    <string name="undo">Angre</string>
+    <string name="timeline_retry">Prøv igjen</string>
+    <string name="timeline_change_provider">Bytt leverandør</string>
+    <string name="recent_pair_switch">Bytt til %1$s → %2$s</string>
+    <string name="cart_section_pinned">Festet</string>
+    <string name="cart_section_others">Andre varer</string>
+    <string name="fallback_banner">%1$s er utilgjengelig • Bruker %2$s</string>
+    <string name="process_text_label">Konverter valuta</string>
+    <string name="selection_open_app">Åpne i %1$s</string>
+    <string name="selection_copy">Kopier</string>
+    <string name="selection_no_amount">Fant ikke noe beløp i «%1$s».</string>
+    <string name="selection_no_rates">Åpne %1$s én gang for å laste inn valutakurser.</string>
+    <string name="selection_assumed_currency">Teksten har ingen valuta, så den ble lest som %1$s.</string>
+    <string name="shortcut_pair_long">Konverter %1$s til %2$s</string>
+    <string name="widget_configure_title">Modul</string>
+    <string name="widget_follow_converter_title">Følg omregneren</string>
+    <string name="widget_follow_converter_summary">Vis paret du sist brukte i appen</string>
+    <string name="done">Ferdig</string>
+    <string name="cart_share_tip">Tips / avgift (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Per person (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Igjen av budsjettet: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Over budsjett: %1$s %2$s</string>
+    <string name="cart_menu_extras">Del, tips og budsjett</string>
+    <string name="cart_tip_label">Tips / avgift</string>
+    <string name="cart_tip_row">Tips / avgift (%1$s%%)</string>
+    <string name="cart_split_label">Del mellom</string>
+    <string name="cart_split_decrease">Færre personer</string>
+    <string name="cart_split_increase">Flere personer</string>
+    <string name="cart_per_person_row">Per person (÷%1$d)</string>
+    <string name="cart_budget_label">Budsjett</string>
+    <string name="cart_budget_left_row">Igjen av budsjettet</string>
+    <string name="cart_over_budget_row">Over budsjett</string>
 </resources>

@@ -2,8 +2,6 @@
 <resources>
     <string name="desc_toggle_currencies">tausche Währungen</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="info_date_latest">Kurse vom &lt;b>%1$s&lt;/b> via &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Historische Kurse vom &lt;b>%1$s&lt;/b> via &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; in die Zwischenablage kopiert</string>
     <string name="historical_rates_dialog_title">Historische Kurse</string>
     <string name="historical_rates_dialog_toggle">Wechselkurse eines spezifischen Datums verwenden. Deaktivieren, um immer die aktuellsten Kurse zu benutzen.</string>
@@ -32,9 +30,12 @@
 
     <string name="offline_banner_with_date">Offline • Kurse vom %1$s</string>
     <string name="offline_banner_no_data">Offline • Noch keine zwischengespeicherten Kurse</string>
+    <string name="unreachable_banner_with_date">Anbieter nicht erreichbar • Kurse vom %1$s</string>
+    <string name="unreachable_banner_no_data">Anbieter nicht erreichbar • Erneuter Versuch</string>
+    <string name="historical_banner">Historisch • Kurse vom %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Aktueller Umrechnungskurs für dein zuletzt verwendetes Währungspaar.</string>
+    <string name="widget_description">Aktueller Kurs und 30-Tage-Trend für dein zuletzt verwendetes Währungspaar oder ein Paar deiner Wahl.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Stand %s</string>
     <string name="widget_footer_empty">App öffnen, um Kurse zu laden.</string>
@@ -50,7 +51,6 @@
     <string name="cart_delete_item">Artikel löschen</string>
     <string name="cart_subtotal_label">Zwischensumme</string>
     <string name="cart_total_label">Gesamt</string>
-    <string name="cart_fee_line">Gebühren: %s%%</string>
     <string name="cart_menu_save">Speichern</string>
     <string name="cart_menu_save_as">Speichern unter…</string>
     <string name="cart_menu_load">Laden</string>
@@ -71,12 +71,6 @@
     <string name="cart_rename_title">Warenkorb umbenennen</string>
     <string name="cart_delete_confirm">„%s“ löschen?</string>
     <string name="cart_delete_confirm_button">Löschen</string>
-    <string name="cart_clear_confirm">Alle Artikel aus dem aktuellen Warenkorb entfernen?</string>
-    <string name="cart_clear_confirm_button">Leeren</string>
-    <string name="cart_clear_items_only">Nur Artikel leeren</string>
-    <string name="cart_clear_items_only_desc">Entfernt alle Zeilen, behält aber die aktuellen Währungen und die Gebührenseite.</string>
-    <string name="cart_clear_reset_all">Warenkorb zurücksetzen</string>
-    <string name="cart_clear_reset_all_desc">Entfernt alle Zeilen und holt Basis-/Zielwährung und Gebührenseite erneut vom Hauptbildschirm.</string>
     <string name="cart_export_ok">Warenkorb exportiert.</string>
     <string name="cart_export_error">Export fehlgeschlagen: %s</string>
     <string name="cart_import_ok">Warenkorb importiert.</string>
@@ -90,13 +84,11 @@
     <string name="cart_share_fees">Gebühren: %s%%</string>
     <string name="cart_share_total">Gesamt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Ungespeicherte Änderungen</string>
-    <string name="cart_unsaved_message">Es gibt ungespeicherte Änderungen. Was möchtest du tun?</string>
     <string name="cart_unsaved_save">Speichern</string>
     <string name="cart_unsaved_save_as">Als neu speichern</string>
     <string name="cart_unsaved_discard">Änderungen verwerfen</string>
     <string name="cart_unsaved_continue">Weiter</string>
     <string name="a11y_delete">Löschen</string>
-    <string name="a11y_historical_rate">Historischer Kurs</string>
     <string name="a11y_search_currencies">Währungen suchen</string>
     <string name="a11y_clear_search">Suche löschen</string>
     <string name="a11y_cart_item_name">Artikelname</string>
@@ -106,10 +98,46 @@
     <string name="a11y_action_select">Auswählen</string>
     <string name="a11y_action_load">Laden</string>
     <string name="a11y_action_open">Öffnen</string>
-    <string name="quick_conversions_fee_conversion">Umrechnung %s</string>
-    <string name="quick_conversions_fee_reduction">Reduktion %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Artikel oben anheften</string>
     <string name="cart_unpin_item">Artikel loslösen</string>
     <string name="cart_reorder_item">Artikel neu anordnen</string>
+    <string name="desc_navigate_up">Nach oben</string>
+    <string name="desc_open_drawer">Navigationsleiste öffnen</string>
+    <string name="desc_close_drawer">Navigationsleiste schließen</string>
+    <string name="desc_more_options">Weitere Optionen</string>
+    <string name="cart_item_deleted">Artikel gelöscht</string>
+    <string name="cart_cleared">Warenkorb geleert</string>
+    <string name="undo">Rückgängig</string>
+    <string name="timeline_retry">Erneut versuchen</string>
+    <string name="timeline_change_provider">Anbieter wechseln</string>
+    <string name="recent_pair_switch">Zu %1$s → %2$s wechseln</string>
+    <string name="cart_section_pinned">Angeheftet</string>
+    <string name="cart_section_others">Weitere Artikel</string>
+    <string name="fallback_banner">%1$s nicht verfügbar • %2$s wird verwendet</string>
+    <string name="process_text_label">Währung umrechnen</string>
+    <string name="selection_open_app">In %1$s öffnen</string>
+    <string name="selection_copy">Kopieren</string>
+    <string name="selection_no_amount">Kein Betrag in „%1$s“ gefunden.</string>
+    <string name="selection_no_rates">Öffne %1$s einmal, um Wechselkurse zu laden.</string>
+    <string name="selection_assumed_currency">Der Text enthält keine Währung und wurde daher als %1$s gelesen.</string>
+    <string name="shortcut_pair_long">%1$s in %2$s umrechnen</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Dem Umrechner folgen</string>
+    <string name="widget_follow_converter_summary">Das zuletzt in der App verwendete Paar anzeigen</string>
+    <string name="done">Fertig</string>
+    <string name="cart_share_tip">Trinkgeld / Steuer (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Pro Person (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Im Budget übrig: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Über Budget: %1$s %2$s</string>
+    <string name="cart_menu_extras">Aufteilen, Trinkgeld und Budget</string>
+    <string name="cart_tip_label">Trinkgeld / Steuer</string>
+    <string name="cart_tip_row">Trinkgeld / Steuer (%1$s%%)</string>
+    <string name="cart_split_label">Aufteilen auf</string>
+    <string name="cart_split_decrease">Weniger Personen</string>
+    <string name="cart_split_increase">Mehr Personen</string>
+    <string name="cart_per_person_row">Pro Person (÷%1$d)</string>
+    <string name="cart_budget_label">Budget</string>
+    <string name="cart_budget_left_row">Im Budget übrig</string>
+    <string name="cart_over_budget_row">Über Budget</string>
 </resources>

@@ -9,4 +9,8 @@
     <string name="year">anno</string>
     <string name="month">mese</string>
     <string name="week">settimana</string>
+    <string name="timeline_five_years">5 anni</string>
+    <string name="timeline_custom_range">Intervallo personalizzato</string>
+    <string name="timeline_share">Condividi grafico</string>
+    <string name="timeline_no_rates">Nessun tasso per queste date</string>
 </resources>

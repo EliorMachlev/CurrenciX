@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">lülita vääringuid sisse/välja</string>
-    <string name="info_date_latest">Valuutakursid &lt;b>%1$s&lt;/b> seisuga teenusest &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Varasemad valuutakursid &lt;b>%1$s&lt;/b> seisuga teenusest &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">Kopeerisime &lt;b>%s&lt;/b> lõikelauale</string>
     <string name="historical_rates_dialog_title">Varasemad valuutakursid</string>
     <string name="historical_rates_dialog_toggle">Kasuta kindla kuupäeva vahetuskursse. Kui lülitad selle eelistuse välja, siis näitame vaid viimaseid kursse.</string>
@@ -31,9 +29,12 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Võrguühenduseta • Kursid alates %1$s</string>
     <string name="offline_banner_no_data">Võrguühenduseta • Salvestatud kursse veel pole</string>
+    <string name="unreachable_banner_with_date">Pakkuja pole kättesaadav • Kursid alates %1$s</string>
+    <string name="unreachable_banner_no_data">Pakkuja pole kättesaadav • Uus katse</string>
+    <string name="historical_banner">Ajalooline • Kursid alates %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Viimane vahetuskurss teie viimati kasutatud valuutapaari jaoks.</string>
+    <string name="widget_description">Viimase kasutatud või valitud valuutapaari viimane kurss ja 30 päeva trend.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Seisuga %s</string>
     <string name="widget_footer_empty">Kursside laadimiseks avage rakendus.</string>
@@ -49,7 +50,6 @@
     <string name="cart_delete_item">Kustuta toode</string>
     <string name="cart_subtotal_label">Vahesumma</string>
     <string name="cart_total_label">Kokku</string>
-    <string name="cart_fee_line">Tasud: %s%%</string>
     <string name="cart_menu_save">Salvesta</string>
     <string name="cart_menu_save_as">Salvesta kui…</string>
     <string name="cart_menu_load">Laadi</string>
@@ -70,12 +70,6 @@
     <string name="cart_rename_title">Nimeta ostukorv ümber</string>
     <string name="cart_delete_confirm">Kas kustutada „%s"?</string>
     <string name="cart_delete_confirm_button">Kustuta</string>
-    <string name="cart_clear_confirm">Kas eemaldada kõik tooted praegusest ostukorvist?</string>
-    <string name="cart_clear_confirm_button">Tühjenda</string>
-    <string name="cart_clear_items_only">Tühjenda ainult tooted</string>
-    <string name="cart_clear_items_only_desc">Eemaldab ostukorvist kõik read, kuid säilitab praegused valuutad ja tasude poole.</string>
-    <string name="cart_clear_reset_all">Lähtesta ostukorv</string>
-    <string name="cart_clear_reset_all_desc">Eemaldab kõik read ning võtab lähte- ja sihtvaluuta ning tasude poole uuesti põhikuvalt.</string>
     <string name="cart_export_ok">Ostukorv eksporditud.</string>
     <string name="cart_export_error">Eksport ebaõnnestus: %s</string>
     <string name="cart_import_ok">Ostukorv imporditud.</string>
@@ -89,13 +83,11 @@
     <string name="cart_share_fees">Tasud: %s%%</string>
     <string name="cart_share_total">Kokku: %1$s %2$s</string>
     <string name="cart_unsaved_title">Salvestamata muudatused</string>
-    <string name="cart_unsaved_message">Teil on salvestamata muudatusi. Mida soovite teha?</string>
     <string name="cart_unsaved_save">Salvesta</string>
     <string name="cart_unsaved_save_as">Salvesta uuena</string>
     <string name="cart_unsaved_discard">Loobu muudatustest</string>
     <string name="cart_unsaved_continue">Jätka</string>
     <string name="a11y_delete">Kustuta</string>
-    <string name="a11y_historical_rate">Varasem kurss</string>
     <string name="a11y_search_currencies">Otsi valuutasid</string>
     <string name="a11y_clear_search">Tühjenda otsing</string>
     <string name="a11y_cart_item_name">Toote nimi</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">Vali</string>
     <string name="a11y_action_load">Laadi</string>
     <string name="a11y_action_open">Ava</string>
-    <string name="quick_conversions_fee_conversion">konversioon %s</string>
-    <string name="quick_conversions_fee_reduction">vähendus %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Kinnita üles</string>
     <string name="cart_unpin_item">Vabasta kinnitus</string>
     <string name="cart_reorder_item">Muuda järjekorda</string>
+    <string name="desc_navigate_up">Liigu üles</string>
+    <string name="desc_open_drawer">Ava navigeerimissahtel</string>
+    <string name="desc_close_drawer">Sulge navigeerimissahtel</string>
+    <string name="desc_more_options">Rohkem valikuid</string>
+    <string name="cart_item_deleted">Üksus kustutatud</string>
+    <string name="cart_cleared">Ostukorv tühjendatud</string>
+    <string name="undo">Võta tagasi</string>
+    <string name="timeline_retry">Proovi uuesti</string>
+    <string name="timeline_change_provider">Muuda teenusepakkujat</string>
+    <string name="recent_pair_switch">Lülitu paarile %1$s → %2$s</string>
+    <string name="cart_section_pinned">Kinnitatud</string>
+    <string name="cart_section_others">Muud üksused</string>
+    <string name="fallback_banner">%1$s pole saadaval • Kasutatakse %2$s</string>
+    <string name="process_text_label">Teisenda valuutat</string>
+    <string name="selection_open_app">Ava rakenduses %1$s</string>
+    <string name="selection_copy">Kopeeri</string>
+    <string name="selection_no_amount">Tekstist „%1$s“ ei leitud summat.</string>
+    <string name="selection_no_rates">Ava %1$s üks kord, et vahetuskursid laadida.</string>
+    <string name="selection_assumed_currency">Tekstis pole valuutat, seega loeti see kui %1$s.</string>
+    <string name="shortcut_pair_long">Teisenda %1$s → %2$s</string>
+    <string name="widget_configure_title">Vidin</string>
+    <string name="widget_follow_converter_title">Järgi konverterit</string>
+    <string name="widget_follow_converter_summary">Näita paari, mida rakenduses viimati kasutasid</string>
+    <string name="done">Valmis</string>
+    <string name="cart_share_tip">Jootraha / maks (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Inimese kohta (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Eelarvest alles: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Üle eelarve: %1$s %2$s</string>
+    <string name="cart_menu_extras">Jagamine, jootraha ja eelarve</string>
+    <string name="cart_tip_label">Jootraha / maks</string>
+    <string name="cart_tip_row">Jootraha / maks (%1$s%%)</string>
+    <string name="cart_split_label">Jaga</string>
+    <string name="cart_split_decrease">Vähem inimesi</string>
+    <string name="cart_split_increase">Rohkem inimesi</string>
+    <string name="cart_per_person_row">Inimese kohta (÷%1$d)</string>
+    <string name="cart_budget_label">Eelarve</string>
+    <string name="cart_budget_left_row">Eelarvest alles</string>
+    <string name="cart_over_budget_row">Üle eelarve</string>
 </resources>

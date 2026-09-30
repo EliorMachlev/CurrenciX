@@ -6,8 +6,9 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
-import com.eliormachlev.currencix.model.SideStacks
 import com.eliormachlev.currencix.repository.Database
+import kotlinx.collections.immutable.ImmutableList
+import java.math.BigDecimal
 
 /**
  * Owns the fee list, exchange rates, and active-exchange/bank ids the cart's
@@ -22,7 +23,7 @@ import com.eliormachlev.currencix.repository.Database
 class CartRatesCache(
     db: Database,
 ) {
-    val fees: LiveData<List<Fee>> = db.getFees()
+    val fees: LiveData<ImmutableList<Fee>> = db.getFees()
     val rates: LiveData<ExchangeRates?> = db.getExchangeRates()
 
     var lastFees: List<Fee> = emptyList()
@@ -37,7 +38,7 @@ class CartRatesCache(
     private val activeExchange: LiveData<String?> = db.getActiveExchangeId()
     private val activeBank: LiveData<String?> = db.getActiveBankId()
 
-    private val feesObserver = Observer<List<Fee>> { lastFees = it }
+    private val feesObserver = Observer<ImmutableList<Fee>> { lastFees = it }
     private val ratesObserver = Observer<ExchangeRates?> { lastRates = it }
     private val activeExchangeObserver = Observer<String?> { lastActiveExchangeId = it }
     private val activeBankObserver = Observer<String?> { lastActiveBankId = it }
@@ -55,9 +56,41 @@ class CartRatesCache(
         activeExchange.removeObserver(activeExchangeObserver)
         activeBank.removeObserver(activeBankObserver)
     }
+
+    /**
+     * Freeze all four last-known scalars into a single snapshot. Callers that
+     * need coherent fee/rate state (e.g. the share flow, which reads several
+     * fields in sequence) should snapshot once and reuse the frozen values so
+     * a mid-flow refresh can't mix new fees with old rates.
+     */
+    fun snapshot(): CartRatesSnapshot =
+        CartRatesSnapshot(
+            fees = lastFees,
+            rates = lastRates,
+            activeExchangeId = lastActiveExchangeId,
+            activeBankId = lastActiveBankId,
+        )
+
+    /** Multiplicative fee stack against the current active exchange/bank ids. */
+    fun feeStackFor(
+        base: Currency?,
+        dest: Currency?,
+    ): BigDecimal = snapshot().feeStackFor(base, dest)
 }
 
-fun CartRatesCache.sideStacksFor(
-    base: Currency?,
-    dest: Currency?,
-): SideStacks = FeeCalculator.sideStacks(lastFees, base, dest, lastActiveExchangeId, lastActiveBankId)
+/**
+ * Frozen view over [CartRatesCache]'s scalars. Same shape as the underlying
+ * fields — mirrors them so callers can compute against a coherent set even if
+ * the cache refreshes mid-computation.
+ */
+data class CartRatesSnapshot(
+    val fees: List<Fee>,
+    val rates: ExchangeRates?,
+    val activeExchangeId: String?,
+    val activeBankId: String?,
+) {
+    fun feeStackFor(
+        base: Currency?,
+        dest: Currency?,
+    ): BigDecimal = FeeCalculator.feeStack(fees, base, dest, activeExchangeId, activeBankId)
+}

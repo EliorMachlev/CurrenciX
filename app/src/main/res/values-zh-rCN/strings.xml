@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">切换货币</string>
-    <string name="info_date_latest">汇率更新于 &lt;b&gt;%1$s&lt;/b&gt; 汇率源 &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">历史汇率日期 &lt;b&gt;%1$s&lt;/b&gt; 汇率源 &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">已将 &lt;b&gt;%s&lt;/b&gt; 复制到剪贴板</string>
     <string name="historical_rates_dialog_title">历史汇率</string>
     <string name="historical_rates_dialog_toggle">打开就会显示选定特定日期的汇率。关上则永远会显示最新的汇率。</string>
@@ -28,14 +26,16 @@
     <string name="quick_conversions_fees_applied">已应用费用：%s</string>
     <string name="tooltip_filter_starred">仅显示收藏的货币。</string>
     <string name="a11y_delete">删除</string>
-    <string name="a11y_historical_rate">历史汇率</string>
     <string name="currency_dropdown_api_hint">没找到需要的汇率？不同的数据来源提供数量不同的货币汇率。尝试在设置里换换来源！ 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">离线 • 汇率来自 %1$s</string>
     <string name="offline_banner_no_data">离线 • 尚无缓存汇率</string>
+    <string name="unreachable_banner_with_date">无法连接服务商 • %1$s 的汇率</string>
+    <string name="unreachable_banner_no_data">无法连接服务商 • 重试中</string>
+    <string name="historical_banner">历史数据 • %1$s 的汇率</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">显示您上次使用的货币对的最新汇率。</string>
+    <string name="widget_description">您最近使用的货币对或您所选货币对的最新汇率和 30 天走势。</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">截至 %s</string>
     <string name="widget_footer_empty">打开应用以加载汇率。</string>
@@ -51,7 +51,6 @@
     <string name="cart_delete_item">删除项目</string>
     <string name="cart_subtotal_label">小计</string>
     <string name="cart_total_label">合计</string>
-    <string name="cart_fee_line">手续费:%s%%</string>
     <string name="cart_menu_save">保存</string>
     <string name="cart_menu_save_as">另存为…</string>
     <string name="cart_menu_load">载入</string>
@@ -72,12 +71,6 @@
     <string name="cart_rename_title">重命名购物车</string>
     <string name="cart_delete_confirm">删除"%s"?</string>
     <string name="cart_delete_confirm_button">删除</string>
-    <string name="cart_clear_confirm">从当前购物车中移除所有项目?</string>
-    <string name="cart_clear_confirm_button">清空</string>
-    <string name="cart_clear_items_only">仅清空项目</string>
-    <string name="cart_clear_items_only_desc">移除购物车中的所有行,但保留当前货币和手续费方向。</string>
-    <string name="cart_clear_reset_all">重置购物车</string>
-    <string name="cart_clear_reset_all_desc">移除所有行,并从主屏幕重新获取基准/目标货币以及手续费方向。</string>
     <string name="cart_export_ok">购物车已导出。</string>
     <string name="cart_export_error">导出失败:%s</string>
     <string name="cart_import_ok">购物车已导入。</string>
@@ -91,7 +84,6 @@
     <string name="cart_share_fees">手续费:%s%%</string>
     <string name="cart_share_total">合计:%1$s %2$s</string>
     <string name="cart_unsaved_title">未保存的更改</string>
-    <string name="cart_unsaved_message">您有未保存的更改。您想如何处理?</string>
     <string name="cart_unsaved_save">保存</string>
     <string name="cart_unsaved_save_as">另存为新的</string>
     <string name="cart_unsaved_discard">放弃更改</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">选择</string>
     <string name="a11y_action_load">加载</string>
     <string name="a11y_action_open">打开</string>
-    <string name="quick_conversions_fee_conversion">转换 %s</string>
-    <string name="quick_conversions_fee_reduction">减免 %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">置顶</string>
     <string name="cart_unpin_item">取消置顶</string>
     <string name="cart_reorder_item">重新排序</string>
+    <string name="desc_navigate_up">向上导航</string>
+    <string name="desc_open_drawer">打开抽屉式导航栏</string>
+    <string name="desc_close_drawer">关闭抽屉式导航栏</string>
+    <string name="desc_more_options">更多选项</string>
+    <string name="cart_item_deleted">已删除商品</string>
+    <string name="cart_cleared">已清空购物车</string>
+    <string name="undo">撤消</string>
+    <string name="timeline_retry">重试</string>
+    <string name="timeline_change_provider">更换数据源</string>
+    <string name="recent_pair_switch">切换到 %1$s → %2$s</string>
+    <string name="cart_section_pinned">已置顶</string>
+    <string name="cart_section_others">其他商品</string>
+    <string name="fallback_banner">%1$s 不可用 • 正在使用 %2$s</string>
+    <string name="process_text_label">货币换算</string>
+    <string name="selection_open_app">在 %1$s 中打开</string>
+    <string name="selection_copy">复制</string>
+    <string name="selection_no_amount">未在“%1$s”中找到金额。</string>
+    <string name="selection_no_rates">请打开一次 %1$s 以加载汇率。</string>
+    <string name="selection_assumed_currency">文本中没有货币，因此按 %1$s 读取。</string>
+    <string name="shortcut_pair_long">将 %1$s 换算为 %2$s</string>
+    <string name="widget_configure_title">微件</string>
+    <string name="widget_follow_converter_title">跟随换算器</string>
+    <string name="widget_follow_converter_summary">显示您在应用中最近使用的货币对</string>
+    <string name="done">完成</string>
+    <string name="cart_share_tip">小费 / 税 (%1$s%%)：%2$s %3$s</string>
+    <string name="cart_share_per_person">每人 (÷%1$d)：%2$s %3$s</string>
+    <string name="cart_share_budget_left">预算剩余：%1$s %2$s</string>
+    <string name="cart_share_over_budget">超出预算：%1$s %2$s</string>
+    <string name="cart_menu_extras">分摊、小费和预算</string>
+    <string name="cart_tip_label">小费 / 税</string>
+    <string name="cart_tip_row">小费 / 税 (%1$s%%)</string>
+    <string name="cart_split_label">分摊人数</string>
+    <string name="cart_split_decrease">减少人数</string>
+    <string name="cart_split_increase">增加人数</string>
+    <string name="cart_per_person_row">每人 (÷%1$d)</string>
+    <string name="cart_budget_label">预算</string>
+    <string name="cart_budget_left_row">预算剩余</string>
+    <string name="cart_over_budget_row">超出预算</string>
 </resources>

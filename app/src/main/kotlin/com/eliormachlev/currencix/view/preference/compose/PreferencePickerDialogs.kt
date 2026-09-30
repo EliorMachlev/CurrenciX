@@ -1,0 +1,178 @@
+package com.eliormachlev.currencix.view.preference.compose
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.LedgerActiveChip
+import com.eliormachlev.currencix.view.compose.LedgerRow
+import com.eliormachlev.currencix.view.compose.LedgerTrailing
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+
+// Small breather between the last picker row and the sheet edge so the final
+// LedgerRow (which has no divider) doesn't butt against the system nav.
+private val SHEET_BOTTOM_SPACE = 12.dp
+
+/**
+ * Compose single-choice picker — one [LedgerRow] per option under a
+ * [LedgerBottomSheet]. The currently-selected option trails a [LedgerActiveChip]
+ * so the picker reads with the same "ink on paper" affordance as the rest of
+ * the ledger surfaces (see [ProviderPickerDialog]). Selecting an option fires
+ * [onPicked] and dismisses.
+ */
+@Composable
+fun <T> SingleChoicePickerDialog(
+    title: String,
+    options: List<T>,
+    selected: T?,
+    label: (T) -> String,
+    onDismiss: () -> Unit,
+    onPicked: (T) -> Unit,
+) {
+    PickerSheet(title = title, onDismiss = onDismiss) {
+        options.forEachIndexed { index, option ->
+            PickerRow(
+                title = label(option),
+                description = null,
+                isSelected = option == selected,
+                isLast = index == options.lastIndex,
+                onClick = {
+                    onPicked(option)
+                    onDismiss()
+                },
+            )
+        }
+    }
+}
+
+/**
+ * Compose text-entry dialog — stock M3 [AlertDialog] chrome with an
+ * [OutlinedTextField]. [message] shows above the field when non-null.
+ * Matches the fee editor and cart save/rename dialog so form-shaped
+ * dialogs stay visually aligned across the app.
+ */
+@Composable
+fun TextEntryDialog(
+    title: String,
+    initialText: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit,
+    message: String? = null,
+    singleLine: Boolean = true,
+) {
+    var text by rememberSaveable(initialText) { mutableStateOf(initialText) }
+    val confirm =
+        rememberHapticOnClick {
+            onConfirm(text)
+        }
+    val cancel = rememberHapticOnClick(onDismiss)
+    AppTheme {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(text = title) },
+            text = {
+                Column {
+                    if (!message.isNullOrBlank()) {
+                        Text(
+                            text = message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(Modifier.height(TEXT_ENTRY_MESSAGE_GAP))
+                    }
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        singleLine = singleLine,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = cancel) {
+                    Text(stringResource(id = android.R.string.cancel))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = confirm) {
+                    Text(stringResource(id = android.R.string.ok))
+                }
+            },
+        )
+    }
+}
+
+private val TEXT_ENTRY_MESSAGE_GAP = 12.dp
+
+// Shared shell + row shape used by both picker variants (simple / explainer)
+// and by the language picker. Callers just describe rows; the sheet chrome,
+// active-chip, and terminal spacer are hoisted here so the three surfaces
+// stay in visual lockstep and any future picker (e.g. currency) can drop in.
+
+@Composable
+internal fun PickerSheet(
+    title: String,
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    LedgerBottomSheet(title = title, onDismiss = onDismiss) {
+        content()
+        Spacer(Modifier.height(SHEET_BOTTOM_SPACE))
+    }
+}
+
+@Composable
+internal fun PickerRow(
+    title: String,
+    description: String?,
+    isSelected: Boolean,
+    isLast: Boolean,
+    onClick: () -> Unit,
+) {
+    LedgerRow(
+        onClick = onClick,
+        showDivider = !isLast,
+        label = {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                if (!description.isNullOrBlank()) {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        value =
+            if (isSelected) {
+                {
+                    LedgerTrailing {
+                        LedgerActiveChip(text = stringResource(id = R.string.picker_active_chip))
+                    }
+                }
+            } else {
+                null
+            },
+    )
+}

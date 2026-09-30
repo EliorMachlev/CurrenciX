@@ -1,0 +1,92 @@
+name: Baseline Profile
+
+# Generates the baseline + startup profiles and runs the frame-timing
+# benchmarks (baselineprofile/) on a headless Gradle Managed Device — an
+# API 34 emulator that Gradle downloads and boots itself.
+#
+# The generated profiles are uploaded as an artifact; commit them under
+# app/src/<flavor>Release/generated/baselineProfiles/ to ship them. Re-run
+# after UI hot paths change materially (a redesign, a new startup dependency).
+#
+# Heavy (tens of minutes of emulator time), so it runs only when the journeys
+# or this workflow change, or on demand. The benchmarks are advisory on CI
+# (see their step); the profiles are the deliverable.
+on:
+  push:
+    branches-ignore:
+      - master
+    paths:
+      - 'baselineprofile/**'
+      - '.github/workflows/baseline-profile.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Emulator time is expensive: a newer push to the same branch supersedes an
+# in-flight run.
+concurrency:
+  group: baseline-profile-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Matches build.yaml: silences the JDK 21 CDS banner in forked JVMs.
+  JDK_JAVA_OPTIONS: -Xshare:off
+  # Software GPU for the headless emulator on CI runners.
+  GMD_GPU: -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
+
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup java environment
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+
+      # Hosted runners support hardware acceleration, but /dev/kvm isn't
+      # accessible to the runner user by default.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Generate baseline profiles (fdroid + play)
+        run: ./gradlew "${GMD_GPU}" :app:generateFdroidReleaseBaselineProfile :app:generatePlayReleaseBaselineProfile --stacktrace
+
+      # Uploaded before the benchmarks so a benchmark failure can't lose them.
+      - name: Upload baseline profiles
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: baseline-profiles
+          path: app/src/*Release/generated/baselineProfiles/
+          if-no-files-found: error
+
+      # Advisory: the software-GPU emulator doesn't report frame stats, so
+      # Macrobenchmark can fail to confirm launches here ("Unable to confirm
+      # activity launch completion"). Real numbers need a physical device or
+      # a GPU runner; profile generation above doesn't depend on this step.
+      - name: Run frame-timing benchmarks (fdroid)
+        continue-on-error: true
+        run: ./gradlew "${GMD_GPU}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace
+
+      - name: Upload benchmark results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: benchmark-results
+          # Includes each test's device logcat, for crashes behind a failed journey.
+          path: |
+            baselineprofile/build/outputs/**/*benchmarkData.json
+            baselineprofile/build/outputs/androidTest-results/
+            baselineprofile/build/reports/androidTests/
+          if-no-files-found: warn

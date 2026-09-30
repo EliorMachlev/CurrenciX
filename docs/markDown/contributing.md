@@ -42,17 +42,18 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 ### Code Style
 
 - Kotlin only (no Java in `app/` or `helpers/`).
-- Follow existing patterns — MVVM, Repository, LiveData.
-- Run `./gradlew detekt` locally before opening a PR. CI will fail on Detekt findings.
+- Follow existing patterns — MVVM, Repository, Compose UI in a single Activity (new screens are a `Screen` key + a route in `AppNavHost`, not a new Activity) — see [architecture.md](architecture.md). Konsist tests enforce the View / ViewModel / Repository / Model layer boundaries; a PR that breaks them fails `test<Flavor>DebugUnitTest`.
+- Run `./gradlew detekt` locally before opening a PR. CI enforces it: any finding not already in `config/detekt/baseline-<module>.xml` fails the build (see [ci-cd.md](ci-cd.md#detekt)).
 - Run `./gradlew spotlessCheck` — CI will fail on formatting drift. Use `./gradlew spotlessApply` to auto-fix.
 - Avoid `java.lang.*` qualifiers (Kotlin imports these automatically).
 - Avoid swallowed exceptions: always use the caught exception variable in the catch block.
 
 ### Pull Request Checklist
 
-- [ ] `./gradlew check assembleDebug` passes locally
-- [ ] No new Detekt warnings
+- [ ] `./gradlew check assembleDebug` passes locally (includes the Konsist architecture tests)
+- [ ] `./gradlew detekt` reports no new findings
 - [ ] `./gradlew spotlessCheck` is clean
+- [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter is required, because Jazzer's instrumentation breaks Robolectric if the fuzz tests run in the same task.
 - [ ] If adding a dependency: check F-Droid licence compatibility
 
 ### Commit Message Convention

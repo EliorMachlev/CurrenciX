@@ -1,8 +1,7 @@
 package com.eliormachlev.currencix.model
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
+import androidx.annotation.DrawableRes
 import com.eliormachlev.currencix.R
 import com.squareup.moshi.JsonClass
 
@@ -420,9 +419,13 @@ enum class Currency(
     fun fullName(context: Context): String = context.getString(this.fullName)
 
     /**
-     * e.g. star-spangled banner for USD
+     * Flag drawable resource — e.g. the star-spangled banner for USD — or the
+     * generic placeholder for currencies without one. Compose code should
+     * render it via `painterResource`, which parses each vector once and
+     * caches it app-wide.
      */
-    fun flag(context: Context): Drawable = ContextCompat.getDrawable(context, this.flag ?: R.drawable.flag_unknown)!!
+    @get:DrawableRes
+    val flagRes: Int get() = this.flag ?: R.drawable.flag_unknown
 
     /**
      * https://en.wikipedia.org/wiki/Currency_symbol
@@ -431,6 +434,9 @@ enum class Currency(
     fun symbol(): String? =
         this.symbol
             ?.let { if (it.hasRtlChar()) it.wrapLtr() else it }
+
+    /** The symbol as written, without the LTR wrapping [symbol] adds — for matching text. */
+    internal val plainSymbol: String? get() = this.symbol
 
     /**
      * Preferred display marker for UI: the currency symbol when known,

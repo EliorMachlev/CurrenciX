@@ -10,6 +10,18 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
 
+// Guard for adapters whose payload must be a JSON object: if the next value is
+// anything else (null, array, string, ...), consume it and return true so the
+// caller can bail out with `null`. Consuming matters — Moshi's contract is one
+// value per fromJson call, and Retrofit's converter rejects a document with
+// input left over ("JSON document was not fully consumed") instead of passing
+// the null through to the provider's "empty JSON" error.
+internal fun JsonReader.skipIfNotObject(): Boolean {
+    if (peek() == JsonReader.Token.BEGIN_OBJECT) return false
+    skipValue()
+    return true
+}
+
 // Both InforEuro endpoints return a JSON array on success and an
 // { "message": "..." } object on failure. Peek at the token: on an array,
 // walk it via [onArray] (begin/endArray are handled here); otherwise pass

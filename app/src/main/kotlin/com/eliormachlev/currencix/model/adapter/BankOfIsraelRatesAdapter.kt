@@ -20,7 +20,7 @@ internal class BankOfIsraelRatesAdapter {
     @FromJson
     @Throws(IOException::class)
     fun fromJson(reader: JsonReader): ExchangeRates? {
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) return null
+        if (reader.skipIfNotObject()) return null
 
         var date: LocalDate? = null
         val rates = mutableListOf<Rate>()

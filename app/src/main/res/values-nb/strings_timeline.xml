@@ -9,4 +9,8 @@
     <string name="year">år</string>
     <string name="month">måned</string>
     <string name="week">uke</string>
+    <string name="timeline_five_years">5 år</string>
+    <string name="timeline_custom_range">Egendefinert periode</string>
+    <string name="timeline_share">Del diagrammet</string>
+    <string name="timeline_no_rates">Ingen kurser for disse datoene</string>
 </resources>

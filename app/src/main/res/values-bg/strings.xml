@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">обърни валутите</string>
-    <string name="info_date_latest">Курс за &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Исторически курс от &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Стойността &lt;b&gt;%s&lt;/b&gt; е копирана в клипборда</string>
     <string name="historical_rates_dialog_title">Исторически курс</string>
     <string name="historical_rates_dialog_toggle">Използвай курс от определена дата. Изключи, за да се взима винаги най-новата стойност.</string>
@@ -25,9 +23,12 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсове от %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Все още няма кеширани курсове</string>
+    <string name="unreachable_banner_with_date">Доставчикът е недостъпен • Курсове от %1$s</string>
+    <string name="unreachable_banner_no_data">Доставчикът е недостъпен • Повторен опит</string>
+    <string name="historical_banner">Историческо • Курсове от %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Последен обменен курс за последно използваната валутна двойка.</string>
+    <string name="widget_description">Последен курс и 30-дневна тенденция за последно използваната валутна двойка или избрана от вас.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Към %s</string>
     <string name="widget_footer_empty">Отворете приложението, за да заредите курсовете.</string>
@@ -43,7 +44,6 @@
     <string name="cart_delete_item">Изтрий артикул</string>
     <string name="cart_subtotal_label">Междинна сума</string>
     <string name="cart_total_label">Общо</string>
-    <string name="cart_fee_line">Такси: %s%%</string>
     <string name="cart_menu_save">Запази</string>
     <string name="cart_menu_save_as">Запази като…</string>
     <string name="cart_menu_load">Зареди</string>
@@ -64,12 +64,6 @@
     <string name="cart_rename_title">Преименуване на количка</string>
     <string name="cart_delete_confirm">Да се изтрие ли „%s"?</string>
     <string name="cart_delete_confirm_button">Изтрий</string>
-    <string name="cart_clear_confirm">Да се премахнат ли всички артикули от текущата количка?</string>
-    <string name="cart_clear_confirm_button">Изчисти</string>
-    <string name="cart_clear_items_only">Изчисти само артикулите</string>
-    <string name="cart_clear_items_only_desc">Премахва всички редове от количката, но запазва текущите валути и страната на таксите.</string>
-    <string name="cart_clear_reset_all">Нулирай количката</string>
-    <string name="cart_clear_reset_all_desc">Премахва всички редове и повторно взема базовата/целевата валута и страната на таксите от главния екран.</string>
     <string name="cart_export_ok">Количката е експортирана.</string>
     <string name="cart_export_error">Експортът е неуспешен: %s</string>
     <string name="cart_import_ok">Количката е импортирана.</string>
@@ -83,13 +77,11 @@
     <string name="cart_share_fees">Такси: %s%%</string>
     <string name="cart_share_total">Общо: %1$s %2$s</string>
     <string name="cart_unsaved_title">Незапазени промени</string>
-    <string name="cart_unsaved_message">Имате незапазени промени. Какво искате да направите?</string>
     <string name="cart_unsaved_save">Запази</string>
     <string name="cart_unsaved_save_as">Запази като нова</string>
     <string name="cart_unsaved_discard">Отхвърли промените</string>
     <string name="cart_unsaved_continue">Продължи</string>
     <string name="a11y_delete">Изтрий</string>
-    <string name="a11y_historical_rate">Исторически курс</string>
     <string name="currency_dropdown_api_hint">Липсва нещо? Различните доставчици на данни предлагат различни валути. Отиди в настройките и опитай друг!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">Сървърът няма данни за тази заявка.</string>
     <string name="error_invalid_api_key">HTTP 401 – Моля, провери своя API ключ.</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">Избери</string>
     <string name="a11y_action_load">Зареди</string>
     <string name="a11y_action_open">Отвори</string>
-    <string name="quick_conversions_fee_conversion">конверсия %s</string>
-    <string name="quick_conversions_fee_reduction">намаление %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закачи най-горе</string>
     <string name="cart_unpin_item">Откачи артикула</string>
     <string name="cart_reorder_item">Пренареди артикула</string>
+    <string name="desc_navigate_up">Навигиране нагоре</string>
+    <string name="desc_open_drawer">Отваряне на навигационното чекмедже</string>
+    <string name="desc_close_drawer">Затваряне на навигационното чекмедже</string>
+    <string name="desc_more_options">Още опции</string>
+    <string name="cart_item_deleted">Елементът е изтрит</string>
+    <string name="cart_cleared">Количката е изчистена</string>
+    <string name="undo">Отмяна</string>
+    <string name="timeline_retry">Опитай отново</string>
+    <string name="timeline_change_provider">Смяна на доставчика</string>
+    <string name="recent_pair_switch">Превключване към %1$s → %2$s</string>
+    <string name="cart_section_pinned">Закачени</string>
+    <string name="cart_section_others">Други артикули</string>
+    <string name="fallback_banner">%1$s не е наличен • Използва се %2$s</string>
+    <string name="process_text_label">Конвертиране на валута</string>
+    <string name="selection_open_app">Отваряне в %1$s</string>
+    <string name="selection_copy">Копиране</string>
+    <string name="selection_no_amount">Не е открита сума в „%1$s“.</string>
+    <string name="selection_no_rates">Отворете %1$s веднъж, за да заредите обменните курсове.</string>
+    <string name="selection_assumed_currency">Текстът няма валута, затова е прочетен като %1$s.</string>
+    <string name="shortcut_pair_long">Конвертиране от %1$s в %2$s</string>
+    <string name="widget_configure_title">Приспособление</string>
+    <string name="widget_follow_converter_title">Следване на конвертора</string>
+    <string name="widget_follow_converter_summary">Показване на двойката, използвана последно в приложението</string>
+    <string name="done">Готово</string>
+    <string name="cart_share_tip">Бакшиш / данък (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">На човек (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Остатък от бюджета: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Над бюджета: %1$s %2$s</string>
+    <string name="cart_menu_extras">Разделяне, бакшиш и бюджет</string>
+    <string name="cart_tip_label">Бакшиш / данък</string>
+    <string name="cart_tip_row">Бакшиш / данък (%1$s%%)</string>
+    <string name="cart_split_label">Разделяне между</string>
+    <string name="cart_split_decrease">По-малко хора</string>
+    <string name="cart_split_increase">Повече хора</string>
+    <string name="cart_per_person_row">На човек (÷%1$d)</string>
+    <string name="cart_budget_label">Бюджет</string>
+    <string name="cart_budget_left_row">Остатък от бюджета</string>
+    <string name="cart_over_budget_row">Над бюджета</string>
 </resources>

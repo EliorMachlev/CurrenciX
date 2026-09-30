@@ -2,8 +2,6 @@
 <resources>
     <string name="desc_toggle_currencies">поміняти валюти місцями</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="info_date_latest">Курс станом на &lt;b>%1$s&lt;/b>, за даними &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">Історичний курс на &lt;b>%1$s&lt;/b>, за даними &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">Скопійовано &lt;b&gt;%s&lt;/b&gt; до буфера обміну</string>
     <string name="historical_rates_dialog_title">Історичний курс</string>
     <string name="historical_rates_dialog_toggle">Використовувати курс валют на певну дату. Вимкніть, щоб завжди брати найновіші.</string>
@@ -29,13 +27,15 @@
     <string name="quick_conversions_fees_applied">Застосовані комісії: %s</string>
     <string name="tooltip_filter_starred">Показувати лише обрані валюти.</string>
     <string name="a11y_delete">Видалити</string>
-    <string name="a11y_historical_rate">Історичний курс</string>
     <string name="currency_dropdown_api_hint">Чогось не вистачає? Різні постачальники даних пропонують різні валюти. Перейдіть до налаштувань, щоб спробувати іншого!\u00A0\uD83E\uDD17</string>
     <string name="offline_banner_with_date">Офлайн • Курси від %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Кешованих курсів ще немає</string>
+    <string name="unreachable_banner_with_date">Постачальник недоступний • Курси від %1$s</string>
+    <string name="unreachable_banner_no_data">Постачальник недоступний • Повтор</string>
+    <string name="historical_banner">Історичні • Курси від %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Останній курс конвертації для нещодавно використаної пари валют.</string>
+    <string name="widget_description">Останній курс і тренд за 30 днів для останньої використаної валютної пари або обраної вами.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Станом на %s</string>
     <string name="widget_footer_empty">Відкрийте застосунок, щоб завантажити курси.</string>
@@ -51,7 +51,6 @@
     <string name="cart_delete_item">Видалити позицію</string>
     <string name="cart_subtotal_label">Проміжний підсумок</string>
     <string name="cart_total_label">Разом</string>
-    <string name="cart_fee_line">Комісія: %s%%</string>
     <string name="cart_menu_save">Зберегти</string>
     <string name="cart_menu_save_as">Зберегти як…</string>
     <string name="cart_menu_load">Завантажити</string>
@@ -72,12 +71,6 @@
     <string name="cart_rename_title">Перейменувати кошик</string>
     <string name="cart_delete_confirm">Видалити «%s»?</string>
     <string name="cart_delete_confirm_button">Видалити</string>
-    <string name="cart_clear_confirm">Видалити всі позиції з поточного кошика?</string>
-    <string name="cart_clear_confirm_button">Очистити</string>
-    <string name="cart_clear_items_only">Очистити лише позиції</string>
-    <string name="cart_clear_items_only_desc">Видаляє всі рядки з кошика, але залишає поточні валюти та бік комісії.</string>
-    <string name="cart_clear_reset_all">Скинути кошик</string>
-    <string name="cart_clear_reset_all_desc">Видаляє всі рядки й повторно підтягує базову / цільову валюту та бік комісії з головного екрана.</string>
     <string name="cart_export_ok">Кошик експортовано.</string>
     <string name="cart_export_error">Помилка експорту: %s</string>
     <string name="cart_import_ok">Кошик імпортовано.</string>
@@ -91,7 +84,6 @@
     <string name="cart_share_fees">Комісія: %s%%</string>
     <string name="cart_share_total">Разом: %1$s %2$s</string>
     <string name="cart_unsaved_title">Незбережені зміни</string>
-    <string name="cart_unsaved_message">У вас є незбережені зміни. Що ви хочете зробити?</string>
     <string name="cart_unsaved_save">Зберегти</string>
     <string name="cart_unsaved_save_as">Зберегти як новий</string>
     <string name="cart_unsaved_discard">Скасувати зміни</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">Вибрати</string>
     <string name="a11y_action_load">Завантажити</string>
     <string name="a11y_action_open">Відкрити</string>
-    <string name="quick_conversions_fee_conversion">конвертація %s</string>
-    <string name="quick_conversions_fee_reduction">зменшення %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закріпити зверху</string>
     <string name="cart_unpin_item">Відкріпити</string>
     <string name="cart_reorder_item">Змінити порядок</string>
+    <string name="desc_navigate_up">Перейти вгору</string>
+    <string name="desc_open_drawer">Відкрити панель навігації</string>
+    <string name="desc_close_drawer">Закрити панель навігації</string>
+    <string name="desc_more_options">Інші параметри</string>
+    <string name="cart_item_deleted">Елемент видалено</string>
+    <string name="cart_cleared">Кошик очищено</string>
+    <string name="undo">Скасувати</string>
+    <string name="timeline_retry">Повторити</string>
+    <string name="timeline_change_provider">Змінити джерело</string>
+    <string name="recent_pair_switch">Перейти до %1$s → %2$s</string>
+    <string name="cart_section_pinned">Закріплені</string>
+    <string name="cart_section_others">Інші товари</string>
+    <string name="fallback_banner">%1$s недоступний • Використовується %2$s</string>
+    <string name="process_text_label">Конвертувати валюту</string>
+    <string name="selection_open_app">Відкрити в %1$s</string>
+    <string name="selection_copy">Копіювати</string>
+    <string name="selection_no_amount">У «%1$s» не знайдено суми.</string>
+    <string name="selection_no_rates">Відкрийте %1$s один раз, щоб завантажити курси.</string>
+    <string name="selection_assumed_currency">У тексті немає валюти, тому його прочитано як %1$s.</string>
+    <string name="shortcut_pair_long">Конвертувати %1$s у %2$s</string>
+    <string name="widget_configure_title">Віджет</string>
+    <string name="widget_follow_converter_title">Стежити за конвертером</string>
+    <string name="widget_follow_converter_summary">Показувати пару, використану в застосунку останньою</string>
+    <string name="done">Готово</string>
+    <string name="cart_share_tip">Чайові / податок (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">На особу (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Залишок бюджету: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Понад бюджет: %1$s %2$s</string>
+    <string name="cart_menu_extras">Поділ, чайові та бюджет</string>
+    <string name="cart_tip_label">Чайові / податок</string>
+    <string name="cart_tip_row">Чайові / податок (%1$s%%)</string>
+    <string name="cart_split_label">Поділити на</string>
+    <string name="cart_split_decrease">Менше людей</string>
+    <string name="cart_split_increase">Більше людей</string>
+    <string name="cart_per_person_row">На особу (÷%1$d)</string>
+    <string name="cart_budget_label">Бюджет</string>
+    <string name="cart_budget_left_row">Залишок бюджету</string>
+    <string name="cart_over_budget_row">Понад бюджет</string>
 </resources>

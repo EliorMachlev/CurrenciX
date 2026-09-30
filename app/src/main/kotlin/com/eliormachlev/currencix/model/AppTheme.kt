@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate
  * (id, night mode, pure-black) triple stays in one place instead of being
  * mirrored across the DB, application, view-model and view layers.
  *
- * `id` is the value persisted in SharedPreferences and referenced from
+ * `id` is the value persisted in DataStore and referenced from
  * `arrays_preference.xml`, so **it must not change once shipped**.
  */
 enum class AppTheme(

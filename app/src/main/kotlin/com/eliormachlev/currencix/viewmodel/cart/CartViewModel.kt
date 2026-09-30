@@ -6,15 +6,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
+import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.model.SavedCart
-import com.eliormachlev.currencix.model.SideStacks
+import com.eliormachlev.currencix.model.afterDrop
 import com.eliormachlev.currencix.repository.Database
+import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalDate
 import java.util.UUID
 
@@ -35,6 +37,15 @@ class CartViewModel(
 
     fun getCurrentCart(): LiveData<SavedCart> = current
 
+    /** Display-safe name of the working cart. Empty string when unnamed / unset. */
+    fun currentCartName(): String = current.value?.name.orEmpty()
+
+    /** Whether the working cart has a persisted counterpart to overwrite. */
+    fun currentCartHasId(): Boolean = current.value?.id?.isNotEmpty() == true
+
+    /** Items on the working cart. Empty list when the cart is unset. */
+    fun currentCartItems(): List<CartItem> = current.value?.items.orEmpty()
+
     fun getSavedCarts(): LiveData<List<SavedCart>> = db.getSavedCarts()
 
     /**
@@ -44,18 +55,15 @@ class CartViewModel(
      */
     fun getSavedCartsSnapshot(): List<SavedCart> = db.getSavedCartsBlocking()
 
-    fun getFees(): LiveData<List<Fee>> = ratesCache.fees
+    fun getFees(): LiveData<ImmutableList<Fee>> = ratesCache.fees
 
     fun getExchangeRates(): LiveData<ExchangeRates?> = ratesCache.rates
 
     /**
-     * Currently-selected keyboard type. Same source of truth as the main
-     * screen so the cart's slide-up keypad shows the same layout the user
-     * picked, and cart taps route to the system IME when that pref is on.
+     * Same source of truth as the main screen so the cart's slide-up keypad
+     * shows the same layout the user picked.
      */
-    val keyboardType: LiveData<KeyboardType> = db.getKeyboardType()
-    val isExtendedKeypadEnabled: LiveData<Boolean> =
-        keyboardType.map { it == KeyboardType.EXPANDED }
+    val isExpandedKeypadEnabled: LiveData<Boolean> = db.getExpandedKeypadEnabled()
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
@@ -70,25 +78,39 @@ class CartViewModel(
         current.map { resolveCurrency(it.destinationCurrency ?: it.currency) }
     }
     private val subtotalLive: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
+    private val extrasLive: LiveData<CartExtras> by lazy { current.map { it.extras } }
+    private val tipLive: LiveData<BigDecimal> by lazy { current.map { tipOf(it) } }
+    private val convertedSubtotalLive: LiveData<BigDecimal> by lazy {
+        MediatorLiveData<BigDecimal>().apply {
+            val recompute = {
+                value = convertedSubtotalOf(current.value, ratesCache.rates.value)
+            }
+            addSource(current) { recompute() }
+            addSource(ratesCache.rates) { recompute() }
+        }
+    }
     private val totalLive: LiveData<BigDecimal> by lazy {
         MediatorLiveData<BigDecimal>().apply {
             val recompute = {
-                value =
-                    totalOf(
-                        current.value,
-                        ratesCache.fees.value.orEmpty(),
-                        ratesCache.rates.value,
-                        ratesCache.lastActiveExchangeId,
-                        ratesCache.lastActiveBankId,
-                    )
+                value = totalOf(current.value, ratesCache.rates.value, currentFeeStack())
             }
             addSource(current) { recompute() }
-            addSource(ratesCache.fees) { recompute() }
             addSource(ratesCache.rates) { recompute() }
+            addSource(ratesCache.fees) { recompute() }
         }
     }
 
     fun getBaseCurrency(): LiveData<Currency> = baseCurrencyLive
+
+    /** Tip / tax, split and budget (see [CartExtras]). */
+    fun getExtras(): LiveData<CartExtras> = extrasLive
+
+    /** The tip / tax on top of the items, in the base currency. */
+    fun getTip(): LiveData<BigDecimal> = tipLive
+
+    fun setExtras(extras: CartExtras) {
+        mutate { cart -> if (cart.extras == extras) cart else cart.copy(extras = extras) }
+    }
 
     /** Destination for the running total. Falls back to base when unset. */
     fun getDestinationCurrency(): LiveData<Currency> = destinationCurrencyLive
@@ -97,10 +119,18 @@ class CartViewModel(
     fun getSubtotal(): LiveData<BigDecimal> = subtotalLive
 
     /**
-     * Total in the destination currency: subtotal → converted at cached rates
-     * → reduced by the CONVERTED-side fee stack. ORIGINAL-side fees don't
-     * change the displayed total; they surface separately as "true cost" on
-     * the base side.
+     * Fee-free destination subtotal — subtotal after currency conversion but
+     * before the fee stack is applied. Used by the footer's fee-annotation
+     * row so the delta reads in destination units (where the fee is actually
+     * charged).
+     */
+    fun getConvertedSubtotal(): LiveData<BigDecimal> = convertedSubtotalLive
+
+    /**
+     * Total in the destination currency: subtotal → converted at cached
+     * rates → inflated by the fee stack. Real-world FX fees are charged on
+     * the post-conversion amount, so the fee lands here rather than on the
+     * base-side subtotal.
      */
     fun getTotal(): LiveData<BigDecimal> = totalLive
 
@@ -136,32 +166,38 @@ class CartViewModel(
         }
     }
 
+    /**
+     * Puts a removed [item] back at [index] (clamped to the list) — Undo for
+     * a delete. No-op if an item with its id is already there.
+     */
+    fun restoreItem(
+        item: CartItem,
+        index: Int,
+    ) {
+        mutate { cart ->
+            if (cart.items.any { it.id == item.id }) return@mutate cart
+            val items = cart.items.toMutableList()
+            items.add(index.coerceIn(0, items.size), item)
+            cart.copy(items = items)
+        }
+    }
+
     fun togglePinned(id: String) {
         mutateItem(id) { it.copy(pinned = !it.pinned) }
     }
 
-    // Move [fromId] to the current position of [toId]. No-op on same id, missing
-    // id, or same slot — the drag-reorder gesture fires this even on a release
-    // without movement, and we don't want to churn the LiveData or disk write.
-    fun reorderItem(
-        fromId: String,
-        toId: String,
+    /**
+     * Applies a finished drag: [movedId] was dropped where it sits in
+     * [displayOrder] (see [afterDrop]). A release without movement changes
+     * nothing and skips the write.
+     */
+    fun commitDrag(
+        displayOrder: List<String>,
+        movedId: String,
     ) {
-        if (fromId == toId) return
         mutate { cart ->
-            var fromIdx = -1
-            var toIdx = -1
-            cart.items.forEachIndexed { i, item ->
-                when (item.id) {
-                    fromId -> fromIdx = i
-                    toId -> toIdx = i
-                }
-            }
-            if (fromIdx < 0 || toIdx < 0 || fromIdx == toIdx) return@mutate cart
-            val reordered = cart.items.toMutableList()
-            val moved = reordered.removeAt(fromIdx)
-            reordered.add(toIdx, moved)
-            cart.copy(items = reordered)
+            val items = cart.items.afterDrop(displayOrder, movedId)
+            if (items == cart.items) cart else cart.copy(items = items)
         }
     }
 
@@ -181,26 +217,46 @@ class CartViewModel(
         }
     }
 
-    /** Clear the cart's items but keep the currency the user picked. */
-    fun clearItems() {
-        mutate { it.copy(items = emptyList()) }
-    }
-
     /**
-     * Reset the cart back to a fresh, main-screen-seeded state: no items and
-     * currencies re-pulled from the app-wide defaults. Preserves the cart's
-     * id/name so a subsequent "Save" still targets the same persisted
-     * entry — this is a content reset, not a "delete and start over".
+     * Wipe every item and re-seed the currency pair from [mainBase] / [mainDest]
+     * when supplied (delivered by the activity's intent extras), else from the
+     * persisted app-wide defaults. Preserves the cart's id/name so a subsequent
+     * "Save" still targets the same persisted entry — this is a content reset,
+     * not a "delete and start over".
      */
-    fun resetToMainDefaults() {
+    fun clearCart(
+        mainBase: Currency? = null,
+        mainDest: Currency? = null,
+    ) {
         val cur = current.value ?: return
-        val fresh = emptyCart()
+        val (base, dest) = resolveSeedPair(mainBase, mainDest)
         val next =
             cur.copy(
                 items = emptyList(),
-                currency = fresh.currency,
-                destinationCurrency = fresh.destinationCurrency,
+                currency = base.iso4217Alpha(),
+                destinationCurrency = dest.iso4217Alpha(),
             )
+        current.value = next
+        db.setCurrentCart(next)
+    }
+
+    /**
+     * Overlay main's currently-visible pair onto a fresh cart. Called by
+     * the cart screen with the pair the converter showed when it opened the
+     * cart — trusts the caller's
+     * pair over what emptyCart() guessed from prefs, and skips the overwrite
+     * once the user has typed anything so we don't stomp their work.
+     */
+    fun seedFromMain(
+        mainBase: Currency?,
+        mainDest: Currency?,
+    ) {
+        if (mainBase == null && mainDest == null) return
+        val cur = current.value ?: return
+        if (cur.items.isNotEmpty()) return
+        val (base, dest) = resolveSeedPair(mainBase, mainDest)
+        val next = cur.copy(currency = base.iso4217Alpha(), destinationCurrency = dest.iso4217Alpha())
+        if (next == cur) return
         current.value = next
         db.setCurrentCart(next)
     }
@@ -302,42 +358,47 @@ class CartViewModel(
     }
 
     /**
-     * Per-side fee stacks for the current base/destination pair. Doesn't
-     * depend on cart items, so the UI can show inline fee annotations even
-     * for an empty cart (same shape as the main screen).
+     * Multiplicative fee stack for the current base/destination pair.
+     * Doesn't depend on cart items, so the UI can show inline fee annotations
+     * even for an empty cart (same shape as the main screen).
      */
-    fun currentSideStacks(): SideStacks {
-        val cart = current.value ?: return SideStacks.NEUTRAL
+    fun currentFeeStack(): BigDecimal {
+        val cart = current.value ?: return BigDecimal.ONE
         val (base, dest) = cart.resolvedPair()
-        return ratesCache.sideStacksFor(base, dest)
+        return ratesCache.feeStackFor(base, dest)
     }
 
     /** Snapshot used by the "Share" flow — computed against the latest fees & rates. */
     fun snapshotForShare(): CartSnapshot? {
         val cart = current.value ?: return null
         if (cart.items.isEmpty()) return null
+        // Freeze fees + rates up front so a mid-flow refresh can't mix
+        // recomputed fees with the pre-refresh rate table.
+        val ratesSnapshot = ratesCache.snapshot()
         val evaluated = cart.items.map { it to evaluateItem(it) }
         val subtotal = evaluated.fold(BigDecimal.ZERO) { acc, (_, value) -> acc + value }
         val (base, dest) = cart.resolvedPair()
-        val stacks = ratesCache.sideStacksFor(base, dest)
-        val converted = convertAmount(subtotal, base, dest, ratesCache.lastRates)
-        val total = applyConvertedStack(converted, stacks.converted)
+        val feeStack = ratesSnapshot.feeStackFor(base, dest)
+        val tip = tipOf(cart)
+        val converted = convertAmount(subtotal + tip, base, dest, ratesSnapshot.rates)
+        val total = converted.multiply(feeStack, MathContext.DECIMAL128)
         return CartSnapshot(
             cart,
             evaluated,
             subtotal,
+            tip,
             converted,
-            stacks,
+            feeStack,
             total,
-            ratesCache.lastFees,
+            ratesSnapshot.fees,
             base,
             dest,
             providerName =
-                ratesCache.lastRates
+                ratesSnapshot.rates
                     ?.provider
                     ?.getName(getApplication())
                     ?.toString(),
-            ratesDate = ratesCache.lastRates?.date,
+            ratesDate = ratesSnapshot.rates?.date,
         )
     }
 
@@ -391,21 +452,43 @@ class CartViewModel(
     }
 
     private fun emptyCart(): SavedCart {
-        // Read the main-screen picks synchronously — the LiveData accessors
-        // return null until observed, which is why an unobserved lookup here
-        // used to fall back to USD even when the user was on a different pair.
-        val base =
-            db.getLastBaseCurrencyBlocking()?.iso4217Alpha()
-                ?: Currency.USD.iso4217Alpha()
-        val dest = db.getLastDestinationCurrencyBlocking()?.iso4217Alpha()
+        val (base, dest) = resolveSeedPair(null, null)
         return SavedCart(
             id = "",
             name = "",
-            currency = base,
-            destinationCurrency = dest.takeIf { it != null && it != base },
+            currency = base.iso4217Alpha(),
+            destinationCurrency = dest.iso4217Alpha(),
             items = emptyList(),
             createdAt = System.currentTimeMillis(),
         )
+    }
+
+    /**
+     * Pick a base/destination pair for a fresh cart. Prefers explicit values
+     * from the caller (intent extras from main), falls back to persisted
+     * prefs, and always enforces "sides must differ" via [distinctFrom].
+     */
+    private fun resolveSeedPair(
+        mainBase: Currency?,
+        mainDest: Currency?,
+    ): Pair<Currency, Currency> {
+        // Read the persisted picks synchronously — the LiveData accessors
+        // return null until observed, which is why an unobserved lookup here
+        // used to fall back to USD even when the user was on a different pair.
+        val base = mainBase ?: db.getLastBaseCurrencyBlocking() ?: Currency.USD
+        val proposedDest = mainDest ?: db.getLastDestinationCurrencyBlocking()
+        val dest = proposedDest?.takeIf { it != base } ?: distinctFrom(base)
+        return base to dest
+    }
+
+    // Belt-and-braces fallback for [emptyCart]. Prefer the first currency from
+    // the cached rates that isn't [base] — that way the pair we seed matches
+    // something the user's active provider actually quotes. Falls back to
+    // USD/EUR only when no rates are cached (e.g. clean install before the
+    // first refresh).
+    private fun distinctFrom(base: Currency): Currency {
+        db.getRateListBlocking().firstOrNull { it.currency != base }?.let { return it.currency }
+        return if (base == Currency.USD) Currency.EUR else Currency.USD
     }
 }
 
@@ -414,10 +497,12 @@ data class CartSnapshot(
     val evaluatedItems: List<Pair<CartItem, BigDecimal>>,
     /** Sum of evaluated items in the base currency. */
     val subtotal: BigDecimal,
-    /** Subtotal after currency conversion, before fees. Equals [subtotal] when base == dest. */
+    /** Tip / tax on top of [subtotal], in the base currency (zero without one). */
+    val tip: BigDecimal,
+    /** Subtotal plus tip after currency conversion. Equals subtotal + tip when base == dest. */
     val convertedSubtotal: BigDecimal,
-    /** Per-side fee stacks for the current base/destination pair. */
-    val sideStacks: SideStacks,
+    /** Multiplicative fee stack for the current base/destination pair. */
+    val feeStack: BigDecimal,
     /** Final displayed total in the destination currency. */
     val total: BigDecimal,
     val fees: List<Fee>,

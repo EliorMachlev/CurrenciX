@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">переключить валюты</string>
-    <string name="info_date_latest">Курсы валют на &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Исторические курсы валют на &lt;b&gt;%1$s&lt;/b&gt; от &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; скопировано в буфер обмена</string>
     <string name="historical_rates_dialog_title">Исторические курсы валют</string>
     <string name="historical_rates_dialog_toggle">Использовать обменные курсы от определённой даты. Отключите, чтобы всегда получать актуальные.</string>
@@ -28,14 +26,16 @@
     <string name="quick_conversions_fees_applied">Применённые комиссии: %s</string>
     <string name="tooltip_filter_starred">Показывать только избранные валюты.</string>
     <string name="a11y_delete">Удалить</string>
-    <string name="a11y_historical_rate">Исторический курс</string>
     <string name="currency_dropdown_api_hint">Чего-то не хватает? Разные поставщики данных предлагают разные валюты. Зайдите в настройки и попробуйте другого! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсы от %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Кэшированных курсов ещё нет</string>
+    <string name="unreachable_banner_with_date">Провайдер недоступен • Курсы от %1$s</string>
+    <string name="unreachable_banner_no_data">Провайдер недоступен • Повтор</string>
+    <string name="historical_banner">Исторические • Курсы от %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Последний курс конвертации для недавно использованной пары валют.</string>
+    <string name="widget_description">Последний курс и тренд за 30 дней для последней использованной валютной пары или выбранной вами.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">На %s</string>
     <string name="widget_footer_empty">Откройте приложение, чтобы загрузить курсы.</string>
@@ -51,7 +51,6 @@
     <string name="cart_delete_item">Удалить позицию</string>
     <string name="cart_subtotal_label">Промежуточный итог</string>
     <string name="cart_total_label">Итого</string>
-    <string name="cart_fee_line">Комиссия: %s%%</string>
     <string name="cart_menu_save">Сохранить</string>
     <string name="cart_menu_save_as">Сохранить как…</string>
     <string name="cart_menu_load">Загрузить</string>
@@ -72,12 +71,6 @@
     <string name="cart_rename_title">Переименовать корзину</string>
     <string name="cart_delete_confirm">Удалить «%s»?</string>
     <string name="cart_delete_confirm_button">Удалить</string>
-    <string name="cart_clear_confirm">Удалить все позиции из текущей корзины?</string>
-    <string name="cart_clear_confirm_button">Очистить</string>
-    <string name="cart_clear_items_only">Только очистить позиции</string>
-    <string name="cart_clear_items_only_desc">Удаляет все строки из корзины, но сохраняет текущие валюты и сторону комиссии.</string>
-    <string name="cart_clear_reset_all">Сбросить корзину</string>
-    <string name="cart_clear_reset_all_desc">Удаляет все строки и заново подтягивает базовую / целевую валюту и сторону комиссии с главного экрана.</string>
     <string name="cart_export_ok">Корзина экспортирована.</string>
     <string name="cart_export_error">Ошибка экспорта: %s</string>
     <string name="cart_import_ok">Корзина импортирована.</string>
@@ -91,7 +84,6 @@
     <string name="cart_share_fees">Комиссия: %s%%</string>
     <string name="cart_share_total">Итого: %1$s %2$s</string>
     <string name="cart_unsaved_title">Несохранённые изменения</string>
-    <string name="cart_unsaved_message">У вас есть несохранённые изменения. Что вы хотите сделать?</string>
     <string name="cart_unsaved_save">Сохранить</string>
     <string name="cart_unsaved_save_as">Сохранить как новую</string>
     <string name="cart_unsaved_discard">Отменить изменения</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">Выбрать</string>
     <string name="a11y_action_load">Загрузить</string>
     <string name="a11y_action_open">Открыть</string>
-    <string name="quick_conversions_fee_conversion">конвертация %s</string>
-    <string name="quick_conversions_fee_reduction">уменьшение %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закрепить сверху</string>
     <string name="cart_unpin_item">Открепить</string>
     <string name="cart_reorder_item">Изменить порядок</string>
+    <string name="desc_navigate_up">Перейти вверх</string>
+    <string name="desc_open_drawer">Открыть панель навигации</string>
+    <string name="desc_close_drawer">Закрыть панель навигации</string>
+    <string name="desc_more_options">Другие параметры</string>
+    <string name="cart_item_deleted">Элемент удалён</string>
+    <string name="cart_cleared">Корзина очищена</string>
+    <string name="undo">Отменить</string>
+    <string name="timeline_retry">Повторить</string>
+    <string name="timeline_change_provider">Сменить источник</string>
+    <string name="recent_pair_switch">Переключиться на %1$s → %2$s</string>
+    <string name="cart_section_pinned">Закреплённые</string>
+    <string name="cart_section_others">Другие товары</string>
+    <string name="fallback_banner">%1$s недоступен • Используется %2$s</string>
+    <string name="process_text_label">Конвертировать валюту</string>
+    <string name="selection_open_app">Открыть в %1$s</string>
+    <string name="selection_copy">Копировать</string>
+    <string name="selection_no_amount">В «%1$s» не найдена сумма.</string>
+    <string name="selection_no_rates">Откройте %1$s один раз, чтобы загрузить курсы.</string>
+    <string name="selection_assumed_currency">В тексте нет валюты, поэтому он прочитан как %1$s.</string>
+    <string name="shortcut_pair_long">Конвертировать %1$s в %2$s</string>
+    <string name="widget_configure_title">Виджет</string>
+    <string name="widget_follow_converter_title">Следовать за конвертером</string>
+    <string name="widget_follow_converter_summary">Показывать пару, использованную в приложении последней</string>
+    <string name="done">Готово</string>
+    <string name="cart_share_tip">Чаевые / налог (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">На человека (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Осталось в бюджете: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Сверх бюджета: %1$s %2$s</string>
+    <string name="cart_menu_extras">Разделить, чаевые и бюджет</string>
+    <string name="cart_tip_label">Чаевые / налог</string>
+    <string name="cart_tip_row">Чаевые / налог (%1$s%%)</string>
+    <string name="cart_split_label">Разделить на</string>
+    <string name="cart_split_decrease">Меньше людей</string>
+    <string name="cart_split_increase">Больше людей</string>
+    <string name="cart_per_person_row">На человека (÷%1$d)</string>
+    <string name="cart_budget_label">Бюджет</string>
+    <string name="cart_budget_left_row">Осталось в бюджете</string>
+    <string name="cart_over_budget_row">Сверх бюджета</string>
 </resources>

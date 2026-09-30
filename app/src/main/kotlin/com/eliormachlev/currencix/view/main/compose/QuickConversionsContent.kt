@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -135,7 +134,7 @@ private fun QuickConversionsHeader(
             onLongClick = onSwapLongPress,
         ) {
             Icon(
-                imageVector = Icons.Filled.SwapHoriz,
+                painter = painterResource(R.drawable.ic_swap_horiz),
                 contentDescription = stringResource(id = R.string.desc_toggle_currencies),
                 tint = MaterialTheme.colorScheme.primary,
             )

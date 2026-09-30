@@ -1,10 +1,20 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Base64
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.eliormachlev.currencix.repository.persistence.PersistenceKey
+import com.eliormachlev.currencix.repository.persistence.prefStore
+import com.eliormachlev.currencix.util.restartApp
+import kotlinx.coroutines.runBlocking
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator
 import org.bouncycastle.crypto.params.Argon2Parameters
 import org.json.JSONArray
@@ -78,10 +88,12 @@ private const val TYPE_FLOAT = "float"
 private const val TYPE_BOOLEAN = "boolean"
 private const val TYPE_STRING_SET = "stringSet"
 
-// SharedPreferences namespaces that carry user-authored state worth backing
-// up. The "rates" namespace is intentionally excluded — it's a network cache
-// that regenerates itself and would bloat backups.
-private val BACKUP_NAMESPACES = listOf("prefs", "last_state", "starred_currencies")
+// DataStore namespaces that carry user-authored state worth backing up. The
+// "rates" namespace is intentionally excluded — it's a network cache that
+// regenerates itself and would bloat backups. Wire-format names are stable
+// (they match the historical SharedPreferences file basenames) so backups
+// produced by older builds still restore into the DataStore-backed shape.
+private val BACKUP_NAMESPACES: List<PersistenceKey> = PersistenceKey.backupNamespaces
 
 sealed class BackupResult {
     data object Success : BackupResult()
@@ -132,7 +144,7 @@ class BackupManager(
     }
 
     /**
-     * Read a backup from [uri] and restore it into SharedPreferences.
+     * Read a backup from [uri] and restore it into the DataStore namespaces.
      *
      * Returns [BackupResult.PasswordRequired] if the file is encrypted and no
      * password was supplied, or [BackupResult.WrongPassword] if the supplied
@@ -154,6 +166,12 @@ class BackupManager(
             }
             val namespaces = extractNamespaces(root, password) ?: return BackupResult.PasswordRequired
             restoreNamespaces(namespaces)
+            // Restore replaced every backed-up namespace on disk; long-lived
+            // in-memory PrefStore caches (and every LiveData built on them)
+            // now hold stale values. A full process restart is the simplest,
+            // safest way to hydrate the app from the restored state without
+            // reasoning about which observer resubscribes first.
+            restartApp(context)
             BackupResult.Success
         } catch (e: WrongPasswordException) {
             BackupResult.WrongPassword
@@ -186,8 +204,8 @@ class BackupManager(
 
     private fun buildBackupJson(password: CharArray?): JSONObject {
         val nsObj = JSONObject()
-        BACKUP_NAMESPACES.forEach { name ->
-            nsObj.put(name, serializeNamespace(context.getSharedPreferences(name, MODE_PRIVATE)))
+        BACKUP_NAMESPACES.forEach { key ->
+            nsObj.put(key.fileName, serializeNamespace(key.prefStore(context).snapshot()))
         }
         val root =
             JSONObject().apply {
@@ -357,10 +375,10 @@ class BackupManager(
         return bytes
     }
 
-    private fun serializeNamespace(prefs: SharedPreferences): JSONObject {
+    private fun serializeNamespace(prefs: Preferences): JSONObject {
         val obj = JSONObject()
-        prefs.all.forEach { (key, value) ->
-            serializeEntry(value)?.let { obj.put(key, it) }
+        prefs.asMap().forEach { (key, value) ->
+            serializeEntry(value)?.let { obj.put(key.name, it) }
         }
         return obj
     }
@@ -387,34 +405,41 @@ class BackupManager(
     }
 
     private fun restoreNamespaces(namespaces: JSONObject) {
-        BACKUP_NAMESPACES.forEach { name ->
-            val nsData = namespaces.optJSONObject(name) ?: return@forEach
-            val prefs = context.getSharedPreferences(name, MODE_PRIVATE)
-            val editor = prefs.edit().clear()
-            nsData.keys().forEach { key ->
-                val entry = nsData.optJSONObject(key) ?: return@forEach
-                applyEntry(editor, key, entry)
+        // Blocking is intentional here — restore must complete before the
+        // subsequent restartApp() call, so we can't return to the caller with
+        // writes still in flight on the PrefStore write pump. DataStore edit
+        // is a suspend function; runBlocking bridges from the plain-callback
+        // import() entry point without pushing suspend up through the UI.
+        runBlocking {
+            BACKUP_NAMESPACES.forEach { key ->
+                val nsData = namespaces.optJSONObject(key.fileName) ?: return@forEach
+                key.prefStore(context).editAndAwait {
+                    clear()
+                    nsData.keys().forEach { entryKey ->
+                        val entry = nsData.optJSONObject(entryKey) ?: return@forEach
+                        applyEntry(this, entryKey, entry)
+                    }
+                }
             }
-            editor.apply()
         }
     }
 
     private fun applyEntry(
-        editor: SharedPreferences.Editor,
+        editor: MutablePreferences,
         key: String,
         entry: JSONObject,
     ) {
         when (entry.optString(KEY_TYPE)) {
-            TYPE_STRING -> editor.putString(key, entry.optString(KEY_VALUE))
-            TYPE_INT -> editor.putInt(key, entry.optInt(KEY_VALUE))
-            TYPE_LONG -> editor.putLong(key, entry.optLong(KEY_VALUE))
-            TYPE_FLOAT -> editor.putFloat(key, entry.optDouble(KEY_VALUE).toFloat())
-            TYPE_BOOLEAN -> editor.putBoolean(key, entry.optBoolean(KEY_VALUE))
+            TYPE_STRING -> editor[stringPreferencesKey(key)] = entry.optString(KEY_VALUE)
+            TYPE_INT -> editor[intPreferencesKey(key)] = entry.optInt(KEY_VALUE)
+            TYPE_LONG -> editor[longPreferencesKey(key)] = entry.optLong(KEY_VALUE)
+            TYPE_FLOAT -> editor[floatPreferencesKey(key)] = entry.optDouble(KEY_VALUE).toFloat()
+            TYPE_BOOLEAN -> editor[booleanPreferencesKey(key)] = entry.optBoolean(KEY_VALUE)
             TYPE_STRING_SET -> {
                 val arr = entry.optJSONArray(KEY_VALUE) ?: return
                 val set = HashSet<String>(arr.length())
                 for (i in 0 until arr.length()) arr.optString(i).let(set::add)
-                editor.putStringSet(key, set)
+                editor[stringSetPreferencesKey(key)] = set
             }
         }
     }

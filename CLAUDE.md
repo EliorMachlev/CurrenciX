@@ -32,3 +32,7 @@ Spotless (ktlint) enforces `ij_kotlin_imports_layout = *,java.**,javax.**,kotlin
 2. Then `java.*`, then `javax.*`, then `kotlin.*` — each group alphabetical.
 
 Add the new import in the right slot the first time; do not rely on a follow-up spotlessApply pass in CI.
+
+## Screenshots (Roborazzi) CI
+
+Don't wait for the Screenshots workflow to finish when nobody will review the pictures — carry on with the next task. The PR still can't be merged until that workflow passes, so check that it's green before treating the PR as ready.

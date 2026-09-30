@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">دگرش ارز‌ها</string>
-    <string name="info_date_latest">نرخ‌ها تا &lt;b>%1$s&lt;/b> از &lt;b>%2$s&lt;/b></string>
-    <string name="info_date_historical">نرخ‌های گذشته‌ی &lt;b>%1$s&lt;/b> از &lt;b>%2$s&lt;/b></string>
     <string name="copied_to_clipboard">رونوشت &lt;b>%s&lt;/b> به کلیپ‌بورد</string>
     <string name="historical_rates_dialog_title">نزخ‌های گذشته</string>
     <string name="historical_rates_dialog_toggle">ار نرخ‌های تاریخ مشخصی بهره بگیرید. اگر می‌خواهید همیشه تازه ترین نرخ‌ها را بگیرید، این گزینه را خاموش کنید.</string>
@@ -31,9 +29,12 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">آفلاین • نرخ‌ها از %1$s</string>
     <string name="offline_banner_no_data">آفلاین • هنوز نرخی ذخیره نشده است</string>
+    <string name="unreachable_banner_with_date">ارائه‌دهنده در دسترس نیست • نرخ‌ها از %1$s</string>
+    <string name="unreachable_banner_no_data">ارائه‌دهنده در دسترس نیست • تلاش مجدد</string>
+    <string name="historical_banner">تاریخی • نرخ‌ها از %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">آخرین نرخ تبدیل برای آخرین جفت‌ارز استفاده‌شده.</string>
+    <string name="widget_description">آخرین نرخ و روند ۳۰ روزه برای آخرین جفت ارزی که استفاده کردید یا جفتی که انتخاب می‌کنید.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">به تاریخ %s</string>
     <string name="widget_footer_empty">برای بارگیری نرخ‌ها برنامه را باز کنید.</string>
@@ -49,7 +50,6 @@
     <string name="cart_delete_item">حذف مورد</string>
     <string name="cart_subtotal_label">جمع جزء</string>
     <string name="cart_total_label">مجموع</string>
-    <string name="cart_fee_line">کارمزد: %s%%</string>
     <string name="cart_menu_save">ذخیره</string>
     <string name="cart_menu_save_as">ذخیره با نام…</string>
     <string name="cart_menu_load">بارگذاری</string>
@@ -70,12 +70,6 @@
     <string name="cart_rename_title">تغییر نام سبد</string>
     <string name="cart_delete_confirm">«%s» حذف شود؟</string>
     <string name="cart_delete_confirm_button">حذف</string>
-    <string name="cart_clear_confirm">همهٔ موارد از سبد فعلی حذف شوند؟</string>
-    <string name="cart_clear_confirm_button">پاک کردن</string>
-    <string name="cart_clear_items_only">فقط پاک کردن موارد</string>
-    <string name="cart_clear_items_only_desc">همهٔ ردیف‌ها را از سبد حذف می‌کند اما ارزهای فعلی و سمت کارمزد را نگه می‌دارد.</string>
-    <string name="cart_clear_reset_all">بازنشانی سبد</string>
-    <string name="cart_clear_reset_all_desc">همهٔ ردیف‌ها را حذف کرده و ارز مبدأ / مقصد و سمت کارمزد را از صفحهٔ اصلی دوباره می‌گیرد.</string>
     <string name="cart_export_ok">سبد صادر شد.</string>
     <string name="cart_export_error">خروجی ناموفق بود: %s</string>
     <string name="cart_import_ok">سبد وارد شد.</string>
@@ -89,13 +83,11 @@
     <string name="cart_share_fees">کارمزد: %s%%</string>
     <string name="cart_share_total">مجموع: %1$s %2$s</string>
     <string name="cart_unsaved_title">تغییرات ذخیره‌نشده</string>
-    <string name="cart_unsaved_message">تغییرات ذخیره‌نشده دارید. می‌خواهید چه کنید؟</string>
     <string name="cart_unsaved_save">ذخیره</string>
     <string name="cart_unsaved_save_as">ذخیره به‌عنوان جدید</string>
     <string name="cart_unsaved_discard">نادیده گرفتن تغییرات</string>
     <string name="cart_unsaved_continue">ادامه</string>
     <string name="a11y_delete">حذف</string>
-    <string name="a11y_historical_rate">نرخ گذشته</string>
     <string name="error_unsupported_timeline">داده‌های خط زمانی توسط این API پشتیبانی نمی‌شود.</string>
     <string name="a11y_search_currencies">جستجوی ارزها</string>
     <string name="a11y_clear_search">پاک کردن جستجو</string>
@@ -106,10 +98,46 @@
     <string name="a11y_action_select">انتخاب</string>
     <string name="a11y_action_load">بارگذاری</string>
     <string name="a11y_action_open">باز کردن</string>
-    <string name="quick_conversions_fee_conversion">تبدیل %s</string>
-    <string name="quick_conversions_fee_reduction">کاهش %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">پین کردن در بالا</string>
     <string name="cart_unpin_item">حذف پین</string>
     <string name="cart_reorder_item">تغییر ترتیب</string>
+    <string name="desc_navigate_up">پیمایش به بالا</string>
+    <string name="desc_open_drawer">باز کردن کشوی پیمایش</string>
+    <string name="desc_close_drawer">بستن کشوی پیمایش</string>
+    <string name="desc_more_options">گزینه‌های بیشتر</string>
+    <string name="cart_item_deleted">مورد حذف شد</string>
+    <string name="cart_cleared">سبد خالی شد</string>
+    <string name="undo">واگرد</string>
+    <string name="timeline_retry">تلاش دوباره</string>
+    <string name="timeline_change_provider">تغییر ارائه‌دهنده</string>
+    <string name="recent_pair_switch">تغییر به %1$s → %2$s</string>
+    <string name="cart_section_pinned">سنجاق‌شده</string>
+    <string name="cart_section_others">موارد دیگر</string>
+    <string name="fallback_banner">%1$s در دسترس نیست • استفاده از %2$s</string>
+    <string name="process_text_label">تبدیل ارز</string>
+    <string name="selection_open_app">باز کردن در %1$s</string>
+    <string name="selection_copy">کپی</string>
+    <string name="selection_no_amount">هیچ مبلغی در «%1$s» پیدا نشد.</string>
+    <string name="selection_no_rates">یک بار %1$s را باز کنید تا نرخ‌ها بارگیری شوند.</string>
+    <string name="selection_assumed_currency">متن ارزی ندارد، بنابراین به‌عنوان %1$s خوانده شد.</string>
+    <string name="shortcut_pair_long">تبدیل %1$s به %2$s</string>
+    <string name="widget_configure_title">ابزارک</string>
+    <string name="widget_follow_converter_title">دنبال کردن مبدل</string>
+    <string name="widget_follow_converter_summary">نمایش جفتی که آخرین بار در برنامه استفاده کردید</string>
+    <string name="done">انجام شد</string>
+    <string name="cart_share_tip">انعام / مالیات (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">برای هر نفر (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">باقی‌مانده بودجه: %1$s %2$s</string>
+    <string name="cart_share_over_budget">بیش از بودجه: %1$s %2$s</string>
+    <string name="cart_menu_extras">تقسیم، انعام و بودجه</string>
+    <string name="cart_tip_label">انعام / مالیات</string>
+    <string name="cart_tip_row">انعام / مالیات (%1$s%%)</string>
+    <string name="cart_split_label">تقسیم بین</string>
+    <string name="cart_split_decrease">افراد کمتر</string>
+    <string name="cart_split_increase">افراد بیشتر</string>
+    <string name="cart_per_person_row">برای هر نفر (÷%1$d)</string>
+    <string name="cart_budget_label">بودجه</string>
+    <string name="cart_budget_left_row">باقی‌مانده بودجه</string>
+    <string name="cart_over_budget_row">بیش از بودجه</string>
 </resources>

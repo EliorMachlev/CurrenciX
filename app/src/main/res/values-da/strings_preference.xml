@@ -6,9 +6,6 @@
     <string name="fee_title">Gebyr for udenlandske transaktioner</string>
     <string name="fee_summary">Administrer veksel-, bank-/kortgebyrer og gebyrer for specifikke valutapar</string>
     <string name="fee_manager_title">Gebyrer</string>
-    <string name="fee_side_label">Gebyrtype</string>
-    <string name="fee_side_original">Konverteringsgebyr</string>
-    <string name="fee_side_converted">Konverteret gebyr</string>
     <string name="fee_section_global_exchange">Globalt vekselgebyr</string>
     <string name="fee_section_global_bank">Globalt bank-/kortgebyr</string>
     <string name="fee_section_specific_pair">Vekselgebyr for specifikt valutapar</string>
@@ -20,24 +17,13 @@
     <string name="fee_pair_to">Til</string>
     <string name="fee_pair_pick_currency">Vælg valuta</string>
     <string name="fee_true_cost_prefix">"Konverteringsgebyr: "</string>
-    <string name="fee_original_value_prefix">"Reduktionsgebyr: "</string>
     <string name="fee_cost_with_fee_prefix">"Pris med gebyr: "</string>
-    <string name="fee_value_before_fee_prefix">"Værdi før gebyr: "</string>
-    <string name="fee_side_summary_original">Den viste konverterede værdi bliver ved mellemkursen; gebyrer vises separat som \"Konverteringsgebyr\".</string>
-    <string name="fee_side_summary_converted">Gebyrer er indregnet i den viste konverterede værdi.</string>
     <string name="fee_empty">Ingen gebyrer endnu</string>
 
     <string name="previewConversion_title">Forhåndsvisning af konvertering</string>
     <string name="previewConversion_summary">Vis den nuværende konverteringsrate for hver valuta i valutavælgeren.</string>
     <string name="keyboard_title">Tastatur</string>
-    <string name="keyboard_option_default">Standard</string>
-    <string name="keyboard_option_expanded">Udvidet</string>
-    <string name="keyboard_option_system">Systemtastatur (numerisk)</string>
-    <string name="keyboard_option_system_full">Systemtastatur (fuldt)</string>
-    <string name="keyboard_summary_default">Standardtastatur til lommeregner.</string>
     <string name="keyboard_summary_expanded">Tilføjer ekstra genvejstaster for hurtigere indtastning.</string>
-    <string name="keyboard_summary_system">Bruger din enheds numeriske tastatur. Accepterer cifre, decimaltegn, almindelige aritmetiske operatorer og parenteser.</string>
-    <string name="keyboard_summary_system_full">Bruger din enheds fulde teksttastatur. Accepterer cifre, decimaltegn, almindelige aritmetiske operatorer og parenteser.</string>
     <string name="decimal_places_title">Decimalnøjagtighed</string>
     <string name="decimal_places_summary">Antal decimaler, der vises for konverterede værdier.</string>
     <string name="haptic_feedback_title">Haptisk feedback</string>
@@ -158,4 +144,14 @@
     <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Uden titel</string>
+    <string name="dynamic_color_title">Baggrundsfarver</string>
+    <string name="dynamic_color_summary">Farv appen med farverne fra din baggrund (Material You)</string>
+    <string name="provider_group_free">Gratis</string>
+    <string name="provider_group_api_key">Kræver en API-nøgle</string>
+    <string name="provider_main_chip">Primær</string>
+    <string name="provider_cadence_hourly">Opdateres hver time</string>
+    <string name="provider_cadence_daily">Opdateres hver hverdag</string>
+    <string name="provider_cadence_monthly">Opdateres én gang om måneden</string>
+    <string name="fallback_provider_title">Reserveudbyder</string>
+    <string name="fallback_provider_summary">%1$s · bruges, når %2$s ikke kan nås</string>
 </resources>

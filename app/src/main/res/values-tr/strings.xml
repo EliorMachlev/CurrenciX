@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">para birimlerini değiştir</string>
-    <string name="info_date_latest">&lt;b&gt;%1$s&lt;/b&gt; tarihli döviz kuru (&lt;b&gt;%2$s&lt;/b&gt;)</string>
-    <string name="info_date_historical">&lt;b&gt;%1$s&lt;/b&gt; tarihli döviz kuru (&lt;b&gt;%2$s&lt;/b&gt;)</string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; panoya kopyalandı</string>
     <string name="historical_rates_dialog_title">Geçmiş kurlar</string>
     <string name="historical_rates_dialog_toggle">Geçmiş bir tarihteki kur verilerini kullan. Her zaman en güncel verileri kullanmak istiyorsan devre dışı bırak.</string>
@@ -28,14 +26,16 @@
     <string name="quick_conversions_fees_applied">Uygulanan ücretler: %s</string>
     <string name="tooltip_filter_starred">Sadece favori para birimlerini göster.</string>
     <string name="a11y_delete">Sil</string>
-    <string name="a11y_historical_rate">Geçmiş kur</string>
     <string name="currency_dropdown_api_hint">Eksik bir şey mi var? Farklı veri sağlayıcıları farklı para birimleri sunar. Başka bir tane denemek için ayarlara gidin!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Çevrimdışı • Kurlar: %1$s</string>
     <string name="offline_banner_no_data">Çevrimdışı • Henüz önbelleğe alınmış kur yok</string>
+    <string name="unreachable_banner_with_date">Sağlayıcıya ulaşılamıyor • %1$s tarihli kurlar</string>
+    <string name="unreachable_banner_no_data">Sağlayıcıya ulaşılamıyor • Yeniden deneniyor</string>
+    <string name="historical_banner">Geçmiş • %1$s tarihli kurlar</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Son kullandığınız para birimi çifti için en güncel dönüşüm kuru.</string>
+    <string name="widget_description">En son kullandığınız veya seçtiğiniz döviz çifti için güncel kur ve 30 günlük eğilim.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s tarihi itibarıyla</string>
     <string name="widget_footer_empty">Kurları yüklemek için uygulamayı açın.</string>
@@ -51,7 +51,6 @@
     <string name="cart_delete_item">Öğeyi sil</string>
     <string name="cart_subtotal_label">Ara toplam</string>
     <string name="cart_total_label">Toplam</string>
-    <string name="cart_fee_line">Ücretler: %%%s</string>
     <string name="cart_menu_save">Kaydet</string>
     <string name="cart_menu_save_as">Farklı kaydet…</string>
     <string name="cart_menu_load">Yükle</string>
@@ -72,12 +71,6 @@
     <string name="cart_rename_title">Sepeti yeniden adlandır</string>
     <string name="cart_delete_confirm">"%s" silinsin mi?</string>
     <string name="cart_delete_confirm_button">Sil</string>
-    <string name="cart_clear_confirm">Mevcut sepetteki tüm öğeler kaldırılsın mı?</string>
-    <string name="cart_clear_confirm_button">Temizle</string>
-    <string name="cart_clear_items_only">Yalnızca öğeleri temizle</string>
-    <string name="cart_clear_items_only_desc">Sepetteki tüm satırları kaldırır, ancak mevcut para birimlerini ve ücret tarafını korur.</string>
-    <string name="cart_clear_reset_all">Sepeti sıfırla</string>
-    <string name="cart_clear_reset_all_desc">Tüm satırları kaldırır ve temel/hedef para birimini ile ücret tarafını ana ekrandan yeniden alır.</string>
     <string name="cart_export_ok">Sepet dışa aktarıldı.</string>
     <string name="cart_export_error">Dışa aktarma başarısız: %s</string>
     <string name="cart_import_ok">Sepet içe aktarıldı.</string>
@@ -91,7 +84,6 @@
     <string name="cart_share_fees">Ücretler: %%%s</string>
     <string name="cart_share_total">Toplam: %1$s %2$s</string>
     <string name="cart_unsaved_title">Kaydedilmemiş değişiklikler</string>
-    <string name="cart_unsaved_message">Kaydedilmemiş değişiklikleriniz var. Ne yapmak istersiniz?</string>
     <string name="cart_unsaved_save">Kaydet</string>
     <string name="cart_unsaved_save_as">Yeni olarak kaydet</string>
     <string name="cart_unsaved_discard">Değişiklikleri sil</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">Seç</string>
     <string name="a11y_action_load">Yükle</string>
     <string name="a11y_action_open">Aç</string>
-    <string name="quick_conversions_fee_conversion">dönüşüm %s</string>
-    <string name="quick_conversions_fee_reduction">indirim %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Öğeyi üste sabitle</string>
     <string name="cart_unpin_item">Sabitlemeyi kaldır</string>
     <string name="cart_reorder_item">Öğeyi yeniden sırala</string>
+    <string name="desc_navigate_up">Yukarı git</string>
+    <string name="desc_open_drawer">Gezinme çekmecesini aç</string>
+    <string name="desc_close_drawer">Gezinme çekmecesini kapat</string>
+    <string name="desc_more_options">Diğer seçenekler</string>
+    <string name="cart_item_deleted">Öğe silindi</string>
+    <string name="cart_cleared">Sepet boşaltıldı</string>
+    <string name="undo">Geri al</string>
+    <string name="timeline_retry">Tekrar dene</string>
+    <string name="timeline_change_provider">Sağlayıcıyı değiştir</string>
+    <string name="recent_pair_switch">%1$s → %2$s çiftine geç</string>
+    <string name="cart_section_pinned">Sabitlenenler</string>
+    <string name="cart_section_others">Diğer öğeler</string>
+    <string name="fallback_banner">%1$s kullanılamıyor • %2$s kullanılıyor</string>
+    <string name="process_text_label">Para birimi dönüştür</string>
+    <string name="selection_open_app">%1$s ile aç</string>
+    <string name="selection_copy">Kopyala</string>
+    <string name="selection_no_amount">“%1$s” içinde tutar bulunamadı.</string>
+    <string name="selection_no_rates">Döviz kurlarını yüklemek için %1$s uygulamasını bir kez açın.</string>
+    <string name="selection_assumed_currency">Metinde para birimi yok, bu yüzden %1$s olarak okundu.</string>
+    <string name="shortcut_pair_long">%1$s birimini %2$s birimine dönüştür</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Dönüştürücüyü takip et</string>
+    <string name="widget_follow_converter_summary">Uygulamada en son kullandığınız çifti göster</string>
+    <string name="done">Bitti</string>
+    <string name="cart_share_tip">Bahşiş / vergi (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Kişi başı (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Bütçede kalan: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Bütçe aşıldı: %1$s %2$s</string>
+    <string name="cart_menu_extras">Bölüş, bahşiş ve bütçe</string>
+    <string name="cart_tip_label">Bahşiş / vergi</string>
+    <string name="cart_tip_row">Bahşiş / vergi (%1$s%%)</string>
+    <string name="cart_split_label">Bölüşen kişi</string>
+    <string name="cart_split_decrease">Daha az kişi</string>
+    <string name="cart_split_increase">Daha fazla kişi</string>
+    <string name="cart_per_person_row">Kişi başı (÷%1$d)</string>
+    <string name="cart_budget_label">Bütçe</string>
+    <string name="cart_budget_left_row">Bütçede kalan</string>
+    <string name="cart_over_budget_row">Bütçe aşıldı</string>
 </resources>

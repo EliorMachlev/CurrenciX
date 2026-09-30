@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.view.cart.compose
 
-import android.app.Activity
-import android.widget.EditText
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,9 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -33,29 +28,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.widget.doAfterTextChanged
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
-import com.eliormachlev.currencix.util.CalculatorKeyListener
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hapticOnFocus
-import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.roundForDisplay
-import com.eliormachlev.currencix.util.setTextAndCursorToEnd
-import com.eliormachlev.currencix.util.showSoftInputOn
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
@@ -65,19 +56,19 @@ private const val NAME_EDIT_DEBOUNCE_MS = 300L
 private const val ROW_PREVIEW_SCALE = 2
 private val FIELD_MIN_HEIGHT = 48.dp
 
-// Distance from the trailing edge to the trashcan icon when the row slides.
-// Matches Material's SwipeToDismiss sample so the icon reads as "emerging"
-// from the row rather than pinned to the screen edge.
-private val SWIPE_ICON_TRAILING_PADDING = 24.dp
+// Distance from the swipe-origin edge to the trashcan icon when the row
+// slides. Matches Material's SwipeToDismiss sample so the icon reads as
+// "emerging" from the row rather than pinned to the screen edge — applied
+// to whichever side the user is dragging from.
+private val SWIPE_ICON_EDGE_PADDING = 24.dp
 
 /**
- * Wrap [CartItemRow] in a Material3 [SwipeToDismissBox] so a trailing-edge
- * swipe (right-to-left in LTR, left-to-right in RTL) reveals a red delete
- * background and, past the dismissal threshold, calls [onDelete] — the
- * same code path the explicit delete button uses. Rows in edit mode
- * ([isActive]) reject the gesture so the user can't wipe out a row
- * while typing into it; the existing button is left in place as an
- * always-available fallback.
+ * Wrap [CartItemRow] in a Material3 [SwipeToDismissBox] so a swipe in either
+ * direction reveals a red delete background and, past the dismissal
+ * threshold, calls [onDelete] — the same code path the explicit delete
+ * button uses. Rows in edit mode ([isActive]) reject the gesture so the
+ * user can't wipe out a row while typing into it; the existing button is
+ * left in place as an always-available fallback.
  */
 @Composable
 @Suppress("LongParameterList")
@@ -85,25 +76,35 @@ fun SwipeableCartItemRow(
     item: CartItem,
     currency: String,
     isActive: Boolean,
-    keyListener: CalculatorKeyListener?,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
-    onExpressionChange: (String) -> Unit,
     onTogglePin: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 ) {
+    // Observe currentValue rather than passing confirmValueChange (deprecated —
+    // the anchor set already excludes disallowed sides via
+    // enableDismissFromStart/EndTo…). onDelete removes the row from the source
+    // list, which drops this SwipeToDismissBox from composition and lets the
+    // LazyList's animateItem() handle the slide-out.
     val dismissState = rememberSwipeToDismissBoxState()
-    LaunchedEffect(dismissState.currentValue) {
-        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) onDelete()
+    val onDeleteState = rememberUpdatedState(onDelete)
+    LaunchedEffect(dismissState) {
+        snapshotFlow { dismissState.currentValue }.collect { value ->
+            if (value == SwipeToDismissBoxValue.StartToEnd ||
+                value == SwipeToDismissBoxValue.EndToStart
+            ) {
+                onDeleteState.value()
+            }
+        }
     }
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = { SwipeDeleteBackground(dismissState) },
-        enableDismissFromStartToEnd = false,
+        enableDismissFromStartToEnd = !isActive,
         enableDismissFromEndToStart = !isActive,
         modifier = modifier,
     ) {
@@ -111,12 +112,10 @@ fun SwipeableCartItemRow(
             item = item,
             currency = currency,
             isActive = isActive,
-            keyListener = keyListener,
             liveExpression = liveExpression,
             onNameCommit = onNameCommit,
             onNamePending = onNamePending,
             onExpressionTap = onExpressionTap,
-            onExpressionChange = onExpressionChange,
             onTogglePin = onTogglePin,
             dragHandleModifier = dragHandleModifier,
         )
@@ -128,21 +127,49 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
     // Only paint the background once the swipe is active — otherwise the
     // OutlinedCard's ambient background would show red rectangles behind
     // every row at rest.
-    val active = state.dismissDirection == SwipeToDismissBoxValue.EndToStart
+    val direction = state.dismissDirection
+    val active =
+        direction == SwipeToDismissBoxValue.StartToEnd ||
+            direction == SwipeToDismissBoxValue.EndToStart
+    // Anchor the trash icon on whichever edge the finger is dragging *from*
+    // (so it appears to emerge from under the row) rather than pinning it
+    // to a single side regardless of swipe direction.
+    val alignment =
+        if (direction == SwipeToDismissBoxValue.StartToEnd) {
+            Alignment.CenterStart
+        } else {
+            Alignment.CenterEnd
+        }
     Box(
         modifier =
             Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(id = R.dimen.margin1x))
+                // Same corners as the card sliding off it.
+                .clip(CardDefaults.outlinedShape)
                 .background(if (active) MaterialTheme.colorScheme.error else Color.Transparent),
-        contentAlignment = Alignment.CenterEnd,
+        contentAlignment = alignment,
     ) {
         if (active) {
             Icon(
-                imageVector = Icons.Filled.Delete,
+                painter = painterResource(R.drawable.ic_delete),
                 contentDescription = stringResource(id = R.string.cart_delete_item),
                 tint = MaterialTheme.colorScheme.onError,
-                modifier = Modifier.padding(end = SWIPE_ICON_TRAILING_PADDING),
+                modifier =
+                    Modifier.padding(
+                        start =
+                            if (direction == SwipeToDismissBoxValue.StartToEnd) {
+                                SWIPE_ICON_EDGE_PADDING
+                            } else {
+                                0.dp
+                            },
+                        end =
+                            if (direction == SwipeToDismissBoxValue.EndToStart) {
+                                SWIPE_ICON_EDGE_PADDING
+                            } else {
+                                0.dp
+                            },
+                    ),
             )
         }
     }
@@ -154,12 +181,10 @@ fun CartItemRow(
     item: CartItem,
     currency: String,
     isActive: Boolean,
-    keyListener: CalculatorKeyListener?,
     liveExpression: String?,
     onNameCommit: (String) -> Unit,
     onNamePending: (String) -> Unit,
     onExpressionTap: () -> Unit,
-    onExpressionChange: (String) -> Unit,
     onTogglePin: () -> Unit,
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
@@ -187,18 +212,10 @@ fun CartItemRow(
                     onCommit = onNameCommit,
                     onPending = onNamePending,
                 )
-                if (isActive && keyListener != null) {
-                    ExpressionEditor(
-                        initial = displayedExpression,
-                        keyListener = keyListener,
-                        onChange = onExpressionChange,
-                    )
-                } else {
-                    ExpressionField(
-                        text = displayedExpression,
-                        onTap = onExpressionTap,
-                    )
-                }
+                ExpressionField(
+                    text = displayedExpression,
+                    onTap = onExpressionTap,
+                )
                 ValuePreview(
                     item = item.copy(expression = displayedExpression),
                     currency = currency,
@@ -219,7 +236,7 @@ fun CartItemRow(
 @Composable
 private fun DragHandle(modifier: Modifier = Modifier) {
     Icon(
-        imageVector = Icons.Filled.DragHandle,
+        painter = painterResource(R.drawable.ic_drag_handle),
         contentDescription = stringResource(id = R.string.cart_reorder_item),
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = modifier.padding(end = dimensionResource(id = R.dimen.margin1x)),
@@ -320,59 +337,6 @@ private fun ExpressionField(
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 },
-        )
-    }
-}
-
-// [initial] arrives in display-glyph form (× ÷); the EditText works in ASCII
-// (* /) so the numpad IME's keys pass through, and callers convert back on
-// commit — matches how [openSystemImeEditorFor]'s dialog used to round-trip.
-@Composable
-private fun ExpressionEditor(
-    initial: String,
-    keyListener: CalculatorKeyListener,
-    onChange: (String) -> Unit,
-) {
-    val onChangeState = rememberUpdatedState(onChange)
-    val textColorArgb = MaterialTheme.colorScheme.onSurface.toArgb()
-    val hint = stringResource(id = R.string.cart_item_expression_hint)
-    val asciiInitial = remember(initial) { initial.normaliseGlyphsToAscii() }
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = FIELD_MIN_HEIGHT),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        AndroidView(
-            factory = { ctx ->
-                EditText(ctx).apply {
-                    this.keyListener = keyListener
-                    background = null
-                    setPadding(0, 0, 0, 0)
-                    isSingleLine = true
-                    setTextColor(textColorArgb)
-                    this.hint = hint
-                    setTextAndCursorToEnd(asciiInitial)
-                    doAfterTextChanged { editable ->
-                        onChangeState.value(editable?.toString().orEmpty())
-                    }
-                    // Post so requestFocus lands after the view is attached to
-                    // the window — otherwise showSoftInput is a no-op.
-                    post { (ctx as? Activity)?.showSoftInputOn(this) }
-                }
-            },
-            update = { et ->
-                // Refresh the listener so a mid-session preference flip
-                // (numpad ↔ full-text IME) takes effect on the live row.
-                if (et.keyListener !== keyListener) et.keyListener = keyListener
-                // Skip while user is typing so keystrokes aren't overwritten
-                // by our own glyph→ASCII round-trip echoing back through
-                // liveExpression. The extension itself no-ops on unchanged
-                // text, so re-emits of the same value cost nothing.
-                if (!et.isFocused) et.setTextAndCursorToEnd(asciiInitial)
-            },
-            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

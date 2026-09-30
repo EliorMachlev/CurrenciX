@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">মুদ্রা toggle</string>
-    <string name="info_date_latest">&lt;b&gt;%1$s&lt;/b&gt; এ বিনিময় হার &lt;b&gt;%2$s&lt;/b&gt; দ্বারা</string>
-    <string name="info_date_historical">ঐতিহাসক মূল্য &lt;b>%1$s&lt;/b> এর &lt;b>%2$s&lt;/b> দ্বারা</string>
     <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; ক্লিপবোর্ডে অনুলিপিত</string>
     <string name="historical_rates_dialog_title">ঐতিহাসক মূল্য</string>
     <string name="historical_rates_dialog_toggle">একটি নির্দিষ্ট তারিখের বিনিময় হার ব্যবহার করুন। অক্ষম করুন, সর্বদা সাম্প্রতিকতমগুলি নিতে।</string>
@@ -31,9 +29,12 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">অফলাইন • %1$s থেকে রেট</string>
     <string name="offline_banner_no_data">অফলাইন • এখনও কোনো ক্যাশে করা রেট নেই</string>
+    <string name="unreachable_banner_with_date">প্রদানকারী পৌঁছানো যাচ্ছে না • %1$s থেকে রেট</string>
+    <string name="unreachable_banner_no_data">প্রদানকারী পৌঁছানো যাচ্ছে না • পুনরায় চেষ্টা</string>
+    <string name="historical_banner">ঐতিহাসিক • %1$s থেকে রেট</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়ের সাম্প্রতিক বিনিময় হার।</string>
+    <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়া বা আপনার বেছে নেওয়া জোড়ার সর্বশেষ হার ও ৩০ দিনের প্রবণতা।</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s অনুযায়ী</string>
     <string name="widget_footer_empty">রেট লোড করতে অ্যাপ খুলুন।</string>
@@ -49,7 +50,6 @@
     <string name="cart_delete_item">আইটেম মুছুন</string>
     <string name="cart_subtotal_label">উপমোট</string>
     <string name="cart_total_label">মোট</string>
-    <string name="cart_fee_line">ফি: %s%%</string>
     <string name="cart_menu_save">সংরক্ষণ</string>
     <string name="cart_menu_save_as">এই নামে সংরক্ষণ…</string>
     <string name="cart_menu_load">লোড করুন</string>
@@ -70,12 +70,6 @@
     <string name="cart_rename_title">কার্টের নাম পরিবর্তন করুন</string>
     <string name="cart_delete_confirm">"%s" মুছবেন?</string>
     <string name="cart_delete_confirm_button">মুছুন</string>
-    <string name="cart_clear_confirm">বর্তমান কার্ট থেকে সমস্ত আইটেম সরাবেন?</string>
-    <string name="cart_clear_confirm_button">পরিষ্কার করুন</string>
-    <string name="cart_clear_items_only">শুধু আইটেম পরিষ্কার করুন</string>
-    <string name="cart_clear_items_only_desc">কার্ট থেকে প্রতিটি সারি সরায় কিন্তু বর্তমান মুদ্রা ও ফি সাইড রাখে।</string>
-    <string name="cart_clear_reset_all">কার্ট রিসেট করুন</string>
-    <string name="cart_clear_reset_all_desc">প্রতিটি সারি সরায় এবং মূল স্ক্রিন থেকে বেস/গন্তব্য মুদ্রা ও ফি সাইড পুনরায় নেয়।</string>
     <string name="cart_export_ok">কার্ট রপ্তানি হয়েছে।</string>
     <string name="cart_export_error">রপ্তানি ব্যর্থ: %s</string>
     <string name="cart_import_ok">কার্ট আমদানি হয়েছে।</string>
@@ -89,13 +83,11 @@
     <string name="cart_share_fees">ফি: %s%%</string>
     <string name="cart_share_total">মোট: %1$s %2$s</string>
     <string name="cart_unsaved_title">অসংরক্ষিত পরিবর্তন</string>
-    <string name="cart_unsaved_message">আপনার অসংরক্ষিত পরিবর্তন রয়েছে। আপনি কী করতে চান?</string>
     <string name="cart_unsaved_save">সংরক্ষণ</string>
     <string name="cart_unsaved_save_as">নতুন হিসেবে সংরক্ষণ</string>
     <string name="cart_unsaved_discard">পরিবর্তন বাতিল করুন</string>
     <string name="cart_unsaved_continue">চালিয়ে যান</string>
     <string name="a11y_delete">মুছুন</string>
-    <string name="a11y_historical_rate">ঐতিহাসিক হার</string>
     <string name="a11y_search_currencies">মুদ্রা অনুসন্ধান</string>
     <string name="a11y_clear_search">অনুসন্ধান সাফ করুন</string>
     <string name="a11y_cart_item_name">আইটেমের নাম</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">নির্বাচন</string>
     <string name="a11y_action_load">লোড করুন</string>
     <string name="a11y_action_open">খুলুন</string>
-    <string name="quick_conversions_fee_conversion">রূপান্তর %s</string>
-    <string name="quick_conversions_fee_reduction">হ্রাস %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">শীর্ষে পিন করুন</string>
     <string name="cart_unpin_item">পিন সরান</string>
     <string name="cart_reorder_item">পুনর্বিন্যাস করুন</string>
+    <string name="desc_navigate_up">উপরে যান</string>
+    <string name="desc_open_drawer">নেভিগেশন ড্রয়ার খুলুন</string>
+    <string name="desc_close_drawer">নেভিগেশন ড্রয়ার বন্ধ করুন</string>
+    <string name="desc_more_options">আরও বিকল্প</string>
+    <string name="cart_item_deleted">আইটেম মুছে ফেলা হয়েছে</string>
+    <string name="cart_cleared">কার্ট খালি করা হয়েছে</string>
+    <string name="undo">পূর্বাবস্থায় ফেরান</string>
+    <string name="timeline_retry">আবার চেষ্টা করুন</string>
+    <string name="timeline_change_provider">প্রদানকারী পরিবর্তন করুন</string>
+    <string name="recent_pair_switch">%1$s → %2$s-এ যান</string>
+    <string name="cart_section_pinned">পিন করা</string>
+    <string name="cart_section_others">অন্যান্য আইটেম</string>
+    <string name="fallback_banner">%1$s অনুপলব্ধ • %2$s ব্যবহার করা হচ্ছে</string>
+    <string name="process_text_label">মুদ্রা রূপান্তর</string>
+    <string name="selection_open_app">%1$s-এ খুলুন</string>
+    <string name="selection_copy">কপি করুন</string>
+    <string name="selection_no_amount">“%1$s”-এ কোনো পরিমাণ পাওয়া যায়নি।</string>
+    <string name="selection_no_rates">বিনিময় হার লোড করতে একবার %1$s খুলুন।</string>
+    <string name="selection_assumed_currency">লেখায় কোনো মুদ্রা নেই, তাই এটি %1$s হিসেবে পড়া হয়েছে।</string>
+    <string name="shortcut_pair_long">%1$s থেকে %2$s-এ রূপান্তর</string>
+    <string name="widget_configure_title">উইজেট</string>
+    <string name="widget_follow_converter_title">কনভার্টার অনুসরণ করুন</string>
+    <string name="widget_follow_converter_summary">অ্যাপে সর্বশেষ ব্যবহৃত জোড়াটি দেখান</string>
+    <string name="done">সম্পন্ন</string>
+    <string name="cart_share_tip">টিপ / কর (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">জনপ্রতি (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">বাজেটে বাকি: %1$s %2$s</string>
+    <string name="cart_share_over_budget">বাজেটের বেশি: %1$s %2$s</string>
+    <string name="cart_menu_extras">ভাগ, টিপ ও বাজেট</string>
+    <string name="cart_tip_label">টিপ / কর</string>
+    <string name="cart_tip_row">টিপ / কর (%1$s%%)</string>
+    <string name="cart_split_label">ভাগ করুন</string>
+    <string name="cart_split_decrease">কম লোক</string>
+    <string name="cart_split_increase">বেশি লোক</string>
+    <string name="cart_per_person_row">জনপ্রতি (÷%1$d)</string>
+    <string name="cart_budget_label">বাজেট</string>
+    <string name="cart_budget_left_row">বাজেটে বাকি</string>
+    <string name="cart_over_budget_row">বাজেটের বেশি</string>
 </resources>

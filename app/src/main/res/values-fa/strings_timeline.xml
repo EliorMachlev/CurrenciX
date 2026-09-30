@@ -9,4 +9,8 @@
     <string name="year">سال</string>
     <string name="month">ماه</string>
     <string name="week">هفته</string>
+    <string name="timeline_five_years">۵ سال</string>
+    <string name="timeline_custom_range">بازه سفارشی</string>
+    <string name="timeline_share">اشتراک‌گذاری نمودار</string>
+    <string name="timeline_no_rates">نرخی برای این تاریخ‌ها وجود ندارد</string>
 </resources>

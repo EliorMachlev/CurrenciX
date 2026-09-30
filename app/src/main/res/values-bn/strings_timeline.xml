@@ -9,4 +9,8 @@
     <string name="year">বছর</string>
     <string name="month">মাস</string>
     <string name="week">সপ্তাহ</string>
+    <string name="timeline_five_years">৫ বছর</string>
+    <string name="timeline_custom_range">কাস্টম সময়সীমা</string>
+    <string name="timeline_share">চার্ট শেয়ার করুন</string>
+    <string name="timeline_no_rates">এই তারিখগুলির জন্য কোনো রেট নেই</string>
 </resources>

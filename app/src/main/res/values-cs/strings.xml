@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">přepnout měny</string>
-    <string name="info_date_latest">Kurzy z &lt;b&gt;%1$s&lt;/b&gt; od &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="info_date_historical">Historické kurzy z &lt;b&gt;%1$s&lt;/b&gt; od &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="copied_to_clipboard">Zkopírováno &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="historical_rates_dialog_title">Historické kurzy</string>
     <string name="historical_rates_dialog_toggle">Použít měnové kurzy ze specifického data. Zakažte pro používání nejnovějších.</string>
@@ -31,9 +29,12 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Kurzy z %1$s</string>
     <string name="offline_banner_no_data">Offline • Zatím žádné uložené kurzy</string>
+    <string name="unreachable_banner_with_date">Poskytovatel není dostupný • Kurzy z %1$s</string>
+    <string name="unreachable_banner_no_data">Poskytovatel není dostupný • Opakuji</string>
+    <string name="historical_banner">Historické • Kurzy z %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Nejnovější směnný kurz pro naposledy použitou dvojici měn.</string>
+    <string name="widget_description">Poslední kurz a 30denní vývoj pro naposledy použitou měnovou dvojici nebo pro vámi vybranou.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Ke dni %s</string>
     <string name="widget_footer_empty">Otevřete aplikaci a načtěte kurzy.</string>
@@ -49,7 +50,6 @@
     <string name="cart_delete_item">Smazat položku</string>
     <string name="cart_subtotal_label">Mezisoučet</string>
     <string name="cart_total_label">Celkem</string>
-    <string name="cart_fee_line">Poplatky: %s%%</string>
     <string name="cart_menu_save">Uložit</string>
     <string name="cart_menu_save_as">Uložit jako…</string>
     <string name="cart_menu_load">Načíst</string>
@@ -70,12 +70,6 @@
     <string name="cart_rename_title">Přejmenovat košík</string>
     <string name="cart_delete_confirm">Smazat „%s“?</string>
     <string name="cart_delete_confirm_button">Smazat</string>
-    <string name="cart_clear_confirm">Odstranit všechny položky z aktuálního košíku?</string>
-    <string name="cart_clear_confirm_button">Vymazat</string>
-    <string name="cart_clear_items_only">Vymazat pouze položky</string>
-    <string name="cart_clear_items_only_desc">Odstraní všechny řádky z košíku, ale zachová aktuální měny a stranu poplatků.</string>
-    <string name="cart_clear_reset_all">Resetovat košík</string>
-    <string name="cart_clear_reset_all_desc">Odstraní všechny řádky a znovu načte základní / cílovou měnu a stranu poplatků z hlavní obrazovky.</string>
     <string name="cart_export_ok">Košík byl exportován.</string>
     <string name="cart_export_error">Export selhal: %s</string>
     <string name="cart_import_ok">Košík byl importován.</string>
@@ -89,13 +83,11 @@
     <string name="cart_share_fees">Poplatky: %s%%</string>
     <string name="cart_share_total">Celkem: %1$s %2$s</string>
     <string name="cart_unsaved_title">Neuložené změny</string>
-    <string name="cart_unsaved_message">Máte neuložené změny. Co chcete udělat?</string>
     <string name="cart_unsaved_save">Uložit</string>
     <string name="cart_unsaved_save_as">Uložit jako nový</string>
     <string name="cart_unsaved_discard">Zahodit změny</string>
     <string name="cart_unsaved_continue">Pokračovat</string>
     <string name="a11y_delete">Smazat</string>
-    <string name="a11y_historical_rate">Historický kurz</string>
     <string name="a11y_search_currencies">Hledat měny</string>
     <string name="a11y_clear_search">Vymazat hledání</string>
     <string name="a11y_cart_item_name">Název položky</string>
@@ -105,10 +97,46 @@
     <string name="a11y_action_select">Vybrat</string>
     <string name="a11y_action_load">Načíst</string>
     <string name="a11y_action_open">Otevřít</string>
-    <string name="quick_conversions_fee_conversion">konverze %s</string>
-    <string name="quick_conversions_fee_reduction">snížení %s</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Připnout nahoru</string>
     <string name="cart_unpin_item">Odepnout položku</string>
     <string name="cart_reorder_item">Přeuspořádat položku</string>
+    <string name="desc_navigate_up">Přejít nahoru</string>
+    <string name="desc_open_drawer">Otevřít navigační panel</string>
+    <string name="desc_close_drawer">Zavřít navigační panel</string>
+    <string name="desc_more_options">Další možnosti</string>
+    <string name="cart_item_deleted">Položka smazána</string>
+    <string name="cart_cleared">Košík vyprázdněn</string>
+    <string name="undo">Vrátit zpět</string>
+    <string name="timeline_retry">Zkusit znovu</string>
+    <string name="timeline_change_provider">Změnit poskytovatele</string>
+    <string name="recent_pair_switch">Přepnout na %1$s → %2$s</string>
+    <string name="cart_section_pinned">Připnuté</string>
+    <string name="cart_section_others">Ostatní položky</string>
+    <string name="fallback_banner">%1$s není k dispozici • Používá se %2$s</string>
+    <string name="process_text_label">Převést měnu</string>
+    <string name="selection_open_app">Otevřít v aplikaci %1$s</string>
+    <string name="selection_copy">Kopírovat</string>
+    <string name="selection_no_amount">V „%1$s“ nebyla nalezena žádná částka.</string>
+    <string name="selection_no_rates">Jednou otevřete %1$s, aby se načetly směnné kurzy.</string>
+    <string name="selection_assumed_currency">Text neobsahuje měnu, proto byl přečten jako %1$s.</string>
+    <string name="shortcut_pair_long">Převést %1$s na %2$s</string>
+    <string name="widget_configure_title">Widget</string>
+    <string name="widget_follow_converter_title">Sledovat převodník</string>
+    <string name="widget_follow_converter_summary">Zobrazit dvojici naposledy použitou v aplikaci</string>
+    <string name="done">Hotovo</string>
+    <string name="cart_share_tip">Spropitné / daň (%1$s%%): %2$s %3$s</string>
+    <string name="cart_share_per_person">Na osobu (÷%1$d): %2$s %3$s</string>
+    <string name="cart_share_budget_left">Zbývá v rozpočtu: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Nad rozpočet: %1$s %2$s</string>
+    <string name="cart_menu_extras">Rozdělení, spropitné a rozpočet</string>
+    <string name="cart_tip_label">Spropitné / daň</string>
+    <string name="cart_tip_row">Spropitné / daň (%1$s%%)</string>
+    <string name="cart_split_label">Rozdělit mezi</string>
+    <string name="cart_split_decrease">Méně lidí</string>
+    <string name="cart_split_increase">Více lidí</string>
+    <string name="cart_per_person_row">Na osobu (÷%1$d)</string>
+    <string name="cart_budget_label">Rozpočet</string>
+    <string name="cart_budget_left_row">Zbývá v rozpočtu</string>
+    <string name="cart_over_budget_row">Nad rozpočet</string>
 </resources>

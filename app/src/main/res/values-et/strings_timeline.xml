@@ -9,4 +9,8 @@
     <string name="year">aasta</string>
     <string name="month">kuu</string>
     <string name="week">nädal</string>
+    <string name="timeline_five_years">5 aastat</string>
+    <string name="timeline_custom_range">Kohandatud vahemik</string>
+    <string name="timeline_share">Jaga graafikut</string>
+    <string name="timeline_no_rates">Nende kuupäevade kohta kursse pole</string>
 </resources>
