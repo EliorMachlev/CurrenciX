@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 ár</string>
     <string name="timeline_custom_range">Sérsniðið tímabil</string>
     <string name="timeline_share">Deila grafi</string>
+    <string name="timeline_no_rates">Engin gengi fyrir þessar dagsetningar</string>
 </resources>

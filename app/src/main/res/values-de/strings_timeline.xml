@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 Jahre</string>
     <string name="timeline_custom_range">Eigener Zeitraum</string>
     <string name="timeline_share">Diagramm teilen</string>
+    <string name="timeline_no_rates">Keine Kurse für diesen Zeitraum</string>
 </resources>

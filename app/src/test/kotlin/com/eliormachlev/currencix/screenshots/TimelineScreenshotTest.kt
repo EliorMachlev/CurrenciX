@@ -67,6 +67,17 @@ class TimelineScreenshotTest {
             )
         }
 
+    // A range with no rates (e.g. a custom weekend): a notice instead of the chart.
+    @Test fun timelineChartCardEmpty() =
+        shots.captureMatrix("timeline_chart_card_empty") {
+            TimelineChartCardPreview(
+                isRefreshing = false,
+                error = null,
+                provider = SAMPLE_PROVIDER_ATTRIBUTION,
+                empty = true,
+            )
+        }
+
     // The period controls with a custom range chosen: no preset selected,
     // the chip showing the dates.
     @Test fun timelinePeriodCustom() =
@@ -126,11 +137,13 @@ private fun TimelineChartCardPreview(
     isRefreshing: Boolean,
     error: String?,
     provider: CharSequence?,
+    empty: Boolean = false,
 ) {
     Column(modifier = Modifier.fillMaxWidth().height(CHART_PREVIEW_HEIGHT)) {
         TimelineChartCard(
             isRefreshing = isRefreshing,
             error = error,
+            empty = empty,
             provider = provider,
             onRetry = {},
             onChangeProvider = {},

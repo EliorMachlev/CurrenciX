@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 yıl</string>
     <string name="timeline_custom_range">Özel aralık</string>
     <string name="timeline_share">Grafiği paylaş</string>
+    <string name="timeline_no_rates">Bu tarihler için kur yok</string>
 </resources>

@@ -142,4 +142,5 @@
     <string name="timeline_five_years">5 jaroj</string>
     <string name="timeline_custom_range">Propra periodo</string>
     <string name="timeline_share">Kunhavigi diagramon</string>
+    <string name="timeline_no_rates">Neniuj kurzoj por ĉi tiuj datoj</string>
 </resources>

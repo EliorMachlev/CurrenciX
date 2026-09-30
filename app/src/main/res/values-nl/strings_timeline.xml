@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 jaar</string>
     <string name="timeline_custom_range">Aangepaste periode</string>
     <string name="timeline_share">Grafiek delen</string>
+    <string name="timeline_no_rates">Geen koersen voor deze datums</string>
 </resources>

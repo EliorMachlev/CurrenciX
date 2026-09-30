@@ -192,6 +192,31 @@ class TimelineViewModel(
             it?.rates
         }
 
+    /**
+     * True when the dates on screen hold no rates once loading is done — a
+     * custom range over a weekend, or before the provider's history. While
+     * older history is still downloading it stays false (the progress bar
+     * says what's happening).
+     */
+    fun isRangeEmpty(): LiveData<Boolean> =
+        MediatorLiveData(false).apply {
+            var timeline: Timeline? = null
+            var loading = false
+
+            fun update() {
+                value = !loading && timeline?.rates?.isEmpty() == true
+            }
+
+            addSource(dbLiveItems) {
+                timeline = it
+                update()
+            }
+            addSource(refreshInFlight) {
+                loading = it
+                update()
+            }
+        }
+
     fun getRateCurrent(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> =
         MediatorLiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>>().apply {
             var rates: Map.Entry<LocalDate, Rate?>? = null
@@ -201,7 +226,7 @@ class TimelineViewModel(
             }
 
             addSource(dbLiveItems) {
-                rates = it?.rates?.entries?.last()
+                rates = it?.rates?.entries?.lastOrNull()
                 update()
             }
 
@@ -221,7 +246,7 @@ class TimelineViewModel(
                     if (date != null) {
                         Pair(rates?.find { it.key == date }, decimalPlaces)
                     } else {
-                        Pair(rates?.first(), decimalPlaces)
+                        Pair(rates?.firstOrNull(), decimalPlaces)
                     }
             }
 
@@ -251,9 +276,9 @@ class TimelineViewModel(
                     if (scrubDate != null) {
                         rates?.find { it.key == scrubDate }?.value
                     } else {
-                        rates?.first()?.value
+                        rates?.firstOrNull()?.value
                     }
-                val current = rates?.last()?.value
+                val current = rates?.lastOrNull()?.value
 
                 val ratePast = past?.value
                 val rateCurrent = current?.value

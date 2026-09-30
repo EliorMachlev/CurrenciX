@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 anys</string>
     <string name="timeline_custom_range">Interval personalitzat</string>
     <string name="timeline_share">Comparteix el gràfic</string>
+    <string name="timeline_no_rates">No hi ha tipus per a aquestes dates</string>
 </resources>

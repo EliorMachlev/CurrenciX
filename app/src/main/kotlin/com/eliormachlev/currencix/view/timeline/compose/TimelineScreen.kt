@@ -39,6 +39,7 @@ internal fun TimelineScreen(
         ) {
             val isRefreshing by model.isRefreshing().observeAsState(initial = false)
             val error by model.getError().observeAsState()
+            val rangeEmpty by model.isRangeEmpty().observeAsState(initial = false)
             val provider by model.getProvider().observeAsState()
             val ratePast by model.getRatePast().observeAsState()
             val rateCurrent by model.getRateCurrent().observeAsState()
@@ -62,6 +63,7 @@ internal fun TimelineScreen(
                 TimelineChartCard(
                     isRefreshing = isRefreshing,
                     error = error,
+                    empty = rangeEmpty,
                     provider = provider,
                     onRetry = model::retry,
                     onChangeProvider = onChangeProvider,

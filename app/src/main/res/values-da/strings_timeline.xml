@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 år</string>
     <string name="timeline_custom_range">Tilpasset periode</string>
     <string name="timeline_share">Del diagram</string>
+    <string name="timeline_no_rates">Ingen kurser for disse datoer</string>
 </resources>

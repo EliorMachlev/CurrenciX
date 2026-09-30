@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 年</string>
     <string name="timeline_custom_range">自定义范围</string>
     <string name="timeline_share">分享图表</string>
+    <string name="timeline_no_rates">这些日期没有汇率</string>
 </resources>

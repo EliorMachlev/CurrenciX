@@ -15,5 +15,6 @@
     <string name="timeline_custom_range">Custom range</string>
     <string name="timeline_range" translatable="false">%1$s – %2$s</string>
     <string name="timeline_share">Share chart</string>
+    <string name="timeline_no_rates">No rates for these dates</string>
     <string name="timeline_share_caption" translatable="false">%1$s → %2$s · %3$s – %4$s · %5$s</string>
 </resources>

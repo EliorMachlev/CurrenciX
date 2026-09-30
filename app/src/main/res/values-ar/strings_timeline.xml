@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 سنوات</string>
     <string name="timeline_custom_range">نطاق مخصص</string>
     <string name="timeline_share">مشاركة الرسم البياني</string>
+    <string name="timeline_no_rates">لا توجد أسعار لهذه التواريخ</string>
 </resources>

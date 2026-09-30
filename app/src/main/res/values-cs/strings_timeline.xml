@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 let</string>
     <string name="timeline_custom_range">Vlastní rozsah</string>
     <string name="timeline_share">Sdílet graf</string>
+    <string name="timeline_no_rates">Pro tato data nejsou k dispozici žádné kurzy</string>
 </resources>

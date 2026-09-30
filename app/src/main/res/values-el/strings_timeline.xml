@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 έτη</string>
     <string name="timeline_custom_range">Προσαρμοσμένο εύρος</string>
     <string name="timeline_share">Κοινοποίηση γραφήματος</string>
+    <string name="timeline_no_rates">Δεν υπάρχουν ισοτιμίες για αυτές τις ημερομηνίες</string>
 </resources>

@@ -14,4 +14,5 @@
     <string name="timeline_five_years">5 വർഷം</string>
     <string name="timeline_custom_range">ഇഷ്ടാനുസൃത കാലയളവ്</string>
     <string name="timeline_share">ചാർട്ട് പങ്കിടുക</string>
+    <string name="timeline_no_rates">ഈ തീയതികൾക്ക് നിരക്കുകളൊന്നുമില്ല</string>
 </resources>

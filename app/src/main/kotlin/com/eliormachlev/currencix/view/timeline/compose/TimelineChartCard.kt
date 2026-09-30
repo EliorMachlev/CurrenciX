@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.view.timeline.compose
 
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +46,7 @@ private const val PROVIDER_ALPHA = 0.5f
 internal fun TimelineChartCard(
     isRefreshing: Boolean,
     error: String?,
+    empty: Boolean,
     provider: CharSequence?,
     onRetry: () -> Unit,
     onChangeProvider: () -> Unit,
@@ -65,17 +67,13 @@ internal fun TimelineChartCard(
             )
         }
 
-        if (error != null) {
-            TimelineErrorState(
-                message = error,
-                onRetry = onRetry,
-                onChangeProvider = onChangeProvider,
-                modifier = Modifier.fillMaxSize().padding(CHART_PADDING),
-            )
-        } else {
-            Box(modifier = Modifier.fillMaxSize().padding(CHART_PADDING)) {
-                chart()
-            }
+        val content = Modifier.fillMaxSize().padding(CHART_PADDING)
+        when {
+            error != null -> TimelineErrorState(error, onRetry, onChangeProvider, content)
+            // No rates in the chosen dates (a weekend, before the provider's
+            // history): say so rather than leave the previous line up.
+            empty -> TimelineNotice(R.drawable.ic_event, AnnotatedString(stringResource(R.string.timeline_no_rates)), content)
+            else -> Box(content) { chart() }
         }
 
         if (provider != null) {
@@ -107,26 +105,8 @@ private fun TimelineErrorState(
     onChangeProvider: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_sync_problem),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(ERROR_ICON_SIZE),
-        )
-        Spacer(Modifier.height(ERROR_GAP))
-        Text(
-            text = remember(message) { AnnotatedString.fromHtml(message) },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(ERROR_GAP))
-        Row(horizontalArrangement = Arrangement.spacedBy(ERROR_GAP)) {
+    TimelineNotice(R.drawable.ic_sync_problem, remember(message) { AnnotatedString.fromHtml(message) }, modifier) {
+        Row(horizontalArrangement = Arrangement.spacedBy(NOTICE_GAP)) {
             OutlinedButton(onClick = rememberHapticOnClick(onRetry)) { Text(stringResource(R.string.timeline_retry)) }
             FilledTonalButton(onClick = rememberHapticOnClick(onChangeProvider)) {
                 Text(stringResource(R.string.timeline_change_provider))
@@ -135,5 +115,38 @@ private fun TimelineErrorState(
     }
 }
 
-private val ERROR_ICON_SIZE = 40.dp
-private val ERROR_GAP = 12.dp
+// An icon and a line of text in place of the chart, with optional actions under them.
+@Composable
+private fun TimelineNotice(
+    @DrawableRes icon: Int,
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    actions: (@Composable () -> Unit)? = null,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(NOTICE_ICON_SIZE),
+        )
+        Spacer(Modifier.height(NOTICE_GAP))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+        if (actions != null) {
+            Spacer(Modifier.height(NOTICE_GAP))
+            actions()
+        }
+    }
+}
+
+private val NOTICE_ICON_SIZE = 40.dp
+private val NOTICE_GAP = 12.dp

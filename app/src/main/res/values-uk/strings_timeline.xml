@@ -12,4 +12,5 @@
     <string name="timeline_five_years">5 років</string>
     <string name="timeline_custom_range">Власний період</string>
     <string name="timeline_share">Поділитися графіком</string>
+    <string name="timeline_no_rates">Немає курсів за ці дати</string>
 </resources>
