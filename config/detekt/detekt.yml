@@ -51,13 +51,11 @@ complexity:
     active: true
     functionThreshold: 6
     constructorThreshold: 7
-    # @Composable functions routinely take many hoisted-state params; and
-    # data classes / value holders naturally list every field.
+    # Composables are held to the same limit as any function: past it, the
+    # state and the callbacks become types of their own. Data classes /
+    # value holders naturally list every field.
     ignoreDefaultParameters: true
     ignoreDataClasses: true
-    ignoreAnnotated:
-      - 'Composable'
-      - 'Preview'
   ComplexCondition:
     active: true
     threshold: 4

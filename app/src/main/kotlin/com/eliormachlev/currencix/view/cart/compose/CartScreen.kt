@@ -18,14 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 /**
@@ -38,37 +35,19 @@ import kotlinx.collections.immutable.persistentListOf
 fun CartScreen(
     viewModel: CartViewModel,
     keypad: CartKeypadController,
-    itemsSource: LiveData<ImmutableList<CartItem>>,
-    currencySource: LiveData<String>,
-    onAddItem: () -> Unit,
-    onNameCommit: (id: String, name: String) -> Unit,
-    onNamePending: (id: String, name: String) -> Unit,
-    onExpressionTap: (item: CartItem) -> Unit,
-    onTogglePin: (id: String) -> Unit,
-    onDelete: (id: String) -> Unit,
-    onReorder: CartDragCommit,
-    onReorderStart: () -> Unit,
-    onOpenFees: () -> Unit,
-    onEditExtras: () -> Unit,
+    sources: CartListSources,
+    actions: CartScreenActions,
     modifier: Modifier = Modifier,
 ) {
     AppTheme {
-        val items by itemsSource.observeAsState(initial = persistentListOf())
+        val items by sources.items.observeAsState(initial = persistentListOf())
         Box(modifier.fillMaxSize()) {
             Column(Modifier.fillMaxSize()) {
                 Box(Modifier.fillMaxWidth().weight(1f)) {
                     CartItemsList(
-                        itemsSource = itemsSource,
-                        currencySource = currencySource,
-                        activeItemIdSource = keypad.activeItemId,
-                        activeExpressionSource = keypad.liveExpression,
-                        onNameCommit = onNameCommit,
-                        onNamePending = onNamePending,
-                        onExpressionTap = onExpressionTap,
-                        onTogglePin = onTogglePin,
-                        onDelete = onDelete,
-                        onReorder = onReorder,
-                        onReorderStart = onReorderStart,
+                        sources = sources,
+                        actions = actions.items,
+                        reorder = actions.reorder,
                         onBackgroundTap = keypad::dismissKeyboards,
                     )
                     if (items.isEmpty()) {
@@ -78,11 +57,11 @@ fun CartScreen(
                         ) { CartEmptyHint() }
                     }
                 }
-                AddItemButton(onAddItem = onAddItem)
+                AddItemButton(onAddItem = actions.onAddItem)
                 CartFooter(
                     viewModel = viewModel,
-                    onOpenFees = onOpenFees,
-                    onEditExtras = onEditExtras,
+                    onOpenFees = actions.onOpenFees,
+                    onEditExtras = actions.onEditExtras,
                 )
             }
             CartKeypadOverlay(

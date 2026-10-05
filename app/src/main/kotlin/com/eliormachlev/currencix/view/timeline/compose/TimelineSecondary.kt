@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,23 +62,33 @@ private data class StatRowData(
     val date: String?,
 )
 
+/**
+ * The readouts under the chart, as the view model publishes them: the rate
+ * at the start of the range (or at the scrub) and now, the change between
+ * them, and the range's max / average / median / min. Each carries the
+ * number of decimals to show.
+ */
+@Immutable
+data class TimelineStats(
+    val ratePast: Pair<Map.Entry<LocalDate, Rate?>?, Int>? = null,
+    val rateCurrent: Pair<Map.Entry<LocalDate, Rate?>?, Int>? = null,
+    val diffPercent: BigDecimal? = null,
+    val ratesMax: Triple<Rate?, LocalDate?, Int>? = null,
+    val ratesAvg: Pair<Rate?, Int>? = null,
+    val ratesMed: Pair<Rate?, Int>? = null,
+    val ratesMin: Triple<Rate?, LocalDate?, Int>? = null,
+)
+
 @Composable
 internal fun TimelineSecondary(
-    ratePast: Pair<Map.Entry<LocalDate, Rate?>?, Int>?,
-    rateCurrent: Pair<Map.Entry<LocalDate, Rate?>?, Int>?,
-    diffPercent: BigDecimal?,
-    ratesMax: Triple<Rate?, LocalDate?, Int>?,
-    ratesAvg: Pair<Rate?, Int>?,
-    ratesMed: Pair<Rate?, Int>?,
-    ratesMin: Triple<Rate?, LocalDate?, Int>?,
+    stats: TimelineStats,
     formatter: DateTimeFormatter,
     period: PeriodControl,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val secondaryColor = MaterialTheme.colorScheme.onSurfaceVariant
-
-    val pastRate = ratePast?.first?.value
+    val pastRate = stats.ratePast?.first?.value
 
     val maxLabel = stringResource(R.string.rate_max)
     val avgLabel = stringResource(R.string.rate_average)
@@ -87,10 +98,10 @@ internal fun TimelineSecondary(
     val stat = StatFormat(context, formatter)
     val rows =
         listOf(
-            stat.row(maxLabel, ratesMax?.first, ratesMax?.second, ratesMax?.third),
-            stat.row(avgLabel, ratesAvg?.first, null, ratesAvg?.second),
-            stat.row(medLabel, ratesMed?.first, null, ratesMed?.second),
-            stat.row(minLabel, ratesMin?.first, ratesMin?.second, ratesMin?.third),
+            stat.row(maxLabel, stats.ratesMax?.first, stats.ratesMax?.second, stats.ratesMax?.third),
+            stat.row(avgLabel, stats.ratesAvg?.first, null, stats.ratesAvg?.second),
+            stat.row(medLabel, stats.ratesMed?.first, null, stats.ratesMed?.second),
+            stat.row(minLabel, stats.ratesMin?.first, stats.ratesMin?.second, stats.ratesMin?.third),
         )
 
     Column(
@@ -102,22 +113,20 @@ internal fun TimelineSecondary(
         // Past / diff-% / current row
         Box(modifier = Modifier.fillMaxWidth()) {
             DatedRateColumn(
-                dated = ratePast,
+                dated = stats.ratePast,
                 horizontalAlignment = Alignment.Start,
                 formatter = formatter,
                 secondaryColor = secondaryColor,
                 modifier = Modifier.align(Alignment.CenterStart),
             )
             DatedRateColumn(
-                dated = rateCurrent,
+                dated = stats.rateCurrent,
                 horizontalAlignment = Alignment.End,
                 formatter = formatter,
                 secondaryColor = secondaryColor,
                 modifier = Modifier.align(Alignment.CenterEnd),
             )
-            if (diffPercent != null) {
-                PercentChange(diffPercent, Modifier.align(Alignment.Center))
-            }
+            stats.diffPercent?.let { PercentChange(it, Modifier.align(Alignment.Center)) }
         }
 
         // Divider — hidden until there's a past rate, mirroring the pre-Compose behaviour.

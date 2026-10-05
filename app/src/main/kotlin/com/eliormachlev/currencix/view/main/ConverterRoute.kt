@@ -32,9 +32,11 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
+import com.eliormachlev.currencix.view.main.compose.ConverterBody
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
+import com.eliormachlev.currencix.view.main.compose.DrawerControl
 import com.eliormachlev.currencix.view.main.compose.HistoricalDatePickerSheet
 import com.eliormachlev.currencix.view.main.compose.MainDisplay
 import com.eliormachlev.currencix.view.main.compose.MainDisplayCallbacks
@@ -95,7 +97,8 @@ internal fun ConverterRoute(
 
     ProvideOnboardingAnchors {
         MainScreen(
-            drawerState = drawerState,
+            drawer = DrawerControl(drawerState, onDrawerItem),
+            body = ConverterBody(isUpdating, viewModel::forceUpdateExchangeRate, foldingFeature, keypadHeights(isExpandedKeypad)),
             topBar = {
                 ConverterTopBar(
                     drawerState = drawerState,
@@ -105,12 +108,6 @@ internal fun ConverterRoute(
                     onFirstFrame = host.onWordmarkFirstFrame,
                 )
             },
-            isRefreshing = isUpdating,
-            onRefresh = viewModel::forceUpdateExchangeRate,
-            isRefreshDrawerEnabled = !isUpdating,
-            onDrawerItem = onDrawerItem,
-            foldingFeature = foldingFeature,
-            keypadHeights = keypadHeights(isExpandedKeypad),
             displayContent = {
                 ConverterDisplay(
                     host = host,
@@ -279,7 +276,7 @@ private fun ConverterDisplay(
     val context = LocalContext.current
     val banner by host.status.banner
     val database = remember(context) { Database(context) }
-    val pattern by database.getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
+    val pattern by database.display.getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
     MainDisplay(
         viewModel = host.viewModel,
         callbacks =
@@ -306,18 +303,18 @@ private fun ConverterRecentPairs(
 ) {
     val base = viewModel.getBaseCurrency().observeAsState().value
     val dest = viewModel.getDestinationCurrency().observeAsState().value
-    val recents by database.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
+    val recents by database.lastState.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
     val current = if (base != null && dest != null && base != dest) CurrencyPair(base, dest) else null
     LaunchedEffect(current) {
         current ?: return@LaunchedEffect
         delay(RECENT_PAIR_SETTLE_MILLIS)
-        database.addRecentPair(current)
+        database.lastState.addRecentPair(current)
     }
     val others = remember(recents, current) { recents.filterNot { it.isSameCurrencies(current) }.toImmutableList() }
     RecentPairsRow(
         pairs = others,
         onPick = viewModel::setCurrencyPair,
-        onRemove = database::removeRecentPair,
+        onRemove = database.lastState::removeRecentPair,
         contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),
         // The bottom gap keeps the chips clear of the keypad's top row.
         modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN, bottom = RECENT_PAIRS_BOTTOM_GAP),
@@ -329,20 +326,23 @@ private fun ConverterRecentPairs(
 @Composable
 private fun ConverterKeypad(viewModel: MainViewModel) {
     val isExpanded by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
-    val nextParen by viewModel.nextParen().observeAsState('(')
+    val input = viewModel.input
+    val nextParen by input.nextParen.observeAsState('(')
     MainKeypad(
         isExpandedKeypad = isExpanded,
         nextParen = nextParen,
         callbacks =
-            MainKeypadCallbacks(
-                onDigit = viewModel::addNumber,
-                onDecimal = viewModel::addDecimal,
-                onOperator = { op -> op.apply(viewModel) },
-                onPercent = viewModel::addPercent,
-                onParens = viewModel::applyNextParen,
-                onDelete = viewModel::delete,
-                onDeleteLong = viewModel::clear,
-            ),
+            remember(input) {
+                MainKeypadCallbacks(
+                    onDigit = input::addNumber,
+                    onDecimal = input::addDecimal,
+                    onOperator = { op -> input.addOperator(op.display) },
+                    onPercent = input::addPercent,
+                    onParens = input::applyNextParen,
+                    onDelete = input::delete,
+                    onDeleteLong = input::clear,
+                )
+            },
     )
 }
 
@@ -353,8 +353,8 @@ private fun ConverterKeypad(viewModel: MainViewModel) {
 private fun OnboardingSpotlightHost() {
     val context = LocalContext.current
     val db = remember(context) { Database(context) }
-    val hasSeen by db.getHasSeenOnboardingFlow().collectAsStateWithLifecycle(
-        initialValue = db.getHasSeenOnboardingBlocking(),
+    val hasSeen by db.display.getHasSeenOnboardingFlow().collectAsStateWithLifecycle(
+        initialValue = db.display.getHasSeenOnboardingBlocking(),
     )
     if (hasSeen) return
     val steps =
@@ -374,7 +374,7 @@ private fun OnboardingSpotlightHost() {
                 title = stringResource(R.string.onboarding_autorefresh_title),
                 body = stringResource(R.string.onboarding_autorefresh_body),
                 actionLabel = stringResource(R.string.onboarding_autorefresh_enable),
-                onAction = { db.setAutoRefreshEnabled(true) },
+                onAction = { db.providers.setAutoRefreshEnabled(true) },
             ),
         )
     Spotlight(
@@ -382,7 +382,7 @@ private fun OnboardingSpotlightHost() {
         skipLabel = stringResource(R.string.onboarding_skip),
         nextLabel = stringResource(R.string.onboarding_next),
         finishLabel = stringResource(R.string.onboarding_finish),
-        onDismiss = { db.setHasSeenOnboarding(true) },
+        onDismiss = { db.display.setHasSeenOnboarding(true) },
     )
 }
 

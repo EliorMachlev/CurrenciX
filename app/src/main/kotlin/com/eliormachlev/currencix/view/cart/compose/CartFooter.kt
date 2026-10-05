@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view.cart.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -41,9 +41,9 @@ import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
-import com.eliormachlev.currencix.view.compose.CurrencyPill
+import com.eliormachlev.currencix.view.compose.CurrencyPairRow
+import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
-import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
 import com.eliormachlev.currencix.viewmodel.cart.perPerson
@@ -55,10 +55,23 @@ private val FOOTER_PADDING: Dp = 16.dp
 private val FOOTER_RADIUS: Dp = 16.dp
 private val ROW_TOP_GAP: Dp = 16.dp
 private val TOTAL_TOP_GAP: Dp = 8.dp
-private val CURRENCY_ROW_GAP: Dp = 8.dp
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val SWAP_ICON_SIZE: Dp = 22.dp
 private val EXTRA_ROW_GAP: Dp = 4.dp
+
+/** The numbers the footer shows. */
+@Immutable
+data class CartTotals(
+    val baseCurrency: Currency?,
+    val destCurrency: Currency?,
+    val subtotal: BigDecimal?,
+    val convertedSubtotal: BigDecimal?,
+    val total: BigDecimal?,
+    // Fees and rates multiplied out; 1 when no fee applies.
+    val feeStack: BigDecimal,
+    val extras: CartExtras = CartExtras(),
+    val tip: BigDecimal? = null,
+)
 
 /**
  * Cart footer — currency-pair header (chip / swap / chip), subtotal in
@@ -73,6 +86,35 @@ fun CartFooter(
     onOpenFees: () -> Unit,
     onEditExtras: () -> Unit,
 ) {
+    val rates by viewModel.getExchangeRates().observeAsState()
+    val totals = observeTotals(viewModel, rates)
+    var pickerSide by remember { mutableStateOf<CartPickSide?>(null) }
+    val pairActions =
+        remember(viewModel, onOpenFees) {
+            PairRowActions(
+                onFromClick = { pickerSide = CartPickSide.FROM },
+                onToClick = { pickerSide = CartPickSide.TO },
+                onSwap = viewModel::swapCurrencies,
+                onSwapLongPress = onOpenFees,
+            )
+        }
+    CartFooterCard(totals = totals, pair = pairActions, onEditExtras = onEditExtras)
+    pickerSide?.let { side ->
+        CartCurrencyPickerHost(
+            side = side,
+            totals = totals,
+            rates = rates,
+            onPicked = if (side == CartPickSide.FROM) viewModel::setBaseCurrency else viewModel::setDestinationCurrency,
+            onDismiss = { pickerSide = null },
+        )
+    }
+}
+
+@Composable
+private fun observeTotals(
+    viewModel: CartViewModel,
+    rates: ExchangeRates?,
+): CartTotals {
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
     val destCurrency by viewModel.getDestinationCurrency().observeAsState()
     val subtotal by viewModel.getSubtotal().observeAsState()
@@ -84,61 +126,20 @@ fun CartFooter(
     // from both — observing them here keeps the fee-annotation rows in sync
     // when either source emits.
     val fees by viewModel.getFees().observeAsState()
-    val rates by viewModel.getExchangeRates().observeAsState()
     val feeStack = remember(fees, rates, baseCurrency, destCurrency) { viewModel.currentFeeStack() }
-
-    var pickerSide by remember { mutableStateOf<CartPickSide?>(null) }
-    CartFooterCard(
-        baseCurrency = baseCurrency,
-        destCurrency = destCurrency,
-        subtotal = subtotal,
-        convertedSubtotal = convertedSubtotal,
-        total = total,
-        feeStack = feeStack,
-        extras = extras ?: CartExtras(),
-        tip = tip,
-        onOpenFees = onOpenFees,
-        onEditExtras = onEditExtras,
-        onBaseClick = { pickerSide = CartPickSide.FROM },
-        onDestClick = { pickerSide = CartPickSide.TO },
-        onSwapClick = viewModel::swapCurrencies,
-    )
-    pickerSide?.let { side ->
-        CartCurrencyPickerHost(
-            side = side,
-            baseCurrency = baseCurrency,
-            destCurrency = destCurrency,
-            subtotal = subtotal,
-            convertedSubtotal = convertedSubtotal,
-            rates = rates,
-            onBasePicked = viewModel::setBaseCurrency,
-            onDestPicked = viewModel::setDestinationCurrency,
-            onDismiss = { pickerSide = null },
-        )
-    }
+    return CartTotals(baseCurrency, destCurrency, subtotal, convertedSubtotal, total, feeStack, extras ?: CartExtras(), tip)
 }
 
 /**
  * Static presentation of the footer — currency row + subtotal + fee delta +
- * total. Extracted from [CartFooter] so the parent can stay under the
- * LongMethod threshold while the picker sheet + observed state stay hoisted
- * where they belong (with the ViewModel).
+ * total — apart from [CartFooter], which holds the observed state and the
+ * picker sheet.
  */
 @Composable
 internal fun CartFooterCard(
-    baseCurrency: Currency?,
-    destCurrency: Currency?,
-    subtotal: BigDecimal?,
-    convertedSubtotal: BigDecimal?,
-    total: BigDecimal?,
-    feeStack: BigDecimal,
-    extras: CartExtras,
-    tip: BigDecimal?,
-    onOpenFees: () -> Unit,
+    totals: CartTotals,
+    pair: PairRowActions,
     onEditExtras: () -> Unit,
-    onBaseClick: () -> Unit,
-    onDestClick: () -> Unit,
-    onSwapClick: () -> Unit,
 ) {
     val context = LocalContext.current
     Column(
@@ -150,40 +151,35 @@ internal fun CartFooterCard(
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(FOOTER_PADDING),
     ) {
-        CurrencyRow(
-            baseCurrency = baseCurrency,
-            destCurrency = destCurrency,
-            onBaseClick = onBaseClick,
-            onDestClick = onDestClick,
-            onSwapClick = onSwapClick,
-            onSwapLongPress = onOpenFees,
-        )
+        CurrencyPairRow(from = totals.baseCurrency, to = totals.destCurrency, actions = pair) {
+            SwapFab(onClick = pair.onSwap, onLongClick = pair.onSwapLongPress)
+        }
         AmountRow(
             topGap = ROW_TOP_GAP,
             labelRes = R.string.cart_subtotal_label,
-            amount = context.formatCartAmount(subtotal, baseCurrency),
+            amount = context.formatCartAmount(totals.subtotal, totals.baseCurrency),
             style = MaterialTheme.typography.titleSmall,
         )
-        extras.tipPercent?.let { percent ->
+        totals.extras.tipPercent?.let { percent ->
             ExtraRow(
                 label = stringResource(R.string.cart_tip_row, percent.toPlainString()),
-                amount = "+" + context.formatCartAmount(tip, baseCurrency),
+                amount = "+" + context.formatCartAmount(totals.tip, totals.baseCurrency),
                 onClick = onEditExtras,
             )
         }
         FeeAnnotationRow(
             prefixRes = R.string.fee_true_cost_prefix,
-            feeStack = feeStack,
-            base = convertedSubtotal,
-            currency = destCurrency,
+            feeStack = totals.feeStack,
+            base = totals.convertedSubtotal,
+            currency = totals.destCurrency,
         )
         AmountRow(
             topGap = TOTAL_TOP_GAP,
             labelRes = R.string.cart_total_label,
-            amount = context.formatCartAmount(total, destCurrency),
+            amount = context.formatCartAmount(totals.total, totals.destCurrency),
             style = MaterialTheme.typography.titleLarge,
         )
-        ExtrasBelowTotal(extras, total ?: BigDecimal.ZERO, destCurrency, onEditExtras)
+        ExtrasBelowTotal(totals.extras, totals.total ?: BigDecimal.ZERO, totals.destCurrency, onEditExtras)
     }
 }
 
@@ -239,35 +235,25 @@ private fun ExtraRow(
 private enum class CartPickSide { FROM, TO }
 
 /**
- * Resolves the reference rate / sum / disabled currency for the picker sheet
- * based on which side ([side]) the user tapped. Extracted so [CartFooter]
- * itself stays under the LongMethod threshold and the compute-then-render
- * block reads on its own — mirrors `CurrencyPickerHost` on the main hero.
+ * The picker sheet for the side the user tapped: it prices each currency
+ * against the other side's amount, and greys that side's currency out.
  */
 @Composable
 private fun CartCurrencyPickerHost(
     side: CartPickSide,
-    baseCurrency: Currency?,
-    destCurrency: Currency?,
-    subtotal: BigDecimal?,
-    convertedSubtotal: BigDecimal?,
+    totals: CartTotals,
     rates: ExchangeRates?,
-    onBasePicked: (Currency) -> Unit,
-    onDestPicked: (Currency) -> Unit,
+    onPicked: (Currency) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val disabled = if (side == CartPickSide.FROM) destCurrency else baseCurrency
-    val refCurrency = if (side == CartPickSide.FROM) destCurrency else baseCurrency
-    val refRate =
-        refCurrency?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } }
-    val refSum = (if (side == CartPickSide.FROM) convertedSubtotal else subtotal) ?: BigDecimal.ONE
+    val picksFrom = side == CartPickSide.FROM
+    val other = if (picksFrom) totals.destCurrency else totals.baseCurrency
+    val otherSum = if (picksFrom) totals.convertedSubtotal else totals.subtotal
     CurrencyPickerSheet(
-        currentRate = refRate,
-        currentSum = refSum,
-        disabledCurrency = disabled,
-        onRateClicked = { rate ->
-            if (side == CartPickSide.FROM) onBasePicked(rate.currency) else onDestPicked(rate.currency)
-        },
+        currentRate = other?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } },
+        currentSum = otherSum ?: BigDecimal.ONE,
+        disabledCurrency = other,
+        onRateClicked = { rate -> onPicked(rate.currency) },
         onDismiss = onDismiss,
     )
 }
@@ -325,36 +311,6 @@ private fun FeeAnnotationRow(
             text = valueText,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.error,
-        )
-    }
-}
-
-@Composable
-private fun CurrencyRow(
-    baseCurrency: Currency?,
-    destCurrency: Currency?,
-    onBaseClick: () -> Unit,
-    onDestClick: () -> Unit,
-    onSwapClick: () -> Unit,
-    onSwapLongPress: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(CURRENCY_ROW_GAP),
-    ) {
-        CurrencyPill(
-            currency = baseCurrency,
-            side = PillSide.FROM,
-            onClick = onBaseClick,
-            modifier = Modifier.weight(1f),
-        )
-        SwapFab(onClick = onSwapClick, onLongClick = onSwapLongPress)
-        CurrencyPill(
-            currency = destCurrency,
-            side = PillSide.TO,
-            onClick = onDestClick,
-            modifier = Modifier.weight(1f),
         )
     }
 }

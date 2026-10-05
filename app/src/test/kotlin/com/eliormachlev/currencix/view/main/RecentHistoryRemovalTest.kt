@@ -18,7 +18,9 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.registerActivityRule
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
+import com.eliormachlev.currencix.view.main.spinner.pickerActions
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -88,17 +90,13 @@ class RecentHistoryRemovalTest {
     @Composable
     private fun Picker() =
         SearchableCurrencyPicker(
-            rates = persistentListOf(Rate(Currency.USD, BigDecimal.ONE), Rate(Currency.ILS, BigDecimal("3.7"))),
-            stars = persistentListOf(),
-            filterStarred = false,
-            conversion = null,
-            disabledCurrency = null,
-            onRateClicked = {},
-            onStarClicked = {},
-            onToggleStarredFilter = {},
-            onStarredOrderChanged = {},
-            recents = persistentListOf(Currency.ILS),
-            onRemoveRecent = { removedCurrencies += it },
+            content =
+                CurrencyPickerContent(
+                    rates = persistentListOf(Rate(Currency.USD, BigDecimal.ONE), Rate(Currency.ILS, BigDecimal("3.7"))),
+                    stars = persistentListOf(),
+                    recents = persistentListOf(Currency.ILS),
+                ),
+            actions = pickerActions(onRemoveRecent = { removedCurrencies += it }),
         )
 
     private fun show(content: @Composable () -> Unit) {

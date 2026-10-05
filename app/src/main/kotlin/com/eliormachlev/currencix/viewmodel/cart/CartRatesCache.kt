@@ -23,20 +23,20 @@ import java.math.BigDecimal
 class CartRatesCache(
     db: Database,
 ) {
-    val fees: LiveData<ImmutableList<Fee>> = db.getFees()
-    val rates: LiveData<ExchangeRates?> = db.getExchangeRates()
+    val fees: LiveData<ImmutableList<Fee>> = db.fees.getFees()
+    val rates: LiveData<ExchangeRates?> = db.rates.getExchangeRates()
 
     var lastFees: List<Fee> = emptyList()
         private set
     var lastRates: ExchangeRates? = null
         private set
-    var lastActiveExchangeId: String? = db.getActiveExchangeIdBlocking()
+    var lastActiveExchangeId: String? = db.fees.getActiveExchangeIdBlocking()
         private set
-    var lastActiveBankId: String? = db.getActiveBankIdBlocking()
+    var lastActiveBankId: String? = db.fees.getActiveBankIdBlocking()
         private set
 
-    private val activeExchange: LiveData<String?> = db.getActiveExchangeId()
-    private val activeBank: LiveData<String?> = db.getActiveBankId()
+    private val activeExchange: LiveData<String?> = db.fees.getActiveExchangeId()
+    private val activeBank: LiveData<String?> = db.fees.getActiveBankId()
 
     private val feesObserver = Observer<ImmutableList<Fee>> { lastFees = it }
     private val ratesObserver = Observer<ExchangeRates?> { lastRates = it }

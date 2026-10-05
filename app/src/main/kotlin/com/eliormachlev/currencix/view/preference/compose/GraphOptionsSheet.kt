@@ -46,32 +46,32 @@ fun GraphOptionsSheet(
     ) {
         GraphOptionRow(
             labelRes = R.string.graph_grid_title,
-            initial = db.isChartGridEnabledBlocking(),
-            onChange = db::setChartGridEnabled,
+            initial = db.chart.isChartGridEnabledBlocking(),
+            onChange = db.chart::setChartGridEnabled,
             isLast = false,
         )
         GraphOptionRow(
             labelRes = R.string.graph_x_axis_title,
-            initial = db.isChartXAxisLabelEnabledBlocking(),
-            onChange = db::setChartXAxisLabelEnabled,
+            initial = db.chart.isChartXAxisLabelEnabledBlocking(),
+            onChange = db.chart::setChartXAxisLabelEnabled,
             isLast = false,
         )
         GraphOptionRow(
             labelRes = R.string.graph_y_axis_title,
-            initial = db.isChartYAxisLabelEnabledBlocking(),
-            onChange = db::setChartYAxisLabelEnabled,
+            initial = db.chart.isChartYAxisLabelEnabledBlocking(),
+            onChange = db.chart::setChartYAxisLabelEnabled,
             isLast = false,
         )
         GraphOptionRow(
             labelRes = R.string.graph_highlight_extremes_title,
-            initial = db.isChartHighlightExtremesEnabledBlocking(),
-            onChange = db::setChartHighlightExtremesEnabled,
+            initial = db.chart.isChartHighlightExtremesEnabledBlocking(),
+            onChange = db.chart::setChartHighlightExtremesEnabled,
             isLast = false,
         )
         GraphOptionRow(
             labelRes = R.string.graph_highlight_period_change_title,
-            initial = db.isChartHighlightPeriodChangeEnabledBlocking(),
-            onChange = db::setChartHighlightPeriodChangeEnabled,
+            initial = db.chart.isChartHighlightPeriodChangeEnabledBlocking(),
+            onChange = db.chart::setChartHighlightPeriodChangeEnabled,
             isLast = true,
         )
         Spacer(Modifier.height(SHEET_BOTTOM_SPACE))

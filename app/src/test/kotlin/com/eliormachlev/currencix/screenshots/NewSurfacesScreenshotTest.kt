@@ -12,10 +12,17 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartFooterCard
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
+import com.eliormachlev.currencix.view.cart.compose.CartTotals
+import com.eliormachlev.currencix.view.cart.compose.NO_PAIR_ACTIONS
+import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
+import com.eliormachlev.currencix.view.cart.compose.cartItemActions
+import com.eliormachlev.currencix.view.cart.compose.cartSources
 import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
+import com.eliormachlev.currencix.view.main.spinner.pickerActions
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
@@ -42,33 +49,23 @@ class NewSurfacesScreenshotTest {
     @Test fun currencyPickerRecents() =
         shots.captureMatrix("currency_picker_recents") {
             SearchableCurrencyPicker(
-                rates = RATES,
-                stars = persistentListOf(Currency.EUR),
-                filterStarred = false,
-                conversion = null,
-                disabledCurrency = Currency.USD,
-                onRateClicked = {},
-                onStarClicked = {},
-                onToggleStarredFilter = {},
-                onStarredOrderChanged = {},
-                recents = persistentListOf(Currency.ILS, Currency.GBP, Currency.JPY),
+                content =
+                    CurrencyPickerContent(
+                        rates = RATES,
+                        stars = persistentListOf(Currency.EUR),
+                        recents = persistentListOf(Currency.ILS, Currency.GBP, Currency.JPY),
+                        disabledCurrency = Currency.USD,
+                    ),
+                actions = pickerActions(),
             )
         }
 
     @Test fun cartSections() =
         shots.captureMatrix("cart_sections") {
             CartItemsList(
-                itemsSource = MutableLiveData(CART_ITEMS),
-                currencySource = MutableLiveData("USD"),
-                activeItemIdSource = MutableLiveData(null),
-                activeExpressionSource = MutableLiveData(""),
-                onNameCommit = { _, _ -> },
-                onNamePending = { _, _ -> },
-                onExpressionTap = {},
-                onTogglePin = {},
-                onDelete = {},
-                onReorder = { _, _ -> },
-                onReorderStart = {},
+                sources = cartSources(MutableLiveData(CART_ITEMS)),
+                actions = cartItemActions(),
+                reorder = NO_REORDER,
                 onBackgroundTap = {},
             )
         }
@@ -76,19 +73,19 @@ class NewSurfacesScreenshotTest {
     @Test fun cartFooterExtras() =
         shots.captureMatrix("cart_footer_extras") {
             CartFooterCard(
-                baseCurrency = Currency.USD,
-                destCurrency = Currency.ILS,
-                subtotal = BigDecimal("100"),
-                convertedSubtotal = BigDecimal("419.75"),
-                total = BigDecimal("427.15"),
-                feeStack = BigDecimal("1.0176"),
-                extras = CartExtras(tipPercent = BigDecimal("15"), splitWays = 3, budget = BigDecimal("400")),
-                tip = BigDecimal("15"),
-                onOpenFees = {},
+                totals =
+                    CartTotals(
+                        baseCurrency = Currency.USD,
+                        destCurrency = Currency.ILS,
+                        subtotal = BigDecimal("100"),
+                        convertedSubtotal = BigDecimal("419.75"),
+                        total = BigDecimal("427.15"),
+                        feeStack = BigDecimal("1.0176"),
+                        extras = CartExtras(tipPercent = BigDecimal("15"), splitWays = 3, budget = BigDecimal("400")),
+                        tip = BigDecimal("15"),
+                    ),
+                pair = NO_PAIR_ACTIONS,
                 onEditExtras = {},
-                onBaseClick = {},
-                onDestClick = {},
-                onSwapClick = {},
             )
         }
 

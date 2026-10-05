@@ -46,22 +46,19 @@ fun QuickConversionsSheet(
         remember(from, to, fees) {
             if (from != null && to != null) viewModel.feeStackFor(from, to) else BigDecimal.ONE
         }
-    val rows: List<QuickConversionsRow> =
-        if (from != null && to != null && rates != null) {
-            buildQuickConversionRows(
-                QuickConversionRowInputs(
-                    ctx = ctx,
-                    from = from!!,
-                    to = to!!,
-                    rates = rates!!,
-                    feeStack = feeStack,
-                    costWithFeePrefix = costWithFeePrefix,
-                ),
-            )
-        } else {
-            emptyList()
+    val table =
+        remember(from, to, rates, feeStack, costWithFeePrefix) {
+            val pairFrom = from
+            val pairTo = to
+            val current = rates
+            val rows =
+                if (pairFrom != null && pairTo != null && current != null) {
+                    buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, costWithFeePrefix))
+                } else {
+                    emptyList()
+                }
+            QuickConversionsTable(pairFrom, pairTo, rows, quickConversionsFeeInfoText(ctx, feeStack))
         }
-    val feeInfoText = quickConversionsFeeInfoText(ctx, feeStack)
 
     LedgerBottomSheet(
         title = stringResource(id = R.string.quick_conversions_title),
@@ -69,10 +66,7 @@ fun QuickConversionsSheet(
         scrollableBody = false,
     ) {
         QuickConversionsContent(
-            from = from,
-            to = to,
-            feeInfoText = feeInfoText,
-            rows = rows,
+            table = table,
             emptyText = emptyText,
             onSwap = onSwap,
             onSwapLongPress = onOpenFees,

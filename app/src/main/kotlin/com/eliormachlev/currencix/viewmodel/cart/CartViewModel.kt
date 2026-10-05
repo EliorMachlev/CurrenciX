@@ -46,14 +46,14 @@ class CartViewModel(
     /** Items on the working cart. Empty list when the cart is unset. */
     fun currentCartItems(): List<CartItem> = current.value?.items.orEmpty()
 
-    fun getSavedCarts(): LiveData<List<SavedCart>> = db.getSavedCarts()
+    fun getSavedCarts(): LiveData<List<SavedCart>> = db.carts.getSavedCarts()
 
     /**
      * Synchronous snapshot for one-shot menu flows (Load / Manage) — the
      * LiveData accessor is a fresh instance per call and never gets observed
      * from those flows, so its `.value` is always null.
      */
-    fun getSavedCartsSnapshot(): List<SavedCart> = db.getSavedCartsBlocking()
+    fun getSavedCartsSnapshot(): List<SavedCart> = db.carts.getSavedCartsBlocking()
 
     fun getFees(): LiveData<ImmutableList<Fee>> = ratesCache.fees
 
@@ -63,10 +63,10 @@ class CartViewModel(
      * Same source of truth as the main screen so the cart's slide-up keypad
      * shows the same layout the user picked.
      */
-    val isExpandedKeypadEnabled: LiveData<Boolean> = db.getExpandedKeypadEnabled()
+    val isExpandedKeypadEnabled: LiveData<Boolean> = db.display.getExpandedKeypadEnabled()
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
-    val isHapticFeedbackEnabled: LiveData<Boolean> = db.isHapticFeedbackEnabled()
+    val isHapticFeedbackEnabled: LiveData<Boolean> = db.display.isHapticFeedbackEnabled()
 
     // Memoize the derived LiveData instances. Returning a fresh instance from
     // each getter left synchronous `.value` reads at null (the caller's instance
@@ -237,7 +237,7 @@ class CartViewModel(
                 destinationCurrency = dest.iso4217Alpha(),
             )
         current.value = next
-        db.setCurrentCart(next)
+        db.carts.setCurrentCart(next)
     }
 
     /**
@@ -258,7 +258,7 @@ class CartViewModel(
         val next = cur.copy(currency = base.iso4217Alpha(), destinationCurrency = dest.iso4217Alpha())
         if (next == cur) return
         current.value = next
-        db.setCurrentCart(next)
+        db.carts.setCurrentCart(next)
     }
 
     /**
@@ -287,7 +287,7 @@ class CartViewModel(
                 name = name,
                 createdAt = System.currentTimeMillis(),
             )
-        db.saveCart(saved)
+        db.carts.saveCart(saved)
         // Keep the current cart in sync with what was just persisted so a
         // subsequent "Save as" reuses the same id (overwrite semantics).
         setCurrent(saved)
@@ -302,7 +302,7 @@ class CartViewModel(
         val cart = current.value ?: return false
         if (cart.id.isEmpty()) return false
         val saved = cart.copy(createdAt = System.currentTimeMillis())
-        db.saveCart(saved)
+        db.carts.saveCart(saved)
         setCurrent(saved)
         return true
     }
@@ -315,7 +315,7 @@ class CartViewModel(
         setCurrent(saved)
     }
 
-    fun deleteSaved(id: String) = db.deleteSavedCart(id)
+    fun deleteSaved(id: String) = db.carts.deleteSavedCart(id)
 
     /**
      * Compare the working cart against its persisted counterpart (matched by
@@ -339,14 +339,14 @@ class CartViewModel(
         name: String,
     ) {
         val existing = findSaved(id) ?: return
-        db.saveCart(existing.copy(name = name))
+        db.carts.saveCart(existing.copy(name = name))
         // Keep the current cart's displayed name in sync if it's the same one.
         if (current.value?.id == id) {
             setCurrent((current.value ?: return).copy(name = name))
         }
     }
 
-    private fun findSaved(id: String): SavedCart? = db.getSavedCartsBlocking().firstOrNull { it.id == id }
+    private fun findSaved(id: String): SavedCart? = db.carts.getSavedCartsBlocking().firstOrNull { it.id == id }
 
     /**
      * Replace the current cart wholesale (used by "Load" and by the file
@@ -354,7 +354,7 @@ class CartViewModel(
      */
     fun setCurrent(cart: SavedCart) {
         current.value = cart
-        db.setCurrentCart(cart)
+        db.carts.setCurrentCart(cart)
     }
 
     /**
@@ -410,7 +410,7 @@ class CartViewModel(
         // emission and disk write.
         if (next === prev) return
         current.value = next
-        db.setCurrentCart(next)
+        db.carts.setCurrentCart(next)
     }
 
     private inline fun mutateItem(
@@ -439,10 +439,10 @@ class CartViewModel(
     private fun loadCurrentOrEmpty(): SavedCart {
         if (!coldStartConsumed) {
             coldStartConsumed = true
-            db.setCurrentCart(null)
+            db.carts.setCurrentCart(null)
             return emptyCart()
         }
-        return db.getCurrentCartBlocking() ?: emptyCart()
+        return db.carts.getCurrentCartBlocking() ?: emptyCart()
     }
 
     private companion object {
@@ -475,8 +475,8 @@ class CartViewModel(
         // Read the persisted picks synchronously — the LiveData accessors
         // return null until observed, which is why an unobserved lookup here
         // used to fall back to USD even when the user was on a different pair.
-        val base = mainBase ?: db.getLastBaseCurrencyBlocking() ?: Currency.USD
-        val proposedDest = mainDest ?: db.getLastDestinationCurrencyBlocking()
+        val base = mainBase ?: db.lastState.getLastBaseCurrencyBlocking() ?: Currency.USD
+        val proposedDest = mainDest ?: db.lastState.getLastDestinationCurrencyBlocking()
         val dest = proposedDest?.takeIf { it != base } ?: distinctFrom(base)
         return base to dest
     }
@@ -487,7 +487,10 @@ class CartViewModel(
     // USD/EUR only when no rates are cached (e.g. clean install before the
     // first refresh).
     private fun distinctFrom(base: Currency): Currency {
-        db.getRateListBlocking().firstOrNull { it.currency != base }?.let { return it.currency }
+        db.rates
+            .getRateListBlocking()
+            .firstOrNull { it.currency != base }
+            ?.let { return it.currency }
         return if (base == Currency.USD) Currency.EUR else Currency.USD
     }
 }

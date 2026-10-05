@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -45,12 +46,19 @@ data class QuickConversionsRow(
     val costWithFeeText: String?,
 )
 
+/** The pair's conversions at a spread of round amounts. */
+@Immutable
+data class QuickConversionsTable(
+    val from: Currency?,
+    val to: Currency?,
+    val rows: List<QuickConversionsRow>,
+    // "Fees applied: +2.5%"; null when no fee is in force.
+    val feeInfoText: String? = null,
+)
+
 @Composable
 fun QuickConversionsContent(
-    from: Currency?,
-    to: Currency?,
-    feeInfoText: String?,
-    rows: List<QuickConversionsRow>,
+    table: QuickConversionsTable,
     emptyText: String,
     onSwap: () -> Unit,
     onSwapLongPress: () -> Unit,
@@ -68,12 +76,12 @@ fun QuickConversionsContent(
                     .padding(start = padH, end = padH, top = padT),
         ) {
             QuickConversionsHeader(
-                from = from,
-                to = to,
+                from = table.from,
+                to = table.to,
                 onSwap = onSwap,
                 onSwapLongPress = onSwapLongPress,
             )
-            if (feeInfoText != null) {
+            table.feeInfoText?.let { feeInfoText ->
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.margin1x)))
                 Text(
                     text = feeInfoText,
@@ -92,7 +100,7 @@ fun QuickConversionsContent(
                         .verticalScroll(rememberScrollState())
                         .padding(vertical = dimensionResource(id = R.dimen.margin1x)),
             ) {
-                if (rows.isEmpty()) {
+                if (table.rows.isEmpty()) {
                     Text(
                         text = emptyText,
                         textAlign = TextAlign.Center,
@@ -102,7 +110,7 @@ fun QuickConversionsContent(
                                 .padding(top = dimensionResource(id = R.dimen.margin2x)),
                     )
                 } else {
-                    rows.forEach { row ->
+                    table.rows.forEach { row ->
                         QuickConversionsRowUi(row)
                     }
                 }

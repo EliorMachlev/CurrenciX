@@ -14,8 +14,10 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.eliormachlev.currencix.view.main.compose.ConverterBody
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
+import com.eliormachlev.currencix.view.main.compose.DrawerControl
 import com.eliormachlev.currencix.view.main.compose.KeypadHeights
 import com.eliormachlev.currencix.view.main.compose.MainScreen
 import org.junit.Rule
@@ -42,7 +44,14 @@ class MainScreenScreenshotTest {
 private fun MainScreenPreview() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     MainScreen(
-        drawerState = drawerState,
+        drawer = DrawerControl(drawerState, onItem = {}),
+        body =
+            ConverterBody(
+                isRefreshing = false,
+                onRefresh = {},
+                foldingFeature = null,
+                keypadHeights = KeypadHeights(compact = KEYPAD_PLACEHOLDER_HEIGHT, full = KEYPAD_PLACEHOLDER_HEIGHT),
+            ),
         topBar = {
             ConverterTopBar(
                 drawerState = drawerState,
@@ -52,12 +61,6 @@ private fun MainScreenPreview() {
                 onFirstFrame = {},
             )
         },
-        isRefreshing = false,
-        onRefresh = {},
-        isRefreshDrawerEnabled = true,
-        onDrawerItem = {},
-        foldingFeature = null,
-        keypadHeights = KeypadHeights(compact = KEYPAD_PLACEHOLDER_HEIGHT, full = KEYPAD_PLACEHOLDER_HEIGHT),
         displayContent = {
             Box(
                 Modifier

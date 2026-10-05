@@ -14,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.view.timeline.compose.ChartStatus
 import com.eliormachlev.currencix.view.timeline.compose.PeriodControl
 import com.eliormachlev.currencix.view.timeline.compose.TimelineChartCard
 import com.eliormachlev.currencix.view.timeline.compose.TimelinePeriodControls
 import com.eliormachlev.currencix.view.timeline.compose.TimelineSecondary
+import com.eliormachlev.currencix.view.timeline.compose.TimelineStats
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import org.junit.Rule
 import org.junit.Test
@@ -99,13 +101,7 @@ class TimelineScreenshotTest {
         shots.captureMatrix("timeline_secondary") {
             Column(modifier = Modifier.fillMaxSize()) {
                 TimelineSecondary(
-                    ratePast = SAMPLE_PAST_RATE_ENTRY to DECIMALS,
-                    rateCurrent = SAMPLE_CURRENT_RATE_ENTRY to DECIMALS,
-                    diffPercent = BigDecimal("2.37"),
-                    ratesMax = Triple(SAMPLE_MAX_RATE, SAMPLE_MAX_DATE, DECIMALS),
-                    ratesAvg = SAMPLE_AVG_RATE to DECIMALS,
-                    ratesMed = SAMPLE_MED_RATE to DECIMALS,
-                    ratesMin = Triple(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
+                    stats = SAMPLE_STATS,
                     formatter = FORMATTER,
                     period = PeriodControl(TimelineViewModel.Period.YEAR, null, {}, { _, _ -> }),
                     modifier = Modifier.fillMaxSize(),
@@ -117,13 +113,7 @@ class TimelineScreenshotTest {
         shots.captureLargeFont("timeline_secondary") {
             Column(modifier = Modifier.fillMaxSize()) {
                 TimelineSecondary(
-                    ratePast = SAMPLE_PAST_RATE_ENTRY to DECIMALS,
-                    rateCurrent = SAMPLE_CURRENT_RATE_ENTRY to DECIMALS,
-                    diffPercent = BigDecimal("2.37"),
-                    ratesMax = Triple(SAMPLE_MAX_RATE, SAMPLE_MAX_DATE, DECIMALS),
-                    ratesAvg = SAMPLE_AVG_RATE to DECIMALS,
-                    ratesMed = SAMPLE_MED_RATE to DECIMALS,
-                    ratesMin = Triple(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
+                    stats = SAMPLE_STATS,
                     formatter = FORMATTER,
                     period = PeriodControl(TimelineViewModel.Period.YEAR, null, {}, { _, _ -> }),
                     modifier = Modifier.fillMaxSize(),
@@ -141,10 +131,7 @@ private fun TimelineChartCardPreview(
 ) {
     Column(modifier = Modifier.fillMaxWidth().height(CHART_PREVIEW_HEIGHT)) {
         TimelineChartCard(
-            isRefreshing = isRefreshing,
-            error = error,
-            empty = empty,
-            provider = provider,
+            status = ChartStatus(isRefreshing, error, empty, provider),
             onRetry = {},
             onChangeProvider = {},
             modifier = Modifier.fillMaxSize(),
@@ -182,3 +169,14 @@ private val SAMPLE_PAST_RATE_ENTRY: Map.Entry<LocalDate, Rate?> =
     java.util.AbstractMap.SimpleImmutableEntry(SAMPLE_PAST_DATE, SAMPLE_PAST_RATE)
 private val SAMPLE_CURRENT_RATE_ENTRY: Map.Entry<LocalDate, Rate?> =
     java.util.AbstractMap.SimpleImmutableEntry(SAMPLE_CURRENT_DATE, SAMPLE_CURRENT_RATE)
+
+private val SAMPLE_STATS =
+    TimelineStats(
+        ratePast = SAMPLE_PAST_RATE_ENTRY to DECIMALS,
+        rateCurrent = SAMPLE_CURRENT_RATE_ENTRY to DECIMALS,
+        diffPercent = BigDecimal("2.37"),
+        ratesMax = Triple(SAMPLE_MAX_RATE, SAMPLE_MAX_DATE, DECIMALS),
+        ratesAvg = SAMPLE_AVG_RATE to DECIMALS,
+        ratesMed = SAMPLE_MED_RATE to DECIMALS,
+        ratesMin = Triple(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
+    )

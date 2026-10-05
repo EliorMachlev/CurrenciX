@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view.cart.compose
 
 import androidx.compose.runtime.Composable
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.cart.CartUnsavedChangesRequest
 
 /**
  * Multi-branch prompt shown before a destructive cart transition (switching
@@ -18,45 +19,17 @@ import com.eliormachlev.currencix.R
  */
 @Composable
 fun CartUnsavedChangesSheet(
-    canOverwrite: Boolean,
-    onSave: () -> Unit,
-    onSaveAs: () -> Unit,
-    onDiscard: () -> Unit,
-    onContinue: () -> Unit,
+    request: CartUnsavedChangesRequest,
     onDismiss: () -> Unit,
 ) {
     val options =
         buildList {
-            if (canOverwrite) {
-                add(
-                    CartChoiceOption(
-                        R.string.cart_unsaved_save,
-                        R.string.cart_unsaved_save_desc,
-                        onSave,
-                    ),
-                )
+            if (request.canOverwrite) {
+                add(CartChoiceOption(R.string.cart_unsaved_save, R.string.cart_unsaved_save_desc, request.onSave))
             }
-            add(
-                CartChoiceOption(
-                    R.string.cart_unsaved_save_as,
-                    R.string.cart_unsaved_save_as_desc,
-                    onSaveAs,
-                ),
-            )
-            add(
-                CartChoiceOption(
-                    R.string.cart_unsaved_discard,
-                    R.string.cart_unsaved_discard_desc,
-                    onDiscard,
-                ),
-            )
-            add(
-                CartChoiceOption(
-                    R.string.cart_unsaved_continue,
-                    R.string.cart_unsaved_continue_desc,
-                    onContinue,
-                ),
-            )
+            add(CartChoiceOption(R.string.cart_unsaved_save_as, R.string.cart_unsaved_save_as_desc, request.onSaveAs))
+            add(CartChoiceOption(R.string.cart_unsaved_discard, R.string.cart_unsaved_discard_desc, request.onDiscard))
+            add(CartChoiceOption(R.string.cart_unsaved_continue, R.string.cart_unsaved_continue_desc, request.onContinue))
         }
     CartChoiceSheet(
         titleRes = R.string.cart_unsaved_title,

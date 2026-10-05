@@ -126,22 +126,24 @@ fun Spotlight(
         SpotlightContent(
             anchorRect = anchorRect,
             step = step,
-            skipLabel = skipLabel,
-            nextLabel = if (isLast) finishLabel else nextLabel,
-            onSkip = onDismiss,
-            onAdvance = advance,
+            buttons = SpotlightButtons(skipLabel, if (isLast) finishLabel else nextLabel, onSkip = onDismiss, onAdvance = advance),
         )
     }
 }
+
+// The tooltip's two buttons: leave the tour, or go on to the next step.
+private class SpotlightButtons(
+    val skipLabel: String,
+    val nextLabel: String,
+    val onSkip: () -> Unit,
+    val onAdvance: () -> Unit,
+)
 
 @Composable
 private fun SpotlightContent(
     anchorRect: Rect?,
     step: SpotlightStep,
-    skipLabel: String,
-    nextLabel: String,
-    onSkip: () -> Unit,
-    onAdvance: () -> Unit,
+    buttons: SpotlightButtons,
 ) {
     val alpha by animateFloatAsState(
         targetValue = 1f,
@@ -157,7 +159,7 @@ private fun SpotlightContent(
                 // the last step by dismissing the overlay. Skip does that
                 // explicitly.
                 .pointerInput(step.anchor) {
-                    detectTapGestures(onTap = { onAdvance() })
+                    detectTapGestures(onTap = { buttons.onAdvance() })
                 }.graphicsLayer { this.alpha = alpha }
                 // Popup = its own window and semantics tree, so the flag set
                 // on MainScreen doesn't reach here; the :baselineprofile
@@ -165,14 +167,7 @@ private fun SpotlightContent(
                 .semantics { testTagsAsResourceId = true },
     ) {
         ScrimWithSpotlight(anchorRect = anchorRect)
-        TooltipCard(
-            anchorRect = anchorRect,
-            step = step,
-            skipLabel = skipLabel,
-            nextLabel = nextLabel,
-            onSkip = onSkip,
-            onAdvance = onAdvance,
-        )
+        TooltipCard(anchorRect = anchorRect, step = step, buttons = buttons)
     }
 }
 
@@ -248,10 +243,7 @@ private fun DrawScope.drawRoundedStroke(
 private fun TooltipCard(
     anchorRect: Rect?,
     step: SpotlightStep,
-    skipLabel: String,
-    nextLabel: String,
-    onSkip: () -> Unit,
-    onAdvance: () -> Unit,
+    buttons: SpotlightButtons,
 ) {
     val density = LocalDensity.current
     val gapPx = with(density) { CARD_GAP_FROM_ANCHOR.toPx() }
@@ -291,16 +283,16 @@ private fun TooltipCard(
                 horizontalArrangement = Arrangement.spacedBy(BUTTON_ROW_GAP, Alignment.End),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(onClick = onSkip, modifier = Modifier.testTag(UiTestTags.ONBOARDING_SKIP)) { Text(skipLabel) }
+                TextButton(onClick = buttons.onSkip, modifier = Modifier.testTag(UiTestTags.ONBOARDING_SKIP)) { Text(buttons.skipLabel) }
                 // Inline action (e.g. "Enable now" on the auto-refresh step).
                 // Fires then dismisses; wired through onAction lambda.
                 step.actionLabel?.let { label ->
                     TextButton(onClick = {
                         step.onAction?.invoke()
-                        onSkip()
+                        buttons.onSkip()
                     }) { Text(label) }
                 }
-                TextButton(onClick = onAdvance) { Text(nextLabel) }
+                TextButton(onClick = buttons.onAdvance) { Text(buttons.nextLabel) }
             }
         }
     }

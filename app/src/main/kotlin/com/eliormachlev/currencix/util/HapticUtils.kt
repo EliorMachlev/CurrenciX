@@ -32,7 +32,7 @@ private fun Context.isInPowerSaveMode(): Boolean {
  * AND the device NOT being in battery-saver mode. Reads the persisted flag
  * on the calling thread — fine for tap-time use.
  */
-private fun Context.shouldHaptic(): Boolean = Database(this).isHapticFeedbackEnabledBlocking() && !isInPowerSaveMode()
+private fun Context.shouldHaptic(): Boolean = Database(this).display.isHapticFeedbackEnabledBlocking() && !isInPowerSaveMode()
 
 /**
  * Compose analogue of [Modifier.clickable] that also fires a keyboard-tap

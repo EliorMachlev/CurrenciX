@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,24 +79,13 @@ internal sealed interface EditorKind {
  */
 @Composable
 fun FeesScreen(viewModel: FeeManagerViewModel) {
-    val fees by viewModel.fees.collectAsStateWithLifecycle()
-    val activeExchangeId by viewModel.activeExchangeId.collectAsStateWithLifecycle()
-    val activeBankId by viewModel.activeBankId.collectAsStateWithLifecycle()
-
-    val globalExchange = remember(fees) { fees.filterIsInstance<Fee.GlobalExchange>().toImmutableList() }
-    val globalBank = remember(fees) { fees.filterIsInstance<Fee.GlobalBank>().toImmutableList() }
-    val specificPair = remember(fees) { fees.filterIsInstance<Fee.SpecificPair>().toImmutableList() }
-
+    val lists = observeFeeLists(viewModel)
     var openPicker by remember { mutableStateOf<GlobalFeeKind?>(null) }
     var openEditor by remember { mutableStateOf<EditorTarget?>(null) }
 
     AppComposeTheme {
         FeesSectionsList(
-            globalExchange = globalExchange,
-            activeExchangeId = activeExchangeId,
-            globalBank = globalBank,
-            activeBankId = activeBankId,
-            specificPair = specificPair,
+            lists = lists,
             onOpenPicker = { openPicker = it },
             onOpenEditor = { openEditor = it },
         )
@@ -104,10 +94,7 @@ fun FeesScreen(viewModel: FeeManagerViewModel) {
     openPicker?.let { kind ->
         GlobalPickerHost(
             kind = kind,
-            globalExchange = globalExchange,
-            globalBank = globalBank,
-            activeExchangeId = activeExchangeId,
-            activeBankId = activeBankId,
+            fees = lists.of(kind),
             viewModel = viewModel,
             onDismiss = { openPicker = null },
             onOpenEditor = { openEditor = it },
@@ -123,42 +110,70 @@ fun FeesScreen(viewModel: FeeManagerViewModel) {
     }
 }
 
+// One kind of global fee: the saved entries, and the id of the one chosen.
+@Immutable
+private data class GlobalFees<T : Fee>(
+    val entries: ImmutableList<T>,
+    val activeId: String?,
+)
+
+// The fees, split the way the screen lists them.
+@Immutable
+private data class FeeLists(
+    val exchange: GlobalFees<Fee.GlobalExchange>,
+    val bank: GlobalFees<Fee.GlobalBank>,
+    val pairs: ImmutableList<Fee.SpecificPair>,
+) {
+    fun of(kind: GlobalFeeKind): GlobalFees<out Fee> =
+        when (kind) {
+            GlobalFeeKind.EXCHANGE -> exchange
+            GlobalFeeKind.BANK -> bank
+        }
+}
+
+@Composable
+private fun observeFeeLists(viewModel: FeeManagerViewModel): FeeLists {
+    val fees by viewModel.fees.collectAsStateWithLifecycle()
+    val activeExchangeId by viewModel.activeExchangeId.collectAsStateWithLifecycle()
+    val activeBankId by viewModel.activeBankId.collectAsStateWithLifecycle()
+    return FeeLists(
+        exchange = GlobalFees(remember(fees) { fees.filterIsInstance<Fee.GlobalExchange>().toImmutableList() }, activeExchangeId),
+        bank = GlobalFees(remember(fees) { fees.filterIsInstance<Fee.GlobalBank>().toImmutableList() }, activeBankId),
+        pairs = remember(fees) { fees.filterIsInstance<Fee.SpecificPair>().toImmutableList() },
+    )
+}
+
 /**
- * Resolves the picker dialog for whichever global fee kind is currently open,
- * threading the right list + active-id into [FeePickerDialog]. Extracted so
- * [FeesScreen] stays under the LongMethod threshold.
+ * The picker dialog for whichever global fee kind is open, over that kind's
+ * [fees].
  */
 @Composable
 private fun GlobalPickerHost(
     kind: GlobalFeeKind,
-    globalExchange: ImmutableList<Fee.GlobalExchange>,
-    globalBank: ImmutableList<Fee.GlobalBank>,
-    activeExchangeId: String?,
-    activeBankId: String?,
+    fees: GlobalFees<out Fee>,
     viewModel: FeeManagerViewModel,
     onDismiss: () -> Unit,
     onOpenEditor: (EditorTarget) -> Unit,
 ) {
-    val (entries, activeId) =
-        when (kind) {
-            GlobalFeeKind.EXCHANGE -> globalExchange to activeExchangeId
-            GlobalFeeKind.BANK -> globalBank to activeBankId
-        }
+    val entries = fees.entries
     val active = entries.firstOrNull { it.isActive }
-    val effectiveId = activeId?.takeIf { id -> entries.any { it.id == id && it.isActive } } ?: active?.id
+    val effectiveId = fees.activeId?.takeIf { id -> entries.any { it.id == id && it.isActive } } ?: active?.id
     FeePickerDialog(
         title = stringResource(id = kind.titleRes),
         entries = entries,
         effectiveId = effectiveId,
+        actions =
+            FeePickerActions(
+                onPicked = { picked ->
+                    when (kind) {
+                        GlobalFeeKind.EXCHANGE -> viewModel.setActiveExchangeId(picked)
+                        GlobalFeeKind.BANK -> viewModel.setActiveBankId(picked)
+                    }
+                },
+                onAdd = { onOpenEditor(EditorTarget(EditorKind.Global(kind))) },
+                onEdit = { onOpenEditor(EditorTarget(EditorKind.Global(kind), it)) },
+            ),
         onDismiss = onDismiss,
-        onPicked = { picked ->
-            when (kind) {
-                GlobalFeeKind.EXCHANGE -> viewModel.setActiveExchangeId(picked)
-                GlobalFeeKind.BANK -> viewModel.setActiveBankId(picked)
-            }
-        },
-        onAdd = { onOpenEditor(EditorTarget(EditorKind.Global(kind))) },
-        onEdit = { onOpenEditor(EditorTarget(EditorKind.Global(kind), it)) },
     )
 }
 
@@ -199,17 +214,12 @@ private fun EditorHost(
 }
 
 /**
- * The three-section LazyColumn body of [FeesScreen]. Extracted so the screen
- * composable stays under the LongMethod threshold and this list-layout block
- * is readable on its own without wading past the dialog state below.
+ * The three-section LazyColumn body of [FeesScreen], apart from the dialog
+ * state that screen holds.
  */
 @Composable
 private fun FeesSectionsList(
-    globalExchange: ImmutableList<Fee.GlobalExchange>,
-    activeExchangeId: String?,
-    globalBank: ImmutableList<Fee.GlobalBank>,
-    activeBankId: String?,
-    specificPair: ImmutableList<Fee.SpecificPair>,
+    lists: FeeLists,
     onOpenPicker: (GlobalFeeKind) -> Unit,
     onOpenEditor: (EditorTarget) -> Unit,
 ) {
@@ -225,8 +235,8 @@ private fun FeesSectionsList(
             SectionEnter(index = FeeSection.GLOBAL_EXCHANGE.ordinal) {
                 GlobalFeeSection(
                     kind = GlobalFeeKind.EXCHANGE,
-                    entries = globalExchange,
-                    activeId = activeExchangeId,
+                    entries = lists.exchange.entries,
+                    activeId = lists.exchange.activeId,
                     onClick = { onOpenPicker(GlobalFeeKind.EXCHANGE) },
                 )
             }
@@ -235,14 +245,14 @@ private fun FeesSectionsList(
             SectionEnter(index = FeeSection.GLOBAL_BANK.ordinal) {
                 GlobalFeeSection(
                     kind = GlobalFeeKind.BANK,
-                    entries = globalBank,
-                    activeId = activeBankId,
+                    entries = lists.bank.entries,
+                    activeId = lists.bank.activeId,
                     onClick = { onOpenPicker(GlobalFeeKind.BANK) },
                 )
             }
         }
         specificPairSection(
-            entries = specificPair,
+            entries = lists.pairs,
             onEdit = { onOpenEditor(EditorTarget(EditorKind.Pair, it)) },
             onAdd = { onOpenEditor(EditorTarget(EditorKind.Pair)) },
         )

@@ -32,7 +32,7 @@ class TwoPaneSmokeTest {
 
     @Before
     fun setUp() {
-        Database(ApplicationProvider.getApplicationContext()).setHasSeenOnboarding(true)
+        Database(ApplicationProvider.getApplicationContext()).display.setHasSeenOnboarding(true)
         // Cached rates, so the converter has its pair without waiting on the network.
         seedCachedRates()
         compose.mainClock.autoAdvance = false

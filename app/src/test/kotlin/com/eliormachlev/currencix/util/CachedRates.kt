@@ -19,7 +19,7 @@ import java.time.LocalTime
  */
 fun seedCachedRates(app: Application = ApplicationProvider.getApplicationContext()) {
     val db = Database(app)
-    db.insertExchangeRates(
+    db.rates.insertExchangeRates(
         ExchangeRates(
             success = true,
             error = null,
@@ -33,7 +33,7 @@ fun seedCachedRates(app: Application = ApplicationProvider.getApplicationContext
                     Rate(Currency.ILS, BigDecimal("4.10")),
                 ),
             time = LocalTime.NOON,
-            provider = db.getApiProvider(),
+            provider = db.providers.getApiProvider(),
         ),
     )
 }

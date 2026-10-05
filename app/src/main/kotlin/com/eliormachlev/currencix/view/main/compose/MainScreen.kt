@@ -98,34 +98,43 @@ private val SecondaryDrawerEntries =
         DrawerEntry(DrawerAction.Settings, R.drawable.ic_settings, R.string.menu_settings),
     )
 
+/** The navigation drawer: whether it's open, and what picking an entry does. */
+class DrawerControl(
+    val state: DrawerState,
+    val onItem: (DrawerAction) -> Unit,
+)
+
+/**
+ * How the space under the top bar behaves: pull-to-refresh, and how the
+ * display and the keypad share it.
+ */
+class ConverterBody(
+    val isRefreshing: Boolean,
+    val onRefresh: () -> Unit,
+    val foldingFeature: FoldingFeature?,
+    val keypadHeights: KeypadHeights,
+)
+
 // The converter screen: [topBar] over the pull-to-refresh hero display and
 // the keypad (side by side in landscape / on a vertical fold), all wrapped by
 // a ModalNavigationDrawer. Content slots are hoisted so ConverterRoute keeps
 // direct control over the hero display + keypad composables (which own their
 // own ViewModel wiring). Offline / historical status is rendered inside the
 // hero's RateFooter instead of stealing a full-width strip above the card.
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    drawerState: DrawerState,
+    drawer: DrawerControl,
+    body: ConverterBody,
     topBar: @Composable () -> Unit,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
-    isRefreshDrawerEnabled: Boolean,
-    onDrawerItem: (DrawerAction) -> Unit,
-    foldingFeature: FoldingFeature?,
-    keypadHeights: KeypadHeights,
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
     ModalNavigationDrawer(
-        drawerState = drawerState,
+        drawerState = drawer.state,
         drawerContent = {
             ModalDrawerSheet {
-                DrawerContent(
-                    onItemClick = onDrawerItem,
-                    isRefreshEnabled = isRefreshDrawerEnabled,
-                )
+                // Nothing to refresh while a refresh is already running.
+                DrawerContent(onItemClick = drawer.onItem, isRefreshEnabled = !body.isRefreshing)
             }
         },
     ) {
@@ -133,10 +142,7 @@ fun MainScreen(
         Scaffold(topBar = topBar, containerColor = Color.Transparent) { padding ->
             MainContent(
                 modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-                isRefreshing = isRefreshing,
-                onRefresh = onRefresh,
-                foldingFeature = foldingFeature,
-                keypadHeights = keypadHeights,
+                body = body,
                 displayContent = displayContent,
                 keypadContent = keypadContent,
             )
@@ -147,22 +153,18 @@ fun MainScreen(
 @Composable
 private fun MainContent(
     modifier: Modifier,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
-    foldingFeature: FoldingFeature?,
-    keypadHeights: KeypadHeights,
+    body: ConverterBody,
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
     BoxWithConstraints(modifier.fillMaxSize()) {
         val available = maxHeight
-        if (shouldUseHorizontal(maxWidth >= maxHeight, foldingFeature)) {
+        if (shouldUseHorizontal(maxWidth >= maxHeight, body.foldingFeature)) {
             Row(Modifier.fillMaxSize()) {
                 DisplayArea(
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                     minContentHeight = available,
-                    isRefreshing = isRefreshing,
-                    onRefresh = onRefresh,
+                    body = body,
                     displayContent = displayContent,
                 )
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) { keypadContent() }
@@ -173,14 +175,13 @@ private fun MainContent(
             // content still fills the space above it), at most what a
             // compact one does. The keypad takes the rest, so its rows give
             // up height before the display has to scroll.
-            val leastDisplay = (available - keypadHeights.full).coerceAtLeast(0.dp)
-            val mostDisplay = (available - keypadHeights.compact).coerceAtLeast(0.dp)
+            val leastDisplay = (available - body.keypadHeights.full).coerceAtLeast(0.dp)
+            val mostDisplay = (available - body.keypadHeights.compact).coerceAtLeast(0.dp)
             Column(Modifier.fillMaxSize()) {
                 DisplayArea(
                     modifier = Modifier.fillMaxWidth().heightIn(max = mostDisplay),
                     minContentHeight = leastDisplay,
-                    isRefreshing = isRefreshing,
-                    onRefresh = onRefresh,
+                    body = body,
                     displayContent = displayContent,
                 )
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) { keypadContent() }
@@ -194,14 +195,13 @@ private fun MainContent(
 private fun DisplayArea(
     modifier: Modifier,
     minContentHeight: Dp,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
+    body: ConverterBody,
     displayContent: @Composable () -> Unit,
 ) {
     val state = rememberPullToRefreshState()
     PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = onRefresh,
+        isRefreshing = body.isRefreshing,
+        onRefresh = body.onRefresh,
         state = state,
         modifier = modifier,
     ) {

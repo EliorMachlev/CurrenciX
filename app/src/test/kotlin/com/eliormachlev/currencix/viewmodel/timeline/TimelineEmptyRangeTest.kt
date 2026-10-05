@@ -31,8 +31,8 @@ class TimelineEmptyRangeTest {
     fun seedCache() {
         val db = Database(app)
         val rates = (0L until CACHED_DAYS).associate { today.minusDays(it) to Rate(Currency.EUR, BigDecimal("0.9")) }
-        db.putCachedTimeline(
-            Timeline(true, null, "USD", rates.keys.min(), rates.keys.max(), rates.toSortedMap(), db.getApiProvider()),
+        db.rates.putCachedTimeline(
+            Timeline(true, null, "USD", rates.keys.min(), rates.keys.max(), rates.toSortedMap(), db.providers.getApiProvider()),
             Currency.USD,
             Currency.EUR,
         )

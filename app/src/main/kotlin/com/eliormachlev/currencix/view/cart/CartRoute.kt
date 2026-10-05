@@ -20,9 +20,13 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
+import com.eliormachlev.currencix.view.cart.compose.CartItemActions
+import com.eliormachlev.currencix.view.cart.compose.CartListSources
 import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
 import com.eliormachlev.currencix.view.cart.compose.CartNameInputDialog
+import com.eliormachlev.currencix.view.cart.compose.CartReorder
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
+import com.eliormachlev.currencix.view.cart.compose.CartScreenActions
 import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.OverflowAction
@@ -72,21 +76,8 @@ fun CartRoute(
         CartScreen(
             viewModel = viewModel,
             keypad = host.keypad,
-            itemsSource = host.itemsLive,
-            currencySource = host.currencyLive,
-            onAddItem = host::addItem,
-            onNameCommit = host::commitName,
-            onNamePending = host::onNamePending,
-            onExpressionTap = { item -> host.keypad.openKeypadFor(item.id, item.expression) },
-            onTogglePin = viewModel::togglePinned,
-            onDelete = host::deleteItem,
-            onReorder = viewModel::commitDrag,
-            // A drag doesn't interact well with a floating keypad — the row
-            // being edited would slide out from under the caret. Commit the
-            // current edit and close before the gesture takes over the list.
-            onReorderStart = host.keypad::closeKeypad,
-            onOpenFees = onOpenFees,
-            onEditExtras = { host.overlays.extrasVisible = true },
+            sources = remember(host) { host.listSources() },
+            actions = remember(host, onOpenFees) { host.screenActions(onOpenFees) },
             // With the window drawn edge to edge, the keyboard no longer
             // resizes it: lift the list and footer above the keyboard here.
             modifier = Modifier.padding(padding).consumeWindowInsets(padding).imePadding(),
@@ -94,6 +85,27 @@ fun CartRoute(
     }
     CartOverlays(host)
 }
+
+private fun CartHost.listSources() = CartListSources(itemsLive, currencyLive, keypad.activeItemId, keypad.liveExpression)
+
+private fun CartHost.screenActions(onOpenFees: () -> Unit) =
+    CartScreenActions(
+        onAddItem = ::addItem,
+        onOpenFees = onOpenFees,
+        onEditExtras = { overlays.extrasVisible = true },
+        items =
+            CartItemActions(
+                onNameCommit = ::commitName,
+                onNamePending = ::onNamePending,
+                onExpressionTap = { item -> keypad.openKeypadFor(item.id, item.expression) },
+                onTogglePin = viewModel::togglePinned,
+                onDelete = ::deleteItem,
+            ),
+        // A drag doesn't interact well with a floating keypad — the row
+        // being edited would slide out from under the caret. Commit the
+        // current edit and close before the gesture takes over the list.
+        reorder = CartReorder(onStart = keypad::closeKeypad, onCommit = viewModel::commitDrag),
+    )
 
 @Composable
 private fun cartMenu(host: CartHost): List<OverflowAction> {
@@ -154,14 +166,7 @@ private fun CartOverlays(host: CartHost) {
         )
     }
     state.unsavedChanges?.let { request ->
-        CartUnsavedChangesSheet(
-            canOverwrite = request.canOverwrite,
-            onSave = request.onSave,
-            onSaveAs = request.onSaveAs,
-            onDiscard = request.onDiscard,
-            onContinue = request.onContinue,
-            onDismiss = { state.unsavedChanges = null },
-        )
+        CartUnsavedChangesSheet(request = request, onDismiss = { state.unsavedChanges = null })
     }
     state.nameInput?.let { request ->
         CartNameInputDialog(

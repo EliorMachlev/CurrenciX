@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
 import com.eliormachlev.currencix.view.cart.compose.CartItemRow
+import com.eliormachlev.currencix.view.cart.compose.CartRowState
+import com.eliormachlev.currencix.view.cart.compose.NO_ROW_ACTIONS
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,14 +73,5 @@ private fun CartRowPreview(
     item: CartItem,
     currency: String,
 ) {
-    CartItemRow(
-        item = item,
-        currency = currency,
-        isActive = false,
-        liveExpression = null,
-        onNameCommit = {},
-        onNamePending = {},
-        onExpressionTap = {},
-        onTogglePin = {},
-    )
+    CartItemRow(state = CartRowState(item, currency), actions = NO_ROW_ACTIONS)
 }

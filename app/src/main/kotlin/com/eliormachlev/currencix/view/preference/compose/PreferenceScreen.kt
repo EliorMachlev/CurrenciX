@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -84,76 +85,98 @@ fun PreferenceScreen(
     callbacks: PreferenceScreenCallbacks,
 ) {
     var openDialog by remember { mutableStateOf<OpenDialog?>(null) }
-    val dismiss: () -> Unit = { openDialog = null }
-
-    val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
-    val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
-    val apiKey by viewModel.openExchangeratesApiKey.collectAsStateWithLifecycle()
-    val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
-    val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
-    val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
-    val dynamicColorEnabled by viewModel.isDynamicColorEnabled.collectAsStateWithLifecycle()
-    val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
-    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
-    val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
-    val theme = remember { viewModel.getTheme() }
-    val language = remember(provider) { Language.byIso(viewModel.getLanguage()) ?: Language.SYSTEM }
+    val values = observePreferenceValues(viewModel)
 
     AppComposeTheme {
         PreferenceSectionsList(
             viewModel = viewModel,
             callbacks = callbacks,
-            provider = provider,
-            fallback = fallback,
-            apiKey = apiKey,
-            decimalPlaces = decimalPlaces,
-            expandedKeypadEnabled = expandedKeypadEnabled,
-            hapticEnabled = hapticEnabled,
-            dynamicColorEnabled = dynamicColorEnabled,
-            previewEnabled = previewEnabled,
-            dateFormat = dateFormat,
-            theme = theme,
-            language = language,
-            autoRefreshEnabled = autoRefreshEnabled,
+            values = values,
             onOpenDialog = { openDialog = it },
         )
     }
 
     PreferenceDialogsHost(
         openDialog = openDialog,
-        dismiss = dismiss,
+        dismiss = { openDialog = null },
         viewModel = viewModel,
         callbacks = callbacks,
-        provider = provider,
-        apiKey = apiKey,
+        values = values,
+    )
+}
+
+// The settings as the screen shows them, grouped the way its sections are.
+@Immutable
+private data class PreferenceValues(
+    val api: ApiValues,
+    val appearance: AppearanceValues,
+    val decimalPlaces: Int,
+    val expandedKeypadEnabled: Boolean,
+)
+
+@Immutable
+private data class ApiValues(
+    val provider: ApiProvider?,
+    val fallback: ApiProvider,
+    // Only Open Exchange Rates takes one.
+    val apiKey: String?,
+    val autoRefreshEnabled: Boolean,
+)
+
+@Immutable
+private data class AppearanceValues(
+    val theme: AppTheme,
+    val language: Language,
+    val dateFormat: String,
+    val hapticEnabled: Boolean,
+    val dynamicColorEnabled: Boolean,
+    val previewEnabled: Boolean,
+)
+
+@Composable
+private fun observePreferenceValues(viewModel: PreferenceViewModel): PreferenceValues {
+    val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
+    val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
+    val apiKey by viewModel.openExchangeratesApiKey.collectAsStateWithLifecycle()
+    val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
+    val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
+    val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
+    return PreferenceValues(
+        api = ApiValues(provider, fallback, apiKey, autoRefreshEnabled),
+        appearance = observeAppearanceValues(viewModel, provider),
         decimalPlaces = decimalPlaces,
+        expandedKeypadEnabled = expandedKeypadEnabled,
+    )
+}
+
+@Composable
+private fun observeAppearanceValues(
+    viewModel: PreferenceViewModel,
+    provider: ApiProvider?,
+): AppearanceValues {
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
+    val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
+    val dynamicColorEnabled by viewModel.isDynamicColorEnabled.collectAsStateWithLifecycle()
+    val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
+    return AppearanceValues(
+        theme = remember { viewModel.getTheme() },
+        language = remember(provider) { Language.byIso(viewModel.getLanguage()) ?: Language.SYSTEM },
         dateFormat = dateFormat,
-        theme = theme,
-        language = language,
+        hapticEnabled = hapticEnabled,
+        dynamicColorEnabled = dynamicColorEnabled,
+        previewEnabled = previewEnabled,
     )
 }
 
 /**
- * The six-section LazyColumn body of [PreferenceScreen]. Extracted so the
- * top-level composable stays under the LongMethod threshold and the dialog
- * host below can be read in isolation from the list layout.
+ * The six-section LazyColumn body of [PreferenceScreen], apart from the
+ * dialog host below.
  */
 @Composable
 private fun PreferenceSectionsList(
     viewModel: PreferenceViewModel,
     callbacks: PreferenceScreenCallbacks,
-    provider: ApiProvider?,
-    fallback: ApiProvider,
-    apiKey: String?,
-    decimalPlaces: Int,
-    expandedKeypadEnabled: Boolean,
-    hapticEnabled: Boolean,
-    dynamicColorEnabled: Boolean,
-    previewEnabled: Boolean,
-    dateFormat: String,
-    theme: AppTheme,
-    language: Language,
-    autoRefreshEnabled: Boolean,
+    values: PreferenceValues,
     onOpenDialog: (OpenDialog) -> Unit,
 ) {
     LazyColumn(
@@ -167,8 +190,8 @@ private fun PreferenceSectionsList(
         item(key = SettingsSection.GENERAL) {
             SectionEnter(index = SettingsSection.GENERAL.ordinal) {
                 GeneralSection(
-                    expandedKeypadEnabled = expandedKeypadEnabled,
-                    decimalPlaces = decimalPlaces,
+                    expandedKeypadEnabled = values.expandedKeypadEnabled,
+                    decimalPlaces = values.decimalPlaces,
                     callbacks = callbacks,
                     onExpandedKeypadChange = viewModel::setExpandedKeypadEnabled,
                     openDecimalPlacesPicker = { onOpenDialog(OpenDialog.DecimalPlaces) },
@@ -177,30 +200,12 @@ private fun PreferenceSectionsList(
         }
         item(key = SettingsSection.API) {
             SectionEnter(index = SettingsSection.API.ordinal) {
-                ApiSection(
-                    provider = provider,
-                    fallback = fallback,
-                    apiKey = apiKey,
-                    autoRefreshEnabled = autoRefreshEnabled,
-                    onAutoRefreshChange = viewModel::setAutoRefreshEnabled,
-                    openProviderPicker = { onOpenDialog(OpenDialog.Provider) },
-                    openFallbackPicker = { onOpenDialog(OpenDialog.FallbackProvider) },
-                    openApiKeyEditor = { onOpenDialog(OpenDialog.ApiKey) },
-                )
+                ApiSection(values = values.api, onAutoRefreshChange = viewModel::setAutoRefreshEnabled, onOpenDialog = onOpenDialog)
             }
         }
         item(key = SettingsSection.APPEARANCE) {
             SectionEnter(index = SettingsSection.APPEARANCE.ordinal) {
-                AppearanceSection(
-                    theme = theme,
-                    language = language,
-                    dateFormat = dateFormat,
-                    toggles = AppearanceToggles(hapticEnabled, dynamicColorEnabled, previewEnabled),
-                    viewModel = viewModel,
-                    openThemePicker = { onOpenDialog(OpenDialog.Theme) },
-                    openLanguagePicker = { onOpenDialog(OpenDialog.Language) },
-                    openDateFormatPicker = { onOpenDialog(OpenDialog.DateFormat) },
-                )
+                AppearanceSection(values = values.appearance, viewModel = viewModel, onOpenDialog = onOpenDialog)
             }
         }
         item(key = SettingsSection.GRAPH) {
@@ -226,34 +231,28 @@ private fun PreferenceDialogsHost(
     dismiss: () -> Unit,
     viewModel: PreferenceViewModel,
     callbacks: PreferenceScreenCallbacks,
-    provider: ApiProvider?,
-    apiKey: String?,
-    decimalPlaces: Int,
-    dateFormat: String,
-    theme: AppTheme,
-    language: Language,
+    values: PreferenceValues,
 ) {
+    val appearance = values.appearance
     when (openDialog) {
         OpenDialog.DecimalPlaces ->
             SingleChoicePickerDialog(
                 title = stringResource(id = R.string.decimal_places_title),
-                options = (DECIMAL_PLACES_MIN..DECIMAL_PLACES_MAX).toList(),
-                selected = decimalPlaces,
-                label = { it.toString() },
+                choices = Choices((DECIMAL_PLACES_MIN..DECIMAL_PLACES_MAX).toList(), values.decimalPlaces) { it.toString() },
                 onDismiss = dismiss,
                 onPicked = viewModel::setDecimalPlaces,
             )
-        OpenDialog.Theme -> ThemePickerDialog(theme = theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
-        OpenDialog.DateFormat -> DateFormatPickerDialog(dateFormat = dateFormat, dismiss = dismiss, viewModel = viewModel)
+        OpenDialog.Theme -> ThemePickerDialog(theme = appearance.theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
+        OpenDialog.DateFormat -> DateFormatPickerDialog(dateFormat = appearance.dateFormat, dismiss = dismiss, viewModel = viewModel)
         OpenDialog.Language ->
             LanguagePickerDialog(
-                selected = language,
+                selected = appearance.language,
                 onDismiss = dismiss,
                 onPicked = { viewModel.setLanguage(it.iso) },
             )
         OpenDialog.Provider ->
             ProviderPickerDialog(
-                selected = provider,
+                selected = values.api.provider,
                 onDismiss = dismiss,
                 onPicked = viewModel::setApiProvider,
             )
@@ -267,7 +266,7 @@ private fun PreferenceDialogsHost(
         OpenDialog.ApiKey ->
             TextEntryDialog(
                 title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
-                initialText = apiKey.orEmpty(),
+                initialText = values.api.apiKey.orEmpty(),
                 message = stringResource(id = R.string.api_open_exchangerates_api_key_message),
                 onDismiss = dismiss,
                 onConfirm = { newKey ->
@@ -290,9 +289,7 @@ private fun ThemePickerDialog(
     val themeLabels = themeEntries.map { stringResource(id = themeLabelRes(it)) }
     SingleChoicePickerDialog(
         title = stringResource(id = R.string.theme_title),
-        options = themeEntries,
-        selected = theme,
-        label = { themeLabels[themeEntries.indexOf(it)] },
+        choices = Choices(themeEntries, theme) { themeLabels[themeEntries.indexOf(it)] },
         onDismiss = dismiss,
         onPicked = { picked ->
             if (viewModel.setTheme(picked)) callbacks.onThemeRequiresRestart()
@@ -310,9 +307,7 @@ private fun DateFormatPickerDialog(
     val names = stringArrayResource(id = R.array.date_format_names).toList()
     SingleChoicePickerDialog(
         title = stringResource(id = R.string.date_format_title),
-        options = patterns,
-        selected = dateFormat,
-        label = { pattern -> names.getOrNull(patterns.indexOf(pattern)) ?: pattern },
+        choices = Choices(patterns, dateFormat) { pattern -> names.getOrNull(patterns.indexOf(pattern)) ?: pattern },
         onDismiss = dismiss,
         onPicked = viewModel::setDateFormat,
     )
@@ -357,35 +352,26 @@ private fun GeneralSection(
 
 @Composable
 private fun ApiSection(
-    provider: ApiProvider?,
-    fallback: ApiProvider,
-    apiKey: String?,
-    autoRefreshEnabled: Boolean,
+    values: ApiValues,
     onAutoRefreshChange: (Boolean) -> Unit,
-    openProviderPicker: () -> Unit,
-    openFallbackPicker: () -> Unit,
-    openApiKeyEditor: () -> Unit,
+    onOpenDialog: (OpenDialog) -> Unit,
 ) {
     val context = LocalContext.current
+    val provider = values.provider
     PreferenceSection(text = stringResource(id = R.string.category_api)) {
         PreferenceRow(
             title = stringResource(id = R.string.api_title),
             summary = provider?.getName(context)?.toString(),
             iconRes = R.drawable.ic_data_provider,
-            onClick = openProviderPicker,
+            onClick = { onOpenDialog(OpenDialog.Provider) },
         )
-        FallbackProviderRow(main = provider, fallback = fallback, onClick = openFallbackPicker)
+        FallbackProviderRow(main = provider, fallback = values.fallback, onClick = { onOpenDialog(OpenDialog.FallbackProvider) })
         if (provider == ApiProvider.OPEN_EXCHANGERATES) {
             PreferenceRow(
                 title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
-                summary =
-                    if (apiKey.isNullOrBlank()) {
-                        stringResource(id = R.string.api_open_exchangerates_api_key_missing)
-                    } else {
-                        apiKey
-                    },
+                summary = values.apiKey?.ifBlank { null } ?: stringResource(id = R.string.api_open_exchangerates_api_key_missing),
                 iconRes = R.drawable.ic_key,
-                onClick = openApiKeyEditor,
+                onClick = { onOpenDialog(OpenDialog.ApiKey) },
             )
         }
         provider?.let {
@@ -408,18 +394,11 @@ private fun ApiSection(
             title = stringResource(id = R.string.auto_refresh_title),
             summary = stringResource(id = R.string.auto_refresh_summary),
             iconRes = R.drawable.ic_schedule,
-            checked = autoRefreshEnabled,
+            checked = values.autoRefreshEnabled,
             onCheckedChange = onAutoRefreshChange,
         )
     }
 }
-
-// The Appearance section's switches.
-private data class AppearanceToggles(
-    val haptic: Boolean,
-    val dynamicColor: Boolean,
-    val preview: Boolean,
-)
 
 // "Fallback provider — Frankfurter.app · used when Bank of Israel can't be reached"
 @Composable
@@ -458,54 +437,49 @@ private fun FallbackPickerDialog(
 
 @Composable
 private fun AppearanceSection(
-    theme: AppTheme,
-    language: Language,
-    dateFormat: String,
-    toggles: AppearanceToggles,
+    values: AppearanceValues,
     viewModel: PreferenceViewModel,
-    openThemePicker: () -> Unit,
-    openLanguagePicker: () -> Unit,
-    openDateFormatPicker: () -> Unit,
+    onOpenDialog: (OpenDialog) -> Unit,
 ) {
     val context = LocalContext.current
     PreferenceSection(text = stringResource(id = R.string.category_appearance)) {
         PreferenceRow(
             title = stringResource(id = R.string.theme_title),
-            summary = stringResource(id = themeLabelRes(theme)),
+            summary = stringResource(id = themeLabelRes(values.theme)),
             iconRes = R.drawable.ic_theme,
-            onClick = openThemePicker,
+            onClick = { onOpenDialog(OpenDialog.Theme) },
         )
         SwitchRow(
             title = stringResource(id = R.string.dynamic_color_title),
             summary = stringResource(id = R.string.dynamic_color_summary),
             iconRes = R.drawable.ic_palette,
-            checked = toggles.dynamicColor,
+            checked = values.dynamicColorEnabled,
             onCheckedChange = viewModel::setDynamicColorEnabled,
         )
         PreferenceRow(
             title = stringResource(id = R.string.language_title),
-            summary = language.localizedName(context),
+            summary = values.language.localizedName(context),
             iconRes = R.drawable.ic_language,
-            onClick = openLanguagePicker,
+            onClick = { onOpenDialog(OpenDialog.Language) },
         )
         PreferenceRow(
             title = stringResource(id = R.string.date_format_title),
-            summary = dateFormat,
+            summary = values.dateFormat,
             iconRes = R.drawable.ic_event,
-            onClick = openDateFormatPicker,
+            onClick = { onOpenDialog(OpenDialog.DateFormat) },
         )
         SwitchRow(
             title = stringResource(id = R.string.haptic_feedback_title),
             summary = stringResource(id = R.string.haptic_feedback_summary),
             iconRes = R.drawable.ic_vibration,
-            checked = toggles.haptic,
+            checked = values.hapticEnabled,
             onCheckedChange = viewModel::setHapticFeedbackEnabled,
         )
         SwitchRow(
             title = stringResource(id = R.string.previewConversion_title),
             summary = stringResource(id = R.string.previewConversion_summary),
             iconRes = R.drawable.ic_conversion_preview,
-            checked = toggles.preview,
+            checked = values.previewEnabled,
             onCheckedChange = viewModel::setPreviewConversionEnabled,
         )
     }

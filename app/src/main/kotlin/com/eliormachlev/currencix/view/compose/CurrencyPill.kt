@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,9 +15,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,6 +43,7 @@ private val FLAG_CORNER_RADIUS: Dp = 2.dp
 private val FLAG_GAP: Dp = 10.dp
 private val CHEVRON_SIZE: Dp = 14.dp
 private val CHEVRON_GAP: Dp = 4.dp
+private val PAIR_ROW_GAP: Dp = 8.dp
 
 /**
  * The flag + ISO code + chevron pill that opens a currency picker. The
@@ -93,6 +97,48 @@ fun CurrencyPill(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(CHEVRON_SIZE),
+        )
+    }
+}
+
+/** The taps a "from · swap · to" row answers. */
+@Immutable
+class PairRowActions(
+    val onFromClick: () -> Unit,
+    val onToClick: () -> Unit,
+    val onSwap: () -> Unit,
+    val onSwapLongPress: () -> Unit,
+)
+
+/**
+ * The two currency pills with a swap control between them, as the converter
+ * and the cart both show them. Each screen brings its own [swap] button.
+ */
+@Composable
+fun CurrencyPairRow(
+    from: Currency?,
+    to: Currency?,
+    actions: PairRowActions,
+    modifier: Modifier = Modifier,
+    swap: @Composable () -> Unit,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(PAIR_ROW_GAP),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CurrencyPill(
+            currency = from,
+            side = PillSide.FROM,
+            onClick = actions.onFromClick,
+            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_FROM),
+        )
+        swap()
+        CurrencyPill(
+            currency = to,
+            side = PillSide.TO,
+            onClick = actions.onToClick,
+            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_TO),
         )
     }
 }

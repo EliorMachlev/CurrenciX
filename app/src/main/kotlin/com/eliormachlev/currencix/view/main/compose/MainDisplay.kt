@@ -39,6 +39,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -59,7 +60,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -88,10 +88,10 @@ import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.view.compose.CurrencyPill
+import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
-import com.eliormachlev.currencix.view.compose.UiTestTags
+import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
@@ -101,7 +101,6 @@ import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
-import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -123,7 +122,6 @@ private val CARD_RADIUS: Dp = 28.dp
 private val CARD_PADDING: Dp = 16.dp
 
 private val SWAP_FAB_SIZE: Dp = 44.dp
-private val PILLS_ROW_GAP: Dp = 8.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = 12.dp
 
 // Vertical gap between the two stacked receipt panels ("You pay" over
@@ -167,9 +165,22 @@ private val MATH_LINE_TEXT_SIZE = 14.sp
 // Currency symbol renders at ~62% of the digits size so it reads as a
 // label riding alongside the number instead of competing with it.
 private const val SYMBOL_SIZE_RATIO = 0.62f
-private val AMOUNT_HERO_SYMBOL_SIZE = AMOUNT_HERO_SIZE * SYMBOL_SIZE_RATIO
-private val AMOUNT_SUBTOTAL_SYMBOL_SIZE = AMOUNT_SUBTOTAL_SIZE * SYMBOL_SIZE_RATIO
-private val AMOUNT_TO_SYMBOL_SIZE = AMOUNT_TO_SIZE * SYMBOL_SIZE_RATIO
+
+// How one tier of amount is set: its digits' size, weight and face.
+private class AmountStyle(
+    val digitsSize: TextUnit,
+    val fontWeight: FontWeight,
+    val fontFamily: FontFamily? = null,
+) {
+    val symbolSize: TextUnit = digitsSize * SYMBOL_SIZE_RATIO
+}
+
+// The typed amount, and the fair result when a fee-adjusted one follows it.
+private val SUBTOTAL_STYLE = AmountStyle(AMOUNT_SUBTOTAL_SIZE, FontWeight.Medium)
+
+// The fair result on its own, and the fee-adjusted final: engraved serif.
+private val RESULT_STYLE = AmountStyle(AMOUNT_TO_SIZE, FontWeight.SemiBold, FontFamily.Serif)
+private val FINAL_STYLE = AmountStyle(AMOUNT_HERO_SIZE, FontWeight.SemiBold, FontFamily.Serif)
 
 // Pinned-symbol dim so the number is the primary read.
 private const val SYMBOL_ALPHA = 0.65f
@@ -306,6 +317,52 @@ internal data class MainDisplayCallbacks(
     val onSwapLongPress: () -> Unit,
 )
 
+// An amount on the card: split for display, whole for the clipboard.
+@Immutable
+private data class Amount(
+    val parts: AmountParts,
+    val copyText: String,
+) {
+    fun copyTo(onCopy: (CharSequence) -> Unit) {
+        if (copyText.isNotEmpty()) onCopy(copyText)
+    }
+}
+
+// The "you get" panel.
+@Immutable
+private data class ResultState(
+    val result: Amount,
+    val trueCost: Amount,
+    // The fees in force multiplied out, and the fees behind that figure.
+    val feeStack: BigDecimal?,
+    val fees: ImmutableList<Fee>,
+    // Whether there's a fee-adjusted amount to show under the fair one.
+    val hasTrueCost: Boolean,
+    val isUpdating: Boolean,
+    // The typed input the amounts were computed from, so keystroke-driven
+    // changes can skip the "updated" animation.
+    val inputKey: Any?,
+)
+
+// The line under the panels: the rate in use, how old it is, who published it.
+@Immutable
+private data class FooterState(
+    val rates: ExchangeRates?,
+    val dateFormatPattern: String,
+    val banner: BannerContent?,
+)
+
+// Everything the hero card shows.
+@Immutable
+private data class HeroState(
+    val baseCurrency: Currency?,
+    val destCurrency: Currency?,
+    val base: Amount,
+    val mathText: String?,
+    val result: ResultState,
+    val footer: FooterState,
+)
+
 /**
  * Pure-Compose replacement for the old `main_display.xml`. Renders the hero
  * card (currency pills + amount hero + amount to + rate footer) and hosts the
@@ -321,130 +378,116 @@ internal fun MainDisplay(
     modifier: Modifier = Modifier,
     captureController: LayerCapture? = null,
 ) {
+    val rates by viewModel.getExchangeRates().observeAsState()
+    val state = observeHeroState(viewModel, FooterState(rates, dateFormatPattern, banner))
+    var pickerSide by remember { mutableStateOf<PickSide?>(null) }
+    val pairActions =
+        remember(viewModel, callbacks) {
+            PairRowActions(
+                onFromClick = { pickerSide = PickSide.FROM },
+                onToClick = { pickerSide = PickSide.TO },
+                onSwap = viewModel::swapCurrencies,
+                onSwapLongPress = callbacks.onSwapLongPress,
+            )
+        }
+    HeroCard(
+        state = state,
+        pair = pairActions,
+        callbacks = callbacks,
+        modifier = modifier,
+        captureController = captureController,
+    )
+    pickerSide?.let { side ->
+        CurrencyPickerHost(side = side, viewModel = viewModel, state = state, onDismiss = { pickerSide = null })
+    }
+}
+
+@Composable
+private fun observeHeroState(
+    viewModel: MainViewModel,
+    footer: FooterState,
+): HeroState {
     val context = LocalContext.current
     val baseCurrency by viewModel.getBaseCurrency().observeAsState()
     val destCurrency by viewModel.getDestinationCurrency().observeAsState()
     val baseFormatted by viewModel.getCurrentBaseValueFormatted().observeAsState()
     val resultFairFormatted by viewModel.getResultFormatted().observeAsState()
     val resultWithFeesFormatted by viewModel.getResultWithFeesFormatted().observeAsState()
-    val rates by viewModel.getExchangeRates().observeAsState()
     val isUpdating by viewModel.isRefreshShimmerVisible().collectAsStateWithLifecycle()
     val feeStack by viewModel.getFeeStack().observeAsState()
     val activeFees by viewModel.getActiveFees().observeAsState()
     val mathText by viewModel.getCalculationInputFormatted().observeAsState()
     val resultWithFeesNumber by viewModel.getResultWithFeesAsNumber().observeAsState()
 
-    val baseFull = baseFormatted?.toString().orEmpty()
-    val resultFairFull = resultFairFormatted?.toString().orEmpty()
-    val resultWithFeesFull = resultWithFeesFormatted?.toString().orEmpty()
-    // Split each formatted string into its (symbol, digits) parts so the
-    // symbol can be pinned outside the scrolling digits row.
-    val baseParts = remember(baseFull, baseCurrency) { splitAmount(context, baseFull, baseCurrency) }
-    val resultParts = remember(resultFairFull, destCurrency) { splitAmount(context, resultFairFull, destCurrency) }
-    val trueCostParts =
-        remember(resultWithFeesFull, destCurrency) { splitAmount(context, resultWithFeesFull, destCurrency) }
-    var pickerSide by remember { mutableStateOf<PickSide?>(null) }
-    HeroCard(
+    val base = rememberAmount(context, baseFormatted, baseCurrency)
+    return HeroState(
         baseCurrency = baseCurrency,
         destCurrency = destCurrency,
-        baseParts = baseParts,
-        resultParts = resultParts,
-        trueCostParts = trueCostParts,
-        baseCopyText = baseFull,
-        resultCopyText = resultFairFull,
-        trueCostCopyText = resultWithFeesFull,
-        rates = rates,
-        isUpdating = isUpdating,
-        feeStack = feeStack,
-        activeFees = activeFees ?: persistentListOf(),
+        base = base,
         mathText = mathText,
-        resultWithFeesNumber = resultWithFeesNumber,
-        dateFormatPattern = dateFormatPattern,
-        banner = banner,
-        onPillFromClick = { pickerSide = PickSide.FROM },
-        onPillToClick = { pickerSide = PickSide.TO },
-        onSwapClick = viewModel::swapCurrencies,
-        callbacks = callbacks,
-        modifier = modifier,
-        captureController = captureController,
+        result =
+            ResultState(
+                result = rememberAmount(context, resultFairFormatted, destCurrency),
+                trueCost = rememberAmount(context, resultWithFeesFormatted, destCurrency),
+                feeStack = feeStack,
+                fees = activeFees ?: persistentListOf(),
+                hasTrueCost = resultWithFeesNumber != null,
+                isUpdating = isUpdating,
+                // Digits only: a new "from" currency changes the symbol, not
+                // the typed amount, so its result update still animates.
+                inputKey = base.parts.digits,
+            ),
+        footer = footer,
     )
-    pickerSide?.let { side ->
-        CurrencyPickerHost(
-            side = side,
-            viewModel = viewModel,
-            baseCurrency = baseCurrency,
-            destCurrency = destCurrency,
-            rates = rates,
-            onDismiss = { pickerSide = null },
-        )
-    }
+}
+
+// Splits a formatted amount into its (symbol, digits) parts so the symbol can
+// be pinned outside the scrolling digits row.
+@Composable
+private fun rememberAmount(
+    context: Context,
+    formatted: CharSequence?,
+    currency: Currency?,
+): Amount {
+    val full = formatted?.toString().orEmpty()
+    return remember(full, currency) { Amount(splitAmount(context, full, currency), full) }
 }
 
 /**
- * Resolves the reference rate / sum / disabled currency for the picker sheet
- * based on which side ([side]) the user tapped, and forwards the selection back
- * to [viewModel]. Extracted so [MainDisplay] itself stays under the LongMethod
- * threshold and the compute-then-render block reads on its own.
+ * The picker sheet for the side the user tapped. It previews each currency
+ * against the other side's amount, and keeps that side's currency unpickable.
  */
 @Composable
 private fun CurrencyPickerHost(
     side: PickSide,
     viewModel: MainViewModel,
-    baseCurrency: Currency?,
-    destCurrency: Currency?,
-    rates: ExchangeRates?,
+    state: HeroState,
     onDismiss: () -> Unit,
 ) {
-    val disabled = if (side == PickSide.FROM) destCurrency else baseCurrency
-    // Reference-rate anchor for the picker's preview column: when picking the
-    // FROM side, the fixed side is the current DEST currency (and vice versa).
-    // The sum being "converted" is likewise the OTHER side's current value.
-    val referenceCurrency = if (side == PickSide.FROM) destCurrency else baseCurrency
-    val referenceRate =
-        referenceCurrency?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } }
-    val referenceSum =
-        if (side == PickSide.FROM) {
-            viewModel.getResultAsNumber().value ?: BigDecimal.ONE
-        } else {
-            viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ONE
-        }
+    val picksFrom = side == PickSide.FROM
+    val other = if (picksFrom) state.destCurrency else state.baseCurrency
+    val otherSum = if (picksFrom) viewModel.getResultAsNumber().value else viewModel.getCurrentBaseValueAsNumber().value
     CurrencyPickerSheet(
-        currentRate = referenceRate,
-        currentSum = referenceSum,
-        disabledCurrency = disabled,
+        currentRate =
+            other?.let { c ->
+                state.footer.rates
+                    ?.rateFor(c)
+                    ?.let { Rate(c, it.value) }
+            },
+        currentSum = otherSum ?: BigDecimal.ONE,
+        disabledCurrency = other,
         onRateClicked = { rate ->
-            if (side == PickSide.FROM) {
-                viewModel.setBaseCurrency(rate.currency)
-            } else {
-                viewModel.setDestinationCurrency(rate.currency)
-            }
+            if (picksFrom) viewModel.setBaseCurrency(rate.currency) else viewModel.setDestinationCurrency(rate.currency)
         },
         onDismiss = onDismiss,
-        selectedCurrency = if (side == PickSide.FROM) baseCurrency else destCurrency,
+        selectedCurrency = if (picksFrom) state.baseCurrency else state.destCurrency,
     )
 }
 
 @Composable
 private fun HeroCard(
-    baseCurrency: Currency?,
-    destCurrency: Currency?,
-    baseParts: AmountParts,
-    resultParts: AmountParts,
-    trueCostParts: AmountParts,
-    baseCopyText: String,
-    resultCopyText: String,
-    trueCostCopyText: String,
-    rates: ExchangeRates?,
-    isUpdating: Boolean,
-    feeStack: BigDecimal?,
-    activeFees: ImmutableList<Fee>,
-    mathText: String?,
-    resultWithFeesNumber: BigDecimal?,
-    dateFormatPattern: String,
-    banner: BannerContent?,
-    onPillFromClick: () -> Unit,
-    onPillToClick: () -> Unit,
-    onSwapClick: () -> Unit,
+    state: HeroState,
+    pair: PairRowActions,
     callbacks: MainDisplayCallbacks,
     modifier: Modifier = Modifier,
     captureController: LayerCapture? = null,
@@ -465,77 +508,26 @@ private fun HeroCard(
             .padding(CARD_PADDING),
     ) {
         Column(Modifier.fillMaxWidth()) {
-            PillsRow(
-                fromCurrency = baseCurrency,
-                toCurrency = destCurrency,
-                onPillFromClick = onPillFromClick,
-                onPillToClick = onPillToClick,
-                onSwapClick = onSwapClick,
-                onSwapLongPress = callbacks.onSwapLongPress,
-            )
+            CurrencyPairRow(from = state.baseCurrency, to = state.destCurrency, actions = pair) {
+                SwapFab(onClick = pair.onSwap, onLongClick = pair.onSwapLongPress)
+            }
             Spacer(Modifier.height(PILLS_ROW_BOTTOM_GAP))
             AmountHero(
-                currency = baseCurrency,
-                subtotalParts = baseParts,
-                mathText = mathText,
-                onSubtotalLongClick = { if (baseCopyText.isNotEmpty()) callbacks.onCopy(baseCopyText) },
+                currency = state.baseCurrency,
+                subtotal = state.base,
+                mathText = state.mathText,
+                onCopy = callbacks.onCopy,
             )
             Spacer(Modifier.height(PANEL_STACK_GAP))
-            AmountToRow(
-                currency = destCurrency,
-                resultParts = resultParts,
-                trueCostParts = trueCostParts,
-                stack = feeStack,
-                fees = activeFees,
-                otherValue = resultWithFeesNumber,
-                isUpdating = isUpdating,
-                // Digits only: a new "from" currency changes the symbol, not
-                // the typed amount, so its result update still animates.
-                inputKey = baseParts.digits,
-                onResultLongClick = { if (resultCopyText.isNotEmpty()) callbacks.onCopy(resultCopyText) },
-                onTrueCostLongClick = { if (trueCostCopyText.isNotEmpty()) callbacks.onCopy(trueCostCopyText) },
-                onFeeChipClick = callbacks.onOpenFees,
-            )
+            AmountToRow(currency = state.destCurrency, state = state.result, callbacks = callbacks)
             Spacer(Modifier.height(RATE_FOOTER_TOP_MARGIN))
             RateFooter(
-                base = baseCurrency,
-                dest = destCurrency,
-                rates = rates,
-                dateFormatPattern = dateFormatPattern,
-                banner = banner,
+                base = state.baseCurrency,
+                dest = state.destCurrency,
+                state = state.footer,
                 onProviderClick = callbacks.onOpenProvider,
             )
         }
-    }
-}
-
-@Composable
-private fun PillsRow(
-    fromCurrency: Currency?,
-    toCurrency: Currency?,
-    onPillFromClick: () -> Unit,
-    onPillToClick: () -> Unit,
-    onSwapClick: () -> Unit,
-    onSwapLongPress: () -> Unit,
-) {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(PILLS_ROW_GAP),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        CurrencyPill(
-            currency = fromCurrency,
-            side = PillSide.FROM,
-            onClick = onPillFromClick,
-            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_FROM),
-        )
-        SwapFab(onClick = onSwapClick, onLongClick = onSwapLongPress)
-        CurrencyPill(
-            currency = toCurrency,
-            side = PillSide.TO,
-            onClick = onPillToClick,
-            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_TO),
-        )
     }
 }
 
@@ -585,21 +577,19 @@ private fun SwapFab(
 @Composable
 private fun AmountHero(
     currency: Currency?,
-    subtotalParts: AmountParts,
+    subtotal: Amount,
     mathText: String?,
-    onSubtotalLongClick: () -> Unit,
+    onCopy: (CharSequence) -> Unit,
 ) {
     val context = LocalContext.current
     ReceiptPanel(label = currency.panelLabel(context)) {
         Column(Modifier.fillMaxWidth()) {
             MathLine(mathText)
             ScrollingAmount(
-                parts = subtotalParts,
-                digitsSize = AMOUNT_SUBTOTAL_SIZE,
-                symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
-                fontWeight = FontWeight.Medium,
+                parts = subtotal.parts,
+                style = SUBTOTAL_STYLE,
                 cursorHeight = CURSOR_HEIGHT_SUBTOTAL,
-                onLongClick = onSubtotalLongClick,
+                onLongClick = { subtotal.copyTo(onCopy) },
             )
             // Mirrors the math-line reservation above so the subtotal
             // sits at the panel's vertical center instead of the bottom
@@ -704,12 +694,9 @@ private fun PayRule() {
 @Composable
 private fun ScrollingAmount(
     parts: AmountParts,
-    digitsSize: TextUnit,
-    symbolSize: TextUnit,
-    fontWeight: FontWeight,
+    style: AmountStyle,
     cursorHeight: Dp?,
     onLongClick: () -> Unit,
-    fontFamily: FontFamily? = null,
     // Result side only: the typed input these digits were computed from, so
     // keystroke-driven changes can skip the "updated" animation.
     inputKey: Any? = null,
@@ -725,10 +712,10 @@ private fun ScrollingAmount(
         if (parts.symbol.isNotEmpty()) {
             Text(
                 text = parts.symbol,
-                fontSize = symbolSize,
-                lineHeight = digitsSize,
-                fontWeight = fontWeight,
-                fontFamily = fontFamily,
+                fontSize = style.symbolSize,
+                lineHeight = style.digitsSize,
+                fontWeight = style.fontWeight,
+                fontFamily = style.fontFamily,
                 color = color.copy(alpha = SYMBOL_ALPHA),
                 maxLines = 1,
                 softWrap = false,
@@ -739,10 +726,10 @@ private fun ScrollingAmount(
         val digitsText: @Composable (String) -> Unit = { value ->
             Text(
                 text = value,
-                fontSize = digitsSize,
-                lineHeight = digitsSize,
-                fontWeight = fontWeight,
-                fontFamily = fontFamily,
+                fontSize = style.digitsSize,
+                lineHeight = style.digitsSize,
+                fontWeight = style.fontWeight,
+                fontFamily = style.fontFamily,
                 color = color,
                 maxLines = 1,
                 softWrap = false,
@@ -896,49 +883,22 @@ private fun BlinkingCursor(
 @Composable
 private fun AmountToRow(
     currency: Currency?,
-    resultParts: AmountParts,
-    trueCostParts: AmountParts,
-    stack: BigDecimal?,
-    fees: ImmutableList<Fee>,
-    otherValue: BigDecimal?,
-    isUpdating: Boolean,
-    inputKey: Any?,
-    onResultLongClick: () -> Unit,
-    onTrueCostLongClick: () -> Unit,
-    onFeeChipClick: () -> Unit,
+    state: ResultState,
+    callbacks: MainDisplayCallbacks,
 ) {
     val context = LocalContext.current
-    val hasFee = stack.hasFee()
-    // When a fee is armed we always render the full receipt chain (subtotal
-    // → chip → rule → fee-adjusted final), even if the input is 0. Showing
-    // "0 + 1% = 0" is intentional: the final slot stays present so the user
-    // sees the same visual anchor at any input.
-    val showChain = hasFee && otherValue != null
+    val stack = state.feeStack?.takeIf { it.hasFee() }
     ReceiptPanel(label = currency.panelLabel(context)) {
         Column(Modifier.fillMaxWidth()) {
-            if (showChain) {
-                AmountToChain(
-                    resultParts = resultParts,
-                    trueCostParts = trueCostParts,
-                    stack = stack!!,
-                    fees = fees,
-                    isUpdating = isUpdating,
-                    inputKey = inputKey,
-                    onResultLongClick = onResultLongClick,
-                    onTrueCostLongClick = onTrueCostLongClick,
-                    onFeeChipClick = onFeeChipClick,
-                )
+            // When a fee is armed we always render the full receipt chain
+            // (subtotal → chip → rule → fee-adjusted final), even if the
+            // input is 0. Showing "0 + 1% = 0" is intentional: the final slot
+            // stays present so the user sees the same visual anchor at any
+            // input.
+            if (stack != null && state.hasTrueCost) {
+                AmountToChain(state = state, stack = stack, callbacks = callbacks)
             } else {
-                AmountToBare(
-                    resultParts = resultParts,
-                    stack = stack,
-                    fees = fees,
-                    hasFee = hasFee,
-                    isUpdating = isUpdating,
-                    inputKey = inputKey,
-                    onResultLongClick = onResultLongClick,
-                    onFeeChipClick = onFeeChipClick,
-                )
+                AmountToBare(state = state, stack = stack, callbacks = callbacks)
             }
         }
     }
@@ -946,87 +906,67 @@ private fun AmountToRow(
 
 // Full receipt chain rendered inside [AmountToRow] when a fee is armed and
 // a fee-adjusted result exists: fair subtotal → fee stamp → rule → engraved
-// fee-adjusted hero final. Extracted to keep [AmountToRow] under detekt's
-// LongMethod threshold once the shimmer wrapper landed.
+// fee-adjusted hero final.
 @Composable
 private fun AmountToChain(
-    resultParts: AmountParts,
-    trueCostParts: AmountParts,
+    state: ResultState,
     stack: BigDecimal,
-    fees: ImmutableList<Fee>,
-    isUpdating: Boolean,
-    inputKey: Any?,
-    onResultLongClick: () -> Unit,
-    onTrueCostLongClick: () -> Unit,
-    onFeeChipClick: () -> Unit,
+    callbacks: MainDisplayCallbacks,
 ) {
-    Box(Modifier.shimmer(enabled = isUpdating)) {
+    Box(Modifier.shimmer(enabled = state.isUpdating)) {
         ScrollingAmount(
-            parts = resultParts,
-            digitsSize = AMOUNT_SUBTOTAL_SIZE,
-            symbolSize = AMOUNT_SUBTOTAL_SYMBOL_SIZE,
-            fontWeight = FontWeight.Medium,
+            parts = state.result.parts,
+            style = SUBTOTAL_STYLE,
             cursorHeight = null,
-            onLongClick = onResultLongClick,
-            inputKey = inputKey,
+            onLongClick = { state.result.copyTo(callbacks.onCopy) },
+            inputKey = state.inputKey,
         )
     }
     Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-    ChipBelow(stack = stack, fees = fees, onClick = onFeeChipClick)
+    ChipBelow(stack = stack, fees = state.fees, onClick = callbacks.onOpenFees)
     Spacer(Modifier.height(PAY_RULE_TOP_GAP))
     PayRule()
     Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
     Box(
-        Modifier.shimmer(enabled = isUpdating, startDelayMillis = HERO_SHIMMER_STAGGER_MILLIS),
+        Modifier.shimmer(enabled = state.isUpdating, startDelayMillis = HERO_SHIMMER_STAGGER_MILLIS),
     ) {
         ScrollingAmount(
-            parts = trueCostParts,
-            digitsSize = AMOUNT_HERO_SIZE,
-            symbolSize = AMOUNT_HERO_SYMBOL_SIZE,
-            fontWeight = FontWeight.SemiBold,
+            parts = state.trueCost.parts,
+            style = FINAL_STYLE,
             cursorHeight = null,
-            onLongClick = onTrueCostLongClick,
-            fontFamily = FontFamily.Serif,
-            inputKey = inputKey,
+            onLongClick = { state.trueCost.copyTo(callbacks.onCopy) },
+            inputKey = state.inputKey,
         )
     }
 }
 
 // Fee-free destination render: single hero-sized fair conversion, plus the
-// fee stamp if a fee is armed against a 0/missing input (so the user sees
-// the fee will apply once they type something).
+// fee stamp if a fee is armed ([stack]) against a 0/missing input (so the
+// user sees the fee will apply once they type something).
 @Composable
 private fun AmountToBare(
-    resultParts: AmountParts,
+    state: ResultState,
     stack: BigDecimal?,
-    fees: ImmutableList<Fee>,
-    hasFee: Boolean,
-    isUpdating: Boolean,
-    inputKey: Any?,
-    onResultLongClick: () -> Unit,
-    onFeeChipClick: () -> Unit,
+    callbacks: MainDisplayCallbacks,
 ) {
-    Box(Modifier.shimmer(enabled = isUpdating)) {
+    Box(Modifier.shimmer(enabled = state.isUpdating)) {
         ScrollingAmount(
-            parts = resultParts,
-            digitsSize = AMOUNT_TO_SIZE,
-            symbolSize = AMOUNT_TO_SYMBOL_SIZE,
-            fontWeight = FontWeight.SemiBold,
+            parts = state.result.parts,
+            style = RESULT_STYLE,
             cursorHeight = null,
-            onLongClick = onResultLongClick,
-            fontFamily = FontFamily.Serif,
-            inputKey = inputKey,
+            onLongClick = { state.result.copyTo(callbacks.onCopy) },
+            inputKey = state.inputKey,
         )
     }
-    if (hasFee && stack != null) {
+    if (stack != null) {
         Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-        ChipBelow(stack = stack, fees = fees, onClick = onFeeChipClick)
+        ChipBelow(stack = stack, fees = state.fees, onClick = callbacks.onOpenFees)
     }
 }
 
 // True when the fee stack is a real markup/markdown (not `1`, i.e. not
 // a no-op). Used to decide whether the amber chip should render at all.
-private fun BigDecimal?.hasFee(): Boolean = this != null && this.compareTo(BigDecimal.ONE) != 0
+private fun BigDecimal.hasFee(): Boolean = compareTo(BigDecimal.ONE) != 0
 
 // Sits between the subtotal and the hero final in the top card, taking no
 // bottom padding of its own — the surrounding column adds symmetric spacers
@@ -1282,11 +1222,10 @@ private fun FeeChipText(
 private fun RateFooter(
     base: Currency?,
     dest: Currency?,
-    rates: ExchangeRates?,
-    dateFormatPattern: String,
-    banner: BannerContent?,
+    state: FooterState,
     onProviderClick: () -> Unit,
 ) {
+    val (rates, dateFormatPattern, banner) = state
     Column {
         Box(
             Modifier

@@ -25,6 +25,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -108,25 +110,11 @@ internal fun FeeEditorDialog(
     onConfirm: (FeeDraft) -> Unit,
     onDelete: (() -> Unit)? = null,
 ) {
-    var name by rememberSaveable(existing?.id) { mutableStateOf(existing?.name.orEmpty()) }
-    val percentText = rememberFeePercentState(existing?.percent)
-    var active by rememberSaveable(existing?.id) { mutableStateOf(existing?.isActive != false) }
-    val pair = existing as? Fee.SpecificPair
-    var from by rememberSaveable(existing?.id) { mutableStateOf(pair?.from) }
-    var to by rememberSaveable(existing?.id) { mutableStateOf(pair?.to) }
-    var bothWays by rememberSaveable(existing?.id) { mutableStateOf(pair?.bothWays == true) }
+    val fields = rememberFeeEditorFields(existing)
     var pickerState by remember { mutableStateOf<CurrencyPickerRequest?>(null) }
     val confirm =
         rememberHapticOnClick {
-            val draft =
-                FeeDraft(
-                    name = name.trim(),
-                    percent = percentText.value.toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
-                    isActive = active,
-                    from = from,
-                    to = to,
-                    bothWays = bothWays,
-                )
+            val draft = fields.toDraft()
             if (isPair && (draft.from == null || draft.to == null)) return@rememberHapticOnClick
             onConfirm(draft)
         }
@@ -141,19 +129,8 @@ internal fun FeeEditorDialog(
             title = { Text(text = stringResource(id = titleRes)) },
             text = {
                 FeeEditorDialogBody(
-                    name = name,
-                    onNameChange = { name = it },
-                    active = active,
-                    onActiveChange = { active = it },
+                    fields = fields,
                     isPair = isPair,
-                    from = from,
-                    onFromChange = { from = it },
-                    to = to,
-                    onToChange = { to = it },
-                    bothWays = bothWays,
-                    onBothWaysChange = { bothWays = it },
-                    percentText = percentText.value,
-                    onPercentChange = { percentText.value = it },
                     onPickCurrency = { d, cb -> pickerState = CurrencyPickerRequest(d, cb) },
                 )
             },
@@ -198,19 +175,8 @@ private data class CurrencyPickerRequest(
  */
 @Composable
 private fun FeeEditorDialogBody(
-    name: String,
-    onNameChange: (String) -> Unit,
-    active: Boolean,
-    onActiveChange: (Boolean) -> Unit,
+    fields: FeeEditorFields,
     isPair: Boolean,
-    from: String?,
-    onFromChange: (String) -> Unit,
-    to: String?,
-    onToChange: (String) -> Unit,
-    bothWays: Boolean,
-    onBothWaysChange: (Boolean) -> Unit,
-    percentText: String,
-    onPercentChange: (String) -> Unit,
     onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
 ) {
     Column(
@@ -221,41 +187,85 @@ private fun FeeEditorDialogBody(
     ) {
         LabeledSwitchRow(
             labelRes = R.string.fee_edit_active,
-            checked = active,
-            onCheckedChange = onActiveChange,
+            checked = fields.active.value,
+            onCheckedChange = { fields.active.value = it },
         )
         LabeledField(labelRes = R.string.fee_edit_name, topGap = FEE_EDITOR_SECTION_GAP) {
             OutlinedTextField(
-                value = name,
-                onValueChange = onNameChange,
+                value = fields.name.value,
+                onValueChange = { fields.name.value = it },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-        if (isPair) {
-            LabeledField(labelRes = R.string.fee_pair_from, topGap = FEE_EDITOR_SECTION_GAP) {
-                CurrencyPickerButton(
-                    iso = from,
-                    onClick = { onPickCurrency(to?.let(Currency::fromString), onFromChange) },
-                )
-            }
-            LabeledField(labelRes = R.string.fee_pair_to, topGap = FEE_EDITOR_SECTION_GAP) {
-                CurrencyPickerButton(
-                    iso = to,
-                    onClick = { onPickCurrency(from?.let(Currency::fromString), onToChange) },
-                )
-            }
-            Spacer(Modifier.height(FEE_EDITOR_SECTION_GAP))
-            LabeledSwitchRow(
-                labelRes = R.string.fee_pair_both_ways,
-                checked = bothWays,
-                onCheckedChange = onBothWaysChange,
-            )
-        }
+        if (isPair) FeePairFields(fields, onPickCurrency)
         LabeledField(labelRes = R.string.fee_edit_percent, topGap = FEE_EDITOR_SECTION_GAP) {
-            FeePercentField(value = percentText, onValueChange = onPercentChange)
+            FeePercentField(value = fields.percentText.value, onValueChange = { fields.percentText.value = it })
         }
     }
+}
+
+// The rows only a specific-pair fee has: from, to, and "both ways". Each
+// currency button greys out the other side's currency in the picker.
+@Composable
+private fun FeePairFields(
+    fields: FeeEditorFields,
+    onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
+) {
+    LabeledField(labelRes = R.string.fee_pair_from, topGap = FEE_EDITOR_SECTION_GAP) {
+        CurrencyPickerButton(
+            iso = fields.from.value,
+            onClick = { onPickCurrency(fields.to.value?.let(Currency::fromString)) { fields.from.value = it } },
+        )
+    }
+    LabeledField(labelRes = R.string.fee_pair_to, topGap = FEE_EDITOR_SECTION_GAP) {
+        CurrencyPickerButton(
+            iso = fields.to.value,
+            onClick = { onPickCurrency(fields.from.value?.let(Currency::fromString)) { fields.to.value = it } },
+        )
+    }
+    Spacer(Modifier.height(FEE_EDITOR_SECTION_GAP))
+    LabeledSwitchRow(
+        labelRes = R.string.fee_pair_both_ways,
+        checked = fields.bothWays.value,
+        onCheckedChange = { fields.bothWays.value = it },
+    )
+}
+
+// The editor's fields, each saved across rotation and reset when another fee
+// is opened.
+@Stable
+private class FeeEditorFields(
+    val name: MutableState<String>,
+    val percentText: MutableState<String>,
+    val active: MutableState<Boolean>,
+    val from: MutableState<String?>,
+    val to: MutableState<String?>,
+    val bothWays: MutableState<Boolean>,
+) {
+    // What the fields hold now, as the fee to save.
+    fun toDraft(): FeeDraft =
+        FeeDraft(
+            name = name.value.trim(),
+            percent = percentText.value.toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
+            isActive = active.value,
+            from = from.value,
+            to = to.value,
+            bothWays = bothWays.value,
+        )
+}
+
+@Composable
+private fun rememberFeeEditorFields(existing: Fee?): FeeEditorFields {
+    val pair = existing as? Fee.SpecificPair
+    return FeeEditorFields(
+        name = rememberSaveable(existing?.id) { mutableStateOf(existing?.name.orEmpty()) },
+        percentText = rememberFeePercentState(existing?.percent),
+        active = rememberSaveable(existing?.id) { mutableStateOf(existing?.isActive != false) },
+        from = rememberSaveable(existing?.id) { mutableStateOf(pair?.from) },
+        to = rememberSaveable(existing?.id) { mutableStateOf(pair?.to) },
+        bothWays = rememberSaveable(existing?.id) { mutableStateOf(pair?.bothWays == true) },
+    )
 }
 
 /**
@@ -368,6 +378,13 @@ private fun CurrencyPickerButton(
     }
 }
 
+/** What the fee picker can do: make a fee the active one, add a new one, or open one for editing. */
+internal class FeePickerActions<T : Fee>(
+    val onPicked: (String) -> Unit,
+    val onAdd: () -> Unit,
+    val onEdit: (T) -> Unit,
+)
+
 /**
  * Global-fee picker dialog: radio list of every fee of a given kind. Tapping
  * a radio commits it as the active fee and dismisses; tapping the row body
@@ -378,16 +395,14 @@ internal fun <T : Fee> FeePickerDialog(
     title: String,
     entries: List<T>,
     effectiveId: String?,
+    actions: FeePickerActions<T>,
     onDismiss: () -> Unit,
-    onPicked: (String) -> Unit,
-    onAdd: () -> Unit,
-    onEdit: (T) -> Unit,
 ) {
     val cancel = rememberHapticOnClick(onDismiss)
     val add =
         rememberHapticOnClick {
             onDismiss()
-            onAdd()
+            actions.onAdd()
         }
     AppTheme {
         AlertDialog(
@@ -400,12 +415,12 @@ internal fun <T : Fee> FeePickerDialog(
                             fee = fee,
                             checked = fee.id == effectiveId,
                             onRadioClick = {
-                                onPicked(fee.id)
+                                actions.onPicked(fee.id)
                                 onDismiss()
                             },
                             onEditClick = {
                                 onDismiss()
-                                onEdit(fee)
+                                actions.onEdit(fee)
                             },
                         )
                     }

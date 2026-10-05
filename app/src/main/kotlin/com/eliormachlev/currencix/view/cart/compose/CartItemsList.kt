@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,26 +32,53 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 /** A finished drag: the rows' new on-screen order and the row that moved. */
 typealias CartDragCommit = (displayOrder: List<String>, movedId: String) -> Unit
 
+/** The live values the list renders. */
+class CartListSources(
+    val items: LiveData<ImmutableList<CartItem>>,
+    val currency: LiveData<String>,
+    val activeItemId: LiveData<String?>,
+    val activeExpression: LiveData<String>,
+)
+
+/** What the rows can ask for, each naming the row it's about. */
+@Immutable
+class CartItemActions(
+    val onNameCommit: (id: String, name: String) -> Unit,
+    val onNamePending: (id: String, name: String) -> Unit,
+    val onExpressionTap: (item: CartItem) -> Unit,
+    val onTogglePin: (id: String) -> Unit,
+    val onDelete: (id: String) -> Unit,
+) {
+    /** These actions, bound to [item]'s row. */
+    fun forRow(item: CartItem) =
+        CartRowActions(
+            onNameCommit = { onNameCommit(item.id, it) },
+            onNamePending = { onNamePending(item.id, it) },
+            onExpressionTap = { onExpressionTap(item) },
+            onTogglePin = { onTogglePin(item.id) },
+            onDelete = { onDelete(item.id) },
+        )
+}
+
+/** A drag to reorder: told when it starts, and where the rows ended up. */
+@Immutable
+class CartReorder(
+    val onStart: () -> Unit,
+    val onCommit: CartDragCommit,
+)
+
 @Composable
 fun CartItemsList(
-    itemsSource: LiveData<ImmutableList<CartItem>>,
-    currencySource: LiveData<String>,
-    activeItemIdSource: LiveData<String?>,
-    activeExpressionSource: LiveData<String>,
-    onNameCommit: (id: String, name: String) -> Unit,
-    onNamePending: (id: String, name: String) -> Unit,
-    onExpressionTap: (item: CartItem) -> Unit,
-    onTogglePin: (id: String) -> Unit,
-    onDelete: (id: String) -> Unit,
-    onReorder: CartDragCommit,
-    onReorderStart: () -> Unit,
+    sources: CartListSources,
+    actions: CartItemActions,
+    reorder: CartReorder,
     onBackgroundTap: () -> Unit,
 ) {
     AppTheme {
-        val items by itemsSource.observeAsState(initial = persistentListOf())
-        val currency by currencySource.observeAsState(initial = "")
-        val activeId by activeItemIdSource.observeAsState()
-        val liveExpression by activeExpressionSource.observeAsState(initial = "")
+        val items by sources.items.observeAsState(initial = persistentListOf())
+        val currency by sources.currency.observeAsState(initial = "")
+        val activeId by sources.activeItemId.observeAsState()
+        val liveExpression by sources.activeExpression.observeAsState(initial = "")
 
         // Local mirror the drag gesture mutates in-flight; ReorderableLazyList
         // needs a stable, mutable data source so the visual swap can settle
@@ -69,21 +97,13 @@ fun CartItemsList(
             // via its `animateItemModifier` parameter, so add/remove/re-slot
             // already animates without extra wiring at the call site.
             ReorderableItem(reorderableState, key = item.id) { _ ->
-                val isActive = item.id == activeId
                 SwipeableCartItemRow(
-                    item = item,
-                    currency = currency,
-                    isActive = isActive,
-                    liveExpression = if (isActive) liveExpression else null,
-                    onNameCommit = { onNameCommit(item.id, it) },
-                    onNamePending = { onNamePending(item.id, it) },
-                    onExpressionTap = { onExpressionTap(item) },
-                    onTogglePin = { onTogglePin(item.id) },
-                    onDelete = { onDelete(item.id) },
+                    state = CartRowState(item, currency, liveExpression.takeIf { item.id == activeId }),
+                    actions = remember(actions, item) { actions.forRow(item) },
                     dragHandleModifier =
                         Modifier.longPressDraggableHandle(
-                            onDragStarted = { onReorderStart() },
-                            onDragStopped = { commitDrag(displayItems, item.id, onReorder) },
+                            onDragStarted = { reorder.onStart() },
+                            onDragStopped = { commitDrag(displayItems, item.id, reorder.onCommit) },
                         ),
                 )
             }

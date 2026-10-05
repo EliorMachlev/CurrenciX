@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.viewmodel.main
 
 import android.app.Application
 import android.text.SpannableStringBuilder
-import android.text.Spanned
 import androidx.core.text.bold
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -14,7 +13,6 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
@@ -24,19 +22,10 @@ import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.repository.RefreshState
-import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
-import com.eliormachlev.currencix.util.OPERATOR_MINUS
-import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
-import com.eliormachlev.currencix.util.OPERATOR_PLUS
 import com.eliormachlev.currencix.util.combineWith
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
-import com.eliormachlev.currencix.util.feeStackDelta
-import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getDecimalSeparator
-import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
-import com.eliormachlev.currencix.util.isNeutralFeeStack
-import com.eliormachlev.currencix.util.normaliseGlyphsToAscii
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
@@ -72,10 +61,10 @@ class MainViewModel(
     // (those compositions are deferred out of this migration per the plan's
     // Molecule-deferral guidance).
     private val starredLiveItems: StateFlow<ImmutableList<Currency>> =
-        db.getStarredCurrenciesFlow().stateInWhileSubscribed(viewModelScope, db.getStarredCurrenciesBlocking())
+        db.stars.getStarredCurrenciesFlow().stateInWhileSubscribed(viewModelScope, db.stars.getStarredCurrenciesBlocking())
     private val starredLiveItemsLive: LiveData<ImmutableList<Currency>> = starredLiveItems.asLiveData()
     private val onlyShowStarred: StateFlow<Boolean> =
-        db.isFilterStarredEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isFilterStarredEnabledBlocking())
+        db.stars.isFilterStarredEnabledFlow().stateInWhileSubscribed(viewModelScope, db.stars.isFilterStarredEnabledBlocking())
     private val onlyShowStarredLive: LiveData<Boolean> = onlyShowStarred.asLiveData()
 
     // ui
@@ -85,15 +74,13 @@ class MainViewModel(
     private val refreshShimmer: StateFlow<Boolean> =
         RefreshState.passiveIndicator.stateInWhileSubscribed(viewModelScope, false)
     val isExpandedKeypadEnabled: StateFlow<Boolean> =
-        db.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.getExpandedKeypadEnabledBlocking())
-    val isHapticFeedbackEnabled: StateFlow<Boolean> =
-        db.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.isHapticFeedbackEnabledBlocking())
+        db.display.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.getExpandedKeypadEnabledBlocking())
     private val decimalPlaces: StateFlow<Int> =
-        db.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.getDecimalPlacesBlocking())
+        db.display.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.display.getDecimalPlacesBlocking())
     private val decimalPlacesLive: LiveData<Int> = decimalPlaces.asLiveData()
 
-    // number input
-    private val input = CalculatorInputState()
+    /** What the keypad has typed. The keypad drives it directly; the amounts below follow it. */
+    internal val input = CalculatorInputState()
     private val currentBaseValueText: LiveData<String?> = input.baseValueText
     private val currentCalculationValueText: LiveData<String?> = input.calculationValueText
 
@@ -104,13 +91,13 @@ class MainViewModel(
     // Fees leaves migrated to `StateFlow`; `.asLiveData()` bridges feed the
     // `pairFeeMediator` MediatorLiveData below (deferred per the plan).
     private val fees: StateFlow<ImmutableList<Fee>> =
-        db.getFeesFlow().stateInWhileSubscribed(viewModelScope, db.getFeesBlocking())
+        db.fees.getFeesFlow().stateInWhileSubscribed(viewModelScope, db.fees.getFeesBlocking())
     private val feesLive: LiveData<ImmutableList<Fee>> = fees.asLiveData()
     private val activeExchangeId: StateFlow<String?> =
-        db.getActiveExchangeIdFlow().stateInWhileSubscribed(viewModelScope, db.getActiveExchangeIdBlocking())
+        db.fees.getActiveExchangeIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveExchangeIdBlocking())
     private val activeExchangeIdLive: LiveData<String?> = activeExchangeId.asLiveData()
     private val activeBankId: StateFlow<String?> =
-        db.getActiveBankIdFlow().stateInWhileSubscribed(viewModelScope, db.getActiveBankIdBlocking())
+        db.fees.getActiveBankIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveBankIdBlocking())
     private val activeBankIdLive: LiveData<String?> = activeBankId.asLiveData()
 
     // Background timeline prefetcher: fires whenever the selected base/target
@@ -129,20 +116,20 @@ class MainViewModel(
         // only update if data is old: https://github.com/Formicka/exchangerate.host
         // "Rates are updated around midnight UTC every working day."
         val currentDate = LocalDate.now(ZoneId.of("UTC"))
-        val cachedDate = db.getDate()
-        val historicalDate = db.getHistoricalDate()
+        val cachedDate = db.rates.getDate()
+        val historicalDate = db.lastState.getHistoricalDate()
 
         dbLiveItems =
             when {
                 // force-use cache
-                onlyCache -> db.getExchangeRates()
+                onlyCache -> db.rates.getExchangeRates()
                 // first run: fetch data
                 cachedDate == null -> repository.getExchangeRates()
                 // Historical rates in use: serve from cache when the cached date
                 // already matches the requested historical date; otherwise re-fetch.
                 historicalDate != null -> {
                     if (historicalDate == cachedDate) {
-                        db.getExchangeRates()
+                        db.rates.getExchangeRates()
                     } else {
                         repository.getExchangeRates()
                     }
@@ -150,7 +137,7 @@ class MainViewModel(
                 // fetch if stored date is before the current date
                 cachedDate.isBefore(currentDate) -> repository.getExchangeRates()
                 // else just use the cached value
-                else -> db.getExchangeRates()
+                else -> db.rates.getExchangeRates()
             }
 
         exchangeRates =
@@ -188,8 +175,8 @@ class MainViewModel(
 
         // update currently selected currencies when rates are updated:
         // sometimes the selected rates aren't available anymore, so reset them
-        val baseCurrency = db.getLastBaseCurrency()
-        val destinationCurrency = db.getLastDestinationCurrency()
+        val baseCurrency = db.lastState.getLastBaseCurrency()
+        val destinationCurrency = db.lastState.getLastDestinationCurrency()
         currentBaseCurrency =
             object : MediatorLiveData<Currency?>() {
                 var base: Currency? = null
@@ -297,7 +284,7 @@ class MainViewModel(
      * persist the user's manual ordering of starred currencies
      */
     internal fun setStarredCurrencyOrder(currencies: List<Currency>) {
-        db.setStarredCurrencyOrder(currencies)
+        db.stars.setStarredCurrencyOrder(currencies)
     }
 
     /**
@@ -309,14 +296,14 @@ class MainViewModel(
      * switch the starred-filter on/off
      */
     internal fun toggleStarredActive() {
-        db.toggleStarredActive()
+        db.stars.toggleStarredActive()
     }
 
     /**
      * de-/star a currency
      */
     internal fun toggleCurrencyStar(currencyCode: Currency) {
-        db.toggleCurrencyStar(currencyCode)
+        db.stars.toggleCurrencyStar(currencyCode)
     }
 
     /**
@@ -342,55 +329,6 @@ class MainViewModel(
      * all configured fees
      */
     internal fun getFees(): StateFlow<ImmutableList<Fee>> = fees
-
-    internal val ratesInformationFooter =
-        object : MediatorLiveData<Spanned?>() {
-            var exchangeRates: ExchangeRates? = null
-            var baseCurrency: Currency? = null
-            var destinationCurrency: Currency? = null
-
-            init {
-                addSource(getExchangeRates()) {
-                    exchangeRates = it
-                    update()
-                }
-                addSource(currentBaseCurrency) {
-                    baseCurrency = it
-                    update()
-                }
-                addSource(currentDestinationCurrency) {
-                    destinationCurrency = it
-                    update()
-                }
-            }
-
-            fun update() {
-                if (exchangeRates != null && baseCurrency != null && destinationCurrency != null) {
-                    // base currency
-                    val baseValue = exchangeRates!!.rateFor(baseCurrency)?.value
-                    // target currency
-                    val destinationValue = exchangeRates!!.rateFor(destinationCurrency)?.value
-                    val destinationValueCalculated =
-                        baseValue?.let {
-                            destinationValue?.divide(it, MathContext.DECIMAL128)
-                        }
-
-                    // create string
-                    this.value =
-                        app
-                            .getString(
-                                R.string.info_conversion,
-                                "1",
-                                baseCurrency!!.iso4217Alpha(),
-                                destinationValueCalculated?.toHumanReadableNumber(
-                                    app,
-                                    decimalPlaces = destinationValueCalculated.getSignificantDecimalPlaces(2),
-                                ) ?: "",
-                                destinationCurrency!!.iso4217Alpha(),
-                            ).fromHtmlLegacy()
-                }
-            }
-        }
 
     /*
      * base and destination text ===================================================================
@@ -597,39 +535,6 @@ class MainViewModel(
             activeBankId.value,
         )
 
-    // `source * multiplier(stack)` gated on the stack being non-trivial; null
-    // otherwise. Bridges every fee-derivation onto one shape so "raw total"
-    // and "abs delta" callers share a pipeline.
-    private fun feeAmountLiveData(
-        source: LiveData<BigDecimal>,
-        multiplier: (BigDecimal) -> BigDecimal,
-    ): LiveData<BigDecimal?> =
-        source.combineWith(feeStack) { value, stack ->
-            val s = stack ?: BigDecimal.ONE
-            if (s.isNeutralFeeStack()) {
-                null
-            } else {
-                (value ?: BigDecimal.ZERO).multiply(multiplier(s), MathContext.DECIMAL128)
-            }
-        }
-
-    /**
-     * The additional "true cost" on the input side: `input * feeStack`.
-     * `null` when no fee applies.
-     */
-    private val trueCost: LiveData<BigDecimal?> =
-        feeAmountLiveData(getCurrentBaseValueAsNumber()) { it }
-
-    internal fun getTrueCost(): LiveData<BigDecimal?> = trueCost
-
-    // Magnitude of the fee in the input currency. The percent tail rendered
-    // alongside carries the sign, so we `.abs()` at source to stop every
-    // consumer from repeating it.
-    private val feeAmount: LiveData<BigDecimal?> =
-        feeAmountLiveData(getCurrentBaseValueAsNumber()) { it.feeStackDelta().abs() }
-
-    internal fun getFeeAmount(): LiveData<BigDecimal?> = feeAmount
-
     /**
      * Multiplicative fee stack for the current pair.
      */
@@ -720,61 +625,11 @@ class MainViewModel(
     internal fun getDecimalPlaces(): StateFlow<Int> = decimalPlaces
 
     /*
-     * user input **********************************************************************************
-     */
-
-    internal fun addNumber(value: String) = input.addNumber(value)
-
-    internal fun paste(value: Number) = input.paste(value)
-
-    internal fun setAmount(value: BigDecimal) = input.setAmount(value)
-
-    internal fun addPercent() = input.addPercent()
-
-    internal fun addDecimal() = input.addDecimal()
-
-    internal fun delete() = input.delete()
-
-    internal fun clear() = input.clear()
-
-    internal fun addition() = input.addOperator(OPERATOR_PLUS)
-
-    internal fun subtraction() = input.addOperator(OPERATOR_MINUS)
-
-    internal fun multiplication() = input.addOperator(OPERATOR_MULTIPLY)
-
-    internal fun division() = input.addOperator(OPERATOR_DIVIDE)
-
-    internal fun openParen() = input.addOpenParen()
-
-    internal fun closeParen() = input.addCloseParen()
-
-    // Cycle-toggle for the shared `()` keypad button — inserts whichever
-    // glyph is currently highlighted.
-    internal fun applyNextParen() = input.applyNextParen()
-
-    // Raw as-typed expression for seeding the system-IME EditText on mode
-    // switch. Display glyphs (× ÷ −) are normalised back to ASCII so the seed
-    // matches what the user's keyboard produces. An untouched state (base
-    // still "0", no calc row) seeds as empty — otherwise the leading "0"
-    // gets prepended to the next keystroke and the EditText drifts out of
-    // sync with the calculator state.
-    internal fun currentTypedExpression(): String {
-        input.calculationValueText.value?.let { return it.normaliseGlyphsToAscii() }
-        val base = input.baseValueText.value.orEmpty()
-        return if (base == "0") "" else base.normaliseGlyphsToAscii()
-    }
-
-    // Which paren the cycle-toggle keypad button should insert next — drives
-    // the bold/green vs grey highlight on the two-glyph `()` button.
-    internal fun nextParen(): LiveData<Char> = input.nextParen
-
-    /*
      * selected currencies *************************************************************************
      */
 
     internal fun setBaseCurrency(currency: Currency) {
-        db.saveLastUsedRates(
+        db.lastState.saveLastUsedRates(
             currency,
             currentDestinationCurrency.value,
         )
@@ -782,7 +637,7 @@ class MainViewModel(
     }
 
     internal fun setDestinationCurrency(currency: Currency) {
-        db.saveLastUsedRates(
+        db.lastState.saveLastUsedRates(
             currentBaseCurrency.value,
             currency,
         )
@@ -792,7 +647,7 @@ class MainViewModel(
     /** Sets both sides in one write, so neither side reads the other mid-change. */
     internal fun setCurrencyPair(pair: CurrencyPair) {
         if (pair.from == pair.to) return
-        db.saveLastUsedRates(pair.from, pair.to)
+        db.lastState.saveLastUsedRates(pair.from, pair.to)
         prefetchTimeline(pair.from, pair.to)
     }
 
@@ -825,18 +680,18 @@ class MainViewModel(
 
     internal fun setHistoricalDate(date: LocalDate?) {
         // check if previous date was "latest" or historical
-        val wasLatestActive = db.getHistoricalDate() == null
+        val wasLatestActive = db.lastState.getHistoricalDate() == null
         // save selected historical date to db
-        db.setHistoricalDate(date)
+        db.lastState.setHistoricalDate(date)
         // refresh, if new date != cached date or if last state was "latest"
-        if (date != db.getDate() || wasLatestActive) {
+        if (date != db.rates.getDate() || wasLatestActive) {
             forceUpdateExchangeRate()
         }
     }
 
-    internal fun getHistoricalDate(): LocalDate? = db.getHistoricalDate()
+    internal fun getHistoricalDate(): LocalDate? = db.lastState.getHistoricalDate()
 
-    internal fun getHistoricalLiveDate(): LiveData<LocalDate?> = db.getHistoricalLiveDate()
+    internal fun getHistoricalLiveDate(): LiveData<LocalDate?> = db.lastState.getHistoricalLiveDate()
 
     /*
      * helpers =====================================================================================

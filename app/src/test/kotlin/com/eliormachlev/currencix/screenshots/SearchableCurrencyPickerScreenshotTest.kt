@@ -3,8 +3,10 @@ package com.eliormachlev.currencix.screenshots
 import android.app.Application
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerConversion
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
+import com.eliormachlev.currencix.view.main.spinner.pickerActions
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
@@ -27,30 +29,27 @@ class SearchableCurrencyPickerScreenshotTest {
     @Test fun currencyPickerAll() =
         shots.captureMatrix("currency_picker_all") {
             SearchableCurrencyPicker(
-                rates = SAMPLE_RATES,
-                stars = SAMPLE_STARS,
-                filterStarred = false,
-                conversion = SAMPLE_CONVERSION,
-                disabledCurrency = null,
-                onRateClicked = {},
-                onStarClicked = {},
-                onToggleStarredFilter = {},
-                onStarredOrderChanged = {},
+                content =
+                    CurrencyPickerContent(
+                        rates = SAMPLE_RATES,
+                        stars = SAMPLE_STARS,
+                        conversion = SAMPLE_CONVERSION,
+                    ),
+                actions = pickerActions(),
             )
         }
 
     @Test fun currencyPickerStarredOnly() =
         shots.captureMatrix("currency_picker_starred") {
             SearchableCurrencyPicker(
-                rates = SAMPLE_RATES,
-                stars = SAMPLE_STARS,
-                filterStarred = true,
-                conversion = SAMPLE_CONVERSION,
-                disabledCurrency = null,
-                onRateClicked = {},
-                onStarClicked = {},
-                onToggleStarredFilter = {},
-                onStarredOrderChanged = {},
+                content =
+                    CurrencyPickerContent(
+                        rates = SAMPLE_RATES,
+                        stars = SAMPLE_STARS,
+                        filterStarred = true,
+                        conversion = SAMPLE_CONVERSION,
+                    ),
+                actions = pickerActions(),
             )
         }
 

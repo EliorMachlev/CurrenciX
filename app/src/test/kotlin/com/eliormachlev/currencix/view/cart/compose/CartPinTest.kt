@@ -45,19 +45,12 @@ class CartPinTest {
             )
         compose.setContent {
             CartItemsList(
-                itemsSource = items,
-                currencySource = MutableLiveData("USD"),
-                activeItemIdSource = MutableLiveData(null),
-                activeExpressionSource = MutableLiveData(""),
-                onNameCommit = { _, _ -> },
-                onNamePending = { _, _ -> },
-                onExpressionTap = {},
-                onTogglePin = { id ->
-                    items.value = items.value!!.map { if (it.id == id) it.copy(pinned = !it.pinned) else it }.toImmutableList()
-                },
-                onDelete = {},
-                onReorder = { _, _ -> },
-                onReorderStart = {},
+                sources = cartSources(items),
+                actions =
+                    cartItemActions(onTogglePin = { id ->
+                        items.value = items.value!!.map { if (it.id == id) it.copy(pinned = !it.pinned) else it }.toImmutableList()
+                    }),
+                reorder = NO_REORDER,
                 onBackgroundTap = {},
             )
         }

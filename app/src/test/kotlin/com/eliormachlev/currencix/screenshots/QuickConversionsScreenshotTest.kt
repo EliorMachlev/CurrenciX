@@ -4,6 +4,7 @@ import android.app.Application
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsContent
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsRow
+import com.eliormachlev.currencix.view.main.compose.QuickConversionsTable
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,10 +21,7 @@ class QuickConversionsScreenshotTest {
     @Test fun quickConversionsPopulated() =
         shots.captureMatrix("quick_conversions_populated") {
             QuickConversionsContent(
-                from = Currency.USD,
-                to = Currency.EUR,
-                feeInfoText = null,
-                rows = SAMPLE_ROWS,
+                table = QuickConversionsTable(Currency.USD, Currency.EUR, SAMPLE_ROWS),
                 emptyText = "No conversions",
                 onSwap = {},
                 onSwapLongPress = {},
@@ -33,10 +31,7 @@ class QuickConversionsScreenshotTest {
     @Test fun quickConversionsEmpty() =
         shots.captureMatrix("quick_conversions_empty") {
             QuickConversionsContent(
-                from = Currency.USD,
-                to = Currency.EUR,
-                feeInfoText = null,
-                rows = emptyList(),
+                table = QuickConversionsTable(Currency.USD, Currency.EUR, emptyList()),
                 emptyText = "No conversions available",
                 onSwap = {},
                 onSwapLongPress = {},

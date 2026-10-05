@@ -60,10 +60,7 @@ internal fun TimelineScreen(
 
             val chartCard: @Composable (Modifier) -> Unit = { mod ->
                 TimelineChartCard(
-                    isRefreshing = isRefreshing,
-                    error = error,
-                    empty = rangeEmpty,
-                    provider = provider,
+                    status = ChartStatus(isRefreshing, error, rangeEmpty, provider),
                     onRetry = model::retry,
                     onChangeProvider = onChangeProvider,
                     modifier = mod.captureInto(chartCapture),
@@ -72,13 +69,7 @@ internal fun TimelineScreen(
             }
             val secondary: @Composable (Modifier) -> Unit = { mod ->
                 TimelineSecondary(
-                    ratePast = ratePast,
-                    rateCurrent = rateCurrent,
-                    diffPercent = diffPercent,
-                    ratesMax = ratesMax,
-                    ratesAvg = ratesAvg,
-                    ratesMed = ratesMed,
-                    ratesMin = ratesMin,
+                    stats = TimelineStats(ratePast, rateCurrent, diffPercent, ratesMax, ratesAvg, ratesMed, ratesMin),
                     formatter = formatter,
                     period = period,
                     modifier = mod,

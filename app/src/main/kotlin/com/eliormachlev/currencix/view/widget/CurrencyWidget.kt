@@ -158,8 +158,8 @@ internal object WidgetPairState {
     }
 
     private fun converterPair(db: Database): CurrencyPair? {
-        val from = db.getLastBaseCurrencyBlocking() ?: return null
-        val to = db.getLastDestinationCurrencyBlocking() ?: return null
+        val from = db.lastState.getLastBaseCurrencyBlocking() ?: return null
+        val to = db.lastState.getLastDestinationCurrencyBlocking() ?: return null
         return CurrencyPair(from, to)
     }
 }
@@ -244,19 +244,22 @@ private fun readSnapshot(
     pair: CurrencyPair?,
     withTrend: Boolean,
 ): WidgetSnapshot {
-    val rates = db.getExchangeRatesBlocking()
+    val rates = db.rates.getExchangeRatesBlocking()
     val converted =
         pair?.let { rates?.convert(BigDecimal.ONE, it.from, it.to) }?.roundForDisplay(WIDGET_DISPLAY_SCALE)
     val trend =
         if (withTrend && pair != null) {
-            trendBitmap(context, sparklinePoints(db.getCachedTimeline(db.getApiProvider(), pair.from, pair.to), LocalDate.now()))
+            trendBitmap(
+                context,
+                sparklinePoints(db.rates.getCachedTimeline(db.providers.getApiProvider(), pair.from, pair.to), LocalDate.now()),
+            )
         } else {
             null
         }
     return WidgetSnapshot(
         pair = pair,
         converted = converted,
-        date = formatRatesTimestamp(db.getDateFormatBlocking(), rates?.date, rates?.time),
+        date = formatRatesTimestamp(db.display.getDateFormatBlocking(), rates?.date, rates?.time),
         hasAnyCachedRate = rates != null,
         trend = trend,
     )

@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -124,11 +125,9 @@ fun LedgerPasswordDialog(
             Spacer(Modifier.height(DIALOG_TITLE_TO_BODY_GAP))
         }
         PasswordFieldWithToggle(
-            value = password,
-            onValueChange = { password = it },
+            input = PasswordInput(password, visible, errorText),
             label = label,
-            errorText = errorText,
-            visible = visible,
+            onValueChange = { password = it },
             onToggleVisibility = { visible = !visible },
         )
         LedgerDialogActions(
@@ -242,42 +241,48 @@ internal fun LedgerDialogActions(
     }
 }
 
+/** A password field's state: what is typed, whether it is shown, and the error under it. */
+@Immutable
+data class PasswordInput(
+    val value: String,
+    val visible: Boolean,
+    val errorText: String? = null,
+)
+
 /**
  * Password field row: [OutlinedTextField] with [PasswordVisualTransformation]
- * (or none when [visible]) plus a trailing eye [IconButton]. Shared by
- * [LedgerPasswordDialog] and any future password-entry surface so the toggle
- * placement + accessibility labels stay in one place.
+ * (or none when [PasswordInput.visible]) plus a trailing eye [IconButton].
+ * Shared by [LedgerPasswordDialog] and any other password-entry surface so
+ * the toggle placement + accessibility labels stay in one place.
  */
 @Composable
 internal fun PasswordFieldWithToggle(
-    value: String,
-    onValueChange: (String) -> Unit,
+    input: PasswordInput,
     label: String,
-    errorText: String?,
-    visible: Boolean,
+    onValueChange: (String) -> Unit,
     onToggleVisibility: () -> Unit,
 ) {
     val toggle = rememberHapticOnClick(onToggleVisibility)
     Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
-            value = value,
+            value = input.value,
             onValueChange = onValueChange,
             singleLine = true,
             visualTransformation =
-                if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+                if (input.visible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = ComposeKeyboardOptions(keyboardType = KeyboardType.Password),
             label = { Text(text = label) },
-            isError = errorText != null,
-            supportingText = errorText?.let { { Text(text = it) } },
+            isError = input.errorText != null,
+            supportingText = input.errorText?.let { { Text(text = it) } },
             modifier = Modifier.weight(1f),
         )
         Spacer(Modifier.width(PASSWORD_FIELD_TO_TOGGLE_GAP))
         val descRes =
-            if (visible) R.string.backup_password_hide else R.string.backup_password_show
+            if (input.visible) R.string.backup_password_hide else R.string.backup_password_show
         IconButton(onClick = toggle) {
             Icon(
                 painter =
-                    painterResource(if (visible) R.drawable.ic_visibility_off else R.drawable.ic_visibility),
+                    painterResource(if (input.visible) R.drawable.ic_visibility_off else R.drawable.ic_visibility),
                 contentDescription = stringResource(id = descRes),
             )
         }

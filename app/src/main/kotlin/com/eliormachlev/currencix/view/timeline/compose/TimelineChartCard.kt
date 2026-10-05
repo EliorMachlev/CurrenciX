@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,12 +42,21 @@ private val CHART_PADDING = TIMELINE_CONTENT_PADDING
 private val PROVIDER_FONT_SIZE = 12.sp
 private const val PROVIDER_ALPHA = 0.5f
 
+/** What the chart card shows around (or instead of) the chart. */
+@Immutable
+data class ChartStatus(
+    val isRefreshing: Boolean,
+    // The provider failed, or doesn't cover the pair: shown in place of the chart.
+    val error: String?,
+    // The range holds no rates: a notice in place of the chart.
+    val empty: Boolean,
+    // "Data by …", in the card's corner.
+    val provider: CharSequence?,
+)
+
 @Composable
 internal fun TimelineChartCard(
-    isRefreshing: Boolean,
-    error: String?,
-    empty: Boolean,
-    provider: CharSequence?,
+    status: ChartStatus,
     onRetry: () -> Unit,
     onChangeProvider: () -> Unit,
     modifier: Modifier = Modifier,
@@ -58,7 +68,7 @@ internal fun TimelineChartCard(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surfaceVariant),
     ) {
-        if (isRefreshing) {
+        if (status.isRefreshing) {
             LinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
                 color = MaterialTheme.colorScheme.primary,
@@ -68,13 +78,14 @@ internal fun TimelineChartCard(
 
         val content = Modifier.fillMaxSize().padding(CHART_PADDING)
         when {
-            error != null -> TimelineErrorState(error, onRetry, onChangeProvider, content)
+            status.error != null -> TimelineErrorState(status.error, onRetry, onChangeProvider, content)
             // No rates in the chosen dates (a weekend, before the provider's
             // history): say so rather than leave the previous line up.
-            empty -> TimelineNotice(R.drawable.ic_event, AnnotatedString(stringResource(R.string.timeline_no_rates)), content)
+            status.empty -> TimelineNotice(R.drawable.ic_event, AnnotatedString(stringResource(R.string.timeline_no_rates)), content)
             else -> Box(content) { chart() }
         }
 
+        val provider = status.provider
         if (provider != null) {
             AndroidView(
                 factory = { ctx ->

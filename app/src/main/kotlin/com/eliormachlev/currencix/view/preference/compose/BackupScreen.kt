@@ -29,6 +29,7 @@ import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogActions
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogFrame
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordDialog
 import com.eliormachlev.currencix.view.compose.dialogs.PasswordFieldWithToggle
+import com.eliormachlev.currencix.view.compose.dialogs.PasswordInput
 import com.eliormachlev.currencix.viewmodel.preference.BACKUP_MIN_PASSWORD_LENGTH
 import com.eliormachlev.currencix.viewmodel.preference.BackupDialog
 import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
@@ -163,14 +164,12 @@ private fun ExportPasswordDialog(
         ExportPasswordDialogBody(
             encrypt = encrypt,
             onEncryptChange = { encrypt = it },
-            passwordText = passwordText,
+            password = PasswordInput(passwordText, visible, errorRes?.let { stringResource(id = it, BACKUP_MIN_PASSWORD_LENGTH) }),
             onPasswordChange = {
                 passwordText = it
                 errorRes = null
             },
-            visible = visible,
             onToggleVisibility = { visible = !visible },
-            errorRes = errorRes,
         )
         LedgerDialogActions(
             confirmLabel = stringResource(id = android.R.string.ok),
@@ -199,11 +198,9 @@ private fun ExportPasswordDialog(
 private fun ExportPasswordDialogBody(
     encrypt: Boolean,
     onEncryptChange: (Boolean) -> Unit,
-    passwordText: String,
+    password: PasswordInput,
     onPasswordChange: (String) -> Unit,
-    visible: Boolean,
     onToggleVisibility: () -> Unit,
-    errorRes: Int?,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -220,11 +217,9 @@ private fun ExportPasswordDialogBody(
         if (encrypt) {
             Spacer(Modifier.height(DIALOG_FIELD_GAP))
             PasswordFieldWithToggle(
-                value = passwordText,
-                onValueChange = onPasswordChange,
+                input = password,
                 label = stringResource(id = R.string.backup_password_hint),
-                errorText = errorRes?.let { stringResource(id = it, BACKUP_MIN_PASSWORD_LENGTH) },
-                visible = visible,
+                onValueChange = onPasswordChange,
                 onToggleVisibility = onToggleVisibility,
             )
         }

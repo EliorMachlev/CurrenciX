@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -102,23 +103,41 @@ internal data class CurrencyPickerConversion(
     val decimalPlaces: Int = DECIMAL_PLACES_DEFAULT,
 )
 
+/** What the picker lists, and how. */
+@Immutable
+internal data class CurrencyPickerContent(
+    val rates: ImmutableList<Rate>,
+    val stars: ImmutableList<Currency>,
+    // Shortcuts above the list: the currencies used last.
+    val recents: ImmutableList<Currency> = persistentListOf(),
+    val filterStarred: Boolean = false,
+    // The amount each row previews under its name, when previews are on.
+    val conversion: CurrencyPickerConversion? = null,
+    // Greyed out and unpickable: the other side of the pair.
+    val disabledCurrency: Currency? = null,
+)
+
+/** What the picker can ask for. */
+@Immutable
+internal class CurrencyPickerActions(
+    val onRateClicked: (Rate) -> Unit,
+    val onStarClicked: (Rate) -> Unit,
+    val onToggleStarredFilter: () -> Unit,
+    val onStarredOrderChanged: (List<Currency>) -> Unit,
+    val onRemoveRecent: (Currency) -> Unit,
+)
+
 @Composable
 internal fun SearchableCurrencyPicker(
-    rates: ImmutableList<Rate>,
-    stars: ImmutableList<Currency>,
-    filterStarred: Boolean,
-    conversion: CurrencyPickerConversion?,
-    disabledCurrency: Currency?,
-    onRateClicked: (Rate) -> Unit,
-    onStarClicked: (Rate) -> Unit,
-    onToggleStarredFilter: () -> Unit,
-    onStarredOrderChanged: (List<Currency>) -> Unit,
-    recents: ImmutableList<Currency> = persistentListOf(),
-    onRemoveRecent: (Currency) -> Unit = {},
+    content: CurrencyPickerContent,
+    actions: CurrencyPickerActions,
 ) {
     var query by remember { mutableStateOf("") }
     val padH = dimensionResource(id = R.dimen.margin2x)
     val ctx = LocalContext.current
+    val rates = content.rates
+    val stars = content.stars
+    val filterStarred = content.filterStarred
 
     // ModalBottomSheet (LedgerBottomSheet's parent) already reacts to IME
     // insets by resizing its window; a redundant imePadding here layers a
@@ -129,7 +148,7 @@ internal fun SearchableCurrencyPicker(
             query = query,
             onQueryChange = { query = it },
             filterStarred = filterStarred,
-            onToggleStarredFilter = onToggleStarredFilter,
+            onToggleStarredFilter = actions.onToggleStarredFilter,
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -138,9 +157,9 @@ internal fun SearchableCurrencyPicker(
         val allowReorder = query.isEmpty() && !filterStarred
         if (allowReorder) {
             RecentCurrenciesRow(
-                rates = remember(rates, recents) { recents.mapNotNull { c -> rates.find { it.currency == c } } },
-                onRateClicked = onRateClicked,
-                onRemove = onRemoveRecent,
+                rates = remember(rates, content.recents) { content.recents.mapNotNull { c -> rates.find { it.currency == c } } },
+                onRateClicked = actions.onRateClicked,
+                onRemove = actions.onRemoveRecent,
                 contentPadding = PaddingValues(horizontal = padH),
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin1x)),
             )
@@ -166,17 +185,17 @@ internal fun SearchableCurrencyPicker(
         CurrencyList(
             starredItems = starredDisplay,
             nonStarredItems = nonStarredFiltered,
-            conversion = conversion,
-            allowReorder = allowReorder,
-            disabledCurrency = disabledCurrency,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            onRateClicked = onRateClicked,
-            onStarClicked = onStarClicked,
-            onDragEnded = {
+            content = content,
+            actions = actions,
+            // Only an unfiltered list can be reordered: a filtered one shows
+            // a subset, whose order says nothing about the rest.
+            onDragEnded =
                 if (allowReorder) {
-                    onStarredOrderChanged(collectStarredOrder(starredDisplay, stars))
-                }
-            },
+                    { actions.onStarredOrderChanged(collectStarredOrder(starredDisplay, stars)) }
+                } else {
+                    null
+                },
+            modifier = Modifier.weight(1f).fillMaxWidth(),
         )
     }
 }
@@ -323,13 +342,11 @@ private fun KeepAtTopOnFavoritesAppear(
 private fun CurrencyList(
     starredItems: SnapshotStateList<Rate>,
     nonStarredItems: List<Rate>,
-    conversion: CurrencyPickerConversion?,
-    allowReorder: Boolean,
-    disabledCurrency: Currency?,
+    content: CurrencyPickerContent,
+    actions: CurrencyPickerActions,
+    // Called when a drag of a starred row settles; null when rows can't be dragged.
+    onDragEnded: (() -> Unit)?,
     modifier: Modifier = Modifier,
-    onRateClicked: (Rate) -> Unit,
-    onStarClicked: (Rate) -> Unit,
-    onDragEnded: () -> Unit,
 ) {
     // Plain remember (not rememberLazyListState) so the scroll position is
     // scoped to the current composition — otherwise the saveable state carries
@@ -361,11 +378,10 @@ private fun CurrencyList(
                 CurrencyRow(
                     rate = rate,
                     isStarred = true,
-                    conversion = conversion,
-                    isDisabled = rate.currency == disabledCurrency,
-                    onClick = { onRateClicked(rate) },
-                    onStarClick = { onStarClicked(rate) },
-                    modifier = Modifier.fillMaxWidth().then(dragModifier(allowReorder, isDragging, onDragEnded)),
+                    conversion = content.conversion,
+                    isDisabled = rate.currency == content.disabledCurrency,
+                    actions = actions,
+                    modifier = Modifier.fillMaxWidth().then(dragModifier(isDragging, onDragEnded)),
                 )
             }
         }
@@ -373,10 +389,9 @@ private fun CurrencyList(
             CurrencyRow(
                 rate = rate,
                 isStarred = false,
-                conversion = conversion,
-                isDisabled = rate.currency == disabledCurrency,
-                onClick = { onRateClicked(rate) },
-                onStarClick = { onStarClicked(rate) },
+                conversion = content.conversion,
+                isDisabled = rate.currency == content.disabledCurrency,
+                actions = actions,
                 modifier = Modifier.fillMaxWidth().animateItem(),
             )
         }
@@ -411,15 +426,14 @@ private fun List<Rate>.indexOfStarredKey(key: Any): Int {
 }
 
 // A starred row's drag behavior: long-press-to-drag when reordering is
-// allowed (which keeps the row's regular tap → select gesture), committing on
-// release so only the settled order is persisted, not each mid-drag swap. The
-// row dims while it is being dragged.
+// allowed ([onDragEnded] is set) — which keeps the row's regular tap → select
+// gesture — committing on release so only the settled order is persisted, not
+// each mid-drag swap. The row dims while it is being dragged.
 private fun ReorderableCollectionItemScope.dragModifier(
-    allowReorder: Boolean,
     isDragging: Boolean,
-    onDragEnded: () -> Unit,
+    onDragEnded: (() -> Unit)?,
 ): Modifier {
-    val handle = if (allowReorder) Modifier.longPressDraggableHandle(onDragStopped = { onDragEnded() }) else Modifier
+    val handle = if (onDragEnded != null) Modifier.longPressDraggableHandle(onDragStopped = { onDragEnded() }) else Modifier
     return if (isDragging) handle.alpha(DRAG_ACTIVE_ALPHA) else handle
 }
 
@@ -429,8 +443,7 @@ private fun CurrencyRow(
     isStarred: Boolean,
     conversion: CurrencyPickerConversion?,
     isDisabled: Boolean,
-    onClick: () -> Unit,
-    onStarClick: () -> Unit,
+    actions: CurrencyPickerActions,
     modifier: Modifier = Modifier,
 ) {
     val ctx = LocalContext.current
@@ -454,7 +467,7 @@ private fun CurrencyRow(
                     .hapticClickable(
                         enabled = !isDisabled,
                         onClickLabel = stringResource(id = R.string.a11y_action_select),
-                        onClick = onClick,
+                        onClick = { actions.onRateClicked(rate) },
                     ).alpha(if (isDisabled) DISABLED_ROW_ALPHA else 1f)
                     .padding(
                         horizontal = dimensionResource(id = R.dimen.margin2x),
@@ -497,7 +510,7 @@ private fun CurrencyRow(
                     id = if (isStarred) R.string.a11y_unstar_currency else R.string.a11y_star_currency,
                     rate.currency.iso4217Alpha(),
                 ),
-            onClick = onStarClick,
+            onClick = { actions.onStarClicked(rate) },
         )
     }
 }

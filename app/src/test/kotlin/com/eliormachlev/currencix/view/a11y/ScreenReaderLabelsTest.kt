@@ -19,13 +19,18 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.registerActivityRule
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
+import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
+import com.eliormachlev.currencix.view.cart.compose.cartItemActions
+import com.eliormachlev.currencix.view.cart.compose.cartSources
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
+import com.eliormachlev.currencix.view.main.spinner.pickerActions
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Assert.assertTrue
@@ -80,17 +85,12 @@ class ScreenReaderLabelsTest {
     @Test fun cartRows() =
         assertEveryTapTargetIsLabelled {
             CartItemsList(
-                itemsSource = MutableLiveData(persistentListOf(CartItem("1", "Coffee", "4.50", pinned = true), CartItem("2", "", ""))),
-                currencySource = MutableLiveData("USD"),
-                activeItemIdSource = MutableLiveData(null),
-                activeExpressionSource = MutableLiveData(""),
-                onNameCommit = { _, _ -> },
-                onNamePending = { _, _ -> },
-                onExpressionTap = {},
-                onTogglePin = {},
-                onDelete = {},
-                onReorder = { _, _ -> },
-                onReorderStart = {},
+                sources =
+                    cartSources(
+                        MutableLiveData(persistentListOf(CartItem("1", "Coffee", "4.50", pinned = true), CartItem("2", "", ""))),
+                    ),
+                actions = cartItemActions(),
+                reorder = NO_REORDER,
                 onBackgroundTap = {},
             )
         }
@@ -108,16 +108,13 @@ class ScreenReaderLabelsTest {
     @Test fun currencyPicker() =
         assertEveryTapTargetIsLabelled {
             SearchableCurrencyPicker(
-                rates = persistentListOf(Rate(Currency.USD, BigDecimal.ONE), Rate(Currency.EUR, BigDecimal("0.9"))),
-                stars = persistentListOf(Currency.EUR),
-                filterStarred = false,
-                conversion = null,
-                disabledCurrency = null,
-                onRateClicked = {},
-                onStarClicked = {},
-                onToggleStarredFilter = {},
-                onStarredOrderChanged = {},
-                recents = persistentListOf(Currency.ILS),
+                content =
+                    CurrencyPickerContent(
+                        rates = persistentListOf(Rate(Currency.USD, BigDecimal.ONE), Rate(Currency.EUR, BigDecimal("0.9"))),
+                        stars = persistentListOf(Currency.EUR),
+                        recents = persistentListOf(Currency.ILS),
+                    ),
+                actions = pickerActions(),
             )
         }
 

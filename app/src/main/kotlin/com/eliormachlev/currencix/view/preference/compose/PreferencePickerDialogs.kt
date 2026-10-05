@@ -29,6 +29,13 @@ import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 // LedgerRow (which has no divider) doesn't butt against the system nav.
 private val SHEET_BOTTOM_SPACE = 12.dp
 
+/** What a single-choice picker offers: the [options], the one [selected] now, and how each reads. */
+class Choices<T>(
+    val options: List<T>,
+    val selected: T?,
+    val label: (T) -> String,
+)
+
 /**
  * Compose single-choice picker — one [LedgerRow] per option under a
  * [LedgerBottomSheet]. The currently-selected option trails a [LedgerActiveChip]
@@ -39,19 +46,17 @@ private val SHEET_BOTTOM_SPACE = 12.dp
 @Composable
 fun <T> SingleChoicePickerDialog(
     title: String,
-    options: List<T>,
-    selected: T?,
-    label: (T) -> String,
+    choices: Choices<T>,
     onDismiss: () -> Unit,
     onPicked: (T) -> Unit,
 ) {
     PickerSheet(title = title, onDismiss = onDismiss) {
-        options.forEachIndexed { index, option ->
+        choices.options.forEachIndexed { index, option ->
             PickerRow(
-                title = label(option),
+                title = choices.label(option),
                 description = null,
-                isSelected = option == selected,
-                isLast = index == options.lastIndex,
+                isSelected = option == choices.selected,
+                isLast = index == choices.options.lastIndex,
                 onClick = {
                     onPicked(option)
                     onDismiss()

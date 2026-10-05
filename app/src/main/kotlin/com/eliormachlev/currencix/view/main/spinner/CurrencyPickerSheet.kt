@@ -22,7 +22,6 @@ import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import java.math.BigDecimal
 
@@ -80,7 +79,6 @@ fun CurrencyPickerSheet(
         val conversion =
             currentRate?.takeIf { previewEnabled }?.let { CurrencyPickerConversion(it, currentSum, decimalPlaces) }
 
-        val ready = rates != null
         // fillMaxHeight so the picker occupies the full expanded-anchor slot;
         // at the partially-expanded anchor the M3 sheet clips this Column and
         // the top portion is what shows. Nested-scroll then hands upward
@@ -93,25 +91,28 @@ fun CurrencyPickerSheet(
                     .fillMaxHeight(),
         ) {
             SearchableCurrencyPicker(
-                rates =
-                    if (ready) {
-                        rates?.rates.orEmpty().toImmutableList()
-                    } else {
-                        persistentListOf()
+                content =
+                    CurrencyPickerContent(
+                        rates = remember(rates) { rates?.rates.orEmpty().toImmutableList() },
+                        stars = stars,
+                        recents = recents,
+                        filterStarred = filterStarred,
+                        conversion = conversion,
+                        disabledCurrency = disabledCurrency,
+                    ),
+                actions =
+                    remember(mainViewModel, database, onRateClicked, onDismiss) {
+                        CurrencyPickerActions(
+                            onRateClicked = { rate ->
+                                onRateClicked(rate)
+                                onDismiss()
+                            },
+                            onStarClicked = { mainViewModel.toggleCurrencyStar(it.currency) },
+                            onToggleStarredFilter = { mainViewModel.toggleStarredActive() },
+                            onStarredOrderChanged = { mainViewModel.setStarredCurrencyOrder(it) },
+                            onRemoveRecent = database.lastState::removeRecentCurrency,
+                        )
                     },
-                stars = stars,
-                filterStarred = filterStarred,
-                conversion = conversion,
-                disabledCurrency = disabledCurrency,
-                onRateClicked = { rate ->
-                    onRateClicked(rate)
-                    onDismiss()
-                },
-                onStarClicked = { mainViewModel.toggleCurrencyStar(it.currency) },
-                onToggleStarredFilter = { mainViewModel.toggleStarredActive() },
-                onStarredOrderChanged = { mainViewModel.setStarredCurrencyOrder(it) },
-                recents = recents,
-                onRemoveRecent = database::removeRecentCurrency,
             )
         }
     }
@@ -131,7 +132,7 @@ private fun rememberRecentCurrencies(
     database: Database,
     excluded: Set<Currency>,
 ): ImmutableList<Currency> {
-    val recentPairs by database.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
+    val recentPairs by database.lastState.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
     return remember(recentPairs, excluded) {
         RecentPairs
             .currencies(recentPairs)

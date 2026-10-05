@@ -63,8 +63,8 @@ internal object RateRefreshScheduler {
      */
     fun scheduleForCurrentProvider(context: Context) {
         val db = Database(context)
-        val override = db.getAutoRefreshIntervalMinutesOverrideBlocking()
-        val effective = override?.toLong() ?: providerRefreshIntervalMinutes(db.getApiProvider())
+        val override = db.providers.getAutoRefreshIntervalMinutesOverrideBlocking()
+        val effective = override?.toLong() ?: providerRefreshIntervalMinutes(db.providers.getApiProvider())
         schedule(context, effective)
     }
 

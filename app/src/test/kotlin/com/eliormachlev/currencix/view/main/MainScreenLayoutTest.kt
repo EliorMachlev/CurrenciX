@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
 import com.eliormachlev.currencix.util.registerActivityRule
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.main.compose.ConverterBody
+import com.eliormachlev.currencix.view.main.compose.DrawerControl
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainScreen
@@ -55,14 +57,9 @@ class MainScreenLayoutTest {
         compose.setContent {
             AppTheme {
                 MainScreen(
-                    drawerState = rememberDrawerState(DrawerValue.Closed),
+                    drawer = DrawerControl(rememberDrawerState(DrawerValue.Closed), onItem = {}),
+                    body = ConverterBody(isRefreshing = false, onRefresh = {}, foldingFeature = null, keypadHeights = heights),
                     topBar = {},
-                    isRefreshing = false,
-                    onRefresh = {},
-                    isRefreshDrawerEnabled = true,
-                    onDrawerItem = {},
-                    foldingFeature = null,
-                    keypadHeights = heights,
                     displayContent = {
                         Spacer(Modifier.fillMaxWidth().height(contentHeight - LAST_LINE_HEIGHT))
                         Box(Modifier.fillMaxWidth().height(LAST_LINE_HEIGHT).testTag(LAST_LINE))

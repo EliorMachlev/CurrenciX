@@ -67,7 +67,7 @@ class ExchangeRatesRepository(
     private val context: Context,
 ) {
     private val db = Database(context)
-    private val liveExchangeRates = db.getExchangeRates()
+    private val liveExchangeRates = db.rates.getExchangeRates()
     private val liveTimeline = MutableLiveData<Timeline?>()
     private var liveError = MutableLiveData<String?>()
 
@@ -79,7 +79,7 @@ class ExchangeRatesRepository(
     private val ratesCache: RateCache<RateCacheKey.RatesLatest, ExchangeRates> =
         RateCacheFactory.buildRatesCache(
             context = context,
-            secretsSupplier = { ApiSecrets(openExchangeRatesApiKey = db.getOpenExchangeRatesApiKey()) },
+            secretsSupplier = { ApiSecrets(openExchangeRatesApiKey = db.providers.getOpenExchangeRatesApiKey()) },
         )
     private val timelineCache: RateCache<RateCacheKey.TimelineRange, Timeline> =
         RateCacheFactory.buildTimelineCache(context)
@@ -122,7 +122,7 @@ class ExchangeRatesRepository(
                     fetchRates(fresh = false).processResponse(
                         successFlag = { success },
                         errorMessage = { error },
-                        onSuccess = { db.insertExchangeRates(it) },
+                        onSuccess = { db.rates.insertExchangeRates(it) },
                     )
                 }
         }
@@ -141,17 +141,17 @@ class ExchangeRatesRepository(
      * with no UI visible, and the spinner in the hero card would flash on
      * next foregrounding for no user-facing reason.
      */
-    suspend fun refreshLatestRates(): Result<ExchangeRates> = fetchRates(fresh = true).onSuccess { db.insertExchangeRates(it) }
+    suspend fun refreshLatestRates(): Result<ExchangeRates> = fetchRates(fresh = true).onSuccess { db.rates.insertExchangeRates(it) }
 
     // The main provider's rates; if it fails while online, the fallback's
     // (Database.getFallbackProvider), marked with the main provider they
     // stand in for. When both fail, the main provider's failure is the one
     // reported. [fresh] bypasses the cache's freshness window.
     private suspend fun fetchRates(fresh: Boolean): Result<ExchangeRates> {
-        val main = db.getApiProvider()
+        val main = db.providers.getApiProvider()
         val result = loadRates(main, fresh)
         if (!result.shouldTryFallback { success }) return result
-        val fallback = loadRates(db.getFallbackProvider(), fresh).map { it.copy(fallbackFrom = main) }
+        val fallback = loadRates(db.providers.getFallbackProvider(), fresh).map { it.copy(fallbackFrom = main) }
         return if (fallback.isUsable { success }) fallback else result
     }
 
@@ -163,7 +163,7 @@ class ExchangeRatesRepository(
             RateCacheKey.RatesLatest(
                 providerId = provider.id,
                 baseIso = provider.baseCurrencyIso(),
-                date = db.getHistoricalDate(),
+                date = db.lastState.getHistoricalDate(),
             )
         val result = if (fresh) ratesCache.refresh(key) else ratesCache.get(key)
         return result.map { it.copy(provider = provider) }
@@ -191,11 +191,11 @@ class ExchangeRatesRepository(
         val jobKey = "$key|$start"
         val existing = timelineJobs[jobKey]
         if (existing?.isActive != true) {
-            val main = db.getApiProvider()
+            val main = db.providers.getApiProvider()
             // Fast-paint: show cached data while the tail refresh runs. Gated on
             // latestTimelineKey so a prefetch for a stale pair can't paint over
             // whatever the user is currently looking at.
-            val cached = db.getCachedTimeline(main, base, symbol)
+            val cached = db.rates.getCachedTimeline(main, base, symbol)
             if (cached != null && isCurrentTimelinePair(key)) liveTimeline.postValue(cached)
 
             val job =
@@ -204,7 +204,7 @@ class ExchangeRatesRepository(
                     // online (its own cached window, not merged with the main's).
                     var result = fetchTimeline(main, base, symbol, start)
                     if (result.shouldTryFallback { success }) {
-                        val fallback = fetchTimeline(db.getFallbackProvider(), base, symbol, start)
+                        val fallback = fetchTimeline(db.providers.getFallbackProvider(), base, symbol, start)
                         if (fallback.isUsable { success }) result = fallback
                     }
                     result.processResponse(
@@ -233,7 +233,7 @@ class ExchangeRatesRepository(
         symbol: Currency,
         since: LocalDate,
     ): Result<Timeline> {
-        val cached = db.getCachedTimeline(provider, base, symbol)
+        val cached = db.rates.getCachedTimeline(provider, base, symbol)
         val today = LocalDate.now()
         val cachedDates = cached?.rates?.keys?.sorted()
         val fetchStart = timelineFetchStart(since, cachedDates?.firstOrNull(), cachedDates?.lastOrNull())
@@ -252,7 +252,7 @@ class ExchangeRatesRepository(
             val tagged = fresh.copy(provider = provider)
             if (tagged.success == false) return@map tagged
             val keepFrom = today.minusYears(TIMELINE_MAX_YEARS)
-            mergeTimeline(cached, tagged, base, keepFrom).also { db.putCachedTimeline(it, base, symbol) }
+            mergeTimeline(cached, tagged, base, keepFrom).also { db.rates.putCachedTimeline(it, base, symbol) }
         }
     }
 

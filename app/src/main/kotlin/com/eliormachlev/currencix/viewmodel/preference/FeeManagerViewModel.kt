@@ -27,19 +27,19 @@ class FeeManagerViewModel(
     private val db = Database(app)
 
     val fees: StateFlow<ImmutableList<Fee>> =
-        db.getFeesFlow().stateInWhileSubscribed(viewModelScope, db.getFeesBlocking())
+        db.fees.getFeesFlow().stateInWhileSubscribed(viewModelScope, db.fees.getFeesBlocking())
     val activeExchangeId: StateFlow<String?> =
-        db.getActiveExchangeIdFlow().stateInWhileSubscribed(viewModelScope, db.getActiveExchangeIdBlocking())
+        db.fees.getActiveExchangeIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveExchangeIdBlocking())
     val activeBankId: StateFlow<String?> =
-        db.getActiveBankIdFlow().stateInWhileSubscribed(viewModelScope, db.getActiveBankIdBlocking())
+        db.fees.getActiveBankIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveBankIdBlocking())
 
-    fun setActiveExchangeId(id: String) = db.setActiveExchangeId(id)
+    fun setActiveExchangeId(id: String) = db.fees.setActiveExchangeId(id)
 
-    fun setActiveBankId(id: String) = db.setActiveBankId(id)
+    fun setActiveBankId(id: String) = db.fees.setActiveBankId(id)
 
-    fun addFee(fee: Fee) = db.addFee(fee)
+    fun addFee(fee: Fee) = db.fees.addFee(fee)
 
-    fun updateFee(fee: Fee) = db.updateFee(fee)
+    fun updateFee(fee: Fee) = db.fees.updateFee(fee)
 
-    fun deleteFee(id: String) = db.deleteFee(id)
+    fun deleteFee(id: String) = db.fees.deleteFee(id)
 }

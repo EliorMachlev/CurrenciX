@@ -22,6 +22,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,25 +63,39 @@ private val FIELD_MIN_HEIGHT = 48.dp
 // to whichever side the user is dragging from.
 private val SWIPE_ICON_EDGE_PADDING = 24.dp
 
+/** What one cart row shows. */
+@Immutable
+data class CartRowState(
+    val item: CartItem,
+    val currency: String,
+    // The expression as it's being typed, while this row is the keypad's
+    // target; null for a row that isn't being edited.
+    val liveExpression: String? = null,
+) {
+    val isActive: Boolean get() = liveExpression != null
+    val displayedExpression: String get() = liveExpression ?: item.expression
+}
+
+/** What one cart row can ask for. */
+@Immutable
+class CartRowActions(
+    val onNameCommit: (String) -> Unit,
+    val onNamePending: (String) -> Unit,
+    val onExpressionTap: () -> Unit,
+    val onTogglePin: () -> Unit,
+    val onDelete: () -> Unit,
+)
+
 /**
  * Wrap [CartItemRow] in a Material3 [SwipeToDismissBox] so a swipe in either
  * direction reveals a red delete background and, past the dismissal
- * threshold, calls [onDelete] — the same code path the explicit delete
- * button uses. Rows in edit mode ([isActive]) reject the gesture so the
- * user can't wipe out a row while typing into it; the existing button is
- * left in place as an always-available fallback.
+ * threshold, deletes the row. A row in edit mode rejects the gesture so the
+ * user can't wipe out a row while typing into it.
  */
 @Composable
 fun SwipeableCartItemRow(
-    item: CartItem,
-    currency: String,
-    isActive: Boolean,
-    liveExpression: String?,
-    onNameCommit: (String) -> Unit,
-    onNamePending: (String) -> Unit,
-    onExpressionTap: () -> Unit,
-    onTogglePin: () -> Unit,
-    onDelete: () -> Unit,
+    state: CartRowState,
+    actions: CartRowActions,
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 ) {
@@ -90,7 +105,7 @@ fun SwipeableCartItemRow(
     // list, which drops this SwipeToDismissBox from composition and lets the
     // LazyList's animateItem() handle the slide-out.
     val dismissState = rememberSwipeToDismissBoxState()
-    val onDeleteState = rememberUpdatedState(onDelete)
+    val onDeleteState = rememberUpdatedState(actions.onDelete)
     LaunchedEffect(dismissState) {
         snapshotFlow { dismissState.currentValue }.collect { value ->
             if (value == SwipeToDismissBoxValue.StartToEnd ||
@@ -103,21 +118,11 @@ fun SwipeableCartItemRow(
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = { SwipeDeleteBackground(dismissState) },
-        enableDismissFromStartToEnd = !isActive,
-        enableDismissFromEndToStart = !isActive,
+        enableDismissFromStartToEnd = !state.isActive,
+        enableDismissFromEndToStart = !state.isActive,
         modifier = modifier,
     ) {
-        CartItemRow(
-            item = item,
-            currency = currency,
-            isActive = isActive,
-            liveExpression = liveExpression,
-            onNameCommit = onNameCommit,
-            onNamePending = onNamePending,
-            onExpressionTap = onExpressionTap,
-            onTogglePin = onTogglePin,
-            dragHandleModifier = dragHandleModifier,
-        )
+        CartItemRow(state = state, actions = actions, dragHandleModifier = dragHandleModifier)
     }
 }
 
@@ -176,24 +181,18 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
 
 @Composable
 fun CartItemRow(
-    item: CartItem,
-    currency: String,
-    isActive: Boolean,
-    liveExpression: String?,
-    onNameCommit: (String) -> Unit,
-    onNamePending: (String) -> Unit,
-    onExpressionTap: () -> Unit,
-    onTogglePin: () -> Unit,
+    state: CartRowState,
+    actions: CartRowActions,
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 ) {
-    val displayedExpression = if (isActive) liveExpression.orEmpty() else item.expression
+    val item = state.item
     OutlinedCard(
         modifier =
             modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.margin1x)),
-        border = rowBorder(isActive),
+        border = rowBorder(state.isActive),
         elevation = CardDefaults.outlinedCardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation1x)),
     ) {
         Row(
@@ -207,16 +206,16 @@ fun CartItemRow(
             Column(modifier = Modifier.weight(1f)) {
                 NameField(
                     initial = item.name,
-                    onCommit = onNameCommit,
-                    onPending = onNamePending,
+                    onCommit = actions.onNameCommit,
+                    onPending = actions.onNamePending,
                 )
                 ExpressionField(
-                    text = displayedExpression,
-                    onTap = onExpressionTap,
+                    text = state.displayedExpression,
+                    onTap = actions.onExpressionTap,
                 )
                 ValuePreview(
-                    item = item.copy(expression = displayedExpression),
-                    currency = currency,
+                    item = item.copy(expression = state.displayedExpression),
+                    currency = state.currency,
                 )
             }
             FavoriteToggleIcon(
@@ -225,7 +224,7 @@ fun CartItemRow(
                     stringResource(
                         id = if (item.pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
                     ),
-                onClick = onTogglePin,
+                onClick = actions.onTogglePin,
             )
         }
     }

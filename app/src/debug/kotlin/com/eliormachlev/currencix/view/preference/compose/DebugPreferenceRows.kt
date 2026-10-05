@@ -21,7 +21,7 @@ private fun ResetOnboardingRow() {
         summary = stringResource(id = R.string.pref_debug_reset_onboarding_summary),
         iconRes = R.drawable.ic_refresh,
         onClick = {
-            Database(context).setHasSeenOnboarding(false)
+            Database(context).display.setHasSeenOnboarding(false)
             Toast.makeText(context, resetToast, Toast.LENGTH_SHORT).show()
         },
     )

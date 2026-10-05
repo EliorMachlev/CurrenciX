@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         // in CurrenciesApplication, so this resolves against the right
         // night qualifier.
         val database = Database(this)
-        val pureBlack = database.isPureBlackEnabled()
+        val pureBlack = database.display.isPureBlackEnabled()
         setTheme(if (pureBlack) R.style.AppTheme_PureBlack else R.style.AppTheme)
         super.onCreate(savedInstanceState)
         // Compose owns the whole window, system bars included: the top bars
@@ -125,9 +125,9 @@ class MainActivity : AppCompatActivity() {
 
         val themeBackground = Color(resolveThemeColor(android.R.attr.colorBackground))
         setContent {
-            val dynamicColor by database
+            val dynamicColor by database.display
                 .isDynamicColorEnabledFlow()
-                .collectAsStateWithLifecycle(database.isDynamicColorEnabledBlocking())
+                .collectAsStateWithLifecycle(database.display.isDynamicColorEnabledBlocking())
             AppTheme(dynamicColor = dynamicColor) {
                 // Wallpaper colors bring their own background — except pure
                 // black, which stays black whatever the palette.
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity() {
     // Launcher shortcuts follow the recent pairs (AppShortcuts).
     private fun keepShortcutsInStep() {
         lifecycleScope.launch(Dispatchers.Default) {
-            Database(applicationContext).getRecentPairsFlow().distinctUntilChanged().collect { recents ->
+            Database(applicationContext).lastState.getRecentPairsFlow().distinctUntilChanged().collect { recents ->
                 AppShortcuts.update(applicationContext, recents)
             }
         }
@@ -188,7 +188,7 @@ class MainActivity : AppCompatActivity() {
             is ConverterLaunch.Request.Convert -> {
                 AppShortcuts.reportUsed(this, request.pair)
                 viewModel.setCurrencyPair(request.pair)
-                request.amount?.let(viewModel::setAmount)
+                request.amount?.let(viewModel.input::setAmount)
                 nav.navigate(Screen.Converter)
             }
             ConverterLaunch.Request.OpenCart ->
@@ -263,16 +263,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleCharKey(key: Char?): Boolean {
         key ?: return false
-        Operator.fromHardware(key)?.let {
-            it.apply(viewModel)
-            return true
-        }
+        val input = viewModel.input
+        val operator = Operator.fromHardware(key)
         when {
-            key.isDigit() -> viewModel.addNumber(key.toString())
-            key == '.' || key == ',' -> viewModel.addDecimal()
-            key == '(' -> viewModel.openParen()
-            key == ')' -> viewModel.closeParen()
-            key == '%' -> viewModel.addPercent()
+            operator != null -> input.addOperator(operator.display)
+            key.isDigit() -> input.addNumber(key.toString())
+            key == '.' || key == ',' -> input.addDecimal()
+            key == '(' -> input.addOpenParen()
+            key == ')' -> input.addCloseParen()
+            key == '%' -> input.addPercent()
             else -> return false
         }
         return true
@@ -280,7 +279,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleControlKey(keyCode: Int): Boolean {
         if (keyCode != KeyEvent.KEYCODE_DEL) return false
-        viewModel.delete()
+        viewModel.input.delete()
         return true
     }
 
