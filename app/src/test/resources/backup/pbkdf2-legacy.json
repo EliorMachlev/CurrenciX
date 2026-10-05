@@ -1,0 +1,1 @@
+{"version":1,"createdAt":"2024-01-01T00:00:00Z","app":"com.eliormachlev.currencix","encryption":{"kdf":"PBKDF2-HMAC-SHA256","iterations":1000,"salt":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=","cipher":"AES-256-GCM","iv":"BwgJCgsMDQ4PEBES","ciphertext":"xEg+ZvaBqidJbziz8NMCzSNA8GgnXJ9joI8/KvIzNhTuDo9sWDH3LFeZ7wV36WFZi6afvfK3CklejaixKzKGfIepLLYJ/Q=="}}

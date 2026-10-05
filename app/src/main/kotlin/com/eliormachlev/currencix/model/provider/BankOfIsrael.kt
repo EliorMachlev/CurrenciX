@@ -13,6 +13,7 @@ import com.eliormachlev.currencix.model.adapter.BankOfIsraelRatesAdapter
 import com.eliormachlev.currencix.model.adapter.BankOfIsraelSdmxParser
 import com.eliormachlev.currencix.model.adapter.NO_DATA_ERROR
 import com.eliormachlev.currencix.model.adapter.addFokFromDkkIfMissing
+import com.eliormachlev.currencix.model.adapter.rateOrNull
 import com.eliormachlev.currencix.model.adapter.register
 import com.eliormachlev.currencix.model.provider.api.BankOfIsraelApi
 import com.eliormachlev.currencix.util.HttpClientProvider
@@ -121,15 +122,13 @@ class BankOfIsrael : ApiProvider.Api() {
         val symbolCode = symbol.iso4217Alpha()
 
         val allDates = ilsPerForeignByDate.values.flatMap { it.keys }.toSortedSet()
-        val rates = sortedMapOf<LocalDate, Rate>()
-        for (date in allDates) {
-            val ilsPerBase = ilsPerFor(baseCode, date, ilsPerForeignByDate) ?: continue
-            val ilsPerSymbol = ilsPerFor(symbolCode, date, ilsPerForeignByDate) ?: continue
-            if (ilsPerSymbol.signum() == 0) continue
-            // 1 base = ilsPerBase ILS = ilsPerBase / ilsPerSymbol of symbol.
-            val ratio = ilsPerBase.divide(ilsPerSymbol, MathContext.DECIMAL128)
-            rates[date] = Rate(symbol, ratio)
-        }
+        val rates =
+            allDates
+                .mapNotNull { date ->
+                    // 1 base = ilsPerBase ILS = ilsPerBase / ilsPerSymbol of symbol.
+                    ratioOrNull(ilsPerFor(baseCode, date, ilsPerForeignByDate), ilsPerFor(symbolCode, date, ilsPerForeignByDate))
+                        ?.let { date to Rate(symbol, it) }
+                }.toMap(sortedMapOf())
 
         return Timeline(
             success = rates.isNotEmpty(),
@@ -157,13 +156,24 @@ class BankOfIsrael : ApiProvider.Api() {
             .groupBy { it.currency }
             .mapValues { (_, list) -> list.maxBy { it.date } }
 
-    private fun buildIlsRateList(latest: Collection<BankOfIsraelObservation>): List<Rate> {
-        val rates = mutableListOf<Rate>()
-        for (obs in latest) {
-            val currency = Currency.fromString(obs.currency) ?: continue
-            if (obs.rawValue.signum() <= 0) continue
-            rates.add(Rate(currency, unitFor(obs.currency).divide(obs.rawValue, MathContext.DECIMAL128)))
+    // [numerator] / [denominator], when both are known and the division is defined.
+    private fun ratioOrNull(
+        numerator: BigDecimal?,
+        denominator: BigDecimal?,
+    ): BigDecimal? =
+        if (numerator == null || denominator == null || denominator.signum() == 0) {
+            null
+        } else {
+            numerator.divide(denominator, MathContext.DECIMAL128)
         }
+
+    private fun buildIlsRateList(latest: Collection<BankOfIsraelObservation>): List<Rate> {
+        val rates =
+            latest
+                .mapNotNull { obs ->
+                    val perIls = ratioOrNull(unitFor(obs.currency), obs.rawValue.takeIf { it.signum() > 0 })
+                    rateOrNull(Currency.fromString(obs.currency), perIls)
+                }.toMutableList()
         if (rates.isNotEmpty()) {
             rates.add(Rate(Currency.ILS, BigDecimal.ONE))
             rates.addFokFromDkkIfMissing()

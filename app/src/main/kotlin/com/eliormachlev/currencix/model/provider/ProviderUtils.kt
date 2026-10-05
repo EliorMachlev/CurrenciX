@@ -40,6 +40,9 @@ internal const val TIMELINE_LOOKBACK_DAYS: Long = 7L
 // query-string dates. Hoisted so providers don't each keep a local alias.
 internal val ISO_DATE: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
+// Chains a step that can itself fail: [next] runs on success, a failure passes through.
+internal inline fun <T, R> Result<T>.flatMap(next: (T) -> Result<R>): Result<R> = fold(onSuccess = next, onFailure = { Result.failure(it) })
+
 // Build a Moshi instance preconfigured with the shared Kotlin adapter factory.
 // Callers add their per-request adapters inside [block].
 internal inline fun moshi(block: Moshi.Builder.() -> Unit = {}): Moshi =

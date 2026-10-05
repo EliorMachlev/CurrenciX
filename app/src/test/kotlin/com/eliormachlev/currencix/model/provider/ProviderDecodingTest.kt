@@ -5,6 +5,7 @@ import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.model.adapter.SDMX_SAMPLE
 import com.eliormachlev.currencix.model.rateFor
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -13,6 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalDate
 
 private val START: LocalDate = LocalDate.of(2024, 1, 1)
@@ -143,8 +145,9 @@ class ProviderDecodingTest {
     @Test
     fun `inforeuro timeline spreads each monthly rate over its days, symbol per base`() =
         runBlocking {
-            http.bodyByPathEnd["/GBP"] = """[{"currencyIso":"GBP","amount":0.88,"dateStart":"01/01/2024","dateEnd":"31/01/2024"}]"""
-            http.bodyByPathEnd["/USD"] =
+            http.bodyByUrlPart["/currencies/GBP"] =
+                """[{"currencyIso":"GBP","amount":0.88,"dateStart":"01/01/2024","dateEnd":"31/01/2024"}]"""
+            http.bodyByUrlPart["/currencies/USD"] =
                 """[{"currencyIso":"USD","amount":1.1,"dateStart":"01/01/2024","dateEnd":"31/01/2024"},""" +
                 """{"currencyIso":"USD","amount":1.08,"dateStart":"01/02/2024","dateEnd":"29/02/2024"}]"""
             val timeline = InforEuro().getTimeline(null, Currency.GBP, Currency.USD, START, END).getOrThrow()
@@ -170,6 +173,37 @@ class ProviderDecodingTest {
             assertEquals(LocalDate.of(2024, 3, 15), rates.date)
             assertEquals(0, BigDecimal("0.25").compareTo(rates.valueOf(Currency.USD)))
             assertEquals(0, BigDecimal("40").compareTo(rates.valueOf(Currency.JPY)))
+            assertEquals(BigDecimal.ONE, rates.valueOf(Currency.ILS))
+        }
+
+    @Test
+    fun `bank of israel timeline prices the symbol in the base, day by day`() =
+        runBlocking {
+            http.body = SDMX_SAMPLE
+            val timeline = BankOfIsrael().getTimeline(null, Currency.EUR, Currency.USD, START, END).getOrThrow()
+
+            // Only 15 March has both: 1 EUR = 4.0 ILS, 1 USD = 3.7 ILS.
+            assertEquals(setOf(LocalDate.of(2024, 3, 15)), timeline.rates?.keys)
+            assertEquals(
+                0,
+                BigDecimal("4.0").divide(BigDecimal("3.7"), MathContext.DECIMAL128).compareTo(
+                    timeline.rates
+                        ?.values
+                        ?.single()
+                        ?.value,
+                ),
+            )
+        }
+
+    @Test
+    fun `bank of israel historical rates take each currency's latest fixing`() =
+        runBlocking {
+            http.body = SDMX_SAMPLE
+            val rates = BankOfIsrael().getRates(null, LocalDate.of(2024, 3, 15), ApiSecrets.EMPTY).getOrThrow()
+
+            assertEquals(Currency.ILS, rates.base)
+            assertEquals(0, BigDecimal.ONE.divide(BigDecimal("3.7"), MathContext.DECIMAL128).compareTo(rates.valueOf(Currency.USD)))
+            assertEquals(0, BigDecimal.ONE.divide(BigDecimal("4.0"), MathContext.DECIMAL128).compareTo(rates.valueOf(Currency.EUR)))
             assertEquals(BigDecimal.ONE, rates.valueOf(Currency.ILS))
         }
 }

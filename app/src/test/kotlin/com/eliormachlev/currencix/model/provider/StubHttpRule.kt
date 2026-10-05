@@ -26,10 +26,10 @@ class StubHttpRule : ExternalResource() {
     // non-object payload.
     var body = "null"
 
-    /** Bodies for particular requests, by the end of their URL path; anything else gets [body]. */
-    val bodyByPathEnd = mutableMapOf<String, String>()
+    /** Bodies for particular requests, by a part of their URL; anything else gets [body]. */
+    val bodyByUrlPart = mutableMapOf<String, String>()
 
-    private fun bodyFor(url: HttpUrl): String = bodyByPathEnd.entries.firstOrNull { url.encodedPath.endsWith(it.key) }?.value ?: body
+    private fun bodyFor(url: HttpUrl): String = bodyByUrlPart.entries.firstOrNull { it.key in url.toString() }?.value ?: body
 
     private val recordingClient =
         OkHttpClient

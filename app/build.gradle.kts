@@ -255,9 +255,12 @@ dependencies {
     // changes can't move the API out from under us — see
     // docs/markDown/contributing.md on version pins.
     implementation("sh.calvin.reorderable:reorderable:3.1.0")
-    // crypto: BouncyCastle provides pure-Java Argon2id, used by BackupManager
+    // crypto: BouncyCastle provides pure-Java Argon2id, the key derivation
     // for password-based backup encryption (quantum-resistant KDF).
     implementation("org.bouncycastle:bcprov-jdk18on:1.85.2")
+    // crypto: Tink (Apache-2.0) runs the AES-GCM cipher for backups and owns
+    // its nonce handling, instead of a hand-driven javax.crypto.Cipher.
+    implementation("com.google.crypto.tink:tink-android:1.23.0")
     // logging: Timber routes to a rotating file tree written under filesDir/logs.
     // Local-only — no remote crash / analytics sink.
     implementation("com.jakewharton.timber:timber:5.0.1")
