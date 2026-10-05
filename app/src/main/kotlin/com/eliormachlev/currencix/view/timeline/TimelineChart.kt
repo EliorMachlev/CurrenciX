@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -26,6 +27,7 @@ import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
@@ -54,45 +56,93 @@ import kotlinx.collections.immutable.ImmutableList
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
+
+private typealias ChartPoints = List<Pair<LocalDate, Float>>
+
+/** The series to draw and the reference values drawn over it, observed. */
+class ChartSeries(
+    val entries: LiveData<ImmutableList<Pair<LocalDate, Float>>?>,
+    // The range's extremes, independent of the scrub position, so the min /
+    // max lines stay pinned to the period's low and high while a finger drags.
+    val highlightMin: LiveData<Double?>,
+    val highlightMax: LiveData<Double?>,
+)
+
+/** The chart's display preferences (Settings → Graph options), observed. */
+class ChartPrefs(
+    val showGrid: LiveData<Boolean>,
+    val showXAxis: LiveData<Boolean>,
+    val showYAxis: LiveData<Boolean>,
+    val highlightExtremes: LiveData<Boolean>,
+    val highlightPeriodChange: LiveData<Boolean>,
+    val dateFormat: LiveData<String>,
+)
+
+@Immutable
+data class ChartColors(
+    val line: Color,
+    val baseline: Color,
+    val axis: Color,
+    val scrubLine: Color,
+)
 
 @Composable
 fun TimelineChart(
-    entriesLive: LiveData<ImmutableList<Pair<LocalDate, Float>>?>,
-    showGridLive: LiveData<Boolean>,
-    showXAxisLive: LiveData<Boolean>,
-    showYAxisLive: LiveData<Boolean>,
-    highlightExtremesLive: LiveData<Boolean>,
-    highlightPeriodChangeLive: LiveData<Boolean>,
-    dateFormatLive: LiveData<String>,
-    // Scrub-aware highlight values from the viewmodel. Passing these in (rather
-    // than deriving from `entries`) keeps the red/blue highlight lines aligned
-    // with the MIN/MAX readouts when the user scrubs, since the readouts also
-    // apply the scrub filter.
-    highlightMinLive: LiveData<Double?>,
-    highlightMaxLive: LiveData<Double?>,
-    lineColor: Color,
-    baselineColor: Color,
-    axisColor: Color,
-    scrubLineColor: Color,
+    series: ChartSeries,
+    prefs: ChartPrefs,
+    colors: ChartColors,
     onScrub: (LocalDate?) -> Unit,
 ) {
-    val entries by entriesLive.observeAsState()
-    val showGrid by showGridLive.observeAsState(initial = true)
-    val showXAxis by showXAxisLive.observeAsState(initial = true)
-    val showYAxis by showYAxisLive.observeAsState(initial = true)
-    val highlightExtremes by highlightExtremesLive.observeAsState(initial = true)
-    val highlightPeriodChange by highlightPeriodChangeLive.observeAsState(initial = true)
-    val highlightMin by highlightMinLive.observeAsState()
-    val highlightMax by highlightMaxLive.observeAsState()
-    val dateFormat by dateFormatLive.observeAsState(initial = DEFAULT_DATE_FORMAT)
-    val axisDateFormatter =
-        remember(dateFormat) {
-            DateTimeFormatter.ofPattern(stripYear(stripTimePattern(dateFormat)))
-        }
+    val entries by series.entries.observeAsState()
+    val highlightMin by series.highlightMin.observeAsState()
+    val highlightMax by series.highlightMax.observeAsState()
+    val highlightExtremes by prefs.highlightExtremes.observeAsState(initial = true)
+    val highlightPeriodChange by prefs.highlightPeriodChange.observeAsState(initial = true)
+    val dateFormat by prefs.dateFormat.observeAsState(initial = DEFAULT_DATE_FORMAT)
 
     val data = entries.orEmpty()
-    val modelProducer = remember { CartesianChartModelProducer() }
+    val scrub = rememberScrub(data, onScrub)
+    val periodChanges = rememberPeriodChanges(data, highlightPeriodChange)
+    val decorations =
+        buildList {
+            addPeriodChangeLines(periodChanges.months, MONTH_CHANGE_COLOR)
+            addPeriodChangeLines(periodChanges.years, YEAR_CHANGE_COLOR)
+            scrub.index?.let { add(VerticalLineOver(x = it.toDouble(), line = chartLine(colors.scrubLine))) }
+            data.lastOrNull()?.let { add(HorizontalLineUnder(y = it.second.toDouble(), line = chartLine(colors.baseline))) }
+            if (highlightExtremes) addExtremeLines(highlightMin, highlightMax, colors.line)
+        }
 
+    ChartHost(
+        data = data,
+        axes = rememberAxes(data, prefs, colors.axis, dateFormat, periodChanges),
+        scrub = scrub,
+        marker = rememberScrubMarker(data, dateFormat),
+        line = ChartLine(colors.line, rememberRangeProvider(data), decorations),
+    )
+}
+
+// The plotted line: its color, the y-range it is drawn in, and what is drawn around it.
+private class ChartLine(
+    val color: Color,
+    val rangeProvider: CartesianLayerRangeProvider,
+    val decorations: List<Decoration>,
+)
+
+private class ChartAxes(
+    val start: VerticalAxis<Axis.Position.Vertical.Start>,
+    val bottom: HorizontalAxis<Axis.Position.Horizontal.Bottom>,
+)
+
+@Composable
+private fun ChartHost(
+    data: ChartPoints,
+    axes: ChartAxes,
+    scrub: Scrub,
+    marker: CartesianMarker,
+    line: ChartLine,
+) {
+    val modelProducer = remember { CartesianChartModelProducer() }
     LaunchedEffect(data.size, data.hashCode()) {
         if (data.isNotEmpty()) {
             modelProducer.runTransaction {
@@ -100,50 +150,86 @@ fun TimelineChart(
             }
         }
     }
+    val chartSummary = stringResource(id = R.string.a11y_chart_summary)
+    // Rebuild the host when the series length changes: Vico's scroll/marker state
+    // caches the previous point count and crashes when the dataset shrinks.
+    key(data.size) {
+        // Vico maps touch x-coordinates against the host's layout direction, so
+        // under an RTL locale (e.g. Hebrew) the scrub marker mirrors to the
+        // wrong side of the finger and clamps to the left edge.
+        Ltr {
+            CartesianChartHost(
+                // Vico exposes no data to accessibility services, so a screen
+                // reader that lands on the host only hears "chart". Provide a
+                // summary that points to the accessible readout below (past,
+                // current, min, avg, max) rather than reading raw data points.
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .semantics { contentDescription = chartSummary },
+                chart =
+                    rememberCartesianChart(
+                        rememberLineCartesianLayer(
+                            lineProvider =
+                                LineCartesianLayer.LineProvider.series(
+                                    LineCartesianLayer.rememberLine(
+                                        fill = LineCartesianLayer.LineFill.single(Fill(line.color)),
+                                    ),
+                                ),
+                            rangeProvider = line.rangeProvider,
+                        ),
+                        startAxis = axes.start,
+                        bottomAxis = axes.bottom,
+                        marker = marker,
+                        markerVisibilityListener = scrub.listener,
+                        decorations = line.decorations,
+                    ),
+                modelProducer = modelProducer,
+                scrollState = rememberVicoScrollState(scrollEnabled = false),
+            )
+        }
+    }
+}
 
+// The y-range: the series' own, padded so the line doesn't touch the edges.
+@Composable
+private fun rememberRangeProvider(data: ChartPoints): CartesianLayerRangeProvider {
     val minValue = remember(data) { data.minOfOrNull { it.second }?.toDouble() }
     val maxValue = remember(data) { data.maxOfOrNull { it.second }?.toDouble() }
-    val baseline = remember(data) { data.lastOrNull()?.second?.toDouble() }
-
-    // Vico's axis measurement (getMaxLabelWidth) may call this with x-values outside
-    // data.indices while the model is transitioning to a smaller series. Returning a
-    // blank string throws IllegalStateException, so clamp to the valid range and fall
-    // back to a non-blank placeholder when the series is empty.
-    val bottomAxisValueFormatter =
-        remember(data, axisDateFormatter) {
-            CartesianValueFormatter { _, value, _ ->
-                val lastIdx = data.size - 1
-                if (lastIdx < 0) {
-                    AXIS_LABEL_EMPTY_PLACEHOLDER
-                } else {
-                    val idx = value.toInt().coerceIn(0, lastIdx)
-                    data[idx].first.format(axisDateFormatter)
-                }
-            }
+    return remember(minValue, maxValue) {
+        when {
+            minValue == null || maxValue == null -> CartesianLayerRangeProvider.auto()
+            minValue < maxValue -> paddedRange(minValue, maxValue, (maxValue - minValue) * Y_AXIS_PADDING)
+            // Constant series (e.g. AUD → AUD, all rates = 1.0). auto()
+            // stretches to [0, 1], which puts the top Y-axis label at the
+            // layer boundary and overflows above the chart region. Pin a
+            // symmetric ±FLAT_SERIES_PADDING band around the value so the
+            // chart shows a centered flat line with a bounded axis.
+            else -> paddedRange(minValue, maxValue, FLAT_SERIES_PADDING.coerceAtLeast(abs(minValue) * Y_AXIS_PADDING))
         }
+    }
+}
 
-    val rangeProvider =
-        remember(minValue, maxValue) {
-            when {
-                minValue != null && maxValue != null && minValue < maxValue -> {
-                    val pad = (maxValue - minValue) * Y_AXIS_PADDING
-                    CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
-                }
-                // Constant series (e.g. AUD → AUD, all rates = 1.0). auto()
-                // stretches to [0, 1], which puts the top Y-axis label at the
-                // layer boundary and overflows above the chart region. Pin a
-                // symmetric ±FLAT_SERIES_PADDING band around the value so the
-                // chart shows a centered flat line with a bounded axis.
-                minValue != null && maxValue != null -> {
-                    val pad = FLAT_SERIES_PADDING.coerceAtLeast(kotlin.math.abs(minValue) * Y_AXIS_PADDING)
-                    CartesianLayerRangeProvider.fixed(minY = minValue - pad, maxY = maxValue + pad)
-                }
-                else -> CartesianLayerRangeProvider.auto()
-            }
-        }
+private fun paddedRange(
+    min: Double,
+    max: Double,
+    padding: Double,
+): CartesianLayerRangeProvider = CartesianLayerRangeProvider.fixed(minY = min - padding, maxY = max + padding)
 
+// Where the finger is on the chart ([index], null when lifted) and the
+// listener that keeps it — and the screen's readouts, via onScrub — current.
+private class Scrub(
+    val index: Int?,
+    val listener: CartesianMarkerVisibilityListener,
+)
+
+@Composable
+private fun rememberScrub(
+    data: ChartPoints,
+    onScrub: (LocalDate?) -> Unit,
+): Scrub {
     var scrubIndex by remember { mutableStateOf<Int?>(null) }
-    val markerListener =
+    val listener =
         remember(data, onScrub) {
             object : CartesianMarkerVisibilityListener {
                 private fun update(targets: List<CartesianMarker.Target>) {
@@ -171,22 +257,26 @@ fun TimelineChart(
                 }
             }
         }
+    return Scrub(scrubIndex, listener)
+}
 
-    val axisLabelStyle = TextStyle(color = axisColor, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp)
-    val indicatorRing = MaterialTheme.colorScheme.surface
-
-    // Scrub bubble: "12/03/26 · 3.0714" above the finger, in Material's
-    // tooltip colors so it reads on any line or grid behind it.
-    val bubbleDateFormatter = remember(dateFormat) { DateTimeFormatter.ofPattern(stripTimePattern(dateFormat)) }
-    val bubbleNumberFormat =
+// Scrub bubble: "12/03/26 · 3.0714" above the finger, in Material's
+// tooltip colors so it reads on any line or grid behind it.
+@Composable
+private fun rememberScrubMarker(
+    data: ChartPoints,
+    dateFormat: String,
+): CartesianMarker {
+    val dateFormatter = remember(dateFormat) { DateTimeFormatter.ofPattern(stripTimePattern(dateFormat)) }
+    val numberFormat =
         remember {
             NumberFormat.getNumberInstance().apply {
                 minimumFractionDigits = MARKER_MIN_DECIMALS
                 maximumFractionDigits = MARKER_MAX_DECIMALS
             }
         }
-    val markerValueFormatter =
-        remember(data, bubbleDateFormatter, bubbleNumberFormat) {
+    val valueFormatter =
+        remember(data, dateFormatter, numberFormat) {
             DefaultCartesianMarker.ValueFormatter { _, targets ->
                 val point =
                     targets
@@ -197,148 +287,129 @@ fun TimelineChart(
                 if (point == null) {
                     AXIS_LABEL_EMPTY_PLACEHOLDER
                 } else {
-                    "${point.first.format(bubbleDateFormatter)}$MARKER_SEPARATOR${bubbleNumberFormat.format(point.second)}"
+                    "${point.first.format(dateFormatter)}$MARKER_SEPARATOR${numberFormat.format(point.second)}"
                 }
             }
         }
-    val bubbleStyle = TextStyle(color = MaterialTheme.colorScheme.inverseOnSurface, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp)
-    val marker =
-        rememberDefaultCartesianMarker(
-            label =
-                rememberTextComponent(
-                    style = bubbleStyle,
-                    padding = Insets(horizontal = MARKER_PADDING_H, vertical = MARKER_PADDING_V),
-                    background =
-                        rememberShapeComponent(
-                            fill = Fill(MaterialTheme.colorScheme.inverseSurface),
-                            shape = RoundedCornerShape(MARKER_CORNER),
-                        ),
-                ),
-            valueFormatter = markerValueFormatter,
-            indicator = { color ->
-                ShapeComponent(fill = Fill(color), shape = CircleShape, strokeFill = Fill(indicatorRing), strokeThickness = MARKER_RING)
-            },
-            indicatorSize = MARKER_DOT,
-        )
-
-    // Solid verticals at year and month boundaries. Suppress the month lines
-    // on the year view (heuristic: >90 data points) since ~12 of them just
-    // add noise. Year boundaries always imply month boundaries, so skip the
-    // month line at the same index to avoid stacking two colors.
-    //
-    // Solid (not dashed) because vico's DashedShape renders inconsistently on
-    // vertical lines across chart contexts (weekly vs monthly view), even
-    // with FitStrategy.Fixed and whole-pixel x-snapping.
-    val showMonthChangeLines = data.size <= YEAR_VIEW_MIN_POINTS
-    val yearChangeIndices =
-        remember(data) { data.boundaryIndices { prev, curr -> prev.year != curr.year } }
-    val monthChangeIndices =
-        remember(data, showMonthChangeLines) {
-            if (!showMonthChangeLines) {
-                emptyList()
-            } else {
-                data.boundaryIndices { prev, curr ->
-                    prev.year == curr.year && prev.monthValue != curr.monthValue
-                }
-            }
-        }
-
-    val currentScrubIndex = scrubIndex
-    val decorations =
-        buildList {
-            if (highlightPeriodChange) {
-                addPeriodChangeLines(monthChangeIndices, MONTH_CHANGE_COLOR)
-                addPeriodChangeLines(yearChangeIndices, YEAR_CHANGE_COLOR)
-            }
-            if (currentScrubIndex != null) {
-                add(VerticalLineOver(x = currentScrubIndex.toDouble(), line = chartLine(scrubLineColor)))
-            }
-            if (baseline != null) {
-                add(HorizontalLineUnder(y = baseline, line = chartLine(baselineColor)))
-            }
-            val hMin = highlightMin
-            val hMax = highlightMax
-            if (highlightExtremes && hMin != null && hMax != null && hMin != hMax) {
-                add(HorizontalLineUnder(y = hMin, line = chartLine(MIN_LINE_COLOR, HIGHLIGHT_ALPHA)))
-                add(HorizontalLineUnder(y = hMax, line = chartLine(lineColor, HIGHLIGHT_ALPHA)))
-            }
-        }
-
-    val yAxisItemPlacer = remember { VerticalAxis.ItemPlacer.count(count = { Y_AXIS_TARGET_LABEL_COUNT }) }
-    val startAxis =
-        VerticalAxis.rememberStart(
-            label = if (showYAxis) rememberAxisLabelComponent(style = axisLabelStyle) else null,
-            guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
-            itemPlacer = yAxisItemPlacer,
-        )
-    val axisItemPlacer =
-        remember(data.size, yearChangeIndices, monthChangeIndices, highlightPeriodChange) {
-            // Aligned placer emits labels at 0, spacing, 2*spacing, … up to n-1, so the
-            // label count is floor((n-1)/spacing) + 1. To cap at exactly
-            // X_AXIS_TARGET_LABEL_COUNT (never one over), pick the smallest spacing that
-            // fits (count-1) hops across (n-1) values: ceil((n-1) / (count-1)). For a
-            // 365-point year this gives spacing=61 → 7 labels instead of spacing=52 → 8.
-            val span = (data.size - 1).coerceAtLeast(1)
-            val spacing =
-                ((span + X_AXIS_TARGET_LABEL_COUNT - 2) / (X_AXIS_TARGET_LABEL_COUNT - 1))
-                    .coerceAtLeast(1)
-            val aligned = HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
-            val skipX =
-                if (highlightPeriodChange) {
-                    (yearChangeIndices + monthChangeIndices).map { it.toDouble() }.toSet()
-                } else {
-                    emptySet()
-                }
-            if (skipX.isEmpty()) aligned else SuppressGuidelineItemPlacer(aligned, skipX)
-        }
-    val bottomAxis =
-        HorizontalAxis.rememberBottom(
-            label = if (showXAxis) rememberAxisLabelComponent(style = axisLabelStyle) else null,
-            guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
-            valueFormatter = bottomAxisValueFormatter,
-            labelRotationDegrees = X_AXIS_LABEL_ROTATION,
-            itemPlacer = axisItemPlacer,
-        )
-
-    // Rebuild the host when the series length changes: Vico's scroll/marker state
-    // caches the previous point count and crashes when the dataset shrinks.
-    val chartSummary = stringResource(id = R.string.a11y_chart_summary)
-    key(data.size) {
-        // Vico maps touch x-coordinates against the host's layout direction, so
-        // under an RTL locale (e.g. Hebrew) the scrub marker mirrors to the
-        // wrong side of the finger and clamps to the left edge.
-        Ltr {
-            CartesianChartHost(
-                // Vico exposes no data to accessibility services, so a screen
-                // reader that lands on the host only hears "chart". Provide a
-                // summary that points to the accessible readout below (past,
-                // current, min, avg, max) rather than reading raw data points.
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .semantics { contentDescription = chartSummary },
-                chart =
-                    rememberCartesianChart(
-                        rememberLineCartesianLayer(
-                            lineProvider =
-                                LineCartesianLayer.LineProvider.series(
-                                    LineCartesianLayer.rememberLine(
-                                        fill = LineCartesianLayer.LineFill.single(Fill(lineColor)),
-                                    ),
-                                ),
-                            rangeProvider = rangeProvider,
-                        ),
-                        startAxis = startAxis,
-                        bottomAxis = bottomAxis,
-                        marker = marker,
-                        markerVisibilityListener = markerListener,
-                        decorations = decorations,
+    val indicatorRing = MaterialTheme.colorScheme.surface
+    return rememberDefaultCartesianMarker(
+        label =
+            rememberTextComponent(
+                style = TextStyle(color = MaterialTheme.colorScheme.inverseOnSurface, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp),
+                padding = Insets(horizontal = MARKER_PADDING_H, vertical = MARKER_PADDING_V),
+                background =
+                    rememberShapeComponent(
+                        fill = Fill(MaterialTheme.colorScheme.inverseSurface),
+                        shape = RoundedCornerShape(MARKER_CORNER),
                     ),
-                modelProducer = modelProducer,
-                scrollState = rememberVicoScrollState(scrollEnabled = false),
+            ),
+        valueFormatter = valueFormatter,
+        indicator = { color ->
+            ShapeComponent(fill = Fill(color), shape = CircleShape, strokeFill = Fill(indicatorRing), strokeThickness = MARKER_RING)
+        },
+        indicatorSize = MARKER_DOT,
+    )
+}
+
+// The indices where a new year or a new month starts — the solid vertical
+// lines. Both are empty when the "highlight period change" option is off.
+private class PeriodChanges(
+    val years: List<Int>,
+    val months: List<Int>,
+) {
+    val all: Set<Double> get() = (years + months).mapTo(HashSet()) { it.toDouble() }
+}
+
+// Month lines are dropped on the year view (heuristic: >90 data points),
+// where ~12 of them just add noise. A year boundary is also a month boundary,
+// so the month line at the same index is skipped to avoid stacking two colors.
+//
+// Solid (not dashed) because vico's DashedShape renders inconsistently on
+// vertical lines across chart contexts (weekly vs monthly view), even
+// with FitStrategy.Fixed and whole-pixel x-snapping.
+@Composable
+private fun rememberPeriodChanges(
+    data: ChartPoints,
+    enabled: Boolean,
+): PeriodChanges =
+    remember(data, enabled) {
+        if (!enabled) {
+            PeriodChanges(emptyList(), emptyList())
+        } else {
+            PeriodChanges(
+                years = data.boundaryIndices { prev, curr -> prev.year != curr.year },
+                months =
+                    if (data.size > YEAR_VIEW_MIN_POINTS) {
+                        emptyList()
+                    } else {
+                        data.boundaryIndices { prev, curr -> prev.year == curr.year && prev.monthValue != curr.monthValue }
+                    },
             )
         }
     }
+
+@Composable
+private fun rememberAxes(
+    data: ChartPoints,
+    prefs: ChartPrefs,
+    axisColor: Color,
+    dateFormat: String,
+    periodChanges: PeriodChanges,
+): ChartAxes {
+    val showGrid by prefs.showGrid.observeAsState(initial = true)
+    val showXAxis by prefs.showXAxis.observeAsState(initial = true)
+    val showYAxis by prefs.showYAxis.observeAsState(initial = true)
+    val labelStyle = TextStyle(color = axisColor, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp)
+    val yAxisItemPlacer = remember { VerticalAxis.ItemPlacer.count(count = { Y_AXIS_TARGET_LABEL_COUNT }) }
+    val start =
+        VerticalAxis.rememberStart(
+            label = if (showYAxis) rememberAxisLabelComponent(style = labelStyle) else null,
+            guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
+            itemPlacer = yAxisItemPlacer,
+        )
+    val bottom =
+        HorizontalAxis.rememberBottom(
+            label = if (showXAxis) rememberAxisLabelComponent(style = labelStyle) else null,
+            guideline = if (showGrid) rememberAxisGuidelineComponent() else null,
+            valueFormatter = rememberDateAxisFormatter(data, dateFormat),
+            labelRotationDegrees = X_AXIS_LABEL_ROTATION,
+            itemPlacer = remember(data.size, periodChanges) { dateAxisItemPlacer(data.size, periodChanges.all) },
+        )
+    return ChartAxes(start, bottom)
+}
+
+// Vico's axis measurement (getMaxLabelWidth) may call this with x-values outside
+// data.indices while the model is transitioning to a smaller series. Returning a
+// blank string throws IllegalStateException, so clamp to the valid range and fall
+// back to a non-blank placeholder when the series is empty.
+@Composable
+private fun rememberDateAxisFormatter(
+    data: ChartPoints,
+    dateFormat: String,
+): CartesianValueFormatter {
+    val formatter = remember(dateFormat) { DateTimeFormatter.ofPattern(stripYear(stripTimePattern(dateFormat))) }
+    return remember(data, formatter) {
+        CartesianValueFormatter { _, value, _ ->
+            data.getOrNull(value.toInt().coerceIn(0, (data.size - 1).coerceAtLeast(0)))?.first?.format(formatter)
+                ?: AXIS_LABEL_EMPTY_PLACEHOLDER
+        }
+    }
+}
+
+// Aligned placer emits labels at 0, spacing, 2*spacing, … up to n-1, so the
+// label count is floor((n-1)/spacing) + 1. To cap at exactly
+// X_AXIS_TARGET_LABEL_COUNT (never one over), pick the smallest spacing that
+// fits (count-1) hops across (n-1) values: ceil((n-1) / (count-1)). For a
+// 365-point year this gives spacing=61 → 7 labels instead of spacing=52 → 8.
+// Guidelines are left out at [skipX], where a period-change line is drawn.
+private fun dateAxisItemPlacer(
+    pointCount: Int,
+    skipX: Set<Double>,
+): HorizontalAxis.ItemPlacer {
+    val span = (pointCount - 1).coerceAtLeast(1)
+    val spacing = ((span + X_AXIS_TARGET_LABEL_COUNT - 2) / (X_AXIS_TARGET_LABEL_COUNT - 1)).coerceAtLeast(1)
+    val aligned = HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
+    return if (skipX.isEmpty()) aligned else SuppressGuidelineItemPlacer(aligned, skipX)
 }
 
 internal const val DEFAULT_DATE_FORMAT = "dd/MM/yy"
@@ -375,6 +446,17 @@ private inline fun List<Pair<LocalDate, Float>>.boundaryIndices(isBoundary: (pre
             if (isBoundary(this@boundaryIndices[i - 1].first, this@boundaryIndices[i].first)) add(i)
         }
     }
+
+// The period's low (red) and high (the line's color), when it has both and they differ.
+private fun MutableList<Decoration>.addExtremeLines(
+    min: Double?,
+    max: Double?,
+    highColor: Color,
+) {
+    if (min == null || max == null || min == max) return
+    add(HorizontalLineUnder(y = min, line = chartLine(MIN_LINE_COLOR, HIGHLIGHT_ALPHA)))
+    add(HorizontalLineUnder(y = max, line = chartLine(highColor, HIGHLIGHT_ALPHA)))
+}
 
 private fun MutableList<Decoration>.addPeriodChangeLines(
     indices: List<Int>,

@@ -195,51 +195,44 @@ private fun TimelineChartContent(
     db: Database,
 ) {
     val context = LocalContext.current
-    val lineColor = remember(context) { Color(context.resolveThemeColor(R.attr.colorPrimary)) }
-    val axisColor = remember(context) { Color(context.resolveThemeColor(android.R.attr.textColorSecondary)) }
-    // Text-on-background keeps the scrub line distinct from the green primary
-    // (max highlight), red min line, and the blue/purple period-change
-    // verticals on every theme.
-    val scrubLineColor = remember(context) { Color(context.resolveThemeColor(android.R.attr.textColorPrimary)) }
-    val entriesLive =
-        remember(model) {
-            model.getRates().map { rates ->
-                rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }?.toImmutableList()
-            }
+    val colors =
+        remember(context) {
+            val axis = Color(context.resolveThemeColor(android.R.attr.textColorSecondary))
+            ChartColors(
+                line = Color(context.resolveThemeColor(R.attr.colorPrimary)),
+                baseline = axis,
+                axis = axis,
+                // Text-on-background keeps the scrub line distinct from the green
+                // primary (max highlight), red min line, and the blue/purple
+                // period-change verticals on every theme.
+                scrubLine = Color(context.resolveThemeColor(android.R.attr.textColorPrimary)),
+            )
         }
-    // Created once per screen: a fresh LiveData per recomposition would make
-    // the chart drop and re-add its observers every time.
-    val chartPrefs = remember(db) { ChartPrefs(db) }
-    TimelineChart(
-        entriesLive = entriesLive,
-        showGridLive = chartPrefs.showGrid,
-        showXAxisLive = chartPrefs.showXAxis,
-        showYAxisLive = chartPrefs.showYAxis,
-        highlightExtremesLive = chartPrefs.highlightExtremes,
-        highlightPeriodChangeLive = chartPrefs.highlightPeriodChange,
-        dateFormatLive = chartPrefs.dateFormat,
-        // Range extremes (scrub-independent) so the min/max reference lines
-        // stay pinned to the visible period's low/high while the finger drags.
-        highlightMinLive = model.getRatesRangeMin(),
-        highlightMaxLive = model.getRatesRangeMax(),
-        lineColor = lineColor,
-        baselineColor = axisColor,
-        axisColor = axisColor,
-        scrubLineColor = scrubLineColor,
-        onScrub = model::setPastDate,
-    )
-}
-
-// The chart's display preferences (Graph options), read from DataStore.
-private class ChartPrefs(
-    db: Database,
-) {
-    val showGrid = db.isChartGridEnabled()
-    val showXAxis = db.isChartXAxisLabelEnabled()
-    val showYAxis = db.isChartYAxisLabelEnabled()
-    val highlightExtremes = db.isChartHighlightExtremesEnabled()
-    val highlightPeriodChange = db.isChartHighlightPeriodChangeEnabled()
-    val dateFormat = db.getDateFormat()
+    // Both created once per screen: a fresh LiveData per recomposition would
+    // make the chart drop and re-add its observers every time.
+    val series =
+        remember(model) {
+            ChartSeries(
+                entries =
+                    model.getRates().map { rates ->
+                        rates?.entries?.map { entry -> entry.key to entry.value.value.toFloat() }?.toImmutableList()
+                    },
+                highlightMin = model.getRatesRangeMin(),
+                highlightMax = model.getRatesRangeMax(),
+            )
+        }
+    val prefs =
+        remember(db) {
+            ChartPrefs(
+                showGrid = db.isChartGridEnabled(),
+                showXAxis = db.isChartXAxisLabelEnabled(),
+                showYAxis = db.isChartYAxisLabelEnabled(),
+                highlightExtremes = db.isChartHighlightExtremesEnabled(),
+                highlightPeriodChange = db.isChartHighlightPeriodChangeEnabled(),
+                dateFormat = db.getDateFormat(),
+            )
+        }
+    TimelineChart(series = series, prefs = prefs, colors = colors, onScrub = model::setPastDate)
 }
 
 // "🇺🇸 $ USD → 🇮🇱 ₪ ILS": each side's flag, symbol and code, joined by an

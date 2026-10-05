@@ -73,7 +73,9 @@ import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.ledgerHairline
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.ReorderableLazyListState
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.math.BigDecimal
 import java.math.MathContext
@@ -333,23 +335,7 @@ private fun CurrencyList(
     // scoped to the current composition — otherwise the saveable state carries
     // a prior dialog's scroll offset over and the list opens mid-scroll.
     val listState = remember { LazyListState() }
-    // sh.calvin's onMove fires as the finger crosses row midpoints and expects
-    // the caller to mutate the backing list synchronously. Keys map back to
-    // starredItems by ISO (see [STARRED_KEY_PREFIX]); the library only calls
-    // onMove for keys registered via ReorderableItem, so non-starred rows and
-    // api_hint aren't in the swap universe.
-    val reorderState =
-        rememberReorderableLazyListState(listState) { from, to ->
-            val fromIso = (from.key as? String)?.removePrefix(STARRED_KEY_PREFIX) ?: return@rememberReorderableLazyListState
-            val toIso = (to.key as? String)?.removePrefix(STARRED_KEY_PREFIX) ?: return@rememberReorderableLazyListState
-            val fromIndex = starredItems.indexOfFirst { it.currency.name == fromIso }
-            val toIndex = starredItems.indexOfFirst { it.currency.name == toIso }
-            if (fromIndex < 0 || toIndex < 0 || fromIndex == toIndex) return@rememberReorderableLazyListState
-            Snapshot.withMutableSnapshot {
-                val moved = starredItems.removeAt(fromIndex)
-                starredItems.add(toIndex, moved)
-            }
-        }
+    val reorderState = rememberStarredReorderState(listState, starredItems)
     // When the favorites slot appears at index 0 (empty → non-empty), LazyList
     // key-preservation keeps the previously-first-visible non-starred key at
     // the viewport top, pushing the new favorites section above the fold. If
@@ -379,22 +365,7 @@ private fun CurrencyList(
                     isDisabled = rate.currency == disabledCurrency,
                     onClick = { onRateClicked(rate) },
                     onStarClick = { onStarClicked(rate) },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .then(
-                                if (allowReorder) {
-                                    // Long-press-to-drag preserves the row's
-                                    // regular tap → select gesture; commit on
-                                    // release so we only persist the settled
-                                    // order (not each mid-drag swap).
-                                    Modifier.longPressDraggableHandle(
-                                        onDragStopped = { onDragEnded() },
-                                    )
-                                } else {
-                                    Modifier
-                                },
-                            ).then(if (isDragging) Modifier.alpha(DRAG_ACTIVE_ALPHA) else Modifier),
+                    modifier = Modifier.fillMaxWidth().then(dragModifier(allowReorder, isDragging, onDragEnded)),
                 )
             }
         }
@@ -413,6 +384,43 @@ private fun CurrencyList(
             ApiHintRow()
         }
     }
+}
+
+// sh.calvin's onMove fires as the finger crosses row midpoints and expects
+// the caller to mutate the backing list synchronously. Keys map back to
+// starredItems by ISO (see [STARRED_KEY_PREFIX]); the library only calls
+// onMove for keys registered via ReorderableItem, so non-starred rows and
+// api_hint aren't in the swap universe.
+@Composable
+private fun rememberStarredReorderState(
+    listState: LazyListState,
+    starredItems: SnapshotStateList<Rate>,
+): ReorderableLazyListState =
+    rememberReorderableLazyListState(listState) { from, to ->
+        val fromIndex = starredItems.indexOfStarredKey(from.key)
+        val toIndex = starredItems.indexOfStarredKey(to.key)
+        if (fromIndex >= 0 && toIndex >= 0 && fromIndex != toIndex) {
+            Snapshot.withMutableSnapshot { starredItems.add(toIndex, starredItems.removeAt(fromIndex)) }
+        }
+    }
+
+// Where the starred row registered under [key] sits; -1 for any other key.
+private fun List<Rate>.indexOfStarredKey(key: Any): Int {
+    val iso = (key as? String)?.removePrefix(STARRED_KEY_PREFIX)
+    return indexOfFirst { it.currency.name == iso }
+}
+
+// A starred row's drag behavior: long-press-to-drag when reordering is
+// allowed (which keeps the row's regular tap → select gesture), committing on
+// release so only the settled order is persisted, not each mid-drag swap. The
+// row dims while it is being dragged.
+private fun ReorderableCollectionItemScope.dragModifier(
+    allowReorder: Boolean,
+    isDragging: Boolean,
+    onDragEnded: () -> Unit,
+): Modifier {
+    val handle = if (allowReorder) Modifier.longPressDraggableHandle(onDragStopped = { onDragEnded() }) else Modifier
+    return if (isDragging) handle.alpha(DRAG_ACTIVE_ALPHA) else handle
 }
 
 @Composable
