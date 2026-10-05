@@ -48,11 +48,23 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 - Avoid `java.lang.*` qualifiers (Kotlin imports these automatically).
 - Avoid swallowed exceptions: always use the caught exception variable in the catch block.
 
+### No Suppressions, No Cosmetic Workarounds
+
+Warnings and findings get fixed, not hidden.
+
+- **No suppressions of any kind.** That covers `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, new detekt or lint baseline entries, turning a rule off in `detekt.yml` / `lint.xml` / `.editorconfig`, `-dontwarn`, and compiler flags that silence warnings. (`@OptIn` for an experimental API is an explicit opt-in, not a suppression.)
+- **No workaround whose only purpose is to make a warning go away.** If the code still has the problem, the warning must still be there. Don't route a deprecated call through a wrapper, reflection or a cast, rename or restructure something only so an analyzer stops matching it, or exclude a file from a check.
+- **Fix the cause.** Migrate off the deprecated API, split the long function, make the parameter list a type, remove the unused code.
+- **When no real fix exists yet,** leave the warning visible and say so in the PR. A visible warning is accurate; a hidden one is not.
+
+The suppressions and baseline entries already in the tree predate this rule. They are debt, not precedent: never add one, and when you change code that one covers, fix the issue and delete it.
+
 ### Pull Request Checklist
 
 - [ ] `./gradlew check assembleDebug` passes locally (includes the Konsist architecture tests)
 - [ ] `./gradlew detekt` reports no new findings
 - [ ] `./gradlew spotlessCheck` is clean
+- [ ] No new suppressions or baseline entries, and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))
 - [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter is required, because Jazzer's instrumentation breaks Robolectric if the fuzz tests run in the same task.
 - [ ] If adding a dependency: check F-Droid licence compatibility
 

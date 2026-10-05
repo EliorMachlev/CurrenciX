@@ -37,7 +37,6 @@ import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAncho
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
 import com.eliormachlev.currencix.view.compose.showOrToast
-import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
@@ -90,7 +89,7 @@ internal fun ConverterRoute(
     if (paneRole == PaneRole.List) TimelineFollowsPair(viewModel, navigator)
     val onLeaveViaDrawer = rememberDrawerClosedOnReturn(drawerState)
     val onDrawerItem: (DrawerAction) -> Unit = { action ->
-        scope.launch { drawerState.slideTo(DrawerValue.Closed) }
+        scope.launch { drawerState.close() }
         onLeaveViaDrawer(action)
         when (action) {
             DrawerAction.Refresh -> viewModel.forceUpdateExchangeRate()
@@ -194,18 +193,9 @@ private class ConverterDestinations(
     }
 }
 
-// Opens / closes the drawer on the app's panel spring (Motion.settle) —
-// quicker than Material's own drawer motion, which open() / close() use.
-//
-// animateTo is deprecated in favor of those two, but they take no spec: the
-// drawer reads its motion from the theme's MotionScheme, which is internal
-// in material3 1.4. Until it's public there is no other way to keep this
-// spring, so the deprecation is suppressed here, and only here. Once it is,
-// give the drawer an app MotionScheme and call open() / close().
-@Suppress("DEPRECATION")
-private suspend fun DrawerState.slideTo(value: DrawerValue) = animateTo(value, Motion.settle())
-
-private suspend fun DrawerState.toggle() = slideTo(if (isOpen) DrawerValue.Closed else DrawerValue.Open)
+// The drawer moves on Material's own motion: DrawerState.open() / close()
+// take no animation spec (the spec-taking animateTo is deprecated).
+private suspend fun DrawerState.toggle() = if (isOpen) close() else open()
 
 // A drawer entry that opens another screen starts closing the drawer, but
 // the converter leaves composition before that animation ends — and would

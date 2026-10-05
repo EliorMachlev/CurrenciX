@@ -24,6 +24,15 @@ When touching code (especially during refactors), always look for and apply thes
 
 Do this in-line with whatever task you're doing — don't gate it behind a separate "refactor" ask.
 
+## No suppressions, no cosmetic workarounds
+
+Full rule: [`contributing.md`](docs/markDown/contributing.md#no-suppressions-no-cosmetic-workarounds).
+
+- **Never add a suppression of any kind**: `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, a detekt or lint baseline entry, a disabled rule in a config file, `-dontwarn`, or a warning-silencing compiler flag.
+- **Never write a workaround that hides a real issue just to quiet the compiler or an analyzer** (a wrapper, cast or reflection around a deprecated call, a rename or restructure done only so a rule stops matching, excluding a file from a check). If the problem is still there, the warning must be too.
+- **Fix the cause instead.** If there is no real fix yet, leave the warning visible and tell the user what it is and why it can't be fixed now. Do not hide it and do not present a hidden warning as fixed.
+- Existing suppressions and baseline entries predate this rule. Don't add to them or copy them; when you change code one covers, fix the issue and delete it.
+
 ## Import ordering
 
 Spotless (ktlint) enforces `ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,^`. When adding an import, place it so the file stays in this order:
