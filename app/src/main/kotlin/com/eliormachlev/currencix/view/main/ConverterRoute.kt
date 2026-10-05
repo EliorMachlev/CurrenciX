@@ -196,6 +196,13 @@ private class ConverterDestinations(
 
 // Opens / closes the drawer on the app's panel spring (Motion.settle) —
 // quicker than Material's own drawer motion, which open() / close() use.
+//
+// animateTo is deprecated in favor of those two, but they take no spec: the
+// drawer reads its motion from the theme's MotionScheme, which is internal
+// in material3 1.4. Until it's public there is no other way to keep this
+// spring, so the deprecation is suppressed here, and only here. Once it is,
+// give the drawer an app MotionScheme and call open() / close().
+@Suppress("DEPRECATION")
 private suspend fun DrawerState.slideTo(value: DrawerValue) = animateTo(value, Motion.settle())
 
 private suspend fun DrawerState.toggle() = slideTo(if (isOpen) DrawerValue.Closed else DrawerValue.Open)
