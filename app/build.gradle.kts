@@ -190,7 +190,7 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
     // test
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.23.0")
+    testImplementation("org.mockito:mockito-core:5.24.0")
     // core-testing provides InstantTaskExecutorRule so LiveData setValue can
     // run on the JVM test thread without hitting the main-thread assertion.
     testImplementation("androidx.arch.core:core-testing:2.2.0")
