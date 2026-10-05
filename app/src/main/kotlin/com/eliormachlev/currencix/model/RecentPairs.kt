@@ -27,7 +27,19 @@ object RecentPairs {
     fun push(
         recents: List<CurrencyPair>,
         pair: CurrencyPair,
-    ): List<CurrencyPair> = (listOf(pair) + recents.filterNot(pair::isSameCurrencies)).take(MAX)
+    ): List<CurrencyPair> = (listOf(pair) + without(recents, pair)).take(MAX)
+
+    /** [recents] without [pair], in either direction. */
+    fun without(
+        recents: List<CurrencyPair>,
+        pair: CurrencyPair,
+    ): List<CurrencyPair> = recents.filterNot(pair::isSameCurrencies)
+
+    /** [recents] without the pairs that use [currency] — which is what takes it off the picker's shortcuts. */
+    fun without(
+        recents: List<CurrencyPair>,
+        currency: Currency,
+    ): List<CurrencyPair> = recents.filterNot { it.from == currency || it.to == currency }
 
     /** The currencies in [recents], most recent first, each once — the picker's shortcuts. */
     fun currencies(recents: List<CurrencyPair>): List<Currency> = recents.flatMap { listOf(it.from, it.to) }.distinct()

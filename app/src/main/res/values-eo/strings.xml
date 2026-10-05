@@ -111,6 +111,9 @@
     <string name="timeline_retry">Reprovi</string>
     <string name="timeline_change_provider">Ŝanĝi provizanton</string>
     <string name="recent_pair_switch">Ŝanĝi al %1$s → %2$s</string>
+    <string name="recent_remove_title">Forigi el historio</string>
+    <string name="recent_remove_pair">%1$s → %2$s estos forigita el la lastaj paroj.</string>
+    <string name="recent_remove_currency">%1$s kaj la lastaj paroj, kiuj uzas ĝin, estos forigitaj.</string>
     <string name="cart_section_pinned">Fiksitaj</string>
     <string name="cart_section_others">Aliaj eroj</string>
     <string name="fallback_banner">%1$s ne disponeblas • Uzante %2$s</string>

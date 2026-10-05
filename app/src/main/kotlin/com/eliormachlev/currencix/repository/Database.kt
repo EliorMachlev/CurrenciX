@@ -361,10 +361,18 @@ class Database(
         }
 
     /** Records [pair] as the most recent one (see [RecentPairs]). */
-    fun addRecentPair(pair: CurrencyPair) {
+    fun addRecentPair(pair: CurrencyPair) = editRecentPairs { RecentPairs.push(it, pair) }
+
+    /** Forgets [pair] (either direction). */
+    fun removeRecentPair(pair: CurrencyPair) = editRecentPairs { RecentPairs.without(it, pair) }
+
+    /** Forgets [currency]: every recent pair that uses it. */
+    fun removeRecentCurrency(currency: Currency) = editRecentPairs { RecentPairs.without(it, currency) }
+
+    private fun editRecentPairs(change: (List<CurrencyPair>) -> List<CurrencyPair>) {
         lastStateStore.edit {
             val key = stringPreferencesKey(KEY_RECENT_PAIRS)
-            this[key] = RecentPairs.encode(RecentPairs.push(RecentPairs.decode(this[key]), pair))
+            this[key] = RecentPairs.encode(change(RecentPairs.decode(this[key])))
         }
     }
 

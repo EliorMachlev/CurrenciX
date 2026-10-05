@@ -36,7 +36,7 @@ class NewSurfacesScreenshotTest {
 
     @Test fun recentPairs() =
         shots.captureMatrix("recent_pairs") {
-            RecentPairsRow(pairs = RECENT_PAIRS, onPick = {}, contentPadding = PaddingValues(16.dp))
+            RecentPairsRow(pairs = RECENT_PAIRS, onPick = {}, onRemove = {}, contentPadding = PaddingValues(16.dp))
         }
 
     @Test fun currencyPickerRecents() =

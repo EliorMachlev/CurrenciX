@@ -111,6 +111,9 @@
     <string name="timeline_retry">ניסיון חוזר</string>
     <string name="timeline_change_provider">החלפת ספק</string>
     <string name="recent_pair_switch">מעבר אל %1$s → %2$s</string>
+    <string name="recent_remove_title">הסרה מההיסטוריה</string>
+    <string name="recent_remove_pair">%1$s → %2$s יוסר מהצמדים האחרונים.</string>
+    <string name="recent_remove_currency">%1$s והצמדים האחרונים שמשתמשים בו יוסרו.</string>
     <string name="cart_section_pinned">מוצמדים</string>
     <string name="cart_section_others">פריטים אחרים</string>
     <string name="fallback_banner">%1$s לא זמין • נעשה שימוש ב־%2$s</string>

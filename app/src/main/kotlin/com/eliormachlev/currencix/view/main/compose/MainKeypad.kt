@@ -1,20 +1,21 @@
 package com.eliormachlev.currencix.view.main.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,16 +38,33 @@ import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.viewmodel.main.Operator
 
-// Fixed row height keeps the keypad compact regardless of screen size. The
-// display column above absorbs any remaining space via a LinearLayout weight
-// so the hero card can grow on tall phones without the keypad also expanding
-// (which is exactly what the old ConstraintLayout keypad did, and what pushed
-// the tinted "you get" band off-screen when the display had extra content).
+// Rows are [KEY_ROW_HEIGHT] tall when there's room and squeeze down to
+// [KEY_ROW_MIN_HEIGHT] (still a full touch target) when the display above
+// needs it — a long hero card or the recent pairs under it would otherwise
+// end up behind the keypad. They never grow past KEY_ROW_HEIGHT: on a tall
+// phone the spare room goes to the display, not to bigger keys.
 private val KEY_ROW_HEIGHT: Dp = 56.dp
+private val KEY_ROW_MIN_HEIGHT: Dp = 48.dp
+private const val BASIC_ROWS = 4
+private const val EXPANDED_ROWS = 5
 private val KEY_TEXT_SIZE = 26.sp
 private val KEYPAD_VERTICAL_PADDING: Dp = 4.dp
 private val KEYPAD_HORIZONTAL_PADDING: Dp = 4.dp
 private val DELETE_ICON_SIZE: Dp = 24.dp
+
+/** How tall the keypad is: [full] when there's room, down to [compact] when the display needs it. */
+@Immutable
+data class KeypadHeights(
+    val compact: Dp,
+    val full: Dp,
+)
+
+/** The [KeypadHeights] of the basic (4-row) or expanded (5-row) keypad. */
+fun keypadHeights(isExpandedKeypad: Boolean): KeypadHeights {
+    val rows = if (isExpandedKeypad) EXPANDED_ROWS else BASIC_ROWS
+    val padding = KEYPAD_VERTICAL_PADDING * 2
+    return KeypadHeights(compact = KEY_ROW_MIN_HEIGHT * rows + padding, full = KEY_ROW_HEIGHT * rows + padding)
+}
 
 // Bundled onClick callbacks — one struct so MainActivity can wire them once
 // and pass a stable reference down through recompositions.
@@ -72,9 +90,10 @@ fun MainKeypad(
     Column(
         modifier
             .fillMaxWidth()
+            // Fills the height it's given, up to full-size rows.
+            .heightIn(max = keypadHeights(isExpandedKeypad).full)
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = KEYPAD_HORIZONTAL_PADDING, vertical = KEYPAD_VERTICAL_PADDING),
-        verticalArrangement = Arrangement.Center,
     ) {
         if (isExpandedKeypad) {
             ExpandedKeypadRows(decimal, nextParen, callbacks)
@@ -87,7 +106,7 @@ fun MainKeypad(
 // BASIC — 4×4 grid, operators stacked as the trailing column with the
 // backspace tucked into the last row between "." and "+".
 @Composable
-private fun BasicKeypadRows(
+private fun ColumnScope.BasicKeypadRows(
     decimal: String,
     callbacks: MainKeypadCallbacks,
 ) {
@@ -119,9 +138,9 @@ private fun BasicKeypadRows(
 
 // EXPANDED — adds a leading operators row and moves the digit-zero cluster
 // (00 / 0 / 000) to a dedicated bottom row next to backspace, matching the
-// v1 xml keypad but with fixed compact row heights.
+// v1 xml keypad.
 @Composable
-private fun ExpandedKeypadRows(
+private fun ColumnScope.ExpandedKeypadRows(
     decimal: String,
     nextParen: Char,
     callbacks: MainKeypadCallbacks,
@@ -158,13 +177,14 @@ private fun ExpandedKeypadRows(
     }
 }
 
+// One row of keys; the rows share the keypad's height evenly.
 @Composable
-private fun KeyRow(content: @Composable RowScope.() -> Unit) {
+private fun ColumnScope.KeyRow(content: @Composable RowScope.() -> Unit) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(KEY_ROW_HEIGHT),
+                .weight(1f),
         verticalAlignment = Alignment.CenterVertically,
         content = content,
     )

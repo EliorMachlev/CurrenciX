@@ -112,6 +112,9 @@
     <string name="timeline_retry">Prøv igen</string>
     <string name="timeline_change_provider">Skift udbyder</string>
     <string name="recent_pair_switch">Skift til %1$s → %2$s</string>
+    <string name="recent_remove_title">Fjern fra historik</string>
+    <string name="recent_remove_pair">%1$s → %2$s fjernes fra dine seneste par.</string>
+    <string name="recent_remove_currency">%1$s og de seneste par, der bruger den, fjernes.</string>
     <string name="cart_section_pinned">Fastgjort</string>
     <string name="cart_section_others">Andre varer</string>
     <string name="fallback_banner">%1$s er utilgængelig • Bruger %2$s</string>

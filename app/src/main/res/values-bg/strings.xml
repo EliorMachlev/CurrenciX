@@ -111,6 +111,9 @@
     <string name="timeline_retry">Опитай отново</string>
     <string name="timeline_change_provider">Смяна на доставчика</string>
     <string name="recent_pair_switch">Превключване към %1$s → %2$s</string>
+    <string name="recent_remove_title">Премахване от историята</string>
+    <string name="recent_remove_pair">%1$s → %2$s ще бъде премахната от последните двойки.</string>
+    <string name="recent_remove_currency">%1$s и последните двойки, които я използват, ще бъдат премахнати.</string>
     <string name="cart_section_pinned">Закачени</string>
     <string name="cart_section_others">Други артикули</string>
     <string name="fallback_banner">%1$s не е наличен • Използва се %2$s</string>

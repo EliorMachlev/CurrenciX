@@ -111,6 +111,9 @@
     <string name="timeline_retry">Coba lagi</string>
     <string name="timeline_change_provider">Ganti penyedia</string>
     <string name="recent_pair_switch">Beralih ke %1$s → %2$s</string>
+    <string name="recent_remove_title">Hapus dari riwayat</string>
+    <string name="recent_remove_pair">%1$s → %2$s akan dihapus dari pasangan terbaru.</string>
+    <string name="recent_remove_currency">%1$s dan pasangan terbaru yang menggunakannya akan dihapus.</string>
     <string name="cart_section_pinned">Disematkan</string>
     <string name="cart_section_others">Item lainnya</string>
     <string name="fallback_banner">%1$s tidak tersedia • Menggunakan %2$s</string>

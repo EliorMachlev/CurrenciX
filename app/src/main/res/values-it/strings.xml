@@ -112,6 +112,9 @@
     <string name="timeline_retry">Riprova</string>
     <string name="timeline_change_provider">Cambia fornitore</string>
     <string name="recent_pair_switch">Passa a %1$s → %2$s</string>
+    <string name="recent_remove_title">Rimuovi dalla cronologia</string>
+    <string name="recent_remove_pair">%1$s → %2$s verrà rimossa dalle coppie recenti.</string>
+    <string name="recent_remove_currency">%1$s e le coppie recenti che la usano verranno rimosse.</string>
     <string name="cart_section_pinned">Fissati</string>
     <string name="cart_section_others">Altri articoli</string>
     <string name="fallback_banner">%1$s non disponibile • Uso di %2$s</string>

@@ -199,6 +199,7 @@ fun Modifier.hapticOnFocus(): Modifier =
 fun Modifier.hapticCombinedClickable(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null,
 ): Modifier =
     composed {
         val ctx = LocalContext.current
@@ -214,6 +215,7 @@ fun Modifier.hapticCombinedClickable(
                 tap()
                 onClick()
             },
+            onLongClickLabel = onLongClickLabel,
             onLongClick =
                 onLongClick?.let {
                     {

@@ -100,6 +100,7 @@ class ScreenReaderLabelsTest {
             RecentPairsRow(
                 pairs = persistentListOf(CurrencyPair(Currency.USD, Currency.ILS), CurrencyPair(Currency.EUR, Currency.GBP)),
                 onPick = {},
+                onRemove = {},
                 contentPadding = PaddingValues(),
             )
         }

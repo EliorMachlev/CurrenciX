@@ -35,6 +35,21 @@ class RecentPairsTest {
     }
 
     @Test
+    fun `without a pair drops it in either direction and keeps the rest`() {
+        val recents = listOf(usdIls, eurUsd, gbpJpy)
+        assertEquals(listOf(usdIls, gbpJpy), RecentPairs.without(recents, eurUsd))
+        assertEquals(listOf(eurUsd, gbpJpy), RecentPairs.without(recents, CurrencyPair(Currency.ILS, Currency.USD)))
+        assertEquals(recents, RecentPairs.without(recents, CurrencyPair(Currency.CHF, Currency.SEK)))
+    }
+
+    @Test
+    fun `without a currency drops every pair that uses it`() {
+        val recents = listOf(usdIls, eurUsd, gbpJpy)
+        assertEquals(listOf(gbpJpy), RecentPairs.without(recents, Currency.USD))
+        assertEquals(recents, RecentPairs.without(recents, Currency.CHF))
+    }
+
+    @Test
     fun `encode and decode round trip`() {
         val recents = listOf(usdIls, eurUsd, gbpJpy)
         assertEquals("USD:ILS,EUR:USD,GBP:JPY", RecentPairs.encode(recents))

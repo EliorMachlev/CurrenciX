@@ -112,6 +112,9 @@
     <string name="timeline_retry">Torna-ho a provar</string>
     <string name="timeline_change_provider">Canvia el proveïdor</string>
     <string name="recent_pair_switch">Canvia a %1$s → %2$s</string>
+    <string name="recent_remove_title">Elimina de l\'historial</string>
+    <string name="recent_remove_pair">%1$s → %2$s s\'eliminarà dels parells recents.</string>
+    <string name="recent_remove_currency">S\'eliminaran %1$s i els parells recents que la fan servir.</string>
     <string name="cart_section_pinned">Fixats</string>
     <string name="cart_section_others">Altres articles</string>
     <string name="fallback_banner">%1$s no disponible • S\'utilitza %2$s</string>

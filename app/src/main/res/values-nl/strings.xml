@@ -112,6 +112,9 @@
     <string name="timeline_retry">Opnieuw proberen</string>
     <string name="timeline_change_provider">Andere provider kiezen</string>
     <string name="recent_pair_switch">Overschakelen naar %1$s → %2$s</string>
+    <string name="recent_remove_title">Uit geschiedenis verwijderen</string>
+    <string name="recent_remove_pair">%1$s → %2$s wordt verwijderd uit je recente paren.</string>
+    <string name="recent_remove_currency">%1$s en de recente paren die deze gebruiken worden verwijderd.</string>
     <string name="cart_section_pinned">Vastgezet</string>
     <string name="cart_section_others">Andere items</string>
     <string name="fallback_banner">%1$s niet beschikbaar • %2$s wordt gebruikt</string>

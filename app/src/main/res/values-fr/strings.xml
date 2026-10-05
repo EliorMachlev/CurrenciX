@@ -112,6 +112,9 @@
     <string name="timeline_retry">Réessayer</string>
     <string name="timeline_change_provider">Changer de fournisseur</string>
     <string name="recent_pair_switch">Passer à %1$s → %2$s</string>
+    <string name="recent_remove_title">Retirer de l\'historique</string>
+    <string name="recent_remove_pair">%1$s → %2$s sera retirée des paires récentes.</string>
+    <string name="recent_remove_currency">%1$s et les paires récentes qui l\'utilisent seront retirées.</string>
     <string name="cart_section_pinned">Épinglés</string>
     <string name="cart_section_others">Autres articles</string>
     <string name="fallback_banner">%1$s indisponible • %2$s utilisé</string>

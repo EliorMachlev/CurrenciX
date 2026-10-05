@@ -111,6 +111,9 @@
     <string name="timeline_retry">Δοκιμάστε ξανά</string>
     <string name="timeline_change_provider">Αλλαγή παρόχου</string>
     <string name="recent_pair_switch">Εναλλαγή σε %1$s → %2$s</string>
+    <string name="recent_remove_title">Αφαίρεση από το ιστορικό</string>
+    <string name="recent_remove_pair">Το %1$s → %2$s θα αφαιρεθεί από τα πρόσφατα ζεύγη.</string>
+    <string name="recent_remove_currency">Το %1$s και τα πρόσφατα ζεύγη που το χρησιμοποιούν θα αφαιρεθούν.</string>
     <string name="cart_section_pinned">Καρφιτσωμένα</string>
     <string name="cart_section_others">Άλλα στοιχεία</string>
     <string name="fallback_banner">%1$s μη διαθέσιμο • Χρησιμοποιείται %2$s</string>

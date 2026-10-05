@@ -111,6 +111,9 @@
     <string name="timeline_retry">Reyna aftur</string>
     <string name="timeline_change_provider">Skipta um veitu</string>
     <string name="recent_pair_switch">Skipta yfir í %1$s → %2$s</string>
+    <string name="recent_remove_title">Fjarlægja úr sögu</string>
+    <string name="recent_remove_pair">%1$s → %2$s verður fjarlægt úr nýlegum pörum.</string>
+    <string name="recent_remove_currency">%1$s og nýleg pör sem nota hann verða fjarlægð.</string>
     <string name="cart_section_pinned">Fest</string>
     <string name="cart_section_others">Önnur atriði</string>
     <string name="fallback_banner">%1$s ekki tiltækt • Notar %2$s</string>

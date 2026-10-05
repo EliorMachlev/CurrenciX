@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.seedCachedRates
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
 import org.junit.Before
@@ -34,6 +35,8 @@ class MainActivitySmokeTest {
     @Before
     fun setUp() {
         Database(ApplicationProvider.getApplicationContext()).setHasSeenOnboarding(true)
+        // Cached rates, so the converter has its pair without waiting on the network.
+        seedCachedRates()
         // The converter never idles (blinking cursor, shimmer, pill
         // auto-scroll): drive the clock by hand instead.
         compose.mainClock.autoAdvance = false

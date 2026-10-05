@@ -111,6 +111,9 @@
     <string name="timeline_retry">إعادة المحاولة</string>
     <string name="timeline_change_provider">تغيير المزوّد</string>
     <string name="recent_pair_switch">التبديل إلى %1$s → %2$s</string>
+    <string name="recent_remove_title">إزالة من السجل</string>
+    <string name="recent_remove_pair">ستتم إزالة %1$s → %2$s من الأزواج الأخيرة.</string>
+    <string name="recent_remove_currency">ستتم إزالة %1$s والأزواج الأخيرة التي تستخدمها.</string>
     <string name="cart_section_pinned">مثبّتة</string>
     <string name="cart_section_others">عناصر أخرى</string>
     <string name="fallback_banner">%1$s غير متاح • يتم استخدام %2$s</string>

@@ -68,6 +68,7 @@ import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.FlagCode
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.RemoveFromHistoryDialog
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.ledgerHairline
 import kotlinx.collections.immutable.ImmutableList
@@ -112,6 +113,7 @@ internal fun SearchableCurrencyPicker(
     onToggleStarredFilter: () -> Unit,
     onStarredOrderChanged: (List<Currency>) -> Unit,
     recents: ImmutableList<Currency> = persistentListOf(),
+    onRemoveRecent: (Currency) -> Unit = {},
 ) {
     var query by remember { mutableStateOf("") }
     val padH = dimensionResource(id = R.dimen.margin2x)
@@ -137,6 +139,7 @@ internal fun SearchableCurrencyPicker(
             RecentCurrenciesRow(
                 rates = remember(rates, recents) { recents.mapNotNull { c -> rates.find { it.currency == c } } },
                 onRateClicked = onRateClicked,
+                onRemove = onRemoveRecent,
                 contentPadding = PaddingValues(horizontal = padH),
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin1x)),
             )
@@ -179,15 +182,29 @@ internal fun SearchableCurrencyPicker(
 
 // Shortcuts to the currencies used last (from the converter's recent pairs),
 // shown while the list is unfiltered. Nothing is drawn when there are none.
+// A long-press asks whether to forget the currency ([onRemove]).
 @Composable
 private fun RecentCurrenciesRow(
     rates: List<Rate>,
     onRateClicked: (Rate) -> Unit,
+    onRemove: (Currency) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    var removing by remember { mutableStateOf<Currency?>(null) }
+    removing?.let { currency ->
+        RemoveFromHistoryDialog(
+            message = stringResource(R.string.recent_remove_currency, currency.iso4217Alpha()),
+            onConfirm = {
+                onRemove(currency)
+                removing = null
+            },
+            onDismiss = { removing = null },
+        )
+    }
     if (rates.isEmpty()) return
     val ctx = LocalContext.current
+    val removeLabel = stringResource(R.string.recent_remove_title)
     LazyRow(
         modifier = modifier,
         contentPadding = contentPadding,
@@ -206,6 +223,8 @@ private fun RecentCurrenciesRow(
             CurrencyChip(
                 description = rate.currency.fullName(ctx),
                 onClick = { onRateClicked(rate) },
+                onLongClick = { removing = rate.currency },
+                onLongClickLabel = removeLabel,
             ) { FlagCode(rate.currency) }
         }
     }

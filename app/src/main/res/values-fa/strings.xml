@@ -112,6 +112,9 @@
     <string name="timeline_retry">تلاش دوباره</string>
     <string name="timeline_change_provider">تغییر ارائه‌دهنده</string>
     <string name="recent_pair_switch">تغییر به %1$s → %2$s</string>
+    <string name="recent_remove_title">حذف از تاریخچه</string>
+    <string name="recent_remove_pair">%1$s → %2$s از جفت‌های اخیر حذف می‌شود.</string>
+    <string name="recent_remove_currency">%1$s و جفت‌های اخیری که از آن استفاده می‌کنند حذف می‌شوند.</string>
     <string name="cart_section_pinned">سنجاق‌شده</string>
     <string name="cart_section_others">موارد دیگر</string>
     <string name="fallback_banner">%1$s در دسترس نیست • استفاده از %2$s</string>

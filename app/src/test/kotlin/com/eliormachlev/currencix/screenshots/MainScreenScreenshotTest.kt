@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
+import com.eliormachlev.currencix.view.main.compose.KeypadHeights
 import com.eliormachlev.currencix.view.main.compose.MainScreen
 import org.junit.Rule
 import org.junit.Test
@@ -56,6 +57,7 @@ private fun MainScreenPreview() {
         isRefreshDrawerEnabled = true,
         onDrawerItem = {},
         foldingFeature = null,
+        keypadHeights = KeypadHeights(compact = KEYPAD_PLACEHOLDER_HEIGHT, full = KEYPAD_PLACEHOLDER_HEIGHT),
         displayContent = {
             Box(
                 Modifier

@@ -111,6 +111,9 @@
     <string name="timeline_retry">Újrapróbálkozás</string>
     <string name="timeline_change_provider">Szolgáltató módosítása</string>
     <string name="recent_pair_switch">Váltás erre: %1$s → %2$s</string>
+    <string name="recent_remove_title">Eltávolítás az előzményekből</string>
+    <string name="recent_remove_pair">A(z) %1$s → %2$s eltávolításra kerül a legutóbbi párok közül.</string>
+    <string name="recent_remove_currency">A(z) %1$s és az azt használó legutóbbi párok eltávolításra kerülnek.</string>
     <string name="cart_section_pinned">Kitűzve</string>
     <string name="cart_section_others">Egyéb tételek</string>
     <string name="fallback_banner">%1$s nem érhető el • %2$s használatban</string>

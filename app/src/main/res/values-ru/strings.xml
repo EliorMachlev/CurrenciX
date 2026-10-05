@@ -111,6 +111,9 @@
     <string name="timeline_retry">Повторить</string>
     <string name="timeline_change_provider">Сменить источник</string>
     <string name="recent_pair_switch">Переключиться на %1$s → %2$s</string>
+    <string name="recent_remove_title">Удалить из истории</string>
+    <string name="recent_remove_pair">%1$s → %2$s будет удалена из недавних пар.</string>
+    <string name="recent_remove_currency">%1$s и недавние пары с ней будут удалены.</string>
     <string name="cart_section_pinned">Закреплённые</string>
     <string name="cart_section_others">Другие товары</string>
     <string name="fallback_banner">%1$s недоступен • Используется %2$s</string>

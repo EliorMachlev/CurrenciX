@@ -115,6 +115,9 @@
     <string name="timeline_retry">വീണ്ടും ശ്രമിക്കുക</string>
     <string name="timeline_change_provider">ദാതാവിനെ മാറ്റുക</string>
     <string name="recent_pair_switch">%1$s → %2$s എന്നതിലേക്ക് മാറുക</string>
+    <string name="recent_remove_title">ചരിത്രത്തിൽ നിന്ന് നീക്കുക</string>
+    <string name="recent_remove_pair">%1$s → %2$s സമീപകാല ജോഡികളിൽ നിന്ന് നീക്കം ചെയ്യും.</string>
+    <string name="recent_remove_currency">%1$s-ഉം അത് ഉപയോഗിക്കുന്ന സമീപകാല ജോഡികളും നീക്കം ചെയ്യും.</string>
     <string name="cart_section_pinned">പിൻ ചെയ്തവ</string>
     <string name="cart_section_others">മറ്റ് ഇനങ്ങൾ</string>
     <string name="fallback_banner">%1$s ലഭ്യമല്ല • %2$s ഉപയോഗിക്കുന്നു</string>

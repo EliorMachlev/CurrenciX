@@ -74,7 +74,8 @@ fun CurrencyPickerSheet(
         val filterStarred by mainViewModel.isFilterStarredEnabled().collectAsStateWithLifecycle()
         val previewEnabled by prefViewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
         val decimalPlaces by mainViewModel.getDecimalPlaces().collectAsStateWithLifecycle()
-        val recents = rememberRecentCurrencies(excluded = setOfNotNull(disabledCurrency, selectedCurrency))
+        val database = rememberDatabase()
+        val recents = rememberRecentCurrencies(database, excluded = setOfNotNull(disabledCurrency, selectedCurrency))
 
         val conversion =
             currentRate?.takeIf { previewEnabled }?.let { CurrencyPickerConversion(it, currentSum, decimalPlaces) }
@@ -110,18 +111,26 @@ fun CurrencyPickerSheet(
                 onToggleStarredFilter = { mainViewModel.toggleStarredActive() },
                 onStarredOrderChanged = { mainViewModel.setStarredCurrencyOrder(it) },
                 recents = recents,
+                onRemoveRecent = database::removeRecentCurrency,
             )
         }
     }
+}
+
+@Composable
+private fun rememberDatabase(): Database {
+    val context = LocalContext.current
+    return remember(context) { Database(context) }
 }
 
 // The recent pairs' currencies, most recent first, as picker shortcuts —
 // minus [excluded]: the currency already on this side and the one it can't
 // be (the other side).
 @Composable
-private fun rememberRecentCurrencies(excluded: Set<Currency>): ImmutableList<Currency> {
-    val context = LocalContext.current
-    val database = remember(context) { Database(context) }
+private fun rememberRecentCurrencies(
+    database: Database,
+    excluded: Set<Currency>,
+): ImmutableList<Currency> {
     val recentPairs by database.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
     return remember(recentPairs, excluded) {
         RecentPairs

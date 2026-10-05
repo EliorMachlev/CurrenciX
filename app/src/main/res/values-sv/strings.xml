@@ -112,6 +112,9 @@
     <string name="timeline_retry">Försök igen</string>
     <string name="timeline_change_provider">Byt leverantör</string>
     <string name="recent_pair_switch">Byt till %1$s → %2$s</string>
+    <string name="recent_remove_title">Ta bort från historik</string>
+    <string name="recent_remove_pair">%1$s → %2$s tas bort från dina senaste par.</string>
+    <string name="recent_remove_currency">%1$s och de senaste paren som använder den tas bort.</string>
     <string name="cart_section_pinned">Fästa</string>
     <string name="cart_section_others">Övriga varor</string>
     <string name="fallback_banner">%1$s är inte tillgänglig • Använder %2$s</string>

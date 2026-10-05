@@ -111,6 +111,9 @@
     <string name="timeline_retry">重试</string>
     <string name="timeline_change_provider">更换数据源</string>
     <string name="recent_pair_switch">切换到 %1$s → %2$s</string>
+    <string name="recent_remove_title">从历史记录中移除</string>
+    <string name="recent_remove_pair">%1$s → %2$s 将从最近使用的货币对中移除。</string>
+    <string name="recent_remove_currency">%1$s 及使用它的最近货币对将被移除。</string>
     <string name="cart_section_pinned">已置顶</string>
     <string name="cart_section_others">其他商品</string>
     <string name="fallback_banner">%1$s 不可用 • 正在使用 %2$s</string>

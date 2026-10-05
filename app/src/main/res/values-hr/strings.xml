@@ -111,6 +111,9 @@
     <string name="timeline_retry">Pokušaj ponovno</string>
     <string name="timeline_change_provider">Promijeni pružatelja</string>
     <string name="recent_pair_switch">Prebaci na %1$s → %2$s</string>
+    <string name="recent_remove_title">Ukloni iz povijesti</string>
+    <string name="recent_remove_pair">%1$s → %2$s uklonit će se iz nedavnih parova.</string>
+    <string name="recent_remove_currency">%1$s i nedavni parovi koji je koriste bit će uklonjeni.</string>
     <string name="cart_section_pinned">Prikvačeno</string>
     <string name="cart_section_others">Ostale stavke</string>
     <string name="fallback_banner">%1$s nije dostupan • Koristi se %2$s</string>

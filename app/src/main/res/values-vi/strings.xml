@@ -108,6 +108,9 @@
     <string name="timeline_retry">Thử lại</string>
     <string name="timeline_change_provider">Đổi nhà cung cấp</string>
     <string name="recent_pair_switch">Chuyển sang %1$s → %2$s</string>
+    <string name="recent_remove_title">Xóa khỏi lịch sử</string>
+    <string name="recent_remove_pair">%1$s → %2$s sẽ bị xóa khỏi các cặp gần đây.</string>
+    <string name="recent_remove_currency">%1$s và các cặp gần đây dùng nó sẽ bị xóa.</string>
     <string name="cart_section_pinned">Đã ghim</string>
     <string name="cart_section_others">Mục khác</string>
     <string name="fallback_banner">%1$s không khả dụng • Đang dùng %2$s</string>

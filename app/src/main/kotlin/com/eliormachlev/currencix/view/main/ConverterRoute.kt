@@ -49,6 +49,7 @@ import com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks
 import com.eliormachlev.currencix.view.main.compose.MainScreen
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsSheet
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
+import com.eliormachlev.currencix.view.main.compose.keypadHeights
 import com.eliormachlev.currencix.view.navigation.AppNavigator
 import com.eliormachlev.currencix.view.navigation.LocalPaneRole
 import com.eliormachlev.currencix.view.navigation.PaneRole
@@ -66,6 +67,7 @@ private enum class ConverterOverlay { ProviderPicker, QuickConversions, Historic
 
 private const val RECENT_PAIR_SETTLE_MILLIS = 2_000L
 private val RECENT_PAIRS_MARGIN = 16.dp
+private val RECENT_PAIRS_BOTTOM_GAP = 8.dp
 
 /** The converter screen: top bar, drawer, hero card, keypad and their sheets. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,6 +79,7 @@ internal fun ConverterRoute(
 ) {
     val viewModel = host.viewModel
     val isUpdating by viewModel.isRefreshing().collectAsStateWithLifecycle()
+    val isExpandedKeypad by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var overlay by rememberSaveable { mutableStateOf<ConverterOverlay?>(null) }
@@ -113,6 +116,7 @@ internal fun ConverterRoute(
             isRefreshDrawerEnabled = !isUpdating,
             onDrawerItem = onDrawerItem,
             foldingFeature = foldingFeature,
+            keypadHeights = keypadHeights(isExpandedKeypad),
             displayContent = {
                 ConverterDisplay(
                     host = host,
@@ -322,8 +326,10 @@ private fun ConverterRecentPairs(
     RecentPairsRow(
         pairs = others,
         onPick = viewModel::setCurrencyPair,
+        onRemove = database::removeRecentPair,
         contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),
-        modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN),
+        // The bottom gap keeps the chips clear of the keypad's top row.
+        modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN, bottom = RECENT_PAIRS_BOTTOM_GAP),
     )
 }
 

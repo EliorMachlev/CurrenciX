@@ -111,6 +111,9 @@
     <string name="timeline_retry">Spróbuj ponownie</string>
     <string name="timeline_change_provider">Zmień dostawcę</string>
     <string name="recent_pair_switch">Przełącz na %1$s → %2$s</string>
+    <string name="recent_remove_title">Usuń z historii</string>
+    <string name="recent_remove_pair">%1$s → %2$s zostanie usunięta z ostatnich par.</string>
+    <string name="recent_remove_currency">%1$s i ostatnie pary, które jej używają, zostaną usunięte.</string>
     <string name="cart_section_pinned">Przypięte</string>
     <string name="cart_section_others">Pozostałe pozycje</string>
     <string name="fallback_banner">%1$s niedostępny • Używany jest %2$s</string>

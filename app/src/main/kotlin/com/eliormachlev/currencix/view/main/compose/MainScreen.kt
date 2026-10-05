@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
@@ -112,6 +114,7 @@ fun MainScreen(
     isRefreshDrawerEnabled: Boolean,
     onDrawerItem: (DrawerAction) -> Unit,
     foldingFeature: FoldingFeature?,
+    keypadHeights: KeypadHeights,
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
@@ -133,6 +136,7 @@ fun MainScreen(
                 isRefreshing = isRefreshing,
                 onRefresh = onRefresh,
                 foldingFeature = foldingFeature,
+                keypadHeights = keypadHeights,
                 displayContent = displayContent,
                 keypadContent = keypadContent,
             )
@@ -140,55 +144,47 @@ fun MainScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainContent(
     modifier: Modifier,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     foldingFeature: FoldingFeature?,
+    keypadHeights: KeypadHeights,
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
     BoxWithConstraints(modifier.fillMaxSize()) {
-        MainContentLayout(
-            horizontal = shouldUseHorizontal(maxWidth >= maxHeight, foldingFeature),
-            isRefreshing = isRefreshing,
-            onRefresh = onRefresh,
-            displayContent = displayContent,
-            keypadContent = keypadContent,
-        )
-    }
-}
-
-@Composable
-private fun MainContentLayout(
-    horizontal: Boolean,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
-    displayContent: @Composable () -> Unit,
-    keypadContent: @Composable () -> Unit,
-) {
-    val rootModifier = Modifier.fillMaxSize()
-    if (horizontal) {
-        Row(modifier = rootModifier) {
-            DisplayArea(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
-                isRefreshing = isRefreshing,
-                onRefresh = onRefresh,
-                displayContent = displayContent,
-            )
-            Box(modifier = Modifier.weight(1f).fillMaxHeight()) { keypadContent() }
-        }
-    } else {
-        Column(modifier = rootModifier) {
-            DisplayArea(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                isRefreshing = isRefreshing,
-                onRefresh = onRefresh,
-                displayContent = displayContent,
-            )
-            Box(modifier = Modifier.fillMaxWidth()) { keypadContent() }
+        val available = maxHeight
+        if (shouldUseHorizontal(maxWidth >= maxHeight, foldingFeature)) {
+            Row(Modifier.fillMaxSize()) {
+                DisplayArea(
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                    minContentHeight = available,
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh,
+                    displayContent = displayContent,
+                )
+                Box(modifier = Modifier.weight(1f).fillMaxHeight()) { keypadContent() }
+            }
+        } else {
+            // The display is as tall as its content, within what the keypad
+            // can give: at least what a full-size keypad leaves (so short
+            // content still fills the space above it), at most what a
+            // compact one does. The keypad takes the rest, so its rows give
+            // up height before the display has to scroll.
+            val leastDisplay = (available - keypadHeights.full).coerceAtLeast(0.dp)
+            val mostDisplay = (available - keypadHeights.compact).coerceAtLeast(0.dp)
+            Column(Modifier.fillMaxSize()) {
+                DisplayArea(
+                    modifier = Modifier.fillMaxWidth().heightIn(max = mostDisplay),
+                    minContentHeight = leastDisplay,
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh,
+                    displayContent = displayContent,
+                )
+                Box(modifier = Modifier.fillMaxWidth().weight(1f)) { keypadContent() }
+            }
         }
     }
 }
@@ -197,6 +193,7 @@ private fun MainContentLayout(
 @Composable
 private fun DisplayArea(
     modifier: Modifier,
+    minContentHeight: Dp,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     displayContent: @Composable () -> Unit,
@@ -211,14 +208,14 @@ private fun DisplayArea(
         // PullToRefreshBox routes its drag detection through a
         // NestedScrollConnection, so it only fires when the child dispatches
         // vertical scroll. MainDisplay is otherwise a static composition —
-        // wrap it in a verticalScroll (with a modifier hoisted to fillMaxSize
-        // so short-content still consumes the top-edge gesture) so the pull
-        // is reachable regardless of hero size.
+        // wrap it in a verticalScroll, at least [minContentHeight] tall so
+        // short content still takes the pull over the whole area.
         Column(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .heightIn(min = minContentHeight),
         ) {
             displayContent()
         }

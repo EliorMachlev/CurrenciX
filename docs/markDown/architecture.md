@@ -162,6 +162,7 @@ From Material's *expanded* width (840 dp) the converter stays on the left and th
 - The scene is keyed by the detail entry, so switching detail screens runs the normal open/back transitions on the detail pane while `NavDisplay` keeps the converter in place as a shared entry.
 - In two-pane, the converter's shortcuts **replace** the detail screen (`replaceTop`) rather than stacking, so one back always returns to the converter alone. The timeline beside it follows the converter's pair (`TimelineFollowsPair`).
 - The converter picks its row (hero | keypad) or column layout from the space it's given (`BoxWithConstraints`), not from the screen orientation, so it stays a column in its pane on a landscape tablet.
+- In the column layout the display is as tall as its content, and the keypad takes what's left: its rows are 56 dp when there's room and shrink to 48 dp (`KeypadHeights`) before the display has to scroll. That keeps the recent pairs under the hero card on screen on phones where a full-size keypad would cover them.
 - Currency pills don't fly between screens on a two-pane window (`LocalTwoPaneWindow`): the converter and the cart are on screen together, so there's nothing to fly between.
 - Moving between the single and two-pane layouts briefly composes the converter in both scenes, so `ConverterStatus` counts visible converters instead of keeping one flag.
 
@@ -180,8 +181,8 @@ Once something is pinned, the list shows two sections, **Pinned** and **Other it
 ### Converter conveniences
 
 - **Rate age**: the footer timestamp reads "5 min ago" / "Yesterday" while recent (within 24 h for providers with a time, 7 days for date-only ones) and ticks every minute; long-press shows the full date and time, tap still opens the provider picker.
-- **Recent pairs**: a pair that stays on screen for 2 s is recorded (`RecentPairs`, newest first, at most 6, stored as `USD:ILS,EUR:USD` in `last_state`). A pair and its swap count as one. Chips under the hero card switch to the others in one tap, through `MainViewModel.setCurrencyPair`, which writes both sides at once (the swap button uses it too).
-- **Currency picker**: while the list is unfiltered, the recent pairs' currencies show as chips above it (minus the one on this side and the one it can't be). Search matches the code, the name, and **the countries that use the currency** ("Japan" → JPY, "Germany" → EUR), in the app's language and in English (`CurrencyCountries`, built once per language from the platform's locale data).
+- **Recent pairs**: a pair that stays on screen for 2 s is recorded (`RecentPairs`, newest first, at most 6, stored as `USD:ILS,EUR:USD` in `last_state`). A pair and its swap count as one. Chips under the hero card switch to the others in one tap, through `MainViewModel.setCurrencyPair`, which writes both sides at once (the swap button uses it too). A long-press on a chip asks whether to remove the pair from the history (`RemoveFromHistoryDialog`).
+- **Currency picker**: while the list is unfiltered, the recent pairs' currencies show as chips above it (minus the one on this side and the one it can't be). A long-press on one asks whether to remove it; since the chips come from the recent pairs, that removes every recent pair using the currency. Search matches the code, the name, and **the countries that use the currency** ("Japan" → JPY, "Germany" → EUR), in the app's language and in English (`CurrencyCountries`, built once per language from the platform's locale data).
 
 ### Outside the app: text selection, shortcuts, widget
 

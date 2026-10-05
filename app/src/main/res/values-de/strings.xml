@@ -112,6 +112,9 @@
     <string name="timeline_retry">Erneut versuchen</string>
     <string name="timeline_change_provider">Anbieter wechseln</string>
     <string name="recent_pair_switch">Zu %1$s → %2$s wechseln</string>
+    <string name="recent_remove_title">Aus Verlauf entfernen</string>
+    <string name="recent_remove_pair">%1$s → %2$s wird aus den zuletzt verwendeten Paaren entfernt.</string>
+    <string name="recent_remove_currency">%1$s und die zuletzt verwendeten Paare mit dieser Währung werden entfernt.</string>
     <string name="cart_section_pinned">Angeheftet</string>
     <string name="cart_section_others">Weitere Artikel</string>
     <string name="fallback_banner">%1$s nicht verfügbar • %2$s wird verwendet</string>
