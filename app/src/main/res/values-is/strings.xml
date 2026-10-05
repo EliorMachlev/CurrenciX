@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">víxla gjaldmiðla</string>
-    <string name="copied_to_clipboard">Afritaði &lt;b>%s&lt;/b> á klemmuspjald</string>
     <string name="historical_rates_dialog_title">Söguleg gengi</string>
     <string name="historical_rates_dialog_toggle">Sýna söguleg gengi af ákveðinni dagsetningu. Slökktu á til að alltaf fá nýjustu gengi.</string>
     <string name="error">Villa: %s</string>

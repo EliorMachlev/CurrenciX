@@ -32,7 +32,7 @@ It's a fork of [Currencies](https://github.com/sal0max/currencies) by Maximilian
 * Material 3 UI with light, dark, and OLED themes.
 * Ad-free and telemetry-free.
 
-Written in Kotlin, min SDK 26 (Android 8.0), targeting current Android.
+Written in Kotlin, min SDK 33 (Android 13), targeting current Android.
 
 ## Screenshots
 

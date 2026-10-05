@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">Alternar monedes</string>
-    <string name="copied_to_clipboard">S\'ha copiat &lt;b&gt;%s&lt;/b&gt; al porta-retalls</string>
     <string name="historical_rates_dialog_title">Taxes històriques</string>
     <string name="historical_rates_dialog_toggle">Utilitza les taxes de canvi d\'una data específica. Desactivar si es vol utilitzar sempre les més recents.</string>
     <string name="error">Error: %s</string>

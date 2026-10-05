@@ -7,7 +7,6 @@
     <string name="unreachable_banner_with_date">הספק אינו זמין • שערים מתאריך %1$s</string>
     <string name="unreachable_banner_no_data">הספק אינו זמין • מנסה שוב</string>
     <string name="historical_banner">שערי עבר • שערים מתאריך %1$s</string>
-    <string name="copied_to_clipboard">&lt;b>%s&lt;/b> הועתק ללוח הגזירים</string>
     <string name="historical_rates_dialog_title">שערי עבר</string>
     <string name="historical_rates_dialog_toggle">שימוש בשערי חליפין בתאריך מסוים. כשמושבת ייעשה שימוש רק בעדכניים.</string>
     <string name="error">שגיאה: %s</string>

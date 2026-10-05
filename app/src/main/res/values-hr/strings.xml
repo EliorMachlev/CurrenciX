@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">zamijeni valute</string>
-    <string name="copied_to_clipboard">Iznos &lt;b&gt;%s&lt;/b&gt; kopiran u međuspremnik</string>
     <string name="historical_rates_dialog_title">Arhiva tečajeva</string>
     <string name="historical_rates_dialog_toggle">Arhiva tečajeva za određeni dan. Isključite ako želite trenutni tečaj.</string>
     <string name="error">Pogreška: %s</string>

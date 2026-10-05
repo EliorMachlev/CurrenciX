@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">تبديل العملات</string>
-    <string name="copied_to_clipboard">تم نسخ &lt;b&gt;%s&lt;/b&gt; إلى الحافظة</string>
     <string name="historical_rates_dialog_title">الأسعار السابقة</string>
     <string name="historical_rates_dialog_toggle">إستخدام أسعار الصرف في تاريخ محدد. أغلق، لإستخدام أحدث الأسعار.</string>
     <string name="error">خطأ: %s</string>

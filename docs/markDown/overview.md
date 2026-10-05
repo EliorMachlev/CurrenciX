@@ -3,7 +3,7 @@
 **CurrenciX** is a simple, privacy-focused Android currency converter designed as a travel companion rather than a financial trading tool. It is a fork of the upstream [Currencies](https://github.com/sal0max/currencies) app by Maximilian Salomon.
 
 - **Package**: `com.eliormachlev.currencix`
-- **Min SDK**: 26 (Android 8.0 Oreo)
+- **Min SDK**: 33 (Android 13)
 - **Target SDK**: 37
 - **License**: GNU General Public License v3+
 - **Language**: Kotlin

@@ -2,7 +2,6 @@
 <resources>
     <string name="desc_toggle_currencies">കറൻസികൾ മാറ്റുക</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="copied_to_clipboard">&lt;b>%s&lt;/b> ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി</string>
 
     <string name="historical_rates_dialog_title">ചരിത്ര നിരക്കുകൾ</string>
     <string name="historical_rates_dialog_toggle">ഒരു നിർദ്ദിഷ്ട തീയതിയിലെ വിനിമയ നിരക്കുകൾ ഉപയോഗിക്കുക. എപ്പോഴും ഏറ്റവും പുതിയവ എടുക്കാൻ പ്രവർത്തനരഹിതമാക്കുക.</string>

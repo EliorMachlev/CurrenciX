@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">دگرش ارز‌ها</string>
-    <string name="copied_to_clipboard">رونوشت &lt;b>%s&lt;/b> به کلیپ‌بورد</string>
     <string name="historical_rates_dialog_title">نزخ‌های گذشته</string>
     <string name="historical_rates_dialog_toggle">ار نرخ‌های تاریخ مشخصی بهره بگیرید. اگر می‌خواهید همیشه تازه ترین نرخ‌ها را بگیرید، این گزینه را خاموش کنید.</string>
     <string name="error">ایرنگ: %s</string>

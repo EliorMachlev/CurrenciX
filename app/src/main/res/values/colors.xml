@@ -18,9 +18,9 @@
    <color name="dollarBill">@color/billGreen</color>
    <color name="seaGreen">#228d57</color>
 
-   <color name="color_primary">@color/billGreen</color>
-   <color name="color_keypad_operators">@color/color_primary</color>
-   <color name="color_keypad_delete">@color/app_error</color>
+   <color name="color_primary">@android:color/system_accent1_300</color>
+   <color name="color_keypad_operators">@android:color/system_accent1_300</color>
+   <color name="color_keypad_delete">@android:color/system_accent2_300</color>
 
    <!-- WCAG AA-compliant error red for text/icon usage on the paper
         background. Material 3 error tone 40 (#B3261E) hits ~6:1 contrast. -->
@@ -32,8 +32,8 @@
    <color name="rate_diff_positive">#1B7343</color>
 
    <!-- light -->
-   <color name="displayOverlay">#26808080</color>
-   <color name="colorBackground">@color/paperBg</color>
+   <color name="displayOverlay">@android:color/system_neutral1_100</color>
+   <color name="colorBackground">@android:color/system_neutral1_50</color>
    <!-- pure black (equals light in light mode) -->
    <color name="displayOverlayPureBlack">@color/displayOverlay</color>
    <color name="colorBackgroundPureBlack">@color/colorBackground</color>

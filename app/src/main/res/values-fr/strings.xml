@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">Toggle les devises</string>
-    <string name="copied_to_clipboard">Copie de &lt;b&gt;%s&lt;/b&gt; au presse-papiers</string>
     <string name="historical_rates_dialog_title">Taux historiques</string>
     <string name="historical_rates_dialog_toggle">Utilisez les taux de change d\'une date précise. Désactiver, pour toujours prendre les plus récents.</string>
     <string name="error">Erreur : %s</string>

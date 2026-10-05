@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">chuyển đơn vị tiền tệ</string>
-    <string name="copied_to_clipboard">Đã sao chép &lt;b&gt;%s&lt;/b&gt; vào bộ nhớ tạm</string>
     <string name="historical_rates_dialog_title">Tỷ giá trong quá khứ</string>
     <string name="historical_rates_dialog_toggle">Sử dụng tỷ giá hối đoái của một ngày cụ thể. Tắt cài đặt này để luôn sử dụng tỷ giá mới nhất.</string>
     <string name="error">Lỗi: %s</string>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">Valuták váltása</string>
-    <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; másolva a vágólapra</string>
     <string name="historical_rates_dialog_title">Múltbéli árfolyamok</string>
     <string name="historical_rates_dialog_toggle">Egy adott időpontra vonatkozó árfolyamok használata. Kikapcsolva mindig a legfrissebbeket veszi figyelembe.</string>
     <string name="error">Hiba: %s</string>

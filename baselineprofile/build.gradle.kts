@@ -23,7 +23,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 28
+        minSdk = 33
         targetSdk = 37
         // Baseline-profile generators are AndroidX-benchmark instrumented tests;
         // the runner must be the benchmark runner, not the default one.

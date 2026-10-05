@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">alternar moedas</string>
-    <string name="copied_to_clipboard">Copiado &lt;b&gt;%s&lt;/b&gt; para a área de transferência</string>
     <string name="historical_rates_dialog_title">Taxas históricas</string>
     <string name="historical_rates_dialog_toggle">Utilize taxas de câmbio de uma data específica. Desabilite, para pegar sempre as mais recentes.</string>
     <string name="error">Erro: %s</string>

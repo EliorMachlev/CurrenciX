@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">切換貨幣</string>
-    <string name="copied_to_clipboard">已經複製 &lt;b&gt;%s&lt;/b&gt; 到剪貼簿</string>
     <string name="historical_rates_dialog_title">歷史匯率</string>
     <string name="historical_rates_dialog_toggle">使用特定日期的匯率。關閉則一律顯示最新匯率</string>
     <string name="error">錯誤: %s</string>

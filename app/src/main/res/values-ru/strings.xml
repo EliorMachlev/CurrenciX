@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">переключить валюты</string>
-    <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; скопировано в буфер обмена</string>
     <string name="historical_rates_dialog_title">Исторические курсы валют</string>
     <string name="historical_rates_dialog_toggle">Использовать обменные курсы от определённой даты. Отключите, чтобы всегда получать актуальные.</string>
     <string name="error">Ошибка: %s</string>

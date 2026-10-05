@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">wissel valuta\'s</string>
-    <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; gekopieerd naar klembord</string>
     <string name="historical_rates_dialog_title">Historische koersen</string>
     <string name="historical_rates_dialog_toggle">Gebruik wisselkoersen van een specifieke datum. Schakel deze optie uit om altijd de nieuwste gegevens te gebruiken.</string>
     <string name="error">Fout: %s</string>

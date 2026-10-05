@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">Veksle valuta</string>
-    <string name="copied_to_clipboard">Kopierte &lt;b&gt;%s&lt;/b&gt; til utklippstavlen</string>
     <string name="historical_rates_dialog_title">Historiske priser</string>
     <string name="historical_rates_dialog_toggle">Bruk valutakurser for en bestemt dato. Deaktiver, for alltid å ta de nyeste.</string>
     <string name="error">Feil: %s</string>

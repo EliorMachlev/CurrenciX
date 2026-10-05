@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view.main
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
@@ -29,14 +28,10 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.fromHtmlLegacy
-import com.eliormachlev.currencix.view.compose.AppSnackbar
-import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
-import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
@@ -282,7 +277,6 @@ private fun ConverterDisplay(
     onOpenProvider: () -> Unit,
 ) {
     val context = LocalContext.current
-    val snackbar = LocalAppSnackbar.current
     val banner by host.status.banner
     val database = remember(context) { Database(context) }
     val pattern by database.getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
@@ -290,7 +284,7 @@ private fun ConverterDisplay(
         viewModel = host.viewModel,
         callbacks =
             MainDisplayCallbacks(
-                onCopy = { text -> copyToClipboard(context, text, snackbar) },
+                onCopy = { text -> copyToClipboard(context, text) },
                 onOpenFees = onOpenFees,
                 onOpenProvider = onOpenProvider,
                 onSwapLongPress = onOpenFees,
@@ -395,13 +389,9 @@ private fun OnboardingSpotlightHost() {
 private fun copyToClipboard(
     context: Context,
     text: CharSequence,
-    snackbar: AppSnackbar?,
 ) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    // The system confirms the copy itself (with a preview); a message of
+    // ours on top of it would be noise.
     clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
-    // Android 13+ confirms copies itself (with a preview); a second message
-    // on top of the system's would be noise.
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        snackbar.showOrToast(context, context.getString(R.string.copied_to_clipboard, text).fromHtmlLegacy())
-    }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">tukar mata uang</string>
-    <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; disalin ke papan klip</string>
     <string name="historical_rates_dialog_title">Nilai tukar sebelumnya</string>
     <string name="historical_rates_dialog_toggle">Gunakan nilai tukar pada tanggal tertentu. Nonaktifkan, untuk selalu menggunakan yang terbaru.</string>
     <string name="error">Kesalahan: %s</string>

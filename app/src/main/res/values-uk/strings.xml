@@ -2,7 +2,6 @@
 <resources>
     <string name="desc_toggle_currencies">поміняти валюти місцями</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="copied_to_clipboard">Скопійовано &lt;b&gt;%s&lt;/b&gt; до буфера обміну</string>
     <string name="historical_rates_dialog_title">Історичний курс</string>
     <string name="historical_rates_dialog_toggle">Використовувати курс валют на певну дату. Вимкніть, щоб завжди брати найновіші.</string>
     <string name="error">Помилка: %s</string>

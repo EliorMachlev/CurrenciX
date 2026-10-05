@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">slå valutaer til/fra</string>
-    <string name="copied_to_clipboard">Kopieret <b>%s</b> til udklipsholderen</string>
     <string name="historical_rates_dialog_title">Historiske valutakurser</string>
     <string name="historical_rates_dialog_toggle">Brug valutakurserne fra en specifik dato. Deaktiver for altid at bruge den nyeste kurs.</string>
     <string name="error">Fejl: %s</string>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">обърни валутите</string>
-    <string name="copied_to_clipboard">Стойността &lt;b&gt;%s&lt;/b&gt; е копирана в клипборда</string>
     <string name="historical_rates_dialog_title">Исторически курс</string>
     <string name="historical_rates_dialog_toggle">Използвай курс от определена дата. Изключи, за да се взима винаги най-новата стойност.</string>
     <string name="error">Грешка: %s</string>

@@ -47,7 +47,7 @@ It does **not** cover:
 - **Touch targets**: Interactive elements target a minimum of **48 dp × 48 dp** per the Material accessibility guidance, matching the WCAG 2.1 target-size AA guidance for mobile. The fee-side toggle and the numeric-keypad icon buttons carry explicit `minWidth` / `minHeight` to guarantee this on small screens.
 - **Font scaling**: The app respects the system font-scale setting (`fontScale`) and uses `sp` units for text. Layouts have been reviewed to avoid clipping at scales up to 200%.
 - **Keyboard / switch access**: Focus order follows visual reading order. Custom compound controls expose an accessibility role and state.
-- **Predictive back gesture**: The app opts in to the Android 13+ predictive-back API so screen-reader users get consistent back-navigation feedback.
+- **Predictive back gesture**: The app opts in to the predictive-back API so screen-reader users get consistent back-navigation feedback.
 
 ### Website (where operated)
 
@@ -66,7 +66,7 @@ The maintainer is a single individual and comprehensive third-party accessibilit
 - **Third-party audit**: A comprehensive third-party accessibility audit has not yet been commissioned. Assessment is currently maintainer-run using TalkBack, Android Accessibility Scanner, and CI lint rules.
 - **Chart data exposure**: The Vico line chart's per-day data points are not individually reachable by accessibility services. A textual MIN / AVG / MAX / current-rate summary for the visible period is provided as an accessible alternative, and the chart itself announces a summary directing users to that readout. A per-day table or sonified view is not provided.
 - **Localised content descriptions**: Some strings inherited from the upstream `sal0max/currencies` project may not yet have translated content descriptions in every one of the 20+ supported languages. Fallbacks display the English string.
-- **Dynamic colour palettes**: On Android 12+ the system-generated dynamic colour scheme is honoured. Because that palette is derived at runtime from the user's wallpaper, its contrast ratios cannot be verified ahead of time; the fixed light / dark / pure-black themes remain the AA-verified baseline.
+- **Dynamic colour palettes**: The system-generated dynamic colour scheme is honoured. Because that palette is derived at runtime from the user's wallpaper, its contrast ratios cannot be verified ahead of time; the fixed light / dark / pure-black themes remain the AA-verified baseline.
 - **Custom on-screen keypad**: An in-app numeric keypad is used by default. On very small screens some keypad keys may fall below the 48 dp target-size guidance despite honouring `minWidth` / `minHeight` where present. Users who prefer the system keyboard (which may integrate better with certain accessibility services) can switch via **Settings → Keyboard**.
 - **RTL layouts**: RTL is supported (Hebrew, Arabic) but edge cases in mixed LTR/RTL content — currency codes are Latin — are still being audited.
 

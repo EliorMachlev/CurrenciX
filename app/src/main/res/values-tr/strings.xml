@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">para birimlerini değiştir</string>
-    <string name="copied_to_clipboard">&lt;b&gt;%s&lt;/b&gt; panoya kopyalandı</string>
     <string name="historical_rates_dialog_title">Geçmiş kurlar</string>
     <string name="historical_rates_dialog_toggle">Geçmiş bir tarihteki kur verilerini kullan. Her zaman en güncel verileri kullanmak istiyorsan devre dışı bırak.</string>
     <string name="error">Hata: %s</string>

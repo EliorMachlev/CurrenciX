@@ -655,7 +655,7 @@ class Database(
 
     fun isHapticFeedbackEnabledBlocking(): Boolean = appStore.snapshot()[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
 
-    // Material You: wallpaper-derived colors (Android 12+) instead of paper / ink
+    // Material You: wallpaper-derived colors instead of paper / ink
 
     fun setDynamicColorEnabled(enabled: Boolean) {
         appStore.edit { this[booleanPreferencesKey(KEY_DYNAMIC_COLOR)] = enabled }

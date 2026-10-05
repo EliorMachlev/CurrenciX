@@ -30,7 +30,6 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.releaseNotesUrl
-import com.eliormachlev.currencix.view.compose.isDynamicColorSupported
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import java.util.Calendar
 import com.eliormachlev.currencix.view.compose.AppTheme as AppComposeTheme
@@ -476,15 +475,13 @@ private fun AppearanceSection(
             iconRes = R.drawable.ic_theme,
             onClick = openThemePicker,
         )
-        if (isDynamicColorSupported) {
-            SwitchRow(
-                title = stringResource(id = R.string.dynamic_color_title),
-                summary = stringResource(id = R.string.dynamic_color_summary),
-                iconRes = R.drawable.ic_palette,
-                checked = toggles.dynamicColor,
-                onCheckedChange = viewModel::setDynamicColorEnabled,
-            )
-        }
+        SwitchRow(
+            title = stringResource(id = R.string.dynamic_color_title),
+            summary = stringResource(id = R.string.dynamic_color_summary),
+            iconRes = R.drawable.ic_palette,
+            checked = toggles.dynamicColor,
+            onCheckedChange = viewModel::setDynamicColorEnabled,
+        )
         PreferenceRow(
             title = stringResource(id = R.string.language_title),
             summary = language.localizedName(context),

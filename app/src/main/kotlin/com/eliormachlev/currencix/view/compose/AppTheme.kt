@@ -1,8 +1,6 @@
 package com.eliormachlev.currencix.view.compose
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -21,10 +19,6 @@ import com.eliormachlev.currencix.view.compose.theme.CurrenciXDarkColors
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXLightColors
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXShapes
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXTypography
-
-/** Material You (wallpaper) colors need Android 12. */
-@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
-val isDynamicColorSupported: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 /**
  * Whether the enclosing [AppTheme] uses wallpaper colors, so an [AppTheme]
@@ -47,8 +41,8 @@ val LocalDynamicColor = compositionLocalOf { false }
 // the manifest for any surviving XML surfaces.
 //
 // [dynamicColor] swaps the paper / ink palette for the wallpaper's (Material
-// You); ignored below Android 12. Brand accents that aren't scheme colors
-// (the fee stamp, status pills) stay as they are.
+// You). Brand accents that aren't scheme colors (the fee stamp, status
+// pills) stay as they are.
 @Composable
 fun AppTheme(
     dark: Boolean = isSystemInDarkTheme(),
@@ -81,7 +75,7 @@ private fun colorScheme(
     dynamicColor: Boolean,
 ): ColorScheme =
     when {
-        dynamicColor && isDynamicColorSupported ->
+        dynamicColor ->
             if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         dark -> CurrenciXDarkColors
         else -> CurrenciXLightColors

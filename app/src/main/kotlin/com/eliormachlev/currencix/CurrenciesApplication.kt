@@ -1,9 +1,6 @@
 package com.eliormachlev.currencix
 
-import android.app.ActivityManager
 import android.app.Application
-import android.content.Context
-import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
@@ -46,21 +43,8 @@ class CurrenciesApplication : Application() {
     }
 
     // True iff this Application instance is running in the app's main
-    // process (name == packageName, no `:suffix`). Falls back to true if we
-    // can't determine the process name — the observers are idempotent on the
-    // main process and rare on secondaries, so the false-positive risk is
-    // preferable to silently disabling auto-refresh.
-    private fun isMainProcess(): Boolean {
-        val name =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                Application.getProcessName()
-            } else {
-                val am = getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-                val pid = android.os.Process.myPid()
-                am?.runningAppProcesses?.firstOrNull { it.pid == pid }?.processName
-            }
-        return name == null || name == packageName
-    }
+    // process (name == packageName, no `:suffix`).
+    private fun isMainProcess(): Boolean = getProcessName() == packageName
 
     // Debug builds also get a console tree so `adb logcat` mirrors what the
     // file tree captures (plantConsoleLogging, per build type). Release

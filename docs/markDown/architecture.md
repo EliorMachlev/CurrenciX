@@ -189,7 +189,7 @@ Once something is pinned, the list shows two sections, **Pinned** and **Other it
 - **Convert currency** in any app's text-selection menu (`ConvertTextActivity`, `ACTION_PROCESS_TEXT`): a sheet over that app converting the selected price with the cached rates — instant, no network. `PriceParser` finds the amount and currency ("€49.99", "49,99 €", "USD 1,234.56"); a shared symbol ("$", "kr") prefers the user's own currencies, codes count only in capitals, and letter symbols only as whole words. The price converts into the converter's destination, or back into its base when it's already in the destination (`targetCurrency`). Copy, or open the converter on that pair and amount.
 - **Launcher shortcuts** (`AppShortcuts`): the top three recent pairs and the cart, kept in step with the recent pairs. Dynamic, since a static shortcut needs a fixed package name and the debug build's differs.
 - Both go through `ConverterLaunch`, the app's intents for "the converter on this pair / amount" and "the cart". MainActivity is exported, so every extra is validated and anything unreadable is dropped.
-- **Widget**: each widget follows the converter's pair by default or keeps a pair of its own (`WidgetConfigureActivity`, offered when placing it before Android 12 and from its reconfigure action after), stored in the widget's Glance state. From 260 dp wide it draws a 30-day trend line from the cached timeline (green rising, red falling). Tapping opens the converter on its pair.
+- **Widget**: each widget follows the converter's pair by default or keeps a pair of its own (`WidgetConfigureActivity`, opened from the widget's reconfigure action), stored in the widget's Glance state. From 260 dp wide it draws a 30-day trend line from the cached timeline (green rising, red falling). Tapping opens the converter on its pair.
 
 ### Cart extras: tip / tax, split, budget
 
@@ -203,7 +203,7 @@ Periods: week, month, year, **5 years**, and a **custom range** (Material's date
 
 ### Colors: paper and ink, or Material You
 
-The brand palette (paper and ink, bill-green accent) is the default. On Android 12+ Settings → Appearance has **Wallpaper colors**, which swaps in `dynamicLight/DarkColorScheme`. `MainActivity` passes the preference to `AppTheme`, which provides it through `LocalDynamicColor`, so the nested `AppTheme` inside sheets and dialogs keeps the same palette. Pure black keeps its black background either way. One-off brand accents that aren't scheme colors (the fee stamp, status pills) stay as they are.
+The brand palette (paper and ink, bill-green accent) is the default. Settings → Appearance has **Wallpaper colors**, which swaps in `dynamicLight/DarkColorScheme`. `MainActivity` passes the preference to `AppTheme`, which provides it through `LocalDynamicColor`, so the nested `AppTheme` inside sheets and dialogs keeps the same palette. Pure black keeps its black background either way. One-off brand accents that aren't scheme colors (the fee stamp, status pills) stay as they are.
 
 ### Top bars: Material 3, per screen
 
@@ -269,7 +269,7 @@ The preference read (`Database(this).getApiProvider()`) and the `InetAddress.get
 
 ### Predictive back gesture
 
-Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<application>` tag (Android 13+). Inside the app, `NavDisplay` handles the gesture itself and scrubs `predictivePopTransition` (above) with the swipe, shared pills included. On the converter, back leaves the app with the system's back-to-home animation. A screen that must intercept back only does so while it needs to (the cart, while it has unsaved edits), so every other back keeps the animated preview.
+Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<application>` tag. Inside the app, `NavDisplay` handles the gesture itself and scrubs `predictivePopTransition` (above) with the swipe, shared pills included. On the converter, back leaves the app with the system's back-to-home animation. A screen that must intercept back only does so while it needs to (the cart, while it has unsaved edits), so every other back keeps the animated preview.
 
 ### Build Flavors: `play` vs `fdroid`
 

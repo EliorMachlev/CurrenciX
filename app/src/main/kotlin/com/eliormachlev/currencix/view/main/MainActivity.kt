@@ -36,7 +36,6 @@ import com.eliormachlev.currencix.view.compose.AppSnackbarHost
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
-import com.eliormachlev.currencix.view.compose.isDynamicColorSupported
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.navigation.AppNavHost
 import com.eliormachlev.currencix.view.navigation.AppNavigator
@@ -133,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                 // Wallpaper colors bring their own background — except pure
                 // black, which stays black whatever the palette.
                 val screenBackground =
-                    if (dynamicColor && isDynamicColorSupported && !pureBlack) MaterialTheme.colorScheme.background else themeBackground
+                    if (dynamicColor && !pureBlack) MaterialTheme.colorScheme.background else themeBackground
                 CompositionLocalProvider(LocalScreenBackground provides screenBackground) {
                     AppContent()
                 }

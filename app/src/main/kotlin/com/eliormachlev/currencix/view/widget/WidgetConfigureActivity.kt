@@ -50,8 +50,8 @@ private val GAP = 12.dp
 
 /**
  * Picks a widget's pair: follow the converter's (the default), or a pair of
- * its own. Offered by the launcher when a widget is placed (before Android 12)
- * and from its reconfigure action (Android 12+, where placing skips it).
+ * its own. Opened from the widget's reconfigure action; placing a widget
+ * skips it and starts with the default.
  *
  * The result is OK from the start, so backing out keeps the widget with the
  * default rather than removing it.

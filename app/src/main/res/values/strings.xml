@@ -24,7 +24,6 @@
     <string name="unreachable_banner_no_data">Provider unreachable • Retrying</string>
     <string name="fallback_banner">%1$s unavailable • Using %2$s</string>
     <string name="historical_banner">Historical • Rates from %1$s</string>
-    <string name="copied_to_clipboard">Copied &lt;b>%s&lt;/b> to clipboard</string>
     <string name="fee_chip_label">%1$s fee</string>
     <string name="recent_pair_switch">Switch to %1$s → %2$s</string>
     <string name="recent_remove_title">Remove from history</string>

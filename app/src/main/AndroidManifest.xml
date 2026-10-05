@@ -44,8 +44,8 @@
             </intent-filter>
         </activity>
 
-        <!-- The widget's pair: offered when a widget is placed (before Android 12)
-             and from its reconfigure action. Not launchable on its own. -->
+        <!-- The widget's pair, opened from its reconfigure action. Not launchable
+             on its own. -->
         <activity
             android:name=".view.widget.WidgetConfigureActivity"
             android:excludeFromRecents="true"

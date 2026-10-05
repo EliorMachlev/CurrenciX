@@ -34,7 +34,7 @@ android {
 
     defaultConfig {
         applicationId = "com.eliormachlev.currencix"
-        minSdk = 26
+        minSdk = 33
         targetSdk = 37
         // SemVer
         versionName = "1.23.0"
