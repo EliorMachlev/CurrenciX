@@ -196,7 +196,6 @@ private fun ExportPasswordDialog(
  * short and the form doesn't have to re-read the surrounding chrome.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun ExportPasswordDialogBody(
     encrypt: Boolean,
     onEncryptChange: (Boolean) -> Unit,

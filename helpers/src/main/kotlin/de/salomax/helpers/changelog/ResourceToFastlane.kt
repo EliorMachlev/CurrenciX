@@ -71,7 +71,7 @@ private class ResourceToFastlane {
     private fun NodeList.toList(): List<Node> = this.let { IntStream.range(0, it.length).mapToObj(it::item).toList() }
 
     private fun String.semVerToVer(): Int {
-        val parts = this.split(".").mapNotNull { it.toIntOrNull() }
-        return if (parts.size >= 3) parts[0] * SEMVER_MAJOR_MULTIPLIER + parts[1] * SEMVER_MINOR_MULTIPLIER + parts[2] else -1
+        val (major, minor, patch) = this.split(".").mapNotNull { it.toIntOrNull() }.takeIf { it.size >= SEMVER_PARTS } ?: return -1
+        return major * SEMVER_MAJOR_MULTIPLIER + minor * SEMVER_MINOR_MULTIPLIER + patch
     }
 }

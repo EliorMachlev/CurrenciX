@@ -42,7 +42,6 @@ private val PROVIDER_FONT_SIZE = 12.sp
 private const val PROVIDER_ALPHA = 0.5f
 
 @Composable
-@Suppress("LongParameterList")
 internal fun TimelineChartCard(
     isRefreshing: Boolean,
     error: String?,

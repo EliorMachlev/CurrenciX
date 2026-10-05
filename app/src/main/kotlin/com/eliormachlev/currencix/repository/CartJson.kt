@@ -6,11 +6,14 @@ import com.eliormachlev.currencix.model.SavedCart
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import timber.log.Timber
 import java.util.UUID
 
 // Wire keys for on-disk cart JSON. Kept top-level (not nested inside
 // [Database]) so [CartExporter] can share the same serde for the file
 // envelope's `cart` payload.
+private const val TAG = "CartJson"
+
 internal const val CART_KEY_ID = "id"
 internal const val CART_KEY_NAME = "name"
 internal const val CART_KEY_CURRENCY = "currency"
@@ -91,6 +94,7 @@ internal fun parseCart(json: String?): SavedCart? {
     return try {
         parseCart(JSONObject(json))
     } catch (e: JSONException) {
+        Timber.tag(TAG).w(e, "Malformed saved cart, dropping it")
         null
     }
 }
@@ -117,6 +121,7 @@ internal fun parseCartList(json: String?): List<SavedCart> {
         val arr = JSONArray(json)
         (0 until arr.length()).mapNotNull { i -> parseCart(arr.optJSONObject(i)) }
     } catch (e: JSONException) {
+        Timber.tag(TAG).w(e, "Malformed saved-cart list, dropping it")
         emptyList()
     }
 }

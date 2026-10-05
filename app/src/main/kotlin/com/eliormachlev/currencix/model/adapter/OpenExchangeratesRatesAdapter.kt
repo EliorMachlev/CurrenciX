@@ -4,10 +4,7 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 import java.io.IOException
 import java.math.BigDecimal
 import java.time.Instant
@@ -15,12 +12,10 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 
-@Suppress("unused", "UNUSED_PARAMETER")
-internal class OpenExchangeratesRatesAdapter {
+internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
     @Synchronized
-    @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): ExchangeRates? {
+    override fun fromJson(reader: JsonReader): ExchangeRates? {
         var base: Currency? = null
         var date: LocalDate? = null
         var time: LocalTime? = null
@@ -87,14 +82,4 @@ internal class OpenExchangeratesRatesAdapter {
             }
             reader.endObject()
         }
-
-    @Synchronized
-    @ToJson
-    @Throws(IOException::class)
-    fun toJson(
-        writer: JsonWriter,
-        value: ExchangeRates,
-    ) {
-        writer.nullValue()
-    }
 }

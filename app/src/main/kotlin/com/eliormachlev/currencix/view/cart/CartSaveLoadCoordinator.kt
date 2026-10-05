@@ -40,6 +40,15 @@ data class CartUnsavedChangesRequest(
     val onContinue: () -> Unit,
 )
 
+/** What [CartSaveLoadCoordinator] asks the screen to show: a message, or one of its dialogs. */
+class CartSaveLoadPrompts(
+    val snackbar: (String) -> Unit,
+    val showLoadList: () -> Unit,
+    val showUnsavedChanges: (CartUnsavedChangesRequest) -> Unit,
+    val showNameInput: (CartNameInputRequest) -> Unit,
+    val showDeleteConfirm: (CartDeleteConfirmRequest) -> Unit,
+)
+
 /**
  * Owns the Save / Save-as / Load / Rename / Delete flows plus the
  * unsaved-changes prompt that gates destructive transitions (loading another
@@ -48,16 +57,11 @@ data class CartUnsavedChangesRequest(
  * compose overlays via injected callbacks. All UI is compose-native ledger
  * chrome — no AppCompat AlertDialog instances anywhere.
  */
-@Suppress("LongParameterList")
 class CartSaveLoadCoordinator(
     private val context: Context,
     private val viewModel: CartViewModel,
     private val flushPendingCommits: () -> Unit,
-    private val snackbar: (String) -> Unit,
-    private val showLoadList: () -> Unit,
-    private val showUnsavedChanges: (CartUnsavedChangesRequest) -> Unit,
-    private val showNameInput: (CartNameInputRequest) -> Unit,
-    private val showDeleteConfirm: (CartDeleteConfirmRequest) -> Unit,
+    private val prompts: CartSaveLoadPrompts,
     private val onClose: () -> Unit,
 ) {
     /**
@@ -78,7 +82,7 @@ class CartSaveLoadCoordinator(
         if (guardEmptyForSave()) return
         flushPendingCommits()
         if (viewModel.saveCurrent()) {
-            snackbar(context.getString(R.string.cart_saved_toast, viewModel.currentCartName()))
+            prompts.snackbar(context.getString(R.string.cart_saved_toast, viewModel.currentCartName()))
             onSaved()
         } else {
             showSaveAsDialog(onSaved = onSaved)
@@ -87,7 +91,7 @@ class CartSaveLoadCoordinator(
 
     fun showSaveAsDialog(onSaved: () -> Unit = {}) {
         if (guardEmptyForSave()) return
-        showNameInput(
+        prompts.showNameInput(
             CartNameInputRequest(
                 titleRes = R.string.cart_menu_save_as,
                 initial = viewModel.currentCartName(),
@@ -96,7 +100,7 @@ class CartSaveLoadCoordinator(
                 // multiple snapshots of the same cart under different names.
                 flushPendingCommits()
                 viewModel.saveCurrentAs(name)
-                snackbar(context.getString(R.string.cart_saved_toast, name))
+                prompts.snackbar(context.getString(R.string.cart_saved_toast, name))
                 onSaved()
             },
         )
@@ -104,16 +108,16 @@ class CartSaveLoadCoordinator(
 
     fun showLoadDialog() {
         if (viewModel.getSavedCartsSnapshot().isEmpty()) {
-            snackbar(context.getString(R.string.cart_no_saved))
+            prompts.snackbar(context.getString(R.string.cart_no_saved))
             return
         }
-        showLoadList()
+        prompts.showLoadList()
     }
 
     fun onLoadPick(cart: SavedCart) = confirmUnsavedThen { viewModel.loadSaved(cart.id) }
 
     fun onLoadRename(cart: SavedCart) {
-        showNameInput(
+        prompts.showNameInput(
             CartNameInputRequest(
                 titleRes = R.string.cart_rename_title,
                 initial = cart.name,
@@ -122,7 +126,7 @@ class CartSaveLoadCoordinator(
     }
 
     fun onLoadDelete(cart: SavedCart) {
-        showDeleteConfirm(
+        prompts.showDeleteConfirm(
             CartDeleteConfirmRequest(
                 name = cart.name.ifBlank { cart.id.take(SHORT_ID_LENGTH) },
             ) { viewModel.deleteSaved(cart.id) },
@@ -134,7 +138,7 @@ class CartSaveLoadCoordinator(
     // caller should abort.
     private fun guardEmptyForSave(): Boolean {
         if (viewModel.currentCartItems().isEmpty()) {
-            snackbar(context.getString(R.string.cart_save_empty))
+            prompts.snackbar(context.getString(R.string.cart_save_empty))
             return true
         }
         return false
@@ -154,7 +158,7 @@ class CartSaveLoadCoordinator(
             action()
             return
         }
-        showUnsavedChanges(
+        prompts.showUnsavedChanges(
             CartUnsavedChangesRequest(
                 canOverwrite = viewModel.currentCartHasId(),
                 onSave = { saveOrPromptForName(action) },

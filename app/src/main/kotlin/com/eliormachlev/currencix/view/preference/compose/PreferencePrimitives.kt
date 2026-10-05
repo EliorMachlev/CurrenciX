@@ -111,18 +111,6 @@ fun SwitchRow(
 }
 
 /**
- * No-op divider kept for source compatibility with earlier callers. Ledger
- * rows draw their own hairline internally; adjacent rows already inherit
- * the paper rule, so an explicit divider is redundant. Left as a stub so a
- * follow-up cleanup can remove all remaining call sites without churn here.
- */
-@Suppress("UnusedParameter")
-@Composable
-fun PreferenceDivider(hasIcon: Boolean = true) {
-    // Intentionally empty — ledger rows own their own hairline.
-}
-
-/**
  * Wraps a preference section (or any grouped card) in a first-appearance
  * fade + slide-up, staggered by [index] so a screen full of sections lands
  * as a soft cascade rather than a jarring flash. Runs once per composition

@@ -9,6 +9,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.BankOfCanadaRatesAdapter
 import com.eliormachlev.currencix.model.adapter.BankOfCanadaTimelineAdapter
+import com.eliormachlev.currencix.model.adapter.register
 import com.eliormachlev.currencix.model.provider.api.BankOfCanadaApi
 import com.eliormachlev.currencix.model.provider.api.ValetOrder
 import com.squareup.moshi.Moshi
@@ -18,7 +19,7 @@ import java.time.LocalDate
 private const val RECENT_LATEST_ONLY = 1
 
 // The rates adapter is stateless, so one Moshi serves every rates request.
-private val RATES_MOSHI: Moshi = moshi { add(BankOfCanadaRatesAdapter()) }
+private val RATES_MOSHI: Moshi = moshi { register(BankOfCanadaRatesAdapter()) }
 
 // Valet names each daily series `FX<currency>CAD`.
 private fun valetSeries(currency: Currency): String = "FX${currency.apiCodeOrDkkForFok()}CAD"
@@ -40,7 +41,7 @@ class BankOfCanada : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val api = retrofitApi<BankOfCanadaApi>(context, RATES_MOSHI)
         // `recent=1` returns just the latest observation; a start/end range asks
@@ -63,7 +64,7 @@ class BankOfCanada : ApiProvider.Api() {
         endDate: LocalDate,
     ): Result<Timeline> {
         // The adapter closes over the requested pair, so it's built per request.
-        val api = retrofitApi<BankOfCanadaApi>(context, moshi { add(BankOfCanadaTimelineAdapter(base, symbol)) })
+        val api = retrofitApi<BankOfCanadaApi>(context, moshi { register(BankOfCanadaTimelineAdapter(base, symbol)) })
 
         return fetchRetrofit {
             api.getSeries(

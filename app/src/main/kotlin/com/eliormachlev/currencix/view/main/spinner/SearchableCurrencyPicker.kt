@@ -101,7 +101,6 @@ internal data class CurrencyPickerConversion(
 )
 
 @Composable
-@Suppress("LongParameterList")
 internal fun SearchableCurrencyPicker(
     rates: ImmutableList<Rate>,
     stars: ImmutableList<Currency>,
@@ -319,7 +318,6 @@ private fun KeepAtTopOnFavoritesAppear(
 }
 
 @Composable
-@Suppress("LongParameterList", "LongMethod")
 private fun CurrencyList(
     starredItems: SnapshotStateList<Rate>,
     nonStarredItems: List<Rate>,
@@ -418,7 +416,6 @@ private fun CurrencyList(
 }
 
 @Composable
-@Suppress("LongParameterList")
 private fun CurrencyRow(
     rate: Rate,
     isStarred: Boolean,

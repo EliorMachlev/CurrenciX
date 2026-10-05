@@ -252,7 +252,7 @@ class ExchangeRatesRepository(
             val tagged = fresh.copy(provider = provider)
             if (tagged.success == false) return@map tagged
             val keepFrom = today.minusYears(TIMELINE_MAX_YEARS)
-            mergeTimeline(cached, tagged, base, symbol, keepFrom).also { db.putCachedTimeline(it, base, symbol) }
+            mergeTimeline(cached, tagged, base, keepFrom).also { db.putCachedTimeline(it, base, symbol) }
         }
     }
 
@@ -260,7 +260,6 @@ class ExchangeRatesRepository(
         cached: Timeline?,
         fresh: Timeline,
         base: Currency,
-        symbol: Currency,
         windowStart: LocalDate,
     ): Timeline {
         val merged = sortedMapOf<LocalDate, Rate>()

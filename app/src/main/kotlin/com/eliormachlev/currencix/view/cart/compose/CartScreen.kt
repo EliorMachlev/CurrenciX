@@ -35,7 +35,6 @@ import kotlinx.collections.immutable.persistentListOf
  * at the bottom so it slides in over the footer without shifting layout.
  */
 @Composable
-@Suppress("LongParameterList")
 fun CartScreen(
     viewModel: CartViewModel,
     keypad: CartKeypadController,

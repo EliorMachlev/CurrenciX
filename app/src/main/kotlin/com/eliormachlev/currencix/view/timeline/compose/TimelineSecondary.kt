@@ -62,7 +62,6 @@ private data class StatRowData(
 )
 
 @Composable
-@Suppress("LongParameterList", "LongMethod")
 internal fun TimelineSecondary(
     ratePast: Pair<Map.Entry<LocalDate, Rate?>?, Int>?,
     rateCurrent: Pair<Map.Entry<LocalDate, Rate?>?, Int>?,

@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.preference
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -17,9 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupResult
 import com.eliormachlev.currencix.view.compose.AppSnackbar
@@ -33,11 +30,6 @@ import com.eliormachlev.currencix.view.preference.compose.PreferenceScreenCallba
 import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
 import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import timber.log.Timber
-
-private const val FLAVOR_PLAY = "play"
-private const val URL_PLAY_MARKET = "market://details?id=com.eliormachlev.currencix"
-private const val URL_PLAY_WEB = "https://play.google.com/store/apps/details?id=com.eliormachlev.currencix"
 
 /**
  * Settings. [onThemeRequiresRestart] recreates the Activity so the XML theme
@@ -58,7 +50,7 @@ fun SettingsRoute(
             PreferenceScreenCallbacks(
                 onOpenFees = onOpenFees,
                 onOpenBackup = onOpenBackup,
-                onRateApp = { openPlayStore(context) },
+                onRateApp = rateApp?.let { rate -> { rate(context) } },
                 onThemeRequiresRestart = onThemeRequiresRestart,
             )
         }
@@ -153,24 +145,4 @@ private fun exportResultMessage(
         is BackupResult.PasswordRequired,
         is BackupResult.WrongPassword,
         -> context.getString(R.string.backup_export_failed, "unexpected state")
-    }
-
-private fun openPlayStore(context: Context) {
-    @Suppress("KotlinConstantConditions")
-    if (BuildConfig.FLAVOR != FLAVOR_PLAY) return
-    try {
-        context.startActivity(playIntent(URL_PLAY_MARKET))
-    } catch (e: ActivityNotFoundException) {
-        Timber.tag("SettingsRoute").d(e, "Play Store not available, opening browser")
-        context.startActivity(playIntent(URL_PLAY_WEB))
-    }
-}
-
-private fun playIntent(url: String): Intent =
-    Intent(Intent.ACTION_VIEW, url.toUri()).apply {
-        addFlags(
-            Intent.FLAG_ACTIVITY_NO_HISTORY
-                or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-                or Intent.FLAG_ACTIVITY_NEW_DOCUMENT,
-        )
     }

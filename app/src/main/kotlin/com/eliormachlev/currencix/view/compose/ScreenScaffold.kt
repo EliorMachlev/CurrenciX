@@ -67,7 +67,6 @@ data class OverflowAction(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Suppress("LongParameterList")
 fun ScreenScaffold(
     title: @Composable () -> Unit,
     onBack: () -> Unit,

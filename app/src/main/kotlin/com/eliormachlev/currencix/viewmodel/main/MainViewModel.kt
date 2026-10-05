@@ -8,11 +8,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
@@ -47,19 +48,16 @@ import java.text.Collator
 import java.time.LocalDate
 import java.time.ZoneId
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
 class MainViewModel(
-    val app: Application,
+    private val app: Application,
     onlyCache: Boolean = false,
 ) : AndroidViewModel(app) {
-    constructor(app: Application) : this(app, false)
-
-    class Factory(
-        val app: Application,
-        val onlyCache: Boolean = false,
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = MainViewModel(app, onlyCache) as T
+    companion object {
+        /** Builds a [MainViewModel]; with [onlyCache] it never asks the network (the currency picker's copy). */
+        fun factory(
+            app: Application,
+            onlyCache: Boolean = false,
+        ): ViewModelProvider.Factory = viewModelFactory { initializer { MainViewModel(app, onlyCache) } }
     }
 
     private var repository: ExchangeRatesRepository = ExchangeRatesRepository(app)

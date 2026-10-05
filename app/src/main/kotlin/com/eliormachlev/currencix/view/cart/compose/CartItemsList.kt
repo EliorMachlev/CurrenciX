@@ -32,7 +32,6 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 typealias CartDragCommit = (displayOrder: List<String>, movedId: String) -> Unit
 
 @Composable
-@Suppress("LongParameterList")
 fun CartItemsList(
     itemsSource: LiveData<ImmutableList<CartItem>>,
     currencySource: LiveData<String>,

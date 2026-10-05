@@ -5,10 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
@@ -58,13 +59,13 @@ class TimelineViewModel(
     private var base: Currency,
     private var target: Currency,
 ) : AndroidViewModel(app) {
-    class Factory(
-        private val mApplication: Application,
-        private val base: Currency,
-        private val target: Currency,
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = TimelineViewModel(mApplication, base, target) as T
+    companion object {
+        /** Builds the [TimelineViewModel] for [base] → [target]. */
+        fun factory(
+            app: Application,
+            base: Currency,
+            target: Currency,
+        ): ViewModelProvider.Factory = viewModelFactory { initializer { TimelineViewModel(app, base, target) } }
     }
 
     enum class Period {

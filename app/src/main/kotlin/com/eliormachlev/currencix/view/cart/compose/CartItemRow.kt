@@ -71,7 +71,6 @@ private val SWIPE_ICON_EDGE_PADDING = 24.dp
  * left in place as an always-available fallback.
  */
 @Composable
-@Suppress("LongParameterList")
 fun SwipeableCartItemRow(
     item: CartItem,
     currency: String,
@@ -176,7 +175,6 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
 }
 
 @Composable
-@Suppress("LongParameterList")
 fun CartItemRow(
     item: CartItem,
     currency: String,

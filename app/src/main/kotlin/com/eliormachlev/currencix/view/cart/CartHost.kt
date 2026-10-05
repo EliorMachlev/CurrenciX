@@ -80,11 +80,14 @@ class CartHost(
             context = activity,
             viewModel = viewModel,
             flushPendingCommits = ::flushPendingCommits,
-            snackbar = toast,
-            showLoadList = { overlays.loadListVisible = true },
-            showUnsavedChanges = { request -> overlays.unsavedChanges = request },
-            showNameInput = { request -> overlays.nameInput = request },
-            showDeleteConfirm = { request -> overlays.deleteConfirm = request },
+            prompts =
+                CartSaveLoadPrompts(
+                    snackbar = toast,
+                    showLoadList = { overlays.loadListVisible = true },
+                    showUnsavedChanges = { request -> overlays.unsavedChanges = request },
+                    showNameInput = { request -> overlays.nameInput = request },
+                    showDeleteConfirm = { request -> overlays.deleteConfirm = request },
+                ),
             onClose = {
                 flushPendingCommits()
                 onClose()

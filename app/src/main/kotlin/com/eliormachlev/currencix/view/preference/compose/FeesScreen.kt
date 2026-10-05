@@ -129,7 +129,6 @@ fun FeesScreen(viewModel: FeeManagerViewModel) {
  * [FeesScreen] stays under the LongMethod threshold.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun GlobalPickerHost(
     kind: GlobalFeeKind,
     globalExchange: ImmutableList<Fee.GlobalExchange>,
@@ -205,7 +204,6 @@ private fun EditorHost(
  * is readable on its own without wading past the dialog state below.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun FeesSectionsList(
     globalExchange: ImmutableList<Fee.GlobalExchange>,
     activeExchangeId: String?,

@@ -32,7 +32,7 @@ class NorgesBank : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val dateQuery =
             if (date == null) {

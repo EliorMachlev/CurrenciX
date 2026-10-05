@@ -20,9 +20,8 @@ plugins {
     // clean task below; each subproject opts in.
     id("com.diffplug.spotless") version "8.10.0" apply false
     // Static analysis. Version pinned so upstream releases can't silently
-    // change what CI enforces. See config/detekt/detekt.yml for tuned rules
-    // and config/detekt/baseline-<module>.xml for the "start clean going
-    // forward" per-module baselines that swallow pre-existing violations.
+    // change what CI enforces. See config/detekt/detekt.yml for tuned rules.
+    // There is no baseline: every finding fails the build.
     id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
 }
 
@@ -30,13 +29,8 @@ plugins {
 // linter version.
 val ktlintCliVersion = "1.5.0"
 
-// Detekt config path — shared across subprojects. Baseline is per-subproject
-// (config/detekt/baseline-<module>.xml) because detekt's baseline format keys
-// off simple file names and merging two modules into one file causes the
-// later writer to clobber the earlier writer.
+// Detekt config path — shared across subprojects.
 val detektConfigFile = rootProject.file("config/detekt/detekt.yml")
-fun Project.detektBaselineFile(): File =
-    rootProject.file("config/detekt/baseline-${name}.xml")
 
 subprojects {
     apply(plugin = "com.diffplug.spotless")
@@ -53,15 +47,9 @@ subprojects {
     }
 
     apply(plugin = "io.gitlab.arturbosch.detekt")
-    val moduleBaseline = detektBaselineFile()
     configure<DetektExtension> {
         toolVersion = "1.23.8"
         config.setFrom(detektConfigFile)
-        // Baseline is opt-in per subproject — only apply it if it exists so
-        // the initial `detektBaseline` run can succeed on a virgin repo.
-        if (moduleBaseline.exists()) {
-            baseline = moduleBaseline
-        }
         buildUponDefaultConfig = true
         allRules = false
         parallel = true
@@ -84,16 +72,6 @@ subprojects {
             txt.required.set(false)
             md.required.set(false)
         }
-    }
-    tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
-        jvmTarget = "21"
-        setSource(files("src"))
-        include("**/*.kt", "**/*.kts")
-        exclude("**/build/**", "**/generated/**", "**/resources/**")
-        // Write per-module baseline to a stable, VCS-tracked path so
-        // subsequent runs pick it up automatically via the
-        // DetektExtension.baseline wiring above.
-        baseline.set(moduleBaseline)
     }
 }
 

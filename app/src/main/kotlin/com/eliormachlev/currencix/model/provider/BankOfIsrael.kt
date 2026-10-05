@@ -13,6 +13,7 @@ import com.eliormachlev.currencix.model.adapter.BankOfIsraelRatesAdapter
 import com.eliormachlev.currencix.model.adapter.BankOfIsraelSdmxParser
 import com.eliormachlev.currencix.model.adapter.NO_DATA_ERROR
 import com.eliormachlev.currencix.model.adapter.addFokFromDkkIfMissing
+import com.eliormachlev.currencix.model.adapter.register
 import com.eliormachlev.currencix.model.provider.api.BankOfIsraelApi
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.fetch
@@ -38,7 +39,7 @@ private val UNIT_PER_CURRENCY: Map<String, BigDecimal> =
 private fun unitFor(currency: String): BigDecimal = UNIT_PER_CURRENCY[currency] ?: BigDecimal.ONE
 
 // The PublicApi rates adapter is stateless, so one Moshi serves every request.
-private val LATEST_RATES_MOSHI: Moshi = moshi { add(BankOfIsraelRatesAdapter()) }
+private val LATEST_RATES_MOSHI: Moshi = moshi { register(BankOfIsraelRatesAdapter()) }
 
 class BankOfIsrael : ApiProvider.Api() {
     override val name = "Bank of Israel"
@@ -57,7 +58,7 @@ class BankOfIsrael : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> = if (date == null) fetchLatestRates(context) else fetchHistoricalRates(context, date)
 
     // Fixed-shape PublicApi JSON — via Retrofit. Historical rates and the

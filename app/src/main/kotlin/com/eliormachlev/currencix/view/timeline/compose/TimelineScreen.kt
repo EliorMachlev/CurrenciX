@@ -20,7 +20,6 @@ import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import java.time.format.DateTimeFormatter
 
 @Composable
-@Suppress("LongParameterList")
 internal fun TimelineScreen(
     model: TimelineViewModel,
     formatter: DateTimeFormatter,

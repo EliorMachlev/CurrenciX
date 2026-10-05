@@ -1,4 +1,3 @@
-@file:Suppress("SpellCheckingInspection", "unused")
 
 package de.salomax.helpers.currencies
 

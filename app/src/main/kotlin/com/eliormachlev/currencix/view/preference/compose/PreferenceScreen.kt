@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -141,7 +140,6 @@ fun PreferenceScreen(
  * host below can be read in isolation from the list layout.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun PreferenceSectionsList(
     viewModel: PreferenceViewModel,
     callbacks: PreferenceScreenCallbacks,
@@ -224,7 +222,6 @@ private fun PreferenceSectionsList(
  * dialog-selection `when` sits next to its own state.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun PreferenceDialogsHost(
     openDialog: OpenDialog?,
     dismiss: () -> Unit,
@@ -551,13 +548,13 @@ private fun AboutSection(
             iconRes = R.drawable.ic_code,
             onClick = openCreditsSheet,
         )
-        @Suppress("KotlinConstantConditions")
-        if (BuildConfig.FLAVOR == FLAVOR_PLAY) {
+        // Only a build distributed through a store can be rated there.
+        callbacks.onRateApp?.let { rate ->
             PreferenceRow(
                 title = stringResource(id = R.string.rate_title),
                 summary = stringResource(id = R.string.rate_summary),
                 iconRes = R.drawable.ic_rate,
-                onClick = callbacks.onRateApp,
+                onClick = rate,
             )
         }
     }
@@ -577,22 +574,8 @@ private fun VersionSection() {
             summary = stringResource(id = R.string.version_summary, Calendar.getInstance().get(Calendar.YEAR).toString()),
             iconRes = R.drawable.ic_tag,
         )
-        // Debug-only replay affordance for the first-run onboarding tour (#147)
-        // so QA can re-enter it without wiping app data. Gated on
-        // BuildConfig.DEBUG to keep the release preferences list unchanged.
-        @Suppress("KotlinConstantConditions")
-        if (BuildConfig.DEBUG) {
-            val resetToast = stringResource(id = R.string.pref_debug_reset_onboarding_toast)
-            PreferenceRow(
-                title = stringResource(id = R.string.pref_debug_reset_onboarding_title),
-                summary = stringResource(id = R.string.pref_debug_reset_onboarding_summary),
-                iconRes = R.drawable.ic_refresh,
-                onClick = {
-                    Database(context).setHasSeenOnboarding(false)
-                    Toast.makeText(context, resetToast, Toast.LENGTH_SHORT).show()
-                },
-            )
-        }
+        // Rows only a debug build has (see debugPreferenceRows, per build type).
+        debugPreferenceRows?.invoke()
     }
     Text(
         text = "",
@@ -610,13 +593,9 @@ private fun VersionSection() {
 data class PreferenceScreenCallbacks(
     val onOpenFees: () -> Unit,
     val onOpenBackup: () -> Unit,
-    val onRateApp: () -> Unit,
+    val onRateApp: (() -> Unit)?,
     val onThemeRequiresRestart: () -> Unit,
 )
-
-// Build flavor served through Play; other flavors hide the "rate on Play"
-// entry (donation flavor gets its own entry elsewhere).
-private const val FLAVOR_PLAY = "play"
 
 private fun themeLabelRes(theme: AppTheme): Int =
     when (theme) {

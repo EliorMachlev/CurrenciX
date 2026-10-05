@@ -87,7 +87,7 @@ fun TimelineRoute(
 ) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
-    val model: TimelineViewModel = viewModel(factory = TimelineViewModel.Factory(application, screen.from, screen.to))
+    val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(application, screen.from, screen.to))
     val db = remember(context) { Database(context) }
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.getDateFormatBlocking())) }
     val pair by model.getCurrencyPair().observeAsState()

@@ -5,3 +5,6 @@ package de.salomax.helpers.changelog
 // with these multipliers, so they must stay in sync.
 internal const val SEMVER_MAJOR_MULTIPLIER = 10_000
 internal const val SEMVER_MINOR_MULTIPLIER = 100
+
+// major.minor.patch
+internal const val SEMVER_PARTS = 3

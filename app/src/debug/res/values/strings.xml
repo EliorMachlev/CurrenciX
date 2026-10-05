@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Strings used by the debug-only crash reporter (CrashReportActivity). -->
-    <string name="crash_header">CurrenciX crashed — trace copied to clipboard</string>
-    <string name="crash_copy">Copy trace</string>
-    <string name="crash_copied">Trace copied to clipboard</string>
-    <string name="crash_restart">Restart app</string>
+    <!-- Debug builds only, and English only: none of these is translated. -->
+    <!-- The crash reporter (CrashReportActivity). -->
+    <string name="crash_header" translatable="false">CurrenciX crashed — trace copied to clipboard</string>
+    <string name="crash_copy" translatable="false">Copy trace</string>
+    <string name="crash_copied" translatable="false">Trace copied to clipboard</string>
+    <string name="crash_restart" translatable="false">Restart app</string>
+
+    <!-- The debug-only Settings row that replays the onboarding tour. -->
+    <string name="pref_debug_reset_onboarding_title" translatable="false">Reset onboarding tour</string>
+    <string name="pref_debug_reset_onboarding_summary" translatable="false">Clears the first-run gate so the spotlight replays on next launch.</string>
+    <string name="pref_debug_reset_onboarding_toast" translatable="false">Onboarding will replay next launch.</string>
 </resources>

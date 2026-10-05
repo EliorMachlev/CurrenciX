@@ -9,6 +9,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.FrankfurterAppRatesAdapter
 import com.eliormachlev.currencix.model.adapter.FrankfurterAppTimelineAdapter
+import com.eliormachlev.currencix.model.adapter.register
 import java.time.LocalDate
 
 class FerEe : ApiProvider.Api() {
@@ -28,14 +29,14 @@ class FerEe : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val base = Currency.EUR
         val datePart = date?.format(ISO_DATE) ?: "latest"
         val adapter =
             moshi {
-                add(FrankfurterAppRatesAdapter(base))
-                add(SHARED_LOCAL_DATE_ADAPTER)
+                register(FrankfurterAppRatesAdapter(base))
+                register(SHARED_LOCAL_DATE_ADAPTER)
             }.adapter(ExchangeRates::class.java)
 
         return fetchJson(context, "$baseUrl/$datePart?base=$base", name, adapter)
@@ -50,9 +51,9 @@ class FerEe : ApiProvider.Api() {
     ): Result<Timeline> {
         val adapter =
             moshi {
-                add(FrankfurterAppRatesAdapter(base))
-                add(SHARED_LOCAL_DATE_ADAPTER)
-                add(FrankfurterAppTimelineAdapter(symbol))
+                register(FrankfurterAppRatesAdapter(base))
+                register(SHARED_LOCAL_DATE_ADAPTER)
+                register(FrankfurterAppTimelineAdapter(symbol))
             }.adapter(Timeline::class.java)
 
         val url =

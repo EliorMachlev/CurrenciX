@@ -104,7 +104,8 @@ internal fun String.asciiToDisplayGlyphs(): String =
 // otherwise the anchor digits get consumed first.
 private fun String.expandPercent(): String =
     replace(SMART_PERCENT_REGEX) { m ->
-        "${m.groupValues[1]}${m.groupValues[2]}(${m.groupValues[1]}*${m.groupValues[3]}/100)"
+        val (anchor, operator, percent) = m.destructured
+        "$anchor$operator($anchor*$percent/100)"
     }.replace("%", "/100")
 
 private fun String.padTrailingToken(): String {

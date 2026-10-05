@@ -43,7 +43,7 @@ class BankRossii : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val dateQuery = date?.let { "?date_req=${it.format(URL_DATE)}" } ?: ""
         return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateQuery") { body ->

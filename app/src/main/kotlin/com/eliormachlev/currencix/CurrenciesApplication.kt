@@ -7,9 +7,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
-import com.eliormachlev.currencix.leaks.suppressKnownPlatformLeaks
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.FileLoggingTree
+import com.eliormachlev.currencix.util.plantConsoleLogging
 import com.eliormachlev.currencix.worker.RateRefreshScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +40,6 @@ class CurrenciesApplication : Application() {
         if (!isMainProcess()) return
         installLogging()
         installJankStats()
-        suppressKnownPlatformLeaks()
         applyNightMode()
         prewarmProviderDns()
         observeAutoRefreshPreference()
@@ -64,11 +63,10 @@ class CurrenciesApplication : Application() {
     }
 
     // Debug builds also get a console tree so `adb logcat` mirrors what the
-    // file tree captures. Release builds are file-only — no remote sink.
+    // file tree captures (plantConsoleLogging, per build type). Release
+    // builds are file-only — no remote sink.
     private fun installLogging() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
+        plantConsoleLogging()
         Timber.plant(FileLoggingTree(filesDir))
     }
 

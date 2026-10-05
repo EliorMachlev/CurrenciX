@@ -56,7 +56,7 @@ fun CurrencyPickerSheet(
     val mainViewModel: MainViewModel =
         viewModel(
             key = PICKER_MAIN_VM_KEY,
-            factory = MainViewModel.Factory(application, onlyCache = true),
+            factory = MainViewModel.factory(application, onlyCache = true),
         )
     val prefViewModel: PreferenceViewModel = viewModel(key = PICKER_PREF_VM_KEY)
 

@@ -1,13 +1,7 @@
 package com.eliormachlev.currencix.util
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.os.PowerManager
-import android.view.HapticFeedbackConstants
-import android.view.MotionEvent
-import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -39,95 +33,6 @@ private fun Context.isInPowerSaveMode(): Boolean {
  * on the calling thread — fine for tap-time use.
  */
 private fun Context.shouldHaptic(): Boolean = Database(this).isHapticFeedbackEnabledBlocking() && !isInPowerSaveMode()
-
-/**
- * Perform a "keyboard tap" haptic when [enabled] says the user wants it AND
- * the device isn't in battery-saver mode. Used by activities that already
- * observe the preference as LiveData (the calculator keypad, cart keypad).
- */
-fun View.hapticTap(enabled: Boolean) {
-    if (!enabled) return
-    if (context.isInPowerSaveMode()) return
-    // FLAG_IGNORE_VIEW_SETTING: some parent chains disable haptic feedback
-    // (e.g. cards, RecyclerView rows), so force the tap regardless of the
-    // view-tree setting. The user's global "haptic feedback" system toggle
-    // is still respected by the OS.
-    performHapticFeedback(
-        HapticFeedbackConstants.KEYBOARD_TAP,
-        HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING,
-    )
-}
-
-/**
- * No-arg variant that reads the preference and power-save state itself. Use
- * this at sites without an observed [Boolean] handy — menu items, dialog
- * buttons, spinner selections, one-off click listeners.
- */
-fun View.hapticTap() {
-    if (!context.shouldHaptic()) return
-    performHapticFeedback(
-        HapticFeedbackConstants.KEYBOARD_TAP,
-        HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING,
-    )
-}
-
-/**
- * Activity-scoped haptic tap for callbacks that don't have a specific source
- * View — menu items, back-press callbacks, dialog buttons routed through the
- * activity. Falls back to the window's decor view for the vibration source.
- */
-fun Activity.hapticTap() {
-    window?.decorView?.hapticTap()
-}
-
-/**
- * Attach haptic taps to the standard positive/negative/neutral buttons of a
- * shown [AlertDialog]. Uses a touch-listener on ACTION_DOWN so the vibration
- * fires immediately with the press — the built-in click behaviour (dismiss +
- * user callback) is preserved because the listener returns false.
- *
- * Deferred to the dialog's onShow callback so it works whether called before
- * or after [AlertDialog.show]. Currently the codebase has no other
- * OnShowListener, so a plain [AlertDialog.setOnShowListener] is safe.
- */
-@SuppressLint("ClickableViewAccessibility")
-private fun AlertDialog.wireHapticButtons() {
-    fun applyNow() {
-        listOf(
-            AlertDialog.BUTTON_POSITIVE,
-            AlertDialog.BUTTON_NEGATIVE,
-            AlertDialog.BUTTON_NEUTRAL,
-        ).forEach { which ->
-            getButton(which)?.setOnTouchListener { v, ev ->
-                if (ev.action == MotionEvent.ACTION_DOWN) v.hapticTap()
-                false
-            }
-        }
-    }
-    if (isShowing) applyNow() else setOnShowListener { applyNow() }
-}
-
-/**
- * Build the dialog and wire haptics onto its buttons in one call — every
- * dialog show-site in the app collapses to a single terminal call instead of
- * repeating `.show().also { it.wireHapticButtons() }`.
- */
-fun AlertDialog.Builder.showWithHapticButtons(): AlertDialog = show().also { it.wireHapticButtons() }
-
-/** [showWithHapticButtons] counterpart for sites that want the dialog created but not yet shown. */
-fun AlertDialog.Builder.createWithHapticButtons(): AlertDialog = create().apply { wireHapticButtons() }
-
-/**
- * [View.setOnClickListener] plus a haptic tap on the source view before the
- * click callback runs. Use at every click-listener site in the app so the
- * "vibrate then dispatch" pattern lives in one place.
- */
-fun View.setOnHapticClickListener(onClick: (View) -> Unit) {
-    setOnClickListener { v ->
-        v.hapticTap()
-        onClick(v)
-    }
-}
 
 /**
  * Compose analogue of [Modifier.clickable] that also fires a keyboard-tap

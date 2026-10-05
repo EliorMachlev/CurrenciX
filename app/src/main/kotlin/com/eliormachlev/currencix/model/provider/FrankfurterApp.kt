@@ -9,6 +9,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.FrankfurterAppRatesAdapter
 import com.eliormachlev.currencix.model.adapter.FrankfurterAppTimelineAdapter
+import com.eliormachlev.currencix.model.adapter.register
 import com.eliormachlev.currencix.model.provider.api.FrankfurterApi
 import java.time.LocalDate
 
@@ -34,7 +35,7 @@ class FrankfurterApp : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-        @Suppress("UNUSED_PARAMETER") secrets: ApiSecrets,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         // Currency conversions are done relatively to each other - so it basically doesn't matter
         // which base is used here. However, Euro is a strong currency, preventing rounding errors.
@@ -79,9 +80,9 @@ class FrankfurterApp : ApiProvider.Api() {
         retrofitApi(
             context,
             moshi {
-                add(FrankfurterAppRatesAdapter(base))
-                add(SHARED_LOCAL_DATE_ADAPTER)
-                if (symbol != null) add(FrankfurterAppTimelineAdapter(symbol))
+                register(FrankfurterAppRatesAdapter(base))
+                register(SHARED_LOCAL_DATE_ADAPTER)
+                if (symbol != null) register(FrankfurterAppTimelineAdapter(symbol))
             },
         )
 }

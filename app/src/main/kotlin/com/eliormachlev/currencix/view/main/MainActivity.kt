@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         // pad for the status bar, each screen for the navigation bar.
         enableEdgeToEdge()
 
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, MainViewModel.factory(application))[MainViewModel::class.java]
         converterHost = createConverterHost(revealPending = isColdStart)
         // Only a fresh launch: a recreated Activity already applied it.
         if (savedInstanceState == null) launchRequest.value = ConverterLaunch.parse(intent)

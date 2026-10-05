@@ -251,7 +251,6 @@ class BackupManager(
         val salt = ByteArray(SALT_LENGTH_BYTES).also(secureRandom::nextBytes)
         val iv = ByteArray(GCM_IV_LENGTH_BYTES).also(secureRandom::nextBytes)
         val key = deriveKeyArgon2id(password, salt, ARGON2_MEMORY_KIB, ARGON2_ITERATIONS, ARGON2_PARALLELISM)
-        // nosemgrep: kotlin.lang.security.gcm-detection.gcm-detection
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
         val plaintext = namespaces.toString().toByteArray(Charsets.UTF_8)
@@ -300,7 +299,6 @@ class BackupManager(
             }
         // Decrypt path — same GCM Semgrep heuristic; IV comes from the file
         // and is uniquely paired with its key (see encryptNamespaces).
-        // nosemgrep: kotlin.lang.security.gcm-detection.gcm-detection
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
         val plaintext =

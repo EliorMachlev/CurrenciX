@@ -177,7 +177,4 @@
     <string name="onboarding_autorefresh_title">Auto-refresh rates</string>
     <string name="onboarding_autorefresh_body">Rates refresh when you open the app. Enable background refresh so they stay current between launches.</string>
     <string name="onboarding_autorefresh_enable">Enable now</string>
-    <string name="pref_debug_reset_onboarding_title">Reset onboarding tour</string>
-    <string name="pref_debug_reset_onboarding_summary">Clears the first-run gate so the spotlight replays on next launch.</string>
-    <string name="pref_debug_reset_onboarding_toast">Onboarding will replay next launch.</string>
 </resources>

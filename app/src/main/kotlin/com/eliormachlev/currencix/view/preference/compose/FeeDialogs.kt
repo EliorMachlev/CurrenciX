@@ -118,7 +118,15 @@ internal fun FeeEditorDialog(
     var pickerState by remember { mutableStateOf<CurrencyPickerRequest?>(null) }
     val confirm =
         rememberHapticOnClick {
-            val draft = feeDraftOf(name, percentText.value, active, from, to, bothWays)
+            val draft =
+                FeeDraft(
+                    name = name.trim(),
+                    percent = percentText.value.toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
+                    isActive = active,
+                    from = from,
+                    to = to,
+                    bothWays = bothWays,
+                )
             if (isPair && (draft.from == null || draft.to == null)) return@rememberHapticOnClick
             onConfirm(draft)
         }
@@ -189,7 +197,6 @@ private data class CurrencyPickerRequest(
  * short and this form-heavy scroll column reads on its own.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun FeeEditorDialogBody(
     name: String,
     onNameChange: (String) -> Unit,
@@ -487,26 +494,6 @@ internal data class FeeDraft(
     val to: String? = null,
     val bothWays: Boolean = false,
 )
-
-// Snapshot the editor's live field state into a [FeeDraft]. Kept plain (non-composable)
-// so the confirm click can build a draft without a recomposition round-trip.
-@Suppress("LongParameterList")
-private fun feeDraftOf(
-    name: String,
-    percentText: String,
-    active: Boolean,
-    from: String?,
-    to: String?,
-    bothWays: Boolean,
-): FeeDraft =
-    FeeDraft(
-        name = name.trim(),
-        percent = percentText.toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
-        isActive = active,
-        from = from,
-        to = to,
-        bothWays = bothWays,
-    )
 
 internal fun FeeDraft.toGlobalExchange(id: String? = null): Fee.GlobalExchange =
     Fee.GlobalExchange(

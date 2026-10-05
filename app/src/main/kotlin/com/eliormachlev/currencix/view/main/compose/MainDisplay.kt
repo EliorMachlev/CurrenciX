@@ -387,7 +387,6 @@ internal fun MainDisplay(
  * threshold and the compute-then-render block reads on its own.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun CurrencyPickerHost(
     side: PickSide,
     viewModel: MainViewModel,

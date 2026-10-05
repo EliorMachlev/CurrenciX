@@ -1,4 +1,3 @@
-@file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
@@ -79,12 +78,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            // Release builds never carry PR or commit context — the in-app
-            // "Release notes" entry deep-links to the GitHub release for the
-            // shipped versionName. Fields must exist so debug/release share
-            // a shape.
-            buildConfigField("String", "PR_URL", "\"\"")
-            buildConfigField("String", "COMMIT_SHA", "\"\"")
         }
         debug {
             applicationIdSuffix = ".debug"

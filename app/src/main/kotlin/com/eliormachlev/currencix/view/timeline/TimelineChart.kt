@@ -56,7 +56,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-@Suppress("LongParameterList", "LongMethod")
 fun TimelineChart(
     entriesLive: LiveData<ImmutableList<Pair<LocalDate, Float>>?>,
     showGridLive: LiveData<Boolean>,

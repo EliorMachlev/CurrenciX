@@ -125,7 +125,6 @@ fun CartFooter(
  * where they belong (with the ViewModel).
  */
 @Composable
-@Suppress("LongParameterList")
 internal fun CartFooterCard(
     baseCurrency: Currency?,
     destCurrency: Currency?,
@@ -246,7 +245,6 @@ private enum class CartPickSide { FROM, TO }
  * block reads on its own — mirrors `CurrencyPickerHost` on the main hero.
  */
 @Composable
-@Suppress("LongParameterList")
 private fun CartCurrencyPickerHost(
     side: CartPickSide,
     baseCurrency: Currency?,

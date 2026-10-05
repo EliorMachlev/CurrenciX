@@ -5,23 +5,14 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.ApiHttpError
 import com.eliormachlev.currencix.util.HttpClientProvider
 import kotlinx.coroutines.runBlocking
-import okhttp3.HttpUrl
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.Response
-import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
-import java.lang.reflect.Modifier
 import java.time.LocalDate
 
-private const val HTTP_OK = 200
 private const val HTTP_UNAUTHORIZED = 401
 private const val HTTP_UNAVAILABLE = 503
 
@@ -43,46 +34,15 @@ private val END: LocalDate = LocalDate.of(2024, 3, 31)
  * (which would also cold-start its HTTP cache entries).
  */
 class ProviderRequestTest {
-    private val requests = mutableListOf<HttpUrl>()
-    private var stubStatus = HTTP_OK
+    @get:Rule val http = StubHttpRule()
 
-    // A JSON `null` body. Adapters that treat a non-object payload as "no data"
-    // (Frankfurter, Open Exchange Rates, Bank of Israel) decode it to null,
-    // which must surface as "<provider>: empty JSON". The Bank of Canada and
-    // InforEuro adapters reject it with a JsonDataException instead — the same
-    // on either transport, so those tests only pin the request.
-    private var stubBody = "null"
+    // The default stub body is a JSON `null`. Adapters that treat a non-object
+    // payload as "no data" (Frankfurter, Open Exchange Rates, Bank of Israel)
+    // decode it to null, which must surface as "<provider>: empty JSON". The
+    // Bank of Canada and InforEuro adapters reject it with a JsonDataException
+    // instead — the same on either transport, so those tests only pin the request.
 
-    private val recordingClient =
-        OkHttpClient
-            .Builder()
-            .addInterceptor { chain ->
-                requests += chain.request().url
-                Response
-                    .Builder()
-                    .request(chain.request())
-                    .protocol(Protocol.HTTP_1_1)
-                    .code(stubStatus)
-                    .message("stub")
-                    .body(stubBody.toResponseBody("application/json".toMediaType()))
-                    .build()
-            }.build()
-
-    // HttpClientProvider has no injection seam, and adding one to production
-    // code just for this test isn't worth it — set its context-less client
-    // slot directly. Fails loudly if the field is renamed.
-    private val uncachedClientField =
-        HttpClientProvider::class.java.getDeclaredField("uncachedInstance").apply { isAccessible = true }
-    private val fieldOwner: Any? =
-        if (Modifier.isStatic(uncachedClientField.modifiers)) null else HttpClientProvider
-
-    @Before
-    fun installRecordingClient() = uncachedClientField.set(fieldOwner, recordingClient)
-
-    @After
-    fun restoreClient() = uncachedClientField.set(fieldOwner, null)
-
-    private fun assertRequested(vararg expected: String) = assertEquals(expected.toList(), requests.map { it.toString() })
+    private fun assertRequested(vararg expected: String) = assertEquals(expected.toList(), http.requests.map { it.toString() })
 
     private fun assertEmptyJson(
         result: Result<*>,
@@ -137,7 +97,7 @@ class ProviderRequestTest {
     @Test
     fun `openexchangerates maps 401 to the invalid-key error, not a raw HTTP error`() =
         runBlocking {
-            stubStatus = HTTP_UNAUTHORIZED
+            http.status = HTTP_UNAUTHORIZED
             val result = OpenExchangerates().getRates(null, null, ApiSecrets(API_KEY))
             assertTrue(result.isFailure)
             assertFalse(result.exceptionOrNull() is ApiHttpError)
@@ -213,7 +173,7 @@ class ProviderRequestTest {
         runBlocking {
             // Any non-object top-level value, not just `null`, must be consumed
             // by the adapter so the transport sees a complete document.
-            stubBody = "[]"
+            http.body = "[]"
             val provider = OpenExchangerates()
             assertEmptyJson(provider.getRates(null, null, ApiSecrets(API_KEY)), provider.name)
         }
@@ -221,7 +181,7 @@ class ProviderRequestTest {
     @Test
     fun `non-2xx surfaces as ApiHttpError with the status code`() =
         runBlocking {
-            stubStatus = HTTP_UNAVAILABLE
+            http.status = HTTP_UNAVAILABLE
             val error = BankOfCanada().getRates(null, null, ApiSecrets.EMPTY).exceptionOrNull()
             assertTrue("expected ApiHttpError, got $error", error is ApiHttpError)
             assertEquals(HTTP_UNAVAILABLE, (error as ApiHttpError).statusCode)

@@ -25,6 +25,9 @@ import com.eliormachlev.currencix.util.rememberHapticOnClick
 
 private const val ROW_MIN_HEIGHT_DP = 48
 
+// An unnamed cart is listed by the start of its id.
+private const val SHORT_ID_LENGTH = 8
+
 @Composable
 fun SavedCartsList(
     items: List<SavedCart>,
@@ -63,7 +66,7 @@ private fun SavedCartRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = cart.name.ifBlank { cart.id.take(8) },
+            text = cart.name.ifBlank { cart.id.take(SHORT_ID_LENGTH) },
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,

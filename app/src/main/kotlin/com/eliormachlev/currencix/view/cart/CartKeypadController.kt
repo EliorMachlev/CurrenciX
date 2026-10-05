@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
-import com.eliormachlev.currencix.viewmodel.main.Operator
 
 /**
  * State holder for the cart's floating calculator keypad. All animation,
@@ -139,11 +138,6 @@ class CartKeypadController(
         activeParenObserver = null
         liveExpression.value = ""
     }
-
-    // Suppress unused-parameter lint — Operator import kept in scope for the
-    // [keypadCallbacks] adapter without a static reference here.
-    @Suppress("unused")
-    private fun operatorTypeAnchor(): Operator = Operator.PLUS
 
     private fun hideSystemIme() {
         val imm = ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
