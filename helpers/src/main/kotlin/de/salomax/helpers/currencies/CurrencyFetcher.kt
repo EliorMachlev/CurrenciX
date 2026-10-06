@@ -5,7 +5,7 @@ import java.util.Currency
 import java.util.Locale
 
 // !! change this to the target language !!
-private val targetLanguage = Locale("zh", "CN")
+private val targetLanguage = Locale.of("zh", "CN")
 
 private val ISO_NAMES =
     listOf(
