@@ -258,7 +258,6 @@ class MainViewModel(
 
     override fun onCleared() {
         timelinePrefetch.removeObserver(timelinePrefetchKeepAlive)
-        super.onCleared()
     }
 
     /**

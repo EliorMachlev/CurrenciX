@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.hapticClickable
 
@@ -41,9 +41,7 @@ fun CreditsList(sections: List<CreditsSection>) {
                 CreditRow(
                     credit = credit,
                     onClick = {
-                        context.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse(credit.url)),
-                        )
+                        context.startActivity(Intent(Intent.ACTION_VIEW, credit.url.toUri()))
                     },
                 )
             }

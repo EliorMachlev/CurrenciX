@@ -34,7 +34,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
-import com.eliormachlev.currencix.view.compose.onboarding.rememberOnboardingAnchorModifier
+import com.eliormachlev.currencix.view.compose.onboarding.onboardingAnchor
 import com.eliormachlev.currencix.view.compose.screenTopBarColors
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
 
@@ -82,7 +82,8 @@ fun ConverterTopBar(
             IconButton(
                 onClick = rememberHapticOnClick(onToggleDrawer),
                 modifier =
-                    rememberOnboardingAnchorModifier(OnboardingAnchor.Hamburger)
+                    Modifier
+                        .onboardingAnchor(OnboardingAnchor.Hamburger)
                         .semantics { contentDescription = description },
             ) {
                 DrawerArrowIcon(drawerState)

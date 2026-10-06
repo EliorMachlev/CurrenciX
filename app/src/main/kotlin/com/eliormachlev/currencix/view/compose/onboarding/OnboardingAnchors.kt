@@ -7,8 +7,13 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
+import androidx.compose.ui.node.GlobalPositionAwareModifierNode
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.currentValueOf
+import androidx.compose.ui.platform.InspectorInfo
 
 /**
  * Anchor identifiers used by the first-run spotlight tour (#147). Kept as an
@@ -24,7 +29,7 @@ enum class OnboardingAnchor {
 }
 
 /**
- * Registry of anchor bounds captured via [rememberOnboardingAnchorModifier].
+ * Registry of anchor bounds captured via [onboardingAnchor].
  * A small mutable state map so [Spotlight] observes changes without every
  * consumer having to re-hoist a callback per anchor.
  *
@@ -53,7 +58,7 @@ val LocalOnboardingAnchors = compositionLocalOf<OnboardingAnchorRegistry?> { nul
 /**
  * Installs a fresh [OnboardingAnchorRegistry] into the composition. Call once
  * at the top of the screen tree; children can then tag their anchor targets
- * with [rememberOnboardingAnchorModifier].
+ * with [onboardingAnchor].
  */
 @Composable
 fun ProvideOnboardingAnchors(content: @Composable () -> Unit) {
@@ -64,15 +69,35 @@ fun ProvideOnboardingAnchors(content: @Composable () -> Unit) {
 }
 
 /**
- * Returns a Modifier that reports its composable's window-space bounds into
- * the enclosing [OnboardingAnchorRegistry], if any. No-op (returns
- * [Modifier]) when no registry is provided — safe to sprinkle on production
- * UI without a conditional wrap on the call site.
+ * Reports this element's window-space bounds into the enclosing
+ * [OnboardingAnchorRegistry]. Does nothing where no registry is provided, so
+ * it's safe on production UI without a conditional at the call site.
  */
-@Composable
-fun rememberOnboardingAnchorModifier(anchor: OnboardingAnchor): Modifier {
-    val registry = LocalOnboardingAnchors.current ?: return Modifier
-    return Modifier.onGloballyPositioned { coords ->
-        registry.report(anchor, coords.boundsInWindow())
+fun Modifier.onboardingAnchor(anchor: OnboardingAnchor): Modifier = this then OnboardingAnchorElement(anchor)
+
+private data class OnboardingAnchorElement(
+    val anchor: OnboardingAnchor,
+) : ModifierNodeElement<OnboardingAnchorNode>() {
+    override fun create() = OnboardingAnchorNode(anchor)
+
+    override fun update(node: OnboardingAnchorNode) {
+        node.anchor = anchor
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        name = "onboardingAnchor"
+        properties["anchor"] = anchor
+    }
+}
+
+// A node rather than a composable factory: it reads the registry when it is
+// positioned, so tagging an element costs no composition of its own.
+private class OnboardingAnchorNode(
+    var anchor: OnboardingAnchor,
+) : Modifier.Node(),
+    GlobalPositionAwareModifierNode,
+    CompositionLocalConsumerModifierNode {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        currentValueOf(LocalOnboardingAnchors)?.report(anchor, coordinates.boundsInWindow())
     }
 }

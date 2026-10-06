@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import androidx.core.graphics.createBitmap
 import com.eliormachlev.currencix.model.Timeline
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -45,7 +46,7 @@ internal fun sparklineBitmap(
     strokePx: Float,
     color: Int,
 ): Bitmap {
-    val bitmap = Bitmap.createBitmap(widthPx, heightPx, Bitmap.Config.ARGB_8888)
+    val bitmap = createBitmap(widthPx, heightPx)
     val values = points.map { it.toDouble() }
     val min = values.min()
     val span = (values.max() - min).takeIf { it > 0.0 }

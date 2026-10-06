@@ -29,7 +29,8 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.view.navigation.PillSide
-import com.eliormachlev.currencix.view.navigation.sharedCurrencyPillModifier
+import com.eliormachlev.currencix.view.navigation.rememberPillTransition
+import com.eliormachlev.currencix.view.navigation.sharedCurrencyPill
 
 private val PILL_HEIGHT: Dp = 44.dp
 private val PILL_RADIUS: Dp = 999.dp
@@ -50,7 +51,7 @@ private val PAIR_ROW_GAP: Dp = 8.dp
  * converter's hero card and the cart footer both use it, and it's the shared
  * element between them: opening the cart flies each pill from the converter
  * into the matching cart pill, and back again on return (see
- * [sharedCurrencyPillModifier] for when two pills count as the same one).
+ * [rememberPillTransition] for when two pills count as the same one).
  */
 @Composable
 fun CurrencyPill(
@@ -62,7 +63,7 @@ fun CurrencyPill(
     val flagPainter = currency?.flagPainter()
     Row(
         modifier
-            .then(sharedCurrencyPillModifier(side, currency))
+            .sharedCurrencyPill(rememberPillTransition(side, currency))
             .height(PILL_HEIGHT)
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(MaterialTheme.colorScheme.surfaceVariant)

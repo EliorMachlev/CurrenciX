@@ -1,9 +1,11 @@
 package com.eliormachlev.currencix.view.navigation
 
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.eliormachlev.currencix.model.Currency
 
@@ -18,28 +20,44 @@ private data class SharedPillKey(
     val currency: Currency,
 )
 
+/** What a pill needs to fly between two screens; see [rememberPillTransition]. */
+class PillTransition internal constructor(
+    internal val scope: SharedTransitionScope,
+    internal val visibility: AnimatedVisibilityScope,
+    internal val state: SharedTransitionScope.SharedContentState,
+)
+
+/**
+ * The shared-element transition of the pill showing [currency] on [side], for
+ * [sharedCurrencyPill]. Null — the pill just stays where it is — outside the
+ * nav host (screenshot tests, previews), while no currency is set, and on a
+ * two-pane window, where the converter and the cart sit side by side and
+ * there's nothing to fly between.
+ */
+@Composable
+fun rememberPillTransition(
+    side: PillSide,
+    currency: Currency?,
+): PillTransition? {
+    if (currency == null || LocalTwoPaneWindow.current) return null
+    val sharedScope = LocalSharedTransitionScope.current ?: return null
+    val visibilityScope = LocalScreenVisibilityScope.current ?: return null
+    val state = with(sharedScope) { rememberSharedContentState(SharedPillKey(side, currency)) }
+    return remember(sharedScope, visibilityScope, state) { PillTransition(sharedScope, visibilityScope, state) }
+}
+
 /**
  * Makes a currency pill a shared element: when a screen with a matching pill
  * ([PillSide] + currency) opens or closes, the pill moves and resizes into
  * its counterpart instead of fading with its screen. It follows the screen
  * transition, so the predictive back gesture scrubs it too.
- *
- * A plain [Modifier] outside the nav host (screenshot tests, previews),
- * while no currency is set, and on a two-pane window — where the converter
- * and the cart sit side by side, so there's nothing to fly between.
  */
-@Composable
-fun sharedCurrencyPillModifier(
-    side: PillSide,
-    currency: Currency?,
-): Modifier {
-    if (currency == null || LocalTwoPaneWindow.current) return Modifier
-    val sharedScope = LocalSharedTransitionScope.current ?: return Modifier
-    val visibilityScope = LocalScreenVisibilityScope.current ?: return Modifier
-    return with(sharedScope) {
-        Modifier.sharedBounds(
-            sharedContentState = rememberSharedContentState(SharedPillKey(side, currency)),
-            animatedVisibilityScope = visibilityScope,
+fun Modifier.sharedCurrencyPill(transition: PillTransition?): Modifier {
+    transition ?: return this
+    return with(transition.scope) {
+        sharedBounds(
+            sharedContentState = transition.state,
+            animatedVisibilityScope = transition.visibility,
             // Re-lays the pill out at each in-between size, so the flag and
             // code stay crisp instead of stretching.
             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,

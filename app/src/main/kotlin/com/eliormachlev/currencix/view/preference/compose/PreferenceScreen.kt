@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,6 +19,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.BuildConfig
@@ -538,7 +538,7 @@ private fun VersionSection() {
         PreferenceRow(
             title = stringResource(id = R.string.title_changelog),
             iconRes = R.drawable.ic_changelog,
-            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(releaseNotesUrl()))) },
+            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, releaseNotesUrl().toUri())) },
         )
         PreferenceRow(
             title = BuildConfig.VERSION_NAME,

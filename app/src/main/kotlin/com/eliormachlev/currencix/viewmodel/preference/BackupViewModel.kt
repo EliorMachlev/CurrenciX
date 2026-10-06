@@ -112,7 +112,6 @@ class BackupViewModel(
         pendingExportPassword = null
         (dialog as? BackupDialog.ImportConfirm)?.password?.fill('\u0000')
         dialog = null
-        super.onCleared()
     }
 }
 

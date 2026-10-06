@@ -57,7 +57,7 @@ internal class RetryPolicy(
         var attempt = 1
         while (attempt < maxAttempts && shouldRetry(last)) {
             delay(backoffFor(attempt))
-            Timber.tag(TAG).d("Retry attempt %d/%d after %s", attempt, maxAttempts - 1, last.exceptionOrNull())
+            Timber.tag(TAG).d(last.exceptionOrNull(), "Retry attempt %d/%d", attempt, maxAttempts - 1)
             last = block(attempt)
             attempt++
         }

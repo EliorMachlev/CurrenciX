@@ -381,7 +381,7 @@ private fun CurrencyList(
                     conversion = content.conversion,
                     isDisabled = rate.currency == content.disabledCurrency,
                     actions = actions,
-                    modifier = Modifier.fillMaxWidth().then(dragModifier(isDragging, onDragEnded)),
+                    modifier = Modifier.fillMaxWidth().starredRowDrag(this, isDragging, onDragEnded),
                 )
             }
         }
@@ -429,11 +429,12 @@ private fun List<Rate>.indexOfStarredKey(key: Any): Int {
 // allowed ([onDragEnded] is set) — which keeps the row's regular tap → select
 // gesture — committing on release so only the settled order is persisted, not
 // each mid-drag swap. The row dims while it is being dragged.
-private fun ReorderableCollectionItemScope.dragModifier(
+private fun Modifier.starredRowDrag(
+    scope: ReorderableCollectionItemScope,
     isDragging: Boolean,
     onDragEnded: (() -> Unit)?,
 ): Modifier {
-    val handle = if (onDragEnded != null) Modifier.longPressDraggableHandle(onDragStopped = { onDragEnded() }) else Modifier
+    val handle = if (onDragEnded != null) with(scope) { longPressDraggableHandle(onDragStopped = { onDragEnded() }) } else this
     return if (isDragging) handle.alpha(DRAG_ACTIVE_ALPHA) else handle
 }
 

@@ -32,7 +32,6 @@ class CartViewModel(
 
     override fun onCleared() {
         ratesCache.clear()
-        super.onCleared()
     }
 
     fun getCurrentCart(): LiveData<SavedCart> = current
