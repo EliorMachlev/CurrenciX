@@ -12,23 +12,6 @@
         tools:replace="android:supportsRtl">
 
         <!--
-             Showkase browser launcher — debug-only Activity that appears as
-             a second app icon on the device (under the debug applicationId
-             suffix, so it never collides with the shipped app). Tapping it
-             launches the generated Showkase browser over the @Preview
-             composables registered via CurrenciXShowkaseRoot.
-        -->
-        <activity
-            android:name=".showkase.ShowkaseBrowserActivity"
-            android:exported="true"
-            android:label="CurrenciX Showkase">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!--
              Debug crash-report landing screen. The process-wide
              UncaughtExceptionHandler installed by installDebugCrashReporter()
              launches this activity in a fresh process after copying the
