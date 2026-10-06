@@ -147,7 +147,7 @@ internal class CalculatorInputState {
         val current = _calculationValueText.value!!
         val trimmed = current.trimEnd()
         // after a value-continuation token (digit, `)`, `%`, `.`) insert an
-        // implicit multiplication so EvalEx sees `5*(...)` instead of parse error
+        // explicit multiplication, so the row reads `5 × (…)` rather than `5(…)`
         setCalc(
             if (isValueContinuationTail(trimmed.lastOrNull())) withImplicitMultBeforeOpen(trimmed) else current + PAREN_OPEN,
         )

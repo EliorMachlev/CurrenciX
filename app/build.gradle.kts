@@ -74,10 +74,7 @@ android {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -206,10 +203,6 @@ dependencies {
     val retrofitVersion = "2.11.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
-    // math: EvalEx (Apache-2.0) evaluates the calculator expression. Replaced
-    // mXparser 4.4.3, which was pinned because its v5+ dual license isn't
-    // F-Droid compatible. EvalEx is actively maintained and BigDecimal-native.
-    implementation("com.ezylang:EvalEx:3.7.0")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
     val composeBomVersion = "2026.08.00"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))

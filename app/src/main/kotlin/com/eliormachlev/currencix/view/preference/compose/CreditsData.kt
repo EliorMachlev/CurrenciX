@@ -89,16 +89,16 @@ private val LIBRARY_CREDITS =
             license = "Apache-2.0",
         ),
         Credit(
-            title = "EvalEx",
-            subtitle = "Math expression evaluator — Udo Klimaschewski",
-            url = "https://github.com/ezylang/EvalEx",
-            license = "Apache-2.0",
-        ),
-        Credit(
             title = "Bouncy Castle",
-            subtitle = "Cryptography provider (Argon2id + AES-GCM for backup encryption)",
+            subtitle = "Argon2id key derivation for encrypted backups",
             url = "https://www.bouncycastle.org/",
             license = "MIT",
+        ),
+        Credit(
+            title = "Tink",
+            subtitle = "AES-GCM encryption for backups — Google",
+            url = "https://github.com/tink-crypto/tink-java",
+            license = "Apache-2.0",
         ),
         Credit(
             title = "Kotlin",
