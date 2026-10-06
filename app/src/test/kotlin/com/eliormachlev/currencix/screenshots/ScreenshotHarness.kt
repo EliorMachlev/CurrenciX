@@ -16,12 +16,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.isDialog
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.eliormachlev.currencix.util.registerActivityRule
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.github.takahirom.roborazzi.captureScreenRoboImage
 import org.junit.rules.RuleChain
@@ -123,6 +124,8 @@ class ScreenshotRule : TestRule {
         content: @Composable () -> Unit,
     ) = capture(listOf(Cell(Locale2.EN, ThemeMode.LIGHT, LARGE_FONT_SCALE)), name, content)
 
+    // captureScreenRoboImage (the whole window, for dialogs) is still experimental in Roborazzi.
+    @OptIn(ExperimentalRoborazziApi::class)
     private fun capture(
         cells: List<Cell>,
         name: String,

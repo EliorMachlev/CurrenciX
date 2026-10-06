@@ -3,7 +3,7 @@ package com.eliormachlev.currencix.view.cart.compose
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.getBoundsInRoot
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
