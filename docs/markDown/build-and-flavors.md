@@ -6,7 +6,7 @@
 |---|---|
 | JDK | 21 (Temurin recommended) |
 | Android Gradle Plugin | see `build.gradle.kts` |
-| Kotlin | 2.4.10 |
+| Kotlin | 2.4.20 |
 | Min SDK | 26 |
 | Target SDK | 37 |
 
@@ -40,13 +40,13 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Dependency | Version |
 |---|---|
-| `androidx.core:core-ktx` | 1.19.0 |
+| `androidx.core:core-ktx` | 1.19.1 |
 | `androidx.appcompat:appcompat` | 1.8.0 |
-| `androidx.core:core-splashscreen` | 1.0.1 |
+| `androidx.core:core-splashscreen` | 1.2.0 |
 | `androidx.lifecycle:lifecycle-*` (livedata/runtime/viewmodel/viewmodel-compose/runtime-compose) | 2.11.0 |
 | `androidx.constraintlayout:constraintlayout` | 2.2.2 |
 | `androidx.window:window` | 1.5.1 |
-| `org.jetbrains.kotlinx:kotlinx-collections-immutable` | 0.4.0 |
+| `org.jetbrains.kotlinx:kotlinx-collections-immutable` | 0.5.2 |
 
 `com.google.android.material` has been **dropped** — the app is appcompat-only chrome plus Compose Material 3 now (see [architecture.md](architecture.md)).
 
@@ -62,7 +62,7 @@ Replaces SharedPreferences across every namespace — see [architecture.md](arch
 
 | Dependency | Version |
 |---|---|
-| `androidx.compose:compose-bom` | 2026.08.00 |
+| `androidx.compose:compose-bom` | 2026.09.00 |
 | `androidx.compose.material3:material3` | 1.4.0 (pinned newer than the BOM ships) |
 | `androidx.compose.ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
 | `androidx.activity:activity-compose` | 1.13.0 |
@@ -78,8 +78,8 @@ Hosts the Vico chart plus the rest of the app's UI — every screen is Compose, 
 |---|---|
 | `com.squareup.okhttp3:okhttp` | 5.5.0 |
 | `com.squareup.okhttp3:logging-interceptor` | 5.5.0 |
-| `com.squareup.retrofit2:retrofit` | 2.11.0 |
-| `com.squareup.retrofit2:converter-moshi` | 2.11.0 |
+| `com.squareup.retrofit2:retrofit` | 3.0.0 |
+| `com.squareup.retrofit2:converter-moshi` | 3.0.0 |
 | `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
 | `com.google.devtools.ksp:*` | 2.3.11 |
 
@@ -93,20 +93,20 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 
 | Dependency | Version |
 |---|---|
-| `com.patrykandpatrick.vico:compose` | 3.3.0 |
+| `com.patrykandpatrick.vico:compose` | 3.3.1 |
 
 ### Background & Widgets
 
 | Dependency | Version | Note |
 |---|---|---|
-| `androidx.work:work-runtime-ktx` | 2.10.0 | Periodic background rate refresh, off by default (opt-in via Settings) |
-| `androidx.glance:glance-appwidget` | 1.1.1 | Home-screen widget content, replacing hand-rolled `RemoteViews` |
+| `androidx.work:work-runtime-ktx` | 2.12.0 | Periodic background rate refresh, off by default (opt-in via Settings) |
+| `androidx.glance:glance-appwidget` | 1.2.0 | Home-screen widget content, replacing hand-rolled `RemoteViews` |
 
 ### Crypto & Logging
 
 | Dependency | Version | Note |
 |---|---|---|
-| `org.bouncycastle:bcprov-jdk18on` | 1.85.2 | Pure-Java Argon2id for password-based backup encryption — see [security.md](security.md) |
+| `org.bouncycastle:bcprov-jdk18on` | 1.86 | Pure-Java Argon2id for password-based backup encryption — see [security.md](security.md) |
 | `com.google.crypto.tink:tink-android` | 1.23.0 | AES-256-GCM for the backup's payload (`BackupCrypto`) — see [security.md](security.md) |
 | `com.jakewharton.timber:timber` | 5.0.1 | Local-only rotating file log, no remote crash/analytics sink |
 | `com.github.chuckerteam.chucker:library` (debug) / `library-no-op` (release) | 4.3.1 | In-app HTTP inspector, debug-only via source-set split |
@@ -124,12 +124,12 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 | Dependency | Version |
 |---|---|
 | `junit:junit` | 4.13.2 |
-| `org.mockito:mockito-core` | 5.23.0 |
+| `org.mockito:mockito-core` | 5.24.0 |
 | `androidx.arch.core:core-testing` | 2.2.0 |
 | `org.junit.jupiter:junit-jupiter-*` | 6.1.3 |
 | `com.code-intelligence:jazzer-junit` | 0.30.0 (fuzz testing) |
-| `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.74.0 |
-| `org.robolectric:robolectric` | 4.16 |
+| `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.76.0 |
+| `org.robolectric:robolectric` | 4.17 |
 | `androidx.compose.ui:ui-test-junit4` / `ui-test-manifest` | via BOM |
 | `com.lemonappdev:konsist` | 0.17.3 |
 

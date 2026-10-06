@@ -5,12 +5,12 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.20"
     id("com.google.devtools.ksp") version "2.3.11"
     // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
     // used by the .github/workflows/screenshots.yaml job. Runs on top of
     // Robolectric Native Graphics — no device or emulator required.
-    id("io.github.takahirom.roborazzi") version "1.74.0"
+    id("io.github.takahirom.roborazzi") version "1.76.0"
     // Consumes the baseline + startup profiles emitted by :baselineprofile and
     // bakes them into the release AAB / APK for ProfileInstaller to hand to
     // ART at install time. Version pinned at the root build script.
@@ -147,12 +147,12 @@ android {
 
 dependencies {
     // kotlin
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.core:core-ktx:1.19.1")
     // kotlinx.collections.immutable: exposes @Immutable persistent collection
     // types (ImmutableList / PersistentList / ...) so Compose stability
     // inference can skip recomposition of composables whose only "unstable"
     // input was a plain `List<T>`. Adopted on Compose-facing state per #161.
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.2")
     // persistence: DataStore Preferences replaces SharedPreferences across every
     // namespace (see repository/persistence/PersistenceKey.kt). The `-preferences`
     // artifact pulls `datastore-preferences-core` transitively and provides the
@@ -171,7 +171,7 @@ dependencies {
     // Closes the black-frame gap between launcher tap and first Compose frame,
     // and hands off to the in-app wordmark reveal (#155). Pinned rather than
     // dropped to the BOM default so upgrades are explicit.
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
     val livecycleVersion = "2.11.0"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$livecycleVersion")
@@ -200,11 +200,11 @@ dependencies {
     // starting with Frankfurter (#158) — subsequent JSON providers follow as
     // separate PRs. converter-moshi reuses our existing Moshi adapters so
     // custom (De)serializers keep working unchanged.
-    val retrofitVersion = "2.11.0"
+    val retrofitVersion = "3.0.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
-    val composeBomVersion = "2026.08.00"
+    val composeBomVersion = "2026.09.00"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
@@ -228,14 +228,14 @@ dependencies {
     implementation("androidx.navigation3:navigation3-ui:$navigation3Version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:$livecycleVersion")
     // glance: home-screen widget composed instead of RemoteViews-driven.
-    val glanceVersion = "1.1.1"
+    val glanceVersion = "1.2.0"
     implementation("androidx.glance:glance-appwidget:$glanceVersion")
     // WorkManager: periodic background refresh of exchange rates (#151).
     // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
     // opt-in via Settings until #147 onboarding wires the hero opt-in.
-    implementation("androidx.work:work-runtime-ktx:2.10.0")
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
     // charts
-    val vicoVersion = "3.3.0"
+    val vicoVersion = "3.3.1"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
     // drag-to-reorder for LazyColumn — used by the currency picker's Starred
     // section (#142) and the cart list (#141). Provides `ReorderableItem` +
@@ -246,7 +246,7 @@ dependencies {
     implementation("sh.calvin.reorderable:reorderable:3.1.0")
     // crypto: BouncyCastle provides pure-Java Argon2id, the key derivation
     // for password-based backup encryption (quantum-resistant KDF).
-    implementation("org.bouncycastle:bcprov-jdk18on:1.85.2")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.86")
     // crypto: Tink (Apache-2.0) runs the AES-GCM cipher for backups and owns
     // its nonce handling, instead of a hand-driven javax.crypto.Cipher.
     implementation("com.google.crypto.tink:tink-android:1.23.0")
@@ -274,7 +274,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling-preview")
     // test
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.23.0")
+    testImplementation("org.mockito:mockito-core:5.24.0")
     // core-testing provides InstantTaskExecutorRule so LiveData setValue can
     // run on the JVM test thread without hitting the main-thread assertion.
     testImplementation("androidx.arch.core:core-testing:2.2.0")
@@ -288,10 +288,10 @@ dependencies {
     // CI can render every Compose surface without an emulator. The vintage
     // engine (already above) runs Robolectric's JUnit 4 test runner under
     // useJUnitPlatform().
-    val roborazziVersion = "1.74.0"
+    val roborazziVersion = "1.76.0"
     testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
-    testImplementation("org.robolectric:robolectric:4.16")
+    testImplementation("org.robolectric:robolectric:4.17")
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.ui:ui-test-manifest")
     // architecture: Konsist encodes MVVM layer boundaries as JUnit tests so
