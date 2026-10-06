@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
@@ -156,7 +157,7 @@ private fun ExportPasswordDialog(
     var encrypt by rememberSaveable { mutableStateOf(false) }
     var passwordText by rememberSaveable { mutableStateOf("") }
     var visible by rememberSaveable { mutableStateOf(false) }
-    var errorRes by remember { mutableStateOf<Int?>(null) }
+    var tooShort by remember { mutableStateOf(false) }
     LedgerDialogFrame(
         title = stringResource(id = R.string.backup_export_title),
         onDismiss = onCancel,
@@ -164,10 +165,10 @@ private fun ExportPasswordDialog(
         ExportPasswordDialogBody(
             encrypt = encrypt,
             onEncryptChange = { encrypt = it },
-            password = PasswordInput(passwordText, visible, errorRes?.let { stringResource(id = it, BACKUP_MIN_PASSWORD_LENGTH) }),
+            password = PasswordInput(passwordText, visible, if (tooShort) passwordTooShortText() else null),
             onPasswordChange = {
                 passwordText = it
-                errorRes = null
+                tooShort = false
             },
             onToggleVisibility = { visible = !visible },
         )
@@ -180,7 +181,7 @@ private fun ExportPasswordDialog(
                     return@LedgerDialogActions
                 }
                 if (passwordText.length < BACKUP_MIN_PASSWORD_LENGTH) {
-                    errorRes = R.string.backup_password_too_short
+                    tooShort = true
                     return@LedgerDialogActions
                 }
                 onConfirm(passwordText.toCharArrayOffHeap())
@@ -188,6 +189,10 @@ private fun ExportPasswordDialog(
         )
     }
 }
+
+@Composable
+private fun passwordTooShortText(): String =
+    pluralStringResource(R.plurals.backup_password_too_short, BACKUP_MIN_PASSWORD_LENGTH, BACKUP_MIN_PASSWORD_LENGTH)
 
 /**
  * Body of [ExportPasswordDialog] — the checkbox row and, when checked, the

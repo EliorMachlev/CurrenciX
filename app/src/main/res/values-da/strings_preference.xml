@@ -69,6 +69,7 @@
     <string name="language_is">Islandsk</string>
     <string name="language_it">Italiensk</string>
     <string name="language_he">Hebraisk</string>
+    <string name="language_ml">Malayalam</string>
     <string name="language_nb">Norsk</string>
     <string name="language_nl">Nederlandsk</string>
     <string name="language_pl">Polsk</string>
@@ -116,7 +117,10 @@
     <string name="backup_password_hint">Adgangskode</string>
     <string name="backup_password_prompt_title">Indtast adgangskode</string>
     <string name="backup_password_wrong">Adgangskoden kunne ikke dekryptere filen. Prøv igen.</string>
-    <string name="backup_password_too_short">Adgangskoden skal være mindst %1$d tegn</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Adgangskoden skal være mindst %1$d tegn</item>
+        <item quantity="other">Adgangskoden skal være mindst %1$d tegn</item>
+    </plurals>
     <string name="backup_password_show">Vis adgangskode</string>
     <string name="backup_password_hide">Skjul adgangskode</string>
     <string name="picker_active_chip">Aktiv</string>

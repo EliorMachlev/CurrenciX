@@ -95,7 +95,11 @@
     <string name="backup_password_hint">Senha</string>
     <string name="backup_password_prompt_title">Digite a senha</string>
     <string name="backup_password_wrong">A senha não descriptografou este arquivo. Tente novamente.</string>
-    <string name="backup_password_too_short">A senha deve ter pelo menos %1$d caracteres</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">A senha deve ter pelo menos %1$d caractere</item>
+        <item quantity="many">A senha deve ter pelo menos %1$d de caracteres</item>
+        <item quantity="other">A senha deve ter pelo menos %1$d caracteres</item>
+    </plurals>
     <string name="backup_password_show">Mostrar senha</string>
     <string name="backup_password_hide">Ocultar senha</string>
     <string name="picker_active_chip">Ativo</string>
@@ -130,6 +134,7 @@
     <string name="language_ca">Catalão</string>
     <string name="language_cs">Tcheco</string>
     <string name="language_he">Hebraico</string>
+    <string name="language_ml">Malaiala</string>
     <string name="language_hr">Croata</string>
     <string name="language_hu">Húngaro</string>
     <string name="language_id">Indonésio</string>

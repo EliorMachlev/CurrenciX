@@ -68,6 +68,7 @@
     <string name="language_is">IJslands</string>
     <string name="language_it">Italiaans</string>
     <string name="language_he">Hebreeuws</string>
+    <string name="language_ml">Malayalam</string>
     <string name="language_nb">Noors</string>
     <string name="language_nl">Nederlands</string>
     <string name="language_pl">Pools</string>
@@ -115,7 +116,10 @@
     <string name="backup_password_hint">Wachtwoord</string>
     <string name="backup_password_prompt_title">Voer wachtwoord in</string>
     <string name="backup_password_wrong">Het wachtwoord kon dit bestand niet ontsleutelen. Probeer het opnieuw.</string>
-    <string name="backup_password_too_short">Het wachtwoord moet minstens %1$d tekens bevatten</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Het wachtwoord moet minstens %1$d teken bevatten</item>
+        <item quantity="other">Het wachtwoord moet minstens %1$d tekens bevatten</item>
+    </plurals>
     <string name="backup_password_show">Wachtwoord tonen</string>
     <string name="backup_password_hide">Wachtwoord verbergen</string>
     <string name="picker_active_chip">Actief</string>

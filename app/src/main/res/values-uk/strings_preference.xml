@@ -68,6 +68,7 @@
     <string name="language_is">Ісландська</string>
     <string name="language_it">Італійська</string>
     <string name="language_he">Іврит</string>
+    <string name="language_ml">Малаялам</string>
     <string name="language_nb">Норвезька</string>
     <string name="language_nl">Нідерландська</string>
     <string name="language_pl">Польська</string>
@@ -115,7 +116,12 @@
     <string name="backup_password_hint">Пароль</string>
     <string name="backup_password_prompt_title">Введіть пароль</string>
     <string name="backup_password_wrong">Пароль не розшифрував цей файл. Спробуйте ще раз.</string>
-    <string name="backup_password_too_short">Пароль має містити щонайменше %1$d символів</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Пароль має містити щонайменше %1$d символ</item>
+        <item quantity="few">Пароль має містити щонайменше %1$d символи</item>
+        <item quantity="many">Пароль має містити щонайменше %1$d символів</item>
+        <item quantity="other">Пароль має містити щонайменше %1$d символу</item>
+    </plurals>
     <string name="backup_password_show">Показати пароль</string>
     <string name="backup_password_hide">Приховати пароль</string>
     <string name="picker_active_chip">Активно</string>

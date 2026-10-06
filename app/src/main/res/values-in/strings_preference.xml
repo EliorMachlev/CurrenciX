@@ -68,6 +68,7 @@
     <string name="language_is">Islan</string>
     <string name="language_it">Italia</string>
     <string name="language_he">Ibrani</string>
+    <string name="language_ml">Malayalam</string>
     <string name="language_nb">Norwegia</string>
     <string name="language_nl">Belanda</string>
     <string name="language_pl">Polski</string>
@@ -111,7 +112,9 @@
     <string name="backup_password_hint">Kata sandi</string>
     <string name="backup_password_prompt_title">Masukkan kata sandi</string>
     <string name="backup_password_wrong">Kata sandi tidak berhasil mendekripsi file. Coba lagi.</string>
-    <string name="backup_password_too_short">Kata sandi harus minimal %1$d karakter</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="other">Kata sandi harus minimal %1$d karakter</item>
+    </plurals>
     <string name="backup_password_show">Tampilkan kata sandi</string>
     <string name="backup_password_hide">Sembunyikan kata sandi</string>
     <string name="picker_active_chip">Aktif</string>

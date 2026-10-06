@@ -68,6 +68,7 @@
     <string name="language_is">Islandès</string>
     <string name="language_it">Italià</string>
     <string name="language_he">Hebreu</string>
+    <string name="language_ml">Malaiàlam</string>
     <string name="language_nb">Noruec</string>
     <string name="language_nl">Neerlandès</string>
     <string name="language_pl">Polonès</string>
@@ -115,7 +116,11 @@
     <string name="backup_password_hint">Contrasenya</string>
     <string name="backup_password_prompt_title">Introdueix la contrasenya</string>
     <string name="backup_password_wrong">La contrasenya no ha desxifrat el fitxer. Torna-ho a provar.</string>
-    <string name="backup_password_too_short">La contrasenya ha de tenir com a mínim %1$d caràcters</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">La contrasenya ha de tenir com a mínim %1$d caràcter</item>
+        <item quantity="many">La contrasenya ha de tenir com a mínim %1$d de caràcters</item>
+        <item quantity="other">La contrasenya ha de tenir com a mínim %1$d caràcters</item>
+    </plurals>
     <string name="backup_password_show">Mostra la contrasenya</string>
     <string name="backup_password_hide">Amaga la contrasenya</string>
     <string name="picker_active_chip">Actiu</string>

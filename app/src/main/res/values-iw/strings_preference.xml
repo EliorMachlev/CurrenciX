@@ -64,6 +64,7 @@
     <string name="language_is">איסלנדית</string>
     <string name="language_it">איטלקית</string>
     <string name="language_he">עברית</string>
+    <string name="language_ml">מלאיאלאם</string>
     <string name="language_nb">נורווגית</string>
     <string name="language_nl">הולנדית</string>
     <string name="language_pl">פולנית</string>
@@ -111,7 +112,11 @@
     <string name="backup_password_hint">סיסמה</string>
     <string name="backup_password_prompt_title">הזן סיסמה</string>
     <string name="backup_password_wrong">הסיסמה לא הצליחה לפענח את הקובץ. נסה שוב.</string>
-    <string name="backup_password_too_short">הסיסמה חייבת להכיל לפחות %1$d תווים</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">הסיסמה חייבת להכיל לפחות תו %1$d</item>
+        <item quantity="two">הסיסמה חייבת להכיל לפחות %1$d תווים</item>
+        <item quantity="other">הסיסמה חייבת להכיל לפחות %1$d תווים</item>
+    </plurals>
     <string name="backup_password_show">הצג סיסמה</string>
     <string name="backup_password_hide">הסתר סיסמה</string>
     <string name="picker_active_chip">פעיל</string>

@@ -68,6 +68,7 @@
     <string name="language_is">Islandsk</string>
     <string name="language_it">Italiensk</string>
     <string name="language_he">Hebraisk</string>
+    <string name="language_ml">Malayalam</string>
     <string name="language_nb">Norsk</string>
     <string name="language_nl">Nederlandsk</string>
     <string name="language_pl">Polsk</string>
@@ -111,7 +112,10 @@
     <string name="backup_password_hint">Passord</string>
     <string name="backup_password_prompt_title">Skriv inn passord</string>
     <string name="backup_password_wrong">Passordet klarte ikke å dekryptere denne filen. Prøv igjen.</string>
-    <string name="backup_password_too_short">Passordet må være minst %1$d tegn</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Passordet må være minst %1$d tegn</item>
+        <item quantity="other">Passordet må være minst %1$d tegn</item>
+    </plurals>
     <string name="backup_password_show">Vis passord</string>
     <string name="backup_password_hide">Skjul passord</string>
     <string name="picker_active_chip">Aktiv</string>

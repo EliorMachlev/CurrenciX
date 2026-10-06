@@ -68,6 +68,7 @@
     <string name="language_is">Islanda</string>
     <string name="language_it">Itala</string>
     <string name="language_he">Hebrea</string>
+    <string name="language_ml">Malajala</string>
     <string name="language_nb">Norvega</string>
     <string name="language_nl">Nederlanda</string>
     <string name="language_pl">Pola</string>
@@ -106,7 +107,10 @@
     <string name="backup_password_hint">Pasvorto</string>
     <string name="backup_password_prompt_title">Enigu pasvorton</string>
     <string name="backup_password_wrong">La pasvorto ne malĉifris ĉi tiun dosieron. Provu denove.</string>
-    <string name="backup_password_too_short">La pasvorto devas havi almenaŭ %1$d signojn</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">La pasvorto devas havi almenaŭ %1$d signon</item>
+        <item quantity="other">La pasvorto devas havi almenaŭ %1$d signojn</item>
+    </plurals>
     <string name="backup_password_show">Montri pasvorton</string>
     <string name="backup_password_hide">Kaŝi pasvorton</string>
     <string name="picker_active_chip">Aktiva</string>

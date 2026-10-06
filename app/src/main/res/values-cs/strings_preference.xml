@@ -68,6 +68,7 @@
     <string name="language_is">Islandština</string>
     <string name="language_it">Italština</string>
     <string name="language_he">Hebrejština</string>
+    <string name="language_ml">Malajálamština</string>
     <string name="language_nb">Norština</string>
     <string name="language_nl">Nizozemština</string>
     <string name="language_pl">Polština</string>
@@ -115,7 +116,12 @@
     <string name="backup_password_hint">Heslo</string>
     <string name="backup_password_prompt_title">Zadej heslo</string>
     <string name="backup_password_wrong">Heslem se soubor nepodařilo dešifrovat. Zkus to znovu.</string>
-    <string name="backup_password_too_short">Heslo musí mít alespoň %1$d znaků</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Heslo musí mít alespoň %1$d znak</item>
+        <item quantity="few">Heslo musí mít alespoň %1$d znaky</item>
+        <item quantity="many">Heslo musí mít alespoň %1$d znaku</item>
+        <item quantity="other">Heslo musí mít alespoň %1$d znaků</item>
+    </plurals>
     <string name="backup_password_show">Zobrazit heslo</string>
     <string name="backup_password_hide">Skrýt heslo</string>
     <string name="picker_active_chip">Aktivní</string>

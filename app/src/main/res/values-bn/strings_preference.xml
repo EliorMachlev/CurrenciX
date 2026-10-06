@@ -115,7 +115,10 @@
     <string name="backup_password_hint">পাসওয়ার্ড</string>
     <string name="backup_password_prompt_title">পাসওয়ার্ড লিখুন</string>
     <string name="backup_password_wrong">পাসওয়ার্ড এই ফাইল ডিক্রিপ্ট করতে পারেনি। আবার চেষ্টা করুন।</string>
-    <string name="backup_password_too_short">পাসওয়ার্ড অন্তত %1$d অক্ষরের হতে হবে</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">পাসওয়ার্ড অন্তত %1$d অক্ষরের হতে হবে</item>
+        <item quantity="other">পাসওয়ার্ড অন্তত %1$d অক্ষরের হতে হবে</item>
+    </plurals>
     <string name="backup_password_show">পাসওয়ার্ড দেখান</string>
     <string name="backup_password_hide">পাসওয়ার্ড লুকান</string>
     <string name="picker_active_chip">সক্রিয়</string>
@@ -142,6 +145,7 @@
     <string name="fee_inactive_marker">নিষ্ক্রিয়</string>
     <string name="fee_untitled">শিরোনামহীন</string>
     <string name="language_he">হিব্রু</string>
+    <string name="language_ml">মালয়ালম</string>
     <string name="dynamic_color_title">ওয়ালপেপারের রং</string>
     <string name="dynamic_color_summary">ওয়ালপেপারের রং দিয়ে অ্যাপ রাঙান (Material You)</string>
     <string name="provider_group_free">বিনামূল্যে</string>

@@ -68,6 +68,7 @@
     <string name="language_is">Исландский</string>
     <string name="language_it">Итальянский</string>
     <string name="language_he">Иврит</string>
+    <string name="language_ml">Малаялам</string>
     <string name="language_nb">Норвежский</string>
     <string name="language_nl">Нидерландский</string>
     <string name="language_pl">Польский</string>
@@ -115,7 +116,12 @@
     <string name="backup_password_hint">Пароль</string>
     <string name="backup_password_prompt_title">Введите пароль</string>
     <string name="backup_password_wrong">Пароль не расшифровал файл. Попробуйте ещё раз.</string>
-    <string name="backup_password_too_short">Пароль должен содержать не менее %1$d символов</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Пароль должен содержать не менее %1$d символа</item>
+        <item quantity="few">Пароль должен содержать не менее %1$d символов</item>
+        <item quantity="many">Пароль должен содержать не менее %1$d символов</item>
+        <item quantity="other">Пароль должен содержать не менее %1$d символа</item>
+    </plurals>
     <string name="backup_password_show">Показать пароль</string>
     <string name="backup_password_hide">Скрыть пароль</string>
     <string name="picker_active_chip">Активно</string>

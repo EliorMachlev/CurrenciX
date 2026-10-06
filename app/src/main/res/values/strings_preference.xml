@@ -68,7 +68,10 @@
     <string name="backup_password_hint">Password</string>
     <string name="backup_password_prompt_title">Enter password</string>
     <string name="backup_password_wrong">Password didn\'t decrypt this file. Try again.</string>
-    <string name="backup_password_too_short">Password must be at least %1$d characters</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Password must be at least %1$d character</item>
+        <item quantity="other">Password must be at least %1$d characters</item>
+    </plurals>
     <string name="backup_password_show">Show password</string>
     <string name="backup_password_hide">Hide password</string>
     <!-- Trails the currently-selected option in a picker sheet (data provider, theme, keyboard, etc.). -->
@@ -114,6 +117,7 @@
     <string name="language_is">Icelandic</string>
     <string name="language_it">Italian</string>
     <string name="language_he">Hebrew</string>
+    <string name="language_ml">Malayalam</string>
     <string name="language_nb">Norwegian</string>
     <string name="language_nl">Dutch</string>
     <string name="language_pl">Polish</string>
@@ -122,7 +126,7 @@
     <string name="language_sv">Swedish</string>
     <string name="language_tr">Turkish</string>
     <string name="language_uk">Ukrainian</string>
-    <string name="language_vi">Vietnames</string>
+    <string name="language_vi">Vietnamese</string>
     <string name="language_zh_CN">Chinese (Simplified)</string>
     <string name="language_zh_TW">Chinese (Traditional)</string>
     <!-- api -->

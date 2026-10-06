@@ -68,6 +68,7 @@
     <string name="language_is">Islandzki</string>
     <string name="language_it">Włoski</string>
     <string name="language_he">Hebrajski</string>
+    <string name="language_ml">Malajalam</string>
     <string name="language_nb">Norweski</string>
     <string name="language_nl">Holenderski</string>
     <string name="language_pl">Polski</string>
@@ -112,7 +113,12 @@
     <string name="backup_password_hint">Hasło</string>
     <string name="backup_password_prompt_title">Wpisz hasło</string>
     <string name="backup_password_wrong">Hasło nie odszyfrowało tego pliku. Spróbuj ponownie.</string>
-    <string name="backup_password_too_short">Hasło musi mieć co najmniej %1$d znaków</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Hasło musi mieć co najmniej %1$d znak</item>
+        <item quantity="few">Hasło musi mieć co najmniej %1$d znaki</item>
+        <item quantity="many">Hasło musi mieć co najmniej %1$d znaków</item>
+        <item quantity="other">Hasło musi mieć co najmniej %1$d znaku</item>
+    </plurals>
     <string name="backup_password_show">Pokaż hasło</string>
     <string name="backup_password_hide">Ukryj hasło</string>
     <string name="picker_active_chip">Aktywne</string>

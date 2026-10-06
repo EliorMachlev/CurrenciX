@@ -68,6 +68,7 @@
     <string name="language_is">ایسلندی</string>
     <string name="language_it">ایتالیایی</string>
     <string name="language_he">عبری</string>
+    <string name="language_ml">مالایالام</string>
     <string name="language_nb">نروژی</string>
     <string name="language_nl">هلندی</string>
     <string name="language_pl">لهستانی</string>
@@ -115,7 +116,10 @@
     <string name="backup_password_hint">گذرواژه</string>
     <string name="backup_password_prompt_title">گذرواژه را وارد کنید</string>
     <string name="backup_password_wrong">گذرواژه نتوانست این فایل را رمزگشایی کند. دوباره تلاش کنید.</string>
-    <string name="backup_password_too_short">گذرواژه باید دست‌کم %1$d نویسه باشد</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">گذرواژه باید دست‌کم %1$d نویسه باشد</item>
+        <item quantity="other">گذرواژه باید دست‌کم %1$d نویسه باشد</item>
+    </plurals>
     <string name="backup_password_show">نمایش گذرواژه</string>
     <string name="backup_password_hide">پنهان کردن گذرواژه</string>
     <string name="picker_active_chip">فعال</string>

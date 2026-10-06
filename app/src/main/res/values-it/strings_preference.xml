@@ -68,6 +68,7 @@
     <string name="language_is">Islandese</string>
     <string name="language_it">Italiano</string>
     <string name="language_he">Ebraico</string>
+    <string name="language_ml">Malayalam</string>
     <string name="language_nb">Norvegese</string>
     <string name="language_nl">Olandese</string>
     <string name="language_pl">Polacco</string>
@@ -115,7 +116,11 @@
     <string name="backup_password_hint">Password</string>
     <string name="backup_password_prompt_title">Inserisci la password</string>
     <string name="backup_password_wrong">La password non ha decifrato questo file. Riprova.</string>
-    <string name="backup_password_too_short">La password deve avere almeno %1$d caratteri</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">La password deve avere almeno %1$d carattere</item>
+        <item quantity="many">La password deve avere almeno %1$d di caratteri</item>
+        <item quantity="other">La password deve avere almeno %1$d caratteri</item>
+    </plurals>
     <string name="backup_password_show">Mostra password</string>
     <string name="backup_password_hide">Nascondi password</string>
     <string name="picker_active_chip">Attivo</string>

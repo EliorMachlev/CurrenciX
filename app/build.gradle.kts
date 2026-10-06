@@ -139,6 +139,14 @@ android {
         }
     }
 
+    // The per-app language list the system shows is generated from the
+    // res/values-* folders, so it can't fall out of step with the
+    // translations that exist. res/resources.properties names the locale
+    // the unqualified resources are written in.
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildFeatures {
         buildConfig = true
         compose = true

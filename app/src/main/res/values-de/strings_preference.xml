@@ -68,6 +68,7 @@
     <string name="language_is">Isländisch</string>
     <string name="language_it">Italienisch</string>
     <string name="language_he">Hebräisch</string>
+    <string name="language_ml">Malayalam</string>
     <string name="language_nb">Norwegisch</string>
     <string name="language_nl">Niederländisch</string>
     <string name="language_pl">Polnisch</string>
@@ -115,7 +116,10 @@
     <string name="backup_password_hint">Passwort</string>
     <string name="backup_password_prompt_title">Passwort eingeben</string>
     <string name="backup_password_wrong">Mit dem Passwort ließ sich die Datei nicht entschlüsseln. Versuche es erneut.</string>
-    <string name="backup_password_too_short">Das Passwort muss mindestens %1$d Zeichen lang sein</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Das Passwort muss mindestens %1$d Zeichen lang sein</item>
+        <item quantity="other">Das Passwort muss mindestens %1$d Zeichen lang sein</item>
+    </plurals>
     <string name="backup_password_show">Passwort anzeigen</string>
     <string name="backup_password_hide">Passwort verbergen</string>
     <string name="picker_active_chip">Aktiv</string>

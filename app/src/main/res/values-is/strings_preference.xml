@@ -68,6 +68,7 @@
     <string name="language_is">Íslenska</string>
     <string name="language_it">Ítalska</string>
     <string name="language_he">Hebreska</string>
+    <string name="language_ml">Malajalam</string>
     <string name="language_nb">Norska</string>
     <string name="language_nl">Hollenska</string>
     <string name="language_pl">Pólska</string>
@@ -113,7 +114,10 @@
     <string name="backup_password_hint">Lykilorð</string>
     <string name="backup_password_prompt_title">Sláðu inn lykilorð</string>
     <string name="backup_password_wrong">Lykilorðið afkóðaði ekki þessa skrá. Reyndu aftur.</string>
-    <string name="backup_password_too_short">Lykilorð verður að vera minnst %1$d stafir</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Lykilorð verður að vera minnst %1$d stafur</item>
+        <item quantity="other">Lykilorð verður að vera minnst %1$d stafir</item>
+    </plurals>
     <string name="backup_password_show">Sýna lykilorð</string>
     <string name="backup_password_hide">Fela lykilorð</string>
     <string name="picker_active_chip">Virkt</string>

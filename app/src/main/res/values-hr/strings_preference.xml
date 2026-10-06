@@ -68,6 +68,7 @@
     <string name="language_is">islandski</string>
     <string name="language_it">talijanski</string>
     <string name="language_he">hebrejski</string>
+    <string name="language_ml">Malajalamski</string>
     <string name="language_nb">norveški</string>
     <string name="language_nl">nizozemski</string>
     <string name="language_pl">poljski</string>
@@ -115,7 +116,11 @@
     <string name="backup_password_hint">Lozinka</string>
     <string name="backup_password_prompt_title">Unesi lozinku</string>
     <string name="backup_password_wrong">Lozinka nije dešifrirala ovu datoteku. Pokušaj ponovno.</string>
-    <string name="backup_password_too_short">Lozinka mora imati najmanje %1$d znakova</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Lozinka mora imati najmanje %1$d znak</item>
+        <item quantity="few">Lozinka mora imati najmanje %1$d znaka</item>
+        <item quantity="other">Lozinka mora imati najmanje %1$d znakova</item>
+    </plurals>
     <string name="backup_password_show">Prikaži lozinku</string>
     <string name="backup_password_hide">Sakrij lozinku</string>
     <string name="picker_active_chip">Aktivno</string>

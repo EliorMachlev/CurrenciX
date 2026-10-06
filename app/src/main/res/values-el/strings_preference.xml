@@ -68,6 +68,7 @@
     <string name="language_is">Ισλανδικά</string>
     <string name="language_it">Ιταλικά</string>
     <string name="language_he">Εβραϊκά</string>
+    <string name="language_ml">Μαλαγιαλάμ</string>
     <string name="language_nb">Νορβηγικά</string>
     <string name="language_nl">Ολλανδικά</string>
     <string name="language_pl">Πολωνικά</string>
@@ -115,7 +116,10 @@
     <string name="backup_password_hint">Κωδικός</string>
     <string name="backup_password_prompt_title">Εισαγωγή κωδικού</string>
     <string name="backup_password_wrong">Ο κωδικός δεν αποκρυπτογράφησε το αρχείο. Δοκίμασε ξανά.</string>
-    <string name="backup_password_too_short">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρες</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρα</item>
+        <item quantity="other">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρες</item>
+    </plurals>
     <string name="backup_password_show">Εμφάνιση κωδικού</string>
     <string name="backup_password_hide">Απόκρυψη κωδικού</string>
     <string name="picker_active_chip">Ενεργό</string>

@@ -85,7 +85,10 @@
     <string name="backup_password_hint">Jelszó</string>
     <string name="backup_password_prompt_title">Add meg a jelszót</string>
     <string name="backup_password_wrong">A jelszóval nem sikerült visszafejteni a fájlt. Próbáld újra.</string>
-    <string name="backup_password_too_short">A jelszónak legalább %1$d karakterből kell állnia</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">A jelszónak legalább %1$d karakterből kell állnia</item>
+        <item quantity="other">A jelszónak legalább %1$d karakterből kell állnia</item>
+    </plurals>
     <string name="backup_password_show">Jelszó megjelenítése</string>
     <string name="backup_password_hide">Jelszó elrejtése</string>
     <string name="picker_active_chip">Aktív</string>
@@ -127,6 +130,7 @@
     <string name="language_es">Spanyol</string>
     <string name="language_fr">Francia</string>
     <string name="language_he">Héber</string>
+    <string name="language_ml">Malajálam</string>
     <string name="language_hr">Horvát</string>
     <string name="language_hu">Magyar</string>
     <string name="language_id">Indonéz</string>

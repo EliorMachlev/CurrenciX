@@ -68,6 +68,7 @@
     <string name="language_is">İzlandaca</string>
     <string name="language_it">İtalyanca</string>
     <string name="language_he">İbranice</string>
+    <string name="language_ml">Malayalamca</string>
     <string name="language_nb">Norveççe</string>
     <string name="language_nl">Flemenkçe</string>
     <string name="language_pl">Lehçe</string>
@@ -115,7 +116,10 @@
     <string name="backup_password_hint">Parola</string>
     <string name="backup_password_prompt_title">Parolayı gir</string>
     <string name="backup_password_wrong">Parola dosyanın şifresini çözemedi. Tekrar dene.</string>
-    <string name="backup_password_too_short">Parola en az %1$d karakter olmalı</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">Parola en az %1$d karakter olmalı</item>
+        <item quantity="other">Parola en az %1$d karakter olmalı</item>
+    </plurals>
     <string name="backup_password_show">Parolayı göster</string>
     <string name="backup_password_hide">Parolayı gizle</string>
     <string name="picker_active_chip">Etkin</string>
