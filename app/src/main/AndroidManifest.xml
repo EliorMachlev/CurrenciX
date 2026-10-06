@@ -43,12 +43,13 @@
             </intent-filter>
         </activity>
 
-        <!-- The widget's pair, opened from its reconfigure action. Not launchable
-             on its own. -->
+        <!-- The widget's pair, opened from its reconfigure action. Not exported:
+             a launcher opens it through AppWidgetHost, where the system starts
+             it on the launcher's behalf, so no other app needs to reach it. -->
         <activity
             android:name=".view.widget.WidgetConfigureActivity"
             android:excludeFromRecents="true"
-            android:exported="true"
+            android:exported="false"
             android:taskAffinity=""
             android:theme="@style/AppTheme.Translucent">
             <intent-filter>

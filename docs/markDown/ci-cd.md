@@ -63,7 +63,7 @@ Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` 
 ### Semgrep
 - Rule sets: `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`
 - Every finding is printed in the job log and uploaded as SARIF to the GitHub Security tab; none is filtered (`nosemgrep`, excluded rules and `|| true` are all banned — see [contributing.md](contributing.md#no-suppressions-no-cosmetic-workarounds)).
-- A finding of `ERROR` severity fails the job. `WARNING` / `INFO` findings are review prompts and don't block: the three standing ones are `exported_activity` on the launcher, the text-selection ("Convert currency") activity and the widget's configure activity, each of which Android can only start if it is exported.
+- A finding of `ERROR` severity fails the job. `WARNING` / `INFO` findings are review prompts and don't block: the two standing ones are `exported_activity` on the launcher and on the text-selection ("Convert currency") activity, which other apps start directly and so can only reach if they are exported. (The widget's configure activity is not exported: launchers open it through `AppWidgetHost`, where the system starts it for them.)
 
 ### OWASP Dependency Check
 - CVSS threshold: 7 (high+)
