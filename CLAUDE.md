@@ -10,6 +10,7 @@ Other reference docs are in [`docs/markDown/`](docs/markDown/):
 - [`api-providers.md`](docs/markDown/api-providers.md) — exchange rate providers
 - [`ci-cd.md`](docs/markDown/ci-cd.md) — CI/CD pipelines
 - [`security.md`](docs/markDown/security.md) — security posture
+- [`exceptions.md`](docs/markDown/exceptions.md) — the only suppressions allowed, and why
 
 Follow the guidance in those files. If a docs update is needed, edit the relevant `.md` there.
 
@@ -31,7 +32,7 @@ Full rule: [`contributing.md`](docs/markDown/contributing.md#no-suppressions-no-
 - **Never add a suppression of any kind**: `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, a detekt or lint baseline entry, a disabled rule in a config file, `-dontwarn`, or a warning-silencing compiler flag.
 - **Never write a workaround that hides a real issue just to quiet the compiler or an analyzer** (a wrapper, cast or reflection around a deprecated call, a rename or restructure done only so a rule stops matching, excluding a file from a check). If the problem is still there, the warning must be too.
 - **Fix the cause instead.** If there is no real fix yet, leave the warning visible and tell the user what it is and why it can't be fixed now. Do not hide it and do not present a hidden warning as fixed.
-- The tree holds no suppressions and no baselines, and `NoSuppressionsTest` fails the unit tests if one appears. Keep it that way.
+- The only suppressions in the tree are the exceptions recorded in [`exceptions.md`](docs/markDown/exceptions.md), and `NoSuppressionsTest` fails the unit tests on any other. Never add an exception on your own: it is the user's decision. If you think one is warranted, say what the finding is and why it has no real fix, and wait for the answer.
 
 ## Import ordering
 

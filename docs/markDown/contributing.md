@@ -59,14 +59,14 @@ Warnings and findings get fixed, not hidden.
 - **Fix the cause.** Migrate off the deprecated API, split the long function, make the parameter list a type, remove the unused code.
 - **When no real fix exists yet,** leave the warning visible and say so in the PR. A visible warning is accurate; a hidden one is not.
 
-The tree holds none: no suppression annotation or comment, no detekt or lint baseline, no `-dontwarn`. `NoSuppressionsTest` fails the unit tests if one is added.
+**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds two Semgrep findings, and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
 
 ### Pull Request Checklist
 
 - [ ] `./gradlew check assembleDebug` passes locally (includes the Konsist architecture tests)
 - [ ] `./gradlew detekt` reports no findings
 - [ ] `./gradlew spotlessCheck` is clean
-- [ ] No suppressions or baseline entries, and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))
+- [ ] No suppressions or baseline entries beyond those in [exceptions.md](exceptions.md), and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))
 - [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter is required, because Jazzer's instrumentation breaks Robolectric if the fuzz tests run in the same task.
 - [ ] If adding a dependency: check F-Droid licence compatibility
 
