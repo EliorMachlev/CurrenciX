@@ -30,7 +30,7 @@ Convert between 30–160+ world currencies using live exchange rates fetched fro
 | Background rate refresh | Optional, off by default — periodic refresh via WorkManager with a provider-aware TTL |
 | Home-screen widget | Glance-based widget showing a chosen currency pair's rate |
 | DNS prewarm | Selected provider's host is resolved at app startup on a background thread |
-| Internationalization | Inherited translations for 20+ languages from the upstream Currencies project |
+| Internationalization | 31 locales, every string translated in each (lint enforces it); most inherited from the upstream Currencies project |
 
 ## Distribution
 

@@ -32,8 +32,7 @@ jobs:
 
       # Enforced: no continue-on-error. Version is pinned in the root
       # build.gradle.kts (io.gitlab.arturbosch.detekt) and config lives in
-      # config/detekt/detekt.yml. Pre-existing violations are swallowed by
-      # config/detekt/baseline.xml so enforcement is forward-only.
+      # config/detekt/detekt.yml. There is no baseline: every finding fails.
       - name: Run detekt
         run: ./gradlew detekt
 

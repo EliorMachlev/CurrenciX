@@ -49,7 +49,8 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── adapter/                # Moshi / XML adapters per provider
 │   └── provider/               # HTTP implementations per provider (api/ holds the Retrofit interfaces)
 ├── repository/
-│   ├── Database.kt             # Typed DataStore Preferences wrapper (5 namespaces)
+│   ├── Database.kt             # Hands out the stores below; holds no logic of its own
+│   ├── RateStore.kt … CartStore.kt  # One typed DataStore wrapper per concern (8 stores over 5 namespaces)
 │   ├── ExchangeRatesRepository.kt
 │   ├── ExchangeRatesService.kt # Singleton, coroutine-based fetch orchestration
 │   ├── BackupManager.kt        # Encrypted export/import — see security.md
@@ -64,16 +65,13 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── cart/                   # Bill-splitting calculator route
 │   └── compose/                # Shared Compose foundation: theme (incl. Motion tokens), top bars (ScreenScaffold), CurrencyPill, UiTestTags, drag-reorder, dialogs, onboarding
 ├── viewmodel/
-│   ├── main/MainViewModel.kt   # 778 lines — core conversion + calculator logic
+│   ├── main/MainViewModel.kt   # Conversion pipeline: pair, rates, fees → result. Exposes `input` (CalculatorInputState), which the keypad drives directly
 │   ├── preference/
 │   ├── timeline/
 │   └── cart/                   # CartViewModel, CartMath, CartRatesCache
 └── util/                       # Date, math, text, LiveData helpers, RetrofitProvider, HttpClientProvider
 
 helpers/src/main/kotlin/de/salomax/helpers/
-├── changelog/
-│   ├── FastlaneToResource.kt   # Fastlane changelogs → Android XML resources
-│   └── ResourceToFastlane.kt   # Reverse: Android XML → Fastlane format
 └── currencies/
     └── CurrencyFetcher.kt      # Generates localized currency-name XML resources
 ```
@@ -86,7 +84,22 @@ helpers/src/main/kotlin/de/salomax/helpers/
 
 ### DataStore Preferences as the Persistence Layer
 
-The app has no SQLite database. `SharedPreferences` has been fully migrated to **Jetpack DataStore Preferences**: all data (cached rates, starred currencies, user state, preferences, and the Cart's current + saved carts as JSON blobs) lives in 5 namespaced `DataStore<Preferences>` instances (`PersistenceKey`: `rates`, `timelines`, `last_state`, `starred_currencies`, `prefs`), managed by `Database.kt` and `repository/persistence/`. File names deliberately match the old SharedPreferences basenames so that exported backups round-trip across the migration. `PrefStore.mappedLiveData { … }` / `mappedFlow { … }` bridge each namespace's `Flow<Preferences>` into `LiveData<T>` / `Flow<T>` for observers, and `Database.getXxx()`-style synchronous accessors use `DataStore.snapshot()` where a blocking read is unavoidable (e.g. `CurrenciesApplication`'s startup DNS prewarm).
+The app has no SQLite database. `SharedPreferences` has been fully migrated to **Jetpack DataStore Preferences**: all data (cached rates, starred currencies, user state, preferences, and the Cart's current + saved carts as JSON blobs) lives in 5 namespaced `DataStore<Preferences>` instances (`PersistenceKey`: `rates`, `timelines`, `last_state`, `starred_currencies`, `prefs`), managed by the stores in `repository/` and by `repository/persistence/`. File names deliberately match the old SharedPreferences basenames so that exported backups round-trip across the migration. `PrefStore.mappedLiveData { … }` / `mappedFlow { … }` bridge each namespace's `Flow<Preferences>` into `LiveData<T>` / `Flow<T>` for observers, and the stores' `…Blocking()` accessors use `DataStore.snapshot()` where a blocking read is unavoidable (e.g. `CurrenciesApplication`'s startup DNS prewarm).
+
+`Database` is a handle on eight stores, each owning one concern, so no class grows past what one screen of code can hold:
+
+| Property | Store | Holds |
+|---|---|---|
+| `rates` | `RateStore` | The latest rates, and each pair's cached timeline |
+| `lastState` | `LastStateStore` | The converter's pair, the recent pairs, a pinned historical date |
+| `stars` | `StarStore` | Starred currencies in the user's order; the starred-only filter |
+| `providers` | `ProviderSettings` | Main and fallback provider, the Open Exchange Rates key, auto-refresh |
+| `fees` | `FeeStore` | Saved fees and the active exchange / bank fee |
+| `display` | `DisplaySettings` | Theme, decimals, date format, keypad, haptics, onboarding gate |
+| `chart` | `ChartSettings` | What the timeline chart draws |
+| `carts` | `CartStore` | The working cart and the saved ones |
+
+Callers reach a value through its store: `Database(context).display.getTheme()`.
 
 The one exception to "DataStore only": Cart JSON can be exported to / imported from an external file via the Storage Access Framework (`CartFileIo.kt`), but that's a one-off user-initiated file transfer, not an ongoing persistence layer.
 
@@ -249,13 +262,13 @@ Behavior preserved: dashed reference line at the last value, scrub-to-past-date 
 
 ### Graph options: user-tunable chart chrome
 
-Four `LiveData<Boolean>` streams (backed by `PrefStore.mappedLiveData`) — grid, X-axis labels, Y-axis labels, and highlight-extremes — flow from `Database` through `TimelineRoute` into `TimelineChart`. All default to `true` so first-run appearance is unchanged. Inside the composable each toggle swaps a Vico component for `null` (e.g. `guideline = if (showGrid) rememberAxisGuidelineComponent() else null`); Vico treats `null` as "don't draw," so no branching in the layer definitions is needed.
+Four `LiveData<Boolean>` streams (backed by `PrefStore.mappedLiveData`) — grid, X-axis labels, Y-axis labels, and highlight-extremes — flow from `Database.chart` (`ChartSettings`) through `TimelineRoute` into `TimelineChart`. All default to `true` so first-run appearance is unchanged. Inside the composable each toggle swaps a Vico component for `null` (e.g. `guideline = if (showGrid) rememberAxisGuidelineComponent() else null`); Vico treats `null` as "don't draw," so no branching in the layer definitions is needed.
 
 ### Application subclass prewarms DNS for the selected provider
 
 `CurrenciesApplication` is registered via `android:name=".CurrenciesApplication"` on the manifest's `<application>` tag. Its only responsibility today is to resolve the currently-selected `ApiProvider`'s host on a background daemon thread during `onCreate()`, so the first exchange-rate request doesn't pay for DNS.
 
-The preference read (`Database(this).getApiProvider()`) and the `InetAddress.getAllByName(host)` call both run **inside** the background thread — DataStore's synchronous snapshot read and DNS resolution are both blocking I/O and neither belongs on the main thread during app startup. Failures (offline, DNS outage) are swallowed with `runCatching`; this is a best-effort warm-up, not a health check.
+The preference read (`Database(this).providers.getApiProvider()`) and the `InetAddress.getAllByName(host)` call both run **inside** the background thread — DataStore's synchronous snapshot read and DNS resolution are both blocking I/O and neither belongs on the main thread during app startup. Failures (offline, DNS outage) are swallowed with `runCatching`; this is a best-effort warm-up, not a health check.
 
 `ApiProvider.getHost()` (a narrow accessor over the enum's `private implementation.baseUrl`) exposes only the hostname to callers, so the `Application` never touches the full base URL.
 
@@ -280,3 +293,5 @@ Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<ap
 | Distribution | F-Droid | Google Play |
 
 Source sets under `app/src/fdroid/` and `app/src/play/` override or add flavor-specific code without touching the shared `main` source set.
+
+Where a build type or flavor decides whether something exists at all, `main` asks for it through a same-named file in each source set that hands back a nullable hook: `httpInspector` (Chucker in debug, `null` in release), `debugPreferenceRows` (the debug-only Settings rows), `rateApp` (the store rating, Play only) and `releaseNotesUrl()` / `plantConsoleLogging()`. `main` never branches on `BuildConfig.DEBUG` or `FLAVOR`, so no variant compiles a branch it can't take.

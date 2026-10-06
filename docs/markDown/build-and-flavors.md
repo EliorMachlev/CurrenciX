@@ -87,9 +87,7 @@ Retrofit is layered on the shared OkHttp client and serves every fixed-shape JSO
 
 ### Calculator
 
-| Dependency | Version | Note |
-|---|---|---|
-| `com.ezylang:EvalEx` | 3.7.0 | Apache-2.0, BigDecimal-native. Replaced mXparser (v5+ dual license isn't F-Droid compatible). |
+No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent, so `util/Arithmetic.kt` evaluates them in about a hundred lines of `BigDecimal` recursive descent (68 significant digits, as its predecessor EvalEx used). EvalEx was dropped because it is built with Lombok, whose `lombok.Generated` marker R8 could only get past with a `-dontwarn` rule; before it came mXparser, whose v5+ dual license isn't F-Droid compatible.
 
 ### Charts
 
@@ -109,6 +107,7 @@ Retrofit is layered on the shared OkHttp client and serves every fixed-shape JSO
 | Dependency | Version | Note |
 |---|---|---|
 | `org.bouncycastle:bcprov-jdk18on` | 1.85.2 | Pure-Java Argon2id for password-based backup encryption — see [security.md](security.md) |
+| `com.google.crypto.tink:tink-android` | 1.23.0 | AES-256-GCM for the backup's payload (`BackupCrypto`) — see [security.md](security.md) |
 | `com.jakewharton.timber:timber` | 5.0.1 | Local-only rotating file log, no remote crash/analytics sink |
 | `com.github.chuckerteam.chucker:library` (debug) / `library-no-op` (release) | 4.3.1 | In-app HTTP inspector, debug-only via source-set split |
 
@@ -118,7 +117,7 @@ Retrofit is layered on the shared OkHttp client and serves every fixed-shape JSO
 |---|---|---|
 | `com.squareup.leakcanary:leakcanary-android` | 2.14 | Debug-only leak detection, auto-installs via its own `ContentProvider` |
 | `androidx.metrics:metrics-performance` | 1.0.0 | JankStats — per-Activity jank logging via Timber, debug-only |
-| `com.airbnb.android:showkase` (+ KSP processor) | 1.0.5 | Browsable `@Preview` gallery, debug-only |
+| `com.airbnb.android:showkase` (+ KSP processor) | 1.0.5 | Browsable `@Preview` gallery, debug-only. Opened from **Settings → Component gallery** (a row only debug builds have), not from a launcher icon of its own |
 
 ### Testing
 

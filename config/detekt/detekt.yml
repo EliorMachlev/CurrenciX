@@ -71,10 +71,9 @@ complexity:
     ignoreSimpleWhenEntries: true
   TooManyFunctions:
     active: true
-    # Activities, ViewModels, adapters and the SharedPreferences-backed
-    # Database legitimately expose many small public functions that map 1:1
-    # to UI actions or persisted settings. Splitting them would fragment
-    # cohesive units.
+    # Forty non-private functions is where a class or file is doing several
+    # jobs: split it by concern (Database is a handle on eight stores for
+    # this reason). Composables count like any other function.
     thresholdInFiles: 40
     thresholdInClasses: 40
     thresholdInInterfaces: 20
@@ -82,9 +81,6 @@ complexity:
     thresholdInEnums: 20
     ignorePrivate: true
     ignoreOverridden: true
-    ignoreAnnotatedFunctions:
-      - 'Composable'
-      - 'Preview'
 
 exceptions:
   active: true

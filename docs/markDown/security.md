@@ -41,7 +41,7 @@ The app requests **no storage permission** — the SAF picker returns a scoped `
 At export time the user may tick **Encrypt with a password**. When set:
 
 - Password → 256-bit AES key via **Argon2id v1.3** (`m=32 MiB, t=3, p=1`) with a random 32-byte salt. Argon2id is memory-hard, which neutralises the √N speedup a quantum attacker gets from Grover's algorithm — parallelism gains don't help when memory bandwidth dominates.
-- The `namespaces` block is encrypted with **AES-256-GCM** using a random 12-byte IV and 128-bit auth tag. AES-256 is itself quantum-resistant: Grover reduces effective security to ~128 bits, which remains out of reach.
+- The `namespaces` block is encrypted with **AES-256-GCM** (Tink's `AesGcmJce`, in `BackupCrypto`) using a random 12-byte IV and 128-bit auth tag. AES-256 is itself quantum-resistant: Grover reduces effective security to ~128 bits, which remains out of reach.
 - KDF, cipher, and Argon2 cost parameters (`memoryKib`, `iterations`, `parallelism`) are recorded in the wrapper JSON so future readers can reject unknown algorithms instead of silently mis-decrypting.
 - Passwords are held as `CharArray` and zeroed by both UI and manager after use; UTF-8 encoding for Argon2 goes through NIO to avoid a `String` allocation that would linger in the pool.
 

@@ -26,7 +26,7 @@ Runs on both PRs and pushes to `master`. Two jobs:
 
 - **`build`** — matrix over `Fdroid` and `Play` flavors. Steps:
   - `spotlessCheck` — ktlint via Spotless (see [Code Style](contributing.md#code-style))
-  - `lint<Flavor>Debug` — Android Lint (missing translations suppressed)
+  - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
   - `test<Flavor>DebugUnitTest` — JUnit unit tests
   - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
 - **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and uploads it as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
@@ -44,20 +44,26 @@ Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` 
 
 ### Detekt
 - Version: 1.23.8 (pinned in root `build.gradle.kts` via the `io.gitlab.arturbosch.detekt` Gradle plugin)
-- Config: `config/detekt/detekt.yml` (tuned to enforce the `CLAUDE.md` code-shape defaults; Compose idioms whitelisted)
-- Baseline: `config/detekt/baseline-<module>.xml` (one per subproject) — pre-existing violations are swallowed so enforcement is forward-only. Regenerate with `./gradlew detektBaseline`.
-- Inputs: `app/src`, `helpers/src` (`src/**/*.kt` per subproject)
+- Config: `config/detekt/detekt.yml` (tuned to enforce the `CLAUDE.md` code-shape defaults). The size limits apply to `@Composable` functions like any other: one that needs six or more arguments takes them as a state type and an actions type.
+- No baseline: every finding counts, in old code and new.
+- Inputs: `app/src`, `helpers/src` (`src/**/*.kt` per subproject) — tests included
 - JVM target: 21
-- Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); a new finding above the baseline fails the build.
+- Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); any finding fails the build.
 - Output: SARIF uploaded to GitHub Security tab (per-module category) + HTML/XML artifact retained 14 days
 
 ### Qodana
 - Image: `qodana-jvm-community:2025.1`
+- Scans production and test sources alike (only build output is excluded)
 - Posts inline PR comments on findings
 - SARIF uploaded to GitHub Security tab
 
 ### CodeQL
 - Language scope: `actions` (YAML workflows only — Kotlin delegated to Qodana)
+
+### Semgrep
+- Rule sets: `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`
+- Every finding is printed in the job log and uploaded as SARIF to the GitHub Security tab; none is filtered (`nosemgrep`, excluded rules and `|| true` are all banned — see [contributing.md](contributing.md#no-suppressions-no-cosmetic-workarounds)).
+- A finding of `ERROR` severity fails the job. `WARNING` / `INFO` findings are review prompts and don't block: the three standing ones are `exported_activity` on the launcher, the text-selection ("Convert currency") activity and the widget's configure activity, each of which Android can only start if it is exported.
 
 ### OWASP Dependency Check
 - CVSS threshold: 7 (high+)
