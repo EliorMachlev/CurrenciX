@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -62,12 +63,16 @@ fun Wordmark(
     // × is fully drawn immediately on config change / navigation returns.
     val xScale = remember(startReveal) { Animatable(if (startReveal) 0f else 1f) }
     val firstFrameCallback by rememberUpdatedState(onFirstFrame)
-    LaunchedEffect(startReveal) {
-        // Notify hosts we're on-screen before kicking off any animation —
-        // splash hand-off wants to release the keep-on-screen guard the
-        // moment the composable is mounted, so the platform's splash exit
-        // animation can overlap the reveal's opening frames.
+    // Tell the host we're mounted before any animation starts: the splash
+    // hand-off releases its keep-on-screen guard on this, so the platform's
+    // exit animation can overlap the reveal's opening frames. Run as the
+    // composition is applied rather than from a coroutine — the splash holds
+    // every draw until it hears this, so it must not wait on a dispatcher.
+    DisposableEffect(Unit) {
         firstFrameCallback()
+        onDispose {}
+    }
+    LaunchedEffect(startReveal) {
         if (startReveal) {
             xScale.animateTo(
                 targetValue = 1f,

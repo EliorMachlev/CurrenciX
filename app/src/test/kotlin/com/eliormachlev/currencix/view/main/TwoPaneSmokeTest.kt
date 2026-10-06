@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.view.main
 
 import android.app.Application
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -26,11 +26,6 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], application = Application::class, qualifiers = "w1100dp-h760dp-land-xhdpi")
 class TwoPaneSmokeTest {
-    // Still the deprecated rule, and the compiler says so. Under its v2
-    // replacement (which queues coroutines instead of running them eagerly)
-    // launching the activity in the two-pane layout never goes idle: the test
-    // hangs inside ActivityScenario.launch. Unexplained so far, so this one
-    // test has not moved; every other compose test has.
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
     private fun string(id: Int) = ApplicationProvider.getApplicationContext<Application>().getString(id)
