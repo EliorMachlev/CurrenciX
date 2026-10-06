@@ -40,10 +40,12 @@ jobs:
         if: always()
         uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
         with:
-          # detekt writes one SARIF per subproject; merge by uploading each
-          # under its own category so the code-scanning UI keeps them apart.
+          # detekt writes one SARIF per subproject, each uploaded under its
+          # own category. The app's keeps the name master already has
+          # ("detekt"), so code scanning can tell which alerts a pull request
+          # introduces instead of reporting a missing configuration.
           sarif_file: app/build/reports/detekt/detekt.sarif
-          category: detekt-app
+          category: detekt
 
       - name: Upload helpers SARIF to code scanning
         if: always() && hashFiles('helpers/build/reports/detekt/detekt.sarif') != ''

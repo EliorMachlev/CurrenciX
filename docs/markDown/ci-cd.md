@@ -49,7 +49,7 @@ Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` 
 - Inputs: `app/src`, `helpers/src` (`src/**/*.kt` per subproject) — tests included
 - JVM target: 21
 - Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); any finding fails the build.
-- Output: SARIF uploaded to GitHub Security tab (per-module category) + HTML/XML artifact retained 14 days
+- Output: SARIF uploaded to GitHub Security tab (category `detekt` for the app, `detekt-helpers` for the helpers) + HTML/XML artifact retained 14 days
 
 ### Qodana
 - Image: `qodana-jvm-community:2025.1`
