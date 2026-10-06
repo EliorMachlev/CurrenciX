@@ -12,9 +12,6 @@
     <string name="api_bankRossii_descriptionShort">ഏകദേശം 44 വിനിമയ നിരക്കുകൾ\nഉറവിടം: റഷ്യയുടെ കേന്ദ്ര ബാങ്ക്</string>
     <string name="api_bankRossii_descriptionUpdateInterval">നിരക്കുകൾ ദിവസേന അപ്ഡേറ്റ് ചെയ്യുന്നു, <a href="https://cbr.ru/eng/other/holidays/">റഷ്യയിലെ പൊതു അവധി ദിവസങ്ങൾ</a> ഒഴികെ.</string>
 
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> യൂറോപ്യൻ കേന്ദ്ര ബാങ്ക് ഉൾപ്പെടെ വിവിധ സാമ്പത്തിക ഡാറ്റ ദാതാക്കളിൽ നിന്നും ബാങ്കുകളിൽ നിന്നും കറൻസി നിരക്കുകൾ ശേഖരിക്കുന്നു. എല്ലാ വിനിമയ നിരക്ക് ഡാറ്റയും മിഡ്‌പോയിന്റ് ഡാറ്റയായി നൽകപ്പെടുന്നു. Bid, Ask നിരക്കുകളുടെ ശരാശരി മീഡിയൻ കണക്കാക്കി മിഡ്‌പോയിന്റ് നിരക്കുകൾ നിർണയിക്കുന്നു.\n<b>ഏകദേശം 160 കറൻസികൾ ഉൾപ്പെടുന്നു.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">വിനിമയ നിരക്കുകൾ ഓരോ പ്രവൃത്തിദിനത്തിലും ഏകദേശം അർദ്ധരാത്രി UTC-ന് അപ്ഡേറ്റ് ചെയ്യുന്നു.</string>
-
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> താരതമ്യേന പുതിയ ഒരു സേവനമാണ്, ഇത് (Frankfurter.app പോലെ) യൂറോപ്യൻ കേന്ദ്ര ബാങ്ക് പ്രസിദ്ധീകരിക്കുന്ന റഫറൻസ് വിനിമയ (forex) നിരക്കുകൾ ട്രാക്ക് ചെയ്യുന്നു.\n<b>ഏകദേശം 30 കറൻസികൾ ഉൾപ്പെടുന്നു.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">നിരക്കുകൾ ഓരോ പ്രവൃത്തി ദിനത്തിലും അപ്ഡേറ്റ് ചെയ്യുന്നു.</string>
 

@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">para birimlerini değiştir</string>
     <string name="historical_rates_dialog_title">Geçmiş kurlar</string>
     <string name="historical_rates_dialog_toggle">Geçmiş bir tarihteki kur verilerini kullan. Her zaman en güncel verileri kullanmak istiyorsan devre dışı bırak.</string>
+    <string name="historical_rates_dialog_now">Şimdi</string>
     <string name="error">Hata: %s</string>
     <string name="error_generic">Bilinmeyen bir sorunla karşılaşıldı.</string>
     <string name="error_http">Sunucu HTTP %d ile yanıt verdi.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Sağlayıcıya ulaşılamıyor • %1$s tarihli kurlar</string>
     <string name="unreachable_banner_no_data">Sağlayıcıya ulaşılamıyor • Yeniden deneniyor</string>
     <string name="historical_banner">Geçmiş • %1$s tarihli kurlar</string>
+    <string name="fee_chip_label">%1$s ücret</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">En son kullandığınız veya seçtiğiniz döviz çifti için güncel kur ve 30 günlük eğilim.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Toplam: %1$s %2$s</string>
     <string name="cart_unsaved_title">Kaydedilmemiş değişiklikler</string>
     <string name="cart_unsaved_save">Kaydet</string>
+    <string name="cart_unsaved_save_desc">Mevcut kaydedilmiş sepetin üzerine bu değişiklikleri yazar.</string>
     <string name="cart_unsaved_save_as">Yeni olarak kaydet</string>
+    <string name="cart_unsaved_save_as_desc">Mevcut kaydedilmiş sepete dokunmaz, farklı bir adla bir kopya kaydeder.</string>
     <string name="cart_unsaved_discard">Değişiklikleri sil</string>
+    <string name="cart_unsaved_discard_desc">Son kaydedilen sürüme döner ve devam eder.</string>
     <string name="cart_unsaved_continue">Devam et</string>
+    <string name="cart_unsaved_continue_desc">Kaydedilmemiş değişikliklerle devam eder; daha sonra kaydedebilirsiniz.</string>
+    <string name="onboarding_skip">Atla</string>
+    <string name="onboarding_next">İleri</string>
+    <string name="onboarding_finish">Anladım</string>
+    <string name="onboarding_fee_title">Gerçek Maliyetteki ücretler</string>
+    <string name="onboarding_fee_body">Ek ücret veya indirim eklemek için buraya dokunun — bunlar hedef tarafa uygulanır, böylece gördüğünüz tutar gerçekte ödediğinizle aynı olur.</string>
+    <string name="onboarding_swap_title">Çifti ters çevir</string>
+    <string name="onboarding_swap_body">Kaynak ve hedef para birimini ters çevirmek için değiştirme düğmesine dokunun. Ücretleri açmak için düğmeye uzun basın.</string>
+    <string name="onboarding_autorefresh_title">Kurları otomatik güncelle</string>
+    <string name="onboarding_autorefresh_body">Kurlar, uygulamayı açtığınızda güncellenir. Açılışlar arasında da güncel kalmaları için arka planda güncellemeyi etkinleştirin.</string>
+    <string name="onboarding_autorefresh_enable">Şimdi etkinleştir</string>
     <string name="a11y_search_currencies">Para birimlerini ara</string>
     <string name="a11y_clear_search">Aramayı temizle</string>
     <string name="a11y_cart_item_name">Öğe adı</string>

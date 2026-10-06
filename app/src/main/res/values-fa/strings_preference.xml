@@ -24,9 +24,10 @@
     <string name="keyboard_title">صفحه‌کلید</string>
     <string name="keyboard_summary_expanded">کلیدهای میان‌بر بیشتری برای ورود سریع‌تر اضافه می‌کند.</string>
     <string name="decimal_places_title">دقت اعشار</string>
-    <string name="decimal_places_summary">تعداد ارقام اعشاری نمایش‌داده‌شده برای مقادیر تبدیل‌شده.</string>
     <string name="haptic_feedback_title">بازخورد لمسی</string>
     <string name="haptic_feedback_summary">لرزش هنگام فشردن کلید\nبر اساس تنظیمات سیستم</string>
+    <string name="auto_refresh_title">به‌روزرسانی خودکار نرخ‌ها</string>
+    <string name="auto_refresh_summary">به‌روزرسانی در پس‌زمینه با تناوب پیشنهادی ارائه‌دهنده</string>
     <string name="date_format_title">قالب تاریخ و زمان</string>
     <string name="category_appearance">ظاهر</string>
     <string name="system_default">پیش فرض سیستم</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">گزینه‌های نمودار</string>
     <string name="graph_options_summary">پیکربندی شبکه، برچسب‌های محور و برجسته‌سازی‌ها.</string>
     <string name="graph_grid_title">نمایش شبکه</string>
-    <string name="graph_grid_summary">خطوط راهنمای افقی و عمودی را پشت نمودار رسم کنید.</string>
     <string name="graph_x_axis_title">نمایش برچسب‌های محور X</string>
-    <string name="graph_x_axis_summary">نمایش برچسب‌های تاریخ در پایین نمودار.</string>
     <string name="graph_y_axis_title">نمایش برچسب‌های محور Y</string>
-    <string name="graph_y_axis_summary">نمایش برچسب‌های ارزش نرخ در سمت چپ نمودار.</string>
     <string name="graph_highlight_extremes_title">برجسته‌سازی حداقل و حداکثر</string>
-    <string name="graph_highlight_extremes_summary">قرار دادن خطوط مرجع در پایین‌ترین و بالاترین نرخ‌های محدوده قابل مشاهده.</string>
     <string name="graph_highlight_period_change_title">برجسته‌سازی تغییر سال/ماه</string>
-    <string name="graph_highlight_period_change_summary">رسم خطوط راهنمای عمودی در جایی که سال یا ماه در نمودار تغییر می‌کند.</string>
     <!-- languages -->
     <string name="language_title">زبان برنامه</string>
     <string name="language_ar">عربی</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">گذرواژه را وارد کنید</string>
     <string name="backup_password_wrong">گذرواژه نتوانست این فایل را رمزگشایی کند. دوباره تلاش کنید.</string>
     <string name="backup_password_too_short">گذرواژه باید دست‌کم %1$d نویسه باشد</string>
+    <string name="backup_password_show">نمایش گذرواژه</string>
+    <string name="backup_password_hide">پنهان کردن گذرواژه</string>
+    <string name="picker_active_chip">فعال</string>
+    <string name="picker_currency_title">ارز</string>
     <string name="credits_title">درباره، حقوقی و متن‌باز</string>
     <string name="credits_summary">سیاست حریم خصوصی، شرایط استفاده، دسترس‌پذیری، کد منبع و مجوزهای کتابخانه‌های شخص ثالث</string>
     <string name="title_credits">درباره، حقوقی و متن‌باز</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">منبع</string>
     <string name="fee_edit_active">فعال</string>
     <string name="fee_edit_name">نام</string>
-    <string name="fee_edit_name_hint">مانند Wise، Revolut، Chase</string>
     <string name="fee_inactive_marker">غیرفعال</string>
     <string name="fee_untitled">بدون‌عنوان</string>
     <string name="dynamic_color_title">رنگ‌های کاغذدیواری</string>

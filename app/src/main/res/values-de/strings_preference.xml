@@ -24,9 +24,10 @@
     <string name="keyboard_title">Tastatur</string>
     <string name="keyboard_summary_expanded">Fügt zusätzliche Kurzwahltasten für schnellere Eingabe hinzu.</string>
     <string name="decimal_places_title">Dezimalgenauigkeit</string>
-    <string name="decimal_places_summary">Anzahl der Nachkommastellen bei umgerechneten Werten.</string>
     <string name="haptic_feedback_title">Haptisches Feedback</string>
     <string name="haptic_feedback_summary">Vibration bei Tastendruck\nRichtet sich nach der Systemeinstellung</string>
+    <string name="auto_refresh_title">Kurse automatisch aktualisieren</string>
+    <string name="auto_refresh_summary">Im Hintergrund im vom Anbieter empfohlenen Intervall aktualisieren</string>
     <string name="date_format_title">Datums- und Uhrzeitformat</string>
     <string name="category_appearance">Aussehen</string>
     <string name="system_default">Standardeinstellung des Systems</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Diagrammoptionen</string>
     <string name="graph_options_summary">Gitter, Achsenbeschriftungen und Hervorhebungen konfigurieren.</string>
     <string name="graph_grid_title">Gitter anzeigen</string>
-    <string name="graph_grid_summary">Horizontale und vertikale Hilfslinien hinter dem Diagramm zeichnen.</string>
     <string name="graph_x_axis_title">X-Achsenbeschriftung anzeigen</string>
-    <string name="graph_x_axis_summary">Datumsbeschriftungen unten am Diagramm anzeigen.</string>
     <string name="graph_y_axis_title">Y-Achsenbeschriftung anzeigen</string>
-    <string name="graph_y_axis_summary">Kursbeschriftungen an der linken Seite des Diagramms anzeigen.</string>
     <string name="graph_highlight_extremes_title">Min. und Max. hervorheben</string>
-    <string name="graph_highlight_extremes_summary">Referenzlinien beim niedrigsten und höchsten Kurs im sichtbaren Bereich einblenden.</string>
     <string name="graph_highlight_period_change_title">Jahres-/Monatswechsel hervorheben</string>
-    <string name="graph_highlight_period_change_summary">Vertikale Hilfslinien zeichnen, wenn sich Jahr oder Monat im Diagramm ändern.</string>
     <!-- languages -->
     <string name="language_title">App-Sprache</string>
     <string name="language_ar">Arabisch</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Passwort eingeben</string>
     <string name="backup_password_wrong">Mit dem Passwort ließ sich die Datei nicht entschlüsseln. Versuche es erneut.</string>
     <string name="backup_password_too_short">Das Passwort muss mindestens %1$d Zeichen lang sein</string>
+    <string name="backup_password_show">Passwort anzeigen</string>
+    <string name="backup_password_hide">Passwort verbergen</string>
+    <string name="picker_active_chip">Aktiv</string>
+    <string name="picker_currency_title">Währung</string>
     <string name="credits_title">Über, rechtliches &amp; Open Source</string>
     <string name="credits_summary">Datenschutzerklärung, Nutzungsbedingungen, Barrierefreiheit, Quellcode und Lizenzen der Drittanbieter-Bibliotheken</string>
     <string name="title_credits">Über, rechtliches &amp; Open Source</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Quelle</string>
     <string name="fee_edit_active">Aktiv</string>
     <string name="fee_edit_name">Name</string>
-    <string name="fee_edit_name_hint">z.\u00A0B. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Unbenannt</string>
     <string name="dynamic_color_title">Hintergrundfarben</string>

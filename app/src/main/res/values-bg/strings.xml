@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">обърни валутите</string>
     <string name="historical_rates_dialog_title">Исторически курс</string>
     <string name="historical_rates_dialog_toggle">Използвай курс от определена дата. Изключи, за да се взима винаги най-новата стойност.</string>
+    <string name="historical_rates_dialog_now">Сега</string>
     <string name="error">Грешка: %s</string>
     <string name="error_generic">Неизвестен проблем.</string>
     <string name="error_http">Сървъра отговаря с HTTP %d</string>
@@ -25,6 +26,7 @@
     <string name="unreachable_banner_with_date">Доставчикът е недостъпен • Курсове от %1$s</string>
     <string name="unreachable_banner_no_data">Доставчикът е недостъпен • Повторен опит</string>
     <string name="historical_banner">Историческо • Курсове от %1$s</string>
+    <string name="fee_chip_label">Такса %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Последен курс и 30-дневна тенденция за последно използваната валутна двойка или избрана от вас.</string>
@@ -77,9 +79,23 @@
     <string name="cart_share_total">Общо: %1$s %2$s</string>
     <string name="cart_unsaved_title">Незапазени промени</string>
     <string name="cart_unsaved_save">Запази</string>
+    <string name="cart_unsaved_save_desc">Презаписва текущата запазена количка с тези промени.</string>
     <string name="cart_unsaved_save_as">Запази като нова</string>
+    <string name="cart_unsaved_save_as_desc">Оставя текущата запазена количка непроменена и запазва копие под друго име.</string>
     <string name="cart_unsaved_discard">Отхвърли промените</string>
+    <string name="cart_unsaved_discard_desc">Връща последната запазена версия и продължава.</string>
     <string name="cart_unsaved_continue">Продължи</string>
+    <string name="cart_unsaved_continue_desc">Продължава с незапазените промени; можете да ги запазите по-късно.</string>
+    <string name="onboarding_skip">Пропусни</string>
+    <string name="onboarding_next">Напред</string>
+    <string name="onboarding_finish">Разбрах</string>
+    <string name="onboarding_fee_title">Такси в реалната цена</string>
+    <string name="onboarding_fee_body">Докоснете тук, за да добавите надценки или отстъпки — те се прилагат към сумата в целевата валута, така че сумата, която виждате, да съвпада с това, което реално плащате.</string>
+    <string name="onboarding_swap_title">Размяна на валутите</string>
+    <string name="onboarding_swap_body">Докоснете бутона за размяна, за да размените базовата и целевата валута. Задръжте го, за да отворите таксите.</string>
+    <string name="onboarding_autorefresh_title">Автоматично обновяване на курсовете</string>
+    <string name="onboarding_autorefresh_body">Курсовете се обновяват, когато отворите приложението. Включете обновяването на заден план, за да останат актуални между стартиранията.</string>
+    <string name="onboarding_autorefresh_enable">Включи сега</string>
     <string name="a11y_delete">Изтрий</string>
     <string name="currency_dropdown_api_hint">Липсва нещо? Различните доставчици на данни предлагат различни валути. Отиди в настройките и опитай друг!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">Сървърът няма данни за тази заявка.</string>

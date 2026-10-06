@@ -25,9 +25,10 @@
     <string name="keyboard_title">Tastatur</string>
     <string name="keyboard_summary_expanded">Tilføjer ekstra genvejstaster for hurtigere indtastning.</string>
     <string name="decimal_places_title">Decimalnøjagtighed</string>
-    <string name="decimal_places_summary">Antal decimaler, der vises for konverterede værdier.</string>
     <string name="haptic_feedback_title">Haptisk feedback</string>
     <string name="haptic_feedback_summary">Vibrer ved tastetryk\nFølger systemindstillingen</string>
+    <string name="auto_refresh_title">Opdatér kurser automatisk</string>
+    <string name="auto_refresh_summary">Opdatér i baggrunden med det interval, udbyderen anbefaler</string>
     <string name="date_format_title">Dato- og klokkeslætsformat</string>
     <string name="category_appearance">Udseende</string>
     <string name="system_default">Systemstandard</string>
@@ -41,15 +42,10 @@
     <string name="graph_options_title">Grafindstillinger</string>
     <string name="graph_options_summary">Konfigurer gitter, akselabels og fremhævelser.</string>
     <string name="graph_grid_title">Vis gitter</string>
-    <string name="graph_grid_summary">Tegn vandrette og lodrette hjælpelinjer bag diagrammet.</string>
     <string name="graph_x_axis_title">Vis X-akselabels</string>
-    <string name="graph_x_axis_summary">Vis datolabels langs bunden af diagrammet.</string>
     <string name="graph_y_axis_title">Vis Y-akselabels</string>
-    <string name="graph_y_axis_summary">Vis kurslabels langs venstre side af diagrammet.</string>
     <string name="graph_highlight_extremes_title">Fremhæv min. og maks.</string>
-    <string name="graph_highlight_extremes_summary">Læg referencelinjer over de laveste og højeste kurser i det synlige område.</string>
     <string name="graph_highlight_period_change_title">Fremhæv års-/månedsskift</string>
-    <string name="graph_highlight_period_change_summary">Tegn lodrette hjælpelinjer, hvor året eller måneden skifter i diagrammet.</string>
     <!-- languages -->
     <string name="language_title">Appsprog</string>
     <string name="language_ar">Arabisk</string>
@@ -121,6 +117,10 @@
     <string name="backup_password_prompt_title">Indtast adgangskode</string>
     <string name="backup_password_wrong">Adgangskoden kunne ikke dekryptere filen. Prøv igen.</string>
     <string name="backup_password_too_short">Adgangskoden skal være mindst %1$d tegn</string>
+    <string name="backup_password_show">Vis adgangskode</string>
+    <string name="backup_password_hide">Skjul adgangskode</string>
+    <string name="picker_active_chip">Aktiv</string>
+    <string name="picker_currency_title">Valuta</string>
     <string name="credits_title">Om, juridisk &amp; open source</string>
     <string name="credits_summary">Privatlivspolitik, servicevilkår, tilgængelighed, kildekode og licenser for tredjepartsbiblioteker</string>
     <string name="title_credits">Om, juridisk &amp; open source</string>
@@ -141,7 +141,6 @@
     <string name="disclaimer_summary">Viste valutakurser er <b>kun vejledende</b>. De kommer fra tredjepartsudbydere, kan være forsinkede eller forkerte, og <b>må ikke</b> bruges til handel, hedging, fakturering eller nogen beslutning, hvor der kræves en nøjagtig eller eksekverbar kurs. Se servicevilkårene for den fulde ansvarsfraskrivelse.\nDe leverede kurser kan – selv hvis de er korrekte – afvige fra dem, din bank bruger.\nTil sidst: fejl sker. Stol aldrig blindt på nogen enkelt kilde.\nDenne app er helt gratis og open source. Hvis du finder en version med en pris eller reklamer, er den falsk — afinstaller den straks.</string>
     <string name="fee_edit_active">Aktiv</string>
     <string name="fee_edit_name">Navn</string>
-    <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Uden titel</string>
     <string name="dynamic_color_title">Baggrundsfarver</string>

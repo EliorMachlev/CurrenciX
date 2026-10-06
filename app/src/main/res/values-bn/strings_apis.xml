@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">বিনিময় হার, রুশ কেন্দ্রীয় ব্যাংক সরবরাহ করা তথ্যানুযায়ী <a href="https://cbr.ru/eng/currency_base/daily/"><b>ব্যাংক রোসি</b></a>। বর্তমান নিষেধাজ্ঞার জন্য, এই উৎসটি রুশ রুবলের জন্য সম্ভবত সবচেয়ে নির্ভরযোগ্য বিনিময় হার দেয়।\n<b>ব্যাংক রোসি ৪৪টির মতো বিনিময় হার তালিকাবদ্ধ করে।</b></string>
     <string name="api_bankRossii_descriptionShort">প্রায় ৪৪টি বিনিময় হার\nউৎস: রুশ কেন্দ্রীয় ব্যাংক</string>
     <string name="api_bankRossii_descriptionUpdateInterval">বিনিময় হার দৈনিক ভিত্তিতে হালনাগাদকৃত, <a href="https://cbr.ru/eng/other/holidays/">রুশ জাতীয় ছুটির দিবস</a> ছাড়া।</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> বিভিন্ন অর্থনৈতিক উপাত্তর সরবরাহকারী ও ব্যাংক থেকে তথ্য সংগ্রহ করে, ইউরোপীয় কেন্দ্রীয় ব্যাংক সহ। সব বিনিময় হার মধ্যবিন্দু উপাত্তে সরবরাহকৃত। মধ্যবিন্দু উপাত্ত চাহিদা নিলামে চাওয়া ও উঠানো অর্থের গড় মধ্যক হিসাব করে বের করা হয়। \n<b>প্রায় ১৬০টি অর্থ অন্তর্ভুক্ত।</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">প্রতি কর্মদিবসের ইউটিসি মধ্যরাতে বিনিময় হার হালনাগাদ হয়।</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> একটি তুলনামূলক নতুন সেবা, এটি (Frankfurter.app এর মতো) ইউরোপীয় কেন্দ্রীয় ব্যাংকের নির্দেশক বিদেশি অর্থ বিনিময় হার নজরে রাখে\n<b>প্রায় ৩০টি অর্থ অন্তর্ভুক্ত।</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">প্রতি কর্মদিবসে বিনিময় হার হালনাগাদ হয়।</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> ইউরোপীয় কেন্দ্রীয় ব্যাংকের নির্দেশক বিনিময় হার নজরে রাখে।\n<b>প্রায় ৩০টি অর্থ অন্তর্ভুক্ত।</b></string>

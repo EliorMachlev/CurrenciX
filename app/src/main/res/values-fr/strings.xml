@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">Toggle les devises</string>
     <string name="historical_rates_dialog_title">Taux historiques</string>
     <string name="historical_rates_dialog_toggle">Utilisez les taux de change d\'une date précise. Désactiver, pour toujours prendre les plus récents.</string>
+    <string name="historical_rates_dialog_now">Maintenant</string>
     <string name="error">Erreur : %s</string>
     <string name="error_generic">Problème inconnu.</string>
     <string name="error_http">Le serveur a répondu avec HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Fournisseur inaccessible • Taux du %1$s</string>
     <string name="unreachable_banner_no_data">Fournisseur inaccessible • Nouvelle tentative</string>
     <string name="historical_banner">Historique • Taux du %1$s</string>
+    <string name="fee_chip_label">%1$s de frais</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Dernier taux et tendance sur 30 jours de votre dernière paire de devises, ou d\'une paire de votre choix.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Total : %1$s %2$s</string>
     <string name="cart_unsaved_title">Modifications non enregistrées</string>
     <string name="cart_unsaved_save">Enregistrer</string>
+    <string name="cart_unsaved_save_desc">Écraser le panier enregistré actuel avec ces modifications.</string>
     <string name="cart_unsaved_save_as">Enregistrer comme nouveau</string>
+    <string name="cart_unsaved_save_as_desc">Conserver le panier enregistré actuel tel quel et enregistrer une copie sous un autre nom.</string>
     <string name="cart_unsaved_discard">Abandonner les modifications</string>
+    <string name="cart_unsaved_discard_desc">Revenir à la dernière version enregistrée et continuer.</string>
     <string name="cart_unsaved_continue">Continuer</string>
+    <string name="cart_unsaved_continue_desc">Poursuivre avec les modifications non enregistrées ; vous pourrez enregistrer plus tard.</string>
+    <string name="onboarding_skip">Passer</string>
+    <string name="onboarding_next">Suivant</string>
+    <string name="onboarding_finish">Compris</string>
+    <string name="onboarding_fee_title">Frais sur le coût réel</string>
+    <string name="onboarding_fee_body">Appuyez ici pour ajouter des majorations ou des remises — elles s\'appliquent du côté de la devise de destination, afin que le montant affiché corresponde à ce que vous payez réellement.</string>
+    <string name="onboarding_swap_title">Inverser la paire</string>
+    <string name="onboarding_swap_body">Appuyez sur le bouton d\'inversion pour permuter la devise de base et la devise de destination. Appuyez longuement dessus pour ouvrir vos frais.</string>
+    <string name="onboarding_autorefresh_title">Rafraîchissement automatique des taux</string>
+    <string name="onboarding_autorefresh_body">Les taux sont rafraîchis à l\'ouverture de l\'application. Activez le rafraîchissement en arrière-plan pour qu\'ils restent à jour entre deux lancements.</string>
+    <string name="onboarding_autorefresh_enable">Activer maintenant</string>
     <string name="a11y_delete">Supprimer</string>
     <string name="a11y_search_currencies">Rechercher des devises</string>
     <string name="a11y_clear_search">Effacer la recherche</string>

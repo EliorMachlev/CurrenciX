@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">lülita vääringuid sisse/välja</string>
     <string name="historical_rates_dialog_title">Varasemad valuutakursid</string>
     <string name="historical_rates_dialog_toggle">Kasuta kindla kuupäeva vahetuskursse. Kui lülitad selle eelistuse välja, siis näitame vaid viimaseid kursse.</string>
+    <string name="historical_rates_dialog_now">Praegu</string>
     <string name="error">Viga: %s</string>
     <string name="error_generic">Tundmatu probleem.</string>
     <string name="error_http">Päringuvastuseks serverist oli http-olekukood %d.</string>
@@ -31,6 +32,7 @@
     <string name="unreachable_banner_with_date">Pakkuja pole kättesaadav • Kursid alates %1$s</string>
     <string name="unreachable_banner_no_data">Pakkuja pole kättesaadav • Uus katse</string>
     <string name="historical_banner">Ajalooline • Kursid alates %1$s</string>
+    <string name="fee_chip_label">Tasu %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Viimase kasutatud või valitud valuutapaari viimane kurss ja 30 päeva trend.</string>
@@ -83,9 +85,23 @@
     <string name="cart_share_total">Kokku: %1$s %2$s</string>
     <string name="cart_unsaved_title">Salvestamata muudatused</string>
     <string name="cart_unsaved_save">Salvesta</string>
+    <string name="cart_unsaved_save_desc">Kirjuta praegune salvestatud ostukorv nende muudatustega üle.</string>
     <string name="cart_unsaved_save_as">Salvesta uuena</string>
+    <string name="cart_unsaved_save_as_desc">Jäta praegune salvestatud ostukorv puutumata ja salvesta koopia teise nime all.</string>
     <string name="cart_unsaved_discard">Loobu muudatustest</string>
+    <string name="cart_unsaved_discard_desc">Taasta viimati salvestatud versioon ja jätka.</string>
     <string name="cart_unsaved_continue">Jätka</string>
+    <string name="cart_unsaved_continue_desc">Jätka salvestamata muudatustega; salvestada saad ka hiljem.</string>
+    <string name="onboarding_skip">Jäta vahele</string>
+    <string name="onboarding_next">Edasi</string>
+    <string name="onboarding_finish">Selge</string>
+    <string name="onboarding_fee_title">Teenustasud tegelikus kulus</string>
+    <string name="onboarding_fee_body">Puuduta siin, et lisada juurdehindlusi või allahindlusi — need rakenduvad sihtvaluuta poolel, nii et nähtav summa vastab sellele, mida tegelikult maksad.</string>
+    <string name="onboarding_swap_title">Vaheta paar ümber</string>
+    <string name="onboarding_swap_body">Puuduta vahetusnuppu, et lähte- ja sihtvaluuta omavahel ära vahetada. Oma teenustasude avamiseks hoia nuppu all.</string>
+    <string name="onboarding_autorefresh_title">Kursside automaatne uuendamine</string>
+    <string name="onboarding_autorefresh_body">Kursid uuenevad, kui avad rakenduse. Lülita sisse taustal uuendamine, et need püsiksid ajakohased ka käivituste vahel.</string>
+    <string name="onboarding_autorefresh_enable">Lülita kohe sisse</string>
     <string name="a11y_delete">Kustuta</string>
     <string name="a11y_search_currencies">Otsi valuutasid</string>
     <string name="a11y_clear_search">Tühjenda otsing</string>

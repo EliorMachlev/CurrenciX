@@ -58,6 +58,7 @@
 
     <string name="name_gbp">Britisk pund</string>
     <string name="name_gel">Georgisk lari</string>
+    <string name="name_ggp">Guernsey-pund</string>
 
     <string name="name_ghs">Ghanesisk cedi</string>
     <string name="name_gip">Gibraltarisk pund</string>
@@ -74,11 +75,13 @@
 
     <string name="name_idr">Indonesisk rupiah</string>
     <string name="name_ils">Ny israelsk shekel</string>
+    <string name="name_imp">Manx-pund</string>
 
     <string name="name_inr">Indisk rupee</string>
     <string name="name_iqd">Irakisk dinar</string>
     <string name="name_irr">Iransk rial</string>
     <string name="name_isk">Islandsk krone</string>
+    <string name="name_jep">Jersey-pund</string>
 
 
     <string name="name_jmd">Jamaicansk dollar</string>

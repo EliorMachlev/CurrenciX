@@ -24,9 +24,10 @@
     <string name="keyboard_title">Πληκτρολόγιο</string>
     <string name="keyboard_summary_expanded">Προσθέτει επιπλέον πλήκτρα συντόμευσης για ταχύτερη εισαγωγή.</string>
     <string name="decimal_places_title">Δεκαδική ακρίβεια</string>
-    <string name="decimal_places_summary">Αριθμός δεκαδικών ψηφίων που εμφανίζονται για τις μετατραπείσες τιμές.</string>
     <string name="haptic_feedback_title">Απτική ανάδραση</string>
     <string name="haptic_feedback_summary">Δόνηση κατά το πάτημα πλήκτρου\nΑκολουθεί τη ρύθμιση συστήματος</string>
+    <string name="auto_refresh_title">Αυτόματη ανανέωση ισοτιμιών</string>
+    <string name="auto_refresh_summary">Ανανέωση στο παρασκήνιο με τη συχνότητα που συνιστά ο πάροχος</string>
     <string name="date_format_title">Μορφή ημερομηνίας και ώρας</string>
     <string name="category_appearance">Εμφάνιση</string>
     <string name="system_default">Συστήματος</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Επιλογές γραφήματος</string>
     <string name="graph_options_summary">Ρύθμιση πλέγματος, ετικετών αξόνων και επισημάνσεων.</string>
     <string name="graph_grid_title">Εμφάνιση πλέγματος</string>
-    <string name="graph_grid_summary">Σχεδίαση οριζόντιων και κατακόρυφων γραμμών πλέγματος πίσω από το γράφημα.</string>
     <string name="graph_x_axis_title">Εμφάνιση ετικετών άξονα X</string>
-    <string name="graph_x_axis_summary">Εμφάνιση ετικετών ημερομηνίας στο κάτω μέρος του γραφήματος.</string>
     <string name="graph_y_axis_title">Εμφάνιση ετικετών άξονα Y</string>
-    <string name="graph_y_axis_summary">Εμφάνιση ετικετών τιμών στην αριστερή πλευρά του γραφήματος.</string>
     <string name="graph_highlight_extremes_title">Επισήμανση ελάχ. και μέγ.</string>
-    <string name="graph_highlight_extremes_summary">Προβολή γραμμών αναφοράς στις χαμηλότερες και υψηλότερες τιμές του ορατού εύρους.</string>
     <string name="graph_highlight_period_change_title">Επισήμανση αλλαγής έτους/μήνα</string>
-    <string name="graph_highlight_period_change_summary">Σχεδίαση κατακόρυφων γραμμών οδηγών όπου αλλάζει το έτος ή ο μήνας στο γράφημα.</string>
     <!-- languages -->
     <string name="language_title">Γλώσσα εφαρμογής</string>
     <string name="language_ar">Αραβικά</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Εισαγωγή κωδικού</string>
     <string name="backup_password_wrong">Ο κωδικός δεν αποκρυπτογράφησε το αρχείο. Δοκίμασε ξανά.</string>
     <string name="backup_password_too_short">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρες</string>
+    <string name="backup_password_show">Εμφάνιση κωδικού</string>
+    <string name="backup_password_hide">Απόκρυψη κωδικού</string>
+    <string name="picker_active_chip">Ενεργό</string>
+    <string name="picker_currency_title">Νόμισμα</string>
     <string name="credits_title">Σχετικά, νομικά &amp; ανοιχτού κώδικα</string>
     <string name="credits_summary">Πολιτική απορρήτου, όροι υπηρεσίας, προσβασιμότητα, πηγαίος κώδικας και άδειες βιβλιοθηκών τρίτων</string>
     <string name="title_credits">Σχετικά, νομικά &amp; ανοιχτού κώδικα</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Πηγή</string>
     <string name="fee_edit_active">Ενεργή</string>
     <string name="fee_edit_name">Όνομα</string>
-    <string name="fee_edit_name_hint">π.χ. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Ανενεργή</string>
     <string name="fee_untitled">Χωρίς τίτλο</string>
     <string name="dynamic_color_title">Χρώματα ταπετσαρίας</string>

@@ -24,9 +24,10 @@
     <string name="keyboard_title">Billentyűzet</string>
     <string name="keyboard_summary_expanded">További gyorsbillentyűket ad hozzá a gyorsabb beviteléhez.</string>
     <string name="decimal_places_title">Tizedes pontosság</string>
-    <string name="decimal_places_summary">A megjelenített tizedesjegyek száma az átváltott értékeknél.</string>
     <string name="haptic_feedback_title">Haptikus visszajelzés</string>
     <string name="haptic_feedback_summary">Rezgés billentyűnyomáskor\nA rendszerbeállítást követi</string>
+    <string name="auto_refresh_title">Árfolyamok automatikus frissítése</string>
+    <string name="auto_refresh_summary">Frissítés a háttérben, a szolgáltató által ajánlott gyakorisággal</string>
     <string name="date_format_title">Dátum- és időformátum</string>
     <string name="category_appearance">Megjelenítés</string>
     <string name="system_default">Rendszerbeállítás</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Grafikon beállítások</string>
     <string name="graph_options_summary">Rács, tengelyfeliratok és kiemelések beállítása.</string>
     <string name="graph_grid_title">Rács megjelenítése</string>
-    <string name="graph_grid_summary">Vízszintes és függőleges segédvonalak rajzolása a diagram mögé.</string>
     <string name="graph_x_axis_title">X tengely feliratok megjelenítése</string>
-    <string name="graph_x_axis_summary">Dátum feliratok megjelenítése a diagram alján.</string>
     <string name="graph_y_axis_title">Y tengely feliratok megjelenítése</string>
-    <string name="graph_y_axis_summary">Árfolyam értékek megjelenítése a diagram bal oldalán.</string>
     <string name="graph_highlight_extremes_title">Min. és max. kiemelése</string>
-    <string name="graph_highlight_extremes_summary">Referenciavonalak átfedése a látható tartomány legalacsonyabb és legmagasabb árfolyamainál.</string>
     <string name="graph_highlight_period_change_title">Év-/hónapváltás kiemelése</string>
-    <string name="graph_highlight_period_change_summary">Függőleges segédvonalak rajzolása a diagramon ott, ahol az év vagy a hónap változik.</string>
     <!-- languages -->
     <string name="language_title">Az alkalmazás nyelve</string>
     <string name="language_da">Dán</string>
@@ -56,33 +52,6 @@
     <string name="language_et">Észt</string>
     <string name="language_fa">Perzsa</string>
     <string name="language_zh_TW">Kínai (hagyományos)</string>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <!-- api -->
     <string name="category_api">Árfolyamok</string>
@@ -95,7 +64,6 @@
     <string name="disclaimer_summary">A megjelenített árfolyamok <b>csak tájékoztató jellegűek</b>. Harmadik felektől származnak, késleltetettek vagy hibásak lehetnek, és <b>nem használhatók</b> kereskedésre, fedezésre, számlázásra vagy bármely olyan döntéshez, amelyhez pontos vagy végrehajtható árfolyamra van szükség. A teljes jogi nyilatkozatot lásd a Szolgáltatási feltételekben.\nA megadott árfolyamok – még ha helyesek is – eltérhetnek a bankod által használtaktól.\nVégül: hibák előfordulnak. Soha ne bízz vakon egyetlen forrásban sem.\nEz az alkalmazás teljesen ingyenes és nyílt forráskódú. Ha árcédulával vagy hirdetésekkel ellátott verziót találsz, az hamis — azonnal távolítsd el.</string>
     <string name="rate_title">Értékeld az alkalmazást</string>
     <string name="rate_summary">Ha szeretnéd, segíthetsz másoknak felfedezni a Currencies-t. Kattints ide az alkalmazás értékeléséhez.</string>
-
 
     <string name="backup_title">Biztonsági mentés és visszaállítás</string>
     <string name="backup_summary">Mentsd a beállításokat fájlba, vagy állítsd vissza egy korábbi mentésből</string>
@@ -118,6 +86,10 @@
     <string name="backup_password_prompt_title">Add meg a jelszót</string>
     <string name="backup_password_wrong">A jelszóval nem sikerült visszafejteni a fájlt. Próbáld újra.</string>
     <string name="backup_password_too_short">A jelszónak legalább %1$d karakterből kell állnia</string>
+    <string name="backup_password_show">Jelszó megjelenítése</string>
+    <string name="backup_password_hide">Jelszó elrejtése</string>
+    <string name="picker_active_chip">Aktív</string>
+    <string name="picker_currency_title">Pénznem</string>
     <string name="credits_title">Névjegy, jogi tudnivalók &amp; nyílt forráskód</string>
     <string name="credits_summary">Adatvédelmi irányelvek, szolgáltatási feltételek, akadálymentesség, forráskód és harmadik féltől származó könyvtárak licencei</string>
     <string name="title_credits">Névjegy, jogi tudnivalók &amp; nyílt forráskód</string>
@@ -141,7 +113,6 @@
     <string name="credits_section_source">Forrás</string>
     <string name="fee_edit_active">Aktív</string>
     <string name="fee_edit_name">Név</string>
-    <string name="fee_edit_name_hint">pl. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktív</string>
     <string name="fee_untitled">Névtelen</string>
     <string name="language_ar">Arab</string>

@@ -24,9 +24,10 @@
     <string name="keyboard_title">键盘</string>
     <string name="keyboard_summary_expanded">添加额外的快捷键,加快输入速度。</string>
     <string name="decimal_places_title">小数精度</string>
-    <string name="decimal_places_summary">转换值显示的小数位数。</string>
     <string name="haptic_feedback_title">触感反馈</string>
     <string name="haptic_feedback_summary">按键时振动\n跟随系统设置</string>
+    <string name="auto_refresh_title">自动更新汇率</string>
+    <string name="auto_refresh_summary">按数据源建议的频率在后台更新</string>
     <string name="date_format_title">日期和时间格式</string>
     <string name="category_appearance">外观</string>
     <string name="system_default">系统默认</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">图表选项</string>
     <string name="graph_options_summary">配置网格、坐标轴标签和高亮。</string>
     <string name="graph_grid_title">显示网格</string>
-    <string name="graph_grid_summary">在图表后面绘制水平和垂直参考线。</string>
     <string name="graph_x_axis_title">显示 X 轴标签</string>
-    <string name="graph_x_axis_summary">在图表底部显示日期标签。</string>
     <string name="graph_y_axis_title">显示 Y 轴标签</string>
-    <string name="graph_y_axis_summary">在图表左侧显示汇率数值标签。</string>
     <string name="graph_highlight_extremes_title">突出显示最小值和最大值</string>
-    <string name="graph_highlight_extremes_summary">在可见范围内的最低和最高汇率处叠加参考线。</string>
     <string name="graph_highlight_period_change_title">突出显示年/月变化</string>
-    <string name="graph_highlight_period_change_summary">在图表中年份或月份变化的位置绘制垂直参考线。</string>
     <!-- languages -->
     <string name="language_title">应用语言</string>
     <string name="language_ar">阿拉伯语</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">输入密码</string>
     <string name="backup_password_wrong">此密码无法解密该文件,请重试。</string>
     <string name="backup_password_too_short">密码长度至少为 %1$d 个字符</string>
+    <string name="backup_password_show">显示密码</string>
+    <string name="backup_password_hide">隐藏密码</string>
+    <string name="picker_active_chip">使用中</string>
+    <string name="picker_currency_title">货币</string>
     <string name="credits_title">关于、法律信息和开源</string>
     <string name="credits_summary">隐私政策、服务条款、无障碍功能、源代码以及第三方库许可证</string>
     <string name="title_credits">关于、法律信息和开源</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">源代码</string>
     <string name="fee_edit_active">启用</string>
     <string name="fee_edit_name">名称</string>
-    <string name="fee_edit_name_hint">例如：Wise、Revolut、Chase</string>
     <string name="fee_inactive_marker">未启用</string>
     <string name="fee_untitled">未命名</string>
     <string name="dynamic_color_title">壁纸颜色</string>

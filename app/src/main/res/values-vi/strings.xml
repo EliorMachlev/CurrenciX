@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">chuyển đơn vị tiền tệ</string>
     <string name="historical_rates_dialog_title">Tỷ giá trong quá khứ</string>
     <string name="historical_rates_dialog_toggle">Sử dụng tỷ giá hối đoái của một ngày cụ thể. Tắt cài đặt này để luôn sử dụng tỷ giá mới nhất.</string>
+    <string name="historical_rates_dialog_now">Hiện tại</string>
     <string name="error">Lỗi: %s</string>
     <string name="error_generic">Sự cố không xác định.</string>
     <string name="error_http">Máy chủ trả về HTTP %d.</string>
@@ -29,6 +30,8 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Ngoại tuyến • Tỷ giá từ %1$s</string>
     <string name="offline_banner_no_data">Ngoại tuyến • Chưa có tỷ giá được lưu</string>
+    <string name="unreachable_banner_with_date">Không kết nối được nhà cung cấp • Tỷ giá từ %1$s</string>
+    <string name="unreachable_banner_no_data">Không kết nối được nhà cung cấp • Đang thử lại</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Tỷ giá mới nhất và xu hướng 30 ngày của cặp tiền tệ bạn dùng gần nhất hoặc cặp bạn chọn.</string>
@@ -81,9 +84,23 @@
     <string name="cart_share_total">Tổng: %1$s %2$s</string>
     <string name="cart_unsaved_title">Thay đổi chưa lưu</string>
     <string name="cart_unsaved_save">Lưu</string>
+    <string name="cart_unsaved_save_desc">Ghi đè giỏ hàng đã lưu hiện tại bằng các thay đổi này.</string>
     <string name="cart_unsaved_save_as">Lưu thành mới</string>
+    <string name="cart_unsaved_save_as_desc">Giữ nguyên giỏ hàng đã lưu hiện tại và lưu một bản sao với tên khác.</string>
     <string name="cart_unsaved_discard">Bỏ thay đổi</string>
+    <string name="cart_unsaved_discard_desc">Quay về phiên bản đã lưu gần nhất và tiếp tục.</string>
     <string name="cart_unsaved_continue">Tiếp tục</string>
+    <string name="cart_unsaved_continue_desc">Tiếp tục với các thay đổi chưa lưu; bạn có thể lưu sau.</string>
+    <string name="onboarding_skip">Bỏ qua</string>
+    <string name="onboarding_next">Tiếp</string>
+    <string name="onboarding_finish">Đã hiểu</string>
+    <string name="onboarding_fee_title">Phí trong chi phí thực tế</string>
+    <string name="onboarding_fee_body">Nhấn vào đây để thêm phụ phí hoặc chiết khấu — chúng được áp dụng ở phía tiền tệ đích để số tiền bạn thấy khớp với số tiền bạn thực trả.</string>
+    <string name="onboarding_swap_title">Đảo cặp tiền tệ</string>
+    <string name="onboarding_swap_body">Nhấn nút đảo để hoán đổi tiền tệ gốc và tiền tệ đích. Nhấn giữ để mở các khoản phí của bạn.</string>
+    <string name="onboarding_autorefresh_title">Tự động làm mới tỷ giá</string>
+    <string name="onboarding_autorefresh_body">Tỷ giá được làm mới khi bạn mở ứng dụng. Hãy bật làm mới trong nền để tỷ giá luôn cập nhật giữa các lần mở.</string>
+    <string name="onboarding_autorefresh_enable">Bật ngay</string>
     <string name="a11y_search_currencies">Tìm tiền tệ</string>
     <string name="a11y_clear_search">Xóa tìm kiếm</string>
     <string name="a11y_cart_item_name">Tên mục</string>
@@ -113,6 +130,8 @@
     <string name="cart_section_pinned">Đã ghim</string>
     <string name="cart_section_others">Mục khác</string>
     <string name="fallback_banner">%1$s không khả dụng • Đang dùng %2$s</string>
+    <string name="historical_banner">Quá khứ • Tỷ giá từ %1$s</string>
+    <string name="fee_chip_label">Phí %1$s</string>
     <string name="process_text_label">Chuyển đổi tiền tệ</string>
     <string name="selection_open_app">Mở trong %1$s</string>
     <string name="selection_copy">Sao chép</string>

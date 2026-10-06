@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">tukar mata uang</string>
     <string name="historical_rates_dialog_title">Nilai tukar sebelumnya</string>
     <string name="historical_rates_dialog_toggle">Gunakan nilai tukar pada tanggal tertentu. Nonaktifkan, untuk selalu menggunakan yang terbaru.</string>
+    <string name="historical_rates_dialog_now">Sekarang</string>
     <string name="error">Kesalahan: %s</string>
     <string name="error_generic">Masalah tak dikenal.</string>
     <string name="error_http">Server membalas dengan HTTP %d</string>
@@ -25,6 +26,7 @@
     <string name="unreachable_banner_with_date">Penyedia tidak dapat dijangkau • Kurs dari %1$s</string>
     <string name="unreachable_banner_no_data">Penyedia tidak dapat dijangkau • Mencoba lagi</string>
     <string name="historical_banner">Historis • Kurs dari %1$s</string>
+    <string name="fee_chip_label">Biaya %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Kurs terbaru dan tren 30 hari untuk pasangan mata uang terakhir Anda, atau yang Anda pilih.</string>
@@ -77,9 +79,23 @@
     <string name="cart_share_total">Total: %1$s %2$s</string>
     <string name="cart_unsaved_title">Perubahan belum disimpan</string>
     <string name="cart_unsaved_save">Simpan</string>
+    <string name="cart_unsaved_save_desc">Timpa keranjang tersimpan saat ini dengan perubahan ini.</string>
     <string name="cart_unsaved_save_as">Simpan sebagai baru</string>
+    <string name="cart_unsaved_save_as_desc">Biarkan keranjang tersimpan saat ini apa adanya dan simpan salinan dengan nama lain.</string>
     <string name="cart_unsaved_discard">Buang perubahan</string>
+    <string name="cart_unsaved_discard_desc">Kembali ke versi terakhir yang disimpan dan lanjutkan.</string>
     <string name="cart_unsaved_continue">Lanjutkan</string>
+    <string name="cart_unsaved_continue_desc">Lanjutkan dengan perubahan yang belum disimpan; Anda dapat menyimpannya nanti.</string>
+    <string name="onboarding_skip">Lewati</string>
+    <string name="onboarding_next">Berikutnya</string>
+    <string name="onboarding_finish">Mengerti</string>
+    <string name="onboarding_fee_title">Biaya dalam Harga Sebenarnya</string>
+    <string name="onboarding_fee_body">Ketuk di sini untuk menambahkan biaya tambahan atau diskon — keduanya diterapkan di sisi mata uang tujuan sehingga jumlah yang Anda lihat sesuai dengan yang benar-benar Anda bayar.</string>
+    <string name="onboarding_swap_title">Tukar pasangan mata uang</string>
+    <string name="onboarding_swap_body">Ketuk tombol tukar untuk membalik mata uang asal dan tujuan. Tekan lama untuk membuka biaya Anda.</string>
+    <string name="onboarding_autorefresh_title">Pembaruan kurs otomatis</string>
+    <string name="onboarding_autorefresh_body">Kurs diperbarui saat Anda membuka aplikasi. Aktifkan pembaruan di latar belakang agar kurs tetap terkini di antara waktu Anda membuka aplikasi.</string>
+    <string name="onboarding_autorefresh_enable">Aktifkan sekarang</string>
     <string name="a11y_delete">Hapus</string>
     <string name="currency_dropdown_api_hint">Ada yang kurang? Penyedia data yang berbeda menawarkan mata uang yang berbeda. Buka pengaturan untuk mencoba yang lain!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">Server tidak memiliki data untuk permintaan ini.</string>

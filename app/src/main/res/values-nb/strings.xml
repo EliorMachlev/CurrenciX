@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">Veksle valuta</string>
     <string name="historical_rates_dialog_title">Historiske priser</string>
     <string name="historical_rates_dialog_toggle">Bruk valutakurser for en bestemt dato. Deaktiver, for alltid å ta de nyeste.</string>
+    <string name="historical_rates_dialog_now">Nå</string>
     <string name="error">Feil: %s</string>
     <string name="error_generic">Ukjent problem.</string>
     <string name="error_http">Serveren svarte med HTTP %d</string>
@@ -33,6 +34,7 @@
     <string name="unreachable_banner_with_date">Leverandøren er utilgjengelig • Kurser fra %1$s</string>
     <string name="unreachable_banner_no_data">Leverandøren er utilgjengelig • Prøver igjen</string>
     <string name="historical_banner">Historisk • Kurser fra %1$s</string>
+    <string name="fee_chip_label">%1$s gebyr</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Siste kurs og 30-dagers trend for valutaparet du sist brukte, eller et du velger.</string>
@@ -85,9 +87,23 @@
     <string name="cart_share_total">Totalt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Ulagrede endringer</string>
     <string name="cart_unsaved_save">Lagre</string>
+    <string name="cart_unsaved_save_desc">Overskriv den lagrede handlekurven med disse endringene.</string>
     <string name="cart_unsaved_save_as">Lagre som ny</string>
+    <string name="cart_unsaved_save_as_desc">La den lagrede handlekurven være urørt, og lagre en kopi under et annet navn.</string>
     <string name="cart_unsaved_discard">Forkast endringer</string>
+    <string name="cart_unsaved_discard_desc">Gå tilbake til den sist lagrede versjonen og fortsett.</string>
     <string name="cart_unsaved_continue">Fortsett</string>
+    <string name="cart_unsaved_continue_desc">Fortsett med ulagrede endringer; du kan lagre senere.</string>
+    <string name="onboarding_skip">Hopp over</string>
+    <string name="onboarding_next">Neste</string>
+    <string name="onboarding_finish">Skjønner</string>
+    <string name="onboarding_fee_title">Faktisk pris med gebyrer</string>
+    <string name="onboarding_fee_body">Trykk her for å legge til påslag eller rabatter — de regnes inn på målsiden, slik at beløpet du ser, stemmer med det du faktisk betaler.</string>
+    <string name="onboarding_swap_title">Bytt om på paret</string>
+    <string name="onboarding_swap_body">Trykk på bytteknappen for å bytte om på basis- og målvaluta. Hold den inne for å åpne gebyrene dine.</string>
+    <string name="onboarding_autorefresh_title">Oppdater kurser automatisk</string>
+    <string name="onboarding_autorefresh_body">Kursene oppdateres når du åpner appen. Slå på oppdatering i bakgrunnen, slik at de holder seg oppdaterte også når appen er lukket.</string>
+    <string name="onboarding_autorefresh_enable">Slå på nå</string>
     <string name="a11y_search_currencies">Søk etter valutaer</string>
     <string name="a11y_clear_search">Tøm søk</string>
     <string name="a11y_cart_item_name">Varenavn</string>

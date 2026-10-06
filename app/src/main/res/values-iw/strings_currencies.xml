@@ -54,9 +54,11 @@
 
     <string name="name_fjd">דולר פיג׳י</string>
     <string name="name_fkp">לירה של איי פוקלנד</string>
+    <string name="name_fok">כתר פארואי</string>
 
     <string name="name_gbp">לירה שטרלינג</string>
     <string name="name_gel">לארי גאורגי</string>
+    <string name="name_ggp">לירה של גרנזי</string>
 
     <string name="name_ghs">סדי גאני</string>
     <string name="name_gip">פאונד גיברלטר</string>
@@ -73,12 +75,14 @@
 
     <string name="name_idr">רופיה אינדונזית</string>
     <string name="name_ils">שקל חדש</string>
+    <string name="name_imp">לירה של האי מאן</string>
 
 
     <string name="name_inr">רופי הודי</string>
     <string name="name_iqd">דינר עיראקי</string>
     <string name="name_irr">ריאל איראני</string>
     <string name="name_isk">כתר איסלנדי</string>
+    <string name="name_jep">לירה של ג׳רזי</string>
 
 
     <string name="name_jmd">דולר ג׳מייקני</string>
@@ -177,6 +181,7 @@
     <string name="name_uzs">סום אוזבקי</string>
 
     <string name="name_vef">בוליבר ונצואלי</string>
+    <string name="name_ves">בוליבר סוברנו ונצואלי</string>
 
     <string name="name_vnd">דונג וייטנאמי</string>
     <string name="name_vuv">ואטו של ונואטו</string>
@@ -197,5 +202,6 @@
 
     <string name="name_zar">ראנד דרום אפריקאי</string>
     <string name="name_zmw">קוואצ׳ה זמבי</string>
+    <string name="name_zwl">דולר זימבבואי</string>
 
 </resources>

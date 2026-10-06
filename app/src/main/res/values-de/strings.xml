@@ -4,6 +4,7 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="historical_rates_dialog_title">Historische Kurse</string>
     <string name="historical_rates_dialog_toggle">Wechselkurse eines spezifischen Datums verwenden. Deaktivieren, um immer die aktuellsten Kurse zu benutzen.</string>
+    <string name="historical_rates_dialog_now">Jetzt</string>
     <string name="error">Fehler: %s</string>
     <string name="error_generic">Unbekanntes Problem.</string>
     <string name="error_http">Der Server antwortet mit HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Anbieter nicht erreichbar • Kurse vom %1$s</string>
     <string name="unreachable_banner_no_data">Anbieter nicht erreichbar • Erneuter Versuch</string>
     <string name="historical_banner">Historisch • Kurse vom %1$s</string>
+    <string name="fee_chip_label">%1$s Gebühr</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Aktueller Kurs und 30-Tage-Trend für dein zuletzt verwendetes Währungspaar oder ein Paar deiner Wahl.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Gesamt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Ungespeicherte Änderungen</string>
     <string name="cart_unsaved_save">Speichern</string>
+    <string name="cart_unsaved_save_desc">Den aktuell gespeicherten Warenkorb mit diesen Änderungen überschreiben.</string>
     <string name="cart_unsaved_save_as">Als neu speichern</string>
+    <string name="cart_unsaved_save_as_desc">Den aktuell gespeicherten Warenkorb unverändert lassen und eine Kopie unter einem anderen Namen speichern.</string>
     <string name="cart_unsaved_discard">Änderungen verwerfen</string>
+    <string name="cart_unsaved_discard_desc">Zur zuletzt gespeicherten Version zurückkehren und fortfahren.</string>
     <string name="cart_unsaved_continue">Weiter</string>
+    <string name="cart_unsaved_continue_desc">Mit ungespeicherten Änderungen fortfahren; du kannst später speichern.</string>
+    <string name="onboarding_skip">Überspringen</string>
+    <string name="onboarding_next">Weiter</string>
+    <string name="onboarding_finish">Verstanden</string>
+    <string name="onboarding_fee_title">Tatsächliche Kosten inkl. Gebühren</string>
+    <string name="onboarding_fee_body">Tippe hier, um Aufschläge oder Rabatte hinzuzufügen — sie werden auf der Zielseite verrechnet, sodass der angezeigte Betrag dem entspricht, was du tatsächlich zahlst.</string>
+    <string name="onboarding_swap_title">Währungspaar tauschen</string>
+    <string name="onboarding_swap_body">Tippe auf die Tausch-Schaltfläche, um Ausgangs- und Zielwährung zu vertauschen. Halte sie gedrückt, um deine Gebühren zu öffnen.</string>
+    <string name="onboarding_autorefresh_title">Kurse automatisch aktualisieren</string>
+    <string name="onboarding_autorefresh_body">Die Kurse werden beim Öffnen der App aktualisiert. Aktiviere die Hintergrundaktualisierung, damit sie auch zwischen den Starts aktuell bleiben.</string>
+    <string name="onboarding_autorefresh_enable">Jetzt aktivieren</string>
     <string name="a11y_delete">Löschen</string>
     <string name="a11y_search_currencies">Währungen suchen</string>
     <string name="a11y_clear_search">Suche löschen</string>

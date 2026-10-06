@@ -24,9 +24,10 @@
     <string name="keyboard_title">Tastatur</string>
     <string name="keyboard_summary_expanded">Legger til flere hurtigtaster for raskere inntasting.</string>
     <string name="decimal_places_title">Desimalpresisjon</string>
-    <string name="decimal_places_summary">Antall desimaler som vises for konverterte verdier.</string>
     <string name="haptic_feedback_title">Haptisk tilbakemelding</string>
     <string name="haptic_feedback_summary">Vibrer ved tastetrykk\nFølger systeminnstillingen</string>
+    <string name="auto_refresh_title">Oppdater kurser automatisk</string>
+    <string name="auto_refresh_summary">Oppdater i bakgrunnen med intervallet leverandøren anbefaler</string>
     <string name="date_format_title">Dato- og tidsformat</string>
     <string name="category_appearance">Utseende</string>
     <string name="system_default">Systemstandard</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Grafinnstillinger</string>
     <string name="graph_options_summary">Konfigurer rutenett, akseetiketter og fremhevinger.</string>
     <string name="graph_grid_title">Vis rutenett</string>
-    <string name="graph_grid_summary">Tegn horisontale og vertikale hjelpelinjer bak diagrammet.</string>
     <string name="graph_x_axis_title">Vis X-akse etiketter</string>
-    <string name="graph_x_axis_summary">Vis datoetiketter langs bunnen av diagrammet.</string>
     <string name="graph_y_axis_title">Vis Y-akse etiketter</string>
-    <string name="graph_y_axis_summary">Vis kursetiketter langs venstre side av diagrammet.</string>
     <string name="graph_highlight_extremes_title">Uthev min. og maks.</string>
-    <string name="graph_highlight_extremes_summary">Legg referanselinjer over laveste og høyeste kurser i det synlige området.</string>
     <string name="graph_highlight_period_change_title">Uthev års-/månedsskifte</string>
-    <string name="graph_highlight_period_change_summary">Tegn vertikale hjelpelinjer der året eller måneden skifter i grafen.</string>
     <!-- languages -->
     <string name="language_title">Språk i appen</string>
     <string name="language_ar">Arabisk</string>
@@ -83,7 +79,6 @@
     <string name="language_vi">Vietnamesisk</string>
     <string name="language_zh_TW">Kinesisk (tradisjonell)</string>
 
-
     <!-- api -->
     <string name="category_api">Valutakurser</string>
     <string name="api_title">Datatilbyder</string>
@@ -95,7 +90,6 @@
     <string name="disclaimer_summary">Vekslingskursene som vises er <b>kun veiledende</b>. De kommer fra tredjepartsleverandører, kan være forsinkede eller feil, og <b>må ikke</b> brukes til handel, sikring, fakturering eller noen beslutning der en nøyaktig eller gjennomførbar kurs er påkrevd. Se vilkårene for tjenesten for den fullstendige ansvarsfraskrivelsen.\nOppgitte kurser – selv om de er korrekte – kan avvike fra dem banken din bruker.\nTil sist: feil skjer. Aldri stol blindt på en enkelt kilde.\nDenne appen er helt gratis og åpen kildekode. Hvis du finner en versjon med prislapp eller reklame, er den falsk — avinstaller den umiddelbart.</string>
     <string name="rate_title">Vurder programmet</string>
     <string name="rate_summary">Hjelp andre å oppdage Currencies. Klikk her for å vurdere programmet.</string>
-
 
     <string name="backup_title">Sikkerhetskopi og gjenoppretting</string>
     <string name="backup_summary">Lagre innstillingene dine i en fil, eller gjenopprett fra en tidligere sikkerhetskopi</string>
@@ -118,6 +112,10 @@
     <string name="backup_password_prompt_title">Skriv inn passord</string>
     <string name="backup_password_wrong">Passordet klarte ikke å dekryptere denne filen. Prøv igjen.</string>
     <string name="backup_password_too_short">Passordet må være minst %1$d tegn</string>
+    <string name="backup_password_show">Vis passord</string>
+    <string name="backup_password_hide">Skjul passord</string>
+    <string name="picker_active_chip">Aktiv</string>
+    <string name="picker_currency_title">Valuta</string>
     <string name="credits_title">Om, juridisk og åpen kildekode</string>
     <string name="credits_summary">Personvernerklæring, vilkår for bruk, tilgjengelighet, kildekode og lisenser for tredjepartsbiblioteker</string>
     <string name="title_credits">Om, juridisk og åpen kildekode</string>
@@ -141,7 +139,6 @@
     <string name="credits_section_source">Kilde</string>
     <string name="fee_edit_active">Aktiv</string>
     <string name="fee_edit_name">Navn</string>
-    <string name="fee_edit_name_hint">f.eks. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Uten navn</string>
     <string name="language_ru">Russisk</string>

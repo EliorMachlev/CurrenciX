@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> മുതൽ &lt;b>%2$s&lt;/b> വരെ</string>
-    <string name="data_provider">&lt;b>%s&lt;/b> നൽകുന്ന ഡാറ്റ</string>
 
     <string name="rate_average">ശരാശരി</string>
     <string name="rate_median">മീഡിയൻ</string>

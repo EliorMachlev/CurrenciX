@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">baskuligi valutojn</string>
     <string name="historical_rates_dialog_title">Historiaj tarifoj</string>
     <string name="historical_rates_dialog_toggle">Uzi kurzojn de specifa dato. Malebligi, por ĉiam preni la plej freŝajn.</string>
+    <string name="historical_rates_dialog_now">Nun</string>
     <string name="error">Eraro: %s</string>
     <string name="error_generic">Nekonata problemo.</string>
     <string name="error_http">La servilo respondis per HTTP %d.</string>
@@ -28,6 +29,7 @@
     <string name="unreachable_banner_with_date">Provizanto neatingebla • Kursoj de %1$s</string>
     <string name="unreachable_banner_no_data">Provizanto neatingebla • Reprovanta</string>
     <string name="historical_banner">Historia • Kursoj de %1$s</string>
+    <string name="fee_chip_label">Kotizo de %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Lasta kurzo kaj 30-taga tendenco por via laste uzita valutparo, aŭ unu, kiun vi elektas.</string>
@@ -80,9 +82,23 @@
     <string name="cart_share_total">Totalo: %1$s %2$s</string>
     <string name="cart_unsaved_title">Nekonservitaj ŝanĝoj</string>
     <string name="cart_unsaved_save">Konservi</string>
+    <string name="cart_unsaved_save_desc">Superskribi la nunan konservitan korbon per ĉi tiuj ŝanĝoj.</string>
     <string name="cart_unsaved_save_as">Konservi kiel novan</string>
+    <string name="cart_unsaved_save_as_desc">Lasi la nunan konservitan korbon netuŝita kaj konservi kopion sub alia nomo.</string>
     <string name="cart_unsaved_discard">Forĵeti ŝanĝojn</string>
+    <string name="cart_unsaved_discard_desc">Reveni al la laste konservita versio kaj daŭrigi.</string>
     <string name="cart_unsaved_continue">Daŭrigi</string>
+    <string name="cart_unsaved_continue_desc">Daŭrigi kun nekonservitaj ŝanĝoj; vi povos konservi poste.</string>
+    <string name="onboarding_skip">Preterpasi</string>
+    <string name="onboarding_next">Sekva</string>
+    <string name="onboarding_finish">Komprenite</string>
+    <string name="onboarding_fee_title">Kotizoj en la vera kosto</string>
+    <string name="onboarding_fee_body">Tuŝetu ĉi tie por aldoni krompagojn aŭ rabatojn — ili aplikiĝas ĉe la cela flanko, por ke la sumo, kiun vi legas, kongruu kun tio, kion vi efektive pagas.</string>
+    <string name="onboarding_swap_title">Interŝanĝi la paron</string>
+    <string name="onboarding_swap_body">Tuŝetu la interŝanĝan butonon por interŝanĝi la bazan kaj la celan valutojn. Longe premu ĝin por malfermi viajn kotizojn.</string>
+    <string name="onboarding_autorefresh_title">Aŭtomata refreŝigo de kurzoj</string>
+    <string name="onboarding_autorefresh_body">Kurzoj refreŝiĝas, kiam vi malfermas la aplikaĵon. Ebligu fonan refreŝigon, por ke ili restu aktualaj inter lanĉoj.</string>
+    <string name="onboarding_autorefresh_enable">Ebligi nun</string>
     <string name="a11y_delete">Forigi</string>
     <string name="error_invalid_api_key">HTTP 401 – Bonvolu kontroli vian API-ŝlosilon.</string>
     <string name="error_no_api_key">Valida API-ŝlosilo devas esti agordita por uzi ĉi tiun fonton.</string>

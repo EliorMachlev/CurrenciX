@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">alternar monedas</string>
     <string name="historical_rates_dialog_title">Tasas históricas</string>
     <string name="historical_rates_dialog_toggle">Utilice los tipos de cambio de una fecha específica. Deshabilitar, para tomar siempre las más recientes.</string>
+    <string name="historical_rates_dialog_now">Ahora</string>
     <string name="error">Error: %s</string>
     <string name="error_generic">Problema desconocido.</string>
     <string name="error_http">El servidor ha respondido con HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Proveedor no disponible • Tipos del %1$s</string>
     <string name="unreachable_banner_no_data">Proveedor no disponible • Reintentando</string>
     <string name="historical_banner">Histórico • Tipos del %1$s</string>
+    <string name="fee_chip_label">%1$s de comisión</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Último tipo y tendencia de 30 días de tu último par de monedas o de uno que elijas.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Total: %1$s %2$s</string>
     <string name="cart_unsaved_title">Cambios sin guardar</string>
     <string name="cart_unsaved_save">Guardar</string>
+    <string name="cart_unsaved_save_desc">Sobrescribir el carrito guardado actual con estos cambios.</string>
     <string name="cart_unsaved_save_as">Guardar como nuevo</string>
+    <string name="cart_unsaved_save_as_desc">Mantener intacto el carrito guardado actual y guardar una copia con otro nombre.</string>
     <string name="cart_unsaved_discard">Descartar cambios</string>
+    <string name="cart_unsaved_discard_desc">Volver a la última versión guardada y continuar.</string>
     <string name="cart_unsaved_continue">Continuar</string>
+    <string name="cart_unsaved_continue_desc">Continuar con los cambios sin guardar; puedes guardarlos más tarde.</string>
+    <string name="onboarding_skip">Omitir</string>
+    <string name="onboarding_next">Siguiente</string>
+    <string name="onboarding_finish">Entendido</string>
+    <string name="onboarding_fee_title">Comisiones en el coste real</string>
+    <string name="onboarding_fee_body">Toca aquí para añadir recargos o descuentos — se aplican en el lado de destino, para que el importe que ves coincida con lo que pagas realmente.</string>
+    <string name="onboarding_swap_title">Invertir el par</string>
+    <string name="onboarding_swap_body">Toca el botón de inversión para intercambiar la moneda base y la de destino. Mantenlo pulsado para abrir tus comisiones.</string>
+    <string name="onboarding_autorefresh_title">Actualización automática de tipos</string>
+    <string name="onboarding_autorefresh_body">Los tipos de cambio se actualizan al abrir la app. Activa la actualización en segundo plano para que sigan al día entre un uso y otro.</string>
+    <string name="onboarding_autorefresh_enable">Activar ahora</string>
     <string name="a11y_delete">Eliminar</string>
     <string name="a11y_search_currencies">Buscar divisas</string>
     <string name="a11y_clear_search">Borrar búsqueda</string>

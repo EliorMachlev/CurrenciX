@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">przełącz waluty</string>
     <string name="historical_rates_dialog_title">Kursy historyczne</string>
     <string name="historical_rates_dialog_toggle">Użyj kursów wymiany z określonego okresu. Wyłącz, aby zawsze używać najnowszych dane.</string>
+    <string name="historical_rates_dialog_now">Teraz</string>
     <string name="error">Błąd: %s</string>
     <string name="error_generic">Nieznany problem.</string>
     <string name="error_http">Serwer odpowiedział z kodem HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Dostawca niedostępny • Kursy z %1$s</string>
     <string name="unreachable_banner_no_data">Dostawca niedostępny • Ponawianie</string>
     <string name="historical_banner">Historyczne • Kursy z %1$s</string>
+    <string name="fee_chip_label">Opłata %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Najnowszy kurs i 30-dniowy trend ostatnio używanej pary walut lub wybranej przez Ciebie.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Razem: %1$s %2$s</string>
     <string name="cart_unsaved_title">Niezapisane zmiany</string>
     <string name="cart_unsaved_save">Zapisz</string>
+    <string name="cart_unsaved_save_desc">Nadpisz bieżący zapisany koszyk tymi zmianami.</string>
     <string name="cart_unsaved_save_as">Zapisz jako nowy</string>
+    <string name="cart_unsaved_save_as_desc">Pozostaw bieżący zapisany koszyk bez zmian i zapisz kopię pod inną nazwą.</string>
     <string name="cart_unsaved_discard">Odrzuć zmiany</string>
+    <string name="cart_unsaved_discard_desc">Przywróć ostatnią zapisaną wersję i kontynuuj.</string>
     <string name="cart_unsaved_continue">Kontynuuj</string>
+    <string name="cart_unsaved_continue_desc">Kontynuuj z niezapisanymi zmianami; możesz zapisać je później.</string>
+    <string name="onboarding_skip">Pomiń</string>
+    <string name="onboarding_next">Dalej</string>
+    <string name="onboarding_finish">Rozumiem</string>
+    <string name="onboarding_fee_title">Opłaty w rzeczywistym koszcie</string>
+    <string name="onboarding_fee_body">Dotknij tutaj, aby dodać narzuty lub rabaty — są naliczane po stronie waluty docelowej, więc widoczna kwota odpowiada temu, co faktycznie zapłacisz.</string>
+    <string name="onboarding_swap_title">Zamień parę walut</string>
+    <string name="onboarding_swap_body">Dotknij przycisku zamiany, aby zamienić miejscami walutę bazową i docelową. Przytrzymaj go, aby otworzyć opłaty.</string>
+    <string name="onboarding_autorefresh_title">Automatyczne odświeżanie kursów</string>
+    <string name="onboarding_autorefresh_body">Kursy odświeżają się po otwarciu aplikacji. Włącz odświeżanie w tle, aby pozostawały aktualne między uruchomieniami.</string>
+    <string name="onboarding_autorefresh_enable">Włącz teraz</string>
     <string name="a11y_search_currencies">Wyszukaj waluty</string>
     <string name="a11y_clear_search">Wyczyść wyszukiwanie</string>
     <string name="a11y_cart_item_name">Nazwa pozycji</string>

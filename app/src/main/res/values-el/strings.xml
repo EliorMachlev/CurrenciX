@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">Εναλλαγή νομισμάτων</string>
     <string name="historical_rates_dialog_title">Ιστορικό ισοτιμίας</string>
     <string name="historical_rates_dialog_toggle">Χρήση ισοτιμίας μιας παρελθούσης ημερομηνίας. Απενεργοποιήστε για χρήση της πιο πρόσφατης.</string>
+    <string name="historical_rates_dialog_now">Τώρα</string>
     <string name="error">Σφάλμα: %s</string>
     <string name="error_generic">Άγνωστο πρόβλημα.</string>
     <string name="error_http">Ο διακομιστής αποκρίθηκε με HTTP %d</string>
@@ -28,6 +29,7 @@
     <string name="unreachable_banner_with_date">Ο πάροχος δεν είναι διαθέσιμος • Ισοτιμίες από %1$s</string>
     <string name="unreachable_banner_no_data">Ο πάροχος δεν είναι διαθέσιμος • Επανάληψη</string>
     <string name="historical_banner">Ιστορικά • Ισοτιμίες από %1$s</string>
+    <string name="fee_chip_label">Προμήθεια %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Τελευταία ισοτιμία και τάση 30 ημερών για το ζεύγος που χρησιμοποιήσατε τελευταία ή ένα που επιλέγετε.</string>
@@ -80,9 +82,23 @@
     <string name="cart_share_total">Σύνολο: %1$s %2$s</string>
     <string name="cart_unsaved_title">Μη αποθηκευμένες αλλαγές</string>
     <string name="cart_unsaved_save">Αποθήκευση</string>
+    <string name="cart_unsaved_save_desc">Αντικατάσταση του τρέχοντος αποθηκευμένου καλαθιού με αυτές τις αλλαγές.</string>
     <string name="cart_unsaved_save_as">Αποθήκευση ως νέο</string>
+    <string name="cart_unsaved_save_as_desc">Διατήρηση του τρέχοντος αποθηκευμένου καλαθιού ως έχει και αποθήκευση αντιγράφου με διαφορετικό όνομα.</string>
     <string name="cart_unsaved_discard">Απόρριψη αλλαγών</string>
+    <string name="cart_unsaved_discard_desc">Επαναφορά στην τελευταία αποθηκευμένη έκδοση και συνέχεια.</string>
     <string name="cart_unsaved_continue">Συνέχεια</string>
+    <string name="cart_unsaved_continue_desc">Συνέχεια με μη αποθηκευμένες αλλαγές· μπορείτε να αποθηκεύσετε αργότερα.</string>
+    <string name="onboarding_skip">Παράλειψη</string>
+    <string name="onboarding_next">Επόμενο</string>
+    <string name="onboarding_finish">Κατάλαβα</string>
+    <string name="onboarding_fee_title">Προμήθειες στο πραγματικό κόστος</string>
+    <string name="onboarding_fee_body">Πατήστε εδώ για να προσθέσετε προσαυξήσεις ή εκπτώσεις — εφαρμόζονται στην πλευρά του νομίσματος προορισμού, ώστε το ποσό που βλέπετε να αντιστοιχεί σε αυτό που πραγματικά πληρώνετε.</string>
+    <string name="onboarding_swap_title">Εναλλαγή ζεύγους</string>
+    <string name="onboarding_swap_body">Πατήστε το κουμπί εναλλαγής για να αντιστρέψετε το νόμισμα βάσης και το νόμισμα προορισμού. Πατήστε το παρατεταμένα για να ανοίξετε τις προμήθειές σας.</string>
+    <string name="onboarding_autorefresh_title">Αυτόματη ανανέωση ισοτιμιών</string>
+    <string name="onboarding_autorefresh_body">Οι ισοτιμίες ανανεώνονται όταν ανοίγετε την εφαρμογή. Ενεργοποιήστε την ανανέωση στο παρασκήνιο, ώστε να παραμένουν επίκαιρες και ανάμεσα στις εκκινήσεις της εφαρμογής.</string>
+    <string name="onboarding_autorefresh_enable">Ενεργοποίηση τώρα</string>
     <string name="a11y_delete">Διαγραφή</string>
     <string name="error_invalid_api_key">HTTP 401 – Ελέγξτε το κλειδί API σας.</string>
     <string name="error_no_api_key">Πρέπει να οριστεί έγκυρο κλειδί API για να χρησιμοποιήσετε αυτήν την πηγή.</string>

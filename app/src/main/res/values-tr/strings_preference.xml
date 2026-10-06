@@ -24,9 +24,10 @@
     <string name="keyboard_title">Klavye</string>
     <string name="keyboard_summary_expanded">Daha hızlı giriş için ek kısayol tuşları ekler.</string>
     <string name="decimal_places_title">Ondalık doğruluk</string>
-    <string name="decimal_places_summary">Dönüştürülmüş değerler için gösterilecek ondalık basamak sayısı.</string>
     <string name="haptic_feedback_title">Dokunsal geri bildirim</string>
     <string name="haptic_feedback_summary">Tuşa basıldığında titreşim\nSistem ayarını takip eder</string>
+    <string name="auto_refresh_title">Kurları otomatik güncelle</string>
+    <string name="auto_refresh_summary">Sağlayıcının önerdiği sıklıkta arka planda güncelle</string>
     <string name="date_format_title">Tarih ve saat biçimi</string>
     <string name="category_appearance">Görünüm</string>
     <string name="system_default">Sistem varsayılanı</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Grafik seçenekleri</string>
     <string name="graph_options_summary">Izgarayı, eksen etiketlerini ve vurguları yapılandır.</string>
     <string name="graph_grid_title">Izgarayı göster</string>
-    <string name="graph_grid_summary">Grafiğin arkasına yatay ve dikey kılavuz çizgileri çiz.</string>
     <string name="graph_x_axis_title">X ekseni etiketlerini göster</string>
-    <string name="graph_x_axis_summary">Grafiğin altında tarih etiketlerini göster.</string>
     <string name="graph_y_axis_title">Y ekseni etiketlerini göster</string>
-    <string name="graph_y_axis_summary">Grafiğin sol tarafında kur değer etiketlerini göster.</string>
     <string name="graph_highlight_extremes_title">Min. ve maks. vurgula</string>
-    <string name="graph_highlight_extremes_summary">Görünür aralıktaki en düşük ve en yüksek kurlarda referans çizgileri ekle.</string>
     <string name="graph_highlight_period_change_title">Yıl/ay değişimini vurgula</string>
-    <string name="graph_highlight_period_change_summary">Grafikte yıl veya ay değiştiği yerlere dikey kılavuz çizgileri çiz.</string>
     <!-- languages -->
     <string name="language_title">Uygulama Dili</string>
     <string name="language_ar">Arapça</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Parolayı gir</string>
     <string name="backup_password_wrong">Parola dosyanın şifresini çözemedi. Tekrar dene.</string>
     <string name="backup_password_too_short">Parola en az %1$d karakter olmalı</string>
+    <string name="backup_password_show">Parolayı göster</string>
+    <string name="backup_password_hide">Parolayı gizle</string>
+    <string name="picker_active_chip">Etkin</string>
+    <string name="picker_currency_title">Para birimi</string>
     <string name="credits_title">Hakkında, yasal &amp; açık kaynak</string>
     <string name="credits_summary">Gizlilik politikası, hizmet şartları, erişilebilirlik, kaynak kodu ve üçüncü taraf kütüphane lisansları</string>
     <string name="title_credits">Hakkında, yasal &amp; açık kaynak</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Kaynak</string>
     <string name="fee_edit_active">Etkin</string>
     <string name="fee_edit_name">Ad</string>
-    <string name="fee_edit_name_hint">örn. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Pasif</string>
     <string name="fee_untitled">Adsız</string>
     <string name="dynamic_color_title">Duvar kağıdı renkleri</string>

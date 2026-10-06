@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">přepnout měny</string>
     <string name="historical_rates_dialog_title">Historické kurzy</string>
     <string name="historical_rates_dialog_toggle">Použít měnové kurzy ze specifického data. Zakažte pro používání nejnovějších.</string>
+    <string name="historical_rates_dialog_now">Nyní</string>
     <string name="error">Chyba: %s</string>
     <string name="error_generic">Neznámá chyba.</string>
     <string name="error_http">Server odpověděl kódem HTTP %d.</string>
@@ -31,6 +32,7 @@
     <string name="unreachable_banner_with_date">Poskytovatel není dostupný • Kurzy z %1$s</string>
     <string name="unreachable_banner_no_data">Poskytovatel není dostupný • Opakuji</string>
     <string name="historical_banner">Historické • Kurzy z %1$s</string>
+    <string name="fee_chip_label">Poplatek %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Poslední kurz a 30denní vývoj pro naposledy použitou měnovou dvojici nebo pro vámi vybranou.</string>
@@ -83,9 +85,23 @@
     <string name="cart_share_total">Celkem: %1$s %2$s</string>
     <string name="cart_unsaved_title">Neuložené změny</string>
     <string name="cart_unsaved_save">Uložit</string>
+    <string name="cart_unsaved_save_desc">Přepsat aktuální uložený košík těmito změnami.</string>
     <string name="cart_unsaved_save_as">Uložit jako nový</string>
+    <string name="cart_unsaved_save_as_desc">Ponechat aktuální uložený košík beze změny a uložit kopii pod jiným názvem.</string>
     <string name="cart_unsaved_discard">Zahodit změny</string>
+    <string name="cart_unsaved_discard_desc">Vrátit se k poslední uložené verzi a pokračovat.</string>
     <string name="cart_unsaved_continue">Pokračovat</string>
+    <string name="cart_unsaved_continue_desc">Pokračovat s neuloženými změnami; uložit můžete později.</string>
+    <string name="onboarding_skip">Přeskočit</string>
+    <string name="onboarding_next">Další</string>
+    <string name="onboarding_finish">Rozumím</string>
+    <string name="onboarding_fee_title">Poplatky ve skutečné ceně</string>
+    <string name="onboarding_fee_body">Klepnutím sem přidáte přirážky nebo slevy — počítají se na straně cílové měny, takže zobrazená částka odpovídá tomu, co skutečně zaplatíte.</string>
+    <string name="onboarding_swap_title">Prohodit měny</string>
+    <string name="onboarding_swap_body">Klepnutím na tlačítko prohození zaměníte výchozí a cílovou měnu. Dlouhým stiskem otevřete poplatky.</string>
+    <string name="onboarding_autorefresh_title">Automatické obnovování kurzů</string>
+    <string name="onboarding_autorefresh_body">Kurzy se obnovují při otevření aplikace. Zapněte obnovování na pozadí, aby zůstaly aktuální i mezi spuštěními.</string>
+    <string name="onboarding_autorefresh_enable">Zapnout nyní</string>
     <string name="a11y_delete">Smazat</string>
     <string name="a11y_search_currencies">Hledat měny</string>
     <string name="a11y_clear_search">Vymazat hledání</string>

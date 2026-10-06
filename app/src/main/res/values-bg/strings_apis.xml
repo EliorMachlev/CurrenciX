@@ -3,16 +3,31 @@
     <string name="api_bankOfIsrael_descriptionFull">Представителни обменни курсове, публикувани от Израелската централна банка <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Курсовете се котират спрямо новия израелски шекел.\n<b>Bank of Israel предоставя около 14 обменни курса.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Около 14 обменни курса\nИзточник: Централна банка на Израел</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Представителните курсове се публикуват веднъж всеки работен ден около 15:30 израелско време.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> взима обменните курсове от различни финансови източници и и банки, включително от Европейската Централна Банка. Всички курсове са средна стойност. Средната стойност се изчислява като средното между продава и купува.\n<b>Включени са около 160 валути.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Обмени курсове се обновяват около полунощ UTC всеки работен ден.</string>
+    <string name="api_bankRossii_descriptionFull">Обменни курсове, предоставяни от Руската централна банка <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. При настоящите санкции този източник дава вероятно най-надеждните обменни курсове за руската рубла.\n<b>Bank Rossii предоставя около 44 обменни курса.</b></string>
+    <string name="api_bankRossii_descriptionShort">Около 44 обменни курса\nИзточник: Централна банка на Русия</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Курсовете се обновяват ежедневно, с изключение на <a href="https://cbr.ru/eng/other/holidays/">официалните празници в Русия</a>.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> е относително нова услуга, която (точно като Frankfurter.app) следи референтните обменни (форекс) курсове публикувани от Европейската Централна Банка.\n<b>Включва около 30 валути.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">Курсовете се обновяват всеки работен ден.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> следи референтните обменни(форекс) курсове публикувани от Европейската Централна Банка.\n<b>включени са около 30 валути.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Около 30 обменни курса\nИзточник: Европейска централна банка</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Данните се обновяват около 16:00 CET всеки работен ден.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_bg"><b>InforEuro</b></a> предоставя официалния месечен счетоводен курс на еврото на Европейската комисия и обменните курсове, както са установени от счетоводителя на Европейската комисия в съответствие с член 19 от Финансовия регламент.\nКурсът се използва за изчисляване на суми за възстановяване на разходи, пътни или дневни разходи на външни лица, участващи в заседания, срещи и др. по искане на Европейската комисия.\n<b>Περιλαμβάνει περίπου 150 νομίσματα.</b></string>
+    <string name="api_inforEuro_descriptionShort">Около 150 обменни курса\nИзточник: Европейска комисия</string>
     <string name="api_inforEuro_descriptionUpdateInterval">Посочените курсове са пазарните курсове за предпоследния ден от предходния месец, както са предоставени от Европейската централна банка или, в зависимост от наличността, от делегациите или други подходящи източници на близка дата.</string>
+    <string name="api_inforEuro_hint">Курсовете се обновяват само веднъж месечно!</string>
+    <string name="api_norgesBank_descriptionFull">Обменни курсове, предоставяни от Норвежката централна банка <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>Norges Bank предоставя около 40 обменни курса.</b></string>
+    <string name="api_norgesBank_descriptionShort">Около 40 обменни курса\nИзточник: Централна банка на Норвегия</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">Дневните обменни курсове се публикуват приблизително в 16:00 CET.</string>
+    <string name="api_norgesBank_hint">Услугата редовно има прекъсвания (HTTP 503), по време на които курсовете не могат да бъдат обновени!</string>
+    <string name="api_openExchangeRates_descriptionFull">Данните се проследяват и комбинират от множество надеждни източници, което гарантира безпристрастни курсове. Виж <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> за повече информация.\n<b>Open Exchange Rates предоставя голям набор от около 160 обменни курса.\n<i>За да използваш този източник, трябва да въведеш своя личен API ключ!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Около 160 обменни курса\nИзточник: Комбинация от множество надеждни доставчици.</string>
+    <string name="api_openExchangeRates_descriptionUpdateInterval">Обновяване на всеки час.</string>
+    <string name="api_openExchangeRates_hint">За да използваш този източник, трябва да създадеш свой личен API ключ!</string>
     <string name="api_bankOfCanada_name">Банка на Канада</string>
     <string name="api_bankOfIsrael_name">Банка на Израел</string>
     <string name="api_bankRossii_name">Банка на Русия</string>
     <string name="api_norgesBank_name">Банка на Норвегия</string>
+    <string name="api_bankOfCanada_descriptionFull">Среднодневни обменни курсове на <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Включени са около 23 валути.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Около 23 обменни курса\nИзточник: Централна банка на Канада</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">Курсовете се публикуват веднъж всеки работен ден до 16:30 ET</string>
 </resources>

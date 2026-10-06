@@ -24,9 +24,10 @@
     <string name="keyboard_title">Lyklaborð</string>
     <string name="keyboard_summary_expanded">Bætir við aukalyklum til að slá inn hraðar.</string>
     <string name="decimal_places_title">Tugabrotanákvæmni</string>
-    <string name="decimal_places_summary">Fjöldi aukastafa sem birtast fyrir umbreytt gildi.</string>
     <string name="haptic_feedback_title">Haptísk endurgjöf</string>
     <string name="haptic_feedback_summary">Titra við lyklakipp\nFylgir kerfisstillingu</string>
+    <string name="auto_refresh_title">Endurnýja gengi sjálfkrafa</string>
+    <string name="auto_refresh_summary">Endurnýja í bakgrunni með þeirri tíðni sem veitan mælir með</string>
     <string name="date_format_title">Snið dagsetningar og tíma</string>
     <string name="category_appearance">Útlit</string>
     <string name="system_default">Sjálfgildi kerfis</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Grafvalkostir</string>
     <string name="graph_options_summary">Stilltu hnitanet, ásamerkingar og áherslur.</string>
     <string name="graph_grid_title">Sýna hnitanet</string>
-    <string name="graph_grid_summary">Teikna láréttar og lóðréttar hjálparlínur á bak við grafið.</string>
     <string name="graph_x_axis_title">Sýna X-ás merkingar</string>
-    <string name="graph_x_axis_summary">Sýna dagsetningarmerkingar við neðri hluta grafsins.</string>
     <string name="graph_y_axis_title">Sýna Y-ás merkingar</string>
-    <string name="graph_y_axis_summary">Sýna gengismerkingar vinstra megin á grafinu.</string>
     <string name="graph_highlight_extremes_title">Auðkenna lág. og hám.</string>
-    <string name="graph_highlight_extremes_summary">Leggja viðmiðunarlínur yfir lægstu og hæstu gildin á sýnilega bilinu.</string>
     <string name="graph_highlight_period_change_title">Auðkenna breytingu á ári/mánuði</string>
-    <string name="graph_highlight_period_change_summary">Teikna lóðréttar leiðbeiningarlínur þar sem árið eða mánuðurinn breytist á grafinu.</string>
     <!-- languages -->
     <string name="language_title">Tungumál forrits</string>
     <string name="language_ar">Arabíska</string>
@@ -118,6 +114,10 @@
     <string name="backup_password_prompt_title">Sláðu inn lykilorð</string>
     <string name="backup_password_wrong">Lykilorðið afkóðaði ekki þessa skrá. Reyndu aftur.</string>
     <string name="backup_password_too_short">Lykilorð verður að vera minnst %1$d stafir</string>
+    <string name="backup_password_show">Sýna lykilorð</string>
+    <string name="backup_password_hide">Fela lykilorð</string>
+    <string name="picker_active_chip">Virkt</string>
+    <string name="picker_currency_title">Gjaldmiðill</string>
     <string name="credits_title">Um, lagalegt &amp; opinn hugbúnaður</string>
     <string name="credits_summary">Persónuverndarstefna, þjónustuskilmálar, aðgengi, frumkóði og leyfi safna þriðja aðila</string>
     <string name="title_credits">Um, lagalegt &amp; opinn hugbúnaður</string>
@@ -140,7 +140,6 @@
     <string name="credits_section_source">Frumkóði</string>
     <string name="fee_edit_active">Virkt</string>
     <string name="fee_edit_name">Nafn</string>
-    <string name="fee_edit_name_hint">t.d. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Óvirkt</string>
     <string name="fee_untitled">Án titils</string>
     <string name="dynamic_color_title">Litir veggfóðurs</string>

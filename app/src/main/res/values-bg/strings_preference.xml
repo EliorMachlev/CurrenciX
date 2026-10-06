@@ -24,9 +24,10 @@
     <string name="keyboard_title">Клавиатура</string>
     <string name="keyboard_summary_expanded">Добавя допълнителни клавиши за пряк път за по-бързо въвеждане.</string>
     <string name="decimal_places_title">Десетична точност</string>
-    <string name="decimal_places_summary">Брой десетични знаци, показвани за конвертираните стойности.</string>
     <string name="haptic_feedback_title">Тактилна обратна връзка</string>
     <string name="haptic_feedback_summary">Вибрация при натискане на клавиш\nСледва системната настройка</string>
+    <string name="auto_refresh_title">Автоматично обновяване на курсовете</string>
+    <string name="auto_refresh_summary">Обновяване на заден план с честотата, препоръчана от доставчика</string>
     <string name="date_format_title">Формат за дата и час</string>
     <string name="category_appearance">Изглед</string>
     <string name="system_default">Стандартно за системата</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Опции на графиката</string>
     <string name="graph_options_summary">Конфигуриране на решетка, етикети на осите и акценти.</string>
     <string name="graph_grid_title">Показване на решетка</string>
-    <string name="graph_grid_summary">Начертайте хоризонтални и вертикални помощни линии зад графиката.</string>
     <string name="graph_x_axis_title">Показване на етикети на оста X</string>
-    <string name="graph_x_axis_summary">Показване на етикети с дати в долната част на графиката.</string>
     <string name="graph_y_axis_title">Показване на етикети на оста Y</string>
-    <string name="graph_y_axis_summary">Показване на етикети със стойности на курса от лявата страна на графиката.</string>
     <string name="graph_highlight_extremes_title">Открояване на минимум и максимум</string>
-    <string name="graph_highlight_extremes_summary">Наслагване на референтни линии при най-ниските и най-високите курсове.</string>
     <string name="graph_highlight_period_change_title">Открояване на смяна на година/месец</string>
-    <string name="graph_highlight_period_change_summary">Изчертаване на вертикални помощни линии при смяна на година или месец в графиката.</string>
     <!-- languages -->
     <string name="language_title">Език на приложението</string>
     <string name="language_da">Датски</string>
@@ -57,32 +53,7 @@
     <string name="language_fa">Персийски</string>
     <string name="language_zh_TW">Китайски (традиционен)</string>
 
-
-
-
-
-
-
-
     <string name="language_eo">Есперанто</string>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <!-- api -->
     <string name="category_api">Обмени курсове</string>
@@ -95,7 +66,6 @@
     <string name="disclaimer_summary">Показаните обменни курсове са <b>само ориентировъчни</b>. Те идват от трети доставчици, може да са забавени или грешни и <b>не трябва</b> да се използват за търговия, хеджиране, фактуриране или каквото и да е решение, за което се изисква точен или изпълним курс. Вижте Общите условия за пълния отказ от отговорност.\nПредоставените курсове – дори ако са правилни – може да се различават от тези, използвани от Вашата банка.\nНакрая: грешки се случват. Никога не се доверявайте сляпо на един-единствен източник.\nТова приложение е напълно безплатно и с отворен код. Ако намерите версия с цена или реклами, тя е фалшива — деинсталирайте я незабавно.</string>
     <string name="rate_title">Оцени това приложение</string>
     <string name="rate_summary">Ако искаш, можеш да помогнеш на другите да открият Currencies. Натисни тук, за да оцениш приложението.</string>
-
 
     <string name="backup_title">Резервно копие и възстановяване</string>
     <string name="backup_summary">Запази настройките си във файл или възстанови от предишно резервно копие</string>
@@ -118,6 +88,10 @@
     <string name="backup_password_prompt_title">Въведи парола</string>
     <string name="backup_password_wrong">Паролата не дешифрира този файл. Опитай отново.</string>
     <string name="backup_password_too_short">Паролата трябва да е поне %1$d знака</string>
+    <string name="backup_password_show">Покажи паролата</string>
+    <string name="backup_password_hide">Скрий паролата</string>
+    <string name="picker_active_chip">Активно</string>
+    <string name="picker_currency_title">Валута</string>
     <string name="credits_title">За приложението, правна информация &amp; отворен код</string>
     <string name="credits_summary">Политика за поверителност, общи условия, достъпност, изходен код и лицензи на библиотеки на трети страни</string>
     <string name="title_credits">За приложението, правна информация &amp; отворен код</string>
@@ -141,7 +115,6 @@
     <string name="credits_section_source">Източник</string>
     <string name="fee_edit_active">Активна</string>
     <string name="fee_edit_name">Име</string>
-    <string name="fee_edit_name_hint">напр. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Неактивна</string>
     <string name="fee_untitled">Без име</string>
     <string name="language_ar">Арабски</string>

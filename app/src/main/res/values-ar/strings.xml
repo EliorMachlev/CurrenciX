@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">تبديل العملات</string>
     <string name="historical_rates_dialog_title">الأسعار السابقة</string>
     <string name="historical_rates_dialog_toggle">إستخدام أسعار الصرف في تاريخ محدد. أغلق، لإستخدام أحدث الأسعار.</string>
+    <string name="historical_rates_dialog_now">الآن</string>
     <string name="error">خطأ: %s</string>
     <string name="error_generic">مشكلة غير معروفة.</string>
     <string name="error_http">استجاب الخادم ب HTTP %d.</string>
@@ -31,6 +32,7 @@
     <string name="unreachable_banner_with_date">الخدمة غير متاحة • أسعار من %1$s</string>
     <string name="unreachable_banner_no_data">الخدمة غير متاحة • جارٍ إعادة المحاولة</string>
     <string name="historical_banner">بيانات تاريخية • أسعار من %1$s</string>
+    <string name="fee_chip_label">رسوم %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">أحدث سعر واتجاه 30 يومًا لآخر زوج عملات استخدمته، أو زوج تختاره.</string>
@@ -83,9 +85,23 @@
     <string name="cart_share_total">الإجمالي: %1$s %2$s</string>
     <string name="cart_unsaved_title">تغييرات غير محفوظة</string>
     <string name="cart_unsaved_save">حفظ</string>
+    <string name="cart_unsaved_save_desc">استبدال السلة المحفوظة الحالية بهذه التغييرات.</string>
     <string name="cart_unsaved_save_as">حفظ كجديد</string>
+    <string name="cart_unsaved_save_as_desc">إبقاء السلة المحفوظة الحالية كما هي وحفظ نسخة باسم مختلف.</string>
     <string name="cart_unsaved_discard">تجاهل التغييرات</string>
+    <string name="cart_unsaved_discard_desc">العودة إلى آخر نسخة محفوظة والمتابعة.</string>
     <string name="cart_unsaved_continue">متابعة</string>
+    <string name="cart_unsaved_continue_desc">المتابعة مع التغييرات غير المحفوظة؛ يمكنك الحفظ لاحقًا.</string>
+    <string name="onboarding_skip">تخطي</string>
+    <string name="onboarding_next">التالي</string>
+    <string name="onboarding_finish">فهمت</string>
+    <string name="onboarding_fee_title">الرسوم ضمن التكلفة الحقيقية</string>
+    <string name="onboarding_fee_body">اضغط هنا لإضافة رسوم إضافية أو خصومات — تُطبَّق على جانب العملة المستهدفة، فيطابق المبلغ الذي تراه ما تدفعه فعليًا.</string>
+    <string name="onboarding_swap_title">تبديل زوج العملات</string>
+    <string name="onboarding_swap_body">اضغط على زر التبديل لعكس عملة الأساس والعملة المستهدفة. اضغط عليه مطولًا لفتح الرسوم.</string>
+    <string name="onboarding_autorefresh_title">تحديث الأسعار تلقائيًا</string>
+    <string name="onboarding_autorefresh_body">تُحدَّث الأسعار عند فتح التطبيق. فعّل التحديث في الخلفية لتبقى محدَّثة بين مرات التشغيل.</string>
+    <string name="onboarding_autorefresh_enable">تفعيل الآن</string>
     <string name="a11y_delete">حذف</string>
     <string name="a11y_search_currencies">ابحث عن العملات</string>
     <string name="a11y_clear_search">امسح البحث</string>

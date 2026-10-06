@@ -3,16 +3,31 @@
     <string name="api_bankOfIsrael_descriptionFull">Taxas de câmbio representativas, conforme publicadas pelo banco central israelense <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. As taxas são cotadas em relação ao novo shekel israelense.\n<b>O Bank of Israel lista cerca de 14 taxas de câmbio.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Cerca de 14 taxas de câmbio\nFonte: Banco Central de Israel</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">As taxas representativas são publicadas uma vez a cada dia útil por volta das 15:30 no horário de Israel.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> apresenta as taxas de câmbios de vários fornecedores de informação financeira e bancos, incluindo o European Central Bank. Todas as taxas de câmbios derivam de um ponto médio. Pontos médios são determinados por cálculo da taxa média da oferta e procura.\n<b>Cerca de 160 moedas estão incluídas.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Taxas de câmbios são atualizadas perto da meia noite UTC a cada dia útil.</string>
+    <string name="api_bankRossii_descriptionFull">Taxas de câmbio, conforme fornecidas pelo banco central russo <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Com as sanções atuais, esta fonte provavelmente oferece as taxas de câmbio mais confiáveis para o rublo russo.\n<b>O Bank Rossii lista cerca de 44 taxas de câmbio.</b></string>
+    <string name="api_bankRossii_descriptionShort">Cerca de 44 taxas de câmbio\nFonte: Banco Central da Rússia</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">As taxas são atualizadas diariamente, exceto nos <a href="https://cbr.ru/eng/other/holidays/">feriados na Rússia</a>.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> é um serviço relativamente novo, que (como o Frankfurter.app) segue as taxas de câmbio de referência (forex) que são publicadas pelo European Central Bank.\n<b>Cerca de 30 moedas estão incluídas.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">Taxas atualizadas a cada dia útil.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> segue taxas de câmbios de referência (forex) publicadas pelo European Central Bank.\n<b>Cerca de 30 moedas estão incluídas.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Cerca de 30 taxas de câmbio\nFonte: Banco Central Europeu</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">A informação é atualizada cerca das 16:00 CET a cada dia útil.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_pt"><b>InforEuro</b></a> indica a taxa contabilística mensal oficial da Comissão Europeia para o euro e as taxas de conversão fixadas pelo contabilista da Comissão Europeia, em conformidade com o artigo 19.º do Regulamento Financeiro.\nEstas taxas são utilizadas para calcular os montantes dos reembolsos das despesas, nomeadamente de deslocação e de estada, de pessoas externas que participam, a convite da Comissão Europeia, em reuniões, entrevistas, etc.\n<b>Cerca de 150 moedas estão incluídas.</b></string>
+    <string name="api_inforEuro_descriptionShort">Cerca de 150 taxas de câmbio\nFonte: Comissão Europeia</string>
     <string name="api_inforEuro_descriptionUpdateInterval">As taxas indicadas são as taxas de mercado do período compreendido entre o segundo e o último dia do mês anterior, divulgadas pelo Banco Central Europeu, ou, caso estejam disponíveis, fornecidas pelas delegações ou por outras fontes adequadas existentes na proximidade dessa data.</string>
+    <string name="api_inforEuro_hint">As taxas só são atualizadas uma vez por mês!</string>
+    <string name="api_norgesBank_descriptionFull">Taxas de câmbio, conforme fornecidas pelo banco central norueguês <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>O Norges Bank lista cerca de 40 taxas de câmbio.</b></string>
+    <string name="api_norgesBank_descriptionShort">Cerca de 40 taxas de câmbio\nFonte: Banco Central da Noruega</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">O horário de publicação das taxas de câmbio diárias é aproximadamente 16:00 CET.</string>
+    <string name="api_norgesBank_hint">O serviço fica fora do ar com frequência (HTTP 503), e nesses períodos as taxas não podem ser atualizadas!</string>
+    <string name="api_openExchangeRates_descriptionFull">Os dados são coletados e combinados a partir de várias fontes confiáveis, garantindo taxas imparciais. Consulte <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> para mais informações.\n<b>O Open Exchange Rates oferece uma grande quantidade de taxas de câmbio, cerca de 160.\n<i>Para usar esta fonte, você precisa inserir sua chave de API pessoal!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Cerca de 160 taxas de câmbio\nFonte: combinação de vários provedores confiáveis.</string>
+    <string name="api_openExchangeRates_descriptionUpdateInterval">Atualizações a cada hora.</string>
+    <string name="api_openExchangeRates_hint">Para usar esta fonte, você precisa criar sua chave de API pessoal!</string>
     <string name="api_bankOfCanada_name">Banco do Canadá</string>
     <string name="api_bankOfIsrael_name">Banco de Israel</string>
     <string name="api_bankRossii_name">Banco da Rússia</string>
     <string name="api_norgesBank_name">Banco da Noruega</string>
+    <string name="api_bankOfCanada_descriptionFull">Taxas de câmbio médias diárias do <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Banco do Canadá</b></a>.\n<b>Cerca de 23 moedas estão incluídas.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Cerca de 23 taxas de câmbio\nFonte: Banco Central do Canadá</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">As taxas são publicadas uma vez a cada dia útil até as 16:30 ET</string>
 </resources>

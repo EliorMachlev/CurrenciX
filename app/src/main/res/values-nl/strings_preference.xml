@@ -24,9 +24,10 @@
     <string name="keyboard_title">Toetsenbord</string>
     <string name="keyboard_summary_expanded">Voegt extra sneltoetsen toe voor snellere invoer.</string>
     <string name="decimal_places_title">Decimale nauwkeurigheid</string>
-    <string name="decimal_places_summary">Aantal decimalen dat wordt getoond bij geconverteerde waarden.</string>
     <string name="haptic_feedback_title">Haptische feedback</string>
     <string name="haptic_feedback_summary">Trilling bij toetsaanslag\nVolgt systeeminstelling</string>
+    <string name="auto_refresh_title">Koersen automatisch bijwerken</string>
+    <string name="auto_refresh_summary">Op de achtergrond bijwerken met het door de provider aanbevolen interval</string>
     <string name="date_format_title">Datum- en tijdformaat</string>
     <string name="category_appearance">Uiterlijk</string>
     <string name="system_default">Systeem standaard</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Grafiekopties</string>
     <string name="graph_options_summary">Configureer raster, aslabels en markeringen.</string>
     <string name="graph_grid_title">Raster tonen</string>
-    <string name="graph_grid_summary">Teken horizontale en verticale hulplijnen achter de grafiek.</string>
     <string name="graph_x_axis_title">X-aslabels tonen</string>
-    <string name="graph_x_axis_summary">Toon datumlabels onderaan de grafiek.</string>
     <string name="graph_y_axis_title">Y-aslabels tonen</string>
-    <string name="graph_y_axis_summary">Toon koerslabels aan de linkerkant van de grafiek.</string>
     <string name="graph_highlight_extremes_title">Min. en max. markeren</string>
-    <string name="graph_highlight_extremes_summary">Referentielijnen weergeven bij de laagste en hoogste koersen in het zichtbare bereik.</string>
     <string name="graph_highlight_period_change_title">Jaar-/maandwissel markeren</string>
-    <string name="graph_highlight_period_change_summary">Verticale hulplijnen tekenen op de plaatsen waar het jaar of de maand in de grafiek verandert.</string>
     <!-- languages -->
     <string name="language_title">App taal</string>
     <string name="language_ar">Arabisch</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Voer wachtwoord in</string>
     <string name="backup_password_wrong">Het wachtwoord kon dit bestand niet ontsleutelen. Probeer het opnieuw.</string>
     <string name="backup_password_too_short">Het wachtwoord moet minstens %1$d tekens bevatten</string>
+    <string name="backup_password_show">Wachtwoord tonen</string>
+    <string name="backup_password_hide">Wachtwoord verbergen</string>
+    <string name="picker_active_chip">Actief</string>
+    <string name="picker_currency_title">Valuta</string>
     <string name="credits_title">Over, juridisch &amp; open-source</string>
     <string name="credits_summary">Privacybeleid, servicevoorwaarden, toegankelijkheid, broncode en licenties van externe bibliotheken</string>
     <string name="title_credits">Over, juridisch &amp; open-source</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Bron</string>
     <string name="fee_edit_active">Actief</string>
     <string name="fee_edit_name">Naam</string>
-    <string name="fee_edit_name_hint">bijv. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inactief</string>
     <string name="fee_untitled">Naamloos</string>
     <string name="dynamic_color_title">Achtergrondkleuren</string>

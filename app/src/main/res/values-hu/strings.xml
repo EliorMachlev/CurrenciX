@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">Valuták váltása</string>
     <string name="historical_rates_dialog_title">Múltbéli árfolyamok</string>
     <string name="historical_rates_dialog_toggle">Egy adott időpontra vonatkozó árfolyamok használata. Kikapcsolva mindig a legfrissebbeket veszi figyelembe.</string>
+    <string name="historical_rates_dialog_now">Most</string>
     <string name="error">Hiba: %s</string>
     <string name="error_generic">Ismeretlen probléma.</string>
     <string name="error_timeout">A szerver nem válaszolt időben, vagy nem elérhető.</string>
@@ -25,6 +26,7 @@
     <string name="unreachable_banner_with_date">A szolgáltató nem elérhető • %1$s árfolyamai</string>
     <string name="unreachable_banner_no_data">A szolgáltató nem elérhető • Újrapróbálkozás</string>
     <string name="historical_banner">Múltbeli • %1$s árfolyamai</string>
+    <string name="fee_chip_label">%1$s díj</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">A legutóbb használt vagy általad választott devizapár legfrissebb árfolyama és 30 napos trendje.</string>
@@ -77,9 +79,23 @@
     <string name="cart_share_total">Összesen: %1$s %2$s</string>
     <string name="cart_unsaved_title">Mentetlen módosítások</string>
     <string name="cart_unsaved_save">Mentés</string>
+    <string name="cart_unsaved_save_desc">A jelenlegi mentett kosár felülírása ezekkel a módosításokkal.</string>
     <string name="cart_unsaved_save_as">Mentés újként</string>
+    <string name="cart_unsaved_save_as_desc">A jelenlegi mentett kosár változatlanul hagyása és egy másolat mentése más néven.</string>
     <string name="cart_unsaved_discard">Módosítások elvetése</string>
+    <string name="cart_unsaved_discard_desc">Visszatérés az utoljára mentett változathoz, majd folytatás.</string>
     <string name="cart_unsaved_continue">Folytatás</string>
+    <string name="cart_unsaved_continue_desc">Folytatás a mentetlen módosításokkal; később is mentheted.</string>
+    <string name="onboarding_skip">Kihagyás</string>
+    <string name="onboarding_next">Tovább</string>
+    <string name="onboarding_finish">Értem</string>
+    <string name="onboarding_fee_title">Díjak a valós költségben</string>
+    <string name="onboarding_fee_body">Koppints ide felárak vagy kedvezmények hozzáadásához — ezek a célpénznem oldalán jelennek meg, így a látott összeg megegyezik azzal, amit ténylegesen fizetsz.</string>
+    <string name="onboarding_swap_title">A pár felcserélése</string>
+    <string name="onboarding_swap_body">Koppints a csere gombra az alap- és a célpénznem felcseréléséhez. A díjaid megnyitásához tartsd nyomva.</string>
+    <string name="onboarding_autorefresh_title">Árfolyamok automatikus frissítése</string>
+    <string name="onboarding_autorefresh_body">Az árfolyamok az alkalmazás megnyitásakor frissülnek. Kapcsold be a háttérben történő frissítést, hogy két megnyitás között is naprakészek maradjanak.</string>
+    <string name="onboarding_autorefresh_enable">Bekapcsolás most</string>
     <string name="a11y_delete">Törlés</string>
     <string name="currency_dropdown_api_hint">Hiányzik valami? A különböző adatszolgáltatók különböző valutákat kínálnak. Nyisd meg a beállításokat, és próbálj ki egy másikat!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">A szervernek nincs adata ehhez a kéréshez.</string>

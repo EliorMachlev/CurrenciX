@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">Alternar monedes</string>
     <string name="historical_rates_dialog_title">Taxes històriques</string>
     <string name="historical_rates_dialog_toggle">Utilitza les taxes de canvi d\'una data específica. Desactivar si es vol utilitzar sempre les més recents.</string>
+    <string name="historical_rates_dialog_now">Ara</string>
     <string name="error">Error: %s</string>
     <string name="error_generic">Problema desconegut.</string>
     <string name="error_http">El servidor ha respost amb HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Proveïdor no disponible • Tipus del %1$s</string>
     <string name="unreachable_banner_no_data">Proveïdor no disponible • Tornant a intentar</string>
     <string name="historical_banner">Històric • Tipus del %1$s</string>
+    <string name="fee_chip_label">%1$s de comissió</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Darrer tipus i tendència de 30 dies del darrer parell de monedes que vas fer servir, o del que triïs.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Total: %1$s %2$s</string>
     <string name="cart_unsaved_title">Canvis no desats</string>
     <string name="cart_unsaved_save">Desa</string>
+    <string name="cart_unsaved_save_desc">Sobreescriu la cistella desada actual amb aquests canvis.</string>
     <string name="cart_unsaved_save_as">Desa com a nou</string>
+    <string name="cart_unsaved_save_as_desc">Mantén intacta la cistella desada actual i desa\'n una còpia amb un altre nom.</string>
     <string name="cart_unsaved_discard">Descarta els canvis</string>
+    <string name="cart_unsaved_discard_desc">Torna a l\'última versió desada i continua.</string>
     <string name="cart_unsaved_continue">Continua</string>
+    <string name="cart_unsaved_continue_desc">Continua amb els canvis no desats; els podràs desar més tard.</string>
+    <string name="onboarding_skip">Omet</string>
+    <string name="onboarding_next">Següent</string>
+    <string name="onboarding_finish">Entesos</string>
+    <string name="onboarding_fee_title">Comissions al cost real</string>
+    <string name="onboarding_fee_body">Toca aquí per afegir recàrrecs o descomptes — s\'apliquen al costat de destinació perquè l\'import que veus coincideixi amb el que pagues realment.</string>
+    <string name="onboarding_swap_title">Inverteix el parell</string>
+    <string name="onboarding_swap_body">Toca el botó d\'inversió per intercanviar la moneda base i la de destinació. Mantén-lo premut per obrir les teves comissions.</string>
+    <string name="onboarding_autorefresh_title">Actualització automàtica de les taxes</string>
+    <string name="onboarding_autorefresh_body">Les taxes s\'actualitzen quan obres l\'aplicació. Activa l\'actualització en segon pla perquè es mantinguin al dia entre un ús i el següent.</string>
+    <string name="onboarding_autorefresh_enable">Activa ara</string>
     <string name="a11y_delete">Suprimeix</string>
     <string name="a11y_search_currencies">Cerca divises</string>
     <string name="a11y_clear_search">Neteja la cerca</string>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <!-- main settings -->
     <string name="category_settings">General Settings</string>
-    <string name="fee_key" translatable="false">KEY_FEE</string>
     <string name="fee_title">Foreign transaction fee</string>
     <string name="fee_summary">Manage exchange, bank/card, and pair-specific fees</string>
     <!-- fee manager -->
@@ -22,20 +21,14 @@
     <string name="fee_cost_with_fee_prefix">"Cost with fee: "</string>
     <string name="fee_empty">No fees yet</string>
     <string name="fee_edit_name">Name</string>
-    <string name="fee_edit_name_hint">e.g. Wise, Revolut, Chase</string>
     <string name="fee_edit_active">Active</string>
     <string name="fee_inactive_marker">Inactive</string>
     <string name="fee_untitled">Untitled</string>
-    <string name="previewConversion_key" translatable="false">KEY_PREVIEW_CONVERSION</string>
     <string name="previewConversion_title">Conversion preview</string>
     <string name="previewConversion_summary">Show the current conversion for each rate in the currency picker.</string>
-    <string name="keyboard_key" translatable="false">KEY_KEYBOARD</string>
     <string name="keyboard_title">Keyboard</string>
     <string name="keyboard_summary_expanded">Adds extra shortcut keys for faster entry.</string>
-    <string name="decimal_places_key" translatable="false">KEY_DECIMAL_PLACES</string>
     <string name="decimal_places_title">Decimal accuracy</string>
-    <string name="decimal_places_summary">Number of decimal places to show for converted values.</string>
-    <string name="haptic_feedback_key" translatable="false">KEY_HAPTIC_FEEDBACK</string>
     <string name="provider_group_free">Free</string>
     <string name="provider_group_api_key">Needs an API key</string>
     <string name="provider_main_chip">Main</string>
@@ -51,10 +44,8 @@
     <!-- auto-refresh (#151) -->
     <string name="auto_refresh_title">Auto-refresh rates</string>
     <string name="auto_refresh_summary">Refresh in the background at the provider-recommended cadence</string>
-    <string name="date_format_key" translatable="false">KEY_DATE_FORMAT</string>
     <string name="date_format_title">Date and Time format</string>
     <!-- backup -->
-    <string name="backup_key" translatable="false">KEY_BACKUP</string>
     <string name="backup_title">Backup &amp; Restore</string>
     <string name="backup_summary">Save your settings to a file, or restore from a previous backup</string>
     <string name="backup_manager_title">Backup</string>
@@ -86,34 +77,21 @@
     <string name="picker_currency_title">Currency</string>
     <!-- graph options -->
     <string name="category_graph_options">Graph options</string>
-    <string name="graph_options_key" translatable="false">KEY_GRAPH_OPTIONS</string>
     <string name="graph_options_title">Graph options</string>
     <string name="graph_options_summary">Configure grid, axis labels, and highlights.</string>
-    <string name="graph_grid_key" translatable="false">KEY_GRAPH_GRID</string>
     <string name="graph_grid_title">Show grid</string>
-    <string name="graph_grid_summary">Draw horizontal and vertical guide lines behind the chart.</string>
-    <string name="graph_x_axis_key" translatable="false">KEY_GRAPH_X_AXIS</string>
     <string name="graph_x_axis_title">Show X-axis labels</string>
-    <string name="graph_x_axis_summary">Show date labels along the bottom of the chart.</string>
-    <string name="graph_y_axis_key" translatable="false">KEY_GRAPH_Y_AXIS</string>
     <string name="graph_y_axis_title">Show Y-axis labels</string>
-    <string name="graph_y_axis_summary">Show rate value labels along the left side of the chart.</string>
-    <string name="graph_highlight_extremes_key" translatable="false">KEY_GRAPH_HIGHLIGHT_EXTREMES</string>
     <string name="graph_highlight_extremes_title">Highlight min and max</string>
-    <string name="graph_highlight_extremes_summary">Overlay reference lines at the lowest and highest rates in the visible range.</string>
-    <string name="graph_highlight_period_change_key" translatable="false">KEY_GRAPH_HIGHLIGHT_PERIOD_CHANGE</string>
     <string name="graph_highlight_period_change_title">Highlight year/month change</string>
-    <string name="graph_highlight_period_change_summary">Draw vertical guide lines where the year or month changes across the chart.</string>
     <string name="category_appearance">Look &amp; Feel</string>
     <string name="system_default">System default</string>
-    <string name="theme_key" translatable="false">KEY_THEME</string>
     <string name="theme_title">Design</string>
     <string name="theme_option_light">Light</string>
     <string name="theme_option_dark">Dark</string>
     <string name="theme_option_oled">OLED</string>
     <string name="theme_option_system_oled">System default (OLED)</string>
     <!-- languages -->
-    <string name="language_key" translatable="false">KEY_LANGUAGE</string>
     <string name="language_title">App Language</string>
     <string name="language_ar">Arabic</string>
     <string name="language_bg">Bulgarian</string>
@@ -149,21 +127,16 @@
     <string name="language_zh_TW">Chinese (Traditional)</string>
     <!-- api -->
     <string name="category_api">Exchange rates</string>
-    <string name="api_key" translatable="false">KEY_API</string>
-    <string name="api_open_exchangerates_id_key" translatable="false">KEY_OPEN_EXCHANGERATES_ID</string>
     <string name="api_title">Data provider</string>
     <string name="api_open_exchangerates_api_key_title">Open Exchangerates API Key</string>
     <string name="api_open_exchangerates_api_key_message">To use this Source, you have to create your personal API Key.\n\nIn order to do that, go to https://openexchangerates.org/signup/free and create a free account.\nFinally, simply generate a new App ID inside your Dashboard and enter it here:</string>
     <string name="api_open_exchangerates_api_key_missing"><i>API Key required</i></string>
-    <string name="key_apiProvider" translatable="false">KEY_DATA_SOURCE</string>
     <string name="api_about_title">About %s</string>
-    <string name="key_refreshPeriod" translatable="false">KEY_DATA_UPDATE</string>
     <string name="api_refreshPeriod_title">Refresh period</string>
     <!-- about -->
     <string name="category_about">About this app</string>
     <string name="disclaimer_title">Disclaimer</string>
     <string name="disclaimer_summary">Exchange rates shown are <b>indicative only</b>. They come from third-party providers, may be delayed or wrong, and <b>must not</b> be used for trading, hedging, invoicing, or any decision where an accurate or executable rate is required. See the Terms of Service for the full disclaimer.\nRates provided – even if correct – may differ from those used by your bank.\nLastly: mistakes happen. Never blindly trust any single source.\nThis app is fully free and open source. If you find a version with a price tag or ads, it is fake — uninstall it immediately.</string>
-    <string name="credits_key" translatable="false">KEY_CREDITS</string>
     <string name="credits_title">About, legal &amp; open-source</string>
     <string name="credits_summary">Privacy policy, terms of service, accessibility, source code, and third-party library licences</string>
     <string name="title_credits">About, legal &amp; open-source</string>
@@ -181,12 +154,9 @@
     <string name="credit_accessibility_subtitle">WCAG 2.1 AA target; how to report barriers.</string>
     <string name="credit_source_title">Source code</string>
     <string name="credit_source_subtitle">Open source on GitHub — contribute or open an issue.</string>
-    <string name="rate_key" translatable="false">KEY_RATE</string>
     <string name="rate_title">Rate this app</string>
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app.</string>
     <string name="category_versioninfo">Version info</string>
-    <string name="changelog_key" translatable="false">KEY_CHANGELOG</string>
     <string name="title_changelog">Changelog</string>
-    <string name="version_key" translatable="false">KEY_ABOUT</string>
     <string name="version_summary" translatable="false">© 2020-%1$s Maximilian Salomon · CurrenciX fork © 2026 Elior Machlev · GPL-3.0-or-later</string>
 </resources>

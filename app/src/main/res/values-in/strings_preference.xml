@@ -24,9 +24,10 @@
     <string name="keyboard_title">Keyboard</string>
     <string name="keyboard_summary_expanded">Menambahkan tombol pintasan tambahan agar input lebih cepat.</string>
     <string name="decimal_places_title">Akurasi desimal</string>
-    <string name="decimal_places_summary">Jumlah tempat desimal yang ditampilkan untuk nilai yang dikonversi.</string>
     <string name="haptic_feedback_title">Umpan balik haptic</string>
     <string name="haptic_feedback_summary">Getar saat tombol ditekan\nMengikuti pengaturan sistem</string>
+    <string name="auto_refresh_title">Pembaruan kurs otomatis</string>
+    <string name="auto_refresh_summary">Perbarui di latar belakang sesuai frekuensi yang direkomendasikan penyedia</string>
     <string name="date_format_title">Format tanggal dan waktu</string>
     <string name="category_appearance">Tampilan</string>
     <string name="system_default">Default sistem</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Opsi grafik</string>
     <string name="graph_options_summary">Konfigurasikan kisi, label sumbu, dan sorotan.</string>
     <string name="graph_grid_title">Tampilkan kisi</string>
-    <string name="graph_grid_summary">Gambar garis panduan horizontal dan vertikal di belakang grafik.</string>
     <string name="graph_x_axis_title">Tampilkan label sumbu X</string>
-    <string name="graph_x_axis_summary">Tampilkan label tanggal di bagian bawah grafik.</string>
     <string name="graph_y_axis_title">Tampilkan label sumbu Y</string>
-    <string name="graph_y_axis_summary">Tampilkan label nilai kurs di sisi kiri grafik.</string>
     <string name="graph_highlight_extremes_title">Sorot min. dan maks.</string>
-    <string name="graph_highlight_extremes_summary">Menampilkan garis referensi pada nilai kurs terendah dan tertinggi dalam rentang.</string>
     <string name="graph_highlight_period_change_title">Tandai pergantian tahun/bulan</string>
-    <string name="graph_highlight_period_change_summary">Menampilkan garis panduan vertikal pada titik pergantian tahun atau bulan di grafik.</string>
     <!-- languages -->
     <string name="language_title">Bahasa Aplikasi</string>
     <string name="language_ar">Arab</string>
@@ -83,7 +79,6 @@
     <string name="language_vi">Vietnam</string>
     <string name="language_zh_TW">Tionghoa (Tradisional)</string>
 
-
     <!-- api -->
     <string name="category_api">Nilai tukar</string>
     <string name="api_title">Penyedia data</string>
@@ -95,7 +90,6 @@
     <string name="disclaimer_summary">Nilai tukar yang ditampilkan <b>hanya bersifat indikatif</b>. Nilai tersebut berasal dari penyedia pihak ketiga, mungkin tertunda atau salah, dan <b>tidak boleh</b> digunakan untuk perdagangan, lindung nilai, penagihan, atau keputusan apa pun yang memerlukan nilai tukar yang akurat atau dapat dieksekusi. Lihat Ketentuan Layanan untuk penafian selengkapnya.\nNilai tukar yang diberikan – meskipun benar – mungkin berbeda dari yang digunakan oleh bank Anda.\nTerakhir: kesalahan bisa terjadi. Jangan pernah mempercayai satu sumber pun secara buta.\nAplikasi ini sepenuhnya gratis dan sumber terbuka. Jika Anda menemukan versi berbayar atau berisi iklan, itu palsu — segera hapus instalasinya.</string>
     <string name="rate_title">Nilai aplikasi ini</string>
     <string name="rate_summary">Jika Anda mau, Anda dapat membantu orang lain menemukan Currencies. Klik di sini untuk menilai aplikasi.</string>
-
 
     <string name="backup_title">Cadangkan &amp; Pulihkan</string>
     <string name="backup_summary">Simpan pengaturan Anda ke sebuah file, atau pulihkan dari cadangan sebelumnya</string>
@@ -118,6 +112,10 @@
     <string name="backup_password_prompt_title">Masukkan kata sandi</string>
     <string name="backup_password_wrong">Kata sandi tidak berhasil mendekripsi file. Coba lagi.</string>
     <string name="backup_password_too_short">Kata sandi harus minimal %1$d karakter</string>
+    <string name="backup_password_show">Tampilkan kata sandi</string>
+    <string name="backup_password_hide">Sembunyikan kata sandi</string>
+    <string name="picker_active_chip">Aktif</string>
+    <string name="picker_currency_title">Mata uang</string>
     <string name="credits_title">Tentang, hukum &amp; sumber terbuka</string>
     <string name="credits_summary">Kebijakan privasi, ketentuan layanan, aksesibilitas, kode sumber, dan lisensi pustaka pihak ketiga</string>
     <string name="title_credits">Tentang, hukum &amp; sumber terbuka</string>
@@ -141,7 +139,6 @@
     <string name="credits_section_source">Sumber</string>
     <string name="fee_edit_active">Aktif</string>
     <string name="fee_edit_name">Nama</string>
-    <string name="fee_edit_name_hint">mis. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Nonaktif</string>
     <string name="fee_untitled">Tanpa judul</string>
     <string name="language_zh_CN">Tionghoa (Sederhana)</string>

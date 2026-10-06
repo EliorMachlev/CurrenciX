@@ -24,9 +24,10 @@
     <string name="keyboard_title">Klaviatuur</string>
     <string name="keyboard_summary_expanded">Lisab täiendavaid kiirklahve kiiremaks sisestamiseks.</string>
     <string name="decimal_places_title">Kümnendtäpsus</string>
-    <string name="decimal_places_summary">Kuvatavate kümnendkohtade arv teisendatud väärtustel.</string>
     <string name="haptic_feedback_title">Haptiline tagasiside</string>
     <string name="haptic_feedback_summary">Vibratsioon klahvivajutuse korral\nJärgib süsteemi seadet</string>
+    <string name="auto_refresh_title">Kursside automaatne uuendamine</string>
+    <string name="auto_refresh_summary">Uuenda taustal teenusepakkuja soovitatud sagedusega</string>
     <string name="date_format_title">Kuupäeva ja kellaaja vorming</string>
     <string name="category_appearance">Välimus</string>
     <string name="system_default">Süsteemi välimus</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Graafiku valikud</string>
     <string name="graph_options_summary">Seadista ruudustik, telgede sildid ja esiletõstud.</string>
     <string name="graph_grid_title">Kuva ruudustik</string>
-    <string name="graph_grid_summary">Joonista graafiku taha horisontaalsed ja vertikaalsed abijooned.</string>
     <string name="graph_x_axis_title">Kuva X-telje sildid</string>
-    <string name="graph_x_axis_summary">Kuva kuupäevasildid graafiku alaosas.</string>
     <string name="graph_y_axis_title">Kuva Y-telje sildid</string>
-    <string name="graph_y_axis_summary">Kuva kursisildid graafiku vasakul küljel.</string>
     <string name="graph_highlight_extremes_title">Rõhuta min. ja max.</string>
-    <string name="graph_highlight_extremes_summary">Aseta viitejooned nähtava vahemiku madalaimatele ja kõrgeimatele kurssidele.</string>
     <string name="graph_highlight_period_change_title">Rõhuta aasta/kuu vahetust</string>
-    <string name="graph_highlight_period_change_summary">Joonista graafikule vertikaalsed abijooned kohtadesse, kus aasta või kuu vahetub.</string>
     <!-- languages -->
     <string name="language_title">Rakenduse keel</string>
     <string name="language_ar">araabia keel</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Sisesta parool</string>
     <string name="backup_password_wrong">Parool ei avanud selle faili krüptot. Proovi uuesti.</string>
     <string name="backup_password_too_short">Parool peab olema vähemalt %1$d märki</string>
+    <string name="backup_password_show">Näita parooli</string>
+    <string name="backup_password_hide">Peida parool</string>
+    <string name="picker_active_chip">Aktiivne</string>
+    <string name="picker_currency_title">Valuuta</string>
     <string name="credits_title">Teave, õiguslik ja avatud lähtekood</string>
     <string name="credits_summary">Privaatsuspõhimõtted, kasutustingimused, ligipääsetavus, lähtekood ja kolmandate osapoolte teekide litsentsid</string>
     <string name="title_credits">Teave, õiguslik ja avatud lähtekood</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Lähtekood</string>
     <string name="fee_edit_active">Aktiivne</string>
     <string name="fee_edit_name">Nimi</string>
-    <string name="fee_edit_name_hint">nt Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Mitteaktiivne</string>
     <string name="fee_untitled">Nimetu</string>
     <string name="dynamic_color_title">Taustapildi värvid</string>

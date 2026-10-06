@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">slå valutaer til/fra</string>
     <string name="historical_rates_dialog_title">Historiske valutakurser</string>
     <string name="historical_rates_dialog_toggle">Brug valutakurserne fra en specifik dato. Deaktiver for altid at bruge den nyeste kurs.</string>
+    <string name="historical_rates_dialog_now">Nu</string>
     <string name="error">Fejl: %s</string>
     <string name="error_generic">Ukendt problem.</string>
     <string name="error_http">Serveren svarede med HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Udbyder utilgængelig • Kurser fra %1$s</string>
     <string name="unreachable_banner_no_data">Udbyder utilgængelig • Prøver igen</string>
     <string name="historical_banner">Historisk • Kurser fra %1$s</string>
+    <string name="fee_chip_label">%1$s gebyr</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Seneste kurs og 30-dages tendens for dit senest brugte valutapar eller et, du vælger.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">I alt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Ikke-gemte ændringer</string>
     <string name="cart_unsaved_save">Gem</string>
+    <string name="cart_unsaved_save_desc">Overskriv den aktuelle gemte kurv med disse ændringer.</string>
     <string name="cart_unsaved_save_as">Gem som ny</string>
+    <string name="cart_unsaved_save_as_desc">Lad den aktuelle gemte kurv være uændret, og gem en kopi under et andet navn.</string>
     <string name="cart_unsaved_discard">Kassér ændringer</string>
+    <string name="cart_unsaved_discard_desc">Vend tilbage til den senest gemte version, og fortsæt.</string>
     <string name="cart_unsaved_continue">Fortsæt</string>
+    <string name="cart_unsaved_continue_desc">Fortsæt med ikke-gemte ændringer; du kan gemme senere.</string>
+    <string name="onboarding_skip">Spring over</string>
+    <string name="onboarding_next">Næste</string>
+    <string name="onboarding_finish">Forstået</string>
+    <string name="onboarding_fee_title">Reel pris med gebyrer</string>
+    <string name="onboarding_fee_body">Tryk her for at tilføje tillæg eller rabatter — de regnes med på målvalutaens side, så det beløb, du ser, svarer til det, du faktisk betaler.</string>
+    <string name="onboarding_swap_title">Byt om på parret</string>
+    <string name="onboarding_swap_body">Tryk på byt-knappen for at bytte om på basis- og målvaluta. Hold den nede for at åbne dine gebyrer.</string>
+    <string name="onboarding_autorefresh_title">Opdatér kurser automatisk</string>
+    <string name="onboarding_autorefresh_body">Kurserne opdateres, når du åbner appen. Slå opdatering i baggrunden til, så de holdes aktuelle, også når appen er lukket.</string>
+    <string name="onboarding_autorefresh_enable">Slå til nu</string>
     <string name="a11y_delete">Slet</string>
     <string name="a11y_search_currencies">Søg valutaer</string>
     <string name="a11y_clear_search">Ryd søgning</string>

@@ -24,9 +24,10 @@
     <string name="keyboard_title">Teclat</string>
     <string name="keyboard_summary_expanded">Afegeix tecles de drecera addicionals per introduir dades més ràpid.</string>
     <string name="decimal_places_title">Precisió decimal</string>
-    <string name="decimal_places_summary">Nombre de decimals a mostrar per als valors convertits.</string>
     <string name="haptic_feedback_title">Resposta tàctil</string>
     <string name="haptic_feedback_summary">Vibra en prémer una tecla\nSegueix la configuració del sistema</string>
+    <string name="auto_refresh_title">Actualització automàtica de les taxes</string>
+    <string name="auto_refresh_summary">Actualitza en segon pla amb la freqüència recomanada pel proveïdor</string>
     <string name="date_format_title">Format de data i hora</string>
     <string name="category_appearance">Aparença</string>
     <string name="system_default">Opció predeterminada del sistema</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Opcions del gràfic</string>
     <string name="graph_options_summary">Configura la graella, les etiquetes dels eixos i els destacats.</string>
     <string name="graph_grid_title">Mostra la graella</string>
-    <string name="graph_grid_summary">Dibuixa línies de guia horitzontals i verticals darrere del gràfic.</string>
     <string name="graph_x_axis_title">Mostra etiquetes de l\'eix X</string>
-    <string name="graph_x_axis_summary">Mostra etiquetes de data a la part inferior del gràfic.</string>
     <string name="graph_y_axis_title">Mostra etiquetes de l\'eix Y</string>
-    <string name="graph_y_axis_summary">Mostra etiquetes de valor de canvi a la banda esquerra del gràfic.</string>
     <string name="graph_highlight_extremes_title">Ressalta mín. i màx.</string>
-    <string name="graph_highlight_extremes_summary">Superposa línies de referència als tipus més baix i més alt visibles.</string>
     <string name="graph_highlight_period_change_title">Ressalta el canvi d\'any/mes</string>
-    <string name="graph_highlight_period_change_summary">Dibuixa línies guia verticals on canvia l\'any o el mes al gràfic.</string>
     <!-- languages -->
     <string name="language_title">Idioma de l\'aplicació</string>
     <string name="language_ar">Àrab</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Introdueix la contrasenya</string>
     <string name="backup_password_wrong">La contrasenya no ha desxifrat el fitxer. Torna-ho a provar.</string>
     <string name="backup_password_too_short">La contrasenya ha de tenir com a mínim %1$d caràcters</string>
+    <string name="backup_password_show">Mostra la contrasenya</string>
+    <string name="backup_password_hide">Amaga la contrasenya</string>
+    <string name="picker_active_chip">Actiu</string>
+    <string name="picker_currency_title">Moneda</string>
     <string name="credits_title">Sobre, legal &amp; codi obert</string>
     <string name="credits_summary">Política de privadesa, termes del servei, accessibilitat, codi font i llicències de biblioteques de tercers</string>
     <string name="title_credits">Sobre, legal &amp; codi obert</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Font</string>
     <string name="fee_edit_active">Activa</string>
     <string name="fee_edit_name">Nom</string>
-    <string name="fee_edit_name_hint">p. ex. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inactiva</string>
     <string name="fee_untitled">Sense títol</string>
     <string name="dynamic_color_title">Colors del fons de pantalla</string>

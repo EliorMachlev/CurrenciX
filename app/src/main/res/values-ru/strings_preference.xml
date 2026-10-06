@@ -24,9 +24,10 @@
     <string name="keyboard_title">Клавиатура</string>
     <string name="keyboard_summary_expanded">Добавляет дополнительные клавиши быстрого ввода.</string>
     <string name="decimal_places_title">Точность десятичных</string>
-    <string name="decimal_places_summary">Количество десятичных знаков, отображаемых для конвертированных значений.</string>
     <string name="haptic_feedback_title">Тактильный отклик</string>
     <string name="haptic_feedback_summary">Вибрация при нажатии клавиши\nСледует системной настройке</string>
+    <string name="auto_refresh_title">Автообновление курсов</string>
+    <string name="auto_refresh_summary">Обновлять в фоне с частотой, рекомендованной провайдером</string>
     <string name="date_format_title">Формат даты и времени</string>
     <string name="category_appearance">Внешний вид</string>
     <string name="system_default">Как в системе</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Параметры графика</string>
     <string name="graph_options_summary">Настройка сетки, меток осей и выделений.</string>
     <string name="graph_grid_title">Показывать сетку</string>
-    <string name="graph_grid_summary">Отрисовывать горизонтальные и вертикальные вспомогательные линии за графиком.</string>
     <string name="graph_x_axis_title">Показывать метки оси X</string>
-    <string name="graph_x_axis_summary">Показывать метки дат в нижней части графика.</string>
     <string name="graph_y_axis_title">Показывать метки оси Y</string>
-    <string name="graph_y_axis_summary">Показывать метки значений курса слева от графика.</string>
     <string name="graph_highlight_extremes_title">Выделять минимум и максимум</string>
-    <string name="graph_highlight_extremes_summary">Накладывать опорные линии на самые низкие и самые высокие курсы в видимом диапазоне.</string>
     <string name="graph_highlight_period_change_title">Выделить смену года/месяца</string>
-    <string name="graph_highlight_period_change_summary">Рисовать вертикальные линии там, где на графике меняется год или месяц.</string>
     <!-- languages -->
     <string name="language_title">Язык приложения</string>
     <string name="language_ar">Арабский</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Введите пароль</string>
     <string name="backup_password_wrong">Пароль не расшифровал файл. Попробуйте ещё раз.</string>
     <string name="backup_password_too_short">Пароль должен содержать не менее %1$d символов</string>
+    <string name="backup_password_show">Показать пароль</string>
+    <string name="backup_password_hide">Скрыть пароль</string>
+    <string name="picker_active_chip">Активно</string>
+    <string name="picker_currency_title">Валюта</string>
     <string name="credits_title">О приложении, юридическая информация и открытый исходный код</string>
     <string name="credits_summary">Политика конфиденциальности, условия обслуживания, доступность, исходный код и лицензии сторонних библиотек</string>
     <string name="title_credits">О приложении, юридическая информация и открытый исходный код</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Исходный код</string>
     <string name="fee_edit_active">Активна</string>
     <string name="fee_edit_name">Название</string>
-    <string name="fee_edit_name_hint">напр., Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Неактивна</string>
     <string name="fee_untitled">Без названия</string>
     <string name="dynamic_color_title">Цвета обоев</string>

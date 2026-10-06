@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">togliere le valute</string>
     <string name="historical_rates_dialog_title">Tassi storici</string>
     <string name="historical_rates_dialog_toggle">Usa i tassi di cambio di una data specifica. Disabilita, per prendere sempre quelli più recenti.</string>
+    <string name="historical_rates_dialog_now">Adesso</string>
     <string name="error">Errore: %s</string>
     <string name="error_generic">Problema sconosciuto.</string>
     <string name="error_http">Il server ha risposto con HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Fornitore irraggiungibile • Tassi del %1$s</string>
     <string name="unreachable_banner_no_data">Fornitore irraggiungibile • Nuovo tentativo</string>
     <string name="historical_banner">Storico • Tassi del %1$s</string>
+    <string name="fee_chip_label">Commissione %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Ultimo tasso e andamento a 30 giorni della coppia di valute usata per ultima o di una a tua scelta.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Totale: %1$s %2$s</string>
     <string name="cart_unsaved_title">Modifiche non salvate</string>
     <string name="cart_unsaved_save">Salva</string>
+    <string name="cart_unsaved_save_desc">Sovrascrivi il carrello salvato attuale con queste modifiche.</string>
     <string name="cart_unsaved_save_as">Salva come nuovo</string>
+    <string name="cart_unsaved_save_as_desc">Lascia invariato il carrello salvato attuale e salva una copia con un altro nome.</string>
     <string name="cart_unsaved_discard">Annulla modifiche</string>
+    <string name="cart_unsaved_discard_desc">Torna all\'ultima versione salvata e continua.</string>
     <string name="cart_unsaved_continue">Continua</string>
+    <string name="cart_unsaved_continue_desc">Prosegui con le modifiche non salvate; potrai salvarle più tardi.</string>
+    <string name="onboarding_skip">Salta</string>
+    <string name="onboarding_next">Avanti</string>
+    <string name="onboarding_finish">Ho capito</string>
+    <string name="onboarding_fee_title">Commissioni sul costo reale</string>
+    <string name="onboarding_fee_body">Tocca qui per aggiungere maggiorazioni o sconti — vengono applicati sul lato di destinazione, così l\'importo che leggi corrisponde a quello che paghi davvero.</string>
+    <string name="onboarding_swap_title">Inverti la coppia</string>
+    <string name="onboarding_swap_body">Tocca il pulsante di inversione per scambiare valuta di base e valuta di destinazione. Tienilo premuto per aprire le tue commissioni.</string>
+    <string name="onboarding_autorefresh_title">Aggiornamento automatico dei tassi</string>
+    <string name="onboarding_autorefresh_body">I tassi si aggiornano quando apri l\'app. Attiva l\'aggiornamento in background per mantenerli aggiornati tra un avvio e l\'altro.</string>
+    <string name="onboarding_autorefresh_enable">Attiva ora</string>
     <string name="a11y_delete">Elimina</string>
     <string name="a11y_search_currencies">Cerca valute</string>
     <string name="a11y_clear_search">Cancella ricerca</string>

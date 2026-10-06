@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">wissel valuta\'s</string>
     <string name="historical_rates_dialog_title">Historische koersen</string>
     <string name="historical_rates_dialog_toggle">Gebruik wisselkoersen van een specifieke datum. Schakel deze optie uit om altijd de nieuwste gegevens te gebruiken.</string>
+    <string name="historical_rates_dialog_now">Nu</string>
     <string name="error">Fout: %s</string>
     <string name="error_generic">Onbekend probleem.</string>
     <string name="error_http">De server reageerde met HTTP %d.</string>
@@ -33,6 +34,7 @@
     <string name="unreachable_banner_with_date">Aanbieder niet bereikbaar • Koersen van %1$s</string>
     <string name="unreachable_banner_no_data">Aanbieder niet bereikbaar • Opnieuw proberen</string>
     <string name="historical_banner">Historisch • Koersen van %1$s</string>
+    <string name="fee_chip_label">%1$s kosten</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Laatste koers en trend over 30 dagen voor je laatst gebruikte valutapaar of een paar naar keuze.</string>
@@ -85,9 +87,23 @@
     <string name="cart_share_total">Totaal: %1$s %2$s</string>
     <string name="cart_unsaved_title">Niet-opgeslagen wijzigingen</string>
     <string name="cart_unsaved_save">Opslaan</string>
+    <string name="cart_unsaved_save_desc">Overschrijf de huidige opgeslagen winkelwagen met deze wijzigingen.</string>
     <string name="cart_unsaved_save_as">Opslaan als nieuw</string>
+    <string name="cart_unsaved_save_as_desc">Laat de huidige opgeslagen winkelwagen ongewijzigd en sla een kopie op onder een andere naam.</string>
     <string name="cart_unsaved_discard">Wijzigingen negeren</string>
+    <string name="cart_unsaved_discard_desc">Keer terug naar de laatst opgeslagen versie en ga verder.</string>
     <string name="cart_unsaved_continue">Doorgaan</string>
+    <string name="cart_unsaved_continue_desc">Ga verder met niet-opgeslagen wijzigingen; je kunt later opslaan.</string>
+    <string name="onboarding_skip">Overslaan</string>
+    <string name="onboarding_next">Volgende</string>
+    <string name="onboarding_finish">Begrepen</string>
+    <string name="onboarding_fee_title">Werkelijke prijs incl. kosten</string>
+    <string name="onboarding_fee_body">Tik hier om toeslagen of kortingen toe te voegen — ze worden aan de doelzijde verrekend, zodat het bedrag dat je ziet overeenkomt met wat je werkelijk betaalt.</string>
+    <string name="onboarding_swap_title">Paar omwisselen</string>
+    <string name="onboarding_swap_body">Tik op de wisselknop om basis- en doelvaluta om te draaien. Houd de knop lang ingedrukt om je kosten te openen.</string>
+    <string name="onboarding_autorefresh_title">Koersen automatisch bijwerken</string>
+    <string name="onboarding_autorefresh_body">Koersen worden bijgewerkt wanneer je de app opent. Schakel bijwerken op de achtergrond in, zodat ze ook tussendoor actueel blijven.</string>
+    <string name="onboarding_autorefresh_enable">Nu inschakelen</string>
     <string name="a11y_search_currencies">Zoek valuta\'s</string>
     <string name="a11y_clear_search">Zoekopdracht wissen</string>
     <string name="a11y_cart_item_name">Itemnaam</string>

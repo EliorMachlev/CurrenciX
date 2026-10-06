@@ -24,9 +24,10 @@
     <string name="keyboard_title">لوحة المفاتيح</string>
     <string name="keyboard_summary_expanded">يضيف مفاتيح اختصار إضافية لإدخال أسرع.</string>
     <string name="decimal_places_title">دقة عشرية</string>
-    <string name="decimal_places_summary">عدد المنازل العشرية المعروضة للقيم المحولة.</string>
     <string name="haptic_feedback_title">اهتزاز اللمس</string>
     <string name="haptic_feedback_summary">اهتزاز عند الضغط على مفتاح\nيتبع إعداد النظام</string>
+    <string name="auto_refresh_title">تحديث الأسعار تلقائيًا</string>
+    <string name="auto_refresh_summary">التحديث في الخلفية بالوتيرة التي يوصي بها المزوّد</string>
     <string name="date_format_title">تنسيق التاريخ والوقت</string>
     <string name="category_appearance">المظهر</string>
     <string name="system_default">الإعداد التلقائي للنظام</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">خيارات الرسم البياني</string>
     <string name="graph_options_summary">تكوين الشبكة وعناوين المحاور والتمييزات.</string>
     <string name="graph_grid_title">إظهار الشبكة</string>
-    <string name="graph_grid_summary">ارسم خطوط توجيه أفقية ورأسية خلف الرسم البياني.</string>
     <string name="graph_x_axis_title">إظهار عناوين المحور السيني</string>
-    <string name="graph_x_axis_summary">إظهار عناوين التاريخ أسفل الرسم البياني.</string>
     <string name="graph_y_axis_title">إظهار عناوين المحور الصادي</string>
-    <string name="graph_y_axis_summary">إظهار عناوين قيم السعر على الجانب الأيسر من الرسم البياني.</string>
     <string name="graph_highlight_extremes_title">تمييز الحد الأدنى والأقصى</string>
-    <string name="graph_highlight_extremes_summary">تراكب خطوط مرجعية عند أدنى وأعلى الأسعار في النطاق المرئي.</string>
     <string name="graph_highlight_period_change_title">إبراز تغيّر السنة/الشهر</string>
-    <string name="graph_highlight_period_change_summary">رسم خطوط إرشادية عمودية عند تغيّر السنة أو الشهر في المخطط.</string>
     <!-- languages -->
     <string name="language_title">لغة التطبيق</string>
     <string name="language_ar">العربية</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">أدخل كلمة المرور</string>
     <string name="backup_password_wrong">كلمة المرور لم تفكّ تشفير هذا الملف. حاول مرة أخرى.</string>
     <string name="backup_password_too_short">يجب ألا تقل كلمة المرور عن %1$d أحرف</string>
+    <string name="backup_password_show">إظهار كلمة المرور</string>
+    <string name="backup_password_hide">إخفاء كلمة المرور</string>
+    <string name="picker_active_chip">نشط</string>
+    <string name="picker_currency_title">العملة</string>
     <string name="credits_title">حول التطبيق، معلومات قانونية &amp; مفتوح المصدر</string>
     <string name="credits_summary">سياسة الخصوصية، شروط الخدمة، إمكانية الوصول، الشيفرة المصدرية، وتراخيص المكتبات الخارجية</string>
     <string name="title_credits">حول التطبيق، معلومات قانونية &amp; مفتوح المصدر</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">المصدر</string>
     <string name="fee_edit_active">نشط</string>
     <string name="fee_edit_name">الاسم</string>
-    <string name="fee_edit_name_hint">مثال: Wise، Revolut، Chase</string>
     <string name="fee_inactive_marker">غير نشط</string>
     <string name="fee_untitled">بدون عنوان</string>
     <string name="dynamic_color_title">ألوان الخلفية</string>

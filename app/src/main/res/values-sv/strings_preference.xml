@@ -24,9 +24,10 @@
     <string name="keyboard_title">Tangentbord</string>
     <string name="keyboard_summary_expanded">Lägger till extra genvägstangenter för snabbare inmatning.</string>
     <string name="decimal_places_title">Decimalnoggrannhet</string>
-    <string name="decimal_places_summary">Antal decimaler som visas för konverterade värden.</string>
     <string name="haptic_feedback_title">Haptisk återkoppling</string>
     <string name="haptic_feedback_summary">Vibrera vid knapptryckning\nFöljer systeminställning</string>
+    <string name="auto_refresh_title">Uppdatera kurser automatiskt</string>
+    <string name="auto_refresh_summary">Uppdatera i bakgrunden med det intervall som leverantören rekommenderar</string>
     <string name="date_format_title">Datum- och tidsformat</string>
     <string name="category_appearance">Utseende</string>
     <string name="system_default">Systemets standardinställning</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Diagraminställningar</string>
     <string name="graph_options_summary">Konfigurera rutnät, axeletiketter och markeringar.</string>
     <string name="graph_grid_title">Visa rutnät</string>
-    <string name="graph_grid_summary">Rita horisontella och vertikala hjälplinjer bakom diagrammet.</string>
     <string name="graph_x_axis_title">Visa X-axelns etiketter</string>
-    <string name="graph_x_axis_summary">Visa datumetiketter längst ner i diagrammet.</string>
     <string name="graph_y_axis_title">Visa Y-axelns etiketter</string>
-    <string name="graph_y_axis_summary">Visa kursetiketter till vänster i diagrammet.</string>
     <string name="graph_highlight_extremes_title">Markera min. och max.</string>
-    <string name="graph_highlight_extremes_summary">Lägg referenslinjer över lägsta och högsta kurserna i det synliga intervallet.</string>
     <string name="graph_highlight_period_change_title">Markera års-/månadsbyte</string>
-    <string name="graph_highlight_period_change_summary">Rita lodräta hjälplinjer där året eller månaden ändras i diagrammet.</string>
     <!-- languages -->
     <string name="language_title">Appspråk</string>
     <string name="language_ar">Arabiska</string>
@@ -121,6 +117,10 @@
     <string name="backup_password_prompt_title">Ange lösenord</string>
     <string name="backup_password_wrong">Lösenordet dekrypterade inte filen. Försök igen.</string>
     <string name="backup_password_too_short">Lösenordet måste vara minst %1$d tecken</string>
+    <string name="backup_password_show">Visa lösenord</string>
+    <string name="backup_password_hide">Dölj lösenord</string>
+    <string name="picker_active_chip">Aktiv</string>
+    <string name="picker_currency_title">Valuta</string>
     <string name="credits_title">Om, juridiskt &amp; öppen källkod</string>
     <string name="credits_summary">Integritetspolicy, användarvillkor, tillgänglighet, källkod och licenser för tredjepartsbibliotek</string>
     <string name="title_credits">Om, juridiskt &amp; öppen källkod</string>
@@ -140,7 +140,6 @@
     <string name="credits_section_source">Källa</string>
     <string name="fee_edit_active">Aktiv</string>
     <string name="fee_edit_name">Namn</string>
-    <string name="fee_edit_name_hint">t.ex. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inaktiv</string>
     <string name="fee_untitled">Namnlös</string>
     <string name="dynamic_color_title">Bakgrundsfärger</string>

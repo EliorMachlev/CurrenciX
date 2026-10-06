@@ -24,9 +24,10 @@
     <string name="keyboard_title">Tipkovnica</string>
     <string name="keyboard_summary_expanded">Dodaje dodatne tipke prečaca za brži unos.</string>
     <string name="decimal_places_title">Decimalna preciznost</string>
-    <string name="decimal_places_summary">Broj decimala prikazanih za pretvorene vrijednosti.</string>
     <string name="haptic_feedback_title">Haptička povratna informacija</string>
     <string name="haptic_feedback_summary">Vibracija pri pritisku tipke\nPrati postavku sustava</string>
+    <string name="auto_refresh_title">Automatsko osvježavanje tečajeva</string>
+    <string name="auto_refresh_summary">Osvježava tečajeve u pozadini učestalošću koju preporučuje pružatelj</string>
     <string name="date_format_title">Format datuma i vremena</string>
     <string name="category_appearance">Izgled</string>
     <string name="system_default">Zadano od sustava</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Opcije grafikona</string>
     <string name="graph_options_summary">Konfiguriraj mrežu, oznake osi i isticanja.</string>
     <string name="graph_grid_title">Prikaži mrežu</string>
-    <string name="graph_grid_summary">Nacrtaj vodoravne i okomite pomoćne linije iza grafikona.</string>
     <string name="graph_x_axis_title">Prikaži oznake X-osi</string>
-    <string name="graph_x_axis_summary">Prikaži oznake datuma na dnu grafikona.</string>
     <string name="graph_y_axis_title">Prikaži oznake Y-osi</string>
-    <string name="graph_y_axis_summary">Prikaži oznake tečaja na lijevoj strani grafikona.</string>
     <string name="graph_highlight_extremes_title">Istakni min. i maks.</string>
-    <string name="graph_highlight_extremes_summary">Prekrij referentne linije na najnižim i najvišim tečajevima u vidljivom rasponu.</string>
     <string name="graph_highlight_period_change_title">Istakni promjenu godine/mjeseca</string>
-    <string name="graph_highlight_period_change_summary">Iscrtaj okomite vodilice ondje gdje se godina ili mjesec mijenja na grafikonu.</string>
     <!-- languages -->
     <string name="language_title">Jezik aplikacije</string>
     <string name="language_ar">arapski</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Unesi lozinku</string>
     <string name="backup_password_wrong">Lozinka nije dešifrirala ovu datoteku. Pokušaj ponovno.</string>
     <string name="backup_password_too_short">Lozinka mora imati najmanje %1$d znakova</string>
+    <string name="backup_password_show">Prikaži lozinku</string>
+    <string name="backup_password_hide">Sakrij lozinku</string>
+    <string name="picker_active_chip">Aktivno</string>
+    <string name="picker_currency_title">Valuta</string>
     <string name="credits_title">O aplikaciji, pravno i otvoreni kod</string>
     <string name="credits_summary">Pravila privatnosti, uvjeti korištenja, pristupačnost, izvorni kod i licence biblioteka trećih strana</string>
     <string name="title_credits">O aplikaciji, pravno i otvoreni kod</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Izvor</string>
     <string name="fee_edit_active">Aktivno</string>
     <string name="fee_edit_name">Naziv</string>
-    <string name="fee_edit_name_hint">npr. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Neaktivno</string>
     <string name="fee_untitled">Bez naziva</string>
     <string name="dynamic_color_title">Boje pozadine</string>

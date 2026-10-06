@@ -22,9 +22,11 @@
     <string name="name_bob">Bolivia bolivjano</string>
     <string name="name_brl">Brazila realo</string>
     <string name="name_bsd">Bahama dolaro</string>
+    <string name="name_btc">Bitmono</string>
 
     <string name="name_btn">Butana ngultrumo</string>
     <string name="name_bwp">Bocvana pulao</string>
+    <string name="name_byn">Belorusa rublo</string>
 
     <string name="name_bzd">Beliza dolaro</string>
 
@@ -33,10 +35,12 @@
     <string name="name_chf">Svisa franko</string>
     <string name="name_clf">Ĉiliaj Unidades de fomento</string>
     <string name="name_clp">Ĉilia peso</string>
+    <string name="name_cnh">Ĉina renminbi (eksterlanda)</string>
 
     <string name="name_cny">Ĉina renminbi</string>
     <string name="name_cop">Kolombia peso</string>
     <string name="name_crc">Kostarika kolumbo</string>
+    <string name="name_cuc">Kuba konvertebla peso</string>
 
     <string name="name_cup">Kuba peso</string>
     <string name="name_cve">Kaboverda eskudo</string>
@@ -54,10 +58,12 @@
 
     <string name="name_fjd">Fiĝia dolaro</string>
     <string name="name_fkp">Falklanda pundo</string>
+    <string name="name_fok">Feroa krono</string>
 
 
     <string name="name_gbp">Sterlinga pundo</string>
     <string name="name_gel">Kartvela lario</string>
+    <string name="name_ggp">Guernsey-pundo</string>
 
     <string name="name_ghs">Ganaa cedio</string>
     <string name="name_gip">Ĝibraltara pundo</string>
@@ -68,12 +74,14 @@
 
     <string name="name_hkd">Honkonga dolaro</string>
     <string name="name_hnl">Hondura lempiro</string>
+    <string name="name_hrk">Kroata kunao</string>
 
     <string name="name_htg">Haitia gurdo</string>
     <string name="name_huf">Hungara forinto</string>
 
     <string name="name_idr">Indonezia rupio</string>
     <string name="name_ils">Nova israela siklo</string>
+    <string name="name_imp">Manksa pundo</string>
 
     <string name="name_inr">Barata rupio</string>
     <string name="name_iqd">Iraka dinaro</string>
@@ -110,6 +118,7 @@
     <string name="name_mnt">Mongola tugriko</string>
     <string name="name_mop">Makaa patako</string>
     <string name="name_mro">Maŭritania uguijao</string>
+    <string name="name_mru">Maŭritania uguijao</string>
 
     <string name="name_mur">Maŭricia rupio</string>
     <string name="name_mvr">Maldiva rufijao</string>
@@ -145,16 +154,20 @@
     <string name="name_sar">Sauda rialo</string>
     <string name="name_sbd">Salomona dolaro</string>
     <string name="name_scr">Sejŝela rupio</string>
+    <string name="name_sdg">Sudana pundo</string>
 
     <string name="name_sek">Sveda krono</string>
     <string name="name_sgd">Singapura dolaro</string>
     <string name="name_shp">Sankthelena pundo</string>
+    <string name="name_sle">Sieraleona leono</string>
 
     <string name="name_sll">Sieraleona leono</string>
     <string name="name_sos">Somalia ŝilingo</string>
     <string name="name_srd">Surinama dolaro</string>
     <string name="name_ssp">Sudsudana pundo</string>
     <string name="name_std">Saotomea dobro</string>
+    <string name="name_stn">Saotomea dobro</string>
+    <string name="name_svc">Salvadora kolumbo</string>
 
 
     <string name="name_syp">Siria pundo</string>
@@ -162,9 +175,11 @@
 
     <string name="name_thb">Tajlanda bahto</string>
     <string name="name_tjs">Taĝika somonio</string>
+    <string name="name_tmt">Turkmena manato</string>
 
     <string name="name_tnd">Tunizia dinaro</string>
     <string name="name_top">Tonga paangao</string>
+    <string name="name_try">Turka liro</string>
 
     <string name="name_ttd">Trinidada dolaro</string>
     <string name="name_twd">Nova tajvana dolaro</string>
@@ -177,6 +192,7 @@
     <string name="name_uzs">Uzbeka somo</string>
 
     <string name="name_vef">Venezuela bolivaro</string>
+    <string name="name_ves">Venezuela suverena bolivaro</string>
 
     <string name="name_vnd">Vjetnama dongo</string>
     <string name="name_vuv">Vanuatua vatuo</string>

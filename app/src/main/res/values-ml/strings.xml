@@ -5,6 +5,7 @@
 
     <string name="historical_rates_dialog_title">ചരിത്ര നിരക്കുകൾ</string>
     <string name="historical_rates_dialog_toggle">ഒരു നിർദ്ദിഷ്ട തീയതിയിലെ വിനിമയ നിരക്കുകൾ ഉപയോഗിക്കുക. എപ്പോഴും ഏറ്റവും പുതിയവ എടുക്കാൻ പ്രവർത്തനരഹിതമാക്കുക.</string>
+    <string name="historical_rates_dialog_now">ഇപ്പോൾ</string>
 
     <string name="error">പിശക്: %s</string>
     <string name="error_generic">അജ്ഞാത പ്രശ്നം.</string>
@@ -35,6 +36,7 @@
     <string name="unreachable_banner_with_date">പ്രൊവൈഡർ ലഭ്യമല്ല • %1$s മുതലുള്ള നിരക്കുകൾ</string>
     <string name="unreachable_banner_no_data">പ്രൊവൈഡർ ലഭ്യമല്ല • വീണ്ടും ശ്രമിക്കുന്നു</string>
     <string name="historical_banner">ചരിത്രപരം • %1$s മുതലുള്ള നിരക്കുകൾ</string>
+    <string name="fee_chip_label">%1$s ഫീസ്</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">നിങ്ങൾ അവസാനം ഉപയോഗിച്ചതോ തിരഞ്ഞെടുക്കുന്നതോ ആയ കറൻസി ജോഡിയുടെ പുതിയ നിരക്കും 30 ദിവസത്തെ പ്രവണതയും.</string>
@@ -87,9 +89,23 @@
     <string name="cart_share_total">ആകെ: %1$s %2$s</string>
     <string name="cart_unsaved_title">സംരക്ഷിക്കാത്ത മാറ്റങ്ങൾ</string>
     <string name="cart_unsaved_save">സംരക്ഷിക്കുക</string>
+    <string name="cart_unsaved_save_desc">നിലവിൽ സംരക്ഷിച്ച കാർട്ട് ഈ മാറ്റങ്ങൾ കൊണ്ട് മാറ്റിയെഴുതുക.</string>
     <string name="cart_unsaved_save_as">പുതിയതായി സംരക്ഷിക്കുക</string>
+    <string name="cart_unsaved_save_as_desc">നിലവിൽ സംരക്ഷിച്ച കാർട്ട് മാറ്റാതെ നിലനിർത്തി മറ്റൊരു പേരിൽ ഒരു പകർപ്പ് സംരക്ഷിക്കുക.</string>
     <string name="cart_unsaved_discard">മാറ്റങ്ങൾ ഉപേക്ഷിക്കുക</string>
+    <string name="cart_unsaved_discard_desc">അവസാനം സംരക്ഷിച്ച പതിപ്പിലേക്ക് മടങ്ങി തുടരുക.</string>
     <string name="cart_unsaved_continue">തുടരുക</string>
+    <string name="cart_unsaved_continue_desc">സംരക്ഷിക്കാത്ത മാറ്റങ്ങളോടെ തുടരുക; പിന്നീട് സംരക്ഷിക്കാം.</string>
+    <string name="onboarding_skip">ഒഴിവാക്കുക</string>
+    <string name="onboarding_next">അടുത്തത്</string>
+    <string name="onboarding_finish">മനസ്സിലായി</string>
+    <string name="onboarding_fee_title">യഥാർത്ഥ ചെലവിലെ ഫീസുകൾ</string>
+    <string name="onboarding_fee_body">മാർക്കപ്പുകളോ കിഴിവുകളോ ചേർക്കാൻ ഇവിടെ ടാപ്പ് ചെയ്യുക — അവ ലക്ഷ്യ കറൻസിയുടെ ഭാഗത്താണ് ബാധകമാകുന്നത്, അതിനാൽ നിങ്ങൾ കാണുന്ന തുക യഥാർത്ഥത്തിൽ നൽകേണ്ട തുകയുമായി പൊരുത്തപ്പെടും.</string>
+    <string name="onboarding_swap_title">ജോഡി പരസ്പരം മാറ്റുക</string>
+    <string name="onboarding_swap_body">അടിസ്ഥാന കറൻസിയും ലക്ഷ്യ കറൻസിയും പരസ്പരം മാറ്റാൻ സ്വാപ്പ് ബട്ടൺ ടാപ്പ് ചെയ്യുക. ഫീസുകൾ തുറക്കാൻ അതിൽ അമർത്തിപ്പിടിക്കുക.</string>
+    <string name="onboarding_autorefresh_title">നിരക്കുകൾ സ്വയമേവ പുതുക്കുക</string>
+    <string name="onboarding_autorefresh_body">ആപ്പ് തുറക്കുമ്പോൾ നിരക്കുകൾ പുതുക്കപ്പെടും. ആപ്പ് തുറക്കാത്ത സമയത്തും അവ പുതിയതായി തുടരാൻ പശ്ചാത്തല പുതുക്കൽ ഓണാക്കുക.</string>
+    <string name="onboarding_autorefresh_enable">ഇപ്പോൾ ഓണാക്കുക</string>
     <string name="a11y_delete">നീക്കംചെയ്യുക</string>
     <string name="a11y_search_currencies">കറൻസികൾ തിരയുക</string>
     <string name="a11y_clear_search">തിരയൽ മായ്ക്കുക</string>

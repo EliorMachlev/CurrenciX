@@ -33,6 +33,7 @@
     <string name="name_chf">സ്വിസ് ഫ്രാങ്ക്</string>
     <string name="name_clf">ചിലിയൻ യൂണിഡാഡ്സ് ഡി ഫോമെൻറോ</string>
     <string name="name_clp">ചിലിയൻ പെസോ</string>
+    <string name="name_cnh">ചൈനീസ് യുവാൻ (ഓഫ്‌ഷോർ)</string>
 
     <string name="name_cny">ചൈനീസ് യുവാൻ</string>
     <string name="name_cop">കൊളംബിയൻ പെസോ</string>
@@ -54,10 +55,12 @@
 
     <string name="name_fjd">ഫിജിയൻ ഡോളർ</string>
     <string name="name_fkp">ഫാക്ക്‌ലാന്റ് ദ്വീപുകളുടെ പൗണ്ട്</string>
+    <string name="name_fok">ഫറോയീസ് ക്രോണ</string>
 
 
     <string name="name_gbp">ബ്രിട്ടീഷ് പൗണ്ട്</string>
     <string name="name_gel">ജോർജ്ജിയൻ ലാറി</string>
+    <string name="name_ggp">ഗേൺസി പൗണ്ട്</string>
 
     <string name="name_ghs">ഘാനയൻ കെഡി</string>
     <string name="name_gip">ജിബ്രാൾട്ടർ പൗണ്ട്</string>
@@ -74,11 +77,13 @@
 
     <string name="name_idr">ഇന്തോനേഷ്യൻ റുപിയ</string>
     <string name="name_ils">ഇസ്രായേലി ന്യൂ ഷെക്കെൽ</string>
+    <string name="name_imp">മാങ്ക്സ് പൗണ്ട്</string>
 
     <string name="name_inr">ഇന്ത്യൻ രൂപ</string>
     <string name="name_iqd">ഇറാഖി ദിനാർ</string>
     <string name="name_irr">ഇറാനിയൻ റിയാൽ</string>
     <string name="name_isk">ഐസ്‌ലാൻഡിക് ക്രോണ</string>
+    <string name="name_jep">ജേഴ്സി പൗണ്ട്</string>
 
 
     <string name="name_jmd">ജമൈക്കൻ ഡോളർ</string>
@@ -197,5 +202,6 @@
 
     <string name="name_zar">ദക്ഷിണാഫ്രിക്കൻ റാൻഡ്</string>
     <string name="name_zmw">സാംബിയൻ ക്വാച്ച</string>
+    <string name="name_zwl">സിംബാബ്‌വിയൻ ഡോളർ</string>
 
 </resources>

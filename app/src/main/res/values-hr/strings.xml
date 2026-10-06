@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">zamijeni valute</string>
     <string name="historical_rates_dialog_title">Arhiva tečajeva</string>
     <string name="historical_rates_dialog_toggle">Arhiva tečajeva za određeni dan. Isključite ako želite trenutni tečaj.</string>
+    <string name="historical_rates_dialog_now">Sada</string>
     <string name="error">Pogreška: %s</string>
     <string name="error_generic">Nepoznata pogreška.</string>
     <string name="error_http">Poslužitelj je odgovorio HTTP statusom %d.</string>
@@ -31,6 +32,7 @@
     <string name="unreachable_banner_with_date">Pružatelj nedostupan • Tečajevi od %1$s</string>
     <string name="unreachable_banner_no_data">Pružatelj nedostupan • Ponovni pokušaj</string>
     <string name="historical_banner">Povijesno • Tečajevi od %1$s</string>
+    <string name="fee_chip_label">Naknada %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Najnoviji tečaj i 30-dnevni trend za zadnji korišteni valutni par ili onaj koji odaberete.</string>
@@ -83,9 +85,23 @@
     <string name="cart_share_total">Ukupno: %1$s %2$s</string>
     <string name="cart_unsaved_title">Nespremljene promjene</string>
     <string name="cart_unsaved_save">Spremi</string>
+    <string name="cart_unsaved_save_desc">Prepisuje trenutno spremljenu košaricu ovim promjenama.</string>
     <string name="cart_unsaved_save_as">Spremi kao novu</string>
+    <string name="cart_unsaved_save_as_desc">Ostavlja trenutno spremljenu košaricu netaknutom i sprema kopiju pod drugim nazivom.</string>
     <string name="cart_unsaved_discard">Odbaci promjene</string>
+    <string name="cart_unsaved_discard_desc">Vraća zadnju spremljenu verziju i nastavlja.</string>
     <string name="cart_unsaved_continue">Nastavi</string>
+    <string name="cart_unsaved_continue_desc">Nastavlja s nespremljenim promjenama; možete ih spremiti kasnije.</string>
+    <string name="onboarding_skip">Preskoči</string>
+    <string name="onboarding_next">Dalje</string>
+    <string name="onboarding_finish">Razumijem</string>
+    <string name="onboarding_fee_title">Naknade u stvarnoj cijeni</string>
+    <string name="onboarding_fee_body">Dodirnite ovdje za dodavanje marži ili popusta — primjenjuju se na odredišnoj strani, pa iznos koji vidite odgovara onome što stvarno plaćate.</string>
+    <string name="onboarding_swap_title">Zamjena valuta</string>
+    <string name="onboarding_swap_body">Dodirnite gumb za zamjenu kako biste zamijenili polaznu i odredišnu valutu. Dugim pritiskom otvarate provizije.</string>
+    <string name="onboarding_autorefresh_title">Automatsko osvježavanje tečajeva</string>
+    <string name="onboarding_autorefresh_body">Tečajevi se osvježavaju kada otvorite aplikaciju. Uključite osvježavanje u pozadini kako bi ostali aktualni između pokretanja.</string>
+    <string name="onboarding_autorefresh_enable">Uključi sada</string>
     <string name="a11y_delete">Izbriši</string>
     <string name="a11y_search_currencies">Traži valute</string>
     <string name="a11y_clear_search">Očisti pretragu</string>

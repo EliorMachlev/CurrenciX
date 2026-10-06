@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">匯率由俄羅斯的中央銀行<a href="https://cbr.ru/eng/currency_base/daily/"><b>俄羅斯銀行</b></a>提供。在目前的制裁環境下，這個來源可能提供對俄羅斯盧布匯率最可靠的數據。\n<b>俄羅斯銀行列出約 44 種貨幣匯率</b></string>
     <string name="api_bankRossii_descriptionShort">大約有 44 種匯率\n來源：俄羅斯中央銀行</string>
     <string name="api_bankRossii_descriptionUpdateInterval">匯率根據每天的需求更新，除了<a href="https://cbr.ru/eng/other/holidays/">俄羅斯國定假日</a>。</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> 從各種金融資料供應商和銀行 (包括歐洲央行) 取得貨幣匯率。所有匯率資料均以中點匯率呈現。中點匯率是透過計算買入價和賣出價的平均中位數率決定的。\n<b>大約包含 160 種貨幣</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">匯率在每個工作日的 UTC 午夜左右更新。</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a>是非常新穎的服務，跟 Frankfurter.app 一樣是追蹤歐洲中央銀行發布的外幣參考匯率 (forex)\n<b>大約包含 30 種貨幣</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">匯率在每個工作日更新。</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> 追蹤歐洲中央銀行發布的外幣參考匯率 (forex)\n<b>大約包含 30 種貨幣</b></string>

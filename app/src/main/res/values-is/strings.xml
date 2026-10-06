@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">víxla gjaldmiðla</string>
     <string name="historical_rates_dialog_title">Söguleg gengi</string>
     <string name="historical_rates_dialog_toggle">Sýna söguleg gengi af ákveðinni dagsetningu. Slökktu á til að alltaf fá nýjustu gengi.</string>
+    <string name="historical_rates_dialog_now">Núna</string>
     <string name="error">Villa: %s</string>
     <string name="error_generic">Óþekkt villa.</string>
     <string name="error_http">Netþjónn svaraði með HTTP %d</string>
@@ -25,6 +26,7 @@
     <string name="unreachable_banner_with_date">Veitandi ekki tiltækur • Gengi frá %1$s</string>
     <string name="unreachable_banner_no_data">Veitandi ekki tiltækur • Reyni aftur</string>
     <string name="historical_banner">Söguleg • Gengi frá %1$s</string>
+    <string name="fee_chip_label">%1$s gjald</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Nýjasta gengi og 30 daga þróun fyrir síðast notaða gjaldmiðlaparið eða par sem þú velur.</string>
@@ -77,9 +79,23 @@
     <string name="cart_share_total">Samtals: %1$s %2$s</string>
     <string name="cart_unsaved_title">Óvistaðar breytingar</string>
     <string name="cart_unsaved_save">Vista</string>
+    <string name="cart_unsaved_save_desc">Skrifa yfir núverandi vistaða körfu með þessum breytingum.</string>
     <string name="cart_unsaved_save_as">Vista sem nýtt</string>
+    <string name="cart_unsaved_save_as_desc">Halda núverandi vistaðri körfu óbreyttri og vista afrit undir öðru nafni.</string>
     <string name="cart_unsaved_discard">Henda breytingum</string>
+    <string name="cart_unsaved_discard_desc">Fara aftur í síðustu vistuðu útgáfu og halda áfram.</string>
     <string name="cart_unsaved_continue">Halda áfram</string>
+    <string name="cart_unsaved_continue_desc">Halda áfram með óvistaðar breytingar; þú getur vistað síðar.</string>
+    <string name="onboarding_skip">Sleppa</string>
+    <string name="onboarding_next">Áfram</string>
+    <string name="onboarding_finish">Ég skil</string>
+    <string name="onboarding_fee_title">Raunkostnaður með gjöldum</string>
+    <string name="onboarding_fee_body">Ýttu hér til að bæta við álagi eða afslætti — það reiknast á markgjaldmiðilinn þannig að upphæðin sem þú sérð samsvarar því sem þú greiðir í raun.</string>
+    <string name="onboarding_swap_title">Víxla parinu</string>
+    <string name="onboarding_swap_body">Ýttu á víxlhnappinn til að víxla grunn- og markgjaldmiðli. Haltu honum inni til að opna gjöldin þín.</string>
+    <string name="onboarding_autorefresh_title">Endurnýja gengi sjálfkrafa</string>
+    <string name="onboarding_autorefresh_body">Gengi er endurnýjað þegar þú opnar forritið. Virkjaðu endurnýjun í bakgrunni svo það haldist uppfært þess á milli.</string>
+    <string name="onboarding_autorefresh_enable">Virkja núna</string>
     <string name="a11y_delete">Eyða</string>
     <string name="currency_dropdown_api_hint">Vantar eitthvað? Mismunandi gagnaveitur bjóða upp á mismunandi gjaldmiðla. Farðu í stillingar og prófaðu aðra!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">Þjónninn hefur engin gögn fyrir þessa beiðni.</string>

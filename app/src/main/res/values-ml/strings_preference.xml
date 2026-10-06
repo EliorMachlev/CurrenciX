@@ -24,9 +24,10 @@
     <string name="keyboard_title">കീബോർഡ്</string>
     <string name="keyboard_summary_expanded">വേഗത്തിലുള്ള ഇൻപുട്ടിനായി അധിക കുറുക്കുവഴി കീകൾ ചേർക്കുന്നു.</string>
     <string name="decimal_places_title">ദശാംശ കൃത്യത</string>
-    <string name="decimal_places_summary">പരിവർത്തനം ചെയ്ത മൂല്യങ്ങൾക്ക് കാണിക്കേണ്ട ദശാംശ സ്ഥാനങ്ങളുടെ എണ്ണം.</string>
     <string name="haptic_feedback_title">ഹാപ്റ്റിക് ഫീഡ്‌ബാക്ക്</string>
     <string name="haptic_feedback_summary">കീ അമർത്തുമ്പോൾ വൈബ്രേറ്റ് ചെയ്യുക\nസിസ്റ്റം ക്രമീകരണം പിന്തുടരുന്നു</string>
+    <string name="auto_refresh_title">നിരക്കുകൾ സ്വയമേവ പുതുക്കുക</string>
+    <string name="auto_refresh_summary">ദാതാവ് ശുപാർശ ചെയ്യുന്ന ഇടവേളയിൽ പശ്ചാത്തലത്തിൽ പുതുക്കുക</string>
     <string name="date_format_title">തീയതി, സമയ ഫോർമാറ്റ്</string>
     <string name="category_appearance">ദൃശ്യരൂപം</string>
     <string name="system_default">സിസ്റ്റം സ്ഥിരസ്ഥിതി</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">ഗ്രാഫ് ഓപ്ഷനുകൾ</string>
     <string name="graph_options_summary">ഗ്രിഡ്, ആക്‌സിസ് ലേബലുകൾ, ഹൈലൈറ്റുകൾ എന്നിവ കോൺഫിഗർ ചെയ്യുക.</string>
     <string name="graph_grid_title">ഗ്രിഡ് കാണിക്കുക</string>
-    <string name="graph_grid_summary">ചാർട്ടിന് പിന്നിൽ തിരശ്ചീനവും ലംബവുമായ ഗൈഡ് ലൈനുകൾ വരയ്ക്കുക.</string>
     <string name="graph_x_axis_title">X-അക്ഷം ലേബലുകൾ കാണിക്കുക</string>
-    <string name="graph_x_axis_summary">ചാർട്ടിന്റെ താഴെയായി തീയതി ലേബലുകൾ കാണിക്കുക.</string>
     <string name="graph_y_axis_title">Y-അക്ഷം ലേബലുകൾ കാണിക്കുക</string>
-    <string name="graph_y_axis_summary">ചാർട്ടിന്റെ ഇടതുവശത്ത് നിരക്ക് മൂല്യ ലേബലുകൾ കാണിക്കുക.</string>
     <string name="graph_highlight_extremes_title">മിനിമവും പരമാവധിയും ഹൈലൈറ്റ് ചെയ്യുക</string>
-    <string name="graph_highlight_extremes_summary">ദൃശ്യമായ ശ്രേണിയിലെ ഏറ്റവും കുറഞ്ഞതും കൂടിയതുമായ നിരക്കുകളിൽ റഫറൻസ് ലൈനുകൾ പ്രദർശിപ്പിക്കുക.</string>
     <string name="graph_highlight_period_change_title">വർഷം/മാസം മാറ്റം ഹൈലൈറ്റ് ചെയ്യുക</string>
-    <string name="graph_highlight_period_change_summary">ചാർട്ടിൽ വർഷമോ മാസമോ മാറുന്ന സ്ഥാനങ്ങളിൽ ലംബമായ ഗൈഡ് ലൈനുകൾ വരയ്ക്കുക.</string>
     <!-- languages -->
     <string name="language_title">ആപ്പ് ഭാഷ</string>
     <string name="language_ar">അറബിക്</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">പാസ്‌വേഡ് നൽകുക</string>
     <string name="backup_password_wrong">പാസ്‌വേഡിന് ഈ ഫയൽ ഡീക്രിപ്റ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.</string>
     <string name="backup_password_too_short">പാസ്‌വേഡ് കുറഞ്ഞത് %1$d പ്രതീകങ്ങൾ ഉണ്ടായിരിക്കണം</string>
+    <string name="backup_password_show">പാസ്‌വേഡ് കാണിക്കുക</string>
+    <string name="backup_password_hide">പാസ്‌വേഡ് മറയ്ക്കുക</string>
+    <string name="picker_active_chip">സജീവം</string>
+    <string name="picker_currency_title">കറൻസി</string>
     <string name="credits_title">വിവരങ്ങൾ, നിയമപരം &amp; ഓപ്പൺ സോഴ്‌സ്</string>
     <string name="credits_summary">സ്വകാര്യതാ നയം, സേവന നിബന്ധനകൾ, പ്രവേശനക്ഷമത, സോഴ്‌സ് കോഡ്, മൂന്നാം കക്ഷി ലൈബ്രറി ലൈസൻസുകൾ</string>
     <string name="title_credits">വിവരങ്ങൾ, നിയമപരം &amp; ഓപ്പൺ സോഴ്‌സ്</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">സോഴ്സ്</string>
     <string name="fee_edit_active">സജീവം</string>
     <string name="fee_edit_name">പേര്</string>
-    <string name="fee_edit_name_hint">ഉദാ. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">നിഷ്ക്രിയം</string>
     <string name="fee_untitled">തലക്കെട്ടില്ലാത്തത്</string>
     <string name="dynamic_color_title">വാൾപേപ്പർ നിറങ്ങൾ</string>

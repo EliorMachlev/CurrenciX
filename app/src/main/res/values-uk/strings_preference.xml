@@ -24,9 +24,10 @@
     <string name="keyboard_title">Клавіатура</string>
     <string name="keyboard_summary_expanded">Додає додаткові клавіші швидкого введення.</string>
     <string name="decimal_places_title">Десяткова точність</string>
-    <string name="decimal_places_summary">Кількість десяткових знаків, що показуються для конвертованих значень.</string>
     <string name="haptic_feedback_title">Тактильний відгук</string>
     <string name="haptic_feedback_summary">Вібрація при натисканні клавіші\nВідповідає системному налаштуванню</string>
+    <string name="auto_refresh_title">Автооновлення курсів</string>
+    <string name="auto_refresh_summary">Оновлювати у фоні з частотою, рекомендованою постачальником</string>
     <string name="date_format_title">Формат дати й часу</string>
     <string name="category_appearance">Зовнішній вигляд</string>
     <string name="system_default">Станадартна, як у системі</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Параметри графіка</string>
     <string name="graph_options_summary">Налаштування сітки, міток осей та виділень.</string>
     <string name="graph_grid_title">Показувати сітку</string>
-    <string name="graph_grid_summary">Малювати горизонтальні та вертикальні допоміжні лінії за графіком.</string>
     <string name="graph_x_axis_title">Показувати мітки осі X</string>
-    <string name="graph_x_axis_summary">Показувати мітки дат внизу графіка.</string>
     <string name="graph_y_axis_title">Показувати мітки осі Y</string>
-    <string name="graph_y_axis_summary">Показувати мітки значень курсу зліва від графіка.</string>
     <string name="graph_highlight_extremes_title">Виділяти мінімум і максимум</string>
-    <string name="graph_highlight_extremes_summary">Накладати опорні лінії на найнижчі та найвищі курси у видимому діапазоні.</string>
     <string name="graph_highlight_period_change_title">Виділяти зміну року/місяця</string>
-    <string name="graph_highlight_period_change_summary">Малювати вертикальні лінії там, де на графіку змінюється рік або місяць.</string>
     <!-- languages -->
     <string name="language_title">Мова додатка</string>
     <string name="language_ar">Арабська</string>
@@ -120,6 +116,10 @@
     <string name="backup_password_prompt_title">Введіть пароль</string>
     <string name="backup_password_wrong">Пароль не розшифрував цей файл. Спробуйте ще раз.</string>
     <string name="backup_password_too_short">Пароль має містити щонайменше %1$d символів</string>
+    <string name="backup_password_show">Показати пароль</string>
+    <string name="backup_password_hide">Приховати пароль</string>
+    <string name="picker_active_chip">Активно</string>
+    <string name="picker_currency_title">Валюта</string>
     <string name="credits_title">Про додаток, юридична інформація &amp; відкритий код</string>
     <string name="credits_summary">Політика конфіденційності, умови обслуговування, доступність, вихідний код і ліцензії сторонніх бібліотек</string>
     <string name="title_credits">Про додаток, юридична інформація &amp; відкритий код</string>
@@ -139,7 +139,6 @@
     <string name="credits_section_source">Джерело</string>
     <string name="fee_edit_active">Активна</string>
     <string name="fee_edit_name">Назва</string>
-    <string name="fee_edit_name_hint">напр. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Неактивна</string>
     <string name="fee_untitled">Без назви</string>
     <string name="dynamic_color_title">Кольори шпалер</string>

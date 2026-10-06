@@ -142,10 +142,6 @@ android {
         }
     }
 
-    lint {
-        disable.add("MissingTranslation")
-    }
-
     buildFeatures {
         buildConfig = true
         compose = true

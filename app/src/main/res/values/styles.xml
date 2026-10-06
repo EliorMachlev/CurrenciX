@@ -46,13 +46,7 @@
         <item name="colorDisplayOverlay">@color/displayOverlayPureBlack</item>
     </style>
 
-
     <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-
     <!-- style of the keypad buttons -->
-    <style name="AppTheme.TextAppearance.Keypad" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textSize">26sp</item>
-    </style>
-
 </resources>

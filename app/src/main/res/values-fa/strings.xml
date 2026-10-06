@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">دگرش ارز‌ها</string>
     <string name="historical_rates_dialog_title">نزخ‌های گذشته</string>
     <string name="historical_rates_dialog_toggle">ار نرخ‌های تاریخ مشخصی بهره بگیرید. اگر می‌خواهید همیشه تازه ترین نرخ‌ها را بگیرید، این گزینه را خاموش کنید.</string>
+    <string name="historical_rates_dialog_now">اکنون</string>
     <string name="error">ایرنگ: %s</string>
     <string name="error_generic">مشکل ناشناخته.</string>
     <string name="error_http">سرور چنین پاسخ داده است HTTP %d.</string>
@@ -31,6 +32,7 @@
     <string name="unreachable_banner_with_date">ارائه‌دهنده در دسترس نیست • نرخ‌ها از %1$s</string>
     <string name="unreachable_banner_no_data">ارائه‌دهنده در دسترس نیست • تلاش مجدد</string>
     <string name="historical_banner">تاریخی • نرخ‌ها از %1$s</string>
+    <string name="fee_chip_label">کارمزد %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">آخرین نرخ و روند ۳۰ روزه برای آخرین جفت ارزی که استفاده کردید یا جفتی که انتخاب می‌کنید.</string>
@@ -83,9 +85,23 @@
     <string name="cart_share_total">مجموع: %1$s %2$s</string>
     <string name="cart_unsaved_title">تغییرات ذخیره‌نشده</string>
     <string name="cart_unsaved_save">ذخیره</string>
+    <string name="cart_unsaved_save_desc">سبد ذخیره‌شدهٔ کنونی را با این تغییرات بازنویسی کنید.</string>
     <string name="cart_unsaved_save_as">ذخیره به‌عنوان جدید</string>
+    <string name="cart_unsaved_save_as_desc">سبد ذخیره‌شدهٔ کنونی را دست‌نخورده نگه دارید و یک نسخه با نامی دیگر ذخیره کنید.</string>
     <string name="cart_unsaved_discard">نادیده گرفتن تغییرات</string>
+    <string name="cart_unsaved_discard_desc">به آخرین نسخهٔ ذخیره‌شده برگردید و ادامه دهید.</string>
     <string name="cart_unsaved_continue">ادامه</string>
+    <string name="cart_unsaved_continue_desc">با تغییرات ذخیره‌نشده ادامه دهید؛ می‌توانید بعداً ذخیره کنید.</string>
+    <string name="onboarding_skip">رد کردن</string>
+    <string name="onboarding_next">بعدی</string>
+    <string name="onboarding_finish">متوجه شدم</string>
+    <string name="onboarding_fee_title">کارمزدها در هزینهٔ واقعی</string>
+    <string name="onboarding_fee_body">برای افزودن اضافه‌بها یا تخفیف اینجا بزنید — این‌ها در سمت ارز مقصد اعمال می‌شوند تا مبلغی که می‌بینید با آنچه واقعاً می‌پردازید یکی باشد.</string>
+    <string name="onboarding_swap_title">جابه‌جایی جفت‌ارز</string>
+    <string name="onboarding_swap_body">برای جابه‌جا کردن ارز مبدأ و مقصد، روی دکمهٔ جابه‌جایی بزنید. برای باز کردن کارمزدها، آن را لمس کنید و نگه دارید.</string>
+    <string name="onboarding_autorefresh_title">به‌روزرسانی خودکار نرخ‌ها</string>
+    <string name="onboarding_autorefresh_body">نرخ‌ها هنگام باز کردن برنامه به‌روز می‌شوند. به‌روزرسانی در پس‌زمینه را فعال کنید تا در فاصلهٔ بین اجراها هم به‌روز بمانند.</string>
+    <string name="onboarding_autorefresh_enable">اکنون فعال کنید</string>
     <string name="a11y_delete">حذف</string>
     <string name="error_unsupported_timeline">داده‌های خط زمانی توسط این API پشتیبانی نمی‌شود.</string>
     <string name="a11y_search_currencies">جستجوی ارزها</string>

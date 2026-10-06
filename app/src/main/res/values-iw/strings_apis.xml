@@ -12,11 +12,7 @@
     <string name="api_bankRossii_descriptionShort">כ־44 שערי חליפין\nמקור: הבנק המרכזי של רוסיה</string>
     <string name="api_bankRossii_descriptionUpdateInterval">השערים מתעדכנים על בסיס יומי, למעט <a href="https://cbr.ru/eng/other/holidays/">חגים לאומיים ברוסיה</a>.</string>
 
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> מקבל את שערי המטבעות ממגוון ספקי נתונים פיננסיים ובנקים, כולל הבנק המרכזי האירופי. כל נתוני שערי החליפין מסופקים כשערי אמצע. שערי אמצע נקבעים על ידי חישוב חציון של שערי ה־Bid וה־Ask.\n<b>כלולים כ־160 מטבעות.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">שערי החליפין מעודכנים בסביבות חצות לפי UTC בכל יום עבודה.</string>
-
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> הוא שירות חדש יחסית אשר (בדומה ל־Frankfurter.app) עוקב אחר שערי חליפין (פורקס) שמפרסם הבנק המרכזי האירופי.\n<b>כלולים כ־30 מטבעות.</b></string>
-    <string name="api_ferEe_descriptionShort" translatable="false">@string/api_frankfurterApp_descriptionShort</string>
     <string name="api_ferEe_descriptionUpdateInterval">השערים מתעדכנים בכל יום עבודה.</string>
 
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> עוקב אחר שערי חליפין (פורקס) שמפרסם הבנק המרכזי האירופי.\n<b>כלולים כ־30 מטבעות.</b></string>

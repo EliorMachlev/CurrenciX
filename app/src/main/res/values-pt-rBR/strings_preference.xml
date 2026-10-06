@@ -24,9 +24,10 @@
     <string name="keyboard_title">Teclado</string>
     <string name="keyboard_summary_expanded">Adiciona teclas de atalho adicionais para digitação mais rápida.</string>
     <string name="decimal_places_title">Precisão decimal</string>
-    <string name="decimal_places_summary">Número de casas decimais mostradas para os valores convertidos.</string>
     <string name="haptic_feedback_title">Feedback tátil</string>
     <string name="haptic_feedback_summary">Vibrar ao pressionar tecla\nSegue configuração do sistema</string>
+    <string name="auto_refresh_title">Atualização automática das cotações</string>
+    <string name="auto_refresh_summary">Atualizar em segundo plano na frequência recomendada pelo provedor</string>
     <string name="date_format_title">Formato de data e hora</string>
     <string name="category_appearance">Aparência</string>
     <string name="system_default">Padrão do sistema</string>
@@ -40,15 +41,10 @@
     <string name="graph_options_title">Opções do gráfico</string>
     <string name="graph_options_summary">Configurar grade, rótulos de eixo e destaques.</string>
     <string name="graph_grid_title">Mostrar grade</string>
-    <string name="graph_grid_summary">Desenhar linhas guia horizontais e verticais atrás do gráfico.</string>
     <string name="graph_x_axis_title">Mostrar rótulos do eixo X</string>
-    <string name="graph_x_axis_summary">Mostrar rótulos de data na parte inferior do gráfico.</string>
     <string name="graph_y_axis_title">Mostrar rótulos do eixo Y</string>
-    <string name="graph_y_axis_summary">Mostrar rótulos de valor de câmbio no lado esquerdo do gráfico.</string>
     <string name="graph_highlight_extremes_title">Destacar mín. e máx.</string>
-    <string name="graph_highlight_extremes_summary">Sobrepor linhas de referência nas taxas mais baixas e mais altas do intervalo visível.</string>
     <string name="graph_highlight_period_change_title">Destacar mudança de ano/mês</string>
-    <string name="graph_highlight_period_change_summary">Desenhar linhas verticais de referência onde o ano ou o mês muda ao longo do gráfico.</string>
     <!-- languages -->
     <string name="language_title">Idioma do app</string>
     <string name="language_da">Dinamarquês</string>
@@ -57,10 +53,6 @@
     <string name="language_fa">Persa</string>
     <string name="language_zh_TW">Chinês (Tradicional)</string>
 
-
-
-
-
     <string name="language_de">Alemão</string>
     <string name="language_el">Grego</string>
     <string name="language_en">Inglês</string>
@@ -68,21 +60,7 @@
     <string name="language_es">Espanhol</string>
     <string name="language_fr">Francês</string>
 
-
-
-
     <string name="language_it">Italiano</string>
-
-
-
-
-
-
-
-
-
-
-
 
     <!-- api -->
     <string name="category_api">Taxas de câmbio</string>
@@ -118,6 +96,10 @@
     <string name="backup_password_prompt_title">Digite a senha</string>
     <string name="backup_password_wrong">A senha não descriptografou este arquivo. Tente novamente.</string>
     <string name="backup_password_too_short">A senha deve ter pelo menos %1$d caracteres</string>
+    <string name="backup_password_show">Mostrar senha</string>
+    <string name="backup_password_hide">Ocultar senha</string>
+    <string name="picker_active_chip">Ativo</string>
+    <string name="picker_currency_title">Moeda</string>
     <string name="credits_title">Sobre, jurídico &amp; código aberto</string>
     <string name="credits_summary">Política de privacidade, termos de serviço, acessibilidade, código-fonte e licenças de bibliotecas de terceiros</string>
     <string name="title_credits">Sobre, jurídico &amp; código aberto</string>
@@ -140,7 +122,6 @@
     <string name="credits_section_source">Fonte</string>
     <string name="fee_edit_active">Ativo</string>
     <string name="fee_edit_name">Nome</string>
-    <string name="fee_edit_name_hint">ex.: Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Inativo</string>
     <string name="fee_untitled">Sem título</string>
     <string name="language_ar">Árabe</string>

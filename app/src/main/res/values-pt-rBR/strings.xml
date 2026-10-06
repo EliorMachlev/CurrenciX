@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">alternar moedas</string>
     <string name="historical_rates_dialog_title">Taxas históricas</string>
     <string name="historical_rates_dialog_toggle">Utilize taxas de câmbio de uma data específica. Desabilite, para pegar sempre as mais recentes.</string>
+    <string name="historical_rates_dialog_now">Agora</string>
     <string name="error">Erro: %s</string>
     <string name="error_generic">Problema desconhecido.</string>
     <string name="error_http">O servidor respondeu com HTTP %d.</string>
@@ -33,6 +34,7 @@
     <string name="unreachable_banner_with_date">Provedor indisponível • Taxas de %1$s</string>
     <string name="unreachable_banner_no_data">Provedor indisponível • Tentando novamente</string>
     <string name="historical_banner">Histórico • Taxas de %1$s</string>
+    <string name="fee_chip_label">Taxa de %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Taxa mais recente e tendência de 30 dias do par de moedas usado por último ou de um escolhido por você.</string>
@@ -85,9 +87,23 @@
     <string name="cart_share_total">Total: %1$s %2$s</string>
     <string name="cart_unsaved_title">Alterações não salvas</string>
     <string name="cart_unsaved_save">Salvar</string>
+    <string name="cart_unsaved_save_desc">Substituir o carrinho salvo atual por estas alterações.</string>
     <string name="cart_unsaved_save_as">Salvar como novo</string>
+    <string name="cart_unsaved_save_as_desc">Manter o carrinho salvo atual intacto e salvar uma cópia com outro nome.</string>
     <string name="cart_unsaved_discard">Descartar alterações</string>
+    <string name="cart_unsaved_discard_desc">Voltar à última versão salva e continuar.</string>
     <string name="cart_unsaved_continue">Continuar</string>
+    <string name="cart_unsaved_continue_desc">Prosseguir com as alterações não salvas; você pode salvar depois.</string>
+    <string name="onboarding_skip">Pular</string>
+    <string name="onboarding_next">Avançar</string>
+    <string name="onboarding_finish">Entendi</string>
+    <string name="onboarding_fee_title">Taxas no custo real</string>
+    <string name="onboarding_fee_body">Toque aqui para adicionar acréscimos ou descontos — eles são aplicados no lado de destino, para que o valor exibido corresponda ao que você realmente paga.</string>
+    <string name="onboarding_swap_title">Inverter o par</string>
+    <string name="onboarding_swap_body">Toque no botão de inversão para trocar a moeda base e a de destino. Toque e segure para abrir suas taxas.</string>
+    <string name="onboarding_autorefresh_title">Atualização automática das cotações</string>
+    <string name="onboarding_autorefresh_body">As cotações são atualizadas quando você abre o app. Ative a atualização em segundo plano para que elas continuem em dia entre um uso e outro.</string>
+    <string name="onboarding_autorefresh_enable">Ativar agora</string>
     <string name="a11y_search_currencies">Pesquisar moedas</string>
     <string name="a11y_clear_search">Limpar pesquisa</string>
     <string name="a11y_cart_item_name">Nome do item</string>

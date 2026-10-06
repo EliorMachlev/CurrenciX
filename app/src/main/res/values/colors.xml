@@ -4,23 +4,16 @@
         view/compose/theme/Color.kt — paper for light, ink for dark, bill
         green as primary, brass as accent. -->
    <color name="paperBg">#F3EEE5</color>
-   <color name="paperSurface">#EFE8DB</color>
    <color name="inkBg">#131311</color>
-   <color name="inkSurface">#1F1E1C</color>
    <color name="billGreen">#85BB65</color>
    <color name="billGreenInk">#0F2A05</color>
    <color name="brass">#B8985B</color>
 
    <!-- Legacy aliases kept for XML that still references the old names.
         Point them at the brand palette so nothing regresses. -->
-   <color name="dirtyWhite">@color/paperBg</color>
-   <color name="blackOlive">@color/inkBg</color>
    <color name="dollarBill">@color/billGreen</color>
-   <color name="seaGreen">#228d57</color>
 
-   <color name="color_primary">@android:color/system_accent1_300</color>
    <color name="color_keypad_operators">@android:color/system_accent1_300</color>
-   <color name="color_keypad_delete">@android:color/system_accent2_300</color>
 
    <!-- WCAG AA-compliant error red for text/icon usage on the paper
         background. Material 3 error tone 40 (#B3261E) hits ~6:1 contrast. -->

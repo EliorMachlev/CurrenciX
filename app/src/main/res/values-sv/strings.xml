@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">byt plats på valutor</string>
     <string name="historical_rates_dialog_title">Historiska kurser</string>
     <string name="historical_rates_dialog_toggle">Använd växlingskurser från ett specifikt datum. Inaktivera för att använda de senaste kurserna.</string>
+    <string name="historical_rates_dialog_now">Nu</string>
     <string name="error">Fel: %s</string>
     <string name="error_generic">Okänt problem.</string>
     <string name="error_http">Servern svarade med HTTP %d.</string>
@@ -33,6 +34,7 @@
     <string name="unreachable_banner_with_date">Leverantören är otillgänglig • Kurser från %1$s</string>
     <string name="unreachable_banner_no_data">Leverantören är otillgänglig • Försöker igen</string>
     <string name="historical_banner">Historiskt • Kurser från %1$s</string>
+    <string name="fee_chip_label">%1$s avgift</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Senaste kurs och 30-dagarstrend för ditt senast använda valutapar eller ett du väljer.</string>
@@ -85,9 +87,23 @@
     <string name="cart_share_total">Totalt: %1$s %2$s</string>
     <string name="cart_unsaved_title">Osparade ändringar</string>
     <string name="cart_unsaved_save">Spara</string>
+    <string name="cart_unsaved_save_desc">Skriv över den sparade kundvagnen med de här ändringarna.</string>
     <string name="cart_unsaved_save_as">Spara som ny</string>
+    <string name="cart_unsaved_save_as_desc">Lämna den sparade kundvagnen orörd och spara en kopia under ett annat namn.</string>
     <string name="cart_unsaved_discard">Kassera ändringar</string>
+    <string name="cart_unsaved_discard_desc">Återgå till den senast sparade versionen och fortsätt.</string>
     <string name="cart_unsaved_continue">Fortsätt</string>
+    <string name="cart_unsaved_continue_desc">Fortsätt med osparade ändringar; du kan spara senare.</string>
+    <string name="onboarding_skip">Hoppa över</string>
+    <string name="onboarding_next">Nästa</string>
+    <string name="onboarding_finish">Jag förstår</string>
+    <string name="onboarding_fee_title">Verklig kostnad med avgifter</string>
+    <string name="onboarding_fee_body">Tryck här för att lägga till påslag eller rabatter — de läggs på målsidan så att beloppet du ser motsvarar det du faktiskt betalar.</string>
+    <string name="onboarding_swap_title">Byt plats på paret</string>
+    <string name="onboarding_swap_body">Tryck på bytesknappen för att byta plats på bas- och målvalutan. Håll den intryckt för att öppna dina avgifter.</string>
+    <string name="onboarding_autorefresh_title">Uppdatera kurser automatiskt</string>
+    <string name="onboarding_autorefresh_body">Kurserna uppdateras när du öppnar appen. Aktivera uppdatering i bakgrunden så att de hålls aktuella även mellan starterna.</string>
+    <string name="onboarding_autorefresh_enable">Aktivera nu</string>
     <string name="a11y_search_currencies">Sök valutor</string>
     <string name="a11y_clear_search">Rensa sökning</string>
     <string name="a11y_cart_item_name">Artikelnamn</string>

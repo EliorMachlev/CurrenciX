@@ -3,6 +3,7 @@
     <string name="desc_toggle_currencies">মুদ্রা toggle</string>
     <string name="historical_rates_dialog_title">ঐতিহাসক মূল্য</string>
     <string name="historical_rates_dialog_toggle">একটি নির্দিষ্ট তারিখের বিনিময় হার ব্যবহার করুন। অক্ষম করুন, সর্বদা সাম্প্রতিকতমগুলি নিতে।</string>
+    <string name="historical_rates_dialog_now">এখন</string>
     <string name="error">সমস্যা: %s</string>
     <string name="error_generic">অজানা সমস্যা ।</string>
     <string name="error_http">সার্ভার HTTP %d দিয়ে সাড়া দিয়েছে।</string>
@@ -31,6 +32,7 @@
     <string name="unreachable_banner_with_date">প্রদানকারী পৌঁছানো যাচ্ছে না • %1$s থেকে রেট</string>
     <string name="unreachable_banner_no_data">প্রদানকারী পৌঁছানো যাচ্ছে না • পুনরায় চেষ্টা</string>
     <string name="historical_banner">ঐতিহাসিক • %1$s থেকে রেট</string>
+    <string name="fee_chip_label">%1$s ফি</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়া বা আপনার বেছে নেওয়া জোড়ার সর্বশেষ হার ও ৩০ দিনের প্রবণতা।</string>
@@ -83,9 +85,23 @@
     <string name="cart_share_total">মোট: %1$s %2$s</string>
     <string name="cart_unsaved_title">অসংরক্ষিত পরিবর্তন</string>
     <string name="cart_unsaved_save">সংরক্ষণ</string>
+    <string name="cart_unsaved_save_desc">এই পরিবর্তনগুলো দিয়ে বর্তমান সংরক্ষিত কার্টটি প্রতিস্থাপন করুন।</string>
     <string name="cart_unsaved_save_as">নতুন হিসেবে সংরক্ষণ</string>
+    <string name="cart_unsaved_save_as_desc">বর্তমান সংরক্ষিত কার্টটি অপরিবর্তিত রেখে ভিন্ন নামে একটি কপি সংরক্ষণ করুন।</string>
     <string name="cart_unsaved_discard">পরিবর্তন বাতিল করুন</string>
+    <string name="cart_unsaved_discard_desc">সর্বশেষ সংরক্ষিত সংস্করণে ফিরে গিয়ে চালিয়ে যান।</string>
     <string name="cart_unsaved_continue">চালিয়ে যান</string>
+    <string name="cart_unsaved_continue_desc">অসংরক্ষিত পরিবর্তন নিয়েই এগিয়ে যান; পরে সংরক্ষণ করতে পারবেন।</string>
+    <string name="onboarding_skip">এড়িয়ে যান</string>
+    <string name="onboarding_next">পরবর্তী</string>
+    <string name="onboarding_finish">বুঝেছি</string>
+    <string name="onboarding_fee_title">প্রকৃত খরচে ফি</string>
+    <string name="onboarding_fee_body">বাড়তি চার্জ বা ছাড় যোগ করতে এখানে আলতো চাপুন — এগুলো গন্তব্য মুদ্রার দিকে প্রযোজ্য হয়, তাই আপনি যে পরিমাণ দেখেন তা আপনার প্রকৃত পরিশোধের সাথে মিলে যায়।</string>
+    <string name="onboarding_swap_title">জোড়া অদলবদল করুন</string>
+    <string name="onboarding_swap_body">মূল ও গন্তব্য মুদ্রা অদলবদল করতে অদলবদল বোতামে আলতো চাপুন। আপনার ফি খুলতে বোতামটি চেপে ধরে রাখুন।</string>
+    <string name="onboarding_autorefresh_title">স্বয়ংক্রিয় হার রিফ্রেশ</string>
+    <string name="onboarding_autorefresh_body">অ্যাপ খুললে হার রিফ্রেশ হয়। ব্যাকগ্রাউন্ড রিফ্রেশ চালু করুন, যাতে অ্যাপ না খুললেও হার হালনাগাদ থাকে।</string>
+    <string name="onboarding_autorefresh_enable">এখনই চালু করুন</string>
     <string name="a11y_delete">মুছুন</string>
     <string name="a11y_search_currencies">মুদ্রা অনুসন্ধান</string>
     <string name="a11y_clear_search">অনুসন্ধান সাফ করুন</string>

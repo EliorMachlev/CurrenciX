@@ -4,6 +4,7 @@
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="historical_rates_dialog_title">Історичний курс</string>
     <string name="historical_rates_dialog_toggle">Використовувати курс валют на певну дату. Вимкніть, щоб завжди брати найновіші.</string>
+    <string name="historical_rates_dialog_now">Зараз</string>
     <string name="error">Помилка: %s</string>
     <string name="error_generic">Невідома помилка.</string>
     <string name="error_http">Сервер відповів зі статусом HTTP %d.</string>
@@ -32,6 +33,7 @@
     <string name="unreachable_banner_with_date">Постачальник недоступний • Курси від %1$s</string>
     <string name="unreachable_banner_no_data">Постачальник недоступний • Повтор</string>
     <string name="historical_banner">Історичні • Курси від %1$s</string>
+    <string name="fee_chip_label">Комісія %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Останній курс і тренд за 30 днів для останньої використаної валютної пари або обраної вами.</string>
@@ -84,9 +86,23 @@
     <string name="cart_share_total">Разом: %1$s %2$s</string>
     <string name="cart_unsaved_title">Незбережені зміни</string>
     <string name="cart_unsaved_save">Зберегти</string>
+    <string name="cart_unsaved_save_desc">Перезаписати поточний збережений кошик цими змінами.</string>
     <string name="cart_unsaved_save_as">Зберегти як новий</string>
+    <string name="cart_unsaved_save_as_desc">Залишити поточний збережений кошик без змін і зберегти копію під іншою назвою.</string>
     <string name="cart_unsaved_discard">Скасувати зміни</string>
+    <string name="cart_unsaved_discard_desc">Повернутися до останньої збереженої версії та продовжити.</string>
     <string name="cart_unsaved_continue">Продовжити</string>
+    <string name="cart_unsaved_continue_desc">Продовжити з незбереженими змінами; зберегти можна пізніше.</string>
+    <string name="onboarding_skip">Пропустити</string>
+    <string name="onboarding_next">Далі</string>
+    <string name="onboarding_finish">Зрозуміло</string>
+    <string name="onboarding_fee_title">Комісії в реальній вартості</string>
+    <string name="onboarding_fee_body">Натисніть тут, щоб додати націнки або знижки — вони застосовуються до суми в цільовій валюті, тож ви бачите саме ту суму, яку насправді заплатите.</string>
+    <string name="onboarding_swap_title">Поміняти валюти місцями</string>
+    <string name="onboarding_swap_body">Натисніть кнопку перемикання, щоб поміняти місцями базову й цільову валюти. Утримуйте її, щоб відкрити комісії.</string>
+    <string name="onboarding_autorefresh_title">Автооновлення курсів</string>
+    <string name="onboarding_autorefresh_body">Курси оновлюються, коли ви відкриваєте застосунок. Увімкніть фонове оновлення, щоб вони залишалися актуальними між запусками.</string>
+    <string name="onboarding_autorefresh_enable">Увімкнути зараз</string>
     <string name="a11y_search_currencies">Пошук валют</string>
     <string name="a11y_clear_search">Очистити пошук</string>
     <string name="a11y_cart_item_name">Назва позиції</string>
