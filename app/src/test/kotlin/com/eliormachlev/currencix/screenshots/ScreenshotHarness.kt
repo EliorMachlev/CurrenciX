@@ -1,5 +1,9 @@
 package com.eliormachlev.currencix.screenshots
 
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,10 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -69,7 +77,13 @@ internal fun MatrixCell(
     content: @Composable () -> Unit,
 ) {
     Locale.setDefault(Locale.forLanguageTag(locale.tag))
-    CompositionLocalProvider(LocalLayoutDirection provides locale.dir) {
+    val context = rememberLocalizedContext(locale.tag)
+    CompositionLocalProvider(
+        LocalContext provides context,
+        LocalConfiguration provides context.resources.configuration,
+        LocalResources provides context.resources,
+        LocalLayoutDirection provides locale.dir,
+    ) {
         AppTheme(dark = theme.dark) {
             // OLED = pureBlack surface applied over the dark palette. In the
             // real app this comes from the Activity's XML theme; in tests we
@@ -88,6 +102,27 @@ internal fun MatrixCell(
             }
         }
     }
+}
+
+// The cell's language for resources too, not only the JVM default locale:
+// strings come out in it, and so does the app language that
+// ReadingDirection reads. A wrapper, so the Activity is still underneath for
+// anything that looks it up.
+@Composable
+private fun rememberLocalizedContext(tag: String): Context {
+    val base = LocalContext.current
+    val configuration = LocalConfiguration.current
+    return remember(base, configuration, tag) {
+        val config = Configuration(configuration).apply { setLocale(Locale.forLanguageTag(tag)) }
+        LocalizedContext(base, base.createConfigurationContext(config).resources)
+    }
+}
+
+private class LocalizedContext(
+    base: Context,
+    private val localized: Resources,
+) : ContextWrapper(base) {
+    override fun getResources(): Resources = localized
 }
 
 /**
@@ -143,8 +178,13 @@ class ScreenshotRule : TestRule {
         }
         cells.forEach { cell ->
             current.value = cell
-            compose.waitForIdle()
-            compose.mainClock.advanceTimeBy(SETTLE_MILLIS)
+            // Twice: a sheet or dialog that replaces the previous cell's
+            // opens in a new window, and only starts its entrance once that
+            // window is attached — after the first pass.
+            repeat(SETTLE_PASSES) {
+                compose.waitForIdle()
+                compose.mainClock.advanceTimeBy(SETTLE_MILLIS)
+            }
             compose.waitForIdle()
             val file = "$SCREENSHOT_DIR/${name}_${cell.suffix}.png"
             if (compose.onAllNodes(isDialog()).fetchSemanticsNodes().isNotEmpty()) {
@@ -170,6 +210,9 @@ class ScreenshotRule : TestRule {
         // Long enough for every entrance and sheet slide-in; a fixed stretch
         // of any animation that never ends.
         const val SETTLE_MILLIS = 1_000L
+
+        // See capture: one pass to attach a new popup window, one for its entrance.
+        const val SETTLE_PASSES = 2
 
         // Android's largest font-size setting.
         const val LARGE_FONT_SCALE = 2f
