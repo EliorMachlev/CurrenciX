@@ -38,11 +38,14 @@ class MainScreenScreenshotTest {
     @get:Rule val shots = ScreenshotRule()
 
     @Test fun mainScreenNormal() = shots.captureMatrix("main_screen_normal") { MainScreenPreview() }
+
+    // The drawer under the top bar, whose button has turned into the arrow that closes it.
+    @Test fun mainScreenDrawerOpen() = shots.captureMatrix("main_screen_drawer_open") { MainScreenPreview(DrawerValue.Open) }
 }
 
 @Composable
-private fun MainScreenPreview() {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+private fun MainScreenPreview(drawer: DrawerValue = DrawerValue.Closed) {
+    val drawerState = rememberDrawerState(drawer)
     MainScreen(
         drawer = DrawerControl(drawerState, onItem = {}),
         body =

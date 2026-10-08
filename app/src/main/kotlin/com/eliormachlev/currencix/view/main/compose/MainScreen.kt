@@ -116,11 +116,12 @@ class ConverterBody(
 )
 
 // The converter screen: [topBar] over the pull-to-refresh hero display and
-// the keypad (side by side in landscape / on a vertical fold), all wrapped by
-// a ModalNavigationDrawer. Content slots are hoisted so ConverterRoute keeps
-// direct control over the hero display + keypad composables (which own their
-// own ViewModel wiring). Offline / historical status is rendered inside the
-// hero's RateFooter instead of stealing a full-width strip above the card.
+// the keypad (side by side in landscape / on a vertical fold), with a
+// ModalNavigationDrawer under the top bar. Content slots are hoisted so
+// ConverterRoute keeps direct control over the hero display + keypad
+// composables (which own their own ViewModel wiring). Offline / historical
+// status is rendered inside the hero's RateFooter instead of stealing a
+// full-width strip above the card.
 @Composable
 fun MainScreen(
     drawer: DrawerControl,
@@ -129,19 +130,25 @@ fun MainScreen(
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
-    ModalNavigationDrawer(
-        drawerState = drawer.state,
-        drawerContent = {
-            ModalDrawerSheet {
-                // Nothing to refresh while a refresh is already running.
-                DrawerContent(onItemClick = drawer.onItem, isRefreshEnabled = !body.isRefreshing)
-            }
-        },
-    ) {
-        // The drawer opens over the top bar, as Material 3 draws it.
-        Scaffold(topBar = topBar, containerColor = Color.Transparent) { padding ->
+    // The drawer slides in under the top bar, not over it: the hamburger
+    // morphs into an arrow as it opens (DrawerArrowIcon), and that arrow is
+    // the way to close it again, so it has to stay in sight and in reach.
+    Scaffold(topBar = topBar, containerColor = Color.Transparent) { padding ->
+        ModalNavigationDrawer(
+            drawerState = drawer.state,
+            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+            drawerContent = {
+                // Given the drawer's state, the sheet handles back: the
+                // gesture's preview shrinks the sheet, and letting go closes
+                // it instead of leaving the app.
+                ModalDrawerSheet(drawerState = drawer.state) {
+                    // Nothing to refresh while a refresh is already running.
+                    DrawerContent(onItemClick = drawer.onItem, isRefreshEnabled = !body.isRefreshing)
+                }
+            },
+        ) {
             MainContent(
-                modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+                modifier = Modifier,
                 body = body,
                 displayContent = displayContent,
                 keypadContent = keypadContent,

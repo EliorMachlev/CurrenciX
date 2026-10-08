@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.view.main
 
 import android.app.Application
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -12,6 +13,8 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.seedCachedRates
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -110,6 +113,39 @@ class MainActivitySmokeTest {
 
         back()
         compose.onNodeWithText(string(R.string.title_preferences)).assertExists()
+        back()
+        assertOnConverter()
+    }
+
+    @Test
+    fun `back closes an open drawer instead of leaving the app`() {
+        openFromTopBar(R.string.desc_open_drawer)
+        compose.onNodeWithContentDescription(string(R.string.desc_close_drawer)).assertExists()
+
+        back()
+        assertOnConverter()
+        assertFalse("back left the app", compose.activity.isFinishing)
+    }
+
+    @Test
+    fun `the open drawer slides in under the top bar, leaving its arrow uncovered`() {
+        openFromTopBar(R.string.desc_open_drawer)
+        val arrow = compose.onNodeWithContentDescription(string(R.string.desc_close_drawer)).getBoundsInRoot()
+        val firstEntry = compose.onNodeWithTag(UiTestTags.drawerEntry(DrawerAction.Timeline.name)).getBoundsInRoot()
+        assertTrue("the drawer covers the top bar", firstEntry.top >= arrow.bottom)
+
+        // …and the arrow, still in reach, closes it.
+        compose.onNodeWithContentDescription(string(R.string.desc_close_drawer)).performClick()
+        settle()
+        assertOnConverter()
+    }
+
+    @Test
+    fun `a top bar shortcut used while the drawer is open returns to a closed drawer`() {
+        openFromTopBar(R.string.desc_open_drawer)
+        openFromTopBar(R.string.cart_title)
+        compose.onNodeWithContentDescription(string(R.string.desc_more_options)).assertExists()
+
         back()
         assertOnConverter()
     }

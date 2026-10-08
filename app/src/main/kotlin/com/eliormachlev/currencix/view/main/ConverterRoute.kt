@@ -85,7 +85,11 @@ internal fun ConverterRoute(
     val destinations = remember(viewModel, navigator, paneRole) { ConverterDestinations(viewModel, navigator, paneRole) }
     if (paneRole == PaneRole.List) TimelineFollowsPair(viewModel, navigator)
     val onLeaveViaDrawer = rememberDrawerClosedOnReturn(drawerState)
-    val onDrawerItem: (DrawerAction) -> Unit = { action ->
+    // Every entry of the drawer and every shortcut of the top bar goes
+    // through here, so the drawer is closed (or left closed) whichever of
+    // the two opened something: with the drawer under the top bar, the
+    // shortcuts stay in reach while it is open.
+    val onAction: (DrawerAction) -> Unit = { action ->
         scope.launch { drawerState.close() }
         onLeaveViaDrawer(action)
         when (action) {
@@ -97,13 +101,13 @@ internal fun ConverterRoute(
 
     ProvideOnboardingAnchors {
         MainScreen(
-            drawer = DrawerControl(drawerState, onDrawerItem),
+            drawer = DrawerControl(drawerState, onAction),
             body = ConverterBody(isUpdating, viewModel::forceUpdateExchangeRate, foldingFeature, keypadHeights(isExpandedKeypad)),
             topBar = {
                 ConverterTopBar(
                     drawerState = drawerState,
                     onToggleDrawer = { scope.launch { drawerState.toggle() } },
-                    actions = destinations.topBarActions { overlay = it },
+                    actions = topBarActions(onAction),
                     startReveal = startReveal,
                     onFirstFrame = host.onWordmarkFirstFrame,
                 )
@@ -134,7 +138,7 @@ private class ConverterDestinations(
     private val navigator: AppNavigator,
     private val paneRole: PaneRole?,
 ) {
-    fun openTimeline() {
+    private fun openTimeline() {
         val from = viewModel.getBaseCurrency().value ?: return
         val to = viewModel.getDestinationCurrency().value ?: return
         openDetail(Screen.Timeline(from, to))
@@ -142,7 +146,7 @@ private class ConverterDestinations(
 
     // A null side is fine here — CartViewModel.seedFromMain keeps the cart's
     // own pair or resolves just the missing side.
-    fun openCart() = openDetail(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+    private fun openCart() = openDetail(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
 
     // Beside the converter, a detail screen takes the detail pane's place
     // rather than stacking on it: back then returns to the converter alone.
@@ -156,16 +160,7 @@ private class ConverterDestinations(
 
     fun openFees() = navigator.navigate(Screen.Fees)
 
-    fun openSettings() = navigator.navigate(Screen.Settings)
-
-    /** The top bar's shortcuts: two screens and two sheets ([showOverlay]). */
-    fun topBarActions(showOverlay: (ConverterOverlay) -> Unit) =
-        ConverterTopBarActions(
-            onTimeline = ::openTimeline,
-            onCart = ::openCart,
-            onQuickConversions = { showOverlay(ConverterOverlay.QuickConversions) },
-            onHistoricalRates = { showOverlay(ConverterOverlay.HistoricalDatePicker) },
-        )
+    private fun openSettings() = navigator.navigate(Screen.Settings)
 
     /** A drawer entry that opens a screen or one of the converter's sheets ([showOverlay]). */
     fun open(
@@ -188,6 +183,15 @@ private class ConverterDestinations(
 // The drawer moves on Material's own motion: DrawerState.open() / close()
 // take no animation spec (the spec-taking animateTo is deprecated).
 private suspend fun DrawerState.toggle() = if (isOpen) close() else open()
+
+// The top bar's shortcuts are the drawer's first four entries.
+private fun topBarActions(open: (DrawerAction) -> Unit) =
+    ConverterTopBarActions(
+        onTimeline = { open(DrawerAction.Timeline) },
+        onCart = { open(DrawerAction.Cart) },
+        onQuickConversions = { open(DrawerAction.QuickConversions) },
+        onHistoricalRates = { open(DrawerAction.DatePicker) },
+    )
 
 // A drawer entry that opens another screen starts closing the drawer, but
 // the converter leaves composition before that animation ends — and would
