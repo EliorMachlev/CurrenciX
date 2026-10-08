@@ -2,8 +2,10 @@ package com.eliormachlev.currencix.util
 
 import android.content.Context
 import android.text.Spanned
+import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
+import androidx.core.text.layoutDirection
 import com.eliormachlev.currencix.R
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -17,6 +19,7 @@ private const val SYMBOL_DETECTION_VALUE = 1.23
 private const val THOUSANDS_GROUP_SIZE = 3
 
 private const val LTR_ISOLATE = '\u2066'
+private const val RTL_ISOLATE = '\u2067'
 private const val POP_DIRECTIONAL_ISOLATE = '\u2069'
 
 // Unicode RTL mark (U+200F) injected by some locales' number/date formatters.
@@ -71,6 +74,22 @@ fun BigDecimal.roundForDisplay(scale: Int): BigDecimal = setScale(scale, Roundin
  * the currency code drifts to the opposite side.
  */
 fun ltrIsolate(s: String): String = "$LTR_ISOLATE$s$POP_DIRECTIONAL_ISOLATE"
+
+/**
+ * This label in the reading order of the app's language ([getLocale]). The
+ * app lays out left to right in every language, so a right-to-left label
+ * that names something in Latin script ("היום · InforEuro") would otherwise
+ * be ordered left to right around that name, and its first part would land
+ * last. Wrapped in an RTL isolate (U+2067 … U+2069) it reads right to left
+ * as one unit, wherever the left-to-right layout places it. Left-to-right
+ * languages get the label back unchanged.
+ */
+fun String.inReadingOrder(context: Context): String =
+    if (getLocale(context).layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+        "$RTL_ISOLATE$this$POP_DIRECTIONAL_ISOLATE"
+    } else {
+        this
+    }
 
 /**
  * Removes any Unicode RTL mark (U+200F) from the string.

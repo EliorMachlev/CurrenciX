@@ -85,6 +85,7 @@ import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
+import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -1294,8 +1295,9 @@ private fun StatusPill(
             tint = contentColor,
             modifier = Modifier.size(STATUS_PILL_ICON_SIZE),
         )
+        val context = LocalContext.current
         Text(
-            text = banner.text,
+            text = remember(banner.text, context) { banner.text.inReadingOrder(context) },
             style = MaterialTheme.typography.labelSmall,
             color = contentColor,
             maxLines = 1,
@@ -1345,13 +1347,16 @@ private fun TimestampText(
     val whenText = remember(date, rates.time, dateFormatPattern, now) { formatWhen(date, rates.time, dateFormatPattern, now) }
     val fullText = remember(date, rates.time, dateFormatPattern) { formatFull(date, rates.time, dateFormatPattern) }
     val provider = rates.provider?.getName(context)?.toString()
-    val text =
+    val label =
         when {
             !showWhen -> provider.orEmpty()
             provider.isNullOrEmpty() -> whenText
             else -> "$whenText$FOOTER_SEPARATOR$provider"
         }
-    if (text.isEmpty()) return
+    if (label.isEmpty()) return
+    // In a right-to-left language the provider follows the date leftwards,
+    // even when its name is in Latin script.
+    val text = remember(label, context) { label.inReadingOrder(context) }
     // Tap: change provider. Long-press: the exact publication time.
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),

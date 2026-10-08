@@ -30,6 +30,7 @@ import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
+import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import java.util.Calendar
@@ -376,7 +377,7 @@ private fun ApiSection(
         }
         provider?.let {
             PreferenceRow(
-                title = stringResource(id = R.string.api_about_title, it.getName(context)),
+                title = stringResource(id = R.string.api_about_title, it.getName(context)).inReadingOrder(context),
                 summary = it.getDescriptionLong(context).toString(),
                 iconRes = R.drawable.ic_info,
             )
@@ -411,8 +412,9 @@ private fun FallbackProviderRow(
     PreferenceRow(
         title = stringResource(id = R.string.fallback_provider_title),
         summary =
-            main?.let { stringResource(R.string.fallback_provider_summary, fallback.getName(context), it.getName(context)) }
-                ?: fallback.getName(context).toString(),
+            main?.let {
+                stringResource(R.string.fallback_provider_summary, fallback.getName(context), it.getName(context)).inReadingOrder(context)
+            } ?: fallback.getName(context).toString(),
         iconRes = R.drawable.ic_sync_problem,
         onClick = onClick,
     )
