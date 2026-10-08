@@ -67,7 +67,7 @@ class CartSaveLoadCoordinator(
     /**
      * Leaves the cart, first offering to save when it has unsaved edits.
      * Back only routes here while [needsClosePrompt] — otherwise the back
-     * gesture pops the screen directly (with its predictive animation).
+     * gesture pops the screen directly.
      */
     fun attemptClose() = confirmUnsavedThen(onClose)
 

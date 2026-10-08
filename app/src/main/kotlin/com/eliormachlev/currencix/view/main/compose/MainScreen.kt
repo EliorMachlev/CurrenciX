@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.main.compose
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.UiTestTags
+import kotlinx.coroutines.launch
 
 enum class DrawerAction(
     /** Whether the entry opens another screen (rather than a sheet, or an action on the converter). */
@@ -130,6 +134,11 @@ fun MainScreen(
     displayContent: @Composable () -> Unit,
     keypadContent: @Composable () -> Unit,
 ) {
+    // Back closes the drawer instead of leaving the app. A plain back
+    // handler rather than the sheet's own (ModalDrawerSheet(drawerState)),
+    // which previews the gesture by shrinking the sheet under the finger.
+    val scope = rememberCoroutineScope()
+    BackHandler(enabled = drawer.state.targetValue == DrawerValue.Open) { scope.launch { drawer.state.close() } }
     // The drawer slides in under the top bar, not over it: the hamburger
     // morphs into an arrow as it opens (DrawerArrowIcon), and that arrow is
     // the way to close it again, so it has to stay in sight and in reach.
@@ -138,10 +147,7 @@ fun MainScreen(
             drawerState = drawer.state,
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
             drawerContent = {
-                // Given the drawer's state, the sheet handles back: the
-                // gesture's preview shrinks the sheet, and letting go closes
-                // it instead of leaving the app.
-                ModalDrawerSheet(drawerState = drawer.state) {
+                ModalDrawerSheet {
                     // Nothing to refresh while a refresh is already running.
                     DrawerContent(onItemClick = drawer.onItem, isRefreshEnabled = !body.isRefreshing)
                 }

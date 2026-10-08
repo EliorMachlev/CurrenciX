@@ -9,8 +9,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 
 /**
  * The app's back stack. The converter is always at the bottom; every other
- * screen is pushed on top of it and popped off by back (button, gesture,
- * predictive gesture) or by the screen itself.
+ * screen is pushed on top of it and popped off by back (button or gesture)
+ * or by the screen itself.
  *
  * Saved with the Activity's instance state, so a rotation, a theme change
  * (which recreates the Activity) or process death comes back to the same

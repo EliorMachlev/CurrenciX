@@ -50,7 +50,7 @@ fun rememberPillTransition(
  * Makes a currency pill a shared element: when a screen with a matching pill
  * ([PillSide] + currency) opens or closes, the pill moves and resizes into
  * its counterpart instead of fading with its screen. It follows the screen
- * transition, so the predictive back gesture scrubs it too.
+ * transition.
  */
 fun Modifier.sharedCurrencyPill(transition: PillTransition?): Modifier {
     transition ?: return this

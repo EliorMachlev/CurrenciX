@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.compose.dialogs
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,9 +10,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -20,9 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.theme.Brass
+import kotlinx.coroutines.launch
 
-// Ledger sheet chrome. The M3 ModalBottomSheet gives us the drag handle,
-// scrim, and predictive-back behavior for free; we override just the container
+// Ledger sheet chrome. The M3 ModalBottomSheet gives us the drag handle and
+// scrim for free; we override just the container
 // color + tonal elevation so the sheet sits on the same paper background as
 // the rest of the ledger surfaces (rather than the raised tonal container the
 // default palette would paint).
@@ -63,6 +69,7 @@ fun LedgerBottomSheet(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+    val scope = rememberCoroutineScope()
     AppTheme {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
@@ -70,7 +77,12 @@ fun LedgerBottomSheet(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface,
             tonalElevation = 0.dp,
+            // Back is handled below rather than by the sheet, whose own
+            // handler previews the gesture by shrinking the sheet under the
+            // finger.
+            properties = ModalBottomSheetProperties(shouldDismissOnBackPress = false, shouldDismissOnClickOutside = true),
         ) {
+            BackHandler { scope.launch { sheetState.stepBack(onDismiss) } }
             val bodyModifier =
                 Modifier
                     .fillMaxWidth()
@@ -84,6 +96,21 @@ fun LedgerBottomSheet(
                 content()
             }
         }
+    }
+}
+
+/**
+ * What back does to a sheet, as M3's own handler would: a fully expanded
+ * sheet that also has a half-height anchor settles there; otherwise it
+ * slides away and is then dismissed.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+private suspend fun SheetState.stepBack(onDismiss: () -> Unit) {
+    if (currentValue == SheetValue.Expanded && hasPartiallyExpandedState) {
+        partialExpand()
+    } else {
+        hide()
+        onDismiss()
     }
 }
 

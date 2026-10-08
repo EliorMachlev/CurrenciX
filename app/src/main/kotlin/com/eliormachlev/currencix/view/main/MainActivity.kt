@@ -64,9 +64,8 @@ private const val SPLASH_EXIT_FADE_MILLIS = Motion.LONG_MILLIS / 4L
 /**
  * The app's only Activity. Every screen — converter, timeline, cart,
  * settings, fees, backup — is a Compose destination on one back stack
- * ([AppNavHost]), so moving between them is an in-window transition that
- * the predictive back gesture can scrub, with shared elements flying
- * between screens.
+ * ([AppNavHost]), so moving between them is an in-window transition, with
+ * shared elements flying between screens.
  *
  * Owns what outlives any one screen: the splash hand-off, the XML theme
  * (pure black), foldable posture, and hardware-keyboard input for the

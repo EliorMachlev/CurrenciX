@@ -41,9 +41,8 @@ import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
  * whose overflow menu holds share, save / load, file import / export and
  * clear.
  *
- * Back leaves directly — so the predictive back gesture can preview the
- * converter — except while the cart has unsaved edits, when it first offers
- * to save (the same prompt the up arrow shows).
+ * Back leaves directly, except while the cart has unsaved edits, when it
+ * first offers to save (the same prompt the up arrow shows).
  */
 @Composable
 fun CartRoute(
