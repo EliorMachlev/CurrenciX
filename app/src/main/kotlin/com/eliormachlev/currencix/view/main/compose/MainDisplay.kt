@@ -86,6 +86,7 @@ import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.inReadingOrder
+import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -582,7 +583,7 @@ private fun AmountHero(
     onCopy: (CharSequence) -> Unit,
 ) {
     val context = LocalContext.current
-    ReceiptPanel(label = currency.panelLabel(context)) {
+    ReceiptPanel(label = remember(currency, context) { currency.panelLabel(context) }) {
         Column(Modifier.fillMaxWidth()) {
             MathLine(mathText)
             ScrollingAmount(
@@ -888,7 +889,7 @@ private fun AmountToRow(
 ) {
     val context = LocalContext.current
     val stack = state.feeStack?.takeIf { it.hasFee() }
-    ReceiptPanel(label = currency.panelLabel(context)) {
+    ReceiptPanel(label = remember(currency, context) { currency.panelLabel(context) }) {
         Column(Modifier.fillMaxWidth()) {
             // When a fee is armed we always render the full receipt chain
             // (subtotal → chip → rule → fee-adjusted final), even if the
@@ -1102,22 +1103,18 @@ internal data class AmountParts(
 // string for a null currency so the panel renders without a label until
 // the pair resolves.
 //
-// The ISO+symbol chunk is wrapped in U+2066 LEFT-TO-RIGHT ISOLATE and
-// U+2069 POP DIRECTIONAL ISOLATE so the parens sit *outside* the isolated
-// LTR run. In an RTL paragraph (Hebrew, Arabic) the parens then take the
-// paragraph direction and mirror correctly — the reader's eye meets "("
-// first (right side) and ")" last (left side), instead of the default bidi
-// behaviour which left ")" glued to the RTL name.
-private const val LRI = "\u2066"
-private const val PDI = "\u2069"
-
+// The ISO + symbol chunk is an LTR isolate, so it stays in "ILS ₪" order with
+// the parens outside it. The whole label is then put in the language's
+// reading order: in Hebrew or Arabic the name comes first, on the right, and
+// the parenthesis follows it on the left — "(ILS ₪) שקל חדש" — even though
+// the app lays out left to right.
 private fun Currency?.panelLabel(context: Context): String {
     val currency = this ?: return ""
     val name = currency.fullName(context)
     val iso = currency.iso4217Alpha()
     val symbol = currency.symbol()
     val inner = if (symbol.isNullOrEmpty()) iso else "$iso $symbol"
-    return "$name ($LRI$inner$PDI)"
+    return "$name (${ltrIsolate(inner)})".inReadingOrder(context)
 }
 
 // Peel the currency symbol off a preformatted "$ 240.00" / "240.00 $"
