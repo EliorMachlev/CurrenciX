@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
 import org.junit.Rule
@@ -28,7 +29,8 @@ import org.robolectric.annotation.GraphicsMode
 class BackupScreenScreenshotTest {
     @get:Rule val shots = ScreenshotRule()
 
-    @Test fun backupScreen() = shots.captureMatrix("backup_screen") { BackupScreenPreview() }
+    // Laid out the way the language reads, as in the app (ProseTheme).
+    @Test fun backupScreen() = shots.captureMatrix("backup_screen") { ReadingDirection { BackupScreenPreview() } }
 }
 
 @Composable

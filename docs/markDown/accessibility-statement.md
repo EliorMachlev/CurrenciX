@@ -68,7 +68,7 @@ The maintainer is a single individual and comprehensive third-party accessibilit
 - **Localised content descriptions**: Some strings inherited from the upstream `sal0max/currencies` project may not yet have translated content descriptions in every one of the 20+ supported languages. Fallbacks display the English string.
 - **Dynamic colour palettes**: The system-generated dynamic colour scheme is honoured. Because that palette is derived at runtime from the user's wallpaper, its contrast ratios cannot be verified ahead of time; the fixed light / dark / pure-black themes remain the AA-verified baseline.
 - **Custom on-screen keypad**: An in-app numeric keypad is used by default. On very small screens some keypad keys may fall below the 48 dp target-size guidance despite honouring `minWidth` / `minHeight` where present. Users who prefer the system keyboard (which may integrate better with certain accessibility services) can switch via **Settings → Keyboard**.
-- **RTL layouts**: RTL is supported (Hebrew, Arabic) but edge cases in mixed LTR/RTL content — currency codes are Latin — are still being audited.
+- **RTL layouts**: In Hebrew, Arabic and Farsi, Settings, sheets and dialogs are laid out right to left; numbers, the converter and the chart stay left to right so digits and math read the same in every language. Labels mixing a right-to-left language with Latin currency codes or provider names keep the language's reading order (see architecture.md, *Right-to-left languages*).
 
 None of the above is a blocker to core currency-conversion functionality via TalkBack.
 

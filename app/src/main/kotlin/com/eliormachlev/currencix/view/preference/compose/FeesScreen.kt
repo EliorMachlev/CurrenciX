@@ -27,10 +27,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import com.eliormachlev.currencix.view.compose.AppTheme as AppComposeTheme
 
 // Sections match the three fee categories from the old
 // PreferenceFragmentCompat-backed FeeManagerFragment so muscle memory carries
@@ -83,7 +84,7 @@ fun FeesScreen(viewModel: FeeManagerViewModel) {
     var openPicker by remember { mutableStateOf<GlobalFeeKind?>(null) }
     var openEditor by remember { mutableStateOf<EditorTarget?>(null) }
 
-    AppComposeTheme {
+    ProseTheme {
         FeesSectionsList(
             lists = lists,
             onOpenPicker = { openPicker = it },
@@ -418,17 +419,22 @@ private fun PairSummaryTrailing(fee: Fee.SpecificPair) {
     val fromCurrency = remember(fee.from) { Currency.fromString(fee.from) }
     val toCurrency = remember(fee.to) { Currency.fromString(fee.to) }
     val arrow = if (fee.bothWays) ARROW_BOTH_WAYS else ARROW_ONE_WAY
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(FLAG_TEXT_GAP),
-    ) {
-        if (fromCurrency != null) InlineFlag(currency = fromCurrency)
-        Text(text = fee.from, style = MaterialTheme.typography.labelLarge)
-        Spacer(Modifier.width(2.dp))
-        Text(text = arrow, style = MaterialTheme.typography.labelLarge)
-        Spacer(Modifier.width(2.dp))
-        if (toCurrency != null) InlineFlag(currency = toCurrency)
-        Text(text = fee.to, style = MaterialTheme.typography.labelLarge)
+    // A pair reads left to right in every language, like the converter's:
+    // mirrored, "USD → EUR" would turn into "EUR → USD" with the arrow still
+    // pointing right.
+    Ltr {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(FLAG_TEXT_GAP),
+        ) {
+            if (fromCurrency != null) InlineFlag(currency = fromCurrency)
+            Text(text = fee.from, style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.width(2.dp))
+            Text(text = arrow, style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.width(2.dp))
+            if (toCurrency != null) InlineFlag(currency = toCurrency)
+            Text(text = fee.to, style = MaterialTheme.typography.labelLarge)
+        }
     }
 }
 

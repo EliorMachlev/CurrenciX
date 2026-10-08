@@ -38,6 +38,7 @@ import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.CurrencyPill
+import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
@@ -161,11 +162,14 @@ private fun PairRow(
     onPick: (PillSide) -> Unit,
     onSwap: () -> Unit,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(GAP / 2)) {
-        CurrencyPill(pair.from, PillSide.FROM, onClick = { onPick(PillSide.FROM) }, modifier = Modifier.weight(1f))
-        IconButton(onClick = onSwap) {
-            Icon(painterResource(R.drawable.ic_swap_horiz), contentDescription = stringResource(R.string.desc_toggle_currencies))
+    // From on the left, to on the right, as on the converter, in every language.
+    Ltr {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(GAP / 2)) {
+            CurrencyPill(pair.from, PillSide.FROM, onClick = { onPick(PillSide.FROM) }, modifier = Modifier.weight(1f))
+            IconButton(onClick = onSwap) {
+                Icon(painterResource(R.drawable.ic_swap_horiz), contentDescription = stringResource(R.string.desc_toggle_currencies))
+            }
+            CurrencyPill(pair.to, PillSide.TO, onClick = { onPick(PillSide.TO) }, modifier = Modifier.weight(1f))
         }
-        CurrencyPill(pair.to, PillSide.TO, onClick = { onPick(PillSide.TO) }, modifier = Modifier.weight(1f))
     }
 }

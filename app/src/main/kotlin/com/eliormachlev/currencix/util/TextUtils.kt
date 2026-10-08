@@ -75,6 +75,9 @@ fun BigDecimal.roundForDisplay(scale: Int): BigDecimal = setScale(scale, Roundin
  */
 fun ltrIsolate(s: String): String = "$LTR_ISOLATE$s$POP_DIRECTIONAL_ISOLATE"
 
+/** Whether the app's language ([getLocale]) is written right to left: Hebrew, Arabic, Farsi. */
+fun isRtlLanguage(context: Context): Boolean = getLocale(context).layoutDirection == View.LAYOUT_DIRECTION_RTL
+
 /**
  * This label in the reading order of the app's language ([getLocale]). The
  * app lays out left to right in every language, so a right-to-left label
@@ -85,7 +88,7 @@ fun ltrIsolate(s: String): String = "$LTR_ISOLATE$s$POP_DIRECTIONAL_ISOLATE"
  * languages get the label back unchanged.
  */
 fun String.inReadingOrder(context: Context): String =
-    if (getLocale(context).layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+    if (isRtlLanguage(context)) {
         "$RTL_ISOLATE$this$POP_DIRECTIONAL_ISOLATE"
     } else {
         this

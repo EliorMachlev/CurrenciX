@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -24,6 +23,7 @@ import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.dialogs.ProseAlertDialog
 
 // Small breather between the last picker row and the sheet edge so the final
 // LedgerRow (which has no divider) doesn't butt against the system nav.
@@ -88,7 +88,7 @@ fun TextEntryDialog(
         }
     val cancel = rememberHapticOnClick(onDismiss)
     AppTheme {
-        AlertDialog(
+        ProseAlertDialog(
             onDismissRequest = onDismiss,
             title = { Text(text = title) },
             text = {

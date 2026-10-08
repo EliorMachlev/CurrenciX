@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Brass
 import kotlinx.coroutines.launch
 
@@ -91,9 +92,14 @@ fun LedgerBottomSheet(
                         horizontal = SHEET_HORIZONTAL_PADDING,
                         vertical = SHEET_BOTTOM_PADDING,
                     )
-            Column(modifier = bodyModifier) {
-                LedgerSheetTitle(title)
-                content()
+            // Inside the sheet's window: the app's supportsRtl="false" makes
+            // every window resolve left to right, so a direction set around
+            // the sheet wouldn't reach in here.
+            ReadingDirection {
+                Column(modifier = bodyModifier) {
+                    LedgerSheetTitle(title)
+                    content()
+                }
             }
         }
     }

@@ -279,6 +279,17 @@ The preference read (`Database(this).providers.getApiProvider()`) and the `InetA
 
 `view/widget/CurrencyWidget.kt` is an `AppWidgetProvider` whose content is composed with **Glance** (`androidx.glance:glance-appwidget`) rather than hand-rolled `RemoteViews`. `widget_currency.xml` remains as the widget's preview/initial-layout resource required by the App Widget framework, but the live content is Glance composables. Per-widget pairs and the trend line: see *Outside the app* above.
 
+### Right-to-left languages
+
+Hebrew, Arabic and Farsi split the app in two:
+
+- **Numbers stay left to right.** `AppTheme` locks the layout direction to LTR (the manifest declares `supportsRtl="false"` for the same reason), so the converter, keypad, hero card, cart amounts and chart never mirror: digits, math and the from → to pair read left to right in every language.
+- **Prose follows the language.** Settings and its screens, the bottom sheets and the dialogs opt back in with `ReadingDirection` (or `ProseTheme`, `AppTheme` plus `ReadingDirection`): text right-aligned, switches and icons on the left, buttons mirrored. Anything inside them whose left-to-right order carries meaning goes back in an `Ltr` island: a fee's currency pair, the widget's from / swap / to row, the amounts in the convert-selection sheet.
+- **Popups set it inside their window.** Because of `supportsRtl="false"`, a dialog's or sheet's window always resolves left to right, whatever the composition around it asked for. So `LedgerBottomSheet` and `LedgerDialogFrame` apply `ReadingDirection` inside their content, and `ProseAlertDialog` / `ProseDatePickerDialog` stand in for Material's `AlertDialog` / `DatePickerDialog` (same look), whose own layout can't be reached from their slots.
+- **Mixed-script labels keep their order.** Inside the LTR layout, a right-to-left label that names something in Latin script ("היום · InforEuro", "שקל חדש (ILS ₪)") goes through `String.inReadingOrder(context)`, an RTL isolate, so its parts read in the language's order.
+
+`ReadingDirectionTest` checks a sheet, a ledger dialog and a Material-style dialog in Hebrew and English with the whole activity in that language, as on a phone. The screenshot matrix's Hebrew cells use Hebrew resources for what's drawn in the main window; a popup's own window takes its resources from the activity, so in those cells its inner text stays in the test's base language.
+
 ### Predictive back gesture
 
 Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<application>` tag, so back runs on the predictive back callbacks (and the system's back-to-home animation plays when back leaves the app from the converter). Inside the app nothing previews a back while the finger is down; letting go plays the ordinary close:

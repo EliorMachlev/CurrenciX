@@ -25,6 +25,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmDialog
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogActions
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogFrame
@@ -34,7 +35,6 @@ import com.eliormachlev.currencix.view.compose.dialogs.PasswordInput
 import com.eliormachlev.currencix.viewmodel.preference.BACKUP_MIN_PASSWORD_LENGTH
 import com.eliormachlev.currencix.viewmodel.preference.BackupDialog
 import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
-import com.eliormachlev.currencix.view.compose.AppTheme as AppComposeTheme
 
 private val DIALOG_FIELD_GAP = 12.dp
 private val CHECKBOX_LABEL_GAP = 8.dp
@@ -60,7 +60,7 @@ fun BackupScreen(
     onLaunchImport: () -> Unit,
     onImportConfirmed: (uri: android.net.Uri, password: CharArray?) -> Unit,
 ) {
-    AppComposeTheme {
+    ProseTheme {
         BackupSectionsList(
             onExportClick = viewModel::openExportPasswordPrompt,
             onImportClick = onLaunchImport,

@@ -41,6 +41,7 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.util.withCurrencySymbol
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
+import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.main.ConverterLaunch
 import java.math.BigDecimal
@@ -172,12 +173,15 @@ private fun AmountLine(
     style: TextStyle,
     color: Color,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(GAP)) {
-        CurrencyFlagImage(
-            currency = currency,
-            modifier = Modifier.size(width = FLAG_WIDTH, height = FLAG_HEIGHT).clip(RoundedCornerShape(FLAG_CORNER)),
-        )
-        Text(amount, style = style, color = color, fontWeight = FontWeight.SemiBold)
+    // An amount reads left to right, flag first, as on the converter.
+    Ltr {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(GAP)) {
+            CurrencyFlagImage(
+                currency = currency,
+                modifier = Modifier.size(width = FLAG_WIDTH, height = FLAG_HEIGHT).clip(RoundedCornerShape(FLAG_CORNER)),
+            )
+            Text(amount, style = style, color = color, fontWeight = FontWeight.SemiBold)
+        }
     }
 }
 

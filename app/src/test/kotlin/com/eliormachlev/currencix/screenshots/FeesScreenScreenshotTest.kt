@@ -10,6 +10,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
 import org.junit.Rule
@@ -24,6 +25,7 @@ import java.math.BigDecimal
 // global bank / specific pair). Bypasses FeeManagerViewModel + Database
 // by feeding hand-authored Fee samples straight into the primitives, per
 // the CartScreenshotTest pattern.
+// The fees screen is laid out the way the language reads (ProseTheme in the app).
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
@@ -32,16 +34,18 @@ class FeesScreenScreenshotTest {
 
     @Test fun feesScreenPopulated() =
         shots.captureMatrix("fees_screen_populated") {
-            FeesScreenPreview(
-                exchange = SAMPLE_EXCHANGE,
-                bank = SAMPLE_BANK,
-                pairs = SAMPLE_PAIRS,
-            )
+            ReadingDirection {
+                FeesScreenPreview(
+                    exchange = SAMPLE_EXCHANGE,
+                    bank = SAMPLE_BANK,
+                    pairs = SAMPLE_PAIRS,
+                )
+            }
         }
 
     @Test fun feesScreenEmpty() =
         shots.captureMatrix("fees_screen_empty") {
-            FeesScreenPreview(exchange = null, bank = null, pairs = emptyList())
+            ReadingDirection { FeesScreenPreview(exchange = null, bank = null, pairs = emptyList()) }
         }
 }
 

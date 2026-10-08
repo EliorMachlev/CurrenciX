@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.dialogs.ProseDatePickerDialog
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Period
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Span
 import java.time.Instant
@@ -131,7 +131,8 @@ private fun RangePickerDialog(
         )
     val start = state.selectedStartDateMillis
     val end = state.selectedEndDateMillis
-    DatePickerDialog(
+    // Laid out the way the language reads, like the app's other dialogs.
+    ProseDatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(

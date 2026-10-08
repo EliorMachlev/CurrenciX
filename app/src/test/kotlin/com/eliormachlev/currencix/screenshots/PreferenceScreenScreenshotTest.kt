@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
 import com.eliormachlev.currencix.view.preference.compose.SwitchRow
@@ -36,8 +37,12 @@ class PreferenceScreenScreenshotTest {
     @Test fun preferenceScreenLargeFont() = shots.captureLargeFont("preference_screen") { PreferenceScreenPreview() }
 }
 
+// Settings is laid out the way the language reads (ProseTheme in the app).
 @Composable
-private fun PreferenceScreenPreview() {
+private fun PreferenceScreenPreview() = ReadingDirection { PreferenceSections() }
+
+@Composable
+private fun PreferenceSections() {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding =

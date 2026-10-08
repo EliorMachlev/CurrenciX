@@ -38,7 +38,9 @@ val LocalDynamicColor = compositionLocalOf { false }
 // swap translated strings, not the whole layout — currency digits and math
 // read L→R universally, and mirroring the pill / keypad / receipt geometry
 // makes those numbers harder to parse. Paired with `supportsRtl="false"` in
-// the manifest for any surviving XML surfaces.
+// the manifest for any surviving XML surfaces. The prose surfaces — Settings,
+// the sheets and the dialogs — opt back into the language's direction with
+// ReadingDirection (see architecture.md, "Right-to-left languages").
 //
 // [dynamicColor] swaps the paper / ink palette for the wallpaper's (Material
 // You). Brand accents that aren't scheme colors (the fee stamp, status
@@ -67,6 +69,17 @@ fun AppTheme(
             )
         }
     }
+}
+
+/**
+ * [AppTheme] for the prose screens — Settings, Fees, Backup: the same
+ * palette, laid out the way the app's language reads ([ReadingDirection]).
+ * Dialogs and sheets set the direction inside their own window instead
+ * (LedgerBottomSheet, LedgerDialogFrame, ProseAlertDialog).
+ */
+@Composable
+fun ProseTheme(content: @Composable () -> Unit) {
+    AppTheme { ReadingDirection(content) }
 }
 
 private fun colorScheme(

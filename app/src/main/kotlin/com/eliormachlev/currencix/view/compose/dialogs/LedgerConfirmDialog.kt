@@ -38,6 +38,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import androidx.compose.foundation.text.KeyboardOptions as ComposeKeyboardOptions
 
 // Ledger dialog chrome — a paper-toned Surface holds the title + body + trailing
@@ -183,29 +184,34 @@ internal fun LedgerDialogFrame(
             properties = DialogProperties(usePlatformDefaultWidth = false),
             modifier = Modifier.fillMaxWidth(DIALOG_MAX_WIDTH_FRACTION),
         ) {
-            Surface(
-                shape = RoundedCornerShape(DIALOG_CORNER_RADIUS),
-                color = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                tonalElevation = 0.dp,
-                shadowElevation = 0.dp,
-            ) {
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = DIALOG_HORIZONTAL_PADDING,
-                                vertical = DIALOG_VERTICAL_PADDING,
-                            ),
+            // Inside the dialog's window: the app's supportsRtl="false" makes
+            // every window resolve left to right, so a direction set around
+            // the dialog wouldn't reach in here.
+            ReadingDirection {
+                Surface(
+                    shape = RoundedCornerShape(DIALOG_CORNER_RADIUS),
+                    color = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp,
                 ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Spacer(Modifier.height(DIALOG_TITLE_TO_BODY_GAP))
-                    content()
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = DIALOG_HORIZONTAL_PADDING,
+                                    vertical = DIALOG_VERTICAL_PADDING,
+                                ),
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Spacer(Modifier.height(DIALOG_TITLE_TO_BODY_GAP))
+                        content()
+                    }
                 }
             }
         }

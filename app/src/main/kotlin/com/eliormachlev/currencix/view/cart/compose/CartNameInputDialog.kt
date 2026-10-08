@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.view.cart.compose
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -16,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.dialogs.ProseAlertDialog
 
 /**
  * One-line text input dialog — Save-as and Rename both use this shape, so the
@@ -40,7 +40,7 @@ fun CartNameInputDialog(
             onDismiss()
         }
     AppTheme {
-        AlertDialog(
+        ProseAlertDialog(
             onDismissRequest = onDismiss,
             title = { Text(text = stringResource(id = titleRes)) },
             text = {

@@ -36,6 +36,7 @@ import com.eliormachlev.currencix.view.compose.AppSnackbarHost
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.navigation.AppNavHost
 import com.eliormachlev.currencix.view.navigation.AppNavigator
@@ -205,15 +206,18 @@ class MainActivity : AppCompatActivity() {
             Screen.Converter -> ConverterRoute(host = converterHost, navigator = nav, foldingFeature = foldingFeature)
             is Screen.Timeline -> TimelineRoute(screen = screen, onBack = nav::pop, foldingFeature = foldingFeature)
             is Screen.Cart -> CartRoute(screen = screen, onBack = nav::pop, onOpenFees = { nav.navigate(Screen.Fees) })
+            // The settings screens are prose: laid out the way the language reads.
             Screen.Settings ->
-                SettingsRoute(
-                    onBack = nav::pop,
-                    onOpenFees = { nav.navigate(Screen.Fees) },
-                    onOpenBackup = { nav.navigate(Screen.Backup) },
-                    onThemeRequiresRestart = ::recreate,
-                )
-            Screen.Fees -> FeesRoute(onBack = nav::pop)
-            Screen.Backup -> BackupRoute(onBack = nav::pop)
+                ReadingDirection {
+                    SettingsRoute(
+                        onBack = nav::pop,
+                        onOpenFees = { nav.navigate(Screen.Fees) },
+                        onOpenBackup = { nav.navigate(Screen.Backup) },
+                        onThemeRequiresRestart = ::recreate,
+                    )
+                }
+            Screen.Fees -> ReadingDirection { FeesRoute(onBack = nav::pop) }
+            Screen.Backup -> ReadingDirection { BackupRoute(onBack = nav::pop) }
         }
     }
 

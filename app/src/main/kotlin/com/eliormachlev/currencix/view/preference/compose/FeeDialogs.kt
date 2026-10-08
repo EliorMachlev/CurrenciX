@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +51,7 @@ import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.dialogs.ProseAlertDialog
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
@@ -122,7 +122,7 @@ internal fun FeeEditorDialog(
     val delete = onDelete?.let { rememberHapticOnClick(it) }
 
     AppTheme {
-        AlertDialog(
+        ProseAlertDialog(
             onDismissRequest = onDismiss,
             properties = DialogProperties(usePlatformDefaultWidth = false),
             modifier = Modifier.fillMaxWidth(FEE_EDITOR_WIDTH_FRACTION),
@@ -405,7 +405,7 @@ internal fun <T : Fee> FeePickerDialog(
             actions.onAdd()
         }
     AppTheme {
-        AlertDialog(
+        ProseAlertDialog(
             onDismissRequest = onDismiss,
             title = { Text(text = title) },
             text = {

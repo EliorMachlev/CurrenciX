@@ -8,17 +8,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.util.isRtlLanguage
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 
 // Every flag in the app renders through this painter. painterResource parses
@@ -53,6 +56,19 @@ fun Ltr(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         content()
     }
+}
+
+// Lays the wrapped content out in the app language's direction: right to
+// left in Hebrew, Arabic and Farsi. AppTheme locks the app to left to right so
+// digits, math and the converter never mirror; the prose surfaces (Settings,
+// the sheets, the dialogs) opt back in with this, so their text, switches
+// and icons sit the way the language reads. Anything numeric inside them
+// that must keep its left-to-right geometry goes back in an [Ltr] island.
+@Composable
+fun ReadingDirection(content: @Composable () -> Unit) {
+    val context = LocalContext.current
+    val direction = remember(context) { if (isRtlLanguage(context)) LayoutDirection.Rtl else LayoutDirection.Ltr }
+    CompositionLocalProvider(LocalLayoutDirection provides direction, content = content)
 }
 
 // Filled-vs-outlined heart IconButton used for the picker's star toggle and

@@ -32,9 +32,9 @@ import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.releaseNotesUrl
+import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import java.util.Calendar
-import com.eliormachlev.currencix.view.compose.AppTheme as AppComposeTheme
 
 // Buckets the preferences into the same six sections as the old prefs.xml
 // (Settings / Data provider / Look & Feel / Graph / About / Version). Order
@@ -88,7 +88,7 @@ fun PreferenceScreen(
     var openDialog by remember { mutableStateOf<OpenDialog?>(null) }
     val values = observePreferenceValues(viewModel)
 
-    AppComposeTheme {
+    ProseTheme {
         PreferenceSectionsList(
             viewModel = viewModel,
             callbacks = callbacks,
