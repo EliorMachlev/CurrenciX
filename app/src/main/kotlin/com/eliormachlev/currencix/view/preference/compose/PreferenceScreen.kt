@@ -377,20 +377,15 @@ private fun ApiSection(
             )
         }
         provider?.let {
-            AboutProviderRow(it)
+            ProviderDetailRows(it)
             // The fallback stands in when the main provider can't be reached,
-            // so what it is matters just as much.
-            if (values.fallback != it) AboutProviderRow(values.fallback)
-            PreferenceRow(
-                title = stringResource(id = R.string.api_refreshPeriod_title),
-                summary = it.getDescriptionUpdateInterval(context).toString(),
-                iconRes = R.drawable.ic_schedule,
-            )
+            // so what it is and how often it updates matter just as much.
+            if (values.fallback != it) ProviderDetailRows(values.fallback)
         }
         // Auto-refresh (#151). Placed inside the API section since its
         // cadence is derived from the currently-selected provider — the
-        // adjacent "refresh period" row above spells out what "recommended"
-        // means for the picked provider.
+        // provider's "refresh period" row above spells out what "recommended"
+        // means for it.
         SwitchRow(
             title = stringResource(id = R.string.auto_refresh_title),
             summary = stringResource(id = R.string.auto_refresh_summary),
@@ -401,14 +396,21 @@ private fun ApiSection(
     }
 }
 
-// "About Bank of Israel" and its description, in full.
+// "About Bank of Israel" with its description in full, then how often it
+// publishes.
 @Composable
-private fun AboutProviderRow(provider: ApiProvider) {
+private fun ProviderDetailRows(provider: ApiProvider) {
     val context = LocalContext.current
     PreferenceRow(
         title = stringResource(id = R.string.api_about_title, provider.getName(context)).inReadingOrder(context),
         summary = provider.getDescriptionLong(context).toString(),
         iconRes = R.drawable.ic_info,
+        summaryMaxLines = FULL_SUMMARY,
+    )
+    PreferenceRow(
+        title = stringResource(id = R.string.api_refreshPeriod_title),
+        summary = provider.getDescriptionUpdateInterval(context).toString(),
+        iconRes = R.drawable.ic_schedule,
         summaryMaxLines = FULL_SUMMARY,
     )
 }

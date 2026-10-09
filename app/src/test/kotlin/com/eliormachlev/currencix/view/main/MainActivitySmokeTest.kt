@@ -9,6 +9,7 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -152,7 +153,7 @@ class MainActivitySmokeTest {
     }
 
     @Test
-    fun `settings describe both the main and the fallback provider`() {
+    fun `settings describe both providers and how often each updates`() {
         openFromTopBar(R.string.desc_open_drawer)
         compose.onNodeWithTag(UiTestTags.drawerEntry(DrawerAction.Settings.name)).performClick()
         settle()
@@ -166,6 +167,8 @@ class MainActivitySmokeTest {
                     .any { it.text.startsWith(about) }
             }
         compose.onAllNodes(aboutTitle).assertCountEquals(2)
+        // …each with how often it updates.
+        compose.onAllNodes(hasText(string(R.string.api_refreshPeriod_title))).assertCountEquals(2)
     }
 
     @Test
