@@ -21,7 +21,8 @@ import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
-import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import kotlinx.collections.immutable.persistentListOf
 
@@ -39,7 +40,10 @@ fun CartScreen(
     actions: CartScreenActions,
     modifier: Modifier = Modifier,
 ) {
-    AppTheme {
+    // Laid out the way the language reads (item rows, labels, the add
+    // button); amounts, prices, the currency pair and the keypad keep their
+    // left-to-right reading in Ltr islands of their own.
+    ProseTheme {
         val items by sources.items.observeAsState(initial = persistentListOf())
         Box(modifier.fillMaxSize()) {
             Column(Modifier.fillMaxSize()) {
@@ -64,10 +68,12 @@ fun CartScreen(
                     onEditExtras = actions.onEditExtras,
                 )
             }
-            CartKeypadOverlay(
-                keypad = keypad,
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
+            Ltr {
+                CartKeypadOverlay(
+                    keypad = keypad,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                )
+            }
         }
     }
 }

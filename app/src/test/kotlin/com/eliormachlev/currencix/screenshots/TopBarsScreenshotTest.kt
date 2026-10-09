@@ -60,8 +60,12 @@ private fun TimelineBarContent() {
     ) { padding -> BodyStub(Modifier.padding(padding)) }
 }
 
+// Laid out the way the language reads, as CartRoute does.
 @Composable
-private fun CartBar() {
+private fun CartBar() = ReadingDirection { CartBarContent() }
+
+@Composable
+private fun CartBarContent() {
     ScreenScaffold(
         title = { Text("Shopping cart") },
         onBack = {},

@@ -9,6 +9,7 @@ import com.eliormachlev.currencix.view.cart.compose.CartEmptyHint
 import com.eliormachlev.currencix.view.cart.compose.CartItemRow
 import com.eliormachlev.currencix.view.cart.compose.CartRowState
 import com.eliormachlev.currencix.view.cart.compose.NO_ROW_ACTIONS
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -68,10 +69,11 @@ class CartScreenshotTest {
     }
 }
 
+// Laid out the way the language reads, as CartScreen does (ProseTheme).
 @androidx.compose.runtime.Composable
 private fun CartRowPreview(
     item: CartItem,
     currency: String,
 ) {
-    CartItemRow(state = CartRowState(item, currency), actions = NO_ROW_ACTIONS)
+    ReadingDirection { CartItemRow(state = CartRowState(item, currency), actions = NO_ROW_ACTIONS) }
 }

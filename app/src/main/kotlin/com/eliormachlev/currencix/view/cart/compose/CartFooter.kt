@@ -42,6 +42,7 @@ import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.view.compose.CurrencyPairRow
+import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
@@ -151,8 +152,11 @@ internal fun CartFooterCard(
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(FOOTER_PADDING),
     ) {
-        CurrencyPairRow(from = totals.baseCurrency, to = totals.destCurrency, actions = pair) {
-            SwapFab(onClick = pair.onSwap, onLongClick = pair.onSwapLongPress)
+        // From on the left, to on the right, as on the converter, in every language.
+        Ltr {
+            CurrencyPairRow(from = totals.baseCurrency, to = totals.destCurrency, actions = pair) {
+                SwapFab(onClick = pair.onSwap, onLongClick = pair.onSwapLongPress)
+            }
         }
         AmountRow(
             topGap = ROW_TOP_GAP,
@@ -228,7 +232,7 @@ private fun ExtraRow(
                 .padding(top = EXTRA_ROW_GAP),
     ) {
         Text(label, style = MaterialTheme.typography.labelMedium, color = color, modifier = Modifier.weight(1f))
-        Text(amount, style = MaterialTheme.typography.labelMedium, color = color)
+        Figure(amount, MaterialTheme.typography.labelMedium, color)
     }
 }
 
@@ -275,8 +279,19 @@ private fun AmountRow(
             style = style,
             modifier = Modifier.weight(1f),
         )
-        Text(text = amount, style = style)
+        Figure(amount, style)
     }
+}
+
+// An amount ("0.00 $", "+1.20 ₪ (3.00%)"): reads left to right in every
+// language, at the row's end edge either way.
+@Composable
+private fun Figure(
+    text: String,
+    style: TextStyle,
+    color: Color = Color.Unspecified,
+) {
+    Ltr { Text(text = text, style = style, color = color) }
 }
 
 // Delta row between the fee-free converted subtotal and the fee-inflated
@@ -307,11 +322,7 @@ private fun FeeAnnotationRow(
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.weight(1f),
         )
-        Text(
-            text = valueText,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.error,
-        )
+        Figure(valueText, MaterialTheme.typography.labelSmall, MaterialTheme.colorScheme.error)
     }
 }
 

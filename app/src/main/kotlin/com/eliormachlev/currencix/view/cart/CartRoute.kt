@@ -30,6 +30,7 @@ import com.eliormachlev.currencix.view.cart.compose.CartScreenActions
 import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.OverflowAction
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmDialog
@@ -67,20 +68,24 @@ fun CartRoute(
     val needsClosePrompt = remember(cart) { host.saveLoad.needsClosePrompt() }
     BackHandler(enabled = needsClosePrompt, onBack = host.saveLoad::attemptClose)
 
-    ScreenScaffold(
-        title = { Text(stringResource(R.string.cart_title)) },
-        onBack = host.saveLoad::attemptClose,
-        actions = { TopBarOverflowMenu(cartMenu(host)) },
-    ) { padding ->
-        CartScreen(
-            viewModel = viewModel,
-            keypad = host.keypad,
-            sources = remember(host) { host.listSources() },
-            actions = remember(host, onOpenFees) { host.screenActions(onOpenFees) },
-            // With the window drawn edge to edge, the keyboard no longer
-            // resizes it: lift the list and footer above the keyboard here.
-            modifier = Modifier.padding(padding).consumeWindowInsets(padding).imePadding(),
-        )
+    // The bar follows the language: in Hebrew the back arrow and title on the
+    // right, the overflow menu on the left.
+    ReadingDirection {
+        ScreenScaffold(
+            title = { Text(stringResource(R.string.cart_title)) },
+            onBack = host.saveLoad::attemptClose,
+            actions = { TopBarOverflowMenu(cartMenu(host)) },
+        ) { padding ->
+            CartScreen(
+                viewModel = viewModel,
+                keypad = host.keypad,
+                sources = remember(host) { host.listSources() },
+                actions = remember(host, onOpenFees) { host.screenActions(onOpenFees) },
+                // With the window drawn edge to edge, the keyboard no longer
+                // resizes it: lift the list and footer above the keyboard here.
+                modifier = Modifier.padding(padding).consumeWindowInsets(padding).imePadding(),
+            )
+        }
     }
     CartOverlays(host)
 }

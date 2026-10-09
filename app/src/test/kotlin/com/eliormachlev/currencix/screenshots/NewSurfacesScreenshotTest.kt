@@ -17,6 +17,7 @@ import com.eliormachlev.currencix.view.cart.compose.NO_PAIR_ACTIONS
 import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
 import com.eliormachlev.currencix.view.cart.compose.cartItemActions
 import com.eliormachlev.currencix.view.cart.compose.cartSources
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
@@ -62,31 +63,37 @@ class NewSurfacesScreenshotTest {
 
     @Test fun cartSections() =
         shots.captureMatrix("cart_sections") {
-            CartItemsList(
-                sources = cartSources(MutableLiveData(CART_ITEMS)),
-                actions = cartItemActions(),
-                reorder = NO_REORDER,
-                onBackgroundTap = {},
-            )
+            // Laid out the way the language reads, as CartScreen does.
+            ReadingDirection {
+                CartItemsList(
+                    sources = cartSources(MutableLiveData(CART_ITEMS)),
+                    actions = cartItemActions(),
+                    reorder = NO_REORDER,
+                    onBackgroundTap = {},
+                )
+            }
         }
 
     @Test fun cartFooterExtras() =
         shots.captureMatrix("cart_footer_extras") {
-            CartFooterCard(
-                totals =
-                    CartTotals(
-                        baseCurrency = Currency.USD,
-                        destCurrency = Currency.ILS,
-                        subtotal = BigDecimal("100"),
-                        convertedSubtotal = BigDecimal("419.75"),
-                        total = BigDecimal("427.15"),
-                        feeStack = BigDecimal("1.0176"),
-                        extras = CartExtras(tipPercent = BigDecimal("15"), splitWays = 3, budget = BigDecimal("400")),
-                        tip = BigDecimal("15"),
-                    ),
-                pair = NO_PAIR_ACTIONS,
-                onEditExtras = {},
-            )
+            // Laid out the way the language reads, as CartScreen does.
+            ReadingDirection {
+                CartFooterCard(
+                    totals =
+                        CartTotals(
+                            baseCurrency = Currency.USD,
+                            destCurrency = Currency.ILS,
+                            subtotal = BigDecimal("100"),
+                            convertedSubtotal = BigDecimal("419.75"),
+                            total = BigDecimal("427.15"),
+                            feeStack = BigDecimal("1.0176"),
+                            extras = CartExtras(tipPercent = BigDecimal("15"), splitWays = 3, budget = BigDecimal("400")),
+                            tip = BigDecimal("15"),
+                        ),
+                    pair = NO_PAIR_ACTIONS,
+                    onEditExtras = {},
+                )
+            }
         }
 
     @Test fun cartExtrasSheet() =

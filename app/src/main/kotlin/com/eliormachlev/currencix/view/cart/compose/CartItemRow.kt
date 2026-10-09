@@ -50,6 +50,7 @@ import com.eliormachlev.currencix.util.hapticOnFocus
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
+import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
 
@@ -325,16 +326,18 @@ private fun ExpressionField(
                 .hapticClickable(onClick = onTap),
         contentAlignment = Alignment.CenterStart,
     ) {
-        Text(
-            text = text.ifBlank { stringResource(id = R.string.cart_item_expression_hint) },
-            style = MaterialTheme.typography.bodyMedium,
-            color =
-                if (text.isBlank()) {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-        )
+        if (text.isBlank()) {
+            Text(
+                text = stringResource(id = R.string.cart_item_expression_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            // A price ("2 × 3.50") is math: left to right in every language.
+            Ltr {
+                Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
+            }
+        }
     }
 }
 
@@ -351,13 +354,13 @@ private fun ValuePreview(
                 .roundForDisplay(ROW_PREVIEW_SCALE)
                 .toHumanReadableNumber(context, decimalPlaces = ROW_PREVIEW_SCALE)
         }
-    Text(
-        text = stringResource(id = R.string.cart_row_value_format, formatted, currency),
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = dimensionResource(id = R.dimen.margin1x)),
-    )
+    // "= 7.00 ₪" reads left to right; the column places it at its start edge.
+    Ltr {
+        Text(
+            text = stringResource(id = R.string.cart_row_value_format, formatted, currency),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.margin1x)),
+        )
+    }
 }
