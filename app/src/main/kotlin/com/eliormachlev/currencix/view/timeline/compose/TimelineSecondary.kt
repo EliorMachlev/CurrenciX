@@ -145,17 +145,26 @@ internal fun TimelineSecondary(
             Box(modifier = Modifier.height(CONTENT_PADDING * 2))
         }
 
-        // 2×2 tiles: the extremes (with their dates) on top, the centre
-        // (average, median) below. Compact, so the chart above gets the height.
-        // The tiles and the period controls follow the language (in Hebrew the
-        // maximum sits on the right, labels right-aligned); the past / current
-        // row above stays left to right, in step with the chart's time axis.
-        ReadingDirection {
-            Column {
-                StatGrid(max = rows[0], min = rows[3], avg = rows[1], med = rows[2])
-                Spacer(Modifier.height(CONTENT_PADDING))
-                TimelinePeriodControls(control = period, formatter = formatter, modifier = Modifier.fillMaxWidth())
-            }
+        TilesAndPeriod(rows, period, formatter)
+    }
+}
+
+// 2×2 tiles: the extremes (with their dates) on top, the centre (average,
+// median) below — compact, so the chart above gets the height — then the
+// period controls. Both follow the language (in Hebrew the maximum sits on
+// the right, labels right-aligned); the past / current row above them stays
+// left to right, in step with the chart's time axis.
+@Composable
+private fun TilesAndPeriod(
+    rows: List<StatRowData>,
+    period: PeriodControl,
+    formatter: DateTimeFormatter,
+) {
+    ReadingDirection {
+        Column {
+            StatGrid(max = rows[0], min = rows[3], avg = rows[1], med = rows[2])
+            Spacer(Modifier.height(CONTENT_PADDING))
+            TimelinePeriodControls(control = period, formatter = formatter, modifier = Modifier.fillMaxWidth())
         }
     }
 }
