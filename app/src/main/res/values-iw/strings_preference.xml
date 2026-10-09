@@ -80,7 +80,7 @@
     <string name="category_api">שערי חליפין</string>
     <string name="api_title">ספק נתונים</string>
     <string name="api_about_title">אודות %s</string>
-    <string name="api_refreshPeriod_title">פער לרענון</string>
+    <string name="api_refreshPeriod_title">תדירות רענון</string>
     <string name="api_open_exchangerates_api_key_title">מפתח API של Open Exchangerates</string>
     <string name="api_open_exchangerates_api_key_message">כדי להשתמש בספק הנתונים הזה, יש ליצור מפתח API אישי.\n\nלשם כך, יש להיכנס לכתובת https://openexchangerates.org/signup/free וליצור חשבון חינמי.\nלבסוף, יש להפיק App ID חדש בלוח הבקרה ולהזין אותו כאן:</string>
     <string name="api_open_exchangerates_api_key_missing"><i>נדרש מפתח API</i></string>
