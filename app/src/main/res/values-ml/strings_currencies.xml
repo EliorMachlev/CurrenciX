@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="name_aed">യുണൈറ്റഡ് അറബ് എമിറേറ്റ്സ് ദിർഹം</string>
-    <string name="name_afn">അഫ്‌ഗാൻ അഫ്‌‌ഗാനി</string>
+    <string name="name_afn">അഫ്‌ഗാൻ അഫ്‌ഗാനി</string>
     <string name="name_all">അൽബേനിയൻ ലെക്</string>
     <string name="name_amd">അർമേനിയൻ ഡ്രാം</string>
     <string name="name_ang">നെതർലാൻഡ്‌സ് ആന്റിലൻ ഗിൽഡർ</string>
-    <string name="name_aoa">അംഗോളൻ ‍ക്വാൻസ</string>
+    <string name="name_aoa">അംഗോളൻ ക്വാൻസ</string>
     <string name="name_ars">അർജൻറീൻ പെസോ</string>
     <string name="name_aud">ഓസ്ട്രേലിയൻ ഡോളർ</string>
     <string name="name_awg">അറൂബൻ ഫ്ലോറിൻ</string>
@@ -23,15 +23,15 @@
     <string name="name_brl">ബ്രസീലിയൻ റിയാൽ</string>
     <string name="name_bsd">ബഹാമിയൻ ഡോളർ</string>
     <string name="name_btc">ബിറ്റ്കോയിൻ</string>
-    <string name="name_btn">ഭൂട്ടാനീസ് ഗൾട്രം</string>
+    <string name="name_btn">ഭൂട്ടാനീസ് എൻഗുൾട്രം</string>
     <string name="name_bwp">ബോട്‌സ്വാനൻ പ്യുല</string>
     <string name="name_byn">ബെലാറുഷ്യൻ റൂബിൾ</string>
     <string name="name_bzd">ബെലീസ് ഡോളർ</string>
 
     <string name="name_cad">കനേഡിയൻ ഡോളർ</string>
-    <string name="name_cdf">കോങ്കളീസ് ഫ്രാങ്ക്</string>
+    <string name="name_cdf">കോംഗോളീസ് ഫ്രാങ്ക്</string>
     <string name="name_chf">സ്വിസ് ഫ്രാങ്ക്</string>
-    <string name="name_clf">ചിലിയൻ യൂണിഡാഡ്സ് ഡി ഫോമെൻറോ</string>
+    <string name="name_clf">ചിലിയൻ അക്കൗണ്ട് യൂണിറ്റ് (UF)</string>
     <string name="name_clp">ചിലിയൻ പെസോ</string>
     <string name="name_cnh">ചൈനീസ് യുവാൻ (ഓഫ്‌ഷോർ)</string>
 
@@ -41,9 +41,9 @@
     <string name="name_cuc">ക്യൂബൻ കൺവേർട്ടബിൾ പെസോ</string>
     <string name="name_cup">ക്യൂബൻ പെസോ</string>
     <string name="name_cve">കേപ് വെർദിയൻ എസ്‌ക്യുഡോ</string>
-    <string name="name_czk">ചെക്ക് റിപ്പബ്ലിക് കൊരുണ</string>
+    <string name="name_czk">ചെക്ക് കൊരുണ</string>
 
-    <string name="name_djf">ദിജിബൗട്ടിയൻ ഫ്രാങ്ക്</string>
+    <string name="name_djf">ജിബൂട്ടിയൻ ഫ്രാങ്ക്</string>
     <string name="name_dkk">ഡാനിഷ് ക്രോണെ</string>
     <string name="name_dop">ഡൊമിനിക്കൻ പെസോ</string>
     <string name="name_dzd">അൾജീരിയൻ ദിനാർ</string>
@@ -62,7 +62,7 @@
     <string name="name_gel">ജോർജ്ജിയൻ ലാറി</string>
     <string name="name_ggp">ഗേൺസി പൗണ്ട്</string>
 
-    <string name="name_ghs">ഘാനയൻ കെഡി</string>
+    <string name="name_ghs">ഘാനയൻ സെഡി</string>
     <string name="name_gip">ജിബ്രാൾട്ടർ പൗണ്ട്</string>
     <string name="name_gmd">ഗാംബിയൻ ദലാസി</string>
     <string name="name_gnf">ഗിനിയൻ ഫ്രാങ്ക്</string>
@@ -71,7 +71,7 @@
 
     <string name="name_hkd">ഹോങ്കോങ്ങ് ഡോളർ</string>
     <string name="name_hnl">ഹോണ്ടുറൻ ലെംപിറ</string>
-    <string name="name_hrk">ക്രൊയേഷൻ ക്യുന</string>
+    <string name="name_hrk">ക്രൊയേഷ്യൻ കുന</string>
     <string name="name_htg">ഹെയ്‌തിയൻ ഗൂർഡ്</string>
     <string name="name_huf">ഹംഗേറിയൻ ഫോറിന്റ്</string>
 
@@ -100,7 +100,7 @@
     <string name="name_kyd">കേമാൻ ഐലൻഡ്‌സ് ഡോളർ</string>
     <string name="name_kzt">കസാക്കിസ്ഥാനി ടെംഗെ</string>
 
-    <string name="name_lak">ലാവോഷിയൻ കിപ്</string>
+    <string name="name_lak">ലാവോ കിപ്</string>
     <string name="name_lbp">ലെബനീസ് പൗണ്ട്</string>
     <string name="name_lkr">ശ്രീലങ്കൻ റുപ്പീ</string>
     <string name="name_lrd">ലൈബീരിയൻ ഡോളർ</string>
@@ -109,11 +109,11 @@
 
     <string name="name_mad">മൊറോക്കൻ ദിർഹം</string>
     <string name="name_mdl">മൊൾഡോവൻ ലിയു</string>
-    <string name="name_mga">മഡഗാസി ഏരിയറി</string>
+    <string name="name_mga">മലഗാസി ഏരിയറി</string>
     <string name="name_mkd">മാസിഡോണിയൻ ദിനാർ</string>
     <string name="name_mmk">മ്യാൻമാർ ക്യാട്</string>
     <string name="name_mnt">മംഗോളിയൻ തുഗ്രിക്</string>
-    <string name="name_mop">മകാനീസ് പതാക്ക</string>
+    <string name="name_mop">മകാനീസ് പടാക്ക</string>
     <string name="name_mro">മൗറിറ്റേനിയൻ ഔഗിയ (1973–2017)</string>
     <string name="name_mru">മൗറിറ്റേനിയൻ ഔഗിയ</string>
     <string name="name_mur">മൗറീഷ്യൻ റുപ്പീ</string>
@@ -149,15 +149,15 @@
 
     <string name="name_sar">സൗദി റിയാൽ</string>
     <string name="name_sbd">സോളമൻ ദ്വീപുകളുടെ ഡോളർ</string>
-    <string name="name_scr">സീഷെലോയിസ് റുപ്പീ</string>
+    <string name="name_scr">സീഷെൽസ് റുപ്പീ</string>
     <string name="name_sdg">സുഡാനീസ് പൗണ്ട്</string>
     <string name="name_sek">സ്വീഡിഷ് ക്രോണ</string>
     <string name="name_sgd">സിംഗപ്പൂർ ഡോളർ</string>
     <string name="name_shp">സെന്റ് ഹെലീന പൗണ്ട്</string>
-    <string name="name_sle">Sierra Leonean Leone</string>
-    <string name="name_sll">സിയെറ ലിയോണിയൻ ലിയോൺ</string>
+    <string name="name_sle">സിയെറ ലിയോണിയൻ ലിയോൺ</string>
+    <string name="name_sll">സിയെറ ലിയോണിയൻ ലിയോൺ (07/2022-ന് മുമ്പ്)</string>
     <string name="name_sos">സോമാലി ഷില്ലിംഗ്</string>
-    <string name="name_srd">സുരിനെയിമിസ് ഡോളർ</string>
+    <string name="name_srd">സുരിനാമീസ് ഡോളർ</string>
     <string name="name_ssp">ദക്ഷിണ സുഡാനീസ് പൗണ്ട്</string>
     <string name="name_std">സാവോ ടോമി ആൻഡ് പ്രിൻസിപെ ഡോബ്ര (1977–2017)</string>
     <string name="name_stn">സാവോ ടോമി ആൻഡ് പ്രിൻസിപെ ഡോബ്ര</string>
@@ -166,12 +166,12 @@
     <string name="name_szl">സ്വാസി ലിലാംഗനി</string>
 
     <string name="name_thb">തായ് ബട്ട്</string>
-    <string name="name_tjs">താജിക്കിസ്ഥാനി സോംനി</string>
+    <string name="name_tjs">താജിക്കിസ്ഥാനി സൊമോനി</string>
     <string name="name_tmt">തുർക്ക്‌മെനിസ്ഥാനി മനത്</string>
     <string name="name_tnd">ടുണീഷ്യൻ ദിനാർ</string>
-    <string name="name_top">ടോംഗൻ പാംഗ</string>
+    <string name="name_top">ടോംഗൻ പാഅംഗ</string>
     <string name="name_try">ടർക്കിഷ് ലിറ</string>
-    <string name="name_ttd">ട്രിനിഡാഡ് അന്റ് ടുബാഗോ ഡോളർ</string>
+    <string name="name_ttd">ട്രിനിഡാഡ് ആൻഡ് ടൊബാഗോ ഡോളർ</string>
     <string name="name_twd">ന്യൂ തായ്‌വാൻ ഡോളർ</string>
     <string name="name_tzs">ടാൻസാനിയൻ ഷില്ലിംഗ്</string>
 
@@ -181,22 +181,22 @@
     <string name="name_uyu">ഉറുഗ്വേയൻ പെസോ</string>
     <string name="name_uzs">ഉസ്‌ബെക്കിസ്ഥാനി സോം</string>
 
-    <string name="name_vef">വെനിസ്വേലൻ ബൊളീവർ (2008–2018)</string>
-    <string name="name_ves">വെനിസ്വേലൻ ബൊളീവർ</string>
+    <string name="name_vef">വെനിസ്വേലൻ ബൊളീവർ ഫുവെർട്ടെ (പഴയത്)</string>
+    <string name="name_ves">വെനിസ്വേലൻ ബൊളീവർ സൊബെറാനോ</string>
     <string name="name_vnd">വിയറ്റ്നാമീസ് ഡോങ്</string>
-    <string name="name_vuv">വന്വാതു വാതു</string>
+    <string name="name_vuv">വനുവാടു വാടു</string>
 
     <string name="name_wst">സമോവൻ താല</string>
 
     <string name="name_xaf">മദ്ധ്യ ആഫ്രിക്കൻ [CFA] ഫ്രാങ്ക്</string>
-    <string name="name_xag">വെള്ളി</string>
-    <string name="name_xau">സ്വർണ്ണം</string>
+    <string name="name_xag">വെള്ളി (ഔൺസ്)</string>
+    <string name="name_xau">സ്വർണ്ണം (ഔൺസ്)</string>
     <string name="name_xcd">കിഴക്കൻ കരീബിയൻ ഡോളർ</string>
-    <string name="name_xdr">സ്പെഷ്യൽ ഡ്രോയിംഗ് റൈറ്റ്സ്</string>
+    <string name="name_xdr">പ്രത്യേക പിൻവലിക്കൽ അവകാശങ്ങൾ</string>
     <string name="name_xof">പശ്ചിമ ആഫ്രിക്കൻ [CFA] ഫ്രാങ്ക്</string>
-    <string name="name_xpd">പലാഡിയം</string>
+    <string name="name_xpd">പലാഡിയം (ഔൺസ്)</string>
     <string name="name_xpf">CFP ഫ്രാങ്ക്</string>
-    <string name="name_xpt">പ്ലാറ്റിനം</string>
+    <string name="name_xpt">പ്ലാറ്റിനം (ഔൺസ്)</string>
 
     <string name="name_yer">യെമനി റിയാൽ</string>
 

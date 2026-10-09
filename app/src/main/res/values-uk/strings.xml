@@ -11,13 +11,13 @@
     <string name="error_timeout">Сервер не відповів своєчасно або він недоступний.</string>
     <string name="error_no_data">Неможливо під\'єднатися до сервера.</string>
     <string name="error_empty_response">На сервері немає даних для цього запиту.</string>
-    <string name="error_api_error">Сталася помилка при виклику API. Будь ласка, спробуйте пізніше.</string>
+    <string name="error_api_error">Сталася помилка під час виклику API. Будь ласка, спробуйте пізніше.</string>
     <string name="error_try_another_api">Однак у налаштуваннях можна вибрати іншого постачальника даних. Спробуйте!</string>
-    <string name="error_no_api_key">Для використання цього джерела необхідно встановити дійсний ключ API.</string>
-    <string name="error_invalid_api_key">HTTP 401 — Перевірте ключ API.</string>
-    <string name="error_unsupported_timeline">Цей API не підтримує дані хронології.</string>
+    <string name="error_no_api_key">Для використання цього джерела необхідно вказати дійсний ключ API.</string>
+    <string name="error_invalid_api_key">HTTP 401 – перевірте ключ API.</string>
+    <string name="error_unsupported_timeline">Цей API не підтримує дані для графіка.</string>
     <string name="menu_settings">Налаштування</string>
-    <string name="menu_refresh">Оновити курс</string>
+    <string name="menu_refresh">Оновити курси</string>
     <string name="menu_timeline">Графік зміни курсу</string>
     <string name="menu_quick_conversions">Швидкі конвертації</string>
     <string name="menu_share">Поділитися</string>
@@ -32,11 +32,11 @@
     <string name="offline_banner_no_data">Офлайн • Кешованих курсів ще немає</string>
     <string name="unreachable_banner_with_date">Постачальник недоступний • Курси від %1$s</string>
     <string name="unreachable_banner_no_data">Постачальник недоступний • Повтор</string>
-    <string name="historical_banner">Історичні • Курси від %1$s</string>
+    <string name="historical_banner">Історичні дані • Курси від %1$s</string>
     <string name="fee_chip_label">Комісія %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Останній курс і тренд за 30 днів для останньої використаної валютної пари або обраної вами.</string>
+    <string name="widget_description">Актуальний курс і динаміка за 30 днів для останньої використаної валютної пари або обраної вами.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Станом на %s</string>
     <string name="widget_footer_empty">Відкрийте застосунок, щоб завантажити курси.</string>
@@ -59,11 +59,11 @@
     <string name="cart_menu_import">Імпорт з файлу</string>
     <string name="cart_menu_clear">Очистити</string>
     <string name="cart_share_option_text">Звичайний текст</string>
-    <string name="cart_share_option_text_desc">Форматоване резюме для вставки в чат чи нотатки.</string>
+    <string name="cart_share_option_text_desc">Відформатований текст, який можна вставити в чат або нотатки.</string>
     <string name="cart_share_option_csv">CSV</string>
     <string name="cart_share_option_csv_desc">Табличний файл з одним рядком на позицію.</string>
     <string name="cart_share_option_pdf">PDF</string>
-    <string name="cart_share_option_pdf_desc">Друкований документ у вигляді чека.</string>
+    <string name="cart_share_option_pdf_desc">Документ для друку у вигляді чека.</string>
     <string name="cart_save_name_hint">Назва кошика</string>
     <string name="cart_default_saved_name">Мій кошик</string>
     <string name="cart_saved_toast">Збережено як «%s»</string>
@@ -76,13 +76,31 @@
     <string name="cart_export_error">Помилка експорту: %s</string>
     <string name="cart_import_ok">Кошик імпортовано.</string>
     <string name="cart_import_error">Помилка імпорту: %s</string>
-    <string name="cart_share_empty">Кошик порожній — нічого поширювати.</string>
+    <string name="cart_share_empty">Кошик порожній — нічим поділитися.</string>
     <string name="cart_save_empty">Кошик порожній — нічого зберігати.</string>
     <string name="cart_share_default_title">Кошик</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Вираз</string>
+    <string name="cart_export_value">Ціна</string>
+    <string name="cart_export_converted">Конвертовано</string>
+    <string name="cart_export_fees">Комісії</string>
+    <string name="cart_export_source">Джерело</string>
+    <string name="cart_export_rates_date">Дата курсів</string>
+    <string name="cart_export_exported_at">Експортовано</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">не вдалося відкрити файл</string>
+    <string name="file_error_read_write">не вдалося прочитати або записати файл</string>
+    <string name="file_error_no_permission">немає дозволу на доступ до цього файлу</string>
+    <string name="file_error_damaged">файл пошкоджений або має неочікуваний формат</string>
+    <string name="file_error_unsupported_version">файл створено у версії CurrenciX, яку ця версія не може прочитати</string>
+    <string name="file_error_not_a_cart">це не файл кошика CurrenciX</string>
+    <string name="file_error_unexpected">сталася неочікувана помилка</string>
+    <string name="backup_error_encryption">не вдалося зашифрувати резервну копію</string>
+    <string name="backup_error_decryption">не вдалося розшифрувати резервну копію</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Проміжний підсумок: %1$s %2$s</string>
     <string name="cart_share_converted">Конвертовано: %1$s %2$s</string>
-    <string name="cart_share_fees">Комісія: %s%%</string>
+    <string name="cart_share_fees">Комісії: %s%%</string>
     <string name="cart_share_total">Разом: %1$s %2$s</string>
     <string name="cart_unsaved_title">Незбережені зміни</string>
     <string name="cart_unsaved_save">Зберегти</string>
@@ -96,7 +114,7 @@
     <string name="onboarding_skip">Пропустити</string>
     <string name="onboarding_next">Далі</string>
     <string name="onboarding_finish">Зрозуміло</string>
-    <string name="onboarding_fee_title">Комісії в реальній вартості</string>
+    <string name="onboarding_fee_title">Комісії та реальна вартість</string>
     <string name="onboarding_fee_body">Натисніть тут, щоб додати націнки або знижки — вони застосовуються до суми в цільовій валюті, тож ви бачите саме ту суму, яку насправді заплатите.</string>
     <string name="onboarding_swap_title">Поміняти валюти місцями</string>
     <string name="onboarding_swap_body">Натисніть кнопку перемикання, щоб поміняти місцями базову й цільову валюти. Утримуйте її, щоб відкрити комісії.</string>
@@ -120,17 +138,17 @@
     <string name="desc_open_drawer">Відкрити панель навігації</string>
     <string name="desc_close_drawer">Закрити панель навігації</string>
     <string name="desc_more_options">Інші параметри</string>
-    <string name="cart_item_deleted">Елемент видалено</string>
+    <string name="cart_item_deleted">Позицію видалено</string>
     <string name="cart_cleared">Кошик очищено</string>
     <string name="undo">Скасувати</string>
     <string name="timeline_retry">Повторити</string>
-    <string name="timeline_change_provider">Змінити джерело</string>
+    <string name="timeline_change_provider">Змінити постачальника</string>
     <string name="recent_pair_switch">Перейти до %1$s → %2$s</string>
     <string name="recent_remove_title">Видалити з історії</string>
     <string name="recent_remove_pair">%1$s → %2$s буде видалено з останніх пар.</string>
     <string name="recent_remove_currency">%1$s та останні пари з нею буде видалено.</string>
     <string name="cart_section_pinned">Закріплені</string>
-    <string name="cart_section_others">Інші товари</string>
+    <string name="cart_section_others">Інші позиції</string>
     <string name="fallback_banner">%1$s недоступний • Використовується %2$s</string>
     <string name="process_text_label">Конвертувати валюту</string>
     <string name="selection_open_app">Відкрити в %1$s</string>

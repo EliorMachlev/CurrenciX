@@ -2,47 +2,47 @@
 <resources>
     <string name="desc_toggle_currencies">víxla gjaldmiðla</string>
     <string name="historical_rates_dialog_title">Söguleg gengi</string>
-    <string name="historical_rates_dialog_toggle">Sýna söguleg gengi af ákveðinni dagsetningu. Slökktu á til að alltaf fá nýjustu gengi.</string>
+    <string name="historical_rates_dialog_toggle">Nota gengi frá ákveðinni dagsetningu. Slökktu á til að nota alltaf nýjasta gengi.</string>
     <string name="historical_rates_dialog_now">Núna</string>
     <string name="error">Villa: %s</string>
     <string name="error_generic">Óþekkt villa.</string>
-    <string name="error_http">Netþjónn svaraði með HTTP %d</string>
-    <string name="error_timeout">Netþjónn svaraði ekki tímanlega eða ekki er hægt að ná í hann.</string>
-    <string name="error_no_data">Gat ekki tengst netþjóni.</string>
-    <string name="error_api_error">Það kom upp villa með forritunarviðmóti. Reyndu aftur síðar.</string>
+    <string name="error_http">Netþjónninn svaraði með HTTP %d.</string>
+    <string name="error_timeout">Netþjónninn svaraði ekki í tæka tíð eða ekki næst í hann.</string>
+    <string name="error_no_data">Gat ekki tengst netþjóninum.</string>
+    <string name="error_api_error">API-villa kom upp. Reyndu aftur síðar.</string>
     <string name="menu_settings">Stillingar</string>
     <string name="menu_refresh">Endurnýja gengi</string>
-    <string name="menu_timeline">Línurit</string>
-    <string name="menu_quick_conversions">Skjótar umbreytingar</string>
+    <string name="menu_timeline">Gengislínurit</string>
+    <string name="menu_quick_conversions">Fljótlegir umreikningar</string>
     <string name="menu_share">Deila</string>
     <string name="share_footer">Byggt á %1$s, %2$s</string>
-    <string name="quick_conversions_title">Skjótar umbreytingar</string>
+    <string name="quick_conversions_title">Fljótlegir umreikningar</string>
     <string name="quick_conversions_no_rates">Gengi hefur ekki verið hlaðið enn.</string>
     <string name="quick_conversions_fees_applied">Beitt gjöld: %s</string>
-    <string name="tooltip_filter_starred">Sýna aðeins eftirlæti.</string>
+    <string name="tooltip_filter_starred">Sýna aðeins stjörnumerkta gjaldmiðla.</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Ónettengt • Gengi frá %1$s</string>
     <string name="offline_banner_no_data">Ónettengt • Ekkert vistað gengi enn</string>
-    <string name="unreachable_banner_with_date">Veitandi ekki tiltækur • Gengi frá %1$s</string>
-    <string name="unreachable_banner_no_data">Veitandi ekki tiltækur • Reyni aftur</string>
+    <string name="unreachable_banner_with_date">Veita ekki tiltæk • Gengi frá %1$s</string>
+    <string name="unreachable_banner_no_data">Veita ekki tiltæk • Reyni aftur</string>
     <string name="historical_banner">Söguleg • Gengi frá %1$s</string>
     <string name="fee_chip_label">%1$s gjald</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Nýjasta gengi og 30 daga þróun fyrir síðast notaða gjaldmiðlaparið eða par sem þú velur.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
-    <string name="widget_footer_date">Frá %s</string>
+    <string name="widget_footer_date">Miðað við %s</string>
     <string name="widget_footer_empty">Opnaðu forritið til að hlaða gengi.</string>
     <string name="widget_no_rate">Gengi ekki tiltækt</string>
 
     <!-- Shopping cart -->
     <string name="cart_title">Innkaupakarfa</string>
-    <string name="cart_empty_hint">Karfan þín er tóm. Ýttu á „Bæta við hlut" til að byrja.</string>
-    <string name="cart_add_item">Bæta við hlut</string>
-    <string name="cart_item_name_hint">Hlutur</string>
+    <string name="cart_empty_hint">Karfan þín er tóm. Ýttu á „Bæta við vöru“ til að byrja.</string>
+    <string name="cart_add_item">Bæta við vöru</string>
+    <string name="cart_item_name_hint">Vara</string>
     <string name="cart_item_expression_hint">Verð (t.d. 2 × 3,50)</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
-    <string name="cart_delete_item">Eyða hlut</string>
+    <string name="cart_delete_item">Eyða vöru</string>
     <string name="cart_subtotal_label">Milliupphæð</string>
     <string name="cart_total_label">Samtals</string>
     <string name="cart_menu_save">Vista</string>
@@ -54,16 +54,16 @@
     <string name="cart_share_option_text">Hreinn texti</string>
     <string name="cart_share_option_text_desc">Sniðin samantekt sem þú getur límt inn í spjall eða minnisforrit.</string>
     <string name="cart_share_option_csv">CSV</string>
-    <string name="cart_share_option_csv_desc">Töflureiknisskrá með einni línu á hlut.</string>
+    <string name="cart_share_option_csv_desc">Töflureiknisskrá með einni línu fyrir hverja vöru.</string>
     <string name="cart_share_option_pdf">PDF</string>
     <string name="cart_share_option_pdf_desc">Prentanlegt kvittanaskjal.</string>
     <string name="cart_save_name_hint">Nafn körfu</string>
     <string name="cart_default_saved_name">Karfan mín</string>
-    <string name="cart_saved_toast">Vistað sem „%s"</string>
+    <string name="cart_saved_toast">Vistað sem „%s“</string>
     <string name="cart_no_saved">Engar vistaðar körfur enn.</string>
     <string name="cart_rename">Endurnefna</string>
     <string name="cart_rename_title">Endurnefna körfu</string>
-    <string name="cart_delete_confirm">Eyða „%s"?</string>
+    <string name="cart_delete_confirm">Eyða „%s“?</string>
     <string name="cart_delete_confirm_button">Eyða</string>
     <string name="cart_export_ok">Karfa flutt út.</string>
     <string name="cart_export_error">Útflutningur mistókst: %s</string>
@@ -72,6 +72,24 @@
     <string name="cart_share_empty">Karfan er tóm — ekkert til að deila.</string>
     <string name="cart_save_empty">Karfan er tóm — ekkert til að vista.</string>
     <string name="cart_share_default_title">Karfa</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Reiknisegð</string>
+    <string name="cart_export_value">Upphæð</string>
+    <string name="cart_export_converted">Umreiknað</string>
+    <string name="cart_export_fees">Gjöld</string>
+    <string name="cart_export_source">Heimild</string>
+    <string name="cart_export_rates_date">Dagsetning gengis</string>
+    <string name="cart_export_exported_at">Flutt út</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Ekki tókst að opna skrána</string>
+    <string name="file_error_read_write">Ekki tókst að lesa eða skrifa skrána</string>
+    <string name="file_error_no_permission">Engin heimild til að nota þessa skrá</string>
+    <string name="file_error_damaged">Skráin er skemmd eða ekki á væntu sniði</string>
+    <string name="file_error_unsupported_version">Skráin kemur úr útgáfu af CurrenciX sem þessi útgáfa getur ekki lesið</string>
+    <string name="file_error_not_a_cart">Þetta er ekki körfuskrá frá CurrenciX</string>
+    <string name="file_error_unexpected">Eitthvað óvænt fór úrskeiðis</string>
+    <string name="backup_error_encryption">Ekki tókst að dulkóða öryggisafritið</string>
+    <string name="backup_error_decryption">Ekki tókst að afkóða öryggisafritið</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Milliupphæð: %1$s %2$s</string>
     <string name="cart_share_converted">Umreiknað: %1$s %2$s</string>
@@ -80,7 +98,7 @@
     <string name="cart_unsaved_title">Óvistaðar breytingar</string>
     <string name="cart_unsaved_save">Vista</string>
     <string name="cart_unsaved_save_desc">Skrifa yfir núverandi vistaða körfu með þessum breytingum.</string>
-    <string name="cart_unsaved_save_as">Vista sem nýtt</string>
+    <string name="cart_unsaved_save_as">Vista sem nýja</string>
     <string name="cart_unsaved_save_as_desc">Halda núverandi vistaðri körfu óbreyttri og vista afrit undir öðru nafni.</string>
     <string name="cart_unsaved_discard">Henda breytingum</string>
     <string name="cart_unsaved_discard_desc">Fara aftur í síðustu vistuðu útgáfu og halda áfram.</string>
@@ -98,9 +116,9 @@
     <string name="onboarding_autorefresh_enable">Virkja núna</string>
     <string name="a11y_delete">Eyða</string>
     <string name="currency_dropdown_api_hint">Vantar eitthvað? Mismunandi gagnaveitur bjóða upp á mismunandi gjaldmiðla. Farðu í stillingar og prófaðu aðra!\u00A0\uD83E\uDD17</string>
-    <string name="error_empty_response">Þjónninn hefur engin gögn fyrir þessa beiðni.</string>
+    <string name="error_empty_response">Netþjónninn hefur engin gögn fyrir þessa beiðni.</string>
     <string name="error_invalid_api_key">HTTP 401 – Athugaðu API-lykilinn þinn.</string>
-    <string name="error_no_api_key">Gilt API-lykil þarf að stilla til að nota þessa uppsprettu.</string>
+    <string name="error_no_api_key">Stilla þarf gildan API-lykil til að nota þessa gagnaveitu.</string>
     <string name="error_try_another_api">Það eru þó aðrar gagnaveitur sem þú getur valið um í stillingunum. Prófaðu bara!</string>
     <string name="error_unsupported_timeline">Tímalínugögn eru ekki studd af þessu API.</string>
     <string name="a11y_search_currencies">Leita að gjaldmiðlum</string>
@@ -114,14 +132,14 @@
     <string name="a11y_action_open">Opna</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Festa efst</string>
-    <string name="cart_unpin_item">Losa festingu</string>
-    <string name="cart_reorder_item">Endurraða atriði</string>
+    <string name="cart_unpin_item">Losa vöru</string>
+    <string name="cart_reorder_item">Endurraða vöru</string>
     <string name="desc_navigate_up">Fara upp</string>
     <string name="desc_open_drawer">Opna leiðarskúffu</string>
     <string name="desc_close_drawer">Loka leiðarskúffu</string>
     <string name="desc_more_options">Fleiri valkostir</string>
-    <string name="cart_item_deleted">Atriði eytt</string>
-    <string name="cart_cleared">Karfa tæmd</string>
+    <string name="cart_item_deleted">Vöru eytt</string>
+    <string name="cart_cleared">Karfan tæmd</string>
     <string name="undo">Afturkalla</string>
     <string name="timeline_retry">Reyna aftur</string>
     <string name="timeline_change_provider">Skipta um veitu</string>
@@ -129,8 +147,8 @@
     <string name="recent_remove_title">Fjarlægja úr sögu</string>
     <string name="recent_remove_pair">%1$s → %2$s verður fjarlægt úr nýlegum pörum.</string>
     <string name="recent_remove_currency">%1$s og nýleg pör sem nota hann verða fjarlægð.</string>
-    <string name="cart_section_pinned">Fest</string>
-    <string name="cart_section_others">Önnur atriði</string>
+    <string name="cart_section_pinned">Festar</string>
+    <string name="cart_section_others">Aðrar vörur</string>
     <string name="fallback_banner">%1$s ekki tiltækt • Notar %2$s</string>
     <string name="process_text_label">Umreikna gjaldmiðil</string>
     <string name="selection_open_app">Opna í %1$s</string>
@@ -151,8 +169,8 @@
     <string name="cart_tip_label">Þjórfé / skattur</string>
     <string name="cart_tip_row">Þjórfé / skattur (%1$s%%)</string>
     <string name="cart_split_label">Skipta á milli</string>
-    <string name="cart_split_decrease">Færri</string>
-    <string name="cart_split_increase">Fleiri</string>
+    <string name="cart_split_decrease">Fækka fólki</string>
+    <string name="cart_split_increase">Fjölga fólki</string>
     <string name="cart_per_person_row">Á mann (÷%1$d)</string>
     <string name="cart_budget_label">Fjárhagsáætlun</string>
     <string name="cart_budget_left_row">Eftir af fjárhagsáætlun</string>

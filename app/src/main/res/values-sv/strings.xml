@@ -2,7 +2,7 @@
 <resources>
     <string name="desc_toggle_currencies">byt plats på valutor</string>
     <string name="historical_rates_dialog_title">Historiska kurser</string>
-    <string name="historical_rates_dialog_toggle">Använd växlingskurser från ett specifikt datum. Inaktivera för att använda de senaste kurserna.</string>
+    <string name="historical_rates_dialog_toggle">Använd växelkurser från ett visst datum. Inaktivera för att alltid använda de senaste kurserna.</string>
     <string name="historical_rates_dialog_now">Nu</string>
     <string name="error">Fel: %s</string>
     <string name="error_generic">Okänt problem.</string>
@@ -12,21 +12,21 @@
     <string name="error_api_error">Ett API-fel har inträffat. Försök igen senare.</string>
     <string name="menu_settings">Inställningar</string>
     <string name="menu_refresh">Uppdatera kurser</string>
-    <string name="menu_timeline">Diagram över valutakurs</string>
-    <string name="menu_quick_conversions">Snabba omvandlingar</string>
+    <string name="menu_timeline">Växelkursdiagram</string>
+    <string name="menu_quick_conversions">Snabba omräkningar</string>
     <string name="menu_share">Dela</string>
     <string name="share_footer">Baserat på %1$s, %2$s</string>
-    <string name="quick_conversions_title">Snabba omvandlingar</string>
+    <string name="quick_conversions_title">Snabba omräkningar</string>
     <string name="quick_conversions_no_rates">Kurserna har inte laddats än.</string>
     <string name="quick_conversions_fees_applied">Tillämpade avgifter: %s</string>
     <string name="tooltip_filter_starred">Visa endast favoritvalutor.</string>
     <string name="a11y_delete">Ta bort</string>
     <string name="error_empty_response">Servern har ingen data för denna förfrågan.</string>
     <string name="error_try_another_api">Men det finns andra dataleverantörer som du kan välja på i inställningarna. Prova!</string>
-    <string name="error_no_api_key">En giltig API-nyckel måste ha angetts för att kunna använda denna källa.</string>
+    <string name="error_no_api_key">En giltig API-nyckel måste anges för att kunna använda den här källan.</string>
     <string name="error_invalid_api_key">HTTP 401 – Kontrollera din API-nyckel.</string>
-    <string name="error_unsupported_timeline">Tidslinjesdata stöds inte med detta API.</string>
-    <string name="currency_dropdown_api_hint">Saknas något? Olika dataleverantörer tillhandahåller olika valutor. Gå till inställningarna och prova en annan! 🤗</string>
+    <string name="error_unsupported_timeline">Tidslinjedata stöds inte av detta API.</string>
+    <string name="currency_dropdown_api_hint">Saknas något? Olika dataleverantörer tillhandahåller olika valutor. Gå till inställningarna och prova en annan!\u00A0\uD83E\uDD17</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Kurser från %1$s</string>
@@ -80,6 +80,24 @@
     <string name="cart_share_empty">Kundvagnen är tom — inget att dela.</string>
     <string name="cart_save_empty">Kundvagnen är tom — inget att spara.</string>
     <string name="cart_share_default_title">Kundvagn</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Uttryck</string>
+    <string name="cart_export_value">Värde</string>
+    <string name="cart_export_converted">Omräknat</string>
+    <string name="cart_export_fees">Avgifter</string>
+    <string name="cart_export_source">Källa</string>
+    <string name="cart_export_rates_date">Kursdatum</string>
+    <string name="cart_export_exported_at">Exporterad</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Kunde inte öppna filen</string>
+    <string name="file_error_read_write">Kunde inte läsa från eller skriva till filen</string>
+    <string name="file_error_no_permission">Behörighet saknas för att använda den här filen</string>
+    <string name="file_error_damaged">Filen är skadad eller har inte det förväntade formatet</string>
+    <string name="file_error_unsupported_version">Filen kommer från en version av CurrenciX som den här versionen inte kan läsa</string>
+    <string name="file_error_not_a_cart">Det här är inte en kundvagnsfil från CurrenciX</string>
+    <string name="file_error_unexpected">Något oväntat gick fel</string>
+    <string name="backup_error_encryption">Kunde inte kryptera säkerhetskopian</string>
+    <string name="backup_error_decryption">Kunde inte dekryptera säkerhetskopian</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Delsumma: %1$s %2$s</string>
     <string name="cart_share_converted">Omräknat: %1$s %2$s</string>
@@ -102,7 +120,7 @@
     <string name="onboarding_swap_title">Byt plats på paret</string>
     <string name="onboarding_swap_body">Tryck på bytesknappen för att byta plats på bas- och målvalutan. Håll den intryckt för att öppna dina avgifter.</string>
     <string name="onboarding_autorefresh_title">Uppdatera kurser automatiskt</string>
-    <string name="onboarding_autorefresh_body">Kurserna uppdateras när du öppnar appen. Aktivera uppdatering i bakgrunden så att de hålls aktuella även mellan starterna.</string>
+    <string name="onboarding_autorefresh_body">Kurserna uppdateras när du öppnar appen. Aktivera uppdatering i bakgrunden så att de hålls aktuella även när appen inte används.</string>
     <string name="onboarding_autorefresh_enable">Aktivera nu</string>
     <string name="a11y_search_currencies">Sök valutor</string>
     <string name="a11y_clear_search">Rensa sökning</string>
@@ -115,14 +133,14 @@
     <string name="a11y_action_open">Öppna</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fäst överst</string>
-    <string name="cart_unpin_item">Ta bort fästning</string>
+    <string name="cart_unpin_item">Lossa artikel</string>
     <string name="cart_reorder_item">Ändra ordning</string>
     <string name="desc_navigate_up">Navigera uppåt</string>
     <string name="desc_open_drawer">Öppna navigeringslådan</string>
     <string name="desc_close_drawer">Stäng navigeringslådan</string>
     <string name="desc_more_options">Fler alternativ</string>
-    <string name="cart_item_deleted">Objektet har tagits bort</string>
-    <string name="cart_cleared">Varukorgen har tömts</string>
+    <string name="cart_item_deleted">Artikeln har tagits bort</string>
+    <string name="cart_cleared">Kundvagnen har tömts</string>
     <string name="undo">Ångra</string>
     <string name="timeline_retry">Försök igen</string>
     <string name="timeline_change_provider">Byt leverantör</string>
@@ -131,7 +149,7 @@
     <string name="recent_remove_pair">%1$s → %2$s tas bort från dina senaste par.</string>
     <string name="recent_remove_currency">%1$s och de senaste paren som använder den tas bort.</string>
     <string name="cart_section_pinned">Fästa</string>
-    <string name="cart_section_others">Övriga varor</string>
+    <string name="cart_section_others">Övriga artiklar</string>
     <string name="fallback_banner">%1$s är inte tillgänglig • Använder %2$s</string>
     <string name="process_text_label">Konvertera valuta</string>
     <string name="selection_open_app">Öppna i %1$s</string>
@@ -148,7 +166,7 @@
     <string name="cart_share_per_person">Per person (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">Kvar av budgeten: %1$s %2$s</string>
     <string name="cart_share_over_budget">Över budget: %1$s %2$s</string>
-    <string name="cart_menu_extras">Dela, dricks och budget</string>
+    <string name="cart_menu_extras">Delning, dricks och budget</string>
     <string name="cart_tip_label">Dricks / skatt</string>
     <string name="cart_tip_row">Dricks / skatt (%1$s%%)</string>
     <string name="cart_split_label">Dela mellan</string>

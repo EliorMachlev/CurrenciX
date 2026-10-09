@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">обърни валутите</string>
-    <string name="historical_rates_dialog_title">Исторически курс</string>
-    <string name="historical_rates_dialog_toggle">Използвай курс от определена дата. Изключи, за да се взима винаги най-новата стойност.</string>
+    <string name="desc_toggle_currencies">размяна на валутите</string>
+    <string name="historical_rates_dialog_title">Исторически курсове</string>
+    <string name="historical_rates_dialog_toggle">Използване на курсовете към определена дата. Изключете, за да се използват винаги най-новите.</string>
     <string name="historical_rates_dialog_now">Сега</string>
     <string name="error">Грешка: %s</string>
     <string name="error_generic">Неизвестен проблем.</string>
-    <string name="error_http">Сървъра отговаря с HTTP %d</string>
+    <string name="error_http">Сървърът отговори с HTTP код %d.</string>
     <string name="error_timeout">Сървърът не отговаря навреме или е недостъпен.</string>
-    <string name="error_no_data">Не мога да се свържа със сървъра.</string>
-    <string name="error_api_error">Възникна грешка с API-то. Моля опитайте по-късно.</string>
+    <string name="error_no_data">Не може да се осъществи връзка със сървъра.</string>
+    <string name="error_api_error">Възникна грешка с API-то. Моля, опитайте по-късно.</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_refresh">Обнови курсовете</string>
-    <string name="menu_timeline">Таблица на обявения курс</string>
-    <string name="menu_quick_conversions">Бързи конверсии</string>
+    <string name="menu_timeline">Графика на обменния курс</string>
+    <string name="menu_quick_conversions">Бързо конвертиране</string>
     <string name="menu_share">Споделяне</string>
     <string name="share_footer">Според %1$s, %2$s</string>
-    <string name="quick_conversions_title">Бързи конверсии</string>
+    <string name="quick_conversions_title">Бързо конвертиране</string>
     <string name="quick_conversions_no_rates">Курсовете все още не са заредени.</string>
     <string name="quick_conversions_fees_applied">Приложени такси: %s</string>
-    <string name="tooltip_filter_starred">Покажи само любимите курсове.</string>
+    <string name="tooltip_filter_starred">Показване само на валутите със звезда.</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсове от %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Все още няма кеширани курсове</string>
     <string name="unreachable_banner_with_date">Доставчикът е недостъпен • Курсове от %1$s</string>
     <string name="unreachable_banner_no_data">Доставчикът е недостъпен • Повторен опит</string>
-    <string name="historical_banner">Историческо • Курсове от %1$s</string>
+    <string name="historical_banner">Исторически данни • Курсове от %1$s</string>
     <string name="fee_chip_label">Такса %1$s</string>
 
     <!-- Home-screen widget -->
@@ -37,7 +37,7 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Пазарска количка</string>
-    <string name="cart_empty_hint">Количката ви е празна. Докоснете „Добави артикул", за да започнете.</string>
+    <string name="cart_empty_hint">Количката ви е празна. Докоснете „Добави артикул“, за да започнете.</string>
     <string name="cart_add_item">Добави артикул</string>
     <string name="cart_item_name_hint">Артикул</string>
     <string name="cart_item_expression_hint">Цена (напр. 2 × 3,50)</string>
@@ -59,11 +59,11 @@
     <string name="cart_share_option_pdf_desc">Документ за печат във вид на касова бележка.</string>
     <string name="cart_save_name_hint">Име на количката</string>
     <string name="cart_default_saved_name">Моята количка</string>
-    <string name="cart_saved_toast">Запазена като „%s"</string>
+    <string name="cart_saved_toast">Запазена като „%s“</string>
     <string name="cart_no_saved">Все още няма запазени колички.</string>
     <string name="cart_rename">Преименувай</string>
     <string name="cart_rename_title">Преименуване на количка</string>
-    <string name="cart_delete_confirm">Да се изтрие ли „%s"?</string>
+    <string name="cart_delete_confirm">Да се изтрие ли „%s“?</string>
     <string name="cart_delete_confirm_button">Изтрий</string>
     <string name="cart_export_ok">Количката е експортирана.</string>
     <string name="cart_export_error">Експортът е неуспешен: %s</string>
@@ -72,6 +72,24 @@
     <string name="cart_share_empty">Количката е празна — няма какво да се сподели.</string>
     <string name="cart_save_empty">Количката е празна — няма какво да се запази.</string>
     <string name="cart_share_default_title">Количка</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Израз</string>
+    <string name="cart_export_value">Цена</string>
+    <string name="cart_export_converted">Конвертирано</string>
+    <string name="cart_export_fees">Такси</string>
+    <string name="cart_export_source">Източник</string>
+    <string name="cart_export_rates_date">Дата на курсовете</string>
+    <string name="cart_export_exported_at">Експортирано на</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">файлът не може да бъде отворен</string>
+    <string name="file_error_read_write">файлът не може да бъде прочетен или записан</string>
+    <string name="file_error_no_permission">няма разрешение за достъп до този файл</string>
+    <string name="file_error_damaged">файлът е повреден или не е в очаквания формат</string>
+    <string name="file_error_unsupported_version">файлът е от версия на CurrenciX, която тази версия не може да прочете</string>
+    <string name="file_error_not_a_cart">това не е файл с количка на CurrenciX</string>
+    <string name="file_error_unexpected">възникна неочаквана грешка</string>
+    <string name="backup_error_encryption">резервното копие не може да бъде шифровано</string>
+    <string name="backup_error_decryption">резервното копие не може да бъде дешифрирано</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Междинна сума: %1$s %2$s</string>
     <string name="cart_share_converted">Конвертирано: %1$s %2$s</string>
@@ -97,16 +115,16 @@
     <string name="onboarding_autorefresh_body">Курсовете се обновяват, когато отворите приложението. Включете обновяването на заден план, за да останат актуални между стартиранията.</string>
     <string name="onboarding_autorefresh_enable">Включи сега</string>
     <string name="a11y_delete">Изтрий</string>
-    <string name="currency_dropdown_api_hint">Липсва нещо? Различните доставчици на данни предлагат различни валути. Отиди в настройките и опитай друг!\u00A0\uD83E\uDD17</string>
+    <string name="currency_dropdown_api_hint">Липсва ли нещо? Различните доставчици на данни предлагат различни валути. Отидете в настройките и опитайте друг! 🤗</string>
     <string name="error_empty_response">Сървърът няма данни за тази заявка.</string>
-    <string name="error_invalid_api_key">HTTP 401 – Моля, провери своя API ключ.</string>
-    <string name="error_no_api_key">Трябва да зададеш валиден API ключ, за да използваш този източник.</string>
-    <string name="error_try_another_api">Все пак, в настройките има и други доставчици на данни, от които можеш да избираш. Просто опитай!</string>
-    <string name="error_unsupported_timeline">Данните за график не се поддържат от този API.</string>
+    <string name="error_invalid_api_key">HTTP 401 – проверете своя API ключ.</string>
+    <string name="error_no_api_key">За да използвате този източник, трябва да зададете валиден API ключ.</string>
+    <string name="error_try_another_api">В настройките обаче има и други доставчици на данни, от които можете да избирате. Просто опитайте!</string>
+    <string name="error_unsupported_timeline">Този API не поддържа данни за графиката.</string>
     <string name="a11y_search_currencies">Търсене на валути</string>
     <string name="a11y_clear_search">Изчисти търсенето</string>
     <string name="a11y_cart_item_name">Име на артикула</string>
-    <string name="a11y_chart_summary">Диаграма на историческите валутни курсове. Статистиките — минимум, среден, максимум и текущ курс — са показани по-долу.</string>
+    <string name="a11y_chart_summary">Графика на историята на обменния курс. Статистиката — минимум, средна стойност, максимум и текущ курс — е показана по-долу.</string>
     <string name="a11y_star_currency">Отбележи със звезда %1$s</string>
     <string name="a11y_unstar_currency">Премахни звездата от %1$s</string>
     <string name="a11y_action_select">Избери</string>
@@ -117,13 +135,13 @@
     <string name="cart_unpin_item">Откачи артикула</string>
     <string name="cart_reorder_item">Пренареди артикула</string>
     <string name="desc_navigate_up">Навигиране нагоре</string>
-    <string name="desc_open_drawer">Отваряне на навигационното чекмедже</string>
-    <string name="desc_close_drawer">Затваряне на навигационното чекмедже</string>
+    <string name="desc_open_drawer">Отваряне на панела за навигация</string>
+    <string name="desc_close_drawer">Затваряне на панела за навигация</string>
     <string name="desc_more_options">Още опции</string>
-    <string name="cart_item_deleted">Елементът е изтрит</string>
+    <string name="cart_item_deleted">Артикулът е изтрит</string>
     <string name="cart_cleared">Количката е изчистена</string>
     <string name="undo">Отмяна</string>
-    <string name="timeline_retry">Опитай отново</string>
+    <string name="timeline_retry">Опитайте отново</string>
     <string name="timeline_change_provider">Смяна на доставчика</string>
     <string name="recent_pair_switch">Превключване към %1$s → %2$s</string>
     <string name="recent_remove_title">Премахване от историята</string>

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">tausche Währungen</string>
+    <string name="desc_toggle_currencies">Währungen tauschen</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="historical_rates_dialog_title">Historische Kurse</string>
-    <string name="historical_rates_dialog_toggle">Wechselkurse eines spezifischen Datums verwenden. Deaktivieren, um immer die aktuellsten Kurse zu benutzen.</string>
+    <string name="historical_rates_dialog_toggle">Wechselkurse eines bestimmten Datums verwenden. Deaktivieren, um immer die aktuellsten Kurse zu verwenden.</string>
     <string name="historical_rates_dialog_now">Jetzt</string>
     <string name="error">Fehler: %s</string>
     <string name="error_generic">Unbekanntes Problem.</string>
-    <string name="error_http">Der Server antwortet mit HTTP %d.</string>
-    <string name="error_timeout">Der Server antwortet nicht rechtzeitig oder ist nicht erreichbar.</string>
-    <string name="error_no_data">Konnte nicht mit dem Server verbinden.</string>
+    <string name="error_http">Der Server antwortete mit HTTP %d.</string>
+    <string name="error_timeout">Der Server hat nicht rechtzeitig geantwortet oder ist nicht erreichbar.</string>
+    <string name="error_no_data">Verbindung zum Server fehlgeschlagen.</string>
     <string name="error_empty_response">Der Server hat keine Daten für diese Anfrage.</string>
     <string name="error_api_error">Ein API-Fehler ist aufgetreten. Bitte später erneut versuchen.</string>
-    <string name="error_try_another_api">In den Einstellungen stehen aber noch andere Datenquellen zur Wahl. Einfach ausprobieren!</string>
-    <string name="error_no_api_key">Ein gültiger API-Schlüssel muss gesetzt sein, um diese Quelle zu nutzen.</string>
+    <string name="error_try_another_api">In den Einstellungen stehen aber noch andere Datenanbieter zur Wahl. Einfach ausprobieren!</string>
+    <string name="error_no_api_key">Um diese Quelle zu nutzen, muss ein gültiger API-Schlüssel hinterlegt sein.</string>
     <string name="error_invalid_api_key">HTTP 401 – Bitte den API-Schlüssel prüfen.</string>
     <string name="error_unsupported_timeline">Wechselkursverlauf wird bei dieser API nicht unterstützt.</string>
     <string name="menu_settings">Einstellungen</string>
@@ -26,7 +26,7 @@
     <string name="quick_conversions_no_rates">Kurse noch nicht geladen.</string>
     <string name="quick_conversions_fees_applied">Angewendete Gebühren: %s</string>
     <string name="tooltip_filter_starred">Nur favorisierte Währungen anzeigen.</string>
-    <string name="currency_dropdown_api_hint">Fehlt etwas? Unterschiedliche Datenquellen bieten unterschiedliche Währungen an. In die Einstellungen gehen, um eine andere auszuprobieren!\u00A0\uD83E\uDD17</string>
+    <string name="currency_dropdown_api_hint">Fehlt etwas? Unterschiedliche Datenanbieter bieten unterschiedliche Währungen an. Probiere in den Einstellungen einen anderen aus!\u00A0\uD83E\uDD17</string>
 
     <string name="offline_banner_with_date">Offline • Kurse vom %1$s</string>
     <string name="offline_banner_no_data">Offline • Noch keine zwischengespeicherten Kurse</string>
@@ -58,7 +58,7 @@
     <string name="cart_menu_export">In Datei exportieren</string>
     <string name="cart_menu_import">Aus Datei importieren</string>
     <string name="cart_menu_clear">Leeren</string>
-    <string name="cart_share_option_text">Klartext</string>
+    <string name="cart_share_option_text">Nur Text</string>
     <string name="cart_share_option_text_desc">Formatierte Zusammenfassung zum Einfügen in einen Chat oder eine Notiz-App.</string>
     <string name="cart_share_option_csv">CSV</string>
     <string name="cart_share_option_csv_desc">Tabellendatei mit einer Zeile pro Artikel.</string>
@@ -79,6 +79,22 @@
     <string name="cart_share_empty">Warenkorb ist leer – nichts zu teilen.</string>
     <string name="cart_save_empty">Warenkorb ist leer – nichts zu speichern.</string>
     <string name="cart_share_default_title">Warenkorb</string>
+    <string name="cart_export_expression">Ausdruck</string>
+    <string name="cart_export_value">Betrag</string>
+    <string name="cart_export_converted">Umgerechnet</string>
+    <string name="cart_export_fees">Gebühren</string>
+    <string name="cart_export_source">Quelle</string>
+    <string name="cart_export_rates_date">Kursdatum</string>
+    <string name="cart_export_exported_at">Exportiert am</string>
+    <string name="file_error_cannot_open">Die Datei konnte nicht geöffnet werden</string>
+    <string name="file_error_read_write">Die Datei konnte nicht gelesen oder geschrieben werden</string>
+    <string name="file_error_no_permission">Keine Berechtigung für diese Datei</string>
+    <string name="file_error_damaged">Die Datei ist beschädigt oder hat nicht das erwartete Format</string>
+    <string name="file_error_unsupported_version">Die Datei stammt aus einer CurrenciX-Version, die diese Version nicht lesen kann</string>
+    <string name="file_error_not_a_cart">Dies ist keine CurrenciX-Warenkorbdatei</string>
+    <string name="file_error_unexpected">Ein unerwarteter Fehler ist aufgetreten</string>
+    <string name="backup_error_encryption">Die Sicherung konnte nicht verschlüsselt werden</string>
+    <string name="backup_error_decryption">Die Sicherung konnte nicht entschlüsselt werden</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Zwischensumme: %1$s %2$s</string>
     <string name="cart_share_converted">Umgerechnet: %1$s %2$s</string>
@@ -147,7 +163,7 @@
     <string name="cart_share_tip">Trinkgeld / Steuer (%1$s%%): %2$s %3$s</string>
     <string name="cart_share_per_person">Pro Person (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">Im Budget übrig: %1$s %2$s</string>
-    <string name="cart_share_over_budget">Über Budget: %1$s %2$s</string>
+    <string name="cart_share_over_budget">Budget überschritten: %1$s %2$s</string>
     <string name="cart_menu_extras">Aufteilen, Trinkgeld und Budget</string>
     <string name="cart_tip_label">Trinkgeld / Steuer</string>
     <string name="cart_tip_row">Trinkgeld / Steuer (%1$s%%)</string>
@@ -157,5 +173,5 @@
     <string name="cart_per_person_row">Pro Person (÷%1$d)</string>
     <string name="cart_budget_label">Budget</string>
     <string name="cart_budget_left_row">Im Budget übrig</string>
-    <string name="cart_over_budget_row">Über Budget</string>
+    <string name="cart_over_budget_row">Budget überschritten</string>
 </resources>

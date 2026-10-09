@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">Alternar monedes</string>
-    <string name="historical_rates_dialog_title">Taxes històriques</string>
-    <string name="historical_rates_dialog_toggle">Utilitza les taxes de canvi d\'una data específica. Desactivar si es vol utilitzar sempre les més recents.</string>
+    <string name="desc_toggle_currencies">Intercanvia les monedes</string>
+    <string name="historical_rates_dialog_title">Tipus històrics</string>
+    <string name="historical_rates_dialog_toggle">Utilitza els tipus de canvi d\'una data concreta. Desactiva-ho per utilitzar sempre els més recents.</string>
     <string name="historical_rates_dialog_now">Ara</string>
     <string name="error">Error: %s</string>
     <string name="error_generic">Problema desconegut.</string>
     <string name="error_http">El servidor ha respost amb HTTP %d.</string>
-    <string name="error_timeout">El servidor no ha respost a temps o no es pot accedir.</string>
+    <string name="error_timeout">El servidor no ha respost a temps o no és accessible.</string>
     <string name="error_no_data">No s\'ha pogut connectar amb el servidor.</string>
     <string name="error_empty_response">El servidor no disposa de dades per a aquesta sol·licitud.</string>
-    <string name="error_api_error">Hi ha hagut un error amb l\'API. Torneu-ho a provar més tard.</string>
-    <string name="error_try_another_api">Alternativament, existeixen altres proveïdors de dades que podeu escollir a la configuració.</string>
+    <string name="error_api_error">Hi ha hagut un error amb l\'API. Torna-ho a provar més tard.</string>
+    <string name="error_try_another_api">Tanmateix, a la configuració pots triar altres proveïdors de dades. Prova-ho!</string>
     <string name="error_no_api_key">És necessari establir una clau API vàlida per a utilitzar aquesta font.</string>
-    <string name="error_invalid_api_key">HTTP 401 – Comproveu la clau API.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Comprova la clau API.</string>
     <string name="error_unsupported_timeline">Aquesta API no admet dades cronològiques.</string>
     <string name="menu_settings">Configuració</string>
-    <string name="menu_refresh">Actualitza les taxes</string>
-    <string name="menu_timeline">Gràfic de la taxa de canvi</string>
+    <string name="menu_refresh">Actualitza els tipus</string>
+    <string name="menu_timeline">Gràfic del tipus de canvi</string>
     <string name="menu_quick_conversions">Conversions ràpides</string>
     <string name="menu_share">Comparteix</string>
     <string name="share_footer">Segons %1$s, %2$s</string>
     <string name="quick_conversions_title">Conversions ràpides</string>
-    <string name="quick_conversions_no_rates">Les taxes encara no s\'han carregat.</string>
+    <string name="quick_conversions_no_rates">Els tipus encara no s\'han carregat.</string>
     <string name="quick_conversions_fees_applied">Comissions aplicades: %s</string>
-    <string name="tooltip_filter_starred">Mostra només les monedes preferides.</string>
-    <string name="currency_dropdown_api_hint">Us falta res? Els diversos proveïdors de dades ofereixen divises diferents. Aneu a la configuració per a provar-ne d\'altres! 🤗</string>
+    <string name="tooltip_filter_starred">Mostra només les monedes marcades amb estrella.</string>
+    <string name="currency_dropdown_api_hint">Et falta res? Cada proveïdor de dades ofereix monedes diferents. Ves a la configuració per provar-ne un altre! 🤗</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="offline_banner_with_date">Sense connexió • Taxes del %1$s</string>
-    <string name="offline_banner_no_data">Sense connexió • Encara no hi ha taxes en cau</string>
+    <string name="offline_banner_with_date">Sense connexió • Tipus del %1$s</string>
+    <string name="offline_banner_no_data">Sense connexió • Encara no hi ha tipus a la memòria cau</string>
     <string name="unreachable_banner_with_date">Proveïdor no disponible • Tipus del %1$s</string>
     <string name="unreachable_banner_no_data">Proveïdor no disponible • Tornant a intentar</string>
     <string name="historical_banner">Històric • Tipus del %1$s</string>
@@ -39,17 +39,17 @@
     <string name="widget_description">Darrer tipus i tendència de 30 dies del darrer parell de monedes que vas fer servir, o del que triïs.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">A data de %s</string>
-    <string name="widget_footer_empty">Obre l\'aplicació per carregar les taxes.</string>
-    <string name="widget_no_rate">Taxa no disponible</string>
+    <string name="widget_footer_empty">Obre l\'aplicació per carregar els tipus.</string>
+    <string name="widget_no_rate">Tipus no disponible</string>
 
     <!-- Shopping cart -->
     <string name="cart_title">Cistella de la compra</string>
-    <string name="cart_empty_hint">La cistella és buida. Toca «Afegeix article» per començar.</string>
-    <string name="cart_add_item">Afegeix article</string>
+    <string name="cart_empty_hint">La cistella és buida. Toca «Afegeix un article» per començar.</string>
+    <string name="cart_add_item">Afegeix un article</string>
     <string name="cart_item_name_hint">Article</string>
     <string name="cart_item_expression_hint">Preu (p. ex. 2 × 3,50)</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
-    <string name="cart_delete_item">Suprimeix article</string>
+    <string name="cart_delete_item">Suprimeix l\'article</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
     <string name="cart_menu_save">Desa</string>
@@ -70,7 +70,7 @@
     <string name="cart_no_saved">Encara no hi ha cistelles desades.</string>
     <string name="cart_rename">Reanomena</string>
     <string name="cart_rename_title">Reanomena la cistella</string>
-    <string name="cart_delete_confirm">Voleu suprimir «%s»?</string>
+    <string name="cart_delete_confirm">Vols suprimir «%s»?</string>
     <string name="cart_delete_confirm_button">Suprimeix</string>
     <string name="cart_export_ok">Cistella exportada.</string>
     <string name="cart_export_error">L\'exportació ha fallat: %s</string>
@@ -79,6 +79,24 @@
     <string name="cart_share_empty">La cistella és buida — no hi ha res per compartir.</string>
     <string name="cart_save_empty">La cistella és buida — no hi ha res per desar.</string>
     <string name="cart_share_default_title">Cistella</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Expressió</string>
+    <string name="cart_export_value">Import</string>
+    <string name="cart_export_converted">Convertit</string>
+    <string name="cart_export_fees">Comissions</string>
+    <string name="cart_export_source">Font</string>
+    <string name="cart_export_rates_date">Data dels tipus</string>
+    <string name="cart_export_exported_at">Exportat el</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">No s\'ha pogut obrir el fitxer</string>
+    <string name="file_error_read_write">No s\'ha pogut llegir ni escriure el fitxer</string>
+    <string name="file_error_no_permission">No hi ha permís per utilitzar aquest fitxer</string>
+    <string name="file_error_damaged">El fitxer està malmès o no té el format esperat</string>
+    <string name="file_error_unsupported_version">Aquest fitxer prové d\'una versió de CurrenciX que aquesta no pot llegir</string>
+    <string name="file_error_not_a_cart">No és un fitxer de cistella de CurrenciX</string>
+    <string name="file_error_unexpected">S\'ha produït un error inesperat</string>
+    <string name="backup_error_encryption">No s\'ha pogut xifrar la còpia de seguretat</string>
+    <string name="backup_error_decryption">No s\'ha pogut desxifrar la còpia de seguretat</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
     <string name="cart_share_converted">Convertit: %1$s %2$s</string>
@@ -96,15 +114,15 @@
     <string name="onboarding_skip">Omet</string>
     <string name="onboarding_next">Següent</string>
     <string name="onboarding_finish">Entesos</string>
-    <string name="onboarding_fee_title">Comissions al cost real</string>
+    <string name="onboarding_fee_title">El cost real, amb comissions</string>
     <string name="onboarding_fee_body">Toca aquí per afegir recàrrecs o descomptes — s\'apliquen al costat de destinació perquè l\'import que veus coincideixi amb el que pagues realment.</string>
     <string name="onboarding_swap_title">Inverteix el parell</string>
     <string name="onboarding_swap_body">Toca el botó d\'inversió per intercanviar la moneda base i la de destinació. Mantén-lo premut per obrir les teves comissions.</string>
-    <string name="onboarding_autorefresh_title">Actualització automàtica de les taxes</string>
-    <string name="onboarding_autorefresh_body">Les taxes s\'actualitzen quan obres l\'aplicació. Activa l\'actualització en segon pla perquè es mantinguin al dia entre un ús i el següent.</string>
+    <string name="onboarding_autorefresh_title">Actualització automàtica dels tipus</string>
+    <string name="onboarding_autorefresh_body">Els tipus s\'actualitzen quan obres l\'aplicació. Activa l\'actualització en segon pla perquè es mantinguin al dia entre un ús i el següent.</string>
     <string name="onboarding_autorefresh_enable">Activa ara</string>
     <string name="a11y_delete">Suprimeix</string>
-    <string name="a11y_search_currencies">Cerca divises</string>
+    <string name="a11y_search_currencies">Cerca monedes</string>
     <string name="a11y_clear_search">Neteja la cerca</string>
     <string name="a11y_cart_item_name">Nom de l\'article</string>
     <string name="a11y_chart_summary">Gràfic històric del tipus de canvi. Les estadístiques — mínim, mitjana, màxim i tipus actual — es mostren a sota.</string>
@@ -114,15 +132,15 @@
     <string name="a11y_action_load">Carrega</string>
     <string name="a11y_action_open">Obre</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
-    <string name="cart_pin_item">Fixa a dalt</string>
+    <string name="cart_pin_item">Fixa l\'article a dalt</string>
     <string name="cart_unpin_item">Desfixa l\'article</string>
     <string name="cart_reorder_item">Reordena l\'article</string>
     <string name="desc_navigate_up">Navega cap amunt</string>
     <string name="desc_open_drawer">Obre el calaix de navegació</string>
     <string name="desc_close_drawer">Tanca el calaix de navegació</string>
     <string name="desc_more_options">Més opcions</string>
-    <string name="cart_item_deleted">S\'ha suprimit l\'element</string>
-    <string name="cart_cleared">S\'ha buidat el carretó</string>
+    <string name="cart_item_deleted">S\'ha suprimit l\'article</string>
+    <string name="cart_cleared">S\'ha buidat la cistella</string>
     <string name="undo">Desfés</string>
     <string name="timeline_retry">Torna-ho a provar</string>
     <string name="timeline_change_provider">Canvia el proveïdor</string>

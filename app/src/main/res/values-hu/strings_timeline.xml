@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> ➞ &lt;b>%2$s&lt;/b></string>
-    <string name="rate_average">átl</string>
-    <string name="rate_median">med</string>
-    <string name="rate_min">min</string>
-    <string name="rate_max">max</string>
+    <string name="rate_average">átl.</string>
+    <string name="rate_median">medián</string>
+    <string name="rate_min">min.</string>
+    <string name="rate_max">max.</string>
     <string name="year">év</string>
     <string name="month">hónap</string>
     <string name="week">hét</string>

@@ -3,13 +3,13 @@
     <string name="activity_timeline_title">&lt;b&gt;%1$s&lt;/b&gt; ➞ &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="rate_average">meðal.</string>
     <string name="rate_median">miðgildi</string>
-    <string name="rate_min">lágma.</string>
-    <string name="rate_max">hámar.</string>
+    <string name="rate_min">lágm.</string>
+    <string name="rate_max">hám.</string>
     <string name="year">ár</string>
-    <string name="month">mánuð</string>
-    <string name="week">viku</string>
+    <string name="month">mánuður</string>
+    <string name="week">vika</string>
     <string name="timeline_five_years">5 ár</string>
     <string name="timeline_custom_range">Sérsniðið tímabil</string>
-    <string name="timeline_share">Deila grafi</string>
+    <string name="timeline_share">Deila línuriti</string>
     <string name="timeline_no_rates">Engin gengi fyrir þessar dagsetningar</string>
 </resources>

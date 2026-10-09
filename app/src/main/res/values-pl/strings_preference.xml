@@ -4,7 +4,7 @@
     <!-- main settings -->
     <string name="category_settings">Ustawienia ogólne</string>
     <string name="fee_title">Opłata za transakcję zagraniczną</string>
-    <string name="fee_summary">Zarządzaj opłatami wymiany, bankowymi/kartowymi oraz specyficznymi dla par walut</string>
+    <string name="fee_summary">Zarządzaj opłatami za wymianę, bankowymi/kartowymi oraz dla konkretnych par walut</string>
     <string name="fee_manager_title">Opłaty</string>
     <string name="fee_section_global_exchange">Globalna opłata za wymianę</string>
     <string name="fee_section_global_bank">Globalna opłata bankowa/kartowa</string>
@@ -16,20 +16,20 @@
     <string name="fee_pair_from">Z</string>
     <string name="fee_pair_to">Na</string>
     <string name="fee_pair_pick_currency">Wybierz walutę</string>
-    <string name="fee_true_cost_prefix">"Opłata za konwersję: "</string>
-    <string name="fee_cost_with_fee_prefix">"Koszt z prowizją: "</string>
+    <string name="fee_true_cost_prefix">"Opłata za przeliczenie: "</string>
+    <string name="fee_cost_with_fee_prefix">"Koszt z opłatą: "</string>
     <string name="fee_empty">Brak opłat</string>
-    <string name="previewConversion_title">Podgląd konwersji</string>
-    <string name="previewConversion_summary">Pokaż obecny kurs w ekranie wyboru waluty.</string>
+    <string name="previewConversion_title">Podgląd przeliczenia</string>
+    <string name="previewConversion_summary">Pokazuj bieżące przeliczenie dla każdego kursu na ekranie wyboru waluty.</string>
     <string name="keyboard_title">Klawiatura</string>
     <string name="keyboard_summary_expanded">Dodaje dodatkowe klawisze skrótów dla szybszego wprowadzania.</string>
     <string name="decimal_places_title">Dokładność dziesiętna</string>
     <string name="haptic_feedback_title">Wibracje dotykowe</string>
-    <string name="haptic_feedback_summary">Wibracja przy naciśnięciu klawisza\nZgodnie z ustawieniami systemu</string>
+    <string name="haptic_feedback_summary">Wibracje przy dotknięciach w całej aplikacji\nZgodnie z ustawieniami systemu\nAutomatycznie wyłączane w trybie oszczędzania baterii</string>
     <string name="auto_refresh_title">Automatyczne odświeżanie kursów</string>
     <string name="auto_refresh_summary">Odświeżaj w tle z częstotliwością zalecaną przez dostawcę</string>
     <string name="date_format_title">Format daty i godziny</string>
-    <string name="category_appearance">Ekran</string>
+    <string name="category_appearance">Wygląd</string>
     <string name="system_default">Ustawienie domyślne systemu</string>
     <string name="theme_title">Motyw</string>
     <string name="theme_option_light">Jasny</string>
@@ -62,7 +62,7 @@
     <string name="language_et">Estoński</string>
     <string name="language_fa">Perski</string>
     <string name="language_fr">Francuski</string>
-    <string name="language_hr">Croatian</string>
+    <string name="language_hr">Chorwacki</string>
     <string name="language_hu">Węgierski</string>
     <string name="language_id">Indonezyjski</string>
     <string name="language_is">Islandzki</string>
@@ -83,15 +83,15 @@
     <!-- api -->
     <string name="category_api">Kursy walut</string>
     <string name="api_title">Dostawca danych</string>
-    <string name="api_about_title">O %s</string>
-    <string name="api_refreshPeriod_title">Okres odświeżenia</string>
+    <string name="api_about_title">O dostawcy %s</string>
+    <string name="api_refreshPeriod_title">Okres odświeżania</string>
     <!-- about -->
     <string name="category_about">O tej aplikacji</string>
-    <string name="disclaimer_title">Ostrzeżenie</string>
-    <string name="disclaimer_summary">Wyświetlane kursy wymiany mają <b>charakter wyłącznie orientacyjny</b>. Pochodzą od zewnętrznych dostawców, mogą być opóźnione lub błędne i <b>nie mogą</b> być używane do handlu, hedgingu, fakturowania ani żadnej decyzji, w której wymagany jest dokładny lub wykonalny kurs. Pełne oświadczenie znajduje się w Warunkach świadczenia usług.\nPodane kursy – nawet jeśli są prawidłowe – mogą różnić się od tych stosowanych przez Twój bank.\nNa koniec: błędy się zdarzają. Nigdy nie ufaj ślepo żadnemu pojedynczemu źródłu.\nTa aplikacja jest całkowicie darmowa i otwartoźródłowa. Jeśli znajdziesz wersję z ceną lub reklamami, jest fałszywa — natychmiast ją odinstaluj.</string>
+    <string name="disclaimer_title">Zastrzeżenie</string>
+    <string name="disclaimer_summary">Wyświetlane kursy wymiany mają <b>charakter wyłącznie orientacyjny</b>. Pochodzą od zewnętrznych dostawców, mogą być opóźnione lub błędne i <b>nie mogą</b> być używane do handlu, hedgingu, fakturowania ani żadnej decyzji, w której wymagany jest dokładny lub wykonalny kurs. Pełne zastrzeżenie znajduje się w Warunkach korzystania z usługi.\nPodane kursy – nawet jeśli są prawidłowe – mogą różnić się od tych stosowanych przez Twój bank.\nNa koniec: błędy się zdarzają. Nigdy nie ufaj ślepo żadnemu pojedynczemu źródłu.\nTa aplikacja jest całkowicie darmowa i otwartoźródłowa. Jeśli znajdziesz wersję z ceną lub reklamami, jest fałszywa — natychmiast ją odinstaluj.</string>
     <string name="rate_title">Oceń tę aplikację</string>
     <string name="rate_summary">Jeśli chcesz, możesz pomóc innym w odkrywaniu aplikacji Currencies. Kliknij tutaj, aby ocenić aplikację.</string>
-    <string name="category_versioninfo">Informacje o werski</string>
+    <string name="category_versioninfo">Informacje o wersji</string>
     <string name="title_changelog">Dziennik zmian</string>
     <string name="backup_title">Kopia zapasowa i przywracanie</string>
     <string name="backup_summary">Zapisz ustawienia do pliku lub przywróć je z wcześniejszej kopii</string>
@@ -124,7 +124,7 @@
     <string name="picker_active_chip">Aktywne</string>
     <string name="picker_currency_title">Waluta</string>
     <string name="credits_title">Informacje, kwestie prawne i open-source</string>
-    <string name="credits_summary">Polityka prywatności, warunki świadczenia usług, dostępność, kod źródłowy i licencje bibliotek innych firm</string>
+    <string name="credits_summary">Polityka prywatności, warunki korzystania z usługi, dostępność, kod źródłowy i licencje bibliotek innych firm</string>
     <string name="title_credits">Informacje, kwestie prawne i open-source</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Licencja</string>
@@ -139,9 +139,25 @@
     <string name="credit_privacy_policy_subtitle">Nie zbieramy żadnych danych osobowych. Pełne stanowisko dla każdej jurysdykcji.</string>
     <string name="credit_source_title">Kod źródłowy</string>
     <string name="credit_source_subtitle">Otwarte źródło na GitHubie — wnieś wkład lub zgłoś problem.</string>
+    <string name="credit_fork_by">Fork autorstwa %1$s</string>
+    <string name="credit_original_by">Oryginalna aplikacja autorstwa %1$s</string>
+    <!-- What each third-party library does for the app; the maker's name follows -->
+    <string name="credit_lib_androidx">Biblioteki Jetpack</string>
+    <string name="credit_lib_compose">Zestaw narzędzi interfejsu i Material 3</string>
+    <string name="credit_lib_material_components">Komponenty Material Design</string>
+    <string name="credit_lib_material_symbols">Ikony (zaokrąglone)</string>
+    <string name="credit_lib_vico">Wykresy</string>
+    <string name="credit_lib_okhttp">Klient HTTP</string>
+    <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_timber">Rejestrowanie logów</string>
+    <string name="credit_lib_bouncy_castle">Wyprowadzanie klucza Argon2id dla szyfrowanych kopii zapasowych</string>
+    <string name="credit_lib_tink">Szyfrowanie AES-GCM kopii zapasowych</string>
+    <string name="credit_lib_kotlin">Środowisko uruchomieniowe języka i biblioteka standardowa</string>
+    <string name="credit_lib_coroutines">Programowanie asynchroniczne (używane przez inne biblioteki)</string>
+    <string name="credit_lib_okio">Podstawowe operacje we/wy (używane przez OkHttp i Moshi)</string>
     <string name="credit_terms_of_service_title">Warunki korzystania z usługi</string>
     <string name="credit_terms_of_service_subtitle">Warunki użytkowania, wyłączenie odpowiedzialności, informacja o dokładności kursów.</string>
-    <string name="credits_section_legal">Prawne</string>
+    <string name="credits_section_legal">Informacje prawne</string>
     <string name="credits_section_source">Źródło</string>
     <string name="fee_edit_active">Aktywne</string>
     <string name="fee_edit_name">Nazwa</string>

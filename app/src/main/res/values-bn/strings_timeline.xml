@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> থেকে &lt;b>%2$s&lt;/b> পর্যন্ত</string>
+    <string name="activity_timeline_title">&lt;b&gt;%1$s&lt;/b&gt; থেকে &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="rate_average">গড়</string>
     <string name="rate_median">মধ্যক</string>
     <string name="rate_min">সর্বনিম্ন</string>
@@ -11,5 +11,5 @@
     <string name="timeline_five_years">৫ বছর</string>
     <string name="timeline_custom_range">কাস্টম সময়সীমা</string>
     <string name="timeline_share">চার্ট শেয়ার করুন</string>
-    <string name="timeline_no_rates">এই তারিখগুলির জন্য কোনো রেট নেই</string>
+    <string name="timeline_no_rates">এই তারিখগুলির জন্য কোনো হার নেই</string>
 </resources>

@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">Εναλλαγή νομισμάτων</string>
-    <string name="historical_rates_dialog_title">Ιστορικό ισοτιμίας</string>
-    <string name="historical_rates_dialog_toggle">Χρήση ισοτιμίας μιας παρελθούσης ημερομηνίας. Απενεργοποιήστε για χρήση της πιο πρόσφατης.</string>
+    <string name="historical_rates_dialog_title">Ιστορικές ισοτιμίες</string>
+    <string name="historical_rates_dialog_toggle">Χρήση ισοτιμιών μιας συγκεκριμένης ημερομηνίας. Απενεργοποιήστε για να χρησιμοποιούνται πάντα οι πιο πρόσφατες.</string>
     <string name="historical_rates_dialog_now">Τώρα</string>
     <string name="error">Σφάλμα: %s</string>
     <string name="error_generic">Άγνωστο πρόβλημα.</string>
-    <string name="error_http">Ο διακομιστής αποκρίθηκε με HTTP %d</string>
+    <string name="error_http">Ο διακομιστής αποκρίθηκε με HTTP %d.</string>
     <string name="error_timeout">Ο διακομιστής δεν αποκρίθηκε έγκαιρα ή δεν είναι προσβάσιμος.</string>
     <string name="error_no_data">Αδυναμία σύνδεσης με τον διακομιστή.</string>
     <string name="error_empty_response">Ο διακομιστής δεν έχει δεδομένα για αυτό το αίτημα.</string>
-    <string name="error_api_error">Σφάλμα API. Προσπαθήστε αργότερα.</string>
+    <string name="error_api_error">Παρουσιάστηκε σφάλμα API. Δοκιμάστε ξανά αργότερα.</string>
     <string name="error_try_another_api">Ωστόσο, υπάρχουν άλλοι πάροχοι δεδομένων από τους οποίους μπορείτε να επιλέξετε στις ρυθμίσεις. Απλά δοκιμάστε το!</string>
     <string name="menu_settings">Ρυθμίσεις</string>
-    <string name="menu_refresh">Επικαιροποίηση ισοτιμίας</string>
-    <string name="menu_timeline">Διάγραμμα ισοτιμίας</string>
+    <string name="menu_refresh">Ανανέωση ισοτιμιών</string>
+    <string name="menu_timeline">Γράφημα ισοτιμίας</string>
     <string name="menu_quick_conversions">Γρήγορες μετατροπές</string>
     <string name="menu_share">Κοινοποίηση</string>
     <string name="share_footer">Βάσει %1$s, %2$s</string>
     <string name="quick_conversions_title">Γρήγορες μετατροπές</string>
     <string name="quick_conversions_no_rates">Οι ισοτιμίες δεν έχουν φορτωθεί ακόμα.</string>
-    <string name="quick_conversions_fees_applied">Εφαρμοσμένες χρεώσεις: %s</string>
+    <string name="quick_conversions_fees_applied">Προμήθειες που εφαρμόστηκαν: %s</string>
     <string name="tooltip_filter_starred">Εμφάνιση μόνο αγαπημένων νομισμάτων.</string>
     <string name="currency_dropdown_api_hint">Κάτι λείπει; Διαφορετικοί πάροχοι δεδομένων προσφέρουν διαφορετικά νομίσματα. Μεταβείτε στις ρυθμίσεις για να δοκιμάσετε έναν άλλο!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
@@ -34,7 +34,7 @@
     <!-- Home-screen widget -->
     <string name="widget_description">Τελευταία ισοτιμία και τάση 30 ημερών για το ζεύγος που χρησιμοποιήσατε τελευταία ή ένα που επιλέγετε.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
-    <string name="widget_footer_date">Από %s</string>
+    <string name="widget_footer_date">Ενημέρωση: %s</string>
     <string name="widget_footer_empty">Ανοίξτε την εφαρμογή για να φορτώσετε τις ισοτιμίες.</string>
     <string name="widget_no_rate">Η ισοτιμία δεν είναι διαθέσιμη</string>
 
@@ -75,10 +75,28 @@
     <string name="cart_share_empty">Το καλάθι είναι άδειο — τίποτα προς κοινοποίηση.</string>
     <string name="cart_save_empty">Το καλάθι είναι άδειο — τίποτα προς αποθήκευση.</string>
     <string name="cart_share_default_title">Καλάθι</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Έκφραση</string>
+    <string name="cart_export_value">Αξία</string>
+    <string name="cart_export_converted">Μετατροπή</string>
+    <string name="cart_export_fees">Προμήθειες</string>
+    <string name="cart_export_source">Πηγή</string>
+    <string name="cart_export_rates_date">Ημερομηνία ισοτιμιών</string>
+    <string name="cart_export_exported_at">Εξαγωγή στις</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Δεν ήταν δυνατό το άνοιγμα του αρχείου</string>
+    <string name="file_error_read_write">Δεν ήταν δυνατή η ανάγνωση ή η εγγραφή του αρχείου</string>
+    <string name="file_error_no_permission">Δεν υπάρχει άδεια χρήσης αυτού του αρχείου</string>
+    <string name="file_error_damaged">Το αρχείο είναι κατεστραμμένο ή δεν έχει την αναμενόμενη μορφή</string>
+    <string name="file_error_unsupported_version">Το αρχείο προέρχεται από έκδοση του CurrenciX που αυτή η έκδοση δεν μπορεί να διαβάσει</string>
+    <string name="file_error_not_a_cart">Αυτό δεν είναι αρχείο καλαθιού του CurrenciX</string>
+    <string name="file_error_unexpected">Παρουσιάστηκε απρόσμενο σφάλμα</string>
+    <string name="backup_error_encryption">Δεν ήταν δυνατή η κρυπτογράφηση του αντιγράφου ασφαλείας</string>
+    <string name="backup_error_decryption">Δεν ήταν δυνατή η αποκρυπτογράφηση του αντιγράφου ασφαλείας</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Μερικό σύνολο: %1$s %2$s</string>
     <string name="cart_share_converted">Μετατροπή: %1$s %2$s</string>
-    <string name="cart_share_fees">Χρεώσεις: %s%%</string>
+    <string name="cart_share_fees">Προμήθειες: %s%%</string>
     <string name="cart_share_total">Σύνολο: %1$s %2$s</string>
     <string name="cart_unsaved_title">Μη αποθηκευμένες αλλαγές</string>
     <string name="cart_unsaved_save">Αποθήκευση</string>
@@ -105,22 +123,22 @@
     <string name="error_unsupported_timeline">Τα δεδομένα χρονογραμμής δεν υποστηρίζονται από αυτό το API.</string>
     <string name="a11y_search_currencies">Αναζήτηση νομισμάτων</string>
     <string name="a11y_clear_search">Καθαρισμός αναζήτησης</string>
-    <string name="a11y_cart_item_name">Όνομα στοιχείου</string>
+    <string name="a11y_cart_item_name">Όνομα αντικειμένου</string>
     <string name="a11y_chart_summary">Γράφημα ιστορικού συναλλαγματικής ισοτιμίας. Οι στατιστικές — ελάχιστο, μέσο, μέγιστο και τρέχουσα ισοτιμία — εμφανίζονται παρακάτω.</string>
-    <string name="a11y_star_currency">Επισήμανση %1$s</string>
-    <string name="a11y_unstar_currency">Αφαίρεση επισήμανσης από %1$s</string>
+    <string name="a11y_star_currency">Προσθήκη του %1$s στα αγαπημένα</string>
+    <string name="a11y_unstar_currency">Αφαίρεση του %1$s από τα αγαπημένα</string>
     <string name="a11y_action_select">Επιλογή</string>
     <string name="a11y_action_load">Φόρτωση</string>
     <string name="a11y_action_open">Άνοιγμα</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Καρφίτσωμα στην κορυφή</string>
-    <string name="cart_unpin_item">Ξεκαρφίτσωμα στοιχείου</string>
-    <string name="cart_reorder_item">Αναδιάταξη στοιχείου</string>
+    <string name="cart_unpin_item">Ξεκαρφίτσωμα αντικειμένου</string>
+    <string name="cart_reorder_item">Αναδιάταξη αντικειμένου</string>
     <string name="desc_navigate_up">Πλοήγηση προς τα πάνω</string>
     <string name="desc_open_drawer">Άνοιγμα συρταριού πλοήγησης</string>
     <string name="desc_close_drawer">Κλείσιμο συρταριού πλοήγησης</string>
     <string name="desc_more_options">Περισσότερες επιλογές</string>
-    <string name="cart_item_deleted">Το στοιχείο διαγράφηκε</string>
+    <string name="cart_item_deleted">Το αντικείμενο διαγράφηκε</string>
     <string name="cart_cleared">Το καλάθι αδειάστηκε</string>
     <string name="undo">Αναίρεση</string>
     <string name="timeline_retry">Δοκιμάστε ξανά</string>
@@ -130,7 +148,7 @@
     <string name="recent_remove_pair">Το %1$s → %2$s θα αφαιρεθεί από τα πρόσφατα ζεύγη.</string>
     <string name="recent_remove_currency">Το %1$s και τα πρόσφατα ζεύγη που το χρησιμοποιούν θα αφαιρεθούν.</string>
     <string name="cart_section_pinned">Καρφιτσωμένα</string>
-    <string name="cart_section_others">Άλλα στοιχεία</string>
+    <string name="cart_section_others">Άλλα αντικείμενα</string>
     <string name="fallback_banner">%1$s μη διαθέσιμο • Χρησιμοποιείται %2$s</string>
     <string name="process_text_label">Μετατροπή νομίσματος</string>
     <string name="selection_open_app">Άνοιγμα στο %1$s</string>
@@ -147,10 +165,10 @@
     <string name="cart_share_per_person">Ανά άτομο (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">Απομένει στον προϋπολογισμό: %1$s %2$s</string>
     <string name="cart_share_over_budget">Πάνω από τον προϋπολογισμό: %1$s %2$s</string>
-    <string name="cart_menu_extras">Διαχωρισμός, φιλοδώρημα και προϋπολογισμός</string>
+    <string name="cart_menu_extras">Μοιρασιά, φιλοδώρημα και προϋπολογισμός</string>
     <string name="cart_tip_label">Φιλοδώρημα / φόρος</string>
     <string name="cart_tip_row">Φιλοδώρημα / φόρος (%1$s%%)</string>
-    <string name="cart_split_label">Διαχωρισμός σε</string>
+    <string name="cart_split_label">Μοιρασιά σε</string>
     <string name="cart_split_decrease">Λιγότερα άτομα</string>
     <string name="cart_split_increase">Περισσότερα άτομα</string>
     <string name="cart_per_person_row">Ανά άτομο (÷%1$d)</string>

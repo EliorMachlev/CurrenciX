@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="name_aed">Arabískt dírham</string>
+    <string name="name_aed">Arabískt dírham (SAF)</string>
     <string name="name_afn">Afgani</string>
     <string name="name_all">Albanskt lek</string>
     <string name="name_amd">Armenskt dramm</string>
@@ -11,7 +11,7 @@
     <string name="name_awg">Arúbönsk flórína</string>
     <string name="name_azn">Aserskt manat</string>
 
-    <string name="name_bam">Skiptanlegt Bosníu og Hersegóvínu-mark</string>
+    <string name="name_bam">Skiptanlegt mark Bosníu og Hersegóvínu</string>
     <string name="name_bbd">Barbadoskur dalur</string>
     <string name="name_bdt">Bangladessk taka</string>
     <string name="name_bgn">Búlgarskt lef</string>
@@ -31,7 +31,7 @@
     <string name="name_cad">Kanadadalur</string>
     <string name="name_cdf">Kongóskur franki</string>
     <string name="name_chf">Svissneskur franki</string>
-    <string name="name_clf">Unidades de formento (Fjármunakóði)</string>
+    <string name="name_clf">Síleskt Unidad de Fomento (UF)</string>
     <string name="name_clp">Síleskur pesi</string>
     <string name="name_cnh">Kínverskt júan (utan heimalands)</string>
     <string name="name_cny">Kínverskt júan</string>
@@ -74,7 +74,7 @@
 
     <string name="name_idr">Indónesísk rúpía</string>
     <string name="name_ils">Ísraelskur Nýsjekell</string>
-    <string name="name_imp">Manx pund</string>
+    <string name="name_imp">Manarpund</string>
     <string name="name_inr">Indversk rúpía</string>
     <string name="name_iqd">Írakskur denari</string>
     <string name="name_irr">Íranskt ríal</string>
@@ -186,14 +186,14 @@
     <string name="name_wst">Samóatala</string>
 
     <string name="name_xaf">Miðafrískur franki</string>
-    <string name="name_xag">Silfur</string>
-    <string name="name_xau">Gull únsa</string>
+    <string name="name_xag">Silfur (únsa)</string>
+    <string name="name_xau">Gull (únsa)</string>
     <string name="name_xcd">Austurkarabískur dalur</string>
     <string name="name_xdr">Sérstök dráttarréttindi</string>
     <string name="name_xof">Vesturafrískur franki</string>
-    <string name="name_xpd">Palladín</string>
+    <string name="name_xpd">Palladín (únsa)</string>
     <string name="name_xpf">Pólinesískur franki</string>
-    <string name="name_xpt">Platína</string>
+    <string name="name_xpt">Platína (únsa)</string>
 
     <string name="name_yer">Jemenskt ríal</string>
 

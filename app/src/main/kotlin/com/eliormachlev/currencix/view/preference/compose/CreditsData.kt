@@ -10,114 +10,57 @@ private const val URL_PRIVACY_POLICY = "${URL_DOCS_BASE}privacy-policy.md"
 private const val URL_TERMS_OF_SERVICE = "${URL_DOCS_BASE}terms-of-service.md"
 private const val URL_ACCESSIBILITY_STATEMENT = "${URL_DOCS_BASE}accessibility-statement.md"
 
-private val PROJECT_CREDITS =
-    listOf(
-        Credit(
-            title = "CurrenciX",
-            subtitle = "Fork by Elior Machlev",
-            url = URL_REPO,
-        ),
-        Credit(
-            title = "Currencies",
-            subtitle = "Original app by Maximilian Salomon (sal0max)",
-            url = "https://github.com/sal0max/currencies",
-        ),
-    )
-
 private val LICENSE_CREDITS =
     listOf(
         Credit(
             title = "GPL-3.0-or-later",
+            // The licence's own name: not translated.
             subtitle = "GNU General Public License v3.0 or later",
             url = "https://www.gnu.org/licenses/gpl-3.0.html",
         ),
     )
+
+// A third-party library: what it does for the app ([role], translated) and
+// who makes it ([author], a name, not translated).
+private class Library(
+    val title: String,
+    @StringRes val role: Int,
+    val author: String?,
+    val url: String,
+    val license: String,
+)
+
+private const val GOOGLE = "Google"
+private const val SQUARE = "Square"
+private const val JETBRAINS = "JetBrains"
+private const val APACHE_2 = "Apache-2.0"
 
 // Runtime dependencies of the app — kept in sync with app/build.gradle.kts.
 // SPDX identifiers per each project's declared licence. The CI-generated SBOM
 // is the machine-readable source of truth; this list is the user-facing
 // attribution surface required by Apache-2.0 §4(d), MIT notice clause, and
 // similar terms in the other permissive licences below.
-private val LIBRARY_CREDITS =
+private val LIBRARIES =
     listOf(
-        Credit(
-            title = "AndroidX",
-            subtitle = "Jetpack (core, appcompat, lifecycle, preference, window, activity, constraintlayout, swiperefreshlayout) — Google",
-            url = "https://developer.android.com/jetpack/androidx",
-            license = "Apache-2.0",
+        Library("AndroidX", R.string.credit_lib_androidx, GOOGLE, "https://developer.android.com/jetpack/androidx", APACHE_2),
+        Library("Jetpack Compose", R.string.credit_lib_compose, GOOGLE, "https://developer.android.com/jetpack/compose", APACHE_2),
+        Library(
+            "Material Components for Android",
+            R.string.credit_lib_material_components,
+            GOOGLE,
+            "https://github.com/material-components/material-components-android",
+            APACHE_2,
         ),
-        Credit(
-            title = "Jetpack Compose",
-            subtitle = "UI toolkit + Material 3 — Google",
-            url = "https://developer.android.com/jetpack/compose",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Material Components for Android",
-            subtitle = "Material Design components — Google",
-            url = "https://github.com/material-components/material-components-android",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Material Symbols",
-            subtitle = "Icons (Rounded) — Google",
-            url = "https://fonts.google.com/icons",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Vico",
-            subtitle = "Charting — Patryk & Patrick",
-            url = "https://github.com/patrykandpatrick/vico",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "OkHttp",
-            subtitle = "HTTP client — Square",
-            url = "https://square.github.io/okhttp/",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Moshi",
-            subtitle = "JSON parser — Square",
-            url = "https://github.com/square/moshi",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Timber",
-            subtitle = "Logging — Jake Wharton",
-            url = "https://github.com/JakeWharton/timber",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Bouncy Castle",
-            subtitle = "Argon2id key derivation for encrypted backups",
-            url = "https://www.bouncycastle.org/",
-            license = "MIT",
-        ),
-        Credit(
-            title = "Tink",
-            subtitle = "AES-GCM encryption for backups — Google",
-            url = "https://github.com/tink-crypto/tink-java",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Kotlin",
-            subtitle = "Language runtime + standard library — JetBrains",
-            url = "https://kotlinlang.org/",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "kotlinx.coroutines",
-            subtitle = "Async primitives — JetBrains (transitive)",
-            url = "https://github.com/Kotlin/kotlinx.coroutines",
-            license = "Apache-2.0",
-        ),
-        Credit(
-            title = "Okio",
-            subtitle = "I/O primitives — Square (transitive via OkHttp / Moshi)",
-            url = "https://square.github.io/okio/",
-            license = "Apache-2.0",
-        ),
+        Library("Material Symbols", R.string.credit_lib_material_symbols, GOOGLE, "https://fonts.google.com/icons", APACHE_2),
+        Library("Vico", R.string.credit_lib_vico, "Patryk & Patrick", "https://github.com/patrykandpatrick/vico", APACHE_2),
+        Library("OkHttp", R.string.credit_lib_okhttp, SQUARE, "https://square.github.io/okhttp/", APACHE_2),
+        Library("Moshi", R.string.credit_lib_moshi, SQUARE, "https://github.com/square/moshi", APACHE_2),
+        Library("Timber", R.string.credit_lib_timber, "Jake Wharton", "https://github.com/JakeWharton/timber", APACHE_2),
+        Library("Bouncy Castle", R.string.credit_lib_bouncy_castle, null, "https://www.bouncycastle.org/", "MIT"),
+        Library("Tink", R.string.credit_lib_tink, GOOGLE, "https://github.com/tink-crypto/tink-java", APACHE_2),
+        Library("Kotlin", R.string.credit_lib_kotlin, JETBRAINS, "https://kotlinlang.org/", APACHE_2),
+        Library("kotlinx.coroutines", R.string.credit_lib_coroutines, JETBRAINS, "https://github.com/Kotlin/kotlinx.coroutines", APACHE_2),
+        Library("Okio", R.string.credit_lib_okio, SQUARE, "https://square.github.io/okio/", APACHE_2),
     )
 
 fun creditsSections(context: Context): List<CreditsSection> =
@@ -134,9 +77,19 @@ fun creditsSections(context: Context): List<CreditsSection> =
             R.string.credits_section_source,
             listOf(context.credit(R.string.credit_source_title, R.string.credit_source_subtitle, URL_REPO)),
         ),
-        CreditsSection(R.string.credits_section_project, PROJECT_CREDITS),
+        CreditsSection(
+            R.string.credits_section_project,
+            listOf(
+                Credit(title = "CurrenciX", subtitle = context.getString(R.string.credit_fork_by, "Elior Machlev"), url = URL_REPO),
+                Credit(
+                    title = "Currencies",
+                    subtitle = context.getString(R.string.credit_original_by, "Maximilian Salomon (sal0max)"),
+                    url = "https://github.com/sal0max/currencies",
+                ),
+            ),
+        ),
         CreditsSection(R.string.credits_section_license, LICENSE_CREDITS),
-        CreditsSection(R.string.credits_section_libraries, LIBRARY_CREDITS),
+        CreditsSection(R.string.credits_section_libraries, LIBRARIES.map { context.credit(it) }),
     )
 
 private fun Context.credit(
@@ -148,3 +101,12 @@ private fun Context.credit(
     subtitle = getString(subtitleRes),
     url = url,
 )
+
+// "Charting — Patryk & Patrick": the role in the app's language, then the maker.
+private fun Context.credit(library: Library) =
+    Credit(
+        title = library.title,
+        subtitle = library.author?.let { "${getString(library.role)} — $it" } ?: getString(library.role),
+        url = library.url,
+        license = library.license,
+    )

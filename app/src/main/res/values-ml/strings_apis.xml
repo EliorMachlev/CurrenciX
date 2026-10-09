@@ -2,7 +2,7 @@
 <resources>
     <string name="api_bankOfCanada_descriptionFull"><a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>ബാങ്ക് ഓഫ് കാനഡ</b></a>-യുടെ ദൈനംദിന ശരാശരി വിനിമയ നിരക്കുകൾ.\n<b>ഏകദേശം 23 കറൻസികൾ ഉൾപ്പെടുന്നു.</b></string>
     <string name="api_bankOfCanada_descriptionShort">ഏകദേശം 23 വിനിമയ നിരക്കുകൾ\nഉറവിടം: കാനഡയുടെ കേന്ദ്ര ബാങ്ക്</string>
-    <string name="api_bankOfCanada_descriptionUpdateInterval">നിരക്കുകൾ ഓരോ പ്രവൃത്തി ദിനത്തിലും 16:30 ET-ന് പ്രസിദ്ധീകരിക്കുന്നു</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">നിരക്കുകൾ ഓരോ പ്രവൃത്തി ദിനത്തിലും ഒരിക്കൽ 16:30 ET-ന് മുമ്പായി പ്രസിദ്ധീകരിക്കുന്നു</string>
 
     <string name="api_bankOfIsrael_descriptionFull">ഇസ്രായേലി കേന്ദ്ര ബാങ്ക് <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>ബാങ്ക് ഓഫ് ഇസ്രായേൽ</b></a> പ്രസിദ്ധീകരിക്കുന്ന പ്രാതിനിധ്യ വിനിമയ നിരക്കുകൾ. നിരക്കുകൾ ഇസ്രായേലി പുതിയ ഷെക്കലിനെതിരെ ഉദ്ധരിച്ചിരിക്കുന്നു.\n<b>ബാങ്ക് ഓഫ് ഇസ്രായേൽ ഏകദേശം 14 വിനിമയ നിരക്കുകൾ പട്ടികപ്പെടുത്തുന്നു.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">ഏകദേശം 14 വിനിമയ നിരക്കുകൾ\nഉറവിടം: ഇസ്രായേലിന്റെ കേന്ദ്ര ബാങ്ക്</string>
@@ -19,7 +19,7 @@
     <string name="api_frankfurterApp_descriptionShort">ഏകദേശം 30 വിനിമയ നിരക്കുകൾ\nഉറവിടം: യൂറോപ്യൻ കേന്ദ്ര ബാങ്ക്</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">ഓരോ പ്രവൃത്തി ദിനത്തിലും ഏകദേശം 16:00 CET-ന് ഡാറ്റ അപ്ഡേറ്റ് ചെയ്യുന്നു.</string>
 
-    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> യൂറോപ്യൻ കമ്മീഷന്റെ യൂറോയ്ക്കായുള്ള ഔദ്യോഗിക പ്രതിമാസ അക്കൗണ്ടിംഗ് നിരക്കും ധനകാര്യ നിയന്ത്രണത്തിന്റെ ആർട്ടിക്കിൾ 19-ന് അനുസൃതമായി യൂറോപ്യൻ കമ്മീഷന്റെ അക്കൗണ്ടിംഗ് ഓഫീസർ സ്ഥാപിച്ച പരിവർത്തന നിരക്കുകളും നൽകുന്നു.\nയൂറോപ്യൻ കമ്മീഷന്റെ അഭ്യർത്ഥന പ്രകാരം മീറ്റിംഗുകൾ, അഭിമുഖങ്ങൾ തുടങ്ങിയവയിൽ പങ്കെടുക്കുന്ന ബാഹ്യ ജനങ്ങൾക്ക് ചെലവുകൾ, യാത്ര അല്ലെങ്കിൽ ജീവനാംശ ചെലവുകൾ എന്നിവയുടെ റീഇംബേഴ്‌സ്‌മെന്റ് കണക്കാക്കാൻ ഈ നിരക്കുകൾ ഉപയോഗിക്കുന്നു.\n<b>ഏകദേശം 150 കറൻസികൾ ഉൾപ്പെടുന്നു.</b></string>
+    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> യൂറോപ്യൻ കമ്മീഷന്റെ യൂറോയ്ക്കായുള്ള ഔദ്യോഗിക പ്രതിമാസ അക്കൗണ്ടിംഗ് നിരക്കും ധനകാര്യ നിയന്ത്രണത്തിന്റെ ആർട്ടിക്കിൾ 19-ന് അനുസൃതമായി യൂറോപ്യൻ കമ്മീഷന്റെ അക്കൗണ്ടിംഗ് ഓഫീസർ സ്ഥാപിച്ച പരിവർത്തന നിരക്കുകളും നൽകുന്നു.\nയൂറോപ്യൻ കമ്മീഷന്റെ അഭ്യർത്ഥന പ്രകാരം മീറ്റിംഗുകൾ, അഭിമുഖങ്ങൾ തുടങ്ങിയവയിൽ പങ്കെടുക്കുന്ന പുറത്തുനിന്നുള്ള വ്യക്തികൾക്ക് ചെലവുകൾ, യാത്ര അല്ലെങ്കിൽ ജീവനാംശ ചെലവുകൾ എന്നിവയുടെ റീഇംബേഴ്‌സ്‌മെന്റ് കണക്കാക്കാൻ ഈ നിരക്കുകൾ ഉപയോഗിക്കുന്നു.\n<b>ഏകദേശം 150 കറൻസികൾ ഉൾപ്പെടുന്നു.</b></string>
     <string name="api_inforEuro_descriptionShort">ഏകദേശം 150 വിനിമയ നിരക്കുകൾ\nഉറവിടം: യൂറോപ്യൻ കമ്മീഷൻ</string>
     <string name="api_inforEuro_descriptionUpdateInterval">സൂചിപ്പിക്കുന്ന നിരക്കുകൾ, യൂറോപ്യൻ കേന്ദ്ര ബാങ്ക് ഉദ്ധരിച്ചതുപോലെ അല്ലെങ്കിൽ ലഭ്യതയനുസരിച്ച് ആ തീയതിക്ക് അടുത്തുള്ള പ്രതിനിധി സംഘങ്ങളോ മറ്റ് ഉചിതമായ ഉറവിടങ്ങളോ നൽകുന്നതുപോലെ, മുൻ മാസത്തിലെ അവസാനത്തിനു തൊട്ടു മുൻപുള്ള ദിവസത്തെ വിപണി നിരക്കുകളാണ്.</string>
     <string name="api_inforEuro_hint">നിരക്കുകൾ മാസത്തിലൊരിക്കൽ മാത്രമേ അപ്ഡേറ്റ് ചെയ്യുന്നുള്ളൂ!</string>

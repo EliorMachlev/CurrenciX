@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">baskuligi valutojn</string>
-    <string name="historical_rates_dialog_title">Historiaj tarifoj</string>
-    <string name="historical_rates_dialog_toggle">Uzi kurzojn de specifa dato. Malebligi, por ĉiam preni la plej freŝajn.</string>
+    <string name="desc_toggle_currencies">interŝanĝi valutojn</string>
+    <string name="historical_rates_dialog_title">Historiaj kurzoj</string>
+    <string name="historical_rates_dialog_toggle">Uzi la kurzojn de difinita dato. Malŝaltu por ĉiam uzi la plej freŝajn.</string>
     <string name="historical_rates_dialog_now">Nun</string>
     <string name="error">Eraro: %s</string>
     <string name="error_generic">Nekonata problemo.</string>
@@ -11,36 +11,36 @@
     <string name="error_no_data">Ne eblis konektiĝi al la servilo.</string>
     <string name="error_empty_response">La servilo ne havas datumojn por ĉi tiu peto.</string>
     <string name="error_api_error">Okazis API-eraro. Bonvolu reprovi poste.</string>
-    <string name="error_try_another_api">Tamen, estas aliaj datumprovizantoj, kiujn vi povas elekti en la agordoj. Nur provu ĝin!</string>
+    <string name="error_try_another_api">Tamen, estas aliaj datumprovizantoj, kiujn vi povas elekti en la agordoj. Simple provu!</string>
     <string name="menu_settings">Agordoj</string>
-    <string name="menu_refresh">Refreŝigaj tarifoj</string>
+    <string name="menu_refresh">Refreŝigi kurzojn</string>
     <string name="menu_timeline">Kurza diagramo</string>
     <string name="menu_quick_conversions">Rapidaj konvertoj</string>
     <string name="menu_share">Kunhavigi</string>
     <string name="share_footer">Bazita sur %1$s, %2$s</string>
     <string name="quick_conversions_title">Rapidaj konvertoj</string>
-    <string name="quick_conversions_no_rates">Kursoj ankoraŭ ne ŝargitaj.</string>
+    <string name="quick_conversions_no_rates">Kurzoj ankoraŭ ne ŝargitaj.</string>
     <string name="quick_conversions_fees_applied">Aplikitaj kotizoj: %s</string>
     <string name="tooltip_filter_starred">Montri nur stelumitajn valutojn.</string>
     <string name="currency_dropdown_api_hint">Io mankas? Aliaj datumprovizantoj ofertas malsamajn valutojn. Iru al la agordoj por provi alian!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="offline_banner_with_date">Senreta • Kursoj de %1$s</string>
-    <string name="offline_banner_no_data">Senreta • Ankoraŭ neniuj kaŝmemorigitaj kursoj</string>
-    <string name="unreachable_banner_with_date">Provizanto neatingebla • Kursoj de %1$s</string>
-    <string name="unreachable_banner_no_data">Provizanto neatingebla • Reprovanta</string>
-    <string name="historical_banner">Historia • Kursoj de %1$s</string>
+    <string name="offline_banner_with_date">Senreta • Kurzoj de %1$s</string>
+    <string name="offline_banner_no_data">Senreta • Ankoraŭ neniuj kaŝmemorigitaj kurzoj</string>
+    <string name="unreachable_banner_with_date">Provizanto neatingebla • Kurzoj de %1$s</string>
+    <string name="unreachable_banner_no_data">Provizanto neatingebla • Reprovante</string>
+    <string name="historical_banner">Historia • Kurzoj de %1$s</string>
     <string name="fee_chip_label">Kotizo de %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Lasta kurzo kaj 30-taga tendenco por via laste uzita valutparo, aŭ unu, kiun vi elektas.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
-    <string name="widget_footer_date">Ekde %s</string>
-    <string name="widget_footer_empty">Malfermu la aplikaĵon por ŝargi kursojn.</string>
-    <string name="widget_no_rate">Kurso nedisponebla</string>
+    <string name="widget_footer_date">Aktuala je %s</string>
+    <string name="widget_footer_empty">Malfermu la aplikaĵon por ŝargi kurzojn.</string>
+    <string name="widget_no_rate">Kurzo nedisponebla</string>
 
     <!-- Shopping cart -->
     <string name="cart_title">Aĉetkorbo</string>
-    <string name="cart_empty_hint">Via korbo estas malplena. Tuŝetu "Aldoni eron" por komenci.</string>
+    <string name="cart_empty_hint">Via korbo estas malplena. Tuŝetu “Aldoni eron” por komenci.</string>
     <string name="cart_add_item">Aldoni eron</string>
     <string name="cart_item_name_hint">Ero</string>
     <string name="cart_item_expression_hint">Prezo (ekz. 2 × 3,50)</string>
@@ -54,7 +54,7 @@
     <string name="cart_menu_export">Eksporti al dosiero</string>
     <string name="cart_menu_import">Importi el dosiero</string>
     <string name="cart_menu_clear">Vakigi</string>
-    <string name="cart_share_option_text">Plata teksto</string>
+    <string name="cart_share_option_text">Simpla teksto</string>
     <string name="cart_share_option_text_desc">Formatita resumo, kiun vi povas alglui en babilejo aŭ notaplikaĵo.</string>
     <string name="cart_share_option_csv">CSV</string>
     <string name="cart_share_option_csv_desc">Kalkultabela dosiero kun unu vico po ero.</string>
@@ -62,19 +62,37 @@
     <string name="cart_share_option_pdf_desc">Presebla dokumento kvitanc-stila.</string>
     <string name="cart_save_name_hint">Nomo de korbo</string>
     <string name="cart_default_saved_name">Mia korbo</string>
-    <string name="cart_saved_toast">Konservita kiel "%s"</string>
+    <string name="cart_saved_toast">Konservita kiel “%s”</string>
     <string name="cart_no_saved">Ankoraŭ neniuj konservitaj korboj.</string>
     <string name="cart_rename">Renomi</string>
     <string name="cart_rename_title">Renomi korbon</string>
-    <string name="cart_delete_confirm">Ĉu forigi "%s"?</string>
+    <string name="cart_delete_confirm">Ĉu forigi “%s”?</string>
     <string name="cart_delete_confirm_button">Forigi</string>
     <string name="cart_export_ok">Korbo eksportita.</string>
     <string name="cart_export_error">Eksporto malsukcesis: %s</string>
     <string name="cart_import_ok">Korbo importita.</string>
     <string name="cart_import_error">Importo malsukcesis: %s</string>
-    <string name="cart_share_empty">Korbo estas malplena — nenio por dividi.</string>
+    <string name="cart_share_empty">Korbo estas malplena — nenio por kunhavigi.</string>
     <string name="cart_save_empty">Korbo estas malplena — nenio por konservi.</string>
     <string name="cart_share_default_title">Korbo</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Esprimo</string>
+    <string name="cart_export_value">Valoro</string>
+    <string name="cart_export_converted">Konvertita</string>
+    <string name="cart_export_fees">Kotizoj</string>
+    <string name="cart_export_source">Fonto</string>
+    <string name="cart_export_rates_date">Dato de la kurzoj</string>
+    <string name="cart_export_exported_at">Eksportita je</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Ne eblis malfermi la dosieron</string>
+    <string name="file_error_read_write">Ne eblis legi aŭ skribi la dosieron</string>
+    <string name="file_error_no_permission">Mankas permeso uzi ĉi tiun dosieron</string>
+    <string name="file_error_damaged">La dosiero estas difektita aŭ ne havas la atendatan formaton</string>
+    <string name="file_error_unsupported_version">La dosiero venas de versio de CurrenciX, kiun ĉi tiu ne povas legi</string>
+    <string name="file_error_not_a_cart">Ĉi tio ne estas korbo-dosiero de CurrenciX</string>
+    <string name="file_error_unexpected">Io neatendita misfunkciis</string>
+    <string name="backup_error_encryption">Ne eblis ĉifri la sekurkopion</string>
+    <string name="backup_error_decryption">Ne eblis malĉifri la sekurkopion</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Subtotalo: %1$s %2$s</string>
     <string name="cart_share_converted">Konvertita: %1$s %2$s</string>
@@ -105,31 +123,31 @@
     <string name="error_unsupported_timeline">Templiniaj datumoj ne estas subtenataj de ĉi tiu API.</string>
     <string name="a11y_search_currencies">Serĉi valutojn</string>
     <string name="a11y_clear_search">Vakigi serĉon</string>
-    <string name="a11y_cart_item_name">Nomo de artikolo</string>
-    <string name="a11y_chart_summary">Diagramo de historio de kurzoj. Statistikoj — minimumo, mezumo, maksimumo, kaj nuna kurzo — montriĝas sube.</string>
-    <string name="a11y_star_currency">Steligi %1$s</string>
-    <string name="a11y_unstar_currency">Malsteligi %1$s</string>
+    <string name="a11y_cart_item_name">Nomo de ero</string>
+    <string name="a11y_chart_summary">Diagramo de historio de kurzoj. Statistikoj — minimumo, mezumo, maksimumo kaj nuna kurzo — montriĝas sube.</string>
+    <string name="a11y_star_currency">Stelumi %1$s</string>
+    <string name="a11y_unstar_currency">Malstelumi %1$s</string>
     <string name="a11y_action_select">Elekti</string>
     <string name="a11y_action_load">Ŝargi</string>
     <string name="a11y_action_open">Malfermi</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
-    <string name="cart_pin_item">Alpingli artikolon supre</string>
-    <string name="cart_unpin_item">Depingli artikolon</string>
-    <string name="cart_reorder_item">Reordigi artikolon</string>
+    <string name="cart_pin_item">Alpingli eron supre</string>
+    <string name="cart_unpin_item">Depingli eron</string>
+    <string name="cart_reorder_item">Reordigi eron</string>
     <string name="desc_navigate_up">Navigi supren</string>
     <string name="desc_open_drawer">Malfermi navigan tirkeston</string>
     <string name="desc_close_drawer">Fermi navigan tirkeston</string>
     <string name="desc_more_options">Pliaj opcioj</string>
     <string name="cart_item_deleted">Ero forigita</string>
-    <string name="cart_cleared">Ĉaro malplenigita</string>
+    <string name="cart_cleared">Korbo malplenigita</string>
     <string name="undo">Malfari</string>
     <string name="timeline_retry">Reprovi</string>
     <string name="timeline_change_provider">Ŝanĝi provizanton</string>
     <string name="recent_pair_switch">Ŝanĝi al %1$s → %2$s</string>
     <string name="recent_remove_title">Forigi el historio</string>
-    <string name="recent_remove_pair">%1$s → %2$s estos forigita el la lastaj paroj.</string>
-    <string name="recent_remove_currency">%1$s kaj la lastaj paroj, kiuj uzas ĝin, estos forigitaj.</string>
-    <string name="cart_section_pinned">Fiksitaj</string>
+    <string name="recent_remove_pair">%1$s → %2$s estos forigita el la lastatempaj paroj.</string>
+    <string name="recent_remove_currency">%1$s kaj la lastatempaj paroj, kiuj uzas ĝin, estos forigitaj.</string>
+    <string name="cart_section_pinned">Alpinglitaj</string>
     <string name="cart_section_others">Aliaj eroj</string>
     <string name="fallback_banner">%1$s ne disponeblas • Uzante %2$s</string>
     <string name="process_text_label">Konverti valuton</string>
@@ -141,8 +159,8 @@
     <string name="shortcut_pair_long">Konverti %1$s al %2$s</string>
     <string name="widget_configure_title">Fenestraĵo</string>
     <string name="widget_follow_converter_title">Sekvi la konvertilon</string>
-    <string name="widget_follow_converter_summary">Montri la paron, kiun vi laste uzis en la apo</string>
-    <string name="done">Farita</string>
+    <string name="widget_follow_converter_summary">Montri la paron, kiun vi laste uzis en la aplikaĵo</string>
+    <string name="done">Preta</string>
     <string name="cart_share_tip">Trinkmono / imposto (%1$s%%): %2$s %3$s</string>
     <string name="cart_share_per_person">Po persono (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">Restas en buĝeto: %1$s %2$s</string>
@@ -157,8 +175,4 @@
     <string name="cart_budget_label">Buĝeto</string>
     <string name="cart_budget_left_row">Restas en buĝeto</string>
     <string name="cart_over_budget_row">Super buĝeto</string>
-    <string name="timeline_five_years">5 jaroj</string>
-    <string name="timeline_custom_range">Propra periodo</string>
-    <string name="timeline_share">Kunhavigi diagramon</string>
-    <string name="timeline_no_rates">Neniuj kurzoj por ĉi tiuj datoj</string>
 </resources>

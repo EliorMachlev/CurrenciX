@@ -19,6 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupResult
+import com.eliormachlev.currencix.repository.FileFailure
+import com.eliormachlev.currencix.repository.fileFailureMessage
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
@@ -128,7 +130,11 @@ private fun runImport(
 ) {
     when (val result = viewModel.runImport(uri, password)) {
         is BackupResult.Success -> snackbar.showOrToast(context, context.getString(R.string.backup_import_success))
-        is BackupResult.Failure -> snackbar.showOrToast(context, context.getString(R.string.backup_import_failed, result.message))
+        is BackupResult.Failure ->
+            snackbar.showOrToast(
+                context,
+                context.getString(R.string.backup_import_failed, context.fileFailureMessage(result.reason, result.detail)),
+            )
         is BackupResult.PasswordRequired -> viewModel.promptPasswordRetry(uri)
         is BackupResult.WrongPassword -> viewModel.promptPasswordRetry(uri)
     }
@@ -140,9 +146,13 @@ private fun exportResultMessage(
 ): String =
     when (result) {
         is BackupResult.Success -> context.getString(R.string.backup_export_success)
-        is BackupResult.Failure -> context.getString(R.string.backup_export_failed, result.message)
+        is BackupResult.Failure ->
+            context.getString(
+                R.string.backup_export_failed,
+                context.fileFailureMessage(result.reason, result.detail),
+            )
         // Export never asks for / rejects a password; treat these as bugs.
         is BackupResult.PasswordRequired,
         is BackupResult.WrongPassword,
-        -> context.getString(R.string.backup_export_failed, "unexpected state")
+        -> context.getString(R.string.backup_export_failed, context.fileFailureMessage(FileFailure.UNEXPECTED, result.toString()))
     }

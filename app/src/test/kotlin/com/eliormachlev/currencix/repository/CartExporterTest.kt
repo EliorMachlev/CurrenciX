@@ -33,7 +33,10 @@ class CartExporterTest {
 
     private fun fileWith(json: String): Uri = Uri.fromFile(files.newFile().apply { writeText(json) })
 
-    private fun failure(json: String): String = (exporter.import(fileWith(json)) as CartFileResult.Failure).message
+    // The technical detail of a refusal; the user sees only its reason.
+    private fun failure(json: String): String? = (exporter.import(fileWith(json)) as CartFileResult.Failure).detail
+
+    private fun reason(json: String): FileFailure = (exporter.import(fileWith(json)) as CartFileResult.Failure).reason
 
     @Test
     fun `an exported cart imports back unchanged`() {
@@ -51,11 +54,13 @@ class CartExporterTest {
     @Test
     fun `a file that isn't a cart is refused before its payload is read`() {
         assertEquals("Not a cart file", failure("""{"version":$CART_FILE_SCHEMA_VERSION,"type":"backup","cart":{}}"""))
+        assertEquals(FileFailure.NOT_A_CART, reason("""{"version":$CART_FILE_SCHEMA_VERSION,"type":"backup","cart":{}}"""))
     }
 
     @Test
     fun `a cart file without a cart is refused`() {
         assertEquals("Malformed cart payload", failure("""{"version":$CART_FILE_SCHEMA_VERSION,"type":"cart"}"""))
+        assertEquals(FileFailure.DAMAGED, reason("""{"version":$CART_FILE_SCHEMA_VERSION,"type":"cart"}"""))
     }
 
     @Test

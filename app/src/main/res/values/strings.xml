@@ -136,6 +136,24 @@
     <string name="cart_share_empty">Cart is empty — nothing to share.</string>
     <string name="cart_save_empty">Cart is empty — nothing to save.</string>
     <string name="cart_share_default_title">Cart</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Expression</string>
+    <string name="cart_export_value">Value</string>
+    <string name="cart_export_converted">Converted</string>
+    <string name="cart_export_fees">Fees</string>
+    <string name="cart_export_source">Source</string>
+    <string name="cart_export_rates_date">Rates date</string>
+    <string name="cart_export_exported_at">Exported at</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Couldn\'t open the file</string>
+    <string name="file_error_read_write">Couldn\'t read or write the file</string>
+    <string name="file_error_no_permission">No permission to use this file</string>
+    <string name="file_error_damaged">The file is damaged or isn\'t in the expected format</string>
+    <string name="file_error_unsupported_version">This file comes from a version of CurrenciX that this one can\'t read</string>
+    <string name="file_error_not_a_cart">This isn\'t a CurrenciX cart file</string>
+    <string name="file_error_unexpected">Something unexpected went wrong</string>
+    <string name="backup_error_encryption">Couldn\'t encrypt the backup</string>
+    <string name="backup_error_decryption">Couldn\'t decrypt the backup</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
     <string name="cart_share_converted">Converted: %1$s %2$s</string>

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">переключить валюты</string>
+    <string name="desc_toggle_currencies">поменять валюты местами</string>
     <string name="historical_rates_dialog_title">Исторические курсы валют</string>
-    <string name="historical_rates_dialog_toggle">Использовать обменные курсы от определённой даты. Отключите, чтобы всегда получать актуальные.</string>
+    <string name="historical_rates_dialog_toggle">Использовать обменные курсы на определённую дату. Отключите, чтобы всегда получать актуальные.</string>
     <string name="historical_rates_dialog_now">Сейчас</string>
     <string name="error">Ошибка: %s</string>
     <string name="error_generic">Неизвестная проблема.</string>
-    <string name="error_http">Сервер ответил HTTP кодом %d.</string>
-    <string name="error_timeout">Сервер не ответил вовремя, или недоступен.</string>
-    <string name="error_no_data">Невозможно подключиться к серверу.</string>
+    <string name="error_http">Сервер вернул код HTTP %d.</string>
+    <string name="error_timeout">Сервер не ответил вовремя или недоступен.</string>
+    <string name="error_no_data">Не удалось подключиться к серверу.</string>
     <string name="error_empty_response">У сервера нет данных для этого запроса.</string>
     <string name="error_api_error">Произошла ошибка API. Пожалуйста, попробуйте позже.</string>
-    <string name="error_try_another_api">Однако в настройках можно выбрать и других поставщиков данных. Просто попробуйте!</string>
-    <string name="error_no_api_key">Для использования этого источника необходимо установить действительный ключ API.</string>
-    <string name="error_invalid_api_key">HTTP 401 - Пожалуйста, проверьте ваш ключ API.</string>
-    <string name="error_unsupported_timeline">Данные о графике не поддерживаются с этим API.</string>
+    <string name="error_try_another_api">Однако в настройках можно выбрать другой источник данных. Просто попробуйте!</string>
+    <string name="error_no_api_key">Для использования этого источника необходимо указать действительный ключ API.</string>
+    <string name="error_invalid_api_key">HTTP 401 – проверьте ключ API.</string>
+    <string name="error_unsupported_timeline">Этот API не поддерживает данные для графика.</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_refresh">Обновить курсы валют</string>
     <string name="menu_timeline">График обменного курса</string>
@@ -26,17 +26,17 @@
     <string name="quick_conversions_fees_applied">Применённые комиссии: %s</string>
     <string name="tooltip_filter_starred">Показывать только избранные валюты.</string>
     <string name="a11y_delete">Удалить</string>
-    <string name="currency_dropdown_api_hint">Чего-то не хватает? Разные поставщики данных предлагают разные валюты. Зайдите в настройки и попробуйте другого! 🤗</string>
+    <string name="currency_dropdown_api_hint">Чего-то не хватает? Разные источники данных предлагают разные валюты. Зайдите в настройки и попробуйте другой!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсы от %1$s</string>
     <string name="offline_banner_no_data">Офлайн • Кэшированных курсов ещё нет</string>
-    <string name="unreachable_banner_with_date">Провайдер недоступен • Курсы от %1$s</string>
-    <string name="unreachable_banner_no_data">Провайдер недоступен • Повтор</string>
-    <string name="historical_banner">Исторические • Курсы от %1$s</string>
+    <string name="unreachable_banner_with_date">Источник недоступен • Курсы от %1$s</string>
+    <string name="unreachable_banner_no_data">Источник недоступен • Повтор</string>
+    <string name="historical_banner">Исторические данные • Курсы от %1$s</string>
     <string name="fee_chip_label">Комиссия %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Последний курс и тренд за 30 дней для последней использованной валютной пары или выбранной вами.</string>
+    <string name="widget_description">Актуальный курс и динамика за 30 дней для последней использованной валютной пары или выбранной вами.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">На %s</string>
     <string name="widget_footer_empty">Откройте приложение, чтобы загрузить курсы.</string>
@@ -63,7 +63,7 @@
     <string name="cart_share_option_csv">CSV</string>
     <string name="cart_share_option_csv_desc">Табличный файл с одной строкой на позицию.</string>
     <string name="cart_share_option_pdf">PDF</string>
-    <string name="cart_share_option_pdf_desc">Печатный документ в стиле чека.</string>
+    <string name="cart_share_option_pdf_desc">Документ для печати в виде чека.</string>
     <string name="cart_save_name_hint">Название корзины</string>
     <string name="cart_default_saved_name">Моя корзина</string>
     <string name="cart_saved_toast">Сохранено как «%s»</string>
@@ -76,13 +76,31 @@
     <string name="cart_export_error">Ошибка экспорта: %s</string>
     <string name="cart_import_ok">Корзина импортирована.</string>
     <string name="cart_import_error">Ошибка импорта: %s</string>
-    <string name="cart_share_empty">Корзина пуста — нечего отправить.</string>
+    <string name="cart_share_empty">Корзина пуста — нечем поделиться.</string>
     <string name="cart_save_empty">Корзина пуста — нечего сохранять.</string>
     <string name="cart_share_default_title">Корзина</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Выражение</string>
+    <string name="cart_export_value">Цена</string>
+    <string name="cart_export_converted">Конвертировано</string>
+    <string name="cart_export_fees">Комиссии</string>
+    <string name="cart_export_source">Источник</string>
+    <string name="cart_export_rates_date">Дата курсов</string>
+    <string name="cart_export_exported_at">Экспортировано</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">не удалось открыть файл</string>
+    <string name="file_error_read_write">не удалось прочитать или записать файл</string>
+    <string name="file_error_no_permission">нет разрешения на доступ к этому файлу</string>
+    <string name="file_error_damaged">файл повреждён или имеет неверный формат</string>
+    <string name="file_error_unsupported_version">файл создан в версии CurrenciX, которую эта версия не может прочитать</string>
+    <string name="file_error_not_a_cart">это не файл корзины CurrenciX</string>
+    <string name="file_error_unexpected">произошла непредвиденная ошибка</string>
+    <string name="backup_error_encryption">не удалось зашифровать резервную копию</string>
+    <string name="backup_error_decryption">не удалось расшифровать резервную копию</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Промежуточный итог: %1$s %2$s</string>
     <string name="cart_share_converted">Конвертировано: %1$s %2$s</string>
-    <string name="cart_share_fees">Комиссия: %s%%</string>
+    <string name="cart_share_fees">Комиссии: %s%%</string>
     <string name="cart_share_total">Итого: %1$s %2$s</string>
     <string name="cart_unsaved_title">Несохранённые изменения</string>
     <string name="cart_unsaved_save">Сохранить</string>
@@ -96,7 +114,7 @@
     <string name="onboarding_skip">Пропустить</string>
     <string name="onboarding_next">Далее</string>
     <string name="onboarding_finish">Понятно</string>
-    <string name="onboarding_fee_title">Комиссии в реальной стоимости</string>
+    <string name="onboarding_fee_title">Комиссии и реальная стоимость</string>
     <string name="onboarding_fee_body">Нажмите здесь, чтобы добавить наценки или скидки — они применяются к сумме в целевой валюте, поэтому вы видите ровно ту сумму, которую действительно заплатите.</string>
     <string name="onboarding_swap_title">Поменять валюты местами</string>
     <string name="onboarding_swap_body">Нажмите кнопку переключения, чтобы поменять местами базовую и целевую валюты. Удерживайте её, чтобы открыть комиссии.</string>
@@ -120,17 +138,17 @@
     <string name="desc_open_drawer">Открыть панель навигации</string>
     <string name="desc_close_drawer">Закрыть панель навигации</string>
     <string name="desc_more_options">Другие параметры</string>
-    <string name="cart_item_deleted">Элемент удалён</string>
+    <string name="cart_item_deleted">Позиция удалена</string>
     <string name="cart_cleared">Корзина очищена</string>
     <string name="undo">Отменить</string>
     <string name="timeline_retry">Повторить</string>
     <string name="timeline_change_provider">Сменить источник</string>
     <string name="recent_pair_switch">Переключиться на %1$s → %2$s</string>
     <string name="recent_remove_title">Удалить из истории</string>
-    <string name="recent_remove_pair">%1$s → %2$s будет удалена из недавних пар.</string>
+    <string name="recent_remove_pair">Пара %1$s → %2$s будет удалена из недавних.</string>
     <string name="recent_remove_currency">%1$s и недавние пары с ней будут удалены.</string>
     <string name="cart_section_pinned">Закреплённые</string>
-    <string name="cart_section_others">Другие товары</string>
+    <string name="cart_section_others">Другие позиции</string>
     <string name="fallback_banner">%1$s недоступен • Используется %2$s</string>
     <string name="process_text_label">Конвертировать валюту</string>
     <string name="selection_open_app">Открыть в %1$s</string>
@@ -147,7 +165,7 @@
     <string name="cart_share_per_person">На человека (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">Осталось в бюджете: %1$s %2$s</string>
     <string name="cart_share_over_budget">Сверх бюджета: %1$s %2$s</string>
-    <string name="cart_menu_extras">Разделить, чаевые и бюджет</string>
+    <string name="cart_menu_extras">Разделение, чаевые и бюджет</string>
     <string name="cart_tip_label">Чаевые / налог</string>
     <string name="cart_tip_row">Чаевые / налог (%1$s%%)</string>
     <string name="cart_split_label">Разделить на</string>

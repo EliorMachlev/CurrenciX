@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.view.cart
 import android.content.Context
 import android.content.Intent
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.CartExportLabels
 import com.eliormachlev.currencix.util.buildCartShareChooser
 import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.util.isNeutralFeeStack
@@ -81,7 +82,7 @@ class CartShareCoordinator(
                 context = context,
                 filename = shareFilename(title, CSV_EXT),
                 mimeType = CSV_MIME,
-                bytes = snapshot.toCsv(title = title).toByteArray(Charsets.UTF_8),
+                bytes = snapshot.toCsv(title = title, labels = CartExportLabels.from(context)).toByteArray(Charsets.UTF_8),
             )
         context.startActivity(chooser)
     }
@@ -93,7 +94,7 @@ class CartShareCoordinator(
                 context = context,
                 filename = shareFilename(title, PDF_EXT),
                 mimeType = PDF_MIME,
-                bytes = snapshot.toPdfBytes(title = title),
+                bytes = snapshot.toPdfBytes(title = title, labels = CartExportLabels.from(context)),
             )
         context.startActivity(chooser)
     }

@@ -2,13 +2,13 @@
 <resources>
     <string name="api_bankOfCanada_descriptionFull">Denní průměrné kurzy banky <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Obsahuje asi 23 měn.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Okolo 23 kurzů\nZdroj: Kanadská centrální banka</string>
-    <string name="api_bankOfCanada_descriptionUpdateInterval">Kurzy jsou zveřejňované každý pracovní den v 16.30 VSČ (22:30 SEČ)</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">Kurzy jsou zveřejňovány jednou každý pracovní den do 16:30 východoamerického času (ET)</string>
     <string name="api_bankOfIsrael_descriptionFull">Reprezentativní směnné kurzy zveřejňované izraelskou centrální bankou <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Kurzy jsou uváděny vůči novému izraelskému šekelu.\n<b>Bank of Israel uvádí přibližně 14 směnných kurzů.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Okolo 14 kurzů\nZdroj: Izraelská centrální banka</string>
-    <string name="api_bankOfIsrael_descriptionUpdateInterval">Reprezentativní kurzy jsou zveřejňovány jednou za každý pracovní den okolo 15:30 izraelského času.</string>
-    <string name="api_bankRossii_descriptionFull">Kurzy poskytované Ruskou centrální bankou <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rosii</b></a>. Při aktuálních sankcích udává tento zdroj nejspíše nejdůvěryhodnější data směnných kurzů na ruský rubl.\n<b>Bank Rosii uvádí přibližně 40 směnných kurzů.</b></string>
+    <string name="api_bankOfIsrael_descriptionUpdateInterval">Reprezentativní kurzy jsou zveřejňovány jednou každý pracovní den kolem 15:30 izraelského času.</string>
+    <string name="api_bankRossii_descriptionFull">Kurzy poskytované Ruskou centrální bankou <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Při současných sankcích poskytuje tento zdroj pravděpodobně nejspolehlivější směnné kurzy pro ruský rubl.\n<b>Bank Rossii uvádí přibližně 44 směnných kurzů.</b></string>
     <string name="api_bankRossii_descriptionShort">Okolo 44 kurzů\nZdroj: Ruská centrální banka</string>
-    <string name="api_bankRossii_descriptionUpdateInterval">Kurzy jsou aktualizovány každý den kromě <a href="https://cbr.ru/eng/other/holidays/">veřejných svátů v Rusku</a>.</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Kurzy jsou aktualizovány každý den kromě <a href="https://cbr.ru/eng/other/holidays/">státních svátků v Rusku</a>.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> je poměrně nová služba, která sleduje referenční směnné kurzy zveřejňované Evropskou centrální bankou (podobně jako Frankfurter.app).\n<b>Je zahrnuto přibližně 30 měn.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">Kurzy jsou aktualizovány každý pracovní den.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> sleduje referenční směnné kurzy zveřejňované Evropskou centrální bankou.\n<b>Je zahrnuto přibližně 30 měn.</b></string>
@@ -16,7 +16,7 @@
     <string name="api_frankfurterApp_descriptionUpdateInterval">Data jsou aktualizována každý pracovní den kolem 16:00 středoevropského času.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_cs"><b>InforEuro</b></a> zajišťuje Evropské komisi oficiální měsíční účetní kurz eura a přepočítací koeficienty, jak je stanoví účetní Evropské komise v souladu s článkem 19 finančního nařízení.\nTyto koeficienty se používají k výpočtu částek na úhradu výdajů, příspěvků na pokrytí nákladů na cestu a pobyt externistů, kteří se u Evropské komise účastní zasedání, pohovorů atp.\n<b>Je zahrnuto přibližně 150 měn.</b></string>
     <string name="api_inforEuro_descriptionShort">Okolo 150 kurzů\nZdroj: Evropská komise</string>
-    <string name="api_inforEuro_descriptionUpdateInterval">Uvedené sazby představují tržní kurzy platné pro druhý až poslední den v předchozím měsíci, jak je stanovila Evropská centrální banka nebo je v závislosti na dostupnosti poskytly delegace či jiné relevantní zdroje k tomuto datu.</string>
+    <string name="api_inforEuro_descriptionUpdateInterval">Uvedené kurzy jsou tržní kurzy platné k předposlednímu dni předchozího měsíce, jak je kotuje Evropská centrální banka, nebo je podle dostupnosti poskytly delegace či jiné vhodné zdroje k datu blízkému tomuto dni.</string>
     <string name="api_inforEuro_hint">Kurzy jsou aktualizovány pouze jednou za měsíc!</string>
     <string name="api_norgesBank_descriptionFull">Kurzy poskytované Norskou centrální bankou <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>Norges Bank uvádí přibližně 40 směnných kurzů.</b></string>
     <string name="api_norgesBank_descriptionShort">Okolo 40 kurzů\nZdroj: Norská centrální banka</string>

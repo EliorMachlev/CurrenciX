@@ -22,32 +22,32 @@
     <string name="menu_settings">ക്രമീകരണങ്ങൾ</string>
     <string name="menu_refresh">നിരക്കുകൾ പുതുക്കുക</string>
     <string name="menu_timeline">വിനിമയ നിരക്ക് ചാർട്ട്</string>
-    <string name="menu_quick_conversions">വേഗത്തിലുള്ള പരിവർത്തനങ്ങൾ</string>
+    <string name="menu_quick_conversions">ദ്രുത പരിവർത്തനങ്ങൾ</string>
     <string name="menu_share">പങ്കിടുക</string>
     <string name="share_footer">%1$s പ്രകാരം, %2$s</string>
-    <string name="quick_conversions_title">വേഗത്തിലുള്ള പരിവർത്തനങ്ങൾ</string>
+    <string name="quick_conversions_title">ദ്രുത പരിവർത്തനങ്ങൾ</string>
     <string name="quick_conversions_no_rates">നിരക്കുകൾ ഇതുവരെ ലോഡ് ചെയ്തിട്ടില്ല.</string>
     <string name="quick_conversions_fees_applied">ബാധകമായ ഫീസുകൾ: %s</string>
 
     <string name="tooltip_filter_starred">നക്ഷത്രമുള്ള കറൻസികൾ മാത്രം കാണിക്കുക.</string>
     <string name="currency_dropdown_api_hint">എന്തെങ്കിലും കാണാനില്ലേ? വ്യത്യസ്ത ഡാറ്റ ദാതാക്കൾ വ്യത്യസ്ത കറൻസികൾ വാഗ്ദാനം ചെയ്യുന്നു. മറ്റൊന്ന് പരീക്ഷിക്കാൻ ക്രമീകരണങ്ങളിലേക്ക് പോകുക!\u00A0\uD83E\uDD17</string>
-    <string name="offline_banner_with_date">ഓഫ്‌ലൈൻ • %1$s മുതലുള്ള നിരക്കുകൾ</string>
+    <string name="offline_banner_with_date">ഓഫ്‌ലൈൻ • %1$s-ലെ നിരക്കുകൾ</string>
     <string name="offline_banner_no_data">ഓഫ്‌ലൈൻ • കാഷെ ചെയ്ത നിരക്കുകൾ ഇതുവരെയില്ല</string>
-    <string name="unreachable_banner_with_date">പ്രൊവൈഡർ ലഭ്യമല്ല • %1$s മുതലുള്ള നിരക്കുകൾ</string>
-    <string name="unreachable_banner_no_data">പ്രൊവൈഡർ ലഭ്യമല്ല • വീണ്ടും ശ്രമിക്കുന്നു</string>
-    <string name="historical_banner">ചരിത്രപരം • %1$s മുതലുള്ള നിരക്കുകൾ</string>
+    <string name="unreachable_banner_with_date">ദാതാവിനെ ബന്ധപ്പെടാനാകുന്നില്ല • %1$s-ലെ നിരക്കുകൾ</string>
+    <string name="unreachable_banner_no_data">ദാതാവിനെ ബന്ധപ്പെടാനാകുന്നില്ല • വീണ്ടും ശ്രമിക്കുന്നു</string>
+    <string name="historical_banner">ചരിത്രപരം • %1$s-ലെ നിരക്കുകൾ</string>
     <string name="fee_chip_label">%1$s ഫീസ്</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">നിങ്ങൾ അവസാനം ഉപയോഗിച്ചതോ തിരഞ്ഞെടുക്കുന്നതോ ആയ കറൻസി ജോഡിയുടെ പുതിയ നിരക്കും 30 ദിവസത്തെ പ്രവണതയും.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s പ്രകാരം</string>
-    <string name="widget_footer_empty">നിരക്കുകൾ ലോഡുചെയ്യാൻ ആപ്പ് തുറക്കുക.</string>
+    <string name="widget_footer_empty">നിരക്കുകൾ ലോഡ് ചെയ്യാൻ ആപ്പ് തുറക്കുക.</string>
     <string name="widget_no_rate">നിരക്ക് ലഭ്യമല്ല</string>
 
     <!-- Shopping cart -->
     <string name="cart_title">ഷോപ്പിംഗ് കാർട്ട്</string>
-    <string name="cart_empty_hint">നിങ്ങളുടെ കാർട്ട് ശൂന്യമാണ്. തുടങ്ങാൻ "ഇനം ചേർക്കുക" ടാപ്പ് ചെയ്യുക.</string>
+    <string name="cart_empty_hint">നിങ്ങളുടെ കാർട്ട് ശൂന്യമാണ്. തുടങ്ങാൻ “ഇനം ചേർക്കുക” ടാപ്പ് ചെയ്യുക.</string>
     <string name="cart_add_item">ഇനം ചേർക്കുക</string>
     <string name="cart_item_name_hint">ഇനം</string>
     <string name="cart_item_expression_hint">വില (ഉദാ. 2 × 3.50)</string>
@@ -56,10 +56,10 @@
     <string name="cart_subtotal_label">ഉപത്തുക</string>
     <string name="cart_total_label">ആകെ</string>
     <string name="cart_menu_save">സംരക്ഷിക്കുക</string>
-    <string name="cart_menu_save_as">ഇപ്രകാരം സംരക്ഷിക്കുക…</string>
-    <string name="cart_menu_load">ലോഡുചെയ്യുക</string>
-    <string name="cart_menu_export">ഫയലിലേക്ക് കയറ്റുമതി ചെയ്യുക</string>
-    <string name="cart_menu_import">ഫയലിൽ നിന്ന് ഇറക്കുമതി ചെയ്യുക</string>
+    <string name="cart_menu_save_as">ഇതായി സംരക്ഷിക്കുക…</string>
+    <string name="cart_menu_load">ലോഡ് ചെയ്യുക</string>
+    <string name="cart_menu_export">ഫയലിലേക്ക് എക്‌സ്‌പോർട്ട് ചെയ്യുക</string>
+    <string name="cart_menu_import">ഫയലിൽ നിന്ന് ഇമ്പോർട്ട് ചെയ്യുക</string>
     <string name="cart_menu_clear">മായ്ക്കുക</string>
     <string name="cart_share_option_text">പ്ലെയിൻ ടെക്സ്റ്റ്</string>
     <string name="cart_share_option_text_desc">ചാറ്റിലേക്കോ നോട്ട്സ് ആപ്പിലേക്കോ ഒട്ടിക്കാവുന്ന ഫോർമാറ്റ് ചെയ്ത സംഗ്രഹം.</string>
@@ -69,19 +69,37 @@
     <string name="cart_share_option_pdf_desc">പ്രിന്റ് ചെയ്യാവുന്ന രസീത് ശൈലിയിലുള്ള രേഖ.</string>
     <string name="cart_save_name_hint">കാർട്ടിന്റെ പേര്</string>
     <string name="cart_default_saved_name">എന്റെ കാർട്ട്</string>
-    <string name="cart_saved_toast">"%s" എന്ന പേരിൽ സംരക്ഷിച്ചു</string>
+    <string name="cart_saved_toast">“%s” എന്ന പേരിൽ സംരക്ഷിച്ചു</string>
     <string name="cart_no_saved">സംരക്ഷിച്ച കാർട്ടുകൾ ഇതുവരെയില്ല.</string>
     <string name="cart_rename">പേരുമാറ്റുക</string>
     <string name="cart_rename_title">കാർട്ടിന്റെ പേരുമാറ്റുക</string>
-    <string name="cart_delete_confirm">"%s" ഇല്ലാതാക്കണോ?</string>
+    <string name="cart_delete_confirm">“%s” ഇല്ലാതാക്കണോ?</string>
     <string name="cart_delete_confirm_button">ഇല്ലാതാക്കുക</string>
-    <string name="cart_export_ok">കാർട്ട് കയറ്റുമതി ചെയ്തു.</string>
-    <string name="cart_export_error">കയറ്റുമതി പരാജയപ്പെട്ടു: %s</string>
-    <string name="cart_import_ok">കാർട്ട് ഇറക്കുമതി ചെയ്തു.</string>
-    <string name="cart_import_error">ഇറക്കുമതി പരാജയപ്പെട്ടു: %s</string>
+    <string name="cart_export_ok">കാർട്ട് എക്‌സ്‌പോർട്ട് ചെയ്തു.</string>
+    <string name="cart_export_error">എക്‌സ്‌പോർട്ട് പരാജയപ്പെട്ടു: %s</string>
+    <string name="cart_import_ok">കാർട്ട് ഇമ്പോർട്ട് ചെയ്തു.</string>
+    <string name="cart_import_error">ഇമ്പോർട്ട് പരാജയപ്പെട്ടു: %s</string>
     <string name="cart_share_empty">കാർട്ട് ശൂന്യമാണ് — പങ്കിടാൻ ഒന്നുമില്ല.</string>
     <string name="cart_save_empty">കാർട്ട് ശൂന്യമാണ് — സംരക്ഷിക്കാൻ ഒന്നുമില്ല.</string>
     <string name="cart_share_default_title">കാർട്ട്</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">കണക്കുകൂട്ടൽ</string>
+    <string name="cart_export_value">വില</string>
+    <string name="cart_export_converted">പരിവർത്തനം ചെയ്തത്</string>
+    <string name="cart_export_fees">ഫീസുകൾ</string>
+    <string name="cart_export_source">ഉറവിടം</string>
+    <string name="cart_export_rates_date">നിരക്കുകളുടെ തീയതി</string>
+    <string name="cart_export_exported_at">എക്‌സ്‌പോർട്ട് ചെയ്ത സമയം</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">ഫയൽ തുറക്കാനായില്ല</string>
+    <string name="file_error_read_write">ഫയൽ വായിക്കാനോ എഴുതാനോ കഴിഞ്ഞില്ല</string>
+    <string name="file_error_no_permission">ഈ ഫയൽ ഉപയോഗിക്കാൻ അനുമതിയില്ല</string>
+    <string name="file_error_damaged">ഫയൽ കേടായതോ പ്രതീക്ഷിച്ച ഫോർമാറ്റിൽ അല്ലാത്തതോ ആണ്</string>
+    <string name="file_error_unsupported_version">ഈ പതിപ്പിന് വായിക്കാനാകാത്ത ഒരു CurrenciX പതിപ്പിൽ നിന്നുള്ളതാണ് ഈ ഫയൽ</string>
+    <string name="file_error_not_a_cart">ഇതൊരു CurrenciX കാർട്ട് ഫയലല്ല</string>
+    <string name="file_error_unexpected">അപ്രതീക്ഷിതമായ ഒരു പിശക് സംഭവിച്ചു</string>
+    <string name="backup_error_encryption">ബാക്കപ്പ് എൻക്രിപ്റ്റ് ചെയ്യാനായില്ല</string>
+    <string name="backup_error_decryption">ബാക്കപ്പ് ഡീക്രിപ്റ്റ് ചെയ്യാനായില്ല</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">ഉപത്തുക: %1$s %2$s</string>
     <string name="cart_share_converted">പരിവർത്തനം ചെയ്തത്: %1$s %2$s</string>
@@ -106,7 +124,7 @@
     <string name="onboarding_autorefresh_title">നിരക്കുകൾ സ്വയമേവ പുതുക്കുക</string>
     <string name="onboarding_autorefresh_body">ആപ്പ് തുറക്കുമ്പോൾ നിരക്കുകൾ പുതുക്കപ്പെടും. ആപ്പ് തുറക്കാത്ത സമയത്തും അവ പുതിയതായി തുടരാൻ പശ്ചാത്തല പുതുക്കൽ ഓണാക്കുക.</string>
     <string name="onboarding_autorefresh_enable">ഇപ്പോൾ ഓണാക്കുക</string>
-    <string name="a11y_delete">നീക്കംചെയ്യുക</string>
+    <string name="a11y_delete">ഇല്ലാതാക്കുക</string>
     <string name="a11y_search_currencies">കറൻസികൾ തിരയുക</string>
     <string name="a11y_clear_search">തിരയൽ മായ്ക്കുക</string>
     <string name="a11y_cart_item_name">ഇനത്തിന്റെ പേര്</string>
@@ -136,7 +154,7 @@
     <string name="cart_section_pinned">പിൻ ചെയ്തവ</string>
     <string name="cart_section_others">മറ്റ് ഇനങ്ങൾ</string>
     <string name="fallback_banner">%1$s ലഭ്യമല്ല • %2$s ഉപയോഗിക്കുന്നു</string>
-    <string name="process_text_label">കറൻസി മാറ്റുക</string>
+    <string name="process_text_label">കറൻസി പരിവർത്തനം ചെയ്യുക</string>
     <string name="selection_open_app">%1$s-ൽ തുറക്കുക</string>
     <string name="selection_copy">പകർത്തുക</string>
     <string name="selection_no_amount">“%1$s” എന്നതിൽ തുകയൊന്നും കണ്ടെത്തിയില്ല.</string>
@@ -144,21 +162,21 @@
     <string name="selection_assumed_currency">ടെക്സ്റ്റിൽ കറൻസിയില്ല, അതിനാൽ %1$s ആയി വായിച്ചു.</string>
     <string name="shortcut_pair_long">%1$s എന്നത് %2$s ആക്കുക</string>
     <string name="widget_configure_title">വിജറ്റ്</string>
-    <string name="widget_follow_converter_title">കൺവെർട്ടറെ പിന്തുടരുക</string>
+    <string name="widget_follow_converter_title">കൺവെർട്ടർ പിന്തുടരുക</string>
     <string name="widget_follow_converter_summary">ആപ്പിൽ അവസാനം ഉപയോഗിച്ച ജോഡി കാണിക്കുക</string>
     <string name="done">പൂർത്തിയായി</string>
     <string name="cart_share_tip">ടിപ്പ് / നികുതി (%1$s%%): %2$s %3$s</string>
     <string name="cart_share_per_person">ഒരാൾക്ക് (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">ബജറ്റിൽ ശേഷിക്കുന്നത്: %1$s %2$s</string>
-    <string name="cart_share_over_budget">ബജറ്റിന് മുകളിൽ: %1$s %2$s</string>
-    <string name="cart_menu_extras">പങ്കിടൽ, ടിപ്പ്, ബജറ്റ്</string>
+    <string name="cart_share_over_budget">ബജറ്റ് കവിഞ്ഞത്: %1$s %2$s</string>
+    <string name="cart_menu_extras">വിഭജനം, ടിപ്പ്, ബജറ്റ്</string>
     <string name="cart_tip_label">ടിപ്പ് / നികുതി</string>
     <string name="cart_tip_row">ടിപ്പ് / നികുതി (%1$s%%)</string>
-    <string name="cart_split_label">പങ്കിടുന്നവർ</string>
-    <string name="cart_split_decrease">കുറച്ച് ആളുകൾ</string>
-    <string name="cart_split_increase">കൂടുതൽ ആളുകൾ</string>
+    <string name="cart_split_label">വിഭജിക്കേണ്ടവർ</string>
+    <string name="cart_split_decrease">ആളുകളെ കുറയ്ക്കുക</string>
+    <string name="cart_split_increase">ആളുകളെ കൂട്ടുക</string>
     <string name="cart_per_person_row">ഒരാൾക്ക് (÷%1$d)</string>
     <string name="cart_budget_label">ബജറ്റ്</string>
     <string name="cart_budget_left_row">ബജറ്റിൽ ശേഷിക്കുന്നത്</string>
-    <string name="cart_over_budget_row">ബജറ്റിന് മുകളിൽ</string>
+    <string name="cart_over_budget_row">ബജറ്റ് കവിഞ്ഞു</string>
 </resources>

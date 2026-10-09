@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="name_aed">UAE-dirhamo</string>
-    <string name="name_afn">Afgana afganio</string>
+    <string name="name_aed">Emirlanda dirhamo</string>
+    <string name="name_afn">Afgana afgano</string>
     <string name="name_all">Albana leko</string>
     <string name="name_amd">Armena dramo</string>
     <string name="name_ang">Nederlandantila guldeno</string>
@@ -11,7 +11,7 @@
     <string name="name_awg">Aruba guldeno</string>
     <string name="name_azn">Azerbajĝana manato</string>
 
-    <string name="name_bam">Bosnio-Hercegovino konvertebla marko</string>
+    <string name="name_bam">Konvertebla marko de Bosnio kaj Hercegovino</string>
     <string name="name_bbd">Barbada dolaro</string>
     <string name="name_bdt">Bangladeŝa tako</string>
     <string name="name_bgn">Bulgara levo</string>
@@ -33,7 +33,7 @@
     <string name="name_cad">Kanada dolaro</string>
     <string name="name_cdf">Konga franko</string>
     <string name="name_chf">Svisa franko</string>
-    <string name="name_clf">Ĉiliaj Unidades de fomento</string>
+    <string name="name_clf">Ĉilia kalkulunuo (UF)</string>
     <string name="name_clp">Ĉilia peso</string>
     <string name="name_cnh">Ĉina renminbi (eksterlanda)</string>
 
@@ -80,7 +80,7 @@
     <string name="name_huf">Hungara forinto</string>
 
     <string name="name_idr">Indonezia rupio</string>
-    <string name="name_ils">Nova israela siklo</string>
+    <string name="name_ils">Nova israela ŝekelo</string>
     <string name="name_imp">Manksa pundo</string>
 
     <string name="name_inr">Barata rupio</string>
@@ -97,8 +97,8 @@
     <string name="name_kgs">Kirgiza somo</string>
     <string name="name_khr">Kamboĝa rielo</string>
     <string name="name_kmf">Komora franko</string>
-    <string name="name_kpw">Nord-korea ŭono</string>
-    <string name="name_krw">Sud-korea ŭono</string>
+    <string name="name_kpw">Nordkorea ŭono</string>
+    <string name="name_krw">Sudkorea ŭono</string>
     <string name="name_kwd">Kuvajta dinaro</string>
     <string name="name_kyd">Kajmana dolaro</string>
     <string name="name_kzt">Kazaĥa tengo</string>
@@ -117,7 +117,7 @@
     <string name="name_mmk">Birma kjato</string>
     <string name="name_mnt">Mongola tugriko</string>
     <string name="name_mop">Makaa patako</string>
-    <string name="name_mro">Maŭritania uguijao</string>
+    <string name="name_mro">Maŭritania uguijao (1973–2017)</string>
     <string name="name_mru">Maŭritania uguijao</string>
 
     <string name="name_mur">Maŭricia rupio</string>
@@ -137,7 +137,7 @@
     <string name="name_omr">Omana rialo</string>
 
     <string name="name_pab">Panama balboo</string>
-    <string name="name_pen">Perua nova suno</string>
+    <string name="name_pen">Perua suno</string>
     <string name="name_pgk">Papuonovgvinea kinao</string>
     <string name="name_php">Filipina peso</string>
     <string name="name_pkr">Pakistana rupio</string>
@@ -161,11 +161,11 @@
     <string name="name_shp">Sankthelena pundo</string>
     <string name="name_sle">Sieraleona leono</string>
 
-    <string name="name_sll">Sieraleona leono</string>
+    <string name="name_sll">Sieraleona leono (antaŭ 07/2022)</string>
     <string name="name_sos">Somalia ŝilingo</string>
     <string name="name_srd">Surinama dolaro</string>
     <string name="name_ssp">Sudsudana pundo</string>
-    <string name="name_std">Saotomea dobro</string>
+    <string name="name_std">Saotomea dobro (1977–2017)</string>
     <string name="name_stn">Saotomea dobro</string>
     <string name="name_svc">Salvadora kolumbo</string>
 
@@ -191,23 +191,23 @@
     <string name="name_uyu">Urugvaja peso</string>
     <string name="name_uzs">Uzbeka somo</string>
 
-    <string name="name_vef">Venezuela bolivaro</string>
+    <string name="name_vef">Venezuela forta bolivaro (malnova)</string>
     <string name="name_ves">Venezuela suverena bolivaro</string>
 
     <string name="name_vnd">Vjetnama dongo</string>
     <string name="name_vuv">Vanuatua vatuo</string>
 
-    <string name="name_wst">Samoa dolaro</string>
+    <string name="name_wst">Samoa talao</string>
 
     <string name="name_xaf">CFA-franko BEAC</string>
-    <string name="name_xag">Arĝento</string>
-    <string name="name_xau">Oro</string>
+    <string name="name_xag">Unco da arĝento</string>
+    <string name="name_xau">Unco da oro</string>
     <string name="name_xcd">Orientkaribia dolaro</string>
-    <string name="name_xdr">Specialaj rajtoj de enspezo</string>
+    <string name="name_xdr">Specialaj tiraj rajtoj</string>
     <string name="name_xof">CFA-franko BCEAO</string>
-    <string name="name_xpd">Paladio</string>
+    <string name="name_xpd">Unco da paladio</string>
     <string name="name_xpf">CFP-franko</string>
-    <string name="name_xpt">Plateno</string>
+    <string name="name_xpt">Unco da plateno</string>
 
     <string name="name_yer">Jemena rialo</string>
 

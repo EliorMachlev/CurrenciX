@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="api_bankOfCanada_descriptionFull">Tỉ lệ chuyển đổi trung bình hàng ngày của <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Ngân hàng Canada</b></a>.\n<b>Có khoảng 23 tiền tệ.</b></string>
-    <string name="api_bankOfCanada_descriptionShort">Khoảng 23 tỉ lệ chuyển đổi\nNguồn: Ngân hàng Trung tâm Canada</string>
-    <string name="api_bankOfCanada_descriptionUpdateInterval">Tỉ lệ được công bố mỗi ngày làm việc một lần trước 16:30 ET</string>
-    <string name="api_bankOfIsrael_descriptionFull">Tỉ lệ chuyển đổi đại diện, được công bố bởi ngân hàng trung ương Israel <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Ngân hàng Israel</b></a>. Tỉ lệ được niêm yết đối với đồng shekel mới của Israel.\n<b>Ngân hàng Israel liệt kê khoảng 14 tỉ lệ chuyển đổi.</b></string>
-    <string name="api_bankOfIsrael_descriptionShort">Khoảng 14 tỉ lệ chuyển đổi\nNguồn: Ngân hàng Trung ương Israel</string>
-    <string name="api_bankOfIsrael_descriptionUpdateInterval">Tỉ lệ đại diện được công bố mỗi ngày làm việc một lần vào khoảng 15:30 giờ Israel.</string>
-    <string name="api_bankRossii_descriptionFull">Tỉ lệ chuyển đổi được cung cấp bởi ngân hàng trung tâm nước Nga <a href="https://cbr.ru/eng/currency_base/daily/"><b>Ngân hàng Rossii</b></a>. Với lệnh cấm vận hiện tại, nguồn này có lẽ là đưa ra tỉ lệ chuyển đổi đồng Ruble Nga đáng tin cậy nhất.\n<b>Ngân hàng Rossii liệt kê khoảng 44 tỉ lệ chuyển đổi.</b></string>
-    <string name="api_bankRossii_descriptionShort">Khoảng 44 tỉ lệ chuyển đổi\nNguồn: Ngân hàng Trung tâm Nga</string>
-    <string name="api_bankRossii_descriptionUpdateInterval">Tỉ lệ được cập nhật hàng ngày, trừ <a href="https://cbr.ru/eng/other/holidays/">những ngày nghỉ toàn nước Nga</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> là một dịch vụ tương đối mới, nó (giống Frankfurter.app) theo dõi tỉ lệ trao đổi tham khảo (ngoại hối) được Ngân hàng trung ương châu Âu xuất bản.\n<b>Có khoảng 30 tiền tệ.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Tỉ lệ được cập nhật mỗi ngày làm việc.</string>
-    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> theo dõi tỉ lệ trao đổi tham khảo (ngoại hối) được Ngân hàng trung ương châu Âu xuất bản.\n<b>Có khoảng 30 tiền tệ.</b></string>
-    <string name="api_frankfurterApp_descriptionShort">Khoảng 30 tỉ lệ chuyển đổi\nNguồn: Ngân hàng Trung ương châu Âu</string>
+    <string name="api_bankOfCanada_descriptionFull">Tỷ giá hối đoái trung bình hằng ngày của <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Ngân hàng Canada</b></a>.\n<b>Có khoảng 23 loại tiền tệ.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Khoảng 23 tỷ giá hối đoái\nNguồn: Ngân hàng Trung ương Canada</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">Tỷ giá được công bố mỗi ngày làm việc một lần, trước 16:30 ET</string>
+    <string name="api_bankOfIsrael_descriptionFull">Tỷ giá đại diện do ngân hàng trung ương Israel <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Ngân hàng Israel</b></a> công bố. Tỷ giá được niêm yết so với đồng shekel mới của Israel.\n<b>Ngân hàng Israel niêm yết khoảng 14 tỷ giá hối đoái.</b></string>
+    <string name="api_bankOfIsrael_descriptionShort">Khoảng 14 tỷ giá hối đoái\nNguồn: Ngân hàng Trung ương Israel</string>
+    <string name="api_bankOfIsrael_descriptionUpdateInterval">Tỷ giá đại diện được công bố mỗi ngày làm việc một lần, vào khoảng 15:30 giờ Israel.</string>
+    <string name="api_bankRossii_descriptionFull">Tỷ giá hối đoái do ngân hàng trung ương Nga <a href="https://cbr.ru/eng/currency_base/daily/"><b>Ngân hàng Nga</b></a> cung cấp. Trong bối cảnh các lệnh trừng phạt hiện nay, đây có lẽ là nguồn tỷ giá đồng rúp Nga đáng tin cậy nhất.\n<b>Ngân hàng Nga niêm yết khoảng 44 tỷ giá hối đoái.</b></string>
+    <string name="api_bankRossii_descriptionShort">Khoảng 44 tỷ giá hối đoái\nNguồn: Ngân hàng Trung ương Nga</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Tỷ giá được cập nhật hằng ngày, trừ <a href="https://cbr.ru/eng/other/holidays/">các ngày lễ ở Nga</a>.</string>
+    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> là một dịch vụ tương đối mới, (giống như Frankfurter.app) theo dõi tỷ giá tham chiếu (ngoại hối) do Ngân hàng Trung ương châu Âu công bố.\n<b>Có khoảng 30 loại tiền tệ.</b></string>
+    <string name="api_ferEe_descriptionUpdateInterval">Tỷ giá được cập nhật mỗi ngày làm việc.</string>
+    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> theo dõi tỷ giá tham chiếu (ngoại hối) do Ngân hàng Trung ương châu Âu công bố.\n<b>Có khoảng 30 loại tiền tệ.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Khoảng 30 tỷ giá hối đoái\nNguồn: Ngân hàng Trung ương châu Âu</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Dữ liệu được cập nhật khoảng 16:00 theo CET mỗi ngày làm việc.</string>
-    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>“InforEuro”</b></a> cung cấp tỷ giá kế toán chính thức cho đồng euro hàng tháng từ Ủy Ban Châu Âu (European Comission) cũng như tỷ lệ chuyển đổi được ấn định bởi Văn Phòng Kế Toán (Accounting Officer) thuộc Ủy Ban Châu Âu theo điều 19 của Quy Chế Tài Chính.\nNhững tỷ giá và tỷ lệ này được dùng để tính số tiền được hoàn trả cho các chi phí sinh hoạt và đi lại của cá nhân ngoài tổ chức đến tham gia hội họp, phỏng vấn, v.v. theo yêu cầu của Ủy Ban Châu Âu.\n<b>Đã bao gồm khoảng 150 đơn vị tiền tệ.</b></string>
-    <string name="api_inforEuro_descriptionShort">Khoảng 150 tỉ lệ chuyển đổi\nNguồn: Ủy ban châu Âu</string>
-    <string name="api_inforEuro_descriptionUpdateInterval">Tỷ giá và tỷ lệ ở đây được lấy từ thị trường, vào ngày áp chót của tháng trước, dựa theo Ngân Hàng Trung Ương Châu Âu (ECB). Tùy vào nguồn dữ liệu sẵn có hay không, tỷ giá và tỷ lệ có thể được lấy từ các nguồn thông tin phù hợp gần với ngày nêu trên.</string>
-    <string name="api_inforEuro_hint">Tỉ lệ chỉ được cập nhật mỗi tháng một lần!</string>
-    <string name="api_norgesBank_descriptionFull">Tỉ lệ được cung cấp bởi ngân hàng trung ương nước Na Uy <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Ngân hàng Norges</b></a>.\n<b>Ngân hàng Norges liệt kê khoảng 40 tỉ lệ chuyển đổi.</b></string>
-    <string name="api_norgesBank_descriptionShort">Khoảng 40 tỉ lệ chuyển đổi\nNguồn: Ngân hàng Trung ương Na Uy</string>
-    <string name="api_norgesBank_descriptionUpdateInterval">Thời gian công bố tỉ lệ chuyển đổi hàng ngày là khoảng 16:00 CET.</string>
-    <string name="api_norgesBank_hint">Dịch vụ thường không hoạt động (HTTP 503), trong khoảng thời gian đó không thể tải lại tỉ lệ!</string>
-    <string name="api_openExchangeRates_descriptionFull">Dữ liệu được theo dõi và kết hợp từ nhiều nguồn đáng tin cậy, việc này đảm bảo các tỉ lệ không bị lệch. Hãy xem <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> để thêm thông tin.\n<b>Open Exchange Rates cung cấp số lượng lớn gồm khoảng 160 tỉ lệ chuyển đổi.\n<i>Để sử dụng Nguồn này, bạn phải nhập mã API cá nhân!</i></b></string>
-    <string name="api_openExchangeRates_descriptionShort">Khoảng 160 tỉ lệ chuyển đổi.\nNguồn: Kết hợp nhiều nhà cung cấp đáng tin cậy.</string>
+    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> cung cấp tỷ giá kế toán chính thức hằng tháng của Ủy ban châu Âu cho đồng euro, cùng các tỷ giá quy đổi do Kế toán trưởng của Ủy ban châu Âu ấn định theo điều 19 của Quy chế Tài chính.\nCác tỷ giá này được dùng để tính số tiền hoàn trả chi phí, chi phí đi lại hoặc sinh hoạt cho người bên ngoài tham gia các cuộc họp, phỏng vấn, v.v. theo yêu cầu của Ủy ban châu Âu.\n<b>Có khoảng 150 loại tiền tệ.</b></string>
+    <string name="api_inforEuro_descriptionShort">Khoảng 150 tỷ giá hối đoái\nNguồn: Ủy ban châu Âu</string>
+    <string name="api_inforEuro_descriptionUpdateInterval">Tỷ giá được nêu là tỷ giá thị trường vào ngày áp chót của tháng trước, theo niêm yết của Ngân hàng Trung ương châu Âu hoặc, tùy theo dữ liệu sẵn có, do các phái đoàn hay các nguồn phù hợp khác cung cấp vào thời điểm gần ngày đó.</string>
+    <string name="api_inforEuro_hint">Tỷ giá chỉ được cập nhật mỗi tháng một lần!</string>
+    <string name="api_norgesBank_descriptionFull">Tỷ giá hối đoái do ngân hàng trung ương Na Uy <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Ngân hàng Na Uy</b></a> cung cấp.\n<b>Ngân hàng Na Uy niêm yết khoảng 40 tỷ giá hối đoái.</b></string>
+    <string name="api_norgesBank_descriptionShort">Khoảng 40 tỷ giá hối đoái\nNguồn: Ngân hàng Trung ương Na Uy</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">Tỷ giá hối đoái hằng ngày được công bố vào khoảng 16:00 CET.</string>
+    <string name="api_norgesBank_hint">Dịch vụ thường xuyên bị gián đoạn (HTTP 503), khi đó không thể làm mới tỷ giá!</string>
+    <string name="api_openExchangeRates_descriptionFull">Dữ liệu được theo dõi và tổng hợp từ nhiều nguồn đáng tin cậy, đảm bảo tỷ giá khách quan. Xem <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> để biết thêm thông tin.\n<b>Open Exchange Rates cung cấp số lượng lớn, khoảng 160 tỷ giá hối đoái.\n<i>Để sử dụng nguồn này, bạn phải nhập khóa API cá nhân!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Khoảng 160 tỷ giá hối đoái\nNguồn: Kết hợp nhiều nhà cung cấp đáng tin cậy.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Cập nhật hàng giờ.</string>
-    <string name="api_openExchangeRates_hint">Để sử dụng Nguồn này, bạn phải tạo mã API cá nhân!</string>
+    <string name="api_openExchangeRates_hint">Để sử dụng nguồn này, bạn phải tạo khóa API cá nhân!</string>
     <string name="api_bankOfCanada_name">Ngân hàng Canada</string>
     <string name="api_bankOfIsrael_name">Ngân hàng Israel</string>
     <string name="api_bankRossii_name">Ngân hàng Nga</string>

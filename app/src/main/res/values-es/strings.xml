@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">alternar monedas</string>
-    <string name="historical_rates_dialog_title">Tasas históricas</string>
-    <string name="historical_rates_dialog_toggle">Utilice los tipos de cambio de una fecha específica. Deshabilitar, para tomar siempre las más recientes.</string>
+    <string name="desc_toggle_currencies">Intercambiar monedas</string>
+    <string name="historical_rates_dialog_title">Tipos históricos</string>
+    <string name="historical_rates_dialog_toggle">Usa los tipos de cambio de una fecha concreta. Desactívalo para usar siempre los más recientes.</string>
     <string name="historical_rates_dialog_now">Ahora</string>
     <string name="error">Error: %s</string>
     <string name="error_generic">Problema desconocido.</string>
-    <string name="error_http">El servidor ha respondido con HTTP %d.</string>
-    <string name="error_timeout">El servidor no ha respondido a tiempo o no está localizable.</string>
+    <string name="error_http">El servidor ha respondido con el código HTTP %d.</string>
+    <string name="error_timeout">El servidor no ha respondido a tiempo o no es accesible.</string>
     <string name="error_no_data">No se ha podido conectar con el servidor.</string>
     <string name="error_empty_response">El servidor no tiene datos para esta solicitud.</string>
-    <string name="error_api_error">Ha habido un error en la API. Por favor, inténtelo de nuevo más tarde.</string>
-    <string name="error_try_another_api">Sin embargo, hay otros proveedores de datos que puedes elegir en los ajustes. ¡Pruébalo!</string>
+    <string name="error_api_error">Se ha producido un error en la API. Inténtalo de nuevo más tarde.</string>
+    <string name="error_try_another_api">Sin embargo, hay otros proveedores de datos que puedes elegir en la configuración. ¡Pruébalo!</string>
     <string name="error_no_api_key">Para poder utilizar esta fuente es necesario disponer de una clave API válida.</string>
-    <string name="error_invalid_api_key">HTTP 401 - Por favor, compruebe su clave API.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Comprueba tu clave API.</string>
     <string name="error_unsupported_timeline">Esta API no admite datos cronológicos.</string>
     <string name="menu_settings">Configuración</string>
-    <string name="menu_refresh">Tarifas de actualización</string>
-    <string name="menu_timeline">Historial de tipos de cambio</string>
+    <string name="menu_refresh">Actualizar tipos</string>
+    <string name="menu_timeline">Gráfico de tipos de cambio</string>
     <string name="menu_quick_conversions">Conversiones rápidas</string>
     <string name="menu_share">Compartir</string>
     <string name="share_footer">Basado en %1$s, %2$s</string>
     <string name="quick_conversions_title">Conversiones rápidas</string>
-    <string name="quick_conversions_no_rates">Las tasas aún no se han cargado.</string>
+    <string name="quick_conversions_no_rates">Los tipos aún no se han cargado.</string>
     <string name="quick_conversions_fees_applied">Comisiones aplicadas: %s</string>
     <string name="tooltip_filter_starred">Mostrar solo las monedas con estrella.</string>
-    <string name="currency_dropdown_api_hint">¿Falta algo? Los distintos proveedores de datos ofrecen monedas diferentes. ¡Ve a la configuración para probar con otra!\u00A0\uD83E\uDD17</string>
+    <string name="currency_dropdown_api_hint">¿Falta algo? Los distintos proveedores de datos ofrecen monedas diferentes. ¡Ve a la configuración para probar con otro! 🤗</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="offline_banner_with_date">Sin conexión • Tarifas del %1$s</string>
-    <string name="offline_banner_no_data">Sin conexión • Aún no hay tarifas en caché</string>
+    <string name="offline_banner_with_date">Sin conexión • Tipos del %1$s</string>
+    <string name="offline_banner_no_data">Sin conexión • Aún no hay tipos en caché</string>
     <string name="unreachable_banner_with_date">Proveedor no disponible • Tipos del %1$s</string>
     <string name="unreachable_banner_no_data">Proveedor no disponible • Reintentando</string>
     <string name="historical_banner">Histórico • Tipos del %1$s</string>
     <string name="fee_chip_label">%1$s de comisión</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Último tipo y tendencia de 30 días de tu último par de monedas o de uno que elijas.</string>
+    <string name="widget_description">Último tipo de cambio y tendencia de 30 días del último par de monedas que usaste o del que elijas.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">A fecha de %s</string>
-    <string name="widget_footer_empty">Abre la app para cargar las tasas.</string>
-    <string name="widget_no_rate">Tasa no disponible</string>
+    <string name="widget_footer_empty">Abre la app para cargar los tipos.</string>
+    <string name="widget_no_rate">Tipo no disponible</string>
 
     <!-- Shopping cart -->
-    <string name="cart_title">Carrito de compras</string>
+    <string name="cart_title">Carrito de la compra</string>
     <string name="cart_empty_hint">Tu carrito está vacío. Toca «Añadir artículo» para empezar.</string>
     <string name="cart_add_item">Añadir artículo</string>
     <string name="cart_item_name_hint">Artículo</string>
@@ -73,12 +73,30 @@
     <string name="cart_delete_confirm">¿Eliminar «%s»?</string>
     <string name="cart_delete_confirm_button">Eliminar</string>
     <string name="cart_export_ok">Carrito exportado.</string>
-    <string name="cart_export_error">Exportación fallida: %s</string>
+    <string name="cart_export_error">Error al exportar: %s</string>
     <string name="cart_import_ok">Carrito importado.</string>
-    <string name="cart_import_error">Importación fallida: %s</string>
+    <string name="cart_import_error">Error al importar: %s</string>
     <string name="cart_share_empty">El carrito está vacío: no hay nada que compartir.</string>
     <string name="cart_save_empty">El carrito está vacío: no hay nada que guardar.</string>
     <string name="cart_share_default_title">Carrito</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Expresión</string>
+    <string name="cart_export_value">Importe</string>
+    <string name="cart_export_converted">Convertido</string>
+    <string name="cart_export_fees">Comisiones</string>
+    <string name="cart_export_source">Fuente</string>
+    <string name="cart_export_rates_date">Fecha de los tipos</string>
+    <string name="cart_export_exported_at">Exportado el</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">No se ha podido abrir el archivo</string>
+    <string name="file_error_read_write">No se ha podido leer ni escribir el archivo</string>
+    <string name="file_error_no_permission">No hay permiso para usar este archivo</string>
+    <string name="file_error_damaged">El archivo está dañado o no tiene el formato esperado</string>
+    <string name="file_error_unsupported_version">Este archivo procede de una versión de CurrenciX que esta no puede leer</string>
+    <string name="file_error_not_a_cart">No es un archivo de carrito de CurrenciX</string>
+    <string name="file_error_unexpected">Se ha producido un error inesperado</string>
+    <string name="backup_error_encryption">No se ha podido cifrar la copia de seguridad</string>
+    <string name="backup_error_decryption">No se ha podido descifrar la copia de seguridad</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
     <string name="cart_share_converted">Convertido: %1$s %2$s</string>
@@ -96,7 +114,7 @@
     <string name="onboarding_skip">Omitir</string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_finish">Entendido</string>
-    <string name="onboarding_fee_title">Comisiones en el coste real</string>
+    <string name="onboarding_fee_title">El coste real, con comisiones</string>
     <string name="onboarding_fee_body">Toca aquí para añadir recargos o descuentos — se aplican en el lado de destino, para que el importe que ves coincida con lo que pagas realmente.</string>
     <string name="onboarding_swap_title">Invertir el par</string>
     <string name="onboarding_swap_body">Toca el botón de inversión para intercambiar la moneda base y la de destino. Mantenlo pulsado para abrir tus comisiones.</string>
@@ -104,7 +122,7 @@
     <string name="onboarding_autorefresh_body">Los tipos de cambio se actualizan al abrir la app. Activa la actualización en segundo plano para que sigan al día entre un uso y otro.</string>
     <string name="onboarding_autorefresh_enable">Activar ahora</string>
     <string name="a11y_delete">Eliminar</string>
-    <string name="a11y_search_currencies">Buscar divisas</string>
+    <string name="a11y_search_currencies">Buscar monedas</string>
     <string name="a11y_clear_search">Borrar búsqueda</string>
     <string name="a11y_cart_item_name">Nombre del artículo</string>
     <string name="a11y_chart_summary">Gráfico del historial del tipo de cambio. Las estadísticas — mínimo, promedio, máximo y tipo actual — se muestran abajo.</string>

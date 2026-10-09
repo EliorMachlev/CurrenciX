@@ -31,9 +31,9 @@
     <string name="name_cad">Dólar canadense</string>
     <string name="name_cdf">Franco congolês</string>
     <string name="name_chf">Franco suíço</string>
-    <string name="name_clf">Unidades de Fomento chilenas</string>
+    <string name="name_clf">Unidade de Fomento chilena (UF)</string>
     <string name="name_clp">Peso chileno</string>
-    <string name="name_cnh">Yuan chinês (Offshore)</string>
+    <string name="name_cnh">Yuan chinês (offshore)</string>
     <string name="name_cny">Yuan chinês</string>
     <string name="name_cop">Peso colombiano</string>
     <string name="name_crc">Colón costarriquenho</string>
@@ -75,7 +75,7 @@
     <string name="name_huf">Florim húngaro</string>
 
     <string name="name_idr">Rupia indonésia</string>
-    <string name="name_ils">Sheqel novo israelita</string>
+    <string name="name_ils">Novo shekel israelense</string>
     <string name="name_imp">Libra manesa</string>
 
     <string name="name_inr">Rupia indiana</string>
@@ -153,8 +153,8 @@
     <string name="name_sek">Coroa sueca</string>
     <string name="name_sgd">Dólar singapuriano</string>
     <string name="name_shp">Libra de Santa Helena</string>
-    <string name="name_sle">Sierra Leonean Leone</string>
-    <string name="name_sll">Leone de Serra Leoa</string>
+    <string name="name_sle">Leone de Serra Leoa</string>
+    <string name="name_sll">Leone de Serra Leoa (até 07/2022)</string>
     <string name="name_sos">Xelim somaliano</string>
     <string name="name_srd">Dólar surinamês</string>
     <string name="name_ssp">Libra sul-sudanesa</string>
@@ -174,28 +174,28 @@
     <string name="name_twd">Novo dólar taiwanês</string>
     <string name="name_tzs">Xelim tanzaniano</string>
 
-    <string name="name_uah">Hryvnia ucraniano</string>
+    <string name="name_uah">Hryvnia ucraniana</string>
     <string name="name_ugx">Xelim ugandense</string>
     <string name="name_usd">Dólar americano</string>
     <string name="name_uyu">Peso uruguaio</string>
     <string name="name_uzs">Som uzbeque</string>
 
-    <string name="name_vef">Bolívar venezuelano</string>
-    <string name="name_ves">Venezuelan Bolívar Soberano</string>
+    <string name="name_vef">Bolívar forte venezuelano (antigo)</string>
+    <string name="name_ves">Bolívar soberano venezuelano</string>
     <string name="name_vnd">Dong vietnamita</string>
     <string name="name_vuv">Vatu vanuatuense</string>
 
     <string name="name_wst">Tala samoano</string>
 
     <string name="name_xaf">Franco CFA de BEAC</string>
-    <string name="name_xag">Prata</string>
-    <string name="name_xau">Ouro</string>
+    <string name="name_xag">Onça de prata</string>
+    <string name="name_xau">Onça de ouro</string>
     <string name="name_xcd">Dólar do Caribe Oriental</string>
     <string name="name_xdr">Direitos Especiais de Giro</string>
     <string name="name_xof">Franco CFA de BCEAO</string>
-    <string name="name_xpd">Paládio</string>
+    <string name="name_xpd">Onça de paládio</string>
     <string name="name_xpf">Franco CFP</string>
-    <string name="name_xpt">Platina</string>
+    <string name="name_xpt">Onça de platina</string>
 
     <string name="name_yer">Rial iemenita</string>
 

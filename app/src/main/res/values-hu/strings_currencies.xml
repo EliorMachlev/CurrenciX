@@ -4,14 +4,14 @@
     <string name="name_afn">Afgán afgáni</string>
     <string name="name_all">Albán lek</string>
     <string name="name_amd">Örmény dram</string>
-    <string name="name_ang">Holland antillákbeli forint</string>
+    <string name="name_ang">Holland antillai forint</string>
     <string name="name_aoa">Angolai kwanza</string>
     <string name="name_ars">Argentin peso</string>
     <string name="name_aud">Ausztrál dollár</string>
     <string name="name_awg">Arubai florin</string>
     <string name="name_azn">Azerbajdzsáni manat</string>
 
-    <string name="name_bam">Bosnyák konvertibilis márka</string>
+    <string name="name_bam">Bosznia-hercegovinai konvertibilis márka</string>
     <string name="name_bbd">Barbadosi dollár</string>
     <string name="name_bdt">Bangladesi taka</string>
     <string name="name_bgn">Bolgár leva</string>
@@ -31,10 +31,10 @@
     <string name="name_cad">Kanadai dollár</string>
     <string name="name_cdf">Kongói frank</string>
     <string name="name_chf">Svájci frank</string>
-    <string name="name_clf">Chilei unidades de fomento</string>
+    <string name="name_clf">Chilei elszámolási egység (UF)</string>
     <string name="name_clp">Chilei peso</string>
-    <string name="name_cnh">Zsenminpi (Offshore)</string>
-    <string name="name_cny">Zsenminpi</string>
+    <string name="name_cnh">Kínai jüan (offshore)</string>
+    <string name="name_cny">Kínai jüan</string>
     <string name="name_cop">Kolumbiai peso</string>
     <string name="name_crc">Costa Rica-i colón</string>
     <string name="name_cuc">Kubai konvertibilis peso</string>
@@ -106,7 +106,7 @@
     <string name="name_mdl">Moldáv lej</string>
     <string name="name_mga">Madagaszkári ariary</string>
     <string name="name_mkd">Macedón dénár</string>
-    <string name="name_mmk">Mianmari kjap</string>
+    <string name="name_mmk">Mianmari kjat</string>
     <string name="name_mnt">Mongol tugrik</string>
     <string name="name_mop">Makaói pataca</string>
     <string name="name_mro">Mauritániai ouguiya (2018 előtt)</string>
@@ -183,14 +183,14 @@
 
     <string name="name_wst">Szamoai tala</string>
 
-    <string name="name_xaf">Közép-afrikai valutaközösségi frank</string>
+    <string name="name_xaf">Közép-afrikai CFA-frank</string>
     <string name="name_xag">Ezüst uncia</string>
     <string name="name_xau">Arany uncia</string>
     <string name="name_xcd">Kelet-karibi dollár</string>
-    <string name="name_xdr">SDR</string>
-    <string name="name_xof">Nyugat-afrikai Valutaközösségi Frank</string>
+    <string name="name_xdr">Különleges lehívási jog (SDR)</string>
+    <string name="name_xof">Nyugat-afrikai CFA-frank</string>
     <string name="name_xpd">Palládium uncia</string>
-    <string name="name_xpf">Csendes-óceáni valutaközösségi frank</string>
+    <string name="name_xpf">CFP-frank</string>
     <string name="name_xpt">Platina uncia</string>
 
     <string name="name_yer">Jemeni riál</string>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> к &lt;b>%2$s&lt;/b></string>
-    <string name="rate_average">средний</string>
+    <string name="rate_average">сред.</string>
     <string name="rate_median">медиана</string>
-    <string name="rate_min">мин</string>
-    <string name="rate_max">макс</string>
+    <string name="rate_min">мин.</string>
+    <string name="rate_max">макс.</string>
     <string name="year">год</string>
     <string name="month">месяц</string>
     <string name="week">неделя</string>

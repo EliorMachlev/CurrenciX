@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">alternar moedas</string>
-    <string name="historical_rates_dialog_title">Taxas históricas</string>
-    <string name="historical_rates_dialog_toggle">Utilize taxas de câmbio de uma data específica. Desabilite, para pegar sempre as mais recentes.</string>
+    <string name="desc_toggle_currencies">inverter moedas</string>
+    <string name="historical_rates_dialog_title">Cotações históricas</string>
+    <string name="historical_rates_dialog_toggle">Use as taxas de câmbio de uma data específica. Desative para usar sempre as mais recentes.</string>
     <string name="historical_rates_dialog_now">Agora</string>
     <string name="error">Erro: %s</string>
     <string name="error_generic">Problema desconhecido.</string>
@@ -14,30 +14,30 @@
     <string name="error_try_another_api">No entanto, há outros provedores de dados que você pode escolher nas configurações. Experimente!</string>
     <string name="error_no_api_key">Uma chave de API válida deve ser definida para usar esta fonte.</string>
     <string name="error_invalid_api_key">HTTP 401 – Por favor, verifique sua chave de API.</string>
-    <string name="error_unsupported_timeline">Os dados de linha do tempo não são suportados por esta API.</string>
+    <string name="error_unsupported_timeline">Esta API não oferece histórico de cotações.</string>
     <string name="menu_settings">Configurações</string>
-    <string name="menu_refresh">Atualizar taxas</string>
+    <string name="menu_refresh">Atualizar cotações</string>
     <string name="menu_timeline">Gráfico da taxa de câmbio</string>
     <string name="menu_quick_conversions">Conversões rápidas</string>
     <string name="menu_share">Compartilhar</string>
     <string name="share_footer">Com base em %1$s, %2$s</string>
     <string name="quick_conversions_title">Conversões rápidas</string>
-    <string name="quick_conversions_no_rates">Taxas ainda não carregadas.</string>
+    <string name="quick_conversions_no_rates">Cotações ainda não carregadas.</string>
     <string name="quick_conversions_fees_applied">Taxas aplicadas: %s</string>
     <string name="tooltip_filter_starred">Mostrar apenas moedas marcadas com estrela.</string>
     <string name="a11y_delete">Excluir</string>
-    <string name="currency_dropdown_api_hint">Está faltando algo? Diferentes provedores de dados oferecem diferentes moedas. Vá para as configurações para tentar outro! 🤗</string>
+    <string name="currency_dropdown_api_hint">Está faltando algo? Cada provedor de dados oferece moedas diferentes. Vá para as configurações e experimente outro! 🤗</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Cotações de %1$s</string>
     <string name="offline_banner_no_data">Offline • Nenhuma cotação em cache</string>
-    <string name="unreachable_banner_with_date">Provedor indisponível • Taxas de %1$s</string>
+    <string name="unreachable_banner_with_date">Provedor indisponível • Cotações de %1$s</string>
     <string name="unreachable_banner_no_data">Provedor indisponível • Tentando novamente</string>
-    <string name="historical_banner">Histórico • Taxas de %1$s</string>
+    <string name="historical_banner">Histórico • Cotações de %1$s</string>
     <string name="fee_chip_label">Taxa de %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Taxa mais recente e tendência de 30 dias do par de moedas usado por último ou de um escolhido por você.</string>
+    <string name="widget_description">Cotação mais recente e tendência de 30 dias do par de moedas usado por último ou de um escolhido por você.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Em %s</string>
     <string name="widget_footer_empty">Abra o app para carregar as cotações.</string>
@@ -80,10 +80,28 @@
     <string name="cart_share_empty">Carrinho vazio — nada para compartilhar.</string>
     <string name="cart_save_empty">Carrinho vazio — nada para salvar.</string>
     <string name="cart_share_default_title">Carrinho</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Expressão</string>
+    <string name="cart_export_value">Valor</string>
+    <string name="cart_export_converted">Convertido</string>
+    <string name="cart_export_fees">Taxas</string>
+    <string name="cart_export_source">Fonte</string>
+    <string name="cart_export_rates_date">Data das cotações</string>
+    <string name="cart_export_exported_at">Exportado em</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Não foi possível abrir o arquivo</string>
+    <string name="file_error_read_write">Não foi possível ler ou gravar o arquivo</string>
+    <string name="file_error_no_permission">Sem permissão para usar este arquivo</string>
+    <string name="file_error_damaged">O arquivo está corrompido ou não está no formato esperado</string>
+    <string name="file_error_unsupported_version">Este arquivo é de uma versão do CurrenciX que esta não consegue ler</string>
+    <string name="file_error_not_a_cart">Este não é um arquivo de carrinho do CurrenciX</string>
+    <string name="file_error_unexpected">Ocorreu um erro inesperado</string>
+    <string name="backup_error_encryption">Não foi possível criptografar o backup</string>
+    <string name="backup_error_decryption">Não foi possível descriptografar o backup</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
     <string name="cart_share_converted">Convertido: %1$s %2$s</string>
-    <string name="cart_share_fees">Tarifas: %s%%</string>
+    <string name="cart_share_fees">Taxas: %s%%</string>
     <string name="cart_share_total">Total: %1$s %2$s</string>
     <string name="cart_unsaved_title">Alterações não salvas</string>
     <string name="cart_unsaved_save">Salvar</string>
@@ -107,7 +125,7 @@
     <string name="a11y_search_currencies">Pesquisar moedas</string>
     <string name="a11y_clear_search">Limpar pesquisa</string>
     <string name="a11y_cart_item_name">Nome do item</string>
-    <string name="a11y_chart_summary">Gráfico do histórico da taxa de câmbio. As estatísticas — mínima, média, máxima e taxa atual — são exibidas abaixo.</string>
+    <string name="a11y_chart_summary">Gráfico do histórico da taxa de câmbio. As estatísticas — mínima, média, máxima e cotação atual — são exibidas abaixo.</string>
     <string name="a11y_star_currency">Marcar %1$s com estrela</string>
     <string name="a11y_unstar_currency">Remover estrela de %1$s</string>
     <string name="a11y_action_select">Selecionar</string>

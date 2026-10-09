@@ -2,31 +2,31 @@
 <resources>
     <string name="api_bankOfCanada_descriptionFull">میانگین روزانه نرخ ارز <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>بانک کانادا</b></a>.\n<b>حدود 23 ارز گنجانده شده است.</b></string>
     <string name="api_bankOfCanada_descriptionShort">حدود 23 نرخ ارز\nمنبع: بانک مرکزی کانادا</string>
-    <string name="api_bankOfCanada_descriptionUpdateInterval">نرخ ها یک بار در هر روز کاری تا ساعت 16:30 ET منتشر می شود</string>
-    <string name="api_bankOfIsrael_descriptionFull">نرخ‌های ارز نمایندگی، همانطور که توسط بانک مرکزی اسرائیل <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>بانک اسرائیل</b></a> منتشر می‌شود. نرخ‌ها در برابر شکل جدید اسرائیل ذکر می‌شوند.\n<b>بانک اسرائیل حدود 14 نرخ ارز را فهرست کرده است.</b></string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">نرخ‌ها هر روز کاری یک بار تا ساعت 16:30 ET منتشر می‌شوند</string>
+    <string name="api_bankOfIsrael_descriptionFull">نرخ‌های رسمی ارز، همان‌طور که بانک مرکزی اسرائیل، <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>بانک اسرائیل</b></a>، منتشر می‌کند. نرخ‌ها در برابر شقل جدید اسرائیل اعلام می‌شوند.\n<b>بانک اسرائیل حدود 14 نرخ ارز را فهرست می‌کند.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">حدود 14 نرخ ارز\nمنبع: بانک مرکزی اسرائیل</string>
-    <string name="api_bankOfIsrael_descriptionUpdateInterval">نرخ‌های نمایندگی یک بار در هر روز کاری در حدود ساعت 15:30 به وقت اسرائیل منتشر می‌شود.</string>
-    <string name="api_bankRossii_descriptionFull">نرخ ارز، همانطور که توسط بانک مرکزی روسیه <a href="https://cbr.ru/eng/currency_base/daily/"><b>بانک Rossii</b></a> ارائه شده است. با تحریم های فعلی، این منبع احتمالاً مطمئن ترین نرخ های مبادله روبل روسیه را ارائه می دهد.\n<b>بانک روسی 44 نرخ ارز را فهرست کرده است.</b></string>
+    <string name="api_bankOfIsrael_descriptionUpdateInterval">نرخ‌های رسمی هر روز کاری یک بار، حدود ساعت 15:30 به وقت اسرائیل، منتشر می‌شوند.</string>
+    <string name="api_bankRossii_descriptionFull">نرخ‌های ارز، همان‌طور که بانک مرکزی روسیه، <a href="https://cbr.ru/eng/currency_base/daily/"><b>بانک روسیه</b></a>، ارائه می‌کند. با تحریم‌های کنونی، این منبع احتمالاً معتبرترین نرخ‌ها را برای روبل روسیه ارائه می‌دهد.\n<b>بانک روسیه حدود 44 نرخ ارز را فهرست می‌کند.</b></string>
     <string name="api_bankRossii_descriptionShort">حدود 44 نرخ ارز\nمنبع: بانک مرکزی روسیه</string>
-    <string name="api_bankRossii_descriptionUpdateInterval">نرخ ها به طور روزانه به روز می شوند، به جز در <a href="https://cbr.ru/eng/other/holidays/">تعطیلات رسمی در روسیه</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> یک سرویس نسبتاً جدید است که (درست مانند Frankfurter.app) مبادلات مرجع (فارکس) را ردیابی می کند. نرخ هایی که توسط بانک مرکزی اروپا منتشر می شود.\n<b>حدود 30 ارز گنجانده شده است.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">نرخ ها هر روز کاری به روز می شوند.</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">نرخ‌ها هر روز به‌روز می‌شوند، به‌جز در <a href="https://cbr.ru/eng/other/holidays/">تعطیلات رسمی روسیه</a>.</string>
+    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> سرویسی نسبتاً جدید است که (درست مانند Frankfurter.app) نرخ‌های مرجع ارز (فارکس) منتشرشده توسط بانک مرکزی اروپا را دنبال می‌کند.\n<b>حدود 30 ارز گنجانده شده است.</b></string>
+    <string name="api_ferEe_descriptionUpdateInterval">نرخ‌ها هر روز کاری به‌روز می‌شوند.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> نرخ‌های مبادله مرجع (forex) منتشر شده توسط بانک مرکزی اروپا را دنبال می‌کند.\n<b>حدود 30 ارز گنجانده شده است.</b></string>
     <string name="api_frankfurterApp_descriptionShort">حدود 30 نرخ ارز\nمنبع: بانک مرکزی اروپا</string>
-    <string name="api_frankfurterApp_descriptionUpdateInterval">داده ها در حدود ساعت 16:00 CET هر روز کاری به روز می شوند.</string>
+    <string name="api_frankfurterApp_descriptionUpdateInterval">داده‌ها هر روز کاری حدود ساعت 16:00 CET به‌روز می‌شوند.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> نرخ حسابداری ماهانهٔ رسمی کمیسیون اروپا برای یورو و نیز نرخ‌های تبدیلی را ارائه می‌کند که مسئول حسابداری کمیسیون اروپا مطابق با مادهٔ 19 آیین‌نامهٔ مالی تعیین کرده است.\nاین نرخ‌ها برای محاسبهٔ مبالغ بازپرداخت هزینه‌ها و هزینه‌های سفر یا معاش افراد بیرونی به کار می‌روند که به درخواست کمیسیون اروپا در جلسات، مصاحبه‌ها و غیره شرکت می‌کنند.\n<b>حدود 150 ارز گنجانده شده است.</b></string>
 
     <string name="api_inforEuro_descriptionShort">حدود 150 نرخ ارز\nمنبع: کمیسیون اروپا</string>
-    <string name="api_inforEuro_descriptionUpdateInterval">نرخ‌های نشان‌داده‌شده، نرخ‌های بازار برای دومین تا آخرین روز ماه قبل است که توسط بانک مرکزی اروپا نقل‌شده است یا بسته به در دسترس بودن، توسط هیئت‌های نمایندگی یا سایر منابع مناسب نزدیک به آن تاریخ ارائه شده است.</string>
-    <string name="api_inforEuro_hint">نرخ ها فقط یک بار در ماه به روز می شوند!</string>
-    <string name="api_norgesBank_descriptionFull">نرخ ارز، همانطور که توسط بانک مرکزی نروژ ارائه شده است <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a> .\n<b>Norges Bank حدود 40 نرخ ارز را فهرست کرده است.</b></string>
+    <string name="api_inforEuro_descriptionUpdateInterval">نرخ‌های نشان‌داده‌شده، نرخ‌های بازار در روز یکی مانده به آخر ماه قبل هستند، همان‌طور که بانک مرکزی اروپا اعلام کرده است، یا بسته به در دسترس بودن، نرخ‌هایی که هیئت‌های نمایندگی یا دیگر منابع مناسب در تاریخی نزدیک به آن ارائه کرده‌اند.</string>
+    <string name="api_inforEuro_hint">نرخ‌ها فقط ماهی یک بار به‌روز می‌شوند!</string>
+    <string name="api_norgesBank_descriptionFull">نرخ‌های ارز، همان‌طور که بانک مرکزی نروژ، <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>، ارائه می‌کند.\n<b>Norges Bank حدود 40 نرخ ارز را فهرست می‌کند.</b></string>
     <string name="api_norgesBank_descriptionShort">حدود 40 نرخ ارز\nمنبع: بانک مرکزی نروژ</string>
     <string name="api_norgesBank_descriptionUpdateInterval">زمان انتشار نرخ ارز روزانه تقریباً 16:00 CET است.</string>
-    <string name="api_norgesBank_hint">سرویس به طور منظم دارای خرابی هایی است (HTTP 503)، که در طی آن نرخ ها نمی توانند تجدید شوند!</string>
-    <string name="api_openExchangeRates_descriptionFull">داده ها از چندین منبع قابل اعتماد ردیابی و ترکیب می شوند و نرخ های بی طرفانه را تضمین می کنند. برای اطلاعات بیشتر به <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> مراجعه کنید.\n<b>Open Exchange Rates مقدار زیادی از حدود 160 نرخ ارز را فراهم می کند.\n<i>برای استفاده از این منبع، باید کلید API شخصی خود را وارد کنید!</i></b></string>
-    <string name="api_openExchangeRates_descriptionShort">حدود 160 نرخ ارز\nمنبع: ترکیبی از چندین ارائه دهنده قابل اعتماد.</string>
-    <string name="api_openExchangeRates_descriptionUpdateInterval">به روز رسانی ساعتی.</string>
-    <string name="api_openExchangeRates_hint">برای استفاده از این منبع، باید کلید API شخصی خود را ایجاد کنید!</string>
+    <string name="api_norgesBank_hint">این سرویس مرتباً از دسترس خارج می‌شود (HTTP 503) و در این مدت نرخ‌ها به‌روز نمی‌شوند!</string>
+    <string name="api_openExchangeRates_descriptionFull">داده‌ها از چندین منبع معتبر گردآوری و ترکیب می‌شوند تا نرخ‌هایی بی‌طرفانه به دست آید. برای اطلاعات بیشتر به <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> مراجعه کنید.\n<b>Open Exchange Rates شمار زیادی، حدود 160 نرخ ارز، ارائه می‌کند.\n<i>برای استفاده از این ارائه‌دهنده، باید کلید API شخصی خود را وارد کنید!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">حدود 160 نرخ ارز\nمنبع: ترکیبی از چندین ارائه‌دهندهٔ معتبر.</string>
+    <string name="api_openExchangeRates_descriptionUpdateInterval">به‌روزرسانی ساعتی.</string>
+    <string name="api_openExchangeRates_hint">برای استفاده از این ارائه‌دهنده، باید کلید API شخصی خود را ایجاد کنید!</string>
     <string name="api_bankOfCanada_name">بانک کانادا</string>
     <string name="api_bankOfIsrael_name">بانک اسرائیل</string>
     <string name="api_bankRossii_name">بانک روسیه</string>

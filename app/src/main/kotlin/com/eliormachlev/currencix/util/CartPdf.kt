@@ -29,12 +29,13 @@ private const val META_TEXT_SIZE = 10f
 // multi-page pagination if user carts start exceeding ~40 rows.
 fun CartSnapshot.toPdfBytes(
     title: String,
+    labels: CartExportLabels,
     generatedAt: LocalDateTime = LocalDateTime.now(),
 ): ByteArray {
     val document = PdfDocument()
     val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH_PT, PAGE_HEIGHT_PT, 1).create()
     val page = document.startPage(pageInfo)
-    drawSnapshot(page.canvas, title, generatedAt)
+    drawSnapshot(page.canvas, title, labels, generatedAt)
     document.finishPage(page)
 
     val out = ByteArrayOutputStream()
@@ -46,6 +47,7 @@ fun CartSnapshot.toPdfBytes(
 private fun CartSnapshot.drawSnapshot(
     canvas: Canvas,
     title: String,
+    labels: CartExportLabels,
     generatedAt: LocalDateTime,
 ) {
     val titlePaint = paint(TITLE_TEXT_SIZE, bold = true)
@@ -61,13 +63,13 @@ private fun CartSnapshot.drawSnapshot(
     y += META_LINE_HEIGHT_PT
 
     cartExportMeta(generatedAt).forEach { (field, value) ->
-        canvas.drawText("${field.label}: $value", PAGE_MARGIN_PT, y, metaPaint)
+        canvas.drawText("${labels.meta.getValue(field)}: $value", PAGE_MARGIN_PT, y, metaPaint)
         y += META_LINE_HEIGHT_PT
     }
     y += SECTION_GAP_PT + LINE_HEIGHT_PT - META_LINE_HEIGHT_PT
 
-    canvas.drawText("Item", PAGE_MARGIN_PT, y, headerPaint)
-    canvas.drawText("Value (${baseCurrency.iso4217Alpha()})", rightX, y, headerPaint.apply { textAlign = Paint.Align.RIGHT })
+    canvas.drawText(labels.item, PAGE_MARGIN_PT, y, headerPaint)
+    canvas.drawText(withUnit(labels.value, baseCurrency.iso4217Alpha()), rightX, y, headerPaint.apply { textAlign = Paint.Align.RIGHT })
     y += LINE_HEIGHT_PT
 
     evaluatedItems.forEach { (item, value) ->
@@ -78,24 +80,24 @@ private fun CartSnapshot.drawSnapshot(
     }
 
     y += SECTION_GAP_PT
-    canvas.drawText("Subtotal", PAGE_MARGIN_PT, y, headerPaint.apply { textAlign = Paint.Align.LEFT })
+    canvas.drawText(labels.subtotal, PAGE_MARGIN_PT, y, headerPaint.apply { textAlign = Paint.Align.LEFT })
     canvas.drawText("${subtotal.toCartDisplayString()} ${baseCurrency.iso4217Alpha()}", rightX, y, bodyRight)
     y += LINE_HEIGHT_PT
 
     if (isConverting) {
-        canvas.drawText("Converted", PAGE_MARGIN_PT, y, bodyPaint)
+        canvas.drawText(labels.converted, PAGE_MARGIN_PT, y, bodyPaint)
         canvas.drawText("${convertedSubtotal.toCartDisplayString()} ${destinationCurrency.iso4217Alpha()}", rightX, y, bodyRight)
         y += LINE_HEIGHT_PT
     }
     val combinedStack = feeStack
     if (!combinedStack.isNeutralFeeStack()) {
-        canvas.drawText("Fees", PAGE_MARGIN_PT, y, bodyPaint)
+        canvas.drawText(labels.fees, PAGE_MARGIN_PT, y, bodyPaint)
         canvas.drawText("${combinedStack.feePercentDelta().toPlainString()}%", rightX, y, bodyRight)
         y += LINE_HEIGHT_PT
     }
 
     y += SECTION_GAP_PT
-    canvas.drawText("Total", PAGE_MARGIN_PT, y, headerPaint.apply { textAlign = Paint.Align.LEFT })
+    canvas.drawText(labels.total, PAGE_MARGIN_PT, y, headerPaint.apply { textAlign = Paint.Align.LEFT })
     canvas.drawText(
         "${total.toCartDisplayString()} ${destinationCurrency.iso4217Alpha()}",
         rightX,

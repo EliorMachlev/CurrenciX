@@ -3,7 +3,7 @@
 <resources>
     <!-- main settings -->
     <string name="category_settings">一般設定</string>
-    <string name="fee_title">外匯手續費</string>
+    <string name="fee_title">國外交易手續費</string>
     <string name="fee_summary">管理匯兌、銀行/信用卡以及特定貨幣對的手續費</string>
     <string name="fee_manager_title">手續費</string>
     <string name="fee_section_global_exchange">全域匯兌手續費</string>
@@ -19,21 +19,21 @@
     <string name="fee_true_cost_prefix">"換算費："</string>
     <string name="fee_cost_with_fee_prefix">"含手續費成本："</string>
     <string name="fee_empty">尚無手續費</string>
-    <string name="previewConversion_title">匯率預覽</string>
-    <string name="previewConversion_summary">在選擇貨幣頁面顯示目前匯率</string>
+    <string name="previewConversion_title">換算預覽</string>
+    <string name="previewConversion_summary">在貨幣選擇器中顯示每種貨幣目前的換算結果。</string>
     <string name="keyboard_title">鍵盤</string>
-    <string name="keyboard_summary_expanded">新增額外的快捷鍵,加快輸入速度。</string>
+    <string name="keyboard_summary_expanded">新增額外的快捷鍵，加快輸入速度。</string>
     <string name="decimal_places_title">小數精度</string>
     <string name="haptic_feedback_title">觸覺回饋</string>
-    <string name="haptic_feedback_summary">按鍵時震動\n跟隨系統設定</string>
+    <string name="haptic_feedback_summary">在應用程式中輕觸時震動\n跟隨系統設定\n省電模式下自動停用</string>
     <string name="auto_refresh_title">自動更新匯率</string>
     <string name="auto_refresh_summary">依資料來源建議的頻率在背景更新</string>
     <string name="date_format_title">日期與時間格式</string>
     <string name="category_appearance">應用程式外觀</string>
     <string name="system_default">系統預設值</string>
-    <string name="theme_title">風格</string>
-    <string name="theme_option_light">亮色</string>
-    <string name="theme_option_dark">暗色</string>
+    <string name="theme_title">主題</string>
+    <string name="theme_option_light">淺色</string>
+    <string name="theme_option_dark">深色</string>
     <string name="theme_option_oled">OLED</string>
     <string name="theme_option_system_oled">系統預設值 (OLED)</string>
     <!-- graph options -->
@@ -49,7 +49,7 @@
     <string name="language_ar">阿拉伯文</string>
     <string name="language_bg">保加利亞文</string>
     <string name="language_bn">孟加拉文</string>
-    <string name="language_ca">加泰隆尼亞語</string>
+    <string name="language_ca">加泰隆尼亞文</string>
     <string name="language_cs">捷克文</string>
     <string name="language_da">丹麥文</string>
     <string name="language_de">德文</string>
@@ -59,7 +59,7 @@
     <string name="language_eo">世界語</string>
     <string name="language_es">西班牙文</string>
     <string name="language_et">愛沙尼亞文</string>
-    <string name="language_fa">波斯語</string>
+    <string name="language_fa">波斯文</string>
     <string name="language_fr">法文</string>
     <string name="language_hr">克羅埃西亞文</string>
     <string name="language_hu">匈牙利文</string>
@@ -84,20 +84,20 @@
     <string name="category_api">匯率</string>
     <string name="api_title">資料來源</string>
     <string name="api_open_exchangerates_api_key_title">Open Exchangerates API 金鑰</string>
-    <string name="api_open_exchangerates_api_key_message">要使用這個來源，您必須建立您的個人 API 金鑰。\n\n請移駕到 https://openexchangerates.org/signup/free 建立免費帳號以取得個人金鑰。\n最後，在儀表版建立一個新 App ID 然後在這邊輸入：</string>
+    <string name="api_open_exchangerates_api_key_message">要使用此資料來源，您必須建立個人 API 金鑰。\n\n請前往 https://openexchangerates.org/signup/free 建立免費帳號。\n最後，在 Dashboard 中產生新的 App ID，然後在這裡輸入：</string>
     <string name="api_open_exchangerates_api_key_missing"><i>需要 API 金鑰</i></string>
     <string name="api_about_title">關於 %s</string>
     <string name="api_refreshPeriod_title">更新週期</string>
     <!-- about -->
-    <string name="category_about">關於這個 App</string>
+    <string name="category_about">關於此應用程式</string>
     <string name="disclaimer_title">免責聲明</string>
     <string name="disclaimer_summary">顯示的匯率<b>僅供參考</b>。它們來自第三方提供者，可能有延遲或錯誤，<b>不得</b>用於交易、避險、開立發票，或任何需要準確或可執行匯率的決策。完整免責聲明請參閱《服務條款》。\n所提供的匯率 – 即使正確 – 也可能與您往來的銀行所使用的匯率不同。\n最後：錯誤在所難免。切勿盲目相信任何單一來源。\n本應用程式完全免費且開放原始碼。若您發現付費版本或含有廣告的版本，那是偽造的 — 請立即解除安裝。</string>
     <string name="rate_title">為此應用程式評分</string>
-    <string name="rate_summary">如果您喜歡的話，您可以幫忙其他人發現 Currencies。按這裡為這個應用程式評分。</string>
+    <string name="rate_summary">如果願意，您可以幫助其他人發現 Currencies。點選這裡為此應用程式評分。</string>
     <string name="category_versioninfo">版本資訊</string>
     <string name="title_changelog">更新日誌</string>
     <string name="backup_title">備份與還原</string>
-    <string name="backup_summary">將設定儲存至檔案,或從先前的備份還原</string>
+    <string name="backup_summary">將設定儲存至檔案，或從先前的備份還原</string>
     <string name="backup_manager_title">備份</string>
     <string name="backup_section_local">本機備份</string>
     <string name="backup_section_restore">還原</string>
@@ -106,16 +106,16 @@
     <string name="backup_import_title">從檔案匯入</string>
     <string name="backup_import_summary">以先前匯出的備份檔覆蓋目前設定</string>
     <string name="backup_export_success">備份已儲存</string>
-    <string name="backup_export_failed">備份失敗:%1$s</string>
+    <string name="backup_export_failed">備份失敗：%1$s</string>
     <string name="backup_import_success">設定已還原 — 請重新啟動以套用</string>
-    <string name="backup_import_failed">還原失敗:%1$s</string>
-    <string name="backup_import_confirm_title">要還原備份嗎?</string>
+    <string name="backup_import_failed">還原失敗：%1$s</string>
+    <string name="backup_import_confirm_title">要還原備份嗎？</string>
     <string name="backup_import_confirm_message">目前的設定將被檔案中的設定覆蓋。此操作無法復原。</string>
     <string name="backup_import_confirm_positive">還原</string>
     <string name="backup_encrypt_option">使用密碼加密</string>
     <string name="backup_password_hint">密碼</string>
     <string name="backup_password_prompt_title">輸入密碼</string>
-    <string name="backup_password_wrong">此密碼無法解密該檔案,請再試一次。</string>
+    <string name="backup_password_wrong">此密碼無法解密該檔案，請再試一次。</string>
     <plurals name="backup_password_too_short">
         <item quantity="other">密碼長度至少須為 %1$d 個字元</item>
     </plurals>
@@ -136,6 +136,21 @@
     <string name="credit_privacy_policy_subtitle">不會蒐集任何個人資料。依各司法管轄區的完整說明。</string>
     <string name="credit_source_title">原始碼</string>
     <string name="credit_source_subtitle">GitHub 上開放原始碼 — 歡迎貢獻或提出問題。</string>
+    <string name="credit_fork_by">分支版本作者：%1$s</string>
+    <string name="credit_original_by">原始應用程式作者：%1$s</string>
+    <string name="credit_lib_androidx">Jetpack 函式庫</string>
+    <string name="credit_lib_compose">使用者介面工具包與 Material 3</string>
+    <string name="credit_lib_material_components">Material Design 元件</string>
+    <string name="credit_lib_material_symbols">圖示（圓角）</string>
+    <string name="credit_lib_vico">圖表</string>
+    <string name="credit_lib_okhttp">HTTP 用戶端</string>
+    <string name="credit_lib_moshi">JSON 剖析器</string>
+    <string name="credit_lib_timber">記錄</string>
+    <string name="credit_lib_bouncy_castle">為加密備份提供 Argon2id 金鑰衍生</string>
+    <string name="credit_lib_tink">為備份提供 AES-GCM 加密</string>
+    <string name="credit_lib_kotlin">語言執行階段與標準函式庫</string>
+    <string name="credit_lib_coroutines">非同步程式設計（供其他函式庫使用）</string>
+    <string name="credit_lib_okio">I/O 基本元件（供 OkHttp 與 Moshi 使用）</string>
     <string name="credit_terms_of_service_title">服務條款</string>
     <string name="credit_terms_of_service_subtitle">使用條款、免責聲明、匯率準確性說明。</string>
     <string name="credits_section_legal">法律</string>

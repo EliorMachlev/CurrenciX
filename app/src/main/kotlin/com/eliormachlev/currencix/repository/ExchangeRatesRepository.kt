@@ -10,6 +10,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
+import com.eliormachlev.currencix.model.adapter.NO_DATA_ERROR
 import com.eliormachlev.currencix.repository.cache.RateCache
 import com.eliormachlev.currencix.repository.cache.RateCacheFactory
 import com.eliormachlev.currencix.repository.cache.RateCacheKey
@@ -305,12 +306,16 @@ class ExchangeRatesRepository(
                 onSuccess(data)
                 liveError.postValue(null)
             } else {
-                postError(data.errorMessage())
+                postError(providerError(data.errorMessage()))
             }
         } else {
             handleGenericError(error)
         }
     }
+
+    // A provider's error in the app's language where it's one of ours (an
+    // empty answer); anything else is the server's own words, shown as sent.
+    private fun providerError(message: String?): String? = if (message == NO_DATA_ERROR) R.string.error_empty_response.text() else message
 
     private fun handleGenericError(error: Throwable?) {
         when (error) {

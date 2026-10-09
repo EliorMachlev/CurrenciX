@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">lülita vääringuid sisse/välja</string>
-    <string name="historical_rates_dialog_title">Varasemad valuutakursid</string>
-    <string name="historical_rates_dialog_toggle">Kasuta kindla kuupäeva vahetuskursse. Kui lülitad selle eelistuse välja, siis näitame vaid viimaseid kursse.</string>
+    <string name="desc_toggle_currencies">vaheta valuutad</string>
+    <string name="historical_rates_dialog_title">Varasemad kursid</string>
+    <string name="historical_rates_dialog_toggle">Kasuta kindla kuupäeva vahetuskursse. Lülita välja, et alati kasutada viimaseid kursse.</string>
     <string name="historical_rates_dialog_now">Praegu</string>
     <string name="error">Viga: %s</string>
     <string name="error_generic">Tundmatu probleem.</string>
-    <string name="error_http">Päringuvastuseks serverist oli http-olekukood %d.</string>
-    <string name="error_timeout">Server ei vastanud päringule etteantud aja jooksul või polnud leitav.</string>
+    <string name="error_http">Server vastas HTTP-koodiga %d.</string>
+    <string name="error_timeout">Server ei vastanud õigeaegselt või pole kättesaadav.</string>
     <string name="error_no_data">Ühenduse loomine serveriga ei õnnestunud.</string>
     <string name="error_empty_response">Selle päringu vastuseks ei leidu serveris andmeid.</string>
-    <string name="error_api_error">Tekkis serveri liidestuse viga. Palun proovi hiljem uuesti.</string>
-    <string name="error_try_another_api">Lisaks leidub teisigi teenusepakkujaid, mida sa saad seadistustest valida. Katseta ja vaata, mis juhtub!</string>
-    <string name="error_no_api_key">Selle teenusepakkuja kasutamiseks on vaja liidestuse võtit.</string>
-    <string name="error_invalid_api_key">HTTP 401 – Palun kontrolli, et liidestuse võti on õige.</string>
-    <string name="error_unsupported_timeline">See liidestus ei võimalda varasemate andmete kuvamist.</string>
+    <string name="error_api_error">Tekkis API viga. Palun proovi hiljem uuesti.</string>
+    <string name="error_try_another_api">Seadistustes saad aga valida ka teisi teenusepakkujaid. Proovi järele!</string>
+    <string name="error_no_api_key">Selle teenusepakkuja kasutamiseks on vaja kehtivat API-võtit.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Palun kontrolli oma API-võtit.</string>
+    <string name="error_unsupported_timeline">See API ei toeta ajaloolisi andmeid.</string>
     <string name="menu_settings">Seadistused</string>
     <string name="menu_refresh">Uuenda vahetuskursse</string>
     <string name="menu_timeline">Vahetuskursside graafik</string>
@@ -25,25 +25,25 @@
     <string name="quick_conversions_no_rates">Kursid pole veel laaditud.</string>
     <string name="quick_conversions_fees_applied">Rakendatud tasud: %s</string>
     <string name="tooltip_filter_starred">Näita vaid lemmikuks märgitud valuutasid.</string>
-    <string name="currency_dropdown_api_hint">Midagi on puudu? Erinevad teenusepakkujad näitavad vahetuskursse erinevate valuutade jaoks. Ava seadistused ning vali mõni muu teenusepakkuja! 🤗</string>
+    <string name="currency_dropdown_api_hint">Midagi on puudu? Eri teenusepakkujad pakuvad eri valuutasid. Ava seadistused ja proovi mõnda teist! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="offline_banner_with_date">Võrguühenduseta • Kursid alates %1$s</string>
+    <string name="offline_banner_with_date">Võrguühenduseta • Kursid seisuga %1$s</string>
     <string name="offline_banner_no_data">Võrguühenduseta • Salvestatud kursse veel pole</string>
-    <string name="unreachable_banner_with_date">Pakkuja pole kättesaadav • Kursid alates %1$s</string>
+    <string name="unreachable_banner_with_date">Pakkuja pole kättesaadav • Kursid seisuga %1$s</string>
     <string name="unreachable_banner_no_data">Pakkuja pole kättesaadav • Uus katse</string>
-    <string name="historical_banner">Ajalooline • Kursid alates %1$s</string>
+    <string name="historical_banner">Ajalooline • Kursid seisuga %1$s</string>
     <string name="fee_chip_label">Tasu %1$s</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">Viimase kasutatud või valitud valuutapaari viimane kurss ja 30 päeva trend.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Seisuga %s</string>
-    <string name="widget_footer_empty">Kursside laadimiseks avage rakendus.</string>
+    <string name="widget_footer_empty">Kursside laadimiseks ava rakendus.</string>
     <string name="widget_no_rate">Kurss pole saadaval</string>
 
     <!-- Shopping cart -->
     <string name="cart_title">Ostukorv</string>
-    <string name="cart_empty_hint">Teie ostukorv on tühi. Alustamiseks puudutage „Lisa toode".</string>
+    <string name="cart_empty_hint">Ostukorv on tühi. Alustamiseks puuduta „Lisa toode“.</string>
     <string name="cart_add_item">Lisa toode</string>
     <string name="cart_item_name_hint">Toode</string>
     <string name="cart_item_expression_hint">Hind (nt 2 × 3,50)</string>
@@ -65,11 +65,11 @@
     <string name="cart_share_option_pdf_desc">Prinditav tšekilaadne dokument.</string>
     <string name="cart_save_name_hint">Ostukorvi nimi</string>
     <string name="cart_default_saved_name">Minu ostukorv</string>
-    <string name="cart_saved_toast">Salvestatud nimega „%s"</string>
+    <string name="cart_saved_toast">Salvestatud nimega „%s“</string>
     <string name="cart_no_saved">Salvestatud ostukorve veel pole.</string>
     <string name="cart_rename">Nimeta ümber</string>
     <string name="cart_rename_title">Nimeta ostukorv ümber</string>
-    <string name="cart_delete_confirm">Kas kustutada „%s"?</string>
+    <string name="cart_delete_confirm">Kas kustutada „%s“?</string>
     <string name="cart_delete_confirm_button">Kustuta</string>
     <string name="cart_export_ok">Ostukorv eksporditud.</string>
     <string name="cart_export_error">Eksport ebaõnnestus: %s</string>
@@ -78,9 +78,27 @@
     <string name="cart_share_empty">Ostukorv on tühi — pole midagi jagada.</string>
     <string name="cart_save_empty">Ostukorv on tühi — pole midagi salvestada.</string>
     <string name="cart_share_default_title">Ostukorv</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Avaldis</string>
+    <string name="cart_export_value">Väärtus</string>
+    <string name="cart_export_converted">Teisendatud</string>
+    <string name="cart_export_fees">Tasud</string>
+    <string name="cart_export_source">Allikas</string>
+    <string name="cart_export_rates_date">Kursside kuupäev</string>
+    <string name="cart_export_exported_at">Eksporditud</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Faili ei õnnestunud avada</string>
+    <string name="file_error_read_write">Faili ei õnnestunud lugeda ega sellesse kirjutada</string>
+    <string name="file_error_no_permission">Selle faili kasutamiseks puudub luba</string>
+    <string name="file_error_damaged">Fail on rikutud või pole oodatud vormingus</string>
+    <string name="file_error_unsupported_version">Fail pärineb CurrenciX-i versioonist, mida see versioon lugeda ei oska</string>
+    <string name="file_error_not_a_cart">See pole CurrenciX-i ostukorvifail</string>
+    <string name="file_error_unexpected">Tekkis ootamatu viga</string>
+    <string name="backup_error_encryption">Varukoopiat ei õnnestunud krüpteerida</string>
+    <string name="backup_error_decryption">Varukoopiat ei õnnestunud dekrüpteerida</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Vahesumma: %1$s %2$s</string>
-    <string name="cart_share_converted">Konverteeritud: %1$s %2$s</string>
+    <string name="cart_share_converted">Teisendatud: %1$s %2$s</string>
     <string name="cart_share_fees">Tasud: %s%%</string>
     <string name="cart_share_total">Kokku: %1$s %2$s</string>
     <string name="cart_unsaved_title">Salvestamata muudatused</string>
@@ -120,7 +138,7 @@
     <string name="desc_open_drawer">Ava navigeerimissahtel</string>
     <string name="desc_close_drawer">Sulge navigeerimissahtel</string>
     <string name="desc_more_options">Rohkem valikuid</string>
-    <string name="cart_item_deleted">Üksus kustutatud</string>
+    <string name="cart_item_deleted">Toode kustutatud</string>
     <string name="cart_cleared">Ostukorv tühjendatud</string>
     <string name="undo">Võta tagasi</string>
     <string name="timeline_retry">Proovi uuesti</string>
@@ -130,7 +148,7 @@
     <string name="recent_remove_pair">%1$s → %2$s eemaldatakse hiljutiste paaride hulgast.</string>
     <string name="recent_remove_currency">%1$s ja seda kasutavad hiljutised paarid eemaldatakse.</string>
     <string name="cart_section_pinned">Kinnitatud</string>
-    <string name="cart_section_others">Muud üksused</string>
+    <string name="cart_section_others">Muud tooted</string>
     <string name="fallback_banner">%1$s pole saadaval • Kasutatakse %2$s</string>
     <string name="process_text_label">Teisenda valuutat</string>
     <string name="selection_open_app">Ava rakenduses %1$s</string>

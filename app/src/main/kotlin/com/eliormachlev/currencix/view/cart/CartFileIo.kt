@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
+import com.eliormachlev.currencix.repository.fileFailureMessage
 import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 
@@ -79,7 +80,7 @@ class CartFileIo(
         when (val res = exporter.export(uri, toExport)) {
             is CartFileResult.Success -> snackbar(activity.getString(R.string.cart_export_ok))
             is CartFileResult.Failure ->
-                snackbar(activity.getString(R.string.cart_export_error, res.message))
+                snackbar(activity.getString(R.string.cart_export_error, activity.fileFailureMessage(res.reason, res.detail)))
             is CartFileResult.Loaded -> Unit
         }
     }
@@ -93,7 +94,7 @@ class CartFileIo(
                 snackbarWithUndo(activity.getString(R.string.cart_import_ok)) { previous?.let(viewModel::setCurrent) }
             }
             is CartFileResult.Failure ->
-                snackbar(activity.getString(R.string.cart_import_error, res.message))
+                snackbar(activity.getString(R.string.cart_import_error, activity.fileFailureMessage(res.reason, res.detail)))
             is CartFileResult.Success -> Unit
         }
     }

@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 private const val CSV_QUOTE = '"'
 private const val CSV_SEPARATOR = ','
 private const val CSV_LINE_END = "\r\n"
-private const val CART_LABEL = "Cart"
 
 // Builds an RFC 4180-compliant CSV rendering of a cart snapshot. Line
 // terminator is CRLF so spreadsheet apps (Excel, Numbers, LibreOffice)
@@ -16,28 +15,29 @@ private const val CART_LABEL = "Cart"
 // [generatedAt] is the local wall-clock time the export was produced.
 fun CartSnapshot.toCsv(
     title: String,
+    labels: CartExportLabels,
     generatedAt: LocalDateTime = LocalDateTime.now(),
 ): String =
     buildString {
-        append(csvRow(CART_LABEL, title))
+        append(csvRow(labels.cart, title))
         cartExportMeta(generatedAt).forEach { (field, value) ->
-            append(csvRow(field.label, value))
+            append(csvRow(labels.meta.getValue(field), value))
         }
         append(csvRow("", ""))
-        append(csvRow("Item", "Expression", "Value (${baseCurrency.iso4217Alpha()})"))
+        append(csvRow(labels.item, labels.expression, withUnit(labels.value, baseCurrency.iso4217Alpha())))
         evaluatedItems.forEach { (item, value) ->
             append(csvRow(item.name, item.expression, value.toCartDisplayString()))
         }
         append(csvRow("", "", ""))
-        append(csvRow("Subtotal", "", subtotal.toCartDisplayString()))
+        append(csvRow(labels.subtotal, "", subtotal.toCartDisplayString()))
         if (isConverting) {
-            append(csvRow("Converted (${destinationCurrency.iso4217Alpha()})", "", convertedSubtotal.toCartDisplayString()))
+            append(csvRow(withUnit(labels.converted, destinationCurrency.iso4217Alpha()), "", convertedSubtotal.toCartDisplayString()))
         }
         val combinedStack = feeStack
         if (!combinedStack.isNeutralFeeStack()) {
-            append(csvRow("Fees (${combinedStack.feePercentDelta().toPlainString()}%)", "", ""))
+            append(csvRow(withUnit(labels.fees, "${combinedStack.feePercentDelta().toPlainString()}%"), "", ""))
         }
-        append(csvRow("Total (${destinationCurrency.iso4217Alpha()})", "", total.toCartDisplayString()))
+        append(csvRow(withUnit(labels.total, destinationCurrency.iso4217Alpha()), "", total.toCartDisplayString()))
     }
 
 private fun csvRow(vararg cells: String): String =

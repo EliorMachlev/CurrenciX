@@ -2,13 +2,13 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Haupteinstellungen</string>
+    <string name="category_settings">Allgemeine Einstellungen</string>
     <string name="fee_title">Fremdwährungsgebühr</string>
     <string name="fee_summary">Wechsel-, Bank-/Karten- und paarspezifische Gebühren verwalten</string>
     <string name="fee_manager_title">Gebühren</string>
     <string name="fee_section_global_exchange">Globale Wechselgebühr</string>
     <string name="fee_section_global_bank">Globale Bank-/Kartengebühr</string>
-    <string name="fee_section_specific_pair">Gebühr für spezifisches Währungspaar</string>
+    <string name="fee_section_specific_pair">Gebühr für bestimmtes Währungspaar</string>
     <string name="fee_add">Gebühr hinzufügen</string>
     <string name="fee_delete">Löschen</string>
     <string name="fee_edit_percent">Prozent</string>
@@ -22,20 +22,20 @@
     <string name="previewConversion_title">Umrechnungsvorschau</string>
     <string name="previewConversion_summary">Im Währungsauswahldialog die aktuelle Umrechnung für jeden Kurs anzeigen.</string>
     <string name="keyboard_title">Tastatur</string>
-    <string name="keyboard_summary_expanded">Fügt zusätzliche Kurzwahltasten für schnellere Eingabe hinzu.</string>
+    <string name="keyboard_summary_expanded">Fügt zusätzliche Schnelltasten für eine schnellere Eingabe hinzu.</string>
     <string name="decimal_places_title">Dezimalgenauigkeit</string>
     <string name="haptic_feedback_title">Haptisches Feedback</string>
-    <string name="haptic_feedback_summary">Vibration bei Tastendruck\nRichtet sich nach der Systemeinstellung</string>
+    <string name="haptic_feedback_summary">Vibration beim Tippen in der App\nRichtet sich nach der Systemeinstellung\nIm Energiesparmodus automatisch deaktiviert</string>
     <string name="auto_refresh_title">Kurse automatisch aktualisieren</string>
     <string name="auto_refresh_summary">Im Hintergrund im vom Anbieter empfohlenen Intervall aktualisieren</string>
     <string name="date_format_title">Datums- und Uhrzeitformat</string>
     <string name="category_appearance">Aussehen</string>
-    <string name="system_default">Standardeinstellung des Systems</string>
+    <string name="system_default">Systemstandard</string>
     <string name="theme_title">Design</string>
     <string name="theme_option_light">Hell</string>
     <string name="theme_option_dark">Dunkel</string>
     <string name="theme_option_oled">OLED</string>
-    <string name="theme_option_system_oled">Standardeinstellung des Systems (OLED)</string>
+    <string name="theme_option_system_oled">Systemstandard (OLED)</string>
     <!-- graph options -->
     <string name="category_graph_options">Diagrammoptionen</string>
     <string name="graph_options_title">Diagrammoptionen</string>
@@ -78,13 +78,13 @@
     <string name="language_tr">Türkisch</string>
     <string name="language_uk">Ukrainisch</string>
     <string name="language_vi">Vietnamesisch</string>
-    <string name="language_zh_CN">Chinesisch (Vereinfacht)</string>
-    <string name="language_zh_TW">Chinesisch (Traditionell)</string>
+    <string name="language_zh_CN">Chinesisch (vereinfacht)</string>
+    <string name="language_zh_TW">Chinesisch (traditionell)</string>
     <!-- api -->
     <string name="category_api">Wechselkurse</string>
-    <string name="api_title">Datenquelle</string>
+    <string name="api_title">Datenanbieter</string>
     <string name="api_open_exchangerates_api_key_title">Open Exchangerates API-Schlüssel</string>
-    <string name="api_open_exchangerates_api_key_message">Um diese Quelle zu nutzen, muss ein persönlicher API-Schlüssel erstellt werden.\n\nHierfür auf https://openexchangerates.org/signup/free gehen und einen kostenlosen Account erstellen.\nZuletzt, einfach eine neue App ID im Dashboard generieren und hier eintragen:</string>
+    <string name="api_open_exchangerates_api_key_message">Um diese Quelle zu nutzen, musst du einen persönlichen API-Schlüssel erstellen.\n\nRufe dazu https://openexchangerates.org/signup/free auf und erstelle ein kostenloses Konto.\nErstelle anschließend einfach in deinem Dashboard eine neue App-ID und gib sie hier ein:</string>
     <string name="api_open_exchangerates_api_key_missing"><i>API-Schlüssel benötigt</i></string>
     <string name="api_about_title">Über %s</string>
     <string name="api_refreshPeriod_title">Aktualisierungsintervall</string>
@@ -124,9 +124,9 @@
     <string name="backup_password_hide">Passwort verbergen</string>
     <string name="picker_active_chip">Aktiv</string>
     <string name="picker_currency_title">Währung</string>
-    <string name="credits_title">Über, rechtliches &amp; Open Source</string>
+    <string name="credits_title">Über, Rechtliches &amp; Open Source</string>
     <string name="credits_summary">Datenschutzerklärung, Nutzungsbedingungen, Barrierefreiheit, Quellcode und Lizenzen der Drittanbieter-Bibliotheken</string>
-    <string name="title_credits">Über, rechtliches &amp; Open Source</string>
+    <string name="title_credits">Über, Rechtliches &amp; Open Source</string>
     <string name="credits_section_project">Projekt</string>
     <string name="credits_section_license">Lizenz</string>
     <string name="credits_section_libraries">Bibliotheken von Drittanbietern</string>
@@ -134,9 +134,24 @@
     <string name="credit_accessibility_title">Erklärung zur Barrierefreiheit</string>
     <string name="credit_accessibility_subtitle">Ziel WCAG 2.1 AA; wie du Barrieren meldest.</string>
     <string name="credit_privacy_policy_title">Datenschutzerklärung</string>
-    <string name="credit_privacy_policy_subtitle">Es werden keine personenbezogenen Daten erfasst. Vollständige Position pro Rechtsordnung.</string>
+    <string name="credit_privacy_policy_subtitle">Es werden keine personenbezogenen Daten erfasst. Ausführliche Angaben je Rechtsordnung.</string>
     <string name="credit_source_title">Quellcode</string>
     <string name="credit_source_subtitle">Open Source auf GitHub — mitmachen oder ein Issue eröffnen.</string>
+    <string name="credit_fork_by">Fork von %1$s</string>
+    <string name="credit_original_by">Original-App von %1$s</string>
+    <string name="credit_lib_androidx">Jetpack-Bibliotheken</string>
+    <string name="credit_lib_compose">UI-Toolkit und Material 3</string>
+    <string name="credit_lib_material_components">Material-Design-Komponenten</string>
+    <string name="credit_lib_material_symbols">Symbole (abgerundet)</string>
+    <string name="credit_lib_vico">Diagramme</string>
+    <string name="credit_lib_okhttp">HTTP-Client</string>
+    <string name="credit_lib_moshi">JSON-Parser</string>
+    <string name="credit_lib_timber">Protokollierung</string>
+    <string name="credit_lib_bouncy_castle">Argon2id-Schlüsselableitung für verschlüsselte Sicherungen</string>
+    <string name="credit_lib_tink">AES-GCM-Verschlüsselung für Sicherungen</string>
+    <string name="credit_lib_kotlin">Laufzeitumgebung und Standardbibliothek der Sprache</string>
+    <string name="credit_lib_coroutines">Asynchrone Programmierung (von anderen Bibliotheken genutzt)</string>
+    <string name="credit_lib_okio">I/O-Grundbausteine (von OkHttp und Moshi genutzt)</string>
     <string name="credit_terms_of_service_title">Nutzungsbedingungen</string>
     <string name="credit_terms_of_service_subtitle">Nutzungsbedingungen, Gewährleistungsausschluss, Hinweis zur Kursgenauigkeit.</string>
     <string name="credits_section_legal">Rechtliches</string>
@@ -149,7 +164,7 @@
     <string name="dynamic_color_summary">App an die Farben des Hintergrundbilds anpassen (Material You)</string>
     <string name="provider_group_free">Kostenlos</string>
     <string name="provider_group_api_key">Benötigt einen API-Schlüssel</string>
-    <string name="provider_main_chip">Haupt</string>
+    <string name="provider_main_chip">Primär</string>
     <string name="provider_cadence_hourly">Stündlich aktualisiert</string>
     <string name="provider_cadence_daily">An jedem Werktag aktualisiert</string>
     <string name="provider_cadence_monthly">Einmal im Monat aktualisiert</string>

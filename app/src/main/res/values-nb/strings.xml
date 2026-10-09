@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">Veksle valuta</string>
-    <string name="historical_rates_dialog_title">Historiske priser</string>
-    <string name="historical_rates_dialog_toggle">Bruk valutakurser for en bestemt dato. Deaktiver, for alltid å ta de nyeste.</string>
+    <string name="desc_toggle_currencies">Bytt om valutaene</string>
+    <string name="historical_rates_dialog_title">Historiske kurser</string>
+    <string name="historical_rates_dialog_toggle">Bruk valutakursene fra en bestemt dato. Slå av for alltid å bruke de nyeste.</string>
     <string name="historical_rates_dialog_now">Nå</string>
     <string name="error">Feil: %s</string>
     <string name="error_generic">Ukjent problem.</string>
-    <string name="error_http">Serveren svarte med HTTP %d</string>
+    <string name="error_http">Serveren svarte med HTTP %d.</string>
     <string name="error_timeout">Serveren svarte ikke i tide eller er ikke tilgjengelig.</string>
     <string name="error_no_data">Kunne ikke koble til serveren.</string>
-    <string name="error_api_error">Det var en API feil. Vennligst prøv igjen senere.</string>
+    <string name="error_api_error">Det oppstod en API-feil. Prøv igjen senere.</string>
     <string name="menu_settings">Innstillinger</string>
-    <string name="menu_refresh">Oppdater kurs</string>
-    <string name="menu_timeline">Valutakurs historikk</string>
+    <string name="menu_refresh">Oppdater kurser</string>
+    <string name="menu_timeline">Valutakursdiagram</string>
     <string name="menu_quick_conversions">Raske omregninger</string>
     <string name="menu_share">Del</string>
     <string name="share_footer">Basert på %1$s, %2$s</string>
@@ -21,11 +21,11 @@
     <string name="quick_conversions_fees_applied">Anvendte gebyrer: %s</string>
     <string name="tooltip_filter_starred">Vis kun favorittvalutaer.</string>
     <string name="a11y_delete">Slett</string>
-    <string name="currency_dropdown_api_hint">Mangler noe? Ulike datatilbydere støtter ulike valutaer. Gå til innstillingene for å prøve en annen!\u00A0\uD83E\uDD17</string>
+    <string name="currency_dropdown_api_hint">Mangler noe? Ulike dataleverandører støtter ulike valutaer. Gå til innstillingene for å prøve en annen!\u00A0\uD83E\uDD17</string>
     <string name="error_empty_response">Serveren har ingen data for denne forespørselen.</string>
-    <string name="error_invalid_api_key">HTTP 401 – Vennligst sjekk API-nøkkelen din.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Sjekk API-nøkkelen din.</string>
     <string name="error_no_api_key">En gyldig API-nøkkel må angis for å bruke denne kilden.</string>
-    <string name="error_try_another_api">Det finnes imidlertid andre datatilbydere du kan velge blant i innstillingene. Bare prøv!</string>
+    <string name="error_try_another_api">Det finnes imidlertid andre dataleverandører du kan velge blant i innstillingene. Bare prøv!</string>
     <string name="error_unsupported_timeline">Tidslinjedata støttes ikke av denne API-en.</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
@@ -80,6 +80,24 @@
     <string name="cart_share_empty">Handlekurven er tom — ingenting å dele.</string>
     <string name="cart_save_empty">Handlekurven er tom — ingenting å lagre.</string>
     <string name="cart_share_default_title">Handlekurv</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Uttrykk</string>
+    <string name="cart_export_value">Verdi</string>
+    <string name="cart_export_converted">Omregnet</string>
+    <string name="cart_export_fees">Gebyrer</string>
+    <string name="cart_export_source">Kilde</string>
+    <string name="cart_export_rates_date">Kursdato</string>
+    <string name="cart_export_exported_at">Eksportert</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Kunne ikke åpne filen</string>
+    <string name="file_error_read_write">Kunne ikke lese fra eller skrive til filen</string>
+    <string name="file_error_no_permission">Mangler tillatelse til å bruke denne filen</string>
+    <string name="file_error_damaged">Filen er skadet eller har ikke forventet format</string>
+    <string name="file_error_unsupported_version">Filen kommer fra en versjon av CurrenciX som denne versjonen ikke kan lese</string>
+    <string name="file_error_not_a_cart">Dette er ikke en handlekurvfil fra CurrenciX</string>
+    <string name="file_error_unexpected">Noe uventet gikk galt</string>
+    <string name="backup_error_encryption">Kunne ikke kryptere sikkerhetskopien</string>
+    <string name="backup_error_decryption">Kunne ikke dekryptere sikkerhetskopien</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Delsum: %1$s %2$s</string>
     <string name="cart_share_converted">Omregnet: %1$s %2$s</string>
@@ -121,7 +139,7 @@
     <string name="desc_open_drawer">Åpne navigasjonsskuffen</string>
     <string name="desc_close_drawer">Lukk navigasjonsskuffen</string>
     <string name="desc_more_options">Flere alternativer</string>
-    <string name="cart_item_deleted">Elementet er slettet</string>
+    <string name="cart_item_deleted">Varen er slettet</string>
     <string name="cart_cleared">Handlekurven er tømt</string>
     <string name="undo">Angre</string>
     <string name="timeline_retry">Prøv igjen</string>
@@ -148,7 +166,7 @@
     <string name="cart_share_per_person">Per person (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">Igjen av budsjettet: %1$s %2$s</string>
     <string name="cart_share_over_budget">Over budsjett: %1$s %2$s</string>
-    <string name="cart_menu_extras">Del, tips og budsjett</string>
+    <string name="cart_menu_extras">Deling, tips og budsjett</string>
     <string name="cart_tip_label">Tips / avgift</string>
     <string name="cart_tip_row">Tips / avgift (%1$s%%)</string>
     <string name="cart_split_label">Del mellom</string>

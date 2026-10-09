@@ -3,15 +3,15 @@
     <string name="name_aed">Dirham Uni Emirat Arab</string>
     <string name="name_afn">Afgani Afganistan</string>
     <string name="name_all">Lek Albania</string>
-    <string name="name_amd">Dram Armenian</string>
-    <string name="name_ang">Guilder Antiles Belanda</string>
+    <string name="name_amd">Dram Armenia</string>
+    <string name="name_ang">Guilder Antilla Belanda</string>
     <string name="name_aoa">Kwanza Angola</string>
     <string name="name_ars">Peso Argentina</string>
     <string name="name_aud">Dolar Australia</string>
-    <string name="name_awg">Guilder Aruba</string>
+    <string name="name_awg">Florin Aruba</string>
     <string name="name_azn">Manat Azerbaijan</string>
 
-    <string name="name_bam">Convertible Marks</string>
+    <string name="name_bam">Mark Konvertibel Bosnia-Herzegovina</string>
     <string name="name_bbd">Dolar Barbados</string>
     <string name="name_bdt">Taka Bangladesh</string>
     <string name="name_bgn">Lev Bulgaria</string>
@@ -31,13 +31,13 @@
     <string name="name_cad">Dolar Kanada</string>
     <string name="name_cdf">Frank Kongo</string>
     <string name="name_chf">Frank Swiss</string>
-    <string name="name_clf">Unidades de formento</string>
+    <string name="name_clf">Satuan Hitung Chili (UF)</string>
     <string name="name_clp">Peso Chili</string>
     <string name="name_cnh">Renminbi Tiongkok (Off-Shore)</string>
     <string name="name_cny">Renminbi Tiongkok</string>
     <string name="name_cop">Peso Kolombia</string>
     <string name="name_crc">Colon Kosta Rika</string>
-    <string name="name_cuc">Peso Kuba</string>
+    <string name="name_cuc">Peso Konvertibel Kuba</string>
     <string name="name_cup">Peso Kuba</string>
     <string name="name_cve">Eskudo Tanjung Verde</string>
     <string name="name_czk">Koruna Ceko</string>
@@ -56,7 +56,7 @@
     <string name="name_fkp">Pound Kepulauan Falkland</string>
     <string name="name_fok">Króna Faroe</string>
 
-    <string name="name_gbp">Pound Sterling</string>
+    <string name="name_gbp">Pound Sterling Inggris</string>
     <string name="name_gel">Lari Georgia</string>
     <string name="name_ggp">Pound Guernsey</string>
     <string name="name_ghs">Cedi Ghana</string>
@@ -73,7 +73,7 @@
     <string name="name_huf">Forint Hongaria</string>
 
     <string name="name_idr">Rupiah Indonesia</string>
-    <string name="name_ils">Shekel Israel</string>
+    <string name="name_ils">Shekel Baru Israel</string>
     <string name="name_imp">Pound Manx</string>
     <string name="name_inr">Rupee India</string>
     <string name="name_iqd">Dinar Irak</string>
@@ -120,7 +120,7 @@
 
     <string name="name_nad">Dolar Namibia</string>
     <string name="name_ngn">Naira Nigeria</string>
-    <string name="name_nio">Cordoba Oro</string>
+    <string name="name_nio">Cordoba Nikaragua</string>
     <string name="name_nok">Krone Norwegia</string>
     <string name="name_npr">Rupee Nepal</string>
     <string name="name_nzd">Dolar Selandia Baru</string>
@@ -128,7 +128,7 @@
     <string name="name_omr">Rial Oman</string>
 
     <string name="name_pab">Balboa Panama</string>
-    <string name="name_pen">Nuevo Sol</string>
+    <string name="name_pen">Sol Peru</string>
     <string name="name_pgk">Kina Papua Nugini</string>
     <string name="name_php">Peso Filipina</string>
     <string name="name_pkr">Rupee Pakistan</string>
@@ -150,13 +150,13 @@
     <string name="name_sgd">Dolar Singapura</string>
     <string name="name_shp">Pound Saint Helena</string>
     <string name="name_sle">Leone Sierra Leone</string>
-    <string name="name_sll">Leone Sierra Leone (pre-07/2022)</string>
+    <string name="name_sll">Leone Sierra Leone (sebelum 07/2022)</string>
     <string name="name_sos">Shilling Somalia</string>
     <string name="name_srd">Dolar Suriname</string>
     <string name="name_ssp">Pound Sudan Selatan</string>
     <string name="name_std">Dobra Sao Tome dan Principe (pra-2018)</string>
     <string name="name_stn">Dobra Sao Tome dan Principe</string>
-    <string name="name_svc">El-Salvador-Colón</string>
+    <string name="name_svc">Colon El Salvador</string>
     <string name="name_syp">Pound Suriah</string>
     <string name="name_szl">Lilangeni Swaziland</string>
 
@@ -164,10 +164,10 @@
     <string name="name_tjs">Somoni Tajikistan</string>
     <string name="name_tmt">Manat Turkmenistan</string>
     <string name="name_tnd">Dinar Tunisia</string>
-    <string name="name_top">Pa\'anga</string>
+    <string name="name_top">Paʻanga Tonga</string>
     <string name="name_try">Lira Turki</string>
     <string name="name_ttd">Dolar Trinidad dan Tobago</string>
-    <string name="name_twd">Dolar Taiwan</string>
+    <string name="name_twd">Dolar Taiwan Baru</string>
     <string name="name_tzs">Shilling Tanzania</string>
 
     <string name="name_uah">Hryvnia Ukraina</string>
@@ -176,7 +176,7 @@
     <string name="name_uyu">Peso Uruguay</string>
     <string name="name_uzs">Som Uzbekistan</string>
 
-    <string name="name_vef">Bolívar Venezuela fuerte (tua)</string>
+    <string name="name_vef">Bolívar Venezuela Fuerte (lama)</string>
     <string name="name_ves">Bolívar Venezuela soberano</string>
     <string name="name_vnd">Đồng Vietnam</string>
     <string name="name_vuv">Vatu Vanuatu</string>
@@ -187,7 +187,7 @@
     <string name="name_xag">Perak</string>
     <string name="name_xau">Emas</string>
     <string name="name_xcd">Dolar Karibia Timur</string>
-    <string name="name_xdr">Special Drawing Rights</string>
+    <string name="name_xdr">Hak Penarikan Khusus</string>
     <string name="name_xof">Frank CFA BCEAO</string>
     <string name="name_xpd">Paladium</string>
     <string name="name_xpf">Frank CFP</string>

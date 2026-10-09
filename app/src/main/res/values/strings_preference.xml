@@ -158,6 +158,22 @@
     <string name="credit_accessibility_subtitle">WCAG 2.1 AA target; how to report barriers.</string>
     <string name="credit_source_title">Source code</string>
     <string name="credit_source_subtitle">Open source on GitHub — contribute or open an issue.</string>
+    <string name="credit_fork_by">Fork by %1$s</string>
+    <string name="credit_original_by">Original app by %1$s</string>
+    <!-- What each third-party library does for the app; the maker's name follows -->
+    <string name="credit_lib_androidx">Jetpack libraries</string>
+    <string name="credit_lib_compose">UI toolkit and Material 3</string>
+    <string name="credit_lib_material_components">Material Design components</string>
+    <string name="credit_lib_material_symbols">Icons (Rounded)</string>
+    <string name="credit_lib_vico">Charts</string>
+    <string name="credit_lib_okhttp">HTTP client</string>
+    <string name="credit_lib_moshi">JSON parser</string>
+    <string name="credit_lib_timber">Logging</string>
+    <string name="credit_lib_bouncy_castle">Argon2id key derivation for encrypted backups</string>
+    <string name="credit_lib_tink">AES-GCM encryption for backups</string>
+    <string name="credit_lib_kotlin">Language runtime and standard library</string>
+    <string name="credit_lib_coroutines">Asynchronous programming (used by other libraries)</string>
+    <string name="credit_lib_okio">I/O primitives (used by OkHttp and Moshi)</string>
     <string name="rate_title">Rate this app</string>
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app.</string>
     <string name="category_versioninfo">Version info</string>

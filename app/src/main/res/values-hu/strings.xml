@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">Valuták váltása</string>
-    <string name="historical_rates_dialog_title">Múltbéli árfolyamok</string>
-    <string name="historical_rates_dialog_toggle">Egy adott időpontra vonatkozó árfolyamok használata. Kikapcsolva mindig a legfrissebbeket veszi figyelembe.</string>
+    <string name="desc_toggle_currencies">Pénznemek felcserélése</string>
+    <string name="historical_rates_dialog_title">Korábbi árfolyamok</string>
+    <string name="historical_rates_dialog_toggle">Egy adott nap árfolyamainak használata. Kapcsold ki, ha mindig a legfrissebbeket szeretnéd használni.</string>
     <string name="historical_rates_dialog_now">Most</string>
     <string name="error">Hiba: %s</string>
     <string name="error_generic">Ismeretlen probléma.</string>
     <string name="error_timeout">A szerver nem válaszolt időben, vagy nem elérhető.</string>
-    <string name="error_http">A kiszolgáló HTTP-vel válaszolt %d</string>
+    <string name="error_http">A szerver HTTP %d kóddal válaszolt.</string>
     <string name="error_no_data">Nem sikerült csatlakozni a szerverhez.</string>
-    <string name="error_api_error">API hiba történt. Kérjük, próbáld meg később újra.</string>
+    <string name="error_api_error">API-hiba történt. Próbáld újra később.</string>
     <string name="menu_settings">Beállítások</string>
     <string name="menu_refresh">Árfolyamok frissítése</string>
     <string name="menu_timeline">Árfolyamgrafikon</string>
@@ -19,13 +19,13 @@
     <string name="quick_conversions_title">Gyors átváltások</string>
     <string name="quick_conversions_no_rates">Az árfolyamok még nincsenek betöltve.</string>
     <string name="quick_conversions_fees_applied">Alkalmazott díjak: %s</string>
-    <string name="tooltip_filter_starred">Csak a kedvenc valuták megjelenítése.</string>
+    <string name="tooltip_filter_starred">Csak a csillagozott pénznemek megjelenítése.</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="offline_banner_with_date">Offline • Árfolyamok innen: %1$s</string>
+    <string name="offline_banner_with_date">Offline • %1$s árfolyamai</string>
     <string name="offline_banner_no_data">Offline • Még nincsenek gyorsítótárazott árfolyamok</string>
     <string name="unreachable_banner_with_date">A szolgáltató nem elérhető • %1$s árfolyamai</string>
     <string name="unreachable_banner_no_data">A szolgáltató nem elérhető • Újrapróbálkozás</string>
-    <string name="historical_banner">Múltbeli • %1$s árfolyamai</string>
+    <string name="historical_banner">Korábbi • %1$s árfolyamai</string>
     <string name="fee_chip_label">%1$s díj</string>
 
     <!-- Home-screen widget -->
@@ -37,7 +37,7 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Bevásárlókosár</string>
-    <string name="cart_empty_hint">A kosarad üres. Koppints a „Tétel hozzáadása" gombra a kezdéshez.</string>
+    <string name="cart_empty_hint">A kosarad üres. Koppints a „Tétel hozzáadása” gombra a kezdéshez.</string>
     <string name="cart_add_item">Tétel hozzáadása</string>
     <string name="cart_item_name_hint">Tétel</string>
     <string name="cart_item_expression_hint">Ár (pl. 2 × 3,50)</string>
@@ -59,11 +59,11 @@
     <string name="cart_share_option_pdf_desc">Nyomtatható, blokk stílusú dokumentum.</string>
     <string name="cart_save_name_hint">Kosár neve</string>
     <string name="cart_default_saved_name">Kosaram</string>
-    <string name="cart_saved_toast">Mentve „%s" néven</string>
+    <string name="cart_saved_toast">Mentve „%s” néven</string>
     <string name="cart_no_saved">Még nincsenek mentett kosarak.</string>
     <string name="cart_rename">Átnevezés</string>
     <string name="cart_rename_title">Kosár átnevezése</string>
-    <string name="cart_delete_confirm">Törlöd a következőt: „%s"?</string>
+    <string name="cart_delete_confirm">Törlöd: „%s”?</string>
     <string name="cart_delete_confirm_button">Törlés</string>
     <string name="cart_export_ok">Kosár exportálva.</string>
     <string name="cart_export_error">Az exportálás sikertelen: %s</string>
@@ -72,6 +72,24 @@
     <string name="cart_share_empty">A kosár üres — nincs mit megosztani.</string>
     <string name="cart_save_empty">A kosár üres — nincs mit menteni.</string>
     <string name="cart_share_default_title">Kosár</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Kifejezés</string>
+    <string name="cart_export_value">Érték</string>
+    <string name="cart_export_converted">Átváltva</string>
+    <string name="cart_export_fees">Díjak</string>
+    <string name="cart_export_source">Forrás</string>
+    <string name="cart_export_rates_date">Árfolyamok dátuma</string>
+    <string name="cart_export_exported_at">Exportálva</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Nem sikerült megnyitni a fájlt</string>
+    <string name="file_error_read_write">Nem sikerült olvasni a fájlt vagy írni bele</string>
+    <string name="file_error_no_permission">Nincs engedély a fájl használatához</string>
+    <string name="file_error_damaged">A fájl sérült, vagy nem a várt formátumú</string>
+    <string name="file_error_unsupported_version">A fájl a CurrenciX egy olyan verziójából származik, amelyet ez a verzió nem tud beolvasni</string>
+    <string name="file_error_not_a_cart">Ez nem CurrenciX-kosárfájl</string>
+    <string name="file_error_unexpected">Váratlan hiba történt</string>
+    <string name="backup_error_encryption">Nem sikerült titkosítani a biztonsági mentést</string>
+    <string name="backup_error_decryption">Nem sikerült visszafejteni a biztonsági mentést</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Részösszeg: %1$s %2$s</string>
     <string name="cart_share_converted">Átváltva: %1$s %2$s</string>
@@ -97,24 +115,24 @@
     <string name="onboarding_autorefresh_body">Az árfolyamok az alkalmazás megnyitásakor frissülnek. Kapcsold be a háttérben történő frissítést, hogy két megnyitás között is naprakészek maradjanak.</string>
     <string name="onboarding_autorefresh_enable">Bekapcsolás most</string>
     <string name="a11y_delete">Törlés</string>
-    <string name="currency_dropdown_api_hint">Hiányzik valami? A különböző adatszolgáltatók különböző valutákat kínálnak. Nyisd meg a beállításokat, és próbálj ki egy másikat!\u00A0\uD83E\uDD17</string>
+    <string name="currency_dropdown_api_hint">Hiányzik valami? A különböző adatszolgáltatók különböző pénznemeket kínálnak. Nyisd meg a beállításokat, és próbálj ki egy másikat! 🤗</string>
     <string name="error_empty_response">A szervernek nincs adata ehhez a kéréshez.</string>
-    <string name="error_invalid_api_key">HTTP 401 – Kérjük, ellenőrizd az API-kulcsot.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Ellenőrizd az API-kulcsot.</string>
     <string name="error_no_api_key">Ennek a forrásnak a használatához érvényes API-kulcsot kell megadni.</string>
     <string name="error_try_another_api">A beállításokban azonban más adatszolgáltatók közül is választhatsz. Csak próbáld ki!</string>
-    <string name="error_unsupported_timeline">Idővonal-adatokat ez az API nem támogat.</string>
+    <string name="error_unsupported_timeline">Ez az API nem támogatja az idővonal-adatokat.</string>
     <string name="a11y_search_currencies">Pénznemek keresése</string>
     <string name="a11y_clear_search">Keresés törlése</string>
     <string name="a11y_cart_item_name">Tétel neve</string>
     <string name="a11y_chart_summary">Árfolyam-előzmények grafikonja. A statisztikák — minimum, átlag, maximum és aktuális árfolyam — lent láthatók.</string>
     <string name="a11y_star_currency">%1$s csillagozása</string>
-    <string name="a11y_unstar_currency">%1$s csillag eltávolítása</string>
+    <string name="a11y_unstar_currency">Csillag eltávolítása: %1$s</string>
     <string name="a11y_action_select">Kiválasztás</string>
     <string name="a11y_action_load">Betöltés</string>
     <string name="a11y_action_open">Megnyitás</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
-    <string name="cart_pin_item">Rögzítés felülre</string>
-    <string name="cart_unpin_item">Rögzítés megszüntetése</string>
+    <string name="cart_pin_item">Kitűzés felülre</string>
+    <string name="cart_unpin_item">Kitűzés megszüntetése</string>
     <string name="cart_reorder_item">Tétel átrendezése</string>
     <string name="desc_navigate_up">Felfelé navigálás</string>
     <string name="desc_open_drawer">Navigációs fiók megnyitása</string>
@@ -127,9 +145,9 @@
     <string name="timeline_change_provider">Szolgáltató módosítása</string>
     <string name="recent_pair_switch">Váltás erre: %1$s → %2$s</string>
     <string name="recent_remove_title">Eltávolítás az előzményekből</string>
-    <string name="recent_remove_pair">A(z) %1$s → %2$s eltávolításra kerül a legutóbbi párok közül.</string>
-    <string name="recent_remove_currency">A(z) %1$s és az azt használó legutóbbi párok eltávolításra kerülnek.</string>
-    <string name="cart_section_pinned">Kitűzve</string>
+    <string name="recent_remove_pair">A(z) %1$s → %2$s pár törlődik a legutóbbi párok közül.</string>
+    <string name="recent_remove_currency">A(z) %1$s és az azt használó legutóbbi párok törlődnek.</string>
+    <string name="cart_section_pinned">Kitűzött</string>
     <string name="cart_section_others">Egyéb tételek</string>
     <string name="fallback_banner">%1$s nem érhető el • %2$s használatban</string>
     <string name="process_text_label">Pénznem átváltása</string>
@@ -140,7 +158,7 @@
     <string name="selection_assumed_currency">A szövegben nincs pénznem, ezért %1$s összegként értelmeztük.</string>
     <string name="shortcut_pair_long">%1$s átváltása erre: %2$s</string>
     <string name="widget_configure_title">Modul</string>
-    <string name="widget_follow_converter_title">A váltó követése</string>
+    <string name="widget_follow_converter_title">Az átváltó követése</string>
     <string name="widget_follow_converter_summary">Az alkalmazásban utoljára használt pár megjelenítése</string>
     <string name="done">Kész</string>
     <string name="cart_share_tip">Borravaló / adó (%1$s%%): %2$s %3$s</string>

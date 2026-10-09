@@ -2,13 +2,13 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Configurações Gerais</string>
-    <string name="fee_title">Taxa de transação estrangeira</string>
-    <string name="fee_summary">Gerencie taxas de câmbio, banco/cartão e específicas por par de moedas</string>
+    <string name="category_settings">Configurações gerais</string>
+    <string name="fee_title">Taxa de transação internacional</string>
+    <string name="fee_summary">Gerencie taxas de conversão, de banco/cartão e específicas por par de moedas</string>
     <string name="fee_manager_title">Taxas</string>
-    <string name="fee_section_global_exchange">Taxa global de câmbio</string>
+    <string name="fee_section_global_exchange">Taxa de conversão global</string>
     <string name="fee_section_global_bank">Taxa global de banco/cartão</string>
-    <string name="fee_section_specific_pair">Taxa de câmbio para par específico</string>
+    <string name="fee_section_specific_pair">Taxa de conversão para par de moedas específico</string>
     <string name="fee_add">Adicionar taxa</string>
     <string name="fee_delete">Excluir</string>
     <string name="fee_edit_percent">Porcentagem</string>
@@ -19,19 +19,19 @@
     <string name="fee_true_cost_prefix">"Taxa de conversão: "</string>
     <string name="fee_cost_with_fee_prefix">"Custo com taxa: "</string>
     <string name="fee_empty">Ainda não há taxas</string>
-    <string name="previewConversion_title">Previsão da conversão</string>
-    <string name="previewConversion_summary">Mostrar a conversão atual para cada taxa no selecionador de moeda.</string>
+    <string name="previewConversion_title">Prévia da conversão</string>
+    <string name="previewConversion_summary">Mostrar a conversão atual para cada cotação no seletor de moedas.</string>
     <string name="keyboard_title">Teclado</string>
-    <string name="keyboard_summary_expanded">Adiciona teclas de atalho adicionais para digitação mais rápida.</string>
+    <string name="keyboard_summary_expanded">Adiciona teclas de atalho extras para digitar mais rápido.</string>
     <string name="decimal_places_title">Precisão decimal</string>
     <string name="haptic_feedback_title">Feedback tátil</string>
-    <string name="haptic_feedback_summary">Vibrar ao pressionar tecla\nSegue configuração do sistema</string>
+    <string name="haptic_feedback_summary">Vibrar ao tocar em qualquer parte do app\nSegue a configuração do sistema\nDesativado automaticamente na economia de bateria</string>
     <string name="auto_refresh_title">Atualização automática das cotações</string>
     <string name="auto_refresh_summary">Atualizar em segundo plano na frequência recomendada pelo provedor</string>
     <string name="date_format_title">Formato de data e hora</string>
     <string name="category_appearance">Aparência</string>
     <string name="system_default">Padrão do sistema</string>
-    <string name="theme_title">Aspeto</string>
+    <string name="theme_title">Tema</string>
     <string name="theme_option_light">Claro</string>
     <string name="theme_option_dark">Escuro</string>
     <string name="theme_option_oled">OLED</string>
@@ -48,7 +48,7 @@
     <!-- languages -->
     <string name="language_title">Idioma do app</string>
     <string name="language_da">Dinamarquês</string>
-    <string name="language_en_GB">Inglês (Britânico)</string>
+    <string name="language_en_GB">Inglês (Reino Unido)</string>
     <string name="language_et">Estoniano</string>
     <string name="language_fa">Persa</string>
     <string name="language_zh_TW">Chinês (Tradicional)</string>
@@ -64,16 +64,16 @@
 
     <!-- api -->
     <string name="category_api">Taxas de câmbio</string>
-    <string name="api_title">Fornecedor de serviço</string>
+    <string name="api_title">Provedor de dados</string>
     <string name="api_about_title">Sobre %s</string>
     <string name="api_refreshPeriod_title">Intervalo de atualização</string>
     <!-- about -->
-    <string name="category_about">Sobre esta app</string>
-    <string name="disclaimer_title">Renúncia de responsabilidade</string>
-    <string name="disclaimer_summary">As taxas de câmbio exibidas são <b>meramente indicativas</b>. Elas vêm de provedores terceirizados, podem estar atrasadas ou incorretas e <b>não devem</b> ser usadas para negociação, hedge, faturamento ou qualquer decisão em que uma taxa precisa ou executável seja necessária. Consulte os Termos de Serviço para o aviso legal completo.\nAs taxas fornecidas – mesmo que corretas – podem diferir daquelas usadas pelo seu banco.\nPor fim: erros acontecem. Nunca confie cegamente em qualquer fonte única.\nEste aplicativo é totalmente gratuito e de código aberto. Se você encontrar uma versão paga ou com anúncios, ela é falsa — desinstale-a imediatamente.</string>
-    <string name="rate_title">Classifique esta app</string>
-    <string name="rate_summary">Se desejar, pode ajudar outros a descobrir Currencies. Clique aqui para avaliar a aplicação.</string>
-    <string name="category_versioninfo">Informação da versão</string>
+    <string name="category_about">Sobre este app</string>
+    <string name="disclaimer_title">Aviso legal</string>
+    <string name="disclaimer_summary">As taxas de câmbio exibidas são <b>meramente indicativas</b>. Elas vêm de provedores terceirizados, podem estar atrasadas ou incorretas e <b>não devem</b> ser usadas para negociação, hedge, faturamento ou qualquer decisão em que uma cotação precisa ou executável seja necessária. Consulte os Termos de Serviço para o aviso legal completo.\nAs cotações fornecidas – mesmo que corretas – podem diferir das usadas pelo seu banco.\nPor fim: erros acontecem. Nunca confie cegamente em uma única fonte.\nEste app é totalmente gratuito e de código aberto. Se você encontrar uma versão paga ou com anúncios, ela é falsa — desinstale-a imediatamente.</string>
+    <string name="rate_title">Avalie este app</string>
+    <string name="rate_summary">Se quiser, você pode ajudar outras pessoas a descobrir o Currencies. Toque aqui para avaliar o app.</string>
+    <string name="category_versioninfo">Informações da versão</string>
     <string name="title_changelog">Registro de alterações</string>
     <string name="backup_title">Backup e restauração</string>
     <string name="backup_summary">Salve suas configurações em um arquivo ou restaure a partir de um backup anterior</string>
@@ -104,9 +104,9 @@
     <string name="backup_password_hide">Ocultar senha</string>
     <string name="picker_active_chip">Ativo</string>
     <string name="picker_currency_title">Moeda</string>
-    <string name="credits_title">Sobre, jurídico &amp; código aberto</string>
+    <string name="credits_title">Sobre, informações legais e código aberto</string>
     <string name="credits_summary">Política de privacidade, termos de serviço, acessibilidade, código-fonte e licenças de bibliotecas de terceiros</string>
-    <string name="title_credits">Sobre, jurídico &amp; código aberto</string>
+    <string name="title_credits">Sobre, informações legais e código aberto</string>
     <string name="credits_section_project">Projeto</string>
     <string name="credits_section_license">Licença</string>
     <string name="credits_section_libraries">Bibliotecas de terceiros</string>
@@ -117,16 +117,32 @@
     <string name="credit_accessibility_title">Declaração de acessibilidade</string>
     <string name="credit_accessibility_subtitle">Meta WCAG 2.1 AA; como relatar barreiras.</string>
     <string name="credit_privacy_policy_title">Política de privacidade</string>
-    <string name="credit_privacy_policy_subtitle">Nenhum dado pessoal é coletado. Postura completa por jurisdição.</string>
+    <string name="credit_privacy_policy_subtitle">Nenhum dado pessoal é coletado. Detalhes completos por jurisdição.</string>
     <string name="credit_source_title">Código-fonte</string>
     <string name="credit_source_subtitle">Código aberto no GitHub — contribua ou abra uma issue.</string>
+    <string name="credit_fork_by">Fork de %1$s</string>
+    <string name="credit_original_by">App original de %1$s</string>
+    <!-- What each third-party library does for the app; the maker's name follows -->
+    <string name="credit_lib_androidx">Bibliotecas Jetpack</string>
+    <string name="credit_lib_compose">Kit de interface do usuário e Material 3</string>
+    <string name="credit_lib_material_components">Componentes do Material Design</string>
+    <string name="credit_lib_material_symbols">Ícones (arredondados)</string>
+    <string name="credit_lib_vico">Gráficos</string>
+    <string name="credit_lib_okhttp">Cliente HTTP</string>
+    <string name="credit_lib_moshi">Analisador de JSON</string>
+    <string name="credit_lib_timber">Registro de logs</string>
+    <string name="credit_lib_bouncy_castle">Derivação de chave Argon2id para backups criptografados</string>
+    <string name="credit_lib_tink">Criptografia AES-GCM para backups</string>
+    <string name="credit_lib_kotlin">Runtime da linguagem e biblioteca padrão</string>
+    <string name="credit_lib_coroutines">Programação assíncrona (usada por outras bibliotecas)</string>
+    <string name="credit_lib_okio">Primitivas de E/S (usadas pelo OkHttp e pelo Moshi)</string>
     <string name="credit_terms_of_service_title">Termos de serviço</string>
     <string name="credit_terms_of_service_subtitle">Termos de uso, isenção de garantia, aviso sobre precisão das cotações.</string>
-    <string name="credits_section_legal">Legal</string>
-    <string name="credits_section_source">Fonte</string>
-    <string name="fee_edit_active">Ativo</string>
+    <string name="credits_section_legal">Informações legais</string>
+    <string name="credits_section_source">Código-fonte</string>
+    <string name="fee_edit_active">Ativa</string>
     <string name="fee_edit_name">Nome</string>
-    <string name="fee_inactive_marker">Inativo</string>
+    <string name="fee_inactive_marker">Inativa</string>
     <string name="fee_untitled">Sem título</string>
     <string name="language_ar">Árabe</string>
     <string name="language_bg">Búlgaro</string>
@@ -157,6 +173,6 @@
     <string name="provider_cadence_hourly">Atualizado a cada hora</string>
     <string name="provider_cadence_daily">Atualizado a cada dia útil</string>
     <string name="provider_cadence_monthly">Atualizado uma vez por mês</string>
-    <string name="fallback_provider_title">Provedor reserva</string>
+    <string name="fallback_provider_title">Provedor de reserva</string>
     <string name="fallback_provider_summary">%1$s · usado quando o %2$s não está acessível</string>
 </resources>

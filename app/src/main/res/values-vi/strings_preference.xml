@@ -17,25 +17,25 @@
     <string name="fee_pair_to">Đến</string>
     <string name="fee_pair_pick_currency">Chọn tiền tệ</string>
     <string name="fee_true_cost_prefix">"Phí chuyển đổi: "</string>
-    <string name="fee_cost_with_fee_prefix">"Chi phí kèm phí: "</string>
+    <string name="fee_cost_with_fee_prefix">"Số tiền kèm phí: "</string>
     <string name="fee_empty">Chưa có phí nào</string>
     <string name="previewConversion_title">Xem trước chuyển đổi</string>
-    <string name="previewConversion_summary">Hiện việc chuyển đổi hiện tại cho mỗi tỉ lệ ở trình chọn tiền tệ.</string>
+    <string name="previewConversion_summary">Hiện kết quả chuyển đổi hiện tại cho từng tỷ giá trong bộ chọn tiền tệ.</string>
     <string name="keyboard_title">Bàn phím</string>
     <string name="keyboard_summary_expanded">Thêm các phím tắt bổ sung để nhập nhanh hơn.</string>
     <string name="decimal_places_title">Độ chính xác thập phân</string>
     <string name="haptic_feedback_title">Phản hồi xúc giác</string>
-    <string name="haptic_feedback_summary">Rung khi nhấn phím\nTheo cài đặt hệ thống</string>
+    <string name="haptic_feedback_summary">Rung khi chạm trong toàn ứng dụng\nTheo cài đặt hệ thống\nTự động tắt khi bật trình tiết kiệm pin</string>
     <string name="auto_refresh_title">Tự động làm mới tỷ giá</string>
     <string name="auto_refresh_summary">Làm mới trong nền theo tần suất nhà cung cấp khuyến nghị</string>
     <string name="date_format_title">Định dạng ngày và giờ</string>
-    <string name="category_appearance">Ngoại hình</string>
-    <string name="system_default">Theo chế độ mặc định của hệ thống</string>
-    <string name="theme_title">Thiết kế</string>
+    <string name="category_appearance">Giao diện</string>
+    <string name="system_default">Mặc định của hệ thống</string>
+    <string name="theme_title">Chủ đề</string>
     <string name="theme_option_light">Sáng</string>
     <string name="theme_option_dark">Tối</string>
     <string name="theme_option_oled">OLED</string>
-    <string name="theme_option_system_oled">Theo chế độ mặc định của hệ thống (OLED)</string>
+    <string name="theme_option_system_oled">Mặc định của hệ thống (OLED)</string>
     <!-- graph options -->
     <string name="category_graph_options">Tùy chọn biểu đồ</string>
     <string name="graph_options_title">Tùy chọn biểu đồ</string>
@@ -48,7 +48,7 @@
     <!-- languages -->
     <string name="language_title">Ngôn ngữ ứng dụng</string>
     <string name="language_ar">Tiếng Ả Rập</string>
-    <string name="language_bg">Tiếng Bungaria</string>
+    <string name="language_bg">Tiếng Bulgaria</string>
     <string name="language_bn">Tiếng Bengal</string>
     <string name="language_ca">Tiếng Catalunya</string>
     <string name="language_cs">Tiếng Séc</string>
@@ -56,7 +56,7 @@
     <string name="language_de">Tiếng Đức</string>
     <string name="language_el">Tiếng Hy Lạp</string>
     <string name="language_en">Tiếng Anh</string>
-    <string name="language_en_GB">Tiếng Anh (Anh)</string>
+    <string name="language_en_GB">Tiếng Anh (Vương quốc Anh)</string>
     <string name="language_eo">Tiếng Quốc tế ngữ</string>
     <string name="language_es">Tiếng Tây Ban Nha</string>
     <string name="language_et">Tiếng Estonia</string>
@@ -83,11 +83,11 @@
     <string name="language_zh_TW">Tiếng Trung phồn thể</string>
 
     <!-- api -->
-    <string name="category_api">Tỉ lệ chuyển đổi</string>
+    <string name="category_api">Tỷ giá hối đoái</string>
     <string name="api_title">Nhà cung cấp dữ liệu</string>
-    <string name="api_open_exchangerates_api_key_title">Mã API Open Exchangerates</string>
-    <string name="api_open_exchangerates_api_key_message">Để sử dụng Nguồn này, bạn phải tạo mã API cá nhân.\n\nĐể làm vậy, hãy đến https://openexchangerates.org/signup/free và tạo tài khoản miễn phí.\nCuối cùng, bạn chỉ cần tạo App ID mới trong Dashboard của bạn và nhập nó ở đây:</string>
-    <string name="api_open_exchangerates_api_key_missing"><i>Yêu cầu có mã API</i></string>
+    <string name="api_open_exchangerates_api_key_title">Khóa API Open Exchangerates</string>
+    <string name="api_open_exchangerates_api_key_message">Để sử dụng nguồn này, bạn phải tạo khóa API cá nhân.\n\nĐể làm vậy, hãy truy cập https://openexchangerates.org/signup/free và tạo tài khoản miễn phí.\nCuối cùng, chỉ cần tạo một App ID mới trong Dashboard của bạn và nhập vào đây:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>Cần có khóa API</i></string>
     <string name="api_about_title">Về %s</string>
     <string name="api_refreshPeriod_title">Khoảng thời gian làm mới</string>
     <!-- about -->
@@ -104,7 +104,7 @@
     <string name="backup_section_local">Sao lưu cục bộ</string>
     <string name="backup_section_restore">Khôi phục</string>
     <string name="backup_export_title">Xuất ra tệp</string>
-    <string name="backup_export_summary">Chọn vị trí trên thiết bị này để lưu tệp cài đặt được mã hoá hoặc dạng thường</string>
+    <string name="backup_export_summary">Chọn vị trí trên thiết bị này để lưu tệp cài đặt được mã hóa hoặc dạng thường</string>
     <string name="backup_import_title">Nhập từ tệp</string>
     <string name="backup_import_summary">Ghi đè cài đặt hiện tại bằng nội dung của tệp sao lưu đã xuất trước đó</string>
     <string name="backup_export_success">Đã lưu bản sao lưu</string>
@@ -114,7 +114,7 @@
     <string name="backup_import_confirm_title">Khôi phục bản sao lưu?</string>
     <string name="backup_import_confirm_message">Cài đặt hiện tại sẽ bị ghi đè bằng cài đặt trong tệp. Không thể hoàn tác thao tác này.</string>
     <string name="backup_import_confirm_positive">Khôi phục</string>
-    <string name="backup_encrypt_option">Mã hoá bằng mật khẩu</string>
+    <string name="backup_encrypt_option">Mã hóa bằng mật khẩu</string>
     <string name="backup_password_hint">Mật khẩu</string>
     <string name="backup_password_prompt_title">Nhập mật khẩu</string>
     <string name="backup_password_wrong">Mật khẩu không giải mã được tệp này. Hãy thử lại.</string>
@@ -138,6 +138,22 @@
     <string name="credit_privacy_policy_subtitle">Không thu thập dữ liệu cá nhân nào. Chi tiết đầy đủ theo từng khu vực pháp lý.</string>
     <string name="credit_source_title">Mã nguồn</string>
     <string name="credit_source_subtitle">Mã nguồn mở trên GitHub — hãy đóng góp hoặc gửi vấn đề.</string>
+    <string name="credit_fork_by">Bản fork của %1$s</string>
+    <string name="credit_original_by">Ứng dụng gốc của %1$s</string>
+    <!-- What each third-party library does for the app; the maker's name follows -->
+    <string name="credit_lib_androidx">Các thư viện Jetpack</string>
+    <string name="credit_lib_compose">Bộ công cụ giao diện và Material 3</string>
+    <string name="credit_lib_material_components">Thành phần Material Design</string>
+    <string name="credit_lib_material_symbols">Biểu tượng (Rounded)</string>
+    <string name="credit_lib_vico">Biểu đồ</string>
+    <string name="credit_lib_okhttp">Ứng dụng khách HTTP</string>
+    <string name="credit_lib_moshi">Trình phân tích JSON</string>
+    <string name="credit_lib_timber">Ghi nhật ký</string>
+    <string name="credit_lib_bouncy_castle">Dẫn xuất khóa Argon2id cho bản sao lưu được mã hóa</string>
+    <string name="credit_lib_tink">Mã hóa AES-GCM cho bản sao lưu</string>
+    <string name="credit_lib_kotlin">Môi trường chạy và thư viện chuẩn của ngôn ngữ</string>
+    <string name="credit_lib_coroutines">Lập trình bất đồng bộ (được các thư viện khác sử dụng)</string>
+    <string name="credit_lib_okio">Các thao tác I/O cơ bản (được OkHttp và Moshi sử dụng)</string>
     <string name="credit_terms_of_service_title">Điều khoản dịch vụ</string>
     <string name="credit_terms_of_service_subtitle">Điều khoản sử dụng, tuyên bố miễn trừ bảo hành, thông báo về độ chính xác của tỷ giá.</string>
     <string name="credits_section_legal">Pháp lý</string>

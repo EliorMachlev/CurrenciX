@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="desc_toggle_currencies">tukar mata uang</string>
-    <string name="historical_rates_dialog_title">Nilai tukar sebelumnya</string>
-    <string name="historical_rates_dialog_toggle">Gunakan nilai tukar pada tanggal tertentu. Nonaktifkan, untuk selalu menggunakan yang terbaru.</string>
+    <string name="historical_rates_dialog_title">Kurs historis</string>
+    <string name="historical_rates_dialog_toggle">Gunakan nilai tukar pada tanggal tertentu. Nonaktifkan agar selalu menggunakan kurs terbaru.</string>
     <string name="historical_rates_dialog_now">Sekarang</string>
     <string name="error">Kesalahan: %s</string>
     <string name="error_generic">Masalah tak dikenal.</string>
-    <string name="error_http">Server membalas dengan HTTP %d</string>
+    <string name="error_http">Server membalas dengan HTTP %d.</string>
     <string name="error_timeout">Server tidak membalas tepat waktu atau tidak dapat dijangkau.</string>
     <string name="error_no_data">Tidak dapat terhubung dengan server.</string>
-    <string name="error_api_error">Ada kesalahan API. Harap coba lagi nanti.</string>
+    <string name="error_api_error">Terjadi kesalahan API. Harap coba lagi nanti.</string>
     <string name="menu_settings">Pengaturan</string>
-    <string name="menu_refresh">Muat ulang nilai tukar</string>
-    <string name="menu_timeline">Bagan nilai tukar</string>
+    <string name="menu_refresh">Muat ulang kurs</string>
+    <string name="menu_timeline">Grafik nilai tukar</string>
     <string name="menu_quick_conversions">Konversi cepat</string>
     <string name="menu_share">Bagikan</string>
     <string name="share_footer">Berdasarkan %1$s, %2$s</string>
     <string name="quick_conversions_title">Konversi cepat</string>
-    <string name="quick_conversions_no_rates">Nilai tukar belum dimuat.</string>
+    <string name="quick_conversions_no_rates">Kurs belum dimuat.</string>
     <string name="quick_conversions_fees_applied">Biaya yang diterapkan: %s</string>
     <string name="tooltip_filter_starred">Tampilkan hanya mata uang yang dibintangi.</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
@@ -37,12 +37,12 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Keranjang belanja</string>
-    <string name="cart_empty_hint">Keranjang Anda kosong. Ketuk "Tambah item" untuk memulai.</string>
-    <string name="cart_add_item">Tambah item</string>
-    <string name="cart_item_name_hint">Item</string>
+    <string name="cart_empty_hint">Keranjang Anda kosong. Ketuk “Tambah barang” untuk memulai.</string>
+    <string name="cart_add_item">Tambah barang</string>
+    <string name="cart_item_name_hint">Barang</string>
     <string name="cart_item_expression_hint">Harga (mis. 2 × 3,50)</string>
     <string name="cart_row_value_format">= %1$s %2$s</string>
-    <string name="cart_delete_item">Hapus item</string>
+    <string name="cart_delete_item">Hapus barang</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
     <string name="cart_menu_save">Simpan</string>
@@ -54,16 +54,16 @@
     <string name="cart_share_option_text">Teks biasa</string>
     <string name="cart_share_option_text_desc">Ringkasan terformat yang bisa Anda tempel ke obrolan atau aplikasi catatan.</string>
     <string name="cart_share_option_csv">CSV</string>
-    <string name="cart_share_option_csv_desc">Berkas spreadsheet dengan satu baris per item.</string>
+    <string name="cart_share_option_csv_desc">File spreadsheet dengan satu baris per barang.</string>
     <string name="cart_share_option_pdf">PDF</string>
     <string name="cart_share_option_pdf_desc">Dokumen bergaya struk yang dapat dicetak.</string>
     <string name="cart_save_name_hint">Nama keranjang</string>
     <string name="cart_default_saved_name">Keranjang saya</string>
-    <string name="cart_saved_toast">Disimpan sebagai "%s"</string>
+    <string name="cart_saved_toast">Disimpan sebagai “%s”</string>
     <string name="cart_no_saved">Belum ada keranjang tersimpan.</string>
     <string name="cart_rename">Ganti nama</string>
     <string name="cart_rename_title">Ganti nama keranjang</string>
-    <string name="cart_delete_confirm">Hapus "%s"?</string>
+    <string name="cart_delete_confirm">Hapus “%s”?</string>
     <string name="cart_delete_confirm_button">Hapus</string>
     <string name="cart_export_ok">Keranjang diekspor.</string>
     <string name="cart_export_error">Ekspor gagal: %s</string>
@@ -72,6 +72,24 @@
     <string name="cart_share_empty">Keranjang kosong — tidak ada yang dibagikan.</string>
     <string name="cart_save_empty">Keranjang kosong — tidak ada yang disimpan.</string>
     <string name="cart_share_default_title">Keranjang</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Ekspresi</string>
+    <string name="cart_export_value">Harga</string>
+    <string name="cart_export_converted">Dikonversi</string>
+    <string name="cart_export_fees">Biaya</string>
+    <string name="cart_export_source">Sumber</string>
+    <string name="cart_export_rates_date">Tanggal kurs</string>
+    <string name="cart_export_exported_at">Diekspor pada</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">tidak dapat membuka file</string>
+    <string name="file_error_read_write">tidak dapat membaca atau menulis file</string>
+    <string name="file_error_no_permission">tidak ada izin untuk menggunakan file ini</string>
+    <string name="file_error_damaged">file rusak atau formatnya tidak sesuai</string>
+    <string name="file_error_unsupported_version">file ini berasal dari versi CurrenciX yang tidak dapat dibaca oleh versi ini</string>
+    <string name="file_error_not_a_cart">ini bukan file keranjang CurrenciX</string>
+    <string name="file_error_unexpected">terjadi kesalahan yang tidak terduga</string>
+    <string name="backup_error_encryption">tidak dapat mengenkripsi cadangan</string>
+    <string name="backup_error_decryption">tidak dapat mendekripsi cadangan</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Subtotal: %1$s %2$s</string>
     <string name="cart_share_converted">Dikonversi: %1$s %2$s</string>
@@ -94,7 +112,7 @@
     <string name="onboarding_swap_title">Tukar pasangan mata uang</string>
     <string name="onboarding_swap_body">Ketuk tombol tukar untuk membalik mata uang asal dan tujuan. Tekan lama untuk membuka biaya Anda.</string>
     <string name="onboarding_autorefresh_title">Pembaruan kurs otomatis</string>
-    <string name="onboarding_autorefresh_body">Kurs diperbarui saat Anda membuka aplikasi. Aktifkan pembaruan di latar belakang agar kurs tetap terkini di antara waktu Anda membuka aplikasi.</string>
+    <string name="onboarding_autorefresh_body">Kurs diperbarui saat Anda membuka aplikasi. Aktifkan pembaruan di latar belakang agar kurs tetap terkini meski aplikasi tidak dibuka.</string>
     <string name="onboarding_autorefresh_enable">Aktifkan sekarang</string>
     <string name="a11y_delete">Hapus</string>
     <string name="currency_dropdown_api_hint">Ada yang kurang? Penyedia data yang berbeda menawarkan mata uang yang berbeda. Buka pengaturan untuk mencoba yang lain!\u00A0\uD83E\uDD17</string>
@@ -105,7 +123,7 @@
     <string name="error_unsupported_timeline">Data timeline tidak didukung oleh API ini.</string>
     <string name="a11y_search_currencies">Cari mata uang</string>
     <string name="a11y_clear_search">Hapus pencarian</string>
-    <string name="a11y_cart_item_name">Nama item</string>
+    <string name="a11y_cart_item_name">Nama barang</string>
     <string name="a11y_chart_summary">Grafik riwayat nilai tukar. Statistik — minimum, rata-rata, maksimum, dan nilai tukar saat ini — ditampilkan di bawah.</string>
     <string name="a11y_star_currency">Bintangi %1$s</string>
     <string name="a11y_unstar_currency">Hapus bintang %1$s</string>
@@ -120,7 +138,7 @@
     <string name="desc_open_drawer">Buka panel navigasi</string>
     <string name="desc_close_drawer">Tutup panel navigasi</string>
     <string name="desc_more_options">Opsi lainnya</string>
-    <string name="cart_item_deleted">Item dihapus</string>
+    <string name="cart_item_deleted">Barang dihapus</string>
     <string name="cart_cleared">Keranjang dikosongkan</string>
     <string name="undo">Urungkan</string>
     <string name="timeline_retry">Coba lagi</string>
@@ -130,7 +148,7 @@
     <string name="recent_remove_pair">%1$s → %2$s akan dihapus dari pasangan terbaru.</string>
     <string name="recent_remove_currency">%1$s dan pasangan terbaru yang menggunakannya akan dihapus.</string>
     <string name="cart_section_pinned">Disematkan</string>
-    <string name="cart_section_others">Item lainnya</string>
+    <string name="cart_section_others">Barang lainnya</string>
     <string name="fallback_banner">%1$s tidak tersedia • Menggunakan %2$s</string>
     <string name="process_text_label">Konversi mata uang</string>
     <string name="selection_open_app">Buka di %1$s</string>
@@ -150,7 +168,7 @@
     <string name="cart_menu_extras">Bagi, tip &amp; anggaran</string>
     <string name="cart_tip_label">Tip / pajak</string>
     <string name="cart_tip_row">Tip / pajak (%1$s%%)</string>
-    <string name="cart_split_label">Bagi antara</string>
+    <string name="cart_split_label">Dibagi untuk</string>
     <string name="cart_split_decrease">Lebih sedikit orang</string>
     <string name="cart_split_increase">Lebih banyak orang</string>
     <string name="cart_per_person_row">Per orang (÷%1$d)</string>

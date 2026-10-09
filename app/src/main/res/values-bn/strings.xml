@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">মুদ্রা toggle</string>
-    <string name="historical_rates_dialog_title">ঐতিহাসক মূল্য</string>
-    <string name="historical_rates_dialog_toggle">একটি নির্দিষ্ট তারিখের বিনিময় হার ব্যবহার করুন। অক্ষম করুন, সর্বদা সাম্প্রতিকতমগুলি নিতে।</string>
+    <string name="desc_toggle_currencies">মুদ্রা অদলবদল করুন</string>
+    <string name="historical_rates_dialog_title">ঐতিহাসিক হার</string>
+    <string name="historical_rates_dialog_toggle">একটি নির্দিষ্ট তারিখের বিনিময় হার ব্যবহার করুন। সবসময় সর্বশেষ হার পেতে বন্ধ করুন।</string>
     <string name="historical_rates_dialog_now">এখন</string>
-    <string name="error">সমস্যা: %s</string>
-    <string name="error_generic">অজানা সমস্যা ।</string>
+    <string name="error">ত্রুটি: %s</string>
+    <string name="error_generic">অজানা সমস্যা।</string>
     <string name="error_http">সার্ভার HTTP %d দিয়ে সাড়া দিয়েছে।</string>
     <string name="error_timeout">সার্ভার সময়মতো সাড়া দেয়নি বা পৌঁছানো যাচ্ছে না।</string>
-    <string name="error_no_data">সার্ভারের সাথে সংযোগ করা যায়নি৷</string>
-    <string name="error_empty_response">এই অনুরোধের জন্য সার্ভারে কোন তথ্য নেই।</string>
-    <string name="error_api_error">একটি API ত্রুটি ছিল। অনুগ্রহ করে একটু পরে আবার চেষ্টা করুন।</string>
-    <string name="error_try_another_api">তবে, পছন্দসমূহে অন্যান্য তথ্য সরবরাহকারী আছে। শুধু চেষ্টা করেই দেখো!</string>
-    <string name="error_no_api_key">এই উৎসটি ব্যবহার করতে একটি সঠিক এপিআই কি(চাবি) ব্যবহার দিতে হবে।</string>
-    <string name="error_invalid_api_key">HTTP 401 – তোমার এপিআই কি(চাবি) দেখো।</string>
-    <string name="error_unsupported_timeline">এই এপিআই সময়রেখার তথ্য সমর্থন করে না।</string>
+    <string name="error_no_data">সার্ভারের সাথে সংযোগ করা যায়নি।</string>
+    <string name="error_empty_response">এই অনুরোধের জন্য সার্ভারে কোনো ডেটা নেই।</string>
+    <string name="error_api_error">একটি API ত্রুটি হয়েছে। অনুগ্রহ করে একটু পরে আবার চেষ্টা করুন।</string>
+    <string name="error_try_another_api">তবে সেটিংসে আপনি বেছে নিতে পারেন এমন অন্য ডেটা প্রদানকারীও আছে। একবার চেষ্টা করে দেখুন!</string>
+    <string name="error_no_api_key">এই উৎসটি ব্যবহার করতে একটি বৈধ API কী সেট করতে হবে।</string>
+    <string name="error_invalid_api_key">HTTP 401 – অনুগ্রহ করে আপনার API কী পরীক্ষা করুন।</string>
+    <string name="error_unsupported_timeline">এই API সময়রেখার ডেটা সমর্থন করে না।</string>
     <string name="menu_settings">সেটিংস</string>
-    <string name="menu_refresh">রিফ্রেশ হার</string>
+    <string name="menu_refresh">হার রিফ্রেশ করুন</string>
     <string name="menu_timeline">বিনিময় হার চার্ট</string>
     <string name="menu_quick_conversions">দ্রুত রূপান্তর</string>
     <string name="menu_share">শেয়ার করুন</string>
@@ -25,25 +25,25 @@
     <string name="quick_conversions_no_rates">হার এখনও লোড হয়নি।</string>
     <string name="quick_conversions_fees_applied">প্রযোজ্য ফি: %s</string>
     <string name="tooltip_filter_starred">শুধুমাত্র তারকাচিহ্নিত মুদ্রা দেখান।</string>
-    <string name="currency_dropdown_api_hint">কোনকিছু পাওয়া যাচ্ছে না? ভিন্ন তথ্য সরবরাহকারী ভিন্ন ভিন্ন অর্থ দেখায়। পছন্দসমূহে গিয়ে আরেকটা চেষ্টা করে দেখো! 🤗</string>
+    <string name="currency_dropdown_api_hint">কিছু খুঁজে পাচ্ছেন না? বিভিন্ন ডেটা প্রদানকারী বিভিন্ন মুদ্রা দেয়। অন্য একটি চেষ্টা করতে সেটিংসে যান!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="offline_banner_with_date">অফলাইন • %1$s থেকে রেট</string>
-    <string name="offline_banner_no_data">অফলাইন • এখনও কোনো ক্যাশে করা রেট নেই</string>
-    <string name="unreachable_banner_with_date">প্রদানকারী পৌঁছানো যাচ্ছে না • %1$s থেকে রেট</string>
-    <string name="unreachable_banner_no_data">প্রদানকারী পৌঁছানো যাচ্ছে না • পুনরায় চেষ্টা</string>
-    <string name="historical_banner">ঐতিহাসিক • %1$s থেকে রেট</string>
+    <string name="offline_banner_with_date">অফলাইন • %1$s-এর হার</string>
+    <string name="offline_banner_no_data">অফলাইন • এখনও কোনো ক্যাশে করা হার নেই</string>
+    <string name="unreachable_banner_with_date">প্রদানকারীর সাথে সংযোগ নেই • %1$s-এর হার</string>
+    <string name="unreachable_banner_no_data">প্রদানকারীর সাথে সংযোগ নেই • আবার চেষ্টা করা হচ্ছে</string>
+    <string name="historical_banner">ঐতিহাসিক • %1$s-এর হার</string>
     <string name="fee_chip_label">%1$s ফি</string>
 
     <!-- Home-screen widget -->
     <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়া বা আপনার বেছে নেওয়া জোড়ার সর্বশেষ হার ও ৩০ দিনের প্রবণতা।</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s অনুযায়ী</string>
-    <string name="widget_footer_empty">রেট লোড করতে অ্যাপ খুলুন।</string>
-    <string name="widget_no_rate">রেট উপলব্ধ নেই</string>
+    <string name="widget_footer_empty">হার লোড করতে অ্যাপ খুলুন।</string>
+    <string name="widget_no_rate">হার উপলব্ধ নেই</string>
 
     <!-- Shopping cart -->
     <string name="cart_title">শপিং কার্ট</string>
-    <string name="cart_empty_hint">আপনার কার্ট খালি। শুরু করতে "আইটেম যোগ করুন" আলতো চাপুন।</string>
+    <string name="cart_empty_hint">আপনার কার্ট খালি। শুরু করতে “আইটেম যোগ করুন” আলতো চাপুন।</string>
     <string name="cart_add_item">আইটেম যোগ করুন</string>
     <string name="cart_item_name_hint">আইটেম</string>
     <string name="cart_item_expression_hint">দাম (যেমন 2 × 3.50)</string>
@@ -54,8 +54,8 @@
     <string name="cart_menu_save">সংরক্ষণ</string>
     <string name="cart_menu_save_as">এই নামে সংরক্ষণ…</string>
     <string name="cart_menu_load">লোড করুন</string>
-    <string name="cart_menu_export">ফাইলে রপ্তানি</string>
-    <string name="cart_menu_import">ফাইল থেকে আমদানি</string>
+    <string name="cart_menu_export">ফাইলে এক্সপোর্ট করুন</string>
+    <string name="cart_menu_import">ফাইল থেকে ইমপোর্ট করুন</string>
     <string name="cart_menu_clear">পরিষ্কার করুন</string>
     <string name="cart_share_option_text">সাধারণ টেক্সট</string>
     <string name="cart_share_option_text_desc">চ্যাট বা নোট অ্যাপে পেস্ট করার জন্য ফরম্যাট করা সারসংক্ষেপ।</string>
@@ -65,19 +65,37 @@
     <string name="cart_share_option_pdf_desc">প্রিন্টযোগ্য রসিদ-শৈলীর নথি।</string>
     <string name="cart_save_name_hint">কার্টের নাম</string>
     <string name="cart_default_saved_name">আমার কার্ট</string>
-    <string name="cart_saved_toast">"%s" নামে সংরক্ষিত</string>
+    <string name="cart_saved_toast">“%s” নামে সংরক্ষিত</string>
     <string name="cart_no_saved">এখনও কোনো সংরক্ষিত কার্ট নেই।</string>
     <string name="cart_rename">নাম পরিবর্তন</string>
     <string name="cart_rename_title">কার্টের নাম পরিবর্তন করুন</string>
-    <string name="cart_delete_confirm">"%s" মুছবেন?</string>
+    <string name="cart_delete_confirm">“%s” মুছবেন?</string>
     <string name="cart_delete_confirm_button">মুছুন</string>
-    <string name="cart_export_ok">কার্ট রপ্তানি হয়েছে।</string>
-    <string name="cart_export_error">রপ্তানি ব্যর্থ: %s</string>
-    <string name="cart_import_ok">কার্ট আমদানি হয়েছে।</string>
-    <string name="cart_import_error">আমদানি ব্যর্থ: %s</string>
+    <string name="cart_export_ok">কার্ট এক্সপোর্ট হয়েছে।</string>
+    <string name="cart_export_error">এক্সপোর্ট ব্যর্থ: %s</string>
+    <string name="cart_import_ok">কার্ট ইমপোর্ট হয়েছে।</string>
+    <string name="cart_import_error">ইমপোর্ট ব্যর্থ: %s</string>
     <string name="cart_share_empty">কার্ট খালি — শেয়ার করার কিছু নেই।</string>
     <string name="cart_save_empty">কার্ট খালি — সংরক্ষণ করার কিছু নেই।</string>
     <string name="cart_share_default_title">কার্ট</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">রাশি</string>
+    <string name="cart_export_value">দাম</string>
+    <string name="cart_export_converted">রূপান্তরিত</string>
+    <string name="cart_export_fees">ফি</string>
+    <string name="cart_export_source">উৎস</string>
+    <string name="cart_export_rates_date">হারের তারিখ</string>
+    <string name="cart_export_exported_at">এক্সপোর্টের সময়</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">ফাইলটি খোলা যায়নি</string>
+    <string name="file_error_read_write">ফাইলটি পড়া বা লেখা যায়নি</string>
+    <string name="file_error_no_permission">এই ফাইল ব্যবহারের অনুমতি নেই</string>
+    <string name="file_error_damaged">ফাইলটি ক্ষতিগ্রস্ত বা প্রত্যাশিত ফরম্যাটে নেই</string>
+    <string name="file_error_unsupported_version">ফাইলটি CurrenciX-এর এমন একটি সংস্করণ থেকে এসেছে যা এই সংস্করণ পড়তে পারে না</string>
+    <string name="file_error_not_a_cart">এটি CurrenciX-এর কার্ট ফাইল নয়</string>
+    <string name="file_error_unexpected">অপ্রত্যাশিত একটি সমস্যা হয়েছে</string>
+    <string name="backup_error_encryption">ব্যাকআপ এনক্রিপ্ট করা যায়নি</string>
+    <string name="backup_error_decryption">ব্যাকআপ ডিক্রিপ্ট করা যায়নি</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">উপমোট: %1$s %2$s</string>
     <string name="cart_share_converted">রূপান্তরিত: %1$s %2$s</string>
@@ -100,16 +118,16 @@
     <string name="onboarding_swap_title">জোড়া অদলবদল করুন</string>
     <string name="onboarding_swap_body">মূল ও গন্তব্য মুদ্রা অদলবদল করতে অদলবদল বোতামে আলতো চাপুন। আপনার ফি খুলতে বোতামটি চেপে ধরে রাখুন।</string>
     <string name="onboarding_autorefresh_title">স্বয়ংক্রিয় হার রিফ্রেশ</string>
-    <string name="onboarding_autorefresh_body">অ্যাপ খুললে হার রিফ্রেশ হয়। ব্যাকগ্রাউন্ড রিফ্রেশ চালু করুন, যাতে অ্যাপ না খুললেও হার হালনাগাদ থাকে।</string>
+    <string name="onboarding_autorefresh_body">অ্যাপ খুললে হার রিফ্রেশ হয়। ব্যাকগ্রাউন্ড রিফ্রেশ চালু করুন, যাতে অ্যাপ না খুললেও হার আপডেট থাকে।</string>
     <string name="onboarding_autorefresh_enable">এখনই চালু করুন</string>
     <string name="a11y_delete">মুছুন</string>
     <string name="a11y_search_currencies">মুদ্রা অনুসন্ধান</string>
     <string name="a11y_clear_search">অনুসন্ধান সাফ করুন</string>
     <string name="a11y_cart_item_name">আইটেমের নাম</string>
     <string name="a11y_chart_summary">বিনিময় হারের ইতিহাসের চার্ট। পরিসংখ্যান — সর্বনিম্ন, গড়, সর্বোচ্চ এবং বর্তমান হার — নিচে দেখানো হয়েছে।</string>
-    <string name="a11y_star_currency">%1$s কে তারা দিন</string>
-    <string name="a11y_unstar_currency">%1$s থেকে তারা সরান</string>
-    <string name="a11y_action_select">নির্বাচন</string>
+    <string name="a11y_star_currency">%1$s তারকাচিহ্নিত করুন</string>
+    <string name="a11y_unstar_currency">%1$s থেকে তারকাচিহ্ন সরান</string>
+    <string name="a11y_action_select">নির্বাচন করুন</string>
     <string name="a11y_action_load">লোড করুন</string>
     <string name="a11y_action_open">খুলুন</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>

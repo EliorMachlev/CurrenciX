@@ -2,7 +2,7 @@
 <resources>
     <string name="desc_toggle_currencies">přepnout měny</string>
     <string name="historical_rates_dialog_title">Historické kurzy</string>
-    <string name="historical_rates_dialog_toggle">Použít měnové kurzy ze specifického data. Zakažte pro používání nejnovějších.</string>
+    <string name="historical_rates_dialog_toggle">Použít směnné kurzy k určitému datu. Vypněte, chcete-li vždy používat nejnovější.</string>
     <string name="historical_rates_dialog_now">Nyní</string>
     <string name="error">Chyba: %s</string>
     <string name="error_generic">Neznámá chyba.</string>
@@ -13,11 +13,11 @@
     <string name="error_api_error">Vyskytla se chyba API. Zkuste to prosím znovu později.</string>
     <string name="error_try_another_api">V nastavení si nicméně můžete vybrat z jiných poskytovatelů dat. Zkuste to!</string>
     <string name="error_no_api_key">Abyste mohli využívat tento zdroj, musíte nejprve nastavit platný klíč API.</string>
-    <string name="error_invalid_api_key">HTTP 401 – Zkontrolujte váš klíč API.</string>
-    <string name="error_unsupported_timeline">U této API není podporována časová osa.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Zkontrolujte svůj klíč API.</string>
+    <string name="error_unsupported_timeline">Toto API nepodporuje data časové osy.</string>
     <string name="menu_settings">Nastavení</string>
     <string name="menu_refresh">Obnovit kurzy</string>
-    <string name="menu_timeline">Tabulka kurzů</string>
+    <string name="menu_timeline">Graf směnného kurzu</string>
     <string name="menu_quick_conversions">Rychlé převody</string>
     <string name="menu_share">Sdílet</string>
     <string name="share_footer">Podle %1$s, %2$s</string>
@@ -35,7 +35,7 @@
     <string name="fee_chip_label">Poplatek %1$s</string>
 
     <!-- Home-screen widget -->
-    <string name="widget_description">Poslední kurz a 30denní vývoj pro naposledy použitou měnovou dvojici nebo pro vámi vybranou.</string>
+    <string name="widget_description">Poslední kurz a 30denní vývoj pro naposledy použitý měnový pár nebo pro vámi vybraný.</string>
     <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Ke dni %s</string>
     <string name="widget_footer_empty">Otevřete aplikaci a načtěte kurzy.</string>
@@ -43,7 +43,7 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Košík</string>
-    <string name="cart_empty_hint">Košík je prázdný. Klepněte na „Přidat položku“ pro začátek.</string>
+    <string name="cart_empty_hint">Košík je prázdný. Začněte klepnutím na „Přidat položku“.</string>
     <string name="cart_add_item">Přidat položku</string>
     <string name="cart_item_name_hint">Položka</string>
     <string name="cart_item_expression_hint">Cena (např. 2 × 3,50)</string>
@@ -78,6 +78,24 @@
     <string name="cart_share_empty">Košík je prázdný — není co sdílet.</string>
     <string name="cart_save_empty">Košík je prázdný — není co uložit.</string>
     <string name="cart_share_default_title">Košík</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Výraz</string>
+    <string name="cart_export_value">Hodnota</string>
+    <string name="cart_export_converted">Převedeno</string>
+    <string name="cart_export_fees">Poplatky</string>
+    <string name="cart_export_source">Zdroj</string>
+    <string name="cart_export_rates_date">Datum kurzů</string>
+    <string name="cart_export_exported_at">Exportováno</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Soubor nelze otevřít</string>
+    <string name="file_error_read_write">Soubor nelze přečíst ani zapsat</string>
+    <string name="file_error_no_permission">K tomuto souboru nemáte oprávnění</string>
+    <string name="file_error_damaged">Soubor je poškozený nebo nemá očekávaný formát</string>
+    <string name="file_error_unsupported_version">Tento soubor pochází z verze CurrenciX, kterou tato verze neumí přečíst</string>
+    <string name="file_error_not_a_cart">Toto není soubor košíku CurrenciX</string>
+    <string name="file_error_unexpected">Došlo k neočekávané chybě</string>
+    <string name="backup_error_encryption">Zálohu nelze zašifrovat</string>
+    <string name="backup_error_decryption">Zálohu nelze dešifrovat</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Mezisoučet: %1$s %2$s</string>
     <string name="cart_share_converted">Převedeno: %1$s %2$s</string>
@@ -127,7 +145,7 @@
     <string name="timeline_change_provider">Změnit poskytovatele</string>
     <string name="recent_pair_switch">Přepnout na %1$s → %2$s</string>
     <string name="recent_remove_title">Odebrat z historie</string>
-    <string name="recent_remove_pair">%1$s → %2$s bude odebráno z nedávných párů.</string>
+    <string name="recent_remove_pair">Pár %1$s → %2$s bude odebrán z nedávných párů.</string>
     <string name="recent_remove_currency">%1$s a nedávné páry, které ji používají, budou odebrány.</string>
     <string name="cart_section_pinned">Připnuté</string>
     <string name="cart_section_others">Ostatní položky</string>
@@ -141,7 +159,7 @@
     <string name="shortcut_pair_long">Převést %1$s na %2$s</string>
     <string name="widget_configure_title">Widget</string>
     <string name="widget_follow_converter_title">Sledovat převodník</string>
-    <string name="widget_follow_converter_summary">Zobrazit dvojici naposledy použitou v aplikaci</string>
+    <string name="widget_follow_converter_summary">Zobrazit pár naposledy použitý v aplikaci</string>
     <string name="done">Hotovo</string>
     <string name="cart_share_tip">Spropitné / daň (%1$s%%): %2$s %3$s</string>
     <string name="cart_share_per_person">Na osobu (÷%1$d): %2$s %3$s</string>

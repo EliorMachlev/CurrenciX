@@ -2,7 +2,7 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Γενικές Ρυθμίσεις</string>
+    <string name="category_settings">Γενικές ρυθμίσεις</string>
     <string name="fee_title">Προμήθεια συναλλαγής εξωτερικού</string>
     <string name="fee_summary">Διαχείριση προμηθειών συναλλάγματος, τράπεζας/κάρτας και ανά ζεύγος νομισμάτων</string>
     <string name="fee_manager_title">Προμήθειες</string>
@@ -17,25 +17,25 @@
     <string name="fee_pair_to">Προς</string>
     <string name="fee_pair_pick_currency">Επιλέξτε νόμισμα</string>
     <string name="fee_true_cost_prefix">"Προμήθεια μετατροπής: "</string>
-    <string name="fee_cost_with_fee_prefix">"Κόστος με χρέωση: "</string>
+    <string name="fee_cost_with_fee_prefix">"Κόστος με προμήθεια: "</string>
     <string name="fee_empty">Δεν υπάρχουν ακόμη προμήθειες</string>
-    <string name="previewConversion_title">Προεπισκόπηση ισοτιμίας</string>
-    <string name="previewConversion_summary">Εμφάνιση της ισοτιμίας κάθε νομίσματος στον επιλογέα νομισμάτων.</string>
+    <string name="previewConversion_title">Προεπισκόπηση μετατροπής</string>
+    <string name="previewConversion_summary">Εμφάνιση της τρέχουσας μετατροπής για κάθε ισοτιμία στον επιλογέα νομισμάτων.</string>
     <string name="keyboard_title">Πληκτρολόγιο</string>
     <string name="keyboard_summary_expanded">Προσθέτει επιπλέον πλήκτρα συντόμευσης για ταχύτερη εισαγωγή.</string>
     <string name="decimal_places_title">Δεκαδική ακρίβεια</string>
     <string name="haptic_feedback_title">Απτική ανάδραση</string>
-    <string name="haptic_feedback_summary">Δόνηση κατά το πάτημα πλήκτρου\nΑκολουθεί τη ρύθμιση συστήματος</string>
+    <string name="haptic_feedback_summary">Δόνηση κατά το πάτημα σε όλη την εφαρμογή\nΑκολουθεί τη ρύθμιση συστήματος\nΑπενεργοποιείται αυτόματα στην εξοικονόμηση μπαταρίας</string>
     <string name="auto_refresh_title">Αυτόματη ανανέωση ισοτιμιών</string>
     <string name="auto_refresh_summary">Ανανέωση στο παρασκήνιο με τη συχνότητα που συνιστά ο πάροχος</string>
     <string name="date_format_title">Μορφή ημερομηνίας και ώρας</string>
     <string name="category_appearance">Εμφάνιση</string>
-    <string name="system_default">Συστήματος</string>
+    <string name="system_default">Προεπιλογή συστήματος</string>
     <string name="theme_title">Θέμα</string>
     <string name="theme_option_light">Ανοικτό</string>
     <string name="theme_option_dark">Σκούρο</string>
     <string name="theme_option_oled">OLED</string>
-    <string name="theme_option_system_oled">Συστήματος (OLED)</string>
+    <string name="theme_option_system_oled">Προεπιλογή συστήματος (OLED)</string>
     <!-- graph options -->
     <string name="category_graph_options">Επιλογές γραφήματος</string>
     <string name="graph_options_title">Επιλογές γραφήματος</string>
@@ -48,10 +48,10 @@
     <!-- languages -->
     <string name="language_title">Γλώσσα εφαρμογής</string>
     <string name="language_ar">Αραβικά</string>
-    <string name="language_bg">Βουλγάρικα</string>
-    <string name="language_bn">Μπενγκάλι</string>
+    <string name="language_bg">Βουλγαρικά</string>
+    <string name="language_bn">Βεγγαλικά</string>
     <string name="language_ca">Καταλανικά</string>
-    <string name="language_cs">Τσέχικα</string>
+    <string name="language_cs">Τσεχικά</string>
     <string name="language_da">Δανικά</string>
     <string name="language_de">Γερμανικά</string>
     <string name="language_el">Ελληνικά</string>
@@ -77,17 +77,17 @@
     <string name="language_sv">Σουηδικά</string>
     <string name="language_tr">Τουρκικά</string>
     <string name="language_uk">Ουκρανικά</string>
-    <string name="language_vi">Βιετναμέζικα</string>
-    <string name="language_zh_CN">Κινέζικα (Απλοποιημένα)</string>
-    <string name="language_zh_TW">Κινέζικα (παραδοσιακά)</string>
+    <string name="language_vi">Βιετναμικά</string>
+    <string name="language_zh_CN">Κινεζικά (απλοποιημένα)</string>
+    <string name="language_zh_TW">Κινεζικά (παραδοσιακά)</string>
     <!-- api -->
     <string name="category_api">Ισοτιμίες</string>
-    <string name="api_title">Χορηγός δεδομένων</string>
-    <string name="api_open_exchangerates_api_key_title">Άνοιγμα κλειδιού Exchangerates API</string>
-    <string name="api_open_exchangerates_api_key_message">Για να χρησιμοποιήσετε αυτήν την πηγή, πρέπει να δημιουργήσετε το προσωπικό σας κλειδί api.\n\nΓια να το κάνετε αυτό, μεταβείτε στη διεύθυνση https://openexchangerates.org/signup/free και δημιουργήστε έναν δωρεάν λογαριασμό.\nΤέλος, απλώς δημιουργήστε ένα νέο αναγνωριστικό εφαρμογής μέσα στον Πίνακα ελέγχου και εισάγετε το εδώ:</string>
-    <string name="api_open_exchangerates_api_key_missing"><i>Potreban API ključ</i></string>
-    <string name="api_about_title">Σχετικά με τον %s</string>
-    <string name="api_refreshPeriod_title">Ρυθμός ανανέωσης</string>
+    <string name="api_title">Πάροχος δεδομένων</string>
+    <string name="api_open_exchangerates_api_key_title">Κλειδί API του Open Exchangerates</string>
+    <string name="api_open_exchangerates_api_key_message">Για να χρησιμοποιήσετε αυτήν την πηγή, πρέπει να δημιουργήσετε το προσωπικό σας κλειδί API.\n\nΓια να το κάνετε αυτό, μεταβείτε στη διεύθυνση https://openexchangerates.org/signup/free και δημιουργήστε έναν δωρεάν λογαριασμό.\nΤέλος, δημιουργήστε ένα νέο App ID στον πίνακα ελέγχου (Dashboard) και εισαγάγετέ το εδώ:</string>
+    <string name="api_open_exchangerates_api_key_missing"><i>Απαιτείται κλειδί API</i></string>
+    <string name="api_about_title">Σχετικά με: %s</string>
+    <string name="api_refreshPeriod_title">Διάστημα ανανέωσης</string>
     <!-- about -->
     <string name="category_about">Σχετικά με την εφαρμογή</string>
     <string name="disclaimer_title">Αποποίηση ευθυνών</string>
@@ -96,26 +96,26 @@
     <string name="rate_summary">Αν θέλετε, μπορείτε να βοηθήσετε και άλλους να ανακαλύψουν την εφαρμογή. Πατήστε εδώ για να την αξιολογήσετε.</string>
     <string name="category_versioninfo">Πληροφορίες έκδοσης</string>
     <string name="title_changelog">Αρχείο αλλαγών</string>
-    <string name="backup_title">Αντίγραφο ασφαλείας &amp; επαναφορά</string>
-    <string name="backup_summary">Αποθήκευσε τις ρυθμίσεις σου σε αρχείο ή κάνε επαναφορά από προηγούμενο αντίγραφο</string>
+    <string name="backup_title">Αντίγραφα ασφαλείας και επαναφορά</string>
+    <string name="backup_summary">Αποθηκεύστε τις ρυθμίσεις σας σε αρχείο ή επαναφέρετέ τες από προηγούμενο αντίγραφο ασφαλείας</string>
     <string name="backup_manager_title">Αντίγραφο ασφαλείας</string>
     <string name="backup_section_local">Τοπικό αντίγραφο</string>
     <string name="backup_section_restore">Επαναφορά</string>
     <string name="backup_export_title">Εξαγωγή σε αρχείο</string>
-    <string name="backup_export_summary">Επίλεξε τοποθεσία σε αυτή τη συσκευή για την αποθήκευση κρυπτογραφημένου ή απλού αρχείου ρυθμίσεων</string>
+    <string name="backup_export_summary">Επιλέξτε τοποθεσία σε αυτή τη συσκευή για την αποθήκευση κρυπτογραφημένου ή απλού αρχείου ρυθμίσεων</string>
     <string name="backup_import_title">Εισαγωγή από αρχείο</string>
     <string name="backup_import_summary">Αντικατάσταση των τρεχουσών ρυθμίσεων με αυτές από ένα προηγούμενο αντίγραφο ασφαλείας</string>
     <string name="backup_export_success">Το αντίγραφο ασφαλείας αποθηκεύτηκε</string>
     <string name="backup_export_failed">Αποτυχία δημιουργίας αντιγράφου: %1$s</string>
-    <string name="backup_import_success">Οι ρυθμίσεις επαναφέρθηκαν — κάνε επανεκκίνηση για να εφαρμοστούν</string>
+    <string name="backup_import_success">Οι ρυθμίσεις επαναφέρθηκαν — κάντε επανεκκίνηση για να εφαρμοστούν</string>
     <string name="backup_import_failed">Αποτυχία επαναφοράς: %1$s</string>
     <string name="backup_import_confirm_title">Επαναφορά αντιγράφου;</string>
-    <string name="backup_import_confirm_message">Οι τρέχουσες ρυθμίσεις σου θα αντικατασταθούν από αυτές του αρχείου. Η ενέργεια δεν αναιρείται.</string>
+    <string name="backup_import_confirm_message">Οι τρέχουσες ρυθμίσεις σας θα αντικατασταθούν από αυτές του αρχείου. Η ενέργεια δεν μπορεί να αναιρεθεί.</string>
     <string name="backup_import_confirm_positive">Επαναφορά</string>
     <string name="backup_encrypt_option">Κρυπτογράφηση με κωδικό</string>
     <string name="backup_password_hint">Κωδικός</string>
     <string name="backup_password_prompt_title">Εισαγωγή κωδικού</string>
-    <string name="backup_password_wrong">Ο κωδικός δεν αποκρυπτογράφησε το αρχείο. Δοκίμασε ξανά.</string>
+    <string name="backup_password_wrong">Το αρχείο δεν αποκρυπτογραφήθηκε με αυτόν τον κωδικό. Δοκιμάστε ξανά.</string>
     <plurals name="backup_password_too_short">
         <item quantity="one">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρα</item>
         <item quantity="other">Ο κωδικός πρέπει να έχει τουλάχιστον %1$d χαρακτήρες</item>
@@ -124,9 +124,9 @@
     <string name="backup_password_hide">Απόκρυψη κωδικού</string>
     <string name="picker_active_chip">Ενεργό</string>
     <string name="picker_currency_title">Νόμισμα</string>
-    <string name="credits_title">Σχετικά, νομικά &amp; ανοιχτού κώδικα</string>
+    <string name="credits_title">Σχετικά, νομικά και ανοιχτός κώδικας</string>
     <string name="credits_summary">Πολιτική απορρήτου, όροι υπηρεσίας, προσβασιμότητα, πηγαίος κώδικας και άδειες βιβλιοθηκών τρίτων</string>
-    <string name="title_credits">Σχετικά, νομικά &amp; ανοιχτού κώδικα</string>
+    <string name="title_credits">Σχετικά, νομικά και ανοιχτός κώδικας</string>
     <string name="credits_section_project">Έργο</string>
     <string name="credits_section_license">Άδεια</string>
     <string name="credits_section_libraries">Βιβλιοθήκες τρίτων</string>
@@ -134,10 +134,26 @@
     <string name="credit_accessibility_title">Δήλωση προσβασιμότητας</string>
     <string name="credit_accessibility_subtitle">Στόχος WCAG 2.1 AA· πώς να αναφέρετε εμπόδια.</string>
     <string name="credit_privacy_policy_title">Πολιτική απορρήτου</string>
-    <string name="credit_privacy_policy_subtitle">Δεν συλλέγονται προσωπικά δεδομένα. Πλήρης στάση ανά δικαιοδοσία.</string>
+    <string name="credit_privacy_policy_subtitle">Δεν συλλέγονται προσωπικά δεδομένα. Πλήρης ανάλυση ανά δικαιοδοσία.</string>
     <string name="credit_source_title">Πηγαίος κώδικας</string>
     <string name="credit_source_subtitle">Ανοιχτού κώδικα στο GitHub — συνεισφέρετε κώδικα ή ανοίξτε ένα ζήτημα.</string>
-    <string name="credit_terms_of_service_title">Όροι χρήσης</string>
+    <string name="credit_fork_by">Fork από %1$s</string>
+    <string name="credit_original_by">Αρχική εφαρμογή από %1$s</string>
+    <!-- What each third-party library does for the app; the maker's name follows -->
+    <string name="credit_lib_androidx">Βιβλιοθήκες Jetpack</string>
+    <string name="credit_lib_compose">Εργαλειοθήκη UI και Material 3</string>
+    <string name="credit_lib_material_components">Στοιχεία Material Design</string>
+    <string name="credit_lib_material_symbols">Εικονίδια (Rounded)</string>
+    <string name="credit_lib_vico">Γραφήματα</string>
+    <string name="credit_lib_okhttp">Πρόγραμμα-πελάτης HTTP</string>
+    <string name="credit_lib_moshi">Αναλυτής JSON</string>
+    <string name="credit_lib_timber">Καταγραφή συμβάντων</string>
+    <string name="credit_lib_bouncy_castle">Παραγωγή κλειδιών Argon2id για κρυπτογραφημένα αντίγραφα ασφαλείας</string>
+    <string name="credit_lib_tink">Κρυπτογράφηση AES-GCM για αντίγραφα ασφαλείας</string>
+    <string name="credit_lib_kotlin">Περιβάλλον εκτέλεσης και τυπική βιβλιοθήκη της γλώσσας</string>
+    <string name="credit_lib_coroutines">Ασύγχρονος προγραμματισμός (χρησιμοποιείται από άλλες βιβλιοθήκες)</string>
+    <string name="credit_lib_okio">Βασικές λειτουργίες I/O (χρησιμοποιούνται από τα OkHttp και Moshi)</string>
+    <string name="credit_terms_of_service_title">Όροι υπηρεσίας</string>
     <string name="credit_terms_of_service_subtitle">Όροι χρήσης, αποποίηση εγγύησης, ειδοποίηση ακρίβειας ισοτιμιών.</string>
     <string name="credits_section_legal">Νομικά</string>
     <string name="credits_section_source">Πηγή</string>

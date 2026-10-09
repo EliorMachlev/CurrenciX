@@ -2,15 +2,15 @@
 <resources>
     <string name="desc_toggle_currencies">przełącz waluty</string>
     <string name="historical_rates_dialog_title">Kursy historyczne</string>
-    <string name="historical_rates_dialog_toggle">Użyj kursów wymiany z określonego okresu. Wyłącz, aby zawsze używać najnowszych dane.</string>
+    <string name="historical_rates_dialog_toggle">Użyj kursów wymiany z określonego dnia. Wyłącz, aby zawsze używać najnowszych.</string>
     <string name="historical_rates_dialog_now">Teraz</string>
     <string name="error">Błąd: %s</string>
     <string name="error_generic">Nieznany problem.</string>
     <string name="error_http">Serwer odpowiedział z kodem HTTP %d.</string>
     <string name="error_timeout">Serwer nie odpowiedział na czas lub jest nieosiągalny.</string>
     <string name="error_no_data">Nie można się połączyć z serwerem.</string>
-    <string name="error_empty_response">Serwer nie posiada danych na temat tego zapytania.</string>
-    <string name="error_api_error">Wystąpił błąd API. Proszę spróbować później.</string>
+    <string name="error_empty_response">Serwer nie ma danych dla tego zapytania.</string>
+    <string name="error_api_error">Wystąpił błąd API. Spróbuj ponownie później.</string>
     <string name="error_try_another_api">Istnieją jednak inni dostawcy danych, których możesz wybrać w ustawieniach. Po prostu spróbuj!</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_refresh">Odśwież kursy</string>
@@ -19,9 +19,9 @@
     <string name="menu_share">Udostępnij</string>
     <string name="share_footer">Na podstawie %1$s, %2$s</string>
     <string name="quick_conversions_title">Szybkie przeliczenia</string>
-    <string name="quick_conversions_no_rates">Kursy nie zostały jeszcze załadowane.</string>
+    <string name="quick_conversions_no_rates">Kursy nie zostały jeszcze wczytane.</string>
     <string name="quick_conversions_fees_applied">Zastosowane opłaty: %s</string>
-    <string name="tooltip_filter_starred">Pokaż tylko polubione waluty.</string>
+    <string name="tooltip_filter_starred">Pokaż tylko waluty oznaczone gwiazdką.</string>
     <string name="a11y_delete">Usuń</string>
     <string name="error_invalid_api_key">HTTP 401 – Sprawdź swój klucz API.</string>
     <string name="error_no_api_key">Aby korzystać z tego źródła, należy ustawić prawidłowy klucz API.</string>
@@ -79,6 +79,24 @@
     <string name="cart_share_empty">Koszyk jest pusty — nie ma czego udostępnić.</string>
     <string name="cart_save_empty">Koszyk jest pusty — nie ma czego zapisać.</string>
     <string name="cart_share_default_title">Koszyk</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Wyrażenie</string>
+    <string name="cart_export_value">Wartość</string>
+    <string name="cart_export_converted">Przeliczone</string>
+    <string name="cart_export_fees">Opłaty</string>
+    <string name="cart_export_source">Źródło</string>
+    <string name="cart_export_rates_date">Data kursów</string>
+    <string name="cart_export_exported_at">Data eksportu</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Nie można otworzyć pliku</string>
+    <string name="file_error_read_write">Nie można odczytać ani zapisać pliku</string>
+    <string name="file_error_no_permission">Brak uprawnień do tego pliku</string>
+    <string name="file_error_damaged">Plik jest uszkodzony lub ma nieoczekiwany format</string>
+    <string name="file_error_unsupported_version">Ten plik pochodzi z wersji CurrenciX, której ta wersja nie potrafi odczytać</string>
+    <string name="file_error_not_a_cart">To nie jest plik koszyka CurrenciX</string>
+    <string name="file_error_unexpected">Wystąpił nieoczekiwany błąd</string>
+    <string name="backup_error_encryption">Nie można zaszyfrować kopii zapasowej</string>
+    <string name="backup_error_decryption">Nie można odszyfrować kopii zapasowej</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Suma częściowa: %1$s %2$s</string>
     <string name="cart_share_converted">Przeliczone: %1$s %2$s</string>
@@ -114,7 +132,7 @@
     <string name="a11y_action_open">Otwórz</string>
     <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Przypnij na górze</string>
-    <string name="cart_unpin_item">Odepnij element</string>
+    <string name="cart_unpin_item">Odepnij pozycję</string>
     <string name="cart_reorder_item">Zmień kolejność</string>
     <string name="desc_navigate_up">Przejdź wyżej</string>
     <string name="desc_open_drawer">Otwórz panel nawigacji</string>
@@ -127,7 +145,7 @@
     <string name="timeline_change_provider">Zmień dostawcę</string>
     <string name="recent_pair_switch">Przełącz na %1$s → %2$s</string>
     <string name="recent_remove_title">Usuń z historii</string>
-    <string name="recent_remove_pair">%1$s → %2$s zostanie usunięta z ostatnich par.</string>
+    <string name="recent_remove_pair">Para %1$s → %2$s zostanie usunięta z ostatnich par.</string>
     <string name="recent_remove_currency">%1$s i ostatnie pary, które jej używają, zostaną usunięte.</string>
     <string name="cart_section_pinned">Przypięte</string>
     <string name="cart_section_others">Pozostałe pozycje</string>

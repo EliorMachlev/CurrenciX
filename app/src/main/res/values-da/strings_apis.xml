@@ -3,11 +3,11 @@
     <string name="api_bankOfCanada_descriptionUpdateInterval">Valutakurserne offentliggøres én gang hver arbejdsdag kl. 16:30 ET</string>
 
     <string name="api_bankOfIsrael_descriptionFull">Repræsentative valutakurser, som offentliggjort af den israelske centralbank <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Kurserne noteres over for den nye israelske shekel.\n<b>Bank of Israel oplyser omkring 14 valutakurser.</b></string>
-    <string name="api_bankOfIsrael_descriptionShort">Omkring 14 valutakurser\nKilde: Israelske centralbank</string>
+    <string name="api_bankOfIsrael_descriptionShort">Omkring 14 valutakurser\nKilde: Israels centralbank</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Repræsentative kurser offentliggøres én gang hver arbejdsdag omkring kl. 15:30 israelsk tid.</string>
     <string name="api_bankRossii_descriptionFull">Valutakurser, som de oplyses af den russiske centralbank <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Med de nuværende sanktioner giver denne kilde formentlig de mest pålidelige valutakurser for den russiske rubel.\n<b>Bank Rossii oplyser omkring 44 valutakurser.</b></string>
 
-    <string name="api_bankRossii_descriptionShort">Omkring 44 valutakurser\nKilde: Russiske centralbank</string>
+    <string name="api_bankRossii_descriptionShort">Omkring 44 valutakurser\nKilde: Ruslands centralbank</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Valutakurserne opdateres dagligt, undtagen på <a href="https://cbr.ru/eng/other/holidays/">russiske helligdage</a>.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> er en relativt ny tjeneste, der (ligesom Frankfurter.app) følger de referencekurser (forex), som Den Europæiske Centralbank offentliggør.\n<b>Omkring 30 valutaer er inkluderet.</b></string>
 
@@ -29,8 +29,8 @@
     <string name="api_openExchangeRates_descriptionUpdateInterval">Opdateres hver time.</string>
     <string name="api_openExchangeRates_hint">For at bruge denne kilde skal du oprette din personlige API-nøgle!</string>
 
-    <string name="api_bankOfCanada_name">Canadas nationalbank</string>
-    <string name="api_bankOfIsrael_name">Israels Nationalbank</string>
+    <string name="api_bankOfCanada_name">Bank of Canada</string>
+    <string name="api_bankOfIsrael_name">Bank of Israel</string>
     <string name="api_bankRossii_name">Ruslands centralbank</string>
     <string name="api_norgesBank_name">Norges Bank</string>
     <string name="api_bankOfCanada_descriptionFull">Daglige gennemsnitlige valutakurser fra <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Omkring 23 valutaer er inkluderet.</b></string>

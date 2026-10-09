@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">para birimlerini değiştir</string>
+    <string name="desc_toggle_currencies">para birimlerinin yerini değiştir</string>
     <string name="historical_rates_dialog_title">Geçmiş kurlar</string>
-    <string name="historical_rates_dialog_toggle">Geçmiş bir tarihteki kur verilerini kullan. Her zaman en güncel verileri kullanmak istiyorsan devre dışı bırak.</string>
+    <string name="historical_rates_dialog_toggle">Geçmiş bir tarihe ait kurları kullanın. Her zaman en güncel kurları kullanmak için devre dışı bırakın.</string>
     <string name="historical_rates_dialog_now">Şimdi</string>
     <string name="error">Hata: %s</string>
     <string name="error_generic">Bilinmeyen bir sorunla karşılaşıldı.</string>
@@ -10,14 +10,14 @@
     <string name="error_timeout">Sunucu zaman aşımına uğradı veya ulaşılamaz durumda.</string>
     <string name="error_no_data">Sunucuya bağlanılamadı.</string>
     <string name="error_empty_response">Sunucuda bu istek için veri bulunmuyor.</string>
-    <string name="error_api_error">API hatası. Lütfen daha sonra tekrar deneyin.</string>
+    <string name="error_api_error">API hatası oluştu. Lütfen daha sonra tekrar deneyin.</string>
     <string name="error_try_another_api">Ancak, ayarlardan seçebileceğiniz başka veri sağlayıcıları da var. Onları deneyebilirsiniz!</string>
     <string name="error_no_api_key">Bu kaynağı kullanmak için geçerli bir API anahtarı ayarlanmalıdır.</string>
-    <string name="error_invalid_api_key">HTTP 401 – Lütfen API anahtarınızı gözden geçirin.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Lütfen API anahtarınızı kontrol edin.</string>
     <string name="error_unsupported_timeline">Zaman çizelgesi verileri bu API ile desteklenmiyor.</string>
     <string name="menu_settings">Ayarlar</string>
     <string name="menu_refresh">Kurları güncelle</string>
-    <string name="menu_timeline">Döviz kur grafiği</string>
+    <string name="menu_timeline">Döviz kuru grafiği</string>
     <string name="menu_quick_conversions">Hızlı dönüşümler</string>
     <string name="menu_share">Paylaş</string>
     <string name="share_footer">Kaynak: %1$s, %2$s</string>
@@ -28,7 +28,7 @@
     <string name="a11y_delete">Sil</string>
     <string name="currency_dropdown_api_hint">Eksik bir şey mi var? Farklı veri sağlayıcıları farklı para birimleri sunar. Başka bir tane denemek için ayarlara gidin!\u00A0\uD83E\uDD17</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
-    <string name="offline_banner_with_date">Çevrimdışı • Kurlar: %1$s</string>
+    <string name="offline_banner_with_date">Çevrimdışı • %1$s tarihli kurlar</string>
     <string name="offline_banner_no_data">Çevrimdışı • Henüz önbelleğe alınmış kur yok</string>
     <string name="unreachable_banner_with_date">Sağlayıcıya ulaşılamıyor • %1$s tarihli kurlar</string>
     <string name="unreachable_banner_no_data">Sağlayıcıya ulaşılamıyor • Yeniden deneniyor</string>
@@ -44,7 +44,7 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Alışveriş sepeti</string>
-    <string name="cart_empty_hint">Sepetiniz boş. Başlamak için "Öğe ekle"ye dokunun.</string>
+    <string name="cart_empty_hint">Sepetiniz boş. Başlamak için “Öğe ekle” düğmesine dokunun.</string>
     <string name="cart_add_item">Öğe ekle</string>
     <string name="cart_item_name_hint">Öğe</string>
     <string name="cart_item_expression_hint">Fiyat (ör. 2 × 3,50)</string>
@@ -66,11 +66,11 @@
     <string name="cart_share_option_pdf_desc">Fiş biçiminde yazdırılabilir belge.</string>
     <string name="cart_save_name_hint">Sepet adı</string>
     <string name="cart_default_saved_name">Sepetim</string>
-    <string name="cart_saved_toast">"%s" olarak kaydedildi</string>
+    <string name="cart_saved_toast">“%s” olarak kaydedildi</string>
     <string name="cart_no_saved">Henüz kaydedilmiş sepet yok.</string>
     <string name="cart_rename">Yeniden adlandır</string>
     <string name="cart_rename_title">Sepeti yeniden adlandır</string>
-    <string name="cart_delete_confirm">"%s" silinsin mi?</string>
+    <string name="cart_delete_confirm">“%s” silinsin mi?</string>
     <string name="cart_delete_confirm_button">Sil</string>
     <string name="cart_export_ok">Sepet dışa aktarıldı.</string>
     <string name="cart_export_error">Dışa aktarma başarısız: %s</string>
@@ -79,9 +79,27 @@
     <string name="cart_share_empty">Sepet boş — paylaşılacak bir şey yok.</string>
     <string name="cart_save_empty">Sepet boş — kaydedilecek bir şey yok.</string>
     <string name="cart_share_default_title">Sepet</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">İfade</string>
+    <string name="cart_export_value">Değer</string>
+    <string name="cart_export_converted">Dönüştürülen</string>
+    <string name="cart_export_fees">Ücretler</string>
+    <string name="cart_export_source">Kaynak</string>
+    <string name="cart_export_rates_date">Kur tarihi</string>
+    <string name="cart_export_exported_at">Dışa aktarma zamanı</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Dosya açılamadı</string>
+    <string name="file_error_read_write">Dosya okunamadı veya dosyaya yazılamadı</string>
+    <string name="file_error_no_permission">Bu dosyayı kullanma izni yok</string>
+    <string name="file_error_damaged">Dosya hasarlı veya beklenen biçimde değil</string>
+    <string name="file_error_unsupported_version">Bu dosya, bu sürümün okuyamadığı bir CurrenciX sürümünden geliyor</string>
+    <string name="file_error_not_a_cart">Bu bir CurrenciX sepet dosyası değil</string>
+    <string name="file_error_unexpected">Beklenmeyen bir hata oluştu</string>
+    <string name="backup_error_encryption">Yedek şifrelenemedi</string>
+    <string name="backup_error_decryption">Yedeğin şifresi çözülemedi</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Ara toplam: %1$s %2$s</string>
-    <string name="cart_share_converted">Dönüştürülmüş: %1$s %2$s</string>
+    <string name="cart_share_converted">Dönüştürülen: %1$s %2$s</string>
     <string name="cart_share_fees">Ücretler: %%%s</string>
     <string name="cart_share_total">Toplam: %1$s %2$s</string>
     <string name="cart_unsaved_title">Kaydedilmemiş değişiklikler</string>
@@ -89,14 +107,14 @@
     <string name="cart_unsaved_save_desc">Mevcut kaydedilmiş sepetin üzerine bu değişiklikleri yazar.</string>
     <string name="cart_unsaved_save_as">Yeni olarak kaydet</string>
     <string name="cart_unsaved_save_as_desc">Mevcut kaydedilmiş sepete dokunmaz, farklı bir adla bir kopya kaydeder.</string>
-    <string name="cart_unsaved_discard">Değişiklikleri sil</string>
+    <string name="cart_unsaved_discard">Değişiklikleri at</string>
     <string name="cart_unsaved_discard_desc">Son kaydedilen sürüme döner ve devam eder.</string>
     <string name="cart_unsaved_continue">Devam et</string>
     <string name="cart_unsaved_continue_desc">Kaydedilmemiş değişikliklerle devam eder; daha sonra kaydedebilirsiniz.</string>
     <string name="onboarding_skip">Atla</string>
     <string name="onboarding_next">İleri</string>
     <string name="onboarding_finish">Anladım</string>
-    <string name="onboarding_fee_title">Gerçek Maliyetteki ücretler</string>
+    <string name="onboarding_fee_title">Gerçek maliyete eklenen ücretler</string>
     <string name="onboarding_fee_body">Ek ücret veya indirim eklemek için buraya dokunun — bunlar hedef tarafa uygulanır, böylece gördüğünüz tutar gerçekte ödediğinizle aynı olur.</string>
     <string name="onboarding_swap_title">Çifti ters çevir</string>
     <string name="onboarding_swap_body">Kaynak ve hedef para birimini ters çevirmek için değiştirme düğmesine dokunun. Ücretleri açmak için düğmeye uzun basın.</string>
@@ -107,8 +125,8 @@
     <string name="a11y_clear_search">Aramayı temizle</string>
     <string name="a11y_cart_item_name">Öğe adı</string>
     <string name="a11y_chart_summary">Döviz kuru geçmişi grafiği. İstatistikler — minimum, ortalama, maksimum ve mevcut kur — aşağıda gösterilmiştir.</string>
-    <string name="a11y_star_currency">%1$s öğesini yıldızla</string>
-    <string name="a11y_unstar_currency">%1$s öğesinden yıldızı kaldır</string>
+    <string name="a11y_star_currency">%1$s para birimini yıldızla</string>
+    <string name="a11y_unstar_currency">%1$s para biriminden yıldızı kaldır</string>
     <string name="a11y_action_select">Seç</string>
     <string name="a11y_action_load">Yükle</string>
     <string name="a11y_action_open">Aç</string>
@@ -147,10 +165,10 @@
     <string name="cart_share_per_person">Kişi başı (÷%1$d): %2$s %3$s</string>
     <string name="cart_share_budget_left">Bütçede kalan: %1$s %2$s</string>
     <string name="cart_share_over_budget">Bütçe aşıldı: %1$s %2$s</string>
-    <string name="cart_menu_extras">Bölüş, bahşiş ve bütçe</string>
+    <string name="cart_menu_extras">Bölüşme, bahşiş ve bütçe</string>
     <string name="cart_tip_label">Bahşiş / vergi</string>
     <string name="cart_tip_row">Bahşiş / vergi (%1$s%%)</string>
-    <string name="cart_split_label">Bölüşen kişi</string>
+    <string name="cart_split_label">Bölüşülecek kişi</string>
     <string name="cart_split_decrease">Daha az kişi</string>
     <string name="cart_split_increase">Daha fazla kişi</string>
     <string name="cart_per_person_row">Kişi başı (÷%1$d)</string>

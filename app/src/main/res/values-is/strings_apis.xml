@@ -3,7 +3,7 @@
     <string name="api_bankOfIsrael_descriptionFull">Viðmiðunargengi, eins og gefið út af ísraelska seðlabankanum <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Gengi er skráð gagnvart nýja ísraelska sekelnum.\n<b>Bank of Israel skráir um 14 gengi.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Um 14 gengi\nHeimild: Seðlabanki Ísraels</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Viðmiðunargengi eru birt einu sinni á hverjum virkum degi um kl. 15:30 að ísraelskum tíma.</string>
-    <string name="api_bankRossii_descriptionFull">Gengi, eins og gefið út af rússneska seðlabankanum <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Miðað við núverandi refsiaðgerðir gefur þessi uppspretta líklega áreiðanlegasta gengið fyrir rússneska rúblu.\n<b>Bank Rossii skráir um 44 gengi.</b></string>
+    <string name="api_bankRossii_descriptionFull">Gengi, eins og gefið út af rússneska seðlabankanum <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Miðað við núverandi refsiaðgerðir gefur þessi gagnaveita líklega áreiðanlegasta gengið fyrir rússneska rúblu.\n<b>Bank Rossii skráir um 44 gengi.</b></string>
     <string name="api_bankRossii_descriptionShort">Um 44 gengi\nHeimild: Seðlabanki Rússlands</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Gengi eru uppfærð daglega, nema á <a href="https://cbr.ru/eng/other/holidays/">almennum frídögum í Rússlandi</a>.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> er tiltölulega ný þjónusta sem (rétt eins og Frankfurter.app) fylgist með viðmiðunargengi (forex) sem Seðlabanki Evrópu birtir.\n<b>Um 30 gjaldmiðlar eru innifaldir.</b></string>
@@ -19,14 +19,14 @@
     <string name="api_norgesBank_descriptionShort">Um 40 gengi\nHeimild: Seðlabanki Noregs</string>
     <string name="api_norgesBank_descriptionUpdateInterval">Daglegt gengi er birt um kl. 16:00 CET.</string>
     <string name="api_norgesBank_hint">Þjónustan liggur reglulega niðri (HTTP 503) og þá er ekki hægt að endurnýja gengi!</string>
-    <string name="api_openExchangeRates_descriptionFull">Gögnum er safnað og þau sameinuð úr mörgum áreiðanlegum heimildum, sem tryggir hlutlaust gengi. Sjá <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> fyrir frekari upplýsingar.\n<b>Open Exchange Rates býður upp á mikið úrval, um 160 gengi.\n<i>Til að nota þessa uppsprettu þarftu að slá inn þinn eigin API-lykil!</i></b></string>
+    <string name="api_openExchangeRates_descriptionFull">Gögnum er safnað og þau sameinuð úr mörgum áreiðanlegum heimildum, sem tryggir hlutlaust gengi. Sjá <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> fyrir frekari upplýsingar.\n<b>Open Exchange Rates býður upp á mikið úrval, um 160 gengi.\n<i>Til að nota þessa gagnaveitu þarftu að slá inn þinn eigin API-lykil!</i></b></string>
     <string name="api_openExchangeRates_descriptionShort">Um 160 gengi\nHeimild: Samsetning margra áreiðanlegra gagnaveitna.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Uppfært á klukkustundar fresti.</string>
-    <string name="api_openExchangeRates_hint">Til að nota þessa uppsprettu þarftu að búa til þinn eigin API-lykil!</string>
-    <string name="api_bankOfCanada_name">Kanadabanki</string>
-    <string name="api_bankOfIsrael_name">Ísraelsbanki</string>
-    <string name="api_bankRossii_name">Rússneski seðlabankinn</string>
-    <string name="api_norgesBank_name">Norski seðlabankinn</string>
+    <string name="api_openExchangeRates_hint">Til að nota þessa gagnaveitu þarftu að búa til þinn eigin API-lykil!</string>
+    <string name="api_bankOfCanada_name">Seðlabanki Kanada</string>
+    <string name="api_bankOfIsrael_name">Seðlabanki Ísraels</string>
+    <string name="api_bankRossii_name">Seðlabanki Rússlands</string>
+    <string name="api_norgesBank_name">Seðlabanki Noregs</string>
     <string name="api_bankOfCanada_descriptionFull">Daglegt meðalgengi frá <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Um 23 gjaldmiðlar eru innifaldir.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Um 23 gengi\nHeimild: Seðlabanki Kanada</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Gengi eru birt einu sinni á hverjum virkum degi fyrir kl. 16:30 ET</string>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="desc_toggle_currencies">togliere le valute</string>
+    <string name="desc_toggle_currencies">inverti le valute</string>
     <string name="historical_rates_dialog_title">Tassi storici</string>
-    <string name="historical_rates_dialog_toggle">Usa i tassi di cambio di una data specifica. Disabilita, per prendere sempre quelli più recenti.</string>
+    <string name="historical_rates_dialog_toggle">Usa i tassi di cambio di una data specifica. Disattiva per usare sempre quelli più recenti.</string>
     <string name="historical_rates_dialog_now">Adesso</string>
     <string name="error">Errore: %s</string>
     <string name="error_generic">Problema sconosciuto.</string>
@@ -10,22 +10,22 @@
     <string name="error_timeout">Il server non ha risposto in tempo o non è raggiungibile.</string>
     <string name="error_no_data">Impossibile connettersi al server.</string>
     <string name="error_empty_response">Il server non ha dati per questa richiesta.</string>
-    <string name="error_api_error">Si è verificato un errore API. Si prega di riprovare più tardi.</string>
+    <string name="error_api_error">Si è verificato un errore dell\'API. Riprova più tardi.</string>
     <string name="error_try_another_api">Tuttavia, nelle impostazioni è possibile scegliere altri fornitori di dati. Provali!</string>
     <string name="error_no_api_key">Per utilizzare questa fonte è necessario impostare una chiave API valida.</string>
-    <string name="error_invalid_api_key">HTTP 401 - Verifica la tua chiave API.</string>
-    <string name="error_unsupported_timeline">I dati della timeline non sono supportati da questa API.</string>
+    <string name="error_invalid_api_key">HTTP 401 – Verifica la tua chiave API.</string>
+    <string name="error_unsupported_timeline">Lo storico dei tassi non è supportato da questa API.</string>
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_refresh">Aggiorna tassi</string>
-    <string name="menu_timeline">Cronologia del tasso di cambio</string>
+    <string name="menu_timeline">Grafico del tasso di cambio</string>
     <string name="menu_quick_conversions">Conversioni rapide</string>
     <string name="menu_share">Condividi</string>
     <string name="share_footer">Basato su %1$s, %2$s</string>
     <string name="quick_conversions_title">Conversioni rapide</string>
     <string name="quick_conversions_no_rates">Tassi non ancora caricati.</string>
     <string name="quick_conversions_fees_applied">Commissioni applicate: %s</string>
-    <string name="tooltip_filter_starred">Mostra solo le valute stellate.</string>
-    <string name="currency_dropdown_api_hint">Manca qualcosa? Diversi fornitori di dati offrono valute diverse. Vai nelle impostazioni per provarne un altro! 🤗</string>
+    <string name="tooltip_filter_starred">Mostra solo le valute con stella.</string>
+    <string name="currency_dropdown_api_hint">Manca qualcosa? Fornitori di dati diversi offrono valute diverse. Vai nelle impostazioni per provarne un altro! 🤗</string>
 
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Offline • Tassi del %1$s</string>
@@ -61,7 +61,7 @@
     <string name="cart_share_option_text">Testo semplice</string>
     <string name="cart_share_option_text_desc">Riepilogo formattato da incollare in chat o in un\'app di note.</string>
     <string name="cart_share_option_csv">CSV</string>
-    <string name="cart_share_option_csv_desc">File foglio di calcolo con una riga per articolo.</string>
+    <string name="cart_share_option_csv_desc">Foglio di calcolo con una riga per articolo.</string>
     <string name="cart_share_option_pdf">PDF</string>
     <string name="cart_share_option_pdf_desc">Documento stampabile in stile ricevuta.</string>
     <string name="cart_save_name_hint">Nome carrello</string>
@@ -79,6 +79,24 @@
     <string name="cart_share_empty">Il carrello è vuoto — niente da condividere.</string>
     <string name="cart_save_empty">Il carrello è vuoto — niente da salvare.</string>
     <string name="cart_share_default_title">Carrello</string>
+    <!-- Cart export (CSV, PDF): column and row labels -->
+    <string name="cart_export_expression">Espressione</string>
+    <string name="cart_export_value">Importo</string>
+    <string name="cart_export_converted">Convertito</string>
+    <string name="cart_export_fees">Commissioni</string>
+    <string name="cart_export_source">Fonte</string>
+    <string name="cart_export_rates_date">Data dei tassi</string>
+    <string name="cart_export_exported_at">Esportato il</string>
+    <!-- Why reading or writing a cart or backup file failed: follows "Export failed: " and the like -->
+    <string name="file_error_cannot_open">Impossibile aprire il file</string>
+    <string name="file_error_read_write">Impossibile leggere o scrivere il file</string>
+    <string name="file_error_no_permission">Nessuna autorizzazione per usare questo file</string>
+    <string name="file_error_damaged">Il file è danneggiato o non è nel formato previsto</string>
+    <string name="file_error_unsupported_version">Il file proviene da una versione di CurrenciX che questa non riesce a leggere</string>
+    <string name="file_error_not_a_cart">Non è un file carrello di CurrenciX</string>
+    <string name="file_error_unexpected">Si è verificato un errore imprevisto</string>
+    <string name="backup_error_encryption">Impossibile cifrare il backup</string>
+    <string name="backup_error_decryption">Impossibile decifrare il backup</string>
     <string name="cart_share_header">%1$s (%2$s)</string>
     <string name="cart_share_subtotal">Subtotale: %1$s %2$s</string>
     <string name="cart_share_converted">Convertito: %1$s %2$s</string>
@@ -89,7 +107,7 @@
     <string name="cart_unsaved_save_desc">Sovrascrivi il carrello salvato attuale con queste modifiche.</string>
     <string name="cart_unsaved_save_as">Salva come nuovo</string>
     <string name="cart_unsaved_save_as_desc">Lascia invariato il carrello salvato attuale e salva una copia con un altro nome.</string>
-    <string name="cart_unsaved_discard">Annulla modifiche</string>
+    <string name="cart_unsaved_discard">Scarta modifiche</string>
     <string name="cart_unsaved_discard_desc">Torna all\'ultima versione salvata e continua.</string>
     <string name="cart_unsaved_continue">Continua</string>
     <string name="cart_unsaved_continue_desc">Prosegui con le modifiche non salvate; potrai salvarle più tardi.</string>
@@ -121,7 +139,7 @@
     <string name="desc_open_drawer">Apri il riquadro di navigazione</string>
     <string name="desc_close_drawer">Chiudi il riquadro di navigazione</string>
     <string name="desc_more_options">Altre opzioni</string>
-    <string name="cart_item_deleted">Elemento eliminato</string>
+    <string name="cart_item_deleted">Articolo eliminato</string>
     <string name="cart_cleared">Carrello svuotato</string>
     <string name="undo">Annulla</string>
     <string name="timeline_retry">Riprova</string>
@@ -136,7 +154,7 @@
     <string name="process_text_label">Converti valuta</string>
     <string name="selection_open_app">Apri in %1$s</string>
     <string name="selection_copy">Copia</string>
-    <string name="selection_no_amount">Nessun importo trovato in “%1$s”.</string>
+    <string name="selection_no_amount">Nessun importo trovato in «%1$s».</string>
     <string name="selection_no_rates">Apri %1$s una volta per caricare i tassi di cambio.</string>
     <string name="selection_assumed_currency">Il testo non indica una valuta, quindi è stato letto come %1$s.</string>
     <string name="shortcut_pair_long">Converti %1$s in %2$s</string>
@@ -146,7 +164,7 @@
     <string name="done">Fine</string>
     <string name="cart_share_tip">Mancia / tasse (%1$s%%): %2$s %3$s</string>
     <string name="cart_share_per_person">A persona (÷%1$d): %2$s %3$s</string>
-    <string name="cart_share_budget_left">Rimasto nel budget: %1$s %2$s</string>
+    <string name="cart_share_budget_left">Budget residuo: %1$s %2$s</string>
     <string name="cart_share_over_budget">Oltre il budget: %1$s %2$s</string>
     <string name="cart_menu_extras">Dividi, mancia e budget</string>
     <string name="cart_tip_label">Mancia / tasse</string>
@@ -156,6 +174,6 @@
     <string name="cart_split_increase">Più persone</string>
     <string name="cart_per_person_row">A persona (÷%1$d)</string>
     <string name="cart_budget_label">Budget</string>
-    <string name="cart_budget_left_row">Rimasto nel budget</string>
+    <string name="cart_budget_left_row">Budget residuo</string>
     <string name="cart_over_budget_row">Oltre il budget</string>
 </resources>

@@ -55,8 +55,10 @@ private val BACKUP_NAMESPACES: List<PersistenceKey> = PersistenceKey.backupNames
 sealed class BackupResult {
     data object Success : BackupResult()
 
+    /** [reason] is for the user; [detail] (English, technical) is for the log. */
     data class Failure(
-        val message: String,
+        val reason: FileFailure,
+        val detail: String? = null,
     ) : BackupResult()
 
     // Import saw an encrypted file and needs a password from the user.
@@ -88,13 +90,13 @@ class BackupManager(
         try {
             val payload = buildBackupJson(password).toString(2).toByteArray(Charsets.UTF_8)
             val written = context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(payload) }
-            if (written == null) BackupResult.Failure("Could not open output stream") else BackupResult.Success
+            if (written == null) BackupResult.Failure(FileFailure.CANNOT_OPEN) else BackupResult.Success
         } catch (e: IOException) {
-            BackupResult.Failure(e.localizedMessage ?: "I/O error")
+            BackupResult.Failure(FileFailure.READ_WRITE, e.message)
         } catch (e: SecurityException) {
-            BackupResult.Failure(e.localizedMessage ?: "Permission denied")
+            BackupResult.Failure(FileFailure.NO_PERMISSION, e.message)
         } catch (e: GeneralSecurityException) {
-            BackupResult.Failure(e.localizedMessage ?: "Encryption failed")
+            BackupResult.Failure(FileFailure.ENCRYPTION, e.message)
         } finally {
             password?.fill('\u0000')
         }
@@ -113,18 +115,18 @@ class BackupManager(
     ): BackupResult =
         try {
             val root = readJson(uri)
-            if (root == null) BackupResult.Failure("Could not open input stream") else restore(root, password)
+            if (root == null) BackupResult.Failure(FileFailure.CANNOT_OPEN) else restore(root, password)
         } catch (e: WrongPasswordException) {
             Timber.tag(TAG).i(e, "Backup password rejected")
             BackupResult.WrongPassword
         } catch (e: IOException) {
-            BackupResult.Failure(e.localizedMessage ?: "I/O error")
+            BackupResult.Failure(FileFailure.READ_WRITE, e.message)
         } catch (e: JSONException) {
-            BackupResult.Failure(e.localizedMessage ?: "Malformed backup file")
+            BackupResult.Failure(FileFailure.DAMAGED, e.message)
         } catch (e: SecurityException) {
-            BackupResult.Failure(e.localizedMessage ?: "Permission denied")
+            BackupResult.Failure(FileFailure.NO_PERMISSION, e.message)
         } catch (e: GeneralSecurityException) {
-            BackupResult.Failure(e.localizedMessage ?: "Decryption failed")
+            BackupResult.Failure(FileFailure.DECRYPTION, e.message)
         } finally {
             password?.fill('\u0000')
         }
@@ -155,7 +157,11 @@ class BackupManager(
         val version = root.optInt(BACKUP_KEY_VERSION, -1)
         val namespaces = if (version == BACKUP_SCHEMA_VERSION) extractNamespaces(root, password) else null
         return when {
-            version != BACKUP_SCHEMA_VERSION -> BackupResult.Failure("Unsupported backup version: $version")
+            version != BACKUP_SCHEMA_VERSION ->
+                BackupResult.Failure(
+                    FileFailure.UNSUPPORTED_VERSION,
+                    "Unsupported backup version: $version",
+                )
             namespaces == null -> BackupResult.PasswordRequired
             else -> {
                 restoreNamespaces(namespaces)

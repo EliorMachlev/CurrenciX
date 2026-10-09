@@ -16,16 +16,16 @@
     <string name="fee_pair_from">Fra</string>
     <string name="fee_pair_to">Til</string>
     <string name="fee_pair_pick_currency">Velg valuta</string>
-    <string name="fee_true_cost_prefix">"Konverteringsgebyr: "</string>
+    <string name="fee_true_cost_prefix">"Vekslingsgebyr: "</string>
     <string name="fee_cost_with_fee_prefix">"Pris med gebyr: "</string>
     <string name="fee_empty">Ingen gebyrer ennå</string>
-    <string name="previewConversion_title">Vekslingsoverslag</string>
-    <string name="previewConversion_summary">Nåværende vekslingssats for hver kurs i valutavelgeren.</string>
+    <string name="previewConversion_title">Forhåndsvisning av omregning</string>
+    <string name="previewConversion_summary">Vis gjeldende omregning for hver kurs i valutavelgeren.</string>
     <string name="keyboard_title">Tastatur</string>
     <string name="keyboard_summary_expanded">Legger til flere hurtigtaster for raskere inntasting.</string>
     <string name="decimal_places_title">Desimalpresisjon</string>
     <string name="haptic_feedback_title">Haptisk tilbakemelding</string>
-    <string name="haptic_feedback_summary">Vibrer ved tastetrykk\nFølger systeminnstillingen</string>
+    <string name="haptic_feedback_summary">Vibrer ved trykk i hele appen\nFølger systeminnstillingen\nSlås av automatisk i strømsparingsmodus</string>
     <string name="auto_refresh_title">Oppdater kurser automatisk</string>
     <string name="auto_refresh_summary">Oppdater i bakgrunnen med intervallet leverandøren anbefaler</string>
     <string name="date_format_title">Dato- og tidsformat</string>
@@ -39,10 +39,10 @@
     <!-- graph options -->
     <string name="category_graph_options">Grafinnstillinger</string>
     <string name="graph_options_title">Grafinnstillinger</string>
-    <string name="graph_options_summary">Konfigurer rutenett, akseetiketter og fremhevinger.</string>
+    <string name="graph_options_summary">Konfigurer rutenett, akseetiketter og uthevinger.</string>
     <string name="graph_grid_title">Vis rutenett</string>
-    <string name="graph_x_axis_title">Vis X-akse etiketter</string>
-    <string name="graph_y_axis_title">Vis Y-akse etiketter</string>
+    <string name="graph_x_axis_title">Vis etiketter på X-aksen</string>
+    <string name="graph_y_axis_title">Vis etiketter på Y-aksen</string>
     <string name="graph_highlight_extremes_title">Uthev min. og maks.</string>
     <string name="graph_highlight_period_change_title">Uthev års-/månedsskifte</string>
     <!-- languages -->
@@ -82,15 +82,15 @@
 
     <!-- api -->
     <string name="category_api">Valutakurser</string>
-    <string name="api_title">Datatilbyder</string>
+    <string name="api_title">Dataleverandør</string>
     <string name="api_about_title">Om %s</string>
-    <string name="api_refreshPeriod_title">Gjenoppfriskingsperiode</string>
+    <string name="api_refreshPeriod_title">Oppdateringsintervall</string>
     <!-- about -->
     <string name="category_about">Om denne appen</string>
     <string name="disclaimer_title">Ansvarsfraskrivelse</string>
     <string name="disclaimer_summary">Vekslingskursene som vises er <b>kun veiledende</b>. De kommer fra tredjepartsleverandører, kan være forsinkede eller feil, og <b>må ikke</b> brukes til handel, sikring, fakturering eller noen beslutning der en nøyaktig eller gjennomførbar kurs er påkrevd. Se vilkårene for tjenesten for den fullstendige ansvarsfraskrivelsen.\nOppgitte kurser – selv om de er korrekte – kan avvike fra dem banken din bruker.\nTil sist: feil skjer. Aldri stol blindt på en enkelt kilde.\nDenne appen er helt gratis og åpen kildekode. Hvis du finner en versjon med prislapp eller reklame, er den falsk — avinstaller den umiddelbart.</string>
-    <string name="rate_title">Vurder programmet</string>
-    <string name="rate_summary">Hjelp andre å oppdage Currencies. Klikk her for å vurdere programmet.</string>
+    <string name="rate_title">Vurder appen</string>
+    <string name="rate_summary">Hvis du vil, kan du hjelpe andre med å oppdage Currencies. Trykk her for å vurdere appen.</string>
 
     <string name="backup_title">Sikkerhetskopi og gjenoppretting</string>
     <string name="backup_summary">Lagre innstillingene dine i en fil, eller gjenopprett fra en tidligere sikkerhetskopi</string>
@@ -111,7 +111,7 @@
     <string name="backup_encrypt_option">Krypter med passord</string>
     <string name="backup_password_hint">Passord</string>
     <string name="backup_password_prompt_title">Skriv inn passord</string>
-    <string name="backup_password_wrong">Passordet klarte ikke å dekryptere denne filen. Prøv igjen.</string>
+    <string name="backup_password_wrong">Filen kunne ikke dekrypteres med dette passordet. Prøv igjen.</string>
     <plurals name="backup_password_too_short">
         <item quantity="one">Passordet må være minst %1$d tegn</item>
         <item quantity="other">Passordet må være minst %1$d tegn</item>
@@ -121,13 +121,13 @@
     <string name="picker_active_chip">Aktiv</string>
     <string name="picker_currency_title">Valuta</string>
     <string name="credits_title">Om, juridisk og åpen kildekode</string>
-    <string name="credits_summary">Personvernerklæring, vilkår for bruk, tilgjengelighet, kildekode og lisenser for tredjepartsbiblioteker</string>
+    <string name="credits_summary">Personvernerklæring, vilkår for tjenesten, tilgjengelighet, kildekode og lisenser for tredjepartsbiblioteker</string>
     <string name="title_credits">Om, juridisk og åpen kildekode</string>
     <string name="credits_section_project">Prosjekt</string>
     <string name="credits_section_license">Lisens</string>
     <string name="credits_section_libraries">Tredjepartsbiblioteker</string>
     <string name="api_open_exchangerates_api_key_title">Open Exchangerates API-nøkkel</string>
-    <string name="api_open_exchangerates_api_key_message">For å bruke denne kilden må du opprette din personlige API-nøkkel.\n\nFor å gjøre det, gå til https://openexchangerates.org/signup/free og opprett en gratis konto.\nGenerer til slutt en ny App-ID i Dashbordet ditt og skriv den inn her:</string>
+    <string name="api_open_exchangerates_api_key_message">For å bruke denne kilden må du opprette din personlige API-nøkkel.\n\nFor å gjøre det, gå til https://openexchangerates.org/signup/free og opprett en gratis konto.\nGenerer til slutt en ny App-ID i dashbordet ditt og skriv den inn her:</string>
     <string name="api_open_exchangerates_api_key_missing"><i>API-nøkkel kreves</i></string>
     <string name="backup_default_filename">currencies-backup.json</string>
     <string name="category_versioninfo">Versjonsinformasjon</string>
@@ -137,6 +137,22 @@
     <string name="credit_privacy_policy_subtitle">Ingen personopplysninger samles inn. Full oversikt per jurisdiksjon.</string>
     <string name="credit_source_title">Kildekode</string>
     <string name="credit_source_subtitle">Åpen kildekode på GitHub — bidra med kode eller åpne en sak.</string>
+    <string name="credit_fork_by">Fork laget av %1$s</string>
+    <string name="credit_original_by">Opprinnelig app av %1$s</string>
+    <!-- What each third-party library does for the app; the maker's name follows -->
+    <string name="credit_lib_androidx">Jetpack-biblioteker</string>
+    <string name="credit_lib_compose">UI-verktøysett og Material 3</string>
+    <string name="credit_lib_material_components">Material Design-komponenter</string>
+    <string name="credit_lib_material_symbols">Ikoner (Rounded)</string>
+    <string name="credit_lib_vico">Diagrammer</string>
+    <string name="credit_lib_okhttp">HTTP-klient</string>
+    <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_timber">Logging</string>
+    <string name="credit_lib_bouncy_castle">Argon2id-nøkkelavledning for krypterte sikkerhetskopier</string>
+    <string name="credit_lib_tink">AES-GCM-kryptering av sikkerhetskopier</string>
+    <string name="credit_lib_kotlin">Språkets kjøretidsmiljø og standardbibliotek</string>
+    <string name="credit_lib_coroutines">Asynkron programmering (brukes av andre biblioteker)</string>
+    <string name="credit_lib_okio">I/O-primitiver (brukes av OkHttp og Moshi)</string>
     <string name="credit_terms_of_service_title">Vilkår for tjenesten</string>
     <string name="credit_terms_of_service_subtitle">Bruksvilkår, garantifraskrivelse, merknad om kursnøyaktighet.</string>
     <string name="credits_section_legal">Juridisk</string>
@@ -152,7 +168,7 @@
     <string name="dynamic_color_summary">Farg appen med fargene fra bakgrunnsbildet (Material You)</string>
     <string name="provider_group_free">Gratis</string>
     <string name="provider_group_api_key">Krever en API-nøkkel</string>
-    <string name="provider_main_chip">Hoved</string>
+    <string name="provider_main_chip">Primær</string>
     <string name="provider_cadence_hourly">Oppdateres hver time</string>
     <string name="provider_cadence_daily">Oppdateres hver virkedag</string>
     <string name="provider_cadence_monthly">Oppdateres én gang i måneden</string>

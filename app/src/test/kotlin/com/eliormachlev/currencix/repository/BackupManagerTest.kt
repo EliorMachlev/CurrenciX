@@ -49,7 +49,10 @@ class BackupManagerTest {
 
     private fun fixture(name: String): Uri = fileWith(checkNotNull(javaClass.getResource("/backup/$name")).readText())
 
-    private fun failure(result: BackupResult): String = (result as BackupResult.Failure).message
+    // The technical detail of a refusal; the user sees only its reason.
+    private fun failure(result: BackupResult): String? = (result as BackupResult.Failure).detail
+
+    private fun reason(result: BackupResult): FileFailure = (result as BackupResult.Failure).reason
 
     @Before
     fun reset() {
@@ -144,6 +147,7 @@ class BackupManagerTest {
     @Test
     fun `files that aren't a usable backup fail with a reason`() {
         assertEquals("Unsupported backup version: 7", failure(manager.import(fileWith("""{"version":7}"""))))
+        assertEquals(FileFailure.UNSUPPORTED_VERSION, reason(manager.import(fileWith("""{"version":7}"""))))
         assertEquals("Unsupported backup version: -1", failure(manager.import(fileWith("{}"))))
         assertTrue(manager.import(fileWith("""{"version":$BACKUP_SCHEMA_VERSION}""")) is BackupResult.Failure)
         assertTrue(manager.import(fileWith("not json")) is BackupResult.Failure)
@@ -167,5 +171,6 @@ class BackupManagerTest {
         assertEquals("Invalid Argon2 parameters", refusal(block("ARGON2ID-v1.3", "AES-256-GCM", nonce)))
         assertEquals("Unsupported nonce length: 3", refusal(block("ARGON2ID-v1.3", "AES-256-GCM", "AAAA")))
         assertEquals("Missing iv", refusal(block("ARGON2ID-v1.3", "AES-256-GCM", "")))
+        assertEquals(FileFailure.DECRYPTION, reason(manager.import(fileWith(block("MD5", "AES-256-GCM", nonce)), "x".toCharArray())))
     }
 }
