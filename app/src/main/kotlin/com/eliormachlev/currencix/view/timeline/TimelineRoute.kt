@@ -49,6 +49,8 @@ import com.eliormachlev.currencix.util.buildImageShareChooser
 import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.LayerCapture
+import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarStyle
@@ -98,42 +100,46 @@ fun TimelineRoute(
     val scope = rememberCoroutineScope()
 
     // Small bar: the pair sits beside the back arrow, leaving the height to the chart.
-    ScreenScaffold(
-        // The screen's own pair until the data (and any swap) has loaded, so
-        // the title is there while offline or still fetching.
-        title = { TimelineTitle(pair ?: (screen.from to screen.to)) },
-        onBack = onBack,
-        style = TopBarStyle.Small,
-        actions = {
-            TopBarAction(
-                icon = painterResource(R.drawable.ic_tune),
-                contentDescription = stringResource(R.string.graph_options_title),
-                onClick = { sheet = TimelineSheet.GraphOptions },
+    // The bar follows the language (in Hebrew: back arrow and pair on the
+    // right, actions on the left); the chart and figures below set their own.
+    ReadingDirection {
+        ScreenScaffold(
+            // The screen's own pair until the data (and any swap) has loaded, so
+            // the title is there while offline or still fetching.
+            title = { TimelineTitle(pair ?: (screen.from to screen.to)) },
+            onBack = onBack,
+            style = TopBarStyle.Small,
+            actions = {
+                TopBarAction(
+                    icon = painterResource(R.drawable.ic_tune),
+                    contentDescription = stringResource(R.string.graph_options_title),
+                    onClick = { sheet = TimelineSheet.GraphOptions },
+                )
+                // Swapping re-fetches the pair; wait out a refresh or an error first.
+                TopBarAction(
+                    icon = painterResource(R.drawable.ic_swap_horiz),
+                    contentDescription = stringResource(R.string.desc_toggle_currencies),
+                    onClick = model::toggleCurrencies,
+                    enabled = !inFlight && error == null,
+                )
+                TopBarAction(
+                    icon = painterResource(R.drawable.ic_share),
+                    contentDescription = stringResource(R.string.timeline_share),
+                    onClick = { scope.launch { shareChart(context, chartCapture, model, formatter) } },
+                    enabled = error == null,
+                )
+            },
+        ) { padding ->
+            TimelineScreen(
+                model = model,
+                formatter = formatter,
+                foldingFeature = foldingFeature,
+                onChangeProvider = { sheet = TimelineSheet.Provider },
+                modifier = Modifier.fillMaxSize().padding(padding),
+                chartCapture = chartCapture,
+                chartContent = { TimelineChartContent(model, db) },
             )
-            // Swapping re-fetches the pair; wait out a refresh or an error first.
-            TopBarAction(
-                icon = painterResource(R.drawable.ic_swap_horiz),
-                contentDescription = stringResource(R.string.desc_toggle_currencies),
-                onClick = model::toggleCurrencies,
-                enabled = !inFlight && error == null,
-            )
-            TopBarAction(
-                icon = painterResource(R.drawable.ic_share),
-                contentDescription = stringResource(R.string.timeline_share),
-                onClick = { scope.launch { shareChart(context, chartCapture, model, formatter) } },
-                enabled = error == null,
-            )
-        },
-    ) { padding ->
-        TimelineScreen(
-            model = model,
-            formatter = formatter,
-            foldingFeature = foldingFeature,
-            onChangeProvider = { sheet = TimelineSheet.Provider },
-            modifier = Modifier.fillMaxSize().padding(padding),
-            chartCapture = chartCapture,
-            chartContent = { TimelineChartContent(model, db) },
-        )
+        }
     }
     TimelineSheets(sheet = sheet, db = db, onProviderPicked = { model.retry() }, onDismiss = { sheet = null })
 }
@@ -269,14 +275,17 @@ internal fun TimelineTitle(pair: Pair<Currency, Currency>?) {
                     )
                 },
         )
-    Text(
-        text = text,
-        inlineContent = inlineContent,
-        style = MaterialTheme.typography.titleMedium,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.clearAndSetSemantics { contentDescription = spoken },
-    )
+    // A pair reads from → to, left to right, in every language.
+    Ltr {
+        Text(
+            text = text,
+            inlineContent = inlineContent,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.clearAndSetSemantics { contentDescription = spoken },
+        )
+    }
 }
 
 // Flag, then the symbol (when the currency has one besides its code) in a

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.view.compose.OverflowAction
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
@@ -41,8 +42,12 @@ class TopBarsScreenshotTest {
     @Test fun cartBarMedium() = shots.captureMatrix("top_bar_cart_medium") { CartBar() }
 }
 
+// Laid out the way the language reads, as TimelineRoute does.
 @Composable
-private fun TimelineBar() {
+private fun TimelineBar() = ReadingDirection { TimelineBarContent() }
+
+@Composable
+private fun TimelineBarContent() {
     ScreenScaffold(
         title = { TimelineTitle(Currency.USD to Currency.ILS) },
         onBack = {},

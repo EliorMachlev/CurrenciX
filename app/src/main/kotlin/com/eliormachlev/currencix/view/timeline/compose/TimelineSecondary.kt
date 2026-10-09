@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -145,10 +147,16 @@ internal fun TimelineSecondary(
 
         // 2×2 tiles: the extremes (with their dates) on top, the centre
         // (average, median) below. Compact, so the chart above gets the height.
-        StatGrid(max = rows[0], min = rows[3], avg = rows[1], med = rows[2])
-        Spacer(Modifier.height(CONTENT_PADDING))
-
-        TimelinePeriodControls(control = period, formatter = formatter, modifier = Modifier.fillMaxWidth())
+        // The tiles and the period controls follow the language (in Hebrew the
+        // maximum sits on the right, labels right-aligned); the past / current
+        // row above stays left to right, in step with the chart's time axis.
+        ReadingDirection {
+            Column {
+                StatGrid(max = rows[0], min = rows[3], avg = rows[1], med = rows[2])
+                Spacer(Modifier.height(CONTENT_PADDING))
+                TimelinePeriodControls(control = period, formatter = formatter, modifier = Modifier.fillMaxWidth())
+            }
+        }
     }
 }
 
@@ -284,18 +292,24 @@ private fun StatTile(
             letterSpacing = TILE_LABEL_LETTER_SPACING_EM.em,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Text(
-            text = stat.value ?: AnnotatedString(PLACEHOLDER_VALUE),
-            fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
-            maxLines = 1,
-        )
-        if (stat.date != null) {
+        // Figures keep their left-to-right reading ("0.356 $", "29/05/26"),
+        // sitting at the tile's start edge either way.
+        Ltr {
             Text(
-                text = stat.date,
-                fontSize = TIMELINE_DATE_FONT_SIZE,
-                letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = stat.value ?: AnnotatedString(PLACEHOLDER_VALUE),
+                fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
+                maxLines = 1,
             )
+        }
+        if (stat.date != null) {
+            Ltr {
+                Text(
+                    text = stat.date,
+                    fontSize = TIMELINE_DATE_FONT_SIZE,
+                    letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
