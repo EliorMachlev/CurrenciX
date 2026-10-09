@@ -276,6 +276,10 @@ dependencies {
     // where the KSP processor picks them up.
     val showkaseVersion = "1.0.5"
     debugImplementation("com.airbnb.android:showkase:$showkaseVersion")
+    // Showkase's browser draws Icons.Filled.* from material-icons-core, which
+    // Compose no longer brings in on its own: without it the gallery crashes
+    // (NoClassDefFoundError) as it opens. Version from the Compose BOM.
+    debugImplementation("androidx.compose.material:material-icons-core")
     kspDebug("com.airbnb.android:showkase-processor:$showkaseVersion")
     // Needed for the @Preview annotation on PlaceholderPreview (and any
     // future debug-only previews). Not shipped in release.
