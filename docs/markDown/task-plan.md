@@ -16,7 +16,7 @@ Guardrails first. These catch regressions in everything that follows.
 - **#144 LeakCanary** — debug-only. Safety net for the migrations in Phases 1–3.
 - **#156 JankStats** — debug-only. Establish a baseline frame-time signal *before* motion changes so regressions are structural, not visual.
 - **#143 Chucker** — debug-only HTTP inspector. Needed for Phase 2's networking migration.
-- **#154 Showkase** — component gallery. Land early so every composable added during redesign registers automatically.
+- **#154 Showkase** — component gallery. Landed, later removed: the screenshot tests already cover every composable, and the gallery went unused.
 
 ## Phase 1 — Data / state layer
 
@@ -98,7 +98,7 @@ No open tasks. Ledger row treatment (#159) applies to any list on timeline scree
 | 151 | 3 | Auto-refresh rates via WorkManager |
 | 152 | 9 | Baseline Profiles + ProfileInstaller |
 | 153 | 0 | detekt: static analysis |
-| 154 | 0 | Showkase: browsable @Preview gallery |
+| 154 | 0 | Showkase: browsable @Preview gallery (removed) |
 | 155 | 5 | Splash screen: androidx.core.splashscreen |
 | 156 | 0 | JankStats: local jank tracking |
 | 157 | 0 | Konsist: architecture invariants as tests |

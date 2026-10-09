@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Réinitialiser la visite guidée</string>
     <string name="pref_debug_reset_onboarding_summary">Efface l\'indicateur de premier lancement pour que la visite avec mises en évidence soit rejouée au prochain lancement.</string>
     <string name="pref_debug_reset_onboarding_toast">La visite guidée sera rejouée au prochain lancement.</string>
-    <string name="pref_debug_gallery_title">Galerie de composants</string>
-    <string name="pref_debug_gallery_summary">Parcourez les composants de l\'application dans Showkase.</string>
 </resources>

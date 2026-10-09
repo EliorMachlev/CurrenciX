@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Lähtesta tutvustusringkäik</string>
     <string name="pref_debug_reset_onboarding_summary">Kustutab esmakäivituse märgi, et esiletõstetega ringkäik kuvataks järgmisel käivitusel uuesti.</string>
     <string name="pref_debug_reset_onboarding_toast">Tutvustus kuvatakse järgmisel käivitusel uuesti.</string>
-    <string name="pref_debug_gallery_title">Komponentide galerii</string>
-    <string name="pref_debug_gallery_summary">Sirvi rakenduse kasutajaliidese komponente Showkase\'is.</string>
 </resources>

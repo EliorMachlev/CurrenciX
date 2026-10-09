@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Obnovit úvodní prohlídku</string>
     <string name="pref_debug_reset_onboarding_summary">Vymaže příznak prvního spuštění, takže se prohlídka se zvýrazněním při příštím spuštění přehraje znovu.</string>
     <string name="pref_debug_reset_onboarding_toast">Úvodní prohlídka se při příštím spuštění přehraje znovu.</string>
-    <string name="pref_debug_gallery_title">Galerie komponent</string>
-    <string name="pref_debug_gallery_summary">Procházejte komponenty aplikace v Showkase.</string>
 </resources>

@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Poništi uvodni obilazak</string>
     <string name="pref_debug_reset_onboarding_summary">Briše oznaku prvog pokretanja kako bi se obilazak s isticanjima ponovno prikazao pri sljedećem pokretanju.</string>
     <string name="pref_debug_reset_onboarding_toast">Uvodni obilazak ponovno će se prikazati pri sljedećem pokretanju.</string>
-    <string name="pref_debug_gallery_title">Galerija komponenti</string>
-    <string name="pref_debug_gallery_summary">Pregledajte komponente aplikacije u Showkaseu.</string>
 </resources>

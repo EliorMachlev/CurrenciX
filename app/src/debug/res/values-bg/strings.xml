@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Нулиране на въвеждащата обиколка</string>
     <string name="pref_debug_reset_onboarding_summary">Изчиства отметката за първо стартиране, така че обиколката с подчертаванията да се покаже отново при следващото стартиране.</string>
     <string name="pref_debug_reset_onboarding_toast">Въвеждащата обиколка ще се покаже отново при следващото стартиране.</string>
-    <string name="pref_debug_gallery_title">Галерия с компоненти</string>
-    <string name="pref_debug_gallery_summary">Разгледайте компонентите на интерфейса на приложението в Showkase.</string>
 </resources>

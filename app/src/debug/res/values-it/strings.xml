@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Reimposta il tour introduttivo</string>
     <string name="pref_debug_reset_onboarding_summary">Cancella l\'indicatore di primo avvio, così il tour con le evidenziazioni ripartirà al prossimo avvio.</string>
     <string name="pref_debug_reset_onboarding_toast">Il tour introduttivo ripartirà al prossimo avvio.</string>
-    <string name="pref_debug_gallery_title">Galleria dei componenti</string>
-    <string name="pref_debug_gallery_summary">Sfoglia i componenti dell\'app in Showkase.</string>
 </resources>

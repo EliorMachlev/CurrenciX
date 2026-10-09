@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">بازنشانی تور معرفی</string>
     <string name="pref_debug_reset_onboarding_summary">نشانگر اجرای نخست را پاک می‌کند تا تور معرفی با برجسته‌سازی‌ها در اجرای بعدی دوباره نمایش داده شود.</string>
     <string name="pref_debug_reset_onboarding_toast">تور معرفی در اجرای بعدی دوباره نمایش داده می‌شود.</string>
-    <string name="pref_debug_gallery_title">گالری مؤلفه‌ها</string>
-    <string name="pref_debug_gallery_summary">مؤلفه‌های رابط کاربری برنامه را در Showkase مرور کنید.</string>
 </resources>

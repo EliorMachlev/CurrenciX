@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-         Showkase's manifest declares supportsRtl=true; the app declares
-         supportsRtl=false in main. Debug-only override keeps the app's
-         opinion on debug builds without changing the release manifest.
-    -->
-    <application
-        android:supportsRtl="false"
-        tools:replace="android:supportsRtl">
+    <application>
 
         <!--
              Debug crash-report landing screen. The process-wide

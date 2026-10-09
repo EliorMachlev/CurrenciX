@@ -270,20 +270,6 @@ dependencies {
     // the release variant sees a no-op installer and this dep is stripped —
     // zero overhead in shipped APKs. No telemetry sink.
     debugImplementation("androidx.metrics:metrics-performance:1.0.0")
-    // showkase: browsable @Preview gallery for debug builds. Runtime and the
-    // KSP processor are debug-scoped so nothing ships in release. The
-    // @ShowkaseRoot module + browser Activity live in src/debug/, which is
-    // where the KSP processor picks them up.
-    val showkaseVersion = "1.0.5"
-    debugImplementation("com.airbnb.android:showkase:$showkaseVersion")
-    // Showkase's browser draws Icons.Filled.* from material-icons-core, which
-    // Compose no longer brings in on its own: without it the gallery crashes
-    // (NoClassDefFoundError) as it opens. Version from the Compose BOM.
-    debugImplementation("androidx.compose.material:material-icons-core")
-    kspDebug("com.airbnb.android:showkase-processor:$showkaseVersion")
-    // Needed for the @Preview annotation on PlaceholderPreview (and any
-    // future debug-only previews). Not shipped in release.
-    debugImplementation("androidx.compose.ui:ui-tooling-preview")
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.24.0")

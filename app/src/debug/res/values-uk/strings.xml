@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Скинути вступний тур</string>
     <string name="pref_debug_reset_onboarding_summary">Скидає позначку першого запуску, щоб тур із підсвічуванням елементів знову показався під час наступного запуску.</string>
     <string name="pref_debug_reset_onboarding_toast">Вступний тур знову покажеться під час наступного запуску.</string>
-    <string name="pref_debug_gallery_title">Галерея компонентів</string>
-    <string name="pref_debug_gallery_summary">Перегляньте компоненти інтерфейсу застосунку в Showkase.</string>
 </resources>

@@ -117,7 +117,6 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 |---|---|---|
 | `com.squareup.leakcanary:leakcanary-android` | 2.14 | Debug-only leak detection, auto-installs via its own `ContentProvider` |
 | `androidx.metrics:metrics-performance` | 1.0.0 | JankStats — per-Activity jank logging via Timber, debug-only |
-| `com.airbnb.android:showkase` (+ KSP processor) | 1.0.5 | Browsable `@Preview` gallery, debug-only. Opened from **Settings → Component gallery** (a row only debug builds have), not from a launcher icon of its own |
 
 ### Testing
 

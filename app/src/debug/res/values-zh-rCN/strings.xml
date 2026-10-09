@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">重置新手引导</string>
     <string name="pref_debug_reset_onboarding_summary">清除首次运行标记，下次启动时将重新播放带高亮提示的引导。</string>
     <string name="pref_debug_reset_onboarding_toast">下次启动时将重新播放新手引导。</string>
-    <string name="pref_debug_gallery_title">组件库</string>
-    <string name="pref_debug_gallery_summary">在 Showkase 中浏览应用的界面组件。</string>
 </resources>

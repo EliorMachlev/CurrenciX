@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Nulstil introduktionsrundvisning</string>
     <string name="pref_debug_reset_onboarding_summary">Rydder markeringen for første start, så rundvisningen med fremhævninger vises igen ved næste start.</string>
     <string name="pref_debug_reset_onboarding_toast">Introduktionen vises igen ved næste start.</string>
-    <string name="pref_debug_gallery_title">Komponentgalleri</string>
-    <string name="pref_debug_gallery_summary">Gennemse appens UI-komponenter i Showkase.</string>
 </resources>

@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Introductierondleiding resetten</string>
     <string name="pref_debug_reset_onboarding_summary">Wist de markering voor de eerste start, zodat de rondleiding met markeringen bij de volgende start opnieuw wordt getoond.</string>
     <string name="pref_debug_reset_onboarding_toast">De introductie wordt bij de volgende start opnieuw getoond.</string>
-    <string name="pref_debug_gallery_title">Componentengalerij</string>
-    <string name="pref_debug_gallery_summary">Blader door de UI-componenten van de app in Showkase.</string>
 </resources>

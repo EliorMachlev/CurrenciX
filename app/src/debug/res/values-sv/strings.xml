@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Återställ introduktionsturen</string>
     <string name="pref_debug_reset_onboarding_summary">Rensar markeringen för första start så att turen med markeringar visas igen vid nästa start.</string>
     <string name="pref_debug_reset_onboarding_toast">Introduktionen visas igen vid nästa start.</string>
-    <string name="pref_debug_gallery_title">Komponentgalleri</string>
-    <string name="pref_debug_gallery_summary">Bläddra bland appens UI-komponenter i Showkase.</string>
 </resources>

@@ -12,7 +12,4 @@
     <string name="pref_debug_reset_onboarding_summary">Clears the first-run gate so the spotlight replays on next launch.</string>
     <string name="pref_debug_reset_onboarding_toast">Onboarding will replay next launch.</string>
 
-    <!-- The debug-only Settings row that opens the Showkase component gallery. -->
-    <string name="pref_debug_gallery_title">Component gallery</string>
-    <string name="pref_debug_gallery_summary">Browse the app\'s composables in Showkase.</string>
 </resources>

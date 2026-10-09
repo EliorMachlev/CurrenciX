@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">重設新手導覽</string>
     <string name="pref_debug_reset_onboarding_summary">清除首次執行標記，下次啟動時將重新播放含重點提示的導覽。</string>
     <string name="pref_debug_reset_onboarding_toast">下次啟動時將重新播放新手導覽。</string>
-    <string name="pref_debug_gallery_title">元件庫</string>
-    <string name="pref_debug_gallery_summary">在 Showkase 中瀏覽應用程式的介面元件。</string>
 </resources>

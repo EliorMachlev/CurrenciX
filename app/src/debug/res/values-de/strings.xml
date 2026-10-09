@@ -3,6 +3,4 @@
     <string name="pref_debug_reset_onboarding_title">Einführungstour zurücksetzen</string>
     <string name="pref_debug_reset_onboarding_summary">Setzt die Erststart-Markierung zurück, damit die Tour mit den Hervorhebungen beim nächsten Start erneut läuft.</string>
     <string name="pref_debug_reset_onboarding_toast">Die Einführung wird beim nächsten Start erneut gezeigt.</string>
-    <string name="pref_debug_gallery_title">Komponentengalerie</string>
-    <string name="pref_debug_gallery_summary">Durchsuche die UI-Komponenten der App in Showkase.</string>
 </resources>
