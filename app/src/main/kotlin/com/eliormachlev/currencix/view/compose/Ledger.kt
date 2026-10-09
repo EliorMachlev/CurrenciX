@@ -186,6 +186,7 @@ fun LedgerLabel(
     summary: String? = null,
     @DrawableRes iconRes: Int? = null,
     enabled: Boolean = true,
+    summaryMaxLines: Int = LIST_SUMMARY_LINES,
 ) {
     val alpha = if (enabled) 1f else LEDGER_DISABLED_ALPHA
     Row(
@@ -212,7 +213,7 @@ fun LedgerLabel(
                     text = summary,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
-                    maxLines = MAX_SUMMARY_LINES,
+                    maxLines = summaryMaxLines,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -220,7 +221,14 @@ fun LedgerLabel(
     }
 }
 
-private const val MAX_SUMMARY_LINES = 3
+/**
+ * A list row's summary stays short; text meant to be read in full (a
+ * disclaimer, a provider's description) passes [FULL_SUMMARY] instead.
+ */
+const val LIST_SUMMARY_LINES = 3
+
+/** No line cap: for summaries meant to be read in full. */
+const val FULL_SUMMARY = Int.MAX_VALUE
 
 /**
  * Small brass-outlined chip — mirrors the hero card's stamp accent so the

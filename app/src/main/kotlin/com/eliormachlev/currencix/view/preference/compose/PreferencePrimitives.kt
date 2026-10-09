@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.LIST_SUMMARY_LINES
 import com.eliormachlev.currencix.view.compose.LedgerLabel
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerSection
@@ -59,6 +60,7 @@ fun PreferenceRow(
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
+    summaryMaxLines: Int = LIST_SUMMARY_LINES,
 ) {
     LedgerRow(
         modifier = modifier,
@@ -71,6 +73,7 @@ fun PreferenceRow(
                 iconRes = iconRes,
                 enabled = enabled,
                 modifier = Modifier.weight(1f),
+                summaryMaxLines = summaryMaxLines,
             )
         },
         value = trailing?.let { slot -> { LedgerTrailing { slot() } } },

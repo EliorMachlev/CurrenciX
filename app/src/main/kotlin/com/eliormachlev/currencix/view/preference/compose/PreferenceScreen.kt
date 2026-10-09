@@ -32,6 +32,7 @@ import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.releaseNotesUrl
+import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import java.util.Calendar
@@ -376,11 +377,10 @@ private fun ApiSection(
             )
         }
         provider?.let {
-            PreferenceRow(
-                title = stringResource(id = R.string.api_about_title, it.getName(context)).inReadingOrder(context),
-                summary = it.getDescriptionLong(context).toString(),
-                iconRes = R.drawable.ic_info,
-            )
+            AboutProviderRow(it)
+            // The fallback stands in when the main provider can't be reached,
+            // so what it is matters just as much.
+            if (values.fallback != it) AboutProviderRow(values.fallback)
             PreferenceRow(
                 title = stringResource(id = R.string.api_refreshPeriod_title),
                 summary = it.getDescriptionUpdateInterval(context).toString(),
@@ -399,6 +399,18 @@ private fun ApiSection(
             onCheckedChange = onAutoRefreshChange,
         )
     }
+}
+
+// "About Bank of Israel" and its description, in full.
+@Composable
+private fun AboutProviderRow(provider: ApiProvider) {
+    val context = LocalContext.current
+    PreferenceRow(
+        title = stringResource(id = R.string.api_about_title, provider.getName(context)).inReadingOrder(context),
+        summary = provider.getDescriptionLong(context).toString(),
+        iconRes = R.drawable.ic_info,
+        summaryMaxLines = FULL_SUMMARY,
+    )
 }
 
 // "Fallback provider — Frankfurter.app · used when Bank of Israel can't be reached"
@@ -514,6 +526,7 @@ private fun AboutSection(
             title = stringResource(id = R.string.disclaimer_title),
             summary = disclaimerAnnotated.text,
             iconRes = R.drawable.ic_gavel,
+            summaryMaxLines = FULL_SUMMARY,
         )
         PreferenceRow(
             title = stringResource(id = R.string.credits_title),

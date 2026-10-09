@@ -4,6 +4,10 @@ import android.app.Application
 import androidx.activity.BackEventCompat
 import androidx.activity.ComponentDialog
 import androidx.activity.OnBackPressedDispatcher
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -145,6 +149,23 @@ class MainActivitySmokeTest {
         compose.onNodeWithText(string(R.string.title_preferences)).assertExists()
         back()
         assertOnConverter()
+    }
+
+    @Test
+    fun `settings describe both the main and the fallback provider`() {
+        openFromTopBar(R.string.desc_open_drawer)
+        compose.onNodeWithTag(UiTestTags.drawerEntry(DrawerAction.Settings.name)).performClick()
+        settle()
+        // Row titles that start "About …" (a description may also contain the word).
+        val about = string(R.string.api_about_title).substringBefore("%")
+        val aboutTitle =
+            SemanticsMatcher("text starts with \"$about\"") { node ->
+                node.config
+                    .getOrNull(SemanticsProperties.Text)
+                    .orEmpty()
+                    .any { it.text.startsWith(about) }
+            }
+        compose.onAllNodes(aboutTitle).assertCountEquals(2)
     }
 
     @Test
