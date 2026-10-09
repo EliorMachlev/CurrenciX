@@ -3,18 +3,22 @@ package com.eliormachlev.currencix.view.compose
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -24,7 +28,9 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmDialog
+import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogActions
 
 private val CHIP_HEIGHT: Dp = 36.dp
 private val CHIP_PADDING_H: Dp = 12.dp
@@ -32,6 +38,11 @@ private val CHIP_INNER_GAP: Dp = 6.dp
 private val FLAG_WIDTH: Dp = 20.dp
 private val FLAG_HEIGHT: Dp = 14.dp
 private val FLAG_CORNER: Dp = 2.dp
+private val PAIR_ARROW_SIZE: Dp = 14.dp
+
+// The sheet body lines up with LedgerBottomSheet's title.
+private val SHEET_BODY_PADDING_H: Dp = 20.dp
+private val SHEET_CHIP_GAP: Dp = 12.dp
 
 /** Space between neighbouring [CurrencyChip]s in a row. */
 val CurrencyChipGap: Dp = 8.dp
@@ -51,13 +62,31 @@ fun CurrencyChip(
     onLongClickLabel: String? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
+    ChipFrame(
+        modifier = modifier,
+        // Inside the pill's clip, so the ripple keeps its shape.
+        action =
+            Modifier
+                .hapticCombinedClickable(onClick = onClick, onLongClick = onLongClick, onLongClickLabel = onLongClickLabel)
+                .semantics(mergeDescendants = true) { contentDescription = description },
+        content = content,
+    )
+}
+
+// The pill itself: height, shape, tone and inner spacing; [action] (a click)
+// goes inside the clip.
+@Composable
+private fun ChipFrame(
+    modifier: Modifier = Modifier,
+    action: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
+) {
     Row(
         modifier
             .height(CHIP_HEIGHT)
             .clip(RoundedCornerShape(CHIP_HEIGHT / 2))
             .background(MaterialTheme.colorScheme.surfaceContainer)
-            .hapticCombinedClickable(onClick = onClick, onLongClick = onLongClick, onLongClickLabel = onLongClickLabel)
-            .semantics(mergeDescendants = true) { contentDescription = description }
+            .then(action)
             .padding(horizontal = CHIP_PADDING_H),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(CHIP_INNER_GAP),
@@ -65,23 +94,54 @@ fun CurrencyChip(
     )
 }
 
+/** A recent pair's chip content: from, an arrow, to. */
+@Composable
+fun PairChipContent(
+    from: Currency,
+    to: Currency,
+) {
+    FlagCode(from)
+    Icon(
+        painter = painterResource(R.drawable.ic_arrow_forward),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.size(PAIR_ARROW_SIZE),
+    )
+    FlagCode(to)
+}
+
 /**
  * Asks before a recent pair or currency is forgotten — what a long-press on
- * its [CurrencyChip] opens. [message] says what goes.
+ * its [CurrencyChip] opens. A sheet, like the app's other prompts: the chip
+ * being removed ([chip], flags and all), what goes ([message]), then Cancel
+ * and Delete.
  */
 @Composable
-fun RemoveFromHistoryDialog(
+fun RemoveFromHistorySheet(
     message: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-) = LedgerConfirmDialog(
-    title = stringResource(R.string.recent_remove_title),
-    message = message,
-    confirmLabel = stringResource(R.string.a11y_delete),
-    onConfirm = onConfirm,
-    onDismiss = onDismiss,
-    destructive = true,
-)
+    chip: @Composable RowScope.() -> Unit,
+) {
+    LedgerBottomSheet(title = stringResource(R.string.recent_remove_title), onDismiss = onDismiss) {
+        Column(Modifier.padding(horizontal = SHEET_BODY_PADDING_H)) {
+            // The chip reads left to right in every language, as in its row.
+            Ltr { ChipFrame(content = chip) }
+            Spacer(Modifier.height(SHEET_CHIP_GAP))
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            LedgerDialogActions(
+                confirmLabel = stringResource(R.string.a11y_delete),
+                onConfirm = rememberHapticOnClick(onConfirm),
+                onCancel = rememberHapticOnClick(onDismiss),
+                destructive = true,
+            )
+        }
+    }
+}
 
 /** A small flag and the ISO code — one side of a [CurrencyChip]. */
 @Composable

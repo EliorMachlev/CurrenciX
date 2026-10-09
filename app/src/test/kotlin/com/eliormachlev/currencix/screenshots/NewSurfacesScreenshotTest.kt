@@ -2,8 +2,10 @@ package com.eliormachlev.currencix.screenshots
 
 import android.app.Application
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -17,7 +19,9 @@ import com.eliormachlev.currencix.view.cart.compose.NO_PAIR_ACTIONS
 import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
 import com.eliormachlev.currencix.view.cart.compose.cartItemActions
 import com.eliormachlev.currencix.view.cart.compose.cartSources
+import com.eliormachlev.currencix.view.compose.PairChipContent
 import com.eliormachlev.currencix.view.compose.ReadingDirection
+import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
@@ -41,6 +45,16 @@ import java.math.BigDecimal
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
 class NewSurfacesScreenshotTest {
     @get:Rule val shots = ScreenshotRule()
+
+    // What a long-press on a recent pair opens.
+    @Test fun removeFromHistorySheet() =
+        shots.captureMatrix("remove_from_history_sheet") {
+            RemoveFromHistorySheet(
+                message = stringResource(R.string.recent_remove_pair, "SEK", "ILS"),
+                onConfirm = {},
+                onDismiss = {},
+            ) { PairChipContent(Currency.SEK, Currency.ILS) }
+        }
 
     @Test fun recentPairs() =
         shots.captureMatrix("recent_pairs") {

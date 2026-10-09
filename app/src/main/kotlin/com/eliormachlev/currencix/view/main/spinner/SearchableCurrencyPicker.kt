@@ -69,7 +69,7 @@ import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.FlagCode
 import com.eliormachlev.currencix.view.compose.Ltr
-import com.eliormachlev.currencix.view.compose.RemoveFromHistoryDialog
+import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.ledgerHairline
 import kotlinx.collections.immutable.ImmutableList
@@ -213,14 +213,14 @@ private fun RecentCurrenciesRow(
 ) {
     var removing by remember { mutableStateOf<Currency?>(null) }
     removing?.let { currency ->
-        RemoveFromHistoryDialog(
+        RemoveFromHistorySheet(
             message = stringResource(R.string.recent_remove_currency, currency.iso4217Alpha()),
             onConfirm = {
                 onRemove(currency)
                 removing = null
             },
             onDismiss = { removing = null },
-        )
+        ) { FlagCode(currency) }
     }
     if (rates.isEmpty()) return
     val ctx = LocalContext.current

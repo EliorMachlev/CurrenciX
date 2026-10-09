@@ -53,18 +53,21 @@ class RecentHistoryRemovalTest {
         tap(app.getString(R.string.a11y_delete))
 
         assertEquals(listOf(EUR_GBP), removedPairs)
-        compose.onNodeWithText(app.getString(R.string.recent_remove_title)).assertDoesNotExist()
+        // The sheet shows its title in small caps.
+        compose.onNodeWithText(app.getString(R.string.recent_remove_title), ignoreCase = true).assertDoesNotExist()
     }
 
     @Test
     fun `cancel keeps the long-pressed pair`() {
         show { PairsRow() }
         longPress(app.getString(R.string.recent_pair_switch, "EUR", "GBP"))
+        compose.onNodeWithText(app.getString(R.string.recent_remove_title), ignoreCase = true).assertExists()
 
         tap(app.getString(android.R.string.cancel))
 
         assertEquals(emptyList<CurrencyPair>(), removedPairs)
-        compose.onNodeWithText(app.getString(R.string.recent_remove_title)).assertDoesNotExist()
+        // The sheet shows its title in small caps.
+        compose.onNodeWithText(app.getString(R.string.recent_remove_title), ignoreCase = true).assertDoesNotExist()
     }
 
     @Test

@@ -2,12 +2,9 @@ package com.eliormachlev.currencix.view.main.compose
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,18 +12,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.view.compose.CurrencyChip
 import com.eliormachlev.currencix.view.compose.CurrencyChipGap
-import com.eliormachlev.currencix.view.compose.FlagCode
-import com.eliormachlev.currencix.view.compose.RemoveFromHistoryDialog
+import com.eliormachlev.currencix.view.compose.PairChipContent
+import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import kotlinx.collections.immutable.ImmutableList
-
-private val ARROW_SIZE = 14.dp
 
 /**
  * One-tap switches to the pairs used most recently — "🇺🇸 USD → 🇮🇱 ILS"
@@ -44,14 +37,14 @@ fun RecentPairsRow(
 ) {
     var removing by remember { mutableStateOf<CurrencyPair?>(null) }
     removing?.let { pair ->
-        RemoveFromHistoryDialog(
+        RemoveFromHistorySheet(
             message = stringResource(R.string.recent_remove_pair, pair.from.iso4217Alpha(), pair.to.iso4217Alpha()),
             onConfirm = {
                 onRemove(pair)
                 removing = null
             },
             onDismiss = { removing = null },
-        )
+        ) { PairChipContent(pair.from, pair.to) }
     }
     if (pairs.isEmpty()) return
     val removeLabel = stringResource(R.string.recent_remove_title)
@@ -73,14 +66,7 @@ fun RecentPairsRow(
                 onLongClick = { removing = pair },
                 onLongClickLabel = removeLabel,
             ) {
-                FlagCode(pair.from)
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_forward),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(ARROW_SIZE),
-                )
-                FlagCode(pair.to)
+                PairChipContent(pair.from, pair.to)
             }
         }
     }
