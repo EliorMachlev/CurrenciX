@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view.main.compose
 
 import android.content.Context
 import android.graphics.Paint
+import android.view.View
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
@@ -23,11 +24,13 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
@@ -114,8 +117,10 @@ fun ConverterTopBar(
  * state that only the Canvas's draw block reads, so a drag redraws this icon
  * and recomposes nothing.
  *
- * The sheet sits at -(its width) when closed and 0 when open (the app is
- * LTR-only). Rather than hard-code the sheet width, the closed offset is
+ * The sheet sits at -(its width) when closed and 0 when open, in either
+ * direction (the drawer's offset follows the layout direction). The arrow
+ * points the way the drawer closes: left in English, right in Hebrew.
+ * Rather than hard-code the sheet width, the closed offset is
  * learned as the smallest one seen: the offset never goes below it, and the
  * drawer starts closed, so the first value already is it.
  */
@@ -123,7 +128,13 @@ fun ConverterTopBar(
 private fun DrawerArrowIcon(drawerState: DrawerState) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val drawable = remember(context, density) { symbolStyleDrawerArrow(context, density) }
+    val layoutDirection = LocalLayoutDirection.current
+    val drawable =
+        remember(context, density, layoutDirection) {
+            symbolStyleDrawerArrow(context, density).apply {
+                this.layoutDirection = if (layoutDirection == LayoutDirection.Rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+            }
+        }
     val progress = remember { mutableFloatStateOf(0f) }
     LaunchedEffect(drawerState) {
         var closedOffset = Float.NaN

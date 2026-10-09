@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.eliormachlev.currencix.view.compose.Ltr
 
 // U+00D7 MULTIPLICATION SIGN, not the letter X — a semantic pun on
 // conversion. Split into two Text nodes so the × can be larger and
@@ -86,22 +87,25 @@ fun Wordmark(
         animationSpec = tween(durationMillis = Motion.LONG_MILLIS),
         label = "wordmarkXTint",
     )
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(text = "Currenci", color = color, style = base)
-        Text(
-            text = "\u00D7",
-            color = xColor,
-            style = base.copy(fontSize = fontSize * WORDMARK_X_SCALE),
-            modifier =
-                Modifier.graphicsLayer {
-                    val s = xScale.value
-                    scaleX = s
-                    scaleY = s
-                    transformOrigin = TransformOrigin(0f, TRANSFORM_ORIGIN_CENTER)
-                },
-        )
+    // A logo: "Currenci×" in every language, even in a right-to-left top bar.
+    Ltr {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = "Currenci", color = color, style = base)
+            Text(
+                text = "\u00D7",
+                color = xColor,
+                style = base.copy(fontSize = fontSize * WORDMARK_X_SCALE),
+                modifier =
+                    Modifier.graphicsLayer {
+                        val s = xScale.value
+                        scaleX = s
+                        scaleY = s
+                        transformOrigin = TransformOrigin(0f, TRANSFORM_ORIGIN_CENTER)
+                    },
+            )
+        }
     }
 }

@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import kotlinx.coroutines.launch
 
@@ -142,23 +144,31 @@ fun MainScreen(
     // The drawer slides in under the top bar, not over it: the hamburger
     // morphs into an arrow as it opens (DrawerArrowIcon), and that arrow is
     // the way to close it again, so it has to stay in sight and in reach.
-    Scaffold(topBar = topBar, containerColor = Color.Transparent) { padding ->
-        ModalNavigationDrawer(
-            drawerState = drawer.state,
-            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-            drawerContent = {
-                ModalDrawerSheet {
-                    // Nothing to refresh while a refresh is already running.
-                    DrawerContent(onItemClick = drawer.onItem, isRefreshEnabled = !body.isRefreshing)
+    //
+    // The bar and the drawer follow the language: in Hebrew or Arabic the
+    // hamburger sits on the right, the shortcuts on the left, and the drawer
+    // slides in from the right. The converter itself stays left to right.
+    Scaffold(topBar = { ReadingDirection(topBar) }, containerColor = Color.Transparent) { padding ->
+        ReadingDirection {
+            ModalNavigationDrawer(
+                drawerState = drawer.state,
+                modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+                drawerContent = {
+                    ModalDrawerSheet {
+                        // Nothing to refresh while a refresh is already running.
+                        DrawerContent(onItemClick = drawer.onItem, isRefreshEnabled = !body.isRefreshing)
+                    }
+                },
+            ) {
+                Ltr {
+                    MainContent(
+                        modifier = Modifier,
+                        body = body,
+                        displayContent = displayContent,
+                        keypadContent = keypadContent,
+                    )
                 }
-            },
-        ) {
-            MainContent(
-                modifier = Modifier,
-                body = body,
-                displayContent = displayContent,
-                keypadContent = keypadContent,
-            )
+            }
         }
     }
 }
