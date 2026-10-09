@@ -187,6 +187,9 @@ fun LedgerLabel(
     @DrawableRes iconRes: Int? = null,
     enabled: Boolean = true,
     summaryMaxLines: Int = LIST_SUMMARY_LINES,
+    // Anything the row adds under its summary (e.g. a provider's refresh
+    // cadence beside a small clock).
+    footer: (@Composable () -> Unit)? = null,
 ) {
     val alpha = if (enabled) 1f else LEDGER_DISABLED_ALPHA
     Row(
@@ -217,6 +220,7 @@ fun LedgerLabel(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+            footer?.invoke()
         }
     }
 }

@@ -61,6 +61,7 @@ fun PreferenceRow(
     onClick: (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     summaryMaxLines: Int = LIST_SUMMARY_LINES,
+    footer: (@Composable () -> Unit)? = null,
 ) {
     LedgerRow(
         modifier = modifier,
@@ -74,6 +75,7 @@ fun PreferenceRow(
                 enabled = enabled,
                 modifier = Modifier.weight(1f),
                 summaryMaxLines = summaryMaxLines,
+                footer = footer,
             )
         },
         value = trailing?.let { slot -> { LedgerTrailing { slot() } } },

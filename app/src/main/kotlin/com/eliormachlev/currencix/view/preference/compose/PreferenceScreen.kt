@@ -1,10 +1,14 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Intent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,12 +17,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -377,10 +384,10 @@ private fun ApiSection(
             )
         }
         provider?.let {
-            ProviderDetailRows(it)
+            AboutProviderRow(it)
             // The fallback stands in when the main provider can't be reached,
             // so what it is and how often it updates matter just as much.
-            if (values.fallback != it) ProviderDetailRows(values.fallback)
+            if (values.fallback != it) AboutProviderRow(values.fallback)
         }
         // Auto-refresh (#151). Placed inside the API section since its
         // cadence is derived from the currently-selected provider — the
@@ -396,24 +403,44 @@ private fun ApiSection(
     }
 }
 
-// "About Bank of Israel" with its description in full, then how often it
-// publishes.
+// One row per provider: "About Bank of Israel", its description in full,
+// and under it how often it publishes, beside a small clock.
 @Composable
-private fun ProviderDetailRows(provider: ApiProvider) {
+private fun AboutProviderRow(provider: ApiProvider) {
     val context = LocalContext.current
+    val cadence = provider.getDescriptionUpdateInterval(context).toString()
     PreferenceRow(
         title = stringResource(id = R.string.api_about_title, provider.getName(context)).inReadingOrder(context),
         summary = provider.getDescriptionLong(context).toString(),
         iconRes = R.drawable.ic_info,
         summaryMaxLines = FULL_SUMMARY,
-    )
-    PreferenceRow(
-        title = stringResource(id = R.string.api_refreshPeriod_title),
-        summary = provider.getDescriptionUpdateInterval(context).toString(),
-        iconRes = R.drawable.ic_schedule,
-        summaryMaxLines = FULL_SUMMARY,
+        footer = { CadenceLine(cadence) },
     )
 }
+
+@Composable
+private fun CadenceLine(text: String) {
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
+    Row(
+        modifier = Modifier.padding(top = CADENCE_TOP_GAP),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(CADENCE_ICON_GAP),
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_schedule),
+            // Read as part of the row; the clock only marks the line.
+            contentDescription = stringResource(R.string.api_refreshPeriod_title),
+            tint = color,
+            modifier = Modifier.padding(top = CADENCE_ICON_NUDGE).size(CADENCE_ICON_SIZE),
+        )
+        Text(text = text, style = MaterialTheme.typography.bodyMedium, color = color)
+    }
+}
+
+private val CADENCE_TOP_GAP = 6.dp
+private val CADENCE_ICON_GAP = 6.dp
+private val CADENCE_ICON_SIZE = 16.dp
+private val CADENCE_ICON_NUDGE = 2.dp
 
 // "Fallback provider — Frankfurter.app · used when Bank of Israel can't be reached"
 @Composable
