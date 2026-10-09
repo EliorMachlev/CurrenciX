@@ -5,15 +5,23 @@ import androidx.annotation.StringRes
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.URL_DOCS_BASE
 import com.eliormachlev.currencix.util.URL_REPO
+import com.eliormachlev.currencix.util.inReadingOrder
 
 private const val URL_PRIVACY_POLICY = "${URL_DOCS_BASE}privacy-policy.md"
 private const val URL_TERMS_OF_SERVICE = "${URL_DOCS_BASE}terms-of-service.md"
 private const val URL_ACCESSIBILITY_STATEMENT = "${URL_DOCS_BASE}accessibility-statement.md"
 
+// Names and the licence identifier: never translated.
+internal const val ORIGINAL_AUTHOR = "Maximilian Salomon"
+internal const val FORK_AUTHOR = "Elior Machlev"
+internal const val APP_LICENSE = "GPL-3.0-or-later"
+private const val ORIGINAL_FIRST_YEAR = 2020
+private const val FORK_FIRST_YEAR = 2026
+
 private val LICENSE_CREDITS =
     listOf(
         Credit(
-            title = "GPL-3.0-or-later",
+            title = APP_LICENSE,
             // The licence's own name: not translated.
             subtitle = "GNU General Public License v3.0 or later",
             url = "https://www.gnu.org/licenses/gpl-3.0.html",
@@ -80,10 +88,10 @@ fun creditsSections(context: Context): List<CreditsSection> =
         CreditsSection(
             R.string.credits_section_project,
             listOf(
-                Credit(title = "CurrenciX", subtitle = context.getString(R.string.credit_fork_by, "Elior Machlev"), url = URL_REPO),
+                Credit(title = "CurrenciX", subtitle = context.getString(R.string.credit_fork_by, FORK_AUTHOR), url = URL_REPO),
                 Credit(
                     title = "Currencies",
-                    subtitle = context.getString(R.string.credit_original_by, "Maximilian Salomon (sal0max)"),
+                    subtitle = context.getString(R.string.credit_original_by, "$ORIGINAL_AUTHOR (sal0max)"),
                     url = "https://github.com/sal0max/currencies",
                 ),
             ),
@@ -110,3 +118,18 @@ private fun Context.credit(library: Library) =
         url = library.url,
         license = library.license,
     )
+
+/**
+ * The version row's lines, in the app's language: who wrote the original
+ * and who the fork, with their years, then the licence. Each line keeps the
+ * language's reading order around the Latin names.
+ */
+fun versionSummary(
+    context: Context,
+    year: Int,
+): String =
+    listOf(
+        "${context.getString(R.string.credit_original_by, ORIGINAL_AUTHOR)} · © $ORIGINAL_FIRST_YEAR–$year",
+        "${context.getString(R.string.credit_fork_by, FORK_AUTHOR)} · © $FORK_FIRST_YEAR",
+        APP_LICENSE,
+    ).joinToString("\n") { it.inReadingOrder(context) }

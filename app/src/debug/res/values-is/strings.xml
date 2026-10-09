@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Endurstilla kynningarferð</string>
+    <string name="pref_debug_reset_onboarding_summary">Hreinsar merkið um fyrstu ræsingu svo kynningarferðin með áherslum spilist aftur við næstu ræsingu.</string>
+    <string name="pref_debug_reset_onboarding_toast">Kynningin spilast aftur við næstu ræsingu.</string>
+    <string name="pref_debug_gallery_title">Einingasafn</string>
+    <string name="pref_debug_gallery_summary">Skoðaðu viðmótseiningar forritsins í Showkase.</string>
+</resources>

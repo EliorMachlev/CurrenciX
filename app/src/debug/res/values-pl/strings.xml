@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Resetuj samouczek</string>
+    <string name="pref_debug_reset_onboarding_summary">Czyści znacznik pierwszego uruchomienia, aby samouczek z wyróżnieniami odtworzył się przy następnym uruchomieniu.</string>
+    <string name="pref_debug_reset_onboarding_toast">Samouczek odtworzy się przy następnym uruchomieniu.</string>
+    <string name="pref_debug_gallery_title">Galeria komponentów</string>
+    <string name="pref_debug_gallery_summary">Przeglądaj komponenty interfejsu aplikacji w Showkase.</string>
+</resources>

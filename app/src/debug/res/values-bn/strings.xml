@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">পরিচিতি ট্যুর রিসেট করুন</string>
+    <string name="pref_debug_reset_onboarding_summary">প্রথমবার চালুর চিহ্ন মুছে দেয়, যাতে পরের বার অ্যাপ চালু হলে হাইলাইটসহ ট্যুরটি আবার দেখায়।</string>
+    <string name="pref_debug_reset_onboarding_toast">পরের বার চালু হলে পরিচিতি ট্যুর আবার দেখাবে।</string>
+    <string name="pref_debug_gallery_title">কম্পোনেন্ট গ্যালারি</string>
+    <string name="pref_debug_gallery_summary">Showkase-এ অ্যাপের UI কম্পোনেন্টগুলো ব্রাউজ করুন।</string>
+</resources>

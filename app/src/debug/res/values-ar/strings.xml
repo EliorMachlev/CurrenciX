@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">إعادة ضبط الجولة التعريفية</string>
+    <string name="pref_debug_reset_onboarding_summary">يمسح علامة التشغيل الأول لتُعاد الجولة التعريفية مع الإبرازات عند التشغيل التالي.</string>
+    <string name="pref_debug_reset_onboarding_toast">ستُعاد الجولة التعريفية عند التشغيل التالي.</string>
+    <string name="pref_debug_gallery_title">معرض المكوّنات</string>
+    <string name="pref_debug_gallery_summary">تصفّح مكوّنات واجهة التطبيق في Showkase.</string>
+</resources>

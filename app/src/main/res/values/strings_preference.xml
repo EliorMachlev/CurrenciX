@@ -178,5 +178,4 @@
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app.</string>
     <string name="category_versioninfo">Version info</string>
     <string name="title_changelog">Changelog</string>
-    <string name="version_summary" translatable="false">© 2020-%1$s Maximilian Salomon · CurrenciX fork © 2026 Elior Machlev · GPL-3.0-or-later</string>
 </resources>

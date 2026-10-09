@@ -586,8 +586,9 @@ private fun VersionSection() {
         )
         PreferenceRow(
             title = BuildConfig.VERSION_NAME,
-            summary = stringResource(id = R.string.version_summary, Calendar.getInstance().get(Calendar.YEAR).toString()),
+            summary = versionSummary(context, Calendar.getInstance().get(Calendar.YEAR)),
             iconRes = R.drawable.ic_tag,
+            summaryMaxLines = FULL_SUMMARY,
         )
         // Rows only a debug build has (see debugPreferenceRows, per build type).
         debugPreferenceRows?.invoke()

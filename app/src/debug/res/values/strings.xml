@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Debug builds only, and English only: none of these is translated. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
+    <!-- Debug builds only. The crash-reporter strings stay English-only; the Settings rows below are translated. -->
     <!-- The crash reporter (CrashReportActivity). -->
     <string name="crash_header" translatable="false">CurrenciX crashed — trace copied to clipboard</string>
     <string name="crash_copy" translatable="false">Copy trace</string>
@@ -8,11 +8,11 @@
     <string name="crash_restart" translatable="false">Restart app</string>
 
     <!-- The debug-only Settings row that replays the onboarding tour. -->
-    <string name="pref_debug_reset_onboarding_title" translatable="false">Reset onboarding tour</string>
-    <string name="pref_debug_reset_onboarding_summary" translatable="false">Clears the first-run gate so the spotlight replays on next launch.</string>
-    <string name="pref_debug_reset_onboarding_toast" translatable="false">Onboarding will replay next launch.</string>
+    <string name="pref_debug_reset_onboarding_title">Reset onboarding tour</string>
+    <string name="pref_debug_reset_onboarding_summary">Clears the first-run gate so the spotlight replays on next launch.</string>
+    <string name="pref_debug_reset_onboarding_toast">Onboarding will replay next launch.</string>
 
     <!-- The debug-only Settings row that opens the Showkase component gallery. -->
-    <string name="pref_debug_gallery_title" translatable="false">Component gallery</string>
-    <string name="pref_debug_gallery_summary" translatable="false">Browse the app\'s composables in Showkase.</string>
+    <string name="pref_debug_gallery_title">Component gallery</string>
+    <string name="pref_debug_gallery_summary">Browse the app\'s composables in Showkase.</string>
 </resources>

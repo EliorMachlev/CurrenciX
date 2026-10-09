@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
@@ -13,6 +14,7 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
 import com.eliormachlev.currencix.view.preference.compose.SwitchRow
+import com.eliormachlev.currencix.view.preference.compose.versionSummary
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -180,7 +182,7 @@ private fun VersionSectionPreview() {
         )
         PreferenceRow(
             title = SAMPLE_VERSION,
-            summary = stringResource(id = R.string.version_summary, SAMPLE_YEAR),
+            summary = versionSummary(LocalContext.current, SAMPLE_YEAR.toInt()),
             iconRes = R.drawable.ic_tag,
         )
     }
