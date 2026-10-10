@@ -6,7 +6,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `build.yaml` | Push → `master`, PR | Spotless, lint, test, build debug APK for both flavors (matrix) + fdroid release APK; failed tests become error annotations |
+| `build.yaml` | Push → `master`, PR | Spotless (own job), lint, test, build debug APK for both flavors (matrix) + fdroid release APK; failed tests become error annotations |
 | `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK, upload it as an artifact, and put a download link in the run summary |
 | `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator), plus 200 % font-size captures of the densest screens, and upload the PNGs as an artifact — not a gate, nothing is verified. `ScreenshotRule` renders on a manual clock, so the suite takes about a minute; the job times out at 20 min so a capture that never settles fails fast |
 | `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles and run frame-timing benchmarks on an API 34 emulator; upload both as artifacts |
@@ -22,14 +22,22 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 
 ## Build Gate (`build.yaml`)
 
-Runs on both PRs and pushes to `master`. Two jobs:
+Runs on both PRs and pushes to `master`. Three jobs, side by side:
 
+- **`spotless`** — `spotlessCheck`, ktlint via Spotless (see [Code Style](contributing.md#code-style)).
 - **`build`** — matrix over `Fdroid` and `Play` flavors. Steps:
-  - `spotlessCheck` — ktlint via Spotless (see [Code Style](contributing.md#code-style))
   - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
   - `test<Flavor>DebugUnitTest` — JUnit unit tests
   - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
 - **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and uploads it as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
+
+## Speed
+
+A PR's checks take about five minutes, all jobs running at once; the longest are the two build legs and the fdroid release build.
+
+- **Superseded runs are cancelled.** Every workflow that runs on PRs or branch pushes has a `concurrency` group per PR (or branch): a new push cancels the run still going for the previous one. Runs on `master` always finish.
+- **Gradle** (`gradle.properties`): the build cache, the configuration cache and parallel project execution are on, with a 3 GB daemon heap and a 2 GB Kotlin daemon. `setup-gradle` keeps Gradle's home, build cache included, between runs: `master` writes it, PRs read it, so a PR reuses whatever `master` already built.
+- Spotless is its own job instead of a step ahead of each build leg.
 
 ## Baseline Profiles & Benchmarks (`baseline-profile.yaml`)
 

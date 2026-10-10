@@ -9,6 +9,12 @@ on:
     - cron: '30 5 * * 1'
   workflow_dispatch:
 
+# A newer push to the same PR or branch supersedes a run still going;
+# master's runs always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 permissions:
   contents: read
 

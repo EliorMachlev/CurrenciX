@@ -83,7 +83,7 @@ android {
             // still knows which commit it came from. versionName encodes the
             // SHA (e.g. "1.23.0-abc1234"); if git isn't available, keep the
             // "[DEBUG]" tag.
-            val commitSha = (project.findProperty("debugCommitSha") as String?) ?: gitShortSha()
+            val commitSha = providers.gradleProperty("debugCommitSha").orNull ?: gitShortSha()
             versionNameSuffix = if (commitSha != null) "-$commitSha" else " [DEBUG]"
             buildConfigField("String", "COMMIT_SHA", "\"${commitSha ?: ""}\"")
             // CI passes -PprUrl=<pr html_url> for pull_request builds so the
@@ -313,20 +313,20 @@ baselineProfile {
 
 // Best-effort short git SHA for the currently checked-out HEAD. Returns null
 // if git isn't installed, the repo isn't a git checkout, or the command
-// fails for any reason — callers treat that as "no commit context".
+// fails for any reason — callers treat that as "no commit context". Run
+// through providers.exec so the configuration cache tracks it as an input
+// (a new HEAD reconfigures) instead of refusing to store the build.
 fun gitShortSha(): String? =
     try {
-        val proc =
-            ProcessBuilder("git", "rev-parse", "--short", "HEAD")
-                .directory(rootDir)
-                .redirectErrorStream(true)
-                .start()
-        proc.waitFor()
-        proc.inputStream
-            .bufferedReader()
-            .readLine()
-            ?.trim()
-            ?.takeIf { it.isNotBlank() }
+        providers
+            .exec {
+                commandLine("git", "rev-parse", "--short", "HEAD")
+                workingDir = rootDir
+                isIgnoreExitValue = true
+            }.standardOutput.asText
+            .get()
+            .trim()
+            .takeIf { it.isNotBlank() }
     } catch (_: Exception) {
         null
     }
