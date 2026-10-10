@@ -34,7 +34,9 @@ import kotlinx.coroutines.launch
 // the rest of the ledger surfaces (rather than the raised tonal container the
 // default palette would paint).
 private val SHEET_HORIZONTAL_PADDING = 0.dp
-private val SHEET_TITLE_HORIZONTAL_PADDING = 20.dp
+
+/** Side padding for a sheet's title, and for body content that isn't edge-to-edge rows. */
+internal val SHEET_CONTENT_PADDING_H = 20.dp
 private val SHEET_TITLE_TOP_PADDING = 4.dp
 private val SHEET_TITLE_BOTTOM_PADDING = 12.dp
 private val SHEET_BOTTOM_PADDING = 8.dp
@@ -136,8 +138,8 @@ private fun LedgerSheetTitle(title: String) {
         modifier =
             Modifier
                 .padding(
-                    start = SHEET_TITLE_HORIZONTAL_PADDING,
-                    end = SHEET_TITLE_HORIZONTAL_PADDING,
+                    start = SHEET_CONTENT_PADDING_H,
+                    end = SHEET_CONTENT_PADDING_H,
                     top = SHEET_TITLE_TOP_PADDING,
                     bottom = SHEET_TITLE_BOTTOM_PADDING,
                 ).semantics { heading() },

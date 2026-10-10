@@ -159,7 +159,7 @@ private fun GlobalPickerHost(
     val entries = fees.entries
     val active = entries.firstOrNull { it.isActive }
     val effectiveId = fees.activeId?.takeIf { id -> entries.any { it.id == id && it.isActive } } ?: active?.id
-    FeePickerDialog(
+    FeePickerSheet(
         title = stringResource(id = kind.titleRes),
         entries = entries,
         effectiveId = effectiveId,

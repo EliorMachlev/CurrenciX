@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import kotlin.math.max
@@ -245,55 +246,67 @@ private fun TooltipCard(
     step: SpotlightStep,
     buttons: SpotlightButtons,
 ) {
+    // The card follows the app language (its own window resolves left to
+    // right whatever the language); the scrim's cutout doesn't, as it
+    // tracks the anchor's on-screen bounds.
+    Box(Modifier.fillMaxSize()) {
+        ReadingDirection { TooltipCardBody(anchorRect, step, buttons, Modifier.align(Alignment.TopStart)) }
+    }
+}
+
+@Composable
+private fun TooltipCardBody(
+    anchorRect: Rect?,
+    step: SpotlightStep,
+    buttons: SpotlightButtons,
+    modifier: Modifier = Modifier,
+) {
     val density = LocalDensity.current
     val gapPx = with(density) { CARD_GAP_FROM_ANCHOR.toPx() }
     val marginPx = with(density) { CARD_MARGIN.toPx() }
-    Box(Modifier.fillMaxSize()) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = CARD_MARGIN)
-                    .align(Alignment.TopStart)
-                    .offset { cardOffset(anchorRect, gapPx, marginPx) }
-                    // Absorb taps on the card so a tap on Skip/Next isn't also
-                    // treated as a tap-outside on the parent scrim (which
-                    // would advance the step underneath the button press).
-                    .pointerInput(Unit) {
-                        detectTapGestures(onTap = { /* consume */ })
-                    }.clip(RoundedCornerShape(CARD_RADIUS))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(CARD_PADDING),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = CARD_MARGIN)
+                .offset { cardOffset(anchorRect, gapPx, marginPx) }
+                // Absorb taps on the card so a tap on Skip/Next isn't also
+                // treated as a tap-outside on the parent scrim (which
+                // would advance the step underneath the button press).
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { /* consume */ })
+                }.clip(RoundedCornerShape(CARD_RADIUS))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(CARD_PADDING),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = step.title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            text = step.body,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.size(4.dp))
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(BUTTON_ROW_GAP, Alignment.End),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = step.title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = step.body,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.size(4.dp))
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(BUTTON_ROW_GAP, Alignment.End),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(onClick = buttons.onSkip, modifier = Modifier.testTag(UiTestTags.ONBOARDING_SKIP)) { Text(buttons.skipLabel) }
-                // Inline action (e.g. "Enable now" on the auto-refresh step).
-                // Fires then dismisses; wired through onAction lambda.
-                step.actionLabel?.let { label ->
-                    TextButton(onClick = {
-                        step.onAction?.invoke()
-                        buttons.onSkip()
-                    }) { Text(label) }
-                }
-                TextButton(onClick = buttons.onAdvance) { Text(buttons.nextLabel) }
+            TextButton(onClick = buttons.onSkip, modifier = Modifier.testTag(UiTestTags.ONBOARDING_SKIP)) { Text(buttons.skipLabel) }
+            // Inline action (e.g. "Enable now" on the auto-refresh step).
+            // Fires then dismisses; wired through onAction lambda.
+            step.actionLabel?.let { label ->
+                TextButton(onClick = {
+                    step.onAction?.invoke()
+                    buttons.onSkip()
+                }) { Text(label) }
             }
+            TextButton(onClick = buttons.onAdvance) { Text(buttons.nextLabel) }
         }
     }
 }

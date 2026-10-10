@@ -29,6 +29,19 @@ object RecentPairs {
         pair: CurrencyPair,
     ): List<CurrencyPair> = (listOf(pair) + without(recents, pair)).take(MAX)
 
+    /**
+     * Undoes a removal: [before] (the list as it was) back in its order,
+     * after any pair first used since ([now] holds those at its front),
+     * capped at [MAX].
+     */
+    fun restore(
+        before: List<CurrencyPair>,
+        now: List<CurrencyPair>,
+    ): List<CurrencyPair> {
+        val usedSince = now.filterNot { pair -> before.any(pair::isSameCurrencies) }
+        return (usedSince + before).take(MAX)
+    }
+
     /** [recents] without [pair], in either direction. */
     fun without(
         recents: List<CurrencyPair>,

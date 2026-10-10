@@ -40,6 +40,7 @@ class LastStateStore(
     context: Context,
 ) {
     private val store: PrefStore = PersistenceKey.LAST_STATE.prefStore(context)
+    private val recentPairsKey = stringPreferencesKey(KEY_RECENT_PAIRS)
 
     /*
      * last state ==================================================================================
@@ -69,21 +70,29 @@ class LastStateStore(
     /** Records [pair] as the most recent one (see [RecentPairs]). */
     fun addRecentPair(pair: CurrencyPair) = editRecentPairs { RecentPairs.push(it, pair) }
 
-    /** Forgets [pair] (either direction). */
-    fun removeRecentPair(pair: CurrencyPair) = editRecentPairs { RecentPairs.without(it, pair) }
+    /** Forgets [pair] (either direction); returns the list as it was, for [restoreRecentPairs]. */
+    fun removeRecentPair(pair: CurrencyPair): List<CurrencyPair> = removeRecent { RecentPairs.without(it, pair) }
 
-    /** Forgets [currency]: every recent pair that uses it. */
-    fun removeRecentCurrency(currency: Currency) = editRecentPairs { RecentPairs.without(it, currency) }
+    /** Forgets [currency]: every recent pair that uses it. Returns the list as it was, for [restoreRecentPairs]. */
+    fun removeRecentCurrency(currency: Currency): List<CurrencyPair> = removeRecent { RecentPairs.without(it, currency) }
 
-    private fun editRecentPairs(change: (List<CurrencyPair>) -> List<CurrencyPair>) {
-        store.edit {
-            val key = stringPreferencesKey(KEY_RECENT_PAIRS)
-            this[key] = RecentPairs.encode(change(RecentPairs.decode(this[key])))
-        }
+    /** Undoes a removal: puts back [before], the list a remove returned (see [RecentPairs.restore]). */
+    fun restoreRecentPairs(before: List<CurrencyPair>) = editRecentPairs { RecentPairs.restore(before, it) }
+
+    private fun removeRecent(change: (List<CurrencyPair>) -> List<CurrencyPair>): List<CurrencyPair> {
+        val before = getRecentPairsBlocking()
+        editRecentPairs(change)
+        return before
     }
 
-    fun getRecentPairsFlow(): Flow<List<CurrencyPair>> =
-        store.mappedFlow { prefs -> RecentPairs.decode(prefs[stringPreferencesKey(KEY_RECENT_PAIRS)]) }
+    /** The recent pairs as they are now, newest first, read synchronously. */
+    fun getRecentPairsBlocking(): List<CurrencyPair> = RecentPairs.decode(store.snapshot()[recentPairsKey])
+
+    private fun editRecentPairs(change: (List<CurrencyPair>) -> List<CurrencyPair>) {
+        store.edit { this[recentPairsKey] = RecentPairs.encode(change(RecentPairs.decode(this[recentPairsKey]))) }
+    }
+
+    fun getRecentPairsFlow(): Flow<List<CurrencyPair>> = store.mappedFlow { prefs -> RecentPairs.decode(prefs[recentPairsKey]) }
 
     // Synchronous readers for callers that can't wait for the LiveData to
     // become active (e.g. the cart's initial state, built before any

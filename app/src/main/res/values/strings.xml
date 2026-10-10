@@ -23,11 +23,15 @@
     <string name="unreachable_banner_with_date">Provider unreachable • Rates from %1$s</string>
     <string name="unreachable_banner_no_data">Provider unreachable • Retrying</string>
     <string name="fallback_banner">%1$s unavailable • Using %2$s</string>
+    <string name="fallback_info_title">Using the fallback provider</string>
+    <string name="fallback_info_message">%1$s didn\'t answer, so these rates come from %2$s, your fallback provider. The next refresh tries %1$s first again.</string>
+    <string name="fallback_info_action">Learn more</string>
     <string name="historical_banner">Historical • Rates from %1$s</string>
     <string name="fee_chip_label">%1$s fee</string>
     <string name="recent_pair_switch">Switch to %1$s → %2$s</string>
     <string name="recent_remove_title">Remove from history</string>
     <string name="recent_remove_pair">%1$s → %2$s will be removed from your recent pairs.</string>
+    <string name="recent_removed_pair">%1$s → %2$s removed from history</string>
     <string name="recent_remove_currency">%1$s and the recent pairs that use it will be removed.</string>
 
     <string name="historical_rates_dialog_title">Historical rates</string>
@@ -100,7 +104,7 @@
     <string name="cart_cleared">Cart cleared</string>
     <string name="undo">Undo</string>
     <string name="timeline_retry">Try again</string>
-    <string name="timeline_change_provider">Change provider</string>
+    <string name="change_provider">Change provider</string>
     <string name="cart_section_pinned">Pinned</string>
     <string name="cart_section_others">Other items</string>
     <string name="cart_pin_item">Pin item to top</string>

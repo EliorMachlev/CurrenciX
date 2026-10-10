@@ -151,7 +151,9 @@ private fun ConvertedContent(
     val rate = stringResource(R.string.info_conversion, "1", conversion.from.iso4217Alpha(), rateValue, conversion.to.iso4217Alpha())
     AmountLine(conversion.from, source, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant)
     AmountLine(conversion.to, result, MaterialTheme.typography.headlineMedium, MaterialTheme.colorScheme.onSurface)
-    Text(rate, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    // The rate is math: left to right in every language, or a right-to-left
+    // one would carry the leading "1" to the far end.
+    Ltr { Text(rate, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     if (conversion.assumedFrom) {
         Message(stringResource(R.string.selection_assumed_currency, conversion.from.iso4217Alpha()))
     }

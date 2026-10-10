@@ -33,7 +33,7 @@ import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmDialog
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 
@@ -181,7 +181,7 @@ private fun CartOverlays(host: CartHost) {
         )
     }
     state.deleteConfirm?.let { request ->
-        DestructiveConfirmDialog(
+        DestructiveConfirmSheet(
             title = request.name,
             message = stringResource(id = R.string.cart_delete_confirm, request.name),
             confirmLabel = stringResource(id = R.string.cart_delete_confirm_button),
@@ -192,16 +192,16 @@ private fun CartOverlays(host: CartHost) {
 }
 
 // Confirmation for deleting a saved cart (which, unlike the working cart's
-// rows, has no Undo): confirming runs [onConfirm] and then closes the dialog
+// rows, has no Undo): confirming runs [onConfirm] and then closes the sheet
 // via [onClose], which dismissing also calls.
 @Composable
-private fun DestructiveConfirmDialog(
+private fun DestructiveConfirmSheet(
     title: String,
     message: String,
     confirmLabel: String,
     onConfirm: () -> Unit,
     onClose: () -> Unit,
-) = LedgerConfirmDialog(
+) = LedgerConfirmSheet(
     title = title,
     message = message,
     confirmLabel = confirmLabel,

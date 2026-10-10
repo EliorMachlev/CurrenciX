@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.ProseTheme
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmDialog
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogActions
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogFrame
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordDialog
@@ -85,7 +85,7 @@ fun BackupScreen(
                 },
             )
         is BackupDialog.ImportConfirm ->
-            ImportConfirmDialog(
+            ImportConfirmSheet(
                 onCancel = viewModel::dismissDialog,
                 onConfirm = {
                     val password = dialog.password
@@ -253,15 +253,15 @@ private fun ImportPasswordDialog(
 
 /**
  * "Are you sure?" confirm before actually overwriting current settings. Kept
- * as its own dialog (rather than a second SAF-driven prompt) so users see the
+ * as its own sheet (rather than a second SAF-driven prompt) so users see the
  * destructive-action language on the same screen that will do the destruction.
  */
 @Composable
-private fun ImportConfirmDialog(
+private fun ImportConfirmSheet(
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
 ) {
-    LedgerConfirmDialog(
+    LedgerConfirmSheet(
         title = stringResource(id = R.string.backup_import_confirm_title),
         message = stringResource(id = R.string.backup_import_confirm_message),
         confirmLabel = stringResource(id = R.string.backup_import_confirm_positive),

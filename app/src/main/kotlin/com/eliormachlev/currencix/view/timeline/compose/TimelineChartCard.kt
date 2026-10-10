@@ -119,7 +119,7 @@ private fun TimelineErrorState(
         Row(horizontalArrangement = Arrangement.spacedBy(NOTICE_GAP)) {
             OutlinedButton(onClick = rememberHapticOnClick(onRetry)) { Text(stringResource(R.string.timeline_retry)) }
             FilledTonalButton(onClick = rememberHapticOnClick(onChangeProvider)) {
-                Text(stringResource(R.string.timeline_change_provider))
+                Text(stringResource(R.string.change_provider))
             }
         }
     }

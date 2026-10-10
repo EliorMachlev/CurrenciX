@@ -50,6 +50,19 @@ class RecentPairsTest {
     }
 
     @Test
+    fun `restore puts a removed pair back in its place`() {
+        val before = listOf(usdIls, eurUsd, gbpJpy)
+        assertEquals(before, RecentPairs.restore(before, RecentPairs.without(before, eurUsd)))
+    }
+
+    @Test
+    fun `restore keeps a pair first used since the removal in front`() {
+        val before = listOf(usdIls, eurUsd)
+        val since = RecentPairs.push(RecentPairs.without(before, eurUsd), gbpJpy)
+        assertEquals(listOf(gbpJpy, usdIls, eurUsd), RecentPairs.restore(before, since))
+    }
+
+    @Test
     fun `encode and decode round trip`() {
         val recents = listOf(usdIls, eurUsd, gbpJpy)
         assertEquals("USD:ILS,EUR:USD,GBP:JPY", RecentPairs.encode(recents))

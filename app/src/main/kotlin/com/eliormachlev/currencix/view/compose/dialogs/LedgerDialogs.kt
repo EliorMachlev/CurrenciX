@@ -54,43 +54,6 @@ private const val DIALOG_MAX_WIDTH_FRACTION = 0.92f
 private val PASSWORD_FIELD_TO_TOGGLE_GAP = 8.dp
 
 /**
- * Ledger-styled confirm dialog — [BasicAlertDialog] wrapping a paper-toned
- * [Surface] with a small-radius shape and two trailing text buttons (Cancel /
- * Confirm). Replaces stock [androidx.compose.material3.AlertDialog] for
- * confirm-shape callers (delete, overwrite, wipe, …) so every confirm across
- * the app reads with the same "ink on paper" aesthetic.
- *
- * Set [destructive] when the confirm action removes or overwrites data — the
- * confirm button tints to `error` to keep the pending-loss cue immediate.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LedgerConfirmDialog(
-    title: String,
-    message: String,
-    confirmLabel: String,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    destructive: Boolean = false,
-) {
-    val cancel = rememberHapticOnClick(onDismiss)
-    val confirm = rememberHapticOnClick(onConfirm)
-    LedgerDialogFrame(title = title, onDismiss = onDismiss) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        LedgerDialogActions(
-            confirmLabel = confirmLabel,
-            onConfirm = confirm,
-            onCancel = cancel,
-            destructive = destructive,
-        )
-    }
-}
-
-/**
  * Ledger-styled password dialog — [BasicAlertDialog] with a title, an
  * [OutlinedTextField] under [PasswordVisualTransformation], a "show password"
  * eye toggle, and Cancel / Continue actions. Reused by both backup export and
@@ -222,6 +185,7 @@ internal fun LedgerDialogFrame(
  * Trailing action row — Cancel + Confirm text buttons, brass by default, error
  * tint for [destructive] confirms. Extracted so every dialog body drops this
  * shape in as a single call rather than re-wiring the row / haptics per site.
+ * [cancelLabel] names the way out when there is nothing to cancel ("Close").
  */
 @Composable
 internal fun LedgerDialogActions(
@@ -229,6 +193,7 @@ internal fun LedgerDialogActions(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     destructive: Boolean = false,
+    cancelLabel: String = stringResource(id = android.R.string.cancel),
 ) {
     Spacer(Modifier.height(DIALOG_BODY_TO_ACTIONS_GAP))
     Row(
@@ -236,7 +201,7 @@ internal fun LedgerDialogActions(
         horizontalArrangement = Arrangement.End,
     ) {
         TextButton(onClick = onCancel) {
-            Text(stringResource(id = android.R.string.cancel))
+            Text(cancelLabel)
         }
         TextButton(onClick = onConfirm) {
             Text(

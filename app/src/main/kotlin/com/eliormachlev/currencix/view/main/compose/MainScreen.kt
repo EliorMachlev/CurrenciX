@@ -76,9 +76,14 @@ private const val DRAWER_DISABLED_ALPHA = 0.38f
 // since each condition subsumes the "the rates aren't fresh" signal of the next.
 enum class BannerKind { Offline, Unreachable, Fallback, Historical }
 
+/**
+ * The converter's status pill: its [kind], the one-line [text], and the
+ * longer [explanation] a tap on the pill opens, for a status that needs one.
+ */
 data class BannerContent(
     val kind: BannerKind,
     val text: String,
+    val explanation: String? = null,
 )
 
 private data class DrawerEntry(

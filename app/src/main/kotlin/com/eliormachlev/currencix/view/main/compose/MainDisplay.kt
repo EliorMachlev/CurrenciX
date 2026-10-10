@@ -62,6 +62,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -317,6 +320,7 @@ internal data class MainDisplayCallbacks(
     val onOpenFees: () -> Unit,
     val onOpenProvider: () -> Unit,
     val onSwapLongPress: () -> Unit,
+    val onExplainBanner: () -> Unit = {},
 )
 
 // An amount on the card: split for display, whole for the clipboard.
@@ -528,6 +532,7 @@ private fun HeroCard(
                 dest = state.destCurrency,
                 state = state.footer,
                 onProviderClick = callbacks.onOpenProvider,
+                onBannerClick = callbacks.onExplainBanner,
             )
         }
     }
@@ -1220,6 +1225,7 @@ private fun RateFooter(
     dest: Currency?,
     state: FooterState,
     onProviderClick: () -> Unit,
+    onBannerClick: () -> Unit,
 ) {
     val (rates, dateFormatPattern, banner) = state
     Column {
@@ -1231,7 +1237,7 @@ private fun RateFooter(
         )
         Spacer(Modifier.height(RATE_FOOTER_PADDING_TOP))
         if (banner != null) {
-            StatusPill(banner, Modifier.align(Alignment.CenterHorizontally))
+            StatusPill(banner, onBannerClick, Modifier.align(Alignment.CenterHorizontally))
             Spacer(Modifier.height(STATUS_PILL_GAP))
         }
         Row(
@@ -1252,10 +1258,12 @@ private fun RateFooter(
 
 // Compact tinted pill surfaced inside the RateFooter (above the rate +
 // timestamp row) when the app is showing offline or historical data. Keeps
-// the status visible without stealing a full-width slot above the hero.
+// the status visible without stealing a full-width slot above the hero. A
+// status with an explanation (the fallback provider) opens it on a tap.
 @Composable
 private fun StatusPill(
     banner: BannerContent,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val containerColor =
@@ -1277,11 +1285,13 @@ private fun StatusPill(
             BannerKind.Fallback -> R.drawable.ic_data_provider
             BannerKind.Historical -> R.drawable.ic_history
         }
+    val explainLabel = stringResource(R.string.fallback_info_action)
     Row(
         modifier =
             modifier
                 .clip(RoundedCornerShape(STATUS_PILL_RADIUS))
                 .background(containerColor)
+                .then(if (banner.explanation != null) Modifier.explainsOnClick(explainLabel, onClick) else Modifier)
                 .padding(horizontal = STATUS_PILL_PADDING_H, vertical = STATUS_PILL_PADDING_V),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(STATUS_PILL_ICON_GAP),
@@ -1302,6 +1312,13 @@ private fun StatusPill(
         )
     }
 }
+
+// A pill that opens its explanation: a button to TalkBack, which reads
+// [label] ("Learn more") as what a double tap does.
+private fun Modifier.explainsOnClick(
+    label: String,
+    onClick: () -> Unit,
+): Modifier = semantics { role = Role.Button }.hapticClickable(onClickLabel = label, onClick = onClick)
 
 @Composable
 private fun RateText(

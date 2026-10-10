@@ -152,10 +152,16 @@ class ConverterStatus(
             }
     }
 
-    // "Bank of Israel unavailable • Using Frankfurter.app"
+    // "Bank of Israel unavailable • Using Frankfurter.app", and what that
+    // means for the tap on it.
     private fun fallbackBanner(providers: Pair<ApiProvider, ApiProvider>): BannerContent {
-        val (main, used) = providers
-        return BannerContent(BannerKind.Fallback, context.getString(R.string.fallback_banner, main.getName(context), used.getName(context)))
+        val main = providers.first.getName(context)
+        val used = providers.second.getName(context)
+        return BannerContent(
+            kind = BannerKind.Fallback,
+            text = context.getString(R.string.fallback_banner, main, used),
+            explanation = context.getString(R.string.fallback_info_message, main, used),
+        )
     }
 
     // Offline and unreachable read the same way: "…, last updated <date>",

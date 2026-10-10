@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,6 +29,8 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
@@ -59,7 +62,7 @@ import kotlinx.coroutines.launch
 
 // Which of the converter's sheets / dialogs is open. Saved, so an open sheet
 // survives rotation.
-private enum class ConverterOverlay { ProviderPicker, QuickConversions, HistoricalDatePicker }
+private enum class ConverterOverlay { ProviderPicker, QuickConversions, HistoricalDatePicker, StatusExplanation }
 
 private const val RECENT_PAIR_SETTLE_MILLIS = 2_000L
 private val RECENT_PAIRS_MARGIN = 16.dp
@@ -117,6 +120,7 @@ internal fun ConverterRoute(
                     host = host,
                     onOpenFees = destinations::openFees,
                     onOpenProvider = { overlay = ConverterOverlay.ProviderPicker },
+                    onExplainStatus = { overlay = ConverterOverlay.StatusExplanation },
                 )
             },
             keypadContent = { ConverterKeypad(viewModel) },
@@ -128,6 +132,7 @@ internal fun ConverterRoute(
         host = host,
         onOpenFees = destinations::openFees,
         onDismiss = { overlay = null },
+        onOpenProvider = { overlay = ConverterOverlay.ProviderPicker },
     )
 }
 
@@ -242,6 +247,7 @@ private fun ConverterOverlays(
     host: ConverterHost,
     onOpenFees: () -> Unit,
     onDismiss: () -> Unit,
+    onOpenProvider: () -> Unit,
 ) {
     val viewModel = host.viewModel
     when (overlay) {
@@ -266,16 +272,42 @@ private fun ConverterOverlays(
                 onPick = viewModel::setHistoricalDate,
                 onDismiss = onDismiss,
             )
+        ConverterOverlay.StatusExplanation -> StatusExplanationSheet(host.status, onOpenProvider, onDismiss)
         null -> Unit
     }
 }
 
-// The hero card, with its copy / fees / provider shortcuts.
+// What the status pill's tap opens: the status explained, with a way to
+// change the provider. Closes itself once the status no longer needs
+// explaining (the main provider answered again).
+@Composable
+private fun StatusExplanationSheet(
+    status: ConverterStatus,
+    onOpenProvider: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val explanation = status.banner.value?.explanation
+    if (explanation == null) {
+        LaunchedEffect(Unit) { onDismiss() }
+        return
+    }
+    LedgerConfirmSheet(
+        title = stringResource(R.string.fallback_info_title),
+        message = explanation,
+        confirmLabel = stringResource(R.string.change_provider),
+        cancelLabel = stringResource(android.R.string.ok),
+        onConfirm = onOpenProvider,
+        onDismiss = onDismiss,
+    )
+}
+
+// The hero card, with its copy / fees / provider / status shortcuts.
 @Composable
 private fun ConverterDisplay(
     host: ConverterHost,
     onOpenFees: () -> Unit,
     onOpenProvider: () -> Unit,
+    onExplainStatus: () -> Unit,
 ) {
     val context = LocalContext.current
     val banner by host.status.banner
@@ -289,6 +321,7 @@ private fun ConverterDisplay(
                 onOpenFees = onOpenFees,
                 onOpenProvider = onOpenProvider,
                 onSwapLongPress = onOpenFees,
+                onExplainBanner = onExplainStatus,
             ),
         dateFormatPattern = pattern,
         banner = banner,
@@ -318,11 +351,29 @@ private fun ConverterRecentPairs(
     RecentPairsRow(
         pairs = others,
         onPick = viewModel::setCurrencyPair,
-        onRemove = database.lastState::removeRecentPair,
+        onRemove = rememberRemoveWithUndo(database),
         contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),
         // The bottom gap keeps the chips clear of the keypad's top row.
         modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN, bottom = RECENT_PAIRS_BOTTOM_GAP),
     )
+}
+
+// Forgets a recent pair, with an Undo on the snackbar: a long-press can land
+// on the wrong chip, and the prompt before it is easy to confirm by habit.
+@Composable
+private fun rememberRemoveWithUndo(database: Database): (CurrencyPair) -> Unit {
+    val snackbar = LocalAppSnackbar.current
+    val resources = LocalResources.current
+    return remember(database, snackbar, resources) {
+        { pair ->
+            val before = database.lastState.removeRecentPair(pair)
+            snackbar?.showWithUndo(
+                message = resources.getString(R.string.recent_removed_pair, pair.from.iso4217Alpha(), pair.to.iso4217Alpha()),
+                actionLabel = resources.getString(R.string.undo),
+                onUndo = { database.lastState.restoreRecentPairs(before) },
+            )
+        }
+    }
 }
 
 // The in-app keypad. The picker only offers in-app variants, so the

@@ -51,6 +51,7 @@ import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.ProseAlertDialog
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
@@ -69,6 +70,10 @@ private val ROW_TIGHT_VERTICAL: Dp = 4.dp
 // because they carry a title+description pair rather than a single line, and
 // they need a leading radio *plus* an entire clickable body.
 private val PICKER_ROW_VERTICAL: Dp = 10.dp
+
+// With the radio's own touch-target inset, lines the rows up with the
+// sheet's title.
+private val PICKER_ROW_HORIZONTAL: Dp = 8.dp
 private val PICKER_RADIO_GAP: Dp = 12.dp
 private val ADD_ICON_HORIZONTAL_PAD: Dp = 12.dp
 
@@ -386,54 +391,41 @@ internal class FeePickerActions<T : Fee>(
 )
 
 /**
- * Global-fee picker dialog: radio list of every fee of a given kind. Tapping
+ * Global-fee picker sheet: radio list of every fee of a given kind. Tapping
  * a radio commits it as the active fee and dismisses; tapping the row body
  * opens the editor for that fee. The bottom "add" row creates a new entry.
+ * A sheet, like the app's other pickers.
  */
 @Composable
-internal fun <T : Fee> FeePickerDialog(
+internal fun <T : Fee> FeePickerSheet(
     title: String,
     entries: List<T>,
     effectiveId: String?,
     actions: FeePickerActions<T>,
     onDismiss: () -> Unit,
 ) {
-    val cancel = rememberHapticOnClick(onDismiss)
     val add =
         rememberHapticOnClick {
             onDismiss()
             actions.onAdd()
         }
-    AppTheme {
-        ProseAlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(text = title) },
-            text = {
-                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                    entries.forEach { fee ->
-                        PickerRow(
-                            fee = fee,
-                            checked = fee.id == effectiveId,
-                            onRadioClick = {
-                                actions.onPicked(fee.id)
-                                onDismiss()
-                            },
-                            onEditClick = {
-                                onDismiss()
-                                actions.onEdit(fee)
-                            },
-                        )
-                    }
-                    if (entries.isNotEmpty()) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    AddRow(onClick = add)
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = cancel) {
-                    Text(stringResource(id = android.R.string.cancel))
-                }
-            },
-        )
+    LedgerBottomSheet(title = title, onDismiss = onDismiss) {
+        entries.forEach { fee ->
+            PickerRow(
+                fee = fee,
+                checked = fee.id == effectiveId,
+                onRadioClick = {
+                    actions.onPicked(fee.id)
+                    onDismiss()
+                },
+                onEditClick = {
+                    onDismiss()
+                    actions.onEdit(fee)
+                },
+            )
+        }
+        if (entries.isNotEmpty()) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        AddRow(onClick = add)
     }
 }
 
@@ -451,7 +443,7 @@ private fun <T : Fee> PickerRow(
             Modifier
                 .fillMaxWidth()
                 .hapticClickable(onClick = onEditClick)
-                .padding(vertical = PICKER_ROW_VERTICAL)
+                .padding(horizontal = PICKER_ROW_HORIZONTAL, vertical = PICKER_ROW_VERTICAL)
                 .alpha(alpha),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(PICKER_RADIO_GAP),
@@ -478,7 +470,7 @@ private fun AddRow(onClick: () -> Unit) {
             Modifier
                 .fillMaxWidth()
                 .hapticClickable(onClick = onClick)
-                .padding(vertical = PICKER_ROW_VERTICAL),
+                .padding(horizontal = PICKER_ROW_HORIZONTAL, vertical = PICKER_ROW_VERTICAL),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(PICKER_RADIO_GAP),
     ) {
