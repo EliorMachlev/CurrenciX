@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="name_aed">Dirham fra de Forenede Arabiske Emirater</string>
+    <string name="name_aed">Dirham fra De Forenede Arabiske Emirater</string>
     <string name="name_afn">Afghansk afghani</string>
     <string name="name_all">Albansk lek</string>
     <string name="name_amd">Armensk dram</string>
@@ -31,9 +31,9 @@
     <string name="name_cad">Canadisk dollar</string>
     <string name="name_cdf">Congolesisk franc</string>
     <string name="name_chf">Schweizerfranc</string>
-    <string name="name_clf">Chilean Unit of Account (UF)</string>
+    <string name="name_clf">Chilensk regningsenhed (UF)</string>
     <string name="name_clp">Chilensk peso</string>
-    <string name="name_cnh">Kinesisk yuan (Off-Shore)</string>
+    <string name="name_cnh">Kinesisk yuan (offshore)</string>
     <string name="name_cny">Kinesisk yuan</string>
     <string name="name_cop">Colombiansk peso</string>
     <string name="name_crc">Costaricansk colón</string>
@@ -54,10 +54,11 @@
 
     <string name="name_fjd">Fijiansk dollar</string>
     <string name="name_fkp">Pund fra Falklandsøerne</string>
-    <string name="name_fok">Færøske kroner</string>
+    <string name="name_fok">Færøsk krone</string>
 
     <string name="name_gbp">Britisk pund</string>
     <string name="name_gel">Georgisk lari</string>
+    <string name="name_ggp">Guernsey-pund</string>
 
     <string name="name_ghs">Ghanesisk cedi</string>
     <string name="name_gip">Gibraltarisk pund</string>
@@ -74,11 +75,13 @@
 
     <string name="name_idr">Indonesisk rupiah</string>
     <string name="name_ils">Ny israelsk shekel</string>
+    <string name="name_imp">Manx-pund</string>
 
     <string name="name_inr">Indisk rupee</string>
     <string name="name_iqd">Irakisk dinar</string>
     <string name="name_irr">Iransk rial</string>
     <string name="name_isk">Islandsk krone</string>
+    <string name="name_jep">Jersey-pund</string>
 
 
     <string name="name_jmd">Jamaicansk dollar</string>
@@ -149,8 +152,8 @@
     <string name="name_sek">Svensk krone</string>
     <string name="name_sgd">Singaporeansk dollar</string>
     <string name="name_shp">Pund fra Saint Helena</string>
-    <string name="name_sle">Sierra Leonean Leone</string>
-    <string name="name_sll">Sierraleonsk leone</string>
+    <string name="name_sle">Sierraleonsk leone</string>
+    <string name="name_sll">Sierraleonsk leone (før 07/2022)</string>
     <string name="name_sos">Somalisk shilling</string>
     <string name="name_srd">Surinamsk dollar</string>
     <string name="name_ssp">Sydsudansk pund</string>
@@ -170,7 +173,7 @@
     <string name="name_twd">Ny taiwansk dollar</string>
     <string name="name_tzs">Tanzanisk shilling</string>
 
-    <string name="name_uah">Ukrainsk grynia</string>
+    <string name="name_uah">Ukrainsk hryvnia</string>
     <string name="name_ugx">Ugandisk shilling</string>
     <string name="name_usd">Amerikansk dollar</string>
     <string name="name_uyu">Uruguayansk peso</string>
@@ -187,7 +190,7 @@
     <string name="name_xag">Sølv</string>
     <string name="name_xau">Guld</string>
     <string name="name_xcd">Østkaribisk dollar</string>
-    <string name="name_xdr">SDR</string>
+    <string name="name_xdr">Særlige trækningsrettigheder</string>
     <string name="name_xof">CFA-franc BCEAO</string>
     <string name="name_xpd">Palladium</string>
     <string name="name_xpf">CFP-franc</string>

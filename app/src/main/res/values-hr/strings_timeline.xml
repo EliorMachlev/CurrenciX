@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> prema &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Izvor podataka: &lt;b>%s&lt;/b></string>
     <string name="rate_average">prosjek</string>
-    <string name="rate_median">median</string>
+    <string name="rate_median">medijan</string>
     <string name="rate_min">minimum</string>
     <string name="rate_max">maksimum</string>
     <string name="year">godina</string>
     <string name="month">mjesec</string>
     <string name="week">tjedan</string>
+    <string name="timeline_five_years">5 godina</string>
+    <string name="timeline_custom_range">Prilagođeno razdoblje</string>
+    <string name="timeline_share">Podijeli grafikon</string>
+    <string name="timeline_no_rates">Nema tečajeva za ove datume</string>
 </resources>

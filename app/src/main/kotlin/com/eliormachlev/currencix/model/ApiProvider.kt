@@ -21,22 +21,39 @@ private const val ID_BANK_OF_CANADA = 6
 private const val ID_OPEN_EXCHANGERATES = 7
 private const val ID_BANK_OF_ISRAEL = 8
 
+/** How often a provider publishes new rates — the picker lists the more frequent ones first. */
+enum class UpdateCadence { HOURLY, DAILY, MONTHLY }
+
+/**
+ * Declaration order is the picker's order within a group ([pickerOrder]):
+ * most useful first — wider coverage and steadier service. Nothing persists
+ * the ordinal (the stored value is [id]), so reordering entries is safe.
+ */
 @JsonClass(generateAdapter = false) // see https://stackoverflow.com/a/64085370/421140
 enum class ApiProvider(
     val id: Int, // safer ordinal; DON'T CHANGE!
     private val implementation: Api,
+    val cadence: UpdateCadence,
+    val needsApiKey: Boolean = false,
 ) {
     // EXCHANGERATE_HOST(0, "https://api.exchangerate.host"), // removed, as API was shut down
-    FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp()),
-
     // FER_EE(2, FerEe()), // deactivated: API returns HTTP 422 most of the time with no response
     //   from developers — see https://github.com/narorolib/fer/issues/6
-    INFOR_EURO(ID_INFOR_EURO, InforEuro()),
-    NORGES_BANK(ID_NORGES_BANK, NorgesBank()),
-    BANK_ROSSII(ID_BANK_ROSSII, BankRossii()),
-    BANK_OF_CANADA(ID_BANK_OF_CANADA, BankOfCanada()),
-    OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates()),
-    BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael()),
+
+    // European Central Bank reference rates, ~30 currencies, reliable.
+    FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp(), UpdateCadence.DAILY),
+
+    // ~44 currencies.
+    BANK_ROSSII(ID_BANK_ROSSII, BankRossii(), UpdateCadence.DAILY),
+
+    // ~40 currencies, but regular HTTP 503 downtimes.
+    NORGES_BANK(ID_NORGES_BANK, NorgesBank(), UpdateCadence.DAILY),
+    BANK_OF_CANADA(ID_BANK_OF_CANADA, BankOfCanada(), UpdateCadence.DAILY),
+    BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael(), UpdateCadence.DAILY),
+
+    // ~150 currencies, but accounting rates set once a month.
+    INFOR_EURO(ID_INFOR_EURO, InforEuro(), UpdateCadence.MONTHLY),
+    OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates(), UpdateCadence.HOURLY, needsApiKey = true),
     ;
 
     companion object {
@@ -44,6 +61,21 @@ enum class ApiProvider(
             entries.firstOrNull { it.id == value }
                 // this is our fallback, e.g. if an API is removed from the app
                 ?: BANK_OF_ISRAEL
+
+        /**
+         * The picker's order: free providers before ones that need an API key,
+         * each group from the most to the least frequently updated, then most
+         * useful first (declaration order).
+         */
+        val pickerOrder: List<ApiProvider> =
+            entries.sortedWith(compareBy<ApiProvider> { it.needsApiKey }.thenBy { it.cadence }.thenBy { it.ordinal })
+
+        /**
+         * The fallback when the user hasn't picked one, or picked what is now
+         * the [main] provider: the first free provider in [pickerOrder] that
+         * isn't [main].
+         */
+        fun defaultFallback(main: ApiProvider): ApiProvider = pickerOrder.first { !it.needsApiKey && it != main }
     }
 
     fun getName(context: Context): CharSequence = context.getText(this.implementation.nameRes)
@@ -62,7 +94,8 @@ enum class ApiProvider(
     suspend fun getRates(
         context: Context?,
         date: LocalDate?,
-    ): Result<ExchangeRates> = this.implementation.getRates(context, date)
+        secrets: ApiSecrets = ApiSecrets.EMPTY,
+    ): Result<ExchangeRates> = this.implementation.getRates(context, date, secrets)
 
     suspend fun getTimeline(
         context: Context?,
@@ -72,34 +105,35 @@ enum class ApiProvider(
         endDate: LocalDate,
     ): Result<Timeline> = this.implementation.getTimeline(context, base, symbol, startDate, endDate)
 
-    abstract class Api {
+    interface Api {
         // Stable English identifier used for log/error tags — never shown to
         // users; keep in ASCII so backend log grep stays predictable.
-        abstract val name: String
+        val name: String
 
         // Localized display name shown in the UI (provider picker, share
         // footer, timeline attribution). Central-bank providers translate;
         // pure product brands (Frankfurter.app, Fer.ee, …) fall back to the
         // base-locale string.
         @get:StringRes
-        abstract val nameRes: Int
+        val nameRes: Int
 
-        abstract fun descriptionShort(context: Context): CharSequence
+        fun descriptionShort(context: Context): CharSequence
 
-        abstract fun getDescriptionLong(context: Context): CharSequence
+        fun getDescriptionLong(context: Context): CharSequence
 
-        abstract fun descriptionUpdateInterval(context: Context): CharSequence
+        fun descriptionUpdateInterval(context: Context): CharSequence
 
-        abstract fun descriptionHint(context: Context): CharSequence?
+        fun descriptionHint(context: Context): CharSequence?
 
-        abstract val baseUrl: String
+        val baseUrl: String
 
-        abstract suspend fun getRates(
+        suspend fun getRates(
             context: Context?,
             date: LocalDate?,
+            secrets: ApiSecrets,
         ): Result<ExchangeRates>
 
-        abstract suspend fun getTimeline(
+        suspend fun getTimeline(
             context: Context?,
             base: Currency,
             symbol: Currency,

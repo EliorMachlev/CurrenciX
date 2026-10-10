@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Nulstil introduktionsrundvisning</string>
+    <string name="pref_debug_reset_onboarding_summary">Rydder markeringen for første start, så rundvisningen med fremhævninger vises igen ved næste start.</string>
+    <string name="pref_debug_reset_onboarding_toast">Introduktionen vises igen ved næste start.</string>
+</resources>

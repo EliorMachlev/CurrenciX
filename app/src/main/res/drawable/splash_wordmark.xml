@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Static splash-icon mark shown by the platform SplashScreen between
+    launcher tap and Compose first-frame. The animated wordmark reveal is
+    handled in-app by view/compose/theme/Wordmark.kt; this drawable is the
+    still frame we hold on until Compose is ready to take over.
+
+    Simplified to a "C×" monogram — brass "×" (U+00D7 as a stroked mark)
+    beside a "C" arc, both sized to fit the 108dp SplashScreen icon slot
+    (Android reserves the outer ~1/3 for the system's icon mask). See
+    https://developer.android.com/develop/ui/views/launch/splash-screen#dimensions
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- "C" arc, ink-toned, left of centre -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M62,38 A16,16 0 1 0 62,70"
+        android:strokeColor="#333331"
+        android:strokeLineCap="round"
+        android:strokeWidth="6" />
+    <!-- "×" multiplication mark, brass, right of centre -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M66,44 L78,64 M78,44 L66,64"
+        android:strokeColor="#B8985B"
+        android:strokeLineCap="round"
+        android:strokeWidth="6" />
+</vector>

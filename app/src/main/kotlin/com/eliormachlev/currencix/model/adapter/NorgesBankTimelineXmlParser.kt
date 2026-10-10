@@ -36,6 +36,7 @@ class NorgesBankTimelineXmlParser(
                         )
                     multiplier = parser.norgesBankUnitMultiplier()
                 }
+
                 eventType == XmlPullParser.START_TAG &&
                     tagname.equals("Obs", ignoreCase = true) -> {
                     val date = LocalDate.parse(parser.getAttributeValue(null, "TIME_PERIOD"))
@@ -48,6 +49,7 @@ class NorgesBankTimelineXmlParser(
                             )
                     }
                 }
+
                 eventType == XmlPullParser.END_TAG &&
                     tagname.equals("Series", ignoreCase = true) -> {
                     ratesList.add(currentTimeline.toMap())

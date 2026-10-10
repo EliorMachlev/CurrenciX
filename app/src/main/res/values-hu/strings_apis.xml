@@ -3,16 +3,31 @@
     <string name="api_bankOfIsrael_descriptionFull">Reprezentatív devizaárfolyamok, ahogyan azokat az izraeli központi bank, a <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a> közzéteszi. Az árfolyamokat az új izraeli sékelhez képest jegyzik.\n<b>A Bank of Israel körülbelül 14 devizaárfolyamot listáz.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Körülbelül 14 devizaárfolyam\nForrás: Izraeli központi bank</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">A reprezentatív árfolyamokat minden munkanapon egyszer, körülbelül 15:30-kor izraeli idő szerint teszik közzé.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> a devizaárfolyamokat különböző pénzügyi adatszolgáltatóktól és bankoktól, köztük az Európai Központi Banktól szerzi be. Minden árfolyamadatot középárfolyam-adatokban szolgáltatnak. A középárfolyamok meghatározása a vételi és eladási árfolyamok átlagos mediánjának kiszámításával történik.\n<b>Körülbelül 160 pénznemet tartalmaz.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Az árfolyamok minden munkanapon éjfél körül frissülnek.</string>
+    <string name="api_bankRossii_descriptionFull">Devizaárfolyamok, ahogyan azokat az orosz központi bank, a <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a> közzéteszi. A jelenlegi szankciók mellett valószínűleg ez a forrás adja a legmegbízhatóbb árfolyamokat az orosz rubelre.\n<b>A Bank Rossii mintegy 44 devizaárfolyamot listáz.</b></string>
+    <string name="api_bankRossii_descriptionShort">Körülbelül 44 devizaárfolyam\nForrás: Orosz központi bank</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Az árfolyamok naponta frissülnek, az <a href="https://cbr.ru/eng/other/holidays/">oroszországi munkaszüneti napok</a> kivételével.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> egy viszonylag új szolgáltatás, amely (a Frankfurter.app-hoz hasonlóan) az Európai Központi Bank által közzétett referencia devizaárfolyamokat követi.\n<b>Körülbelül 30 pénznemet tartalmaz.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">Az árfolyamok minden munkanapon frissülnek.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> az Európai Központi Bank által közzétett referencia devizaárfolyamokat követi.\n<b>Körülbelül 30 pénznemet tartalmaz.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Körülbelül 30 devizaárfolyam\nForrás: Európai Központi Bank</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Az adatok minden munkanapon 16:00 CET körül frissülnek.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_hu"><b>InforEuro</b></a> a világ pénznemei közötti átváltási számításokat segíti. Az alkalmazás az Európai Bizottság euróra vonatkozó hivatalos havi elszámolási árfolyamán és az annak megfelelő átváltási árfolyamokon alapul, melyeket a költségvetési rendelet 19. cikkével összhangban a Bizottság számvitelért felelős tisztviselője határoz meg.\nEzek az átváltási árfolyamok használatosak az Európai Bizottság által szervezett üléseken, interjúkon stb. részt vevő külső személyeknek térítendő utazási, napidíj- vagy egyéb költségek kiszámítására.\n<b>Körülbelül 150 pénznemet tartalmaz.</b></string>
+    <string name="api_inforEuro_descriptionShort">Körülbelül 150 devizaárfolyam\nForrás: Európai Bizottság</string>
     <string name="api_inforEuro_descriptionUpdateInterval">A feltüntetett árfolyamok az előző hónap utolsó előtti napján érvényes, az Európai Központi Bank által megadott piaci árfolyamok, vagy – a rendelkezésre állástól függően – a küldöttségek vagy más források által az említett dátumhoz közeli időpontokban megadott árfolyamok.</string>
+    <string name="api_inforEuro_hint">Az árfolyamok csak havonta egyszer frissülnek!</string>
+    <string name="api_norgesBank_descriptionFull">Devizaárfolyamok, ahogyan azokat a norvég központi bank, a <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a> közzéteszi.\n<b>A Norges Bank mintegy 40 devizaárfolyamot listáz.</b></string>
+    <string name="api_norgesBank_descriptionShort">Körülbelül 40 devizaárfolyam\nForrás: Norvég központi bank</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">A napi devizaárfolyamok közzétételi ideje körülbelül 16:00 CET.</string>
+    <string name="api_norgesBank_hint">A szolgáltatás rendszeresen leáll (HTTP 503), ilyenkor az árfolyamok nem frissíthetők!</string>
+    <string name="api_openExchangeRates_descriptionFull">Az adatokat több megbízható forrásból követik és egyesítik, ami elfogulatlan árfolyamokat biztosít. További információ: <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a>.\n<b>Az Open Exchange Rates nagyszámú, mintegy 160 devizaárfolyamot kínál.\n<i>Ennek a forrásnak a használatához meg kell adnod a saját API-kulcsodat!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Körülbelül 160 devizaárfolyam\nForrás: Több megbízható szolgáltató kombinációja.</string>
+    <string name="api_openExchangeRates_descriptionUpdateInterval">Óránkénti frissítés.</string>
+    <string name="api_openExchangeRates_hint">Ennek a forrásnak a használatához létre kell hoznod a saját API-kulcsodat!</string>
     <string name="api_bankOfCanada_name">Kanadai Központi Bank</string>
     <string name="api_bankOfIsrael_name">Izraeli Központi Bank</string>
     <string name="api_bankRossii_name">Oroszországi Központi Bank</string>
     <string name="api_norgesBank_name">Norvégiai Központi Bank</string>
+    <string name="api_bankOfCanada_descriptionFull">A kanadai központi bank, a <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a> napi átlagos devizaárfolyamai.\n<b>Körülbelül 23 pénznemet tartalmaz.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Körülbelül 23 devizaárfolyam\nForrás: Kanadai központi bank</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">Az árfolyamokat minden munkanapon egyszer, legkésőbb 16:30 ET-ig teszik közzé</string>
 </resources>

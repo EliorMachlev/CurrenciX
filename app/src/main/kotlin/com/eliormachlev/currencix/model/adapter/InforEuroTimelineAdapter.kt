@@ -4,25 +4,20 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 import java.io.IOException
 import java.math.BigDecimal
 import java.time.LocalDate
 
-@Suppress("unused", "UNUSED_PARAMETER")
 internal class InforEuroTimelineAdapter(
     private val startDate: LocalDate,
     private val endDate: LocalDate,
-) {
+) : ResponseAdapter<Timeline>(Timeline::class.java) {
     private val base: String = Currency.EUR.iso4217Alpha()
 
     @Synchronized
-    @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): Timeline =
+    override fun fromJson(reader: JsonReader): Timeline =
         reader.readArrayOrError(
             onError = ::errorResponse,
         ) { r ->
@@ -63,11 +58,11 @@ internal class InforEuroTimelineAdapter(
         }
         reader.endObject()
 
-        if (currencyIso == null || value == null || dateStart == null || dateEnd == null) return
+        val rate = rateOrNull(currencyIso, value) ?: return
+        if (dateStart == null || dateEnd == null) return
         // inclusive: before-or-equal start
         if (startDate.withDayOfMonth(1).isAfter(dateStart)) return
 
-        val rate = Rate(currencyIso, value)
         var date: LocalDate = dateEnd
         while (!date.isBefore(dateStart)) {
             rates[date] = rate
@@ -85,14 +80,4 @@ internal class InforEuroTimelineAdapter(
             rates = null,
             provider = ApiProvider.INFOR_EURO,
         )
-
-    @Synchronized
-    @ToJson
-    @Throws(IOException::class)
-    fun toJson(
-        writer: JsonWriter,
-        value: Timeline,
-    ) {
-        writer.nullValue()
-    }
 }

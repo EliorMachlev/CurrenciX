@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">איפוס סיור ההיכרות</string>
+    <string name="pref_debug_reset_onboarding_summary">ניקוי סימון ההפעלה הראשונה, כך שסיור ההיכרות יוצג שוב בפתיחה הבאה.</string>
+    <string name="pref_debug_reset_onboarding_toast">סיור ההיכרות יוצג שוב בפתיחה הבאה.</string>
+</resources>

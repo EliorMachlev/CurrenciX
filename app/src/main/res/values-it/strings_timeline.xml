@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="data_provider">Dati di &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="rate_average">media</string>
-    <string name="rate_median">med</string>
+    <string name="rate_median">mediana</string>
     <string name="rate_min">min</string>
     <string name="rate_max">max</string>
     <string name="year">anno</string>
     <string name="month">mese</string>
     <string name="week">settimana</string>
+    <string name="timeline_five_years">5 anni</string>
+    <string name="timeline_custom_range">Intervallo personalizzato</string>
+    <string name="timeline_share">Condividi grafico</string>
+    <string name="timeline_no_rates">Nessun tasso per queste date</string>
 </resources>

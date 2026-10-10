@@ -1,5 +1,5 @@
 version: "1.0"
-linter: jetbrains/qodana-jvm-community:2025.1
+linter: jetbrains/qodana-jvm-community:2026.2
 profile:
   name: qodana.recommended
 exclude:
@@ -9,6 +9,3 @@ exclude:
       - .gradle
       - app/build
       - helpers/build
-      - app/src/test
-      - app/src/androidTest
-      - helpers/src/test

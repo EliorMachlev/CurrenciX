@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.model.provider
 import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
@@ -14,7 +15,7 @@ import java.time.LocalDate
 
 private const val SDMX_FORMAT_QS = "&format=sdmx-compact-2.1"
 
-class NorgesBank : ApiProvider.Api() {
+class NorgesBank : ApiProvider.Api {
     override val name = "Norges Bank"
     override val nameRes = R.string.api_norgesBank_name
 
@@ -31,6 +32,7 @@ class NorgesBank : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val dateQuery =
             if (date == null) {

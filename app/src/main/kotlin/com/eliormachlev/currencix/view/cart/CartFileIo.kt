@@ -1,40 +1,57 @@
 package com.eliormachlev.currencix.view.cart
 
 import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
+import com.eliormachlev.currencix.repository.fileFailureMessage
 import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 
 private const val EXPORT_FILE_MIME = "application/json"
 private const val EXPORT_FILE_EXT = ".json"
 
+// Registry keys for the two document pickers. Fixed, so a result that
+// lands after the Activity was recreated (the picker outlived a rotation or
+// process death) is delivered to the cart screen that re-registers them.
+private const val EXPORT_KEY = "cart_export_json"
+private const val IMPORT_KEY = "cart_import_json"
+
 /**
- * Owns the SAF launcher pair for cart JSON export / import. Registration must
- * happen before the host activity reaches STARTED, so construct this in the
- * activity's onCreate before observe() runs. The [snackbar] callback bridges
- * result messages back to the host's snackbar host.
+ * Owns the SAF launcher pair for cart JSON export / import. The cart is a
+ * screen inside the single Activity, created long after the Activity
+ * started, so the launchers are registered on the Activity's result
+ * registry directly (no lifecycle owner) — the host must [unregister] when
+ * the cart screen leaves. The [snackbar] callback bridges result messages
+ * back to the host.
  */
 class CartFileIo(
-    private val activity: AppCompatActivity,
+    private val activity: ComponentActivity,
     private val viewModel: CartViewModel,
     private val exporter: CartExporter,
     private val flushPendingCommits: () -> Unit,
     private val snackbar: (String) -> Unit,
+    private val snackbarWithUndo: (message: String, undo: () -> Unit) -> Unit,
 ) {
     private val exportLauncher: ActivityResultLauncher<String> =
-        activity.registerForActivityResult(
+        activity.activityResultRegistry.register(
+            EXPORT_KEY,
             ActivityResultContracts.CreateDocument(EXPORT_FILE_MIME),
         ) { uri -> uri?.let(::doExport) }
 
     private val importLauncher: ActivityResultLauncher<Array<String>> =
-        activity.registerForActivityResult(
+        activity.activityResultRegistry.register(
+            IMPORT_KEY,
             ActivityResultContracts.OpenDocument(),
         ) { uri -> uri?.let(::doImport) }
+
+    fun unregister() {
+        exportLauncher.unregister()
+        importLauncher.unregister()
+    }
 
     fun launchExport() {
         flushPendingCommits()
@@ -61,22 +78,32 @@ class CartFileIo(
                 createdAt = System.currentTimeMillis(),
             )
         when (val res = exporter.export(uri, toExport)) {
-            is CartFileResult.Success -> snackbar(activity.getString(R.string.cart_export_ok))
-            is CartFileResult.Failure ->
-                snackbar(activity.getString(R.string.cart_export_error, res.message))
-            is CartFileResult.Loaded -> Unit
+            is CartFileResult.Success -> {
+                snackbar(activity.getString(R.string.cart_export_ok))
+            }
+
+            is CartFileResult.Failure -> {
+                snackbar(activity.getString(R.string.cart_export_error, activity.fileFailureMessage(res.reason, res.detail)))
+            }
+
+            is CartFileResult.Loaded -> {}
         }
     }
 
     private fun doImport(uri: Uri) {
         when (val res = exporter.import(uri)) {
             is CartFileResult.Loaded -> {
+                // An import replaces the working cart wholesale; Undo puts it back.
+                val previous = viewModel.getCurrentCart().value
                 viewModel.setCurrent(res.cart)
-                snackbar(activity.getString(R.string.cart_import_ok))
+                snackbarWithUndo(activity.getString(R.string.cart_import_ok)) { previous?.let(viewModel::setCurrent) }
             }
-            is CartFileResult.Failure ->
-                snackbar(activity.getString(R.string.cart_import_error, res.message))
-            is CartFileResult.Success -> Unit
+
+            is CartFileResult.Failure -> {
+                snackbar(activity.getString(R.string.cart_import_error, activity.fileFailureMessage(res.reason, res.detail)))
+            }
+
+            is CartFileResult.Success -> {}
         }
     }
 }

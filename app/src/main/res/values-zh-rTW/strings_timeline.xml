@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> 換 &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">資料來源 &lt;b>%s&lt;/b></string>
-    <string name="rate_average">均價</string>
-    <string name="rate_median">中位</string>
+    <string name="activity_timeline_title">&lt;b&gt;%1$s&lt;/b&gt; 兌 &lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="rate_average">平均</string>
+    <string name="rate_median">中位數</string>
     <string name="rate_min">最低</string>
     <string name="rate_max">最高</string>
-    <string name="year">年線</string>
-    <string name="month">月線</string>
-    <string name="week">週線</string>
+    <string name="year">1 年</string>
+    <string name="month">1 個月</string>
+    <string name="week">1 週</string>
+    <string name="timeline_five_years">5 年</string>
+    <string name="timeline_custom_range">自訂範圍</string>
+    <string name="timeline_share">分享圖表</string>
+    <string name="timeline_no_rates">這些日期沒有匯率</string>
 </resources>

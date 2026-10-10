@@ -2,11 +2,7 @@ package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
-import java.io.IOException
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -15,13 +11,11 @@ import java.time.LocalDate
  * The API actually returns Map<LocalDate, List<Rate>>>, however, we only want one Rate per day.
  * This converter reduces the list.
  */
-@Suppress("unused", "UNUSED_PARAMETER")
 internal class FrankfurterAppTimelineAdapter(
     private val symbol: Currency,
-) {
+) : ResponseAdapter<Map<LocalDate, Rate>>(DATED_RATES_TYPE) {
     @Synchronized
-    @FromJson
-    fun fromJson(reader: JsonReader): Map<LocalDate, Rate> =
+    override fun fromJson(reader: JsonReader): Map<LocalDate, Rate> =
         buildMap {
             reader.beginObject()
             // convert
@@ -53,14 +47,4 @@ internal class FrankfurterAppTimelineAdapter(
             }
             reader.endObject()
         }
-
-    @Synchronized
-    @ToJson
-    @Throws(IOException::class)
-    fun toJson(
-        writer: JsonWriter,
-        value: Map<LocalDate, Rate>?,
-    ) {
-        writer.nullValue()
-    }
 }

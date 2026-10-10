@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Bemutató alaphelyzetbe állítása</string>
+    <string name="pref_debug_reset_onboarding_summary">Törli az első indítás jelzőjét, így a kiemeléses bemutató a következő indításkor újra lejátszódik.</string>
+    <string name="pref_debug_reset_onboarding_toast">A bemutató a következő indításkor újra lejátszódik.</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> al &lt;b>%2$s&lt;/b></string>
+    <string name="rate_average">mez</string>
+    <string name="rate_median">mediano</string>
+    <string name="rate_min">min</string>
+    <string name="rate_max">maks</string>
+    <string name="year">jaro</string>
+    <string name="month">monato</string>
+    <string name="week">semajno</string>
+    <string name="timeline_five_years">5 jaroj</string>
+    <string name="timeline_custom_range">Propra periodo</string>
+    <string name="timeline_share">Kunhavigi diagramon</string>
+    <string name="timeline_no_rates">Neniuj kurzoj por ĉi tiuj datoj</string>
+</resources>

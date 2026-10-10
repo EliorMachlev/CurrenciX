@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dark-mode override: swap the paper splash background for ink so the
+    launcher-splash → Compose seam stays invisible in dark mode too. The
+    icon drawable stays the same brass-on-neutral mark; brass reads on both
+    paper and ink surfaces (~6:1 on ink).
+-->
+<resources>
+    <style name="AppTheme.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/inkBg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_wordmark</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+</resources>

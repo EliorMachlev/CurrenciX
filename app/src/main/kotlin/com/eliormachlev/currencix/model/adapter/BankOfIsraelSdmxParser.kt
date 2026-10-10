@@ -33,84 +33,87 @@ private const val DIM_TIME_PERIOD = "TIME_PERIOD"
  * Fixing — the same series exposed by the simpler PublicApi endpoint).
  */
 internal class BankOfIsraelSdmxParser {
-    fun parse(inputStream: InputStream): List<BankOfIsraelObservation> {
+    fun parse(inputStream: InputStream): List<BankOfIsraelObservation> =
         JsonReader.of(inputStream.source().buffer()).use { reader ->
-            val root = reader.readJsonValue() as? Map<*, *> ?: return emptyList()
-            val data = root["data"] as? Map<*, *> ?: return emptyList()
+            val data = (reader.readJsonValue() as? Map<*, *>)?.get("data") as? Map<*, *>
+            data?.let(::officialFixings).orEmpty()
+        }
 
-            val (seriesDimNames, seriesDimCodes) = readDimensions(data, "series")
-            val timeCodes = readTimeCodes(data)
+    private fun officialFixings(data: Map<*, *>): List<BankOfIsraelObservation> {
+        val seriesDimensions = dimensions(data, "series")
+        val currencyPos = seriesDimensions.indexOfFirst { it.id == DIM_BASE_CURRENCY }
+        val dataTypePos = seriesDimensions.indexOfFirst { it.id == DIM_DATA_TYPE }
+        val dates = dates(data)
+        if (currencyPos < 0 || dataTypePos < 0 || dates.isEmpty()) return emptyList()
 
-            val baseCurrencyPos = seriesDimNames.indexOf(DIM_BASE_CURRENCY)
-            val dataTypePos = seriesDimNames.indexOf(DIM_DATA_TYPE)
-            if (baseCurrencyPos < 0 || dataTypePos < 0 || timeCodes.isEmpty()) return emptyList()
-
-            val dataSets = data["dataSets"] as? List<*> ?: return emptyList()
-            val firstDataSet = dataSets.firstOrNull() as? Map<*, *> ?: return emptyList()
-            val series = firstDataSet["series"] as? Map<*, *> ?: return emptyList()
-
-            return buildList {
-                for ((seriesKey, seriesValue) in series) {
-                    val indices =
-                        (seriesKey as? String)?.split(':')?.mapNotNull { it.toIntOrNull() }
-                            ?: continue
-                    if (indices.size <= maxOf(baseCurrencyPos, dataTypePos)) continue
-
-                    val dataType = seriesDimCodes.getOrNull(dataTypePos)?.getOrNull(indices[dataTypePos])
-                    if (dataType != DATA_TYPE_OFFICIAL_FIXING) continue
-
-                    val currency =
-                        seriesDimCodes
-                            .getOrNull(baseCurrencyPos)
-                            ?.getOrNull(indices[baseCurrencyPos]) ?: continue
-                    val observations =
-                        (seriesValue as? Map<*, *>)?.get("observations") as? Map<*, *>
-                            ?: continue
-
-                    for ((obsKey, obsValue) in observations) {
-                        val dateIndex = (obsKey as? String)?.toIntOrNull() ?: continue
-                        val date = timeCodes.getOrNull(dateIndex) ?: continue
-                        val rawValue = extractObservationValue(obsValue) ?: continue
-                        add(BankOfIsraelObservation(currency, date, rawValue))
-                    }
-                }
+        return seriesOf(data).flatMap { (key, series) ->
+            val codes = codesOf(key, seriesDimensions)
+            val currency = codes.getOrNull(currencyPos)
+            if (currency == null || codes.getOrNull(dataTypePos) != DATA_TYPE_OFFICIAL_FIXING) {
+                emptyList()
+            } else {
+                observationsOf(series).mapNotNull { (dateIndex, value) -> observation(currency, dates.getOrNull(dateIndex), value) }
             }
         }
     }
 
-    private fun readDimensions(
+    // A dimension's declared codes, in the order the keys index them. A slot
+    // is null when its entry has no id, so the positions stay aligned.
+    private fun dimensions(
         data: Map<*, *>,
         kind: String,
-    ): Pair<List<String>, List<List<String>>> {
-        val structures =
-            data["structures"] as? List<*>
-                ?: (data["structure"]?.let { listOf(it) }) ?: return emptyList<String>() to emptyList()
-        val first = structures.firstOrNull() as? Map<*, *> ?: return emptyList<String>() to emptyList()
-        val dimensions = first["dimensions"] as? Map<*, *> ?: return emptyList<String>() to emptyList()
-        val dims = dimensions[kind] as? List<*> ?: return emptyList<String>() to emptyList()
-
-        val names = mutableListOf<String>()
-        val codes = mutableListOf<List<String>>()
-        for (dim in dims) {
-            val dimMap = dim as? Map<*, *> ?: continue
-            names.add(dimMap["id"] as? String ?: "")
-            val values = dimMap["values"] as? List<*> ?: emptyList<Any>()
-            codes.add(values.mapNotNull { (it as? Map<*, *>)?.get("id") as? String })
+    ): List<Dimension> {
+        val structures = data["structures"] as? List<*> ?: listOfNotNull(data["structure"])
+        val declared = ((structures.firstOrNull() as? Map<*, *>)?.get("dimensions") as? Map<*, *>)?.get(kind) as? List<*>
+        return declared.orEmpty().filterIsInstance<Map<*, *>>().map { dimension ->
+            Dimension(
+                id = (dimension["id"] as? String).orEmpty(),
+                codes = (dimension["values"] as? List<*>).orEmpty().map { (it as? Map<*, *>)?.get("id") as? String },
+            )
         }
-        return names to codes
     }
 
-    private fun readTimeCodes(data: Map<*, *>): List<LocalDate> {
-        val (names, codes) = readDimensions(data, "observation")
-        val timePos = names.indexOf(DIM_TIME_PERIOD)
-        if (timePos < 0) return emptyList()
-        return codes[timePos].mapNotNull { runCatching { LocalDate.parse(it) }.getOrNull() }
-    }
+    // The observation dates, by observation index; empty when none parses.
+    private fun dates(data: Map<*, *>): List<LocalDate?> =
+        dimensions(data, "observation")
+            .firstOrNull { it.id == DIM_TIME_PERIOD }
+            ?.codes
+            .orEmpty()
+            .map { code -> code?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
+            .takeIf { parsed -> parsed.any { it != null } }
+            .orEmpty()
 
-    private fun extractObservationValue(obsValue: Any?): BigDecimal? {
-        // observations are arrays: [value, ...attributes]
-        val list = obsValue as? List<*> ?: return null
-        val first = list.firstOrNull() ?: return null
-        return runCatching { BigDecimal(first.toString()) }.getOrNull()
+    private fun seriesOf(data: Map<*, *>): Map<*, *> =
+        (((data["dataSets"] as? List<*>)?.firstOrNull() as? Map<*, *>)?.get("series") as? Map<*, *>).orEmpty()
+
+    // "0:0:6:0:0:0" → the code each position selects in its dimension; null
+    // where a position doesn't resolve.
+    private fun codesOf(
+        seriesKey: Any?,
+        dimensions: List<Dimension>,
+    ): List<String?> =
+        (seriesKey as? String)?.split(':').orEmpty().mapIndexed { position, index ->
+            index.toIntOrNull()?.let { dimensions.getOrNull(position)?.codes?.getOrNull(it) }
+        }
+
+    // A series' observations as (date index, raw entry).
+    private fun observationsOf(series: Any?): List<Pair<Int, Any?>> =
+        ((series as? Map<*, *>)?.get("observations") as? Map<*, *>)
+            .orEmpty()
+            .mapNotNull { (key, value) -> (key as? String)?.toIntOrNull()?.let { it to value } }
+
+    private fun observation(
+        currency: String,
+        date: LocalDate?,
+        entry: Any?,
+    ): BankOfIsraelObservation? {
+        // An entry is an array: [value, ...attributes].
+        val rawValue = (entry as? List<*>)?.firstOrNull()?.let { runCatching { BigDecimal(it.toString()) }.getOrNull() }
+        return if (date != null && rawValue != null) BankOfIsraelObservation(currency, date, rawValue) else null
     }
 }
+
+private class Dimension(
+    val id: String,
+    val codes: List<String?>,
+)

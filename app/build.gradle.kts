@@ -1,4 +1,3 @@
-@file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
@@ -6,8 +5,12 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
-    id("com.google.devtools.ksp") version "2.3.11"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.21"
+    id("com.google.devtools.ksp") version "2.3.12"
+    // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
+    // used by the .github/workflows/screenshots.yaml job. Runs on top of
+    // Robolectric Native Graphics — no device or emulator required.
+    id("io.github.takahirom.roborazzi") version "1.76.0"
     // Consumes the baseline + startup profiles emitted by :baselineprofile and
     // bakes them into the release AAB / APK for ProfileInstaller to hand to
     // ART at install time. Version pinned at the root build script.
@@ -26,13 +29,16 @@ base {
 
 android {
     namespace = "com.eliormachlev.currencix"
-    compileSdk = 37
+    // 37.2: Compose 1.13 needs at least API 37.1 to compile against.
+    compileSdk {
+        version = release(37) { minorApiLevel = 2 }
+    }
     buildToolsVersion = "37.0.0"
 
     defaultConfig {
         applicationId = "com.eliormachlev.currencix"
-        minSdk = 26
-        targetSdk = 37
+        minSdk { version = release(33) }
+        targetSdk { version = release(37) }
         // SemVer
         versionName = "1.23.0"
         versionCode = 12300
@@ -71,16 +77,7 @@ android {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-            // Release builds never carry PR or commit context — the in-app
-            // "Release notes" entry deep-links to the GitHub release for the
-            // shipped versionName. Fields must exist so debug/release share
-            // a shape.
-            buildConfigField("String", "PR_URL", "\"\"")
-            buildConfigField("String", "COMMIT_SHA", "\"\"")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -89,7 +86,7 @@ android {
             // still knows which commit it came from. versionName encodes the
             // SHA (e.g. "1.23.0-abc1234"); if git isn't available, keep the
             // "[DEBUG]" tag.
-            val commitSha = (project.findProperty("debugCommitSha") as String?) ?: gitShortSha()
+            val commitSha = providers.gradleProperty("debugCommitSha").orNull ?: gitShortSha()
             versionNameSuffix = if (commitSha != null) "-$commitSha" else " [DEBUG]"
             buildConfigField("String", "COMMIT_SHA", "\"${commitSha ?: ""}\"")
             // CI passes -PprUrl=<pr html_url> for pull_request builds so the
@@ -118,13 +115,39 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        // Robolectric (Roborazzi's rendering engine) needs merged resources +
+        // AndroidManifest on the JVM test classpath to instantiate Application
+        // and resolve @string / @color references at screenshot capture time.
+        unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.useJUnitPlatform()
+            it.testLogging {
+                events("failed")
+                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+                showStackTraces = true
+                showCauses = true
+            }
+            // Jazzer's `@FuzzTest` (jazzer-junit) installs a JVM-wide
+            // ClassFileTransformer that injects `JazzerInternal` references
+            // into every class loaded after it. Robolectric's SandboxClassLoader
+            // then re-loads test/production classes in its own sandbox where
+            // `JazzerInternal` is not visible, and the injected calls blow up
+            // with `NoClassDefFoundError` inside our Roborazzi screenshot tests.
+            // Excluding FuzzTest keeps Jazzer's agent from attaching; when we
+            // want to run fuzz tests, they need their own task or a filter that
+            // includes only FuzzTest (see docs/markDown/build-and-flavors.md).
+            it.filter {
+                excludeTestsMatching("com.eliormachlev.currencix.FuzzTest")
+            }
         }
     }
 
-    lint {
-        disable.add("MissingTranslation")
+    // The per-app language list the system shows is generated from the
+    // res/values-* folders, so it can't fall out of step with the
+    // translations that exist. res/resources.properties names the locale
+    // the unqualified resources are written in.
+    androidResources {
+        generateLocaleConfig = true
     }
 
     buildFeatures {
@@ -135,7 +158,17 @@ android {
 
 dependencies {
     // kotlin
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.core:core-ktx:1.19.1")
+    // kotlinx.collections.immutable: exposes @Immutable persistent collection
+    // types (ImmutableList / PersistentList / ...) so Compose stability
+    // inference can skip recomposition of composables whose only "unstable"
+    // input was a plain `List<T>`. Adopted on Compose-facing state per #161.
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.2")
+    // persistence: DataStore Preferences replaces SharedPreferences across every
+    // namespace (see repository/persistence/PersistenceKey.kt). The `-preferences`
+    // artifact pulls `datastore-preferences-core` transitively and provides the
+    // Android-aware `preferencesDataStore` delegate.
+    implementation("androidx.datastore:datastore-preferences:1.2.1")
     // profileinstaller: reads the baseline + startup profiles baked in by the
     // androidx.baselineprofile plugin (generated by :baselineprofile) and
     // hands them to ART at install time so first-frame + first-interaction
@@ -145,52 +178,107 @@ dependencies {
     val appCompatVersion = "1.8.0"
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
     implementation("androidx.appcompat:appcompat-resources:$appCompatVersion")
+    // Splash screen: androidx compat wrapper around Android 12+ SplashScreen API.
+    // Closes the black-frame gap between launcher tap and first Compose frame,
+    // and hands off to the in-app wordmark reveal (#155). Pinned rather than
+    // dropped to the BOM default so upgrades are explicit.
+    implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
     val livecycleVersion = "2.11.0"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$livecycleVersion")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
     implementation("androidx.window:window:1.5.1")
-    implementation("com.google.android.material:material:1.14.0")
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
     // the shared instance via the HttpClientProvider.fetch extension.
     val okHttpVersion = "5.5.0"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
+    // Chucker: in-app HTTP inspector for debug builds. The real library is
+    // wired only into debug via the ChuckerInterceptorProvider source-set
+    // split (src/debug vs src/release); release ships the library-no-op
+    // artifact so the class references still resolve at compile time but
+    // no UI / storage code is dragged into the shipped APK.
+    val chuckerVersion = "4.3.1"
+    debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:$chuckerVersion")
     val moshiVersion = "1.15.2"
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
-    // math: EvalEx (Apache-2.0) evaluates the calculator expression. Replaced
-    // mXparser 4.4.3, which was pinned because its v5+ dual license isn't
-    // F-Droid compatible. EvalEx is actively maintained and BigDecimal-native.
-    implementation("com.ezylang:EvalEx:3.7.0")
-    // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
-    val composeBomVersion = "2026.08.00"
-    implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    // Retrofit: type-safe HTTP interfaces layered on top of the shared OkHttp
+    // client (see util/RetrofitProvider.kt). Migrated one provider at a time
+    // starting with Frankfurter (#158) — subsequent JSON providers follow as
+    // separate PRs. converter-moshi reuses our existing Moshi adapters so
+    // custom (De)serializers keep working unchanged.
+    val retrofitVersion = "3.0.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+    // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView).
+    // The pre-release BOM: Compose 1.13.0-beta01 and Material 3 1.5.0-beta01,
+    // for their text-field keyboard (IME) and list-prefetch fixes. Back to
+    // `compose-bom` once both are stable.
+    val composeBomVersion = "2026.10.00"
+    implementation(platform("androidx.compose:compose-bom-alpha:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
-    // Pin material3 to latest stable (newer than the BOM ships).
-    implementation("androidx.compose.material3:material3:1.4.0")
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.runtime:runtime")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
+    // Bridges StateFlow → Compose (`collectAsStateWithLifecycle`), which is
+    // lifecycle-aware in a way `collectAsState` isn't: it pauses collection
+    // when the host goes to STOPPED and resumes on STARTED. Used by the
+    // StateFlow-based ViewModels (see #149 pilot in PreferenceViewModel).
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$livecycleVersion")
+    // Navigation 3: the whole app is one Activity; screens are NavDisplay
+    // entries over a Compose-owned back stack (view/navigation). The ViewModel
+    // decorator scopes each screen's ViewModel to its back-stack entry, so a
+    // popped screen's state is cleared exactly as a finished Activity's was.
+    val navigation3Version = "1.2.0"
+    implementation("androidx.navigation3:navigation3-runtime:$navigation3Version")
+    implementation("androidx.navigation3:navigation3-ui:$navigation3Version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:$livecycleVersion")
+    // glance: home-screen widget composed instead of RemoteViews-driven.
+    val glanceVersion = "1.2.0"
+    implementation("androidx.glance:glance-appwidget:$glanceVersion")
+    // WorkManager: periodic background refresh of exchange rates (#151).
+    // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
+    // opt-in via Settings until #147 onboarding wires the hero opt-in.
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
     // charts
-    val vicoVersion = "3.3.0"
+    val vicoVersion = "3.3.1"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
-    // crypto: BouncyCastle provides pure-Java Argon2id, used by BackupManager
+    // drag-to-reorder for LazyColumn — used by the currency picker's Starred
+    // section (#142) and the cart list (#141). Provides `ReorderableItem` +
+    // `longPressDraggableHandle` so cart rows can pair the drag handle with a
+    // sibling SwipeToDismissBox. Pinned to a stable tag so upstream drop-in
+    // changes can't move the API out from under us — see
+    // docs/markDown/contributing.md on version pins.
+    implementation("sh.calvin.reorderable:reorderable:3.1.0")
+    // crypto: BouncyCastle provides pure-Java Argon2id, the key derivation
     // for password-based backup encryption (quantum-resistant KDF).
-    implementation("org.bouncycastle:bcprov-jdk18on:1.85.2")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.86")
+    // crypto: Tink (Apache-2.0) runs the AES-GCM cipher for backups and owns
+    // its nonce handling, instead of a hand-driven javax.crypto.Cipher.
+    implementation("com.google.crypto.tink:tink-android:1.23.0")
     // logging: Timber routes to a rotating file tree written under filesDir/logs.
     // Local-only — no remote crash / analytics sink.
     implementation("com.jakewharton.timber:timber:5.0.1")
+    // leak detection: LeakCanary is debug-only and auto-installs via its own
+    // ContentProvider — no Application wiring needed. Safety net for the
+    // upcoming Phase 1–3 migrations; never shipped in release/F-Droid builds.
+    // 3.0 is still an alpha, but 2.14 dates from April 2024; debug-only.
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:3.0-alpha-9")
+    // perf: JankStats attaches per-Activity in debug builds and logs jank
+    // frames via Timber. Source-set split (src/debug vs src/release) means
+    // the release variant sees a no-op installer and this dep is stripped —
+    // zero overhead in shipped APKs. No telemetry sink.
+    debugImplementation("androidx.metrics:metrics-performance:1.0.0")
     // test
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.23.0")
+    testImplementation("org.mockito:mockito-core:5.24.0")
     // core-testing provides InstantTaskExecutorRule so LiveData setValue can
     // run on the JVM test thread without hitting the main-thread assertion.
     testImplementation("androidx.arch.core:core-testing:2.2.0")
@@ -200,6 +288,20 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:$junitVersion")
     testImplementation("com.code-intelligence:jazzer-junit:0.30.0")
+    // screenshot testing — pure JVM path via Robolectric Native Graphics, so
+    // CI can render every Compose surface without an emulator. The vintage
+    // engine (already above) runs Robolectric's JUnit 4 test runner under
+    // useJUnitPlatform().
+    val roborazziVersion = "1.76.0"
+    testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
+    testImplementation("org.robolectric:robolectric:4.17")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("androidx.compose.ui:ui-test-manifest")
+    // architecture: Konsist encodes MVVM layer boundaries as JUnit tests so
+    // Phase 1+ rewrites can't silently break the View / ViewModel / Repository
+    // / Model separation. Runs on the plain JVM (no Android / Robolectric).
+    testImplementation("com.lemonappdev:konsist:0.18.1")
     // Pulls the generated baseline + startup profiles from the :baselineprofile
     // module into every :app variant. The androidx.baselineprofile plugin
     // registers this configuration and rewires assemble* tasks accordingly.
@@ -217,20 +319,20 @@ baselineProfile {
 
 // Best-effort short git SHA for the currently checked-out HEAD. Returns null
 // if git isn't installed, the repo isn't a git checkout, or the command
-// fails for any reason — callers treat that as "no commit context".
+// fails for any reason — callers treat that as "no commit context". Run
+// through providers.exec so the configuration cache tracks it as an input
+// (a new HEAD reconfigures) instead of refusing to store the build.
 fun gitShortSha(): String? =
     try {
-        val proc =
-            ProcessBuilder("git", "rev-parse", "--short", "HEAD")
-                .directory(rootDir)
-                .redirectErrorStream(true)
-                .start()
-        proc.waitFor()
-        proc.inputStream
-            .bufferedReader()
-            .readLine()
-            ?.trim()
-            ?.takeIf { it.isNotBlank() }
+        providers
+            .exec {
+                commandLine("git", "rev-parse", "--short", "HEAD")
+                workingDir = rootDir
+                isIgnoreExitValue = true
+            }.standardOutput.asText
+            .get()
+            .trim()
+            .takeIf { it.isNotBlank() }
     } catch (_: Exception) {
         null
     }
@@ -248,11 +350,9 @@ fun getSecret(key: String): String? {
 
 // versionCode <-> versionName /////////////////////////////////////////////////////////////////////
 
-/**
- * Checks if versionCode and versionName match.
- * Needed because of F-Droid: both have to be hard-coded and can't be assigned dynamically.
- * So at least check during build for them to match.
- */
+// Checks that versionCode and versionName match. Needed because of F-Droid:
+// both have to be hard-coded and can't be assigned dynamically, so at least
+// the build checks that they agree.
 tasks.register("checkVersion") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode
@@ -266,9 +366,7 @@ tasks.register("checkVersion") {
 }
 tasks.findByName("assemble")!!.dependsOn(tasks.findByName("checkVersion")!!)
 
-/**
- * Checks if a fastlane changelog for the current version is present.
- */
+// Checks that a fastlane changelog for the current version is present.
 tasks.register("checkFastlaneChangelog") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode

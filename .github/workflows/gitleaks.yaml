@@ -8,6 +8,12 @@ on:
     - cron: '0 7 * * 1'
   workflow_dispatch:
 
+# A newer push to the same PR or branch supersedes a run still going;
+# master's runs always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 permissions:
   contents: read
 
@@ -15,7 +21,7 @@ jobs:
   gitleaks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0

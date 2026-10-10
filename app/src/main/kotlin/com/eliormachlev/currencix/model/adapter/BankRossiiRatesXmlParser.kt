@@ -25,7 +25,7 @@ class BankRossiiRatesXmlParser {
         while (eventType != XmlPullParser.END_DOCUMENT) {
             tagname = parser.name ?: tagname
             when (eventType) {
-                XmlPullParser.START_TAG ->
+                XmlPullParser.START_TAG -> {
                     if (tagname == "ValCurs") {
                         date =
                             LocalDate.parse(
@@ -33,22 +33,31 @@ class BankRossiiRatesXmlParser {
                                 BANK_ROSSII_DATE_FORMATTER,
                             )
                     }
-                XmlPullParser.TEXT ->
+                }
+
+                XmlPullParser.TEXT -> {
                     when (tagname) {
-                        "CharCode" -> currency = Currency.fromString(parser.text)
-                        "VunitRate" ->
+                        "CharCode" -> {
+                            currency = Currency.fromString(parser.text)
+                        }
+
+                        "VunitRate" -> {
                             value =
                                 BigDecimal.ONE.divide(
                                     parser.text.replace(',', '.').toBigDecimal(),
                                     MathContext.DECIMAL128,
                                 )
+                        }
                     }
-                XmlPullParser.END_TAG ->
+                }
+
+                XmlPullParser.END_TAG -> {
                     if (tagname == "Valute") {
                         recordRate(currency, value)
                         currency = null
                         value = null
                     }
+                }
             }
             eventType = parser.next()
         }

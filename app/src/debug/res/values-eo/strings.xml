@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Restarigi la enkondukan gvidadon</string>
+    <string name="pref_debug_reset_onboarding_summary">Forigas la markon de unua lanĉo, por ke la gvidado kun elstarigoj ripetiĝu ĉe la sekva lanĉo.</string>
+    <string name="pref_debug_reset_onboarding_toast">La enkonduka gvidado ripetiĝos ĉe la sekva lanĉo.</string>
+</resources>

@@ -1,0 +1,270 @@
+package com.eliormachlev.currencix.view.preference.compose
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordSheet
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
+import com.eliormachlev.currencix.view.compose.dialogs.PasswordFieldWithToggle
+import com.eliormachlev.currencix.view.compose.dialogs.PasswordInput
+import com.eliormachlev.currencix.view.compose.dialogs.rememberPasswordState
+import com.eliormachlev.currencix.view.compose.dialogs.takePassword
+import com.eliormachlev.currencix.viewmodel.preference.BACKUP_MIN_PASSWORD_LENGTH
+import com.eliormachlev.currencix.viewmodel.preference.BackupDialog
+import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
+import kotlinx.coroutines.flow.drop
+
+private val CHECKBOX_TO_FIELD_GAP = 12.dp
+private val CHECKBOX_LABEL_GAP = 8.dp
+
+// Two categories match the old PreferenceFragmentCompat-backed BackupFragment:
+// Local backup (export) on top, Restore (import) below.
+private enum class BackupSection {
+    LOCAL,
+    RESTORE,
+}
+
+/**
+ * Full backup-and-restore screen. Renders two preference cards and
+ * dispatches the active dialog off the [viewModel]'s dialog state. The
+ * document pickers and toasts live in the route (BackupRoute); the screen
+ * calls back through [onLaunchExport] / [onLaunchImport] /
+ * [onImportConfirmed] once its own dialog state has settled.
+ */
+@Composable
+fun BackupScreen(
+    viewModel: BackupViewModel,
+    onLaunchExport: () -> Unit,
+    onLaunchImport: () -> Unit,
+    onImportConfirmed: (uri: android.net.Uri, password: CharArray?) -> Unit,
+) {
+    ProseTheme {
+        BackupSectionsList(
+            onExportClick = viewModel::openExportPasswordPrompt,
+            onImportClick = onLaunchImport,
+        )
+    }
+
+    when (val dialog = viewModel.dialog) {
+        BackupDialog.ExportPassword -> {
+            ExportPasswordSheet(
+                onCancel = viewModel::dismissDialog,
+                onConfirm = { password ->
+                    viewModel.stashExportPasswordAndDismiss(password)
+                    onLaunchExport()
+                },
+            )
+        }
+
+        is BackupDialog.ImportPassword -> {
+            ImportPasswordSheet(
+                isRetry = dialog.isRetry,
+                onCancel = viewModel::dismissDialog,
+                onConfirm = { password ->
+                    viewModel.confirmImportPassword(dialog.uri, password)
+                },
+            )
+        }
+
+        is BackupDialog.ImportConfirm -> {
+            ImportConfirmSheet(
+                onCancel = viewModel::dismissDialog,
+                onConfirm = {
+                    val password = dialog.password
+                    viewModel.dismissDialog()
+                    onImportConfirmed(dialog.uri, password)
+                },
+            )
+        }
+
+        null -> {}
+    }
+}
+
+/**
+ * Two-section preference list for the backup screen (Local export on top,
+ * Restore below). Extracted so [BackupScreen] stays under LongMethod and the
+ * list layout can be read without wading past the dialog dispatch below.
+ */
+@Composable
+private fun BackupSectionsList(
+    onExportClick: () -> Unit,
+    onImportClick: () -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding =
+            PaddingValues(
+                horizontal = dimensionResource(id = R.dimen.margin2x),
+                vertical = dimensionResource(id = R.dimen.margin1x),
+            ),
+    ) {
+        item(key = BackupSection.LOCAL) {
+            SectionEnter(index = BackupSection.LOCAL.ordinal) {
+                PreferenceSection(text = stringResource(id = R.string.backup_section_local)) {
+                    PreferenceRow(
+                        title = stringResource(id = R.string.backup_export_title),
+                        summary = stringResource(id = R.string.backup_export_summary),
+                        onClick = onExportClick,
+                    )
+                }
+            }
+        }
+        item(key = BackupSection.RESTORE) {
+            SectionEnter(index = BackupSection.RESTORE.ordinal) {
+                PreferenceSection(text = stringResource(id = R.string.backup_section_restore)) {
+                    PreferenceRow(
+                        title = stringResource(id = R.string.backup_import_title),
+                        summary = stringResource(id = R.string.backup_import_summary),
+                        onClick = onImportClick,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Export prompt: an "encrypt" checkbox and, when it's checked, a password
+ * (at least [BACKUP_MIN_PASSWORD_LENGTH] characters; shorter keeps the sheet
+ * open with the reason under the field). Confirming hands back the password,
+ * or null for a plain backup.
+ */
+@Composable
+private fun ExportPasswordSheet(
+    onCancel: () -> Unit,
+    onConfirm: (CharArray?) -> Unit,
+) {
+    var encrypt by rememberSaveable { mutableStateOf(false) }
+    val password = rememberPasswordState()
+    var visible by rememberSaveable { mutableStateOf(false) }
+    var tooShort by remember { mutableStateOf(false) }
+    // Any edit clears the "too short" reason under the field.
+    LaunchedEffect(password) {
+        snapshotFlow { password.text }.drop(1).collect { tooShort = false }
+    }
+    LedgerPromptSheet(
+        title = stringResource(id = R.string.backup_export_title),
+        confirmLabel = stringResource(id = android.R.string.ok),
+        onDismiss = onCancel,
+        onConfirm = {
+            when {
+                !encrypt -> onConfirm(null)
+                password.text.length < BACKUP_MIN_PASSWORD_LENGTH -> tooShort = true
+                else -> onConfirm(password.takePassword())
+            }
+        },
+    ) {
+        ExportPasswordSheetBody(
+            encrypt = encrypt,
+            onEncryptChange = { encrypt = it },
+            password = PasswordInput(password, visible, if (tooShort) passwordTooShortText() else null),
+            onToggleVisibility = { visible = !visible },
+        )
+    }
+}
+
+@Composable
+private fun passwordTooShortText(): String =
+    pluralStringResource(R.plurals.backup_password_too_short, BACKUP_MIN_PASSWORD_LENGTH, BACKUP_MIN_PASSWORD_LENGTH)
+
+/**
+ * Body of [ExportPasswordSheet] — the checkbox row and, when checked, the
+ * password field + visibility toggle. Extracted so the sheet wrapper stays
+ * short and the form doesn't have to re-read the surrounding chrome.
+ */
+@Composable
+private fun ExportPasswordSheetBody(
+    encrypt: Boolean,
+    onEncryptChange: (Boolean) -> Unit,
+    password: PasswordInput,
+    onToggleVisibility: () -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = encrypt,
+                onCheckedChange = onEncryptChange,
+            )
+            Spacer(Modifier.width(CHECKBOX_LABEL_GAP))
+            Text(
+                text = stringResource(id = R.string.backup_encrypt_option),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+        if (encrypt) {
+            Spacer(Modifier.height(CHECKBOX_TO_FIELD_GAP))
+            PasswordFieldWithToggle(
+                input = password,
+                label = stringResource(id = R.string.backup_password_hint),
+                onToggleVisibility = onToggleVisibility,
+            )
+        }
+    }
+}
+
+/**
+ * Password prompt for decrypting an encrypted import. In [isRetry] state the
+ * previous attempt failed decryption — surface the reason inline as a supporting
+ * error on the field so the user knows what to do differently.
+ */
+@Composable
+private fun ImportPasswordSheet(
+    isRetry: Boolean,
+    onCancel: () -> Unit,
+    onConfirm: (CharArray) -> Unit,
+) {
+    LedgerPasswordSheet(
+        titleRes = R.string.backup_password_prompt_title,
+        confirmLabelRes = android.R.string.ok,
+        errorText = if (isRetry) stringResource(id = R.string.backup_password_wrong) else null,
+        onDismiss = onCancel,
+        onConfirm = onConfirm,
+    )
+}
+
+/**
+ * "Are you sure?" confirm before actually overwriting current settings. Kept
+ * as its own sheet (rather than a second SAF-driven prompt) so users see the
+ * destructive-action language on the same screen that will do the destruction.
+ */
+@Composable
+private fun ImportConfirmSheet(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    LedgerConfirmSheet(
+        title = stringResource(id = R.string.backup_import_confirm_title),
+        message = stringResource(id = R.string.backup_import_confirm_message),
+        confirmLabel = stringResource(id = R.string.backup_import_confirm_positive),
+        onConfirm = onConfirm,
+        onDismiss = onCancel,
+        destructive = true,
+    )
+}

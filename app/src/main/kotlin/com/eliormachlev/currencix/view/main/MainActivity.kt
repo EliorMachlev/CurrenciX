@@ -1,991 +1,333 @@
 package com.eliormachlev.currencix.view.main
 
-import android.content.ClipData
-import android.content.ClipDescription
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface
-import android.graphics.drawable.Drawable
-import android.icu.util.Calendar
-import android.icu.util.TimeZone
 import android.os.Bundle
-import android.text.Editable
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextWatcher
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
-import android.text.style.TypefaceSpan
-import android.util.TypedValue
-import android.view.ContextMenu
 import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageButton
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.splashscreen.SplashScreenViewProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
-import com.eliormachlev.currencix.BuildConfig
+import androidx.window.layout.WindowInfoTracker
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.Currency
-import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.KeyboardType
-import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.CalculatorKeyListener
-import com.eliormachlev.currencix.util.NetworkStatusLiveData
-import com.eliormachlev.currencix.util.feePercentDelta
-import com.eliormachlev.currencix.util.fromHtmlLegacy
-import com.eliormachlev.currencix.util.getDecimalSeparator
-import com.eliormachlev.currencix.util.hapticTap
-import com.eliormachlev.currencix.util.hideSoftInputFrom
-import com.eliormachlev.currencix.util.isNeutralFeeStack
-import com.eliormachlev.currencix.util.ltrIsolate
-import com.eliormachlev.currencix.util.paintParenCycle
-import com.eliormachlev.currencix.util.rateSpinnerListener
-import com.eliormachlev.currencix.util.setTextAndCursorToEnd
-import com.eliormachlev.currencix.util.showSoftInputOn
-import com.eliormachlev.currencix.util.showWithHapticButtons
-import com.eliormachlev.currencix.util.stripRtlMark
-import com.eliormachlev.currencix.util.stripTimePattern
-import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.util.toNumber
-import com.eliormachlev.currencix.view.BaseActivity
-import com.eliormachlev.currencix.view.cart.CartActivity
-import com.eliormachlev.currencix.view.main.spinner.SearchableSpinner
-import com.eliormachlev.currencix.view.preference.PreferenceActivity
-import com.eliormachlev.currencix.view.preference.showProviderPickerDialog
-import com.eliormachlev.currencix.view.timeline.TimelineActivity
+import com.eliormachlev.currencix.util.AppDispatchers
+import com.eliormachlev.currencix.util.resolveThemeColor
+import com.eliormachlev.currencix.view.cart.CartRoute
+import com.eliormachlev.currencix.view.compose.AppSnackbar
+import com.eliormachlev.currencix.view.compose.AppSnackbarHost
+import com.eliormachlev.currencix.view.compose.AppTheme
+import com.eliormachlev.currencix.view.compose.LayerCapture
+import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
+import com.eliormachlev.currencix.view.compose.ReadingDirection
+import com.eliormachlev.currencix.view.compose.theme.Motion
+import com.eliormachlev.currencix.view.navigation.AppNavHost
+import com.eliormachlev.currencix.view.navigation.AppNavigator
+import com.eliormachlev.currencix.view.navigation.LocalScreenBackground
+import com.eliormachlev.currencix.view.navigation.Screen
+import com.eliormachlev.currencix.view.navigation.rememberAppNavigator
+import com.eliormachlev.currencix.view.preference.BackupRoute
+import com.eliormachlev.currencix.view.preference.FeesRoute
+import com.eliormachlev.currencix.view.preference.SettingsRoute
+import com.eliormachlev.currencix.view.timeline.TimelineRoute
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.switchmaterial.SwitchMaterial
-import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
-private const val HISTORICAL_MIN_YEAR = 2010
-private const val STALE_RATES_DAYS = 3L
-private const val MAX_ERROR_TEXT_LINES = 20
+// Splash → wordmark hand-off overlap (#155). The platform splash icon
+// fades out over this window while the Compose wordmark's × reveal
+// (Motion.LONG_MILLIS) is already running — a small overlap hides the seam
+// that would otherwise show if we waited for the icon to disappear before
+// starting the reveal. Ending at the reveal's first quarter means the eye
+// never catches a hard cut; derived so it tracks any change to the reveal.
+private const val SPLASH_EXIT_FADE_MILLIS = Motion.LONG_MILLIS / 4L
 
-// context-menu item ids for the from/to text views
-private const val CTX_MENU_COPY_FROM = 0
-private const val CTX_MENU_PASTE_FROM = 1
-private const val CTX_MENU_COPY_TO = 2
-
-// fee true-cost / percent formatting
-private const val FEE_PERCENT_DECIMAL_PLACES = 2
-private const val AMOUNT_DECIMAL_PLACES = 2
-
-class MainActivity : BaseActivity() {
+/**
+ * The app's only Activity. Every screen — converter, timeline, cart,
+ * settings, fees, backup — is a Compose destination on one back stack
+ * ([AppNavHost]), so moving between them is an in-window transition, with
+ * shared elements flying between screens.
+ *
+ * Owns what outlives any one screen: the splash hand-off, the XML theme
+ * (pure black), foldable posture, and hardware-keyboard input for the
+ * converter.
+ */
+class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
-    private lateinit var preferenceModel: PreferenceViewModel
+    private lateinit var converterHost: ConverterHost
 
-    private var hapticEnabled = false
+    // Set while composed; lets hardware-keyboard input check which screen is up.
+    private var navigator: AppNavigator? = null
 
-    // Cached date pattern so the frequently-fired `observeExchangeRates`
-    // handler doesn't hit SharedPreferences on the main thread on every rate
-    // emission. Kept in sync via the `getDateFormat()` LiveData below.
-    private var dateFormatPattern: String = "dd/MM/yy HH:mm"
+    private val foldingFeatureState = mutableStateOf<FoldingFeature?>(null)
 
-    private lateinit var refreshIndicator: LinearProgressIndicator
-    private lateinit var swipeRefresh: SwipeRefreshLayout
-    private var menuItemRefresh: MenuItem? = null
+    // A pair / amount / screen an intent asked for (ConverterLaunch), applied
+    // once the navigator exists, then cleared.
+    private val launchRequest = mutableStateOf<ConverterLaunch.Request?>(null)
 
-    private lateinit var offlineBanner: MaterialCardView
-    private lateinit var offlineBannerText: TextView
-    private var isOnline: Boolean = true
-    private var latestRatesDate: LocalDate? = null
-    private var latestRatesTime: LocalTime? = null
+    // Messages from any screen, drawn over all of them (AppContent).
+    private val snackbar by lazy { AppSnackbar(lifecycleScope) }
 
-    private lateinit var tvCalculations: EditText
-    private lateinit var tvFrom: EditText
-    private lateinit var tvTo: TextView
-
-    // Guards the expression-preview observer from stomping on characters the
-    // user is actively typing on the system keyboard: our own setText() call
-    // for seeding / mode-swap would otherwise re-fire the TextWatcher and
-    // replay it, garbling the input.
-    private var muteCalculationsWriteback = false
-
-    // True while either system-IME variant is selected — the calculations
-    // EditText is the source of truth for the typed expression, so the
-    // formatted-preview observer skips it entirely (even for updates that
-    // originate elsewhere: currency swap, rate refresh, mid-entry reformat).
-    private var isSystemKeyboardMode = false
-    private var lastKeyboardTypeApplied: KeyboardType? = null
-    private lateinit var spinnerFrom: SearchableSpinner
-    private lateinit var spinnerTo: SearchableSpinner
-    private lateinit var tvInfoConversion: TextView
-    private lateinit var tvInfoDate: TextView
-    private lateinit var tvTrueCost: TextView
-    private lateinit var tvOriginalValue: TextView
-    private lateinit var tvOriginalFeeAmount: TextView
-    private lateinit var tvConvertedFeeAmount: TextView
+    // Splash-screen keep-on-screen gate (#155). Flipped to true by the
+    // wordmark's first frame so the platform splash holds until Compose is
+    // pixel-ready to run its reveal, then releases into the exit animation.
+    // Plain Boolean — the platform polls it from a pre-draw listener on the
+    // main thread and the wordmark writes it from the main thread too.
+    private var firstContentReady: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // installSplashScreen() must run before super.onCreate() per the
+        // androidx docs — it swaps the launcher-splash theme (AppTheme.Splash)
+        // for postSplashScreenTheme (AppTheme) and installs the exit-animation
+        // listener. Only a cold start gets the animated hand-off: a
+        // recreation (rotation, theme change, process-death restore) skips
+        // the reveal, so the gate opens immediately.
+        val isColdStart = savedInstanceState == null
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { !firstContentReady }
+        if (isColdStart) splashScreen.setOnExitAnimationListener(::fadeOutSplashIcon) else firstContentReady = true
+
+        // Pure black is an XML theme variant — night mode itself is set once
+        // in CurrenciesApplication, so this resolves against the right
+        // night qualifier.
+        val database = Database(this)
+        val pureBlack = database.display.isPureBlackEnabled()
+        setTheme(if (pureBlack) R.style.AppTheme_PureBlack else R.style.AppTheme)
         super.onCreate(savedInstanceState)
+        // Compose owns the whole window, system bars included: the top bars
+        // pad for the status bar, each screen for the navigation bar.
+        enableEdgeToEdge()
 
-        // general layout
-        setContentView(R.layout.activity_main)
-        title = buildWordmarkTitle()
+        viewModel = ViewModelProvider(this, MainViewModel.factory(application))[MainViewModel::class.java]
+        converterHost = createConverterHost(revealPending = isColdStart)
+        // Only a fresh launch: a recreated Activity already applied it.
+        if (savedInstanceState == null) launchRequest.value = ConverterLaunch.parse(intent)
 
-        // model
-        this.viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        this.preferenceModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
+        val themeBackground = Color(resolveThemeColor(android.R.attr.colorBackground))
+        setContent {
+            val dynamicColor by database.display
+                .isDynamicColorEnabledFlow()
+                .collectAsStateWithLifecycle(database.display.isDynamicColorEnabledBlocking())
+            AppTheme(dynamicColor = dynamicColor) {
+                // Wallpaper colors bring their own background — except pure
+                // black, which stays black whatever the palette.
+                val screenBackground =
+                    if (dynamicColor && !pureBlack) MaterialTheme.colorScheme.background else themeBackground
+                CompositionLocalProvider(LocalScreenBackground provides screenBackground) {
+                    AppContent()
+                }
+            }
+        }
 
-        // views
-        this.refreshIndicator = findViewById(R.id.refreshIndicator)
-        this.swipeRefresh = findViewById(R.id.swipeRefresh)
-        this.tvCalculations = findViewById(R.id.textCalculations)
-        this.tvFrom = findViewById(R.id.textFrom)
-        this.tvTo = findViewById(R.id.textTo)
-        this.spinnerFrom = findViewById(R.id.spinnerFrom)
-        this.spinnerTo = findViewById(R.id.spinnerTo)
-        this.tvInfoConversion = findViewById(R.id.textInfoConversion)
-        this.tvInfoDate = findViewById(R.id.textInfoDate)
-        this.tvTrueCost = findViewById(R.id.textTrueCost)
-        this.tvOriginalValue = findViewById(R.id.textOriginalValue)
-        this.tvOriginalFeeAmount = findViewById(R.id.textOriginalFeeAmount)
-        this.tvConvertedFeeAmount = findViewById(R.id.textConvertedFeeAmount)
-        this.offlineBanner = findViewById(R.id.offlineBanner)
-        this.offlineBannerText = findViewById(R.id.offlineBannerText)
-
-        // swipe-to-refresh: color scheme (not accessible in xml)
-        swipeRefresh.setColorSchemeColors(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
-        swipeRefresh.setProgressBackgroundColorSchemeColor(MaterialColors.getColor(this, R.attr.colorPrimary, null))
-
-        // listeners & stuff
-        setListeners()
-
-        // heavy lifting
-        observe()
-
-        // foldable devices
-        prepareFoldableLayoutChanges()
+        observeFoldingFeature()
+        keepShortcutsInStep()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        this.menuItemRefresh = menu.findItem(R.id.refresh)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        hapticTap()
-        return when (item.itemId) {
-            R.id.settings -> {
-                startActivity(Intent(this, PreferenceActivity::class.java))
-                true
+    // Launcher shortcuts follow the recent pairs (AppShortcuts).
+    private fun keepShortcutsInStep() {
+        lifecycleScope.launch(AppDispatchers.production.default) {
+            Database(applicationContext).lastState.getRecentPairsFlow().distinctUntilChanged().collect { recents ->
+                AppShortcuts.update(applicationContext, recents)
             }
-            R.id.fees -> {
-                startActivity(PreferenceActivity.feesIntent(this))
-                true
-            }
-            R.id.change_api -> {
-                showApiProviderPicker()
-                true
-            }
-            R.id.refresh -> {
-                viewModel.forceUpdateExchangeRate()
-                true
-            }
-            R.id.share -> {
-                shareCurrentConversion()
-                true
-            }
-            R.id.timeline -> openTimelineActivity()
-            R.id.quick_conversions -> {
-                openQuickConversionsDialog()
-                true
-            }
-            R.id.date_picker -> {
-                openHistoricalDatePicker()
-                true
-            }
-            R.id.cart -> {
-                startActivity(Intent(this, CartActivity::class.java))
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun showApiProviderPicker() {
-        showProviderPickerDialog(
-            context = this,
-            current = Database(this).getApiProvider(),
-        ) { provider -> preferenceModel.setApiProvider(provider) }
-    }
-
-    private fun shareCurrentConversion() {
-        val conversion = buildShareConversion() ?: return
-        val footer = buildShareFooter(viewModel.getExchangeRates().value)
-        val text = if (footer != null) "$conversion\n-- $footer" else conversion
-        val intent =
-            Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, text)
+    @Composable
+    private fun AppContent() {
+        val nav = rememberAppNavigator()
+        val foldingFeature by foldingFeatureState
+        val request by launchRequest
+        LaunchedEffect(request, nav) {
+            request?.let { apply(it, nav) }
+            launchRequest.value = null
+        }
+        DisposableEffect(nav) {
+            navigator = nav
+            onDispose { navigator = null }
+        }
+        CompositionLocalProvider(LocalAppSnackbar provides snackbar) {
+            Box(Modifier.fillMaxSize()) {
+                AppNavHost(navigator = nav) { screen -> Destination(screen, nav, foldingFeature) }
+                AppSnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
             }
-        startActivity(Intent.createChooser(intent, null))
-    }
-
-    // Compose the shared conversion line from the on-screen values so it
-    // honors the currently typed amount and the active fee stack (matching
-    // what the user sees), rather than the "1 base ≈ result" info footer
-    // which is always unit-scaled and fee-free.
-    private fun buildShareConversion(): String? {
-        val base = viewModel.getBaseCurrency().value ?: return null
-        val dest = viewModel.getDestinationCurrency().value ?: return null
-        val rates = viewModel.getExchangeRates().value?.rates ?: return null
-        if (rates.none { it.currency == base } || rates.none { it.currency == dest }) return null
-        val amount = viewModel.getCurrentBaseValueAsNumber().value ?: BigDecimal.ZERO
-        val result = viewModel.getResultAsNumber().value ?: BigDecimal.ZERO
-        val places = viewModel.getDecimalPlaces().value ?: AMOUNT_DECIMAL_PLACES
-        val main =
-            getString(
-                R.string.info_conversion,
-                amount.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
-                base.iso4217Alpha(),
-                result.toHumanReadableNumber(this, trim = true, decimalPlaces = places),
-                dest.iso4217Alpha(),
-            )
-        val extra = buildShareFeeExtra(base, dest)
-        return if (extra != null) "$main\n$extra" else main
-    }
-
-    // Small annotation line(s) shown under the shared result. Order matches
-    // the on-screen layout: ORIGINAL side surfaces fee then cost-with-fee;
-    // CONVERTED side surfaces value-before-fee then reduction-fee.
-    private fun buildShareFeeExtra(
-        base: Currency,
-        dest: Currency,
-    ): String? {
-        val stacks = viewModel.getSideStacks().value
-
-        fun line(
-            prefixRes: Int,
-            value: BigDecimal?,
-            currency: Currency,
-            stack: BigDecimal?,
-        ): String? = value?.let { buildFeeAmountLine(prefixRes, it, currency, stack) }
-        return listOfNotNull(
-            line(R.string.fee_true_cost_prefix, viewModel.getOriginalFeeAmount().value, base, stacks?.original),
-            line(R.string.fee_cost_with_fee_prefix, viewModel.getTrueCost().value, base, null),
-            line(R.string.fee_value_before_fee_prefix, viewModel.getOriginalValue().value, dest, null),
-            line(R.string.fee_original_value_prefix, viewModel.getConvertedFeeAmount().value, dest, stacks?.converted),
-        ).takeIf { it.isNotEmpty() }
-            ?.joinToString("\n")
-    }
-
-    private fun buildShareFooter(rates: ExchangeRates?): String? {
-        if (rates == null) return null
-        val providerName = rates.provider?.getName(this) ?: return null
-        val dateString = formatRatesTimestamp(rates.date, rates.time) ?: return null
-        return getString(R.string.share_footer, providerName, dateString)
-    }
-
-    // Combine [date] and optional [time] into a single formatted string using
-    // the user's configured pattern. When [time] is null the time portion is
-    // stripped from the pattern first so users on "date-only" don't see a
-    // trailing "00:00". RTL marks injected by some locale formatters are
-    // stripped so a right-side timestamp stays flush with the label.
-    private fun formatRatesTimestamp(
-        date: LocalDate?,
-        time: LocalTime?,
-    ): String? {
-        if (date == null) return null
-        val pattern = if (time != null) dateFormatPattern else stripTimePattern(dateFormatPattern)
-        val temporal = if (time != null) date.atTime(time) else date
-        return DateTimeFormatter.ofPattern(pattern).format(temporal).stripRtlMark()
-    }
-
-    private fun openQuickConversionsDialog() {
-        QuickConversionsDialog().show(supportFragmentManager, null)
-    }
-
-    private fun openTimelineActivity(): Boolean {
-        val from = viewModel.getBaseCurrency().value ?: return false
-        val to = viewModel.getDestinationCurrency().value ?: return false
-        startActivity(TimelineActivity.newIntent(this, from, to))
-        return true
-    }
-
-    private fun openHistoricalDatePicker() {
-        val startDate =
-            Calendar
-                .getInstance(TimeZone.getTimeZone("UTC"))
-                .apply { this.set(HISTORICAL_MIN_YEAR, Calendar.JANUARY, 1) }
-                .timeInMillis
-        val layout = layoutInflater.inflate(R.layout.main_dialog_historical_rates, null)
-        val toggle: SwitchMaterial = layout.findViewById(R.id.toggle)
-        val datePicker: DatePicker = layout.findViewById(R.id.date_picker)
-        val border: View = layout.findViewById(R.id.border)
-        val historicalDate = viewModel.getHistoricalDate()
-
-        fun showDatePicker(show: Boolean) {
-            datePicker.visibility = if (show) View.VISIBLE else View.GONE
-            border.visibility = if (show) View.VISIBLE else View.GONE
         }
-        showDatePicker(historicalDate != null)
-        datePicker.apply {
-            minDate = startDate
-            maxDate = Calendar.getInstance().timeInMillis
-            firstDayOfWeek = Calendar.getInstance().firstDayOfWeek
-            historicalDate?.let { updateDate(it.year, it.monthValue - 1, it.dayOfMonth) }
-        }
-        toggle.apply {
-            setOnCheckedChangeListener { _, enabled -> showDatePicker(enabled) }
-            isChecked = historicalDate != null
-        }
-        AlertDialog
-            .Builder(this)
-            .setTitle(R.string.historical_rates_dialog_title)
-            .setView(layout)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                viewModel.setHistoricalDate(
-                    if (toggle.isChecked) {
-                        LocalDate.of(
-                            datePicker.year,
-                            datePicker.month + 1,
-                            datePicker.dayOfMonth,
-                        )
-                    } else {
-                        null
-                    },
-                )
-            }.setNegativeButton(android.R.string.cancel, null)
-            .showWithHapticButtons()
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View,
-        menuInfo: ContextMenu.ContextMenuInfo?,
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        ConverterLaunch.parse(intent)?.let { launchRequest.value = it }
+    }
+
+    // Converter on the asked-for pair (and amount), or the cart — over
+    // whatever was open, since the request came from outside the app.
+    private fun apply(
+        request: ConverterLaunch.Request,
+        nav: AppNavigator,
     ) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        when (v.id) {
-            R.id.textFrom -> {
-                menu.add(0, CTX_MENU_COPY_FROM, 0, android.R.string.copy)
-                val paste = menu.add(0, CTX_MENU_PASTE_FROM, 0, android.R.string.paste)
-                // only show "paste" when applicable
-                paste.isVisible = clipboardHasNumber()
+        when (request) {
+            is ConverterLaunch.Request.Convert -> {
+                AppShortcuts.reportUsed(this, request.pair)
+                viewModel.setCurrencyPair(request.pair)
+                request.amount?.let(viewModel.input::setAmount)
+                nav.navigate(Screen.Converter)
             }
-            R.id.textTo -> {
-                menu.add(0, CTX_MENU_COPY_TO, 0, android.R.string.copy)
-            }
-        }
-    }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        hapticTap()
-        when (item.itemId) {
-            CTX_MENU_COPY_FROM -> copyToClipboard(findViewById<TextView>(R.id.textFrom).text.toString())
-            CTX_MENU_PASTE_FROM -> {
-                clipboardNumber()?.let { viewModel.paste(it) }
-                // Preview observer is muted in system mode, so mirror the
-                // fresh expression into the EditText ourselves.
-                if (isSystemKeyboardMode) setCalculationsTextMuted(viewModel.currentTypedExpression())
-            }
-            CTX_MENU_COPY_TO -> copyToClipboard(findViewById<TextView>(R.id.textTo).text.toString())
-        }
-        return true
-    }
-
-    private fun clipboardManager(): ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
-    private fun clipboardHasNumber(): Boolean {
-        val clipboard = clipboardManager()
-        return clipboard.hasPrimaryClip() &&
-            clipboard.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true &&
-            clipboardNumber() != null
-    }
-
-    private fun clipboardNumber(): Number? =
-        clipboardManager()
-            .primaryClip
-            ?.getItemAt(0)
-            ?.text
-            ?.toNumber()
-
-    private fun setListeners() {
-        // long click on delete
-        arrayOf<View>(findViewById(R.id.keypad), findViewById(R.id.keypad_extended)).forEach {
-            it.findViewById<AppCompatImageButton>(R.id.btn_delete).setOnLongClickListener {
-                it.hapticTap(hapticEnabled)
-                viewModel.clear()
-                true
+            ConverterLaunch.Request.OpenCart -> {
+                nav.navigate(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
             }
         }
-
-        // long click on input "from"
-        registerForContextMenu(tvFrom)
-        // long click on input "to"
-        registerForContextMenu(tvTo)
-
-        // spinners: listen for changes
-        spinnerFrom.onItemSelectedListener = rateSpinnerListener(viewModel::setBaseCurrency)
-        spinnerTo.onItemSelectedListener = rateSpinnerListener(viewModel::setDestinationCurrency)
-
-        // swipe to refresh
-        swipeRefresh.setOnRefreshListener {
-            // update
-            viewModel.forceUpdateExchangeRate()
-            swipeRefresh.isRefreshing = false
-        }
-
-        // long-press on the main swap arrow opens the Fees settings,
-        // mirroring the swap arrow inside the quick-conversions dialog.
-        findViewById<View>(R.id.btn_toggle).setOnLongClickListener { openFeesSettings(it) }
-
-        // In system-keyboard mode `tvCalculations` becomes the tap target that
-        // opens the IME; every other tap in the app vibrates, so this one
-        // should too. Gated on the mode flag because the field isn't tappable
-        // when the custom keypads are in use.
-        tvCalculations.setOnClickListener { v -> if (isSystemKeyboardMode) v.hapticTap() }
     }
 
-    private fun openFeesSettings(source: View): Boolean {
-        haptic(source)
-        startActivity(PreferenceActivity.feesIntent(this))
-        return true
-    }
-
-    private fun copyToClipboard(copyText: String) {
-        clipboardManager().setPrimaryClip(ClipData.newPlainText(null, copyText))
-        val message = getString(R.string.copied_to_clipboard, copyText).fromHtmlLegacy()
-        snackbar(message)
-            .setBackgroundTint(MaterialColors.getColor(this, R.attr.colorPrimary, null))
-            .setTextColor(MaterialColors.getColor(this, R.attr.colorOnPrimary, null))
-            .show()
-    }
-
-    private fun observe() {
-        Database(this).getDateFormat().observe(this) { pattern ->
-            dateFormatPattern = pattern
-            // Re-render the rates footer so a pattern change from Settings
-            // takes effect immediately without waiting for the next refresh.
-            observeExchangeRates(viewModel.getExchangeRates().value)
-        }
-        viewModel.ratesInformationFooter.observe(this) { tvInfoConversion.text = it }
-        viewModel.getExchangeRates().observe(this) { observeExchangeRates(it) }
-        viewModel.getError().observe(this) { showErrorSnackbar(it) }
-        viewModel.isUpdating().observe(this) { isRefreshing ->
-            refreshIndicator.visibility = if (isRefreshing) View.VISIBLE else View.GONE
-            swipeRefresh.isEnabled = isRefreshing.not()
-            menuItemRefresh?.isEnabled = isRefreshing.not()
-        }
-        viewModel.getCurrentBaseValueFormatted().observe(this) { formatted ->
-            tvFrom.setTextAndCursorToEnd(formatted ?: "")
-        }
-        viewModel.getResultFormatted().observe(this) { tvTo.text = it }
-        viewModel.getCalculationInputFormatted().observe(this) { formatted ->
-            // In SYSTEM-keyboard mode `tvCalculations` is the EditText the
-            // user is actively typing into; the pretty-formatted preview
-            // would clobber the raw text and jump the cursor. Skip the
-            // writeback entirely — including reformats from a currency swap
-            // or rate refresh mid-entry.
-            if (isSystemKeyboardMode || muteCalculationsWriteback) return@observe
-            setCalculationsTextMuted(formatted ?: "")
-        }
-        viewModel.getBaseCurrency().observe(this) { observeBaseCurrency(it) }
-        viewModel.getDestinationCurrency().observe(this) { observeDestinationCurrency(it) }
-        viewModel.getCurrentBaseValueAsNumber().observe(this) { spinnerTo.setCurrentSum(it) }
-        viewModel.getResultAsNumber().observe(this) { spinnerFrom.setCurrentSum(it) }
-        viewModel.keyboardType.observe(this) { observeKeyboardType(it) }
-        viewModel.nextParen().observe(this) { next ->
-            findViewById<AppCompatButton>(R.id.btn_parens)?.paintParenCycle(next)
-        }
-        viewModel.isHapticFeedbackEnabled.observe(this) { hapticEnabled = it }
-        viewModel.getTrueCost().observe(this) { observeTrueCost(it) }
-        viewModel.getOriginalValue().observe(this) { observeOriginalValue(it) }
-        viewModel.getOriginalFeeAmount().observe(this) { observeOriginalFeeAmount(it) }
-        viewModel.getConvertedFeeAmount().observe(this) { observeConvertedFeeAmount(it) }
-        NetworkStatusLiveData(this).observe(this) { online ->
-            isOnline = online
-            renderOfflineBanner()
-        }
-    }
-
-    private fun renderOfflineBanner() {
-        if (isOnline) {
-            offlineBanner.visibility = View.GONE
-            return
-        }
-        val date = latestRatesDate
-        offlineBannerText.text =
-            if (date != null) {
-                getString(R.string.offline_banner_with_date, formatRatesTimestamp(date, latestRatesTime).orEmpty())
-            } else {
-                getString(R.string.offline_banner_no_data)
-            }
-        offlineBanner.visibility = View.VISIBLE
-    }
-
-    // Cost-with-fee and value-before-fee are companion rows to the
-    // conversion/reduction-fee lines, which already carry the percent tail.
-    // Passing null stack suppresses the duplicate.
-    private fun observeTrueCost(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvTrueCost,
-            prefixRes = R.string.fee_cost_with_fee_prefix,
-            value = value,
-            currency = viewModel.getBaseCurrency().value,
-            stack = null,
-        )
-    }
-
-    private fun observeOriginalValue(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvOriginalValue,
-            prefixRes = R.string.fee_value_before_fee_prefix,
-            value = value,
-            currency = viewModel.getDestinationCurrency().value,
-            stack = null,
-        )
-    }
-
-    private fun observeOriginalFeeAmount(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvOriginalFeeAmount,
-            prefixRes = R.string.fee_true_cost_prefix,
-            value = value,
-            currency = viewModel.getBaseCurrency().value,
-            stack = viewModel.getSideStacks().value?.original,
-        )
-    }
-
-    private fun observeConvertedFeeAmount(value: BigDecimal?) {
-        renderFeeAmount(
-            target = tvConvertedFeeAmount,
-            prefixRes = R.string.fee_original_value_prefix,
-            value = value,
-            currency = viewModel.getDestinationCurrency().value,
-            stack = viewModel.getSideStacks().value?.converted,
-        )
-    }
-
-    private fun renderFeeAmount(
-        target: TextView,
-        prefixRes: Int,
-        value: BigDecimal?,
-        currency: Currency?,
-        stack: BigDecimal?,
+    @Composable
+    private fun Destination(
+        screen: Screen,
+        nav: AppNavigator,
+        foldingFeature: FoldingFeature?,
     ) {
-        if (value == null) {
-            target.visibility = View.GONE
-            return
-        }
-        target.text = buildFeeAmountLine(prefixRes, value, currency, stack)
-        target.visibility = View.VISIBLE
-    }
-
-    // "<prefix><amount> <ISO> (<sign><pct>%)" with the amount+ISO isolated LTR
-    // so a right-aligned prefix in an RTL locale doesn't flip the number/code
-    // pair. The percent tail is omitted when the [stack] is trivial (no fee on
-    // this side) or unknown. Shared by the on-screen fee annotations and the
-    // share sheet.
-    private fun buildFeeAmountLine(
-        prefixRes: Int,
-        value: BigDecimal,
-        currency: Currency?,
-        stack: BigDecimal?,
-    ): String {
-        val amount = value.toHumanReadableNumber(this, decimalPlaces = AMOUNT_DECIMAL_PLACES)
-        val marker = currency?.symbolOrIso().orEmpty()
-        val amountWithMarker = if (marker.isEmpty()) amount else "$amount $marker"
-        val line = getString(prefixRes) + ltrIsolate(amountWithMarker)
-        if (stack == null || stack.isNeutralFeeStack()) return line
-        val percent =
-            stack
-                .feePercentDelta(FEE_PERCENT_DECIMAL_PLACES)
-                .toHumanReadableNumber(this, showPositiveSign = true, suffix = "%", trim = true)
-        return "$line ${ltrIsolate("($percent)")}"
-    }
-
-    private fun observeExchangeRates(rates: ExchangeRates?) {
-        latestRatesDate = rates?.date
-        latestRatesTime = rates?.time
-        renderOfflineBanner()
-        rates?.let {
-            val date = it.date
-            val dateString = formatRatesTimestamp(date, it.time)
-            val providerString = it.provider?.getName(this)
-            tvInfoDate.text =
-                if (dateString != null && providerString != null) {
-                    getString(
-                        if (viewModel.getHistoricalDate() != null) {
-                            R.string.info_date_historical
-                        } else {
-                            R.string.info_date_latest
-                        },
-                        dateString,
-                        providerString,
-                    ).fromHtmlLegacy()
-                } else {
-                    null
-                }
-            val isStaleOrHistorical =
-                date?.isBefore(LocalDate.now().minusDays(STALE_RATES_DAYS)) == true ||
-                    viewModel.getHistoricalDate() != null
-            val infoColor =
-                if (isStaleOrHistorical) {
-                    MaterialColors.getColor(this, R.attr.colorError, null)
-                } else {
-                    getTextColorSecondary()
-                }
-            listOf(tvInfoDate, tvInfoConversion).forEach { tv -> tv.setTextColor(infoColor) }
-            findViewById<ImageView>(R.id.iconHistorical).visibility =
-                if (viewModel.getHistoricalDate() != null) View.VISIBLE else View.GONE
-        }
-        spinnerFrom.setRates(rates?.rates, viewModel.getBaseCurrency().value)
-        spinnerTo.setRates(rates?.rates, viewModel.getDestinationCurrency().value)
-    }
-
-    private fun showErrorSnackbar(message: String?) {
-        message ?: return
-        snackbar(
-            message.fromHtmlLegacy(),
-            Snackbar.LENGTH_INDEFINITE,
-        ).setBackgroundTint(MaterialColors.getColor(this, R.attr.colorError, null))
-            .setTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))
-            .setActionTextColor(MaterialColors.getColor(this, R.attr.colorOnError, null))
-            .setAction(android.R.string.ok) { }
-            .setTextMaxLines(MAX_ERROR_TEXT_LINES)
-            .show()
-    }
-
-    private fun observeBaseCurrency(currency: Currency?) {
-        spinnerFrom.setSelection(currency)
-        // Whatever's picked on the base side must not be pickable on the
-        // destination side — grey it out in the "to" picker.
-        spinnerTo.setDisabledCurrency(currency)
-        // Fee-line renderer reads the currency synchronously; re-run so a late
-        // arrival (e.g. process restart, DB load after trueCost fires) still
-        // paints the "$" marker.
-        observeTrueCost(viewModel.getTrueCost().value)
-        observeOriginalFeeAmount(viewModel.getOriginalFeeAmount().value)
-        currency ?: return
-        findRateFor(currency)?.let { spinnerTo.setCurrentRate(Rate(currency, it)) }
-    }
-
-    private fun observeDestinationCurrency(currency: Currency?) {
-        spinnerTo.setSelection(currency)
-        spinnerFrom.setDisabledCurrency(currency)
-        observeOriginalValue(viewModel.getOriginalValue().value)
-        observeConvertedFeeAmount(viewModel.getConvertedFeeAmount().value)
-        currency ?: return
-        findRateFor(currency)?.let { spinnerFrom.setCurrentRate(Rate(currency, it)) }
-    }
-
-    // Look up the current-cache rate value for [currency]; null when rates
-    // haven't loaded yet or the currency isn't in the response.
-    private fun findRateFor(currency: Currency): BigDecimal? =
-        viewModel
-            .getExchangeRates()
-            .value
-            ?.rates
-            ?.find { it.currency == currency }
-            ?.value
-
-    private fun observeKeyboardType(type: KeyboardType) {
-        val keypadRegular = findViewById<View>(R.id.keypad)
-        val keypadExtended = findViewById<View>(R.id.keypad_extended)
-        keypadRegular.visibility = if (type == KeyboardType.BASIC) View.VISIBLE else View.GONE
-        keypadExtended.visibility = if (type == KeyboardType.EXPANDED) View.VISIBLE else View.GONE
-        val separator = getDecimalSeparator(this)
-        keypadExtended.findViewById<TextView>(R.id.btn_decimal).text = separator
-        keypadRegular.findViewById<TextView>(R.id.btn_decimal).text = separator
-        configureCalculationsEditText(type)
-    }
-
-    // Runtime flags mirror the XML defaults so mode swaps are reversible.
-    // Compare by the exact type (not just `wantsSystem`) so a switch between
-    // the numpad and full-text sub-variants refreshes the KeyListener + IME
-    // class instead of no-oping.
-    private fun configureCalculationsEditText(type: KeyboardType) {
-        if (lastKeyboardTypeApplied == type) return
-        val wantsSystem = type.isSystem
-        isSystemKeyboardMode = wantsSystem
-        lastKeyboardTypeApplied = type
-        // Detach first so seed-setText below doesn't accidentally clear the
-        // state via a stale watcher call.
-        tvCalculations.removeTextChangedListener(systemKeyboardWatcher)
-        if (wantsSystem) {
-            tvCalculations.isFocusable = true
-            tvCalculations.isFocusableInTouchMode = true
-            tvCalculations.isCursorVisible = true
-            tvCalculations.showSoftInputOnFocus = true
-            tvCalculations.keyListener = CalculatorKeyListener.forKeyboardType(type)
-            // Seed with the current typed expression (display glyphs → ASCII)
-            // so switching mode mid-entry doesn't lose the user's work.
-            setCalculationsTextMuted(viewModel.currentTypedExpression())
-            tvCalculations.addTextChangedListener(systemKeyboardWatcher)
-            showSystemImeOnField()
-        } else {
-            tvCalculations.isCursorVisible = false
-            tvCalculations.showSoftInputOnFocus = false
-            tvCalculations.isFocusable = false
-            tvCalculations.isFocusableInTouchMode = false
-            // Also clears inputType to TYPE_NULL — no separate reset needed.
-            tvCalculations.keyListener = null
-            hideSystemIme()
-            // Restore the pretty formatted preview now that the writeback
-            // observer is authoritative again.
-            setCalculationsTextMuted(viewModel.getCalculationInputFormatted().value ?: "")
-        }
-    }
-
-    private var cachedSystemKeyboardIcon: Drawable? = null
-
-    private fun systemKeyboardIcon(): Drawable =
-        cachedSystemKeyboardIcon ?: getDrawable(R.drawable.ic_keyboard_extended)!!.also {
-            cachedSystemKeyboardIcon = it
-        }
-
-    // Show the keyboard glyph as a start-compound drawable while system-IME
-    // mode is active and the field is empty, so the user has a visible tap
-    // target instead of a bare caret. Cleared as soon as text appears (or on
-    // mode-swap back to the custom keypads).
-    private fun updateSystemKeyboardIcon() {
-        val icon =
-            if (isSystemKeyboardMode && tvCalculations.text.isNullOrEmpty()) {
-                systemKeyboardIcon()
-            } else {
-                null
+        when (screen) {
+            Screen.Converter -> {
+                ConverterRoute(host = converterHost, navigator = nav, foldingFeature = foldingFeature)
             }
-        tvCalculations.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
-    }
 
-    private fun showSystemImeOnField() {
-        tvCalculations.setSelection(tvCalculations.text?.length ?: 0)
-        showSoftInputOn(tvCalculations)
-    }
+            is Screen.Timeline -> {
+                TimelineRoute(screen = screen, onBack = nav::pop, foldingFeature = foldingFeature)
+            }
 
-    // Programmatic setText that suppresses the system-IME watcher re-entry —
-    // used for the pretty-preview observer, paste, mode swaps, and the
-    // watcher's own reconcile. `alreadyMuted` preserves the outer mute when
-    // called from inside afterTextChanged.
-    private fun setCalculationsTextMuted(text: CharSequence) {
-        val alreadyMuted = muteCalculationsWriteback
-        muteCalculationsWriteback = true
-        try {
-            tvCalculations.setTextAndCursorToEnd(text)
-            updateSystemKeyboardIcon()
-        } finally {
-            if (!alreadyMuted) muteCalculationsWriteback = false
-        }
-    }
+            is Screen.Cart -> {
+                CartRoute(screen = screen, onBack = nav::pop, onOpenFees = { nav.navigate(Screen.Fees) })
+            }
 
-    private fun hideSystemIme() = hideSoftInputFrom(tvCalculations)
-
-    // On every EditText mutation while system-IME mode is active, rebuild
-    // the calculator state from the new text — same char-routing the hardware
-    // keyboard uses. Simpler than diffing insert vs. delete positions and
-    // correct for pastes / mid-string edits too.
-    private val systemKeyboardWatcher =
-        object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int,
-            ) = Unit
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int,
-            ) = Unit
-
-            override fun afterTextChanged(s: Editable?) {
-                if (muteCalculationsWriteback) return
-                val text = s?.toString().orEmpty()
-                muteCalculationsWriteback = true
-                try {
-                    viewModel.clear()
-                    text.forEach { handleCharKey(it) }
-                    // Reconcile the visible text with the calculator's canonical
-                    // form so shortcuts round-trip: e.g. `()` after a number
-                    // becomes `*(`, matching what the custom keypads produce.
-                    setCalculationsTextMuted(viewModel.currentTypedExpression())
-                } finally {
-                    muteCalculationsWriteback = false
+            // The settings screens are prose: laid out the way the language reads.
+            Screen.Settings -> {
+                ReadingDirection {
+                    SettingsRoute(
+                        onBack = nav::pop,
+                        onOpenFees = { nav.navigate(Screen.Fees) },
+                        onOpenBackup = { nav.navigate(Screen.Backup) },
+                        onThemeRequiresRestart = ::recreate,
+                    )
                 }
             }
+
+            Screen.Fees -> {
+                ReadingDirection { FeesRoute(onBack = nav::pop) }
+            }
+
+            Screen.Backup -> {
+                ReadingDirection { BackupRoute(onBack = nav::pop) }
+            }
         }
-
-    private fun haptic(view: View) = view.hapticTap(hapticEnabled)
-
-    /*
-     * keyboard: number input
-     */
-    fun numberEvent(view: View) {
-        haptic(view)
-        viewModel.addNumber((view as AppCompatButton).text.toString())
     }
 
-    /*
-     * keyboard: add decimal point
-     */
-    fun decimalEvent(view: View) {
-        haptic(view)
-        viewModel.addDecimal()
+    private fun createConverterHost(revealPending: Boolean): ConverterHost {
+        val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
+        val heroCapture = LayerCapture()
+        return ConverterHost(
+            viewModel = viewModel,
+            preferenceModel = ViewModelProvider(this)[PreferenceViewModel::class.java],
+            status = status,
+            share = ConversionShare(this, viewModel, heroCapture, status),
+            revealPending = revealPending,
+            onWordmarkFirstFrame = { firstContentReady = true },
+        )
     }
 
-    /*
-     * keyboard: delete
-     */
-    fun deleteEvent(view: View) {
-        haptic(view)
-        viewModel.delete()
+    // Foldable posture, forwarded to the converter and timeline layouts.
+    private fun observeFoldingFeature() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                WindowInfoTracker
+                    .getOrCreate(this@MainActivity)
+                    .windowLayoutInfo(this@MainActivity)
+                    .collect { info ->
+                        info.displayFeatures
+                            .filterIsInstance<FoldingFeature>()
+                            .firstOrNull()
+                            ?.let { foldingFeatureState.value = it }
+                    }
+            }
+        }
     }
 
-    /*
-     * keyboard: percentage
-     */
-    fun percentEvent(view: View) {
-        haptic(view)
-        viewModel.addPercent()
-    }
-
-    /*
-     * keyboard: do some calculations
-     */
-    fun calculationEvent(view: View) {
-        haptic(view)
-        Operator
-            .fromDisplay((view as AppCompatButton).text.toString())
-            ?.apply
-            ?.invoke(viewModel)
-    }
-
-    /*
-     * keyboard: parentheses (cycle-toggle between `(` and `)`)
-     */
-    fun parensEvent(view: View) {
-        haptic(view)
-        viewModel.applyNextParen()
-    }
-
-    // capture hardware keyboard input
+    // Hardware keyboard: typing goes to the converter, and only while it's
+    // the screen on top.
     override fun onKeyDown(
         keyCode: Int,
         event: KeyEvent?,
     ): Boolean {
+        if (navigator?.current != Screen.Converter) return super.onKeyDown(keyCode, event)
         // IMPORTANT: can't work with simple keyCodes here, as depending on the keyboard
         // configuration, wrong values will be returned (e.g. KEYCODE_8 instead of KEYCODE_PLUS).
         val key = event?.keyCharacterMap?.get(keyCode, event.metaState)?.let { Char(it) }
-        return handleCharKey(key) || handleControlKey(keyCode)
+        return handleCharKey(key) || handleControlKey(keyCode) || super.onKeyDown(keyCode, event)
     }
 
     private fun handleCharKey(key: Char?): Boolean {
         key ?: return false
-        Operator.fromHardware(key)?.let {
-            it.apply(viewModel)
-            return true
-        }
+        val input = viewModel.input
+        val operator = Operator.fromHardware(key)
         when {
-            key.isDigit() -> viewModel.addNumber(key.toString())
-            key == '.' || key == ',' -> viewModel.addDecimal()
-            key == '(' -> viewModel.openParen()
-            key == ')' -> viewModel.closeParen()
-            key == '%' -> viewModel.addPercent()
+            operator != null -> input.addOperator(operator.display)
+            key.isDigit() -> input.addNumber(key.toString())
+            key == '.' || key == ',' -> input.addDecimal()
+            key == '(' -> input.addOpenParen()
+            key == ')' -> input.addCloseParen()
+            key == '%' -> input.addPercent()
             else -> return false
         }
         return true
     }
 
-    // Hardware-keyboard input path: KEYCODE_BACK from a physical keyboard is
-    // not the same as the gesture-back the GestureBackNavigation lint flags,
-    // so route it through onBackPressedDispatcher explicitly.
-    @Suppress("GestureBackNavigation")
     private fun handleControlKey(keyCode: Int): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_DEL -> viewModel.delete()
-            KeyEvent.KEYCODE_BACK -> super.onBackPressedDispatcher.onBackPressed()
-            else -> return false
-        }
+        if (keyCode != KeyEvent.KEYCODE_DEL) return false
+        viewModel.input.delete()
         return true
     }
 
-    /*
-     * swap currencies
-     */
-    fun toggleEvent(
-        @Suppress("UNUSED_PARAMETER") view: View?,
-    ) {
-        val from = spinnerFrom.selectedItemPosition
-        val to = spinnerTo.selectedItemPosition
-        spinnerFrom.setSelection(to)
-        spinnerTo.setSelection(from)
-    }
-
-    private fun prepareFoldableLayoutChanges() {
-        observeFoldingFeature { feature ->
-            val root = findViewById<LinearLayout>(R.id.main_root)
-            root.orientation =
-                when {
-                    feature.state == FoldingFeature.State.FLAT -> flatOrientation()
-                    feature.orientation == FoldingFeature.Orientation.VERTICAL -> LinearLayout.HORIZONTAL
-                    else -> LinearLayout.VERTICAL
-                }
+    // Splash exit-animation listener. Fades the platform splash icon over
+    // SPLASH_EXIT_FADE_MILLIS while the Compose wordmark's own × reveal
+    // (already started on its first frame — see Wordmark.kt) runs
+    // underneath, then removes the SplashScreenView so later frames aren't
+    // overdrawn by the leftover splash surface.
+    //
+    // Only iconView fades (not the whole SplashScreenView) so the paper
+    // background stays solid underneath until removal — otherwise the
+    // Compose background would briefly show through a semi-transparent
+    // splash surface and read as a flash.
+    private fun fadeOutSplashIcon(provider: SplashScreenViewProvider) {
+        // Some OEM ROMs (observed on MIUI) return a null iconView from
+        // SplashScreenViewProvider.ViewImpl31 — nothing to fade in that case,
+        // just remove the splash surface directly so we don't NPE.
+        val icon = runCatching { provider.iconView }.getOrNull()
+        if (icon == null) {
+            provider.remove()
+            return
         }
-    }
-
-    private fun flatOrientation(): Int {
-        val cfg = resources.configuration
-        return if (cfg.screenHeightDp >= cfg.screenWidthDp) {
-            LinearLayout.VERTICAL
-        } else {
-            LinearLayout.HORIZONTAL
-        }
-    }
-
-    private fun buildWordmarkTitle(): CharSequence {
-        val text = getString(R.string.app_name)
-        val sizePx =
-            TypedValue
-                .applyDimension(
-                    TypedValue.COMPLEX_UNIT_SP,
-                    WORDMARK_TITLE_SP,
-                    resources.displayMetrics,
-                ).toInt()
-        return SpannableString(text).apply {
-            setSpan(AbsoluteSizeSpan(sizePx), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(TypefaceSpan(WORDMARK_TITLE_FONT_FAMILY), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(StyleSpan(Typeface.BOLD), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            if (BuildConfig.DEBUG) {
-                setSpan(
-                    ForegroundColorSpan(getColor(android.R.color.holo_red_light)),
-                    0,
-                    length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                )
-            }
-        }
+        icon
+            .animate()
+            .alpha(0f)
+            .setDuration(SPLASH_EXIT_FADE_MILLIS)
+            .withEndAction { provider.remove() }
+            .start()
     }
 }
-
-private const val WORDMARK_TITLE_SP = 26f
-
-// sans-serif-black is Android's heaviest built-in font family (weight 900).
-// Combined with StyleSpan(BOLD), it gives the wordmark a distinct logo weight
-// without shipping a custom font asset.
-private const val WORDMARK_TITLE_FONT_FAMILY = "sans-serif-black"

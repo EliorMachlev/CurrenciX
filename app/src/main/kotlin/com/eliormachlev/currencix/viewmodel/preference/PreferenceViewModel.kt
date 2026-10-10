@@ -4,13 +4,14 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
-import com.eliormachlev.currencix.model.KeyboardType
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
+import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 
 // Language.SYSTEM.iso — matches the enum value that means "follow system
 // locale" without pulling the enum into this file.
@@ -20,18 +21,34 @@ class PreferenceViewModel(
     private val app: Application,
 ) : AndroidViewModel(app) {
     private val db = Database(app)
-    private var apiProvider: LiveData<ApiProvider> = db.getApiProviderAsync()
-    private var openExchangeratesApiKey: LiveData<String?> = db.getOpenExchangeRatesApiKeyAsync()
-    private var isPreviewConversionEnabled: LiveData<Boolean> = db.isPreviewConversionEnabled()
+
+    val apiProvider: StateFlow<ApiProvider> =
+        db.providers.getApiProviderFlow().stateInWhileSubscribed(viewModelScope, db.providers.getApiProvider())
+    val fallbackProvider: StateFlow<ApiProvider> =
+        db.providers.getFallbackProviderFlow().stateInWhileSubscribed(viewModelScope, db.providers.getFallbackProvider())
+    val openExchangeratesApiKey: StateFlow<String?> =
+        db.providers.getOpenExchangeRatesApiKeyFlow().stateInWhileSubscribed(viewModelScope, db.providers.getOpenExchangeRatesApiKey())
+    val isPreviewConversionEnabled: StateFlow<Boolean> =
+        db.display.isPreviewConversionEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isPreviewConversionEnabledBlocking())
+    val isExpandedKeypadEnabled: StateFlow<Boolean> =
+        db.display.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.getExpandedKeypadEnabledBlocking())
+    val isHapticFeedbackEnabled: StateFlow<Boolean> =
+        db.display.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isHapticFeedbackEnabledBlocking())
+    val isDynamicColorEnabled: StateFlow<Boolean> =
+        db.display.isDynamicColorEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isDynamicColorEnabledBlocking())
+    val decimalPlaces: StateFlow<Int> =
+        db.display.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.display.getDecimalPlacesBlocking())
+    val dateFormat: StateFlow<String> =
+        db.display.getDateFormatFlow().stateInWhileSubscribed(viewModelScope, db.display.getDateFormatBlocking())
+    val isAutoRefreshEnabled: StateFlow<Boolean> =
+        db.providers.isAutoRefreshEnabledFlow().stateInWhileSubscribed(viewModelScope, db.providers.isAutoRefreshEnabledBlocking())
 
     fun setApiProvider(api: ApiProvider) {
-        persistAndRefreshRates { db.setApiProvider(api) }
+        persistAndRefreshRates { db.providers.setApiProvider(api) }
     }
 
-    fun getApiProvider(): LiveData<ApiProvider> = apiProvider
-
     fun setOpenExchangeratesApiKey(id: String) {
-        persistAndRefreshRates { db.setOpenExchangeRatesApiKey(id) }
+        persistAndRefreshRates { db.providers.setOpenExchangeRatesApiKey(id) }
     }
 
     // Persist a provider-affecting change, then re-fetch rates so the UI
@@ -41,18 +58,16 @@ class PreferenceViewModel(
         ExchangeRatesRepository(app).getExchangeRates()
     }
 
-    fun getOpenExchangeratesApiKey(): LiveData<String?> = openExchangeratesApiKey
-
     /**
-     * Returns true when the caller must rebuild the activity stack to make
-     * the change visible. `setDefaultNightMode` auto-recreates when the
+     * Returns true when the caller must recreate the Activity to make the
+     * change visible. `setDefaultNightMode` auto-recreates when the
      * night mode changes, but a pure-black-only flip (Dark ↔ OLED, or
      * System ↔ System-OLED while system is dark) keeps the same night mode,
-     * so `BaseActivity.setTheme` doesn't rerun on its own.
+     * so `MainActivity.setTheme` doesn't rerun on its own.
      */
     fun setTheme(theme: AppTheme): Boolean {
-        val old = db.getTheme()
-        db.setTheme(theme)
+        val old = db.display.getTheme()
+        db.display.setTheme(theme)
         AppCompatDelegate.setDefaultNightMode(theme.nightMode)
         return old.nightMode == theme.nightMode &&
             old.isPureBlack != theme.isPureBlack &&
@@ -91,23 +106,42 @@ class PreferenceViewModel(
         }
     }
 
-    fun isPreviewConversionEnabled(): LiveData<Boolean> = isPreviewConversionEnabled
-
     fun setPreviewConversionEnabled(enabled: Boolean) {
-        db.setPreviewConversionEnabled(enabled)
+        db.display.setPreviewConversionEnabled(enabled)
     }
 
-    fun setKeyboardType(type: KeyboardType) {
-        db.setKeyboardType(type)
+    fun setExpandedKeypadEnabled(enabled: Boolean) {
+        db.display.setExpandedKeypadEnabled(enabled)
     }
 
-    fun getKeyboardTypeBlocking(): KeyboardType = db.getKeyboardTypeBlocking()
+    fun getExpandedKeypadEnabledBlocking(): Boolean = db.display.getExpandedKeypadEnabledBlocking()
 
     fun setHapticFeedbackEnabled(enabled: Boolean) {
-        db.setHapticFeedbackEnabled(enabled)
+        db.display.setHapticFeedbackEnabled(enabled)
+    }
+
+    fun setFallbackProvider(provider: ApiProvider) {
+        db.providers.setFallbackProvider(provider)
+    }
+
+    fun setDynamicColorEnabled(enabled: Boolean) {
+        db.display.setDynamicColorEnabled(enabled)
     }
 
     fun setDecimalPlaces(places: Int) {
-        db.setDecimalPlaces(places)
+        db.display.setDecimalPlaces(places)
     }
+
+    fun setDateFormat(pattern: String) {
+        db.display.setDateFormat(pattern)
+    }
+
+    // Auto-refresh toggle (#151). Persistence-only — the actual WorkManager
+    // schedule/cancel is driven from the Application observer so the source
+    // of truth is DataStore rather than the UI's imperative flow.
+    fun setAutoRefreshEnabled(enabled: Boolean) {
+        db.providers.setAutoRefreshEnabled(enabled)
+    }
+
+    fun getTheme(): AppTheme = db.display.getTheme()
 }

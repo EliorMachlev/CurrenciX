@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> به &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">&lt;b>%s&lt;/b></string>
     <string name="rate_average">میانگین</string>
     <string name="rate_median">میانه</string>
     <string name="rate_min">کمینه</string>
@@ -9,4 +8,8 @@
     <string name="year">سال</string>
     <string name="month">ماه</string>
     <string name="week">هفته</string>
+    <string name="timeline_five_years">۵ سال</string>
+    <string name="timeline_custom_range">بازه سفارشی</string>
+    <string name="timeline_share">اشتراک‌گذاری نمودار</string>
+    <string name="timeline_no_rates">نرخی برای این تاریخ‌ها وجود ندارد</string>
 </resources>

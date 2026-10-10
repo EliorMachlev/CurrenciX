@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.util
 
 import android.content.Context
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -12,18 +12,6 @@ import okhttp3.ResponseBody
 import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-
-/**
- * Thrown when a request completed but returned a non-2xx status. Distinct
- * class so the repository's error handler can format an "HTTP nnn" message
- * without inspecting message strings. Network-layer failures (timeouts,
- * DNS, socket resets) propagate as their original exception types so the
- * same handler can pattern-match on them (SocketTimeoutException etc.).
- */
-class ApiHttpError(
-    val statusCode: Int,
-    message: String? = null,
-) : IOException(message ?: "HTTP $statusCode")
 
 /**
  * Suspend-friendly wrapper around [Call.enqueue] that supports cancellation.
@@ -60,15 +48,16 @@ private suspend fun Call.await(): Response =
  *  - Network failures propagate as their original exception type
  *  - Deserialization failures propagate as whatever [parse] throws
  *
- * Parsing runs on [Dispatchers.IO] alongside the request — most parsers here
- * pull XML off a stream, which is I/O-bound anyway.
+ * Parsing runs on [dispatcher] (the IO one) alongside the request — most
+ * parsers here pull XML off a stream, which is I/O-bound anyway.
  */
 suspend fun <T> HttpClientProvider.fetch(
     context: Context?,
     url: String,
+    dispatcher: CoroutineDispatcher = AppDispatchers.production.io,
     parse: (ResponseBody) -> T,
 ): Result<T> =
-    withContext(Dispatchers.IO) {
+    withContext(dispatcher) {
         runCatching {
             val request = Request.Builder().url(url).build()
             val response = client(context).newCall(request).await()

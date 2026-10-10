@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher-shortcut icon: paper background, ink glyph. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/paperBg" />
+    <foreground android:drawable="@drawable/shortcut_pair_foreground" />
+</adaptive-icon>

@@ -8,6 +8,12 @@ on:
     - cron: '0 9 * * 1'
   workflow_dispatch:
 
+# A newer push to the same PR or branch supersedes a run still going;
+# master's runs always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 permissions:
   contents: read
 
@@ -20,7 +26,11 @@ jobs:
     container:
       image: semgrep/semgrep
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Every finding is printed here and uploaded to code scanning below, and
+      # any finding fails the job (--error). No rule is switched off and no
+      # path is left out; the two findings excluded where they occur are
+      # recorded in docs/markDown/exceptions.md.
       - name: Run Semgrep
         run: |
           semgrep scan \
@@ -29,12 +39,11 @@ jobs:
             --config=p/kotlin \
             --config=p/java \
             --config=p/github-actions \
-            --sarif \
-            --output=semgrep.sarif \
-            || true
+            --error \
+            --sarif-output=semgrep.sarif
       - name: Upload SARIF to code scanning
         if: always()
-        uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
         with:
           sarif_file: semgrep.sarif
           category: semgrep
