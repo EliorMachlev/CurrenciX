@@ -17,7 +17,7 @@ import java.math.MathContext
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-class InforEuro : ApiProvider.Api() {
+class InforEuro : ApiProvider.Api {
     override val name = "InforEuro"
     override val nameRes = R.string.api_inforEuro_name
 

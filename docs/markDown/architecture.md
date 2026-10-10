@@ -41,7 +41,7 @@ CurrenciX follows **MVVM** (Model-View-ViewModel) with a Repository layer, imple
 app/src/main/kotlin/com/eliormachlev/currencix/
 ├── CurrenciesApplication.kt   # Application subclass — prewarms provider DNS at startup
 ├── model/
-│   ├── ApiProvider.kt          # Enum of 7 active providers + abstract Api interface
+│   ├── ApiProvider.kt          # Enum of 7 active providers + the Api interface
 │   ├── Currency.kt             # 190+ ISO-4217 currencies with symbols & flags
 │   ├── ExchangeRates.kt        # Snapshot of rates for a base currency
 │   ├── Rate.kt                 # Single (currency, rate) pair
@@ -78,9 +78,9 @@ helpers/src/main/kotlin/de/salomax/helpers/
 
 ## Key Design Decisions
 
-### Multiple API Providers via Enum + Abstract Interface
+### Multiple API Providers via Enum + Interface
 
-`ApiProvider` is an enum whose entries each implement `Api`, an abstract interface exposing `getRates()` and `getTimeline()`. Switching provider at runtime is a single DataStore write; no factory classes required.
+`ApiProvider` is an enum whose entries each implement `Api`, an interface exposing `getRates()` and `getTimeline()`. Switching provider at runtime is a single DataStore write; no factory classes required.
 
 ### DataStore Preferences as the Persistence Layer
 
@@ -125,6 +125,10 @@ Both transports share one error contract, so `ExchangeRatesRepository`'s error h
 ### Moshi + Custom Adapters for Diverse API Formats
 
 Each exchange-rate API returns a different JSON (or XML) schema. Rather than normalising at the network layer, each provider ships its own Moshi adapter (or SAX parser for Norges Bank / Bank Rossii) that maps the raw response to the shared `ExchangeRates` / `Timeline` model.
+
+### Coroutine dispatchers in one place
+
+`AppDispatchers` (`util/AppDispatchers.kt`) holds the IO and Default dispatchers. Classes the app constructs take one, defaulting to `AppDispatchers.production` (`ExchangeRatesRepository`, `DiskJsonStore`; `HttpClientProvider.fetch` and `retrofitCall` take the IO dispatcher as a parameter), so a test can hand in its own; the ones Android instantiates (the Application, `MainActivity`, the widget receiver) and `PrefStore`'s process-wide scope use `production` directly. Nothing names `Dispatchers.IO` / `Default` elsewhere, which detekt's `InjectDispatcher` enforces.
 
 ### LiveData for Reactive UI
 

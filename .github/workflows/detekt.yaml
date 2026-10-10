@@ -37,28 +37,51 @@ jobs:
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
 
       # Enforced: no continue-on-error. Version is pinned in the root
-      # build.gradle.kts (io.gitlab.arturbosch.detekt) and config lives in
+      # build.gradle.kts (dev.detekt) and config lives in
       # config/detekt/detekt.yml. There is no baseline: every finding fails.
+      # `detekt` runs detekt's per-variant tasks (see build.gradle.kts), the
+      # ones with its type-aware rules.
       - name: Run detekt
         run: ./gradlew detekt
 
-      - name: Upload SARIF to code scanning
-        if: always()
+      # One SARIF per variant task, each under its own category. The app's
+      # main one keeps the name master already has ("detekt"), so code
+      # scanning can tell which alerts a pull request introduces instead of
+      # reporting a missing configuration.
+      - name: Upload SARIF to code scanning (app (main, fdroid, debug))
+        if: always() && hashFiles('app/build/reports/detekt/fdroidDebug.sarif') != ''
         uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
         with:
-          # detekt writes one SARIF per subproject, each uploaded under its
-          # own category. The app's keeps the name master already has
-          # ("detekt"), so code scanning can tell which alerts a pull request
-          # introduces instead of reporting a missing configuration.
-          sarif_file: app/build/reports/detekt/detekt.sarif
+          sarif_file: app/build/reports/detekt/fdroidDebug.sarif
           category: detekt
 
-      - name: Upload helpers SARIF to code scanning
-        if: always() && hashFiles('helpers/build/reports/detekt/detekt.sarif') != ''
+      - name: Upload SARIF to code scanning (app (play, release))
+        if: always() && hashFiles('app/build/reports/detekt/playRelease.sarif') != ''
         uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
         with:
-          sarif_file: helpers/build/reports/detekt/detekt.sarif
+          sarif_file: app/build/reports/detekt/playRelease.sarif
+          category: detekt-release
+
+      - name: Upload SARIF to code scanning (app unit tests)
+        if: always() && hashFiles('app/build/reports/detekt/fdroidDebugUnitTest.sarif') != ''
+        uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
+        with:
+          sarif_file: app/build/reports/detekt/fdroidDebugUnitTest.sarif
+          category: detekt-tests
+
+      - name: Upload SARIF to code scanning (helpers)
+        if: always() && hashFiles('helpers/build/reports/detekt/main.sarif') != ''
+        uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
+        with:
+          sarif_file: helpers/build/reports/detekt/main.sarif
           category: detekt-helpers
+
+      - name: Upload SARIF to code scanning (baselineprofile)
+        if: always() && hashFiles('baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif') != ''
+        uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
+        with:
+          sarif_file: baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif
+          category: detekt-baselineprofile
 
       - name: Upload detekt report artifact
         if: always()
@@ -68,5 +91,6 @@ jobs:
           path: |
             app/build/reports/detekt/
             helpers/build/reports/detekt/
+            baselineprofile/build/reports/detekt/
           retention-days: 14
           if-no-files-found: ignore

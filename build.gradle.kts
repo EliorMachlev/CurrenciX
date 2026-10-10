@@ -1,6 +1,6 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
 
 plugins {
     id("com.android.application") version "9.3.2" apply false
@@ -22,7 +22,7 @@ plugins {
     // Static analysis. Version pinned so upstream releases can't silently
     // change what CI enforces. See config/detekt/detekt.yml for tuned rules.
     // There is no baseline: every finding fails the build.
-    id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
+    id("dev.detekt") version "2.0.0-alpha.6" apply false
 }
 
 // ktlint CLI pinned so Spotless updates don't silently bump the underlying
@@ -31,6 +31,17 @@ val ktlintCliVersion = "1.5.0"
 
 // Detekt config path — shared across subprojects.
 val detektConfigFile = rootProject.file("config/detekt/detekt.yml")
+
+// detekt 2 runs its type-aware rules (LongParameterList, UnsafeCallOnNullableType,
+// InjectDispatcher, …) only in the per-variant tasks, not in the plain
+// `detekt` one. These cover every source folder once: main + fdroid + debug,
+// play + release, and the unit tests.
+val detektVariantTasks =
+    mapOf(
+        "app" to listOf("detektFdroidDebug", "detektPlayRelease", "detektFdroidDebugUnitTest"),
+        "helpers" to listOf("detektMain", "detektTest"),
+        "baselineprofile" to listOf("detektFdroidBenchmarkRelease"),
+    )
 
 subprojects {
     apply(plugin = "com.diffplug.spotless")
@@ -46,9 +57,9 @@ subprojects {
         }
     }
 
-    apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "dev.detekt")
     configure<DetektExtension> {
-        toolVersion = "1.23.8"
+        toolVersion = "2.0.0-alpha.6"
         config.setFrom(detektConfigFile)
         buildUponDefaultConfig = true
         allRules = false
@@ -56,21 +67,19 @@ subprojects {
         autoCorrect = false
         ignoreFailures = false
     }
+    // `detekt` stands for the variant tasks above: it runs them, and skips
+    // its own pass, which would leave the type-aware rules out.
+    tasks.named("detekt") {
+        enabled = false
+        dependsOn(detektVariantTasks.getValue(project.name))
+    }
     tasks.withType<Detekt>().configureEach {
         jvmTarget = "21"
-        // The Android plugin doesn't wire its source-sets into the plain
-        // `detekt` task, and the `helpers` JVM module's `sourceSets["main"]`
-        // convention wiring also skips it. Point the task at src/**/*.kt
-        // explicitly so both modules actually analyse code.
-        setSource(files("src"))
-        include("**/*.kt", "**/*.kts")
-        exclude("**/build/**", "**/generated/**", "**/resources/**")
         reports {
             html.required.set(true)
-            xml.required.set(true)
+            checkstyle.required.set(true)
             sarif.required.set(true)
-            txt.required.set(false)
-            md.required.set(false)
+            markdown.required.set(false)
         }
     }
 }

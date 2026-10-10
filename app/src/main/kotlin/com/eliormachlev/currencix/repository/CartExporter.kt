@@ -16,18 +16,18 @@ private const val CART_FILE_KEY_TYPE = "type"
 private const val CART_FILE_KEY_PAYLOAD = "cart"
 private const val CART_FILE_TYPE = "cart"
 
-sealed class CartFileResult {
-    data object Success : CartFileResult()
+sealed interface CartFileResult {
+    data object Success : CartFileResult
 
     data class Loaded(
         val cart: SavedCart,
-    ) : CartFileResult()
+    ) : CartFileResult
 
     /** [reason] is for the user; [detail] (English, technical) is for the log. */
     data class Failure(
         val reason: FileFailure,
         val detail: String? = null,
-    ) : CartFileResult()
+    ) : CartFileResult
 }
 
 /**

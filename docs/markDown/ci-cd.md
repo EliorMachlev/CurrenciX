@@ -51,13 +51,13 @@ Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` 
 ## Security Scans
 
 ### Detekt
-- Version: 1.23.8 (pinned in root `build.gradle.kts` via the `io.gitlab.arturbosch.detekt` Gradle plugin)
-- Config: `config/detekt/detekt.yml` (tuned to enforce the `CLAUDE.md` code-shape defaults). The size limits apply to `@Composable` functions like any other: one that needs six or more arguments takes them as a state type and an actions type.
+- Version: 2.0.0-alpha.6 (pinned in root `build.gradle.kts` via the `dev.detekt` Gradle plugin). Still an alpha: 1.23.8 is the last stable release, but it is incompatible with Gradle 10 and 2.0 is the line with the fix.
+- Config: `config/detekt/detekt.yml` (tuned to enforce the `CLAUDE.md` code-shape defaults). The size limits apply to `@Composable` functions like any other: one that needs six or more arguments takes them as a state type and an actions type. detekt 2 names each limit as what's allowed (`allowedLines: 59`, `allowedFunctionParameters: 5`), one below 1.x's trigger thresholds, so the limits are the same as before.
 - No baseline: every finding counts, in old code and new.
-- Inputs: `app/src`, `helpers/src` (`src/**/*.kt` per subproject) — tests included
+- Type resolution: detekt 2 runs its type-aware rules (`LongParameterList`, `UnsafeCallOnNullableType`, `InjectDispatcher`, …) only in its per-variant tasks. `./gradlew detekt` runs a set of them that covers every source folder once — `:app:detektFdroidDebug` (main, fdroid, debug), `:app:detektPlayRelease` (play, release), `:app:detektFdroidDebugUnitTest` (unit tests), `:helpers:detektMain` / `detektTest` and `:baselineprofile:detektFdroidBenchmarkRelease` — and skips its own pass, which would leave those rules out (`detektVariantTasks` in the root build script).
 - JVM target: 21
 - Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); any finding fails the build.
-- Output: SARIF uploaded to GitHub Security tab (category `detekt` for the app, `detekt-helpers` for the helpers) + HTML/XML artifact retained 14 days
+- Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-baselineprofile`) + HTML/checkstyle/SARIF artifact retained 14 days
 
 ### Qodana
 - Image: `qodana-jvm-community:2025.1`

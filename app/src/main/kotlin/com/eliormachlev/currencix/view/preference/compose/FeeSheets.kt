@@ -471,16 +471,20 @@ internal fun FeeDraft.toGlobalBank(id: String? = null): Fee.GlobalBank =
         isActive = isActive,
     )
 
-internal fun FeeDraft.toSpecificPair(id: String? = null): Fee.SpecificPair =
-    Fee.SpecificPair(
+// Null while either side of the pair is unset: there's no pair fee to make.
+internal fun FeeDraft.toSpecificPair(id: String? = null): Fee.SpecificPair? {
+    val from = from ?: return null
+    val to = to ?: return null
+    return Fee.SpecificPair(
         id = id ?: UUID.randomUUID().toString(),
         name = name,
         percent = percent,
-        from = from!!,
-        to = to!!,
+        from = from,
+        to = to,
         bothWays = bothWays,
         isActive = isActive,
     )
+}
 
 @Composable
 internal fun displayNameOf(fee: Fee): String = if (fee.name.isBlank()) stringResource(id = R.string.fee_untitled) else fee.name

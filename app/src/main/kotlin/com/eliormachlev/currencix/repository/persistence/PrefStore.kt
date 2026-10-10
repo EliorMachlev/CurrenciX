@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
+import com.eliormachlev.currencix.util.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -170,7 +170,7 @@ class PrefStore internal constructor(
         // Single supervised, IO-dispatched scope shared by every PrefStore
         // instance. Long-lived (process scope) — DataStore itself is a process
         // singleton, so binding the write pump to the same lifetime is safe.
-        val defaultScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        val defaultScope: CoroutineScope = CoroutineScope(SupervisorJob() + AppDispatchers.production.io)
     }
 }
 

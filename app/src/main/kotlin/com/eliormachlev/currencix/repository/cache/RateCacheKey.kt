@@ -12,19 +12,19 @@ import java.time.LocalDate
  * itself, so a future SoT implementation (e.g. Room in #164) never has to
  * pull the enum through its schema.
  */
-sealed class RateCacheKey {
+sealed interface RateCacheKey {
     /**
      * Stable filesystem-safe identity. Used verbatim as the disk filename
      * (with a `.json` suffix) and as the map key for in-memory / dedupe
      * tiers. All components are ASCII — no locale-sensitive formatting.
      */
-    abstract val stableId: String
+    val stableId: String
 
     data class RatesLatest(
         val providerId: Int,
         val baseIso: String,
         val date: LocalDate?,
-    ) : RateCacheKey() {
+    ) : RateCacheKey {
         override val stableId: String
             get() = "rates_${providerId}_${baseIso}_${date?.toString() ?: "latest"}"
     }
@@ -43,7 +43,7 @@ sealed class RateCacheKey {
         val symbolIso: String,
         val startDate: LocalDate,
         val endDate: LocalDate,
-    ) : RateCacheKey() {
+    ) : RateCacheKey {
         override val stableId: String
             get() = "timeline_${providerId}_${baseIso}_$symbolIso"
     }

@@ -5,11 +5,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.FileLoggingTree
 import com.eliormachlev.currencix.util.plantConsoleLogging
 import com.eliormachlev.currencix.worker.RateRefreshScheduler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -23,7 +23,7 @@ class CurrenciesApplication : Application() {
     // a collector cancellation doesn't tear down the app-wide scope, and
     // Default because the work is a single distinct-until-changed pref read
     // plus a WorkManager enqueue — no IO on the hot path.
-    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val appScope = CoroutineScope(SupervisorJob() + AppDispatchers.production.default)
 
     override fun onCreate() {
         super.onCreate()

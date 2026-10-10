@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.repository.cache
 
-import kotlinx.coroutines.Dispatchers
+import com.eliormachlev.currencix.util.AppDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -34,6 +35,7 @@ import java.io.IOException
 internal class DiskJsonStore<V : Any>(
     private val rootDir: File,
     private val converter: Converter<V>,
+    private val io: CoroutineDispatcher = AppDispatchers.production.io,
 ) : SourceOfTruth<V> {
     init {
         // mkdirs is a no-op when the directory already exists. Called from
@@ -42,7 +44,7 @@ internal class DiskJsonStore<V : Any>(
     }
 
     override suspend fun read(key: RateCacheKey): CachedEntry<V>? =
-        withContext(Dispatchers.IO) {
+        withContext(io) {
             val file = fileFor(key)
             if (!file.isFile) return@withContext null
             runCatching {
@@ -63,7 +65,7 @@ internal class DiskJsonStore<V : Any>(
         key: RateCacheKey,
         value: V,
     ) {
-        withContext(Dispatchers.IO) {
+        withContext(io) {
             val target = fileFor(key)
             val tmp = File(rootDir, "${target.name}.tmp")
             runCatching {
@@ -84,11 +86,11 @@ internal class DiskJsonStore<V : Any>(
     }
 
     override suspend fun clear(key: RateCacheKey) {
-        withContext(Dispatchers.IO) { fileFor(key).delete() }
+        withContext(io) { fileFor(key).delete() }
     }
 
     override suspend fun clearAll() {
-        withContext(Dispatchers.IO) { rootDir.listFiles()?.forEach { it.delete() } }
+        withContext(io) { rootDir.listFiles()?.forEach { it.delete() } }
     }
 
     private fun fileFor(key: RateCacheKey): File = File(rootDir, "${key.stableId}.json")

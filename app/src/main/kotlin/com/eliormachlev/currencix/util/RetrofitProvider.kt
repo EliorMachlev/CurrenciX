@@ -2,7 +2,7 @@ package com.eliormachlev.currencix.util
 
 import android.content.Context
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Retrofit
@@ -53,12 +53,15 @@ object RetrofitProvider {
  *    (`SocketTimeoutException`, `IOException`, …).
  *  - Deserialization failures propagate as whatever the converter throws.
  *
- * Runs on [Dispatchers.IO] so response body decoding doesn't touch the main
- * thread even though Retrofit's own dispatcher already backgrounds the HTTP
- * call itself.
+ * Runs on [dispatcher] (the IO one) so response body decoding doesn't touch
+ * the main thread even though Retrofit's own dispatcher already backgrounds
+ * the HTTP call itself.
  */
-suspend fun <T> retrofitCall(block: suspend () -> T): Result<T> =
-    withContext(Dispatchers.IO) {
+suspend fun <T> retrofitCall(
+    dispatcher: CoroutineDispatcher = AppDispatchers.production.io,
+    block: suspend () -> T,
+): Result<T> =
+    withContext(dispatcher) {
         runCatching {
             try {
                 block()

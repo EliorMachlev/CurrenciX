@@ -32,7 +32,7 @@ import kotlinx.collections.immutable.toImmutableList
  */
 class CartHost(
     private val activity: ComponentActivity,
-    private val snackbar: AppSnackbar?,
+    snackbar: AppSnackbar?,
     val viewModel: CartViewModel,
     private val mainBase: Currency?,
     private val mainDest: Currency?,

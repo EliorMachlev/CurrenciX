@@ -15,8 +15,8 @@ import com.eliormachlev.currencix.repository.cache.RateCache
 import com.eliormachlev.currencix.repository.cache.RateCacheFactory
 import com.eliormachlev.currencix.repository.cache.RateCacheKey
 import com.eliormachlev.currencix.util.ApiHttpError
+import com.eliormachlev.currencix.util.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
@@ -66,11 +66,12 @@ private const val NERD_SUFFIX = "\u00A0\uD83E\uDD13"
 
 class ExchangeRatesRepository(
     private val context: Context,
+    private val dispatchers: AppDispatchers = AppDispatchers.production,
 ) {
     private val db = Database(context)
     private val liveExchangeRates = db.rates.getExchangeRates()
     private val liveTimeline = MutableLiveData<Timeline?>()
-    private var liveError = MutableLiveData<String?>()
+    private val liveError = MutableLiveData<String?>()
 
     // In-house rate cache (#148): sits on top of the shared OkHttp Cache so
     // memory / disk tiers of *parsed* domain objects short-circuit the parse
@@ -289,7 +290,7 @@ class ExchangeRatesRepository(
 
     private fun launchApiCall(block: suspend () -> Unit): Job {
         RefreshState.start()
-        return CoroutineScope(Dispatchers.IO).launch { block() }
+        return CoroutineScope(dispatchers.io).launch { block() }
     }
 
     private suspend fun <T : Any> Result<T>.processResponse(

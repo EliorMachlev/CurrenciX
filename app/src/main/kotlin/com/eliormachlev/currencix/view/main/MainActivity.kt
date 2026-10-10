@@ -29,6 +29,7 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.view.cart.CartRoute
 import com.eliormachlev.currencix.view.compose.AppSnackbar
@@ -50,7 +51,6 @@ import com.eliormachlev.currencix.view.timeline.TimelineRoute
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
 
     // Launcher shortcuts follow the recent pairs (AppShortcuts).
     private fun keepShortcutsInStep() {
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(AppDispatchers.production.default) {
             Database(applicationContext).lastState.getRecentPairsFlow().distinctUntilChanged().collect { recents ->
                 AppShortcuts.update(applicationContext, recents)
             }

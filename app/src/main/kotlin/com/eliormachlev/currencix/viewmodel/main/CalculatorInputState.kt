@@ -42,11 +42,17 @@ internal class CalculatorInputState {
         if (_nextParen.value != newParen) _nextParen.value = newParen
     }
 
-    fun isInCalculationMode(): Boolean = _calculationValueText.value.isNullOrBlank().not()
+    fun isInCalculationMode(): Boolean = calculation() != null
+
+    // The calculation row while in calculation mode, else null.
+    private fun calculation(): String? = _calculationValueText.value?.takeIf { it.isNotBlank() }
+
+    // The base row; never null once initialised, "0" as the fallback.
+    private fun base(): String = _baseValueText.value ?: "0"
 
     fun addNumber(value: String) {
-        if (isInCalculationMode()) {
-            val current = _calculationValueText.value!!
+        val current = calculation()
+        if (current != null) {
             val lastToken = current.split(" ").last().trim()
             when {
                 // last input was "0": replace it with any other number
@@ -65,12 +71,12 @@ internal class CalculatorInputState {
                 }
             }
         } else {
-            val current = _baseValueText.value
+            val base = base()
             _baseValueText.value =
-                if (current == "0") {
+                if (base == "0") {
                     if (value == "00" || value == "000") "0" else value
                 } else {
-                    current + value
+                    base + value
                 }
         }
     }
@@ -92,33 +98,34 @@ internal class CalculatorInputState {
     }
 
     fun addDecimal() {
-        if (isInCalculationMode()) {
-            val current = _calculationValueText.value!!
+        val current = calculation()
+        if (current != null) {
             if (!current.substringAfterLast(" ").contains(".")) {
                 // if last char is not a number: add 0 first
                 val prefix = if (!current.trim().last().isDigit()) current + "0" else current
                 setCalc("$prefix.")
             }
         } else {
-            val current = _baseValueText.value!!
-            if (!current.contains(".")) {
-                _baseValueText.value = "$current."
+            val base = base()
+            if (!base.contains(".")) {
+                _baseValueText.value = "$base."
             }
         }
     }
 
     fun delete() {
-        if (isInCalculationMode()) {
-            var next = _calculationValueText.value!!.trim().dropLast(1)
+        val current = calculation()
+        if (current != null) {
+            var next = current.trim().dropLast(1)
             // if last char is a number: trim any dangling space
             if (next.isNotEmpty() && next.last().isDigit()) next = next.trim()
             // drop back to base row only once no operator or paren remains —
             // otherwise `(5)` deleting to `(` would collapse and lose the paren
             setCalc(if (!next.contains(CALC_TOKEN_REGEX)) null else next)
         } else {
-            val current = _baseValueText.value!!
-            if (current.length > 1) {
-                _baseValueText.value = current.dropLast(1)
+            val base = base()
+            if (base.length > 1) {
+                _baseValueText.value = base.dropLast(1)
             } else {
                 clear()
             }
@@ -137,14 +144,14 @@ internal class CalculatorInputState {
     }
 
     fun addOpenParen() {
-        if (!isInCalculationMode()) {
+        val current = calculation()
+        if (current == null) {
             // seed calc row from base like operators do; drop base "0" so the
             // user gets a clean `(` instead of `0 × (`
-            val base = _baseValueText.value.orEmpty()
+            val base = base()
             setCalc(if (base.isEmpty() || base == "0") PAREN_OPEN else withImplicitMultBeforeOpen(base))
             return
         }
-        val current = _calculationValueText.value!!
         val trimmed = current.trimEnd()
         // after a value-continuation token (digit, `)`, `%`, `.`) insert an
         // explicit multiplication, so the row reads `5 × (…)` rather than `5(…)`
@@ -154,8 +161,7 @@ internal class CalculatorInputState {
     }
 
     fun addCloseParen() {
-        if (!isInCalculationMode()) return
-        val current = _calculationValueText.value!!
+        val current = calculation() ?: return
         // only close when there is something to close AND the trailing token is
         // a completed value — refuse `(` -> `()` or `5+` -> `5+)` so unbalanced
         // junk never enters the expression
@@ -173,8 +179,8 @@ internal class CalculatorInputState {
     }
 
     fun addOperator(operator: String) {
-        if (isInCalculationMode()) {
-            val current = _calculationValueText.value!!
+        val current = calculation()
+        if (current != null) {
             val lastChar = current.trim().last()
             when {
                 // already an operator at the end: swap it

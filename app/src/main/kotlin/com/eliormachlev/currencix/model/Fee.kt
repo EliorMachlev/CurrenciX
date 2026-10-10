@@ -11,12 +11,12 @@ import java.math.BigDecimal
  * and an [isActive] flag that lets the user temporarily skip it without
  * deleting the entry.
  */
-sealed class Fee {
-    abstract val id: String
-    abstract val name: String
-    abstract val percent: BigDecimal
-    abstract val isActive: Boolean
-    abstract val type: FeeType
+sealed interface Fee {
+    val id: String
+    val name: String
+    val percent: BigDecimal
+    val isActive: Boolean
+    val type: FeeType
 
     /**
      * Return a copy with the fields the editor UI exposes overwritten,
@@ -25,7 +25,7 @@ sealed class Fee {
      * to the concrete `copy` so the runtime type is preserved without the
      * fragment having to `when` over the sealed hierarchy.
      */
-    abstract fun withEditableFields(
+    fun withEditableFields(
         name: String,
         percent: BigDecimal,
         isActive: Boolean,
@@ -37,7 +37,7 @@ sealed class Fee {
         override val name: String,
         override val percent: BigDecimal,
         override val isActive: Boolean = true,
-    ) : Fee() {
+    ) : Fee {
         override val type: FeeType get() = FeeType.GLOBAL_EXCHANGE
 
         override fun withEditableFields(
@@ -58,7 +58,7 @@ sealed class Fee {
         override val name: String,
         override val percent: BigDecimal,
         override val isActive: Boolean = true,
-    ) : Fee() {
+    ) : Fee {
         override val type: FeeType get() = FeeType.GLOBAL_BANK
 
         override fun withEditableFields(
@@ -85,7 +85,7 @@ sealed class Fee {
         val to: String,
         val bothWays: Boolean,
         override val isActive: Boolean = true,
-    ) : Fee() {
+    ) : Fee {
         override val type: FeeType get() = FeeType.SPECIFIC_PAIR
 
         override fun withEditableFields(

@@ -26,7 +26,7 @@ private val URL_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyy
 
 private val RUB_CODE: String = Currency.RUB.iso4217Alpha()
 
-class BankRossii : ApiProvider.Api() {
+class BankRossii : ApiProvider.Api {
     override val name = "Bank Rossii"
     override val nameRes = R.string.api_bankRossii_name
 
@@ -45,7 +45,7 @@ class BankRossii : ApiProvider.Api() {
         date: LocalDate?,
         secrets: ApiSecrets,
     ): Result<ExchangeRates> {
-        val dateQuery = date?.let { "?date_req=${it.format(URL_DATE)}" } ?: ""
+        val dateQuery = date?.let { "?date_req=${it.format(URL_DATE)}" }.orEmpty()
         return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateQuery") { body ->
             BankRossiiRatesXmlParser().parse(body.byteStream())
         }

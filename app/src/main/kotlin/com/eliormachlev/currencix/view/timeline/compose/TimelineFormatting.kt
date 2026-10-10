@@ -64,7 +64,7 @@ internal fun combineValueAndSymbol(
     decimalPlaces: Int,
 ): AnnotatedString {
     val number = value.toHumanReadableNumber(context, decimalPlaces = decimalPlaces)
-    val safeSymbol = symbol ?: ""
+    val safeSymbol = symbol.orEmpty()
     return buildAnnotatedString {
         if (hasAppendedCurrencySymbol(context)) {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(number) }

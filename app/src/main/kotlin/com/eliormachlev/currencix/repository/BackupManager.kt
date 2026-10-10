@@ -52,23 +52,23 @@ private const val TYPE_STRING_SET = "stringSet"
 // produced by older builds still restore into the DataStore-backed shape.
 private val BACKUP_NAMESPACES: List<PersistenceKey> = PersistenceKey.backupNamespaces
 
-sealed class BackupResult {
-    data object Success : BackupResult()
+sealed interface BackupResult {
+    data object Success : BackupResult
 
     /** [reason] is for the user; [detail] (English, technical) is for the log. */
     data class Failure(
         val reason: FileFailure,
         val detail: String? = null,
-    ) : BackupResult()
+    ) : BackupResult
 
     // Import saw an encrypted file and needs a password from the user.
     // The manager itself never prompts — the caller drives the UI.
-    data object PasswordRequired : BackupResult()
+    data object PasswordRequired : BackupResult
 
     // Import saw an encrypted file, tried the supplied password, and the
     // GCM tag failed to verify. Distinct from a generic failure so the UI
     // can re-prompt without treating the file as corrupt.
-    data object WrongPassword : BackupResult()
+    data object WrongPassword : BackupResult
 }
 
 class BackupManager(

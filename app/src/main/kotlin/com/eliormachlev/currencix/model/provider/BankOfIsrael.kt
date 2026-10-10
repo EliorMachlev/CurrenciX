@@ -42,7 +42,7 @@ private fun unitFor(currency: String): BigDecimal = UNIT_PER_CURRENCY[currency] 
 // The PublicApi rates adapter is stateless, so one Moshi serves every request.
 private val LATEST_RATES_MOSHI: Moshi = moshi { register(BankOfIsraelRatesAdapter()) }
 
-class BankOfIsrael : ApiProvider.Api() {
+class BankOfIsrael : ApiProvider.Api {
     override val name = "Bank of Israel"
     override val nameRes = R.string.api_bankOfIsrael_name
 

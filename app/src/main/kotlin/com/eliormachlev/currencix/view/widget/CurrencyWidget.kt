@@ -45,11 +45,11 @@ import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
+import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.view.main.ConverterLaunch
 import com.eliormachlev.currencix.view.main.formatRatesTimestamp
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -101,7 +101,7 @@ class CurrencyWidget : GlanceAppWidgetReceiver() {
         // a suspend contract into the repository layer. WidgetRefreshBus lets
         // the repository signal "data changed" without importing this class,
         // preserving the Konsist layer boundary (see WidgetRefreshBus).
-        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        private val scope = CoroutineScope(SupervisorJob() + AppDispatchers.production.default)
 
         @Volatile
         private var busBound: Boolean = false

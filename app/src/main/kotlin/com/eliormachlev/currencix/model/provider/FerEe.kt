@@ -12,7 +12,7 @@ import com.eliormachlev.currencix.model.adapter.FrankfurterAppTimelineAdapter
 import com.eliormachlev.currencix.model.adapter.register
 import java.time.LocalDate
 
-class FerEe : ApiProvider.Api() {
+class FerEe : ApiProvider.Api {
     override val name = "Fer.ee"
     override val nameRes = R.string.api_ferEe_name
 

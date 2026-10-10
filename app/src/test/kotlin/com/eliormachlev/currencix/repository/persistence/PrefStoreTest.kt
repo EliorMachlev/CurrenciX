@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.util.concurrent.Executor
 
 // Reads see the store's own writes, in order, even while the disk catches
 // up: a disk emission that reflects only the first of two quick writes
@@ -21,9 +22,9 @@ import org.junit.Test
 class PrefStoreTest {
     private val disk = GatedDataStore()
 
-    // Unconfined: the store's write pump and disk collector run right away,
-    // on the test thread, so each step below is deterministic.
-    private val scope = CoroutineScope(Job() + Dispatchers.Unconfined)
+    // A same-thread dispatcher: the store's write pump and disk collector run
+    // right away, on the test thread, so each step below is deterministic.
+    private val scope = CoroutineScope(Job() + Executor(Runnable::run).asCoroutineDispatcher())
     private val store = PrefStore(disk, scope)
 
     @After

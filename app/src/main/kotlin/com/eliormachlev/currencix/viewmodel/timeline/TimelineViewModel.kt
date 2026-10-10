@@ -99,7 +99,7 @@ class TimelineViewModel(
         val end: LocalDate,
     )
 
-    private var repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
+    private val repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
 
     private var decimalPlaces = DEFAULT_DECIMAL_PLACES
 

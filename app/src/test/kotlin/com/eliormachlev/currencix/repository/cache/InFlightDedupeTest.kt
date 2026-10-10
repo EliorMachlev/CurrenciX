@@ -3,13 +3,14 @@ package com.eliormachlev.currencix.repository.cache
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
 private val KEY = RateCacheKey.RatesLatest(1, "EUR", null)
@@ -18,9 +19,15 @@ private const val CONCURRENT_CALLERS = 8
 class InFlightDedupeTest {
     @Test
     fun `concurrent callers for the same key coalesce onto one fetch`() =
+        // The callers run on a pool of the test's own, so they really are
+        // concurrent; closed once the test is done.
+        Executors.newFixedThreadPool(CONCURRENT_CALLERS).asCoroutineDispatcher().use { pool ->
+            concurrentCallersCoalesce(CoroutineScope(SupervisorJob() + pool))
+        }
+
+    private fun concurrentCallersCoalesce(scope: CoroutineScope) =
         runBlocking {
             val dedupe = InFlightDedupe<String>()
-            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
             val invocations = AtomicInteger(0)
             val producerRunning = CompletableDeferred<Unit>()
             val releaseProducer = CompletableDeferred<Unit>()
@@ -38,7 +45,7 @@ class InFlightDedupeTest {
                 Result.success("payload")
             }
 
-            // First caller kicks off the fetch on Dispatchers.Default. We
+            // First caller kicks off the fetch on the pool. We
             // then wait for the producer to actually be running so the
             // in-flight map is guaranteed to hold the shared Deferred.
             val first = scope.async { dedupe.get(KEY, scope, producer) }

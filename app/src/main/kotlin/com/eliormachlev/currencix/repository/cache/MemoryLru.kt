@@ -15,7 +15,7 @@ package com.eliormachlev.currencix.repository.cache
  * pure-JVM unit tests).
  */
 internal class MemoryLru<V : Any>(
-    private val maxEntries: Int,
+    maxEntries: Int,
 ) {
     private val map =
         object : LinkedHashMap<String, CachedEntry<V>>(

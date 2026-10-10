@@ -7,10 +7,6 @@
 # See https://detekt.dev/docs/rules/ for the full rule catalogue. Only rules
 # we tune are overridden here; anything unlisted keeps its upstream default.
 
-build:
-  maxIssues: 0
-  excludeCorrectable: false
-
 config:
   validation: true
   warningsAsErrors: false
@@ -22,9 +18,6 @@ processors:
   active: true
 
 console-reports:
-  active: true
-
-output-reports:
   active: true
 
 comments:
@@ -44,13 +37,13 @@ complexity:
   # catching genuine monoliths.
   LongMethod:
     active: true
-    threshold: 60
+    allowedLines: 59
   # "Hoist to variables/constants" — long signatures usually mean a params
   # object or hoisted state is warranted.
   LongParameterList:
     active: true
-    functionThreshold: 6
-    constructorThreshold: 7
+    allowedFunctionParameters: 5
+    allowedConstructorParameters: 6
     # Composables are held to the same limit as any function: past it, the
     # state and the callbacks become types of their own. Data classes /
     # value holders naturally list every field.
@@ -58,15 +51,15 @@ complexity:
     ignoreDataClasses: true
   ComplexCondition:
     active: true
-    threshold: 4
+    allowedConditions: 3
   NestedBlockDepth:
     active: true
-    threshold: 4
+    allowedDepth: 3
   # "Extract functions" for long methods; complements LongMethod on cyclomatic
   # rather than line count.
   CyclomaticComplexMethod:
     active: true
-    threshold: 15
+    allowedComplexity: 14
     ignoreSingleWhenExpression: true
     ignoreSimpleWhenEntries: true
   TooManyFunctions:
@@ -74,11 +67,11 @@ complexity:
     # Forty non-private functions is where a class or file is doing several
     # jobs: split it by concern (Database is a handle on eight stores for
     # this reason). Composables count like any other function.
-    thresholdInFiles: 40
-    thresholdInClasses: 40
-    thresholdInInterfaces: 20
-    thresholdInObjects: 30
-    thresholdInEnums: 20
+    allowedFunctionsPerFile: 39
+    allowedFunctionsPerClass: 39
+    allowedFunctionsPerInterface: 19
+    allowedFunctionsPerObject: 29
+    allowedFunctionsPerEnum: 19
     ignorePrivate: true
     ignoreOverridden: true
 

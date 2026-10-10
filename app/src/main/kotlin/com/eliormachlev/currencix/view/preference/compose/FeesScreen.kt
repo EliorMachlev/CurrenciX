@@ -329,7 +329,7 @@ private fun persistEditorConfirm(
         val updated =
             when (target.kind) {
                 is EditorKind.Global -> existing.withEditableFields(draft.name, draft.percent, draft.isActive)
-                EditorKind.Pair -> draft.toSpecificPair(id = existing.id)
+                EditorKind.Pair -> draft.toSpecificPair(id = existing.id) ?: return
             }
         viewModel.updateFee(updated)
     } else {
@@ -340,7 +340,7 @@ private fun persistEditorConfirm(
                         GlobalFeeKind.EXCHANGE -> draft.toGlobalExchange()
                         GlobalFeeKind.BANK -> draft.toGlobalBank()
                     }
-                EditorKind.Pair -> draft.toSpecificPair()
+                EditorKind.Pair -> draft.toSpecificPair() ?: return
             }
         viewModel.addFee(created)
         adoptFirstGlobalAsActive(viewModel, target.kind, created.id)

@@ -24,7 +24,7 @@ private const val SHOW_ALTERNATIVE = false
 // The rates adapter is stateless, so one Moshi serves every request.
 private val RATES_MOSHI: Moshi = moshi { register(OpenExchangeratesRatesAdapter()) }
 
-class OpenExchangerates : ApiProvider.Api() {
+class OpenExchangerates : ApiProvider.Api {
     override val name = "Open Exchangerates"
     override val nameRes = R.string.api_openExchangeRates_name
 

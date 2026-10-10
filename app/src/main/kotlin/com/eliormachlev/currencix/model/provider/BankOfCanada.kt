@@ -24,7 +24,7 @@ private val RATES_MOSHI: Moshi = moshi { register(BankOfCanadaRatesAdapter()) }
 // Valet names each daily series `FX<currency>CAD`.
 private fun valetSeries(currency: Currency): String = "FX${currency.apiCodeOrDkkForFok()}CAD"
 
-class BankOfCanada : ApiProvider.Api() {
+class BankOfCanada : ApiProvider.Api {
     override val name = "Bank of Canada"
     override val nameRes = R.string.api_bankOfCanada_name
 

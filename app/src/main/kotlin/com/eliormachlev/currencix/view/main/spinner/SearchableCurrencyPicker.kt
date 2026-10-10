@@ -605,9 +605,12 @@ private fun buildConversionText(
     conversion: CurrencyPickerConversion,
 ): String {
     val sum = if (conversion.baseSum.compareTo(BigDecimal.ZERO) == 0) BigDecimal.ONE else conversion.baseSum
-    val sourceSymbol = conversion.baseRate.currency.symbol() ?: ""
+    val sourceSymbol =
+        conversion.baseRate.currency
+            .symbol()
+            .orEmpty()
     val source = sum.toHumanReadableNumber(context, decimalPlaces = conversion.decimalPlaces, trim = true)
-    val destinationSymbol = item.currency.symbol() ?: ""
+    val destinationSymbol = item.currency.symbol().orEmpty()
     val destination =
         sum
             .divide(conversion.baseRate.value, MathContext.DECIMAL128)

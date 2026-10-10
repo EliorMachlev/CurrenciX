@@ -67,7 +67,7 @@ internal class BankOfIsraelSdmxParser {
         val declared = ((structures.firstOrNull() as? Map<*, *>)?.get("dimensions") as? Map<*, *>)?.get(kind) as? List<*>
         return declared.orEmpty().filterIsInstance<Map<*, *>>().map { dimension ->
             Dimension(
-                id = dimension["id"] as? String ?: "",
+                id = (dimension["id"] as? String).orEmpty(),
                 codes = (dimension["values"] as? List<*>).orEmpty().map { (it as? Map<*, *>)?.get("id") as? String },
             )
         }
@@ -84,7 +84,7 @@ internal class BankOfIsraelSdmxParser {
             .orEmpty()
 
     private fun seriesOf(data: Map<*, *>): Map<*, *> =
-        ((data["dataSets"] as? List<*>)?.firstOrNull() as? Map<*, *>)?.get("series") as? Map<*, *> ?: emptyMap<Any?, Any?>()
+        (((data["dataSets"] as? List<*>)?.firstOrNull() as? Map<*, *>)?.get("series") as? Map<*, *>).orEmpty()
 
     // "0:0:6:0:0:0" → the code each position selects in its dimension; null
     // where a position doesn't resolve.

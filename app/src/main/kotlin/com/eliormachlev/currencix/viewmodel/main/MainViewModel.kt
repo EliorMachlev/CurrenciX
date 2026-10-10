@@ -49,7 +49,7 @@ class MainViewModel(
         ): ViewModelProvider.Factory = viewModelFactory { initializer { MainViewModel(app, onlyCache) } }
     }
 
-    private var repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
+    private val repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
     private val db = Database(app)
 
     // repository data
