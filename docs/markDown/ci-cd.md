@@ -35,7 +35,7 @@ Runs on both PRs and pushes to `master`. Two jobs:
 
 Boots a Gradle Managed Device (`pixel6Api34`, API 34 AOSP emulator, software GPU) on a KVM-enabled hosted runner, then:
 
-1. Generates the fdroid and play baseline + startup profiles, and uploads them as the `baseline-profiles` artifact *before* benchmarking so a benchmark failure can't lose them. Commit the files under `app/src/<flavor>Release/generated/baselineProfiles/` to ship them, or run the workflow by hand with **commit** ticked: the `commit` job then pushes them to the branch it ran on.
+1. Generates the fdroid and play baseline + startup profiles, and uploads them as the `baseline-profiles` artifact *before* benchmarking so a benchmark failure can't lose them. Commit the files under `app/src/<flavor>Release/generated/baselineProfiles/` to ship them, or run the workflow by hand with **commit** ticked: `commit-baseline-profiles.yaml` then pushes them to the branch it ran on. To commit an earlier run's profiles without generating them again, run Baseline Profile by hand with **commit_run_id** set to that run's ID (or `commit-baseline-profiles.yaml` directly, once it is on the default branch).
 2. Runs `InteractionBenchmarks` (startup time plus frame timing for typing, picker scrolling and screen transitions, each with and without the profile), and uploads `benchmarkData.json` as `benchmark-results`. This step is advisory (`continue-on-error`): the software-GPU emulator doesn't report frame stats, so Macrobenchmark can fail to confirm launches there. Trust benchmark numbers from a physical device.
 
 Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` or the workflow itself changes on a non-master push, or on demand. See [build-and-flavors.md](build-and-flavors.md#baseline-profiles).
@@ -107,4 +107,4 @@ All workflows use `permissions: contents: read` by default. Additional permissio
 | `scorecard.yaml` | `security-events: write`, `id-token: write` |
 | `dependency-review.yaml` | `pull-requests: write` |
 | `owasp-dependency-check.yaml` | `security-events: write` |
-| `baseline-profile.yaml` (`commit` job only) | `contents: write`, `actions: read`: on a manual run with "commit" ticked, pushes the generated profiles to the branch; the job runs no build |
+| `commit-baseline-profiles.yaml` | `contents: write`, `actions: read`: pushes a Baseline Profile run's profiles to the branch (called by that workflow on a manual run with "commit" ticked, or run by hand with the run's ID); runs no build |

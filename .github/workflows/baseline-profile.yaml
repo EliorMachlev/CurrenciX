@@ -26,6 +26,10 @@ on:
         description: Commit the generated profiles to this branch
         type: boolean
         default: false
+      commit_run_id:
+        description: Instead of generating, commit the profiles of this earlier run (its ID)
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -44,6 +48,8 @@ env:
 
 jobs:
   profile:
+    # Skipped when only committing an earlier run's profiles.
+    if: ${{ !inputs.commit_run_id }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -98,35 +104,17 @@ jobs:
             baselineprofile/build/reports/androidTests/
           if-no-files-found: warn
 
-  # Pushes the generated profiles to the branch the workflow was run on. Only
-  # on a manual run with "commit" ticked, and the only job with write access:
-  # it runs no build, just git, with the artifact the profile job uploaded.
+  # Pushes profiles to the branch the workflow was run on: this run's, on a
+  # manual run with "commit" ticked, or an earlier run's (commit_run_id).
+  # The write access lives in the called workflow's job alone.
   commit:
     needs: profile
-    if: github.event_name == 'workflow_dispatch' && inputs.commit
-    runs-on: ubuntu-latest
+    if: >-
+      always() && github.event_name == 'workflow_dispatch' &&
+      (inputs.commit_run_id != '' || (inputs.commit && needs.profile.result == 'success'))
     permissions:
       contents: write
       actions: read
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - name: Download the profiles
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh run download "$GITHUB_RUN_ID" --name baseline-profiles --dir app/src
-
-      - name: Commit and push
-        env:
-          BRANCH: ${{ github.ref_name }}
-        run: |
-          git add app/src/*Release/generated/baselineProfiles/
-          if git diff --cached --quiet; then
-            echo "Profiles unchanged; nothing to commit."
-            exit 0
-          fi
-          git -c user.name="github-actions[bot]" \
-              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-              commit -m "perf(startup): regenerate baseline and startup profiles"
-          git push origin "HEAD:${BRANCH}"
+    uses: ./.github/workflows/commit-baseline-profiles.yaml
+    with:
+      run_id: ${{ inputs.commit_run_id || github.run_id }}
