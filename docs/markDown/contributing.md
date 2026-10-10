@@ -23,7 +23,7 @@ Every translatable string exists in all 31 locales, and lint fails the build on 
 
 1. Fork and clone the repository.
 2. Open in Android Studio (latest stable recommended).
-3. JDK 21 is required.
+3. JDK 21 or newer is required; CI builds on JDK 25. The app's bytecode targets Java 21 either way.
 4. `./gradlew assembleFdroidDebug` should build without errors.
 
 ### Branching Base

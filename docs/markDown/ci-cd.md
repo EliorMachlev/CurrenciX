@@ -1,6 +1,6 @@
 # CI / CD
 
-All automation lives in `.github/workflows/`. Every workflow pins its GitHub Actions to a full 40-character commit SHA to prevent supply-chain attacks.
+All automation lives in `.github/workflows/`. Every workflow pins its GitHub Actions to a full 40-character commit SHA to prevent supply-chain attacks. Each pin's comment names the exact release it points at (`# v7.0.1`). Every Java job runs on JDK 25 (Temurin); the app's bytecode targets Java 21.
 
 ## Workflow Summary
 
@@ -60,7 +60,7 @@ Tens of minutes of emulator time, so it triggers only when `baselineprofile/**` 
 - Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-baselineprofile`) + HTML/checkstyle/SARIF artifact retained 14 days
 
 ### Qodana
-- Image: `qodana-jvm-community:2025.1`
+- Image: `qodana-jvm-community:2026.2`
 - Scans production and test sources alike (only build output is excluded)
 - Posts inline PR comments on findings
 - SARIF uploaded to GitHub Security tab
