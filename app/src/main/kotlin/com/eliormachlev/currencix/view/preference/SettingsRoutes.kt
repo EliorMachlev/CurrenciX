@@ -129,14 +129,24 @@ private fun runImport(
     password: CharArray?,
 ) {
     when (val result = viewModel.runImport(uri, password)) {
-        is BackupResult.Success -> snackbar.showOrToast(context, context.getString(R.string.backup_import_success))
-        is BackupResult.Failure ->
+        is BackupResult.Success -> {
+            snackbar.showOrToast(context, context.getString(R.string.backup_import_success))
+        }
+
+        is BackupResult.Failure -> {
             snackbar.showOrToast(
                 context,
                 context.getString(R.string.backup_import_failed, context.fileFailureMessage(result.reason, result.detail)),
             )
-        is BackupResult.PasswordRequired -> viewModel.promptPasswordRetry(uri)
-        is BackupResult.WrongPassword -> viewModel.promptPasswordRetry(uri)
+        }
+
+        is BackupResult.PasswordRequired -> {
+            viewModel.promptPasswordRetry(uri)
+        }
+
+        is BackupResult.WrongPassword -> {
+            viewModel.promptPasswordRetry(uri)
+        }
     }
 }
 
@@ -145,14 +155,21 @@ private fun exportResultMessage(
     result: BackupResult,
 ): String =
     when (result) {
-        is BackupResult.Success -> context.getString(R.string.backup_export_success)
-        is BackupResult.Failure ->
+        is BackupResult.Success -> {
+            context.getString(R.string.backup_export_success)
+        }
+
+        is BackupResult.Failure -> {
             context.getString(
                 R.string.backup_export_failed,
                 context.fileFailureMessage(result.reason, result.detail),
             )
+        }
+
         // Export never asks for / rejects a password; treat these as bugs.
         is BackupResult.PasswordRequired,
         is BackupResult.WrongPassword,
-        -> context.getString(R.string.backup_export_failed, context.fileFailureMessage(FileFailure.UNEXPECTED, result.toString()))
+        -> {
+            context.getString(R.string.backup_export_failed, context.fileFailureMessage(FileFailure.UNEXPECTED, result.toString()))
+        }
     }

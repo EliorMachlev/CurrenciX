@@ -157,12 +157,17 @@ class BackupManager(
         val version = root.optInt(BACKUP_KEY_VERSION, -1)
         val namespaces = if (version == BACKUP_SCHEMA_VERSION) extractNamespaces(root, password) else null
         return when {
-            version != BACKUP_SCHEMA_VERSION ->
+            version != BACKUP_SCHEMA_VERSION -> {
                 BackupResult.Failure(
                     FileFailure.UNSUPPORTED_VERSION,
                     "Unsupported backup version: $version",
                 )
-            namespaces == null -> BackupResult.PasswordRequired
+            }
+
+            namespaces == null -> {
+                BackupResult.PasswordRequired
+            }
+
             else -> {
                 restoreNamespaces(namespaces)
                 // Restore replaced every backed-up namespace on disk; long-lived
@@ -264,15 +269,31 @@ class BackupManager(
         entry: JSONObject,
     ) {
         when (entry.optString(KEY_TYPE)) {
-            TYPE_STRING -> editor[stringPreferencesKey(key)] = entry.optString(KEY_VALUE)
-            TYPE_INT -> editor[intPreferencesKey(key)] = entry.optInt(KEY_VALUE)
-            TYPE_LONG -> editor[longPreferencesKey(key)] = entry.optLong(KEY_VALUE)
-            TYPE_FLOAT -> editor[floatPreferencesKey(key)] = entry.optDouble(KEY_VALUE).toFloat()
-            TYPE_BOOLEAN -> editor[booleanPreferencesKey(key)] = entry.optBoolean(KEY_VALUE)
-            TYPE_STRING_SET ->
+            TYPE_STRING -> {
+                editor[stringPreferencesKey(key)] = entry.optString(KEY_VALUE)
+            }
+
+            TYPE_INT -> {
+                editor[intPreferencesKey(key)] = entry.optInt(KEY_VALUE)
+            }
+
+            TYPE_LONG -> {
+                editor[longPreferencesKey(key)] = entry.optLong(KEY_VALUE)
+            }
+
+            TYPE_FLOAT -> {
+                editor[floatPreferencesKey(key)] = entry.optDouble(KEY_VALUE).toFloat()
+            }
+
+            TYPE_BOOLEAN -> {
+                editor[booleanPreferencesKey(key)] = entry.optBoolean(KEY_VALUE)
+            }
+
+            TYPE_STRING_SET -> {
                 entry.optJSONArray(KEY_VALUE)?.let { values ->
                     editor[stringSetPreferencesKey(key)] = (0 until values.length()).mapTo(HashSet()) { values.optString(it) }
                 }
+            }
         }
     }
 }

@@ -118,9 +118,14 @@ internal fun ConvertTextSheet(
             verticalArrangement = Arrangement.spacedBy(GAP),
         ) {
             when (conversion) {
-                is SelectionConversion.Converted ->
+                is SelectionConversion.Converted -> {
                     ConvertedContent(conversion, decimals, onOpen = { onOpen(openIntent(context, conversion)) })
-                SelectionConversion.NoAmount -> Message(stringResource(R.string.selection_no_amount, text.trim()))
+                }
+
+                SelectionConversion.NoAmount -> {
+                    Message(stringResource(R.string.selection_no_amount, text.trim()))
+                }
+
                 SelectionConversion.NoRates -> {
                     Message(stringResource(R.string.selection_no_rates, appName))
                     FilledTonalButton(onClick = { onOpen(ConverterLaunch.openConverter(context)) }) {

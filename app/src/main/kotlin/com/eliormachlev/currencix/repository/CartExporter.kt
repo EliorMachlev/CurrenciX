@@ -80,17 +80,23 @@ class CartExporter(
     private fun decode(root: JSONObject): CartFileResult {
         val version = root.optInt(BACKUP_KEY_VERSION, -1)
         return when {
-            version != CART_FILE_SCHEMA_VERSION ->
+            version != CART_FILE_SCHEMA_VERSION -> {
                 CartFileResult.Failure(
                     FileFailure.UNSUPPORTED_VERSION,
                     "Unsupported cart version: $version",
                 )
+            }
+
             // `type` is checked so a full-app backup dropped in by mistake
             // is rejected before it's parsed as a cart.
-            root.optString(CART_FILE_KEY_TYPE) != CART_FILE_TYPE -> CartFileResult.Failure(FileFailure.NOT_A_CART, "Not a cart file")
-            else ->
+            root.optString(CART_FILE_KEY_TYPE) != CART_FILE_TYPE -> {
+                CartFileResult.Failure(FileFailure.NOT_A_CART, "Not a cart file")
+            }
+
+            else -> {
                 parseCart(root.optJSONObject(CART_FILE_KEY_PAYLOAD))?.let(CartFileResult::Loaded)
                     ?: CartFileResult.Failure(FileFailure.DAMAGED, "Malformed cart payload")
+            }
         }
     }
 }

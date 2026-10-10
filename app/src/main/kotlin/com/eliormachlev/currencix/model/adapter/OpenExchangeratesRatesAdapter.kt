@@ -29,7 +29,10 @@ internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates>(Ex
                 while (reader.hasNext()) {
                     if (reader.peek() != JsonReader.Token.NAME) continue
                     when (reader.nextName()) {
-                        "rates" -> addAll(parseRates(reader))
+                        "rates" -> {
+                            addAll(parseRates(reader))
+                        }
+
                         "timestamp" -> {
                             val zoned =
                                 Instant
@@ -38,9 +41,18 @@ internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates>(Ex
                             date = zoned.toLocalDate()
                             time = zoned.toLocalTime().withSecond(0).withNano(0)
                         }
-                        "base" -> base = Currency.fromString(reader.nextString())
-                        "message" -> errorMessage = reader.nextString()
-                        else -> reader.skipValue()
+
+                        "base" -> {
+                            base = Currency.fromString(reader.nextString())
+                        }
+
+                        "message" -> {
+                            errorMessage = reader.nextString()
+                        }
+
+                        else -> {
+                            reader.skipValue()
+                        }
                     }
                 }
                 reader.endObject()

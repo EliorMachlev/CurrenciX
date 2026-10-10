@@ -88,8 +88,15 @@ private fun colorScheme(
     dynamicColor: Boolean,
 ): ColorScheme =
     when {
-        dynamicColor ->
+        dynamicColor -> {
             if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        dark -> CurrenciXDarkColors
-        else -> CurrenciXLightColors
+        }
+
+        dark -> {
+            CurrenciXDarkColors
+        }
+
+        else -> {
+            CurrenciXLightColors
+        }
     }

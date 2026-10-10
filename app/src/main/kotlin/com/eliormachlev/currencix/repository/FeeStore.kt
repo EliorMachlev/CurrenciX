@@ -53,9 +53,15 @@ private fun parseFeeEntry(obj: JSONObject?): Fee? {
     val percent = obj.optString("percent", "0").toBigDecimalOrNull() ?: return null
     val isActive = obj.optBoolean("isActive", true)
     return when (FeeType.fromWire(obj.optString("type"))) {
-        FeeType.GLOBAL_EXCHANGE -> Fee.GlobalExchange(id, name, percent, isActive)
-        FeeType.GLOBAL_BANK -> Fee.GlobalBank(id, name, percent, isActive)
-        FeeType.SPECIFIC_PAIR ->
+        FeeType.GLOBAL_EXCHANGE -> {
+            Fee.GlobalExchange(id, name, percent, isActive)
+        }
+
+        FeeType.GLOBAL_BANK -> {
+            Fee.GlobalBank(id, name, percent, isActive)
+        }
+
+        FeeType.SPECIFIC_PAIR -> {
             Fee.SpecificPair(
                 id = id,
                 name = name,
@@ -65,7 +71,11 @@ private fun parseFeeEntry(obj: JSONObject?): Fee? {
                 bothWays = obj.optBoolean("bothWays", false),
                 isActive = isActive,
             )
-        null -> null
+        }
+
+        null -> {
+            null
+        }
     }
 }
 

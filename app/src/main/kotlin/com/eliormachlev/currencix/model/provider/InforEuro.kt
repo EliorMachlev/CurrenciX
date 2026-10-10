@@ -59,9 +59,15 @@ class InforEuro : ApiProvider.Api {
         val resultSymbol = fetchRetrofit { api.getCurrencyHistory(symbol.apiCodeOrDkkForFok()) }
 
         return when {
-            resultBase.isFailure -> resultBase
-            resultSymbol.isFailure -> resultSymbol
-            else ->
+            resultBase.isFailure -> {
+                resultBase
+            }
+
+            resultSymbol.isFailure -> {
+                resultSymbol
+            }
+
+            else -> {
                 runCatching {
                     val baseTimeline = resultBase.getOrThrow()
                     val symbolTimeline = resultSymbol.getOrThrow()
@@ -75,6 +81,7 @@ class InforEuro : ApiProvider.Api {
                             },
                     )
                 }
+            }
         }
     }
 }

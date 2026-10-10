@@ -178,7 +178,10 @@ private fun TimelineSheets(
     onDismiss: () -> Unit,
 ) {
     when (sheet) {
-        TimelineSheet.GraphOptions -> GraphOptionsSheet(db = db, onDismiss = onDismiss)
+        TimelineSheet.GraphOptions -> {
+            GraphOptionsSheet(db = db, onDismiss = onDismiss)
+        }
+
         TimelineSheet.Provider -> {
             val preferences: PreferenceViewModel = viewModel()
             val current by preferences.apiProvider.collectAsStateWithLifecycle()
@@ -191,7 +194,8 @@ private fun TimelineSheets(
                 },
             )
         }
-        null -> Unit
+
+        null -> {}
     }
 }
 

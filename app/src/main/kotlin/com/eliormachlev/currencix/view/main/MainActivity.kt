@@ -191,8 +191,10 @@ class MainActivity : AppCompatActivity() {
                 request.amount?.let(viewModel.input::setAmount)
                 nav.navigate(Screen.Converter)
             }
-            ConverterLaunch.Request.OpenCart ->
+
+            ConverterLaunch.Request.OpenCart -> {
                 nav.navigate(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+            }
         }
     }
 
@@ -203,11 +205,20 @@ class MainActivity : AppCompatActivity() {
         foldingFeature: FoldingFeature?,
     ) {
         when (screen) {
-            Screen.Converter -> ConverterRoute(host = converterHost, navigator = nav, foldingFeature = foldingFeature)
-            is Screen.Timeline -> TimelineRoute(screen = screen, onBack = nav::pop, foldingFeature = foldingFeature)
-            is Screen.Cart -> CartRoute(screen = screen, onBack = nav::pop, onOpenFees = { nav.navigate(Screen.Fees) })
+            Screen.Converter -> {
+                ConverterRoute(host = converterHost, navigator = nav, foldingFeature = foldingFeature)
+            }
+
+            is Screen.Timeline -> {
+                TimelineRoute(screen = screen, onBack = nav::pop, foldingFeature = foldingFeature)
+            }
+
+            is Screen.Cart -> {
+                CartRoute(screen = screen, onBack = nav::pop, onOpenFees = { nav.navigate(Screen.Fees) })
+            }
+
             // The settings screens are prose: laid out the way the language reads.
-            Screen.Settings ->
+            Screen.Settings -> {
                 ReadingDirection {
                     SettingsRoute(
                         onBack = nav::pop,
@@ -216,8 +227,15 @@ class MainActivity : AppCompatActivity() {
                         onThemeRequiresRestart = ::recreate,
                     )
                 }
-            Screen.Fees -> ReadingDirection { FeesRoute(onBack = nav::pop) }
-            Screen.Backup -> ReadingDirection { BackupRoute(onBack = nav::pop) }
+            }
+
+            Screen.Fees -> {
+                ReadingDirection { FeesRoute(onBack = nav::pop) }
+            }
+
+            Screen.Backup -> {
+                ReadingDirection { BackupRoute(onBack = nav::pop) }
+            }
         }
     }
 

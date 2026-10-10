@@ -31,6 +31,7 @@ class NorgesBankRatesXmlParser {
                         base = Currency.fromString(parser.getAttributeValue(null, "BASE_CUR"))
                         multiplier = parser.norgesBankUnitMultiplier()
                     }
+
                     tagname.equals("Obs", ignoreCase = true) -> {
                         val obsDate = LocalDate.parse(parser.getAttributeValue(null, "TIME_PERIOD"))
                         val value = parser.getAttributeValue(null, "OBS_VALUE").toBigDecimalOrNull()

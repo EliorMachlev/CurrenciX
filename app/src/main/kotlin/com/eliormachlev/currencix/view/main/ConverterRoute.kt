@@ -259,21 +259,29 @@ private fun ConverterOverlays(
                 onPicked = host.preferenceModel::setApiProvider,
             )
         }
-        ConverterOverlay.QuickConversions ->
+
+        ConverterOverlay.QuickConversions -> {
             QuickConversionsSheet(
                 viewModel = viewModel,
                 onSwap = viewModel::swapCurrencies,
                 onOpenFees = onOpenFees,
                 onDismiss = onDismiss,
             )
-        ConverterOverlay.HistoricalDatePicker ->
+        }
+
+        ConverterOverlay.HistoricalDatePicker -> {
             HistoricalDatePickerSheet(
                 initial = viewModel.getHistoricalDate(),
                 onPick = viewModel::setHistoricalDate,
                 onDismiss = onDismiss,
             )
-        ConverterOverlay.StatusExplanation -> StatusExplanationSheet(host.status, onOpenProvider, onDismiss)
-        null -> Unit
+        }
+
+        ConverterOverlay.StatusExplanation -> {
+            StatusExplanationSheet(host.status, onOpenProvider, onDismiss)
+        }
+
+        null -> {}
     }
 }
 

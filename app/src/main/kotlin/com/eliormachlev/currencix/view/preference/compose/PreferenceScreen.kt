@@ -230,7 +230,7 @@ private fun PreferenceSectionsList(
 }
 
 /**
- * Dispatches whichever picker/editor is currently open to its dialog composable.
+ * Dispatches whichever picker/editor is currently open to its sheet.
  * Extracted from [PreferenceScreen] so the screen body stays short and the
  * dialog-selection `when` sits next to its own state.
  */
@@ -244,47 +244,88 @@ private fun PreferenceDialogsHost(
 ) {
     val appearance = values.appearance
     when (openDialog) {
-        OpenDialog.DecimalPlaces ->
-            SingleChoicePickerSheet(
-                title = stringResource(id = R.string.decimal_places_title),
-                choices = Choices((DECIMAL_PLACES_MIN..DECIMAL_PLACES_MAX).toList(), values.decimalPlaces) { it.toString() },
-                onDismiss = dismiss,
-                onPicked = viewModel::setDecimalPlaces,
-            )
-        OpenDialog.Theme -> ThemePickerSheet(theme = appearance.theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
-        OpenDialog.DateFormat -> DateFormatPickerSheet(dateFormat = appearance.dateFormat, dismiss = dismiss, viewModel = viewModel)
-        OpenDialog.Language ->
+        OpenDialog.DecimalPlaces -> {
+            DecimalPlacesPickerSheet(decimalPlaces = values.decimalPlaces, dismiss = dismiss, viewModel = viewModel)
+        }
+
+        OpenDialog.Theme -> {
+            ThemePickerSheet(theme = appearance.theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
+        }
+
+        OpenDialog.DateFormat -> {
+            DateFormatPickerSheet(dateFormat = appearance.dateFormat, dismiss = dismiss, viewModel = viewModel)
+        }
+
+        OpenDialog.Language -> {
             LanguagePickerSheet(
                 selected = appearance.language,
                 onDismiss = dismiss,
                 onPicked = { viewModel.setLanguage(it.iso) },
             )
-        OpenDialog.Provider ->
+        }
+
+        OpenDialog.Provider -> {
             ProviderPickerSheet(
                 selected = values.api.provider,
                 onDismiss = dismiss,
                 onPicked = viewModel::setApiProvider,
             )
-        OpenDialog.FallbackProvider -> FallbackPickerSheet(viewModel, dismiss)
-        OpenDialog.GraphOptions ->
+        }
+
+        OpenDialog.FallbackProvider -> {
+            FallbackPickerSheet(viewModel, dismiss)
+        }
+
+        OpenDialog.GraphOptions -> {
             GraphOptionsSheet(
                 db = Database(LocalContext.current),
                 onDismiss = dismiss,
             )
-        OpenDialog.Credits -> CreditsSheet(onDismiss = dismiss)
-        OpenDialog.ApiKey ->
-            TextEntrySheet(
-                title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
-                initialText = values.api.apiKey.orEmpty(),
-                message = stringResource(id = R.string.api_open_exchangerates_api_key_message),
-                onDismiss = dismiss,
-                onConfirm = { newKey ->
-                    viewModel.setOpenExchangeratesApiKey(newKey.trim())
-                    dismiss()
-                },
-            )
-        null -> Unit
+        }
+
+        OpenDialog.Credits -> {
+            CreditsSheet(onDismiss = dismiss)
+        }
+
+        OpenDialog.ApiKey -> {
+            ApiKeySheet(apiKey = values.api.apiKey, dismiss = dismiss, viewModel = viewModel)
+        }
+
+        null -> {}
     }
+}
+
+@Composable
+private fun DecimalPlacesPickerSheet(
+    decimalPlaces: Int,
+    dismiss: () -> Unit,
+    viewModel: PreferenceViewModel,
+) {
+    SingleChoicePickerSheet(
+        title = stringResource(id = R.string.decimal_places_title),
+        choices = Choices((DECIMAL_PLACES_MIN..DECIMAL_PLACES_MAX).toList(), decimalPlaces) { it.toString() },
+        onDismiss = dismiss,
+        onPicked = viewModel::setDecimalPlaces,
+    )
+}
+
+// The Open Exchange Rates key, trimmed on the way in.
+@Composable
+private fun ApiKeySheet(
+    apiKey: String?,
+    dismiss: () -> Unit,
+    viewModel: PreferenceViewModel,
+) {
+    TextEntrySheet(
+        title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
+        initialText = apiKey.orEmpty(),
+        message = stringResource(id = R.string.api_open_exchangerates_api_key_message),
+        onDismiss = dismiss,
+        onConfirm = { newKey ->
+            viewModel.setOpenExchangeratesApiKey(newKey.trim())
+            dismiss()
+        },
+    )
 }
 
 @Composable

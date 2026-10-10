@@ -41,7 +41,10 @@ object FeeCalculator {
         destCode: String?,
     ): Boolean =
         when (fee) {
-            is Fee.GlobalExchange, is Fee.GlobalBank -> true
+            is Fee.GlobalExchange, is Fee.GlobalBank -> {
+                true
+            }
+
             is Fee.SpecificPair -> {
                 if (baseCode == null || destCode == null) {
                     false

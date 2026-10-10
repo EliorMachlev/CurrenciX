@@ -199,7 +199,9 @@ private fun rememberRangeProvider(data: ChartPoints): CartesianLayerRangeProvide
     return remember(minValue, maxValue) {
         when {
             minValue == null || maxValue == null -> CartesianLayerRangeProvider.auto()
+
             minValue < maxValue -> paddedRange(minValue, maxValue, (maxValue - minValue) * Y_AXIS_PADDING)
+
             // Constant series (e.g. AUD → AUD, all rates = 1.0). auto()
             // stretches to [0, 1], which puts the top Y-axis label at the
             // layer boundary and overflows above the chart region. Pin a

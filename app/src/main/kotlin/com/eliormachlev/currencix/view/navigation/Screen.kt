@@ -85,16 +85,34 @@ internal fun decodeScreen(encoded: String): Screen? {
     val parts = encoded.split(SEPARATOR)
     val args = parts.drop(1)
     return when (Route.byId(parts.first())) {
-        Route.CONVERTER -> Screen.Converter
+        Route.CONVERTER -> {
+            Screen.Converter
+        }
+
         Route.TIMELINE -> {
             val from = args.getOrNull(0)?.decodeArg()
             val to = args.getOrNull(1)?.decodeArg()
             if (from != null && to != null) Screen.Timeline(from, to) else null
         }
-        Route.CART -> Screen.Cart(args.getOrNull(0)?.decodeArg(), args.getOrNull(1)?.decodeArg())
-        Route.SETTINGS -> Screen.Settings
-        Route.FEES -> Screen.Fees
-        Route.BACKUP -> Screen.Backup
-        null -> null
+
+        Route.CART -> {
+            Screen.Cart(args.getOrNull(0)?.decodeArg(), args.getOrNull(1)?.decodeArg())
+        }
+
+        Route.SETTINGS -> {
+            Screen.Settings
+        }
+
+        Route.FEES -> {
+            Screen.Fees
+        }
+
+        Route.BACKUP -> {
+            Screen.Backup
+        }
+
+        null -> {
+            null
+        }
     }
 }

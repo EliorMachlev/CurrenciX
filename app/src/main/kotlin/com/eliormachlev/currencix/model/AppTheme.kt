@@ -26,10 +26,17 @@ enum class AppTheme(
     /** True when this theme currently renders dark under [config]. */
     fun isDarkActive(config: Configuration): Boolean =
         when (nightMode) {
-            AppCompatDelegate.MODE_NIGHT_YES -> true
-            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM ->
+            AppCompatDelegate.MODE_NIGHT_YES -> {
+                true
+            }
+
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> {
                 (config.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            else -> false
+            }
+
+            else -> {
+                false
+            }
         }
 
     companion object {

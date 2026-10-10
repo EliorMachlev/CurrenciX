@@ -96,7 +96,7 @@ fun ScreenScaffold(
         containerColor = Color.Transparent,
         topBar = {
             when (barStyle) {
-                TopBarStyle.Medium ->
+                TopBarStyle.Medium -> {
                     MediumTopAppBar(
                         title = title,
                         navigationIcon = navigationIcon,
@@ -104,7 +104,9 @@ fun ScreenScaffold(
                         colors = screenTopBarColors(),
                         scrollBehavior = scrollBehavior,
                     )
-                TopBarStyle.Small ->
+                }
+
+                TopBarStyle.Small -> {
                     TopAppBar(
                         title = title,
                         navigationIcon = navigationIcon,
@@ -112,6 +114,7 @@ fun ScreenScaffold(
                         colors = screenTopBarColors(),
                         scrollBehavior = scrollBehavior,
                     )
+                }
             }
         },
         content = content,

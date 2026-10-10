@@ -122,9 +122,15 @@ class MainViewModel(
         dbLiveItems =
             when {
                 // force-use cache
-                onlyCache -> db.rates.getExchangeRates()
+                onlyCache -> {
+                    db.rates.getExchangeRates()
+                }
+
                 // first run: fetch data
-                cachedDate == null -> repository.getExchangeRates()
+                cachedDate == null -> {
+                    repository.getExchangeRates()
+                }
+
                 // Historical rates in use: serve from cache when the cached date
                 // already matches the requested historical date; otherwise re-fetch.
                 historicalDate != null -> {
@@ -134,10 +140,16 @@ class MainViewModel(
                         repository.getExchangeRates()
                     }
                 }
+
                 // fetch if stored date is before the current date
-                cachedDate.isBefore(currentDate) -> repository.getExchangeRates()
+                cachedDate.isBefore(currentDate) -> {
+                    repository.getExchangeRates()
+                }
+
                 // else just use the cached value
-                else -> db.rates.getExchangeRates()
+                else -> {
+                    db.rates.getExchangeRates()
+                }
             }
 
         exchangeRates =

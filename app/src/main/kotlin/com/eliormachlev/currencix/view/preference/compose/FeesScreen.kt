@@ -335,12 +335,16 @@ private fun persistEditorConfirm(
     } else {
         val created =
             when (target.kind) {
-                is EditorKind.Global ->
+                is EditorKind.Global -> {
                     when (target.kind.globalKind) {
                         GlobalFeeKind.EXCHANGE -> draft.toGlobalExchange()
                         GlobalFeeKind.BANK -> draft.toGlobalBank()
                     }
-                EditorKind.Pair -> draft.toSpecificPair() ?: return
+                }
+
+                EditorKind.Pair -> {
+                    draft.toSpecificPair() ?: return
+                }
             }
         viewModel.addFee(created)
         adoptFirstGlobalAsActive(viewModel, target.kind, created.id)
@@ -360,10 +364,13 @@ private fun adoptFirstGlobalAsActive(
 ) {
     if (kind !is EditorKind.Global) return
     when (kind.globalKind) {
-        GlobalFeeKind.EXCHANGE ->
+        GlobalFeeKind.EXCHANGE -> {
             if (viewModel.activeExchangeId.value == null) viewModel.setActiveExchangeId(createdId)
-        GlobalFeeKind.BANK ->
+        }
+
+        GlobalFeeKind.BANK -> {
             if (viewModel.activeBankId.value == null) viewModel.setActiveBankId(createdId)
+        }
     }
 }
 

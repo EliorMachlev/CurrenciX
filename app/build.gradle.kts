@@ -5,8 +5,8 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.20"
-    id("com.google.devtools.ksp") version "2.3.11"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.21"
+    id("com.google.devtools.ksp") version "2.3.12"
     // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
     // used by the .github/workflows/screenshots.yaml job. Runs on top of
     // Robolectric Native Graphics — no device or emulator required.
@@ -295,7 +295,7 @@ dependencies {
     // architecture: Konsist encodes MVVM layer boundaries as JUnit tests so
     // Phase 1+ rewrites can't silently break the View / ViewModel / Repository
     // / Model separation. Runs on the plain JVM (no Android / Robolectric).
-    testImplementation("com.lemonappdev:konsist:0.17.3")
+    testImplementation("com.lemonappdev:konsist:0.18.1")
     // Pulls the generated baseline + startup profiles from the :baselineprofile
     // module into every :app variant. The androidx.baselineprofile plugin
     // registers this configuration and rewires assemble* tasks accordingly.
@@ -344,11 +344,9 @@ fun getSecret(key: String): String? {
 
 // versionCode <-> versionName /////////////////////////////////////////////////////////////////////
 
-/**
- * Checks if versionCode and versionName match.
- * Needed because of F-Droid: both have to be hard-coded and can't be assigned dynamically.
- * So at least check during build for them to match.
- */
+// Checks that versionCode and versionName match. Needed because of F-Droid:
+// both have to be hard-coded and can't be assigned dynamically, so at least
+// the build checks that they agree.
 tasks.register("checkVersion") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode
@@ -362,9 +360,7 @@ tasks.register("checkVersion") {
 }
 tasks.findByName("assemble")!!.dependsOn(tasks.findByName("checkVersion")!!)
 
-/**
- * Checks if a fastlane changelog for the current version is present.
- */
+// Checks that a fastlane changelog for the current version is present.
 tasks.register("checkFastlaneChangelog") {
     doLast {
         val versionCode: Int? = android.defaultConfig.versionCode

@@ -61,11 +61,13 @@ internal class CalculatorInputState {
                         setCalc(current.trim().dropLast(1) + value)
                     }
                 }
+
                 // last input was an operator: collapse "00"/"000" down to "0"
                 current.split(" ").last().isEmpty() &&
                     (value == "00" || value == "000") -> {
                     setCalc(current + "0")
                 }
+
                 else -> {
                     setCalc(current + value)
                 }
@@ -187,10 +189,12 @@ internal class CalculatorInputState {
                 lastChar.toString().matches(OPERATOR_REGEX) -> {
                     setCalc(current.trim().dropLast(1) + "$operator ")
                 }
+
                 // trailing '.': drop it, then append operator
                 lastChar == '.' -> {
                     setCalc(current.trim().dropLast(1) + " $operator ")
                 }
+
                 else -> {
                     setCalc(current.trim() + " $operator ")
                 }

@@ -320,26 +320,37 @@ class ExchangeRatesRepository(
 
     private fun handleGenericError(error: Throwable?) {
         when (error) {
-            null ->
+            null -> {
                 postError(R.string.error_generic.text())
+            }
+
             // Non-2xx HTTP response
-            is ApiHttpError ->
+            is ApiHttpError -> {
                 postError(R.string.error_http.text(error.statusCode))
+            }
+
             // timeout after 15s. likely server not reachable
-            is SocketTimeoutException ->
+            is SocketTimeoutException -> {
                 postError(R.string.error_timeout.text())
+            }
+
             // happens e.g. when device is offline or there's a DNS error
-            is UnknownHostException ->
+            is UnknownHostException -> {
                 postError(R.string.error_no_data.text())
+            }
+
             // received no data - happens e.g. with RUB @ Norges Bank
-            is NoSuchElementException ->
+            is NoSuchElementException -> {
                 postError(R.string.error_empty_response.text())
+            }
+
             // everything else
-            else ->
+            else -> {
                 postError(
                     error.localizedMessage?.let { R.string.error.text(it) }
                         ?: R.string.error_generic.text(),
                 )
+            }
         }
     }
 
@@ -372,9 +383,14 @@ private fun ApiProvider.baseCurrencyIso(): String =
         ApiProvider.FRANKFURTER_APP,
         ApiProvider.INFOR_EURO,
         -> Currency.EUR.iso4217Alpha()
+
         ApiProvider.NORGES_BANK -> Currency.NOK.iso4217Alpha()
+
         ApiProvider.BANK_ROSSII -> Currency.RUB.iso4217Alpha()
+
         ApiProvider.BANK_OF_CANADA -> Currency.CAD.iso4217Alpha()
+
         ApiProvider.OPEN_EXCHANGERATES -> Currency.USD.iso4217Alpha()
+
         ApiProvider.BANK_OF_ISRAEL -> Currency.ILS.iso4217Alpha()
     }

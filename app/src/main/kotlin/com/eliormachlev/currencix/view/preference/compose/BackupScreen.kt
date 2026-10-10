@@ -67,7 +67,7 @@ fun BackupScreen(
     }
 
     when (val dialog = viewModel.dialog) {
-        BackupDialog.ExportPassword ->
+        BackupDialog.ExportPassword -> {
             ExportPasswordSheet(
                 onCancel = viewModel::dismissDialog,
                 onConfirm = { password ->
@@ -75,7 +75,9 @@ fun BackupScreen(
                     onLaunchExport()
                 },
             )
-        is BackupDialog.ImportPassword ->
+        }
+
+        is BackupDialog.ImportPassword -> {
             ImportPasswordSheet(
                 isRetry = dialog.isRetry,
                 onCancel = viewModel::dismissDialog,
@@ -83,7 +85,9 @@ fun BackupScreen(
                     viewModel.confirmImportPassword(dialog.uri, password)
                 },
             )
-        is BackupDialog.ImportConfirm ->
+        }
+
+        is BackupDialog.ImportConfirm -> {
             ImportConfirmSheet(
                 onCancel = viewModel::dismissDialog,
                 onConfirm = {
@@ -92,7 +96,9 @@ fun BackupScreen(
                     onImportConfirmed(dialog.uri, password)
                 },
             )
-        null -> Unit
+        }
+
+        null -> {}
     }
 }
 

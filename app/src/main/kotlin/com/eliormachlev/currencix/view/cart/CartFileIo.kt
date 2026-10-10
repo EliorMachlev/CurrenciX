@@ -78,10 +78,15 @@ class CartFileIo(
                 createdAt = System.currentTimeMillis(),
             )
         when (val res = exporter.export(uri, toExport)) {
-            is CartFileResult.Success -> snackbar(activity.getString(R.string.cart_export_ok))
-            is CartFileResult.Failure ->
+            is CartFileResult.Success -> {
+                snackbar(activity.getString(R.string.cart_export_ok))
+            }
+
+            is CartFileResult.Failure -> {
                 snackbar(activity.getString(R.string.cart_export_error, activity.fileFailureMessage(res.reason, res.detail)))
-            is CartFileResult.Loaded -> Unit
+            }
+
+            is CartFileResult.Loaded -> {}
         }
     }
 
@@ -93,9 +98,12 @@ class CartFileIo(
                 viewModel.setCurrent(res.cart)
                 snackbarWithUndo(activity.getString(R.string.cart_import_ok)) { previous?.let(viewModel::setCurrent) }
             }
-            is CartFileResult.Failure ->
+
+            is CartFileResult.Failure -> {
                 snackbar(activity.getString(R.string.cart_import_error, activity.fileFailureMessage(res.reason, res.detail)))
-            is CartFileResult.Success -> Unit
+            }
+
+            is CartFileResult.Success -> {}
         }
     }
 }

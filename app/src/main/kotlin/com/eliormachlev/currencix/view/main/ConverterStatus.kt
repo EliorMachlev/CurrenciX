@@ -139,16 +139,28 @@ class ConverterStatus(
         val fallback = fallback
         bannerState.value =
             when {
-                !isOnline -> staleBanner(BannerKind.Offline, R.string.offline_banner_with_date, R.string.offline_banner_no_data)
-                lastRefreshFailed ->
+                !isOnline -> {
+                    staleBanner(BannerKind.Offline, R.string.offline_banner_with_date, R.string.offline_banner_no_data)
+                }
+
+                lastRefreshFailed -> {
                     staleBanner(BannerKind.Unreachable, R.string.unreachable_banner_with_date, R.string.unreachable_banner_no_data)
-                fallback != null -> fallbackBanner(fallback)
-                historicalDate != null ->
+                }
+
+                fallback != null -> {
+                    fallbackBanner(fallback)
+                }
+
+                historicalDate != null -> {
                     BannerContent(
                         BannerKind.Historical,
                         context.getString(R.string.historical_banner, formatTimestamp(historicalDate, null).orEmpty()),
                     )
-                else -> null
+                }
+
+                else -> {
+                    null
+                }
             }
     }
 

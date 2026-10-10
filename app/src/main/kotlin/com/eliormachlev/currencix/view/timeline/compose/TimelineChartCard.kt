@@ -79,9 +79,11 @@ internal fun TimelineChartCard(
         val content = Modifier.fillMaxSize().padding(CHART_PADDING)
         when {
             status.error != null -> TimelineErrorState(status.error, onRetry, onChangeProvider, content)
+
             // No rates in the chosen dates (a weekend, before the provider's
             // history): say so rather than leave the previous line up.
             status.empty -> TimelineNotice(R.drawable.ic_event, AnnotatedString(stringResource(R.string.timeline_no_rates)), content)
+
             else -> Box(content) { chart() }
         }
 

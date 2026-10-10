@@ -99,12 +99,14 @@ private fun LanguageRow(
         label = {
             Column(modifier = Modifier.weight(1f)) {
                 when (language) {
-                    Language.SYSTEM ->
+                    Language.SYSTEM -> {
                         Text(
                             text = language.localizedName(context),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
+                    }
+
                     else -> {
                         Text(
                             text = language.nativeName(context),
