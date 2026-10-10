@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Tanıtım turunu sıfırla</string>
+    <string name="pref_debug_reset_onboarding_summary">İlk açılış işaretini temizler, böylece vurgulu tanıtım turu bir sonraki açılışta yeniden oynatılır.</string>
+    <string name="pref_debug_reset_onboarding_toast">Tanıtım turu bir sonraki açılışta yeniden oynatılacak.</string>
+</resources>

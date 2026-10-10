@@ -4,23 +4,18 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 import java.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
-@Suppress("unused", "UNUSED_PARAMETER")
-internal class BankOfIsraelRatesAdapter {
+internal class BankOfIsraelRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
     @Synchronized
-    @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): ExchangeRates? {
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) return null
+    override fun fromJson(reader: JsonReader): ExchangeRates? {
+        if (reader.skipIfNotObject()) return null
 
         var date: LocalDate? = null
         val rates = mutableListOf<Rate>()
@@ -92,15 +87,5 @@ internal class BankOfIsraelRatesAdapter {
                 null
             }
         return rate to date
-    }
-
-    @Synchronized
-    @ToJson
-    @Throws(IOException::class)
-    fun toJson(
-        writer: JsonWriter,
-        value: ExchangeRates?,
-    ) {
-        writer.nullValue()
     }
 }

@@ -11,18 +11,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -46,12 +46,19 @@ data class QuickConversionsRow(
     val costWithFeeText: String?,
 )
 
+/** The pair's conversions at a spread of round amounts. */
+@Immutable
+data class QuickConversionsTable(
+    val from: Currency?,
+    val to: Currency?,
+    val rows: List<QuickConversionsRow>,
+    // "Fees applied: +2.5%"; null when no fee is in force.
+    val feeInfoText: String? = null,
+)
+
 @Composable
 fun QuickConversionsContent(
-    from: Currency?,
-    to: Currency?,
-    feeInfoText: String?,
-    rows: List<QuickConversionsRow>,
+    table: QuickConversionsTable,
     emptyText: String,
     onSwap: () -> Unit,
     onSwapLongPress: () -> Unit,
@@ -69,12 +76,12 @@ fun QuickConversionsContent(
                     .padding(start = padH, end = padH, top = padT),
         ) {
             QuickConversionsHeader(
-                from = from,
-                to = to,
+                from = table.from,
+                to = table.to,
                 onSwap = onSwap,
                 onSwapLongPress = onSwapLongPress,
             )
-            if (feeInfoText != null) {
+            table.feeInfoText?.let { feeInfoText ->
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.margin1x)))
                 Text(
                     text = feeInfoText,
@@ -93,7 +100,7 @@ fun QuickConversionsContent(
                         .verticalScroll(rememberScrollState())
                         .padding(vertical = dimensionResource(id = R.dimen.margin1x)),
             ) {
-                if (rows.isEmpty()) {
+                if (table.rows.isEmpty()) {
                     Text(
                         text = emptyText,
                         textAlign = TextAlign.Center,
@@ -103,7 +110,7 @@ fun QuickConversionsContent(
                                 .padding(top = dimensionResource(id = R.dimen.margin2x)),
                     )
                 } else {
-                    rows.forEach { row ->
+                    table.rows.forEach { row ->
                         QuickConversionsRowUi(row)
                     }
                 }
@@ -135,7 +142,7 @@ private fun QuickConversionsHeader(
             onLongClick = onSwapLongPress,
         ) {
             Icon(
-                imageVector = Icons.Filled.SwapHoriz,
+                painter = painterResource(R.drawable.ic_swap_horiz),
                 contentDescription = stringResource(id = R.string.desc_toggle_currencies),
                 tint = MaterialTheme.colorScheme.primary,
             )

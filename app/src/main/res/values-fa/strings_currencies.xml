@@ -22,6 +22,7 @@
     <string name="name_bob">بولیویانوی بولیوی</string>
     <string name="name_brl">رئال برزیل</string>
     <string name="name_bsd">دلار باهاما</string>
+    <string name="name_btc">بیت‌کوین</string>
 
     <string name="name_btn">انگولتروم بوتان</string>
     <string name="name_bwp">پولای بوتسوانا</string>
@@ -31,8 +32,9 @@
     <string name="name_cad">دلار کانادا</string>
     <string name="name_cdf">فرانک کنگو</string>
     <string name="name_chf">فرانک سوئیس</string>
-    <string name="name_clf">Chilean Unit of Account (UF)</string>
+    <string name="name_clf">واحد حساب شیلی (UF)</string>
     <string name="name_clp">پزوی شیلی</string>
+    <string name="name_cnh">یوآن چین (برون‌مرزی)</string>
 
     <string name="name_cny">یوآن چین</string>
     <string name="name_cop">پزوی کلمبیا</string>
@@ -54,10 +56,12 @@
 
     <string name="name_fjd">دلار فیجی</string>
     <string name="name_fkp">پوند جزایر فالکلند</string>
+    <string name="name_fok">کرونای فارو</string>
 
 
     <string name="name_gbp">پوند بریتانیا</string>
     <string name="name_gel">لاری گرجستان</string>
+    <string name="name_ggp">پوند گرنزی</string>
 
     <string name="name_ghs">سدی غنا</string>
     <string name="name_gip">پوند جبل‌الطارق</string>
@@ -74,11 +78,13 @@
 
     <string name="name_idr">روپیهٔ اندونزی</string>
     <string name="name_ils">شقل جدید اسرائیل</string>
+    <string name="name_imp">پوند جزیرهٔ من</string>
 
     <string name="name_inr">روپیهٔ هند</string>
     <string name="name_iqd">دینار عراق</string>
     <string name="name_irr">ریال ایران</string>
     <string name="name_isk">کرونای ایسلند</string>
+    <string name="name_jep">پوند جرزی</string>
 
 
     <string name="name_jmd">دلار جامائیکا</string>
@@ -149,13 +155,15 @@
     <string name="name_sek">کرون سوئد</string>
     <string name="name_sgd">دلار سنگاپور</string>
     <string name="name_shp">پوند سنت هلن</string>
+    <string name="name_sle">لئون سیرالئون</string>
 
-    <string name="name_sll">لئون سیرالئون</string>
+    <string name="name_sll">لئون سیرالئون (پیش از ۰۷/۲۰۲۲)</string>
     <string name="name_sos">شیلینگ سومالی</string>
     <string name="name_srd">دلار سورینام</string>
     <string name="name_ssp">پوند سودان جنوبی</string>
     <string name="name_std">دوبرای سائوتومه و پرنسیپ (۱۹۷۷ تا ۲۰۱۷)</string>
     <string name="name_stn">دوبرای سائوتومه و پرنسیپ</string>
+    <string name="name_svc">کولون السالوادور</string>
 
     <string name="name_syp">لیرهٔ سوریه</string>
     <string name="name_szl">لیلانگنی سوازیلند</string>
@@ -172,7 +180,7 @@
 
     <string name="name_uah">هریونیای اوکراین</string>
     <string name="name_ugx">شیلینگ اوگاندا</string>
-    <string name="name_usd">دلار امریکا</string>
+    <string name="name_usd">دلار آمریکا</string>
     <string name="name_uyu">پزوی اوروگوئه</string>
     <string name="name_uzs">سوم ازبکستان</string>
 
@@ -183,19 +191,20 @@
 
     <string name="name_wst">تالای ساموا</string>
 
-    <string name="name_xaf">فرانک CFA مرکز افریقا</string>
-    <string name="name_xag">نقره</string>
-    <string name="name_xau">طلا</string>
+    <string name="name_xaf">فرانک CFA مرکز آفریقا</string>
+    <string name="name_xag">اونس نقره</string>
+    <string name="name_xau">اونس طلا</string>
     <string name="name_xcd">دلار شرق کارائیب</string>
+    <string name="name_xdr">حق برداشت مخصوص</string>
 
-    <string name="name_xof">فرانک CFA غرب افریقا</string>
-    <string name="name_xpd">پالادیم</string>
+    <string name="name_xof">فرانک CFA غرب آفریقا</string>
+    <string name="name_xpd">اونس پالادیم</string>
     <string name="name_xpf">فرانک اقیانوسیه</string>
-    <string name="name_xpt">پلاتین</string>
+    <string name="name_xpt">اونس پلاتین</string>
 
     <string name="name_yer">ریال یمن</string>
 
-    <string name="name_zar">راند افریقای جنوبی</string>
+    <string name="name_zar">راند آفریقای جنوبی</string>
     <string name="name_zmw">کواچای زامبیا</string>
     <string name="name_zwl">دلار زیمبابوه (۲۰۰۹)</string>
 </resources>

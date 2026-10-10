@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.model.provider
 import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
@@ -42,6 +43,7 @@ class BankRossii : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val dateQuery = date?.let { "?date_req=${it.format(URL_DATE)}" } ?: ""
         return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateQuery") { body ->
@@ -55,66 +57,51 @@ class BankRossii : ApiProvider.Api() {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline> {
-        val parameterBase = base.apiCodeOrDkkForFok()
-        val parameterSymbol = symbol.apiCodeOrDkkForFok()
-
-        val ids = fetchCurrencyIds(context).getOrElse { return Result.failure(it) }
-
-        val idBase =
-            resolveCurrencyId(parameterBase, ids)
-                ?: return Result.failure(Throwable("No currency ID found for: $parameterBase"))
-        val idSymbol =
-            resolveCurrencyId(parameterSymbol, ids)
-                ?: return Result.failure(Throwable("No currency ID found for: $parameterSymbol"))
-
-        val rubTimeline = buildRubTimeline(startDate, endDate)
-        val baseTimeline = timelineFor(context, parameterBase, startDate, endDate, idBase, ids, rubTimeline)
-        val symbolTimeline = timelineFor(context, parameterSymbol, startDate, endDate, idSymbol, ids, rubTimeline)
-
-        val baseRates: Map<LocalDate, Rate>? = baseTimeline.getOrNull()?.rates
-        val symbolRates: Map<LocalDate, Rate>? = symbolTimeline.getOrNull()?.rates
-
-        return if (baseRates == null || symbolRates == null) {
-            Result.failure(Throwable("Timeline data unavailable for base or symbol currency"))
-        } else {
-            runCatching {
-                symbolTimeline.getOrThrow().copy(
-                    rates =
-                        symbolRates
-                            .filter { (date, _) -> baseRates[date] != null }
-                            .mapValues { (date, rate) ->
-                                rate.copy(value = rate.value.divide(baseRates[date]!!.value, MathContext.DECIMAL128))
-                            },
-                )
+    ): Result<Timeline> =
+        fetchCurrencyIds(context)
+            // Both legs are resolved before either series is fetched.
+            .mapCatching { ids -> TimelineQuery(context, startDate, endDate, ids, legOf(base, ids), legOf(symbol, ids)) }
+            .flatMap { query ->
+                timelineFor(query, query.base).flatMap { baseTimeline ->
+                    timelineFor(query, query.symbol).mapCatching { symbolTimeline -> symbolTimeline.pricedIn(baseTimeline) }
+                }
             }
-        }
+
+    // One side of the pair: its API code and the bank's ID for it. RUB has
+    // no ID (it's the API's implicit quote currency), so its code stands in.
+    private fun legOf(
+        currency: Currency,
+        ids: Map<String, String>,
+    ): Leg {
+        val code = currency.apiCodeOrDkkForFok()
+        val id = if (code == RUB_CODE) RUB_CODE else ids.entries.find { it.value == code }?.key
+        return Leg(code, checkNotNull(id) { "No currency ID found for: $code" })
     }
 
-    // Returns the numeric ID for [code], or null when unknown. RUB itself
-    // has no ID (it's the API's implicit quote currency) — signal that with
-    // a sentinel string that only [timelineFor] recognises.
-    private fun resolveCurrencyId(
-        code: String,
-        ids: Map<String, String>,
-    ): String? = if (code == RUB_CODE) RUB_CODE else ids.entries.find { it.value == code }?.key
-
-    // Picks either the synthetic RUB timeline (1:1) or hits the API for the
-    // real currency series.
+    // The synthetic RUB series (1:1), or the bank's series for a real currency.
     private suspend fun timelineFor(
-        context: Context?,
-        code: String,
-        startDate: LocalDate,
-        endDate: LocalDate,
-        id: String,
-        ids: Map<String, String>,
-        rubTimeline: Timeline,
+        query: TimelineQuery,
+        leg: Leg,
     ): Result<Timeline> =
-        if (code == RUB_CODE) {
-            Result.success(rubTimeline)
+        if (leg.code == RUB_CODE) {
+            Result.success(buildRubTimeline(query.startDate, query.endDate))
         } else {
-            fetchCurrencyTimeline(context, startDate, endDate, id, ids)
+            fetchCurrencyTimeline(query, leg.id)
         }
+
+    // This series (the symbol's, in RUB) priced in [base]'s, on the days both have.
+    private fun Timeline.pricedIn(base: Timeline): Timeline {
+        val baseRates = base.rates
+        val symbolRates = rates
+        check(baseRates != null && symbolRates != null) { "Timeline data unavailable for base or symbol currency" }
+        return copy(
+            rates =
+                symbolRates
+                    .mapNotNull { (date, rate) ->
+                        baseRates[date]?.let { date to rate.copy(value = rate.value.divide(it.value, MathContext.DECIMAL128)) }
+                    }.toMap(),
+        )
+    }
 
     private fun buildRubTimeline(
         startDate: LocalDate,
@@ -139,19 +126,32 @@ class BankRossii : ApiProvider.Api() {
         }
 
     private suspend fun fetchCurrencyTimeline(
-        context: Context?,
-        startDate: LocalDate,
-        endDate: LocalDate,
+        query: TimelineQuery,
         currencyId: String,
-        ids: Map<String, String>,
     ): Result<Timeline> =
         HttpClientProvider.fetch(
-            context,
+            query.context,
             "$baseUrl/XML_dynamic.asp" +
-                "?date_req1=${startDate.format(URL_DATE)}" +
-                "&date_req2=${endDate.format(URL_DATE)}" +
+                "?date_req1=${query.startDate.format(URL_DATE)}" +
+                "&date_req2=${query.endDate.format(URL_DATE)}" +
                 "&VAL_NM_RQ=$currencyId",
         ) { body ->
-            BankRossiiTimelineXmlParser(ids).parse(body.byteStream())
+            BankRossiiTimelineXmlParser(query.ids).parse(body.byteStream())
         }
 }
+
+// One side of a timeline's pair: its API code and the bank's ID for it.
+private class Leg(
+    val code: String,
+    val id: String,
+)
+
+// What a timeline request carries to each of its fetches.
+private class TimelineQuery(
+    val context: Context?,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val ids: Map<String, String>,
+    val base: Leg,
+    val symbol: Leg,
+)

@@ -3,12 +3,26 @@ package com.eliormachlev.currencix.model.provider
 import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.BankOfCanadaRatesAdapter
 import com.eliormachlev.currencix.model.adapter.BankOfCanadaTimelineAdapter
+import com.eliormachlev.currencix.model.adapter.register
+import com.eliormachlev.currencix.model.provider.api.BankOfCanadaApi
+import com.eliormachlev.currencix.model.provider.api.ValetOrder
+import com.squareup.moshi.Moshi
 import java.time.LocalDate
+
+// `recent=1` asks Valet for just the latest observation.
+private const val RECENT_LATEST_ONLY = 1
+
+// The rates adapter is stateless, so one Moshi serves every rates request.
+private val RATES_MOSHI: Moshi = moshi { register(BankOfCanadaRatesAdapter()) }
+
+// Valet names each daily series `FX<currency>CAD`.
+private fun valetSeries(currency: Currency): String = "FX${currency.apiCodeOrDkkForFok()}CAD"
 
 class BankOfCanada : ApiProvider.Api() {
     override val name = "Bank of Canada"
@@ -27,26 +41,19 @@ class BankOfCanada : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> {
+        val api = retrofitApi<BankOfCanadaApi>(context, RATES_MOSHI)
         // `recent=1` returns just the latest observation; a start/end range asks
         // for the historical window ending on the requested date.
-        val dateQuery =
-            if (date == null) {
-                "recent=1"
-            } else {
-                "start_date=${date.minusDays(TIMELINE_LOOKBACK_DAYS).format(ISO_DATE)}" +
-                    "&end_date=${date.format(ISO_DATE)}"
-            }
-        val adapter =
-            moshi { add(BankOfCanadaRatesAdapter()) }
-                .adapter(ExchangeRates::class.java)
-
-        return fetchJson(
-            context,
-            "$baseUrl/observations/group/FX_RATES_DAILY_CURRENT/json?$dateQuery&order_dir=desc",
-            name,
-            adapter,
-        )
+        return fetchRetrofit {
+            api.getRates(
+                recent = if (date == null) RECENT_LATEST_ONLY else null,
+                startDate = date?.minusDays(TIMELINE_LOOKBACK_DAYS)?.format(ISO_DATE),
+                endDate = date?.format(ISO_DATE),
+                order = ValetOrder.DESC,
+            )
+        }
     }
 
     override suspend fun getTimeline(
@@ -56,17 +63,16 @@ class BankOfCanada : ApiProvider.Api() {
         startDate: LocalDate,
         endDate: LocalDate,
     ): Result<Timeline> {
-        val adapter =
-            moshi { add(BankOfCanadaTimelineAdapter(base, symbol)) }
-                .adapter(Timeline::class.java)
+        // The adapter closes over the requested pair, so it's built per request.
+        val api = retrofitApi<BankOfCanadaApi>(context, moshi { register(BankOfCanadaTimelineAdapter(base, symbol)) })
 
-        val url =
-            "$baseUrl/observations/" +
-                "FX${base.apiCodeOrDkkForFok()}CAD,FX${symbol.apiCodeOrDkkForFok()}CAD/json" +
-                "?start_date=${startDate.format(ISO_DATE)}" +
-                "&end_date=${endDate.format(ISO_DATE)}" +
-                "&order_dir=asc"
-
-        return fetchJson(context, url, name, adapter)
+        return fetchRetrofit {
+            api.getSeries(
+                seriesNames = "${valetSeries(base)},${valetSeries(symbol)}",
+                startDate = startDate.format(ISO_DATE),
+                endDate = endDate.format(ISO_DATE),
+                order = ValetOrder.ASC,
+            )
+        }
     }
 }

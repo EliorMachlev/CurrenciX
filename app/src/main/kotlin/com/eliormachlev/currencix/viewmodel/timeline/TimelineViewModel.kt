@@ -1,22 +1,23 @@
 package com.eliormachlev.currencix.viewmodel.timeline
 
 import android.app.Application
-import android.text.Spanned
-import android.text.SpannedString
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import com.eliormachlev.currencix.R
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
+import com.eliormachlev.currencix.repository.RefreshState
+import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
+import com.eliormachlev.currencix.repository.defaultTimelineSince
 import com.eliormachlev.currencix.util.calculateDifference
-import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
 import java.math.BigDecimal
 import java.math.MathContext
@@ -58,35 +59,56 @@ class TimelineViewModel(
     private var base: Currency,
     private var target: Currency,
 ) : AndroidViewModel(app) {
-    class Factory(
-        private val mApplication: Application,
-        private val base: Currency,
-        private val target: Currency,
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = TimelineViewModel(mApplication, base, target) as T
+    companion object {
+        /** Builds the [TimelineViewModel] for [base] → [target]. */
+        fun factory(
+            app: Application,
+            base: Currency,
+            target: Currency,
+        ): ViewModelProvider.Factory = viewModelFactory { initializer { TimelineViewModel(app, base, target) } }
     }
 
     enum class Period {
         WEEK,
         MONTH,
         YEAR,
+        FIVE_YEARS,
+
+        /** The user's own dates ([setCustomRange]). */
+        CUSTOM,
         ;
 
-        fun startDate(today: LocalDate = LocalDate.now()): LocalDate =
+        /** Where this period starts, ending [today]; null for [CUSTOM], which has its own dates. */
+        fun startDate(today: LocalDate = LocalDate.now()): LocalDate? =
             when (this) {
                 WEEK -> today.minusWeeks(1)
                 MONTH -> today.minusMonths(1)
                 YEAR -> today.minusYears(1)
+                FIVE_YEARS -> today.minusYears(FIVE)
+                CUSTOM -> null
             }
+
+        private companion object {
+            const val FIVE = 5L
+        }
     }
+
+    /** The dates a [Period] covers: [start] to [end] (today, unless custom). */
+    data class Span(
+        val start: LocalDate,
+        val end: LocalDate,
+    )
 
     private var repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
 
     private var decimalPlaces = DEFAULT_DECIMAL_PLACES
 
-    // week/month/year
     private val periodLiveData = MutableLiveData(Period.YEAR)
+    private val customRangeLiveData = MutableLiveData<Span?>(null)
+
+    // How far back this screen has asked the repository for — a longer span
+    // fetches further back; a shorter one filters what's already there.
+    private var fetchedSince: LocalDate = defaultTimelineSince()
 
     // currently selected date
     private val scrubDateLiveData = MutableLiveData<LocalDate?>()
@@ -94,63 +116,71 @@ class TimelineViewModel(
     // error
     private val errorLiveData = repository.getError()
 
-    // updating
-    private var isUpdating = repository.isUpdating()
+    // updating — see RefreshState: the chart's progress bar is a passive
+    // indicator; menu enablement is logic, so it reads the raw state.
+    private val refreshIndicator: LiveData<Boolean> = RefreshState.passiveIndicator.asLiveData()
+    private val refreshInFlight: LiveData<Boolean> = RefreshState.inFlight.asLiveData()
 
     private val dbLiveItems: LiveData<Timeline?> by lazy {
         MediatorLiveData<Timeline?>().apply {
             var timeline: Timeline? = null
-            var startDate: LocalDate? = null
 
             fun update() {
+                val span = currentSpan()
                 this.value =
                     timeline?.copy(
-                        startDate = startDate,
-                        rates =
-                            timeline?.rates?.filter { entries ->
-                                !entries.key.isBefore(startDate)
-                            },
+                        startDate = span.start,
+                        rates = timeline?.rates?.filterKeys { !it.isBefore(span.start) && !it.isAfter(span.end) },
                     )
             }
 
-            // 1y timeline data - always call api - hard to find a decent caching strategy
-            addSource(repository.getTimeline(base, target)) {
+            addSource(repository.getTimeline(base, target, fetchedSince)) {
                 timeline = it
                 update()
             }
-
-            // selected time period
-            addSource(periodLiveData) {
-                startDate = it.startDate()
-                update()
-            }
+            addSource(periodLiveData) { update() }
+            addSource(customRangeLiveData) { update() }
         }
+    }
+
+    /** The dates on screen: the chosen period's, or the custom range. */
+    private fun currentSpan(today: LocalDate = LocalDate.now()): Span {
+        val period = periodLiveData.value ?: Period.YEAR
+        return period.startDate(today)?.let { Span(it, today) }
+            ?: customRangeLiveData.value
+            ?: Span(today.minusYears(1), today)
+    }
+
+    // Asks for older history when the span on screen starts before what's
+    // been fetched; a span within it needs no network.
+    private fun fetchCovering(span: Span) {
+        if (!span.start.isBefore(fetchedSince)) return
+        fetchedSince = span.start
+        repository.getTimeline(base, target, fetchedSince)
     }
 
     /*
      * getters for the various values ==============================================================
      */
 
-    fun getTitle(): LiveData<Spanned> =
-        dbLiveItems.map {
-            if (it == null) {
-                SpannedString("")
-            } else {
-                app
-                    .getString(
-                        R.string.activity_timeline_title,
-                        base.iso4217Alpha(),
-                        target.iso4217Alpha(),
-                    ).fromHtmlLegacy()
-            }
-        }
+    /**
+     * The pair on screen, for the title. Follows [toggleCurrencies]; null
+     * until the first timeline arrives, so the title doesn't flash the pair
+     * over an empty chart.
+     */
+    fun getCurrencyPair(): LiveData<Pair<Currency, Currency>?> = dbLiveItems.map { if (it == null) null else base to target }
+
+    /** Fetches the pair again — after an error, or once the provider changed. */
+    fun retry() {
+        repository.getTimeline(base, target, fetchedSince)
+    }
 
     fun toggleCurrencies() {
         val tmp = base
         base = target
         target = tmp
         // call the api -- timeline live data is auto-updated everywhere where it is used
-        repository.getTimeline(base, target)
+        repository.getTimeline(base, target, fetchedSince)
     }
 
     fun getProvider(): LiveData<CharSequence?> =
@@ -163,6 +193,31 @@ class TimelineViewModel(
             it?.rates
         }
 
+    /**
+     * True when the dates on screen hold no rates once loading is done — a
+     * custom range over a weekend, or before the provider's history. While
+     * older history is still downloading it stays false (the progress bar
+     * says what's happening).
+     */
+    fun isRangeEmpty(): LiveData<Boolean> =
+        MediatorLiveData(false).apply {
+            var timeline: Timeline? = null
+            var loading = false
+
+            fun update() {
+                value = !loading && timeline?.rates?.isEmpty() == true
+            }
+
+            addSource(dbLiveItems) {
+                timeline = it
+                update()
+            }
+            addSource(refreshInFlight) {
+                loading = it
+                update()
+            }
+        }
+
     fun getRateCurrent(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> =
         MediatorLiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>>().apply {
             var rates: Map.Entry<LocalDate, Rate?>? = null
@@ -172,7 +227,7 @@ class TimelineViewModel(
             }
 
             addSource(dbLiveItems) {
-                rates = it?.rates?.entries?.last()
+                rates = it?.rates?.entries?.lastOrNull()
                 update()
             }
 
@@ -192,7 +247,7 @@ class TimelineViewModel(
                     if (date != null) {
                         Pair(rates?.find { it.key == date }, decimalPlaces)
                     } else {
-                        Pair(rates?.first(), decimalPlaces)
+                        Pair(rates?.firstOrNull(), decimalPlaces)
                     }
             }
 
@@ -222,9 +277,9 @@ class TimelineViewModel(
                     if (scrubDate != null) {
                         rates?.find { it.key == scrubDate }?.value
                     } else {
-                        rates?.first()?.value
+                        rates?.firstOrNull()?.value
                     }
-                val current = rates?.last()?.value
+                val current = rates?.lastOrNull()?.value
 
                 val ratePast = past?.value
                 val rateCurrent = current?.value
@@ -358,8 +413,31 @@ class TimelineViewModel(
             }
         }
 
+    fun getPeriod(): LiveData<Period> = periodLiveData
+
+    /** The dates on screen right now (for the chart's share caption). */
+    fun span(): Span = currentSpan()
+
+    fun getCustomRange(): LiveData<Span?> = customRangeLiveData
+
+    /** A preset period; [Period.CUSTOM] goes through [setCustomRange]. */
     fun setTimePeriod(period: Period) {
-        periodLiveData.postValue(period)
+        if (period == Period.CUSTOM && customRangeLiveData.value == null) return
+        periodLiveData.value = period
+        fetchCovering(currentSpan())
+    }
+
+    /** Shows [start]…[end] (clamped to what the app keeps: [TIMELINE_MAX_YEARS]). */
+    fun setCustomRange(
+        start: LocalDate,
+        end: LocalDate,
+    ) {
+        val today = LocalDate.now()
+        val from = maxOf(minOf(start, end), today.minusYears(TIMELINE_MAX_YEARS))
+        val to = minOf(maxOf(start, end), today)
+        customRangeLiveData.value = Span(from, to)
+        periodLiveData.value = Period.CUSTOM
+        fetchCovering(Span(from, to))
     }
 
     fun setPastDate(date: LocalDate?) {
@@ -372,5 +450,9 @@ class TimelineViewModel(
 
     fun getError(): LiveData<String?> = errorLiveData
 
-    fun isUpdating(): LiveData<Boolean> = isUpdating
+    /** Chart progress bar: only for a refresh slow enough to notice. */
+    fun isRefreshing(): LiveData<Boolean> = refreshIndicator
+
+    /** Raw "a refresh is running" — for enabling actions, not for display. */
+    fun isRefreshInFlight(): LiveData<Boolean> = refreshInFlight
 }

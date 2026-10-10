@@ -9,6 +9,3 @@ exclude:
       - .gradle
       - app/build
       - helpers/build
-      - app/src/test
-      - app/src/androidTest
-      - helpers/src/test

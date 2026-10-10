@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> за &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Данни от &lt;b>%s&lt;/b></string>
-    <string name="rate_average">Средно</string>
+    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> към &lt;b>%2$s&lt;/b></string>
+    <string name="rate_average">средно</string>
     <string name="rate_median">медиана</string>
     <string name="rate_min">минимум</string>
     <string name="rate_max">максимум</string>
     <string name="year">година</string>
     <string name="month">месец</string>
     <string name="week">седмица</string>
+    <string name="timeline_five_years">5 години</string>
+    <string name="timeline_custom_range">Персонализиран период</string>
+    <string name="timeline_share">Споделяне на графиката</string>
+    <string name="timeline_no_rates">Няма курсове за тези дати</string>
 </resources>

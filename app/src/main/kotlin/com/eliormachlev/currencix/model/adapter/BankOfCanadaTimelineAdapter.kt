@@ -4,74 +4,66 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 import java.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 
-@Suppress("unused", "UNUSED_PARAMETER")
 internal class BankOfCanadaTimelineAdapter(
     private val base: Currency,
     private val symbol: Currency,
-) {
+) : ResponseAdapter<Timeline>(Timeline::class.java) {
     @Synchronized
-    @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): Timeline? {
-        reader.beginObject()
+    override fun fromJson(reader: JsonReader): Timeline? {
+        // The whole document is read, whichever field answers first: Retrofit
+        // rejects a response its adapter left partly unread.
         var result: Timeline? = null
-        while (reader.hasNext() && result == null) {
-            when (reader.nextName()) {
-                "message" ->
-                    result =
-                        Timeline(
-                            success = false,
-                            error = reader.nextString(),
-                            base = null,
-                            startDate = null,
-                            endDate = null,
-                            rates = null,
-                            provider = ApiProvider.BANK_OF_CANADA,
-                        )
-                "observations" -> {
-                    reader.beginArray()
-                    result = convertObservations(reader)
+        reader.beginObject()
+        while (reader.hasNext()) {
+            val found =
+                when (reader.nextName()) {
+                    "message" -> errorResponse(reader.nextString())
+                    "observations" -> convertObservations(reader)
+                    else -> null.also { reader.skipValue() }
                 }
-                else -> reader.skipValue()
-            }
+            result = result ?: found
         }
         reader.endObject()
         return result
     }
 
-    private fun convertObservations(reader: JsonReader): Timeline {
-        var errorMessage: String? = null
-        var rates = mutableMapOf<LocalDate, Rate>()
+    private fun errorResponse(message: String?): Timeline =
+        Timeline(
+            success = false,
+            error = message,
+            base = null,
+            startDate = null,
+            endDate = null,
+            rates = null,
+            provider = ApiProvider.BANK_OF_CANADA,
+        )
 
-        if (reader.peek() == JsonReader.Token.END_ARRAY) {
-            // no data
-            errorMessage = NO_DATA_ERROR
-        } else {
-            while (reader.hasNext() && reader.peek() != JsonReader.Token.END_ARRAY) {
-                convertObservation(reader)?.let { rates.put(it.first, it.second) }
-            }
+    private fun convertObservations(reader: JsonReader): Timeline {
+        val rates = sortedMapOf<LocalDate, Rate>()
+        reader.beginArray()
+        while (reader.hasNext()) {
+            convertObservation(reader)?.let { (date, rate) -> rates[date] = rate }
         }
-        rates = rates.toSortedMap()
+        reader.endArray()
         return Timeline(
-            success = errorMessage == null && rates.isNotEmpty(),
-            error = errorMessage,
+            success = rates.isNotEmpty(),
+            error = if (rates.isEmpty()) NO_DATA_ERROR else null,
             base = base.iso4217Alpha(),
-            startDate = rates.entries.first().key,
-            endDate = rates.entries.last().key,
+            startDate = rates.keys.firstOrNull(),
+            endDate = rates.keys.lastOrNull(),
             rates = rates,
             provider = ApiProvider.BANK_OF_CANADA,
         )
     }
 
+    // One day's observation: the symbol priced in the base, when the day has both.
     private fun convertObservation(reader: JsonReader): Pair<LocalDate, Rate>? {
         var date: LocalDate? = null
         var baseValue: BigDecimal? = null
@@ -84,18 +76,16 @@ internal class BankOfCanadaTimelineAdapter(
                 date = LocalDate.parse(reader.nextString())
             } else {
                 val (currency, value) = readCurrencyValue(reader, nextName)
-                if (currency == base) {
-                    baseValue = value
-                } else if (currency == symbol) {
-                    symbolValue = value
-                }
-            }
-            if (date != null && baseValue != null && symbolValue != null) {
-                reader.endObject()
-                return Pair(date, Rate(symbol, baseValue.divide(symbolValue, MathContext.DECIMAL128)))
+                if (currency == base) baseValue = value
+                if (currency == symbol) symbolValue = value
             }
         }
-        return null
+        reader.endObject()
+        return if (date != null && baseValue != null && symbolValue != null) {
+            date to Rate(symbol, baseValue.divide(symbolValue, MathContext.DECIMAL128))
+        } else {
+            null
+        }
     }
 
     private fun readCurrencyValue(
@@ -108,15 +98,5 @@ internal class BankOfCanadaTimelineAdapter(
         val value = BigDecimal(reader.nextString())
         reader.endObject()
         return currency to value
-    }
-
-    @Synchronized
-    @ToJson
-    @Throws(IOException::class)
-    fun toJson(
-        writer: JsonWriter,
-        value: Timeline?,
-    ) {
-        writer.nullValue()
     }
 }

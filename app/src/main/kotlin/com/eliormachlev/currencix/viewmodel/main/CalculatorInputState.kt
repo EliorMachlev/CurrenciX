@@ -8,6 +8,7 @@ import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.PAREN_CLOSE
 import com.eliormachlev.currencix.util.PAREN_OPEN
 import com.eliormachlev.currencix.util.unclosedParens
+import java.math.BigDecimal
 
 /**
  * Holds the mutable keypad state — the lower "base" row and the optional upper
@@ -129,6 +130,12 @@ internal class CalculatorInputState {
         setCalc(null)
     }
 
+    /** Replaces the input with [value] (any calculation is dropped) — an amount handed in from outside. */
+    fun setAmount(value: BigDecimal) {
+        setCalc(null)
+        _baseValueText.value = value.abs().stripTrailingZeros().toPlainString()
+    }
+
     fun addOpenParen() {
         if (!isInCalculationMode()) {
             // seed calc row from base like operators do; drop base "0" so the
@@ -140,7 +147,7 @@ internal class CalculatorInputState {
         val current = _calculationValueText.value!!
         val trimmed = current.trimEnd()
         // after a value-continuation token (digit, `)`, `%`, `.`) insert an
-        // implicit multiplication so EvalEx sees `5*(...)` instead of parse error
+        // explicit multiplication, so the row reads `5 × (…)` rather than `5(…)`
         setCalc(
             if (isValueContinuationTail(trimmed.lastOrNull())) withImplicitMultBeforeOpen(trimmed) else current + PAREN_OPEN,
         )

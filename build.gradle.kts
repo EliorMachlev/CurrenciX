@@ -1,9 +1,11 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 
 plugins {
     id("com.android.application") version "9.3.2" apply false
     id("com.android.test") version "9.3.2" apply false
-    id("org.jetbrains.kotlin.jvm") version "2.4.10" apply false
+    id("org.jetbrains.kotlin.jvm") version "2.4.20" apply false
     // Baseline-profile Gradle plugin — wired at :app (to consume generated
     // profiles) and :baselineprofile (to run the generator). Pinned to the
     // same androidx-benchmark train as the macro-benchmark dependency in the
@@ -17,11 +19,18 @@ plugins {
     // apply=false at root so the base plugin doesn't collide with the manual
     // clean task below; each subproject opts in.
     id("com.diffplug.spotless") version "8.10.0" apply false
+    // Static analysis. Version pinned so upstream releases can't silently
+    // change what CI enforces. See config/detekt/detekt.yml for tuned rules.
+    // There is no baseline: every finding fails the build.
+    id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
 }
 
 // ktlint CLI pinned so Spotless updates don't silently bump the underlying
 // linter version.
 val ktlintCliVersion = "1.5.0"
+
+// Detekt config path — shared across subprojects.
+val detektConfigFile = rootProject.file("config/detekt/detekt.yml")
 
 subprojects {
     apply(plugin = "com.diffplug.spotless")
@@ -34,6 +43,34 @@ subprojects {
         kotlinGradle {
             target("*.gradle.kts")
             ktlint(ktlintCliVersion)
+        }
+    }
+
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+    configure<DetektExtension> {
+        toolVersion = "1.23.8"
+        config.setFrom(detektConfigFile)
+        buildUponDefaultConfig = true
+        allRules = false
+        parallel = true
+        autoCorrect = false
+        ignoreFailures = false
+    }
+    tasks.withType<Detekt>().configureEach {
+        jvmTarget = "21"
+        // The Android plugin doesn't wire its source-sets into the plain
+        // `detekt` task, and the `helpers` JVM module's `sourceSets["main"]`
+        // convention wiring also skips it. Point the task at src/**/*.kt
+        // explicitly so both modules actually analyse code.
+        setSource(files("src"))
+        include("**/*.kt", "**/*.kts")
+        exclude("**/build/**", "**/generated/**", "**/resources/**")
+        reports {
+            html.required.set(true)
+            xml.required.set(true)
+            sarif.required.set(true)
+            txt.required.set(false)
+            md.required.set(false)
         }
     }
 }

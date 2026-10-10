@@ -1,0 +1,109 @@
+package com.eliormachlev.currencix.util
+
+import android.content.ClipData
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.core.content.FileProvider
+import java.io.ByteArrayOutputStream
+import java.io.File
+
+// Cache subdirectories mapped in res/xml/file_provider_paths.xml. Kept as
+// constants so both this helper and callers stay in lockstep with the
+// FileProvider config.
+internal const val CART_EXPORT_SUBDIR = "cart-exports"
+internal const val SHARE_IMAGES_SUBDIR = "share-images"
+
+private const val AUTHORITY_SUFFIX = ".fileprovider"
+private const val PNG_MIME = "image/png"
+private const val PNG_EXT = ".png"
+
+// PNG compression is lossless — the "quality" arg is ignored by the PNG
+// encoder, but the API still requires it.
+private const val PNG_QUALITY = 100
+
+/**
+ * `<cacheDir>/<subdir>/<filename>` (the directory created if needed) and its
+ * FileProvider URI, for handing the file to another app.
+ */
+internal fun cacheFile(
+    context: Context,
+    subdir: String,
+    filename: String,
+): Pair<File, Uri> {
+    val file = File(File(context.cacheDir, subdir).apply { mkdirs() }, filename)
+    return file to FileProvider.getUriForFile(context, context.packageName + AUTHORITY_SUFFIX, file)
+}
+
+/**
+ * Writes [bytes] into `<cacheDir>/<subdir>/<filename>` and returns an
+ * `ACTION_SEND` chooser Intent primed with the resulting FileProvider URI,
+ * MIME type, and per-URI read grant. Optional [extraText] is added as
+ * `EXTRA_TEXT` so a recipient that renders text (SMS, email) still sees the
+ * caption alongside the attachment.
+ *
+ * Central share-file plumbing — both CSV/PDF cart exports and hero-card PNG
+ * snapshots go through here so filename hygiene, URI grants, and chooser
+ * flags stay consistent.
+ */
+internal fun buildShareChooser(
+    context: Context,
+    subdir: String,
+    filename: String,
+    mimeType: String,
+    bytes: ByteArray,
+    extraText: String? = null,
+): Intent {
+    val (outFile, uri) = cacheFile(context, subdir, filename)
+    outFile.writeBytes(bytes)
+    val sendIntent =
+        Intent(Intent.ACTION_SEND).apply {
+            type = mimeType
+            putExtra(Intent.EXTRA_STREAM, uri)
+            if (extraText != null) putExtra(Intent.EXTRA_TEXT, extraText)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            // Sharesheet runs in com.android.intentresolver — a separate
+            // process from ours. EXTRA_STREAM only grants URI access to the
+            // *target* app, not to the sharesheet itself, so the sheet fails
+            // to load a preview and the entry visually collapses to a bare
+            // text row. ClipData carries the grant to the sheet process too,
+            // so the image preview renders and the intent doesn't look like
+            // text-only to the user.
+            clipData = ClipData.newRawUri(null, uri)
+        }
+    return Intent.createChooser(sendIntent, null).apply {
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+}
+
+/**
+ * A share chooser for [image] as a PNG named `<namePrefix>-<timestamp>.png`,
+ * with [text] alongside — the snapshot shares (converter, timeline chart).
+ */
+internal fun buildImageShareChooser(
+    context: Context,
+    image: ImageBitmap,
+    namePrefix: String,
+    text: String?,
+): Intent =
+    buildShareChooser(
+        context = context,
+        subdir = SHARE_IMAGES_SUBDIR,
+        filename = "$namePrefix-${filenameTimestampNow()}$PNG_EXT",
+        mimeType = PNG_MIME,
+        bytes = image.toPngBytes(),
+        extraText = text,
+    )
+
+/**
+ * Encode this [ImageBitmap] as PNG bytes — what [buildImageShareChooser]
+ * attaches, so the encode and the MIME it advertises stay in one place.
+ */
+internal fun ImageBitmap.toPngBytes(): ByteArray {
+    val out = ByteArrayOutputStream()
+    asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, PNG_QUALITY, out)
+    return out.toByteArray()
+}

@@ -3,14 +3,31 @@
     <string name="api_bankOfIsrael_descriptionFull">Nilai tukar representatif, seperti yang dipublikasikan oleh bank sentral Israel <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Nilai tukar dikutip terhadap syikal baru Israel.\n<b>Bank of Israel mencantumkan sekitar 14 nilai tukar.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Sekitar 14 nilai tukar\nSumber: Bank Sentral Israel</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Nilai tukar representatif dipublikasikan sekali setiap hari kerja sekitar pukul 15.30 waktu Israel.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> menerima nilai tukar mata uang dari berbagai penyedia data keuangan dan bank, termasuk Bank Sentral Eropa (European Central Bank). Semua data nilai tukar disampaikan dalam data titik tengah. Titik tengah ditentukan dengan menghitung rata-rata Bid dan Ask.\n<b>Sekitar 160 mata uang tersedia.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Nilai tukar diperbarui pada tengah malam UTC setiap hari kerja.</string>
+    <string name="api_bankRossii_descriptionFull">Nilai tukar, seperti yang disediakan oleh bank sentral Rusia <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Dengan sanksi yang berlaku saat ini, sumber ini kemungkinan memberikan nilai tukar paling andal untuk Rubel Rusia.\n<b>Bank Rossii mencantumkan sekitar 44 nilai tukar.</b></string>
+    <string name="api_bankRossii_descriptionShort">Sekitar 44 nilai tukar\nSumber: Bank Sentral Rusia</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Nilai tukar diperbarui setiap hari, kecuali pada <a href="https://cbr.ru/eng/other/holidays/">hari libur nasional di Rusia</a>.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> adalah layanan yang relatif lebih baru, yang (seperti Frankfurter.app) memantau nilai valas yang dipublikasikan oleh Bank Sentral Eropa (European Central Bank).\n<b>Sekitar 30 mata uang tersedia.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">Nilai tukar diperbarui setiap hari kerja.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> memantau nilai valas yang dipublikasikan oleh Bank Sentral Eropa (European Central Bank).\n<b>Sekitar 30 mata uang tersedia.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Sekitar 30 nilai tukar\nSumber: Bank Sentral Eropa</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Data diperbarui sekitar pukul 16.00 CET setiap hari kerja.</string>
+    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> menyediakan kurs akuntansi bulanan resmi Komisi Eropa untuk Euro serta kurs konversi yang ditetapkan oleh Pejabat Akuntansi Komisi Eropa sesuai dengan pasal 19 Peraturan Keuangan.\nKurs ini digunakan untuk menghitung jumlah penggantian pengeluaran, biaya perjalanan, atau biaya hidup bagi pihak eksternal yang mengikuti rapat, wawancara, dsb. atas permintaan Komisi Eropa.\n<b>Sekitar 150 mata uang tersedia.</b></string>
+    <string name="api_inforEuro_descriptionShort">Sekitar 150 nilai tukar\nSumber: Komisi Eropa</string>
+    <string name="api_inforEuro_descriptionUpdateInterval">Nilai tukar yang ditampilkan adalah kurs pasar pada hari kedua terakhir bulan sebelumnya sebagaimana dikutip oleh Bank Sentral Eropa atau, bergantung pada ketersediaan, disediakan oleh delegasi atau sumber lain yang sesuai mendekati tanggal tersebut.</string>
+    <string name="api_inforEuro_hint">Nilai tukar hanya diperbarui sebulan sekali!</string>
+    <string name="api_norgesBank_descriptionFull">Nilai tukar, seperti yang disediakan oleh bank sentral Norwegia <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>Norges Bank mencantumkan sekitar 40 nilai tukar.</b></string>
+    <string name="api_norgesBank_descriptionShort">Sekitar 40 nilai tukar\nSumber: Bank Sentral Norwegia</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">Waktu publikasi nilai tukar harian adalah sekitar pukul 16:00 CET.</string>
+    <string name="api_norgesBank_hint">Layanan ini sering mengalami gangguan (HTTP 503), dan selama itu nilai tukar tidak dapat diperbarui!</string>
+    <string name="api_openExchangeRates_descriptionFull">Data dipantau dan digabungkan dari berbagai sumber tepercaya, sehingga menjamin nilai tukar yang tidak bias. Lihat <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> untuk informasi selengkapnya.\n<b>Open Exchange Rates menyediakan banyak nilai tukar, yaitu sekitar 160.\n<i>Untuk menggunakan Sumber ini, Anda harus memasukkan Kunci API pribadi Anda!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Sekitar 160 nilai tukar\nSumber: Gabungan dari beberapa penyedia tepercaya.</string>
+    <string name="api_openExchangeRates_descriptionUpdateInterval">Pembaruan setiap jam.</string>
+    <string name="api_openExchangeRates_hint">Untuk menggunakan Sumber ini, Anda harus membuat Kunci API pribadi!</string>
     <string name="api_bankOfCanada_name">Bank Kanada</string>
     <string name="api_bankOfIsrael_name">Bank Israel</string>
     <string name="api_bankRossii_name">Bank Rusia</string>
     <string name="api_norgesBank_name">Bank Norwegia</string>
+    <string name="api_bankOfCanada_descriptionFull">Nilai tukar rata-rata harian dari <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Sekitar 23 mata uang tersedia.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Sekitar 23 nilai tukar\nSumber: Bank Sentral Kanada</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">Nilai tukar dipublikasikan sekali setiap hari kerja paling lambat pukul 16:30 ET</string>
 </resources>

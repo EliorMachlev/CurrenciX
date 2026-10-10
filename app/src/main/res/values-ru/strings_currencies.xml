@@ -31,9 +31,9 @@
     <string name="name_cad">Канадский доллар</string>
     <string name="name_cdf">Конголезский франк</string>
     <string name="name_chf">Швейцарский франк</string>
-    <string name="name_clf">Условная расчётная единица Чили</string>
+    <string name="name_clf">Условная расчётная единица Чили (UF)</string>
     <string name="name_clp">Чилийское песо</string>
-    <string name="name_cnh">Китайский юань (оффшорный)</string>
+    <string name="name_cnh">Китайский юань (офшорный)</string>
     <string name="name_cny">Китайский юань</string>
     <string name="name_cop">Колумбийское песо</string>
     <string name="name_crc">Коста-Риканский колон</string>
@@ -99,7 +99,7 @@
     <string name="name_lbp">Ливанский фунт</string>
     <string name="name_lkr">Шри-ланкийская рупия</string>
     <string name="name_lrd">Либерийский доллар</string>
-    <string name="name_lsl">Лоти</string>
+    <string name="name_lsl">Лоти Лесото</string>
     <string name="name_lyd">Ливийский динар</string>
 
     <string name="name_mad">Марокканский дирхам</string>
@@ -150,7 +150,7 @@
     <string name="name_sgd">Сингапурский доллар</string>
     <string name="name_shp">Фунт острова Святой Елены</string>
     <string name="name_sle">Леоне Сьерра-Леоне</string>
-    <string name="name_sll">Леоне</string>
+    <string name="name_sll">Леоне Сьерра-Леоне (до 07/2022)</string>
     <string name="name_sos">Сомалийский шиллинг</string>
     <string name="name_srd">Суринамский доллар</string>
     <string name="name_ssp">Южносуданский фунт</string>
@@ -162,7 +162,7 @@
 
     <string name="name_thb">Таиландский бат</string>
     <string name="name_tjs">Таджикский сомони</string>
-    <string name="name_tmt">Новый туркменский манат</string>
+    <string name="name_tmt">Туркменский манат</string>
     <string name="name_tnd">Тунисский динар</string>
     <string name="name_top">Тонганская паанга</string>
     <string name="name_try">Турецкая лира</string>
@@ -176,26 +176,26 @@
     <string name="name_uyu">Уругвайское песо</string>
     <string name="name_uzs">Узбекский сум</string>
 
-    <string name="name_vef">Венесуэльский боливар</string>
-    <string name="name_ves">Venezuelan Bolívar Soberano</string>
+    <string name="name_vef">Венесуэльский боливар фуэрте (старый)</string>
+    <string name="name_ves">Венесуэльский боливар соберано</string>
     <string name="name_vnd">Вьетнамский донг</string>
     <string name="name_vuv">Вату Вануату</string>
 
     <string name="name_wst">Самоанская тала</string>
 
     <string name="name_xaf">Франк КФА BEAC</string>
-    <string name="name_xag">Серебро</string>
-    <string name="name_xau">Золото</string>
+    <string name="name_xag">Унция серебра</string>
+    <string name="name_xau">Унция золота</string>
     <string name="name_xcd">Восточно-карибский доллар</string>
     <string name="name_xdr">СДР (специальные права заимствования)</string>
-    <string name="name_xof">Франк КФА ВСЕАО</string>
-    <string name="name_xpd">Палладий</string>
+    <string name="name_xof">Франк КФА BCEAO</string>
+    <string name="name_xpd">Унция палладия</string>
     <string name="name_xpf">Французский тихоокеанский франк</string>
-    <string name="name_xpt">Платина</string>
+    <string name="name_xpt">Унция платины</string>
 
     <string name="name_yer">Йеменский риал</string>
 
     <string name="name_zar">Южноафриканский рэнд</string>
     <string name="name_zmw">Замбийская квача</string>
-    <string name="name_zwl">Доллар Зимбабве (2009)</string>
+    <string name="name_zwl">Доллар Зимбабве</string>
 </resources>

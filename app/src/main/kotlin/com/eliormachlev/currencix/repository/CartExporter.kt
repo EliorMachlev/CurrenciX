@@ -23,8 +23,10 @@ sealed class CartFileResult {
         val cart: SavedCart,
     ) : CartFileResult()
 
+    /** [reason] is for the user; [detail] (English, technical) is for the log. */
     data class Failure(
-        val message: String,
+        val reason: FileFailure,
+        val detail: String? = null,
     ) : CartFileResult()
 }
 
@@ -39,8 +41,8 @@ class CartExporter(
     fun export(
         uri: Uri,
         cart: SavedCart,
-    ): CartFileResult {
-        return try {
+    ): CartFileResult =
+        try {
             val root =
                 JSONObject().apply {
                     put(BACKUP_KEY_VERSION, CART_FILE_SCHEMA_VERSION)
@@ -50,42 +52,45 @@ class CartExporter(
                     put(CART_FILE_KEY_PAYLOAD, serializeCart(cart))
                 }
             val bytes = root.toString(2).toByteArray(Charsets.UTF_8)
-            context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
-                ?: return CartFileResult.Failure("Could not open output stream")
-            CartFileResult.Success
+            val written = context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+            if (written == null) CartFileResult.Failure(FileFailure.CANNOT_OPEN) else CartFileResult.Success
         } catch (e: IOException) {
-            CartFileResult.Failure(e.localizedMessage ?: "I/O error")
+            CartFileResult.Failure(FileFailure.READ_WRITE, e.message)
         } catch (e: SecurityException) {
-            CartFileResult.Failure(e.localizedMessage ?: "Permission denied")
+            CartFileResult.Failure(FileFailure.NO_PERMISSION, e.message)
         }
-    }
 
-    fun import(uri: Uri): CartFileResult {
-        return try {
-            val bytes =
-                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                    ?: return CartFileResult.Failure("Could not open input stream")
-            val root = JSONObject(String(bytes, Charsets.UTF_8))
-            val version = root.optInt(BACKUP_KEY_VERSION, -1)
-            if (version != CART_FILE_SCHEMA_VERSION) {
-                return CartFileResult.Failure("Unsupported cart version: $version")
+    fun import(uri: Uri): CartFileResult =
+        try {
+            val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            if (bytes == null) {
+                CartFileResult.Failure(FileFailure.CANNOT_OPEN)
+            } else {
+                decode(JSONObject(String(bytes, Charsets.UTF_8)))
             }
-            // `type` is checked defensively so a full-app backup dropped in
-            // by mistake gets rejected before we try to parse it as a cart.
-            val type = root.optString(CART_FILE_KEY_TYPE)
-            if (type != CART_FILE_TYPE) {
-                return CartFileResult.Failure("Not a cart file")
-            }
-            val cart =
-                parseCart(root.optJSONObject(CART_FILE_KEY_PAYLOAD))
-                    ?: return CartFileResult.Failure("Malformed cart payload")
-            CartFileResult.Loaded(cart)
         } catch (e: IOException) {
-            CartFileResult.Failure(e.localizedMessage ?: "I/O error")
+            CartFileResult.Failure(FileFailure.READ_WRITE, e.message)
         } catch (e: JSONException) {
-            CartFileResult.Failure(e.localizedMessage ?: "Malformed cart file")
+            CartFileResult.Failure(FileFailure.DAMAGED, e.message)
         } catch (e: SecurityException) {
-            CartFileResult.Failure(e.localizedMessage ?: "Permission denied")
+            CartFileResult.Failure(FileFailure.NO_PERMISSION, e.message)
+        }
+
+    // The cart in a cart file's JSON, or why it isn't one.
+    private fun decode(root: JSONObject): CartFileResult {
+        val version = root.optInt(BACKUP_KEY_VERSION, -1)
+        return when {
+            version != CART_FILE_SCHEMA_VERSION ->
+                CartFileResult.Failure(
+                    FileFailure.UNSUPPORTED_VERSION,
+                    "Unsupported cart version: $version",
+                )
+            // `type` is checked so a full-app backup dropped in by mistake
+            // is rejected before it's parsed as a cart.
+            root.optString(CART_FILE_KEY_TYPE) != CART_FILE_TYPE -> CartFileResult.Failure(FileFailure.NOT_A_CART, "Not a cart file")
+            else ->
+                parseCart(root.optJSONObject(CART_FILE_KEY_PAYLOAD))?.let(CartFileResult::Loaded)
+                    ?: CartFileResult.Failure(FileFailure.DAMAGED, "Malformed cart payload")
         }
     }
 }

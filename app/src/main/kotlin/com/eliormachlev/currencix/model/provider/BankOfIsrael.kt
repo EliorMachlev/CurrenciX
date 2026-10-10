@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.model.provider
 import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
@@ -12,8 +13,12 @@ import com.eliormachlev.currencix.model.adapter.BankOfIsraelRatesAdapter
 import com.eliormachlev.currencix.model.adapter.BankOfIsraelSdmxParser
 import com.eliormachlev.currencix.model.adapter.NO_DATA_ERROR
 import com.eliormachlev.currencix.model.adapter.addFokFromDkkIfMissing
+import com.eliormachlev.currencix.model.adapter.rateOrNull
+import com.eliormachlev.currencix.model.adapter.register
+import com.eliormachlev.currencix.model.provider.api.BankOfIsraelApi
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.fetch
+import com.squareup.moshi.Moshi
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -34,6 +39,9 @@ private val UNIT_PER_CURRENCY: Map<String, BigDecimal> =
 
 private fun unitFor(currency: String): BigDecimal = UNIT_PER_CURRENCY[currency] ?: BigDecimal.ONE
 
+// The PublicApi rates adapter is stateless, so one Moshi serves every request.
+private val LATEST_RATES_MOSHI: Moshi = moshi { register(BankOfIsraelRatesAdapter()) }
+
 class BankOfIsrael : ApiProvider.Api() {
     override val name = "Bank of Israel"
     override val nameRes = R.string.api_bankOfIsrael_name
@@ -51,13 +59,15 @@ class BankOfIsrael : ApiProvider.Api() {
     override suspend fun getRates(
         context: Context?,
         date: LocalDate?,
+        secrets: ApiSecrets,
     ): Result<ExchangeRates> = if (date == null) fetchLatestRates(context) else fetchHistoricalRates(context, date)
 
+    // Fixed-shape PublicApi JSON — via Retrofit. Historical rates and the
+    // timeline come from the SDMX-JSON feed instead, which stays on raw OkHttp
+    // (see BankOfIsraelApi for why).
     private suspend fun fetchLatestRates(context: Context?): Result<ExchangeRates> {
-        val adapter =
-            moshi { add(BankOfIsraelRatesAdapter()) }
-                .adapter(ExchangeRates::class.java)
-        return fetchJson(context, "$baseUrl/PublicApi/GetExchangeRates", name, adapter)
+        val api = retrofitApi<BankOfIsraelApi>(context, LATEST_RATES_MOSHI)
+        return fetchRetrofit { api.getLatestRates() }
             .map { it.copy(provider = ApiProvider.BANK_OF_ISRAEL) }
     }
 
@@ -112,15 +122,13 @@ class BankOfIsrael : ApiProvider.Api() {
         val symbolCode = symbol.iso4217Alpha()
 
         val allDates = ilsPerForeignByDate.values.flatMap { it.keys }.toSortedSet()
-        val rates = sortedMapOf<LocalDate, Rate>()
-        for (date in allDates) {
-            val ilsPerBase = ilsPerFor(baseCode, date, ilsPerForeignByDate) ?: continue
-            val ilsPerSymbol = ilsPerFor(symbolCode, date, ilsPerForeignByDate) ?: continue
-            if (ilsPerSymbol.signum() == 0) continue
-            // 1 base = ilsPerBase ILS = ilsPerBase / ilsPerSymbol of symbol.
-            val ratio = ilsPerBase.divide(ilsPerSymbol, MathContext.DECIMAL128)
-            rates[date] = Rate(symbol, ratio)
-        }
+        val rates =
+            allDates
+                .mapNotNull { date ->
+                    // 1 base = ilsPerBase ILS = ilsPerBase / ilsPerSymbol of symbol.
+                    ratioOrNull(ilsPerFor(baseCode, date, ilsPerForeignByDate), ilsPerFor(symbolCode, date, ilsPerForeignByDate))
+                        ?.let { date to Rate(symbol, it) }
+                }.toMap(sortedMapOf())
 
         return Timeline(
             success = rates.isNotEmpty(),
@@ -148,13 +156,24 @@ class BankOfIsrael : ApiProvider.Api() {
             .groupBy { it.currency }
             .mapValues { (_, list) -> list.maxBy { it.date } }
 
-    private fun buildIlsRateList(latest: Collection<BankOfIsraelObservation>): List<Rate> {
-        val rates = mutableListOf<Rate>()
-        for (obs in latest) {
-            val currency = Currency.fromString(obs.currency) ?: continue
-            if (obs.rawValue.signum() <= 0) continue
-            rates.add(Rate(currency, unitFor(obs.currency).divide(obs.rawValue, MathContext.DECIMAL128)))
+    // [numerator] / [denominator], when both are known and the division is defined.
+    private fun ratioOrNull(
+        numerator: BigDecimal?,
+        denominator: BigDecimal?,
+    ): BigDecimal? =
+        if (numerator == null || denominator == null || denominator.signum() == 0) {
+            null
+        } else {
+            numerator.divide(denominator, MathContext.DECIMAL128)
         }
+
+    private fun buildIlsRateList(latest: Collection<BankOfIsraelObservation>): List<Rate> {
+        val rates =
+            latest
+                .mapNotNull { obs ->
+                    val perIls = ratioOrNull(unitFor(obs.currency), obs.rawValue.takeIf { it.signum() > 0 })
+                    rateOrNull(Currency.fromString(obs.currency), perIls)
+                }.toMutableList()
         if (rates.isNotEmpty()) {
             rates.add(Rate(Currency.ILS, BigDecimal.ONE))
             rates.addFokFromDkkIfMissing()

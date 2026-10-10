@@ -3,9 +3,31 @@
     <string name="api_bankOfIsrael_descriptionFull">Reprezentaj valutkurzoj, publikigitaj de la israela centra banko <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Kurzoj estas kvotitaj kontraŭ la nova israela ŝekelo.\n<b>Bank of Israel listigas ĉirkaŭ 14 valutkurzojn.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Ĉirkaŭ 14 valutkurzoj\nFonto: Centra Banko de Israelo</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Reprezentaj kurzoj estas publikigitaj unufoje ĉiun labortagon ĉirkaŭ la 15:30 israela tempo.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> fontas la valutajn kurzoj el diversaj financaj datumprovizantoj kaj bankoj, inkluzive de la Eŭropa Centra Banko. Ĉiuj kurzoj-datumoj estas liveritaj en mezpunkto-datumoj. Mezpunktaj kurzoj estas determinitaj kalkulante la mezan kurzon de Bid and Ask.\n<b>Proksime 160 valutoj estas inkluzivitaj.</b></string>
+    <string name="api_bankRossii_descriptionFull">Valutkurzoj, provizitaj de la rusa centra banko <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Pro la nunaj sankcioj, ĉi tiu fonto verŝajne donas la plej fidindajn valutkurzojn por la rusa rublo.\n<b>Bank Rossii listigas ĉirkaŭ 44 valutkurzojn.</b></string>
+    <string name="api_bankRossii_descriptionShort">Ĉirkaŭ 44 valutkurzoj\nFonto: Centra Banko de Rusio</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Kurzoj estas ĝisdatigataj ĉiutage, krom dum <a href="https://cbr.ru/eng/other/holidays/">oficialaj festotagoj en Rusio</a>.</string>
+    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> estas relative nova servo, kiu (same kiel Frankfurter.app) sekvas la referencajn valutkurzojn (forex) publikigatajn de la Eŭropa Centra Banko.\n<b>Ĉirkaŭ 30 valutoj estas inkluzivitaj.</b></string>
+    <string name="api_ferEe_descriptionUpdateInterval">Kurzoj estas ĝisdatigataj ĉiun labortagon.</string>
+    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> sekvas la referencajn valutkurzojn (forex) publikigatajn de la Eŭropa Centra Banko.\n<b>Ĉirkaŭ 30 valutoj estas inkluzivitaj.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Ĉirkaŭ 30 valutkurzoj\nFonto: Eŭropa Centra Banko</string>
+    <string name="api_frankfurterApp_descriptionUpdateInterval">La datumoj estas ĝisdatigataj ĉirkaŭ la 16:00 CET ĉiun labortagon.</string>
+    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> provizas la oficialan monatan kontadan kurzon de la Eŭropa Komisiono por la eŭro kaj la konvertajn kurzojn fiksitajn de la Kontada Oficisto de la Eŭropa Komisiono konforme al artikolo 19 de la Financa Regularo.\nĈi tiuj kurzoj estas uzataj por kalkuli sumojn por la repago de elspezoj, vojaĝkostoj aŭ restadkostoj de eksteraj personoj, kiuj partoprenas en kunvenoj, intervjuoj ktp. laŭ peto de la Eŭropa Komisiono.\n<b>Ĉirkaŭ 150 valutoj estas inkluzivitaj.</b></string>
+    <string name="api_inforEuro_descriptionShort">Ĉirkaŭ 150 valutkurzoj\nFonto: Eŭropa Komisiono</string>
+    <string name="api_inforEuro_descriptionUpdateInterval">La indikitaj kurzoj estas la merkataj kurzoj de la antaŭlasta tago de la antaŭa monato, kiel kvotitaj de la Eŭropa Centra Banko aŭ, depende de la disponebleco, provizitaj de la delegacioj aŭ aliaj taŭgaj fontoj proksime al tiu dato.</string>
+    <string name="api_inforEuro_hint">Kurzoj estas ĝisdatigataj nur unufoje monate!</string>
+    <string name="api_norgesBank_descriptionFull">Valutkurzoj, provizitaj de la norvega centra banko <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>Norges Bank listigas ĉirkaŭ 40 valutkurzojn.</b></string>
+    <string name="api_norgesBank_descriptionShort">Ĉirkaŭ 40 valutkurzoj\nFonto: Centra Banko de Norvegio</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">La ĉiutagaj valutkurzoj estas publikigataj proksimume je la 16:00 CET.</string>
+    <string name="api_norgesBank_hint">La servo regule havas paneojn (HTTP 503), dum kiuj kurzoj ne povas esti refreŝigitaj!</string>
+    <string name="api_openExchangeRates_descriptionFull">Datumoj estas kolektataj kaj kombinataj el pluraj fidindaj fontoj, kio certigas senpartiajn kurzojn. Vidu <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> por pliaj informoj.\n<b>Open Exchange Rates provizas grandan kvanton da valutkurzoj, ĉirkaŭ 160.\n<i>Por uzi ĉi tiun fonton, vi devas enigi vian personan API-ŝlosilon!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Ĉirkaŭ 160 valutkurzoj\nFonto: Kombino de pluraj fidindaj provizantoj.</string>
+    <string name="api_openExchangeRates_descriptionUpdateInterval">Ĉiuhoraj ĝisdatigoj.</string>
+    <string name="api_openExchangeRates_hint">Por uzi ĉi tiun fonton, vi devas krei vian personan API-ŝlosilon!</string>
     <string name="api_bankOfCanada_name">Banko de Kanado</string>
     <string name="api_bankOfIsrael_name">Banko de Israelo</string>
     <string name="api_bankRossii_name">Banko de Rusio</string>
     <string name="api_norgesBank_name">Banko de Norvegio</string>
+    <string name="api_bankOfCanada_descriptionFull">Ĉiutagaj mezumaj valutkurzoj de la <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Banko de Kanado</b></a>.\n<b>Ĉirkaŭ 23 valutoj estas inkluzivitaj.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Ĉirkaŭ 23 valutkurzoj\nFonto: Centra Banko de Kanado</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">La kurzoj estas publikigataj unufoje ĉiun labortagon antaŭ la 16:30 ET</string>
 </resources>

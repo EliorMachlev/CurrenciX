@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Data by &lt;b>%s&lt;/b></string>
 
     <string name="rate_average">avg</string>
     <string name="rate_median">med</string>
@@ -11,4 +10,10 @@
     <string name="year">year</string>
     <string name="month">month</string>
     <string name="week">week</string>
+    <string name="timeline_five_years">5 years</string>
+    <string name="timeline_custom_range">Custom range</string>
+    <string name="timeline_range" translatable="false">%1$s – %2$s</string>
+    <string name="timeline_share">Share chart</string>
+    <string name="timeline_no_rates">No rates for these dates</string>
+    <string name="timeline_share_caption" translatable="false">%1$s → %2$s · %3$s – %4$s · %5$s</string>
 </resources>

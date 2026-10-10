@@ -2,13 +2,64 @@ package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
+import java.lang.reflect.Type
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
+
+/** `List<Rate>`, as Moshi keys it. */
+internal val RATE_LIST_TYPE: Type = Types.newParameterizedType(List::class.java, Rate::class.java)
+
+/** `Map<LocalDate, Rate>`, as Moshi keys it. */
+internal val DATED_RATES_TYPE: Type = Types.newParameterizedType(Map::class.java, LocalDate::class.java, Rate::class.java)
+
+/**
+ * A [JsonAdapter] that knows the [type] it handles, so [register] can add it
+ * to a Moshi builder without the call site repeating the type.
+ */
+internal abstract class TypedJsonAdapter<T>(
+    val type: Type,
+) : JsonAdapter<T>()
+
+/** A [TypedJsonAdapter] for a response the app only ever reads. */
+internal abstract class ResponseAdapter<T>(
+    type: Type,
+) : TypedJsonAdapter<T>(type) {
+    final override fun toJson(
+        writer: JsonWriter,
+        value: T?,
+    ): Unit = throw UnsupportedOperationException("${javaClass.simpleName} only reads JSON")
+}
+
+/** A [Rate] once both of its parts have been read; null while either is missing. */
+internal fun rateOrNull(
+    currency: Currency?,
+    value: BigDecimal?,
+): Rate? = if (currency != null && value != null) Rate(currency, value) else null
+
+/** Adds [adapter] for the type it declares. */
+internal fun <T> Moshi.Builder.register(adapter: TypedJsonAdapter<T>): Moshi.Builder = add(adapter.type, adapter)
+
+// Guard for adapters whose payload must be a JSON object: if the next value is
+// anything else (null, array, string, ...), consume it and return true so the
+// caller can bail out with `null`. Consuming matters — Moshi's contract is one
+// value per fromJson call, and Retrofit's converter rejects a document with
+// input left over ("JSON document was not fully consumed") instead of passing
+// the null through to the provider's "empty JSON" error.
+internal fun JsonReader.skipIfNotObject(): Boolean {
+    if (peek() == JsonReader.Token.BEGIN_OBJECT) return false
+    skipValue()
+    return true
+}
 
 // Both InforEuro endpoints return a JSON array on success and an
 // { "message": "..." } object on failure. Peek at the token: on an array,

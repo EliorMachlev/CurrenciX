@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> til &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Data af &lt;b>%s&lt;/b></string>
     <string name="rate_average">gns</string>
     <string name="rate_median">median</string>
     <string name="rate_min">min</string>
@@ -9,4 +8,8 @@
     <string name="year">år</string>
     <string name="month">måned</string>
     <string name="week">uge</string>
+    <string name="timeline_five_years">5 år</string>
+    <string name="timeline_custom_range">Tilpasset periode</string>
+    <string name="timeline_share">Del diagram</string>
+    <string name="timeline_no_rates">Ingen kurser for disse datoer</string>
 </resources>

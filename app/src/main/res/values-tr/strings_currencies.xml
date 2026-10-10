@@ -11,7 +11,7 @@
     <string name="name_awg">Aruba florini</string>
     <string name="name_azn">Azerbaycan manatı</string>
 
-    <string name="name_bam">Bosna-Hersek markı</string>
+    <string name="name_bam">Bosna-Hersek konvertibl markı</string>
     <string name="name_bbd">Barbados doları</string>
     <string name="name_bdt">Bangladeş takası</string>
     <string name="name_bgn">Bulgar levası</string>
@@ -31,9 +31,9 @@
     <string name="name_cad">Kanada doları</string>
     <string name="name_cdf">Kongo frangı</string>
     <string name="name_chf">İsviçre frangı</string>
-    <string name="name_clf">Şili Unidad de Fomentosu (UF)</string>
+    <string name="name_clf">Şili hesap birimi (UF)</string>
     <string name="name_clp">Şili pesosu</string>
-    <string name="name_cnh">Çin yuanı (Offshore)</string>
+    <string name="name_cnh">Çin yuanı (offshore)</string>
     <string name="name_cny">Çin yuanı</string>
     <string name="name_cop">Kolombiya pesosu</string>
     <string name="name_crc">Kosta Rika kolonu</string>
@@ -105,7 +105,7 @@
     <string name="name_mad">Fas dirhemi</string>
     <string name="name_mdl">Moldova leyi</string>
     <string name="name_mga">Madagaskar ariarisi</string>
-    <string name="name_mkd">Makedonya dinarı</string>
+    <string name="name_mkd">Kuzey Makedonya dinarı</string>
     <string name="name_mmk">Myanmar kyatı</string>
     <string name="name_mnt">Moğolistan tugriki</string>
     <string name="name_mop">Makao patakası</string>
@@ -128,7 +128,7 @@
     <string name="name_omr">Umman riyali</string>
 
     <string name="name_pab">Panama balboası</string>
-    <string name="name_pen">Nuevo sol</string>
+    <string name="name_pen">Peru solü</string>
     <string name="name_pgk">Papua Yeni Gine kinası</string>
     <string name="name_php">Filipin pesosu</string>
     <string name="name_pkr">Pakistan rupisi</string>
@@ -158,7 +158,7 @@
     <string name="name_stn">São Tomé ve Príncipe dobrası</string>
     <string name="name_svc">El Salvador kolonu</string>
     <string name="name_syp">Suriye lirası</string>
-    <string name="name_szl">Svaziland lilangenisi</string>
+    <string name="name_szl">Esvatini lilangenisi</string>
 
     <string name="name_thb">Tayland bahtı</string>
     <string name="name_tjs">Tacikistan somonisi</string>
@@ -187,7 +187,7 @@
     <string name="name_xag">Gümüş ons</string>
     <string name="name_xau">Altın ons</string>
     <string name="name_xcd">Doğu Karayip doları</string>
-    <string name="name_xdr">Özel çekme hakları</string>
+    <string name="name_xdr">Özel Çekme Hakkı (SDR)</string>
     <string name="name_xof">Batı Afrika CFA frangı</string>
     <string name="name_xpd">Paladyum ons</string>
     <string name="name_xpf">CFP frangı</string>

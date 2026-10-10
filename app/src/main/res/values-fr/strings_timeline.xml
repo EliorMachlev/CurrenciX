@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="data_provider">Données du &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="rate_average">moy</string>
     <string name="rate_median">méd</string>
     <string name="rate_min">min</string>
@@ -9,4 +8,8 @@
     <string name="year">année</string>
     <string name="month">mois</string>
     <string name="week">semaine</string>
+    <string name="timeline_five_years">5 ans</string>
+    <string name="timeline_custom_range">Période personnalisée</string>
+    <string name="timeline_share">Partager le graphique</string>
+    <string name="timeline_no_rates">Aucun taux pour ces dates</string>
 </resources>

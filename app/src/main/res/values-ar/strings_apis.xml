@@ -3,31 +3,29 @@
     <string name="api_bankOfCanada_descriptionFull">متوسط أسعار الصرف اليومية في <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>بنك كندا</b></a>.\n<b>يتم تضمين حوالي 23 عملة.</b></string>
     <string name="api_bankOfCanada_descriptionShort">حوالي 23 سعر صرف\nالمصدر: البنك المركزي الكندي</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">يتم نشر الأسعار مرة واحدة كل يوم عمل بحلول الساعة 16:30 بالتوقيت الشرقي ET</string>
-    <string name="api_bankOfIsrael_descriptionFull">أسعار الصرف التمثيلية، على النحو الذي ينشره البنك المركزي الإسرائيلي <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>بنك إسرائيل</b></a>. يتم اقتباس الأسعار مقابل الشيكل الإسرائيلي الجديد.\n<b>يدرج بنك إسرائيل حوالي 14 سعر صرف.</b></string>
+    <string name="api_bankOfIsrael_descriptionFull">أسعار الصرف التمثيلية كما ينشرها البنك المركزي الإسرائيلي <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>بنك إسرائيل</b></a>. تُحدَّد الأسعار مقابل الشيكل الإسرائيلي الجديد.\n<b>يدرج بنك إسرائيل نحو 14 سعر صرف.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">حوالي 14 سعر صرف\nالمصدر: البنك المركزي الإسرائيلي</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">يتم نشر الأسعار التمثيلية مرة واحدة كل يوم عمل حوالي الساعة 15:30 بتوقيت إسرائيل.</string>
-    <string name="api_bankRossii_descriptionFull">أسعار الصرف، على النحو المنصوص عليه من قبل البنك المركزي الروسي <a href="https://cbr.ru/eng/currency_base/daily/"><b>بنك روسي</b></a>. وفي ظل العقوبات الحالية، ربما يقدم هذا المصدر أسعار الصرف الأكثر موثوقية للروبل الروسي.\n<b>يدرج بنك روسي حوالي 44 سعر صرف.</b></string>
+    <string name="api_bankRossii_descriptionFull">أسعار الصرف كما يقدّمها البنك المركزي الروسي <a href="https://cbr.ru/eng/currency_base/daily/"><b>بنك روسيا</b></a>. في ظل العقوبات الحالية، يقدّم هذا المصدر على الأرجح أكثر أسعار الصرف موثوقية للروبل الروسي.\n<b>يدرج بنك روسيا نحو 44 سعر صرف.</b></string>
     <string name="api_bankRossii_descriptionShort">حوالي 44 سعر صرف\nالمصدر: البنك المركزي الروسي</string>
     <string name="api_bankRossii_descriptionUpdateInterval">يتم تحديث الأسعار يوميًا، باستثناء <a href="https://cbr.ru/eng/other/holidays/">العطلات الرسمية في روسيا</a>.</string>
-    <string name="api_exchangerateHost_descriptionFull">توفر <a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> أسعار العملات من مختلف موفري البيانات المالية والمصارف ، بما في ذلك البنك المركزي الأوروبي. يتم تسليم جميع بيانات سعر الصرف في بيانات نقطة الوسط. يتم تحديد معدلات نقطة الوسط عن طريق حساب متوسط سعر العرض والطلب.\n<b> تم تضمين حوالي 160 عملة. </b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">يتم تحديث أسعار الصرف في منتصف الليل بالتوقيت العالمي المنسق كل يوم عمل.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> هي خدمة جديدة نسبيًا ، (تمامًا مثل Frankfurter.app) تتعقب تبادل المراجع (فوركس) المعدلات التي ينشرها البنك المركزي الأوروبي.\n<b> تم تضمين حوالي 30 عملة. </b></string>
+    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> خدمة جديدة نسبيًا تتتبّع (مثل Frankfurter.app) أسعار الصرف المرجعية (فوركس) التي ينشرها البنك المركزي الأوروبي.\n<b>تشمل نحو 30 عملة.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">يتم تحديث الأسعار كل يوم عمل.</string>
-    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> تتعقب أسعار الصرف المرجعية (الفوركس) التي ينشرها البنك المركزي الأوروبي.\n<b> تم تضمين حوالي 30 عملة. </b></string>
-    <string name="api_frankfurterApp_descriptionShort">حوالي 30 سعر الصرف\nالمصدر: البنك المركزي الأوروبي</string>
+    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> تتتبّع أسعار الصرف المرجعية (فوركس) التي ينشرها البنك المركزي الأوروبي.\n<b>تشمل نحو 30 عملة.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">نحو 30 سعر صرف\nالمصدر: البنك المركزي الأوروبي</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">يتم تحديث البيانات في حوالي الساعة 16:00 بتوقيت وسط أوروبا كل يوم عمل.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> يوفر السعر المحاسبي الشهري الرسمي للمفوضية الأوروبية لليورو وأسعار التحويل كما حددها مسؤول المحاسبة في المفوضية الأوروبية بما يتماشى مع المادة 19 من اللائحة المالية.\nتُستخدم هذه المعدلات لحساب مبالغ سداد النفقات أو تكاليف السفر أو الإقامة للأشخاص الخارجيين المشاركين في الاجتماعات والمقابلات وما إلى ذلك بناءً على طلب المفوضية الأوروبية.\n<b>يتم تضمين حوالي 150 عملة.</b></string>
-    <string name="api_inforEuro_descriptionShort">حوالي 150 سعر الصرف\nالمصدر: المفوضية الأوروبية</string>
-    <string name="api_inforEuro_descriptionUpdateInterval">الأسعار المشار إليها هي أسعار السوق لليوم الثاني إلى الأخير من الشهر السابق كما ذكرها البنك المركزي الأوروبي أو، حسب التوافر، المقدمة من الوفود أو المصادر المناسبة الأخرى في وقت قريب من ذلك التاريخ.</string>
+    <string name="api_inforEuro_descriptionShort">نحو 150 سعر صرف\nالمصدر: المفوضية الأوروبية</string>
+    <string name="api_inforEuro_descriptionUpdateInterval">الأسعار المشار إليها هي أسعار السوق لليوم قبل الأخير من الشهر السابق كما ينشرها البنك المركزي الأوروبي، أو، حسب التوافر، كما تقدّمها الوفود أو المصادر المناسبة الأخرى في تاريخ قريب من ذلك التاريخ.</string>
     <string name="api_inforEuro_hint">يتم تحديث الأسعار مرة واحدة فقط في الشهر!</string>
-    <string name="api_norgesBank_descriptionFull">أسعار الصرف، على النحو المنصوص عليه من قبل البنك المركزي النرويجي <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>بنك Norges</b></a> .\n<b>يدرج بنك Norges حوالي 40 سعر صرف.</b></string>
-    <string name="api_norgesBank_descriptionShort">حوالي 40 سعر الصرف\nالمصدر: البنك المركزي النرويجي</string>
+    <string name="api_norgesBank_descriptionFull">أسعار الصرف كما يقدّمها البنك المركزي النرويجي <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>بنك النرويج</b></a>.\n<b>يدرج بنك النرويج نحو 40 سعر صرف.</b></string>
+    <string name="api_norgesBank_descriptionShort">نحو 40 سعر صرف\nالمصدر: البنك المركزي النرويجي</string>
     <string name="api_norgesBank_descriptionUpdateInterval">وقت نشر أسعار الصرف اليومية هو حوالي الساعة 16:00 بتوقيت وسط أوروبا.</string>
     <string name="api_norgesBank_hint">تخضع الخدمة لفترات توقف منتظمة (HTTP 503)، وخلال هذه الأوقات لا يمكن تحديث الأسعار!</string>
-    <string name="api_openExchangeRates_descriptionFull">يتم تتبع البيانات ودمجها من مصادر متعددة موثوقة، مما يضمن معدلات غير متحيزة. راجع <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> لمزيد من المعلومات.\n<b>توفر أسعار الصرف المفتوحة كمية كبيرة تبلغ حوالي 160 سعر صرف.\n<i>لاستخدام هذا المصدر، عليك إدخال مفتاح API الشخصي الخاص بك!</i></b></string>
-    <string name="api_openExchangeRates_descriptionShort">حوالي 160 سعر الصرف\nالمصدر: مزيج من مقدمي خدمات موثوقين متعددين.</string>
+    <string name="api_openExchangeRates_descriptionFull">تُجمع البيانات وتُدمج من مصادر موثوقة متعددة لضمان أسعار غير متحيزة. راجع <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> لمزيد من المعلومات.\n<b>يوفّر Open Exchange Rates عددًا كبيرًا يبلغ نحو 160 سعر صرف.\n<i>لاستخدام هذا المزوّد، عليك إدخال مفتاح API الشخصي الخاص بك!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">نحو 160 سعر صرف\nالمصدر: مزيج من عدة مزوّدين موثوقين.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">تحديثات كل ساعة.</string>
-    <string name="api_openExchangeRates_hint">لاستخدام هذا المصدر، عليك إنشاء مفتاح API الشخصي الخاص بك!</string>
+    <string name="api_openExchangeRates_hint">لاستخدام هذا المزوّد، عليك إنشاء مفتاح API الشخصي الخاص بك!</string>
     <string name="api_bankOfCanada_name">بنك كندا</string>
     <string name="api_bankOfIsrael_name">بنك إسرائيل</string>
     <string name="api_bankRossii_name">بنك روسيا</string>

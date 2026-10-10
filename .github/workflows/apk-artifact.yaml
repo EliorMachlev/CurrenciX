@@ -33,8 +33,22 @@ jobs:
         run: ./gradlew assembleFdroidDebug -PdebugCommitSha=${{ steps.sha.outputs.short }}
 
       - name: Upload APK
+        id: upload
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: currencies-fdroid-debug-${{ steps.sha.outputs.short }}
           path: app/build/outputs/apk/fdroid/debug/*.apk
           if-no-files-found: error
+
+      # Puts a direct download link at the top of the run page, so the APK
+      # is one click away instead of buried in the run's artifact list.
+      - name: Link the APK in the run summary
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+          SHORT_SHA: ${{ steps.sha.outputs.short }}
+        run: |
+          {
+            echo "### Debug APK (fdroid) for \`${SHORT_SHA}\`"
+            echo
+            echo "[Download the APK](${ARTIFACT_URL}) (a zip holding the .apk)."
+          } >> "$GITHUB_STEP_SUMMARY"

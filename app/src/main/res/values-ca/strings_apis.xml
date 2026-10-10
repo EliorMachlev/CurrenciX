@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="api_bankOfCanada_descriptionFull">Mitjana diària de les taxes de canvi del <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Banc de Canadà</b></a>.\n<b>S\'inclouen 23 divises.</b></string>
-    <string name="api_bankOfCanada_descriptionShort">Unes 23 taxes de canvi\nFont: Banc Central de Canadà</string>
-    <string name="api_bankOfCanada_descriptionUpdateInterval">Les taxes es publiquen un cop cada dia laborable abans de les 16:30 ET</string>
-    <string name="api_bankOfIsrael_descriptionFull">Taxes de canvi representatives, publicades pel banc central israelià <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Les taxes es cotitzen respecte al nou xéquel israelià.\n<b>Bank of Israel ofereix unes 14 taxes de canvi.</b></string>
-    <string name="api_bankOfIsrael_descriptionShort">Unes 14 taxes de canvi\nFont: Banc Central d\'Israel</string>
-    <string name="api_bankOfIsrael_descriptionUpdateInterval">Les taxes representatives es publiquen un cop cada dia laborable al voltant de les 15:30 hora d\'Israel.</string>
-    <string name="api_bankRossii_descriptionFull">Taxes de canvi facilitades pel banc central rus <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Amb les sancions actuals, aquesta font proporciona possiblement les dades més precises sobre les taxes de canvi del ruble rus.\n<b>El Banc de Rússia ofereix 44 taxes de canvi diferents.</b></string>
-    <string name="api_bankRossii_descriptionShort">Unes 44 taxes de canvi.\nFont: Banc Central de la Federació Russa</string>
-    <string name="api_bankRossii_descriptionUpdateInterval">Les taxes s\'actualitzen diàriament, exceptuant els <a href="https://cbr.ru/eng/other/holidays/">dies festius a Rússia</a>.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> obté els tipus de canvi de diferents proveïdors de dades financeres i bancs, inclòs el Banc Central Europeu. S\'ofereix el tipus de canvi mitjà, el qual es calcula fent la mitjana entre les taxes d\'oferta i demanda d\'una moneda.\n<b>Inclou unes 160 monedes.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Les taxes de canvi s\'actualitzen al voltant de la mitjanit (zona horària UTC) de cada dia laborable.</string>
+    <string name="api_bankOfCanada_descriptionFull">Tipus de canvi mitjans diaris del <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Banc del Canadà</b></a>.\n<b>S\'hi inclouen unes 23 monedes.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Uns 23 tipus de canvi\nFont: Banc central del Canadà</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">Els tipus es publiquen cada dia laborable abans de les 16:30 ET</string>
+    <string name="api_bankOfIsrael_descriptionFull">Tipus de canvi representatius, publicats pel banc central israelià <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Els tipus es coten respecte al nou xéquel israelià.\n<b>El Bank of Israel ofereix uns 14 tipus de canvi.</b></string>
+    <string name="api_bankOfIsrael_descriptionShort">Uns 14 tipus de canvi\nFont: Banc central d\'Israel</string>
+    <string name="api_bankOfIsrael_descriptionUpdateInterval">Els tipus representatius es publiquen cada dia laborable cap a les 15:30, hora d\'Israel.</string>
+    <string name="api_bankRossii_descriptionFull">Tipus de canvi facilitats pel banc central rus <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Amb les sancions actuals, aquesta font ofereix probablement els tipus de canvi més fiables per al ruble rus.\n<b>El Bank Rossii ofereix uns 44 tipus de canvi.</b></string>
+    <string name="api_bankRossii_descriptionShort">Uns 44 tipus de canvi\nFont: Banc central de Rússia</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Els tipus s\'actualitzen diàriament, excepte els <a href="https://cbr.ru/eng/other/holidays/">dies festius a Rússia</a>.</string>
     <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> és un servei relativament nou que, similarment a Frankfurter.app, fa el seguiment dels tipus de canvi de referència (Forex) publicats pel Banc Central Europeu.\n<b>Inclou unes 30 monedes.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Les taxes s\'actualitzen cada dia laborable.</string>
+    <string name="api_ferEe_descriptionUpdateInterval">Els tipus s\'actualitzen cada dia laborable.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> fa el seguiment dels tipus de canvi de referència (Forex) publicats pel Banc Central Europeu.\n<b>Inclou unes 30 monedes.</b></string>
-    <string name="api_frankfurterApp_descriptionShort">Unes 30 taxes de canvi\nFont: Banc Central Europeu</string>
-    <string name="api_frankfurterApp_descriptionUpdateInterval">Les dades s\'actualitzen al voltant de les 16:00 (zona horària CET) de cada dia laborable.</string>
-    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> ofereix la taxa comptable mensual oficial de la Comissió Europea per a l\'euro i les taxes de canvi establertes pel comptable de la Comissió Europea de conformitat amb l\'article 19 del Reglament Financer.\nAquestes taxes s\'utilitzen per al càlcul dels imports de viatges o dietes a reemborsar de les persones externes que participen, a petició de la Comissió Europea, a reunions, entrevistes, etc.\n<b>S\'inclouen unes 150 divises.</b></string>
-    <string name="api_inforEuro_descriptionShort">Unes 150 taxes de canvi\nFont: Comissió Europea</string>
-    <string name="api_inforEuro_descriptionUpdateInterval">Són les taxes de mercat corresponents al segon a l\'últim dia del mes previ indicades pel Banc Central Europeu o, depenent de la disponibilitat, proporcionades per delegacions o altres fonts adients i més properes a la data específica.</string>
-    <string name="api_inforEuro_hint">Les taxes s\'actualitzen un cop al mes.</string>
-    <string name="api_norgesBank_descriptionFull">Taxes de canvi facilitades pel banc central de Noruega <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>El Norges Bank disposa de 40 taxes de canvi</b></string>
-    <string name="api_norgesBank_descriptionShort">Unes 40 taxes de canvi\nFont: Banc Central de Noruega</string>
-    <string name="api_norgesBank_descriptionUpdateInterval">La publicació de les taxes de canvi es realitza entorn a les 16:00 CET.</string>
-    <string name="api_norgesBank_hint">El servei pateix caigudes freqüents (HTTP 503), durant les quals les taxes no es poden actualitzar.</string>
-    <string name="api_openExchangeRates_descriptionFull">Es fa un seguiment i combinació de les dades de diferents fonts, garantint així taxes no esbiaixades. Consulteu <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> per a més informació.\n<b>Open Exchange Rates proporciona una gran quantitat de canvis de taxa, entorn de 160.\n<i>Per a utilitzar aquesta font, heu d\'introduir la vostra clau API personal.</i></b></string>
-    <string name="api_openExchangeRates_descriptionShort">Unes 160 taxes de canvi.\nFont: Combinació de diferents proveïdors de confiança.</string>
+    <string name="api_frankfurterApp_descriptionShort">Uns 30 tipus de canvi\nFont: Banc Central Europeu</string>
+    <string name="api_frankfurterApp_descriptionUpdateInterval">Les dades s\'actualitzen cap a les 16:00 CET cada dia laborable.</string>
+    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> ofereix el tipus comptable mensual oficial de la Comissió Europea per a l\'euro i els tipus de conversió establerts pel comptable de la Comissió Europea de conformitat amb l\'article 19 del Reglament Financer.\nAquests tipus s\'utilitzen per calcular els imports de despeses, viatges o dietes que es reemborsen a les persones externes que participen, a petició de la Comissió Europea, en reunions, entrevistes, etc.\n<b>S\'hi inclouen unes 150 monedes.</b></string>
+    <string name="api_inforEuro_descriptionShort">Uns 150 tipus de canvi\nFont: Comissió Europea</string>
+    <string name="api_inforEuro_descriptionUpdateInterval">Els tipus indicats són els tipus de mercat del penúltim dia del mes anterior segons el Banc Central Europeu o, segons la disponibilitat, els que faciliten les delegacions o altres fonts adequades properes a aquesta data.</string>
+    <string name="api_inforEuro_hint">Els tipus només s\'actualitzen un cop al mes!</string>
+    <string name="api_norgesBank_descriptionFull">Tipus de canvi facilitats pel banc central de Noruega <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>El Norges Bank ofereix uns 40 tipus de canvi.</b></string>
+    <string name="api_norgesBank_descriptionShort">Uns 40 tipus de canvi\nFont: Banc central de Noruega</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">Els tipus de canvi diaris es publiquen cap a les 16:00 CET.</string>
+    <string name="api_norgesBank_hint">El servei té caigudes freqüents (HTTP 503), durant les quals els tipus no es poden actualitzar!</string>
+    <string name="api_openExchangeRates_descriptionFull">Les dades es recullen i es combinen a partir de diverses fonts fiables, cosa que garanteix uns tipus imparcials. Consulta <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> per a més informació.\n<b>Open Exchange Rates ofereix uns 160 tipus de canvi.\n<i>Per utilitzar aquesta font, has d\'introduir la teva clau API personal!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Uns 160 tipus de canvi\nFont: combinació de diversos proveïdors fiables.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Actualitzacions cada hora.</string>
-    <string name="api_openExchangeRates_hint">Heu de crear una clau API personal per a utilitzar aquesta font.</string>
+    <string name="api_openExchangeRates_hint">Per utilitzar aquesta font, has de crear la teva clau API personal!</string>
     <string name="api_bankOfCanada_name">Banc del Canadà</string>
     <string name="api_bankOfIsrael_name">Banc d\'Israel</string>
     <string name="api_bankRossii_name">Banc de Rússia</string>

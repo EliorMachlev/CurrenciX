@@ -3,14 +3,31 @@
     <string name="api_bankOfIsrael_descriptionFull">Representative valutakurser, som publisert av den israelske sentralbanken <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a>. Kursene noteres mot den nye israelske shekelen.\n<b>Bank of Israel oppgir ca. 14 valutakurser.</b></string>
     <string name="api_bankOfIsrael_descriptionShort">Ca. 14 valutakurser\nKilde: Israels sentralbank</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Representative kurser publiseres én gang hver arbeidsdag rundt kl. 15:30 israelsk tid.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> henter inn valutakurser fra forskjellige finansdatatilbydere og banker, inkludert den Europeiske sentralbanken. All vekslingsdata leveres som midpunktsdata- Disse kursene bestemmes ved å regne ut gjen. medianrate fra tilbud og etterspørsel.\n<b>Ca. 160 valutaer.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Valutakurser oppdateres rundt midnatt UTC hver arbeidsdag.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> er en relativt ny tjeneste, som (akkurat som Frankfurter.app) sporer referansekursene (forex) som publisert av den Europeiske sentralbanken.\n<b>Ca. 30 valutaer.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Vekslingskursene oppdateres hver arbeidsdag.</string>
-    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> sporer referansekursene (forex) som publisert av den Europeiske sentralbanken.\n<b>Ca. 30 valutaer.</b></string>
-    <string name="api_frankfurterApp_descriptionUpdateInterval">Dataen oppdateres ~16.00 CET hver dag.</string>
+    <string name="api_bankRossii_descriptionFull">Valutakurser, som oppgitt av den russiske sentralbanken <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Med dagens sanksjoner gir denne kilden trolig de mest pålitelige valutakursene for russiske rubler.\n<b>Bank Rossii oppgir ca. 44 valutakurser.</b></string>
+    <string name="api_bankRossii_descriptionShort">Ca. 44 valutakurser\nKilde: Russlands sentralbank</string>
+    <string name="api_bankRossii_descriptionUpdateInterval">Kursene oppdateres daglig, unntatt på <a href="https://cbr.ru/eng/other/holidays/">offentlige fridager i Russland</a>.</string>
+    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> er en relativt ny tjeneste som (akkurat som Frankfurter.app) sporer referansekursene (forex) som publiseres av Den europeiske sentralbanken.\n<b>Ca. 30 valutaer er inkludert.</b></string>
+    <string name="api_ferEe_descriptionUpdateInterval">Kursene oppdateres hver virkedag.</string>
+    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> sporer referansekursene (forex) som publiseres av Den europeiske sentralbanken.\n<b>Ca. 30 valutaer er inkludert.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Ca. 30 valutakurser\nKilde: Den europeiske sentralbanken</string>
+    <string name="api_frankfurterApp_descriptionUpdateInterval">Dataene oppdateres rundt kl. 16:00 CET hver virkedag.</string>
+    <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a> oppgir Europakommisjonens offisielle månedlige regnskapskurs for euro og omregningskursene som Europakommisjonens regnskapsfører har fastsatt i samsvar med artikkel 19 i finansreglementet.\nDisse kursene brukes til å beregne beløp for refusjon av utgifter, reise- eller oppholdskostnader for eksterne personer som deltar i møter, intervjuer osv. på forespørsel fra Europakommisjonen.\n<b>Ca. 150 valutaer er inkludert.</b></string>
+    <string name="api_inforEuro_descriptionShort">Ca. 150 valutakurser\nKilde: Europakommisjonen</string>
+    <string name="api_inforEuro_descriptionUpdateInterval">De oppgitte kursene er markedskursene for den nest siste dagen i forrige måned, som oppgitt av Den europeiske sentralbanken eller, avhengig av tilgjengelighet, av delegasjonene eller andre egnede kilder nær denne datoen.</string>
+    <string name="api_inforEuro_hint">Kursene oppdateres bare én gang i måneden!</string>
+    <string name="api_norgesBank_descriptionFull">Valutakurser, som oppgitt av Norges sentralbank <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a>.\n<b>Norges Bank oppgir ca. 40 valutakurser.</b></string>
+    <string name="api_norgesBank_descriptionShort">Ca. 40 valutakurser\nKilde: Norges sentralbank</string>
+    <string name="api_norgesBank_descriptionUpdateInterval">Daglige valutakurser publiseres omtrent kl. 16:00 CET.</string>
+    <string name="api_norgesBank_hint">Tjenesten har jevnlig nedetid (HTTP 503), og da kan ikke kursene oppdateres!</string>
+    <string name="api_openExchangeRates_descriptionFull">Data hentes og kombineres fra flere pålitelige kilder, noe som sikrer upartiske kurser. Se <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> for mer informasjon.\n<b>Open Exchange Rates tilbyr et stort utvalg på ca. 160 valutakurser.\n<i>For å bruke denne kilden må du skrive inn din personlige API-nøkkel!</i></b></string>
+    <string name="api_openExchangeRates_descriptionShort">Ca. 160 valutakurser\nKilde: Kombinasjon av flere pålitelige leverandører.</string>
+    <string name="api_openExchangeRates_descriptionUpdateInterval">Oppdateres hver time.</string>
+    <string name="api_openExchangeRates_hint">For å bruke denne kilden må du opprette din personlige API-nøkkel!</string>
     <string name="api_bankOfCanada_name">Canadas sentralbank</string>
     <string name="api_bankOfIsrael_name">Israels sentralbank</string>
     <string name="api_bankRossii_name">Russlands sentralbank</string>
     <string name="api_norgesBank_name">Norges Bank</string>
+    <string name="api_bankOfCanada_descriptionFull">Daglige gjennomsnittlige valutakurser fra <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Ca. 23 valutaer er inkludert.</b></string>
+    <string name="api_bankOfCanada_descriptionShort">Ca. 23 valutakurser\nKilde: Canadas sentralbank</string>
+    <string name="api_bankOfCanada_descriptionUpdateInterval">Kursene publiseres én gang hver arbeidsdag innen kl. 16:30 ET</string>
 </resources>

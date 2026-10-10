@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="api_bankOfCanada_descriptionFull"><a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Kanada Merkez Bankası</b></a>\'nın günlük ortalama döviz kurları.\n<b>Yaklaşık 23 para birimi dahildir.</b></string>
-    <string name="api_bankOfCanada_descriptionShort">Yaklaşık 23 para birimi\nKaynak: Kanada Merkez Bankası</string>
+    <string name="api_bankOfCanada_descriptionShort">Yaklaşık 23 döviz kuru\nKaynak: Kanada Merkez Bankası</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Kurlar her iş günü 16:30 ET\'ye kadar bir kez yayınlanır</string>
     <string name="api_bankOfIsrael_descriptionFull">İsrail merkez bankası <a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/"><b>Bank of Israel</b></a> tarafından yayınlanan temsili döviz kurları. Kurlar yeni İsrail şekeline karşı verilmektedir.\n<b>Bank of Israel yaklaşık 14 döviz kurunu listeler.</b></string>
-    <string name="api_bankOfIsrael_descriptionShort">Yaklaşık 14 para birimi\nKaynak: İsrail Merkez Bankası</string>
+    <string name="api_bankOfIsrael_descriptionShort">Yaklaşık 14 döviz kuru\nKaynak: İsrail Merkez Bankası</string>
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Temsili kurlar her iş günü İsrail saatiyle yaklaşık 15:30\'da yayınlanır.</string>
-    <string name="api_bankRossii_descriptionFull">Rusya merkez bankası <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a> tarafından sağlanan döviz kurları. Şu anki yaptırımlarla birlikte, bu kaynak muhtemelen Rus Rublesi için en güvenilir döviz kuru verilerini vermektedir.\n<b>Bank Rossii yaklaşık 44 döviz kurunu listeler.</b></string>
-    <string name="api_bankRossii_descriptionShort">Yaklaşık 44 para birimi\nKaynak: Rusya Merkez Bankası</string>
+    <string name="api_bankRossii_descriptionFull">Rusya merkez bankası <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a> tarafından sağlanan döviz kurları. Mevcut yaptırımlar nedeniyle bu kaynak, Rus rublesi için muhtemelen en güvenilir döviz kurlarını sunar.\n<b>Bank Rossii yaklaşık 44 döviz kurunu listeler.</b></string>
+    <string name="api_bankRossii_descriptionShort">Yaklaşık 44 döviz kuru\nKaynak: Rusya Merkez Bankası</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Kurlar, <a href="https://cbr.ru/eng/other/holidays/">Rusya\'daki resmi tatiller</a> dışında günlük olarak güncellenir.</string>
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> döviz kurlarını Avrupa Merkez Bankası\'nın da dahil olduğu güvenilir banka ve sağlayıcılardan alır. Tüm döviz kurları orta nokta verisi olarak alınır. Orta nokta oranları Bid ve Ask\'ın ortalama medyanı hesaplanarak belirlenir.\n <b>Yaklaşık 160 para birimi bulunmaktadır.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Döviz kurları her iş gününde gece yarısı (UTC) civarında güncellenir.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> (tıpkı Frankfurter.app gibi) Avrupa Merkez Bankası tarafından yayınlanan gösterge döviz (forex) kurlarını esas alan, kısmen yeni bir veri sağlayıcısıdır.\n<b>Yaklaşık 30 para birimi bulunmaktadır.</b></string>
+    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a>, (tıpkı Frankfurter.app gibi) Avrupa Merkez Bankası tarafından yayınlanan gösterge döviz (forex) kurlarını takip eden, nispeten yeni bir hizmettir.\n<b>Yaklaşık 30 para birimi bulunmaktadır.</b></string>
     <string name="api_ferEe_descriptionUpdateInterval">Kurlar her iş günü güncellenir.</string>
-    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a>, Avrupa Merkez Bankası tarafından yayınlanan gösterge niteliğindeki döviz (forex) kurlarını esas alır.\n<b>Yaklaşık 30 para birimi bulunmaktadır.</b></string>
-    <string name="api_frankfurterApp_descriptionShort">Yaklaşık 30 para birimi\nKaynak: Avrupa Merkez Bankası</string>
+    <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a>, Avrupa Merkez Bankası tarafından yayınlanan gösterge döviz (forex) kurlarını takip eder.\n<b>Yaklaşık 30 para birimi bulunmaktadır.</b></string>
+    <string name="api_frankfurterApp_descriptionShort">Yaklaşık 30 döviz kuru\nKaynak: Avrupa Merkez Bankası</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Veri güncellemesi her iş günü 16:00 (CET) civarında gerçekleşir.</string>
     <string name="api_inforEuro_descriptionFull"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en"><b>InforEuro</b></a>, Avrupa Komisyonu\'nun Euro için resmi aylık muhasebe kurunu ve Mali Tüzüğün 19. maddesi uyarınca Avrupa Komisyonu Muhasebe Sorumlusu tarafından belirlenen dönüşüm oranlarını paylaşır.\nBu oranlar, Avrupa Komisyonu\'nun talebi üzerine toplantılar, görüşmeler gibi etkinliklere dışarıdan katılan kişilerin harcamalarının, seyahat veya konaklama masraflarının geri ödenmesine ilişkin tutarları hesaplamak için kullanılır.\n<b>Yaklaşık 150 para birimi bulunmaktadır.</b></string>
-    <string name="api_inforEuro_descriptionShort">Yaklaşık 150 para birimi\nKaynak: Avrupa Komisyonu</string>
+    <string name="api_inforEuro_descriptionShort">Yaklaşık 150 döviz kuru\nKaynak: Avrupa Komisyonu</string>
     <string name="api_inforEuro_descriptionUpdateInterval">Belirtilen oranlar, bir önceki ayın sondan ikinci günü için Avrupa Merkez Bankası tarafından verilen veya mevcudiyete bağlı olarak delegasyonlar ya da diğer uygun kaynaklar tarafından o tarihe yakın bir zamanda sağlanan piyasa oranlarıdır.</string>
-    <string name="api_inforEuro_hint">Kur oranları yalnızca ayda bir kez güncellenir!</string>
+    <string name="api_inforEuro_hint">Kurlar yalnızca ayda bir kez güncellenir!</string>
     <string name="api_norgesBank_descriptionFull">Norveç merkez bankası <a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/"><b>Norges Bank</b></a> tarafından sağlanan döviz kurları.\n<b>Norges Bank yaklaşık 40 döviz kurunu listeler.</b></string>
-    <string name="api_norgesBank_descriptionShort">Yaklaşık 40 para birimi\nKaynak: Norveç Merkez Bankası</string>
+    <string name="api_norgesBank_descriptionShort">Yaklaşık 40 döviz kuru\nKaynak: Norveç Merkez Bankası</string>
     <string name="api_norgesBank_descriptionUpdateInterval">Günlük döviz kurlarının yayınlanma saati yaklaşık olarak 16:00 CET\'dir.</string>
-    <string name="api_norgesBank_hint">Hizmet düzenli olarak kesintiye uğramakta (HTTP 503) ve kesinti esnasında kur oranları maalesef güncellenemez!</string>
-    <string name="api_openExchangeRates_descriptionFull">Veriler birden fazla güvenilir kaynaktan takip edilir ve birleştirilir, böylece tarafsız oranlar sağlanır. Daha fazla bilgi için <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> adresini ziyaret edin.\n<b>Open Exchange Rates, yaklaşık 160 döviz kuru hakkında büyük miktarda bilgi sağlar.\n<i>Bu kaynağı kullanmak için kişisel API anahtarınızı girmeniz gerekir!</i></b></string>
+    <string name="api_norgesBank_hint">Hizmette düzenli olarak kesintiler yaşanır (HTTP 503) ve bu sırada kurlar güncellenemez!</string>
+    <string name="api_openExchangeRates_descriptionFull">Veriler birden fazla güvenilir kaynaktan takip edilip birleştirilir, böylece tarafsız kurlar sağlanır. Daha fazla bilgi için <a href="https://openexchangerates.org/"><b>openexchangerates.org</b></a> adresini ziyaret edin.\n<b>Open Exchange Rates, yaklaşık 160 döviz kuruyla geniş bir kapsam sunar.\n<i>Bu kaynağı kullanmak için kişisel API anahtarınızı girmeniz gerekir!</i></b></string>
     <string name="api_openExchangeRates_descriptionShort">Yaklaşık 160 döviz kuru\nKaynak: Birden fazla güvenilir sağlayıcının birleşimi.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Saatlik güncellemeler.</string>
     <string name="api_openExchangeRates_hint">Bu kaynağı kullanmak için kişisel API anahtarınızı oluşturmanız gerekir!</string>

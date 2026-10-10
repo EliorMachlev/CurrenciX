@@ -2,13 +2,10 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Ĝeneralaj Agordoj</string>
+    <string name="category_settings">Ĝeneralaj agordoj</string>
     <string name="fee_title">Eksterlanda transakcia kotizo</string>
     <string name="fee_summary">Administri interŝanĝajn, bankajn/kartajn kaj para-specifajn kotizojn</string>
     <string name="fee_manager_title">Kotizoj</string>
-    <string name="fee_side_label">Speco de kotizo</string>
-    <string name="fee_side_original">Konverta kotizo</string>
-    <string name="fee_side_converted">Konvertita kotizo</string>
     <string name="fee_section_global_exchange">Ĝenerala interŝanĝa kotizo</string>
     <string name="fee_section_global_bank">Ĝenerala banka/karta kotizo</string>
     <string name="fee_section_specific_pair">Kotizo por specifa valuta paro</string>
@@ -20,51 +17,36 @@
     <string name="fee_pair_to">Al</string>
     <string name="fee_pair_pick_currency">Elekti valuton</string>
     <string name="fee_true_cost_prefix">"Konverta kotizo: "</string>
-    <string name="fee_original_value_prefix">"Redukta kotizo: "</string>
     <string name="fee_cost_with_fee_prefix">"Kosto kun kotizo: "</string>
-    <string name="fee_value_before_fee_prefix">"Valoro antaŭ kotizo: "</string>
-    <string name="fee_side_summary_original">La montrata konvertita sumo restas ĉe la mez-merkata kurzo; kotizoj estas montrataj aparte kiel \"Konverta kotizo\".</string>
-    <string name="fee_side_summary_converted">Kotizoj estas inkluzivitaj en la montrata konvertita sumo.</string>
     <string name="fee_empty">Neniuj kotizoj ankoraŭ</string>
-    <string name="previewConversion_title">Antaŭrigardo de konvertiĝo</string>
-    <string name="previewConversion_summary">Montri la nunan konvertiĝon por ĉiu kurzo en la valutelektilo.</string>
+    <string name="previewConversion_title">Antaŭrigardo de konverto</string>
+    <string name="previewConversion_summary">Montri la nunan konverton por ĉiu kurzo en la valutelektilo.</string>
     <string name="keyboard_title">Klavaro</string>
-    <string name="keyboard_option_default">Implicita</string>
-    <string name="keyboard_option_expanded">Etendita</string>
-    <string name="keyboard_option_system">Sistema klavaro (nombra)</string>
-    <string name="keyboard_option_system_full">Sistema klavaro (plena)</string>
-    <string name="keyboard_summary_default">Norma kalkulila klavaro.</string>
-    <string name="keyboard_summary_expanded">Aldonas kromajn ŝparklavojn por pli rapida enigo.</string>
-    <string name="keyboard_summary_system">Uzas la nombran klavaron de via aparato. Akceptas ciferojn, decimalpunkton, kutimajn aritmetikajn operatorojn kaj krampojn.</string>
-    <string name="keyboard_summary_system_full">Uzas la plenan tekstan klavaron de via aparato. Akceptas ciferojn, decimalpunkton, kutimajn aritmetikajn operatorojn kaj krampojn.</string>
+    <string name="keyboard_summary_expanded">Aldonas kromajn fulmoklavojn por pli rapida enigo.</string>
     <string name="decimal_places_title">Decimala precizeco</string>
-    <string name="decimal_places_summary">Nombro de decimalaj lokoj montrataj por konvertitaj valoroj.</string>
     <string name="haptic_feedback_title">Hapta reago</string>
-    <string name="haptic_feedback_summary">Vibru ĉe klav-premo\nSekvas sisteman agordon</string>
+    <string name="haptic_feedback_summary">Vibri ĉe tuŝetoj tra la tuta aplikaĵo\nSekvas la sisteman agordon\nAŭtomate malŝaltita en energiŝpara reĝimo</string>
+    <string name="auto_refresh_title">Aŭtomata refreŝigo de kurzoj</string>
+    <string name="auto_refresh_summary">Refreŝigi en la fono laŭ la ofteco rekomendita de la provizanto</string>
     <string name="date_format_title">Formato de dato kaj tempo</string>
     <string name="category_appearance">Aspekto</string>
-    <string name="system_default">Sistema defaŭlta</string>
+    <string name="system_default">Laŭ la sistemo</string>
     <string name="theme_title">Dezajno</string>
     <string name="theme_option_light">Hela</string>
     <string name="theme_option_dark">Malhela</string>
     <string name="theme_option_oled">OLED</string>
-    <string name="theme_option_system_oled">Sistema defaŭlta (OLED)</string>
+    <string name="theme_option_system_oled">Laŭ la sistemo (OLED)</string>
     <!-- graph options -->
-    <string name="category_graph_options">Grafeaj agordoj</string>
-    <string name="graph_options_title">Grafeaj agordoj</string>
+    <string name="category_graph_options">Agordoj de diagramo</string>
+    <string name="graph_options_title">Agordoj de diagramo</string>
     <string name="graph_options_summary">Agordi kradon, aksajn etikedojn kaj emfazojn.</string>
     <string name="graph_grid_title">Montri kradon</string>
-    <string name="graph_grid_summary">Desegni horizontalajn kaj vertikalajn gvidliniojn malantaŭ la grafeo.</string>
     <string name="graph_x_axis_title">Montri X-aksajn etikedojn</string>
-    <string name="graph_x_axis_summary">Montri datojn ĉe la malsupro de la grafeo.</string>
     <string name="graph_y_axis_title">Montri Y-aksajn etikedojn</string>
-    <string name="graph_y_axis_summary">Montri kursvalorojn ĉe la maldekstra flanko de la grafeo.</string>
     <string name="graph_highlight_extremes_title">Emfazi minimumon kaj maksimumon</string>
-    <string name="graph_highlight_extremes_summary">Surmeti referencajn liniojn ĉe la plej malaltaj kaj plej altaj kursoj en la videbla intervalo.</string>
     <string name="graph_highlight_period_change_title">Emfazi ŝanĝon de jaro/monato</string>
-    <string name="graph_highlight_period_change_summary">Desegni vertikalajn gvidliniojn kie la jaro aŭ monato ŝanĝiĝas tra la diagramo.</string>
     <!-- languages -->
-    <string name="language_title">Aplikaĵa Lingvo</string>
+    <string name="language_title">Lingvo de la aplikaĵo</string>
     <string name="language_ar">Araba</string>
     <string name="language_bg">Bulgara</string>
     <string name="language_bn">Bengala</string>
@@ -74,7 +56,7 @@
     <string name="language_de">Germana</string>
     <string name="language_el">Greka</string>
     <string name="language_en">Angla</string>
-    <string name="language_en_GB">Angla (Brita)</string>
+    <string name="language_en_GB">Angla (Britio)</string>
     <string name="language_eo">Esperanto</string>
     <string name="language_es">Hispana</string>
     <string name="language_et">Estona</string>
@@ -86,6 +68,7 @@
     <string name="language_is">Islanda</string>
     <string name="language_it">Itala</string>
     <string name="language_he">Hebrea</string>
+    <string name="language_ml">Malajala</string>
     <string name="language_nb">Norvega</string>
     <string name="language_nl">Nederlanda</string>
     <string name="language_pl">Pola</string>
@@ -98,21 +81,11 @@
     <string name="language_zh_CN">Ĉina (Simpligita)</string>
     <string name="language_zh_TW">Ĉina (Tradicia)</string>
     <!-- api -->
-    <string name="category_api">Tarifoj</string>
+    <string name="category_api">Kurzoj</string>
     <string name="api_title">Datumprovizanto</string>
     <string name="api_about_title">Pri %s</string>
 
     <!-- about -->
-
-
-
-
-
-
-
-
-
-
 
     <string name="backup_title">Sekurkopio kaj restarigo</string>
     <string name="backup_summary">Konservu viajn agordojn en dosiero, aŭ restarigu el antaŭa sekurkopio</string>
@@ -120,12 +93,12 @@
     <string name="backup_section_local">Loka sekurkopio</string>
     <string name="backup_section_restore">Restarigo</string>
     <string name="backup_export_title">Eksporti al dosiero</string>
-    <string name="backup_export_summary">Elektu lokon en ĉi tiu aparato por konservi ĉifritan aŭ nudan agordo-dosieron</string>
+    <string name="backup_export_summary">Elektu lokon en ĉi tiu aparato por konservi ĉifritan aŭ neĉifritan agordo-dosieron</string>
     <string name="backup_import_title">Importi el dosiero</string>
     <string name="backup_import_summary">Anstataŭigi la nunajn agordojn per tiuj el antaŭe eksportita sekurkopio</string>
     <string name="backup_export_success">Sekurkopio konservita</string>
     <string name="backup_export_failed">Sekurkopio malsukcesis: %1$s</string>
-    <string name="backup_import_success">Agordoj restarigitaj — restartigu por apliki</string>
+    <string name="backup_import_success">Agordoj restarigitaj — relanĉu por apliki</string>
     <string name="backup_import_failed">Restarigo malsukcesis: %1$s</string>
     <string name="backup_import_confirm_title">Ĉu restarigi el sekurkopio?</string>
     <string name="backup_import_confirm_message">Viaj nunaj agordoj estos anstataŭigitaj per tiuj en la dosiero. Tio ne malfareblas.</string>
@@ -134,10 +107,17 @@
     <string name="backup_password_hint">Pasvorto</string>
     <string name="backup_password_prompt_title">Enigu pasvorton</string>
     <string name="backup_password_wrong">La pasvorto ne malĉifris ĉi tiun dosieron. Provu denove.</string>
-    <string name="backup_password_too_short">La pasvorto devas havi almenaŭ %1$d signojn</string>
-    <string name="credits_title">Pri, jura &amp; malfermitkoda</string>
+    <plurals name="backup_password_too_short">
+        <item quantity="one">La pasvorto devas havi almenaŭ %1$d signon</item>
+        <item quantity="other">La pasvorto devas havi almenaŭ %1$d signojn</item>
+    </plurals>
+    <string name="backup_password_show">Montri pasvorton</string>
+    <string name="backup_password_hide">Kaŝi pasvorton</string>
+    <string name="picker_active_chip">Aktiva</string>
+    <string name="picker_currency_title">Valuto</string>
+    <string name="credits_title">Pri, juraĵoj kaj malferma kodo</string>
     <string name="credits_summary">Privateca politiko, servkondiĉoj, alirebleco, fontkodo kaj permesiloj de triapartaj bibliotekoj</string>
-    <string name="title_credits">Pri, jura &amp; malfermitkoda</string>
+    <string name="title_credits">Pri, juraĵoj kaj malferma kodo</string>
     <string name="credits_section_project">Projekto</string>
     <string name="credits_section_license">Permesilo</string>
     <string name="credits_section_libraries">Triapartaj bibliotekoj</string>
@@ -150,22 +130,47 @@
     <string name="category_versioninfo">Versia informo</string>
     <string name="credit_accessibility_title">Alirebleca deklaro</string>
     <string name="credit_accessibility_subtitle">Celo WCAG 2.1 AA; kiel raporti barojn.</string>
-    <string name="credit_privacy_policy_title">Politiko pri privateco</string>
+    <string name="credit_privacy_policy_title">Privateca politiko</string>
     <string name="credit_privacy_policy_subtitle">Neniuj personaj datumoj estas kolektataj. Plena sinteno laŭ jurisdikcio.</string>
     <string name="credit_source_title">Fontkodo</string>
-    <string name="credit_source_subtitle">Malfermitkoda en GitHub — kontribuu aŭ malfermu problemon.</string>
+    <string name="credit_source_subtitle">Malfermitkoda en GitHub — kontribuu aŭ raportu problemon.</string>
+    <string name="credit_fork_by">Forko de %1$s</string>
+    <string name="credit_original_by">Originala aplikaĵo de %1$s</string>
+    <!-- What each third-party library does for the app; the maker's name follows -->
+    <string name="credit_lib_androidx">Jetpack-bibliotekoj</string>
+    <string name="credit_lib_compose">Ilaro por la uzantinterfaco kaj Material 3</string>
+    <string name="credit_lib_material_components">Komponantoj de Material Design</string>
+    <string name="credit_lib_material_symbols">Piktogramoj (rondigitaj)</string>
+    <string name="credit_lib_vico">Diagramoj</string>
+    <string name="credit_lib_okhttp">HTTP-kliento</string>
+    <string name="credit_lib_moshi">JSON-analizilo</string>
+    <string name="credit_lib_timber">Protokolado</string>
+    <string name="credit_lib_bouncy_castle">Ŝlosila derivado per Argon2id por ĉifritaj sekurkopioj</string>
+    <string name="credit_lib_tink">AES-GCM-ĉifrado por sekurkopioj</string>
+    <string name="credit_lib_kotlin">Rultempo de la lingvo kaj norma biblioteko</string>
+    <string name="credit_lib_coroutines">Nesinkrona programado (uzata de aliaj bibliotekoj)</string>
+    <string name="credit_lib_okio">Bazaj enig-eligaj elementoj (uzataj de OkHttp kaj Moshi)</string>
     <string name="credit_terms_of_service_title">Servkondiĉoj</string>
-    <string name="credit_terms_of_service_subtitle">Uzokondiĉoj, malagnosko de garantio, avizo pri kurza precizeco.</string>
-    <string name="credits_section_legal">Jura</string>
+    <string name="credit_terms_of_service_subtitle">Uzokondiĉoj, malgarantio, avizo pri la precizeco de kurzoj.</string>
+    <string name="credits_section_legal">Juraĵoj</string>
     <string name="credits_section_source">Fonto</string>
     <string name="disclaimer_title">Malgarantio</string>
-    <string name="disclaimer_summary">Montritaj kurzoj estas <b>nur indikaj</b>. Ili venas de triaj provizantoj, povas esti prokrastitaj aŭ malĝustaj, kaj <b>ne devas</b> esti uzataj por komerco, kovrado, fakturado aŭ ajna decido, kie preciza aŭ efektivigebla kurzo estas postulata. Vidu la servkondiĉojn por la plena malgarantio.\nDonitaj kurzoj – eĉ se ĝustaj – povas malsami de tiuj uzataj de via banko.\nFine: eraroj okazas. Neniam blinde fidu al iu ajn sola fonto.\nĈi tiu aplikaĵo estas tute senpaga kaj malfermitkoda. Se vi trovas version kun prezo aŭ reklamoj, ĝi estas falsa — malinstalu ĝin tuj.</string>
+    <string name="disclaimer_summary">Montritaj kurzoj estas <b>nur indikaj</b>. Ili venas de triapartaj provizantoj, povas esti prokrastitaj aŭ malĝustaj, kaj <b>ne rajtas</b> esti uzataj por komerco, kovrado, fakturado aŭ ajna decido, kie preciza aŭ efektivigebla kurzo estas postulata. Vidu la servkondiĉojn por la plena malgarantio.\nDonitaj kurzoj – eĉ se ĝustaj – povas malsami de tiuj uzataj de via banko.\nFine: eraroj okazas. Neniam blinde fidu al iu ajn sola fonto.\nĈi tiu aplikaĵo estas tute senpaga kaj malfermitkoda. Se vi trovas version kun prezo aŭ reklamoj, ĝi estas falsa — malinstalu ĝin tuj.</string>
     <string name="fee_edit_active">Aktiva</string>
     <string name="fee_edit_name">Nomo</string>
-    <string name="fee_edit_name_hint">ekz. Wise, Revolut, Chase</string>
     <string name="fee_inactive_marker">Neaktiva</string>
     <string name="fee_untitled">Sennomita</string>
     <string name="rate_title">Taksi ĉi tiun aplikaĵon</string>
-    <string name="rate_summary">Se vi volas, vi povas helpi aliajn malkovri Currencies. Alklaku ĉi tie por taksi la aplikaĵon.</string>
+    <string name="rate_summary">Se vi volas, vi povas helpi aliajn malkovri Currencies. Tuŝetu ĉi tie por taksi la aplikaĵon.</string>
     <string name="title_changelog">Ŝanĝoprotokolo</string>
+    <string name="dynamic_color_title">Ekranfonaj koloroj</string>
+    <string name="dynamic_color_summary">Kolorigi la aplikaĵon per la koloroj de via ekranfono (Material You)</string>
+    <string name="provider_group_free">Senpagaj</string>
+    <string name="provider_group_api_key">Bezonas API-ŝlosilon</string>
+    <string name="provider_main_chip">Ĉefa</string>
+    <string name="provider_cadence_hourly">Ĝisdatigo ĉiuhore</string>
+    <string name="provider_cadence_daily">Ĝisdatigo ĉiun labortagon</string>
+    <string name="provider_cadence_monthly">Ĝisdatigo unufoje monate</string>
+    <string name="fallback_provider_title">Rezerva provizanto</string>
+    <string name="fallback_provider_summary">%1$s · uzata, kiam %2$s ne atingeblas</string>
 </resources>

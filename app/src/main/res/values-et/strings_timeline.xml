@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> ⇨ &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Andmeallikas <b>%s</b></string>
     <string name="rate_average">keskm.</string>
-    <string name="rate_median">med</string>
+    <string name="rate_median">mediaan</string>
     <string name="rate_min">miin.</string>
     <string name="rate_max">maks.</string>
     <string name="year">aasta</string>
     <string name="month">kuu</string>
     <string name="week">nädal</string>
+    <string name="timeline_five_years">5 aastat</string>
+    <string name="timeline_custom_range">Kohandatud vahemik</string>
+    <string name="timeline_share">Jaga graafikut</string>
+    <string name="timeline_no_rates">Nende kuupäevade kohta kursse pole</string>
 </resources>
