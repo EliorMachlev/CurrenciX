@@ -1,6 +1,8 @@
 package com.eliormachlev.currencix.screenshots
 
 import android.app.Application
+import androidx.compose.ui.res.stringResource
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.view.preference.compose.LanguagePickerDialog
@@ -56,7 +58,7 @@ class DialogsScreenshotTest {
                 selected = ApiProvider.FRANKFURTER_APP,
                 onDismiss = {},
                 onPicked = {},
-                title = "Fallback provider",
+                title = stringResource(R.string.fallback_provider_title),
                 unavailable = ApiProvider.BANK_OF_ISRAEL,
             )
         }

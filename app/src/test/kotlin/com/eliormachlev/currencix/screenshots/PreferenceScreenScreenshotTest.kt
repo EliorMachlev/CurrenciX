@@ -10,7 +10,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ReadingDirection
+import com.eliormachlev.currencix.view.preference.compose.AboutProviderRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
 import com.eliormachlev.currencix.view.preference.compose.SwitchRow
@@ -95,19 +98,12 @@ private fun ApiSectionPreview() {
     PreferenceSection(text = stringResource(id = R.string.category_api)) {
         PreferenceRow(
             title = stringResource(id = R.string.api_title),
-            summary = SAMPLE_PROVIDER,
+            summary = SAMPLE_PROVIDER.getName(LocalContext.current).toString(),
             iconRes = R.drawable.ic_data_provider,
         )
-        PreferenceRow(
-            title = stringResource(id = R.string.api_about_title, SAMPLE_PROVIDER),
-            summary = SAMPLE_PROVIDER_DESCRIPTION,
-            iconRes = R.drawable.ic_info,
-        )
-        PreferenceRow(
-            title = stringResource(id = R.string.api_refreshPeriod_title),
-            summary = SAMPLE_PROVIDER_UPDATE_INTERVAL,
-            iconRes = R.drawable.ic_schedule,
-        )
+        // The real row: its description and refresh cadence come from the
+        // provider's own (translated) strings.
+        AboutProviderRow(SAMPLE_PROVIDER)
     }
 }
 
@@ -162,7 +158,8 @@ private fun AboutSectionPreview() {
     PreferenceSection(text = stringResource(id = R.string.category_about)) {
         PreferenceRow(
             title = stringResource(id = R.string.disclaimer_title),
-            summary = SAMPLE_DISCLAIMER,
+            summary = stringResource(id = R.string.disclaimer_summary),
+            summaryMaxLines = FULL_SUMMARY,
             iconRes = R.drawable.ic_gavel,
         )
         PreferenceRow(
@@ -188,12 +185,7 @@ private fun VersionSectionPreview() {
     }
 }
 
-private const val SAMPLE_PROVIDER = "European Central Bank"
-private const val SAMPLE_PROVIDER_DESCRIPTION =
-    "Reference rates published each business day around 16:00 CET."
-private const val SAMPLE_PROVIDER_UPDATE_INTERVAL = "Every 4 hours"
+private val SAMPLE_PROVIDER = ApiProvider.FRANKFURTER_APP
 private const val SAMPLE_DATE_FORMAT = "dd/MM/yy HH:mm"
-private const val SAMPLE_DISCLAIMER =
-    "Rates are informational only and may lag the market. Do not trade on them."
 private const val SAMPLE_VERSION = "1.0.0"
 private const val SAMPLE_YEAR = "2026"

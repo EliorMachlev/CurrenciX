@@ -7,11 +7,11 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.assertOnReadingStartSide
 import com.eliormachlev.currencix.util.seedCachedRates
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.main.compose.DrawerAction
@@ -46,17 +46,15 @@ class ConverterRtlTest {
         repeat(SETTLE_FRAMES) { compose.mainClock.advanceTimeByFrame() }
     }
 
-    private fun bounds(description: Int) = compose.onNodeWithContentDescription(string(description)).getBoundsInRoot()
-
-    private fun DpRect.centerX() = (left + right) / 2
+    private fun node(description: Int) = compose.onNodeWithContentDescription(string(description))
 
     @Test
     fun `the hamburger sits on the right, after the shortcuts`() {
-        val hamburger = bounds(R.string.desc_open_drawer)
-        val cart = bounds(R.string.cart_title)
-        val screen = compose.onRoot().getBoundsInRoot()
-        assertTrue("hamburger at $hamburger", hamburger.centerX() > screen.centerX())
-        assertTrue("hamburger $hamburger left of the cart $cart", hamburger.left > cart.right)
+        val hamburger = node(R.string.desc_open_drawer)
+        hamburger.assertOnReadingStartSide(compose.onRoot())
+        val cart = node(R.string.cart_title).getBoundsInRoot()
+        val bounds = hamburger.getBoundsInRoot()
+        assertTrue("hamburger $bounds right of the cart $cart", bounds.left > cart.right)
     }
 
     @Test

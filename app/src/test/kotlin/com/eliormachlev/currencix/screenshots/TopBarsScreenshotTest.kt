@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
@@ -67,7 +68,7 @@ private fun CartBar() = ReadingDirection { CartBarContent() }
 @Composable
 private fun CartBarContent() {
     ScreenScaffold(
-        title = { Text("Shopping cart") },
+        title = { Text(stringResource(R.string.cart_title)) },
         onBack = {},
         actions = {
             TopBarOverflowMenu(

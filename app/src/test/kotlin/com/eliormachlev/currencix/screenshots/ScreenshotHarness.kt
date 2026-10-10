@@ -1,10 +1,7 @@
 package com.eliormachlev.currencix.screenshots
 
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.res.Configuration
-import android.content.res.Resources
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,14 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -37,6 +30,7 @@ import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+import org.robolectric.RuntimeEnvironment
 import java.util.Locale
 
 // Where recordRoborazzi{Flavor}Debug writes PNGs. The CI workflow uploads
@@ -51,6 +45,10 @@ internal enum class Locale2(
 ) {
     EN("en", LayoutDirection.Ltr),
     HE("he", LayoutDirection.Rtl),
+    ;
+
+    // The resource qualifier: Hebrew's resources live under the legacy "iw".
+    val qualifier: String get() = if (this == HE) "iw" else tag
 }
 
 internal enum class ThemeMode(
@@ -77,13 +75,7 @@ internal fun MatrixCell(
     content: @Composable () -> Unit,
 ) {
     Locale.setDefault(Locale.forLanguageTag(locale.tag))
-    val context = rememberLocalizedContext(locale.tag)
-    CompositionLocalProvider(
-        LocalContext provides context,
-        LocalConfiguration provides context.resources.configuration,
-        LocalResources provides context.resources,
-        LocalLayoutDirection provides locale.dir,
-    ) {
+    CompositionLocalProvider(LocalLayoutDirection provides locale.dir) {
         AppTheme(dark = theme.dark) {
             // OLED = pureBlack surface applied over the dark palette. In the
             // real app this comes from the Activity's XML theme; in tests we
@@ -102,27 +94,6 @@ internal fun MatrixCell(
             }
         }
     }
-}
-
-// The cell's language for resources too, not only the JVM default locale:
-// strings come out in it, and so does the app language that
-// ReadingDirection reads. A wrapper, so the Activity is still underneath for
-// anything that looks it up.
-@Composable
-private fun rememberLocalizedContext(tag: String): Context {
-    val base = LocalContext.current
-    val configuration = LocalConfiguration.current
-    return remember(base, configuration, tag) {
-        val config = Configuration(configuration).apply { setLocale(Locale.forLanguageTag(tag)) }
-        LocalizedContext(base, base.createConfigurationContext(config).resources)
-    }
-}
-
-private class LocalizedContext(
-    base: Context,
-    private val localized: Resources,
-) : ContextWrapper(base) {
-    override fun getResources(): Resources = localized
 }
 
 /**
@@ -159,39 +130,63 @@ class ScreenshotRule : TestRule {
         content: @Composable () -> Unit,
     ) = capture(listOf(Cell(Locale2.EN, ThemeMode.LIGHT, LARGE_FONT_SCALE)), name, content)
 
-    // captureScreenRoboImage (the whole window, for dialogs) is still experimental in Roborazzi.
-    @OptIn(ExperimentalRoborazziApi::class)
     private fun capture(
         cells: List<Cell>,
         name: String,
         content: @Composable () -> Unit,
     ) {
-        val current = mutableStateOf(cells.first())
         compose.mainClock.autoAdvance = false
-        compose.setContent {
-            val cell = current.value
-            key(cell) {
-                FontScaled(cell.fontScale) {
-                    Box(Modifier.testTag(ROOT_TAG)) { MatrixCell(cell.locale, cell.theme, content) }
+        cells.groupBy(Cell::locale).forEach { (locale, group) ->
+            val current = mutableStateOf(group.first())
+            showInLanguage(locale) {
+                val cell = current.value
+                key(cell) {
+                    FontScaled(cell.fontScale) {
+                        Box(Modifier.testTag(ROOT_TAG)) { MatrixCell(cell.locale, cell.theme, content) }
+                    }
                 }
             }
+            group.forEach { cell ->
+                current.value = cell
+                settle()
+                save("$SCREENSHOT_DIR/${name}_${cell.suffix}.png")
+            }
         }
-        cells.forEach { cell ->
-            current.value = cell
-            // Twice: a sheet or dialog that replaces the previous cell's
-            // opens in a new window, and only starts its entrance once that
-            // window is attached — after the first pass.
-            repeat(SETTLE_PASSES) {
-                compose.waitForIdle()
-                compose.mainClock.advanceTimeBy(SETTLE_MILLIS)
-            }
+    }
+
+    // The whole activity runs in the cell's language, as on a phone set to
+    // it: a sheet or dialog opens a window of its own that takes its
+    // resources (and so its strings and reading direction) from the
+    // activity, not from anything provided around it. Switching the
+    // qualifiers recreates the activity, so the content goes on the new one.
+    private fun showInLanguage(
+        locale: Locale2,
+        content: @Composable () -> Unit,
+    ) {
+        RuntimeEnvironment.setQualifiers("+${locale.qualifier}")
+        compose.runOnUiThread { compose.activity.setContent(content = content) }
+    }
+
+    // Twice: a sheet or dialog that replaces the previous cell's opens in a
+    // new window, and only starts its entrance once that window is attached
+    // — after the first pass.
+    private fun settle() {
+        repeat(SETTLE_PASSES) {
             compose.waitForIdle()
-            val file = "$SCREENSHOT_DIR/${name}_${cell.suffix}.png"
-            if (compose.onAllNodes(isDialog()).fetchSemanticsNodes().isNotEmpty()) {
-                captureScreenRoboImage(file)
-            } else {
-                compose.onNodeWithTag(ROOT_TAG).captureRoboImage(file)
-            }
+            compose.mainClock.advanceTimeBy(SETTLE_MILLIS)
+        }
+        compose.waitForIdle()
+    }
+
+    // A sheet or dialog lives in a window of its own: the whole screen is
+    // captured then; anything else as just the content.
+    // captureScreenRoboImage is still experimental in Roborazzi.
+    @OptIn(ExperimentalRoborazziApi::class)
+    private fun save(file: String) {
+        if (compose.onAllNodes(isDialog()).fetchSemanticsNodes().isNotEmpty()) {
+            captureScreenRoboImage(file)
+        } else {
+            compose.onNodeWithTag(ROOT_TAG).captureRoboImage(file)
         }
     }
 

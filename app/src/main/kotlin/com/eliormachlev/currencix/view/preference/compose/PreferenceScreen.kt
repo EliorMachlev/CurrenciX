@@ -406,7 +406,7 @@ private fun ApiSection(
 // One row per provider: "About Bank of Israel", its description in full,
 // and under it how often it publishes, beside a small clock.
 @Composable
-private fun AboutProviderRow(provider: ApiProvider) {
+internal fun AboutProviderRow(provider: ApiProvider) {
     val context = LocalContext.current
     val cadence = provider.getDescriptionUpdateInterval(context).toString()
     PreferenceRow(
