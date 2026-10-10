@@ -25,7 +25,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 Runs on both PRs and pushes to `master`. Three jobs, side by side:
 
 - **`spotless`** — `spotlessCheck`, ktlint via Spotless (see [Code Style](contributing.md#code-style)).
-- **`build`** — matrix over `Fdroid` and `Play` flavors. Steps:
+- **`build`** — matrix over `Fdroid` and `Play` flavors × the three checks below, six jobs in all, each running one of:
   - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
   - `test<Flavor>DebugUnitTest` — JUnit unit tests
   - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
@@ -36,8 +36,8 @@ Runs on both PRs and pushes to `master`. Three jobs, side by side:
 A PR's checks take about five minutes, all jobs running at once; the longest are the two build legs and the fdroid release build.
 
 - **Superseded runs are cancelled.** Every workflow that runs on PRs or branch pushes has a `concurrency` group per PR (or branch): a new push cancels the run still going for the previous one. Runs on `master` always finish.
-- **Gradle** (`gradle.properties`): the build cache, the configuration cache and parallel project execution are on, with a 3 GB daemon heap and a 2 GB Kotlin daemon. `setup-gradle` keeps Gradle's home, build cache included, between runs: `master` writes it, PRs read it, so a PR reuses whatever `master` already built.
-- Spotless is its own job instead of a step ahead of each build leg.
+- **More jobs, side by side**: each flavor's lint, unit tests and debug build are separate jobs, as is Spotless, instead of one job per flavor running them one after another.
+- **Gradle** (`gradle.properties`): the build cache and parallel project execution are on, with a 3 GB daemon heap and a 2 GB Kotlin daemon. `setup-gradle` keeps Gradle's home, build cache included, between runs: `master` writes it, PRs read it, so a PR reuses whatever `master` already built. The configuration cache is off: measured on CI, it made lint + test + build about 70 s slower, by running one module's tasks side by side on 4 cores (the build script is compatible with it, should that change).
 
 ## Baseline Profiles & Benchmarks (`baseline-profile.yaml`)
 

@@ -48,8 +48,11 @@ jobs:
       matrix:
         # Flavor matrix — both fdroid and play must pass independently so a
         # play-only regression can't slip through by riding on a green fdroid job
-        # (and vice versa).
+        # (and vice versa). Lint, unit tests and the APK build are separate
+        # jobs, so they run side by side instead of one after another.
         flavor: [Fdroid, Play]
+        check: [lint, test, assemble]
+    name: ${{ matrix.check }} (${{ matrix.flavor }})
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -63,8 +66,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
 
-      - name: Lint, test and build the debug apk (${{ matrix.flavor }})
+      - name: ${{ matrix.check }} the ${{ matrix.flavor }} debug build
         env:
+          CHECK: ${{ matrix.check }}
+          FLAVOR: ${{ matrix.flavor }}
           # PR_URL is populated only for pull_request events — empty on
           # push/dispatch. Gradle reads it into BuildConfig.PR_URL so the
           # in-app "Release notes" entry deep-links to the PR the APK was
@@ -82,13 +87,18 @@ jobs:
           if [ -n "$COMMIT_SHA_FULL" ]; then
             ARGS+=("-PdebugCommitSha=${COMMIT_SHA_FULL:0:7}")
           fi
-          ./gradlew "${ARGS[@]}" lint${{ matrix.flavor }}Debug test${{ matrix.flavor }}DebugUnitTest assemble${{ matrix.flavor }}Debug
+          case "$CHECK" in
+            lint) TASK="lint${FLAVOR}Debug" ;;
+            test) TASK="test${FLAVOR}DebugUnitTest" ;;
+            assemble) TASK="assemble${FLAVOR}Debug" ;;
+          esac
+          ./gradlew "${ARGS[@]}" "$TASK"
 
       # A failed test otherwise shows only as "exit code 1": put each one
       # (class, name, message) on the run as an error annotation, readable
       # from the checks page and the API without the full log.
       - name: Annotate failed tests
-        if: failure()
+        if: failure() && matrix.check == 'test'
         run: |
           python3 - <<'PY'
           import glob
