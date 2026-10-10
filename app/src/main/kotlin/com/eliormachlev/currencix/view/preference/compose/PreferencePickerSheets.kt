@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,13 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.util.rememberHapticOnClick
-import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
-import com.eliormachlev.currencix.view.compose.dialogs.ProseAlertDialog
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
+import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
 
 // Small breather between the last picker row and the sheet edge so the final
 // LedgerRow (which has no divider) doesn't butt against the system nav.
@@ -40,11 +38,11 @@ class Choices<T>(
  * Compose single-choice picker — one [LedgerRow] per option under a
  * [LedgerBottomSheet]. The currently-selected option trails a [LedgerActiveChip]
  * so the picker reads with the same "ink on paper" affordance as the rest of
- * the ledger surfaces (see [ProviderPickerDialog]). Selecting an option fires
+ * the ledger surfaces (see [ProviderPickerSheet]). Selecting an option fires
  * [onPicked] and dismisses.
  */
 @Composable
-fun <T> SingleChoicePickerDialog(
+fun <T> SingleChoicePickerSheet(
     title: String,
     choices: Choices<T>,
     onDismiss: () -> Unit,
@@ -67,13 +65,12 @@ fun <T> SingleChoicePickerDialog(
 }
 
 /**
- * Compose text-entry dialog — stock M3 [AlertDialog] chrome with an
- * [OutlinedTextField]. [message] shows above the field when non-null.
- * Matches the fee editor and cart save/rename dialog so form-shaped
- * dialogs stay visually aligned across the app.
+ * Text-entry prompt — a sheet with an [OutlinedTextField], and [message]
+ * above it when non-null. Shares its chrome with the cart's name prompt and
+ * the fee editor, so every form-shaped prompt looks the same.
  */
 @Composable
-fun TextEntryDialog(
+fun TextEntrySheet(
     title: String,
     initialText: String,
     onDismiss: () -> Unit,
@@ -82,43 +79,21 @@ fun TextEntryDialog(
     singleLine: Boolean = true,
 ) {
     var text by rememberSaveable(initialText) { mutableStateOf(initialText) }
-    val confirm =
-        rememberHapticOnClick {
-            onConfirm(text)
+    LedgerPromptSheet(
+        title = title,
+        confirmLabel = stringResource(id = android.R.string.ok),
+        onConfirm = { onConfirm(text) },
+        onDismiss = onDismiss,
+    ) {
+        if (!message.isNullOrBlank()) {
+            PromptMessage(message)
+            Spacer(Modifier.height(TEXT_ENTRY_MESSAGE_GAP))
         }
-    val cancel = rememberHapticOnClick(onDismiss)
-    AppTheme {
-        ProseAlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(text = title) },
-            text = {
-                Column {
-                    if (!message.isNullOrBlank()) {
-                        Text(
-                            text = message,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Spacer(Modifier.height(TEXT_ENTRY_MESSAGE_GAP))
-                    }
-                    OutlinedTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        singleLine = singleLine,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = cancel) {
-                    Text(stringResource(id = android.R.string.cancel))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = confirm) {
-                    Text(stringResource(id = android.R.string.ok))
-                }
-            },
+        OutlinedTextField(
+            value = text,
+            onValueChange = { text = it },
+            singleLine = singleLine,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

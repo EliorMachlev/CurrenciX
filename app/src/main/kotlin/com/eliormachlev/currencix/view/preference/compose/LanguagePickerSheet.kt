@@ -39,7 +39,7 @@ private val SHEET_BOTTOM_SPACE = 12.dp
  * Tapping a row commits [onPicked] with the language and dismisses.
  */
 @Composable
-fun LanguagePickerDialog(
+fun LanguagePickerSheet(
     selected: Language?,
     onDismiss: () -> Unit,
     onPicked: (Language) -> Unit,

@@ -42,7 +42,7 @@ Guardrails first. These catch regressions in everything that follows.
 Load-bearing for every feature phase that follows. Land these before touching feature UI so features inherit ledger + bespoke-dialog treatment.
 
 - **#159 List redesign (ledger)** — migrate `PreferenceRow`/`PreferenceSection` first; cascades to Preferences, Fees, Backup for free. Drawer + picker rows next.
-- **#160 Dialog redesign** — `BasicAlertDialog` for confirm/password, `ModalBottomSheet` for data-provider picker. M3 primitives, no third-party dialog lib.
+- **#160 Dialog redesign** — `BasicAlertDialog` for confirm/password, `ModalBottomSheet` for data-provider picker. M3 primitives, no third-party dialog lib. (Later superseded: every prompt is now a `ModalBottomSheet`, see architecture.md, *Prompts*.)
 
 ## Phase 5 — Main screen
 

@@ -3,7 +3,7 @@ package com.eliormachlev.currencix.screenshots
 import android.app.Application
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Fee
-import com.eliormachlev.currencix.view.preference.compose.FeeEditorDialog
+import com.eliormachlev.currencix.view.preference.compose.FeeEditorSheet
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,12 +19,12 @@ import java.math.BigDecimal
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
-class FeeEditorDialogScreenshotTest {
+class FeeEditorSheetScreenshotTest {
     @get:Rule val shots = ScreenshotRule()
 
     @Test fun feeEditorNewGlobal() =
         shots.captureMatrix("fee_editor_new_global") {
-            FeeEditorDialog(
+            FeeEditorSheet(
                 titleRes = R.string.fee_section_global_exchange,
                 existing = null,
                 isPair = false,
@@ -36,7 +36,7 @@ class FeeEditorDialogScreenshotTest {
 
     @Test fun feeEditorExistingPair() =
         shots.captureMatrix("fee_editor_existing_pair") {
-            FeeEditorDialog(
+            FeeEditorSheet(
                 titleRes = R.string.fee_section_specific_pair,
                 existing = SAMPLE_PAIR,
                 isPair = true,

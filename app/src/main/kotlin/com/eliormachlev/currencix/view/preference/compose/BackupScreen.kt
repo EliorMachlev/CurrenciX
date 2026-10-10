@@ -27,16 +27,15 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogActions
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerDialogFrame
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordDialog
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordSheet
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PasswordFieldWithToggle
 import com.eliormachlev.currencix.view.compose.dialogs.PasswordInput
 import com.eliormachlev.currencix.viewmodel.preference.BACKUP_MIN_PASSWORD_LENGTH
 import com.eliormachlev.currencix.viewmodel.preference.BackupDialog
 import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
 
-private val DIALOG_FIELD_GAP = 12.dp
+private val CHECKBOX_TO_FIELD_GAP = 12.dp
 private val CHECKBOX_LABEL_GAP = 8.dp
 
 // Two categories match the old PreferenceFragmentCompat-backed BackupFragment:
@@ -69,7 +68,7 @@ fun BackupScreen(
 
     when (val dialog = viewModel.dialog) {
         BackupDialog.ExportPassword ->
-            ExportPasswordDialog(
+            ExportPasswordSheet(
                 onCancel = viewModel::dismissDialog,
                 onConfirm = { password ->
                     viewModel.stashExportPasswordAndDismiss(password)
@@ -77,7 +76,7 @@ fun BackupScreen(
                 },
             )
         is BackupDialog.ImportPassword ->
-            ImportPasswordDialog(
+            ImportPasswordSheet(
                 isRetry = dialog.isRetry,
                 onCancel = viewModel::dismissDialog,
                 onConfirm = { password ->
@@ -141,16 +140,13 @@ private fun BackupSectionsList(
 }
 
 /**
- * Pre-export dialog: optional encrypt checkbox + a password field that reveals
- * when the checkbox is on. Empty-password + short-password reject stays here so
- * the confirm handler in the fragment only ever sees a valid (or null) password.
- *
- * Wraps [LedgerDialogFrame] directly rather than [LedgerPasswordDialog] because
- * the encrypt checkbox drives whether a password is required at all — the
- * password-only helper doesn't fit that branch.
+ * Export prompt: an "encrypt" checkbox and, when it's checked, a password
+ * (at least [BACKUP_MIN_PASSWORD_LENGTH] characters; shorter keeps the sheet
+ * open with the reason under the field). Confirming hands back the password,
+ * or null for a plain backup.
  */
 @Composable
-private fun ExportPasswordDialog(
+private fun ExportPasswordSheet(
     onCancel: () -> Unit,
     onConfirm: (CharArray?) -> Unit,
 ) {
@@ -158,11 +154,19 @@ private fun ExportPasswordDialog(
     var passwordText by rememberSaveable { mutableStateOf("") }
     var visible by rememberSaveable { mutableStateOf(false) }
     var tooShort by remember { mutableStateOf(false) }
-    LedgerDialogFrame(
+    LedgerPromptSheet(
         title = stringResource(id = R.string.backup_export_title),
+        confirmLabel = stringResource(id = android.R.string.ok),
         onDismiss = onCancel,
+        onConfirm = {
+            when {
+                !encrypt -> onConfirm(null)
+                passwordText.length < BACKUP_MIN_PASSWORD_LENGTH -> tooShort = true
+                else -> onConfirm(passwordText.toCharArrayOffHeap())
+            }
+        },
     ) {
-        ExportPasswordDialogBody(
+        ExportPasswordSheetBody(
             encrypt = encrypt,
             onEncryptChange = { encrypt = it },
             password = PasswordInput(passwordText, visible, if (tooShort) passwordTooShortText() else null),
@@ -172,21 +176,6 @@ private fun ExportPasswordDialog(
             },
             onToggleVisibility = { visible = !visible },
         )
-        LedgerDialogActions(
-            confirmLabel = stringResource(id = android.R.string.ok),
-            onCancel = onCancel,
-            onConfirm = {
-                if (!encrypt) {
-                    onConfirm(null)
-                    return@LedgerDialogActions
-                }
-                if (passwordText.length < BACKUP_MIN_PASSWORD_LENGTH) {
-                    tooShort = true
-                    return@LedgerDialogActions
-                }
-                onConfirm(passwordText.toCharArrayOffHeap())
-            },
-        )
     }
 }
 
@@ -195,12 +184,12 @@ private fun passwordTooShortText(): String =
     pluralStringResource(R.plurals.backup_password_too_short, BACKUP_MIN_PASSWORD_LENGTH, BACKUP_MIN_PASSWORD_LENGTH)
 
 /**
- * Body of [ExportPasswordDialog] — the checkbox row and, when checked, the
- * password field + visibility toggle. Extracted so the dialog wrapper stays
+ * Body of [ExportPasswordSheet] — the checkbox row and, when checked, the
+ * password field + visibility toggle. Extracted so the sheet wrapper stays
  * short and the form doesn't have to re-read the surrounding chrome.
  */
 @Composable
-private fun ExportPasswordDialogBody(
+private fun ExportPasswordSheetBody(
     encrypt: Boolean,
     onEncryptChange: (Boolean) -> Unit,
     password: PasswordInput,
@@ -220,7 +209,7 @@ private fun ExportPasswordDialogBody(
             )
         }
         if (encrypt) {
-            Spacer(Modifier.height(DIALOG_FIELD_GAP))
+            Spacer(Modifier.height(CHECKBOX_TO_FIELD_GAP))
             PasswordFieldWithToggle(
                 input = password,
                 label = stringResource(id = R.string.backup_password_hint),
@@ -237,12 +226,12 @@ private fun ExportPasswordDialogBody(
  * error on the field so the user knows what to do differently.
  */
 @Composable
-private fun ImportPasswordDialog(
+private fun ImportPasswordSheet(
     isRetry: Boolean,
     onCancel: () -> Unit,
     onConfirm: (CharArray) -> Unit,
 ) {
-    LedgerPasswordDialog(
+    LedgerPasswordSheet(
         titleRes = R.string.backup_password_prompt_title,
         confirmLabelRes = android.R.string.ok,
         errorText = if (isRetry) stringResource(id = R.string.backup_password_wrong) else null,

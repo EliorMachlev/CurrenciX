@@ -8,7 +8,7 @@ import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 
 /**
  * Payload for the "give this cart a name" dialog. Save-as and Rename both use
- * this shape so the same [com.eliormachlev.currencix.view.cart.compose.CartNameInputDialog]
+ * this shape so the same [com.eliormachlev.currencix.view.cart.compose.CartNameInputSheet]
  * handles both entry points.
  */
 data class CartNameInputRequest(

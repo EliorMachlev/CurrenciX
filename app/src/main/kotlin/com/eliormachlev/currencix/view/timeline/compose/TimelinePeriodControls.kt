@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.view.timeline.compose
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,7 +14,6 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
 import com.eliormachlev.currencix.util.rememberHapticOnClick
-import com.eliormachlev.currencix.view.compose.dialogs.ProseDatePickerDialog
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Period
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Span
 import java.time.Instant
@@ -92,7 +92,7 @@ internal fun TimelinePeriodControls(
         )
     }
     if (picking) {
-        RangePickerDialog(
+        RangePickerSheet(
             initial = control.customRange,
             onPicked = { start, end ->
                 control.onCustomRange(start, end)
@@ -115,7 +115,7 @@ private val Period.labelRes: Int
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RangePickerDialog(
+private fun RangePickerSheet(
     initial: Span?,
     onPicked: (LocalDate, LocalDate) -> Unit,
     onDismiss: () -> Unit,
@@ -131,20 +131,27 @@ private fun RangePickerDialog(
         )
     val start = state.selectedStartDateMillis
     val end = state.selectedEndDateMillis
-    // Laid out the way the language reads, like the app's other dialogs.
-    ProseDatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = { if (start != null && end != null) onPicked(start.toLocalDate(), end.toLocalDate()) },
-                enabled = start != null && end != null,
-            ) { Text(stringResource(android.R.string.ok)) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) } },
+    // A sheet, like the app's other prompts. The picker scrolls its months
+    // itself, so the sheet doesn't, and it gets a bounded height to do it in.
+    LedgerPromptSheet(
+        title = stringResource(R.string.timeline_custom_range),
+        confirmLabel = stringResource(android.R.string.ok),
+        onConfirm = { if (start != null && end != null) onPicked(start.toLocalDate(), end.toLocalDate()) },
+        onDismiss = onDismiss,
+        confirmEnabled = start != null && end != null,
+        scrollableBody = false,
     ) {
-        DateRangePicker(state = state, modifier = Modifier.fillMaxWidth())
+        DateRangePicker(
+            state = state,
+            title = null,
+            showModeToggle = false,
+            modifier = Modifier.fillMaxWidth().height(RANGE_PICKER_HEIGHT),
+        )
     }
 }
+
+// Tall enough for the selected range and about two months of days.
+private val RANGE_PICKER_HEIGHT = 480.dp
 
 // Only days the app can chart: from [earliest] to [latest].
 @OptIn(ExperimentalMaterial3Api::class)

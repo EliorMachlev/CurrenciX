@@ -42,8 +42,8 @@ private enum class FeeSection {
     SPECIFIC_PAIR,
 }
 
-// Which global fee category a picker/editor dialog is currently addressing.
-// Threaded through the dialog state so a single [FeeEditorDialog] instance can
+// Which global fee category a picker/editor sheet is currently addressing.
+// Threaded through the screen state so a single [FeeEditorSheet] instance can
 // serve both categories without callers having to `when` on the fee kind.
 internal enum class GlobalFeeKind(
     @StringRes val titleRes: Int,
@@ -72,9 +72,9 @@ internal sealed interface EditorKind {
 
 /**
  * Full fee-manager screen. Observes fees via the
- * [viewModel]; opens per-category picker/editor dialogs via local state so a
- * single [FeeEditorDialog] instance is reused across categories. Currency
- * selection is fully compose-native — [FeeEditorDialog] hosts its own
+ * [viewModel]; opens per-category picker/editor sheets via local state so a
+ * single [FeeEditorSheet] instance is reused across categories. Currency
+ * selection is fully compose-native — [FeeEditorSheet] hosts its own
  * [com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet], so this
  * screen doesn't need to thread a picker callback in.
  */
@@ -195,7 +195,7 @@ private fun EditorHost(
             is EditorKind.Global -> kind.globalKind.titleRes
             EditorKind.Pair -> R.string.fee_section_specific_pair
         }
-    FeeEditorDialog(
+    FeeEditorSheet(
         titleRes = titleRes,
         existing = target.existing,
         isPair = isPair,

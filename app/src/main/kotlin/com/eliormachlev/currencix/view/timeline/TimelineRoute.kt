@@ -57,7 +57,7 @@ import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
+import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
@@ -182,7 +182,7 @@ private fun TimelineSheets(
         TimelineSheet.Provider -> {
             val preferences: PreferenceViewModel = viewModel()
             val current by preferences.apiProvider.collectAsStateWithLifecycle()
-            ProviderPickerDialog(
+            ProviderPickerSheet(
                 selected = current,
                 onDismiss = onDismiss,
                 onPicked = { provider ->

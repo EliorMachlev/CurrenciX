@@ -74,8 +74,8 @@ fun AppTheme(
 /**
  * [AppTheme] for the prose screens — Settings, Fees, Backup: the same
  * palette, laid out the way the app's language reads ([ReadingDirection]).
- * Dialogs and sheets set the direction inside their own window instead
- * (LedgerBottomSheet, LedgerDialogFrame, ProseAlertDialog).
+ * Sheets set the direction inside their own window instead
+ * (LedgerBottomSheet, and so every prompt built on it).
  */
 @Composable
 fun ProseTheme(content: @Composable () -> Unit) {

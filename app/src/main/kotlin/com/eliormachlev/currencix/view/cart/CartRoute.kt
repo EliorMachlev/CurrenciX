@@ -23,7 +23,7 @@ import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartItemActions
 import com.eliormachlev.currencix.view.cart.compose.CartListSources
 import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
-import com.eliormachlev.currencix.view.cart.compose.CartNameInputDialog
+import com.eliormachlev.currencix.view.cart.compose.CartNameInputSheet
 import com.eliormachlev.currencix.view.cart.compose.CartReorder
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
 import com.eliormachlev.currencix.view.cart.compose.CartScreenActions
@@ -173,7 +173,7 @@ private fun CartOverlays(host: CartHost) {
         CartUnsavedChangesSheet(request = request, onDismiss = { state.unsavedChanges = null })
     }
     state.nameInput?.let { request ->
-        CartNameInputDialog(
+        CartNameInputSheet(
             titleRes = request.titleRes,
             initial = request.initial,
             onOk = request.onOk,

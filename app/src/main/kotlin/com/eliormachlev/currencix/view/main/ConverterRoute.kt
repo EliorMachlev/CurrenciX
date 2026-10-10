@@ -54,7 +54,7 @@ import com.eliormachlev.currencix.view.navigation.LocalPaneRole
 import com.eliormachlev.currencix.view.navigation.PaneRole
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.paneRole
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
+import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
@@ -253,7 +253,7 @@ private fun ConverterOverlays(
     when (overlay) {
         ConverterOverlay.ProviderPicker -> {
             val current by host.preferenceModel.apiProvider.collectAsStateWithLifecycle()
-            ProviderPickerDialog(
+            ProviderPickerSheet(
                 selected = current,
                 onDismiss = onDismiss,
                 onPicked = host.preferenceModel::setApiProvider,

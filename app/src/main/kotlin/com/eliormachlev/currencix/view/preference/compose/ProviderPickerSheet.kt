@@ -38,7 +38,7 @@ private val PROVIDER_SHEET_BOTTOM_SPACE = 12.dp
  * when this picks the fallback (a provider can't stand in for itself).
  */
 @Composable
-fun ProviderPickerDialog(
+fun ProviderPickerSheet(
     selected: ApiProvider?,
     onDismiss: () -> Unit,
     onPicked: (ApiProvider) -> Unit,

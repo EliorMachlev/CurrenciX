@@ -5,8 +5,8 @@ import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Language
-import com.eliormachlev.currencix.view.preference.compose.LanguagePickerDialog
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
+import com.eliormachlev.currencix.view.preference.compose.LanguagePickerSheet
+import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,19 +14,18 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-// Stateless picker dialogs rendered across the matrix. Each dialog wraps
-// itself in AppTheme via ChoiceDialogFrame, but our MatrixCell also sets
-// theme/locale up-stack — that's fine, the inner AppTheme is a no-op with
-// the same palette.
+// Stateless picker sheets rendered across the matrix. Each sheet wraps
+// itself in AppTheme, but our MatrixCell also sets theme/locale up-stack —
+// that's fine, the inner AppTheme is a no-op with the same palette.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
-class DialogsScreenshotTest {
+class PickerSheetsScreenshotTest {
     @get:Rule val shots = ScreenshotRule()
 
     @Test fun languagePicker() =
         shots.captureMatrix("dialog_language_picker") {
-            LanguagePickerDialog(
+            LanguagePickerSheet(
                 selected = Language.SYSTEM,
                 onDismiss = {},
                 onPicked = {},
@@ -35,7 +34,7 @@ class DialogsScreenshotTest {
 
     @Test fun providerPicker() =
         shots.captureMatrix("dialog_provider_picker") {
-            ProviderPickerDialog(
+            ProviderPickerSheet(
                 selected = ApiProvider.entries.first(),
                 onDismiss = {},
                 onPicked = {},
@@ -44,7 +43,7 @@ class DialogsScreenshotTest {
 
     @Test fun providerPickerLargeFont() =
         shots.captureLargeFont("dialog_provider_picker") {
-            ProviderPickerDialog(
+            ProviderPickerSheet(
                 selected = ApiProvider.entries.first(),
                 onDismiss = {},
                 onPicked = {},
@@ -54,7 +53,7 @@ class DialogsScreenshotTest {
     // The fallback picker: the main provider greyed out.
     @Test fun fallbackProviderPicker() =
         shots.captureMatrix("dialog_fallback_provider_picker") {
-            ProviderPickerDialog(
+            ProviderPickerSheet(
                 selected = ApiProvider.FRANKFURTER_APP,
                 onDismiss = {},
                 onPicked = {},

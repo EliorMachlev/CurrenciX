@@ -31,7 +31,7 @@ import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
 import com.eliormachlev.currencix.view.main.spinner.pickerActions
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog
+import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -120,7 +120,7 @@ class ScreenReaderLabelsTest {
 
     @Test fun providerPicker() =
         assertEveryTapTargetIsLabelled {
-            ProviderPickerDialog(
+            ProviderPickerSheet(
                 selected = ApiProvider.FRANKFURTER_APP,
                 onDismiss = {},
                 onPicked = {},

@@ -28,7 +28,7 @@ private val SHEET_BOTTOM_SPACE = 12.dp
  * Ledger-styled graph options sheet — replaces the old
  * `GraphOptionsDialog` AlertDialog. Each toggle renders as a [LedgerRow] with
  * a [Switch] in the trailing slot, matching the picker sheet family
- * ([com.eliormachlev.currencix.view.preference.compose.ProviderPickerDialog]).
+ * ([com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet]).
  *
  * Reads current values via [Database]'s blocking accessors so the sheet
  * lights up with the persisted state on the first frame — the same shape the

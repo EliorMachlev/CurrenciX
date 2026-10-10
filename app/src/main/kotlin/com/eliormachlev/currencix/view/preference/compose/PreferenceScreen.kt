@@ -245,27 +245,27 @@ private fun PreferenceDialogsHost(
     val appearance = values.appearance
     when (openDialog) {
         OpenDialog.DecimalPlaces ->
-            SingleChoicePickerDialog(
+            SingleChoicePickerSheet(
                 title = stringResource(id = R.string.decimal_places_title),
                 choices = Choices((DECIMAL_PLACES_MIN..DECIMAL_PLACES_MAX).toList(), values.decimalPlaces) { it.toString() },
                 onDismiss = dismiss,
                 onPicked = viewModel::setDecimalPlaces,
             )
-        OpenDialog.Theme -> ThemePickerDialog(theme = appearance.theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
-        OpenDialog.DateFormat -> DateFormatPickerDialog(dateFormat = appearance.dateFormat, dismiss = dismiss, viewModel = viewModel)
+        OpenDialog.Theme -> ThemePickerSheet(theme = appearance.theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
+        OpenDialog.DateFormat -> DateFormatPickerSheet(dateFormat = appearance.dateFormat, dismiss = dismiss, viewModel = viewModel)
         OpenDialog.Language ->
-            LanguagePickerDialog(
+            LanguagePickerSheet(
                 selected = appearance.language,
                 onDismiss = dismiss,
                 onPicked = { viewModel.setLanguage(it.iso) },
             )
         OpenDialog.Provider ->
-            ProviderPickerDialog(
+            ProviderPickerSheet(
                 selected = values.api.provider,
                 onDismiss = dismiss,
                 onPicked = viewModel::setApiProvider,
             )
-        OpenDialog.FallbackProvider -> FallbackPickerDialog(viewModel, dismiss)
+        OpenDialog.FallbackProvider -> FallbackPickerSheet(viewModel, dismiss)
         OpenDialog.GraphOptions ->
             GraphOptionsSheet(
                 db = Database(LocalContext.current),
@@ -273,7 +273,7 @@ private fun PreferenceDialogsHost(
             )
         OpenDialog.Credits -> CreditsSheet(onDismiss = dismiss)
         OpenDialog.ApiKey ->
-            TextEntryDialog(
+            TextEntrySheet(
                 title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
                 initialText = values.api.apiKey.orEmpty(),
                 message = stringResource(id = R.string.api_open_exchangerates_api_key_message),
@@ -288,7 +288,7 @@ private fun PreferenceDialogsHost(
 }
 
 @Composable
-private fun ThemePickerDialog(
+private fun ThemePickerSheet(
     theme: AppTheme,
     dismiss: () -> Unit,
     viewModel: PreferenceViewModel,
@@ -296,7 +296,7 @@ private fun ThemePickerDialog(
 ) {
     val themeEntries = AppTheme.entries.toList()
     val themeLabels = themeEntries.map { stringResource(id = themeLabelRes(it)) }
-    SingleChoicePickerDialog(
+    SingleChoicePickerSheet(
         title = stringResource(id = R.string.theme_title),
         choices = Choices(themeEntries, theme) { themeLabels[themeEntries.indexOf(it)] },
         onDismiss = dismiss,
@@ -307,14 +307,14 @@ private fun ThemePickerDialog(
 }
 
 @Composable
-private fun DateFormatPickerDialog(
+private fun DateFormatPickerSheet(
     dateFormat: String,
     dismiss: () -> Unit,
     viewModel: PreferenceViewModel,
 ) {
     val patterns = stringArrayResource(id = R.array.date_format_values).toList()
     val names = stringArrayResource(id = R.array.date_format_names).toList()
-    SingleChoicePickerDialog(
+    SingleChoicePickerSheet(
         title = stringResource(id = R.string.date_format_title),
         choices = Choices(patterns, dateFormat) { pattern -> names.getOrNull(patterns.indexOf(pattern)) ?: pattern },
         onDismiss = dismiss,
@@ -463,13 +463,13 @@ private fun FallbackProviderRow(
 
 // The fallback picker: the main provider is greyed out, since it can't stand in for itself.
 @Composable
-private fun FallbackPickerDialog(
+private fun FallbackPickerSheet(
     viewModel: PreferenceViewModel,
     onDismiss: () -> Unit,
 ) {
     val main by viewModel.apiProvider.collectAsStateWithLifecycle()
     val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
-    ProviderPickerDialog(
+    ProviderPickerSheet(
         selected = fallback,
         onDismiss = onDismiss,
         onPicked = viewModel::setFallbackProvider,

@@ -7,12 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.core.app.ApplicationProvider
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.assertOnReadingStartSide
 import com.eliormachlev.currencix.util.registerActivityRule
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
-import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordDialog
-import com.eliormachlev.currencix.view.compose.dialogs.ProseAlertDialog
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordSheet
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -20,7 +21,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-// The prose popups (sheets, ledger and Material-style dialogs) follow the
+// The app's prompts (plain, confirm and password sheets) follow the
 // app language's direction: their title starts where the language reads
 // from, on the right in Hebrew and on the left in English. The whole
 // activity runs in the language (qualifiers), as on a phone, since a popup's
@@ -37,30 +38,34 @@ class ReadingDirectionTest {
     private fun confirmSheet() =
         show { LedgerConfirmSheet(title = TITLE, message = BODY, confirmLabel = "OK", onConfirm = {}, onDismiss = {}) }
 
-    private fun ledgerDialog() = show { LedgerPasswordDialog(title = TITLE, confirmLabel = "OK", onConfirm = {}, onDismiss = {}) }
-
-    private fun materialDialog() =
-        show {
-            AppTheme {
-                ProseAlertDialog(
-                    onDismissRequest = {},
-                    confirmButton = { Text("OK") },
-                    title = { Text(TITLE) },
-                    text = { Text(BODY) },
+    private fun passwordSheet() =
+        showTitled(
+            popup = {
+                LedgerPasswordSheet(
+                    titleRes = R.string.backup_password_prompt_title,
+                    confirmLabelRes = android.R.string.ok,
+                    onConfirm = {},
+                    onDismiss = {},
                 )
-            }
-        }
+            },
+            title = ApplicationProvider.getApplicationContext<Application>().getString(R.string.backup_password_prompt_title),
+        )
 
     // Settles twice: the popup's window attaches first, then it enters. The
     // sheet's title is shown in small caps (upper case).
-    private fun show(popup: @Composable () -> Unit) {
+    private fun show(popup: @Composable () -> Unit) = showTitled(popup, TITLE)
+
+    private fun showTitled(
+        popup: @Composable () -> Unit,
+        title: String,
+    ) {
         compose.mainClock.autoAdvance = false
         compose.setContent(popup)
         repeat(2) {
             compose.waitForIdle()
             compose.mainClock.advanceTimeBy(SETTLE_MILLIS)
         }
-        compose.onNodeWithText(TITLE, ignoreCase = true).assertOnReadingStartSide(compose.onNode(isDialog()))
+        compose.onNodeWithText(title, ignoreCase = true).assertOnReadingStartSide(compose.onNode(isDialog()))
     }
 
     @Test
@@ -81,19 +86,11 @@ class ReadingDirectionTest {
 
     @Test
     @Config(qualifiers = "iw")
-    fun `in Hebrew a dialog's title sits on the right`() = ledgerDialog()
+    fun `in Hebrew a password sheet's title sits on the right`() = passwordSheet()
 
     @Test
     @Config(qualifiers = "en")
-    fun `in English a dialog's title sits on the left`() = ledgerDialog()
-
-    @Test
-    @Config(qualifiers = "iw")
-    fun `in Hebrew a Material-style dialog's title sits on the right`() = materialDialog()
-
-    @Test
-    @Config(qualifiers = "en")
-    fun `in English a Material-style dialog's title sits on the left`() = materialDialog()
+    fun `in English a password sheet's title sits on the left`() = passwordSheet()
 }
 
 private const val TITLE = "Title"

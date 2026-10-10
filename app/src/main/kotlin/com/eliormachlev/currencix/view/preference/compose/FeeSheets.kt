@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
@@ -50,17 +47,13 @@ import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
-import com.eliormachlev.currencix.view.compose.dialogs.ProseAlertDialog
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
 import java.util.UUID
 
-// Fee editor dialog: horizontal slice of the screen (95%) so wide rows
-// (currency buttons + bothWays label) don't get truncated on typical phones.
-private const val FEE_EDITOR_WIDTH_FRACTION = 0.95f
 private val FEE_EDITOR_SECTION_GAP: Dp = 16.dp
 private val FEE_EDITOR_LABEL_GAP: Dp = 4.dp
 private val FEE_EDITOR_INTERNAL_PADDING: Dp = 4.dp
@@ -103,11 +96,11 @@ internal const val SUMMARY_SEPARATOR = "  ·  "
  * exposed when [onDelete] is non-null (i.e. editing an existing entry).
  *
  * Owns the currency-picker sheet state internally — from/to buttons flip
- * [pickerState] on tap and the sheet renders as a sibling of the AlertDialog
- * so callers don't have to thread a picker callback through the compose tree.
+ * [pickerState] on tap and the picker opens over the editor's sheet, so
+ * callers don't have to thread a picker callback through the compose tree.
  */
 @Composable
-internal fun FeeEditorDialog(
+internal fun FeeEditorSheet(
     @StringRes titleRes: Int,
     existing: Fee?,
     isPair: Boolean,
@@ -117,37 +110,27 @@ internal fun FeeEditorDialog(
 ) {
     val fields = rememberFeeEditorFields(existing)
     var pickerState by remember { mutableStateOf<CurrencyPickerRequest?>(null) }
-    val confirm =
-        rememberHapticOnClick {
+    LedgerPromptSheet(
+        title = stringResource(id = titleRes),
+        confirmLabel = stringResource(id = android.R.string.ok),
+        onConfirm = {
             val draft = fields.toDraft()
-            if (isPair && (draft.from == null || draft.to == null)) return@rememberHapticOnClick
-            onConfirm(draft)
-        }
-    val cancel = rememberHapticOnClick(onDismiss)
-    val delete = onDelete?.let { rememberHapticOnClick(it) }
-
-    AppTheme {
-        ProseAlertDialog(
-            onDismissRequest = onDismiss,
-            properties = DialogProperties(usePlatformDefaultWidth = false),
-            modifier = Modifier.fillMaxWidth(FEE_EDITOR_WIDTH_FRACTION),
-            title = { Text(text = stringResource(id = titleRes)) },
-            text = {
-                FeeEditorDialogBody(
-                    fields = fields,
-                    isPair = isPair,
-                    onPickCurrency = { d, cb -> pickerState = CurrencyPickerRequest(d, cb) },
-                )
-            },
-            confirmButton = { FeeEditorDialogFooter(delete = delete, cancel = cancel, confirm = confirm) },
+            if (!isPair || (draft.from != null && draft.to != null)) onConfirm(draft)
+        },
+        onDismiss = onDismiss,
+        leadingAction = onDelete?.let { delete -> { DeleteFeeButton(delete) } },
+    ) {
+        FeeEditorSheetBody(
+            fields = fields,
+            isPair = isPair,
+            onPickCurrency = { d, cb -> pickerState = CurrencyPickerRequest(d, cb) },
         )
     }
     FeeEditorPickerOverlay(request = pickerState, onDismiss = { pickerState = null })
 }
 
-// Sheet overlay for the from/to buttons — sibling of the AlertDialog (each is
-// its own Window composition), so both render layered without needing the
-// picker state to live above the dialog.
+// The from/to buttons' currency picker — a sheet of its own, opened over the
+// editor's, without the picker state having to live above the editor.
 @Composable
 private fun FeeEditorPickerOverlay(
     request: CurrencyPickerRequest?,
@@ -166,7 +149,7 @@ private fun FeeEditorPickerOverlay(
 // Snapshot of a currency-picker request captured when the user taps a
 // from/to button — the sheet reads back [disabled] to grey out the opposite
 // side of the pair and calls [onPicked] with the chosen ISO. Held in the
-// dialog's own state so opening the sheet doesn't have to bubble up to the
+// editor's own state so opening the picker doesn't have to bubble up to the
 // fees screen.
 private data class CurrencyPickerRequest(
     val disabled: Currency?,
@@ -174,22 +157,17 @@ private data class CurrencyPickerRequest(
 )
 
 /**
- * Body of [FeeEditorDialog] — active switch, name/percent fields, and the
- * pair-only rows when [isPair] is true. Extracted so the dialog wrapper stays
- * short and this form-heavy scroll column reads on its own.
+ * Body of [FeeEditorSheet] — active switch, name/percent fields, and the
+ * pair-only rows when [isPair] is true. Extracted so the sheet wrapper stays
+ * short and this form reads on its own. The sheet scrolls it.
  */
 @Composable
-private fun FeeEditorDialogBody(
+private fun FeeEditorSheetBody(
     fields: FeeEditorFields,
     isPair: Boolean,
     onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(top = FEE_EDITOR_INTERNAL_PADDING),
-    ) {
+    Column(modifier = Modifier.padding(top = FEE_EDITOR_INTERNAL_PADDING)) {
         LabeledSwitchRow(
             labelRes = R.string.fee_edit_active,
             checked = fields.active.value,
@@ -273,37 +251,12 @@ private fun rememberFeeEditorFields(existing: Fee?): FeeEditorFields {
     )
 }
 
-/**
- * Confirm-row footer for [FeeEditorDialog] — delete (only when editing) on
- * the leading edge, cancel + ok on the trailing edge. Split out so the parent
- * dialog stays below LongMethod threshold.
- */
+// The editor's Delete, on the far side of the action row from Cancel and OK;
+// only shown when editing an existing fee.
 @Composable
-private fun FeeEditorDialogFooter(
-    delete: (() -> Unit)?,
-    cancel: () -> Unit,
-    confirm: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (delete != null) {
-            TextButton(onClick = delete) {
-                Text(stringResource(id = R.string.fee_delete))
-            }
-        } else {
-            Spacer(Modifier.width(0.dp))
-        }
-        Row {
-            TextButton(onClick = cancel) {
-                Text(stringResource(id = android.R.string.cancel))
-            }
-            TextButton(onClick = confirm) {
-                Text(stringResource(id = android.R.string.ok))
-            }
-        }
+private fun DeleteFeeButton(onDelete: () -> Unit) {
+    TextButton(onClick = rememberHapticOnClick(onDelete)) {
+        Text(stringResource(id = R.string.fee_delete))
     }
 }
 
