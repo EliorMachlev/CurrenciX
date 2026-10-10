@@ -38,12 +38,29 @@ import kotlinx.coroutines.runBlocking
  * coroutine drains a serial [writeQueue] that persists each mutation via
  * `store.edit { }`. Serializing the queue keeps write ordering intact even
  * under bursts (the "insertExchangeRates writes ~180 keys" case).
+ *
+ * While this store still has writes on their way to disk, the disk's own
+ * emissions are older than the cache (each one reflects only the writes
+ * finished so far), so they're ignored; once the last pending write lands,
+ * the cache is resynced from disk. Without that, a read between two quick
+ * writes could see the first one undone.
  */
 class PrefStore internal constructor(
     private val store: DataStore<Preferences>,
-    scope: CoroutineScope = defaultScope,
+    private val scope: CoroutineScope = defaultScope,
 ) {
     private val cache = MutableStateFlow<Preferences?>(null)
+
+    // Serializes the read-modify-write cycle on [cache] so two concurrent
+    // callers can't clone the same "current" snapshot and then race their
+    // updates back into cache in an order that loses one of them.
+    // Declared before init: the collectors launched there take it, and with
+    // an immediate dispatcher they run before the rest of the class is set up.
+    private val cacheWriteLock = Any()
+
+    // Writes applied to [cache] but not yet to disk. Changed only under
+    // [cacheWriteLock], together with the cache.
+    private var pendingWrites = 0
 
     // Serial write queue. Buffer is large enough to swallow a full
     // insertExchangeRates() burst without dropping; overflow is SUSPEND so a
@@ -58,13 +75,18 @@ class PrefStore internal constructor(
         // Persist queued mutations in submission order.
         scope.launch {
             writeQueue.collect { mutator ->
-                runCatching { store.edit { mutator(it) } }
+                try {
+                    runCatching { store.edit { mutator(it) } }
+                } finally {
+                    onWriteLanded()
+                }
             }
         }
         // Keep the cache aligned with disk. This picks up external writes
-        // (e.g. BackupManager restore, migrations) that bypass the queue.
+        // (e.g. BackupManager restore, migrations) that bypass the queue —
+        // but not while our own writes are pending (see the class doc).
         scope.launch {
-            store.data.collect { cache.value = it }
+            store.data.collect { disk -> syncFromDisk(disk) }
         }
     }
 
@@ -92,10 +114,30 @@ class PrefStore internal constructor(
 
     fun <T> mappedLiveData(mapper: (Preferences) -> T): LiveData<T> = mappedFlow(mapper).asLiveData()
 
-    // Serializes the read-modify-write cycle on [cache] so two concurrent
-    // callers can't clone the same "current" snapshot and then race their
-    // updates back into cache in an order that loses one of them.
-    private val cacheWriteLock = Any()
+    // Applies [mutator] to the cache and counts it as pending until it
+    // reaches disk.
+    private fun applyToCache(mutator: MutablePreferences.() -> Unit) {
+        synchronized(cacheWriteLock) {
+            val next = snapshot().toMutablePreferences()
+            next.mutator()
+            cache.value = next
+            pendingWrites++
+        }
+    }
+
+    private fun syncFromDisk(disk: Preferences) {
+        synchronized(cacheWriteLock) {
+            if (pendingWrites == 0) cache.value = disk
+        }
+    }
+
+    // A write reached disk (or failed). After the last one, the disk is the
+    // truth again: resync, which also picks up any external write the
+    // ignored emissions carried.
+    private suspend fun onWriteLanded() {
+        val drained = synchronized(cacheWriteLock) { --pendingWrites == 0 }
+        if (drained) syncFromDisk(store.data.first())
+    }
 
     /**
      * Queue a mutation and eagerly apply it to the in-memory cache so
@@ -103,13 +145,9 @@ class PrefStore internal constructor(
      * The actual disk write is executed asynchronously on the background scope.
      */
     fun edit(mutator: MutablePreferences.() -> Unit) {
-        synchronized(cacheWriteLock) {
-            val current = snapshot()
-            val next = current.toMutablePreferences()
-            next.mutator()
-            cache.value = next
-        }
-        writeQueue.tryEmit(mutator)
+        applyToCache(mutator)
+        // A full queue would otherwise drop the write: wait for room instead.
+        if (!writeQueue.tryEmit(mutator)) scope.launch { writeQueue.emit(mutator) }
     }
 
     /**
@@ -118,13 +156,12 @@ class PrefStore internal constructor(
      * still mirrors the mutation into the cache first for read-your-writes.
      */
     suspend fun editAndAwait(mutator: MutablePreferences.() -> Unit) {
-        synchronized(cacheWriteLock) {
-            val current = snapshot()
-            val next = current.toMutablePreferences()
-            next.mutator()
-            cache.value = next
+        applyToCache(mutator)
+        try {
+            store.edit { it.mutator() }
+        } finally {
+            onWriteLanded()
         }
-        store.edit { it.mutator() }
     }
 
     private companion object {
