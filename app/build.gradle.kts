@@ -29,13 +29,16 @@ base {
 
 android {
     namespace = "com.eliormachlev.currencix"
-    compileSdk = 37
+    // 37.2: Compose 1.13 needs at least API 37.1 to compile against.
+    compileSdk {
+        version = release(37) { minorApiLevel = 2 }
+    }
     buildToolsVersion = "37.0.0"
 
     defaultConfig {
         applicationId = "com.eliormachlev.currencix"
-        minSdk = 33
-        targetSdk = 37
+        minSdk { version = release(33) }
+        targetSdk { version = release(37) }
         // SemVer
         versionName = "1.23.0"
         versionCode = 12300
@@ -211,13 +214,15 @@ dependencies {
     val retrofitVersion = "3.0.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
-    // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView)
-    val composeBomVersion = "2026.09.00"
-    implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView).
+    // The pre-release BOM: Compose 1.13.0-beta01 and Material 3 1.5.0-beta01,
+    // for their text-field keyboard (IME) and list-prefetch fixes. Back to
+    // `compose-bom` once both are stable.
+    val composeBomVersion = "2026.10.00"
+    implementation(platform("androidx.compose:compose-bom-alpha:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
-    // Pin material3 to latest stable (newer than the BOM ships).
-    implementation("androidx.compose.material3:material3:1.4.0")
+    implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.runtime:runtime")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.activity:activity-compose:1.13.0")
@@ -264,7 +269,8 @@ dependencies {
     // leak detection: LeakCanary is debug-only and auto-installs via its own
     // ContentProvider — no Application wiring needed. Safety net for the
     // upcoming Phase 1–3 migrations; never shipped in release/F-Droid builds.
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+    // 3.0 is still an alpha, but 2.14 dates from April 2024; debug-only.
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:3.0-alpha-9")
     // perf: JankStats attaches per-Activity in debug builds and logs jank
     // frames via Timber. Source-set split (src/debug vs src/release) means
     // the release variant sees a no-op installer and this dep is stripped —

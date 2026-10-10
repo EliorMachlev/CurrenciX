@@ -14,7 +14,10 @@ val benchmarkVersion = "1.5.0"
 
 android {
     namespace = "com.eliormachlev.currencix.baselineprofile"
-    compileSdk = 37
+    // 37.2: Compose 1.13 needs at least API 37.1 to compile against.
+    compileSdk {
+        version = release(37) { minorApiLevel = 2 }
+    }
     buildToolsVersion = "37.0.0"
 
     compileOptions {
@@ -23,8 +26,8 @@ android {
     }
 
     defaultConfig {
-        minSdk = 33
-        targetSdk = 37
+        minSdk { version = release(33) }
+        targetSdk { version = release(37) }
         // Baseline-profile generators are AndroidX-benchmark instrumented tests;
         // the runner must be the benchmark runner, not the default one.
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

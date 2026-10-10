@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -175,15 +177,14 @@ private fun FeeEditorSheetBody(
         )
         LabeledField(labelRes = R.string.fee_edit_name, topGap = FEE_EDITOR_SECTION_GAP) {
             OutlinedTextField(
-                value = fields.name.value,
-                onValueChange = { fields.name.value = it },
-                singleLine = true,
+                state = fields.name,
+                lineLimits = TextFieldLineLimits.SingleLine,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
         if (isPair) FeePairFields(fields, onPickCurrency)
         LabeledField(labelRes = R.string.fee_edit_percent, topGap = FEE_EDITOR_SECTION_GAP) {
-            FeePercentField(value = fields.percentText.value, onValueChange = { fields.percentText.value = it })
+            FeePercentField(state = fields.percentText)
         }
     }
 }
@@ -219,8 +220,8 @@ private fun FeePairFields(
 // is opened.
 @Stable
 private class FeeEditorFields(
-    val name: MutableState<String>,
-    val percentText: MutableState<String>,
+    val name: TextFieldState,
+    val percentText: TextFieldState,
     val active: MutableState<Boolean>,
     val from: MutableState<String?>,
     val to: MutableState<String?>,
@@ -229,8 +230,8 @@ private class FeeEditorFields(
     // What the fields hold now, as the fee to save.
     fun toDraft(): FeeDraft =
         FeeDraft(
-            name = name.value.trim(),
-            percent = percentText.value.toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
+            name = name.text.trim().toString(),
+            percent = percentText.text.toString().toFeePercentOrNull(feePercentSeparator) ?: BigDecimal.ZERO,
             isActive = active.value,
             from = from.value,
             to = to.value,
@@ -242,7 +243,7 @@ private class FeeEditorFields(
 private fun rememberFeeEditorFields(existing: Fee?): FeeEditorFields {
     val pair = existing as? Fee.SpecificPair
     return FeeEditorFields(
-        name = rememberSaveable(existing?.id) { mutableStateOf(existing?.name.orEmpty()) },
+        name = rememberSaveable(existing?.id, saver = TextFieldState.Saver) { TextFieldState(existing?.name.orEmpty()) },
         percentText = rememberFeePercentState(existing?.percent),
         active = rememberSaveable(existing?.id) { mutableStateOf(existing?.isActive != false) },
         from = rememberSaveable(existing?.id) { mutableStateOf(pair?.from) },

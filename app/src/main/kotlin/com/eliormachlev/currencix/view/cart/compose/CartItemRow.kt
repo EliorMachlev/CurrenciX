@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -53,6 +56,7 @@ import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 private const val NAME_EDIT_DEBOUNCE_MS = 300L
 private const val ROW_PREVIEW_SCALE = 2
@@ -259,20 +263,25 @@ private fun NameField(
     // list. Sync only when the *external* value diverges from what we last
     // committed — a self-echo from our own updateItem must not clobber
     // in-flight typing.
-    var text by remember { mutableStateOf(initial) }
+    val state = remember { TextFieldState(initial) }
     var lastCommitted by remember { mutableStateOf(initial) }
     LaunchedEffect(initial) {
-        if (initial != lastCommitted && initial != text) {
-            text = initial
+        if (initial != lastCommitted && initial != state.text.toString()) {
+            state.setTextAndPlaceCursorAtEnd(initial)
             lastCommitted = initial
         }
     }
-    LaunchedEffect(text) {
-        if (text == lastCommitted) return@LaunchedEffect
-        onPending(text)
-        delay(NAME_EDIT_DEBOUNCE_MS)
-        onCommit(text)
-        lastCommitted = text
+    val pending by rememberUpdatedState(onPending)
+    val commit by rememberUpdatedState(onCommit)
+    // Text edits only (not cursor moves); a new keystroke restarts the wait.
+    LaunchedEffect(state) {
+        snapshotFlow { state.text.toString() }.collectLatest { text ->
+            if (text == lastCommitted) return@collectLatest
+            pending(text)
+            delay(NAME_EDIT_DEBOUNCE_MS)
+            commit(text)
+            lastCommitted = text
+        }
     }
     val textStyle =
         LocalTextStyle.current.merge(
@@ -288,9 +297,8 @@ private fun NameField(
         contentAlignment = Alignment.CenterStart,
     ) {
         BasicTextField(
-            value = text,
-            onValueChange = { text = it },
-            singleLine = true,
+            state = state,
+            lineLimits = TextFieldLineLimits.SingleLine,
             textStyle = textStyle,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -304,7 +312,7 @@ private fun NameField(
                     .hapticOnFocus()
                     .semantics { contentDescription = fieldLabel },
         )
-        if (text.isEmpty()) {
+        if (state.text.isEmpty()) {
             Text(
                 text = stringResource(id = R.string.cart_item_name_hint),
                 style = textStyle.copy(color = hintColor),

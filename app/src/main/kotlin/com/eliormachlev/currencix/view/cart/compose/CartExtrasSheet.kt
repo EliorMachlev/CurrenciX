@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
@@ -17,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -58,22 +61,23 @@ fun CartExtrasSheet(
     onDone: (CartExtras) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var tip by rememberSaveable { mutableStateOf(initial.tipPercent?.toPlainString().orEmpty()) }
+    val tipState = rememberTextFieldState(initial.tipPercent?.toPlainString().orEmpty())
     var split by rememberSaveable { mutableIntStateOf(initial.splitWays) }
-    var budget by rememberSaveable { mutableStateOf(initial.budget?.toPlainString().orEmpty()) }
+    val budgetState = rememberTextFieldState(initial.budget?.toPlainString().orEmpty())
+    val tip = tipState.text.toString()
+    val budget = budgetState.text.toString()
     val tipValue = remember(tip) { parseDecimal(tip)?.takeIf { it.signum() > 0 && it <= MAX_TIP } }
     val budgetValue = remember(budget) { parseDecimal(budget)?.takeIf { it.signum() > 0 } }
     LedgerBottomSheet(title = stringResource(R.string.cart_menu_extras), onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(CONTENT_PADDING), verticalArrangement = Arrangement.spacedBy(GAP)) {
-            TipField(tip, isError = tip.isNotBlank() && tipValue == null, onChange = { tip = it })
+            TipField(tipState, isError = tip.isNotBlank() && tipValue == null)
             SplitStepper(split, onChange = { split = it })
             OutlinedTextField(
-                value = budget,
-                onValueChange = { budget = it },
+                state = budgetState,
                 label = { Text(stringResource(R.string.cart_budget_label)) },
                 prefix = destination?.let { { Text(it.symbolOrIso() + " ") } },
                 isError = budget.isNotBlank() && budgetValue == null,
-                singleLine = true,
+                lineLimits = TextFieldLineLimits.SingleLine,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -87,18 +91,17 @@ fun CartExtrasSheet(
 
 @Composable
 private fun TipField(
-    value: String,
+    state: TextFieldState,
     isError: Boolean,
-    onChange: (String) -> Unit,
 ) {
+    val value = state.text.toString()
     Column(verticalArrangement = Arrangement.spacedBy(CHIP_GAP)) {
         OutlinedTextField(
-            value = value,
-            onValueChange = onChange,
+            state = state,
             label = { Text(stringResource(R.string.cart_tip_label)) },
             suffix = { Text("%") },
             isError = isError,
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.fillMaxWidth(),
         )
@@ -106,7 +109,8 @@ private fun TipField(
             QUICK_TIPS.forEach { percent ->
                 FilterChip(
                     selected = value == percent,
-                    onClick = { onChange(if (value == percent) "" else percent) },
+                    // A quick rate fills the field; tapping it again clears it.
+                    onClick = { state.setTextAndPlaceCursorAtEnd(if (value == percent) "" else percent) },
                     label = { Text("$percent%") },
                 )
             }

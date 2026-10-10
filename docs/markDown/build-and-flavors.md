@@ -7,7 +7,8 @@
 | JDK | 21 (Temurin recommended) |
 | Android Gradle Plugin | see `build.gradle.kts` |
 | Kotlin | 2.4.20 |
-| Min SDK | 26 |
+| Min SDK | 33 |
+| Compile SDK | 37.2 (Compose 1.13 needs at least 37.1; set with AGP's `release(37) { minorApiLevel = 2 }` DSL) |
 | Target SDK | 37 |
 
 ## Product Flavors
@@ -62,9 +63,8 @@ Replaces SharedPreferences across every namespace — see [architecture.md](arch
 
 | Dependency | Version |
 |---|---|
-| `androidx.compose:compose-bom` | 2026.09.00 |
-| `androidx.compose.material3:material3` | 1.4.0 (pinned newer than the BOM ships) |
-| `androidx.compose.ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
+| `androidx.compose:compose-bom-alpha` | 2026.10.00 — the pre-release BOM: Compose 1.13.0-beta01, Material 3 1.5.0-beta01. Back to `compose-bom` once both are stable |
+| `androidx.compose.material3:material3` / `ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
 | `androidx.activity:activity-compose` | 1.13.0 |
 | `androidx.navigation3:navigation3-runtime` / `navigation3-ui` | 1.2.0 |
 | `androidx.lifecycle:lifecycle-viewmodel-navigation3` | 2.11.0 (per-screen ViewModel stores) |
@@ -115,7 +115,7 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 
 | Dependency | Version | Note |
 |---|---|---|
-| `com.squareup.leakcanary:leakcanary-android` | 2.14 | Debug-only leak detection, auto-installs via its own `ContentProvider` |
+| `com.squareup.leakcanary:leakcanary-android` | 3.0-alpha-9 | Debug-only leak detection, auto-installs via its own `ContentProvider` |
 | `androidx.metrics:metrics-performance` | 1.0.0 | JankStats — per-Activity jank logging via Timber, debug-only |
 
 ### Testing

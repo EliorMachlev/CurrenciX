@@ -14,7 +14,7 @@ import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -41,6 +41,13 @@ private val SHEET_TITLE_TOP_PADDING = 4.dp
 private val SHEET_TITLE_BOTTOM_PADDING = 12.dp
 private val SHEET_BOTTOM_PADDING = 8.dp
 private val SHEET_TITLE_LETTER_SPACING = 0.14.em
+
+// Where a sheet can rest: closed or full height, or also at half height.
+@OptIn(ExperimentalMaterial3Api::class)
+private val FULL_HEIGHT_ONLY = setOf(SheetValue.Hidden, SheetValue.Expanded)
+
+@OptIn(ExperimentalMaterial3Api::class)
+private val WITH_PARTIAL_HEIGHT = setOf(SheetValue.Hidden, SheetValue.PartiallyExpanded, SheetValue.Expanded)
 
 /**
  * Ledger-styled modal bottom sheet — [ModalBottomSheet] with a paper-toned
@@ -71,7 +78,11 @@ fun LedgerBottomSheet(
     skipPartiallyExpanded: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+    val sheetState =
+        rememberBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            enabledValues = if (skipPartiallyExpanded) FULL_HEIGHT_ONLY else WITH_PARTIAL_HEIGHT,
+        )
     val scope = rememberCoroutineScope()
     AppTheme {
         ModalBottomSheet(

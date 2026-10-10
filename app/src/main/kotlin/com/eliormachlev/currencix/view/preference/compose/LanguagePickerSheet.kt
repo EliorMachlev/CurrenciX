@@ -5,16 +5,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,7 +43,8 @@ fun LanguagePickerSheet(
     onPicked: (Language) -> Unit,
 ) {
     val context = LocalContext.current
-    var query by rememberSaveable { mutableStateOf("") }
+    val queryState = rememberTextFieldState()
+    val query = queryState.text.toString()
     val normalized = remember(query) { query.trim().normalizeForSearch() }
     val filtered =
         remember(normalized) {
@@ -60,9 +59,8 @@ fun LanguagePickerSheet(
         onDismiss = onDismiss,
     ) {
         OutlinedTextField(
-            value = query,
-            onValueChange = { query = it },
-            singleLine = true,
+            state = queryState,
+            lineLimits = TextFieldLineLimits.SingleLine,
             leadingIcon = { Icon(painter = painterResource(R.drawable.ic_search), contentDescription = null) },
             modifier =
                 Modifier

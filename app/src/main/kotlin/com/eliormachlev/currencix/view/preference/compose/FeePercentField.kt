@@ -1,11 +1,15 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldBuffer
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,7 +55,7 @@ private fun isAcceptable(
 /**
  * Longest prefix of [candidate] that is a valid fee-percent field. Preserves
  * the graceful paste-truncation behavior of the XML input filter: e.g. a
- * pasted "1234.5678" collapses to "123.567" instead of being silently rejected.
+ * pasted "1.23456" collapses to "1.234" instead of being silently rejected.
  * Returns `null` only when even the empty string is somehow invalid (never
  * happens from a valid starting state, but keeps the caller total).
  */
@@ -68,43 +72,55 @@ private fun longestAcceptablePrefix(
     }
 }
 
+// Keeps the field a valid fee percent as the user types or pastes: both
+// separators become the locale's, and input past the digit budget is cut
+// from the tail (see [longestAcceptablePrefix]).
+private class FeePercentInputTransformation(
+    private val sep: Char,
+) : InputTransformation {
+    override val keyboardOptions = ComposeKeyboardOptions(keyboardType = KeyboardType.Decimal)
+
+    override fun TextFieldBuffer.transformInput() {
+        val typed = asCharSequence().toString()
+        val accepted = longestAcceptablePrefix(typed.normalizeSeparatorsTo(sep), sep)
+        if (accepted == null) {
+            revertAllChanges()
+        } else if (accepted != typed) {
+            replace(0, length, accepted)
+        }
+    }
+}
+
 /**
- * Numeric percent field with a "%" suffix. Unsigned decimal input in [0, 100].
- * [onValueChange] fires only for accepted values, so the caller sees the
- * field text with the locale separator preserved. Use [toFeePercentOrNull]
- * on the returned string to parse for persistence.
+ * Numeric percent field with a "%" suffix. Unsigned decimal input in [0, 100];
+ * [state] only ever holds an accepted value, with the locale separator. Use
+ * [toFeePercentOrNull] on its text to parse for persistence.
  */
 @Composable
 internal fun FeePercentField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    state: TextFieldState,
     modifier: Modifier = Modifier,
 ) {
     val sep = feePercentSeparator
-    val suffix = @Composable { Text("%", style = MaterialTheme.typography.bodyLarge) }
+    val transformation = remember(sep) { FeePercentInputTransformation(sep) }
     OutlinedTextField(
-        value = value,
-        onValueChange = { incoming ->
-            val normalized = incoming.normalizeSeparatorsTo(sep)
-            val accepted = longestAcceptablePrefix(normalized, sep)
-            if (accepted != null && accepted != value) onValueChange(accepted)
-        },
-        singleLine = true,
-        keyboardOptions = ComposeKeyboardOptions(keyboardType = KeyboardType.Decimal),
-        suffix = suffix,
+        state = state,
+        inputTransformation = transformation,
+        lineLimits = TextFieldLineLimits.SingleLine,
+        suffix = { Text("%", style = MaterialTheme.typography.bodyLarge) },
         modifier = modifier.fillMaxWidth(),
     )
 }
 
 /**
- * Remembers a mutable percent-field state seeded from [initial]. Extracted so
- * both the global-fee and specific-pair editors get the same seed conversion
- * (BigDecimal → locale-separator plain string) without duplicating the logic.
+ * Remembers the percent field's state seeded from [initial], so the global-fee
+ * and specific-pair editors share the seed conversion (BigDecimal →
+ * locale-separator plain string).
  */
 @Composable
-internal fun rememberFeePercentState(initial: BigDecimal?): androidx.compose.runtime.MutableState<String> {
+internal fun rememberFeePercentState(initial: BigDecimal?): TextFieldState {
     val sep = feePercentSeparator
-    return rememberSaveable(initial) {
-        mutableStateOf(initial?.toPlainString()?.replace('.', sep).orEmpty())
+    return rememberSaveable(initial, saver = TextFieldState.Saver) {
+        TextFieldState(initial?.toPlainString()?.replace('.', sep).orEmpty())
     }
 }

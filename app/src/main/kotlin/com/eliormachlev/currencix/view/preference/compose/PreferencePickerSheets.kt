@@ -4,14 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -78,11 +76,11 @@ fun TextEntrySheet(
     message: String? = null,
     singleLine: Boolean = true,
 ) {
-    var text by rememberSaveable(initialText) { mutableStateOf(initialText) }
+    val text = rememberTextFieldState(initialText)
     LedgerPromptSheet(
         title = title,
         confirmLabel = stringResource(id = android.R.string.ok),
-        onConfirm = { onConfirm(text) },
+        onConfirm = { onConfirm(text.text.toString()) },
         onDismiss = onDismiss,
     ) {
         if (!message.isNullOrBlank()) {
@@ -90,9 +88,8 @@ fun TextEntrySheet(
             Spacer(Modifier.height(TEXT_ENTRY_MESSAGE_GAP))
         }
         OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            singleLine = singleLine,
+            state = text,
+            lineLimits = if (singleLine) TextFieldLineLimits.SingleLine else TextFieldLineLimits.Default,
             modifier = Modifier.fillMaxWidth(),
         )
     }

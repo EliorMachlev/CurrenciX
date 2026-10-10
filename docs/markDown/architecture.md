@@ -193,6 +193,8 @@ Destructive actions don't ask first; they act and offer **Undo**: deleting a car
 
 The app has no dialogs: every prompt is a bottom sheet built on `LedgerPromptSheet` (`view/compose/dialogs/LedgerPromptSheet.kt`), the prompt's content over a Cancel / confirm row, so they all open, swipe away and go back the same way. That covers the pickers; every "are you sure?" (`LedgerConfirmSheet`: deleting a saved cart, importing a backup over the current settings, removing from history) and "here's what happened" (the fallback provider's explanation); and the prompts that take typed input: a cart's name (`CartNameInputSheet`), the Open Exchange Rates key (`TextEntrySheet`), the backup passwords (`LedgerPasswordSheet` and the export prompt), a fee (`FeeEditorSheet`, its Delete on the far side of the row), and the timeline's custom date range. The sheet makes room for the keyboard itself.
 
+Every text field is state-based (`TextFieldState`, Compose 1.13): the field owns its text, so a recomposition never moves the cursor, and input rules are an `InputTransformation` (the fee percent field normalizes the decimal separator and trims what's past its limits there). Passwords use `OutlinedSecureTextField`, which blocks copy and cut; they aren't saved across configuration changes and reach the backup code as a `CharArray` copied straight from the field, which is then cleared.
+
 ### Cart pins and drag order
 
 Pinned rows sit above the rest. Storage keeps the user's own order, and the pinned-first order is only applied on screen (`CartItemsList`), so unpinning a row returns it to its old place. Pinning or unpinning re-sorts the list at once.

@@ -17,6 +17,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -132,7 +136,8 @@ internal fun SearchableCurrencyPicker(
     content: CurrencyPickerContent,
     actions: CurrencyPickerActions,
 ) {
-    var query by remember { mutableStateOf("") }
+    val queryState = rememberTextFieldState()
+    val query = queryState.text.toString()
     val padH = dimensionResource(id = R.dimen.margin2x)
     val ctx = LocalContext.current
     val rates = content.rates
@@ -145,8 +150,7 @@ internal fun SearchableCurrencyPicker(
     // drifts up over the IME reveal duration.
     Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(
-            query = query,
-            onQueryChange = { query = it },
+            state = queryState,
             filterStarred = filterStarred,
             onToggleStarredFilter = actions.onToggleStarredFilter,
             modifier =
@@ -252,8 +256,7 @@ private fun RecentCurrenciesRow(
 
 @Composable
 private fun SearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
+    state: TextFieldState,
     filterStarred: Boolean,
     onToggleStarredFilter: () -> Unit,
     modifier: Modifier = Modifier,
@@ -264,9 +267,8 @@ private fun SearchBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedTextField(
-            value = query,
-            onValueChange = onQueryChange,
-            singleLine = true,
+            state = state,
+            lineLimits = TextFieldLineLimits.SingleLine,
             placeholder = { Text(text = stringResource(id = R.string.a11y_search_currencies)) },
             leadingIcon = {
                 Icon(
@@ -275,8 +277,8 @@ private fun SearchBar(
                 )
             },
             trailingIcon = {
-                if (query.isNotEmpty()) {
-                    IconButton(onClick = rememberHapticOnClick { onQueryChange("") }) {
+                if (state.text.isNotEmpty()) {
+                    IconButton(onClick = rememberHapticOnClick { state.clearText() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_close),
                             contentDescription = stringResource(id = R.string.a11y_clear_search),
