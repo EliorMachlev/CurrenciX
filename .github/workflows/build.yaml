@@ -62,6 +62,27 @@ jobs:
           fi
           ./gradlew "${ARGS[@]}" lint${{ matrix.flavor }}Debug test${{ matrix.flavor }}DebugUnitTest assemble${{ matrix.flavor }}Debug
 
+      # A failed test otherwise shows only as "exit code 1": put each one
+      # (class, name, message) on the run as an error annotation, readable
+      # from the checks page and the API without the full log.
+      - name: Annotate failed tests
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import glob
+          import xml.etree.ElementTree as ET
+
+          for path in glob.glob("app/build/test-results/**/*.xml", recursive=True):
+              for case in ET.parse(path).getroot().iter("testcase"):
+                  for problem in case.findall("failure") + case.findall("error"):
+                      text = (problem.get("message") or problem.text or "")[:900]
+                      # Workflow-command escaping: one annotation per line.
+                      text = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+                      title = f"{case.get('classname')} > {case.get('name')}"
+                      title = title.replace("%", "%25").replace(":", "%3A").replace(",", "%2C")
+                      print(f"::error title={title}::{text}")
+          PY
+
   fdroid-release-build:
     # F-Droid reproducibility guard: the fdroid release APK must build unsigned
     # in CI, so we catch any breakage of the reproducible build path before it
