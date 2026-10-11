@@ -19,7 +19,7 @@ internal fun cartSources(
     activeItemId = MutableLiveData(null),
     activeExpression = MutableLiveData(""),
     conversion = MutableLiveData(null),
-    shoppingMode = MutableLiveData(shoppingMode),
+    mode = CartListMode(shoppingMode = MutableLiveData(shoppingMode), people = MutableLiveData(emptyList())),
 )
 
 /** Row actions that do nothing, but for [onTogglePin]. */

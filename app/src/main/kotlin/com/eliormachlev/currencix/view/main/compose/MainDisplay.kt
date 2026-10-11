@@ -34,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -90,6 +91,7 @@ import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.ltrIsolate
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -329,6 +331,8 @@ internal data class MainDisplayCallbacks(
     val onOpenProvider: () -> Unit,
     val onSwapLongPress: () -> Unit,
     val onExplainBanner: () -> Unit = {},
+    // "Compare cards" beside the fee stamp; null hides it (fewer than two cards).
+    val onCompareCards: (() -> Unit)? = null,
 )
 
 // An amount on the card: split for display, whole for the clipboard.
@@ -937,7 +941,7 @@ private fun AmountToChain(
         )
     }
     Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-    ChipBelow(stack = stack, fees = state.fees, onClick = callbacks.onOpenFees)
+    ChipBelow(stack = stack, fees = state.fees, onClick = callbacks.onOpenFees, onCompare = callbacks.onCompareCards)
     Spacer(Modifier.height(PAY_RULE_TOP_GAP))
     PayRule()
     Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
@@ -974,7 +978,7 @@ private fun AmountToBare(
     }
     if (stack != null) {
         Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
-        ChipBelow(stack = stack, fees = state.fees, onClick = callbacks.onOpenFees)
+        ChipBelow(stack = stack, fees = state.fees, onClick = callbacks.onOpenFees, onCompare = callbacks.onCompareCards)
     }
 }
 
@@ -991,6 +995,7 @@ private fun ChipBelow(
     stack: BigDecimal,
     fees: ImmutableList<Fee>,
     onClick: () -> Unit,
+    onCompare: (() -> Unit)? = null,
 ) {
     Ltr {
         Row(
@@ -998,6 +1003,10 @@ private fun ChipBelow(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            onCompare?.let { compare ->
+                TextButton(onClick = rememberHapticOnClick(compare)) { Text(stringResource(R.string.compare_cards)) }
+                Spacer(Modifier.weight(1f))
+            }
             Text(
                 text = FEE_STAMP_OP_PREFIX,
                 fontSize = FEE_CHIP_TEXT_SIZE,

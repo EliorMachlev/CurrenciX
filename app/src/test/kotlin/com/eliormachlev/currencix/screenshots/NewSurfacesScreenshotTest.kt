@@ -10,7 +10,12 @@ import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.Trip
+import com.eliormachlev.currencix.model.compareCards
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartFooterCard
@@ -18,6 +23,8 @@ import com.eliormachlev.currencix.view.cart.compose.CartItemsList
 import com.eliormachlev.currencix.view.cart.compose.CartTotals
 import com.eliormachlev.currencix.view.cart.compose.NO_PAIR_ACTIONS
 import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
+import com.eliormachlev.currencix.view.cart.compose.SavedCartActions
+import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
 import com.eliormachlev.currencix.view.cart.compose.cartItemActions
 import com.eliormachlev.currencix.view.cart.compose.cartSources
 import com.eliormachlev.currencix.view.compose.PairChipContent
@@ -25,10 +32,12 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
+import com.eliormachlev.currencix.view.main.compose.CompareCardsSheet
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
 import com.eliormachlev.currencix.view.main.spinner.pickerActions
+import com.eliormachlev.currencix.viewmodel.cart.TripSummary
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
@@ -144,6 +153,55 @@ class NewSurfacesScreenshotTest {
         shots.captureMatrix("rate_alert_sheet") {
             RateAlertSheet(pair = CurrencyPair(Currency.USD, Currency.ILS), current = BigDecimal("3.5"), onSet = {}, onDismiss = {})
         }
+
+    // Split by person: each one's share under the total.
+    @Test fun cartFooterPeople() =
+        shots.captureMatrix("cart_footer_people") {
+            ReadingDirection {
+                CartFooterCard(
+                    totals =
+                        SAMPLE_TOTALS.copy(
+                            shares = listOf(Person("d", "Dana") to BigDecimal("231.20"), Person("a", "Avi") to BigDecimal("195.95")),
+                        ),
+                    pair = NO_PAIR_ACTIONS,
+                    onEditExtras = {},
+                )
+            }
+        }
+
+    // Two cards for USD → ILS: the cheaper first, the one in use ticked.
+    @Test fun compareCardsSheet() =
+        shots.captureMatrix("compare_cards_sheet") {
+            val visa = Fee.GlobalBank("visa", "Visa abroad", BigDecimal("2.5"))
+            val revolut = Fee.GlobalBank("rev", "Revolut", BigDecimal("0.5"))
+            CompareCardsSheet(
+                costs = compareCards(listOf(visa, revolut), Currency.USD, Currency.ILS, null, BigDecimal("365")),
+                currency = Currency.ILS,
+                activeCardId = "visa",
+                onPick = {},
+                onDismiss = {},
+            )
+        }
+
+    // Saved carts grouped by trip: the trip's spending against its budget, then the rest.
+    @Test fun savedCartsTrips() =
+        shots.captureMatrix("saved_carts_trips") {
+            val trip = Trip("t1", "Japan 2026", Currency.ILS, BigDecimal("3000"))
+            // Laid out the way the language reads, as in its sheet.
+            ReadingDirection { SavedCartsTripsPreview(trip) }
+        }
+
+    @androidx.compose.runtime.Composable
+    private fun SavedCartsTripsPreview(trip: Trip) =
+        SavedCartsList(
+            items =
+                listOf(
+                    SavedCart("c1", "Ramen night", "JPY", listOf(CartItem("1", "Ramen", "1200")), 0, tripId = "t1"),
+                    SavedCart("c2", "Weekly shop", "ILS", listOf(CartItem("2", "Milk", "6.90")), 0),
+                ),
+            trips = listOf(TripSummary(trip, BigDecimal("1234.50"), 1)),
+            actions = SavedCartActions(onPick = {}, onRename = {}, onDelete = {}),
+        )
 
     @Test fun cartExtrasSheet() =
         shots.captureMatrix("cart_extras_sheet") {

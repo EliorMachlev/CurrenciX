@@ -248,4 +248,33 @@
     <string name="alert_notification_below">You asked to hear when 1 %1$s is %2$s %3$s or less.</string>
     <string name="widget_amount_line" translatable="false">%1$s %2$s = %3$s %4$s</string>
     <string name="widget_amount_desc">Convert %1$s; tap for another amount</string>
+    <string name="compare_cards">Compare cards</string>
+    <string name="compare_cards_title">Which card is cheaper</string>
+    <string name="compare_cheapest">Cheapest</string>
+    <string name="compare_in_use">In use</string>
+    <string name="compare_more">%1$s more</string>
+    <string name="compare_enter_amount">Type an amount to see what each card comes to.</string>
+    <string name="compare_pick_hint">Tap a card to use it.</string>
+    <string name="cart_split_by_person">Split by person</string>
+    <string name="cart_split_by_person_hint">Add who’s paying, then pick who each item is for from its long-press menu. Items for no one are shared.</string>
+    <string name="cart_person_add">Add person</string>
+    <string name="cart_person_remove">Remove %1$s</string>
+    <string name="cart_person_unnamed">Someone</string>
+    <string name="cart_person_shared">Shared by everyone</string>
+    <string name="cart_assign_item">For…</string>
+    <string name="cart_assign_to">For %1$s</string>
+    <string name="cart_share_person">%1$s: %2$s %3$s</string>
+    <string name="trip_new">New trip</string>
+    <string name="trip_edit">Edit trip</string>
+    <string name="trip_delete">Delete trip</string>
+    <string name="trip_name">Trip name</string>
+    <string name="trip_currency">Home currency</string>
+    <string name="trip_budget">Budget (optional)</string>
+    <string name="trip_rates_note">Carts add up at today’s rates, with your card fees.</string>
+    <string name="trip_spent">%1$s spent</string>
+    <string name="trip_spent_of">%1$s of %2$s</string>
+    <string name="trip_other_carts">Other carts</string>
+    <string name="trip_unnamed">Trip</string>
+    <string name="trip_move">Trip</string>
+    <string name="trip_none">No trip</string>
 </resources>

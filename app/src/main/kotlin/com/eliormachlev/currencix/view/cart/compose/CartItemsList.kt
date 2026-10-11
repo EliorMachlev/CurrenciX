@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LedgerSectionHeader
 import com.eliormachlev.currencix.view.compose.onBackgroundTap
@@ -43,17 +44,25 @@ class CartListSources(
     val activeExpression: LiveData<String>,
     // Each row's price in the destination currency.
     val conversion: LiveData<RowConversion?>,
-    // Shopping-list mode: each row has a tick for "in the basket".
-    val shoppingMode: LiveData<Boolean>,
+    val mode: CartListMode,
 )
 
-/** What a row can ask for about where it sits: pin, duplicate, move to top, delete. */
+/** How the cart is being used, which changes what each row offers. */
+class CartListMode(
+    // Shopping-list mode: each row has a tick for "in the basket".
+    val shoppingMode: LiveData<Boolean>,
+    // The cart's people, when it splits by person; empty otherwise.
+    val people: LiveData<List<Person>>,
+)
+
+/** What a row's menu can ask for: pin, duplicate, move to top, delete, who it's for. */
 @Immutable
 class CartItemArrangeActions(
     val onTogglePin: (id: String) -> Unit,
     val onDuplicate: (id: String) -> Unit,
     val onMoveToTop: (id: String) -> Unit,
     val onDelete: (id: String) -> Unit,
+    val onAssign: (id: String, personId: String?) -> Unit = { _, _ -> },
 )
 
 /** What the rows can ask for, each naming the row it's about. */
@@ -78,6 +87,7 @@ class CartItemActions(
             onToggleChecked = { onToggleChecked(item.id) },
             onDuplicate = { arrange.onDuplicate(item.id) },
             onMoveToTop = { arrange.onMoveToTop(item.id) },
+            onAssign = { arrange.onAssign(item.id, it) },
         )
 }
 
@@ -106,7 +116,8 @@ fun CartItemsList(
         val activeId by sources.activeItemId.observeAsState()
         val liveExpression by sources.activeExpression.observeAsState(initial = "")
         val conversion by sources.conversion.observeAsState()
-        val shoppingMode by sources.shoppingMode.observeAsState(initial = false)
+        val shoppingMode by sources.mode.shoppingMode.observeAsState(initial = false)
+        val people by sources.mode.people.observeAsState(initial = emptyList())
 
         // Local mirror the drag gesture mutates in-flight; ReorderableLazyList
         // needs a stable, mutable data source so the visual swap can settle
@@ -126,7 +137,7 @@ fun CartItemsList(
             // already animates without extra wiring at the call site.
             ReorderableItem(reorderableState, key = item.id) { _ ->
                 SwipeableCartItemRow(
-                    state = CartRowState(item, currency, liveExpression.takeIf { item.id == activeId }, conversion, shoppingMode),
+                    state = CartRowState(item, currency, liveExpression.takeIf { item.id == activeId }, conversion, shoppingMode, people),
                     actions = remember(actions, item) { actions.forRow(item) },
                     position = position,
                     dragHandleModifier =

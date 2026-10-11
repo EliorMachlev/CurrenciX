@@ -40,6 +40,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.HUNDRED_PERCENT
@@ -101,6 +102,8 @@ data class CartTotals(
     val basket: BigDecimal? = null,
     // The rates' date, formatted, when they're old (see [ratesAreOld]); null otherwise.
     val oldRatesDate: String? = null,
+    // What each person pays, when the cart splits by person; empty otherwise.
+    val shares: List<Pair<Person, BigDecimal>> = emptyList(),
 )
 
 /**
@@ -166,6 +169,7 @@ private fun observeTotals(
     val feeStack = remember(fees, rates, baseCurrency, destCurrency) { viewModel.currentFeeStack() }
     val shoppingMode by viewModel.isShoppingMode().observeAsState(initial = false)
     val basket by viewModel.getBasketTotal().observeAsState()
+    val shares by viewModel.getPersonShares().observeAsState(emptyList())
     val datePattern by viewModel.dateFormat.observeAsState(initial = DEFAULT_DATE_PATTERN)
     val oldRatesDate =
         remember(rates, datePattern) {
@@ -182,6 +186,7 @@ private fun observeTotals(
         tip = tip,
         basket = basket.takeIf { shoppingMode },
         oldRatesDate = oldRatesDate,
+        shares = shares,
     )
 }
 
@@ -231,7 +236,7 @@ internal fun CartFooterCard(
             )
         }
         AnimatedVisibility(visible = !collapsed) {
-            Column { ExtrasBelowTotal(totals.extras, totals.total ?: BigDecimal.ZERO, totals.destCurrency, onEditExtras) }
+            Column { ExtrasBelowTotal(totals, onEditExtras) }
         }
         totals.oldRatesDate?.let { date ->
             Text(
@@ -293,13 +298,22 @@ private fun CollapseToggle(
 // each only when set; tapping one edits them.
 @Composable
 private fun ExtrasBelowTotal(
-    extras: CartExtras,
-    total: BigDecimal,
-    currency: Currency?,
+    totals: CartTotals,
     onEdit: () -> Unit,
 ) {
     val context = LocalContext.current
-    if (extras.splitWays > 1) {
+    val extras = totals.extras
+    val total = totals.total ?: BigDecimal.ZERO
+    val currency = totals.destCurrency
+    // Split by person: each one's name and share; otherwise the even split.
+    totals.shares.forEach { (person, share) ->
+        ExtraRow(
+            label = person.name.ifBlank { stringResource(R.string.cart_person_unnamed) },
+            amount = context.formatCartAmount(share, currency),
+            onClick = onEdit,
+        )
+    }
+    if (!extras.splitsByPerson && extras.splitWays > 1) {
         ExtraRow(
             label = stringResource(R.string.cart_per_person_row, extras.splitWays),
             amount = context.formatCartAmount(perPerson(total, extras.splitWays), currency),

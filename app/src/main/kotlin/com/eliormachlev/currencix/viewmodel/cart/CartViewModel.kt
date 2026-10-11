@@ -11,6 +11,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.newId
@@ -103,6 +104,14 @@ class CartViewModel(
         }
     }
     private val shoppingModeLive: LiveData<Boolean> by lazy { current.map { it.shoppingMode } }
+    private val peopleLive: LiveData<List<Person>> by lazy { current.map { it.extras.people } }
+    private val personSharesLive: LiveData<List<Pair<Person, BigDecimal>>> by lazy {
+        MediatorLiveData<List<Pair<Person, BigDecimal>>>().apply {
+            val recompute = { value = personSharesOf(current.value, totalLive.value ?: BigDecimal.ZERO) }
+            addSource(current) { recompute() }
+            addSource(totalLive) { recompute() }
+        }
+    }
     private val basketTotalLive: LiveData<BigDecimal> by lazy {
         MediatorLiveData<BigDecimal>().apply {
             val recompute = { value = basketShareOf(current.value, totalLive.value ?: BigDecimal.ZERO) }
@@ -129,9 +138,21 @@ class CartViewModel(
     /** The tip / tax on top of the items, in the base currency. */
     fun getTip(): LiveData<BigDecimal> = tipLive
 
+    /** Sets the extras; items for someone no longer in the cart go back to being shared. */
     fun setExtras(extras: CartExtras) {
-        mutate { cart -> if (cart.extras == extras) cart else cart.copy(extras = extras) }
+        mutate { cart ->
+            if (cart.extras == extras) return@mutate cart
+            val ids = extras.people.mapTo(mutableSetOf()) { it.id }
+            val items = cart.items.map { if (it.personId != null && it.personId !in ids) it.copy(personId = null) else it }
+            cart.copy(extras = extras, items = items)
+        }
     }
+
+    /** The cart's people, when it splits by person; empty otherwise. */
+    fun getPeople(): LiveData<List<Person>> = peopleLive
+
+    /** What each person pays of the total, when the cart splits by person; empty otherwise. */
+    fun getPersonShares(): LiveData<List<Pair<Person, BigDecimal>>> = personSharesLive
 
     /** Destination for the running total. Falls back to base when unset. */
     fun getDestinationCurrency(): LiveData<Currency> = destinationCurrencyLive
@@ -160,6 +181,9 @@ class CartViewModel(
 
     /** Edits to the working cart's rows: add, edit, delete, pin, reorder. */
     val rows = CartRowEdits(::mutate)
+
+    /** The trips saved carts are grouped into, with their spending. */
+    val trips = CartTrips(db, ratesCache)
 
     /** Turns shopping-list mode on or off; ticks stay for the next time it's on. */
     fun setShoppingMode(enabled: Boolean) {

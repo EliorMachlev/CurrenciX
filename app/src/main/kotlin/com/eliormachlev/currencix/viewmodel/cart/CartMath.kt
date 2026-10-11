@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.viewmodel.cart
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.util.HUNDRED_PERCENT
@@ -63,6 +64,29 @@ internal fun basketShareOf(
     if (cart == null || subtotal.signum() == 0) return BigDecimal.ZERO
     val basket = cart.items.filter { it.checked }.fold(BigDecimal.ZERO) { acc, item -> acc + evaluateItem(item) }
     return total.multiply(basket, MathContext.DECIMAL128).divide(subtotal, MathContext.DECIMAL128)
+}
+
+/**
+ * What each of the cart's people pays of [total] when it splits by person:
+ * their own items plus an equal part of the shared ones (no one's, or
+ * someone no longer in the cart), as a share of the subtotal, so tip and
+ * fees count in proportion. Empty when the cart doesn't split by person.
+ */
+internal fun personSharesOf(
+    cart: SavedCart?,
+    total: BigDecimal,
+): List<Pair<Person, BigDecimal>> {
+    val people = cart?.extras?.people.orEmpty()
+    if (cart == null || people.isEmpty()) return emptyList()
+    val subtotal = subtotalOf(cart)
+    if (subtotal.signum() == 0) return people.map { it to BigDecimal.ZERO }
+    val ids = people.mapTo(mutableSetOf()) { it.id }
+    val (own, shared) = cart.items.partition { it.personId in ids }
+    val sharedEach = shared.sumOf(::evaluateItem).divide(BigDecimal(people.size), MathContext.DECIMAL128)
+    return people.map { person ->
+        val mine = own.filter { it.personId == person.id }.sumOf(::evaluateItem) + sharedEach
+        person to total.multiply(mine, MathContext.DECIMAL128).divide(subtotal, MathContext.DECIMAL128)
+    }
 }
 
 /** Each person's share of [total] when the cart splits it [ways] ways. */

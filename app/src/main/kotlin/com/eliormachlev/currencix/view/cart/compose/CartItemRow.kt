@@ -60,6 +60,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.hintText
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -71,6 +72,7 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
 import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
 import com.eliormachlev.currencix.util.OPERATOR_MINUS
@@ -134,7 +136,12 @@ data class CartRowState(
     val conversion: RowConversion? = null,
     // Shopping-list mode: a tick for "in the basket" instead of the drag handle.
     val shoppingMode: Boolean = false,
+    // The cart's people, when it splits by person: the row can be assigned to one.
+    val people: List<Person> = emptyList(),
 ) {
+    /** Who the item is for, when it's assigned to one of [people]. */
+    val person: Person? get() = item.personId?.let { id -> people.firstOrNull { it.id == id } }
+
     val isActive: Boolean get() = liveExpression != null
     val displayedExpression: String get() = liveExpression ?: item.expression
 }
@@ -191,6 +198,8 @@ class CartRowActions(
     val onToggleChecked: () -> Unit = {},
     val onDuplicate: () -> Unit = {},
     val onMoveToTop: () -> Unit = {},
+    // Who the item is for (null: shared), when the cart splits by person.
+    val onAssign: (String?) -> Unit = {},
 )
 
 /**
@@ -307,7 +316,7 @@ fun CartItemRow(
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
-    val rowActions = rowAccessibilityActions(actions)
+    val rowActions = rowAccessibilityActions(actions, state.people)
     Box(modifier.fillMaxWidth()) {
         Column(
             modifier =
@@ -335,7 +344,13 @@ fun CartItemRow(
                 }
             }
         }
-        RowMenu(expanded = menuOpen, actions = actions, onDismiss = { menuOpen = false })
+        RowMenu(
+            expanded = menuOpen,
+            actions = actions,
+            people = state.people,
+            current = state.item.personId,
+            onDismiss = { menuOpen = false },
+        )
     }
 }
 
@@ -398,42 +413,99 @@ private fun rowBackground(active: Boolean): Color {
 
 // The long-press menu's actions, also offered to TalkBack as the row's actions.
 @Composable
-private fun rowAccessibilityActions(actions: CartRowActions): List<CustomAccessibilityAction> {
+private fun rowAccessibilityActions(
+    actions: CartRowActions,
+    people: List<Person>,
+): List<CustomAccessibilityAction> {
     val duplicate = stringResource(R.string.cart_duplicate_item)
     val moveToTop = stringResource(R.string.cart_move_to_top)
     val delete = stringResource(R.string.cart_delete_item)
-    return remember(actions, duplicate, moveToTop, delete) {
-        listOf(
-            CustomAccessibilityAction(duplicate) { true.also { actions.onDuplicate() } },
-            CustomAccessibilityAction(moveToTop) { true.also { actions.onMoveToTop() } },
-            CustomAccessibilityAction(delete) { true.also { actions.onDelete() } },
-        )
+    // "For Dana", "For Avi", "Shared by everyone", when the cart splits by person.
+    val shared = stringResource(R.string.cart_person_shared)
+    val forPerson = people.map { it.id to stringResource(R.string.cart_assign_to, it.name) }
+    return remember(actions, duplicate, moveToTop, delete, forPerson, shared) {
+        val assign =
+            if (forPerson.isEmpty()) {
+                emptyList()
+            } else {
+                forPerson.map { (id, label) -> CustomAccessibilityAction(label) { true.also { actions.onAssign(id) } } } +
+                    CustomAccessibilityAction(shared) { true.also { actions.onAssign(null) } }
+            }
+        assign +
+            listOf(
+                CustomAccessibilityAction(duplicate) { true.also { actions.onDuplicate() } },
+                CustomAccessibilityAction(moveToTop) { true.also { actions.onMoveToTop() } },
+                CustomAccessibilityAction(delete) { true.also { actions.onDelete() } },
+            )
     }
 }
 
-// Duplicate, move to top, delete: the long-press menu.
+// Duplicate, move to top, delete: the long-press menu; with [people] (the
+// cart splits by person) also "For…", which turns the menu into the list of
+// who the item can be for.
 @Composable
 private fun RowMenu(
     expanded: Boolean,
     actions: CartRowActions,
+    people: List<Person>,
+    current: String?,
     onDismiss: () -> Unit,
 ) {
+    var choosingPerson by remember(expanded) { mutableStateOf(false) }
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        if (choosingPerson) {
+            PersonChoices(people = people, current = current) { personId ->
+                onDismiss()
+                actions.onAssign(personId)
+            }
+            return@DropdownMenu
+        }
+        if (people.isNotEmpty()) {
+            MenuEntry(R.string.cart_assign_item, R.drawable.ic_person) { choosingPerson = true }
+        }
         listOf(
             Triple(R.string.cart_duplicate_item, R.drawable.ic_content_copy, actions.onDuplicate),
             Triple(R.string.cart_move_to_top, R.drawable.ic_vertical_align_top, actions.onMoveToTop),
             Triple(R.string.cart_delete_item, R.drawable.ic_delete, actions.onDelete),
         ).forEach { (label, icon, action) ->
-            DropdownMenuItem(
-                text = { Text(stringResource(label)) },
-                leadingIcon = { Icon(painter = painterResource(icon), contentDescription = null) },
-                onClick =
-                    rememberHapticOnClick {
-                        onDismiss()
-                        action()
-                    },
-            )
+            MenuEntry(label, icon) {
+                onDismiss()
+                action()
+            }
         }
+    }
+}
+
+@Composable
+private fun MenuEntry(
+    @StringRes label: Int,
+    @DrawableRes icon: Int,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = { Text(stringResource(label)) },
+        leadingIcon = { Icon(painter = painterResource(icon), contentDescription = null) },
+        onClick = rememberHapticOnClick(onClick),
+    )
+}
+
+// "Shared by everyone", then each person; the current choice is ticked.
+@Composable
+private fun PersonChoices(
+    people: List<Person>,
+    current: String?,
+    onPick: (String?) -> Unit,
+) {
+    val unnamed = stringResource(R.string.cart_person_unnamed)
+    val choices = listOf(null to stringResource(R.string.cart_person_shared)) + people.map { it.id to it.name.ifBlank { unnamed } }
+    choices.forEach { (id, name) ->
+        DropdownMenuItem(
+            text = { Text(name) },
+            leadingIcon = { if (id == current) Icon(painterResource(R.drawable.ic_check), contentDescription = null) },
+            onClick = rememberHapticOnClick { onPick(id) },
+            // TalkBack hears which one it's set to.
+            modifier = Modifier.semantics { selected = id == current },
+        )
     }
 }
 
@@ -504,7 +576,8 @@ private fun spokenPrice(
         state.conversion?.let { conversion ->
             conversion.convert(total)?.let { stringResource(R.string.cart_row_a11y_converted, spokenAmount(it, conversion.currency)) }
         }
-    return listOfNotNull(amount, quantity, converted).joinToString(SPOKEN_PART_SEPARATOR)
+    val person = state.person?.let { stringResource(R.string.cart_assign_to, it.name) }
+    return listOfNotNull(amount, quantity, converted, person).joinToString(SPOKEN_PART_SEPARATOR)
 }
 
 // "4.50 US dollar": the amount with its currency's name, for TalkBack.
@@ -537,7 +610,9 @@ private fun PriceDetails(
 ) {
     val calculation = state.calculation()
     val converted = convertedPrice(state)
-    if (calculation == null && converted == null && !state.isActive) return
+    val person = state.person?.name?.ifBlank { stringResource(R.string.cart_person_unnamed) }
+    // Nothing under the name and price: no line at all.
+    if (!state.isActive && listOfNotNull(calculation, converted, person).isEmpty()) return
     Row(modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.Tiny), verticalAlignment = Alignment.CenterVertically) {
         if (state.isActive) QuantityStepper(quantity = state.item.quantity, onChange = actions.onQuantityChange)
         Row(
@@ -550,7 +625,11 @@ private fun PriceDetails(
             verticalAlignment = Alignment.Top,
         ) {
             // Kept apart from the converted price when a long calculation wraps.
-            Box(Modifier.weight(1f).padding(end = Spacing.Small)) {
+            Column(Modifier.weight(1f).padding(end = Spacing.Small)) {
+                // Who it's for, when the cart splits by person.
+                person?.let {
+                    Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                }
                 calculation?.let { Calculation(it) }
             }
             converted?.let { Ltr { SupportingText(it) } }

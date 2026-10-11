@@ -66,6 +66,9 @@ ICONS = {
     # rate alerts
     "ic_alert": ("notifications", False),
     "ic_alert_active": ("notifications_active", False),
+    "ic_check": ("check", False),
+    "ic_person": ("person", False),
+    "ic_luggage": ("luggage", False),
     # timeline
     "ic_tune": ("tune", False),
     "ic_trending_up": ("trending_up", False),

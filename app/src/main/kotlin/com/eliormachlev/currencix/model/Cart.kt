@@ -13,7 +13,9 @@ import java.math.BigDecimal
  * reorder order is preserved when they toggle pins on and off.
  *
  * [quantity] multiplies the price ("2 × 3.50" can also be 3.50 at ×2);
- * [checked] marks the item as in the basket, in a cart's shopping-list mode.
+ * [checked] marks the item as in the basket, in a cart's shopping-list mode;
+ * [personId] is who it's for, when the cart splits by person (null: shared
+ * by everyone).
  */
 data class CartItem(
     val id: String,
@@ -22,6 +24,7 @@ data class CartItem(
     val pinned: Boolean = false,
     val quantity: Int = 1,
     val checked: Boolean = false,
+    val personId: String? = null,
 ) {
     /** The price as written, with its quantity when more than one ("3.50 × 2"). */
     val expressionWithQuantity: String get() = if (quantity > 1) "$expression × $quantity" else expression
@@ -79,6 +82,8 @@ data class SavedCart(
     val extras: CartExtras = CartExtras(),
     // Shopping-list mode: each item gets a tick for "in the basket".
     val shoppingMode: Boolean = false,
+    // The trip it's part of, when saved into one.
+    val tripId: String? = null,
 )
 
 /**
@@ -90,10 +95,23 @@ data class CartExtras(
     val tipPercent: BigDecimal? = null,
     val splitWays: Int = 1,
     val budget: BigDecimal? = null,
+    // Split by person: who's paying. With anyone here, each pays for their
+    // own items and an equal part of the shared ones ([splitWays] is unused).
+    val people: List<Person> = emptyList(),
 ) {
     val isDefault: Boolean get() = this == CartExtras()
 
+    /** Whether the total splits by person rather than evenly. */
+    val splitsByPerson: Boolean get() = people.isNotEmpty()
+
     companion object {
         const val MAX_SPLIT = 99
+        const val MAX_PEOPLE = 12
     }
 }
+
+/** Someone a cart splits its total with. */
+data class Person(
+    val id: String,
+    val name: String,
+)

@@ -19,6 +19,7 @@ import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
 import com.eliormachlev.currencix.viewmodel.cart.perPerson
+import com.eliormachlev.currencix.viewmodel.cart.personSharesOf
 
 private const val CSV_MIME = "text/csv"
 private const val CSV_EXT = ".csv"
@@ -150,7 +151,12 @@ class CartShareCoordinator(
         destIso: String,
     ) {
         val extras = snapshot.cart.extras
-        if (extras.splitWays > 1) {
+        // "Dana: 120.40 ILS", one line each, when it splits by person.
+        personSharesOf(snapshot.cart, snapshot.total).forEach { (person, share) ->
+            val name = person.name.ifBlank { context.getString(R.string.cart_person_unnamed) }
+            append('\n').append(context.getString(R.string.cart_share_person, name, share.toCartDisplayString(), destIso))
+        }
+        if (!extras.splitsByPerson && extras.splitWays > 1) {
             val each = perPerson(snapshot.total, extras.splitWays).toCartDisplayString()
             append('\n').append(context.getString(R.string.cart_share_per_person, extras.splitWays, each, destIso))
         }

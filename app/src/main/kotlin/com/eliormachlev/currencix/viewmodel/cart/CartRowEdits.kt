@@ -78,6 +78,12 @@ class CartRowEdits internal constructor(
         quantity: Int,
     ) = mutateItem(id) { it.copy(quantity = quantity.coerceIn(CartItem.MIN_QUANTITY, CartItem.MAX_QUANTITY)) }
 
+    /** Item [id] is for [personId], or shared by everyone (null), when the cart splits by person. */
+    fun assignTo(
+        id: String,
+        personId: String?,
+    ) = mutateItem(id) { it.copy(personId = personId) }
+
     /** Ticks item [id] as in the basket, or unticks it (shopping-list mode). */
     fun toggleChecked(id: String) = mutateItem(id) { it.copy(checked = !it.checked) }
 

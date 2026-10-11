@@ -23,6 +23,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.compareCards
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
@@ -34,6 +36,7 @@ import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAncho
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.main.compose.CompareCardsSheet
 import com.eliormachlev.currencix.view.main.compose.ConverterBody
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
@@ -62,7 +65,7 @@ import java.math.BigDecimal
 
 // Which of the converter's sheets / dialogs is open. Saved, so an open sheet
 // survives rotation.
-private enum class ConverterOverlay { ProviderPicker, QuickConversions, HistoricalDatePicker, StatusExplanation }
+private enum class ConverterOverlay { ProviderPicker, QuickConversions, HistoricalDatePicker, StatusExplanation, CompareCards }
 
 private const val RECENT_PAIR_SETTLE_MILLIS = 2_000L
 private val RECENT_PAIRS_MARGIN = Spacing.Large
@@ -120,6 +123,7 @@ internal fun ConverterRoute(
                     onOpenFees = destinations::openFees,
                     onOpenProvider = { overlay = ConverterOverlay.ProviderPicker },
                     onExplainStatus = { overlay = ConverterOverlay.StatusExplanation },
+                    onCompareCards = { overlay = ConverterOverlay.CompareCards },
                 )
             },
             keypadContent = { ConverterKeypad(viewModel) },
@@ -276,6 +280,10 @@ private fun ConverterOverlays(
             )
         }
 
+        ConverterOverlay.CompareCards -> {
+            CompareCardsHost(viewModel, onDismiss)
+        }
+
         ConverterOverlay.StatusExplanation -> {
             StatusExplanationSheet(host.status, onOpenProvider, onDismiss)
         }
@@ -315,12 +323,17 @@ private fun ConverterDisplay(
     onOpenFees: () -> Unit,
     onOpenProvider: () -> Unit,
     onExplainStatus: () -> Unit,
+    onCompareCards: () -> Unit,
 ) {
     val context = LocalContext.current
     val banner by host.status.banner
     val database = remember(context) { Database(context) }
     val pattern by database.display.dateFormat.liveData
         .observeAsState(DEFAULT_DATE_PATTERN)
+    val fees by database.fees.fees.flow
+        .collectAsStateWithLifecycle(database.fees.fees.get())
+    // "Compare cards" only with two or more cards to compare.
+    val canCompare = fees.count { it is Fee.GlobalBank && it.isActive } >= 2
     MainDisplay(
         viewModel = host.viewModel,
         callbacks =
@@ -330,12 +343,44 @@ private fun ConverterDisplay(
                 onOpenProvider = onOpenProvider,
                 onSwapLongPress = onOpenFees,
                 onExplainBanner = onExplainStatus,
+                onCompareCards = onCompareCards.takeIf { canCompare },
             ),
         dateFormatPattern = pattern,
         banner = banner,
         captureController = host.share.heroCapture,
     )
     ConverterRecentPairs(host.viewModel, database)
+}
+
+// "Which card is cheaper" for the amount on screen; picking a card makes it
+// the one in force.
+@Composable
+private fun CompareCardsHost(
+    viewModel: MainViewModel,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    val db = remember(context) { Database(context) }
+    val fees by db.fees.fees.flow
+        .collectAsStateWithLifecycle(db.fees.fees.get())
+    val activeExchange by db.fees.activeExchangeId.flow
+        .collectAsStateWithLifecycle(db.fees.activeExchangeId.get())
+    val activeCard by db.fees.activeBankId.flow
+        .collectAsStateWithLifecycle(db.fees.activeBankId.get())
+    val base by viewModel.getBaseCurrency().observeAsState()
+    val dest by viewModel.getDestinationCurrency().observeAsState()
+    val amount by viewModel.getResultAsNumber().observeAsState()
+    val costs = remember(fees, base, dest, activeExchange, amount) { compareCards(fees, base, dest, activeExchange, amount) }
+    CompareCardsSheet(
+        costs = costs,
+        currency = dest,
+        activeCardId = activeCard,
+        onPick = { id ->
+            db.fees.activeBankId.set(id)
+            onDismiss()
+        },
+        onDismiss = onDismiss,
+    )
 }
 
 // One-tap chips for the pairs used before the one on screen. A pair counts

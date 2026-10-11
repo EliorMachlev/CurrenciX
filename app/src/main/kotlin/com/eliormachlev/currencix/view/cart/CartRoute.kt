@@ -23,6 +23,7 @@ import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartItemActions
 import com.eliormachlev.currencix.view.cart.compose.CartItemArrangeActions
+import com.eliormachlev.currencix.view.cart.compose.CartListMode
 import com.eliormachlev.currencix.view.cart.compose.CartListSources
 import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
 import com.eliormachlev.currencix.view.cart.compose.CartNameInputSheet
@@ -114,7 +115,7 @@ private fun CartHost.listSources() =
         activeItemId = keypad.activeItemId,
         activeExpression = keypad.liveExpression,
         conversion = viewModel.getRowConversion(),
-        shoppingMode = viewModel.isShoppingMode(),
+        mode = CartListMode(shoppingMode = viewModel.isShoppingMode(), people = viewModel.getPeople()),
     )
 
 private fun CartHost.screenActions(onOpenFees: () -> Unit) =
@@ -135,6 +136,7 @@ private fun CartHost.screenActions(onOpenFees: () -> Unit) =
                         onDuplicate = viewModel.rows::duplicate,
                         onMoveToTop = viewModel.rows::moveToTop,
                         onDelete = ::deleteItem,
+                        onAssign = viewModel.rows::assignTo,
                     ),
             ),
         // A drag doesn't interact well with a floating keypad — the row
