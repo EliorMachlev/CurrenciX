@@ -35,6 +35,10 @@ base {
 val abiVersionDigits = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86" to 3, "x86_64" to 4)
 val abiVersionMultiplier = 10
 
+// Each per-CPU APK's version name says which it is ("1.23.0-arm64"), for
+// people: Settings and Android's app info show it. Stores go by the codes.
+val abiVersionLabels = mapOf("armeabi-v7a" to "arm32", "arm64-v8a" to "arm64", "x86" to "x86", "x86_64" to "x64")
+
 // Whether this Gradle run builds an app bundle (Play), which takes no APK splits.
 val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
 
@@ -198,6 +202,9 @@ androidComponents {
             val abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
             val base = android.defaultConfig.versionCode ?: return@forEach
             output.versionCode.set(base * abiVersionMultiplier + (abiVersionDigits[abi] ?: 0))
+            val label = abiVersionLabels[abi] ?: return@forEach
+            val name = output.versionName.orNull ?: return@forEach
+            output.versionName.set("$name-$label")
         }
     }
 }

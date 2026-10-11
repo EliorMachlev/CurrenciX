@@ -1,6 +1,8 @@
 package com.eliormachlev.currencix.view.preference.compose
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -634,6 +636,8 @@ private fun AboutSection(
 @Composable
 private fun VersionSection() {
     val context = LocalContext.current
+    // The installed APK's own name ("1.23.0-arm64"): BuildConfig is one for every CPU type's APK.
+    val versionName = remember(context) { installedVersionName(context) }
     PreferenceSection(text = stringResource(id = R.string.category_versioninfo)) {
         PreferenceRow(
             title = stringResource(id = R.string.title_changelog),
@@ -641,7 +645,7 @@ private fun VersionSection() {
             onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, releaseNotesUrl().toUri())) },
         )
         PreferenceRow(
-            title = BuildConfig.VERSION_NAME,
+            title = versionName,
             summary = versionSummary(context, Calendar.getInstance().get(Calendar.YEAR)),
             iconRes = R.drawable.ic_tag,
             summaryMaxLines = FULL_SUMMARY,
@@ -677,3 +681,11 @@ private fun themeLabelRes(theme: AppTheme): Int =
         AppTheme.SYSTEM -> R.string.system_default
         AppTheme.SYSTEM_OLED -> R.string.theme_option_system_oled
     }
+
+// The version name of the APK installed, which names its CPU type; BuildConfig's when it can't be read.
+private fun installedVersionName(context: Context): String =
+    try {
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName
+    } catch (_: PackageManager.NameNotFoundException) {
+        null
+    } ?: BuildConfig.VERSION_NAME

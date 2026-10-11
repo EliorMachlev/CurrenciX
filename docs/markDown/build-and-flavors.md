@@ -41,6 +41,8 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 Each APK's version code is `versionCode × 10 + digit`: 1 `armeabi-v7a`, 2 `arm64-v8a`, 3 `x86`, 4 `x86_64`, 0 universal (so 1.23.0 is 123001 … 123004, and 123000). The APKs of one release need different codes, and a phone that runs two types (64-bit ARM runs 32-bit too) is offered the higher, better fit. `defaultConfig.versionCode` stays the plain SemVer code (12300), which `checkVersion` and `checkFastlaneChangelog` check.
 
+Each per-CPU APK's version name also names its type, for people (Settings and Android's app info show it): `1.23.0-arm32`, `-arm64`, `-x86`, `-x64` (debug: `1.23.0-<commit>-arm64`); the universal APK and the bundle keep the plain name. Settings reads the installed APK's name from the package manager, since `BuildConfig.VERSION_NAME` is one for all of a variant's APKs; the release-notes link keeps using `BuildConfig.VERSION_NAME`, the plain tag.
+
 `bundle*` (Play) builds no splits: AGP can't make an app bundle and per-CPU APKs in one run, and Play splits the bundle by CPU itself. The bundle's version code is the universal one (123000). Version codes only go up, so this ×10 scheme is permanent once released.
 
 For hand downloads (GitHub), the universal APK is the one that installs everywhere; the debug-APK workflow uploads only that one.
@@ -51,14 +53,15 @@ F-Droid builds each entry from source and keeps the APK that `output` names; its
 
 ```yaml
 Builds:
-  - versionName: 1.23.0
+  - versionName: 1.23.0-arm32
     versionCode: 123001
     commit: v1.23.0
     subdir: app
     gradle:
       - fdroid
     output: build/outputs/apk/fdroid/release/*-fdroid-armeabi-v7a-release-unsigned.apk
-  # … the same for 123002 (arm64-v8a), 123003 (x86), 123004 (x86_64)
+  # … the same for 1.23.0-arm64 / 123002 (arm64-v8a), 1.23.0-x86 / 123003,
+  # 1.23.0-x64 / 123004 (x86_64)
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
@@ -69,6 +72,8 @@ VercodeOperation:
   - 10*%c+4
 UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
 ```
+
+F-Droid's build checks that the APK's version name and code both match the entry ("Unexpected version/version code in output"), so each entry carries its labelled name. Whether its auto-update can write those suffixed names for new releases is to confirm with the F-Droid reviewers; if not, the labels can be left off the release builds F-Droid makes.
 
 Open question for the F-Droid submission: fastlane changelogs are named after the version code (`changelogs/12300.txt`); whether F-Droid shows that file for the per-type codes (123001 …) or needs one per code hasn't been confirmed.
 
