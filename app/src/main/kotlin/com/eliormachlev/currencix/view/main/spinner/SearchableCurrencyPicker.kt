@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -340,6 +341,9 @@ private fun KeepAtTopOnFavoritesAppear(
     }
 }
 
+// One viewport ahead, half behind (fractions of the list's viewport).
+private val PICKER_CACHE_WINDOW = LazyLayoutCacheWindow(1f, 0.5f)
+
 @Composable
 private fun CurrencyList(
     starredItems: SnapshotStateList<Rate>,
@@ -365,6 +369,10 @@ private fun CurrencyList(
 
     LazyColumn(
         state = listState,
+        // Composes rows a screen ahead of a fling (half a screen behind, for
+        // flinging back) so ~170 flag rows don't compose on the frame they
+        // scroll in.
+        cacheWindow = PICKER_CACHE_WINDOW,
         // The sheet is its own window, so it exposes its own test tags as
         // resource ids for the :baselineprofile scroll journey.
         modifier =
