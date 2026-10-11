@@ -187,4 +187,6 @@
     <string name="settings_display_section">Показване</string>
     <string name="settings_touch_section">Звук и докосване</string>
     <string name="settings_updates_section">Обновявания</string>
+    <string name="high_refresh_rate_title">Плавно движение</string>
+    <string name="high_refresh_rate_summary">Работа с най-високата честота на екрана, %1$d Hz. Изразходва малко повече батерия.</string>
 </resources>

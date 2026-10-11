@@ -184,4 +184,6 @@
     <string name="settings_display_section">പ്രദർശനം</string>
     <string name="settings_touch_section">ശബ്ദവും സ്പർശവും</string>
     <string name="settings_updates_section">അപ്ഡേറ്റുകൾ</string>
+    <string name="high_refresh_rate_title">സുഗമമായ ചലനം</string>
+    <string name="high_refresh_rate_summary">സ്ക്രീനിന്റെ ഏറ്റവും ഉയർന്ന നിരക്കിൽ, %1$d Hz. കുറച്ചുകൂടി ബാറ്ററി ഉപയോഗിക്കും.</string>
 </resources>

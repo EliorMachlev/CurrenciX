@@ -34,6 +34,9 @@ class PreferenceViewModel(
 
     val isClickSoundsEnabled: StateFlow<Boolean> =
         db.display.clickSounds.stateInWhileSubscribed(viewModelScope)
+
+    val isHighRefreshRateEnabled: StateFlow<Boolean> =
+        db.display.highRefreshRate.stateInWhileSubscribed(viewModelScope)
     val isDynamicColorEnabled: StateFlow<Boolean> =
         db.display.dynamicColor.stateInWhileSubscribed(viewModelScope)
     val decimalPlaces: StateFlow<Int> =
@@ -108,6 +111,8 @@ class PreferenceViewModel(
     fun setHapticFeedbackEnabled(enabled: Boolean) = db.display.hapticFeedback.set(enabled)
 
     fun setClickSoundsEnabled(enabled: Boolean) = db.display.clickSounds.set(enabled)
+
+    fun setHighRefreshRateEnabled(enabled: Boolean) = db.display.highRefreshRate.set(enabled)
 
     fun setFallbackProvider(provider: ApiProvider) = db.providers.fallbackProvider.set(provider)
 

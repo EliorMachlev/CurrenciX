@@ -184,4 +184,6 @@
     <string name="settings_display_section">نمایش</string>
     <string name="settings_touch_section">صدا و لمس</string>
     <string name="settings_updates_section">به‌روزرسانی‌ها</string>
+    <string name="high_refresh_rate_title">حرکت روان</string>
+    <string name="high_refresh_rate_summary">اجرا با بیشترین نرخ صفحه، %1$d هرتز. کمی باتری بیشتری مصرف می‌کند.</string>
 </resources>

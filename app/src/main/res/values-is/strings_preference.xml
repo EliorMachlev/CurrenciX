@@ -185,4 +185,6 @@
     <string name="settings_display_section">Birting</string>
     <string name="settings_touch_section">Hljóð og snerting</string>
     <string name="settings_updates_section">Uppfærslur</string>
+    <string name="high_refresh_rate_title">Mjúk hreyfing</string>
+    <string name="high_refresh_rate_summary">Keyra á hraðasta tíðni skjásins, %1$d Hz. Notar aðeins meiri rafhlöðu.</string>
 </resources>

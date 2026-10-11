@@ -188,4 +188,6 @@
     <string name="settings_display_section">Exibição</string>
     <string name="settings_touch_section">Som e toque</string>
     <string name="settings_updates_section">Atualizações</string>
+    <string name="high_refresh_rate_title">Movimento suave</string>
+    <string name="high_refresh_rate_summary">Usa a taxa mais alta da tela, %1$d Hz. Gasta um pouco mais de bateria.</string>
 </resources>

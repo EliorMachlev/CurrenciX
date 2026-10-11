@@ -185,4 +185,6 @@
     <string name="settings_display_section">Visning</string>
     <string name="settings_touch_section">Lyd og berøring</string>
     <string name="settings_updates_section">Opdateringer</string>
+    <string name="high_refresh_rate_title">Jævn bevægelse</string>
+    <string name="high_refresh_rate_summary">Kør med skærmens højeste hastighed, %1$d Hz. Bruger lidt mere batteri.</string>
 </resources>

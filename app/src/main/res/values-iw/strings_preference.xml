@@ -186,4 +186,6 @@
     <string name="settings_display_section">תצוגה</string>
     <string name="settings_touch_section">צליל ומגע</string>
     <string name="settings_updates_section">עדכונים</string>
+    <string name="high_refresh_rate_title">תנועה חלקה</string>
+    <string name="high_refresh_rate_summary">הפעלה בקצב הרענון הגבוה ביותר של המסך, %1$d הרץ. צורך מעט יותר סוללה.</string>
 </resources>

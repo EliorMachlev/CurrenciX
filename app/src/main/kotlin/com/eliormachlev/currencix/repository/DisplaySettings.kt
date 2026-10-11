@@ -17,6 +17,7 @@ private const val KEY_PREVIEW_CONVERSION_ENABLED = "_previewConversionEnabled"
 private const val KEY_EXPANDED_KEYPAD = "_expandedKeypad"
 private const val KEY_HAPTIC_FEEDBACK = "_hapticFeedback"
 private const val KEY_CLICK_SOUNDS = "_clickSounds"
+private const val KEY_HIGH_REFRESH_RATE = "_highRefreshRate"
 private const val KEY_DYNAMIC_COLOR = "_dynamicColor"
 private const val KEY_DECIMAL_PLACES = "_decimalPlaces"
 private const val KEY_DATE_FORMAT = "_dateFormat"
@@ -32,7 +33,7 @@ private const val DEFAULT_DATE_FORMAT = "dd/MM/yy HH:mm"
 private const val DEFAULT_DECIMAL_PLACES = 2
 private val DECIMAL_PLACES_RANGE = 0..6
 
-/** How the app looks and behaves: theme, formats, keypad, haptics, click sounds, and the onboarding gate. */
+/** How the app looks and behaves: theme, formats, keypad, haptics, click sounds, refresh rate, and the onboarding gate. */
 class DisplaySettings(
     context: Context,
 ) {
@@ -53,6 +54,9 @@ class DisplaySettings(
 
     /** The system click on taps (when the phone's touch sounds are on too). */
     val clickSounds: Pref<Boolean> = store.booleanPref(KEY_CLICK_SOUNDS, default = true)
+
+    /** Ask for the screen's fastest refresh rate (120 Hz and up) rather than leave it to the system. */
+    val highRefreshRate: Pref<Boolean> = store.booleanPref(KEY_HIGH_REFRESH_RATE, default = true)
 
     /** Material You: wallpaper-derived colors instead of paper / ink. */
     val dynamicColor: Pref<Boolean> = store.booleanPref(KEY_DYNAMIC_COLOR, default = false)

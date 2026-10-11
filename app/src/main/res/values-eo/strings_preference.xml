@@ -186,4 +186,6 @@
     <string name="settings_display_section">Montrado</string>
     <string name="settings_touch_section">Sono kaj tuŝo</string>
     <string name="settings_updates_section">Ĝisdatigoj</string>
+    <string name="high_refresh_rate_title">Glata movo</string>
+    <string name="high_refresh_rate_summary">Funkcii je la plej rapida frekvenco de la ekrano, %1$d Hz. Uzas iom pli da baterio.</string>
 </resources>

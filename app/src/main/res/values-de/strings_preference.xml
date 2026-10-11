@@ -183,4 +183,6 @@
     <string name="settings_display_section">Anzeige</string>
     <string name="settings_touch_section">Ton &amp; Berührung</string>
     <string name="settings_updates_section">Aktualisierungen</string>
+    <string name="high_refresh_rate_title">Flüssige Bewegung</string>
+    <string name="high_refresh_rate_summary">Mit der höchsten Bildwiederholrate des Displays, %1$d Hz. Braucht etwas mehr Akku.</string>
 </resources>

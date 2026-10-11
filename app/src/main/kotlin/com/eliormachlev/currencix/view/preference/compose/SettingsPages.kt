@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.net.toUri
@@ -20,12 +21,14 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.Pref
+import com.eliormachlev.currencix.util.fastestMode
 import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import java.util.Calendar
+import kotlin.math.roundToInt
 
 // One section of a settings screen, given what its rows read and do.
 private typealias PageSection = @Composable (SettingsPageContext) -> Unit
@@ -264,6 +267,24 @@ private fun DisplaySection(page: SettingsPageContext) {
             iconRes = R.drawable.ic_event,
             onClick = { page.openDialog(OpenDialog.DateFormat) },
         )
+        // Only a screen faster than 60 Hz has a choice to make.
+        val view = LocalView.current
+        val fastest =
+            remember(view.display) {
+                view.display
+                    ?.fastestMode()
+                    ?.hz
+                    ?.roundToInt()
+            }
+        fastest?.let { hz ->
+            SwitchRow(
+                title = stringResource(R.string.high_refresh_rate_title),
+                summary = stringResource(R.string.high_refresh_rate_summary, hz),
+                iconRes = R.drawable.ic_speed,
+                checked = values.highRefreshRateEnabled,
+                onCheckedChange = page.viewModel::setHighRefreshRateEnabled,
+            )
+        }
     }
 }
 

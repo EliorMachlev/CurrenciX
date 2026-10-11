@@ -182,4 +182,6 @@
     <string name="settings_display_section">显示</string>
     <string name="settings_touch_section">声音与触感</string>
     <string name="settings_updates_section">更新</string>
+    <string name="high_refresh_rate_title">流畅动画</string>
+    <string name="high_refresh_rate_summary">以屏幕最高刷新率运行（%1$d Hz）。会稍微多耗电。</string>
 </resources>

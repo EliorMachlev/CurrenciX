@@ -186,4 +186,6 @@
     <string name="settings_display_section">Megjelenítés</string>
     <string name="settings_touch_section">Hang és érintés</string>
     <string name="settings_updates_section">Frissítések</string>
+    <string name="high_refresh_rate_title">Folyamatos mozgás</string>
+    <string name="high_refresh_rate_summary">A kijelző legnagyobb frissítési gyakorisága, %1$d Hz. Kicsit több akkumulátort használ.</string>
 </resources>

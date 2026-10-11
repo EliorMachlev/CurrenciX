@@ -82,6 +82,7 @@ ICONS = {
     "ic_key": ("key", False),
     "ic_info": ("info", False),
     "ic_calculate": ("calculate", False),
+    "ic_speed": ("speed", False),
     "ic_schedule": ("schedule", False),
     "ic_theme": ("contrast", False),
     "ic_palette": ("palette", False),

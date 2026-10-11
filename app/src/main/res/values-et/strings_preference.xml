@@ -184,4 +184,6 @@
     <string name="settings_display_section">Kuva</string>
     <string name="settings_touch_section">Heli ja puudutus</string>
     <string name="settings_updates_section">Värskendused</string>
+    <string name="high_refresh_rate_title">Sujuv liikumine</string>
+    <string name="high_refresh_rate_summary">Ekraani suurim värskendussagedus, %1$d Hz. Kulutab veidi rohkem akut.</string>
 </resources>

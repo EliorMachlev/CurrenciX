@@ -183,4 +183,6 @@
     <string name="settings_display_section">Weergave</string>
     <string name="settings_touch_section">Geluid en aanraking</string>
     <string name="settings_updates_section">Updates</string>
+    <string name="high_refresh_rate_title">Vloeiende beweging</string>
+    <string name="high_refresh_rate_summary">Gebruik de hoogste verversingssnelheid van het scherm, %1$d Hz. Kost iets meer batterij.</string>
 </resources>

@@ -185,4 +185,6 @@
     <string name="settings_display_section">Visualizzazione</string>
     <string name="settings_touch_section">Suono e tocco</string>
     <string name="settings_updates_section">Aggiornamenti</string>
+    <string name="high_refresh_rate_title">Movimento fluido</string>
+    <string name="high_refresh_rate_summary">Usa la frequenza più alta dello schermo, %1$d Hz. Consuma un po\' più di batteria.</string>
 </resources>

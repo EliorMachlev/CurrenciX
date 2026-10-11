@@ -184,4 +184,6 @@
     <string name="settings_display_section">Εμφάνιση</string>
     <string name="settings_touch_section">Ήχος και αφή</string>
     <string name="settings_updates_section">Ενημερώσεις</string>
+    <string name="high_refresh_rate_title">Ομαλή κίνηση</string>
+    <string name="high_refresh_rate_summary">Λειτουργία στον υψηλότερο ρυθμό της οθόνης, %1$d Hz. Καταναλώνει λίγη περισσότερη μπαταρία.</string>
 </resources>

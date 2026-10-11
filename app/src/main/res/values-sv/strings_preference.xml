@@ -185,4 +185,6 @@
     <string name="settings_display_section">Visning</string>
     <string name="settings_touch_section">Ljud och beröring</string>
     <string name="settings_updates_section">Uppdateringar</string>
+    <string name="high_refresh_rate_title">Mjuk rörelse</string>
+    <string name="high_refresh_rate_summary">Kör med skärmens högsta frekvens, %1$d Hz. Drar lite mer batteri.</string>
 </resources>

@@ -186,4 +186,6 @@
     <string name="settings_display_section">Отображение</string>
     <string name="settings_touch_section">Звук и касание</string>
     <string name="settings_updates_section">Обновления</string>
+    <string name="high_refresh_rate_title">Плавное движение</string>
+    <string name="high_refresh_rate_summary">Работа на максимальной частоте экрана, %1$d Гц. Расходует чуть больше заряда.</string>
 </resources>

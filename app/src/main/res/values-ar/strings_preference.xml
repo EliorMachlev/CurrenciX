@@ -188,4 +188,6 @@
     <string name="settings_display_section">العرض</string>
     <string name="settings_touch_section">الصوت واللمس</string>
     <string name="settings_updates_section">التحديثات</string>
+    <string name="high_refresh_rate_title">حركة سلسة</string>
+    <string name="high_refresh_rate_summary">التشغيل بأسرع معدل للشاشة، %1$d هرتز. يستهلك بطارية أكثر قليلًا.</string>
 </resources>

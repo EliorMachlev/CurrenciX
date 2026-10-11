@@ -185,4 +185,6 @@
     <string name="settings_display_section">Affichage</string>
     <string name="settings_touch_section">Son et toucher</string>
     <string name="settings_updates_section">Mises à jour</string>
+    <string name="high_refresh_rate_title">Mouvement fluide</string>
+    <string name="high_refresh_rate_summary">Utilise la fréquence la plus élevée de l\'écran, %1$d Hz. Consomme un peu plus de batterie.</string>
 </resources>

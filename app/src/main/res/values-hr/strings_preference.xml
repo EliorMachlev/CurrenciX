@@ -185,4 +185,6 @@
     <string name="settings_display_section">Prikaz</string>
     <string name="settings_touch_section">Zvuk i dodir</string>
     <string name="settings_updates_section">Ažuriranja</string>
+    <string name="high_refresh_rate_title">Glatko kretanje</string>
+    <string name="high_refresh_rate_summary">Rad na najvećoj frekvenciji zaslona, %1$d Hz. Troši malo više baterije.</string>
 </resources>

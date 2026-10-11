@@ -184,4 +184,6 @@
     <string name="settings_display_section">Görüntüleme</string>
     <string name="settings_touch_section">Ses ve dokunma</string>
     <string name="settings_updates_section">Güncellemeler</string>
+    <string name="high_refresh_rate_title">Akıcı hareket</string>
+    <string name="high_refresh_rate_summary">Ekranın en yüksek yenileme hızında, %1$d Hz. Biraz daha fazla pil kullanır.</string>
 </resources>

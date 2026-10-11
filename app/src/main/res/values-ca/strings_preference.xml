@@ -185,4 +185,6 @@
     <string name="settings_display_section">Visualització</string>
     <string name="settings_touch_section">So i tacte</string>
     <string name="settings_updates_section">Actualitzacions</string>
+    <string name="high_refresh_rate_title">Moviment fluid</string>
+    <string name="high_refresh_rate_summary">Funciona a la freqüència més alta de la pantalla, %1$d Hz. Gasta una mica més de bateria.</string>
 </resources>

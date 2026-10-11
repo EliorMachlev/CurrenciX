@@ -185,4 +185,6 @@
     <string name="settings_display_section">প্রদর্শন</string>
     <string name="settings_touch_section">শব্দ ও স্পর্শ</string>
     <string name="settings_updates_section">আপডেট</string>
+    <string name="high_refresh_rate_title">মসৃণ গতি</string>
+    <string name="high_refresh_rate_summary">স্ক্রিনের সর্বোচ্চ হারে চালান, %1$d Hz। একটু বেশি ব্যাটারি খরচ হয়।</string>
 </resources>

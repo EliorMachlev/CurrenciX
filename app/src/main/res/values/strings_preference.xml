@@ -191,4 +191,6 @@
     <string name="settings_display_section">Display</string>
     <string name="settings_touch_section">Sound &amp; touch</string>
     <string name="settings_updates_section">Updates</string>
+    <string name="high_refresh_rate_title">Smooth motion</string>
+    <string name="high_refresh_rate_summary">Run at the screen\'s fastest rate, %1$d Hz. Uses a little more battery.</string>
 </resources>

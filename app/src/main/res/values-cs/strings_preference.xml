@@ -186,4 +186,6 @@
     <string name="settings_display_section">Zobrazení</string>
     <string name="settings_touch_section">Zvuk a dotyk</string>
     <string name="settings_updates_section">Aktualizace</string>
+    <string name="high_refresh_rate_title">Plynulý pohyb</string>
+    <string name="high_refresh_rate_summary">Běží na nejvyšší frekvenci displeje, %1$d Hz. Spotřebuje o něco víc baterie.</string>
 </resources>

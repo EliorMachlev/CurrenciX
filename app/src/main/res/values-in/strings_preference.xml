@@ -185,4 +185,6 @@
     <string name="settings_display_section">Tampilan</string>
     <string name="settings_touch_section">Suara &amp; sentuhan</string>
     <string name="settings_updates_section">Pembaruan</string>
+    <string name="high_refresh_rate_title">Gerakan mulus</string>
+    <string name="high_refresh_rate_summary">Jalankan pada laju tercepat layar, %1$d Hz. Memakai sedikit lebih banyak baterai.</string>
 </resources>

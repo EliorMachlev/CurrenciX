@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.Lifecycle
@@ -29,6 +30,7 @@ import androidx.window.layout.WindowInfoTracker
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
+import com.eliormachlev.currencix.util.preferFastestRefreshRate
 import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.view.cart.CartRoute
 import com.eliormachlev.currencix.view.compose.AppSnackbar
@@ -139,6 +141,20 @@ class MainActivity : AppCompatActivity() {
 
         observeFoldingFeature()
         keepShortcutsInStep()
+        keepRefreshRateInStep(database)
+    }
+
+    // The screen's fastest rate while the app is up, unless switched off in
+    // Settings. Asked again on each start: a fold or a new display may offer
+    // other modes.
+    private fun keepRefreshRateInStep(database: Database) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                database.display.highRefreshRate.flow.collect { enabled ->
+                    window.preferFastestRefreshRate(ContextCompat.getDisplayOrDefault(this@MainActivity), enabled)
+                }
+            }
+        }
     }
 
     // Launcher shortcuts follow the recent pairs (AppShortcuts).

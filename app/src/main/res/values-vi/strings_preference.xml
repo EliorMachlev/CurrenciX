@@ -185,4 +185,6 @@
     <string name="settings_display_section">Hiển thị</string>
     <string name="settings_touch_section">Âm thanh &amp; chạm</string>
     <string name="settings_updates_section">Cập nhật</string>
+    <string name="high_refresh_rate_title">Chuyển động mượt</string>
+    <string name="high_refresh_rate_summary">Chạy ở tần số quét cao nhất của màn hình, %1$d Hz. Tốn pin hơn một chút.</string>
 </resources>

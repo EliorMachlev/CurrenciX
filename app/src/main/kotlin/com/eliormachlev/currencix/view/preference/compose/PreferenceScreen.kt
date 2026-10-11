@@ -120,6 +120,7 @@ internal data class AppearanceValues(
     val dateFormat: String,
     val hapticEnabled: Boolean,
     val clickSoundsEnabled: Boolean,
+    val highRefreshRateEnabled: Boolean,
     val dynamicColorEnabled: Boolean,
     val previewEnabled: Boolean,
 )
@@ -148,6 +149,7 @@ private fun observeAppearanceValues(
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
     val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
     val clickSoundsEnabled by viewModel.isClickSoundsEnabled.collectAsStateWithLifecycle()
+    val highRefreshRateEnabled by viewModel.isHighRefreshRateEnabled.collectAsStateWithLifecycle()
     val dynamicColorEnabled by viewModel.isDynamicColorEnabled.collectAsStateWithLifecycle()
     val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
     return AppearanceValues(
@@ -156,6 +158,7 @@ private fun observeAppearanceValues(
         dateFormat = dateFormat,
         hapticEnabled = hapticEnabled,
         clickSoundsEnabled = clickSoundsEnabled,
+        highRefreshRateEnabled = highRefreshRateEnabled,
         dynamicColorEnabled = dynamicColorEnabled,
         previewEnabled = previewEnabled,
     )
