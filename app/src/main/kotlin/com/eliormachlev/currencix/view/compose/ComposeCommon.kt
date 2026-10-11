@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -83,6 +84,12 @@ fun CurrencyFlag(
     modifier: Modifier = Modifier,
 ) {
     CurrencyFlagImage(currency, modifier.size(width = size.width, height = size.height).clip(size.shape))
+}
+
+/** A row's supporting line under its title: small, in the muted color. */
+@Composable
+fun SupportingText(text: String) {
+    Text(text = text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 // Forces left-to-right layout for the wrapped content. Math previews and the

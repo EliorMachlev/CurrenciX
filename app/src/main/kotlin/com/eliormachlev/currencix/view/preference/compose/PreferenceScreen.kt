@@ -169,7 +169,7 @@ private fun observeAppearanceValues(
     val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
     return AppearanceValues(
         theme = remember { viewModel.getTheme() },
-        language = remember(provider) { Language.byIso(viewModel.getLanguage()) ?: Language.SYSTEM },
+        language = remember(provider) { viewModel.getLanguage() },
         dateFormat = dateFormat,
         hapticEnabled = hapticEnabled,
         clickSoundsEnabled = clickSoundsEnabled,
@@ -254,7 +254,7 @@ private fun PreferenceDialogsHost(
             LanguagePickerSheet(
                 selected = appearance.language,
                 onDismiss = dismiss,
-                onPicked = { viewModel.setLanguage(it.iso) },
+                onPicked = viewModel::setLanguage,
             )
         }
 

@@ -7,15 +7,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
+import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
-
-// Language.SYSTEM.iso — matches the enum value that means "follow system
-// locale" without pulling the enum into this file.
-private const val LANGUAGE_SYSTEM = "system"
 
 class PreferenceViewModel(
     private val app: Application,
@@ -77,36 +74,29 @@ class PreferenceViewModel(
             theme.isDarkActive(app.resources.configuration)
     }
 
-    fun setLanguage(language: String) {
+    fun setLanguage(language: Language) {
         val appLocale: LocaleListCompat =
-            if (language == LANGUAGE_SYSTEM) {
+            if (language == Language.SYSTEM) {
                 LocaleListCompat.getEmptyLocaleList()
             } else {
                 LocaleListCompat.forLanguageTags(
                     // pt_BR -> pt-BR, and modern BCP-47 -> Android's legacy
                     // form so what we hand Android matches what it hands back
                     // via getLanguage() later (avoids picker/lookup drift).
-                    androidLanguageCode(language).replace('_', '-'),
+                    androidLanguageCode(language.iso).replace('_', '-'),
                 )
             }
         AppCompatDelegate.setApplicationLocales(appLocale)
     }
 
-    /**
-     * returns the currently selected language in the following format:
-     * "de_DE" or "de", if no country is set
-     */
-    fun getLanguage(): String? {
-        val appLocale = AppCompatDelegate.getApplicationLocales()[0]
-        return if (appLocale == null || (appLocale.language.isEmpty() && appLocale.country.isEmpty())) {
-            null
-        } else if (appLocale.country.isEmpty()) {
-            appLocale.language
-        } else if (appLocale.language.isEmpty()) {
-            appLocale.country
-        } else {
-            "${appLocale.language}_${appLocale.country}"
-        }
+    /** The app language picked in Settings, or [Language.SYSTEM] when it follows the phone's. */
+    fun getLanguage(): Language = Language.byIso(appLocaleCode()) ?: Language.SYSTEM
+
+    // The app locale as "de_DE", or "de" when no country is set; null when unset.
+    private fun appLocaleCode(): String? {
+        val appLocale = AppCompatDelegate.getApplicationLocales()[0] ?: return null
+        val parts = listOf(appLocale.language, appLocale.country).filter { it.isNotEmpty() }
+        return parts.joinToString("_").ifEmpty { null }
     }
 
     fun setPreviewConversionEnabled(enabled: Boolean) = db.display.previewConversion.set(enabled)

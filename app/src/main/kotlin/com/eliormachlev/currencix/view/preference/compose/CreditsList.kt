@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.core.net.toUri
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 @Composable
@@ -84,17 +85,9 @@ private fun CreditRow(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        Text(
-            text = credit.subtitle,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        SupportingText(credit.subtitle)
         credit.license?.let { spdx ->
-            Text(
-                text = stringResource(id = R.string.credit_license_prefix, spdx),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            SupportingText(stringResource(id = R.string.credit_license_prefix, spdx))
         }
         Text(
             text = credit.url,

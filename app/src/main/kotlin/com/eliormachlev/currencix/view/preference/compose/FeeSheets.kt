@@ -51,6 +51,7 @@ import com.eliormachlev.currencix.util.newId
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.NameInputTransformation
+import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.flagPainter
@@ -411,11 +412,7 @@ private fun <T : Fee> PickerRow(
                 text = displayNameOf(fee),
                 style = MaterialTheme.typography.titleMedium,
             )
-            Text(
-                text = summary,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            SupportingText(summary)
         }
     }
 }

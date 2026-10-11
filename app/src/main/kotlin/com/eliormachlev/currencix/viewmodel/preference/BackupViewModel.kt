@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.eliormachlev.currencix.repository.BackupManager
 import com.eliormachlev.currencix.repository.BackupResult
+import com.eliormachlev.currencix.util.wipe
 
 /**
  * Minimum password length for encrypted export. A four-char password is
@@ -43,7 +44,7 @@ class BackupViewModel(
         // Any password sitting in the dialog state gets zeroed on dismiss so
         // a cancelled prompt doesn't leave secrets in memory longer than it
         // takes to close the dialog.
-        (dialog as? BackupDialog.ImportConfirm)?.password?.fill('\u0000')
+        (dialog as? BackupDialog.ImportConfirm)?.password?.wipe()
         dialog = null
     }
 
@@ -56,7 +57,7 @@ class BackupViewModel(
      * toast — the caller supplies the string).
      */
     fun stashExportPasswordAndDismiss(password: CharArray?) {
-        pendingExportPassword?.fill('\u0000')
+        pendingExportPassword?.wipe()
         pendingExportPassword = password
         dialog = null
     }
@@ -108,9 +109,9 @@ class BackupViewModel(
     }
 
     override fun onCleared() {
-        pendingExportPassword?.fill('\u0000')
+        pendingExportPassword?.wipe()
         pendingExportPassword = null
-        (dialog as? BackupDialog.ImportConfirm)?.password?.fill('\u0000')
+        (dialog as? BackupDialog.ImportConfirm)?.password?.wipe()
         dialog = null
     }
 }

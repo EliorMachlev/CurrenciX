@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.repository
 
 import android.util.Base64
+import com.eliormachlev.currencix.util.wipe
 import com.google.crypto.tink.subtle.AesGcmJce
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator
 import org.bouncycastle.crypto.params.Argon2Parameters
@@ -128,7 +129,7 @@ internal class BackupCrypto(
         try {
             use(AesGcmJce(key))
         } finally {
-            key.fill(0)
+            key.wipe()
         }
 
     // The key for [block], by whichever derivation the block names.
@@ -180,7 +181,7 @@ internal class BackupCrypto(
             val generator = Argon2BytesGenerator().apply { init(params) }
             return ByteArray(KEY_LENGTH_BYTES).also { generator.generateBytes(passwordBytes, it) }
         } finally {
-            passwordBytes.fill(0)
+            passwordBytes.wipe()
         }
     }
 

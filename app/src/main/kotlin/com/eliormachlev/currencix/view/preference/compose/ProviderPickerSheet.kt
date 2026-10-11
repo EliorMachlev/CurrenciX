@@ -17,6 +17,7 @@ import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerSectionHeader
+import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.activeChipSlot
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
@@ -102,16 +103,8 @@ private fun RowScope.ProviderRowLabel(provider: ApiProvider) {
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        Text(
-            text = provider.getDescriptionShort(context).toString(),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = stringResource(provider.cadence.labelRes),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        SupportingText(provider.getDescriptionShort(context).toString())
+        SupportingText(stringResource(provider.cadence.labelRes))
         provider.getHint(context)?.let { hint ->
             Text(
                 text = hint.toString(),

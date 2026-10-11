@@ -40,6 +40,7 @@ import com.eliormachlev.currencix.view.compose.CurrencyFlag
 import com.eliormachlev.currencix.view.compose.FlagSize
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.ConverterLaunch
 import java.math.BigDecimal
@@ -118,11 +119,11 @@ internal fun ConvertTextSheet(
                 }
 
                 SelectionConversion.NoAmount -> {
-                    Message(stringResource(R.string.selection_no_amount, text.trim()))
+                    PromptMessage(stringResource(R.string.selection_no_amount, text.trim()))
                 }
 
                 SelectionConversion.NoRates -> {
-                    Message(stringResource(R.string.selection_no_rates, appName))
+                    PromptMessage(stringResource(R.string.selection_no_rates, appName))
                     FilledTonalButton(onClick = { onOpen(ConverterLaunch.openConverter(context)) }) {
                         Text(stringResource(R.string.selection_open_app, appName))
                     }
@@ -155,7 +156,7 @@ private fun ConvertedContent(
     // one would carry the leading "1" to the far end.
     Ltr { Text(rate, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     if (conversion.assumedFrom) {
-        Message(stringResource(R.string.selection_assumed_currency, conversion.from.iso4217Alpha()))
+        PromptMessage(stringResource(R.string.selection_assumed_currency, conversion.from.iso4217Alpha()))
     }
     Spacer(Modifier.height(GAP / 2))
     Row(horizontalArrangement = Arrangement.spacedBy(GAP)) {
@@ -182,11 +183,6 @@ private fun AmountLine(
             Text(amount, style = style, color = color, fontWeight = FontWeight.SemiBold)
         }
     }
-}
-
-@Composable
-private fun Message(text: String) {
-    Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 // "₪ 184.20" / "184,20 €" — the symbol on the locale's side.

@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.view.compose.LedgerRow
+import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.activeChipSlot
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
@@ -110,11 +111,7 @@ private fun LanguageRow(
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
-                        Text(
-                            text = language.localizedName(context),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        SupportingText(language.localizedName(context))
                     }
                 }
             }

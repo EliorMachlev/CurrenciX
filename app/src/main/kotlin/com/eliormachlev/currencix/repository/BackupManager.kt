@@ -13,6 +13,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.restartApp
+import com.eliormachlev.currencix.util.wipe
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONException
@@ -38,12 +39,104 @@ private const val KEY_ENCRYPTION = "encryption"
 private const val KEY_TYPE = "type"
 private const val KEY_VALUE = "value"
 
-private const val TYPE_STRING = "string"
-private const val TYPE_INT = "int"
-private const val TYPE_LONG = "long"
-private const val TYPE_FLOAT = "float"
-private const val TYPE_BOOLEAN = "boolean"
-private const val TYPE_STRING_SET = "stringSet"
+/**
+ * Each preference type a backup carries: its "type" tag ([wire]), which
+ * stored values it is ([holds]), its JSON payload, and how it's put back.
+ */
+private enum class BackupValueType(
+    val wire: String,
+) {
+    STRING("string") {
+        override fun holds(value: Any) = value is String
+
+        override fun restore(
+            editor: MutablePreferences,
+            key: String,
+            entry: JSONObject,
+        ) {
+            editor[stringPreferencesKey(key)] = entry.optString(KEY_VALUE)
+        }
+    },
+    INT("int") {
+        override fun holds(value: Any) = value is Int
+
+        override fun restore(
+            editor: MutablePreferences,
+            key: String,
+            entry: JSONObject,
+        ) {
+            editor[intPreferencesKey(key)] = entry.optInt(KEY_VALUE)
+        }
+    },
+    LONG("long") {
+        override fun holds(value: Any) = value is Long
+
+        override fun restore(
+            editor: MutablePreferences,
+            key: String,
+            entry: JSONObject,
+        ) {
+            editor[longPreferencesKey(key)] = entry.optLong(KEY_VALUE)
+        }
+    },
+    FLOAT("float") {
+        override fun holds(value: Any) = value is Float
+
+        // JSON has no float: written as a double.
+        override fun payload(value: Any): Any = (value as Float).toDouble()
+
+        override fun restore(
+            editor: MutablePreferences,
+            key: String,
+            entry: JSONObject,
+        ) {
+            editor[floatPreferencesKey(key)] = entry.optDouble(KEY_VALUE).toFloat()
+        }
+    },
+    BOOLEAN("boolean") {
+        override fun holds(value: Any) = value is Boolean
+
+        override fun restore(
+            editor: MutablePreferences,
+            key: String,
+            entry: JSONObject,
+        ) {
+            editor[booleanPreferencesKey(key)] = entry.optBoolean(KEY_VALUE)
+        }
+    },
+    STRING_SET("stringSet") {
+        override fun holds(value: Any) = value is Set<*>
+
+        override fun payload(value: Any): Any = JSONArray((value as Set<*>).filterIsInstance<String>())
+
+        override fun restore(
+            editor: MutablePreferences,
+            key: String,
+            entry: JSONObject,
+        ) {
+            entry.optJSONArray(KEY_VALUE)?.let { values ->
+                editor[stringSetPreferencesKey(key)] = (0 until values.length()).mapTo(HashSet()) { values.optString(it) }
+            }
+        }
+    },
+    ;
+
+    abstract fun holds(value: Any): Boolean
+
+    open fun payload(value: Any): Any = value
+
+    abstract fun restore(
+        editor: MutablePreferences,
+        key: String,
+        entry: JSONObject,
+    )
+
+    companion object {
+        fun of(value: Any): BackupValueType? = entries.firstOrNull { it.holds(value) }
+
+        fun fromWire(wire: String): BackupValueType? = entries.firstOrNull { it.wire == wire }
+    }
+}
 
 // DataStore namespaces that carry user-authored state worth backing up. The
 // "rates" namespace is intentionally excluded — it's a network cache that
@@ -98,7 +191,7 @@ class BackupManager(
         } catch (e: GeneralSecurityException) {
             BackupResult.Failure(FileFailure.ENCRYPTION, e.message)
         } finally {
-            password?.fill('\u0000')
+            password?.wipe()
         }
 
     /**
@@ -128,7 +221,7 @@ class BackupManager(
         } catch (e: GeneralSecurityException) {
             BackupResult.Failure(FileFailure.DECRYPTION, e.message)
         } finally {
-            password?.fill('\u0000')
+            password?.wipe()
         }
 
     /** True if the file at [uri] is a valid encrypted backup. */
@@ -225,22 +318,11 @@ class BackupManager(
     }
 
     // {"type": …, "value": …} for a stored value; null for a type backups don't carry.
-    private fun serializeEntry(value: Any?): JSONObject? {
-        val typed: Pair<String, Any>? =
-            when (value) {
-                is String -> TYPE_STRING to value
-                is Int -> TYPE_INT to value
-                is Long -> TYPE_LONG to value
-                is Float -> TYPE_FLOAT to value.toDouble()
-                is Boolean -> TYPE_BOOLEAN to value
-                is Set<*> -> TYPE_STRING_SET to JSONArray(value.filterIsInstance<String>())
-                else -> null
-            }
-        return typed?.let { (type, payload) ->
-            JSONObject().apply {
-                put(KEY_TYPE, type)
-                put(KEY_VALUE, payload)
-            }
+    private fun serializeEntry(value: Any): JSONObject? {
+        val type = BackupValueType.of(value) ?: return null
+        return JSONObject().apply {
+            put(KEY_TYPE, type.wire)
+            put(KEY_VALUE, type.payload(value))
         }
     }
 
@@ -268,32 +350,6 @@ class BackupManager(
         key: String,
         entry: JSONObject,
     ) {
-        when (entry.optString(KEY_TYPE)) {
-            TYPE_STRING -> {
-                editor[stringPreferencesKey(key)] = entry.optString(KEY_VALUE)
-            }
-
-            TYPE_INT -> {
-                editor[intPreferencesKey(key)] = entry.optInt(KEY_VALUE)
-            }
-
-            TYPE_LONG -> {
-                editor[longPreferencesKey(key)] = entry.optLong(KEY_VALUE)
-            }
-
-            TYPE_FLOAT -> {
-                editor[floatPreferencesKey(key)] = entry.optDouble(KEY_VALUE).toFloat()
-            }
-
-            TYPE_BOOLEAN -> {
-                editor[booleanPreferencesKey(key)] = entry.optBoolean(KEY_VALUE)
-            }
-
-            TYPE_STRING_SET -> {
-                entry.optJSONArray(KEY_VALUE)?.let { values ->
-                    editor[stringSetPreferencesKey(key)] = (0 until values.length()).mapTo(HashSet()) { values.optString(it) }
-                }
-            }
-        }
+        BackupValueType.fromWire(entry.optString(KEY_TYPE))?.restore(editor, key, entry)
     }
 }
