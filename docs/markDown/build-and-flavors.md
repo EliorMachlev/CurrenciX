@@ -35,6 +35,43 @@ Two flavors are defined in `app/build.gradle.kts`:
 ./gradlew check assembleDebug
 ```
 
+### APKs per CPU type, and version codes
+
+`assemble*` builds one APK per CPU type (`armeabi-v7a`, `arm64-v8a`, `x86`, `x86_64`) plus a universal one (`splits.abi` in `app/build.gradle.kts`): receipt scanning's native OCR code is about 7 MB per type, so a phone that gets only its own is spared the rest. Native libraries are also stored compressed (`packaging.jniLibs.useLegacyPackaging`), so the download is smaller and Android unpacks them on install. Release sizes at 1.23.0: about 14.5 MB per type, 24 MB universal, 40.5 MB before either change.
+
+Each APK's version code is `versionCode × 10 + digit`: 1 `armeabi-v7a`, 2 `arm64-v8a`, 3 `x86`, 4 `x86_64`, 0 universal (so 1.23.0 is 123001 … 123004, and 123000). The APKs of one release need different codes, and a phone that runs two types (64-bit ARM runs 32-bit too) is offered the higher, better fit. `defaultConfig.versionCode` stays the plain SemVer code (12300), which `checkVersion` and `checkFastlaneChangelog` check.
+
+`bundle*` (Play) builds no splits: AGP can't make an app bundle and per-CPU APKs in one run, and Play splits the bundle by CPU itself. The bundle's version code is the universal one (123000). Version codes only go up, so this ×10 scheme is permanent once released.
+
+For hand downloads (GitHub), the universal APK is the one that installs everywhere; the debug-APK workflow uploads only that one.
+
+#### F-Droid recipe (draft, for fdroiddata)
+
+F-Droid builds each entry from source and keeps the APK that `output` names; its client installs the one that fits the phone. One entry per type:
+
+```yaml
+Builds:
+  - versionName: 1.23.0
+    versionCode: 123001
+    commit: v1.23.0
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/fdroid/release/*-fdroid-armeabi-v7a-release-unsigned.apk
+  # … the same for 123002 (arm64-v8a), 123003 (x86), 123004 (x86_64)
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 10*%c+1
+  - 10*%c+2
+  - 10*%c+3
+  - 10*%c+4
+UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
+```
+
+Open question for the F-Droid submission: fastlane changelogs are named after the version code (`changelogs/12300.txt`); whether F-Droid shows that file for the per-type codes (123001 …) or needs one per code hasn't been confirmed.
+
 ## Key Dependencies
 
 ### Android / AndroidX
@@ -94,7 +131,7 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 | Dependency | Version | Note |
 |---|---|---|
 | `com.github.adaptech-cz.Tesseract4Android:tesseract4android` | 4.8.0 | Tesseract OCR with Leptonica, native, Apache-2.0. Published only on JitPack, which `settings.gradle` allows for this one group (`exclusiveContent`). Its native libraries are about 7 MB per ABI (four ABIs), so per-ABI splits or an App Bundle keep the install small. It has no R8 rules of its own; `app/proguard-rules.pro` keeps its two packages, whose native code finds Java members by name |
-| `androidx.exifinterface:exifinterface` | 1.4.1 | A receipt photo's orientation, so it's read upright |
+| `androidx.exifinterface:exifinterface` | 1.4.2 | A receipt photo's orientation, so it's read upright |
 
 English OCR data (`assets/tessdata/eng.traineddata`, tessdata_fast 4.1.0, 4.1 MB) ships in the APK; the other languages download on demand and are checked against SHA-256s in `ocr/TessLanguage.kt`.
 

@@ -1,4 +1,5 @@
 
+import com.android.build.api.variant.FilterConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
@@ -26,6 +27,16 @@ kotlin {
 base {
     archivesName.set("com.eliormachlev.currencix-v12300")
 }
+
+// The last digit of each APK's version code: versionCode × 10 + this, so
+// the per-CPU APKs of one release differ (Android and F-Droid need that)
+// and a phone that runs several types (64-bit ARM also runs 32-bit) gets
+// the higher, better fit. The universal APK and the app bundle keep 0.
+val abiVersionDigits = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86" to 3, "x86_64" to 4)
+val abiVersionMultiplier = 10
+
+// Whether this Gradle run builds an app bundle (Play), which takes no APK splits.
+val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
 
 android {
     namespace = "com.eliormachlev.currencix"
@@ -154,6 +165,41 @@ android {
         buildConfig = true
         compose = true
     }
+
+    // One APK per CPU type (each phone needs one: receipt scanning's native
+    // OCR code is about 7 MB per type), plus a universal APK for people who
+    // download by hand. F-Droid builds one recipe entry per type and its app
+    // installs the one that fits; Play builds from the app bundle, which
+    // splits by type itself. Version codes: see abiVersionDigits above.
+    splits {
+        abi {
+            // Not while building the app bundle: AGP can't make both at once
+            // (issuetracker.google.com/402800800), and Play splits the bundle itself.
+            isEnable = !buildsBundle
+            reset()
+            // Written out (not from abiVersionDigits) so lint can read which types are built.
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = true
+        }
+    }
+
+    // Native libraries compressed in the APK: about 12 MB smaller to download
+    // with all four types; Android unpacks them on install.
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.outputs.forEach { output ->
+            val abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
+            val base = android.defaultConfig.versionCode ?: return@forEach
+            output.versionCode.set(base * abiVersionMultiplier + (abiVersionDigits[abi] ?: 0))
+        }
+    }
 }
 
 dependencies {
@@ -251,7 +297,7 @@ dependencies {
     // (see settings.gradle). English data ships in assets/tessdata; other
     // languages download in the background (ocr/TessdataDownloadWorker).
     implementation("com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.8.0")
-    implementation("androidx.exifinterface:exifinterface:1.4.1")
+    implementation("androidx.exifinterface:exifinterface:1.4.2")
     // charts
     val vicoVersion = "3.3.1"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
