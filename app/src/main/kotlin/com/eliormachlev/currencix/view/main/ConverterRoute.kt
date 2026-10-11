@@ -55,6 +55,7 @@ import com.eliormachlev.currencix.view.navigation.AppNavigator
 import com.eliormachlev.currencix.view.navigation.LocalPaneRole
 import com.eliormachlev.currencix.view.navigation.PaneRole
 import com.eliormachlev.currencix.view.navigation.Screen
+import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import com.eliormachlev.currencix.view.navigation.paneRole
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -170,6 +171,9 @@ private class ConverterDestinations(
 
     private fun openSettings() = navigator.navigate(Screen.Settings)
 
+    // Straight to Settings' About screen; back returns to the converter.
+    private fun openAbout() = navigator.navigate(Screen.SettingsPage(SettingsTopic.ABOUT))
+
     /** A drawer entry that opens a screen or one of the converter's sheets ([showOverlay]). */
     fun open(
         action: DrawerAction,
@@ -183,6 +187,7 @@ private class ConverterDestinations(
             DrawerAction.ChangeApi -> showOverlay(ConverterOverlay.ProviderPicker)
             DrawerAction.Fees -> openFees()
             DrawerAction.Settings -> openSettings()
+            DrawerAction.About -> openAbout()
             DrawerAction.Refresh, DrawerAction.Share -> Unit
         }
     }

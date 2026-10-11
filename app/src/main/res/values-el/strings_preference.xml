@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Γενικές ρυθμίσεις</string>
     <string name="fee_title">Προμήθεια συναλλαγής εξωτερικού</string>
     <string name="fee_summary">Διαχείριση προμηθειών συναλλάγματος, τράπεζας/κάρτας και ανά ζεύγος νομισμάτων</string>
     <string name="fee_manager_title">Προμήθειες</string>
@@ -173,4 +172,16 @@
     <string name="provider_cadence_monthly">Ενημερώνεται μία φορά τον μήνα</string>
     <string name="fallback_provider_title">Εφεδρικός πάροχος</string>
     <string name="fallback_provider_summary">%1$s · χρησιμοποιείται όταν το %2$s δεν είναι προσβάσιμο</string>
+    <string name="menu_about">Σχετικά</string>
+    <string name="settings_converter_title">Μετατροπέας</string>
+    <string name="settings_converter_summary">Χρεώσεις, πληκτρολόγιο, δεκαδικά ψηφία</string>
+    <string name="settings_rates_summary">Πάροχος, αυτόματη ανανέωση, ειδοποιήσεις ισοτιμίας</string>
+    <string name="settings_appearance_summary">Θέμα, γλώσσα, μορφή ημερομηνίας, ήχος και αφή</string>
+    <string name="settings_about_summary">Έκδοση, αλλαγές, ευχαριστίες, αποποίηση ευθύνης</string>
+    <string name="settings_providers_title">Σχετικά με τους παρόχους</string>
+    <string name="settings_providers_summary">Τι είναι κάθε πηγή και πόσο συχνά δημοσιεύει</string>
+    <string name="settings_input_section">Εισαγωγή και εμφάνιση</string>
+    <string name="settings_display_section">Εμφάνιση</string>
+    <string name="settings_touch_section">Ήχος και αφή</string>
+    <string name="settings_updates_section">Ενημερώσεις</string>
 </resources>

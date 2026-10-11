@@ -24,6 +24,7 @@ ICONS = {
     "ic_more_vert": ("more_vert", False),
     "ic_expand_more": ("keyboard_arrow_down", False),
     "ic_expand_less": ("keyboard_arrow_up", False),
+    "ic_chevron_forward": ("chevron_right", True),
     "ic_close": ("close", False),
     "ic_search": ("search", False),
     # converter top bar + drawer
@@ -80,6 +81,7 @@ ICONS = {
     "ic_backup": ("backup", False),
     "ic_key": ("key", False),
     "ic_info": ("info", False),
+    "ic_calculate": ("calculate", False),
     "ic_schedule": ("schedule", False),
     "ic_theme": ("contrast", False),
     "ic_palette": ("palette", False),

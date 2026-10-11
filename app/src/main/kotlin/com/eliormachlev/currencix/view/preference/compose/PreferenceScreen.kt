@@ -1,13 +1,11 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,45 +21,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.Language
-import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.inReadingOrder
-import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.view.alert.RateAlertsSheet
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.navigation.Screen
+import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import java.util.Calendar
-
-// Buckets the preferences into the same six sections as the old prefs.xml
-// (Settings / Data provider / Look & Feel / Graph / About / Version). Order
-// is preserved so users landing on Settings see the same shape they always
-// did — this migration is UI-plumbing, not IA.
-private enum class SettingsSection {
-    GENERAL,
-    API,
-    APPEARANCE,
-    GRAPH,
-    ABOUT,
-    VERSION,
-}
 
 // One centrally-tracked "which picker dialog is currently open" — nulling it
 // closes whatever's open. Keeps dialog state out of every row and lets us
 // dismiss on rotation / back without individual saveable flags.
-private sealed interface OpenDialog {
+internal sealed interface OpenDialog {
     data object DecimalPlaces : OpenDialog
 
     data object Theme : OpenDialog
@@ -76,37 +57,26 @@ private sealed interface OpenDialog {
 
     data object ApiKey : OpenDialog
 
-    data object GraphOptions : OpenDialog
-
-    data object Credits : OpenDialog
-
     data object RateAlerts : OpenDialog
 }
 
 /**
- * Full preferences screen — Compose replacement for the old `prefs.xml`.
- * Assembles six [PreferenceSection] cards from the observed
- * [PreferenceViewModel] state, opens picker dialogs via [OpenDialog] state,
- * and dispatches non-preference actions (opening fees, backup, credits,
- * changelog, rate) through the [callbacks] bag so the route
- * (SettingsRoute) can wire navigation and intents.
+ * Settings: the list of its categories when [topic] is null, else that
+ * category's screen ([settingsPage]). Picker sheets open via [OpenDialog]
+ * state; navigation, the store page and restarts go through [callbacks] so
+ * the route (SettingsRoute) wires them.
  */
 @Composable
 fun PreferenceScreen(
     viewModel: PreferenceViewModel,
     callbacks: PreferenceScreenCallbacks,
+    topic: SettingsTopic?,
 ) {
     var openDialog by remember { mutableStateOf<OpenDialog?>(null) }
     val values = observePreferenceValues(viewModel)
+    val page = SettingsPageContext(viewModel, callbacks, values) { openDialog = it }
 
-    ProseTheme {
-        PreferenceSectionsList(
-            viewModel = viewModel,
-            callbacks = callbacks,
-            values = values,
-            onOpenDialog = { openDialog = it },
-        )
-    }
+    ProseTheme { SettingsPage(topic, page) }
 
     PreferenceDialogsHost(
         openDialog = openDialog,
@@ -117,9 +87,17 @@ fun PreferenceScreen(
     )
 }
 
+/** What a settings screen's rows read and do. */
+internal class SettingsPageContext(
+    val viewModel: PreferenceViewModel,
+    val callbacks: PreferenceScreenCallbacks,
+    val values: PreferenceValues,
+    val openDialog: (OpenDialog) -> Unit,
+)
+
 // The settings as the screen shows them, grouped the way its sections are.
 @Immutable
-private data class PreferenceValues(
+internal data class PreferenceValues(
     val api: ApiValues,
     val appearance: AppearanceValues,
     val decimalPlaces: Int,
@@ -127,7 +105,7 @@ private data class PreferenceValues(
 )
 
 @Immutable
-private data class ApiValues(
+internal data class ApiValues(
     val provider: ApiProvider?,
     val fallback: ApiProvider,
     // Only Open Exchange Rates takes one.
@@ -136,7 +114,7 @@ private data class ApiValues(
 )
 
 @Immutable
-private data class AppearanceValues(
+internal data class AppearanceValues(
     val theme: AppTheme,
     val language: Language,
     val dateFormat: String,
@@ -184,51 +162,6 @@ private fun observeAppearanceValues(
 }
 
 /**
- * The six-section LazyColumn body of [PreferenceScreen], apart from the
- * dialog host below.
- */
-@Composable
-private fun PreferenceSectionsList(
-    viewModel: PreferenceViewModel,
-    callbacks: PreferenceScreenCallbacks,
-    values: PreferenceValues,
-    onOpenDialog: (OpenDialog) -> Unit,
-) {
-    SettingsList {
-        item(key = SettingsSection.GENERAL) {
-            SectionEnter(index = SettingsSection.GENERAL.ordinal) {
-                GeneralSection(
-                    expandedKeypadEnabled = values.expandedKeypadEnabled,
-                    decimalPlaces = values.decimalPlaces,
-                    callbacks = callbacks,
-                    onExpandedKeypadChange = viewModel::setExpandedKeypadEnabled,
-                    openDecimalPlacesPicker = { onOpenDialog(OpenDialog.DecimalPlaces) },
-                )
-            }
-        }
-        item(key = SettingsSection.API) {
-            SectionEnter(index = SettingsSection.API.ordinal) {
-                ApiSection(values = values.api, onAutoRefreshChange = viewModel::setAutoRefreshEnabled, onOpenDialog = onOpenDialog)
-            }
-        }
-        item(key = SettingsSection.APPEARANCE) {
-            SectionEnter(index = SettingsSection.APPEARANCE.ordinal) {
-                AppearanceSection(values = values.appearance, viewModel = viewModel, onOpenDialog = onOpenDialog)
-            }
-        }
-        item(key = SettingsSection.GRAPH) {
-            SectionEnter(SettingsSection.GRAPH.ordinal) { GraphSection { onOpenDialog(OpenDialog.GraphOptions) } }
-        }
-        item(key = SettingsSection.ABOUT) {
-            SectionEnter(SettingsSection.ABOUT.ordinal) { AboutSection(callbacks) { onOpenDialog(OpenDialog.Credits) } }
-        }
-        item(key = SettingsSection.VERSION) {
-            SectionEnter(index = SettingsSection.VERSION.ordinal) { VersionSection() }
-        }
-    }
-}
-
-/**
  * Dispatches whichever picker/editor is currently open to its sheet.
  * Extracted from [PreferenceScreen] so the screen body stays short and the
  * dialog-selection `when` sits next to its own state.
@@ -273,17 +206,6 @@ private fun PreferenceDialogsHost(
 
         OpenDialog.FallbackProvider -> {
             FallbackPickerSheet(viewModel, dismiss)
-        }
-
-        OpenDialog.GraphOptions -> {
-            GraphOptionsSheet(
-                db = Database(LocalContext.current),
-                onDismiss = dismiss,
-            )
-        }
-
-        OpenDialog.Credits -> {
-            CreditsSheet(onDismiss = dismiss)
         }
 
         OpenDialog.RateAlerts -> {
@@ -366,94 +288,6 @@ private fun DateFormatPickerSheet(
     )
 }
 
-@Composable
-private fun GeneralSection(
-    expandedKeypadEnabled: Boolean,
-    decimalPlaces: Int,
-    callbacks: PreferenceScreenCallbacks,
-    onExpandedKeypadChange: (Boolean) -> Unit,
-    openDecimalPlacesPicker: () -> Unit,
-) {
-    PreferenceSection(text = stringResource(id = R.string.category_settings)) {
-        PreferenceRow(
-            title = stringResource(id = R.string.fee_title),
-            summary = stringResource(id = R.string.fee_summary),
-            iconRes = R.drawable.ic_fee,
-            onClick = callbacks.onOpenFees,
-        )
-        SwitchRow(
-            title = stringResource(id = R.string.keyboard_title),
-            summary = stringResource(id = R.string.keyboard_summary_expanded),
-            iconRes = R.drawable.ic_keyboard_extended,
-            checked = expandedKeypadEnabled,
-            onCheckedChange = onExpandedKeypadChange,
-        )
-        PreferenceRow(
-            title = stringResource(id = R.string.decimal_places_title),
-            summary = decimalPlaces.toString(),
-            iconRes = R.drawable.ic_numbers,
-            onClick = openDecimalPlacesPicker,
-        )
-        PreferenceRow(
-            title = stringResource(id = R.string.backup_title),
-            summary = stringResource(id = R.string.backup_summary),
-            iconRes = R.drawable.ic_backup,
-            onClick = callbacks.onOpenBackup,
-        )
-    }
-}
-
-@Composable
-private fun ApiSection(
-    values: ApiValues,
-    onAutoRefreshChange: (Boolean) -> Unit,
-    onOpenDialog: (OpenDialog) -> Unit,
-) {
-    val context = LocalContext.current
-    val provider = values.provider
-    PreferenceSection(text = stringResource(id = R.string.category_api)) {
-        PreferenceRow(
-            title = stringResource(id = R.string.api_title),
-            summary = provider?.getName(context)?.toString(),
-            iconRes = R.drawable.ic_data_provider,
-            onClick = { onOpenDialog(OpenDialog.Provider) },
-        )
-        FallbackProviderRow(main = provider, fallback = values.fallback, onClick = { onOpenDialog(OpenDialog.FallbackProvider) })
-        if (provider == ApiProvider.OPEN_EXCHANGERATES) {
-            PreferenceRow(
-                title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
-                summary = values.apiKey?.ifBlank { null } ?: stringResource(id = R.string.api_open_exchangerates_api_key_missing),
-                iconRes = R.drawable.ic_key,
-                onClick = { onOpenDialog(OpenDialog.ApiKey) },
-            )
-        }
-        provider?.let {
-            AboutProviderRow(it)
-            // The fallback stands in when the main provider can't be reached,
-            // so what it is and how often it updates matter just as much.
-            if (values.fallback != it) AboutProviderRow(values.fallback)
-        }
-        // Auto-refresh (#151). Placed inside the API section since its
-        // cadence is derived from the currently-selected provider — the
-        // provider's "refresh period" row above spells out what "recommended"
-        // means for it.
-        SwitchRow(
-            title = stringResource(id = R.string.auto_refresh_title),
-            summary = stringResource(id = R.string.auto_refresh_summary),
-            iconRes = R.drawable.ic_schedule,
-            checked = values.autoRefreshEnabled,
-            onCheckedChange = onAutoRefreshChange,
-        )
-        // Checked when rates arrive, so beside the refresh they ride on.
-        PreferenceRow(
-            title = stringResource(id = R.string.alerts_title),
-            summary = stringResource(id = R.string.alerts_summary),
-            iconRes = R.drawable.ic_alert,
-            onClick = { onOpenDialog(OpenDialog.RateAlerts) },
-        )
-    }
-}
-
 // One row per provider: "About Bank of Israel", its description in full,
 // and under it how often it publishes, beside a small clock.
 @Composable
@@ -495,7 +329,7 @@ private val CADENCE_ICON_NUDGE = 2.dp
 
 // "Fallback provider — Frankfurter.app · used when Bank of Israel can't be reached"
 @Composable
-private fun FallbackProviderRow(
+internal fun FallbackProviderRow(
     main: ApiProvider?,
     fallback: ApiProvider,
     onClick: () -> Unit,
@@ -529,151 +363,18 @@ private fun FallbackPickerSheet(
     )
 }
 
-@Composable
-private fun AppearanceSection(
-    values: AppearanceValues,
-    viewModel: PreferenceViewModel,
-    onOpenDialog: (OpenDialog) -> Unit,
-) {
-    val context = LocalContext.current
-    PreferenceSection(text = stringResource(id = R.string.category_appearance)) {
-        PreferenceRow(
-            title = stringResource(id = R.string.theme_title),
-            summary = stringResource(id = themeLabelRes(values.theme)),
-            iconRes = R.drawable.ic_theme,
-            onClick = { onOpenDialog(OpenDialog.Theme) },
-        )
-        SwitchRow(
-            title = stringResource(id = R.string.dynamic_color_title),
-            summary = stringResource(id = R.string.dynamic_color_summary),
-            iconRes = R.drawable.ic_palette,
-            checked = values.dynamicColorEnabled,
-            onCheckedChange = viewModel::setDynamicColorEnabled,
-        )
-        PreferenceRow(
-            title = stringResource(id = R.string.language_title),
-            summary = values.language.localizedName(context),
-            iconRes = R.drawable.ic_language,
-            onClick = { onOpenDialog(OpenDialog.Language) },
-        )
-        PreferenceRow(
-            title = stringResource(id = R.string.date_format_title),
-            summary = values.dateFormat,
-            iconRes = R.drawable.ic_event,
-            onClick = { onOpenDialog(OpenDialog.DateFormat) },
-        )
-        SwitchRow(
-            title = stringResource(id = R.string.haptic_feedback_title),
-            summary = stringResource(id = R.string.haptic_feedback_summary),
-            iconRes = R.drawable.ic_vibration,
-            checked = values.hapticEnabled,
-            onCheckedChange = viewModel::setHapticFeedbackEnabled,
-        )
-        SwitchRow(
-            title = stringResource(id = R.string.click_sounds_title),
-            summary = stringResource(id = R.string.click_sounds_summary),
-            iconRes = R.drawable.ic_volume_up,
-            checked = values.clickSoundsEnabled,
-            onCheckedChange = viewModel::setClickSoundsEnabled,
-        )
-        SwitchRow(
-            title = stringResource(id = R.string.previewConversion_title),
-            summary = stringResource(id = R.string.previewConversion_summary),
-            iconRes = R.drawable.ic_conversion_preview,
-            checked = values.previewEnabled,
-            onCheckedChange = viewModel::setPreviewConversionEnabled,
-        )
-    }
-}
-
-@Composable
-private fun GraphSection(openGraphOptions: () -> Unit) {
-    PreferenceSection(text = stringResource(id = R.string.category_graph_options)) {
-        PreferenceRow(
-            title = stringResource(id = R.string.graph_options_title),
-            summary = stringResource(id = R.string.graph_options_summary),
-            iconRes = R.drawable.ic_tune,
-            onClick = openGraphOptions,
-        )
-    }
-}
-
-@Composable
-private fun AboutSection(
-    callbacks: PreferenceScreenCallbacks,
-    openCreditsSheet: () -> Unit,
-) {
-    val disclaimerHtml = stringResource(id = R.string.disclaimer_summary)
-    val disclaimerAnnotated =
-        remember(disclaimerHtml) {
-            AnnotatedString(HtmlCompat.fromHtml(disclaimerHtml, HtmlCompat.FROM_HTML_MODE_COMPACT).toString())
-        }
-    PreferenceSection(text = stringResource(id = R.string.category_about)) {
-        PreferenceRow(
-            title = stringResource(id = R.string.disclaimer_title),
-            summary = disclaimerAnnotated.text,
-            iconRes = R.drawable.ic_gavel,
-            summaryMaxLines = FULL_SUMMARY,
-        )
-        PreferenceRow(
-            title = stringResource(id = R.string.credits_title),
-            summary = stringResource(id = R.string.credits_summary),
-            iconRes = R.drawable.ic_code,
-            onClick = openCreditsSheet,
-        )
-        // Only a build distributed through a store can be rated there.
-        callbacks.onRateApp?.let { rate ->
-            PreferenceRow(
-                title = stringResource(id = R.string.rate_title),
-                summary = stringResource(id = R.string.rate_summary),
-                iconRes = R.drawable.ic_rate,
-                onClick = rate,
-            )
-        }
-    }
-}
-
-@Composable
-private fun VersionSection() {
-    val context = LocalContext.current
-    // The installed APK's own name ("1.23.0-arm64"): BuildConfig is one for every CPU type's APK.
-    val versionName = remember(context) { installedVersionName(context) }
-    PreferenceSection(text = stringResource(id = R.string.category_versioninfo)) {
-        PreferenceRow(
-            title = stringResource(id = R.string.title_changelog),
-            iconRes = R.drawable.ic_changelog,
-            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, releaseNotesUrl().toUri())) },
-        )
-        PreferenceRow(
-            title = versionName,
-            summary = versionSummary(context, Calendar.getInstance().get(Calendar.YEAR)),
-            iconRes = R.drawable.ic_tag,
-            summaryMaxLines = FULL_SUMMARY,
-        )
-        // Rows only a debug build has (see debugPreferenceRows, per build type).
-        debugPreferenceRows?.invoke()
-    }
-    Text(
-        text = "",
-        style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.padding(bottom = Spacing.Large),
-    )
-}
-
 /**
- * Wire-out for non-preference actions triggered from the screen: opening
- * sub-fragments (fees, backup), showing existing dialogs (credits, graph
- * options), external intents (rate on Play), and full-activity restarts
- * (theme swap that changes pure-black but not night mode).
+ * What the screen hands to its route: opening another screen ([onOpen]: a
+ * category, fees, backup), rating the app on its store (null where it has
+ * none), and the full restart a pure-black theme change needs.
  */
 data class PreferenceScreenCallbacks(
-    val onOpenFees: () -> Unit,
-    val onOpenBackup: () -> Unit,
+    val onOpen: (Screen) -> Unit,
     val onRateApp: (() -> Unit)?,
     val onThemeRequiresRestart: () -> Unit,
 )
 
-private fun themeLabelRes(theme: AppTheme): Int =
+internal fun themeLabelRes(theme: AppTheme): Int =
     when (theme) {
         AppTheme.LIGHT -> R.string.theme_option_light
         AppTheme.DARK -> R.string.theme_option_dark
@@ -683,7 +384,7 @@ private fun themeLabelRes(theme: AppTheme): Int =
     }
 
 // The version name of the APK installed, which names its CPU type; BuildConfig's when it can't be read.
-private fun installedVersionName(context: Context): String =
+internal fun installedVersionName(context: Context): String =
     try {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName
     } catch (_: PackageManager.NameNotFoundException) {

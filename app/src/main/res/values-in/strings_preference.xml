@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Pengaturan Umum</string>
     <string name="fee_title">Biaya transaksi luar negeri</string>
     <string name="fee_summary">Kelola biaya penukaran, bank/kartu, dan biaya pasangan mata uang tertentu</string>
     <string name="fee_manager_title">Biaya</string>
@@ -174,4 +173,16 @@
     <string name="provider_cadence_monthly">Diperbarui sebulan sekali</string>
     <string name="fallback_provider_title">Penyedia cadangan</string>
     <string name="fallback_provider_summary">%1$s · digunakan jika %2$s tidak dapat dijangkau</string>
+    <string name="menu_about">Tentang</string>
+    <string name="settings_converter_title">Pengonversi</string>
+    <string name="settings_converter_summary">Biaya, papan tombol, angka desimal</string>
+    <string name="settings_rates_summary">Penyedia, segarkan otomatis, peringatan kurs</string>
+    <string name="settings_appearance_summary">Tema, bahasa, format tanggal, suara &amp; sentuhan</string>
+    <string name="settings_about_summary">Versi, log perubahan, kredit, penafian</string>
+    <string name="settings_providers_title">Tentang penyedia</string>
+    <string name="settings_providers_summary">Apa setiap sumber dan seberapa sering ia menerbitkan</string>
+    <string name="settings_input_section">Masukan &amp; tampilan</string>
+    <string name="settings_display_section">Tampilan</string>
+    <string name="settings_touch_section">Suara &amp; sentuhan</string>
+    <string name="settings_updates_section">Pembaruan</string>
 </resources>

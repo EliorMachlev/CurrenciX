@@ -21,8 +21,14 @@ class AppNavigatorTest {
                 Screen.Settings,
                 Screen.Fees,
                 Screen.Backup,
-            )
+            ) + SettingsTopic.entries.map(Screen::SettingsPage)
         screens.forEach { screen -> assertEquals(screen, decodeScreen(screen.encode())) }
+    }
+
+    @Test
+    fun `settings saved by an older version still reads as settings`() {
+        assertEquals(Screen.Settings, decodeScreen("settings"))
+        assertEquals(Screen.SettingsPage(SettingsTopic.ABOUT), decodeScreen("settings:about"))
     }
 
     @Test
@@ -30,6 +36,7 @@ class AppNavigatorTest {
         assertNull(decodeScreen("unknown-route"))
         assertNull(decodeScreen("timeline:EUR"))
         assertNull(decodeScreen("timeline:EUR:XXX"))
+        assertNull(decodeScreen("settings:unknown-page"))
     }
 
     @Test
@@ -106,6 +113,12 @@ class AppNavigatorTest {
         assertEquals(PaneRole.List, Screen.Converter.paneRole)
         assertEquals(PaneRole.Detail, timeline.paneRole)
         assertEquals(PaneRole.Detail, cart.paneRole)
-        listOf(Screen.Settings, Screen.Fees, Screen.Backup).forEach { assertNull(it.paneRole) }
+        (
+            listOf(
+                Screen.Settings,
+                Screen.Fees,
+                Screen.Backup,
+            ) + SettingsTopic.entries.map(Screen::SettingsPage)
+        ).forEach { assertNull(it.paneRole) }
     }
 }

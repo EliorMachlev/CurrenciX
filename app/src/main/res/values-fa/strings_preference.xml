@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">تنظیمات عمومی</string>
     <string name="fee_title">کارمزد تراکنش‌های خارجی</string>
     <string name="fee_summary">مدیریت کارمزدهای تبدیل، بانک/کارت و جفت‌ارزهای خاص</string>
     <string name="fee_manager_title">کارمزدها</string>
@@ -173,4 +172,16 @@
     <string name="provider_cadence_monthly">به‌روزرسانی ماهی یک بار</string>
     <string name="fallback_provider_title">ارائه‌دهندهٔ جایگزین</string>
     <string name="fallback_provider_summary">%1$s · وقتی %2$s در دسترس نیست استفاده می‌شود</string>
+    <string name="menu_about">درباره</string>
+    <string name="settings_converter_title">مبدل</string>
+    <string name="settings_converter_summary">کارمزدها، صفحه‌کلید، ارقام اعشار</string>
+    <string name="settings_rates_summary">ارائه‌دهنده، تازه‌سازی خودکار، هشدارهای نرخ</string>
+    <string name="settings_appearance_summary">پوسته، زبان، قالب تاریخ، صدا و لمس</string>
+    <string name="settings_about_summary">نسخه، تغییرات، قدردانی، سلب مسئولیت</string>
+    <string name="settings_providers_title">درباره ارائه‌دهندگان</string>
+    <string name="settings_providers_summary">هر منبع چیست و هر چند وقت منتشر می‌کند</string>
+    <string name="settings_input_section">ورودی و نمایش</string>
+    <string name="settings_display_section">نمایش</string>
+    <string name="settings_touch_section">صدا و لمس</string>
+    <string name="settings_updates_section">به‌روزرسانی‌ها</string>
 </resources>

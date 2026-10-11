@@ -25,39 +25,43 @@ import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.showOrToast
+import com.eliormachlev.currencix.view.navigation.Screen
+import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import com.eliormachlev.currencix.view.preference.compose.BackupScreen
 import com.eliormachlev.currencix.view.preference.compose.FeesScreen
 import com.eliormachlev.currencix.view.preference.compose.PreferenceScreen
 import com.eliormachlev.currencix.view.preference.compose.PreferenceScreenCallbacks
+import com.eliormachlev.currencix.view.preference.compose.titleRes
 import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
 import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 
 /**
- * Settings. [onThemeRequiresRestart] recreates the Activity so the XML theme
- * (pure black) is reapplied everywhere; the back stack is saved state, so
- * the user lands back on Settings.
+ * Settings: its list of categories ([topic] null), or one category's own
+ * screen. [onOpen] goes on to a nested screen (a category, fees, backup).
+ * [onThemeRequiresRestart] recreates the Activity so the XML theme (pure
+ * black) is reapplied everywhere; the back stack is saved state, so the user
+ * lands back where they were.
  */
 @Composable
 fun SettingsRoute(
+    topic: SettingsTopic?,
     onBack: () -> Unit,
-    onOpenFees: () -> Unit,
-    onOpenBackup: () -> Unit,
+    onOpen: (Screen) -> Unit,
     onThemeRequiresRestart: () -> Unit,
 ) {
     val context = LocalContext.current
     val viewModel: PreferenceViewModel = viewModel()
     val callbacks =
-        remember(context, onOpenFees, onOpenBackup, onThemeRequiresRestart) {
+        remember(context, onOpen, onThemeRequiresRestart) {
             PreferenceScreenCallbacks(
-                onOpenFees = onOpenFees,
-                onOpenBackup = onOpenBackup,
+                onOpen = onOpen,
                 onRateApp = rateApp?.let { rate -> { rate(context) } },
                 onThemeRequiresRestart = onThemeRequiresRestart,
             )
         }
-    SettingsScaffold(titleRes = R.string.title_preferences, onBack = onBack) {
-        PreferenceScreen(viewModel = viewModel, callbacks = callbacks)
+    SettingsScaffold(titleRes = topic?.titleRes ?: R.string.title_preferences, onBack = onBack) {
+        PreferenceScreen(viewModel = viewModel, callbacks = callbacks, topic = topic)
     }
 }
 
@@ -95,7 +99,7 @@ fun BackupRoute(onBack: () -> Unit) {
     }
 }
 
-// The three settings screens share one frame: a medium top bar over a list
+// The settings screens share one frame: a medium top bar over a list
 // that scrolls under it.
 @Composable
 private fun SettingsScaffold(

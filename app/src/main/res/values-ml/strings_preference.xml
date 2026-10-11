@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">പൊതു ക്രമീകരണങ്ങൾ</string>
     <string name="fee_title">വിദേശ ഇടപാട് ഫീസ്</string>
     <string name="fee_summary">വിനിമയ, ബാങ്ക്/കാർഡ്, കറൻസി ജോഡി അടിസ്ഥാനത്തിലുള്ള ഫീസുകൾ കൈകാര്യം ചെയ്യുക</string>
     <string name="fee_manager_title">ഫീസുകൾ</string>
@@ -173,4 +172,16 @@
     <string name="provider_cadence_monthly">മാസത്തിലൊരിക്കൽ അപ്ഡേറ്റ് ചെയ്യും</string>
     <string name="fallback_provider_title">പകരം ദാതാവ്</string>
     <string name="fallback_provider_summary">%1$s · %2$s ലഭ്യമല്ലാത്തപ്പോൾ ഉപയോഗിക്കുന്നു</string>
+    <string name="menu_about">വിവരം</string>
+    <string name="settings_converter_title">കൺവെർട്ടർ</string>
+    <string name="settings_converter_summary">ഫീസ്, കീപാഡ്, ദശാംശ സ്ഥാനങ്ങൾ</string>
+    <string name="settings_rates_summary">ദാതാവ്, സ്വയം പുതുക്കൽ, നിരക്ക് അറിയിപ്പുകൾ</string>
+    <string name="settings_appearance_summary">തീം, ഭാഷ, തീയതി ഫോർമാറ്റ്, ശബ്ദവും സ്പർശവും</string>
+    <string name="settings_about_summary">പതിപ്പ്, മാറ്റങ്ങൾ, കടപ്പാട്, നിരാകരണം</string>
+    <string name="settings_providers_title">ദാതാക്കളെക്കുറിച്ച്</string>
+    <string name="settings_providers_summary">ഓരോ ഉറവിടവും എന്താണെന്നും എത്ര തവണ പ്രസിദ്ധീകരിക്കുന്നുവെന്നും</string>
+    <string name="settings_input_section">ഇൻപുട്ടും പ്രദർശനവും</string>
+    <string name="settings_display_section">പ്രദർശനം</string>
+    <string name="settings_touch_section">ശബ്ദവും സ്പർശവും</string>
+    <string name="settings_updates_section">അപ്ഡേറ്റുകൾ</string>
 </resources>

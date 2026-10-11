@@ -228,11 +228,17 @@ class MainActivity : AppCompatActivity() {
             Screen.Settings -> {
                 ReadingDirection {
                     SettingsRoute(
+                        topic = null,
                         onBack = nav::pop,
-                        onOpenFees = { nav.navigate(Screen.Fees) },
-                        onOpenBackup = { nav.navigate(Screen.Backup) },
+                        onOpen = nav::navigate,
                         onThemeRequiresRestart = ::recreate,
                     )
+                }
+            }
+
+            is Screen.SettingsPage -> {
+                ReadingDirection {
+                    SettingsRoute(topic = screen.topic, onBack = nav::pop, onOpen = nav::navigate, onThemeRequiresRestart = ::recreate)
                 }
             }
 

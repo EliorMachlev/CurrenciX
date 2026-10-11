@@ -58,6 +58,7 @@ enum class DrawerAction(
     ChangeApi,
     Fees(opensScreen = true),
     Settings(opensScreen = true),
+    About(opensScreen = true),
 }
 
 private val DrawerOuterPadding = 12.dp
@@ -106,6 +107,7 @@ private val SecondaryDrawerEntries =
         DrawerEntry(DrawerAction.ChangeApi, R.drawable.ic_data_provider, R.string.api_title),
         DrawerEntry(DrawerAction.Fees, R.drawable.ic_fee, R.string.fee_manager_title),
         DrawerEntry(DrawerAction.Settings, R.drawable.ic_settings, R.string.menu_settings),
+        DrawerEntry(DrawerAction.About, R.drawable.ic_info, R.string.menu_about),
     )
 
 /** The navigation drawer: whether it's open, and what picking an entry does. */

@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Cài đặt chung</string>
     <string name="fee_title">Phí giao dịch nước ngoài</string>
     <string name="fee_summary">Quản lý phí chuyển đổi, ngân hàng/thẻ và phí cho cặp tiền tệ cụ thể</string>
     <string name="fee_manager_title">Phí</string>
@@ -174,4 +173,16 @@
     <string name="provider_cadence_monthly">Cập nhật mỗi tháng một lần</string>
     <string name="fallback_provider_title">Nhà cung cấp dự phòng</string>
     <string name="fallback_provider_summary">%1$s · dùng khi không kết nối được %2$s</string>
+    <string name="menu_about">Giới thiệu</string>
+    <string name="settings_converter_title">Bộ chuyển đổi</string>
+    <string name="settings_converter_summary">Phí, bàn phím, số chữ số thập phân</string>
+    <string name="settings_rates_summary">Nhà cung cấp, tự động làm mới, cảnh báo tỷ giá</string>
+    <string name="settings_appearance_summary">Giao diện, ngôn ngữ, định dạng ngày, âm thanh &amp; chạm</string>
+    <string name="settings_about_summary">Phiên bản, nhật ký thay đổi, ghi công, tuyên bố miễn trừ</string>
+    <string name="settings_providers_title">Về các nhà cung cấp</string>
+    <string name="settings_providers_summary">Mỗi nguồn là gì và cập nhật thường xuyên thế nào</string>
+    <string name="settings_input_section">Nhập &amp; hiển thị</string>
+    <string name="settings_display_section">Hiển thị</string>
+    <string name="settings_touch_section">Âm thanh &amp; chạm</string>
+    <string name="settings_updates_section">Cập nhật</string>
 </resources>

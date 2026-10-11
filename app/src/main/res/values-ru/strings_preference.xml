@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Основные настройки</string>
     <string name="fee_title">Комиссия за валютные операции</string>
     <string name="fee_summary">Управление комиссиями за обмен, банка/карты и для отдельных валютных пар</string>
     <string name="fee_manager_title">Комиссии</string>
@@ -175,4 +174,16 @@
     <string name="provider_cadence_monthly">Обновляется раз в месяц</string>
     <string name="fallback_provider_title">Резервный источник</string>
     <string name="fallback_provider_summary">%1$s · используется, когда %2$s недоступен</string>
+    <string name="menu_about">О приложении</string>
+    <string name="settings_converter_title">Конвертер</string>
+    <string name="settings_converter_summary">Комиссии, клавиатура, знаки после запятой</string>
+    <string name="settings_rates_summary">Источник, автообновление, оповещения о курсе</string>
+    <string name="settings_appearance_summary">Тема, язык, формат даты, звук и касание</string>
+    <string name="settings_about_summary">Версия, изменения, благодарности, отказ от ответственности</string>
+    <string name="settings_providers_title">Об источниках</string>
+    <string name="settings_providers_summary">Что представляет каждый источник и как часто он публикует</string>
+    <string name="settings_input_section">Ввод и отображение</string>
+    <string name="settings_display_section">Отображение</string>
+    <string name="settings_touch_section">Звук и касание</string>
+    <string name="settings_updates_section">Обновления</string>
 </resources>

@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Impostazioni generali</string>
     <string name="fee_title">Commissione per transazioni estere</string>
     <string name="fee_summary">Gestisci commissioni di cambio, banca/carta e specifiche per coppia</string>
     <string name="fee_manager_title">Commissioni</string>
@@ -174,4 +173,16 @@
     <string name="provider_cadence_monthly">Aggiornato una volta al mese</string>
     <string name="fallback_provider_title">Fornitore di riserva</string>
     <string name="fallback_provider_summary">%1$s · usato quando %2$s non è raggiungibile</string>
+    <string name="menu_about">Informazioni</string>
+    <string name="settings_converter_title">Convertitore</string>
+    <string name="settings_converter_summary">Commissioni, tastierino, decimali</string>
+    <string name="settings_rates_summary">Fornitore, aggiornamento automatico, avvisi di cambio</string>
+    <string name="settings_appearance_summary">Tema, lingua, formato data, suono e tocco</string>
+    <string name="settings_about_summary">Versione, novità, riconoscimenti, avvertenze</string>
+    <string name="settings_providers_title">Informazioni sui fornitori</string>
+    <string name="settings_providers_summary">Cos\'è ogni fonte e quanto spesso pubblica</string>
+    <string name="settings_input_section">Inserimento e visualizzazione</string>
+    <string name="settings_display_section">Visualizzazione</string>
+    <string name="settings_touch_section">Suono e tocco</string>
+    <string name="settings_updates_section">Aggiornamenti</string>
 </resources>

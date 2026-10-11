@@ -11,7 +11,7 @@ CurrenciX is a currency-conversion app. It is designed to collect **no** persona
 
 **On the device.** All configuration (fee settings, starred currencies, keyboard preferences, theme, API key if you supply one) is stored in Android SharedPreferences private to the app. Cached exchange rates are stored in the same private storage. Nothing in this storage leaves your device unless **you** initiate an export via **Settings → Backup & Restore**, and even then it goes to a file location **you** pick via the system file picker.
 
-**Off the device.** The app makes network requests to whichever exchange-rate provider you have selected in **Settings → Exchange rate provider**. These requests carry your device's IP address, the standard HTTP headers a network client sends, and the currency codes you have starred. The provider — not CurrenciX — receives and processes those requests under **its own** privacy terms. See [`api-providers.md`](api-providers.md) for the list.
+**Off the device.** The app makes network requests to whichever exchange-rate provider you have selected in **Settings → Exchange rates → Data provider**. These requests carry your device's IP address, the standard HTTP headers a network client sends, and the currency codes you have starred. The provider — not CurrenciX — receives and processes those requests under **its own** privacy terms. See [`api-providers.md`](api-providers.md) for the list.
 
 **No SDKs.** CurrenciX does not integrate any analytics SDK, crash-reporting SDK, advertising SDK, attribution SDK, or persistent-identifier SDK. There is no Google Analytics, no Firebase, no Crashlytics, no AdMob, no Facebook SDK.
 

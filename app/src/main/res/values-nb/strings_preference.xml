@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Generelle innstillinger</string>
     <string name="fee_title">Valutagebyr</string>
     <string name="fee_summary">Administrer veksel-, bank-/kortgebyrer og gebyrer for spesifikke valutapar</string>
     <string name="fee_manager_title">Gebyrer</string>
@@ -176,4 +175,16 @@
     <string name="provider_cadence_monthly">Oppdateres én gang i måneden</string>
     <string name="fallback_provider_title">Reserveleverandør</string>
     <string name="fallback_provider_summary">%1$s · brukes når %2$s ikke kan nås</string>
+    <string name="menu_about">Om</string>
+    <string name="settings_converter_title">Omregner</string>
+    <string name="settings_converter_summary">Gebyrer, tastatur, desimaler</string>
+    <string name="settings_rates_summary">Leverandør, automatisk oppdatering, kursvarsler</string>
+    <string name="settings_appearance_summary">Tema, språk, datoformat, lyd og berøring</string>
+    <string name="settings_about_summary">Versjon, endringer, takk, ansvarsfraskrivelse</string>
+    <string name="settings_providers_title">Om leverandørene</string>
+    <string name="settings_providers_summary">Hva hver kilde er og hvor ofte den publiserer</string>
+    <string name="settings_input_section">Inntasting og visning</string>
+    <string name="settings_display_section">Visning</string>
+    <string name="settings_touch_section">Lyd og berøring</string>
+    <string name="settings_updates_section">Oppdateringer</string>
 </resources>

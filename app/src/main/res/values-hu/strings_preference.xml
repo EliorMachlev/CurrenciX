@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Általános beállítások</string>
     <string name="fee_title">Devizatranzakciós díj</string>
     <string name="fee_summary">Váltási, banki/kártya- és pénznempár-specifikus díjak kezelése</string>
     <string name="fee_manager_title">Díjak</string>
@@ -175,4 +174,16 @@
     <string name="provider_cadence_monthly">Havonta egyszer frissül</string>
     <string name="fallback_provider_title">Tartalék szolgáltató</string>
     <string name="fallback_provider_summary">%1$s · akkor használjuk, ha %2$s nem érhető el</string>
+    <string name="menu_about">Névjegy</string>
+    <string name="settings_converter_title">Átváltó</string>
+    <string name="settings_converter_summary">Díjak, billentyűzet, tizedesjegyek</string>
+    <string name="settings_rates_summary">Szolgáltató, automatikus frissítés, árfolyam-értesítések</string>
+    <string name="settings_appearance_summary">Téma, nyelv, dátumformátum, hang és érintés</string>
+    <string name="settings_about_summary">Verzió, változások, köszönetnyilvánítás, jogi nyilatkozat</string>
+    <string name="settings_providers_title">A szolgáltatókról</string>
+    <string name="settings_providers_summary">Mi az egyes források lényege, és milyen gyakran tesznek közzé</string>
+    <string name="settings_input_section">Bevitel és megjelenítés</string>
+    <string name="settings_display_section">Megjelenítés</string>
+    <string name="settings_touch_section">Hang és érintés</string>
+    <string name="settings_updates_section">Frissítések</string>
 </resources>

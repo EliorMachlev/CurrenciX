@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <!-- main settings -->
-    <string name="category_settings">General Settings</string>
     <string name="fee_title">Foreign transaction fee</string>
     <string name="fee_summary">Manage exchange, bank/card, and pair-specific fees</string>
     <!-- fee manager -->
@@ -180,4 +179,16 @@
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app.</string>
     <string name="category_versioninfo">Version info</string>
     <string name="title_changelog">Changelog</string>
+    <string name="menu_about">About</string>
+    <string name="settings_converter_title">Converter</string>
+    <string name="settings_converter_summary">Fees, keypad, decimal places</string>
+    <string name="settings_rates_summary">Provider, auto-refresh, rate alerts</string>
+    <string name="settings_appearance_summary">Theme, language, date format, sound &amp; touch</string>
+    <string name="settings_about_summary">Version, changelog, credits, disclaimer</string>
+    <string name="settings_providers_title">About the providers</string>
+    <string name="settings_providers_summary">What each source is and how often it publishes</string>
+    <string name="settings_input_section">Input &amp; display</string>
+    <string name="settings_display_section">Display</string>
+    <string name="settings_touch_section">Sound &amp; touch</string>
+    <string name="settings_updates_section">Updates</string>
 </resources>

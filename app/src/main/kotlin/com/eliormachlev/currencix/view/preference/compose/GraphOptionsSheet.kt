@@ -49,8 +49,8 @@ fun GraphOptionsSheet(
     }
 }
 
-// Each switch in the sheet and the setting it flips, top to bottom.
-private fun graphOptions(chart: ChartSettings): List<Pair<Int, Pref<Boolean>>> =
+// Each switch in the sheet (and on Settings' chart screen) and the setting it flips, top to bottom.
+internal fun graphOptions(chart: ChartSettings): List<Pair<Int, Pref<Boolean>>> =
     listOf(
         R.string.graph_grid_title to chart.grid,
         R.string.graph_x_axis_title to chart.xAxisLabel,

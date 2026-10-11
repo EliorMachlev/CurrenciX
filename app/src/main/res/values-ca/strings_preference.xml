@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Configuració general</string>
     <string name="fee_title">Comissió per transaccions a l\'estranger</string>
     <string name="fee_summary">Gestiona comissions de canvi, banc/targeta i específiques per parell</string>
     <string name="fee_manager_title">Comissions</string>
@@ -174,4 +173,16 @@
     <string name="provider_cadence_monthly">S\'actualitza un cop al mes</string>
     <string name="fallback_provider_title">Proveïdor de reserva</string>
     <string name="fallback_provider_summary">%1$s · s\'utilitza quan no es pot accedir a %2$s</string>
+    <string name="menu_about">Quant a</string>
+    <string name="settings_converter_title">Conversor</string>
+    <string name="settings_converter_summary">Comissions, teclat, decimals</string>
+    <string name="settings_rates_summary">Proveïdor, actualització automàtica, alertes de canvi</string>
+    <string name="settings_appearance_summary">Tema, idioma, format de data, so i tacte</string>
+    <string name="settings_about_summary">Versió, canvis, crèdits, avís legal</string>
+    <string name="settings_providers_title">Quant als proveïdors</string>
+    <string name="settings_providers_summary">Què és cada font i amb quina freqüència publica</string>
+    <string name="settings_input_section">Entrada i visualització</string>
+    <string name="settings_display_section">Visualització</string>
+    <string name="settings_touch_section">So i tacte</string>
+    <string name="settings_updates_section">Actualitzacions</string>
 </resources>

@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Paramètres généraux</string>
     <string name="fee_title">Frais de transaction à l\'étranger</string>
     <string name="fee_summary">Gérer les frais de change, de banque/carte et spécifiques à une paire</string>
     <string name="fee_manager_title">Frais</string>
@@ -174,4 +173,16 @@
     <string name="provider_cadence_monthly">Mis à jour une fois par mois</string>
     <string name="fallback_provider_title">Fournisseur de secours</string>
     <string name="fallback_provider_summary">%1$s · utilisé quand %2$s est injoignable</string>
+    <string name="menu_about">À propos</string>
+    <string name="settings_converter_title">Convertisseur</string>
+    <string name="settings_converter_summary">Frais, pavé numérique, décimales</string>
+    <string name="settings_rates_summary">Fournisseur, actualisation automatique, alertes de taux</string>
+    <string name="settings_appearance_summary">Thème, langue, format de date, son et toucher</string>
+    <string name="settings_about_summary">Version, nouveautés, crédits, avertissement</string>
+    <string name="settings_providers_title">À propos des fournisseurs</string>
+    <string name="settings_providers_summary">Ce qu\'est chaque source et à quelle fréquence elle publie</string>
+    <string name="settings_input_section">Saisie et affichage</string>
+    <string name="settings_display_section">Affichage</string>
+    <string name="settings_touch_section">Son et toucher</string>
+    <string name="settings_updates_section">Mises à jour</string>
 </resources>

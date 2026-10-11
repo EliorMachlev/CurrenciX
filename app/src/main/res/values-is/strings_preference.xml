@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">Almennar stillingar</string>
     <string name="fee_title">Gjaldeyrisviðskiptagjald</string>
     <string name="fee_summary">Umsjón með skipti-, banka-/kortagjöldum og gjöldum fyrir tiltekin gjaldmiðlapör</string>
     <string name="fee_manager_title">Gjöld</string>
@@ -174,4 +173,16 @@
     <string name="provider_cadence_monthly">Uppfært einu sinni í mánuði</string>
     <string name="fallback_provider_title">Varaveita</string>
     <string name="fallback_provider_summary">%1$s · notað þegar ekki næst í %2$s</string>
+    <string name="menu_about">Um</string>
+    <string name="settings_converter_title">Umreiknir</string>
+    <string name="settings_converter_summary">Gjöld, talnaborð, aukastafir</string>
+    <string name="settings_rates_summary">Veita, sjálfvirk uppfærsla, gengisviðvaranir</string>
+    <string name="settings_appearance_summary">Þema, tungumál, dagsetningarsnið, hljóð og snerting</string>
+    <string name="settings_about_summary">Útgáfa, breytingar, þakkir, fyrirvari</string>
+    <string name="settings_providers_title">Um veiturnar</string>
+    <string name="settings_providers_summary">Hvað hver heimild er og hversu oft hún birtir</string>
+    <string name="settings_input_section">Innsláttur og birting</string>
+    <string name="settings_display_section">Birting</string>
+    <string name="settings_touch_section">Hljóð og snerting</string>
+    <string name="settings_updates_section">Uppfærslur</string>
 </resources>

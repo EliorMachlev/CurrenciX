@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">常规设置</string>
     <string name="fee_title">外币交易手续费</string>
     <string name="fee_summary">管理汇兑、银行/银行卡以及特定货币对的手续费</string>
     <string name="fee_manager_title">手续费</string>
@@ -171,4 +170,16 @@
     <string name="provider_cadence_monthly">每月更新一次</string>
     <string name="fallback_provider_title">备用数据源</string>
     <string name="fallback_provider_summary">%1$s · 在无法连接 %2$s 时使用</string>
+    <string name="menu_about">关于</string>
+    <string name="settings_converter_title">换算器</string>
+    <string name="settings_converter_summary">费用、键盘、小数位数</string>
+    <string name="settings_rates_summary">数据源、自动刷新、汇率提醒</string>
+    <string name="settings_appearance_summary">主题、语言、日期格式、声音与触感</string>
+    <string name="settings_about_summary">版本、更新日志、致谢、免责声明</string>
+    <string name="settings_providers_title">关于数据源</string>
+    <string name="settings_providers_summary">各数据源是什么以及多久发布一次</string>
+    <string name="settings_input_section">输入与显示</string>
+    <string name="settings_display_section">显示</string>
+    <string name="settings_touch_section">声音与触感</string>
+    <string name="settings_updates_section">更新</string>
 </resources>

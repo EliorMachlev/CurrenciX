@@ -9,13 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.LIST_SUMMARY_LINES
 import com.eliormachlev.currencix.view.compose.LedgerLabel
@@ -83,6 +87,35 @@ fun PreferenceRow(
             )
         },
         value = trailing?.let { slot -> { LedgerTrailing { slot() } } },
+    )
+}
+
+/**
+ * A row that opens a screen of its own (a category, fees, backup): a
+ * [PreferenceRow] with a chevron pointing on, mirrored right-to-left.
+ */
+@Composable
+fun NavigationRow(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+    @DrawableRes iconRes: Int? = null,
+) {
+    PreferenceRow(
+        title = title,
+        modifier = modifier,
+        summary = summary,
+        iconRes = iconRes,
+        onClick = onClick,
+        trailing = {
+            // The row reads as a button already; the chevron only marks it.
+            Icon(
+                painter = painterResource(R.drawable.ic_chevron_forward),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
     )
 }
 

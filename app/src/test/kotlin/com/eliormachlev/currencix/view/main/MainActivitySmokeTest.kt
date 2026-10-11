@@ -140,12 +140,17 @@ class MainActivitySmokeTest {
         settle()
         compose.onNodeWithText(string(R.string.title_preferences)).assertExists()
 
+        // Settings lists its categories; fees sit under the converter's.
+        compose.onNodeWithText(string(R.string.settings_converter_title)).performClick()
+        settle()
         // The settings row itself ("Foreign transaction fee"): "Fees" alone
-        // also matches the converter's drawer entry.
+        // is also the section's heading.
         compose.onNodeWithText(string(R.string.fee_title)).performClick()
         settle()
-        compose.onNodeWithContentDescription(string(R.string.desc_navigate_up)).assertExists()
+        compose.onNodeWithText(string(R.string.fee_manager_title)).assertExists()
 
+        back()
+        compose.onNodeWithText(string(R.string.fee_title)).assertExists()
         back()
         compose.onNodeWithText(string(R.string.title_preferences)).assertExists()
         back()
@@ -157,18 +162,39 @@ class MainActivitySmokeTest {
         openFromTopBar(R.string.desc_open_drawer)
         compose.onNodeWithTag(UiTestTags.drawerEntry(DrawerAction.Settings.name)).performClick()
         settle()
-        // Row titles that start "About …" (a description may also contain the word).
+        compose.onNodeWithText(string(R.string.category_api)).performClick()
+        settle()
+        compose.onNodeWithText(string(R.string.settings_providers_title)).performClick()
+        settle()
+        // Row titles that start "About …" (a description may also contain
+        // the word), apart from the screen's own title.
         val about = string(R.string.api_about_title).substringBefore("%")
+        val screenTitle = string(R.string.settings_providers_title)
         val aboutTitle =
             SemanticsMatcher("text starts with \"$about\"") { node ->
                 node.config
                     .getOrNull(SemanticsProperties.Text)
                     .orEmpty()
-                    .any { it.text.startsWith(about) }
+                    .any { it.text.startsWith(about) && it.text != screenTitle }
             }
         compose.onAllNodes(aboutTitle).assertCountEquals(2)
         // …each with how often it updates, inside the same row.
         compose.onAllNodesWithContentDescription(string(R.string.api_refreshPeriod_title)).assertCountEquals(2)
+    }
+
+    @Test
+    fun `about opens straight from the drawer, and back returns to the converter`() {
+        openFromTopBar(R.string.desc_open_drawer)
+        compose.onNodeWithTag(UiTestTags.drawerEntry(DrawerAction.About.name)).performClick()
+        settle()
+        compose.onNodeWithText(string(R.string.category_about)).assertExists()
+        compose.onNodeWithText(string(R.string.credits_title)).performClick()
+        settle()
+        compose.onNodeWithText(string(R.string.title_credits)).assertExists()
+
+        back()
+        back()
+        assertOnConverter()
     }
 
     @Test

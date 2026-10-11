@@ -33,6 +33,11 @@ sealed interface Screen {
 
     data object Settings : Screen
 
+    /** One of Settings' categories (or a part of one), a screen of its own. */
+    data class SettingsPage(
+        val topic: SettingsTopic,
+    ) : Screen
+
     data object Fees : Screen
 
     data object Backup : Screen
@@ -72,6 +77,7 @@ internal fun Screen.encode(): String =
         is Screen.Timeline -> listOf(Route.TIMELINE.id, from.encodeArg(), to.encodeArg()).joinToString(SEPARATOR.toString())
         is Screen.Cart -> listOf(Route.CART.id, mainBase.encodeArg(), mainDest.encodeArg()).joinToString(SEPARATOR.toString())
         Screen.Settings -> Route.SETTINGS.id
+        is Screen.SettingsPage -> listOf(Route.SETTINGS.id, topic.id).joinToString(SEPARATOR.toString())
         Screen.Fees -> Route.FEES.id
         Screen.Backup -> Route.BACKUP.id
     }
@@ -99,8 +105,10 @@ internal fun decodeScreen(encoded: String): Screen? {
             Screen.Cart(args.getOrNull(0)?.decodeArg(), args.getOrNull(1)?.decodeArg())
         }
 
+        // `settings` alone is Settings itself; `settings:about` one of its pages.
         Route.SETTINGS -> {
-            Screen.Settings
+            val topic = args.getOrNull(0)
+            if (topic == null) Screen.Settings else SettingsTopic.byId(topic)?.let(Screen::SettingsPage)
         }
 
         Route.FEES -> {

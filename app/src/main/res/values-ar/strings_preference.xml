@@ -2,7 +2,6 @@
 <!DOCTYPE resources [<!ENTITY nbsp "&#160;">]>
 <resources>
     <!-- main settings -->
-    <string name="category_settings">الإعدادات العامة</string>
     <string name="fee_title">رسوم المعاملات بالعملات الأجنبية</string>
     <string name="fee_summary">إدارة رسوم الصرف والبنك/البطاقة والرسوم الخاصة بأزواج العملات</string>
     <string name="fee_manager_title">الرسوم</string>
@@ -177,4 +176,16 @@
     <string name="provider_cadence_monthly">يُحدَّث مرة في الشهر</string>
     <string name="fallback_provider_title">المزوّد الاحتياطي</string>
     <string name="fallback_provider_summary">%1$s · يُستخدم عندما يتعذّر الوصول إلى %2$s</string>
+    <string name="menu_about">حول</string>
+    <string name="settings_converter_title">المحوّل</string>
+    <string name="settings_converter_summary">الرسوم، لوحة المفاتيح، المنازل العشرية</string>
+    <string name="settings_rates_summary">المزوّد، التحديث التلقائي، تنبيهات السعر</string>
+    <string name="settings_appearance_summary">السمة، اللغة، تنسيق التاريخ، الصوت واللمس</string>
+    <string name="settings_about_summary">الإصدار، سجل التغييرات، الشكر، إخلاء المسؤولية</string>
+    <string name="settings_providers_title">حول المزوّدين</string>
+    <string name="settings_providers_summary">ما هو كل مصدر وكم مرة ينشر</string>
+    <string name="settings_input_section">الإدخال والعرض</string>
+    <string name="settings_display_section">العرض</string>
+    <string name="settings_touch_section">الصوت واللمس</string>
+    <string name="settings_updates_section">التحديثات</string>
 </resources>
