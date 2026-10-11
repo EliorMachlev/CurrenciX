@@ -73,9 +73,9 @@ VercodeOperation:
 UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
 ```
 
-F-Droid's build checks that the APK's version name and code both match the entry ("Unexpected version/version code in output"), so each entry carries its labelled name. Whether its auto-update can write those suffixed names for new releases is to confirm with the F-Droid reviewers; if not, the labels can be left off the release builds F-Droid makes.
+F-Droid's build checks that the APK's version name and code both match the entry ("Unexpected version/version code in output", `fdroidserver/build.py`), so each entry carries its labelled name. Its auto-update can't keep those names for new releases: `checkupdates` copies the last builds and gives every copy the same name, the tag's version plus one optional suffix from `AutoUpdateMode: Version +<suffix> <pattern>`, in which only `%c` (that copy's code) changes (`fdroidserver/checkupdates.py`, 2.4.5). A per-type word like `arm64` can't come out of that, so with the labels every auto-generated build would fail the check. Before submitting, the release builds F-Droid makes need the plain name (`1.23.0`), and the recipe's entries with it.
 
-Open question for the F-Droid submission: fastlane changelogs are named after the version code (`changelogs/12300.txt`); whether F-Droid shows that file for the per-type codes (123001 …) or needs one per code hasn't been confirmed.
+Changelogs: F-Droid's app page shows `changelogs/<CurrentVersionCode>.txt`, the highest code of the release (the `x86_64` one, 123004), else `changelogs/default.txt`; a file named after any other build's code becomes that build's own notes (`fdroidserver/update.py`). `changelogs/12300.txt` (the plain code) matches no build, so F-Droid wouldn't show it.
 
 ## Key Dependencies
 
