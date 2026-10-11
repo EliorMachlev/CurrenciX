@@ -18,6 +18,7 @@ object UiTestTags {
     const val CART_LIST = "cart_list"
     const val CART_ADD = "cart_add"
     const val CART_NEXT = "cart_next"
+    const val CART_PRICE = "cart_price"
 
     /** A row of Settings' category list, e.g. `settings_appearance`. */
     fun settingsTopic(name: String): String = "settings_${name.lowercase()}"

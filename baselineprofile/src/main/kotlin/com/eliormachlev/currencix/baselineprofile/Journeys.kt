@@ -98,14 +98,16 @@ internal fun MacrobenchmarkScope.visitFromDrawer(entryTag: String) {
 
 /**
  * Opens the cart from the drawer, filling it with CART_ROWS rows when it's
- * empty (a price typed on each, then the keypad's Next for a new row), and
- * leaves it open with the keypad closed. The rows stay for later runs.
+ * empty (the first row's price opens the keypad; a price typed on each, then
+ * the keypad's Next for a new row), and leaves it open with the keypad
+ * closed. The rows stay for later runs.
  */
 internal fun MacrobenchmarkScope.openCartWithRows() {
     openFromDrawer(UiTags.DRAWER_CART)
     awaitTag(UiTags.CART_LIST, "cart")
     val add = device.findObject(By.res(UiTags.CART_ADD)) ?: return
     add.click()
+    awaitTag(UiTags.CART_PRICE, "cart").click()
     repeat(CART_ROWS) {
         awaitTag(UiTags.CART_NEXT, "cart keypad")
         CART_ROW_PRICE.forEach { digit -> device.findObject(By.res(UiTags.key(digit))).click() }

@@ -53,6 +53,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
@@ -88,6 +89,7 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.SupportingText
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.WrappingNameInputTransformation
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.cart.RowConversion
@@ -540,6 +542,7 @@ private fun PriceField(
         modifier =
             Modifier
                 .defaultMinSize(minHeight = FIELD_MIN_HEIGHT)
+                .testTag(UiTestTags.CART_PRICE)
                 .hapticClickable(onClick = onTap)
                 .padding(start = Spacing.Small)
                 .semantics { spoken?.let { contentDescription = it } },
