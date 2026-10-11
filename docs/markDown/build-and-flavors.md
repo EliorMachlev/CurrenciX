@@ -216,8 +216,9 @@ hands to ART at install time. The generated `baseline-prof.txt` and
 release APK/AAB automatically.
 
 The generator drives real user journeys (`baselineprofile/.../Journeys.kt`):
-launch, type on the keypad, fling through the currency picker, and visit
-Timeline and Cart from the drawer. A startup-only collection produces
+launch, type on the keypad, fling through the currency picker, visit
+Timeline and Cart from the drawer, fill a cart with 30 rows and fling
+through it, and open each of Settings' categories. A startup-only collection produces
 `startup-prof.txt`, which also drives DEX layout; the full journey produces
 `baseline-prof.txt`. Journeys find elements by the app's `UiTestTags`
 (exposed as resource ids), never by visible text. `UiTags.kt` in the module
@@ -240,11 +241,21 @@ device or manual emulator is needed. It does need hardware virtualization
 Commit the regenerated `baseline-prof.txt` / `startup-prof.txt`. Re-run when
 hot paths shift materially (major redesign, new startup dependency).
 
+**F-Droid builds carry the profile too.** The F-Droid APKs have
+`assets/dexopt/baseline.prof` and `ProfileInstallerInitializer` runs at
+startup (checked in the merged manifest), so a sideloaded or F-Droid install
+gets the same profile as a Play one. The difference is timing: Play can apply
+cloud profiles at install, while elsewhere `ProfileInstaller` writes the
+profile on the first launch and ART compiles it in its next idle maintenance
+(usually overnight on charge), so the first launches after an update run
+without it. The benchmarks' `None` vs `Partial` runs show what that costs.
+
 ### Frame-timing benchmarks
 
 `InteractionBenchmarks` (same module, same journeys) measures cold-start time
-and `FrameTimingMetric` for keypad typing, currency-picker scrolling and screen
-transitions, each with and without the baseline profile. Watch the P90/P99
+and `FrameTimingMetric` for keypad typing, currency-picker scrolling, screen
+transitions, scrolling a 30-row cart and browsing Settings, each with and
+without the baseline profile. Watch the P90/P99
 `frameDurationCpuMs` and any `frameOverrunMs > 0` (frames that missed their
 deadline, i.e. visible jank). CI runs them on the same emulator. Emulator
 numbers are for comparison and catching regressions, not absolute timings, so
@@ -254,6 +265,18 @@ Macrobenchmark's emulator guard is suppressed.
 ./gradlew :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest \
   -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
 ```
+
+### Compose stability
+
+`app/compose-stability.conf` tells the Compose compiler that JDK value types
+(`BigDecimal`, `java.time`, `DateTimeFormatter`, `Locale`) never change, so
+composables taking rates and dates compare them by `equals` and skip
+recomposing for an equal value. Hot-path parameter objects are values too
+(`ConverterBody` is an `@Immutable` data class; the currency picker's
+conversion preview is remembered). To look again, add
+`reportsDestination` / `metricsDestination` to the `composeCompiler` block
+and compile a release variant: the reports list each composable's unstable
+parameters.
 
 ## Known Issues
 

@@ -12,6 +12,13 @@ internal object UiTags {
     const val CURRENCY_LIST = "currency_list"
     const val DRAWER_TIMELINE = "drawer_timeline"
     const val DRAWER_CART = "drawer_cart"
+    const val DRAWER_SETTINGS = "drawer_settings"
+    const val CART_LIST = "cart_list"
+    const val CART_ADD = "cart_add"
+    const val CART_NEXT = "cart_next"
+
+    /** Settings' category rows, in the order they're listed. */
+    val SETTINGS_TOPICS = listOf("converter", "rates", "appearance", "chart", "about").map { "settings_$it" }
 
     fun key(label: Char): String = "key_$label"
 }

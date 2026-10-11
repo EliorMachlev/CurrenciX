@@ -294,6 +294,8 @@ The converter's and the cart's currency pills (`CurrencyPill`) are shared elemen
 
 The timeline chart is rendered by [Vico](https://github.com/patrykandpatrick/vico) (`com.patrykandpatrick.vico:compose`), hosted inside a `ComposeView` embedded in the otherwise View-based XML layout (`timeline_chart.xml`). `TimelineChart.kt` is a `@Composable` that observes the ViewModel's `LiveData` streams via `observeAsState()` (bridged by `androidx.compose.runtime:runtime-livedata`) and drives a `CartesianChartHost` backed by a `CartesianChartModelProducer`.
 
+The chart draws at most two points per pair of pixels (`thinForWidth`: each bucket's low and high, in order), so the 5-year view's ~1,800 days are drawn, hit-tested and scrubbed as a few hundred points with every peak and trough kept; the chart is measured before it's first drawn so it's never handed the whole series. When a different stretch of history arrives (a new pair or period) the chart draws itself in from the start edge (`drawIn`, `Motion.draw`), a clip on its layer, so it costs no recomposition.
+
 Why Vico over the previous engine (SparkView): SparkView is unmaintained and required a hand-rolled adapter, a manual dashed baseline `Paint`, and custom scrub handling. Vico ships all of that as first-class API (`HorizontalLine` decorations, `CartesianMarkerVisibilityListener`) and is actively developed. This was also the entry point that first introduced Jetpack Compose to what was then a View-only app; Compose has since become the primary UI toolkit (see above).
 
 Behavior preserved: dashed reference line at the last value, scrub-to-past-date via marker-shown callback, theme-aware colors resolved through `MaterialColors.getColor` and passed into the composable.

@@ -34,7 +34,7 @@ class BaselineProfileGenerator {
             launchToConverter()
         }
 
-    /** The interactions right after launch: typing, picking a currency, moving between screens. */
+    /** The interactions right after launch: typing, picking a currency, moving between screens, a long cart, Settings. */
     @Test
     fun journeys() =
         rule.collect(packageName = targetPackage()) {
@@ -43,5 +43,9 @@ class BaselineProfileGenerator {
             scrollCurrencyPicker()
             visitFromDrawer(UiTags.DRAWER_TIMELINE)
             visitFromDrawer(UiTags.DRAWER_CART)
+            openCartWithRows()
+            scrollCart()
+            backToConverter()
+            browseSettings()
         }
 }

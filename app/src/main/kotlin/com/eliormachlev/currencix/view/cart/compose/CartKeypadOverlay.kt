@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -44,6 +45,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
@@ -176,7 +178,7 @@ private fun NextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    TextButton(onClick = rememberHapticOnClick(onClick), modifier = modifier.padding(end = Spacing.Small)) {
+    TextButton(onClick = rememberHapticOnClick(onClick), modifier = modifier.padding(end = Spacing.Small).testTag(UiTestTags.CART_NEXT)) {
         Text(stringResource(R.string.cart_keypad_next))
         Icon(
             painter = painterResource(R.drawable.ic_arrow_forward),

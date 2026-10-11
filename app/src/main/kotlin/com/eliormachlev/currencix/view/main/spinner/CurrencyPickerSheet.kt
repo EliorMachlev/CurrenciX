@@ -76,8 +76,12 @@ fun CurrencyPickerSheet(
         val database = rememberDatabase()
         val recents = rememberRecentCurrencies(database, excluded = setOfNotNull(disabledCurrency, selectedCurrency))
 
+        // Kept across recompositions (typing a search), so the rows that
+        // show it don't all recompose for a new but equal one.
         val conversion =
-            currentRate?.takeIf { previewEnabled }?.let { CurrencyPickerConversion(it, currentSum, decimalPlaces) }
+            remember(currentRate, previewEnabled, currentSum, decimalPlaces) {
+                currentRate?.takeIf { previewEnabled }?.let { CurrencyPickerConversion(it, currentSum, decimalPlaces) }
+            }
 
         // fillMaxHeight so the picker occupies the full expanded-anchor slot;
         // at the partially-expanded anchor the M3 sheet clips this Column and

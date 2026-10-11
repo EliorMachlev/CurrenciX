@@ -9,8 +9,8 @@ import java.io.ByteArrayOutputStream
 /*
  * The user journeys shared by the baseline-profile generator and the
  * frame-timing benchmarks, so both exercise exactly the same hot paths:
- * typing on the keypad, scrolling the currency picker, and moving between
- * screens. Elements are found by the app's UiTestTags (see UiTags), never by
+ * typing on the keypad, scrolling the currency picker and a long cart,
+ * moving between screens, and browsing Settings. Elements are found by the app's UiTestTags (see UiTags), never by
  * visible text, so the journeys don't depend on locale or copy.
  */
 
@@ -37,6 +37,10 @@ private const val GESTURE_STEPS = 20
 private const val FLING_MARGIN_DIVISOR = 10
 private const val MAX_BACK_PRESSES = 3
 private const val MAX_DESCRIBED_VALUES = 40
+
+// Enough cart rows to fill a few screens, each priced at CART_ROW_PRICE.
+private const val CART_ROWS = 30
+private const val CART_ROW_PRICE = "12"
 
 /** Cold path to the converter: launch, clear onboarding if shown, wait for the keypad. */
 internal fun MacrobenchmarkScope.launchToConverter() {
@@ -91,6 +95,63 @@ internal fun MacrobenchmarkScope.visitFromDrawer(entryTag: String) {
     device.pressBack()
     awaitConverter()
 }
+
+/**
+ * Opens the cart from the drawer, filling it with CART_ROWS rows when it's
+ * empty (a price typed on each, then the keypad's Next for a new row), and
+ * leaves it open with the keypad closed. The rows stay for later runs.
+ */
+internal fun MacrobenchmarkScope.openCartWithRows() {
+    openFromDrawer(UiTags.DRAWER_CART)
+    awaitTag(UiTags.CART_LIST, "cart")
+    val add = device.findObject(By.res(UiTags.CART_ADD)) ?: return
+    add.click()
+    repeat(CART_ROWS) {
+        awaitTag(UiTags.CART_NEXT, "cart keypad")
+        CART_ROW_PRICE.forEach { digit -> device.findObject(By.res(UiTags.key(digit))).click() }
+        device.findObject(By.res(UiTags.CART_NEXT)).click()
+    }
+    backUntilGone(UiTags.CART_NEXT)
+}
+
+/** Flings the open cart's list down to its end and back up. */
+internal fun MacrobenchmarkScope.scrollCart() {
+    val list = awaitTag(UiTags.CART_LIST, "cart")
+    list.setGestureMargin(device.displayWidth / FLING_MARGIN_DIVISOR)
+    repeat(2) { list.fling(Direction.DOWN) }
+    repeat(2) { list.fling(Direction.UP) }
+    device.waitForIdle()
+}
+
+/** Back from the screen on top to the converter. */
+internal fun MacrobenchmarkScope.backToConverter() {
+    device.pressBack()
+    awaitConverter()
+}
+
+/** Opens Settings from the drawer, then each category's screen and back, then back to the converter. */
+internal fun MacrobenchmarkScope.browseSettings() {
+    openFromDrawer(UiTags.DRAWER_SETTINGS)
+    UiTags.SETTINGS_TOPICS.forEach { topic ->
+        awaitTag(topic, "Settings").click()
+        check(device.wait(Until.gone(By.res(topic)), UI_TIMEOUT_MS)) { "$topic never opened — ${describeScreen()}" }
+        device.waitForIdle()
+        device.pressBack()
+    }
+    awaitTag(UiTags.SETTINGS_TOPICS.first(), "Settings")
+    device.pressBack()
+    awaitConverter()
+}
+
+private fun MacrobenchmarkScope.openFromDrawer(entryTag: String) {
+    openDrawer()
+    awaitTag(entryTag, "drawer").click()
+}
+
+private fun MacrobenchmarkScope.awaitTag(
+    tag: String,
+    where: String,
+) = checkNotNull(device.wait(Until.findObject(By.res(tag)), UI_TIMEOUT_MS)) { "$tag never appeared in the $where — ${describeScreen()}" }
 
 private fun MacrobenchmarkScope.awaitConverter() {
     check(device.wait(Until.hasObject(By.res(UiTags.KEY_DELETE)), UI_TIMEOUT_MS)) {

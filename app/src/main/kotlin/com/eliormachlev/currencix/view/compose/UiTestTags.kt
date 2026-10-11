@@ -15,6 +15,12 @@ object UiTestTags {
     const val PILL_TO = "pill_to"
     const val ONBOARDING_SKIP = "onboarding_skip"
     const val CURRENCY_LIST = "currency_list"
+    const val CART_LIST = "cart_list"
+    const val CART_ADD = "cart_add"
+    const val CART_NEXT = "cart_next"
+
+    /** A row of Settings' category list, e.g. `settings_appearance`. */
+    fun settingsTopic(name: String): String = "settings_${name.lowercase()}"
 
     /** Keypad digit / decimal key, e.g. `key_7`. */
     fun key(label: String): String = "key_$label"

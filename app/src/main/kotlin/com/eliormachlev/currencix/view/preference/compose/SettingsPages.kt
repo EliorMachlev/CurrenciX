@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.net.toUri
@@ -24,6 +25,7 @@ import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.util.fastestMode
 import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
@@ -120,6 +122,7 @@ private fun TopicRow(
         summary = stringResource(topic.summaryRes),
         iconRes = topic.iconRes,
         onClick = { page.callbacks.onOpen(Screen.SettingsPage(topic)) },
+        modifier = Modifier.testTag(UiTestTags.settingsTopic(topic.name)),
     )
 }
 

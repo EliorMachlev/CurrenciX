@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
@@ -25,6 +26,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LedgerSectionHeader
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.onBackgroundTap
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.cart.RowConversion
@@ -157,6 +159,7 @@ fun CartItemsList(
             modifier =
                 Modifier
                     .fillMaxSize()
+                    .testTag(UiTestTags.CART_LIST)
                     .onBackgroundTap(onBackgroundTap),
             contentPadding = LIST_PADDING,
         ) {

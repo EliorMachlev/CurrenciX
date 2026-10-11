@@ -34,6 +34,9 @@ internal object Motion {
     /** One-off flourish — the launch wordmark. */
     const val LONG_MILLIS = 320
 
+    /** A line drawing itself across a chart. */
+    const val DRAW_MILLIS = 600
+
     // Slight overshoot (~1–2%) — lively on a rotation, invisible on a fade.
     private const val SNAPPY_DAMPING = 0.8f
 
@@ -46,6 +49,9 @@ internal object Motion {
 
     /** Standard entrance: decelerating, medium length. */
     fun <T> enter(): TweenSpec<T> = tween(MEDIUM_MILLIS, easing = FastOutSlowInEasing)
+
+    /** A chart's line drawing itself in: long, decelerating. */
+    fun <T> draw(): TweenSpec<T> = tween(DRAW_MILLIS, easing = FastOutSlowInEasing)
 
     /** One-off flourish: long, decelerating. */
     fun <T> flourish(): TweenSpec<T> = tween(LONG_MILLIS, easing = LinearOutSlowInEasing)

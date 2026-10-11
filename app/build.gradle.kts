@@ -450,3 +450,9 @@ fun generateVersionCode(semVer: String): Int =
         .split('.')
         .map { Integer.parseInt(it) }
         .reduce { sum, value -> sum * 100 + value }
+
+// JDK value types (BigDecimal, java.time) count as stable, so composables
+// taking rates and dates can skip recomposing (see compose-stability.conf).
+composeCompiler {
+    stabilityConfigurationFiles.add(layout.projectDirectory.file("compose-stability.conf"))
+}

@@ -54,6 +54,22 @@ class InteractionBenchmarks(
     fun currencyPickerScroll() = measureFrames { scrollCurrencyPicker() }
 
     @Test
+    fun cartScroll() =
+        rule.measureRepeated(
+            packageName = targetPackage(),
+            metrics = listOf(FrameTimingMetric()),
+            compilationMode = compilationMode,
+            iterations = ITERATIONS,
+            setupBlock = {
+                launchToConverter()
+                openCartWithRows()
+            },
+        ) { scrollCart() }
+
+    @Test
+    fun settingsBrowse() = measureFrames { browseSettings() }
+
+    @Test
     fun screenTransitions() =
         measureFrames {
             visitFromDrawer(UiTags.DRAWER_TIMELINE)

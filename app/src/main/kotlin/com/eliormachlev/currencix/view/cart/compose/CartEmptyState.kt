@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private val EMPTY_ICON_CIRCLE = 72.dp
@@ -87,7 +89,10 @@ fun CartEmptyState(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
-        FilledTonalButton(onClick = rememberHapticOnClick(onAddItem), modifier = Modifier.padding(top = Spacing.Small)) {
+        FilledTonalButton(
+            onClick = rememberHapticOnClick(onAddItem),
+            modifier = Modifier.padding(top = Spacing.Small).testTag(UiTestTags.CART_ADD),
+        ) {
             AddLabel(stringResource(R.string.cart_add_first_item))
         }
     }

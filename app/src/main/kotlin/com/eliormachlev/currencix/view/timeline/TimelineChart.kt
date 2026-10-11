@@ -1,5 +1,7 @@
 package com.eliormachlev.currencix.view.timeline
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,21 +12,31 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
@@ -102,7 +114,11 @@ fun TimelineChart(
     val highlightPeriodChange by prefs.highlightPeriodChange.observeAsState(initial = true)
     val dateFormat by prefs.dateFormat.observeAsState(initial = DEFAULT_DATE_FORMAT)
 
-    val data = entries.orEmpty()
+    // At most two points a pair of pixels (thinForWidth): five years' days
+    // drawn and scrubbed as a few hundred, every peak and trough kept.
+    val all = entries.orEmpty()
+    var width by remember { mutableIntStateOf(0) }
+    val data = remember(all, width) { thinForWidth(all, width / PIXELS_PER_BUCKET) { it.second } }
     val scrub = rememberScrub(data, onScrub)
     val periodChanges = rememberPeriodChanges(data, highlightPeriodChange)
     val decorations =
@@ -114,13 +130,52 @@ fun TimelineChart(
             if (highlightExtremes) addExtremeLines(highlightMin, highlightMax, colors.line)
         }
 
-    ChartHost(
-        data = data,
-        axes = rememberAxes(data, prefs, colors.axis, dateFormat, periodChanges),
-        scrub = scrub,
-        marker = rememberScrubMarker(data, dateFormat),
-        line = ChartLine(colors.line, rememberRangeProvider(data), decorations),
-    )
+    // Measured before the chart is first drawn, so it's never handed the
+    // whole series only to be redrawn thinned a frame later.
+    Box(Modifier.fillMaxSize().onSizeChanged { width = it.width }) {
+        if (width > 0) {
+            ChartHost(
+                data = data,
+                axes = rememberAxes(data, prefs, colors.axis, dateFormat, periodChanges),
+                scrub = scrub,
+                marker = rememberScrubMarker(data, dateFormat),
+                line = ChartLine(colors.line, rememberRangeProvider(data), decorations),
+            )
+        }
+    }
+}
+
+// Two points (a bucket's low and high) to each pair of pixels.
+private const val PIXELS_PER_BUCKET = 2
+
+/**
+ * Draws the chart in from the start edge whenever a different stretch of
+ * history arrives (a new pair or period: its first day or its length
+ * changes), not when a refresh only updates values.
+ */
+@Composable
+private fun Modifier.drawIn(data: ChartPoints): Modifier {
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(data.firstOrNull()?.first, data.size) {
+        if (data.isEmpty()) return@LaunchedEffect
+        progress.snapTo(0f)
+        progress.animateTo(1f, Motion.draw())
+    }
+    return graphicsLayer {
+        clip = true
+        shape = RevealShape(progress.value)
+    }
+}
+
+// The part of the chart drawn so far: its first [fraction] of width.
+private class RevealShape(
+    private val fraction: Float,
+) : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline = Outline.Rectangle(Rect(0f, 0f, size.width * fraction, size.height))
 }
 
 // The plotted line: its color, the y-range it is drawn in, and what is drawn around it.
@@ -167,6 +222,7 @@ private fun ChartHost(
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .drawIn(data)
                         .semantics { contentDescription = chartSummary },
                 chart =
                     rememberCartesianChart(
