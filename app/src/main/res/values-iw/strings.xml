@@ -36,7 +36,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">השער האחרון ומגמה של 30 יום לצמד המטבעות האחרון שבו השתמשת, או לצמד שבחרת.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">נכון לתאריך %s</string>
     <string name="widget_footer_empty">יש לפתוח את האפליקציה כדי לטעון שערים.</string>
     <string name="widget_no_rate">השער אינו זמין</string>
@@ -206,4 +205,26 @@
     <string name="paste_amount">הדבקת סכום</string>
     <string name="paste_no_amount">אין סכום בלוח</string>
     <string name="tile_label">שער חליפין</string>
+    <string name="alert_sheet_title">התראת שער</string>
+    <string name="alert_sheet_confirm">הגדרת התראה</string>
+    <string name="alert_sheet_label">1 %1$s ב־%2$s</string>
+    <string name="alert_sheet_now">עכשיו: %1$s</string>
+    <string name="alert_sheet_above">תקבלו התראה כש־1 %1$s יהיה %2$s %3$s או יותר.</string>
+    <string name="alert_sheet_below">תקבלו התראה כש־1 %1$s יהיה %2$s %3$s או פחות.</string>
+    <string name="alert_sheet_background">השערים נבדקים ברקע, ולכן זה מפעיל רענון ברקע.</string>
+    <string name="alert_set">התראת השער הוגדרה</string>
+    <string name="alert_notifications_off">ההתראות כבויות, ולכן ההתראה לא תגיע אליכם. הפעילו אותן בהגדרות המערכת.</string>
+    <string name="alerts_title">התראות שער</string>
+    <string name="alerts_summary">הגדירו מהגרף או מצמד אחרון</string>
+    <string name="alerts_empty">אין עדיין התראות. הגדירו אחת עם הפעמון שבגרף, או לחיצה ארוכה על צמד אחרון.</string>
+    <string name="alert_row_above">%1$s או יותר</string>
+    <string name="alert_row_below">%1$s או פחות</string>
+    <string name="alert_delete">מחיקת התראה</string>
+    <string name="alert_menu">התראת שער</string>
+    <string name="recent_pair_options">אפשרויות הצמד</string>
+    <string name="alert_channel_name">התראות שער</string>
+    <string name="alert_notification_title">%1$s → %2$s עומד על %3$s</string>
+    <string name="alert_notification_above">ביקשתם לדעת כש־1 %1$s יהיה %2$s %3$s או יותר.</string>
+    <string name="alert_notification_below">ביקשתם לדעת כש־1 %1$s יהיה %2$s %3$s או פחות.</string>
+    <string name="widget_amount_desc">המרה של %1$s; הקישו לסכום אחר</string>
 </resources>

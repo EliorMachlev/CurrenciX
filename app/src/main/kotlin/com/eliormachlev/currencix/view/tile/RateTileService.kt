@@ -1,8 +1,7 @@
 package com.eliormachlev.currencix.view.tile
 
-import android.app.PendingIntent
-import android.content.Intent
-import android.os.Build
+import android.content.ComponentName
+import android.content.Context
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import com.eliormachlev.currencix.R
@@ -12,7 +11,7 @@ import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
-import com.eliormachlev.currencix.view.main.ConverterLaunch
+import com.eliormachlev.currencix.worker.RateRefreshScheduler
 import java.math.BigDecimal
 
 // Rates have more places than prices: four shows a move of 0.01%.
@@ -20,9 +19,10 @@ private const val TILE_RATE_DECIMALS = 4
 
 /**
  * A Quick Settings tile with the converter's pair and its rate ("USD → ILS",
- * "3.6512"), from the rates already on the phone. A tap opens the converter
- * on Android 14+, a long-press on every version. Nothing is fetched here: the
- * tile shows what the app last got.
+ * "3.6512"), from the rates on the phone. A tap fetches fresh rates (in the
+ * background, like the scheduled refresh) and the tile redraws when they
+ * arrive; a long-press opens the app, through the manifest's
+ * QS_TILE_PREFERENCES filter.
  */
 class RateTileService : TileService() {
     override fun onStartListening() {
@@ -30,20 +30,12 @@ class RateTileService : TileService() {
         refresh()
     }
 
-    // Android 14+: opens the converter. Android 13 can only open an app from
-    // a tile tap through a call that's deprecated from 14, so there a tap
-    // just redraws the tile, and a long-press (on every version) opens the
-    // app through the manifest's QS_TILE_PREFERENCES filter.
     override fun onClick() {
         super.onClick()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val intent = ConverterLaunch.openConverter(this).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivityAndCollapse(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE))
-        } else {
-            refresh()
-        }
+        RateRefreshScheduler.refreshNow(applicationContext)
     }
 
+    // Redraws the tile from the stored rates.
     private fun refresh() {
         val tile = qsTile ?: return
         val db = Database(applicationContext)
@@ -56,6 +48,11 @@ class RateTileService : TileService() {
         tile.contentDescription = listOfNotNull(label, tile.subtitle).joinToString(" ")
         tile.state = if (rate == null) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
         tile.updateTile()
+    }
+
+    companion object {
+        /** Asks the system to redraw the tile (after new rates); a no-op when it isn't in Quick Settings. */
+        fun requestRedraw(context: Context) = requestListeningState(context, ComponentName(context, RateTileService::class.java))
     }
 }
 

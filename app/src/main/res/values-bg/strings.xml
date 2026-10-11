@@ -30,7 +30,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Последен курс и 30-дневна тенденция за последно използваната валутна двойка или избрана от вас.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Към %s</string>
     <string name="widget_footer_empty">Отворете приложението, за да заредите курсовете.</string>
     <string name="widget_no_rate">Курсът е недостъпен</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">Постави сума</string>
     <string name="paste_no_amount">Няма сума в клипборда</string>
     <string name="tile_label">Обменен курс</string>
+    <string name="alert_sheet_title">Известие за курс</string>
+    <string name="alert_sheet_confirm">Задай известие</string>
+    <string name="alert_sheet_label">1 %1$s в %2$s</string>
+    <string name="alert_sheet_now">Сега: %1$s</string>
+    <string name="alert_sheet_above">Ще получите известие, когато 1 %1$s е %2$s %3$s или повече.</string>
+    <string name="alert_sheet_below">Ще получите известие, когато 1 %1$s е %2$s %3$s или по-малко.</string>
+    <string name="alert_sheet_background">Курсовете се проверяват във фонов режим, затова това включва фоновото обновяване.</string>
+    <string name="alert_set">Известието е зададено</string>
+    <string name="alert_notifications_off">Известията са изключени, така че няма да го получите. Включете ги от системните настройки.</string>
+    <string name="alerts_title">Известия за курс</string>
+    <string name="alerts_summary">Задайте от графиката или от скорошна двойка</string>
+    <string name="alerts_empty">Още няма известия. Задайте с камбанката на графиката или задръжте скорошна двойка.</string>
+    <string name="alert_row_above">%1$s или повече</string>
+    <string name="alert_row_below">%1$s или по-малко</string>
+    <string name="alert_delete">Изтрий известието</string>
+    <string name="alert_menu">Известие за курс</string>
+    <string name="recent_pair_options">Опции за двойката</string>
+    <string name="alert_channel_name">Известия за курс</string>
+    <string name="alert_notification_title">%1$s → %2$s е %3$s</string>
+    <string name="alert_notification_above">Поискахте известие, когато 1 %1$s е %2$s %3$s или повече.</string>
+    <string name="alert_notification_below">Поискахте известие, когато 1 %1$s е %2$s %3$s или по-малко.</string>
+    <string name="widget_amount_desc">Обмен на %1$s; докоснете за друга сума</string>
 </resources>

@@ -38,7 +38,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Senaste kurs och 30-dagarstrend för ditt senast använda valutapar eller ett du väljer.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Per %s</string>
     <string name="widget_footer_empty">Öppna appen för att läsa in kurser.</string>
     <string name="widget_no_rate">Kurs ej tillgänglig</string>
@@ -206,4 +205,26 @@
     <string name="paste_amount">Klistra in belopp</string>
     <string name="paste_no_amount">Inget belopp i urklipp</string>
     <string name="tile_label">Växelkurs</string>
+    <string name="alert_sheet_title">Kursbevakning</string>
+    <string name="alert_sheet_confirm">Skapa bevakning</string>
+    <string name="alert_sheet_label">1 %1$s i %2$s</string>
+    <string name="alert_sheet_now">Nu: %1$s</string>
+    <string name="alert_sheet_above">Du får en avisering när 1 %1$s är %2$s %3$s eller mer.</string>
+    <string name="alert_sheet_below">Du får en avisering när 1 %1$s är %2$s %3$s eller mindre.</string>
+    <string name="alert_sheet_background">Kurserna kontrolleras i bakgrunden, så det här slår på bakgrundsuppdatering.</string>
+    <string name="alert_set">Kursbevakning skapad</string>
+    <string name="alert_notifications_off">Aviseringar är avstängda, så bevakningen når dig inte. Slå på dem i systeminställningarna.</string>
+    <string name="alerts_title">Kursbevakningar</string>
+    <string name="alerts_summary">Skapa en från kursutvecklingen eller ett nyligt par</string>
+    <string name="alerts_empty">Inga bevakningar än. Skapa en med klockan i kursutvecklingen eller håll på ett nyligt par.</string>
+    <string name="alert_row_above">%1$s eller mer</string>
+    <string name="alert_row_below">%1$s eller mindre</string>
+    <string name="alert_delete">Ta bort bevakning</string>
+    <string name="alert_menu">Kursbevakning</string>
+    <string name="recent_pair_options">Alternativ för par</string>
+    <string name="alert_channel_name">Kursbevakningar</string>
+    <string name="alert_notification_title">%1$s → %2$s ligger på %3$s</string>
+    <string name="alert_notification_above">Du ville veta när 1 %1$s är %2$s %3$s eller mer.</string>
+    <string name="alert_notification_below">Du ville veta när 1 %1$s är %2$s %3$s eller mindre.</string>
+    <string name="widget_amount_desc">Räkna om %1$s; tryck för ett annat belopp</string>
 </resources>

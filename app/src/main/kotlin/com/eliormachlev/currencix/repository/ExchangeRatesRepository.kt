@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.alert.checkRateAlerts
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
@@ -124,7 +125,7 @@ class ExchangeRatesRepository(
                     fetchRates(fresh = false).processResponse(
                         successFlag = { success },
                         errorMessage = { error },
-                        onSuccess = { db.rates.insertExchangeRates(it) },
+                        onSuccess = ::store,
                     )
                 }
         }
@@ -143,7 +144,13 @@ class ExchangeRatesRepository(
      * with no UI visible, and the spinner in the hero card would flash on
      * next foregrounding for no user-facing reason.
      */
-    suspend fun refreshLatestRates(): Result<ExchangeRates> = fetchRates(fresh = true).onSuccess { db.rates.insertExchangeRates(it) }
+    suspend fun refreshLatestRates(): Result<ExchangeRates> = fetchRates(fresh = true).onSuccess(::store)
+
+    // New rates kept for the app and the widget, then checked against the rate alerts.
+    private fun store(rates: ExchangeRates) {
+        db.rates.insertExchangeRates(rates)
+        checkRateAlerts(context, db, rates)
+    }
 
     // The main provider's rates; if it fails while online, the fallback's
     // (Database.getFallbackProvider), marked with the main provider they

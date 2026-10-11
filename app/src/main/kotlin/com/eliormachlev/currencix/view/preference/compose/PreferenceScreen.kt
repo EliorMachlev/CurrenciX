@@ -36,6 +36,7 @@ import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.releaseNotesUrl
+import com.eliormachlev.currencix.view.alert.RateAlertsSheet
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -76,6 +77,8 @@ private sealed interface OpenDialog {
     data object GraphOptions : OpenDialog
 
     data object Credits : OpenDialog
+
+    data object RateAlerts : OpenDialog
 }
 
 /**
@@ -281,6 +284,10 @@ private fun PreferenceDialogsHost(
             CreditsSheet(onDismiss = dismiss)
         }
 
+        OpenDialog.RateAlerts -> {
+            RateAlertsSheet(onDismiss = dismiss)
+        }
+
         OpenDialog.ApiKey -> {
             ApiKeySheet(apiKey = values.api.apiKey, dismiss = dismiss, viewModel = viewModel)
         }
@@ -434,6 +441,13 @@ private fun ApiSection(
             iconRes = R.drawable.ic_schedule,
             checked = values.autoRefreshEnabled,
             onCheckedChange = onAutoRefreshChange,
+        )
+        // Checked when rates arrive, so beside the refresh they ride on.
+        PreferenceRow(
+            title = stringResource(id = R.string.alerts_title),
+            summary = stringResource(id = R.string.alerts_summary),
+            iconRes = R.drawable.ic_alert,
+            onClick = { onOpenDialog(OpenDialog.RateAlerts) },
         )
     }
 }

@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">van %1$s op %2$s naar %3$s op %4$s</string>
     <string name="timeline_a11y_high">hoogste %1$s op %2$s</string>
     <string name="timeline_a11y_low">laagste %1$s op %2$s</string>
+    <string name="timeline_alert_at">Melding bij %1$s</string>
 </resources>

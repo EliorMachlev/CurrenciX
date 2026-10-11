@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">de %1$s je %2$s ĝis %3$s je %4$s</string>
     <string name="timeline_a11y_high">maksimumo %1$s je %2$s</string>
     <string name="timeline_a11y_low">minimumo %1$s je %2$s</string>
+    <string name="timeline_alert_at">Averto je %1$s</string>
 </resources>

@@ -33,7 +33,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Lasta kurzo kaj 30-taga tendenco por via laste uzita valutparo, aŭ unu, kiun vi elektas.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Aktuala je %s</string>
     <string name="widget_footer_empty">Malfermu la aplikaĵon por ŝargi kurzojn.</string>
     <string name="widget_no_rate">Kurzo nedisponebla</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">Alglui sumon</string>
     <string name="paste_no_amount">Neniu sumo en la tondujo</string>
     <string name="tile_label">Kurzo</string>
+    <string name="alert_sheet_title">Kurza averto</string>
+    <string name="alert_sheet_confirm">Agordi averton</string>
+    <string name="alert_sheet_label">1 %1$s en %2$s</string>
+    <string name="alert_sheet_now">Nun: %1$s</string>
+    <string name="alert_sheet_above">Vi ricevos sciigon kiam 1 %1$s valoros %2$s %3$s aŭ pli.</string>
+    <string name="alert_sheet_below">Vi ricevos sciigon kiam 1 %1$s valoros %2$s %3$s aŭ malpli.</string>
+    <string name="alert_sheet_background">Kurzoj estas kontrolataj fone, do ĉi tio ŝaltas fonan ĝisdatigon.</string>
+    <string name="alert_set">Averto agordita</string>
+    <string name="alert_notifications_off">Sciigoj estas malŝaltitaj, do la averto ne atingos vin. Ŝaltu ilin en la sistemaj agordoj.</string>
+    <string name="alerts_title">Kurzaj avertoj</string>
+    <string name="alerts_summary">Agordu el la tempolinio aŭ el lastatempa paro</string>
+    <string name="alerts_empty">Ankoraŭ neniu averto. Agordu per la sonorilo de la tempolinio, aŭ longe premu lastatempan paron.</string>
+    <string name="alert_row_above">%1$s aŭ pli</string>
+    <string name="alert_row_below">%1$s aŭ malpli</string>
+    <string name="alert_delete">Forigi averton</string>
+    <string name="alert_menu">Kurza averto</string>
+    <string name="recent_pair_options">Opcioj de paro</string>
+    <string name="alert_channel_name">Kurzaj avertoj</string>
+    <string name="alert_notification_title">%1$s → %2$s estas %3$s</string>
+    <string name="alert_notification_above">Vi petis sciigon kiam 1 %1$s valoros %2$s %3$s aŭ pli.</string>
+    <string name="alert_notification_below">Vi petis sciigon kiam 1 %1$s valoros %2$s %3$s aŭ malpli.</string>
+    <string name="widget_amount_desc">Konverti %1$s; tuŝu por alia sumo</string>
 </resources>

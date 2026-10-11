@@ -37,7 +37,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Najnowszy kurs i 30-dniowy trend ostatnio używanej pary walut lub wybranej przez Ciebie.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Stan na %s</string>
     <string name="widget_footer_empty">Otwórz aplikację, aby pobrać kursy.</string>
     <string name="widget_no_rate">Kurs niedostępny</string>
@@ -207,4 +206,26 @@
     <string name="paste_amount">Wklej kwotę</string>
     <string name="paste_no_amount">Brak kwoty w schowku</string>
     <string name="tile_label">Kurs wymiany</string>
+    <string name="alert_sheet_title">Alert kursu</string>
+    <string name="alert_sheet_confirm">Ustaw alert</string>
+    <string name="alert_sheet_label">1 %1$s w %2$s</string>
+    <string name="alert_sheet_now">Teraz: %1$s</string>
+    <string name="alert_sheet_above">Dostaniesz powiadomienie, gdy 1 %1$s będzie kosztować %2$s %3$s lub więcej.</string>
+    <string name="alert_sheet_below">Dostaniesz powiadomienie, gdy 1 %1$s będzie kosztować %2$s %3$s lub mniej.</string>
+    <string name="alert_sheet_background">Kursy są sprawdzane w tle, więc to włączy odświeżanie w tle.</string>
+    <string name="alert_set">Alert ustawiony</string>
+    <string name="alert_notifications_off">Powiadomienia są wyłączone, więc alert do Ciebie nie dotrze. Włącz je w ustawieniach systemu.</string>
+    <string name="alerts_title">Alerty kursu</string>
+    <string name="alerts_summary">Ustaw z wykresu lub z ostatniej pary</string>
+    <string name="alerts_empty">Brak alertów. Ustaw alert dzwonkiem na wykresie albo przytrzymaj ostatnią parę.</string>
+    <string name="alert_row_above">%1$s lub więcej</string>
+    <string name="alert_row_below">%1$s lub mniej</string>
+    <string name="alert_delete">Usuń alert</string>
+    <string name="alert_menu">Alert kursu</string>
+    <string name="recent_pair_options">Opcje pary</string>
+    <string name="alert_channel_name">Alerty kursu</string>
+    <string name="alert_notification_title">%1$s → %2$s wynosi %3$s</string>
+    <string name="alert_notification_above">Chciałeś wiedzieć, gdy 1 %1$s będzie kosztować %2$s %3$s lub więcej.</string>
+    <string name="alert_notification_below">Chciałeś wiedzieć, gdy 1 %1$s będzie kosztować %2$s %3$s lub mniej.</string>
+    <string name="widget_amount_desc">Przelicz %1$s; dotknij, aby zmienić kwotę</string>
 </resources>

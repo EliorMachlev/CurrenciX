@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">từ %1$s ngày %2$s đến %3$s ngày %4$s</string>
     <string name="timeline_a11y_high">cao nhất %1$s ngày %2$s</string>
     <string name="timeline_a11y_low">thấp nhất %1$s ngày %2$s</string>
+    <string name="timeline_alert_at">Cảnh báo ở %1$s</string>
 </resources>

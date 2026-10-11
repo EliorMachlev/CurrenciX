@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">von %1$s am %2$s auf %3$s am %4$s</string>
     <string name="timeline_a11y_high">Höchstwert %1$s am %2$s</string>
     <string name="timeline_a11y_low">Tiefstwert %1$s am %2$s</string>
+    <string name="timeline_alert_at">Alarm bei %1$s</string>
 </resources>

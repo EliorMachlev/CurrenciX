@@ -11,7 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -19,16 +21,22 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
+import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
@@ -36,6 +44,8 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.semantics.contentDescription
+import androidx.glance.semantics.semantics
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -48,6 +58,7 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.roundForDisplay
+import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.ConverterLaunch
 import com.eliormachlev.currencix.view.main.formatRatesTimestamp
@@ -60,15 +71,22 @@ import java.time.LocalDate
 
 private const val WIDGET_DISPLAY_SCALE = 4
 
+// Amounts above one are prices, shown with cents.
+private const val WIDGET_AMOUNT_SCALE = 2
+
 private val WIDGET_PADDING = Spacing.Medium
 private val RATE_FONT_SIZE = 18.sp
 private val FOOTER_FONT_SIZE = 11.sp
+private val BUTTON_SIZE = 32.dp
+private val BUTTON_ICON_SIZE = 18.dp
+private val BUTTON_FONT_SIZE = 12.sp
 
 /**
  * Home-screen widget rendering a pair — the converter's last-used one, or its
  * own ([WidgetPairState], set in [WidgetConfigureActivity]) — its cached
- * rate, and on wider widgets a 30-day trend line. Tapping opens the
- * converter on that pair. Backed by the same DataStore namespaces the app
+ * rate for one of [WidgetAmounts] (cycled by a button, per widget), a swap
+ * button, and on wider widgets a 30-day trend line. Tapping the rate opens
+ * the converter on that pair and amount. Backed by the same DataStore namespaces the app
  * writes to (rates + last_state) via PersistenceKey, so there's no separate
  * widget data source. Refresh happens on the AppWidget update tick (see
  * currency_widget_info.xml) and via [WidgetRefreshBus], which the repository
@@ -143,6 +161,9 @@ internal object WidgetPairState {
     val FROM = stringPreferencesKey("from")
     val TO = stringPreferencesKey("to")
 
+    /** Which of [WidgetAmounts.PRESETS] the widget converts; the first when unset. */
+    val AMOUNT_INDEX = intPreferencesKey("amount_index")
+
     /** The pair a widget with [state] shows; null before any pair exists. */
     fun resolve(
         state: Preferences,
@@ -204,9 +225,12 @@ private fun WidgetContent(
     state: Preferences,
 ) {
     val pair = WidgetPairState.resolve(state, db)
+    val amount = WidgetAmounts.at(state[WidgetPairState.AMOUNT_INDEX])
     val wide = LocalSize.current.width >= WIDE_SIZE.width
-    val snapshot = readSnapshot(context, db, pair, withTrend = wide)
-    val launch = pair?.let { ConverterLaunch.convert(context, it.from, it.to) } ?: ConverterLaunch.openConverter(context)
+    val snapshot = readSnapshot(context, db, pair, amount, withTrend = wide)
+    val launch =
+        pair?.let { ConverterLaunch.convert(context, it.from, it.to, amount.takeIf { a -> a > BigDecimal.ONE }) }
+            ?: ConverterLaunch.openConverter(context)
     WidgetBody(snapshot = snapshot, launchIntent = launch)
 }
 
@@ -222,11 +246,10 @@ private fun WidgetBody(
                 GlanceModifier
                     .fillMaxSize()
                     .background(imageProvider = ImageProvider(R.drawable.widget_background))
-                    .clickable(actionStartActivity(launchIntent))
                     .padding(WIDGET_PADDING),
             verticalAlignment = Alignment.Vertical.CenterVertically,
         ) {
-            Column(modifier = GlanceModifier.defaultWeight()) {
+            Column(modifier = GlanceModifier.defaultWeight().clickable(actionStartActivity(launchIntent))) {
                 Text(
                     text = snapshot.rateLine(context),
                     maxLines = 1,
@@ -255,7 +278,48 @@ private fun WidgetBody(
                     modifier = GlanceModifier.size(SPARKLINE_WIDTH, SPARKLINE_HEIGHT),
                 )
             }
+            if (snapshot.pair != null) WidgetButtons(snapshot.amount)
         }
+    }
+}
+
+// "×100" (the next amount on a tap) and ⇄ (swap the pair), at the end.
+@Composable
+private fun WidgetButtons(amount: BigDecimal) {
+    val context = LocalContext.current
+    val label = WidgetAmounts.label(amount)
+    Spacer(GlanceModifier.width(Spacing.Small))
+    Box(
+        modifier =
+            GlanceModifier
+                .size(BUTTON_SIZE)
+                .cornerRadius(BUTTON_SIZE / 2)
+                .background(GlanceTheme.colors.secondaryContainer)
+                .clickable(actionRunCallback<CycleWidgetAmount>()),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = label,
+            style = TextStyle(color = GlanceTheme.colors.onSecondaryContainer, fontSize = BUTTON_FONT_SIZE, fontWeight = FontWeight.Bold),
+            modifier = GlanceModifier.semantics { contentDescription = context.getString(R.string.widget_amount_desc, label) },
+        )
+    }
+    Spacer(GlanceModifier.width(Spacing.Tiny))
+    Box(
+        modifier =
+            GlanceModifier
+                .size(BUTTON_SIZE)
+                .cornerRadius(BUTTON_SIZE / 2)
+                .background(GlanceTheme.colors.secondaryContainer)
+                .clickable(actionRunCallback<SwapWidgetPair>()),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            provider = ImageProvider(R.drawable.ic_swap_horiz),
+            contentDescription = context.getString(R.string.desc_toggle_currencies),
+            colorFilter = ColorFilter.tint(GlanceTheme.colors.onSecondaryContainer),
+            modifier = GlanceModifier.size(BUTTON_ICON_SIZE),
+        )
     }
 }
 
@@ -263,11 +327,13 @@ private fun readSnapshot(
     context: Context,
     db: Database,
     pair: CurrencyPair?,
+    amount: BigDecimal,
     withTrend: Boolean,
 ): WidgetSnapshot {
     val rates = db.rates.getExchangeRatesBlocking()
+    val scale = if (amount > BigDecimal.ONE) WIDGET_AMOUNT_SCALE else WIDGET_DISPLAY_SCALE
     val converted =
-        pair?.let { rates?.convert(BigDecimal.ONE, it.from, it.to) }?.roundForDisplay(WIDGET_DISPLAY_SCALE)
+        pair?.let { rates?.convert(amount, it.from, it.to) }?.roundForDisplay(scale)?.toHumanReadableNumber(context, decimalPlaces = scale)
     val trend =
         if (withTrend && pair != null) {
             trendBitmap(
@@ -279,6 +345,7 @@ private fun readSnapshot(
         }
     return WidgetSnapshot(
         pair = pair,
+        amount = amount,
         converted = converted,
         date = formatRatesTimestamp(db.display.dateFormat.get(), rates?.date, rates?.time),
         hasAnyCachedRate = rates != null,
@@ -306,7 +373,9 @@ private fun trendBitmap(
 
 private data class WidgetSnapshot(
     val pair: CurrencyPair?,
-    val converted: BigDecimal?,
+    val amount: BigDecimal,
+    // Already formatted for the locale ("1,234.50").
+    val converted: String?,
     val date: String?,
     val hasAnyCachedRate: Boolean,
     val trend: Bitmap?,
@@ -314,9 +383,10 @@ private data class WidgetSnapshot(
     fun rateLine(context: Context): String =
         if (pair != null && converted != null) {
             context.getString(
-                R.string.widget_rate_line,
+                R.string.widget_amount_line,
+                amount.toHumanReadableNumber(context, decimalPlaces = 0),
                 pair.from.iso4217Alpha(),
-                converted.toPlainString(),
+                converted,
                 pair.to.iso4217Alpha(),
             )
         } else {
@@ -329,4 +399,61 @@ private data class WidgetSnapshot(
             hasAnyCachedRate -> context.getString(R.string.widget_no_rate)
             else -> context.getString(R.string.widget_footer_empty)
         }
+}
+
+/** The amounts the widget's button steps through: 1, 10, 100, 1,000, then 1 again. */
+internal object WidgetAmounts {
+    val PRESETS: List<BigDecimal> = listOf(1, 10, 100, 1000).map(::BigDecimal)
+    private val THOUSAND = BigDecimal(1000)
+
+    /** The preset at [index] (wrapping); the first for null. */
+    fun at(index: Int?): BigDecimal = PRESETS[Math.floorMod(index ?: 0, PRESETS.size)]
+
+    /** The index after [index]. */
+    fun next(index: Int?): Int = Math.floorMod((index ?: 0) + 1, PRESETS.size)
+
+    /** "×1", "×10", "×100", "×1K": short enough for the round button. */
+    fun label(amount: BigDecimal): String =
+        if (amount >=
+            THOUSAND
+        ) {
+            "×${amount.divide(THOUSAND).toPlainString()}K"
+        } else {
+            "×${amount.toPlainString()}"
+        }
+}
+
+/** The amount button: the widget converts the next of [WidgetAmounts]. */
+internal class CycleWidgetAmount : ActionCallback {
+    override suspend fun onAction(
+        context: Context,
+        glanceId: GlanceId,
+        parameters: ActionParameters,
+    ) {
+        updateAppWidgetState(context, glanceId) { state ->
+            state[WidgetPairState.AMOUNT_INDEX] = WidgetAmounts.next(state[WidgetPairState.AMOUNT_INDEX])
+        }
+        CurrencyGlanceWidget.update(context, glanceId)
+    }
+}
+
+/**
+ * The swap button: the widget shows its pair the other way round, as a pair
+ * of its own from then on (the converter's pair is left alone).
+ */
+internal class SwapWidgetPair : ActionCallback {
+    override suspend fun onAction(
+        context: Context,
+        glanceId: GlanceId,
+        parameters: ActionParameters,
+    ) {
+        val db = Database(context)
+        updateAppWidgetState(context, glanceId) { state ->
+            val pair = WidgetPairState.resolve(state, db) ?: return@updateAppWidgetState
+            state[WidgetPairState.FOLLOW_CONVERTER] = false
+            state[WidgetPairState.FROM] = pair.to.iso4217Alpha()
+            state[WidgetPairState.TO] = pair.from.iso4217Alpha()
+        }
+        CurrencyGlanceWidget.update(context, glanceId)
+    }
 }

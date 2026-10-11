@@ -35,7 +35,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Tỷ giá mới nhất và xu hướng 30 ngày của cặp tiền tệ bạn dùng gần nhất hoặc cặp bạn chọn.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Tính đến %s</string>
     <string name="widget_footer_empty">Mở ứng dụng để tải tỷ giá.</string>
     <string name="widget_no_rate">Không có tỷ giá</string>
@@ -204,4 +203,26 @@
     <string name="paste_amount">Dán số tiền</string>
     <string name="paste_no_amount">Không có số tiền trong bộ nhớ tạm</string>
     <string name="tile_label">Tỷ giá</string>
+    <string name="alert_sheet_title">Cảnh báo tỷ giá</string>
+    <string name="alert_sheet_confirm">Đặt cảnh báo</string>
+    <string name="alert_sheet_label">1 %1$s sang %2$s</string>
+    <string name="alert_sheet_now">Hiện tại: %1$s</string>
+    <string name="alert_sheet_above">Bạn sẽ được báo khi 1 %1$s đạt %2$s %3$s trở lên.</string>
+    <string name="alert_sheet_below">Bạn sẽ được báo khi 1 %1$s xuống %2$s %3$s trở xuống.</string>
+    <string name="alert_sheet_background">Tỷ giá được kiểm tra ở chế độ nền, nên việc này sẽ bật làm mới nền.</string>
+    <string name="alert_set">Đã đặt cảnh báo</string>
+    <string name="alert_notifications_off">Thông báo đang tắt nên cảnh báo sẽ không đến được bạn. Hãy bật trong cài đặt hệ thống.</string>
+    <string name="alerts_title">Cảnh báo tỷ giá</string>
+    <string name="alerts_summary">Đặt từ biểu đồ hoặc từ một cặp gần đây</string>
+    <string name="alerts_empty">Chưa có cảnh báo. Đặt bằng chuông trên biểu đồ, hoặc nhấn giữ một cặp gần đây.</string>
+    <string name="alert_row_above">%1$s trở lên</string>
+    <string name="alert_row_below">%1$s trở xuống</string>
+    <string name="alert_delete">Xóa cảnh báo</string>
+    <string name="alert_menu">Cảnh báo tỷ giá</string>
+    <string name="recent_pair_options">Tùy chọn cặp</string>
+    <string name="alert_channel_name">Cảnh báo tỷ giá</string>
+    <string name="alert_notification_title">%1$s → %2$s ở mức %3$s</string>
+    <string name="alert_notification_above">Bạn muốn được báo khi 1 %1$s đạt %2$s %3$s trở lên.</string>
+    <string name="alert_notification_below">Bạn muốn được báo khi 1 %1$s xuống %2$s %3$s trở xuống.</string>
+    <string name="widget_amount_desc">Quy đổi %1$s; chạm để chọn số tiền khác</string>
 </resources>

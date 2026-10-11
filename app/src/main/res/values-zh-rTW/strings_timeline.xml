@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">從 %2$s 的 %1$s 到 %4$s 的 %3$s</string>
     <string name="timeline_a11y_high">最高 %1$s（%2$s）</string>
     <string name="timeline_a11y_low">最低 %1$s（%2$s）</string>
+    <string name="timeline_alert_at">在 %1$s 時提醒</string>
 </resources>

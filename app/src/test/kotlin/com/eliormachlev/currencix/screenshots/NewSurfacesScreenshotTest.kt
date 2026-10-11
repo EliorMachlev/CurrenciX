@@ -11,6 +11,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.view.alert.RateAlertSheet
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartFooterCard
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
@@ -136,6 +137,12 @@ class NewSurfacesScreenshotTest {
             ReadingDirection {
                 CartFooterCard(totals = SAMPLE_TOTALS, pair = NO_PAIR_ACTIONS, onEditExtras = {}, collapsed = true)
             }
+        }
+
+    // Setting a rate alert below today's rate: "…3.5000 ILS or less".
+    @Test fun rateAlertSheet() =
+        shots.captureMatrix("rate_alert_sheet") {
+            RateAlertSheet(pair = CurrencyPair(Currency.USD, Currency.ILS), current = BigDecimal("3.5"), onSet = {}, onDismiss = {})
         }
 
     @Test fun cartExtrasSheet() =

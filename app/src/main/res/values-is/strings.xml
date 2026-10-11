@@ -30,7 +30,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Nýjasta gengi og 30 daga þróun fyrir síðast notaða gjaldmiðlaparið eða par sem þú velur.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Miðað við %s</string>
     <string name="widget_footer_empty">Opnaðu forritið til að hlaða gengi.</string>
     <string name="widget_no_rate">Gengi ekki tiltækt</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">Líma upphæð</string>
     <string name="paste_no_amount">Engin upphæð á klippiborðinu</string>
     <string name="tile_label">Gengi</string>
+    <string name="alert_sheet_title">Gengisviðvörun</string>
+    <string name="alert_sheet_confirm">Stilla viðvörun</string>
+    <string name="alert_sheet_label">1 %1$s í %2$s</string>
+    <string name="alert_sheet_now">Núna: %1$s</string>
+    <string name="alert_sheet_above">Þú færð tilkynningu þegar 1 %1$s er %2$s %3$s eða meira.</string>
+    <string name="alert_sheet_below">Þú færð tilkynningu þegar 1 %1$s er %2$s %3$s eða minna.</string>
+    <string name="alert_sheet_background">Gengi er athugað í bakgrunni, svo þetta kveikir á uppfærslu í bakgrunni.</string>
+    <string name="alert_set">Viðvörun stillt</string>
+    <string name="alert_notifications_off">Slökkt er á tilkynningum svo viðvörunin nær ekki til þín. Kveiktu á þeim í kerfisstillingum.</string>
+    <string name="alerts_title">Gengisviðvaranir</string>
+    <string name="alerts_summary">Stilltu frá tímalínunni eða nýlegu pari</string>
+    <string name="alerts_empty">Engar viðvaranir enn. Stilltu með bjöllu tímalínunnar eða haltu inni nýlegu pari.</string>
+    <string name="alert_row_above">%1$s eða meira</string>
+    <string name="alert_row_below">%1$s eða minna</string>
+    <string name="alert_delete">Eyða viðvörun</string>
+    <string name="alert_menu">Gengisviðvörun</string>
+    <string name="recent_pair_options">Valkostir pars</string>
+    <string name="alert_channel_name">Gengisviðvaranir</string>
+    <string name="alert_notification_title">%1$s → %2$s er í %3$s</string>
+    <string name="alert_notification_above">Þú baðst um tilkynningu þegar 1 %1$s væri %2$s %3$s eða meira.</string>
+    <string name="alert_notification_below">Þú baðst um tilkynningu þegar 1 %1$s væri %2$s %3$s eða minna.</string>
+    <string name="widget_amount_desc">Umreikna %1$s; ýttu fyrir aðra upphæð</string>
 </resources>

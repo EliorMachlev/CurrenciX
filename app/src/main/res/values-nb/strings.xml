@@ -38,7 +38,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Siste kurs og 30-dagers trend for valutaparet du sist brukte, eller et du velger.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Pr. %s</string>
     <string name="widget_footer_empty">Åpne appen for å laste kurser.</string>
     <string name="widget_no_rate">Kurs utilgjengelig</string>
@@ -206,4 +205,26 @@
     <string name="paste_amount">Lim inn beløp</string>
     <string name="paste_no_amount">Ingen beløp på utklippstavlen</string>
     <string name="tile_label">Valutakurs</string>
+    <string name="alert_sheet_title">Kursvarsel</string>
+    <string name="alert_sheet_confirm">Opprett varsel</string>
+    <string name="alert_sheet_label">1 %1$s i %2$s</string>
+    <string name="alert_sheet_now">Nå: %1$s</string>
+    <string name="alert_sheet_above">Du får beskjed når 1 %1$s er %2$s %3$s eller mer.</string>
+    <string name="alert_sheet_below">Du får beskjed når 1 %1$s er %2$s %3$s eller mindre.</string>
+    <string name="alert_sheet_background">Kursene sjekkes i bakgrunnen, så dette slår på bakgrunnsoppdatering.</string>
+    <string name="alert_set">Kursvarsel opprettet</string>
+    <string name="alert_notifications_off">Varsler er slått av, så varselet når deg ikke. Slå dem på i systeminnstillingene.</string>
+    <string name="alerts_title">Kursvarsler</string>
+    <string name="alerts_summary">Opprett ett fra kursutviklingen eller et nylig par</string>
+    <string name="alerts_empty">Ingen kursvarsler ennå. Opprett ett med bjellen i kursutviklingen, eller hold på et nylig par.</string>
+    <string name="alert_row_above">%1$s eller mer</string>
+    <string name="alert_row_below">%1$s eller mindre</string>
+    <string name="alert_delete">Slett varsel</string>
+    <string name="alert_menu">Kursvarsel</string>
+    <string name="recent_pair_options">Valg for par</string>
+    <string name="alert_channel_name">Kursvarsler</string>
+    <string name="alert_notification_title">%1$s → %2$s er på %3$s</string>
+    <string name="alert_notification_above">Du ville ha beskjed når 1 %1$s er %2$s %3$s eller mer.</string>
+    <string name="alert_notification_below">Du ville ha beskjed når 1 %1$s er %2$s %3$s eller mindre.</string>
+    <string name="widget_amount_desc">Regn om %1$s; trykk for et annet beløp</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">من %1$s في %2$s إلى %3$s في %4$s</string>
     <string name="timeline_a11y_high">الأعلى %1$s في %2$s</string>
     <string name="timeline_a11y_low">الأدنى %1$s في %2$s</string>
+    <string name="timeline_alert_at">تنبيه عند %1$s</string>
 </resources>

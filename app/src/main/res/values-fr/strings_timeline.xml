@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">de %1$s le %2$s à %3$s le %4$s</string>
     <string name="timeline_a11y_high">plus haut %1$s le %2$s</string>
     <string name="timeline_a11y_low">plus bas %1$s le %2$s</string>
+    <string name="timeline_alert_at">Alerte à %1$s</string>
 </resources>

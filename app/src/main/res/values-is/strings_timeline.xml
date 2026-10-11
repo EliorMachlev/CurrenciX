@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">úr %1$s þann %2$s í %3$s þann %4$s</string>
     <string name="timeline_a11y_high">hæst %1$s þann %2$s</string>
     <string name="timeline_a11y_low">lægst %1$s þann %2$s</string>
+    <string name="timeline_alert_at">Viðvörun við %1$s</string>
 </resources>

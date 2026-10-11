@@ -45,9 +45,11 @@
     <p><strong>None.</strong> The app does not collect any data whatsoever from users.</p>
 
     <h2>Permissions</h2>
-    <p>The app requests a single Android permission:</p>
+    <p>The app requests these Android permissions:</p>
     <ul>
-      <li><strong><code>android.permission.INTERNET</code></strong> — required to download exchange rates from the selected provider. No other permission is requested or used.</li>
+      <li><strong><code>android.permission.INTERNET</code></strong> — required to download exchange rates from the selected provider.</li>
+      <li><strong><code>android.permission.ACCESS_NETWORK_STATE</code></strong> — lets the app check whether you're online before it asks for rates. It gives no access to network identifiers or traffic.</li>
+      <li><strong><code>android.permission.POST_NOTIFICATIONS</code></strong> — only for rate alerts, and asked for only when you set your first one. Alerts are checked on your device against the rates the app already downloads; nothing about them leaves the phone.</li>
     </ul>
     <p>The app does <em>not</em> request access to your location, contacts, camera, microphone, storage, phone state, or any other sensitive permission.</p>
 

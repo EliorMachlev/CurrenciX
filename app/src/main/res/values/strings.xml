@@ -83,7 +83,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Latest rate and 30-day trend for your last-used currency pair, or one you pick.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">As of %s</string>
     <string name="widget_footer_empty">Open the app to load rates.</string>
     <string name="widget_no_rate">Rate unavailable</string>
@@ -226,4 +225,27 @@
     <string name="paste_amount">Paste amount</string>
     <string name="paste_no_amount">No amount on the clipboard</string>
     <string name="tile_label">Exchange rate</string>
+    <string name="alert_sheet_title">Rate alert</string>
+    <string name="alert_sheet_confirm">Set alert</string>
+    <string name="alert_sheet_label">1 %1$s in %2$s</string>
+    <string name="alert_sheet_now">Now: %1$s</string>
+    <string name="alert_sheet_above">You’ll be notified when 1 %1$s is %2$s %3$s or more.</string>
+    <string name="alert_sheet_below">You’ll be notified when 1 %1$s is %2$s %3$s or less.</string>
+    <string name="alert_sheet_background">Rates are checked in the background, so this turns background refresh on.</string>
+    <string name="alert_set">Rate alert set</string>
+    <string name="alert_notifications_off">Notifications are off, so the alert can’t reach you. Turn them on in the system settings.</string>
+    <string name="alerts_title">Rate alerts</string>
+    <string name="alerts_summary">Set one from the timeline or a recent pair</string>
+    <string name="alerts_empty">No rate alerts yet. Set one with the timeline’s bell, or long-press a recent pair.</string>
+    <string name="alert_row_above">%1$s or more</string>
+    <string name="alert_row_below">%1$s or less</string>
+    <string name="alert_delete">Delete alert</string>
+    <string name="alert_menu">Rate alert</string>
+    <string name="recent_pair_options">Pair options</string>
+    <string name="alert_channel_name">Rate alerts</string>
+    <string name="alert_notification_title">%1$s → %2$s is at %3$s</string>
+    <string name="alert_notification_above">You asked to hear when 1 %1$s is %2$s %3$s or more.</string>
+    <string name="alert_notification_below">You asked to hear when 1 %1$s is %2$s %3$s or less.</string>
+    <string name="widget_amount_line" translatable="false">%1$s %2$s = %3$s %4$s</string>
+    <string name="widget_amount_desc">Convert %1$s; tap for another amount</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">%1$s (%2$s) → %3$s (%4$s)</string>
     <string name="timeline_a11y_high">kõrgeim %1$s, %2$s</string>
     <string name="timeline_a11y_low">madalaim %1$s, %2$s</string>
+    <string name="timeline_alert_at">Teavita %1$s juures</string>
 </resources>

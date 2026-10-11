@@ -23,7 +23,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.view.alert.RateAlertSheet
+import com.eliormachlev.currencix.view.alert.rememberSetRateAlert
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
@@ -55,6 +58,7 @@ import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 // Which of the converter's sheets / dialogs is open. Saved, so an open sheet
 // survives rotation.
@@ -354,14 +358,43 @@ private fun ConverterRecentPairs(
     }
     val others = remember(recents, current) { recents.filterNot { it.isSameCurrencies(current) }.toImmutableList() }
     val paste = rememberPasteAmount(viewModel, current)
+    var alertFor by remember { mutableStateOf<CurrencyPair?>(null) }
     RecentPairsRow(
         pairs = others,
         onPaste = paste,
+        onAlert = { alertFor = it },
         onPick = viewModel::setCurrencyPair,
         onRemove = rememberRemoveWithUndo(database),
         contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),
         // The bottom gap keeps the chips clear of the keypad's top row.
         modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN, bottom = RECENT_PAIRS_BOTTOM_GAP),
+    )
+    alertFor?.let { pair -> PairAlertSheet(viewModel, pair, onDismiss = { alertFor = null }) }
+}
+
+// The rate alert sheet for a recent pair, at today's rate; nothing to set
+// before the pair has a rate.
+@Composable
+private fun PairAlertSheet(
+    viewModel: MainViewModel,
+    pair: CurrencyPair,
+    onDismiss: () -> Unit,
+) {
+    val rates by viewModel.getExchangeRates().observeAsState()
+    val current = rates?.convert(BigDecimal.ONE, pair.from, pair.to)
+    val setAlert = rememberSetRateAlert()
+    if (current == null) {
+        LaunchedEffect(Unit) { onDismiss() }
+        return
+    }
+    RateAlertSheet(
+        pair = pair,
+        current = current,
+        onSet = { alert ->
+            setAlert(alert)
+            onDismiss()
+        },
+        onDismiss = onDismiss,
     )
 }
 

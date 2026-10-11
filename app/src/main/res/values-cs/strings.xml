@@ -36,7 +36,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Poslední kurz a 30denní vývoj pro naposledy použitý měnový pár nebo pro vámi vybraný.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Ke dni %s</string>
     <string name="widget_footer_empty">Otevřete aplikaci a načtěte kurzy.</string>
     <string name="widget_no_rate">Kurz není k dispozici</string>
@@ -207,4 +206,26 @@
     <string name="paste_amount">Vložit částku</string>
     <string name="paste_no_amount">Ve schránce není žádná částka</string>
     <string name="tile_label">Směnný kurz</string>
+    <string name="alert_sheet_title">Upozornění na kurz</string>
+    <string name="alert_sheet_confirm">Nastavit upozornění</string>
+    <string name="alert_sheet_label">1 %1$s v %2$s</string>
+    <string name="alert_sheet_now">Nyní: %1$s</string>
+    <string name="alert_sheet_above">Dostanete upozornění, až bude 1 %1$s za %2$s %3$s nebo více.</string>
+    <string name="alert_sheet_below">Dostanete upozornění, až bude 1 %1$s za %2$s %3$s nebo méně.</string>
+    <string name="alert_sheet_background">Kurzy se kontrolují na pozadí, takže se tím zapne obnovování na pozadí.</string>
+    <string name="alert_set">Upozornění nastaveno</string>
+    <string name="alert_notifications_off">Oznámení jsou vypnutá, takže upozornění nedorazí. Zapněte je v nastavení systému.</string>
+    <string name="alerts_title">Upozornění na kurz</string>
+    <string name="alerts_summary">Nastavte z vývoje kurzu nebo z nedávného páru</string>
+    <string name="alerts_empty">Zatím žádná upozornění. Nastavte je zvonkem u vývoje kurzu nebo podržením nedávného páru.</string>
+    <string name="alert_row_above">%1$s nebo více</string>
+    <string name="alert_row_below">%1$s nebo méně</string>
+    <string name="alert_delete">Smazat upozornění</string>
+    <string name="alert_menu">Upozornění na kurz</string>
+    <string name="recent_pair_options">Možnosti páru</string>
+    <string name="alert_channel_name">Upozornění na kurz</string>
+    <string name="alert_notification_title">%1$s → %2$s je na %3$s</string>
+    <string name="alert_notification_above">Chtěli jste vědět, až bude 1 %1$s za %2$s %3$s nebo více.</string>
+    <string name="alert_notification_below">Chtěli jste vědět, až bude 1 %1$s za %2$s %3$s nebo méně.</string>
+    <string name="widget_amount_desc">Převod %1$s; klepněte pro jinou částku</string>
 </resources>

@@ -1,12 +1,15 @@
 package com.eliormachlev.currencix.view.main.compose
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,8 +37,9 @@ import kotlinx.collections.immutable.ImmutableList
  * One-tap switches to the pairs used most recently — "🇺🇸 USD → 🇮🇱 ILS"
  * chips under the hero card. [pairs] excludes the pair on screen; nothing
  * is drawn when it's empty (and there's no [onPaste]). A long-press asks
- * whether to forget the pair ([onRemove]). With [onPaste], a "Paste amount"
- * chip leads the row.
+ * whether to forget the pair ([onRemove]); with [onAlert], it opens a menu
+ * first: a rate alert for the pair, or removing it. With [onPaste], a "Paste
+ * amount" chip leads the row.
  */
 @Composable
 fun RecentPairsRow(
@@ -45,6 +49,7 @@ fun RecentPairsRow(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onPaste: (() -> Unit)? = null,
+    onAlert: ((CurrencyPair) -> Unit)? = null,
 ) {
     var removing by remember { mutableStateOf<CurrencyPair?>(null) }
     removing?.let { pair ->
@@ -58,7 +63,8 @@ fun RecentPairsRow(
         ) { PairChipContent(pair.from, pair.to) }
     }
     if (pairs.isEmpty() && onPaste == null) return
-    val removeLabel = stringResource(R.string.recent_remove_title)
+    val longPressLabel = stringResource(if (onAlert == null) R.string.recent_remove_title else R.string.recent_pair_options)
+    var menuFor by remember { mutableStateOf<CurrencyPair?>(null) }
     // The newest pair goes in at the front. Left alone, the row holds its
     // place on the chip that was first, leaving the new one off-screen.
     val listState = rememberLazyListState()
@@ -71,14 +77,23 @@ fun RecentPairsRow(
     ) {
         onPaste?.let { paste -> item(key = PASTE_KEY) { PasteChip(onClick = paste, modifier = Modifier.animateItem()) } }
         items(pairs, key = { "${it.from}:${it.to}" }) { pair ->
-            CurrencyChip(
-                description = stringResource(R.string.recent_pair_switch, pair.from.iso4217Alpha(), pair.to.iso4217Alpha()),
-                onClick = { onPick(pair) },
-                modifier = Modifier.animateItem(),
-                onLongClick = { removing = pair },
-                onLongClickLabel = removeLabel,
-            ) {
-                PairChipContent(pair.from, pair.to)
+            Box(Modifier.animateItem()) {
+                CurrencyChip(
+                    description = stringResource(R.string.recent_pair_switch, pair.from.iso4217Alpha(), pair.to.iso4217Alpha()),
+                    onClick = { onPick(pair) },
+                    onLongClick = { if (onAlert == null) removing = pair else menuFor = pair },
+                    onLongClickLabel = longPressLabel,
+                ) {
+                    PairChipContent(pair.from, pair.to)
+                }
+                if (onAlert != null) {
+                    PairMenu(
+                        expanded = menuFor == pair,
+                        onAlert = { onAlert(pair) },
+                        onRemove = { removing = pair },
+                        onDismiss = { menuFor = null },
+                    )
+                }
             }
         }
     }
@@ -112,3 +127,28 @@ private fun PasteChip(
 
 private val PASTE_ICON_SIZE = 18.dp
 private val PASTE_ICON_GAP = 6.dp
+
+// A recent pair's long-press: a rate alert for it, or forget it (which still asks).
+@Composable
+private fun PairMenu(
+    expanded: Boolean,
+    onAlert: () -> Unit,
+    onRemove: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        listOf(
+            Triple(R.string.alert_menu, R.drawable.ic_alert, onAlert),
+            Triple(R.string.recent_remove_title, R.drawable.ic_delete, onRemove),
+        ).forEach { (label, icon, action) ->
+            DropdownMenuItem(
+                text = { Text(stringResource(label)) },
+                leadingIcon = { Icon(painterResource(icon), contentDescription = null) },
+                onClick = {
+                    onDismiss()
+                    action()
+                },
+            )
+        }
+    }
+}

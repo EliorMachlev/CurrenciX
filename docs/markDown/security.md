@@ -56,9 +56,10 @@ The app declares two normal (non-dangerous) permissions:
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 ```
 
-`ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. No location, contacts, storage, camera, or microphone access.
+`ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. `POST_NOTIFICATIONS` is for rate alerts only: it's requested at runtime when the user sets their first alert (never at launch), and alerts are evaluated on the device against the rates already downloaded, so they add no network traffic or data. Denying it leaves the alerts waiting; nothing else in the app needs it. No location, contacts, storage, camera, or microphone access.
 
 ## Network Security
 

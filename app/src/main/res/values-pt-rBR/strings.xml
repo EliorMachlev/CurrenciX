@@ -38,7 +38,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Cotação mais recente e tendência de 30 dias do par de moedas usado por último ou de um escolhido por você.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Em %s</string>
     <string name="widget_footer_empty">Abra o app para carregar as cotações.</string>
     <string name="widget_no_rate">Cotação indisponível</string>
@@ -207,4 +206,26 @@
     <string name="paste_amount">Colar valor</string>
     <string name="paste_no_amount">Nenhum valor na área de transferência</string>
     <string name="tile_label">Taxa de câmbio</string>
+    <string name="alert_sheet_title">Alerta de cotação</string>
+    <string name="alert_sheet_confirm">Criar alerta</string>
+    <string name="alert_sheet_label">1 %1$s em %2$s</string>
+    <string name="alert_sheet_now">Agora: %1$s</string>
+    <string name="alert_sheet_above">Você será avisado quando 1 %1$s valer %2$s %3$s ou mais.</string>
+    <string name="alert_sheet_below">Você será avisado quando 1 %1$s valer %2$s %3$s ou menos.</string>
+    <string name="alert_sheet_background">As cotações são verificadas em segundo plano, então isso liga a atualização em segundo plano.</string>
+    <string name="alert_set">Alerta criado</string>
+    <string name="alert_notifications_off">As notificações estão desativadas, então o alerta não vai chegar. Ative-as nas configurações do sistema.</string>
+    <string name="alerts_title">Alertas de cotação</string>
+    <string name="alerts_summary">Crie um pelo histórico ou por um par recente</string>
+    <string name="alerts_empty">Nenhum alerta ainda. Crie um com o sino do histórico ou toque e segure um par recente.</string>
+    <string name="alert_row_above">%1$s ou mais</string>
+    <string name="alert_row_below">%1$s ou menos</string>
+    <string name="alert_delete">Excluir alerta</string>
+    <string name="alert_menu">Alerta de cotação</string>
+    <string name="recent_pair_options">Opções do par</string>
+    <string name="alert_channel_name">Alertas de cotação</string>
+    <string name="alert_notification_title">%1$s → %2$s está em %3$s</string>
+    <string name="alert_notification_above">Você pediu um aviso quando 1 %1$s valesse %2$s %3$s ou mais.</string>
+    <string name="alert_notification_below">Você pediu um aviso quando 1 %1$s valesse %2$s %3$s ou menos.</string>
+    <string name="widget_amount_desc">Converter %1$s; toque para outro valor</string>
 </resources>

@@ -63,6 +63,9 @@ ICONS = {
     "ic_vertical_align_top": ("vertical_align_top", False),
     # converter
     "ic_content_paste": ("content_paste", False),
+    # rate alerts
+    "ic_alert": ("notifications", False),
+    "ic_alert_active": ("notifications_active", False),
     # timeline
     "ic_tune": ("tune", False),
     "ic_trending_up": ("trending_up", False),

@@ -36,7 +36,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">آخرین نرخ و روند ۳۰ روزه برای آخرین جفت ارزی که استفاده کردید یا جفتی که انتخاب می‌کنید.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">به تاریخ %s</string>
     <string name="widget_footer_empty">برای بارگیری نرخ‌ها برنامه را باز کنید.</string>
     <string name="widget_no_rate">نرخ در دسترس نیست</string>
@@ -206,4 +205,26 @@
     <string name="paste_amount">چسباندن مبلغ</string>
     <string name="paste_no_amount">مبلغی در بریده‌دان نیست</string>
     <string name="tile_label">نرخ ارز</string>
+    <string name="alert_sheet_title">هشدار نرخ</string>
+    <string name="alert_sheet_confirm">تنظیم هشدار</string>
+    <string name="alert_sheet_label">1 %1$s به %2$s</string>
+    <string name="alert_sheet_now">اکنون: %1$s</string>
+    <string name="alert_sheet_above">وقتی 1 %1$s به %2$s %3$s یا بیشتر برسد، به شما اطلاع داده می‌شود.</string>
+    <string name="alert_sheet_below">وقتی 1 %1$s به %2$s %3$s یا کمتر برسد، به شما اطلاع داده می‌شود.</string>
+    <string name="alert_sheet_background">نرخ‌ها در پس‌زمینه بررسی می‌شوند، پس این کار به‌روزرسانی پس‌زمینه را روشن می‌کند.</string>
+    <string name="alert_set">هشدار نرخ تنظیم شد</string>
+    <string name="alert_notifications_off">اعلان‌ها خاموش‌اند و هشدار به شما نمی‌رسد. آن‌ها را در تنظیمات سیستم روشن کنید.</string>
+    <string name="alerts_title">هشدارهای نرخ</string>
+    <string name="alerts_summary">از نمودار زمانی یا یک جفت اخیر تنظیم کنید</string>
+    <string name="alerts_empty">هنوز هشداری نیست. با زنگ نمودار زمانی تنظیم کنید یا یک جفت اخیر را لمس طولانی کنید.</string>
+    <string name="alert_row_above">%1$s یا بیشتر</string>
+    <string name="alert_row_below">%1$s یا کمتر</string>
+    <string name="alert_delete">حذف هشدار</string>
+    <string name="alert_menu">هشدار نرخ</string>
+    <string name="recent_pair_options">گزینه‌های جفت</string>
+    <string name="alert_channel_name">هشدارهای نرخ</string>
+    <string name="alert_notification_title">%1$s ← %2$s به %3$s رسید</string>
+    <string name="alert_notification_above">خواسته بودید وقتی 1 %1$s به %2$s %3$s یا بیشتر رسید باخبر شوید.</string>
+    <string name="alert_notification_below">خواسته بودید وقتی 1 %1$s به %2$s %3$s یا کمتر رسید باخبر شوید.</string>
+    <string name="widget_amount_desc">تبدیل %1$s؛ برای مبلغ دیگر لمس کنید</string>
 </resources>

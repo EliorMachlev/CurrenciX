@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">fra %1$s den %2$s til %3$s den %4$s</string>
     <string name="timeline_a11y_high">høyest %1$s den %2$s</string>
     <string name="timeline_a11y_low">lavest %1$s den %2$s</string>
+    <string name="timeline_alert_at">Varsel ved %1$s</string>
 </resources>

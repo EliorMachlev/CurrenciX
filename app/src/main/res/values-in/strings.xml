@@ -30,7 +30,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Kurs terbaru dan tren 30 hari untuk pasangan mata uang terakhir Anda, atau yang Anda pilih.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Per %s</string>
     <string name="widget_footer_empty">Buka aplikasi untuk memuat kurs.</string>
     <string name="widget_no_rate">Kurs tidak tersedia</string>
@@ -204,4 +203,26 @@
     <string name="paste_amount">Tempel jumlah</string>
     <string name="paste_no_amount">Tidak ada jumlah di papan klip</string>
     <string name="tile_label">Kurs</string>
+    <string name="alert_sheet_title">Peringatan kurs</string>
+    <string name="alert_sheet_confirm">Setel peringatan</string>
+    <string name="alert_sheet_label">1 %1$s dalam %2$s</string>
+    <string name="alert_sheet_now">Sekarang: %1$s</string>
+    <string name="alert_sheet_above">Anda akan diberi tahu saat 1 %1$s mencapai %2$s %3$s atau lebih.</string>
+    <string name="alert_sheet_below">Anda akan diberi tahu saat 1 %1$s mencapai %2$s %3$s atau kurang.</string>
+    <string name="alert_sheet_background">Kurs diperiksa di latar belakang, jadi ini menyalakan pembaruan latar belakang.</string>
+    <string name="alert_set">Peringatan kurs disetel</string>
+    <string name="alert_notifications_off">Notifikasi mati, jadi peringatan tidak akan sampai. Nyalakan di setelan sistem.</string>
+    <string name="alerts_title">Peringatan kurs</string>
+    <string name="alerts_summary">Setel dari linimasa atau pasangan terbaru</string>
+    <string name="alerts_empty">Belum ada peringatan. Setel dengan lonceng di linimasa, atau tekan lama pasangan terbaru.</string>
+    <string name="alert_row_above">%1$s atau lebih</string>
+    <string name="alert_row_below">%1$s atau kurang</string>
+    <string name="alert_delete">Hapus peringatan</string>
+    <string name="alert_menu">Peringatan kurs</string>
+    <string name="recent_pair_options">Opsi pasangan</string>
+    <string name="alert_channel_name">Peringatan kurs</string>
+    <string name="alert_notification_title">%1$s → %2$s di %3$s</string>
+    <string name="alert_notification_above">Anda ingin diberi tahu saat 1 %1$s mencapai %2$s %3$s atau lebih.</string>
+    <string name="alert_notification_below">Anda ingin diberi tahu saat 1 %1$s mencapai %2$s %3$s atau kurang.</string>
+    <string name="widget_amount_desc">Konversi %1$s; ketuk untuk jumlah lain</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">%2$s tarihinde %1$s, %4$s tarihinde %3$s</string>
     <string name="timeline_a11y_high">en yüksek %1$s (%2$s)</string>
     <string name="timeline_a11y_low">en düşük %1$s (%2$s)</string>
+    <string name="timeline_alert_at">%1$s için uyarı</string>
 </resources>

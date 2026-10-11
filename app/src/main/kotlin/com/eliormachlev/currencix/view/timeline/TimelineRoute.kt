@@ -2,8 +2,11 @@ package com.eliormachlev.currencix.view.timeline
 
 import android.app.Application
 import android.content.Context
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,13 +52,18 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.alert.ALERT_RATE_DECIMALS
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.buildImageShareChooser
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.resolveThemeColor
+import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.stripTimePattern
+import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.alert.RateAlertSheet
+import com.eliormachlev.currencix.view.alert.rememberSetRateAlert
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ReadingDirection
@@ -63,6 +71,7 @@ import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.flagPainter
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
@@ -71,6 +80,7 @@ import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -107,11 +117,11 @@ fun TimelineRoute(
     val db = remember(context) { Database(context) }
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
     val pair by model.getCurrencyPair().observeAsState()
-    val inFlight by model.isRefreshInFlight().observeAsState(false)
-    val error by model.getError().observeAsState()
     var sheet by rememberSaveable { mutableStateOf<TimelineSheet?>(null) }
     val chartCapture = remember { LayerCapture() }
     val scope = rememberCoroutineScope()
+    // The rate a rate-alert sheet is open at: today's (the bell) or a touched day's.
+    var alertAt by remember { mutableStateOf<BigDecimal?>(null) }
 
     // Small bar: the pair sits beside the back arrow, leaving the height to the chart.
     // The bar follows the language (in Hebrew: back arrow and pair on the
@@ -124,23 +134,11 @@ fun TimelineRoute(
             onBack = onBack,
             style = TopBarStyle.Small,
             actions = {
-                TopBarAction(
-                    icon = painterResource(R.drawable.ic_tune),
-                    contentDescription = stringResource(R.string.graph_options_title),
-                    onClick = { sheet = TimelineSheet.GraphOptions },
-                )
-                // Swapping re-fetches the pair; wait out a refresh or an error first.
-                TopBarAction(
-                    icon = painterResource(R.drawable.ic_swap_horiz),
-                    contentDescription = stringResource(R.string.desc_toggle_currencies),
-                    onClick = model::toggleCurrencies,
-                    enabled = !inFlight && error == null,
-                )
-                TopBarAction(
-                    icon = painterResource(R.drawable.ic_share),
-                    contentDescription = stringResource(R.string.timeline_share),
-                    onClick = { scope.launch { shareChart(context, chartCapture, model, formatter) } },
-                    enabled = error == null,
+                TimelineBarActions(
+                    model = model,
+                    onOptions = { sheet = TimelineSheet.GraphOptions },
+                    onAlert = { alertAt = it },
+                    onShare = { scope.launch { shareChart(context, chartCapture, model, formatter) } },
                 )
             },
         ) { padding ->
@@ -152,7 +150,12 @@ fun TimelineRoute(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 chartCapture = chartCapture,
                 chartContent = {
-                    ChartWithConvertChip(model = model, formatter = formatter, onConvertAt = onConvertAt) { onScrub ->
+                    ChartWithConvertChip(
+                        model = model,
+                        formatter = formatter,
+                        onConvertAt = onConvertAt,
+                        onAlertAt = { alertAt = it },
+                    ) { onScrub ->
                         TimelineChartContent(model, db, onScrub)
                     }
                 },
@@ -160,6 +163,67 @@ fun TimelineRoute(
         }
     }
     TimelineSheets(sheet = sheet, db = db, onProviderPicked = { model.retry() }, onDismiss = { sheet = null })
+    alertAt?.let { rate -> TimelineAlertSheet(model = model, rate = rate, onClose = { alertAt = null }) }
+}
+
+// The bar's actions: graph options, swap (once a refresh or an error is
+// out of the way, since swapping re-fetches), a rate alert at today's rate,
+// and share.
+@Composable
+private fun TimelineBarActions(
+    model: TimelineViewModel,
+    onOptions: () -> Unit,
+    onAlert: (BigDecimal) -> Unit,
+    onShare: () -> Unit,
+) {
+    val inFlight by model.isRefreshInFlight().observeAsState(false)
+    val error by model.getError().observeAsState()
+    val rateCurrent by remember(model) { model.getRateCurrent() }.observeAsState()
+    val today = rateCurrent?.first?.value?.value
+    TopBarAction(
+        icon = painterResource(R.drawable.ic_tune),
+        contentDescription = stringResource(R.string.graph_options_title),
+        onClick = onOptions,
+    )
+    TopBarAction(
+        icon = painterResource(R.drawable.ic_swap_horiz),
+        contentDescription = stringResource(R.string.desc_toggle_currencies),
+        onClick = model::toggleCurrencies,
+        enabled = !inFlight && error == null,
+    )
+    TopBarAction(
+        icon = painterResource(R.drawable.ic_alert),
+        contentDescription = stringResource(R.string.alert_sheet_title),
+        onClick = { today?.let(onAlert) },
+        enabled = today != null,
+    )
+    TopBarAction(
+        icon = painterResource(R.drawable.ic_share),
+        contentDescription = stringResource(R.string.timeline_share),
+        onClick = onShare,
+        enabled = error == null,
+    )
+}
+
+// The rate alert sheet for the timeline's pair at [rate]; [onClose] when set or dismissed.
+@Composable
+private fun TimelineAlertSheet(
+    model: TimelineViewModel,
+    rate: BigDecimal,
+    onClose: () -> Unit,
+) {
+    val pair by model.getCurrencyPair().observeAsState()
+    val (from, to) = pair ?: return
+    val setAlert = rememberSetRateAlert()
+    RateAlertSheet(
+        pair = CurrencyPair(from, to),
+        current = rate,
+        onSet = { alert ->
+            setAlert(alert)
+            onClose()
+        },
+        onDismiss = onClose,
+    )
 }
 
 // The chart card as a PNG, captioned "USD → ILS · 29/09/25 – 29/09/26 ·
@@ -264,17 +328,21 @@ private fun TimelineChartContent(
     TimelineChart(series = series, prefs = prefs, colors = colors, onScrub = onScrub)
 }
 
-// The chart, and once it has been touched, "Convert at 04/03/26" for the
-// day last touched, over its top. The chip goes with a new pair or period.
+// The chart, and once it has been touched, "Convert at 04/03/26" and "Alert
+// at 3.6512" for the day last touched, over its top. The chips go with a new
+// pair or period.
 @Composable
 private fun ChartWithConvertChip(
     model: TimelineViewModel,
     formatter: DateTimeFormatter,
     onConvertAt: (CurrencyPair, LocalDate) -> Unit,
+    onAlertAt: (BigDecimal) -> Unit,
     chart: @Composable (onScrub: (LocalDate?) -> Unit) -> Unit,
 ) {
+    val context = LocalContext.current
     val pair by model.getCurrencyPair().observeAsState()
     val period by model.getPeriod().observeAsState()
+    val rates by remember(model) { model.getRates() }.observeAsState()
     var touchedDay by remember { mutableStateOf<LocalDate?>(null) }
     LaunchedEffect(pair, period) { touchedDay = null }
     Box(Modifier.fillMaxSize()) {
@@ -285,25 +353,41 @@ private fun ChartWithConvertChip(
         val day = touchedDay
         val (from, to) = pair ?: return@Box
         if (day != null) {
-            AssistChip(
-                onClick =
-                    rememberHapticOnClick {
-                        touchedDay = null
-                        onConvertAt(CurrencyPair(from, to), day)
-                    },
-                label = { Text(stringResource(R.string.timeline_convert_at, day.format(formatter))) },
-                leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.ic_swap_horiz),
-                        contentDescription = null,
-                        Modifier.size(CONVERT_CHIP_ICON_SIZE),
-                    )
-                },
-                colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.align(Alignment.TopCenter),
-            )
+            val dayRate = rates?.get(day)?.value
+            Row(Modifier.align(Alignment.TopCenter), horizontalArrangement = Arrangement.spacedBy(Spacing.Small)) {
+                ChartChip(
+                    label = stringResource(R.string.timeline_convert_at, day.format(formatter)),
+                    icon = R.drawable.ic_swap_horiz,
+                ) {
+                    touchedDay = null
+                    onConvertAt(CurrencyPair(from, to), day)
+                }
+                dayRate?.let { rate ->
+                    val shown =
+                        rate
+                            .roundForDisplay(
+                                ALERT_RATE_DECIMALS,
+                            ).toHumanReadableNumber(context, decimalPlaces = ALERT_RATE_DECIMALS)
+                    ChartChip(label = stringResource(R.string.timeline_alert_at, shown), icon = R.drawable.ic_alert) { onAlertAt(rate) }
+                }
+            }
         }
     }
+}
+
+// A chip over the chart, on the card's surface so the line doesn't show through.
+@Composable
+private fun ChartChip(
+    label: String,
+    @DrawableRes icon: Int,
+    onClick: () -> Unit,
+) {
+    AssistChip(
+        onClick = rememberHapticOnClick(onClick),
+        label = { Text(label) },
+        leadingIcon = { Icon(painterResource(icon), contentDescription = null, Modifier.size(CONVERT_CHIP_ICON_SIZE)) },
+        colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surface),
+    )
 }
 
 private val CONVERT_CHIP_ICON_SIZE = 18.dp

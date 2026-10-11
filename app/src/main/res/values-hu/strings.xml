@@ -30,7 +30,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">A legutóbb használt vagy általad választott devizapár legfrissebb árfolyama és 30 napos trendje.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Ekkori állapot: %s</string>
     <string name="widget_footer_empty">Nyisd meg az alkalmazást az árfolyamok betöltéséhez.</string>
     <string name="widget_no_rate">Árfolyam nem elérhető</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">Összeg beillesztése</string>
     <string name="paste_no_amount">Nincs összeg a vágólapon</string>
     <string name="tile_label">Árfolyam</string>
+    <string name="alert_sheet_title">Árfolyam-értesítés</string>
+    <string name="alert_sheet_confirm">Értesítés beállítása</string>
+    <string name="alert_sheet_label">1 %1$s %2$s-ban</string>
+    <string name="alert_sheet_now">Most: %1$s</string>
+    <string name="alert_sheet_above">Értesítést kapsz, ha 1 %1$s eléri a(z) %2$s %3$s értéket vagy többet.</string>
+    <string name="alert_sheet_below">Értesítést kapsz, ha 1 %1$s %2$s %3$s vagy kevesebb lesz.</string>
+    <string name="alert_sheet_background">Az árfolyamokat a háttérben ellenőrizzük, ezért ez bekapcsolja a háttérfrissítést.</string>
+    <string name="alert_set">Értesítés beállítva</string>
+    <string name="alert_notifications_off">Az értesítések ki vannak kapcsolva, így ez nem jut el hozzád. Kapcsold be őket a rendszerbeállításokban.</string>
+    <string name="alerts_title">Árfolyam-értesítések</string>
+    <string name="alerts_summary">Állíts be egyet az idővonalon vagy egy legutóbbi párnál</string>
+    <string name="alerts_empty">Még nincs értesítés. Állíts be egyet az idővonal csengőjével, vagy nyomj hosszan egy legutóbbi párra.</string>
+    <string name="alert_row_above">%1$s vagy több</string>
+    <string name="alert_row_below">%1$s vagy kevesebb</string>
+    <string name="alert_delete">Értesítés törlése</string>
+    <string name="alert_menu">Árfolyam-értesítés</string>
+    <string name="recent_pair_options">Pár beállításai</string>
+    <string name="alert_channel_name">Árfolyam-értesítések</string>
+    <string name="alert_notification_title">%1$s → %2$s: %3$s</string>
+    <string name="alert_notification_above">Értesítést kértél, ha 1 %1$s %2$s %3$s vagy több lesz.</string>
+    <string name="alert_notification_below">Értesítést kértél, ha 1 %1$s %2$s %3$s vagy kevesebb lesz.</string>
+    <string name="widget_amount_desc">%1$s átváltása; koppints másik összegért</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">с %1$s на %2$s до %3$s на %4$s</string>
     <string name="timeline_a11y_high">максимум %1$s на %2$s</string>
     <string name="timeline_a11y_low">минимум %1$s на %2$s</string>
+    <string name="timeline_alert_at">Уведомить при %1$s</string>
 </resources>

@@ -37,7 +37,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Último tipo de cambio y tendencia de 30 días del último par de monedas que usaste o del que elijas.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">A fecha de %s</string>
     <string name="widget_footer_empty">Abre la app para cargar los tipos.</string>
     <string name="widget_no_rate">Tipo no disponible</string>
@@ -207,4 +206,26 @@
     <string name="paste_amount">Pegar importe</string>
     <string name="paste_no_amount">No hay ningún importe en el portapapeles</string>
     <string name="tile_label">Tipo de cambio</string>
+    <string name="alert_sheet_title">Alerta de tipo</string>
+    <string name="alert_sheet_confirm">Crear alerta</string>
+    <string name="alert_sheet_label">1 %1$s en %2$s</string>
+    <string name="alert_sheet_now">Ahora: %1$s</string>
+    <string name="alert_sheet_above">Recibirás un aviso cuando 1 %1$s valga %2$s %3$s o más.</string>
+    <string name="alert_sheet_below">Recibirás un aviso cuando 1 %1$s valga %2$s %3$s o menos.</string>
+    <string name="alert_sheet_background">Los tipos se comprueban en segundo plano, así que esto activa la actualización en segundo plano.</string>
+    <string name="alert_set">Alerta creada</string>
+    <string name="alert_notifications_off">Las notificaciones están desactivadas y la alerta no te llegará. Actívalas en los ajustes del sistema.</string>
+    <string name="alerts_title">Alertas de tipo</string>
+    <string name="alerts_summary">Crea una desde la evolución o un par reciente</string>
+    <string name="alerts_empty">Aún no hay alertas. Crea una con la campana de la evolución o mantén pulsado un par reciente.</string>
+    <string name="alert_row_above">%1$s o más</string>
+    <string name="alert_row_below">%1$s o menos</string>
+    <string name="alert_delete">Eliminar alerta</string>
+    <string name="alert_menu">Alerta de tipo</string>
+    <string name="recent_pair_options">Opciones del par</string>
+    <string name="alert_channel_name">Alertas de tipo</string>
+    <string name="alert_notification_title">%1$s → %2$s está en %3$s</string>
+    <string name="alert_notification_above">Pediste un aviso cuando 1 %1$s valiera %2$s %3$s o más.</string>
+    <string name="alert_notification_below">Pediste un aviso cuando 1 %1$s valiera %2$s %3$s o menos.</string>
+    <string name="widget_amount_desc">Convertir %1$s; toca para otro importe</string>
 </resources>

@@ -36,7 +36,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Najnoviji tečaj i 30-dnevni trend za zadnji korišteni valutni par ili onaj koji odaberete.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Na dan %s</string>
     <string name="widget_footer_empty">Otvorite aplikaciju za učitavanje tečajeva.</string>
     <string name="widget_no_rate">Tečaj nije dostupan</string>
@@ -206,4 +205,26 @@
     <string name="paste_amount">Zalijepi iznos</string>
     <string name="paste_no_amount">U međuspremniku nema iznosa</string>
     <string name="tile_label">Tečaj</string>
+    <string name="alert_sheet_title">Upozorenje na tečaj</string>
+    <string name="alert_sheet_confirm">Postavi upozorenje</string>
+    <string name="alert_sheet_label">1 %1$s u %2$s</string>
+    <string name="alert_sheet_now">Sada: %1$s</string>
+    <string name="alert_sheet_above">Dobit ćete obavijest kada 1 %1$s bude %2$s %3$s ili više.</string>
+    <string name="alert_sheet_below">Dobit ćete obavijest kada 1 %1$s bude %2$s %3$s ili manje.</string>
+    <string name="alert_sheet_background">Tečajevi se provjeravaju u pozadini, pa se time uključuje osvježavanje u pozadini.</string>
+    <string name="alert_set">Upozorenje postavljeno</string>
+    <string name="alert_notifications_off">Obavijesti su isključene pa vas upozorenje neće dosegnuti. Uključite ih u postavkama sustava.</string>
+    <string name="alerts_title">Upozorenja na tečaj</string>
+    <string name="alerts_summary">Postavite ih s grafikona ili iz nedavnog para</string>
+    <string name="alerts_empty">Još nema upozorenja. Postavite ga zvonom na grafikonu ili dugim pritiskom na nedavni par.</string>
+    <string name="alert_row_above">%1$s ili više</string>
+    <string name="alert_row_below">%1$s ili manje</string>
+    <string name="alert_delete">Izbriši upozorenje</string>
+    <string name="alert_menu">Upozorenje na tečaj</string>
+    <string name="recent_pair_options">Opcije para</string>
+    <string name="alert_channel_name">Upozorenja na tečaj</string>
+    <string name="alert_notification_title">%1$s → %2$s je na %3$s</string>
+    <string name="alert_notification_above">Htjeli ste znati kada 1 %1$s bude %2$s %3$s ili više.</string>
+    <string name="alert_notification_below">Htjeli ste znati kada 1 %1$s bude %2$s %3$s ili manje.</string>
+    <string name="widget_amount_desc">Pretvori %1$s; dodirnite za drugi iznos</string>
 </resources>

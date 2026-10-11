@@ -40,7 +40,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">നിങ്ങൾ അവസാനം ഉപയോഗിച്ചതോ തിരഞ്ഞെടുക്കുന്നതോ ആയ കറൻസി ജോഡിയുടെ പുതിയ നിരക്കും 30 ദിവസത്തെ പ്രവണതയും.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s പ്രകാരം</string>
     <string name="widget_footer_empty">നിരക്കുകൾ ലോഡ് ചെയ്യാൻ ആപ്പ് തുറക്കുക.</string>
     <string name="widget_no_rate">നിരക്ക് ലഭ്യമല്ല</string>
@@ -209,4 +208,26 @@
     <string name="paste_amount">തുക ഒട്ടിക്കുക</string>
     <string name="paste_no_amount">ക്ലിപ്പ്ബോർഡിൽ തുകയില്ല</string>
     <string name="tile_label">വിനിമയ നിരക്ക്</string>
+    <string name="alert_sheet_title">നിരക്ക് മുന്നറിയിപ്പ്</string>
+    <string name="alert_sheet_confirm">മുന്നറിയിപ്പ് സജ്ജമാക്കുക</string>
+    <string name="alert_sheet_label">%2$s-ൽ 1 %1$s</string>
+    <string name="alert_sheet_now">ഇപ്പോൾ: %1$s</string>
+    <string name="alert_sheet_above">1 %1$s, %2$s %3$s അല്ലെങ്കിൽ കൂടുതൽ ആകുമ്പോൾ അറിയിക്കും.</string>
+    <string name="alert_sheet_below">1 %1$s, %2$s %3$s അല്ലെങ്കിൽ കുറവ് ആകുമ്പോൾ അറിയിക്കും.</string>
+    <string name="alert_sheet_background">നിരക്കുകൾ പശ്ചാത്തലത്തിൽ പരിശോധിക്കുന്നതിനാൽ ഇത് പശ്ചാത്തല പുതുക്കൽ ഓണാക്കും.</string>
+    <string name="alert_set">മുന്നറിയിപ്പ് സജ്ജമാക്കി</string>
+    <string name="alert_notifications_off">അറിയിപ്പുകൾ ഓഫാണ്, അതിനാൽ മുന്നറിയിപ്പ് എത്തില്ല. സിസ്റ്റം ക്രമീകരണങ്ങളിൽ ഓണാക്കുക.</string>
+    <string name="alerts_title">നിരക്ക് മുന്നറിയിപ്പുകൾ</string>
+    <string name="alerts_summary">ടൈംലൈനിൽ നിന്നോ സമീപകാല ജോഡിയിൽ നിന്നോ സജ്ജമാക്കുക</string>
+    <string name="alerts_empty">ഇതുവരെ മുന്നറിയിപ്പുകളില്ല. ടൈംലൈനിലെ മണി ഉപയോഗിക്കുക, അല്ലെങ്കിൽ സമീപകാല ജോഡിയിൽ ദീർഘമായി അമർത്തുക.</string>
+    <string name="alert_row_above">%1$s അല്ലെങ്കിൽ കൂടുതൽ</string>
+    <string name="alert_row_below">%1$s അല്ലെങ്കിൽ കുറവ്</string>
+    <string name="alert_delete">മുന്നറിയിപ്പ് ഇല്ലാതാക്കുക</string>
+    <string name="alert_menu">നിരക്ക് മുന്നറിയിപ്പ്</string>
+    <string name="recent_pair_options">ജോഡി ഓപ്ഷനുകൾ</string>
+    <string name="alert_channel_name">നിരക്ക് മുന്നറിയിപ്പുകൾ</string>
+    <string name="alert_notification_title">%1$s → %2$s ഇപ്പോൾ %3$s</string>
+    <string name="alert_notification_above">1 %1$s, %2$s %3$s അല്ലെങ്കിൽ കൂടുതൽ ആകുമ്പോൾ അറിയാൻ ആവശ്യപ്പെട്ടു.</string>
+    <string name="alert_notification_below">1 %1$s, %2$s %3$s അല്ലെങ്കിൽ കുറവ് ആകുമ്പോൾ അറിയാൻ ആവശ്യപ്പെട്ടു.</string>
+    <string name="widget_amount_desc">%1$s മാറ്റുക; മറ്റൊരു തുകയ്ക്ക് ടാപ്പ് ചെയ്യുക</string>
 </resources>

@@ -37,7 +37,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">En son kullandığınız veya seçtiğiniz döviz çifti için güncel kur ve 30 günlük eğilim.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s tarihi itibarıyla</string>
     <string name="widget_footer_empty">Kurları yüklemek için uygulamayı açın.</string>
     <string name="widget_no_rate">Kur mevcut değil</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">Tutarı yapıştır</string>
     <string name="paste_no_amount">Panoda tutar yok</string>
     <string name="tile_label">Döviz kuru</string>
+    <string name="alert_sheet_title">Kur uyarısı</string>
+    <string name="alert_sheet_confirm">Uyarı kur</string>
+    <string name="alert_sheet_label">%2$s cinsinden 1 %1$s</string>
+    <string name="alert_sheet_now">Şu an: %1$s</string>
+    <string name="alert_sheet_above">1 %1$s, %2$s %3$s veya üzerine çıktığında bildirim alırsınız.</string>
+    <string name="alert_sheet_below">1 %1$s, %2$s %3$s veya altına indiğinde bildirim alırsınız.</string>
+    <string name="alert_sheet_background">Kurlar arka planda kontrol edilir; bu nedenle arka plan yenilemesi açılır.</string>
+    <string name="alert_set">Kur uyarısı kuruldu</string>
+    <string name="alert_notifications_off">Bildirimler kapalı, uyarı size ulaşamaz. Sistem ayarlarından açın.</string>
+    <string name="alerts_title">Kur uyarıları</string>
+    <string name="alerts_summary">Zaman çizelgesinden veya son bir çiftten kurun</string>
+    <string name="alerts_empty">Henüz uyarı yok. Zaman çizelgesindeki zille kurun veya son bir çifte uzun basın.</string>
+    <string name="alert_row_above">%1$s veya üzeri</string>
+    <string name="alert_row_below">%1$s veya altı</string>
+    <string name="alert_delete">Uyarıyı sil</string>
+    <string name="alert_menu">Kur uyarısı</string>
+    <string name="recent_pair_options">Çift seçenekleri</string>
+    <string name="alert_channel_name">Kur uyarıları</string>
+    <string name="alert_notification_title">%1$s → %2$s: %3$s</string>
+    <string name="alert_notification_above">1 %1$s, %2$s %3$s veya üzerine çıktığında haber vermemizi istediniz.</string>
+    <string name="alert_notification_below">1 %1$s, %2$s %3$s veya altına indiğinde haber vermemizi istediniz.</string>
+    <string name="widget_amount_desc">%1$s çevir; başka tutar için dokunun</string>
 </resources>

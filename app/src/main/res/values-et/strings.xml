@@ -36,7 +36,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Viimase kasutatud või valitud valuutapaari viimane kurss ja 30 päeva trend.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Seisuga %s</string>
     <string name="widget_footer_empty">Kursside laadimiseks ava rakendus.</string>
     <string name="widget_no_rate">Kurss pole saadaval</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">Kleebi summa</string>
     <string name="paste_no_amount">Lõikelaual pole summat</string>
     <string name="tile_label">Vahetuskurss</string>
+    <string name="alert_sheet_title">Kursiteavitus</string>
+    <string name="alert_sheet_confirm">Määra teavitus</string>
+    <string name="alert_sheet_label">1 %1$s valuutas %2$s</string>
+    <string name="alert_sheet_now">Praegu: %1$s</string>
+    <string name="alert_sheet_above">Saad teavituse, kui 1 %1$s on %2$s %3$s või rohkem.</string>
+    <string name="alert_sheet_below">Saad teavituse, kui 1 %1$s on %2$s %3$s või vähem.</string>
+    <string name="alert_sheet_background">Kursse kontrollitakse taustal, seega lülitab see taustal värskendamise sisse.</string>
+    <string name="alert_set">Teavitus määratud</string>
+    <string name="alert_notifications_off">Märguanded on välja lülitatud, nii et teavitus sinuni ei jõua. Lülita need süsteemi seadetes sisse.</string>
+    <string name="alerts_title">Kursiteavitused</string>
+    <string name="alerts_summary">Määra ajajoonelt või hiljutiselt paarilt</string>
+    <string name="alerts_empty">Teavitusi veel pole. Määra ajajoone kellaga või vajuta pikalt hiljutist paari.</string>
+    <string name="alert_row_above">%1$s või rohkem</string>
+    <string name="alert_row_below">%1$s või vähem</string>
+    <string name="alert_delete">Kustuta teavitus</string>
+    <string name="alert_menu">Kursiteavitus</string>
+    <string name="recent_pair_options">Paari valikud</string>
+    <string name="alert_channel_name">Kursiteavitused</string>
+    <string name="alert_notification_title">%1$s → %2$s on %3$s</string>
+    <string name="alert_notification_above">Soovisid teada, kui 1 %1$s on %2$s %3$s või rohkem.</string>
+    <string name="alert_notification_below">Soovisid teada, kui 1 %1$s on %2$s %3$s või vähem.</string>
+    <string name="widget_amount_desc">Teisenda %1$s; puuduta teise summa jaoks</string>
 </resources>

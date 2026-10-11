@@ -22,4 +22,5 @@
     <string name="timeline_a11y_from_to">%2$s-ലെ %1$s മുതൽ %4$s-ലെ %3$s വരെ</string>
     <string name="timeline_a11y_high">ഉയർന്നത് %1$s, %2$s</string>
     <string name="timeline_a11y_low">താഴ്ന്നത് %1$s, %2$s</string>
+    <string name="timeline_alert_at">%1$s-ൽ മുന്നറിയിപ്പ്</string>
 </resources>

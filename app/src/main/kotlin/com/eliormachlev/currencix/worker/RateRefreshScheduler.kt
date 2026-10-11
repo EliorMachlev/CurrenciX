@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -26,6 +28,7 @@ private const val WORK_MANAGER_MIN_INTERVAL_MINUTES = 15L
 private const val BACKOFF_SECONDS = 30L
 
 private const val UNIQUE_NAME = "rate-refresh"
+private const val UNIQUE_NAME_NOW = "rate-refresh-now"
 
 /**
  * Hoisted API for turning the periodic auto-refresh work on/off (#151).
@@ -66,6 +69,18 @@ internal object RateRefreshScheduler {
         val override = db.providers.autoRefreshIntervalOverride.get()
         val effective = override?.toLong() ?: providerRefreshIntervalMinutes(db.providers.apiProvider.get())
         schedule(context, effective)
+    }
+
+    /**
+     * One refresh as soon as there's a network (the Quick Settings tile's
+     * tap). A second request while one is pending joins it.
+     */
+    fun refreshNow(context: Context) {
+        val request =
+            OneTimeWorkRequestBuilder<RateRefreshWorker>()
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(UNIQUE_NAME_NOW, ExistingWorkPolicy.KEEP, request)
     }
 
     fun cancel(context: Context) {

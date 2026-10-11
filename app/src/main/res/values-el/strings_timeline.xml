@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">από %1$s στις %2$s σε %3$s στις %4$s</string>
     <string name="timeline_a11y_high">υψηλότερη %1$s στις %2$s</string>
     <string name="timeline_a11y_low">χαμηλότερη %1$s στις %2$s</string>
+    <string name="timeline_alert_at">Ειδοποίηση στα %1$s</string>
 </resources>

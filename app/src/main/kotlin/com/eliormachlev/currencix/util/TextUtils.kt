@@ -316,3 +316,11 @@ fun CharSequence.toNumber(): Number? {
     if (isBlank() || !matches(NUMERIC_INPUT_REGEX)) return null
     return NumberFormat.getNumberInstance().parse(toString().replace(WHITESPACE_REGEX, ""))
 }
+
+/** A number typed into a field: "12,5" and "12.5" alike; blank or unreadable is null. */
+fun parseDecimal(text: String): BigDecimal? =
+    text
+        .trim()
+        .replace(',', '.')
+        .takeIf { it.isNotEmpty() }
+        ?.toBigDecimalOrNull()

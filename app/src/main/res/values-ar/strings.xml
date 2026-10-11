@@ -36,7 +36,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">أحدث سعر واتجاه 30 يومًا لآخر زوج عملات استخدمته، أو زوج تختاره.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">بتاريخ %s</string>
     <string name="widget_footer_empty">افتح التطبيق لتحميل الأسعار.</string>
     <string name="widget_no_rate">السعر غير متاح</string>
@@ -209,4 +208,26 @@
     <string name="paste_amount">لصق المبلغ</string>
     <string name="paste_no_amount">لا يوجد مبلغ في الحافظة</string>
     <string name="tile_label">سعر الصرف</string>
+    <string name="alert_sheet_title">تنبيه السعر</string>
+    <string name="alert_sheet_confirm">تعيين التنبيه</string>
+    <string name="alert_sheet_label">1 %1$s بعملة %2$s</string>
+    <string name="alert_sheet_now">الآن: %1$s</string>
+    <string name="alert_sheet_above">سيصلك إشعار عندما يصبح 1 %1$s يساوي %2$s %3$s أو أكثر.</string>
+    <string name="alert_sheet_below">سيصلك إشعار عندما يصبح 1 %1$s يساوي %2$s %3$s أو أقل.</string>
+    <string name="alert_sheet_background">يتم فحص الأسعار في الخلفية، لذا سيؤدي هذا إلى تشغيل التحديث في الخلفية.</string>
+    <string name="alert_set">تم تعيين تنبيه السعر</string>
+    <string name="alert_notifications_off">الإشعارات متوقفة، لذا لن يصلك التنبيه. شغّلها من إعدادات النظام.</string>
+    <string name="alerts_title">تنبيهات الأسعار</string>
+    <string name="alerts_summary">عيّن تنبيهًا من المخطط الزمني أو من زوج حديث</string>
+    <string name="alerts_empty">لا توجد تنبيهات بعد. عيّن واحدًا بجرس المخطط الزمني، أو اضغط مطولًا على زوج حديث.</string>
+    <string name="alert_row_above">%1$s أو أكثر</string>
+    <string name="alert_row_below">%1$s أو أقل</string>
+    <string name="alert_delete">حذف التنبيه</string>
+    <string name="alert_menu">تنبيه السعر</string>
+    <string name="recent_pair_options">خيارات الزوج</string>
+    <string name="alert_channel_name">تنبيهات الأسعار</string>
+    <string name="alert_notification_title">%1$s ← %2$s عند %3$s</string>
+    <string name="alert_notification_above">طلبت إشعارًا عندما يصبح 1 %1$s يساوي %2$s %3$s أو أكثر.</string>
+    <string name="alert_notification_below">طلبت إشعارًا عندما يصبح 1 %1$s يساوي %2$s %3$s أو أقل.</string>
+    <string name="widget_amount_desc">تحويل %1$s؛ اضغط لمبلغ آخر</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">dari %1$s pada %2$s menjadi %3$s pada %4$s</string>
     <string name="timeline_a11y_high">tertinggi %1$s pada %2$s</string>
     <string name="timeline_a11y_low">terendah %1$s pada %2$s</string>
+    <string name="timeline_alert_at">Peringatan di %1$s</string>
 </resources>

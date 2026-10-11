@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">från %1$s den %2$s till %3$s den %4$s</string>
     <string name="timeline_a11y_high">högst %1$s den %2$s</string>
     <string name="timeline_a11y_low">lägst %1$s den %2$s</string>
+    <string name="timeline_alert_at">Bevaka %1$s</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="timeline_a11y_from_to">z %1$s dne %2$s na %3$s dne %4$s</string>
     <string name="timeline_a11y_high">maximum %1$s dne %2$s</string>
     <string name="timeline_a11y_low">minimum %1$s dne %2$s</string>
+    <string name="timeline_alert_at">Upozornit na %1$s</string>
 </resources>

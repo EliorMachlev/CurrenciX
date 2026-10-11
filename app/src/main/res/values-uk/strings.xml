@@ -37,7 +37,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Актуальний курс і динаміка за 30 днів для останньої використаної валютної пари або обраної вами.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Станом на %s</string>
     <string name="widget_footer_empty">Відкрийте застосунок, щоб завантажити курси.</string>
     <string name="widget_no_rate">Курс недоступний</string>
@@ -207,4 +206,26 @@
     <string name="paste_amount">Вставити суму</string>
     <string name="paste_no_amount">У буфері обміну немає суми</string>
     <string name="tile_label">Курс обміну</string>
+    <string name="alert_sheet_title">Сповіщення про курс</string>
+    <string name="alert_sheet_confirm">Створити сповіщення</string>
+    <string name="alert_sheet_label">1 %1$s у %2$s</string>
+    <string name="alert_sheet_now">Зараз: %1$s</string>
+    <string name="alert_sheet_above">Ви отримаєте сповіщення, коли 1 %1$s коштуватиме %2$s %3$s або більше.</string>
+    <string name="alert_sheet_below">Ви отримаєте сповіщення, коли 1 %1$s коштуватиме %2$s %3$s або менше.</string>
+    <string name="alert_sheet_background">Курси перевіряються у фоні, тож буде ввімкнено фонове оновлення.</string>
+    <string name="alert_set">Сповіщення створено</string>
+    <string name="alert_notifications_off">Сповіщення вимкнено, тож воно до вас не дійде. Увімкніть їх у налаштуваннях системи.</string>
+    <string name="alerts_title">Сповіщення про курс</string>
+    <string name="alerts_summary">Створіть на графіку або в недавньої пари</string>
+    <string name="alerts_empty">Сповіщень поки немає. Створіть дзвіночком на графіку або довгим натисканням на недавню пару.</string>
+    <string name="alert_row_above">%1$s або більше</string>
+    <string name="alert_row_below">%1$s або менше</string>
+    <string name="alert_delete">Видалити сповіщення</string>
+    <string name="alert_menu">Сповіщення про курс</string>
+    <string name="recent_pair_options">Дії з парою</string>
+    <string name="alert_channel_name">Сповіщення про курс</string>
+    <string name="alert_notification_title">%1$s → %2$s: %3$s</string>
+    <string name="alert_notification_above">Ви просили повідомити, коли 1 %1$s коштуватиме %2$s %3$s або більше.</string>
+    <string name="alert_notification_below">Ви просили повідомити, коли 1 %1$s коштуватиме %2$s %3$s або менше.</string>
+    <string name="widget_amount_desc">Перерахувати %1$s; натисніть для іншої суми</string>
 </resources>

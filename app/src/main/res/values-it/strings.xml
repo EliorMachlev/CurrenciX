@@ -37,7 +37,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Ultimo tasso e andamento a 30 giorni della coppia di valute usata per ultima o di una a tua scelta.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Al %s</string>
     <string name="widget_footer_empty">Apri l\'app per caricare i tassi.</string>
     <string name="widget_no_rate">Tasso non disponibile</string>
@@ -207,4 +206,26 @@
     <string name="paste_amount">Incolla importo</string>
     <string name="paste_no_amount">Nessun importo negli appunti</string>
     <string name="tile_label">Tasso di cambio</string>
+    <string name="alert_sheet_title">Avviso di cambio</string>
+    <string name="alert_sheet_confirm">Imposta avviso</string>
+    <string name="alert_sheet_label">1 %1$s in %2$s</string>
+    <string name="alert_sheet_now">Ora: %1$s</string>
+    <string name="alert_sheet_above">Riceverai una notifica quando 1 %1$s varrà %2$s %3$s o più.</string>
+    <string name="alert_sheet_below">Riceverai una notifica quando 1 %1$s varrà %2$s %3$s o meno.</string>
+    <string name="alert_sheet_background">I tassi vengono controllati in background, quindi verrà attivato l’aggiornamento in background.</string>
+    <string name="alert_set">Avviso impostato</string>
+    <string name="alert_notifications_off">Le notifiche sono disattivate e l’avviso non ti raggiungerà. Attivale nelle impostazioni di sistema.</string>
+    <string name="alerts_title">Avvisi di cambio</string>
+    <string name="alerts_summary">Impostane uno dall’andamento o da una coppia recente</string>
+    <string name="alerts_empty">Ancora nessun avviso. Impostane uno con la campanella dell’andamento o tieni premuta una coppia recente.</string>
+    <string name="alert_row_above">%1$s o più</string>
+    <string name="alert_row_below">%1$s o meno</string>
+    <string name="alert_delete">Elimina avviso</string>
+    <string name="alert_menu">Avviso di cambio</string>
+    <string name="recent_pair_options">Opzioni coppia</string>
+    <string name="alert_channel_name">Avvisi di cambio</string>
+    <string name="alert_notification_title">%1$s → %2$s è a %3$s</string>
+    <string name="alert_notification_above">Volevi sapere quando 1 %1$s avrebbe valso %2$s %3$s o più.</string>
+    <string name="alert_notification_below">Volevi sapere quando 1 %1$s avrebbe valso %2$s %3$s o meno.</string>
+    <string name="widget_amount_desc">Converti %1$s; tocca per un altro importo</string>
 </resources>

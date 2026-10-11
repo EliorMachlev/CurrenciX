@@ -33,7 +33,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Τελευταία ισοτιμία και τάση 30 ημερών για το ζεύγος που χρησιμοποιήσατε τελευταία ή ένα που επιλέγετε.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Ενημέρωση: %s</string>
     <string name="widget_footer_empty">Ανοίξτε την εφαρμογή για να φορτώσετε τις ισοτιμίες.</string>
     <string name="widget_no_rate">Η ισοτιμία δεν είναι διαθέσιμη</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">Επικόλληση ποσού</string>
     <string name="paste_no_amount">Δεν υπάρχει ποσό στο πρόχειρο</string>
     <string name="tile_label">Συναλλαγματική ισοτιμία</string>
+    <string name="alert_sheet_title">Ειδοποίηση ισοτιμίας</string>
+    <string name="alert_sheet_confirm">Ορισμός ειδοποίησης</string>
+    <string name="alert_sheet_label">1 %1$s σε %2$s</string>
+    <string name="alert_sheet_now">Τώρα: %1$s</string>
+    <string name="alert_sheet_above">Θα ειδοποιηθείτε όταν 1 %1$s φτάσει τα %2$s %3$s ή περισσότερα.</string>
+    <string name="alert_sheet_below">Θα ειδοποιηθείτε όταν 1 %1$s πέσει στα %2$s %3$s ή λιγότερα.</string>
+    <string name="alert_sheet_background">Οι ισοτιμίες ελέγχονται στο παρασκήνιο, οπότε ενεργοποιείται η ανανέωση στο παρασκήνιο.</string>
+    <string name="alert_set">Η ειδοποίηση ορίστηκε</string>
+    <string name="alert_notifications_off">Οι ειδοποιήσεις είναι απενεργοποιημένες, οπότε δεν θα τη λάβετε. Ενεργοποιήστε τες στις ρυθμίσεις συστήματος.</string>
+    <string name="alerts_title">Ειδοποιήσεις ισοτιμίας</string>
+    <string name="alerts_summary">Ορίστε μία από το ιστορικό ή από πρόσφατο ζεύγος</string>
+    <string name="alerts_empty">Δεν υπάρχουν ειδοποιήσεις ακόμα. Ορίστε μία με το καμπανάκι του ιστορικού ή κρατήστε πατημένο ένα πρόσφατο ζεύγος.</string>
+    <string name="alert_row_above">%1$s ή περισσότερο</string>
+    <string name="alert_row_below">%1$s ή λιγότερο</string>
+    <string name="alert_delete">Διαγραφή ειδοποίησης</string>
+    <string name="alert_menu">Ειδοποίηση ισοτιμίας</string>
+    <string name="recent_pair_options">Επιλογές ζεύγους</string>
+    <string name="alert_channel_name">Ειδοποιήσεις ισοτιμίας</string>
+    <string name="alert_notification_title">%1$s → %2$s στα %3$s</string>
+    <string name="alert_notification_above">Ζητήσατε ειδοποίηση όταν 1 %1$s φτάσει τα %2$s %3$s ή περισσότερα.</string>
+    <string name="alert_notification_below">Ζητήσατε ειδοποίηση όταν 1 %1$s πέσει στα %2$s %3$s ή λιγότερα.</string>
+    <string name="widget_amount_desc">Μετατροπή %1$s· πατήστε για άλλο ποσό</string>
 </resources>

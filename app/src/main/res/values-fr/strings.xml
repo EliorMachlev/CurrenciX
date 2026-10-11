@@ -37,7 +37,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Dernier taux et tendance sur 30 jours de la dernière paire de devises utilisée, ou d\'une paire de votre choix.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Au %s</string>
     <string name="widget_footer_empty">Ouvrez l\'application pour charger les taux.</string>
     <string name="widget_no_rate">Taux indisponible</string>
@@ -207,4 +206,26 @@
     <string name="paste_amount">Coller le montant</string>
     <string name="paste_no_amount">Aucun montant dans le presse-papiers</string>
     <string name="tile_label">Taux de change</string>
+    <string name="alert_sheet_title">Alerte de taux</string>
+    <string name="alert_sheet_confirm">Créer l’alerte</string>
+    <string name="alert_sheet_label">1 %1$s en %2$s</string>
+    <string name="alert_sheet_now">Actuellement : %1$s</string>
+    <string name="alert_sheet_above">Vous serez prévenu quand 1 %1$s vaudra %2$s %3$s ou plus.</string>
+    <string name="alert_sheet_below">Vous serez prévenu quand 1 %1$s vaudra %2$s %3$s ou moins.</string>
+    <string name="alert_sheet_background">Les taux sont vérifiés en arrière-plan, l’actualisation en arrière-plan sera donc activée.</string>
+    <string name="alert_set">Alerte créée</string>
+    <string name="alert_notifications_off">Les notifications sont désactivées : l’alerte ne vous parviendra pas. Activez-les dans les paramètres du système.</string>
+    <string name="alerts_title">Alertes de taux</string>
+    <string name="alerts_summary">À créer depuis l’historique ou une paire récente</string>
+    <string name="alerts_empty">Aucune alerte pour l’instant. Créez-en une avec la cloche de l’historique ou par appui long sur une paire récente.</string>
+    <string name="alert_row_above">%1$s ou plus</string>
+    <string name="alert_row_below">%1$s ou moins</string>
+    <string name="alert_delete">Supprimer l’alerte</string>
+    <string name="alert_menu">Alerte de taux</string>
+    <string name="recent_pair_options">Options de la paire</string>
+    <string name="alert_channel_name">Alertes de taux</string>
+    <string name="alert_notification_title">%1$s → %2$s est à %3$s</string>
+    <string name="alert_notification_above">Vous vouliez être prévenu quand 1 %1$s vaudrait %2$s %3$s ou plus.</string>
+    <string name="alert_notification_below">Vous vouliez être prévenu quand 1 %1$s vaudrait %2$s %3$s ou moins.</string>
+    <string name="widget_amount_desc">Convertir %1$s ; touchez pour un autre montant</string>
 </resources>

@@ -18,4 +18,5 @@ class Database(
     val display = DisplaySettings(context)
     val chart = ChartSettings(context)
     val carts = CartStore(context)
+    val alerts = RateAlertStore(context)
 }

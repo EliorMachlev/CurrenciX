@@ -36,7 +36,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">আপনার সর্বশেষ ব্যবহৃত মুদ্রা জোড়া বা আপনার বেছে নেওয়া জোড়ার সর্বশেষ হার ও ৩০ দিনের প্রবণতা।</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">%s অনুযায়ী</string>
     <string name="widget_footer_empty">হার লোড করতে অ্যাপ খুলুন।</string>
     <string name="widget_no_rate">হার উপলব্ধ নেই</string>
@@ -205,4 +204,26 @@
     <string name="paste_amount">পরিমাণ পেস্ট করুন</string>
     <string name="paste_no_amount">ক্লিপবোর্ডে কোনো পরিমাণ নেই</string>
     <string name="tile_label">বিনিময় হার</string>
+    <string name="alert_sheet_title">হার সতর্কতা</string>
+    <string name="alert_sheet_confirm">সতর্কতা সেট করুন</string>
+    <string name="alert_sheet_label">%2$s-এ 1 %1$s</string>
+    <string name="alert_sheet_now">এখন: %1$s</string>
+    <string name="alert_sheet_above">1 %1$s যখন %2$s %3$s বা তার বেশি হবে, আপনাকে জানানো হবে।</string>
+    <string name="alert_sheet_below">1 %1$s যখন %2$s %3$s বা তার কম হবে, আপনাকে জানানো হবে।</string>
+    <string name="alert_sheet_background">হার ব্যাকগ্রাউন্ডে যাচাই হয়, তাই এটি ব্যাকগ্রাউন্ড রিফ্রেশ চালু করে।</string>
+    <string name="alert_set">হার সতর্কতা সেট হয়েছে</string>
+    <string name="alert_notifications_off">বিজ্ঞপ্তি বন্ধ, তাই সতর্কতা পৌঁছাবে না। সিস্টেম সেটিংসে চালু করুন।</string>
+    <string name="alerts_title">হার সতর্কতা</string>
+    <string name="alerts_summary">টাইমলাইন বা সাম্প্রতিক জোড়া থেকে সেট করুন</string>
+    <string name="alerts_empty">এখনও কোনো সতর্কতা নেই। টাইমলাইনের ঘণ্টা দিয়ে সেট করুন, বা সাম্প্রতিক জোড়ায় দীর্ঘক্ষণ চাপুন।</string>
+    <string name="alert_row_above">%1$s বা বেশি</string>
+    <string name="alert_row_below">%1$s বা কম</string>
+    <string name="alert_delete">সতর্কতা মুছুন</string>
+    <string name="alert_menu">হার সতর্কতা</string>
+    <string name="recent_pair_options">জোড়ার বিকল্প</string>
+    <string name="alert_channel_name">হার সতর্কতা</string>
+    <string name="alert_notification_title">%1$s → %2$s এখন %3$s</string>
+    <string name="alert_notification_above">1 %1$s যখন %2$s %3$s বা বেশি হয়, তা জানতে চেয়েছিলেন।</string>
+    <string name="alert_notification_below">1 %1$s যখন %2$s %3$s বা কম হয়, তা জানতে চেয়েছিলেন।</string>
+    <string name="widget_amount_desc">%1$s রূপান্তর; অন্য পরিমাণের জন্য ট্যাপ করুন</string>
 </resources>

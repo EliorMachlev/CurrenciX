@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
+import com.eliormachlev.currencix.view.tile.RateTileService
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -40,6 +41,8 @@ internal class RateRefreshWorker(
         return outcome.fold(
             onSuccess = {
                 Timber.tag(TAG).d("Auto-refresh success")
+                // The tile shows the new rate if it's in Quick Settings.
+                RateTileService.requestRedraw(applicationContext)
                 Result.success()
             },
             onFailure = { throwable ->

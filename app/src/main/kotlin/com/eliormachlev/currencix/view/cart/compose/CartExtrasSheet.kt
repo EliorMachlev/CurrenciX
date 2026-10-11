@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.util.parseDecimal
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
@@ -143,11 +144,3 @@ private fun SplitStepper(
         }
     }
 }
-
-// "12,5" and "12.5" alike; blank or unreadable is null.
-internal fun parseDecimal(text: String): BigDecimal? =
-    text
-        .trim()
-        .replace(',', '.')
-        .takeIf { it.isNotEmpty() }
-        ?.toBigDecimalOrNull()

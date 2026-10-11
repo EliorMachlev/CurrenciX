@@ -38,7 +38,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">Laatste koers en trend over 30 dagen voor je laatst gebruikte valutapaar of een paar naar keuze.</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">Per %s</string>
     <string name="widget_footer_empty">Open de app om koersen te laden.</string>
     <string name="widget_no_rate">Koers niet beschikbaar</string>
@@ -204,4 +203,26 @@
     <string name="paste_amount">Bedrag plakken</string>
     <string name="paste_no_amount">Geen bedrag op het klembord</string>
     <string name="tile_label">Wisselkoers</string>
+    <string name="alert_sheet_title">Koersmelding</string>
+    <string name="alert_sheet_confirm">Melding instellen</string>
+    <string name="alert_sheet_label">1 %1$s in %2$s</string>
+    <string name="alert_sheet_now">Nu: %1$s</string>
+    <string name="alert_sheet_above">Je krijgt een melding als 1 %1$s %2$s %3$s of meer is.</string>
+    <string name="alert_sheet_below">Je krijgt een melding als 1 %1$s %2$s %3$s of minder is.</string>
+    <string name="alert_sheet_background">Koersen worden op de achtergrond gecontroleerd, dus vernieuwen op de achtergrond wordt ingeschakeld.</string>
+    <string name="alert_set">Koersmelding ingesteld</string>
+    <string name="alert_notifications_off">Meldingen staan uit, dus deze melding bereikt je niet. Zet ze aan in de systeeminstellingen.</string>
+    <string name="alerts_title">Koersmeldingen</string>
+    <string name="alerts_summary">Stel er een in via het koersverloop of een recent paar</string>
+    <string name="alerts_empty">Nog geen koersmeldingen. Stel er een in met de bel bij het koersverloop of houd een recent paar ingedrukt.</string>
+    <string name="alert_row_above">%1$s of meer</string>
+    <string name="alert_row_below">%1$s of minder</string>
+    <string name="alert_delete">Melding verwijderen</string>
+    <string name="alert_menu">Koersmelding</string>
+    <string name="recent_pair_options">Opties voor paar</string>
+    <string name="alert_channel_name">Koersmeldingen</string>
+    <string name="alert_notification_title">%1$s → %2$s staat op %3$s</string>
+    <string name="alert_notification_above">Je wilde weten wanneer 1 %1$s %2$s %3$s of meer is.</string>
+    <string name="alert_notification_below">Je wilde weten wanneer 1 %1$s %2$s %3$s of minder is.</string>
+    <string name="widget_amount_desc">%1$s omrekenen; tik voor een ander bedrag</string>
 </resources>

@@ -37,7 +37,6 @@
 
     <!-- Home-screen widget -->
     <string name="widget_description">您最近使用的貨幣對或您所選貨幣對的最新匯率和 30 天走勢。</string>
-    <string name="widget_rate_line">1 %1$s = %2$s %3$s</string>
     <string name="widget_footer_date">截至 %s</string>
     <string name="widget_footer_empty">開啟應用程式以載入匯率。</string>
     <string name="widget_no_rate">匯率無法使用</string>
@@ -202,4 +201,26 @@
     <string name="paste_amount">貼上金額</string>
     <string name="paste_no_amount">剪貼簿中沒有金額</string>
     <string name="tile_label">匯率</string>
+    <string name="alert_sheet_title">匯率提醒</string>
+    <string name="alert_sheet_confirm">設定提醒</string>
+    <string name="alert_sheet_label">1 %1$s 兌 %2$s</string>
+    <string name="alert_sheet_now">目前：%1$s</string>
+    <string name="alert_sheet_above">當 1 %1$s 達到 %2$s %3$s 或更高時通知你。</string>
+    <string name="alert_sheet_below">當 1 %1$s 降到 %2$s %3$s 或更低時通知你。</string>
+    <string name="alert_sheet_background">匯率會在背景檢查，因此會開啟背景重新整理。</string>
+    <string name="alert_set">已設定匯率提醒</string>
+    <string name="alert_notifications_off">通知已關閉，提醒無法送達。請在系統設定中開啟。</string>
+    <string name="alerts_title">匯率提醒</string>
+    <string name="alerts_summary">可在走勢圖或最近的貨幣組合中設定</string>
+    <string name="alerts_empty">還沒有匯率提醒。輕觸走勢圖上的鈴鐺，或長按最近的貨幣組合來設定。</string>
+    <string name="alert_row_above">%1$s 或更高</string>
+    <string name="alert_row_below">%1$s 或更低</string>
+    <string name="alert_delete">刪除提醒</string>
+    <string name="alert_menu">匯率提醒</string>
+    <string name="recent_pair_options">貨幣組合選項</string>
+    <string name="alert_channel_name">匯率提醒</string>
+    <string name="alert_notification_title">%1$s → %2$s 現為 %3$s</string>
+    <string name="alert_notification_above">你希望在 1 %1$s 達到 %2$s %3$s 或更高時收到通知。</string>
+    <string name="alert_notification_below">你希望在 1 %1$s 降到 %2$s %3$s 或更低時收到通知。</string>
+    <string name="widget_amount_desc">換算 %1$s；輕觸切換金額</string>
 </resources>
