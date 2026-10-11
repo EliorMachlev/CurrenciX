@@ -24,11 +24,11 @@ private val CONNECTED_BUTTON_PADDING = PaddingValues(horizontal = 8.dp, vertical
 
 /**
  * A row of connected toggle buttons (Material 3 Expressive), one per
- * [options] entry, sharing the width: the checked one rounds fully, the rest
- * keep the group's outer corners. [selected] is the checked option, or none.
- * Tapping an option calls [onToggle] with it and whether it is now checked
- * (false when the checked one is tapped again), so a caller can clear the
- * choice or keep it.
+ * [options] entry, sharing the width, with the group's outer corners on its
+ * ends; the checked one keeps its shape and takes the accent color.
+ * [selected] is the checked option, or none. Tapping an option calls
+ * [onToggle] with it and whether it is now checked (false when the checked
+ * one is tapped again), so a caller can clear the choice or keep it.
  */
 @Composable
 internal fun <T> ConnectedToggleGroup(
@@ -60,14 +60,19 @@ internal fun <T> ConnectedToggleGroup(
     }
 }
 
-// The outer corners on the ends, square-ish joins in between.
+// The outer corners on the ends, square-ish joins in between. A checked
+// button keeps its shape (Material's default rounds it fully): only its
+// color says it's the one picked.
 @Composable
 private fun connectedShapes(
     index: Int,
     count: Int,
-): ToggleButtonShapes =
-    when (index) {
-        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-        count - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-    }
+): ToggleButtonShapes {
+    val shapes =
+        when (index) {
+            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+            count - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+        }
+    return shapes.copy(checkedShape = shapes.shape)
+}
