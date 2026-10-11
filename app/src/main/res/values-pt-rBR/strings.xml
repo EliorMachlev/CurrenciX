@@ -45,11 +45,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Carrinho de compras</string>
-    <string name="cart_empty_hint">Seu carrinho está vazio. Toque em “Adicionar item” para começar.</string>
+    <string name="cart_empty_title">Seu carrinho está vazio</string>
+    <string name="cart_empty_body">Adicione o que você está comprando para ver o total em outra moeda. Um preço pode ser uma soma, como 3.25 + 0.50 ou 2.99 × 2.</string>
+    <string name="cart_add_first_item">Adicionar o primeiro item</string>
     <string name="cart_add_item">Adicionar item</string>
     <string name="cart_item_name_hint">Item</string>
-    <string name="cart_item_expression_hint">Preço (ex.: 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Preço</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Excluir item</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
@@ -179,5 +181,6 @@
     <string name="cart_per_person_row">Por pessoa (÷%1$d)</string>
     <string name="cart_budget_label">Orçamento</string>
     <string name="cart_budget_left_row">Resta no orçamento</string>
+    <string name="cart_budget_used_a11y">%1$d%% do orçamento usado</string>
     <string name="cart_over_budget_row">Acima do orçamento</string>
 </resources>

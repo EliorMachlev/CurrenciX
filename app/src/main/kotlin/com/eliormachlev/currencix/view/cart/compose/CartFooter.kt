@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.rateFor
+import com.eliormachlev.currencix.util.HUNDRED_PERCENT
 import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.isNeutralFeeStack
@@ -51,6 +55,7 @@ import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
 import com.eliormachlev.currencix.viewmodel.cart.perPerson
 import java.math.BigDecimal
 import java.math.MathContext
+import kotlin.math.roundToInt
 
 private val FOOTER_OUTER_MARGIN: Dp = Spacing.Large
 private val FOOTER_PADDING: Dp = Spacing.Large
@@ -208,12 +213,14 @@ private fun ExtrasBelowTotal(
     extras.budget?.let { budget ->
         val left = budgetLeft(total, budget)
         val over = left.signum() < 0
+        val color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
         ExtraRow(
             label = stringResource(if (over) R.string.cart_over_budget_row else R.string.cart_budget_left_row),
             amount = context.formatCartAmount(left.abs(), currency),
             onClick = onEdit,
-            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = color,
         )
+        BudgetBar(used = budgetUsed(total, budget), over = over)
     }
 }
 
@@ -235,6 +242,32 @@ private fun ExtraRow(
         Text(label, style = MaterialTheme.typography.labelMedium, color = color, modifier = Modifier.weight(1f))
         Figure(amount, MaterialTheme.typography.labelMedium, color)
     }
+}
+
+// How much of the budget the total takes, 0 to 1 (full when over).
+private fun budgetUsed(
+    total: BigDecimal,
+    budget: BigDecimal,
+): Float = if (budget.signum() <= 0) 1f else total.divide(budget, MathContext.DECIMAL64).toFloat().coerceIn(0f, 1f)
+
+// The budget as a bar: the share the total takes, red once it's over.
+@Composable
+private fun BudgetBar(
+    used: Float,
+    over: Boolean,
+) {
+    val percent = (used * HUNDRED_PERCENT.toFloat()).roundToInt()
+    val description = stringResource(R.string.cart_budget_used_a11y, percent)
+    LinearProgressIndicator(
+        progress = { used },
+        color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = Spacing.XSmall)
+                .semantics { contentDescription = description },
+    )
 }
 
 private enum class CartPickSide { FROM, TO }
@@ -316,14 +349,16 @@ private fun FeeAnnotationRow(
             amountText,
             feeStack.toCartFeePercentDisplay(),
         )
-    Row(modifier = Modifier.fillMaxWidth()) {
+    // A fee is part of the price, not a problem: muted, like the tip row.
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
+    Row(modifier = Modifier.fillMaxWidth().padding(top = EXTRA_ROW_GAP)) {
         Text(
             text = stripLabelSeparator(stringResource(id = prefixRes)),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.labelMedium,
+            color = color,
             modifier = Modifier.weight(1f),
         )
-        Figure(valueText, MaterialTheme.typography.labelSmall, MaterialTheme.colorScheme.error)
+        Figure(valueText, MaterialTheme.typography.labelMedium, color)
     }
 }
 

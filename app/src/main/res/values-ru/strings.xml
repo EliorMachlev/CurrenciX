@@ -44,11 +44,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Корзина</string>
-    <string name="cart_empty_hint">Корзина пуста. Нажмите «Добавить позицию», чтобы начать.</string>
+    <string name="cart_empty_title">Корзина пуста</string>
+    <string name="cart_empty_body">Добавьте покупки, чтобы увидеть итог в другой валюте. Цена может быть суммой, например 3.25 + 0.50 или 2.99 × 2.</string>
+    <string name="cart_add_first_item">Добавить первый товар</string>
     <string name="cart_add_item">Добавить позицию</string>
     <string name="cart_item_name_hint">Позиция</string>
-    <string name="cart_item_expression_hint">Цена (например, 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Цена</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Удалить позицию</string>
     <string name="cart_subtotal_label">Промежуточный итог</string>
     <string name="cart_total_label">Итого</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">На человека (÷%1$d)</string>
     <string name="cart_budget_label">Бюджет</string>
     <string name="cart_budget_left_row">Осталось в бюджете</string>
+    <string name="cart_budget_used_a11y">Использовано %1$d%% бюджета</string>
     <string name="cart_over_budget_row">Сверх бюджета</string>
 </resources>

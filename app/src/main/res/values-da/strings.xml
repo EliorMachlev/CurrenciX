@@ -44,11 +44,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Indkøbskurv</string>
-    <string name="cart_empty_hint">Din kurv er tom. Tryk på ”Tilføj vare” for at komme i gang.</string>
+    <string name="cart_empty_title">Kurven er tom</string>
+    <string name="cart_empty_body">Tilføj det, du køber, for at se totalen i en anden valuta. En pris kan være en sum, f.eks. 3.25 + 0.50 eller 2.99 × 2.</string>
+    <string name="cart_add_first_item">Tilføj første vare</string>
     <string name="cart_add_item">Tilføj vare</string>
     <string name="cart_item_name_hint">Vare</string>
-    <string name="cart_item_expression_hint">Pris (fx 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Pris</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Slet vare</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">I alt</string>
@@ -177,5 +179,6 @@
     <string name="cart_per_person_row">Pr. person (÷%1$d)</string>
     <string name="cart_budget_label">Budget</string>
     <string name="cart_budget_left_row">Tilbage af budgettet</string>
+    <string name="cart_budget_used_a11y">%1$d%% af budgettet brugt</string>
     <string name="cart_over_budget_row">Over budget</string>
 </resources>

@@ -43,11 +43,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">עגלת קניות</string>
-    <string name="cart_empty_hint">העגלה ריקה. יש להקיש על ״הוספת פריט״ כדי להתחיל.</string>
+    <string name="cart_empty_title">העגלה ריקה</string>
+    <string name="cart_empty_body">אפשר להוסיף את מה שקונים כדי לראות את הסכום במטבע אחר. מחיר יכול להיות חישוב, למשל 3.25 + 0.50 או 2.99 × 2.</string>
+    <string name="cart_add_first_item">הוספת פריט ראשון</string>
     <string name="cart_add_item">הוספת פריט</string>
     <string name="cart_item_name_hint">פריט</string>
-    <string name="cart_item_expression_hint">מחיר (למשל 2 × 3.50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">מחיר</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">מחיקת פריט</string>
     <string name="cart_subtotal_label">סכום ביניים</string>
     <string name="cart_total_label">סה״כ</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">לאדם (÷%1$d)</string>
     <string name="cart_budget_label">תקציב</string>
     <string name="cart_budget_left_row">יתרת תקציב</string>
+    <string name="cart_budget_used_a11y">‏%1$d%% מהתקציב נוצלו</string>
     <string name="cart_over_budget_row">חריגה מהתקציב</string>
 </resources>

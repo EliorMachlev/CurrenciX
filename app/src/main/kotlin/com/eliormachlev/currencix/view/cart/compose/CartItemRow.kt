@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.cart.compose
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,16 +8,16 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -37,39 +36,55 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hintText
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
+import com.eliormachlev.currencix.util.OPERATOR_MINUS
+import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
+import com.eliormachlev.currencix.util.OPERATOR_PLUS
+import com.eliormachlev.currencix.util.PAREN_OPEN
+import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hapticOnFocus
-import com.eliormachlev.currencix.util.roundForDisplay
-import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.NameInputTransformation
+import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.theme.Spacing
-import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
+import com.eliormachlev.currencix.viewmodel.cart.RowConversion
+import com.eliormachlev.currencix.viewmodel.cart.evaluatePrice
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
-// The row being edited is outlined thicker, in the accent color.
-private val BORDER_WIDTH: Dp = 1.dp
-private val ACTIVE_BORDER_WIDTH: Dp = 2.dp
-private val ROW_ELEVATION: Dp = 2.dp
-
 private const val NAME_EDIT_DEBOUNCE_MS = 300L
-private const val ROW_PREVIEW_SCALE = 2
 private val FIELD_MIN_HEIGHT = 48.dp
+
+// Rows of one section share a card; between rows, a hairline inset to
+// where the text starts (past the drag handle).
+private val ROW_CORNER = 14.dp
+private val DIVIDER_INSET = 40.dp
+private const val ACTIVE_ROW_TINT = 0.08f
+
+// A price that's worked out ("3.25 + 0.50", "2.99 × 2"), as opposed to a
+// plain amount: the calculation is shown under the result.
+private val CALCULATION_CHARS = (OPERATOR_PLUS + OPERATOR_MINUS + OPERATOR_MULTIPLY + OPERATOR_DIVIDE + PAREN_OPEN + "%").toSet()
 
 // Distance from the swipe-origin edge to the trashcan icon when the row
 // slides. Matches Material's SwipeToDismiss sample so the icon reads as
@@ -85,9 +100,51 @@ data class CartRowState(
     // The expression as it's being typed, while this row is the keypad's
     // target; null for a row that isn't being edited.
     val liveExpression: String? = null,
+    // The price in the destination currency; null when there's nothing to convert to.
+    val conversion: RowConversion? = null,
 ) {
     val isActive: Boolean get() = liveExpression != null
     val displayedExpression: String get() = liveExpression ?: item.expression
+}
+
+/**
+ * Where a row sits in its section's card: the first rounds its top
+ * corners, the last its bottom ones, and every row but the first has a
+ * divider above it.
+ */
+enum class RowPosition(
+    top: Boolean,
+    bottom: Boolean,
+) {
+    Single(top = true, bottom = true),
+    First(top = true, bottom = false),
+    Middle(top = false, bottom = false),
+    Last(top = false, bottom = true),
+    ;
+
+    val shape: Shape =
+        RoundedCornerShape(
+            topStart = if (top) ROW_CORNER else 0.dp,
+            topEnd = if (top) ROW_CORNER else 0.dp,
+            bottomStart = if (bottom) ROW_CORNER else 0.dp,
+            bottomEnd = if (bottom) ROW_CORNER else 0.dp,
+        )
+
+    val hasDividerAbove: Boolean = !top
+
+    companion object {
+        /** The position of row [index] among [count] rows. */
+        fun of(
+            index: Int,
+            count: Int,
+        ): RowPosition =
+            when {
+                count == 1 -> Single
+                index == 0 -> First
+                index == count - 1 -> Last
+                else -> Middle
+            }
+    }
 }
 
 /** What one cart row can ask for. */
@@ -111,6 +168,7 @@ fun SwipeableCartItemRow(
     state: CartRowState,
     actions: CartRowActions,
     modifier: Modifier = Modifier,
+    position: RowPosition = RowPosition.Single,
     dragHandleModifier: Modifier = Modifier,
 ) {
     // Observe currentValue rather than passing confirmValueChange (deprecated —
@@ -131,20 +189,22 @@ fun SwipeableCartItemRow(
     }
     SwipeToDismissBox(
         state = dismissState,
-        backgroundContent = { SwipeDeleteBackground(dismissState) },
+        backgroundContent = { SwipeDeleteBackground(dismissState, position.shape) },
         enableDismissFromStartToEnd = !state.isActive,
         enableDismissFromEndToStart = !state.isActive,
         modifier = modifier,
     ) {
-        CartItemRow(state = state, actions = actions, dragHandleModifier = dragHandleModifier)
+        CartItemRow(state = state, actions = actions, position = position, dragHandleModifier = dragHandleModifier)
     }
 }
 
 @Composable
-private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
-    // Only paint the background once the swipe is active — otherwise the
-    // OutlinedCard's ambient background would show red rectangles behind
-    // every row at rest.
+private fun SwipeDeleteBackground(
+    state: SwipeToDismissBoxState,
+    shape: Shape,
+) {
+    // Only paint the background once the swipe is active — otherwise red
+    // would show through behind every row at rest.
     val direction = state.dismissDirection
     val active =
         direction == SwipeToDismissBoxValue.StartToEnd ||
@@ -162,9 +222,8 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(Spacing.Small)
-                // Same corners as the card sliding off it.
-                .clip(CardDefaults.outlinedShape)
+                // Same corners as the row sliding off it.
+                .clip(shape)
                 .background(if (active) MaterialTheme.colorScheme.error else Color.Transparent),
         contentAlignment = alignment,
     ) {
@@ -193,44 +252,57 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
     }
 }
 
+/**
+ * One cart item as a receipt line: the name, editable in place, and the
+ * price at the end (tap it for the keypad); under them the calculation, when
+ * the price is worked out, and the price in the destination currency. Rows
+ * of a section share a card ([position]); the row being edited is tinted.
+ */
 @Composable
 fun CartItemRow(
     state: CartRowState,
     actions: CartRowActions,
     modifier: Modifier = Modifier,
+    position: RowPosition = RowPosition.Single,
     dragHandleModifier: Modifier = Modifier,
 ) {
     val item = state.item
-    OutlinedCard(
+    val surface = MaterialTheme.colorScheme.surface
+    val background =
+        if (state.isActive) {
+            MaterialTheme.colorScheme.primary
+                .copy(alpha = ACTIVE_ROW_TINT)
+                .compositeOver(surface)
+        } else {
+            surface
+        }
+    Column(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(Spacing.Small),
-        border = rowBorder(state.isActive),
-        elevation = CardDefaults.outlinedCardElevation(defaultElevation = ROW_ELEVATION),
+                .clip(position.shape)
+                .background(background),
     ) {
+        if (position.hasDividerAbove) {
+            HorizontalDivider(Modifier.padding(start = DIVIDER_INSET), color = MaterialTheme.colorScheme.outlineVariant)
+        }
         Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(Spacing.Small),
+            modifier = Modifier.fillMaxWidth().padding(start = Spacing.Tiny, top = Spacing.Tiny, bottom = Spacing.Tiny),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             DragHandle(modifier = dragHandleModifier)
             Column(modifier = Modifier.weight(1f)) {
-                NameField(
-                    initial = item.name,
-                    onCommit = actions.onNameCommit,
-                    onPending = actions.onNamePending,
-                )
-                ExpressionField(
-                    text = state.displayedExpression,
-                    onTap = actions.onExpressionTap,
-                )
-                ValuePreview(
-                    item = item.copy(expression = state.displayedExpression),
-                    currency = state.currency,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.weight(1f)) {
+                        NameField(
+                            initial = item.name,
+                            onCommit = actions.onNameCommit,
+                            onPending = actions.onNamePending,
+                        )
+                    }
+                    PriceField(state = state, onTap = actions.onExpressionTap)
+                }
+                PriceDetails(state = state, onTap = actions.onExpressionTap)
             }
             FavoriteToggleIcon(
                 active = item.pinned,
@@ -244,23 +316,99 @@ fun CartItemRow(
     }
 }
 
+// The row's price at its end edge: the result in the cart's currency, or a
+// "Price" placeholder before one is entered. Tapping opens the keypad.
+@Composable
+private fun PriceField(
+    state: CartRowState,
+    onTap: () -> Unit,
+) {
+    val context = LocalContext.current
+    val expression = state.displayedExpression
+    val price =
+        remember(expression, state.currency) {
+            expression.takeIf { it.isNotBlank() }?.let { context.formatCartAmount(evaluatePrice(it), Currency.fromString(state.currency)) }
+        }
+    Box(
+        modifier =
+            Modifier
+                .defaultMinSize(minHeight = FIELD_MIN_HEIGHT)
+                .hapticClickable(onClick = onTap)
+                .padding(start = Spacing.Small),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
+        if (price == null) {
+            Text(
+                text = stringResource(id = R.string.cart_item_price_hint),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            // An amount reads left to right in every language.
+            Ltr { Text(text = price, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold) }
+        }
+    }
+}
+
+// Under the name and price: the calculation (when the price is worked out)
+// at the start, the price in the destination currency at the end. Nothing
+// when there's neither.
+@Composable
+private fun PriceDetails(
+    state: CartRowState,
+    onTap: () -> Unit,
+) {
+    val context = LocalContext.current
+    val expression = state.displayedExpression
+    val calculation = expression.takeIf { it.any(CALCULATION_CHARS::contains) }
+    val convertedAmount =
+        remember(expression, state.conversion) {
+            val conversion = state.conversion ?: return@remember null
+            expression
+                .takeIf { it.isNotBlank() }
+                ?.let { conversion.convert(evaluatePrice(it)) }
+                ?.let { context.formatCartAmount(it, conversion.currency) }
+        }
+    val converted = convertedAmount?.let { stringResource(R.string.cart_row_converted, it) }
+    if (calculation == null && converted == null) return
+    Row(
+        modifier = Modifier.fillMaxWidth().hapticClickable(onClick = onTap).padding(bottom = Spacing.Tiny),
+        // A long calculation wraps; the converted price stays level with its first line.
+        verticalAlignment = Alignment.Top,
+    ) {
+        // Kept apart from the converted price when a long calculation wraps.
+        Box(Modifier.weight(1f).padding(end = Spacing.Small)) {
+            calculation?.let { Calculation(it) }
+        }
+        converted?.let { Ltr { SupportingText(it) } }
+    }
+}
+
+// A price's calculation ("2 × 3.50"): math, so left to right in every
+// language, but its lines on the side the language starts reading from.
+@Composable
+private fun Calculation(text: String) {
+    val align = if (LocalLayoutDirection.current == LayoutDirection.Rtl) TextAlign.Right else TextAlign.Left
+    Ltr {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = align,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
 @Composable
 private fun DragHandle(modifier: Modifier = Modifier) {
     Icon(
         painter = painterResource(R.drawable.ic_drag_handle),
         contentDescription = stringResource(id = R.string.cart_reorder_item),
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier.padding(end = Spacing.Small),
+        modifier = modifier.padding(horizontal = Spacing.Small),
     )
 }
-
-@Composable
-private fun rowBorder(isActive: Boolean): BorderStroke =
-    if (isActive) {
-        BorderStroke(ACTIVE_BORDER_WIDTH, MaterialTheme.colorScheme.primary)
-    } else {
-        BorderStroke(BORDER_WIDTH, MaterialTheme.colorScheme.outlineVariant)
-    }
 
 @Composable
 private fun NameField(
@@ -329,57 +477,5 @@ private fun NameField(
                 modifier = Modifier.clearAndSetSemantics {},
             )
         }
-    }
-}
-
-@Composable
-private fun ExpressionField(
-    text: String,
-    onTap: () -> Unit,
-) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = FIELD_MIN_HEIGHT)
-                .hapticClickable(onClick = onTap),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        if (text.isBlank()) {
-            Text(
-                text = stringResource(id = R.string.cart_item_expression_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        } else {
-            // A price ("2 × 3.50") is math: left to right in every language.
-            Ltr {
-                Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ValuePreview(
-    item: CartItem,
-    currency: String,
-) {
-    if (item.expression.isBlank()) return
-    val context = LocalContext.current
-    val formatted =
-        remember(item.expression) {
-            evaluateItem(item)
-                .roundForDisplay(ROW_PREVIEW_SCALE)
-                .toHumanReadableNumber(context, decimalPlaces = ROW_PREVIEW_SCALE)
-        }
-    // "= 7.00 ₪" reads left to right; the column places it at its start edge.
-    Ltr {
-        Text(
-            text = stringResource(id = R.string.cart_row_value_format, formatted, currency),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(top = Spacing.Small),
-        )
     }
 }

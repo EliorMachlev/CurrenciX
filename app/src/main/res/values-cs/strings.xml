@@ -43,11 +43,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Košík</string>
-    <string name="cart_empty_hint">Košík je prázdný. Začněte klepnutím na „Přidat položku“.</string>
+    <string name="cart_empty_title">Košík je prázdný</string>
+    <string name="cart_empty_body">Přidejte, co kupujete, a uvidíte součet v jiné měně. Cena může být i součet, třeba 3.25 + 0.50 nebo 2.99 × 2.</string>
+    <string name="cart_add_first_item">Přidat první položku</string>
     <string name="cart_add_item">Přidat položku</string>
     <string name="cart_item_name_hint">Položka</string>
-    <string name="cart_item_expression_hint">Cena (např. 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Cena</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Smazat položku</string>
     <string name="cart_subtotal_label">Mezisoučet</string>
     <string name="cart_total_label">Celkem</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">Na osobu (÷%1$d)</string>
     <string name="cart_budget_label">Rozpočet</string>
     <string name="cart_budget_left_row">Zbývá v rozpočtu</string>
+    <string name="cart_budget_used_a11y">Využito %1$d%% rozpočtu</string>
     <string name="cart_over_budget_row">Nad rozpočet</string>
 </resources>

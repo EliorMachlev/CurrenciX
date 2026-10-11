@@ -37,11 +37,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Innkaupakarfa</string>
-    <string name="cart_empty_hint">Karfan þín er tóm. Ýttu á „Bæta við vöru“ til að byrja.</string>
+    <string name="cart_empty_title">Karfan er tóm</string>
+    <string name="cart_empty_body">Bættu við því sem þú kaupir til að sjá heildina í öðrum gjaldmiðli. Verð getur verið summa, t.d. 3.25 + 0.50 eða 2.99 × 2.</string>
+    <string name="cart_add_first_item">Bæta við fyrstu vöru</string>
     <string name="cart_add_item">Bæta við vöru</string>
     <string name="cart_item_name_hint">Vara</string>
-    <string name="cart_item_expression_hint">Verð (t.d. 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Verð</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Eyða vöru</string>
     <string name="cart_subtotal_label">Milliupphæð</string>
     <string name="cart_total_label">Samtals</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">Á mann (÷%1$d)</string>
     <string name="cart_budget_label">Fjárhagsáætlun</string>
     <string name="cart_budget_left_row">Eftir af fjárhagsáætlun</string>
+    <string name="cart_budget_used_a11y">%1$d%% af fjárhagsáætlun notuð</string>
     <string name="cart_over_budget_row">Yfir fjárhagsáætlun</string>
 </resources>

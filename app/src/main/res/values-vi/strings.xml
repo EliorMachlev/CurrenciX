@@ -42,11 +42,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Giỏ hàng</string>
-    <string name="cart_empty_hint">Giỏ hàng của bạn trống. Nhấn “Thêm mục” để bắt đầu.</string>
+    <string name="cart_empty_title">Giỏ hàng trống</string>
+    <string name="cart_empty_body">Thêm những gì bạn mua để xem tổng bằng loại tiền khác. Giá có thể là một phép tính, như 3.25 + 0.50 hoặc 2.99 × 2.</string>
+    <string name="cart_add_first_item">Thêm mặt hàng đầu tiên</string>
     <string name="cart_add_item">Thêm mục</string>
     <string name="cart_item_name_hint">Mục</string>
-    <string name="cart_item_expression_hint">Giá (ví dụ 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Giá</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Xóa mục</string>
     <string name="cart_subtotal_label">Tạm tính</string>
     <string name="cart_total_label">Tổng</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">Mỗi người (÷%1$d)</string>
     <string name="cart_budget_label">Ngân sách</string>
     <string name="cart_budget_left_row">Còn lại trong ngân sách</string>
+    <string name="cart_budget_used_a11y">Đã dùng %1$d%% ngân sách</string>
     <string name="cart_over_budget_row">Vượt ngân sách</string>
 </resources>

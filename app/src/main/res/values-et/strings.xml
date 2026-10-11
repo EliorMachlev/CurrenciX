@@ -43,11 +43,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Ostukorv</string>
-    <string name="cart_empty_hint">Ostukorv on tühi. Alustamiseks puuduta „Lisa toode“.</string>
+    <string name="cart_empty_title">Ostukorv on tühi</string>
+    <string name="cart_empty_body">Lisa, mida ostad, et näha kogusummat teises valuutas. Hind võib olla ka summa, näiteks 3.25 + 0.50 või 2.99 × 2.</string>
+    <string name="cart_add_first_item">Lisa esimene toode</string>
     <string name="cart_add_item">Lisa toode</string>
     <string name="cart_item_name_hint">Toode</string>
-    <string name="cart_item_expression_hint">Hind (nt 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Hind</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Kustuta toode</string>
     <string name="cart_subtotal_label">Vahesumma</string>
     <string name="cart_total_label">Kokku</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">Inimese kohta (÷%1$d)</string>
     <string name="cart_budget_label">Eelarve</string>
     <string name="cart_budget_left_row">Eelarvest alles</string>
+    <string name="cart_budget_used_a11y">%1$d%% eelarvest kasutatud</string>
     <string name="cart_over_budget_row">Üle eelarve</string>
 </resources>

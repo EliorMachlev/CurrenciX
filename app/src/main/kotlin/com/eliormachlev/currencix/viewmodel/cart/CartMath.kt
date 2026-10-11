@@ -15,8 +15,11 @@ import java.math.MathContext
  * malformed expressions collapse to zero so a partially-typed row never
  * derails a totals calculation.
  */
-fun evaluateItem(item: CartItem): BigDecimal {
-    val raw = item.expression.trim()
+fun evaluateItem(item: CartItem): BigDecimal = evaluatePrice(item.expression)
+
+/** A price expression ("3.25 + 0.50") worked out; zero when blank or unfinished. */
+fun evaluatePrice(expression: String): BigDecimal {
+    val raw = expression.trim()
     if (raw.isEmpty()) return BigDecimal.ZERO
     return runCatching { raw.evaluateCalculatorExpression().toBigDecimal() }
         .getOrDefault(BigDecimal.ZERO)

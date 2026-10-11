@@ -92,6 +92,7 @@ class ScreenReaderLabelsTest {
                     ),
                 actions = cartItemActions(),
                 reorder = NO_REORDER,
+                onAddItem = {},
                 onBackgroundTap = {},
             )
         }

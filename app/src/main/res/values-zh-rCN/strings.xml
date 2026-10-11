@@ -44,11 +44,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">购物车</string>
-    <string name="cart_empty_hint">购物车为空。点按“添加商品”开始。</string>
+    <string name="cart_empty_title">购物车是空的</string>
+    <string name="cart_empty_body">添加要买的东西，即可查看以另一种货币计的总额。价格可以是算式，例如 3.25 + 0.50 或 2.99 × 2。</string>
+    <string name="cart_add_first_item">添加第一件商品</string>
     <string name="cart_add_item">添加商品</string>
     <string name="cart_item_name_hint">商品</string>
-    <string name="cart_item_expression_hint">价格（例如 2 × 3.50）</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">价格</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">删除商品</string>
     <string name="cart_subtotal_label">小计</string>
     <string name="cart_total_label">合计</string>
@@ -176,5 +178,6 @@
     <string name="cart_per_person_row">每人 (÷%1$d)</string>
     <string name="cart_budget_label">预算</string>
     <string name="cart_budget_left_row">预算剩余</string>
+    <string name="cart_budget_used_a11y">已用预算的 %1$d%%</string>
     <string name="cart_over_budget_row">超出预算</string>
 </resources>

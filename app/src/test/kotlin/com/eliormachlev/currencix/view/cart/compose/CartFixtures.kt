@@ -16,6 +16,7 @@ internal fun cartSources(items: LiveData<ImmutableList<CartItem>>) =
         currency = MutableLiveData("USD"),
         activeItemId = MutableLiveData(null),
         activeExpression = MutableLiveData(""),
+        conversion = MutableLiveData(null),
     )
 
 /** Row actions that do nothing, but for [onTogglePin]. */

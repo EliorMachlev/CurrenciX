@@ -37,11 +37,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Bevásárlókosár</string>
-    <string name="cart_empty_hint">A kosarad üres. Koppints a „Tétel hozzáadása” gombra a kezdéshez.</string>
+    <string name="cart_empty_title">A kosár üres</string>
+    <string name="cart_empty_body">Add hozzá, amit veszel, hogy lásd a végösszeget egy másik pénznemben. Az ár lehet összeg is, például 3.25 + 0.50 vagy 2.99 × 2.</string>
+    <string name="cart_add_first_item">Első tétel hozzáadása</string>
     <string name="cart_add_item">Tétel hozzáadása</string>
     <string name="cart_item_name_hint">Tétel</string>
-    <string name="cart_item_expression_hint">Ár (pl. 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Ár</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Tétel törlése</string>
     <string name="cart_subtotal_label">Részösszeg</string>
     <string name="cart_total_label">Összesen</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">Fejenként (÷%1$d)</string>
     <string name="cart_budget_label">Keret</string>
     <string name="cart_budget_left_row">Maradt a keretből</string>
+    <string name="cart_budget_used_a11y">A keret %1$d%%-a felhasználva</string>
     <string name="cart_over_budget_row">Kereten felül</string>
 </resources>

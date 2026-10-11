@@ -88,6 +88,13 @@ class CartViewModel(
             addSource(ratesCache.rates) { recompute() }
         }
     }
+    private val rowConversionLive: LiveData<RowConversion?> by lazy {
+        MediatorLiveData<RowConversion?>().apply {
+            val recompute = { value = RowConversion.of(current.value, ratesCache.rates.value) }
+            addSource(current) { recompute() }
+            addSource(ratesCache.rates) { recompute() }
+        }
+    }
     private val totalLive: LiveData<BigDecimal> by lazy {
         MediatorLiveData<BigDecimal>().apply {
             val recompute = {
@@ -124,6 +131,9 @@ class CartViewModel(
      * charged).
      */
     fun getConvertedSubtotal(): LiveData<BigDecimal> = convertedSubtotalLive
+
+    /** Each row's price in the destination currency (see [RowConversion]). */
+    fun getRowConversion(): LiveData<RowConversion?> = rowConversionLive
 
     /**
      * Total in the destination currency: subtotal → converted at cached

@@ -45,11 +45,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Kundvagn</string>
-    <string name="cart_empty_hint">Din kundvagn är tom. Tryck på ”Lägg till artikel” för att börja.</string>
+    <string name="cart_empty_title">Varukorgen är tom</string>
+    <string name="cart_empty_body">Lägg till det du köper för att se totalen i en annan valuta. Ett pris kan vara en summa, t.ex. 3.25 + 0.50 eller 2.99 × 2.</string>
+    <string name="cart_add_first_item">Lägg till första varan</string>
     <string name="cart_add_item">Lägg till artikel</string>
     <string name="cart_item_name_hint">Artikel</string>
-    <string name="cart_item_expression_hint">Pris (t.ex. 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Pris</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Ta bort artikel</string>
     <string name="cart_subtotal_label">Delsumma</string>
     <string name="cart_total_label">Totalt</string>
@@ -179,5 +181,6 @@
     <string name="cart_per_person_row">Per person (÷%1$d)</string>
     <string name="cart_budget_label">Budget</string>
     <string name="cart_budget_left_row">Kvar av budgeten</string>
+    <string name="cart_budget_used_a11y">%1$d %% av budgeten använd</string>
     <string name="cart_over_budget_row">Över budget</string>
 </resources>

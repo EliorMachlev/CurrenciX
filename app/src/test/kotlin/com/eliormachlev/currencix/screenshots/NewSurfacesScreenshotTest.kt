@@ -83,6 +83,7 @@ class NewSurfacesScreenshotTest {
                     sources = cartSources(MutableLiveData(CART_ITEMS)),
                     actions = cartItemActions(),
                     reorder = NO_REORDER,
+                    onAddItem = {},
                     onBackgroundTap = {},
                 )
             }

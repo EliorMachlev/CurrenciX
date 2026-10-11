@@ -106,7 +106,8 @@ internal fun CartBarActions(
     TopBarOverflowMenu(menu)
 }
 
-private fun CartHost.listSources() = CartListSources(itemsLive, currencyLive, keypad.activeItemId, keypad.liveExpression)
+private fun CartHost.listSources() =
+    CartListSources(itemsLive, currencyLive, keypad.activeItemId, keypad.liveExpression, viewModel.getRowConversion())
 
 private fun CartHost.screenActions(onOpenFees: () -> Unit) =
     CartScreenActions(

@@ -44,11 +44,13 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Кошик</string>
-    <string name="cart_empty_hint">Кошик порожній. Натисніть «Додати позицію», щоб почати.</string>
+    <string name="cart_empty_title">Кошик порожній</string>
+    <string name="cart_empty_body">Додайте покупки, щоб побачити підсумок в іншій валюті. Ціна може бути сумою, наприклад 3.25 + 0.50 або 2.99 × 2.</string>
+    <string name="cart_add_first_item">Додати перший товар</string>
     <string name="cart_add_item">Додати позицію</string>
     <string name="cart_item_name_hint">Позиція</string>
-    <string name="cart_item_expression_hint">Ціна (наприклад, 2 × 3,50)</string>
-    <string name="cart_row_value_format">= %1$s %2$s</string>
+    <string name="cart_item_price_hint">Ціна</string>
+    <string name="cart_row_converted">≈ %1$s</string>
     <string name="cart_delete_item">Видалити позицію</string>
     <string name="cart_subtotal_label">Проміжний підсумок</string>
     <string name="cart_total_label">Разом</string>
@@ -178,5 +180,6 @@
     <string name="cart_per_person_row">На особу (÷%1$d)</string>
     <string name="cart_budget_label">Бюджет</string>
     <string name="cart_budget_left_row">Залишок бюджету</string>
+    <string name="cart_budget_used_a11y">Використано %1$d%% бюджету</string>
     <string name="cart_over_budget_row">Понад бюджет</string>
 </resources>

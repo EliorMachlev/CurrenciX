@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -24,6 +24,7 @@ import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LedgerSectionHeader
 import com.eliormachlev.currencix.view.compose.onBackgroundTap
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.viewmodel.cart.RowConversion
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import sh.calvin.reorderable.ReorderableItem
@@ -38,6 +39,8 @@ class CartListSources(
     val currency: LiveData<String>,
     val activeItemId: LiveData<String?>,
     val activeExpression: LiveData<String>,
+    // Each row's price in the destination currency.
+    val conversion: LiveData<RowConversion?>,
 )
 
 /** What the rows can ask for, each naming the row it's about. */
@@ -67,11 +70,16 @@ class CartReorder(
     val onCommit: CartDragCommit,
 )
 
+/**
+ * The cart's items, pinned ones first, each section one card of receipt
+ * lines, then an "Add item" row; with no items, the empty state instead.
+ */
 @Composable
 fun CartItemsList(
     sources: CartListSources,
     actions: CartItemActions,
     reorder: CartReorder,
+    onAddItem: () -> Unit,
     onBackgroundTap: () -> Unit,
 ) {
     AppTheme {
@@ -79,6 +87,7 @@ fun CartItemsList(
         val currency by sources.currency.observeAsState(initial = "")
         val activeId by sources.activeItemId.observeAsState()
         val liveExpression by sources.activeExpression.observeAsState(initial = "")
+        val conversion by sources.conversion.observeAsState()
 
         // Local mirror the drag gesture mutates in-flight; ReorderableLazyList
         // needs a stable, mutable data source so the visual swap can settle
@@ -92,14 +101,15 @@ fun CartItemsList(
                 // indices don't line up with the list's.
                 displayItems.moveByKey(from.key, to.key)
             }
-        val row: @Composable LazyItemScope.(CartItem) -> Unit = { item ->
+        val row: @Composable LazyItemScope.(CartItem, RowPosition) -> Unit = { item, position ->
             // ReorderableItem applies `Modifier.animateItem()` internally
             // via its `animateItemModifier` parameter, so add/remove/re-slot
             // already animates without extra wiring at the call site.
             ReorderableItem(reorderableState, key = item.id) { _ ->
                 SwipeableCartItemRow(
-                    state = CartRowState(item, currency, liveExpression.takeIf { item.id == activeId }),
+                    state = CartRowState(item, currency, liveExpression.takeIf { item.id == activeId }, conversion),
                     actions = remember(actions, item) { actions.forRow(item) },
+                    position = position,
                     dragHandleModifier =
                         Modifier.longPressDraggableHandle(
                             onDragStarted = { reorder.onStart() },
@@ -118,25 +128,30 @@ fun CartItemsList(
                 Modifier
                     .fillMaxSize()
                     .onBackgroundTap(onBackgroundTap),
-            contentPadding =
-                PaddingValues(
-                    horizontal = Spacing.Small,
-                    vertical = Spacing.Small,
-                ),
+            contentPadding = LIST_PADDING,
         ) {
-            cartSections(
-                rows = displayItems,
-                pinnedTitle = { stringResource(R.string.cart_section_pinned) },
-                othersTitle = { stringResource(R.string.cart_section_others) },
-                row = row,
-            )
+            if (displayItems.isEmpty()) {
+                item(key = EMPTY_KEY) { CartEmptyState(onAddItem = onAddItem, modifier = Modifier.animateItem()) }
+            } else {
+                cartSections(
+                    rows = displayItems,
+                    pinnedTitle = { stringResource(R.string.cart_section_pinned) },
+                    othersTitle = { stringResource(R.string.cart_section_others) },
+                    row = row,
+                )
+                item(key = ADD_ROW_KEY) { AddItemRow(onAddItem = onAddItem, modifier = Modifier.animateItem()) }
+            }
         }
     }
 }
 
-// Section keys; distinct from item ids (UUIDs), so they never collide.
+// Non-row keys; distinct from item ids (UUIDs), so they never collide.
 private const val PINNED_HEADER_KEY = "section:pinned"
 private const val OTHERS_HEADER_KEY = "section:others"
+private const val ADD_ROW_KEY = "action:add"
+private const val EMPTY_KEY = "state:empty"
+
+private val LIST_PADDING = PaddingValues(horizontal = Spacing.Large, vertical = Spacing.Small)
 
 /**
  * Pinned rows under a "Pinned" heading, then the rest — headed "Other items"
@@ -148,17 +163,25 @@ private fun LazyListScope.cartSections(
     rows: List<CartItem>,
     pinnedTitle: @Composable () -> String,
     othersTitle: @Composable () -> String,
-    row: @Composable LazyItemScope.(CartItem) -> Unit,
+    row: @Composable LazyItemScope.(CartItem, RowPosition) -> Unit,
 ) {
     val (pinned, others) = rows.partition { it.pinned }
     if (pinned.isNotEmpty()) {
         item(key = PINNED_HEADER_KEY) { LedgerSectionHeader(pinnedTitle(), Modifier.animateItem()) }
-        items(pinned, key = { it.id }, itemContent = row)
+        sectionRows(pinned, row)
         if (others.isNotEmpty()) {
             item(key = OTHERS_HEADER_KEY) { LedgerSectionHeader(othersTitle(), Modifier.animateItem()) }
         }
     }
-    items(others, key = { it.id }, itemContent = row)
+    sectionRows(others, row)
+}
+
+// One section's rows, each told where it sits in the section's card.
+private fun LazyListScope.sectionRows(
+    rows: List<CartItem>,
+    row: @Composable LazyItemScope.(CartItem, RowPosition) -> Unit,
+) {
+    itemsIndexed(rows, key = { _, item -> item.id }) { index, item -> row(item, RowPosition.of(index, rows.size)) }
 }
 
 /**

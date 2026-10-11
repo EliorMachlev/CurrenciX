@@ -75,14 +75,14 @@ class TwoPaneSmokeTest {
         openFromTopBar(R.string.menu_timeline)
         openFromTopBar(R.string.cart_title)
         assertConverterShown()
-        compose.onNodeWithText(string(R.string.cart_add_item)).assertExists()
+        compose.onNodeWithText(string(R.string.cart_empty_title)).assertExists()
         compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertDoesNotExist()
         compose.onRoot().captureRoboImage("$SCREENSHOT_DIR/two_pane_cart.png")
 
         // One back: the cart replaced the timeline, so it's the converter alone.
         back()
         assertConverterShown()
-        compose.onNodeWithText(string(R.string.cart_add_item)).assertDoesNotExist()
+        compose.onNodeWithText(string(R.string.cart_empty_title)).assertDoesNotExist()
         compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertDoesNotExist()
     }
 }
