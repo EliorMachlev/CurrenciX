@@ -13,4 +13,11 @@
     <string name="timeline_custom">自定义</string>
     <string name="timeline_share">分享图表</string>
     <string name="timeline_no_rates">这些日期没有汇率</string>
+    <string name="timeline_convert_at">按 %1$s 的汇率换算</string>
+    <string name="timeline_a11y_up">上涨 %1$s%%</string>
+    <string name="timeline_a11y_down">下跌 %1$s%%</string>
+    <string name="timeline_a11y_unchanged">没有变化</string>
+    <string name="timeline_a11y_from_to">从 %2$s 的 %1$s 到 %4$s 的 %3$s</string>
+    <string name="timeline_a11y_high">最高 %1$s（%2$s）</string>
+    <string name="timeline_a11y_low">最低 %1$s（%2$s）</string>
 </resources>

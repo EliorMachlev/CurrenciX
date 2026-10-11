@@ -13,4 +13,11 @@
     <string name="timeline_custom">Sérval</string>
     <string name="timeline_share">Deila línuriti</string>
     <string name="timeline_no_rates">Engin gengi fyrir þessar dagsetningar</string>
+    <string name="timeline_convert_at">Umreikna á genginu %1$s</string>
+    <string name="timeline_a11y_up">Hækkun um %1$s%%</string>
+    <string name="timeline_a11y_down">Lækkun um %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Óbreytt</string>
+    <string name="timeline_a11y_from_to">úr %1$s þann %2$s í %3$s þann %4$s</string>
+    <string name="timeline_a11y_high">hæst %1$s þann %2$s</string>
+    <string name="timeline_a11y_low">lægst %1$s þann %2$s</string>
 </resources>

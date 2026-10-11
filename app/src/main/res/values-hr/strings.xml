@@ -203,4 +203,7 @@
         <item quantity="few">%d stavke</item>
         <item quantity="other">%d stavki</item>
     </plurals>
+    <string name="paste_amount">Zalijepi iznos</string>
+    <string name="paste_no_amount">U međuspremniku nema iznosa</string>
+    <string name="tile_label">Tečaj</string>
 </resources>

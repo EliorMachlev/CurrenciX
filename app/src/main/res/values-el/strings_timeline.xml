@@ -13,4 +13,11 @@
     <string name="timeline_custom">Επιλογή</string>
     <string name="timeline_share">Κοινοποίηση γραφήματος</string>
     <string name="timeline_no_rates">Δεν υπάρχουν ισοτιμίες για αυτές τις ημερομηνίες</string>
+    <string name="timeline_convert_at">Μετατροπή με την ισοτιμία της %1$s</string>
+    <string name="timeline_a11y_up">Άνοδος %1$s%%</string>
+    <string name="timeline_a11y_down">Πτώση %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Αμετάβλητη</string>
+    <string name="timeline_a11y_from_to">από %1$s στις %2$s σε %3$s στις %4$s</string>
+    <string name="timeline_a11y_high">υψηλότερη %1$s στις %2$s</string>
+    <string name="timeline_a11y_low">χαμηλότερη %1$s στις %2$s</string>
 </resources>

@@ -13,4 +13,11 @@
     <string name="timeline_custom">Eigen</string>
     <string name="timeline_share">Grafiek delen</string>
     <string name="timeline_no_rates">Geen koersen voor deze datums</string>
+    <string name="timeline_convert_at">Omrekenen tegen koers van %1$s</string>
+    <string name="timeline_a11y_up">%1$s%% omhoog</string>
+    <string name="timeline_a11y_down">%1$s%% omlaag</string>
+    <string name="timeline_a11y_unchanged">Ongewijzigd</string>
+    <string name="timeline_a11y_from_to">van %1$s op %2$s naar %3$s op %4$s</string>
+    <string name="timeline_a11y_high">hoogste %1$s op %2$s</string>
+    <string name="timeline_a11y_low">laagste %1$s op %2$s</string>
 </resources>

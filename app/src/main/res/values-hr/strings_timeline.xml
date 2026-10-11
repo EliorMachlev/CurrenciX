@@ -13,4 +13,11 @@
     <string name="timeline_custom">Vlastito</string>
     <string name="timeline_share">Podijeli grafikon</string>
     <string name="timeline_no_rates">Nema tečajeva za ove datume</string>
+    <string name="timeline_convert_at">Pretvori po tečaju od %1$s</string>
+    <string name="timeline_a11y_up">Rast %1$s %%</string>
+    <string name="timeline_a11y_down">Pad %1$s %%</string>
+    <string name="timeline_a11y_unchanged">Bez promjene</string>
+    <string name="timeline_a11y_from_to">od %1$s dana %2$s do %3$s dana %4$s</string>
+    <string name="timeline_a11y_high">najviši %1$s dana %2$s</string>
+    <string name="timeline_a11y_low">najniži %1$s dana %2$s</string>
 </resources>

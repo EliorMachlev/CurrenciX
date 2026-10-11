@@ -202,4 +202,7 @@
         <item quantity="one">%dটি আইটেম</item>
         <item quantity="other">%dটি আইটেম</item>
     </plurals>
+    <string name="paste_amount">পরিমাণ পেস্ট করুন</string>
+    <string name="paste_no_amount">ক্লিপবোর্ডে কোনো পরিমাণ নেই</string>
+    <string name="tile_label">বিনিময় হার</string>
 </resources>

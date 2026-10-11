@@ -32,8 +32,8 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.lifecycle.lifecycleScope
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.HomeCurrency
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.CurrencyPill
@@ -108,7 +108,7 @@ private data class WidgetChoice(
             db: Database,
         ) = WidgetChoice(
             followConverter = state[WidgetPairState.FOLLOW_CONVERTER] != false,
-            pair = WidgetPairState.resolve(state, db) ?: CurrencyPair(Currency.USD, Currency.EUR),
+            pair = WidgetPairState.resolve(state, db) ?: HomeCurrency.defaultPair,
         )
     }
 }

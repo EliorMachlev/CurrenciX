@@ -202,4 +202,7 @@
         <item quantity="one">%d toode</item>
         <item quantity="other">%d toodet</item>
     </plurals>
+    <string name="paste_amount">Kleebi summa</string>
+    <string name="paste_no_amount">Lõikelaual pole summat</string>
+    <string name="tile_label">Vahetuskurss</string>
 </resources>

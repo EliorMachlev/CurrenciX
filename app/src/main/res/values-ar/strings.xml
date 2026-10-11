@@ -206,4 +206,7 @@
         <item quantity="many">%d عنصرًا</item>
         <item quantity="other">%d عنصر</item>
     </plurals>
+    <string name="paste_amount">لصق المبلغ</string>
+    <string name="paste_no_amount">لا يوجد مبلغ في الحافظة</string>
+    <string name="tile_label">سعر الصرف</string>
 </resources>

@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +55,8 @@ data class ChartStatus(
     val empty: Boolean,
     // "Data by …", in the card's corner.
     val provider: CharSequence?,
+    // What the chart shows, read by TalkBack in place of the line (see [timelineSummary]).
+    val summary: String? = null,
 )
 
 @Composable
@@ -79,13 +83,21 @@ internal fun TimelineChartCard(
 
         val content = Modifier.fillMaxSize().padding(CHART_PADDING)
         when {
-            status.error != null -> TimelineErrorState(status.error, onRetry, onChangeProvider, content)
+            status.error != null -> {
+                TimelineErrorState(status.error, onRetry, onChangeProvider, content)
+            }
 
             // No rates in the chosen dates (a weekend, before the provider's
             // history): say so rather than leave the previous line up.
-            status.empty -> TimelineNotice(R.drawable.ic_event, AnnotatedString(stringResource(R.string.timeline_no_rates)), content)
+            status.empty -> {
+                TimelineNotice(R.drawable.ic_event, AnnotatedString(stringResource(R.string.timeline_no_rates)), content)
+            }
 
-            else -> Box(content) { chart() }
+            else -> {
+                val summary = status.summary
+                val described = if (summary == null) content else content.clearAndSetSemantics { contentDescription = summary }
+                Box(described) { chart() }
+            }
         }
 
         val provider = status.provider

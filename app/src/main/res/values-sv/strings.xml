@@ -203,4 +203,7 @@
         <item quantity="one">%d vara</item>
         <item quantity="other">%d varor</item>
     </plurals>
+    <string name="paste_amount">Klistra in belopp</string>
+    <string name="paste_no_amount">Inget belopp i urklipp</string>
+    <string name="tile_label">Växelkurs</string>
 </resources>

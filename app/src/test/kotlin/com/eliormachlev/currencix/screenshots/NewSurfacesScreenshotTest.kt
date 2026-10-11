@@ -61,6 +61,12 @@ class NewSurfacesScreenshotTest {
             RecentPairsRow(pairs = RECENT_PAIRS, onPick = {}, onRemove = {}, contentPadding = PaddingValues(16.dp))
         }
 
+    // A recent copy on the clipboard: "Paste amount" leads the row.
+    @Test fun recentPairsWithPaste() =
+        shots.captureMatrix("recent_pairs_paste") {
+            RecentPairsRow(pairs = RECENT_PAIRS, onPick = {}, onRemove = {}, contentPadding = PaddingValues(16.dp), onPaste = {})
+        }
+
     @Test fun currencyPickerRecents() =
         shots.captureMatrix("currency_picker_recents") {
             SearchableCurrencyPicker(

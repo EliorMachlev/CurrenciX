@@ -204,4 +204,7 @@
         <item quantity="many">%d di articoli</item>
         <item quantity="other">%d articoli</item>
     </plurals>
+    <string name="paste_amount">Incolla importo</string>
+    <string name="paste_no_amount">Nessun importo negli appunti</string>
+    <string name="tile_label">Tasso di cambio</string>
 </resources>

@@ -201,4 +201,7 @@
         <item quantity="one">%d artikel</item>
         <item quantity="other">%d artikelen</item>
     </plurals>
+    <string name="paste_amount">Bedrag plakken</string>
+    <string name="paste_no_amount">Geen bedrag op het klembord</string>
+    <string name="tile_label">Wisselkoers</string>
 </resources>

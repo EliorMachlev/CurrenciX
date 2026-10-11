@@ -13,4 +13,11 @@
     <string name="timeline_custom">Özel</string>
     <string name="timeline_share">Grafiği paylaş</string>
     <string name="timeline_no_rates">Bu tarihler için kur yok</string>
+    <string name="timeline_convert_at">%1$s kuruyla çevir</string>
+    <string name="timeline_a11y_up">%%%1$s yükseliş</string>
+    <string name="timeline_a11y_down">%%%1$s düşüş</string>
+    <string name="timeline_a11y_unchanged">Değişmedi</string>
+    <string name="timeline_a11y_from_to">%2$s tarihinde %1$s, %4$s tarihinde %3$s</string>
+    <string name="timeline_a11y_high">en yüksek %1$s (%2$s)</string>
+    <string name="timeline_a11y_low">en düşük %1$s (%2$s)</string>
 </resources>

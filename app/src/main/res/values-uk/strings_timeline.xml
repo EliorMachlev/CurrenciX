@@ -13,4 +13,11 @@
     <string name="timeline_custom">Свій</string>
     <string name="timeline_share">Поділитися графіком</string>
     <string name="timeline_no_rates">Немає курсів за ці дати</string>
+    <string name="timeline_convert_at">Перерахувати за курсом на %1$s</string>
+    <string name="timeline_a11y_up">Зростання на %1$s%%</string>
+    <string name="timeline_a11y_down">Падіння на %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Без змін</string>
+    <string name="timeline_a11y_from_to">з %1$s на %2$s до %3$s на %4$s</string>
+    <string name="timeline_a11y_high">максимум %1$s на %2$s</string>
+    <string name="timeline_a11y_low">мінімум %1$s на %2$s</string>
 </resources>

@@ -206,4 +206,7 @@
         <item quantity="one">%d ഇനം</item>
         <item quantity="other">%d ഇനങ്ങൾ</item>
     </plurals>
+    <string name="paste_amount">തുക ഒട്ടിക്കുക</string>
+    <string name="paste_no_amount">ക്ലിപ്പ്ബോർഡിൽ തുകയില്ല</string>
+    <string name="tile_label">വിനിമയ നിരക്ക്</string>
 </resources>

@@ -3,15 +3,20 @@ package com.eliormachlev.currencix.view.timeline
 import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -44,8 +50,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.buildImageShareChooser
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.resolveThemeColor
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.LayerCapture
@@ -63,6 +71,7 @@ import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private const val FLAG_FROM_ID = "flagFrom"
@@ -80,12 +89,17 @@ private val TITLE_FLAG_HEIGHT = 0.92.em
 private val TITLE_FLAG_CORNER = 2.dp
 private val TITLE_ARROW_SIZE = 1.1.em
 
-/** Rate history for [screen]'s pair, under a small top bar titled "🇺🇸 $ USD → 🇮🇱 ₪ ILS". */
+/**
+ * Rate history for [screen]'s pair, under a small top bar titled "🇺🇸 $ USD →
+ * 🇮🇱 ₪ ILS". After a touch on the chart, a chip offers the converter at the
+ * day last touched ([onConvertAt]).
+ */
 @Composable
 fun TimelineRoute(
     screen: Screen.Timeline,
     onBack: () -> Unit,
     foldingFeature: FoldingFeature?,
+    onConvertAt: (pair: CurrencyPair, date: LocalDate) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
@@ -137,7 +151,11 @@ fun TimelineRoute(
                 onChangeProvider = { sheet = TimelineSheet.Provider },
                 modifier = Modifier.fillMaxSize().padding(padding),
                 chartCapture = chartCapture,
-                chartContent = { TimelineChartContent(model, db) },
+                chartContent = {
+                    ChartWithConvertChip(model = model, formatter = formatter, onConvertAt = onConvertAt) { onScrub ->
+                        TimelineChartContent(model, db, onScrub)
+                    }
+                },
             )
         }
     }
@@ -203,6 +221,7 @@ private fun TimelineSheets(
 private fun TimelineChartContent(
     model: TimelineViewModel,
     db: Database,
+    onScrub: (LocalDate?) -> Unit,
 ) {
     val context = LocalContext.current
     val colors =
@@ -242,8 +261,52 @@ private fun TimelineChartContent(
                 dateFormat = db.display.dateFormat.liveData,
             )
         }
-    TimelineChart(series = series, prefs = prefs, colors = colors, onScrub = model::setPastDate)
+    TimelineChart(series = series, prefs = prefs, colors = colors, onScrub = onScrub)
 }
+
+// The chart, and once it has been touched, "Convert at 04/03/26" for the
+// day last touched, over its top. The chip goes with a new pair or period.
+@Composable
+private fun ChartWithConvertChip(
+    model: TimelineViewModel,
+    formatter: DateTimeFormatter,
+    onConvertAt: (CurrencyPair, LocalDate) -> Unit,
+    chart: @Composable (onScrub: (LocalDate?) -> Unit) -> Unit,
+) {
+    val pair by model.getCurrencyPair().observeAsState()
+    val period by model.getPeriod().observeAsState()
+    var touchedDay by remember { mutableStateOf<LocalDate?>(null) }
+    LaunchedEffect(pair, period) { touchedDay = null }
+    Box(Modifier.fillMaxSize()) {
+        chart { day ->
+            if (day != null) touchedDay = day
+            model.setPastDate(day)
+        }
+        val day = touchedDay
+        val (from, to) = pair ?: return@Box
+        if (day != null) {
+            AssistChip(
+                onClick =
+                    rememberHapticOnClick {
+                        touchedDay = null
+                        onConvertAt(CurrencyPair(from, to), day)
+                    },
+                label = { Text(stringResource(R.string.timeline_convert_at, day.format(formatter))) },
+                leadingIcon = {
+                    Icon(
+                        painterResource(R.drawable.ic_swap_horiz),
+                        contentDescription = null,
+                        Modifier.size(CONVERT_CHIP_ICON_SIZE),
+                    )
+                },
+                colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
+        }
+    }
+}
+
+private val CONVERT_CHIP_ICON_SIZE = 18.dp
 
 // "🇺🇸 $ USD → 🇮🇱 ₪ ILS": each side's flag, symbol and code, joined by an
 // arrow — shorter than the localized "to", so the pair fits beside the back

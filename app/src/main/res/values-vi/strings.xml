@@ -201,4 +201,7 @@
     <plurals name="cart_saved_items">
         <item quantity="other">%d mặt hàng</item>
     </plurals>
+    <string name="paste_amount">Dán số tiền</string>
+    <string name="paste_no_amount">Không có số tiền trong bộ nhớ tạm</string>
+    <string name="tile_label">Tỷ giá</string>
 </resources>

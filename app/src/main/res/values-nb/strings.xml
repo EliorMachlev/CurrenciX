@@ -203,4 +203,7 @@
         <item quantity="one">%d vare</item>
         <item quantity="other">%d varer</item>
     </plurals>
+    <string name="paste_amount">Lim inn beløp</string>
+    <string name="paste_no_amount">Ingen beløp på utklippstavlen</string>
+    <string name="tile_label">Valutakurs</string>
 </resources>

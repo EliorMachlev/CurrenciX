@@ -203,4 +203,7 @@
         <item quantity="two">שני פריטים</item>
         <item quantity="other">%d פריטים</item>
     </plurals>
+    <string name="paste_amount">הדבקת סכום</string>
+    <string name="paste_no_amount">אין סכום בלוח</string>
+    <string name="tile_label">שער חליפין</string>
 </resources>

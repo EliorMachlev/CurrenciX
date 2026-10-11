@@ -13,4 +13,11 @@
     <string name="timeline_custom">Eigener</string>
     <string name="timeline_share">Diagramm teilen</string>
     <string name="timeline_no_rates">Keine Kurse für diesen Zeitraum</string>
+    <string name="timeline_convert_at">Zum Kurs vom %1$s umrechnen</string>
+    <string name="timeline_a11y_up">Plus %1$s %%</string>
+    <string name="timeline_a11y_down">Minus %1$s %%</string>
+    <string name="timeline_a11y_unchanged">Unverändert</string>
+    <string name="timeline_a11y_from_to">von %1$s am %2$s auf %3$s am %4$s</string>
+    <string name="timeline_a11y_high">Höchstwert %1$s am %2$s</string>
+    <string name="timeline_a11y_low">Tiefstwert %1$s am %2$s</string>
 </resources>

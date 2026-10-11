@@ -202,4 +202,7 @@
         <item quantity="one">%d артикул</item>
         <item quantity="other">%d артикула</item>
     </plurals>
+    <string name="paste_amount">Постави сума</string>
+    <string name="paste_no_amount">Няма сума в клипборда</string>
+    <string name="tile_label">Обменен курс</string>
 </resources>

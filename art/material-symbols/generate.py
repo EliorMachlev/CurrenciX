@@ -61,6 +61,8 @@ ICONS = {
     # cart row menu
     "ic_content_copy": ("content_copy", False),
     "ic_vertical_align_top": ("vertical_align_top", False),
+    # converter
+    "ic_content_paste": ("content_paste", False),
     # timeline
     "ic_tune": ("tune", False),
     "ic_trending_up": ("trending_up", False),

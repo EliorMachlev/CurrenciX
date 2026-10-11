@@ -201,4 +201,7 @@
         <item quantity="one">%d Artikel</item>
         <item quantity="other">%d Artikel</item>
     </plurals>
+    <string name="paste_amount">Betrag einfügen</string>
+    <string name="paste_no_amount">Kein Betrag in der Zwischenablage</string>
+    <string name="tile_label">Wechselkurs</string>
 </resources>

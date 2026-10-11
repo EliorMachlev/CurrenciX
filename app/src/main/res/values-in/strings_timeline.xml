@@ -13,4 +13,11 @@
     <string name="timeline_custom">Kustom</string>
     <string name="timeline_share">Bagikan grafik</string>
     <string name="timeline_no_rates">Tidak ada kurs untuk tanggal ini</string>
+    <string name="timeline_convert_at">Konversi dengan kurs %1$s</string>
+    <string name="timeline_a11y_up">Naik %1$s%%</string>
+    <string name="timeline_a11y_down">Turun %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Tidak berubah</string>
+    <string name="timeline_a11y_from_to">dari %1$s pada %2$s menjadi %3$s pada %4$s</string>
+    <string name="timeline_a11y_high">tertinggi %1$s pada %2$s</string>
+    <string name="timeline_a11y_low">terendah %1$s pada %2$s</string>
 </resources>

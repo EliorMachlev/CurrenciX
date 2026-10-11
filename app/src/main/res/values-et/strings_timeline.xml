@@ -13,4 +13,11 @@
     <string name="timeline_custom">Oma</string>
     <string name="timeline_share">Jaga graafikut</string>
     <string name="timeline_no_rates">Nende kuupäevade kohta kursse pole</string>
+    <string name="timeline_convert_at">Teisenda %1$s kursiga</string>
+    <string name="timeline_a11y_up">Tõus %1$s%%</string>
+    <string name="timeline_a11y_down">Langus %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Muutumatu</string>
+    <string name="timeline_a11y_from_to">%1$s (%2$s) → %3$s (%4$s)</string>
+    <string name="timeline_a11y_high">kõrgeim %1$s, %2$s</string>
+    <string name="timeline_a11y_low">madalaim %1$s, %2$s</string>
 </resources>

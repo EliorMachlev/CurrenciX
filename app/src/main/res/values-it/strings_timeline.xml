@@ -13,4 +13,11 @@
     <string name="timeline_custom">A scelta</string>
     <string name="timeline_share">Condividi grafico</string>
     <string name="timeline_no_rates">Nessun tasso per queste date</string>
+    <string name="timeline_convert_at">Converti al tasso del %1$s</string>
+    <string name="timeline_a11y_up">In rialzo del %1$s%%</string>
+    <string name="timeline_a11y_down">In ribasso del %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Invariato</string>
+    <string name="timeline_a11y_from_to">da %1$s il %2$s a %3$s il %4$s</string>
+    <string name="timeline_a11y_high">massimo %1$s il %2$s</string>
+    <string name="timeline_a11y_low">minimo %1$s il %2$s</string>
 </resources>

@@ -13,4 +13,11 @@
     <string name="timeline_custom">A mida</string>
     <string name="timeline_share">Comparteix el gràfic</string>
     <string name="timeline_no_rates">No hi ha tipus per a aquestes dates</string>
+    <string name="timeline_convert_at">Converteix al tipus del %1$s</string>
+    <string name="timeline_a11y_up">Puja un %1$s%%</string>
+    <string name="timeline_a11y_down">Baixa un %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Sense canvis</string>
+    <string name="timeline_a11y_from_to">de %1$s el %2$s a %3$s el %4$s</string>
+    <string name="timeline_a11y_high">màxim %1$s el %2$s</string>
+    <string name="timeline_a11y_low">mínim %1$s el %2$s</string>
 </resources>

@@ -202,4 +202,7 @@
         <item quantity="one">%d είδος</item>
         <item quantity="other">%d είδη</item>
     </plurals>
+    <string name="paste_amount">Επικόλληση ποσού</string>
+    <string name="paste_no_amount">Δεν υπάρχει ποσό στο πρόχειρο</string>
+    <string name="tile_label">Συναλλαγματική ισοτιμία</string>
 </resources>

@@ -202,4 +202,7 @@
         <item quantity="one">%d ero</item>
         <item quantity="other">%d eroj</item>
     </plurals>
+    <string name="paste_amount">Alglui sumon</string>
+    <string name="paste_no_amount">Neniu sumo en la tondujo</string>
+    <string name="tile_label">Kurzo</string>
 </resources>

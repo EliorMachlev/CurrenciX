@@ -199,4 +199,7 @@
     <plurals name="cart_saved_items">
         <item quantity="other">%d 件商品</item>
     </plurals>
+    <string name="paste_amount">貼上金額</string>
+    <string name="paste_no_amount">剪貼簿中沒有金額</string>
+    <string name="tile_label">匯率</string>
 </resources>

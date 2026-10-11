@@ -1,8 +1,5 @@
 package com.eliormachlev.currencix.view.main
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
@@ -356,14 +353,39 @@ private fun ConverterRecentPairs(
         database.lastState.addRecentPair(current)
     }
     val others = remember(recents, current) { recents.filterNot { it.isSameCurrencies(current) }.toImmutableList() }
+    val paste = rememberPasteAmount(viewModel, current)
     RecentPairsRow(
         pairs = others,
+        onPaste = paste,
         onPick = viewModel::setCurrencyPair,
         onRemove = rememberRemoveWithUndo(database),
         contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),
         // The bottom gap keeps the chips clear of the keypad's top row.
         modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN, bottom = RECENT_PAIRS_BOTTOM_GAP),
     )
+}
+
+// The paste chip's action while the clipboard holds a recent copy: the
+// price found in it typed in (its currency on the "from" side), or a
+// message when there's none. Null while there's nothing to offer.
+@Composable
+private fun rememberPasteAmount(
+    viewModel: MainViewModel,
+    current: CurrencyPair?,
+): (() -> Unit)? {
+    val offer = rememberClipboardOffer()
+    val snackbar = LocalAppSnackbar.current
+    val noAmount = stringResource(R.string.paste_no_amount)
+    if (!offer.available) return null
+    return {
+        val price = offer.take(listOfNotNull(current?.from, current?.to))
+        if (price == null) {
+            snackbar?.show(noAmount)
+        } else {
+            current?.let { viewModel.setCurrencyPair(pairForPaste(price, it)) }
+            viewModel.input.setAmount(price.amount)
+        }
+    }
 }
 
 // Forgets a recent pair, with an Undo on the snackbar: a long-press can land
@@ -447,14 +469,4 @@ private fun OnboardingSpotlightHost() {
         finishLabel = stringResource(R.string.onboarding_finish),
         onDismiss = { db.display.hasSeenOnboarding.set(true) },
     )
-}
-
-private fun copyToClipboard(
-    context: Context,
-    text: CharSequence,
-) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    // The system confirms the copy itself (with a preview); a message of
-    // ours on top of it would be noise.
-    clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
 }

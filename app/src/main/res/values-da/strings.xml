@@ -201,4 +201,7 @@
         <item quantity="one">%d vare</item>
         <item quantity="other">%d varer</item>
     </plurals>
+    <string name="paste_amount">Indsæt beløb</string>
+    <string name="paste_no_amount">Intet beløb i udklipsholderen</string>
+    <string name="tile_label">Valutakurs</string>
 </resources>

@@ -204,4 +204,7 @@
         <item quantity="many">%d de artículos</item>
         <item quantity="other">%d artículos</item>
     </plurals>
+    <string name="paste_amount">Pegar importe</string>
+    <string name="paste_no_amount">No hay ningún importe en el portapapeles</string>
+    <string name="tile_label">Tipo de cambio</string>
 </resources>

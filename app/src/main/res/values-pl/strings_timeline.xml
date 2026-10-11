@@ -13,4 +13,11 @@
     <string name="timeline_custom">Własny</string>
     <string name="timeline_share">Udostępnij wykres</string>
     <string name="timeline_no_rates">Brak kursów dla tych dat</string>
+    <string name="timeline_convert_at">Przelicz po kursie z %1$s</string>
+    <string name="timeline_a11y_up">Wzrost o %1$s%%</string>
+    <string name="timeline_a11y_down">Spadek o %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Bez zmian</string>
+    <string name="timeline_a11y_from_to">z %1$s dnia %2$s do %3$s dnia %4$s</string>
+    <string name="timeline_a11y_high">najwyższy %1$s dnia %2$s</string>
+    <string name="timeline_a11y_low">najniższy %1$s dnia %2$s</string>
 </resources>

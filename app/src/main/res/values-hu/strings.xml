@@ -202,4 +202,7 @@
         <item quantity="one">%d tétel</item>
         <item quantity="other">%d tétel</item>
     </plurals>
+    <string name="paste_amount">Összeg beillesztése</string>
+    <string name="paste_no_amount">Nincs összeg a vágólapon</string>
+    <string name="tile_label">Árfolyam</string>
 </resources>

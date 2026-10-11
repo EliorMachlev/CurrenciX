@@ -223,4 +223,7 @@
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
     </plurals>
+    <string name="paste_amount">Paste amount</string>
+    <string name="paste_no_amount">No amount on the clipboard</string>
+    <string name="tile_label">Exchange rate</string>
 </resources>

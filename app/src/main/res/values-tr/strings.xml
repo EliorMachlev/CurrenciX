@@ -202,4 +202,7 @@
         <item quantity="one">%d ürün</item>
         <item quantity="other">%d ürün</item>
     </plurals>
+    <string name="paste_amount">Tutarı yapıştır</string>
+    <string name="paste_no_amount">Panoda tutar yok</string>
+    <string name="tile_label">Döviz kuru</string>
 </resources>

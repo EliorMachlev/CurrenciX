@@ -13,4 +13,11 @@
     <string name="timeline_custom">Egen</string>
     <string name="timeline_share">Del diagrammet</string>
     <string name="timeline_no_rates">Ingen kurser for disse datoene</string>
+    <string name="timeline_convert_at">Regn om til kursen %1$s</string>
+    <string name="timeline_a11y_up">Opp %1$s %%</string>
+    <string name="timeline_a11y_down">Ned %1$s %%</string>
+    <string name="timeline_a11y_unchanged">Uendret</string>
+    <string name="timeline_a11y_from_to">fra %1$s den %2$s til %3$s den %4$s</string>
+    <string name="timeline_a11y_high">høyest %1$s den %2$s</string>
+    <string name="timeline_a11y_low">lavest %1$s den %2$s</string>
 </resources>

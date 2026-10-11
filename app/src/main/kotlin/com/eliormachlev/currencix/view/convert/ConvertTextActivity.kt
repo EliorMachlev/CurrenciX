@@ -30,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.HomeCurrency
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.rememberHapticOnClick
@@ -74,8 +75,8 @@ class ConvertTextActivity : ComponentActivity() {
                 .orEmpty()
                 .take(MAX_SELECTION_LENGTH)
         val db = Database(this)
-        val from = db.lastState.lastBaseCurrency.get() ?: Currency.USD
-        val to = db.lastState.lastDestinationCurrency.get() ?: Currency.EUR
+        val from = db.lastState.lastBaseCurrency.get() ?: HomeCurrency.defaultPair.from
+        val to = db.lastState.lastDestinationCurrency.get() ?: HomeCurrency.defaultPair.to
         val conversion = convertSelection(text, db.rates.getExchangeRatesBlocking(), from, to)
         val decimals = db.display.decimalPlaces.get()
         setContent {

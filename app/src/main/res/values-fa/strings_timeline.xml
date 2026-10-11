@@ -13,4 +13,11 @@
     <string name="timeline_custom">سفارشی</string>
     <string name="timeline_share">اشتراک‌گذاری نمودار</string>
     <string name="timeline_no_rates">نرخی برای این تاریخ‌ها وجود ندارد</string>
+    <string name="timeline_convert_at">تبدیل با نرخ %1$s</string>
+    <string name="timeline_a11y_up">افزایش %1$s%%</string>
+    <string name="timeline_a11y_down">کاهش %1$s%%</string>
+    <string name="timeline_a11y_unchanged">بدون تغییر</string>
+    <string name="timeline_a11y_from_to">از %1$s در %2$s تا %3$s در %4$s</string>
+    <string name="timeline_a11y_high">بیشترین %1$s در %2$s</string>
+    <string name="timeline_a11y_low">کمترین %1$s در %2$s</string>
 </resources>

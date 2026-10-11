@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.HomeCurrency
 import com.eliormachlev.currencix.model.RecentPairs
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.Pref
@@ -36,20 +37,20 @@ class LastStateStore(
     // The converter's pair, by ISO code; the widget follows it, so it redraws on a change.
     private fun currencyPref(
         name: String,
-        default: Currency,
+        default: () -> Currency,
     ): Pref<Currency?> =
         store.keyedPref(
             stringPreferencesKey(name),
-            decode = { Currency.fromString(it ?: default.iso4217Alpha()) },
+            decode = { Currency.fromString(it ?: default().iso4217Alpha()) },
             encode = { it?.iso4217Alpha() },
             afterWrite = WidgetRefreshBus::signal,
         )
 
-    /** The converter's "from" currency (USD before the first conversion). */
-    val lastBaseCurrency: Pref<Currency?> = currencyPref(KEY_LAST_STATE_FROM, Currency.USD)
+    /** The converter's "from" currency (before the first conversion, [HomeCurrency.defaultPair]'s). */
+    val lastBaseCurrency: Pref<Currency?> = currencyPref(KEY_LAST_STATE_FROM) { HomeCurrency.defaultPair.from }
 
-    /** The converter's "to" currency (EUR before the first conversion). */
-    val lastDestinationCurrency: Pref<Currency?> = currencyPref(KEY_LAST_STATE_TO, Currency.EUR)
+    /** The converter's "to" currency (before the first conversion, the home currency). */
+    val lastDestinationCurrency: Pref<Currency?> = currencyPref(KEY_LAST_STATE_TO) { HomeCurrency.defaultPair.to }
 
     /** The recent pairs, newest first (see [RecentPairs]). */
     val recentPairs: Pref<List<CurrencyPair>> =

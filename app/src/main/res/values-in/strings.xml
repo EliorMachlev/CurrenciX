@@ -201,4 +201,7 @@
     <plurals name="cart_saved_items">
         <item quantity="other">%d item</item>
     </plurals>
+    <string name="paste_amount">Tempel jumlah</string>
+    <string name="paste_no_amount">Tidak ada jumlah di papan klip</string>
+    <string name="tile_label">Kurs</string>
 </resources>

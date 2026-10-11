@@ -204,4 +204,7 @@
         <item quantity="many">%d položky</item>
         <item quantity="other">%d položek</item>
     </plurals>
+    <string name="paste_amount">Vložit částku</string>
+    <string name="paste_no_amount">Ve schránce není žádná částka</string>
+    <string name="tile_label">Směnný kurz</string>
 </resources>

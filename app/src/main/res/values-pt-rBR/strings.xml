@@ -204,4 +204,7 @@
         <item quantity="many">%d de itens</item>
         <item quantity="other">%d itens</item>
     </plurals>
+    <string name="paste_amount">Colar valor</string>
+    <string name="paste_no_amount">Nenhum valor na área de transferência</string>
+    <string name="tile_label">Taxa de câmbio</string>
 </resources>

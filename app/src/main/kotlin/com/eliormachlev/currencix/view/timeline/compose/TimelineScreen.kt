@@ -10,8 +10,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LayerCapture
@@ -58,9 +60,12 @@ internal fun TimelineScreen(
                     onCustomRange = model::setCustomRange,
                 )
 
+            val stats = TimelineStats(ratePast, rateCurrent, diffPercent, ratesMax, ratesAvg, ratesMed, ratesMin)
+            val context = LocalContext.current
+            val summary = remember(stats, formatter) { timelineSummary(context, stats, formatter) }
             val chartCard: @Composable (Modifier) -> Unit = { mod ->
                 TimelineChartCard(
-                    status = ChartStatus(isRefreshing, error, rangeEmpty, provider),
+                    status = ChartStatus(isRefreshing, error, rangeEmpty, provider, summary),
                     onRetry = model::retry,
                     onChangeProvider = onChangeProvider,
                     modifier = mod.captureInto(chartCapture),
@@ -69,7 +74,7 @@ internal fun TimelineScreen(
             }
             val secondary: @Composable (Modifier) -> Unit = { mod ->
                 TimelineSecondary(
-                    stats = TimelineStats(ratePast, rateCurrent, diffPercent, ratesMax, ratesAvg, ratesMed, ratesMin),
+                    stats = stats,
                     formatter = formatter,
                     period = period,
                     modifier = mod,

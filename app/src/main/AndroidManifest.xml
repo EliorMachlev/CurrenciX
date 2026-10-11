@@ -28,6 +28,10 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- A long-press on the Quick Settings tile opens the app. -->
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
         </activity>
 
         <!-- "Convert currency" in any app's text-selection menu. Own task and
@@ -84,6 +88,18 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/currency_widget_info" />
         </receiver>
+
+        <!-- Quick Settings tile: the converter's pair and rate; tapping opens the app. -->
+        <service
+            android:name=".view.tile.RateTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_swap_horiz"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

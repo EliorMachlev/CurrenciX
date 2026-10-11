@@ -15,4 +15,11 @@
     <string name="timeline_custom">מותאם</string>
     <string name="timeline_share">שיתוף התרשים</string>
     <string name="timeline_no_rates">אין שערים לתאריכים האלה</string>
+    <string name="timeline_convert_at">המרה לפי השער של %1$s</string>
+    <string name="timeline_a11y_up">עלייה של %1$s%%</string>
+    <string name="timeline_a11y_down">ירידה של %1$s%%</string>
+    <string name="timeline_a11y_unchanged">ללא שינוי</string>
+    <string name="timeline_a11y_from_to">מ־%1$s ב־%2$s ל־%3$s ב־%4$s</string>
+    <string name="timeline_a11y_high">שיא %1$s ב־%2$s</string>
+    <string name="timeline_a11y_low">שפל %1$s ב־%2$s</string>
 </resources>

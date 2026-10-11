@@ -203,4 +203,7 @@
         <item quantity="one">%d قلم</item>
         <item quantity="other">%d قلم</item>
     </plurals>
+    <string name="paste_amount">چسباندن مبلغ</string>
+    <string name="paste_no_amount">مبلغی در بریده‌دان نیست</string>
+    <string name="tile_label">نرخ ارز</string>
 </resources>

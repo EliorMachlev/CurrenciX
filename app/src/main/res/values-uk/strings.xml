@@ -204,4 +204,7 @@
         <item quantity="many">%d товарів</item>
         <item quantity="other">%d товару</item>
     </plurals>
+    <string name="paste_amount">Вставити суму</string>
+    <string name="paste_no_amount">У буфері обміну немає суми</string>
+    <string name="tile_label">Курс обміну</string>
 </resources>

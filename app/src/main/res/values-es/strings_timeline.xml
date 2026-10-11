@@ -13,4 +13,11 @@
     <string name="timeline_custom">A medida</string>
     <string name="timeline_share">Compartir gráfico</string>
     <string name="timeline_no_rates">No hay tipos para estas fechas</string>
+    <string name="timeline_convert_at">Convertir al tipo del %1$s</string>
+    <string name="timeline_a11y_up">Sube un %1$s %%</string>
+    <string name="timeline_a11y_down">Baja un %1$s %%</string>
+    <string name="timeline_a11y_unchanged">Sin cambios</string>
+    <string name="timeline_a11y_from_to">de %1$s el %2$s a %3$s el %4$s</string>
+    <string name="timeline_a11y_high">máximo %1$s el %2$s</string>
+    <string name="timeline_a11y_low">mínimo %1$s el %2$s</string>
 </resources>

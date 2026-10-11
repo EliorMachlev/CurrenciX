@@ -202,4 +202,7 @@
         <item quantity="one">%d vara</item>
         <item quantity="other">%d vörur</item>
     </plurals>
+    <string name="paste_amount">Líma upphæð</string>
+    <string name="paste_no_amount">Engin upphæð á klippiborðinu</string>
+    <string name="tile_label">Gengi</string>
 </resources>

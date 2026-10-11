@@ -13,4 +13,11 @@
     <string name="timeline_custom">مخصص</string>
     <string name="timeline_share">مشاركة الرسم البياني</string>
     <string name="timeline_no_rates">لا توجد أسعار لهذه التواريخ</string>
+    <string name="timeline_convert_at">التحويل بسعر %1$s</string>
+    <string name="timeline_a11y_up">ارتفاع %1$s%%</string>
+    <string name="timeline_a11y_down">انخفاض %1$s%%</string>
+    <string name="timeline_a11y_unchanged">بلا تغيير</string>
+    <string name="timeline_a11y_from_to">من %1$s في %2$s إلى %3$s في %4$s</string>
+    <string name="timeline_a11y_high">الأعلى %1$s في %2$s</string>
+    <string name="timeline_a11y_low">الأدنى %1$s في %2$s</string>
 </resources>

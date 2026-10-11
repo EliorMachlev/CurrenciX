@@ -204,4 +204,7 @@
         <item quantity="many">%d d’articles</item>
         <item quantity="other">%d articles</item>
     </plurals>
+    <string name="paste_amount">Coller le montant</string>
+    <string name="paste_no_amount">Aucun montant dans le presse-papiers</string>
+    <string name="tile_label">Taux de change</string>
 </resources>

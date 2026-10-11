@@ -13,4 +13,11 @@
     <string name="timeline_custom">Tùy chọn</string>
     <string name="timeline_share">Chia sẻ biểu đồ</string>
     <string name="timeline_no_rates">Không có tỷ giá cho những ngày này</string>
+    <string name="timeline_convert_at">Quy đổi theo tỷ giá ngày %1$s</string>
+    <string name="timeline_a11y_up">Tăng %1$s%%</string>
+    <string name="timeline_a11y_down">Giảm %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Không đổi</string>
+    <string name="timeline_a11y_from_to">từ %1$s ngày %2$s đến %3$s ngày %4$s</string>
+    <string name="timeline_a11y_high">cao nhất %1$s ngày %2$s</string>
+    <string name="timeline_a11y_low">thấp nhất %1$s ngày %2$s</string>
 </resources>

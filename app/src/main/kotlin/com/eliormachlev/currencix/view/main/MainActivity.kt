@@ -208,7 +208,16 @@ class MainActivity : AppCompatActivity() {
             }
 
             is Screen.Timeline -> {
-                TimelineRoute(screen = screen, onBack = nav::pop, foldingFeature = foldingFeature)
+                TimelineRoute(
+                    screen = screen,
+                    onBack = nav::pop,
+                    foldingFeature = foldingFeature,
+                    onConvertAt = { pair, date ->
+                        viewModel.setCurrencyPair(pair)
+                        viewModel.setHistoricalDate(date)
+                        nav.navigate(Screen.Converter)
+                    },
+                )
             }
 
             is Screen.Cart -> {

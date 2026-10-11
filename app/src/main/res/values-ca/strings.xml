@@ -204,4 +204,7 @@
         <item quantity="many">%d d\'articles</item>
         <item quantity="other">%d articles</item>
     </plurals>
+    <string name="paste_amount">Enganxa l\'import</string>
+    <string name="paste_no_amount">No hi ha cap import al porta-retalls</string>
+    <string name="tile_label">Tipus de canvi</string>
 </resources>

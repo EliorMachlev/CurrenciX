@@ -16,4 +16,11 @@
     <string name="timeline_share">Share chart</string>
     <string name="timeline_no_rates">No rates for these dates</string>
     <string name="timeline_share_caption" translatable="false">%1$s → %2$s · %3$s – %4$s · %5$s</string>
+    <string name="timeline_convert_at">Convert at %1$s</string>
+    <string name="timeline_a11y_up">Up %1$s%%</string>
+    <string name="timeline_a11y_down">Down %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Unchanged</string>
+    <string name="timeline_a11y_from_to">from %1$s on %2$s to %3$s on %4$s</string>
+    <string name="timeline_a11y_high">high %1$s on %2$s</string>
+    <string name="timeline_a11y_low">low %1$s on %2$s</string>
 </resources>

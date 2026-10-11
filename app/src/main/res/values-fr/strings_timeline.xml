@@ -13,4 +13,11 @@
     <string name="timeline_custom">Perso</string>
     <string name="timeline_share">Partager le graphique</string>
     <string name="timeline_no_rates">Aucun taux pour ces dates</string>
+    <string name="timeline_convert_at">Convertir au taux du %1$s</string>
+    <string name="timeline_a11y_up">En hausse de %1$s %%</string>
+    <string name="timeline_a11y_down">En baisse de %1$s %%</string>
+    <string name="timeline_a11y_unchanged">Inchangé</string>
+    <string name="timeline_a11y_from_to">de %1$s le %2$s à %3$s le %4$s</string>
+    <string name="timeline_a11y_high">plus haut %1$s le %2$s</string>
+    <string name="timeline_a11y_low">plus bas %1$s le %2$s</string>
 </resources>
