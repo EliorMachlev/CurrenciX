@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.model
 
 import android.content.Context
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.eliormachlev.currencix.R
 import com.squareup.moshi.JsonClass
 
@@ -14,13 +15,13 @@ private const val POP_DIRECTIONAL_FORMATTING = "\u202C"
 // Constructor arg roles, in order:
 //   iso4217Alpha    e.g. "USD"
 //   symbol          e.g. "$"
-//   fullName        string res, e.g. "US dollar"
+//   fullNameRes     string res, e.g. "US dollar"
 //   flag            drawable res, e.g. star-spangled banner
 @JsonClass(generateAdapter = false) // see https://stackoverflow.com/a/64085370/421140
 enum class Currency(
     private val iso4217Alpha: String,
     private val symbol: String?,
-    private val fullName: Int,
+    @StringRes val fullNameRes: Int,
     private val flag: Int?,
 ) {
     AED("AED", "د.إ", R.string.name_aed, R.drawable.flag_ae),
@@ -236,7 +237,7 @@ enum class Currency(
     /**
      * e.g. US dollar (localized) for USD
      */
-    fun fullName(context: Context): String = context.getString(this.fullName)
+    fun fullName(context: Context): String = context.getString(fullNameRes)
 
     /**
      * Flag drawable resource — e.g. the star-spangled banner for USD — or the

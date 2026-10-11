@@ -111,6 +111,27 @@ class NewSurfacesScreenshotTest {
             }
         }
 
+    // Shopping-list mode with old rates: the basket under the total, and the
+    // rates' date at the foot.
+    @Test fun cartFooterBasket() =
+        shots.captureMatrix("cart_footer_basket") {
+            ReadingDirection {
+                CartFooterCard(
+                    totals = SAMPLE_TOTALS.copy(basket = BigDecimal("181.60"), oldRatesDate = "02/10/26"),
+                    pair = NO_PAIR_ACTIONS,
+                    onEditExtras = {},
+                )
+            }
+        }
+
+    // Collapsed: the currency row and the total only.
+    @Test fun cartFooterCollapsed() =
+        shots.captureMatrix("cart_footer_collapsed") {
+            ReadingDirection {
+                CartFooterCard(totals = SAMPLE_TOTALS, pair = NO_PAIR_ACTIONS, onEditExtras = {}, collapsed = true)
+            }
+        }
+
     @Test fun cartExtrasSheet() =
         shots.captureMatrix("cart_extras_sheet") {
             CartExtrasSheet(
@@ -183,3 +204,16 @@ class NewSurfacesScreenshotTest {
             )
     }
 }
+
+// A converted cart with a tip and a fee, for the footer's states.
+private val SAMPLE_TOTALS =
+    CartTotals(
+        baseCurrency = Currency.USD,
+        destCurrency = Currency.ILS,
+        subtotal = BigDecimal("100"),
+        convertedSubtotal = BigDecimal("419.75"),
+        total = BigDecimal("427.15"),
+        feeStack = BigDecimal("1.0176"),
+        extras = CartExtras(tipPercent = BigDecimal("15")),
+        tip = BigDecimal("15"),
+    )

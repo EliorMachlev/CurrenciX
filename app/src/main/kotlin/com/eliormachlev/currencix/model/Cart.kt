@@ -11,13 +11,26 @@ import java.math.BigDecimal
  * [pinned] items float to the top of the list at render time (sort happens
  * in the composable, not in storage) so the user's underlying insertion /
  * reorder order is preserved when they toggle pins on and off.
+ *
+ * [quantity] multiplies the price ("2 × 3.50" can also be 3.50 at ×2);
+ * [checked] marks the item as in the basket, in a cart's shopping-list mode.
  */
 data class CartItem(
     val id: String,
     val name: String,
     val expression: String,
     val pinned: Boolean = false,
-)
+    val quantity: Int = 1,
+    val checked: Boolean = false,
+) {
+    /** The price as written, with its quantity when more than one ("3.50 × 2"). */
+    val expressionWithQuantity: String get() = if (quantity > 1) "$expression × $quantity" else expression
+
+    companion object {
+        const val MIN_QUANTITY = 1
+        const val MAX_QUANTITY = 99
+    }
+}
 
 /**
  * These items (storage order) after a drag dropped [movedId] where it sits
@@ -64,6 +77,8 @@ data class SavedCart(
     val createdAt: Long,
     val destinationCurrency: String? = null,
     val extras: CartExtras = CartExtras(),
+    // Shopping-list mode: each item gets a tick for "in the basket".
+    val shoppingMode: Boolean = false,
 )
 
 /**

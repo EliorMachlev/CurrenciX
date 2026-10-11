@@ -13,7 +13,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,6 +43,17 @@ class CartListSources(
     val activeExpression: LiveData<String>,
     // Each row's price in the destination currency.
     val conversion: LiveData<RowConversion?>,
+    // Shopping-list mode: each row has a tick for "in the basket".
+    val shoppingMode: LiveData<Boolean>,
+)
+
+/** What a row can ask for about where it sits: pin, duplicate, move to top, delete. */
+@Immutable
+class CartItemArrangeActions(
+    val onTogglePin: (id: String) -> Unit,
+    val onDuplicate: (id: String) -> Unit,
+    val onMoveToTop: (id: String) -> Unit,
+    val onDelete: (id: String) -> Unit,
 )
 
 /** What the rows can ask for, each naming the row it's about. */
@@ -49,8 +62,9 @@ class CartItemActions(
     val onNameCommit: (id: String, name: String) -> Unit,
     val onNamePending: (id: String, name: String) -> Unit,
     val onExpressionTap: (item: CartItem) -> Unit,
-    val onTogglePin: (id: String) -> Unit,
-    val onDelete: (id: String) -> Unit,
+    val onQuantityChange: (id: String, quantity: Int) -> Unit,
+    val onToggleChecked: (id: String) -> Unit,
+    val arrange: CartItemArrangeActions,
 ) {
     /** These actions, bound to [item]'s row. */
     fun forRow(item: CartItem) =
@@ -58,8 +72,12 @@ class CartItemActions(
             onNameCommit = { onNameCommit(item.id, it) },
             onNamePending = { onNamePending(item.id, it) },
             onExpressionTap = { onExpressionTap(item) },
-            onTogglePin = { onTogglePin(item.id) },
-            onDelete = { onDelete(item.id) },
+            onTogglePin = { arrange.onTogglePin(item.id) },
+            onDelete = { arrange.onDelete(item.id) },
+            onQuantityChange = { onQuantityChange(item.id, it) },
+            onToggleChecked = { onToggleChecked(item.id) },
+            onDuplicate = { arrange.onDuplicate(item.id) },
+            onMoveToTop = { arrange.onMoveToTop(item.id) },
         )
 }
 
@@ -88,6 +106,7 @@ fun CartItemsList(
         val activeId by sources.activeItemId.observeAsState()
         val liveExpression by sources.activeExpression.observeAsState(initial = "")
         val conversion by sources.conversion.observeAsState()
+        val shoppingMode by sources.shoppingMode.observeAsState(initial = false)
 
         // Local mirror the drag gesture mutates in-flight; ReorderableLazyList
         // needs a stable, mutable data source so the visual swap can settle
@@ -107,7 +126,7 @@ fun CartItemsList(
             // already animates without extra wiring at the call site.
             ReorderableItem(reorderableState, key = item.id) { _ ->
                 SwipeableCartItemRow(
-                    state = CartRowState(item, currency, liveExpression.takeIf { item.id == activeId }, conversion),
+                    state = CartRowState(item, currency, liveExpression.takeIf { item.id == activeId }, conversion, shoppingMode),
                     actions = remember(actions, item) { actions.forRow(item) },
                     position = position,
                     dragHandleModifier =
@@ -188,17 +207,21 @@ private fun LazyListScope.sectionRows(
  * SnapshotStateList mirror of the storage list, ordered pinned-first while
  * preserving storage order within each partition. Drag operates on this list.
  *
- * When the id set or the pinned set changes (add/remove/load, a pin toggle),
- * take the source order wholesale, so a newly pinned row jumps to the top
- * right away. When only content changed (name/expression edit mid-drag),
+ * When the source order, the id set or the pinned set changes
+ * (add/remove/load, move to top, a pin toggle), take the source order
+ * wholesale, so a newly pinned row jumps to the top right away. When only content changed (name/expression edit mid-drag),
  * refresh per-id in place so the display's current order isn't wiped.
  */
 @Composable
 private fun rememberDisplayItems(items: ImmutableList<CartItem>): SnapshotStateList<CartItem> {
     val list = remember { mutableStateListOf<CartItem>() }
+    // The source's order last time: a drag reorders [list] but not the
+    // source, so only a change to this one replaces the list's order.
+    var sourceOrder by remember { mutableStateOf(emptyList<String>()) }
     LaunchedEffect(items) {
         val ordered = items.sortedByDescending { it.pinned }
-        if (list.pinState() != ordered.pinState()) {
+        val order = ordered.map { it.id }
+        if (order != sourceOrder || list.pinState() != ordered.pinState()) {
             list.clear()
             list.addAll(ordered)
         } else {
@@ -208,6 +231,7 @@ private fun rememberDisplayItems(items: ImmutableList<CartItem>): SnapshotStateL
                 if (fresh != list[i]) list[i] = fresh
             }
         }
+        sourceOrder = order
     }
     return list
 }

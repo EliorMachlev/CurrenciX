@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">Απομένει στον προϋπολογισμό</string>
     <string name="cart_budget_used_a11y">Χρησιμοποιήθηκε το %1$d%% του προϋπολογισμού</string>
     <string name="cart_over_budget_row">Πάνω από τον προϋπολογισμό</string>
+    <string name="cart_duplicate_item">Αντιγραφή</string>
+    <string name="cart_move_to_top">Μετακίνηση στην κορυφή</string>
+    <string name="cart_in_basket_item">Στο καλάθι</string>
+    <string name="cart_row_a11y_quantity">ποσότητα %1$d</string>
+    <string name="cart_row_a11y_converted">περίπου %1$s</string>
+    <string name="cart_quantity_decrease">Μείωση ποσότητας</string>
+    <string name="cart_quantity_increase">Αύξηση ποσότητας</string>
+    <string name="cart_keypad_next">Επόμενο</string>
+    <string name="cart_menu_shopping_list">Λίστα αγορών</string>
+    <string name="cart_menu_shopping_list_off">Έξοδος από τη λίστα αγορών</string>
+    <string name="cart_in_basket">Στο καλάθι</string>
+    <string name="cart_rates_from">Ισοτιμίες από %1$s</string>
+    <string name="cart_share_option_image">Εικόνα</string>
+    <string name="cart_share_option_image_desc">Εικόνα απόδειξης για συνομιλίες και μηνύματα.</string>
+    <string name="cart_totals_show_details">Εμφάνιση λεπτομερειών</string>
+    <string name="cart_totals_hide_details">Απόκρυψη λεπτομερειών</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d είδος</item>
+        <item quantity="other">%d είδη</item>
+    </plurals>
 </resources>

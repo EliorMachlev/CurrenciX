@@ -182,4 +182,26 @@
     <string name="cart_budget_left_row">Осталось в бюджете</string>
     <string name="cart_budget_used_a11y">Использовано %1$d%% бюджета</string>
     <string name="cart_over_budget_row">Сверх бюджета</string>
+    <string name="cart_duplicate_item">Дублировать</string>
+    <string name="cart_move_to_top">Переместить наверх</string>
+    <string name="cart_in_basket_item">В корзине</string>
+    <string name="cart_row_a11y_quantity">количество %1$d</string>
+    <string name="cart_row_a11y_converted">около %1$s</string>
+    <string name="cart_quantity_decrease">Уменьшить количество</string>
+    <string name="cart_quantity_increase">Увеличить количество</string>
+    <string name="cart_keypad_next">Далее</string>
+    <string name="cart_menu_shopping_list">Список покупок</string>
+    <string name="cart_menu_shopping_list_off">Выйти из списка покупок</string>
+    <string name="cart_in_basket">В корзине</string>
+    <string name="cart_rates_from">Курсы на %1$s</string>
+    <string name="cart_share_option_image">Изображение</string>
+    <string name="cart_share_option_image_desc">Изображение чека для чатов и сообщений.</string>
+    <string name="cart_totals_show_details">Показать подробности</string>
+    <string name="cart_totals_hide_details">Скрыть подробности</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d товар</item>
+        <item quantity="few">%d товара</item>
+        <item quantity="many">%d товаров</item>
+        <item quantity="other">%d товара</item>
+    </plurals>
 </resources>

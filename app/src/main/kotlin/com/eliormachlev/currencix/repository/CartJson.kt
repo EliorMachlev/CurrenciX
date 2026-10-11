@@ -26,6 +26,9 @@ internal const val CART_ITEM_KEY_ID = "id"
 internal const val CART_ITEM_KEY_NAME = "name"
 internal const val CART_ITEM_KEY_EXPR = "expression"
 internal const val CART_ITEM_KEY_PINNED = "pinned"
+internal const val CART_ITEM_KEY_QUANTITY = "quantity"
+internal const val CART_ITEM_KEY_CHECKED = "checked"
+internal const val CART_KEY_SHOPPING_MODE = "shoppingMode"
 
 internal fun serializeCart(cart: SavedCart): JSONObject =
     JSONObject().apply {
@@ -34,6 +37,7 @@ internal fun serializeCart(cart: SavedCart): JSONObject =
         put(CART_KEY_CURRENCY, cart.currency)
         cart.destinationCurrency?.let { put(CART_KEY_DEST_CURRENCY, it) }
         put(CART_KEY_CREATED_AT, cart.createdAt)
+        if (cart.shoppingMode) put(CART_KEY_SHOPPING_MODE, true)
         if (!cart.extras.isDefault) put(CART_KEY_EXTRAS, serializeExtras(cart.extras))
         put(CART_KEY_ITEMS, cart.items.toJsonArray(::serializeCartItem))
     }
@@ -62,6 +66,8 @@ private fun serializeCartItem(item: CartItem): JSONObject =
         put(CART_ITEM_KEY_NAME, item.name)
         put(CART_ITEM_KEY_EXPR, item.expression)
         if (item.pinned) put(CART_ITEM_KEY_PINNED, true)
+        if (item.quantity > 1) put(CART_ITEM_KEY_QUANTITY, item.quantity)
+        if (item.checked) put(CART_ITEM_KEY_CHECKED, true)
     }
 
 internal fun parseCart(obj: JSONObject?): SavedCart? {
@@ -80,6 +86,7 @@ internal fun parseCart(obj: JSONObject?): SavedCart? {
         items = items,
         createdAt = obj.optLong(CART_KEY_CREATED_AT, System.currentTimeMillis()),
         extras = parseExtras(obj.optJSONObject(CART_KEY_EXTRAS)),
+        shoppingMode = obj.optBoolean(CART_KEY_SHOPPING_MODE, false),
     )
 }
 
@@ -99,6 +106,8 @@ private fun parseCartItem(obj: JSONObject): CartItem =
         name = obj.optString(CART_ITEM_KEY_NAME, ""),
         expression = obj.optString(CART_ITEM_KEY_EXPR, ""),
         pinned = obj.optBoolean(CART_ITEM_KEY_PINNED, false),
+        quantity = obj.optInt(CART_ITEM_KEY_QUANTITY, 1).coerceIn(CartItem.MIN_QUANTITY, CartItem.MAX_QUANTITY),
+        checked = obj.optBoolean(CART_ITEM_KEY_CHECKED, false),
     )
 
 internal fun serializeCartList(list: List<SavedCart>): String = list.toJsonArray(::serializeCart).toString()

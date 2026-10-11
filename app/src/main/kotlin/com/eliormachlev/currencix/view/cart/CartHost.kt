@@ -98,6 +98,7 @@ class CartHost(
             activity = activity,
             isExpandedKeypad = viewModel.isExpandedKeypadEnabled,
             onExpressionCommit = ::commitExpression,
+            onNext = ::nextPrice,
         )
 
     private val cartObserver =
@@ -128,7 +129,26 @@ class CartHost(
         toastWithUndo(activity.getString(R.string.cart_cleared)) { viewModel.setCurrent(previous) }
     }
 
-    fun addItem() = viewModel.addItem(name = "", expression = "")
+    fun addItem() {
+        addEmptyItem()
+    }
+
+    private fun addEmptyItem(): String = viewModel.rows.add(name = "", expression = "")
+
+    /**
+     * The keypad's Next: the price of the row below the one being edited, in
+     * the order shown (pinned first); past the last row, a new row's.
+     */
+    fun nextPrice() {
+        val currentId = keypad.activeItemId.value ?: return
+        val shown = itemsLive.value.orEmpty().sortedByDescending { it.pinned }
+        val next = shown.getOrNull(shown.indexOfFirst { it.id == currentId } + 1)
+        if (next != null) {
+            keypad.openKeypadFor(next.id, next.expression)
+        } else {
+            keypad.openKeypadFor(addEmptyItem(), "")
+        }
+    }
 
     /** Removes one row (button or swipe); Undo puts it back where it was. */
     fun deleteItem(id: String) {
@@ -141,10 +161,10 @@ class CartHost(
                 ?.items
                 .orEmpty()
         val index = items.indexOfFirst { it.id == id }
-        viewModel.removeItem(id)
+        viewModel.rows.remove(id)
         if (index < 0) return
         val removed = items[index]
-        toastWithUndo(activity.getString(R.string.cart_item_deleted)) { viewModel.restoreItem(removed, index) }
+        toastWithUndo(activity.getString(R.string.cart_item_deleted)) { viewModel.rows.restore(removed, index) }
     }
 
     fun onNamePending(
@@ -167,7 +187,7 @@ class CartHost(
         pendingNames.remove(id)
         val current = itemsLive.value?.firstOrNull { it.id == id } ?: return
         if (current.name == name) return
-        viewModel.updateItem(id, name, current.expression)
+        viewModel.rows.update(id, name, current.expression)
     }
 
     private fun commitExpression(
@@ -178,7 +198,7 @@ class CartHost(
         val effectiveName = pendingNames[id] ?: current.name
         if (current.name == effectiveName && current.expression == expression) return
         pendingNames.remove(id)
-        viewModel.updateItem(id, effectiveName, expression)
+        viewModel.rows.update(id, effectiveName, expression)
     }
 }
 

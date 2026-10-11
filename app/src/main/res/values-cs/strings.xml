@@ -182,4 +182,26 @@
     <string name="cart_budget_left_row">Zbývá v rozpočtu</string>
     <string name="cart_budget_used_a11y">Využito %1$d%% rozpočtu</string>
     <string name="cart_over_budget_row">Nad rozpočet</string>
+    <string name="cart_duplicate_item">Duplikovat</string>
+    <string name="cart_move_to_top">Přesunout nahoru</string>
+    <string name="cart_in_basket_item">V košíku</string>
+    <string name="cart_row_a11y_quantity">množství %1$d</string>
+    <string name="cart_row_a11y_converted">asi %1$s</string>
+    <string name="cart_quantity_decrease">Snížit množství</string>
+    <string name="cart_quantity_increase">Zvýšit množství</string>
+    <string name="cart_keypad_next">Další</string>
+    <string name="cart_menu_shopping_list">Nákupní seznam</string>
+    <string name="cart_menu_shopping_list_off">Opustit nákupní seznam</string>
+    <string name="cart_in_basket">V košíku</string>
+    <string name="cart_rates_from">Kurzy z %1$s</string>
+    <string name="cart_share_option_image">Obrázek</string>
+    <string name="cart_share_option_image_desc">Obrázek účtenky pro chaty a zprávy.</string>
+    <string name="cart_totals_show_details">Zobrazit podrobnosti</string>
+    <string name="cart_totals_hide_details">Skrýt podrobnosti</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d položka</item>
+        <item quantity="few">%d položky</item>
+        <item quantity="many">%d položky</item>
+        <item quantity="other">%d položek</item>
+    </plurals>
 </resources>

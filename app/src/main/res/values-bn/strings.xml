@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">বাজেটে বাকি</string>
     <string name="cart_budget_used_a11y">বাজেটের %1$d%% ব্যবহৃত</string>
     <string name="cart_over_budget_row">বাজেটের বেশি</string>
+    <string name="cart_duplicate_item">ডুপ্লিকেট</string>
+    <string name="cart_move_to_top">উপরে সরান</string>
+    <string name="cart_in_basket_item">ঝুড়িতে</string>
+    <string name="cart_row_a11y_quantity">পরিমাণ %1$d</string>
+    <string name="cart_row_a11y_converted">প্রায় %1$s</string>
+    <string name="cart_quantity_decrease">পরিমাণ কমান</string>
+    <string name="cart_quantity_increase">পরিমাণ বাড়ান</string>
+    <string name="cart_keypad_next">পরবর্তী</string>
+    <string name="cart_menu_shopping_list">কেনাকাটার তালিকা</string>
+    <string name="cart_menu_shopping_list_off">কেনাকাটার তালিকা বন্ধ করুন</string>
+    <string name="cart_in_basket">ঝুড়িতে</string>
+    <string name="cart_rates_from">%1$s তারিখের হার</string>
+    <string name="cart_share_option_image">ছবি</string>
+    <string name="cart_share_option_image_desc">চ্যাট ও মেসেজের জন্য রসিদের ছবি।</string>
+    <string name="cart_totals_show_details">বিস্তারিত দেখান</string>
+    <string name="cart_totals_hide_details">বিস্তারিত লুকান</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%dটি আইটেম</item>
+        <item quantity="other">%dটি আইটেম</item>
+    </plurals>
 </resources>

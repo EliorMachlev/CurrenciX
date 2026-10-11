@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.cart.compose
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,17 +46,22 @@ import com.eliormachlev.currencix.util.HUNDRED_PERCENT
 import com.eliormachlev.currencix.util.feeStackDelta
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.isNeutralFeeStack
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.main.DEFAULT_DATE_PATTERN
+import com.eliormachlev.currencix.view.main.formatRatesTimestamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
 import com.eliormachlev.currencix.viewmodel.cart.perPerson
 import java.math.BigDecimal
 import java.math.MathContext
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 
 private val FOOTER_OUTER_MARGIN: Dp = Spacing.Large
@@ -65,6 +72,18 @@ private val TOTAL_TOP_GAP: Dp = Spacing.Small
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val SWAP_ICON_SIZE: Dp = 22.dp
 private val EXTRA_ROW_GAP: Dp = Spacing.Tiny
+private val COLLAPSE_BUTTON_SIZE: Dp = 32.dp
+private val COLLAPSE_ICON_SIZE: Dp = 20.dp
+
+// Providers publish on working days, so a long weekend leaves rates a few
+// days old as a matter of course; older than this, the card says how old.
+internal const val RATES_OLD_AFTER_DAYS = 4L
+
+/** Whether rates dated [date] are older than a long weekend explains, on [today]. */
+internal fun ratesAreOld(
+    date: LocalDate?,
+    today: LocalDate = LocalDate.now(),
+): Boolean = date != null && ChronoUnit.DAYS.between(date, today) > RATES_OLD_AFTER_DAYS
 
 /** The numbers the footer shows. */
 @Immutable
@@ -78,6 +97,10 @@ data class CartTotals(
     val feeStack: BigDecimal,
     val extras: CartExtras = CartExtras(),
     val tip: BigDecimal? = null,
+    // What the ticked items come to (shopping-list mode); null otherwise.
+    val basket: BigDecimal? = null,
+    // The rates' date, formatted, when they're old (see [ratesAreOld]); null otherwise.
+    val oldRatesDate: String? = null,
 )
 
 /**
@@ -95,6 +118,7 @@ fun CartFooter(
 ) {
     val rates by viewModel.getExchangeRates().observeAsState()
     val totals = observeTotals(viewModel, rates)
+    val collapsed by viewModel.isTotalsCollapsed.observeAsState(initial = false)
     var pickerSide by remember { mutableStateOf<CartPickSide?>(null) }
     val pairActions =
         remember(viewModel, onOpenFees) {
@@ -105,7 +129,13 @@ fun CartFooter(
                 onSwapLongPress = onOpenFees,
             )
         }
-    CartFooterCard(totals = totals, pair = pairActions, onEditExtras = onEditExtras)
+    CartFooterCard(
+        totals = totals,
+        pair = pairActions,
+        onEditExtras = onEditExtras,
+        collapsed = collapsed,
+        onToggleCollapsed = { viewModel.setTotalsCollapsed(!collapsed) },
+    )
     pickerSide?.let { side ->
         CartCurrencyPickerHost(
             side = side,
@@ -134,19 +164,40 @@ private fun observeTotals(
     // when either source emits.
     val fees by viewModel.getFees().observeAsState()
     val feeStack = remember(fees, rates, baseCurrency, destCurrency) { viewModel.currentFeeStack() }
-    return CartTotals(baseCurrency, destCurrency, subtotal, convertedSubtotal, total, feeStack, extras ?: CartExtras(), tip)
+    val shoppingMode by viewModel.isShoppingMode().observeAsState(initial = false)
+    val basket by viewModel.getBasketTotal().observeAsState()
+    val datePattern by viewModel.dateFormat.observeAsState(initial = DEFAULT_DATE_PATTERN)
+    val oldRatesDate =
+        remember(rates, datePattern) {
+            rates?.takeIf { ratesAreOld(it.date) }?.let { formatRatesTimestamp(datePattern, it.date, it.time) }
+        }
+    return CartTotals(
+        baseCurrency = baseCurrency,
+        destCurrency = destCurrency,
+        subtotal = subtotal,
+        convertedSubtotal = convertedSubtotal,
+        total = total,
+        feeStack = feeStack,
+        extras = extras ?: CartExtras(),
+        tip = tip,
+        basket = basket.takeIf { shoppingMode },
+        oldRatesDate = oldRatesDate,
+    )
 }
 
 /**
  * Static presentation of the footer — currency row + subtotal + fee delta +
  * total — apart from [CartFooter], which holds the observed state and the
- * picker sheet.
+ * picker sheet. [collapsed] leaves the currency row and the total (and what's
+ * in the basket); the chevron by the total ([onToggleCollapsed]) switches.
  */
 @Composable
 internal fun CartFooterCard(
     totals: CartTotals,
     pair: PairRowActions,
     onEditExtras: () -> Unit,
+    collapsed: Boolean = false,
+    onToggleCollapsed: () -> Unit = {},
 ) {
     val context = LocalContext.current
     Column(
@@ -164,6 +215,43 @@ internal fun CartFooterCard(
                 SwapFab(onClick = pair.onSwap, onLongClick = pair.onSwapLongPress)
             }
         }
+        AnimatedVisibility(visible = !collapsed) { AboveTotal(totals, onEditExtras) }
+        AmountRow(
+            topGap = if (collapsed) ROW_TOP_GAP else TOTAL_TOP_GAP,
+            labelRes = R.string.cart_total_label,
+            amount = context.formatCartAmount(totals.total, totals.destCurrency),
+            style = MaterialTheme.typography.titleLarge,
+            afterLabel = { CollapseToggle(collapsed = collapsed, onToggle = onToggleCollapsed) },
+        )
+        totals.basket?.let { basket ->
+            ExtraRow(
+                label = stringResource(R.string.cart_in_basket),
+                amount = context.formatCartAmount(basket, totals.destCurrency),
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+        AnimatedVisibility(visible = !collapsed) {
+            Column { ExtrasBelowTotal(totals.extras, totals.total ?: BigDecimal.ZERO, totals.destCurrency, onEditExtras) }
+        }
+        totals.oldRatesDate?.let { date ->
+            Text(
+                text = stringResource(R.string.cart_rates_from, date),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = EXTRA_ROW_GAP),
+            )
+        }
+    }
+}
+
+// Subtotal, tip and the fee line: what the collapsed card leaves out.
+@Composable
+private fun AboveTotal(
+    totals: CartTotals,
+    onEditExtras: () -> Unit,
+) {
+    val context = LocalContext.current
+    Column {
         AmountRow(
             topGap = ROW_TOP_GAP,
             labelRes = R.string.cart_subtotal_label,
@@ -183,13 +271,21 @@ internal fun CartFooterCard(
             base = totals.convertedSubtotal,
             currency = totals.destCurrency,
         )
-        AmountRow(
-            topGap = TOTAL_TOP_GAP,
-            labelRes = R.string.cart_total_label,
-            amount = context.formatCartAmount(totals.total, totals.destCurrency),
-            style = MaterialTheme.typography.titleLarge,
+    }
+}
+
+// The chevron by the total: hide the other lines, or show them again.
+@Composable
+private fun CollapseToggle(
+    collapsed: Boolean,
+    onToggle: () -> Unit,
+) {
+    IconButton(onClick = rememberHapticOnClick(onToggle), modifier = Modifier.size(COLLAPSE_BUTTON_SIZE)) {
+        Icon(
+            painter = painterResource(if (collapsed) R.drawable.ic_expand_more else R.drawable.ic_expand_less),
+            contentDescription = stringResource(if (collapsed) R.string.cart_totals_show_details else R.string.cart_totals_hide_details),
+            modifier = Modifier.size(COLLAPSE_ICON_SIZE),
         )
-        ExtrasBelowTotal(totals.extras, totals.total ?: BigDecimal.ZERO, totals.destCurrency, onEditExtras)
     }
 }
 
@@ -224,19 +320,20 @@ private fun ExtrasBelowTotal(
     }
 }
 
-// A small label + amount line for the cart's extras (tip, split, budget).
+// A small label + amount line for the cart's extras (tip, split, budget)
+// and the basket; tapping one with [onClick] edits it.
 @Composable
 private fun ExtraRow(
     label: String,
     amount: String,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
                 .padding(top = EXTRA_ROW_GAP),
     ) {
         Text(label, style = MaterialTheme.typography.labelMedium, color = color, modifier = Modifier.weight(1f))
@@ -304,15 +401,18 @@ private fun AmountRow(
     labelRes: Int,
     amount: String,
     style: TextStyle,
+    afterLabel: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(top = topGap),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = stringResource(id = labelRes),
-            style = style,
-            modifier = Modifier.weight(1f),
-        )
+        // The label takes the room the amount leaves; [afterLabel] sits right
+        // after its text, so every amount keeps the row's end edge.
+        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = stringResource(id = labelRes), style = style, modifier = Modifier.weight(1f, fill = false))
+            afterLabel?.invoke()
+        }
         Figure(amount, style)
     }
 }

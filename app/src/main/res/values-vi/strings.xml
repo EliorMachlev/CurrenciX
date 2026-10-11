@@ -182,4 +182,23 @@
     <string name="cart_budget_left_row">Còn lại trong ngân sách</string>
     <string name="cart_budget_used_a11y">Đã dùng %1$d%% ngân sách</string>
     <string name="cart_over_budget_row">Vượt ngân sách</string>
+    <string name="cart_duplicate_item">Nhân bản</string>
+    <string name="cart_move_to_top">Chuyển lên đầu</string>
+    <string name="cart_in_basket_item">Trong giỏ</string>
+    <string name="cart_row_a11y_quantity">số lượng %1$d</string>
+    <string name="cart_row_a11y_converted">khoảng %1$s</string>
+    <string name="cart_quantity_decrease">Giảm số lượng</string>
+    <string name="cart_quantity_increase">Tăng số lượng</string>
+    <string name="cart_keypad_next">Tiếp</string>
+    <string name="cart_menu_shopping_list">Danh sách mua sắm</string>
+    <string name="cart_menu_shopping_list_off">Thoát danh sách mua sắm</string>
+    <string name="cart_in_basket">Trong giỏ</string>
+    <string name="cart_rates_from">Tỷ giá ngày %1$s</string>
+    <string name="cart_share_option_image">Hình ảnh</string>
+    <string name="cart_share_option_image_desc">Ảnh biên lai cho trò chuyện và tin nhắn.</string>
+    <string name="cart_totals_show_details">Hiện chi tiết</string>
+    <string name="cart_totals_hide_details">Ẩn chi tiết</string>
+    <plurals name="cart_saved_items">
+        <item quantity="other">%d mặt hàng</item>
+    </plurals>
 </resources>

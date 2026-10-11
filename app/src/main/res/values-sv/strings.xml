@@ -183,4 +183,24 @@
     <string name="cart_budget_left_row">Kvar av budgeten</string>
     <string name="cart_budget_used_a11y">%1$d %% av budgeten använd</string>
     <string name="cart_over_budget_row">Över budget</string>
+    <string name="cart_duplicate_item">Duplicera</string>
+    <string name="cart_move_to_top">Flytta överst</string>
+    <string name="cart_in_basket_item">I korgen</string>
+    <string name="cart_row_a11y_quantity">antal %1$d</string>
+    <string name="cart_row_a11y_converted">cirka %1$s</string>
+    <string name="cart_quantity_decrease">Minska antal</string>
+    <string name="cart_quantity_increase">Öka antal</string>
+    <string name="cart_keypad_next">Nästa</string>
+    <string name="cart_menu_shopping_list">Inköpslista</string>
+    <string name="cart_menu_shopping_list_off">Lämna inköpslistan</string>
+    <string name="cart_in_basket">I korgen</string>
+    <string name="cart_rates_from">Kurser från %1$s</string>
+    <string name="cart_share_option_image">Bild</string>
+    <string name="cart_share_option_image_desc">Kvittobild för chattar och meddelanden.</string>
+    <string name="cart_totals_show_details">Visa detaljer</string>
+    <string name="cart_totals_hide_details">Dölj detaljer</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d vara</item>
+        <item quantity="other">%d varor</item>
+    </plurals>
 </resources>

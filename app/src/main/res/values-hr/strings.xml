@@ -182,4 +182,25 @@
     <string name="cart_budget_left_row">Preostalo u proračunu</string>
     <string name="cart_budget_used_a11y">Iskorišteno %1$d%% proračuna</string>
     <string name="cart_over_budget_row">Iznad proračuna</string>
+    <string name="cart_duplicate_item">Dupliciraj</string>
+    <string name="cart_move_to_top">Premjesti na vrh</string>
+    <string name="cart_in_basket_item">U košarici</string>
+    <string name="cart_row_a11y_quantity">količina %1$d</string>
+    <string name="cart_row_a11y_converted">oko %1$s</string>
+    <string name="cart_quantity_decrease">Smanji količinu</string>
+    <string name="cart_quantity_increase">Povećaj količinu</string>
+    <string name="cart_keypad_next">Dalje</string>
+    <string name="cart_menu_shopping_list">Popis za kupnju</string>
+    <string name="cart_menu_shopping_list_off">Izađi iz popisa za kupnju</string>
+    <string name="cart_in_basket">U košarici</string>
+    <string name="cart_rates_from">Tečajevi od %1$s</string>
+    <string name="cart_share_option_image">Slika</string>
+    <string name="cart_share_option_image_desc">Slika računa za razgovore i poruke.</string>
+    <string name="cart_totals_show_details">Prikaži pojedinosti</string>
+    <string name="cart_totals_hide_details">Sakrij pojedinosti</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d stavka</item>
+        <item quantity="few">%d stavke</item>
+        <item quantity="other">%d stavki</item>
+    </plurals>
 </resources>

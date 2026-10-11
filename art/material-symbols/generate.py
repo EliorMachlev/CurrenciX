@@ -23,6 +23,7 @@ ICONS = {
     "ic_arrow_forward": ("arrow_forward", True),
     "ic_more_vert": ("more_vert", False),
     "ic_expand_more": ("keyboard_arrow_down", False),
+    "ic_expand_less": ("keyboard_arrow_up", False),
     "ic_close": ("close", False),
     "ic_search": ("search", False),
     # converter top bar + drawer
@@ -56,6 +57,10 @@ ICONS = {
     "ic_folder_open": ("folder_open", False),
     "ic_upload": ("upload", False),
     "ic_download": ("download", False),
+    "ic_checklist": ("checklist", True),
+    # cart row menu
+    "ic_content_copy": ("content_copy", False),
+    "ic_vertical_align_top": ("vertical_align_top", False),
     # timeline
     "ic_tune": ("tune", False),
     "ic_trending_up": ("trending_up", False),

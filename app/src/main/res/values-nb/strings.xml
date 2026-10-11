@@ -183,4 +183,24 @@
     <string name="cart_budget_left_row">Igjen av budsjettet</string>
     <string name="cart_budget_used_a11y">%1$d %% av budsjettet brukt</string>
     <string name="cart_over_budget_row">Over budsjett</string>
+    <string name="cart_duplicate_item">Dupliser</string>
+    <string name="cart_move_to_top">Flytt øverst</string>
+    <string name="cart_in_basket_item">I kurven</string>
+    <string name="cart_row_a11y_quantity">antall %1$d</string>
+    <string name="cart_row_a11y_converted">ca. %1$s</string>
+    <string name="cart_quantity_decrease">Reduser antall</string>
+    <string name="cart_quantity_increase">Øk antall</string>
+    <string name="cart_keypad_next">Neste</string>
+    <string name="cart_menu_shopping_list">Handleliste</string>
+    <string name="cart_menu_shopping_list_off">Forlat handleliste</string>
+    <string name="cart_in_basket">I kurven</string>
+    <string name="cart_rates_from">Kurser fra %1$s</string>
+    <string name="cart_share_option_image">Bilde</string>
+    <string name="cart_share_option_image_desc">Kvitteringsbilde for chatter og meldinger.</string>
+    <string name="cart_totals_show_details">Vis detaljer</string>
+    <string name="cart_totals_hide_details">Skjul detaljer</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d vare</item>
+        <item quantity="other">%d varer</item>
+    </plurals>
 </resources>

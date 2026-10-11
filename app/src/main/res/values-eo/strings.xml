@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">Restas en buĝeto</string>
     <string name="cart_budget_used_a11y">%1$d%% de la buĝeto uzita</string>
     <string name="cart_over_budget_row">Super buĝeto</string>
+    <string name="cart_duplicate_item">Duobligi</string>
+    <string name="cart_move_to_top">Movi supren</string>
+    <string name="cart_in_basket_item">En la korbo</string>
+    <string name="cart_row_a11y_quantity">kvanto %1$d</string>
+    <string name="cart_row_a11y_converted">ĉirkaŭ %1$s</string>
+    <string name="cart_quantity_decrease">Malpliigi kvanton</string>
+    <string name="cart_quantity_increase">Pliigi kvanton</string>
+    <string name="cart_keypad_next">Sekva</string>
+    <string name="cart_menu_shopping_list">Aĉetlisto</string>
+    <string name="cart_menu_shopping_list_off">Forlasi aĉetliston</string>
+    <string name="cart_in_basket">En korbo</string>
+    <string name="cart_rates_from">Kurzoj de %1$s</string>
+    <string name="cart_share_option_image">Bildo</string>
+    <string name="cart_share_option_image_desc">Kvitanca bildo por babiloj kaj mesaĝoj.</string>
+    <string name="cart_totals_show_details">Montri detalojn</string>
+    <string name="cart_totals_hide_details">Kaŝi detalojn</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d ero</item>
+        <item quantity="other">%d eroj</item>
+    </plurals>
 </resources>

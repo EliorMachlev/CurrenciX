@@ -181,4 +181,24 @@
     <string name="cart_budget_left_row">Resterend budget</string>
     <string name="cart_budget_used_a11y">%1$d%% van het budget gebruikt</string>
     <string name="cart_over_budget_row">Budget overschreden</string>
+    <string name="cart_duplicate_item">Dupliceren</string>
+    <string name="cart_move_to_top">Bovenaan zetten</string>
+    <string name="cart_in_basket_item">In het mandje</string>
+    <string name="cart_row_a11y_quantity">aantal %1$d</string>
+    <string name="cart_row_a11y_converted">ongeveer %1$s</string>
+    <string name="cart_quantity_decrease">Aantal verlagen</string>
+    <string name="cart_quantity_increase">Aantal verhogen</string>
+    <string name="cart_keypad_next">Volgende</string>
+    <string name="cart_menu_shopping_list">Boodschappenlijst</string>
+    <string name="cart_menu_shopping_list_off">Boodschappenlijst verlaten</string>
+    <string name="cart_in_basket">In mandje</string>
+    <string name="cart_rates_from">Koersen van %1$s</string>
+    <string name="cart_share_option_image">Afbeelding</string>
+    <string name="cart_share_option_image_desc">Bonafbeelding voor chats en berichten.</string>
+    <string name="cart_totals_show_details">Details tonen</string>
+    <string name="cart_totals_hide_details">Details verbergen</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d artikel</item>
+        <item quantity="other">%d artikelen</item>
+    </plurals>
 </resources>

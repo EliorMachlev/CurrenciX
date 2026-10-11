@@ -26,7 +26,7 @@ fun CartSnapshot.toCsv(
         append(csvRow("", ""))
         append(csvRow(labels.item, labels.expression, withUnit(labels.value, baseCurrency.iso4217Alpha())))
         evaluatedItems.forEach { (item, value) ->
-            append(csvRow(item.name, item.expression, value.toCartDisplayString()))
+            append(csvRow(item.name, item.expressionWithQuantity, value.toCartDisplayString()))
         }
         append(csvRow("", "", ""))
         append(csvRow(labels.subtotal, "", subtotal.toCartDisplayString()))

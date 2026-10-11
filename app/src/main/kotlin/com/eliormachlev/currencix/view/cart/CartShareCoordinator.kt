@@ -12,6 +12,7 @@ import com.eliormachlev.currencix.util.toCartDisplayString
 import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.util.toCsv
 import com.eliormachlev.currencix.util.toPdfBytes
+import com.eliormachlev.currencix.util.toPngBytes
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
 import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
@@ -23,6 +24,8 @@ private const val CSV_MIME = "text/csv"
 private const val CSV_EXT = ".csv"
 private const val PDF_MIME = "application/pdf"
 private const val PDF_EXT = ".pdf"
+private const val PNG_MIME = "image/png"
+private const val PNG_EXT = ".png"
 
 /**
  * Presents the Share picker and dispatches to the selected format
@@ -53,6 +56,10 @@ class CartShareCoordinator(
                             R.string.cart_share_option_text_desc,
                         ) { shareAsText(snapshot) },
                         CartChoiceOption(
+                            R.string.cart_share_option_image,
+                            R.string.cart_share_option_image_desc,
+                        ) { shareAsImage(snapshot) },
+                        CartChoiceOption(
                             R.string.cart_share_option_csv,
                             R.string.cart_share_option_csv_desc,
                         ) { shareAsCsv(snapshot) },
@@ -75,26 +82,27 @@ class CartShareCoordinator(
         context.startActivity(Intent.createChooser(intent, null))
     }
 
-    private fun shareAsCsv(snapshot: CartSnapshot) {
-        val title = shareTitle(snapshot)
-        val chooser =
-            buildCartShareChooser(
-                context = context,
-                filename = shareFilename(title, CSV_EXT),
-                mimeType = CSV_MIME,
-                bytes = snapshot.toCsv(title = title, labels = CartExportLabels.from(context)).toByteArray(Charsets.UTF_8),
-            )
-        context.startActivity(chooser)
-    }
+    private fun shareAsCsv(snapshot: CartSnapshot) =
+        shareFile(snapshot, CSV_EXT, CSV_MIME) { title, labels -> toCsv(title = title, labels = labels).toByteArray(Charsets.UTF_8) }
 
-    private fun shareAsPdf(snapshot: CartSnapshot) {
+    private fun shareAsPdf(snapshot: CartSnapshot) = shareFile(snapshot, PDF_EXT, PDF_MIME) { title, labels -> toPdfBytes(title, labels) }
+
+    private fun shareAsImage(snapshot: CartSnapshot) = shareFile(snapshot, PNG_EXT, PNG_MIME) { title, labels -> toPngBytes(title, labels) }
+
+    // The cart as a file ([render] makes its bytes), handed to the share sheet.
+    private fun shareFile(
+        snapshot: CartSnapshot,
+        extension: String,
+        mimeType: String,
+        render: CartSnapshot.(title: String, labels: CartExportLabels) -> ByteArray,
+    ) {
         val title = shareTitle(snapshot)
         val chooser =
             buildCartShareChooser(
                 context = context,
-                filename = shareFilename(title, PDF_EXT),
-                mimeType = PDF_MIME,
-                bytes = snapshot.toPdfBytes(title = title, labels = CartExportLabels.from(context)),
+                filename = shareFilename(title, extension),
+                mimeType = mimeType,
+                bytes = snapshot.render(title, CartExportLabels.from(context)),
             )
         context.startActivity(chooser)
     }

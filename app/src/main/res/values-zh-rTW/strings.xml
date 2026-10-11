@@ -180,4 +180,23 @@
     <string name="cart_budget_left_row">預算剩餘</string>
     <string name="cart_budget_used_a11y">已用預算的 %1$d%%</string>
     <string name="cart_over_budget_row">超出預算</string>
+    <string name="cart_duplicate_item">複製</string>
+    <string name="cart_move_to_top">移到頂端</string>
+    <string name="cart_in_basket_item">已放入購物籃</string>
+    <string name="cart_row_a11y_quantity">數量 %1$d</string>
+    <string name="cart_row_a11y_converted">約 %1$s</string>
+    <string name="cart_quantity_decrease">減少數量</string>
+    <string name="cart_quantity_increase">增加數量</string>
+    <string name="cart_keypad_next">下一個</string>
+    <string name="cart_menu_shopping_list">購物清單</string>
+    <string name="cart_menu_shopping_list_off">退出購物清單</string>
+    <string name="cart_in_basket">購物籃中</string>
+    <string name="cart_rates_from">%1$s 的匯率</string>
+    <string name="cart_share_option_image">圖片</string>
+    <string name="cart_share_option_image_desc">用於聊天和訊息的收據圖片。</string>
+    <string name="cart_totals_show_details">顯示詳細資料</string>
+    <string name="cart_totals_hide_details">隱藏詳細資料</string>
+    <plurals name="cart_saved_items">
+        <item quantity="other">%d 件商品</item>
+    </plurals>
 </resources>

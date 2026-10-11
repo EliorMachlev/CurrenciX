@@ -6,6 +6,7 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.DraggableState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -16,7 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,11 +34,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -55,8 +63,12 @@ private fun GripStrip(modifier: Modifier = Modifier) {
     }
 }
 
-// Matches the old activity_cart.xml FrameLayout's 320dp allocation.
-private val KEYPAD_HEIGHT: Dp = 320.dp
+// The keys keep what they had under the old 20dp grip strip (the old
+// activity_cart.xml's 320dp allocation); the header with the grip and the
+// Next key sits above them.
+private val KEYS_HEIGHT: Dp = 300.dp
+private val KEYPAD_HEADER_HEIGHT: Dp = 40.dp
+private val KEYPAD_HEIGHT: Dp = KEYS_HEIGHT + KEYPAD_HEADER_HEIGHT
 
 // Distance the user must drag the keypad downward before releasing to commit
 // the dismiss. Anything less snaps back to fully open.
@@ -119,21 +131,16 @@ fun CartKeypadOverlay(
                 .graphicsLayer { translationY = dragOffsetPx }
                 .background(MaterialTheme.colorScheme.background),
         ) {
-            GripStrip(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .draggable(
-                            state = dragState,
-                            orientation = Orientation.Vertical,
-                            onDragStopped = {
-                                if (dragOffsetPx >= thresholdPx) {
-                                    keypad.closeKeypad()
-                                } else {
-                                    dragOffsetPx = 0f
-                                }
-                            },
-                        ),
+            KeypadHeader(
+                dragState = dragState,
+                onDragStopped = {
+                    if (dragOffsetPx >= thresholdPx) {
+                        keypad.closeKeypad()
+                    } else {
+                        dragOffsetPx = 0f
+                    }
+                },
+                onNext = keypad.onNext,
             )
             MainKeypad(
                 isExpandedKeypad = isExpandedKeypad,
@@ -143,3 +150,40 @@ fun CartKeypadOverlay(
         }
     }
 }
+
+// Above the keys: the grip to drag the keypad away by, and Next at the end.
+@Composable
+private fun KeypadHeader(
+    dragState: DraggableState,
+    onDragStopped: () -> Unit,
+    onNext: () -> Unit,
+) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(KEYPAD_HEADER_HEIGHT)
+                .draggable(state = dragState, orientation = Orientation.Vertical, onDragStopped = { onDragStopped() }),
+    ) {
+        GripStrip(Modifier.align(Alignment.Center))
+        NextButton(onClick = onNext, modifier = Modifier.align(Alignment.CenterEnd))
+    }
+}
+
+// "Next →": on to the next row's price, or a new row after the last.
+@Composable
+private fun NextButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TextButton(onClick = rememberHapticOnClick(onClick), modifier = modifier.padding(end = Spacing.Small)) {
+        Text(stringResource(R.string.cart_keypad_next))
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_forward),
+            contentDescription = null,
+            modifier = Modifier.padding(start = Spacing.Tiny).size(NEXT_ICON_SIZE),
+        )
+    }
+}
+
+private val NEXT_ICON_SIZE: Dp = 18.dp

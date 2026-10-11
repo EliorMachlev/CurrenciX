@@ -10,14 +10,17 @@ import kotlinx.collections.immutable.ImmutableList
 // without a ViewModel behind.
 
 /** A list showing [items] priced in USD, with no row being edited. */
-internal fun cartSources(items: LiveData<ImmutableList<CartItem>>) =
-    CartListSources(
-        items = items,
-        currency = MutableLiveData("USD"),
-        activeItemId = MutableLiveData(null),
-        activeExpression = MutableLiveData(""),
-        conversion = MutableLiveData(null),
-    )
+internal fun cartSources(
+    items: LiveData<ImmutableList<CartItem>>,
+    shoppingMode: Boolean = false,
+) = CartListSources(
+    items = items,
+    currency = MutableLiveData("USD"),
+    activeItemId = MutableLiveData(null),
+    activeExpression = MutableLiveData(""),
+    conversion = MutableLiveData(null),
+    shoppingMode = MutableLiveData(shoppingMode),
+)
 
 /** Row actions that do nothing, but for [onTogglePin]. */
 internal fun cartItemActions(onTogglePin: (id: String) -> Unit = {}) =
@@ -25,8 +28,9 @@ internal fun cartItemActions(onTogglePin: (id: String) -> Unit = {}) =
         onNameCommit = { _, _ -> },
         onNamePending = { _, _ -> },
         onExpressionTap = {},
-        onTogglePin = onTogglePin,
-        onDelete = {},
+        onQuantityChange = { _, _ -> },
+        onToggleChecked = {},
+        arrange = CartItemArrangeActions(onTogglePin = onTogglePin, onDuplicate = {}, onMoveToTop = {}, onDelete = {}),
     )
 
 internal val NO_REORDER = CartReorder(onStart = {}, onCommit = { _, _ -> })

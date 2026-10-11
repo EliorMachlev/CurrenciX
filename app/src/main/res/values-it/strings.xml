@@ -183,4 +183,25 @@
     <string name="cart_budget_left_row">Budget residuo</string>
     <string name="cart_budget_used_a11y">%1$d%% del budget usato</string>
     <string name="cart_over_budget_row">Oltre il budget</string>
+    <string name="cart_duplicate_item">Duplica</string>
+    <string name="cart_move_to_top">Sposta in cima</string>
+    <string name="cart_in_basket_item">Nel carrello</string>
+    <string name="cart_row_a11y_quantity">quantità %1$d</string>
+    <string name="cart_row_a11y_converted">circa %1$s</string>
+    <string name="cart_quantity_decrease">Diminuisci quantità</string>
+    <string name="cart_quantity_increase">Aumenta quantità</string>
+    <string name="cart_keypad_next">Avanti</string>
+    <string name="cart_menu_shopping_list">Lista della spesa</string>
+    <string name="cart_menu_shopping_list_off">Esci dalla lista della spesa</string>
+    <string name="cart_in_basket">Nel carrello</string>
+    <string name="cart_rates_from">Tassi del %1$s</string>
+    <string name="cart_share_option_image">Immagine</string>
+    <string name="cart_share_option_image_desc">Immagine dello scontrino per chat e messaggi.</string>
+    <string name="cart_totals_show_details">Mostra dettagli</string>
+    <string name="cart_totals_hide_details">Nascondi dettagli</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d articolo</item>
+        <item quantity="many">%d di articoli</item>
+        <item quantity="other">%d articoli</item>
+    </plurals>
 </resources>

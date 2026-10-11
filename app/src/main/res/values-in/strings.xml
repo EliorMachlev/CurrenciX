@@ -182,4 +182,23 @@
     <string name="cart_budget_left_row">Sisa anggaran</string>
     <string name="cart_budget_used_a11y">%1$d%% anggaran terpakai</string>
     <string name="cart_over_budget_row">Melebihi anggaran</string>
+    <string name="cart_duplicate_item">Duplikat</string>
+    <string name="cart_move_to_top">Pindahkan ke atas</string>
+    <string name="cart_in_basket_item">Di keranjang</string>
+    <string name="cart_row_a11y_quantity">jumlah %1$d</string>
+    <string name="cart_row_a11y_converted">sekitar %1$s</string>
+    <string name="cart_quantity_decrease">Kurangi jumlah</string>
+    <string name="cart_quantity_increase">Tambah jumlah</string>
+    <string name="cart_keypad_next">Berikutnya</string>
+    <string name="cart_menu_shopping_list">Daftar belanja</string>
+    <string name="cart_menu_shopping_list_off">Keluar dari daftar belanja</string>
+    <string name="cart_in_basket">Di keranjang</string>
+    <string name="cart_rates_from">Kurs per %1$s</string>
+    <string name="cart_share_option_image">Gambar</string>
+    <string name="cart_share_option_image_desc">Gambar struk untuk obrolan dan pesan.</string>
+    <string name="cart_totals_show_details">Tampilkan detail</string>
+    <string name="cart_totals_hide_details">Sembunyikan detail</string>
+    <plurals name="cart_saved_items">
+        <item quantity="other">%d item</item>
+    </plurals>
 </resources>

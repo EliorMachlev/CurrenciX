@@ -58,7 +58,23 @@ class CartScreenshotTest {
             }
         }
 
+    // Shopping-list mode: ticks instead of drag handles, a ticked row crossed
+    // off, a quantity, and a long name wrapping.
+    @Test fun cartShoppingList() =
+        shots.captureMatrix("cart_shopping_list") {
+            Column(Modifier.fillMaxWidth()) {
+                CartSectionPreview(SHOPPING_ITEMS, shoppingMode = true, editFirst = false)
+            }
+        }
+
     companion object {
+        private val SHOPPING_ITEMS =
+            listOf(
+                CartItem(id = "1", name = "Coffee", expression = "4.50", checked = true),
+                CartItem(id = "2", name = "Yogurt", expression = "1.20", quantity = 4),
+                CartItem(id = "3", name = "Organic free-range eggs, large, from the farm stand", expression = "6.80"),
+            )
+
         // Named + priced rows the user would recognize as a grocery cart.
         private val SAMPLE_ITEMS =
             listOf(
@@ -87,14 +103,26 @@ class CartScreenshotTest {
 private val TO_ILS = RowConversion(Currency.ILS) { it.multiply(BigDecimal("3.65")) }
 
 // One section's card of rows, laid out the way the language reads, as
-// CartScreen does (ProseTheme); the first row is the one being edited.
+// CartScreen does (ProseTheme); the first row is the one being edited
+// unless [editFirst] is off.
 @androidx.compose.runtime.Composable
-private fun CartSectionPreview(items: List<CartItem>) {
+private fun CartSectionPreview(
+    items: List<CartItem>,
+    shoppingMode: Boolean = false,
+    editFirst: Boolean = true,
+) {
     ReadingDirection {
         Column(Modifier.fillMaxWidth().padding(horizontal = Spacing.Large, vertical = Spacing.Small)) {
             items.forEachIndexed { index, item ->
                 CartItemRow(
-                    state = CartRowState(item, "USD", liveExpression = item.expression.takeIf { index == 0 }, conversion = TO_ILS),
+                    state =
+                        CartRowState(
+                            item = item,
+                            currency = "USD",
+                            liveExpression = item.expression.takeIf { editFirst && index == 0 },
+                            conversion = TO_ILS,
+                            shoppingMode = shoppingMode,
+                        ),
                     actions = NO_ROW_ACTIONS,
                     position = RowPosition.of(index, items.size),
                 )

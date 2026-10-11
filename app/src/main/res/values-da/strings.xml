@@ -181,4 +181,24 @@
     <string name="cart_budget_left_row">Tilbage af budgettet</string>
     <string name="cart_budget_used_a11y">%1$d%% af budgettet brugt</string>
     <string name="cart_over_budget_row">Over budget</string>
+    <string name="cart_duplicate_item">Dupliker</string>
+    <string name="cart_move_to_top">Flyt øverst</string>
+    <string name="cart_in_basket_item">I kurven</string>
+    <string name="cart_row_a11y_quantity">antal %1$d</string>
+    <string name="cart_row_a11y_converted">ca. %1$s</string>
+    <string name="cart_quantity_decrease">Reducer antal</string>
+    <string name="cart_quantity_increase">Øg antal</string>
+    <string name="cart_keypad_next">Næste</string>
+    <string name="cart_menu_shopping_list">Indkøbsliste</string>
+    <string name="cart_menu_shopping_list_off">Forlad indkøbsliste</string>
+    <string name="cart_in_basket">I kurven</string>
+    <string name="cart_rates_from">Kurser fra %1$s</string>
+    <string name="cart_share_option_image">Billede</string>
+    <string name="cart_share_option_image_desc">Kvitteringsbillede til chats og beskeder.</string>
+    <string name="cart_totals_show_details">Vis detaljer</string>
+    <string name="cart_totals_hide_details">Skjul detaljer</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d vare</item>
+        <item quantity="other">%d varer</item>
+    </plurals>
 </resources>

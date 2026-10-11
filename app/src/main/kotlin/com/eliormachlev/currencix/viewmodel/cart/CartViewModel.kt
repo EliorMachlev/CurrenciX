@@ -12,7 +12,6 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.SavedCart
-import com.eliormachlev.currencix.model.afterDrop
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.newId
 import kotlinx.collections.immutable.ImmutableList
@@ -67,6 +66,14 @@ class CartViewModel(
     /** Shared with the main screen — same preference gates haptics everywhere. */
     val isHapticFeedbackEnabled: LiveData<Boolean> = db.display.hapticFeedback.liveData
 
+    /** The totals card shows only the total; remembered across carts and launches. */
+    val isTotalsCollapsed: LiveData<Boolean> = db.display.cartTotalsCollapsed.liveData
+
+    fun setTotalsCollapsed(collapsed: Boolean) = db.display.cartTotalsCollapsed.set(collapsed)
+
+    /** The user's date format, for the rates' date on the totals card. */
+    val dateFormat: LiveData<String> = db.display.dateFormat.liveData
+
     // Memoize the derived LiveData instances. Returning a fresh instance from
     // each getter left synchronous `.value` reads at null (the caller's instance
     // has no active observer, so its MediatorLiveData never advances) — which
@@ -93,6 +100,14 @@ class CartViewModel(
             val recompute = { value = RowConversion.of(current.value, ratesCache.rates.value) }
             addSource(current) { recompute() }
             addSource(ratesCache.rates) { recompute() }
+        }
+    }
+    private val shoppingModeLive: LiveData<Boolean> by lazy { current.map { it.shoppingMode } }
+    private val basketTotalLive: LiveData<BigDecimal> by lazy {
+        MediatorLiveData<BigDecimal>().apply {
+            val recompute = { value = basketShareOf(current.value, totalLive.value ?: BigDecimal.ZERO) }
+            addSource(current) { recompute() }
+            addSource(totalLive) { recompute() }
         }
     }
     private val totalLive: LiveData<BigDecimal> by lazy {
@@ -143,72 +158,23 @@ class CartViewModel(
      */
     fun getTotal(): LiveData<BigDecimal> = totalLive
 
-    fun addItem(
-        name: String,
-        expression: String,
-    ) {
-        mutate { cart ->
-            cart.copy(
-                items =
-                    cart.items +
-                        CartItem(
-                            id = newId(),
-                            name = name,
-                            expression = expression,
-                        ),
-            )
-        }
+    /** Edits to the working cart's rows: add, edit, delete, pin, reorder. */
+    val rows = CartRowEdits(::mutate)
+
+    /** Turns shopping-list mode on or off; ticks stay for the next time it's on. */
+    fun setShoppingMode(enabled: Boolean) {
+        mutate { cart -> if (cart.shoppingMode == enabled) cart else cart.copy(shoppingMode = enabled) }
     }
 
-    fun updateItem(
-        id: String,
-        name: String,
-        expression: String,
-    ) {
-        mutateItem(id) { it.copy(name = name, expression = expression) }
-    }
-
-    fun removeItem(id: String) {
-        mutate { cart ->
-            val filtered = cart.items.filter { it.id != id }
-            if (filtered.size == cart.items.size) cart else cart.copy(items = filtered)
-        }
-    }
+    /** Whether the current cart is in shopping-list mode. */
+    fun isShoppingMode(): LiveData<Boolean> = shoppingModeLive
 
     /**
-     * Puts a removed [item] back at [index] (clamped to the list) — Undo for
-     * a delete. No-op if an item with its id is already there.
+     * What the ticked items come to, in the destination currency, as a share
+     * of the total (tip and fees included in proportion). Zero with nothing
+     * ticked.
      */
-    fun restoreItem(
-        item: CartItem,
-        index: Int,
-    ) {
-        mutate { cart ->
-            if (cart.items.any { it.id == item.id }) return@mutate cart
-            val items = cart.items.toMutableList()
-            items.add(index.coerceIn(0, items.size), item)
-            cart.copy(items = items)
-        }
-    }
-
-    fun togglePinned(id: String) {
-        mutateItem(id) { it.copy(pinned = !it.pinned) }
-    }
-
-    /**
-     * Applies a finished drag: [movedId] was dropped where it sits in
-     * [displayOrder] (see [afterDrop]). A release without movement changes
-     * nothing and skips the write.
-     */
-    fun commitDrag(
-        displayOrder: List<String>,
-        movedId: String,
-    ) {
-        mutate { cart ->
-            val items = cart.items.afterDrop(displayOrder, movedId)
-            if (items == cart.items) cart else cart.copy(items = items)
-        }
-    }
+    fun getBasketTotal(): LiveData<BigDecimal> = basketTotalLive
 
     fun setBaseCurrency(currency: Currency) {
         mutate { it.copy(currency = currency.iso4217Alpha()) }
@@ -423,25 +389,6 @@ class CartViewModel(
         if (next === prev) return
         current.value = next
         db.carts.currentCart.set(next)
-    }
-
-    private inline fun mutateItem(
-        id: String,
-        crossinline transform: (CartItem) -> CartItem,
-    ) {
-        mutate { cart ->
-            var changed = false
-            val items =
-                cart.items.map {
-                    if (it.id == id) {
-                        changed = true
-                        transform(it)
-                    } else {
-                        it
-                    }
-                }
-            if (changed) cart.copy(items = items) else cart
-        }
     }
 
     // Every cold start begins with a fresh cart that inherits the main

@@ -183,4 +183,25 @@
     <string name="cart_budget_left_row">Queda en el presupuesto</string>
     <string name="cart_budget_used_a11y">%1$d %% del presupuesto usado</string>
     <string name="cart_over_budget_row">Por encima del presupuesto</string>
+    <string name="cart_duplicate_item">Duplicar</string>
+    <string name="cart_move_to_top">Mover arriba del todo</string>
+    <string name="cart_in_basket_item">En la cesta</string>
+    <string name="cart_row_a11y_quantity">cantidad %1$d</string>
+    <string name="cart_row_a11y_converted">unos %1$s</string>
+    <string name="cart_quantity_decrease">Reducir cantidad</string>
+    <string name="cart_quantity_increase">Aumentar cantidad</string>
+    <string name="cart_keypad_next">Siguiente</string>
+    <string name="cart_menu_shopping_list">Lista de la compra</string>
+    <string name="cart_menu_shopping_list_off">Salir de la lista de la compra</string>
+    <string name="cart_in_basket">En la cesta</string>
+    <string name="cart_rates_from">Tipos del %1$s</string>
+    <string name="cart_share_option_image">Imagen</string>
+    <string name="cart_share_option_image_desc">Imagen del recibo para chats y mensajes.</string>
+    <string name="cart_totals_show_details">Mostrar detalles</string>
+    <string name="cart_totals_hide_details">Ocultar detalles</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d artículo</item>
+        <item quantity="many">%d de artículos</item>
+        <item quantity="other">%d artículos</item>
+    </plurals>
 </resources>

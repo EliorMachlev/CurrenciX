@@ -22,6 +22,7 @@ import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartItemActions
+import com.eliormachlev.currencix.view.cart.compose.CartItemArrangeActions
 import com.eliormachlev.currencix.view.cart.compose.CartListSources
 import com.eliormachlev.currencix.view.cart.compose.CartLoadSheet
 import com.eliormachlev.currencix.view.cart.compose.CartNameInputSheet
@@ -107,7 +108,14 @@ internal fun CartBarActions(
 }
 
 private fun CartHost.listSources() =
-    CartListSources(itemsLive, currencyLive, keypad.activeItemId, keypad.liveExpression, viewModel.getRowConversion())
+    CartListSources(
+        items = itemsLive,
+        currency = currencyLive,
+        activeItemId = keypad.activeItemId,
+        activeExpression = keypad.liveExpression,
+        conversion = viewModel.getRowConversion(),
+        shoppingMode = viewModel.isShoppingMode(),
+    )
 
 private fun CartHost.screenActions(onOpenFees: () -> Unit) =
     CartScreenActions(
@@ -119,13 +127,20 @@ private fun CartHost.screenActions(onOpenFees: () -> Unit) =
                 onNameCommit = ::commitName,
                 onNamePending = ::onNamePending,
                 onExpressionTap = { item -> keypad.openKeypadFor(item.id, item.expression) },
-                onTogglePin = viewModel::togglePinned,
-                onDelete = ::deleteItem,
+                onQuantityChange = viewModel.rows::setQuantity,
+                onToggleChecked = viewModel.rows::toggleChecked,
+                arrange =
+                    CartItemArrangeActions(
+                        onTogglePin = viewModel.rows::togglePinned,
+                        onDuplicate = viewModel.rows::duplicate,
+                        onMoveToTop = viewModel.rows::moveToTop,
+                        onDelete = ::deleteItem,
+                    ),
             ),
         // A drag doesn't interact well with a floating keypad — the row
         // being edited would slide out from under the caret. Commit the
         // current edit and close before the gesture takes over the list.
-        reorder = CartReorder(onStart = keypad::closeKeypad, onCommit = viewModel::commitDrag),
+        reorder = CartReorder(onStart = keypad::closeKeypad, onCommit = viewModel.rows::commitDrag),
     )
 
 @Composable
@@ -137,10 +152,13 @@ private fun cartMenu(host: CartHost): List<OverflowAction> {
     val import = stringResource(R.string.cart_menu_import)
     val clear = stringResource(R.string.cart_menu_clear)
     val extras = stringResource(R.string.cart_menu_extras)
-    return remember(host, share, extras, saveAs, load, export, import, clear) {
+    val shoppingMode by host.viewModel.isShoppingMode().observeAsState(initial = false)
+    val shoppingList = stringResource(if (shoppingMode) R.string.cart_menu_shopping_list_off else R.string.cart_menu_shopping_list)
+    return remember(host, share, extras, shoppingList, shoppingMode, saveAs, load, export, import, clear) {
         listOf(
             OverflowAction(share, R.drawable.ic_share) { host.shareCoordinator.show() },
             OverflowAction(extras, R.drawable.ic_split) { host.overlays.extrasVisible = true },
+            OverflowAction(shoppingList, R.drawable.ic_checklist) { host.viewModel.setShoppingMode(!shoppingMode) },
             OverflowAction(saveAs, R.drawable.ic_save_as) { host.saveLoad.showSaveAsDialog() },
             OverflowAction(load, R.drawable.ic_folder_open) { host.saveLoad.showLoadDialog() },
             OverflowAction(export, R.drawable.ic_upload) { host.fileIo.launchExport() },

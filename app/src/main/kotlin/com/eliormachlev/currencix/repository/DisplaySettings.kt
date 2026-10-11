@@ -20,6 +20,7 @@ private const val KEY_CLICK_SOUNDS = "_clickSounds"
 private const val KEY_DYNAMIC_COLOR = "_dynamicColor"
 private const val KEY_DECIMAL_PLACES = "_decimalPlaces"
 private const val KEY_DATE_FORMAT = "_dateFormat"
+private const val KEY_CART_TOTALS_COLLAPSED = "_cartTotalsCollapsed"
 
 // First-run onboarding gate (#147). Default `false` — the spotlight tour runs
 // on the very first cold-start, then flips to `true` on Skip/Finish so future
@@ -66,6 +67,9 @@ class DisplaySettings(
         )
 
     val dateFormat: Pref<String> = store.stringPref(KEY_DATE_FORMAT, DEFAULT_DATE_FORMAT)
+
+    /** The cart's totals card shows only the total (true) or every line. */
+    val cartTotalsCollapsed: Pref<Boolean> = store.booleanPref(KEY_CART_TOTALS_COLLAPSED, default = false)
 
     fun isPureBlackEnabled(): Boolean = theme.get().isPureBlack
 }

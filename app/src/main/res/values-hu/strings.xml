@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">Maradt a keretből</string>
     <string name="cart_budget_used_a11y">A keret %1$d%%-a felhasználva</string>
     <string name="cart_over_budget_row">Kereten felül</string>
+    <string name="cart_duplicate_item">Másolat</string>
+    <string name="cart_move_to_top">Áthelyezés legfelülre</string>
+    <string name="cart_in_basket_item">A kosárban</string>
+    <string name="cart_row_a11y_quantity">mennyiség: %1$d</string>
+    <string name="cart_row_a11y_converted">kb. %1$s</string>
+    <string name="cart_quantity_decrease">Mennyiség csökkentése</string>
+    <string name="cart_quantity_increase">Mennyiség növelése</string>
+    <string name="cart_keypad_next">Tovább</string>
+    <string name="cart_menu_shopping_list">Bevásárlólista</string>
+    <string name="cart_menu_shopping_list_off">Kilépés a bevásárlólistából</string>
+    <string name="cart_in_basket">Kosárban</string>
+    <string name="cart_rates_from">Árfolyamok: %1$s</string>
+    <string name="cart_share_option_image">Kép</string>
+    <string name="cart_share_option_image_desc">Nyugtakép csevegésekhez és üzenetekhez.</string>
+    <string name="cart_totals_show_details">Részletek megjelenítése</string>
+    <string name="cart_totals_hide_details">Részletek elrejtése</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d tétel</item>
+        <item quantity="other">%d tétel</item>
+    </plurals>
 </resources>

@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">Bütçede kalan</string>
     <string name="cart_budget_used_a11y">Bütçenin %%%1$d kadarı kullanıldı</string>
     <string name="cart_over_budget_row">Bütçe aşıldı</string>
+    <string name="cart_duplicate_item">Çoğalt</string>
+    <string name="cart_move_to_top">En üste taşı</string>
+    <string name="cart_in_basket_item">Sepette</string>
+    <string name="cart_row_a11y_quantity">adet %1$d</string>
+    <string name="cart_row_a11y_converted">yaklaşık %1$s</string>
+    <string name="cart_quantity_decrease">Adedi azalt</string>
+    <string name="cart_quantity_increase">Adedi artır</string>
+    <string name="cart_keypad_next">İleri</string>
+    <string name="cart_menu_shopping_list">Alışveriş listesi</string>
+    <string name="cart_menu_shopping_list_off">Alışveriş listesinden çık</string>
+    <string name="cart_in_basket">Sepette</string>
+    <string name="cart_rates_from">%1$s tarihli kurlar</string>
+    <string name="cart_share_option_image">Görsel</string>
+    <string name="cart_share_option_image_desc">Sohbetler ve mesajlar için fiş görseli.</string>
+    <string name="cart_totals_show_details">Ayrıntıları göster</string>
+    <string name="cart_totals_hide_details">Ayrıntıları gizle</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d ürün</item>
+        <item quantity="other">%d ürün</item>
+    </plurals>
 </resources>

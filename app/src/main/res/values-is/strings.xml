@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">Eftir af fjárhagsáætlun</string>
     <string name="cart_budget_used_a11y">%1$d%% af fjárhagsáætlun notuð</string>
     <string name="cart_over_budget_row">Yfir fjárhagsáætlun</string>
+    <string name="cart_duplicate_item">Tvítaka</string>
+    <string name="cart_move_to_top">Færa efst</string>
+    <string name="cart_in_basket_item">Í körfunni</string>
+    <string name="cart_row_a11y_quantity">magn %1$d</string>
+    <string name="cart_row_a11y_converted">um %1$s</string>
+    <string name="cart_quantity_decrease">Minnka magn</string>
+    <string name="cart_quantity_increase">Auka magn</string>
+    <string name="cart_keypad_next">Áfram</string>
+    <string name="cart_menu_shopping_list">Innkaupalisti</string>
+    <string name="cart_menu_shopping_list_off">Hætta í innkaupalista</string>
+    <string name="cart_in_basket">Í körfu</string>
+    <string name="cart_rates_from">Gengi frá %1$s</string>
+    <string name="cart_share_option_image">Mynd</string>
+    <string name="cart_share_option_image_desc">Kvittunarmynd fyrir spjall og skilaboð.</string>
+    <string name="cart_totals_show_details">Sýna nánar</string>
+    <string name="cart_totals_hide_details">Fela nánar</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d vara</item>
+        <item quantity="other">%d vörur</item>
+    </plurals>
 </resources>

@@ -182,4 +182,26 @@
     <string name="cart_budget_left_row">Залишок бюджету</string>
     <string name="cart_budget_used_a11y">Використано %1$d%% бюджету</string>
     <string name="cart_over_budget_row">Понад бюджет</string>
+    <string name="cart_duplicate_item">Дублювати</string>
+    <string name="cart_move_to_top">Перемістити вгору</string>
+    <string name="cart_in_basket_item">У кошику</string>
+    <string name="cart_row_a11y_quantity">кількість %1$d</string>
+    <string name="cart_row_a11y_converted">близько %1$s</string>
+    <string name="cart_quantity_decrease">Зменшити кількість</string>
+    <string name="cart_quantity_increase">Збільшити кількість</string>
+    <string name="cart_keypad_next">Далі</string>
+    <string name="cart_menu_shopping_list">Список покупок</string>
+    <string name="cart_menu_shopping_list_off">Вийти зі списку покупок</string>
+    <string name="cart_in_basket">У кошику</string>
+    <string name="cart_rates_from">Курси на %1$s</string>
+    <string name="cart_share_option_image">Зображення</string>
+    <string name="cart_share_option_image_desc">Зображення чека для чатів і повідомлень.</string>
+    <string name="cart_totals_show_details">Показати подробиці</string>
+    <string name="cart_totals_hide_details">Сховати подробиці</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d товар</item>
+        <item quantity="few">%d товари</item>
+        <item quantity="many">%d товарів</item>
+        <item quantity="other">%d товару</item>
+    </plurals>
 </resources>

@@ -201,4 +201,26 @@
     <string name="onboarding_autorefresh_title">Auto-refresh rates</string>
     <string name="onboarding_autorefresh_body">Rates refresh when you open the app. Enable background refresh so they stay current between launches.</string>
     <string name="onboarding_autorefresh_enable">Enable now</string>
+    <string name="cart_duplicate_item">Duplicate</string>
+    <string name="cart_move_to_top">Move to top</string>
+    <string name="cart_in_basket_item">In the basket</string>
+    <string name="cart_row_a11y_amount" translatable="false">%1$s %2$s</string>
+    <string name="cart_quantity_value" translatable="false">×%1$d</string>
+    <string name="cart_row_a11y_quantity">quantity %1$d</string>
+    <string name="cart_row_a11y_converted">about %1$s</string>
+    <string name="cart_quantity_decrease">Decrease quantity</string>
+    <string name="cart_quantity_increase">Increase quantity</string>
+    <string name="cart_keypad_next">Next</string>
+    <string name="cart_menu_shopping_list">Shopping list</string>
+    <string name="cart_menu_shopping_list_off">Leave shopping list</string>
+    <string name="cart_in_basket">In basket</string>
+    <string name="cart_rates_from">Rates from %1$s</string>
+    <string name="cart_share_option_image">Image</string>
+    <string name="cart_share_option_image_desc">Receipt picture for chats and messages.</string>
+    <string name="cart_totals_show_details">Show details</string>
+    <string name="cart_totals_hide_details">Hide details</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
 </resources>

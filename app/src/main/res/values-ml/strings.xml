@@ -186,4 +186,24 @@
     <string name="cart_budget_left_row">ബജറ്റിൽ ശേഷിക്കുന്നത്</string>
     <string name="cart_budget_used_a11y">ബജറ്റിന്റെ %1$d%% ഉപയോഗിച്ചു</string>
     <string name="cart_over_budget_row">ബജറ്റ് കവിഞ്ഞു</string>
+    <string name="cart_duplicate_item">ഡ്യൂപ്ലിക്കേറ്റ്</string>
+    <string name="cart_move_to_top">മുകളിലേക്ക് നീക്കുക</string>
+    <string name="cart_in_basket_item">കൊട്ടയിൽ</string>
+    <string name="cart_row_a11y_quantity">അളവ് %1$d</string>
+    <string name="cart_row_a11y_converted">ഏകദേശം %1$s</string>
+    <string name="cart_quantity_decrease">അളവ് കുറയ്ക്കുക</string>
+    <string name="cart_quantity_increase">അളവ് കൂട്ടുക</string>
+    <string name="cart_keypad_next">അടുത്തത്</string>
+    <string name="cart_menu_shopping_list">ഷോപ്പിംഗ് ലിസ്റ്റ്</string>
+    <string name="cart_menu_shopping_list_off">ഷോപ്പിംഗ് ലിസ്റ്റിൽ നിന്ന് പുറത്തുകടക്കുക</string>
+    <string name="cart_in_basket">കൊട്ടയിൽ</string>
+    <string name="cart_rates_from">%1$s-ലെ നിരക്കുകൾ</string>
+    <string name="cart_share_option_image">ചിത്രം</string>
+    <string name="cart_share_option_image_desc">ചാറ്റുകൾക്കും സന്ദേശങ്ങൾക്കുമുള്ള രസീത് ചിത്രം.</string>
+    <string name="cart_totals_show_details">വിശദാംശങ്ങൾ കാണിക്കുക</string>
+    <string name="cart_totals_hide_details">വിശദാംശങ്ങൾ മറയ്ക്കുക</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d ഇനം</item>
+        <item quantity="other">%d ഇനങ്ങൾ</item>
+    </plurals>
 </resources>

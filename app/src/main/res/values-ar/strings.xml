@@ -182,4 +182,28 @@
     <string name="cart_budget_left_row">المتبقي من الميزانية</string>
     <string name="cart_budget_used_a11y">‏%1$d%% من الميزانية مستخدم</string>
     <string name="cart_over_budget_row">تجاوز الميزانية</string>
+    <string name="cart_duplicate_item">تكرار</string>
+    <string name="cart_move_to_top">نقل إلى الأعلى</string>
+    <string name="cart_in_basket_item">في السلة</string>
+    <string name="cart_row_a11y_quantity">الكمية %1$d</string>
+    <string name="cart_row_a11y_converted">حوالي %1$s</string>
+    <string name="cart_quantity_decrease">تقليل الكمية</string>
+    <string name="cart_quantity_increase">زيادة الكمية</string>
+    <string name="cart_keypad_next">التالي</string>
+    <string name="cart_menu_shopping_list">قائمة التسوق</string>
+    <string name="cart_menu_shopping_list_off">الخروج من قائمة التسوق</string>
+    <string name="cart_in_basket">في السلة</string>
+    <string name="cart_rates_from">الأسعار من %1$s</string>
+    <string name="cart_share_option_image">صورة</string>
+    <string name="cart_share_option_image_desc">صورة إيصال للدردشات والرسائل.</string>
+    <string name="cart_totals_show_details">إظهار التفاصيل</string>
+    <string name="cart_totals_hide_details">إخفاء التفاصيل</string>
+    <plurals name="cart_saved_items">
+        <item quantity="zero">لا عناصر</item>
+        <item quantity="one">عنصر واحد</item>
+        <item quantity="two">عنصران</item>
+        <item quantity="few">%d عناصر</item>
+        <item quantity="many">%d عنصرًا</item>
+        <item quantity="other">%d عنصر</item>
+    </plurals>
 </resources>

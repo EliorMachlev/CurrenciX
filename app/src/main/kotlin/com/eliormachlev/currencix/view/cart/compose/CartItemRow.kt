@@ -1,6 +1,9 @@
 package com.eliormachlev.currencix.view.cart.compose
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,14 +11,19 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
@@ -34,27 +42,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.hintText
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.util.CART_EXPORT_DISPLAY_SCALE
 import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
 import com.eliormachlev.currencix.util.OPERATOR_MINUS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
@@ -63,15 +80,19 @@ import com.eliormachlev.currencix.util.PAREN_OPEN
 import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hapticOnFocus
+import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.util.roundForDisplay
+import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
-import com.eliormachlev.currencix.view.compose.NameInputTransformation
 import com.eliormachlev.currencix.view.compose.SupportingText
+import com.eliormachlev.currencix.view.compose.WrappingNameInputTransformation
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.cart.RowConversion
-import com.eliormachlev.currencix.viewmodel.cart.evaluatePrice
+import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import java.math.BigDecimal
 
 private const val NAME_EDIT_DEBOUNCE_MS = 300L
 private val FIELD_MIN_HEIGHT = 48.dp
@@ -81,6 +102,15 @@ private val FIELD_MIN_HEIGHT = 48.dp
 private val ROW_CORNER = 14.dp
 private val DIVIDER_INSET = 40.dp
 private const val ACTIVE_ROW_TINT = 0.08f
+private const val CHECKED_ROW_ALPHA = 0.55f
+private val STEP_BUTTON_SIZE = 32.dp
+private val STEP_ICON_SIZE = 18.dp
+
+// Between the parts of a row's spoken price: TalkBack pauses at a comma.
+private const val SPOKEN_PART_SEPARATOR = ", "
+
+// A long name wraps up to this many lines, then scrolls inside the field.
+private const val NAME_MAX_LINES = 3
 
 // A price that's worked out ("3.25 + 0.50", "2.99 × 2"), as opposed to a
 // plain amount: the calculation is shown under the result.
@@ -102,6 +132,8 @@ data class CartRowState(
     val liveExpression: String? = null,
     // The price in the destination currency; null when there's nothing to convert to.
     val conversion: RowConversion? = null,
+    // Shopping-list mode: a tick for "in the basket" instead of the drag handle.
+    val shoppingMode: Boolean = false,
 ) {
     val isActive: Boolean get() = liveExpression != null
     val displayedExpression: String get() = liveExpression ?: item.expression
@@ -155,6 +187,10 @@ class CartRowActions(
     val onExpressionTap: () -> Unit,
     val onTogglePin: () -> Unit,
     val onDelete: () -> Unit,
+    val onQuantityChange: (Int) -> Unit = {},
+    val onToggleChecked: () -> Unit = {},
+    val onDuplicate: () -> Unit = {},
+    val onMoveToTop: () -> Unit = {},
 )
 
 /**
@@ -255,8 +291,11 @@ private fun SwipeDeleteBackground(
 /**
  * One cart item as a receipt line: the name, editable in place, and the
  * price at the end (tap it for the keypad); under them the calculation, when
- * the price is worked out, and the price in the destination currency. Rows
- * of a section share a card ([position]); the row being edited is tinted.
+ * the price is worked out or bought more than once, and the price in the
+ * destination currency. Rows of a section share a card ([position]); the
+ * row being edited is tinted and shows a quantity stepper. In shopping-list
+ * mode a tick marks the item as in the basket. Long-press for duplicate,
+ * move to top and delete.
  */
 @Composable
 fun CartItemRow(
@@ -266,75 +305,172 @@ fun CartItemRow(
     position: RowPosition = RowPosition.Single,
     dragHandleModifier: Modifier = Modifier,
 ) {
-    val item = state.item
-    val surface = MaterialTheme.colorScheme.surface
-    val background =
-        if (state.isActive) {
-            MaterialTheme.colorScheme.primary
-                .copy(alpha = ACTIVE_ROW_TINT)
-                .compositeOver(surface)
-        } else {
-            surface
-        }
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(position.shape)
-                .background(background),
-    ) {
-        if (position.hasDividerAbove) {
-            HorizontalDivider(Modifier.padding(start = DIVIDER_INSET), color = MaterialTheme.colorScheme.outlineVariant)
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = Spacing.Tiny, top = Spacing.Tiny, bottom = Spacing.Tiny),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            DragHandle(modifier = dragHandleModifier)
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.weight(1f)) {
-                        NameField(
-                            initial = item.name,
-                            onCommit = actions.onNameCommit,
-                            onPending = actions.onNamePending,
+    var menuOpen by remember { mutableStateOf(false) }
+    val haptic = LocalHapticFeedback.current
+    val rowActions = rowAccessibilityActions(actions)
+    Box(modifier.fillMaxWidth()) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(position.shape)
+                    .background(rowBackground(state.isActive))
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                menuOpen = true
+                            },
                         )
-                    }
-                    PriceField(state = state, onTap = actions.onExpressionTap)
-                }
-                PriceDetails(state = state, onTap = actions.onExpressionTap)
+                    }.semantics { customActions = rowActions },
+        ) {
+            if (position.hasDividerAbove) {
+                HorizontalDivider(Modifier.padding(start = DIVIDER_INSET), color = MaterialTheme.colorScheme.outlineVariant)
             }
-            FavoriteToggleIcon(
-                active = item.pinned,
-                contentDescription =
-                    stringResource(
-                        id = if (item.pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
-                    ),
-                onClick = actions.onTogglePin,
+            RowContent(state = state, actions = actions) {
+                if (state.shoppingMode) {
+                    BasketCheckbox(checked = state.item.checked, onToggle = actions.onToggleChecked)
+                } else {
+                    DragHandle(modifier = dragHandleModifier)
+                }
+            }
+        }
+        RowMenu(expanded = menuOpen, actions = actions, onDismiss = { menuOpen = false })
+    }
+}
+
+// The line itself: [leading] (the tick or the drag handle), the name and
+// price with the details under them, and the pin.
+@Composable
+private fun RowContent(
+    state: CartRowState,
+    actions: CartRowActions,
+    leading: @Composable () -> Unit,
+) {
+    val item = state.item
+    val inBasket = state.shoppingMode && item.checked
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(start = Spacing.Tiny, top = Spacing.Tiny, bottom = Spacing.Tiny)
+                .alpha(if (inBasket) CHECKED_ROW_ALPHA else 1f),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        leading()
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.weight(1f)) {
+                    NameField(
+                        initial = item.name,
+                        onCommit = actions.onNameCommit,
+                        onPending = actions.onNamePending,
+                        struck = inBasket,
+                    )
+                }
+                PriceField(state = state, onTap = actions.onExpressionTap)
+            }
+            PriceDetails(state = state, actions = actions)
+        }
+        FavoriteToggleIcon(
+            active = item.pinned,
+            contentDescription =
+                stringResource(
+                    id = if (item.pinned) R.string.cart_unpin_item else R.string.cart_pin_item,
+                ),
+            onClick = actions.onTogglePin,
+        )
+    }
+}
+
+// The edited row is tinted with the accent; the rest sit on the card color.
+@Composable
+private fun rowBackground(active: Boolean): Color {
+    val surface = MaterialTheme.colorScheme.surface
+    return if (active) {
+        MaterialTheme.colorScheme.primary
+            .copy(alpha = ACTIVE_ROW_TINT)
+            .compositeOver(surface)
+    } else {
+        surface
+    }
+}
+
+// The long-press menu's actions, also offered to TalkBack as the row's actions.
+@Composable
+private fun rowAccessibilityActions(actions: CartRowActions): List<CustomAccessibilityAction> {
+    val duplicate = stringResource(R.string.cart_duplicate_item)
+    val moveToTop = stringResource(R.string.cart_move_to_top)
+    val delete = stringResource(R.string.cart_delete_item)
+    return remember(actions, duplicate, moveToTop, delete) {
+        listOf(
+            CustomAccessibilityAction(duplicate) { true.also { actions.onDuplicate() } },
+            CustomAccessibilityAction(moveToTop) { true.also { actions.onMoveToTop() } },
+            CustomAccessibilityAction(delete) { true.also { actions.onDelete() } },
+        )
+    }
+}
+
+// Duplicate, move to top, delete: the long-press menu.
+@Composable
+private fun RowMenu(
+    expanded: Boolean,
+    actions: CartRowActions,
+    onDismiss: () -> Unit,
+) {
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        listOf(
+            Triple(R.string.cart_duplicate_item, R.drawable.ic_content_copy, actions.onDuplicate),
+            Triple(R.string.cart_move_to_top, R.drawable.ic_vertical_align_top, actions.onMoveToTop),
+            Triple(R.string.cart_delete_item, R.drawable.ic_delete, actions.onDelete),
+        ).forEach { (label, icon, action) ->
+            DropdownMenuItem(
+                text = { Text(stringResource(label)) },
+                leadingIcon = { Icon(painter = painterResource(icon), contentDescription = null) },
+                onClick =
+                    rememberHapticOnClick {
+                        onDismiss()
+                        action()
+                    },
             )
         }
     }
 }
 
-// The row's price at its end edge: the result in the cart's currency, or a
-// "Price" placeholder before one is entered. Tapping opens the keypad.
+// Shopping-list mode's tick: the item is in the basket.
+@Composable
+private fun BasketCheckbox(
+    checked: Boolean,
+    onToggle: () -> Unit,
+) {
+    val label = stringResource(R.string.cart_in_basket_item)
+    Checkbox(
+        checked = checked,
+        onCheckedChange = { onToggle() },
+        modifier = Modifier.semantics { contentDescription = label },
+    )
+}
+
+// The row's price at its end edge: the result in the cart's currency (its
+// quantity included), or a "Price" placeholder before one is entered.
+// Tapping opens the keypad; TalkBack hears the whole price in one go.
 @Composable
 private fun PriceField(
     state: CartRowState,
     onTap: () -> Unit,
 ) {
     val context = LocalContext.current
-    val expression = state.displayedExpression
-    val price =
-        remember(expression, state.currency) {
-            expression.takeIf { it.isNotBlank() }?.let { context.formatCartAmount(evaluatePrice(it), Currency.fromString(state.currency)) }
-        }
+    val total = state.total()
+    val currency = Currency.fromString(state.currency)
+    val price = remember(total, currency) { total?.let { context.formatCartAmount(it, currency) } }
+    val spoken = spokenPrice(state, total, currency)
     Box(
         modifier =
             Modifier
                 .defaultMinSize(minHeight = FIELD_MIN_HEIGHT)
                 .hapticClickable(onClick = onTap)
-                .padding(start = Spacing.Small),
+                .padding(start = Spacing.Small)
+                .semantics { spoken?.let { contentDescription = it } },
         contentAlignment = Alignment.CenterEnd,
     ) {
         if (price == null) {
@@ -350,37 +486,134 @@ private fun PriceField(
     }
 }
 
-// Under the name and price: the calculation (when the price is worked out)
-// at the start, the price in the destination currency at the end. Nothing
-// when there's neither.
+// The price as TalkBack reads it: "4.50 US dollar, quantity 2, about 16.42
+// Israeli new shekel" — currency names, not symbols. Null before a price.
+@Composable
+private fun spokenPrice(
+    state: CartRowState,
+    total: BigDecimal?,
+    currency: Currency?,
+): String? {
+    total ?: return null
+    val amount = spokenAmount(total, currency)
+    val quantity =
+        state.item.quantity
+            .takeIf { it > 1 }
+            ?.let { stringResource(R.string.cart_row_a11y_quantity, it) }
+    val converted =
+        state.conversion?.let { conversion ->
+            conversion.convert(total)?.let { stringResource(R.string.cart_row_a11y_converted, spokenAmount(it, conversion.currency)) }
+        }
+    return listOfNotNull(amount, quantity, converted).joinToString(SPOKEN_PART_SEPARATOR)
+}
+
+// "4.50 US dollar": the amount with its currency's name, for TalkBack.
+@Composable
+private fun spokenAmount(
+    amount: BigDecimal,
+    currency: Currency?,
+): String {
+    val context = LocalContext.current
+    val number =
+        remember(amount) {
+            amount.roundForDisplay(CART_EXPORT_DISPLAY_SCALE).toHumanReadableNumber(context, decimalPlaces = CART_EXPORT_DISPLAY_SCALE)
+        }
+    val name = currency?.let { stringResource(it.fullNameRes) }.orEmpty()
+    return stringResource(R.string.cart_row_a11y_amount, number, name).trim()
+}
+
+// The row's price with its quantity, live while it's being typed; null before a price.
+private fun CartRowState.total(): BigDecimal? =
+    displayedExpression.takeIf { it.isNotBlank() }?.let { evaluateItem(item.copy(expression = it)) }
+
+// Under the name and price: the calculation (when the price is worked out
+// or bought more than once) at the start, and the price in the destination
+// currency at the end; on the row being edited, a quantity stepper first.
+// TalkBack reads all of it with the price ([spokenPrice]).
 @Composable
 private fun PriceDetails(
     state: CartRowState,
-    onTap: () -> Unit,
+    actions: CartRowActions,
 ) {
+    val calculation = state.calculation()
+    val converted = convertedPrice(state)
+    if (calculation == null && converted == null && !state.isActive) return
+    Row(modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.Tiny), verticalAlignment = Alignment.CenterVertically) {
+        if (state.isActive) QuantityStepper(quantity = state.item.quantity, onChange = actions.onQuantityChange)
+        Row(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .hapticClickable(onClick = actions.onExpressionTap)
+                    .clearAndSetSemantics {},
+            // A long calculation wraps; the converted price stays level with its first line.
+            verticalAlignment = Alignment.Top,
+        ) {
+            // Kept apart from the converted price when a long calculation wraps.
+            Box(Modifier.weight(1f).padding(end = Spacing.Small)) {
+                calculation?.let { Calculation(it) }
+            }
+            converted?.let { Ltr { SupportingText(it) } }
+        }
+    }
+}
+
+// The calculation under the price: when it's worked out ("3.25 + 0.50") or
+// bought more than once ("4.50 × 3"); null for a plain price. While the row
+// is edited the stepper shows the quantity, so it's left out here.
+private fun CartRowState.calculation(): String? {
+    val expression = displayedExpression.takeIf { it.isNotBlank() } ?: return null
+    if (item.quantity == 1 && expression.none(CALCULATION_CHARS::contains)) return null
+    return if (isActive) expression else item.copy(expression = expression).expressionWithQuantity
+}
+
+// "≈ 16.42 ₪": the row's price in the destination currency; null with
+// nothing to convert to or no price yet.
+@Composable
+private fun convertedPrice(state: CartRowState): String? {
     val context = LocalContext.current
-    val expression = state.displayedExpression
-    val calculation = expression.takeIf { it.any(CALCULATION_CHARS::contains) }
-    val convertedAmount =
-        remember(expression, state.conversion) {
+    val total = state.total()
+    val amount =
+        remember(total, state.conversion) {
             val conversion = state.conversion ?: return@remember null
-            expression
-                .takeIf { it.isNotBlank() }
-                ?.let { conversion.convert(evaluatePrice(it)) }
-                ?.let { context.formatCartAmount(it, conversion.currency) }
+            total?.let { conversion.convert(it) }?.let { context.formatCartAmount(it, conversion.currency) }
         }
-    val converted = convertedAmount?.let { stringResource(R.string.cart_row_converted, it) }
-    if (calculation == null && converted == null) return
-    Row(
-        modifier = Modifier.fillMaxWidth().hapticClickable(onClick = onTap).padding(bottom = Spacing.Tiny),
-        // A long calculation wraps; the converted price stays level with its first line.
-        verticalAlignment = Alignment.Top,
-    ) {
-        // Kept apart from the converted price when a long calculation wraps.
-        Box(Modifier.weight(1f).padding(end = Spacing.Small)) {
-            calculation?.let { Calculation(it) }
+    return amount?.let { stringResource(R.string.cart_row_converted, it) }
+}
+
+// "−  ×2  +" on the row being edited.
+@Composable
+private fun QuantityStepper(
+    quantity: Int,
+    onChange: (Int) -> Unit,
+) {
+    Ltr {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = Spacing.Small)) {
+            StepButton(R.drawable.ic_remove, R.string.cart_quantity_decrease, enabled = quantity > CartItem.MIN_QUANTITY) {
+                onChange(quantity - 1)
+            }
+            val spoken = stringResource(R.string.cart_row_a11y_quantity, quantity)
+            Text(
+                text = stringResource(R.string.cart_quantity_value, quantity),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.semantics { contentDescription = spoken },
+            )
+            StepButton(R.drawable.ic_add, R.string.cart_quantity_increase, enabled = quantity < CartItem.MAX_QUANTITY) {
+                onChange(quantity + 1)
+            }
         }
-        converted?.let { Ltr { SupportingText(it) } }
+    }
+}
+
+@Composable
+private fun StepButton(
+    @DrawableRes icon: Int,
+    @StringRes description: Int,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    IconButton(onClick = rememberHapticOnClick(onClick), enabled = enabled, modifier = Modifier.size(STEP_BUTTON_SIZE)) {
+        Icon(painter = painterResource(icon), contentDescription = stringResource(description), modifier = Modifier.size(STEP_ICON_SIZE))
     }
 }
 
@@ -415,6 +648,7 @@ private fun NameField(
     initial: String,
     onCommit: (String) -> Unit,
     onPending: (String) -> Unit,
+    struck: Boolean = false,
 ) {
     // Local buffer so cursor position isn't reset when the VM re-emits the
     // list. Sync only when the *external* value diverges from what we last
@@ -442,7 +676,11 @@ private fun NameField(
     }
     val textStyle =
         LocalTextStyle.current.merge(
-            MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+            MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                // In the basket: crossed off, as on a paper list.
+                textDecoration = if (struck) TextDecoration.LineThrough else null,
+            ),
         )
     val hintColor = MaterialTheme.colorScheme.onSurfaceVariant
     val fieldLabel = stringResource(id = R.string.a11y_cart_item_name)
@@ -455,11 +693,12 @@ private fun NameField(
     ) {
         BasicTextField(
             state = state,
-            inputTransformation = NameInputTransformation,
-            lineLimits = TextFieldLineLimits.SingleLine,
+            // A long name wraps rather than scrolling out of sight; it stays one paragraph.
+            inputTransformation = WrappingNameInputTransformation,
+            lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = NAME_MAX_LINES),
             textStyle = textStyle,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
             // BasicTextField has no visible label, and the placeholder below
             // goes once the user types: TalkBack reads "Item name" as the
             // field's hint, after whatever is typed, so it's always named.

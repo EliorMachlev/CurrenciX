@@ -182,4 +182,25 @@
     <string name="cart_budget_left_row">יתרת תקציב</string>
     <string name="cart_budget_used_a11y">‏%1$d%% מהתקציב נוצלו</string>
     <string name="cart_over_budget_row">חריגה מהתקציב</string>
+    <string name="cart_duplicate_item">שכפול</string>
+    <string name="cart_move_to_top">העברה לראש הרשימה</string>
+    <string name="cart_in_basket_item">בסל</string>
+    <string name="cart_row_a11y_quantity">כמות %1$d</string>
+    <string name="cart_row_a11y_converted">בערך %1$s</string>
+    <string name="cart_quantity_decrease">הקטנת הכמות</string>
+    <string name="cart_quantity_increase">הגדלת הכמות</string>
+    <string name="cart_keypad_next">הבא</string>
+    <string name="cart_menu_shopping_list">רשימת קניות</string>
+    <string name="cart_menu_shopping_list_off">יציאה מרשימת הקניות</string>
+    <string name="cart_in_basket">בסל</string>
+    <string name="cart_rates_from">שערים מ־%1$s</string>
+    <string name="cart_share_option_image">תמונה</string>
+    <string name="cart_share_option_image_desc">תמונת קבלה לצ׳אטים ולהודעות.</string>
+    <string name="cart_totals_show_details">הצגת פרטים</string>
+    <string name="cart_totals_hide_details">הסתרת פרטים</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">פריט אחד</item>
+        <item quantity="two">שני פריטים</item>
+        <item quantity="other">%d פריטים</item>
+    </plurals>
 </resources>

@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">Остатък от бюджета</string>
     <string name="cart_budget_used_a11y">Използвани %1$d%% от бюджета</string>
     <string name="cart_over_budget_row">Над бюджета</string>
+    <string name="cart_duplicate_item">Дублиране</string>
+    <string name="cart_move_to_top">Премести най-горе</string>
+    <string name="cart_in_basket_item">В кошницата</string>
+    <string name="cart_row_a11y_quantity">количество %1$d</string>
+    <string name="cart_row_a11y_converted">около %1$s</string>
+    <string name="cart_quantity_decrease">Намали количеството</string>
+    <string name="cart_quantity_increase">Увеличи количеството</string>
+    <string name="cart_keypad_next">Напред</string>
+    <string name="cart_menu_shopping_list">Списък за пазаруване</string>
+    <string name="cart_menu_shopping_list_off">Изход от списъка за пазаруване</string>
+    <string name="cart_in_basket">В кошницата</string>
+    <string name="cart_rates_from">Курсове от %1$s</string>
+    <string name="cart_share_option_image">Изображение</string>
+    <string name="cart_share_option_image_desc">Снимка на касова бележка за чатове и съобщения.</string>
+    <string name="cart_totals_show_details">Покажи подробности</string>
+    <string name="cart_totals_hide_details">Скрий подробности</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d артикул</item>
+        <item quantity="other">%d артикула</item>
+    </plurals>
 </resources>

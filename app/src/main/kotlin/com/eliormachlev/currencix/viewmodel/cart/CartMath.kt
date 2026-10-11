@@ -15,7 +15,7 @@ import java.math.MathContext
  * malformed expressions collapse to zero so a partially-typed row never
  * derails a totals calculation.
  */
-fun evaluateItem(item: CartItem): BigDecimal = evaluatePrice(item.expression)
+fun evaluateItem(item: CartItem): BigDecimal = evaluatePrice(item.expression).multiply(BigDecimal(item.quantity))
 
 /** A price expression ("3.25 + 0.50") worked out; zero when blank or unfinished. */
 fun evaluatePrice(expression: String): BigDecimal {
@@ -49,6 +49,20 @@ internal fun convertedSubtotalOf(
     cart ?: return BigDecimal.ZERO
     val (base, dest) = cart.resolvedPair()
     return convertAmount(subtotalOf(cart) + tipOf(cart), base, dest, rates)
+}
+
+/**
+ * The ticked items' share of [total]: their subtotal over the whole
+ * subtotal, so tip and fees count in proportion. Zero when nothing is ticked.
+ */
+internal fun basketShareOf(
+    cart: SavedCart?,
+    total: BigDecimal,
+): BigDecimal {
+    val subtotal = subtotalOf(cart)
+    if (cart == null || subtotal.signum() == 0) return BigDecimal.ZERO
+    val basket = cart.items.filter { it.checked }.fold(BigDecimal.ZERO) { acc, item -> acc + evaluateItem(item) }
+    return total.multiply(basket, MathContext.DECIMAL128).divide(subtotal, MathContext.DECIMAL128)
 }
 
 /** Each person's share of [total] when the cart splits it [ways] ways. */

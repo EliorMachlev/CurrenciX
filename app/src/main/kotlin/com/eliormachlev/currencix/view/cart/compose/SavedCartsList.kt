@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.cart.compose
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,22 +12,37 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.util.formatCartAmount
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.viewmodel.cart.subtotalOf
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 private const val ROW_MIN_HEIGHT_DP = 48
 
 // An unnamed cart is listed by the start of its id.
 private const val SHORT_ID_LENGTH = 8
+
+// Between the parts of a saved cart's summary line.
+private const val SUMMARY_SEPARATOR = " · "
+
+private val SAVED_DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
 
 @Composable
 fun SavedCartsList(
@@ -65,14 +81,22 @@ private fun SavedCartRow(
                 ).padding(horizontal = Spacing.Large),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = cart.name.ifBlank { cart.id.take(SHORT_ID_LENGTH) },
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
-        )
+        Column(modifier = Modifier.weight(1f).padding(vertical = Spacing.Small)) {
+            Text(
+                text = cart.name.ifBlank { cart.id.take(SHORT_ID_LENGTH) },
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = savedCartSummary(cart),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         IconButton(onClick = rememberHapticOnClick(onRename)) {
             Icon(
                 painter = painterResource(R.drawable.ic_edit),
@@ -86,4 +110,22 @@ private fun SavedCartRow(
             )
         }
     }
+}
+
+// "4 items · 23.50 $ · 3 Oct 2026": what's in a saved cart, what it comes
+// to in its own currency, and when it was saved.
+@Composable
+private fun savedCartSummary(cart: SavedCart): String {
+    val context = LocalContext.current
+    val count = pluralStringResource(R.plurals.cart_saved_items, cart.items.size, cart.items.size)
+    val total = remember(cart) { context.formatCartAmount(subtotalOf(cart), Currency.fromString(cart.currency)) }
+    val date =
+        remember(cart.createdAt) {
+            Instant
+                .ofEpochMilli(cart.createdAt)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .format(SAVED_DATE_FORMAT)
+        }
+    return listOf(count, total, date).joinToString(SUMMARY_SEPARATOR)
 }

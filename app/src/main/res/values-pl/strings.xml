@@ -182,4 +182,26 @@
     <string name="cart_budget_left_row">Pozostało w budżecie</string>
     <string name="cart_budget_used_a11y">Wykorzystano %1$d%% budżetu</string>
     <string name="cart_over_budget_row">Ponad budżet</string>
+    <string name="cart_duplicate_item">Duplikuj</string>
+    <string name="cart_move_to_top">Przenieś na górę</string>
+    <string name="cart_in_basket_item">W koszyku</string>
+    <string name="cart_row_a11y_quantity">ilość %1$d</string>
+    <string name="cart_row_a11y_converted">około %1$s</string>
+    <string name="cart_quantity_decrease">Zmniejsz ilość</string>
+    <string name="cart_quantity_increase">Zwiększ ilość</string>
+    <string name="cart_keypad_next">Dalej</string>
+    <string name="cart_menu_shopping_list">Lista zakupów</string>
+    <string name="cart_menu_shopping_list_off">Opuść listę zakupów</string>
+    <string name="cart_in_basket">W koszyku</string>
+    <string name="cart_rates_from">Kursy z %1$s</string>
+    <string name="cart_share_option_image">Obraz</string>
+    <string name="cart_share_option_image_desc">Obraz paragonu do czatów i wiadomości.</string>
+    <string name="cart_totals_show_details">Pokaż szczegóły</string>
+    <string name="cart_totals_hide_details">Ukryj szczegóły</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d pozycja</item>
+        <item quantity="few">%d pozycje</item>
+        <item quantity="many">%d pozycji</item>
+        <item quantity="other">%d pozycji</item>
+    </plurals>
 </resources>

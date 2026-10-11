@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.view.cart
 import android.app.Activity
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -32,6 +31,8 @@ class CartKeypadController(
     activity: Activity,
     val isExpandedKeypad: LiveData<Boolean>,
     private val onExpressionCommit: (id: String, expression: String) -> Unit,
+    /** The keypad's Next key: moves on to the next row's price. */
+    val onNext: () -> Unit,
 ) {
     private val ctx: Context = activity
 

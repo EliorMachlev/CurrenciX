@@ -181,4 +181,24 @@
     <string name="cart_budget_left_row">Im Budget übrig</string>
     <string name="cart_budget_used_a11y">%1$d %% des Budgets verbraucht</string>
     <string name="cart_over_budget_row">Budget überschritten</string>
+    <string name="cart_duplicate_item">Duplizieren</string>
+    <string name="cart_move_to_top">Nach oben verschieben</string>
+    <string name="cart_in_basket_item">Im Korb</string>
+    <string name="cart_row_a11y_quantity">Menge %1$d</string>
+    <string name="cart_row_a11y_converted">etwa %1$s</string>
+    <string name="cart_quantity_decrease">Menge verringern</string>
+    <string name="cart_quantity_increase">Menge erhöhen</string>
+    <string name="cart_keypad_next">Weiter</string>
+    <string name="cart_menu_shopping_list">Einkaufsliste</string>
+    <string name="cart_menu_shopping_list_off">Einkaufsliste verlassen</string>
+    <string name="cart_in_basket">Im Korb</string>
+    <string name="cart_rates_from">Kurse vom %1$s</string>
+    <string name="cart_share_option_image">Bild</string>
+    <string name="cart_share_option_image_desc">Belegbild für Chats und Nachrichten.</string>
+    <string name="cart_totals_show_details">Details anzeigen</string>
+    <string name="cart_totals_hide_details">Details ausblenden</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d Artikel</item>
+        <item quantity="other">%d Artikel</item>
+    </plurals>
 </resources>

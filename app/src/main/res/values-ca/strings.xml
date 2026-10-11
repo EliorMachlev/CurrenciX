@@ -183,4 +183,25 @@
     <string name="cart_budget_left_row">Queda al pressupost</string>
     <string name="cart_budget_used_a11y">%1$d%% del pressupost utilitzat</string>
     <string name="cart_over_budget_row">Per sobre del pressupost</string>
+    <string name="cart_duplicate_item">Duplica</string>
+    <string name="cart_move_to_top">Mou a dalt de tot</string>
+    <string name="cart_in_basket_item">A la cistella</string>
+    <string name="cart_row_a11y_quantity">quantitat %1$d</string>
+    <string name="cart_row_a11y_converted">uns %1$s</string>
+    <string name="cart_quantity_decrease">Redueix la quantitat</string>
+    <string name="cart_quantity_increase">Augmenta la quantitat</string>
+    <string name="cart_keypad_next">Següent</string>
+    <string name="cart_menu_shopping_list">Llista de la compra</string>
+    <string name="cart_menu_shopping_list_off">Surt de la llista de la compra</string>
+    <string name="cart_in_basket">A la cistella</string>
+    <string name="cart_rates_from">Tipus del %1$s</string>
+    <string name="cart_share_option_image">Imatge</string>
+    <string name="cart_share_option_image_desc">Imatge de rebut per a xats i missatges.</string>
+    <string name="cart_totals_show_details">Mostra els detalls</string>
+    <string name="cart_totals_hide_details">Amaga els detalls</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d article</item>
+        <item quantity="many">%d d\'articles</item>
+        <item quantity="other">%d articles</item>
+    </plurals>
 </resources>

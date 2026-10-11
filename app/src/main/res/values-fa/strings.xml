@@ -183,4 +183,24 @@
     <string name="cart_budget_left_row">باقی‌مانده بودجه</string>
     <string name="cart_budget_used_a11y">‏%1$d%% از بودجه مصرف شده</string>
     <string name="cart_over_budget_row">بیش از بودجه</string>
+    <string name="cart_duplicate_item">تکثیر</string>
+    <string name="cart_move_to_top">انتقال به بالا</string>
+    <string name="cart_in_basket_item">در سبد</string>
+    <string name="cart_row_a11y_quantity">تعداد %1$d</string>
+    <string name="cart_row_a11y_converted">حدود %1$s</string>
+    <string name="cart_quantity_decrease">کاهش تعداد</string>
+    <string name="cart_quantity_increase">افزایش تعداد</string>
+    <string name="cart_keypad_next">بعدی</string>
+    <string name="cart_menu_shopping_list">فهرست خرید</string>
+    <string name="cart_menu_shopping_list_off">خروج از فهرست خرید</string>
+    <string name="cart_in_basket">در سبد</string>
+    <string name="cart_rates_from">نرخ‌های %1$s</string>
+    <string name="cart_share_option_image">تصویر</string>
+    <string name="cart_share_option_image_desc">تصویر رسید برای گفتگوها و پیام‌ها.</string>
+    <string name="cart_totals_show_details">نمایش جزئیات</string>
+    <string name="cart_totals_hide_details">پنهان کردن جزئیات</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d قلم</item>
+        <item quantity="other">%d قلم</item>
+    </plurals>
 </resources>

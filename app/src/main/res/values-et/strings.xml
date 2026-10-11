@@ -182,4 +182,24 @@
     <string name="cart_budget_left_row">Eelarvest alles</string>
     <string name="cart_budget_used_a11y">%1$d%% eelarvest kasutatud</string>
     <string name="cart_over_budget_row">Üle eelarve</string>
+    <string name="cart_duplicate_item">Dubleeri</string>
+    <string name="cart_move_to_top">Liiguta üles</string>
+    <string name="cart_in_basket_item">Korvis</string>
+    <string name="cart_row_a11y_quantity">kogus %1$d</string>
+    <string name="cart_row_a11y_converted">umbes %1$s</string>
+    <string name="cart_quantity_decrease">Vähenda kogust</string>
+    <string name="cart_quantity_increase">Suurenda kogust</string>
+    <string name="cart_keypad_next">Järgmine</string>
+    <string name="cart_menu_shopping_list">Ostunimekiri</string>
+    <string name="cart_menu_shopping_list_off">Lahku ostunimekirjast</string>
+    <string name="cart_in_basket">Korvis</string>
+    <string name="cart_rates_from">Kursid seisuga %1$s</string>
+    <string name="cart_share_option_image">Pilt</string>
+    <string name="cart_share_option_image_desc">Tšeki pilt vestlusteks ja sõnumiteks.</string>
+    <string name="cart_totals_show_details">Näita üksikasju</string>
+    <string name="cart_totals_hide_details">Peida üksikasjad</string>
+    <plurals name="cart_saved_items">
+        <item quantity="one">%d toode</item>
+        <item quantity="other">%d toodet</item>
+    </plurals>
 </resources>
