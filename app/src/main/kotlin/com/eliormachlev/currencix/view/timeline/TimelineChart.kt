@@ -25,6 +25,7 @@ import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
@@ -427,8 +428,8 @@ private const val Y_AXIS_TARGET_LABEL_COUNT = 6
 private const val MARKER_MIN_DECIMALS = 2
 private const val MARKER_MAX_DECIMALS = 4
 private const val MARKER_SEPARATOR = "  ·  "
-private val MARKER_PADDING_H = 8.dp
-private val MARKER_PADDING_V = 4.dp
+private val MARKER_PADDING_H = Spacing.Small
+private val MARKER_PADDING_V = Spacing.Tiny
 private val MARKER_CORNER = 8.dp
 private val MARKER_DOT = 10.dp
 private val MARKER_RING = 2.dp

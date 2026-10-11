@@ -3,7 +3,9 @@ package com.eliormachlev.currencix.view.compose.dialogs
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Brass
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlinx.coroutines.launch
 
 // Ledger sheet chrome. The M3 ModalBottomSheet gives us the drag handle and
@@ -36,10 +39,10 @@ import kotlinx.coroutines.launch
 private val SHEET_HORIZONTAL_PADDING = 0.dp
 
 /** Side padding for a sheet's title, and for body content that isn't edge-to-edge rows. */
-internal val SHEET_CONTENT_PADDING_H = 20.dp
-private val SHEET_TITLE_TOP_PADDING = 4.dp
-private val SHEET_TITLE_BOTTOM_PADDING = 12.dp
-private val SHEET_BOTTOM_PADDING = 8.dp
+internal val SHEET_CONTENT_PADDING_H = Spacing.XLarge
+private val SHEET_TITLE_TOP_PADDING = Spacing.Tiny
+private val SHEET_TITLE_BOTTOM_PADDING = Spacing.Medium
+private val SHEET_BOTTOM_PADDING = Spacing.Small
 private val SHEET_TITLE_LETTER_SPACING = 0.14.em
 
 // Where a sheet can rest: closed or full height, or also at half height.
@@ -155,4 +158,13 @@ private fun LedgerSheetTitle(title: String) {
                     bottom = SHEET_TITLE_BOTTOM_PADDING,
                 ).semantics { heading() },
     )
+}
+
+/**
+ * A breather after a sheet's last list row, so it doesn't butt against the
+ * sheet edge and the navigation bar.
+ */
+@Composable
+fun SheetListEnd() {
+    Spacer(Modifier.height(Spacing.Medium))
 }

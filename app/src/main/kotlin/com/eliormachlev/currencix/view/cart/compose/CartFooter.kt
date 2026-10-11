@@ -44,6 +44,7 @@ import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
@@ -51,14 +52,14 @@ import com.eliormachlev.currencix.viewmodel.cart.perPerson
 import java.math.BigDecimal
 import java.math.MathContext
 
-private val FOOTER_OUTER_MARGIN: Dp = 16.dp
-private val FOOTER_PADDING: Dp = 16.dp
+private val FOOTER_OUTER_MARGIN: Dp = Spacing.Large
+private val FOOTER_PADDING: Dp = Spacing.Large
 private val FOOTER_RADIUS: Dp = 16.dp
-private val ROW_TOP_GAP: Dp = 16.dp
-private val TOTAL_TOP_GAP: Dp = 8.dp
+private val ROW_TOP_GAP: Dp = Spacing.Large
+private val TOTAL_TOP_GAP: Dp = Spacing.Small
 private val SWAP_FAB_SIZE: Dp = 44.dp
 private val SWAP_ICON_SIZE: Dp = 22.dp
-private val EXTRA_ROW_GAP: Dp = 4.dp
+private val EXTRA_ROW_GAP: Dp = Spacing.Tiny
 
 /** The numbers the footer shows. */
 @Immutable

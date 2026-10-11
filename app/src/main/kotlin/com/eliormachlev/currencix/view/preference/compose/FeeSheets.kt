@@ -53,13 +53,14 @@ import com.eliormachlev.currencix.view.compose.NameInputTransformation
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.flagPainter
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
 import java.util.UUID
 
-private val FEE_EDITOR_SECTION_GAP: Dp = 16.dp
-private val FEE_EDITOR_LABEL_GAP: Dp = 4.dp
-private val FEE_EDITOR_INTERNAL_PADDING: Dp = 4.dp
+private val FEE_EDITOR_SECTION_GAP: Dp = Spacing.Large
+private val FEE_EDITOR_LABEL_GAP: Dp = Spacing.Tiny
+private val FEE_EDITOR_INTERNAL_PADDING: Dp = Spacing.Tiny
 private val ROW_TIGHT_VERTICAL: Dp = 4.dp
 
 // Fee picker dialog: rows are slightly denser than the standard choice row
@@ -70,8 +71,8 @@ private val PICKER_ROW_VERTICAL: Dp = 10.dp
 // With the radio's own touch-target inset, lines the rows up with the
 // sheet's title.
 private val PICKER_ROW_HORIZONTAL: Dp = 8.dp
-private val PICKER_RADIO_GAP: Dp = 12.dp
-private val ADD_ICON_HORIZONTAL_PAD: Dp = 12.dp
+private val PICKER_RADIO_GAP: Dp = Spacing.Medium
+private val ADD_ICON_HORIZONTAL_PAD: Dp = Spacing.Medium
 
 // Currency-picker button (from / to) chrome — matches the outlined MaterialButton
 // look of the XML version so pairs of specific-pair rows read the same.
@@ -83,7 +84,7 @@ private val CURRENCY_BUTTON_HORIZONTAL: Dp = 16.dp
 // visuals — small enough to sit inline with body-medium text without
 // throwing off the line box.
 internal val INLINE_FLAG_HEIGHT: Dp = 18.dp
-internal val FLAG_TEXT_GAP: Dp = 6.dp
+internal val FLAG_TEXT_GAP: Dp = Spacing.XSmall
 private val FLAG_CORNER_RADIUS: Dp = 2.dp
 
 // Arrow / separator glyphs — reused by the pair summary so on-screen and

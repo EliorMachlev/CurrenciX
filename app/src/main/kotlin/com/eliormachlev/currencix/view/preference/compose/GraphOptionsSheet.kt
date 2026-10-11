@@ -1,8 +1,6 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -15,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.ChartSettings
 import com.eliormachlev.currencix.repository.Database
@@ -23,8 +20,7 @@ import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
-
-private val SHEET_BOTTOM_SPACE = 12.dp
+import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
 
 /**
  * Ledger-styled graph options sheet — replaces the old
@@ -49,7 +45,7 @@ fun GraphOptionsSheet(
         options.forEachIndexed { index, (labelRes, pref) ->
             GraphOptionRow(labelRes = labelRes, initial = pref.get(), onChange = pref::set, isLast = index == options.lastIndex)
         }
-        Spacer(Modifier.height(SHEET_BOTTOM_SPACE))
+        SheetListEnd()
     }
 }
 

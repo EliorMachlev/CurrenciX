@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
@@ -23,6 +22,7 @@ import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import kotlinx.collections.immutable.persistentListOf
 
@@ -89,13 +89,13 @@ private fun AddItemButton(onAddItem: () -> Unit) {
             Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = dimensionResource(id = R.dimen.margin2x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
+                    horizontal = Spacing.Large,
+                    vertical = Spacing.Small,
                 ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.margin1x)),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.Small),
         ) {
             Icon(painter = painterResource(R.drawable.ic_add), contentDescription = null)
             Text(text = stringResource(id = R.string.cart_add_item))

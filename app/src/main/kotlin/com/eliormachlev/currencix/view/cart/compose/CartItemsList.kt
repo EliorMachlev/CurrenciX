@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.R
@@ -24,6 +23,7 @@ import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LedgerSectionHeader
 import com.eliormachlev.currencix.view.compose.onBackgroundTap
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import sh.calvin.reorderable.ReorderableItem
@@ -120,8 +120,8 @@ fun CartItemsList(
                     .onBackgroundTap(onBackgroundTap),
             contentPadding =
                 PaddingValues(
-                    horizontal = dimensionResource(id = R.dimen.margin1x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
+                    horizontal = Spacing.Small,
+                    vertical = Spacing.Small,
                 ),
         ) {
             cartSections(

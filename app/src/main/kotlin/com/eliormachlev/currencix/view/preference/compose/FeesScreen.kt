@@ -2,10 +2,8 @@ package com.eliormachlev.currencix.view.preference.compose
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -20,15 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -224,14 +221,7 @@ private fun FeesSectionsList(
     onOpenPicker: (GlobalFeeKind) -> Unit,
     onOpenEditor: (EditorTarget) -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding =
-            PaddingValues(
-                horizontal = dimensionResource(id = R.dimen.margin2x),
-                vertical = dimensionResource(id = R.dimen.margin1x),
-            ),
-    ) {
+    SettingsList {
         item(key = FeeSection.GLOBAL_EXCHANGE) {
             SectionEnter(index = FeeSection.GLOBAL_EXCHANGE.ordinal) {
                 GlobalFeeSection(
@@ -436,9 +426,9 @@ private fun PairSummaryTrailing(fee: Fee.SpecificPair) {
         ) {
             if (fromCurrency != null) InlineFlag(currency = fromCurrency)
             Text(text = fee.from, style = MaterialTheme.typography.labelLarge)
-            Spacer(Modifier.width(2.dp))
+            Spacer(Modifier.width(Spacing.Hairline))
             Text(text = arrow, style = MaterialTheme.typography.labelLarge)
-            Spacer(Modifier.width(2.dp))
+            Spacer(Modifier.width(Spacing.Hairline))
             if (toCurrency != null) InlineFlag(currency = toCurrency)
             Text(text = fee.to, style = MaterialTheme.typography.labelLarge)
         }

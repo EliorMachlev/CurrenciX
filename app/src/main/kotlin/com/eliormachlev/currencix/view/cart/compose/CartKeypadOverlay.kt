@@ -37,12 +37,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.theme.Motion
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
 
 @Composable
 private fun GripStrip(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.height(GRIP_STRIP_HEIGHT).padding(vertical = 8.dp),
+        modifier = modifier.height(GRIP_STRIP_HEIGHT).padding(vertical = Spacing.Small),
         contentAlignment = Alignment.Center,
     ) {
         Box(

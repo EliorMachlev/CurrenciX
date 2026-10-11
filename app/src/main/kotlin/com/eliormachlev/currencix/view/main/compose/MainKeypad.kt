@@ -36,6 +36,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.UiTestTags
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.main.Operator
 
 // Rows are [KEY_ROW_HEIGHT] tall when there's room and squeeze down to
@@ -48,8 +49,8 @@ private val KEY_ROW_MIN_HEIGHT: Dp = 48.dp
 private const val BASIC_ROWS = 4
 private const val EXPANDED_ROWS = 5
 private val KEY_TEXT_SIZE = 26.sp
-private val KEYPAD_VERTICAL_PADDING: Dp = 4.dp
-private val KEYPAD_HORIZONTAL_PADDING: Dp = 4.dp
+private val KEYPAD_VERTICAL_PADDING: Dp = Spacing.Tiny
+private val KEYPAD_HORIZONTAL_PADDING: Dp = Spacing.Tiny
 private val DELETE_ICON_SIZE: Dp = 24.dp
 
 /** How tall the keypad is: [full] when there's room, down to [compact] when the display needs it. */

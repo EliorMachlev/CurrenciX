@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.compose
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -27,13 +26,11 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private val CHIP_HEIGHT: Dp = 36.dp
-private val CHIP_PADDING_H: Dp = 12.dp
-private val CHIP_INNER_GAP: Dp = 6.dp
-private val FLAG_WIDTH: Dp = 20.dp
-private val FLAG_HEIGHT: Dp = 14.dp
-private val FLAG_CORNER: Dp = 2.dp
+private val CHIP_PADDING_H: Dp = Spacing.Medium
+private val CHIP_INNER_GAP: Dp = Spacing.XSmall
 private val PAIR_ARROW_SIZE: Dp = 14.dp
 
 /** Space between neighbouring [CurrencyChip]s in a row. */
@@ -130,14 +127,7 @@ fun RemoveFromHistorySheet(
 /** A small flag and the ISO code — one side of a [CurrencyChip]. */
 @Composable
 fun FlagCode(currency: Currency) {
-    Image(
-        painter = currency.flagPainter(),
-        contentDescription = null,
-        modifier =
-            Modifier
-                .size(width = FLAG_WIDTH, height = FLAG_HEIGHT)
-                .clip(RoundedCornerShape(FLAG_CORNER)),
-    )
+    CurrencyFlag(currency, FlagSize.Small)
     Text(
         text = currency.iso4217Alpha(),
         style = MaterialTheme.typography.labelLarge,

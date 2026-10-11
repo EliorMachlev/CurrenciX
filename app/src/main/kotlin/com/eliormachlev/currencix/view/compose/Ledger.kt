@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.view.compose.theme.Brass
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 // Ledger vocabulary — the shared row/section primitives every list surface
 // (Preferences, Fees, Backup, drawer, picker) leans on so the "paper + brass"
@@ -54,8 +55,8 @@ import com.eliormachlev.currencix.view.compose.theme.Brass
 private val LEDGER_ROW_HORIZONTAL: Dp = 20.dp
 private val LEDGER_ROW_VERTICAL: Dp = 14.dp
 private val LEDGER_ROW_ICON_SIZE: Dp = 24.dp
-private val LEDGER_ROW_ICON_GAP: Dp = 20.dp
-private val LEDGER_TRAILING_GAP: Dp = 12.dp
+private val LEDGER_ROW_ICON_GAP: Dp = Spacing.XLarge
+private val LEDGER_TRAILING_GAP: Dp = Spacing.Medium
 private val LEDGER_SECTION_HEADER_HORIZONTAL: Dp = 20.dp
 private val LEDGER_SECTION_HEADER_TOP: Dp = 20.dp
 private val LEDGER_SECTION_HEADER_BOTTOM: Dp = 6.dp
@@ -68,7 +69,7 @@ private const val LEDGER_DISABLED_ALPHA = 0.38f
 // carries the "engraved on paper" cue instead.
 private val LEDGER_SECTION_HEADER_LETTER_SPACING = 0.14.em
 
-private val LEDGER_CHIP_HORIZONTAL_PADDING: Dp = 10.dp
+private val LEDGER_CHIP_HORIZONTAL_PADDING: Dp = Spacing.SmallPlus
 private val LEDGER_CHIP_VERTICAL_PADDING: Dp = 3.dp
 private val LEDGER_CHIP_CORNER_RADIUS: Dp = 4.dp
 private val LEDGER_CHIP_BORDER_WIDTH: Dp = 1.dp

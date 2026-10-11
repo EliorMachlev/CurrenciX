@@ -32,13 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
-private val MESSAGE_TO_CONTENT_GAP = 12.dp
-private val CONTENT_TO_ACTIONS_GAP = 20.dp
-private val PASSWORD_FIELD_TO_TOGGLE_GAP = 8.dp
+private val MESSAGE_TO_CONTENT_GAP = Spacing.Medium
+private val CONTENT_TO_ACTIONS_GAP = Spacing.XLarge
+private val PASSWORD_FIELD_TO_TOGGLE_GAP = Spacing.Small
 
 /**
  * Every prompt in the app: a [LedgerBottomSheet] with the prompt's

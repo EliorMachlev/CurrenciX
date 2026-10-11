@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -40,14 +39,15 @@ import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.CurrencyPill
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.view.preference.compose.SwitchRow
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-private val CONTENT_PADDING = 16.dp
-private val GAP = 12.dp
+private val CONTENT_PADDING = Spacing.Large
+private val GAP = Spacing.Medium
 
 /**
  * Picks a widget's pair: follow the converter's (the default), or a pair of

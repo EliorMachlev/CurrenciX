@@ -14,19 +14,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 @Composable
 fun CreditsList(sections: List<CreditsSection>) {
-    val horizontal = dimensionResource(id = R.dimen.margin3x)
-    val vertical = dimensionResource(id = R.dimen.margin2x)
+    val horizontal = Spacing.XXLarge
+    val vertical = Spacing.Large
     val context = LocalContext.current
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -58,7 +57,7 @@ private fun SectionHeader(text: String) {
         // TalkBack exposes headings so users can jump between sections; without
         // this the "Project / Legal / Source / Libraries" separators are read
         // as ordinary body text and become invisible for section navigation.
-        modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
+        modifier = Modifier.padding(bottom = Spacing.Tiny).semantics { heading() },
     )
 }
 
@@ -74,7 +73,7 @@ private fun CreditRow(
                 .hapticClickable(
                     onClickLabel = stringResource(id = R.string.a11y_action_open),
                     onClick = onClick,
-                ).padding(vertical = 8.dp)
+                ).padding(vertical = Spacing.Small)
                 // Title + subtitle + optional SPDX + URL should read as one
                 // focus stop; without this TalkBack lands on each Text
                 // separately and forces four swipes per credit.

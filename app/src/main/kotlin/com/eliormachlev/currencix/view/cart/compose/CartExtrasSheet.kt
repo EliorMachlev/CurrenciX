@@ -36,11 +36,12 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
-private val CONTENT_PADDING = 16.dp
-private val GAP = 16.dp
-private val TIP_FIELD_GAP = 8.dp
+private val CONTENT_PADDING = Spacing.Large
+private val GAP = Spacing.Large
+private val TIP_FIELD_GAP = Spacing.Small
 private val SPLIT_COUNT_WIDTH = 40.dp
 
 // One-tap tip / tax rates; any other goes in the field.

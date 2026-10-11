@@ -104,6 +104,7 @@ import com.eliormachlev.currencix.view.compose.shimmer
 import com.eliormachlev.currencix.view.compose.theme.AmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -121,18 +122,25 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 // Hero-card visual metrics — mirror the v1 Fluid Converter mockup.
-private val MATH_LINE_BOTTOM_GAP: Dp = 2.dp
-private val CARD_OUTER_MARGIN: Dp = 16.dp
+private val MATH_LINE_BOTTOM_GAP: Dp = Spacing.Hairline
+private val CARD_OUTER_MARGIN: Dp = Spacing.Large
+
+// The swap button's arrows, inside its 44 dp circle.
+private val SWAP_GLYPH_SIZE: Dp = 22.dp
+
+// The hairline above the rate footer.
+private val RATE_FOOTER_RULE_HEIGHT: Dp = 1.dp
+
 private val CARD_RADIUS: Dp = 28.dp
-private val CARD_PADDING: Dp = 16.dp
+private val CARD_PADDING: Dp = Spacing.Large
 
 private val SWAP_FAB_SIZE: Dp = 44.dp
-private val PILLS_ROW_BOTTOM_GAP: Dp = 12.dp
+private val PILLS_ROW_BOTTOM_GAP: Dp = Spacing.Medium
 
 // Vertical gap between the two stacked receipt panels ("You pay" over
 // "You get"). Matches the mock's 18px so the labels breathe without
 // separating the panels into disconnected cards.
-private val PANEL_STACK_GAP: Dp = 14.dp
+private val PANEL_STACK_GAP: Dp = Spacing.MediumPlus
 
 // Ambient shadow under the hero card so it lifts off the background. Kept
 // modest — Material3 elevated cards usually sit at 1–3dp for the "resting"
@@ -145,13 +153,13 @@ private val CARD_ELEVATION: Dp = 3.dp
 // current spin forward instead of restarting it.
 private const val SWAP_FAB_ROTATION_STEP = 180f
 
-private val RATE_FOOTER_TOP_MARGIN: Dp = 8.dp
-private val RATE_FOOTER_PADDING_TOP: Dp = 8.dp
-private val STATUS_PILL_GAP: Dp = 8.dp
+private val RATE_FOOTER_TOP_MARGIN: Dp = Spacing.Small
+private val RATE_FOOTER_PADDING_TOP: Dp = Spacing.Small
+private val STATUS_PILL_GAP: Dp = Spacing.Small
 private val STATUS_PILL_RADIUS: Dp = 999.dp
-private val STATUS_PILL_PADDING_H: Dp = 10.dp
-private val STATUS_PILL_PADDING_V: Dp = 4.dp
-private val STATUS_PILL_ICON_GAP: Dp = 6.dp
+private val STATUS_PILL_PADDING_H: Dp = Spacing.SmallPlus
+private val STATUS_PILL_PADDING_V: Dp = Spacing.Tiny
+private val STATUS_PILL_ICON_GAP: Dp = Spacing.XSmall
 private val STATUS_PILL_ICON_SIZE: Dp = 14.dp
 private val CURSOR_WIDTH: Dp = 2.dp
 private val CURSOR_HEIGHT: Dp = 44.dp
@@ -189,12 +197,12 @@ private val FINAL_STYLE = AmountStyle(AMOUNT_HERO_SIZE, FontWeight.SemiBold, Fon
 
 // Pinned-symbol dim so the number is the primary read.
 private const val SYMBOL_ALPHA = 0.65f
-private val SYMBOL_GAP: Dp = 6.dp
+private val SYMBOL_GAP: Dp = Spacing.XSmall
 
 // Gap between the medium subtotal row and the fee chip that follows it.
 // Tuned so the two read as one vertical equation without doubling the
 // card height.
-private val SUBTOTAL_TO_CHIP_GAP: Dp = 4.dp
+private val SUBTOTAL_TO_CHIP_GAP: Dp = Spacing.Tiny
 
 // The two hero panels share a fieldset-legend frame — "YOU PAY" and
 // "YOU GET" labels sit ON the top border. The label paints a strip of
@@ -204,15 +212,15 @@ private val SUBTOTAL_TO_CHIP_GAP: Dp = 4.dp
 // actual rendered height, so there's no static half-height constant here.
 private val PANEL_BORDER_WIDTH: Dp = 1.dp
 private val PANEL_CORNER_RADIUS: Dp = 16.dp
-private val PANEL_HORIZONTAL_PADDING: Dp = 14.dp
-private val PANEL_VERTICAL_PADDING: Dp = 12.dp
+private val PANEL_HORIZONTAL_PADDING: Dp = Spacing.MediumPlus
+private val PANEL_VERTICAL_PADDING: Dp = Spacing.Medium
 
 // How far the legend sits from the panel's leading corner along the top
 // border, and the horizontal padding around the label's surface-colored
 // mask so it's a bit wider than the text on each side — that padding is
 // what makes the border look like it "breaks" for the legend.
-private val PANEL_LABEL_START_INSET: Dp = 14.dp
-private val PANEL_LABEL_MASK_PADDING: Dp = 6.dp
+private val PANEL_LABEL_START_INSET: Dp = Spacing.MediumPlus
+private val PANEL_LABEL_MASK_PADDING: Dp = Spacing.XSmall
 private val PANEL_LABEL_LETTER_SPACING = 0.14.em
 
 // Thin receipt-rule between the fee stamp and the engraved final source,
@@ -220,8 +228,8 @@ private val PANEL_LABEL_LETTER_SPACING = 0.14.em
 // so it reads as a subtotal line on the receipt.
 private val PAY_RULE_HEIGHT: Dp = 1.dp
 private const val PAY_RULE_WIDTH_FRACTION = 0.6f
-private val PAY_RULE_TOP_GAP: Dp = 6.dp
-private val PAY_RULE_BOTTOM_GAP: Dp = 4.dp
+private val PAY_RULE_TOP_GAP: Dp = Spacing.XSmall
+private val PAY_RULE_BOTTOM_GAP: Dp = Spacing.Tiny
 
 // Applied to the big-value texts so Android's default font padding
 // (~4-6 dp above/below the glyph on top of lineHeight) doesn't inflate
@@ -290,11 +298,11 @@ private const val FEE_CHIP_MAX_WIDTH_FRACTION = 0.5f
 // name inside.
 private val FEE_STAMP_CORNER_RADIUS: Dp = 4.dp
 private val FEE_STAMP_BORDER_WIDTH: Dp = 1.dp
-private val FEE_STAMP_HORIZONTAL_PADDING: Dp = 8.dp
+private val FEE_STAMP_HORIZONTAL_PADDING: Dp = Spacing.Small
 private val FEE_STAMP_VERTICAL_PADDING: Dp = 3.dp
-private val FEE_STAMP_INNER_GAP: Dp = 8.dp
+private val FEE_STAMP_INNER_GAP: Dp = Spacing.Small
 private val FEE_STAMP_LETTER_SPACING = 0.06.em
-private val FEE_STAMP_OP_GAP: Dp = 6.dp
+private val FEE_STAMP_OP_GAP: Dp = Spacing.XSmall
 private const val FEE_STAMP_OP_PREFIX = "+"
 
 // Pill auto-scroll: after this long without a user drag on a scrollable pill,
@@ -570,7 +578,7 @@ private fun SwapFab(
             tint = MaterialTheme.colorScheme.onPrimary,
             modifier =
                 Modifier
-                    .size(22.dp)
+                    .size(SWAP_GLYPH_SIZE)
                     .graphicsLayer { rotationZ = rotation },
         )
     }
@@ -871,7 +879,7 @@ private fun BlinkingCursor(
     val primary = MaterialTheme.colorScheme.primary
     Spacer(
         Modifier
-            .padding(start = 6.dp)
+            .padding(start = Spacing.XSmall)
             .width(CURSOR_WIDTH)
             .height(height)
             // Read in the draw layer: a toggle redraws, never recomposes.
@@ -1232,7 +1240,7 @@ private fun RateFooter(
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(1.dp)
+                .height(RATE_FOOTER_RULE_HEIGHT)
                 .background(MaterialTheme.colorScheme.outlineVariant),
         )
         Spacer(Modifier.height(RATE_FOOTER_PADDING_TOP))

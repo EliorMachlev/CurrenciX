@@ -48,6 +48,7 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.roundForDisplay
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.ConverterLaunch
 import com.eliormachlev.currencix.view.main.formatRatesTimestamp
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +60,7 @@ import java.time.LocalDate
 
 private const val WIDGET_DISPLAY_SCALE = 4
 
-private val WIDGET_PADDING = 12.dp
+private val WIDGET_PADDING = Spacing.Medium
 private val RATE_FONT_SIZE = 18.sp
 private val FOOTER_FONT_SIZE = 11.sp
 
@@ -130,7 +131,7 @@ private val WIDE_SIZE = DpSize(260.dp, 60.dp)
 private val SPARKLINE_WIDTH = 88.dp
 private val SPARKLINE_HEIGHT = 32.dp
 private val SPARKLINE_STROKE = 2.dp
-private val SPARKLINE_GAP = 12.dp
+private val SPARKLINE_GAP = Spacing.Medium
 
 /**
  * One widget's pair, in its own Glance state: by default it follows the

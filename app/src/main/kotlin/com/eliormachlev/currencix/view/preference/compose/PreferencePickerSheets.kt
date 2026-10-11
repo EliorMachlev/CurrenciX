@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
@@ -20,17 +19,8 @@ import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
-
-// Small breather between the last picker row and the sheet edge so the final
-// LedgerRow (which has no divider) doesn't butt against the system nav.
-private val SHEET_BOTTOM_SPACE = 12.dp
-
-/** What a single-choice picker offers: the [options], the one [selected] now, and how each reads. */
-class Choices<T>(
-    val options: List<T>,
-    val selected: T?,
-    val label: (T) -> String,
-)
+import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 /**
  * Compose single-choice picker — one [LedgerRow] per option under a
@@ -95,7 +85,7 @@ fun TextEntrySheet(
     }
 }
 
-private val TEXT_ENTRY_MESSAGE_GAP = 12.dp
+private val TEXT_ENTRY_MESSAGE_GAP = Spacing.Medium
 
 // Shared shell + row shape used by both picker variants (simple / explainer)
 // and by the language picker. Callers just describe rows; the sheet chrome,
@@ -110,7 +100,7 @@ internal fun PickerSheet(
 ) {
     LedgerBottomSheet(title = title, onDismiss = onDismiss) {
         content()
-        Spacer(Modifier.height(SHEET_BOTTOM_SPACE))
+        SheetListEnd()
     }
 }
 

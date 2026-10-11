@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -25,13 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.repository.Database
@@ -40,9 +36,11 @@ import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.util.withCurrencySymbol
 import com.eliormachlev.currencix.view.compose.AppTheme
-import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
+import com.eliormachlev.currencix.view.compose.CurrencyFlag
+import com.eliormachlev.currencix.view.compose.FlagSize
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.ConverterLaunch
 import java.math.BigDecimal
 
@@ -52,11 +50,8 @@ private const val MAX_SELECTION_LENGTH = 200
 // The rate line ("1 EUR ≈ 3.6851 ILS") is shown finer than amounts.
 private const val RATE_DECIMALS = 4
 
-private val FLAG_WIDTH = 28.dp
-private val FLAG_HEIGHT = 20.dp
-private val FLAG_CORNER = 3.dp
-private val CONTENT_PADDING = 24.dp
-private val GAP = 12.dp
+private val CONTENT_PADDING = Spacing.XXLarge
+private val GAP = Spacing.Medium
 
 /**
  * "Convert currency" in the text-selection menu of any app: converts the
@@ -183,10 +178,7 @@ private fun AmountLine(
     // An amount reads left to right, flag first, as on the converter.
     Ltr {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(GAP)) {
-            CurrencyFlagImage(
-                currency = currency,
-                modifier = Modifier.size(width = FLAG_WIDTH, height = FLAG_HEIGHT).clip(RoundedCornerShape(FLAG_CORNER)),
-            )
+            CurrencyFlag(currency, FlagSize.Large)
             Text(amount, style = style, color = color, fontWeight = FontWeight.SemiBold)
         }
     }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
@@ -42,12 +41,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -70,13 +67,15 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.util.withCurrencySymbol
 import com.eliormachlev.currencix.view.compose.CurrencyChip
 import com.eliormachlev.currencix.view.compose.CurrencyChipGap
-import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
+import com.eliormachlev.currencix.view.compose.CurrencyFlag
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.FlagCode
+import com.eliormachlev.currencix.view.compose.FlagSize
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.ledgerHairline
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -87,9 +86,6 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.util.Locale
 
-private const val FLAG_WIDTH_DP = 24
-private const val FLAG_HEIGHT_DP = 17
-private const val FLAG_CORNER_RADIUS_DP = 2
 private const val ROW_MIN_HEIGHT_DP = 56
 private const val API_HINT_ALPHA = 0.7f
 private const val DRAG_ACTIVE_ALPHA = 0.85f
@@ -139,7 +135,7 @@ internal fun SearchableCurrencyPicker(
 ) {
     val queryState = rememberTextFieldState()
     val query = queryState.text.toString()
-    val padH = dimensionResource(id = R.dimen.margin2x)
+    val padH = Spacing.Large
     val ctx = LocalContext.current
     val rates = content.rates
     val stars = content.stars
@@ -157,7 +153,7 @@ internal fun SearchableCurrencyPicker(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = padH, vertical = dimensionResource(id = R.dimen.margin1x)),
+                    .padding(horizontal = padH, vertical = Spacing.Small),
         )
         val allowReorder = query.isEmpty() && !filterStarred
         if (allowReorder) {
@@ -166,7 +162,7 @@ internal fun SearchableCurrencyPicker(
                 onRateClicked = actions.onRateClicked,
                 onRemove = actions.onRemoveRecent,
                 contentPadding = PaddingValues(horizontal = padH),
-                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin1x)),
+                modifier = Modifier.padding(bottom = Spacing.Small),
             )
         }
         // Starred rates in the user-defined order, filtered by query. Held in
@@ -298,7 +294,7 @@ private fun SearchBar(
         )
         IconButton(
             onClick = rememberHapticOnClick(onToggleStarredFilter),
-            modifier = Modifier.padding(start = dimensionResource(id = R.dimen.margin1x)),
+            modifier = Modifier.padding(start = Spacing.Small),
         ) {
             Icon(
                 painter = painterResource(if (filterStarred) R.drawable.ic_favorite_filled else R.drawable.ic_favorite),
@@ -481,8 +477,8 @@ private fun CurrencyRow(
                         onClick = { actions.onRateClicked(rate) },
                     ).alpha(if (isDisabled) DISABLED_ROW_ALPHA else 1f)
                     .padding(
-                        horizontal = dimensionResource(id = R.dimen.margin2x),
-                        vertical = dimensionResource(id = R.dimen.margin1x),
+                        horizontal = Spacing.Large,
+                        vertical = Spacing.Small,
                     )
                     // TalkBack would otherwise announce ISO code, full name, and
                     // preview conversion as three separate focus stops, forcing
@@ -491,8 +487,8 @@ private fun CurrencyRow(
                     .semantics(mergeDescendants = true) {},
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CurrencyFlag(rate.currency)
-            Spacer(Modifier.size(dimensionResource(id = R.dimen.margin2x)))
+            CurrencyFlag(rate.currency, FlagSize.Medium)
+            Spacer(Modifier.size(Spacing.Large))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = rate.currency.iso4217Alpha(),
@@ -527,17 +523,6 @@ private fun CurrencyRow(
 }
 
 @Composable
-private fun CurrencyFlag(currency: Currency) {
-    CurrencyFlagImage(
-        currency = currency,
-        modifier =
-            Modifier
-                .size(width = FLAG_WIDTH_DP.dp, height = FLAG_HEIGHT_DP.dp)
-                .clip(RoundedCornerShape(FLAG_CORNER_RADIUS_DP.dp)),
-    )
-}
-
-@Composable
 private fun ApiHintRow() {
     Text(
         text = stringResource(id = R.string.currency_dropdown_api_hint),
@@ -549,8 +534,8 @@ private fun ApiHintRow() {
                 // paints a hairline via [ledgerHairline]; adding another divider
                 // here would draw a double-line at the hint's leading edge.
                 .padding(
-                    horizontal = dimensionResource(id = R.dimen.margin2x),
-                    vertical = dimensionResource(id = R.dimen.margin1x),
+                    horizontal = Spacing.Large,
+                    vertical = Spacing.Small,
                 ).alpha(API_HINT_ALPHA),
     )
 }

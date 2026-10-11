@@ -26,6 +26,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
 import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Period
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Span
 import java.time.Instant
@@ -33,7 +34,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-private val CONTROLS_GAP = 8.dp
+private val CONTROLS_GAP = Spacing.Small
 private val CHIP_ICON_SIZE = 18.dp
 
 // The presets in the segmented row; CUSTOM is the chip under it.

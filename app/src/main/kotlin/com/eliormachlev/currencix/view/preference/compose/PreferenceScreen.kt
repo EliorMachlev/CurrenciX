@@ -2,9 +2,7 @@ package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +38,7 @@ import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import java.util.Calendar
 
@@ -191,14 +189,7 @@ private fun PreferenceSectionsList(
     values: PreferenceValues,
     onOpenDialog: (OpenDialog) -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding =
-            PaddingValues(
-                horizontal = dimensionResource(id = R.dimen.margin2x),
-                vertical = dimensionResource(id = R.dimen.margin1x),
-            ),
-    ) {
+    SettingsList {
         item(key = SettingsSection.GENERAL) {
             SectionEnter(index = SettingsSection.GENERAL.ordinal) {
                 GeneralSection(
@@ -481,8 +472,8 @@ private fun CadenceLine(text: String) {
     }
 }
 
-private val CADENCE_TOP_GAP = 6.dp
-private val CADENCE_ICON_GAP = 6.dp
+private val CADENCE_TOP_GAP = Spacing.XSmall
+private val CADENCE_ICON_GAP = Spacing.XSmall
 private val CADENCE_ICON_SIZE = 16.dp
 private val CADENCE_ICON_NUDGE = 2.dp
 
@@ -647,7 +638,7 @@ private fun VersionSection() {
     Text(
         text = "",
         style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin2x)),
+        modifier = Modifier.padding(bottom = Spacing.Large),
     )
 }
 

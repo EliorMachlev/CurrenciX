@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
@@ -34,6 +33,7 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.compose.ConverterBody
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
@@ -64,8 +64,8 @@ import kotlinx.coroutines.launch
 private enum class ConverterOverlay { ProviderPicker, QuickConversions, HistoricalDatePicker, StatusExplanation }
 
 private const val RECENT_PAIR_SETTLE_MILLIS = 2_000L
-private val RECENT_PAIRS_MARGIN = 16.dp
-private val RECENT_PAIRS_BOTTOM_GAP = 8.dp
+private val RECENT_PAIRS_MARGIN = Spacing.Large
+private val RECENT_PAIRS_BOTTOM_GAP = Spacing.Small
 
 /** The converter screen: top bar, drawer, hero card, keypad and their sheets. */
 @Composable

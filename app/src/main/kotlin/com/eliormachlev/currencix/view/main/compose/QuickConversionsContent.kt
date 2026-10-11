@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -32,6 +31,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private const val FLAG_SIZE_DP = 28
 private const val EQ_ALPHA = 0.5f
@@ -63,8 +63,8 @@ fun QuickConversionsContent(
     onSwap: () -> Unit,
     onSwapLongPress: () -> Unit,
 ) {
-    val padH = dimensionResource(id = R.dimen.margin2x)
-    val padT = dimensionResource(id = R.dimen.margin2x)
+    val padH = Spacing.Large
+    val padT = Spacing.Large
     // Math reads left-to-right in every locale. Force LTR for the whole
     // dialog so "from | swap | to" and "amount = amount" rows don't mirror
     // under RTL layout.
@@ -82,7 +82,7 @@ fun QuickConversionsContent(
                 onSwapLongPress = onSwapLongPress,
             )
             table.feeInfoText?.let { feeInfoText ->
-                Spacer(Modifier.height(dimensionResource(id = R.dimen.margin1x)))
+                Spacer(Modifier.height(Spacing.Small))
                 Text(
                     text = feeInfoText,
                     style = MaterialTheme.typography.labelMedium,
@@ -91,14 +91,14 @@ fun QuickConversionsContent(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            Spacer(Modifier.height(dimensionResource(id = R.dimen.margin2x)))
+            Spacer(Modifier.height(Spacing.Large))
             HorizontalDivider()
             Column(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
-                        .padding(vertical = dimensionResource(id = R.dimen.margin1x)),
+                        .padding(vertical = Spacing.Small),
             ) {
                 if (table.rows.isEmpty()) {
                     Text(
@@ -107,7 +107,7 @@ fun QuickConversionsContent(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .padding(top = dimensionResource(id = R.dimen.margin2x)),
+                                .padding(top = Spacing.Large),
                     )
                 } else {
                     table.rows.forEach { row ->
@@ -193,7 +193,7 @@ private fun CurrencyBadge(currency: Currency?) {
             currency = currency,
             modifier = Modifier.size(FLAG_SIZE_DP.dp),
         )
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.margin1x)))
+        Spacer(Modifier.size(Spacing.Small))
         Text(
             text = currency.iso4217Alpha(),
             style = MaterialTheme.typography.titleMedium,
@@ -207,7 +207,7 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = dimensionResource(id = R.dimen.margin1x))
+                .padding(vertical = Spacing.Small)
                 // Merge so TalkBack reads "$FROM equals $TO" as one item rather
                 // than swiping through several separate text nodes per row.
                 .semantics(mergeDescendants = true) {},
@@ -235,7 +235,7 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
             color = Color.Unspecified,
             modifier =
                 Modifier
-                    .padding(horizontal = dimensionResource(id = R.dimen.margin2x))
+                    .padding(horizontal = Spacing.Large)
                     .alpha(EQ_ALPHA),
         )
         Column(

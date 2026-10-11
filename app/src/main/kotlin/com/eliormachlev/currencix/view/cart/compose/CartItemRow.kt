@@ -39,7 +39,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -47,6 +46,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hintText
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
@@ -57,9 +57,15 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.NameInputTransformation
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+
+// The row being edited is outlined thicker, in the accent color.
+private val BORDER_WIDTH: Dp = 1.dp
+private val ACTIVE_BORDER_WIDTH: Dp = 2.dp
+private val ROW_ELEVATION: Dp = 2.dp
 
 private const val NAME_EDIT_DEBOUNCE_MS = 300L
 private const val ROW_PREVIEW_SCALE = 2
@@ -69,7 +75,7 @@ private val FIELD_MIN_HEIGHT = 48.dp
 // slides. Matches Material's SwipeToDismiss sample so the icon reads as
 // "emerging" from the row rather than pinned to the screen edge — applied
 // to whichever side the user is dragging from.
-private val SWIPE_ICON_EDGE_PADDING = 24.dp
+private val SWIPE_ICON_EDGE_PADDING = Spacing.XXLarge
 
 /** What one cart row shows. */
 @Immutable
@@ -156,7 +162,7 @@ private fun SwipeDeleteBackground(state: SwipeToDismissBoxState) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(dimensionResource(id = R.dimen.margin1x))
+                .padding(Spacing.Small)
                 // Same corners as the card sliding off it.
                 .clip(CardDefaults.outlinedShape)
                 .background(if (active) MaterialTheme.colorScheme.error else Color.Transparent),
@@ -199,15 +205,15 @@ fun CartItemRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.margin1x)),
+                .padding(Spacing.Small),
         border = rowBorder(state.isActive),
-        elevation = CardDefaults.outlinedCardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation1x)),
+        elevation = CardDefaults.outlinedCardElevation(defaultElevation = ROW_ELEVATION),
     ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(dimensionResource(id = R.dimen.margin1x)),
+                    .padding(Spacing.Small),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             DragHandle(modifier = dragHandleModifier)
@@ -244,16 +250,16 @@ private fun DragHandle(modifier: Modifier = Modifier) {
         painter = painterResource(R.drawable.ic_drag_handle),
         contentDescription = stringResource(id = R.string.cart_reorder_item),
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier.padding(end = dimensionResource(id = R.dimen.margin1x)),
+        modifier = modifier.padding(end = Spacing.Small),
     )
 }
 
 @Composable
 private fun rowBorder(isActive: Boolean): BorderStroke =
     if (isActive) {
-        BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        BorderStroke(ACTIVE_BORDER_WIDTH, MaterialTheme.colorScheme.primary)
     } else {
-        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        BorderStroke(BORDER_WIDTH, MaterialTheme.colorScheme.outlineVariant)
     }
 
 @Composable
@@ -373,7 +379,7 @@ private fun ValuePreview(
             text = stringResource(id = R.string.cart_row_value_format, formatted, currency),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.margin1x)),
+            modifier = Modifier.padding(top = Spacing.Small),
         )
     }
 }

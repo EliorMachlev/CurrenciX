@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.util.normalizeForSearch
@@ -25,10 +24,11 @@ import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
-private val SEARCH_FIELD_HORIZONTAL_PADDING = 20.dp
-private val SEARCH_TO_LIST_GAP = 12.dp
-private val SHEET_BOTTOM_SPACE = 12.dp
+private val SEARCH_FIELD_HORIZONTAL_PADDING = Spacing.XLarge
+private val SEARCH_TO_LIST_GAP = Spacing.Medium
 
 /**
  * Compose replacement for the old `LanguagePickerPreference` dialog. Ledger
@@ -79,7 +79,7 @@ fun LanguagePickerSheet(
                 },
             )
         }
-        Spacer(Modifier.height(SHEET_BOTTOM_SPACE))
+        SheetListEnd()
     }
 }
 

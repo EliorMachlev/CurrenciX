@@ -37,6 +37,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private val CHART_PADDING = TIMELINE_CONTENT_PADDING
 private val PROVIDER_FONT_SIZE = 12.sp
@@ -101,7 +102,7 @@ internal fun TimelineChartCard(
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(horizontal = CHART_PADDING, vertical = 8.dp)
+                        .padding(horizontal = CHART_PADDING, vertical = Spacing.Small)
                         .wrapContentSize(),
             )
         }
@@ -161,4 +162,4 @@ private fun TimelineNotice(
 }
 
 private val NOTICE_ICON_SIZE = 40.dp
-private val NOTICE_GAP = 12.dp
+private val NOTICE_GAP = Spacing.Medium

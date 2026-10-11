@@ -50,6 +50,7 @@ import androidx.compose.ui.window.PopupProperties
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Motion
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -57,13 +58,16 @@ import kotlin.math.roundToInt
 // house rule) so tweaking the ring-halo thickness or padding budget is a
 // single-place change.
 private const val SCRIM_ALPHA: Float = 0.72f
-private val SPOTLIGHT_PAD: Dp = 8.dp
+private val SPOTLIGHT_PAD: Dp = Spacing.Small
 private val SPOTLIGHT_HALO: Dp = 3.dp
-private val CARD_MARGIN: Dp = 20.dp
-private val CARD_PADDING: Dp = 16.dp
+private val CARD_MARGIN: Dp = Spacing.XLarge
+
+// Corner radius of the cut-out around the highlighted element.
+private val SPOTLIGHT_CORNER: Dp = 12.dp
+private val CARD_PADDING: Dp = Spacing.Large
 private val CARD_RADIUS: Dp = 20.dp
-private val CARD_GAP_FROM_ANCHOR: Dp = 16.dp
-private val BUTTON_ROW_GAP: Dp = 8.dp
+private val CARD_GAP_FROM_ANCHOR: Dp = Spacing.Large
+private val BUTTON_ROW_GAP: Dp = Spacing.Small
 
 // Step fade uses Motion.enter(): deliberate but never gates a tap — the
 // overlay remains interactive even during the fade because the pointer-input
@@ -183,7 +187,7 @@ private fun ScrimWithSpotlight(anchorRect: Rect?) {
     with(LocalDensity.current) {
         padPx = SPOTLIGHT_PAD.toPx()
         haloPx = SPOTLIGHT_HALO.toPx()
-        cornerPx = 12.dp.toPx()
+        cornerPx = SPOTLIGHT_CORNER.toPx()
     }
     val scrimColor = Color.Black.copy(alpha = SCRIM_ALPHA)
     val haloColor = MaterialTheme.colorScheme.primary
@@ -278,7 +282,7 @@ private fun TooltipCardBody(
                 }.clip(RoundedCornerShape(CARD_RADIUS))
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(CARD_PADDING),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(Spacing.Small),
     ) {
         Text(
             text = step.title,
@@ -291,7 +295,7 @@ private fun TooltipCardBody(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(Modifier.size(4.dp))
+        Spacer(Modifier.size(Spacing.Tiny))
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(BUTTON_ROW_GAP, Alignment.End),

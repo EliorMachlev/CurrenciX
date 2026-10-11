@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.compose
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -28,23 +27,21 @@ import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.view.navigation.rememberPillTransition
 import com.eliormachlev.currencix.view.navigation.sharedCurrencyPill
 
 private val PILL_HEIGHT: Dp = 44.dp
 private val PILL_RADIUS: Dp = 999.dp
-private val PILL_HORIZONTAL_PADDING: Dp = 14.dp
+private val PILL_HORIZONTAL_PADDING: Dp = Spacing.MediumPlus
 
 // Rectangular flag in the picker's 24×17 aspect, scaled to 28×20 so it sits
 // comfortably inside the 44dp pill.
-private val FLAG_WIDTH: Dp = 28.dp
-private val FLAG_HEIGHT: Dp = 20.dp
-private val FLAG_CORNER_RADIUS: Dp = 2.dp
-private val FLAG_GAP: Dp = 10.dp
+private val FLAG_GAP: Dp = Spacing.SmallPlus
 private val CHEVRON_SIZE: Dp = 14.dp
-private val CHEVRON_GAP: Dp = 4.dp
-private val PAIR_ROW_GAP: Dp = 8.dp
+private val CHEVRON_GAP: Dp = Spacing.Tiny
+private val PAIR_ROW_GAP: Dp = Spacing.Small
 
 /**
  * The flag + ISO code + chevron pill that opens a currency picker. The
@@ -60,7 +57,6 @@ fun CurrencyPill(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val flagPainter = currency?.flagPainter()
     Row(
         modifier
             .sharedCurrencyPill(rememberPillTransition(side, currency))
@@ -72,15 +68,8 @@ fun CurrencyPill(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        if (flagPainter != null) {
-            Image(
-                painter = flagPainter,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(width = FLAG_WIDTH, height = FLAG_HEIGHT)
-                        .clip(RoundedCornerShape(FLAG_CORNER_RADIUS)),
-            )
+        if (currency != null) {
+            CurrencyFlag(currency, FlagSize.Large)
             Spacer(Modifier.width(FLAG_GAP))
         }
         Text(

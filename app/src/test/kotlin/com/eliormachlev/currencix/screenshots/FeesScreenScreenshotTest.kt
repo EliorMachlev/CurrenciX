@@ -1,18 +1,14 @@
 package com.eliormachlev.currencix.screenshots
 
 import android.app.Application
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
+import com.eliormachlev.currencix.view.preference.compose.SettingsList
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,14 +51,7 @@ private fun FeesScreenPreview(
     bank: Fee.GlobalBank?,
     pairs: List<Fee.SpecificPair>,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding =
-            PaddingValues(
-                horizontal = dimensionResource(id = R.dimen.margin2x),
-                vertical = dimensionResource(id = R.dimen.margin1x),
-            ),
-    ) {
+    SettingsList {
         item {
             PreferenceSection(text = stringResource(id = R.string.fee_section_global_exchange)) {
                 if (exchange == null) {

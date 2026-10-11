@@ -1,14 +1,11 @@
 package com.eliormachlev.currencix.view.preference.compose
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,10 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
@@ -35,13 +30,14 @@ import com.eliormachlev.currencix.view.compose.dialogs.PasswordFieldWithToggle
 import com.eliormachlev.currencix.view.compose.dialogs.PasswordInput
 import com.eliormachlev.currencix.view.compose.dialogs.rememberPasswordState
 import com.eliormachlev.currencix.view.compose.dialogs.takePassword
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.BACKUP_MIN_PASSWORD_LENGTH
 import com.eliormachlev.currencix.viewmodel.preference.BackupDialog
 import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
 import kotlinx.coroutines.flow.drop
 
-private val CHECKBOX_TO_FIELD_GAP = 12.dp
-private val CHECKBOX_LABEL_GAP = 8.dp
+private val CHECKBOX_TO_FIELD_GAP = Spacing.Medium
+private val CHECKBOX_LABEL_GAP = Spacing.Small
 
 // Two categories match the old PreferenceFragmentCompat-backed BackupFragment:
 // Local backup (export) on top, Restore (import) below.
@@ -117,14 +113,7 @@ private fun BackupSectionsList(
     onExportClick: () -> Unit,
     onImportClick: () -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding =
-            PaddingValues(
-                horizontal = dimensionResource(id = R.dimen.margin2x),
-                vertical = dimensionResource(id = R.dimen.margin1x),
-            ),
-    ) {
+    SettingsList {
         item(key = BackupSection.LOCAL) {
             SectionEnter(index = BackupSection.LOCAL.ordinal) {
                 PreferenceSection(text = stringResource(id = R.string.backup_section_local)) {

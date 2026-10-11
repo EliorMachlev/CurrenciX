@@ -1,13 +1,8 @@
 package com.eliormachlev.currencix.screenshots
 
 import android.app.Application
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
@@ -16,6 +11,7 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.AboutProviderRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
+import com.eliormachlev.currencix.view.preference.compose.SettingsList
 import com.eliormachlev.currencix.view.preference.compose.SwitchRow
 import com.eliormachlev.currencix.view.preference.compose.versionSummary
 import org.junit.Rule
@@ -48,14 +44,7 @@ private fun PreferenceScreenPreview() = ReadingDirection { PreferenceSections() 
 
 @Composable
 private fun PreferenceSections() {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding =
-            PaddingValues(
-                horizontal = dimensionResource(id = R.dimen.margin2x),
-                vertical = dimensionResource(id = R.dimen.margin1x),
-            ),
-    ) {
+    SettingsList {
         item { GeneralSectionPreview() }
         item { ApiSectionPreview() }
         item { AppearanceSectionPreview() }

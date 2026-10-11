@@ -2,6 +2,8 @@ package com.eliormachlev.currencix.view.compose
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -10,15 +12,18 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.isRtlLanguage
@@ -46,6 +51,38 @@ fun CurrencyFlagImage(
         contentDescription = null,
         modifier = modifier,
     )
+}
+
+/**
+ * The sizes a flag is drawn at, each a rounded rectangle, so flags of one
+ * role look the same wherever they appear.
+ */
+enum class FlagSize(
+    val width: Dp,
+    val height: Dp,
+    corner: Dp,
+) {
+    /** Beside an ISO code in a chip. */
+    Small(20.dp, 14.dp, 2.dp),
+
+    /** A currency picker row. */
+    Medium(24.dp, 17.dp, 2.dp),
+
+    /** The converter's currency pills and the convert-selection sheet. */
+    Large(28.dp, 20.dp, 2.dp),
+    ;
+
+    val shape: Shape = RoundedCornerShape(corner)
+}
+
+/** [currency]'s flag at one of the app's [FlagSize]s. */
+@Composable
+fun CurrencyFlag(
+    currency: Currency,
+    size: FlagSize,
+    modifier: Modifier = Modifier,
+) {
+    CurrencyFlagImage(currency, modifier.size(width = size.width, height = size.height).clip(size.shape))
 }
 
 // Forces left-to-right layout for the wrapped content. Math previews and the

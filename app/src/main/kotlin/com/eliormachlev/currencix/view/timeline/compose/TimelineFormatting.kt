@@ -6,17 +6,17 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
 // Shared timeline typography/spacing so a design tweak lands in one place instead
 // of drifting across TimelineChartCard and TimelineSecondary.
 
-internal val TIMELINE_CONTENT_PADDING = 16.dp
+internal val TIMELINE_CONTENT_PADDING = Spacing.Large
 internal val TIMELINE_DATE_FONT_SIZE = 12.sp
 internal val TIMELINE_RATE_VALUE_FONT_SIZE = 18.sp
 internal const val TIMELINE_DATE_LETTER_SPACING_EM = 0.075f

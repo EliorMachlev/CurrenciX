@@ -38,6 +38,7 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ReadingDirection
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -51,11 +52,11 @@ private val CONTENT_PADDING = TIMELINE_CONTENT_PADDING
 private val DIVIDER_THICKNESS = 0.75.dp
 private val DIFF_FONT_SIZE = 20.sp
 private val DIFF_ICON_SIZE = 20.dp
-private val DIFF_ICON_GAP = 4.dp
-private val TILE_GAP = 8.dp
+private val DIFF_ICON_GAP = Spacing.Tiny
+private val TILE_GAP = Spacing.Small
 private val TILE_RADIUS = 16.dp
-private val TILE_PADDING_H = 12.dp
-private val TILE_PADDING_V = 10.dp
+private val TILE_PADDING_H = Spacing.Medium
+private val TILE_PADDING_V = Spacing.SmallPlus
 private const val TILE_LABEL_LETTER_SPACING_EM = 0.1f
 
 private data class StatRowData(

@@ -3,8 +3,12 @@ package com.eliormachlev.currencix.view.preference.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.LIST_SUMMARY_LINES
 import com.eliormachlev.currencix.view.compose.LedgerLabel
@@ -20,6 +23,7 @@ import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerSection
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.theme.Motion
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlinx.coroutines.delay
 
 // Thin preference-flavoured wrapper around the shared ledger vocabulary in
@@ -148,10 +152,19 @@ fun SectionEnter(
 // Extra breathing room between adjacent sections. With the grouped-card
 // backdrop gone the header brass is the primary separator; a small bottom
 // gap keeps consecutive sections from crowding each other's brass.
-private val SECTION_ENTER_BOTTOM_GAP: Dp = 4.dp
+private val SECTION_ENTER_BOTTOM_GAP: Dp = Spacing.Tiny
 
 // Timing comes from Motion: a MEDIUM entrance, STAGGER apart. On the
 // six-section Settings screen the last section lands at 5*30 + 220 = 370ms,
 // short enough that the cascade reads as polish rather than as the screen
 // loading.
 private const val SECTION_ENTER_TRANSLATION_PX: Float = 32f
+
+// Space around a settings list: its sections inset from the screen sides.
+private val SETTINGS_LIST_PADDING = PaddingValues(horizontal = Spacing.Large, vertical = Spacing.Small)
+
+/** A settings screen's scrolling list of [PreferenceSection]s, inset the same on every screen. */
+@Composable
+fun SettingsList(content: LazyListScope.() -> Unit) {
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = SETTINGS_LIST_PADDING, content = content)
+}
