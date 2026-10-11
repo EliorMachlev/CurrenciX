@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SelectableDates
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
@@ -27,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
-import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Period
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Span
@@ -64,15 +61,14 @@ internal fun TimelinePeriodControls(
 ) {
     var picking by rememberSaveable { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(CONTROLS_GAP)) {
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            PRESETS.forEachIndexed { index, period ->
-                SegmentedButton(
-                    selected = period == control.selected,
-                    onClick = rememberHapticOnClick { control.onPeriod(period) },
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = PRESETS.size),
-                ) { Text(stringResource(period.labelRes).replaceFirstChar { it.titlecase() }, maxLines = 1) }
-            }
-        }
+        // A period stays picked when tapped again: there's always one shown.
+        ConnectedToggleGroup(
+            options = PRESETS,
+            selected = control.selected,
+            label = { stringResource(it.labelRes).replaceFirstChar { c -> c.titlecase() } },
+            onToggle = { period, _ -> control.onPeriod(period) },
+            modifier = Modifier.fillMaxWidth(),
+        )
         val custom = control.selected == Period.CUSTOM
         FilterChip(
             selected = custom,

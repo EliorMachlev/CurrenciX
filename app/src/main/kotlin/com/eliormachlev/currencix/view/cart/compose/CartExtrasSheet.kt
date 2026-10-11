@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -35,12 +34,13 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import java.math.BigDecimal
 
 private val CONTENT_PADDING = 16.dp
 private val GAP = 16.dp
-private val CHIP_GAP = 8.dp
+private val TIP_FIELD_GAP = 8.dp
 private val SPLIT_COUNT_WIDTH = 40.dp
 
 // One-tap tip / tax rates; any other goes in the field.
@@ -95,7 +95,7 @@ private fun TipField(
     isError: Boolean,
 ) {
     val value = state.text.toString()
-    Column(verticalArrangement = Arrangement.spacedBy(CHIP_GAP)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TIP_FIELD_GAP)) {
         OutlinedTextField(
             state = state,
             label = { Text(stringResource(R.string.cart_tip_label)) },
@@ -105,16 +105,14 @@ private fun TipField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.fillMaxWidth(),
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(CHIP_GAP)) {
-            QUICK_TIPS.forEach { percent ->
-                FilterChip(
-                    selected = value == percent,
-                    // A quick rate fills the field; tapping it again clears it.
-                    onClick = { state.setTextAndPlaceCursorAtEnd(if (value == percent) "" else percent) },
-                    label = { Text("$percent%") },
-                )
-            }
-        }
+        // A quick rate fills the field; tapping it again clears it.
+        ConnectedToggleGroup(
+            options = QUICK_TIPS,
+            selected = value.takeIf { it in QUICK_TIPS },
+            label = { "$it%" },
+            onToggle = { percent, checked -> state.setTextAndPlaceCursorAtEnd(if (checked) percent else "") },
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
