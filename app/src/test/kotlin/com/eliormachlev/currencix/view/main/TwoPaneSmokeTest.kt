@@ -56,7 +56,7 @@ class TwoPaneSmokeTest {
 
     private fun assertConverterShown() = compose.onNodeWithContentDescription(string(R.string.desc_open_drawer)).assertExists()
 
-    private fun assertTimelineShown() = compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertExists()
+    private fun assertTimelineShown() = compose.onNodeWithText(string(R.string.timeline_five_years)).assertExists()
 
     @Test
     fun `timeline opens beside the converter and back closes only the pane`() {
@@ -67,7 +67,7 @@ class TwoPaneSmokeTest {
 
         back()
         assertConverterShown()
-        compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertDoesNotExist()
+        compose.onNodeWithText(string(R.string.timeline_five_years)).assertDoesNotExist()
     }
 
     @Test
@@ -76,14 +76,14 @@ class TwoPaneSmokeTest {
         openFromTopBar(R.string.cart_title)
         assertConverterShown()
         compose.onNodeWithText(string(R.string.cart_empty_title)).assertExists()
-        compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertDoesNotExist()
+        compose.onNodeWithText(string(R.string.timeline_five_years)).assertDoesNotExist()
         compose.onRoot().captureRoboImage("$SCREENSHOT_DIR/two_pane_cart.png")
 
         // One back: the cart replaced the timeline, so it's the converter alone.
         back()
         assertConverterShown()
         compose.onNodeWithText(string(R.string.cart_empty_title)).assertDoesNotExist()
-        compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertDoesNotExist()
+        compose.onNodeWithText(string(R.string.timeline_five_years)).assertDoesNotExist()
     }
 }
 

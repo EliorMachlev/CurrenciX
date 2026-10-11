@@ -179,9 +179,9 @@ fun TimelineRoute(
     alertAt?.let { rate -> TimelineAlertSheet(model = model, rate = rate, onClose = { alertAt = null }) }
 }
 
-// The bar's actions: graph options and swap (once a refresh or an error is
-// out of the way, since swapping re-fetches), and under ⋮ a rate alert at
-// today's rate and share, so the pair keeps its room in the title.
+// The bar's actions: swap (once a refresh or an error is out of the way,
+// since swapping re-fetches), and under ⋮ a rate alert at today's rate,
+// share and graph options, so the pair keeps its room in the title.
 @Composable
 private fun TimelineBarActions(
     model: TimelineViewModel,
@@ -194,11 +194,6 @@ private fun TimelineBarActions(
     val rateCurrent by remember(model) { model.getRateCurrent() }.observeAsState()
     val today = rateCurrent?.first?.value?.value
     TopBarAction(
-        icon = painterResource(R.drawable.ic_tune),
-        contentDescription = stringResource(R.string.graph_options_title),
-        onClick = onOptions,
-    )
-    TopBarAction(
         icon = painterResource(R.drawable.ic_swap_horiz),
         contentDescription = stringResource(R.string.desc_toggle_currencies),
         onClick = model::toggleCurrencies,
@@ -206,15 +201,17 @@ private fun TimelineBarActions(
     )
     val alertLabel = stringResource(R.string.alert_sheet_title)
     val shareLabel = stringResource(R.string.timeline_share)
+    val optionsLabel = stringResource(R.string.graph_options_title)
     // Only what can be done now: an alert needs today's rate, a share the chart.
     val menu =
-        remember(today, error, alertLabel, shareLabel, onAlert, onShare) {
+        remember(today, error, alertLabel, shareLabel, optionsLabel, onAlert, onShare, onOptions) {
             listOfNotNull(
                 today?.let { rate -> OverflowAction(alertLabel, R.drawable.ic_alert) { onAlert(rate) } },
                 OverflowAction(shareLabel, R.drawable.ic_share, onClick = onShare).takeIf { error == null },
+                OverflowAction(optionsLabel, R.drawable.ic_tune, onClick = onOptions),
             )
         }
-    if (menu.isNotEmpty()) TopBarOverflowMenu(menu)
+    TopBarOverflowMenu(menu)
 }
 
 // The rate alert sheet for the timeline's pair at [rate]; [onClose] when set or dismissed.

@@ -55,11 +55,15 @@ private fun TimelineBarContent() {
         onBack = {},
         style = TopBarStyle.Small,
         actions = {
-            TopBarAction(painterResource(R.drawable.ic_tune), "Graph options", onClick = {})
             TopBarAction(painterResource(R.drawable.ic_swap_horiz), "Swap", onClick = {})
-            // Rate alert and share, as TimelineBarActions has them.
+            // Rate alert, share and graph options, as TimelineBarActions has them.
             TopBarOverflowMenu(
-                listOf(OverflowAction("Rate alert", R.drawable.ic_alert) {}, OverflowAction("Share", R.drawable.ic_share) {}),
+                listOf(
+                    OverflowAction("Rate alert", R.drawable.ic_alert) {
+                    },
+                    OverflowAction("Share", R.drawable.ic_share) {},
+                    OverflowAction("Graph options", R.drawable.ic_tune) {},
+                ),
             )
         },
         modifier = Modifier.height(BAR_PREVIEW_HEIGHT),

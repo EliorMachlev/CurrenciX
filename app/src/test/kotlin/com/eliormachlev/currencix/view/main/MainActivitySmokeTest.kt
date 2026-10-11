@@ -117,7 +117,7 @@ class MainActivitySmokeTest {
     @Test
     fun `timeline opens with its actions and the up arrow returns`() {
         openFromTopBar(R.string.menu_timeline)
-        compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertExists()
+        compose.onNodeWithText(string(R.string.timeline_five_years)).assertExists()
 
         compose.onNodeWithContentDescription(string(R.string.desc_navigate_up)).performClick()
         settle()
@@ -235,7 +235,7 @@ class MainActivitySmokeTest {
         openFromTopBar(R.string.desc_open_drawer)
         compose.onNodeWithTag(UiTestTags.drawerEntry(DrawerAction.Timeline.name)).performClick()
         settle()
-        compose.onNodeWithContentDescription(string(R.string.graph_options_title)).assertExists()
+        compose.onNodeWithText(string(R.string.timeline_five_years)).assertExists()
 
         back()
         // Open-drawer label means the drawer is shut (it reads "close" while open).
