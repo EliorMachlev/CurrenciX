@@ -5,7 +5,12 @@ import java.math.MathContext
 import java.math.RoundingMode
 
 private val SIGNIFICANT_THRESHOLD = BigDecimal("0.01")
-private val PERCENT_MULTIPLIER = BigDecimal("100")
+
+/** 100 %: a percentage divided by this is a fraction. */
+val HUNDRED_PERCENT: BigDecimal = BigDecimal(100)
+
+/** This percentage as a fraction (12.5 → 0.125). */
+fun BigDecimal.percentToFraction(): BigDecimal = divide(HUNDRED_PERCENT, MathContext.DECIMAL128)
 
 fun calculateDifference(
     old: BigDecimal?,
@@ -14,7 +19,7 @@ fun calculateDifference(
     if (old == null || new == null || old.compareTo(BigDecimal.ZERO) == 0) {
         null
     } else {
-        (new - old).divide(old, MathContext.DECIMAL128) * PERCENT_MULTIPLIER
+        (new - old).divide(old, MathContext.DECIMAL128) * HUNDRED_PERCENT
     }
 
 // A multiplicative fee stack of 1.0 means "no fees apply". Centralised so the
@@ -37,7 +42,7 @@ fun BigDecimal.feePercentDelta(
     roundingMode: RoundingMode = RoundingMode.HALF_EVEN,
 ): BigDecimal =
     feeStackDelta()
-        .multiply(PERCENT_MULTIPLIER, MathContext.DECIMAL128)
+        .multiply(HUNDRED_PERCENT, MathContext.DECIMAL128)
         .setScale(scale, roundingMode)
 
 fun BigDecimal.getSignificantDecimalPlaces(significantNumbers: Int = 2): Int {

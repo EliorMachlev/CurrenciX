@@ -9,6 +9,14 @@ const val OPERATOR_MINUS = "\u2212" // − (minus sign, not hyphen)
 const val OPERATOR_MULTIPLY = "\u00D7" // ×
 const val OPERATOR_DIVIDE = "\u00F7" // ÷
 
+// The keypad's zero keys: one zero, and the two that enter several at once
+// (collapsed to one where a number can't start with zeros).
+const val ZERO = "0"
+const val DOUBLE_ZERO = "00"
+const val TRIPLE_ZERO = "000"
+val MULTI_ZERO_KEYS: Set<String> = setOf(DOUBLE_ZERO, TRIPLE_ZERO)
+val ZERO_KEYS: Set<String> = MULTI_ZERO_KEYS + ZERO
+
 // Parentheses use plain ASCII in both display and evaluator — no glyph
 // normalisation needed. Kept as constants so the paren-cycle button, the
 // state-machine, and the auto-close padder all agree on the same character.

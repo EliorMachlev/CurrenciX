@@ -60,7 +60,7 @@ class NorgesBank : ApiProvider.Api {
         val parameterBase = base.apiCodeOrDkkForFok()
         val parameterSymbol = symbol.apiCodeOrDkkForFok()
         // if we request NOK->NOK, the response would be empty. Add EUR in that case.
-        val eur = if (base == Currency.NOK && symbol == Currency.NOK) "EUR" else ""
+        val eur = if (base == Currency.NOK && symbol == Currency.NOK) Currency.EUR.iso4217Alpha() else ""
 
         val url =
             "$baseUrl/data/EXR/B.$parameterBase+$parameterSymbol+$eur.NOK.SP" +

@@ -47,6 +47,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.util.newId
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.NameInputTransformation
@@ -56,7 +57,6 @@ import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
-import java.util.UUID
 
 private val FEE_EDITOR_SECTION_GAP: Dp = Spacing.Large
 private val FEE_EDITOR_LABEL_GAP: Dp = Spacing.Tiny
@@ -461,7 +461,7 @@ internal data class FeeDraft(
 
 internal fun FeeDraft.toGlobalExchange(id: String? = null): Fee.GlobalExchange =
     Fee.GlobalExchange(
-        id = id ?: UUID.randomUUID().toString(),
+        id = id ?: newId(),
         name = name,
         percent = percent,
         isActive = isActive,
@@ -469,7 +469,7 @@ internal fun FeeDraft.toGlobalExchange(id: String? = null): Fee.GlobalExchange =
 
 internal fun FeeDraft.toGlobalBank(id: String? = null): Fee.GlobalBank =
     Fee.GlobalBank(
-        id = id ?: UUID.randomUUID().toString(),
+        id = id ?: newId(),
         name = name,
         percent = percent,
         isActive = isActive,
@@ -480,7 +480,7 @@ internal fun FeeDraft.toSpecificPair(id: String? = null): Fee.SpecificPair? {
     val from = from ?: return null
     val to = to ?: return null
     return Fee.SpecificPair(
-        id = id ?: UUID.randomUUID().toString(),
+        id = id ?: newId(),
         name = name,
         percent = percent,
         from = from,

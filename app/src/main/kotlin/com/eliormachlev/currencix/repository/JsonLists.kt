@@ -43,3 +43,6 @@ internal fun <T> List<T>.replacingOrAppending(
     item: T,
     isSame: (T) -> Boolean,
 ): List<T> = if (any(isSame)) map { if (isSame(it)) item else it } else this + item
+
+/** The object's [key] string, or null when it's missing or empty. */
+internal fun JSONObject.optStringOrNull(key: String): String? = optString(key).ifEmpty { null }

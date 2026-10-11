@@ -17,7 +17,7 @@ import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerSectionHeader
-import com.eliormachlev.currencix.view.compose.LedgerTrailing
+import com.eliormachlev.currencix.view.compose.activeChipSlot
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
 
@@ -82,7 +82,7 @@ private fun ProviderRow(
         enabled = enabled,
         showDivider = showDivider,
         label = { ProviderRowLabel(provider = provider) },
-        value = chip?.let { res -> { LedgerTrailing { LedgerActiveChip(text = stringResource(id = res)) } } },
+        value = chip?.let { activeChipSlot(isActive = true, chipRes = it) },
     )
 }
 

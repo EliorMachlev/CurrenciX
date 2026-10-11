@@ -20,9 +20,8 @@ import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.util.normalizeForSearch
-import com.eliormachlev.currencix.view.compose.LedgerActiveChip
 import com.eliormachlev.currencix.view.compose.LedgerRow
-import com.eliormachlev.currencix.view.compose.LedgerTrailing
+import com.eliormachlev.currencix.view.compose.activeChipSlot
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -120,16 +119,7 @@ private fun LanguageRow(
                 }
             }
         },
-        value =
-            if (isSelected) {
-                {
-                    LedgerTrailing {
-                        LedgerActiveChip(text = stringResource(id = R.string.picker_active_chip))
-                    }
-                }
-            } else {
-                null
-            },
+        value = activeChipSlot(isSelected),
     )
 }
 

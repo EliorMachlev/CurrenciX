@@ -33,6 +33,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.DOUBLE_ZERO
+import com.eliormachlev.currencix.util.TRIPLE_ZERO
+import com.eliormachlev.currencix.util.ZERO
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.UiTestTags
@@ -104,6 +107,10 @@ fun MainKeypad(
     }
 }
 
+// The digit keys, row by row, top to bottom; the two layouts differ in what
+// fills the last column and the bottom row.
+private val DIGIT_ROWS = listOf(listOf("7", "8", "9"), listOf("4", "5", "6"), listOf("1", "2", "3"))
+
 // BASIC — 4×4 grid, operators stacked as the trailing column with the
 // backspace tucked into the last row between "." and "+".
 @Composable
@@ -111,29 +118,17 @@ private fun ColumnScope.BasicKeypadRows(
     decimal: String,
     callbacks: MainKeypadCallbacks,
 ) {
-    KeyRow {
-        DigitKey("7") { callbacks.onDigit("7") }
-        DigitKey("8") { callbacks.onDigit("8") }
-        DigitKey("9") { callbacks.onDigit("9") }
-        OperatorKey("÷") { callbacks.onOperator(Operator.DIVIDE) }
+    DIGIT_ROWS.zip(listOf(Operator.DIVIDE, Operator.TIMES, Operator.MINUS)).forEach { (digits, operator) ->
+        KeyRow {
+            DigitKeys(digits, callbacks)
+            OperatorKey(operator, callbacks)
+        }
     }
     KeyRow {
-        DigitKey("4") { callbacks.onDigit("4") }
-        DigitKey("5") { callbacks.onDigit("5") }
-        DigitKey("6") { callbacks.onDigit("6") }
-        OperatorKey("×") { callbacks.onOperator(Operator.TIMES) }
-    }
-    KeyRow {
-        DigitKey("1") { callbacks.onDigit("1") }
-        DigitKey("2") { callbacks.onDigit("2") }
-        DigitKey("3") { callbacks.onDigit("3") }
-        OperatorKey("−") { callbacks.onOperator(Operator.MINUS) }
-    }
-    KeyRow {
-        DigitKey("0") { callbacks.onDigit("0") }
+        DigitKey(ZERO, callbacks)
         DigitKey(decimal, onClick = callbacks.onDecimal)
         DeleteKey(onClick = callbacks.onDelete, onLongClick = callbacks.onDeleteLong)
-        OperatorKey("+") { callbacks.onOperator(Operator.PLUS) }
+        OperatorKey(Operator.PLUS, callbacks)
     }
 }
 
@@ -146,37 +141,49 @@ private fun ColumnScope.ExpandedKeypadRows(
     nextParen: Char,
     callbacks: MainKeypadCallbacks,
 ) {
+    val (sevens, fours, ones) = DIGIT_ROWS
+    KeyRow { EXPANDED_OPERATOR_ROW.forEach { OperatorKey(it, callbacks) } }
     KeyRow {
-        OperatorKey("÷") { callbacks.onOperator(Operator.DIVIDE) }
-        OperatorKey("×") { callbacks.onOperator(Operator.TIMES) }
-        OperatorKey("−") { callbacks.onOperator(Operator.MINUS) }
-        OperatorKey("+") { callbacks.onOperator(Operator.PLUS) }
-    }
-    KeyRow {
-        DigitKey("7") { callbacks.onDigit("7") }
-        DigitKey("8") { callbacks.onDigit("8") }
-        DigitKey("9") { callbacks.onDigit("9") }
+        DigitKeys(sevens, callbacks)
         OperatorKey("%", onClick = callbacks.onPercent)
     }
     KeyRow {
-        DigitKey("4") { callbacks.onDigit("4") }
-        DigitKey("5") { callbacks.onDigit("5") }
-        DigitKey("6") { callbacks.onDigit("6") }
+        DigitKeys(fours, callbacks)
         ParensKey(nextParen = nextParen, onClick = callbacks.onParens)
     }
     KeyRow {
-        DigitKey("1") { callbacks.onDigit("1") }
-        DigitKey("2") { callbacks.onDigit("2") }
-        DigitKey("3") { callbacks.onDigit("3") }
+        DigitKeys(ones, callbacks)
         DigitKey(decimal, onClick = callbacks.onDecimal)
     }
     KeyRow {
-        DigitKey("00") { callbacks.onDigit("00") }
-        DigitKey("0") { callbacks.onDigit("0") }
-        DigitKey("000") { callbacks.onDigit("000") }
+        DigitKeys(EXPANDED_ZERO_ROW, callbacks)
         DeleteKey(onClick = callbacks.onDelete, onLongClick = callbacks.onDeleteLong)
     }
 }
+
+// The expanded keypad's top row and its zero cluster, left to right.
+private val EXPANDED_OPERATOR_ROW = listOf(Operator.DIVIDE, Operator.TIMES, Operator.MINUS, Operator.PLUS)
+private val EXPANDED_ZERO_ROW = listOf(DOUBLE_ZERO, ZERO, TRIPLE_ZERO)
+
+// A key that types [digit].
+@Composable
+private fun RowScope.DigitKey(
+    digit: String,
+    callbacks: MainKeypadCallbacks,
+) = DigitKey(digit) { callbacks.onDigit(digit) }
+
+@Composable
+private fun RowScope.DigitKeys(
+    digits: List<String>,
+    callbacks: MainKeypadCallbacks,
+) = digits.forEach { DigitKey(it, callbacks) }
+
+// A key for [operator], labeled with its glyph.
+@Composable
+private fun RowScope.OperatorKey(
+    operator: Operator,
+    callbacks: MainKeypadCallbacks,
+) = OperatorKey(operator.display) { callbacks.onOperator(operator) }
 
 // One row of keys; the rows share the keypad's height evenly.
 @Composable

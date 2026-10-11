@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.view.compose
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.view.compose.theme.Brass
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -284,6 +287,20 @@ fun LedgerActiveChip(
 fun LedgerTrailing(content: @Composable () -> Unit) {
     Box(contentAlignment = Alignment.Center) { content() }
 }
+
+/**
+ * A picker row's trailing slot: the [LedgerActiveChip] reading [chipRes]
+ * ("Active" by default) on the chosen row, nothing on the others.
+ */
+fun activeChipSlot(
+    isActive: Boolean,
+    @StringRes chipRes: Int = R.string.picker_active_chip,
+): (@Composable RowScope.() -> Unit)? =
+    if (isActive) {
+        { LedgerTrailing { LedgerActiveChip(text = stringResource(id = chipRes)) } }
+    } else {
+        null
+    }
 
 /**
  * Paints the ledger's paper hairline along the bottom edge of the modified

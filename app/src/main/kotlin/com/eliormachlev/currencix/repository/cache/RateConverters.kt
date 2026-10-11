@@ -5,6 +5,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
+import com.eliormachlev.currencix.repository.optStringOrNull
 import org.json.JSONObject
 import timber.log.Timber
 import java.time.LocalDate
@@ -22,6 +23,9 @@ private const val FIELD_END = "end"
 private const val FIELD_SUCCESS = "success"
 
 private const val TAG = "RateConverters"
+
+// The provider the cached data came from, stored by its id.
+private fun JSONObject.optProvider(): ApiProvider? = (opt(FIELD_PROVIDER) as? Int)?.let(ApiProvider::fromId)
 
 /**
  * JSON [Converter] for [ExchangeRates]. Deliberately hand-rolled with
@@ -49,21 +53,18 @@ internal object ExchangeRatesConverter : Converter<ExchangeRates> {
     override fun decode(encoded: String): ExchangeRates? =
         runCatching {
             val obj = JSONObject(encoded)
-            val date = obj.optString(FIELD_DATE).takeIf { it.isNotEmpty() }?.let(LocalDate::parse)
+            val date = obj.optStringOrNull(FIELD_DATE)?.let(LocalDate::parse)
             val ratesObj = obj.optJSONObject(FIELD_RATES) ?: return@runCatching null
             val rates = decodeRates(ratesObj)
             if (rates.isEmpty()) return@runCatching null
             ExchangeRates(
                 success = true,
                 error = null,
-                base = obj.optString(FIELD_BASE).takeIf { it.isNotEmpty() }?.let(Currency::fromString),
+                base = obj.optStringOrNull(FIELD_BASE)?.let(Currency::fromString),
                 date = date,
                 rates = rates,
-                time = obj.optString(FIELD_TIME).takeIf { it.isNotEmpty() }?.let(LocalTime::parse),
-                provider =
-                    obj.opt(FIELD_PROVIDER)?.let { raw ->
-                        (raw as? Int)?.let(ApiProvider::fromId)
-                    },
+                time = obj.optStringOrNull(FIELD_TIME)?.let(LocalTime::parse),
+                provider = obj.optProvider(),
             )
         }.onFailure { Timber.tag(TAG).w(it, "Failed to decode ExchangeRates") }
             .getOrNull()
@@ -109,14 +110,11 @@ internal class TimelineConverter(
             Timeline(
                 success = obj.optBoolean(FIELD_SUCCESS, true),
                 error = null,
-                base = obj.optString(FIELD_BASE).takeIf { it.isNotEmpty() },
-                startDate = obj.optString(FIELD_START).takeIf { it.isNotEmpty() }?.let(LocalDate::parse),
-                endDate = obj.optString(FIELD_END).takeIf { it.isNotEmpty() }?.let(LocalDate::parse),
+                base = obj.optStringOrNull(FIELD_BASE),
+                startDate = obj.optStringOrNull(FIELD_START)?.let(LocalDate::parse),
+                endDate = obj.optStringOrNull(FIELD_END)?.let(LocalDate::parse),
                 rates = rates,
-                provider =
-                    obj.opt(FIELD_PROVIDER)?.let { raw ->
-                        (raw as? Int)?.let(ApiProvider::fromId)
-                    },
+                provider = obj.optProvider(),
             )
         }.onFailure { Timber.tag(TAG).w(it, "Failed to decode Timeline") }
             .getOrNull()

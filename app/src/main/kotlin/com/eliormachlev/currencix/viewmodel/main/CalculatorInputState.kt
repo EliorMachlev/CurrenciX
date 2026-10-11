@@ -3,10 +3,13 @@ package com.eliormachlev.currencix.viewmodel.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
+import com.eliormachlev.currencix.util.MULTI_ZERO_KEYS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.PAREN_CLOSE
 import com.eliormachlev.currencix.util.PAREN_OPEN
+import com.eliormachlev.currencix.util.ZERO
+import com.eliormachlev.currencix.util.ZERO_KEYS
 import com.eliormachlev.currencix.util.unclosedParens
 import java.math.BigDecimal
 
@@ -23,7 +26,7 @@ import java.math.BigDecimal
  * is null iff we are not in calculation mode.
  */
 internal class CalculatorInputState {
-    private val _baseValueText = MutableLiveData("0")
+    private val _baseValueText = MutableLiveData(ZERO)
     private val _calculationValueText = MutableLiveData<String?>()
 
     val baseValueText: LiveData<String?> = _baseValueText
@@ -48,7 +51,7 @@ internal class CalculatorInputState {
     private fun calculation(): String? = _calculationValueText.value?.takeIf { it.isNotBlank() }
 
     // The base row; never null once initialised, "0" as the fallback.
-    private fun base(): String = _baseValueText.value ?: "0"
+    private fun base(): String = _baseValueText.value ?: ZERO
 
     fun addNumber(value: String) {
         val current = calculation()
@@ -56,16 +59,16 @@ internal class CalculatorInputState {
             val lastToken = current.split(" ").last().trim()
             when {
                 // last input was "0": replace it with any other number
-                lastToken == "0" -> {
-                    if (value != "0" && value != "00" && value != "000") {
+                lastToken == ZERO -> {
+                    if (value !in ZERO_KEYS) {
                         setCalc(current.trim().dropLast(1) + value)
                     }
                 }
 
                 // last input was an operator: collapse "00"/"000" down to "0"
                 current.split(" ").last().isEmpty() &&
-                    (value == "00" || value == "000") -> {
-                    setCalc(current + "0")
+                    value in MULTI_ZERO_KEYS -> {
+                    setCalc(current + ZERO)
                 }
 
                 else -> {
@@ -75,8 +78,8 @@ internal class CalculatorInputState {
         } else {
             val base = base()
             _baseValueText.value =
-                if (base == "0") {
-                    if (value == "00" || value == "000") "0" else value
+                if (base == ZERO) {
+                    if (value in MULTI_ZERO_KEYS) ZERO else value
                 } else {
                     base + value
                 }
@@ -85,7 +88,7 @@ internal class CalculatorInputState {
 
     fun paste(value: Number) {
         // clear base value (but not calculation row!)
-        _baseValueText.value = "0"
+        _baseValueText.value = ZERO
         value.toString().forEach { addNumber(it.toString()) }
     }
 
@@ -104,7 +107,7 @@ internal class CalculatorInputState {
         if (current != null) {
             if (!current.substringAfterLast(" ").contains(".")) {
                 // if last char is not a number: add 0 first
-                val prefix = if (!current.trim().last().isDigit()) current + "0" else current
+                val prefix = if (!current.trim().last().isDigit()) current + ZERO else current
                 setCalc("$prefix.")
             }
         } else {
@@ -135,7 +138,7 @@ internal class CalculatorInputState {
     }
 
     fun clear() {
-        _baseValueText.value = "0"
+        _baseValueText.value = ZERO
         setCalc(null)
     }
 
@@ -151,7 +154,7 @@ internal class CalculatorInputState {
             // seed calc row from base like operators do; drop base "0" so the
             // user gets a clean `(` instead of `0 × (`
             val base = base()
-            setCalc(if (base.isEmpty() || base == "0") PAREN_OPEN else withImplicitMultBeforeOpen(base))
+            setCalc(if (base.isEmpty() || base == ZERO) PAREN_OPEN else withImplicitMultBeforeOpen(base))
             return
         }
         val trimmed = current.trimEnd()

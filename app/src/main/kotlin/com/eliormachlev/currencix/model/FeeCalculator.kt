@@ -1,9 +1,8 @@
 package com.eliormachlev.currencix.model
 
+import com.eliormachlev.currencix.util.percentToFraction
 import java.math.BigDecimal
 import java.math.MathContext
-
-private val PERCENTAGE_DIVISOR = BigDecimal("100")
 
 /**
  * Pure fee-stacking math. Extracted from MainViewModel so it can be exercised
@@ -63,7 +62,7 @@ object FeeCalculator {
     fun stackFactor(subset: List<Fee>): BigDecimal {
         var acc = BigDecimal.ONE
         subset.forEach { fee ->
-            val delta = fee.percent.divide(PERCENTAGE_DIVISOR, MathContext.DECIMAL128)
+            val delta = fee.percent.percentToFraction()
             val factor = BigDecimal.ONE + delta
             acc = acc.multiply(factor, MathContext.DECIMAL128)
         }

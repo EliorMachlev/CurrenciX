@@ -13,9 +13,6 @@ import com.eliormachlev.currencix.model.adapter.register
 import com.eliormachlev.currencix.model.provider.api.FrankfurterApi
 import java.time.LocalDate
 
-// Path segment sent to the /latest endpoint (versus an ISO-8601 date).
-private const val LATEST_DATE_PATH = "latest"
-
 class FrankfurterApp : ApiProvider.Api {
     override val name = "Frankfurter.app"
     override val nameRes = R.string.api_frankfurterApp_name

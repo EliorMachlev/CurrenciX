@@ -3,11 +3,9 @@ package com.eliormachlev.currencix.repository
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.SavedCart
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
-import java.util.UUID
 
 // Wire keys for on-disk cart JSON. Kept top-level (not nested inside
 // [Database]) so [CartExporter] can share the same serde for the file
@@ -78,7 +76,7 @@ internal fun parseCart(obj: JSONObject?): SavedCart? {
         id = obj.optIdOrNew(CART_KEY_ID),
         name = obj.optString(CART_KEY_NAME, ""),
         currency = obj.optString(CART_KEY_CURRENCY, ""),
-        destinationCurrency = obj.optString(CART_KEY_DEST_CURRENCY, "").ifEmpty { null },
+        destinationCurrency = obj.optStringOrNull(CART_KEY_DEST_CURRENCY),
         items = items,
         createdAt = obj.optLong(CART_KEY_CREATED_AT, System.currentTimeMillis()),
         extras = parseExtras(obj.optJSONObject(CART_KEY_EXTRAS)),

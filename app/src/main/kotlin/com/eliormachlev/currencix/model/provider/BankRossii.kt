@@ -11,18 +11,17 @@ import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.BankRossiiCurrencyCodesXmlParser
 import com.eliormachlev.currencix.model.adapter.BankRossiiRatesXmlParser
 import com.eliormachlev.currencix.model.adapter.BankRossiiTimelineXmlParser
+import com.eliormachlev.currencix.model.adapter.SLASHED_DATE_FORMATTER
 import com.eliormachlev.currencix.model.adapter.dateSequence
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.fetch
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 // The Bank Rossii URL endpoints accept dates as dd/MM/yyyy in the query
 // string. The XML *response* uses dd.MM.yyyy — that formatter lives in
 // AdapterUtils as BANK_ROSSII_DATE_FORMATTER and shouldn't be reused here.
-private val URL_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 private val RUB_CODE: String = Currency.RUB.iso4217Alpha()
 
@@ -45,7 +44,7 @@ class BankRossii : ApiProvider.Api {
         date: LocalDate?,
         secrets: ApiSecrets,
     ): Result<ExchangeRates> {
-        val dateQuery = date?.let { "?date_req=${it.format(URL_DATE)}" }.orEmpty()
+        val dateQuery = date?.let { "?date_req=${it.format(SLASHED_DATE_FORMATTER)}" }.orEmpty()
         return HttpClientProvider.fetch(context, "$baseUrl/XML_daily.asp$dateQuery") { body ->
             BankRossiiRatesXmlParser().parse(body.byteStream())
         }
@@ -132,8 +131,8 @@ class BankRossii : ApiProvider.Api {
         HttpClientProvider.fetch(
             query.context,
             "$baseUrl/XML_dynamic.asp" +
-                "?date_req1=${query.startDate.format(URL_DATE)}" +
-                "&date_req2=${query.endDate.format(URL_DATE)}" +
+                "?date_req1=${query.startDate.format(SLASHED_DATE_FORMATTER)}" +
+                "&date_req2=${query.endDate.format(SLASHED_DATE_FORMATTER)}" +
                 "&VAL_NM_RQ=$currencyId",
         ) { body ->
             BankRossiiTimelineXmlParser(query.ids).parse(body.byteStream())

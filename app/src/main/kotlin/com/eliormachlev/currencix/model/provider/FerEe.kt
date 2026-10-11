@@ -32,7 +32,7 @@ class FerEe : ApiProvider.Api {
         secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val base = Currency.EUR
-        val datePart = date?.format(ISO_DATE) ?: "latest"
+        val datePart = date?.format(ISO_DATE) ?: LATEST_DATE_PATH
         val adapter =
             moshi {
                 register(FrankfurterAppRatesAdapter(base))

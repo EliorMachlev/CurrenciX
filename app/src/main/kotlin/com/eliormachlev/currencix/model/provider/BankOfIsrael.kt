@@ -33,8 +33,8 @@ private const val SDMX_FORMAT = "sdmx-json"
 // PublicApi and SDMX feeds; every other currency is quoted per single unit.
 private val UNIT_PER_CURRENCY: Map<String, BigDecimal> =
     mapOf(
-        "JPY" to BigDecimal("100"),
-        "LBP" to BigDecimal("10"),
+        Currency.JPY.iso4217Alpha() to BigDecimal(100),
+        Currency.LBP.iso4217Alpha() to BigDecimal.TEN,
     )
 
 private fun unitFor(currency: String): BigDecimal = UNIT_PER_CURRENCY[currency] ?: BigDecimal.ONE

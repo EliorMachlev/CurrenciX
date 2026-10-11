@@ -16,23 +16,14 @@ internal class BankOfCanadaTimelineAdapter(
 ) : ResponseAdapter<Timeline>(Timeline::class.java) {
     @Synchronized
     @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): Timeline? {
-        // The whole document is read, whichever field answers first: Retrofit
-        // rejects a response its adapter left partly unread.
-        var result: Timeline? = null
-        reader.beginObject()
-        while (reader.hasNext()) {
-            val found =
-                when (reader.nextName()) {
-                    "message" -> errorResponse(reader.nextString())
-                    "observations" -> convertObservations(reader)
-                    else -> null.also { reader.skipValue() }
-                }
-            result = result ?: found
+    override fun fromJson(reader: JsonReader): Timeline? =
+        reader.readObjectFirstOf { name ->
+            when (name) {
+                FIELD_MESSAGE -> errorResponse(reader.nextString())
+                BANK_OF_CANADA_OBSERVATIONS -> convertObservations(reader)
+                else -> null.also { reader.skipValue() }
+            }
         }
-        reader.endObject()
-        return result
-    }
 
     private fun errorResponse(message: String?): Timeline =
         Timeline(
@@ -72,10 +63,10 @@ internal class BankOfCanadaTimelineAdapter(
         reader.beginObject()
         while (reader.hasNext()) {
             val nextName = reader.nextName()
-            if (nextName == "d") {
+            if (nextName == BANK_OF_CANADA_DATE) {
                 date = LocalDate.parse(reader.nextString())
             } else {
-                val (currency, value) = readCurrencyValue(reader, nextName)
+                val (currency, value) = reader.readBankOfCanadaValue(nextName)
                 if (currency == base) baseValue = value
                 if (currency == symbol) symbolValue = value
             }
@@ -86,17 +77,5 @@ internal class BankOfCanadaTimelineAdapter(
         } else {
             null
         }
-    }
-
-    private fun readCurrencyValue(
-        reader: JsonReader,
-        name: String,
-    ): Pair<Currency?, BigDecimal> {
-        val currency = Currency.fromString(name.bankOfCanadaIso())
-        reader.beginObject()
-        reader.skipName() // always "v"
-        val value = BigDecimal(reader.nextString())
-        reader.endObject()
-        return currency to value
     }
 }

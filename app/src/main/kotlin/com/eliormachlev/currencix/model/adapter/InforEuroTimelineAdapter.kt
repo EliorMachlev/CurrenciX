@@ -51,8 +51,8 @@ internal class InforEuroTimelineAdapter(
             when (reader.nextName()) {
                 "currencyIso" -> currencyIso = Currency.fromString(reader.nextString())
                 "amount" -> value = BigDecimal(reader.nextString())
-                "dateStart" -> dateStart = LocalDate.parse(reader.nextString(), INFOR_EURO_DATE_FORMATTER)
-                "dateEnd" -> dateEnd = LocalDate.parse(reader.nextString(), INFOR_EURO_DATE_FORMATTER)
+                "dateStart" -> dateStart = LocalDate.parse(reader.nextString(), SLASHED_DATE_FORMATTER)
+                "dateEnd" -> dateEnd = LocalDate.parse(reader.nextString(), SLASHED_DATE_FORMATTER)
                 else -> reader.skipValue()
             }
         }

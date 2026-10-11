@@ -28,10 +28,7 @@ class BankRossiiRatesXmlParser {
                 XmlPullParser.START_TAG -> {
                     if (tagname == "ValCurs") {
                         date =
-                            LocalDate.parse(
-                                parser.getAttributeValue(null, "Date"),
-                                BANK_ROSSII_DATE_FORMATTER,
-                            )
+                            parser.bankRossiiDate()
                     }
                 }
 

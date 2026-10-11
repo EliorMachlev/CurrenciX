@@ -5,6 +5,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.convert
+import com.eliormachlev.currencix.util.HUNDRED_PERCENT
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import java.math.BigDecimal
 import java.math.MathContext
@@ -30,7 +31,7 @@ internal fun subtotalOf(cart: SavedCart?): BigDecimal {
 /** The tip / tax on top of the items, in the base currency; zero without one. */
 internal fun tipOf(cart: SavedCart?): BigDecimal {
     val percent = cart?.extras?.tipPercent ?: return BigDecimal.ZERO
-    return subtotalOf(cart).multiply(percent).divide(PERCENT, MathContext.DECIMAL128)
+    return subtotalOf(cart).multiply(percent).divide(HUNDRED_PERCENT, MathContext.DECIMAL128)
 }
 
 /**
@@ -58,8 +59,6 @@ internal fun budgetLeft(
     total: BigDecimal,
     budget: BigDecimal,
 ): BigDecimal = budget - total
-
-private val PERCENT = BigDecimal(100)
 
 /**
  * Total in the destination currency: subtotal → converted at [rates] →

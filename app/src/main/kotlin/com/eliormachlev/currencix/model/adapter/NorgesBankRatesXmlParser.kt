@@ -27,13 +27,13 @@ class NorgesBankRatesXmlParser {
             val tagname = parser.name
             if (eventType == XmlPullParser.START_TAG) {
                 when {
-                    tagname.equals("Series", ignoreCase = true) -> {
+                    tagname.equals(NORGES_BANK_SERIES_TAG, ignoreCase = true) -> {
                         base = Currency.fromString(parser.getAttributeValue(null, "BASE_CUR"))
                         multiplier = parser.norgesBankUnitMultiplier()
                     }
 
                     tagname.equals("Obs", ignoreCase = true) -> {
-                        val obsDate = LocalDate.parse(parser.getAttributeValue(null, "TIME_PERIOD"))
+                        val obsDate = LocalDate.parse(parser.getAttributeValue(null, NORGES_BANK_TIME_PERIOD))
                         val value = parser.getAttributeValue(null, "OBS_VALUE").toBigDecimalOrNull()
                         recordObservation(base, value, obsDate, multiplier, requestedDate)
                         base = null

@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import com.eliormachlev.currencix.util.HUNDRED_PERCENT
 import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 import androidx.compose.foundation.text.KeyboardOptions as ComposeKeyboardOptions
@@ -24,7 +25,7 @@ import androidx.compose.foundation.text.KeyboardOptions as ComposeKeyboardOption
 // pasted input are auto-normalized to it so keyboards / spreadsheet paste
 // from other locales still work. Paste that exceeds the digit budget is
 // trimmed from the tail rather than rejected outright.
-private val FEE_PERCENT_RANGE = BigDecimal.ZERO..BigDecimal("100")
+private val FEE_PERCENT_RANGE = BigDecimal.ZERO..HUNDRED_PERCENT
 private const val FEE_PERCENT_MAX_INT_DIGITS = 3
 private const val FEE_PERCENT_MAX_FRACTION_DIGITS = 3
 

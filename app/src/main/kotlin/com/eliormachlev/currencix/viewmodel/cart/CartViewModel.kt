@@ -14,11 +14,11 @@ import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.afterDrop
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.newId
 import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
-import java.util.UUID
 
 class CartViewModel(
     app: Application,
@@ -142,7 +142,7 @@ class CartViewModel(
                 items =
                     cart.items +
                         CartItem(
-                            id = UUID.randomUUID().toString(),
+                            id = newId(),
                             name = name,
                             expression = expression,
                         ),
@@ -282,7 +282,7 @@ class CartViewModel(
         val cart = current.value ?: return
         val saved =
             cart.copy(
-                id = id ?: UUID.randomUUID().toString(),
+                id = id ?: newId(),
                 name = name,
                 createdAt = System.currentTimeMillis(),
             )

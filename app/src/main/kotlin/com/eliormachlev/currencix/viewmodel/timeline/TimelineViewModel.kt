@@ -30,6 +30,10 @@ private const val MAX_DECIMAL_PLACES = 7
 
 // Restrict a set of (date -> rate) entries to those on/after the user's scrub
 // point on the timeline. When [scrubDate] is null, no filtering happens.
+// The entry the change is measured from: the scrubbed day, or the range's first.
+private fun Set<Map.Entry<LocalDate, Rate?>>.pastEntry(scrubDate: LocalDate?): Map.Entry<LocalDate, Rate?>? =
+    if (scrubDate != null) find { it.key == scrubDate } else firstOrNull()
+
 private fun Set<Map.Entry<LocalDate, Rate?>>.fromScrub(scrubDate: LocalDate?): List<Map.Entry<LocalDate, Rate?>> =
     if (scrubDate == null) {
         this.toList()
@@ -219,124 +223,27 @@ class TimelineViewModel(
         }
 
     fun getRateCurrent(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> =
-        MediatorLiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>>().apply {
-            var rates: Map.Entry<LocalDate, Rate?>? = null
-
-            fun update() {
-                this.value = Pair(rates, decimalPlaces)
-            }
-
-            addSource(dbLiveItems) {
-                rates = it?.rates?.entries?.lastOrNull()
-                update()
-            }
-
-            addSource(getDecimalPlaces()) {
-                decimalPlaces = it
-                update()
-            }
-        }
+        rangeLiveData(followScrub = false) { rates, _ -> Pair(rates?.lastOrNull(), decimalPlaces) }
 
     fun getRatePast(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> =
-        MediatorLiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>>().apply {
-            var date: LocalDate? = null
-            var rates: Set<Map.Entry<LocalDate, Rate?>>? = null
-
-            fun update() {
-                this.value =
-                    if (date != null) {
-                        Pair(rates?.find { it.key == date }, decimalPlaces)
-                    } else {
-                        Pair(rates?.firstOrNull(), decimalPlaces)
-                    }
-            }
-
-            addSource(dbLiveItems) {
-                rates = it?.rates?.entries
-                update()
-            }
-
-            addSource(scrubDateLiveData) {
-                date = it
-                update()
-            }
-
-            addSource(getDecimalPlaces()) {
-                decimalPlaces = it
-                update()
-            }
-        }
+        rangeLiveData { rates, scrubDate -> Pair(rates?.pastEntry(scrubDate), decimalPlaces) }
 
     fun getRatesDifferencePercent(): LiveData<BigDecimal?> =
-        MediatorLiveData<BigDecimal?>().apply {
-            var scrubDate: LocalDate? = null
-            var rates: Set<Map.Entry<LocalDate, Rate?>>? = null
-
-            fun update() {
-                val past =
-                    if (scrubDate != null) {
-                        rates?.find { it.key == scrubDate }?.value
-                    } else {
-                        rates?.firstOrNull()?.value
-                    }
-                val current = rates?.lastOrNull()?.value
-
-                val ratePast = past?.value
-                val rateCurrent = current?.value
-                this.value = calculateDifference(ratePast, rateCurrent)
-            }
-
-            addSource(dbLiveItems) {
-                rates = it?.rates?.entries
-                update()
-            }
-
-            addSource(scrubDateLiveData) {
-                scrubDate = it
-                update()
-            }
+        rangeLiveData(withDecimals = false) { rates, scrubDate ->
+            calculateDifference(rates?.pastEntry(scrubDate)?.value?.value, rates?.lastOrNull()?.value?.value)
         }
 
     fun getRatesAverage(): LiveData<Pair<Rate?, Int>> = aggregateLiveData(::averageOf)
 
     fun getRatesMedian(): LiveData<Pair<Rate?, Int>> = aggregateLiveData(::medianOf)
 
-    // Shared MediatorLiveData scaffolding for range-wide statistics that reduce
-    // the visible-range value set to a single [Rate]. The reducer receives a
-    // non-empty list; an empty range short-circuits to null before it runs.
+    // Range-wide statistics that reduce the visible range's values to one
+    // [Rate]. The reducer receives a non-empty list; an empty range
+    // short-circuits to null before it runs.
     private fun aggregateLiveData(reducer: (List<BigDecimal>) -> BigDecimal): LiveData<Pair<Rate?, Int>> =
-        MediatorLiveData<Pair<Rate?, Int>>().apply {
-            var scrubDate: LocalDate? = null
-            var rates: Set<Map.Entry<LocalDate, Rate?>>? = null
-
-            fun update() {
-                val values =
-                    rates
-                        ?.fromScrub(scrubDate)
-                        ?.mapNotNull { entry -> entry.value?.value }
-                val aggregate: Rate? =
-                    if (values.isNullOrEmpty()) {
-                        null
-                    } else {
-                        Rate(target, reducer(values))
-                    }
-                this.value = Pair(aggregate, decimalPlaces)
-            }
-
-            addSource(dbLiveItems) {
-                rates = it?.rates?.entries
-                update()
-            }
-
-            addSource(scrubDateLiveData) {
-                scrubDate = it
-                update()
-            }
-
-            addSource(getDecimalPlaces()) {
-                decimalPlaces = it
-                update()
-            }
+        rangeLiveData { rates, scrubDate ->
+            val values = rates?.fromScrub(scrubDate)?.mapNotNull { entry -> entry.value?.value }
+            Pair(values?.takeIf { it.isNotEmpty() }?.let { Rate(target, reducer(it)) }, decimalPlaces)
         }
 
     fun getRatesMin(): LiveData<Triple<Rate?, LocalDate?, Int>> = extremeLiveData(pickMax = false, respectScrub = true)
@@ -357,39 +264,49 @@ class TimelineViewModel(
         pickMax: Boolean,
         respectScrub: Boolean,
     ): LiveData<Triple<Rate?, LocalDate?, Int>> =
-        MediatorLiveData<Triple<Rate?, LocalDate?, Int>>().apply {
+        rangeLiveData(followScrub = respectScrub) { rates, scrubDate ->
+            val slice = rates?.fromScrub(scrubDate)
+            val extreme: Rate? =
+                slice
+                    ?.mapNotNull { entry -> entry.value }
+                    ?.let { if (pickMax) it.maxByOrNull { r -> r.value } else it.minByOrNull { r -> r.value } }
+                    ?.let { Rate(target, it.value) }
+            val date: LocalDate? =
+                slice
+                    ?.findLast { entry -> entry.value?.value?.compareTo(extreme?.value) == 0 }
+                    ?.key
+            Triple(extreme, date, decimalPlaces)
+        }
+
+    /**
+     * A value [compute]d from the range's rates and the scrub date, redone
+     * when the rates change, the scrub date moves ([followScrub]) or the
+     * decimal places do ([withDecimals]; they also update [decimalPlaces]).
+     */
+    private fun <T> rangeLiveData(
+        followScrub: Boolean = true,
+        withDecimals: Boolean = true,
+        compute: (rates: Set<Map.Entry<LocalDate, Rate?>>?, scrubDate: LocalDate?) -> T,
+    ): LiveData<T> =
+        MediatorLiveData<T>().apply {
             var scrubDate: LocalDate? = null
             var rates: Set<Map.Entry<LocalDate, Rate?>>? = null
-
-            fun update() {
-                val slice = rates?.fromScrub(scrubDate)
-                val extreme: Rate? =
-                    slice
-                        ?.mapNotNull { entry -> entry.value }
-                        ?.let { if (pickMax) it.maxByOrNull { r -> r.value } else it.minByOrNull { r -> r.value } }
-                        ?.let { Rate(target, it.value) }
-                val date: LocalDate? =
-                    slice
-                        ?.findLast { entry -> entry.value?.value?.compareTo(extreme?.value) == 0 }
-                        ?.key
-                this.value = Triple(extreme, date, decimalPlaces)
-            }
-
+            val update = { value = compute(rates, scrubDate) }
             addSource(dbLiveItems) {
                 rates = it?.rates?.entries
                 update()
             }
-
-            if (respectScrub) {
+            if (followScrub) {
                 addSource(scrubDateLiveData) {
                     scrubDate = it
                     update()
                 }
             }
-
-            addSource(getDecimalPlaces()) {
-                decimalPlaces = it
-                update()
+            if (withDecimals) {
+                addSource(getDecimalPlaces()) {
+                    decimalPlaces = it
+                    update()
+                }
             }
         }
 

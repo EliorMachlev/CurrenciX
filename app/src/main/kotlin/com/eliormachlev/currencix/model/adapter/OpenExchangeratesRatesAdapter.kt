@@ -29,7 +29,7 @@ internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates>(Ex
                 while (reader.hasNext()) {
                     if (reader.peek() != JsonReader.Token.NAME) continue
                     when (reader.nextName()) {
-                        "rates" -> {
+                        FIELD_RATES -> {
                             addAll(parseRates(reader))
                         }
 
@@ -42,11 +42,11 @@ internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates>(Ex
                             time = zoned.toLocalTime().withSecond(0).withNano(0)
                         }
 
-                        "base" -> {
+                        FIELD_BASE -> {
                             base = Currency.fromString(reader.nextString())
                         }
 
-                        "message" -> {
+                        FIELD_MESSAGE -> {
                             errorMessage = reader.nextString()
                         }
 

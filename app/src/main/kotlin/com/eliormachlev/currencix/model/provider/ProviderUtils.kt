@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter
 
 // FOK (Faroese króna) is pegged 1:1 to DKK and not listed by upstream APIs —
 // query DKK instead and let callers relabel the result on the way back.
-internal fun Currency.apiCodeOrDkkForFok(): String = if (this == Currency.FOK) "DKK" else this.iso4217Alpha()
+internal fun Currency.apiCodeOrDkkForFok(): String = if (this == Currency.FOK) Currency.DKK.iso4217Alpha() else this.iso4217Alpha()
 
 // One shared KotlinJsonAdapterFactory across every provider. The factory
 // keeps its own class-to-adapter cache internally, so a single instance
@@ -35,6 +35,10 @@ internal val SHARED_LOCAL_DATE_ADAPTER: LocalDateAdapter = LocalDateAdapter()
 // the most recent business-day rate when the requested date lands on a weekend
 // or holiday — 7 days safely covers long weekends.
 internal const val TIMELINE_LOOKBACK_DAYS: Long = 7L
+
+// Path segment for "today's rates" on Frankfurter-style APIs (versus an
+// ISO-8601 date), used by Frankfurter.app and fer.ee.
+internal const val LATEST_DATE_PATH = "latest"
 
 // ISO-8601 (yyyy-MM-dd) — the format every upstream in this app accepts for
 // query-string dates. Hoisted so providers don't each keep a local alias.

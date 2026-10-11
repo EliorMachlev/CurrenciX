@@ -30,10 +30,7 @@ class BankRossiiTimelineXmlParser(
                 XmlPullParser.START_TAG -> {
                     if (tagname == "Record") {
                         date =
-                            LocalDate.parse(
-                                parser.getAttributeValue(null, "Date"),
-                                BANK_ROSSII_DATE_FORMATTER,
-                            )
+                            parser.bankRossiiDate()
                         currencyId = parser.getAttributeValue(null, "Id")
                     }
                 }

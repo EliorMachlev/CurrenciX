@@ -13,23 +13,14 @@ import java.time.LocalDate
 internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
     @Synchronized
     @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): ExchangeRates? {
-        // The whole document is read, whichever field answers first: Retrofit
-        // rejects a response its adapter left partly unread.
-        var result: ExchangeRates? = null
-        reader.beginObject()
-        while (reader.hasNext()) {
-            val found =
-                when (reader.nextName()) {
-                    "message" -> errorResponse(reader.nextString())
-                    "observations" -> readObservations(reader)
-                    else -> null.also { reader.skipValue() }
-                }
-            result = result ?: found
+    override fun fromJson(reader: JsonReader): ExchangeRates? =
+        reader.readObjectFirstOf { name ->
+            when (name) {
+                FIELD_MESSAGE -> errorResponse(reader.nextString())
+                BANK_OF_CANADA_OBSERVATIONS -> readObservations(reader)
+                else -> null.also { reader.skipValue() }
+            }
         }
-        reader.endObject()
-        return result
-    }
 
     private fun errorResponse(message: String?): ExchangeRates =
         ExchangeRates(
@@ -82,7 +73,7 @@ internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates>(Exchang
         reader.beginObject()
         while (reader.hasNext()) {
             val nextName = reader.nextName()
-            if (nextName == "d") {
+            if (nextName == BANK_OF_CANADA_DATE) {
                 date = LocalDate.parse(reader.nextString())
             } else {
                 readRate(reader, nextName)?.let(rates::add)
@@ -92,15 +83,12 @@ internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates>(Exchang
         return date
     }
 
+    // The value is Canadian dollars per unit; the rate is units per dollar.
     private fun readRate(
         reader: JsonReader,
         name: String,
     ): Rate? {
-        val currency = Currency.fromString(name.bankOfCanadaIso())
-        reader.beginObject()
-        reader.skipName() // always "v"
-        val value = BigDecimal(reader.nextString())
-        reader.endObject()
+        val (currency, value) = reader.readBankOfCanadaValue(name)
         return currency?.let { Rate(it, BigDecimal.ONE.divide(value, MathContext.DECIMAL128)) }
     }
 }
