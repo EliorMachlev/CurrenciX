@@ -273,4 +273,8 @@
     <string name="receipt_check_hint">Разчетено на телефона ви, затова проверете имената и цените.</string>
     <string name="receipt_language_pending">Имената на вашия език се разчитат по-добре, след като данните за текста се изтеглят.</string>
     <string name="recent_pair_alert_set">Зададено известие за курс</string>
+    <string name="receipt_setup_message">За четене на касови бележки е нужно еднократно изтегляне от няколко мегабайта: четецът на текст, който после работи офлайн на телефона ви.</string>
+    <string name="receipt_setup_download">Изтегляне</string>
+    <string name="receipt_setup_progress">Изтегляне на четеца на бележки…</string>
+    <string name="receipt_setup_failed">Четецът на бележки не можа да се изтегли. Опитайте по-късно.</string>
 </resources>

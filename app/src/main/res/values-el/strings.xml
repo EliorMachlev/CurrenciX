@@ -273,4 +273,8 @@
     <string name="receipt_check_hint">Διαβάστηκε στο τηλέφωνό σας, ελέγξτε ονόματα και τιμές.</string>
     <string name="receipt_language_pending">Τα ονόματα στη γλώσσα σας θα διαβάζονται καλύτερα μόλις ολοκληρωθεί η λήψη των δεδομένων κειμένου.</string>
     <string name="recent_pair_alert_set">Ορίστηκε ειδοποίηση ισοτιμίας</string>
+    <string name="receipt_setup_message">Η ανάγνωση αποδείξεων χρειάζεται μια εφάπαξ λήψη λίγων megabyte: τον αναγνώστη κειμένου, που μετά λειτουργεί εκτός σύνδεσης στο τηλέφωνό σας.</string>
+    <string name="receipt_setup_download">Λήψη</string>
+    <string name="receipt_setup_progress">Λήψη αναγνώστη αποδείξεων…</string>
+    <string name="receipt_setup_failed">Δεν ήταν δυνατή η λήψη του αναγνώστη αποδείξεων. Δοκιμάστε αργότερα.</string>
 </resources>

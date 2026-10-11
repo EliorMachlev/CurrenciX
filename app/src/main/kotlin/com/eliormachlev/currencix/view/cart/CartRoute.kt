@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,8 @@ import com.eliormachlev.currencix.view.cart.compose.CartScreenActions
 import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptReadingSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptReviewSheet
+import com.eliormachlev.currencix.view.cart.compose.ReceiptSetupOfferSheet
+import com.eliormachlev.currencix.view.cart.compose.ReceiptSetupProgressSheet
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ReadingDirection
@@ -111,7 +114,23 @@ private fun ReceiptOverlays(
     val resources = LocalResources.current
     val currency by host.viewModel.getBaseCurrency().observeAsState()
     val lines = scan.lines
+    val setup = scan.setup
+    if (scan.setupFailed) {
+        val failed = stringResource(R.string.receipt_setup_failed)
+        LaunchedEffect(Unit) {
+            snackbar?.show(failed)
+            scan.setupFailureShown()
+        }
+    }
     when {
+        setup == ReceiptSetup.Offer -> {
+            ReceiptSetupOfferSheet(onDownload = scan::acceptSetup, onDismiss = scan::dismissSetup)
+        }
+
+        setup is ReceiptSetup.Installing -> {
+            ReceiptSetupProgressSheet(fraction = setup.fraction, onDismiss = scan::dismissSetup)
+        }
+
         scan.reading -> {
             // Closing it doesn't stop the reading; the review follows when it's done.
             var hidden by remember { mutableStateOf(false) }
@@ -202,7 +221,7 @@ private fun cartMenu(
     val shoppingList = stringResource(if (shoppingMode) R.string.cart_menu_shopping_list_off else R.string.cart_menu_shopping_list)
     return remember(host, scan, scanLabel, share, extras, shoppingList, shoppingMode, saveAs, load, export, import, clear) {
         listOf(
-            OverflowAction(scanLabel, R.drawable.ic_receipt) { host.overlays.cartChoice = scan.sourceChoice() },
+            OverflowAction(scanLabel, R.drawable.ic_receipt) { scan.begin { host.overlays.cartChoice = scan.sourceChoice() } },
             OverflowAction(share, R.drawable.ic_share) { host.shareCoordinator.show() },
             OverflowAction(extras, R.drawable.ic_split) { host.overlays.extrasVisible = true },
             OverflowAction(shoppingList, R.drawable.ic_checklist) { host.viewModel.setShoppingMode(!shoppingMode) },

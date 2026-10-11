@@ -279,4 +279,8 @@
     <string name="receipt_check_hint">Розпізнано на телефоні, тож перевірте назви й ціни.</string>
     <string name="receipt_language_pending">Назви вашою мовою розпізнаватимуться краще після завантаження текстових даних.</string>
     <string name="recent_pair_alert_set">Сповіщення про курс задано</string>
+    <string name="receipt_setup_message">Для читання чеків потрібне одноразове завантаження кількох мегабайт: модуля розпізнавання тексту, який потім працює на телефоні без мережі.</string>
+    <string name="receipt_setup_download">Завантажити</string>
+    <string name="receipt_setup_progress">Завантаження модуля читання чеків…</string>
+    <string name="receipt_setup_failed">Не вдалося завантажити модуль читання чеків. Спробуйте пізніше.</string>
 </resources>

@@ -273,4 +273,8 @@
     <string name="receipt_check_hint">A telefonodon olvastuk be, ezért ellenőrizd a neveket és árakat.</string>
     <string name="receipt_language_pending">A saját nyelvű nevek jobban olvashatók lesznek, ha letöltődnek a szövegadatok.</string>
     <string name="recent_pair_alert_set">Árfolyam-értesítés beállítva</string>
+    <string name="receipt_setup_message">A blokkok olvasásához egyszeri, néhány megabájtos letöltés kell: a szövegolvasó, amely utána offline működik a telefonon.</string>
+    <string name="receipt_setup_download">Letöltés</string>
+    <string name="receipt_setup_progress">A blokkolvasó letöltése…</string>
+    <string name="receipt_setup_failed">A blokkolvasót nem sikerült letölteni. Próbálja újra később.</string>
 </resources>

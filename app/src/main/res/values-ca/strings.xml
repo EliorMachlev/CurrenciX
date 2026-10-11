@@ -277,4 +277,8 @@
     <string name="receipt_check_hint">Llegit al telèfon: comprova els noms i els preus.</string>
     <string name="receipt_language_pending">Els noms en el teu idioma es llegiran millor quan acabi la baixada de les dades de text.</string>
     <string name="recent_pair_alert_set">Alerta de canvi activa</string>
+    <string name="receipt_setup_message">Per llegir tiquets cal una baixada única d\'uns quants megabytes: el lector de text, que després funciona sense connexió al telèfon.</string>
+    <string name="receipt_setup_download">Baixa</string>
+    <string name="receipt_setup_progress">S\'està baixant el lector de tiquets…</string>
+    <string name="receipt_setup_failed">No s\'ha pogut baixar el lector de tiquets. Torna-ho a provar més tard.</string>
 </resources>

@@ -92,7 +92,7 @@ android {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -112,6 +112,11 @@ android {
             buildConfigField("String", "PR_URL", "\"$prUrl\"")
         }
     }
+
+    // Receipt scanning's recognizer, on demand for Play (see :ocr). Bundles
+    // only: AGP can't make per-CPU APKs with a feature module (it links the
+    // feature against one base APK), and only Play installs features anyway.
+    if (buildsBundle) dynamicFeatures += setOf(":ocr")
 
     flavorDimensions.add("version")
     productFlavors {
@@ -300,10 +305,13 @@ dependencies {
     // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
     // opt-in via Settings until #147 onboarding wires the hero opt-in.
     implementation("androidx.work:work-runtime-ktx:2.12.0")
-    // Receipt scanning: Tesseract OCR on the device (Apache-2.0), from JitPack
-    // (see settings.gradle). English data ships in assets/tessdata; other
-    // languages download in the background (ocr/TessdataDownloadWorker).
-    implementation("com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.8.0")
+    // Receipt scanning: Tesseract OCR on the device (:ocr-engine), built into
+    // the F-Droid app and installed on demand from :ocr in the Play app
+    // through Play Feature Delivery. The F-Droid app ships English data in
+    // its assets; other languages (and English, on Play) download in the
+    // background (ocr/TessdataDownloadWorker).
+    "fdroidImplementation"(project(":ocr-engine"))
+    "playImplementation"("com.google.android.play:feature-delivery-ktx:2.1.0")
     implementation("androidx.exifinterface:exifinterface:1.4.2")
     // charts
     val vicoVersion = "3.3.1"

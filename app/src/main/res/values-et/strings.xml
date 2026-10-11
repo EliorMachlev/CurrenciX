@@ -273,4 +273,8 @@
     <string name="receipt_check_hint">Loetud sinu telefonis, seega kontrolli nimesid ja hindu.</string>
     <string name="receipt_language_pending">Sinu keele nimed loetakse paremini, kui tekstiandmed on alla laaditud.</string>
     <string name="recent_pair_alert_set">Kursiteavitus seatud</string>
+    <string name="receipt_setup_message">Tšekkide lugemiseks on vaja ühekordset mõne megabaidist allalaadimist: tekstilugejat, mis töötab siis telefonis võrguühenduseta.</string>
+    <string name="receipt_setup_download">Laadi alla</string>
+    <string name="receipt_setup_progress">Tšekilugeja allalaadimine…</string>
+    <string name="receipt_setup_failed">Tšekilugejat ei õnnestunud alla laadida. Proovi hiljem uuesti.</string>
 </resources>

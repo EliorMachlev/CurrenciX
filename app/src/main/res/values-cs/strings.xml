@@ -279,4 +279,8 @@
     <string name="receipt_check_hint">Přečteno v telefonu, takže zkontrolujte názvy a ceny.</string>
     <string name="receipt_language_pending">Názvy ve vašem jazyce se přečtou lépe, až se dokončí stahování textových dat.</string>
     <string name="recent_pair_alert_set">Upozornění na kurz nastaveno</string>
+    <string name="receipt_setup_message">Čtení účtenek vyžaduje jednorázové stažení několika megabajtů: čtečky textu, která pak funguje offline ve vašem telefonu.</string>
+    <string name="receipt_setup_download">Stáhnout</string>
+    <string name="receipt_setup_progress">Stahování čtečky účtenek…</string>
+    <string name="receipt_setup_failed">Čtečku účtenek se nepodařilo stáhnout. Zkuste to později.</string>
 </resources>

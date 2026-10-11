@@ -274,4 +274,8 @@
     <string name="receipt_check_hint">Lest på telefonen, så sjekk navn og priser.</string>
     <string name="receipt_language_pending">Navn på ditt språk leses bedre når tekstdataene er lastet ned.</string>
     <string name="recent_pair_alert_set">Kursvarsel satt</string>
+    <string name="receipt_setup_message">Lesing av kvitteringer krever en engangsnedlasting på noen få megabyte: tekstleseren, som deretter virker frakoblet på telefonen.</string>
+    <string name="receipt_setup_download">Last ned</string>
+    <string name="receipt_setup_progress">Laster ned kvitteringsleseren…</string>
+    <string name="receipt_setup_failed">Kunne ikke laste ned kvitteringsleseren. Prøv igjen senere.</string>
 </resources>

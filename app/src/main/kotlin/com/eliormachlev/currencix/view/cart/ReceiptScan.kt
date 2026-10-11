@@ -14,20 +14,35 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.ocr.OcrInstall
 import com.eliormachlev.currencix.ocr.TessLanguage
 import com.eliormachlev.currencix.ocr.Tessdata
 import com.eliormachlev.currencix.ocr.TessdataDownloadWorker
+import com.eliormachlev.currencix.ocr.installReceiptReader
+import com.eliormachlev.currencix.ocr.isReceiptReaderReady
 import com.eliormachlev.currencix.ocr.readReceipt
 import com.eliormachlev.currencix.util.ReceiptLine
 import com.eliormachlev.currencix.util.ReceiptParser
 import com.eliormachlev.currencix.util.cacheFile
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 // Where the camera app writes the photo (see file_provider_paths.xml); deleted once read.
 private const val RECEIPTS_DIR = "receipts"
 private const val PHOTO_NAME = "receipt.jpg"
+
+/** Getting the receipt reader onto the device, where the build doesn't carry it (Play). */
+sealed interface ReceiptSetup {
+    /** Asking whether to download it. */
+    data object Offer : ReceiptSetup
+
+    /** Downloading; [fraction] done when known. */
+    data class Installing(
+        val fraction: Float?,
+    ) : ReceiptSetup
+}
 
 /** Where a receipt scan stands: reading the photo, or its lines found, for review. */
 @Stable
@@ -35,6 +50,21 @@ class ReceiptScan internal constructor() {
     // Set by [rememberReceiptScan], where the photo launchers live.
     internal var takePhoto: () -> Unit = {}
     internal var choosePhoto: () -> Unit = {}
+    internal var startSetup: () -> Unit = {}
+    internal var cancelSetup: () -> Unit = {}
+
+    // What to do once the reader is ready: show the photo choice.
+    internal var afterSetup: () -> Unit = {}
+
+    /** The reader's download, while it's being offered or running; null otherwise. */
+    var setup by mutableStateOf<ReceiptSetup?>(null)
+        internal set
+
+    /** The download just failed (cleared once said, see [setupFailureShown]). */
+    var setupFailed by mutableStateOf(false)
+        internal set
+
+    internal var isReady: () -> Boolean = { true }
 
     /** The photo is being read. */
     var reading by mutableStateOf(false)
@@ -63,6 +93,33 @@ class ReceiptScan internal constructor() {
     fun clear() {
         lines = null
     }
+
+    /**
+     * Starts a scan: [then] (show the photo choice) right away when the
+     * reader is on the device, otherwise once its download, offered first,
+     * is done.
+     */
+    fun begin(then: () -> Unit) {
+        if (isReady()) {
+            then()
+        } else {
+            afterSetup = then
+            setup = ReceiptSetup.Offer
+        }
+    }
+
+    /** The offered download, accepted. */
+    fun acceptSetup() = startSetup()
+
+    /** The offer or the progress, closed: the download goes on, but nothing follows it here. */
+    fun dismissSetup() {
+        cancelSetup()
+        setup = null
+    }
+
+    fun setupFailureShown() {
+        setupFailed = false
+    }
 }
 
 /**
@@ -70,7 +127,9 @@ class ReceiptScan internal constructor() {
  * photo picker (neither needs a permission), read on the device
  * ([readReceipt]) and split into items ([ReceiptParser]). The app
  * language's OCR data is fetched in the background the first time a scan
- * starts ([TessdataDownloadWorker]); until it's here, English is used.
+ * starts ([TessdataDownloadWorker]); until it's here, English is used. Where
+ * the reader itself isn't on the device (the Play app's on-demand module),
+ * the first scan offers to download it ([installReceiptReader]).
  */
 @Composable
 fun rememberReceiptScan(): ReceiptScan {
@@ -102,5 +161,46 @@ fun rememberReceiptScan(): ReceiptScan {
         fetchLanguage()
         picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
+    ReaderSetup(scan)
     return scan
+}
+
+// Wires [scan]'s download of the reader: the store's confirmation dialog
+// when it asks for one, progress into ReceiptSetup.Installing, and on to the
+// photo choice once it's done.
+@Composable
+private fun ReaderSetup(scan: ReceiptScan) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val confirm = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {}
+    val job = remember { arrayOfNulls<Job>(1) }
+    scan.isReady = { isReceiptReaderReady(context) }
+    scan.cancelSetup = { job[0]?.cancel() }
+    scan.startSetup = {
+        scan.setup = ReceiptSetup.Installing(null)
+        job[0] =
+            scope.launch {
+                installReceiptReader(context).collect { step ->
+                    when (step) {
+                        is OcrInstall.Downloading -> {
+                            scan.setup = ReceiptSetup.Installing(step.fraction)
+                        }
+
+                        is OcrInstall.NeedsConfirmation -> {
+                            step.confirm(confirm)
+                        }
+
+                        OcrInstall.Installed -> {
+                            scan.setup = null
+                            scan.afterSetup()
+                        }
+
+                        OcrInstall.Failed -> {
+                            scan.setup = null
+                            scan.setupFailed = true
+                        }
+                    }
+                }
+            }
+    }
 }

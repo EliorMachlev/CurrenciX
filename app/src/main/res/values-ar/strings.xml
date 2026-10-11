@@ -285,4 +285,8 @@
     <string name="receipt_check_hint">تمت القراءة على هاتفك، لذا راجع الأسماء والأسعار.</string>
     <string name="receipt_language_pending">تُقرأ الأسماء بلغتك بشكل أفضل بعد انتهاء تنزيل بيانات النص.</string>
     <string name="recent_pair_alert_set">تم ضبط تنبيه سعر</string>
+    <string name="receipt_setup_message">قراءة الإيصالات تحتاج إلى تنزيل لمرة واحدة بحجم بضعة ميغابايت: قارئ النصوص، الذي يعمل بعدها دون اتصال على هاتفك.</string>
+    <string name="receipt_setup_download">تنزيل</string>
+    <string name="receipt_setup_progress">جارٍ تنزيل قارئ الإيصالات…</string>
+    <string name="receipt_setup_failed">تعذّر تنزيل قارئ الإيصالات. حاول لاحقًا.</string>
 </resources>

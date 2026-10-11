@@ -273,4 +273,8 @@
     <string name="receipt_check_hint">Legita en via telefono, do kontrolu nomojn kaj prezojn.</string>
     <string name="receipt_language_pending">Nomoj en via lingvo legiĝos pli bone post kiam la tekstaj datumoj elŝutiĝos.</string>
     <string name="recent_pair_alert_set">Kurz-averto agordita</string>
+    <string name="receipt_setup_message">Legi kvitancojn bezonas unufojan elŝuton de kelkaj megabajtoj: la tekstlegilon, kiu poste funkcias senrete en via telefono.</string>
+    <string name="receipt_setup_download">Elŝuti</string>
+    <string name="receipt_setup_progress">Elŝutante la kvitancan legilon…</string>
+    <string name="receipt_setup_failed">Ne eblis elŝuti la kvitancan legilon. Reprovu poste.</string>
 </resources>

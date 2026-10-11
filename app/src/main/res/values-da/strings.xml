@@ -272,4 +272,8 @@
     <string name="receipt_check_hint">Læst på din telefon, så tjek navne og priser.</string>
     <string name="receipt_language_pending">Navne på dit sprog læses bedre, når tekstdataene er hentet.</string>
     <string name="recent_pair_alert_set">Kursalarm sat</string>
+    <string name="receipt_setup_message">Læsning af kvitteringer kræver en engangsdownload på et par megabyte: tekstlæseren, som derefter virker offline på din telefon.</string>
+    <string name="receipt_setup_download">Download</string>
+    <string name="receipt_setup_progress">Downloader kvitteringslæseren…</string>
+    <string name="receipt_setup_failed">Kvitteringslæseren kunne ikke downloades. Prøv igen senere.</string>
 </resources>

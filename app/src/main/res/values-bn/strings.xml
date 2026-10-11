@@ -273,4 +273,8 @@
     <string name="receipt_check_hint">আপনার ফোনেই পড়া হয়েছে, তাই নাম ও দাম মিলিয়ে নিন।</string>
     <string name="receipt_language_pending">টেক্সট ডেটা ডাউনলোড শেষ হলে আপনার ভাষার নাম আরও ভালোভাবে পড়া যাবে।</string>
     <string name="recent_pair_alert_set">হার সতর্কতা সেট করা আছে</string>
+    <string name="receipt_setup_message">রসিদ পড়তে কয়েক মেগাবাইটের একবারের ডাউনলোড লাগবে: টেক্সট রিডার, যা পরে আপনার ফোনে অফলাইনে কাজ করে।</string>
+    <string name="receipt_setup_download">ডাউনলোড</string>
+    <string name="receipt_setup_progress">রসিদ রিডার ডাউনলোড হচ্ছে…</string>
+    <string name="receipt_setup_failed">রসিদ রিডার ডাউনলোড করা যায়নি। পরে আবার চেষ্টা করুন।</string>
 </resources>

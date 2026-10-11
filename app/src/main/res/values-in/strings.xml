@@ -270,4 +270,8 @@
     <string name="receipt_check_hint">Dibaca di ponsel Anda, jadi periksa nama dan harga.</string>
     <string name="receipt_language_pending">Nama dalam bahasa Anda terbaca lebih baik setelah data teksnya selesai diunduh.</string>
     <string name="recent_pair_alert_set">Peringatan kurs dipasang</string>
+    <string name="receipt_setup_message">Membaca struk memerlukan unduhan sekali sebesar beberapa megabyte: pembaca teks, yang lalu berjalan offline di ponsel Anda.</string>
+    <string name="receipt_setup_download">Unduh</string>
+    <string name="receipt_setup_progress">Mengunduh pembaca struk…</string>
+    <string name="receipt_setup_failed">Tidak dapat mengunduh pembaca struk. Coba lagi nanti.</string>
 </resources>

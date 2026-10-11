@@ -41,6 +41,9 @@ val detektVariantTasks =
         "app" to listOf("detektFdroidDebug", "detektPlayRelease", "detektFdroidDebugUnitTest"),
         "helpers" to listOf("detektMain", "detektTest"),
         "baselineprofile" to listOf("detektFdroidBenchmarkRelease"),
+        "ocr-engine" to listOf("detektRelease"),
+        // A manifest and a build file, built only with a bundle: no code to check.
+        "ocr" to emptyList(),
     )
 
 subprojects {

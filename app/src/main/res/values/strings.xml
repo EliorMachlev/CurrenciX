@@ -295,4 +295,8 @@
     <string name="receipt_check_hint">Read on your phone, so check the names and prices.</string>
     <string name="receipt_language_pending">Names in your language read better once its text data finishes downloading.</string>
     <string name="recent_pair_alert_set">Rate alert set</string>
+    <string name="receipt_setup_message">Reading receipts needs a one-time download of a few megabytes: the text reader, which then works offline on your phone.</string>
+    <string name="receipt_setup_download">Download</string>
+    <string name="receipt_setup_progress">Downloading the receipt reader…</string>
+    <string name="receipt_setup_failed">Couldn\'t download the receipt reader. Try again later.</string>
 </resources>

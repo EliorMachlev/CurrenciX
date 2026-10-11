@@ -7,16 +7,19 @@ import android.graphics.Matrix
 import android.net.Uri
 import androidx.exifinterface.media.ExifInterface
 import com.eliormachlev.currencix.util.AppDispatchers
-import com.googlecode.tesseract.android.TessBaseAPI
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.withContext
 
 // Tesseract reads printed text well at this size; bigger is slower, not better.
 private const val MAX_IMAGE_SIDE = 2400
 
 /**
- * The text on a receipt photo ([uri]), read on the device with Tesseract in
- * [languages] ("heb+eng", see [Tessdata.languages]). Empty when the image
- * can't be read. Runs off the main thread: it takes a few seconds.
+ * The text on a receipt photo ([uri]), read on the device by this build's
+ * recognizer ([ocrEngine]) in [languages] ("heb+eng", see
+ * [Tessdata.languages]). Empty when the image can't be read. Only once
+ * [isReceiptReaderReady]. Runs off the main thread: it takes a few seconds.
  */
 suspend fun readReceipt(
     context: Context,
@@ -25,19 +28,39 @@ suspend fun readReceipt(
     dispatchers: AppDispatchers = AppDispatchers.production,
 ): String =
     withContext(dispatchers.default) {
-        Tessdata.ensureBundled(context)
         val bitmap = decodeUpright(context, uri) ?: return@withContext ""
-        val api = TessBaseAPI()
         try {
-            if (!api.init(Tessdata.root(context).absolutePath, languages)) return@withContext ""
-            // A receipt is one column of lines.
-            api.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_COLUMN
-            api.setImage(bitmap)
-            api.utF8Text.orEmpty()
+            ocrEngine.recognizer(context).recognize(bitmap, Tessdata.root(context).absolutePath, languages)
         } finally {
-            api.recycle()
             bitmap.recycle()
         }
+    }
+
+/** Whether a receipt can be read now: the recognizer and the English data are on the device. */
+fun isReceiptReaderReady(context: Context): Boolean = ocrEngine.isInstalled(context) && Tessdata.ensureEnglish(context)
+
+/**
+ * Gets what reading a receipt needs that isn't on the device yet: the
+ * recognizer ([OcrEngine.install]) and the English data (downloaded where
+ * the build doesn't carry it), reporting how it goes. Ends with
+ * [OcrInstall.Installed] or [OcrInstall.Failed].
+ */
+fun installReceiptReader(context: Context): Flow<OcrInstall> =
+    flow {
+        if (!Tessdata.ensureEnglish(context)) TessdataDownloadWorker.enqueue(context, TessLanguage.ENGLISH)
+        var outcome: OcrInstall = OcrInstall.Failed
+        ocrEngine
+            .install(context)
+            .transformWhile { step ->
+                emit(step)
+                step !is OcrInstall.Installed && step !is OcrInstall.Failed
+            }.collect { step ->
+                outcome = step
+                emit(step)
+            }
+        if (outcome != OcrInstall.Installed) return@flow
+        if (!Tessdata.isInstalled(context, TessLanguage.ENGLISH)) emit(OcrInstall.Downloading(null))
+        emit(if (TessdataDownloadWorker.awaitInstalled(context, TessLanguage.ENGLISH)) OcrInstall.Installed else OcrInstall.Failed)
     }
 
 // The photo, scaled down to at most MAX_IMAGE_SIDE and turned the way it was taken.

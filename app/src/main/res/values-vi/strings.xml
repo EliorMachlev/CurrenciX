@@ -270,4 +270,8 @@
     <string name="receipt_check_hint">Đọc trên điện thoại của bạn, nên hãy kiểm tra tên và giá.</string>
     <string name="receipt_language_pending">Tên bằng ngôn ngữ của bạn sẽ được đọc tốt hơn khi dữ liệu văn bản tải xong.</string>
     <string name="recent_pair_alert_set">Đã đặt cảnh báo tỷ giá</string>
+    <string name="receipt_setup_message">Đọc hóa đơn cần tải xuống một lần vài megabyte: bộ đọc văn bản, sau đó chạy ngoại tuyến trên điện thoại của bạn.</string>
+    <string name="receipt_setup_download">Tải xuống</string>
+    <string name="receipt_setup_progress">Đang tải bộ đọc hóa đơn…</string>
+    <string name="receipt_setup_failed">Không tải được bộ đọc hóa đơn. Hãy thử lại sau.</string>
 </resources>

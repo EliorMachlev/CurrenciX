@@ -67,11 +67,4 @@ class TessdataTest {
         assertFalse(target.exists())
         assertEquals("eng", Tessdata.languages(context, TessLanguage.HEBREW))
     }
-
-    @Test
-    fun `the bundled English file is the expected one`() {
-        Tessdata.ensureBundled(context)
-        assertTrue(Tessdata.isInstalled(context, TessLanguage.ENGLISH))
-        assertEquals("eng", Tessdata.languages(context, null))
-    }
 }

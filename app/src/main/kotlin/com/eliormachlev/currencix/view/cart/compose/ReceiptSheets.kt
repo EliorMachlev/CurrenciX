@@ -44,6 +44,41 @@ fun ReceiptReadingSheet(onDismiss: () -> Unit) {
     }
 }
 
+/** The first scan where the reader isn't on the device yet: download it? */
+@Composable
+fun ReceiptSetupOfferSheet(
+    onDownload: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    LedgerPromptSheet(
+        title = stringResource(R.string.receipt_scan),
+        confirmLabel = stringResource(R.string.receipt_setup_download),
+        onConfirm = onDownload,
+        onDismiss = onDismiss,
+    ) {
+        PromptMessage(stringResource(R.string.receipt_setup_message))
+    }
+}
+
+/** The reader downloading, [fraction] of the way when known; closing it lets it carry on unseen. */
+@Composable
+fun ReceiptSetupProgressSheet(
+    fraction: Float?,
+    onDismiss: () -> Unit,
+) {
+    LedgerBottomSheet(title = stringResource(R.string.receipt_scan), onDismiss = onDismiss) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = Spacing.XXLarge, vertical = Spacing.Large)) {
+            PromptMessage(stringResource(R.string.receipt_setup_progress))
+            Spacer(Modifier.height(Spacing.Medium))
+            if (fraction == null) {
+                LinearProgressIndicator(Modifier.fillMaxWidth())
+            } else {
+                LinearProgressIndicator(progress = { fraction }, modifier = Modifier.fillMaxWidth())
+            }
+        }
+    }
+}
+
 /**
  * The items found on a receipt, each ticked, prices in the cart's
  * [currency]: untick what isn't wanted, then add the rest ([onAdd]). With

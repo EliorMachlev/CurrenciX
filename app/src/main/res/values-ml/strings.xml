@@ -277,4 +277,8 @@
     <string name="receipt_check_hint">ഫോണിൽ തന്നെ വായിച്ചതാണ്, അതിനാൽ പേരുകളും വിലകളും പരിശോധിക്കുക.</string>
     <string name="receipt_language_pending">ടെക്സ്റ്റ് ഡാറ്റ ഡൗൺലോഡ് പൂർത്തിയാകുമ്പോൾ നിങ്ങളുടെ ഭാഷയിലെ പേരുകൾ കൂടുതൽ നന്നായി വായിക്കും.</string>
     <string name="recent_pair_alert_set">നിരക്ക് അറിയിപ്പ് സജ്ജമാക്കി</string>
+    <string name="receipt_setup_message">രസീതുകൾ വായിക്കാൻ കുറച്ച് മെഗാബൈറ്റിന്റെ ഒറ്റത്തവണ ഡൗൺലോഡ് വേണം: ടെക്സ്റ്റ് റീഡർ, പിന്നീട് ഫോണിൽ ഓഫ്‌ലൈനായി പ്രവർത്തിക്കും.</string>
+    <string name="receipt_setup_download">ഡൗൺലോഡ്</string>
+    <string name="receipt_setup_progress">രസീത് റീഡർ ഡൗൺലോഡ് ചെയ്യുന്നു…</string>
+    <string name="receipt_setup_failed">രസീത് റീഡർ ഡൗൺലോഡ് ചെയ്യാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.</string>
 </resources>

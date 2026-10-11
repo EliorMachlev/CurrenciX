@@ -277,4 +277,8 @@
     <string name="receipt_check_hint">Lu sur votre téléphone : vérifiez les noms et les prix.</string>
     <string name="receipt_language_pending">Les noms dans votre langue seront mieux lus une fois ses données de texte téléchargées.</string>
     <string name="recent_pair_alert_set">Alerte de taux active</string>
+    <string name="receipt_setup_message">Lire les tickets nécessite un téléchargement unique de quelques mégaoctets : le lecteur de texte, qui fonctionne ensuite hors ligne sur votre téléphone.</string>
+    <string name="receipt_setup_download">Télécharger</string>
+    <string name="receipt_setup_progress">Téléchargement du lecteur de tickets…</string>
+    <string name="receipt_setup_failed">Impossible de télécharger le lecteur de tickets. Réessayez plus tard.</string>
 </resources>

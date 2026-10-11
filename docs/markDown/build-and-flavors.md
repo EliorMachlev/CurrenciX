@@ -135,10 +135,13 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 
 | Dependency | Version | Note |
 |---|---|---|
-| `com.github.adaptech-cz.Tesseract4Android:tesseract4android` | 4.8.0 | Tesseract OCR with Leptonica, native, Apache-2.0. Published only on JitPack, which `settings.gradle` allows for this one group (`exclusiveContent`). Its native libraries are about 7 MB per ABI (four ABIs), so per-ABI splits or an App Bundle keep the install small. It has no R8 rules of its own; `app/proguard-rules.pro` keeps its two packages, whose native code finds Java members by name |
+| `com.github.adaptech-cz.Tesseract4Android:tesseract4android` | 4.8.0 | Tesseract OCR with Leptonica, native, Apache-2.0, in the `:ocr-engine` module. Published only on JitPack, which `settings.gradle` allows for this one group (`exclusiveContent`). Its native libraries are about 7 MB per ABI (four ABIs). It has no R8 rules of its own; `ocr-engine/consumer-rules.pro` keeps its two packages, whose native code finds Java members by name, and `TesseractRecognizer`, which the Play app loads by name |
+| `com.google.android.play:feature-delivery-ktx` | 2.1.0 | **Play flavor only** (`playImplementation`): installs the `:ocr` feature module on demand. F-Droid's scanner checks only the flavors it builds, and the F-Droid app has no Play code |
 | `androidx.exifinterface:exifinterface` | 1.4.2 | A receipt photo's orientation, so it's read upright |
 
-English OCR data (`assets/tessdata/eng.traineddata`, tessdata_fast 4.1.0, 4.1 MB) ships in the APK; the other languages download on demand and are checked against SHA-256s in `ocr/TessLanguage.kt`.
+Modules: `:ocr-engine` (an Android library: Tesseract and `TesseractRecognizer`) and `:ocr` (a dynamic feature: just a manifest and a build file). The F-Droid app depends on `:ocr-engine` directly; the Play bundle carries it in `:ocr`, on demand. `:ocr` is declared in `:app` (`dynamicFeatures`) and has variants only in a bundle build: AGP can't make per-CPU APKs with a feature module, and only Play installs features.
+
+English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.1.0, 4.1 MB) ships in the F-Droid APKs; the Play app downloads it with the recognizer. The other languages download on demand in both, all checked against SHA-256s in `ocr/TessLanguage.kt`.
 
 ### Charts
 

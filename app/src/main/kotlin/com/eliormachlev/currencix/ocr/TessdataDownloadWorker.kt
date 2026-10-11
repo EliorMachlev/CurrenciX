@@ -11,6 +11,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.eliormachlev.currencix.util.HttpClientProvider
+import kotlinx.coroutines.flow.first
 import okhttp3.Request
 import timber.log.Timber
 import java.io.IOException
@@ -75,6 +76,23 @@ internal class TessdataDownloadWorker(
                     .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_MINUTES, TimeUnit.MINUTES)
                     .build()
             WorkManager.getInstance(context).enqueueUniqueWork(UNIQUE_PREFIX + language.code, ExistingWorkPolicy.KEEP, request)
+        }
+
+        /**
+         * Waits for [language]'s download ([enqueue]d before) to end; true
+         * when its file is then on the device. A download retrying after a
+         * failure keeps it waiting.
+         */
+        suspend fun awaitInstalled(
+            context: Context,
+            language: TessLanguage,
+        ): Boolean {
+            if (Tessdata.isInstalled(context, language)) return true
+            WorkManager
+                .getInstance(context)
+                .getWorkInfosForUniqueWorkFlow(UNIQUE_PREFIX + language.code)
+                .first { infos -> infos.none { !it.state.isFinished } }
+            return Tessdata.isInstalled(context, language)
         }
     }
 }

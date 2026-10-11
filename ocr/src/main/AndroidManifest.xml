@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution">
+
+    <!-- Downloaded when someone first scans a receipt (see PlayOcrEngine), never
+         fused into a device's base APK, and not in instant or pre-Lollipop splits. -->
+    <dist:module dist:title="@string/receipt_scan">
+        <dist:delivery>
+            <dist:on-demand />
+        </dist:delivery>
+        <dist:fusing dist:include="false" />
+    </dist:module>
+
+    <application android:hasCode="true" />
+</manifest>
