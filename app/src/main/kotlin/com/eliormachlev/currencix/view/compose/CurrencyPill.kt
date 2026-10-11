@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.compose
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,18 +16,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.view.navigation.rememberPillTransition
@@ -112,8 +124,14 @@ fun CurrencyPairRow(
     modifier: Modifier = Modifier,
     swap: @Composable () -> Unit,
 ) {
+    val trade = rememberPillTrade(from, to)
+    var rowWidth by remember { mutableIntStateOf(0) }
+    var pillWidth by remember { mutableIntStateOf(0) }
+    val toEnd = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
+    // How far a pill travels to the other's place: the row less one pill.
+    val travel = { (rowWidth - pillWidth) * toEnd * trade.remaining() }
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().onSizeChanged { rowWidth = it.width },
         horizontalArrangement = Arrangement.spacedBy(PAIR_ROW_GAP),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -121,14 +139,54 @@ fun CurrencyPairRow(
             currency = from,
             side = PillSide.FROM,
             onClick = actions.onFromClick,
-            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_FROM),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .onSizeChanged { pillWidth = it.width }
+                    .graphicsLayer { translationX = travel() }
+                    .testTag(UiTestTags.PILL_FROM),
         )
         swap()
         CurrencyPill(
             currency = to,
             side = PillSide.TO,
             onClick = actions.onToClick,
-            modifier = Modifier.weight(1f).testTag(UiTestTags.PILL_TO),
+            modifier = Modifier.weight(1f).graphicsLayer { translationX = -travel() }.testTag(UiTestTags.PILL_TO),
         )
     }
+}
+
+// The two pills trading places after a swap: each starts where the other
+// was and slides home. [remaining] is how much of the way is left, 1 → 0.
+private class PillTrade(
+    private val progress: Animatable<Float, *>,
+    private val pendingStart: () -> Boolean,
+) {
+    fun remaining(): Float = if (pendingStart()) 1f else progress.value
+}
+
+@Composable
+private fun rememberPillTrade(
+    from: Currency?,
+    to: Currency?,
+): PillTrade {
+    val progress = remember { Animatable(0f) }
+    val last = remember { arrayOf(from, to) }
+    // Worked out while composing, so the swapped pills are drawn at their
+    // old places from the very first frame, not after a frame at the new.
+    val swapped =
+        remember(from, to) {
+            val traded = from != null && to != null && from != to && from == last[1] && to == last[0]
+            last[0] = from
+            last[1] = to
+            traded
+        }
+    var started by remember(from, to) { mutableStateOf(!swapped) }
+    LaunchedEffect(from, to) {
+        if (!swapped) return@LaunchedEffect
+        progress.snapTo(1f)
+        started = true
+        progress.animateTo(0f, Motion.settle())
+    }
+    return remember(progress) { PillTrade(progress) { !started } }
 }

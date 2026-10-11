@@ -269,4 +269,5 @@
     <string name="receipt_none_found">Tidak ada harga ditemukan. Coba foto yang lebih tajam dan rata.</string>
     <string name="receipt_check_hint">Dibaca di ponsel Anda, jadi periksa nama dan harga.</string>
     <string name="receipt_language_pending">Nama dalam bahasa Anda terbaca lebih baik setelah data teksnya selesai diunduh.</string>
+    <string name="recent_pair_alert_set">Peringatan kurs dipasang</string>
 </resources>

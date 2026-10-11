@@ -271,4 +271,5 @@
     <string name="receipt_none_found">Keine Preise gefunden. Versuche ein schärferes, flacheres Foto.</string>
     <string name="receipt_check_hint">Auf deinem Handy gelesen – prüfe Namen und Preise.</string>
     <string name="receipt_language_pending">Namen in deiner Sprache werden besser erkannt, sobald die Textdaten heruntergeladen sind.</string>
+    <string name="recent_pair_alert_set">Kursalarm gesetzt</string>
 </resources>

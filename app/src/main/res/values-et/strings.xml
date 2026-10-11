@@ -272,4 +272,5 @@
     <string name="receipt_none_found">Hindu ei leitud. Proovi teravamat ja sirgemat fotot.</string>
     <string name="receipt_check_hint">Loetud sinu telefonis, seega kontrolli nimesid ja hindu.</string>
     <string name="receipt_language_pending">Sinu keele nimed loetakse paremini, kui tekstiandmed on alla laaditud.</string>
+    <string name="recent_pair_alert_set">Kursiteavitus seatud</string>
 </resources>

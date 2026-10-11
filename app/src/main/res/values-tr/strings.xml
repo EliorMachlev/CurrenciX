@@ -272,4 +272,5 @@
     <string name="receipt_none_found">Bu fişte fiyat bulunamadı. Daha net ve düz bir fotoğraf deneyin.</string>
     <string name="receipt_check_hint">Telefonunuzda okundu, adları ve fiyatları kontrol edin.</string>
     <string name="receipt_language_pending">Metin verilerinin indirilmesi bitince kendi dilinizdeki adlar daha iyi okunur.</string>
+    <string name="recent_pair_alert_set">Kur uyarısı kuruldu</string>
 </resources>

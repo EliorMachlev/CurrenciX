@@ -3,6 +3,12 @@ package com.eliormachlev.currencix.view.timeline
 import android.app.Application
 import android.content.Context
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -73,6 +79,7 @@ import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.flagPainter
+import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
@@ -134,7 +141,7 @@ fun TimelineRoute(
         ScreenScaffold(
             // The screen's own pair until the data (and any swap) has loaded, so
             // the title is there while offline or still fetching.
-            title = { TimelineTitle(pair ?: (screen.from to screen.to)) },
+            title = { SwappingTitle(pair ?: (screen.from to screen.to)) },
             onBack = onBack,
             style = TopBarStyle.Small,
             actions = {
@@ -418,6 +425,26 @@ private val CONVERT_CHIP_ICON_SIZE = 18.dp
 
 // An assist chip's 32 dp and Material's 8 dp around it.
 private val DAY_ACTIONS_HEIGHT = 48.dp
+
+// The title, rolling over to the new pair when swap reverses it (the old
+// one leaving downwards as the reversed one drops in), and a quick fade
+// for any other change of pair.
+@Composable
+private fun SwappingTitle(pair: Pair<Currency, Currency>) {
+    AnimatedContent(
+        targetState = pair,
+        transitionSpec = {
+            val swapped = targetState.first == initialState.second && targetState.second == initialState.first
+            if (swapped) {
+                (slideInVertically(Motion.settle()) { -it } + fadeIn(Motion.enter())) togetherWith
+                    (slideOutVertically(Motion.settle()) { it } + fadeOut(Motion.fadeShort()))
+            } else {
+                fadeIn(Motion.enter()) togetherWith fadeOut(Motion.fadeShort())
+            }
+        },
+        label = "timeline title",
+    ) { shown -> TimelineTitle(shown) }
+}
 
 // "🇺🇸 $ USD → 🇮🇱 ₪ ILS": each side's flag, symbol and code, joined by an
 // arrow — shorter than the localized "to", so the pair fits beside the back

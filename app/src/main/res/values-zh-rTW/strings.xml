@@ -267,4 +267,5 @@
     <string name="receipt_none_found">這張收據上找不到價格。請試試更清晰、更平整的相片。</string>
     <string name="receipt_check_hint">在手機上辨識，請核對名稱和價格。</string>
     <string name="receipt_language_pending">文字資料下載完成後，你所用語言的名稱會辨識得更好。</string>
+    <string name="recent_pair_alert_set">已設匯率提醒</string>
 </resources>

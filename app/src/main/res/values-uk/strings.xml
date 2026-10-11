@@ -278,4 +278,5 @@
     <string name="receipt_none_found">Ціни не знайдено. Спробуйте чіткіше й рівніше фото.</string>
     <string name="receipt_check_hint">Розпізнано на телефоні, тож перевірте назви й ціни.</string>
     <string name="receipt_language_pending">Назви вашою мовою розпізнаватимуться краще після завантаження текстових даних.</string>
+    <string name="recent_pair_alert_set">Сповіщення про курс задано</string>
 </resources>

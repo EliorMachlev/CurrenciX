@@ -284,4 +284,5 @@
     <string name="receipt_none_found">لم يُعثر على أسعار في هذا الإيصال. جرّب صورة أوضح ومستوية أكثر.</string>
     <string name="receipt_check_hint">تمت القراءة على هاتفك، لذا راجع الأسماء والأسعار.</string>
     <string name="receipt_language_pending">تُقرأ الأسماء بلغتك بشكل أفضل بعد انتهاء تنزيل بيانات النص.</string>
+    <string name="recent_pair_alert_set">تم ضبط تنبيه سعر</string>
 </resources>

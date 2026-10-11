@@ -276,4 +276,5 @@
     <string name="receipt_none_found">ഈ രസീതിൽ വിലകൾ കണ്ടെത്തിയില്ല. കൂടുതൽ വ്യക്തവും നിരപ്പുമുള്ള ഫോട്ടോ ശ്രമിക്കുക.</string>
     <string name="receipt_check_hint">ഫോണിൽ തന്നെ വായിച്ചതാണ്, അതിനാൽ പേരുകളും വിലകളും പരിശോധിക്കുക.</string>
     <string name="receipt_language_pending">ടെക്സ്റ്റ് ഡാറ്റ ഡൗൺലോഡ് പൂർത്തിയാകുമ്പോൾ നിങ്ങളുടെ ഭാഷയിലെ പേരുകൾ കൂടുതൽ നന്നായി വായിക്കും.</string>
+    <string name="recent_pair_alert_set">നിരക്ക് അറിയിപ്പ് സജ്ജമാക്കി</string>
 </resources>

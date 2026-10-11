@@ -273,4 +273,5 @@
     <string name="receipt_none_found">Fant ingen priser. Prøv et skarpere og flatere bilde.</string>
     <string name="receipt_check_hint">Lest på telefonen, så sjekk navn og priser.</string>
     <string name="receipt_language_pending">Navn på ditt språk leses bedre når tekstdataene er lastet ned.</string>
+    <string name="recent_pair_alert_set">Kursvarsel satt</string>
 </resources>

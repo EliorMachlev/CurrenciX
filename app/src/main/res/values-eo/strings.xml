@@ -272,4 +272,5 @@
     <string name="receipt_none_found">Neniuj prezoj troviĝis. Provu pli akran kaj ebenan foton.</string>
     <string name="receipt_check_hint">Legita en via telefono, do kontrolu nomojn kaj prezojn.</string>
     <string name="receipt_language_pending">Nomoj en via lingvo legiĝos pli bone post kiam la tekstaj datumoj elŝutiĝos.</string>
+    <string name="recent_pair_alert_set">Kurz-averto agordita</string>
 </resources>

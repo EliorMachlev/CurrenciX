@@ -60,6 +60,7 @@ import com.eliormachlev.currencix.view.navigation.paneRole
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -409,10 +410,14 @@ private fun ConverterRecentPairs(
     val others = remember(recents, current) { recents.filterNot { it.isSameCurrencies(current) }.toImmutableList() }
     val paste = rememberPasteAmount(viewModel, current)
     var alertFor by remember { mutableStateOf<CurrencyPair?>(null) }
+    val alerts by database.alerts.alerts.flow
+        .collectAsStateWithLifecycle(remember(database) { database.alerts.alerts.get() })
+    val alerted = remember(alerts) { alerts.mapTo(mutableSetOf()) { it.pair }.toImmutableSet() }
     RecentPairsRow(
         pairs = others,
         onPaste = paste,
         onAlert = { alertFor = it },
+        alerted = alerted,
         onPick = viewModel::setCurrencyPair,
         onRemove = rememberRemoveWithUndo(database),
         contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),

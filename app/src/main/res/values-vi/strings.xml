@@ -269,4 +269,5 @@
     <string name="receipt_none_found">Không tìm thấy giá. Hãy thử ảnh rõ và phẳng hơn.</string>
     <string name="receipt_check_hint">Đọc trên điện thoại của bạn, nên hãy kiểm tra tên và giá.</string>
     <string name="receipt_language_pending">Tên bằng ngôn ngữ của bạn sẽ được đọc tốt hơn khi dữ liệu văn bản tải xong.</string>
+    <string name="recent_pair_alert_set">Đã đặt cảnh báo tỷ giá</string>
 </resources>

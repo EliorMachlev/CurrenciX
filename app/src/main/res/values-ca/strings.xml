@@ -276,4 +276,5 @@
     <string name="receipt_none_found">No s\'han trobat preus. Prova amb una foto més nítida i plana.</string>
     <string name="receipt_check_hint">Llegit al telèfon: comprova els noms i els preus.</string>
     <string name="receipt_language_pending">Els noms en el teu idioma es llegiran millor quan acabi la baixada de les dades de text.</string>
+    <string name="recent_pair_alert_set">Alerta de canvi activa</string>
 </resources>

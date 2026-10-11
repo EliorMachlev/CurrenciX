@@ -271,4 +271,5 @@
     <string name="receipt_none_found">Geen prijzen gevonden. Probeer een scherpere, vlakkere foto.</string>
     <string name="receipt_check_hint">Gelezen op je telefoon, dus controleer namen en prijzen.</string>
     <string name="receipt_language_pending">Namen in jouw taal worden beter gelezen zodra de tekstgegevens zijn gedownload.</string>
+    <string name="recent_pair_alert_set">Koersmelding ingesteld</string>
 </resources>

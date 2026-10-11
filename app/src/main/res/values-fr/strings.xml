@@ -276,4 +276,5 @@
     <string name="receipt_none_found">Aucun prix trouvé. Essayez une photo plus nette et plus à plat.</string>
     <string name="receipt_check_hint">Lu sur votre téléphone : vérifiez les noms et les prix.</string>
     <string name="receipt_language_pending">Les noms dans votre langue seront mieux lus une fois ses données de texte téléchargées.</string>
+    <string name="recent_pair_alert_set">Alerte de taux active</string>
 </resources>

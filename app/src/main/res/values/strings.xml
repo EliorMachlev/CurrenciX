@@ -294,4 +294,5 @@
     <string name="receipt_none_found">No prices found on this receipt. Try a sharper, flatter photo.</string>
     <string name="receipt_check_hint">Read on your phone, so check the names and prices.</string>
     <string name="receipt_language_pending">Names in your language read better once its text data finishes downloading.</string>
+    <string name="recent_pair_alert_set">Rate alert set</string>
 </resources>

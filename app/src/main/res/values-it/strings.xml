@@ -276,4 +276,5 @@
     <string name="receipt_none_found">Nessun prezzo trovato. Prova con una foto più nitida e piatta.</string>
     <string name="receipt_check_hint">Letto sul telefono: controlla nomi e prezzi.</string>
     <string name="receipt_language_pending">I nomi nella tua lingua verranno letti meglio al termine del download dei dati di testo.</string>
+    <string name="recent_pair_alert_set">Avviso di cambio impostato</string>
 </resources>

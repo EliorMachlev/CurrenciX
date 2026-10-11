@@ -272,4 +272,5 @@
     <string name="receipt_none_found">Nem található ár. Próbálj élesebb, egyenesebb fotót.</string>
     <string name="receipt_check_hint">A telefonodon olvastuk be, ezért ellenőrizd a neveket és árakat.</string>
     <string name="receipt_language_pending">A saját nyelvű nevek jobban olvashatók lesznek, ha letöltődnek a szövegadatok.</string>
+    <string name="recent_pair_alert_set">Árfolyam-értesítés beállítva</string>
 </resources>

@@ -272,4 +272,5 @@
     <string name="receipt_none_found">এই রসিদে কোনো দাম পাওয়া যায়নি। আরও স্পষ্ট ও সমান ছবি দিয়ে চেষ্টা করুন।</string>
     <string name="receipt_check_hint">আপনার ফোনেই পড়া হয়েছে, তাই নাম ও দাম মিলিয়ে নিন।</string>
     <string name="receipt_language_pending">টেক্সট ডেটা ডাউনলোড শেষ হলে আপনার ভাষার নাম আরও ভালোভাবে পড়া যাবে।</string>
+    <string name="recent_pair_alert_set">হার সতর্কতা সেট করা আছে</string>
 </resources>

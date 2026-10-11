@@ -271,4 +271,5 @@
     <string name="receipt_none_found">Ingen priser fundet. Prøv et skarpere og fladere billede.</string>
     <string name="receipt_check_hint">Læst på din telefon, så tjek navne og priser.</string>
     <string name="receipt_language_pending">Navne på dit sprog læses bedre, når tekstdataene er hentet.</string>
+    <string name="recent_pair_alert_set">Kursalarm sat</string>
 </resources>

@@ -272,4 +272,5 @@
     <string name="receipt_none_found">Δεν βρέθηκαν τιμές. Δοκιμάστε μια πιο καθαρή και επίπεδη φωτογραφία.</string>
     <string name="receipt_check_hint">Διαβάστηκε στο τηλέφωνό σας, ελέγξτε ονόματα και τιμές.</string>
     <string name="receipt_language_pending">Τα ονόματα στη γλώσσα σας θα διαβάζονται καλύτερα μόλις ολοκληρωθεί η λήψη των δεδομένων κειμένου.</string>
+    <string name="recent_pair_alert_set">Ορίστηκε ειδοποίηση ισοτιμίας</string>
 </resources>

@@ -275,4 +275,5 @@
     <string name="receipt_none_found">לא נמצאו מחירים בקבלה. נסו תמונה חדה ושטוחה יותר.</string>
     <string name="receipt_check_hint">הקריאה נעשתה בטלפון, אז כדאי לבדוק שמות ומחירים.</string>
     <string name="receipt_language_pending">שמות בשפה שלכם ייקראו טוב יותר כשהורדת נתוני הטקסט תסתיים.</string>
+    <string name="recent_pair_alert_set">הוגדרה התראת שער</string>
 </resources>

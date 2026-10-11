@@ -278,4 +278,5 @@
     <string name="receipt_none_found">Na účtence nebyly nalezeny ceny. Zkuste ostřejší a rovnější fotku.</string>
     <string name="receipt_check_hint">Přečteno v telefonu, takže zkontrolujte názvy a ceny.</string>
     <string name="receipt_language_pending">Názvy ve vašem jazyce se přečtou lépe, až se dokončí stahování textových dat.</string>
+    <string name="recent_pair_alert_set">Upozornění na kurz nastaveno</string>
 </resources>

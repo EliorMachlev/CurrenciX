@@ -52,6 +52,7 @@ import com.eliormachlev.currencix.util.toCartFeePercentDisplay
 import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
+import com.eliormachlev.currencix.view.compose.countTo
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.DEFAULT_DATE_PATTERN
 import com.eliormachlev.currencix.view.main.formatRatesTimestamp
@@ -221,10 +222,12 @@ internal fun CartFooterCard(
             }
         }
         AnimatedVisibility(visible = !collapsed) { AboveTotal(totals, onEditExtras) }
+        // Counts to a new total (an item added, a price changed), not to another currency's.
+        val shownTotal = countTo(totals.total, key = totals.destCurrency)
         AmountRow(
             topGap = if (collapsed) ROW_TOP_GAP else TOTAL_TOP_GAP,
             labelRes = R.string.cart_total_label,
-            amount = context.formatCartAmount(totals.total, totals.destCurrency),
+            amount = context.formatCartAmount(shownTotal, totals.destCurrency),
             style = MaterialTheme.typography.titleLarge,
             afterLabel = { CollapseToggle(collapsed = collapsed, onToggle = onToggleCollapsed) },
         )

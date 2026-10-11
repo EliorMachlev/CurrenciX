@@ -272,4 +272,5 @@
     <string name="receipt_none_found">Engin verð fundust. Prófaðu skarpari og flatari mynd.</string>
     <string name="receipt_check_hint">Lesið í símanum, svo athugaðu heiti og verð.</string>
     <string name="receipt_language_pending">Heiti á þínu máli lesast betur þegar textagögnin hafa sótt.</string>
+    <string name="recent_pair_alert_set">Gengisviðvörun sett</string>
 </resources>

@@ -271,7 +271,15 @@ Every currency flag renders through `Currency.flagPainter()` (`painterResource` 
 
 ### Motion: shared tokens, springs for anything interruptible
 
-All UI timing comes from `view/compose/theme/Motion.kt`, so "make it snappier" is a one-file change. Durations sit on the Material 3 scale: short 120 ms (value fades), medium 180 ms (entrances, onboarding steps), long 320 ms (the launch wordmark only), and a 20 ms stagger — kept on the quick side of Material's ranges. There are two springs, both stiffer than Material's medium (2500): `snappy` for tap-driven motion (the swap button's flip) and `settle` for panels (the Cart keypad). Anything the user can re-trigger mid-flight uses a spring, because an interrupted spring keeps its velocity while a restarted tween visibly kinks. The navigation drawer is the one panel not on `settle`: it moves on Material's own drawer motion, because `DrawerState.open()` / `close()` take no animation spec (the spec-taking `animateTo` is deprecated). Content pacing (the loading shimmer, the rate pill's auto-scroll) isn't a transition and keeps its own constants.
+All UI timing comes from `view/compose/theme/Motion.kt`, so "make it snappier" is a one-file change. Durations sit on the Material 3 scale: short 120 ms (value fades), medium 180 ms (entrances, onboarding steps), long 320 ms (the launch wordmark only), 600 ms for a chart's line drawing in, and a 20 ms stagger — kept on the quick side of Material's ranges. There are two springs, both stiffer than Material's medium (2500): `snappy` for tap-driven motion (the swap button's flip) and `settle` for panels (the Cart keypad). Anything the user can re-trigger mid-flight uses a spring, because an interrupted spring keeps its velocity while a restarted tween visibly kinks. The navigation drawer is the one panel not on `settle`: it moves on Material's own drawer motion, because `DrawerState.open()` / `close()` take no animation spec (the spec-taking `animateTo` is deprecated). Content pacing (the loading shimmer, the rate pill's auto-scroll) isn't a transition and keeps its own constants.
+
+Moments the motion marks:
+
+- **Swap.** The two currency pills (converter and cart) trade places: each is drawn at the other's spot from the first frame and slides home on `settle` (`rememberPillTrade` in `CurrencyPill.kt`, a layer translation, mirrored right-to-left). The timeline's title rolls over to the reversed pair (`SwappingTitle`); any other change of pair just fades.
+- **Chart.** A new pair or period draws the line in from the start edge over 600 ms (`Motion.draw`, see the timeline section).
+- **Refresh.** When an update moves the converter's rate for the same pair, its line turns green (up) or red (down) and fades back over 1.4 s (`flashOnChange`); a new pair or the first value doesn't flash.
+- **Cart total.** The total counts to its new value over 450 ms when an item is added or a price changes (`countTo`), and jumps when the currency changes.
+- **Rate alerts.** A recent pair with an alert waiting carries a small bell (TalkBack adds "Rate alert set"); the bell swings once, from its top, when the alert is new.
 
 Rules the main screen follows:
 

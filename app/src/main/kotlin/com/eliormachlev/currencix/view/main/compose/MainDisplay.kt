@@ -1344,14 +1344,17 @@ private fun RateText(
     rates: ExchangeRates?,
 ) {
     val context = LocalContext.current
+    val perOne = remember(base, dest, rates) { ratePerOne(base, dest, rates) }
+    // Green or red for a moment when a refresh moves the rate.
+    val color = flashOnChange(key = base to dest, value = perOne, rest = MaterialTheme.colorScheme.onSurfaceVariant)
     val rateText =
-        remember(base, dest, rates) {
-            buildRateText(context, base, dest, rates)
+        remember(base, dest, perOne) {
+            buildRateText(context, base, dest, perOne)
         } ?: return
     Text(
         text = rateText,
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        color = color,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
@@ -1452,16 +1455,25 @@ private fun formatFull(
     return DateTimeFormatter.ofPattern(effective).format(temporal).stripRtlMark()
 }
 
+// How much of [dest] one [base] buys at [rates]; null without both rates.
+private fun ratePerOne(
+    base: Currency?,
+    dest: Currency?,
+    rates: ExchangeRates?,
+): BigDecimal? {
+    if (base == null || dest == null || rates == null) return null
+    val baseValue = rates.rateFor(base)?.value ?: return null
+    val destValue = rates.rateFor(dest)?.value ?: return null
+    return destValue.divide(baseValue, MathContext.DECIMAL128)
+}
+
 private fun buildRateText(
     context: Context,
     base: Currency?,
     dest: Currency?,
-    rates: ExchangeRates?,
+    perOne: BigDecimal?,
 ): String? {
-    if (base == null || dest == null || rates == null) return null
-    val baseValue = rates.rateFor(base)?.value ?: return null
-    val destValue = rates.rateFor(dest)?.value ?: return null
-    val perOne = destValue.divide(baseValue, MathContext.DECIMAL128)
+    if (base == null || dest == null || perOne == null) return null
     val amount = perOne.toHumanReadableNumber(context, trim = true, decimalPlaces = FOOTER_RATE_DECIMAL_PLACES)
     return context
         .getString(R.string.info_conversion, "1", base.iso4217Alpha(), amount, dest.iso4217Alpha())

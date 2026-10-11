@@ -1,9 +1,12 @@
 package com.eliormachlev.currencix.view.main.compose
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -32,6 +37,8 @@ import com.eliormachlev.currencix.view.compose.PairChipContent
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 
 /**
  * One-tap switches to the pairs used most recently — "🇺🇸 USD → 🇮🇱 ILS"
@@ -39,7 +46,8 @@ import kotlinx.collections.immutable.ImmutableList
  * is drawn when it's empty (and there's no [onPaste]). A long-press asks
  * whether to forget the pair ([onRemove]); with [onAlert], it opens a menu
  * first: a rate alert for the pair, or removing it. With [onPaste], a "Paste
- * amount" chip leads the row.
+ * amount" chip leads the row. A pair in [alerted] has a rate alert waiting:
+ * its chip carries a small bell, which rings once when the alert is new.
  */
 @Composable
 fun RecentPairsRow(
@@ -50,6 +58,7 @@ fun RecentPairsRow(
     modifier: Modifier = Modifier,
     onPaste: (() -> Unit)? = null,
     onAlert: ((CurrencyPair) -> Unit)? = null,
+    alerted: ImmutableSet<CurrencyPair> = persistentSetOf(),
 ) {
     var removing by remember { mutableStateOf<CurrencyPair?>(null) }
     removing?.let { pair ->
@@ -68,6 +77,10 @@ fun RecentPairsRow(
     // The newest pair goes in at the front. Left alone, the row holds its
     // place on the chip that was first, leaving the new one off-screen.
     val listState = rememberLazyListState()
+    // Bells that have rung (or were there from the start) don't ring again;
+    // a pair whose alert goes may ring when it's set anew.
+    val quiet = remember { alerted.toMutableSet() }
+    LaunchedEffect(alerted) { quiet.retainAll(alerted) }
     LaunchedEffect(pairs.firstOrNull(), onPaste != null) { listState.scrollToItem(0) }
     LazyRow(
         modifier = modifier,
@@ -78,13 +91,17 @@ fun RecentPairsRow(
         onPaste?.let { paste -> item(key = PASTE_KEY) { PasteChip(onClick = paste, modifier = Modifier.animateItem()) } }
         items(pairs, key = { "${it.from}:${it.to}" }) { pair ->
             Box(Modifier.animateItem()) {
+                val hasAlert = pair in alerted
+                val switchTo = stringResource(R.string.recent_pair_switch, pair.from.iso4217Alpha(), pair.to.iso4217Alpha())
+                val alertSet = stringResource(R.string.recent_pair_alert_set)
                 CurrencyChip(
-                    description = stringResource(R.string.recent_pair_switch, pair.from.iso4217Alpha(), pair.to.iso4217Alpha()),
+                    description = if (hasAlert) "$switchTo. $alertSet" else switchTo,
                     onClick = { onPick(pair) },
                     onLongClick = { if (onAlert == null) removing = pair else menuFor = pair },
                     onLongClickLabel = longPressLabel,
                 ) {
                     PairChipContent(pair.from, pair.to)
+                    if (hasAlert) AlertBell(ring = pair !in quiet, onRung = { quiet += pair })
                 }
                 if (onAlert != null) {
                     PairMenu(
@@ -152,3 +169,48 @@ private fun PairMenu(
         }
     }
 }
+
+// The small bell on a pair with a rate alert waiting; with [ring], it swings
+// once as it appears ([onRung] after).
+@Composable
+private fun AlertBell(
+    ring: Boolean,
+    onRung: () -> Unit,
+) {
+    val swing = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        if (!ring) return@LaunchedEffect
+        swing.animateTo(
+            0f,
+            keyframes {
+                durationMillis = BELL_RING_MILLIS
+                BELL_SWINGS.forEachIndexed { index, degrees -> degrees at (index + 1) * BELL_RING_MILLIS / (BELL_SWINGS.size + 1) }
+            },
+        )
+        onRung()
+    }
+    Icon(
+        painter = painterResource(R.drawable.ic_alert_active),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary,
+        modifier =
+            Modifier
+                .padding(start = BELL_GAP)
+                .size(BELL_SIZE)
+                .graphicsLayer {
+                    // Swings from the top, where a bell hangs.
+                    transformOrigin = BELL_HANG
+                    rotationZ = swing.value
+                },
+    )
+}
+
+private const val BELL_RING_MILLIS = 700
+
+// The middle of the bell's top edge.
+private val BELL_HANG = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f)
+
+// Each swing smaller than the last, settling back at rest.
+private val BELL_SWINGS = listOf(18f, -14f, 10f, -6f, 3f)
+private val BELL_SIZE = 14.dp
+private val BELL_GAP = 4.dp

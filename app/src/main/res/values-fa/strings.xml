@@ -273,4 +273,5 @@
     <string name="receipt_none_found">قیمتی در این رسید پیدا نشد. عکسی واضح‌تر و صاف‌تر امتحان کنید.</string>
     <string name="receipt_check_hint">روی گوشی شما خوانده شد؛ نام‌ها و قیمت‌ها را بررسی کنید.</string>
     <string name="receipt_language_pending">نام‌ها به زبان شما پس از پایان دانلود داده‌های متن بهتر خوانده می‌شوند.</string>
+    <string name="recent_pair_alert_set">هشدار نرخ تنظیم شده</string>
 </resources>
