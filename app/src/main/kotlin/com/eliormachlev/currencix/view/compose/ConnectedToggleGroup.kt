@@ -15,10 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 
-// Tighter than a lone button's 24 dp sides: the buttons share one row, and a
-// label still fits at large font sizes.
+// The smallest a label shrinks to before it would be cut off.
 private val MIN_LABEL_SIZE = 10.sp
 
+// Tighter than a lone button's 24 dp sides: the buttons share one row, and a
+// label still fits at large font sizes.
 private val CONNECTED_BUTTON_PADDING = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
 
 /**

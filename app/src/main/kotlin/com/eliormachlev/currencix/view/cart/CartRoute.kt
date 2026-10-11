@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,6 +33,7 @@ import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
+import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.navigation.Screen
@@ -74,7 +76,7 @@ fun CartRoute(
         ScreenScaffold(
             title = { Text(stringResource(R.string.cart_title)) },
             onBack = host.saveLoad::attemptClose,
-            actions = { TopBarOverflowMenu(cartMenu(host)) },
+            actions = { CartBarActions(onSave = host.saveLoad::saveOrPromptForName, menu = cartMenu(host)) },
         ) { padding ->
             CartScreen(
                 viewModel = viewModel,
@@ -88,6 +90,20 @@ fun CartRoute(
         }
     }
     CartOverlays(host)
+}
+
+/** The cart bar's actions: Save, one tap away, then the ⋮ menu with Save as and the rest. */
+@Composable
+internal fun CartBarActions(
+    onSave: () -> Unit,
+    menu: List<OverflowAction>,
+) {
+    TopBarAction(
+        icon = painterResource(R.drawable.ic_save),
+        contentDescription = stringResource(R.string.cart_menu_save),
+        onClick = onSave,
+    )
+    TopBarOverflowMenu(menu)
 }
 
 private fun CartHost.listSources() = CartListSources(itemsLive, currencyLive, keypad.activeItemId, keypad.liveExpression)
@@ -114,18 +130,16 @@ private fun CartHost.screenActions(onOpenFees: () -> Unit) =
 @Composable
 private fun cartMenu(host: CartHost): List<OverflowAction> {
     val share = stringResource(R.string.menu_share)
-    val save = stringResource(R.string.cart_menu_save)
     val saveAs = stringResource(R.string.cart_menu_save_as)
     val load = stringResource(R.string.cart_menu_load)
     val export = stringResource(R.string.cart_menu_export)
     val import = stringResource(R.string.cart_menu_import)
     val clear = stringResource(R.string.cart_menu_clear)
     val extras = stringResource(R.string.cart_menu_extras)
-    return remember(host, share, extras, save, saveAs, load, export, import, clear) {
+    return remember(host, share, extras, saveAs, load, export, import, clear) {
         listOf(
             OverflowAction(share, R.drawable.ic_share) { host.shareCoordinator.show() },
             OverflowAction(extras, R.drawable.ic_split) { host.overlays.extrasVisible = true },
-            OverflowAction(save, R.drawable.ic_save) { host.saveLoad.saveOrPromptForName() },
             OverflowAction(saveAs, R.drawable.ic_save_as) { host.saveLoad.showSaveAsDialog() },
             OverflowAction(load, R.drawable.ic_folder_open) { host.saveLoad.showLoadDialog() },
             OverflowAction(export, R.drawable.ic_upload) { host.fileIo.launchExport() },

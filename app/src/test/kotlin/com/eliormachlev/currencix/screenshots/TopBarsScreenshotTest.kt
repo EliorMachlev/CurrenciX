@@ -16,11 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.view.cart.CartBarActions
 import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
-import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.timeline.TimelineTitle
 import org.junit.Rule
@@ -71,11 +71,13 @@ private fun CartBarContent() {
         title = { Text(stringResource(R.string.cart_title)) },
         onBack = {},
         actions = {
-            TopBarOverflowMenu(
-                listOf(
-                    OverflowAction("Share", R.drawable.ic_share) {},
-                    OverflowAction("Clear", R.drawable.ic_delete, destructive = true, separated = true) {},
-                ),
+            CartBarActions(
+                onSave = {},
+                menu =
+                    listOf(
+                        OverflowAction("Share", R.drawable.ic_share) {},
+                        OverflowAction("Clear", R.drawable.ic_delete, destructive = true, separated = true) {},
+                    ),
             )
         },
         modifier = Modifier.height(BAR_PREVIEW_HEIGHT),
