@@ -10,6 +10,7 @@
     <string name="week">minggu</string>
     <string name="timeline_five_years">5 tahun</string>
     <string name="timeline_custom_range">Rentang khusus</string>
+    <string name="timeline_custom">Kustom</string>
     <string name="timeline_share">Bagikan grafik</string>
     <string name="timeline_no_rates">Tidak ada kurs untuk tanggal ini</string>
 </resources>

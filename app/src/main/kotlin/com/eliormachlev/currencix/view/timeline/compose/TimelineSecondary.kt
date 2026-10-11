@@ -146,7 +146,7 @@ internal fun TimelineSecondary(
             Box(modifier = Modifier.height(CONTENT_PADDING * 2))
         }
 
-        TilesAndPeriod(rows, period, formatter)
+        TilesAndPeriod(rows, period)
     }
 }
 
@@ -159,13 +159,12 @@ internal fun TimelineSecondary(
 private fun TilesAndPeriod(
     rows: List<StatRowData>,
     period: PeriodControl,
-    formatter: DateTimeFormatter,
 ) {
     ReadingDirection {
         Column {
             StatGrid(max = rows[0], min = rows[3], avg = rows[1], med = rows[2])
             Spacer(Modifier.height(CONTENT_PADDING))
-            TimelinePeriodControls(control = period, formatter = formatter, modifier = Modifier.fillMaxWidth())
+            TimelinePeriodControls(control = period, modifier = Modifier.fillMaxWidth())
         }
     }
 }

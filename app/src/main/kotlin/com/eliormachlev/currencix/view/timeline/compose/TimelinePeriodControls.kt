@@ -1,15 +1,9 @@
 package com.eliormachlev.currencix.view.timeline.compose
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SelectableDates
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -19,26 +13,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
 import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
-import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Period
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Span
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
-private val CONTROLS_GAP = Spacing.Small
-private val CHIP_ICON_SIZE = 18.dp
-
-// The presets in the segmented row; CUSTOM is the chip under it.
-private val PRESETS = listOf(Period.WEEK, Period.MONTH, Period.YEAR, Period.FIVE_YEARS)
+// Week, Month, Year, 5 years, then Custom, all in one row.
+private val PERIODS = Period.entries
 
 /** The period control's state and what it does. */
 @Immutable
@@ -50,43 +38,25 @@ data class PeriodControl(
 )
 
 /**
- * Week / Month / Year / 5 years, and under them a "Custom range" chip that
- * opens a date-range picker (back to [TIMELINE_MAX_YEARS] ago); once chosen,
- * the chip shows the range.
+ * One row of connected buttons: Week / Month / Year / 5 years / Custom.
+ * Custom opens a date-range picker (back to [TIMELINE_MAX_YEARS] ago) and is
+ * picked once dates are chosen; tapped again, it reopens the picker to change
+ * them. The chosen dates show above, as the first and last rates' dates.
  */
 @Composable
 internal fun TimelinePeriodControls(
     control: PeriodControl,
-    formatter: DateTimeFormatter,
     modifier: Modifier = Modifier,
 ) {
     var picking by rememberSaveable { mutableStateOf(false) }
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(CONTROLS_GAP)) {
-        // A period stays picked when tapped again: there's always one shown.
-        ConnectedToggleGroup(
-            options = PRESETS,
-            selected = control.selected,
-            label = { stringResource(it.labelRes).replaceFirstChar { c -> c.titlecase() } },
-            onToggle = { period, _ -> control.onPeriod(period) },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        val custom = control.selected == Period.CUSTOM
-        FilterChip(
-            selected = custom,
-            onClick = { picking = true },
-            label = {
-                val range = control.customRange
-                Text(
-                    if (custom && range != null) {
-                        stringResource(R.string.timeline_range, range.start.format(formatter), range.end.format(formatter))
-                    } else {
-                        stringResource(R.string.timeline_custom_range)
-                    },
-                )
-            },
-            leadingIcon = { Icon(painterResource(R.drawable.ic_event), contentDescription = null, Modifier.size(CHIP_ICON_SIZE)) },
-        )
-    }
+    // A period stays picked when tapped again: there's always one shown.
+    ConnectedToggleGroup(
+        options = PERIODS,
+        selected = control.selected,
+        label = { stringResource(it.labelRes).replaceFirstChar { c -> c.titlecase() } },
+        onToggle = { period, _ -> if (period == Period.CUSTOM) picking = true else control.onPeriod(period) },
+        modifier = modifier,
+    )
     if (picking) {
         RangePickerSheet(
             initial = control.customRange,
@@ -106,7 +76,7 @@ private val Period.labelRes: Int
             Period.MONTH -> R.string.month
             Period.YEAR -> R.string.year
             Period.FIVE_YEARS -> R.string.timeline_five_years
-            Period.CUSTOM -> R.string.timeline_custom_range
+            Period.CUSTOM -> R.string.timeline_custom
         }
 
 @Composable

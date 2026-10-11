@@ -10,6 +10,7 @@
     <string name="week">hét</string>
     <string name="timeline_five_years">5 év</string>
     <string name="timeline_custom_range">Egyéni időszak</string>
+    <string name="timeline_custom">Egyéni</string>
     <string name="timeline_share">Grafikon megosztása</string>
     <string name="timeline_no_rates">Nincsenek árfolyamok ezekre a napokra</string>
 </resources>

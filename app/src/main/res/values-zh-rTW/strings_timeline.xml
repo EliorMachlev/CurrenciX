@@ -10,6 +10,7 @@
     <string name="week">1 週</string>
     <string name="timeline_five_years">5 年</string>
     <string name="timeline_custom_range">自訂範圍</string>
+    <string name="timeline_custom">自訂</string>
     <string name="timeline_share">分享圖表</string>
     <string name="timeline_no_rates">這些日期沒有匯率</string>
 </resources>

@@ -80,8 +80,7 @@ class TimelineScreenshotTest {
             )
         }
 
-    // The period controls with a custom range chosen: no preset selected,
-    // the chip showing the dates.
+    // The period row with a custom range chosen: Custom is the picked button.
     @Test fun timelinePeriodCustom() =
         shots.captureMatrix("timeline_period_custom") {
             TimelinePeriodControls(
@@ -92,7 +91,6 @@ class TimelineScreenshotTest {
                         {},
                         { _, _ -> },
                     ),
-                formatter = FORMATTER,
                 modifier = Modifier.padding(16.dp),
             )
         }

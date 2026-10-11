@@ -10,6 +10,7 @@
     <string name="week">tydzień</string>
     <string name="timeline_five_years">5 lat</string>
     <string name="timeline_custom_range">Własny zakres</string>
+    <string name="timeline_custom">Własny</string>
     <string name="timeline_share">Udostępnij wykres</string>
     <string name="timeline_no_rates">Brak kursów dla tych dat</string>
 </resources>

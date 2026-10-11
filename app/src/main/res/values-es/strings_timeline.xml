@@ -10,6 +10,7 @@
     <string name="week">semana</string>
     <string name="timeline_five_years">5 años</string>
     <string name="timeline_custom_range">Rango personalizado</string>
+    <string name="timeline_custom">A medida</string>
     <string name="timeline_share">Compartir gráfico</string>
     <string name="timeline_no_rates">No hay tipos para estas fechas</string>
 </resources>

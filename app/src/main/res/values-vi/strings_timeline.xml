@@ -10,6 +10,7 @@
     <string name="week">tuần</string>
     <string name="timeline_five_years">5 năm</string>
     <string name="timeline_custom_range">Khoảng tùy chỉnh</string>
+    <string name="timeline_custom">Tùy chọn</string>
     <string name="timeline_share">Chia sẻ biểu đồ</string>
     <string name="timeline_no_rates">Không có tỷ giá cho những ngày này</string>
 </resources>
