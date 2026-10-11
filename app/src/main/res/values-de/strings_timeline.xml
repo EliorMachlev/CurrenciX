@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">Höchstwert %1$s am %2$s</string>
     <string name="timeline_a11y_low">Tiefstwert %1$s am %2$s</string>
     <string name="timeline_alert_at">Alarm bei %1$s</string>
+    <string name="timeline_touch_hint">Tippe auf das Diagramm, um zum Kurs eines Tages umzurechnen oder einen Alarm zu setzen</string>
 </resources>

@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">cao nhất %1$s ngày %2$s</string>
     <string name="timeline_a11y_low">thấp nhất %1$s ngày %2$s</string>
     <string name="timeline_alert_at">Cảnh báo ở %1$s</string>
+    <string name="timeline_touch_hint">Chạm vào biểu đồ để quy đổi hoặc đặt cảnh báo theo tỷ giá của một ngày</string>
 </resources>

@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
+import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.timeline.TimelineTitle
 import org.junit.Rule
@@ -56,6 +57,10 @@ private fun TimelineBarContent() {
         actions = {
             TopBarAction(painterResource(R.drawable.ic_tune), "Graph options", onClick = {})
             TopBarAction(painterResource(R.drawable.ic_swap_horiz), "Swap", onClick = {})
+            // Rate alert and share, as TimelineBarActions has them.
+            TopBarOverflowMenu(
+                listOf(OverflowAction("Rate alert", R.drawable.ic_alert) {}, OverflowAction("Share", R.drawable.ic_share) {}),
+            )
         },
         modifier = Modifier.height(BAR_PREVIEW_HEIGHT),
     ) { padding -> BodyStub(Modifier.padding(padding)) }

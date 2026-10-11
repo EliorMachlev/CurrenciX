@@ -29,6 +29,8 @@ internal fun TimelineScreen(
     onChangeProvider: () -> Unit,
     modifier: Modifier = Modifier,
     chartCapture: LayerCapture? = null,
+    // Under the chart card, outside what a share captures.
+    chartActions: @Composable (Modifier) -> Unit = {},
     chartContent: @Composable () -> Unit,
 ) {
     AppTheme {
@@ -64,13 +66,16 @@ internal fun TimelineScreen(
             val context = LocalContext.current
             val summary = remember(stats, formatter) { timelineSummary(context, stats, formatter) }
             val chartCard: @Composable (Modifier) -> Unit = { mod ->
-                TimelineChartCard(
-                    status = ChartStatus(isRefreshing, error, rangeEmpty, provider, summary),
-                    onRetry = model::retry,
-                    onChangeProvider = onChangeProvider,
-                    modifier = mod.captureInto(chartCapture),
-                    chart = chartContent,
-                )
+                Column(mod) {
+                    TimelineChartCard(
+                        status = ChartStatus(isRefreshing, error, rangeEmpty, provider, summary),
+                        onRetry = model::retry,
+                        onChangeProvider = onChangeProvider,
+                        modifier = Modifier.weight(1f).captureInto(chartCapture),
+                        chart = chartContent,
+                    )
+                    chartActions(Modifier.fillMaxWidth())
+                }
             }
             val secondary: @Composable (Modifier) -> Unit = { mod ->
                 TimelineSecondary(

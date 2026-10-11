@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">högst %1$s den %2$s</string>
     <string name="timeline_a11y_low">lägst %1$s den %2$s</string>
     <string name="timeline_alert_at">Bevaka %1$s</string>
+    <string name="timeline_touch_hint">Tryck på diagrammet för att räkna om eller sätta en avisering vid en dags kurs</string>
 </resources>

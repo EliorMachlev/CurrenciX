@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">máximo %1$s el %2$s</string>
     <string name="timeline_a11y_low">mínimo %1$s el %2$s</string>
     <string name="timeline_alert_at">Alerta a %1$s</string>
+    <string name="timeline_touch_hint">Toca el gráfico para convertir o crear una alerta al tipo de un día</string>
 </resources>

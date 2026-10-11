@@ -5,21 +5,21 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -66,15 +66,18 @@ import com.eliormachlev.currencix.view.alert.RateAlertSheet
 import com.eliormachlev.currencix.view.alert.rememberSetRateAlert
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
+import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
+import com.eliormachlev.currencix.view.timeline.compose.TIMELINE_CONTENT_PADDING
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
@@ -122,6 +125,7 @@ fun TimelineRoute(
     val scope = rememberCoroutineScope()
     // The rate a rate-alert sheet is open at: today's (the bell) or a touched day's.
     var alertAt by remember { mutableStateOf<BigDecimal?>(null) }
+    val touched = rememberTouchedDay(model)
 
     // Small bar: the pair sits beside the back arrow, leaving the height to the chart.
     // The bar follows the language (in Hebrew: back arrow and pair on the
@@ -150,14 +154,23 @@ fun TimelineRoute(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 chartCapture = chartCapture,
                 chartContent = {
-                    ChartWithConvertChip(
-                        model = model,
-                        formatter = formatter,
-                        onConvertAt = onConvertAt,
-                        onAlertAt = { alertAt = it },
-                    ) { onScrub ->
-                        TimelineChartContent(model, db, onScrub)
+                    TimelineChartContent(model, db) { day ->
+                        if (day != null) touched.day = day
+                        model.setPastDate(day)
                     }
+                },
+                chartActions = { mod ->
+                    ChartDayActions(
+                        model = model,
+                        day = touched.day,
+                        formatter = formatter,
+                        onConvertAt = { pair, day ->
+                            touched.day = null
+                            onConvertAt(pair, day)
+                        },
+                        onAlertAt = { alertAt = it },
+                        modifier = mod,
+                    )
                 },
             )
         }
@@ -166,9 +179,9 @@ fun TimelineRoute(
     alertAt?.let { rate -> TimelineAlertSheet(model = model, rate = rate, onClose = { alertAt = null }) }
 }
 
-// The bar's actions: graph options, swap (once a refresh or an error is
-// out of the way, since swapping re-fetches), a rate alert at today's rate,
-// and share.
+// The bar's actions: graph options and swap (once a refresh or an error is
+// out of the way, since swapping re-fetches), and under ⋮ a rate alert at
+// today's rate and share, so the pair keeps its room in the title.
 @Composable
 private fun TimelineBarActions(
     model: TimelineViewModel,
@@ -191,18 +204,17 @@ private fun TimelineBarActions(
         onClick = model::toggleCurrencies,
         enabled = !inFlight && error == null,
     )
-    TopBarAction(
-        icon = painterResource(R.drawable.ic_alert),
-        contentDescription = stringResource(R.string.alert_sheet_title),
-        onClick = { today?.let(onAlert) },
-        enabled = today != null,
-    )
-    TopBarAction(
-        icon = painterResource(R.drawable.ic_share),
-        contentDescription = stringResource(R.string.timeline_share),
-        onClick = onShare,
-        enabled = error == null,
-    )
+    val alertLabel = stringResource(R.string.alert_sheet_title)
+    val shareLabel = stringResource(R.string.timeline_share)
+    // Only what can be done now: an alert needs today's rate, a share the chart.
+    val menu =
+        remember(today, error, alertLabel, shareLabel, onAlert, onShare) {
+            listOfNotNull(
+                today?.let { rate -> OverflowAction(alertLabel, R.drawable.ic_alert) { onAlert(rate) } },
+                OverflowAction(shareLabel, R.drawable.ic_share, onClick = onShare).takeIf { error == null },
+            )
+        }
+    if (menu.isNotEmpty()) TopBarOverflowMenu(menu)
 }
 
 // The rate alert sheet for the timeline's pair at [rate]; [onClose] when set or dismissed.
@@ -328,41 +340,50 @@ private fun TimelineChartContent(
     TimelineChart(series = series, prefs = prefs, colors = colors, onScrub = onScrub)
 }
 
-// The chart, and once it has been touched, "Convert at 04/03/26" and "Alert
-// at 3.6512" for the day last touched, over its top. The chips go with a new
-// pair or period.
+// The day last touched on the chart, which the actions under it act on.
+// Forgotten with a new pair or period.
+@Stable
+private class TouchedDay {
+    var day by mutableStateOf<LocalDate?>(null)
+}
+
 @Composable
-private fun ChartWithConvertChip(
+private fun rememberTouchedDay(model: TimelineViewModel): TouchedDay {
+    val touched = remember { TouchedDay() }
+    val pair by model.getCurrencyPair().observeAsState()
+    val period by model.getPeriod().observeAsState()
+    LaunchedEffect(pair, period) { touched.day = null }
+    return touched
+}
+
+// Under the chart, so they never cover its line or the touched day's label:
+// "Convert at 04/03/26" and "Alert at 3.6512" for [day], or, before a touch,
+// a line saying the chart can be touched. Always one chip tall, so the chart
+// keeps its size when they appear.
+@Composable
+private fun ChartDayActions(
     model: TimelineViewModel,
+    day: LocalDate?,
     formatter: DateTimeFormatter,
     onConvertAt: (CurrencyPair, LocalDate) -> Unit,
     onAlertAt: (BigDecimal) -> Unit,
-    chart: @Composable (onScrub: (LocalDate?) -> Unit) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val pair by model.getCurrencyPair().observeAsState()
-    val period by model.getPeriod().observeAsState()
     val rates by remember(model) { model.getRates() }.observeAsState()
-    var touchedDay by remember { mutableStateOf<LocalDate?>(null) }
-    LaunchedEffect(pair, period) { touchedDay = null }
-    Box(Modifier.fillMaxSize()) {
-        chart { day ->
-            if (day != null) touchedDay = day
-            model.setPastDate(day)
-        }
-        val day = touchedDay
-        val (from, to) = pair ?: return@Box
-        if (day != null) {
-            val dayRate = rates?.get(day)?.value
-            Row(Modifier.align(Alignment.TopCenter), horizontalArrangement = Arrangement.spacedBy(Spacing.Small)) {
-                ChartChip(
-                    label = stringResource(R.string.timeline_convert_at, day.format(formatter)),
-                    icon = R.drawable.ic_swap_horiz,
-                ) {
-                    touchedDay = null
+    Row(
+        modifier = modifier.heightIn(min = DAY_ACTIONS_HEIGHT).padding(horizontal = TIMELINE_CONTENT_PADDING),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.Small),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val (from, to) = pair ?: return@Row
+        when {
+            day != null -> {
+                ChartChip(label = stringResource(R.string.timeline_convert_at, day.format(formatter)), icon = R.drawable.ic_swap_horiz) {
                     onConvertAt(CurrencyPair(from, to), day)
                 }
-                dayRate?.let { rate ->
+                rates?.get(day)?.value?.let { rate ->
                     val shown =
                         rate
                             .roundForDisplay(
@@ -371,11 +392,18 @@ private fun ChartWithConvertChip(
                     ChartChip(label = stringResource(R.string.timeline_alert_at, shown), icon = R.drawable.ic_alert) { onAlertAt(rate) }
                 }
             }
+
+            !rates.isNullOrEmpty() -> {
+                Text(
+                    text = stringResource(R.string.timeline_touch_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
 
-// A chip over the chart, on the card's surface so the line doesn't show through.
 @Composable
 private fun ChartChip(
     label: String,
@@ -386,11 +414,13 @@ private fun ChartChip(
         onClick = rememberHapticOnClick(onClick),
         label = { Text(label) },
         leadingIcon = { Icon(painterResource(icon), contentDescription = null, Modifier.size(CONVERT_CHIP_ICON_SIZE)) },
-        colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surface),
     )
 }
 
 private val CONVERT_CHIP_ICON_SIZE = 18.dp
+
+// An assist chip's 32 dp and Material's 8 dp around it.
+private val DAY_ACTIONS_HEIGHT = 48.dp
 
 // "🇺🇸 $ USD → 🇮🇱 ₪ ILS": each side's flag, symbol and code, joined by an
 // arrow — shorter than the localized "to", so the pair fits beside the back

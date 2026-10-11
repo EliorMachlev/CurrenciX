@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">最高 %1$s（%2$s）</string>
     <string name="timeline_a11y_low">最低 %1$s（%2$s）</string>
     <string name="timeline_alert_at">在 %1$s 时提醒</string>
+    <string name="timeline_touch_hint">轻触图表，按某天的汇率换算或设置提醒</string>
 </resources>

@@ -23,4 +23,5 @@
     <string name="timeline_a11y_high">שיא %1$s ב־%2$s</string>
     <string name="timeline_a11y_low">שפל %1$s ב־%2$s</string>
     <string name="timeline_alert_at">התראה ב־%1$s</string>
+    <string name="timeline_touch_hint">געו בגרף כדי להמיר או להגדיר התראה לפי השער של יום מסוים</string>
 </resources>

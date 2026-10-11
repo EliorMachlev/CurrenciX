@@ -23,4 +23,5 @@
     <string name="timeline_a11y_high">ഉയർന്നത് %1$s, %2$s</string>
     <string name="timeline_a11y_low">താഴ്ന്നത് %1$s, %2$s</string>
     <string name="timeline_alert_at">%1$s-ൽ മുന്നറിയിപ്പ്</string>
+    <string name="timeline_touch_hint">ഒരു ദിവസത്തെ നിരക്കിൽ മാറ്റാനോ അറിയിപ്പ് സജ്ജമാക്കാനോ ചാർട്ടിൽ തൊടുക</string>
 </resources>

@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">максимум %1$s на %2$s</string>
     <string name="timeline_a11y_low">мінімум %1$s на %2$s</string>
     <string name="timeline_alert_at">Сповістити при %1$s</string>
+    <string name="timeline_touch_hint">Торкніться графіка, щоб конвертувати або задати сповіщення за курсом дня</string>
 </resources>

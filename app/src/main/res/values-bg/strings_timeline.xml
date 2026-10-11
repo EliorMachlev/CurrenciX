@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">най-висок %1$s на %2$s</string>
     <string name="timeline_a11y_low">най-нисък %1$s на %2$s</string>
     <string name="timeline_alert_at">Известие при %1$s</string>
+    <string name="timeline_touch_hint">Докоснете графиката, за да конвертирате или зададете известие по курса за деня</string>
 </resources>

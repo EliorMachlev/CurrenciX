@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">hoogste %1$s op %2$s</string>
     <string name="timeline_a11y_low">laagste %1$s op %2$s</string>
     <string name="timeline_alert_at">Melding bij %1$s</string>
+    <string name="timeline_touch_hint">Tik op de grafiek om om te rekenen of een melding in te stellen op de koers van een dag</string>
 </resources>

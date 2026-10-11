@@ -24,4 +24,5 @@
     <string name="timeline_a11y_high">high %1$s on %2$s</string>
     <string name="timeline_a11y_low">low %1$s on %2$s</string>
     <string name="timeline_alert_at">Alert at %1$s</string>
+    <string name="timeline_touch_hint">Touch the chart to convert or set an alert at a day\'s rate</string>
 </resources>

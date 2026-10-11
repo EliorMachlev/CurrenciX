@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">بیشترین %1$s در %2$s</string>
     <string name="timeline_a11y_low">کمترین %1$s در %2$s</string>
     <string name="timeline_alert_at">هشدار در %1$s</string>
+    <string name="timeline_touch_hint">برای تبدیل یا تنظیم هشدار با نرخ یک روز، نمودار را لمس کنید</string>
 </resources>

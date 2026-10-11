@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">kõrgeim %1$s, %2$s</string>
     <string name="timeline_a11y_low">madalaim %1$s, %2$s</string>
     <string name="timeline_alert_at">Teavita %1$s juures</string>
+    <string name="timeline_touch_hint">Puuduta graafikut, et teisendada või seada teavitus päeva kursi järgi</string>
 </resources>

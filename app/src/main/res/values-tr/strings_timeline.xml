@@ -21,4 +21,5 @@
     <string name="timeline_a11y_high">en yüksek %1$s (%2$s)</string>
     <string name="timeline_a11y_low">en düşük %1$s (%2$s)</string>
     <string name="timeline_alert_at">%1$s için uyarı</string>
+    <string name="timeline_touch_hint">Bir günün kurundan dönüştürmek veya uyarı kurmak için grafiğe dokunun</string>
 </resources>
