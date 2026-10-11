@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
+import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.FileLoggingTree
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.net.InetAddress
@@ -86,8 +88,8 @@ class CurrenciesApplication : Application() {
         }
     }
 
-    // Observe the three inputs to the WorkManager schedule (opt-in flag,
-    // user interval override, current provider). Any change re-enqueues or
+    // Observe the inputs to the WorkManager schedule (opt-in flag, user
+    // interval override, current provider, whether rate alerts are waiting). Any change re-enqueues or
     // cancels the periodic work — enqueueUniquePeriodicWork with UPDATE
     // makes the reschedule race-free. Distinct-until-changed on the tuple
     // avoids a redundant enqueue on every DataStore emit.
@@ -98,13 +100,15 @@ class CurrenciesApplication : Application() {
                 db.providers.autoRefresh.flow,
                 db.providers.autoRefreshIntervalOverride.flow,
                 db.providers.apiProvider.flow,
-            ) { enabled, override, provider ->
-                Triple(enabled, override, provider)
+                db.alerts.alerts.flow
+                    .map { it.isNotEmpty() },
+            ) { enabled, override, provider, forAlerts ->
+                AutoRefreshPlan(enabled, override, provider, forAlerts)
             }.distinctUntilChanged()
-                .collect { (enabled, override, provider) ->
-                    if (enabled) {
-                        val minutes = RateRefreshScheduler.effectiveIntervalMinutes(provider, override)
-                        RateRefreshScheduler.schedule(this@CurrenciesApplication, minutes)
+                .collect { plan ->
+                    if (plan.enabled) {
+                        val minutes = RateRefreshScheduler.effectiveIntervalMinutes(plan.provider, plan.override)
+                        RateRefreshScheduler.schedule(this@CurrenciesApplication, minutes, plan.forAlerts)
                     } else {
                         RateRefreshScheduler.cancel(this@CurrenciesApplication)
                     }
@@ -112,3 +116,11 @@ class CurrenciesApplication : Application() {
         }
     }
 }
+
+// What the periodic refresh is scheduled from (see observeAutoRefreshPreference).
+private data class AutoRefreshPlan(
+    val enabled: Boolean,
+    val override: Int?,
+    val provider: ApiProvider,
+    val forAlerts: Boolean,
+)

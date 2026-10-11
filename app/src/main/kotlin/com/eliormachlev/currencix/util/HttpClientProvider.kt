@@ -40,56 +40,80 @@ object HttpClientProvider {
     @Volatile
     private var uncachedInstance: OkHttpClient? = null
 
+    @Volatile
+    private var downloadInstance: OkHttpClient? = null
+
     /**
      * Returns the shared client. When [context] is non-null the returned
      * client has an on-disk response cache under `cacheDir/http-cache`;
      * when [context] is null (unit tests, background workers without a
-     * Context) a cache-less client with the same timeouts / logging is
-     * returned so the cache directory doesn't have to be faked.
+     * Context) the cache-less base client is returned so the cache
+     * directory doesn't have to be faked. Both are one client underneath
+     * ([OkHttpClient.newBuilder]): the same connections, threads and timeouts.
      */
     fun client(context: Context?): OkHttpClient =
         if (context != null) {
             cachedInstance ?: synchronized(this) {
-                cachedInstance ?: build(context).also { cachedInstance = it }
+                cachedInstance ?: withCache(base(), context).also { cachedInstance = it }
             }
         } else {
-            uncachedInstance ?: synchronized(this) {
-                uncachedInstance ?: build(null).also { uncachedInstance = it }
-            }
+            base()
         }
 
-    private fun build(context: Context?): OkHttpClient {
+    /**
+     * For a large one-off download (an OCR language file, a few megabytes):
+     * the shared client without its call time limit or its cache.
+     */
+    fun downloadClient(context: Context): OkHttpClient =
+        downloadInstance ?: synchronized(this) {
+            downloadInstance ?: client(context)
+                .newBuilder()
+                .cache(null)
+                .callTimeout(0, TimeUnit.SECONDS)
+                .build()
+                .also { downloadInstance = it }
+        }
+
+    private fun base(): OkHttpClient =
+        uncachedInstance ?: synchronized(this) {
+            uncachedInstance ?: build().also { uncachedInstance = it }
+        }
+
+    private fun build(): OkHttpClient {
         val loggingInterceptor =
             HttpLoggingInterceptor { line ->
                 Timber.tag("HTTP").d(line)
             }.apply {
                 level = HttpLoggingInterceptor.Level.BASIC
             }
-        val builder =
-            OkHttpClient
-                .Builder()
-                .addInterceptor(loggingInterceptor)
-                // Network-layer rewrite runs before OkHttp's cache writer sees
-                // the response, so the stamped Cache-Control controls what the
-                // cache stores for the non-cooperative provider hosts.
-                .addNetworkInterceptor(ProviderCacheRewriteInterceptor(PROVIDER_CACHE_TTL_SECONDS))
-                .connectTimeout(CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-                .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-                // Belt-and-braces: cap total call time as well, so an HTTP/2
-                // stream that stalls between frames can't outlive the per-frame
-                // read timeout indefinitely.
-                .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-        if (context != null) {
-            val cacheDir = File(context.cacheDir, CACHE_DIR).apply { mkdirs() }
-            builder.cache(Cache(cacheDir, CACHE_SIZE_BYTES))
-            // The in-app HTTP inspector (Chucker) — debug builds only; the
-            // build type decides (see httpInspector). Only wired when we
-            // have a Context (background workers / unit tests hit the null
-            // path and don't need the inspector). Added last so its capture
-            // sees the fully-decorated request.
-            httpInspector?.let { inspector -> builder.addInterceptor(inspector(context)) }
-        }
+        return OkHttpClient
+            .Builder()
+            .addInterceptor(loggingInterceptor)
+            // Network-layer rewrite runs before OkHttp's cache writer sees
+            // the response, so the stamped Cache-Control controls what the
+            // cache stores for the non-cooperative provider hosts.
+            .addNetworkInterceptor(ProviderCacheRewriteInterceptor(PROVIDER_CACHE_TTL_SECONDS))
+            .connectTimeout(CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            // Belt-and-braces: cap total call time as well, so an HTTP/2
+            // stream that stalls between frames can't outlive the per-frame
+            // read timeout indefinitely.
+            .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .build()
+    }
+
+    // The base client plus the on-disk cache and, in debug builds, the
+    // in-app HTTP inspector (Chucker; the build type decides, see
+    // httpInspector). Added last so its capture sees the fully-decorated
+    // request.
+    private fun withCache(
+        base: OkHttpClient,
+        context: Context,
+    ): OkHttpClient {
+        val cacheDir = File(context.cacheDir, CACHE_DIR).apply { mkdirs() }
+        val builder = base.newBuilder().cache(Cache(cacheDir, CACHE_SIZE_BYTES))
+        httpInspector?.let { inspector -> builder.addInterceptor(inspector(context)) }
         return builder.build()
     }
 }

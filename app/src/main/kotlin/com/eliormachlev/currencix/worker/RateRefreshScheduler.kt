@@ -47,12 +47,19 @@ private const val UNIQUE_NAME_NOW = "rate-refresh-now"
  * updates the running work without producing duplicates.
  */
 internal object RateRefreshScheduler {
+    /**
+     * Refresh every [intervalMinutes]. With [forAlerts] (rate alerts are
+     * waiting) on any network and at any charge, since the alerts only fire
+     * when rates arrive; otherwise only on an unmetered network and with the
+     * battery not low.
+     */
     fun schedule(
         context: Context,
         intervalMinutes: Long,
+        forAlerts: Boolean = false,
     ) {
         val coerced = intervalMinutes.coerceAtLeast(WORK_MANAGER_MIN_INTERVAL_MINUTES)
-        val request = buildPeriodicRequest(coerced)
+        val request = buildPeriodicRequest(coerced, forAlerts)
         WorkManager
             .getInstance(context)
             .enqueueUniquePeriodicWork(UNIQUE_NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
@@ -68,7 +75,14 @@ internal object RateRefreshScheduler {
         val db = Database(context)
         val override = db.providers.autoRefreshIntervalOverride.get()
         val effective = override?.toLong() ?: providerRefreshIntervalMinutes(db.providers.apiProvider.get())
-        schedule(context, effective)
+        schedule(
+            context,
+            effective,
+            forAlerts =
+                db.alerts.alerts
+                    .get()
+                    .isNotEmpty(),
+        )
     }
 
     /**
@@ -89,18 +103,26 @@ internal object RateRefreshScheduler {
 
     // Extracted so the constraints + backoff wiring lives in one obvious
     // place and the enqueue path stays a two-liner.
-    private fun buildPeriodicRequest(intervalMinutes: Long): PeriodicWorkRequest {
-        val constraints =
-            Constraints
-                .Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .setRequiresBatteryNotLow(true)
-                .build()
-        return PeriodicWorkRequestBuilder<RateRefreshWorker>(intervalMinutes, TimeUnit.MINUTES)
-            .setConstraints(constraints)
+    private fun buildPeriodicRequest(
+        intervalMinutes: Long,
+        forAlerts: Boolean,
+    ): PeriodicWorkRequest =
+        PeriodicWorkRequestBuilder<RateRefreshWorker>(intervalMinutes, TimeUnit.MINUTES)
+            .setConstraints(refreshConstraints(forAlerts))
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_SECONDS, TimeUnit.SECONDS)
             .build()
-    }
+
+    /**
+     * What the periodic refresh waits for: Wi-Fi (or another unmetered
+     * network) and a battery that isn't low, so keeping rates warm costs
+     * neither data nor charge; or, [forAlerts], just a network.
+     */
+    internal fun refreshConstraints(forAlerts: Boolean): Constraints =
+        Constraints
+            .Builder()
+            .setRequiredNetworkType(if (forAlerts) NetworkType.CONNECTED else NetworkType.UNMETERED)
+            .setRequiresBatteryNotLow(!forAlerts)
+            .build()
 
     /**
      * Resolve the interval that would be used *right now* for [provider]

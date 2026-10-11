@@ -37,7 +37,7 @@ object RetrofitProvider {
         Retrofit
             .Builder()
             .baseUrl(if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/")
-            .client(HttpClientProvider.client(context))
+            .callFactory(RevalidatingCallFactory(HttpClientProvider.client(context)))
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 }

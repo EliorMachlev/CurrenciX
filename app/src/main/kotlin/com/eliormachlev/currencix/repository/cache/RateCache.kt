@@ -1,9 +1,11 @@
 package com.eliormachlev.currencix.repository.cache
 
+import com.eliormachlev.currencix.util.revalidating
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 
 /**
  * Top-level orchestrator inspired by Store5's Fetcher / SourceOfTruth /
@@ -81,9 +83,11 @@ internal class RateCache<K : RateCacheKey, V : Any>(
      * Forces an upstream refetch, ignoring cached values but still populating
      * both tiers with the result. Used by explicit-refresh paths (swipe-to-
      * refresh, WorkManager cadence in #151) where the user's intent is
-     * "give me the latest, even if cache says fresh".
+     * "give me the latest, even if cache says fresh". The HTTP layer checks
+     * its own cached answer with the server too ([revalidating]): unchanged,
+     * it costs a few bytes.
      */
-    suspend fun refresh(key: K): Result<V> = dedupe.get(key, scope) { fetchWithRetry(key) }
+    suspend fun refresh(key: K): Result<V> = dedupe.get(key, scope) { withContext(revalidating()) { fetchWithRetry(key) } }
 
     suspend fun invalidate(key: K) {
         memoryLru.remove(key)

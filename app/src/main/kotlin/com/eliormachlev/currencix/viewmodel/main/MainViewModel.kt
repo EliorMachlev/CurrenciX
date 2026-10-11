@@ -283,11 +283,12 @@ class MainViewModel(
     internal fun getExchangeRates(): LiveData<ExchangeRates?> = exchangeRates
 
     /**
-     * update the data, without checking the cache
+     * Update the data, past the cache's freshness window: the server is asked
+     * whether the cached answer still holds (a few bytes if it does).
      */
     internal fun forceUpdateExchangeRate() {
         if (!RefreshState.inFlight.value) {
-            dbLiveItems = repository.getExchangeRates()
+            dbLiveItems = repository.getExchangeRates(fresh = true)
         }
     }
 

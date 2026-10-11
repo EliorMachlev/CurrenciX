@@ -19,6 +19,8 @@ import com.eliormachlev.currencix.util.ApiHttpError
 import com.eliormachlev.currencix.util.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -40,22 +42,42 @@ private const val HEAD_SLACK_DAYS = 7L
 /** The default start of a timeline fetch: a year back, with a buffer. */
 fun defaultTimelineSince(today: LocalDate = LocalDate.now()): LocalDate = today.minusDays(TIMELINE_WINDOW_DAYS)
 
+// The longest stretch one timeline request asks for: a longer range comes
+// in pieces, newest first, each shown as it arrives.
+private const val TIMELINE_CHUNK_YEARS = 1L
+
 /**
- * Where a timeline fetch starts, given what's cached ([cachedFirst] …
- * [cachedLast]) and how far back it's wanted ([since]): the last cached day
- * (re-fetched, in case it was preliminary) when the cache already reaches
- * back far enough, otherwise [since] — the whole range again.
+ * The date ranges a timeline fetch asks for, in order, given what's cached
+ * ([cachedFirst] … [cachedLast]) and how far back it's wanted ([since]):
+ * the tail from the last cached day (re-fetched, in case it was preliminary)
+ * to [today], then whatever the cache lacks before its first day, a year at
+ * a time going back. With nothing cached, the whole span a year at a time
+ * from [today] back. A cached stretch is never asked for again, so a longer
+ * period reuses what a shorter one fetched.
  */
-internal fun timelineFetchStart(
+internal fun timelineFetchRanges(
     since: LocalDate,
     cachedFirst: LocalDate?,
     cachedLast: LocalDate?,
-): LocalDate =
-    if (cachedFirst == null || cachedLast == null || cachedFirst.isAfter(since.plusDays(HEAD_SLACK_DAYS))) {
-        since
-    } else {
-        maxOf(cachedLast, since)
-    }
+    today: LocalDate,
+): List<ClosedRange<LocalDate>> {
+    if (cachedFirst == null || cachedLast == null) return yearlyBackFrom(today, since)
+    val tail = listOf(maxOf(cachedLast, since)..today)
+    val headMissing = cachedFirst.isAfter(since.plusDays(HEAD_SLACK_DAYS))
+    return if (headMissing) tail + yearlyBackFrom(cachedFirst, since) else tail
+}
+
+// [end] back to [start] in ranges of at most TIMELINE_CHUNK_YEARS, newest
+// first; a single day when they're the same.
+private fun yearlyBackFrom(
+    end: LocalDate,
+    start: LocalDate,
+): List<ClosedRange<LocalDate>> =
+    generateSequence(end) { it.minusYears(TIMELINE_CHUNK_YEARS) }
+        .takeWhile { it.isAfter(start) }
+        .map { chunkEnd -> maxOf(start, chunkEnd.minusYears(TIMELINE_CHUNK_YEARS))..chunkEnd }
+        .toList()
+        .ifEmpty { listOf(start..end) }
 
 // Non-breaking space + 👀 emoji, used as the trailing eyeballs on the bold
 // error message shown in the UI (rendered as HTML by the calling view).
@@ -116,13 +138,15 @@ class ExchangeRatesRepository(
      * upstream with retry-with-jitter and in-flight dedupe). LiveData is
      * still sourced from DataStore so existing UI subscribers keep working
      * unchanged; a cache-hit still writes to DataStore so the LiveData
-     * refires with the fresh value.
+     * refires with the fresh value. [fresh] (pull to refresh, back online)
+     * goes past the cache's freshness window and asks the server whether its
+     * cached answer still holds.
      */
-    fun getExchangeRates(): LiveData<ExchangeRates?> {
+    fun getExchangeRates(fresh: Boolean = false): LiveData<ExchangeRates?> {
         if (ratesJob?.isActive != true) {
             ratesJob =
                 launchApiCall {
-                    fetchRates(fresh = false).processResponse(
+                    fetchRates(fresh).processResponse(
                         successFlag = { success },
                         errorMessage = { error },
                         onSuccess = ::store,
@@ -156,13 +180,24 @@ class ExchangeRatesRepository(
     // (Database.getFallbackProvider), marked with the main provider they
     // stand in for. When both fail, the main provider's failure is the one
     // reported. [fresh] bypasses the cache's freshness window.
-    private suspend fun fetchRates(fresh: Boolean): Result<ExchangeRates> {
-        val main = db.providers.apiProvider.get()
-        val result = loadRates(main, fresh)
-        if (!result.shouldTryFallback { success }) return result
-        val fallback = loadRates(db.providers.fallbackProvider.get(), fresh).map { it.copy(fallbackFrom = main) }
-        return if (fallback.isUsable { success }) fallback else result
-    }
+    //
+    // Both are asked at once, so when the main provider fails the fallback's
+    // answer is already there (or on its way) instead of only starting then.
+    // When the main one answers, its rates are used and the fallback's fetch
+    // finishes in the rate cache's own scope, keeping that cache warm.
+    private suspend fun fetchRates(fresh: Boolean): Result<ExchangeRates> =
+        coroutineScope {
+            val main = db.providers.apiProvider.get()
+            val backup = db.providers.fallbackProvider.get()
+            val fallback = if (backup == main) null else async { loadRates(backup, fresh).map { it.copy(fallbackFrom = main) } }
+            val result = loadRates(main, fresh)
+            if (fallback == null || !result.shouldTryFallback { success }) {
+                fallback?.cancel()
+                return@coroutineScope result
+            }
+            val answer = fallback.await()
+            if (answer.isUsable { success }) answer else result
+        }
 
     private suspend fun loadRates(
         provider: ApiProvider,
@@ -211,9 +246,10 @@ class ExchangeRatesRepository(
                 launchApiCall {
                     // Main provider first; the fallback when it fails while
                     // online (its own cached window, not merged with the main's).
-                    var result = fetchTimeline(main, base, symbol, start)
+                    val showPartial: (Timeline) -> Unit = { partial -> if (isCurrentTimelinePair(key)) liveTimeline.postValue(partial) }
+                    var result = fetchTimeline(main, base, symbol, start, showPartial)
                     if (result.shouldTryFallback { success }) {
-                        val fallback = fetchTimeline(db.providers.fallbackProvider.get(), base, symbol, start)
+                        val fallback = fetchTimeline(db.providers.fallbackProvider.get(), base, symbol, start, showPartial)
                         if (fallback.isUsable { success }) result = fallback
                     }
                     result.processResponse(
@@ -232,37 +268,68 @@ class ExchangeRatesRepository(
         return liveTimeline
     }
 
-    // [provider]'s timeline for the pair: the missing tail fetched and merged
-    // into its cached window, then persisted — even for pairs the user has
-    // since navigated away from, so switching back fast-paints from fresh
-    // cache. The result is the merged window.
+    // [provider]'s timeline for the pair: the missing ranges fetched
+    // (timelineFetchRanges) and merged into its cached window, which is
+    // persisted after each one — even for pairs the user has since navigated
+    // away from, so switching back fast-paints from fresh cache. [onPartial]
+    // gets the window after each range but the last. The result is the
+    // merged window; a range that fails ends the fetch, with what came
+    // before it kept.
     private suspend fun fetchTimeline(
         provider: ApiProvider,
         base: Currency,
         symbol: Currency,
         since: LocalDate,
+        onPartial: (Timeline) -> Unit = {},
     ): Result<Timeline> {
-        val cached = db.rates.getCachedTimeline(provider, base, symbol)
+        var window = db.rates.getCachedTimeline(provider, base, symbol)
         val today = LocalDate.now()
-        val cachedDates = cached?.rates?.keys?.sorted()
-        val fetchStart = timelineFetchStart(since, cachedDates?.firstOrNull(), cachedDates?.lastOrNull())
+        val cachedDates = window?.rates?.keys?.sorted()
+        val ranges = timelineFetchRanges(since, cachedDates?.firstOrNull(), cachedDates?.lastOrNull(), today)
+        var fetched: Result<Timeline>? = null
+        for ((index, range) in ranges.withIndex()) {
+            val result = fetchTimelineRange(provider, base, symbol, range)
+            val fresh = result.getOrNull()
+            if (fresh == null || fresh.success == false) {
+                // Only the first range's failure is the fetch's: past it, the
+                // pieces already merged are worth showing.
+                if (fetched == null) return result.map { it.copy(provider = provider) }
+                break
+            }
+            window =
+                mergeTimeline(
+                    window,
+                    fresh,
+                    base,
+                    today.minusYears(TIMELINE_MAX_YEARS),
+                ).also { db.rates.putCachedTimeline(it, base, symbol) }
+            fetched = Result.success(window)
+            if (index < ranges.lastIndex) onPartial(window)
+        }
+        // timelineFetchRanges always gives at least one range, so a fetch either
+        // failed on the first (returned above) or merged something.
+        return checkNotNull(fetched)
+    }
+
+    // One range of [provider]'s timeline. refresh() rather than get(): the
+    // merge against the cached window needs the days asked for, which a
+    // stale RateCache entry would skip. RateCache still adds
+    // retry-with-jitter and in-flight dedupe.
+    private suspend fun fetchTimelineRange(
+        provider: ApiProvider,
+        base: Currency,
+        symbol: Currency,
+        range: ClosedRange<LocalDate>,
+    ): Result<Timeline> {
         val cacheKey =
             RateCacheKey.TimelineRange(
                 providerId = provider.id,
                 baseIso = base.iso4217Alpha(),
                 symbolIso = symbol.iso4217Alpha(),
-                startDate = fetchStart,
-                endDate = today,
+                startDate = range.start,
+                endDate = range.endInclusive,
             )
-        // refresh() rather than get() — the tail-merge against the cached
-        // window needs the missing days, which a stale RateCache entry would
-        // skip. RateCache still adds retry-with-jitter and in-flight dedupe.
-        return timelineCache.refresh(cacheKey).map { fresh ->
-            val tagged = fresh.copy(provider = provider)
-            if (tagged.success == false) return@map tagged
-            val keepFrom = today.minusYears(TIMELINE_MAX_YEARS)
-            mergeTimeline(cached, tagged, base, keepFrom).also { db.rates.putCachedTimeline(it, base, symbol) }
-        }
+        return timelineCache.refresh(cacheKey).map { it.copy(provider = provider) }
     }
 
     private fun mergeTimeline(

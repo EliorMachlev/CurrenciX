@@ -35,13 +35,7 @@ internal class TessdataDownloadWorker(
     override suspend fun doWork(): Result {
         val language = TessLanguage.entries.firstOrNull { it.name == inputData.getString(KEY_LANGUAGE) } ?: return Result.failure()
         if (Tessdata.isInstalled(applicationContext, language)) return Result.success()
-        val client =
-            HttpClientProvider
-                .client(applicationContext)
-                .newBuilder()
-                .cache(null)
-                .callTimeout(0, TimeUnit.SECONDS)
-                .build()
+        val client = HttpClientProvider.downloadClient(applicationContext)
         return try {
             client.newCall(Request.Builder().url(language.url).build()).execute().use { response ->
                 val body = response.body

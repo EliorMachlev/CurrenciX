@@ -103,8 +103,12 @@ class ConverterStatus(
             if (converterVisible) onError(message) else pendingError = message
         }
         NetworkStatusLiveData(context).observe(owner) { online ->
+            // Back online after being offline: the rates on screen are as old
+            // as the outage, so fetch new ones without waiting for a pull.
+            val reconnected = online && !isOnline
             isOnline = online
             recompute()
+            if (reconnected) viewModel.forceUpdateExchangeRate()
         }
     }
 

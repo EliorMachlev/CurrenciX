@@ -59,7 +59,12 @@ suspend fun <T> HttpClientProvider.fetch(
 ): Result<T> =
     withContext(dispatcher) {
         runCatching {
-            val request = Request.Builder().url(url).build()
+            val request =
+                Request
+                    .Builder()
+                    .url(url)
+                    .build()
+                    .checkedWithServerIfAsked()
             val response = client(context).newCall(request).await()
             response.use {
                 if (!it.isSuccessful) throw ApiHttpError(it.code)
