@@ -11,8 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -31,6 +34,8 @@ import com.eliormachlev.currencix.view.cart.compose.CartReorder
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
 import com.eliormachlev.currencix.view.cart.compose.CartScreenActions
 import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
+import com.eliormachlev.currencix.view.cart.compose.ReceiptReadingSheet
+import com.eliormachlev.currencix.view.cart.compose.ReceiptReviewSheet
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.OverflowAction
 import com.eliormachlev.currencix.view.compose.ReadingDirection
@@ -68,6 +73,7 @@ fun CartRoute(
             host.dispose()
         }
     }
+    val scan = rememberReceiptScan()
     val cart by viewModel.getCurrentCart().observeAsState()
     val needsClosePrompt = remember(cart) { host.saveLoad.needsClosePrompt() }
     BackHandler(enabled = needsClosePrompt, onBack = host.saveLoad::attemptClose)
@@ -78,7 +84,7 @@ fun CartRoute(
         ScreenScaffold(
             title = { Text(stringResource(R.string.cart_title)) },
             onBack = host.saveLoad::attemptClose,
-            actions = { CartBarActions(onSave = host.saveLoad::saveOrPromptForName, menu = cartMenu(host)) },
+            actions = { CartBarActions(onSave = host.saveLoad::saveOrPromptForName, menu = cartMenu(host, scan)) },
         ) { padding ->
             CartScreen(
                 viewModel = viewModel,
@@ -92,6 +98,40 @@ fun CartRoute(
         }
     }
     CartOverlays(host)
+    ReceiptOverlays(host, scan)
+}
+
+// Reading a receipt photo, then its items to review and add.
+@Composable
+private fun ReceiptOverlays(
+    host: CartHost,
+    scan: ReceiptScan,
+) {
+    val snackbar = LocalAppSnackbar.current
+    val resources = LocalResources.current
+    val currency by host.viewModel.getBaseCurrency().observeAsState()
+    val lines = scan.lines
+    when {
+        scan.reading -> {
+            // Closing it doesn't stop the reading; the review follows when it's done.
+            var hidden by remember { mutableStateOf(false) }
+            if (!hidden) ReceiptReadingSheet(onDismiss = { hidden = true })
+        }
+
+        lines != null -> {
+            ReceiptReviewSheet(
+                lines = lines,
+                currency = currency,
+                languagePending = scan.languagePending,
+                onAdd = { chosen ->
+                    chosen.forEach { host.viewModel.rows.add(it.name, it.price.toPlainString()) }
+                    scan.clear()
+                    snackbar?.show(resources.getQuantityString(R.plurals.receipt_added, chosen.size, chosen.size))
+                },
+                onDismiss = scan::clear,
+            )
+        }
+    }
 }
 
 /** The cart bar's actions: Save, one tap away, then the ⋮ menu with Save as and the rest. */
@@ -146,7 +186,11 @@ private fun CartHost.screenActions(onOpenFees: () -> Unit) =
     )
 
 @Composable
-private fun cartMenu(host: CartHost): List<OverflowAction> {
+private fun cartMenu(
+    host: CartHost,
+    scan: ReceiptScan,
+): List<OverflowAction> {
+    val scanLabel = stringResource(R.string.receipt_scan)
     val share = stringResource(R.string.menu_share)
     val saveAs = stringResource(R.string.cart_menu_save_as)
     val load = stringResource(R.string.cart_menu_load)
@@ -156,8 +200,9 @@ private fun cartMenu(host: CartHost): List<OverflowAction> {
     val extras = stringResource(R.string.cart_menu_extras)
     val shoppingMode by host.viewModel.isShoppingMode().observeAsState(initial = false)
     val shoppingList = stringResource(if (shoppingMode) R.string.cart_menu_shopping_list_off else R.string.cart_menu_shopping_list)
-    return remember(host, share, extras, shoppingList, shoppingMode, saveAs, load, export, import, clear) {
+    return remember(host, scan, scanLabel, share, extras, shoppingList, shoppingMode, saveAs, load, export, import, clear) {
         listOf(
+            OverflowAction(scanLabel, R.drawable.ic_receipt) { host.overlays.cartChoice = scan.sourceChoice() },
             OverflowAction(share, R.drawable.ic_share) { host.shareCoordinator.show() },
             OverflowAction(extras, R.drawable.ic_split) { host.overlays.extrasVisible = true },
             OverflowAction(shoppingList, R.drawable.ic_checklist) { host.viewModel.setShoppingMode(!shoppingMode) },

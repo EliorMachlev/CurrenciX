@@ -60,6 +60,8 @@
       <li>Your device's standard HTTP headers (User-Agent, Accept-Encoding, etc.)</li>
     </ul>
     <p>No personally identifiable information is included in these requests. The providers' own privacy policies govern how they handle server-side access logs.</p>
+    <p>If you scan a receipt while the app is in a language other than English, the app downloads that language's text-recognition data once, from Tesseract's public repository on GitHub (<code>raw.githubusercontent.com</code>). The request is for a fixed public file and carries nothing about you; the file is checked against a fingerprint built into the app before it's used.</p>
+    <p>Receipt photos are read entirely on your device and are never uploaded. A photo taken for a scan is deleted as soon as it has been read. The app has no camera permission: the photo comes from your camera app or the system photo picker.</p>
 
     <h3>Provider Privacy Policies</h3>
     <ul>

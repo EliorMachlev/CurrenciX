@@ -255,4 +255,21 @@
     <string name="trip_unnamed">Reis</string>
     <string name="trip_move">Reis</string>
     <string name="trip_none">Reisita</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Lisa %d toode</item>
+        <item quantity="other">Lisa %d toodet</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">Lisati %d toode</item>
+        <item quantity="other">Lisati %d toodet</item>
+    </plurals>
+    <string name="receipt_scan">Skanni tšekk</string>
+    <string name="receipt_take_photo">Tee foto</string>
+    <string name="receipt_take_photo_desc">Kaamerarakendusega. CurrenciX ei saa kunagi ligipääsu kaamerale.</string>
+    <string name="receipt_choose_photo">Vali foto</string>
+    <string name="receipt_choose_photo_desc">Foto tšekist, mis sul juba on.</string>
+    <string name="receipt_reading">Tšeki lugemine…</string>
+    <string name="receipt_none_found">Hindu ei leitud. Proovi teravamat ja sirgemat fotot.</string>
+    <string name="receipt_check_hint">Loetud sinu telefonis, seega kontrolli nimesid ja hindu.</string>
+    <string name="receipt_language_pending">Sinu keele nimed loetakse paremini, kui tekstiandmed on alla laaditud.</string>
 </resources>

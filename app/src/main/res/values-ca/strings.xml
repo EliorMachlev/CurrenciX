@@ -257,4 +257,23 @@
     <string name="trip_unnamed">Viatge</string>
     <string name="trip_move">Viatge</string>
     <string name="trip_none">Sense viatge</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Afegeix %d article</item>
+        <item quantity="many">Afegeix %d d\'articles</item>
+        <item quantity="other">Afegeix %d articles</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">S\'ha afegit %d article</item>
+        <item quantity="many">S\'han afegit %d d\'articles</item>
+        <item quantity="other">S\'han afegit %d articles</item>
+    </plurals>
+    <string name="receipt_scan">Escaneja un tiquet</string>
+    <string name="receipt_take_photo">Fes una foto</string>
+    <string name="receipt_take_photo_desc">Amb l\'app de càmera. CurrenciX no té mai accés a la càmera.</string>
+    <string name="receipt_choose_photo">Tria una foto</string>
+    <string name="receipt_choose_photo_desc">Una foto d\'un tiquet que ja tens.</string>
+    <string name="receipt_reading">S\'està llegint el tiquet…</string>
+    <string name="receipt_none_found">No s\'han trobat preus. Prova amb una foto més nítida i plana.</string>
+    <string name="receipt_check_hint">Llegit al telèfon: comprova els noms i els preus.</string>
+    <string name="receipt_language_pending">Els noms en el teu idioma es llegiran millor quan acabi la baixada de les dades de text.</string>
 </resources>

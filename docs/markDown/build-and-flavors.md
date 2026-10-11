@@ -89,6 +89,15 @@ Retrofit is layered on the shared OkHttp client and serves every fixed-shape JSO
 
 No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent, so `util/Arithmetic.kt` evaluates them in about a hundred lines of `BigDecimal` recursive descent (68 significant digits, as its predecessor EvalEx used). EvalEx was dropped because it is built with Lombok, whose `lombok.Generated` marker R8 could only get past with a `-dontwarn` rule; before it came mXparser, whose v5+ dual license isn't F-Droid compatible.
 
+### Receipt scanning
+
+| Dependency | Version | Note |
+|---|---|---|
+| `com.github.adaptech-cz.Tesseract4Android:tesseract4android` | 4.8.0 | Tesseract OCR with Leptonica, native, Apache-2.0. Published only on JitPack, which `settings.gradle` allows for this one group (`exclusiveContent`). Its native libraries are about 7 MB per ABI (four ABIs), so per-ABI splits or an App Bundle keep the install small. It has no R8 rules of its own; `app/proguard-rules.pro` keeps its two packages, whose native code finds Java members by name |
+| `androidx.exifinterface:exifinterface` | 1.4.1 | A receipt photo's orientation, so it's read upright |
+
+English OCR data (`assets/tessdata/eng.traineddata`, tessdata_fast 4.1.0, 4.1 MB) ships in the APK; the other languages download on demand and are checked against SHA-256s in `ocr/TessLanguage.kt`.
+
 ### Charts
 
 | Dependency | Version |

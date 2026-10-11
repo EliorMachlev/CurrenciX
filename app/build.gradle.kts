@@ -77,7 +77,7 @@ android {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -247,6 +247,11 @@ dependencies {
     // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
     // opt-in via Settings until #147 onboarding wires the hero opt-in.
     implementation("androidx.work:work-runtime-ktx:2.12.0")
+    // Receipt scanning: Tesseract OCR on the device (Apache-2.0), from JitPack
+    // (see settings.gradle). English data ships in assets/tessdata; other
+    // languages download in the background (ocr/TessdataDownloadWorker).
+    implementation("com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.8.0")
+    implementation("androidx.exifinterface:exifinterface:1.4.1")
     // charts
     val vicoVersion = "3.3.1"
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")

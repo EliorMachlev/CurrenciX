@@ -255,4 +255,21 @@
     <string name="trip_unnamed">Ταξίδι</string>
     <string name="trip_move">Ταξίδι</string>
     <string name="trip_none">Χωρίς ταξίδι</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Προσθήκη %d είδους</item>
+        <item quantity="other">Προσθήκη %d ειδών</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">Προστέθηκε %d είδος</item>
+        <item quantity="other">Προστέθηκαν %d είδη</item>
+    </plurals>
+    <string name="receipt_scan">Σάρωση απόδειξης</string>
+    <string name="receipt_take_photo">Λήψη φωτογραφίας</string>
+    <string name="receipt_take_photo_desc">Με την εφαρμογή κάμερας. Το CurrenciX δεν αποκτά ποτέ πρόσβαση στην κάμερα.</string>
+    <string name="receipt_choose_photo">Επιλογή φωτογραφίας</string>
+    <string name="receipt_choose_photo_desc">Μια φωτογραφία απόδειξης που ήδη έχετε.</string>
+    <string name="receipt_reading">Ανάγνωση απόδειξης…</string>
+    <string name="receipt_none_found">Δεν βρέθηκαν τιμές. Δοκιμάστε μια πιο καθαρή και επίπεδη φωτογραφία.</string>
+    <string name="receipt_check_hint">Διαβάστηκε στο τηλέφωνό σας, ελέγξτε ονόματα και τιμές.</string>
+    <string name="receipt_language_pending">Τα ονόματα στη γλώσσα σας θα διαβάζονται καλύτερα μόλις ολοκληρωθεί η λήψη των δεδομένων κειμένου.</string>
 </resources>

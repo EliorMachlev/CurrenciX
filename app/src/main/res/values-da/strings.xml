@@ -254,4 +254,21 @@
     <string name="trip_unnamed">Rejse</string>
     <string name="trip_move">Rejse</string>
     <string name="trip_none">Ingen rejse</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Tilføj %d vare</item>
+        <item quantity="other">Tilføj %d varer</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%d vare tilføjet</item>
+        <item quantity="other">%d varer tilføjet</item>
+    </plurals>
+    <string name="receipt_scan">Scan kvittering</string>
+    <string name="receipt_take_photo">Tag et billede</string>
+    <string name="receipt_take_photo_desc">Med din kameraapp. CurrenciX får aldrig adgang til kameraet.</string>
+    <string name="receipt_choose_photo">Vælg et billede</string>
+    <string name="receipt_choose_photo_desc">Et billede af en kvittering, du allerede har.</string>
+    <string name="receipt_reading">Læser kvitteringen…</string>
+    <string name="receipt_none_found">Ingen priser fundet. Prøv et skarpere og fladere billede.</string>
+    <string name="receipt_check_hint">Læst på din telefon, så tjek navne og priser.</string>
+    <string name="receipt_language_pending">Navne på dit sprog læses bedre, når tekstdataene er hentet.</string>
 </resources>

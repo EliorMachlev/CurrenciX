@@ -256,4 +256,21 @@
     <string name="trip_unnamed">Resa</string>
     <string name="trip_move">Resa</string>
     <string name="trip_none">Ingen resa</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Lägg till %d vara</item>
+        <item quantity="other">Lägg till %d varor</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%d vara tillagd</item>
+        <item quantity="other">%d varor tillagda</item>
+    </plurals>
+    <string name="receipt_scan">Skanna kvitto</string>
+    <string name="receipt_take_photo">Ta en bild</string>
+    <string name="receipt_take_photo_desc">Med kameraappen. CurrenciX får aldrig åtkomst till kameran.</string>
+    <string name="receipt_choose_photo">Välj en bild</string>
+    <string name="receipt_choose_photo_desc">En bild på ett kvitto du redan har.</string>
+    <string name="receipt_reading">Läser kvittot …</string>
+    <string name="receipt_none_found">Inga priser hittades. Prova en skarpare och plattare bild.</string>
+    <string name="receipt_check_hint">Läst på telefonen, så kontrollera namn och priser.</string>
+    <string name="receipt_language_pending">Namn på ditt språk läses bättre när textdata har laddats ned.</string>
 </resources>

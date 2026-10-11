@@ -259,4 +259,29 @@
     <string name="trip_unnamed">رحلة</string>
     <string name="trip_move">رحلة</string>
     <string name="trip_none">بلا رحلة</string>
+    <plurals name="receipt_add">
+        <item quantity="zero">لا عناصر للإضافة</item>
+        <item quantity="one">إضافة عنصر واحد</item>
+        <item quantity="two">إضافة عنصرين</item>
+        <item quantity="few">إضافة %d عناصر</item>
+        <item quantity="many">إضافة %d عنصرًا</item>
+        <item quantity="other">إضافة %d عنصر</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="zero">لم يُضف شيء</item>
+        <item quantity="one">أُضيف عنصر واحد</item>
+        <item quantity="two">أُضيف عنصران</item>
+        <item quantity="few">أُضيفت %d عناصر</item>
+        <item quantity="many">أُضيف %d عنصرًا</item>
+        <item quantity="other">أُضيف %d عنصر</item>
+    </plurals>
+    <string name="receipt_scan">مسح إيصال</string>
+    <string name="receipt_take_photo">التقاط صورة</string>
+    <string name="receipt_take_photo_desc">بتطبيق الكاميرا. لا يحصل CurrenciX على إذن الكاميرا أبدًا.</string>
+    <string name="receipt_choose_photo">اختيار صورة</string>
+    <string name="receipt_choose_photo_desc">صورة إيصال التقطتها من قبل.</string>
+    <string name="receipt_reading">جارٍ قراءة الإيصال…</string>
+    <string name="receipt_none_found">لم يُعثر على أسعار في هذا الإيصال. جرّب صورة أوضح ومستوية أكثر.</string>
+    <string name="receipt_check_hint">تمت القراءة على هاتفك، لذا راجع الأسماء والأسعار.</string>
+    <string name="receipt_language_pending">تُقرأ الأسماء بلغتك بشكل أفضل بعد انتهاء تنزيل بيانات النص.</string>
 </resources>

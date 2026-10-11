@@ -257,4 +257,25 @@
     <string name="trip_unnamed">Podróż</string>
     <string name="trip_move">Podróż</string>
     <string name="trip_none">Bez podróży</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Dodaj %d pozycję</item>
+        <item quantity="few">Dodaj %d pozycje</item>
+        <item quantity="many">Dodaj %d pozycji</item>
+        <item quantity="other">Dodaj %d pozycji</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">Dodano %d pozycję</item>
+        <item quantity="few">Dodano %d pozycje</item>
+        <item quantity="many">Dodano %d pozycji</item>
+        <item quantity="other">Dodano %d pozycji</item>
+    </plurals>
+    <string name="receipt_scan">Zeskanuj paragon</string>
+    <string name="receipt_take_photo">Zrób zdjęcie</string>
+    <string name="receipt_take_photo_desc">Aplikacją aparatu. CurrenciX nigdy nie dostaje dostępu do aparatu.</string>
+    <string name="receipt_choose_photo">Wybierz zdjęcie</string>
+    <string name="receipt_choose_photo_desc">Zdjęcie paragonu, które już masz.</string>
+    <string name="receipt_reading">Odczytywanie paragonu…</string>
+    <string name="receipt_none_found">Nie znaleziono cen. Spróbuj ostrzejszego, płaskiego zdjęcia.</string>
+    <string name="receipt_check_hint">Odczytano na telefonie, więc sprawdź nazwy i ceny.</string>
+    <string name="receipt_language_pending">Nazwy w Twoim języku będą odczytywane lepiej po pobraniu danych tekstowych.</string>
 </resources>

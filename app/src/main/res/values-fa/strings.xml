@@ -256,4 +256,21 @@
     <string name="trip_unnamed">سفر</string>
     <string name="trip_move">سفر</string>
     <string name="trip_none">بدون سفر</string>
+    <plurals name="receipt_add">
+        <item quantity="one">افزودن %d قلم</item>
+        <item quantity="other">افزودن %d قلم</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%d قلم افزوده شد</item>
+        <item quantity="other">%d قلم افزوده شد</item>
+    </plurals>
+    <string name="receipt_scan">اسکن رسید</string>
+    <string name="receipt_take_photo">گرفتن عکس</string>
+    <string name="receipt_take_photo_desc">با برنامه دوربین. CurrenciX هرگز به دوربین دسترسی ندارد.</string>
+    <string name="receipt_choose_photo">انتخاب عکس</string>
+    <string name="receipt_choose_photo_desc">عکس رسیدی که از قبل دارید.</string>
+    <string name="receipt_reading">در حال خواندن رسید…</string>
+    <string name="receipt_none_found">قیمتی در این رسید پیدا نشد. عکسی واضح‌تر و صاف‌تر امتحان کنید.</string>
+    <string name="receipt_check_hint">روی گوشی شما خوانده شد؛ نام‌ها و قیمت‌ها را بررسی کنید.</string>
+    <string name="receipt_language_pending">نام‌ها به زبان شما پس از پایان دانلود داده‌های متن بهتر خوانده می‌شوند.</string>
 </resources>

@@ -254,4 +254,19 @@
     <string name="trip_unnamed">Chuyến đi</string>
     <string name="trip_move">Chuyến đi</string>
     <string name="trip_none">Không thuộc chuyến nào</string>
+    <plurals name="receipt_add">
+        <item quantity="other">Thêm %d mặt hàng</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="other">Đã thêm %d mặt hàng</item>
+    </plurals>
+    <string name="receipt_scan">Quét hóa đơn</string>
+    <string name="receipt_take_photo">Chụp ảnh</string>
+    <string name="receipt_take_photo_desc">Bằng ứng dụng máy ảnh. CurrenciX không bao giờ có quyền truy cập máy ảnh.</string>
+    <string name="receipt_choose_photo">Chọn ảnh</string>
+    <string name="receipt_choose_photo_desc">Ảnh hóa đơn bạn đã chụp.</string>
+    <string name="receipt_reading">Đang đọc hóa đơn…</string>
+    <string name="receipt_none_found">Không tìm thấy giá. Hãy thử ảnh rõ và phẳng hơn.</string>
+    <string name="receipt_check_hint">Đọc trên điện thoại của bạn, nên hãy kiểm tra tên và giá.</string>
+    <string name="receipt_language_pending">Tên bằng ngôn ngữ của bạn sẽ được đọc tốt hơn khi dữ liệu văn bản tải xong.</string>
 </resources>

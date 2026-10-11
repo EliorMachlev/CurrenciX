@@ -69,6 +69,7 @@ ICONS = {
     "ic_check": ("check", False),
     "ic_person": ("person", False),
     "ic_luggage": ("luggage", False),
+    "ic_receipt": ("receipt_long", False),
     # timeline
     "ic_tune": ("tune", False),
     "ic_trending_up": ("trending_up", False),

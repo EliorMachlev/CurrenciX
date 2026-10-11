@@ -255,4 +255,21 @@
     <string name="trip_unnamed">Пътуване</string>
     <string name="trip_move">Пътуване</string>
     <string name="trip_none">Без пътуване</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Добави %d артикул</item>
+        <item quantity="other">Добави %d артикула</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">Добавен е %d артикул</item>
+        <item quantity="other">Добавени са %d артикула</item>
+    </plurals>
+    <string name="receipt_scan">Сканирай бележка</string>
+    <string name="receipt_take_photo">Снимай</string>
+    <string name="receipt_take_photo_desc">С приложението за камера. CurrenciX никога не получава достъп до камерата.</string>
+    <string name="receipt_choose_photo">Избери снимка</string>
+    <string name="receipt_choose_photo_desc">Снимка на бележка, която вече имате.</string>
+    <string name="receipt_reading">Бележката се разчита…</string>
+    <string name="receipt_none_found">Не са открити цени. Опитайте с по-ясна и по-равна снимка.</string>
+    <string name="receipt_check_hint">Разчетено на телефона ви, затова проверете имената и цените.</string>
+    <string name="receipt_language_pending">Имената на вашия език се разчитат по-добре, след като данните за текста се изтеглят.</string>
 </resources>

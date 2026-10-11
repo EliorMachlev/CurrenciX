@@ -255,4 +255,21 @@
     <string name="trip_unnamed">ট্রিপ</string>
     <string name="trip_move">ট্রিপ</string>
     <string name="trip_none">কোনো ট্রিপ নয়</string>
+    <plurals name="receipt_add">
+        <item quantity="one">%dটি আইটেম যোগ করুন</item>
+        <item quantity="other">%dটি আইটেম যোগ করুন</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%dটি আইটেম যোগ হয়েছে</item>
+        <item quantity="other">%dটি আইটেম যোগ হয়েছে</item>
+    </plurals>
+    <string name="receipt_scan">রসিদ স্ক্যান</string>
+    <string name="receipt_take_photo">ছবি তুলুন</string>
+    <string name="receipt_take_photo_desc">আপনার ক্যামেরা অ্যাপ দিয়ে। CurrenciX কখনও ক্যামেরার অনুমতি পায় না।</string>
+    <string name="receipt_choose_photo">ছবি বেছে নিন</string>
+    <string name="receipt_choose_photo_desc">আগে তোলা রসিদের ছবি।</string>
+    <string name="receipt_reading">রসিদ পড়া হচ্ছে…</string>
+    <string name="receipt_none_found">এই রসিদে কোনো দাম পাওয়া যায়নি। আরও স্পষ্ট ও সমান ছবি দিয়ে চেষ্টা করুন।</string>
+    <string name="receipt_check_hint">আপনার ফোনেই পড়া হয়েছে, তাই নাম ও দাম মিলিয়ে নিন।</string>
+    <string name="receipt_language_pending">টেক্সট ডেটা ডাউনলোড শেষ হলে আপনার ভাষার নাম আরও ভালোভাবে পড়া যাবে।</string>
 </resources>

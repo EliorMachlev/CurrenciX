@@ -252,4 +252,19 @@
     <string name="trip_unnamed">旅行</string>
     <string name="trip_move">旅行</string>
     <string name="trip_none">不属于旅行</string>
+    <plurals name="receipt_add">
+        <item quantity="other">添加 %d 件商品</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="other">已添加 %d 件商品</item>
+    </plurals>
+    <string name="receipt_scan">扫描小票</string>
+    <string name="receipt_take_photo">拍照</string>
+    <string name="receipt_take_photo_desc">使用相机应用拍摄。CurrenciX 绝不会获得相机权限。</string>
+    <string name="receipt_choose_photo">选择照片</string>
+    <string name="receipt_choose_photo_desc">已拍好的小票照片。</string>
+    <string name="receipt_reading">正在读取小票…</string>
+    <string name="receipt_none_found">这张小票上没有找到价格。请试试更清晰、更平整的照片。</string>
+    <string name="receipt_check_hint">在手机上识别，请核对名称和价格。</string>
+    <string name="receipt_language_pending">文字数据下载完成后，你所用语言的名称会识别得更好。</string>
 </resources>

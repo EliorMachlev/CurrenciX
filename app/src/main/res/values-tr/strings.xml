@@ -255,4 +255,21 @@
     <string name="trip_unnamed">Seyahat</string>
     <string name="trip_move">Seyahat</string>
     <string name="trip_none">Seyahat yok</string>
+    <plurals name="receipt_add">
+        <item quantity="one">%d ürün ekle</item>
+        <item quantity="other">%d ürün ekle</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%d ürün eklendi</item>
+        <item quantity="other">%d ürün eklendi</item>
+    </plurals>
+    <string name="receipt_scan">Fiş tara</string>
+    <string name="receipt_take_photo">Fotoğraf çek</string>
+    <string name="receipt_take_photo_desc">Kamera uygulamanızla. CurrenciX hiçbir zaman kamera erişimi almaz.</string>
+    <string name="receipt_choose_photo">Fotoğraf seç</string>
+    <string name="receipt_choose_photo_desc">Önceden çektiğiniz bir fiş fotoğrafı.</string>
+    <string name="receipt_reading">Fiş okunuyor…</string>
+    <string name="receipt_none_found">Bu fişte fiyat bulunamadı. Daha net ve düz bir fotoğraf deneyin.</string>
+    <string name="receipt_check_hint">Telefonunuzda okundu, adları ve fiyatları kontrol edin.</string>
+    <string name="receipt_language_pending">Metin verilerinin indirilmesi bitince kendi dilinizdeki adlar daha iyi okunur.</string>
 </resources>

@@ -256,4 +256,23 @@
     <string name="trip_unnamed">טיול</string>
     <string name="trip_move">טיול</string>
     <string name="trip_none">בלי טיול</string>
+    <plurals name="receipt_add">
+        <item quantity="one">הוספת פריט אחד</item>
+        <item quantity="two">הוספת שני פריטים</item>
+        <item quantity="other">הוספת %d פריטים</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">נוסף פריט אחד</item>
+        <item quantity="two">נוספו שני פריטים</item>
+        <item quantity="other">נוספו %d פריטים</item>
+    </plurals>
+    <string name="receipt_scan">סריקת קבלה</string>
+    <string name="receipt_take_photo">צילום</string>
+    <string name="receipt_take_photo_desc">באפליקציית המצלמה. ל־CurrenciX אין אף פעם גישה למצלמה.</string>
+    <string name="receipt_choose_photo">בחירת תמונה</string>
+    <string name="receipt_choose_photo_desc">תמונה של קבלה שכבר צילמתם.</string>
+    <string name="receipt_reading">קורא את הקבלה…</string>
+    <string name="receipt_none_found">לא נמצאו מחירים בקבלה. נסו תמונה חדה ושטוחה יותר.</string>
+    <string name="receipt_check_hint">הקריאה נעשתה בטלפון, אז כדאי לבדוק שמות ומחירים.</string>
+    <string name="receipt_language_pending">שמות בשפה שלכם ייקראו טוב יותר כשהורדת נתוני הטקסט תסתיים.</string>
 </resources>

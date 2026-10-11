@@ -16,6 +16,7 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.model.compareCards
+import com.eliormachlev.currencix.util.ReceiptLine
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartFooterCard
@@ -23,6 +24,7 @@ import com.eliormachlev.currencix.view.cart.compose.CartItemsList
 import com.eliormachlev.currencix.view.cart.compose.CartTotals
 import com.eliormachlev.currencix.view.cart.compose.NO_PAIR_ACTIONS
 import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
+import com.eliormachlev.currencix.view.cart.compose.ReceiptReviewSheet
 import com.eliormachlev.currencix.view.cart.compose.SavedCartActions
 import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
 import com.eliormachlev.currencix.view.cart.compose.cartItemActions
@@ -202,6 +204,23 @@ class NewSurfacesScreenshotTest {
             trips = listOf(TripSummary(trip, BigDecimal("1234.50"), 1)),
             actions = SavedCartActions(onPick = {}, onRename = {}, onDelete = {}),
         )
+
+    // A scanned receipt's items, all ticked, waiting to be added.
+    @Test fun receiptReviewSheet() =
+        shots.captureMatrix("receipt_review_sheet") {
+            ReceiptReviewSheet(
+                lines =
+                    listOf(
+                        ReceiptLine("Milk 1L", BigDecimal("6.90")),
+                        ReceiptLine("Bread whole wheat", BigDecimal("12.50")),
+                        ReceiptLine("Bananas", BigDecimal("7.00")),
+                    ),
+                currency = Currency.ILS,
+                languagePending = false,
+                onAdd = {},
+                onDismiss = {},
+            )
+        }
 
     @Test fun cartExtrasSheet() =
         shots.captureMatrix("cart_extras_sheet") {

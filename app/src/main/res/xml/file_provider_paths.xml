@@ -9,4 +9,9 @@
     <cache-path
         name="share-images"
         path="share-images/" />
+    <!-- The camera app writes a receipt photo here for scanning; it's
+         deleted once read. -->
+    <cache-path
+        name="receipts"
+        path="receipts/" />
 </paths>

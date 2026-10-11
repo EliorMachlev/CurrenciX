@@ -255,4 +255,21 @@
     <string name="trip_unnamed">Utazás</string>
     <string name="trip_move">Utazás</string>
     <string name="trip_none">Nincs utazás</string>
+    <plurals name="receipt_add">
+        <item quantity="one">%d tétel hozzáadása</item>
+        <item quantity="other">%d tétel hozzáadása</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%d tétel hozzáadva</item>
+        <item quantity="other">%d tétel hozzáadva</item>
+    </plurals>
+    <string name="receipt_scan">Blokk beolvasása</string>
+    <string name="receipt_take_photo">Fotó készítése</string>
+    <string name="receipt_take_photo_desc">A kameraalkalmazással. A CurrenciX soha nem kap hozzáférést a kamerához.</string>
+    <string name="receipt_choose_photo">Fotó kiválasztása</string>
+    <string name="receipt_choose_photo_desc">Egy blokkfotó, ami már megvan.</string>
+    <string name="receipt_reading">A blokk beolvasása…</string>
+    <string name="receipt_none_found">Nem található ár. Próbálj élesebb, egyenesebb fotót.</string>
+    <string name="receipt_check_hint">A telefonodon olvastuk be, ezért ellenőrizd a neveket és árakat.</string>
+    <string name="receipt_language_pending">A saját nyelvű nevek jobban olvashatók lesznek, ha letöltődnek a szövegadatok.</string>
 </resources>

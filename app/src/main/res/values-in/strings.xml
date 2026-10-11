@@ -254,4 +254,19 @@
     <string name="trip_unnamed">Perjalanan</string>
     <string name="trip_move">Perjalanan</string>
     <string name="trip_none">Tanpa perjalanan</string>
+    <plurals name="receipt_add">
+        <item quantity="other">Tambahkan %d item</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="other">%d item ditambahkan</item>
+    </plurals>
+    <string name="receipt_scan">Pindai struk</string>
+    <string name="receipt_take_photo">Ambil foto</string>
+    <string name="receipt_take_photo_desc">Dengan aplikasi kamera. CurrenciX tidak pernah mendapat akses kamera.</string>
+    <string name="receipt_choose_photo">Pilih foto</string>
+    <string name="receipt_choose_photo_desc">Foto struk yang sudah Anda punya.</string>
+    <string name="receipt_reading">Membaca struk…</string>
+    <string name="receipt_none_found">Tidak ada harga ditemukan. Coba foto yang lebih tajam dan rata.</string>
+    <string name="receipt_check_hint">Dibaca di ponsel Anda, jadi periksa nama dan harga.</string>
+    <string name="receipt_language_pending">Nama dalam bahasa Anda terbaca lebih baik setelah data teksnya selesai diunduh.</string>
 </resources>

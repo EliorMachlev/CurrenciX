@@ -257,4 +257,25 @@
     <string name="trip_unnamed">Поездка</string>
     <string name="trip_move">Поездка</string>
     <string name="trip_none">Без поездки</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Добавить %d товар</item>
+        <item quantity="few">Добавить %d товара</item>
+        <item quantity="many">Добавить %d товаров</item>
+        <item quantity="other">Добавить %d товара</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">Добавлен %d товар</item>
+        <item quantity="few">Добавлено %d товара</item>
+        <item quantity="many">Добавлено %d товаров</item>
+        <item quantity="other">Добавлено %d товара</item>
+    </plurals>
+    <string name="receipt_scan">Сканировать чек</string>
+    <string name="receipt_take_photo">Сделать фото</string>
+    <string name="receipt_take_photo_desc">Приложением камеры. CurrenciX никогда не получает доступ к камере.</string>
+    <string name="receipt_choose_photo">Выбрать фото</string>
+    <string name="receipt_choose_photo_desc">Фото чека, которое у вас уже есть.</string>
+    <string name="receipt_reading">Чтение чека…</string>
+    <string name="receipt_none_found">Цены не найдены. Попробуйте более чёткое и ровное фото.</string>
+    <string name="receipt_check_hint">Распознано на телефоне, проверьте названия и цены.</string>
+    <string name="receipt_language_pending">Названия на вашем языке будут распознаваться лучше после загрузки текстовых данных.</string>
 </resources>

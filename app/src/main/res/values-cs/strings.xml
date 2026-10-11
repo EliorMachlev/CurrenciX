@@ -257,4 +257,25 @@
     <string name="trip_unnamed">Cesta</string>
     <string name="trip_move">Cesta</string>
     <string name="trip_none">Bez cesty</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Přidat %d položku</item>
+        <item quantity="few">Přidat %d položky</item>
+        <item quantity="many">Přidat %d položky</item>
+        <item quantity="other">Přidat %d položek</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">Přidána %d položka</item>
+        <item quantity="few">Přidány %d položky</item>
+        <item quantity="many">Přidáno %d položky</item>
+        <item quantity="other">Přidáno %d položek</item>
+    </plurals>
+    <string name="receipt_scan">Naskenovat účtenku</string>
+    <string name="receipt_take_photo">Vyfotit</string>
+    <string name="receipt_take_photo_desc">Aplikací fotoaparátu. CurrenciX nikdy nedostane přístup k fotoaparátu.</string>
+    <string name="receipt_choose_photo">Vybrat fotku</string>
+    <string name="receipt_choose_photo_desc">Fotka účtenky, kterou už máte.</string>
+    <string name="receipt_reading">Čtení účtenky…</string>
+    <string name="receipt_none_found">Na účtence nebyly nalezeny ceny. Zkuste ostřejší a rovnější fotku.</string>
+    <string name="receipt_check_hint">Přečteno v telefonu, takže zkontrolujte názvy a ceny.</string>
+    <string name="receipt_language_pending">Názvy ve vašem jazyce se přečtou lépe, až se dokončí stahování textových dat.</string>
 </resources>

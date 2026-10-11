@@ -257,4 +257,23 @@
     <string name="trip_unnamed">Viaje</string>
     <string name="trip_move">Viaje</string>
     <string name="trip_none">Sin viaje</string>
+    <plurals name="receipt_add">
+        <item quantity="one">Añadir %d artículo</item>
+        <item quantity="many">Añadir %d de artículos</item>
+        <item quantity="other">Añadir %d artículos</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%d artículo añadido</item>
+        <item quantity="many">%d de artículos añadidos</item>
+        <item quantity="other">%d artículos añadidos</item>
+    </plurals>
+    <string name="receipt_scan">Escanear ticket</string>
+    <string name="receipt_take_photo">Hacer una foto</string>
+    <string name="receipt_take_photo_desc">Con tu app de cámara. CurrenciX nunca tiene acceso a la cámara.</string>
+    <string name="receipt_choose_photo">Elegir una foto</string>
+    <string name="receipt_choose_photo_desc">Una foto de un ticket que ya tienes.</string>
+    <string name="receipt_reading">Leyendo el ticket…</string>
+    <string name="receipt_none_found">No se encontraron precios. Prueba con una foto más nítida y plana.</string>
+    <string name="receipt_check_hint">Leído en tu teléfono: revisa nombres y precios.</string>
+    <string name="receipt_language_pending">Los nombres en tu idioma se leerán mejor cuando termine la descarga de los datos de texto.</string>
 </resources>

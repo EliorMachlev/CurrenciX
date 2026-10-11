@@ -11,6 +11,12 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        // Tesseract4Android (receipt scanning) is published only on JitPack;
+        // only its group may come from there.
+        exclusiveContent {
+            forRepository { maven { url = 'https://jitpack.io' } }
+            filter { includeGroup('com.github.adaptech-cz.Tesseract4Android') }
+        }
     }
 }
 

@@ -254,4 +254,21 @@
     <string name="trip_unnamed">Reis</string>
     <string name="trip_move">Reis</string>
     <string name="trip_none">Geen reis</string>
+    <plurals name="receipt_add">
+        <item quantity="one">%d artikel toevoegen</item>
+        <item quantity="other">%d artikelen toevoegen</item>
+    </plurals>
+    <plurals name="receipt_added">
+        <item quantity="one">%d artikel toegevoegd</item>
+        <item quantity="other">%d artikelen toegevoegd</item>
+    </plurals>
+    <string name="receipt_scan">Bon scannen</string>
+    <string name="receipt_take_photo">Foto maken</string>
+    <string name="receipt_take_photo_desc">Met je camera-app. CurrenciX krijgt nooit toegang tot de camera.</string>
+    <string name="receipt_choose_photo">Foto kiezen</string>
+    <string name="receipt_choose_photo_desc">Een foto van een bon die je al hebt.</string>
+    <string name="receipt_reading">Bon lezen…</string>
+    <string name="receipt_none_found">Geen prijzen gevonden. Probeer een scherpere, vlakkere foto.</string>
+    <string name="receipt_check_hint">Gelezen op je telefoon, dus controleer namen en prijzen.</string>
+    <string name="receipt_language_pending">Namen in jouw taal worden beter gelezen zodra de tekstgegevens zijn gedownload.</string>
 </resources>
