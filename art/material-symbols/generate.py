@@ -72,6 +72,7 @@ ICONS = {
     "ic_language": ("language", False),
     "ic_event": ("event", False),
     "ic_vibration": ("mobile_vibrate", False),
+    "ic_volume_up": ("volume_up", False),
     "ic_conversion_preview": ("preview", False),
     "ic_gavel": ("gavel", False),
     "ic_code": ("code", False),

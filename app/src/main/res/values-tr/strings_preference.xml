@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Ondalık hassasiyet</string>
     <string name="haptic_feedback_title">Dokunsal geri bildirim</string>
     <string name="haptic_feedback_summary">Uygulama genelinde dokunuşlarda titreşim\nSistem ayarını takip eder\nPil tasarrufu modunda otomatik olarak devre dışı kalır</string>
+    <string name="click_sounds_title">Tıklama sesleri</string>
+    <string name="click_sounds_summary">Uygulama genelinde dokunuşlarda tıklama sesi\nSistem ayarına uyar</string>
     <string name="auto_refresh_title">Kurları otomatik güncelle</string>
     <string name="auto_refresh_summary">Sağlayıcının önerdiği sıklıkta arka planda güncelle</string>
     <string name="date_format_title">Tarih ve saat biçimi</string>

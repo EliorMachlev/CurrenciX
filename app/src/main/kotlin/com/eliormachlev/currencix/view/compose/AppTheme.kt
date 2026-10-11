@@ -10,11 +10,15 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.SoundEffectOnInteraction
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.eliormachlev.currencix.repository.DisplaySettings
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXDarkColors
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXLightColors
 import com.eliormachlev.currencix.view.compose.theme.CurrenciXShapes
@@ -25,6 +29,12 @@ import com.eliormachlev.currencix.view.compose.theme.CurrenciXTypography
  * nested inside it (a sheet, a dialog) keeps the same palette.
  */
 val LocalDynamicColor = compositionLocalOf { false }
+
+/**
+ * Whether taps in the enclosing [AppTheme] play the system click sound, so a
+ * nested [AppTheme] (a sheet in its own window) follows the same setting.
+ */
+val LocalClickSounds = compositionLocalOf { true }
 
 // Single wrapper for every Compose surface in the app. Callers should never
 // instantiate their own MaterialTheme — hoist to this so palette / typography /
@@ -42,6 +52,9 @@ val LocalDynamicColor = compositionLocalOf { false }
 // the sheets and the dialogs — opt back into the language's direction with
 // ReadingDirection (see architecture.md, "Right-to-left languages").
 //
+// [clickSounds] lets the user turn off the system click Compose plays on
+// taps (Settings → Click sounds).
+//
 // [dynamicColor] swaps the paper / ink palette for the wallpaper's (Material
 // You). Brand accents that aren't scheme colors (the fee stamp, status
 // pills) stay as they are.
@@ -49,6 +62,7 @@ val LocalDynamicColor = compositionLocalOf { false }
 fun AppTheme(
     dark: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = LocalDynamicColor.current,
+    clickSounds: Boolean = LocalClickSounds.current,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -61,14 +75,33 @@ fun AppTheme(
         CompositionLocalProvider(
             LocalLayoutDirection provides LayoutDirection.Ltr,
             LocalDynamicColor provides dynamicColor,
+            LocalClickSounds provides clickSounds,
         ) {
-            Surface(
-                color = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                content = content,
-            )
+            // Compose plays the system click on taps (when the phone's touch
+            // sounds are on); off here when the user turned it off in Settings.
+            SoundEffectOnInteraction(enabled = clickSounds) {
+                Surface(
+                    color = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    content = content,
+                )
+            }
         }
     }
+}
+
+/**
+ * An activity's root [AppTheme], following the user's [display] settings as
+ * they change: wallpaper colors and click sounds.
+ */
+@Composable
+fun AppTheme(
+    display: DisplaySettings,
+    content: @Composable () -> Unit,
+) {
+    val dynamicColor by display.isDynamicColorEnabledFlow().collectAsStateWithLifecycle(display.isDynamicColorEnabledBlocking())
+    val clickSounds by display.isClickSoundsEnabledFlow().collectAsStateWithLifecycle(display.isClickSoundsEnabledBlocking())
+    AppTheme(dynamicColor = dynamicColor, clickSounds = clickSounds, content = content)
 }
 
 /**

@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Độ chính xác thập phân</string>
     <string name="haptic_feedback_title">Phản hồi xúc giác</string>
     <string name="haptic_feedback_summary">Rung khi chạm trong toàn ứng dụng\nTheo cài đặt hệ thống\nTự động tắt khi bật trình tiết kiệm pin</string>
+    <string name="click_sounds_title">Âm thanh khi chạm</string>
+    <string name="click_sounds_summary">Phát tiếng click khi chạm trong toàn ứng dụng\nTheo cài đặt hệ thống</string>
     <string name="auto_refresh_title">Tự động làm mới tỷ giá</string>
     <string name="auto_refresh_summary">Làm mới trong nền theo tần suất nhà cung cấp khuyến nghị</string>
     <string name="date_format_title">Định dạng ngày và giờ</string>

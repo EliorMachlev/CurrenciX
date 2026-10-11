@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
@@ -113,7 +112,6 @@ private val Period.labelRes: Int
             Period.CUSTOM -> R.string.timeline_custom_range
         }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RangePickerSheet(
     initial: Span?,
@@ -154,7 +152,6 @@ private fun RangePickerSheet(
 private val RANGE_PICKER_HEIGHT = 480.dp
 
 // Only days the app can chart: from [earliest] to [latest].
-@OptIn(ExperimentalMaterial3Api::class)
 private class PastDates(
     private val earliest: LocalDate,
     private val latest: LocalDate,

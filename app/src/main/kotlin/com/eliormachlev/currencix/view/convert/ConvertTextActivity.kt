@@ -83,7 +83,7 @@ class ConvertTextActivity : ComponentActivity() {
         val conversion = convertSelection(text, db.rates.getExchangeRatesBlocking(), from, to)
         val decimals = db.display.getDecimalPlacesBlocking()
         setContent {
-            AppTheme(dynamicColor = db.display.isDynamicColorEnabledBlocking()) {
+            AppTheme(db.display) {
                 ConvertTextSheet(
                     text = text,
                     conversion = conversion,

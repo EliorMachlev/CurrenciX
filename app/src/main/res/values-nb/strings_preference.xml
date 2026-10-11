@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Desimalpresisjon</string>
     <string name="haptic_feedback_title">Haptisk tilbakemelding</string>
     <string name="haptic_feedback_summary">Vibrer ved trykk i hele appen\nFølger systeminnstillingen\nSlås av automatisk i strømsparingsmodus</string>
+    <string name="click_sounds_title">Klikkelyder</string>
+    <string name="click_sounds_summary">Spill av et klikk ved trykk i hele appen\nFølger systeminnstillingen</string>
     <string name="auto_refresh_title">Oppdater kurser automatisk</string>
     <string name="auto_refresh_summary">Oppdater i bakgrunnen med intervallet leverandøren anbefaler</string>
     <string name="date_format_title">Dato- og tidsformat</string>

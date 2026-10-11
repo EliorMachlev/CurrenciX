@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DisplayMode
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
@@ -49,7 +48,6 @@ private val ActionRowVerticalPadding = 8.dp
  * On OK, [onPick] fires with the selected [LocalDate] (or null when the
  * switch is off), then [onDismiss] closes the sheet.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoricalDatePickerSheet(
     initial: LocalDate?,
@@ -162,7 +160,6 @@ private fun HistoricalActionRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 private object PastOrTodaySelectableDates : SelectableDates {
     override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis <= System.currentTimeMillis()
 

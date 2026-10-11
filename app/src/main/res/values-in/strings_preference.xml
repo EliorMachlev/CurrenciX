@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Akurasi desimal</string>
     <string name="haptic_feedback_title">Umpan balik haptik</string>
     <string name="haptic_feedback_summary">Bergetar saat mengetuk di seluruh aplikasi\nMengikuti pengaturan sistem\nOtomatis nonaktif saat penghemat baterai aktif</string>
+    <string name="click_sounds_title">Suara klik</string>
+    <string name="click_sounds_summary">Putar suara klik saat mengetuk di seluruh aplikasi\nMengikuti setelan sistem</string>
     <string name="auto_refresh_title">Pembaruan kurs otomatis</string>
     <string name="auto_refresh_summary">Perbarui di latar belakang sesuai frekuensi yang direkomendasikan penyedia</string>
     <string name="date_format_title">Format tanggal dan waktu</string>

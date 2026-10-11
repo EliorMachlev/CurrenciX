@@ -8,7 +8,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TopAppBar
@@ -66,7 +65,6 @@ data class ConverterTopBarActions(
  * lives in the drawer). [startReveal] / [onFirstFrame] drive the wordmark's
  * cold-start reveal and the splash-screen hand-off.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConverterTopBar(
     drawerState: DrawerState,

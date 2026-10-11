@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Δεκαδική ακρίβεια</string>
     <string name="haptic_feedback_title">Απτική ανάδραση</string>
     <string name="haptic_feedback_summary">Δόνηση κατά το πάτημα σε όλη την εφαρμογή\nΑκολουθεί τη ρύθμιση συστήματος\nΑπενεργοποιείται αυτόματα στην εξοικονόμηση μπαταρίας</string>
+    <string name="click_sounds_title">Ήχοι πατήματος</string>
+    <string name="click_sounds_summary">Ήχος κλικ στα πατήματα σε όλη την εφαρμογή\nΑκολουθεί τη ρύθμιση του συστήματος</string>
     <string name="auto_refresh_title">Αυτόματη ανανέωση ισοτιμιών</string>
     <string name="auto_refresh_summary">Ανανέωση στο παρασκήνιο με τη συχνότητα που συνιστά ο πάροχος</string>
     <string name="date_format_title">Μορφή ημερομηνίας και ώρας</string>

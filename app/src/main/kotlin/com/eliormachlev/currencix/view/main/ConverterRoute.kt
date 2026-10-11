@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -69,7 +68,6 @@ private val RECENT_PAIRS_MARGIN = 16.dp
 private val RECENT_PAIRS_BOTTOM_GAP = 8.dp
 
 /** The converter screen: top bar, drawer, hero card, keypad and their sheets. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ConverterRoute(
     host: ConverterHost,

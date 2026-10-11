@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Précision décimale</string>
     <string name="haptic_feedback_title">Retour haptique</string>
     <string name="haptic_feedback_summary">Vibrer lors des appuis dans l\'application\nSuit le réglage du système\nDésactivé automatiquement en mode économiseur de batterie</string>
+    <string name="click_sounds_title">Sons des touches</string>
+    <string name="click_sounds_summary">Émet un clic à chaque appui dans l\'appli\nSuit le réglage du système</string>
     <string name="auto_refresh_title">Actualisation automatique des taux</string>
     <string name="auto_refresh_summary">Actualiser en arrière-plan à la fréquence recommandée par le fournisseur</string>
     <string name="date_format_title">Format de date et d\'heure</string>

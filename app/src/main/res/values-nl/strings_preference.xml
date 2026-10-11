@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Decimale nauwkeurigheid</string>
     <string name="haptic_feedback_title">Haptische feedback</string>
     <string name="haptic_feedback_summary">Trillen bij tikken in de app\nVolgt systeeminstelling\nAutomatisch uitgeschakeld in batterijbesparing</string>
+    <string name="click_sounds_title">Klikgeluiden</string>
+    <string name="click_sounds_summary">Klikgeluid bij tikken in de hele app\nVolgt de systeeminstelling</string>
     <string name="auto_refresh_title">Koersen automatisch bijwerken</string>
     <string name="auto_refresh_summary">Op de achtergrond bijwerken met het door de aanbieder aanbevolen interval</string>
     <string name="date_format_title">Datum- en tijdformaat</string>

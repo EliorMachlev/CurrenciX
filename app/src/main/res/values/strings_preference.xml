@@ -41,6 +41,8 @@
     <string name="dynamic_color_summary">Tint the app with colors from your wallpaper (Material You)</string>
     <string name="haptic_feedback_title">Haptic feedback</string>
     <string name="haptic_feedback_summary">Vibrate on taps across the app\nFollows system setting\nAutomatically disabled in battery saver</string>
+    <string name="click_sounds_title">Click sounds</string>
+    <string name="click_sounds_summary">Play a click on taps across the app\nFollows system setting</string>
     <!-- auto-refresh (#151) -->
     <string name="auto_refresh_title">Auto-refresh rates</string>
     <string name="auto_refresh_summary">Refresh in the background at the provider-recommended cadence</string>

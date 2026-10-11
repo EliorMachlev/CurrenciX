@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.util
 
 import android.content.Context
 import android.os.PowerManager
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.runtime.Composable
@@ -100,7 +99,6 @@ fun Modifier.hapticOnFocus(): Modifier =
  * Compose analogue of [Modifier.combinedClickable] with the same
  * battery-saver-aware haptic behaviour on click and long-click.
  */
-@OptIn(ExperimentalFoundationApi::class)
 fun Modifier.hapticCombinedClickable(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,

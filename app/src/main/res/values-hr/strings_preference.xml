@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Decimalna preciznost</string>
     <string name="haptic_feedback_title">Haptička povratna informacija</string>
     <string name="haptic_feedback_summary">Vibracija pri dodirima u cijeloj aplikaciji\nPrati postavku sustava\nAutomatski se isključuje u načinu štednje baterije</string>
+    <string name="click_sounds_title">Zvukovi dodira</string>
+    <string name="click_sounds_summary">Klik pri dodiru u cijeloj aplikaciji\nPrati postavku sustava</string>
     <string name="auto_refresh_title">Automatsko osvježavanje tečajeva</string>
     <string name="auto_refresh_summary">Osvježava tečajeve u pozadini učestalošću koju preporučuje pružatelj</string>
     <string name="date_format_title">Format datuma i vremena</string>

@@ -8,6 +8,7 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.FileLoggingTree
 import com.eliormachlev.currencix.util.plantConsoleLogging
+import com.eliormachlev.currencix.view.widget.publishWidgetPreviews
 import com.eliormachlev.currencix.worker.RateRefreshScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -19,10 +20,10 @@ import java.net.InetAddress
 import kotlin.concurrent.thread
 
 class CurrenciesApplication : Application() {
-    // Process-lifetime scope for the auto-refresh observer. SupervisorJob so
-    // a collector cancellation doesn't tear down the app-wide scope, and
-    // Default because the work is a single distinct-until-changed pref read
-    // plus a WorkManager enqueue — no IO on the hot path.
+    // Process-lifetime scope for the auto-refresh observer and the widget
+    // preview publisher. SupervisorJob so a collector cancellation doesn't
+    // tear down the app-wide scope, and Default because the work is a pref
+    // read plus a WorkManager enqueue, and an hourly-at-most preview update.
     private val appScope = CoroutineScope(SupervisorJob() + AppDispatchers.production.default)
 
     override fun onCreate() {
@@ -40,6 +41,7 @@ class CurrenciesApplication : Application() {
         applyNightMode()
         prewarmProviderDns()
         observeAutoRefreshPreference()
+        appScope.publishWidgetPreviews(this)
     }
 
     // True iff this Application instance is running in the app's main

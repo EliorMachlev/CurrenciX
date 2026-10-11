@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Знаков после запятой</string>
     <string name="haptic_feedback_title">Тактильный отклик</string>
     <string name="haptic_feedback_summary">Вибрация при нажатиях в приложении\nСледует системной настройке\nАвтоматически отключается в режиме энергосбережения</string>
+    <string name="click_sounds_title">Звук нажатия</string>
+    <string name="click_sounds_summary">Щелчок при нажатиях во всём приложении\nСледует системной настройке</string>
     <string name="auto_refresh_title">Автообновление курсов</string>
     <string name="auto_refresh_summary">Обновлять в фоне с частотой, рекомендованной источником</string>
     <string name="date_format_title">Формат даты и времени</string>

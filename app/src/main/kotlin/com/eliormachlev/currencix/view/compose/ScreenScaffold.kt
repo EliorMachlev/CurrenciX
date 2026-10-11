@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,7 +64,6 @@ data class OverflowAction(
  * surface tone. [content] gets the padding that keeps it clear of the bar
  * and the system bars.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenScaffold(
     title: @Composable () -> Unit,
@@ -122,7 +120,6 @@ fun ScreenScaffold(
 }
 
 /** Top bar colors shared by every screen, the converter's included. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun screenTopBarColors(): TopAppBarColors =
     TopAppBarDefaults.topAppBarColors(

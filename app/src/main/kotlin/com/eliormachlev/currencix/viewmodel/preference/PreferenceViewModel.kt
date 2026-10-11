@@ -34,6 +34,9 @@ class PreferenceViewModel(
         db.display.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.getExpandedKeypadEnabledBlocking())
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
         db.display.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isHapticFeedbackEnabledBlocking())
+
+    val isClickSoundsEnabled: StateFlow<Boolean> =
+        db.display.isClickSoundsEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isClickSoundsEnabledBlocking())
     val isDynamicColorEnabled: StateFlow<Boolean> =
         db.display.isDynamicColorEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isDynamicColorEnabledBlocking())
     val decimalPlaces: StateFlow<Int> =
@@ -118,6 +121,10 @@ class PreferenceViewModel(
 
     fun setHapticFeedbackEnabled(enabled: Boolean) {
         db.display.setHapticFeedbackEnabled(enabled)
+    }
+
+    fun setClickSoundsEnabled(enabled: Boolean) {
+        db.display.setClickSoundsEnabled(enabled)
     }
 
     fun setFallbackProvider(provider: ApiProvider) {

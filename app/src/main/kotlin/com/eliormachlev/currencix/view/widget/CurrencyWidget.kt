@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -179,14 +180,33 @@ internal object CurrencyGlanceWidget : GlanceAppWidget() {
         id: GlanceId,
     ) {
         val db = Database(context)
-        provideContent {
-            val pair = WidgetPairState.resolve(currentState(), db)
-            val wide = LocalSize.current.width >= WIDE_SIZE.width
-            val snapshot = readSnapshot(context, db, pair, withTrend = wide)
-            val launch = pair?.let { ConverterLaunch.convert(context, it.from, it.to) } ?: ConverterLaunch.openConverter(context)
-            WidgetBody(snapshot = snapshot, launchIntent = launch)
-        }
+        provideContent { WidgetContent(context, db, currentState()) }
     }
+
+    // The widget picker's preview (Android 15+, see publishWidgetPreviews): the
+    // widget as it would look added now — the converter's pair and its cached
+    // rate, or the empty state before any rates are cached.
+    override suspend fun providePreview(
+        context: Context,
+        widgetCategory: Int,
+    ) {
+        val db = Database(context)
+        provideContent { WidgetContent(context, db, emptyPreferences()) }
+    }
+}
+
+// A widget with [state] (its own pair, or none to follow the converter).
+@Composable
+private fun WidgetContent(
+    context: Context,
+    db: Database,
+    state: Preferences,
+) {
+    val pair = WidgetPairState.resolve(state, db)
+    val wide = LocalSize.current.width >= WIDE_SIZE.width
+    val snapshot = readSnapshot(context, db, pair, withTrend = wide)
+    val launch = pair?.let { ConverterLaunch.convert(context, it.from, it.to) } ?: ConverterLaunch.openConverter(context)
+    WidgetBody(snapshot = snapshot, launchIntent = launch)
 }
 
 @Composable

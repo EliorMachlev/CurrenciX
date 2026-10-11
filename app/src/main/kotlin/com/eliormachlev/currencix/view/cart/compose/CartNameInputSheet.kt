@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.compose.NameInputTransformation
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 
 /**
@@ -44,6 +45,7 @@ fun CartNameInputSheet(
     ) {
         OutlinedTextField(
             state = name,
+            inputTransformation = NameInputTransformation,
             lineLimits = TextFieldLineLimits.SingleLine,
             label = { Text(stringResource(id = R.string.cart_save_name_hint)) },
             modifier = Modifier.fillMaxWidth(),

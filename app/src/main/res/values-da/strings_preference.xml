@@ -27,6 +27,8 @@
     <string name="decimal_places_title">Decimalnøjagtighed</string>
     <string name="haptic_feedback_title">Haptisk feedback</string>
     <string name="haptic_feedback_summary">Vibrer ved tryk i appen\nFølger systemindstillingen\nSlås automatisk fra i batterisparetilstand</string>
+    <string name="click_sounds_title">Kliklyde</string>
+    <string name="click_sounds_summary">Afspil et klik ved tryk i hele appen\nFølger systemindstillingen</string>
     <string name="auto_refresh_title">Opdatér kurser automatisk</string>
     <string name="auto_refresh_summary">Opdatér i baggrunden med det interval, udbyderen anbefaler</string>
     <string name="date_format_title">Dato- og klokkeslætsformat</string>

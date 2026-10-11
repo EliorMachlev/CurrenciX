@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Tugabrotanákvæmni</string>
     <string name="haptic_feedback_title">Haptísk endurgjöf</string>
     <string name="haptic_feedback_summary">Titra við snertingu í öllu forritinu\nFylgir kerfisstillingu\nSlökkt sjálfkrafa í rafhlöðusparnaði</string>
+    <string name="click_sounds_title">Smellihljóð</string>
+    <string name="click_sounds_summary">Smellur við ýtingar í öllu forritinu\nFylgir kerfisstillingu</string>
     <string name="auto_refresh_title">Endurnýja gengi sjálfkrafa</string>
     <string name="auto_refresh_summary">Endurnýja í bakgrunni með þeirri tíðni sem veitan mælir með</string>
     <string name="date_format_title">Snið dagsetningar og tíma</string>

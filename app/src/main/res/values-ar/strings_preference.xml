@@ -26,6 +26,8 @@
     <string name="decimal_places_title">دقة عشرية</string>
     <string name="haptic_feedback_title">الاهتزاز عند اللمس</string>
     <string name="haptic_feedback_summary">الاهتزاز عند النقر في أنحاء التطبيق\nيتبع إعداد النظام\nيتوقف تلقائيًا في وضع توفير شحن البطارية</string>
+    <string name="click_sounds_title">أصوات النقر</string>
+    <string name="click_sounds_summary">تشغيل صوت نقرة عند النقر في أنحاء التطبيق\nيتبع إعداد النظام</string>
     <string name="auto_refresh_title">تحديث الأسعار تلقائيًا</string>
     <string name="auto_refresh_summary">التحديث في الخلفية بالوتيرة التي يوصي بها المزوّد</string>
     <string name="date_format_title">تنسيق التاريخ والوقت</string>

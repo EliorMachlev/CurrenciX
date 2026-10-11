@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Брой десетични знаци</string>
     <string name="haptic_feedback_title">Тактилна обратна връзка</string>
     <string name="haptic_feedback_summary">Вибрация при докосване в приложението\nСледва системната настройка\nИзключва се автоматично в режим за пестене на батерията</string>
+    <string name="click_sounds_title">Звуци при докосване</string>
+    <string name="click_sounds_summary">Звук при докосване в цялото приложение\nСледва системната настройка</string>
     <string name="auto_refresh_title">Автоматично обновяване на курсовете</string>
     <string name="auto_refresh_summary">Обновяване на заден план с честотата, препоръчана от доставчика</string>
     <string name="date_format_title">Формат за дата и час</string>

@@ -20,6 +20,7 @@ on:
     paths:
       - 'baselineprofile/**'
       - '.github/workflows/baseline-profile.yaml'
+      - '.github/scripts/benchmark-summary.py'
   workflow_dispatch:
     inputs:
       commit:
@@ -91,6 +92,12 @@ jobs:
       - name: Run frame-timing benchmarks (fdroid)
         continue-on-error: true
         run: ./gradlew "${GMD_GPU}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace
+
+      # The numbers in the run summary and as annotations, so two runs can be
+      # compared without downloading the artifact.
+      - name: Report benchmark numbers
+        if: always()
+        run: python3 .github/scripts/benchmark-summary.py baselineprofile/build/outputs
 
       - name: Upload benchmark results
         if: always()

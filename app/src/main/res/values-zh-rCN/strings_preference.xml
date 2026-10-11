@@ -26,6 +26,8 @@
     <string name="decimal_places_title">小数精度</string>
     <string name="haptic_feedback_title">触感反馈</string>
     <string name="haptic_feedback_summary">在应用中点按时振动\n跟随系统设置\n省电模式下自动关闭</string>
+    <string name="click_sounds_title">点按音效</string>
+    <string name="click_sounds_summary">在整个应用中点按时播放点击声\n跟随系统设置</string>
     <string name="auto_refresh_title">自动更新汇率</string>
     <string name="auto_refresh_summary">按数据源建议的频率在后台更新</string>
     <string name="date_format_title">日期和时间格式</string>

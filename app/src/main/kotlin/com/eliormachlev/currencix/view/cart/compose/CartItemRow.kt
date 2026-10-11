@@ -42,7 +42,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hintText
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -54,6 +56,7 @@ import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.FavoriteToggleIcon
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.NameInputTransformation
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -298,24 +301,26 @@ private fun NameField(
     ) {
         BasicTextField(
             state = state,
+            inputTransformation = NameInputTransformation,
             lineLimits = TextFieldLineLimits.SingleLine,
             textStyle = textStyle,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            // BasicTextField has no visible label and the hint disappears once
-            // the user types, leaving TalkBack focused on an unlabelled field.
-            // Attach a persistent contentDescription so it always announces as
-            // "Item name".
+            // BasicTextField has no visible label, and the placeholder below
+            // goes once the user types: TalkBack reads "Item name" as the
+            // field's hint, after whatever is typed, so it's always named.
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .hapticOnFocus()
-                    .semantics { contentDescription = fieldLabel },
+                    .semantics { hintText = fieldLabel },
         )
         if (state.text.isEmpty()) {
+            // The hint above already says it; not read a second time.
             Text(
                 text = stringResource(id = R.string.cart_item_name_hint),
                 style = textStyle.copy(color = hintColor),
+                modifier = Modifier.clearAndSetSemantics {},
             )
         }
     }

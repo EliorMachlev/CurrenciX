@@ -138,6 +138,7 @@ private data class AppearanceValues(
     val language: Language,
     val dateFormat: String,
     val hapticEnabled: Boolean,
+    val clickSoundsEnabled: Boolean,
     val dynamicColorEnabled: Boolean,
     val previewEnabled: Boolean,
 )
@@ -165,6 +166,7 @@ private fun observeAppearanceValues(
 ): AppearanceValues {
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
     val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
+    val clickSoundsEnabled by viewModel.isClickSoundsEnabled.collectAsStateWithLifecycle()
     val dynamicColorEnabled by viewModel.isDynamicColorEnabled.collectAsStateWithLifecycle()
     val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
     return AppearanceValues(
@@ -172,6 +174,7 @@ private fun observeAppearanceValues(
         language = remember(provider) { Language.byIso(viewModel.getLanguage()) ?: Language.SYSTEM },
         dateFormat = dateFormat,
         hapticEnabled = hapticEnabled,
+        clickSoundsEnabled = clickSoundsEnabled,
         dynamicColorEnabled = dynamicColorEnabled,
         previewEnabled = previewEnabled,
     )
@@ -558,6 +561,13 @@ private fun AppearanceSection(
             iconRes = R.drawable.ic_vibration,
             checked = values.hapticEnabled,
             onCheckedChange = viewModel::setHapticFeedbackEnabled,
+        )
+        SwitchRow(
+            title = stringResource(id = R.string.click_sounds_title),
+            summary = stringResource(id = R.string.click_sounds_summary),
+            iconRes = R.drawable.ic_volume_up,
+            checked = values.clickSoundsEnabled,
+            onCheckedChange = viewModel::setClickSoundsEnabled,
         )
         SwitchRow(
             title = stringResource(id = R.string.previewConversion_title),

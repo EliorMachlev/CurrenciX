@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Kümnendtäpsus</string>
     <string name="haptic_feedback_title">Haptiline tagasiside</string>
     <string name="haptic_feedback_summary">Vibreeri puudutamisel kogu rakenduses\nJärgib süsteemi seadet\nLülitub akusäästjas automaatselt välja</string>
+    <string name="click_sounds_title">Klõpsuhelid</string>
+    <string name="click_sounds_summary">Klõpsuheli puudutamisel kogu rakenduses\nJärgib süsteemi seadet</string>
     <string name="auto_refresh_title">Kursside automaatne uuendamine</string>
     <string name="auto_refresh_summary">Uuenda taustal teenusepakkuja soovitatud sagedusega</string>
     <string name="date_format_title">Kuupäeva ja kellaaja vorming</string>

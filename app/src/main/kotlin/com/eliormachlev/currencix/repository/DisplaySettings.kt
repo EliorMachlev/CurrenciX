@@ -16,6 +16,7 @@ private const val KEY_THEME = "_theme"
 private const val KEY_PREVIEW_CONVERSION_ENABLED = "_previewConversionEnabled"
 private const val KEY_EXPANDED_KEYPAD = "_expandedKeypad"
 private const val KEY_HAPTIC_FEEDBACK = "_hapticFeedback"
+private const val KEY_CLICK_SOUNDS = "_clickSounds"
 private const val KEY_DYNAMIC_COLOR = "_dynamicColor"
 private const val KEY_DECIMAL_PLACES = "_decimalPlaces"
 private const val KEY_DATE_FORMAT = "_dateFormat"
@@ -39,6 +40,11 @@ private val hapticFeedbackEnabledMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
 }
 
+// On by default: taps sound only when the system's touch sounds are on too.
+private val clickSoundsEnabledMapper: (Preferences) -> Boolean = {
+    it[booleanPreferencesKey(KEY_CLICK_SOUNDS)] ?: true
+}
+
 private val dynamicColorEnabledMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_DYNAMIC_COLOR)] ?: false
 }
@@ -55,7 +61,7 @@ private val hasSeenOnboardingMapper: (Preferences) -> Boolean = {
     it[booleanPreferencesKey(KEY_HAS_SEEN_ONBOARDING)] ?: false
 }
 
-/** How the app looks and behaves: theme, formats, keypad, haptics, and the onboarding gate. */
+/** How the app looks and behaves: theme, formats, keypad, haptics, click sounds, and the onboarding gate. */
 class DisplaySettings(
     context: Context,
 ) {
@@ -115,7 +121,17 @@ class DisplaySettings(
 
     fun isHapticFeedbackEnabledFlow(): Flow<Boolean> = store.mappedFlow(hapticFeedbackEnabledMapper)
 
-    fun isHapticFeedbackEnabledBlocking(): Boolean = store.snapshot()[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
+    fun isHapticFeedbackEnabledBlocking(): Boolean = hapticFeedbackEnabledMapper(store.snapshot())
+
+    // click sounds on taps (the system's touch sounds, as Views play them)
+
+    fun setClickSoundsEnabled(enabled: Boolean) {
+        store.edit { this[booleanPreferencesKey(KEY_CLICK_SOUNDS)] = enabled }
+    }
+
+    fun isClickSoundsEnabledFlow(): Flow<Boolean> = store.mappedFlow(clickSoundsEnabledMapper)
+
+    fun isClickSoundsEnabledBlocking(): Boolean = clickSoundsEnabledMapper(store.snapshot())
 
     // Material You: wallpaper-derived colors instead of paper / ink
 

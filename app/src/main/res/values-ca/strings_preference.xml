@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Precisió decimal</string>
     <string name="haptic_feedback_title">Resposta tàctil</string>
     <string name="haptic_feedback_summary">Vibra en tocar qualsevol element de l\'aplicació\nSegueix la configuració del sistema\nEs desactiva automàticament amb l\'estalvi de bateria</string>
+    <string name="click_sounds_title">Sons en tocar</string>
+    <string name="click_sounds_summary">Fa un clic en tocar a tota l\'aplicació\nSegueix la configuració del sistema</string>
     <string name="auto_refresh_title">Actualització automàtica dels tipus</string>
     <string name="auto_refresh_summary">Actualitza en segon pla amb la freqüència recomanada pel proveïdor</string>
     <string name="date_format_title">Format de data i hora</string>

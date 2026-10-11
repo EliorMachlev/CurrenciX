@@ -26,6 +26,8 @@
     <string name="decimal_places_title">দশমিক নির্ভুলতা</string>
     <string name="haptic_feedback_title">হ্যাপটিক ফিডব্যাক</string>
     <string name="haptic_feedback_summary">পুরো অ্যাপে ট্যাপ করলে কম্পন\nসিস্টেম সেটিং অনুসরণ করে\nব্যাটারি সেভারে স্বয়ংক্রিয়ভাবে বন্ধ থাকে</string>
+    <string name="click_sounds_title">ক্লিকের শব্দ</string>
+    <string name="click_sounds_summary">অ্যাপজুড়ে ট্যাপ করলে ক্লিকের শব্দ বাজবে\nসিস্টেম সেটিং অনুসরণ করে</string>
     <string name="auto_refresh_title">স্বয়ংক্রিয় হার রিফ্রেশ</string>
     <string name="auto_refresh_summary">প্রদানকারীর সুপারিশকৃত বিরতিতে ব্যাকগ্রাউন্ডে রিফ্রেশ করুন</string>
     <string name="date_format_title">তারিখ ও সময়ের ফরম্যাট</string>

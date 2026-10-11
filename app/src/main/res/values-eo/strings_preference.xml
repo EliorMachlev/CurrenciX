@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Decimala precizeco</string>
     <string name="haptic_feedback_title">Hapta reago</string>
     <string name="haptic_feedback_summary">Vibri ĉe tuŝetoj tra la tuta aplikaĵo\nSekvas la sisteman agordon\nAŭtomate malŝaltita en energiŝpara reĝimo</string>
+    <string name="click_sounds_title">Klakaj sonoj</string>
+    <string name="click_sounds_summary">Ludi klakon ĉe frapetoj tra la aplikaĵo\nSekvas la sisteman agordon</string>
     <string name="auto_refresh_title">Aŭtomata refreŝigo de kurzoj</string>
     <string name="auto_refresh_summary">Refreŝigi en la fono laŭ la ofteco rekomendita de la provizanto</string>
     <string name="date_format_title">Formato de dato kaj tempo</string>

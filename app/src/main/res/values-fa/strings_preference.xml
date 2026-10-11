@@ -26,6 +26,8 @@
     <string name="decimal_places_title">دقت اعشار</string>
     <string name="haptic_feedback_title">بازخورد لمسی</string>
     <string name="haptic_feedback_summary">لرزش هنگام لمس در سراسر برنامه\nپیروی از تنظیمات سیستم\nغیرفعال شدن خودکار در حالت صرفه‌جویی باتری</string>
+    <string name="click_sounds_title">صدای ضربه</string>
+    <string name="click_sounds_summary">پخش صدای کلیک هنگام ضربه در سراسر برنامه\nاز تنظیمات سیستم پیروی می‌کند</string>
     <string name="auto_refresh_title">به‌روزرسانی خودکار نرخ‌ها</string>
     <string name="auto_refresh_summary">به‌روزرسانی در پس‌زمینه با تناوب پیشنهادی ارائه‌دهنده</string>
     <string name="date_format_title">قالب تاریخ و زمان</string>

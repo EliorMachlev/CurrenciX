@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Dezimalgenauigkeit</string>
     <string name="haptic_feedback_title">Haptisches Feedback</string>
     <string name="haptic_feedback_summary">Vibration beim Tippen in der App\nRichtet sich nach der Systemeinstellung\nIm Energiesparmodus automatisch deaktiviert</string>
+    <string name="click_sounds_title">Klickgeräusche</string>
+    <string name="click_sounds_summary">Klickton beim Tippen in der App\nRichtet sich nach der Systemeinstellung</string>
     <string name="auto_refresh_title">Kurse automatisch aktualisieren</string>
     <string name="auto_refresh_summary">Im Hintergrund im vom Anbieter empfohlenen Intervall aktualisieren</string>
     <string name="date_format_title">Datums- und Uhrzeitformat</string>

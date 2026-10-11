@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Dokładność dziesiętna</string>
     <string name="haptic_feedback_title">Wibracje dotykowe</string>
     <string name="haptic_feedback_summary">Wibracje przy dotknięciach w całej aplikacji\nZgodnie z ustawieniami systemu\nAutomatycznie wyłączane w trybie oszczędzania baterii</string>
+    <string name="click_sounds_title">Dźwięki dotknięć</string>
+    <string name="click_sounds_summary">Kliknięcie przy dotknięciu w całej aplikacji\nZgodnie z ustawieniem systemu</string>
     <string name="auto_refresh_title">Automatyczne odświeżanie kursów</string>
     <string name="auto_refresh_summary">Odświeżaj w tle z częstotliwością zalecaną przez dostawcę</string>
     <string name="date_format_title">Format daty i godziny</string>

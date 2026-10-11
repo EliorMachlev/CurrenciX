@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Precisão decimal</string>
     <string name="haptic_feedback_title">Feedback tátil</string>
     <string name="haptic_feedback_summary">Vibrar ao tocar em qualquer parte do app\nSegue a configuração do sistema\nDesativado automaticamente na economia de bateria</string>
+    <string name="click_sounds_title">Sons de toque</string>
+    <string name="click_sounds_summary">Toca um clique ao tocar em todo o app\nSegue a configuração do sistema</string>
     <string name="auto_refresh_title">Atualização automática das cotações</string>
     <string name="auto_refresh_summary">Atualizar em segundo plano na frequência recomendada pelo provedor</string>
     <string name="date_format_title">Formato de data e hora</string>

@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Tizedes pontosság</string>
     <string name="haptic_feedback_title">Haptikus visszajelzés</string>
     <string name="haptic_feedback_summary">Rezgés koppintáskor az egész alkalmazásban\nA rendszerbeállítást követi\nEnergiatakarékos módban automatikusan kikapcsol</string>
+    <string name="click_sounds_title">Kattintási hangok</string>
+    <string name="click_sounds_summary">Kattanó hang koppintáskor az egész alkalmazásban\nA rendszerbeállítást követi</string>
     <string name="auto_refresh_title">Árfolyamok automatikus frissítése</string>
     <string name="auto_refresh_summary">Frissítés a háttérben, a szolgáltató által ajánlott gyakorisággal</string>
     <string name="date_format_title">Dátum- és időformátum</string>

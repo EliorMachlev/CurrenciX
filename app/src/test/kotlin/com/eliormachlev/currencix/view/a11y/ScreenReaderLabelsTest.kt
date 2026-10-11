@@ -44,9 +44,9 @@ import java.math.BigDecimal
 
 /**
  * What TalkBack needs from every screen: each thing you can tap says what it
- * is — a content description, its text, or its field's text. An unlabelled
- * button reads as just "button". Checked on the merged semantics tree, the
- * one TalkBack walks, across every window (sheets included).
+ * is — a content description, its text, or its field's text or hint. An
+ * unlabelled button reads as just "button". Checked on the merged semantics
+ * tree, the one TalkBack walks, across every window (sheets included).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = Application::class)
@@ -70,7 +70,8 @@ class ScreenReaderLabelsTest {
         val config = node.config
         return !config.getOrNull(SemanticsProperties.ContentDescription).isNullOrEmpty() ||
             config.getOrNull(SemanticsProperties.Text).orEmpty().any { it.isNotBlank() } ||
-            config.getOrNull(SemanticsProperties.EditableText)?.isNotBlank() == true
+            config.getOrNull(SemanticsProperties.EditableText)?.isNotBlank() == true ||
+            !config.getOrNull(SemanticsProperties.HintText).isNullOrBlank()
     }
 
     @Test fun keypad() =

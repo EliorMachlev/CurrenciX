@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Precisione decimale</string>
     <string name="haptic_feedback_title">Feedback tattile</string>
     <string name="haptic_feedback_summary">Vibra ai tocchi in tutta l\'app\nSegue l\'impostazione di sistema\nDisattivato automaticamente con il risparmio energetico</string>
+    <string name="click_sounds_title">Suoni al tocco</string>
+    <string name="click_sounds_summary">Riproduce un clic ai tocchi in tutta l\'app\nSegue l\'impostazione di sistema</string>
     <string name="auto_refresh_title">Aggiornamento automatico dei tassi</string>
     <string name="auto_refresh_summary">Aggiorna in background con la frequenza consigliata dal fornitore</string>
     <string name="date_format_title">Formato di data e ora</string>

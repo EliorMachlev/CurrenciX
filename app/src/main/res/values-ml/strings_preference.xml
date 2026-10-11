@@ -26,6 +26,8 @@
     <string name="decimal_places_title">ദശാംശ കൃത്യത</string>
     <string name="haptic_feedback_title">ഹാപ്റ്റിക് ഫീഡ്‌ബാക്ക്</string>
     <string name="haptic_feedback_summary">ആപ്പിലുടനീളം ടാപ്പ് ചെയ്യുമ്പോൾ വൈബ്രേറ്റ് ചെയ്യുക\nസിസ്റ്റം ക്രമീകരണം പിന്തുടരുന്നു\nബാറ്ററി സേവറിൽ സ്വയമേവ ഓഫാകും</string>
+    <string name="click_sounds_title">ക്ലിക്ക് ശബ്ദങ്ങൾ</string>
+    <string name="click_sounds_summary">ആപ്പിൽ എവിടെ ടാപ്പ് ചെയ്താലും ക്ലിക്ക് ശബ്ദം\nസിസ്റ്റം ക്രമീകരണം പിന്തുടരുന്നു</string>
     <string name="auto_refresh_title">നിരക്കുകൾ സ്വയമേവ പുതുക്കുക</string>
     <string name="auto_refresh_summary">ദാതാവ് ശുപാർശ ചെയ്യുന്ന ഇടവേളയിൽ പശ്ചാത്തലത്തിൽ പുതുക്കുക</string>
     <string name="date_format_title">തീയതി, സമയ ഫോർമാറ്റ്</string>

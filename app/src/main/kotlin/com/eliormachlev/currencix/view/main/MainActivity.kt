@@ -22,7 +22,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
@@ -37,6 +36,7 @@ import com.eliormachlev.currencix.view.compose.AppSnackbarHost
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
+import com.eliormachlev.currencix.view.compose.LocalDynamicColor
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.navigation.AppNavHost
@@ -125,10 +125,8 @@ class MainActivity : AppCompatActivity() {
 
         val themeBackground = Color(resolveThemeColor(android.R.attr.colorBackground))
         setContent {
-            val dynamicColor by database.display
-                .isDynamicColorEnabledFlow()
-                .collectAsStateWithLifecycle(database.display.isDynamicColorEnabledBlocking())
-            AppTheme(dynamicColor = dynamicColor) {
+            AppTheme(database.display) {
+                val dynamicColor = LocalDynamicColor.current
                 // Wallpaper colors bring their own background — except pure
                 // black, which stays black whatever the palette.
                 val screenBackground =

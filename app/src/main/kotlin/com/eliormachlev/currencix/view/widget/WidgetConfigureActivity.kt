@@ -73,7 +73,7 @@ class WidgetConfigureActivity : ComponentActivity() {
             val state: Preferences = getAppWidgetState(this@WidgetConfigureActivity, PreferencesGlanceStateDefinition, glanceId)
             val initial = WidgetChoice.from(state, db)
             setContent {
-                AppTheme(dynamicColor = db.display.isDynamicColorEnabledBlocking()) {
+                AppTheme(db.display) {
                     WidgetConfigureSheet(
                         initial = initial,
                         onDone = { choice ->

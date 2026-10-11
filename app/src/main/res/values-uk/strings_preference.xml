@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Знаків після коми</string>
     <string name="haptic_feedback_title">Тактильний відгук</string>
     <string name="haptic_feedback_summary">Вібрація під час натискань у застосунку\nВідповідає системному налаштуванню\nАвтоматично вимикається в режимі енергозбереження</string>
+    <string name="click_sounds_title">Звук натискання</string>
+    <string name="click_sounds_summary">Клацання під час натискань у всьому застосунку\nВідповідає налаштуванню системи</string>
     <string name="auto_refresh_title">Автооновлення курсів</string>
     <string name="auto_refresh_summary">Оновлювати у фоні з частотою, рекомендованою постачальником</string>
     <string name="date_format_title">Формат дати й часу</string>

@@ -26,6 +26,8 @@
     <string name="decimal_places_title">Desetinná přesnost</string>
     <string name="haptic_feedback_title">Haptická odezva</string>
     <string name="haptic_feedback_summary">Vibrace při klepnutí v celé aplikaci\nŘídí se systémovým nastavením\nV režimu úspory baterie se automaticky vypne</string>
+    <string name="click_sounds_title">Zvuky klepnutí</string>
+    <string name="click_sounds_summary">Cvaknutí při klepnutí v celé aplikaci\nŘídí se nastavením systému</string>
     <string name="auto_refresh_title">Automatické obnovování kurzů</string>
     <string name="auto_refresh_summary">Obnovovat na pozadí v intervalu doporučeném poskytovatelem</string>
     <string name="date_format_title">Formát data a času</string>
