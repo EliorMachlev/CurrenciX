@@ -37,12 +37,7 @@ internal fun serializeCart(cart: SavedCart): JSONObject =
         cart.destinationCurrency?.let { put(CART_KEY_DEST_CURRENCY, it) }
         put(CART_KEY_CREATED_AT, cart.createdAt)
         if (!cart.extras.isDefault) put(CART_KEY_EXTRAS, serializeExtras(cart.extras))
-        put(
-            CART_KEY_ITEMS,
-            JSONArray().apply {
-                cart.items.forEach { put(serializeCartItem(it)) }
-            },
-        )
+        put(CART_KEY_ITEMS, cart.items.toJsonArray(::serializeCartItem))
     }
 
 // Amounts as plain strings, so no precision is lost to a JSON double.
@@ -73,13 +68,14 @@ private fun serializeCartItem(item: CartItem): JSONObject =
 
 internal fun parseCart(obj: JSONObject?): SavedCart? {
     obj ?: return null
-    val itemsArr = obj.optJSONArray(CART_KEY_ITEMS) ?: JSONArray()
     val items =
-        (0 until itemsArr.length()).mapNotNull { i ->
-            parseCartItem(itemsArr.optJSONObject(i))
-        }
+        obj
+            .optJSONArray(CART_KEY_ITEMS)
+            ?.objects()
+            .orEmpty()
+            .map(::parseCartItem)
     return SavedCart(
-        id = obj.optString(CART_KEY_ID, "").ifEmpty { UUID.randomUUID().toString() },
+        id = obj.optIdOrNew(CART_KEY_ID),
         name = obj.optString(CART_KEY_NAME, ""),
         currency = obj.optString(CART_KEY_CURRENCY, ""),
         destinationCurrency = obj.optString(CART_KEY_DEST_CURRENCY, "").ifEmpty { null },
@@ -99,29 +95,14 @@ internal fun parseCart(json: String?): SavedCart? {
     }
 }
 
-private fun parseCartItem(obj: JSONObject?): CartItem? {
-    obj ?: return null
-    return CartItem(
-        id = obj.optString(CART_ITEM_KEY_ID, "").ifEmpty { UUID.randomUUID().toString() },
+private fun parseCartItem(obj: JSONObject): CartItem =
+    CartItem(
+        id = obj.optIdOrNew(CART_ITEM_KEY_ID),
         name = obj.optString(CART_ITEM_KEY_NAME, ""),
         expression = obj.optString(CART_ITEM_KEY_EXPR, ""),
         pinned = obj.optBoolean(CART_ITEM_KEY_PINNED, false),
     )
-}
 
-internal fun serializeCartList(list: List<SavedCart>): String {
-    val arr = JSONArray()
-    list.forEach { arr.put(serializeCart(it)) }
-    return arr.toString()
-}
+internal fun serializeCartList(list: List<SavedCart>): String = list.toJsonArray(::serializeCart).toString()
 
-internal fun parseCartList(json: String?): List<SavedCart> {
-    if (json.isNullOrBlank()) return emptyList()
-    return try {
-        val arr = JSONArray(json)
-        (0 until arr.length()).mapNotNull { i -> parseCart(arr.optJSONObject(i)) }
-    } catch (e: JSONException) {
-        Timber.tag(TAG).w(e, "Malformed saved-cart list, dropping it")
-        emptyList()
-    }
-}
+internal fun parseCartList(json: String?): List<SavedCart> = parseJsonList(json, TAG, "saved-cart", ::parseCart)

@@ -64,7 +64,12 @@ class CurrenciesApplication : Application() {
     // initial disk load is bounded (~1 KB file) and blocking here is
     // preferable to a recreate() flash mid-startup.
     private fun applyNightMode() {
-        AppCompatDelegate.setDefaultNightMode(Database(this).display.getTheme().nightMode)
+        AppCompatDelegate.setDefaultNightMode(
+            Database(this)
+                .display.theme
+                .get()
+                .nightMode,
+        )
     }
 
     // Resolve the currently-selected provider's host on a background thread so
@@ -72,7 +77,11 @@ class CurrenciesApplication : Application() {
     // outage) are silent — this is a best-effort warm-up, not a health check.
     private fun prewarmProviderDns() {
         thread(name = "dns-prewarm", isDaemon = true) {
-            val host = Database(this).providers.getApiProvider().getHost() ?: return@thread
+            val host =
+                Database(this)
+                    .providers.apiProvider
+                    .get()
+                    .getHost() ?: return@thread
             runCatching { InetAddress.getAllByName(host) }
         }
     }
@@ -86,9 +95,9 @@ class CurrenciesApplication : Application() {
         val db = Database(this)
         appScope.launch {
             combine(
-                db.providers.isAutoRefreshEnabledFlow(),
-                db.providers.getAutoRefreshIntervalMinutesOverrideFlow(),
-                db.providers.getApiProviderFlow(),
+                db.providers.autoRefresh.flow,
+                db.providers.autoRefreshIntervalOverride.flow,
+                db.providers.apiProvider.flow,
             ) { enabled, override, provider ->
                 Triple(enabled, override, provider)
             }.distinctUntilChanged()

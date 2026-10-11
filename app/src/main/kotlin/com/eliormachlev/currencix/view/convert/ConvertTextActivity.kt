@@ -78,10 +78,10 @@ class ConvertTextActivity : ComponentActivity() {
                 .orEmpty()
                 .take(MAX_SELECTION_LENGTH)
         val db = Database(this)
-        val from = db.lastState.getLastBaseCurrencyBlocking() ?: Currency.USD
-        val to = db.lastState.getLastDestinationCurrencyBlocking() ?: Currency.EUR
+        val from = db.lastState.lastBaseCurrency.get() ?: Currency.USD
+        val to = db.lastState.lastDestinationCurrency.get() ?: Currency.EUR
         val conversion = convertSelection(text, db.rates.getExchangeRatesBlocking(), from, to)
-        val decimals = db.display.getDecimalPlacesBlocking()
+        val decimals = db.display.decimalPlaces.get()
         setContent {
             AppTheme(db.display) {
                 ConvertTextSheet(

@@ -17,7 +17,7 @@ import org.robolectric.annotation.Config
 class RecentPairsStoreTest {
     private val store = Database(ApplicationProvider.getApplicationContext()).lastState
 
-    private fun recents() = store.getRecentPairsBlocking()
+    private fun recents() = store.recentPairs.get()
 
     private fun seed() {
         // The store outlives a test: start from an empty history.

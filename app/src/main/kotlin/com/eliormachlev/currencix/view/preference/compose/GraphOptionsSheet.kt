@@ -17,7 +17,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.repository.ChartSettings
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
@@ -30,10 +32,9 @@ private val SHEET_BOTTOM_SPACE = 12.dp
  * a [Switch] in the trailing slot, matching the picker sheet family
  * ([com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet]).
  *
- * Reads current values via [Database]'s blocking accessors so the sheet
- * lights up with the persisted state on the first frame — the same shape the
- * old AlertDialog used; no LiveData/Flow subscription needed because the
- * chart consumers already observe these keys.
+ * Reads current values with [Pref.get] so the sheet lights up with the
+ * persisted state on the first frame; no LiveData/Flow subscription needed
+ * because the chart consumers already observe these keys.
  */
 @Composable
 fun GraphOptionsSheet(
@@ -44,39 +45,23 @@ fun GraphOptionsSheet(
         title = stringResource(id = R.string.category_graph_options),
         onDismiss = onDismiss,
     ) {
-        GraphOptionRow(
-            labelRes = R.string.graph_grid_title,
-            initial = db.chart.isChartGridEnabledBlocking(),
-            onChange = db.chart::setChartGridEnabled,
-            isLast = false,
-        )
-        GraphOptionRow(
-            labelRes = R.string.graph_x_axis_title,
-            initial = db.chart.isChartXAxisLabelEnabledBlocking(),
-            onChange = db.chart::setChartXAxisLabelEnabled,
-            isLast = false,
-        )
-        GraphOptionRow(
-            labelRes = R.string.graph_y_axis_title,
-            initial = db.chart.isChartYAxisLabelEnabledBlocking(),
-            onChange = db.chart::setChartYAxisLabelEnabled,
-            isLast = false,
-        )
-        GraphOptionRow(
-            labelRes = R.string.graph_highlight_extremes_title,
-            initial = db.chart.isChartHighlightExtremesEnabledBlocking(),
-            onChange = db.chart::setChartHighlightExtremesEnabled,
-            isLast = false,
-        )
-        GraphOptionRow(
-            labelRes = R.string.graph_highlight_period_change_title,
-            initial = db.chart.isChartHighlightPeriodChangeEnabledBlocking(),
-            onChange = db.chart::setChartHighlightPeriodChangeEnabled,
-            isLast = true,
-        )
+        val options = graphOptions(db.chart)
+        options.forEachIndexed { index, (labelRes, pref) ->
+            GraphOptionRow(labelRes = labelRes, initial = pref.get(), onChange = pref::set, isLast = index == options.lastIndex)
+        }
         Spacer(Modifier.height(SHEET_BOTTOM_SPACE))
     }
 }
+
+// Each switch in the sheet and the setting it flips, top to bottom.
+private fun graphOptions(chart: ChartSettings): List<Pair<Int, Pref<Boolean>>> =
+    listOf(
+        R.string.graph_grid_title to chart.grid,
+        R.string.graph_x_axis_title to chart.xAxisLabel,
+        R.string.graph_y_axis_title to chart.yAxisLabel,
+        R.string.graph_highlight_extremes_title to chart.highlightExtremes,
+        R.string.graph_highlight_period_change_title to chart.highlightPeriodChange,
+    )
 
 @Composable
 private fun GraphOptionRow(

@@ -84,7 +84,7 @@ class ConverterStatus(
     private var pendingError: String? = null
 
     fun observe(owner: LifecycleOwner) {
-        Database(context).display.getDateFormat().observe(owner) { pattern ->
+        Database(context).display.dateFormat.liveData.observe(owner) { pattern ->
             dateFormatPattern = pattern
             recompute()
         }

@@ -23,35 +23,35 @@ class PreferenceViewModel(
     private val db = Database(app)
 
     val apiProvider: StateFlow<ApiProvider> =
-        db.providers.getApiProviderFlow().stateInWhileSubscribed(viewModelScope, db.providers.getApiProvider())
+        db.providers.apiProvider.stateInWhileSubscribed(viewModelScope)
     val fallbackProvider: StateFlow<ApiProvider> =
-        db.providers.getFallbackProviderFlow().stateInWhileSubscribed(viewModelScope, db.providers.getFallbackProvider())
+        db.providers.fallbackProvider.stateInWhileSubscribed(viewModelScope)
     val openExchangeratesApiKey: StateFlow<String?> =
-        db.providers.getOpenExchangeRatesApiKeyFlow().stateInWhileSubscribed(viewModelScope, db.providers.getOpenExchangeRatesApiKey())
+        db.providers.openExchangeRatesApiKey.stateInWhileSubscribed(viewModelScope)
     val isPreviewConversionEnabled: StateFlow<Boolean> =
-        db.display.isPreviewConversionEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isPreviewConversionEnabledBlocking())
+        db.display.previewConversion.stateInWhileSubscribed(viewModelScope)
     val isExpandedKeypadEnabled: StateFlow<Boolean> =
-        db.display.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.getExpandedKeypadEnabledBlocking())
+        db.display.expandedKeypad.stateInWhileSubscribed(viewModelScope)
     val isHapticFeedbackEnabled: StateFlow<Boolean> =
-        db.display.isHapticFeedbackEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isHapticFeedbackEnabledBlocking())
+        db.display.hapticFeedback.stateInWhileSubscribed(viewModelScope)
 
     val isClickSoundsEnabled: StateFlow<Boolean> =
-        db.display.isClickSoundsEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isClickSoundsEnabledBlocking())
+        db.display.clickSounds.stateInWhileSubscribed(viewModelScope)
     val isDynamicColorEnabled: StateFlow<Boolean> =
-        db.display.isDynamicColorEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.isDynamicColorEnabledBlocking())
+        db.display.dynamicColor.stateInWhileSubscribed(viewModelScope)
     val decimalPlaces: StateFlow<Int> =
-        db.display.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.display.getDecimalPlacesBlocking())
+        db.display.decimalPlaces.stateInWhileSubscribed(viewModelScope)
     val dateFormat: StateFlow<String> =
-        db.display.getDateFormatFlow().stateInWhileSubscribed(viewModelScope, db.display.getDateFormatBlocking())
+        db.display.dateFormat.stateInWhileSubscribed(viewModelScope)
     val isAutoRefreshEnabled: StateFlow<Boolean> =
-        db.providers.isAutoRefreshEnabledFlow().stateInWhileSubscribed(viewModelScope, db.providers.isAutoRefreshEnabledBlocking())
+        db.providers.autoRefresh.stateInWhileSubscribed(viewModelScope)
 
     fun setApiProvider(api: ApiProvider) {
-        persistAndRefreshRates { db.providers.setApiProvider(api) }
+        persistAndRefreshRates { db.providers.apiProvider.set(api) }
     }
 
     fun setOpenExchangeratesApiKey(id: String) {
-        persistAndRefreshRates { db.providers.setOpenExchangeRatesApiKey(id) }
+        persistAndRefreshRates { db.providers.openExchangeRatesApiKey.set(id) }
     }
 
     // Persist a provider-affecting change, then re-fetch rates so the UI
@@ -69,8 +69,8 @@ class PreferenceViewModel(
      * so `MainActivity.setTheme` doesn't rerun on its own.
      */
     fun setTheme(theme: AppTheme): Boolean {
-        val old = db.display.getTheme()
-        db.display.setTheme(theme)
+        val old = db.display.theme.get()
+        db.display.theme.set(theme)
         AppCompatDelegate.setDefaultNightMode(theme.nightMode)
         return old.nightMode == theme.nightMode &&
             old.isPureBlack != theme.isPureBlack &&
@@ -109,46 +109,28 @@ class PreferenceViewModel(
         }
     }
 
-    fun setPreviewConversionEnabled(enabled: Boolean) {
-        db.display.setPreviewConversionEnabled(enabled)
-    }
+    fun setPreviewConversionEnabled(enabled: Boolean) = db.display.previewConversion.set(enabled)
 
-    fun setExpandedKeypadEnabled(enabled: Boolean) {
-        db.display.setExpandedKeypadEnabled(enabled)
-    }
+    fun setExpandedKeypadEnabled(enabled: Boolean) = db.display.expandedKeypad.set(enabled)
 
-    fun getExpandedKeypadEnabledBlocking(): Boolean = db.display.getExpandedKeypadEnabledBlocking()
+    fun getExpandedKeypadEnabledBlocking(): Boolean = db.display.expandedKeypad.get()
 
-    fun setHapticFeedbackEnabled(enabled: Boolean) {
-        db.display.setHapticFeedbackEnabled(enabled)
-    }
+    fun setHapticFeedbackEnabled(enabled: Boolean) = db.display.hapticFeedback.set(enabled)
 
-    fun setClickSoundsEnabled(enabled: Boolean) {
-        db.display.setClickSoundsEnabled(enabled)
-    }
+    fun setClickSoundsEnabled(enabled: Boolean) = db.display.clickSounds.set(enabled)
 
-    fun setFallbackProvider(provider: ApiProvider) {
-        db.providers.setFallbackProvider(provider)
-    }
+    fun setFallbackProvider(provider: ApiProvider) = db.providers.fallbackProvider.set(provider)
 
-    fun setDynamicColorEnabled(enabled: Boolean) {
-        db.display.setDynamicColorEnabled(enabled)
-    }
+    fun setDynamicColorEnabled(enabled: Boolean) = db.display.dynamicColor.set(enabled)
 
-    fun setDecimalPlaces(places: Int) {
-        db.display.setDecimalPlaces(places)
-    }
+    fun setDecimalPlaces(places: Int) = db.display.decimalPlaces.set(places)
 
-    fun setDateFormat(pattern: String) {
-        db.display.setDateFormat(pattern)
-    }
+    fun setDateFormat(pattern: String) = db.display.dateFormat.set(pattern)
 
     // Auto-refresh toggle (#151). Persistence-only — the actual WorkManager
     // schedule/cancel is driven from the Application observer so the source
     // of truth is DataStore rather than the UI's imperative flow.
-    fun setAutoRefreshEnabled(enabled: Boolean) {
-        db.providers.setAutoRefreshEnabled(enabled)
-    }
+    fun setAutoRefreshEnabled(enabled: Boolean) = db.providers.autoRefresh.set(enabled)
 
-    fun getTheme(): AppTheme = db.display.getTheme()
+    fun getTheme(): AppTheme = db.display.theme.get()
 }

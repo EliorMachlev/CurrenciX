@@ -17,17 +17,17 @@ class ClickSoundsSettingTest {
 
     @Test
     fun `click sounds are on by default`() {
-        assertTrue(display.isClickSoundsEnabledBlocking())
+        assertTrue(display.clickSounds.get())
     }
 
     @Test
     fun `turning click sounds off sticks`() {
-        display.setClickSoundsEnabled(false)
+        display.clickSounds.set(false)
         try {
-            assertFalse(display.isClickSoundsEnabledBlocking())
+            assertFalse(display.clickSounds.get())
         } finally {
             // The store outlives a test: leave the default for the next one.
-            display.setClickSoundsEnabled(true)
+            display.clickSounds.set(true)
         }
     }
 }

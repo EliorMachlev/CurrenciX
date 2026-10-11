@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
     // Launcher shortcuts follow the recent pairs (AppShortcuts).
     private fun keepShortcutsInStep() {
         lifecycleScope.launch(AppDispatchers.production.default) {
-            Database(applicationContext).lastState.getRecentPairsFlow().distinctUntilChanged().collect { recents ->
+            Database(applicationContext).lastState.recentPairs.flow.distinctUntilChanged().collect { recents ->
                 AppShortcuts.update(applicationContext, recents)
             }
         }

@@ -33,7 +33,7 @@ fun seedCachedRates(app: Application = ApplicationProvider.getApplicationContext
                     Rate(Currency.ILS, BigDecimal("4.10")),
                 ),
             time = LocalTime.NOON,
-            provider = db.providers.getApiProvider(),
+            provider = db.providers.apiProvider.get(),
         ),
     )
 }

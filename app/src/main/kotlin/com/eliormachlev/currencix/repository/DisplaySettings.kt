@@ -1,16 +1,16 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
+import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.repository.persistence.PrefStore
+import com.eliormachlev.currencix.repository.persistence.booleanPref
+import com.eliormachlev.currencix.repository.persistence.intPref
+import com.eliormachlev.currencix.repository.persistence.keyedPref
 import com.eliormachlev.currencix.repository.persistence.prefStore
-import kotlinx.coroutines.flow.Flow
+import com.eliormachlev.currencix.repository.persistence.stringPref
 
 private const val KEY_THEME = "_theme"
 private const val KEY_PREVIEW_CONVERSION_ENABLED = "_previewConversionEnabled"
@@ -20,7 +20,6 @@ private const val KEY_CLICK_SOUNDS = "_clickSounds"
 private const val KEY_DYNAMIC_COLOR = "_dynamicColor"
 private const val KEY_DECIMAL_PLACES = "_decimalPlaces"
 private const val KEY_DATE_FORMAT = "_dateFormat"
-private const val DEFAULT_DATE_FORMAT = "dd/MM/yy HH:mm"
 
 // First-run onboarding gate (#147). Default `false` — the spotlight tour runs
 // on the very first cold-start, then flips to `true` on Skip/Finish so future
@@ -28,38 +27,9 @@ private const val DEFAULT_DATE_FORMAT = "dd/MM/yy HH:mm"
 // "Reset onboarding" preference so QA can replay the tour.
 private const val KEY_HAS_SEEN_ONBOARDING = "_hasSeenOnboarding"
 
-private val previewConversionEnabledMapper: (Preferences) -> Boolean = {
-    it[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] ?: false
-}
-
-private val expandedKeypadEnabledMapper: (Preferences) -> Boolean = {
-    it[booleanPreferencesKey(KEY_EXPANDED_KEYPAD)] ?: false
-}
-
-private val hapticFeedbackEnabledMapper: (Preferences) -> Boolean = {
-    it[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] ?: true
-}
-
-// On by default: taps sound only when the system's touch sounds are on too.
-private val clickSoundsEnabledMapper: (Preferences) -> Boolean = {
-    it[booleanPreferencesKey(KEY_CLICK_SOUNDS)] ?: true
-}
-
-private val dynamicColorEnabledMapper: (Preferences) -> Boolean = {
-    it[booleanPreferencesKey(KEY_DYNAMIC_COLOR)] ?: false
-}
-
-private val decimalPlacesMapper: (Preferences) -> Int = {
-    (it[stringPreferencesKey(KEY_DECIMAL_PLACES)] ?: "2").toIntOrNull()?.coerceIn(0, 6) ?: 2
-}
-
-private val dateFormatMapper: (Preferences) -> String = {
-    it[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT
-}
-
-private val hasSeenOnboardingMapper: (Preferences) -> Boolean = {
-    it[booleanPreferencesKey(KEY_HAS_SEEN_ONBOARDING)] ?: false
-}
+private const val DEFAULT_DATE_FORMAT = "dd/MM/yy HH:mm"
+private const val DEFAULT_DECIMAL_PLACES = 2
+private val DECIMAL_PLACES_RANGE = 0..6
 
 /** How the app looks and behaves: theme, formats, keypad, haptics, click sounds, and the onboarding gate. */
 class DisplaySettings(
@@ -67,104 +37,35 @@ class DisplaySettings(
 ) {
     private val store: PrefStore = PersistenceKey.APP.prefStore(context)
 
-    // theme
+    val theme: Pref<AppTheme> = store.intPref(KEY_THEME, { AppTheme.fromId(it ?: AppTheme.DEFAULT.id) }, { it.id })
 
-    fun setTheme(theme: AppTheme) {
-        store.edit { this[intPreferencesKey(KEY_THEME)] = theme.id }
-    }
+    /** The first-run tour has been shown (skipped or finished). */
+    val hasSeenOnboarding: Pref<Boolean> = store.booleanPref(KEY_HAS_SEEN_ONBOARDING, default = false)
 
-    fun getTheme(): AppTheme = AppTheme.fromId(store.snapshot()[intPreferencesKey(KEY_THEME)] ?: AppTheme.DEFAULT.id)
+    /** The currency picker previews each currency's converted amount. */
+    val previewConversion: Pref<Boolean> = store.booleanPref(KEY_PREVIEW_CONVERSION_ENABLED, default = false)
 
-    fun isPureBlackEnabled(): Boolean = getTheme().isPureBlack
+    /** The keypad shows its extra keys (true) or the basic layout. */
+    val expandedKeypad: Pref<Boolean> = store.booleanPref(KEY_EXPANDED_KEYPAD, default = false)
 
-    // onboarding (#147) — first-run spotlight tour gate.
+    val hapticFeedback: Pref<Boolean> = store.booleanPref(KEY_HAPTIC_FEEDBACK, default = true)
 
-    fun setHasSeenOnboarding(seen: Boolean) {
-        store.edit { this[booleanPreferencesKey(KEY_HAS_SEEN_ONBOARDING)] = seen }
-    }
+    /** The system click on taps (when the phone's touch sounds are on too). */
+    val clickSounds: Pref<Boolean> = store.booleanPref(KEY_CLICK_SOUNDS, default = true)
 
-    fun getHasSeenOnboardingFlow(): Flow<Boolean> = store.mappedFlow(hasSeenOnboardingMapper)
+    /** Material You: wallpaper-derived colors instead of paper / ink. */
+    val dynamicColor: Pref<Boolean> = store.booleanPref(KEY_DYNAMIC_COLOR, default = false)
 
-    fun getHasSeenOnboardingBlocking(): Boolean = hasSeenOnboardingMapper(store.snapshot())
+    // Stored as a String so old backups round-trip: the SharedPreferences
+    // preference screen wrote it through a ListPreference, which stringifies.
+    val decimalPlaces: Pref<Int> =
+        store.keyedPref(
+            stringPreferencesKey(KEY_DECIMAL_PLACES),
+            decode = { it?.toIntOrNull()?.coerceIn(DECIMAL_PLACES_RANGE) ?: DEFAULT_DECIMAL_PLACES },
+            encode = { it.toString() },
+        )
 
-    // preview conversion
+    val dateFormat: Pref<String> = store.stringPref(KEY_DATE_FORMAT, DEFAULT_DATE_FORMAT)
 
-    fun setPreviewConversionEnabled(enabled: Boolean) {
-        store.edit { this[booleanPreferencesKey(KEY_PREVIEW_CONVERSION_ENABLED)] = enabled }
-    }
-
-    fun isPreviewConversionEnabled(): LiveData<Boolean> = store.mappedLiveData(previewConversionEnabledMapper)
-
-    fun isPreviewConversionEnabledFlow(): Flow<Boolean> = store.mappedFlow(previewConversionEnabledMapper)
-
-    fun isPreviewConversionEnabledBlocking(): Boolean = previewConversionEnabledMapper(store.snapshot())
-
-    // expanded keypad (boolean pref: true = expanded layout, false = basic/default)
-
-    fun setExpandedKeypadEnabled(enabled: Boolean) {
-        store.edit { this[booleanPreferencesKey(KEY_EXPANDED_KEYPAD)] = enabled }
-    }
-
-    fun getExpandedKeypadEnabled(): LiveData<Boolean> = store.mappedLiveData(expandedKeypadEnabledMapper)
-
-    fun getExpandedKeypadEnabledFlow(): Flow<Boolean> = store.mappedFlow(expandedKeypadEnabledMapper)
-
-    fun getExpandedKeypadEnabledBlocking(): Boolean = expandedKeypadEnabledMapper(store.snapshot())
-
-    // haptic feedback
-
-    fun setHapticFeedbackEnabled(enabled: Boolean) {
-        store.edit { this[booleanPreferencesKey(KEY_HAPTIC_FEEDBACK)] = enabled }
-    }
-
-    fun isHapticFeedbackEnabled(): LiveData<Boolean> = store.mappedLiveData(hapticFeedbackEnabledMapper)
-
-    fun isHapticFeedbackEnabledFlow(): Flow<Boolean> = store.mappedFlow(hapticFeedbackEnabledMapper)
-
-    fun isHapticFeedbackEnabledBlocking(): Boolean = hapticFeedbackEnabledMapper(store.snapshot())
-
-    // click sounds on taps (the system's touch sounds, as Views play them)
-
-    fun setClickSoundsEnabled(enabled: Boolean) {
-        store.edit { this[booleanPreferencesKey(KEY_CLICK_SOUNDS)] = enabled }
-    }
-
-    fun isClickSoundsEnabledFlow(): Flow<Boolean> = store.mappedFlow(clickSoundsEnabledMapper)
-
-    fun isClickSoundsEnabledBlocking(): Boolean = clickSoundsEnabledMapper(store.snapshot())
-
-    // Material You: wallpaper-derived colors instead of paper / ink
-
-    fun setDynamicColorEnabled(enabled: Boolean) {
-        store.edit { this[booleanPreferencesKey(KEY_DYNAMIC_COLOR)] = enabled }
-    }
-
-    fun isDynamicColorEnabledFlow(): Flow<Boolean> = store.mappedFlow(dynamicColorEnabledMapper)
-
-    fun isDynamicColorEnabledBlocking(): Boolean = dynamicColorEnabledMapper(store.snapshot())
-
-    // decimal places
-
-    fun setDecimalPlaces(places: Int) {
-        // Historical shape kept: stored as String so old backups round-trip
-        // (the SharedPreferences preference-screen used to write via
-        // ListPreference which stringifies its value).
-        store.edit { this[stringPreferencesKey(KEY_DECIMAL_PLACES)] = places.toString() }
-    }
-
-    fun getDecimalPlaces(): LiveData<Int> = store.mappedLiveData(decimalPlacesMapper)
-
-    fun getDecimalPlacesFlow(): Flow<Int> = store.mappedFlow(decimalPlacesMapper)
-
-    fun getDecimalPlacesBlocking(): Int = decimalPlacesMapper(store.snapshot())
-
-    fun setDateFormat(pattern: String) {
-        store.edit { this[stringPreferencesKey(KEY_DATE_FORMAT)] = pattern }
-    }
-
-    fun getDateFormat(): LiveData<String> = store.mappedLiveData(dateFormatMapper)
-
-    fun getDateFormatFlow(): Flow<String> = store.mappedFlow(dateFormatMapper)
-
-    fun getDateFormatBlocking(): String = store.snapshot()[stringPreferencesKey(KEY_DATE_FORMAT)] ?: DEFAULT_DATE_FORMAT
+    fun isPureBlackEnabled(): Boolean = theme.get().isPureBlack
 }

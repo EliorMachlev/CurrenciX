@@ -91,7 +91,7 @@ fun TimelineRoute(
     val application = context.applicationContext as Application
     val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(application, screen.from, screen.to))
     val db = remember(context) { Database(context) }
-    val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.getDateFormatBlocking())) }
+    val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
     val pair by model.getCurrencyPair().observeAsState()
     val inFlight by model.isRefreshInFlight().observeAsState(false)
     val error by model.getError().observeAsState()
@@ -234,12 +234,12 @@ private fun TimelineChartContent(
     val prefs =
         remember(db) {
             ChartPrefs(
-                showGrid = db.chart.isChartGridEnabled(),
-                showXAxis = db.chart.isChartXAxisLabelEnabled(),
-                showYAxis = db.chart.isChartYAxisLabelEnabled(),
-                highlightExtremes = db.chart.isChartHighlightExtremesEnabled(),
-                highlightPeriodChange = db.chart.isChartHighlightPeriodChangeEnabled(),
-                dateFormat = db.display.getDateFormat(),
+                showGrid = db.chart.grid.liveData,
+                showXAxis = db.chart.xAxisLabel.liveData,
+                showYAxis = db.chart.yAxisLabel.liveData,
+                highlightExtremes = db.chart.highlightExtremes.liveData,
+                highlightPeriodChange = db.chart.highlightPeriodChange.liveData,
+                dateFormat = db.display.dateFormat.liveData,
             )
         }
     TimelineChart(series = series, prefs = prefs, colors = colors, onScrub = model::setPastDate)

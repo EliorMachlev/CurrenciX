@@ -318,7 +318,8 @@ private fun ConverterDisplay(
     val context = LocalContext.current
     val banner by host.status.banner
     val database = remember(context) { Database(context) }
-    val pattern by database.display.getDateFormat().observeAsState(DEFAULT_DATE_PATTERN)
+    val pattern by database.display.dateFormat.liveData
+        .observeAsState(DEFAULT_DATE_PATTERN)
     MainDisplay(
         viewModel = host.viewModel,
         callbacks =
@@ -346,7 +347,8 @@ private fun ConverterRecentPairs(
 ) {
     val base = viewModel.getBaseCurrency().observeAsState().value
     val dest = viewModel.getDestinationCurrency().observeAsState().value
-    val recents by database.lastState.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
+    val recents by database.lastState.recentPairs.flow
+        .collectAsStateWithLifecycle(emptyList())
     val current = if (base != null && dest != null && base != dest) CurrencyPair(base, dest) else null
     LaunchedEffect(current) {
         current ?: return@LaunchedEffect
@@ -414,8 +416,8 @@ private fun ConverterKeypad(viewModel: MainViewModel) {
 private fun OnboardingSpotlightHost() {
     val context = LocalContext.current
     val db = remember(context) { Database(context) }
-    val hasSeen by db.display.getHasSeenOnboardingFlow().collectAsStateWithLifecycle(
-        initialValue = db.display.getHasSeenOnboardingBlocking(),
+    val hasSeen by db.display.hasSeenOnboarding.flow.collectAsStateWithLifecycle(
+        initialValue = db.display.hasSeenOnboarding.get(),
     )
     if (hasSeen) return
     val steps =
@@ -435,7 +437,7 @@ private fun OnboardingSpotlightHost() {
                 title = stringResource(R.string.onboarding_autorefresh_title),
                 body = stringResource(R.string.onboarding_autorefresh_body),
                 actionLabel = stringResource(R.string.onboarding_autorefresh_enable),
-                onAction = { db.providers.setAutoRefreshEnabled(true) },
+                onAction = { db.providers.autoRefresh.set(true) },
             ),
         )
     Spotlight(
@@ -443,7 +445,7 @@ private fun OnboardingSpotlightHost() {
         skipLabel = stringResource(R.string.onboarding_skip),
         nextLabel = stringResource(R.string.onboarding_next),
         finishLabel = stringResource(R.string.onboarding_finish),
-        onDismiss = { db.display.setHasSeenOnboarding(true) },
+        onDismiss = { db.display.hasSeenOnboarding.set(true) },
     )
 }
 

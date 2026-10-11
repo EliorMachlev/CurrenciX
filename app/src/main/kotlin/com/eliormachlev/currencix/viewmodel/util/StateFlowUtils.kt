@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.viewmodel.util
 
+import com.eliormachlev.currencix.repository.persistence.Pref
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,3 +25,6 @@ internal fun <T> Flow<T>.stateInWhileSubscribed(
     scope: CoroutineScope,
     initial: T,
 ): StateFlow<T> = stateIn(scope, SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS), initial)
+
+/** A setting as a [StateFlow] for the UI: its current value at once, then its changes. */
+internal fun <T> Pref<T>.stateInWhileSubscribed(scope: CoroutineScope): StateFlow<T> = flow.stateInWhileSubscribed(scope, get())

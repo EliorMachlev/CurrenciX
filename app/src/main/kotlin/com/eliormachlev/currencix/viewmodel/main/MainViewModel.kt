@@ -61,10 +61,12 @@ class MainViewModel(
     // (those compositions are deferred out of this migration per the plan's
     // Molecule-deferral guidance).
     private val starredLiveItems: StateFlow<ImmutableList<Currency>> =
-        db.stars.getStarredCurrenciesFlow().stateInWhileSubscribed(viewModelScope, db.stars.getStarredCurrenciesBlocking())
+        db.stars.starredCurrencies.flow
+            .stateInWhileSubscribed(viewModelScope, db.stars.starredCurrencies.get())
     private val starredLiveItemsLive: LiveData<ImmutableList<Currency>> = starredLiveItems.asLiveData()
     private val onlyShowStarred: StateFlow<Boolean> =
-        db.stars.isFilterStarredEnabledFlow().stateInWhileSubscribed(viewModelScope, db.stars.isFilterStarredEnabledBlocking())
+        db.stars.filterStarred.flow
+            .stateInWhileSubscribed(viewModelScope, db.stars.filterStarred.get())
     private val onlyShowStarredLive: LiveData<Boolean> = onlyShowStarred.asLiveData()
 
     // ui
@@ -74,9 +76,9 @@ class MainViewModel(
     private val refreshShimmer: StateFlow<Boolean> =
         RefreshState.passiveIndicator.stateInWhileSubscribed(viewModelScope, false)
     val isExpandedKeypadEnabled: StateFlow<Boolean> =
-        db.display.getExpandedKeypadEnabledFlow().stateInWhileSubscribed(viewModelScope, db.display.getExpandedKeypadEnabledBlocking())
+        db.display.expandedKeypad.stateInWhileSubscribed(viewModelScope)
     private val decimalPlaces: StateFlow<Int> =
-        db.display.getDecimalPlacesFlow().stateInWhileSubscribed(viewModelScope, db.display.getDecimalPlacesBlocking())
+        db.display.decimalPlaces.stateInWhileSubscribed(viewModelScope)
     private val decimalPlacesLive: LiveData<Int> = decimalPlaces.asLiveData()
 
     /** What the keypad has typed. The keypad drives it directly; the amounts below follow it. */
@@ -91,13 +93,16 @@ class MainViewModel(
     // Fees leaves migrated to `StateFlow`; `.asLiveData()` bridges feed the
     // `pairFeeMediator` MediatorLiveData below (deferred per the plan).
     private val fees: StateFlow<ImmutableList<Fee>> =
-        db.fees.getFeesFlow().stateInWhileSubscribed(viewModelScope, db.fees.getFeesBlocking())
+        db.fees.fees.flow
+            .stateInWhileSubscribed(viewModelScope, db.fees.fees.get())
     private val feesLive: LiveData<ImmutableList<Fee>> = fees.asLiveData()
     private val activeExchangeId: StateFlow<String?> =
-        db.fees.getActiveExchangeIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveExchangeIdBlocking())
+        db.fees.activeExchangeId.flow
+            .stateInWhileSubscribed(viewModelScope, db.fees.activeExchangeId.get())
     private val activeExchangeIdLive: LiveData<String?> = activeExchangeId.asLiveData()
     private val activeBankId: StateFlow<String?> =
-        db.fees.getActiveBankIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveBankIdBlocking())
+        db.fees.activeBankId.flow
+            .stateInWhileSubscribed(viewModelScope, db.fees.activeBankId.get())
     private val activeBankIdLive: LiveData<String?> = activeBankId.asLiveData()
 
     // Background timeline prefetcher: fires whenever the selected base/target
@@ -117,7 +122,7 @@ class MainViewModel(
         // "Rates are updated around midnight UTC every working day."
         val currentDate = LocalDate.now(ZoneId.of("UTC"))
         val cachedDate = db.rates.getDate()
-        val historicalDate = db.lastState.getHistoricalDate()
+        val historicalDate = db.lastState.historicalDate.get()
 
         dbLiveItems =
             when {
@@ -187,8 +192,8 @@ class MainViewModel(
 
         // update currently selected currencies when rates are updated:
         // sometimes the selected rates aren't available anymore, so reset them
-        val baseCurrency = db.lastState.getLastBaseCurrency()
-        val destinationCurrency = db.lastState.getLastDestinationCurrency()
+        val baseCurrency = db.lastState.lastBaseCurrency.liveData
+        val destinationCurrency = db.lastState.lastDestinationCurrency.liveData
         currentBaseCurrency =
             object : MediatorLiveData<Currency?>() {
                 var base: Currency? = null
@@ -295,7 +300,7 @@ class MainViewModel(
      * persist the user's manual ordering of starred currencies
      */
     internal fun setStarredCurrencyOrder(currencies: List<Currency>) {
-        db.stars.setStarredCurrencyOrder(currencies)
+        db.stars.starredCurrencies.set(currencies.toImmutableList())
     }
 
     /**
@@ -691,18 +696,18 @@ class MainViewModel(
 
     internal fun setHistoricalDate(date: LocalDate?) {
         // check if previous date was "latest" or historical
-        val wasLatestActive = db.lastState.getHistoricalDate() == null
+        val wasLatestActive = db.lastState.historicalDate.get() == null
         // save selected historical date to db
-        db.lastState.setHistoricalDate(date)
+        db.lastState.historicalDate.set(date)
         // refresh, if new date != cached date or if last state was "latest"
         if (date != db.rates.getDate() || wasLatestActive) {
             forceUpdateExchangeRate()
         }
     }
 
-    internal fun getHistoricalDate(): LocalDate? = db.lastState.getHistoricalDate()
+    internal fun getHistoricalDate(): LocalDate? = db.lastState.historicalDate.get()
 
-    internal fun getHistoricalLiveDate(): LiveData<LocalDate?> = db.lastState.getHistoricalLiveDate()
+    internal fun getHistoricalLiveDate(): LiveData<LocalDate?> = db.lastState.historicalDate.liveData
 
     /*
      * helpers =====================================================================================

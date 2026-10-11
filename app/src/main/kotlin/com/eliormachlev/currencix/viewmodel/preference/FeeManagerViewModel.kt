@@ -27,15 +27,18 @@ class FeeManagerViewModel(
     private val db = Database(app)
 
     val fees: StateFlow<ImmutableList<Fee>> =
-        db.fees.getFeesFlow().stateInWhileSubscribed(viewModelScope, db.fees.getFeesBlocking())
+        db.fees.fees.flow
+            .stateInWhileSubscribed(viewModelScope, db.fees.fees.get())
     val activeExchangeId: StateFlow<String?> =
-        db.fees.getActiveExchangeIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveExchangeIdBlocking())
+        db.fees.activeExchangeId.flow
+            .stateInWhileSubscribed(viewModelScope, db.fees.activeExchangeId.get())
     val activeBankId: StateFlow<String?> =
-        db.fees.getActiveBankIdFlow().stateInWhileSubscribed(viewModelScope, db.fees.getActiveBankIdBlocking())
+        db.fees.activeBankId.flow
+            .stateInWhileSubscribed(viewModelScope, db.fees.activeBankId.get())
 
-    fun setActiveExchangeId(id: String) = db.fees.setActiveExchangeId(id)
+    fun setActiveExchangeId(id: String) = db.fees.activeExchangeId.set(id)
 
-    fun setActiveBankId(id: String) = db.fees.setActiveBankId(id)
+    fun setActiveBankId(id: String) = db.fees.activeBankId.set(id)
 
     fun addFee(fee: Fee) = db.fees.addFee(fee)
 

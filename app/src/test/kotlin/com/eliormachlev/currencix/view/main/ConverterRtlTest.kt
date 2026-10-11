@@ -35,7 +35,7 @@ class ConverterRtlTest {
 
     @Before
     fun setUp() {
-        Database(ApplicationProvider.getApplicationContext()).display.setHasSeenOnboarding(true)
+        Database(ApplicationProvider.getApplicationContext()).display.hasSeenOnboarding.set(true)
         seedCachedRates()
         compose.mainClock.autoAdvance = false
         settle()

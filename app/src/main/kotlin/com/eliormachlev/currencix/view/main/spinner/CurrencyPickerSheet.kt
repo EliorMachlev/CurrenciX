@@ -132,7 +132,8 @@ private fun rememberRecentCurrencies(
     database: Database,
     excluded: Set<Currency>,
 ): ImmutableList<Currency> {
-    val recentPairs by database.lastState.getRecentPairsFlow().collectAsStateWithLifecycle(emptyList())
+    val recentPairs by database.lastState.recentPairs.flow
+        .collectAsStateWithLifecycle(emptyList())
     return remember(recentPairs, excluded) {
         RecentPairs
             .currencies(recentPairs)

@@ -32,7 +32,7 @@ class TimelineEmptyRangeTest {
         val db = Database(app)
         val rates = (0L until CACHED_DAYS).associate { today.minusDays(it) to Rate(Currency.EUR, BigDecimal("0.9")) }
         db.rates.putCachedTimeline(
-            Timeline(true, null, "USD", rates.keys.min(), rates.keys.max(), rates.toSortedMap(), db.providers.getApiProvider()),
+            Timeline(true, null, "USD", rates.keys.min(), rates.keys.max(), rates.toSortedMap(), db.providers.apiProvider.get()),
             Currency.USD,
             Currency.EUR,
         )
