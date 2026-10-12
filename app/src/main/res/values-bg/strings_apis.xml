@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">Среднодневни обменни курсове на <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Банката на Канада</b></a>.\n<b>Включени са около 23 валути.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Около 23 обменни курса\nИзточник: Централна банка на Канада</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Курсовете се публикуват веднъж всеки работен ден до 16:30 ET</string>
+    <string name="api_allRatesToday_descriptionShort">Около 160 валутни курса\nИзточник: средни пазарни курсове от междубанкови данни.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> публикува средни пазарни валутни курсове от междубанкови данни, обновявани приблизително всяка минута.\n<b>Около 160 валутни курса.\n<i>За да използвате този източник, трябва да въведете свой API ключ. Безплатният план позволява общо 300 заявки, еднократно.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Обновява се приблизително всяка минута.</string>
+    <string name="api_allRatesToday_hint">Изисква собствен API ключ. Безплатният план позволява общо 300 заявки.</string>
 </resources>

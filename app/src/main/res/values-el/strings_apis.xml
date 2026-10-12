@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Τράπεζα του Ισραήλ</string>
     <string name="api_bankRossii_name">Τράπεζα της Ρωσίας</string>
     <string name="api_norgesBank_name">Τράπεζα της Νορβηγίας</string>
+    <string name="api_allRatesToday_descriptionShort">Περίπου 160 ισοτιμίες\nΠηγή: Μέσες ισοτιμίες αγοράς από διατραπεζικά δεδομένα.</string>
+    <string name="api_allRatesToday_descriptionFull">Το <a href="https://allratestoday.com/"><b>AllRatesToday</b></a> δημοσιεύει μέσες ισοτιμίες αγοράς από διατραπεζικά δεδομένα, που ενημερώνονται περίπου κάθε λεπτό.\n<b>Περίπου 160 ισοτιμίες.\n<i>Για να χρησιμοποιήσετε αυτή την πηγή πρέπει να εισαγάγετε το προσωπικό σας κλειδί API. Το δωρεάν πρόγραμμα επιτρέπει συνολικά 300 αιτήματα, εφάπαξ.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Ενημερώνεται περίπου κάθε λεπτό.</string>
+    <string name="api_allRatesToday_hint">Χρειάζεται δικό σας κλειδί API. Το δωρεάν πρόγραμμα επιτρέπει συνολικά 300 αιτήματα.</string>
 </resources>

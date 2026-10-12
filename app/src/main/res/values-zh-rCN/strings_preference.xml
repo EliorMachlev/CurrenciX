@@ -199,4 +199,7 @@
     <string name="refresh_interval_title">刷新间隔</string>
     <string name="refresh_interval_daily">每天一次，在 %1$s 发布后立即刷新</string>
     <string name="refresh_interval_monthly">每月一次，在 %1$s 发布后立即刷新</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API 密钥</string>
+    <string name="api_all_rates_today_api_key_message">使用此来源需要你自己的 API 密钥。\n\n在 https://allratestoday.com 创建免费账户，然后从个人资料页复制你的密钥（以 art_live_ 开头）并在此输入。\n\n免费套餐总共只允许 300 次请求，用完即止。每次刷新和每个图表区间各用一次。</string>
+    <string name="provider_cadence_every_minute">约每分钟更新一次</string>
 </resources>

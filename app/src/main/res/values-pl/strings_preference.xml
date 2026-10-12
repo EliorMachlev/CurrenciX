@@ -203,4 +203,7 @@
     <string name="refresh_interval_title">Odświeżaj co</string>
     <string name="refresh_interval_daily">Raz dziennie, zaraz po publikacji przez %1$s</string>
     <string name="refresh_interval_monthly">Raz w miesiącu, zaraz po publikacji przez %1$s</string>
+    <string name="api_all_rates_today_api_key_title">Klucz API AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Aby korzystać z tego źródła, potrzebujesz własnego klucza API.\n\nZałóż darmowe konto na https://allratestoday.com, skopiuj swój klucz (zaczyna się od art_live_) ze strony profilu i wpisz go tutaj.\n\nDarmowy plan pozwala łącznie na 300 zapytań, jednorazowo. Każde odświeżenie i każdy zakres wykresu zużywa jedno.</string>
+    <string name="provider_cadence_every_minute">Aktualizowane mniej więcej co minutę</string>
 </resources>

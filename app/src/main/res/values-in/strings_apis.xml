@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">Nilai tukar rata-rata harian dari <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Sekitar 23 mata uang tersedia.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Sekitar 23 nilai tukar\nSumber: Bank Sentral Kanada</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Nilai tukar dipublikasikan sekali setiap hari kerja paling lambat pukul 16:30 ET</string>
+    <string name="api_allRatesToday_descriptionShort">Sekitar 160 kurs\nSumber: kurs tengah pasar dari data antarbank.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> menerbitkan kurs tengah pasar dari data antarbank, diperbarui kira-kira setiap menit.\n<b>Sekitar 160 kurs.\n<i>Untuk menggunakan sumber ini, Anda harus memasukkan kunci API pribadi Anda. Paket gratis mengizinkan total 300 permintaan, selamanya.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Diperbarui kira-kira setiap menit.</string>
+    <string name="api_allRatesToday_hint">Memerlukan kunci API Anda sendiri. Paket gratis mengizinkan total 300 permintaan.</string>
 </resources>

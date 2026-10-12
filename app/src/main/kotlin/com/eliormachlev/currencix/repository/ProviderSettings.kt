@@ -3,7 +3,9 @@ package com.eliormachlev.currencix.repository
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.Pref
@@ -19,6 +21,7 @@ import com.eliormachlev.currencix.util.NO_PROVIDER_ID
 private const val KEY_API = "_api"
 private const val KEY_FALLBACK_API = "_fallbackApi"
 private const val KEY_OPEN_EXCHANGERATES_API_KEY = "_api_openExchangeratesApiKey"
+private const val KEY_ALL_RATES_TODAY_API_KEY = "_api_allRatesTodayApiKey"
 
 // Whether the pickers list providers that are often down or inaccurate.
 private const val KEY_SHOW_UNRELIABLE_PROVIDERS = "_showUnreliableProviders"
@@ -32,6 +35,13 @@ private const val KEY_AUTO_REFRESH_ENABLED = "_autoRefreshEnabled"
 private const val KEY_AUTO_REFRESH_INTERVAL = "_autoRefreshIntervalMinutesOverride"
 
 private val apiProviderKey = intPreferencesKey(KEY_API)
+
+// Where each keyed provider's API key is stored.
+private val apiKeyKeys: Map<ApiProvider, Preferences.Key<String>> =
+    mapOf(
+        ApiProvider.OPEN_EXCHANGERATES to stringPreferencesKey(KEY_OPEN_EXCHANGERATES_API_KEY),
+        ApiProvider.ALL_RATES_TODAY to stringPreferencesKey(KEY_ALL_RATES_TODAY_API_KEY),
+    )
 private val fallbackApiKey = intPreferencesKey(KEY_FALLBACK_API)
 
 private fun mainProvider(prefs: Preferences): ApiProvider = ApiProvider.fromId(prefs[apiProviderKey] ?: NO_PROVIDER_ID)
@@ -61,6 +71,31 @@ class ProviderSettings(
 
     /** The user's Open Exchange Rates key; null (and removed) when there is none. */
     val openExchangeRatesApiKey: Pref<String?> = store.optionalStringPref(KEY_OPEN_EXCHANGERATES_API_KEY)
+
+    /** The user's AllRatesToday key; null (and removed) when there is none. */
+    val allRatesTodayApiKey: Pref<String?> = store.optionalStringPref(KEY_ALL_RATES_TODAY_API_KEY)
+
+    /**
+     * The main provider's own API key: null for one that needs none or has
+     * none yet. Written to that provider's key, removed when blank, so
+     * switching provider shows (and keeps) each one's key.
+     */
+    val mainProviderApiKey: Pref<String?> =
+        store.pref(
+            read = { prefs -> apiKeyKeys[mainProvider(prefs)]?.let { prefs[it] } },
+            write = { key ->
+                apiKeyKeys[mainProvider(this)]?.let { stored ->
+                    if (key.isNullOrBlank()) remove(stored) else this[stored] = key
+                }
+            },
+        )
+
+    /** Every provider's key as it is now, for a fetch to hand its provider. */
+    fun secrets(): ApiSecrets =
+        ApiSecrets(
+            openExchangeRatesApiKey = openExchangeRatesApiKey.get(),
+            allRatesTodayApiKey = allRatesTodayApiKey.get(),
+        )
 
     /**
      * Whether the provider pickers list the unreliable providers too

@@ -199,4 +199,7 @@
     <string name="refresh_interval_title">重新整理間隔</string>
     <string name="refresh_interval_daily">每天一次，在 %1$s 發布後立即重新整理</string>
     <string name="refresh_interval_monthly">每月一次，在 %1$s 發布後立即重新整理</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API 金鑰</string>
+    <string name="api_all_rates_today_api_key_message">使用此來源需要你自己的 API 金鑰。\n\n在 https://allratestoday.com 建立免費帳戶，然後從個人資料頁複製你的金鑰（以 art_live_ 開頭）並在此輸入。\n\n免費方案總共只允許 300 次請求，用完即止。每次重新整理和每個圖表區間各用一次。</string>
+    <string name="provider_cadence_every_minute">約每分鐘更新一次</string>
 </resources>

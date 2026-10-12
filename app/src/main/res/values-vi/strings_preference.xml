@@ -202,4 +202,7 @@
     <string name="refresh_interval_title">Làm mới mỗi</string>
     <string name="refresh_interval_daily">Mỗi ngày một lần, ngay sau khi %1$s công bố</string>
     <string name="refresh_interval_monthly">Mỗi tháng một lần, ngay sau khi %1$s công bố</string>
+    <string name="api_all_rates_today_api_key_title">Khóa API AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Để dùng nguồn này, bạn cần khóa API riêng.\n\nTạo tài khoản miễn phí tại https://allratestoday.com, sau đó sao chép khóa của bạn (bắt đầu bằng art_live_) từ trang hồ sơ và nhập vào đây.\n\nGói miễn phí cho phép tổng cộng 300 yêu cầu, chỉ một lần. Mỗi lần làm mới và mỗi khoảng biểu đồ dùng một yêu cầu.</string>
+    <string name="provider_cadence_every_minute">Cập nhật khoảng mỗi phút</string>
 </resources>

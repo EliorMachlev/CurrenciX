@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">A kanadai központi bank, a <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a> napi átlagos devizaárfolyamai.\n<b>Körülbelül 23 pénznemet tartalmaz.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Körülbelül 23 devizaárfolyam\nForrás: Kanadai központi bank</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Az árfolyamokat minden munkanapon egyszer, legkésőbb 16:30 ET-ig teszik közzé</string>
+    <string name="api_allRatesToday_descriptionShort">Körülbelül 160 árfolyam\nForrás: bankközi adatokból származó középárfolyamok.</string>
+    <string name="api_allRatesToday_descriptionFull">Az <a href="https://allratestoday.com/"><b>AllRatesToday</b></a> bankközi adatokból származó középárfolyamokat tesz közzé, nagyjából percenként frissítve.\n<b>Körülbelül 160 árfolyam.\n<i>A forrás használatához meg kell adnod a személyes API-kulcsodat. Az ingyenes csomag összesen 300 kérést enged, egyszeri keretként.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Nagyjából percenként frissül.</string>
+    <string name="api_allRatesToday_hint">Saját API-kulcs kell hozzá. Az ingyenes csomag összesen 300 kérést enged.</string>
 </resources>

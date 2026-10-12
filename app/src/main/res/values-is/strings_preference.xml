@@ -202,4 +202,7 @@
     <string name="refresh_interval_title">Uppfæra á</string>
     <string name="refresh_interval_daily">Einu sinni á dag, rétt eftir að %1$s birtir</string>
     <string name="refresh_interval_monthly">Einu sinni í mánuði, rétt eftir að %1$s birtir</string>
+    <string name="api_all_rates_today_api_key_title">API-lykill AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Til að nota þessa heimild þarftu eigin API-lykil.\n\nStofnaðu ókeypis aðgang á https://allratestoday.com, afritaðu lykilinn þinn (hann byrjar á art_live_) af prófílsíðunni og sláðu hann inn hér.\n\nÓkeypis áskriftin leyfir 300 beiðnir samtals, í eitt skipti. Hver uppfærsla og hvert tímabil á grafi notar eina.</string>
+    <string name="provider_cadence_every_minute">Uppfært um það bil á mínútu fresti</string>
 </resources>

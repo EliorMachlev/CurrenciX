@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Iisraeli keskpank</string>
     <string name="api_bankRossii_name">Venemaa Pank</string>
     <string name="api_norgesBank_name">Norra keskpank</string>
+    <string name="api_allRatesToday_descriptionShort">Umbes 160 vahetuskurssi\nAllikas: pankadevahelistest andmetest keskturukursid.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> avaldab pankadevahelistest andmetest keskturukursse, mida uuendatakse umbes iga minut.\n<b>Umbes 160 vahetuskurssi.\n<i>Selle allika kasutamiseks pead sisestama oma isikliku API-võtme. Tasuta pakett lubab kokku 300 päringut, ühekordselt.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Uuendatakse umbes iga minut.</string>
+    <string name="api_allRatesToday_hint">Vajab sinu enda API-võtit. Tasuta pakett lubab kokku 300 päringut.</string>
 </resources>

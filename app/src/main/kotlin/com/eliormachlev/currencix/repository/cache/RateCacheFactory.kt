@@ -28,6 +28,9 @@ internal val PROVIDER_TTL_MS: Map<ApiProvider, Long> =
         // last-hour data when the user explicitly refreshes.
         ApiProvider.FRANKFURTER_APP to TimeUnit.MINUTES.toMillis(15),
         ApiProvider.OPEN_EXCHANGERATES to TimeUnit.MINUTES.toMillis(15),
+        // Minute-fresh upstream, but every request spends the user's quota
+        // (300 in all on the free plan): reuse what we have for an hour.
+        ApiProvider.ALL_RATES_TODAY to TimeUnit.HOURS.toMillis(1),
         // Business-day publishers — 30 minutes covers the "user opens app
         // twice in a lunch break" case without pinging idle upstreams.
         ApiProvider.BANK_OF_CANADA to TimeUnit.MINUTES.toMillis(30),
@@ -79,7 +82,10 @@ internal object RateCacheFactory {
         )
     }
 
-    fun buildTimelineCache(context: Context): RateCache<RateCacheKey.TimelineRange, Timeline> {
+    fun buildTimelineCache(
+        context: Context,
+        secretsSupplier: () -> ApiSecrets = { ApiSecrets.EMPTY },
+    ): RateCache<RateCacheKey.TimelineRange, Timeline> {
         val rootDir = File(context.cacheDir, "$RATE_CACHE_DIR/$TIMELINE_SUBDIR")
         // Timeline persistence is per-pair; the converter needs the symbol
         // currency so the on-disk map keys reconstruct with the right Rate
@@ -95,6 +101,7 @@ internal object RateCacheFactory {
                         startDate = key.startDate,
                         endDate = key.endDate,
                         context = context,
+                        secrets = secretsSupplier(),
                     )
                 },
             ttlFor = { key -> ttlFor(ApiProvider.fromId(key.providerId)) },

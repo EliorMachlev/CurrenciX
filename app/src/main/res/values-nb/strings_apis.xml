@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">Daglige gjennomsnittlige valutakurser fra <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Ca. 23 valutaer er inkludert.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Ca. 23 valutakurser\nKilde: Canadas sentralbank</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Kursene publiseres én gang hver arbeidsdag innen kl. 16:30 ET</string>
+    <string name="api_allRatesToday_descriptionShort">Omtrent 160 valutakurser\nKilde: Midtkurser fra interbankdata.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publiserer midtkurser fra interbankdata, oppdatert omtrent hvert minutt.\n<b>Omtrent 160 valutakurser.\n<i>For å bruke denne kilden må du legge inn din personlige API-nøkkel. Gratisplanen gir 300 forespørsler totalt, én gang.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Oppdateres omtrent hvert minutt.</string>
+    <string name="api_allRatesToday_hint">Krever din egen API-nøkkel. Gratisplanen gir 300 forespørsler totalt.</string>
 </resources>

@@ -203,4 +203,7 @@
     <string name="refresh_interval_title">רענון כל</string>
     <string name="refresh_interval_daily">פעם ביום, מיד אחרי ש־%1$s מפרסם</string>
     <string name="refresh_interval_monthly">פעם בחודש, מיד אחרי ש־%1$s מפרסם</string>
+    <string name="api_all_rates_today_api_key_title">מפתח API של AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">כדי להשתמש במקור הזה צריך מפתח API משלך.\n\nפתחו חשבון חינמי ב־https://allratestoday.com, העתיקו את המפתח (מתחיל ב־art_live_) מדף הפרופיל והזינו אותו כאן.\n\nהתוכנית החינמית מאפשרת 300 בקשות בסך הכול, לתמיד. כל רענון וכל טווח בגרף משתמשים בבקשה אחת.</string>
+    <string name="provider_cadence_every_minute">מתעדכן בערך כל דקה</string>
 </resources>

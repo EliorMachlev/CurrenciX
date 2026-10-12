@@ -201,4 +201,7 @@
     <string name="refresh_interval_title">പുതുക്കൽ ഇടവേള</string>
     <string name="refresh_interval_daily">ദിവസത്തിൽ ഒരിക്കൽ, %1$s പ്രസിദ്ധീകരിച്ച ഉടൻ</string>
     <string name="refresh_interval_monthly">മാസത്തിൽ ഒരിക്കൽ, %1$s പ്രസിദ്ധീകരിച്ച ഉടൻ</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API കീ</string>
+    <string name="api_all_rates_today_api_key_message">ഈ ഉറവിടം ഉപയോഗിക്കാൻ നിങ്ങൾക്ക് സ്വന്തം API കീ വേണം.\n\nhttps://allratestoday.com ൽ സൗജന്യ അക്കൗണ്ട് സൃഷ്ടിക്കുക, തുടർന്ന് പ്രൊഫൈൽ പേജിൽ നിന്ന് നിങ്ങളുടെ കീ (art_live_ ൽ തുടങ്ങുന്നത്) പകർത്തി ഇവിടെ നൽകുക.\n\nസൗജന്യ പ്ലാനിൽ ആകെ 300 അഭ്യർത്ഥനകൾ, ഒരിക്കൽ മാത്രം. ഓരോ പുതുക്കലും ഓരോ ചാർട്ട് കാലയളവും ഒന്ന് ഉപയോഗിക്കുന്നു.</string>
+    <string name="provider_cadence_every_minute">ഏകദേശം ഓരോ മിനിറ്റിലും പുതുക്കുന്നു</string>
 </resources>

@@ -200,4 +200,7 @@
     <string name="refresh_interval_title">Vernieuwen elke</string>
     <string name="refresh_interval_daily">Eén keer per dag, vlak nadat %1$s publiceert</string>
     <string name="refresh_interval_monthly">Eén keer per maand, vlak nadat %1$s publiceert</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API-sleutel</string>
+    <string name="api_all_rates_today_api_key_message">Om deze bron te gebruiken heb je je eigen API-sleutel nodig.\n\nMaak een gratis account aan op https://allratestoday.com, kopieer je sleutel (die begint met art_live_) van je profielpagina en voer hem hier in.\n\nHet gratis abonnement staat in totaal 300 verzoeken toe, eenmalig. Elke vernieuwing en elke grafiekperiode gebruikt er één.</string>
+    <string name="provider_cadence_every_minute">Ongeveer elke minuut bijgewerkt</string>
 </resources>

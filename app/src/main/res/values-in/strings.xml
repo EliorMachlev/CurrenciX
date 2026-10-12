@@ -278,4 +278,6 @@
     <string name="show_unreliable_providers_summary">Tampilkan juga penyedia yang sering tidak aktif atau kursnya tidak akurat, dengan label yang sesuai</string>
     <string name="provider_reliability_downtime">Gangguan</string>
     <string name="provider_reliability_inaccurate">Data tidak akurat</string>
+    <string name="error_api_plan_required">HTTP 403 – Paket Anda di sumber ini tidak mencakup ini.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Jatah permintaan Anda di sumber ini sudah habis.</string>
 </resources>

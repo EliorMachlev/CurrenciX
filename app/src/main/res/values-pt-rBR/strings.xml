@@ -285,4 +285,6 @@
     <string name="show_unreliable_providers_summary">Listar também provedores que ficam fora do ar com frequência ou têm cotações imprecisas, sinalizados como tal</string>
     <string name="provider_reliability_downtime">Indisponibilidade</string>
     <string name="provider_reliability_inaccurate">Dados imprecisos</string>
+    <string name="error_api_plan_required">HTTP 403 – Seu plano nesta fonte não inclui isso.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Você esgotou suas solicitações nesta fonte.</string>
 </resources>

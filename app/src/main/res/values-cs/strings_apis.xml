@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Izraelská centrální banka</string>
     <string name="api_bankRossii_name">Ruská centrální banka</string>
     <string name="api_norgesBank_name">Norská centrální banka</string>
+    <string name="api_allRatesToday_descriptionShort">Asi 160 směnných kurzů\nZdroj: středové tržní kurzy z mezibankovních dat.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> zveřejňuje středové tržní kurzy z mezibankovních dat, aktualizované přibližně každou minutu.\n<b>Asi 160 směnných kurzů.\n<i>Pro použití tohoto zdroje musíte zadat svůj osobní API klíč. Bezplatný tarif umožňuje celkem 300 požadavků, jednorázově.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Aktualizace přibližně každou minutu.</string>
+    <string name="api_allRatesToday_hint">Vyžaduje vlastní API klíč. Bezplatný tarif umožňuje celkem 300 požadavků.</string>
 </resources>

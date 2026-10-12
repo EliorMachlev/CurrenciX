@@ -281,4 +281,6 @@
     <string name="show_unreliable_providers_summary">Включва и доставчици, които често не работят или чиито курсове са неточни, с означение за това</string>
     <string name="provider_reliability_downtime">Прекъсвания</string>
     <string name="provider_reliability_inaccurate">Неточни данни</string>
+    <string name="error_api_plan_required">HTTP 403 – Планът ви при този източник не включва това.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Изчерпахте лимита на заявки при този източник.</string>
 </resources>

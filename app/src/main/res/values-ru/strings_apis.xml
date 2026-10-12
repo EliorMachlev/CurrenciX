@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Банк Израиля</string>
     <string name="api_bankRossii_name">Банк России</string>
     <string name="api_norgesBank_name">Банк Норвегии</string>
+    <string name="api_allRatesToday_descriptionShort">Около 160 курсов валют\nИсточник: среднерыночные курсы по межбанковским данным.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> публикует среднерыночные курсы по межбанковским данным, обновляемые примерно каждую минуту.\n<b>Около 160 курсов валют.\n<i>Чтобы пользоваться этим источником, нужно ввести свой личный ключ API. Бесплатный тариф даёт всего 300 запросов, единоразово.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Обновляется примерно каждую минуту.</string>
+    <string name="api_allRatesToday_hint">Нужен собственный ключ API. Бесплатный тариф даёт всего 300 запросов.</string>
 </resources>

@@ -27,7 +27,7 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 ## Secrets
 
 - Release signing credentials are stored in `secrets.properties` (gitignored) and referenced only at build time.
-- No API keys are stored in source code. OpenExchangerates key (if used) is expected as an environment variable or build config field.
+- No API keys are stored in source code. The keys a user enters for Open Exchangerates or AllRatesToday stay in the app's private storage, one per provider. AllRatesToday's goes as an `Authorization` header (never in a URL, so never in a log line or cache key), and debug builds' HTTP inspector redacts that header.
 - Gitleaks scans the full repository on every PR, every push to `master`, and weekly (Mon 07:00 UTC) for accidental credential commits.
 
 ## User-initiated Backup
@@ -79,7 +79,7 @@ Receipt scanning adds one host: `raw.githubusercontent.com`, for the OCR languag
 
 `android:allowBackup="false"` and `android:fullBackupContent="false"` are set in the manifest, backed by an explicit `res/xml/data_extraction_rules.xml` that excludes every domain (`root`, `database`, `sharedpref`, `external`, `file`) from both **cloud backups** and **device-to-device transfers** on Android 12+.
 
-Rationale: SharedPreferences contain the user's OpenExchangeRates API key (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
+Rationale: SharedPreferences contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
 
 ## Code Analysis
 

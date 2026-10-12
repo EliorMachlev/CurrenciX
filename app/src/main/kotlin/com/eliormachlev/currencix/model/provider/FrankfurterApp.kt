@@ -50,6 +50,7 @@ class FrankfurterApp : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
+        secrets: ApiSecrets,
     ): Result<Timeline> {
         val api = api(context, base, symbol)
         return fetchRetrofit {

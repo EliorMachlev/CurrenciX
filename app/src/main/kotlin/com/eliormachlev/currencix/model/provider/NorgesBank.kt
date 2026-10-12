@@ -56,6 +56,7 @@ class NorgesBank : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
+        secrets: ApiSecrets,
     ): Result<Timeline> {
         val parameterBase = base.apiCodeOrDkkForFok()
         val parameterSymbol = symbol.apiCodeOrDkkForFok()

@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">ব্যাংক অফ ইসরায়েল</string>
     <string name="api_bankRossii_name">ব্যাংক অফ রাশিয়া</string>
     <string name="api_norgesBank_name">ব্যাংক অফ নরওয়ে</string>
+    <string name="api_allRatesToday_descriptionShort">প্রায় ১৬০টি বিনিময় হার\nউৎস: আন্তঃব্যাংক ডেটা থেকে মধ্য-বাজার হার।</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> আন্তঃব্যাংক ডেটা থেকে মধ্য-বাজার বিনিময় হার প্রকাশ করে, প্রায় প্রতি মিনিটে হালনাগাদ হয়।\n<b>প্রায় ১৬০টি বিনিময় হার।\n<i>এই উৎস ব্যবহার করতে আপনার ব্যক্তিগত API কী দিতে হবে। ফ্রি প্ল্যানে মোট ৩০০টি অনুরোধ, একবারই।</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">প্রায় প্রতি মিনিটে হালনাগাদ হয়।</string>
+    <string name="api_allRatesToday_hint">নিজস্ব API কী প্রয়োজন। ফ্রি প্ল্যানে মোট ৩০০টি অনুরোধ।</string>
 </resources>

@@ -205,4 +205,7 @@
     <string name="refresh_interval_title">التحديث كل</string>
     <string name="refresh_interval_daily">مرة يوميًا، بعد نشر %1$s مباشرة</string>
     <string name="refresh_interval_monthly">مرة شهريًا، بعد نشر %1$s مباشرة</string>
+    <string name="api_all_rates_today_api_key_title">مفتاح API لـ AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">لاستخدام هذا المصدر تحتاج إلى مفتاح API خاص بك.\n\nأنشئ حسابًا مجانيًا على https://allratestoday.com، ثم انسخ مفتاحك (يبدأ بـ art_live_) من صفحة ملفك الشخصي وأدخله هنا.\n\nتسمح الخطة المجانية بـ 300 طلب إجمالًا، مرة واحدة فقط. كل تحديث وكل نطاق للرسم البياني يستهلك طلبًا.</string>
+    <string name="provider_cadence_every_minute">يُحدَّث كل دقيقة تقريبًا</string>
 </resources>

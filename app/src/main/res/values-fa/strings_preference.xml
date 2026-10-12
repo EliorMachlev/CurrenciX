@@ -201,4 +201,7 @@
     <string name="refresh_interval_title">تازه‌سازی هر</string>
     <string name="refresh_interval_daily">روزی یک بار، درست پس از انتشار %1$s</string>
     <string name="refresh_interval_monthly">ماهی یک بار، درست پس از انتشار %1$s</string>
+    <string name="api_all_rates_today_api_key_title">کلید API برای AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">برای استفاده از این منبع به کلید API خودتان نیاز دارید.\n\nدر https://allratestoday.com یک حساب رایگان بسازید، سپس کلید خود را (که با art_live_ شروع می‌شود) از صفحه نمایه کپی کرده و اینجا وارد کنید.\n\nطرح رایگان در مجموع ۳۰۰ درخواست، برای همیشه، مجاز می‌داند. هر تازه‌سازی و هر بازه نمودار یکی مصرف می‌کند.</string>
+    <string name="provider_cadence_every_minute">تقریبا هر دقیقه به‌روز می‌شود</string>
 </resources>

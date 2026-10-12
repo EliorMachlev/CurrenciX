@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Ngân hàng Israel</string>
     <string name="api_bankRossii_name">Ngân hàng Nga</string>
     <string name="api_norgesBank_name">Ngân hàng Na Uy</string>
+    <string name="api_allRatesToday_descriptionShort">Khoảng 160 tỷ giá\nNguồn: Tỷ giá trung bình thị trường từ dữ liệu liên ngân hàng.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> công bố tỷ giá trung bình thị trường từ dữ liệu liên ngân hàng, cập nhật khoảng mỗi phút.\n<b>Khoảng 160 tỷ giá.\n<i>Để dùng nguồn này, bạn phải nhập khóa API cá nhân. Gói miễn phí cho phép tổng cộng 300 yêu cầu, chỉ một lần.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Cập nhật khoảng mỗi phút.</string>
+    <string name="api_allRatesToday_hint">Cần khóa API riêng của bạn. Gói miễn phí cho phép tổng cộng 300 yêu cầu.</string>
 </resources>

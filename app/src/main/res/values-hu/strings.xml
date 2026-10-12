@@ -281,4 +281,6 @@
     <string name="show_unreliable_providers_summary">A gyakran elérhetetlen vagy pontatlan árfolyamú szolgáltatók is megjelennek, ennek jelölésével</string>
     <string name="provider_reliability_downtime">Kiesések</string>
     <string name="provider_reliability_inaccurate">Pontatlan adatok</string>
+    <string name="error_api_plan_required">HTTP 403 – A csomagod ennél a forrásnál ezt nem tartalmazza.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Elhasználtad a kéréskeretedet ennél a forrásnál.</string>
 </resources>

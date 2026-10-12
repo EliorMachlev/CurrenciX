@@ -202,4 +202,7 @@
     <string name="refresh_interval_title">Uppdatera var</string>
     <string name="refresh_interval_daily">En gång om dagen, strax efter att %1$s publicerar</string>
     <string name="refresh_interval_monthly">En gång i månaden, strax efter att %1$s publicerar</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API-nyckel</string>
+    <string name="api_all_rates_today_api_key_message">För att använda den här källan behöver du en egen API-nyckel.\n\nSkapa ett gratiskonto på https://allratestoday.com, kopiera din nyckel (den börjar med art_live_) från din profilsida och ange den här.\n\nGratisplanen ger 300 förfrågningar totalt, en gång. Varje uppdatering och varje diagramperiod använder en.</string>
+    <string name="provider_cadence_every_minute">Uppdateras ungefär varje minut</string>
 </resources>

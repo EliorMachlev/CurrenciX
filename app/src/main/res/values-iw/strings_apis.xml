@@ -35,4 +35,8 @@
     <string name="api_bankOfIsrael_name">בנק ישראל</string>
     <string name="api_bankRossii_name">בנק רוסיה</string>
     <string name="api_norgesBank_name">בנק נורווגיה</string>
+    <string name="api_allRatesToday_descriptionShort">כ־160 שערי חליפין\nמקור: שערי אמצע שוק מנתונים בין־בנקאיים.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> מפרסם שערי אמצע שוק מנתונים בין־בנקאיים, שמתעדכנים בערך כל דקה.\n<b>כ־160 שערי חליפין.\n<i>כדי להשתמש במקור הזה צריך להזין מפתח API אישי. התוכנית החינמית מאפשרת 300 בקשות בסך הכול, לתמיד.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">מתעדכן בערך כל דקה.</string>
+    <string name="api_allRatesToday_hint">דורש מפתח API משלך. התוכנית החינמית מאפשרת 300 בקשות בסך הכול.</string>
 </resources>

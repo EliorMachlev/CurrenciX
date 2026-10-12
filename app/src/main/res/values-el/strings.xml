@@ -281,4 +281,6 @@
     <string name="show_unreliable_providers_summary">Εμφανίζονται και πάροχοι που συχνά δεν λειτουργούν ή έχουν ανακριβείς ισοτιμίες, με σχετική σήμανση</string>
     <string name="provider_reliability_downtime">Διακοπές λειτουργίας</string>
     <string name="provider_reliability_inaccurate">Ανακριβή δεδομένα</string>
+    <string name="error_api_plan_required">HTTP 403 – Το πρόγραμμά σας σε αυτή την πηγή δεν το περιλαμβάνει.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Εξαντλήσατε τα αιτήματα που σας αναλογούν σε αυτή την πηγή.</string>
 </resources>

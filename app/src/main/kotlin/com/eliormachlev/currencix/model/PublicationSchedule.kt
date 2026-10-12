@@ -23,10 +23,10 @@ private val REFRESH_MARGIN = 30.minutes.toJavaDuration()
 sealed interface PublicationSchedule {
     val cadence: UpdateCadence
 
-    /** Many times a day (hourly or more): refreshed every [RefreshInterval]. */
-    data object Frequent : PublicationSchedule {
-        override val cadence = UpdateCadence.HOURLY
-    }
+    /** Many times a day, every [cadence] (hourly or more often): refreshed every [RefreshInterval]. */
+    data class Frequent(
+        override val cadence: UpdateCadence,
+    ) : PublicationSchedule
 
     /** At a known time, in the publisher's own [ZoneId]. */
     sealed interface Published : PublicationSchedule {

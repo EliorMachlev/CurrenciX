@@ -104,10 +104,10 @@ class ExchangeRatesRepository(
     private val ratesCache: RateCache<RateCacheKey.RatesLatest, ExchangeRates> =
         RateCacheFactory.buildRatesCache(
             context = context,
-            secretsSupplier = { ApiSecrets(openExchangeRatesApiKey = db.providers.openExchangeRatesApiKey.get()) },
+            secretsSupplier = db.providers::secrets,
         )
     private val timelineCache: RateCache<RateCacheKey.TimelineRange, Timeline> =
-        RateCacheFactory.buildTimelineCache(context)
+        RateCacheFactory.buildTimelineCache(context, secretsSupplier = db.providers::secrets)
 
     // Track in-flight fetches so rapid re-triggers (swipe-to-refresh spam,
     // toolbar tap during pull, currency swap chains) share the current job
@@ -465,6 +465,8 @@ private fun ApiProvider.baseCurrencyIso(): String =
         ApiProvider.BANK_OF_CANADA -> Currency.CAD.iso4217Alpha()
 
         ApiProvider.OPEN_EXCHANGERATES -> Currency.USD.iso4217Alpha()
+
+        ApiProvider.ALL_RATES_TODAY -> Currency.EUR.iso4217Alpha()
 
         ApiProvider.BANK_OF_ISRAEL -> Currency.ILS.iso4217Alpha()
     }

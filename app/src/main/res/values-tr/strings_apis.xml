@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">İsrail Merkez Bankası</string>
     <string name="api_bankRossii_name">Rusya Merkez Bankası</string>
     <string name="api_norgesBank_name">Norveç Merkez Bankası</string>
+    <string name="api_allRatesToday_descriptionShort">Yaklaşık 160 döviz kuru\nKaynak: Bankalar arası verilerden orta piyasa kurları.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> bankalar arası verilerden orta piyasa kurlarını yayımlar; kurlar yaklaşık her dakika güncellenir.\n<b>Yaklaşık 160 döviz kuru.\n<i>Bu kaynağı kullanmak için kişisel API anahtarınızı girmeniz gerekir. Ücretsiz plan toplamda 300 isteğe, tek seferlik izin verir.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Yaklaşık her dakika güncellenir.</string>
+    <string name="api_allRatesToday_hint">Kendi API anahtarınızı gerektirir. Ücretsiz plan toplamda 300 isteğe izin verir.</string>
 </resources>

@@ -287,4 +287,6 @@
     <string name="show_unreliable_providers_summary">Uvádět i poskytovatele, kteří často nefungují nebo mají nepřesné kurzy, s příslušným označením</string>
     <string name="provider_reliability_downtime">Výpadky</string>
     <string name="provider_reliability_inaccurate">Nepřesná data</string>
+    <string name="error_api_plan_required">HTTP 403 – Váš tarif u tohoto zdroje toto nezahrnuje.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Vyčerpali jste limit požadavků u tohoto zdroje.</string>
 </resources>

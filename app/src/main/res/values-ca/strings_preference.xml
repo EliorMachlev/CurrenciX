@@ -202,4 +202,7 @@
     <string name="refresh_interval_title">Actualitza cada</string>
     <string name="refresh_interval_daily">Un cop al dia, just després que %1$s publiqui</string>
     <string name="refresh_interval_monthly">Un cop al mes, just després que %1$s publiqui</string>
+    <string name="api_all_rates_today_api_key_title">Clau d’API d’AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Per fer servir aquesta font necessites la teva pròpia clau d’API.\n\nCrea un compte gratuït a https://allratestoday.com, copia la clau (comença per art_live_) de la pàgina del perfil i introdueix-la aquí.\n\nEl pla gratuït permet 300 sol·licituds en total, per sempre. Cada actualització i cada interval del gràfic en gasta una.</string>
+    <string name="provider_cadence_every_minute">S’actualitza aproximadament cada minut</string>
 </resources>

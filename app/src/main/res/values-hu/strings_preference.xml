@@ -203,4 +203,7 @@
     <string name="refresh_interval_title">Frissítés gyakorisága</string>
     <string name="refresh_interval_daily">Naponta egyszer, közvetlenül a(z) %1$s közzététele után</string>
     <string name="refresh_interval_monthly">Havonta egyszer, közvetlenül a(z) %1$s közzététele után</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API-kulcs</string>
+    <string name="api_all_rates_today_api_key_message">A forrás használatához saját API-kulcs kell.\n\nHozz létre ingyenes fiókot a https://allratestoday.com oldalon, másold ki a kulcsodat (art_live_ kezdetű) a profiloldaladról, és add meg itt.\n\nAz ingyenes csomag összesen 300 kérést enged, egyszeri keretként. Minden frissítés és minden grafikonidőszak egyet használ el.</string>
+    <string name="provider_cadence_every_minute">Nagyjából percenként frissül</string>
 </resources>

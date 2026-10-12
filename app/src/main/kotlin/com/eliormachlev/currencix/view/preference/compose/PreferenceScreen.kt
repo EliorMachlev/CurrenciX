@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view.preference.compose
 
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -112,7 +113,7 @@ internal data class PreferenceValues(
 internal data class ApiValues(
     val provider: ApiProvider?,
     val fallback: ApiProvider,
-    // Only Open Exchange Rates takes one.
+    // The main provider's, for one that takes a key.
     val apiKey: String?,
     val autoRefreshEnabled: Boolean,
     val autoRefreshInterval: RefreshInterval,
@@ -134,7 +135,7 @@ internal data class AppearanceValues(
 private fun observePreferenceValues(viewModel: PreferenceViewModel): PreferenceValues {
     val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
     val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
-    val apiKey by viewModel.openExchangeratesApiKey.collectAsStateWithLifecycle()
+    val apiKey by viewModel.apiKey.collectAsStateWithLifecycle()
     val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
     val autoRefreshInterval by viewModel.autoRefreshInterval.collectAsStateWithLifecycle()
     val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
@@ -226,7 +227,9 @@ private fun PreferenceDialogsHost(
         }
 
         OpenDialog.ApiKey -> {
-            ApiKeySheet(apiKey = values.api.apiKey, dismiss = dismiss, viewModel = viewModel)
+            values.api.provider?.let { provider ->
+                ApiKeySheet(provider = provider, apiKey = values.api.apiKey, dismiss = dismiss, viewModel = viewModel)
+            }
         }
 
         null -> {}
@@ -263,24 +266,49 @@ private fun RefreshIntervalPickerSheet(
     )
 }
 
-// The Open Exchange Rates key, trimmed on the way in.
+// The main provider's key, trimmed on the way in; how to get one is its own text.
 @Composable
 private fun ApiKeySheet(
+    provider: ApiProvider,
     apiKey: String?,
     dismiss: () -> Unit,
     viewModel: PreferenceViewModel,
 ) {
+    val texts = provider.apiKeyTexts ?: return
     TextEntrySheet(
-        title = stringResource(id = R.string.api_open_exchangerates_api_key_title),
+        title = stringResource(id = texts.title),
         initialText = apiKey.orEmpty(),
-        message = stringResource(id = R.string.api_open_exchangerates_api_key_message),
+        message = stringResource(id = texts.message),
         onDismiss = dismiss,
         onConfirm = { newKey ->
-            viewModel.setOpenExchangeratesApiKey(newKey.trim())
+            viewModel.setApiKey(newKey.trim())
             dismiss()
         },
     )
 }
+
+/** What the key row and its sheet say for a keyed provider. */
+internal class ApiKeyTexts(
+    @StringRes val title: Int,
+    @StringRes val message: Int,
+)
+
+/** [ApiKeyTexts] for a provider that takes an API key; null for one that doesn't. */
+internal val ApiProvider.apiKeyTexts: ApiKeyTexts?
+    get() =
+        when (this) {
+            ApiProvider.OPEN_EXCHANGERATES -> {
+                ApiKeyTexts(R.string.api_open_exchangerates_api_key_title, R.string.api_open_exchangerates_api_key_message)
+            }
+
+            ApiProvider.ALL_RATES_TODAY -> {
+                ApiKeyTexts(R.string.api_all_rates_today_api_key_title, R.string.api_all_rates_today_api_key_message)
+            }
+
+            else -> {
+                null
+            }
+        }
 
 @Composable
 private fun ThemePickerSheet(

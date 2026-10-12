@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Banka Izraela</string>
     <string name="api_bankRossii_name">Banka Rusije</string>
     <string name="api_norgesBank_name">Norveška središnja banka</string>
+    <string name="api_allRatesToday_descriptionShort">Oko 160 tečajeva\nIzvor: srednji tržišni tečajevi iz međubankovnih podataka.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> objavljuje srednje tržišne tečajeve iz međubankovnih podataka, ažurirane otprilike svake minute.\n<b>Oko 160 tečajeva.\n<i>Za korištenje ovog izvora morate unijeti svoj osobni API ključ. Besplatni plan dopušta ukupno 300 zahtjeva, jednokratno.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Ažurira se otprilike svake minute.</string>
+    <string name="api_allRatesToday_hint">Potreban je vlastiti API ključ. Besplatni plan dopušta ukupno 300 zahtjeva.</string>
 </resources>

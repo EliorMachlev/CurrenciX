@@ -287,4 +287,6 @@
     <string name="show_unreliable_providers_summary">Wyświetlaj też dostawców, którzy często nie działają lub mają niedokładne kursy, z odpowiednim oznaczeniem</string>
     <string name="provider_reliability_downtime">Awarie</string>
     <string name="provider_reliability_inaccurate">Niedokładne dane</string>
+    <string name="error_api_plan_required">HTTP 403 – Twój plan w tym źródle tego nie obejmuje.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Wykorzystałeś limit zapytań w tym źródle.</string>
 </resources>

@@ -201,4 +201,7 @@
     <string name="refresh_interval_title">Ανανέωση κάθε</string>
     <string name="refresh_interval_daily">Μία φορά την ημέρα, αμέσως μετά τη δημοσίευση από %1$s</string>
     <string name="refresh_interval_monthly">Μία φορά τον μήνα, αμέσως μετά τη δημοσίευση από %1$s</string>
+    <string name="api_all_rates_today_api_key_title">Κλειδί API του AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Για να χρησιμοποιήσετε αυτή την πηγή χρειάζεστε δικό σας κλειδί API.\n\nΔημιουργήστε δωρεάν λογαριασμό στο https://allratestoday.com, αντιγράψτε το κλειδί σας (ξεκινά με art_live_) από τη σελίδα του προφίλ σας και εισαγάγετέ το εδώ.\n\nΤο δωρεάν πρόγραμμα επιτρέπει συνολικά 300 αιτήματα, εφάπαξ. Κάθε ανανέωση και κάθε διάστημα γραφήματος χρησιμοποιεί ένα.</string>
+    <string name="provider_cadence_every_minute">Ενημερώνεται περίπου κάθε λεπτό</string>
 </resources>

@@ -303,4 +303,6 @@
     <string name="show_unreliable_providers_summary">Also list providers that are often down or whose rates are inaccurate, labelled as such</string>
     <string name="provider_reliability_downtime">Downtime</string>
     <string name="provider_reliability_inaccurate">Inaccurate data</string>
+    <string name="error_api_plan_required">HTTP 403 – Your plan with this Source doesn\'t include this.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – You\'ve used up this Source\'s request allowance.</string>
 </resources>

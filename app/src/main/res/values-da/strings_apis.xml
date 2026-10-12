@@ -33,4 +33,8 @@
     <string name="api_norgesBank_name">Norges Bank</string>
     <string name="api_bankOfCanada_descriptionFull">Daglige gennemsnitlige valutakurser fra <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Omkring 23 valutaer er inkluderet.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Omkring 23 valutakurser\nKilde: Canadas centralbank</string>
+    <string name="api_allRatesToday_descriptionShort">Omkring 160 valutakurser\nKilde: Midtmarkedskurser fra interbankdata.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> offentliggør midtmarkedskurser fra interbankdata, opdateret cirka hvert minut.\n<b>Omkring 160 valutakurser.\n<i>For at bruge denne kilde skal du indtaste din personlige API-nøgle. Gratisplanen giver 300 forespørgsler i alt, nogensinde.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Opdateres cirka hvert minut.</string>
+    <string name="api_allRatesToday_hint">Kræver din egen API-nøgle. Gratisplanen giver 300 forespørgsler i alt.</string>
 </resources>

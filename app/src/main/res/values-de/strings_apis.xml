@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Bank of Israel</string>
     <string name="api_bankRossii_name">Russische Zentralbank</string>
     <string name="api_norgesBank_name">Norges Bank</string>
+    <string name="api_allRatesToday_descriptionShort">Etwa 160 Wechselkurse\nQuelle: Mittelkurse aus Interbankendaten.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> veröffentlicht Mittelkurse aus Interbankendaten, etwa jede Minute aktualisiert.\n<b>Etwa 160 Wechselkurse.\n<i>Um diese Quelle zu nutzen, muss ein persönlicher API-Schlüssel eingetragen werden. Der kostenlose Tarif erlaubt insgesamt 300 Anfragen, einmalig.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Etwa jede Minute aktualisiert.</string>
+    <string name="api_allRatesToday_hint">Braucht einen eigenen API-Schlüssel. Der kostenlose Tarif erlaubt insgesamt 300 Anfragen.</string>
 </resources>

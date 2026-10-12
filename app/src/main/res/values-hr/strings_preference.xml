@@ -202,4 +202,7 @@
     <string name="refresh_interval_title">Osvježi svakih</string>
     <string name="refresh_interval_daily">Jednom dnevno, odmah nakon objave %1$s</string>
     <string name="refresh_interval_monthly">Jednom mjesečno, odmah nakon objave %1$s</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API ključ</string>
+    <string name="api_all_rates_today_api_key_message">Za korištenje ovog izvora potreban vam je vlastiti API ključ.\n\nIzradite besplatni račun na https://allratestoday.com, kopirajte ključ (počinje s art_live_) sa stranice profila i unesite ga ovdje.\n\nBesplatni plan dopušta ukupno 300 zahtjeva, jednokratno. Svako osvježavanje i svako razdoblje grafikona troši jedan.</string>
+    <string name="provider_cadence_every_minute">Ažurira se otprilike svake minute</string>
 </resources>

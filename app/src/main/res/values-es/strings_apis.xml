@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Banco de Israel</string>
     <string name="api_bankRossii_name">Banco de Rusia</string>
     <string name="api_norgesBank_name">Banco de Noruega</string>
+    <string name="api_allRatesToday_descriptionShort">Unos 160 tipos de cambio\nFuente: tipos de mercado medio a partir de datos interbancarios.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publica tipos de cambio de mercado medio a partir de datos interbancarios, actualizados aproximadamente cada minuto.\n<b>Unos 160 tipos de cambio.\n<i>Para usar esta fuente tienes que introducir tu clave de API personal. El plan gratuito permite 300 solicitudes en total, para siempre.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Se actualiza aproximadamente cada minuto.</string>
+    <string name="api_allRatesToday_hint">Necesita tu propia clave de API. El plan gratuito permite 300 solicitudes en total.</string>
 </resources>

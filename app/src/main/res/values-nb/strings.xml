@@ -282,4 +282,6 @@
     <string name="show_unreliable_providers_summary">List også opp leverandører som ofte er nede eller har unøyaktige kurser, merket som det</string>
     <string name="provider_reliability_downtime">Nedetid</string>
     <string name="provider_reliability_inaccurate">Unøyaktige data</string>
+    <string name="error_api_plan_required">HTTP 403 – Planen din hos denne kilden inkluderer ikke dette.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Du har brukt opp forespørslene dine hos denne kilden.</string>
 </resources>

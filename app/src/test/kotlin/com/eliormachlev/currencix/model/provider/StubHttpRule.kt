@@ -20,6 +20,9 @@ private const val HTTP_OK = 200
  */
 class StubHttpRule : ExternalResource() {
     val requests = mutableListOf<HttpUrl>()
+
+    /** Each request's Authorization header (null when it had none), in [requests]' order. */
+    val authorizations = mutableListOf<String?>()
     var status = HTTP_OK
 
     // A JSON `null` by default: "no data" to the adapters that accept a
@@ -36,6 +39,7 @@ class StubHttpRule : ExternalResource() {
             .Builder()
             .addInterceptor { chain ->
                 requests += chain.request().url
+                authorizations += chain.request().header("Authorization")
                 Response
                     .Builder()
                     .request(chain.request())

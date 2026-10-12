@@ -207,9 +207,9 @@ private fun ProviderSection(page: SettingsPageContext) {
             onClick = { page.openDialog(OpenDialog.Provider) },
         )
         FallbackProviderRow(main = provider, fallback = api.fallback, onClick = { page.openDialog(OpenDialog.FallbackProvider) })
-        if (provider == ApiProvider.OPEN_EXCHANGERATES) {
+        provider?.apiKeyTexts?.let { texts ->
             PreferenceRow(
-                title = stringResource(R.string.api_open_exchangerates_api_key_title),
+                title = stringResource(texts.title),
                 summary = api.apiKey?.ifBlank { null } ?: stringResource(R.string.api_open_exchangerates_api_key_missing),
                 iconRes = R.drawable.ic_key,
                 onClick = { page.openDialog(OpenDialog.ApiKey) },

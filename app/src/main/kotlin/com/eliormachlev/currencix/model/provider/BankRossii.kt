@@ -56,6 +56,7 @@ class BankRossii : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
+        secrets: ApiSecrets,
     ): Result<Timeline> =
         fetchCurrencyIds(context)
             // Both legs are resolved before either series is fetched.

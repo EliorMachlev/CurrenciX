@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Bank of Israel</string>
     <string name="api_bankRossii_name">Bank van Rusland</string>
     <string name="api_norgesBank_name">Norges Bank</string>
+    <string name="api_allRatesToday_descriptionShort">Ongeveer 160 wisselkoersen\nBron: middenkoersen uit interbancaire gegevens.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publiceert middenkoersen uit interbancaire gegevens, ongeveer elke minuut bijgewerkt.\n<b>Ongeveer 160 wisselkoersen.\n<i>Om deze bron te gebruiken moet je je persoonlijke API-sleutel invoeren. Het gratis abonnement staat in totaal 300 verzoeken toe, eenmalig.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Ongeveer elke minuut bijgewerkt.</string>
+    <string name="api_allRatesToday_hint">Vereist je eigen API-sleutel. Het gratis abonnement staat in totaal 300 verzoeken toe.</string>
 </resources>

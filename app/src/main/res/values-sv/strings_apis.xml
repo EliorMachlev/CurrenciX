@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">Israels centralbank</string>
     <string name="api_bankRossii_name">Rysslands centralbank</string>
     <string name="api_norgesBank_name">Norges Bank</string>
+    <string name="api_allRatesToday_descriptionShort">Omkring 160 växelkurser\nKälla: Mittkurser från interbankdata.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publicerar mittkurser från interbankdata, uppdaterade ungefär varje minut.\n<b>Omkring 160 växelkurser.\n<i>För att använda den här källan måste du ange din personliga API-nyckel. Gratisplanen ger 300 förfrågningar totalt, en gång.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Uppdateras ungefär varje minut.</string>
+    <string name="api_allRatesToday_hint">Kräver din egen API-nyckel. Gratisplanen ger 300 förfrågningar totalt.</string>
 </resources>

@@ -287,4 +287,6 @@
     <string name="show_unreliable_providers_summary">Показувати й постачальників, які часто не працюють або мають неточні курси, з відповідною позначкою</string>
     <string name="provider_reliability_downtime">Збої</string>
     <string name="provider_reliability_inaccurate">Неточні дані</string>
+    <string name="error_api_plan_required">HTTP 403 – Ваш тариф у цього джерела цього не включає.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Ви вичерпали ліміт запитів у цього джерела.</string>
 </resources>

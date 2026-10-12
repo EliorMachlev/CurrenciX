@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.model.provider
 
 import android.content.Context
+import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.adapter.LocalDateAdapter
@@ -77,3 +78,27 @@ internal suspend fun <T : Any> ApiProvider.Api.fetchRetrofit(call: suspend () ->
         if (!response.isSuccessful) throw ApiHttpError(response.code())
         response.body() ?: throw emptyJson(name)
     }
+
+private const val HTTP_UNAUTHORIZED = 401
+private const val HTTP_FORBIDDEN = 403
+private const val HTTP_TOO_MANY_REQUESTS = 429
+
+/**
+ * A keyed provider's failure in words the user can act on: the key is
+ * wrong (401), the plan doesn't include this (403), or the request quota is
+ * used up (429). Anything else passes through unchanged.
+ */
+internal fun <T> Result<T>.explainKeyErrors(context: Context?): Result<T> {
+    val status = (exceptionOrNull() as? ApiHttpError)?.statusCode ?: return this
+    val message =
+        when (status) {
+            HTTP_UNAUTHORIZED -> R.string.error_invalid_api_key
+            HTTP_FORBIDDEN -> R.string.error_api_plan_required
+            HTTP_TOO_MANY_REQUESTS -> R.string.error_api_quota_exceeded
+            else -> return this
+        }
+    return Result.failure(Exception(context?.getString(message)))
+}
+
+/** The "no key yet" failure a keyed provider answers with before any request. */
+internal fun <T> missingApiKey(context: Context?): Result<T> = Result.failure(Exception(context?.getString(R.string.error_no_api_key)))

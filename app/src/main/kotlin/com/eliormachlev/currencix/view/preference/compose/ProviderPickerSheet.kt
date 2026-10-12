@@ -142,6 +142,7 @@ private fun RowScope.ProviderRowLabel(provider: ApiProvider) {
 private val UpdateCadence.labelRes: Int
     get() =
         when (this) {
+            UpdateCadence.EVERY_MINUTE -> R.string.provider_cadence_every_minute
             UpdateCadence.HOURLY -> R.string.provider_cadence_hourly
             UpdateCadence.DAILY -> R.string.provider_cadence_daily
             UpdateCadence.MONTHLY -> R.string.provider_cadence_monthly

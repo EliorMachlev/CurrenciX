@@ -70,7 +70,7 @@ internal object RateRefreshScheduler {
     ) {
         val workManager = WorkManager.getInstance(context)
         when (val publication = provider.publication) {
-            PublicationSchedule.Frequent -> {
+            is PublicationSchedule.Frequent -> {
                 workManager.cancelUniqueWork(UNIQUE_NAME_PUBLISHED)
                 workManager.enqueueUniquePeriodicWork(
                     UNIQUE_NAME,

@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">Średnie dzienne kursy wymiany banku <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Uwzględniono około 23 walut.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Około 23 kursów wymiany\nŹródło: Bank Centralny Kanady</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Kursy są publikowane raz w każdy dzień roboczy do godziny 16:30 ET</string>
+    <string name="api_allRatesToday_descriptionShort">Około 160 kursów walut\nŹródło: kursy średnie rynkowe z danych międzybankowych.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publikuje średnie kursy rynkowe z danych międzybankowych, aktualizowane mniej więcej co minutę.\n<b>Około 160 kursów walut.\n<i>Aby korzystać z tego źródła, musisz wpisać swój osobisty klucz API. Darmowy plan pozwala łącznie na 300 zapytań, jednorazowo.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Aktualizowane mniej więcej co minutę.</string>
+    <string name="api_allRatesToday_hint">Wymaga własnego klucza API. Darmowy plan pozwala łącznie na 300 zapytań.</string>
 </resources>

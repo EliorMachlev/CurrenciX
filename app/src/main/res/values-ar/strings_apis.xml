@@ -28,4 +28,8 @@
     <string name="api_bankOfIsrael_name">بنك إسرائيل</string>
     <string name="api_bankRossii_name">بنك روسيا</string>
     <string name="api_norgesBank_name">بنك النرويج</string>
+    <string name="api_allRatesToday_descriptionShort">حوالي 160 سعر صرف\nالمصدر: أسعار السوق المتوسطة من بيانات ما بين البنوك.</string>
+    <string name="api_allRatesToday_descriptionFull">ينشر <a href="https://allratestoday.com/"><b>AllRatesToday</b></a> أسعار صرف السوق المتوسطة من بيانات ما بين البنوك، وتُحدَّث كل دقيقة تقريبًا.\n<b>حوالي 160 سعر صرف.\n<i>لاستخدام هذا المصدر عليك إدخال مفتاح API الشخصي. تسمح الخطة المجانية بـ 300 طلب إجمالًا، مرة واحدة فقط.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">يُحدَّث كل دقيقة تقريبًا.</string>
+    <string name="api_allRatesToday_hint">يتطلب مفتاح API خاصًا بك. تسمح الخطة المجانية بـ 300 طلب إجمالًا.</string>
 </resources>

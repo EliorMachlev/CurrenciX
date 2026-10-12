@@ -202,4 +202,7 @@
     <string name="refresh_interval_title">প্রতি কত সময় পর রিফ্রেশ</string>
     <string name="refresh_interval_daily">দিনে একবার, %1$s প্রকাশের ঠিক পরে</string>
     <string name="refresh_interval_monthly">মাসে একবার, %1$s প্রকাশের ঠিক পরে</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API কী</string>
+    <string name="api_all_rates_today_api_key_message">এই উৎস ব্যবহার করতে আপনার নিজস্ব API কী প্রয়োজন।\n\nhttps://allratestoday.com এ একটি ফ্রি অ্যাকাউন্ট তৈরি করুন, তারপর প্রোফাইল পেজ থেকে আপনার কী (art_live_ দিয়ে শুরু) কপি করে এখানে দিন।\n\nফ্রি প্ল্যানে মোট ৩০০টি অনুরোধ, একবারই। প্রতিটি রিফ্রেশ ও চার্টের প্রতিটি পরিসর একটি করে ব্যবহার করে।</string>
+    <string name="provider_cadence_every_minute">প্রায় প্রতি মিনিটে হালনাগাদ</string>
 </resources>

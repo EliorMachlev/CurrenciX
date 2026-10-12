@@ -202,4 +202,7 @@
     <string name="refresh_interval_title">Perbarui setiap</string>
     <string name="refresh_interval_daily">Sekali sehari, tepat setelah %1$s menerbitkan</string>
     <string name="refresh_interval_monthly">Sekali sebulan, tepat setelah %1$s menerbitkan</string>
+    <string name="api_all_rates_today_api_key_title">Kunci API AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Untuk menggunakan sumber ini, Anda memerlukan kunci API sendiri.\n\nBuat akun gratis di https://allratestoday.com, lalu salin kunci Anda (diawali art_live_) dari halaman profil dan masukkan di sini.\n\nPaket gratis mengizinkan total 300 permintaan, selamanya. Setiap pembaruan dan setiap rentang grafik memakai satu.</string>
+    <string name="provider_cadence_every_minute">Diperbarui kira-kira setiap menit</string>
 </resources>

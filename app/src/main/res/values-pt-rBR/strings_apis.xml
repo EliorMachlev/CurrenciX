@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">Taxas de câmbio médias diárias do <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Banco do Canadá</b></a>.\n<b>Cerca de 23 moedas estão incluídas.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Cerca de 23 taxas de câmbio\nFonte: Banco Central do Canadá</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">As taxas são publicadas uma vez a cada dia útil até as 16:30 ET</string>
+    <string name="api_allRatesToday_descriptionShort">Cerca de 160 cotações\nFonte: cotações de mercado médio a partir de dados interbancários.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publica cotações de mercado médio a partir de dados interbancários, atualizadas mais ou menos a cada minuto.\n<b>Cerca de 160 cotações.\n<i>Para usar esta fonte, você precisa inserir sua chave de API pessoal. O plano gratuito permite 300 solicitações no total, uma única vez.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Atualizado mais ou menos a cada minuto.</string>
+    <string name="api_allRatesToday_hint">Requer sua própria chave de API. O plano gratuito permite 300 solicitações no total.</string>
 </resources>

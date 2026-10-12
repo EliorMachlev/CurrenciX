@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">Ĉiutagaj mezumaj valutkurzoj de la <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Banko de Kanado</b></a>.\n<b>Ĉirkaŭ 23 valutoj estas inkluzivitaj.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Ĉirkaŭ 23 valutkurzoj\nFonto: Centra Banko de Kanado</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">La kurzoj estas publikigataj unufoje ĉiun labortagon antaŭ la 16:30 ET</string>
+    <string name="api_allRatesToday_descriptionShort">Ĉirkaŭ 160 kurzoj\nFonto: mezmerkataj kurzoj el interbankaj datumoj.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publikigas mezmerkatajn kurzojn el interbankaj datumoj, ĝisdatigatajn ĉirkaŭ ĉiuminute.\n<b>Ĉirkaŭ 160 kurzoj.\n<i>Por uzi ĉi tiun fonton, vi devas enigi vian personan API-ŝlosilon. La senpaga plano permesas entute 300 petojn, por ĉiam.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Ĝisdatigata ĉirkaŭ ĉiuminute.</string>
+    <string name="api_allRatesToday_hint">Bezonas vian propran API-ŝlosilon. La senpaga plano permesas entute 300 petojn.</string>
 </resources>

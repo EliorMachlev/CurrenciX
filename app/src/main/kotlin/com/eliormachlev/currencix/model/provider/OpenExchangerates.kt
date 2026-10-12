@@ -10,11 +10,8 @@ import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.OpenExchangeratesRatesAdapter
 import com.eliormachlev.currencix.model.adapter.register
 import com.eliormachlev.currencix.model.provider.api.OpenExchangeratesApi
-import com.eliormachlev.currencix.util.ApiHttpError
 import com.squareup.moshi.Moshi
 import java.time.LocalDate
-
-private const val HTTP_UNAUTHORIZED = 401
 
 // Compact JSON, and no unofficial / black-market rates — the fixed query
 // flags every request carries.
@@ -44,26 +41,17 @@ class OpenExchangerates : ApiProvider.Api {
         secrets: ApiSecrets,
     ): Result<ExchangeRates> {
         val apiKey = secrets.openExchangeRatesApiKey
-        if (apiKey.isNullOrBlank()) {
-            return Result.failure(Exception(context?.getString(R.string.error_no_api_key)))
-        }
+        if (apiKey.isNullOrBlank()) return missingApiKey(context)
 
         val api = retrofitApi<OpenExchangeratesApi>(context, RATES_MOSHI)
-        val result =
-            fetchRetrofit {
-                if (date != null) {
-                    api.getHistorical(date.format(ISO_DATE), apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
-                } else {
-                    api.getLatest(apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
-                }
-            }.map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
-
-        val err = result.exceptionOrNull()
-        return if (err is ApiHttpError && err.statusCode == HTTP_UNAUTHORIZED) {
-            Result.failure(Exception(context?.getString(R.string.error_invalid_api_key)))
-        } else {
-            result
-        }
+        return fetchRetrofit {
+            if (date != null) {
+                api.getHistorical(date.format(ISO_DATE), apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
+            } else {
+                api.getLatest(apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
+            }
+        }.map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
+            .explainKeyErrors(context)
     }
 
     override suspend fun getTimeline(
@@ -72,5 +60,6 @@ class OpenExchangerates : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
+        secrets: ApiSecrets,
     ): Result<Timeline> = Result.failure(Exception(context?.getString(R.string.error_unsupported_timeline)))
 }

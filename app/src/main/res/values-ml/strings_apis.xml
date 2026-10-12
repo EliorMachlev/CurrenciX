@@ -35,4 +35,8 @@
     <string name="api_bankOfIsrael_name">ബാങ്ക് ഓഫ് ഇസ്രായേൽ</string>
     <string name="api_bankRossii_name">ബാങ്ക് ഓഫ് റഷ്യ</string>
     <string name="api_norgesBank_name">ബാങ്ക് ഓഫ് നോർവേ</string>
+    <string name="api_allRatesToday_descriptionShort">ഏകദേശം 160 വിനിമയ നിരക്കുകൾ\nഉറവിടം: ഇന്റർബാങ്ക് ഡാറ്റയിൽ നിന്നുള്ള മിഡ്-മാർക്കറ്റ് നിരക്കുകൾ.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> ഇന്റർബാങ്ക് ഡാറ്റയിൽ നിന്നുള്ള മിഡ്-മാർക്കറ്റ് വിനിമയ നിരക്കുകൾ പ്രസിദ്ധീകരിക്കുന്നു, ഏകദേശം ഓരോ മിനിറ്റിലും പുതുക്കുന്നു.\n<b>ഏകദേശം 160 വിനിമയ നിരക്കുകൾ.\n<i>ഈ ഉറവിടം ഉപയോഗിക്കാൻ നിങ്ങളുടെ സ്വകാര്യ API കീ നൽകണം. സൗജന്യ പ്ലാനിൽ ആകെ 300 അഭ്യർത്ഥനകൾ, ഒരിക്കൽ മാത്രം.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">ഏകദേശം ഓരോ മിനിറ്റിലും പുതുക്കുന്നു.</string>
+    <string name="api_allRatesToday_hint">സ്വന്തം API കീ ആവശ്യമാണ്. സൗജന്യ പ്ലാനിൽ ആകെ 300 അഭ്യർത്ഥനകൾ.</string>
 </resources>

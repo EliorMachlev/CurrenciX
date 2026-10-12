@@ -62,6 +62,7 @@ class BankOfCanada : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
+        secrets: ApiSecrets,
     ): Result<Timeline> {
         // The adapter closes over the requested pair, so it's built per request.
         val api = retrofitApi<BankOfCanadaApi>(context, moshi { register(BankOfCanadaTimelineAdapter(base, symbol)) })

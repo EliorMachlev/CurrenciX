@@ -31,5 +31,6 @@ object ExchangeRatesService {
         startDate: LocalDate = LocalDate.now().minusYears(1),
         endDate: LocalDate = LocalDate.now(),
         context: Context? = null,
-    ): Result<Timeline> = apiProvider.getTimeline(context, base, symbol, startDate, endDate)
+        secrets: ApiSecrets = ApiSecrets.EMPTY,
+    ): Result<Timeline> = apiProvider.getTimeline(context, base, symbol, startDate, endDate, secrets)
 }

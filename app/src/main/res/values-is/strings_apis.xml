@@ -28,4 +28,8 @@
     <string name="api_bankOfCanada_descriptionFull">Daglegt meðalgengi frá <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"><b>Bank of Canada</b></a>.\n<b>Um 23 gjaldmiðlar eru innifaldir.</b></string>
     <string name="api_bankOfCanada_descriptionShort">Um 23 gengi\nHeimild: Seðlabanki Kanada</string>
     <string name="api_bankOfCanada_descriptionUpdateInterval">Gengi eru birt einu sinni á hverjum virkum degi fyrir kl. 16:30 ET</string>
+    <string name="api_allRatesToday_descriptionShort">Um 160 gengi\nHeimild: miðgengi úr millibankagögnum.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> birtir miðgengi úr millibankagögnum, uppfært um það bil á mínútu fresti.\n<b>Um 160 gengi.\n<i>Til að nota þessa heimild þarftu að slá inn þinn eigin API-lykil. Ókeypis áskriftin leyfir 300 beiðnir samtals, í eitt skipti.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Uppfært um það bil á mínútu fresti.</string>
+    <string name="api_allRatesToday_hint">Krefst eigin API-lykils. Ókeypis áskriftin leyfir 300 beiðnir samtals.</string>
 </resources>

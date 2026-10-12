@@ -15,6 +15,7 @@ package com.eliormachlev.currencix.model
  */
 data class ApiSecrets(
     val openExchangeRatesApiKey: String? = null,
+    val allRatesTodayApiKey: String? = null,
 ) {
     companion object {
         val EMPTY = ApiSecrets()

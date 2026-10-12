@@ -93,7 +93,7 @@ The app has no SQLite database. `SharedPreferences` has been fully migrated to *
 | `rates` | `RateStore` | The latest rates, and each pair's cached timeline |
 | `lastState` | `LastStateStore` | The converter's pair, the recent pairs, a pinned historical date |
 | `stars` | `StarStore` | Starred currencies in the user's order; the starred-only filter |
-| `providers` | `ProviderSettings` | Main and fallback provider, the Open Exchange Rates key, whether pickers show unreliable providers, auto-refresh and its interval |
+| `providers` | `ProviderSettings` | Main and fallback provider, each keyed provider's API key, whether pickers show unreliable providers, auto-refresh and its interval |
 | `fees` | `FeeStore` | Saved fees and the active exchange / bank fee |
 | `display` | `DisplaySettings` | Theme, decimals, date format, keypad, haptics, click sounds, onboarding gate |
 | `chart` | `ChartSettings` | What the timeline chart draws |
@@ -113,7 +113,7 @@ All providers share one `OkHttpClient` singleton (`HttpClientProvider`) with a d
 
 | Transport | Used for | Endpoints |
 |---|---|---|
-| **Retrofit** (`model/provider/api/*Api.kt`) | Fixed-shape JSON that a Moshi adapter decodes directly | Frankfurter, Open Exchange Rates, InforEuro, Bank of Canada, Bank of Israel `PublicApi` (latest rates) |
+| **Retrofit** (`model/provider/api/*Api.kt`) | Fixed-shape JSON that a Moshi adapter decodes directly | Frankfurter, Open Exchange Rates, AllRatesToday, InforEuro, Bank of Canada, Bank of Israel `PublicApi` (latest rates) |
 | **Raw OkHttp** (`HttpClientProvider.fetch`) | Feeds parsed by hand off the byte stream | Norges Bank (SDMX XML), Bank Rossii (XML), Bank of Israel SDMX-JSON (historical rates + timeline) |
 
 The split is deliberate and permanent, not an unfinished migration. Retrofit's value is typed `@Path`/`@Query` binding plus converter-driven decoding. The raw-OkHttp feeds get the first but not the second: the XML ones go through SAX parsers, and Bank of Israel's SDMX-JSON is keyed by dimension-index tuples rather than a fixed schema, so `BankOfIsraelSdmxParser` walks it as a generic JSON tree. Wrapping those in Retrofit would only replace a query string.
@@ -195,7 +195,7 @@ Destructive actions don't ask first; they act and offer **Undo**: deleting a car
 
 ### Prompts: every one is a sheet
 
-The app has no dialogs: every prompt is a bottom sheet built on `LedgerPromptSheet` (`view/compose/dialogs/LedgerPromptSheet.kt`), the prompt's content over a Cancel / confirm row, so they all open, swipe away and go back the same way. That covers the pickers; every "are you sure?" (`LedgerConfirmSheet`: deleting a saved cart, importing a backup over the current settings, removing from history) and "here's what happened" (the fallback provider's explanation); and the prompts that take typed input: a cart's name (`CartNameInputSheet`), the Open Exchange Rates key (`TextEntrySheet`), the backup passwords (`LedgerPasswordSheet` and the export prompt), a fee (`FeeEditorSheet`, its Delete on the far side of the row), and the timeline's custom date range. The sheet makes room for the keyboard itself.
+The app has no dialogs: every prompt is a bottom sheet built on `LedgerPromptSheet` (`view/compose/dialogs/LedgerPromptSheet.kt`), the prompt's content over a Cancel / confirm row, so they all open, swipe away and go back the same way. That covers the pickers; every "are you sure?" (`LedgerConfirmSheet`: deleting a saved cart, importing a backup over the current settings, removing from history) and "here's what happened" (the fallback provider's explanation); and the prompts that take typed input: a cart's name (`CartNameInputSheet`), a keyed provider's API key (`TextEntrySheet`), the backup passwords (`LedgerPasswordSheet` and the export prompt), a fee (`FeeEditorSheet`, its Delete on the far side of the row), and the timeline's custom date range. The sheet makes room for the keyboard itself.
 
 Every text field is state-based (`TextFieldState`, Compose 1.13): the field owns its text, so a recomposition never moves the cursor, and input rules are an `InputTransformation` (the fee percent field normalizes the decimal separator and trims what's past its limits there). Passwords use `OutlinedSecureTextField`, which blocks copy and cut; they aren't saved across configuration changes and reach the backup code as a `CharArray` copied straight from the field, which is then cleared. Names (a cart, a cart item, a fee) stop at 50 characters (`NameInputTransformation` in `view/compose/TextInput.kt`, which cuts a longer paste to fit). The cart item's name wraps onto more lines, so its field also turns a pasted line break into a space (`WrappingNameInputTransformation`). The cart item's name field has no visible label, so it gives TalkBack its name as the field's hint (`hintText`).
 

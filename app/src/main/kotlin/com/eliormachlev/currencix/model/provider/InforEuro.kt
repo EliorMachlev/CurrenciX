@@ -50,6 +50,7 @@ class InforEuro : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
+        secrets: ApiSecrets,
     ): Result<Timeline> {
         // InforEuro needs 2 calls: the API only provides EUR <-> symbol, without changing the base.
         // So, we make 2 calls: EUR <-> base & EUR <-> symbol

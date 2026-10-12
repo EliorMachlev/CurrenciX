@@ -29,4 +29,8 @@
     <string name="api_bankOfIsrael_name">بانک اسرائیل</string>
     <string name="api_bankRossii_name">بانک روسیه</string>
     <string name="api_norgesBank_name">بانک نروژ</string>
+    <string name="api_allRatesToday_descriptionShort">حدود ۱۶۰ نرخ ارز\nمنبع: نرخ‌های میانگین بازار از داده‌های بین‌بانکی.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> نرخ‌های میانگین بازار را از داده‌های بین‌بانکی منتشر می‌کند که تقریبا هر دقیقه به‌روز می‌شوند.\n<b>حدود ۱۶۰ نرخ ارز.\n<i>برای استفاده از این منبع باید کلید API شخصی خود را وارد کنید. طرح رایگان در مجموع ۳۰۰ درخواست، برای همیشه، مجاز می‌داند.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">تقریبا هر دقیقه به‌روز می‌شود.</string>
+    <string name="api_allRatesToday_hint">به کلید API خودتان نیاز دارد. طرح رایگان در مجموع ۳۰۰ درخواست مجاز می‌داند.</string>
 </resources>

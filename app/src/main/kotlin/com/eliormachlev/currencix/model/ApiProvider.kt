@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.model
 
 import android.content.Context
 import androidx.annotation.StringRes
+import com.eliormachlev.currencix.model.provider.AllRatesToday
 import com.eliormachlev.currencix.model.provider.BankOfCanada
 import com.eliormachlev.currencix.model.provider.BankOfIsrael
 import com.eliormachlev.currencix.model.provider.BankRossii
@@ -22,6 +23,7 @@ private const val ID_BANK_ROSSII = 5
 private const val ID_BANK_OF_CANADA = 6
 private const val ID_OPEN_EXCHANGERATES = 7
 private const val ID_BANK_OF_ISRAEL = 8
+private const val ID_ALL_RATES_TODAY = 9
 
 // A table published every day at [hour]:[minute] in [zone].
 private fun dailyAt(
@@ -31,7 +33,7 @@ private fun dailyAt(
 ) = PublicationSchedule.Daily(LocalTime.of(hour, minute), ZoneId.of(zone))
 
 /** How often a provider publishes new rates — the picker lists the more frequent ones first. */
-enum class UpdateCadence { HOURLY, DAILY, MONTHLY }
+enum class UpdateCadence { EVERY_MINUTE, HOURLY, DAILY, MONTHLY }
 
 /**
  * How far a provider can be trusted. Anything but [RELIABLE] is hidden from
@@ -97,7 +99,11 @@ enum class ApiProvider(
     ),
 
     // Hourly.
-    OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates(), PublicationSchedule.Frequent, needsApiKey = true),
+    OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates(), PublicationSchedule.Frequent(UpdateCadence.HOURLY), needsApiKey = true),
+
+    // ~160 currencies, mid-market, about every minute; the free plan is 300
+    // requests in all.
+    ALL_RATES_TODAY(ID_ALL_RATES_TODAY, AllRatesToday(), PublicationSchedule.Frequent(UpdateCadence.EVERY_MINUTE), needsApiKey = true),
     ;
 
     /** How often it publishes: the picker's order and its "Updates …" line. */
@@ -161,7 +167,8 @@ enum class ApiProvider(
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline> = this.implementation.getTimeline(context, base, symbol, startDate, endDate)
+        secrets: ApiSecrets = ApiSecrets.EMPTY,
+    ): Result<Timeline> = this.implementation.getTimeline(context, base, symbol, startDate, endDate, secrets)
 
     interface Api {
         // Stable English identifier used for log/error tags — never shown to
@@ -197,6 +204,7 @@ enum class ApiProvider(
             symbol: Currency,
             startDate: LocalDate,
             endDate: LocalDate,
+            secrets: ApiSecrets = ApiSecrets.EMPTY,
         ): Result<Timeline>
     }
 }

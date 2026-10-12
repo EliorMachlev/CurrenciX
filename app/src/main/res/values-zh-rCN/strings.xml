@@ -276,4 +276,6 @@
     <string name="show_unreliable_providers_summary">同时列出经常无法访问或汇率不准确的提供方，并作相应标注</string>
     <string name="provider_reliability_downtime">经常中断</string>
     <string name="provider_reliability_inaccurate">数据不准确</string>
+    <string name="error_api_plan_required">HTTP 403 – 你在此来源的套餐不包含此项。</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – 你在此来源的请求额度已用完。</string>
 </resources>

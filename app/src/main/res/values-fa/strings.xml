@@ -282,4 +282,6 @@
     <string name="show_unreliable_providers_summary">ارائه‌دهندگانی که اغلب از دسترس خارج‌اند یا نرخ‌هایشان دقیق نیست نیز با برچسب مربوط نمایش داده شوند</string>
     <string name="provider_reliability_downtime">قطعی</string>
     <string name="provider_reliability_inaccurate">داده‌های نادقیق</string>
+    <string name="error_api_plan_required">HTTP 403 – طرح شما در این منبع شامل این مورد نیست.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – سهمیه درخواست شما در این منبع تمام شده است.</string>
 </resources>

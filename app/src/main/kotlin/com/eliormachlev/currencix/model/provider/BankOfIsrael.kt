@@ -94,6 +94,7 @@ class BankOfIsrael : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
+        secrets: ApiSecrets,
     ): Result<Timeline> =
         fetchSdmxObservations(context, startDate, endDate)
             .map { observations -> buildTimeline(observations, base, symbol) }

@@ -281,4 +281,6 @@
     <string name="show_unreliable_providers_summary">যেসব প্রদানকারী প্রায়ই বন্ধ থাকে বা যাদের হার সঠিক নয়, সেগুলোও চিহ্নিত করে দেখানো হবে</string>
     <string name="provider_reliability_downtime">বিভ্রাট</string>
     <string name="provider_reliability_inaccurate">ভুল তথ্য</string>
+    <string name="error_api_plan_required">HTTP 403 – এই উৎসে আপনার প্ল্যানে এটি অন্তর্ভুক্ত নয়।</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – এই উৎসে আপনার অনুরোধের সীমা শেষ।</string>
 </resources>

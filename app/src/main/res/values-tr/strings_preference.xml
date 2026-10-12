@@ -201,4 +201,7 @@
     <string name="refresh_interval_title">Yenileme sıklığı</string>
     <string name="refresh_interval_daily">Günde bir kez, %1$s yayımladıktan hemen sonra</string>
     <string name="refresh_interval_monthly">Ayda bir kez, %1$s yayımladıktan hemen sonra</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API Anahtarı</string>
+    <string name="api_all_rates_today_api_key_message">Bu kaynağı kullanmak için kendi API anahtarınız gerekir.\n\nhttps://allratestoday.com adresinde ücretsiz bir hesap oluşturun, ardından profil sayfanızdan anahtarınızı (art_live_ ile başlar) kopyalayıp buraya girin.\n\nÜcretsiz plan toplamda 300 isteğe, tek seferlik izin verir. Her yenileme ve her grafik aralığı bir tane kullanır.</string>
+    <string name="provider_cadence_every_minute">Yaklaşık her dakika güncellenir</string>
 </resources>

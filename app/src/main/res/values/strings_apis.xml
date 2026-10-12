@@ -43,4 +43,9 @@
     <string name="api_openExchangeRates_descriptionShort">About 160 exchange rates\nSource: Combination of multiple reliable providers.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Hourly updates.</string>
     <string name="api_openExchangeRates_hint">To use this Source, you have to create your personal API Key!</string>
+    <string name="api_allRatesToday_name" translatable="false">AllRatesToday</string>
+    <string name="api_allRatesToday_descriptionShort">About 160 exchange rates\nSource: Mid-market rates from interbank data.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publishes mid-market exchange rates from interbank data, updated about every minute.\n<b>About 160 exchange rates.\n<i>To use this Source, you have to enter your personal API Key. The free plan allows 300 requests in total, ever.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Updated about every minute.</string>
+    <string name="api_allRatesToday_hint">Needs your own API key. The free plan allows 300 requests in total.</string>
 </resources>

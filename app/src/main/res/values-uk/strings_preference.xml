@@ -203,4 +203,7 @@
     <string name="refresh_interval_title">Оновлювати кожні</string>
     <string name="refresh_interval_daily">Раз на день, одразу після публікації %1$s</string>
     <string name="refresh_interval_monthly">Раз на місяць, одразу після публікації %1$s</string>
+    <string name="api_all_rates_today_api_key_title">Ключ API AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Щоб користуватися цим джерелом, потрібен власний ключ API.\n\nСтворіть безкоштовний обліковий запис на https://allratestoday.com, скопіюйте ключ (починається з art_live_) на сторінці профілю та введіть його тут.\n\nБезкоштовний тариф дає загалом 300 запитів, одноразово. Кожне оновлення й кожен період графіка витрачає один.</string>
+    <string name="provider_cadence_every_minute">Оновлюється приблизно щохвилини</string>
 </resources>

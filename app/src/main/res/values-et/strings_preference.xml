@@ -201,4 +201,7 @@
     <string name="refresh_interval_title">Värskenda iga</string>
     <string name="refresh_interval_daily">Kord päevas, kohe pärast %1$s avaldamist</string>
     <string name="refresh_interval_monthly">Kord kuus, kohe pärast %1$s avaldamist</string>
+    <string name="api_all_rates_today_api_key_title">AllRatesToday API-võti</string>
+    <string name="api_all_rates_today_api_key_message">Selle allika kasutamiseks vajad oma API-võtit.\n\nLoo tasuta konto aadressil https://allratestoday.com, kopeeri oma võti (algab art_live_) profiililehelt ja sisesta see siia.\n\nTasuta pakett lubab kokku 300 päringut, ühekordselt. Iga värskendus ja iga graafiku vahemik kasutab ühe.</string>
+    <string name="provider_cadence_every_minute">Uuendatakse umbes iga minut</string>
 </resources>

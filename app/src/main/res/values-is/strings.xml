@@ -281,4 +281,6 @@
     <string name="show_unreliable_providers_summary">Sýna líka veitur sem liggja oft niðri eða hafa ónákvæm gengi, merktar sem slíkar</string>
     <string name="provider_reliability_downtime">Niðritími</string>
     <string name="provider_reliability_inaccurate">Ónákvæm gögn</string>
+    <string name="error_api_plan_required">HTTP 403 – Áskriftin þín hjá þessari heimild nær ekki yfir þetta.</string>
+    <string name="error_api_quota_exceeded">HTTP 429 – Þú hefur klárað beiðnirnar þínar hjá þessari heimild.</string>
 </resources>

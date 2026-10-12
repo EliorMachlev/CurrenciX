@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.model
 
+import com.eliormachlev.currencix.view.preference.compose.apiKeyTexts
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -61,5 +62,12 @@ class ApiProviderOrderTest {
         assertTrue(ApiProvider.NORGES_BANK in kept)
         assertFalse(ApiProvider.INFOR_EURO in kept)
         assertEquals(order.filter { it in kept }, kept)
+    }
+
+    @Test
+    fun `every provider that needs a key has a key row to enter it, and only those`() {
+        ApiProvider.entries.forEach { provider ->
+            assertEquals(provider.name, provider.needsApiKey, provider.apiKeyTexts != null)
+        }
     }
 }

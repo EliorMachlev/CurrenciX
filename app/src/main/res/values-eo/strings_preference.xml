@@ -203,4 +203,7 @@
     <string name="refresh_interval_title">Aktualigi ĉiun</string>
     <string name="refresh_interval_daily">Unufoje tage, tuj post kiam %1$s publikigas</string>
     <string name="refresh_interval_monthly">Unufoje monate, tuj post kiam %1$s publikigas</string>
+    <string name="api_all_rates_today_api_key_title">API-ŝlosilo de AllRatesToday</string>
+    <string name="api_all_rates_today_api_key_message">Por uzi ĉi tiun fonton, vi bezonas vian propran API-ŝlosilon.\n\nKreu senpagan konton ĉe https://allratestoday.com, kopiu vian ŝlosilon (ĝi komenciĝas per art_live_) el via profilpaĝo kaj enigu ĝin ĉi tie.\n\nLa senpaga plano permesas entute 300 petojn, por ĉiam. Ĉiu aktualigo kaj ĉiu grafika periodo uzas unu.</string>
+    <string name="provider_cadence_every_minute">Ĝisdatigata ĉirkaŭ ĉiuminute</string>
 </resources>

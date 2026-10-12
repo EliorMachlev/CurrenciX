@@ -47,8 +47,8 @@ class PublicationScheduleTest {
     @Test
     fun `only a provider that updates many times a day follows the user's interval`() {
         assertEquals(
-            listOf(ApiProvider.OPEN_EXCHANGERATES),
-            ApiProvider.entries.filter { it.publication == PublicationSchedule.Frequent },
+            listOf(ApiProvider.OPEN_EXCHANGERATES, ApiProvider.ALL_RATES_TODAY),
+            ApiProvider.entries.filter { it.publication is PublicationSchedule.Frequent },
         )
         assertEquals(UpdateCadence.MONTHLY, ApiProvider.INFOR_EURO.cadence)
     }
