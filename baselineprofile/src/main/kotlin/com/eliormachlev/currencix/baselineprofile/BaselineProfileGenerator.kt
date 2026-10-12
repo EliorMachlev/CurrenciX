@@ -45,7 +45,7 @@ class BaselineProfileGenerator {
             visitFromDrawer(UiTags.DRAWER_CART)
             openCartWithRows()
             scrollCart()
-            backToConverter()
+            leaveCart()
             browseSettings()
         }
 }

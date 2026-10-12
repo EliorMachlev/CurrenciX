@@ -17,6 +17,7 @@ internal object UiTags {
     const val CART_ADD = "cart_add"
     const val CART_NEXT = "cart_next"
     const val CART_PRICE = "cart_price"
+    const val CART_CONTINUE = "cart_continue"
 
     /** Settings' category rows, in the order they're listed. */
     val SETTINGS_TOPICS = listOf("converter", "rates", "appearance", "chart", "about").map { "settings_$it" }

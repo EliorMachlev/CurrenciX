@@ -8,7 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
@@ -25,6 +28,8 @@ private const val ROW_DESCRIPTION_ALPHA = 0.7f
 data class CartChoiceOption(
     @StringRes val title: Int,
     @StringRes val description: Int,
+    // A UiTestTags tag, for the rows the :baselineprofile journeys pick.
+    val tag: String? = null,
     val onPick: () -> Unit,
 )
 
@@ -54,15 +59,19 @@ fun CartChoiceSheet(
         title = stringResource(id = titleRes),
         onDismiss = onDismiss,
     ) {
-        options.forEach { option ->
-            CartChoiceRow(
-                title = stringResource(id = option.title),
-                description = stringResource(id = option.description),
-                onClick = {
-                    option.onPick()
-                    onDismiss()
-                },
-            )
+        // The sheet is a window of its own: its tags need exposing here too.
+        Column(Modifier.semantics { testTagsAsResourceId = true }) {
+            options.forEach { option ->
+                CartChoiceRow(
+                    title = stringResource(id = option.title),
+                    description = stringResource(id = option.description),
+                    onClick = {
+                        option.onPick()
+                        onDismiss()
+                    },
+                    modifier = option.tag?.let { Modifier.testTag(it) } ?: Modifier,
+                )
+            }
         }
     }
 }
@@ -72,10 +81,11 @@ private fun CartChoiceRow(
     title: String,
     description: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .hapticClickable(onClick = onClick)
                 .padding(horizontal = RowHorizontalPadding, vertical = RowVerticalPadding),

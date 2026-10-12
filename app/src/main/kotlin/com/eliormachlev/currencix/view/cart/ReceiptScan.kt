@@ -84,8 +84,8 @@ class ReceiptScan internal constructor() {
             titleRes = R.string.receipt_scan,
             options =
                 listOf(
-                    CartChoiceOption(R.string.receipt_take_photo, R.string.receipt_take_photo_desc, takePhoto),
-                    CartChoiceOption(R.string.receipt_choose_photo, R.string.receipt_choose_photo_desc, choosePhoto),
+                    CartChoiceOption(R.string.receipt_take_photo, R.string.receipt_take_photo_desc, onPick = takePhoto),
+                    CartChoiceOption(R.string.receipt_choose_photo, R.string.receipt_choose_photo_desc, onPick = choosePhoto),
                 ),
         )
 

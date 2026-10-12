@@ -38,6 +38,9 @@ private const val FLING_MARGIN_DIVISOR = 10
 private const val MAX_BACK_PRESSES = 3
 private const val MAX_DESCRIBED_VALUES = 40
 
+// The cart's unsaved-changes prompt comes up at once when it comes at all.
+private const val PROMPT_TIMEOUT_MS = 2_000L
+
 // Enough cart rows to fill a few screens, each priced at CART_ROW_PRICE.
 private const val CART_ROWS = 30
 private const val CART_ROW_PRICE = "12"
@@ -92,8 +95,7 @@ internal fun MacrobenchmarkScope.visitFromDrawer(entryTag: String) {
     // on the real cause (a crash, a screen that didn't open) if it's gone.
     check(device.currentPackageName == targetPackage()) { "app left the foreground after opening $entryTag — ${describeScreen()}" }
     if (entryTag == UiTags.DRAWER_TIMELINE) scrubChart()
-    device.pressBack()
-    awaitConverter()
+    leaveToConverter()
 }
 
 /**
@@ -125,9 +127,16 @@ internal fun MacrobenchmarkScope.scrollCart() {
     device.waitForIdle()
 }
 
-/** Back from the screen on top to the converter. */
-internal fun MacrobenchmarkScope.backToConverter() {
+/**
+ * Back from the cart to the converter. A cart with unsaved rows asks first
+ * (save / discard / continue): continue, keeping them for the next run.
+ */
+internal fun MacrobenchmarkScope.leaveCart() = leaveToConverter()
+
+// Back to the converter, past the cart's unsaved-changes prompt if it asks.
+private fun MacrobenchmarkScope.leaveToConverter() {
     device.pressBack()
+    device.wait(Until.findObject(By.res(UiTags.CART_CONTINUE)), PROMPT_TIMEOUT_MS)?.click()
     awaitConverter()
 }
 

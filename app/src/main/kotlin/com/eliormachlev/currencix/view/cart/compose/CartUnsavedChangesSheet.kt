@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.view.cart.compose
 import androidx.compose.runtime.Composable
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.cart.CartUnsavedChangesRequest
+import com.eliormachlev.currencix.view.compose.UiTestTags
 
 /**
  * Multi-branch prompt shown before a destructive cart transition (switching
@@ -25,11 +26,18 @@ fun CartUnsavedChangesSheet(
     val options =
         buildList {
             if (request.canOverwrite) {
-                add(CartChoiceOption(R.string.cart_unsaved_save, R.string.cart_unsaved_save_desc, request.onSave))
+                add(CartChoiceOption(R.string.cart_unsaved_save, R.string.cart_unsaved_save_desc, onPick = request.onSave))
             }
-            add(CartChoiceOption(R.string.cart_unsaved_save_as, R.string.cart_unsaved_save_as_desc, request.onSaveAs))
-            add(CartChoiceOption(R.string.cart_unsaved_discard, R.string.cart_unsaved_discard_desc, request.onDiscard))
-            add(CartChoiceOption(R.string.cart_unsaved_continue, R.string.cart_unsaved_continue_desc, request.onContinue))
+            add(CartChoiceOption(R.string.cart_unsaved_save_as, R.string.cart_unsaved_save_as_desc, onPick = request.onSaveAs))
+            add(CartChoiceOption(R.string.cart_unsaved_discard, R.string.cart_unsaved_discard_desc, onPick = request.onDiscard))
+            add(
+                CartChoiceOption(
+                    R.string.cart_unsaved_continue,
+                    R.string.cart_unsaved_continue_desc,
+                    tag = UiTestTags.CART_CONTINUE,
+                    onPick = request.onContinue,
+                ),
+            )
         }
     CartChoiceSheet(
         titleRes = R.string.cart_unsaved_title,
