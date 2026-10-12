@@ -37,7 +37,7 @@ internal val SHARED_LOCAL_DATE_ADAPTER: LocalDateAdapter = LocalDateAdapter()
 internal const val TIMELINE_LOOKBACK_DAYS: Long = 7L
 
 // Path segment for "today's rates" on Frankfurter-style APIs (versus an
-// ISO-8601 date), used by Frankfurter.app and fer.ee.
+// ISO-8601 date), used by Frankfurter.app.
 internal const val LATEST_DATE_PATH = "latest"
 
 // ISO-8601 (yyyy-MM-dd) — the format every upstream in this app accepts for

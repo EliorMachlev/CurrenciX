@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Tipus de canvi facilitats pel banc central rus <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Amb les sancions actuals, aquesta font ofereix probablement els tipus de canvi més fiables per al ruble rus.\n<b>El Bank Rossii ofereix uns 44 tipus de canvi.</b></string>
     <string name="api_bankRossii_descriptionShort">Uns 44 tipus de canvi\nFont: Banc central de Rússia</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Els tipus s\'actualitzen diàriament, excepte els <a href="https://cbr.ru/eng/other/holidays/">dies festius a Rússia</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> és un servei relativament nou que, similarment a Frankfurter.app, fa el seguiment dels tipus de canvi de referència (Forex) publicats pel Banc Central Europeu.\n<b>Inclou unes 30 monedes.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Els tipus s\'actualitzen cada dia laborable.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> fa el seguiment dels tipus de canvi de referència (Forex) publicats pel Banc Central Europeu.\n<b>Inclou unes 30 monedes.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Uns 30 tipus de canvi\nFont: Banc Central Europeu</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Les dades s\'actualitzen cap a les 16:00 CET cada dia laborable.</string>

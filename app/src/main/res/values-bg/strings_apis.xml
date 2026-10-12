@@ -6,8 +6,6 @@
     <string name="api_bankRossii_descriptionFull">Обменни курсове, предоставяни от Руската централна банка — <a href="https://cbr.ru/eng/currency_base/daily/"><b>Банката на Русия</b></a>. При настоящите санкции този източник дава вероятно най-надеждните обменни курсове за руската рубла.\n<b>Банката на Русия публикува около 44 обменни курса.</b></string>
     <string name="api_bankRossii_descriptionShort">Около 44 обменни курса\nИзточник: Централна банка на Русия</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Курсовете се обновяват ежедневно, с изключение на <a href="https://cbr.ru/eng/other/holidays/">официалните празници в Русия</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> е сравнително нова услуга, която (точно като Frankfurter.app) следи референтните обменни (форекс) курсове, публикувани от Европейската централна банка.\n<b>Включва около 30 валути.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Курсовете се обновяват всеки работен ден.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> следи референтните обменни (форекс) курсове, публикувани от Европейската централна банка.\n<b>Включени са около 30 валути.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Около 30 обменни курса\nИзточник: Европейска централна банка</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Данните се обновяват около 16:00 CET всеки работен ден.</string>

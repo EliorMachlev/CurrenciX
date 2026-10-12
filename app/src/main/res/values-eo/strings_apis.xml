@@ -6,8 +6,6 @@
     <string name="api_bankRossii_descriptionFull">Valutkurzoj, provizitaj de la rusa centra banko <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Pro la nunaj sankcioj, ĉi tiu fonto verŝajne donas la plej fidindajn valutkurzojn por la rusa rublo.\n<b>Bank Rossii listigas ĉirkaŭ 44 valutkurzojn.</b></string>
     <string name="api_bankRossii_descriptionShort">Ĉirkaŭ 44 valutkurzoj\nFonto: Centra Banko de Rusio</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Kurzoj estas ĝisdatigataj ĉiutage, krom dum <a href="https://cbr.ru/eng/other/holidays/">oficialaj festotagoj en Rusio</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> estas relative nova servo, kiu (same kiel Frankfurter.app) sekvas la referencajn valutkurzojn (forex) publikigatajn de la Eŭropa Centra Banko.\n<b>Ĉirkaŭ 30 valutoj estas inkluzivitaj.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Kurzoj estas ĝisdatigataj ĉiun labortagon.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> sekvas la referencajn valutkurzojn (forex) publikigatajn de la Eŭropa Centra Banko.\n<b>Ĉirkaŭ 30 valutoj estas inkluzivitaj.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Ĉirkaŭ 30 valutkurzoj\nFonto: Eŭropa Centra Banko</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">La datumoj estas ĝisdatigataj ĉirkaŭ la 16:00 CET ĉiun labortagon.</string>

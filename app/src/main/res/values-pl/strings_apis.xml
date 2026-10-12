@@ -6,8 +6,6 @@
     <string name="api_bankRossii_descriptionFull">Kursy wymiany udostępniane przez rosyjski bank centralny <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Przy obecnych sankcjach to źródło podaje prawdopodobnie najbardziej wiarygodne kursy wymiany rubla rosyjskiego.\n<b>Bank Rossii podaje około 44 kursów wymiany.</b></string>
     <string name="api_bankRossii_descriptionShort">Około 44 kursów wymiany\nŹródło: Bank Centralny Rosji</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Kursy są aktualizowane codziennie, z wyjątkiem <a href="https://cbr.ru/eng/other/holidays/">świąt państwowych w Rosji</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> jest stosunkowo nową usługą, która (podobnie jak Frankfurter.app) śledzi referencyjne kursy wymiany walut (forex) publikowane przez Europejski Bank Centralny.\n<b>Uwzględniono około 30 walut.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Kursy aktualizowane są każdego dnia roboczego.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> śledzi referencyjne kursy wymiany walut (forex) publikowane przez Europejski Bank Centralny.\n<b>Uwzględniono około 30 walut.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Około 30 kursów wymiany\nŹródło: Europejski Bank Centralny</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Dane aktualizowane są każdego dnia roboczego około godziny 16:00 czasu środkowoeuropejskiego.</string>

@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">匯率由俄羅斯的中央銀行<a href="https://cbr.ru/eng/currency_base/daily/"><b>俄羅斯銀行</b></a>提供。在目前的制裁環境下，這個來源可能提供對俄羅斯盧布匯率最可靠的數據。\n<b>俄羅斯銀行列出約 44 種貨幣匯率</b></string>
     <string name="api_bankRossii_descriptionShort">大約有 44 種匯率\n來源：俄羅斯中央銀行</string>
     <string name="api_bankRossii_descriptionUpdateInterval">匯率每日更新，<a href="https://cbr.ru/eng/other/holidays/">俄羅斯國定假日</a>除外。</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> 是相對較新的服務，與 Frankfurter.app 一樣，追蹤歐洲中央銀行發布的外匯參考匯率。\n<b>大約包含 30 種貨幣。</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">匯率在每個工作日更新。</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> 追蹤歐洲中央銀行發布的外幣參考匯率 (forex)\n<b>大約包含 30 種貨幣</b></string>
     <string name="api_frankfurterApp_descriptionShort">大約有 30 種匯率\n來源：歐洲中央銀行</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">資料在每個工作日的 16:00 CET 左右更新。</string>

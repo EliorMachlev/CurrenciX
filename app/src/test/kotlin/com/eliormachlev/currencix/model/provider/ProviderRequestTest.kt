@@ -71,24 +71,6 @@ class ProviderRequestTest {
             assertRequested("https://api.frankfurter.dev/v1/2024-01-01..2024-03-31?base=EUR&symbols=USD")
         }
 
-    // --- Fer.ee (raw OkHttp) ------------------------------------------------------
-
-    @Test
-    fun `fer-ee latest rates`() =
-        runBlocking {
-            val provider = FerEe()
-            val result = provider.getRates(null, null, ApiSecrets.EMPTY)
-            assertRequested("https://api.fer.ee/latest?base=EUR")
-            assertEmptyJson(result, provider.name)
-        }
-
-    @Test
-    fun `fer-ee timeline, FOK as DKK`() =
-        runBlocking {
-            FerEe().getTimeline(null, Currency.FOK, Currency.USD, START, END)
-            assertRequested("https://api.fer.ee/2024-01-01..2024-03-31?base=DKK&symbols=USD")
-        }
-
     // --- Open Exchange Rates (Retrofit) ------------------------------------------
 
     @Test

@@ -6,8 +6,6 @@
     <string name="api_bankRossii_descriptionFull">Gengi, eins og gefið út af rússneska seðlabankanum <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Miðað við núverandi refsiaðgerðir gefur þessi gagnaveita líklega áreiðanlegasta gengið fyrir rússneska rúblu.\n<b>Bank Rossii skráir um 44 gengi.</b></string>
     <string name="api_bankRossii_descriptionShort">Um 44 gengi\nHeimild: Seðlabanki Rússlands</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Gengi eru uppfærð daglega, nema á <a href="https://cbr.ru/eng/other/holidays/">almennum frídögum í Rússlandi</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> er tiltölulega ný þjónusta sem (rétt eins og Frankfurter.app) fylgist með viðmiðunargengi (forex) sem Seðlabanki Evrópu birtir.\n<b>Um 30 gjaldmiðlar eru innifaldir.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Gengi eru uppfærð alla virka daga.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> fylgist með viðmiðunargengi (forex) sem Seðlabanki Evrópu birtir.\n<b>Um 30 gjaldmiðlar eru innifaldir.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Um 30 gengi\nHeimild: Seðlabanki Evrópu</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Gengi eru uppfærð um 16:00 CET alla virka daga.</string>

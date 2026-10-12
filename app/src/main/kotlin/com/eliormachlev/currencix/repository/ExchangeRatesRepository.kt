@@ -455,7 +455,6 @@ class ExchangeRatesRepository(
 private fun ApiProvider.baseCurrencyIso(): String =
     when (this) {
         ApiProvider.FRANKFURTER_APP,
-        ApiProvider.FER_EE,
         ApiProvider.INFOR_EURO,
         -> Currency.EUR.iso4217Alpha()
 

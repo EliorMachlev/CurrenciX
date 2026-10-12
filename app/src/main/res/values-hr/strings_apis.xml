@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Tečajevi koje objavljuje ruska središnja banka <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Uz trenutne sankcije ovaj izvor ima vjerojatno najpouzdanije podatke o tečajevima u odnosu na ruski rubalj.\n<b>Bank Rossii objavljuje tečajeve za oko 44 valute.</b></string>
     <string name="api_bankRossii_descriptionShort">Oko 44 valute\nIzvor: Središnja banka Rusije</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Tečajevi se objavljuju svakodnevno, osim na <a href="https://cbr.ru/eng/other/holidays/">državne praznike u Rusiji</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> je relativno nova usluga koja (kao i Frankfurter.app) prati referentne tečajeve (forex) koje objavljuje Europska središnja banka.\n<b>Uključuje oko 30 valuta.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Tečajevi se ažuriraju svakog radnog dana.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> prati referentne tečajeve (forex) koje objavljuje Europska središnja banka.\n<b>Uključuje oko 30 valuta.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Oko 30 valuta\nIzvor: Europska središnja banka</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Podaci se ažuriraju svakog radnog dana oko 16.00 sati po srednjoeuropskom vremenu.</string>

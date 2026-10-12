@@ -46,7 +46,6 @@ class ApiProviderOrderTest {
         val unreliable = ApiProvider.entries.filterNot { it.reliability.isReliable }.associateWith { it.reliability }
         assertEquals(
             mapOf(
-                ApiProvider.FER_EE to ProviderReliability.DOWNTIME,
                 ApiProvider.NORGES_BANK to ProviderReliability.DOWNTIME,
                 ApiProvider.INFOR_EURO to ProviderReliability.INACCURATE_DATA,
             ),
@@ -60,7 +59,7 @@ class ApiProviderOrderTest {
         assertEquals(order, ApiProvider.listed(showUnreliable = true))
         val kept = ApiProvider.listed(showUnreliable = false, keep = setOf(ApiProvider.NORGES_BANK))
         assertTrue(ApiProvider.NORGES_BANK in kept)
-        assertFalse(ApiProvider.FER_EE in kept)
+        assertFalse(ApiProvider.INFOR_EURO in kept)
         assertEquals(order.filter { it in kept }, kept)
     }
 }

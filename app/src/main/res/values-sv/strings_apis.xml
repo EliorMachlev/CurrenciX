@@ -8,8 +8,6 @@
     <string name="api_bankOfIsrael_descriptionUpdateInterval">Representativa kurser publiceras en gång varje arbetsdag runt 15:30 israelisk tid.</string>
     <string name="api_bankRossii_descriptionShort">Cirka 44 växelkurser\nKälla: Rysslands centralbank</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Kurserna uppdateras dagligen, utom på <a href="https://cbr.ru/eng/other/holidays/">allmänna helgdagar i Ryssland</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> är en relativt ny tjänst, som (precis som Frankfurter.app) spårar referenskurserna (forex) som publiceras av Europeiska centralbanken.\n<b>Ungefär 30 valutor ingår.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Valutakurserna uppdateras varje arbetsdag.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> spårar referenskurserna (forex) som publicerats av Europeiska centralbanken.\n<b>Ungefär 30 valutor ingår.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Cirka 30 växelkurser\nKälla: Europeiska centralbanken</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Datan uppdateras runt 16:00 CET på arbetsdagar.</string>

@@ -57,14 +57,6 @@
           <td>No</td>
         </tr>
         <tr>
-          <td><strong>Fer.ee</strong><br><small style="color:var(--clr-text-muted)">European Central Bank · often down</small></td>
-          <td><span class="tag">~30</span></td>
-          <td>Business days</td>
-          <td>EUR</td>
-          <td>Yes</td>
-          <td>No</td>
-        </tr>
-        <tr>
           <td><strong>OpenExchangerates</strong></td>
           <td><span class="tag">160+</span></td>
           <td>Hourly</td>
@@ -120,13 +112,6 @@
     </div>
 
     <div class="card">
-      <span class="card-icon">🇪🇺</span>
-      <h3>Fer.ee</h3>
-      <p>Another service built on the <strong>European Central Bank</strong> reference rates (~30 currencies, every business day). Its API fails with HTTP 422 most of the time, so the app lists it only when <em>Show unreliable providers</em> is on, labelled <em>Downtime</em>.</p>
-      <p style="margin-top:.5rem;"><a href="https://fer.ee/">fer.ee</a></p>
-    </div>
-
-    <div class="card">
       <span class="card-icon">🌐</span>
       <h3>OpenExchangerates</h3>
       <p>A commercial service offering the widest currency coverage of any provider in the app — <strong>160+ currencies</strong> updated hourly. The free "App ID" tier provides access to current and historical rates. A free account is required; the API key is entered in Settings.</p>
@@ -171,6 +156,10 @@
       </thead>
       <tbody>
         <tr>
+          <td><strong>fer.ee</strong></td>
+          <td>Removed — the domain no longer resolves and the project is gone</td>
+        </tr>
+        <tr>
           <td><strong>exchangerate.host</strong></td>
           <td>Removed — the service shut down its free API</td>
         </tr>
@@ -181,7 +170,7 @@
   <h2 class="section-title">Switching Providers</h2>
   <div class="prose">
     <p>Open <strong>Settings → Exchange rates → Data provider</strong> and select a provider. The change takes effect immediately on the next pull-to-refresh or app restart. Cached rates from the previous provider are discarded.</p>
-    <p>Providers that are often down (Fer.ee, Norges Bank) or whose rates are inaccurate (InforEuro) are hidden from the list until you turn on <strong>Settings → Exchange rates → Show unreliable providers</strong>; then each is labelled with why. A provider you already use stays in the list either way.</p>
+    <p>Providers that are often down (Norges Bank) or whose rates are inaccurate (InforEuro) are hidden from the list until you turn on <strong>Settings → Exchange rates → Show unreliable providers</strong>; then each is labelled with why. A provider you already use stays in the list either way.</p>
     <p>If a provider requires an API key (currently only OpenExchangerates), an input field appears in Settings after selecting it. The key is stored locally in SharedPreferences and is never transmitted to any server other than the provider's own API.</p>
   </div>
 

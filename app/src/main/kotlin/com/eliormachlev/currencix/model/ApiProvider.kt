@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import com.eliormachlev.currencix.model.provider.BankOfCanada
 import com.eliormachlev.currencix.model.provider.BankOfIsrael
 import com.eliormachlev.currencix.model.provider.BankRossii
-import com.eliormachlev.currencix.model.provider.FerEe
 import com.eliormachlev.currencix.model.provider.FrankfurterApp
 import com.eliormachlev.currencix.model.provider.InforEuro
 import com.eliormachlev.currencix.model.provider.NorgesBank
@@ -15,7 +14,6 @@ import java.net.URI
 import java.time.LocalDate
 
 private const val ID_FRANKFURTER_APP = 1
-private const val ID_FER_EE = 2
 private const val ID_INFOR_EURO = 3
 private const val ID_NORGES_BANK = 4
 private const val ID_BANK_ROSSII = 5
@@ -58,6 +56,8 @@ enum class ApiProvider(
     val reliability: ProviderReliability = ProviderReliability.RELIABLE,
 ) {
     // EXCHANGERATE_HOST(0, "https://api.exchangerate.host"), // removed, as API was shut down
+    // FER_EE(2, …), // removed: fer.ee no longer resolves and its repo is gone
+    //   (it served the same ECB rates as Frankfurter.app) — never reuse id 2
 
     // European Central Bank reference rates, ~30 currencies, reliable.
     FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp(), UpdateCadence.DAILY),
@@ -69,10 +69,6 @@ enum class ApiProvider(
     NORGES_BANK(ID_NORGES_BANK, NorgesBank(), UpdateCadence.DAILY, reliability = ProviderReliability.DOWNTIME),
     BANK_OF_CANADA(ID_BANK_OF_CANADA, BankOfCanada(), UpdateCadence.DAILY),
     BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael(), UpdateCadence.DAILY),
-
-    // The same ECB rates as Frankfurter.app, but the API returns HTTP 422 most
-    // of the time — see https://github.com/narorolib/fer/issues/6
-    FER_EE(ID_FER_EE, FerEe(), UpdateCadence.DAILY, reliability = ProviderReliability.DOWNTIME),
 
     // ~150 currencies, but accounting rates set once a month.
     INFOR_EURO(ID_INFOR_EURO, InforEuro(), UpdateCadence.MONTHLY, reliability = ProviderReliability.INACCURATE_DATA),
@@ -146,7 +142,7 @@ enum class ApiProvider(
 
         // Localized display name shown in the UI (provider picker, share
         // footer, timeline attribution). Central-bank providers translate;
-        // pure product brands (Frankfurter.app, Fer.ee, …) fall back to the
+        // pure product brands (Frankfurter.app, …) fall back to the
         // base-locale string.
         @get:StringRes
         val nameRes: Int

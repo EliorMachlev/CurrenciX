@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">أسعار الصرف كما يقدّمها البنك المركزي الروسي <a href="https://cbr.ru/eng/currency_base/daily/"><b>بنك روسيا</b></a>. في ظل العقوبات الحالية، يقدّم هذا المصدر على الأرجح أكثر أسعار الصرف موثوقية للروبل الروسي.\n<b>يدرج بنك روسيا نحو 44 سعر صرف.</b></string>
     <string name="api_bankRossii_descriptionShort">حوالي 44 سعر صرف\nالمصدر: البنك المركزي الروسي</string>
     <string name="api_bankRossii_descriptionUpdateInterval">يتم تحديث الأسعار يوميًا، باستثناء <a href="https://cbr.ru/eng/other/holidays/">العطلات الرسمية في روسيا</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> خدمة جديدة نسبيًا تتتبّع (مثل Frankfurter.app) أسعار الصرف المرجعية (فوركس) التي ينشرها البنك المركزي الأوروبي.\n<b>تشمل نحو 30 عملة.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">يتم تحديث الأسعار كل يوم عمل.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> تتتبّع أسعار الصرف المرجعية (فوركس) التي ينشرها البنك المركزي الأوروبي.\n<b>تشمل نحو 30 عملة.</b></string>
     <string name="api_frankfurterApp_descriptionShort">نحو 30 سعر صرف\nالمصدر: البنك المركزي الأوروبي</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">يتم تحديث البيانات في حوالي الساعة 16:00 بتوقيت وسط أوروبا كل يوم عمل.</string>

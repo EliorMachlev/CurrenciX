@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Tỷ giá hối đoái do ngân hàng trung ương Nga <a href="https://cbr.ru/eng/currency_base/daily/"><b>Ngân hàng Nga</b></a> cung cấp. Trong bối cảnh các lệnh trừng phạt hiện nay, đây có lẽ là nguồn tỷ giá đồng rúp Nga đáng tin cậy nhất.\n<b>Ngân hàng Nga niêm yết khoảng 44 tỷ giá hối đoái.</b></string>
     <string name="api_bankRossii_descriptionShort">Khoảng 44 tỷ giá hối đoái\nNguồn: Ngân hàng Trung ương Nga</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Tỷ giá được cập nhật hằng ngày, trừ <a href="https://cbr.ru/eng/other/holidays/">các ngày lễ ở Nga</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> là một dịch vụ tương đối mới, (giống như Frankfurter.app) theo dõi tỷ giá tham chiếu (ngoại hối) do Ngân hàng Trung ương châu Âu công bố.\n<b>Có khoảng 30 loại tiền tệ.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Tỷ giá được cập nhật mỗi ngày làm việc.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> theo dõi tỷ giá tham chiếu (ngoại hối) do Ngân hàng Trung ương châu Âu công bố.\n<b>Có khoảng 30 loại tiền tệ.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Khoảng 30 tỷ giá hối đoái\nNguồn: Ngân hàng Trung ương châu Âu</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Dữ liệu được cập nhật khoảng 16:00 theo CET mỗi ngày làm việc.</string>

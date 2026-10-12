@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Wechselkurse, bereitgestellt von der russischen Zentralbank <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Angesichts der aktuellen Sanktionen liefert diese Quelle vermutlich die zuverlässigsten Wechselkurse für den russischen Rubel.\n<b>Bank Rossii listet etwa 44 Wechselkurse.</b></string>
     <string name="api_bankRossii_descriptionShort">Ungefähr 44 Wechselkurse\nQuelle: Zentralbank der Russischen Föderation</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Kurse werden täglich aktualisiert, außer an <a href="https://cbr.ru/eng/other/holidays/">gesetzlichen Feiertagen in Russland</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> ist ein recht neuer Dienst, der (genau wie Frankfurter.app) die von der Europäischen Zentralbank veröffentlichten Referenzkurse (Forex) erfasst.\n<b>Etwa 30 Währungen sind enthalten.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Die Kurse werden an jedem Werktag aktualisiert.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> erfasst die von der Europäischen Zentralbank veröffentlichten Referenzkurse (Forex).\n<b>Etwa 30 Währungen sind enthalten.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Ungefähr 30 Wechselkurse\nQuelle: Europäische Zentralbank</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Die Daten werden an jedem Werktag gegen 16:00 Uhr MEZ aktualisiert.</string>

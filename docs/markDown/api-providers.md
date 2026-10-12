@@ -4,11 +4,11 @@ CurrenciX supports multiple exchange-rate data sources. The active provider is s
 
 ## Picker order
 
-The picker (`ProviderPickerSheet`) lists `ApiProvider.pickerOrder`: free providers under **Free**, then the ones that need a key under **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`: hourly, business-daily, monthly), then the more useful — wider coverage, steadier service — which is the enum's declaration order. Each row says how often it updates. Today that's: Frankfurter.app, Bank Rossii, Norges Bank, Bank of Canada, Bank of Israel, Fer.ee, InforEuro; then OpenExchangerates. Reordering the enum is safe: only each entry's `id` is stored.
+The picker (`ProviderPickerSheet`) lists `ApiProvider.pickerOrder`: free providers under **Free**, then the ones that need a key under **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`: hourly, business-daily, monthly), then the more useful — wider coverage, steadier service — which is the enum's declaration order. Each row says how often it updates. Today that's: Frankfurter.app, Bank Rossii, Norges Bank, Bank of Canada, Bank of Israel, InforEuro; then OpenExchangerates. Reordering the enum is safe: only each entry's `id` is stored.
 
 ## Unreliable providers
 
-Each `ApiProvider` carries a `ProviderReliability`: `RELIABLE`, `DOWNTIME` (often down — Fer.ee, whose API returns HTTP 422 most of the time, see [narorolib/fer#6](https://github.com/narorolib/fer/issues/6); Norges Bank, with regular HTTP 503 outages) or `INACCURATE_DATA` (answers, but far from the market — InforEuro's monthly accounting rates). Every picker (Settings' provider and fallback, the converter's, the timeline's) lists `ApiProvider.listed(showUnreliable, keep)`: the unreliable ones only when **Settings → Exchange rates → Show unreliable providers** is on (`ProviderSettings.showUnreliable`, off by default), each labelled "Downtime" or "Inaccurate data" in the error color — but the provider already chosen (and the main provider, greyed out in the fallback picker) is always listed, so a choice never vanishes from its own list. The About row on **Providers** shows the same label. A user who already uses an unreliable provider keeps it; nothing is switched for them.
+Each `ApiProvider` carries a `ProviderReliability`: `RELIABLE`, `DOWNTIME` (often down — Norges Bank, with regular HTTP 503 outages) or `INACCURATE_DATA` (answers, but far from the market — InforEuro's monthly accounting rates). Every picker (Settings' provider and fallback, the converter's, the timeline's) lists `ApiProvider.listed(showUnreliable, keep)`: the unreliable ones only when **Settings → Exchange rates → Show unreliable providers** is on (`ProviderSettings.showUnreliable`, off by default), each labelled "Downtime" or "Inaccurate data" in the error color — but the provider already chosen (and the main provider, greyed out in the fallback picker) is always listed, so a choice never vanishes from its own list. The About row on **Providers** shows the same label. A user who already uses an unreliable provider keeps it; nothing is switched for them.
 
 ## Fallback provider
 
@@ -21,7 +21,6 @@ When the main provider fails while the device is online (a timeout, an HTTP erro
 | Provider | Currencies | Update freq | Base | Notes |
 |---|---|---|---|---|
 | [Frankfurter.app](https://frankfurter.app/) | ~33 | Business days | EUR | European Central Bank data |
-| [Fer.ee](https://fer.ee/) | ~30 | Business days | EUR | European Central Bank data; unreliable (downtime) |
 | [OpenExchangerates](https://openexchangerates.org/) | 160+ | Hourly | USD | Free tier requires API key |
 | [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | ~150 | Monthly | EUR | EU Commission accounting rates; unreliable (inaccurate data) |
 | [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) | ~23 | Business days | CAD | Canadian Central Bank |
@@ -33,6 +32,7 @@ When the main provider fails while the device is online (a timeout, an HTTP erro
 
 | Provider | Reason |
 |---|---|
+| fer.ee | Domain no longer resolves and its source repo is gone (it served the same ECB rates as Frankfurter.app). Its id, 2, stays retired |
 | exchangerate.host | API shutdown |
 
 ## Cache behaviour
@@ -45,7 +45,6 @@ responses are cached depends on the upstream headers it returns:
 |---|---|---|---|---|
 | Frankfurter.app | `api.frankfurter.dev` | Cooperative | Upstream `Cache-Control` | Publishes daily; upstream sends usable `max-age`. |
 | OpenExchangerates | `openexchangerates.org` | Cooperative | Upstream `Cache-Control` | Publishes hourly; upstream sends usable `max-age`. |
-| Fer.ee | `api.fer.ee` | Cooperative | Upstream `Cache-Control` | Rarely answers; not on the rewrite allowlist. |
 | InforEuro | `ec.europa.eu` | Rewritten | 6 h (`21600s`) | Rates change on the first of the month — leisurely TTL is fine. |
 | Bank of Canada | `www.bankofcanada.ca` | Rewritten | 1 h (`3600s`) | Valet API sends `no-cache`; upstream cadence is business-day. |
 | Norges Bank | `data.norges-bank.no` | Rewritten | 1 h (`3600s`) | SDMX endpoint headers unreliable; business-day cadence. |

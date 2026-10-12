@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Taux de change, tels que fournis par la banque centrale russe <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Avec les sanctions actuelles, cette source fournit probablement les données les plus fiables sur les taux de change du rouble russe.\n<b>La Bank Rossii répertorie quelque 44 taux de change.</b></string>
     <string name="api_bankRossii_descriptionShort">Environ 44 taux de change\nSource\u00A0: Banque centrale de Russie</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Les taux sont mis à jour quotidiennement, sauf les <a href="https://cbr.ru/eng/other/holidays/">jours fériés en Russie</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> est un service relativement nouveau, qui (tout comme Frankfurter.app) suit les taux de change de référence (forex) qui sont publiés par la Banque centrale européenne.\n<b>Une trentaine de devises sont incluses.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Les taux sont mis à jour chaque jour ouvré.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> suit les taux de change de référence (forex) publiés par la Banque centrale européenne.\n<b>Une trentaine de devises sont incluses.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Environ 30 taux de change\nSource\u00A0: Banque centrale européenne</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Les données sont mises à jour vers 16\u00A0h CET chaque jour ouvré.</string>

@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Курси обміну, які встановлює центральний банк Росії — <a href="https://cbr.ru/eng/currency_base/daily/"><b>Банк Росії</b></a>. В умовах нинішніх санкцій це джерело дає, мабуть, найдостовірніші курси російського рубля.\n<b>Банк Росії публікує близько 44 курсів валют.</b></string>
     <string name="api_bankRossii_descriptionShort">Близько 44 курсів валют\nДжерело: Центральний банк Росії</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Дані оновлюються щодня, крім днів <a href="https://cbr.ru/eng/other/holidays/">державних свят у Росії</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> — відносно новий сервіс, який (як і Frankfurter.app) відстежує довідкові курси обміну (форекс), що їх публікує Європейський центральний банк.\n<b>Включено близько 30 валют.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Дані оновлюються кожного робочого дня.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> відстежує довідкові обмінні курси (форекс), опубліковані Європейським центральним банком.\n<b>Включено близько 30 валют.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Близько 30 курсів валют\nДжерело: Європейський центральний банк</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Дані оновлюються близько 16:00 CET (центральноєвропейський час) кожного робочого дня.</string>

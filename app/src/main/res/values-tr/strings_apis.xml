@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Rusya merkez bankası <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a> tarafından sağlanan döviz kurları. Mevcut yaptırımlar nedeniyle bu kaynak, Rus rublesi için muhtemelen en güvenilir döviz kurlarını sunar.\n<b>Bank Rossii yaklaşık 44 döviz kurunu listeler.</b></string>
     <string name="api_bankRossii_descriptionShort">Yaklaşık 44 döviz kuru\nKaynak: Rusya Merkez Bankası</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Kurlar, <a href="https://cbr.ru/eng/other/holidays/">Rusya\'daki resmi tatiller</a> dışında günlük olarak güncellenir.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a>, (tıpkı Frankfurter.app gibi) Avrupa Merkez Bankası tarafından yayınlanan gösterge döviz (forex) kurlarını takip eden, nispeten yeni bir hizmettir.\n<b>Yaklaşık 30 para birimi bulunmaktadır.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Kurlar her iş günü güncellenir.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a>, Avrupa Merkez Bankası tarafından yayınlanan gösterge döviz (forex) kurlarını takip eder.\n<b>Yaklaşık 30 para birimi bulunmaktadır.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Yaklaşık 30 döviz kuru\nKaynak: Avrupa Merkez Bankası</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Veri güncellemesi her iş günü 16:00 (CET) civarında gerçekleşir.</string>

@@ -6,8 +6,6 @@
     <string name="api_bankRossii_descriptionFull">Nilai tukar, seperti yang disediakan oleh bank sentral Rusia <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Dengan sanksi yang berlaku saat ini, sumber ini kemungkinan memberikan nilai tukar paling andal untuk Rubel Rusia.\n<b>Bank Rossii mencantumkan sekitar 44 nilai tukar.</b></string>
     <string name="api_bankRossii_descriptionShort">Sekitar 44 nilai tukar\nSumber: Bank Sentral Rusia</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Nilai tukar diperbarui setiap hari, kecuali pada <a href="https://cbr.ru/eng/other/holidays/">hari libur nasional di Rusia</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> adalah layanan yang relatif lebih baru, yang (seperti Frankfurter.app) memantau nilai valas yang dipublikasikan oleh Bank Sentral Eropa (European Central Bank).\n<b>Sekitar 30 mata uang tersedia.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Nilai tukar diperbarui setiap hari kerja.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> memantau nilai valas yang dipublikasikan oleh Bank Sentral Eropa (European Central Bank).\n<b>Sekitar 30 mata uang tersedia.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Sekitar 30 nilai tukar\nSumber: Bank Sentral Eropa</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Data diperbarui sekitar pukul 16.00 CET setiap hari kerja.</string>

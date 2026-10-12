@@ -9,9 +9,7 @@
 
     <string name="api_bankRossii_descriptionShort">Omkring 44 valutakurser\nKilde: Ruslands centralbank</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Valutakurserne opdateres dagligt, undtagen på <a href="https://cbr.ru/eng/other/holidays/">russiske helligdage</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> er en relativt ny tjeneste, der (ligesom Frankfurter.app) følger de referencekurser (forex), som Den Europæiske Centralbank offentliggør.\n<b>Omkring 30 valutaer er inkluderet.</b></string>
 
-    <string name="api_ferEe_descriptionUpdateInterval">Valutakurserne opdateres hver arbejdsdag.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> følger de referencekurser (forex), som Den Europæiske Centralbank offentliggør.\n<b>Omkring 30 valutaer er inkluderet.</b></string>
 
     <string name="api_frankfurterApp_descriptionShort">Omkring 30 valutakurser\nKilde: Den Europæiske Centralbank</string>

@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Kurzy poskytované Ruskou centrální bankou <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Při současných sankcích poskytuje tento zdroj pravděpodobně nejspolehlivější směnné kurzy pro ruský rubl.\n<b>Bank Rossii uvádí přibližně 44 směnných kurzů.</b></string>
     <string name="api_bankRossii_descriptionShort">Okolo 44 kurzů\nZdroj: Ruská centrální banka</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Kurzy jsou aktualizovány každý den kromě <a href="https://cbr.ru/eng/other/holidays/">státních svátků v Rusku</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> je poměrně nová služba, která sleduje referenční směnné kurzy zveřejňované Evropskou centrální bankou (podobně jako Frankfurter.app).\n<b>Je zahrnuto přibližně 30 měn.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Kurzy jsou aktualizovány každý pracovní den.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> sleduje referenční směnné kurzy zveřejňované Evropskou centrální bankou.\n<b>Je zahrnuto přibližně 30 měn.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Okolo 30 kurzů\nZdroj: Evropská centrální banka</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Data jsou aktualizována každý pracovní den kolem 16:00 středoevropského času.</string>

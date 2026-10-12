@@ -6,8 +6,6 @@
     <string name="api_bankRossii_descriptionFull">Taxas de câmbio, conforme fornecidas pelo banco central russo <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Com as sanções atuais, esta fonte provavelmente oferece as taxas de câmbio mais confiáveis para o rublo russo.\n<b>O Bank Rossii lista cerca de 44 taxas de câmbio.</b></string>
     <string name="api_bankRossii_descriptionShort">Cerca de 44 taxas de câmbio\nFonte: Banco Central da Rússia</string>
     <string name="api_bankRossii_descriptionUpdateInterval">As taxas são atualizadas diariamente, exceto nos <a href="https://cbr.ru/eng/other/holidays/">feriados na Rússia</a>.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> é um serviço relativamente novo que (como o Frankfurter.app) acompanha as taxas de câmbio de referência (forex) publicadas pelo Banco Central Europeu.\n<b>Cerca de 30 moedas estão incluídas.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Taxas atualizadas a cada dia útil.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> acompanha as taxas de câmbio de referência (forex) publicadas pelo Banco Central Europeu.\n<b>Cerca de 30 moedas estão incluídas.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Cerca de 30 taxas de câmbio\nFonte: Banco Central Europeu</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Os dados são atualizados por volta das 16:00 CET a cada dia útil.</string>

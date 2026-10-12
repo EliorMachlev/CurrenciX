@@ -9,8 +9,6 @@
     <string name="api_bankRossii_descriptionFull">Συναλλαγματικές ισοτιμίες, όπως παρέχονται από τη Ρωσική Κεντρική Τράπεζα <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a>. Με τις τρέχουσες κυρώσεις, αυτή η πηγή παρέχει πιθανώς τις πιο αξιόπιστες ισοτιμίες για το ρωσικό ρούβλι.\n<b>Η Bank Rossii παρέχει περίπου 44 συναλλαγματικές ισοτιμίες.</b></string>
     <string name="api_bankRossii_descriptionShort">Περίπου 44 συναλλαγματικές ισοτιμίες\nΠηγή: Κεντρική Τράπεζα της Ρωσίας</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Οι ισοτιμίες ενημερώνονται καθημερινά, εκτός από τις <a href="https://cbr.ru/eng/other/holidays/">επίσημες αργίες στη Ρωσία</a>.</string>
-    <string name="api_ferEe_descriptionFull">Το <a href="https://fer.ee/"><b>Fer.ee</b></a> είναι σχετικά καινούργια υπηρεσία, η οποία (όπως και το Frankfurter.app) παρακολουθεί τις τιμές αναφοράς (forex) της ΕΚΤ.\n<b>Περιλαμβάνει περίπου 30 νομίσματα.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Οι ισοτιμίες ανανεώνονται κάθε εργάσιμη ημέρα.</string>
     <string name="api_frankfurterApp_descriptionFull">Το <a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> παρακολουθεί τις τιμές αναφοράς (forex) της ΕΚΤ.\n<b>Περιλαμβάνει περίπου 30 νομίσματα.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Περίπου 30 συναλλαγματικές ισοτιμίες\nΠηγή: Ευρωπαϊκή Κεντρική Τράπεζα</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Τα δεδομένα ανανεώνονται κάθε εργάσιμη ημέρα γύρω στις 16:00 CET.</string>

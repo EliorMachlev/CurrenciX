@@ -6,8 +6,6 @@
     <string name="api_bankRossii_descriptionFull">Devizaárfolyamok, ahogyan azokat az orosz központi bank, a <a href="https://cbr.ru/eng/currency_base/daily/"><b>Bank Rossii</b></a> közzéteszi. A jelenlegi szankciók mellett valószínűleg ez a forrás adja a legmegbízhatóbb árfolyamokat az orosz rubelre.\n<b>A Bank Rossii mintegy 44 devizaárfolyamot listáz.</b></string>
     <string name="api_bankRossii_descriptionShort">Körülbelül 44 devizaárfolyam\nForrás: Orosz központi bank</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Az árfolyamok naponta frissülnek, az <a href="https://cbr.ru/eng/other/holidays/">oroszországi munkaszüneti napok</a> kivételével.</string>
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> egy viszonylag új szolgáltatás, amely (a Frankfurter.app-hoz hasonlóan) az Európai Központi Bank által közzétett referencia devizaárfolyamokat követi.\n<b>Körülbelül 30 pénznemet tartalmaz.</b></string>
-    <string name="api_ferEe_descriptionUpdateInterval">Az árfolyamok minden munkanapon frissülnek.</string>
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> az Európai Központi Bank által közzétett referencia devizaárfolyamokat követi.\n<b>Körülbelül 30 pénznemet tartalmaz.</b></string>
     <string name="api_frankfurterApp_descriptionShort">Körülbelül 30 devizaárfolyam\nForrás: Európai Központi Bank</string>
     <string name="api_frankfurterApp_descriptionUpdateInterval">Az adatok minden munkanapon 16:00 CET körül frissülnek.</string>
