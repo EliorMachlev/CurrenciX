@@ -128,7 +128,7 @@ jobs:
       (inputs.commit_run_id != '' || (inputs.commit && needs.profile.result == 'success'))
     permissions:
       contents: write
-      actions: read
+      actions: write
     uses: ./.github/workflows/commit-baseline-profiles.yaml
     with:
       run_id: ${{ inputs.commit_run_id || github.run_id }}

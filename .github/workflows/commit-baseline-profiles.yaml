@@ -28,7 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      actions: read
+      # read: download the profiles; write: start the checks on the commit.
+      actions: write
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -48,6 +49,7 @@ jobs:
           cp -R "$RUNNER_TEMP/profiles/." app/src/
 
       - name: Commit and push
+        id: push
         env:
           BRANCH: ${{ github.ref_name }}
         run: |
@@ -60,3 +62,18 @@ jobs:
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -m "perf(startup): regenerate baseline and startup profiles"
           git push origin "HEAD:${BRANCH}"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # A push made with the workflow's own token starts no push-triggered
+      # workflows, so the commit would sit without Screenshots (which the PR
+      # needs green) or a debug APK. A workflow_dispatch is the one event that
+      # token may still start.
+      - name: Start the push checks on the new commit
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          for workflow in screenshots.yaml apk-artifact.yaml; do
+            gh workflow run "$workflow" --ref "$BRANCH"
+          done
