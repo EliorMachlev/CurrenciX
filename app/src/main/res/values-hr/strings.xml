@@ -280,4 +280,8 @@
     <string name="receipt_setup_download">Preuzmi</string>
     <string name="receipt_setup_progress">Preuzimanje čitača računa…</string>
     <string name="receipt_setup_failed">Čitač računa nije bilo moguće preuzeti. Pokušajte kasnije.</string>
+    <string name="show_unreliable_providers_title">Prikaži nepouzdane pružatelje</string>
+    <string name="show_unreliable_providers_summary">Navedi i pružatelje koji su često nedostupni ili imaju netočne tečajeve, uz odgovarajuću oznaku</string>
+    <string name="provider_reliability_downtime">Prekidi rada</string>
+    <string name="provider_reliability_inaccurate">Netočni podaci</string>
 </resources>

@@ -56,19 +56,6 @@ internal inline fun moshi(block: Moshi.Builder.() -> Unit = {}): Moshi =
         .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
         .build()
 
-// GETs [url] as JSON and parses it via [adapter]. Empty top-level JSON turns
-// into an IOException tagged with [providerLabel] so the caller's error
-// surface can identify which provider failed to decode.
-internal suspend fun <T : Any> fetchJson(
-    context: Context?,
-    url: String,
-    providerLabel: String,
-    adapter: JsonAdapter<T>,
-): Result<T> =
-    HttpClientProvider.fetch(context, url) { body ->
-        adapter.fromJson(body.source()) ?: throw emptyJson(providerLabel)
-    }
-
 private fun emptyJson(providerLabel: String) = IOException("$providerLabel: empty JSON")
 
 // Binds the Retrofit interface [T] to this provider's [ApiProvider.Api.baseUrl],
@@ -80,9 +67,8 @@ internal inline fun <reified T : Any> ApiProvider.Api.retrofitApi(
     moshi: Moshi,
 ): T = RetrofitProvider.retrofit(context, baseUrl, moshi).create(T::class.java)
 
-// Retrofit counterpart of [fetchJson], with the same error contract: non-2xx
-// becomes [ApiHttpError], a `null` JSON body becomes an IOException labelled
-// with the provider name. Interfaces return [Response] rather than the bare
+// Runs a Retrofit [call]: non-2xx becomes [ApiHttpError], a `null` JSON body
+// becomes an IOException labelled with the provider name. Interfaces return [Response] rather than the bare
 // body because Retrofit's suspend adapter would otherwise throw an opaque
 // KotlinNullPointerException on a null body, whatever the declared nullability.
 internal suspend fun <T : Any> ApiProvider.Api.fetchRetrofit(call: suspend () -> Response<T>): Result<T> =

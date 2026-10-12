@@ -281,4 +281,8 @@
     <string name="receipt_setup_download">ഡൗൺലോഡ്</string>
     <string name="receipt_setup_progress">രസീത് റീഡർ ഡൗൺലോഡ് ചെയ്യുന്നു…</string>
     <string name="receipt_setup_failed">രസീത് റീഡർ ഡൗൺലോഡ് ചെയ്യാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.</string>
+    <string name="show_unreliable_providers_title">വിശ്വസനീയമല്ലാത്ത ദാതാക്കളെ കാണിക്കുക</string>
+    <string name="show_unreliable_providers_summary">പലപ്പോഴും പ്രവർത്തനരഹിതമാകുന്നതോ നിരക്കുകൾ കൃത്യമല്ലാത്തതോ ആയ ദാതാക്കളെയും അടയാളപ്പെടുത്തി കാണിക്കും</string>
+    <string name="provider_reliability_downtime">തകരാറുകൾ</string>
+    <string name="provider_reliability_inaccurate">കൃത്യമല്ലാത്ത ഡാറ്റ</string>
 </resources>

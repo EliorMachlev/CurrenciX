@@ -82,6 +82,13 @@ private fun RatesPreview() {
                     summary = SAMPLE_PROVIDER.getName(LocalContext.current).toString(),
                     iconRes = R.drawable.ic_data_provider,
                 )
+                SwitchRow(
+                    title = stringResource(id = R.string.show_unreliable_providers_title),
+                    summary = stringResource(id = R.string.show_unreliable_providers_summary),
+                    iconRes = R.drawable.ic_visibility,
+                    checked = false,
+                    onCheckedChange = {},
+                )
                 CategoryRow(R.string.settings_providers_title, R.string.settings_providers_summary, R.drawable.ic_info)
             }
         }
@@ -96,9 +103,15 @@ private fun RatesPreview() {
                 )
             }
         }
-        // The providers screen's row: its description and refresh cadence
-        // come from the provider's own (translated) strings.
-        item { PreferenceSection(text = stringResource(id = R.string.settings_providers_title)) { AboutProviderRow(SAMPLE_PROVIDER) } }
+        // The providers screen's rows: their description and refresh cadence
+        // come from the provider's own (translated) strings; an unreliable
+        // one says why under them.
+        item {
+            PreferenceSection(text = stringResource(id = R.string.settings_providers_title)) {
+                AboutProviderRow(SAMPLE_PROVIDER)
+                AboutProviderRow(ApiProvider.NORGES_BANK)
+            }
+        }
     }
 }
 

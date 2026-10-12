@@ -19,6 +19,9 @@ private const val KEY_API = "_api"
 private const val KEY_FALLBACK_API = "_fallbackApi"
 private const val KEY_OPEN_EXCHANGERATES_API_KEY = "_api_openExchangeratesApiKey"
 
+// Whether the pickers list providers that are often down or inaccurate.
+private const val KEY_SHOW_UNRELIABLE_PROVIDERS = "_showUnreliableProviders"
+
 // Auto-refresh (#151): default OFF at first launch — opting-in is explicit
 // via Settings (until #147 onboarding lands the hero opt-in).
 private const val KEY_AUTO_REFRESH_ENABLED = "_autoRefreshEnabled"
@@ -57,6 +60,12 @@ class ProviderSettings(
 
     /** The user's Open Exchange Rates key; null (and removed) when there is none. */
     val openExchangeRatesApiKey: Pref<String?> = store.optionalStringPref(KEY_OPEN_EXCHANGERATES_API_KEY)
+
+    /**
+     * Whether the provider pickers list the unreliable providers too
+     * ([com.eliormachlev.currencix.model.ProviderReliability]); off by default.
+     */
+    val showUnreliable: Pref<Boolean> = store.booleanPref(KEY_SHOW_UNRELIABLE_PROVIDERS, default = false)
 
     /** Background rate refresh (#151), opt-in. */
     val autoRefresh: Pref<Boolean> = store.booleanPref(KEY_AUTO_REFRESH_ENABLED, default = false)

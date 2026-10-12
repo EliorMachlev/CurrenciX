@@ -278,4 +278,8 @@
     <string name="receipt_setup_download">بارگیری</string>
     <string name="receipt_setup_progress">در حال بارگیری خواننده رسید…</string>
     <string name="receipt_setup_failed">بارگیری خواننده رسید ممکن نشد. بعداً دوباره امتحان کنید.</string>
+    <string name="show_unreliable_providers_title">نمایش ارائه‌دهندگان نامطمئن</string>
+    <string name="show_unreliable_providers_summary">ارائه‌دهندگانی که اغلب از دسترس خارج‌اند یا نرخ‌هایشان دقیق نیست نیز با برچسب مربوط نمایش داده شوند</string>
+    <string name="provider_reliability_downtime">قطعی</string>
+    <string name="provider_reliability_inaccurate">داده‌های نادقیق</string>
 </resources>

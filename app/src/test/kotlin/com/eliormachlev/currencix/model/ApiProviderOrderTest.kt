@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.model
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ApiProviderOrderTest {
@@ -28,15 +29,38 @@ class ApiProviderOrderTest {
     }
 
     @Test
-    fun `the default fallback is the first free provider that isn't the main one`() {
-        val first = order.first { !it.needsApiKey }
-        val second = order.filter { !it.needsApiKey }[1]
-        assertEquals(first, ApiProvider.defaultFallback(ApiProvider.OPEN_EXCHANGERATES))
-        assertEquals(second, ApiProvider.defaultFallback(first))
+    fun `the default fallback is the first free, reliable provider that isn't the main one`() {
+        val candidates = order.filter { !it.needsApiKey && it.reliability.isReliable }
+        assertEquals(candidates[0], ApiProvider.defaultFallback(ApiProvider.OPEN_EXCHANGERATES))
+        assertEquals(candidates[1], ApiProvider.defaultFallback(candidates[0]))
         ApiProvider.entries.forEach { main ->
             val fallback = ApiProvider.defaultFallback(main)
             assertNotEquals(main, fallback)
             assertFalse(fallback.needsApiKey)
+            assertTrue(fallback.reliability.isReliable)
         }
+    }
+
+    @Test
+    fun `the unreliable providers are the ones the user was told about`() {
+        val unreliable = ApiProvider.entries.filterNot { it.reliability.isReliable }.associateWith { it.reliability }
+        assertEquals(
+            mapOf(
+                ApiProvider.FER_EE to ProviderReliability.DOWNTIME,
+                ApiProvider.NORGES_BANK to ProviderReliability.DOWNTIME,
+                ApiProvider.INFOR_EURO to ProviderReliability.INACCURATE_DATA,
+            ),
+            unreliable,
+        )
+    }
+
+    @Test
+    fun `pickers hide unreliable providers unless asked, keeping the ones in use`() {
+        assertEquals(order.filter { it.reliability.isReliable }, ApiProvider.listed(showUnreliable = false))
+        assertEquals(order, ApiProvider.listed(showUnreliable = true))
+        val kept = ApiProvider.listed(showUnreliable = false, keep = setOf(ApiProvider.NORGES_BANK))
+        assertTrue(ApiProvider.NORGES_BANK in kept)
+        assertFalse(ApiProvider.FER_EE in kept)
+        assertEquals(order.filter { it in kept }, kept)
     }
 }

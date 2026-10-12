@@ -276,4 +276,8 @@
     <string name="receipt_setup_download">Herunterladen</string>
     <string name="receipt_setup_progress">Bonleser wird heruntergeladen …</string>
     <string name="receipt_setup_failed">Der Bonleser konnte nicht heruntergeladen werden. Versuche es später noch einmal.</string>
+    <string name="show_unreliable_providers_title">Unzuverlässige Anbieter anzeigen</string>
+    <string name="show_unreliable_providers_summary">Auch Anbieter auflisten, die oft ausfallen oder ungenaue Kurse liefern – entsprechend gekennzeichnet</string>
+    <string name="provider_reliability_downtime">Ausfälle</string>
+    <string name="provider_reliability_inaccurate">Ungenaue Daten</string>
 </resources>

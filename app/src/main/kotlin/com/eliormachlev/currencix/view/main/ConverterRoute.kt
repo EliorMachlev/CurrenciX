@@ -30,11 +30,13 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
 import com.eliormachlev.currencix.view.alert.rememberSetRateAlert
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.ProvideOnboardingAnchors
 import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
+import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.compose.CompareCardsSheet
 import com.eliormachlev.currencix.view.main.compose.ConverterBody
@@ -333,11 +335,10 @@ private fun ConverterDisplay(
 ) {
     val context = LocalContext.current
     val banner by host.status.banner
-    val database = remember(context) { Database(context) }
+    val database = rememberDatabase()
     val pattern by database.display.dateFormat.liveData
         .observeAsState(DEFAULT_DATE_PATTERN)
-    val fees by database.fees.fees.flow
-        .collectAsStateWithLifecycle(database.fees.fees.get())
+    val fees by database.fees.fees.collectAsStateWithLifecycle()
     // "Compare cards" only with two or more cards to compare.
     val canCompare = fees.count { it is Fee.GlobalBank && it.isActive } >= 2
     MainDisplay(
@@ -365,14 +366,10 @@ private fun CompareCardsHost(
     viewModel: MainViewModel,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val db = remember(context) { Database(context) }
-    val fees by db.fees.fees.flow
-        .collectAsStateWithLifecycle(db.fees.fees.get())
-    val activeExchange by db.fees.activeExchangeId.flow
-        .collectAsStateWithLifecycle(db.fees.activeExchangeId.get())
-    val activeCard by db.fees.activeBankId.flow
-        .collectAsStateWithLifecycle(db.fees.activeBankId.get())
+    val db = rememberDatabase()
+    val fees by db.fees.fees.collectAsStateWithLifecycle()
+    val activeExchange by db.fees.activeExchangeId.collectAsStateWithLifecycle()
+    val activeCard by db.fees.activeBankId.collectAsStateWithLifecycle()
     val base by viewModel.getBaseCurrency().observeAsState()
     val dest by viewModel.getDestinationCurrency().observeAsState()
     val amount by viewModel.getResultAsNumber().observeAsState()
@@ -410,8 +407,7 @@ private fun ConverterRecentPairs(
     val others = remember(recents, current) { recents.filterNot { it.isSameCurrencies(current) }.toImmutableList() }
     val paste = rememberPasteAmount(viewModel, current)
     var alertFor by remember { mutableStateOf<CurrencyPair?>(null) }
-    val alerts by database.alerts.alerts.flow
-        .collectAsStateWithLifecycle(remember(database) { database.alerts.alerts.get() })
+    val alerts by database.alerts.alerts.collectAsStateWithLifecycle()
     val alerted = remember(alerts) { alerts.mapTo(mutableSetOf()) { it.pair }.toImmutableSet() }
     RecentPairsRow(
         pairs = others,
@@ -524,11 +520,8 @@ private fun ConverterKeypad(viewModel: MainViewModel) {
 // the flip on Skip/Finish is written *and* recomposes this host in one step.
 @Composable
 private fun OnboardingSpotlightHost() {
-    val context = LocalContext.current
-    val db = remember(context) { Database(context) }
-    val hasSeen by db.display.hasSeenOnboarding.flow.collectAsStateWithLifecycle(
-        initialValue = db.display.hasSeenOnboarding.get(),
-    )
+    val db = rememberDatabase()
+    val hasSeen by db.display.hasSeenOnboarding.collectAsStateWithLifecycle()
     if (hasSeen) return
     val steps =
         listOf(

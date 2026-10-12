@@ -79,6 +79,7 @@ import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.flagPainter
+import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
@@ -124,7 +125,7 @@ fun TimelineRoute(
     val context = LocalContext.current
     val application = context.applicationContext as Application
     val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(application, screen.from, screen.to))
-    val db = remember(context) { Database(context) }
+    val db = rememberDatabase()
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
     val pair by model.getCurrencyPair().observeAsState()
     var sheet by rememberSaveable { mutableStateOf<TimelineSheet?>(null) }

@@ -8,7 +8,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
- * Type-safe Retrofit binding for the Frankfurter.app v1 API.
+ * Type-safe Retrofit binding for the Frankfurter.app v1 API — which Fer.ee
+ * serves too, at its own base URL.
  *
  * The endpoints mirror the raw-OkHttp URLs previously built by
  * `FrankfurterApp.ratesUrl` / `.timelineUrl` — see

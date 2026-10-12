@@ -281,4 +281,8 @@
     <string name="receipt_setup_download">Baixar</string>
     <string name="receipt_setup_progress">Baixando o leitor de recibos…</string>
     <string name="receipt_setup_failed">Não foi possível baixar o leitor de recibos. Tente mais tarde.</string>
+    <string name="show_unreliable_providers_title">Mostrar provedores não confiáveis</string>
+    <string name="show_unreliable_providers_summary">Listar também provedores que ficam fora do ar com frequência ou têm cotações imprecisas, sinalizados como tal</string>
+    <string name="provider_reliability_downtime">Indisponibilidade</string>
+    <string name="provider_reliability_inaccurate">Dados imprecisos</string>
 </resources>

@@ -283,4 +283,8 @@
     <string name="receipt_setup_download">Pobierz</string>
     <string name="receipt_setup_progress">Pobieranie czytnika paragonów…</string>
     <string name="receipt_setup_failed">Nie udało się pobrać czytnika paragonów. Spróbuj później.</string>
+    <string name="show_unreliable_providers_title">Pokaż niewiarygodnych dostawców</string>
+    <string name="show_unreliable_providers_summary">Wyświetlaj też dostawców, którzy często nie działają lub mają niedokładne kursy, z odpowiednim oznaczeniem</string>
+    <string name="provider_reliability_downtime">Awarie</string>
+    <string name="provider_reliability_inaccurate">Niedokładne dane</string>
 </resources>

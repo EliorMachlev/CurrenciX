@@ -278,4 +278,8 @@
     <string name="receipt_setup_download">Last ned</string>
     <string name="receipt_setup_progress">Laster ned kvitteringsleseren…</string>
     <string name="receipt_setup_failed">Kunne ikke laste ned kvitteringsleseren. Prøv igjen senere.</string>
+    <string name="show_unreliable_providers_title">Vis upålitelige leverandører</string>
+    <string name="show_unreliable_providers_summary">List også opp leverandører som ofte er nede eller har unøyaktige kurser, merket som det</string>
+    <string name="provider_reliability_downtime">Nedetid</string>
+    <string name="provider_reliability_inaccurate">Unøyaktige data</string>
 </resources>

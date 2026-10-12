@@ -281,4 +281,8 @@
     <string name="receipt_setup_download">Baixa</string>
     <string name="receipt_setup_progress">S\'està baixant el lector de tiquets…</string>
     <string name="receipt_setup_failed">No s\'ha pogut baixar el lector de tiquets. Torna-ho a provar més tard.</string>
+    <string name="show_unreliable_providers_title">Mostra proveïdors poc fiables</string>
+    <string name="show_unreliable_providers_summary">Llista també els proveïdors que sovint fallen o que tenen tipus inexactes, indicant-ho</string>
+    <string name="provider_reliability_downtime">Caigudes</string>
+    <string name="provider_reliability_inaccurate">Dades inexactes</string>
 </resources>

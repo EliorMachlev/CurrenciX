@@ -44,9 +44,11 @@ import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairChipContent
 import com.eliormachlev.currencix.view.compose.SupportingText
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
+import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
@@ -115,7 +117,7 @@ fun rememberSetRateAlert(): (RateAlert) -> Unit {
     val context = LocalContext.current
     val resources = LocalResources.current
     val snackbar = LocalAppSnackbar.current
-    val db = remember(context) { Database(context) }
+    val db = rememberDatabase()
     val confirm = { granted: Boolean ->
         snackbar?.show(resources.getString(if (granted) R.string.alert_set else R.string.alert_notifications_off))
     }
@@ -132,10 +134,8 @@ fun rememberSetRateAlert(): (RateAlert) -> Unit {
 /** The alerts waiting to fire, each with a delete button; from Settings. */
 @Composable
 fun RateAlertsSheet(onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    val db = remember(context) { Database(context) }
-    val alerts by db.alerts.alerts.flow
-        .collectAsStateWithLifecycle(db.alerts.alerts.get())
+    val db = rememberDatabase()
+    val alerts by db.alerts.alerts.collectAsStateWithLifecycle()
     LedgerBottomSheet(title = stringResource(R.string.alerts_title), onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = Spacing.XXLarge, vertical = Spacing.Small)) {
             if (alerts.isEmpty()) {

@@ -272,4 +272,8 @@
     <string name="receipt_setup_download">下载</string>
     <string name="receipt_setup_progress">正在下载小票识别组件…</string>
     <string name="receipt_setup_failed">无法下载小票识别组件，请稍后重试。</string>
+    <string name="show_unreliable_providers_title">显示不可靠的提供方</string>
+    <string name="show_unreliable_providers_summary">同时列出经常无法访问或汇率不准确的提供方，并作相应标注</string>
+    <string name="provider_reliability_downtime">经常中断</string>
+    <string name="provider_reliability_inaccurate">数据不准确</string>
 </resources>

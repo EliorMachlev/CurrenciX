@@ -26,6 +26,7 @@ import com.eliormachlev.currencix.util.fastestMode
 import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.UiTestTags
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.lock.AppLock
 import com.eliormachlev.currencix.view.navigation.Screen
@@ -210,8 +211,22 @@ private fun ProviderSection(page: SettingsPageContext) {
                 onClick = { page.openDialog(OpenDialog.ApiKey) },
             )
         }
+        ShowUnreliableProvidersRow(page)
         TopicRow(SettingsTopic.PROVIDERS, page)
     }
+}
+
+// Whether the provider pickers list the providers that are often down or inaccurate.
+@Composable
+private fun ShowUnreliableProvidersRow(page: SettingsPageContext) {
+    val enabled by page.viewModel.isShowUnreliableProvidersEnabled.collectAsStateWithLifecycle()
+    SwitchRow(
+        title = stringResource(R.string.show_unreliable_providers_title),
+        summary = stringResource(R.string.show_unreliable_providers_summary),
+        iconRes = R.drawable.ic_visibility,
+        checked = enabled,
+        onCheckedChange = page.viewModel::setShowUnreliableProvidersEnabled,
+    )
 }
 
 // Auto-refresh (#151) and the alerts checked whenever rates arrive.
@@ -375,7 +390,7 @@ private fun ChartOptionRow(
     @StringRes labelRes: Int,
     pref: Pref<Boolean>,
 ) {
-    val checked by pref.flow.collectAsStateWithLifecycle(initialValue = remember(pref) { pref.get() })
+    val checked by pref.collectAsStateWithLifecycle()
     SwitchRow(title = stringResource(labelRes), checked = checked, onCheckedChange = pref::set)
 }
 

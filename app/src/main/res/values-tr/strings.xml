@@ -277,4 +277,8 @@
     <string name="receipt_setup_download">İndir</string>
     <string name="receipt_setup_progress">Fiş okuyucu indiriliyor…</string>
     <string name="receipt_setup_failed">Fiş okuyucu indirilemedi. Daha sonra tekrar deneyin.</string>
+    <string name="show_unreliable_providers_title">Güvenilmez sağlayıcıları göster</string>
+    <string name="show_unreliable_providers_summary">Sık sık çalışmayan veya kurları hatalı olan sağlayıcıları da bu şekilde etiketleyerek listele</string>
+    <string name="provider_reliability_downtime">Kesintiler</string>
+    <string name="provider_reliability_inaccurate">Hatalı veriler</string>
 </resources>

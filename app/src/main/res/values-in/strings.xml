@@ -274,4 +274,8 @@
     <string name="receipt_setup_download">Unduh</string>
     <string name="receipt_setup_progress">Mengunduh pembaca struk…</string>
     <string name="receipt_setup_failed">Tidak dapat mengunduh pembaca struk. Coba lagi nanti.</string>
+    <string name="show_unreliable_providers_title">Tampilkan penyedia yang tidak andal</string>
+    <string name="show_unreliable_providers_summary">Tampilkan juga penyedia yang sering tidak aktif atau kursnya tidak akurat, dengan label yang sesuai</string>
+    <string name="provider_reliability_downtime">Gangguan</string>
+    <string name="provider_reliability_inaccurate">Data tidak akurat</string>
 </resources>

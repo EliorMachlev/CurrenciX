@@ -7,11 +7,9 @@ import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
-import com.eliormachlev.currencix.model.adapter.FrankfurterAppRatesAdapter
-import com.eliormachlev.currencix.model.adapter.FrankfurterAppTimelineAdapter
-import com.eliormachlev.currencix.model.adapter.register
 import java.time.LocalDate
 
+/** ECB reference rates over the same API as [FrankfurterApp]; often down ([ApiProvider.FER_EE]). */
 class FerEe : ApiProvider.Api {
     override val name = "Fer.ee"
     override val nameRes = R.string.api_ferEe_name
@@ -30,17 +28,7 @@ class FerEe : ApiProvider.Api {
         context: Context?,
         date: LocalDate?,
         secrets: ApiSecrets,
-    ): Result<ExchangeRates> {
-        val base = Currency.EUR
-        val datePart = date?.format(ISO_DATE) ?: LATEST_DATE_PATH
-        val adapter =
-            moshi {
-                register(FrankfurterAppRatesAdapter(base))
-                register(SHARED_LOCAL_DATE_ADAPTER)
-            }.adapter(ExchangeRates::class.java)
-
-        return fetchJson(context, "$baseUrl/$datePart?base=$base", name, adapter)
-    }
+    ): Result<ExchangeRates> = frankfurterRates(context, date, ApiProvider.FER_EE)
 
     override suspend fun getTimeline(
         context: Context?,
@@ -48,20 +36,5 @@ class FerEe : ApiProvider.Api {
         symbol: Currency,
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Result<Timeline> {
-        val adapter =
-            moshi {
-                register(FrankfurterAppRatesAdapter(base))
-                register(SHARED_LOCAL_DATE_ADAPTER)
-                register(FrankfurterAppTimelineAdapter(symbol))
-            }.adapter(Timeline::class.java)
-
-        val url =
-            "$baseUrl/${startDate.format(ISO_DATE)}..${endDate.format(ISO_DATE)}" +
-                "?base=${base.apiCodeOrDkkForFok()}&symbols=${symbol.apiCodeOrDkkForFok()}"
-
-        return fetchJson(context, url, name, adapter).map { timeline ->
-            if (base == Currency.FOK) timeline.copy(base = base.iso4217Alpha()) else timeline
-        }
-    }
+    ): Result<Timeline> = frankfurterTimeline(context, base, symbol, startDate..endDate, ApiProvider.FER_EE)
 }

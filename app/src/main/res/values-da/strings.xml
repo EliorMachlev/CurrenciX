@@ -276,4 +276,8 @@
     <string name="receipt_setup_download">Download</string>
     <string name="receipt_setup_progress">Downloader kvitteringslæseren…</string>
     <string name="receipt_setup_failed">Kvitteringslæseren kunne ikke downloades. Prøv igen senere.</string>
+    <string name="show_unreliable_providers_title">Vis upålidelige udbydere</string>
+    <string name="show_unreliable_providers_summary">Vis også udbydere, der ofte er nede, eller hvis kurser er unøjagtige, markeret som sådan</string>
+    <string name="provider_reliability_downtime">Nedetid</string>
+    <string name="provider_reliability_inaccurate">Unøjagtige data</string>
 </resources>

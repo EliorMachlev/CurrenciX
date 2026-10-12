@@ -278,4 +278,8 @@
     <string name="receipt_setup_download">Ladda ned</string>
     <string name="receipt_setup_progress">Laddar ned kvittoläsaren…</string>
     <string name="receipt_setup_failed">Det gick inte att ladda ned kvittoläsaren. Försök igen senare.</string>
+    <string name="show_unreliable_providers_title">Visa opålitliga leverantörer</string>
+    <string name="show_unreliable_providers_summary">Lista även leverantörer som ofta ligger nere eller har felaktiga kurser, märkta som sådana</string>
+    <string name="provider_reliability_downtime">Driftavbrott</string>
+    <string name="provider_reliability_inaccurate">Felaktiga data</string>
 </resources>

@@ -281,4 +281,8 @@
     <string name="receipt_setup_download">Télécharger</string>
     <string name="receipt_setup_progress">Téléchargement du lecteur de tickets…</string>
     <string name="receipt_setup_failed">Impossible de télécharger le lecteur de tickets. Réessayez plus tard.</string>
+    <string name="show_unreliable_providers_title">Afficher les fournisseurs peu fiables</string>
+    <string name="show_unreliable_providers_summary">Lister aussi les fournisseurs souvent indisponibles ou aux taux inexacts, signalés comme tels</string>
+    <string name="provider_reliability_downtime">Pannes</string>
+    <string name="provider_reliability_inaccurate">Données inexactes</string>
 </resources>

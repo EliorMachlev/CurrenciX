@@ -99,8 +99,8 @@ fun AppTheme(
     display: DisplaySettings,
     content: @Composable () -> Unit,
 ) {
-    val dynamicColor by display.dynamicColor.flow.collectAsStateWithLifecycle(display.dynamicColor.get())
-    val clickSounds by display.clickSounds.flow.collectAsStateWithLifecycle(display.clickSounds.get())
+    val dynamicColor by display.dynamicColor.collectAsStateWithLifecycle()
+    val clickSounds by display.clickSounds.collectAsStateWithLifecycle()
     AppTheme(dynamicColor = dynamicColor, clickSounds = clickSounds, content = content)
 }
 

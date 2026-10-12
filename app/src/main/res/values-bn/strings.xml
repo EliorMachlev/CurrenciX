@@ -277,4 +277,8 @@
     <string name="receipt_setup_download">ডাউনলোড</string>
     <string name="receipt_setup_progress">রসিদ রিডার ডাউনলোড হচ্ছে…</string>
     <string name="receipt_setup_failed">রসিদ রিডার ডাউনলোড করা যায়নি। পরে আবার চেষ্টা করুন।</string>
+    <string name="show_unreliable_providers_title">অনির্ভরযোগ্য প্রদানকারী দেখান</string>
+    <string name="show_unreliable_providers_summary">যেসব প্রদানকারী প্রায়ই বন্ধ থাকে বা যাদের হার সঠিক নয়, সেগুলোও চিহ্নিত করে দেখানো হবে</string>
+    <string name="provider_reliability_downtime">বিভ্রাট</string>
+    <string name="provider_reliability_inaccurate">ভুল তথ্য</string>
 </resources>

@@ -289,4 +289,8 @@
     <string name="receipt_setup_download">تنزيل</string>
     <string name="receipt_setup_progress">جارٍ تنزيل قارئ الإيصالات…</string>
     <string name="receipt_setup_failed">تعذّر تنزيل قارئ الإيصالات. حاول لاحقًا.</string>
+    <string name="show_unreliable_providers_title">عرض المزوّدين غير الموثوقين</string>
+    <string name="show_unreliable_providers_summary">إدراج المزوّدين الذين يتعطّلون كثيرًا أو أسعارهم غير دقيقة أيضًا، مع وسمهم بذلك</string>
+    <string name="provider_reliability_downtime">انقطاعات</string>
+    <string name="provider_reliability_inaccurate">بيانات غير دقيقة</string>
 </resources>

@@ -292,7 +292,8 @@ private fun DateFormatPickerSheet(
 }
 
 // One row per provider: "About Bank of Israel", its description in full,
-// and under it how often it publishes, beside a small clock.
+// and under it how often it publishes, beside a small clock (and why it's
+// unreliable, if it is).
 @Composable
 internal fun AboutProviderRow(provider: ApiProvider) {
     val context = LocalContext.current
@@ -302,7 +303,10 @@ internal fun AboutProviderRow(provider: ApiProvider) {
         summary = provider.getDescriptionLong(context).toString(),
         iconRes = R.drawable.ic_info,
         summaryMaxLines = FULL_SUMMARY,
-        footer = { CadenceLine(cadence) },
+        footer = {
+            CadenceLine(cadence)
+            ReliabilityLabel(provider.reliability)
+        },
     )
 }
 

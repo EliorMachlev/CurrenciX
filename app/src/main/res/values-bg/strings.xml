@@ -277,4 +277,8 @@
     <string name="receipt_setup_download">Изтегляне</string>
     <string name="receipt_setup_progress">Изтегляне на четеца на бележки…</string>
     <string name="receipt_setup_failed">Четецът на бележки не можа да се изтегли. Опитайте по-късно.</string>
+    <string name="show_unreliable_providers_title">Показване на ненадеждни доставчици</string>
+    <string name="show_unreliable_providers_summary">Включва и доставчици, които често не работят или чиито курсове са неточни, с означение за това</string>
+    <string name="provider_reliability_downtime">Прекъсвания</string>
+    <string name="provider_reliability_inaccurate">Неточни данни</string>
 </resources>

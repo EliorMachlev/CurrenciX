@@ -299,4 +299,8 @@
     <string name="receipt_setup_download">Download</string>
     <string name="receipt_setup_progress">Downloading the receipt reader…</string>
     <string name="receipt_setup_failed">Couldn\'t download the receipt reader. Try again later.</string>
+    <string name="show_unreliable_providers_title">Show unreliable providers</string>
+    <string name="show_unreliable_providers_summary">Also list providers that are often down or whose rates are inaccurate, labelled as such</string>
+    <string name="provider_reliability_downtime">Downtime</string>
+    <string name="provider_reliability_inaccurate">Inaccurate data</string>
 </resources>

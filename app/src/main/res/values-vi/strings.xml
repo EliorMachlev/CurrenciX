@@ -274,4 +274,8 @@
     <string name="receipt_setup_download">Tải xuống</string>
     <string name="receipt_setup_progress">Đang tải bộ đọc hóa đơn…</string>
     <string name="receipt_setup_failed">Không tải được bộ đọc hóa đơn. Hãy thử lại sau.</string>
+    <string name="show_unreliable_providers_title">Hiển thị nhà cung cấp không đáng tin cậy</string>
+    <string name="show_unreliable_providers_summary">Liệt kê cả các nhà cung cấp thường xuyên gián đoạn hoặc có tỷ giá không chính xác, kèm nhãn tương ứng</string>
+    <string name="provider_reliability_downtime">Gián đoạn</string>
+    <string name="provider_reliability_inaccurate">Dữ liệu không chính xác</string>
 </resources>

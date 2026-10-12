@@ -277,4 +277,8 @@
     <string name="receipt_setup_download">Λήψη</string>
     <string name="receipt_setup_progress">Λήψη αναγνώστη αποδείξεων…</string>
     <string name="receipt_setup_failed">Δεν ήταν δυνατή η λήψη του αναγνώστη αποδείξεων. Δοκιμάστε αργότερα.</string>
+    <string name="show_unreliable_providers_title">Εμφάνιση αναξιόπιστων παρόχων</string>
+    <string name="show_unreliable_providers_summary">Εμφανίζονται και πάροχοι που συχνά δεν λειτουργούν ή έχουν ανακριβείς ισοτιμίες, με σχετική σήμανση</string>
+    <string name="provider_reliability_downtime">Διακοπές λειτουργίας</string>
+    <string name="provider_reliability_inaccurate">Ανακριβή δεδομένα</string>
 </resources>

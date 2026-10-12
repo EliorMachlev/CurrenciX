@@ -23,6 +23,8 @@ class PreferenceViewModel(
         db.providers.apiProvider.stateInWhileSubscribed(viewModelScope)
     val fallbackProvider: StateFlow<ApiProvider> =
         db.providers.fallbackProvider.stateInWhileSubscribed(viewModelScope)
+    val isShowUnreliableProvidersEnabled: StateFlow<Boolean> =
+        db.providers.showUnreliable.stateInWhileSubscribed(viewModelScope)
     val openExchangeratesApiKey: StateFlow<String?> =
         db.providers.openExchangeRatesApiKey.stateInWhileSubscribed(viewModelScope)
     val isPreviewConversionEnabled: StateFlow<Boolean> =
@@ -119,6 +121,8 @@ class PreferenceViewModel(
     fun setClickSoundsEnabled(enabled: Boolean) = db.display.clickSounds.set(enabled)
 
     fun setHighRefreshRateEnabled(enabled: Boolean) = db.display.highRefreshRate.set(enabled)
+
+    fun setShowUnreliableProvidersEnabled(enabled: Boolean) = db.providers.showUnreliable.set(enabled)
 
     fun setAppLockEnabled(enabled: Boolean) = db.privacy.appLock.set(enabled)
 

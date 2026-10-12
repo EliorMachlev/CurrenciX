@@ -283,4 +283,8 @@
     <string name="receipt_setup_download">Stáhnout</string>
     <string name="receipt_setup_progress">Stahování čtečky účtenek…</string>
     <string name="receipt_setup_failed">Čtečku účtenek se nepodařilo stáhnout. Zkuste to později.</string>
+    <string name="show_unreliable_providers_title">Zobrazit nespolehlivé poskytovatele</string>
+    <string name="show_unreliable_providers_summary">Uvádět i poskytovatele, kteří často nefungují nebo mají nepřesné kurzy, s příslušným označením</string>
+    <string name="provider_reliability_downtime">Výpadky</string>
+    <string name="provider_reliability_inaccurate">Nepřesná data</string>
 </resources>

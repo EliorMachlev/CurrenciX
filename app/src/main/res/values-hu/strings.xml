@@ -277,4 +277,8 @@
     <string name="receipt_setup_download">Letöltés</string>
     <string name="receipt_setup_progress">A blokkolvasó letöltése…</string>
     <string name="receipt_setup_failed">A blokkolvasót nem sikerült letölteni. Próbálja újra később.</string>
+    <string name="show_unreliable_providers_title">Megbízhatatlan szolgáltatók megjelenítése</string>
+    <string name="show_unreliable_providers_summary">A gyakran elérhetetlen vagy pontatlan árfolyamú szolgáltatók is megjelennek, ennek jelölésével</string>
+    <string name="provider_reliability_downtime">Kiesések</string>
+    <string name="provider_reliability_inaccurate">Pontatlan adatok</string>
 </resources>

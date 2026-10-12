@@ -272,4 +272,8 @@
     <string name="receipt_setup_download">下載</string>
     <string name="receipt_setup_progress">正在下載收據辨識元件…</string>
     <string name="receipt_setup_failed">無法下載收據辨識元件，請稍後再試。</string>
+    <string name="show_unreliable_providers_title">顯示不可靠的提供者</string>
+    <string name="show_unreliable_providers_summary">一併列出經常無法使用或匯率不準確的提供者，並加上相應標示</string>
+    <string name="provider_reliability_downtime">經常中斷</string>
+    <string name="provider_reliability_inaccurate">資料不準確</string>
 </resources>

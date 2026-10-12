@@ -19,6 +19,7 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.RecentPairs
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -120,12 +121,6 @@ fun CurrencyPickerSheet(
             )
         }
     }
-}
-
-@Composable
-private fun rememberDatabase(): Database {
-    val context = LocalContext.current
-    return remember(context) { Database(context) }
 }
 
 // The recent pairs' currencies, most recent first, as picker shortcuts —

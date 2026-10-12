@@ -50,6 +50,17 @@ class PickerSheetsScreenshotTest {
             )
         }
 
+    // "Show unreliable providers" on: every provider, the unreliable ones labelled.
+    @Test fun providerPickerWithUnreliable() =
+        shots.captureMatrix("dialog_provider_picker_unreliable") {
+            ProviderPickerSheet(
+                selected = ApiProvider.entries.first(),
+                onDismiss = {},
+                onPicked = {},
+                showUnreliable = true,
+            )
+        }
+
     // The fallback picker: the main provider greyed out.
     @Test fun fallbackProviderPicker() =
         shots.captureMatrix("dialog_fallback_provider_picker") {

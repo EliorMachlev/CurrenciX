@@ -281,4 +281,8 @@
     <string name="receipt_setup_download">Descargar</string>
     <string name="receipt_setup_progress">Descargando el lector de tiques…</string>
     <string name="receipt_setup_failed">No se pudo descargar el lector de tiques. Inténtalo más tarde.</string>
+    <string name="show_unreliable_providers_title">Mostrar proveedores poco fiables</string>
+    <string name="show_unreliable_providers_summary">Incluir también los proveedores que fallan a menudo o cuyas tasas son inexactas, marcados como tales</string>
+    <string name="provider_reliability_downtime">Caídas</string>
+    <string name="provider_reliability_inaccurate">Datos inexactos</string>
 </resources>

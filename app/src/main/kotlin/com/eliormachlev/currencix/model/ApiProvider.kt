@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.eliormachlev.currencix.model.provider.BankOfCanada
 import com.eliormachlev.currencix.model.provider.BankOfIsrael
 import com.eliormachlev.currencix.model.provider.BankRossii
+import com.eliormachlev.currencix.model.provider.FerEe
 import com.eliormachlev.currencix.model.provider.FrankfurterApp
 import com.eliormachlev.currencix.model.provider.InforEuro
 import com.eliormachlev.currencix.model.provider.NorgesBank
@@ -14,6 +15,7 @@ import java.net.URI
 import java.time.LocalDate
 
 private const val ID_FRANKFURTER_APP = 1
+private const val ID_FER_EE = 2
 private const val ID_INFOR_EURO = 3
 private const val ID_NORGES_BANK = 4
 private const val ID_BANK_ROSSII = 5
@@ -23,6 +25,24 @@ private const val ID_BANK_OF_ISRAEL = 8
 
 /** How often a provider publishes new rates — the picker lists the more frequent ones first. */
 enum class UpdateCadence { HOURLY, DAILY, MONTHLY }
+
+/**
+ * How far a provider can be trusted. Anything but [RELIABLE] is hidden from
+ * the pickers unless the user turns on "Show unreliable providers", and is
+ * labelled with why when shown.
+ */
+enum class ProviderReliability {
+    RELIABLE,
+
+    /** Often down: requests fail for hours (HTTP 422 / 503). */
+    DOWNTIME,
+
+    /** Answers, but its rates don't match the market (e.g. set once a month). */
+    INACCURATE_DATA,
+    ;
+
+    val isReliable: Boolean get() = this == RELIABLE
+}
 
 /**
  * Declaration order is the picker's order within a group ([pickerOrder]):
@@ -35,10 +55,9 @@ enum class ApiProvider(
     private val implementation: Api,
     val cadence: UpdateCadence,
     val needsApiKey: Boolean = false,
+    val reliability: ProviderReliability = ProviderReliability.RELIABLE,
 ) {
     // EXCHANGERATE_HOST(0, "https://api.exchangerate.host"), // removed, as API was shut down
-    // FER_EE(2, FerEe()), // deactivated: API returns HTTP 422 most of the time with no response
-    //   from developers — see https://github.com/narorolib/fer/issues/6
 
     // European Central Bank reference rates, ~30 currencies, reliable.
     FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp(), UpdateCadence.DAILY),
@@ -47,12 +66,16 @@ enum class ApiProvider(
     BANK_ROSSII(ID_BANK_ROSSII, BankRossii(), UpdateCadence.DAILY),
 
     // ~40 currencies, but regular HTTP 503 downtimes.
-    NORGES_BANK(ID_NORGES_BANK, NorgesBank(), UpdateCadence.DAILY),
+    NORGES_BANK(ID_NORGES_BANK, NorgesBank(), UpdateCadence.DAILY, reliability = ProviderReliability.DOWNTIME),
     BANK_OF_CANADA(ID_BANK_OF_CANADA, BankOfCanada(), UpdateCadence.DAILY),
     BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael(), UpdateCadence.DAILY),
 
+    // The same ECB rates as Frankfurter.app, but the API returns HTTP 422 most
+    // of the time — see https://github.com/narorolib/fer/issues/6
+    FER_EE(ID_FER_EE, FerEe(), UpdateCadence.DAILY, reliability = ProviderReliability.DOWNTIME),
+
     // ~150 currencies, but accounting rates set once a month.
-    INFOR_EURO(ID_INFOR_EURO, InforEuro(), UpdateCadence.MONTHLY),
+    INFOR_EURO(ID_INFOR_EURO, InforEuro(), UpdateCadence.MONTHLY, reliability = ProviderReliability.INACCURATE_DATA),
     OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates(), UpdateCadence.HOURLY, needsApiKey = true),
     ;
 
@@ -71,11 +94,22 @@ enum class ApiProvider(
             entries.sortedWith(compareBy<ApiProvider> { it.needsApiKey }.thenBy { it.cadence }.thenBy { it.ordinal })
 
         /**
-         * The fallback when the user hasn't picked one, or picked what is now
-         * the [main] provider: the first free provider in [pickerOrder] that
-         * isn't [main].
+         * The providers a picker lists: [pickerOrder], minus the unreliable
+         * ones unless [showUnreliable] — though never minus one in [keep] (the
+         * provider in use, say), so a choice never vanishes from its own list.
          */
-        fun defaultFallback(main: ApiProvider): ApiProvider = pickerOrder.first { !it.needsApiKey && it != main }
+        fun listed(
+            showUnreliable: Boolean,
+            keep: Set<ApiProvider> = emptySet(),
+        ): List<ApiProvider> = pickerOrder.filter { showUnreliable || it.reliability.isReliable || it in keep }
+
+        /**
+         * The fallback when the user hasn't picked one, or picked what is now
+         * the [main] provider: the first free, reliable provider in
+         * [pickerOrder] that isn't [main].
+         */
+        fun defaultFallback(main: ApiProvider): ApiProvider =
+            pickerOrder.first { !it.needsApiKey && it.reliability.isReliable && it != main }
     }
 
     fun getName(context: Context): CharSequence = context.getText(this.implementation.nameRes)
