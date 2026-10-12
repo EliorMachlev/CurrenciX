@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.LIST_SUMMARY_LINES
 import com.eliormachlev.currencix.view.compose.LedgerLabel
 import com.eliormachlev.currencix.view.compose.LedgerRow
@@ -141,6 +142,8 @@ fun SwitchRow(
         summary = summary,
         iconRes = iconRes,
         enabled = enabled,
+        // A switch's summary says what it does and what it costs: never cut it short.
+        summaryMaxLines = FULL_SUMMARY,
         onClick = if (enabled) ({ onCheckedChange(!checked) }) else null,
         trailing = {
             Switch(
