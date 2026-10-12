@@ -18,8 +18,9 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 |---|---|---|---|
 | 1 | Semgrep `java.android.security.exported_activity.exported_activity` | `MainActivity` | `app/src/main/AndroidManifest.xml` |
 | 2 | Semgrep `java.android.security.exported_activity.exported_activity` | `ConvertTextActivity` | `app/src/main/AndroidManifest.xml` |
+| 3 | LeakCanary IgnoredReferenceMatcher (debug builds) | `ResourcesImpl.mAppContext` (vendor framework field) | `app/src/debug/kotlin/com/eliormachlev/currencix/leaks/LeakDetection.kt` |
 
-Both decided by the maintainer on 2026-10-06 (PR #181).
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12 (PR #181).
 
 ### 1. `MainActivity` is exported
 
@@ -34,9 +35,15 @@ Both decided by the maintainer on 2026-10-06 (PR #181).
 - **Why it can't be fixed:** this is "Convert currency" in the text-selection menu of other apps (`ACTION_PROCESS_TEXT`). The app showing the selection starts it, so it has to be exported. The only alternative is removing the feature.
 - **What still guards it:** it reads one thing from the caller, the selected text, cut to a fixed maximum length and handed to `PriceParser`. Beyond that it only reads the cached rates and the user's settings, and it makes no network request.
 
+### 3. LeakCanary: `ResourcesImpl.mAppContext`
+
+- **What it reports:** a "library leak" in debug builds on Xiaomi's Android and other vendors' builds from the same fork: a static `ResourcesImpl.mAppContext` field, added by the vendor, keeps the context of the last service that set up resources, here WorkManager's `SystemJobService` after it finished (about 1 kB).
+- **Why it can't be fixed:** the field is in the phone's framework, not in the app or WorkManager. The app holds no reference it could release; clearing a private framework field by reflection would be fragile, vendor-specific, and done only to quiet the report. It is held one context at a time and replaced by the next service, so it doesn't grow.
+- **What is excluded:** `configureLeakDetection` (debug source set) takes LeakCanary's own known-leak list and turns that one static field from "report as a library leak" into "ignore". Every other known leak and every app leak is still reported; release builds have no LeakCanary.
+
 ### What the exclusion does and doesn't cover
 
-Each exclusion is one `nosemgrep` comment naming the rule, on the one activity it is for. The rule itself keeps running: an exported activity added later is reported, and fails the Semgrep job, until it is either not exported or added here. The widget's configure activity shows the first route: it used to be exported, did not need to be, and no longer is.
+For 1 and 2, each exclusion is one `nosemgrep` comment naming the rule, on the one activity it is for. The rule itself keeps running: an exported activity added later is reported, and fails the Semgrep job, until it is either not exported or added here. The widget's configure activity shows the first route: it used to be exported, did not need to be, and no longer is.
 
 ## Adding an exception
 
@@ -55,4 +62,3 @@ When the tool is fixed upstream, or the code changes so the finding no longer ap
 These have no real fix either, but nothing is excluded for them. They show up in every report.
 
 - **Lint `Typos`, twice, in `values-tr/strings_currencies.xml`:** "Gine" in the Turkish names of the Guinean franc and the Papua New Guinean kina. It is the Turkish word for Guinea; lint's word list takes it for a misspelling of "yine".
-- **LeakCanary, debug builds on some manufacturers' devices:** a leak inside the vendor's Android framework (`ResourcesImpl.mAppContext`) that pins a WorkManager service context. The app holds no reference it could release.

@@ -53,10 +53,9 @@ class NoSuppressionsTest {
     @Test
     fun `every recorded exception sits on the thing it was granted for`() {
         EXCEPTIONS.forEach { exception ->
-            val marked = Regex(Regex.escape(exception.line) + """\s*<activity\s+android:name="[\w.]*\.""" + exception.subject + "\"")
             assertTrue(
-                "${exception.path}: the ${exception.rule} exclusion must be directly above ${exception.subject}",
-                marked.containsMatchIn(File(root, exception.path).readText()),
+                "${exception.path}: the ${exception.rule} exclusion must be on ${exception.subject}",
+                exception.placement.containsMatchIn(File(root, exception.path).readText()),
             )
         }
     }
@@ -105,12 +104,17 @@ class NoSuppressionsTest {
         val text: String,
     )
 
-    /** One permitted suppression: the exact [line], in [path], silencing [rule] for [subject]. */
+    /**
+     * One permitted suppression: the exact [line], in [path], silencing
+     * [rule] for [subject]; [placement] matches the file only while the line
+     * still sits on that subject.
+     */
     private data class RecordedException(
         val path: String,
         val line: String,
         val rule: String,
         val subject: String,
+        val placement: Regex,
     )
 
     private companion object {
@@ -120,12 +124,31 @@ class NoSuppressionsTest {
         const val MANIFEST = "app/src/main/AndroidManifest.xml"
         const val EXPORTED_ACTIVITY_RULE = "java.android.security.exported_activity.exported_activity"
 
+        const val LEAK_DETECTION = "app/src/debug/kotlin/com/eliormachlev/currencix/leaks/LeakDetection.kt"
+        const val VENDOR_FIELD = "ResourcesImpl.mAppContext"
+
         // The whole list. Adding to it is a maintainer's decision, recorded
         // in EXCEPTIONS_DOC with the reason no real fix exists.
         val EXCEPTIONS =
             listOf("MainActivity", "ConvertTextActivity").map { activity ->
-                RecordedException(MANIFEST, "<!-- nosemgrep: $EXPORTED_ACTIVITY_RULE -->", EXPORTED_ACTIVITY_RULE, activity)
-            }
+                val marker = "<!-- nosemgrep: $EXPORTED_ACTIVITY_RULE -->"
+                RecordedException(
+                    MANIFEST,
+                    marker,
+                    EXPORTED_ACTIVITY_RULE,
+                    activity,
+                    // The marker directly above that activity's element.
+                    Regex(Regex.escape(marker) + """\s*<activity\s+android:name="[\w.]*\.""" + activity + "\""),
+                )
+            } +
+                RecordedException(
+                    LEAK_DETECTION,
+                    "IgnoredReferenceMatcher(vendorAppContext),",
+                    "LeakCanary IgnoredReferenceMatcher",
+                    VENDOR_FIELD,
+                    // Only that one static field is ignored.
+                    Regex(Regex.escape("""StaticFieldPattern("android.content.res.ResourcesImpl", "mAppContext")""")),
+                )
 
         val SKIPPED_DIRECTORIES = setOf("build", ".gradle", ".git", ".kotlin", ".idea", "node_modules")
         val SCANNED_EXTENSIONS = setOf("kt", "kts", "java", "gradle", "xml", "pro", "yml", "yaml", "toml", "properties")
@@ -146,6 +169,8 @@ class NoSuppressionsTest {
                 Regex("""-nowarn|suppressWarnings\s*="""),
                 // Analyzer flags that drop a rule or a path wholesale
                 Regex("""--exclude-rule|--exclude[ =]"""),
+                // LeakCanary told to stop reporting a reference
+                Regex("""IgnoredReferenceMatcher\("""),
             )
 
         // detekt's baseline-<module>.xml / detekt-baseline.xml and lint's lint-baseline.xml.

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
+import com.eliormachlev.currencix.leaks.configureLeakDetection
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
@@ -38,6 +39,7 @@ class CurrenciesApplication : Application() {
         // except crash-reporter installation there.
         installDebugCrashReporter()
         if (!isMainProcess()) return
+        configureLeakDetection()
         installLogging()
         installJankStats()
         applyNightMode()
