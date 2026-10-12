@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Sons en tocar</string>
     <string name="click_sounds_summary">Fa un clic en tocar a tota l\'aplicació\nSegueix la configuració del sistema</string>
     <string name="auto_refresh_title">Actualització automàtica dels tipus</string>
-    <string name="auto_refresh_summary">Actualitza en segon pla amb la freqüència recomanada pel proveïdor</string>
     <string name="date_format_title">Format de data i hora</string>
     <string name="category_appearance">Aparença</string>
     <string name="system_default">Opció predeterminada del sistema</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Desbloqueja</string>
     <string name="private_requests_title">Peticions privades</string>
     <string name="private_requests_summary">Envia les peticions de canvi igual que tothom: sense versió de l\'app, detalls del dispositiu ni identificadors de memòria cau. Gasta una mica més de dades.</string>
+    <string name="auto_refresh_summary">Mantén els tipus actualitzats en segon pla</string>
+    <string name="refresh_interval_title">Actualitza cada</string>
 </resources>

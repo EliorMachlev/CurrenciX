@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Suara klik</string>
     <string name="click_sounds_summary">Putar suara klik saat mengetuk di seluruh aplikasi\nMengikuti setelan sistem</string>
     <string name="auto_refresh_title">Pembaruan kurs otomatis</string>
-    <string name="auto_refresh_summary">Perbarui di latar belakang sesuai frekuensi yang direkomendasikan penyedia</string>
     <string name="date_format_title">Format tanggal dan waktu</string>
     <string name="category_appearance">Tampilan</string>
     <string name="system_default">Default sistem</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Buka kunci</string>
     <string name="private_requests_title">Permintaan privat</string>
     <string name="private_requests_summary">Kirim permintaan kurs sama seperti orang lain: tanpa versi aplikasi, detail perangkat, atau pengenal cache. Memakai sedikit lebih banyak data.</string>
+    <string name="auto_refresh_summary">Perbarui kurs di latar belakang</string>
+    <string name="refresh_interval_title">Perbarui setiap</string>
 </resources>

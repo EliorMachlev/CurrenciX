@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Zvukovi dodira</string>
     <string name="click_sounds_summary">Klik pri dodiru u cijeloj aplikaciji\nPrati postavku sustava</string>
     <string name="auto_refresh_title">Automatsko osvježavanje tečajeva</string>
-    <string name="auto_refresh_summary">Osvježava tečajeve u pozadini učestalošću koju preporučuje pružatelj</string>
     <string name="date_format_title">Format datuma i vremena</string>
     <string name="category_appearance">Izgled</string>
     <string name="system_default">Zadano od sustava</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Otključaj</string>
     <string name="private_requests_title">Privatni zahtjevi</string>
     <string name="private_requests_summary">Šalji zahtjeve za tečaj kao svi ostali: bez verzije aplikacije, podataka o uređaju i identifikatora predmemorije. Troši malo više podataka.</string>
+    <string name="auto_refresh_summary">Održavaj tečajeve ažurnima u pozadini</string>
+    <string name="refresh_interval_title">Osvježi svakih</string>
 </resources>

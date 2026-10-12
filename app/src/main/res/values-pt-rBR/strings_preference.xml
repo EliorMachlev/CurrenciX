@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Sons de toque</string>
     <string name="click_sounds_summary">Toca um clique ao tocar em todo o app\nSegue a configuração do sistema</string>
     <string name="auto_refresh_title">Atualização automática das cotações</string>
-    <string name="auto_refresh_summary">Atualizar em segundo plano na frequência recomendada pelo provedor</string>
     <string name="date_format_title">Formato de data e hora</string>
     <string name="category_appearance">Aparência</string>
     <string name="system_default">Padrão do sistema</string>
@@ -202,4 +201,6 @@
     <string name="app_lock_unlock">Desbloquear</string>
     <string name="private_requests_title">Solicitações privadas</string>
     <string name="private_requests_summary">Envia as solicitações de cotação como todo mundo: sem versão do app, detalhes do aparelho ou identificadores de cache. Usa um pouco mais de dados.</string>
+    <string name="auto_refresh_summary">Manter as cotações atualizadas em segundo plano</string>
+    <string name="refresh_interval_title">Atualizar a cada</string>
 </resources>

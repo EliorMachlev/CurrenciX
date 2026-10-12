@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Smellihljóð</string>
     <string name="click_sounds_summary">Smellur við ýtingar í öllu forritinu\nFylgir kerfisstillingu</string>
     <string name="auto_refresh_title">Endurnýja gengi sjálfkrafa</string>
-    <string name="auto_refresh_summary">Endurnýja í bakgrunni með þeirri tíðni sem veitan mælir með</string>
     <string name="date_format_title">Snið dagsetningar og tíma</string>
     <string name="category_appearance">Útlit</string>
     <string name="system_default">Sjálfgildi kerfis</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Opna</string>
     <string name="private_requests_title">Einkabeiðnir</string>
     <string name="private_requests_summary">Senda gengisbeiðnir eins og allir aðrir: án útgáfu forrits, upplýsinga um tæki eða skyndiminnisauðkenna. Notar aðeins meiri gögn.</string>
+    <string name="auto_refresh_summary">Halda gengi uppfærðu í bakgrunni</string>
+    <string name="refresh_interval_title">Uppfæra á</string>
 </resources>

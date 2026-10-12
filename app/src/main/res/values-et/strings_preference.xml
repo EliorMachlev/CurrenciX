@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Klõpsuhelid</string>
     <string name="click_sounds_summary">Klõpsuheli puudutamisel kogu rakenduses\nJärgib süsteemi seadet</string>
     <string name="auto_refresh_title">Kursside automaatne uuendamine</string>
-    <string name="auto_refresh_summary">Uuenda taustal teenusepakkuja soovitatud sagedusega</string>
     <string name="date_format_title">Kuupäeva ja kellaaja vorming</string>
     <string name="category_appearance">Välimus</string>
     <string name="system_default">Süsteemi vaikeseade</string>
@@ -198,4 +197,6 @@
     <string name="app_lock_unlock">Ava</string>
     <string name="private_requests_title">Privaatsed päringud</string>
     <string name="private_requests_summary">Saada kursipäringud nagu kõik teised: ilma rakenduse versiooni, seadme andmete ja vahemälu tunnusteta. Kulutab veidi rohkem andmeid.</string>
+    <string name="auto_refresh_summary">Hoia kursid taustal ajakohasena</string>
+    <string name="refresh_interval_title">Värskenda iga</string>
 </resources>

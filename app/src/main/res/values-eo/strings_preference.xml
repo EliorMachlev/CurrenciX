@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Klakaj sonoj</string>
     <string name="click_sounds_summary">Ludi klakon ĉe frapetoj tra la aplikaĵo\nSekvas la sisteman agordon</string>
     <string name="auto_refresh_title">Aŭtomata refreŝigo de kurzoj</string>
-    <string name="auto_refresh_summary">Refreŝigi en la fono laŭ la ofteco rekomendita de la provizanto</string>
     <string name="date_format_title">Formato de dato kaj tempo</string>
     <string name="category_appearance">Aspekto</string>
     <string name="system_default">Laŭ la sistemo</string>
@@ -200,4 +199,6 @@
     <string name="app_lock_unlock">Malŝlosi</string>
     <string name="private_requests_title">Privataj petoj</string>
     <string name="private_requests_summary">Sendi kurzajn petojn same kiel ĉiuj: sen aplikaĵa versio, aparataj detaloj aŭ kaŝmemoraj identigiloj. Uzas iom pli da datumoj.</string>
+    <string name="auto_refresh_summary">Teni kurzojn ĝisdataj fone</string>
+    <string name="refresh_interval_title">Aktualigi ĉiun</string>
 </resources>

@@ -28,7 +28,6 @@
     <string name="click_sounds_title">觸控音效</string>
     <string name="click_sounds_summary">在整個應用程式中輕觸時播放點擊聲\n依循系統設定</string>
     <string name="auto_refresh_title">自動更新匯率</string>
-    <string name="auto_refresh_summary">依資料來源建議的頻率在背景更新</string>
     <string name="date_format_title">日期與時間格式</string>
     <string name="category_appearance">應用程式外觀</string>
     <string name="system_default">系統預設值</string>
@@ -196,4 +195,6 @@
     <string name="app_lock_unlock">解鎖</string>
     <string name="private_requests_title">隱私要求</string>
     <string name="private_requests_summary">以與所有人相同的方式傳送匯率要求：不含應用程式版本、裝置資訊或快取識別碼。會多用一點數據。</string>
+    <string name="auto_refresh_summary">在背景保持匯率最新</string>
+    <string name="refresh_interval_title">重新整理間隔</string>
 </resources>

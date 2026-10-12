@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.Language
+import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
@@ -53,6 +54,8 @@ class PreferenceViewModel(
         db.display.dateFormat.stateInWhileSubscribed(viewModelScope)
     val isAutoRefreshEnabled: StateFlow<Boolean> =
         db.providers.autoRefresh.stateInWhileSubscribed(viewModelScope)
+    val autoRefreshInterval: StateFlow<RefreshInterval> =
+        db.providers.autoRefreshInterval.stateInWhileSubscribed(viewModelScope)
 
     fun setApiProvider(api: ApiProvider) {
         persistAndRefreshRates { db.providers.apiProvider.set(api) }
@@ -140,6 +143,8 @@ class PreferenceViewModel(
     // schedule/cancel is driven from the Application observer so the source
     // of truth is DataStore rather than the UI's imperative flow.
     fun setAutoRefreshEnabled(enabled: Boolean) = db.providers.autoRefresh.set(enabled)
+
+    fun setAutoRefreshInterval(interval: RefreshInterval) = db.providers.autoRefreshInterval.set(interval)
 
     fun getTheme(): AppTheme = db.display.theme.get()
 }

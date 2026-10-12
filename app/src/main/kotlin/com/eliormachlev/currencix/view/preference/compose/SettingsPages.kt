@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
@@ -239,6 +240,15 @@ private fun UpdatesSection(page: SettingsPageContext) {
             iconRes = R.drawable.ic_schedule,
             checked = page.values.api.autoRefreshEnabled,
             onCheckedChange = page.viewModel::setAutoRefreshEnabled,
+        )
+        PreferenceRow(
+            title = stringResource(R.string.refresh_interval_title),
+            summary =
+                page.values.api.autoRefreshInterval
+                    .label(LocalConfiguration.current.locales[0]),
+            iconRes = R.drawable.ic_refresh,
+            enabled = page.values.api.autoRefreshEnabled,
+            onClick = { page.openDialog(OpenDialog.AutoRefreshInterval) },
         )
         PreferenceRow(
             title = stringResource(R.string.alerts_title),

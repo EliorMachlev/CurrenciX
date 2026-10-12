@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Klickljud</string>
     <string name="click_sounds_summary">Spela ett klick vid tryck i hela appen\nFöljer systeminställningen</string>
     <string name="auto_refresh_title">Uppdatera kurser automatiskt</string>
-    <string name="auto_refresh_summary">Uppdatera i bakgrunden med det intervall som leverantören rekommenderar</string>
     <string name="date_format_title">Datum- och tidsformat</string>
     <string name="category_appearance">Utseende</string>
     <string name="system_default">Systemstandard</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Lås upp</string>
     <string name="private_requests_title">Privata förfrågningar</string>
     <string name="private_requests_summary">Skicka kursförfrågningar på samma sätt som alla andra: utan appversion, enhetsuppgifter eller cache-id:n. Drar lite mer data.</string>
+    <string name="auto_refresh_summary">Håll kurserna uppdaterade i bakgrunden</string>
+    <string name="refresh_interval_title">Uppdatera var</string>
 </resources>

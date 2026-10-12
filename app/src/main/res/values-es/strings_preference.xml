@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Sonidos al tocar</string>
     <string name="click_sounds_summary">Reproduce un clic al tocar en toda la aplicación\nSigue la configuración del sistema</string>
     <string name="auto_refresh_title">Actualización automática de tipos</string>
-    <string name="auto_refresh_summary">Actualizar en segundo plano con la frecuencia recomendada por el proveedor</string>
     <string name="date_format_title">Formato de fecha y hora</string>
     <string name="category_appearance">Apariencia</string>
     <string name="system_default">Predeterminado del sistema</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Desbloquear</string>
     <string name="private_requests_title">Solicitudes privadas</string>
     <string name="private_requests_summary">Envía las solicitudes de tipos de cambio igual que todos: sin versión de la app, datos del dispositivo ni identificadores de caché. Consume algo más de datos.</string>
+    <string name="auto_refresh_summary">Mantener los tipos actualizados en segundo plano</string>
+    <string name="refresh_interval_title">Actualizar cada</string>
 </resources>

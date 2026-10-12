@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Suoni al tocco</string>
     <string name="click_sounds_summary">Riproduce un clic ai tocchi in tutta l\'app\nSegue l\'impostazione di sistema</string>
     <string name="auto_refresh_title">Aggiornamento automatico dei tassi</string>
-    <string name="auto_refresh_summary">Aggiorna in background con la frequenza consigliata dal fornitore</string>
     <string name="date_format_title">Formato di data e ora</string>
     <string name="category_appearance">Aspetto</string>
     <string name="system_default">Predefinito di sistema</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Sblocca</string>
     <string name="private_requests_title">Richieste private</string>
     <string name="private_requests_summary">Invia le richieste dei cambi come tutti gli altri: senza versione dell\'app, dettagli del dispositivo o identificatori della cache. Usa un po\' più di dati.</string>
+    <string name="auto_refresh_summary">Mantieni i tassi aggiornati in background</string>
+    <string name="refresh_interval_title">Aggiorna ogni</string>
 </resources>

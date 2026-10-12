@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Klikgeluiden</string>
     <string name="click_sounds_summary">Klikgeluid bij tikken in de hele app\nVolgt de systeeminstelling</string>
     <string name="auto_refresh_title">Koersen automatisch bijwerken</string>
-    <string name="auto_refresh_summary">Op de achtergrond bijwerken met het door de aanbieder aanbevolen interval</string>
     <string name="date_format_title">Datum- en tijdformaat</string>
     <string name="category_appearance">Uiterlijk</string>
     <string name="system_default">Systeemstandaard</string>
@@ -197,4 +196,6 @@
     <string name="app_lock_unlock">Ontgrendelen</string>
     <string name="private_requests_title">Privéverzoeken</string>
     <string name="private_requests_summary">Verstuur koersverzoeken op dezelfde manier als iedereen: zonder appversie, apparaatgegevens of cache-ID\'s. Kost iets meer data.</string>
+    <string name="auto_refresh_summary">Koersen op de achtergrond actueel houden</string>
+    <string name="refresh_interval_title">Vernieuwen elke</string>
 </resources>

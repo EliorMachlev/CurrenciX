@@ -28,7 +28,6 @@
     <string name="click_sounds_title">צלילי הקשה</string>
     <string name="click_sounds_summary">צליל לחיצה בהקשה בכל האפליקציה\nבהתאם להגדרות המערכת</string>
     <string name="auto_refresh_title">רענון שערים אוטומטי</string>
-    <string name="auto_refresh_summary">רענון ברקע בתדירות שעליה ממליץ הספק</string>
     <string name="date_format_title">תבנית תאריך ושעה</string>
     <string name="category_appearance">מראה</string>
     <string name="system_default">ברירת המחדל של המערכת</string>
@@ -200,4 +199,6 @@
     <string name="app_lock_unlock">ביטול נעילה</string>
     <string name="private_requests_title">בקשות פרטיות</string>
     <string name="private_requests_summary">שליחת בקשות השערים כמו של כולם: בלי גרסת אפליקציה, פרטי מכשיר או מזהי מטמון. צורך מעט יותר נתונים.</string>
+    <string name="auto_refresh_summary">שמירה על שערים עדכניים ברקע</string>
+    <string name="refresh_interval_title">רענון כל</string>
 </resources>

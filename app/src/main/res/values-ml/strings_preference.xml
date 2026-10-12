@@ -28,7 +28,6 @@
     <string name="click_sounds_title">ക്ലിക്ക് ശബ്ദങ്ങൾ</string>
     <string name="click_sounds_summary">ആപ്പിൽ എവിടെ ടാപ്പ് ചെയ്താലും ക്ലിക്ക് ശബ്ദം\nസിസ്റ്റം ക്രമീകരണം പിന്തുടരുന്നു</string>
     <string name="auto_refresh_title">നിരക്കുകൾ സ്വയമേവ പുതുക്കുക</string>
-    <string name="auto_refresh_summary">ദാതാവ് ശുപാർശ ചെയ്യുന്ന ഇടവേളയിൽ പശ്ചാത്തലത്തിൽ പുതുക്കുക</string>
     <string name="date_format_title">തീയതി, സമയ ഫോർമാറ്റ്</string>
     <string name="category_appearance">ദൃശ്യരൂപം</string>
     <string name="system_default">സിസ്റ്റം സ്ഥിരസ്ഥിതി</string>
@@ -198,4 +197,6 @@
     <string name="app_lock_unlock">അൺലോക്ക്</string>
     <string name="private_requests_title">സ്വകാര്യ അഭ്യർത്ഥനകൾ</string>
     <string name="private_requests_summary">നിരക്ക് അഭ്യർത്ഥനകൾ എല്ലാവരുടേതുപോലെ അയയ്ക്കുക: ആപ്പ് പതിപ്പോ ഉപകരണ വിവരങ്ങളോ കാഷെ ഐഡന്റിഫയറുകളോ ഇല്ലാതെ. കുറച്ചുകൂടി ഡാറ്റ ഉപയോഗിക്കും.</string>
+    <string name="auto_refresh_summary">നിരക്കുകൾ പശ്ചാത്തലത്തിൽ കാലികമായി നിലനിർത്തുക</string>
+    <string name="refresh_interval_title">പുതുക്കൽ ഇടവേള</string>
 </resources>

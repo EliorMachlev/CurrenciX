@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -28,6 +29,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.Language
+import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MAX
 import com.eliormachlev.currencix.util.DECIMAL_PLACES_MIN
 import com.eliormachlev.currencix.util.inReadingOrder
@@ -58,6 +60,8 @@ internal sealed interface OpenDialog {
     data object ApiKey : OpenDialog
 
     data object RateAlerts : OpenDialog
+
+    data object AutoRefreshInterval : OpenDialog
 }
 
 /**
@@ -111,6 +115,7 @@ internal data class ApiValues(
     // Only Open Exchange Rates takes one.
     val apiKey: String?,
     val autoRefreshEnabled: Boolean,
+    val autoRefreshInterval: RefreshInterval,
 )
 
 @Immutable
@@ -131,10 +136,11 @@ private fun observePreferenceValues(viewModel: PreferenceViewModel): PreferenceV
     val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
     val apiKey by viewModel.openExchangeratesApiKey.collectAsStateWithLifecycle()
     val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
+    val autoRefreshInterval by viewModel.autoRefreshInterval.collectAsStateWithLifecycle()
     val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
     val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     return PreferenceValues(
-        api = ApiValues(provider, fallback, apiKey, autoRefreshEnabled),
+        api = ApiValues(provider, fallback, apiKey, autoRefreshEnabled, autoRefreshInterval),
         appearance = observeAppearanceValues(viewModel, provider),
         decimalPlaces = decimalPlaces,
         expandedKeypadEnabled = expandedKeypadEnabled,
@@ -211,6 +217,10 @@ private fun PreferenceDialogsHost(
             FallbackPickerSheet(viewModel, dismiss)
         }
 
+        OpenDialog.AutoRefreshInterval -> {
+            RefreshIntervalPickerSheet(selected = values.api.autoRefreshInterval, dismiss = dismiss, viewModel = viewModel)
+        }
+
         OpenDialog.RateAlerts -> {
             RateAlertsSheet(onDismiss = dismiss)
         }
@@ -234,6 +244,22 @@ private fun DecimalPlacesPickerSheet(
         choices = Choices((DECIMAL_PLACES_MIN..DECIMAL_PLACES_MAX).toList(), decimalPlaces) { it.toString() },
         onDismiss = dismiss,
         onPicked = viewModel::setDecimalPlaces,
+    )
+}
+
+// How often auto-refresh runs: 15 minutes to a day.
+@Composable
+private fun RefreshIntervalPickerSheet(
+    selected: RefreshInterval,
+    dismiss: () -> Unit,
+    viewModel: PreferenceViewModel,
+) {
+    val locale = LocalConfiguration.current.locales[0]
+    SingleChoicePickerSheet(
+        title = stringResource(id = R.string.refresh_interval_title),
+        choices = Choices(RefreshInterval.entries, selected) { it.label(locale) },
+        onDismiss = dismiss,
+        onPicked = viewModel::setAutoRefreshInterval,
     )
 }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.repository.persistence.PrefStore
@@ -26,9 +27,9 @@ private const val KEY_SHOW_UNRELIABLE_PROVIDERS = "_showUnreliableProviders"
 // via Settings (until #147 onboarding lands the hero opt-in).
 private const val KEY_AUTO_REFRESH_ENABLED = "_autoRefreshEnabled"
 
-// Optional user override for the WorkManager refresh cadence. `null` means
-// "use the provider-recommended default"; a positive Int overrides it.
-private const val KEY_AUTO_REFRESH_INTERVAL_OVERRIDE = "_autoRefreshIntervalMinutesOverride"
+// How often auto-refresh runs, in minutes (RefreshInterval.minutes); absent
+// means the default. The name predates the setting: it's stored, so it stays.
+private const val KEY_AUTO_REFRESH_INTERVAL = "_autoRefreshIntervalMinutesOverride"
 
 private val apiProviderKey = intPreferencesKey(KEY_API)
 private val fallbackApiKey = intPreferencesKey(KEY_FALLBACK_API)
@@ -70,15 +71,11 @@ class ProviderSettings(
     /** Background rate refresh (#151), opt-in. */
     val autoRefresh: Pref<Boolean> = store.booleanPref(KEY_AUTO_REFRESH_ENABLED, default = false)
 
-    /**
-     * The user's refresh interval in minutes, or null for the provider's
-     * recommended one. Stored only when positive: DataStore has no nullable
-     * Int, so an absent key (or an old 0) means "no override".
-     */
-    val autoRefreshIntervalOverride: Pref<Int?> =
+    /** How often auto-refresh runs; [RefreshInterval.DEFAULT] (an hour) until the user picks one. */
+    val autoRefreshInterval: Pref<RefreshInterval> =
         store.intPref(
-            KEY_AUTO_REFRESH_INTERVAL_OVERRIDE,
-            decode = { minutes -> minutes?.takeIf { it > 0 } },
-            encode = { minutes -> minutes?.takeIf { it > 0 } },
+            KEY_AUTO_REFRESH_INTERVAL,
+            decode = RefreshInterval::fromMinutes,
+            encode = { it.minutes.toInt() },
         )
 }

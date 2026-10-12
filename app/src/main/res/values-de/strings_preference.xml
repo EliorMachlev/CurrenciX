@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Klickgeräusche</string>
     <string name="click_sounds_summary">Klickton beim Tippen in der App\nRichtet sich nach der Systemeinstellung</string>
     <string name="auto_refresh_title">Kurse automatisch aktualisieren</string>
-    <string name="auto_refresh_summary">Im Hintergrund im vom Anbieter empfohlenen Intervall aktualisieren</string>
     <string name="date_format_title">Datums- und Uhrzeitformat</string>
     <string name="category_appearance">Aussehen</string>
     <string name="system_default">Systemstandard</string>
@@ -197,4 +196,6 @@
     <string name="app_lock_unlock">Entsperren</string>
     <string name="private_requests_title">Private Anfragen</string>
     <string name="private_requests_summary">Kursanfragen so senden wie alle anderen: ohne App-Version, Gerätedetails oder Cache-Kennungen. Braucht etwas mehr Daten.</string>
+    <string name="auto_refresh_summary">Kurse im Hintergrund aktuell halten</string>
+    <string name="refresh_interval_title">Aktualisieren alle</string>
 </resources>

@@ -44,7 +44,6 @@
     <string name="click_sounds_summary">Play a click on taps across the app\nFollows system setting</string>
     <!-- auto-refresh (#151) -->
     <string name="auto_refresh_title">Auto-refresh rates</string>
-    <string name="auto_refresh_summary">Refresh in the background at the provider-recommended cadence</string>
     <string name="date_format_title">Date and Time format</string>
     <!-- backup -->
     <string name="backup_title">Backup &amp; Restore</string>
@@ -205,4 +204,6 @@
     <string name="app_lock_unlock">Unlock</string>
     <string name="private_requests_title">Private requests</string>
     <string name="private_requests_summary">Send rate requests the same way as everyone else: no app version, no device details, no cache identifiers. Uses a little more data.</string>
+    <string name="auto_refresh_summary">Keep rates up to date in the background</string>
+    <string name="refresh_interval_title">Refresh every</string>
 </resources>

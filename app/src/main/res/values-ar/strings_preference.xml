@@ -28,7 +28,6 @@
     <string name="click_sounds_title">أصوات النقر</string>
     <string name="click_sounds_summary">تشغيل صوت نقرة عند النقر في أنحاء التطبيق\nيتبع إعداد النظام</string>
     <string name="auto_refresh_title">تحديث الأسعار تلقائيًا</string>
-    <string name="auto_refresh_summary">التحديث في الخلفية بالوتيرة التي يوصي بها المزوّد</string>
     <string name="date_format_title">تنسيق التاريخ والوقت</string>
     <string name="category_appearance">المظهر</string>
     <string name="system_default">الإعداد الافتراضي للنظام</string>
@@ -202,4 +201,6 @@
     <string name="app_lock_unlock">فتح القفل</string>
     <string name="private_requests_title">طلبات خاصة</string>
     <string name="private_requests_summary">أرسل طلبات الأسعار بالطريقة نفسها لدى الجميع: بلا إصدار للتطبيق ولا تفاصيل للجهاز ولا معرّفات تخزين مؤقت. يستهلك بيانات أكثر قليلًا.</string>
+    <string name="auto_refresh_summary">تحديث الأسعار في الخلفية باستمرار</string>
+    <string name="refresh_interval_title">التحديث كل</string>
 </resources>

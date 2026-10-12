@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Dźwięki dotknięć</string>
     <string name="click_sounds_summary">Kliknięcie przy dotknięciu w całej aplikacji\nZgodnie z ustawieniem systemu</string>
     <string name="auto_refresh_title">Automatyczne odświeżanie kursów</string>
-    <string name="auto_refresh_summary">Odświeżaj w tle z częstotliwością zalecaną przez dostawcę</string>
     <string name="date_format_title">Format daty i godziny</string>
     <string name="category_appearance">Wygląd</string>
     <string name="system_default">Ustawienie domyślne systemu</string>
@@ -200,4 +199,6 @@
     <string name="app_lock_unlock">Odblokuj</string>
     <string name="private_requests_title">Prywatne żądania</string>
     <string name="private_requests_summary">Wysyłaj żądania kursów tak samo jak wszyscy: bez wersji aplikacji, danych urządzenia i identyfikatorów pamięci podręcznej. Zużywa nieco więcej danych.</string>
+    <string name="auto_refresh_summary">Aktualizuj kursy w tle</string>
+    <string name="refresh_interval_title">Odświeżaj co</string>
 </resources>

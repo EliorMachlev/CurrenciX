@@ -28,7 +28,6 @@
     <string name="click_sounds_title">点按音效</string>
     <string name="click_sounds_summary">在整个应用中点按时播放点击声\n跟随系统设置</string>
     <string name="auto_refresh_title">自动更新汇率</string>
-    <string name="auto_refresh_summary">按数据源建议的频率在后台更新</string>
     <string name="date_format_title">日期和时间格式</string>
     <string name="category_appearance">外观</string>
     <string name="system_default">系统默认</string>
@@ -196,4 +195,6 @@
     <string name="app_lock_unlock">解锁</string>
     <string name="private_requests_title">隐私请求</string>
     <string name="private_requests_summary">以与所有人相同的方式发送汇率请求：不含应用版本、设备信息或缓存标识。会多用一点流量。</string>
+    <string name="auto_refresh_summary">在后台保持汇率最新</string>
+    <string name="refresh_interval_title">刷新间隔</string>
 </resources>

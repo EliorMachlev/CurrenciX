@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Звуци при докосване</string>
     <string name="click_sounds_summary">Звук при докосване в цялото приложение\nСледва системната настройка</string>
     <string name="auto_refresh_title">Автоматично обновяване на курсовете</string>
-    <string name="auto_refresh_summary">Обновяване на заден план с честотата, препоръчана от доставчика</string>
     <string name="date_format_title">Формат за дата и час</string>
     <string name="category_appearance">Изглед</string>
     <string name="system_default">Стандартно за системата</string>
@@ -201,4 +200,6 @@
     <string name="app_lock_unlock">Отключване</string>
     <string name="private_requests_title">Лични заявки</string>
     <string name="private_requests_summary">Заявките за курсове се изпращат еднакво за всички: без версия на приложението, данни за устройството и идентификатори на кеша. Използва малко повече данни.</string>
+    <string name="auto_refresh_summary">Курсовете се обновяват във фонов режим</string>
+    <string name="refresh_interval_title">Обновяване на всеки</string>
 </resources>

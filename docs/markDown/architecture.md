@@ -93,7 +93,7 @@ The app has no SQLite database. `SharedPreferences` has been fully migrated to *
 | `rates` | `RateStore` | The latest rates, and each pair's cached timeline |
 | `lastState` | `LastStateStore` | The converter's pair, the recent pairs, a pinned historical date |
 | `stars` | `StarStore` | Starred currencies in the user's order; the starred-only filter |
-| `providers` | `ProviderSettings` | Main and fallback provider, the Open Exchange Rates key, whether pickers show unreliable providers, auto-refresh |
+| `providers` | `ProviderSettings` | Main and fallback provider, the Open Exchange Rates key, whether pickers show unreliable providers, auto-refresh and its interval |
 | `fees` | `FeeStore` | Saved fees and the active exchange / bank fee |
 | `display` | `DisplaySettings` | Theme, decimals, date format, keypad, haptics, click sounds, onboarding gate |
 | `chart` | `ChartSettings` | What the timeline chart draws |
@@ -201,7 +201,7 @@ Every text field is state-based (`TextFieldState`, Compose 1.13): the field owns
 
 ### Settings
 
-Settings is a list of categories, each a screen of its own like the fee manager, with a chevron on every row that opens one (`NavigationRow`): **Converter** (fees, keypad, decimal places, conversion preview), **Exchange rates** (provider, fallback, key, auto-refresh, rate alerts, and **About the providers** under it), **Look & Feel** (display; sound & touch), **Exchange rate chart** (the chart's switches, the same as its options sheet), **Backup & Restore**, **Security & privacy** (app lock; private requests, see security.md), and **About this app** (version, changelog, credits under it, disclaimer). The pages are `SettingsTopic`s, a topic with a `parent` opening from that topic's screen; each is one `Screen.SettingsPage` on the back stack, saved as `settings:<id>` (plain `settings` stays Settings itself, so a stack saved before still restores). `SettingsPages.kt` lists each page's sections; the picker sheets they open are shared (`PreferenceDialogsHost`). The converter's drawer has **About** too, straight to that screen.
+Settings is a list of categories, each a screen of its own like the fee manager, with a chevron on every row that opens one (`NavigationRow`): **Converter** (fees, keypad, decimal places, conversion preview), **Exchange rates** (provider, fallback, key, auto-refresh and how often, rate alerts, and **About the providers** under it), **Look & Feel** (display; sound & touch), **Exchange rate chart** (the chart's switches, the same as its options sheet), **Backup & Restore**, **Security & privacy** (app lock; private requests, see security.md), and **About this app** (version, changelog, credits under it, disclaimer). The pages are `SettingsTopic`s, a topic with a `parent` opening from that topic's screen; each is one `Screen.SettingsPage` on the back stack, saved as `settings:<id>` (plain `settings` stays Settings itself, so a stack saved before still restores). `SettingsPages.kt` lists each page's sections; the picker sheets they open are shared (`PreferenceDialogsHost`). The converter's drawer has **About** too, straight to that screen.
 
 ### Receipt scanning
 
@@ -324,7 +324,7 @@ The preference read (`Database(this).providers.apiProvider.get()`) and the `Inet
 
 ### Background rate refresh via WorkManager
 
-`androidx.work:work-runtime-ktx` schedules periodic background refresh of exchange rates (provider-aware TTL — see `worker/RateRefreshScheduler.kt`). Off by default; opt-in via Settings.
+`androidx.work:work-runtime-ktx` schedules periodic background refresh of exchange rates, every `RefreshInterval` the user picks (an hour by default — see `worker/RateRefreshScheduler.kt`). Off by default; opt-in via Settings.
 
 ### Rate alerts
 

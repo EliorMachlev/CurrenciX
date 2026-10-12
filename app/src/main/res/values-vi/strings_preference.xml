@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Âm thanh khi chạm</string>
     <string name="click_sounds_summary">Phát tiếng click khi chạm trong toàn ứng dụng\nTheo cài đặt hệ thống</string>
     <string name="auto_refresh_title">Tự động làm mới tỷ giá</string>
-    <string name="auto_refresh_summary">Làm mới trong nền theo tần suất nhà cung cấp khuyến nghị</string>
     <string name="date_format_title">Định dạng ngày và giờ</string>
     <string name="category_appearance">Giao diện</string>
     <string name="system_default">Mặc định của hệ thống</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Mở khóa</string>
     <string name="private_requests_title">Yêu cầu riêng tư</string>
     <string name="private_requests_summary">Gửi yêu cầu tỷ giá giống như mọi người: không có phiên bản ứng dụng, thông tin thiết bị hay mã nhận dạng bộ nhớ đệm. Tốn dữ liệu hơn một chút.</string>
+    <string name="auto_refresh_summary">Giữ tỷ giá luôn cập nhật trong nền</string>
+    <string name="refresh_interval_title">Làm mới mỗi</string>
 </resources>

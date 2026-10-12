@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Sons des touches</string>
     <string name="click_sounds_summary">Émet un clic à chaque appui dans l\'appli\nSuit le réglage du système</string>
     <string name="auto_refresh_title">Actualisation automatique des taux</string>
-    <string name="auto_refresh_summary">Actualiser en arrière-plan à la fréquence recommandée par le fournisseur</string>
     <string name="date_format_title">Format de date et d\'heure</string>
     <string name="category_appearance">Apparence</string>
     <string name="system_default">Paramètre système par défaut</string>
@@ -199,4 +198,6 @@
     <string name="app_lock_unlock">Déverrouiller</string>
     <string name="private_requests_title">Requêtes privées</string>
     <string name="private_requests_summary">Envoyer les requêtes de taux comme tout le monde : sans version de l\'appli, détails de l\'appareil ni identifiants de cache. Consomme un peu plus de données.</string>
+    <string name="auto_refresh_summary">Garder les taux à jour en arrière-plan</string>
+    <string name="refresh_interval_title">Actualiser toutes les</string>
 </resources>

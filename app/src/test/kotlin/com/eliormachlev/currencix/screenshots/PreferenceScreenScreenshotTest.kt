@@ -3,10 +3,12 @@ package com.eliormachlev.currencix.screenshots
 import android.app.Application
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.AboutProviderRow
@@ -15,6 +17,7 @@ import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
 import com.eliormachlev.currencix.view.preference.compose.SettingsList
 import com.eliormachlev.currencix.view.preference.compose.SwitchRow
+import com.eliormachlev.currencix.view.preference.compose.label
 import com.eliormachlev.currencix.view.preference.compose.versionSummary
 import org.junit.Rule
 import org.junit.Test
@@ -100,6 +103,11 @@ private fun RatesPreview() {
                     iconRes = R.drawable.ic_schedule,
                     checked = true,
                     onCheckedChange = {},
+                )
+                PreferenceRow(
+                    title = stringResource(id = R.string.refresh_interval_title),
+                    summary = RefreshInterval.DEFAULT.label(LocalConfiguration.current.locales[0]),
+                    iconRes = R.drawable.ic_refresh,
                 )
             }
         }

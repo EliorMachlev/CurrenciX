@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Tıklama sesleri</string>
     <string name="click_sounds_summary">Uygulama genelinde dokunuşlarda tıklama sesi\nSistem ayarına uyar</string>
     <string name="auto_refresh_title">Kurları otomatik güncelle</string>
-    <string name="auto_refresh_summary">Sağlayıcının önerdiği sıklıkta arka planda güncelle</string>
     <string name="date_format_title">Tarih ve saat biçimi</string>
     <string name="category_appearance">Görünüm</string>
     <string name="system_default">Sistem varsayılanı</string>
@@ -198,4 +197,6 @@
     <string name="app_lock_unlock">Kilidi aç</string>
     <string name="private_requests_title">Özel istekler</string>
     <string name="private_requests_summary">Kur isteklerini herkes gibi gönderir: uygulama sürümü, cihaz bilgisi veya önbellek tanımlayıcısı olmadan. Biraz daha fazla veri kullanır.</string>
+    <string name="auto_refresh_summary">Kurları arka planda güncel tut</string>
+    <string name="refresh_interval_title">Yenileme sıklığı</string>
 </resources>

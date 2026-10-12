@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Klikkelyder</string>
     <string name="click_sounds_summary">Spill av et klikk ved trykk i hele appen\nFølger systeminnstillingen</string>
     <string name="auto_refresh_title">Oppdater kurser automatisk</string>
-    <string name="auto_refresh_summary">Oppdater i bakgrunnen med intervallet leverandøren anbefaler</string>
     <string name="date_format_title">Dato- og tidsformat</string>
     <string name="category_appearance">Utseende</string>
     <string name="system_default">Systemstandard</string>
@@ -201,4 +200,6 @@
     <string name="app_lock_unlock">Lås opp</string>
     <string name="private_requests_title">Private forespørsler</string>
     <string name="private_requests_summary">Send kursforespørsler på samme måte som alle andre: uten appversjon, enhetsdetaljer eller buffer-ID-er. Bruker litt mer data.</string>
+    <string name="auto_refresh_summary">Hold kursene oppdatert i bakgrunnen</string>
+    <string name="refresh_interval_title">Oppdater hver</string>
 </resources>

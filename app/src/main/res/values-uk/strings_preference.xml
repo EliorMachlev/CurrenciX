@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Звук натискання</string>
     <string name="click_sounds_summary">Клацання під час натискань у всьому застосунку\nВідповідає налаштуванню системи</string>
     <string name="auto_refresh_title">Автооновлення курсів</string>
-    <string name="auto_refresh_summary">Оновлювати у фоні з частотою, рекомендованою постачальником</string>
     <string name="date_format_title">Формат дати й часу</string>
     <string name="category_appearance">Зовнішній вигляд</string>
     <string name="system_default">Як у системі</string>
@@ -200,4 +199,6 @@
     <string name="app_lock_unlock">Розблокувати</string>
     <string name="private_requests_title">Приватні запити</string>
     <string name="private_requests_summary">Надсилати запити курсів так само, як усі: без версії застосунку, даних пристрою та ідентифікаторів кешу. Витрачає трохи більше трафіку.</string>
+    <string name="auto_refresh_summary">Оновлювати курси у фоновому режимі</string>
+    <string name="refresh_interval_title">Оновлювати кожні</string>
 </resources>

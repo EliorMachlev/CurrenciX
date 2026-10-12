@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Звук нажатия</string>
     <string name="click_sounds_summary">Щелчок при нажатиях во всём приложении\nСледует системной настройке</string>
     <string name="auto_refresh_title">Автообновление курсов</string>
-    <string name="auto_refresh_summary">Обновлять в фоне с частотой, рекомендованной источником</string>
     <string name="date_format_title">Формат даты и времени</string>
     <string name="category_appearance">Внешний вид</string>
     <string name="system_default">Как в системе</string>
@@ -200,4 +199,6 @@
     <string name="app_lock_unlock">Разблокировать</string>
     <string name="private_requests_title">Приватные запросы</string>
     <string name="private_requests_summary">Отправлять запросы курсов так же, как все: без версии приложения, данных устройства и идентификаторов кеша. Расходует чуть больше трафика.</string>
+    <string name="auto_refresh_summary">Обновлять курсы в фоновом режиме</string>
+    <string name="refresh_interval_title">Обновлять каждые</string>
 </resources>

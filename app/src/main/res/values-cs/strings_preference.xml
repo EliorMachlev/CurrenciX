@@ -28,7 +28,6 @@
     <string name="click_sounds_title">Zvuky klepnutí</string>
     <string name="click_sounds_summary">Cvaknutí při klepnutí v celé aplikaci\nŘídí se nastavením systému</string>
     <string name="auto_refresh_title">Automatické obnovování kurzů</string>
-    <string name="auto_refresh_summary">Obnovovat na pozadí v intervalu doporučeném poskytovatelem</string>
     <string name="date_format_title">Formát data a času</string>
     <string name="category_appearance">Vzhled</string>
     <string name="system_default">Výchozí nastavení systému</string>
@@ -200,4 +199,6 @@
     <string name="app_lock_unlock">Odemknout</string>
     <string name="private_requests_title">Soukromé požadavky</string>
     <string name="private_requests_summary">Posílat požadavky na kurzy stejně jako všichni ostatní: bez verze aplikace, údajů o zařízení a identifikátorů mezipaměti. Spotřebuje o něco víc dat.</string>
+    <string name="auto_refresh_summary">Udržovat kurzy aktuální na pozadí</string>
+    <string name="refresh_interval_title">Obnovovat každých</string>
 </resources>
