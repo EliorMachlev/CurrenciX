@@ -64,7 +64,8 @@ fun TextEntrySheet(
     initialText: String,
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
-    message: String? = null,
+    // Its links (marked up, or a written-out web address) open the browser.
+    message: CharSequence? = null,
     singleLine: Boolean = true,
 ) {
     val text = rememberTextFieldState(initialText)

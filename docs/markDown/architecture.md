@@ -99,7 +99,7 @@ The app has no SQLite database. `SharedPreferences` has been fully migrated to *
 | `chart` | `ChartSettings` | What the timeline chart draws |
 | `carts` | `CartStore` | The working cart and the saved ones |
 
-Callers reach a value through its store: `Database(context).display.getTheme()`. A composable that reads settings without a view model takes `rememberDatabase()` and follows a `Pref` with `pref.collectAsStateWithLifecycle()` (`view/compose/DatabaseState.kt`), which starts from the stored value so the first frame is already right.
+Row summaries and prompt messages (`LedgerLabel`, `PromptMessage`) take a `CharSequence` and keep its links tappable (`rememberLinkedText`): a string resource's `<a href>` links and any web address written out in plain text open the browser, and its bold and italics stay. Callers reach a value through its store: `Database(context).display.getTheme()`. A composable that reads settings without a view model takes `rememberDatabase()` and follows a `Pref` with `pref.collectAsStateWithLifecycle()` (`view/compose/DatabaseState.kt`), which starts from the stored value so the first frame is already right.
 
 The one exception to "DataStore only": Cart JSON can be exported to / imported from an external file via the Storage Access Framework (`CartFileIo.kt`), but that's a one-off user-initiated file transfer, not an ongoing persistence layer.
 

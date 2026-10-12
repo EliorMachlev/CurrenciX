@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.rememberLinkedText
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private val MESSAGE_TO_CONTENT_GAP = Spacing.Medium
@@ -156,9 +157,9 @@ fun LedgerPasswordSheet(
 
 /** A prompt's explanatory text, above its field or on its own. */
 @Composable
-fun PromptMessage(text: String) {
+fun PromptMessage(text: CharSequence) {
     Text(
-        text = text,
+        text = rememberLinkedText(text),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )

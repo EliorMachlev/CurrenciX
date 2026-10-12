@@ -207,17 +207,32 @@ private fun ProviderSection(page: SettingsPageContext) {
             onClick = { page.openDialog(OpenDialog.Provider) },
         )
         FallbackProviderRow(main = provider, fallback = api.fallback, onClick = { page.openDialog(OpenDialog.FallbackProvider) })
-        provider?.apiKeyTexts?.let { texts ->
-            PreferenceRow(
-                title = stringResource(texts.title),
-                summary = api.apiKey?.ifBlank { null } ?: stringResource(R.string.api_open_exchangerates_api_key_missing),
-                iconRes = R.drawable.ic_key,
-                onClick = { page.openDialog(OpenDialog.ApiKey) },
-            )
+        // A key row for each provider in use that takes one: the main
+        // provider's, and the fallback's when it needs its own.
+        listOfNotNull(provider, api.fallback).distinct().forEach { keyed ->
+            ApiKeyRow(keyed, api.apiKeys[keyed], page)
         }
         ShowUnreliableProvidersRow(page)
         TopicRow(SettingsTopic.PROVIDERS, page)
     }
+}
+
+// [provider]'s API key row, for a provider that takes one: the key shown
+// masked to its last few characters (enough to tell keys apart, never
+// enough to read one off a screenshot), or that one is needed.
+@Composable
+private fun ApiKeyRow(
+    provider: ApiProvider,
+    apiKey: String?,
+    page: SettingsPageContext,
+) {
+    val texts = provider.apiKeyTexts ?: return
+    PreferenceRow(
+        title = stringResource(texts.title),
+        summary = apiKey?.ifBlank { null }?.let(::maskedApiKey) ?: stringResource(R.string.api_open_exchangerates_api_key_missing),
+        iconRes = R.drawable.ic_key,
+        onClick = { page.openDialog(OpenDialog.ApiKey(provider)) },
+    )
 }
 
 // How often auto-refresh runs. The user picks it for a provider that updates
@@ -495,3 +510,9 @@ private fun LegalSection() {
     // Room under the last row, clear of the navigation bar's edge.
     Spacer(Modifier.height(Spacing.Large))
 }
+
+// How many of a key's last characters its row shows.
+private const val API_KEY_VISIBLE_TAIL = 4
+
+/** "•••• 1a2b": a key's last few characters, the rest hidden. */
+internal fun maskedApiKey(key: String): String = "•••• " + key.takeLast(API_KEY_VISIBLE_TAIL)

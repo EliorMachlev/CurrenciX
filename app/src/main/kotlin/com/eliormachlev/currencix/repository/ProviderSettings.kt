@@ -69,33 +69,35 @@ class ProviderSettings(
      */
     val fallbackProvider: Pref<ApiProvider> = store.pref(::resolveFallback, write = { this[fallbackApiKey] = it.id })
 
-    /** The user's Open Exchange Rates key; null (and removed) when there is none. */
-    val openExchangeRatesApiKey: Pref<String?> = store.optionalStringPref(KEY_OPEN_EXCHANGERATES_API_KEY)
-
-    /** The user's AllRatesToday key; null (and removed) when there is none. */
-    val allRatesTodayApiKey: Pref<String?> = store.optionalStringPref(KEY_ALL_RATES_TODAY_API_KEY)
-
     /**
-     * The main provider's own API key: null for one that needs none or has
-     * none yet. Written to that provider's key, removed when blank, so
-     * switching provider shows (and keeps) each one's key.
+     * The API key the user entered for each keyed provider, each stored on
+     * its own, so the main and the fallback provider can both have one.
      */
-    val mainProviderApiKey: Pref<String?> =
+    val apiKeys: Pref<Map<ApiProvider, String>> =
         store.pref(
-            read = { prefs -> apiKeyKeys[mainProvider(prefs)]?.let { prefs[it] } },
-            write = { key ->
-                apiKeyKeys[mainProvider(this)]?.let { stored ->
-                    if (key.isNullOrBlank()) remove(stored) else this[stored] = key
+            read = { prefs -> apiKeyKeys.mapNotNull { (provider, key) -> prefs[key]?.let { provider to it } }.toMap() },
+            write = { keys ->
+                apiKeyKeys.forEach { (provider, key) ->
+                    val value = keys[provider]
+                    if (value.isNullOrBlank()) remove(key) else this[key] = value
                 }
             },
         )
 
+    /** Stores [key] as [provider]'s API key; a blank one removes it. */
+    fun setApiKey(
+        provider: ApiProvider,
+        key: String,
+    ) = apiKeys.update { keys -> if (key.isBlank()) keys - provider else keys + (provider to key) }
+
     /** Every provider's key as it is now, for a fetch to hand its provider. */
-    fun secrets(): ApiSecrets =
-        ApiSecrets(
-            openExchangeRatesApiKey = openExchangeRatesApiKey.get(),
-            allRatesTodayApiKey = allRatesTodayApiKey.get(),
+    fun secrets(): ApiSecrets {
+        val keys = apiKeys.get()
+        return ApiSecrets(
+            openExchangeRatesApiKey = keys[ApiProvider.OPEN_EXCHANGERATES],
+            allRatesTodayApiKey = keys[ApiProvider.ALL_RATES_TODAY],
         )
+    }
 
     /**
      * Whether the provider pickers list the unreliable providers too

@@ -37,6 +37,7 @@ import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.view.alert.RateAlertsSheet
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.rememberLinkedText
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
@@ -58,7 +59,10 @@ internal sealed interface OpenDialog {
 
     data object FallbackProvider : OpenDialog
 
-    data object ApiKey : OpenDialog
+    /** [provider]'s key: the main provider's or the fallback's. */
+    data class ApiKey(
+        val provider: ApiProvider,
+    ) : OpenDialog
 
     data object RateAlerts : OpenDialog
 
@@ -113,8 +117,8 @@ internal data class PreferenceValues(
 internal data class ApiValues(
     val provider: ApiProvider?,
     val fallback: ApiProvider,
-    // The main provider's, for one that takes a key.
-    val apiKey: String?,
+    // The key entered for each keyed provider.
+    val apiKeys: Map<ApiProvider, String>,
     val autoRefreshEnabled: Boolean,
     val autoRefreshInterval: RefreshInterval,
 )
@@ -135,13 +139,13 @@ internal data class AppearanceValues(
 private fun observePreferenceValues(viewModel: PreferenceViewModel): PreferenceValues {
     val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
     val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
-    val apiKey by viewModel.apiKey.collectAsStateWithLifecycle()
+    val apiKeys by viewModel.apiKeys.collectAsStateWithLifecycle()
     val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
     val autoRefreshInterval by viewModel.autoRefreshInterval.collectAsStateWithLifecycle()
     val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
     val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     return PreferenceValues(
-        api = ApiValues(provider, fallback, apiKey, autoRefreshEnabled, autoRefreshInterval),
+        api = ApiValues(provider, fallback, apiKeys, autoRefreshEnabled, autoRefreshInterval),
         appearance = observeAppearanceValues(viewModel, provider),
         decimalPlaces = decimalPlaces,
         expandedKeypadEnabled = expandedKeypadEnabled,
@@ -207,8 +211,9 @@ private fun PreferenceDialogsHost(
         }
 
         OpenDialog.Provider -> {
-            ProviderPickerSheet(
+            ProviderPickerWithKeyPrompt(
                 selected = values.api.provider,
+                viewModel = viewModel,
                 onDismiss = dismiss,
                 onPicked = viewModel::setApiProvider,
             )
@@ -226,10 +231,13 @@ private fun PreferenceDialogsHost(
             RateAlertsSheet(onDismiss = dismiss)
         }
 
-        OpenDialog.ApiKey -> {
-            values.api.provider?.let { provider ->
-                ApiKeySheet(provider = provider, apiKey = values.api.apiKey, dismiss = dismiss, viewModel = viewModel)
-            }
+        is OpenDialog.ApiKey -> {
+            ApiKeySheet(
+                provider = openDialog.provider,
+                apiKey = values.api.apiKeys[openDialog.provider],
+                dismiss = dismiss,
+                viewModel = viewModel,
+            )
         }
 
         null -> {}
@@ -265,50 +273,6 @@ private fun RefreshIntervalPickerSheet(
         onPicked = viewModel::setAutoRefreshInterval,
     )
 }
-
-// The main provider's key, trimmed on the way in; how to get one is its own text.
-@Composable
-private fun ApiKeySheet(
-    provider: ApiProvider,
-    apiKey: String?,
-    dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
-) {
-    val texts = provider.apiKeyTexts ?: return
-    TextEntrySheet(
-        title = stringResource(id = texts.title),
-        initialText = apiKey.orEmpty(),
-        message = stringResource(id = texts.message),
-        onDismiss = dismiss,
-        onConfirm = { newKey ->
-            viewModel.setApiKey(newKey.trim())
-            dismiss()
-        },
-    )
-}
-
-/** What the key row and its sheet say for a keyed provider. */
-internal class ApiKeyTexts(
-    @StringRes val title: Int,
-    @StringRes val message: Int,
-)
-
-/** [ApiKeyTexts] for a provider that takes an API key; null for one that doesn't. */
-internal val ApiProvider.apiKeyTexts: ApiKeyTexts?
-    get() =
-        when (this) {
-            ApiProvider.OPEN_EXCHANGERATES -> {
-                ApiKeyTexts(R.string.api_open_exchangerates_api_key_title, R.string.api_open_exchangerates_api_key_message)
-            }
-
-            ApiProvider.ALL_RATES_TODAY -> {
-                ApiKeyTexts(R.string.api_all_rates_today_api_key_title, R.string.api_all_rates_today_api_key_message)
-            }
-
-            else -> {
-                null
-            }
-        }
 
 @Composable
 private fun ThemePickerSheet(
@@ -347,14 +311,15 @@ private fun DateFormatPickerSheet(
 
 // One row per provider: "About Bank of Israel", its description in full,
 // and under it how often it publishes, beside a small clock (and why it's
-// unreliable, if it is).
+// unreliable, if it is). Both keep their resource's links and emphasis.
 @Composable
 internal fun AboutProviderRow(provider: ApiProvider) {
     val context = LocalContext.current
-    val cadence = provider.getDescriptionUpdateInterval(context).toString()
+    val description = remember(provider, context) { provider.getDescriptionLong(context) }
+    val cadence = remember(provider, context) { provider.getDescriptionUpdateInterval(context) }
     PreferenceRow(
         title = stringResource(id = R.string.api_about_title, provider.getName(context)).inReadingOrder(context),
-        summary = provider.getDescriptionLong(context).toString(),
+        summary = description,
         iconRes = R.drawable.ic_info,
         summaryMaxLines = FULL_SUMMARY,
         footer = {
@@ -365,7 +330,7 @@ internal fun AboutProviderRow(provider: ApiProvider) {
 }
 
 @Composable
-private fun CadenceLine(text: String) {
+private fun CadenceLine(text: CharSequence) {
     val color = MaterialTheme.colorScheme.onSurfaceVariant
     Row(
         modifier = Modifier.padding(top = CADENCE_TOP_GAP),
@@ -379,7 +344,7 @@ private fun CadenceLine(text: String) {
             tint = color,
             modifier = Modifier.padding(top = CADENCE_ICON_NUDGE).size(CADENCE_ICON_SIZE),
         )
-        Text(text = text, style = MaterialTheme.typography.bodyMedium, color = color)
+        Text(text = rememberLinkedText(text), style = MaterialTheme.typography.bodyMedium, color = color)
     }
 }
 
@@ -415,8 +380,9 @@ private fun FallbackPickerSheet(
 ) {
     val main by viewModel.apiProvider.collectAsStateWithLifecycle()
     val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
-    ProviderPickerSheet(
+    ProviderPickerWithKeyPrompt(
         selected = fallback,
+        viewModel = viewModel,
         onDismiss = onDismiss,
         onPicked = viewModel::setFallbackProvider,
         title = stringResource(id = R.string.fallback_provider_title),

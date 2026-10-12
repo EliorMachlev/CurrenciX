@@ -187,7 +187,8 @@ fun LedgerSectionHeader(
 fun LedgerLabel(
     title: String,
     modifier: Modifier = Modifier,
-    summary: String? = null,
+    // Its links (marked up, or a written-out web address) open the browser.
+    summary: CharSequence? = null,
     @DrawableRes iconRes: Int? = null,
     enabled: Boolean = true,
     summaryMaxLines: Int = LIST_SUMMARY_LINES,
@@ -217,7 +218,7 @@ fun LedgerLabel(
             )
             if (!summary.isNullOrBlank()) {
                 Text(
-                    text = summary,
+                    text = rememberLinkedText(summary),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
                     maxLines = summaryMaxLines,

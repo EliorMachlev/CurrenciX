@@ -27,9 +27,9 @@ class PreferenceViewModel(
     val isShowUnreliableProvidersEnabled: StateFlow<Boolean> =
         db.providers.showUnreliable.stateInWhileSubscribed(viewModelScope)
 
-    /** The main provider's API key (null for one that needs none). */
-    val apiKey: StateFlow<String?> =
-        db.providers.mainProviderApiKey.stateInWhileSubscribed(viewModelScope)
+    /** The API key entered for each keyed provider. */
+    val apiKeys: StateFlow<Map<ApiProvider, String>> =
+        db.providers.apiKeys.stateInWhileSubscribed(viewModelScope)
     val isPreviewConversionEnabled: StateFlow<Boolean> =
         db.display.previewConversion.stateInWhileSubscribed(viewModelScope)
     val isExpandedKeypadEnabled: StateFlow<Boolean> =
@@ -63,9 +63,12 @@ class PreferenceViewModel(
         persistAndRefreshRates { db.providers.apiProvider.set(api) }
     }
 
-    /** Stores [key] as the main provider's API key, then fetches its rates with it. */
-    fun setApiKey(key: String) {
-        persistAndRefreshRates { db.providers.mainProviderApiKey.set(key) }
+    /** Stores [key] as [provider]'s API key, then fetches rates with it. */
+    fun setApiKey(
+        provider: ApiProvider,
+        key: String,
+    ) {
+        persistAndRefreshRates { db.providers.setApiKey(provider, key) }
     }
 
     // Persist a provider-affecting change, then re-fetch rates so the UI

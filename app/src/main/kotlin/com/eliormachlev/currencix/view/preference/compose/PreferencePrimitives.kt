@@ -64,7 +64,7 @@ fun PreferenceSection(
 fun PreferenceRow(
     title: String,
     modifier: Modifier = Modifier,
-    summary: String? = null,
+    summary: CharSequence? = null,
     @DrawableRes iconRes: Int? = null,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,

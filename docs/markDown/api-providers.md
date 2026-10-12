@@ -93,7 +93,7 @@ Fixed-shape JSON endpoints are declared as Retrofit interfaces in `model/provide
 
 ## Providers that need an API key
 
-Open Exchangerates and AllRatesToday each take the user's own key, stored per provider (`ProviderSettings.openExchangeRatesApiKey`, `allRatesTodayApiKey`). Settings shows the key row for whichever of them is the main provider (`ProviderSettings.mainProviderApiKey`, `ApiProvider.apiKeyTexts`), and every fetch, rates and timeline alike, gets all keys as `ApiSecrets`. Without a key a provider fails at once, without a request. A 401, 403 or 429 reaches the user as "check your key", "your plan doesn't include this" or "you've used up your requests" (`explainKeyErrors`).
+Open Exchangerates and AllRatesToday each take the user's own key, each stored under its own setting (`ProviderSettings.apiKeys`, `setApiKey`). Settings → Exchange rates shows a key row for every provider in use that takes one, the main provider's and the fallback's alike (`ApiProvider.apiKeyTexts`), the key masked to its last four characters. Picking a keyed provider that has no key yet, in any provider picker (Settings' main and fallback, the converter's, the chart's), goes straight on to its key prompt (`ProviderPickerWithKeyPrompt`). Every fetch, rates and timeline alike, gets all keys as `ApiSecrets`. Without a key a provider fails at once, without a request. A 401, 403 or 429 reaches the user as "check your key", "your plan doesn't include this" or "you've used up your requests" (`explainKeyErrors`).
 
 **AllRatesToday** ([docs](https://allratestoday.com/docs), [OpenAPI spec](https://allratestoday.com/api/openapi.json)) is built from its published spec, against `GET /api/v1/rates`:
 
