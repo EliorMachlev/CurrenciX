@@ -199,4 +199,6 @@
     <string name="private_requests_summary">Στέλνει τα αιτήματα ισοτιμιών όπως όλοι: χωρίς έκδοση εφαρμογής, στοιχεία συσκευής ή αναγνωριστικά cache. Χρησιμοποιεί λίγα περισσότερα δεδομένα.</string>
     <string name="auto_refresh_summary">Διατήρηση ενημερωμένων ισοτιμιών στο παρασκήνιο</string>
     <string name="refresh_interval_title">Ανανέωση κάθε</string>
+    <string name="refresh_interval_daily">Μία φορά την ημέρα, αμέσως μετά τη δημοσίευση από %1$s</string>
+    <string name="refresh_interval_monthly">Μία φορά τον μήνα, αμέσως μετά τη δημοσίευση από %1$s</string>
 </resources>

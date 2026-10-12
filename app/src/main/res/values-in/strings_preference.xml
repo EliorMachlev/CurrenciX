@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Kirim permintaan kurs sama seperti orang lain: tanpa versi aplikasi, detail perangkat, atau pengenal cache. Memakai sedikit lebih banyak data.</string>
     <string name="auto_refresh_summary">Perbarui kurs di latar belakang</string>
     <string name="refresh_interval_title">Perbarui setiap</string>
+    <string name="refresh_interval_daily">Sekali sehari, tepat setelah %1$s menerbitkan</string>
+    <string name="refresh_interval_monthly">Sekali sebulan, tepat setelah %1$s menerbitkan</string>
 </resources>

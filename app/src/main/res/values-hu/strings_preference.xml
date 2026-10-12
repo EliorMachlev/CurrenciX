@@ -201,4 +201,6 @@
     <string name="private_requests_summary">Az árfolyamkéréseket mindenkivel azonos módon küldi: alkalmazásverzió, eszközadatok és gyorsítótár-azonosítók nélkül. Kicsit több adatot használ.</string>
     <string name="auto_refresh_summary">Árfolyamok frissen tartása a háttérben</string>
     <string name="refresh_interval_title">Frissítés gyakorisága</string>
+    <string name="refresh_interval_daily">Naponta egyszer, közvetlenül a(z) %1$s közzététele után</string>
+    <string name="refresh_interval_monthly">Havonta egyszer, közvetlenül a(z) %1$s közzététele után</string>
 </resources>

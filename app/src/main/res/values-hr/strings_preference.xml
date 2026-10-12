@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Šalji zahtjeve za tečaj kao svi ostali: bez verzije aplikacije, podataka o uređaju i identifikatora predmemorije. Troši malo više podataka.</string>
     <string name="auto_refresh_summary">Održavaj tečajeve ažurnima u pozadini</string>
     <string name="refresh_interval_title">Osvježi svakih</string>
+    <string name="refresh_interval_daily">Jednom dnevno, odmah nakon objave %1$s</string>
+    <string name="refresh_interval_monthly">Jednom mjesečno, odmah nakon objave %1$s</string>
 </resources>

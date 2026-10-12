@@ -198,4 +198,6 @@
     <string name="private_requests_summary">Kursanfragen so senden wie alle anderen: ohne App-Version, Gerätedetails oder Cache-Kennungen. Braucht etwas mehr Daten.</string>
     <string name="auto_refresh_summary">Kurse im Hintergrund aktuell halten</string>
     <string name="refresh_interval_title">Aktualisieren alle</string>
+    <string name="refresh_interval_daily">Einmal täglich, kurz nach der Veröffentlichung durch %1$s</string>
+    <string name="refresh_interval_monthly">Einmal im Monat, kurz nach der Veröffentlichung durch %1$s</string>
 </resources>

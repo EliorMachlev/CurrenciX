@@ -198,4 +198,6 @@
     <string name="private_requests_summary">Verstuur koersverzoeken op dezelfde manier als iedereen: zonder appversie, apparaatgegevens of cache-ID\'s. Kost iets meer data.</string>
     <string name="auto_refresh_summary">Koersen op de achtergrond actueel houden</string>
     <string name="refresh_interval_title">Vernieuwen elke</string>
+    <string name="refresh_interval_daily">Eén keer per dag, vlak nadat %1$s publiceert</string>
+    <string name="refresh_interval_monthly">Eén keer per maand, vlak nadat %1$s publiceert</string>
 </resources>

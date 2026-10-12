@@ -202,4 +202,6 @@
     <string name="private_requests_summary">Заявките за курсове се изпращат еднакво за всички: без версия на приложението, данни за устройството и идентификатори на кеша. Използва малко повече данни.</string>
     <string name="auto_refresh_summary">Курсовете се обновяват във фонов режим</string>
     <string name="refresh_interval_title">Обновяване на всеки</string>
+    <string name="refresh_interval_daily">Веднъж дневно, веднага след публикуване от %1$s</string>
+    <string name="refresh_interval_monthly">Веднъж месечно, веднага след публикуване от %1$s</string>
 </resources>

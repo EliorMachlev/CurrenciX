@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Envia les peticions de canvi igual que tothom: sense versió de l\'app, detalls del dispositiu ni identificadors de memòria cau. Gasta una mica més de dades.</string>
     <string name="auto_refresh_summary">Mantén els tipus actualitzats en segon pla</string>
     <string name="refresh_interval_title">Actualitza cada</string>
+    <string name="refresh_interval_daily">Un cop al dia, just després que %1$s publiqui</string>
+    <string name="refresh_interval_monthly">Un cop al mes, just després que %1$s publiqui</string>
 </resources>

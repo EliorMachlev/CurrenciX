@@ -201,4 +201,6 @@
     <string name="private_requests_summary">Отправлять запросы курсов так же, как все: без версии приложения, данных устройства и идентификаторов кеша. Расходует чуть больше трафика.</string>
     <string name="auto_refresh_summary">Обновлять курсы в фоновом режиме</string>
     <string name="refresh_interval_title">Обновлять каждые</string>
+    <string name="refresh_interval_daily">Раз в день, сразу после публикации %1$s</string>
+    <string name="refresh_interval_monthly">Раз в месяц, сразу после публикации %1$s</string>
 </resources>

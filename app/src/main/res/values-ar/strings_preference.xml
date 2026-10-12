@@ -203,4 +203,6 @@
     <string name="private_requests_summary">أرسل طلبات الأسعار بالطريقة نفسها لدى الجميع: بلا إصدار للتطبيق ولا تفاصيل للجهاز ولا معرّفات تخزين مؤقت. يستهلك بيانات أكثر قليلًا.</string>
     <string name="auto_refresh_summary">تحديث الأسعار في الخلفية باستمرار</string>
     <string name="refresh_interval_title">التحديث كل</string>
+    <string name="refresh_interval_daily">مرة يوميًا، بعد نشر %1$s مباشرة</string>
+    <string name="refresh_interval_monthly">مرة شهريًا، بعد نشر %1$s مباشرة</string>
 </resources>

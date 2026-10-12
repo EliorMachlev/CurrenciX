@@ -324,7 +324,7 @@ The preference read (`Database(this).providers.apiProvider.get()`) and the `Inet
 
 ### Background rate refresh via WorkManager
 
-`androidx.work:work-runtime-ktx` schedules periodic background refresh of exchange rates, every `RefreshInterval` the user picks (an hour by default — see `worker/RateRefreshScheduler.kt`). Off by default; opt-in via Settings.
+`androidx.work:work-runtime-ktx` schedules background refresh of exchange rates: just after each publication for a provider that publishes at a known time (`PublicationSchedule`), or every `RefreshInterval` the user picks (an hour by default) for one that updates many times a day — see `worker/RateRefreshScheduler.kt`. Off by default; opt-in via Settings.
 
 ### Rate alerts
 

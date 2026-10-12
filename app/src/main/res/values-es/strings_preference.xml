@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Envía las solicitudes de tipos de cambio igual que todos: sin versión de la app, datos del dispositivo ni identificadores de caché. Consume algo más de datos.</string>
     <string name="auto_refresh_summary">Mantener los tipos actualizados en segundo plano</string>
     <string name="refresh_interval_title">Actualizar cada</string>
+    <string name="refresh_interval_daily">Una vez al día, justo después de que %1$s publique</string>
+    <string name="refresh_interval_monthly">Una vez al mes, justo después de que %1$s publique</string>
 </resources>

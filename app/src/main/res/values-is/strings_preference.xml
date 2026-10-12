@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Senda gengisbeiðnir eins og allir aðrir: án útgáfu forrits, upplýsinga um tæki eða skyndiminnisauðkenna. Notar aðeins meiri gögn.</string>
     <string name="auto_refresh_summary">Halda gengi uppfærðu í bakgrunni</string>
     <string name="refresh_interval_title">Uppfæra á</string>
+    <string name="refresh_interval_daily">Einu sinni á dag, rétt eftir að %1$s birtir</string>
+    <string name="refresh_interval_monthly">Einu sinni í mánuði, rétt eftir að %1$s birtir</string>
 </resources>

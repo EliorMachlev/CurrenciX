@@ -202,4 +202,6 @@
     <string name="private_requests_summary">Send kursforespørsler på samme måte som alle andre: uten appversjon, enhetsdetaljer eller buffer-ID-er. Bruker litt mer data.</string>
     <string name="auto_refresh_summary">Hold kursene oppdatert i bakgrunnen</string>
     <string name="refresh_interval_title">Oppdater hver</string>
+    <string name="refresh_interval_daily">Én gang om dagen, rett etter at %1$s publiserer</string>
+    <string name="refresh_interval_monthly">Én gang i måneden, rett etter at %1$s publiserer</string>
 </resources>

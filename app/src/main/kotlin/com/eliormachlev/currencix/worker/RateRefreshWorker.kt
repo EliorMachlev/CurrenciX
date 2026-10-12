@@ -43,6 +43,7 @@ internal class RateRefreshWorker(
                 Timber.tag(TAG).d("Auto-refresh success")
                 // The tile shows the new rate if it's in Quick Settings.
                 RateTileService.requestRedraw(applicationContext)
+                if (TAG_PUBLISHED_REFRESH in tags) RateRefreshScheduler.scheduleNextPublication(applicationContext)
                 Result.success()
             },
             onFailure = { throwable ->

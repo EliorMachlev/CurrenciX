@@ -12,6 +12,8 @@ import com.eliormachlev.currencix.model.provider.OpenExchangerates
 import com.squareup.moshi.JsonClass
 import java.net.URI
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 
 private const val ID_FRANKFURTER_APP = 1
 private const val ID_INFOR_EURO = 3
@@ -20,6 +22,13 @@ private const val ID_BANK_ROSSII = 5
 private const val ID_BANK_OF_CANADA = 6
 private const val ID_OPEN_EXCHANGERATES = 7
 private const val ID_BANK_OF_ISRAEL = 8
+
+// A table published every day at [hour]:[minute] in [zone].
+private fun dailyAt(
+    hour: Int,
+    minute: Int,
+    zone: String,
+) = PublicationSchedule.Daily(LocalTime.of(hour, minute), ZoneId.of(zone))
 
 /** How often a provider publishes new rates — the picker lists the more frequent ones first. */
 enum class UpdateCadence { HOURLY, DAILY, MONTHLY }
@@ -51,7 +60,8 @@ enum class ProviderReliability {
 enum class ApiProvider(
     val id: Int, // safer ordinal; DON'T CHANGE!
     private val implementation: Api,
-    val cadence: UpdateCadence,
+    /** When it publishes new rates: what auto-refresh follows (see [PublicationSchedule]). */
+    val publication: PublicationSchedule,
     val needsApiKey: Boolean = false,
     val reliability: ProviderReliability = ProviderReliability.RELIABLE,
 ) {
@@ -60,20 +70,38 @@ enum class ApiProvider(
     //   (it served the same ECB rates as Frankfurter.app) — never reuse id 2
 
     // European Central Bank reference rates, ~30 currencies, reliable.
-    FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp(), UpdateCadence.DAILY),
+    // ECB reference rates are published around 16:00 CET.
+    FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp(), dailyAt(16, 0, "Europe/Berlin")),
 
     // ~44 currencies.
-    BANK_ROSSII(ID_BANK_ROSSII, BankRossii(), UpdateCadence.DAILY),
+    // Official rates are set as of 15:30 Moscow time.
+    BANK_ROSSII(ID_BANK_ROSSII, BankRossii(), dailyAt(15, 30, "Europe/Moscow")),
 
     // ~40 currencies, but regular HTTP 503 downtimes.
-    NORGES_BANK(ID_NORGES_BANK, NorgesBank(), UpdateCadence.DAILY, reliability = ProviderReliability.DOWNTIME),
-    BANK_OF_CANADA(ID_BANK_OF_CANADA, BankOfCanada(), UpdateCadence.DAILY),
-    BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael(), UpdateCadence.DAILY),
+    // Published around 16:00 CET.
+    NORGES_BANK(ID_NORGES_BANK, NorgesBank(), dailyAt(16, 0, "Europe/Oslo"), reliability = ProviderReliability.DOWNTIME),
 
-    // ~150 currencies, but accounting rates set once a month.
-    INFOR_EURO(ID_INFOR_EURO, InforEuro(), UpdateCadence.MONTHLY, reliability = ProviderReliability.INACCURATE_DATA),
-    OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates(), UpdateCadence.HOURLY, needsApiKey = true),
+    // Published by 16:30 ET.
+    BANK_OF_CANADA(ID_BANK_OF_CANADA, BankOfCanada(), dailyAt(16, 30, "America/Toronto")),
+
+    // Representative rates are published around 15:30 Israel time.
+    BANK_OF_ISRAEL(ID_BANK_OF_ISRAEL, BankOfIsrael(), dailyAt(15, 30, "Asia/Jerusalem")),
+
+    // ~150 currencies, but accounting rates set once a month, in force from
+    // the 1st (they're the ECB's rates near the end of the month before).
+    INFOR_EURO(
+        ID_INFOR_EURO,
+        InforEuro(),
+        PublicationSchedule.Monthly(dayOfMonth = 1, at = LocalTime.of(6, 0), zone = ZoneId.of("Europe/Brussels")),
+        reliability = ProviderReliability.INACCURATE_DATA,
+    ),
+
+    // Hourly.
+    OPEN_EXCHANGERATES(ID_OPEN_EXCHANGERATES, OpenExchangerates(), PublicationSchedule.Frequent, needsApiKey = true),
     ;
+
+    /** How often it publishes: the picker's order and its "Updates …" line. */
+    val cadence: UpdateCadence get() = publication.cadence
 
     companion object {
         fun fromId(value: Int): ApiProvider =

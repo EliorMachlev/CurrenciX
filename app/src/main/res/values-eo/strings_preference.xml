@@ -201,4 +201,6 @@
     <string name="private_requests_summary">Sendi kurzajn petojn same kiel ĉiuj: sen aplikaĵa versio, aparataj detaloj aŭ kaŝmemoraj identigiloj. Uzas iom pli da datumoj.</string>
     <string name="auto_refresh_summary">Teni kurzojn ĝisdataj fone</string>
     <string name="refresh_interval_title">Aktualigi ĉiun</string>
+    <string name="refresh_interval_daily">Unufoje tage, tuj post kiam %1$s publikigas</string>
+    <string name="refresh_interval_monthly">Unufoje monate, tuj post kiam %1$s publikigas</string>
 </resources>

@@ -201,4 +201,6 @@
     <string name="private_requests_summary">Wysyłaj żądania kursów tak samo jak wszyscy: bez wersji aplikacji, danych urządzenia i identyfikatorów pamięci podręcznej. Zużywa nieco więcej danych.</string>
     <string name="auto_refresh_summary">Aktualizuj kursy w tle</string>
     <string name="refresh_interval_title">Odświeżaj co</string>
+    <string name="refresh_interval_daily">Raz dziennie, zaraz po publikacji przez %1$s</string>
+    <string name="refresh_interval_monthly">Raz w miesiącu, zaraz po publikacji przez %1$s</string>
 </resources>

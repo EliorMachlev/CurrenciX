@@ -201,4 +201,6 @@
     <string name="private_requests_summary">Надсилати запити курсів так само, як усі: без версії застосунку, даних пристрою та ідентифікаторів кешу. Витрачає трохи більше трафіку.</string>
     <string name="auto_refresh_summary">Оновлювати курси у фоновому режимі</string>
     <string name="refresh_interval_title">Оновлювати кожні</string>
+    <string name="refresh_interval_daily">Раз на день, одразу після публікації %1$s</string>
+    <string name="refresh_interval_monthly">Раз на місяць, одразу після публікації %1$s</string>
 </resources>

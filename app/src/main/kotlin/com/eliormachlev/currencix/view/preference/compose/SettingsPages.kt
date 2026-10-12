@@ -21,9 +21,12 @@ import androidx.core.text.HtmlCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.PublicationSchedule
+import com.eliormachlev.currencix.model.UpdateCadence
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.util.fastestMode
+import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.UiTestTags
@@ -217,6 +220,41 @@ private fun ProviderSection(page: SettingsPageContext) {
     }
 }
 
+// How often auto-refresh runs. The user picks it for a provider that updates
+// many times a day; one that publishes on a schedule is refreshed just after
+// each publication, which the row says instead (greyed out, nothing to pick).
+@Composable
+private fun RefreshIntervalRow(page: SettingsPageContext) {
+    val api = page.values.api
+    val context = LocalContext.current
+    val provider = api.provider
+    val scheduled = provider?.publication as? PublicationSchedule.Published
+    val summary =
+        when {
+            provider == null || scheduled == null -> {
+                api.autoRefreshInterval.label(LocalConfiguration.current.locales[0])
+            }
+
+            scheduled.cadence == UpdateCadence.MONTHLY -> {
+                stringResource(
+                    R.string.refresh_interval_monthly,
+                    provider.getName(context),
+                ).inReadingOrder(context)
+            }
+
+            else -> {
+                stringResource(R.string.refresh_interval_daily, provider.getName(context)).inReadingOrder(context)
+            }
+        }
+    PreferenceRow(
+        title = stringResource(R.string.refresh_interval_title),
+        summary = summary,
+        iconRes = R.drawable.ic_refresh,
+        enabled = api.autoRefreshEnabled && scheduled == null,
+        onClick = { page.openDialog(OpenDialog.AutoRefreshInterval) },
+    )
+}
+
 // Whether the provider pickers list the providers that are often down or inaccurate.
 @Composable
 private fun ShowUnreliableProvidersRow(page: SettingsPageContext) {
@@ -241,15 +279,7 @@ private fun UpdatesSection(page: SettingsPageContext) {
             checked = page.values.api.autoRefreshEnabled,
             onCheckedChange = page.viewModel::setAutoRefreshEnabled,
         )
-        PreferenceRow(
-            title = stringResource(R.string.refresh_interval_title),
-            summary =
-                page.values.api.autoRefreshInterval
-                    .label(LocalConfiguration.current.locales[0]),
-            iconRes = R.drawable.ic_refresh,
-            enabled = page.values.api.autoRefreshEnabled,
-            onClick = { page.openDialog(OpenDialog.AutoRefreshInterval) },
-        )
+        RefreshIntervalRow(page)
         PreferenceRow(
             title = stringResource(R.string.alerts_title),
             summary = stringResource(R.string.alerts_summary),

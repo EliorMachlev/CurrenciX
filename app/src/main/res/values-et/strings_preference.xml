@@ -199,4 +199,6 @@
     <string name="private_requests_summary">Saada kursipäringud nagu kõik teised: ilma rakenduse versiooni, seadme andmete ja vahemälu tunnusteta. Kulutab veidi rohkem andmeid.</string>
     <string name="auto_refresh_summary">Hoia kursid taustal ajakohasena</string>
     <string name="refresh_interval_title">Värskenda iga</string>
+    <string name="refresh_interval_daily">Kord päevas, kohe pärast %1$s avaldamist</string>
+    <string name="refresh_interval_monthly">Kord kuus, kohe pärast %1$s avaldamist</string>
 </resources>

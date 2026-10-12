@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Envoyer les requêtes de taux comme tout le monde : sans version de l\'appli, détails de l\'appareil ni identifiants de cache. Consomme un peu plus de données.</string>
     <string name="auto_refresh_summary">Garder les taux à jour en arrière-plan</string>
     <string name="refresh_interval_title">Actualiser toutes les</string>
+    <string name="refresh_interval_daily">Une fois par jour, juste après la publication de %1$s</string>
+    <string name="refresh_interval_monthly">Une fois par mois, juste après la publication de %1$s</string>
 </resources>

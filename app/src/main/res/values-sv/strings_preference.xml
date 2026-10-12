@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Skicka kursförfrågningar på samma sätt som alla andra: utan appversion, enhetsuppgifter eller cache-id:n. Drar lite mer data.</string>
     <string name="auto_refresh_summary">Håll kurserna uppdaterade i bakgrunden</string>
     <string name="refresh_interval_title">Uppdatera var</string>
+    <string name="refresh_interval_daily">En gång om dagen, strax efter att %1$s publicerar</string>
+    <string name="refresh_interval_monthly">En gång i månaden, strax efter att %1$s publicerar</string>
 </resources>

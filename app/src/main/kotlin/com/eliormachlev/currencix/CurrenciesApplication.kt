@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
 import com.eliormachlev.currencix.leaks.configureLeakDetection
+import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
@@ -103,8 +104,8 @@ class CurrenciesApplication : Application() {
         }
     }
 
-    // Observe the inputs to the WorkManager schedule (opt-in flag, the user's
-    // interval, whether rate alerts are waiting). Any change re-enqueues or
+    // Observe the inputs to the WorkManager schedule (opt-in flag, the
+    // provider, the user's interval, whether rate alerts are waiting). Any change re-enqueues or
     // cancels the periodic work — enqueueUniquePeriodicWork with UPDATE
     // makes the reschedule race-free. Distinct-until-changed on the tuple
     // avoids a redundant enqueue on every DataStore emit.
@@ -113,15 +114,16 @@ class CurrenciesApplication : Application() {
         appScope.launch {
             combine(
                 db.providers.autoRefresh.flow,
+                db.providers.apiProvider.flow,
                 db.providers.autoRefreshInterval.flow,
                 db.alerts.alerts.flow
                     .map { it.isNotEmpty() },
-            ) { enabled, interval, forAlerts ->
-                AutoRefreshPlan(enabled, interval, forAlerts)
+            ) { enabled, provider, interval, forAlerts ->
+                AutoRefreshPlan(enabled, provider, interval, forAlerts)
             }.distinctUntilChanged()
                 .collect { plan ->
                     if (plan.enabled) {
-                        RateRefreshScheduler.schedule(this@CurrenciesApplication, plan.interval.minutes, plan.forAlerts)
+                        RateRefreshScheduler.schedule(this@CurrenciesApplication, plan.provider, plan.interval, plan.forAlerts)
                     } else {
                         RateRefreshScheduler.cancel(this@CurrenciesApplication)
                     }
@@ -133,6 +135,7 @@ class CurrenciesApplication : Application() {
 // What the periodic refresh is scheduled from (see observeAutoRefreshPreference).
 private data class AutoRefreshPlan(
     val enabled: Boolean,
+    val provider: ApiProvider,
     val interval: RefreshInterval,
     val forAlerts: Boolean,
 )

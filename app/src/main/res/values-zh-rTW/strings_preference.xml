@@ -197,4 +197,6 @@
     <string name="private_requests_summary">以與所有人相同的方式傳送匯率要求：不含應用程式版本、裝置資訊或快取識別碼。會多用一點數據。</string>
     <string name="auto_refresh_summary">在背景保持匯率最新</string>
     <string name="refresh_interval_title">重新整理間隔</string>
+    <string name="refresh_interval_daily">每天一次，在 %1$s 發布後立即重新整理</string>
+    <string name="refresh_interval_monthly">每月一次，在 %1$s 發布後立即重新整理</string>
 </resources>

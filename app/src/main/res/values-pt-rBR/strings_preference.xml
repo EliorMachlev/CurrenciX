@@ -203,4 +203,6 @@
     <string name="private_requests_summary">Envia as solicitações de cotação como todo mundo: sem versão do app, detalhes do aparelho ou identificadores de cache. Usa um pouco mais de dados.</string>
     <string name="auto_refresh_summary">Manter as cotações atualizadas em segundo plano</string>
     <string name="refresh_interval_title">Atualizar a cada</string>
+    <string name="refresh_interval_daily">Uma vez por dia, logo após %1$s publicar</string>
+    <string name="refresh_interval_monthly">Uma vez por mês, logo após %1$s publicar</string>
 </resources>

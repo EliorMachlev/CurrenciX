@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Invia le richieste dei cambi come tutti gli altri: senza versione dell\'app, dettagli del dispositivo o identificatori della cache. Usa un po\' più di dati.</string>
     <string name="auto_refresh_summary">Mantieni i tassi aggiornati in background</string>
     <string name="refresh_interval_title">Aggiorna ogni</string>
+    <string name="refresh_interval_daily">Una volta al giorno, subito dopo la pubblicazione di %1$s</string>
+    <string name="refresh_interval_monthly">Una volta al mese, subito dopo la pubblicazione di %1$s</string>
 </resources>

@@ -201,4 +201,6 @@
     <string name="private_requests_summary">Posílat požadavky na kurzy stejně jako všichni ostatní: bez verze aplikace, údajů o zařízení a identifikátorů mezipaměti. Spotřebuje o něco víc dat.</string>
     <string name="auto_refresh_summary">Udržovat kurzy aktuální na pozadí</string>
     <string name="refresh_interval_title">Obnovovat každých</string>
+    <string name="refresh_interval_daily">Jednou denně, hned po zveřejnění od %1$s</string>
+    <string name="refresh_interval_monthly">Jednou měsíčně, hned po zveřejnění od %1$s</string>
 </resources>

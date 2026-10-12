@@ -197,4 +197,6 @@
     <string name="private_requests_summary">以与所有人相同的方式发送汇率请求：不含应用版本、设备信息或缓存标识。会多用一点流量。</string>
     <string name="auto_refresh_summary">在后台保持汇率最新</string>
     <string name="refresh_interval_title">刷新间隔</string>
+    <string name="refresh_interval_daily">每天一次，在 %1$s 发布后立即刷新</string>
+    <string name="refresh_interval_monthly">每月一次，在 %1$s 发布后立即刷新</string>
 </resources>

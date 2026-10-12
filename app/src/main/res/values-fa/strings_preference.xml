@@ -199,4 +199,6 @@
     <string name="private_requests_summary">درخواست‌های نرخ را مثل بقیه بفرستد: بدون نسخه برنامه، جزئیات دستگاه یا شناسه‌های حافظه پنهان. کمی داده بیشتری مصرف می‌کند.</string>
     <string name="auto_refresh_summary">به‌روز نگه داشتن نرخ‌ها در پس‌زمینه</string>
     <string name="refresh_interval_title">تازه‌سازی هر</string>
+    <string name="refresh_interval_daily">روزی یک بار، درست پس از انتشار %1$s</string>
+    <string name="refresh_interval_monthly">ماهی یک بار، درست پس از انتشار %1$s</string>
 </resources>

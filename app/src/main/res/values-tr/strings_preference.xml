@@ -199,4 +199,6 @@
     <string name="private_requests_summary">Kur isteklerini herkes gibi gönderir: uygulama sürümü, cihaz bilgisi veya önbellek tanımlayıcısı olmadan. Biraz daha fazla veri kullanır.</string>
     <string name="auto_refresh_summary">Kurları arka planda güncel tut</string>
     <string name="refresh_interval_title">Yenileme sıklığı</string>
+    <string name="refresh_interval_daily">Günde bir kez, %1$s yayımladıktan hemen sonra</string>
+    <string name="refresh_interval_monthly">Ayda bir kez, %1$s yayımladıktan hemen sonra</string>
 </resources>

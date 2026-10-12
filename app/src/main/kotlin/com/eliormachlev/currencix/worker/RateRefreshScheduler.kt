@@ -6,10 +6,17 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.PublicationSchedule
+import com.eliormachlev.currencix.model.RefreshInterval
+import com.eliormachlev.currencix.repository.Database
+import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 
 // WorkManager enforces a minimum periodic interval of 15 minutes. Attempting
@@ -24,38 +31,92 @@ private const val WORK_MANAGER_MIN_INTERVAL_MINUTES = 15L
 private const val BACKOFF_SECONDS = 30L
 
 private const val UNIQUE_NAME = "rate-refresh"
+private const val UNIQUE_NAME_PUBLISHED = "rate-refresh-published"
 private const val UNIQUE_NAME_NOW = "rate-refresh-now"
 
+// Marks the one-off refresh timed to a publication, so the worker knows to
+// queue the next one when it's done.
+internal const val TAG_PUBLISHED_REFRESH = "rate-refresh-published"
+
 /**
- * Hoisted API for turning the periodic auto-refresh work on/off (#151).
+ * Turns the background auto-refresh (#151) on and off.
  *
  * ### Cadence
- * The user's [com.eliormachlev.currencix.model.RefreshInterval] (an hour by
- * default), coerced to the WorkManager 15-min floor.
+ * A provider that publishes on a known schedule
+ * ([PublicationSchedule.Published]: once a day, once a month) is refreshed
+ * just after each publication: one one-off request timed to it, which queues
+ * the next when it finishes. Only a [PublicationSchedule.Frequent] one
+ * follows the user's [RefreshInterval] (an hour by default), as periodic
+ * work coerced to WorkManager's 15-minute floor.
  *
  * ### Uniqueness
- * Enqueued via [WorkManager.enqueueUniquePeriodicWork] with
- * [ExistingPeriodicWorkPolicy.UPDATE] so [schedule] doubles as "reschedule
- * with new interval" — an interval change transparently updates the running
- * work without producing duplicates.
+ * Each kind is unique work, replaced on every [schedule], and scheduling one
+ * kind cancels the other, so a provider or interval change never leaves two
+ * refreshes running.
  */
 internal object RateRefreshScheduler {
     /**
-     * Refresh every [intervalMinutes]. With [forAlerts] (rate alerts are
-     * waiting) on any network and at any charge, since the alerts only fire
-     * when rates arrive; otherwise only on an unmetered network and with the
-     * battery not low.
+     * Refresh [provider]'s rates on its schedule (see Cadence above). With
+     * [forAlerts] (rate alerts are waiting) on any network and at any charge,
+     * since the alerts only fire when rates arrive; otherwise only on an
+     * unmetered network and with the battery not low.
      */
     fun schedule(
         context: Context,
-        intervalMinutes: Long,
+        provider: ApiProvider,
+        interval: RefreshInterval,
         forAlerts: Boolean = false,
+        now: Instant = Instant.now(),
     ) {
-        val coerced = intervalMinutes.coerceAtLeast(WORK_MANAGER_MIN_INTERVAL_MINUTES)
-        val request = buildPeriodicRequest(coerced, forAlerts)
+        val workManager = WorkManager.getInstance(context)
+        when (val publication = provider.publication) {
+            PublicationSchedule.Frequent -> {
+                workManager.cancelUniqueWork(UNIQUE_NAME_PUBLISHED)
+                workManager.enqueueUniquePeriodicWork(
+                    UNIQUE_NAME,
+                    ExistingPeriodicWorkPolicy.UPDATE,
+                    buildPeriodicRequest(interval.minutes.coerceAtLeast(WORK_MANAGER_MIN_INTERVAL_MINUTES), forAlerts),
+                )
+            }
+
+            is PublicationSchedule.Published -> {
+                workManager.cancelUniqueWork(UNIQUE_NAME)
+                workManager.enqueueUniqueWork(
+                    UNIQUE_NAME_PUBLISHED,
+                    ExistingWorkPolicy.REPLACE,
+                    buildPublishedRequest(publication, forAlerts, now),
+                )
+            }
+        }
+    }
+
+    /**
+     * After a refresh timed to a publication: the one after the next
+     * publication, if auto-refresh is still on and the provider still
+     * publishes on a schedule. Appended, so it waits for the refresh that
+     * queues it to finish rather than replacing it mid-run.
+     */
+    fun scheduleNextPublication(
+        context: Context,
+        now: Instant = Instant.now(),
+    ) {
+        val db = Database(context)
+        if (!db.providers.autoRefresh.get()) return
+        val publication =
+            db.providers.apiProvider
+                .get()
+                .publication as? PublicationSchedule.Published ?: return
+        val forAlerts =
+            db.alerts.alerts
+                .get()
+                .isNotEmpty()
         WorkManager
             .getInstance(context)
-            .enqueueUniquePeriodicWork(UNIQUE_NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
+            .enqueueUniqueWork(
+                UNIQUE_NAME_PUBLISHED,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                buildPublishedRequest(publication, forAlerts, now),
+            )
     }
 
     /**
@@ -71,8 +132,23 @@ internal object RateRefreshScheduler {
     }
 
     fun cancel(context: Context) {
-        WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_NAME)
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork(UNIQUE_NAME)
+        workManager.cancelUniqueWork(UNIQUE_NAME_PUBLISHED)
     }
+
+    // One refresh, [publication]'s next refresh time after [now].
+    private fun buildPublishedRequest(
+        publication: PublicationSchedule.Published,
+        forAlerts: Boolean,
+        now: Instant,
+    ): OneTimeWorkRequest =
+        OneTimeWorkRequestBuilder<RateRefreshWorker>()
+            .setInitialDelay(Duration.between(now, publication.nextRefreshAfter(now)))
+            .setConstraints(refreshConstraints(forAlerts))
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_SECONDS, TimeUnit.SECONDS)
+            .addTag(TAG_PUBLISHED_REFRESH)
+            .build()
 
     // Extracted so the constraints + backoff wiring lives in one obvious
     // place and the enqueue path stays a two-liner.

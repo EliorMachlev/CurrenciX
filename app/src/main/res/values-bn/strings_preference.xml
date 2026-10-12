@@ -200,4 +200,6 @@
     <string name="private_requests_summary">হারের অনুরোধ সবার মতো একইভাবে পাঠান: অ্যাপ সংস্করণ, ডিভাইসের তথ্য বা ক্যাশ শনাক্তকারী ছাড়া। একটু বেশি ডেটা লাগে।</string>
     <string name="auto_refresh_summary">পটভূমিতে হার হালনাগাদ রাখুন</string>
     <string name="refresh_interval_title">প্রতি কত সময় পর রিফ্রেশ</string>
+    <string name="refresh_interval_daily">দিনে একবার, %1$s প্রকাশের ঠিক পরে</string>
+    <string name="refresh_interval_monthly">মাসে একবার, %1$s প্রকাশের ঠিক পরে</string>
 </resources>

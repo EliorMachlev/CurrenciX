@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Send kursforespørgsler på samme måde som alle andre: uden appversion, enhedsoplysninger eller cache-id\'er. Bruger lidt mere data.</string>
     <string name="auto_refresh_summary">Hold kurserne opdaterede i baggrunden</string>
     <string name="refresh_interval_title">Opdater hver</string>
+    <string name="refresh_interval_daily">Én gang om dagen, lige efter %1$s offentliggør</string>
+    <string name="refresh_interval_monthly">Én gang om måneden, lige efter %1$s offentliggør</string>
 </resources>

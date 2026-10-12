@@ -199,4 +199,6 @@
     <string name="private_requests_summary">നിരക്ക് അഭ്യർത്ഥനകൾ എല്ലാവരുടേതുപോലെ അയയ്ക്കുക: ആപ്പ് പതിപ്പോ ഉപകരണ വിവരങ്ങളോ കാഷെ ഐഡന്റിഫയറുകളോ ഇല്ലാതെ. കുറച്ചുകൂടി ഡാറ്റ ഉപയോഗിക്കും.</string>
     <string name="auto_refresh_summary">നിരക്കുകൾ പശ്ചാത്തലത്തിൽ കാലികമായി നിലനിർത്തുക</string>
     <string name="refresh_interval_title">പുതുക്കൽ ഇടവേള</string>
+    <string name="refresh_interval_daily">ദിവസത്തിൽ ഒരിക്കൽ, %1$s പ്രസിദ്ധീകരിച്ച ഉടൻ</string>
+    <string name="refresh_interval_monthly">മാസത്തിൽ ഒരിക്കൽ, %1$s പ്രസിദ്ധീകരിച്ച ഉടൻ</string>
 </resources>

@@ -200,4 +200,6 @@
     <string name="private_requests_summary">Gửi yêu cầu tỷ giá giống như mọi người: không có phiên bản ứng dụng, thông tin thiết bị hay mã nhận dạng bộ nhớ đệm. Tốn dữ liệu hơn một chút.</string>
     <string name="auto_refresh_summary">Giữ tỷ giá luôn cập nhật trong nền</string>
     <string name="refresh_interval_title">Làm mới mỗi</string>
+    <string name="refresh_interval_daily">Mỗi ngày một lần, ngay sau khi %1$s công bố</string>
+    <string name="refresh_interval_monthly">Mỗi tháng một lần, ngay sau khi %1$s công bố</string>
 </resources>

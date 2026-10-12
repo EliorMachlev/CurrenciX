@@ -201,4 +201,6 @@
     <string name="private_requests_summary">שליחת בקשות השערים כמו של כולם: בלי גרסת אפליקציה, פרטי מכשיר או מזהי מטמון. צורך מעט יותר נתונים.</string>
     <string name="auto_refresh_summary">שמירה על שערים עדכניים ברקע</string>
     <string name="refresh_interval_title">רענון כל</string>
+    <string name="refresh_interval_daily">פעם ביום, מיד אחרי ש־%1$s מפרסם</string>
+    <string name="refresh_interval_monthly">פעם בחודש, מיד אחרי ש־%1$s מפרסם</string>
 </resources>
