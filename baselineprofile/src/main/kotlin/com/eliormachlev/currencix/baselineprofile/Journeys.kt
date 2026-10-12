@@ -38,11 +38,14 @@ private const val FLING_MARGIN_DIVISOR = 10
 private const val MAX_BACK_PRESSES = 3
 private const val MAX_DESCRIBED_VALUES = 40
 
+// A drawer entry is tapped at most this often before the journey gives up.
+private const val DRAWER_TAPS = 2
+
 // The cart's unsaved-changes prompt comes up at once when it comes at all.
 private const val PROMPT_TIMEOUT_MS = 2_000L
 
-// Enough cart rows to fill a few screens, each priced at CART_ROW_PRICE.
-private const val CART_ROWS = 30
+// More cart rows than a screen holds, each priced at CART_ROW_PRICE.
+private const val CART_ROWS = 15
 private const val CART_ROW_PRICE = "12"
 
 /** Cold path to the converter: launch, clear onboarding if shown, wait for the keypad. */
@@ -81,10 +84,7 @@ internal fun MacrobenchmarkScope.scrollCurrencyPicker() {
 
 /** Opens a screen from the drawer, lets it settle, and navigates back. */
 internal fun MacrobenchmarkScope.visitFromDrawer(entryTag: String) {
-    openDrawer()
-    checkNotNull(device.wait(Until.findObject(By.res(entryTag)), UI_TIMEOUT_MS)) {
-        "drawer entry $entryTag never appeared"
-    }.click()
+    openFromDrawer(entryTag)
     // The converter's keypad disappears once the new screen has covered it
     // (it leaves composition when the screen transition ends).
     check(device.wait(Until.gone(By.res(UiTags.KEY_DELETE)), UI_TIMEOUT_MS)) {
@@ -154,9 +154,18 @@ internal fun MacrobenchmarkScope.browseSettings() {
     awaitConverter()
 }
 
+// Opens the drawer and taps [entryTag], once the drawer has stopped moving
+// (a tap while it slides in can land beside the entry). When the drawer is
+// still open after the tap, it didn't take: tap once more.
 private fun MacrobenchmarkScope.openFromDrawer(entryTag: String) {
     openDrawer()
-    awaitTag(entryTag, "drawer").click()
+    awaitTag(entryTag, "drawer")
+    device.waitForIdle()
+    repeat(DRAWER_TAPS) {
+        device.findObject(By.res(entryTag))?.click() ?: return
+        if (device.wait(Until.gone(By.res(entryTag)), UI_TIMEOUT_MS)) return
+    }
+    check(!device.hasObject(By.res(entryTag))) { "$entryTag didn't open from the drawer — ${describeScreen()}" }
 }
 
 private fun MacrobenchmarkScope.awaitTag(

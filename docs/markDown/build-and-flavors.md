@@ -220,7 +220,7 @@ release APK/AAB automatically.
 
 The generator drives real user journeys (`baselineprofile/.../Journeys.kt`):
 launch, type on the keypad, fling through the currency picker, visit
-Timeline and Cart from the drawer, fill a cart with 30 rows and fling
+Timeline and Cart from the drawer, fill a cart with 15 rows and fling
 through it, and open each of Settings' categories. A startup-only collection produces
 `startup-prof.txt`, which also drives DEX layout; the full journey produces
 `baseline-prof.txt`. Journeys find elements by the app's `UiTestTags`
@@ -257,7 +257,7 @@ without it. The benchmarks' `None` vs `Partial` runs show what that costs.
 
 `InteractionBenchmarks` (same module, same journeys) measures cold-start time
 and `FrameTimingMetric` for keypad typing, currency-picker scrolling, screen
-transitions, scrolling a 30-row cart and browsing Settings, each with and
+transitions, scrolling a 15-row cart and browsing Settings, each with and
 without the baseline profile. Watch the P90/P99
 `frameDurationCpuMs` and any `frameOverrunMs > 0` (frames that missed their
 deadline, i.e. visible jank). CI runs them on the same emulator. Emulator
