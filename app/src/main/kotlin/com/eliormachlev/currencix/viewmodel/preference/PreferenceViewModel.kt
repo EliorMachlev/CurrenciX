@@ -37,6 +37,12 @@ class PreferenceViewModel(
 
     val isHighRefreshRateEnabled: StateFlow<Boolean> =
         db.display.highRefreshRate.stateInWhileSubscribed(viewModelScope)
+
+    val isAppLockEnabled: StateFlow<Boolean> =
+        db.privacy.appLock.stateInWhileSubscribed(viewModelScope)
+
+    val isPrivateRequestsEnabled: StateFlow<Boolean> =
+        db.privacy.privateRequests.stateInWhileSubscribed(viewModelScope)
     val isDynamicColorEnabled: StateFlow<Boolean> =
         db.display.dynamicColor.stateInWhileSubscribed(viewModelScope)
     val decimalPlaces: StateFlow<Int> =
@@ -113,6 +119,10 @@ class PreferenceViewModel(
     fun setClickSoundsEnabled(enabled: Boolean) = db.display.clickSounds.set(enabled)
 
     fun setHighRefreshRateEnabled(enabled: Boolean) = db.display.highRefreshRate.set(enabled)
+
+    fun setAppLockEnabled(enabled: Boolean) = db.privacy.appLock.set(enabled)
+
+    fun setPrivateRequestsEnabled(enabled: Boolean) = db.privacy.privateRequests.set(enabled)
 
     fun setFallbackProvider(provider: ApiProvider) = db.providers.fallbackProvider.set(provider)
 

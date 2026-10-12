@@ -93,6 +93,8 @@ object HttpClientProvider {
             // the response, so the stamped Cache-Control controls what the
             // cache stores for the non-cooperative provider hosts.
             .addNetworkInterceptor(ProviderCacheRewriteInterceptor(PROVIDER_CACHE_TTL_SECONDS))
+            // Innermost, so the request it shapes is exactly what leaves the phone.
+            .addNetworkInterceptor(PrivateRequestsInterceptor())
             .connectTimeout(CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             // Belt-and-braces: cap total call time as well, so an HTTP/2

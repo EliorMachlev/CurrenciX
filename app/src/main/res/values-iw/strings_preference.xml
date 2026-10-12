@@ -188,4 +188,16 @@
     <string name="settings_updates_section">עדכונים</string>
     <string name="high_refresh_rate_title">תנועה חלקה</string>
     <string name="high_refresh_rate_summary">הפעלה בקצב הרענון הגבוה ביותר של המסך, %1$d הרץ. צורך מעט יותר סוללה.</string>
+    <string name="settings_security_title">אבטחה ופרטיות</string>
+    <string name="settings_security_summary">נעילת אפליקציה, בקשות פרטיות</string>
+    <string name="settings_access_section">גישה</string>
+    <string name="settings_network_section">רשת</string>
+    <string name="app_lock_title">נעילת אפליקציה</string>
+    <string name="app_lock_summary">דרישת טביעת אצבע, פנים או נעילת מסך כדי לפתוח את האפליקציה, והסתרתה במסך האחרונות</string>
+    <string name="app_lock_unavailable">יש להגדיר קודם נעילת מסך בטלפון</string>
+    <string name="app_lock_prompt_title">ביטול נעילת CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX נעולה</string>
+    <string name="app_lock_unlock">ביטול נעילה</string>
+    <string name="private_requests_title">בקשות פרטיות</string>
+    <string name="private_requests_summary">שליחת בקשות השערים כמו של כולם: בלי גרסת אפליקציה, פרטי מכשיר או מזהי מטמון. צורך מעט יותר נתונים.</string>
 </resources>

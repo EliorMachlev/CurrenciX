@@ -189,4 +189,16 @@
     <string name="settings_updates_section">Обновявания</string>
     <string name="high_refresh_rate_title">Плавно движение</string>
     <string name="high_refresh_rate_summary">Работа с най-високата честота на екрана, %1$d Hz. Изразходва малко повече батерия.</string>
+    <string name="settings_security_title">Сигурност и поверителност</string>
+    <string name="settings_security_summary">Заключване, лични заявки</string>
+    <string name="settings_access_section">Достъп</string>
+    <string name="settings_network_section">Мрежа</string>
+    <string name="app_lock_title">Заключване на приложението</string>
+    <string name="app_lock_summary">Изисква пръстов отпечатък, лице или заключване на екрана за отваряне и скрива приложението в „Скорошни“</string>
+    <string name="app_lock_unavailable">Първо задайте заключване на екрана</string>
+    <string name="app_lock_prompt_title">Отключване на CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX е заключено</string>
+    <string name="app_lock_unlock">Отключване</string>
+    <string name="private_requests_title">Лични заявки</string>
+    <string name="private_requests_summary">Заявките за курсове се изпращат еднакво за всички: без версия на приложението, данни за устройството и идентификатори на кеша. Използва малко повече данни.</string>
 </resources>

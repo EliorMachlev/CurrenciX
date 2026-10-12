@@ -188,4 +188,16 @@
     <string name="settings_updates_section">Aktualizace</string>
     <string name="high_refresh_rate_title">Plynulý pohyb</string>
     <string name="high_refresh_rate_summary">Běží na nejvyšší frekvenci displeje, %1$d Hz. Spotřebuje o něco víc baterie.</string>
+    <string name="settings_security_title">Zabezpečení a soukromí</string>
+    <string name="settings_security_summary">Zámek aplikace, soukromé požadavky</string>
+    <string name="settings_access_section">Přístup</string>
+    <string name="settings_network_section">Síť</string>
+    <string name="app_lock_title">Zámek aplikace</string>
+    <string name="app_lock_summary">Vyžadovat otisk prstu, obličej nebo zámek obrazovky k otevření aplikace a skrýt ji v Nedávných</string>
+    <string name="app_lock_unavailable">Nejprve v telefonu nastavte zámek obrazovky</string>
+    <string name="app_lock_prompt_title">Odemknout CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX je zamčen</string>
+    <string name="app_lock_unlock">Odemknout</string>
+    <string name="private_requests_title">Soukromé požadavky</string>
+    <string name="private_requests_summary">Posílat požadavky na kurzy stejně jako všichni ostatní: bez verze aplikace, údajů o zařízení a identifikátorů mezipaměti. Spotřebuje o něco víc dat.</string>
 </resources>

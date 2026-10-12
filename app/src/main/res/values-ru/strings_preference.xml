@@ -188,4 +188,16 @@
     <string name="settings_updates_section">Обновления</string>
     <string name="high_refresh_rate_title">Плавное движение</string>
     <string name="high_refresh_rate_summary">Работа на максимальной частоте экрана, %1$d Гц. Расходует чуть больше заряда.</string>
+    <string name="settings_security_title">Безопасность и конфиденциальность</string>
+    <string name="settings_security_summary">Блокировка, приватные запросы</string>
+    <string name="settings_access_section">Доступ</string>
+    <string name="settings_network_section">Сеть</string>
+    <string name="app_lock_title">Блокировка приложения</string>
+    <string name="app_lock_summary">Запрашивать отпечаток, лицо или блокировку экрана для открытия и скрывать приложение в «Недавних»</string>
+    <string name="app_lock_unavailable">Сначала настройте блокировку экрана</string>
+    <string name="app_lock_prompt_title">Разблокировать CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX заблокирован</string>
+    <string name="app_lock_unlock">Разблокировать</string>
+    <string name="private_requests_title">Приватные запросы</string>
+    <string name="private_requests_summary">Отправлять запросы курсов так же, как все: без версии приложения, данных устройства и идентификаторов кеша. Расходует чуть больше трафика.</string>
 </resources>

@@ -193,4 +193,16 @@
     <string name="settings_updates_section">Updates</string>
     <string name="high_refresh_rate_title">Smooth motion</string>
     <string name="high_refresh_rate_summary">Run at the screen\'s fastest rate, %1$d Hz. Uses a little more battery.</string>
+    <string name="settings_security_title">Security &amp; privacy</string>
+    <string name="settings_security_summary">App lock, private requests</string>
+    <string name="settings_access_section">Access</string>
+    <string name="settings_network_section">Network</string>
+    <string name="app_lock_title">App lock</string>
+    <string name="app_lock_summary">Ask for your fingerprint, face or screen lock to open the app, and hide it in Recents</string>
+    <string name="app_lock_unavailable">Set a screen lock on your phone first</string>
+    <string name="app_lock_prompt_title">Unlock CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX is locked</string>
+    <string name="app_lock_unlock">Unlock</string>
+    <string name="private_requests_title">Private requests</string>
+    <string name="private_requests_summary">Send rate requests the same way as everyone else: no app version, no device details, no cache identifiers. Uses a little more data.</string>
 </resources>

@@ -186,4 +186,16 @@
     <string name="settings_updates_section">به‌روزرسانی‌ها</string>
     <string name="high_refresh_rate_title">حرکت روان</string>
     <string name="high_refresh_rate_summary">اجرا با بیشترین نرخ صفحه، %1$d هرتز. کمی باتری بیشتری مصرف می‌کند.</string>
+    <string name="settings_security_title">امنیت و حریم خصوصی</string>
+    <string name="settings_security_summary">قفل برنامه، درخواست‌های خصوصی</string>
+    <string name="settings_access_section">دسترسی</string>
+    <string name="settings_network_section">شبکه</string>
+    <string name="app_lock_title">قفل برنامه</string>
+    <string name="app_lock_summary">برای باز کردن برنامه اثر انگشت، چهره یا قفل صفحه بخواهد و آن را در برنامه‌های اخیر پنهان کند</string>
+    <string name="app_lock_unavailable">ابتدا روی تلفن قفل صفحه تنظیم کنید</string>
+    <string name="app_lock_prompt_title">باز کردن قفل CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX قفل است</string>
+    <string name="app_lock_unlock">باز کردن قفل</string>
+    <string name="private_requests_title">درخواست‌های خصوصی</string>
+    <string name="private_requests_summary">درخواست‌های نرخ را مثل بقیه بفرستد: بدون نسخه برنامه، جزئیات دستگاه یا شناسه‌های حافظه پنهان. کمی داده بیشتری مصرف می‌کند.</string>
 </resources>

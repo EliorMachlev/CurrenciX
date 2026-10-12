@@ -190,4 +190,16 @@
     <string name="settings_updates_section">التحديثات</string>
     <string name="high_refresh_rate_title">حركة سلسة</string>
     <string name="high_refresh_rate_summary">التشغيل بأسرع معدل للشاشة، %1$d هرتز. يستهلك بطارية أكثر قليلًا.</string>
+    <string name="settings_security_title">الأمان والخصوصية</string>
+    <string name="settings_security_summary">قفل التطبيق، طلبات خاصة</string>
+    <string name="settings_access_section">الوصول</string>
+    <string name="settings_network_section">الشبكة</string>
+    <string name="app_lock_title">قفل التطبيق</string>
+    <string name="app_lock_summary">اطلب بصمتك أو وجهك أو قفل الشاشة لفتح التطبيق، وإخفاءه في التطبيقات الأخيرة</string>
+    <string name="app_lock_unavailable">اضبط قفل شاشة على هاتفك أولًا</string>
+    <string name="app_lock_prompt_title">فتح قفل CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX مقفل</string>
+    <string name="app_lock_unlock">فتح القفل</string>
+    <string name="private_requests_title">طلبات خاصة</string>
+    <string name="private_requests_summary">أرسل طلبات الأسعار بالطريقة نفسها لدى الجميع: بلا إصدار للتطبيق ولا تفاصيل للجهاز ولا معرّفات تخزين مؤقت. يستهلك بيانات أكثر قليلًا.</string>
 </resources>

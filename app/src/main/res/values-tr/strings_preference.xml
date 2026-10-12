@@ -186,4 +186,16 @@
     <string name="settings_updates_section">Güncellemeler</string>
     <string name="high_refresh_rate_title">Akıcı hareket</string>
     <string name="high_refresh_rate_summary">Ekranın en yüksek yenileme hızında, %1$d Hz. Biraz daha fazla pil kullanır.</string>
+    <string name="settings_security_title">Güvenlik ve gizlilik</string>
+    <string name="settings_security_summary">Uygulama kilidi, özel istekler</string>
+    <string name="settings_access_section">Erişim</string>
+    <string name="settings_network_section">Ağ</string>
+    <string name="app_lock_title">Uygulama kilidi</string>
+    <string name="app_lock_summary">Açmak için parmak izi, yüz veya ekran kilidi ister ve uygulamayı Son kullanılanlarda gizler</string>
+    <string name="app_lock_unavailable">Önce telefonunuzda bir ekran kilidi ayarlayın</string>
+    <string name="app_lock_prompt_title">CurrenciX kilidini aç</string>
+    <string name="app_lock_locked">CurrenciX kilitli</string>
+    <string name="app_lock_unlock">Kilidi aç</string>
+    <string name="private_requests_title">Özel istekler</string>
+    <string name="private_requests_summary">Kur isteklerini herkes gibi gönderir: uygulama sürümü, cihaz bilgisi veya önbellek tanımlayıcısı olmadan. Biraz daha fazla veri kullanır.</string>
 </resources>

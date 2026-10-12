@@ -187,4 +187,16 @@
     <string name="settings_updates_section">Actualitzacions</string>
     <string name="high_refresh_rate_title">Moviment fluid</string>
     <string name="high_refresh_rate_summary">Funciona a la freqüència més alta de la pantalla, %1$d Hz. Gasta una mica més de bateria.</string>
+    <string name="settings_security_title">Seguretat i privadesa</string>
+    <string name="settings_security_summary">Bloqueig, peticions privades</string>
+    <string name="settings_access_section">Accés</string>
+    <string name="settings_network_section">Xarxa</string>
+    <string name="app_lock_title">Bloqueig de l\'app</string>
+    <string name="app_lock_summary">Demana l\'empremta, la cara o el bloqueig de pantalla per obrir l\'app i l\'amaga a Recents</string>
+    <string name="app_lock_unavailable">Primer configura un bloqueig de pantalla al telèfon</string>
+    <string name="app_lock_prompt_title">Desbloqueja CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX està bloquejada</string>
+    <string name="app_lock_unlock">Desbloqueja</string>
+    <string name="private_requests_title">Peticions privades</string>
+    <string name="private_requests_summary">Envia les peticions de canvi igual que tothom: sense versió de l\'app, detalls del dispositiu ni identificadors de memòria cau. Gasta una mica més de dades.</string>
 </resources>

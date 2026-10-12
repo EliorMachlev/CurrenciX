@@ -186,4 +186,16 @@
     <string name="settings_updates_section">അപ്ഡേറ്റുകൾ</string>
     <string name="high_refresh_rate_title">സുഗമമായ ചലനം</string>
     <string name="high_refresh_rate_summary">സ്ക്രീനിന്റെ ഏറ്റവും ഉയർന്ന നിരക്കിൽ, %1$d Hz. കുറച്ചുകൂടി ബാറ്ററി ഉപയോഗിക്കും.</string>
+    <string name="settings_security_title">സുരക്ഷയും സ്വകാര്യതയും</string>
+    <string name="settings_security_summary">ആപ്പ് ലോക്ക്, സ്വകാര്യ അഭ്യർത്ഥനകൾ</string>
+    <string name="settings_access_section">ആക്സസ്</string>
+    <string name="settings_network_section">നെറ്റ്‌വർക്ക്</string>
+    <string name="app_lock_title">ആപ്പ് ലോക്ക്</string>
+    <string name="app_lock_summary">ആപ്പ് തുറക്കാൻ വിരലടയാളം, മുഖം അല്ലെങ്കിൽ സ്ക്രീൻ ലോക്ക് ചോദിക്കും, സമീപകാല ആപ്പുകളിൽ മറയ്ക്കും</string>
+    <string name="app_lock_unavailable">ആദ്യം ഫോണിൽ സ്ക്രീൻ ലോക്ക് സജ്ജമാക്കുക</string>
+    <string name="app_lock_prompt_title">CurrenciX അൺലോക്ക് ചെയ്യുക</string>
+    <string name="app_lock_locked">CurrenciX ലോക്ക് ചെയ്തിരിക്കുന്നു</string>
+    <string name="app_lock_unlock">അൺലോക്ക്</string>
+    <string name="private_requests_title">സ്വകാര്യ അഭ്യർത്ഥനകൾ</string>
+    <string name="private_requests_summary">നിരക്ക് അഭ്യർത്ഥനകൾ എല്ലാവരുടേതുപോലെ അയയ്ക്കുക: ആപ്പ് പതിപ്പോ ഉപകരണ വിവരങ്ങളോ കാഷെ ഐഡന്റിഫയറുകളോ ഇല്ലാതെ. കുറച്ചുകൂടി ഡാറ്റ ഉപയോഗിക്കും.</string>
 </resources>

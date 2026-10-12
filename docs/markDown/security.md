@@ -51,15 +51,23 @@ Automatic Android backup remains disabled (`android:allowBackup="false"`) — us
 
 ## Runtime Permissions
 
-The app declares two normal (non-dangerous) permissions:
+The app declares these permissions (all normal, install-time ones except `POST_NOTIFICATIONS`, which is asked for at runtime):
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<uses-permission android:name="android.permission.USE_BIOMETRIC" />
 ```
 
-`ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. `POST_NOTIFICATIONS` is for rate alerts only: it's requested at runtime when the user sets their first alert (never at launch), and alerts are evaluated on the device against the rates already downloaded, so they add no network traffic or data. Denying it leaves the alerts waiting; nothing else in the app needs it. No location, contacts, storage, camera, or microphone access (receipt photos come from the system camera app or photo picker, which need no permission).
+`ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. `POST_NOTIFICATIONS` is for rate alerts only: it's requested at runtime when the user sets their first alert (never at launch), and alerts are evaluated on the device against the rates already downloaded, so they add no network traffic or data. Denying it leaves the alerts waiting; nothing else in the app needs it. `USE_BIOMETRIC` lets the optional app lock show the system's biometric / screen-lock prompt (`BiometricPrompt`); the prompt is the system's, and the app learns only whether it succeeded. No location, contacts, storage, camera, or microphone access (receipt photos come from the system camera app or photo picker, which need no permission).
+
+## App lock and private requests
+
+Settings → Security & privacy has two switches, both off by default (`PrivacySettings`):
+
+- **App lock** (`view/lock/AppLock.kt`, `LockGate`): with it on, the app is covered by a lock screen when it starts and when it comes back after more than a minute away, until the person passes the system prompt (`BiometricPrompt`, strong biometrics or the phone's screen lock, `BIOMETRIC_STRONG or DEVICE_CREDENTIAL`). The minute's grace lets the camera (receipts) and the file pickers (backup, export) come and go without asking again. The screens stay composed underneath but can't be seen, touched or read by TalkBack, and Recents shows no picture of the app (`setRecentsScreenshotEnabled(false)`); screenshots still work. Turning it on asks for the prompt first, so nobody locks themselves out; without a screen lock on the phone the switch is disabled and nothing locks (a restored backup with it on included). The text-selection converter, the widget and the Quick Settings tile stay outside the lock.
+- **Private requests** (`util/PrivateRequests.kt`): every request leaves the phone the same as everyone else's: the `User-Agent` is a fixed `CurrenciX` (no app or OkHttp version, nothing about the phone) and no cache identifiers are sent (`If-None-Match` / `If-Modified-Since`, which a server could make unique per phone and read back). A network interceptor, innermost, so it shapes exactly what goes out. The cost: an unchanged answer comes back in full instead of as a `304`. Not covered: the IP address, the TLS handshake (Android's own, shared by most apps) and when requests are made.
 
 ## Network Security
 

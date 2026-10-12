@@ -188,4 +188,16 @@
     <string name="settings_updates_section">Ĝisdatigoj</string>
     <string name="high_refresh_rate_title">Glata movo</string>
     <string name="high_refresh_rate_summary">Funkcii je la plej rapida frekvenco de la ekrano, %1$d Hz. Uzas iom pli da baterio.</string>
+    <string name="settings_security_title">Sekureco kaj privateco</string>
+    <string name="settings_security_summary">Aplika ŝloso, privataj petoj</string>
+    <string name="settings_access_section">Aliro</string>
+    <string name="settings_network_section">Reto</string>
+    <string name="app_lock_title">Aplika ŝloso</string>
+    <string name="app_lock_summary">Peti fingrospuron, vizaĝon aŭ ekranŝloson por malfermi la aplikaĵon, kaj kaŝi ĝin en Lastatempaj</string>
+    <string name="app_lock_unavailable">Unue agordu ekranŝloson en via telefono</string>
+    <string name="app_lock_prompt_title">Malŝlosi CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX estas ŝlosita</string>
+    <string name="app_lock_unlock">Malŝlosi</string>
+    <string name="private_requests_title">Privataj petoj</string>
+    <string name="private_requests_summary">Sendi kurzajn petojn same kiel ĉiuj: sen aplikaĵa versio, aparataj detaloj aŭ kaŝmemoraj identigiloj. Uzas iom pli da datumoj.</string>
 </resources>

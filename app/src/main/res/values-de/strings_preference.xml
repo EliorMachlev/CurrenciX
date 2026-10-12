@@ -185,4 +185,16 @@
     <string name="settings_updates_section">Aktualisierungen</string>
     <string name="high_refresh_rate_title">Flüssige Bewegung</string>
     <string name="high_refresh_rate_summary">Mit der höchsten Bildwiederholrate des Displays, %1$d Hz. Braucht etwas mehr Akku.</string>
+    <string name="settings_security_title">Sicherheit &amp; Datenschutz</string>
+    <string name="settings_security_summary">App-Sperre, private Anfragen</string>
+    <string name="settings_access_section">Zugriff</string>
+    <string name="settings_network_section">Netzwerk</string>
+    <string name="app_lock_title">App-Sperre</string>
+    <string name="app_lock_summary">Zum Öffnen Fingerabdruck, Gesicht oder Displaysperre verlangen und die App in „Zuletzt verwendet“ verbergen</string>
+    <string name="app_lock_unavailable">Richte zuerst eine Displaysperre ein</string>
+    <string name="app_lock_prompt_title">CurrenciX entsperren</string>
+    <string name="app_lock_locked">CurrenciX ist gesperrt</string>
+    <string name="app_lock_unlock">Entsperren</string>
+    <string name="private_requests_title">Private Anfragen</string>
+    <string name="private_requests_summary">Kursanfragen so senden wie alle anderen: ohne App-Version, Gerätedetails oder Cache-Kennungen. Braucht etwas mehr Daten.</string>
 </resources>

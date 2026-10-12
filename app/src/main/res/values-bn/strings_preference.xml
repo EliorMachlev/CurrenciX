@@ -187,4 +187,16 @@
     <string name="settings_updates_section">আপডেট</string>
     <string name="high_refresh_rate_title">মসৃণ গতি</string>
     <string name="high_refresh_rate_summary">স্ক্রিনের সর্বোচ্চ হারে চালান, %1$d Hz। একটু বেশি ব্যাটারি খরচ হয়।</string>
+    <string name="settings_security_title">নিরাপত্তা ও গোপনীয়তা</string>
+    <string name="settings_security_summary">অ্যাপ লক, ব্যক্তিগত অনুরোধ</string>
+    <string name="settings_access_section">প্রবেশাধিকার</string>
+    <string name="settings_network_section">নেটওয়ার্ক</string>
+    <string name="app_lock_title">অ্যাপ লক</string>
+    <string name="app_lock_summary">অ্যাপ খুলতে আঙুলের ছাপ, মুখ বা স্ক্রিন লক চাওয়া হবে, আর সাম্প্রতিক তালিকায় লুকানো থাকবে</string>
+    <string name="app_lock_unavailable">প্রথমে ফোনে স্ক্রিন লক সেট করুন</string>
+    <string name="app_lock_prompt_title">CurrenciX আনলক করুন</string>
+    <string name="app_lock_locked">CurrenciX লক করা আছে</string>
+    <string name="app_lock_unlock">আনলক</string>
+    <string name="private_requests_title">ব্যক্তিগত অনুরোধ</string>
+    <string name="private_requests_summary">হারের অনুরোধ সবার মতো একইভাবে পাঠান: অ্যাপ সংস্করণ, ডিভাইসের তথ্য বা ক্যাশ শনাক্তকারী ছাড়া। একটু বেশি ডেটা লাগে।</string>
 </resources>

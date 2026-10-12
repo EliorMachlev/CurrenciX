@@ -187,4 +187,16 @@
     <string name="settings_updates_section">Actualizaciones</string>
     <string name="high_refresh_rate_title">Movimiento fluido</string>
     <string name="high_refresh_rate_summary">Usa la frecuencia más alta de la pantalla, %1$d Hz. Consume algo más de batería.</string>
+    <string name="settings_security_title">Seguridad y privacidad</string>
+    <string name="settings_security_summary">Bloqueo, solicitudes privadas</string>
+    <string name="settings_access_section">Acceso</string>
+    <string name="settings_network_section">Red</string>
+    <string name="app_lock_title">Bloqueo de la app</string>
+    <string name="app_lock_summary">Pide huella, rostro o bloqueo de pantalla para abrir la app y la oculta en Recientes</string>
+    <string name="app_lock_unavailable">Primero configura un bloqueo de pantalla en el teléfono</string>
+    <string name="app_lock_prompt_title">Desbloquear CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX está bloqueada</string>
+    <string name="app_lock_unlock">Desbloquear</string>
+    <string name="private_requests_title">Solicitudes privadas</string>
+    <string name="private_requests_summary">Envía las solicitudes de tipos de cambio igual que todos: sin versión de la app, datos del dispositivo ni identificadores de caché. Consume algo más de datos.</string>
 </resources>

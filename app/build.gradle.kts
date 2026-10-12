@@ -245,6 +245,8 @@ dependencies {
     val livecycleVersion = "2.11.0"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$livecycleVersion")
+    // The app lock: when the app as a whole leaves and comes back (view/lock/AppLock).
+    implementation("androidx.lifecycle:lifecycle-process:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$livecycleVersion")
     implementation("androidx.window:window:1.5.1")
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging

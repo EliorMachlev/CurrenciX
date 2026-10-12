@@ -27,6 +27,7 @@ import com.eliormachlev.currencix.util.releaseNotesUrl
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.lock.AppLock
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import java.util.Calendar
@@ -66,6 +67,7 @@ private fun sectionsOf(topic: SettingsTopic?): List<PageSection> =
         SettingsTopic.PROVIDERS -> listOf { ProvidersSection(it) }
         SettingsTopic.APPEARANCE -> listOf({ DisplaySection(it) }, { TouchSection(it) })
         SettingsTopic.CHART -> listOf { ChartSection() }
+        SettingsTopic.SECURITY -> listOf({ AccessSection(it) }, { NetworkPrivacySection(it) })
         SettingsTopic.ABOUT -> listOf({ VersionSection() }, { ProjectSection(it) }, { LegalSection() })
         SettingsTopic.CREDITS -> emptyList()
     }
@@ -80,6 +82,7 @@ internal val SettingsTopic.titleRes: Int
             SettingsTopic.PROVIDERS -> R.string.settings_providers_title
             SettingsTopic.APPEARANCE -> R.string.category_appearance
             SettingsTopic.CHART -> R.string.menu_timeline
+            SettingsTopic.SECURITY -> R.string.settings_security_title
             SettingsTopic.ABOUT -> R.string.category_about
             SettingsTopic.CREDITS -> R.string.title_credits
         }
@@ -94,6 +97,7 @@ private val SettingsTopic.summaryRes: Int
             SettingsTopic.PROVIDERS -> R.string.settings_providers_summary
             SettingsTopic.APPEARANCE -> R.string.settings_appearance_summary
             SettingsTopic.CHART -> R.string.graph_options_summary
+            SettingsTopic.SECURITY -> R.string.settings_security_summary
             SettingsTopic.ABOUT -> R.string.settings_about_summary
             SettingsTopic.CREDITS -> R.string.credits_summary
         }
@@ -107,6 +111,7 @@ private val SettingsTopic.iconRes: Int
             SettingsTopic.PROVIDERS -> R.drawable.ic_info
             SettingsTopic.APPEARANCE -> R.drawable.ic_theme
             SettingsTopic.CHART -> R.drawable.ic_timeline
+            SettingsTopic.SECURITY -> R.drawable.ic_shield
             SettingsTopic.ABOUT -> R.drawable.ic_info
             SettingsTopic.CREDITS -> R.drawable.ic_code
         }
@@ -140,6 +145,7 @@ private fun CategoriesSection(page: SettingsPageContext) {
             iconRes = R.drawable.ic_backup,
             onClick = { page.callbacks.onOpen(Screen.Backup) },
         )
+        TopicRow(SettingsTopic.SECURITY, page)
         TopicRow(SettingsTopic.ABOUT, page)
     }
 }
@@ -308,6 +314,48 @@ private fun TouchSection(page: SettingsPageContext) {
             iconRes = R.drawable.ic_volume_up,
             checked = values.clickSoundsEnabled,
             onCheckedChange = page.viewModel::setClickSoundsEnabled,
+        )
+    }
+}
+
+// The app lock. Turning it on asks for the phone's biometrics or screen lock
+// first, so it can't lock someone out who can't unlock; without a screen
+// lock on the phone there's nothing to unlock with, and it says so.
+@Composable
+private fun AccessSection(page: SettingsPageContext) {
+    val context = LocalContext.current
+    val enabled by page.viewModel.isAppLockEnabled.collectAsStateWithLifecycle()
+    val available = remember(context) { AppLock.isAvailable(context) }
+    PreferenceSection(text = stringResource(R.string.settings_access_section)) {
+        SwitchRow(
+            title = stringResource(R.string.app_lock_title),
+            summary = stringResource(if (available) R.string.app_lock_summary else R.string.app_lock_unavailable),
+            iconRes = R.drawable.ic_fingerprint,
+            checked = enabled && available,
+            enabled = available,
+            onCheckedChange = { on ->
+                if (on) {
+                    AppLock.authenticate(
+                        context,
+                    ) { page.viewModel.setAppLockEnabled(true) }
+                } else {
+                    page.viewModel.setAppLockEnabled(false)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun NetworkPrivacySection(page: SettingsPageContext) {
+    val enabled by page.viewModel.isPrivateRequestsEnabled.collectAsStateWithLifecycle()
+    PreferenceSection(text = stringResource(R.string.settings_network_section)) {
+        SwitchRow(
+            title = stringResource(R.string.private_requests_title),
+            summary = stringResource(R.string.private_requests_summary),
+            iconRes = R.drawable.ic_visibility_off,
+            checked = enabled,
+            onCheckedChange = page.viewModel::setPrivateRequestsEnabled,
         )
     }
 }

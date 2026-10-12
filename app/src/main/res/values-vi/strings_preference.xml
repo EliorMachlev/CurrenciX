@@ -187,4 +187,16 @@
     <string name="settings_updates_section">Cập nhật</string>
     <string name="high_refresh_rate_title">Chuyển động mượt</string>
     <string name="high_refresh_rate_summary">Chạy ở tần số quét cao nhất của màn hình, %1$d Hz. Tốn pin hơn một chút.</string>
+    <string name="settings_security_title">Bảo mật và quyền riêng tư</string>
+    <string name="settings_security_summary">Khóa ứng dụng, yêu cầu riêng tư</string>
+    <string name="settings_access_section">Truy cập</string>
+    <string name="settings_network_section">Mạng</string>
+    <string name="app_lock_title">Khóa ứng dụng</string>
+    <string name="app_lock_summary">Yêu cầu vân tay, khuôn mặt hoặc khóa màn hình để mở ứng dụng và ẩn nó trong mục Gần đây</string>
+    <string name="app_lock_unavailable">Hãy đặt khóa màn hình trên điện thoại trước</string>
+    <string name="app_lock_prompt_title">Mở khóa CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX đang bị khóa</string>
+    <string name="app_lock_unlock">Mở khóa</string>
+    <string name="private_requests_title">Yêu cầu riêng tư</string>
+    <string name="private_requests_summary">Gửi yêu cầu tỷ giá giống như mọi người: không có phiên bản ứng dụng, thông tin thiết bị hay mã nhận dạng bộ nhớ đệm. Tốn dữ liệu hơn một chút.</string>
 </resources>

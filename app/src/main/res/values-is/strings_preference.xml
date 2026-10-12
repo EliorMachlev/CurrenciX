@@ -187,4 +187,16 @@
     <string name="settings_updates_section">Uppfærslur</string>
     <string name="high_refresh_rate_title">Mjúk hreyfing</string>
     <string name="high_refresh_rate_summary">Keyra á hraðasta tíðni skjásins, %1$d Hz. Notar aðeins meiri rafhlöðu.</string>
+    <string name="settings_security_title">Öryggi og persónuvernd</string>
+    <string name="settings_security_summary">Forritalás, einkabeiðnir</string>
+    <string name="settings_access_section">Aðgangur</string>
+    <string name="settings_network_section">Net</string>
+    <string name="app_lock_title">Forritalás</string>
+    <string name="app_lock_summary">Biðja um fingrafar, andlit eða skjálás til að opna forritið, og fela það í Nýlegu</string>
+    <string name="app_lock_unavailable">Stilltu fyrst skjálás á símanum</string>
+    <string name="app_lock_prompt_title">Opna CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX er læst</string>
+    <string name="app_lock_unlock">Opna</string>
+    <string name="private_requests_title">Einkabeiðnir</string>
+    <string name="private_requests_summary">Senda gengisbeiðnir eins og allir aðrir: án útgáfu forrits, upplýsinga um tæki eða skyndiminnisauðkenna. Notar aðeins meiri gögn.</string>
 </resources>

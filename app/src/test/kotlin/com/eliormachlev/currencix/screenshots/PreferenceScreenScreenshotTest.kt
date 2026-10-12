@@ -58,6 +58,7 @@ private fun CategoriesPreview() {
                 CategoryRow(R.string.category_appearance, R.string.settings_appearance_summary, R.drawable.ic_theme)
                 CategoryRow(R.string.menu_timeline, R.string.graph_options_summary, R.drawable.ic_timeline)
                 CategoryRow(R.string.backup_title, R.string.backup_summary, R.drawable.ic_backup)
+                CategoryRow(R.string.settings_security_title, R.string.settings_security_summary, R.drawable.ic_shield)
                 CategoryRow(R.string.category_about, R.string.settings_about_summary, R.drawable.ic_info)
             }
         }

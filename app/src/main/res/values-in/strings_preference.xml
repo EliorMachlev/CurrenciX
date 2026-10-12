@@ -187,4 +187,16 @@
     <string name="settings_updates_section">Pembaruan</string>
     <string name="high_refresh_rate_title">Gerakan mulus</string>
     <string name="high_refresh_rate_summary">Jalankan pada laju tercepat layar, %1$d Hz. Memakai sedikit lebih banyak baterai.</string>
+    <string name="settings_security_title">Keamanan &amp; privasi</string>
+    <string name="settings_security_summary">Kunci aplikasi, permintaan privat</string>
+    <string name="settings_access_section">Akses</string>
+    <string name="settings_network_section">Jaringan</string>
+    <string name="app_lock_title">Kunci aplikasi</string>
+    <string name="app_lock_summary">Minta sidik jari, wajah, atau kunci layar untuk membuka aplikasi, dan sembunyikan di Terbaru</string>
+    <string name="app_lock_unavailable">Atur kunci layar di ponsel Anda terlebih dahulu</string>
+    <string name="app_lock_prompt_title">Buka CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX terkunci</string>
+    <string name="app_lock_unlock">Buka kunci</string>
+    <string name="private_requests_title">Permintaan privat</string>
+    <string name="private_requests_summary">Kirim permintaan kurs sama seperti orang lain: tanpa versi aplikasi, detail perangkat, atau pengenal cache. Memakai sedikit lebih banyak data.</string>
 </resources>

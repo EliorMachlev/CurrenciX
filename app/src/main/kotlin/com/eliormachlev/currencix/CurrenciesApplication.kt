@@ -9,7 +9,9 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.FileLoggingTree
+import com.eliormachlev.currencix.util.PrivateRequests
 import com.eliormachlev.currencix.util.plantConsoleLogging
+import com.eliormachlev.currencix.view.lock.AppLock
 import com.eliormachlev.currencix.view.widget.publishWidgetPreviews
 import com.eliormachlev.currencix.worker.RateRefreshScheduler
 import kotlinx.coroutines.CoroutineScope
@@ -43,9 +45,20 @@ class CurrenciesApplication : Application() {
         installLogging()
         installJankStats()
         applyNightMode()
+        keepPrivacyInStep()
         prewarmProviderDns()
         observeAutoRefreshPreference()
         appScope.publishWidgetPreviews(this)
+    }
+
+    // Security & privacy: requests go out private from the first one when the
+    // setting is on, and follow it after; the app lock starts following the
+    // app coming and going.
+    private fun keepPrivacyInStep() {
+        val privacy = Database(this).privacy
+        PrivateRequests.enabled = privacy.privateRequests.get()
+        appScope.launch { privacy.privateRequests.flow.collect { PrivateRequests.enabled = it } }
+        AppLock.install(this, privacy)
     }
 
     // True iff this Application instance is running in the app's main

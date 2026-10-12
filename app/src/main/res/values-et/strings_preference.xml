@@ -186,4 +186,16 @@
     <string name="settings_updates_section">Värskendused</string>
     <string name="high_refresh_rate_title">Sujuv liikumine</string>
     <string name="high_refresh_rate_summary">Ekraani suurim värskendussagedus, %1$d Hz. Kulutab veidi rohkem akut.</string>
+    <string name="settings_security_title">Turvalisus ja privaatsus</string>
+    <string name="settings_security_summary">Rakenduse lukk, privaatsed päringud</string>
+    <string name="settings_access_section">Juurdepääs</string>
+    <string name="settings_network_section">Võrk</string>
+    <string name="app_lock_title">Rakenduse lukk</string>
+    <string name="app_lock_summary">Küsi avamiseks sõrmejälge, nägu või ekraanilukku ja peida rakendus hiljutistes</string>
+    <string name="app_lock_unavailable">Määra esmalt telefonis ekraanilukk</string>
+    <string name="app_lock_prompt_title">Ava CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX on lukus</string>
+    <string name="app_lock_unlock">Ava</string>
+    <string name="private_requests_title">Privaatsed päringud</string>
+    <string name="private_requests_summary">Saada kursipäringud nagu kõik teised: ilma rakenduse versiooni, seadme andmete ja vahemälu tunnusteta. Kulutab veidi rohkem andmeid.</string>
 </resources>

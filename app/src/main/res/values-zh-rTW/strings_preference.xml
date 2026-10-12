@@ -184,4 +184,16 @@
     <string name="settings_updates_section">更新</string>
     <string name="high_refresh_rate_title">流暢動畫</string>
     <string name="high_refresh_rate_summary">以螢幕最高更新率執行（%1$d Hz）。會稍微多耗電。</string>
+    <string name="settings_security_title">安全性與隱私權</string>
+    <string name="settings_security_summary">應用程式鎖、隱私要求</string>
+    <string name="settings_access_section">存取</string>
+    <string name="settings_network_section">網路</string>
+    <string name="app_lock_title">應用程式鎖</string>
+    <string name="app_lock_summary">開啟應用程式時需驗證指紋、臉孔或螢幕鎖定，並在最近使用中隱藏</string>
+    <string name="app_lock_unavailable">請先在手機上設定螢幕鎖定</string>
+    <string name="app_lock_prompt_title">解鎖 CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX 已鎖定</string>
+    <string name="app_lock_unlock">解鎖</string>
+    <string name="private_requests_title">隱私要求</string>
+    <string name="private_requests_summary">以與所有人相同的方式傳送匯率要求：不含應用程式版本、裝置資訊或快取識別碼。會多用一點數據。</string>
 </resources>

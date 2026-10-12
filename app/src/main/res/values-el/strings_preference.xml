@@ -186,4 +186,16 @@
     <string name="settings_updates_section">Ενημερώσεις</string>
     <string name="high_refresh_rate_title">Ομαλή κίνηση</string>
     <string name="high_refresh_rate_summary">Λειτουργία στον υψηλότερο ρυθμό της οθόνης, %1$d Hz. Καταναλώνει λίγη περισσότερη μπαταρία.</string>
+    <string name="settings_security_title">Ασφάλεια και απόρρητο</string>
+    <string name="settings_security_summary">Κλείδωμα, ιδιωτικά αιτήματα</string>
+    <string name="settings_access_section">Πρόσβαση</string>
+    <string name="settings_network_section">Δίκτυο</string>
+    <string name="app_lock_title">Κλείδωμα εφαρμογής</string>
+    <string name="app_lock_summary">Ζητά δακτυλικό αποτύπωμα, πρόσωπο ή κλείδωμα οθόνης για άνοιγμα και την κρύβει στις Πρόσφατες</string>
+    <string name="app_lock_unavailable">Ορίστε πρώτα κλείδωμα οθόνης στο τηλέφωνο</string>
+    <string name="app_lock_prompt_title">Ξεκλείδωμα CurrenciX</string>
+    <string name="app_lock_locked">Το CurrenciX είναι κλειδωμένο</string>
+    <string name="app_lock_unlock">Ξεκλείδωμα</string>
+    <string name="private_requests_title">Ιδιωτικά αιτήματα</string>
+    <string name="private_requests_summary">Στέλνει τα αιτήματα ισοτιμιών όπως όλοι: χωρίς έκδοση εφαρμογής, στοιχεία συσκευής ή αναγνωριστικά cache. Χρησιμοποιεί λίγα περισσότερα δεδομένα.</string>
 </resources>

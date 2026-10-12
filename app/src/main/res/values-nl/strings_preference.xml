@@ -185,4 +185,16 @@
     <string name="settings_updates_section">Updates</string>
     <string name="high_refresh_rate_title">Vloeiende beweging</string>
     <string name="high_refresh_rate_summary">Gebruik de hoogste verversingssnelheid van het scherm, %1$d Hz. Kost iets meer batterij.</string>
+    <string name="settings_security_title">Beveiliging en privacy</string>
+    <string name="settings_security_summary">App-vergrendeling, privéverzoeken</string>
+    <string name="settings_access_section">Toegang</string>
+    <string name="settings_network_section">Netwerk</string>
+    <string name="app_lock_title">App-vergrendeling</string>
+    <string name="app_lock_summary">Vraag om vingerafdruk, gezicht of schermvergrendeling om de app te openen, en verberg hem in Recent</string>
+    <string name="app_lock_unavailable">Stel eerst een schermvergrendeling in op je telefoon</string>
+    <string name="app_lock_prompt_title">CurrenciX ontgrendelen</string>
+    <string name="app_lock_locked">CurrenciX is vergrendeld</string>
+    <string name="app_lock_unlock">Ontgrendelen</string>
+    <string name="private_requests_title">Privéverzoeken</string>
+    <string name="private_requests_summary">Verstuur koersverzoeken op dezelfde manier als iedereen: zonder appversie, apparaatgegevens of cache-ID\'s. Kost iets meer data.</string>
 </resources>

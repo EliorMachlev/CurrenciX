@@ -187,4 +187,16 @@
     <string name="settings_updates_section">Mises à jour</string>
     <string name="high_refresh_rate_title">Mouvement fluide</string>
     <string name="high_refresh_rate_summary">Utilise la fréquence la plus élevée de l\'écran, %1$d Hz. Consomme un peu plus de batterie.</string>
+    <string name="settings_security_title">Sécurité et confidentialité</string>
+    <string name="settings_security_summary">Verrouillage, requêtes privées</string>
+    <string name="settings_access_section">Accès</string>
+    <string name="settings_network_section">Réseau</string>
+    <string name="app_lock_title">Verrouillage de l\'appli</string>
+    <string name="app_lock_summary">Demander l\'empreinte, le visage ou le verrouillage de l\'écran pour ouvrir l\'appli, et la masquer dans les applis récentes</string>
+    <string name="app_lock_unavailable">Configurez d\'abord un verrouillage de l\'écran</string>
+    <string name="app_lock_prompt_title">Déverrouiller CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX est verrouillée</string>
+    <string name="app_lock_unlock">Déverrouiller</string>
+    <string name="private_requests_title">Requêtes privées</string>
+    <string name="private_requests_summary">Envoyer les requêtes de taux comme tout le monde : sans version de l\'appli, détails de l\'appareil ni identifiants de cache. Consomme un peu plus de données.</string>
 </resources>

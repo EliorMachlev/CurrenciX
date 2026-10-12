@@ -41,6 +41,8 @@ import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalDynamicColor
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Motion
+import com.eliormachlev.currencix.view.lock.LockGate
+import com.eliormachlev.currencix.view.lock.hideFromRecents
 import com.eliormachlev.currencix.view.navigation.AppNavHost
 import com.eliormachlev.currencix.view.navigation.AppNavigator
 import com.eliormachlev.currencix.view.navigation.LocalScreenBackground
@@ -134,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 val screenBackground =
                     if (dynamicColor && !pureBlack) MaterialTheme.colorScheme.background else themeBackground
                 CompositionLocalProvider(LocalScreenBackground provides screenBackground) {
-                    AppContent()
+                    LockGate { AppContent() }
                 }
             }
         }
@@ -142,6 +144,15 @@ class MainActivity : AppCompatActivity() {
         observeFoldingFeature()
         keepShortcutsInStep()
         keepRefreshRateInStep(database)
+        keepRecentsInStep(database)
+    }
+
+    // With the app lock on, Recents shows no picture of the last screen.
+    private fun keepRecentsInStep(database: Database) {
+        lifecycleScope.launch {
+            database.privacy.appLock.flow
+                .collect { hideFromRecents(it) }
+        }
     }
 
     // The screen's fastest rate while the app is up, unless switched off in

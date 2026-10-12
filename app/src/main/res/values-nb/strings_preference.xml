@@ -189,4 +189,16 @@
     <string name="settings_updates_section">Oppdateringer</string>
     <string name="high_refresh_rate_title">Jevn bevegelse</string>
     <string name="high_refresh_rate_summary">Kjør med skjermens høyeste frekvens, %1$d Hz. Bruker litt mer batteri.</string>
+    <string name="settings_security_title">Sikkerhet og personvern</string>
+    <string name="settings_security_summary">Applås, private forespørsler</string>
+    <string name="settings_access_section">Tilgang</string>
+    <string name="settings_network_section">Nettverk</string>
+    <string name="app_lock_title">Applås</string>
+    <string name="app_lock_summary">Krev fingeravtrykk, ansikt eller skjermlås for å åpne appen, og skjul den i Nylige</string>
+    <string name="app_lock_unavailable">Konfigurer en skjermlås på telefonen først</string>
+    <string name="app_lock_prompt_title">Lås opp CurrenciX</string>
+    <string name="app_lock_locked">CurrenciX er låst</string>
+    <string name="app_lock_unlock">Lås opp</string>
+    <string name="private_requests_title">Private forespørsler</string>
+    <string name="private_requests_summary">Send kursforespørsler på samme måte som alle andre: uten appversjon, enhetsdetaljer eller buffer-ID-er. Bruker litt mer data.</string>
 </resources>

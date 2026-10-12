@@ -14,6 +14,7 @@ enum class SettingsTopic(
     PROVIDERS("providers", parent = RATES),
     APPEARANCE("appearance"),
     CHART("chart"),
+    SECURITY("security"),
     ABOUT("about"),
     CREDITS("credits", parent = ABOUT),
     ;
