@@ -103,6 +103,8 @@ fun Modifier.hapticCombinedClickable(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
+    // TalkBack's "double-tap to …" verb for [onClick].
+    onClickLabel: String? = null,
 ): Modifier =
     composed {
         val ctx = LocalContext.current
@@ -118,6 +120,7 @@ fun Modifier.hapticCombinedClickable(
                 tap()
                 onClick()
             },
+            onClickLabel = onClickLabel,
             onLongClickLabel = onLongClickLabel,
             onLongClick =
                 onLongClick?.let {

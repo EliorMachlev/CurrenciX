@@ -289,4 +289,6 @@
     <string name="provider_reliability_inaccurate">Неточні дані</string>
     <string name="error_api_plan_required">HTTP 403 – Ваш тариф у цього джерела цього не включає.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Ви вичерпали ліміт запитів у цього джерела.</string>
+    <string name="quick_conversions_use_amount">Використати цю суму</string>
+    <string name="quick_conversions_copy">Копіювати</string>
 </resources>

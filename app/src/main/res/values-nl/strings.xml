@@ -282,4 +282,6 @@
     <string name="provider_reliability_inaccurate">Onnauwkeurige gegevens</string>
     <string name="error_api_plan_required">HTTP 403 – Je abonnement bij deze bron omvat dit niet.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Je hebt je verzoeken bij deze bron opgebruikt.</string>
+    <string name="quick_conversions_use_amount">Dit bedrag gebruiken</string>
+    <string name="quick_conversions_copy">Kopiëren</string>
 </resources>

@@ -1,63 +1,78 @@
 package com.eliormachlev.currencix.view.main.compose
 
 import android.content.Context
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.isNeutralFeeStack
+import com.eliormachlev.currencix.util.shareImageOrText
+import com.eliormachlev.currencix.view.compose.LayerCapture
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.rememberDatabase
+import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.main.ConverterStatus
+import com.eliormachlev.currencix.view.main.copyToClipboard
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
 
+// The shared image's file name starts with this.
+private const val SHARE_NAME_PREFIX = "currencix-quick"
+
 /**
- * Compose-native quick conversions sheet — a [LedgerBottomSheet] wrapping the
- * shared [QuickConversionsContent] (currency-pair header + swap + rate rows).
- * Replaces the DialogFragment-based `QuickConversionsDialog` so callers no
- * longer need a `FragmentManager`. The content owns its own vertical scroll
- * so the sheet is created with `scrollableBody = false`.
+ * Quick conversions: the pair at a spread of round amounts, plus the amount
+ * typed in the converter, in a [LedgerBottomSheet] over
+ * [QuickConversionsContent]. A row's tap puts its amount into the converter
+ * and closes the sheet; a long-press copies it. The recent pairs sit on top
+ * to switch without closing, the rates' source and any reason they may not
+ * be current sit under the rows, and Share sends the table as an image with
+ * a text version. The content owns its own vertical scroll, so the sheet is
+ * created with `scrollableBody = false`.
  */
 @Composable
-fun QuickConversionsSheet(
+internal fun QuickConversionsSheet(
     viewModel: MainViewModel,
+    status: ConverterStatus,
     onSwap: () -> Unit,
     onOpenFees: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val ctx = LocalContext.current
-    val costWithFeePrefix = stringResource(id = R.string.fee_cost_with_fee_prefix)
-    val emptyText = stringResource(id = R.string.quick_conversions_no_rates)
-
-    val from by viewModel.getBaseCurrency().observeAsState()
-    val to by viewModel.getDestinationCurrency().observeAsState()
-    val rates by viewModel.getExchangeRates().observeAsState()
-    // Observed for recomposition; feeStackFor() itself isn't snapshot-observed.
-    val fees by viewModel.getFees().collectAsStateWithLifecycle()
-
-    val feeStack: BigDecimal =
-        remember(from, to, fees) {
-            if (from != null && to != null) viewModel.feeStackFor(from, to) else BigDecimal.ONE
-        }
-    val table =
-        remember(from, to, rates, feeStack, costWithFeePrefix) {
-            val pairFrom = from
-            val pairTo = to
-            val current = rates
-            val rows =
-                if (pairFrom != null && pairTo != null && current != null) {
-                    buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, costWithFeePrefix))
-                } else {
-                    emptyList()
-                }
-            QuickConversionsTable(pairFrom, pairTo, rows, quickConversionsFeeInfoText(ctx, feeStack))
+    val table = rememberQuickConversionsTable(viewModel, status)
+    val capture = remember { LayerCapture() }
+    val scope = rememberCoroutineScope()
+    val actions =
+        remember(viewModel, table, onSwap, onOpenFees, onDismiss) {
+            QuickConversionsActions(
+                onSwap = onSwap,
+                onSwapLongPress = onOpenFees,
+                onUseAmount = { amount ->
+                    viewModel.input.setAmount(amount)
+                    onDismiss()
+                },
+                onCopy = { row -> copyToClipboard(ctx, row.copyText) },
+                onShare = {
+                    scope.launch { shareImageOrText(ctx, capture.capture(), namePrefix = SHARE_NAME_PREFIX, text = table.shareText()) }
+                },
+            )
         }
 
     LedgerBottomSheet(
@@ -67,11 +82,99 @@ fun QuickConversionsSheet(
     ) {
         QuickConversionsContent(
             table = table,
-            emptyText = emptyText,
-            onSwap = onSwap,
-            onSwapLongPress = onOpenFees,
+            emptyText = stringResource(id = R.string.quick_conversions_no_rates),
+            actions = actions,
+            top = { QuickConversionsRecentPairs(viewModel, table.from, table.to) },
+            capture = capture,
         )
     }
+}
+
+// The table for the pair on screen, the typed amount among its rows, and
+// where its rates come from.
+@Composable
+private fun rememberQuickConversionsTable(
+    viewModel: MainViewModel,
+    status: ConverterStatus,
+): QuickConversionsTable {
+    val ctx = LocalContext.current
+    val costWithFeePrefix = stringResource(id = R.string.fee_cost_with_fee_prefix)
+    val from by viewModel.getBaseCurrency().observeAsState()
+    val to by viewModel.getDestinationCurrency().observeAsState()
+    val rates by viewModel.getExchangeRates().observeAsState()
+    val typed by viewModel.getCurrentBaseValueAsNumber().observeAsState()
+    // Observed for recomposition; feeStackFor() itself isn't snapshot-observed.
+    val fees by viewModel.getFees().collectAsStateWithLifecycle()
+    val warning = status.banner.value?.text
+
+    val feeStack: BigDecimal =
+        remember(from, to, fees) {
+            val pairFrom = from
+            val pairTo = to
+            if (pairFrom != null && pairTo != null) viewModel.feeStackFor(pairFrom, pairTo) else BigDecimal.ONE
+        }
+    return remember(from, to, rates, typed, feeStack, costWithFeePrefix, warning) {
+        val pairFrom = from
+        val pairTo = to
+        val current = rates
+        val rows =
+            if (pairFrom != null && pairTo != null && current != null) {
+                buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, costWithFeePrefix, typed))
+            } else {
+                emptyList()
+            }
+        QuickConversionsTable(
+            from = pairFrom,
+            to = pairTo,
+            rows = rows,
+            feeInfoText = quickConversionsFeeInfoText(ctx, feeStack),
+            sourceText = current?.let { ratesSource(ctx, it, status) },
+            warningText = warning,
+        )
+    }
+}
+
+// "Based on Frankfurter.app, 12/10/26 16:00"; null before rates arrive.
+private fun ratesSource(
+    ctx: Context,
+    rates: ExchangeRates,
+    status: ConverterStatus,
+): String? {
+    val provider = rates.provider?.getName(ctx) ?: return null
+    val timestamp = status.formatTimestamp(rates.date, rates.time) ?: return null
+    return ctx.getString(R.string.share_footer, provider, timestamp)
+}
+
+// The shared text: one "100 USD = 92.00 EUR" per row (and its cost with the
+// fee), then where the rates come from, as the converter's share ends.
+private fun QuickConversionsTable.shareText(): String =
+    buildString {
+        rows.forEach { row ->
+            appendLine(row.copyText)
+            row.costWithFeeText?.let { appendLine("  $it") }
+        }
+        sourceText?.let { append("\n-- ").append(it) }
+    }.trimEnd()
+
+// The recent pairs other than the one on screen: a tap switches the table.
+@Composable
+private fun QuickConversionsRecentPairs(
+    viewModel: MainViewModel,
+    from: Currency?,
+    to: Currency?,
+) {
+    val database = rememberDatabase()
+    val recents by database.lastState.recentPairs.collectAsStateWithLifecycle()
+    val current = if (from != null && to != null && from != to) CurrencyPair(from, to) else null
+    val others = remember(recents, current) { recents.filterNot { it.isSameCurrencies(current) }.toImmutableList() }
+    if (others.isEmpty()) return
+    RecentPairsRow(
+        pairs = others,
+        onPick = viewModel::setCurrencyPair,
+        onRemove = { database.lastState.removeRecentPair(it) },
+        contentPadding = PaddingValues(horizontal = Spacing.Large),
+        modifier = Modifier.padding(top = Spacing.Small),
+    )
 }
 
 // Top-of-sheet "fees applied" line — omitted when the stack is neutral.

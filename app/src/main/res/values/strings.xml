@@ -305,4 +305,6 @@
     <string name="provider_reliability_inaccurate">Inaccurate data</string>
     <string name="error_api_plan_required">HTTP 403 – Your plan with this Source doesn\'t include this.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – You\'ve used up this Source\'s request allowance.</string>
+    <string name="quick_conversions_use_amount">Use this amount</string>
+    <string name="quick_conversions_copy">Copy</string>
 </resources>

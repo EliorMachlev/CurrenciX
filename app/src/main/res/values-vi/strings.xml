@@ -280,4 +280,6 @@
     <string name="provider_reliability_inaccurate">Dữ liệu không chính xác</string>
     <string name="error_api_plan_required">HTTP 403 – Gói của bạn ở nguồn này không bao gồm mục này.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Bạn đã dùng hết số yêu cầu ở nguồn này.</string>
+    <string name="quick_conversions_use_amount">Dùng số tiền này</string>
+    <string name="quick_conversions_copy">Sao chép</string>
 </resources>

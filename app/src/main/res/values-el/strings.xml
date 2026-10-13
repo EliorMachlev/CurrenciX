@@ -283,4 +283,6 @@
     <string name="provider_reliability_inaccurate">Ανακριβή δεδομένα</string>
     <string name="error_api_plan_required">HTTP 403 – Το πρόγραμμά σας σε αυτή την πηγή δεν το περιλαμβάνει.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Εξαντλήσατε τα αιτήματα που σας αναλογούν σε αυτή την πηγή.</string>
+    <string name="quick_conversions_use_amount">Χρήση αυτού του ποσού</string>
+    <string name="quick_conversions_copy">Αντιγραφή</string>
 </resources>

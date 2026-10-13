@@ -289,4 +289,6 @@
     <string name="provider_reliability_inaccurate">Nepřesná data</string>
     <string name="error_api_plan_required">HTTP 403 – Váš tarif u tohoto zdroje toto nezahrnuje.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Vyčerpali jste limit požadavků u tohoto zdroje.</string>
+    <string name="quick_conversions_use_amount">Použít tuto částku</string>
+    <string name="quick_conversions_copy">Kopírovat</string>
 </resources>

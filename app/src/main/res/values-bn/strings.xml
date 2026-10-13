@@ -283,4 +283,6 @@
     <string name="provider_reliability_inaccurate">ভুল তথ্য</string>
     <string name="error_api_plan_required">HTTP 403 – এই উৎসে আপনার প্ল্যানে এটি অন্তর্ভুক্ত নয়।</string>
     <string name="error_api_quota_exceeded">HTTP 429 – এই উৎসে আপনার অনুরোধের সীমা শেষ।</string>
+    <string name="quick_conversions_use_amount">এই পরিমাণ ব্যবহার করুন</string>
+    <string name="quick_conversions_copy">কপি</string>
 </resources>

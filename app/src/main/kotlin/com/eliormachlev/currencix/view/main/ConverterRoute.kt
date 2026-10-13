@@ -275,6 +275,7 @@ private fun ConverterOverlays(
         ConverterOverlay.QuickConversions -> {
             QuickConversionsSheet(
                 viewModel = viewModel,
+                status = host.status,
                 onSwap = viewModel::swapCurrencies,
                 onOpenFees = onOpenFees,
                 onDismiss = onDismiss,

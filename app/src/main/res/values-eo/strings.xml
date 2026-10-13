@@ -283,4 +283,6 @@
     <string name="provider_reliability_inaccurate">Malprecizaj datumoj</string>
     <string name="error_api_plan_required">HTTP 403 – Via plano ĉe ĉi tiu fonto ne inkluzivas tion.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Vi eluzis viajn petojn ĉe ĉi tiu fonto.</string>
+    <string name="quick_conversions_use_amount">Uzi ĉi tiun sumon</string>
+    <string name="quick_conversions_copy">Kopii</string>
 </resources>

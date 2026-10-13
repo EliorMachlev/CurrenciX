@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.main.compose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,23 +16,29 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
+import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import java.math.BigDecimal
 
 private const val FLAG_SIZE_DP = 28
 private const val EQ_ALPHA = 0.5f
@@ -43,8 +50,16 @@ private const val ICON_BUTTON_SIZE_DP = 48
 data class QuickConversionsRow(
     val amountFromText: String,
     val amountToText: String,
+    // "Cost with fee: 94.30 EUR", under the result; null without a fee.
     val costWithFeeText: String?,
-)
+    // The amount the row converts, for a tap to put into the converter.
+    val amount: BigDecimal = BigDecimal.ZERO,
+    // The converter's own amount, set apart from the round ones.
+    val isTyped: Boolean = false,
+) {
+    /** "100 USD = 92.00 EUR", what a long-press copies. */
+    val copyText: String get() = "$amountFromText = $amountToText"
+}
 
 /** The pair's conversions at a spread of round amounts. */
 @Immutable
@@ -54,68 +69,146 @@ data class QuickConversionsTable(
     val rows: List<QuickConversionsRow>,
     // "Fees applied: +2.5%"; null when no fee is in force.
     val feeInfoText: String? = null,
+    // "Based on Frankfurter.app, 12/10/26 16:00": where the rates come from.
+    val sourceText: String? = null,
+    // Why they may not be today's: offline, the fallback, a past date.
+    val warningText: String? = null,
+)
+
+/** What the sheet's taps do. */
+@Immutable
+class QuickConversionsActions(
+    val onSwap: () -> Unit,
+    val onSwapLongPress: () -> Unit,
+    // A row's tap: put its amount into the converter.
+    val onUseAmount: (BigDecimal) -> Unit = {},
+    // A row's long-press: copy "100 USD = 92.00 EUR".
+    val onCopy: (QuickConversionsRow) -> Unit = {},
+    // Share the table; null hides the button.
+    val onShare: (() -> Unit)? = null,
 )
 
 @Composable
 fun QuickConversionsContent(
     table: QuickConversionsTable,
     emptyText: String,
-    onSwap: () -> Unit,
-    onSwapLongPress: () -> Unit,
+    actions: QuickConversionsActions,
+    // Above the pair: the recent pairs, to switch without closing.
+    top: @Composable () -> Unit = {},
+    // What Share snapshots: the rows and where their rates come from.
+    capture: LayerCapture? = null,
 ) {
     val padH = Spacing.Large
     val padT = Spacing.Large
-    // Math reads left-to-right in every locale. Force LTR for the whole
-    // dialog so "from | swap | to" and "amount = amount" rows don't mirror
-    // under RTL layout.
-    Ltr {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = padH, end = padH, top = padT),
-        ) {
-            QuickConversionsHeader(
-                from = table.from,
-                to = table.to,
-                onSwap = onSwap,
-                onSwapLongPress = onSwapLongPress,
-            )
-            table.feeInfoText?.let { feeInfoText ->
-                Spacer(Modifier.height(Spacing.Small))
-                Text(
-                    text = feeInfoText,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-            Spacer(Modifier.height(Spacing.Large))
-            HorizontalDivider()
+    Column(modifier = Modifier.fillMaxWidth()) {
+        top()
+        // Math reads left-to-right in every locale. Force LTR for the table
+        // so "from | swap | to" and "amount = amount" rows don't mirror
+        // under RTL layout.
+        Ltr {
             Column(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(vertical = Spacing.Small),
+                        .padding(start = padH, end = padH, top = padT),
             ) {
-                if (table.rows.isEmpty()) {
+                QuickConversionsHeader(
+                    from = table.from,
+                    to = table.to,
+                    onSwap = actions.onSwap,
+                    onSwapLongPress = actions.onSwapLongPress,
+                )
+                table.feeInfoText?.let { feeInfoText ->
+                    Spacer(Modifier.height(Spacing.Small))
                     Text(
-                        text = emptyText,
+                        text = feeInfoText,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = Spacing.Large),
+                        modifier = Modifier.fillMaxWidth(),
                     )
-                } else {
-                    table.rows.forEach { row ->
-                        QuickConversionsRowUi(row)
-                    }
+                }
+                Spacer(Modifier.height(Spacing.Large))
+                HorizontalDivider()
+                Column(
+                    modifier =
+                        Modifier
+                            .weight(1f, fill = false)
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()),
+                ) {
+                    QuickConversionsTableBody(table, emptyText, actions, capture)
                 }
             }
         }
+        // In the reading direction, unlike the table above it.
+        actions.onShare?.takeIf { table.rows.isNotEmpty() }?.let { share -> ShareTableButton(share) }
+    }
+}
+
+// The rows and, under them, where their rates come from: all of it on the
+// sheet's own background, so a shared snapshot reads like the sheet.
+@Composable
+private fun QuickConversionsTableBody(
+    table: QuickConversionsTable,
+    emptyText: String,
+    actions: QuickConversionsActions,
+    capture: LayerCapture?,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .captureInto(capture)
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(vertical = Spacing.Small),
+    ) {
+        if (table.rows.isEmpty()) {
+            Text(
+                text = emptyText,
+                textAlign = TextAlign.Center,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Large),
+            )
+        } else {
+            table.rows.forEach { row -> QuickConversionsRowUi(row, actions) }
+        }
+        table.sourceText?.let { SourceLine(it, MaterialTheme.colorScheme.onSurfaceVariant) }
+        table.warningText?.let { SourceLine(it, MaterialTheme.colorScheme.error) }
+    }
+}
+
+@Composable
+private fun SourceLine(
+    text: String,
+    color: Color,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMedium,
+        color = color,
+        textAlign = TextAlign.Center,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = Spacing.Small),
+    )
+}
+
+@Composable
+private fun ShareTableButton(onShare: () -> Unit) {
+    TextButton(
+        onClick = onShare,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Spacing.Large, vertical = Spacing.Small),
+    ) {
+        Icon(painter = painterResource(R.drawable.ic_share), contentDescription = null)
+        Spacer(Modifier.size(Spacing.Small))
+        Text(stringResource(R.string.menu_share))
     }
 }
 
@@ -201,34 +294,38 @@ private fun CurrencyBadge(currency: Currency?) {
     }
 }
 
+// One "amount = result" row: a tap puts the amount into the converter, a
+// long-press copies the line. The typed amount's row is tinted and bold.
 @Composable
-private fun QuickConversionsRowUi(row: QuickConversionsRow) {
+private fun QuickConversionsRowUi(
+    row: QuickConversionsRow,
+    actions: QuickConversionsActions,
+) {
+    val weight = if (row.isTyped) FontWeight.Bold else null
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = Spacing.Small)
+                .clip(MaterialTheme.shapes.small)
+                .then(if (row.isTyped) Modifier.background(MaterialTheme.colorScheme.secondaryContainer) else Modifier)
+                .hapticCombinedClickable(
+                    onClick = { actions.onUseAmount(row.amount) },
+                    onClickLabel = stringResource(R.string.quick_conversions_use_amount),
+                    onLongClick = { actions.onCopy(row) },
+                    onLongClickLabel = stringResource(R.string.quick_conversions_copy),
+                ).padding(vertical = Spacing.Small)
                 // Merge so TalkBack reads "$FROM equals $TO" as one item rather
                 // than swiping through several separate text nodes per row.
                 .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
+        Text(
+            text = row.amountFromText,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = weight,
+            textAlign = TextAlign.End,
             modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.End,
-        ) {
-            Text(
-                text = row.amountFromText,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            if (row.costWithFeeText != null) {
-                Text(
-                    text = row.costWithFeeText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        }
+        )
         Text(
             text = "=",
             style = MaterialTheme.typography.bodyLarge,
@@ -245,7 +342,15 @@ private fun QuickConversionsRowUi(row: QuickConversionsRow) {
             Text(
                 text = row.amountToText,
                 style = MaterialTheme.typography.bodyLarge,
+                fontWeight = weight,
             )
+            if (row.costWithFeeText != null) {
+                Text(
+                    text = row.costWithFeeText,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
         }
     }
 }

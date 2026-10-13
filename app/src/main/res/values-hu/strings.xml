@@ -283,4 +283,6 @@
     <string name="provider_reliability_inaccurate">Pontatlan adatok</string>
     <string name="error_api_plan_required">HTTP 403 – A csomagod ennél a forrásnál ezt nem tartalmazza.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Elhasználtad a kéréskeretedet ennél a forrásnál.</string>
+    <string name="quick_conversions_use_amount">Ennek az összegnek a használata</string>
+    <string name="quick_conversions_copy">Másolás</string>
 </resources>

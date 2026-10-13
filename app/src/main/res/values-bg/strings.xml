@@ -283,4 +283,6 @@
     <string name="provider_reliability_inaccurate">Неточни данни</string>
     <string name="error_api_plan_required">HTTP 403 – Планът ви при този източник не включва това.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Изчерпахте лимита на заявки при този източник.</string>
+    <string name="quick_conversions_use_amount">Използване на тази сума</string>
+    <string name="quick_conversions_copy">Копиране</string>
 </resources>

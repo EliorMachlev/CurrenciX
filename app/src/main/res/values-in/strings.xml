@@ -280,4 +280,6 @@
     <string name="provider_reliability_inaccurate">Data tidak akurat</string>
     <string name="error_api_plan_required">HTTP 403 – Paket Anda di sumber ini tidak mencakup ini.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Jatah permintaan Anda di sumber ini sudah habis.</string>
+    <string name="quick_conversions_use_amount">Gunakan jumlah ini</string>
+    <string name="quick_conversions_copy">Salin</string>
 </resources>

@@ -282,4 +282,6 @@
     <string name="provider_reliability_inaccurate">Ungenaue Daten</string>
     <string name="error_api_plan_required">HTTP 403 – Dein Tarif bei dieser Quelle umfasst das nicht.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Dein Anfragekontingent bei dieser Quelle ist aufgebraucht.</string>
+    <string name="quick_conversions_use_amount">Diesen Betrag verwenden</string>
+    <string name="quick_conversions_copy">Kopieren</string>
 </resources>

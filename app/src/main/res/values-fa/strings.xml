@@ -284,4 +284,6 @@
     <string name="provider_reliability_inaccurate">داده‌های نادقیق</string>
     <string name="error_api_plan_required">HTTP 403 – طرح شما در این منبع شامل این مورد نیست.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – سهمیه درخواست شما در این منبع تمام شده است.</string>
+    <string name="quick_conversions_use_amount">استفاده از این مبلغ</string>
+    <string name="quick_conversions_copy">کپی</string>
 </resources>

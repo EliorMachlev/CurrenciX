@@ -5,6 +5,7 @@ import android.content.Intent
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.CartExportLabels
 import com.eliormachlev.currencix.util.buildCartShareChooser
+import com.eliormachlev.currencix.util.buildTextShareChooser
 import com.eliormachlev.currencix.util.filenameTimestampNow
 import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.sanitizeForFilename
@@ -74,13 +75,7 @@ class CartShareCoordinator(
     }
 
     private fun shareAsText(snapshot: CartSnapshot) {
-        val text = buildShareText(snapshot)
-        val intent =
-            Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, text)
-            }
-        context.startActivity(Intent.createChooser(intent, null))
+        context.startActivity(buildTextShareChooser(buildShareText(snapshot)))
     }
 
     private fun shareAsCsv(snapshot: CartSnapshot) =

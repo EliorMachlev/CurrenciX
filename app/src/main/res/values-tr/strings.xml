@@ -283,4 +283,6 @@
     <string name="provider_reliability_inaccurate">Hatalı veriler</string>
     <string name="error_api_plan_required">HTTP 403 – Bu kaynaktaki planınız bunu kapsamıyor.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Bu kaynaktaki istek hakkınızı tükettiniz.</string>
+    <string name="quick_conversions_use_amount">Bu tutarı kullan</string>
+    <string name="quick_conversions_copy">Kopyala</string>
 </resources>

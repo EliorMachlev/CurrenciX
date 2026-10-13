@@ -286,4 +286,6 @@
     <string name="provider_reliability_inaccurate">Netočni podaci</string>
     <string name="error_api_plan_required">HTTP 403 – Vaš plan kod ovog izvora to ne uključuje.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Potrošili ste dopuštene zahtjeve kod ovog izvora.</string>
+    <string name="quick_conversions_use_amount">Koristi ovaj iznos</string>
+    <string name="quick_conversions_copy">Kopiraj</string>
 </resources>

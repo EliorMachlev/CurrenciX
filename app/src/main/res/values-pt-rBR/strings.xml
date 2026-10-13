@@ -287,4 +287,6 @@
     <string name="provider_reliability_inaccurate">Dados imprecisos</string>
     <string name="error_api_plan_required">HTTP 403 – Seu plano nesta fonte não inclui isso.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Você esgotou suas solicitações nesta fonte.</string>
+    <string name="quick_conversions_use_amount">Usar este valor</string>
+    <string name="quick_conversions_copy">Copiar</string>
 </resources>

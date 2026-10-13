@@ -282,4 +282,6 @@
     <string name="provider_reliability_inaccurate">Unøjagtige data</string>
     <string name="error_api_plan_required">HTTP 403 – Din plan hos denne kilde omfatter ikke dette.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – Du har brugt alle dine forespørgsler hos denne kilde.</string>
+    <string name="quick_conversions_use_amount">Brug dette beløb</string>
+    <string name="quick_conversions_copy">Kopiér</string>
 </resources>

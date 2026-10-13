@@ -1,14 +1,13 @@
 package com.eliormachlev.currencix.view.main
 
 import android.content.Context
-import android.content.Intent
 import androidx.compose.runtime.withFrameNanos
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.util.buildImageShareChooser
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.isNeutralFeeStack
+import com.eliormachlev.currencix.util.shareImageOrText
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -26,10 +25,6 @@ private const val SHARE_RATE_DECIMAL_PLACES = 4
 
 // Fee-name joiner for the share fee stamp — matches the on-screen FeeChip.
 private const val SHARE_FEE_NAME_SEPARATOR = ", "
-
-// Hero-card snapshot chooser payload. MIME + extension pair kept together so
-// the file name and Intent's `type` never drift out of sync.
-private const val SHARE_TEXT_MIME = "text/plain"
 
 /**
  * The converter's Share action: a snapshot of the hero card plus a text
@@ -53,19 +48,7 @@ internal class ConversionShare(
         withFrameNanos { }
         val bitmap = heroCapture.capture()
         if (bitmap == null) Timber.w("share: hero capture returned null, falling back to text share")
-        val chooser =
-            if (bitmap != null) {
-                buildImageShareChooser(context, bitmap, namePrefix = "currencix", text = text)
-            } else {
-                Intent.createChooser(
-                    Intent(Intent.ACTION_SEND).apply {
-                        type = SHARE_TEXT_MIME
-                        putExtra(Intent.EXTRA_TEXT, text)
-                    },
-                    null,
-                )
-            }
-        context.startActivity(chooser)
+        shareImageOrText(context, bitmap, namePrefix = "currencix", text = text)
     }
 
     // The chooser's EXTRA_TEXT:

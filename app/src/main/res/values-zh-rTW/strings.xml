@@ -278,4 +278,6 @@
     <string name="provider_reliability_inaccurate">資料不準確</string>
     <string name="error_api_plan_required">HTTP 403 – 你在此來源的方案不包含此項目。</string>
     <string name="error_api_quota_exceeded">HTTP 429 – 你在此來源的請求額度已用完。</string>
+    <string name="quick_conversions_use_amount">使用此金額</string>
+    <string name="quick_conversions_copy">複製</string>
 </resources>

@@ -295,4 +295,6 @@
     <string name="provider_reliability_inaccurate">بيانات غير دقيقة</string>
     <string name="error_api_plan_required">HTTP 403 – خطتك لدى هذا المصدر لا تشمل ذلك.</string>
     <string name="error_api_quota_exceeded">HTTP 429 – استنفدت حصة الطلبات لدى هذا المصدر.</string>
+    <string name="quick_conversions_use_amount">استخدام هذا المبلغ</string>
+    <string name="quick_conversions_copy">نسخ</string>
 </resources>

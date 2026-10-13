@@ -98,6 +98,34 @@ internal fun buildImageShareChooser(
         extraText = text,
     )
 
+// What a text share's Intent says it carries.
+private const val TEXT_MIME = "text/plain"
+
+/** The share chooser for plain [text] (a conversion, a cart, a table). */
+internal fun buildTextShareChooser(text: String): Intent =
+    Intent.createChooser(
+        Intent(Intent.ACTION_SEND).apply {
+            type = TEXT_MIME
+            putExtra(Intent.EXTRA_TEXT, text)
+        },
+        null,
+    )
+
+/**
+ * Shares [image] with [text] alongside, or [text] alone when there's no
+ * image (the element to snapshot hasn't been drawn yet), so a share tap is
+ * never a no-op.
+ */
+internal fun shareImageOrText(
+    context: Context,
+    image: ImageBitmap?,
+    namePrefix: String,
+    text: String,
+) {
+    val chooser = image?.let { buildImageShareChooser(context, it, namePrefix, text) } ?: buildTextShareChooser(text)
+    context.startActivity(chooser)
+}
+
 /**
  * Encode this [ImageBitmap] as PNG bytes — what [buildImageShareChooser]
  * attaches, so the encode and the MIME it advertises stay in one place.
