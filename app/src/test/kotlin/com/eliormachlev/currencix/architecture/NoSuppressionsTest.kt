@@ -96,6 +96,8 @@ class NoSuppressionsTest {
 
     // Unit tests run from the module directory; the repository is the first
     // parent holding the Gradle wrapper.
+    private fun repositoryRoot(): File = generateSequence(File("").absoluteFile) { it.parentFile }.first { File(it, "gradlew").exists() }
+
     private data class Suppression(
         val path: String,
         val lineNumber: Int,

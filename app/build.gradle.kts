@@ -162,6 +162,16 @@ android {
         }
     }
 
+    // The per-app language list the system shows is generated from the
+    // res/values-* folders, so it can't fall out of step with the
+    // translations that exist. res/resources.properties names the locale
+    // the unqualified resources are written in. AGP still marks the switch
+    // @Incubating, and the IDE says so; it's kept on purpose (it saves a
+    // hand-kept list and the test that would guard it).
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildFeatures {
         buildConfig = true
         compose = true
