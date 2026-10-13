@@ -16,7 +16,6 @@
     <string name="fee_pair_to">В</string>
     <string name="fee_pair_pick_currency">Выбрать валюту</string>
     <string name="fee_true_cost_prefix">"Комиссия за конвертацию: "</string>
-    <string name="fee_cost_with_fee_prefix">"Стоимость с комиссией: "</string>
     <string name="fee_empty">Комиссий пока нет</string>
     <string name="previewConversion_title">Предпросмотр конвертации</string>
     <string name="previewConversion_summary">Показывать результат конвертации для каждой валюты в списке выбора валют.</string>

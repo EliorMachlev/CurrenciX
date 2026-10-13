@@ -16,7 +16,6 @@
     <string name="fee_pair_to">Til</string>
     <string name="fee_pair_pick_currency">Veldu gjaldmiðil</string>
     <string name="fee_true_cost_prefix">"Skiptigjald: "</string>
-    <string name="fee_cost_with_fee_prefix">"Verð með gjaldi: "</string>
     <string name="fee_empty">Engin gjöld ennþá</string>
     <string name="previewConversion_title">Forskoðun umreiknings</string>
     <string name="previewConversion_summary">Sýna núverandi umreikning fyrir hvert gengi í gjaldmiðlavalinu.</string>

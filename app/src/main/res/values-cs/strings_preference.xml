@@ -16,7 +16,6 @@
     <string name="fee_pair_to">Na</string>
     <string name="fee_pair_pick_currency">Vyberte měnu</string>
     <string name="fee_true_cost_prefix">"Poplatek za převod: "</string>
-    <string name="fee_cost_with_fee_prefix">"Cena s poplatkem: "</string>
     <string name="fee_empty">Zatím žádné poplatky</string>
     <string name="previewConversion_title">Náhled převodu</string>
     <string name="previewConversion_summary">Zobrazí aktuální převod u každého kurzu ve výběru měny.</string>

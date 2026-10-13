@@ -98,7 +98,6 @@ private fun rememberQuickConversionsTable(
     status: ConverterStatus,
 ): QuickConversionsTable {
     val ctx = LocalContext.current
-    val costWithFeePrefix = stringResource(id = R.string.fee_cost_with_fee_prefix)
     val from by viewModel.getBaseCurrency().observeAsState()
     val to by viewModel.getDestinationCurrency().observeAsState()
     val rates by viewModel.getExchangeRates().observeAsState()
@@ -113,13 +112,13 @@ private fun rememberQuickConversionsTable(
             val pairTo = to
             if (pairFrom != null && pairTo != null) viewModel.feeStackFor(pairFrom, pairTo) else BigDecimal.ONE
         }
-    return remember(from, to, rates, typed, feeStack, costWithFeePrefix, warning) {
+    return remember(from, to, rates, typed, feeStack, warning) {
         val pairFrom = from
         val pairTo = to
         val current = rates
         val rows =
             if (pairFrom != null && pairTo != null && current != null) {
-                buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, costWithFeePrefix, typed))
+                buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, typed))
             } else {
                 emptyList()
             }
@@ -145,14 +144,11 @@ private fun ratesSource(
     return ctx.getString(R.string.share_footer, provider, timestamp)
 }
 
-// The shared text: one "100 USD = 92.00 EUR" per row (and its cost with the
-// fee), then where the rates come from, as the converter's share ends.
+// The shared text: one "ILS ₪ 1 = USD $ 0.3249" line per row (its cost with
+// the fee after it), then where the rates come from, as the converter's share ends.
 private fun QuickConversionsTable.shareText(): String =
     buildString {
-        rows.forEach { row ->
-            appendLine(row.copyText)
-            row.costWithFeeText?.let { appendLine("  $it") }
-        }
+        rows.forEach { row -> appendLine(row.copyText) }
         sourceText?.let { append("\n-- ").append(it) }
     }.trimEnd()
 

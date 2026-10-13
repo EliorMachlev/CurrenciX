@@ -16,7 +16,6 @@
     <string name="fee_pair_to">به</string>
     <string name="fee_pair_pick_currency">انتخاب ارز</string>
     <string name="fee_true_cost_prefix">"کارمزد تبدیل: "</string>
-    <string name="fee_cost_with_fee_prefix">"هزینه با کارمزد: "</string>
     <string name="fee_empty">هنوز کارمزدی وجود ندارد</string>
     <string name="previewConversion_title">پیش‌نمایش تبدیل</string>
     <string name="previewConversion_summary">نمایش تبدیل فعلی برای هر نرخ در انتخابگر ارز.</string>

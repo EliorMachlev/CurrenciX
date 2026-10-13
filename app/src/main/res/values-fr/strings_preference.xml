@@ -16,7 +16,6 @@
     <string name="fee_pair_to">Vers</string>
     <string name="fee_pair_pick_currency">Choisir une devise</string>
     <string name="fee_true_cost_prefix">"Frais de conversion\u00A0: "</string>
-    <string name="fee_cost_with_fee_prefix">"Coût avec frais\u00A0: "</string>
     <string name="fee_empty">Aucun frais pour le moment</string>
     <string name="previewConversion_title">Aperçu de la conversion</string>
     <string name="previewConversion_summary">Afficher la conversion actuelle pour chaque taux dans le sélecteur de devises.</string>

@@ -16,7 +16,6 @@
     <string name="fee_pair_to">ഇതിലേക്ക്</string>
     <string name="fee_pair_pick_currency">കറൻസി തിരഞ്ഞെടുക്കുക</string>
     <string name="fee_true_cost_prefix">"പരിവർത്തന ഫീസ്: "</string>
-    <string name="fee_cost_with_fee_prefix">"ഫീസ് ഉൾപ്പെടെയുള്ള വില: "</string>
     <string name="fee_empty">ഇതുവരെ ഫീസുകളില്ല</string>
     <string name="previewConversion_title">പരിവർത്തന പ്രിവ്യൂ</string>
     <string name="previewConversion_summary">കറൻസി പിക്കറിൽ ഓരോ നിരക്കിന്റെയും നിലവിലെ പരിവർത്തനം കാണിക്കുക.</string>

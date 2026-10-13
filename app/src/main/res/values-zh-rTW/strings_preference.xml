@@ -16,7 +16,6 @@
     <string name="fee_pair_to">到</string>
     <string name="fee_pair_pick_currency">選擇貨幣</string>
     <string name="fee_true_cost_prefix">"換算費："</string>
-    <string name="fee_cost_with_fee_prefix">"含手續費成本："</string>
     <string name="fee_empty">尚無手續費</string>
     <string name="previewConversion_title">換算預覽</string>
     <string name="previewConversion_summary">在貨幣選擇器中顯示每種貨幣目前的換算結果。</string>

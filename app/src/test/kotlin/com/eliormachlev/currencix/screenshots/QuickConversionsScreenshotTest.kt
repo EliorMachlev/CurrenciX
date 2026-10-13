@@ -40,10 +40,10 @@ class QuickConversionsScreenshotTest {
             QuickConversionsContent(
                 table =
                     QuickConversionsTable(
+                        Currency.ILS,
                         Currency.USD,
-                        Currency.EUR,
                         FEE_ROWS,
-                        feeInfoText = "Fees applied: +2.5%",
+                        feeInfoText = "Fees applied: +1%",
                         sourceText = "Based on Bank of Israel, 12/10/26",
                         warningText = "Offline • last updated 12/10/26",
                     ),
@@ -66,18 +66,18 @@ class QuickConversionsScreenshotTest {
 
         private val FEE_ROWS =
             listOf(
-                QuickConversionsRow("10 USD", "9.20 EUR", "Cost with fee: \u2066 9.43 EUR\u2069"),
-                QuickConversionsRow("37.5 USD", "34.50 EUR", "Cost with fee: \u2066 35.36 EUR\u2069", isTyped = true),
-                QuickConversionsRow("50 USD", "46.00 EUR", "Cost with fee: \u2066 47.15 EUR\u2069"),
+                QuickConversionsRow("ILS ₪ 1", "USD $ 0.3249", "+ 1% = USD $ 0.3281"),
+                QuickConversionsRow("ILS ₪ 37.5", "USD $ 12.18", "+ 1% = USD $ 12.30", isTyped = true),
+                QuickConversionsRow("ILS ₪ 100", "USD $ 32.49", "+ 1% = USD $ 32.81"),
             )
 
         private val SAMPLE_ROWS =
             listOf(
-                QuickConversionsRow("$1", "€0.92", null),
-                QuickConversionsRow("$5", "€4.60", null),
-                QuickConversionsRow("$10", "€9.20", null),
-                QuickConversionsRow("$50", "€46.00", null),
-                QuickConversionsRow("$100", "€92.00", null),
+                QuickConversionsRow("USD $ 1", "EUR € 0.9200", null),
+                QuickConversionsRow("USD $ 5", "EUR € 4.60", null),
+                QuickConversionsRow("USD $ 10", "EUR € 9.20", null),
+                QuickConversionsRow("USD $ 50", "EUR € 46.00", null),
+                QuickConversionsRow("USD $ 100", "EUR € 92.00", null),
             )
     }
 }

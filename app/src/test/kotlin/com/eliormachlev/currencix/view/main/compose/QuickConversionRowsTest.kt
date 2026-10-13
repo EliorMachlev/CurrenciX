@@ -31,7 +31,7 @@ class QuickConversionRowsTest {
         typed: BigDecimal? = null,
         feeStack: BigDecimal = BigDecimal.ONE,
     ) = buildQuickConversionRows(
-        QuickConversionRowInputs(RuntimeEnvironment.getApplication(), Currency.USD, Currency.EUR, RATES, feeStack, "With fee: ", typed),
+        QuickConversionRowInputs(RuntimeEnvironment.getApplication(), Currency.USD, Currency.EUR, RATES, feeStack, typed),
     )
 
     @Test
@@ -52,16 +52,19 @@ class QuickConversionRowsTest {
     }
 
     @Test
-    fun `a row copies as one line, from amount to result`() {
-        val row = rows().first { it.amount.compareTo(BigDecimal.TEN) == 0 }
-        assertEquals("10 USD = 8.00 EUR", row.copyText)
+    fun `a row reads code, symbol and amount on each side`() {
+        val row = rows().first { it.amount.compareTo(BigDecimal.ONE) == 0 }
+        assertEquals("USD $ 1", row.amountFromText)
+        assertEquals("EUR € 0.8000", row.amountToText)
+        assertEquals("USD $ 1 = EUR € 0.8000", row.copyText)
     }
 
     @Test
-    fun `with a fee the cost is in the result's currency, the converter's true cost`() {
-        val row = rows(feeStack = BigDecimal("1.1")).first { it.amount.compareTo(BigDecimal.TEN) == 0 }
-        // 10 USD = 8 EUR; 8 x 1.1 = 8.80 EUR.
-        assertTrue(row.costWithFeeText, row.costWithFeeText!!.contains("8.80 EUR"))
+    fun `with a fee the row adds the percent and the cost in the result's currency`() {
+        val row = rows(feeStack = BigDecimal("1.01")).first { it.amount.compareTo(BigDecimal.TEN) == 0 }
+        // 10 USD = 8 EUR; with +1%, 8 x 1.01 = 8.08 EUR (the converter's true cost).
+        assertEquals("+ 1% = EUR € 8.08", row.costWithFeeText)
+        assertEquals("USD $ 10 = EUR € 8.00   + 1% = EUR € 8.08", row.copyText)
         assertNull(rows().first().costWithFeeText)
     }
 }

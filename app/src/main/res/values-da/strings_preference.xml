@@ -16,7 +16,6 @@
     <string name="fee_pair_to">Til</string>
     <string name="fee_pair_pick_currency">Vælg valuta</string>
     <string name="fee_true_cost_prefix">"Omregningsgebyr: "</string>
-    <string name="fee_cost_with_fee_prefix">"Pris med gebyr: "</string>
     <string name="fee_empty">Ingen gebyrer endnu</string>
 
     <string name="previewConversion_title">Forhåndsvisning af omregning</string>

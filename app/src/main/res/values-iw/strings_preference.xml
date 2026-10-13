@@ -16,7 +16,6 @@
     <string name="fee_pair_to">למטבע</string>
     <string name="fee_pair_pick_currency">בחירת מטבע</string>
     <string name="fee_true_cost_prefix">"עמלת המרה: "</string>
-    <string name="fee_cost_with_fee_prefix">"עלות עם עמלה: "</string>
     <string name="fee_empty">אין עמלות עדיין</string>
     <string name="previewConversion_title">תצוגה מקדימה להמרה</string>
     <string name="previewConversion_summary">הצגת ההמרה הנוכחית לכל שער בבורר המטבעות.</string>

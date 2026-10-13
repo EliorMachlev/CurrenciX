@@ -16,7 +16,6 @@
     <string name="fee_pair_to">A</string>
     <string name="fee_pair_pick_currency">Selecciona una moneda</string>
     <string name="fee_true_cost_prefix">"Comissió de conversió: "</string>
-    <string name="fee_cost_with_fee_prefix">"Cost amb comissió: "</string>
     <string name="fee_empty">Encara no hi ha comissions</string>
     <string name="previewConversion_title">Previsualització de la conversió</string>
     <string name="previewConversion_summary">Mostra la conversió actual per a cada tipus de canvi en el selector de monedes.</string>

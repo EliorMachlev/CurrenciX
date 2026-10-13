@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -19,16 +20,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
@@ -43,6 +52,13 @@ import java.math.BigDecimal
 private const val FLAG_SIZE_DP = 28
 private const val EQ_ALPHA = 0.5f
 
+// Between a result and its cost with the fee, in copied and shared text.
+private const val FEE_GAP = "   "
+
+private const val NO_BREAK_SPACE = '\u00A0'
+
+private fun String.unbroken(): String = replace(' ', NO_BREAK_SPACE)
+
 // Bumped from 40dp to hit WCAG 2.1 AA "target size" (48×48). Applies to the
 // header swap button — the only icon-only action in this dialog.
 private const val ICON_BUTTON_SIZE_DP = 48
@@ -50,15 +66,16 @@ private const val ICON_BUTTON_SIZE_DP = 48
 data class QuickConversionsRow(
     val amountFromText: String,
     val amountToText: String,
-    // "Cost with fee: 94.30 EUR", under the result; null without a fee.
+    // "+ 1% = USD $ 0.3281", after the result; null without a fee.
     val costWithFeeText: String?,
     // The amount the row converts, for a tap to put into the converter.
     val amount: BigDecimal = BigDecimal.ZERO,
     // The converter's own amount, set apart from the round ones.
     val isTyped: Boolean = false,
 ) {
-    /** "100 USD = 92.00 EUR", what a long-press copies. */
-    val copyText: String get() = "$amountFromText = $amountToText"
+    /** "ILS ₪ 1 = USD $ 0.3249  + 1% = USD $ 0.3281", what a long-press copies. */
+    val copyText: String
+        get() = listOfNotNull("$amountFromText = $amountToText", costWithFeeText).joinToString(FEE_GAP)
 }
 
 /** The pair's conversions at a spread of round amounts. */
@@ -173,10 +190,40 @@ private fun QuickConversionsTableBody(
                         .padding(top = Spacing.Large),
             )
         } else {
-            table.rows.forEach { row -> QuickConversionsRowUi(row, actions) }
+            val hasFees = table.rows.any { it.costWithFeeText != null }
+            val rowStyle = if (hasFees) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge
+            val columns = rememberFeeColumns(table.rows, rowStyle, hasFees)
+            table.rows.forEach { row -> QuickConversionsRowUi(row, actions, rowStyle, columns) }
         }
         table.sourceText?.let { SourceLine(it, MaterialTheme.colorScheme.onSurfaceVariant) }
         table.warningText?.let { SourceLine(it, MaterialTheme.colorScheme.error) }
+    }
+}
+
+/** With fees, the amounts' and results' column widths, so every fee starts at the same place. */
+private class FeeColumns(
+    val from: Dp,
+    val to: Dp,
+)
+
+// With fees, each column is as wide as its longest entry (in bold, as the
+// typed row is), leaving the rest of the row to the fees; null without fees,
+// when both sides share the row evenly.
+@Composable
+private fun rememberFeeColumns(
+    rows: List<QuickConversionsRow>,
+    style: TextStyle,
+    hasFees: Boolean,
+): FeeColumns? {
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    if (!hasFees) return null
+    return remember(rows, style, density) {
+        val bold = style.copy(fontWeight = FontWeight.Bold)
+
+        fun widest(text: (QuickConversionsRow) -> String) =
+            with(density) { rows.maxOf { measurer.measure(text(it).unbroken(), bold).size.width }.toDp() }
+        FeeColumns(from = widest { it.amountFromText }, to = widest { it.amountToText })
     }
 }
 
@@ -300,6 +347,10 @@ private fun CurrencyBadge(currency: Currency?) {
 private fun QuickConversionsRowUi(
     row: QuickConversionsRow,
     actions: QuickConversionsActions,
+    // A notch smaller when the rows carry fees, so a whole row fits a line.
+    rowStyle: TextStyle,
+    // The columns' widths with fees; null shares the row evenly.
+    columns: FeeColumns?,
 ) {
     val weight = if (row.isTyped) FontWeight.Bold else null
     Row(
@@ -313,44 +364,46 @@ private fun QuickConversionsRowUi(
                     onClickLabel = stringResource(R.string.quick_conversions_use_amount),
                     onLongClick = { actions.onCopy(row) },
                     onLongClickLabel = stringResource(R.string.quick_conversions_copy),
-                ).padding(vertical = Spacing.Small)
+                ).padding(horizontal = Spacing.Small, vertical = Spacing.Small)
                 // Merge so TalkBack reads "$FROM equals $TO" as one item rather
                 // than swiping through several separate text nodes per row.
                 .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = row.amountFromText,
-            style = MaterialTheme.typography.bodyLarge,
+            text = row.amountFromText.unbroken(),
+            style = rowStyle,
             fontWeight = weight,
             textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f),
+            modifier = if (columns != null) Modifier.width(columns.from) else Modifier.weight(1f),
         )
         Text(
             text = "=",
-            style = MaterialTheme.typography.bodyLarge,
+            style = rowStyle,
             color = Color.Unspecified,
             modifier =
                 Modifier
-                    .padding(horizontal = Spacing.Large)
+                    .padding(horizontal = if (columns != null) Spacing.Small else Spacing.Large)
                     .alpha(EQ_ALPHA),
         )
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.Start,
-        ) {
+        // "USD $ 0.3249   + 1% = USD $ 0.3281": the result, then its fee in
+        // a column of its own; each keeps its words together.
+        Text(
+            text = row.amountToText.unbroken(),
+            style = rowStyle,
+            fontWeight = weight,
+            modifier = if (columns != null) Modifier.width(columns.to) else Modifier.weight(1f),
+        )
+        if (columns != null) {
             Text(
-                text = row.amountToText,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = weight,
+                text = row.costWithFeeText?.unbroken().orEmpty(),
+                style = rowStyle,
+                color = MaterialTheme.colorScheme.error,
+                modifier =
+                    Modifier
+                        .padding(start = Spacing.Medium)
+                        .weight(1f),
             )
-            if (row.costWithFeeText != null) {
-                Text(
-                    text = row.costWithFeeText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
         }
     }
 }

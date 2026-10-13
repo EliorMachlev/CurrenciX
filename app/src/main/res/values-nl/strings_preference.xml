@@ -16,7 +16,6 @@
     <string name="fee_pair_to">Naar</string>
     <string name="fee_pair_pick_currency">Selecteer valuta</string>
     <string name="fee_true_cost_prefix">"Omrekenkosten: "</string>
-    <string name="fee_cost_with_fee_prefix">"Prijs met kosten: "</string>
     <string name="fee_empty">Nog geen kosten</string>
     <string name="previewConversion_title">Omrekenvoorbeeld</string>
     <string name="previewConversion_summary">Toon de huidige omrekening voor elke koers in de valutakiezer.</string>

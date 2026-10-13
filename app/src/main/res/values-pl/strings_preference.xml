@@ -16,7 +16,6 @@
     <string name="fee_pair_to">Na</string>
     <string name="fee_pair_pick_currency">Wybierz walutę</string>
     <string name="fee_true_cost_prefix">"Opłata za przeliczenie: "</string>
-    <string name="fee_cost_with_fee_prefix">"Koszt z opłatą: "</string>
     <string name="fee_empty">Brak opłat</string>
     <string name="previewConversion_title">Podgląd przeliczenia</string>
     <string name="previewConversion_summary">Pokazuj bieżące przeliczenie dla każdego kursu na ekranie wyboru waluty.</string>

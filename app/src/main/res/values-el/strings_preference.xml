@@ -16,7 +16,6 @@
     <string name="fee_pair_to">Προς</string>
     <string name="fee_pair_pick_currency">Επιλέξτε νόμισμα</string>
     <string name="fee_true_cost_prefix">"Προμήθεια μετατροπής: "</string>
-    <string name="fee_cost_with_fee_prefix">"Κόστος με προμήθεια: "</string>
     <string name="fee_empty">Δεν υπάρχουν ακόμη προμήθειες</string>
     <string name="previewConversion_title">Προεπισκόπηση μετατροπής</string>
     <string name="previewConversion_summary">Εμφάνιση της τρέχουσας μετατροπής για κάθε ισοτιμία στον επιλογέα νομισμάτων.</string>
