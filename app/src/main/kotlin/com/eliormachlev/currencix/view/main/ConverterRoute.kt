@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
@@ -74,6 +75,7 @@ private enum class ConverterOverlay { ProviderPicker, QuickConversions, Historic
 private const val RECENT_PAIR_SETTLE_MILLIS = 2_000L
 private val RECENT_PAIRS_MARGIN = Spacing.Large
 private val RECENT_PAIRS_BOTTOM_GAP = Spacing.Small
+private val RECENT_PAIRS_COMPACT_TOP = Spacing.Tiny
 
 /** The converter screen: top bar, drawer, hero card, keypad and their sheets. */
 @Composable
@@ -358,7 +360,9 @@ private fun ConverterDisplay(
         banner = banner,
         captureController = host.share.heroCapture,
     )
-    ConverterRecentPairs(host.viewModel, database)
+    // The status pill makes the card taller: the chips give that height
+    // back, so they stay clear of the keypad.
+    ConverterRecentPairs(host.viewModel, database, compact = banner != null)
 }
 
 // "Which card is cheaper" for the amount on screen; picking a card makes it
@@ -395,6 +399,7 @@ private fun CompareCardsHost(
 private fun ConverterRecentPairs(
     viewModel: MainViewModel,
     database: Database,
+    compact: Boolean,
 ) {
     val base = viewModel.getBaseCurrency().observeAsState().value
     val dest = viewModel.getDestinationCurrency().observeAsState().value
@@ -419,8 +424,15 @@ private fun ConverterRecentPairs(
         onPick = viewModel::setCurrencyPair,
         onRemove = rememberRemoveWithUndo(database),
         contentPadding = PaddingValues(horizontal = RECENT_PAIRS_MARGIN),
+        compact = compact,
         // The bottom gap keeps the chips clear of the keypad's top row.
-        modifier = Modifier.padding(top = RECENT_PAIRS_MARGIN, bottom = RECENT_PAIRS_BOTTOM_GAP),
+        // Compact, the chips and their margins together give back the status
+        // pill's height (its line and the gap under it).
+        modifier =
+            Modifier.padding(
+                top = if (compact) RECENT_PAIRS_COMPACT_TOP else RECENT_PAIRS_MARGIN,
+                bottom = if (compact) 0.dp else RECENT_PAIRS_BOTTOM_GAP,
+            ),
     )
     alertFor?.let { pair -> PairAlertSheet(viewModel, pair, onDismiss = { alertFor = null }) }
 }

@@ -59,6 +59,8 @@ fun RecentPairsRow(
     onPaste: (() -> Unit)? = null,
     onAlert: ((CurrencyPair) -> Unit)? = null,
     alerted: ImmutableSet<CurrencyPair> = persistentSetOf(),
+    // Shorter chips, while the converter's status pill takes room above them.
+    compact: Boolean = false,
 ) {
     var removing by remember { mutableStateOf<CurrencyPair?>(null) }
     removing?.let { pair ->
@@ -88,7 +90,7 @@ fun RecentPairsRow(
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(CurrencyChipGap),
     ) {
-        onPaste?.let { paste -> item(key = PASTE_KEY) { PasteChip(onClick = paste, modifier = Modifier.animateItem()) } }
+        onPaste?.let { paste -> item(key = PASTE_KEY) { PasteChip(onClick = paste, compact = compact, modifier = Modifier.animateItem()) } }
         items(pairs, key = { "${it.from}:${it.to}" }) { pair ->
             Box(Modifier.animateItem()) {
                 val hasAlert = pair in alerted
@@ -99,6 +101,7 @@ fun RecentPairsRow(
                     onClick = { onPick(pair) },
                     onLongClick = { if (onAlert == null) removing = pair else menuFor = pair },
                     onLongClickLabel = longPressLabel,
+                    compact = compact,
                 ) {
                     PairChipContent(pair.from, pair.to)
                     if (hasAlert) AlertBell(ring = pair !in quiet, onRung = { quiet += pair })
@@ -123,10 +126,11 @@ private const val PASTE_KEY = "action:paste"
 @Composable
 private fun PasteChip(
     onClick: () -> Unit,
+    compact: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val label = stringResource(R.string.paste_amount)
-    CurrencyChip(description = label, onClick = onClick, modifier = modifier) {
+    CurrencyChip(description = label, onClick = onClick, modifier = modifier, compact = compact) {
         // Words, not a pair: the icon leads in the language's direction.
         ReadingDirection {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(PASTE_ICON_GAP)) {

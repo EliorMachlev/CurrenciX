@@ -73,6 +73,19 @@ class NewSurfacesScreenshotTest {
             RecentPairsRow(pairs = RECENT_PAIRS, onPick = {}, onRemove = {}, contentPadding = PaddingValues(16.dp))
         }
 
+    // The shorter chips, while the converter's status pill takes room above them.
+    @Test fun recentPairsCompact() =
+        shots.captureMatrix("recent_pairs_compact") {
+            RecentPairsRow(
+                pairs = RECENT_PAIRS,
+                onPick = {},
+                onRemove = {},
+                contentPadding = PaddingValues(16.dp),
+                onPaste = {},
+                compact = true,
+            )
+        }
+
     // A recent copy on the clipboard: "Paste amount" leads the row.
     @Test fun recentPairsWithPaste() =
         shots.captureMatrix("recent_pairs_paste") {

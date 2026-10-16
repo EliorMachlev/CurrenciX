@@ -29,6 +29,10 @@ import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private val CHIP_HEIGHT: Dp = 36.dp
+
+// A [compact] chip's height: the converter's recent pairs while the status
+// pill takes room above them.
+private val COMPACT_CHIP_HEIGHT: Dp = 26.dp
 private val CHIP_PADDING_H: Dp = Spacing.Medium
 private val CHIP_INNER_GAP: Dp = Spacing.XSmall
 private val PAIR_ARROW_SIZE: Dp = 14.dp
@@ -40,7 +44,8 @@ val CurrencyChipGap: Dp = 8.dp
  * A pill-shaped shortcut to a currency or pair — the converter's recent
  * pairs and the picker's recent currencies. [description] is what TalkBack
  * reads for the whole chip; put [FlagCode]s (and any glyphs) in [content].
- * [onLongClick], when given, is announced as [onLongClickLabel].
+ * [onLongClick], when given, is announced as [onLongClickLabel]. A
+ * [compact] chip is shorter, for when the row has to give up some height.
  */
 @Composable
 fun CurrencyChip(
@@ -49,10 +54,12 @@ fun CurrencyChip(
     modifier: Modifier = Modifier,
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
+    compact: Boolean = false,
     content: @Composable RowScope.() -> Unit,
 ) {
     ChipFrame(
         modifier = modifier,
+        height = if (compact) COMPACT_CHIP_HEIGHT else CHIP_HEIGHT,
         // Inside the pill's clip, so the ripple keeps its shape.
         action =
             Modifier
@@ -68,12 +75,13 @@ fun CurrencyChip(
 private fun ChipFrame(
     modifier: Modifier = Modifier,
     action: Modifier = Modifier,
+    height: Dp = CHIP_HEIGHT,
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
         modifier
-            .height(CHIP_HEIGHT)
-            .clip(RoundedCornerShape(CHIP_HEIGHT / 2))
+            .height(height)
+            .clip(RoundedCornerShape(height / 2))
             .background(MaterialTheme.colorScheme.surfaceContainer)
             .then(action)
             .padding(horizontal = CHIP_PADDING_H),
