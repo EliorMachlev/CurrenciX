@@ -29,8 +29,9 @@ import org.robolectric.annotation.GraphicsMode
 
 // MainScreen is fully slot-based — no VM needed. We render placeholder
 // display/keypad content to focus on the layout shell. Offline/historical
-// state is now rendered inside the hero's RateFooter (see HeroCard tests),
-// not by MainScreen, so there is nothing extra to snapshot here.
+// state is now rendered inside the hero's RateFooter (see
+// RateFooterScreenshotTest), not by MainScreen, so there is nothing extra to
+// snapshot here.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
