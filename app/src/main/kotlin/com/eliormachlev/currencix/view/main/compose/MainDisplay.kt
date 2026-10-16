@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -365,7 +364,7 @@ private data class ResultState(
 
 // The line under the panels: the rate in use, how old it is, who published it.
 @Immutable
-internal data class FooterState(
+private data class FooterState(
     val rates: ExchangeRates?,
     val dateFormatPattern: String,
     val banner: BannerContent?,
@@ -1237,13 +1236,8 @@ private fun FeeChipText(
     )
 }
 
-/**
- * The line under the panels: the rate, and when and from whom, or the status
- * pill ([FooterState.banner]) in that place; always the same height either
- * way. Internal for its tests.
- */
 @Composable
-internal fun RateFooter(
+private fun RateFooter(
     base: Currency?,
     dest: Currency?,
     state: FooterState,
@@ -1259,32 +1253,28 @@ internal fun RateFooter(
                 .background(MaterialTheme.colorScheme.outlineVariant),
         )
         Spacer(Modifier.height(RATE_FOOTER_PADDING_TOP))
-        // The rate, then either when and from whom, or the status pill in
-        // its place. Both are one line of the same height in the same
-        // vertical padding, so going offline (or coming back) never changes
-        // the card's height and pushes the recent pairs under the keypad, at
-        // any font size.
+        if (banner != null) {
+            StatusPill(banner, onBannerClick, Modifier.align(Alignment.CenterHorizontally))
+            Spacer(Modifier.height(STATUS_PILL_GAP))
+        }
         Row(
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(STATUS_PILL_GAP),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             RateText(base = base, dest = dest, rates = rates)
-            Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
-                if (banner != null) {
-                    StatusPill(banner, onBannerClick)
-                } else {
-                    Box(Modifier.padding(vertical = STATUS_PILL_PADDING_V)) {
-                        TimestampText(rates = rates, dateFormatPattern = dateFormatPattern, onProviderClick = onProviderClick)
-                    }
-                }
-            }
+            TimestampText(
+                rates = rates,
+                dateFormatPattern = dateFormatPattern,
+                showWhen = banner == null,
+                onProviderClick = onProviderClick,
+            )
         }
     }
 }
 
-// Compact tinted pill surfaced inside the RateFooter (in the rate row, in
-// the timestamp's place) when the app is showing offline or historical data. Keeps
+// Compact tinted pill surfaced inside the RateFooter (above the rate +
+// timestamp row) when the app is showing offline or historical data. Keeps
 // the status visible without stealing a full-width slot above the hero. A
 // status with an explanation (the fallback provider) opens it on a tap.
 @Composable
@@ -1332,9 +1322,7 @@ private fun StatusPill(
         val context = LocalContext.current
         Text(
             text = remember(banner.text, context) { banner.text.inReadingOrder(context) },
-            // The timestamp's line height (bodySmall), so the pill is exactly
-            // as tall as the timestamp in the same padding.
-            style = MaterialTheme.typography.labelSmall.copy(lineHeight = MaterialTheme.typography.bodySmall.lineHeight),
+            style = MaterialTheme.typography.labelSmall,
             color = contentColor,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -1377,6 +1365,7 @@ private fun RateText(
 private fun TimestampText(
     rates: ExchangeRates?,
     dateFormatPattern: String,
+    showWhen: Boolean,
     onProviderClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -1394,6 +1383,7 @@ private fun TimestampText(
     val provider = rates.provider?.getName(context)?.toString()
     val label =
         when {
+            !showWhen -> provider.orEmpty()
             provider.isNullOrEmpty() -> whenText
             else -> "$whenText$FOOTER_SEPARATOR$provider"
         }
