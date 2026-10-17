@@ -129,7 +129,6 @@
     <string name="a11y_action_select">選擇</string>
     <string name="a11y_action_load">載入</string>
     <string name="a11y_action_open">開啟</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">置頂</string>
     <string name="cart_unpin_item">取消置頂</string>
     <string name="cart_reorder_item">重新排序</string>
@@ -171,6 +170,7 @@
     <string name="cart_menu_extras">分攤、小費和預算</string>
     <string name="cart_tip_label">小費 / 稅</string>
     <string name="cart_tip_row">小費 / 稅 (%1$s%%)</string>
+    <string name="cart_fee_row">換算費 (%1$s%%)</string>
     <string name="cart_split_label">分攤人數</string>
     <string name="cart_split_decrease">減少人數</string>
     <string name="cart_split_increase">增加人數</string>

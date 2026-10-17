@@ -15,7 +15,6 @@
     <string name="fee_pair_from">Dari</string>
     <string name="fee_pair_to">Ke</string>
     <string name="fee_pair_pick_currency">Pilih mata uang</string>
-    <string name="fee_true_cost_prefix">"Biaya konversi: "</string>
     <string name="fee_empty">Belum ada biaya</string>
     <string name="previewConversion_title">Pratinjau konversi</string>
     <string name="previewConversion_summary">Tampilkan konversi saat ini untuk setiap kurs di pemilih mata uang.</string>

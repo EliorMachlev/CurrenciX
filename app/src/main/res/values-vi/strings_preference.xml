@@ -15,7 +15,6 @@
     <string name="fee_pair_from">Từ</string>
     <string name="fee_pair_to">Đến</string>
     <string name="fee_pair_pick_currency">Chọn tiền tệ</string>
-    <string name="fee_true_cost_prefix">"Phí chuyển đổi: "</string>
     <string name="fee_empty">Chưa có phí nào</string>
     <string name="previewConversion_title">Xem trước chuyển đổi</string>
     <string name="previewConversion_summary">Hiện kết quả chuyển đổi hiện tại cho từng tỷ giá trong bộ chọn tiền tệ.</string>

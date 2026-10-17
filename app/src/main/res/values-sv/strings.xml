@@ -132,7 +132,6 @@
     <string name="a11y_action_select">Välj</string>
     <string name="a11y_action_load">Läs in</string>
     <string name="a11y_action_open">Öppna</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fäst överst</string>
     <string name="cart_unpin_item">Lossa artikel</string>
     <string name="cart_reorder_item">Ändra ordning</string>
@@ -174,6 +173,7 @@
     <string name="cart_menu_extras">Delning, dricks och budget</string>
     <string name="cart_tip_label">Dricks / skatt</string>
     <string name="cart_tip_row">Dricks / skatt (%1$s%%)</string>
+    <string name="cart_fee_row">Växlingsavgift (%1$s%%)</string>
     <string name="cart_split_label">Dela mellan</string>
     <string name="cart_split_decrease">Färre personer</string>
     <string name="cart_split_increase">Fler personer</string>

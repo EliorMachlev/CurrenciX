@@ -15,7 +15,6 @@
     <string name="fee_pair_from">Iz</string>
     <string name="fee_pair_to">U</string>
     <string name="fee_pair_pick_currency">Odaberi valutu</string>
-    <string name="fee_true_cost_prefix">"Naknada za konverziju: "</string>
     <string name="fee_empty">Još nema naknada</string>
     <string name="previewConversion_title">Pretpregled konverzije</string>
     <string name="previewConversion_summary">Prikazuje tečaj konverzije za svaku valutu u izborniku valuta.</string>

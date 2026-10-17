@@ -15,7 +15,6 @@
     <string name="fee_pair_from">Von</string>
     <string name="fee_pair_to">Nach</string>
     <string name="fee_pair_pick_currency">Währung auswählen</string>
-    <string name="fee_true_cost_prefix">"Umrechnungsgebühr: "</string>
     <string name="fee_empty">Noch keine Gebühren</string>
     <string name="previewConversion_title">Umrechnungsvorschau</string>
     <string name="previewConversion_summary">Im Währungsauswahldialog die aktuelle Umrechnung für jeden Kurs anzeigen.</string>

@@ -16,7 +16,6 @@
     <string name="fee_pair_from">From</string>
     <string name="fee_pair_to">To</string>
     <string name="fee_pair_pick_currency">Select currency</string>
-    <string name="fee_true_cost_prefix">"Conversion fee: "</string>
     <string name="fee_empty">No fees yet</string>
     <string name="fee_edit_name">Name</string>
     <string name="fee_edit_active">Active</string>

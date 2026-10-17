@@ -132,7 +132,6 @@
     <string name="a11y_action_select">Seleziona</string>
     <string name="a11y_action_load">Carica</string>
     <string name="a11y_action_open">Apri</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fissa in cima</string>
     <string name="cart_unpin_item">Rimuovi fissaggio</string>
     <string name="cart_reorder_item">Riordina articolo</string>
@@ -174,6 +173,7 @@
     <string name="cart_menu_extras">Dividi, mancia e budget</string>
     <string name="cart_tip_label">Mancia / tasse</string>
     <string name="cart_tip_row">Mancia / tasse (%1$s%%)</string>
+    <string name="cart_fee_row">Commissione di conversione (%1$s%%)</string>
     <string name="cart_split_label">Dividi tra</string>
     <string name="cart_split_decrease">Meno persone</string>
     <string name="cart_split_increase">Più persone</string>

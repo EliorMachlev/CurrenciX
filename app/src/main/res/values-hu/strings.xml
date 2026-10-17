@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Kiválasztás</string>
     <string name="a11y_action_load">Betöltés</string>
     <string name="a11y_action_open">Megnyitás</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Kitűzés felülre</string>
     <string name="cart_unpin_item">Kitűzés megszüntetése</string>
     <string name="cart_reorder_item">Tétel átrendezése</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Felosztás, borravaló és keret</string>
     <string name="cart_tip_label">Borravaló / adó</string>
     <string name="cart_tip_row">Borravaló / adó (%1$s%%)</string>
+    <string name="cart_fee_row">Átváltási díj (%1$s%%)</string>
     <string name="cart_split_label">Felosztás</string>
     <string name="cart_split_decrease">Kevesebb fő</string>
     <string name="cart_split_increase">Több fő</string>

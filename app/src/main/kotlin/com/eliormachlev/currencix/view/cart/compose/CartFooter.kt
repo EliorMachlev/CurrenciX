@@ -271,7 +271,6 @@ private fun AboveTotal(
             )
         }
         FeeAnnotationRow(
-            prefixRes = R.string.fee_true_cost_prefix,
             feeStack = totals.feeStack,
             base = totals.convertedSubtotal,
             currency = totals.destCurrency,
@@ -446,7 +445,6 @@ private fun Figure(
 // amount, not the source subtotal.
 @Composable
 private fun FeeAnnotationRow(
-    prefixRes: Int,
     feeStack: BigDecimal,
     base: BigDecimal?,
     currency: Currency?,
@@ -454,18 +452,14 @@ private fun FeeAnnotationRow(
     if (feeStack.isNeutralFeeStack()) return
     val context = LocalContext.current
     val delta = (base ?: BigDecimal.ZERO).multiply(feeStack.feeStackDelta(), MathContext.DECIMAL128).abs()
-    val amountText = context.formatCartAmount(delta, currency)
-    val valueText =
-        stringResource(
-            id = R.string.cart_fee_extra_value,
-            amountText,
-            feeStack.toCartFeePercentDisplay(),
-        )
+    // As the tip row: the rate by the label, "Conversion fee (1.00%)", and
+    // what it adds, "+1.20 ₪".
+    val valueText = "+" + context.formatCartAmount(delta, currency)
     // A fee is part of the price, not a problem: muted, like the tip row.
     val color = MaterialTheme.colorScheme.onSurfaceVariant
     Row(modifier = Modifier.fillMaxWidth().padding(top = EXTRA_ROW_GAP)) {
         Text(
-            text = stripLabelSeparator(stringResource(id = prefixRes)),
+            text = stringResource(R.string.cart_fee_row, feeStack.toCartFeePercentDisplay()),
             style = MaterialTheme.typography.labelMedium,
             color = color,
             modifier = Modifier.weight(1f),
@@ -473,7 +467,3 @@ private fun FeeAnnotationRow(
         Figure(valueText, MaterialTheme.typography.labelMedium, color)
     }
 }
-
-// Existing prefix strings end with a locale-specific ": " / " : " / "：" for
-// inline use. Trim it here so the label sits flush left of the right column.
-private fun stripLabelSeparator(text: String): String = text.trimEnd(' ', '\u00A0', ':', '：')

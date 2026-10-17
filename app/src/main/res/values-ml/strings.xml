@@ -135,7 +135,6 @@
     <string name="a11y_action_select">തിരഞ്ഞെടുക്കുക</string>
     <string name="a11y_action_load">ലോഡ് ചെയ്യുക</string>
     <string name="a11y_action_open">തുറക്കുക</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">മുകളിലേക്ക് പിൻ ചെയ്യുക</string>
     <string name="cart_unpin_item">പിൻ നീക്കുക</string>
     <string name="cart_reorder_item">പുനഃക്രമീകരിക്കുക</string>
@@ -177,6 +176,7 @@
     <string name="cart_menu_extras">വിഭജനം, ടിപ്പ്, ബജറ്റ്</string>
     <string name="cart_tip_label">ടിപ്പ് / നികുതി</string>
     <string name="cart_tip_row">ടിപ്പ് / നികുതി (%1$s%%)</string>
+    <string name="cart_fee_row">പരിവർത്തന ഫീസ് (%1$s%%)</string>
     <string name="cart_split_label">വിഭജിക്കേണ്ടവർ</string>
     <string name="cart_split_decrease">ആളുകളെ കുറയ്ക്കുക</string>
     <string name="cart_split_increase">ആളുകളെ കൂട്ടുക</string>

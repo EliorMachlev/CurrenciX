@@ -130,7 +130,6 @@
     <string name="a11y_action_select">Vælg</string>
     <string name="a11y_action_load">Indlæs</string>
     <string name="a11y_action_open">Åbn</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fastgør øverst</string>
     <string name="cart_unpin_item">Frigør vare</string>
     <string name="cart_reorder_item">Omarrangér vare</string>
@@ -172,6 +171,7 @@
     <string name="cart_menu_extras">Fordel, drikkepenge og budget</string>
     <string name="cart_tip_label">Drikkepenge / skat</string>
     <string name="cart_tip_row">Drikkepenge / skat (%1$s%%)</string>
+    <string name="cart_fee_row">Omregningsgebyr (%1$s%%)</string>
     <string name="cart_split_label">Fordel på</string>
     <string name="cart_split_decrease">Færre personer</string>
     <string name="cart_split_increase">Flere personer</string>

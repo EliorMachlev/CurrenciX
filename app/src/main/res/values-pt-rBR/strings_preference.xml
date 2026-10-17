@@ -15,7 +15,6 @@
     <string name="fee_pair_from">De</string>
     <string name="fee_pair_to">Para</string>
     <string name="fee_pair_pick_currency">Selecionar moeda</string>
-    <string name="fee_true_cost_prefix">"Taxa de conversão: "</string>
     <string name="fee_empty">Ainda não há taxas</string>
     <string name="previewConversion_title">Prévia da conversão</string>
     <string name="previewConversion_summary">Mostrar a conversão atual para cada cotação no seletor de moedas.</string>

@@ -15,7 +15,6 @@
     <string name="fee_pair_from">Kaynak</string>
     <string name="fee_pair_to">Hedef</string>
     <string name="fee_pair_pick_currency">Para birimi seçin</string>
-    <string name="fee_true_cost_prefix">"Dönüşüm ücreti: "</string>
     <string name="fee_empty">Henüz ücret yok</string>
     <string name="previewConversion_title">Dönüşüm önizlemesi</string>
     <string name="previewConversion_summary">Para birimi seçicide her kur için güncel dönüşümü göster.</string>

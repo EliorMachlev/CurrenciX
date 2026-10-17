@@ -131,7 +131,6 @@
     <string name="a11y_action_select">בחירה</string>
     <string name="a11y_action_load">טעינה</string>
     <string name="a11y_action_open">פתיחה</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">הצמדה לראש הרשימה</string>
     <string name="cart_unpin_item">ביטול ההצמדה</string>
     <string name="cart_reorder_item">שינוי הסדר</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">חלוקה, טיפ ותקציב</string>
     <string name="cart_tip_label">טיפ / מס</string>
     <string name="cart_tip_row">טיפ / מס (%1$s%%)</string>
+    <string name="cart_fee_row">עמלת המרה (%1$s%%)</string>
     <string name="cart_split_label">חלוקה בין</string>
     <string name="cart_split_decrease">פחות אנשים</string>
     <string name="cart_split_increase">יותר אנשים</string>

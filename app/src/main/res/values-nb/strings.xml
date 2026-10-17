@@ -132,7 +132,6 @@
     <string name="a11y_action_select">Velg</string>
     <string name="a11y_action_load">Last inn</string>
     <string name="a11y_action_open">Åpne</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fest øverst</string>
     <string name="cart_unpin_item">Løsne vare</string>
     <string name="cart_reorder_item">Endre rekkefølge</string>
@@ -174,6 +173,7 @@
     <string name="cart_menu_extras">Deling, tips og budsjett</string>
     <string name="cart_tip_label">Tips / avgift</string>
     <string name="cart_tip_row">Tips / avgift (%1$s%%)</string>
+    <string name="cart_fee_row">Vekslingsgebyr (%1$s%%)</string>
     <string name="cart_split_label">Del mellom</string>
     <string name="cart_split_decrease">Færre personer</string>
     <string name="cart_split_increase">Flere personer</string>

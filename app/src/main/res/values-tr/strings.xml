@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Seç</string>
     <string name="a11y_action_load">Yükle</string>
     <string name="a11y_action_open">Aç</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Öğeyi üste sabitle</string>
     <string name="cart_unpin_item">Sabitlemeyi kaldır</string>
     <string name="cart_reorder_item">Öğeyi yeniden sırala</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Bölüşme, bahşiş ve bütçe</string>
     <string name="cart_tip_label">Bahşiş / vergi</string>
     <string name="cart_tip_row">Bahşiş / vergi (%1$s%%)</string>
+    <string name="cart_fee_row">Dönüşüm ücreti (%1$s%%)</string>
     <string name="cart_split_label">Bölüşülecek kişi</string>
     <string name="cart_split_decrease">Daha az kişi</string>
     <string name="cart_split_increase">Daha fazla kişi</string>

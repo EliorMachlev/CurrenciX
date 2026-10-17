@@ -132,7 +132,6 @@
     <string name="a11y_action_select">انتخاب</string>
     <string name="a11y_action_load">بارگذاری</string>
     <string name="a11y_action_open">باز کردن</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">سنجاق کردن به بالا</string>
     <string name="cart_unpin_item">برداشتن سنجاق</string>
     <string name="cart_reorder_item">تغییر ترتیب</string>
@@ -174,6 +173,7 @@
     <string name="cart_menu_extras">تقسیم، انعام و بودجه</string>
     <string name="cart_tip_label">انعام / مالیات</string>
     <string name="cart_tip_row">انعام / مالیات (%1$s%%)</string>
+    <string name="cart_fee_row">کارمزد تبدیل (%1$s%%)</string>
     <string name="cart_split_label">تقسیم بین</string>
     <string name="cart_split_decrease">افراد کمتر</string>
     <string name="cart_split_increase">افراد بیشتر</string>

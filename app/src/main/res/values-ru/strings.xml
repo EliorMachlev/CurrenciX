@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Выбрать</string>
     <string name="a11y_action_load">Загрузить</string>
     <string name="a11y_action_open">Открыть</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закрепить сверху</string>
     <string name="cart_unpin_item">Открепить</string>
     <string name="cart_reorder_item">Изменить порядок</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Разделение, чаевые и бюджет</string>
     <string name="cart_tip_label">Чаевые / налог</string>
     <string name="cart_tip_row">Чаевые / налог (%1$s%%)</string>
+    <string name="cart_fee_row">Комиссия за конвертацию (%1$s%%)</string>
     <string name="cart_split_label">Разделить на</string>
     <string name="cart_split_decrease">Меньше людей</string>
     <string name="cart_split_increase">Больше людей</string>

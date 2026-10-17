@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Wybierz</string>
     <string name="a11y_action_load">Wczytaj</string>
     <string name="a11y_action_open">Otwórz</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Przypnij na górze</string>
     <string name="cart_unpin_item">Odepnij pozycję</string>
     <string name="cart_reorder_item">Zmień kolejność</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Podział, napiwek i budżet</string>
     <string name="cart_tip_label">Napiwek / podatek</string>
     <string name="cart_tip_row">Napiwek / podatek (%1$s%%)</string>
+    <string name="cart_fee_row">Opłata za przeliczenie (%1$s%%)</string>
     <string name="cart_split_label">Podziel między</string>
     <string name="cart_split_decrease">Mniej osób</string>
     <string name="cart_split_increase">Więcej osób</string>

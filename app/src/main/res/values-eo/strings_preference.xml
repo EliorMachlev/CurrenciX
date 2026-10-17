@@ -15,7 +15,6 @@
     <string name="fee_pair_from">De</string>
     <string name="fee_pair_to">Al</string>
     <string name="fee_pair_pick_currency">Elekti valuton</string>
-    <string name="fee_true_cost_prefix">"Konverta kotizo: "</string>
     <string name="fee_empty">Neniuj kotizoj ankoraŭ</string>
     <string name="previewConversion_title">Antaŭrigardo de konverto</string>
     <string name="previewConversion_summary">Montri la nunan konverton por ĉiu kurzo en la valutelektilo.</string>

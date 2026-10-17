@@ -129,7 +129,6 @@
     <string name="a11y_action_select">Chọn</string>
     <string name="a11y_action_load">Tải</string>
     <string name="a11y_action_open">Mở</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Ghim lên đầu</string>
     <string name="cart_unpin_item">Bỏ ghim</string>
     <string name="cart_reorder_item">Sắp xếp lại</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Chia tiền, tiền boa và ngân sách</string>
     <string name="cart_tip_label">Tiền boa / thuế</string>
     <string name="cart_tip_row">Tiền boa / thuế (%1$s%%)</string>
+    <string name="cart_fee_row">Phí chuyển đổi (%1$s%%)</string>
     <string name="cart_split_label">Chia cho</string>
     <string name="cart_split_decrease">Ít người hơn</string>
     <string name="cart_split_increase">Nhiều người hơn</string>

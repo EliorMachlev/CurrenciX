@@ -132,7 +132,6 @@
     <string name="a11y_action_select">Selecciona</string>
     <string name="a11y_action_load">Carrega</string>
     <string name="a11y_action_open">Obre</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fixa l\'article a dalt</string>
     <string name="cart_unpin_item">Desfixa l\'article</string>
     <string name="cart_reorder_item">Reordena l\'article</string>
@@ -174,6 +173,7 @@
     <string name="cart_menu_extras">Divideix, propina i pressupost</string>
     <string name="cart_tip_label">Propina / impost</string>
     <string name="cart_tip_row">Propina / impost (%1$s%%)</string>
+    <string name="cart_fee_row">Comissió de conversió (%1$s%%)</string>
     <string name="cart_split_label">Divideix entre</string>
     <string name="cart_split_decrease">Menys persones</string>
     <string name="cart_split_increase">Més persones</string>

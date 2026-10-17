@@ -113,7 +113,6 @@
     <string name="cart_reorder_item">Reorder item</string>
     <string name="cart_subtotal_label">Subtotal</string>
     <string name="cart_total_label">Total</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_menu_save">Save</string>
     <string name="cart_menu_save_as">Save as…</string>
     <string name="cart_menu_load">Load</string>
@@ -171,6 +170,7 @@
     <string name="cart_menu_extras">Split, tip &amp; budget</string>
     <string name="cart_tip_label">Tip / tax</string>
     <string name="cart_tip_row">Tip / tax (%1$s%%)</string>
+    <string name="cart_fee_row">Conversion fee (%1$s%%)</string>
     <string name="cart_split_label">Split between</string>
     <string name="cart_split_decrease">Fewer people</string>
     <string name="cart_split_increase">More people</string>

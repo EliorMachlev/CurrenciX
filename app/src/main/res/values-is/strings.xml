@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Velja</string>
     <string name="a11y_action_load">Hlaða</string>
     <string name="a11y_action_open">Opna</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Festa efst</string>
     <string name="cart_unpin_item">Losa vöru</string>
     <string name="cart_reorder_item">Endurraða vöru</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Skipting, þjórfé og fjárhagsáætlun</string>
     <string name="cart_tip_label">Þjórfé / skattur</string>
     <string name="cart_tip_row">Þjórfé / skattur (%1$s%%)</string>
+    <string name="cart_fee_row">Skiptigjald (%1$s%%)</string>
     <string name="cart_split_label">Skipta á milli</string>
     <string name="cart_split_decrease">Fækka fólki</string>
     <string name="cart_split_increase">Fjölga fólki</string>

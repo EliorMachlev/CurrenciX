@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Vybrat</string>
     <string name="a11y_action_load">Načíst</string>
     <string name="a11y_action_open">Otevřít</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Připnout nahoru</string>
     <string name="cart_unpin_item">Odepnout položku</string>
     <string name="cart_reorder_item">Přeuspořádat položku</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Rozdělení, spropitné a rozpočet</string>
     <string name="cart_tip_label">Spropitné / daň</string>
     <string name="cart_tip_row">Spropitné / daň (%1$s%%)</string>
+    <string name="cart_fee_row">Poplatek za převod (%1$s%%)</string>
     <string name="cart_split_label">Rozdělit mezi</string>
     <string name="cart_split_decrease">Méně lidí</string>
     <string name="cart_split_increase">Více lidí</string>

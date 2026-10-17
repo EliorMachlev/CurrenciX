@@ -15,7 +15,6 @@
     <string name="fee_pair_from">Fra</string>
     <string name="fee_pair_to">Til</string>
     <string name="fee_pair_pick_currency">Velg valuta</string>
-    <string name="fee_true_cost_prefix">"Vekslingsgebyr: "</string>
     <string name="fee_empty">Ingen gebyrer ennå</string>
     <string name="previewConversion_title">Forhåndsvisning av omregning</string>
     <string name="previewConversion_summary">Vis gjeldende omregning for hver kurs i valutavelgeren.</string>

@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Odaberi</string>
     <string name="a11y_action_load">Učitaj</string>
     <string name="a11y_action_open">Otvori</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Prikvači na vrh</string>
     <string name="cart_unpin_item">Otkvači stavku</string>
     <string name="cart_reorder_item">Presloži stavku</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Podjela, napojnica i proračun</string>
     <string name="cart_tip_label">Napojnica / porez</string>
     <string name="cart_tip_row">Napojnica / porez (%1$s%%)</string>
+    <string name="cart_fee_row">Naknada za konverziju (%1$s%%)</string>
     <string name="cart_split_label">Podijeli na</string>
     <string name="cart_split_decrease">Manje osoba</string>
     <string name="cart_split_increase">Više osoba</string>

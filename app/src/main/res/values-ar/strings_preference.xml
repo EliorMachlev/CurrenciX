@@ -15,7 +15,6 @@
     <string name="fee_pair_from">من</string>
     <string name="fee_pair_to">إلى</string>
     <string name="fee_pair_pick_currency">اختر عملة</string>
-    <string name="fee_true_cost_prefix">"رسوم التحويل: "</string>
     <string name="fee_empty">لا توجد رسوم بعد</string>
     <string name="previewConversion_title">معاينة التحويل</string>
     <string name="previewConversion_summary">اعرض التحويل الحالي لكل سعر في منتقي العملات.</string>

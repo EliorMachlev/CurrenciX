@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Επιλογή</string>
     <string name="a11y_action_load">Φόρτωση</string>
     <string name="a11y_action_open">Άνοιγμα</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Καρφίτσωμα στην κορυφή</string>
     <string name="cart_unpin_item">Ξεκαρφίτσωμα αντικειμένου</string>
     <string name="cart_reorder_item">Αναδιάταξη αντικειμένου</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Μοιρασιά, φιλοδώρημα και προϋπολογισμός</string>
     <string name="cart_tip_label">Φιλοδώρημα / φόρος</string>
     <string name="cart_tip_row">Φιλοδώρημα / φόρος (%1$s%%)</string>
+    <string name="cart_fee_row">Προμήθεια μετατροπής (%1$s%%)</string>
     <string name="cart_split_label">Μοιρασιά σε</string>
     <string name="cart_split_decrease">Λιγότερα άτομα</string>
     <string name="cart_split_increase">Περισσότερα άτομα</string>

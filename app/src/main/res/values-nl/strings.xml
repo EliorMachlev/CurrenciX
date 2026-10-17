@@ -130,7 +130,6 @@
     <string name="a11y_action_select">Selecteren</string>
     <string name="a11y_action_load">Laden</string>
     <string name="a11y_action_open">Openen</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Bovenaan vastzetten</string>
     <string name="cart_unpin_item">Niet meer vastzetten</string>
     <string name="cart_reorder_item">Volgorde wijzigen</string>
@@ -172,6 +171,7 @@
     <string name="cart_menu_extras">Verdelen, fooi en budget</string>
     <string name="cart_tip_label">Fooi / belasting</string>
     <string name="cart_tip_row">Fooi / belasting (%1$s%%)</string>
+    <string name="cart_fee_row">Omrekenkosten (%1$s%%)</string>
     <string name="cart_split_label">Verdelen over</string>
     <string name="cart_split_decrease">Minder personen</string>
     <string name="cart_split_increase">Meer personen</string>

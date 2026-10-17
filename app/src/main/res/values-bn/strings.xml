@@ -131,7 +131,6 @@
     <string name="a11y_action_select">নির্বাচন করুন</string>
     <string name="a11y_action_load">লোড করুন</string>
     <string name="a11y_action_open">খুলুন</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">শীর্ষে পিন করুন</string>
     <string name="cart_unpin_item">পিন সরান</string>
     <string name="cart_reorder_item">পুনর্বিন্যাস করুন</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">ভাগ, টিপ ও বাজেট</string>
     <string name="cart_tip_label">টিপ / কর</string>
     <string name="cart_tip_row">টিপ / কর (%1$s%%)</string>
+    <string name="cart_fee_row">রূপান্তর ফি (%1$s%%)</string>
     <string name="cart_split_label">ভাগ করুন</string>
     <string name="cart_split_decrease">কম লোক</string>
     <string name="cart_split_increase">বেশি লোক</string>

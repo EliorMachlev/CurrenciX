@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Избери</string>
     <string name="a11y_action_load">Зареди</string>
     <string name="a11y_action_open">Отвори</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закачи най-горе</string>
     <string name="cart_unpin_item">Откачи артикула</string>
     <string name="cart_reorder_item">Пренареди артикула</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Разделяне, бакшиш и бюджет</string>
     <string name="cart_tip_label">Бакшиш / данък</string>
     <string name="cart_tip_row">Бакшиш / данък (%1$s%%)</string>
+    <string name="cart_fee_row">Такса за конвертиране (%1$s%%)</string>
     <string name="cart_split_label">Разделяне между</string>
     <string name="cart_split_decrease">По-малко хора</string>
     <string name="cart_split_increase">Повече хора</string>

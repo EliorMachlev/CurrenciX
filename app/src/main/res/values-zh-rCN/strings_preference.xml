@@ -15,7 +15,6 @@
     <string name="fee_pair_from">从</string>
     <string name="fee_pair_to">到</string>
     <string name="fee_pair_pick_currency">选择货币</string>
-    <string name="fee_true_cost_prefix">"换算费："</string>
     <string name="fee_empty">暂无手续费</string>
     <string name="previewConversion_title">换算预览</string>
     <string name="previewConversion_summary">在货币选择器中显示每种货币的当前换算结果。</string>

@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Elekti</string>
     <string name="a11y_action_load">Ŝargi</string>
     <string name="a11y_action_open">Malfermi</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Alpingli eron supre</string>
     <string name="cart_unpin_item">Depingli eron</string>
     <string name="cart_reorder_item">Reordigi eron</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Dividi, trinkmono kaj buĝeto</string>
     <string name="cart_tip_label">Trinkmono / imposto</string>
     <string name="cart_tip_row">Trinkmono / imposto (%1$s%%)</string>
+    <string name="cart_fee_row">Konverta kotizo (%1$s%%)</string>
     <string name="cart_split_label">Dividi inter</string>
     <string name="cart_split_decrease">Malpli da homoj</string>
     <string name="cart_split_increase">Pli da homoj</string>

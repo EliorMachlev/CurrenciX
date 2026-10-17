@@ -15,7 +15,6 @@
     <string name="fee_pair_from">উৎস</string>
     <string name="fee_pair_to">গন্তব্য</string>
     <string name="fee_pair_pick_currency">মুদ্রা নির্বাচন করুন</string>
-    <string name="fee_true_cost_prefix">"রূপান্তর ফি: "</string>
     <string name="fee_empty">এখনো কোনো ফি নেই</string>
     <string name="previewConversion_title">রূপান্তরের প্রিভিউ</string>
     <string name="previewConversion_summary">মুদ্রা নির্বাচকে প্রতিটি হারের জন্য বর্তমান রূপান্তর দেখান।</string>

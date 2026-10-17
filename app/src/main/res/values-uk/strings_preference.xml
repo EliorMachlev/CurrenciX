@@ -15,7 +15,6 @@
     <string name="fee_pair_from">З</string>
     <string name="fee_pair_to">На</string>
     <string name="fee_pair_pick_currency">Виберіть валюту</string>
-    <string name="fee_true_cost_prefix">"Комісія за конвертацію: "</string>
     <string name="fee_empty">Комісій ще немає</string>
     <string name="previewConversion_title">Попередній перегляд конвертації</string>
     <string name="previewConversion_summary">Показувати результат конвертації для кожного курсу у виборі валюти.</string>

@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Вибрати</string>
     <string name="a11y_action_load">Завантажити</string>
     <string name="a11y_action_open">Відкрити</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Закріпити зверху</string>
     <string name="cart_unpin_item">Відкріпити</string>
     <string name="cart_reorder_item">Змінити порядок</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Поділ, чайові та бюджет</string>
     <string name="cart_tip_label">Чайові / податок</string>
     <string name="cart_tip_row">Чайові / податок (%1$s%%)</string>
+    <string name="cart_fee_row">Комісія за конвертацію (%1$s%%)</string>
     <string name="cart_split_label">Поділити на</string>
     <string name="cart_split_decrease">Менше людей</string>
     <string name="cart_split_increase">Більше людей</string>

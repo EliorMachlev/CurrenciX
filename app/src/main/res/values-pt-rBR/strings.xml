@@ -132,7 +132,6 @@
     <string name="a11y_action_select">Selecionar</string>
     <string name="a11y_action_load">Carregar</string>
     <string name="a11y_action_open">Abrir</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Fixar no topo</string>
     <string name="cart_unpin_item">Desfixar item</string>
     <string name="cart_reorder_item">Reordenar item</string>
@@ -174,6 +173,7 @@
     <string name="cart_menu_extras">Dividir, gorjeta e orçamento</string>
     <string name="cart_tip_label">Gorjeta / imposto</string>
     <string name="cart_tip_row">Gorjeta / imposto (%1$s%%)</string>
+    <string name="cart_fee_row">Taxa de conversão (%1$s%%)</string>
     <string name="cart_split_label">Dividir entre</string>
     <string name="cart_split_decrease">Menos pessoas</string>
     <string name="cart_split_increase">Mais pessoas</string>

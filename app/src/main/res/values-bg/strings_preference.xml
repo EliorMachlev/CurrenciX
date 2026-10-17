@@ -15,7 +15,6 @@
     <string name="fee_pair_from">От</string>
     <string name="fee_pair_to">До</string>
     <string name="fee_pair_pick_currency">Избери валута</string>
-    <string name="fee_true_cost_prefix">"Такса за конвертиране: "</string>
     <string name="fee_empty">Все още няма такси</string>
     <string name="previewConversion_title">Преглед на конвертирането</string>
     <string name="previewConversion_summary">Показване на текущото конвертиране за всеки курс в списъка за избор на валута.</string>

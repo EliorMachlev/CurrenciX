@@ -130,7 +130,6 @@
     <string name="a11y_action_select">Auswählen</string>
     <string name="a11y_action_load">Laden</string>
     <string name="a11y_action_open">Öffnen</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Artikel oben anheften</string>
     <string name="cart_unpin_item">Artikel loslösen</string>
     <string name="cart_reorder_item">Artikel neu anordnen</string>
@@ -172,6 +171,7 @@
     <string name="cart_menu_extras">Aufteilen, Trinkgeld und Budget</string>
     <string name="cart_tip_label">Trinkgeld / Steuer</string>
     <string name="cart_tip_row">Trinkgeld / Steuer (%1$s%%)</string>
+    <string name="cart_fee_row">Umrechnungsgebühr (%1$s%%)</string>
     <string name="cart_split_label">Aufteilen auf</string>
     <string name="cart_split_decrease">Weniger Personen</string>
     <string name="cart_split_increase">Mehr Personen</string>

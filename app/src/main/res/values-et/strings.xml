@@ -131,7 +131,6 @@
     <string name="a11y_action_select">Vali</string>
     <string name="a11y_action_load">Laadi</string>
     <string name="a11y_action_open">Ava</string>
-    <string name="cart_fee_extra_value">%1$s (%2$s%%)</string>
     <string name="cart_pin_item">Kinnita üles</string>
     <string name="cart_unpin_item">Vabasta kinnitus</string>
     <string name="cart_reorder_item">Muuda järjekorda</string>
@@ -173,6 +172,7 @@
     <string name="cart_menu_extras">Jagamine, jootraha ja eelarve</string>
     <string name="cart_tip_label">Jootraha / maks</string>
     <string name="cart_tip_row">Jootraha / maks (%1$s%%)</string>
+    <string name="cart_fee_row">Teisendustasu (%1$s%%)</string>
     <string name="cart_split_label">Jaga</string>
     <string name="cart_split_decrease">Vähem inimesi</string>
     <string name="cart_split_increase">Rohkem inimesi</string>

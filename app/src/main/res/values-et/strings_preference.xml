@@ -15,7 +15,6 @@
     <string name="fee_pair_from">Kust</string>
     <string name="fee_pair_to">Kuhu</string>
     <string name="fee_pair_pick_currency">Vali valuuta</string>
-    <string name="fee_true_cost_prefix">"Teisendustasu: "</string>
     <string name="fee_empty">Teenustasusid veel pole</string>
     <string name="previewConversion_title">Teisenduse eelvaade</string>
     <string name="previewConversion_summary">Näita valuutavalijas iga kursi juures praegust teisendust.</string>
