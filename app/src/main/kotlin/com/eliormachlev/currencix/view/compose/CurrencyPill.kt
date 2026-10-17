@@ -58,6 +58,12 @@ private val CHEVRON_SIZE: Dp = 14.dp
 private val CHEVRON_GAP: Dp = Spacing.Tiny
 private val PAIR_ROW_GAP: Dp = Spacing.Small
 private val SWAP_FAB_SIZE: Dp = 44.dp
+
+/**
+ * The room between a [CurrencyPairRow]'s two pills (the swap button and its
+ * gaps), for content laid out in columns under them.
+ */
+internal val PAIR_ROW_MIDDLE: Dp = SWAP_FAB_SIZE + PAIR_ROW_GAP * 2
 private val SWAP_GLYPH_SIZE: Dp = 22.dp
 
 // One 180° flip of the swap glyph per tap. The counter drives a target

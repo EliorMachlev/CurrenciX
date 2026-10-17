@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.main.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -37,9 +36,9 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.view.compose.CurrencyPairRow
-import com.eliormachlev.currencix.view.compose.FlagCode
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.PAIR_ROW_MIDDLE
 import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -125,19 +124,6 @@ fun QuickConversionsContent(
                         .fillMaxWidth()
                         .padding(start = padH, end = padH, top = padT),
             ) {
-                // The converter's pills and swap button: the same pair, the same look.
-                CurrencyPairRow(
-                    from = table.from,
-                    to = table.to,
-                    actions =
-                        remember(
-                            actions,
-                        ) { PairRowActions(actions.onFromClick, actions.onToClick, actions.onSwap, actions.onSwapLongPress) },
-                    // Over the converter, whose own pills hold the shared-element keys.
-                    sharedElement = false,
-                )
-                Spacer(Modifier.height(Spacing.Large))
-                HorizontalDivider()
                 Column(
                     modifier =
                         Modifier
@@ -145,7 +131,20 @@ fun QuickConversionsContent(
                             .fillMaxWidth()
                             .verticalScroll(rememberScrollState()),
                 ) {
-                    QuickConversionsTableBody(table, emptyText, actions, capture)
+                    QuickConversionsTableBody(table, emptyText, actions, capture) {
+                        // The converter's pills and swap button: the same pair, the
+                        // same look, and the table's column headers.
+                        CurrencyPairRow(
+                            from = table.from,
+                            to = table.to,
+                            actions =
+                                remember(
+                                    actions,
+                                ) { PairRowActions(actions.onFromClick, actions.onToClick, actions.onSwap, actions.onSwapLongPress) },
+                            // Over the converter, whose own pills hold the shared-element keys.
+                            sharedElement = false,
+                        )
+                    }
                 }
             }
         }
@@ -154,14 +153,16 @@ fun QuickConversionsContent(
     }
 }
 
-// The rows and, under them, where their rates come from: all of it on the
-// sheet's own background, so a shared snapshot reads like the sheet.
+// The pair (the columns' headers), the rows under it and where their rates
+// come from: all of it on the sheet's own background, so a shared snapshot
+// reads like the sheet, pills included.
 @Composable
 private fun QuickConversionsTableBody(
     table: QuickConversionsTable,
     emptyText: String,
     actions: QuickConversionsActions,
     capture: LayerCapture?,
+    pair: @Composable () -> Unit,
 ) {
     Column(
         modifier =
@@ -169,8 +170,11 @@ private fun QuickConversionsTableBody(
                 .fillMaxWidth()
                 .captureInto(capture)
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(vertical = Spacing.Small),
+                .padding(bottom = Spacing.Small),
     ) {
+        pair()
+        Spacer(Modifier.height(Spacing.Large))
+        HorizontalDivider()
         if (table.rows.isEmpty()) {
             Text(
                 text = emptyText,
@@ -182,8 +186,7 @@ private fun QuickConversionsTableBody(
             )
         } else {
             val feePercent = table.rows.firstNotNullOfOrNull { it.feePercent }
-            TableHeader(table.from, table.to, feePercent)
-            HorizontalDivider(Modifier.padding(horizontal = Spacing.Small), color = MaterialTheme.colorScheme.outlineVariant)
+            feePercent?.let { FeeHeader(it) }
             table.rows.forEach { row -> QuickConversionsRowUi(row, actions, hasFees = feePercent != null) }
         }
         table.sourceText?.let { SourceLine(it, MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -195,43 +198,38 @@ private fun QuickConversionsTableBody(
 @Composable
 private fun tableNumberStyle(): TextStyle = MaterialTheme.typography.bodyLarge.copy(fontFeatureSettings = TABULAR_FIGURES)
 
-// "🇨🇦 CAD | 🇮🇱 ILS | Fees +1%": what each column is in, so its cells are just numbers.
+// A table line in the pair row's columns: [from] under the from pill, the
+// swap button's room, [to] under the to pill.
 @Composable
-private fun TableHeader(
-    from: Currency?,
-    to: Currency?,
-    feePercent: String?,
+private fun UnderPills(
+    modifier: Modifier = Modifier,
+    from: @Composable RowScope.() -> Unit,
+    to: @Composable RowScope.() -> Unit,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.Small, vertical = Spacing.Small),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        HeaderCell(Modifier.weight(1f)) { from?.let { FlagCode(it) } }
-        HeaderCell(Modifier.weight(1f)) { to?.let { FlagCode(it) } }
-        if (feePercent != null) {
-            HeaderCell(Modifier.weight(1f)) {
-                // "Fees +1%": the sheet's one mention of the fee.
-                Text(
-                    stringResource(R.string.quick_conversions_fee_column, ltrIsolate(feePercent)),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        }
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.weight(1f), content = from)
+        Spacer(Modifier.width(PAIR_ROW_MIDDLE))
+        Row(Modifier.weight(1f), content = to)
     }
 }
 
-// A header cell, its content at the end, over the right-aligned numbers.
+// "Fees +1%", the sheet's one mention of the fee, over the with-fee column:
+// the second half of the to pill's, both columns being in its currency. The
+// pills head the other columns, so there's no header row without fees.
 @Composable
-private fun HeaderCell(
-    modifier: Modifier,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.XSmall, Alignment.End),
-        verticalAlignment = Alignment.CenterVertically,
-        content = content,
+private fun FeeHeader(feePercent: String) {
+    UnderPills(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.Small, vertical = Spacing.Small),
+        from = {},
+        to = {
+            Text(
+                stringResource(R.string.quick_conversions_fee_column, ltrIsolate(feePercent)),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
     )
 }
 
@@ -276,7 +274,7 @@ private fun QuickConversionsRowUi(
     hasFees: Boolean,
 ) {
     val style = tableNumberStyle().copy(fontWeight = if (row.isTyped) FontWeight.Bold else null)
-    Row(
+    UnderPills(
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -291,18 +289,18 @@ private fun QuickConversionsRowUi(
                 // TalkBack hears the whole line, "CAD $ 1 = ILS ₪ 2.18 …", as
                 // one item, not three bare numbers.
                 .clearAndSetSemantics { contentDescription = row.copyText },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(row.fromValue, style = style, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
-        Text(row.toValue, style = style, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
-        if (hasFees) {
-            Text(
-                text = row.withFeeValue.orEmpty(),
-                style = style,
-                color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.End,
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
+        from = { Text(row.fromValue, style = style, textAlign = TextAlign.End, modifier = Modifier.weight(1f)) },
+        to = {
+            Text(row.toValue, style = style, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+            if (hasFees) {
+                Text(
+                    text = row.withFeeValue.orEmpty(),
+                    style = style,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        },
+    )
 }
