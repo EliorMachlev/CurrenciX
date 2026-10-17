@@ -64,8 +64,8 @@ class QuickConversionRowsTest {
     fun `with a fee the row adds the percent and the cost in the result's currency`() {
         val row = rows(feeStack = BigDecimal("1.01")).first { it.amount.compareTo(BigDecimal.TEN) == 0 }
         // 10 USD = 8 EUR; with +1%, 8 x 1.01 = 8.08 EUR (the converter's true cost).
-        assertEquals("+ 1% = EUR € 8.08", row.costWithFeeText)
-        assertEquals("USD $ 10 = EUR € 8.00   + 1% = EUR € 8.08", row.copyText)
+        assertEquals("+1% = EUR € 8.08", row.costWithFeeText)
+        assertEquals("USD $ 10 = EUR € 8.00   +1% = EUR € 8.08", row.copyText)
         assertNull(rows().first().costWithFeeText)
     }
 
@@ -75,7 +75,7 @@ class QuickConversionRowsTest {
         assertEquals("1,000", row.fromValue)
         assertEquals("800.00", row.toValue)
         assertEquals("808.00", row.withFeeValue)
-        assertEquals("+ 1%", row.feePercent)
+        assertEquals("+1%", row.feePercent)
         assertNull(rows().first().withFeeValue)
     }
 

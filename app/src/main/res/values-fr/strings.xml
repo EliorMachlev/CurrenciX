@@ -23,7 +23,7 @@
     <string name="share_footer">D\'après %1$s, %2$s</string>
     <string name="quick_conversions_title">Conversions rapides</string>
     <string name="quick_conversions_no_rates">Taux non encore chargés.</string>
-    <string name="quick_conversions_fees_applied">Frais appliqués\u00A0: %s</string>
+    <string name="quick_conversions_fee_column">Frais %1$s</string>
     <string name="tooltip_filter_starred">Afficher uniquement les devises favorites.</string>
     <string name="currency_dropdown_api_hint">Il manque quelque chose\u00A0? Les fournisseurs de données ne proposent pas tous les mêmes devises. Allez dans les paramètres pour en essayer un autre\u00A0!\u00A0\uD83E\uDD17</string>
 

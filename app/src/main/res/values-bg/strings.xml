@@ -18,7 +18,7 @@
     <string name="share_footer">Според %1$s, %2$s</string>
     <string name="quick_conversions_title">Бързо конвертиране</string>
     <string name="quick_conversions_no_rates">Курсовете все още не са заредени.</string>
-    <string name="quick_conversions_fees_applied">Приложени такси: %s</string>
+    <string name="quick_conversions_fee_column">Такси %1$s</string>
     <string name="tooltip_filter_starred">Показване само на валутите със звезда.</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Офлайн • Курсове от %1$s</string>

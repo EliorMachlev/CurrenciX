@@ -18,8 +18,6 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.util.feePercentDelta
-import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.shareImageOrText
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
@@ -33,9 +31,6 @@ import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.math.RoundingMode
-
-private const val FEE_PERCENT_DECIMAL_PLACES = 2
 
 // The shared image's file name starts with this.
 private const val SHARE_NAME_PREFIX = "currencix-quick"
@@ -135,7 +130,6 @@ private fun rememberQuickConversionsTable(
             from = pairFrom,
             to = pairTo,
             rows = rows,
-            feeInfoText = quickConversionsFeeInfoText(ctx, feeStack),
             sourceText = current?.let { ratesSource(ctx, it, status) },
             warningText = warning,
         )
@@ -180,15 +174,4 @@ private fun QuickConversionsRecentPairs(
         contentPadding = PaddingValues(horizontal = Spacing.Large),
         modifier = Modifier.padding(top = Spacing.Small),
     )
-}
-
-// Top-of-sheet "fees applied" line — omitted when the stack is neutral.
-private fun quickConversionsFeeInfoText(
-    ctx: Context,
-    stack: BigDecimal,
-): String? {
-    if (stack.isNeutralFeeStack()) return null
-    val percent = stack.feePercentDelta(FEE_PERCENT_DECIMAL_PLACES, RoundingMode.HALF_UP)
-    val sign = if (percent.signum() >= 0) "+" else ""
-    return ctx.getString(R.string.quick_conversions_fees_applied, "$sign$percent%")
 }

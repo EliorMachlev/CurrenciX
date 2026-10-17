@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
+import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.FlagCode
 import com.eliormachlev.currencix.view.compose.LayerCapture
@@ -53,7 +54,7 @@ private const val TABULAR_FIGURES = "tnum"
 data class QuickConversionsRow(
     val amountFromText: String,
     val amountToText: String,
-    // "+ 1% = USD $ 0.3281", after the result; null without a fee.
+    // "+1% = USD $ 0.3281", after the result; null without a fee.
     val costWithFeeText: String?,
     // The amount the row converts, for a tap to put into the converter.
     val amount: BigDecimal = BigDecimal.ZERO,
@@ -64,10 +65,10 @@ data class QuickConversionsRow(
     val fromValue: String = "",
     val toValue: String = "",
     val withFeeValue: String? = null,
-    // "+ 1%", the fee column's header; null without a fee.
+    // "+1%", the fee's rate, for the fee column's header; null without a fee.
     val feePercent: String? = null,
 ) {
-    /** "ILS ₪ 1 = USD $ 0.3249  + 1% = USD $ 0.3281", what a long-press copies. */
+    /** "ILS ₪ 1 = USD $ 0.32   +1% = USD $ 0.33", what a long-press copies. */
     val copyText: String
         get() = listOfNotNull("$amountFromText = $amountToText", costWithFeeText).joinToString(FEE_GAP)
 }
@@ -78,8 +79,6 @@ data class QuickConversionsTable(
     val from: Currency?,
     val to: Currency?,
     val rows: List<QuickConversionsRow>,
-    // "Fees applied: +2.5%"; null when no fee is in force.
-    val feeInfoText: String? = null,
     // "Based on Frankfurter.app, 12/10/26 16:00": where the rates come from.
     val sourceText: String? = null,
     // Why they may not be today's: offline, the fallback, a past date.
@@ -137,16 +136,6 @@ fun QuickConversionsContent(
                     // Over the converter, whose own pills hold the shared-element keys.
                     sharedElement = false,
                 )
-                table.feeInfoText?.let { feeInfoText ->
-                    Spacer(Modifier.height(Spacing.Small))
-                    Text(
-                        text = feeInfoText,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
                 Spacer(Modifier.height(Spacing.Large))
                 HorizontalDivider()
                 Column(
@@ -206,7 +195,7 @@ private fun QuickConversionsTableBody(
 @Composable
 private fun tableNumberStyle(): TextStyle = MaterialTheme.typography.bodyLarge.copy(fontFeatureSettings = TABULAR_FIGURES)
 
-// "🇨🇦 CAD | 🇮🇱 ILS | + 1%": what each column is in, so its cells are just numbers.
+// "🇨🇦 CAD | 🇮🇱 ILS | Fees +1%": what each column is in, so its cells are just numbers.
 @Composable
 private fun TableHeader(
     from: Currency?,
@@ -221,7 +210,12 @@ private fun TableHeader(
         HeaderCell(Modifier.weight(1f)) { to?.let { FlagCode(it) } }
         if (feePercent != null) {
             HeaderCell(Modifier.weight(1f)) {
-                Text(feePercent, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.error)
+                // "Fees +1%": the sheet's one mention of the fee.
+                Text(
+                    stringResource(R.string.quick_conversions_fee_column, ltrIsolate(feePercent)),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.error,
+                )
             }
         }
     }

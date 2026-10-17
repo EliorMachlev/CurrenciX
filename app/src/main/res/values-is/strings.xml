@@ -18,7 +18,7 @@
     <string name="share_footer">Byggt á %1$s, %2$s</string>
     <string name="quick_conversions_title">Fljótlegir umreikningar</string>
     <string name="quick_conversions_no_rates">Gengi hefur ekki verið hlaðið enn.</string>
-    <string name="quick_conversions_fees_applied">Beitt gjöld: %s</string>
+    <string name="quick_conversions_fee_column">Gjöld %1$s</string>
     <string name="tooltip_filter_starred">Sýna aðeins stjörnumerkta gjaldmiðla.</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>
     <string name="offline_banner_with_date">Ónettengt • Gengi frá %1$s</string>

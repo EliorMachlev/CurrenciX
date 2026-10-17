@@ -23,7 +23,7 @@
     <string name="share_footer">بر اساس %1$s، %2$s</string>
     <string name="quick_conversions_title">تبدیل‌های سریع</string>
     <string name="quick_conversions_no_rates">نرخ‌ها هنوز بارگذاری نشده‌اند.</string>
-    <string name="quick_conversions_fees_applied">کارمزدهای اعمال‌شده: %s</string>
+    <string name="quick_conversions_fee_column">کارمزدها %1$s</string>
     <string name="tooltip_filter_starred">نمایش فقط ارزهای ستاره‌دار.</string>
     <string name="currency_dropdown_api_hint">چیزی کم است؟ ارائه‌دهندگان دادهٔ مختلف، ارزهای متفاوتی ارائه می‌کنند. به تنظیمات بروید و ارائه‌دهندهٔ دیگری را امتحان کنید! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>

@@ -18,7 +18,7 @@
     <string name="share_footer">Baserat på %1$s, %2$s</string>
     <string name="quick_conversions_title">Snabba omräkningar</string>
     <string name="quick_conversions_no_rates">Kurserna har inte laddats än.</string>
-    <string name="quick_conversions_fees_applied">Tillämpade avgifter: %s</string>
+    <string name="quick_conversions_fee_column">Avgifter %1$s</string>
     <string name="tooltip_filter_starred">Visa endast favoritvalutor.</string>
     <string name="a11y_delete">Ta bort</string>
     <string name="error_empty_response">Servern har ingen data för denna förfrågan.</string>

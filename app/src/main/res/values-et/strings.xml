@@ -23,7 +23,7 @@
     <string name="share_footer">Allika %1$s põhjal, %2$s</string>
     <string name="quick_conversions_title">Kiirteisendused</string>
     <string name="quick_conversions_no_rates">Kursid pole veel laaditud.</string>
-    <string name="quick_conversions_fees_applied">Rakendatud tasud: %s</string>
+    <string name="quick_conversions_fee_column">Teenustasud %1$s</string>
     <string name="tooltip_filter_starred">Näita vaid lemmikuks märgitud valuutasid.</string>
     <string name="currency_dropdown_api_hint">Midagi on puudu? Eri teenusepakkujad pakuvad eri valuutasid. Ava seadistused ja proovi mõnda teist! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>

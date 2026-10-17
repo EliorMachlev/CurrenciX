@@ -23,7 +23,7 @@
     <string name="share_footer">استنادًا إلى %1$s، %2$s</string>
     <string name="quick_conversions_title">تحويلات سريعة</string>
     <string name="quick_conversions_no_rates">لم يتم تحميل الأسعار بعد.</string>
-    <string name="quick_conversions_fees_applied">الرسوم المطبقة: %s</string>
+    <string name="quick_conversions_fee_column">الرسوم %1$s</string>
     <string name="tooltip_filter_starred">إظهار العملات المميزة بنجمة فقط.</string>
     <string name="currency_dropdown_api_hint">هل تفتقد عملة ما؟ يقدّم كل مزوّد بيانات عملات مختلفة. انتقل إلى الإعدادات لتجربة مزوّد آخر! 🤗</string>
     <string name="info_conversion">%1$s %2$s ≈ %3$s %4$s</string>

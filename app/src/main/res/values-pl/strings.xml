@@ -20,7 +20,7 @@
     <string name="share_footer">Na podstawie %1$s, %2$s</string>
     <string name="quick_conversions_title">Szybkie przeliczenia</string>
     <string name="quick_conversions_no_rates">Kursy nie zostały jeszcze wczytane.</string>
-    <string name="quick_conversions_fees_applied">Zastosowane opłaty: %s</string>
+    <string name="quick_conversions_fee_column">Opłaty %1$s</string>
     <string name="tooltip_filter_starred">Pokaż tylko waluty oznaczone gwiazdką.</string>
     <string name="a11y_delete">Usuń</string>
     <string name="error_invalid_api_key">HTTP 401 – Sprawdź swój klucz API.</string>

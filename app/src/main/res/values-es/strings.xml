@@ -23,7 +23,7 @@
     <string name="share_footer">Basado en %1$s, %2$s</string>
     <string name="quick_conversions_title">Conversiones rápidas</string>
     <string name="quick_conversions_no_rates">Los tipos aún no se han cargado.</string>
-    <string name="quick_conversions_fees_applied">Comisiones aplicadas: %s</string>
+    <string name="quick_conversions_fee_column">Comisiones %1$s</string>
     <string name="tooltip_filter_starred">Mostrar solo las monedas con estrella.</string>
     <string name="currency_dropdown_api_hint">¿Falta algo? Los distintos proveedores de datos ofrecen monedas diferentes. ¡Ve a la configuración para probar con otro! 🤗</string>
 

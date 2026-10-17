@@ -24,7 +24,7 @@
     <string name="share_footer">Basierend auf %1$s, %2$s</string>
     <string name="quick_conversions_title">Schnellumrechnung</string>
     <string name="quick_conversions_no_rates">Kurse noch nicht geladen.</string>
-    <string name="quick_conversions_fees_applied">Angewendete Gebühren: %s</string>
+    <string name="quick_conversions_fee_column">Gebühren %1$s</string>
     <string name="tooltip_filter_starred">Nur favorisierte Währungen anzeigen.</string>
     <string name="currency_dropdown_api_hint">Fehlt etwas? Unterschiedliche Datenanbieter bieten unterschiedliche Währungen an. Probiere in den Einstellungen einen anderen aus!\u00A0\uD83E\uDD17</string>
 

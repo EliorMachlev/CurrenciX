@@ -13,7 +13,7 @@ import java.math.RoundingMode
 
 private val QUICK_AMOUNTS: List<BigDecimal> = listOf("1", "5", "10", "20", "50", "100", "500", "1000").map(::BigDecimal)
 
-// Fee percent shown on a row ("+ 1%"), as on the converter's fee chip.
+// Fee percent shown on a row ("+1%"), as on the converter's fee chip.
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
 
 /**
@@ -39,7 +39,7 @@ data class QuickConversionRowInputs(
  * The pair at round amounts, plus the typed one, smallest first: the bare
  * numbers for the sheet's table, and each as "ILS ₪ 1 = USD $ 0.3249" for
  * copy, share and TalkBack. With a fee in force each row adds what it comes
- * to with the fee, "+ 1% = USD $ 0.3281": the converter's True Cost
+ * to with the fee, "+1% = USD $ 0.3281": the converter's True Cost
  * (result x fee stack), in the result's currency.
  */
 fun buildQuickConversionRows(inputs: QuickConversionRowInputs): List<QuickConversionsRow> {
@@ -84,14 +84,14 @@ private fun moneyLabel(
     return listOfNotNull(iso, symbol, amount).joinToString(" ")
 }
 
-// "+ 1%", "- 0.5%": the fee stack's change, signed apart from the number.
+// "+1%", "-0.5%": the fee stack's change, signed.
 private fun feePercentLabel(
     ctx: Context,
     feeStack: BigDecimal,
 ): String {
     val percent = feeStack.feePercentDelta(FEE_PERCENT_DECIMAL_PLACES, RoundingMode.HALF_UP)
     val sign = if (percent.signum() < 0) "-" else "+"
-    return "$sign ${percent.abs().toHumanReadableNumber(ctx, trim = true)}%"
+    return "$sign${percent.abs().toHumanReadableNumber(ctx, trim = true)}%"
 }
 
 // Rounded to the user's [decimals], grouped and in the locale's separator.

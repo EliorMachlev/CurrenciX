@@ -23,7 +23,7 @@
     <string name="share_footer">数据来源：%1$s，%2$s</string>
     <string name="quick_conversions_title">快速换算</string>
     <string name="quick_conversions_no_rates">汇率尚未加载。</string>
-    <string name="quick_conversions_fees_applied">已应用费用：%s</string>
+    <string name="quick_conversions_fee_column">手续费 %1$s</string>
     <string name="tooltip_filter_starred">仅显示收藏的货币。</string>
     <string name="a11y_delete">删除</string>
     <string name="currency_dropdown_api_hint">缺少某种货币？不同的数据源提供的货币不同。去设置里换一个试试吧！\u00A0🤗</string>
