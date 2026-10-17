@@ -20,6 +20,11 @@
     <style name="AppTheme.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splashBackground</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/brand_mark_animated</item>
+        <!-- The app's version under the mark, generated at build time
+             (GenerateSplashVersion in app/build.gradle.kts). The splash
+             library has no attribute for it; Android has had one since
+             API 31, below minSdk. -->
+        <item name="android:windowSplashScreenBrandingImage">@drawable/splash_version</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 </resources>

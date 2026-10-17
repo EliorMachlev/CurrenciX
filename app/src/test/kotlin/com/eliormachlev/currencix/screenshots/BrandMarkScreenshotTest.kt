@@ -20,8 +20,9 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 // The mark in each place it's drawn, as the platform draws it (no Compose):
-// the splash icon on its background, the launcher icon through a circle
-// mask, and the themed icon in a wallpaper colour. Light, then dark mode.
+// the splash icon on its background with the version under it, the
+// launcher icon through a circle mask, and the themed icon in a wallpaper
+// colour. Light, then dark mode.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], application = Application::class)
@@ -52,13 +53,17 @@ class BrandMarkScreenshotTest {
                 ColorDrawable(themedBackground),
                 launcher.monochrome?.mutate()?.apply { setTint(themedMark) },
             )
-        val splashBackground = context.getColor(if (night) R.color.inkBg else R.color.paperBg)
 
-        val bitmap = createBitmap(CELL * CELLS, CELL)
+        val bitmap = createBitmap(CELL * CELLS, CELL + VERSION_HEIGHT)
         val canvas = Canvas(bitmap)
-        canvas.drawColor(splashBackground)
+        canvas.drawColor(context.getColor(R.color.splashBackground))
         listOf(context.getDrawable(R.drawable.brand_mark), launcher, themed).forEachIndexed { index, drawable ->
             canvas.withTranslation(x = (index * CELL).toFloat()) { drawable?.drawIn(this) }
+        }
+        // The splash's version line, under its mark, in the splash's 5:2 slot.
+        context.getDrawable(R.drawable.splash_version)?.apply {
+            setBounds(0, CELL, CELL, CELL + VERSION_HEIGHT)
+            draw(canvas)
         }
         bitmap.captureRoboImage("$SCREENSHOT_DIR/$name.png")
     }
@@ -71,6 +76,7 @@ class BrandMarkScreenshotTest {
     private companion object {
         const val CELL = 432
         const val CELLS = 3
+        const val VERSION_HEIGHT = CELL * 2 / 5
 
         // A blue wallpaper's themed-icon colours (background to mark).
         val THEMED_LIGHT = argb(0xFFD6E3FF) to argb(0xFF0E3A6E)

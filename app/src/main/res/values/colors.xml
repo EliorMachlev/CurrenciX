@@ -19,6 +19,8 @@
    <color name="brandMarkCross">@color/paperInk</color>
    <!-- The splash screen's, the app's own background so its exit has no seam. -->
    <color name="splashBackground">@color/paperBg</color>
+   <!-- The launcher icon's ×; debug builds make it red (src/debug). -->
+   <color name="launcherMarkCross">@color/inkForeground</color>
 
    <!-- Legacy aliases kept for XML that still references the old names.
         Point them at the brand palette so nothing regresses. -->

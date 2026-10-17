@@ -3,8 +3,14 @@ import com.android.build.api.artifact.ArtifactTransformationRequest
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.FilterConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.awt.Color
+import java.awt.Font
+import java.awt.RenderingHints
+import java.awt.font.FontRenderContext
+import java.awt.image.BufferedImage
 import java.io.FileInputStream
 import java.util.Properties
+import javax.imageio.ImageIO
 
 plugins {
     id("com.android.application")
@@ -215,6 +221,17 @@ androidComponents {
             val name = output.versionName.orNull ?: return@forEach
             output.versionName.set("$name-$label")
         }
+        // The version on the splash screen: the universal APK's, without an ABI label.
+        val universal = variant.outputs.first { output -> output.filters.none { it.filterType == FilterConfiguration.FilterType.ABI } }
+        val splashVersion =
+            tasks.register<GenerateSplashVersion>("generateSplashVersion${variant.name.replaceFirstChar(Char::uppercaseChar)}") {
+                versionName.set(universal.versionName)
+                font.set(layout.projectDirectory.file("src/main/res/font/space_grotesk_medium.ttf"))
+                // PaperInkMuted and InkForegroundMuted (view/compose/theme/Color.kt).
+                lightColor.set(0xFF6B675FL)
+                darkColor.set(0xFFA9A49AL)
+            }
+        variant.sources.res?.addGeneratedSourceDirectory(splashVersion, GenerateSplashVersion::outputDirectory)
     }
     // Release APKs re-signed with the post-quantum hybrid signature once its
     // keys are configured (see "Post-quantum signing" below).
@@ -628,6 +645,83 @@ abstract class SignApksHybrid : DefaultTask() {
         private const val ENV_STANDALONE_PASSWORD = "CURRENCIX_STANDALONE_PASSWORD"
         private const val ENV_STANDALONE_KEY_PASSWORD = "CURRENCIX_STANDALONE_KEY_PASSWORD"
         private const val ENV_HYBRID_PASSWORD = "CURRENCIX_HYBRID_PASSWORD"
+    }
+}
+
+// Splash version ////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Draws the splash screen's branding image, `drawable/splash_version`: the
+ * app's version ("v1.23.0") in the app's font, centred in the 200 × 80 dp
+ * the splash gives it, in a light-mode and a dark-mode colour. Android's
+ * splash takes a drawable there, not text, so the version is drawn here, at
+ * build time, as an extra-extra-extra-high-density PNG (which Android
+ * scales down for other screens): as a vector path its glyphs would be far
+ * too long a path to draw well.
+ */
+abstract class GenerateSplashVersion : DefaultTask() {
+    @get:Input
+    abstract val versionName: Property<String>
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val font: RegularFileProperty
+
+    // ARGB, as in a colour resource: on paper, then on ink.
+    @get:Input
+    abstract val lightColor: Property<Long>
+
+    @get:Input
+    abstract val darkColor: Property<Long>
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun generate() {
+        val glyphs =
+            Font
+                .createFont(Font.TRUETYPE_FONT, font.get().asFile)
+                .deriveFont(FONT_SIZE * SCALE)
+                .createGlyphVector(FontRenderContext(null, true, true), "v${versionName.get()}")
+        val bounds = glyphs.visualBounds
+        val outline =
+            glyphs.getOutline(
+                ((WIDTH * SCALE - bounds.width) / 2 - bounds.x).toFloat(),
+                ((HEIGHT * SCALE - bounds.height) / 2 - bounds.y).toFloat(),
+            )
+        // Only this run's images: nothing left from an earlier version of the task.
+        outputDirectory
+            .get()
+            .asFile
+            .listFiles()
+            ?.forEach { it.deleteRecursively() }
+        mapOf("drawable-xxxhdpi" to lightColor.get(), "drawable-night-xxxhdpi" to darkColor.get()).forEach { (folder, color) ->
+            val image = BufferedImage(WIDTH * SCALE, HEIGHT * SCALE, BufferedImage.TYPE_INT_ARGB)
+            image.createGraphics().apply {
+                setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+                setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
+                this.color = Color(color.toInt(), true)
+                fill(outline)
+                dispose()
+            }
+            val dir =
+                outputDirectory
+                    .get()
+                    .dir(folder)
+                    .asFile
+                    .apply { mkdirs() }
+            ImageIO.write(image, "png", dir.resolve("splash_version.png"))
+        }
+    }
+
+    companion object {
+        // The branding image's size on the splash screen, in dp, and the
+        // pixels per dp of the density it's drawn for (xxxhdpi).
+        const val WIDTH = 200
+        const val HEIGHT = 80
+        const val SCALE = 4
+        const val FONT_SIZE = 15f
     }
 }
 

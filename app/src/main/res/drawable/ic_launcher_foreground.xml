@@ -19,7 +19,7 @@
         android:strokeWidth="@dimen/brand_mark_arrow_round" />
     <path
         android:pathData="@string/brand_mark_cross"
-        android:strokeColor="@color/inkForeground"
+        android:strokeColor="@color/launcherMarkCross"
         android:strokeLineCap="round"
         android:strokeWidth="@dimen/brand_mark_cross_width" />
 </vector>

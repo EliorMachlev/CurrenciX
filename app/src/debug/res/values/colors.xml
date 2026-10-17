@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Debug builds: the launcher icon's × in red, to tell them from a release
+         on the home screen. -->
+    <color name="launcherMarkCross">#E5534B</color>
+</resources>
