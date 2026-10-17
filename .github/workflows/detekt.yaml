@@ -29,7 +29,7 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: 25
           distribution: temurin
@@ -50,35 +50,35 @@ jobs:
       # reporting a missing configuration.
       - name: Upload SARIF to code scanning (app (main, fdroid, debug))
         if: always() && hashFiles('app/build/reports/detekt/fdroidDebug.sarif') != ''
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
         with:
           sarif_file: app/build/reports/detekt/fdroidDebug.sarif
           category: detekt
 
       - name: Upload SARIF to code scanning (app (play, release))
         if: always() && hashFiles('app/build/reports/detekt/playRelease.sarif') != ''
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
         with:
           sarif_file: app/build/reports/detekt/playRelease.sarif
           category: detekt-release
 
       - name: Upload SARIF to code scanning (app unit tests)
         if: always() && hashFiles('app/build/reports/detekt/fdroidDebugUnitTest.sarif') != ''
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
         with:
           sarif_file: app/build/reports/detekt/fdroidDebugUnitTest.sarif
           category: detekt-tests
 
       - name: Upload SARIF to code scanning (helpers)
         if: always() && hashFiles('helpers/build/reports/detekt/main.sarif') != ''
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
         with:
           sarif_file: helpers/build/reports/detekt/main.sarif
           category: detekt-helpers
 
       - name: Upload SARIF to code scanning (baselineprofile)
         if: always() && hashFiles('baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif') != ''
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
         with:
           sarif_file: baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif
           category: detekt-baselineprofile
