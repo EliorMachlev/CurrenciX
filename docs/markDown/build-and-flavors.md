@@ -161,7 +161,7 @@ English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.
 | Dependency | Version | Note |
 |---|---|---|
 | `org.bouncycastle:bcprov-jdk18on` | 1.86 | Pure-Java Argon2id for password-based backup encryption — see [security.md](security.md) |
-| `com.google.crypto.tink:tink-android` | 1.23.0 | AES-256-GCM for the backup's payload (`BackupCrypto`) — see [security.md](security.md) |
+| `com.google.crypto.tink:tink-android` | 1.24.0 | AES-256-GCM for the backup's payload (`BackupCrypto`) — see [security.md](security.md) |
 | `com.jakewharton.timber:timber` | 5.0.1 | Local-only rotating file log, no remote crash/analytics sink |
 | `com.github.chuckerteam.chucker:library` (debug) / `library-no-op` (release) | 4.3.1 | In-app HTTP inspector, debug-only via source-set split |
 
