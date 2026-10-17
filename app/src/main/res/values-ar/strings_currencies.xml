@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="name_aed">درهم إماراتي</string>
-    <string name="name_afn">أفغاني أفغانستان</string>
+    <string name="name_afn">أفغاني أفغانستاني</string>
     <string name="name_all">ليك ألباني</string>
-    <string name="name_amd">الدرام الأرميني</string>
+    <string name="name_amd">درام أرميني</string>
     <string name="name_ang">غيلدر الأنتيل الهولندية</string>
-    <string name="name_aoa">الكوانزا أنغولا</string>
-    <string name="name_ars">‌بيزو الأرجنتين</string>
-    <string name="name_aud">دولار استرالي</string>
+    <string name="name_aoa">كوانزا أنغولي</string>
+    <string name="name_ars">بيزو أرجنتيني</string>
+    <string name="name_aud">دولار أسترالي</string>
     <string name="name_awg">فلورين أروبا</string>
     <string name="name_azn">مانات أذربيجاني</string>
 
@@ -31,14 +31,14 @@
     <string name="name_cad">دولار كندي</string>
     <string name="name_cdf">فرنك كونغولي</string>
     <string name="name_chf">فرنك سويسري</string>
-    <string name="name_clf">شيلي Unidad de Fomento (UF)</string>
+    <string name="name_clf">وحدة الحساب التشيلية (UF)</string>
     <string name="name_clp">بيزو تشيلي</string>
     <string name="name_cnh">رينمينبي صيني (في الخارج)</string>
     <string name="name_cny">رينمينبي صيني</string>
     <string name="name_cop">بيزو كولومبي</string>
     <string name="name_crc">كولون كوستاريكي</string>
     <string name="name_cuc">بيزو كوبي قابل للتحويل</string>
-    <string name="name_cup">البيزو الكوبي</string>
+    <string name="name_cup">بيزو كوبي</string>
     <string name="name_cve">إيسكودو جزر الرأس الأخضر</string>
     <string name="name_czk">كورونا تشيكية</string>
 
@@ -56,7 +56,7 @@
     <string name="name_fkp">جنيه جزر فوكلاند</string>
     <string name="name_fok">كرونة فاروية</string>
 
-    <string name="name_gbp">الجنيه الاسترليني</string>
+    <string name="name_gbp">جنيه إسترليني</string>
     <string name="name_gel">لاري جورجي</string>
     <string name="name_ggp">جنيه جيرنزي</string>
     <string name="name_ghs">سيدي غاني</string>
@@ -111,7 +111,7 @@
     <string name="name_mop">باتاكا ماكاوية</string>
     <string name="name_mro">أوقية موريتانية (قبل 2018)</string>
     <string name="name_mru">أوقية موريتانية</string>
-    <string name="name_mur">روبي موريشي</string>
+    <string name="name_mur">روبية موريشيوسية</string>
     <string name="name_mvr">روفية مالديفية</string>
     <string name="name_mwk">كواشا ملاوية</string>
     <string name="name_mxn">بيزو مكسيكي</string>
@@ -183,12 +183,12 @@
 
     <string name="name_wst">تالا ساموي</string>
 
-    <string name="name_xaf">فرنك CFA وسط أفريقيا BEAC</string>
+    <string name="name_xaf">فرنك CFA وسط أفريقيا</string>
     <string name="name_xag">أونصة الفضة</string>
     <string name="name_xau">أونصة الذهب</string>
     <string name="name_xcd">دولار شرق الكاريبي</string>
     <string name="name_xdr">حقوق السحب الخاصة بصندوق النقد الدولي</string>
-    <string name="name_xof">فرنك CFA وسط أفريقيا BCEAO</string>
+    <string name="name_xof">فرنك CFA غرب أفريقيا</string>
     <string name="name_xpd">أونصة البلاديوم</string>
     <string name="name_xpf">فرنك CFP</string>
     <string name="name_xpt">أونصة البلاتين</string>

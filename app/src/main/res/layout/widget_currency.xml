@@ -17,8 +17,7 @@
         android:maxLines="1"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
-        android:textStyle="bold"
-        tools:ignore="UnusedAttribute" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/widget_footer"
@@ -28,6 +27,5 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="?android:attr/textColorSecondary"
-        android:textSize="11sp"
-        tools:ignore="UnusedAttribute" />
+        android:textSize="11sp" />
 </LinearLayout>

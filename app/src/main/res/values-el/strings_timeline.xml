@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> σε &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Δεδομένα από &lt;b>%s&lt;/b></string>
-    <string name="rate_average">Μ.Ο.</string>
+    <string name="rate_average">μ.ό.</string>
     <string name="rate_median">διάμ.</string>
-    <string name="rate_min">Ελάχ.</string>
-    <string name="rate_max">Μέγ.</string>
+    <string name="rate_min">ελάχ.</string>
+    <string name="rate_max">μέγ.</string>
     <string name="year">έτος</string>
     <string name="month">μήνας</string>
     <string name="week">εβδομάδα</string>
+    <string name="timeline_five_years">5 έτη</string>
+    <string name="timeline_custom_range">Προσαρμοσμένο εύρος</string>
+    <string name="timeline_custom">Επιλογή</string>
+    <string name="timeline_share">Κοινοποίηση γραφήματος</string>
+    <string name="timeline_no_rates">Δεν υπάρχουν ισοτιμίες για αυτές τις ημερομηνίες</string>
+    <string name="timeline_convert_at">Μετατροπή με την ισοτιμία της %1$s</string>
+    <string name="timeline_a11y_up">Άνοδος %1$s%%</string>
+    <string name="timeline_a11y_down">Πτώση %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Αμετάβλητη</string>
+    <string name="timeline_a11y_from_to">από %1$s στις %2$s σε %3$s στις %4$s</string>
+    <string name="timeline_a11y_high">υψηλότερη %1$s στις %2$s</string>
+    <string name="timeline_a11y_low">χαμηλότερη %1$s στις %2$s</string>
+    <string name="timeline_alert_at">Ειδοποίηση στα %1$s</string>
+    <string name="timeline_touch_hint">Αγγίξτε το γράφημα για μετατροπή ή ειδοποίηση με την ισοτιμία μιας ημέρας</string>
 </resources>

@@ -7,7 +7,7 @@
 Every GitHub Actions `uses:` reference is pinned to a full 40-character commit SHA, with the human-readable tag preserved in a trailing comment:
 
 ```yaml
-uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 ```
 
 This prevents a compromised or reused tag from injecting malicious code into CI. Enforced by the Semgrep rule `yaml.github-actions.security.github-actions-mutable-action-tag` and verified by the OpenSSF Scorecard `Pinned-Dependencies` check.
@@ -27,8 +27,8 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 ## Secrets
 
 - Release signing credentials are stored in `secrets.properties` (gitignored) and referenced only at build time.
-- No API keys are stored in source code. OpenExchangerates key (if used) is expected as an environment variable or build config field.
-- Gitleaks scans the full repository weekly for accidental credential commits.
+- No API keys are stored in source code. The keys a user enters for Open Exchangerates or AllRatesToday stay in the app's private storage, one per provider. AllRatesToday's goes as an `Authorization` header (never in a URL, so never in a log line or cache key), and debug builds' HTTP inspector redacts that header.
+- Gitleaks scans the full repository on every PR, every push to `master`, and weekly (Mon 07:00 UTC) for accidental credential commits.
 
 ## User-initiated Backup
 
@@ -41,7 +41,7 @@ The app requests **no storage permission** — the SAF picker returns a scoped `
 At export time the user may tick **Encrypt with a password**. When set:
 
 - Password → 256-bit AES key via **Argon2id v1.3** (`m=32 MiB, t=3, p=1`) with a random 32-byte salt. Argon2id is memory-hard, which neutralises the √N speedup a quantum attacker gets from Grover's algorithm — parallelism gains don't help when memory bandwidth dominates.
-- The `namespaces` block is encrypted with **AES-256-GCM** using a random 12-byte IV and 128-bit auth tag. AES-256 is itself quantum-resistant: Grover reduces effective security to ~128 bits, which remains out of reach.
+- The `namespaces` block is encrypted with **AES-256-GCM** (Tink's `AesGcmJce`, in `BackupCrypto`) using a random 12-byte IV and 128-bit auth tag. AES-256 is itself quantum-resistant: Grover reduces effective security to ~128 bits, which remains out of reach.
 - KDF, cipher, and Argon2 cost parameters (`memoryKib`, `iterations`, `parallelism`) are recorded in the wrapper JSON so future readers can reject unknown algorithms instead of silently mis-decrypting.
 - Passwords are held as `CharArray` and zeroed by both UI and manager after use; UTF-8 encoding for Argon2 goes through NIO to avoid a `String` allocation that would linger in the pool.
 
@@ -51,23 +51,41 @@ Automatic Android backup remains disabled (`android:allowBackup="false"`) — us
 
 ## Runtime Permissions
 
-The app declares a single permission:
+The app declares these permissions (all normal, install-time ones except `POST_NOTIFICATIONS`, which is asked for at runtime):
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<uses-permission android:name="android.permission.USE_BIOMETRIC" />
 ```
 
-No location, contacts, storage, camera, or microphone access.
+`ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. `POST_NOTIFICATIONS` is for rate alerts only: it's requested at runtime when the user sets their first alert (never at launch), and alerts are evaluated on the device against the rates already downloaded, so they add no network traffic or data. Denying it leaves the alerts waiting; nothing else in the app needs it. `USE_BIOMETRIC` lets the optional app lock show the system's biometric / screen-lock prompt (`BiometricPrompt`); the prompt is the system's, and the app learns only whether it succeeded. No location, contacts, storage, camera, or microphone access (receipt photos come from the system camera app or photo picker, which need no permission).
+
+## App lock and private requests
+
+Settings → Security & privacy has two switches, both off by default (`PrivacySettings`):
+
+- **App lock** (`view/lock/AppLock.kt`, `LockGate`): with it on, the app is covered by a lock screen when it starts and when it comes back after more than a minute away, until the person passes the system prompt (`BiometricPrompt`, strong biometrics or the phone's screen lock, `BIOMETRIC_STRONG or DEVICE_CREDENTIAL`). The minute's grace lets the camera (receipts) and the file pickers (backup, export) come and go without asking again. The screens stay composed underneath but can't be seen, touched or read by TalkBack, and Recents shows no picture of the app (`setRecentsScreenshotEnabled(false)`); screenshots still work. Turning it on asks for the prompt first, so nobody locks themselves out; without a screen lock on the phone the switch is disabled and nothing locks (a restored backup with it on included). The text-selection converter, the widget and the Quick Settings tile stay outside the lock.
+- **Private requests** (`util/PrivateRequests.kt`): every request leaves the phone the same as everyone else's: the `User-Agent` is a fixed `CurrenciX` (no app or OkHttp version, nothing about the phone) and no cache identifiers are sent (`If-None-Match` / `If-Modified-Since`, which a server could make unique per phone and read back). A network interceptor, innermost, so it shapes exactly what goes out. The cost: an unchanged answer comes back in full instead of as a `304`. Not covered: the IP address, the TLS handshake (Android's own, shared by most apps; on Android 17+ it hides the host name where the host supports it, see Encrypted Client Hello below) and when requests are made.
 
 ## Network Security
 
 `res/xml/network_security_config.xml` refuses cleartext HTTP globally. Every configured exchange-rate provider serves HTTPS only, so the config closes off downgrade / MITM avenues without breaking real traffic.
 
+**Encrypted Client Hello (Android 17+).** The TLS handshake normally names the host in the clear (SNI), so anyone on the network can see which provider the app asks for rates, HTTPS or not. On Android 17 and later the shared client resolves through the platform's `DnsResolver` (OkHttp's `AndroidDns`, `HttpClientProvider.encryptedClientHelloDns`), which also fetches the host's DNS `HTTPS` record with its ECH keys, and the handshake then encrypts the host name. It covers the hosts that publish ECH keys (typically those behind Cloudflare); the others connect as before, as ECH isn't enforced in the network security config, which would make them fail. Earlier Android versions can't do ECH and keep the system resolver. The IP address stays visible either way.
+
+Receipt scanning adds one host: `raw.githubusercontent.com`, for the OCR language data (`tessdata_fast` at its fixed `4.1.0` tag), fetched once per language when a scan starts and the app's language isn't English (and English too in the Play app, which doesn't bundle it). In the Play app the recognizer itself comes from Google Play as an on-demand feature module (Play Feature Delivery): code is only ever installed by Play, never downloaded by the app. The request carries nothing about the user (a fixed file URL). Each file is streamed to a temporary file, hashed, and kept only if its SHA-256 matches the one compiled into the app (`TessLanguage.sha256`, `Tessdata.install`); a mismatch is discarded and not retried. The bundled English file goes through the same check when it's copied out of the assets. Receipt photos are read on the device and never uploaded; the camera photo is written to the app's cache through its `FileProvider` and deleted once read. The app has no camera permission: the photo comes from the system camera app (`TakePicture`) or the system photo picker.
+
+## APK signing
+
+Release APKs are signed with the release key (`KEYSTORE_*` in `secrets.properties`) and, once its keys are made, with Android 17's post-quantum hybrid signature too (APK Signature Scheme v3.2: a classical key plus ML-DSA-65), which Android 17+ verifies so a future quantum computer couldn't forge an update. Older Android versions verify the release key as before. How to set it up, and why its keys must never be lost: [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17). F-Droid signs its builds with its own key and Play re-signs bundles, so neither changes.
+
 ## Backups
 
 `android:allowBackup="false"` and `android:fullBackupContent="false"` are set in the manifest, backed by an explicit `res/xml/data_extraction_rules.xml` that excludes every domain (`root`, `database`, `sharedpref`, `external`, `file`) from both **cloud backups** and **device-to-device transfers** on Android 12+.
 
-Rationale: SharedPreferences contain the user's OpenExchangeRates API key (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
+Rationale: SharedPreferences contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
 
 ## Code Analysis
 
@@ -76,7 +94,8 @@ Rationale: SharedPreferences contain the user's OpenExchangeRates API key (if an
 | Detekt | Kotlin source (app + helpers) | Every PR and master push |
 | Qodana JVM Community | Kotlin / Java | Every PR, master push, weekly |
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |
-| Semgrep | Security patterns | Every PR and master push |
+| Semgrep | Security patterns | Every PR, master push, weekly |
+| Gitleaks | Secret / credential scanning | Every PR, master push, weekly |
 
 ## OpenSSF Scorecard
 

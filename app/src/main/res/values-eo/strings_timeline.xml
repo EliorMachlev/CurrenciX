@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rate_average">mez</string>
+    <string name="rate_median">mediano</string>
+    <string name="rate_min">min</string>
+    <string name="rate_max">maks</string>
+    <string name="year">jaro</string>
+    <string name="month">monato</string>
+    <string name="week">semajno</string>
+    <string name="timeline_five_years">5 jaroj</string>
+    <string name="timeline_custom_range">Propra periodo</string>
+    <string name="timeline_custom">Propra</string>
+    <string name="timeline_share">Kunhavigi diagramon</string>
+    <string name="timeline_no_rates">Neniuj kurzoj por ĉi tiuj datoj</string>
+    <string name="timeline_convert_at">Konverti laŭ kurzo de %1$s</string>
+    <string name="timeline_a11y_up">Supren je %1$s%%</string>
+    <string name="timeline_a11y_down">Malsupren je %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Senŝanĝa</string>
+    <string name="timeline_a11y_from_to">de %1$s je %2$s ĝis %3$s je %4$s</string>
+    <string name="timeline_a11y_high">maksimumo %1$s je %2$s</string>
+    <string name="timeline_a11y_low">minimumo %1$s je %2$s</string>
+    <string name="timeline_alert_at">Averto je %1$s</string>
+    <string name="timeline_touch_hint">Tuŝu la diagramon por konverti aŭ agordi averton laŭ la kurzo de tago</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Redefinir tour de introdução</string>
+    <string name="pref_debug_reset_onboarding_summary">Limpa a marca de primeira execução para que o tour com destaques seja exibido de novo na próxima abertura.</string>
+    <string name="pref_debug_reset_onboarding_toast">O tour de introdução será exibido de novo na próxima abertura.</string>
+</resources>

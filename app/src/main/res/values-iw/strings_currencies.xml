@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="name_aed">דירהם של איחוד הנסיכויות הערביות</string>
-    <string name="name_afn">אפגני אפגני</string>
+    <string name="name_afn">אפגני אפגניסטני</string>
     <string name="name_all">לק אלבני</string>
     <string name="name_amd">דראם ארמני</string>
     <string name="name_ang">גילדר של האנטילים ההולנדיים</string>
@@ -12,7 +12,7 @@
     <string name="name_azn">מאנאט אזרבייג׳ני</string>
 
     <string name="name_bam">מארק סחיר של בוסניה והרצגובינה</string>
-    <string name="name_bbd">דולר ברבדיאני</string>
+    <string name="name_bbd">דולר ברבדוסי</string>
     <string name="name_bdt">טאקה בנגלדשי</string>
     <string name="name_bgn">לב בולגרי</string>
     <string name="name_bhd">דינר בחרייני</string>
@@ -31,20 +31,20 @@
     <string name="name_cad">דולר קנדי</string>
     <string name="name_cdf">פרנק קונגולזי</string>
     <string name="name_chf">פרנק שוויצרי</string>
-    <string name="name_clf">אונידד דה פומנטו (UF) של צ׳ילה</string>
-    <string name="name_clp">פסו צ׳ילאני</string>
-    <string name="name_cnh">יואן סיני מחוץ לגבולות סין</string>
+    <string name="name_clf">יחידת חשבון צ׳יליאנית (UF)</string>
+    <string name="name_clp">פסו צ׳יליאני</string>
+    <string name="name_cnh">יואן סיני (אופשור)</string>
     <string name="name_cny">יואן סיני</string>
     <string name="name_cop">פסו קולומביאני</string>
     <string name="name_crc">קולון קוסטה־ריקני</string>
-    <string name="name_cuc">פזו קובני להמרה</string>
-    <string name="name_cup">פזו קובני</string>
-    <string name="name_cve">אסקודו כף ורדה</string>
+    <string name="name_cuc">פסו קובני להמרה</string>
+    <string name="name_cup">פסו קובני</string>
+    <string name="name_cve">אסקודו של כף ורדה</string>
     <string name="name_czk">קורונה צ׳כית</string>
 
     <string name="name_djf">פרנק ג׳יבוטי</string>
     <string name="name_dkk">כתר דני</string>
-    <string name="name_dop">פזו דומיניקני</string>
+    <string name="name_dop">פסו דומיניקני</string>
     <string name="name_dzd">דינר אלג׳ירי</string>
 
     <string name="name_egp">לירה מצרית</string>
@@ -54,12 +54,14 @@
 
     <string name="name_fjd">דולר פיג׳י</string>
     <string name="name_fkp">לירה של איי פוקלנד</string>
+    <string name="name_fok">כתר פארואי</string>
 
     <string name="name_gbp">לירה שטרלינג</string>
     <string name="name_gel">לארי גאורגי</string>
+    <string name="name_ggp">לירה של גרנזי</string>
 
     <string name="name_ghs">סדי גאני</string>
-    <string name="name_gip">פאונד גיברלטר</string>
+    <string name="name_gip">לירה של גיברלטר</string>
     <string name="name_gmd">דלסי גמבי</string>
     <string name="name_gnf">פרנק גינאי</string>
     <string name="name_gtq">קצאל גואטמלי</string>
@@ -67,18 +69,20 @@
 
     <string name="name_hkd">דולר הונג קונגי</string>
     <string name="name_hnl">למפירה הונדורי</string>
-    <string name="name_hrk">קונה קרואטי</string>
-    <string name="name_htg">גורד האיטי</string>
+    <string name="name_hrk">קונה קרואטית</string>
+    <string name="name_htg">גורד האיטיני</string>
     <string name="name_huf">פורינט הונגרי</string>
 
     <string name="name_idr">רופיה אינדונזית</string>
     <string name="name_ils">שקל חדש</string>
+    <string name="name_imp">לירה של האי מאן</string>
 
 
     <string name="name_inr">רופי הודי</string>
     <string name="name_iqd">דינר עיראקי</string>
     <string name="name_irr">ריאל איראני</string>
     <string name="name_isk">כתר איסלנדי</string>
+    <string name="name_jep">לירה של ג׳רזי</string>
 
 
     <string name="name_jmd">דולר ג׳מייקני</string>
@@ -92,14 +96,14 @@
     <string name="name_kpw">וון צפון קוריאני</string>
     <string name="name_krw">וון דרום קוריאני</string>
     <string name="name_kwd">דינר כוויתי</string>
-    <string name="name_kyd">דולר קיימני</string>
+    <string name="name_kyd">דולר איי קיימן</string>
     <string name="name_kzt">טנגה קזחסטני</string>
 
-    <string name="name_lak">קיפ לאי</string>
+    <string name="name_lak">קיפ לאוסי</string>
     <string name="name_lbp">לירה לבנונית</string>
     <string name="name_lkr">רופי סרי לנקי</string>
     <string name="name_lrd">דולר ליברי</string>
-    <string name="name_lsl">לוטי לסותי</string>
+    <string name="name_lsl">לוטי של לסוטו</string>
     <string name="name_lyd">דינר לובי</string>
 
     <string name="name_mad">דירהם מרוקאי</string>
@@ -109,18 +113,18 @@
     <string name="name_mmk">קיאט מיאנמרי</string>
     <string name="name_mnt">טוגרוג מונגולי</string>
     <string name="name_mop">פטקה של מקאו</string>
-    <string name="name_mro">אואוגויה מאוריטני (1973–2017)</string>
-    <string name="name_mru">אואוגויה מאוריטני</string>
-    <string name="name_mur">רופי מאוריציני</string>
+    <string name="name_mro">אוגייה מאוריטני (1973–2017)</string>
+    <string name="name_mru">אוגייה מאוריטני</string>
+    <string name="name_mur">רופי מאוריציאני</string>
     <string name="name_mvr">רופיה מלדיבית</string>
-    <string name="name_mwk">קואצ׳ה מלאווי</string>
-    <string name="name_mxn">פזו מקסיקני</string>
+    <string name="name_mwk">קוואצ׳ה מלאווית</string>
+    <string name="name_mxn">פסו מקסיקני</string>
     <string name="name_myr">רינגיט מלזי</string>
-    <string name="name_mzn">מטיקל מוזמביני</string>
+    <string name="name_mzn">מטיקל מוזמביקי</string>
 
     <string name="name_nad">דולר נמיבי</string>
     <string name="name_ngn">נאירה ניגרי</string>
-    <string name="name_nio">קורדובה ניקרגואה</string>
+    <string name="name_nio">קורדובה ניקרגואי</string>
     <string name="name_nok">כתר נורווגי</string>
     <string name="name_npr">רופי נפאלי</string>
     <string name="name_nzd">דולר ניו זילנדי</string>
@@ -130,7 +134,7 @@
     <string name="name_pab">בלבואה פנמי</string>
     <string name="name_pen">סול פרואני</string>
     <string name="name_pgk">קינה של פפואה גינאה החדשה</string>
-    <string name="name_php">פזו פיליפיני</string>
+    <string name="name_php">פסו פיליפיני</string>
     <string name="name_pkr">רופי פקיסטני</string>
     <string name="name_pln">זלוטי פולני</string>
     <string name="name_pyg">גוארני פרגוואי</string>
@@ -148,12 +152,12 @@
     <string name="name_sdg">לירה סודנית</string>
     <string name="name_sek">כתר שוודי</string>
     <string name="name_sgd">דולר סינגפורי</string>
-    <string name="name_shp">פאונד סנט הלני</string>
-    <string name="name_sle">Sierra Leonean Leone</string>
-    <string name="name_sll">ליאון סיירה לאוני</string>
+    <string name="name_shp">לירה של סנט הלנה</string>
+    <string name="name_sle">ליאון סיירה לאוני</string>
+    <string name="name_sll">ליאון סיירה לאוני (לפני 07/2022)</string>
     <string name="name_sos">שילינג סומלי</string>
     <string name="name_srd">דולר סורינאמי</string>
-    <string name="name_ssp">לירה דרום-סודנית</string>
+    <string name="name_ssp">לירה דרום־סודנית</string>
     <string name="name_std">דוברה של סן טומה ופרינסיפה (1977–2017)</string>
     <string name="name_stn">דוברה של סן טומה ופרינסיפה</string>
     <string name="name_svc">קולון סלבדורי</string>
@@ -164,19 +168,20 @@
     <string name="name_tjs">סומוני טג׳קיסטני</string>
     <string name="name_tmt">מאנאט טורקמני</string>
     <string name="name_tnd">דינר טוניסאי</string>
-    <string name="name_top">פאנגה טונגי</string>
-    <string name="name_try">לירה טורקית חדשה</string>
-    <string name="name_ttd">דולר טרינידדי</string>
+    <string name="name_top">פאאנגה טונגי</string>
+    <string name="name_try">לירה טורקית</string>
+    <string name="name_ttd">דולר טרינידד וטובגו</string>
     <string name="name_twd">דולר טייוואני חדש</string>
     <string name="name_tzs">שילינג טנזני</string>
 
-    <string name="name_uah">הריבנה אוקראיני</string>
+    <string name="name_uah">הריבניה אוקראינית</string>
     <string name="name_ugx">שילינג אוגנדי</string>
     <string name="name_usd">דולר אמריקאי</string>
     <string name="name_uyu">פסו אורוגוואי</string>
     <string name="name_uzs">סום אוזבקי</string>
 
-    <string name="name_vef">בוליבר ונצואלי</string>
+    <string name="name_vef">בוליבר ונצואלי (ישן)</string>
+    <string name="name_ves">בוליבר סוברנו ונצואלי</string>
 
     <string name="name_vnd">דונג וייטנאמי</string>
     <string name="name_vuv">ואטו של ונואטו</string>
@@ -184,18 +189,19 @@
     <string name="name_wst">טאלה סמואי</string>
 
     <string name="name_xaf">פרנק CFA מרכז אפריקני</string>
-    <string name="name_xag">כסף</string>
-    <string name="name_xau">זהב</string>
+    <string name="name_xag">אונקיית כסף</string>
+    <string name="name_xau">אונקיית זהב</string>
     <string name="name_xcd">דולר מזרח קריבי</string>
     <string name="name_xdr">זכויות משיכה מיוחדות</string>
     <string name="name_xof">פרנק CFA מערב אפריקני</string>
-    <string name="name_xpd">פלדיום</string>
-    <string name="name_xpf">פרנק פולינזיה הצרפתית</string>
-    <string name="name_xpt">פלטינה</string>
+    <string name="name_xpd">אונקיית פלדיום</string>
+    <string name="name_xpf">פרנק CFP</string>
+    <string name="name_xpt">אונקיית פלטינה</string>
 
     <string name="name_yer">ריאל תימני</string>
 
     <string name="name_zar">ראנד דרום אפריקאי</string>
-    <string name="name_zmw">קוואצ׳ה זמבי</string>
+    <string name="name_zmw">קוואצ׳ה זמבית</string>
+    <string name="name_zwl">דולר זימבבואי</string>
 
 </resources>

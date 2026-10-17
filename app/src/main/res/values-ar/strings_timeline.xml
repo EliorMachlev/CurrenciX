@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">\u202B&lt;b&gt;%1$s&lt;/b&gt; إلى &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="data_provider">البيانات بواسطة <b>%s</b></string>
     <string name="rate_average">متوسط</string>
     <string name="rate_median">وسيط</string>
-    <string name="rate_min">أقل</string>
-    <string name="rate_max">أعلى</string>
+    <string name="rate_min">الأدنى</string>
+    <string name="rate_max">الأعلى</string>
     <string name="year">عام</string>
     <string name="month">شهر</string>
     <string name="week">أسبوع</string>
+    <string name="timeline_five_years">5 سنوات</string>
+    <string name="timeline_custom_range">نطاق مخصص</string>
+    <string name="timeline_custom">مخصص</string>
+    <string name="timeline_share">مشاركة الرسم البياني</string>
+    <string name="timeline_no_rates">لا توجد أسعار لهذه التواريخ</string>
+    <string name="timeline_convert_at">التحويل بسعر %1$s</string>
+    <string name="timeline_a11y_up">ارتفاع %1$s%%</string>
+    <string name="timeline_a11y_down">انخفاض %1$s%%</string>
+    <string name="timeline_a11y_unchanged">بلا تغيير</string>
+    <string name="timeline_a11y_from_to">من %1$s في %2$s إلى %3$s في %4$s</string>
+    <string name="timeline_a11y_high">الأعلى %1$s في %2$s</string>
+    <string name="timeline_a11y_low">الأدنى %1$s في %2$s</string>
+    <string name="timeline_alert_at">تنبيه عند %1$s</string>
+    <string name="timeline_touch_hint">المس الرسم البياني للتحويل أو ضبط تنبيه بسعر يوم ما</string>
 </resources>

@@ -31,9 +31,9 @@
     <string name="name_cad">Δολάριο Καναδά</string>
     <string name="name_cdf">Φράγκο Κονγκό</string>
     <string name="name_chf">Φράγκο Ελβετίας</string>
-    <string name="name_clf">Ουνιδάδες ντε Φομέντο Χιλής</string>
+    <string name="name_clf">Λογιστική μονάδα Χιλής (UF)</string>
     <string name="name_clp">Πέσο Χιλής</string>
-    <string name="name_cnh">Πενμίνμπι Κίνας (Παράκτιο)</string>
+    <string name="name_cnh">Ρενμίνμπι Κίνας (υπεράκτιο)</string>
     <string name="name_cny">Ρενμίνμπι Κίνας</string>
     <string name="name_cop">Πέσο Κολομβίας</string>
     <string name="name_crc">Κολόν Κόστα Ρίκα</string>
@@ -56,7 +56,7 @@
     <string name="name_fkp">Λίρα Νήσων Φόκλαντ</string>
     <string name="name_fok">Κορόνα Φαρόε</string>
 
-    <string name="name_gbp">Λίρα Αγγλίας</string>
+    <string name="name_gbp">Λίρα στερλίνα</string>
     <string name="name_gel">Λάρι Γεωργίας</string>
     <string name="name_ggp">Λίρα Γκέρνσεϊ</string>
     <string name="name_ghs">Σέντι Γκάνας</string>
@@ -74,7 +74,7 @@
 
     <string name="name_idr">Ρουπία Ινδονησίας</string>
     <string name="name_ils">Νέο Σεκέλ Ισραήλ</string>
-    <string name="name_imp">Λίρα Μανξ</string>
+    <string name="name_imp">Λίρα Νήσου Μαν</string>
     <string name="name_inr">Ρουπία Ινδίας</string>
     <string name="name_iqd">Δηνάριο Ιράκ</string>
     <string name="name_irr">Ριάλ Ιράν</string>
@@ -111,7 +111,7 @@
     <string name="name_mop">Πατάκα Μακάου</string>
     <string name="name_mro">Ουγκίγια Μαυριτανίας (προ 2018)</string>
     <string name="name_mru">Ουγκίγια Μαυριτανίας</string>
-    <string name="name_mur">Ρουπία Μαυριτανίας</string>
+    <string name="name_mur">Ρουπία Μαυρικίου</string>
     <string name="name_mvr">Ρουφίγια Μαλδίβων</string>
     <string name="name_mwk">Κουάτσα Μαλάουι</string>
     <string name="name_mxn">Πέσο Μεξικού</string>
@@ -158,7 +158,7 @@
     <string name="name_stn">Ντόμπρα Σάο Τομέ και Πρίνσιπε</string>
     <string name="name_svc">Κολόν Ελ Σαλβαδόρ</string>
     <string name="name_syp">Λίρα Συρίας</string>
-    <string name="name_szl">Λιλανγκένι Σουαζιλάνδης</string>
+    <string name="name_szl">Λιλανγκένι Εσουατίνι</string>
 
     <string name="name_thb">Μπατ Ταϊλάνδης</string>
     <string name="name_tjs">Σομόνι Τατζικιστάν</string>
@@ -167,7 +167,7 @@
     <string name="name_top">Παάνγκα Τόνγκα</string>
     <string name="name_try">Λίρα Τουρκίας</string>
     <string name="name_ttd">Δολάριο Τρινιδάδ και Τομπάγκο</string>
-    <string name="name_twd">Δολάριο Ταϊβάν</string>
+    <string name="name_twd">Νέο δολάριο Ταϊβάν</string>
     <string name="name_tzs">Σελίνι Τανζανίας</string>
 
     <string name="name_uah">Γκρίβνα Ουκρανίας</string>
@@ -183,14 +183,14 @@
 
     <string name="name_wst">Τάλα Σαμόα</string>
 
-    <string name="name_xaf">Φράγκο Κεντρικής Αφρικής</string>
+    <string name="name_xaf">Φράγκο CFA Κεντρικής Αφρικής</string>
     <string name="name_xag">Ουγκιά αργύρου</string>
     <string name="name_xau">Ουγκιά χρυσού</string>
     <string name="name_xcd">Δολάριο Ανατολικής Καραϊβικής</string>
     <string name="name_xdr">Ειδικά Δικαιώματα Ανάληψης</string>
-    <string name="name_xof">Φράγκο Δυτικής Αφρικής</string>
+    <string name="name_xof">Φράγκο CFA Δυτικής Αφρικής</string>
     <string name="name_xpd">Ουγκιά παλλάδιου</string>
-    <string name="name_xpf">Φράγκο Ειρηνικού</string>
+    <string name="name_xpf">Φράγκο CFP</string>
     <string name="name_xpt">Ουγκιά πλατίνας</string>
 
     <string name="name_yer">Ριάλ Υεμένης</string>

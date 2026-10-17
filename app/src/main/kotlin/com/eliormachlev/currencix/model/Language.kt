@@ -45,6 +45,7 @@ enum class Language(
     AR("ar", "اَلْعَرَبِيَّة", R.string.language_ar),
     FA("fa", "فارسی", R.string.language_fa),
     BN("bn", "বাংলা", R.string.language_bn),
+    ML("ml", "മലയാളം", R.string.language_ml),
     ZH_CN("zh_CN", "简体中文", R.string.language_zh_CN),
     ZH_TW("zh_TW", "正體中文", R.string.language_zh_TW),
     ;

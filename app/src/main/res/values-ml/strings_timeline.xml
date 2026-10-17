@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> മുതൽ &lt;b>%2$s&lt;/b> വരെ</string>
-    <string name="data_provider">&lt;b>%s&lt;/b> നൽകുന്ന ഡാറ്റ</string>
 
     <string name="rate_average">ശരാശരി</string>
     <string name="rate_median">മീഡിയൻ</string>
@@ -11,4 +9,18 @@
     <string name="year">വർഷം</string>
     <string name="month">മാസം</string>
     <string name="week">ആഴ്ച</string>
+    <string name="timeline_five_years">5 വർഷം</string>
+    <string name="timeline_custom_range">ഇഷ്ടാനുസൃത കാലയളവ്</string>
+    <string name="timeline_custom">ഇഷ്ടാനുസൃതം</string>
+    <string name="timeline_share">ചാർട്ട് പങ്കിടുക</string>
+    <string name="timeline_no_rates">ഈ തീയതികൾക്ക് നിരക്കുകളൊന്നുമില്ല</string>
+    <string name="timeline_convert_at">%1$s-ലെ നിരക്കിൽ മാറ്റുക</string>
+    <string name="timeline_a11y_up">%1$s%% ഉയർന്നു</string>
+    <string name="timeline_a11y_down">%1$s%% താഴ്ന്നു</string>
+    <string name="timeline_a11y_unchanged">മാറ്റമില്ല</string>
+    <string name="timeline_a11y_from_to">%2$s-ലെ %1$s മുതൽ %4$s-ലെ %3$s വരെ</string>
+    <string name="timeline_a11y_high">ഉയർന്നത് %1$s, %2$s</string>
+    <string name="timeline_a11y_low">താഴ്ന്നത് %1$s, %2$s</string>
+    <string name="timeline_alert_at">%1$s-ൽ മുന്നറിയിപ്പ്</string>
+    <string name="timeline_touch_hint">ഒരു ദിവസത്തെ നിരക്കിൽ മാറ്റാനോ അറിയിപ്പ് സജ്ജമാക്കാനോ ചാർട്ടിൽ തൊടുക</string>
 </resources>
