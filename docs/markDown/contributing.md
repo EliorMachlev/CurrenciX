@@ -82,6 +82,8 @@ chore(deps): bump moshi to 1.15.2
 chore(ci): pin checkout action to SHA
 ```
 
+PRs are squash-merged, and the PR title becomes the commit on `master`, so the title is what counts: release notes are generated from those titles (`feat` → New, `fix` → Fixes, `perf` → Faster, `i18n` → Translations; `chore`, `ci`, `build`, `refactor`, `test`, `docs`, `style` are left out). Write the description for users ("show the rate's change since yesterday", not "add DeltaRow composable"). See [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17).
+
 ## Reporting Issues
 
 Open a GitHub Issue with:

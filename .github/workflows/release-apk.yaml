@@ -5,11 +5,12 @@ name: Release
 # Scheme v3.2) and publishes them as a GitHub release.
 #
 # - Push a tag "v<versionName>" (e.g. v1.23.0) on a commit of master: the
-#   release is published, with the fastlane changelog of that version as its
-#   notes. F-Droid picks up the same tag (UpdateCheckMode: Tags).
+#   release is published, its notes written from the commits since the last
+#   release (.github/scripts/release-notes.py). F-Droid picks up the same tag
+#   (UpdateCheckMode: Tags).
 # - Or start it by hand (Actions → Release → Run workflow): it builds and
-#   uploads the signed APKs as an artifact, without a release; for checking
-#   a build before tagging it.
+#   uploads the signed APKs as an artifact and shows the notes the release
+#   would get, without a release; for checking a build before tagging it.
 #
 # Only these two can start it, so the signing keys never reach a pull request.
 #
@@ -42,7 +43,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.name }}
-      version-code: ${{ steps.version.outputs.code }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -54,9 +54,7 @@ jobs:
         id: version
         run: |
           name=$(sed -n 's/.*versionName = "\(.*\)"/\1/p' app/build.gradle.kts | head -1)
-          code=$(sed -n 's/.*versionCode = \([0-9]*\).*/\1/p' app/build.gradle.kts | head -1)
           echo "name=$name" >> "$GITHUB_OUTPUT"
-          echo "code=$code" >> "$GITHUB_OUTPUT"
 
       # A release only from a tag that names the version being built, on a
       # commit that is on master: a typo'd or stray tag publishes nothing.
@@ -152,6 +150,16 @@ jobs:
             echo "Signed with the release key (v3.0, all Android versions) and the post-quantum hybrid signature (v3.2, Android 17+)."
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Preview the release notes
+        if: github.ref_type != 'tag'
+        run: |
+          {
+            echo
+            echo "### Release notes a tag here would get"
+            echo
+            python3 .github/scripts/release-notes.py HEAD
+          } >> "$GITHUB_STEP_SUMMARY"
+
   # Publishing is a job of its own, the only one that may write to the
   # repository, and it never sees the signing keys: it takes the signed APKs
   # the build uploaded.
@@ -164,6 +172,9 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The notes need the history back to the previous tag.
+          fetch-depth: 0
 
       - name: Download the signed APKs
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -176,11 +187,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
           VERSION: ${{ needs.build.outputs.version }}
-          VERSION_CODE: ${{ needs.build.outputs.version-code }}
         run: |
-          changelog="fastlane/metadata/android/en-US/changelogs/$VERSION_CODE.txt"
           {
-            cat "$changelog"
+            python3 .github/scripts/release-notes.py "$TAG"
             echo
             echo "---"
             echo
