@@ -31,6 +31,8 @@ import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.Collator
@@ -289,6 +291,18 @@ class MainViewModel(
     internal fun forceUpdateExchangeRate() {
         if (!RefreshState.inFlight.value) {
             dbLiveItems = repository.getExchangeRates(fresh = true)
+        }
+    }
+
+    /**
+     * [forceUpdateExchangeRate] on getting back online — once any refresh
+     * still running has ended, since that one started without a connection
+     * and its outcome says nothing about now.
+     */
+    internal fun refreshAfterReconnect() {
+        viewModelScope.launch {
+            RefreshState.inFlight.first { running -> !running }
+            forceUpdateExchangeRate()
         }
     }
 

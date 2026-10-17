@@ -72,8 +72,9 @@ class ConverterStatus(
     private var fallback: Pair<ApiProvider, ApiProvider>? = null
 
     // True when the most recent refresh failed (5xx, timeout, DNS, …) while
-    // the device was online. Cleared once a new rates payload arrives — a
-    // successful update is the definitive "provider is back".
+    // the device was online. Cleared by the next refresh that succeeds — even
+    // one that brings back the same rates, which the rates themselves don't
+    // announce — and on reconnecting, which starts a new one.
     private var lastRefreshFailed = false
 
     // How many compositions of the converter are on screen. Usually 0 or 1,
@@ -100,15 +101,19 @@ class ConverterStatus(
             recompute()
         }
         viewModel.getError().observe(owner) { message ->
-            if (converterVisible) onError(message) else pendingError = message
+            if (message == null) {
+                // A refresh succeeded: the provider is reachable again.
+                onRefreshSucceeded()
+            } else if (converterVisible) {
+                onError(message)
+            } else {
+                pendingError = message
+            }
         }
         NetworkStatusLiveData(context).observe(owner) { online ->
-            // Back online after being offline: the rates on screen are as old
-            // as the outage, so fetch new ones without waiting for a pull.
             val reconnected = online && !isOnline
             isOnline = online
-            recompute()
-            if (reconnected) viewModel.forceUpdateExchangeRate()
+            if (reconnected) onReconnected() else recompute()
         }
     }
 
@@ -124,6 +129,22 @@ class ConverterStatus(
         date: LocalDate?,
         time: LocalTime?,
     ): String? = formatRatesTimestamp(dateFormatPattern, date, time)
+
+    // Back online after being offline: the rates on screen are as old as the
+    // outage, and a failure from during it says nothing about the provider
+    // now, so fetch new ones without waiting for a pull.
+    private fun onReconnected() {
+        lastRefreshFailed = false
+        recompute()
+        viewModel.refreshAfterReconnect()
+    }
+
+    private fun onRefreshSucceeded() {
+        pendingError = null
+        if (!lastRefreshFailed) return
+        lastRefreshFailed = false
+        recompute()
+    }
 
     private fun onError(message: String?) {
         if (message.isNullOrEmpty()) return
