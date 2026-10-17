@@ -3,22 +3,13 @@ package com.eliormachlev.currencix.view.timeline
 import android.app.Application
 import android.content.Context
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,24 +26,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.map
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -61,6 +41,8 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.alert.ALERT_RATE_DECIMALS
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.buildImageShareChooser
 import com.eliormachlev.currencix.util.rememberHapticOnClick
@@ -70,18 +52,18 @@ import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
 import com.eliormachlev.currencix.view.alert.rememberSetRateAlert
+import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.LayerCapture
-import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.OverflowAction
+import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
-import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
-import com.eliormachlev.currencix.view.compose.flagPainter
 import com.eliormachlev.currencix.view.compose.rememberDatabase
-import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
+import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyPrompt
@@ -95,25 +77,11 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-private const val FLAG_FROM_ID = "flagFrom"
-private const val FLAG_TO_ID = "flagTo"
-private const val ARROW_ID = "arrow"
-
-// Breathing room in the title: an en space after each flag and around the
-// arrow, so the pieces don't run together.
-private const val FLAG_GAP = "\u2002"
-private const val TITLE_GAP = "\u2002"
-
-// Inline flag in the title, in the flag artwork's 24×17 aspect.
-private val TITLE_FLAG_WIDTH = 1.3.em
-private val TITLE_FLAG_HEIGHT = 0.92.em
-private val TITLE_FLAG_CORNER = 2.dp
-private val TITLE_ARROW_SIZE = 1.1.em
-
 /**
- * Rate history for [screen]'s pair, under a small top bar titled "🇺🇸 $ USD →
- * 🇮🇱 ₪ ILS". After a touch on the chart, a chip offers the converter at the
- * day last touched ([onConvertAt]).
+ * Rate history for [screen]'s pair, shown under the small top bar as the
+ * converter shows it: two currency pills and the swap button. After a touch
+ * on the chart, a chip offers the converter at the day last touched
+ * ([onConvertAt]).
  */
 @Composable
 fun TimelineRoute(
@@ -135,14 +103,12 @@ fun TimelineRoute(
     var alertAt by remember { mutableStateOf<BigDecimal?>(null) }
     val touched = rememberTouchedDay(model)
 
-    // Small bar: the pair sits beside the back arrow, leaving the height to the chart.
-    // The bar follows the language (in Hebrew: back arrow and pair on the
-    // right, actions on the left); the chart and figures below set their own.
+    // Small bar, leaving the height to the chart. The bar follows the language
+    // (in Hebrew: back arrow and title on the right, actions on the left);
+    // the pair's pills under it, the chart and figures set their own.
     ReadingDirection {
         ScreenScaffold(
-            // The screen's own pair until the data (and any swap) has loaded, so
-            // the title is there while offline or still fetching.
-            title = { SwappingTitle(pair ?: (screen.from to screen.to)) },
+            title = { Text(stringResource(R.string.menu_timeline), maxLines = 1, overflow = TextOverflow.Ellipsis) },
             onBack = onBack,
             style = TopBarStyle.Small,
             actions = {
@@ -154,42 +120,46 @@ fun TimelineRoute(
                 )
             },
         ) { padding ->
-            TimelineScreen(
-                model = model,
-                formatter = formatter,
-                foldingFeature = foldingFeature,
-                onChangeProvider = { sheet = TimelineSheet.Provider },
-                modifier = Modifier.fillMaxSize().padding(padding),
-                chartCapture = chartCapture,
-                chartContent = {
-                    TimelineChartContent(model, db) { day ->
-                        if (day != null) touched.day = day
-                        model.setPastDate(day)
-                    }
-                },
-                chartActions = { mod ->
-                    ChartDayActions(
-                        model = model,
-                        day = touched.day,
-                        formatter = formatter,
-                        onConvertAt = { pair, day ->
-                            touched.day = null
-                            onConvertAt(pair, day)
-                        },
-                        onAlertAt = { alertAt = it },
-                        modifier = mod,
-                    )
-                },
-            )
+            Column(Modifier.fillMaxSize().padding(padding)) {
+                // The screen's own pair until the data (and any swap) has loaded,
+                // so the pills are there while offline or still fetching.
+                TimelinePairRow(model, db, pair ?: (screen.from to screen.to))
+                TimelineScreen(
+                    model = model,
+                    formatter = formatter,
+                    foldingFeature = foldingFeature,
+                    onChangeProvider = { sheet = TimelineSheet.Provider },
+                    modifier = Modifier.weight(1f),
+                    chartCapture = chartCapture,
+                    chartContent = {
+                        TimelineChartContent(model, db) { day ->
+                            if (day != null) touched.day = day
+                            model.setPastDate(day)
+                        }
+                    },
+                    chartActions = { mod ->
+                        ChartDayActions(
+                            model = model,
+                            day = touched.day,
+                            formatter = formatter,
+                            onConvertAt = { pair, day ->
+                                touched.day = null
+                                onConvertAt(pair, day)
+                            },
+                            onAlertAt = { alertAt = it },
+                            modifier = mod,
+                        )
+                    },
+                )
+            }
         }
     }
     TimelineSheets(sheet = sheet, db = db, onProviderPicked = { model.retry() }, onDismiss = { sheet = null })
     alertAt?.let { rate -> TimelineAlertSheet(model = model, rate = rate, onClose = { alertAt = null }) }
 }
 
-// The bar's actions: swap (once a refresh or an error is out of the way,
-// since swapping re-fetches), and under ⋮ a rate alert at today's rate,
-// share and graph options, so the pair keeps its room in the title.
+// The bar's actions, under ⋮: a rate alert at today's rate, share and graph
+// options (swap is the pills' round button).
 @Composable
 private fun TimelineBarActions(
     model: TimelineViewModel,
@@ -197,16 +167,9 @@ private fun TimelineBarActions(
     onAlert: (BigDecimal) -> Unit,
     onShare: () -> Unit,
 ) {
-    val inFlight by model.isRefreshInFlight().observeAsState(false)
     val error by model.getError().observeAsState()
     val rateCurrent by remember(model) { model.getRateCurrent() }.observeAsState()
     val today = rateCurrent?.first?.value?.value
-    TopBarAction(
-        icon = painterResource(R.drawable.ic_swap_horiz),
-        contentDescription = stringResource(R.string.desc_toggle_currencies),
-        onClick = model::toggleCurrencies,
-        enabled = !inFlight && error == null,
-    )
     val alertLabel = stringResource(R.string.alert_sheet_title)
     val shareLabel = stringResource(R.string.timeline_share)
     val optionsLabel = stringResource(R.string.graph_options_title)
@@ -428,93 +391,59 @@ private val CONVERT_CHIP_ICON_SIZE = 18.dp
 // An assist chip's 32 dp and Material's 8 dp around it.
 private val DAY_ACTIONS_HEIGHT = 48.dp
 
-// The title, rolling over to the new pair when swap reverses it (the old
-// one leaving downwards as the reversed one drops in), and a quick fade
-// for any other change of pair.
+// The pair as the converter shows it: a pill per currency (a tap opens the
+// picker for it) and the round swap button, which waits while a refresh or
+// an error is in the way, since swapping re-fetches. Opening the chart from
+// the converter, its pills fly into these.
 @Composable
-private fun SwappingTitle(pair: Pair<Currency, Currency>) {
-    AnimatedContent(
-        targetState = pair,
-        transitionSpec = {
-            val swapped = targetState.first == initialState.second && targetState.second == initialState.first
-            if (swapped) {
-                (slideInVertically(Motion.settle()) { -it } + fadeIn(Motion.enter())) togetherWith
-                    (slideOutVertically(Motion.settle()) { it } + fadeOut(Motion.fadeShort()))
-            } else {
-                fadeIn(Motion.enter()) togetherWith fadeOut(Motion.fadeShort())
-            }
-        },
-        label = "timeline title",
-    ) { shown -> TimelineTitle(shown) }
-}
-
-// "🇺🇸 $ USD → 🇮🇱 ₪ ILS": each side's flag, symbol and code, joined by an
-// arrow — shorter than the localized "to", so the pair fits beside the back
-// arrow in a small bar. Screen readers still hear the localized sentence.
-@Composable
-internal fun TimelineTitle(pair: Pair<Currency, Currency>?) {
-    val (from, to) = pair ?: return
-    val spoken = AnnotatedString.fromHtml(stringResource(R.string.activity_timeline_title, from.iso4217Alpha(), to.iso4217Alpha())).text
-    val symbolColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val text =
-        remember(from, to, symbolColor) {
-            buildAnnotatedString {
-                appendSide(FLAG_FROM_ID, from, symbolColor)
-                append(TITLE_GAP)
-                appendInlineContent(ARROW_ID, alternateText = "→")
-                append(TITLE_GAP)
-                appendSide(FLAG_TO_ID, to, symbolColor)
-            }
-        }
-    val flagFrom = from.flagPainter()
-    val flagTo = to.flagPainter()
-    val inlineContent =
-        mapOf(
-            FLAG_FROM_ID to inlineFlag { Image(flagFrom, contentDescription = null, modifier = it) },
-            FLAG_TO_ID to inlineFlag { Image(flagTo, contentDescription = null, modifier = it) },
-            ARROW_ID to
-                InlineTextContent(Placeholder(TITLE_ARROW_SIZE, TITLE_ARROW_SIZE, PlaceholderVerticalAlign.TextCenter)) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_forward),
-                        contentDescription = null,
-                        tint = symbolColor,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                },
-        )
-    // A pair reads from → to, left to right, in every language.
-    Ltr {
-        Text(
-            text = text,
-            inlineContent = inlineContent,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.clearAndSetSemantics { contentDescription = spoken },
-        )
-    }
-}
-
-// Flag, then the symbol (when the currency has one besides its code) in a
-// quieter tone, then the code in bold.
-private fun AnnotatedString.Builder.appendSide(
-    flagId: String,
-    currency: Currency,
-    symbolColor: Color,
+private fun TimelinePairRow(
+    model: TimelineViewModel,
+    db: Database,
+    pair: Pair<Currency, Currency>,
 ) {
-    val code = currency.iso4217Alpha()
-    appendInlineContent(flagId, alternateText = code)
-    append(FLAG_GAP)
-    currency.symbol()?.takeIf { it != code }?.let { symbol ->
-        withStyle(SpanStyle(color = symbolColor)) { append(symbol) }
-        append(' ')
-    }
-    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(code) }
+    val inFlight by model.isRefreshInFlight().observeAsState(false)
+    val error by model.getError().observeAsState()
+    var picking by remember { mutableStateOf<PillSide?>(null) }
+    val actions =
+        remember(model) {
+            PairRowActions(
+                onFromClick = { picking = PillSide.FROM },
+                onToClick = { picking = PillSide.TO },
+                onSwap = model::toggleCurrencies,
+                onSwapLongPress = {},
+            )
+        }
+    CurrencyPairRow(
+        from = pair.first,
+        to = pair.second,
+        actions = actions,
+        swapEnabled = !inFlight && error == null,
+        modifier = Modifier.padding(horizontal = Spacing.Large, vertical = Spacing.Small),
+    )
+    picking?.let { side -> TimelineCurrencyPicker(side, model, db, pair) { picking = null } }
 }
 
-private fun inlineFlag(image: @Composable (Modifier) -> Unit): InlineTextContent =
-    InlineTextContent(
-        Placeholder(width = TITLE_FLAG_WIDTH, height = TITLE_FLAG_HEIGHT, placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter),
-    ) {
-        image(Modifier.fillMaxSize().clip(RoundedCornerShape(TITLE_FLAG_CORNER)))
-    }
+// The currency picker for the chart's [side]: the latest rates, against one
+// of the other side's currency, which can't be picked.
+@Composable
+private fun TimelineCurrencyPicker(
+    side: PillSide,
+    model: TimelineViewModel,
+    db: Database,
+    pair: Pair<Currency, Currency>,
+    onDismiss: () -> Unit,
+) {
+    val rates by db.rates.getExchangeRates().observeAsState()
+    val (from, to) = pair
+    val other = if (side == PillSide.FROM) to else from
+    CurrencyPickerSheet(
+        currentRate = rates?.rateFor(other)?.let { Rate(other, it.value) },
+        currentSum = BigDecimal.ONE,
+        disabledCurrency = other,
+        onRateClicked = { rate ->
+            if (side == PillSide.FROM) model.setCurrencies(rate.currency, to) else model.setCurrencies(from, rate.currency)
+        },
+        onDismiss = onDismiss,
+        selectedCurrency = if (side == PillSide.FROM) from else to,
+    )
+}

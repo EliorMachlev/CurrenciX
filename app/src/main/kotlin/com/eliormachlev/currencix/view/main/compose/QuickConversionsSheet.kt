@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,6 +28,7 @@ import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.ConverterStatus
 import com.eliormachlev.currencix.view.main.copyToClipboard
+import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
@@ -59,11 +62,15 @@ internal fun QuickConversionsSheet(
     val table = rememberQuickConversionsTable(viewModel, status)
     val capture = remember { LayerCapture() }
     val scope = rememberCoroutineScope()
+    // A pill's picker, over the sheet: the converter's own.
+    var pickerSide by remember { mutableStateOf<PillSide?>(null) }
     val actions =
         remember(viewModel, table, onSwap, onOpenFees, onDismiss) {
             QuickConversionsActions(
                 onSwap = onSwap,
                 onSwapLongPress = onOpenFees,
+                onFromClick = { pickerSide = PillSide.FROM },
+                onToClick = { pickerSide = PillSide.TO },
                 onUseAmount = { amount ->
                     viewModel.input.setAmount(amount)
                     onDismiss()
@@ -88,6 +95,7 @@ internal fun QuickConversionsSheet(
             capture = capture,
         )
     }
+    pickerSide?.let { side -> ConverterCurrencyPicker(side = side, viewModel = viewModel, onDismiss = { pickerSide = null }) }
 }
 
 // The table for the pair on screen, the typed amount among its rows, and

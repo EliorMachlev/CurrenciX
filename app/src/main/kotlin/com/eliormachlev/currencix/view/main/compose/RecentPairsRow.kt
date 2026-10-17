@@ -33,6 +33,7 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.view.compose.CurrencyChip
 import com.eliormachlev.currencix.view.compose.CurrencyChipGap
+import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairChipContent
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
@@ -84,35 +85,45 @@ fun RecentPairsRow(
     val quiet = remember { alerted.toMutableSet() }
     LaunchedEffect(alerted) { quiet.retainAll(alerted) }
     LaunchedEffect(pairs.firstOrNull(), onPaste != null) { listState.scrollToItem(0) }
-    LazyRow(
-        modifier = modifier,
-        state = listState,
-        contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(CurrencyChipGap),
-    ) {
-        onPaste?.let { paste -> item(key = PASTE_KEY) { PasteChip(onClick = paste, compact = compact, modifier = Modifier.animateItem()) } }
-        items(pairs, key = { "${it.from}:${it.to}" }) { pair ->
-            Box(Modifier.animateItem()) {
-                val hasAlert = pair in alerted
-                val switchTo = stringResource(R.string.recent_pair_switch, pair.from.iso4217Alpha(), pair.to.iso4217Alpha())
-                val alertSet = stringResource(R.string.recent_pair_alert_set)
-                CurrencyChip(
-                    description = if (hasAlert) "$switchTo. $alertSet" else switchTo,
-                    onClick = { onPick(pair) },
-                    onLongClick = { if (onAlert == null) removing = pair else menuFor = pair },
-                    onLongClickLabel = longPressLabel,
-                    compact = compact,
-                ) {
-                    PairChipContent(pair.from, pair.to)
-                    if (hasAlert) AlertBell(ring = pair !in quiet, onRung = { quiet += pair })
-                }
-                if (onAlert != null) {
-                    PairMenu(
-                        expanded = menuFor == pair,
-                        onAlert = { onAlert(pair) },
-                        onRemove = { removing = pair },
-                        onDismiss = { menuFor = null },
-                    )
+    // Pairs read from → to, left to right, in every language, as on the
+    // converter, wherever the row sits: in a sheet that follows Hebrew's
+    // direction (Quick conversions) it would otherwise mirror.
+    Ltr {
+        LazyRow(
+            modifier = modifier,
+            state = listState,
+            contentPadding = contentPadding,
+            horizontalArrangement = Arrangement.spacedBy(CurrencyChipGap),
+        ) {
+            onPaste?.let { paste ->
+                item(key = PASTE_KEY) { PasteChip(onClick = paste, compact = compact, modifier = Modifier.animateItem()) }
+            }
+            items(pairs, key = { "${it.from}:${it.to}" }) { pair ->
+                Box(Modifier.animateItem()) {
+                    val hasAlert = pair in alerted
+                    val switchTo = stringResource(R.string.recent_pair_switch, pair.from.iso4217Alpha(), pair.to.iso4217Alpha())
+                    val alertSet = stringResource(R.string.recent_pair_alert_set)
+                    CurrencyChip(
+                        description = if (hasAlert) "$switchTo. $alertSet" else switchTo,
+                        onClick = { onPick(pair) },
+                        onLongClick = { if (onAlert == null) removing = pair else menuFor = pair },
+                        onLongClickLabel = longPressLabel,
+                        compact = compact,
+                    ) {
+                        PairChipContent(pair.from, pair.to)
+                        if (hasAlert) AlertBell(ring = pair !in quiet, onRung = { quiet += pair })
+                    }
+                    if (onAlert != null) {
+                        // Words: the menu follows the language again.
+                        ReadingDirection {
+                            PairMenu(
+                                expanded = menuFor == pair,
+                                onAlert = { onAlert(pair) },
+                                onRemove = { removing = pair },
+                                onDismiss = { menuFor = null },
+                            )
+                        }
+                    }
                 }
             }
         }

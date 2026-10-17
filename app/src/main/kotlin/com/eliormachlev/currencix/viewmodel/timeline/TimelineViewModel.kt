@@ -179,11 +179,20 @@ class TimelineViewModel(
         repository.getTimeline(base, target, fetchedSince)
     }
 
-    fun toggleCurrencies() {
-        val tmp = base
-        base = target
-        target = tmp
-        // call the api -- timeline live data is auto-updated everywhere where it is used
+    fun toggleCurrencies() = setCurrencies(target, base)
+
+    /**
+     * Charts [base] → [target] instead (a currency picked on a pill, or the
+     * pair swapped): the timeline live data follows, as far back as this
+     * screen has fetched.
+     */
+    fun setCurrencies(
+        base: Currency,
+        target: Currency,
+    ) {
+        if (base == this.base && target == this.target) return
+        this.base = base
+        this.target = target
         repository.getTimeline(base, target, fetchedSince)
     }
 

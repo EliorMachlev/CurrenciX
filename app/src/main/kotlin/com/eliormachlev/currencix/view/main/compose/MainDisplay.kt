@@ -109,6 +109,7 @@ import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.compose.theme.Stamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
+import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -127,16 +128,12 @@ import java.time.format.DateTimeFormatter
 private val MATH_LINE_BOTTOM_GAP: Dp = Spacing.Hairline
 private val CARD_OUTER_MARGIN: Dp = Spacing.Large
 
-// The swap button's arrows, inside its 44 dp circle.
-private val SWAP_GLYPH_SIZE: Dp = 22.dp
-
 // The hairline above the rate footer.
 private val RATE_FOOTER_RULE_HEIGHT: Dp = 1.dp
 
 private val CARD_RADIUS: Dp = 28.dp
 private val CARD_PADDING: Dp = Spacing.Large
 
-private val SWAP_FAB_SIZE: Dp = 44.dp
 private val PILLS_ROW_BOTTOM_GAP: Dp = Spacing.Medium
 
 // Vertical gap between the two stacked receipt panels ("You pay" over
@@ -148,12 +145,6 @@ private val PANEL_STACK_GAP: Dp = Spacing.MediumPlus
 // modest — Material3 elevated cards usually sit at 1–3dp for the "resting"
 // affordance; anything higher starts to feel floaty over the dark keypad.
 private val CARD_ELEVATION: Dp = 3.dp
-
-// Swap FAB rotation animation — one 180° flip per tap. The counter drives
-// a target angle so successive taps keep spinning in the same direction
-// (never snap back). A spring, so a second tap mid-flip carries the
-// current spin forward instead of restarting it.
-private const val SWAP_FAB_ROTATION_STEP = 180f
 
 private val RATE_FOOTER_TOP_MARGIN: Dp = Spacing.Small
 private val RATE_FOOTER_PADDING_TOP: Dp = Spacing.Small
@@ -398,12 +389,12 @@ internal fun MainDisplay(
 ) {
     val rates by viewModel.getExchangeRates().observeAsState()
     val state = observeHeroState(viewModel, FooterState(rates, dateFormatPattern, banner))
-    var pickerSide by remember { mutableStateOf<PickSide?>(null) }
+    var pickerSide by remember { mutableStateOf<PillSide?>(null) }
     val pairActions =
         remember(viewModel, callbacks) {
             PairRowActions(
-                onFromClick = { pickerSide = PickSide.FROM },
-                onToClick = { pickerSide = PickSide.TO },
+                onFromClick = { pickerSide = PillSide.FROM },
+                onToClick = { pickerSide = PillSide.TO },
                 onSwap = viewModel::swapCurrencies,
                 onSwapLongPress = callbacks.onSwapLongPress,
             )
@@ -415,9 +406,7 @@ internal fun MainDisplay(
         modifier = modifier,
         captureController = captureController,
     )
-    pickerSide?.let { side ->
-        CurrencyPickerHost(side = side, viewModel = viewModel, state = state, onDismiss = { pickerSide = null })
-    }
+    pickerSide?.let { side -> ConverterCurrencyPicker(side = side, viewModel = viewModel, onDismiss = { pickerSide = null }) }
 }
 
 @Composable
@@ -475,30 +464,32 @@ private fun rememberAmount(
  * The picker sheet for the side the user tapped. It previews each currency
  * against the other side's amount, and keeps that side's currency unpickable.
  */
+/**
+ * The currency picker for the converter's [side], wherever its pair is
+ * shown: the hero card's pills and Quick conversions'. Lists today's rates
+ * against the other side's amount; the other side's currency can't be picked.
+ */
 @Composable
-private fun CurrencyPickerHost(
-    side: PickSide,
+internal fun ConverterCurrencyPicker(
+    side: PillSide,
     viewModel: MainViewModel,
-    state: HeroState,
     onDismiss: () -> Unit,
 ) {
-    val picksFrom = side == PickSide.FROM
-    val other = if (picksFrom) state.destCurrency else state.baseCurrency
+    val rates by viewModel.getExchangeRates().observeAsState()
+    val baseCurrency by viewModel.getBaseCurrency().observeAsState()
+    val destCurrency by viewModel.getDestinationCurrency().observeAsState()
+    val picksFrom = side == PillSide.FROM
+    val other = if (picksFrom) destCurrency else baseCurrency
     val otherSum = if (picksFrom) viewModel.getResultAsNumber().value else viewModel.getCurrentBaseValueAsNumber().value
     CurrencyPickerSheet(
-        currentRate =
-            other?.let { c ->
-                state.footer.rates
-                    ?.rateFor(c)
-                    ?.let { Rate(c, it.value) }
-            },
+        currentRate = other?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } },
         currentSum = otherSum ?: BigDecimal.ONE,
         disabledCurrency = other,
         onRateClicked = { rate ->
             if (picksFrom) viewModel.setBaseCurrency(rate.currency) else viewModel.setDestinationCurrency(rate.currency)
         },
         onDismiss = onDismiss,
-        selectedCurrency = if (picksFrom) state.baseCurrency else state.destCurrency,
+        selectedCurrency = if (picksFrom) baseCurrency else destCurrency,
     )
 }
 
@@ -526,9 +517,12 @@ private fun HeroCard(
             .padding(CARD_PADDING),
     ) {
         Column(Modifier.fillMaxWidth()) {
-            CurrencyPairRow(from = state.baseCurrency, to = state.destCurrency, actions = pair) {
-                SwapFab(onClick = pair.onSwap, onLongClick = pair.onSwapLongPress)
-            }
+            CurrencyPairRow(
+                from = state.baseCurrency,
+                to = state.destCurrency,
+                actions = pair,
+                swapModifier = Modifier.onboardingAnchor(OnboardingAnchor.SwapFab),
+            )
             Spacer(Modifier.height(PILLS_ROW_BOTTOM_GAP))
             AmountHero(
                 currency = state.baseCurrency,
@@ -547,44 +541,6 @@ private fun HeroCard(
                 onBannerClick = callbacks.onExplainBanner,
             )
         }
-    }
-}
-
-@Composable
-private fun SwapFab(
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-) {
-    var tapCount by remember { mutableIntStateOf(0) }
-    val rotation by animateFloatAsState(
-        targetValue = tapCount * SWAP_FAB_ROTATION_STEP,
-        animationSpec = Motion.snappy(),
-        label = "swapFabRotation",
-    )
-    Box(
-        Modifier
-            .size(SWAP_FAB_SIZE)
-            .onboardingAnchor(OnboardingAnchor.SwapFab)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary)
-            .hapticCombinedClickable(
-                onClick = {
-                    tapCount += 1
-                    onClick()
-                },
-                onLongClick = onLongClick,
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_swap_horiz),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier =
-                Modifier
-                    .size(SWAP_GLYPH_SIZE)
-                    .graphicsLayer { rotationZ = rotation },
-        )
     }
 }
 
@@ -1480,8 +1436,6 @@ private fun buildRateText(
         .fromHtmlLegacy()
         .toString()
 }
-
-private enum class PickSide { FROM, TO }
 
 // --- Small helpers ------------------------------------------------------------
 

@@ -11,19 +11,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.view.cart.CartBarActions
+import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.OverflowAction
+import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
-import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
-import com.eliormachlev.currencix.view.timeline.TimelineTitle
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 // The Material 3 top bars the pushed screens wear: the timeline's small bar
-// (pair beside the back arrow) and the cart's medium one.
+// (its pair's pills under it) and the cart's medium one.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
@@ -51,11 +51,10 @@ private fun TimelineBar() = ReadingDirection { TimelineBarContent() }
 @Composable
 private fun TimelineBarContent() {
     ScreenScaffold(
-        title = { TimelineTitle(Currency.USD to Currency.ILS) },
+        title = { Text(stringResource(R.string.menu_timeline)) },
         onBack = {},
         style = TopBarStyle.Small,
         actions = {
-            TopBarAction(painterResource(R.drawable.ic_swap_horiz), "Swap", onClick = {})
             // Rate alert, share and graph options, as TimelineBarActions has them.
             TopBarOverflowMenu(
                 listOf(
@@ -67,7 +66,18 @@ private fun TimelineBarContent() {
             )
         },
         modifier = Modifier.height(BAR_PREVIEW_HEIGHT),
-    ) { padding -> BodyStub(Modifier.padding(padding)) }
+    ) { padding ->
+        Column(Modifier.padding(padding)) {
+            // The pair under the bar, as the converter shows it.
+            CurrencyPairRow(
+                from = Currency.USD,
+                to = Currency.ILS,
+                actions = PairRowActions({}, {}, {}, {}),
+                modifier = Modifier.padding(horizontal = Spacing.Large, vertical = Spacing.Small),
+            )
+            BodyStub(Modifier)
+        }
+    }
 }
 
 // Laid out the way the language reads, as CartRoute does.

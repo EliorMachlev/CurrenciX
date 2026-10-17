@@ -57,6 +57,7 @@ import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.DEFAULT_DATE_PATTERN
 import com.eliormachlev.currencix.view.main.formatRatesTimestamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
+import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
 import com.eliormachlev.currencix.viewmodel.cart.perPerson
@@ -71,8 +72,6 @@ private val FOOTER_PADDING: Dp = Spacing.Large
 private val FOOTER_RADIUS: Dp = 16.dp
 private val ROW_TOP_GAP: Dp = Spacing.Large
 private val TOTAL_TOP_GAP: Dp = Spacing.Small
-private val SWAP_FAB_SIZE: Dp = 44.dp
-private val SWAP_ICON_SIZE: Dp = 22.dp
 private val EXTRA_ROW_GAP: Dp = Spacing.Tiny
 private val COLLAPSE_BUTTON_SIZE: Dp = 32.dp
 private val COLLAPSE_ICON_SIZE: Dp = 20.dp
@@ -123,12 +122,12 @@ fun CartFooter(
     val rates by viewModel.getExchangeRates().observeAsState()
     val totals = observeTotals(viewModel, rates)
     val collapsed by viewModel.isTotalsCollapsed.observeAsState(initial = false)
-    var pickerSide by remember { mutableStateOf<CartPickSide?>(null) }
+    var pickerSide by remember { mutableStateOf<PillSide?>(null) }
     val pairActions =
         remember(viewModel, onOpenFees) {
             PairRowActions(
-                onFromClick = { pickerSide = CartPickSide.FROM },
-                onToClick = { pickerSide = CartPickSide.TO },
+                onFromClick = { pickerSide = PillSide.FROM },
+                onToClick = { pickerSide = PillSide.TO },
                 onSwap = viewModel::swapCurrencies,
                 onSwapLongPress = onOpenFees,
             )
@@ -145,7 +144,7 @@ fun CartFooter(
             side = side,
             totals = totals,
             rates = rates,
-            onPicked = if (side == CartPickSide.FROM) viewModel::setBaseCurrency else viewModel::setDestinationCurrency,
+            onPicked = if (side == PillSide.FROM) viewModel::setBaseCurrency else viewModel::setDestinationCurrency,
             onDismiss = { pickerSide = null },
         )
     }
@@ -217,9 +216,7 @@ internal fun CartFooterCard(
     ) {
         // From on the left, to on the right, as on the converter, in every language.
         Ltr {
-            CurrencyPairRow(from = totals.baseCurrency, to = totals.destCurrency, actions = pair) {
-                SwapFab(onClick = pair.onSwap, onLongClick = pair.onSwapLongPress)
-            }
+            CurrencyPairRow(from = totals.baseCurrency, to = totals.destCurrency, actions = pair)
         }
         AnimatedVisibility(visible = !collapsed) { AboveTotal(totals, onEditExtras) }
         // Counts to a new total (an item added, a price changed), not to another currency's.
@@ -384,21 +381,19 @@ private fun BudgetBar(
     )
 }
 
-private enum class CartPickSide { FROM, TO }
-
 /**
  * The picker sheet for the side the user tapped: it prices each currency
  * against the other side's amount, and greys that side's currency out.
  */
 @Composable
 private fun CartCurrencyPickerHost(
-    side: CartPickSide,
+    side: PillSide,
     totals: CartTotals,
     rates: ExchangeRates?,
     onPicked: (Currency) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val picksFrom = side == CartPickSide.FROM
+    val picksFrom = side == PillSide.FROM
     val other = if (picksFrom) totals.destCurrency else totals.baseCurrency
     val otherSum = if (picksFrom) totals.convertedSubtotal else totals.subtotal
     CurrencyPickerSheet(
@@ -476,28 +471,6 @@ private fun FeeAnnotationRow(
             modifier = Modifier.weight(1f),
         )
         Figure(valueText, MaterialTheme.typography.labelMedium, color)
-    }
-}
-
-@Composable
-private fun SwapFab(
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-) {
-    Box(
-        Modifier
-            .size(SWAP_FAB_SIZE)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary)
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_swap_horiz),
-            contentDescription = stringResource(id = R.string.desc_toggle_currencies),
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.size(SWAP_ICON_SIZE),
-        )
     }
 }
 

@@ -86,6 +86,15 @@ class NewSurfacesScreenshotTest {
             )
         }
 
+    // As at the top of Quick conversions, a sheet that follows Hebrew's
+    // direction: the pairs still read from → to, left to right.
+    @Test fun recentPairsInReadingDirection() =
+        shots.captureMatrix("recent_pairs_reading_direction") {
+            ReadingDirection {
+                RecentPairsRow(pairs = RECENT_PAIRS, onPick = {}, onRemove = {}, contentPadding = PaddingValues(16.dp))
+            }
+        }
+
     // A recent copy on the clipboard: "Paste amount" leads the row.
     @Test fun recentPairsWithPaste() =
         shots.captureMatrix("recent_pairs_paste") {

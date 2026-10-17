@@ -1,8 +1,6 @@
 package com.eliormachlev.currencix.view.main.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,26 +28,22 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
-import com.eliormachlev.currencix.view.compose.CurrencyFlagImage
+import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
-private const val FLAG_SIZE_DP = 28
 private const val EQ_ALPHA = 0.5f
 
 // Between a result and its cost with the fee, in copied and shared text.
@@ -58,10 +52,6 @@ private const val FEE_GAP = "   "
 private const val NO_BREAK_SPACE = '\u00A0'
 
 private fun String.unbroken(): String = replace(' ', NO_BREAK_SPACE)
-
-// Bumped from 40dp to hit WCAG 2.1 AA "target size" (48×48). Applies to the
-// header swap button — the only icon-only action in this dialog.
-private const val ICON_BUTTON_SIZE_DP = 48
 
 data class QuickConversionsRow(
     val amountFromText: String,
@@ -97,6 +87,9 @@ data class QuickConversionsTable(
 class QuickConversionsActions(
     val onSwap: () -> Unit,
     val onSwapLongPress: () -> Unit,
+    // A currency pill's tap: pick that side's currency.
+    val onFromClick: () -> Unit = {},
+    val onToClick: () -> Unit = {},
     // A row's tap: put its amount into the converter.
     val onUseAmount: (BigDecimal) -> Unit = {},
     // A row's long-press: copy "100 USD = 92.00 EUR".
@@ -129,11 +122,16 @@ fun QuickConversionsContent(
                         .fillMaxWidth()
                         .padding(start = padH, end = padH, top = padT),
             ) {
-                QuickConversionsHeader(
+                // The converter's pills and swap button: the same pair, the same look.
+                CurrencyPairRow(
                     from = table.from,
                     to = table.to,
-                    onSwap = actions.onSwap,
-                    onSwapLongPress = actions.onSwapLongPress,
+                    actions =
+                        remember(
+                            actions,
+                        ) { PairRowActions(actions.onFromClick, actions.onToClick, actions.onSwap, actions.onSwapLongPress) },
+                    // Over the converter, whose own pills hold the shared-element keys.
+                    sharedElement = false,
                 )
                 table.feeInfoText?.let { feeInfoText ->
                     Spacer(Modifier.height(Spacing.Small))
@@ -256,88 +254,6 @@ private fun ShareTableButton(onShare: () -> Unit) {
         Icon(painter = painterResource(R.drawable.ic_share), contentDescription = null)
         Spacer(Modifier.size(Spacing.Small))
         Text(stringResource(R.string.menu_share))
-    }
-}
-
-@Composable
-private fun QuickConversionsHeader(
-    from: Currency?,
-    to: Currency?,
-    onSwap: () -> Unit,
-    onSwapLongPress: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            CurrencyBadge(currency = from)
-        }
-        LongPressIconButton(
-            onClick = onSwap,
-            onLongClick = onSwapLongPress,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_swap_horiz),
-                contentDescription = stringResource(id = R.string.desc_toggle_currencies),
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            CurrencyBadge(currency = to)
-        }
-    }
-}
-
-// Shared shape for the header's swap icon button: a 48dp clickable region
-// (WCAG 2.1 AA target size) with long-press support. Keeps the .size and
-// .combinedClickable chained together so no intermediate padding can shrink
-// the click target below 48dp.
-@Composable
-private fun LongPressIconButton(
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    Box(
-        modifier =
-            modifier
-                .size(ICON_BUTTON_SIZE_DP.dp)
-                .hapticCombinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick,
-                ),
-        contentAlignment = Alignment.Center,
-    ) {
-        content()
-    }
-}
-
-@Composable
-private fun CurrencyBadge(currency: Currency?) {
-    if (currency == null) {
-        Spacer(Modifier.size(FLAG_SIZE_DP.dp))
-        return
-    }
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        CurrencyFlagImage(
-            currency = currency,
-            modifier = Modifier.size(FLAG_SIZE_DP.dp),
-        )
-        Spacer(Modifier.size(Spacing.Small))
-        Text(
-            text = currency.iso4217Alpha(),
-            style = MaterialTheme.typography.titleMedium,
-        )
     }
 }
 

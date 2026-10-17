@@ -1,8 +1,10 @@
 package com.eliormachlev.currencix.view.compose
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,17 +30,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.PillSide
@@ -54,6 +57,13 @@ private val FLAG_GAP: Dp = Spacing.SmallPlus
 private val CHEVRON_SIZE: Dp = 14.dp
 private val CHEVRON_GAP: Dp = Spacing.Tiny
 private val PAIR_ROW_GAP: Dp = Spacing.Small
+private val SWAP_FAB_SIZE: Dp = 44.dp
+private val SWAP_GLYPH_SIZE: Dp = 22.dp
+
+// One 180° flip of the swap glyph per tap. The counter drives a target
+// angle so successive taps keep spinning the same way (never snap back),
+// and a second tap mid-flip carries the spin on instead of restarting it.
+private const val SWAP_FAB_ROTATION_STEP = 180f
 
 /**
  * The flag + ISO code + chevron pill that opens a currency picker. The
@@ -68,10 +78,14 @@ fun CurrencyPill(
     side: PillSide,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    // False where the pill shares the screen with the converter's own (a
+    // sheet over it): two pills with one key would fight over the flight.
+    sharedElement: Boolean = true,
 ) {
+    val transition = rememberPillTransition(side, currency).takeIf { sharedElement }
     Row(
         modifier
-            .sharedCurrencyPill(rememberPillTransition(side, currency))
+            .sharedCurrencyPill(transition)
             .height(PILL_HEIGHT)
             .clip(RoundedCornerShape(PILL_RADIUS))
             .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -113,8 +127,12 @@ class PairRowActions(
 )
 
 /**
- * The two currency pills with a swap control between them, as the converter
- * and the cart both show them. Each screen brings its own [swap] button.
+ * The two currency pills with the round swap button between them: the
+ * converter, the cart, the rate chart and Quick conversions all show their
+ * pair this way, "from" on the left in every language. [swapModifier]
+ * decorates the swap button (the converter's onboarding anchors to it);
+ * [swapEnabled] false greys it out while a swap can't be done yet.
+ * [sharedElement] as on [CurrencyPill].
  */
 @Composable
 fun CurrencyPairRow(
@@ -122,39 +140,91 @@ fun CurrencyPairRow(
     to: Currency?,
     actions: PairRowActions,
     modifier: Modifier = Modifier,
-    swap: @Composable () -> Unit,
+    swapModifier: Modifier = Modifier,
+    swapEnabled: Boolean = true,
+    sharedElement: Boolean = true,
 ) {
     val trade = rememberPillTrade(from, to)
     var rowWidth by remember { mutableIntStateOf(0) }
     var pillWidth by remember { mutableIntStateOf(0) }
-    val toEnd = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
     // How far a pill travels to the other's place: the row less one pill.
-    val travel = { (rowWidth - pillWidth) * toEnd * trade.remaining() }
-    Row(
-        modifier = modifier.fillMaxWidth().onSizeChanged { rowWidth = it.width },
-        horizontalArrangement = Arrangement.spacedBy(PAIR_ROW_GAP),
-        verticalAlignment = Alignment.CenterVertically,
+    val travel = { (rowWidth - pillWidth) * trade.remaining() }
+    // From → to reads left to right in every language, also inside a screen
+    // or sheet that follows Hebrew's direction.
+    Ltr {
+        Row(
+            modifier = modifier.fillMaxWidth().onSizeChanged { rowWidth = it.width },
+            horizontalArrangement = Arrangement.spacedBy(PAIR_ROW_GAP),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CurrencyPill(
+                currency = from,
+                side = PillSide.FROM,
+                onClick = actions.onFromClick,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .onSizeChanged { pillWidth = it.width }
+                        .graphicsLayer { translationX = travel() }
+                        .testTag(UiTestTags.PILL_FROM),
+                sharedElement = sharedElement,
+            )
+            SwapFab(onClick = actions.onSwap, onLongClick = actions.onSwapLongPress, modifier = swapModifier, enabled = swapEnabled)
+            CurrencyPill(
+                currency = to,
+                side = PillSide.TO,
+                onClick = actions.onToClick,
+                modifier = Modifier.weight(1f).graphicsLayer { translationX = -travel() }.testTag(UiTestTags.PILL_TO),
+                sharedElement = sharedElement,
+            )
+        }
+    }
+}
+
+// The round swap button between the pills: a tap swaps (the glyph turning
+// half a turn each time), a long-press does what the screen gives it.
+@Composable
+private fun SwapFab(
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    modifier: Modifier,
+    enabled: Boolean,
+) {
+    var tapCount by remember { mutableIntStateOf(0) }
+    val rotation by animateFloatAsState(
+        targetValue = tapCount * SWAP_FAB_ROTATION_STEP,
+        animationSpec = Motion.snappy(),
+        label = "swapFabRotation",
+    )
+    Box(
+        modifier
+            .size(SWAP_FAB_SIZE)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = if (enabled) 1f else DISABLED_ALPHA))
+            .hapticCombinedClickable(
+                enabled = enabled,
+                onClick = {
+                    tapCount += 1
+                    onClick()
+                },
+                onLongClick = onLongClick,
+            ),
+        contentAlignment = Alignment.Center,
     ) {
-        CurrencyPill(
-            currency = from,
-            side = PillSide.FROM,
-            onClick = actions.onFromClick,
+        Icon(
+            painter = painterResource(R.drawable.ic_swap_horiz),
+            contentDescription = stringResource(R.string.desc_toggle_currencies),
+            tint = MaterialTheme.colorScheme.onPrimary,
             modifier =
                 Modifier
-                    .weight(1f)
-                    .onSizeChanged { pillWidth = it.width }
-                    .graphicsLayer { translationX = travel() }
-                    .testTag(UiTestTags.PILL_FROM),
-        )
-        swap()
-        CurrencyPill(
-            currency = to,
-            side = PillSide.TO,
-            onClick = actions.onToClick,
-            modifier = Modifier.weight(1f).graphicsLayer { translationX = -travel() }.testTag(UiTestTags.PILL_TO),
+                    .size(SWAP_GLYPH_SIZE)
+                    .graphicsLayer { rotationZ = rotation },
         )
     }
 }
+
+// Material's opacity for a disabled control.
+private const val DISABLED_ALPHA = 0.38f
 
 // The two pills trading places after a swap: each starts where the other
 // was and slides home. [remaining] is how much of the way is left, 1 → 0.
