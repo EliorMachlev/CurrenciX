@@ -8,6 +8,17 @@
    <color name="billGreen">#85BB65</color>
    <color name="billGreenInk">#0F2A05</color>
    <color name="brass">#B8985B</color>
+   <color name="inkForeground">#EFEAE0</color>
+   <color name="paperInk">#1C1B1F</color>
+
+   <!-- The mark (brand_mark.xml) on the splash screen. On paper its green
+        and brass are darkened so they keep their contrast; values-night
+        uses the brand tones on ink, as the launcher icon always does. -->
+   <color name="brandMarkGreen">#5E9A40</color>
+   <color name="brandMarkBrass">#9C7C3E</color>
+   <color name="brandMarkCross">@color/paperInk</color>
+   <!-- The splash screen's, the app's own background so its exit has no seam. -->
+   <color name="splashBackground">@color/paperBg</color>
 
    <!-- Legacy aliases kept for XML that still references the old names.
         Point them at the brand palette so nothing regresses. -->

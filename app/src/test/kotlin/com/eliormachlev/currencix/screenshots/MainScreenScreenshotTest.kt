@@ -14,6 +14,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
 import com.eliormachlev.currencix.view.main.compose.ConverterBody
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBarActions
@@ -60,8 +61,7 @@ private fun MainScreenPreview(drawer: DrawerValue = DrawerValue.Closed) {
                 drawerState = drawerState,
                 onToggleDrawer = {},
                 actions = ConverterTopBarActions(onTimeline = {}, onCart = {}, onQuickConversions = {}, onHistoricalRates = {}),
-                startReveal = false,
-                onFirstFrame = {},
+                reveal = WordmarkReveal.Shown,
             )
         },
         displayContent = {

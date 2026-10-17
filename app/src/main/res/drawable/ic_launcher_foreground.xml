@@ -1,46 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher icon's mark, in its colors on ink (ic_launcher_background). Paths: values/brand_mark.xml. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="512"
-    android:viewportHeight="512">
-    <group
-        android:pivotX="256"
-        android:pivotY="256"
-        android:scaleX="0.77"
-        android:scaleY="0.77">
-        <group>
-            <path
-                android:pathData="M 383,129 A 180,180 0 1 0 383,383"
-                android:strokeColor="#F8FAFC"
-                android:strokeWidth="44"
-                android:strokeLineCap="round"
-                android:strokeLineJoin="round" />
-            <group
-                android:pivotX="0"
-                android:pivotY="0"
-                android:rotation="-45"
-                android:translateX="256"
-                android:translateY="256">
-                <path
-                    android:pathData="M -140,0 L 140,0 M 85,-32 L 140,0 L 85,32"
-                    android:strokeColor="#10B981"
-                    android:strokeWidth="24"
-                    android:strokeLineCap="round"
-                    android:strokeLineJoin="round" />
-            </group>
-            <group
-                android:pivotX="0"
-                android:pivotY="0"
-                android:rotation="45"
-                android:translateX="256"
-                android:translateY="256">
-                <path
-                    android:pathData="M -140,0 L 140,0 M 85,-32 L 140,0 L 85,32"
-                    android:strokeColor="#EF4444"
-                    android:strokeWidth="24"
-                    android:strokeLineCap="round"
-                    android:strokeLineJoin="round" />
-            </group>
-        </group>
-    </group>
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/billGreen"
+        android:pathData="@string/brand_mark_arrow_top"
+        android:strokeColor="@color/billGreen"
+        android:strokeLineJoin="round"
+        android:strokeWidth="@dimen/brand_mark_arrow_round" />
+    <path
+        android:fillColor="@color/brass"
+        android:pathData="@string/brand_mark_arrow_bottom"
+        android:strokeColor="@color/brass"
+        android:strokeLineJoin="round"
+        android:strokeWidth="@dimen/brand_mark_arrow_round" />
+    <path
+        android:pathData="@string/brand_mark_cross"
+        android:strokeColor="@color/inkForeground"
+        android:strokeLineCap="round"
+        android:strokeWidth="@dimen/brand_mark_cross_width" />
 </vector>

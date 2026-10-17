@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.main
 
+import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 
@@ -14,13 +15,12 @@ internal class ConverterHost(
     val preferenceModel: PreferenceViewModel,
     val status: ConverterStatus,
     val share: ConversionShare,
-    private var revealPending: Boolean,
-    val onWordmarkFirstFrame: () -> Unit,
+    private var wordmarkReveal: WordmarkReveal,
 ) {
     /**
-     * True exactly once per cold start: the wordmark reveal plays the first
-     * time the converter shows, not again when the user comes back to it
-     * from another screen or rotates.
+     * The cold start's reveal the first time: the wordmark reveal plays the
+     * first time the converter shows, not again when the user comes back to
+     * it from another screen or rotates.
      */
-    fun takeWordmarkReveal(): Boolean = revealPending.also { revealPending = false }
+    fun takeWordmarkReveal(): WordmarkReveal = wordmarkReveal.also { wordmarkReveal = WordmarkReveal.Shown }
 }

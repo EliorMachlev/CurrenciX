@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-   <img alt="Logo" height="200" src="art/ic_launcher/ic_launcher_foreground.svg">
+   <img alt="Logo" height="200" src="art/brand/ic_launcher.svg">
 </div>
 
 **CurrenciX** is a [simple](https://en.wikipedia.org/wiki/KISS_principle) currency converter — a handy travel companion, not a tool for realtime financial business.

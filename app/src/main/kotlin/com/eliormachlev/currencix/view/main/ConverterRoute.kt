@@ -90,7 +90,7 @@ internal fun ConverterRoute(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var overlay by rememberSaveable { mutableStateOf<ConverterOverlay?>(null) }
-    val startReveal = remember { host.takeWordmarkReveal() }
+    val reveal = remember { host.takeWordmarkReveal() }
     ReportVisibleWhileComposed(host.status)
     val paneRole = LocalPaneRole.current
     val destinations = remember(viewModel, navigator, paneRole) { ConverterDestinations(viewModel, navigator, paneRole) }
@@ -119,8 +119,7 @@ internal fun ConverterRoute(
                     drawerState = drawerState,
                     onToggleDrawer = { scope.launch { drawerState.toggle() } },
                     actions = topBarActions(onAction),
-                    startReveal = startReveal,
-                    onFirstFrame = host.onWordmarkFirstFrame,
+                    reveal = reveal,
                 )
             },
             displayContent = {

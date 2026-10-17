@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The splash mark's half turn (animator/brand_mark_spin), which the
+         splash screen waits for before it fades. -->
+    <integer name="brand_mark_spin_millis">800</integer>
+</resources>

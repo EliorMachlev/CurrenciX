@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -41,6 +42,7 @@ import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalDynamicColor
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Motion
+import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
 import com.eliormachlev.currencix.view.lock.LockGate
 import com.eliormachlev.currencix.view.lock.hideFromRecents
 import com.eliormachlev.currencix.view.navigation.AppNavHost
@@ -55,15 +57,15 @@ import com.eliormachlev.currencix.view.timeline.TimelineRoute
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-// Splash → wordmark hand-off overlap (#155). The platform splash icon
-// fades out over this window while the Compose wordmark's × reveal
-// (Motion.LONG_MILLIS) is already running — a small overlap hides the seam
-// that would otherwise show if we waited for the icon to disappear before
-// starting the reveal. Ending at the reveal's first quarter means the eye
-// never catches a hard cut; derived so it tracks any change to the reveal.
+// Splash → wordmark hand-off overlap (#155). The splash icon fades out over
+// this window while the Compose wordmark's × reveal (Motion.LONG_MILLIS),
+// started with the fade, runs underneath: the overlap hides the seam that
+// a hard cut would show. Ending at the reveal's first quarter; derived so
+// it tracks any change to the reveal.
 private const val SPLASH_EXIT_FADE_MILLIS = Motion.LONG_MILLIS / 4L
 
 /**
@@ -99,6 +101,10 @@ class MainActivity : AppCompatActivity() {
     // main thread and the wordmark writes it from the main thread too.
     private var firstContentReady: Boolean = false
 
+    // Completed when the splash starts to fade (at once when there's no
+    // splash to wait for); the wordmark's reveal waits for it.
+    private val splashExiting = CompletableDeferred<Unit>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // installSplashScreen() must run before super.onCreate() per the
         // androidx docs — it swaps the launcher-splash theme (AppTheme.Splash)
@@ -109,7 +115,12 @@ class MainActivity : AppCompatActivity() {
         val isColdStart = savedInstanceState == null
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition { !firstContentReady }
-        if (isColdStart) splashScreen.setOnExitAnimationListener(::fadeOutSplashIcon) else firstContentReady = true
+        if (isColdStart) {
+            splashScreen.setOnExitAnimationListener(::fadeOutSplashIcon)
+        } else {
+            firstContentReady = true
+            splashExiting.complete(Unit)
+        }
 
         // Pure black is an XML theme variant — night mode itself is set once
         // in CurrenciesApplication, so this resolves against the right
@@ -123,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         viewModel = ViewModelProvider(this, MainViewModel.factory(application))[MainViewModel::class.java]
-        converterHost = createConverterHost(revealPending = isColdStart)
+        converterHost = createConverterHost(playReveal = isColdStart)
         // Only a fresh launch: a recreated Activity already applied it.
         if (savedInstanceState == null) launchRequest.value = ConverterLaunch.parse(intent)
 
@@ -279,7 +290,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createConverterHost(revealPending: Boolean): ConverterHost {
+    private fun createConverterHost(playReveal: Boolean): ConverterHost {
         val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
         val heroCapture = LayerCapture()
         return ConverterHost(
@@ -287,8 +298,12 @@ class MainActivity : AppCompatActivity() {
             preferenceModel = ViewModelProvider(this)[PreferenceViewModel::class.java],
             status = status,
             share = ConversionShare(this, viewModel, heroCapture, status),
-            revealPending = revealPending,
-            onWordmarkFirstFrame = { firstContentReady = true },
+            wordmarkReveal =
+                WordmarkReveal(
+                    play = playReveal,
+                    onFirstFrame = { firstContentReady = true },
+                    awaitStart = splashExiting::await,
+                ),
         )
     }
 
@@ -344,11 +359,11 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    // Splash exit-animation listener. Fades the platform splash icon over
-    // SPLASH_EXIT_FADE_MILLIS while the Compose wordmark's own × reveal
-    // (already started on its first frame — see Wordmark.kt) runs
-    // underneath, then removes the SplashScreenView so later frames aren't
-    // overdrawn by the leftover splash surface.
+    // Splash exit-animation listener. Lets the icon finish its turn
+    // (brand_mark_animated) if Compose was ready first, then fades it over
+    // SPLASH_EXIT_FADE_MILLIS while the wordmark's × reveal, started with
+    // the fade, runs underneath, and removes the SplashScreenView so later
+    // frames aren't overdrawn by the leftover splash surface.
     //
     // Only iconView fades (not the whole SplashScreenView) so the paper
     // background stays solid underneath until removal — otherwise the
@@ -361,13 +376,21 @@ class MainActivity : AppCompatActivity() {
         val icon = runCatching { provider.iconView }.getOrNull()
         if (icon == null) {
             provider.remove()
+            splashExiting.complete(Unit)
             return
         }
         icon
             .animate()
+            .setStartDelay(provider.remainingIconAnimationMillis())
             .alpha(0f)
             .setDuration(SPLASH_EXIT_FADE_MILLIS)
+            .withStartAction { splashExiting.complete(Unit) }
             .withEndAction { provider.remove() }
             .start()
     }
 }
+
+// How much of the splash icon's animation is still to play; both times are
+// SystemClock.uptimeMillis() based.
+private fun SplashScreenViewProvider.remainingIconAnimationMillis(): Long =
+    (iconAnimationStartMillis + iconAnimationDurationMillis - SystemClock.uptimeMillis()).coerceAtLeast(0L)

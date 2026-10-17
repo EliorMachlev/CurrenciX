@@ -2,25 +2,25 @@
 <!--
     Splash-screen theme for MainActivity. Inherits Theme.SplashScreen from
     androidx.core:core-splashscreen so we get the API 31+ SplashScreen APIs
-    on every supported release (minSdk 33). The static wordmark drawable is
-    shown while the platform hosts the splash; once Compose is ready to
-    render its own animated reveal, MainActivity releases the keep-on-screen
-    condition and installs postSplashScreenTheme — the normal AppTheme —
-    which MainActivity may further swap for AppTheme.PureBlack.
+    on every supported release (minSdk 33).
+
+    The splash shows the app's mark (brand_mark, the launcher icon's shape)
+    on the app's own background, paper or ink (splashBackground), so the
+    seam into the first Compose frame doesn't show. Its arrows make a half
+    turn around the ×, swapping places (brand_mark_animated). MainActivity
+    holds the splash until Compose has drawn and the turn has finished, then
+    fades the mark out while the top bar's wordmark plays its reveal, and
+    installs postSplashScreenTheme, the normal AppTheme, which MainActivity
+    may further swap for AppTheme.PureBlack.
 
     MainActivity is the app's only Activity; every screen is a Compose
     destination inside it, so the launcher splash shows once per launch.
 -->
 <resources>
     <style name="AppTheme.Splash" parent="Theme.SplashScreen">
-        <!-- Paper background matches the light AppTheme's colorBackground so
-             the seam between launcher-splash and Compose first frame is
-             invisible in light mode. -->
-        <item name="windowSplashScreenBackground">@color/paperBg</item>
-        <!-- Static brass-on-paper monogram; animated reveal happens in
-             Compose after setKeepOnScreenCondition releases. -->
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_wordmark</item>
-        <!-- Hand off to the real app theme once the splash exits. -->
+        <item name="windowSplashScreenBackground">@color/splashBackground</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/brand_mark_animated</item>
+        <item name="windowSplashScreenAnimationDuration">@integer/brand_mark_spin_millis</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 </resources>

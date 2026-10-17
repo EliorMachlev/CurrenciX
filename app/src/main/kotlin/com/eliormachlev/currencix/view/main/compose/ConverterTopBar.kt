@@ -39,6 +39,7 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.onboardingAnchor
 import com.eliormachlev.currencix.view.compose.screenTopBarColors
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
+import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
 
 private val WORDMARK_TITLE_SIZE = 26.sp
 private val DRAWER_ARROW_SIZE = 24.dp
@@ -62,20 +63,19 @@ data class ConverterTopBarActions(
 /**
  * The converter's top bar: drawer button, the Currenci× wordmark, and the
  * four highest-frequency shortcuts as always-visible icons (everything else
- * lives in the drawer). [startReveal] / [onFirstFrame] drive the wordmark's
- * cold-start reveal and the splash-screen hand-off.
+ * lives in the drawer). [reveal] is the wordmark's cold-start reveal and
+ * its hand-off with the splash screen.
  */
 @Composable
 fun ConverterTopBar(
     drawerState: DrawerState,
     onToggleDrawer: () -> Unit,
     actions: ConverterTopBarActions,
-    startReveal: Boolean,
-    onFirstFrame: () -> Unit,
+    reveal: WordmarkReveal,
 ) {
     TopAppBar(
         title = {
-            Wordmark(fontSize = WORDMARK_TITLE_SIZE, startReveal = startReveal, onFirstFrame = onFirstFrame)
+            Wordmark(fontSize = WORDMARK_TITLE_SIZE, reveal = reveal)
         },
         navigationIcon = {
             val description =

@@ -35,23 +35,32 @@ private const val WORDMARK_X_SCALE = 1.35f
 // the × grows outward from its optical middle rather than from the top.
 private const val TRANSFORM_ORIGIN_CENTER = 0.5f
 
+/**
+ * The wordmark's reveal, the × growing in, which plays once per cold start
+ * ([play]), and its hand-off with the splash screen: [onFirstFrame] tells
+ * the host the wordmark is composed (the splash holds until then), and the
+ * reveal starts once [awaitStart] returns, when the splash starts to fade.
+ */
+class WordmarkReveal(
+    val play: Boolean,
+    val onFirstFrame: () -> Unit = {},
+    val awaitStart: suspend () -> Unit = {},
+) {
+    companion object {
+        /** No reveal: the × is drawn from the start. */
+        val Shown = WordmarkReveal(play = false)
+    }
+}
+
 @Composable
 fun Wordmark(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 22.sp,
     color: Color = MaterialTheme.colorScheme.onBackground,
     accentColor: Color = MaterialTheme.colorScheme.primary,
-    // Gates the × reveal animation. When false the × is shown at its final
-    // scale immediately (no animation). This lets callers restart the
-    // reveal on cold start only, and avoids re-running it on config
-    // change / navigation returns. Also allows MainActivity to overlap the
-    // splash-screen exit animation with the in-Compose reveal (#155).
-    startReveal: Boolean = true,
-    // Invoked once the Wordmark has laid out its first frame. Used by the
-    // splash-screen hand-off in MainActivity to release
-    // setKeepOnScreenCondition — the splash holds until we're pixel-ready
-    // to run the reveal, then fades out over the reveal's opening frames.
-    onFirstFrame: () -> Unit = {},
+    // The cold-start reveal and its hand-off with the splash screen; by
+    // default the × is simply shown.
+    reveal: WordmarkReveal = WordmarkReveal.Shown,
 ) {
     val base =
         TextStyle(
@@ -60,21 +69,23 @@ fun Wordmark(
             fontWeight = FontWeight.Medium,
             letterSpacing = (-0.01).em,
         )
-    // Initial value is the final scale when [startReveal] is false so the
+    // Initial value is the final scale when the reveal doesn't play, so the
     // × is fully drawn immediately on config change / navigation returns.
-    val xScale = remember(startReveal) { Animatable(if (startReveal) 0f else 1f) }
-    val firstFrameCallback by rememberUpdatedState(onFirstFrame)
+    val xScale = remember(reveal) { Animatable(if (reveal.play) 0f else 1f) }
+    val firstFrameCallback by rememberUpdatedState(reveal.onFirstFrame)
     // Tell the host we're mounted before any animation starts: the splash
-    // hand-off releases its keep-on-screen guard on this, so the platform's
-    // exit animation can overlap the reveal's opening frames. Run as the
+    // hand-off releases its keep-on-screen guard on this. Run as the
     // composition is applied rather than from a coroutine — the splash holds
     // every draw until it hears this, so it must not wait on a dispatcher.
     DisposableEffect(Unit) {
         firstFrameCallback()
         onDispose {}
     }
-    LaunchedEffect(startReveal) {
-        if (startReveal) {
+    LaunchedEffect(reveal) {
+        if (reveal.play) {
+            // Under the splash the reveal would play unseen: start it as the
+            // splash fades.
+            reveal.awaitStart()
             xScale.animateTo(
                 targetValue = 1f,
                 animationSpec = Motion.flourish(),

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The splash mark's arrows make a half turn: green and brass swap places. -->
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/brand_mark_spin_millis"
+    android:interpolator="@android:interpolator/fast_out_slow_in"
+    android:propertyName="rotation"
+    android:valueFrom="0"
+    android:valueTo="180"
+    android:valueType="floatType" />
