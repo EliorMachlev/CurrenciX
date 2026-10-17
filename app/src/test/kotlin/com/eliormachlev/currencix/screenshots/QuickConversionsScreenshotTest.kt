@@ -66,18 +66,43 @@ class QuickConversionsScreenshotTest {
 
         private val FEE_ROWS =
             listOf(
-                QuickConversionsRow("ILS ₪ 1", "USD $ 0.3249", "+ 1% = USD $ 0.3281"),
-                QuickConversionsRow("ILS ₪ 37.5", "USD $ 12.18", "+ 1% = USD $ 12.30", isTyped = true),
-                QuickConversionsRow("ILS ₪ 100", "USD $ 32.49", "+ 1% = USD $ 32.81"),
+                QuickConversionsRow(
+                    "ILS ₪ 1",
+                    "USD $ 0.3249",
+                    "+ 1% = USD $ 0.3281",
+                    fromValue = "1",
+                    toValue = "0.3249",
+                    withFeeValue = "0.3281",
+                    feePercent = "+ 1%",
+                ),
+                QuickConversionsRow(
+                    "ILS ₪ 37.5",
+                    "USD $ 12.18",
+                    "+ 1% = USD $ 12.30",
+                    isTyped = true,
+                    fromValue = "37.5",
+                    toValue = "12.18",
+                    withFeeValue = "12.30",
+                    feePercent = "+ 1%",
+                ),
+                QuickConversionsRow(
+                    "ILS ₪ 100",
+                    "USD $ 32.49",
+                    "+ 1% = USD $ 32.81",
+                    fromValue = "100",
+                    toValue = "32.49",
+                    withFeeValue = "32.81",
+                    feePercent = "+ 1%",
+                ),
             )
 
         private val SAMPLE_ROWS =
             listOf(
-                QuickConversionsRow("USD $ 1", "EUR € 0.9200", null),
-                QuickConversionsRow("USD $ 5", "EUR € 4.60", null),
-                QuickConversionsRow("USD $ 10", "EUR € 9.20", null),
-                QuickConversionsRow("USD $ 50", "EUR € 46.00", null),
-                QuickConversionsRow("USD $ 100", "EUR € 92.00", null),
+                QuickConversionsRow("USD $ 1", "EUR € 0.9200", null, fromValue = "1", toValue = "0.9200"),
+                QuickConversionsRow("USD $ 5", "EUR € 4.60", null, fromValue = "5", toValue = "4.60"),
+                QuickConversionsRow("USD $ 10", "EUR € 9.20", null, fromValue = "10", toValue = "9.20"),
+                QuickConversionsRow("USD $ 50", "EUR € 46.00", null, fromValue = "50", toValue = "46.00"),
+                QuickConversionsRow("USD $ 100", "EUR € 92.00", null, fromValue = "100", toValue = "92.00"),
             )
     }
 }

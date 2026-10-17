@@ -67,4 +67,14 @@ class QuickConversionRowsTest {
         assertEquals("USD $ 10 = EUR € 8.00   + 1% = EUR € 8.08", row.copyText)
         assertNull(rows().first().costWithFeeText)
     }
+
+    @Test
+    fun `the table's cells are the bare numbers, the fee's rate its column header`() {
+        val row = rows(feeStack = BigDecimal("1.01")).first { it.amount.compareTo(BigDecimal("1000")) == 0 }
+        assertEquals("1,000", row.fromValue)
+        assertEquals("800.00", row.toValue)
+        assertEquals("808.00", row.withFeeValue)
+        assertEquals("+ 1%", row.feePercent)
+        assertNull(rows().first().withFeeValue)
+    }
 }

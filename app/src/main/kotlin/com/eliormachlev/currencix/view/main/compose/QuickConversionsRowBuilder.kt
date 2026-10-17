@@ -36,8 +36,9 @@ data class QuickConversionRowInputs(
 )
 
 /**
- * The pair at round amounts, plus the typed one, smallest first, each as
- * "ILS ₪ 1 = USD $ 0.3249". With a fee in force each row adds what it comes
+ * The pair at round amounts, plus the typed one, smallest first: the bare
+ * numbers for the sheet's table, and each as "ILS ₪ 1 = USD $ 0.3249" for
+ * copy, share and TalkBack. With a fee in force each row adds what it comes
  * to with the fee, "+ 1% = USD $ 0.3281": the converter's True Cost
  * (result x fee stack), in the result's currency.
  */
@@ -48,17 +49,20 @@ fun buildQuickConversionRows(inputs: QuickConversionRowInputs): List<QuickConver
     val typed = inputs.typed?.takeIf { it.signum() > 0 && QUICK_AMOUNTS.none { round -> round.compareTo(it) == 0 } }
     return (QUICK_AMOUNTS + listOfNotNull(typed)).sorted().map { amount ->
         val fair = amount.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
-        val withFee =
-            feePercent?.let { percent ->
-                val cost = fair.multiply(inputs.feeStack, MathContext.DECIMAL128)
-                "$percent = ${moneyLabel(inputs.to, cost.formatForRow(inputs.ctx))}"
-            }
+        // "1,000", grouped as the results are.
+        val fromValue = amount.stripTrailingZeros().toPlainString().toHumanReadableNumber(inputs.ctx)
+        val toValue = fair.formatForRow(inputs.ctx)
+        val withFeeValue = feePercent?.let { fair.multiply(inputs.feeStack, MathContext.DECIMAL128).formatForRow(inputs.ctx) }
         QuickConversionsRow(
-            amountFromText = moneyLabel(inputs.from, amount.stripTrailingZeros().toPlainString()),
-            amountToText = moneyLabel(inputs.to, fair.formatForRow(inputs.ctx)),
-            costWithFeeText = withFee,
+            amountFromText = moneyLabel(inputs.from, fromValue),
+            amountToText = moneyLabel(inputs.to, toValue),
+            costWithFeeText = withFeeValue?.let { "$feePercent = ${moneyLabel(inputs.to, it)}" },
             amount = amount,
             isTyped = typed != null && amount.compareTo(typed) == 0,
+            fromValue = fromValue,
+            toValue = toValue,
+            withFeeValue = withFeeValue,
+            feePercent = feePercent,
         )
     }
 }

@@ -1,8 +1,10 @@
 package com.eliormachlev.currencix.view.main.compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,22 +23,20 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.CurrencyPairRow
+import com.eliormachlev.currencix.view.compose.FlagCode
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
@@ -44,14 +44,11 @@ import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
-private const val EQ_ALPHA = 0.5f
-
 // Between a result and its cost with the fee, in copied and shared text.
 private const val FEE_GAP = "   "
 
-private const val NO_BREAK_SPACE = '\u00A0'
-
-private fun String.unbroken(): String = replace(' ', NO_BREAK_SPACE)
+// OpenType tabular figures: every digit the same width.
+private const val TABULAR_FIGURES = "tnum"
 
 data class QuickConversionsRow(
     val amountFromText: String,
@@ -62,6 +59,13 @@ data class QuickConversionsRow(
     val amount: BigDecimal = BigDecimal.ZERO,
     // The converter's own amount, set apart from the round ones.
     val isTyped: Boolean = false,
+    // The table's cells: the bare numbers, "1" / "0.3249" / "0.3281", under
+    // headers naming the currencies; the texts above are for copy and share.
+    val fromValue: String = "",
+    val toValue: String = "",
+    val withFeeValue: String? = null,
+    // "+ 1%", the fee column's header; null without a fee.
+    val feePercent: String? = null,
 ) {
     /** "ILS ₪ 1 = USD $ 0.3249  + 1% = USD $ 0.3281", what a long-press copies. */
     val copyText: String
@@ -188,41 +192,53 @@ private fun QuickConversionsTableBody(
                         .padding(top = Spacing.Large),
             )
         } else {
-            val hasFees = table.rows.any { it.costWithFeeText != null }
-            val rowStyle = if (hasFees) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge
-            val columns = rememberFeeColumns(table.rows, rowStyle, hasFees)
-            table.rows.forEach { row -> QuickConversionsRowUi(row, actions, rowStyle, columns) }
+            val feePercent = table.rows.firstNotNullOfOrNull { it.feePercent }
+            TableHeader(table.from, table.to, feePercent)
+            HorizontalDivider(Modifier.padding(horizontal = Spacing.Small), color = MaterialTheme.colorScheme.outlineVariant)
+            table.rows.forEach { row -> QuickConversionsRowUi(row, actions, hasFees = feePercent != null) }
         }
         table.sourceText?.let { SourceLine(it, MaterialTheme.colorScheme.onSurfaceVariant) }
         table.warningText?.let { SourceLine(it, MaterialTheme.colorScheme.error) }
     }
 }
 
-/** With fees, the amounts' and results' column widths, so every fee starts at the same place. */
-private class FeeColumns(
-    val from: Dp,
-    val to: Dp,
-)
-
-// With fees, each column is as wide as its longest entry (in bold, as the
-// typed row is), leaving the rest of the row to the fees; null without fees,
-// when both sides share the row evenly.
+// The table's numbers: same-width digits, so the decimals line up down a column.
 @Composable
-private fun rememberFeeColumns(
-    rows: List<QuickConversionsRow>,
-    style: TextStyle,
-    hasFees: Boolean,
-): FeeColumns? {
-    val measurer = rememberTextMeasurer()
-    val density = LocalDensity.current
-    if (!hasFees) return null
-    return remember(rows, style, density) {
-        val bold = style.copy(fontWeight = FontWeight.Bold)
+private fun tableNumberStyle(): TextStyle = MaterialTheme.typography.bodyLarge.copy(fontFeatureSettings = TABULAR_FIGURES)
 
-        fun widest(text: (QuickConversionsRow) -> String) =
-            with(density) { rows.maxOf { measurer.measure(text(it).unbroken(), bold).size.width }.toDp() }
-        FeeColumns(from = widest { it.amountFromText }, to = widest { it.amountToText })
+// "🇨🇦 CAD | 🇮🇱 ILS | + 1%": what each column is in, so its cells are just numbers.
+@Composable
+private fun TableHeader(
+    from: Currency?,
+    to: Currency?,
+    feePercent: String?,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.Small, vertical = Spacing.Small),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        HeaderCell(Modifier.weight(1f)) { from?.let { FlagCode(it) } }
+        HeaderCell(Modifier.weight(1f)) { to?.let { FlagCode(it) } }
+        if (feePercent != null) {
+            HeaderCell(Modifier.weight(1f)) {
+                Text(feePercent, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.error)
+            }
+        }
     }
+}
+
+// A header cell, its content at the end, over the right-aligned numbers.
+@Composable
+private fun HeaderCell(
+    modifier: Modifier,
+    content: @Composable RowScope.() -> Unit,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.XSmall, Alignment.End),
+        verticalAlignment = Alignment.CenterVertically,
+        content = content,
+    )
 }
 
 @Composable
@@ -263,12 +279,9 @@ private fun ShareTableButton(onShare: () -> Unit) {
 private fun QuickConversionsRowUi(
     row: QuickConversionsRow,
     actions: QuickConversionsActions,
-    // A notch smaller when the rows carry fees, so a whole row fits a line.
-    rowStyle: TextStyle,
-    // The columns' widths with fees; null shares the row evenly.
-    columns: FeeColumns?,
+    hasFees: Boolean,
 ) {
-    val weight = if (row.isTyped) FontWeight.Bold else null
+    val style = tableNumberStyle().copy(fontWeight = if (row.isTyped) FontWeight.Bold else null)
     Row(
         modifier =
             Modifier
@@ -281,44 +294,20 @@ private fun QuickConversionsRowUi(
                     onLongClick = { actions.onCopy(row) },
                     onLongClickLabel = stringResource(R.string.quick_conversions_copy),
                 ).padding(horizontal = Spacing.Small, vertical = Spacing.Small)
-                // Merge so TalkBack reads "$FROM equals $TO" as one item rather
-                // than swiping through several separate text nodes per row.
-                .semantics(mergeDescendants = true) {},
+                // TalkBack hears the whole line, "CAD $ 1 = ILS ₪ 2.18 …", as
+                // one item, not three bare numbers.
+                .clearAndSetSemantics { contentDescription = row.copyText },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = row.amountFromText.unbroken(),
-            style = rowStyle,
-            fontWeight = weight,
-            textAlign = TextAlign.End,
-            modifier = if (columns != null) Modifier.width(columns.from) else Modifier.weight(1f),
-        )
-        Text(
-            text = "=",
-            style = rowStyle,
-            color = Color.Unspecified,
-            modifier =
-                Modifier
-                    .padding(horizontal = if (columns != null) Spacing.Small else Spacing.Large)
-                    .alpha(EQ_ALPHA),
-        )
-        // "USD $ 0.3249   + 1% = USD $ 0.3281": the result, then its fee in
-        // a column of its own; each keeps its words together.
-        Text(
-            text = row.amountToText.unbroken(),
-            style = rowStyle,
-            fontWeight = weight,
-            modifier = if (columns != null) Modifier.width(columns.to) else Modifier.weight(1f),
-        )
-        if (columns != null) {
+        Text(row.fromValue, style = style, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+        Text(row.toValue, style = style, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+        if (hasFees) {
             Text(
-                text = row.costWithFeeText?.unbroken().orEmpty(),
-                style = rowStyle,
+                text = row.withFeeValue.orEmpty(),
+                style = style,
                 color = MaterialTheme.colorScheme.error,
-                modifier =
-                    Modifier
-                        .padding(start = Spacing.Medium)
-                        .weight(1f),
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(1f),
             )
         }
     }
