@@ -193,11 +193,36 @@ Roborazzi + Robolectric give pure-JVM screenshot testing for every Compose surfa
 Create `secrets.properties` in the project root (not committed):
 
 ```properties
-storeFile=path/to/keystore.jks
-storePassword=...
-keyAlias=...
-keyPassword=...
+KEYSTORE_FILE=path/to/release.jks
+KEYSTORE_PASSWORD=...
+KEYSTORE_KEY_ALIAS=...
+KEYSTORE_KEY_PASSWORD=...
 ```
+
+Without it, release builds come out unsigned (what F-Droid builds: it signs with its own key). Play bundles are signed with this key as the upload key; Play App Signing re-signs them.
+
+### Post-quantum signing (Android 17+)
+
+Release APKs can also carry Android 17's hybrid signature (APK Signature Scheme v3.2): a new classical key plus an ML-DSA-65 key, which a quantum computer couldn't forge. Android 17 and later verify it; Android 16 and earlier keep verifying the release key, which still signs every APK. Only APKs the project signs itself are affected (GitHub releases, `install`): F-Droid signs with its own key, and Play re-signs bundles (it plans its own hybrid upgrade).
+
+1. Once, on your own machine: `scripts/create-hybrid-signing-keys.sh path/to/release.jks <release-key-alias>` (JDK 24+, build-tools 37+). It makes the release key if there isn't one yet, the two hybrid keys in `signing/hybrid.p12`, and a lineage for each (`signing/classical-lineage`, `signing/pqc-lineage`) that rotates from the release key to it, without rollback.
+2. Add what it prints to `secrets.properties`:
+
+   ```properties
+   HYBRID_KEYSTORE_FILE=/…/signing/hybrid.p12
+   HYBRID_KEYSTORE_PASSWORD=...
+   HYBRID_CLASSICAL_LINEAGE=/…/signing/classical-lineage
+   HYBRID_PQC_LINEAGE=/…/signing/pqc-lineage
+   # optional, these are the defaults:
+   HYBRID_CLASSICAL_KEY_ALIAS=hybrid-classical
+   HYBRID_PQC_KEY_ALIAS=hybrid-pqc
+   ```
+
+3. `assemble<Flavor>Release` then runs `signApksHybrid<Flavor>Release` after packaging: `apksigner` re-signs each APK with the release key and the hybrid pair and verifies it. It is wired as a transform of the APK artifact (`SignApksHybrid` in `app/build.gradle.kts`), so the output folder and `install` only ever get hybrid-signed APKs. `apksigner` runs on a JDK 25 toolchain whatever JDK runs Gradle, as reading ML-DSA keys needs 24+; passwords reach it through its environment, not its command line. Some but not all of the `HYBRID_*` lines fails the build, so a release can't quietly go out without the signature.
+
+Check a signed APK with `apksigner verify --verbose --print-certs` (on JDK 24+): it lists "v3.2 … true", the V3.2 Hybrid Classical and PQC signers and the V3.0 signer.
+
+**Once released, it's permanent.** A hybrid-signed app on Android 17 only accepts updates signed with the hybrid keys (the lineage has no rollback to the release key alone), so lose `signing/` or its password and that install can't be updated. Back up `signing/` with the release keystore, and keep them out of the repository (`.gitignore` covers `*.jks`, `*.p12` and `/signing/`).
 
 ## Version Code Generation
 

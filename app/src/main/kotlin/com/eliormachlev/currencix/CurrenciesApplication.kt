@@ -10,6 +10,7 @@ import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.FileLoggingTree
+import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.PrivateRequests
 import com.eliormachlev.currencix.util.plantConsoleLogging
 import com.eliormachlev.currencix.view.lock.AppLock
@@ -22,7 +23,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.net.InetAddress
 import kotlin.concurrent.thread
 
 class CurrenciesApplication : Application() {
@@ -91,8 +91,11 @@ class CurrenciesApplication : Application() {
     }
 
     // Resolve the currently-selected provider's host on a background thread so
-    // the first network request doesn't pay for DNS. Failures (offline, DNS
-    // outage) are silent — this is a best-effort warm-up, not a health check.
+    // the first network request doesn't pay for DNS. Through the shared
+    // client's own resolver, so the answer lands in the cache its requests
+    // use (on Android 17+ that's AndroidDns, not the system's). Failures
+    // (offline, DNS outage) are silent — this is a best-effort warm-up, not a
+    // health check.
     private fun prewarmProviderDns() {
         thread(name = "dns-prewarm", isDaemon = true) {
             val host =
@@ -100,7 +103,7 @@ class CurrenciesApplication : Application() {
                     .providers.apiProvider
                     .get()
                     .getHost() ?: return@thread
-            runCatching { InetAddress.getAllByName(host) }
+            runCatching { HttpClientProvider.client(null).dns.lookup(host) }
         }
     }
 

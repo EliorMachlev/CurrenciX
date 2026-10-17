@@ -1,8 +1,11 @@
 package com.eliormachlev.currencix.util
 
 import android.content.Context
+import android.os.Build
 import okhttp3.Cache
+import okhttp3.Dns
 import okhttp3.OkHttpClient
+import okhttp3.android.AndroidDns
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.File
@@ -102,8 +105,17 @@ object HttpClientProvider {
             // read timeout indefinitely.
             .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
+            .apply { encryptedClientHelloDns()?.let(::dns) }
             .build()
     }
+
+    // On Android 17 and later, resolve through the platform's DnsResolver
+    // (OkHttp's AndroidDns), which also fetches each host's DNS HTTPS record
+    // with its Encrypted Client Hello keys: the TLS handshake then hides which
+    // provider the app is talking to from anyone watching the network, where
+    // the host offers ECH (others connect as before). Earlier versions can't
+    // do ECH, so they keep the system resolver they always used.
+    private fun encryptedClientHelloDns(): Dns? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) AndroidDns() else null
 
     // The base client plus the on-disk cache and, in debug builds, the
     // in-app HTTP inspector (Chucker; the build type decides, see

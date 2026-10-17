@@ -1,4 +1,6 @@
 
+import com.android.build.api.artifact.ArtifactTransformationRequest
+import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.FilterConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
@@ -214,6 +216,28 @@ androidComponents {
             output.versionName.set("$name-$label")
         }
     }
+    // Release APKs re-signed with the post-quantum hybrid signature once its
+    // keys are configured (see "Post-quantum signing" below).
+    val hybridKeys = HybridSigningKeys.fromSecrets(::getSecret)
+    if (hybridKeys != null) {
+        val apksignerJar = sdkComponents.sdkDirectory.map { it.file("build-tools/${android.buildToolsVersion}/lib/apksigner.jar") }
+        val nativeLibs = sdkComponents.sdkDirectory.map { it.dir("build-tools/${android.buildToolsVersion}/lib64") }
+        onVariants(selector().withBuildType("release")) { variant ->
+            val signing =
+                tasks.register<SignApksHybrid>("signApksHybrid${variant.name.replaceFirstChar(Char::uppercaseChar)}") {
+                    javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(SignApksHybrid.JDK_VERSION)) })
+                    this.apksignerJar.set(apksignerJar)
+                    this.nativeLibs.set(nativeLibs)
+                    keys.set(hybridKeys)
+                }
+            val request =
+                variant.artifacts
+                    .use(signing)
+                    .wiredWithDirectories(SignApksHybrid::inputApks, SignApksHybrid::outputApks)
+                    .toTransformMany(SingleArtifact.APK)
+            signing.configure { transformationRequest.set(request) }
+        }
+    }
 }
 
 dependencies {
@@ -415,6 +439,195 @@ fun getSecret(key: String): String? {
         props.getProperty(key)
     } else {
         null
+    }
+}
+
+// Post-quantum signing ///////////////////////////////////////////////////////////////////////////
+
+/**
+ * The keys for APK Signature Scheme v3.2, Android 17's post-quantum "hybrid"
+ * signature: the app's own release key ([standalone], `KEYSTORE_*`), which
+ * Android 16 and earlier keep verifying, plus a hybrid pair that Android 17+
+ * verifies, a new classical key and an ML-DSA key, each with its lineage (the
+ * certificate history that ties it to the release key, so updates install
+ * over each other). Made once with `scripts/create-hybrid-signing-keys.sh`.
+ */
+data class HybridSigningKeys(
+    val standalone: File,
+    val standaloneAlias: String,
+    val standalonePassword: String,
+    val standaloneKeyPassword: String,
+    val hybrid: File,
+    val hybridPassword: String,
+    val classicalAlias: String,
+    val pqcAlias: String,
+    val classicalLineage: File,
+    val pqcLineage: File,
+) : java.io.Serializable {
+    // The passwords are never part of a log or an error.
+    override fun toString() = "HybridSigningKeys(standalone=$standalone, hybrid=$hybrid)"
+
+    companion object {
+        private val HYBRID_SECRETS =
+            listOf("HYBRID_KEYSTORE_FILE", "HYBRID_KEYSTORE_PASSWORD", "HYBRID_CLASSICAL_LINEAGE", "HYBRID_PQC_LINEAGE")
+        private val RELEASE_SECRETS = listOf("KEYSTORE_FILE", "KEYSTORE_PASSWORD", "KEYSTORE_KEY_ALIAS")
+
+        /**
+         * The keys named in `secrets.properties`, or null when none of the
+         * hybrid ones are there. Some but not all of them fails the build:
+         * a release meant to be hybrid must never quietly go out without it.
+         */
+        fun fromSecrets(secret: (String) -> String?): HybridSigningKeys? {
+            if (HYBRID_SECRETS.none { secret(it) != null }) return null
+            val missing = (HYBRID_SECRETS + RELEASE_SECRETS).filter { secret(it) == null }
+            if (missing.isNotEmpty()) {
+                throw GradleException(
+                    "Hybrid APK signing is half set up: secrets.properties lacks ${missing.joinToString()}",
+                )
+            }
+
+            fun required(key: String) = requireNotNull(secret(key))
+            return HybridSigningKeys(
+                standalone = File(required("KEYSTORE_FILE")),
+                standaloneAlias = required("KEYSTORE_KEY_ALIAS"),
+                standalonePassword = required("KEYSTORE_PASSWORD"),
+                standaloneKeyPassword = secret("KEYSTORE_KEY_PASSWORD") ?: required("KEYSTORE_PASSWORD"),
+                hybrid = File(required("HYBRID_KEYSTORE_FILE")),
+                hybridPassword = required("HYBRID_KEYSTORE_PASSWORD"),
+                classicalAlias = secret("HYBRID_CLASSICAL_KEY_ALIAS") ?: "hybrid-classical",
+                pqcAlias = secret("HYBRID_PQC_KEY_ALIAS") ?: "hybrid-pqc",
+                classicalLineage = File(required("HYBRID_CLASSICAL_LINEAGE")),
+                pqcLineage = File(required("HYBRID_PQC_LINEAGE")),
+            )
+        }
+    }
+}
+
+/**
+ * Re-signs a release variant's APKs (already signed with the release key by
+ * the Android Gradle plugin, which can't make a hybrid signature) with
+ * `apksigner`: the release key for Android 16 and earlier, the hybrid
+ * classical + ML-DSA pair for Android 17 and later, then verifies each one.
+ * Wired as a transform of the APK artifact, so `assemble`, `install` and the
+ * output folder all get the hybrid-signed APKs, never the others.
+ */
+abstract class SignApksHybrid : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val inputApks: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputApks: DirectoryProperty
+
+    @get:Internal
+    abstract val transformationRequest: Property<ArtifactTransformationRequest<SignApksHybrid>>
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val apksignerJar: RegularFileProperty
+
+    @get:Internal
+    abstract val nativeLibs: DirectoryProperty
+
+    // apksigner runs on its own JDK, new enough for ML-DSA keys, whatever JDK Gradle runs on.
+    @get:Nested
+    abstract val javaLauncher: Property<JavaLauncher>
+
+    // The keystores and lineages are read by apksigner; a changed key re-signs.
+    @get:Internal
+    abstract val keys: Property<HybridSigningKeys>
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    val keyFiles get() = keys.map { listOf(it.standalone, it.hybrid, it.classicalLineage, it.pqcLineage) }
+
+    @get:Input
+    val keyAliases get() = keys.map { listOf(it.standaloneAlias, it.classicalAlias, it.pqcAlias) }
+
+    @TaskAction
+    fun sign() {
+        val k = keys.get()
+        transformationRequest.get().submit(this) { artifact ->
+            val input = File(artifact.outputFile)
+            val output = outputApks.file(input.name).get().asFile
+            apksigner(
+                "sign",
+                "--ks",
+                k.standalone.path,
+                "--ks-key-alias",
+                k.standaloneAlias,
+                "--ks-pass",
+                "env:$ENV_STANDALONE_PASSWORD",
+                "--key-pass",
+                "env:$ENV_STANDALONE_KEY_PASSWORD",
+                "--next-signer",
+                "--ks",
+                k.hybrid.path,
+                "--ks-key-alias",
+                k.classicalAlias,
+                "--ks-pass",
+                "env:$ENV_HYBRID_PASSWORD",
+                "--signer-lineage",
+                k.classicalLineage.path,
+                "--hybrid-signer-role",
+                "classical",
+                "--next-signer",
+                "--ks",
+                k.hybrid.path,
+                "--ks-key-alias",
+                k.pqcAlias,
+                "--ks-pass",
+                "env:$ENV_HYBRID_PASSWORD",
+                "--signer-lineage",
+                k.pqcLineage.path,
+                "--hybrid-signer-role",
+                "pqc",
+                "--out",
+                output.path,
+                input.path,
+            )
+            apksigner("verify", "--verbose", output.path)
+            output
+        }
+    }
+
+    private fun apksigner(vararg args: String) {
+        val k = keys.get()
+        val java =
+            javaLauncher
+                .get()
+                .executablePath.asFile.path
+        val command =
+            listOf(
+                java,
+                "--enable-native-access=ALL-UNNAMED",
+                "-Djava.library.path=${nativeLibs.get().asFile}",
+                "-jar",
+                apksignerJar.get().asFile.path,
+            ) +
+                args
+        val process =
+            ProcessBuilder(command)
+                .redirectErrorStream(true)
+                .apply {
+                    environment()[ENV_STANDALONE_PASSWORD] = k.standalonePassword
+                    environment()[ENV_STANDALONE_KEY_PASSWORD] = k.standaloneKeyPassword
+                    environment()[ENV_HYBRID_PASSWORD] = k.hybridPassword
+                }.start()
+        val log = process.inputStream.bufferedReader().readText()
+        if (process.waitFor() != 0) throw GradleException("apksigner ${args.first()} failed:\n$log")
+        logger.info(log)
+    }
+
+    companion object {
+        // Reading ML-DSA keys takes JDK 24 or later, where keytool and the JCA
+        // know the algorithm; 25 is the long-term release after it.
+        const val JDK_VERSION = 25
+
+        // The passwords reach apksigner through its environment, never its command line.
+        private const val ENV_STANDALONE_PASSWORD = "CURRENCIX_STANDALONE_PASSWORD"
+        private const val ENV_STANDALONE_KEY_PASSWORD = "CURRENCIX_STANDALONE_KEY_PASSWORD"
+        private const val ENV_HYBRID_PASSWORD = "CURRENCIX_HYBRID_PASSWORD"
     }
 }
 

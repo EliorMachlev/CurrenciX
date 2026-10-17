@@ -1,11 +1,16 @@
 package com.eliormachlev.currencix.alert
 
 import android.Manifest
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
+import android.text.SpannableString
+import android.text.Spanned
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -68,7 +73,8 @@ private fun notifyReached(
     val number = { value: BigDecimal ->
         value.roundForDisplay(ALERT_RATE_DECIMALS).toHumanReadableNumber(context, decimalPlaces = ALERT_RATE_DECIMALS)
     }
-    val title = context.getString(R.string.alert_notification_title, from.iso4217Alpha(), to.iso4217Alpha(), number(rate))
+    val rateText = number(rate)
+    val title = context.getString(R.string.alert_notification_title, from.iso4217Alpha(), to.iso4217Alpha(), rateText)
     val textRes = if (alert.direction == AlertDirection.ABOVE) R.string.alert_notification_above else R.string.alert_notification_below
     val text = context.getString(textRes, from.iso4217Alpha(), number(alert.threshold), to.iso4217Alpha())
     val open =
@@ -82,13 +88,46 @@ private fun notifyReached(
         NotificationCompat
             .Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alert_active)
-            .setContentTitle(title)
+            .setContentTitle(withRateColor(title, rateText, alert.direction))
             .setContentText(text)
             .setContentIntent(open)
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .build()
     NotificationManagerCompat.from(context).notify(alert.id.hashCode(), notification)
+}
+
+// Android 17's notification colors: the rate in the title green when it has
+// risen to the alert, red when it has fallen to it, the way a ticker shows a
+// move. Earlier versions show it plain.
+private fun withRateColor(
+    title: String,
+    rateText: String,
+    direction: AlertDirection,
+): CharSequence =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) {
+        title.withSpanOnLast(rateText, Notification.createSemanticStyleAnnotation(direction.semanticStyle))
+    } else {
+        title
+    }
+
+/** The notification color for an alert in this direction: up is green ("safe"), down is red ("danger"). */
+@get:RequiresApi(Build.VERSION_CODES.CINNAMON_BUN)
+internal val AlertDirection.semanticStyle: Int
+    get() =
+        when (this) {
+            AlertDirection.ABOVE -> Notification.SEMANTIC_STYLE_SAFE
+            AlertDirection.BELOW -> Notification.SEMANTIC_STYLE_DANGER
+        }
+
+/** This text with [span] over the last occurrence of [part]; unchanged when [part] isn't in it. */
+internal fun CharSequence.withSpanOnLast(
+    part: String,
+    span: Any,
+): CharSequence {
+    val start = toString().lastIndexOf(part)
+    if (part.isEmpty() || start < 0) return this
+    return SpannableString(this).apply { setSpan(span, start, start + part.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
 }
 
 // One channel, "Rate alerts", so the user can tune them in the system settings.

@@ -3,6 +3,8 @@ package com.eliormachlev.currencix.alert
 import android.Manifest
 import android.app.Application
 import android.app.NotificationManager
+import android.text.Annotation
+import android.text.Spanned
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.AlertDirection
 import com.eliormachlev.currencix.model.Currency
@@ -16,6 +18,7 @@ import com.eliormachlev.currencix.repository.serializeRateAlerts
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -87,5 +90,21 @@ class RateAlertsTest {
         db.alerts.add(reached)
         checkRateAlerts(context, db, ratesAt("3.795"))
         assertEquals(listOf(reached), db.alerts.alerts.get())
+    }
+
+    @Test
+    fun `the color goes over the rate in the title, the last time it appears`() {
+        val span = Annotation("style", "safe")
+        val colored = "USD 3 → ILS is at 3".withSpanOnLast("3", span) as Spanned
+        val spans = colored.getSpans(0, colored.length, Any::class.java)
+        assertSame(span, spans.single())
+        assertEquals(colored.length - 1, colored.getSpanStart(span))
+        assertEquals(colored.length, colored.getSpanEnd(span))
+    }
+
+    @Test
+    fun `a title without the rate stays as it is`() {
+        val title = "USD → ILS"
+        assertSame(title, title.withSpanOnLast("3.6000", Annotation("style", "safe")))
     }
 }
