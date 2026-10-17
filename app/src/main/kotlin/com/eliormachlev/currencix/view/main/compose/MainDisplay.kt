@@ -461,10 +461,6 @@ private fun rememberAmount(
 }
 
 /**
- * The picker sheet for the side the user tapped. It previews each currency
- * against the other side's amount, and keeps that side's currency unpickable.
- */
-/**
  * The currency picker for the converter's [side], wherever its pair is
  * shown: the hero card's pills and Quick conversions'. Lists today's rates
  * against the other side's amount; the other side's currency can't be picked.

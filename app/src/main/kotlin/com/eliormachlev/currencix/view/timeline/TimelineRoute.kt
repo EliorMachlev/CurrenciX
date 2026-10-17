@@ -131,12 +131,7 @@ fun TimelineRoute(
                     onChangeProvider = { sheet = TimelineSheet.Provider },
                     modifier = Modifier.weight(1f),
                     chartCapture = chartCapture,
-                    chartContent = {
-                        TimelineChartContent(model, db) { day ->
-                            if (day != null) touched.day = day
-                            model.setPastDate(day)
-                        }
-                    },
+                    chartContent = { TouchableChart(model, db, touched) },
                     chartActions = { mod ->
                         ChartDayActions(
                             model = model,
@@ -314,6 +309,20 @@ private fun TimelineChartContent(
 @Stable
 private class TouchedDay {
     var day by mutableStateOf<LocalDate?>(null)
+}
+
+// The chart, remembering the day a touch lands on (for the chips under it)
+// and showing that day's figures.
+@Composable
+private fun TouchableChart(
+    model: TimelineViewModel,
+    db: Database,
+    touched: TouchedDay,
+) {
+    TimelineChartContent(model, db) { day ->
+        if (day != null) touched.day = day
+        model.setPastDate(day)
+    }
 }
 
 @Composable
