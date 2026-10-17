@@ -68,11 +68,11 @@ class QuickConversionsScreenshotTest {
             listOf(
                 QuickConversionsRow(
                     "ILS ₪ 1",
-                    "USD $ 0.3249",
-                    "+ 1% = USD $ 0.3281",
+                    "USD $ 0.32",
+                    "+ 1% = USD $ 0.33",
                     fromValue = "1",
-                    toValue = "0.3249",
-                    withFeeValue = "0.3281",
+                    toValue = "0.32",
+                    withFeeValue = "0.33",
                     feePercent = "+ 1%",
                 ),
                 QuickConversionsRow(
@@ -98,7 +98,7 @@ class QuickConversionsScreenshotTest {
 
         private val SAMPLE_ROWS =
             listOf(
-                QuickConversionsRow("USD $ 1", "EUR € 0.9200", null, fromValue = "1", toValue = "0.9200"),
+                QuickConversionsRow("USD $ 1", "EUR € 0.92", null, fromValue = "1", toValue = "0.92"),
                 QuickConversionsRow("USD $ 5", "EUR € 4.60", null, fromValue = "5", toValue = "4.60"),
                 QuickConversionsRow("USD $ 10", "EUR € 9.20", null, fromValue = "10", toValue = "9.20"),
                 QuickConversionsRow("USD $ 50", "EUR € 46.00", null, fromValue = "50", toValue = "46.00"),

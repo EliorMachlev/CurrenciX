@@ -112,6 +112,7 @@ private fun rememberQuickConversionsTable(
     val typed by viewModel.getCurrentBaseValueAsNumber().observeAsState()
     // Observed for recomposition; feeStackFor() itself isn't snapshot-observed.
     val fees by viewModel.getFees().collectAsStateWithLifecycle()
+    val decimalPlaces by viewModel.getDecimalPlaces().collectAsStateWithLifecycle()
     val warning = status.banner.value?.text
 
     val feeStack: BigDecimal =
@@ -120,13 +121,13 @@ private fun rememberQuickConversionsTable(
             val pairTo = to
             if (pairFrom != null && pairTo != null) viewModel.feeStackFor(pairFrom, pairTo) else BigDecimal.ONE
         }
-    return remember(from, to, rates, typed, feeStack, warning) {
+    return remember(from, to, rates, typed, feeStack, decimalPlaces, warning) {
         val pairFrom = from
         val pairTo = to
         val current = rates
         val rows =
             if (pairFrom != null && pairTo != null && current != null) {
-                buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, typed))
+                buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, typed, decimalPlaces))
             } else {
                 emptyList()
             }

@@ -30,8 +30,9 @@ class QuickConversionRowsTest {
     private fun rows(
         typed: BigDecimal? = null,
         feeStack: BigDecimal = BigDecimal.ONE,
+        decimalPlaces: Int = 2,
     ) = buildQuickConversionRows(
-        QuickConversionRowInputs(RuntimeEnvironment.getApplication(), Currency.USD, Currency.EUR, RATES, feeStack, typed),
+        QuickConversionRowInputs(RuntimeEnvironment.getApplication(), Currency.USD, Currency.EUR, RATES, feeStack, typed, decimalPlaces),
     )
 
     @Test
@@ -55,8 +56,8 @@ class QuickConversionRowsTest {
     fun `a row reads code, symbol and amount on each side`() {
         val row = rows().first { it.amount.compareTo(BigDecimal.ONE) == 0 }
         assertEquals("USD $ 1", row.amountFromText)
-        assertEquals("EUR € 0.8000", row.amountToText)
-        assertEquals("USD $ 1 = EUR € 0.8000", row.copyText)
+        assertEquals("EUR € 0.80", row.amountToText)
+        assertEquals("USD $ 1 = EUR € 0.80", row.copyText)
     }
 
     @Test
@@ -76,5 +77,19 @@ class QuickConversionRowsTest {
         assertEquals("808.00", row.withFeeValue)
         assertEquals("+ 1%", row.feePercent)
         assertNull(rows().first().withFeeValue)
+    }
+
+    @Test
+    fun `results round to the user's decimal places, small ones too`() {
+        val one = { places: Int ->
+            rows(feeStack = BigDecimal("1.01"), decimalPlaces = places).first {
+                it.amount.compareTo(BigDecimal.ONE) ==
+                    0
+            }
+        }
+        assertEquals("0.8000", one(4).toValue)
+        assertEquals("0.8080", one(4).withFeeValue)
+        assertEquals("1", one(0).toValue)
+        assertEquals("0.8", one(1).toValue)
     }
 }

@@ -12,9 +12,6 @@ import java.math.MathContext
 import java.math.RoundingMode
 
 private val QUICK_AMOUNTS: List<BigDecimal> = listOf("1", "5", "10", "20", "50", "100", "500", "1000").map(::BigDecimal)
-private const val ROW_DEFAULT_DECIMALS = 2
-private const val ROW_SMALL_AMOUNT_DECIMALS = 4
-private val ROW_SMALL_AMOUNT_THRESHOLD: BigDecimal = BigDecimal.ONE
 
 // Fee percent shown on a row ("+ 1%"), as on the converter's fee chip.
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
@@ -33,6 +30,9 @@ data class QuickConversionRowInputs(
     // The amount in the converter: a row of its own, in order, when it isn't
     // one of the round amounts already.
     val typed: BigDecimal? = null,
+    // The user's decimal places (Settings → Converter), as the converter
+    // shows its result: every result in the table rounds to it.
+    val decimalPlaces: Int,
 )
 
 /**
@@ -51,8 +51,15 @@ fun buildQuickConversionRows(inputs: QuickConversionRowInputs): List<QuickConver
         val fair = amount.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
         // "1,000", grouped as the results are.
         val fromValue = amount.stripTrailingZeros().toPlainString().toHumanReadableNumber(inputs.ctx)
-        val toValue = fair.formatForRow(inputs.ctx)
-        val withFeeValue = feePercent?.let { fair.multiply(inputs.feeStack, MathContext.DECIMAL128).formatForRow(inputs.ctx) }
+        val toValue = fair.formatForRow(inputs.ctx, inputs.decimalPlaces)
+        val withFeeValue =
+            feePercent?.let {
+                fair
+                    .multiply(
+                        inputs.feeStack,
+                        MathContext.DECIMAL128,
+                    ).formatForRow(inputs.ctx, inputs.decimalPlaces)
+            }
         QuickConversionsRow(
             amountFromText = moneyLabel(inputs.from, fromValue),
             amountToText = moneyLabel(inputs.to, toValue),
@@ -87,12 +94,8 @@ private fun feePercentLabel(
     return "$sign ${percent.abs().toHumanReadableNumber(ctx, trim = true)}%"
 }
 
-private fun BigDecimal.formatForRow(ctx: Context): String {
-    val decimals =
-        if (this.abs() >= ROW_SMALL_AMOUNT_THRESHOLD) {
-            ROW_DEFAULT_DECIMALS
-        } else {
-            ROW_SMALL_AMOUNT_DECIMALS
-        }
-    return this.setScale(decimals, RoundingMode.HALF_UP).toHumanReadableNumber(ctx)
-}
+// Rounded to the user's [decimals], grouped and in the locale's separator.
+private fun BigDecimal.formatForRow(
+    ctx: Context,
+    decimals: Int,
+): String = setScale(decimals, RoundingMode.HALF_UP).toHumanReadableNumber(ctx)

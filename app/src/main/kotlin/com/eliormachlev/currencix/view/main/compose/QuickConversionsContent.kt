@@ -59,7 +59,7 @@ data class QuickConversionsRow(
     val amount: BigDecimal = BigDecimal.ZERO,
     // The converter's own amount, set apart from the round ones.
     val isTyped: Boolean = false,
-    // The table's cells: the bare numbers, "1" / "0.3249" / "0.3281", under
+    // The table's cells: the bare numbers, "1" / "0.32" / "0.33", under
     // headers naming the currencies; the texts above are for copy and share.
     val fromValue: String = "",
     val toValue: String = "",
