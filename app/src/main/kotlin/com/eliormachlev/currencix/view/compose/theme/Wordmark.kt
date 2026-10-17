@@ -1,9 +1,8 @@
 package com.eliormachlev.currencix.view.compose.theme
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,105 +13,107 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.view.compose.Ltr
 
-// U+00D7 MULTIPLICATION SIGN, not the letter X — a semantic pun on
-// conversion. Split into two Text nodes so the × can be larger and
-// center-aligned against the cap-height of "Currenci" (SpanStyle can't
-// change the box height an AnnotatedString glyph is measured in, so it
-// couldn't optically center on its own).
-private const val WORDMARK_X_SCALE = 1.35f
+// The logo stands in for the × of "Currenci×", larger than the letters:
+// this many times the font size across.
+private const val MARK_SCALE = 1.5f
 
-// TransformOrigin vertical pivot: 0.5 = center of the glyph's box. Used so
-// the × grows outward from its optical middle rather than from the top.
-private const val TRANSFORM_ORIGIN_CENTER = 0.5f
+// Air between "Currenci" and the logo, as a fraction of the font size.
+private const val MARK_GAP = 0.08f
 
 /**
- * The wordmark's reveal, the × growing in, which plays once per cold start
- * ([play]), and its hand-off with the splash screen: [onFirstFrame] tells
- * the host the wordmark is composed, and the splash, which holds until
- * then, fades over the reveal's opening frames.
+ * The wordmark's reveal, the logo's arrows turning into place, which plays
+ * once per cold start ([play]), and its hand-off with the splash screen:
+ * [onFirstFrame] tells the host the wordmark is composed, and the splash,
+ * which holds until then, fades over the turn's opening frames.
  */
 class WordmarkReveal(
     val play: Boolean,
     val onFirstFrame: () -> Unit = {},
 ) {
     companion object {
-        /** No reveal: the × is drawn from the start. */
+        /** No reveal: the logo is at rest from the start. */
         val Shown = WordmarkReveal(play = false)
     }
 }
 
+/**
+ * "Currenci" and the app's logo ([BrandMark]) as its ×. The logo's arrows
+ * turn into place on a cold start ([reveal]), keep turning while [turning]
+ * (rates refreshing), and turn when the wordmark is tapped, which calls
+ * [onClick] (a refresh) when it's set.
+ */
 @Composable
 fun Wordmark(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 22.sp,
     color: Color = MaterialTheme.colorScheme.onBackground,
-    accentColor: Color = MaterialTheme.colorScheme.primary,
-    // The cold-start reveal and its hand-off with the splash screen; by
-    // default the × is simply shown.
     reveal: WordmarkReveal = WordmarkReveal.Shown,
+    turning: Boolean = false,
+    onClick: (() -> Unit)? = null,
 ) {
-    val base =
+    val style =
         TextStyle(
             fontFamily = SpaceGrotesk,
             fontSize = fontSize,
             fontWeight = FontWeight.Medium,
             letterSpacing = (-0.01).em,
         )
-    // Initial value is the final scale when the reveal doesn't play, so the
-    // × is fully drawn immediately on config change / navigation returns.
-    val xScale = remember(reveal) { Animatable(if (reveal.play) 0f else 1f) }
+    val turns = remember(reveal) { MarkTurns(launch = reveal.play) }
+    val isTurning by rememberUpdatedState(turning)
     val firstFrameCallback by rememberUpdatedState(reveal.onFirstFrame)
     // Tell the host we're mounted before any animation starts: the splash
     // hand-off releases its keep-on-screen guard on this, so the platform's
-    // exit animation can overlap the reveal's opening frames. Run as the
+    // exit animation can overlap the turn's opening frames. Run as the
     // composition is applied rather than from a coroutine — the splash holds
     // every draw until it hears this, so it must not wait on a dispatcher.
     DisposableEffect(Unit) {
         firstFrameCallback()
         onDispose {}
     }
-    LaunchedEffect(reveal) {
-        if (reveal.play) {
-            xScale.animateTo(
-                targetValue = 1f,
-                animationSpec = Motion.flourish(),
-            )
-        }
-    }
-    val tintTarget by rememberUpdatedState(if (xScale.value >= 1f) accentColor else color)
-    val xColor by animateColorAsState(
-        targetValue = tintTarget,
-        animationSpec = tween(durationMillis = Motion.LONG_MILLIS),
-        label = "wordmarkXTint",
-    )
+    LaunchedEffect(turns) { turns.run { isTurning } }
+    val density = LocalDensity.current
+    val markSize = with(density) { (fontSize * MARK_SCALE).toDp() }
+    val gap = with(density) { (fontSize * MARK_GAP).toDp() }
+    val name = stringResource(R.string.app_name)
+    val tap =
+        onClick?.let { action ->
+            Modifier
+                .clip(MaterialTheme.shapes.small)
+                .hapticClickable(onClickLabel = stringResource(R.string.menu_refresh)) {
+                    action()
+                    turns.turnOnce()
+                }
+        } ?: Modifier
     // A logo: "Currenci×" in every language, even in a right-to-left top bar.
     Ltr {
         Row(
-            modifier = modifier,
+            modifier = modifier.then(tap).semantics { contentDescription = name },
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "Currenci", color = color, style = base)
-            Text(
-                text = "\u00D7",
-                color = xColor,
-                style = base.copy(fontSize = fontSize * WORDMARK_X_SCALE),
+            Text(text = "Currenci", color = color, style = style, modifier = Modifier.clearAndSetSemantics {})
+            BrandMark(
+                rotation = { turns.rotation },
+                crossColor = color,
                 modifier =
-                    Modifier.graphicsLayer {
-                        val s = xScale.value
-                        scaleX = s
-                        scaleY = s
-                        transformOrigin = TransformOrigin(0f, TRANSFORM_ORIGIN_CENTER)
-                    },
+                    Modifier
+                        .padding(start = gap)
+                        .size(markSize),
             )
         }
     }

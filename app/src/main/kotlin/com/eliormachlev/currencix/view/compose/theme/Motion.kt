@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.compose.theme
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.TweenSpec
@@ -13,7 +12,8 @@ import androidx.compose.animation.core.tween
  * "make it snappier" is a one-file change and similar gestures move alike.
  *
  * Durations sit on the Material 3 scale: short for small, direct feedback,
- * medium for elements entering or leaving, long only for one-off flourishes.
+ * medium for elements entering or leaving, long for the logo's turn and a
+ * chart drawing in.
  * Anything the user can re-trigger mid-flight (taps, drags, panels) uses a
  * spring instead: an interrupted spring keeps its velocity, where a tween
  * restarting from its current value visibly kinks.
@@ -31,8 +31,8 @@ internal object Motion {
     /** Gap between successive items of a staggered entrance. */
     const val STAGGER_MILLIS = 20L
 
-    /** One-off flourish — the launch wordmark. */
-    const val LONG_MILLIS = 320
+    /** A half turn of the logo's arrows (BrandMark): on launch, per refresh. */
+    const val TURN_MILLIS = 600
 
     /** A line drawing itself across a chart. */
     const val DRAW_MILLIS = 600
@@ -53,8 +53,8 @@ internal object Motion {
     /** A chart's line drawing itself in: long, decelerating. */
     fun <T> draw(): TweenSpec<T> = tween(DRAW_MILLIS, easing = FastOutSlowInEasing)
 
-    /** One-off flourish: long, decelerating. */
-    fun <T> flourish(): TweenSpec<T> = tween(LONG_MILLIS, easing = LinearOutSlowInEasing)
+    /** A half turn of the logo's arrows: long, eased at both ends, as on the splash. */
+    fun <T> turn(): TweenSpec<T> = tween(TURN_MILLIS, easing = FastOutSlowInEasing)
 
     /** Tap-driven motion (rotations, toggles): interruptible, a touch of overshoot. */
     fun <T> snappy(visibilityThreshold: T? = null): SpringSpec<T> =

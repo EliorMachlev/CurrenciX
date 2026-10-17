@@ -7,6 +7,12 @@ import androidx.compose.ui.graphics.Color
 val BillGreen = Color(0xFF85BB65)
 val BillGreenInk = Color(0xFF0F2A05)
 val Brass = Color(0xFFB8985B)
+
+// The logo's arrows on paper (BrandMark): bill green and brass darkened so
+// they keep their contrast; on ink they're BillGreen and Brass. Kept in sync
+// with the brandMark* colours in res/values*/colors.xml (the splash's mark).
+val BrandGreenOnPaper = Color(0xFF5E9A40)
+val BrandBrassOnPaper = Color(0xFF9C7C3E)
 val Vermillion = Color(0xFFC1443A)
 val Amber = Color(0xFFE0A144)
 

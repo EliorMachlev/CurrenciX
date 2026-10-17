@@ -60,8 +60,16 @@ private fun MainScreenPreview(drawer: DrawerValue = DrawerValue.Closed) {
             ConverterTopBar(
                 drawerState = drawerState,
                 onToggleDrawer = {},
-                actions = ConverterTopBarActions(onTimeline = {}, onCart = {}, onQuickConversions = {}, onHistoricalRates = {}),
+                actions =
+                    ConverterTopBarActions(
+                        onTimeline = {},
+                        onCart = {},
+                        onQuickConversions = {},
+                        onHistoricalRates = {},
+                        onRefresh = {},
+                    ),
                 reveal = WordmarkReveal.Shown,
+                isRefreshing = false,
             )
         },
         displayContent = {

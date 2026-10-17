@@ -120,6 +120,7 @@ internal fun ConverterRoute(
                     onToggleDrawer = { scope.launch { drawerState.toggle() } },
                     actions = topBarActions(onAction),
                     reveal = reveal,
+                    isRefreshing = isUpdating,
                 )
             },
             displayContent = {
@@ -208,6 +209,7 @@ private fun topBarActions(open: (DrawerAction) -> Unit) =
         onCart = { open(DrawerAction.Cart) },
         onQuickConversions = { open(DrawerAction.QuickConversions) },
         onHistoricalRates = { open(DrawerAction.DatePicker) },
+        onRefresh = { open(DrawerAction.Refresh) },
     )
 
 // A drawer entry that opens another screen starts closing the drawer, but

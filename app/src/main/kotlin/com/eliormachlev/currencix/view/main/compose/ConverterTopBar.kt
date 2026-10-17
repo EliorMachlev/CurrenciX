@@ -58,13 +58,15 @@ data class ConverterTopBarActions(
     val onCart: () -> Unit,
     val onQuickConversions: () -> Unit,
     val onHistoricalRates: () -> Unit,
+    val onRefresh: () -> Unit,
 )
 
 /**
  * The converter's top bar: drawer button, the Currenci× wordmark, and the
  * four highest-frequency shortcuts as always-visible icons (everything else
  * lives in the drawer). [reveal] is the wordmark's cold-start reveal and
- * its hand-off with the splash screen.
+ * its hand-off with the splash screen; its logo turns while [isRefreshing],
+ * and tapping it refreshes the rates.
  */
 @Composable
 fun ConverterTopBar(
@@ -72,10 +74,16 @@ fun ConverterTopBar(
     onToggleDrawer: () -> Unit,
     actions: ConverterTopBarActions,
     reveal: WordmarkReveal,
+    isRefreshing: Boolean,
 ) {
     TopAppBar(
         title = {
-            Wordmark(fontSize = WORDMARK_TITLE_SIZE, reveal = reveal)
+            Wordmark(
+                fontSize = WORDMARK_TITLE_SIZE,
+                reveal = reveal,
+                turning = isRefreshing,
+                onClick = actions.onRefresh,
+            )
         },
         navigationIcon = {
             val description =

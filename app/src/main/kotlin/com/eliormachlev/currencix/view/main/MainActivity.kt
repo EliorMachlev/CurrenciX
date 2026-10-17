@@ -60,11 +60,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 // Splash → wordmark hand-off overlap (#155). The splash icon fades out over
-// this window while the Compose wordmark's × reveal (Motion.LONG_MILLIS),
-// started on its first frame, runs underneath: the overlap hides the seam
-// that a hard cut would show. Ending at the reveal's first quarter; derived so
-// it tracks any change to the reveal.
-private const val SPLASH_EXIT_FADE_MILLIS = Motion.LONG_MILLIS / 4L
+// this window while the wordmark's logo turns into place (Motion.TURN_MILLIS),
+// started on its first frame, underneath: the overlap hides the seam that a
+// hard cut would show. Ending at the turn's first quarter; derived so it
+// tracks any change to the turn.
+private const val SPLASH_EXIT_FADE_MILLIS = Motion.TURN_MILLIS / 4L
 
 /**
  * The app's only Activity. Every screen — converter, timeline, cart,
@@ -349,7 +349,7 @@ class MainActivity : AppCompatActivity() {
 
     // Splash exit-animation listener. Fades the icon (still turning, see
     // brand_mark_animated) over SPLASH_EXIT_FADE_MILLIS while the
-    // wordmark's × reveal, already started on its first frame, runs
+    // wordmark's logo turn, already started on its first frame, runs
     // underneath, and removes the SplashScreenView so later
     // frames aren't overdrawn by the leftover splash surface.
     //
