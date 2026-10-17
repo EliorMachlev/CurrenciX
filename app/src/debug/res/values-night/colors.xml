@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- See values/colors.xml: the main values-night outranks debug's values,
+     so the splash's × is overridden here too. -->
+<resources>
+    <color name="brandMarkCross">@color/debugMarkCross</color>
+</resources>

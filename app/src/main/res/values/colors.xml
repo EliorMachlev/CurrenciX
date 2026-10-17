@@ -21,6 +21,9 @@
    <color name="splashBackground">@color/paperBg</color>
    <!-- The launcher icon's ×; debug builds make it red (src/debug). -->
    <color name="launcherMarkCross">@color/inkForeground</color>
+   <!-- The logo's × in debug builds, wherever it's drawn: the launcher icon
+        and splash (src/debug overrides) and the top bar (BrandMark). -->
+   <color name="debugMarkCross">#E5534B</color>
 
    <!-- Legacy aliases kept for XML that still references the old names.
         Point them at the brand palette so nothing regresses. -->

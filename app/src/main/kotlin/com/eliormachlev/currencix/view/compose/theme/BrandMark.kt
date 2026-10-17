@@ -23,7 +23,9 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import kotlinx.coroutines.flow.first
 
@@ -43,7 +45,8 @@ private const val FULL_TURN = 360f
  * The app's mark, as on the launcher icon and the splash screen: two arrows
  * swapping around a "×", drawn from the same paths (values/brand_mark.xml).
  * [rotation] turns the arrows, in degrees; the × stays still. The arrows
- * are green over brass, in the tones that read on the current background.
+ * are green over brass, in the tones that read on the current background;
+ * the × is [crossColor], or red in a debug build, as on its launcher icon.
  */
 @Composable
 fun BrandMark(
@@ -55,6 +58,7 @@ fun BrandMark(
     val onInk = MaterialTheme.colorScheme.background.luminance() < INK_LUMINANCE
     val green = if (onInk) BillGreen else BrandGreenOnPaper
     val brass = if (onInk) Brass else BrandBrassOnPaper
+    val cross = if (BuildConfig.DEBUG) colorResource(R.color.debugMarkCross) else crossColor
     Canvas(modifier) {
         val scale = size.minDimension / (2 * SAFE_RADIUS)
         withTransform({
@@ -65,7 +69,7 @@ fun BrandMark(
                 drawArrow(paths.top, green, paths.rounding)
                 drawArrow(paths.bottom, brass, paths.rounding)
             }
-            drawPath(paths.cross, crossColor, style = Stroke(width = paths.crossWidth, cap = StrokeCap.Round))
+            drawPath(paths.cross, cross, style = Stroke(width = paths.crossWidth, cap = StrokeCap.Round))
         }
     }
 }

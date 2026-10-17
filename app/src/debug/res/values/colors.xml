@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Debug builds draw the logo's × in red (debugMarkCross) to tell them from
+     a release: on the launcher icon and on the splash, here and in
+     values-night; the top bar's BrandMark checks BuildConfig.DEBUG. -->
 <resources>
-    <!-- Debug builds: the launcher icon's × in red, to tell them from a release
-         on the home screen. -->
-    <color name="launcherMarkCross">#E5534B</color>
+    <color name="launcherMarkCross">@color/debugMarkCross</color>
+    <color name="brandMarkCross">@color/debugMarkCross</color>
 </resources>
