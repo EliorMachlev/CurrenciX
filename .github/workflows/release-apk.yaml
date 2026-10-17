@@ -1,0 +1,109 @@
+name: Signed release APKs
+
+# Builds the fdroid release APKs signed with the release key and Android 17's
+# post-quantum hybrid signature (APK Signature Scheme v3.2), for GitHub
+# releases. Started by hand only (Actions → Signed release APKs → Run
+# workflow), so the signing keys are never exposed to a pull request.
+#
+# Repository secrets it needs (Settings → Secrets and variables → Actions):
+#   RELEASE_KEYSTORE_B64      base64 of the release keystore (release.p12)
+#   RELEASE_KEYSTORE_PASSWORD its password
+#   HYBRID_KEYSTORE_B64       base64 of the hybrid keystore (hybrid.p12)
+#   HYBRID_KEYSTORE_PASSWORD  its password
+# The lineages tying the hybrid keys to the release key hold certificates
+# only and are in the repository (signing-lineages/). See
+# docs/markDown/build-and-flavors.md, "Post-quantum signing".
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: read
+
+env:
+  RELEASE_KEY_ALIAS: currencix-release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup java environment
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          # 24+ reads the ML-DSA key; the signing step runs on a JDK 25 toolchain.
+          java-version: 25
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          # No build cache entries from a run that held the signing keys.
+          cache-read-only: true
+
+      - name: Write the signing keys
+        env:
+          RELEASE_KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE_B64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          HYBRID_KEYSTORE_B64: ${{ secrets.HYBRID_KEYSTORE_B64 }}
+          HYBRID_KEYSTORE_PASSWORD: ${{ secrets.HYBRID_KEYSTORE_PASSWORD }}
+        run: |
+          for name in RELEASE_KEYSTORE_B64 RELEASE_KEYSTORE_PASSWORD HYBRID_KEYSTORE_B64 HYBRID_KEYSTORE_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository secret $name is missing (see the comment at the top of release-apk.yaml)"
+              exit 1
+            fi
+          done
+          umask 077
+          keys="$RUNNER_TEMP/signing"
+          mkdir -p "$keys"
+          echo "$RELEASE_KEYSTORE_B64" | base64 --decode > "$keys/release.p12"
+          echo "$HYBRID_KEYSTORE_B64" | base64 --decode > "$keys/hybrid.p12"
+          {
+            echo "KEYSTORE_FILE=$keys/release.p12"
+            echo "KEYSTORE_PASSWORD=$RELEASE_KEYSTORE_PASSWORD"
+            echo "KEYSTORE_KEY_ALIAS=$RELEASE_KEY_ALIAS"
+            echo "KEYSTORE_KEY_PASSWORD=$RELEASE_KEYSTORE_PASSWORD"
+            echo "HYBRID_KEYSTORE_FILE=$keys/hybrid.p12"
+            echo "HYBRID_KEYSTORE_PASSWORD=$HYBRID_KEYSTORE_PASSWORD"
+            echo "HYBRID_CLASSICAL_LINEAGE=$GITHUB_WORKSPACE/signing-lineages/classical-lineage"
+            echo "HYBRID_PQC_LINEAGE=$GITHUB_WORKSPACE/signing-lineages/pqc-lineage"
+          } > secrets.properties
+
+      # signApksHybridFdroidRelease re-signs each APK and verifies it.
+      - name: Build the signed fdroid release APKs
+        run: ./gradlew assembleFdroidRelease
+
+      - name: Remove the signing keys
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/signing" secrets.properties
+
+      - name: Read the version
+        id: version
+        run: echo "name=$(sed -n 's/.*versionName = "\(.*\)"/\1/p' app/build.gradle.kts | head -1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the APKs
+        id: upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: currencix-${{ steps.version.outputs.name }}-signed
+          path: app/build/outputs/apk/fdroid/release/*-release.apk
+          if-no-files-found: error
+
+      - name: Link the APKs in the run summary
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+          VERSION: ${{ steps.version.outputs.name }}
+        run: |
+          {
+            echo "### Signed release APKs, CurrenciX ${VERSION}"
+            echo
+            echo "[Download the APKs](${ARTIFACT_URL}) (a zip: one per CPU type, and the universal one that installs everywhere)."
+            echo
+            echo "Signed with the release key (v3.0, all Android versions) and the post-quantum hybrid signature (v3.2, Android 17+)."
+          } >> "$GITHUB_STEP_SUMMARY"

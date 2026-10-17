@@ -205,7 +205,13 @@ Without it, release builds come out unsigned (what F-Droid builds: it signs with
 
 Release APKs can also carry Android 17's hybrid signature (APK Signature Scheme v3.2): a new classical key plus an ML-DSA-65 key, which a quantum computer couldn't forge. Android 17 and later verify it; Android 16 and earlier keep verifying the release key, which still signs every APK. Only APKs the project signs itself are affected (GitHub releases, `install`): F-Droid signs with its own key, and Play re-signs bundles (it plans its own hybrid upgrade).
 
-1. Once, on your own machine: `scripts/create-hybrid-signing-keys.sh path/to/release.jks <release-key-alias>` (JDK 24+, build-tools 37+). It makes the release key if there isn't one yet, the two hybrid keys in `signing/hybrid.p12`, and a lineage for each (`signing/classical-lineage`, `signing/pqc-lineage`) that rotates from the release key to it, without rollback.
+**The keys exist** (made 2026-10-17): the release key (`release.p12`, alias `currencix-release`, EC P-521, certificate SHA-256 `5c:f5:cb:30:0f:0d:a0:76:f7:bc:fd:36:5e:f8:3b:67:c6:46:d6:2a:d8:64:7a:6d:f4:6b:95:85:df:a3:00:99`) and the hybrid pair (`hybrid.p12`: `hybrid-classical`, EC P-521, `3e:10:0d:de:…:d5:99`; `hybrid-pqc`, ML-DSA-65, `9c:18:29:84:…:dc:66`). Their lineages hold certificates only and are in the repository (`signing-lineages/`). The keystores and passwords are not: the maintainer keeps them in an encrypted backup and as repository secrets.
+
+**Releases are signed on GitHub**: Actions → **Signed release APKs** → Run workflow (`release-apk.yaml`, started by hand only, so pull requests never see the keys). It decodes the keystores from the secrets `RELEASE_KEYSTORE_B64`, `RELEASE_KEYSTORE_PASSWORD`, `HYBRID_KEYSTORE_B64` and `HYBRID_KEYSTORE_PASSWORD` into the runner's temp folder, writes `secrets.properties`, builds `assembleFdroidRelease` (which signs and verifies every APK, below), deletes the keys and uploads the five APKs. Its Gradle cache is read-only, so nothing from a run that held the keys is cached.
+
+To make new keys instead (only before the first release; after it they're permanent):
+
+1. `scripts/create-hybrid-signing-keys.sh path/to/release.jks <release-key-alias>` (JDK 24+, build-tools 37+). It makes the release key if there isn't one yet, the two hybrid keys in `signing/hybrid.p12`, and a lineage for each (`signing/classical-lineage`, `signing/pqc-lineage`) that rotates from the release key to it, without rollback.
 2. Add what it prints to `secrets.properties`:
 
    ```properties
