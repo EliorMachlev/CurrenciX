@@ -47,6 +47,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.util.DISABLED_ROW_ALPHA
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.util.ltrIsolate
 import com.eliormachlev.currencix.util.newId
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.util.toHumanReadableNumber
@@ -499,7 +500,8 @@ internal fun displayNameOf(fee: Fee): String = if (fee.name.isBlank()) stringRes
 @Composable
 internal fun feeSummaryWithInactive(fee: Fee): String {
     val context = LocalContext.current
-    val base = remember(fee.percent) { fee.percent.toHumanReadableNumber(context, suffix = "%") }
+    // Isolated left to right, so "1 %" keeps its "%" on the right in Hebrew too.
+    val base = remember(fee.percent) { ltrIsolate(fee.percent.toHumanReadableNumber(context, suffix = "%")) }
     return if (fee.isActive) {
         base
     } else {

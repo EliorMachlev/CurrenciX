@@ -9,6 +9,7 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.preference.compose.PreferenceRow
 import com.eliormachlev.currencix.view.preference.compose.PreferenceSection
 import com.eliormachlev.currencix.view.preference.compose.SettingsList
+import com.eliormachlev.currencix.view.preference.compose.feeSummaryWithInactive
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -59,7 +60,7 @@ private fun FeesScreenPreview(
                 } else {
                     PreferenceRow(
                         title = exchange.name,
-                        summary = formatPercent(exchange.percent),
+                        summary = feeSummaryWithInactive(exchange),
                     )
                 }
             }
@@ -71,7 +72,7 @@ private fun FeesScreenPreview(
                 } else {
                     PreferenceRow(
                         title = bank.name,
-                        summary = formatPercent(bank.percent),
+                        summary = feeSummaryWithInactive(bank),
                     )
                 }
             }
@@ -85,7 +86,7 @@ private fun FeesScreenPreview(
                         val arrow = if (fee.bothWays) "\u2194" else "\u2192"
                         PreferenceRow(
                             title = fee.name.ifBlank { "${fee.from} $arrow ${fee.to}" },
-                            summary = formatPercent(fee.percent),
+                            summary = feeSummaryWithInactive(fee),
                         )
                     }
                 }
@@ -97,8 +98,6 @@ private fun FeesScreenPreview(
         }
     }
 }
-
-private fun formatPercent(value: BigDecimal): String = "${value.stripTrailingZeros().toPlainString()} %"
 
 private val SAMPLE_EXCHANGE =
     Fee.GlobalExchange(

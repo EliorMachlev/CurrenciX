@@ -1,19 +1,15 @@
 package com.eliormachlev.currencix.view.preference.compose
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.eliormachlev.currencix.util.HUNDRED_PERCENT
+import com.eliormachlev.currencix.view.compose.PercentTextField
 import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 import androidx.compose.foundation.text.KeyboardOptions as ComposeKeyboardOptions
@@ -93,8 +89,8 @@ private class FeePercentInputTransformation(
 }
 
 /**
- * Numeric percent field with a "%" suffix. Unsigned decimal input in [0, 100];
- * [state] only ever holds an accepted value, with the locale separator. Use
+ * Numeric percent field, its "%" on the right in every language
+ * ([PercentTextField]). Unsigned decimal input in [0, 100]; [state] only ever holds an accepted value, with the locale separator. Use
  * [toFeePercentOrNull] on its text to parse for persistence.
  */
 @Composable
@@ -104,13 +100,7 @@ internal fun FeePercentField(
 ) {
     val sep = feePercentSeparator
     val transformation = remember(sep) { FeePercentInputTransformation(sep) }
-    OutlinedTextField(
-        state = state,
-        inputTransformation = transformation,
-        lineLimits = TextFieldLineLimits.SingleLine,
-        suffix = { Text("%", style = MaterialTheme.typography.bodyLarge) },
-        modifier = modifier.fillMaxWidth(),
-    )
+    PercentTextField(state = state, inputTransformation = transformation, modifier = modifier)
 }
 
 /**

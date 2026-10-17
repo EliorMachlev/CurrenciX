@@ -47,6 +47,7 @@ import com.eliormachlev.currencix.util.parseDecimal
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.NameInputTransformation
+import com.eliormachlev.currencix.view.compose.PercentTextField
 import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -114,15 +115,7 @@ private fun TipField(
 ) {
     val value = state.text.toString()
     Column(verticalArrangement = Arrangement.spacedBy(TIP_FIELD_GAP)) {
-        OutlinedTextField(
-            state = state,
-            label = { Text(stringResource(R.string.cart_tip_label)) },
-            suffix = { Text("%") },
-            isError = isError,
-            lineLimits = TextFieldLineLimits.SingleLine,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            modifier = Modifier.fillMaxWidth(),
-        )
+        PercentTextField(state = state, label = stringResource(R.string.cart_tip_label), isError = isError)
         // A quick rate fills the field; tapping it again clears it.
         ConnectedToggleGroup(
             options = QUICK_TIPS,
