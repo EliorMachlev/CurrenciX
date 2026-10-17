@@ -6,11 +6,11 @@
 
     The splash shows the app's mark (brand_mark, the launcher icon's shape)
     on the app's own background, paper or ink (splashBackground), so the
-    seam into the first Compose frame doesn't show. Its arrows make a half
-    turn around the ×, swapping places (brand_mark_animated). MainActivity
-    holds the splash until Compose has drawn and the turn has finished, then
-    fades the mark out while the top bar's wordmark plays its reveal, and
-    installs postSplashScreenTheme, the normal AppTheme, which MainActivity
+    seam into the first Compose frame doesn't show. Its arrows keep turning
+    around the ×, half a turn at a time, swapping places
+    (brand_mark_animated). MainActivity holds the splash until Compose has
+    drawn, then fades the mark out while the top bar's wordmark plays its
+    reveal, and installs postSplashScreenTheme, the normal AppTheme, which MainActivity
     may further swap for AppTheme.PureBlack.
 
     MainActivity is the app's only Activity; every screen is a Compose
@@ -20,7 +20,6 @@
     <style name="AppTheme.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splashBackground</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/brand_mark_animated</item>
-        <item name="windowSplashScreenAnimationDuration">@integer/brand_mark_spin_millis</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 </resources>

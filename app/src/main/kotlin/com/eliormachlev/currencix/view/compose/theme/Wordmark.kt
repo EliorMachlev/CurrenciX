@@ -38,13 +38,12 @@ private const val TRANSFORM_ORIGIN_CENTER = 0.5f
 /**
  * The wordmark's reveal, the × growing in, which plays once per cold start
  * ([play]), and its hand-off with the splash screen: [onFirstFrame] tells
- * the host the wordmark is composed (the splash holds until then), and the
- * reveal starts once [awaitStart] returns, when the splash starts to fade.
+ * the host the wordmark is composed, and the splash, which holds until
+ * then, fades over the reveal's opening frames.
  */
 class WordmarkReveal(
     val play: Boolean,
     val onFirstFrame: () -> Unit = {},
-    val awaitStart: suspend () -> Unit = {},
 ) {
     companion object {
         /** No reveal: the × is drawn from the start. */
@@ -74,7 +73,8 @@ fun Wordmark(
     val xScale = remember(reveal) { Animatable(if (reveal.play) 0f else 1f) }
     val firstFrameCallback by rememberUpdatedState(reveal.onFirstFrame)
     // Tell the host we're mounted before any animation starts: the splash
-    // hand-off releases its keep-on-screen guard on this. Run as the
+    // hand-off releases its keep-on-screen guard on this, so the platform's
+    // exit animation can overlap the reveal's opening frames. Run as the
     // composition is applied rather than from a coroutine — the splash holds
     // every draw until it hears this, so it must not wait on a dispatcher.
     DisposableEffect(Unit) {
@@ -83,9 +83,6 @@ fun Wordmark(
     }
     LaunchedEffect(reveal) {
         if (reveal.play) {
-            // Under the splash the reveal would play unseen: start it as the
-            // splash fades.
-            reveal.awaitStart()
             xScale.animateTo(
                 targetValue = 1f,
                 animationSpec = Motion.flourish(),

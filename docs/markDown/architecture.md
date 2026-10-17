@@ -275,9 +275,9 @@ Every UI icon is a Material Symbols **Rounded** glyph (weight 400, outlined, 24 
 The app has one mark: two arrows swapping around a "×", the green one over the brass one. It is the launcher icon, the themed (monochrome) icon and the splash screen; the converter's top bar shows the Currenci× wordmark, whose × is the mark's. `art/brand/generate.py` draws it and writes its paths to `res/values/brand_mark.xml`, plus the SVGs in `art/brand/` and the store icon; every drawable reads the paths from there:
 
 - `ic_launcher_foreground` (on `ic_launcher_background`, ink) and `ic_launcher_monochrome`, in `mipmap/ic_launcher`. The mark stays inside the adaptive icon's 66 dp safe circle, so no launcher mask crops it. Debug builds keep a red background to tell them apart.
-- `brand_mark`, the splash icon, in the `brandMark*` colors: darkened green and brass on paper, the brand tones on ink (`values-night`), over `splashBackground`, the app's own background. `brand_mark_animated` turns its arrows half a turn (`brand_mark_spin_millis`), so green and brass swap places.
+- `brand_mark`, the splash icon, in the `brandMark*` colors: darkened green and brass on paper, the brand tones on ink (`values-night`), over `splashBackground`, the app's own background. `brand_mark_animated` keeps turning its arrows half a turn at a time (`animator/brand_mark_spin`), so green and brass swap places, until the splash fades.
 
-The splash holds until Compose has drawn the wordmark and the turn has finished; then the mark fades (`MainActivity.fadeOutSplashIcon`) and the wordmark's × reveal starts with the fade (`WordmarkReveal.awaitStart`), once per cold start.
+The splash holds until Compose has drawn the wordmark; then the mark fades (`MainActivity.fadeOutSplashIcon`) over the opening frames of the wordmark's × reveal (`WordmarkReveal`), once per cold start.
 
 Every currency flag renders through `Currency.flagPainter()` (`painterResource` over `Currency.flagRes`), which parses each vector flag once, caches it app-wide, and draws it crisply at any size. Don't wrap flags in an `AndroidView`/`ImageView` or rasterise the `Drawable` to a bitmap. The currency picker's 190+ rows used to do the former, and it cost scroll smoothness.
 

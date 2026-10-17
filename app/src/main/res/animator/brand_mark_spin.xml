@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The splash mark's arrows make a half turn: green and brass swap places. -->
+<!--
+    The splash mark's arrows turn half a turn at a time, so green and brass
+    swap places, and keep turning until the app has drawn and the splash
+    fades. One repeat is two half turns (0 → 180 → 360°), each eased, so the
+    loop restarts with the arrows where they began.
+-->
 <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="@integer/brand_mark_spin_millis"
-    android:interpolator="@android:interpolator/fast_out_slow_in"
-    android:propertyName="rotation"
-    android:valueFrom="0"
-    android:valueTo="180"
-    android:valueType="floatType" />
+    android:duration="1600"
+    android:repeatCount="infinite"
+    android:repeatMode="restart">
+    <propertyValuesHolder
+        android:propertyName="rotation"
+        android:valueType="floatType">
+        <keyframe
+            android:fraction="0"
+            android:value="0" />
+        <keyframe
+            android:fraction="0.5"
+            android:interpolator="@android:interpolator/fast_out_slow_in"
+            android:value="180" />
+        <keyframe
+            android:fraction="1"
+            android:interpolator="@android:interpolator/fast_out_slow_in"
+            android:value="360" />
+    </propertyValuesHolder>
+</objectAnimator>
