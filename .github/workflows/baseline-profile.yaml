@@ -48,11 +48,22 @@ env:
   GMD_GPU: -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
 
 jobs:
+  # One job per flavor, side by side on their own emulators: together they
+  # came close to the time limit (about 80 of 90 minutes).
   profile:
     # Skipped when only committing an earlier run's profiles.
     if: ${{ !inputs.commit_run_id }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - flavor: fdroid
+            task: generateFdroidReleaseBaselineProfile
+          - flavor: play
+            task: generatePlayReleaseBaselineProfile
+    name: profile (${{ matrix.flavor }})
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -74,8 +85,10 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Generate baseline profiles (fdroid + play)
-        run: ./gradlew "${GMD_GPU}" :app:generateFdroidReleaseBaselineProfile :app:generatePlayReleaseBaselineProfile --stacktrace
+      - name: Generate baseline profiles (${{ matrix.flavor }})
+        env:
+          TASK: ${{ matrix.task }}
+        run: ./gradlew "${GMD_GPU}" ":app:${TASK}" --stacktrace
 
       # A journey that fails otherwise shows only as "exit code 1".
       - name: Annotate failed journeys
@@ -84,12 +97,13 @@ jobs:
           pip install --quiet defusedxml==0.7.1
           python3 .github/scripts/annotate-test-failures.py "baselineprofile/build/outputs/androidTest-results/**/*.xml"
 
-      # The profiles are the deliverable.
+      # The profiles are the deliverable: one artifact per flavor, holding the
+      # contents of app/src/<flavor>Release/generated/baselineProfiles/.
       - name: Upload baseline profiles
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: baseline-profiles
-          path: app/src/*Release/generated/baselineProfiles/
+          name: baseline-profiles-${{ matrix.flavor }}
+          path: app/src/${{ matrix.flavor }}Release/generated/baselineProfiles/
           if-no-files-found: error
 
   # Pushes profiles to the branch the workflow was run on: this run's, on a

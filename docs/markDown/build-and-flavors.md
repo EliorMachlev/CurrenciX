@@ -266,8 +266,8 @@ AOSP emulator that Gradle downloads and boots headless), so no physical
 device or manual emulator is needed. It does need hardware virtualization
 (KVM).
 
-- **CI:** `baseline-profile.yaml` generates both flavors' profiles and uploads
-  them as the `baseline-profiles` artifact. See [ci-cd.md](ci-cd.md).
+- **CI:** `baseline-profile.yaml` generates each flavor's profiles in a job of
+  its own and uploads them as `baseline-profiles-<flavor>`. See [ci-cd.md](ci-cd.md).
 - **Locally:**
 
 ```bash
