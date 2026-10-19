@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Lähtesta tutvustusringkäik</string>
+    <string name="pref_debug_reset_onboarding_summary">Kustutab esmakäivituse märgi, et esiletõstetega ringkäik kuvataks järgmisel käivitusel uuesti.</string>
+    <string name="pref_debug_reset_onboarding_toast">Tutvustus kuvatakse järgmisel käivitusel uuesti.</string>
+</resources>

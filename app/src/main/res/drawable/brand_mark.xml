@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The splash screen's mark, on paper or ink by theme (brandMark* colors). Paths: values/brand_mark.xml. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Turned by brand_mark_animated on the splash screen. -->
+    <group
+        android:name="arrows"
+        android:pivotX="54"
+        android:pivotY="54">
+        <path
+            android:fillColor="@color/brandMarkGreen"
+            android:pathData="@string/brand_mark_arrow_top"
+            android:strokeColor="@color/brandMarkGreen"
+            android:strokeLineJoin="round"
+            android:strokeWidth="@dimen/brand_mark_arrow_round" />
+        <path
+            android:fillColor="@color/brandMarkBrass"
+            android:pathData="@string/brand_mark_arrow_bottom"
+            android:strokeColor="@color/brandMarkBrass"
+            android:strokeLineJoin="round"
+            android:strokeWidth="@dimen/brand_mark_arrow_round" />
+    </group>
+    <path
+        android:pathData="@string/brand_mark_cross"
+        android:strokeColor="@color/brandMarkCross"
+        android:strokeLineCap="round"
+        android:strokeWidth="@dimen/brand_mark_cross_width" />
+</vector>

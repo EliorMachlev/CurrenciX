@@ -31,6 +31,5 @@ fun Context.formatCartAmount(
         (value ?: BigDecimal.ZERO)
             .roundForDisplay(CART_EXPORT_DISPLAY_SCALE)
             .toHumanReadableNumber(this, decimalPlaces = CART_EXPORT_DISPLAY_SCALE)
-    val marker = currency?.symbolOrIso()
-    return if (marker.isNullOrEmpty()) amount else "$amount $marker"
+    return money(amount, currency)
 }

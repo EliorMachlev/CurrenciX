@@ -1,18 +1,22 @@
 # CI / CD
 
-All automation lives in `.github/workflows/`. Every workflow pins its GitHub Actions to a full 40-character commit SHA to prevent supply-chain attacks.
+All automation lives in `.github/workflows/`. Every workflow pins its GitHub Actions to a full 40-character commit SHA to prevent supply-chain attacks. Each pin's comment names the exact release it points at (`# v7.0.1`). Every Java job runs on JDK 25 (Temurin); the app's bytecode targets Java 21.
 
 ## Workflow Summary
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `build.yaml` | Push → `master`, PR | Spotless, lint, test, build debug APK for both flavors (matrix) + fdroid release APK |
-| `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK and upload as artifact |
+| `build.yaml` | Push → `master`, PR | Spotless and Compose stability (own jobs), lint, test, build debug APK for both flavors (matrix) + fdroid release APK; failed tests become error annotations |
+| `release-apk.yaml` | Tag `v*` push, manual | The release: on a `v<versionName>` tag of a `master` commit, build the fdroid release APKs signed with the release key and the post-quantum hybrid signature (keys from repository secrets, removed after the build; Gradle cache read-only) and publish them as a GitHub release with `SHA256SUMS` and notes generated from the Conventional Commit titles since the previous tag (`.github/scripts/release-notes.py`); publishing is a separate job with `contents: write` that never sees the keys. By hand it only builds and uploads the signed APKs, and previews the notes. See build-and-flavors.md, "Post-quantum signing" |
+| `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK, upload it as an artifact, and put a download link in the run summary |
+| `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator), plus 200 % font-size captures of the densest screens, and upload the PNGs as an artifact — not a gate, nothing is verified. `ScreenshotRule` renders on a manual clock, so the suite takes about a minute; the job times out at 20 min so a capture that never settles fails fast |
+| `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles on an API 34 emulator; upload them as an artifact |
+| `benchmarks.yaml` | Push → non-master touching app code, the build, `baselineprofile/**` or the benchmark scripts, manual | Run the startup and frame-timing benchmarks on the same emulator; fail on a slowdown against the saved baseline |
 | `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |
 | `codeql.yaml` | PR, push → `master`, weekly | GitHub CodeQL (Actions YAML) |
-| `semgrep.yaml` | PR, push → `master` | SAST security pattern scanning |
-| `gitleaks.yaml` | Weekly (Mon 07:00 UTC) | Secret / credential scanning |
+| `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC) | SAST security pattern scanning |
+| `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC) | Secret / credential scanning |
 | `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC) | Dependency vulnerability scan (CVSS ≥ 7) |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
 | `scorecard.yaml` | Push → `master`, weekly | OpenSSF Scorecard supply-chain score |
@@ -20,30 +24,64 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 
 ## Build Gate (`build.yaml`)
 
-Runs on both PRs and pushes to `master`. Two jobs:
+Runs on both PRs and pushes to `master`. Three jobs, side by side:
 
-- **`build`** — matrix over `Fdroid` and `Play` flavors. Steps:
-  - `spotlessCheck` — ktlint via Spotless (see [Code Style](contributing.md#code-style))
-  - `lint<Flavor>Debug` — Android Lint (missing translations suppressed)
+- **`spotless`** — `spotlessCheck`, ktlint via Spotless (see [Code Style](contributing.md#code-style)).
+- **`compose-stability`** — compiles with `-PcomposeReports` (the Compose compiler's report of each composable, `app/build/compose-reports/`) and runs `.github/scripts/compose-stability.py`, which fails on a composable that can't skip, or one taking a parameter the compiler can't prove stable: with strong skipping that parameter is compared by identity, so a fresh but equal value recomposes it every time. Fix it by making the type stable (immutable, `@Stable` / `@Immutable` when that's true, or listed in `app/compose-stability.conf`). Keys typed `Any`, an Android `Context` and receivers are compared by identity on purpose and aren't flagged; nor are the widget's Glance composables, which compose once per update.
+- **`build`** — matrix over `Fdroid` and `Play` flavors × the three checks below, six jobs in all, each running one of:
+  - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
   - `test<Flavor>DebugUnitTest` — JUnit unit tests
   - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
 - **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and uploads it as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
 
+## Speed
+
+A PR's checks take about five minutes, all jobs running at once; the longest are the two build legs and the fdroid release build.
+
+- **Superseded runs are cancelled.** Every workflow that runs on PRs or branch pushes has a `concurrency` group per PR (or branch): a new push cancels the run still going for the previous one. Runs on `master` always finish.
+- **More jobs, side by side**: each flavor's lint, unit tests and debug build are separate jobs, as is Spotless, instead of one job per flavor running them one after another.
+- **Gradle** (`gradle.properties`): the build cache and parallel project execution are on, with a 3 GB daemon heap and a 2 GB Kotlin daemon. `setup-gradle` keeps Gradle's home, build cache included, between runs: `master` writes it, PRs read it, so a PR reuses whatever `master` already built. The configuration cache is off: measured on CI, it made lint + test + build about 70 s slower, by running one module's tasks side by side on 4 cores (the build script is compatible with it, should that change).
+
+## Baseline Profiles (`baseline-profile.yaml`)
+
+Boots a Gradle Managed Device (`pixel6Api34`, API 34 AOSP emulator, software GPU) on a KVM-enabled hosted runner, then generates the fdroid and play baseline + startup profiles and uploads them as the `baseline-profiles` artifact. Commit the files under `app/src/<flavor>Release/generated/baselineProfiles/` to ship them, or run the workflow by hand with **commit** ticked: `commit-baseline-profiles.yaml` then pushes them to the branch it ran on, and starts Screenshots and the debug APK build on that commit by `workflow_dispatch` (a push made with the workflow's own token starts no push-triggered workflows). To commit an earlier run's profiles without generating them again, run Baseline Profile by hand with **commit_run_id** set to that run's ID (or `commit-baseline-profiles.yaml` directly, once it is on the default branch).
+
+Generating the profiles takes most of an hour of emulator time, so it triggers only when `baselineprofile/**` or the workflow itself changes on a non-master push, or on demand. See [build-and-flavors.md](build-and-flavors.md#baseline-profiles).
+
+## Benchmarks (`benchmarks.yaml`)
+
+Its own workflow (it used to share the profile job and ran out of its 90 minutes). On the same emulator it runs `InteractionBenchmarks` (startup time plus frame timing for typing, picker scrolling and screen transitions, each with and without the profile), then:
+
+1. Puts the numbers in the run summary and as notice annotations (`.github/scripts/benchmark-summary.py`), so two runs compare without downloading anything.
+2. Checks for slowdowns (`.github/scripts/benchmark-gate.py`): each benchmark's median against `baselineprofile/benchmark-baseline.json`. A metric fails the run when it's both 25% and 5 ms slower; the emulator's numbers wander, so smaller swings pass. Each regression is an error annotation.
+3. Uploads `benchmark-current.json` (this run's medians) with `benchmarkData.json` as `benchmark-results`. To start checking, or to accept a slowdown that's deliberate, commit that file as `baselineprofile/benchmark-baseline.json`.
+
+The benchmark step itself is `continue-on-error`: the software-GPU emulator doesn't always report frame stats, so Macrobenchmark can fail to confirm launches there. With no numbers, or no baseline yet, the check says so and passes. Trust absolute numbers from a physical device; the check is for catching large regressions. It runs when app code, the build, `baselineprofile/**` or the benchmark scripts change on a non-master push (a newer push cancels a running one), or on demand.
+
 ## Security Scans
 
 ### Detekt
-- Version: 1.23.7 (pinned via `DETEKT_VERSION` env var)
-- Inputs: `app/src`, `helpers/src`
+- Version: 2.0.0-alpha.6 (pinned in root `build.gradle.kts` via the `dev.detekt` Gradle plugin). Still an alpha: 1.23.8 is the last stable release, but it is incompatible with Gradle 10 and 2.0 is the line with the fix.
+- Config: `config/detekt/detekt.yml` (tuned to enforce the `CLAUDE.md` code-shape defaults). The size limits apply to `@Composable` functions like any other: one that needs six or more arguments takes them as a state type and an actions type. detekt 2 names each limit as what's allowed (`allowedLines: 59`, `allowedFunctionParameters: 5`), one below 1.x's trigger thresholds, so the limits are the same as before.
+- No baseline: every finding counts, in old code and new.
+- Type resolution: detekt 2 runs its type-aware rules (`LongParameterList`, `UnsafeCallOnNullableType`, `InjectDispatcher`, …) only in its per-variant tasks. `./gradlew detekt` runs a set of them that covers every source folder once — `:app:detektFdroidDebug` (main, fdroid, debug), `:app:detektPlayRelease` (play, release), `:app:detektFdroidDebugUnitTest` (unit tests), `:helpers:detektMain` / `detektTest` and `:baselineprofile:detektFdroidBenchmarkRelease` — and skips its own pass, which would leave those rules out (`detektVariantTasks` in the root build script).
 - JVM target: 21
-- Output: SARIF uploaded to GitHub Security tab + artifact retained 14 days
+- Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); any finding fails the build.
+- Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-baselineprofile`) + HTML/checkstyle/SARIF artifact retained 14 days
 
 ### Qodana
-- Image: `qodana-jvm-community:2025.1`
+- Image: `qodana-jvm-community:2026.2`
+- Scans production and test sources alike (only build output is excluded)
 - Posts inline PR comments on findings
 - SARIF uploaded to GitHub Security tab
 
 ### CodeQL
 - Language scope: `actions` (YAML workflows only — Kotlin delegated to Qodana)
+
+### Semgrep
+- Rule sets: `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`
+- Every finding is printed in the job log and uploaded as SARIF to the GitHub Security tab. No rule is switched off and no path is left out. Two findings are excluded where they occur, both recorded in [exceptions.md](exceptions.md): `exported_activity` on the launcher and on the text-selection ("Convert currency") activity.
+- Any finding fails the job, whatever its severity.
 
 ### OWASP Dependency Check
 - CVSS threshold: 7 (high+)
@@ -82,7 +120,9 @@ All workflows use `permissions: contents: read` by default. Additional permissio
 | Workflow | Extra permissions |
 |---|---|
 | `detekt.yaml` | `security-events: write` |
+| `qodana.yaml` | `security-events: write`, `pull-requests: write`, `checks: write` |
 | `codeql.yaml` | `security-events: write`, `actions: read` |
 | `scorecard.yaml` | `security-events: write`, `id-token: write` |
 | `dependency-review.yaml` | `pull-requests: write` |
 | `owasp-dependency-check.yaml` | `security-events: write` |
+| `commit-baseline-profiles.yaml` | `contents: write`, `actions: write`: pushes a Baseline Profile run's profiles to the branch (called by that workflow on a manual run with "commit" ticked, or run by hand with the run's ID), then dispatches Screenshots and the debug APK build on that commit; runs no build itself |

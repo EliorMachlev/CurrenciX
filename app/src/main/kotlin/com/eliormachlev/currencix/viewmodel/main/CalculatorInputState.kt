@@ -3,11 +3,28 @@ package com.eliormachlev.currencix.viewmodel.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
+import com.eliormachlev.currencix.util.MULTI_ZERO_KEYS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.util.PAREN_CLOSE
 import com.eliormachlev.currencix.util.PAREN_OPEN
+import com.eliormachlev.currencix.util.ZERO
+import com.eliormachlev.currencix.util.ZERO_KEYS
+import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import com.eliormachlev.currencix.util.unclosedParens
+import java.math.BigDecimal
+
+/**
+ * Which keypad keys would do something with the input as it stands: "."
+ * (no decimal point in the number yet), % (after a number), ")" (something
+ * open to close, after a value) and = (a calculation to work out).
+ */
+data class KeyAvailability(
+    val decimal: Boolean = true,
+    val percent: Boolean = true,
+    val closeParen: Boolean = false,
+    val equals: Boolean = false,
+)
 
 /**
  * Holds the mutable keypad state — the lower "base" row and the optional upper
@@ -22,61 +39,87 @@ import com.eliormachlev.currencix.util.unclosedParens
  * is null iff we are not in calculation mode.
  */
 internal class CalculatorInputState {
-    private val _baseValueText = MutableLiveData("0")
+    private val _baseValueText = MutableLiveData(ZERO)
     private val _calculationValueText = MutableLiveData<String?>()
 
     val baseValueText: LiveData<String?> = _baseValueText
     val calculationValueText: LiveData<String?> = _calculationValueText
 
-    // Driven from `setCalc` (not `LiveData.map` / `MediatorLiveData.addSource`)
-    // so the value stays current even without an active observer — otherwise
-    // the button's XML `textColor` paints both glyphs green at rest and unit
-    // tests reading `.value` see null.
-    private val _nextParen = MutableLiveData(nextParenFor(null))
-    val nextParen: LiveData<Char> = _nextParen
+    // Which keys would do something, for the keypad to dim the rest. Set on
+    // every change (not `LiveData.map`) so `.value` is current even with no
+    // observer, as unit tests read it.
+    private val _keys = MutableLiveData(KeyAvailability())
+    val keys: LiveData<KeyAvailability> = _keys
 
     private fun setCalc(value: String?) {
         _calculationValueText.value = value
-        val newParen = nextParenFor(value)
-        if (_nextParen.value != newParen) _nextParen.value = newParen
+        updateKeys()
     }
 
-    fun isInCalculationMode(): Boolean = _calculationValueText.value.isNullOrBlank().not()
+    private fun setBase(value: String) {
+        _baseValueText.value = value
+        updateKeys()
+    }
+
+    private fun updateKeys() {
+        val calc = calculation()
+        val tail = (calc ?: base()).trimEnd()
+        val last = tail.lastOrNull()
+        val next =
+            KeyAvailability(
+                decimal = !tail.substringAfterLast(' ').contains('.') && last != ')' && last != '%',
+                percent = last != null && (last.isDigit() || last == '.'),
+                closeParen = calc != null && calc.unclosedParens() > 0 && isCompletedValueTail(last),
+                equals = calc != null,
+            )
+        if (_keys.value != next) _keys.value = next
+    }
+
+    fun isInCalculationMode(): Boolean = calculation() != null
+
+    // The calculation row while in calculation mode, else null.
+    private fun calculation(): String? = _calculationValueText.value?.takeIf { it.isNotBlank() }
+
+    // The base row; never null once initialised, "0" as the fallback.
+    private fun base(): String = _baseValueText.value ?: ZERO
 
     fun addNumber(value: String) {
-        if (isInCalculationMode()) {
-            val current = _calculationValueText.value!!
+        val current = calculation()
+        if (current != null) {
             val lastToken = current.split(" ").last().trim()
             when {
                 // last input was "0": replace it with any other number
-                lastToken == "0" -> {
-                    if (value != "0" && value != "00" && value != "000") {
+                lastToken == ZERO -> {
+                    if (value !in ZERO_KEYS) {
                         setCalc(current.trim().dropLast(1) + value)
                     }
                 }
+
                 // last input was an operator: collapse "00"/"000" down to "0"
                 current.split(" ").last().isEmpty() &&
-                    (value == "00" || value == "000") -> {
-                    setCalc(current + "0")
+                    value in MULTI_ZERO_KEYS -> {
+                    setCalc(current + ZERO)
                 }
+
                 else -> {
                     setCalc(current + value)
                 }
             }
         } else {
-            val current = _baseValueText.value
-            _baseValueText.value =
-                if (current == "0") {
-                    if (value == "00" || value == "000") "0" else value
+            val base = base()
+            setBase(
+                if (base == ZERO) {
+                    if (value in MULTI_ZERO_KEYS) ZERO else value
                 } else {
-                    current + value
-                }
+                    base + value
+                },
+            )
         }
     }
 
     fun paste(value: Number) {
         // clear base value (but not calculation row!)
-        _baseValueText.value = "0"
+        setBase(ZERO)
         value.toString().forEach { addNumber(it.toString()) }
     }
 
@@ -91,33 +134,34 @@ internal class CalculatorInputState {
     }
 
     fun addDecimal() {
-        if (isInCalculationMode()) {
-            val current = _calculationValueText.value!!
+        val current = calculation()
+        if (current != null) {
             if (!current.substringAfterLast(" ").contains(".")) {
                 // if last char is not a number: add 0 first
-                val prefix = if (!current.trim().last().isDigit()) current + "0" else current
+                val prefix = if (!current.trim().last().isDigit()) current + ZERO else current
                 setCalc("$prefix.")
             }
         } else {
-            val current = _baseValueText.value!!
-            if (!current.contains(".")) {
-                _baseValueText.value = "$current."
+            val base = base()
+            if (!base.contains(".")) {
+                setBase("$base.")
             }
         }
     }
 
     fun delete() {
-        if (isInCalculationMode()) {
-            var next = _calculationValueText.value!!.trim().dropLast(1)
+        val current = calculation()
+        if (current != null) {
+            var next = current.trim().dropLast(1)
             // if last char is a number: trim any dangling space
             if (next.isNotEmpty() && next.last().isDigit()) next = next.trim()
             // drop back to base row only once no operator or paren remains —
             // otherwise `(5)` deleting to `(` would collapse and lose the paren
             setCalc(if (!next.contains(CALC_TOKEN_REGEX)) null else next)
         } else {
-            val current = _baseValueText.value!!
-            if (current.length > 1) {
-                _baseValueText.value = current.dropLast(1)
+            val base = base()
+            if (base.length > 1) {
+                setBase(base.dropLast(1))
             } else {
                 clear()
             }
@@ -125,30 +169,45 @@ internal class CalculatorInputState {
     }
 
     fun clear() {
-        _baseValueText.value = "0"
+        setBase(ZERO)
         setCalc(null)
     }
 
+    /** Replaces the input with [value] (any calculation is dropped) — an amount handed in from outside. */
+    fun setAmount(value: BigDecimal) {
+        setCalc(null)
+        setBase(value.abs().stripTrailingZeros().toPlainString())
+    }
+
+    /**
+     * "=": the calculation's result becomes the amount, so the next key
+     * carries on from it ("12 × 3 + 5" becomes 41). Nothing to do without a
+     * calculation.
+     */
+    fun evaluate() {
+        val current = calculation() ?: return
+        current.evaluateCalculatorExpression().toBigDecimalOrNull()?.let(::setAmount)
+    }
+
     fun addOpenParen() {
-        if (!isInCalculationMode()) {
+        val current = calculation()
+        if (current == null) {
             // seed calc row from base like operators do; drop base "0" so the
             // user gets a clean `(` instead of `0 × (`
-            val base = _baseValueText.value.orEmpty()
-            setCalc(if (base.isEmpty() || base == "0") PAREN_OPEN else withImplicitMultBeforeOpen(base))
+            val base = base()
+            setCalc(if (base.isEmpty() || base == ZERO) PAREN_OPEN else withImplicitMultBeforeOpen(base))
             return
         }
-        val current = _calculationValueText.value!!
         val trimmed = current.trimEnd()
         // after a value-continuation token (digit, `)`, `%`, `.`) insert an
-        // implicit multiplication so EvalEx sees `5*(...)` instead of parse error
+        // explicit multiplication, so the row reads `5 × (…)` rather than `5(…)`
         setCalc(
             if (isValueContinuationTail(trimmed.lastOrNull())) withImplicitMultBeforeOpen(trimmed) else current + PAREN_OPEN,
         )
     }
 
     fun addCloseParen() {
-        if (!isInCalculationMode()) return
-        val current = _calculationValueText.value!!
+        val current = calculation() ?: return
         // only close when there is something to close AND the trailing token is
         // a completed value — refuse `(` -> `()` or `5+` -> `5+)` so unbalanced
         // junk never enters the expression
@@ -158,26 +217,21 @@ internal class CalculatorInputState {
         }
     }
 
-    // Cycle-toggle entry point for the shared `()` keypad button — dispatches
-    // to open/close using the same rule the button's highlight is drawn from,
-    // so pressing the button always inserts whichever glyph is highlighted.
-    fun applyNextParen() {
-        if (_nextParen.value == ')') addCloseParen() else addOpenParen()
-    }
-
     fun addOperator(operator: String) {
-        if (isInCalculationMode()) {
-            val current = _calculationValueText.value!!
+        val current = calculation()
+        if (current != null) {
             val lastChar = current.trim().last()
             when {
                 // already an operator at the end: swap it
                 lastChar.toString().matches(OPERATOR_REGEX) -> {
                     setCalc(current.trim().dropLast(1) + "$operator ")
                 }
+
                 // trailing '.': drop it, then append operator
                 lastChar == '.' -> {
                     setCalc(current.trim().dropLast(1) + " $operator ")
                 }
+
                 else -> {
                     setCalc(current.trim() + " $operator ")
                 }
@@ -186,12 +240,6 @@ internal class CalculatorInputState {
             // switch to calculation mode, seeded from the base row
             setCalc(_baseValueText.value + " $operator ")
         }
-    }
-
-    private fun nextParenFor(calc: String?): Char {
-        if (calc.isNullOrBlank()) return '('
-        val canClose = calc.unclosedParens() > 0 && isCompletedValueTail(calc.trimEnd().lastOrNull())
-        return if (canClose) ')' else '('
     }
 
     // A "completed value" tail is safe to append `)` after — a digit, a `)`

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b&gt;%1$s&lt;/b&gt; a &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="data_provider">Datos de &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="rate_average">prm</string>
     <string name="rate_median">mediana</string>
     <string name="rate_min">mín</string>
@@ -9,4 +7,18 @@
     <string name="year">año</string>
     <string name="month">mes</string>
     <string name="week">semana</string>
+    <string name="timeline_five_years">5 años</string>
+    <string name="timeline_custom_range">Rango personalizado</string>
+    <string name="timeline_custom">A medida</string>
+    <string name="timeline_share">Compartir gráfico</string>
+    <string name="timeline_no_rates">No hay tipos para estas fechas</string>
+    <string name="timeline_convert_at">Convertir al tipo del %1$s</string>
+    <string name="timeline_a11y_up">Sube un %1$s %%</string>
+    <string name="timeline_a11y_down">Baja un %1$s %%</string>
+    <string name="timeline_a11y_unchanged">Sin cambios</string>
+    <string name="timeline_a11y_from_to">de %1$s el %2$s a %3$s el %4$s</string>
+    <string name="timeline_a11y_high">máximo %1$s el %2$s</string>
+    <string name="timeline_a11y_low">mínimo %1$s el %2$s</string>
+    <string name="timeline_alert_at">Alerta a %1$s</string>
+    <string name="timeline_touch_hint">Toca el gráfico para convertir o crear una alerta al tipo de un día</string>
 </resources>

@@ -6,15 +6,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.math.BigDecimal
 
 @RunWith(MockitoJUnitRunner::class)
 class TextUtilsTest {
-    @Mock
-    private lateinit var mockContext: Context
+    private val mockContext: Context = mock(Context::class.java)
 
     @Before
     fun init() {

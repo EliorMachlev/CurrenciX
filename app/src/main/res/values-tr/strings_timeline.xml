@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> ➞ &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Veri sağlayıcısı: &lt;b>%s&lt;/b></string>
-    <string name="rate_average">ort</string>
+    <string name="rate_average">ort.</string>
     <string name="rate_median">medyan</string>
-    <string name="rate_min">min</string>
-    <string name="rate_max">max</string>
+    <string name="rate_min">min.</string>
+    <string name="rate_max">maks.</string>
     <string name="year">yıl</string>
     <string name="month">ay</string>
     <string name="week">hafta</string>
+    <string name="timeline_five_years">5 yıl</string>
+    <string name="timeline_custom_range">Özel aralık</string>
+    <string name="timeline_custom">Özel</string>
+    <string name="timeline_share">Grafiği paylaş</string>
+    <string name="timeline_no_rates">Bu tarihler için kur yok</string>
+    <string name="timeline_convert_at">%1$s kuruyla çevir</string>
+    <string name="timeline_a11y_up">%%%1$s yükseliş</string>
+    <string name="timeline_a11y_down">%%%1$s düşüş</string>
+    <string name="timeline_a11y_unchanged">Değişmedi</string>
+    <string name="timeline_a11y_from_to">%2$s tarihinde %1$s, %4$s tarihinde %3$s</string>
+    <string name="timeline_a11y_high">en yüksek %1$s (%2$s)</string>
+    <string name="timeline_a11y_low">en düşük %1$s (%2$s)</string>
+    <string name="timeline_alert_at">%1$s için uyarı</string>
+    <string name="timeline_touch_hint">Bir günün kurundan dönüştürmek veya uyarı kurmak için grafiğe dokunun</string>
 </resources>

@@ -22,6 +22,8 @@ class CalculatorInputStateTest {
 
     private val CalculatorInputState.base: String? get() = baseValueText.value
     private val CalculatorInputState.calc: String? get() = calculationValueText.value
+    private val CalculatorInputState.available: KeyAvailability get() = keys.value!!
+    private val CalculatorInputState.closeParen: Boolean get() = available.closeParen
 
     @Test
     fun `initial state is zero and not in calculation mode`() {
@@ -170,7 +172,7 @@ class CalculatorInputStateTest {
         assertTrue(s.isInCalculationMode())
         assertEquals(PAREN_OPEN, s.calc)
         // no value inside yet — closing is not offered, cycle still shows `(`
-        assertEquals('(', s.nextParen.value)
+        assertFalse(s.closeParen)
     }
 
     @Test
@@ -195,11 +197,11 @@ class CalculatorInputStateTest {
         val s = state()
         s.addOpenParen()
         s.addNumber("2")
-        assertEquals(')', s.nextParen.value)
+        assertTrue(s.closeParen)
         s.addCloseParen()
         assertEquals("${PAREN_OPEN}2$PAREN_CLOSE", s.calc)
         // once balanced, next cycles back to `(`
-        assertEquals('(', s.nextParen.value)
+        assertFalse(s.closeParen)
     }
 
     @Test
@@ -212,24 +214,87 @@ class CalculatorInputStateTest {
     }
 
     @Test
-    fun `applyNextParen cycles open then close then open`() {
+    fun `next paren offers close only while something can be closed`() {
         val s = state()
-        // no calc yet → next=`(` → inserts `(`
-        s.applyNextParen()
-        assertEquals(PAREN_OPEN, s.calc)
-        // still `(` (no value inside yet, close not offered) → inserts another `(`
-        s.applyNextParen()
-        assertEquals(PAREN_OPEN + PAREN_OPEN, s.calc)
+        assertFalse(s.closeParen)
+        s.addOpenParen()
+        // nothing inside yet: ")" isn't offered
+        assertFalse(s.closeParen)
         s.addNumber("3")
-        // now closable → inserts `)`
-        s.applyNextParen()
-        assertEquals("${PAREN_OPEN}${PAREN_OPEN}3$PAREN_CLOSE", s.calc)
-        // still one unclosed `(` and last is `)` → close again
-        s.applyNextParen()
-        assertEquals("${PAREN_OPEN}${PAREN_OPEN}3$PAREN_CLOSE$PAREN_CLOSE", s.calc)
-        // balanced → cycles back to `(`
-        s.applyNextParen()
-        assertEquals("${PAREN_OPEN}${PAREN_OPEN}3$PAREN_CLOSE$PAREN_CLOSE $OPERATOR_MULTIPLY $PAREN_OPEN", s.calc)
+        assertTrue(s.closeParen)
+        s.addCloseParen()
+        // balanced again
+        assertFalse(s.closeParen)
+    }
+
+    @Test
+    fun `decimal point is offered once per number`() {
+        val s = state()
+        assertTrue(s.available.decimal)
+        s.addDecimal()
+        assertFalse(s.available.decimal)
+        s.addNumber("5")
+        s.addOperator(OPERATOR_PLUS)
+        // a new number: a point again
+        assertTrue(s.available.decimal)
+        s.addOpenParen()
+        s.addNumber("2")
+        s.addCloseParen()
+        // nothing to put a point in after ")"
+        assertFalse(s.available.decimal)
+    }
+
+    @Test
+    fun `percent follows a number, equals needs a calculation`() {
+        val s = state()
+        assertTrue(s.available.percent)
+        assertFalse(s.available.equals)
+        s.addNumber("5")
+        s.addOperator(OPERATOR_PLUS)
+        assertFalse(s.available.percent)
+        assertTrue(s.available.equals)
+        s.addNumber("2")
+        assertTrue(s.available.percent)
+        s.evaluate()
+        assertFalse(s.available.equals)
+    }
+
+    @Test
+    fun `equals turns the calculation into the amount`() {
+        val s = state()
+        s.addNumber("12")
+        s.addOperator(OPERATOR_MULTIPLY)
+        s.addNumber("3")
+        s.addOperator(OPERATOR_PLUS)
+        s.addNumber("5")
+        s.evaluate()
+        assertEquals("41", s.base)
+        assertNull(s.calc)
+        assertFalse(s.isInCalculationMode())
+        // the next digit carries on from the result
+        s.addNumber("0")
+        assertEquals("410", s.base)
+    }
+
+    @Test
+    fun `equals closes open brackets and keeps decimals`() {
+        val s = state()
+        s.addOpenParen()
+        s.addNumber("1")
+        s.addDecimal()
+        s.addNumber("5")
+        s.addOperator(OPERATOR_PLUS)
+        s.addNumber("2")
+        s.evaluate()
+        assertEquals("3.5", s.base)
+    }
+
+    @Test
+    fun `equals without a calculation leaves the amount alone`() {
+        val s = state()
+        s.addNumber("7")
+        s.evaluate()
+        assertEquals("7", s.base)
     }
 
     @Test

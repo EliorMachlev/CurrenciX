@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> থেকে &lt;b>%2$s&lt;/b> পর্যন্ত</string>
-    <string name="data_provider">&lt;b>%s&lt;/b> প্রদত্ত তথ্য</string>
     <string name="rate_average">গড়</string>
     <string name="rate_median">মধ্যক</string>
     <string name="rate_min">সর্বনিম্ন</string>
@@ -9,4 +7,18 @@
     <string name="year">বছর</string>
     <string name="month">মাস</string>
     <string name="week">সপ্তাহ</string>
+    <string name="timeline_five_years">৫ বছর</string>
+    <string name="timeline_custom_range">কাস্টম সময়সীমা</string>
+    <string name="timeline_custom">কাস্টম</string>
+    <string name="timeline_share">চার্ট শেয়ার করুন</string>
+    <string name="timeline_no_rates">এই তারিখগুলির জন্য কোনো হার নেই</string>
+    <string name="timeline_convert_at">%1$s তারিখের হারে রূপান্তর</string>
+    <string name="timeline_a11y_up">%1$s%% বেড়েছে</string>
+    <string name="timeline_a11y_down">%1$s%% কমেছে</string>
+    <string name="timeline_a11y_unchanged">অপরিবর্তিত</string>
+    <string name="timeline_a11y_from_to">%2$s তারিখে %1$s থেকে %4$s তারিখে %3$s</string>
+    <string name="timeline_a11y_high">সর্বোচ্চ %1$s, %2$s</string>
+    <string name="timeline_a11y_low">সর্বনিম্ন %1$s, %2$s</string>
+    <string name="timeline_alert_at">%1$s-এ সতর্কতা</string>
+    <string name="timeline_touch_hint">কোনো দিনের হারে রূপান্তর বা সতর্কতা সেট করতে চার্টে স্পর্শ করুন</string>
 </resources>

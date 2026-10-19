@@ -1,0 +1,61 @@
+package com.eliormachlev.currencix.screenshots
+
+import android.app.Application
+import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.view.preference.compose.FeeEditorSheet
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import java.math.BigDecimal
+
+// Fee editor covers three shapes it renders in the app: a fresh global
+// exchange fee (no delete button), an existing specific-pair fee (extra
+// from/to/both-ways rows + delete button), and a specific-pair with a
+// bothWays=true toggle so we lock down the switched-on state too.
+@RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.PIXEL_5, application = Application::class)
+class FeeEditorSheetScreenshotTest {
+    @get:Rule val shots = ScreenshotRule()
+
+    @Test fun feeEditorNewGlobal() =
+        shots.captureMatrix("fee_editor_new_global") {
+            FeeEditorSheet(
+                titleRes = R.string.fee_section_global_exchange,
+                existing = null,
+                isPair = false,
+                onDismiss = {},
+                onConfirm = {},
+                onDelete = null,
+            )
+        }
+
+    @Test fun feeEditorExistingPair() =
+        shots.captureMatrix("fee_editor_existing_pair") {
+            FeeEditorSheet(
+                titleRes = R.string.fee_section_specific_pair,
+                existing = SAMPLE_PAIR,
+                isPair = true,
+                onDismiss = {},
+                onConfirm = {},
+                onDelete = {},
+            )
+        }
+
+    companion object {
+        private val SAMPLE_PAIR =
+            Fee.SpecificPair(
+                id = "pair-1",
+                name = "Wise USD→EUR",
+                percent = BigDecimal("0.45"),
+                from = "USD",
+                to = "EUR",
+                bothWays = true,
+                isActive = true,
+            )
+    }
+}

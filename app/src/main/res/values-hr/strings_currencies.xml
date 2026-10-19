@@ -8,21 +8,21 @@
     <string name="name_aoa">angolska kvanza</string>
     <string name="name_ars">argentinski pezo</string>
     <string name="name_aud">australski dolar</string>
-    <string name="name_awg">arupski gulden</string>
+    <string name="name_awg">arupski florin</string>
     <string name="name_azn">azerbajdžanski manat</string>
 
     <string name="name_bam">BiH konvertibilna marka</string>
     <string name="name_bbd">barbadoski dolar</string>
     <string name="name_bdt">bangladeška taka</string>
     <string name="name_bgn">bugarski lev</string>
-    <string name="name_bhd">barhreinski dinar</string>
+    <string name="name_bhd">bahreinski dinar</string>
     <string name="name_bif">burundski franak</string>
     <string name="name_bmd">bermudski dolar</string>
     <string name="name_bnd">brunejski dolar</string>
     <string name="name_bob">bolivijski bolivijano</string>
     <string name="name_brl">brazilski real</string>
     <string name="name_bsd">bahamski dolar</string>
-    <string name="name_btc">Bitcoin</string>
+    <string name="name_btc">bitcoin</string>
     <string name="name_btn">butanski ngultrum</string>
     <string name="name_bwp">bocvanska pula</string>
     <string name="name_byn">bjeloruski rubalj</string>
@@ -33,7 +33,7 @@
     <string name="name_chf">švicarski franak</string>
     <string name="name_clf">čileanski Unidad de Fomento (UF)</string>
     <string name="name_clp">čileanski pezo</string>
-    <string name="name_cnh">kineski renmimbi (offshore)</string>
+    <string name="name_cnh">kineski juan (offshore)</string>
     <string name="name_cny">kineski juan</string>
     <string name="name_cop">kolumbijski pezo</string>
     <string name="name_crc">kostarikanski kolon</string>
@@ -54,7 +54,7 @@
 
     <string name="name_fjd">fidžijski dolar</string>
     <string name="name_fkp">falklandska funta</string>
-    <string name="name_fok">føroyarska kruna</string>
+    <string name="name_fok">farska kruna</string>
 
     <string name="name_gbp">britanska funta</string>
     <string name="name_gel">gruzijski lari</string>
@@ -128,7 +128,7 @@
     <string name="name_omr">omanski rijal</string>
 
     <string name="name_pab">panamska balboa</string>
-    <string name="name_pen">peruanski novi sol</string>
+    <string name="name_pen">peruanski sol</string>
     <string name="name_pgk">papuanska kina</string>
     <string name="name_php">filipinski pezo</string>
     <string name="name_pkr">pakistanska rupija</string>
@@ -176,7 +176,7 @@
     <string name="name_uyu">urugvajski pezo</string>
     <string name="name_uzs">uzbekistanski som</string>
 
-    <string name="name_vef">venezuelanski bolivar</string>
+    <string name="name_vef">venezuelanski bolivar fuerte (stari)</string>
     <string name="name_ves">venezuelanski bolivar soberano</string>
     <string name="name_vnd">vijetnamski dong</string>
     <string name="name_vuv">vanuatski vatu</string>

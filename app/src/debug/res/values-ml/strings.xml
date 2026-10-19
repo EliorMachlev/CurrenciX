@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">പരിചയ ടൂർ റീസെറ്റ് ചെയ്യുക</string>
+    <string name="pref_debug_reset_onboarding_summary">ആദ്യ തുടക്ക അടയാളം മായ്ക്കുന്നു, അതുവഴി അടുത്ത തവണ ആപ്പ് തുറക്കുമ്പോൾ ഹൈലൈറ്റുകളോടെയുള്ള ടൂർ വീണ്ടും കാണിക്കും.</string>
+    <string name="pref_debug_reset_onboarding_toast">അടുത്ത തവണ തുറക്കുമ്പോൾ പരിചയ ടൂർ വീണ്ടും കാണിക്കും.</string>
+</resources>

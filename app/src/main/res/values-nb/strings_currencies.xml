@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="name_aed">Emiratarabisk dirham</string>
+    <string name="name_aed">Emiratisk dirham</string>
     <string name="name_afn">Afghansk afghani</string>
     <string name="name_all">Albansk lek</string>
     <string name="name_amd">Armensk dram</string>
@@ -11,7 +11,7 @@
     <string name="name_awg">Arubansk florin</string>
     <string name="name_azn">Aserbajdsjansk manat</string>
 
-    <string name="name_bam">Konvertibilna mark</string>
+    <string name="name_bam">Bosnisk-hercegovinsk konvertibel mark</string>
     <string name="name_bbd">Barbadisk dollar</string>
     <string name="name_bdt">Bangladeshisk taka</string>
     <string name="name_bgn">Bulgarsk lev</string>
@@ -31,12 +31,12 @@
     <string name="name_cad">Canadisk dollar</string>
     <string name="name_cdf">Kongolesisk franc</string>
     <string name="name_chf">Sveitsisk franc</string>
-    <string name="name_clf">Chilenske Unidad de Fomento (UF)</string>
+    <string name="name_clf">Chilensk unidad de fomento (UF)</string>
     <string name="name_clp">Chilensk peso</string>
-    <string name="name_cnh">Kinesisk renminbi (Offshore)</string>
+    <string name="name_cnh">Kinesisk renminbi (offshore)</string>
     <string name="name_cny">Kinesisk renminbi</string>
     <string name="name_cop">Colombiansk peso</string>
-    <string name="name_crc">Kostarikansk colón</string>
+    <string name="name_crc">Costaricansk colón</string>
     <string name="name_cuc">Kubansk konvertibel peso</string>
     <string name="name_cup">Kubansk peso</string>
     <string name="name_cve">Kappverdisk escudo</string>
@@ -109,10 +109,10 @@
     <string name="name_mmk">Burmesisk kyat</string>
     <string name="name_mnt">Mongolsk tugrik</string>
     <string name="name_mop">Macaoisk pataca</string>
-    <string name="name_mro">Mauritansk ouguiya</string>
+    <string name="name_mro">Mauritansk ouguiya (1973–2017)</string>
     <string name="name_mru">Mauritansk ouguiya</string>
     <string name="name_mur">Mauritisk rupi</string>
-    <string name="name_mvr">Maldivisk rufiyah</string>
+    <string name="name_mvr">Maldivisk rufiyaa</string>
     <string name="name_mwk">Malawisk kwacha</string>
     <string name="name_mxn">Meksikansk peso</string>
     <string name="name_myr">Malaysisk ringgit</string>
@@ -128,7 +128,7 @@
     <string name="name_omr">Omansk rial</string>
 
     <string name="name_pab">Panamansk balboa</string>
-    <string name="name_pen">Peruansk nuevo sol</string>
+    <string name="name_pen">Peruansk sol</string>
     <string name="name_pgk">Papuansk kina</string>
     <string name="name_php">Filippinsk peso</string>
     <string name="name_pkr">Pakistansk rupi</string>
@@ -150,24 +150,24 @@
     <string name="name_sgd">Singaporsk dollar</string>
     <string name="name_shp">Sankthelensk pund</string>
     <string name="name_sle">Sierraleonsk leone</string>
-    <string name="name_sll">Sierraleonsk leone (pre-07/2022)</string>
+    <string name="name_sll">Sierraleonsk leone (før 07/2022)</string>
     <string name="name_sos">Somalisk shilling</string>
     <string name="name_srd">Surinamsk dollar</string>
     <string name="name_ssp">Sørsudansk pund</string>
-    <string name="name_std">Saotomesisk dobra (pre-2018)</string>
+    <string name="name_std">Saotomesisk dobra (1977–2017)</string>
     <string name="name_stn">Saotomesisk dobra</string>
     <string name="name_svc">Salvadoransk colón</string>
     <string name="name_syp">Syrisk pund</string>
-    <string name="name_szl">Swazilandsk lilangeni</string>
+    <string name="name_szl">Swazisk lilangeni</string>
 
     <string name="name_thb">Thailandsk baht</string>
     <string name="name_tjs">Tadsjikisk somoni</string>
     <string name="name_tmt">Turkmensk manat</string>
     <string name="name_tnd">Tunisisk dinar</string>
-    <string name="name_top">Tongansk paanga</string>
+    <string name="name_top">Tongansk paʻanga</string>
     <string name="name_try">Tyrkisk lira</string>
     <string name="name_ttd">Trinidadisk dollar</string>
-    <string name="name_twd">Taiwansk dollar</string>
+    <string name="name_twd">Ny taiwansk dollar</string>
     <string name="name_tzs">Tanzaniansk shilling</string>
 
     <string name="name_uah">Ukrainsk hryvnia</string>
@@ -184,14 +184,14 @@
     <string name="name_wst">Samoansk tala</string>
 
     <string name="name_xaf">Sentralafrikansk CFA-franc</string>
-    <string name="name_xag">Sølv</string>
-    <string name="name_xau">Gull</string>
+    <string name="name_xag">Unse sølv</string>
+    <string name="name_xau">Unse gull</string>
     <string name="name_xcd">Østkaribisk dollar</string>
     <string name="name_xdr">Spesielle trekkrettigheter</string>
     <string name="name_xof">Vestafrikansk CFA-franc</string>
-    <string name="name_xpd">Palladium</string>
+    <string name="name_xpd">Unse palladium</string>
     <string name="name_xpf">CFP-franc</string>
-    <string name="name_xpt">Platinum</string>
+    <string name="name_xpt">Unse platina</string>
 
     <string name="name_yer">Jemenittisk rial</string>
 
