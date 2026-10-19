@@ -64,34 +64,6 @@ class TextUtilsTest {
     }
 
     @Test
-    fun toNumber() {
-        assertEquals(
-            123,
-            "123".toNumber()?.toInt(),
-        )
-        assertEquals(
-            123123,
-            "123 123".toNumber()?.toInt(),
-        )
-        assertEquals(
-            null,
-            "123a1".toNumber(),
-        )
-        assertEquals(
-            null,
-            "-123".toNumber(),
-        )
-        assertEquals(
-            null,
-            "abcdef".toNumber(),
-        )
-        assertEquals(
-            null,
-            "".toNumber(),
-        )
-    }
-
-    @Test
     fun getDecimalSeparatorGetGroupingSeparator() {
         // default
         `when`(mockContext.getString(R.string.locale_language)).thenReturn("en")

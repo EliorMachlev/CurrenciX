@@ -48,6 +48,10 @@ val abiVersionMultiplier = 10
 val abiVersionLabels = mapOf("armeabi-v7a" to "arm32", "arm64-v8a" to "arm64", "x86" to "x86", "x86_64" to "x64")
 
 // Whether this Gradle run builds an app bundle (Play), which takes no APK splits.
+// The Jazzer fuzz tests: left out of every unit-test run, or run alone
+// with -PfuzzTests (see the unitTests filter below).
+val fuzzTestClass = "com.eliormachlev.currencix.FuzzTest"
+
 val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
 
 android {
@@ -161,11 +165,17 @@ android {
             // then re-loads test/production classes in its own sandbox where
             // `JazzerInternal` is not visible, and the injected calls blow up
             // with `NoClassDefFoundError` inside our Roborazzi screenshot tests.
-            // Excluding FuzzTest keeps Jazzer's agent from attaching; when we
-            // want to run fuzz tests, they need their own task or a filter that
-            // includes only FuzzTest (see docs/markDown/build-and-flavors.md).
+            // Excluding FuzzTest keeps Jazzer's agent from attaching. With
+            // -PfuzzTests the run is the other way round: the fuzz tests
+            // alone (CI's fuzz job; JAZZER_FUZZ=1 fuzzes rather than only
+            // replaying the saved inputs; see docs/markDown/build-and-flavors.md).
+            val fuzzOnly = providers.gradleProperty("fuzzTests").isPresent
             it.filter {
-                excludeTestsMatching("com.eliormachlev.currencix.FuzzTest")
+                if (fuzzOnly) {
+                    includeTestsMatching(fuzzTestClass)
+                } else {
+                    excludeTestsMatching(fuzzTestClass)
+                }
             }
         }
     }

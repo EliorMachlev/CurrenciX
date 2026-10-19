@@ -41,15 +41,6 @@ internal const val DECIMAL_PLACES_MAX = 6
 // zero on an integer ("0" or "0.5") is preserved.
 private val TRAILING_ZEROS_REGEX = Regex("(?!^)\\.?0+$")
 
-// Characters accepted by [CharSequence.toNumber]: digits, comma, dot, and any
-// whitespace (thousands separator can be NBSP or normal space depending on
-// locale). Anything else means "not a number, don't try to parse".
-private val NUMERIC_INPUT_REGEX = Regex("[0-9,.\\s]+")
-
-// Any run of whitespace — used to strip locale thousands separators before
-// handing the string to NumberFormat.parse.
-private val WHITESPACE_REGEX = Regex("\\s+")
-
 // Unicode "Mark, Nonspacing" — combining diacritics that sit between/on top of
 // base letters (Hebrew niqqud, Arabic tashkeel, Latin accents after NFD, etc.).
 // Stripped for diacritic-insensitive substring search in language/currency
@@ -346,17 +337,6 @@ fun BigDecimal.toCompactHumanReadableNumber(
             .divide(divisor, decimalPlaces, RoundingMode.HALF_EVEN)
             .toHumanReadableNumber(context, decimalPlaces = decimalPlaces, trim = true)
     return "$body$suffix"
-}
-
-/**
- * Parses the given string to a number. Uses the default locale for thousands and decimal separators.
- * - Returns null, if invalid characters are found.
- * - Also returns null, for negative values
- */
-fun CharSequence.toNumber(): Number? {
-    // allow 0-9 , . whitespace only
-    if (isBlank() || !matches(NUMERIC_INPUT_REGEX)) return null
-    return NumberFormat.getNumberInstance().parse(toString().replace(WHITESPACE_REGEX, ""))
 }
 
 /** A number typed into a field: "12,5" and "12.5" alike; blank or unreadable is null. */

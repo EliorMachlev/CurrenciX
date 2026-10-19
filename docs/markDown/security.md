@@ -102,6 +102,7 @@ Rationale: SharedPreferences contain the user's API keys for Open Exchangerates 
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |
 | Semgrep | Security patterns | Every PR, master push, weekly |
 | Gitleaks | Secret / credential scanning | Every PR, master push, weekly |
+| Jazzer fuzzing | Parsers of text the app doesn't control (selected text, receipt scans, calculations, codes, amounts) | Every PR and master push, two minutes per parser |
 
 ## OpenSSF Scorecard
 

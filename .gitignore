@@ -46,3 +46,6 @@ art/theme-proposals/
 
 # Python bytecode from the .github/scripts helpers
 __pycache__/
+
+# Jazzer's working corpus from local fuzzing runs (regenerated every run)
+.cifuzz-corpus/

@@ -189,6 +189,17 @@ English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.
 
 Roborazzi + Robolectric give pure-JVM screenshot testing for every Compose surface (no emulator needed), running under the existing `test<Flavor>DebugUnitTest` task via the JUnit vintage engine. Konsist encodes the View / ViewModel / Repository / Model layer boundaries as JUnit tests on the plain JVM, so a refactor can't silently break MVVM separation.
 
+#### Fuzz tests
+
+`FuzzTest` (Jazzer) fuzzes the parsers that take text the app doesn't control, each of which must answer rather than throw on anything: a currency code (`Currency.fromString`), text selected in another app (`PriceParser`), a receipt's scanned text (`ReceiptParser`), a calculation, typed or in an imported cart (`evaluateCalculatorExpression`), and a typed amount (`parseDecimal`). Jazzer's instrumentation breaks Robolectric, so the unit-test tasks leave `FuzzTest` out, and `-PfuzzTests` runs it alone. Without `JAZZER_FUZZ` only the saved inputs are replayed; with it, one target is fuzzed for two minutes (one per run):
+
+```bash
+JAZZER_FUZZ=1 ./gradlew :app:testFdroidDebugUnitTest -PfuzzTests \
+  --tests "com.eliormachlev.currencix.FuzzTest.fuzzSelectedPrice"
+```
+
+CI does this for each target on every PR (`build.yaml`'s `fuzz` job). A crash fails the run and saves its input under `app/src/test/resources/com/eliormachlev/currencix/FuzzTestInputs/<target>/`; commit it there with the fix, and it's replayed from then on. OpenSSF Scorecard's Fuzzing check doesn't recognise Jazzer (it looks for OSS-Fuzz, ClusterFuzzLite, or fuzzing in Go and a few other languages), so it keeps reporting the project as not fuzzed.
+
 ## Signing (Release)
 
 Create `secrets.properties` in the project root (not committed):
