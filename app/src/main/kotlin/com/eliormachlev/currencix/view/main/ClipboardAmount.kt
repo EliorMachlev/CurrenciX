@@ -26,12 +26,15 @@ internal const val RECENT_COPY_MILLIS = 10 * 60 * 1000L
 // Longer than any price someone would copy; a guard against pasting a page.
 private const val MAX_CLIP_LENGTH = 200
 
+// The clipboard, always through the application context (see rememberClipboardOffer).
+internal fun clipboardOf(context: Context): ClipboardManager = context.applicationContext.getSystemService(ClipboardManager::class.java)
+
 /** Copies [text] (an amount from the converter), marked as the app's own. */
 internal fun copyToClipboard(
     context: Context,
     text: CharSequence,
 ) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clipboard = clipboardOf(context)
     // The system confirms the copy itself (with a preview); a message of
     // ours on top of it would be noise.
     clipboard.setPrimaryClip(ClipData.newPlainText(OWN_CLIP_LABEL, text))
@@ -93,7 +96,12 @@ internal class ClipboardOffer(
 @Composable
 internal fun rememberClipboardOffer(): ClipboardOffer {
     val context = LocalContext.current
-    val clipboard = remember(context) { context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager }
+    // From the application, not the activity: a ClipboardManager keeps the
+    // context it came from, and the system's clipboard service keeps the
+    // manager (through the binder it registers for change listeners) long
+    // after the listener is removed. Taken from the activity, that held each
+    // destroyed MainActivity (LeakCanary: ClipboardManager$1 → mContext).
+    val clipboard = remember(context) { clipboardOf(context) }
     var available by remember { mutableStateOf(false) }
     // The clip already offered and taken, by its copy time: not offered again.
     var taken by remember { mutableStateOf<Long?>(null) }

@@ -2,11 +2,16 @@ package com.eliormachlev.currencix.view.main
 
 import android.app.Application
 import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.util.ParsedPrice
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,6 +29,26 @@ class ClipboardAmountTest {
         label: String?,
         at: Long,
     ) = ClipInfo(isText = true, label = label, copiedAt = at)
+
+    // A ClipboardManager keeps the context it came from, and the system keeps
+    // the manager: taken from an activity, it leaked every destroyed one. (The
+    // test environment shares one clipboard object between contexts, so this
+    // checks which context is asked, not which object comes back.)
+    @Test
+    fun `the clipboard comes from the application, not the activity`() {
+        val app = ApplicationProvider.getApplicationContext<Application>()
+        val activity = ScreenContext(app)
+        assertSame(app.getSystemService(ClipboardManager::class.java), clipboardOf(activity))
+    }
+
+    // Stands in for an activity: asking it for a system service fails.
+    private class ScreenContext(
+        private val app: Application,
+    ) : ContextWrapper(app) {
+        override fun getApplicationContext(): Context = app
+
+        override fun getSystemService(name: String): Any = error("asked the screen for $name")
+    }
 
     @Test
     fun `a plain-text clip counts as text`() {

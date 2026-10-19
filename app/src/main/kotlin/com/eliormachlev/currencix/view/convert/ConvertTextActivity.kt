@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.view.convert
 
 import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -44,6 +43,7 @@ import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.ConverterLaunch
+import com.eliormachlev.currencix.view.main.clipboardOf
 import java.math.BigDecimal
 
 // Selected text can be a whole page; a price is in the first few words.
@@ -200,7 +200,6 @@ private fun copy(
     context: Context,
     text: String,
 ) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     // The system confirms the copy itself (with a preview), so no message here.
-    clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
+    clipboardOf(context).setPrimaryClip(ClipData.newPlainText(null, text))
 }
