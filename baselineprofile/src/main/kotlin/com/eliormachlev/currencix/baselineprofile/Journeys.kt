@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.baselineprofile
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import java.io.ByteArrayOutputStream
 
@@ -38,8 +39,10 @@ private const val FLING_MARGIN_DIVISOR = 10
 private const val MAX_BACK_PRESSES = 3
 private const val MAX_DESCRIBED_VALUES = 40
 
-// A drawer entry is tapped at most this often before the journey gives up.
-private const val DRAWER_TAPS = 2
+// A drawer entry or a button is tapped at most this often before the journey
+// gives up: on a slow emulator a tap can land while the screen is still
+// settling and be lost.
+private const val TAP_ATTEMPTS = 2
 
 // The cart's unsaved-changes prompt comes up at once when it comes at all.
 private const val PROMPT_TIMEOUT_MS = 2_000L
@@ -68,11 +71,7 @@ internal fun MacrobenchmarkScope.typeOnKeypad(keys: String) {
 
 /** Opens the "to" currency picker, flings through the list, and closes it. */
 internal fun MacrobenchmarkScope.scrollCurrencyPicker() {
-    device.findObject(By.res(UiTags.PILL_TO)).click()
-    val list =
-        checkNotNull(device.wait(Until.findObject(By.res(UiTags.CURRENCY_LIST)), UI_TIMEOUT_MS)) {
-            "currency picker never opened"
-        }
+    val list = tapUntilShown(UiTags.PILL_TO, UiTags.CURRENCY_LIST, "currency picker")
     // Keep flings off the sheet's edges (drag handle, system gesture areas).
     list.setGestureMargin(device.displayWidth / FLING_MARGIN_DIVISOR)
     repeat(2) { list.fling(Direction.DOWN) }
@@ -161,11 +160,26 @@ private fun MacrobenchmarkScope.openFromDrawer(entryTag: String) {
     openDrawer()
     awaitTag(entryTag, "drawer")
     device.waitForIdle()
-    repeat(DRAWER_TAPS) {
+    repeat(TAP_ATTEMPTS) {
         device.findObject(By.res(entryTag))?.click() ?: return
         if (device.wait(Until.gone(By.res(entryTag)), UI_TIMEOUT_MS)) return
     }
     check(!device.hasObject(By.res(entryTag))) { "$entryTag didn't open from the drawer — ${describeScreen()}" }
+}
+
+// Taps [tapTag] until [shownTag] appears (at most TAP_ATTEMPTS times), and
+// returns what appeared; fails with what's on screen if it never does.
+private fun MacrobenchmarkScope.tapUntilShown(
+    tapTag: String,
+    shownTag: String,
+    what: String,
+): UiObject2 {
+    awaitTag(tapTag, "converter")
+    repeat(TAP_ATTEMPTS) {
+        device.findObject(By.res(tapTag))?.click()
+        device.wait(Until.findObject(By.res(shownTag)), UI_TIMEOUT_MS)?.let { shown -> return shown }
+    }
+    error("$what never opened — ${describeScreen()}")
 }
 
 private fun MacrobenchmarkScope.awaitTag(
