@@ -1,0 +1,11 @@
+{
+  "InteractionBenchmarks.currencyPickerScroll[None]|frameDurationCpuMs": 104.8,
+  "InteractionBenchmarks.currencyPickerScroll[None]|frameOverrunMs": 141.2,
+  "InteractionBenchmarks.keypadTyping[None]|frameDurationCpuMs": 98.3,
+  "InteractionBenchmarks.keypadTyping[None]|frameOverrunMs": 121.1,
+  "InteractionBenchmarks.screenTransitions[None]|frameDurationCpuMs": 69.2,
+  "InteractionBenchmarks.screenTransitions[None]|frameOverrunMs": 80.3,
+  "InteractionBenchmarks.settingsBrowse[None]|frameDurationCpuMs": 69.4,
+  "InteractionBenchmarks.settingsBrowse[None]|frameOverrunMs": 83.0,
+  "InteractionBenchmarks.startup[None]|timeToInitialDisplayMs": 3328.1
+}

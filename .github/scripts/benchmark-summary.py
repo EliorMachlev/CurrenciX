@@ -14,7 +14,7 @@ import os
 import pathlib
 import sys
 
-from benchmark_results import PERCENTILES, rows
+from benchmark_results import PERCENTILES, annotation, rows
 
 
 def cell(value) -> str:
@@ -31,7 +31,7 @@ def main() -> None:
         lines = [f"| {n} | {m} | " + " | ".join(cell(v) for v in vs) + " |" for n, m, vs in found]
         table = header + "\n" + "\n".join(lines)
         for n, m, vs in found:
-            print(f"::notice title=Benchmark {n}::{m} " + ", ".join(f"{p} {cell(v)}" for p, v in zip(PERCENTILES, vs)))
+            print(annotation("notice", f"Benchmark {n}", f"{m} " + ", ".join(f"{p} {cell(v)}" for p, v in zip(PERCENTILES, vs))))
     print(table)
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:

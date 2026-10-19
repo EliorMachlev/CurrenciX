@@ -10,6 +10,9 @@ least MIN_DELTA_MS slower: CI runs on an emulator, whose numbers wander, so
 small swings and fast metrics' noise don't fail it. Each regression is an
 error annotation, and the run fails.
 
+The medians are also posted whole as one annotation ("Benchmark medians"),
+so a baseline can be taken from the run through the API.
+
 It can't judge, and passes with a notice, when the benchmarks gave no
 numbers (the emulator sometimes reports no frame stats) or there's no
 baseline yet. Either way it writes this run's medians to benchmark-current.json
@@ -20,7 +23,7 @@ import json
 import pathlib
 import sys
 
-from benchmark_results import medians
+from benchmark_results import annotation, medians
 
 TOLERANCE = 0.25
 MIN_DELTA_MS = 5.0
@@ -41,6 +44,10 @@ def main() -> int:
     baseline_path = pathlib.Path(sys.argv[2])
     current = medians(results)
     pathlib.Path(CURRENT_FILE).write_text(json.dumps(current, indent=2, sort_keys=True) + "\n")
+    if current:
+        # The medians whole, readable from the run's annotations through the
+        # API (artifacts need a download), to take as the baseline.
+        print(annotation("notice", "Benchmark medians", json.dumps(current, sort_keys=True)))
     if not current:
         print("::notice title=Benchmark check::No benchmark numbers this run, so nothing to compare.")
         return 0
@@ -50,7 +57,7 @@ def main() -> int:
     found = list(regressions(current, json.loads(baseline_path.read_text())))
     for key, before, now in found:
         name, metric = key.split("|", 1)
-        print(f"::error title=Slower: {name}::{metric} P50 {now:.1f} ms, baseline {before:.1f} ms (+{(now / before - 1) * 100:.0f}%)")
+        print(annotation("error", f"Slower: {name}", f"{metric} P50 {now:.1f} ms, baseline {before:.1f} ms (+{(now / before - 1) * 100:.0f}%)"))
     if not found:
         print(f"Benchmark check: {len(current)} medians within {TOLERANCE:.0%} of the baseline.")
     return 1 if found else 0
