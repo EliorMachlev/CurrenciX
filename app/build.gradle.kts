@@ -3,6 +3,7 @@ import com.android.build.api.artifact.ArtifactTransformationRequest
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.FilterConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.awt.Color
 import java.awt.Font
 import java.awt.RenderingHints
@@ -789,6 +790,8 @@ fun generateVersionCode(semVer: String): Int =
         .map { Integer.parseInt(it) }
         .reduce { sum, value -> sum * 100 + value }
 
+val composeReports = layout.buildDirectory.dir("compose-reports").takeIf { providers.gradleProperty("composeReports").isPresent }
+
 // JDK value types (BigDecimal, java.time) count as stable, so composables
 // taking rates and dates can skip recomposing (see compose-stability.conf).
 composeCompiler {
@@ -796,7 +799,12 @@ composeCompiler {
     // -PcomposeReports: the compiler's report of each composable and how
     // stable its parameters are (build/compose-reports/*-composables.txt),
     // which CI's stability check reads. Off otherwise, to keep builds lean.
-    if (providers.gradleProperty("composeReports").isPresent) {
-        reportsDestination.set(layout.buildDirectory.dir("compose-reports"))
-    }
+    if (composeReports != null) reportsDestination.set(composeReports)
+}
+
+// The report is something compiling writes, so it's declared as an output of
+// the compile: a compile taken from the build cache (as on a PR that changes
+// no code) then brings its report back instead of leaving none.
+if (composeReports != null) {
+    tasks.withType<KotlinCompile>().configureEach { outputs.dir(composeReports) }
 }
