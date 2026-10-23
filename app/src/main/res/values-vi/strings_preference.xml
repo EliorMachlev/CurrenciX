@@ -143,6 +143,7 @@
     <string name="credit_lib_compose">Bộ công cụ giao diện và Material 3</string>
     <string name="credit_lib_material_components">Thành phần Material Design</string>
     <string name="credit_lib_material_symbols">Biểu tượng (Rounded)</string>
+    <string name="credit_lib_typeface">Phông chữ</string>
     <string name="credit_lib_vico">Biểu đồ</string>
     <string name="credit_lib_okhttp">Ứng dụng khách HTTP</string>
     <string name="credit_lib_moshi">Trình phân tích JSON</string>

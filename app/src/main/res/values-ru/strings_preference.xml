@@ -144,6 +144,7 @@
     <string name="credit_lib_compose">Фреймворк интерфейса и Material 3</string>
     <string name="credit_lib_material_components">Компоненты Material Design</string>
     <string name="credit_lib_material_symbols">Значки (скруглённые)</string>
+    <string name="credit_lib_typeface">Шрифт</string>
     <string name="credit_lib_vico">Графики</string>
     <string name="credit_lib_okhttp">HTTP-клиент</string>
     <string name="credit_lib_moshi">JSON-парсер</string>

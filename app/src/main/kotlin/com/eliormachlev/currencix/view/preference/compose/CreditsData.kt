@@ -42,8 +42,10 @@ private const val GOOGLE = "Google"
 private const val SQUARE = "Square"
 private const val JETBRAINS = "JetBrains"
 private const val APACHE_2 = "Apache-2.0"
+private const val OFL = "OFL-1.1"
 
-// Runtime dependencies of the app — kept in sync with app/build.gradle.kts.
+// Runtime dependencies of the app — kept in sync with app/build.gradle.kts —
+// and the typefaces in res/font (SIL Open Font License, which asks for credit).
 // SPDX identifiers per each project's declared licence. The CI-generated SBOM
 // is the machine-readable source of truth; this list is the user-facing
 // attribution surface required by Apache-2.0 §4(d), MIT notice clause, and
@@ -60,6 +62,8 @@ private val LIBRARIES =
             APACHE_2,
         ),
         Library("Material Symbols", R.string.credit_lib_material_symbols, GOOGLE, "https://fonts.google.com/icons", APACHE_2),
+        Library("Inter", R.string.credit_lib_typeface, "Rasmus Andersson", "https://rsms.me/inter/", OFL),
+        Library("Space Grotesk", R.string.credit_lib_typeface, "Florian Karsten", "https://github.com/floriankarsten/space-grotesk", OFL),
         Library("Vico", R.string.credit_lib_vico, "Patryk & Patrick", "https://github.com/patrykandpatrick/vico", APACHE_2),
         Library("OkHttp", R.string.credit_lib_okhttp, SQUARE, "https://square.github.io/okhttp/", APACHE_2),
         Library("Moshi", R.string.credit_lib_moshi, SQUARE, "https://github.com/square/moshi", APACHE_2),

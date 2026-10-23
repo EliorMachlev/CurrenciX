@@ -143,6 +143,7 @@
     <string name="credit_lib_compose">Kit d\'eines d\'interfície i Material 3</string>
     <string name="credit_lib_material_components">Components de Material Design</string>
     <string name="credit_lib_material_symbols">Icones (arrodonides)</string>
+    <string name="credit_lib_typeface">Tipus de lletra</string>
     <string name="credit_lib_vico">Gràfics</string>
     <string name="credit_lib_okhttp">Client HTTP</string>
     <string name="credit_lib_moshi">Analitzador de JSON</string>

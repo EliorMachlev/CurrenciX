@@ -139,6 +139,7 @@
     <string name="credit_lib_compose">Ilaro por la uzantinterfaco kaj Material 3</string>
     <string name="credit_lib_material_components">Komponantoj de Material Design</string>
     <string name="credit_lib_material_symbols">Piktogramoj (rondigitaj)</string>
+    <string name="credit_lib_typeface">Tiparo</string>
     <string name="credit_lib_vico">Diagramoj</string>
     <string name="credit_lib_okhttp">HTTP-kliento</string>
     <string name="credit_lib_moshi">JSON-analizilo</string>

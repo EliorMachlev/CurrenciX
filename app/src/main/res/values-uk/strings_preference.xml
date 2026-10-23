@@ -144,6 +144,7 @@
     <string name="credit_lib_compose">Інструментарій інтерфейсу та Material 3</string>
     <string name="credit_lib_material_components">Компоненти Material Design</string>
     <string name="credit_lib_material_symbols">Значки (заокруглені)</string>
+    <string name="credit_lib_typeface">Шрифт</string>
     <string name="credit_lib_vico">Графіки</string>
     <string name="credit_lib_okhttp">HTTP-клієнт</string>
     <string name="credit_lib_moshi">Парсер JSON</string>

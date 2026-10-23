@@ -142,6 +142,7 @@
     <string name="credit_lib_compose">UI ടൂൾകിറ്റും Material 3-ഉം</string>
     <string name="credit_lib_material_components">Material Design ഘടകങ്ങൾ</string>
     <string name="credit_lib_material_symbols">ഐക്കണുകൾ (Rounded)</string>
+    <string name="credit_lib_typeface">ടൈപ്പ്ഫേസ്</string>
     <string name="credit_lib_vico">ചാർട്ടുകൾ</string>
     <string name="credit_lib_okhttp">HTTP ക്ലയന്റ്</string>
     <string name="credit_lib_moshi">JSON പാഴ്‌സർ</string>

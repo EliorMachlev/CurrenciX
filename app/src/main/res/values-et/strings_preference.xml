@@ -142,6 +142,7 @@
     <string name="credit_lib_compose">Kasutajaliidese tööriistakomplekt ja Material 3</string>
     <string name="credit_lib_material_components">Material Designi komponendid</string>
     <string name="credit_lib_material_symbols">Ikoonid (Rounded)</string>
+    <string name="credit_lib_typeface">Kirjatüüp</string>
     <string name="credit_lib_vico">Graafikud</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
     <string name="credit_lib_moshi">JSON-parser</string>

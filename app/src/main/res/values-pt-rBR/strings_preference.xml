@@ -125,6 +125,7 @@
     <string name="credit_lib_compose">Kit de interface do usuário e Material 3</string>
     <string name="credit_lib_material_components">Componentes do Material Design</string>
     <string name="credit_lib_material_symbols">Ícones (arredondados)</string>
+    <string name="credit_lib_typeface">Fonte</string>
     <string name="credit_lib_vico">Gráficos</string>
     <string name="credit_lib_okhttp">Cliente HTTP</string>
     <string name="credit_lib_moshi">Analisador de JSON</string>

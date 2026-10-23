@@ -143,6 +143,7 @@
     <string name="credit_lib_compose">Toolkit per l\'interfaccia utente e Material 3</string>
     <string name="credit_lib_material_components">Componenti Material Design</string>
     <string name="credit_lib_material_symbols">Icone (arrotondate)</string>
+    <string name="credit_lib_typeface">Carattere</string>
     <string name="credit_lib_vico">Grafici</string>
     <string name="credit_lib_okhttp">Client HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>

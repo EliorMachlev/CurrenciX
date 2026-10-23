@@ -146,6 +146,7 @@
     <string name="credit_lib_compose">أدوات واجهة المستخدم وMaterial 3</string>
     <string name="credit_lib_material_components">مكوّنات Material Design</string>
     <string name="credit_lib_material_symbols">الأيقونات (المستديرة)</string>
+    <string name="credit_lib_typeface">الخط</string>
     <string name="credit_lib_vico">الرسوم البيانية</string>
     <string name="credit_lib_okhttp">عميل HTTP</string>
     <string name="credit_lib_moshi">محلّل JSON</string>

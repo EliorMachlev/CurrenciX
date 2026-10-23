@@ -141,6 +141,7 @@
     <string name="credit_lib_compose">Toolkit UI dan Material 3</string>
     <string name="credit_lib_material_components">Komponen Material Design</string>
     <string name="credit_lib_material_symbols">Ikon (Rounded)</string>
+    <string name="credit_lib_typeface">Jenis huruf</string>
     <string name="credit_lib_vico">Grafik</string>
     <string name="credit_lib_okhttp">Klien HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>

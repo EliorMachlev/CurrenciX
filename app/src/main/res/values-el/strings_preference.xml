@@ -142,6 +142,7 @@
     <string name="credit_lib_compose">Εργαλειοθήκη UI και Material 3</string>
     <string name="credit_lib_material_components">Στοιχεία Material Design</string>
     <string name="credit_lib_material_symbols">Εικονίδια (Rounded)</string>
+    <string name="credit_lib_typeface">Γραμματοσειρά</string>
     <string name="credit_lib_vico">Γραφήματα</string>
     <string name="credit_lib_okhttp">Πρόγραμμα-πελάτης HTTP</string>
     <string name="credit_lib_moshi">Αναλυτής JSON</string>

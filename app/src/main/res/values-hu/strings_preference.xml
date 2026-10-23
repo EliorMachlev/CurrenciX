@@ -115,6 +115,7 @@
     <string name="credit_lib_compose">Felhasználói felület eszközkészlete és Material 3</string>
     <string name="credit_lib_material_components">Material Design-komponensek</string>
     <string name="credit_lib_material_symbols">Ikonok (Rounded)</string>
+    <string name="credit_lib_typeface">Betűtípus</string>
     <string name="credit_lib_vico">Diagramok</string>
     <string name="credit_lib_okhttp">HTTP-kliens</string>
     <string name="credit_lib_moshi">JSON-elemző</string>

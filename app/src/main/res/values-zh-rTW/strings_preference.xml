@@ -140,6 +140,7 @@
     <string name="credit_lib_compose">使用者介面工具包與 Material 3</string>
     <string name="credit_lib_material_components">Material Design 元件</string>
     <string name="credit_lib_material_symbols">圖示（圓角）</string>
+    <string name="credit_lib_typeface">字型</string>
     <string name="credit_lib_vico">圖表</string>
     <string name="credit_lib_okhttp">HTTP 用戶端</string>
     <string name="credit_lib_moshi">JSON 剖析器</string>

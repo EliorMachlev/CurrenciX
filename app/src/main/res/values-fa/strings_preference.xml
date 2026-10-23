@@ -142,6 +142,7 @@
     <string name="credit_lib_compose">ابزار رابط کاربری و Material 3</string>
     <string name="credit_lib_material_components">مؤلفه‌های Material Design</string>
     <string name="credit_lib_material_symbols">نمادها (گرد)</string>
+    <string name="credit_lib_typeface">قلم</string>
     <string name="credit_lib_vico">نمودارها</string>
     <string name="credit_lib_okhttp">کلاینت HTTP</string>
     <string name="credit_lib_moshi">تجزیه‌گر JSON</string>

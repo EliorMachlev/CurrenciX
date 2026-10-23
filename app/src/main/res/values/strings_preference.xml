@@ -163,6 +163,7 @@
     <string name="credit_lib_compose">UI toolkit and Material 3</string>
     <string name="credit_lib_material_components">Material Design components</string>
     <string name="credit_lib_material_symbols">Icons (Rounded)</string>
+    <string name="credit_lib_typeface">Typeface</string>
     <string name="credit_lib_vico">Charts</string>
     <string name="credit_lib_okhttp">HTTP client</string>
     <string name="credit_lib_moshi">JSON parser</string>

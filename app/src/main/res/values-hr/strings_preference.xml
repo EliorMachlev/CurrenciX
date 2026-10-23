@@ -143,6 +143,7 @@
     <string name="credit_lib_compose">Alati za korisničko sučelje i Material 3</string>
     <string name="credit_lib_material_components">Material Design komponente</string>
     <string name="credit_lib_material_symbols">Ikone (zaobljene)</string>
+    <string name="credit_lib_typeface">Font</string>
     <string name="credit_lib_vico">Grafikoni</string>
     <string name="credit_lib_okhttp">HTTP klijent</string>
     <string name="credit_lib_moshi">JSON parser</string>

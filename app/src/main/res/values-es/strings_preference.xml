@@ -143,6 +143,7 @@
     <string name="credit_lib_compose">Kit de herramientas de interfaz y Material 3</string>
     <string name="credit_lib_material_components">Componentes de Material Design</string>
     <string name="credit_lib_material_symbols">Iconos (redondeados)</string>
+    <string name="credit_lib_typeface">Tipo de letra</string>
     <string name="credit_lib_vico">Gráficos</string>
     <string name="credit_lib_okhttp">Cliente HTTP</string>
     <string name="credit_lib_moshi">Analizador de JSON</string>

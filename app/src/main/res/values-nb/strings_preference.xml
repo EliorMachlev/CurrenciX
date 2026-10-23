@@ -142,6 +142,7 @@
     <string name="credit_lib_compose">UI-verktøysett og Material 3</string>
     <string name="credit_lib_material_components">Material Design-komponenter</string>
     <string name="credit_lib_material_symbols">Ikoner (Rounded)</string>
+    <string name="credit_lib_typeface">Skrifttype</string>
     <string name="credit_lib_vico">Diagrammer</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
     <string name="credit_lib_moshi">JSON-parser</string>

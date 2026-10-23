@@ -117,6 +117,7 @@
     <string name="credit_lib_compose">Инструментариум за интерфейса и Material 3</string>
     <string name="credit_lib_material_components">Компоненти на Material Design</string>
     <string name="credit_lib_material_symbols">Икони (заоблени)</string>
+    <string name="credit_lib_typeface">Шрифт</string>
     <string name="credit_lib_vico">Графики</string>
     <string name="credit_lib_okhttp">HTTP клиент</string>
     <string name="credit_lib_moshi">JSON парсер</string>

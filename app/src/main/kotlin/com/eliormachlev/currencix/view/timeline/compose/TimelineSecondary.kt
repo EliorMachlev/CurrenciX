@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +55,11 @@ private val DIVIDER_THICKNESS = 0.75.dp
 private val DIFF_FONT_SIZE = 20.sp
 private val DIFF_ICON_SIZE = 20.dp
 private val DIFF_ICON_GAP = Spacing.Tiny
+private val DIFF_SIDE_GAP = Spacing.Tiny
+
+// The smallest the change shrinks to between the rates, at the default font
+// size; divided by the font scale, so it fits at 200 % too.
+private val DIFF_MIN_FONT_SIZE = 12.sp
 private val TILE_GAP = Spacing.Small
 private val TILE_RADIUS = 16.dp
 private val TILE_PADDING_H = Spacing.Medium
@@ -113,23 +120,24 @@ internal fun TimelineSecondary(
                 .fillMaxWidth()
                 .padding(CONTENT_PADDING),
     ) {
-        // Past / diff-% / current row
-        Box(modifier = Modifier.fillMaxWidth()) {
+        // Past / diff-% / current row: the change takes the room between the
+        // two rates, so a long rate or a large font never draws over it.
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             DatedRateColumn(
                 dated = stats.ratePast,
                 horizontalAlignment = Alignment.Start,
                 formatter = formatter,
                 secondaryColor = secondaryColor,
-                modifier = Modifier.align(Alignment.CenterStart),
             )
+            Box(Modifier.weight(1f).padding(horizontal = DIFF_SIDE_GAP), contentAlignment = Alignment.Center) {
+                stats.diffPercent?.let { PercentChange(it) }
+            }
             DatedRateColumn(
                 dated = stats.rateCurrent,
                 horizontalAlignment = Alignment.End,
                 formatter = formatter,
                 secondaryColor = secondaryColor,
-                modifier = Modifier.align(Alignment.CenterEnd),
             )
-            stats.diffPercent?.let { PercentChange(it, Modifier.align(Alignment.Center)) }
         }
 
         // Divider — hidden until there's a past rate, mirroring the pre-Compose behaviour.
@@ -246,7 +254,16 @@ private fun PercentChange(
             modifier = Modifier.size(DIFF_ICON_SIZE),
         )
         Spacer(Modifier.width(DIFF_ICON_GAP))
-        Text(text = text, fontSize = DIFF_FONT_SIZE, color = color)
+        Text(
+            text = text,
+            color = color,
+            maxLines = 1,
+            autoSize =
+                TextAutoSize.StepBased(
+                    minFontSize = DIFF_MIN_FONT_SIZE / LocalDensity.current.fontScale,
+                    maxFontSize = DIFF_FONT_SIZE,
+                ),
+        )
     }
 }
 

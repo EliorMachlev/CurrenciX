@@ -142,6 +142,7 @@
     <string name="credit_lib_compose">Kullanıcı arayüzü araç seti ve Material 3</string>
     <string name="credit_lib_material_components">Material Design bileşenleri</string>
     <string name="credit_lib_material_symbols">Simgeler (Rounded)</string>
+    <string name="credit_lib_typeface">Yazı tipi</string>
     <string name="credit_lib_vico">Grafikler</string>
     <string name="credit_lib_okhttp">HTTP istemcisi</string>
     <string name="credit_lib_moshi">JSON ayrıştırıcı</string>
