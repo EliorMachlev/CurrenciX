@@ -83,7 +83,7 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 
 ### Semgrep
 - Rule sets: `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`
-- Installed on Python 3.13 from `.github/semgrep/requirements.txt`, Semgrep and every package it needs pinned by hash (`--require-hashes`), not the unpinned `semgrep/semgrep` image; that file is compiled from `requirements.in` with `pip-compile --generate-hashes`, and Dependabot recompiles it
+- Installed on Python 3.14 (the newest Semgrep supports; its wheels stop at 3.14) from `.github/semgrep/requirements.txt`, Semgrep and every package it needs pinned by hash (`--require-hashes`), not the unpinned `semgrep/semgrep` image; that file is compiled from `requirements.in` with `pip-compile --generate-hashes`, and Dependabot recompiles it
 - Every finding is printed in the job log and uploaded as SARIF to the GitHub Security tab. No rule is switched off and no path is left out. Two findings are excluded where they occur, both recorded in [exceptions.md](exceptions.md): `exported_activity` on the launcher and on the text-selection ("Convert currency") activity.
 - Semgrep honours those `nosemgrep` comments (the job passes) and marks both results suppressed in the SARIF, but GitHub code scanning doesn't read SARIF suppressions, so it still lists them as open alerts until they're dismissed there.
 - Any finding fails the job, whatever its severity.
