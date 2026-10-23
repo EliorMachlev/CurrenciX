@@ -56,10 +56,10 @@ An SBOM is generated as part of the CI pipeline (see [`docs/markDown/ci-cd.md`](
 ## Scope
 
 This app:
-- Requests only the `INTERNET` permission
+- Requests only `INTERNET`, `ACCESS_NETWORK_STATE`, `POST_NOTIFICATIONS` (rate alerts, asked for at runtime) and `USE_BIOMETRIC` (the optional app lock); see [`docs/markDown/security.md`](docs/markDown/security.md#runtime-permissions)
 - Stores no personal data
-- Contains no authentication or payment flows
-- Communicates only with the exchange rate provider selected by the user
+- Contains no accounts or payment flows; the optional app lock is checked on the device only
+- Communicates only with exchange rate providers: the one selected by the user, and a fallback when it can't be reached
 
 Issues related to third-party exchange rate APIs should be reported directly to those providers.
 

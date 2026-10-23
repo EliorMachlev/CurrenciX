@@ -59,11 +59,12 @@ Warnings and findings get fixed, not hidden.
 - **Fix the cause.** Migrate off the deprecated API, split the long function, make the parameter list a type, remove the unused code.
 - **When no real fix exists yet,** leave the warning visible and say so in the PR. A visible warning is accurate; a hidden one is not.
 
-**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds two Semgrep findings, and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
+**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds six entries (two Semgrep findings, one LeakCanary reference and three incubating Android Gradle Plugin APIs), and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
 
 ### Pull Request Checklist
 
 - [ ] `./gradlew check assembleDebug` passes locally (includes the Konsist architecture tests)
+- [ ] New functionality comes with unit tests, and a bug fix with a test that fails without it (Robolectric for Android and Compose code, plain JUnit otherwise)
 - [ ] `./gradlew detekt` reports no findings
 - [ ] `./gradlew spotlessCheck` is clean
 - [ ] No suppressions or baseline entries beyond those in [exceptions.md](exceptions.md), and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))
