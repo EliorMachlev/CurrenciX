@@ -33,7 +33,7 @@
     <string name="name_chf">Zwitserse frank</string>
     <string name="name_clf">Chileense Unidades de fomento</string>
     <string name="name_clp">Chileense peso</string>
-    <string name="name_cnh">Chinese renminbi (Buitengaats)</string>
+    <string name="name_cnh">Chinese renminbi (offshore)</string>
     <string name="name_cny">Chinese renminbi</string>
     <string name="name_cop">Colombiaanse peso</string>
     <string name="name_crc">Costa Ricaanse colon</string>
@@ -78,7 +78,7 @@
     <string name="name_inr">Indiase roepie</string>
     <string name="name_iqd">Iraakse dinar</string>
     <string name="name_irr">Iraanse rial</string>
-    <string name="name_isk">Ijslandse kroon</string>
+    <string name="name_isk">IJslandse kroon</string>
 
     <string name="name_jep">Jersey pond</string>
     <string name="name_jmd">Jamaicaanse dollar</string>
@@ -109,7 +109,7 @@
     <string name="name_mmk">Myanmarese kyat</string>
     <string name="name_mnt">Mongolische tugrik</string>
     <string name="name_mop">Macause pataca</string>
-    <string name="name_mro">Mauritaanse ouguiya (pre-2018)</string>
+    <string name="name_mro">Mauritaanse ouguiya (1973–2017)</string>
     <string name="name_mru">Mauritaanse ouguiya</string>
     <string name="name_mur">Mauritiaanse roepie</string>
     <string name="name_mvr">Maldivische rufiyaa</string>
@@ -120,7 +120,7 @@
 
     <string name="name_nad">Namibische dollar</string>
     <string name="name_ngn">Nigeriaanse naira</string>
-    <string name="name_nio">Nicaraguaanse córdoba Oro</string>
+    <string name="name_nio">Nicaraguaanse córdoba</string>
     <string name="name_nok">Noorse kroon</string>
     <string name="name_npr">Nepalese roepie</string>
     <string name="name_nzd">Nieuw-Zeelandse dollar</string>
@@ -128,7 +128,7 @@
     <string name="name_omr">Omaanse rial</string>
 
     <string name="name_pab">Panamese balboa</string>
-    <string name="name_pen">Nieuwe Peruviaanse sol</string>
+    <string name="name_pen">Peruaanse sol</string>
     <string name="name_pgk">Papoease kina</string>
     <string name="name_php">Filipijnse peso</string>
     <string name="name_pkr">Pakistaanse roepie</string>
@@ -143,18 +143,18 @@
     <string name="name_rwf">Rwandese frank</string>
 
     <string name="name_sar">Saoedi-Arabische riyal</string>
-    <string name="name_sbd">Salomon-dollar</string>
+    <string name="name_sbd">Salomonseilandse dollar</string>
     <string name="name_scr">Seychelse roepie</string>
     <string name="name_sdg">Soedanees pond</string>
     <string name="name_sek">Zweedse kroon</string>
     <string name="name_sgd">Singaporese dollar</string>
     <string name="name_shp">Sint-Heleens pond</string>
     <string name="name_sle">Sierra Leoonse leone</string>
-    <string name="name_sll">Sierra Leoonse leone (pre-07/2022)</string>
+    <string name="name_sll">Sierra Leoonse leone (vóór 07/2022)</string>
     <string name="name_sos">Somalische shilling</string>
     <string name="name_srd">Surinaamse dollar</string>
     <string name="name_ssp">Zuid-Soedanees pond</string>
-    <string name="name_std">São Tomé en Principe dobra (1977–2017)</string>
+    <string name="name_std">Santomese dobra (1977–2017)</string>
     <string name="name_stn">Santomese dobra</string>
     <string name="name_svc">Salvadoraanse colon</string>
     <string name="name_syp">Syrisch pond</string>
@@ -166,7 +166,7 @@
     <string name="name_tnd">Tunesische dinar</string>
     <string name="name_top">Tongaanse pa\'anga</string>
     <string name="name_try">Turkse lira</string>
-    <string name="name_ttd">Trinidad en Tobago dollar</string>
+    <string name="name_ttd">Trinidad en Tobagaanse dollar</string>
     <string name="name_twd">Nieuwe Taiwanese dollar</string>
     <string name="name_tzs">Tanzaniaanse shilling</string>
 
@@ -184,14 +184,14 @@
     <string name="name_wst">Samoaanse tala</string>
 
     <string name="name_xaf">CFA-frank BEAC</string>
-    <string name="name_xag">Zilver ons</string>
-    <string name="name_xau">Goud ons</string>
+    <string name="name_xag">Ons zilver</string>
+    <string name="name_xau">Ons goud</string>
     <string name="name_xcd">Oost-Caribische dollar</string>
     <string name="name_xdr">Speciale trekkingsrechten (IMF)</string>
     <string name="name_xof">CFA-frank BCEAO</string>
-    <string name="name_xpd">Palladium ons</string>
+    <string name="name_xpd">Ons palladium</string>
     <string name="name_xpf">CFP-frank</string>
-    <string name="name_xpt">Platina ons</string>
+    <string name="name_xpt">Ons platina</string>
 
     <string name="name_yer">Jemenitische rial</string>
 

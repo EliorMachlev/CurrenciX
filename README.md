@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-   <img alt="Logo" height="200" src="art/ic_launcher/ic_launcher_foreground.svg">
+   <img alt="Logo" height="200" src="art/brand/ic_launcher.svg">
 </div>
 
 **CurrenciX** is a [simple](https://en.wikipedia.org/wiki/KISS_principle) currency converter — a handy travel companion, not a tool for realtime financial business.
@@ -21,15 +21,18 @@ It's a fork of [Currencies](https://github.com/sal0max/currencies) by Maximilian
    * [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) — ~23 CAD rates
    * [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) (Norway) — ~40 rates
    * [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) (Russia) — ~44 rates against the Ruble
-* Built-in calculator for on-the-fly conversions (e.g. splitting a restaurant bill).
+   * [Bank of Israel](https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/) — ~14 ILS rates
+* Built-in calculator for on-the-fly conversions.
+* Cart: a dedicated bill-splitting screen — a running list of items converted against a chosen currency pair.
 * Fee manager: global exchange/bank fees plus per-pair overrides — see the "true cost" alongside the mid-market rate.
 * Rate-history chart with configurable overlays (grid, axis labels, min/max highlights).
 * Historical rates: convert against rates from any prior date.
 * Encrypted local backup & restore of settings.
+* Optional background rate refresh and a home-screen widget.
 * Material 3 UI with light, dark, and OLED themes.
 * Ad-free and telemetry-free.
 
-Written in Kotlin, min SDK 26 (Android 8.0), targeting current Android.
+Written in Kotlin, min SDK 33 (Android 13), targeting current Android.
 
 ## Screenshots
 

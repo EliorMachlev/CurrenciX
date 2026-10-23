@@ -27,16 +27,15 @@ class BankRossiiTimelineXmlParser(
         while (eventType != XmlPullParser.END_DOCUMENT) {
             tagname = parser.name ?: tagname
             when (eventType) {
-                XmlPullParser.START_TAG ->
+                XmlPullParser.START_TAG -> {
                     if (tagname == "Record") {
                         date =
-                            LocalDate.parse(
-                                parser.getAttributeValue(null, "Date"),
-                                BANK_ROSSII_DATE_FORMATTER,
-                            )
+                            parser.bankRossiiDate()
                         currencyId = parser.getAttributeValue(null, "Id")
                     }
-                XmlPullParser.TEXT ->
+                }
+
+                XmlPullParser.TEXT -> {
                     if (tagname == "VunitRate") {
                         value =
                             BigDecimal.ONE.divide(
@@ -44,13 +43,16 @@ class BankRossiiTimelineXmlParser(
                                 MathContext.DECIMAL128,
                             )
                     }
-                XmlPullParser.END_TAG ->
+                }
+
+                XmlPullParser.END_TAG -> {
                     if (tagname == "Record") {
                         recordRate(date, value, currencyId)
                         date = null
                         currencyId = null
                         value = null
                     }
+                }
             }
             eventType = parser.next()
         }
@@ -63,8 +65,8 @@ class BankRossiiTimelineXmlParser(
                     .firstOrNull()
                     ?.currency
                     ?.iso4217Alpha(),
-            startDate = rates.entries.first().key,
-            endDate = rates.entries.last().key,
+            startDate = rates.keys.firstOrNull(),
+            endDate = rates.keys.lastOrNull(),
             rates = rates,
             provider = ApiProvider.BANK_ROSSII,
         )

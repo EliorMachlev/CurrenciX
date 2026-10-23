@@ -4,43 +4,40 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 import java.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 
-@Suppress("unused", "UNUSED_PARAMETER")
-internal class BankOfCanadaRatesAdapter {
+internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
     @Synchronized
-    @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): ExchangeRates? {
-        reader.beginObject()
-        var result: ExchangeRates? = null
-        while (reader.hasNext() && result == null) {
-            when (reader.nextName()) {
-                "message" ->
-                    result =
-                        ExchangeRates(
-                            success = false,
-                            error = reader.nextString(),
-                            base = null,
-                            date = null,
-                            rates = null,
-                            provider = ApiProvider.BANK_OF_CANADA,
-                        )
-                "observations" -> {
-                    reader.beginArray()
-                    result = convertObservation(reader)
-                }
-                else -> reader.skipValue()
+    override fun fromJson(reader: JsonReader): ExchangeRates? =
+        reader.readObjectFirstOf { name ->
+            when (name) {
+                FIELD_MESSAGE -> errorResponse(reader.nextString())
+                BANK_OF_CANADA_OBSERVATIONS -> readObservations(reader)
+                else -> null.also { reader.skipValue() }
             }
         }
-        reader.endObject()
+
+    private fun errorResponse(message: String?): ExchangeRates =
+        ExchangeRates(
+            success = false,
+            error = message,
+            base = null,
+            date = null,
+            rates = null,
+            provider = ApiProvider.BANK_OF_CANADA,
+        )
+
+    // The first observation is the one asked for; any others are read past.
+    private fun readObservations(reader: JsonReader): ExchangeRates {
+        reader.beginArray()
+        val result = convertObservation(reader)
+        while (reader.hasNext()) reader.skipValue()
+        reader.endArray()
         return result
     }
 
@@ -76,34 +73,22 @@ internal class BankOfCanadaRatesAdapter {
         reader.beginObject()
         while (reader.hasNext()) {
             val nextName = reader.nextName()
-            if (nextName == "d") {
+            if (nextName == BANK_OF_CANADA_DATE) {
                 date = LocalDate.parse(reader.nextString())
             } else {
                 readRate(reader, nextName)?.let(rates::add)
             }
         }
+        reader.endObject()
         return date
     }
 
+    // The value is Canadian dollars per unit; the rate is units per dollar.
     private fun readRate(
         reader: JsonReader,
         name: String,
     ): Rate? {
-        val currency = Currency.fromString(name.bankOfCanadaIso())
-        reader.beginObject()
-        reader.skipName() // always "v"
-        val value = BigDecimal(reader.nextString())
-        reader.endObject()
+        val (currency, value) = reader.readBankOfCanadaValue(name)
         return currency?.let { Rate(it, BigDecimal.ONE.divide(value, MathContext.DECIMAL128)) }
-    }
-
-    @Synchronized
-    @ToJson
-    @Throws(IOException::class)
-    fun toJson(
-        writer: JsonWriter,
-        value: ExchangeRates?,
-    ) {
-        writer.nullValue()
     }
 }

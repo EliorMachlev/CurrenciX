@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> до &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Дані надано &lt;b>%s&lt;/b></string>
     <string name="rate_average">сер.</string>
     <string name="rate_median">медіана</string>
     <string name="rate_min">мін.</string>
@@ -9,4 +7,18 @@
     <string name="year">рік</string>
     <string name="month">місяць</string>
     <string name="week">тиждень</string>
+    <string name="timeline_five_years">5 років</string>
+    <string name="timeline_custom_range">Власний період</string>
+    <string name="timeline_custom">Свій</string>
+    <string name="timeline_share">Поділитися графіком</string>
+    <string name="timeline_no_rates">Немає курсів за ці дати</string>
+    <string name="timeline_convert_at">Перерахувати за курсом на %1$s</string>
+    <string name="timeline_a11y_up">Зростання на %1$s%%</string>
+    <string name="timeline_a11y_down">Падіння на %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Без змін</string>
+    <string name="timeline_a11y_from_to">з %1$s на %2$s до %3$s на %4$s</string>
+    <string name="timeline_a11y_high">максимум %1$s на %2$s</string>
+    <string name="timeline_a11y_low">мінімум %1$s на %2$s</string>
+    <string name="timeline_alert_at">Сповістити при %1$s</string>
+    <string name="timeline_touch_hint">Торкніться графіка, щоб конвертувати або задати сповіщення за курсом дня</string>
 </resources>

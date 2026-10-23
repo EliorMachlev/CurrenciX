@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.util
 
-import com.ezylang.evalex.Expression
-
 // Calculator operator glyphs shown to the user. Kept as constants so the
 // "which operator?" check and the "insert this operator" call agree on the
 // exact Unicode codepoint (typographical minus and multiplication signs
@@ -11,6 +9,14 @@ const val OPERATOR_MINUS = "\u2212" // − (minus sign, not hyphen)
 const val OPERATOR_MULTIPLY = "\u00D7" // ×
 const val OPERATOR_DIVIDE = "\u00F7" // ÷
 
+// The keypad's zero keys: one zero, and the two that enter several at once
+// (collapsed to one where a number can't start with zeros).
+const val ZERO = "0"
+const val DOUBLE_ZERO = "00"
+const val TRIPLE_ZERO = "000"
+val MULTI_ZERO_KEYS: Set<String> = setOf(DOUBLE_ZERO, TRIPLE_ZERO)
+val ZERO_KEYS: Set<String> = MULTI_ZERO_KEYS + ZERO
+
 // Parentheses use plain ASCII in both display and evaluator — no glyph
 // normalisation needed. Kept as constants so the paren-cycle button, the
 // state-machine, and the auto-close padder all agree on the same character.
@@ -18,7 +24,7 @@ const val PAREN_OPEN = "("
 const val PAREN_CLOSE = ")"
 
 // Single source of truth pairing each display glyph with the ASCII operator
-// EvalEx understands. Drives both [OPERATOR_REGEX] and [normaliseGlyphsToAscii]
+// [evaluateArithmetic] understands. Drives both [OPERATOR_REGEX] and [normaliseGlyphsToAscii]
 // so adding an operator is a one-line change instead of three coordinated ones.
 // linkedMapOf keeps the declaration order stable — the identity `+ → +` entry
 // intentionally lands first so a future reader sees the natural PLUS-first order.
@@ -69,23 +75,18 @@ fun String.evaluateCalculatorExpression(): String {
             .expandPercent()
             .padTrailingToken()
             .closeUnbalancedParens()
-    // EvalEx.evaluate() throws checked ParseException/EvaluationException
-    // (parse errors, unbalanced parens, division by zero, …). Every failure
-    // collapses to FALLBACK_RESULT — same contract the UI relied on with
-    // mXparser.
+    // Anything that can't be worked out — a malformed expression, a division
+    // by zero — collapses to FALLBACK_RESULT.
     return try {
-        Expression(normalised)
-            .evaluate()
-            .numberValue
-            .stripTrailingZeros()
-            .toPlainString()
-    } catch (_: Exception) {
+        evaluateArithmetic(normalised).stripTrailingZeros().toPlainString()
+    } catch (_: ArithmeticSyntaxException) {
+        FALLBACK_RESULT
+    } catch (_: ArithmeticException) {
         FALLBACK_RESULT
     }
 }
 
-// Exposed to the system-IME seed path so a state already holding display glyphs
-// like `5 − 3` can be re-typed into an EditText as ASCII `5-3`.
+// `5 − 3` as the ASCII `5-3`, without the spaces.
 internal fun String.normaliseGlyphsToAscii(): String =
     DISPLAY_TO_ASCII.entries.fold(replace(" ", "")) { acc, (glyph, ascii) ->
         acc.replace(glyph, ascii)
@@ -104,7 +105,8 @@ internal fun String.asciiToDisplayGlyphs(): String =
 // otherwise the anchor digits get consumed first.
 private fun String.expandPercent(): String =
     replace(SMART_PERCENT_REGEX) { m ->
-        "${m.groupValues[1]}${m.groupValues[2]}(${m.groupValues[1]}*${m.groupValues[3]}/100)"
+        val (anchor, operator, percent) = m.destructured
+        "$anchor$operator($anchor*$percent/100)"
     }.replace("%", "/100")
 
 private fun String.padTrailingToken(): String {

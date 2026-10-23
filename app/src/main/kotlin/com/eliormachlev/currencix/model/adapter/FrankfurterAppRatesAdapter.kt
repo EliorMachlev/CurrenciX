@@ -2,10 +2,7 @@ package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 import java.io.IOException
 import java.math.BigDecimal
 
@@ -13,14 +10,12 @@ import java.math.BigDecimal
  * Converts currency object to array of currencies.
  * Also removes some unwanted values and adds some wanted ones.
  */
-@Suppress("unused", "UNUSED_PARAMETER")
 internal class FrankfurterAppRatesAdapter(
     private val base: Currency,
-) {
+) : ResponseAdapter<List<Rate>>(RATE_LIST_TYPE) {
     @Synchronized
-    @FromJson
     @Throws(IOException::class)
-    fun fromJson(reader: JsonReader): List<Rate> =
+    override fun fromJson(reader: JsonReader): List<Rate> =
         buildList {
             reader.beginObject()
             // convert
@@ -36,14 +31,4 @@ internal class FrankfurterAppRatesAdapter(
             }
             addFokFromDkkIfMissing()
         }
-
-    @Synchronized
-    @ToJson
-    @Throws(IOException::class)
-    fun toJson(
-        writer: JsonWriter,
-        value: List<Rate>?,
-    ) {
-        writer.nullValue()
-    }
 }

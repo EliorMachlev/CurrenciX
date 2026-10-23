@@ -22,7 +22,7 @@
     <string name="name_bob">Болівійський болівіано</string>
     <string name="name_brl">Бразильський реал</string>
     <string name="name_bsd">Багамський долар</string>
-    <string name="name_btc">Bitcoin (Біткоїн)</string>
+    <string name="name_btc">Біткоїн</string>
     <string name="name_btn">Бутанський нгултрум</string>
     <string name="name_bwp">Ботсванська пула</string>
     <string name="name_byn">Білоруський рубль</string>
@@ -33,7 +33,7 @@
     <string name="name_chf">Швейцарський франк</string>
     <string name="name_clf">Умовно розрахункова одиниця Чилі (UF)</string>
     <string name="name_clp">Чилійський песо</string>
-    <string name="name_cnh">Китайський юань (офшори)</string>
+    <string name="name_cnh">Китайський юань (офшорний)</string>
     <string name="name_cny">Китайський юань</string>
     <string name="name_cop">Колумбійський песо</string>
     <string name="name_crc">Коста-риканський колон</string>

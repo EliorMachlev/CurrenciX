@@ -65,7 +65,15 @@
           <td>Free tier available</td>
         </tr>
         <tr>
-          <td><strong>InforEuro</strong><br><small style="color:var(--clr-text-muted)">European Commission</small></td>
+          <td><strong>AllRatesToday</strong><br><small style="color:var(--clr-text-muted)">Mid-market interbank rates</small></td>
+          <td><span class="tag">~160</span></td>
+          <td>About every minute</td>
+          <td>EUR</td>
+          <td>Yes</td>
+          <td>Required; free plan 300 requests in total</td>
+        </tr>
+        <tr>
+          <td><strong>InforEuro</strong><br><small style="color:var(--clr-text-muted)">European Commission · inaccurate data</small></td>
           <td><span class="tag">~150</span></td>
           <td>Monthly</td>
           <td>EUR</td>
@@ -81,7 +89,7 @@
           <td>No</td>
         </tr>
         <tr>
-          <td><strong>Norges Bank</strong><br><small style="color:var(--clr-text-muted)">Norwegian Central Bank</small></td>
+          <td><strong>Norges Bank</strong><br><small style="color:var(--clr-text-muted)">Norwegian Central Bank · often down</small></td>
           <td><span class="tag">~40</span></td>
           <td>Business days</td>
           <td>NOK</td>
@@ -119,9 +127,16 @@
     </div>
 
     <div class="card">
+      <span class="card-icon">⏱️</span>
+      <h3>AllRatesToday</h3>
+      <p>Mid-market exchange rates from <strong>interbank data</strong> for about 160 currencies, updated about every minute. It needs your own API key, entered in Settings. The free plan allows <strong>300 requests in total, ever</strong>; each refresh and each chart range uses one, so pick a long refresh interval or a paid plan.</p>
+      <p style="margin-top:.5rem;"><a href="https://allratestoday.com/">allratestoday.com</a></p>
+    </div>
+
+    <div class="card">
       <span class="card-icon">🏛️</span>
       <h3>InforEuro</h3>
-      <p>The <strong>European Commission's</strong> official monthly accounting rates for the euro, used for EU budget and grant calculations. Covers ~150 currencies and is updated once per month. Ideal when you need the official EU rate rather than market rates.</p>
+      <p>The <strong>European Commission's</strong> official monthly accounting rates for the euro, used for EU budget and grant calculations. Covers ~150 currencies and is updated once per month. Ideal when you need the official EU rate rather than market rates — but since a month-old rate can be far from today's market, the app lists it only when <em>Show unreliable providers</em> is on, labelled <em>Inaccurate data</em>.</p>
       <p style="margin-top:.5rem;"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en">European Commission</a></p>
     </div>
 
@@ -135,7 +150,7 @@
     <div class="card">
       <span class="card-icon">🇳🇴</span>
       <h3>Norges Bank</h3>
-      <p>The <strong>Norwegian Central Bank</strong> publishes about 40 exchange rates against NOK every business day. Data is returned as XML and parsed natively in the app. No API key required.</p>
+      <p>The <strong>Norwegian Central Bank</strong> publishes about 40 exchange rates against NOK every business day. Data is returned as XML and parsed natively in the app. No API key required. Its service has regular outages (HTTP 503), so the app lists it only when <em>Show unreliable providers</em> is on, labelled <em>Downtime</em>.</p>
       <p style="margin-top:.5rem;"><a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/">norges-bank.no</a></p>
     </div>
 
@@ -157,7 +172,7 @@
       <tbody>
         <tr>
           <td><strong>fer.ee</strong></td>
-          <td>Deactivated — persistent API instability made it unreliable</td>
+          <td>Removed — the domain no longer resolves and the project is gone</td>
         </tr>
         <tr>
           <td><strong>exchangerate.host</strong></td>
@@ -169,8 +184,9 @@
 
   <h2 class="section-title">Switching Providers</h2>
   <div class="prose">
-    <p>Open <strong>Settings → Exchange rate provider</strong> and select a provider. The change takes effect immediately on the next pull-to-refresh or app restart. Cached rates from the previous provider are discarded.</p>
-    <p>If a provider requires an API key (currently only OpenExchangerates), an input field appears in Settings after selecting it. The key is stored locally in SharedPreferences and is never transmitted to any server other than the provider's own API.</p>
+    <p>Open <strong>Settings → Exchange rates → Data provider</strong> and select a provider. The change takes effect immediately on the next pull-to-refresh or app restart. Cached rates from the previous provider are discarded.</p>
+    <p>Providers that are often down (Norges Bank) or whose rates are inaccurate (InforEuro) are hidden from the list until you turn on <strong>Settings → Exchange rates → Show unreliable providers</strong>; then each is labelled with why. A provider you already use stays in the list either way.</p>
+    <p>If a provider requires an API key (OpenExchangerates and AllRatesToday), an input field appears in Settings after selecting it. The key is stored locally in SharedPreferences and is never transmitted to any server other than the provider's own API.</p>
   </div>
 
 </main>

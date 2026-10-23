@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">Setel ulang tur pengenalan</string>
+    <string name="pref_debug_reset_onboarding_summary">Menghapus penanda jalankan pertama agar tur dengan sorotan diputar ulang saat aplikasi dibuka berikutnya.</string>
+    <string name="pref_debug_reset_onboarding_toast">Tur pengenalan akan diputar ulang saat aplikasi dibuka berikutnya.</string>
+</resources>

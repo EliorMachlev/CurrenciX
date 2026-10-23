@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The themed launcher icon: the mark in one color, which the launcher replaces with the wallpaper's. Paths: values/brand_mark.xml. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="@string/brand_mark_arrow_top"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineJoin="round"
+        android:strokeWidth="@dimen/brand_mark_arrow_round" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="@string/brand_mark_arrow_bottom"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineJoin="round"
+        android:strokeWidth="@dimen/brand_mark_arrow_round" />
+    <path
+        android:pathData="@string/brand_mark_cross"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeWidth="@dimen/brand_mark_cross_width" />
+</vector>

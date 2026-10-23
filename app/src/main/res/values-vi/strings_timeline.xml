@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b&gt;%1$s&lt;/b&gt; sang &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="data_provider">Dữ liệu bởi &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="rate_average">TB</string>
     <string name="rate_median">TV</string>
-    <string name="rate_min">sàn</string>
-    <string name="rate_max">trần</string>
+    <string name="rate_min">thấp nhất</string>
+    <string name="rate_max">cao nhất</string>
     <string name="year">năm</string>
     <string name="month">tháng</string>
     <string name="week">tuần</string>
+    <string name="timeline_five_years">5 năm</string>
+    <string name="timeline_custom_range">Khoảng tùy chỉnh</string>
+    <string name="timeline_custom">Tùy chọn</string>
+    <string name="timeline_share">Chia sẻ biểu đồ</string>
+    <string name="timeline_no_rates">Không có tỷ giá cho những ngày này</string>
+    <string name="timeline_convert_at">Quy đổi theo tỷ giá ngày %1$s</string>
+    <string name="timeline_a11y_up">Tăng %1$s%%</string>
+    <string name="timeline_a11y_down">Giảm %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Không đổi</string>
+    <string name="timeline_a11y_from_to">từ %1$s ngày %2$s đến %3$s ngày %4$s</string>
+    <string name="timeline_a11y_high">cao nhất %1$s ngày %2$s</string>
+    <string name="timeline_a11y_low">thấp nhất %1$s ngày %2$s</string>
+    <string name="timeline_alert_at">Cảnh báo ở %1$s</string>
+    <string name="timeline_touch_hint">Chạm vào biểu đồ để quy đổi hoặc đặt cảnh báo theo tỷ giá của một ngày</string>
 </resources>

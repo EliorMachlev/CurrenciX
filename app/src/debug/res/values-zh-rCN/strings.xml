@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_debug_reset_onboarding_title">重置新手引导</string>
+    <string name="pref_debug_reset_onboarding_summary">清除首次运行标记，下次启动时将重新播放带高亮提示的引导。</string>
+    <string name="pref_debug_reset_onboarding_toast">下次启动时将重新播放新手引导。</string>
+</resources>

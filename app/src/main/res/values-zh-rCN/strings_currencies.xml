@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="name_aed">阿联酋迪拉姆</string>
-    <string name="name_afn">阿尼</string>
-    <string name="name_all">列克</string>
+    <string name="name_afn">阿富汗尼</string>
+    <string name="name_all">阿尔巴尼亚列克</string>
     <string name="name_amd">亚美尼亚德拉姆</string>
     <string name="name_ang">荷属安的列斯盾</string>
-    <string name="name_aoa">宽扎</string>
+    <string name="name_aoa">安哥拉宽扎</string>
     <string name="name_ars">阿根廷比索</string>
     <string name="name_aud">澳元</string>
     <string name="name_awg">阿鲁巴弗洛林</string>
     <string name="name_azn">阿塞拜疆马纳特</string>
 
-    <string name="name_bam">可兑换马克</string>
+    <string name="name_bam">波黑可兑换马克</string>
     <string name="name_bbd">巴巴多斯元</string>
-    <string name="name_bdt">塔卡</string>
-    <string name="name_bgn">保加利亚列瓦</string>
+    <string name="name_bdt">孟加拉塔卡</string>
+    <string name="name_bgn">保加利亚列弗</string>
     <string name="name_bhd">巴林第纳尔</string>
     <string name="name_bif">布隆迪法郎</string>
     <string name="name_bmd">百慕大元</string>
     <string name="name_bnd">文莱元</string>
     <string name="name_bob">玻利维亚诺</string>
-    <string name="name_brl">玻利维亚资金</string>
+    <string name="name_brl">巴西雷亚尔</string>
     <string name="name_bsd">巴哈马元</string>
     <string name="name_btc">比特币</string>
-    <string name="name_btn">努扎姆</string>
-    <string name="name_bwp">普拉</string>
+    <string name="name_btn">不丹努尔特鲁姆</string>
+    <string name="name_bwp">博茨瓦纳普拉</string>
     <string name="name_byn">白俄罗斯卢布</string>
     <string name="name_bzd">伯利兹元</string>
 
     <string name="name_cad">加元</string>
     <string name="name_cdf">刚果法郎</string>
     <string name="name_chf">瑞士法郎</string>
-    <string name="name_clf">智利资金</string>
+    <string name="name_clf">智利计价单位（UF）</string>
     <string name="name_clp">智利比索</string>
     <string name="name_cnh">离岸人民币</string>
     <string name="name_cny">人民币</string>
@@ -48,7 +48,7 @@
     <string name="name_dzd">阿尔及利亚第纳尔</string>
 
     <string name="name_egp">埃及镑</string>
-    <string name="name_ern">纳法克</string>
+    <string name="name_ern">厄立特里亚纳克法</string>
     <string name="name_etb">埃塞俄比亚比尔</string>
     <string name="name_eur">欧元</string>
 
@@ -57,23 +57,23 @@
     <string name="name_fok">法罗群岛克朗</string>
 
     <string name="name_gbp">英镑</string>
-    <string name="name_gel">拉里</string>
+    <string name="name_gel">格鲁吉亚拉里</string>
     <string name="name_ggp">根西镑</string>
     <string name="name_ghs">加纳赛地</string>
     <string name="name_gip">直布罗陀镑</string>
-    <string name="name_gmd">达拉西</string>
+    <string name="name_gmd">冈比亚达拉西</string>
     <string name="name_gnf">几内亚法郎</string>
-    <string name="name_gtq">格查尔</string>
+    <string name="name_gtq">危地马拉格查尔</string>
     <string name="name_gyd">圭亚那元</string>
 
     <string name="name_hkd">港元</string>
-    <string name="name_hnl">伦皮拉</string>
-    <string name="name_hrk">库纳</string>
-    <string name="name_htg">古德</string>
-    <string name="name_huf">福林</string>
+    <string name="name_hnl">洪都拉斯伦皮拉</string>
+    <string name="name_hrk">克罗地亚库纳</string>
+    <string name="name_htg">海地古德</string>
+    <string name="name_huf">匈牙利福林</string>
 
-    <string name="name_idr">印度尼西亚卢比</string>
-    <string name="name_ils">新谢克尔</string>
+    <string name="name_idr">印度尼西亚盾</string>
+    <string name="name_ils">以色列新谢克尔</string>
     <string name="name_imp">马恩岛镑</string>
     <string name="name_inr">印度卢比</string>
     <string name="name_iqd">伊拉克第纳尔</string>
@@ -87,33 +87,33 @@
 
     <string name="name_kes">肯尼亚先令</string>
     <string name="name_kgs">吉尔吉斯斯坦索姆</string>
-    <string name="name_khr">瑞尔</string>
+    <string name="name_khr">柬埔寨瑞尔</string>
     <string name="name_kmf">科摩罗法郎</string>
     <string name="name_kpw">朝鲜圆</string>
     <string name="name_krw">韩元</string>
     <string name="name_kwd">科威特第纳尔</string>
     <string name="name_kyd">开曼群岛元</string>
-    <string name="name_kzt">腾格</string>
+    <string name="name_kzt">哈萨克斯坦坚戈</string>
 
-    <string name="name_lak">基普</string>
+    <string name="name_lak">老挝基普</string>
     <string name="name_lbp">黎巴嫩镑</string>
     <string name="name_lkr">斯里兰卡卢比</string>
     <string name="name_lrd">利比里亚元</string>
-    <string name="name_lsl">鲁梯</string>
+    <string name="name_lsl">莱索托洛蒂</string>
     <string name="name_lyd">利比亚第纳尔</string>
 
     <string name="name_mad">摩洛哥迪拉姆</string>
-    <string name="name_mdl">摩尔多瓦尼乌</string>
-    <string name="name_mga">阿里亚里</string>
+    <string name="name_mdl">摩尔多瓦列伊</string>
+    <string name="name_mga">马达加斯加阿里亚里</string>
     <string name="name_mkd">马其顿第纳尔</string>
     <string name="name_mmk">缅甸元</string>
-    <string name="name_mnt">图格里克</string>
+    <string name="name_mnt">蒙古图格里克</string>
     <string name="name_mop">澳门元</string>
-    <string name="name_mro">乌吉亚</string>
+    <string name="name_mro">毛里塔尼亚乌吉亚（1973–2017）</string>
     <string name="name_mru">毛里塔尼亚乌吉亚</string>
     <string name="name_mur">毛里求斯卢比</string>
-    <string name="name_mvr">马尔代夫拉菲亚</string>
-    <string name="name_mwk">克瓦查</string>
+    <string name="name_mvr">马尔代夫卢菲亚</string>
+    <string name="name_mwk">马拉维克瓦查</string>
     <string name="name_mxn">墨西哥比索</string>
     <string name="name_myr">马来西亚林吉特</string>
     <string name="name_mzn">莫桑比克梅蒂卡尔</string>
@@ -128,12 +128,12 @@
     <string name="name_omr">阿曼里亚尔</string>
 
     <string name="name_pab">巴拿马巴波亚</string>
-    <string name="name_pen">秘鲁新索尔</string>
-    <string name="name_pgk">基那</string>
+    <string name="name_pen">秘鲁索尔</string>
+    <string name="name_pgk">巴布亚新几内亚基那</string>
     <string name="name_php">菲律宾比索</string>
     <string name="name_pkr">巴基斯坦卢比</string>
-    <string name="name_pln">兹罗提</string>
-    <string name="name_pyg">瓜拉尼</string>
+    <string name="name_pln">波兰兹罗提</string>
+    <string name="name_pyg">巴拉圭瓜拉尼</string>
 
     <string name="name_qar">卡塔尔里亚尔</string>
 
@@ -149,8 +149,8 @@
     <string name="name_sek">瑞典克朗</string>
     <string name="name_sgd">新加坡元</string>
     <string name="name_shp">圣赫勒拿镑</string>
-    <string name="name_sle">新利昂</string>
-    <string name="name_sll">利昂</string>
+    <string name="name_sle">塞拉利昂利昂</string>
+    <string name="name_sll">塞拉利昂利昂（2022年7月前）</string>
     <string name="name_sos">索马里先令</string>
     <string name="name_srd">苏里南元</string>
     <string name="name_ssp">南苏丹镑</string>
@@ -158,44 +158,44 @@
     <string name="name_stn">圣多美和普林西比多布拉</string>
     <string name="name_svc">萨尔瓦多科朗</string>
     <string name="name_syp">叙利亚镑</string>
-    <string name="name_szl">里兰基尼</string>
+    <string name="name_szl">斯威士兰里兰吉尼</string>
 
     <string name="name_thb">泰铢</string>
-    <string name="name_tjs">索摩尼</string>
+    <string name="name_tjs">塔吉克斯坦索莫尼</string>
     <string name="name_tmt">土库曼斯坦新马纳特</string>
     <string name="name_tnd">突尼斯第纳尔</string>
-    <string name="name_top">潘加</string>
+    <string name="name_top">汤加潘加</string>
     <string name="name_try">土耳其里拉</string>
-    <string name="name_ttd">特立达与多巴哥元</string>
-    <string name="name_twd">新台币元</string>
+    <string name="name_ttd">特立尼达和多巴哥元</string>
+    <string name="name_twd">新台币</string>
     <string name="name_tzs">坦桑尼亚先令</string>
 
-    <string name="name_uah">格里夫尼亚</string>
+    <string name="name_uah">乌克兰格里夫纳</string>
     <string name="name_ugx">乌干达先令</string>
     <string name="name_usd">美元</string>
     <string name="name_uyu">乌拉圭比索</string>
-    <string name="name_uzs">乌兹别克斯坦萨</string>
+    <string name="name_uzs">乌兹别克斯坦苏姆</string>
 
-    <string name="name_vef">强势玻利瓦尔</string>
-    <string name="name_ves">主权玻利瓦尔</string>
+    <string name="name_vef">委内瑞拉强势玻利瓦尔（旧币）</string>
+    <string name="name_ves">委内瑞拉主权玻利瓦尔</string>
     <string name="name_vnd">越南盾</string>
-    <string name="name_vuv">瓦图</string>
+    <string name="name_vuv">瓦努阿图瓦图</string>
 
-    <string name="name_wst">塔拉</string>
+    <string name="name_wst">萨摩亚塔拉</string>
 
     <string name="name_xaf">中非法郎</string>
-    <string name="name_xag">盎司银</string>
-    <string name="name_xau">盎司金</string>
+    <string name="name_xag">白银（盎司）</string>
+    <string name="name_xau">黄金（盎司）</string>
     <string name="name_xcd">东加勒比元</string>
     <string name="name_xdr">特别提款权</string>
     <string name="name_xof">西非法郎</string>
-    <string name="name_xpd">盎司钯</string>
+    <string name="name_xpd">钯金（盎司）</string>
     <string name="name_xpf">太平洋法郎</string>
-    <string name="name_xpt">盎司铂</string>
+    <string name="name_xpt">铂金（盎司）</string>
 
     <string name="name_yer">也门里亚尔</string>
 
-    <string name="name_zar">兰特</string>
+    <string name="name_zar">南非兰特</string>
     <string name="name_zmw">赞比亚克瓦查</string>
     <string name="name_zwl">津巴布韦元</string>
 </resources>

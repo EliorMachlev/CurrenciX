@@ -6,15 +6,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.math.BigDecimal
 
 @RunWith(MockitoJUnitRunner::class)
 class TextUtilsTest {
-    @Mock
-    private lateinit var mockContext: Context
+    private val mockContext: Context = mock(Context::class.java)
 
     @Before
     fun init() {
@@ -61,34 +60,6 @@ class TextUtilsTest {
         assertEquals(
             "- 111,222",
             "-111222".toHumanReadableNumber(mockContext),
-        )
-    }
-
-    @Test
-    fun toNumber() {
-        assertEquals(
-            123,
-            "123".toNumber()?.toInt(),
-        )
-        assertEquals(
-            123123,
-            "123 123".toNumber()?.toInt(),
-        )
-        assertEquals(
-            null,
-            "123a1".toNumber(),
-        )
-        assertEquals(
-            null,
-            "-123".toNumber(),
-        )
-        assertEquals(
-            null,
-            "abcdef".toNumber(),
-        )
-        assertEquals(
-            null,
-            "".toNumber(),
         )
     }
 

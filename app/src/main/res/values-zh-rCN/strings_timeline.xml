@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> 兑 &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">日期 &lt;b>%s&lt;/b></string>
-    <string name="rate_average">均价</string>
-    <string name="rate_median">中位</string>
+    <string name="rate_average">平均</string>
+    <string name="rate_median">中位数</string>
     <string name="rate_min">最低</string>
     <string name="rate_max">最高</string>
-    <string name="year">年线</string>
-    <string name="month">月线</string>
-    <string name="week">周线</string>
+    <string name="year">1 年</string>
+    <string name="month">1 个月</string>
+    <string name="week">1 周</string>
+    <string name="timeline_five_years">5 年</string>
+    <string name="timeline_custom_range">自定义范围</string>
+    <string name="timeline_custom">自定义</string>
+    <string name="timeline_share">分享图表</string>
+    <string name="timeline_no_rates">这些日期没有汇率</string>
+    <string name="timeline_convert_at">按 %1$s 的汇率换算</string>
+    <string name="timeline_a11y_up">上涨 %1$s%%</string>
+    <string name="timeline_a11y_down">下跌 %1$s%%</string>
+    <string name="timeline_a11y_unchanged">没有变化</string>
+    <string name="timeline_a11y_from_to">从 %2$s 的 %1$s 到 %4$s 的 %3$s</string>
+    <string name="timeline_a11y_high">最高 %1$s（%2$s）</string>
+    <string name="timeline_a11y_low">最低 %1$s（%2$s）</string>
+    <string name="timeline_alert_at">在 %1$s 时提醒</string>
+    <string name="timeline_touch_hint">轻触图表，按某天的汇率换算或设置提醒</string>
 </resources>

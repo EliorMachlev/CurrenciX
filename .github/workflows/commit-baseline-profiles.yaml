@@ -1,0 +1,93 @@
+name: Commit baseline profiles
+
+# Pushes the profiles a Baseline Profile run generated (its
+# `baseline-profiles-fdroid` and `baseline-profiles-play` artifacts, or an
+# older run's single `baseline-profiles`) to the branch this runs on. Called by that
+# workflow at the end of a manual run with "commit" ticked, or run by hand
+# with the run's ID, to commit an earlier run's profiles without generating
+# them again.
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: ID of the Baseline Profile run whose profiles to commit
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      run_id:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  # The only job with write access: it runs no build, just git, with the
+  # artifact the profile run uploaded.
+  commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      # read: download the profiles; write: start the checks on the commit.
+      actions: write
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Into a scratch folder: gh won't extract over files that exist, and
+      # the branch already has profiles. A run has one artifact per flavor
+      # (baseline-profiles-<flavor>, the contents of that flavor's profile
+      # folder); runs from before the split have one, baseline-profiles,
+      # holding <flavor>Release/generated/baselineProfiles/ for both.
+      - name: Download the profiles
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run_id }}
+        run: |
+          if ! [[ "$RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "::error::run_id must be a number, got: $RUN_ID"
+            exit 1
+          fi
+          found=false
+          for flavor in fdroid play; do
+            if gh run download "$RUN_ID" --name "baseline-profiles-${flavor}" --dir "$RUNNER_TEMP/profiles/${flavor}"; then
+              mkdir -p "app/src/${flavor}Release/generated/baselineProfiles"
+              cp -R "$RUNNER_TEMP/profiles/${flavor}/." "app/src/${flavor}Release/generated/baselineProfiles/"
+              found=true
+            fi
+          done
+          if [[ "$found" == false ]]; then
+            gh run download "$RUN_ID" --name baseline-profiles --dir "$RUNNER_TEMP/profiles/legacy"
+            cp -R "$RUNNER_TEMP/profiles/legacy/." app/src/
+          fi
+
+      - name: Commit and push
+        id: push
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          git add app/src/*Release/generated/baselineProfiles/
+          if git diff --cached --quiet; then
+            echo "Profiles unchanged; nothing to commit."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "perf(startup): regenerate baseline and startup profiles"
+          git push origin "HEAD:${BRANCH}"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # A push made with the workflow's own token starts no push-triggered
+      # workflows, so the commit would sit without Screenshots (which the PR
+      # needs green) or a debug APK. A workflow_dispatch is the one event that
+      # token may still start.
+      - name: Start the push checks on the new commit
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          for workflow in screenshots.yaml apk-artifact.yaml; do
+            gh workflow run "$workflow" --ref "$BRANCH"
+          done

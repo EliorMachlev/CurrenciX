@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> naar &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Gegevens per &lt;b>%s&lt;/b></string>
     <string name="rate_average">gem</string>
     <string name="rate_median">mediaan</string>
     <string name="rate_min">min</string>
@@ -9,4 +7,18 @@
     <string name="year">jaar</string>
     <string name="month">maand</string>
     <string name="week">week</string>
+    <string name="timeline_five_years">5 jaar</string>
+    <string name="timeline_custom_range">Aangepaste periode</string>
+    <string name="timeline_custom">Eigen</string>
+    <string name="timeline_share">Grafiek delen</string>
+    <string name="timeline_no_rates">Geen koersen voor deze datums</string>
+    <string name="timeline_convert_at">Omrekenen tegen koers van %1$s</string>
+    <string name="timeline_a11y_up">%1$s%% omhoog</string>
+    <string name="timeline_a11y_down">%1$s%% omlaag</string>
+    <string name="timeline_a11y_unchanged">Ongewijzigd</string>
+    <string name="timeline_a11y_from_to">van %1$s op %2$s naar %3$s op %4$s</string>
+    <string name="timeline_a11y_high">hoogste %1$s op %2$s</string>
+    <string name="timeline_a11y_low">laagste %1$s op %2$s</string>
+    <string name="timeline_alert_at">Melding bij %1$s</string>
+    <string name="timeline_touch_hint">Tik op de grafiek om om te rekenen of een melding in te stellen op de koers van een dag</string>
 </resources>

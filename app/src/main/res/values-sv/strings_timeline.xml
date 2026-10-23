@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> till &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Data från &lt;b>%s&lt;/b></string>
     <string name="rate_average">snitt</string>
     <string name="rate_median">median</string>
     <string name="rate_min">min</string>
@@ -9,4 +7,18 @@
     <string name="year">år</string>
     <string name="month">månad</string>
     <string name="week">vecka</string>
+    <string name="timeline_five_years">5 år</string>
+    <string name="timeline_custom_range">Eget intervall</string>
+    <string name="timeline_custom">Egen</string>
+    <string name="timeline_share">Dela diagram</string>
+    <string name="timeline_no_rates">Inga kurser för dessa datum</string>
+    <string name="timeline_convert_at">Räkna om till kursen %1$s</string>
+    <string name="timeline_a11y_up">Upp %1$s %%</string>
+    <string name="timeline_a11y_down">Ned %1$s %%</string>
+    <string name="timeline_a11y_unchanged">Oförändrad</string>
+    <string name="timeline_a11y_from_to">från %1$s den %2$s till %3$s den %4$s</string>
+    <string name="timeline_a11y_high">högst %1$s den %2$s</string>
+    <string name="timeline_a11y_low">lägst %1$s den %2$s</string>
+    <string name="timeline_alert_at">Bevaka %1$s</string>
+    <string name="timeline_touch_hint">Tryck på diagrammet för att räkna om eller sätta en avisering vid en dags kurs</string>
 </resources>

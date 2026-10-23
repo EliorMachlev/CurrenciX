@@ -11,12 +11,23 @@ google-services.json
 .gradle/
 build/
 
+# Kotlin compiler session files
+.kotlin/
+
+# Local artifacts (downloaded CI screenshot dumps, etc.)
+artifacts/
+
+# Claude Code local state (agent worktrees, etc.)
+.claude/worktrees/
+
 # IntelliJ
 *.iml
 .idea/
 
-# keystore/api keys/local configuration
-.jks
+# keystore/api keys/local configuration (app/debug.keystore is shared on purpose)
+*.jks
+*.p12
+/signing/
 keystore.properties
 secrets.properties
 local.properties
@@ -25,3 +36,16 @@ local.properties
 ._*
 .DS_Store
 Thumbs.db
+
+# npx skills tool leftover
+skills-lock.json
+
+# scratch design/proposal drops that aren't ready to commit
+art/logo-proposals/
+art/theme-proposals/
+
+# Python bytecode from the .github/scripts helpers
+__pycache__/
+
+# Jazzer's working corpus from local fuzzing runs (regenerated every run)
+.cifuzz-corpus/

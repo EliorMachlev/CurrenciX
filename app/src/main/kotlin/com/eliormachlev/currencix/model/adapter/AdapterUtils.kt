@@ -2,13 +2,64 @@ package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
+import java.lang.reflect.Type
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
+
+/** `List<Rate>`, as Moshi keys it. */
+internal val RATE_LIST_TYPE: Type = Types.newParameterizedType(List::class.java, Rate::class.java)
+
+/** `Map<LocalDate, Rate>`, as Moshi keys it. */
+internal val DATED_RATES_TYPE: Type = Types.newParameterizedType(Map::class.java, LocalDate::class.java, Rate::class.java)
+
+/**
+ * A [JsonAdapter] that knows the [type] it handles, so [register] can add it
+ * to a Moshi builder without the call site repeating the type.
+ */
+internal abstract class TypedJsonAdapter<T>(
+    val type: Type,
+) : JsonAdapter<T>()
+
+/** A [TypedJsonAdapter] for a response the app only ever reads. */
+internal abstract class ResponseAdapter<T>(
+    type: Type,
+) : TypedJsonAdapter<T>(type) {
+    final override fun toJson(
+        writer: JsonWriter,
+        value: T?,
+    ): Unit = throw UnsupportedOperationException("${javaClass.simpleName} only reads JSON")
+}
+
+/** A [Rate] once both of its parts have been read; null while either is missing. */
+internal fun rateOrNull(
+    currency: Currency?,
+    value: BigDecimal?,
+): Rate? = if (currency != null && value != null) Rate(currency, value) else null
+
+/** Adds [adapter] for the type it declares. */
+internal fun <T> Moshi.Builder.register(adapter: TypedJsonAdapter<T>): Moshi.Builder = add(adapter.type, adapter)
+
+// Guard for adapters whose payload must be a JSON object: if the next value is
+// anything else (null, array, string, ...), consume it and return true so the
+// caller can bail out with `null`. Consuming matters — Moshi's contract is one
+// value per fromJson call, and Retrofit's converter rejects a document with
+// input left over ("JSON document was not fully consumed") instead of passing
+// the null through to the provider's "empty JSON" error.
+internal fun JsonReader.skipIfNotObject(): Boolean {
+    if (peek() == JsonReader.Token.BEGIN_OBJECT) return false
+    skipValue()
+    return true
+}
 
 // Both InforEuro endpoints return a JSON array on success and an
 // { "message": "..." } object on failure. Peek at the token: on an array,
@@ -25,13 +76,56 @@ internal inline fun <T> JsonReader.readArrayOrError(
     return result
 }
 
+// Response field names more than one adapter reads.
+internal const val FIELD_MESSAGE = "message"
+internal const val FIELD_RATES = "rates"
+internal const val FIELD_BASE = "base"
+
+// Bank of Canada's Valet API: the rows of a series, each dated by "d".
+internal const val BANK_OF_CANADA_OBSERVATIONS = "observations"
+internal const val BANK_OF_CANADA_DATE = "d"
+
+// Norges Bank's SDMX-ML: one <Series> per currency, each observation dated
+// by its TIME_PERIOD attribute.
+internal const val NORGES_BANK_SERIES_TAG = "Series"
+internal const val NORGES_BANK_TIME_PERIOD = "TIME_PERIOD"
+
+/**
+ * Reads the whole current object (Retrofit rejects a response its adapter
+ * left partly unread) and returns the first non-null answer of [onField],
+ * which gets each field's name and must consume its value.
+ */
+internal inline fun <T : Any> JsonReader.readObjectFirstOf(onField: (name: String) -> T?): T? {
+    var result: T? = null
+    beginObject()
+    while (hasNext()) {
+        val found = onField(nextName())
+        result = result ?: found
+    }
+    endObject()
+    return result
+}
+
+/**
+ * One currency's value in a Bank of Canada observation: the field [name]
+ * (FXUSDCAD, …) holds { "v": "1.3672" }, Canadian dollars per unit.
+ */
+internal fun JsonReader.readBankOfCanadaValue(name: String): Pair<Currency?, BigDecimal> {
+    val currency = Currency.fromString(name.bankOfCanadaIso())
+    beginObject()
+    skipName() // always "v"
+    val value = BigDecimal(nextString())
+    endObject()
+    return currency to value
+}
+
 // Providers surface error payloads as { "message": "..." }. This helper reads
 // that message field out of the current object, skipping anything else.
 internal fun JsonReader.readErrorMessage(): String? {
     beginObject()
     var message: String? = null
     while (hasNext()) {
-        if (nextName() == "message") {
+        if (nextName() == FIELD_MESSAGE) {
             message = nextString()
         } else {
             skipValue()
@@ -45,8 +139,12 @@ internal fun JsonReader.readErrorMessage(): String? {
 internal val BANK_ROSSII_DATE_FORMATTER: DateTimeFormatter =
     DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-// InforEuro's timeline endpoint uses dd/MM/yyyy for dateStart/dateEnd.
-internal val INFOR_EURO_DATE_FORMATTER: DateTimeFormatter =
+/** The current element's Date attribute, as Bank Rossii writes it (dd.MM.yyyy). */
+internal fun XmlPullParser.bankRossiiDate(): LocalDate = LocalDate.parse(getAttributeValue(null, "Date"), BANK_ROSSII_DATE_FORMATTER)
+
+// dd/MM/yyyy: InforEuro's timeline dateStart/dateEnd, and Bank Rossii's
+// date query parameters.
+internal val SLASHED_DATE_FORMATTER: DateTimeFormatter =
     DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 // Faroese króna isn't listed by upstream APIs; mirror the Danish krone

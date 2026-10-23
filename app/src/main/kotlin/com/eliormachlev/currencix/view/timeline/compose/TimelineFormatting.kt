@@ -1,23 +1,22 @@
 package com.eliormachlev.currencix.view.timeline.compose
 
 import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.layout.FoldingFeature
-import com.eliormachlev.currencix.util.hasAppendedCurrencySymbol
+import com.eliormachlev.currencix.util.isCurrencySymbolOnRight
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
 // Shared timeline typography/spacing so a design tweak lands in one place instead
-// of drifting across TimelineChartCard, TimelineSecondary, and TimelineStatsRow.
+// of drifting across TimelineChartCard and TimelineSecondary.
 
-internal val TIMELINE_CONTENT_PADDING = 16.dp
+internal val TIMELINE_CONTENT_PADDING = Spacing.Large
 internal val TIMELINE_DATE_FONT_SIZE = 12.sp
 internal val TIMELINE_RATE_VALUE_FONT_SIZE = 18.sp
 internal const val TIMELINE_DATE_LETTER_SPACING_EM = 0.075f
@@ -44,9 +43,14 @@ internal fun orientationFor(feature: FoldingFeature): TimelineLayout {
     }
 }
 
-/** Fallback layout used until the folding-feature stream emits (or on non-foldables). */
-internal fun defaultLayoutFor(orientation: Int): TimelineLayout =
-    if (orientation == Configuration.ORIENTATION_LANDSCAPE) TimelineLayout.ROW else TimelineLayout.COLUMN
+/**
+ * Fallback layout used until the folding-feature stream emits (or on
+ * non-foldables): side by side when the screen's space is wider than tall.
+ * The space, not the device orientation — beside the converter on a
+ * landscape tablet, the timeline pane is portrait-shaped.
+ */
+internal fun defaultLayoutFor(isLandscapeSpace: Boolean): TimelineLayout =
+    if (isLandscapeSpace) TimelineLayout.ROW else TimelineLayout.COLUMN
 
 /**
  * Build "<symbol> <bold-number>" or "<bold-number> <symbol>" depending on
@@ -60,9 +64,9 @@ internal fun combineValueAndSymbol(
     decimalPlaces: Int,
 ): AnnotatedString {
     val number = value.toHumanReadableNumber(context, decimalPlaces = decimalPlaces)
-    val safeSymbol = symbol ?: ""
+    val safeSymbol = symbol.orEmpty()
     return buildAnnotatedString {
-        if (hasAppendedCurrencySymbol(context)) {
+        if (isCurrencySymbolOnRight(context)) {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(number) }
             append(" $safeSymbol")
         } else {
@@ -71,10 +75,3 @@ internal fun combineValueAndSymbol(
         }
     }
 }
-
-/** Format the rate-difference percent as "+ 12 %" / "- 3 %" or blank when null. */
-internal fun formatRateDiff(
-    context: Context,
-    value: BigDecimal?,
-    decimals: Int,
-): String = value?.toHumanReadableNumber(context, decimals, true, "%") ?: ""

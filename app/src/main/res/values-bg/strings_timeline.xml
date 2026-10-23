@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_timeline_title">&lt;b>%1$s&lt;/b> за &lt;b>%2$s&lt;/b></string>
-    <string name="data_provider">Данни от &lt;b>%s&lt;/b></string>
-    <string name="rate_average">Средно</string>
+    <string name="rate_average">средно</string>
     <string name="rate_median">медиана</string>
     <string name="rate_min">минимум</string>
     <string name="rate_max">максимум</string>
     <string name="year">година</string>
     <string name="month">месец</string>
     <string name="week">седмица</string>
+    <string name="timeline_five_years">5 години</string>
+    <string name="timeline_custom_range">Персонализиран период</string>
+    <string name="timeline_custom">Друг</string>
+    <string name="timeline_share">Споделяне на графиката</string>
+    <string name="timeline_no_rates">Няма курсове за тези дати</string>
+    <string name="timeline_convert_at">Обмен по курса от %1$s</string>
+    <string name="timeline_a11y_up">Нагоре с %1$s%%</string>
+    <string name="timeline_a11y_down">Надолу с %1$s%%</string>
+    <string name="timeline_a11y_unchanged">Без промяна</string>
+    <string name="timeline_a11y_from_to">от %1$s на %2$s до %3$s на %4$s</string>
+    <string name="timeline_a11y_high">най-висок %1$s на %2$s</string>
+    <string name="timeline_a11y_low">най-нисък %1$s на %2$s</string>
+    <string name="timeline_alert_at">Известие при %1$s</string>
+    <string name="timeline_touch_hint">Докоснете графиката, за да конвертирате или зададете известие по курса за деня</string>
 </resources>

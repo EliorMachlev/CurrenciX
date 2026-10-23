@@ -22,7 +22,7 @@
     <string name="name_bob">Boliivia boliviaano</string>
     <string name="name_brl">Brasiilia reaal</string>
     <string name="name_bsd">Bahama dollar</string>
-    <string name="name_btc">Bitcoin</string>
+    <string name="name_btc">bitcoin</string>
     <string name="name_btn">Bhutani ngultrum</string>
     <string name="name_bwp">Botswana pula</string>
     <string name="name_byn">Valgevene rubla</string>
@@ -33,7 +33,7 @@
     <string name="name_chf">Šveitsi frank</string>
     <string name="name_clf">Tšiili arveldusühik (UF)</string>
     <string name="name_clp">Tšiili peeso</string>
-    <string name="name_cnh">Hiina jüaan (Hongkongis)</string>
+    <string name="name_cnh">Hiina jüaan (offshore)</string>
     <string name="name_cny">Hiina jüaan</string>
     <string name="name_cop">Colombia peeso</string>
     <string name="name_crc">Costa Rica koloon</string>
@@ -50,7 +50,7 @@
     <string name="name_egp">Egiptuse nael</string>
     <string name="name_ern">Eritrea nakfa</string>
     <string name="name_etb">Etioopia birr</string>
-    <string name="name_eur">Euro</string>
+    <string name="name_eur">euro</string>
 
     <string name="name_fjd">Fidži dollar</string>
     <string name="name_fkp">Falklandi saarte nael</string>
@@ -112,7 +112,7 @@
     <string name="name_mro">Mauritaania ugia (1973–2017)</string>
     <string name="name_mru">Mauritaania ugia</string>
     <string name="name_mur">Mauritiuse ruupia</string>
-    <string name="name_mvr">Maldiivide ruupia</string>
+    <string name="name_mvr">Maldiivi rufiyaa</string>
     <string name="name_mwk">Malawi kvatša</string>
     <string name="name_mxn">Mehhiko peeso</string>
     <string name="name_myr">Malaisia ringgit</string>
@@ -128,7 +128,7 @@
     <string name="name_omr">Omaani riaal</string>
 
     <string name="name_pab">Panama balboa</string>
-    <string name="name_pen">Peruu uus sol</string>
+    <string name="name_pen">Peruu sol</string>
     <string name="name_pgk">Paapua Uus-Guinea kina</string>
     <string name="name_php">Filipiinide peeso</string>
     <string name="name_pkr">Pakistani ruupia</string>
@@ -181,14 +181,14 @@
     <string name="name_vnd">Vietnami dong</string>
     <string name="name_vuv">Vanuatu vatu</string>
 
-    <string name="name_wst">Samoa tālā</string>
+    <string name="name_wst">Samoa tala</string>
 
-    <string name="name_xaf">Kesk-Aafrika frank</string>
+    <string name="name_xaf">Kesk-Aafrika CFA frank</string>
     <string name="name_xag">Hõbeda unts</string>
     <string name="name_xau">Kulla unts</string>
     <string name="name_xcd">Ida-Kariibi dollar</string>
     <string name="name_xdr">Rahvusvahelise Valuutafondi arvestusühik</string>
-    <string name="name_xof">Lääne-Aafrika frank</string>
+    <string name="name_xof">Lääne-Aafrika CFA frank</string>
     <string name="name_xpd">Pallaadiumi unts</string>
     <string name="name_xpf">CFP frank</string>
     <string name="name_xpt">Plaatina unts</string>

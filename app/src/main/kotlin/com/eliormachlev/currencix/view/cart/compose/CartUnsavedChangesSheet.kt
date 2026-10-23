@@ -1,0 +1,47 @@
+package com.eliormachlev.currencix.view.cart.compose
+
+import androidx.compose.runtime.Composable
+import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.view.cart.CartUnsavedChangesRequest
+import com.eliormachlev.currencix.view.compose.UiTestTags
+
+/**
+ * Multi-branch prompt shown before a destructive cart transition (switching
+ * carts, closing the screen) when there are unsaved changes. Shape:
+ *  - "Save" (overwrite) — only when the cart has a persisted counterpart.
+ *  - "Save as new" — always available.
+ *  - "Discard changes" — always available.
+ *  - "Continue" — always available (proceed with destructive action, keep buffer).
+ * Cancel is implicit via sheet drag-down / scrim tap.
+ *
+ * Thin wrapper over [CartChoiceSheet] so all cart branch-picker surfaces share
+ * the same row shape (title + one-line explainer) and the coordinator only
+ * has to describe *what* the branches do, not *how* to lay them out.
+ */
+@Composable
+fun CartUnsavedChangesSheet(
+    request: CartUnsavedChangesRequest,
+    onDismiss: () -> Unit,
+) {
+    val options =
+        buildList {
+            if (request.canOverwrite) {
+                add(CartChoiceOption(R.string.cart_unsaved_save, R.string.cart_unsaved_save_desc, onPick = request.onSave))
+            }
+            add(CartChoiceOption(R.string.cart_unsaved_save_as, R.string.cart_unsaved_save_as_desc, onPick = request.onSaveAs))
+            add(CartChoiceOption(R.string.cart_unsaved_discard, R.string.cart_unsaved_discard_desc, onPick = request.onDiscard))
+            add(
+                CartChoiceOption(
+                    R.string.cart_unsaved_continue,
+                    R.string.cart_unsaved_continue_desc,
+                    tag = UiTestTags.CART_CONTINUE,
+                    onPick = request.onContinue,
+                ),
+            )
+        }
+    CartChoiceSheet(
+        titleRes = R.string.cart_unsaved_title,
+        options = options,
+        onDismiss = onDismiss,
+    )
+}

@@ -1,0 +1,20 @@
+{
+  "InteractionBenchmarks.currencyPickerScroll[None]|frameDurationCpuMs": 104.8,
+  "InteractionBenchmarks.currencyPickerScroll[None]|frameOverrunMs": 141.2,
+  "InteractionBenchmarks.currencyPickerScroll[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameDurationCpuMs": 115.9,
+  "InteractionBenchmarks.currencyPickerScroll[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameOverrunMs": 158.0,
+  "InteractionBenchmarks.keypadTyping[None]|frameDurationCpuMs": 108.2,
+  "InteractionBenchmarks.keypadTyping[None]|frameOverrunMs": 136.9,
+  "InteractionBenchmarks.keypadTyping[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameDurationCpuMs": 113.3,
+  "InteractionBenchmarks.keypadTyping[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameOverrunMs": 144.1,
+  "InteractionBenchmarks.screenTransitions[None]|frameDurationCpuMs": 76.5,
+  "InteractionBenchmarks.screenTransitions[None]|frameOverrunMs": 92.9,
+  "InteractionBenchmarks.screenTransitions[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameDurationCpuMs": 84.3,
+  "InteractionBenchmarks.screenTransitions[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameOverrunMs": 101.5,
+  "InteractionBenchmarks.settingsBrowse[None]|frameDurationCpuMs": 78.3,
+  "InteractionBenchmarks.settingsBrowse[None]|frameOverrunMs": 97.2,
+  "InteractionBenchmarks.settingsBrowse[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameDurationCpuMs": 83.9,
+  "InteractionBenchmarks.settingsBrowse[Partial(baselineProfile=UseIfAvailable,iterations=0)]|frameOverrunMs": 105.1,
+  "InteractionBenchmarks.startup[None]|timeToInitialDisplayMs": 3999.3,
+  "InteractionBenchmarks.startup[Partial(baselineProfile=UseIfAvailable,iterations=0)]|timeToInitialDisplayMs": 3801.7
+}

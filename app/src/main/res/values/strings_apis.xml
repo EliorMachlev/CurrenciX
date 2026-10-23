@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <!-- Provider display names. Locales are free to translate central-bank
          names (Bank of Israel, Bank of Canada, …) into their own official
-         form; pure product/brand names (Frankfurter.app, Fer.ee, InforEuro,
+         form; pure product/brand names (Frankfurter.app, InforEuro,
          Open Exchangerates) should stay verbatim across locales. -->
     <string name="api_bankOfCanada_name">Bank of Canada</string>
     <string name="api_bankOfIsrael_name">Bank of Israel</string>
     <string name="api_bankRossii_name">Bank Rossii</string>
-    <string name="api_ferEe_name" translatable="false">Fer.ee</string>
     <string name="api_frankfurterApp_name" translatable="false">Frankfurter.app</string>
     <string name="api_inforEuro_name" translatable="false">InforEuro</string>
     <string name="api_norgesBank_name">Norges Bank</string>
@@ -25,12 +24,6 @@
     <string name="api_bankRossii_descriptionShort">About 44 exchange rates\nSource: Central Bank of Russia</string>
     <string name="api_bankRossii_descriptionUpdateInterval">Rates are updated on a daily basis, except on <a href="https://cbr.ru/eng/other/holidays/">public holidays in Russia</a>.</string>
 
-    <string name="api_exchangerateHost_descriptionFull"><a href="https://exchangerate.host/"><b>Exchangerate.host</b></a> sources the currency rates from various financial data providers and banks, including the European Central Bank. All exchange rate data are delivered in midpoint data. Midpoint rates are determined by calculating the average median rate of Bid and Ask.\n<b>About 160 currencies are included.</b></string>
-    <string name="api_exchangerateHost_descriptionUpdateInterval">Exchange rates are updated around midnight UTC every working day.</string>
-
-    <string name="api_ferEe_descriptionFull"><a href="https://fer.ee/"><b>Fer.ee</b></a> is a relatively new service, that (just like Frankfurter.app) does track reference exchange (forex) rates that are published by the European Central Bank.\n<b>About 30 currencies are included.</b></string>
-    <string name="api_ferEe_descriptionShort" translatable="false">@string/api_frankfurterApp_descriptionShort</string>
-    <string name="api_ferEe_descriptionUpdateInterval">Rates are updated every working day.</string>
 
     <string name="api_frankfurterApp_descriptionFull"><a href="https://www.frankfurter.app/"><b>Frankfurter.app</b></a> tracks reference exchange (forex) rates published by the European Central Bank.\n<b>About 30 currencies are included.</b></string>
     <string name="api_frankfurterApp_descriptionShort">About 30 exchange rates\nSource: European Central Bank</string>
@@ -50,4 +43,9 @@
     <string name="api_openExchangeRates_descriptionShort">About 160 exchange rates\nSource: Combination of multiple reliable providers.</string>
     <string name="api_openExchangeRates_descriptionUpdateInterval">Hourly updates.</string>
     <string name="api_openExchangeRates_hint">To use this Source, you have to create your personal API Key!</string>
+    <string name="api_allRatesToday_name" translatable="false">AllRatesToday</string>
+    <string name="api_allRatesToday_descriptionShort">About 160 exchange rates\nSource: Mid-market rates from interbank data.</string>
+    <string name="api_allRatesToday_descriptionFull"><a href="https://allratestoday.com/"><b>AllRatesToday</b></a> publishes mid-market exchange rates from interbank data, updated about every minute.\n<b>About 160 exchange rates.\n<i>To use this Source, you have to enter your personal API Key. The free plan allows 300 requests in total, ever.</i></b></string>
+    <string name="api_allRatesToday_descriptionUpdateInterval">Updated about every minute.</string>
+    <string name="api_allRatesToday_hint">Needs your own API key. The free plan allows 300 requests in total.</string>
 </resources>

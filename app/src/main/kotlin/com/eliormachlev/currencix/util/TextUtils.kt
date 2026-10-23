@@ -2,9 +2,12 @@ package com.eliormachlev.currencix.util
 
 import android.content.Context
 import android.text.Spanned
+import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
+import androidx.core.text.layoutDirection
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.Currency
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -12,11 +15,13 @@ import java.text.DecimalFormatSymbols
 import java.text.Normalizer
 import java.text.NumberFormat
 import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 
 private const val SYMBOL_DETECTION_VALUE = 1.23
 private const val THOUSANDS_GROUP_SIZE = 3
 
 private const val LTR_ISOLATE = '\u2066'
+private const val RTL_ISOLATE = '\u2067'
 private const val POP_DIRECTIONAL_ISOLATE = '\u2069'
 
 // Unicode RTL mark (U+200F) injected by some locales' number/date formatters.
@@ -25,7 +30,7 @@ private const val POP_DIRECTIONAL_ISOLATE = '\u2069'
 private const val RTL_MARK = "\u200F"
 
 // User-configurable decimal places for displayed conversion results.
-// Kept in one place so PreferenceFragment (writer) and the spinner list
+// Kept in one place so the Settings screen (writer) and the spinner list
 // (reader) can't drift on the allowed range or the fallback default.
 internal const val DECIMAL_PLACES_DEFAULT = 2
 internal const val DECIMAL_PLACES_MIN = 0
@@ -35,15 +40,6 @@ internal const val DECIMAL_PLACES_MAX = 6
 // itself when nothing survives ("12.0000" -> "12"). Anchored so a leading
 // zero on an integer ("0" or "0.5") is preserved.
 private val TRAILING_ZEROS_REGEX = Regex("(?!^)\\.?0+$")
-
-// Characters accepted by [CharSequence.toNumber]: digits, comma, dot, and any
-// whitespace (thousands separator can be NBSP or normal space depending on
-// locale). Anything else means "not a number, don't try to parse".
-private val NUMERIC_INPUT_REGEX = Regex("[0-9,.\\s]+")
-
-// Any run of whitespace — used to strip locale thousands separators before
-// handing the string to NumberFormat.parse.
-private val WHITESPACE_REGEX = Regex("\\s+")
 
 // Unicode "Mark, Nonspacing" — combining diacritics that sit between/on top of
 // base letters (Hebrew niqqud, Arabic tashkeel, Latin accents after NFD, etc.).
@@ -71,6 +67,25 @@ fun BigDecimal.roundForDisplay(scale: Int): BigDecimal = setScale(scale, Roundin
  * the currency code drifts to the opposite side.
  */
 fun ltrIsolate(s: String): String = "$LTR_ISOLATE$s$POP_DIRECTIONAL_ISOLATE"
+
+/** Whether the app's language ([getLocale]) is written right to left: Hebrew, Arabic, Farsi. */
+fun isRtlLanguage(context: Context): Boolean = getLocale(context).layoutDirection == View.LAYOUT_DIRECTION_RTL
+
+/**
+ * This label in the reading order of the app's language ([getLocale]). The
+ * app lays out left to right in every language, so a right-to-left label
+ * that names something in Latin script ("היום · InforEuro") would otherwise
+ * be ordered left to right around that name, and its first part would land
+ * last. Wrapped in an RTL isolate (U+2067 … U+2069) it reads right to left
+ * as one unit, wherever the left-to-right layout places it. Left-to-right
+ * languages get the label back unchanged.
+ */
+fun String.inReadingOrder(context: Context): String =
+    if (isRtlLanguage(context)) {
+        "$RTL_ISOLATE$this$POP_DIRECTIONAL_ISOLATE"
+    } else {
+        this
+    }
 
 /**
  * Removes any Unicode RTL mark (U+200F) from the string.
@@ -133,14 +148,70 @@ fun getDecimalSeparator(context: Context): String = getDecimalSymbols(context).d
 fun getGroupingSeparator(context: Context): String = getDecimalSymbols(context).groupingSeparator.toString()
 
 /**
- * True, when the currency symbol should be placed after the value for the current locale.
- * False, when the currency symbol should be placed before the value.
+ * [amount] with [currency]'s symbol, or its code when it has none, where the
+ * app's language puts it, for the app's own screens, which lay numbers out
+ * left to right in every language: "$ 49.99", "49,99 €", and "₪ 3.09" in
+ * Hebrew, whose "3.09 ₪" puts the symbol after the number, on its left when
+ * read right to left. Every amount on screen with its currency goes through
+ * here (or, styled, asks [isCurrencySymbolOnRight]), so they all agree.
  */
-fun hasAppendedCurrencySymbol(context: Context): Boolean {
-    val currencyFormatter = NumberFormat.getCurrencyInstance(getLocale(context))
-    val formattedCurrency = currencyFormatter.format(SYMBOL_DETECTION_VALUE)
-    return formattedCurrency.last().digitToIntOrNull() == null
-}
+fun Context.money(
+    amount: String,
+    currency: Currency?,
+): String = withCurrencySymbol(amount, currency?.symbolOrIso())
+
+/** [amount] with [symbol] where [money] puts it; no symbol, just the amount. */
+fun Context.withCurrencySymbol(
+    amount: String,
+    symbol: String?,
+): String = joinSymbol(amount, symbol, after = isCurrencySymbolOnRight(this))
+
+/**
+ * [amount] with [currency]'s symbol in the language's own writing order, for
+ * text read in its direction: copied and shared lines, TalkBack. "3.09 ₪" in
+ * Hebrew, which shows the symbol on the number's left there, as [money] does.
+ */
+fun Context.moneyText(
+    amount: String,
+    currency: Currency?,
+): String = joinSymbol(amount, currency?.symbolOrIso(), after = hasAppendedCurrencySymbol(this))
+
+private fun joinSymbol(
+    amount: String,
+    symbol: String?,
+    after: Boolean,
+): String =
+    when {
+        symbol.isNullOrEmpty() -> amount
+        after -> "$amount $symbol"
+        else -> "$symbol $amount"
+    }
+
+/**
+ * True when the currency symbol goes on the number's right on the app's
+ * left-to-right number layouts: when the language writes it after the number
+ * and reads left to right ("49,99 €"). A right-to-left language's "after"
+ * is the number's left ("3.09 ₪" reads as ₪ then 3.09), as is any "before".
+ */
+fun isCurrencySymbolOnRight(context: Context): Boolean = hasAppendedCurrencySymbol(context) && !isRtlLanguage(context)
+
+// Per language: asked of its currency format once, not for every amount drawn.
+private val appendedSymbolByLocale = ConcurrentHashMap<Locale, Boolean>()
+
+/**
+ * True when the app's language writes the currency symbol after the amount
+ * ("49,99 €", "3.09 ₪"), false when before ("$ 49.99"), as its currency
+ * format does: the writing order, for text ([moneyText]); on screen it's
+ * [isCurrencySymbolOnRight].
+ */
+fun hasAppendedCurrencySymbol(context: Context): Boolean =
+    appendedSymbolByLocale.computeIfAbsent(getLocale(context)) { locale ->
+        NumberFormat
+            .getCurrencyInstance(locale)
+            .format(SYMBOL_DETECTION_VALUE)
+            .last()
+            .digitToIntOrNull() == null
+    }
 
 // *************************************************************************************************
 
@@ -235,13 +306,43 @@ private fun String.groupNumbers(context: Context): String {
 
 // *************************************************************************************************
 
+// Cut-off for switching to compact form (K/M/B/T/Q). 13 = trillion range, so
+// values under a trillion still render as grouped digits ("999,000,000,000")
+// and only genuinely-unreadable magnitudes fold into "1.2T"-style text.
+private const val COMPACT_MIN_INTEGER_DIGITS = 13
+private const val COMPACT_GROUP_STEP = 3
+private val COMPACT_SUFFIXES = arrayOf("K", "M", "B", "T", "Q")
+
 /**
- * Parses the given string to a number. Uses the default locale for thousands and decimal separators.
- * - Returns null, if invalid characters are found.
- * - Also returns null, for negative values
+ * Compact form of a large number, e.g. 310_500_000_000_000 -> "310.5T".
+ * Returns null when the integer part has fewer than [COMPACT_MIN_INTEGER_DIGITS]
+ * digits, so callers can fall back to the regular grouped rendering.
  */
-fun CharSequence.toNumber(): Number? {
-    // allow 0-9 , . whitespace only
-    if (isBlank() || !matches(NUMERIC_INPUT_REGEX)) return null
-    return NumberFormat.getNumberInstance().parse(toString().replace(WHITESPACE_REGEX, ""))
+fun BigDecimal.toCompactHumanReadableNumber(
+    context: Context,
+    decimalPlaces: Int = 1,
+): String? {
+    val integerDigits =
+        this
+            .abs()
+            .toBigInteger()
+            .toString()
+            .length
+    if (integerDigits < COMPACT_MIN_INTEGER_DIGITS) return null
+    val group = ((integerDigits - 1) / COMPACT_GROUP_STEP).coerceAtMost(COMPACT_SUFFIXES.size)
+    val suffix = COMPACT_SUFFIXES[group - 1]
+    val divisor = BigDecimal.TEN.pow(group * COMPACT_GROUP_STEP)
+    val body =
+        this
+            .divide(divisor, decimalPlaces, RoundingMode.HALF_EVEN)
+            .toHumanReadableNumber(context, decimalPlaces = decimalPlaces, trim = true)
+    return "$body$suffix"
 }
+
+/** A number typed into a field: "12,5" and "12.5" alike; blank or unreadable is null. */
+fun parseDecimal(text: String): BigDecimal? =
+    text
+        .trim()
+        .replace(',', '.')
+        .takeIf { it.isNotEmpty() }
+        ?.toBigDecimalOrNull()
