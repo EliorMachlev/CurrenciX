@@ -51,7 +51,7 @@ Users affected by the vulnerability will be notified via the GitHub release note
 
 ## Software Bill of Materials (SBOM)
 
-An SBOM is generated as part of the CI pipeline (see [`docs/markDown/ci-cd.md`](docs/markDown/ci-cd.md)) and attached to each release. It enumerates all direct and transitive runtime dependencies with version and licence metadata to satisfy CRA Annex I Part II §1 and downstream supply-chain audit requests.
+No SBOM is produced yet. Every dependency is declared with an exact version in the Gradle build files ([`docs/markDown/build-and-flavors.md`](docs/markDown/build-and-flavors.md#key-dependencies) lists them), and Dependabot and the weekly OWASP Dependency Check watch them for known vulnerabilities. Generating an SBOM of all direct and transitive runtime dependencies in CI and attaching it to each release, as CRA Annex I Part II §1 will expect, is still to do.
 
 ## Scope
 

@@ -4,9 +4,10 @@
 
 | Tool | Version |
 |---|---|
-| JDK | 21 (Temurin recommended) |
-| Android Gradle Plugin | see `build.gradle.kts` |
-| Kotlin | 2.4.20 |
+| JDK | 21 or newer (Temurin recommended; CI uses 25). The code targets Java 21; signing with the post-quantum hybrid signature needs 24+, which the build fetches as a toolchain |
+| Gradle | 9.8.1 (the wrapper) |
+| Android Gradle Plugin | 9.4.1 |
+| Kotlin | 2.4.21 |
 | Min SDK | 33 |
 | Compile SDK | 37.2 (Compose 1.13 needs at least 37.1; set with AGP's `release(37) { minorApiLevel = 2 }` DSL) |
 | Target SDK | 37 |
@@ -17,7 +18,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Flavor | Description |
 |---|---|
-| `fdroid` | F-Droid distribution — no Play Services dependency, fully open-source, reproducible |
+| `fdroid` | F-Droid distribution — no Play Services dependency, fully open-source, a reproducible-build target |
 | `play` | Google Play distribution — may use Play-specific APIs |
 
 ### Common Gradle tasks
@@ -124,7 +125,7 @@ Hosts the Vico chart plus the rest of the app's UI — every screen is Compose, 
 | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | `com.squareup.retrofit2:converter-moshi` | 3.0.0 |
 | `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
-| `com.google.devtools.ksp:*` | 2.3.11 |
+| `com.google.devtools.ksp:*` | 2.3.12 |
 
 Retrofit is layered on the shared OkHttp client and serves every fixed-shape JSON endpoint; the XML and SDMX feeds stay on raw OkHttp by design — see [architecture.md](architecture.md).
 
@@ -185,7 +186,7 @@ English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.
 | `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.76.0 |
 | `org.robolectric:robolectric` | 4.17 |
 | `androidx.compose.ui:ui-test-junit4` / `ui-test-manifest` | via BOM |
-| `com.lemonappdev:konsist` | 0.17.3 |
+| `com.lemonappdev:konsist` | 0.18.1 |
 
 Roborazzi + Robolectric give pure-JVM screenshot testing for every Compose surface (no emulator needed), running under the existing `test<Flavor>DebugUnitTest` task via the JUnit vintage engine. Konsist encodes the View / ViewModel / Repository / Model layer boundaries as JUnit tests on the plain JVM, so a refactor can't silently break MVVM separation.
 
@@ -221,7 +222,7 @@ Release APKs can also carry Android 17's hybrid signature (APK Signature Scheme 
 
 **Releasing is pushing a tag.** Tag a commit of `master` `v<versionName>` (`v1.23.0`) and push the tag: `release-apk.yaml` checks that the tag names the version being built and is on `master`, decodes the keystores from the secrets `RELEASE_KEYSTORE_B64`, `RELEASE_KEYSTORE_PASSWORD`, `HYBRID_KEYSTORE_B64` and `HYBRID_KEYSTORE_PASSWORD` into the runner's temp folder, writes `secrets.properties`, builds `assembleFdroidRelease` (which signs and verifies every APK, below), deletes the keys and uploads the five APKs with a `SHA256SUMS`. A second job, the only one allowed to write to the repository and one that never sees the keys, then publishes the GitHub release "CurrenciX <version>": the APKs, the checksums and notes written automatically, followed by which APK to pick and the release certificate's fingerprint.
 
-The notes come from `.github/scripts/release-notes.py <tag>`: the commits from the previous `v*` tag (for the first release, the fork's rebrand to CurrenciX, #89, as earlier history is the upstream app's) to this one. `master` takes each pull request as one squashed commit with a Conventional Commits title, so they group by type: **New** (`feat`), **Fixes** (`fix`), **Faster** (`perf`), **Translations** (`i18n`, plus one line naming the languages Weblate updated), and **Other changes** for a title in no known style. `chore`, `ci`, `build`, `refactor`, `test`, `docs`, `style` and `revert` are left out as not user-facing. Each entry keeps its PR number, which GitHub links, and the notes end with the compare link to the previous release. The PR title is the release note, so title PRs for users. Run by hand, the workflow shows the notes a tag would get in its summary. The fastlane changelog (`changelogs/<versionCode>.txt`, what F-Droid shows, 500 characters at most) is still written by hand. A version with a `-` (`1.24.0-beta1`) is marked a pre-release. F-Droid builds the same tag (`UpdateCheckMode: Tags`). Started by hand instead (Actions → Release → Run workflow), it only builds and uploads the signed APKs, to try a build before tagging it. Nothing else can start it, so pull requests never see the keys, and its Gradle cache is read-only, so nothing from a run that held them is cached.
+The notes come from `.github/scripts/release-notes.py <tag>`: the commits from the previous `v*` tag (for the first release, the fork's rebrand to CurrenciX, #89, as earlier history is the upstream app's) to this one. `master` takes each pull request as one squashed commit with a Conventional Commits title, so they group by type: **New** (`feat`), **Fixes** (`fix`), **Faster** (`perf`), **Translations** (`i18n`, plus one line naming the languages Weblate updated, should translations come through Weblate again as they did upstream), and **Other changes** for a title in no known style. `chore`, `ci`, `build`, `refactor`, `test`, `docs`, `style` and `revert` are left out as not user-facing. Each entry keeps its PR number, which GitHub links, and the notes end with the compare link to the previous release. The PR title is the release note, so title PRs for users. Run by hand, the workflow shows the notes a tag would get in its summary. The fastlane changelog (`changelogs/<versionCode>.txt`, what F-Droid shows, 500 characters at most) is still written by hand. A version with a `-` (`1.24.0-beta1`) is marked a pre-release. F-Droid builds the same tag (`UpdateCheckMode: Tags`). Started by hand instead (Actions → Release → Run workflow), it only builds and uploads the signed APKs, to try a build before tagging it. Nothing else can start it, so pull requests never see the keys, and its Gradle cache is read-only, so nothing from a run that held them is cached.
 
 To make new keys instead (only before the first release; after it they're permanent):
 
@@ -323,22 +324,27 @@ timings, so Macrobenchmark's emulator guard is suppressed.
 composables taking rates and dates compare them by `equals` and skip
 recomposing for an equal value. Hot-path parameter objects are values too
 (`ConverterBody` is an `@Immutable` data class; the currency picker's
-conversion preview is remembered). To look again, add
-`reportsDestination` / `metricsDestination` to the `composeCompiler` block
-and compile a release variant: the reports list each composable's unstable
-parameters.
+conversion preview is remembered). CI keeps it that way: the `compose-stability`
+job compiles with `-PcomposeReports` (the compiler's report of each composable,
+in `app/build/compose-reports/`, also restored from the build cache) and
+`.github/scripts/compose-stability.py` fails on a composable that can't skip or
+a parameter the compiler can't prove stable (see [ci-cd.md](ci-cd.md)). Locally:
+
+```bash
+./gradlew :app:compileFdroidReleaseKotlin -PcomposeReports
+python3 .github/scripts/compose-stability.py app/build/compose-reports
+```
 
 ## Known Issues
 
-### Gradle deprecation: "Project object as dependency notation" (AGP bug)
+### Gradle deprecation: `Configuration.setVisible(boolean)` (AGP)
 
-**Symptom:** During configuration of `:app`, Gradle prints:
+**Symptom:** During configuration of `:app`, Gradle (9.8.1) prints:
 
 ```
-Using a Project object as a dependency notation has been deprecated.
-This will fail with an error in Gradle 10.
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11.
 ```
 
-**Root cause:** This originated inside **AGP 9.2.1** (`VariantDependenciesBuilder.java:279/333` → `VariantManager.createTestComponents`), not from any build script in this repository. The stack trace confirmed no call site in our code.
+**Root cause:** inside **AGP 9.4.1** (`BasePlugin.createAndroidJdkImageConfiguration`, `BasePlugin.kt:362`), not in any build script here (`./gradlew help --warning-mode all -Dorg.gradle.deprecation.trace=true` shows the stack).
 
-**Status:** The project has since moved to **AGP 9.3.2**. Upstream bug, expected to resolve once AGP uses `project(String)` internally — needs a fresh check on 9.3.2 to confirm whether it still reproduces before this section is trusted as current.
+**Status:** left visible, as nothing in this repository can fix it; it should go away once AGP stops calling `setVisible`, and must before the move to Gradle 11. The earlier AGP warning about using a `Project` object as dependency notation (AGP 9.2.1) no longer appears on AGP 9.4.1.

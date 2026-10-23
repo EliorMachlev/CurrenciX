@@ -13,9 +13,9 @@ The project favours simplicity. Large feature additions are unlikely to be merge
 
 ## Translations
 
-The fork inherits translations for 20+ languages from upstream Currencies but doesn't yet run its own translation workflow. If you'd like to contribute a translation, open an issue first so we can coordinate.
+The app is in 33 languages: English plus 32 translations (`res/values-*`), most inherited from upstream Currencies, whose translators used Weblate. The fork doesn't run its own translation workflow yet; if you'd like to contribute or correct a translation, open an issue first so we can coordinate.
 
-Every translatable string exists in all 31 locales, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
+Every translatable string exists in all 32 translated locales, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
 
 ## Code Contributions
 

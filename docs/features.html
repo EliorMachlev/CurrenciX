@@ -38,23 +38,33 @@
   <div class="cards">
     <div class="card">
       <span class="card-icon">🌐</span>
-      <h3>Multiple Providers</h3>
-      <p>Choose from 6 active exchange-rate providers. Switch at any time in Settings — the next refresh uses the new source.</p>
+      <h3>Eight Providers</h3>
+      <p>Central banks (ECB via Frankfurter.app, Bank of Canada, Norges Bank, Bank Rossii, Bank of Israel), the European Commission's InforEuro, and Open Exchangerates or AllRatesToday with your own API key.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🛟</span>
+      <h3>Fallback Provider</h3>
+      <p>When your main provider is down, rates come from a second one you pick, and the app says so. The next refresh tries the main one again.</p>
     </div>
     <div class="card">
       <span class="card-icon">⭐</span>
       <h3>Starred Currencies</h3>
-      <p>Mark currencies as favourites to keep your most-used ones at the top. Tap the star icon next to any currency to toggle.</p>
+      <p>Keep the currencies you use at the top, in your own order. Search finds a currency by code, name or country.</p>
     </div>
     <div class="card">
-      <span class="card-icon">🔄</span>
-      <h3>Swap &amp; Mirror</h3>
-      <p>Instantly swap the base and target currencies. The conversion result updates in real time without re-entering values.</p>
+      <span class="card-icon">🕘</span>
+      <h3>Recent Pairs</h3>
+      <p>The pairs you used last sit under the converter, one tap to switch back. Swap either way with the round button.</p>
     </div>
     <div class="card">
       <span class="card-icon">📋</span>
-      <h3>Copy / Paste</h3>
-      <p>Long-press the result to copy it to the clipboard, or paste a value directly into the input field.</p>
+      <h3>Copy &amp; Paste</h3>
+      <p>Copy any amount, or paste a price you copied in another app: the app finds the amount and its currency.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">✂️</span>
+      <h3>Convert from Any App</h3>
+      <p>Select a price anywhere and pick <em>Convert currency</em> from the text-selection menu: a sheet converts it at once, offline, from the saved rates.</p>
     </div>
   </div>
 
@@ -63,115 +73,155 @@
     <div class="card">
       <span class="card-icon">🧮</span>
       <h3>Full Arithmetic</h3>
-      <p>Addition, subtraction, multiplication, and division — evaluated before conversion using the <strong>EvalEx</strong> engine.</p>
+      <p>+, −, ×, ÷, brackets and percent, worked out before converting; = turns the result into the amount to carry on from.</p>
     </div>
     <div class="card">
       <span class="card-icon">⌨️</span>
-      <h3>Extended Keypad</h3>
-      <p>Optional expanded keypad mode adds operator keys directly on the main screen. Enable in Settings → Converter → Extended keypad.</p>
+      <h3>Expanded Keypad</h3>
+      <p>An optional extra row of 00 / 0 / 000 (Settings → Converter). On a tablet or unfolded phone the keypad keeps to one side, in reach of one thumb.</p>
     </div>
     <div class="card">
       <span class="card-icon">🖥️</span>
       <h3>Hardware Keyboard</h3>
-      <p>Physical keyboard input is fully supported — great for tablets and foldable devices with an attached keyboard.</p>
+      <p>Type digits and operators on a physical keyboard, on tablets and foldables alike.</p>
     </div>
   </div>
 
-  <h2 class="section-title">Fee Calculator</h2>
-  <div class="cards" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+  <h2 class="section-title">Fees</h2>
+  <div class="cards">
     <div class="card">
       <span class="card-icon">💳</span>
-      <h3>Foreign Exchange Fee</h3>
-      <p>Add a configurable fee percentage (e.g., 1.5 %) to every conversion. The result shows both the raw and fee-inclusive amounts simultaneously.</p>
+      <h3>Exchange &amp; Bank Fees</h3>
+      <p>Add your card's or bureau's fee and see the true cost next to the mid-market result, globally or per currency pair.</p>
     </div>
     <div class="card">
-      <span class="card-icon">🔧</span>
-      <h3>Custom Percentage</h3>
-      <p>Set any fee from 0 % to any value in Settings. Useful for credit-card foreign-transaction fees or bureau-de-change margins.</p>
+      <span class="card-icon">⚖️</span>
+      <h3>Compare Cards</h3>
+      <p>With several cards saved, see what each would charge for the amount on screen, cheapest first, and switch with a tap.</p>
     </div>
   </div>
 
-  <h2 class="section-title">Historical Rates &amp; Charts</h2>
+  <h2 class="section-title">Rates, Charts &amp; Alerts</h2>
   <div class="cards">
     <div class="card">
       <span class="card-icon">📅</span>
       <h3>Past Dates</h3>
-      <p>Select any historical date using the built-in date picker. Data availability depends on the provider — Frankfurter.app goes back to <strong>2010-01-04</strong>.</p>
+      <p>Convert at any past date's rates, back to 2010 (how far depends on the provider).</p>
     </div>
     <div class="card">
       <span class="card-icon">📈</span>
-      <h3>1-Year Chart</h3>
-      <p>Tap the chart icon on the converter to see a full year of daily rate history for the selected currency pair.</p>
+      <h3>Rate Charts</h3>
+      <p>A week, a month, a year, five years or a custom range of up to ten years, with high, low, average, median and the change.</p>
     </div>
     <div class="card">
       <span class="card-icon">🔍</span>
-      <h3>Interactive Timeline</h3>
-      <p>Scrub along the chart to see exact rates on any day. High and low points are highlighted for quick reference.</p>
+      <h3>Interactive Chart</h3>
+      <p>Scrub to see the rate on any day, then convert at that day's rate or set an alert from it. Share the chart as an image.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔔</span>
+      <h3>Rate Alerts</h3>
+      <p>Get a notification when a pair reaches your rate, checked on your phone after each update.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">⏱️</span>
+      <h3>Quick Conversions</h3>
+      <p>Your pair at round amounts, fees included, to copy or share.</p>
     </div>
   </div>
 
-  <h2 class="section-title">UI &amp; Customisation</h2>
+  <h2 class="section-title">Cart</h2>
+  <div class="cards">
+    <div class="card">
+      <span class="card-icon">🛒</span>
+      <h3>Prices in Your Currency</h3>
+      <p>A list of prices with quantities, converted into your currency, with tip or tax, a budget and the fees counted in.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">👥</span>
+      <h3>Split &amp; Trips</h3>
+      <p>Split the total evenly or by who had what, and group saved carts into trips with a home currency and budget.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🧾</span>
+      <h3>Receipt Scanning</h3>
+      <p>Scan a receipt to add its items, read on your phone; nothing is uploaded.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">📤</span>
+      <h3>Share &amp; Export</h3>
+      <p>Share a cart as text, an image, CSV or PDF, or save it to a file to import again later.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">Look &amp; Feel</h2>
   <div class="cards">
     <div class="card">
       <span class="card-icon">🎨</span>
-      <h3>Material 3 Design</h3>
-      <p>Built with the latest Material Design system components — adaptive colours, proper elevation, and dynamic theming.</p>
+      <h3>Material 3</h3>
+      <p>Colors from your wallpaper (on by default), or the app's own paper-and-ink palette.</p>
     </div>
     <div class="card">
       <span class="card-icon">🌙</span>
-      <h3>Dark &amp; Pure Black</h3>
-      <p>Three theme options: Light, Dark, and Pure Black (OLED-friendly). Follows system setting or can be locked manually.</p>
+      <h3>Light, Dark &amp; Pure Black</h3>
+      <p>Pick one or follow the system, with an OLED-friendly black.</p>
     </div>
     <div class="card">
       <span class="card-icon">📱</span>
-      <h3>Foldable Support</h3>
-      <p>Detects fold state via <code>WindowInfoTracker</code> and switches to a multi-pane layout when unfolded, making full use of the larger screen.</p>
+      <h3>Tablets &amp; Foldables</h3>
+      <p>Two panes on wide screens: the converter beside the chart or the cart.</p>
     </div>
     <div class="card">
       <span class="card-icon">🌏</span>
-      <h3>20+ Languages</h3>
-      <p>Translated by the community via <a href="https://translate.codeberg.org/engage/currencies/">Weblate</a>. RTL languages are fully supported.</p>
+      <h3>33 Languages</h3>
+      <p>Translated into 32 languages besides English. Hebrew, Arabic and Farsi lay out right to left, while numbers stay left to right.</p>
     </div>
     <div class="card">
-      <span class="card-icon">👆</span>
-      <h3>Predictive Back Gesture</h3>
-      <p>On Android 13+ the system's animated back-preview is enabled, so swiping back reveals where you're heading before you commit to the gesture.</p>
+      <span class="card-icon">🧩</span>
+      <h3>Widget, Tile &amp; Shortcuts</h3>
+      <p>A home-screen widget with its own pair and a trend line, a Quick Settings tile, and launcher shortcuts to your recent pairs.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">♿</span>
+      <h3>Accessibility</h3>
+      <p>TalkBack labels and spoken summaries, 48 dp touch targets, and layouts that hold at large font sizes.</p>
     </div>
   </div>
 
-  <h2 class="section-title">Performance</h2>
-  <div class="cards" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
-    <div class="card">
-      <span class="card-icon">⚡</span>
-      <h3>DNS Prewarm</h3>
-      <p>At app startup the currently-selected provider's hostname is resolved on a background thread, so the first rate refresh doesn't have to wait on DNS.</p>
-    </div>
-  </div>
-
-  <h2 class="section-title">Privacy &amp; Permissions</h2>
-  <div class="cards" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
-    <div class="card">
-      <span class="card-icon">🔒</span>
-      <h3>Minimal Permissions</h3>
-      <p><code>INTERNET</code> to fetch exchange rates, and notifications only if you set a rate alert. No location, no contacts, no camera, no microphone.</p>
-    </div>
+  <h2 class="section-title">Privacy &amp; Security</h2>
+  <div class="cards">
     <div class="card">
       <span class="card-icon">🚫</span>
       <h3>No Tracking</h3>
-      <p>Zero advertising SDKs. Zero analytics. No crash reporter. Your usage never leaves your device.</p>
+      <p>No ads, no analytics, no account, no crash-reporting service. Nothing about you leaves your phone.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔐</span>
+      <h3>App Lock</h3>
+      <p>Optionally lock the app behind your fingerprint or screen lock.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🕶️</span>
+      <h3>Private Requests</h3>
+      <p>Optionally make every rate request look the same as everyone else's.</p>
     </div>
     <div class="card">
       <span class="card-icon">💾</span>
-      <h3>Local Storage Only</h3>
-      <p>All data (cached rates, preferences, starred currencies) is stored in SharedPreferences on your device. Nothing is synced to any server.</p>
+      <h3>Your Data Stays Local</h3>
+      <p>Settings, carts and alerts live in the app's private storage. Back them up to a file you choose, encrypted with a password if you like.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔒</span>
+      <h3>Few Permissions</h3>
+      <p>Internet and network state for rates, biometrics for the optional lock, and notifications only once you set a rate alert. No location, contacts, storage, camera or microphone.</p>
     </div>
   </div>
 
 </main>
 
 <footer>
-  <p>CurrenciX &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
-  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://translate.codeberg.org/engage/currencies/">Translate</a></p>
+  <p>CurrenciX &copy; 2026 Elior Machlev &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
+  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Translate</a></p>
 </footer>
 
 </body>

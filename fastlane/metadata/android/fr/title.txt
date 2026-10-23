@@ -1,1 +1,1 @@
-Currencies: Calculateur de taux de change
+CurrenciX: Calculateur de taux de change

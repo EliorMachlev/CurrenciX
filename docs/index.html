@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CurrenciX — Simple Currency Converter for Android</title>
-  <meta name="description" content="CurrenciX — a simple, privacy-focused currency converter for Android. No ads, no tracking. Supports 6 exchange rate providers with 30–160+ currencies.">
+  <meta name="description" content="CurrenciX — a simple, privacy-focused currency converter for Android. No ads, no tracking. Supports 8 exchange rate providers with 14–160+ currencies each.">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💱</text></svg>">
 </head>
@@ -46,32 +46,32 @@
     <div class="card">
       <span class="card-icon">🔒</span>
       <h3>Privacy First</h3>
-      <p>No ads, no analytics, no crash reporters. The only network call is fetching exchange rates from the provider you choose.</p>
+      <p>No ads, no analytics, no account, no crash-reporting service. The app fetches exchange rates from the providers you choose, and nothing about you goes anywhere.</p>
     </div>
     <div class="card">
       <span class="card-icon">🌍</span>
       <h3>160+ Currencies</h3>
-      <p>From major world currencies to exotic ones — choose from 6 exchange-rate providers offering 30–160+ currencies each.</p>
+      <p>From major world currencies to exotic ones — choose from 8 exchange-rate providers, with a fallback for when your main one is down.</p>
     </div>
     <div class="card">
       <span class="card-icon">🧮</span>
       <h3>Built-in Calculator</h3>
-      <p>Do full arithmetic (+, −, ×, ÷) before converting. Perfect for splitting restaurant bills or calculating bulk prices.</p>
+      <p>Do full arithmetic (+, −, ×, ÷, brackets, percent) before converting, add your card's fee, and keep a cart of prices to split the bill.</p>
     </div>
     <div class="card">
       <span class="card-icon">📈</span>
-      <h3>Historical Charts</h3>
-      <p>See a full year of exchange-rate history at a glance, or look up rates on any past date back to 2010.</p>
+      <h3>Charts &amp; Alerts</h3>
+      <p>See a week to five years of rate history, convert at any past date's rates back to 2010, and get notified when a pair reaches your rate.</p>
     </div>
     <div class="card">
       <span class="card-icon">🎨</span>
       <h3>Material 3 Design</h3>
-      <p>Clean adaptive UI with light, dark, and pure-black themes. Follows your system theme automatically.</p>
+      <p>Colors from your wallpaper, light, dark and pure-black themes, and 33 languages.</p>
     </div>
     <div class="card">
       <span class="card-icon">📱</span>
-      <h3>Foldable-Ready</h3>
-      <p>Adaptive multi-pane layout on foldable devices. Proper support for hardware keyboards and all screen sizes.</p>
+      <h3>Everywhere on Your Phone</h3>
+      <p>Convert a price selected in any app, plus a widget, a Quick Settings tile, and two panes on tablets and foldables.</p>
     </div>
   </div>
 
@@ -94,10 +94,16 @@
           <td>EUR</td>
         </tr>
         <tr>
-          <td><strong>OpenExchangerates</strong></td>
+          <td><strong>Open Exchangerates</strong><br><small>Free API key</small></td>
           <td><span class="tag">160+</span></td>
           <td>Hourly</td>
           <td>USD</td>
+        </tr>
+        <tr>
+          <td><strong>AllRatesToday</strong><br><small>API key</small></td>
+          <td><span class="tag">~160</span></td>
+          <td>About every minute</td>
+          <td>EUR</td>
         </tr>
         <tr>
           <td><strong>InforEuro</strong><br><small>European Commission</small></td>
@@ -123,6 +129,12 @@
           <td>Business days</td>
           <td>RUB</td>
         </tr>
+        <tr>
+          <td><strong>Bank of Israel</strong></td>
+          <td><span class="tag">~14</span></td>
+          <td>Business days</td>
+          <td>ILS</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -136,21 +148,21 @@
     </div>
     <div class="card">
       <span class="card-icon">🔄</span>
-      <h3>F-Droid Reproducible</h3>
-      <p>The <code>fdroid</code> build flavor is reproducible and fully free of proprietary SDKs — verified by the F-Droid build system.</p>
+      <h3>F-Droid Ready</h3>
+      <p>The <code>fdroid</code> build flavor is fully free of proprietary SDKs and built to be reproducible from source.</p>
     </div>
     <div class="card">
       <span class="card-icon">🛡️</span>
       <h3>Automated Security</h3>
-      <p>CI runs Detekt, Qodana, Semgrep, OWASP Dependency Check, Gitleaks, and OpenSSF Scorecard on every change.</p>
+      <p>Every change runs Android Lint, Detekt, Qodana, Semgrep, CodeQL, Gitleaks and fuzz tests; OWASP Dependency Check and OpenSSF Scorecard watch the dependencies and the supply chain.</p>
     </div>
   </div>
 
 </main>
 
 <footer>
-  <p>CurrenciX &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
-  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://translate.codeberg.org/engage/currencies/">Translate</a></p>
+  <p>CurrenciX &copy; 2026 Elior Machlev &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
+  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Translate</a></p>
 </footer>
 
 </body>

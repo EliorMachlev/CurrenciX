@@ -9,7 +9,7 @@ These Terms of Service ("Terms") govern your use of the **CurrenciX** Android ap
 
 ## 1. The service
 
-CurrenciX is a currency-conversion utility. It fetches exchange-rate data from third-party providers you select in **Settings → Exchange rates → Data provider** and displays computed conversions. It is provided as **open-source software** under the terms of the GNU General Public License v3 or later (see [`LICENSE`](../../LICENSE)); nothing in these Terms overrides your rights under that license.
+CurrenciX is a currency-conversion utility. It fetches exchange-rate data from third-party providers you select in **Settings → Exchange rates → Data provider** and displays computed conversions. It is provided as **open-source software** under the terms of the GNU General Public License v3 or later (see [`COPYING`](../../COPYING)); nothing in these Terms overrides your rights under that license.
 
 ## 2. Rate-accuracy disclaimer
 

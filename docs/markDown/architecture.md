@@ -7,7 +7,7 @@ CurrenciX follows **MVVM** (Model-View-ViewModel) with a Repository layer, imple
 ```
 ┌──────────────────────────────────────┐
 │              View Layer              │
-│  Activities · Custom Views · Dialogs │
+│ MainActivity · Compose screens/sheets│
 └──────────────┬───────────────────────┘
                │ observes LiveData
 ┌──────────────▼───────────────────────┐
@@ -42,8 +42,8 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 ├── CurrenciesApplication.kt   # Application subclass — prewarms provider DNS and the saved stores, installs the crash recorder
 ├── problems/ProblemReports.kt # Crashes and freezes kept on the phone, shared from About on request
 ├── model/
-│   ├── ApiProvider.kt          # Enum of 7 active providers + the Api interface
-│   ├── Currency.kt             # 190+ ISO-4217 currencies with symbols & flags
+│   ├── ApiProvider.kt          # Enum of 8 active providers + the Api interface
+│   ├── Currency.kt             # 173 ISO-4217 currencies with symbols & flags
 │   ├── ExchangeRates.kt        # Snapshot of rates for a base currency
 │   ├── Rate.kt                 # Single (currency, rate) pair
 │   ├── Timeline.kt             # Historical rate series
@@ -51,7 +51,7 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   └── provider/               # HTTP implementations per provider (api/ holds the Retrofit interfaces)
 ├── repository/
 │   ├── Database.kt             # Hands out the stores below; holds no logic of its own
-│   ├── RateStore.kt … CartStore.kt  # One typed DataStore wrapper per concern (8 stores over 5 namespaces)
+│   ├── RateStore.kt … RateAlertStore.kt  # One typed DataStore wrapper per concern (10 stores over 4 namespaces, plus the old timelines one read once)
 │   ├── ExchangeRatesRepository.kt
 │   ├── ExchangeRatesService.kt # Singleton, coroutine-based fetch orchestration
 │   ├── BackupManager.kt        # Encrypted export/import — see security.md
@@ -61,12 +61,21 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── cache/                  # Memory → disk → network rate cache (Store5-inspired, no Store5 dep)
 │   └── persistence/             # PersistenceKey enum, DataStore delegates, PrefStore helper
 ├── view/
-│   ├── main/                   # MainActivity (the only Activity) + the converter route
+│   ├── main/                   # MainActivity (the main Activity) + the converter route
+│   ├── convert/                # ConvertTextActivity: "Convert currency" in other apps' text-selection menu
+│   ├── lock/                   # The optional app lock
+│   ├── alert/                  # Rate alert UI
+│   ├── tile/                   # Quick Settings tile
+│   ├── widget/                 # Glance home-screen widget + its configure activity
 │   ├── navigation/             # Screen keys, AppNavigator back stack, AppNavHost (Navigation 3), screen motion, shared pills
 │   ├── preference/             # Settings, Fees and Backup routes
 │   ├── timeline/               # Chart route
 │   ├── cart/                   # Bill-splitting calculator route
-│   └── compose/                # Shared Compose foundation: theme (incl. Motion tokens), top bars (ScreenScaffold), CurrencyPill, UiTestTags, drag-reorder, dialogs, onboarding
+│   ├── compose/                # Shared Compose foundation: theme (incl. Motion tokens), top bars (ScreenScaffold), CurrencyPill, UiTestTags, drag-reorder, dialogs, onboarding
+│
+├── alert/RateAlerts.kt         # Checks rate alerts after each update and posts the notifications
+├── ocr/                        # Receipt reading: OcrEngine, ReceiptReader, Tesseract language data (TessLanguage, Tessdata)
+├── worker/                     # Background rate refresh (RateRefreshWorker, RateRefreshScheduler)
 ├── viewmodel/
 │   ├── main/MainViewModel.kt   # Conversion pipeline: pair, rates, fees → result. Exposes `input` (CalculatorInputState), which the keypad drives directly
 │   ├── preference/
@@ -89,7 +98,7 @@ helpers/src/main/kotlin/de/salomax/helpers/
 
 The app has no SQLite database. `SharedPreferences` has been fully migrated to **Jetpack DataStore Preferences**: all data (cached rates, starred currencies, user state, preferences, and the Cart's current + saved carts as JSON blobs) lives in namespaced `DataStore<Preferences>` instances (`PersistenceKey`: `rates`, `last_state`, `starred_currencies`, `prefs`; `timelines` is only read once, to move what's in it into per-pair files, see below), managed by the stores in `repository/` and by `repository/persistence/`. File names deliberately match the old SharedPreferences basenames so that exported backups round-trip across the migration. Each setting is one `Pref<T>` (`repository/persistence/Pref.kt`) declared in its store: `display.hapticFeedback`, `providers.apiProvider`, `fees.fees`, `lastState.recentPairs`, … A `Pref` reads with `get()` (the in-memory snapshot, where a blocking read is unavoidable, e.g. `CurrenciesApplication`'s startup DNS prewarm), writes with `set()` or a read-modify-write `update { }`, and is observed as `flow` / `liveData` (`PrefStore.mappedFlow` / `mappedLiveData` underneath), so a setting's key, default and stored shape live in one declaration (`booleanPref(KEY, default = true)`, `keyedPref(key, decode, encode)`). ViewModels turn one into UI state with `Pref.stateInWhileSubscribed(viewModelScope)`. Stores that keep a list as a JSON array share `JsonLists.kt` (`parseJsonList`, `toJsonArray`, `optIdOrNew`). Writes update `PrefStore`'s in-memory cache at once and reach disk through a serial queue; while any of its own writes are still pending, the disk's emissions (each reflecting only the writes finished so far) are ignored, and the cache is resynced from disk when the queue drains, so a read between two quick writes never sees the first one undone (`PrefStoreTest`).
 
-`Database` is a handle on eight stores, each owning one concern, so no class grows past what one screen of code can hold:
+`Database` is a handle on ten stores, each owning one concern, so no class grows past what one screen of code can hold:
 
 | Property | Store | Holds |
 |---|---|---|
@@ -98,9 +107,11 @@ The app has no SQLite database. `SharedPreferences` has been fully migrated to *
 | `stars` | `StarStore` | Starred currencies in the user's order; the starred-only filter |
 | `providers` | `ProviderSettings` | Main and fallback provider, each keyed provider's API key, whether pickers show unreliable providers, auto-refresh and its interval |
 | `fees` | `FeeStore` | Saved fees and the active exchange / bank fee |
-| `display` | `DisplaySettings` | Theme, decimals, date format, keypad, haptics, click sounds, onboarding gate |
+| `display` | `DisplaySettings` | Theme, wallpaper colors, decimals, date format, keypad (expanded, side on wide screens), haptics, click sounds, smooth motion, conversion preview, cart totals collapsed, onboarding gate |
+| `privacy` | `PrivacySettings` | App lock, private requests |
 | `chart` | `ChartSettings` | What the timeline chart draws |
-| `carts` | `CartStore` | The working cart and the saved ones |
+| `carts` | `CartStore` | The working cart, the saved ones and their trips |
+| `alerts` | `RateAlertStore` | Rate alerts waiting to fire |
 
 Row summaries and prompt messages (`LedgerLabel`, `PromptMessage`) take a `CharSequence` and keep its links tappable (`rememberLinkedText`): a string resource's `<a href>` links and any web address written out in plain text open the browser, and its bold and italics stay. Callers reach a value through its store: `Database(context).display.getTheme()`. A composable that reads settings without a view model takes `rememberDatabase()` and follows a `Pref` with `pref.collectAsStateWithLifecycle()` (`view/compose/DatabaseState.kt`), which starts from the stored value so the first frame is already right.
 
@@ -165,7 +176,7 @@ Trade-off: users who explicitly raise or lower `decimal_places` in Settings will
 
 ### One Activity, Compose navigation (Navigation 3)
 
-`MainActivity` is the app's only Activity. Every screen — converter, timeline, cart, settings, fees, backup — is a destination on one Compose back stack, so there are no Fragments, no XML layouts and no ActionBar (the theme is `Theme.AppCompat.DayNight.NoActionBar`, and the window is edge to edge).
+`MainActivity` is the app's one main Activity (the others stand alone: `ConvertTextActivity` over another app, `WidgetConfigureActivity` for a widget). Every screen — converter, timeline, cart, settings, fees, backup — is a destination on one Compose back stack, so there are no Fragments, no XML layouts and no ActionBar (the theme is `Theme.AppCompat.DayNight.NoActionBar`, and the window is edge to edge).
 
 | Piece | Where | Job |
 |---|---|---|
@@ -293,7 +304,7 @@ The app has one mark: two arrows swapping around a "×", the green one over the 
 
 The splash holds until Compose has drawn the wordmark; then the mark fades (`MainActivity.fadeOutSplashIcon`) while the wordmark's mark turns into place (`WordmarkReveal`), once per cold start. In the top bar the mark is drawn in Compose from the same paths (`BrandMark`) and moves by half turns (`MarkTurns`, `Motion.turn`): into place on launch, for as long as rates refresh, and when tapped, which refreshes the rates; it always comes to rest green on top, as on the icon.
 
-Every currency flag renders through `Currency.flagPainter()` (`painterResource` over `Currency.flagRes`), which parses each vector flag once, caches it app-wide, and draws it crisply at any size. Don't wrap flags in an `AndroidView`/`ImageView` or rasterise the `Drawable` to a bitmap. The currency picker's 190+ rows used to do the former, and it cost scroll smoothness.
+Every currency flag renders through `Currency.flagPainter()` (`painterResource` over `Currency.flagRes`), which parses each vector flag once, caches it app-wide, and draws it crisply at any size. Don't wrap flags in an `AndroidView`/`ImageView` or rasterise the `Drawable` to a bitmap. The currency picker's 173 rows used to do the former, and it cost scroll smoothness.
 
 `UiTestTags` are stable semantics tags on the elements the `:baselineprofile` journeys drive (keypad keys, pills, drawer rows, picker list, onboarding Skip). They're exposed as resource ids via `testTagsAsResourceId` on `AppNavHost` (every screen) and on the popups that have their own window. They carry no visual meaning. Keep them in sync with `baselineprofile/.../UiTags.kt`.
 
@@ -328,13 +339,13 @@ The converter's and the cart's currency pills (`CurrencyPill`) are shared elemen
 
 ### Timeline chart engine: Vico via Compose interop
 
-The timeline chart is rendered by [Vico](https://github.com/patrykandpatrick/vico) (`com.patrykandpatrick.vico:compose`), hosted inside a `ComposeView` embedded in the otherwise View-based XML layout (`timeline_chart.xml`). `TimelineChart.kt` is a `@Composable` that observes the ViewModel's `LiveData` streams via `observeAsState()` (bridged by `androidx.compose.runtime:runtime-livedata`) and drives a `CartesianChartHost` backed by a `CartesianChartModelProducer`.
+The timeline chart is rendered by [Vico](https://github.com/patrykandpatrick/vico) (`com.patrykandpatrick.vico:compose`), drawn straight into the timeline screen's Compose tree (`TimelineRoute` → `TimelineChart`). `TimelineChart.kt` is a `@Composable` that observes the ViewModel's `LiveData` streams via `observeAsState()` (bridged by `androidx.compose.runtime:runtime-livedata`) and drives a `CartesianChartHost` backed by a `CartesianChartModelProducer`.
 
 The chart draws at most two points per pair of pixels (`thinForWidth`: each bucket's low and high, in order), so the 5-year view's ~1,800 days are drawn, hit-tested and scrubbed as a few hundred points with every peak and trough kept; the chart is measured before it's first drawn so it's never handed the whole series. When a different stretch of history arrives (a new pair or period) the chart draws itself in from the start edge (`drawIn`, `Motion.draw`), a clip on its layer, so it costs no recomposition.
 
-Why Vico over the previous engine (SparkView): SparkView is unmaintained and required a hand-rolled adapter, a manual dashed baseline `Paint`, and custom scrub handling. Vico ships all of that as first-class API (`HorizontalLine` decorations, `CartesianMarkerVisibilityListener`) and is actively developed. This was also the entry point that first introduced Jetpack Compose to what was then a View-only app; Compose has since become the primary UI toolkit (see above).
+Why Vico over the previous engine (SparkView): SparkView is unmaintained and required a hand-rolled adapter, a manual dashed baseline `Paint`, and custom scrub handling. Vico ships all of that as first-class API (`HorizontalLine` decorations, `CartesianMarkerVisibilityListener`) and is actively developed. This was also the entry point that first introduced Jetpack Compose to what was then a View-only app; the whole UI is Compose now (see above).
 
-Behavior preserved: dashed reference line at the last value, scrub-to-past-date via marker-shown callback, theme-aware colors resolved through `MaterialColors.getColor` and passed into the composable.
+Behavior preserved: dashed reference line at the last value, scrub-to-past-date via marker-shown callback, theme-aware colors taken from the Compose `MaterialTheme.colorScheme` and passed into the composable.
 
 ### Graph options: user-tunable chart chrome
 
@@ -342,7 +353,7 @@ The chart's `Pref<Boolean>` settings — grid, X-axis labels, Y-axis labels, hig
 
 ### Application subclass prewarms DNS for the selected provider
 
-`CurrenciesApplication` is registered via `android:name=".CurrenciesApplication"` on the manifest's `<application>` tag. Its only responsibility today is to resolve the currently-selected `ApiProvider`'s host on a background daemon thread during `onCreate()`, so the first exchange-rate request doesn't pay for DNS.
+`CurrenciesApplication` is registered via `android:name=".CurrenciesApplication"` on the manifest's `<application>` tag. Its first job is to resolve the currently-selected `ApiProvider`'s host on a background daemon thread during `onCreate()`, so the first exchange-rate request doesn't pay for DNS.
 
 The preference read (`Database(this).providers.apiProvider.get()`) and the lookup through the shared client's own resolver (`HttpClientProvider.client(null).dns.lookup(host)`, so the answer lands in the cache its requests use: `AndroidDns` on Android 17+, for Encrypted Client Hello, the system resolver before) both run **inside** the background thread — DataStore's synchronous snapshot read and DNS resolution are both blocking I/O and neither belongs on the main thread during app startup. Failures (offline, DNS outage) are swallowed with `runCatching`; this is a best-effort warm-up, not a health check.
 
@@ -368,7 +379,7 @@ The latest rates come from the main provider and the fallback at once (`Exchange
 
 ### Home-screen widget via Glance
 
-`view/widget/CurrencyWidget.kt` is an `AppWidgetProvider` whose content is composed with **Glance** (`androidx.glance:glance-appwidget`) rather than hand-rolled `RemoteViews`. `widget_currency.xml` remains as the widget's preview/initial-layout resource required by the App Widget framework, but the live content is Glance composables. Per-widget pairs and the trend line: see *Outside the app* above.
+`view/widget/CurrencyWidget.kt` is a `GlanceAppWidgetReceiver` whose content is composed with **Glance** (`androidx.glance:glance-appwidget`) rather than hand-rolled `RemoteViews`. `widget_currency.xml` remains as the widget's preview/initial-layout resource required by the App Widget framework, but the live content is Glance composables. Per-widget pairs and the trend line: see *Outside the app* above.
 
 ### Right-to-left languages
 
@@ -400,7 +411,7 @@ Opted in via `android:enableOnBackInvokedCallback="true"` on the manifest's `<ap
 | Dimension | `fdroid` | `play` |
 |---|---|---|
 | Play Services | None | Allowed |
-| Reproducibility | Yes | No |
+| Reproducible-build target | Yes | No |
 | Distribution | F-Droid | Google Play |
 
 Source sets under `app/src/fdroid/` and `app/src/play/` override or add flavor-specific code without touching the shared `main` source set.

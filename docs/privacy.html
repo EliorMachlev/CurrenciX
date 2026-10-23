@@ -36,10 +36,10 @@
 
   <div class="prose">
 
-    <p><em>Last updated: July 2026</em></p>
+    <p><em>Last updated: October 2026</em></p>
 
     <h2>Summary</h2>
-    <p>CurrenciX does <strong>not</strong> collect, transmit, store, or share any personal data. The app has no account system, no analytics, no advertising SDK, and no crash reporter. The sole network activity is fetching exchange rates from the provider you select.</p>
+    <p>CurrenciX does <strong>not</strong> collect, transmit, store, or share any personal data. The app has no account system, no analytics, no advertising SDK, and no crash-reporting service. Its network activity is fetching exchange rates from the providers you select, and, only if you scan receipts, a one-time download of the text reader's data (below).</p>
 
     <h2>Data Collected by This App</h2>
     <p><strong>None.</strong> The app does not collect any data whatsoever from users.</p>
@@ -55,10 +55,11 @@
     <p>The app does <em>not</em> request access to your location, contacts, camera, microphone, storage, phone state, or any other sensitive permission.</p>
 
     <h2>Network Activity</h2>
-    <p>The app makes outbound HTTPS requests <em>only</em> to the exchange rate provider you have selected in Settings. The request contains:</p>
+    <p>For rates, the app makes outbound HTTPS requests <em>only</em> to the exchange rate provider you have selected in Settings and to the fallback provider set there (asked at the same time, in case the main one fails). The request contains:</p>
     <ul>
       <li>The URL of the rates or history endpoint (publicly documented by each provider)</li>
       <li>Your device's standard HTTP headers (User-Agent, Accept-Encoding, etc.)</li>
+      <li>For Open Exchangerates or AllRatesToday, your API key for that provider, in a request header</li>
     </ul>
     <p>With <strong>Settings → Security &amp; privacy → Private requests</strong> on, every request is sent the same way as everyone else's: a fixed app name instead of the usual software versions, and none of the cache identifiers a server could use to recognise your phone from one request to the next. Your IP address still reaches the provider, as with any connection.</p>
     <p>No personally identifiable information is included in these requests. The providers' own privacy policies govern how they handle server-side access logs.</p>
@@ -67,24 +68,27 @@
 
     <h3>Provider Privacy Policies</h3>
     <ul>
-      <li><a href="https://www.frankfurter.app/">Frankfurter.app</a> — open-source proxy, no account required</li>
+      <li><a href="https://frankfurter.dev/">Frankfurter.app</a> — open-source proxy, no account required</li>
       <li><a href="https://allratestoday.com/">AllRatesToday</a> — account required; subject to their privacy policy</li>
       <li><a href="https://openexchangerates.org/privacy">OpenExchangerates</a> — account required; subject to their privacy policy</li>
       <li><a href="https://commission.europa.eu/privacy-policy-websites_en">InforEuro (European Commission)</a></li>
       <li><a href="https://www.bankofcanada.ca/privacy/">Bank of Canada</a></li>
       <li><a href="https://www.norges-bank.no/en/about/privacy-cookies/">Norges Bank</a></li>
       <li><a href="https://cbr.ru/eng/contacts/policy/">Bank Rossii</a></li>
+      <li><a href="https://www.boi.org.il/en/">Bank of Israel</a></li>
     </ul>
 
     <h2>Local Storage</h2>
-    <p>The following data is stored <strong>locally on your device</strong> in Android SharedPreferences. It is never transmitted to any server:</p>
+    <p>The following data is stored <strong>locally on your device</strong>, in the app's private storage. It is never transmitted to any server:</p>
     <ul>
-      <li>Cached exchange rates (from the last successful fetch)</li>
-      <li>Selected base and target currencies</li>
+      <li>Cached exchange rates and rate history</li>
+      <li>Selected currencies, recent pairs and the last historical date</li>
       <li>Starred (favourite) currencies</li>
-      <li>User preferences (theme, fee percentage, provider choice, extended keypad toggle)</li>
-      <li>Last selected historical date</li>
+      <li>Settings (theme, fees, provider choices, keypad, app lock) and any API keys you entered</li>
+      <li>Carts, trips and rate alerts</li>
+      <li>A small diagnostic log and records of the app's last few crashes</li>
     </ul>
+    <p>Nothing leaves the device unless you send it: a backup or a cart export goes to a file you choose, and <strong>About this app → Report a problem</strong> shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.</p>
     <p>This data is cleared when you uninstall the app. It can also be cleared via Android Settings → Apps → CurrenciX → Clear Data.</p>
 
     <h2>Third-Party SDKs</h2>
@@ -104,8 +108,8 @@
 </main>
 
 <footer>
-  <p>CurrenciX &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
-  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://translate.codeberg.org/engage/currencies/">Translate</a></p>
+  <p>CurrenciX &copy; 2026 Elior Machlev &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
+  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Translate</a></p>
 </footer>
 
 </body>

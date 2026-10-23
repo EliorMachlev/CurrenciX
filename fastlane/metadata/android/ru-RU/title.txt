@@ -1,1 +1,1 @@
-Currencies: Курсы валют
+CurrenciX: Курсы валют

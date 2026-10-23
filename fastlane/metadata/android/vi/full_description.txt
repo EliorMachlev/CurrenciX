@@ -1,4 +1,4 @@
-Currencies là một ứng dụng chuyển đổi đơn vị tiền tệ nhanh, gọn, lẹ. Ứng dụng được tạo ra không nhằm phục vụ cho công việc kinh doanh tài chính theo thời gian thực, mà để làm công cụ thuận tiện trong túi bạn để dùng thường ngày hoặc những khi đi du lịch.
+CurrenciX là một ứng dụng chuyển đổi đơn vị tiền tệ nhanh, gọn, lẹ. Ứng dụng được tạo ra không nhằm phục vụ cho công việc kinh doanh tài chính theo thời gian thực, mà để làm công cụ thuận tiện trong túi bạn để dùng thường ngày hoặc những khi đi du lịch.
 
 – Ứng dụng hỗ trợ tất cả các loại tiền tệ phổ biến đang lưu hành. Bạn có thể chọn giữa nhiều nhà cung cấp tỷ giá hối đoái:
    – “exchangerate.host” với hơn 160 loại tiền tệ
@@ -8,5 +8,5 @@ Currencies là một ứng dụng chuyển đổi đơn vị tiền tệ nhanh, 
 – Tỷ giá trong quá khứ: Bạn có thể sử dụng tỉ lệ từ những ngày trước.
 – Máy tính được tích hợp: Đây là một tính năng lớn, rất hữu dụng trong những lúc bạn muốn chia tiền như khi đi ăn ở nhà hàng.
 – Máy tính phụ phí: tính thêm phí chuyển đổi tiền nước ngoài, có thể tự thêm vào tất cả phép tính (không bắt buộc).
-– Currencies được lập trình cho Android bằng Kotlin, nhắm đến hệ điệu hành Android  3 và hỗ trợ chế độ sáng và tối.
+– CurrenciX được lập trình cho Android bằng Kotlin, nhắm đến hệ điệu hành Android  3 và hỗ trợ chế độ sáng và tối.
 – Ứng dụng hoàn toàn không có quảng cáo và không theo dõi người dùng.

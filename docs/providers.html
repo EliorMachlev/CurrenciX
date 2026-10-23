@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exchange Rate Providers — CurrenciX</title>
-  <meta name="description" content="Compare all exchange rate providers supported by the CurrenciX Android app — Frankfurter, OpenExchangerates, InforEuro, Bank of Canada, Norges Bank, Bank Rossii.">
+  <meta name="description" content="Compare all exchange rate providers supported by the CurrenciX Android app — Frankfurter, Open Exchangerates, AllRatesToday, InforEuro, Bank of Canada, Norges Bank, Bank Rossii, Bank of Israel.">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💱</text></svg>">
 </head>
@@ -28,7 +28,7 @@
 <header class="hero" style="padding: 3.5rem 1.5rem 3rem;">
   <div class="hero-inner">
     <h1 style="font-size:clamp(1.6rem,4vw,2.4rem);">Exchange Rate Providers</h1>
-    <p class="tagline" style="font-size:1.05rem;">Compare the 6 active data sources. Switch freely in Settings — no account needed for most.</p>
+    <p class="tagline" style="font-size:1.05rem;">Compare the 8 data sources. Switch freely in Settings — no account needed for most.</p>
   </div>
 </header>
 
@@ -53,15 +53,15 @@
           <td><span class="tag">~33</span></td>
           <td>Business days (~16:00 CET)</td>
           <td>EUR</td>
-          <td>From 2010-01-04</td>
+          <td>Yes (ECB data from 1999)</td>
           <td>No</td>
         </tr>
         <tr>
-          <td><strong>OpenExchangerates</strong></td>
+          <td><strong>Open Exchangerates</strong></td>
           <td><span class="tag">160+</span></td>
           <td>Hourly</td>
           <td>USD</td>
-          <td>Yes</td>
+          <td>Past dates only (no chart)</td>
           <td>Free tier available</td>
         </tr>
         <tr>
@@ -104,6 +104,14 @@
           <td>Yes</td>
           <td>No</td>
         </tr>
+        <tr>
+          <td><strong>Bank of Israel</strong><br><small style="color:var(--clr-text-muted)">Israeli Central Bank</small></td>
+          <td><span class="tag">~14</span></td>
+          <td>Business days</td>
+          <td>ILS</td>
+          <td>Yes</td>
+          <td>No</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -115,14 +123,14 @@
     <div class="card">
       <span class="card-icon">🇪🇺</span>
       <h3>Frankfurter.app</h3>
-      <p>A free, open-source API wrapper around the <strong>European Central Bank</strong> reference rates. Rates are published every business day around 16:00 CET. Covers major world currencies (~33). Historical data starts at 2010-01-04 and the service is highly reliable. No sign-up required.</p>
-      <p style="margin-top:.5rem;"><a href="https://frankfurter.app/">frankfurter.app</a></p>
+      <p>A free, open-source API wrapper around the <strong>European Central Bank</strong> reference rates. Rates are published every business day around 16:00 CET. Covers major world currencies (~33). Its ECB history goes back to 1999 (the app's date picker to 2010), and the service is highly reliable. No sign-up required.</p>
+      <p style="margin-top:.5rem;"><a href="https://frankfurter.dev/">frankfurter.dev</a></p>
     </div>
 
     <div class="card">
       <span class="card-icon">🌐</span>
-      <h3>OpenExchangerates</h3>
-      <p>A commercial service offering the widest currency coverage of any provider in the app — <strong>160+ currencies</strong> updated hourly. The free "App ID" tier provides access to current and historical rates. A free account is required; the API key is entered in Settings.</p>
+      <h3>Open Exchangerates</h3>
+      <p>A commercial service offering the widest currency coverage of any provider in the app — <strong>160+ currencies</strong> updated hourly. The free "App ID" tier provides current and past dates' rates (the app draws no chart from it). A free account is required; the API key is entered in Settings.</p>
       <p style="margin-top:.5rem;"><a href="https://openexchangerates.org/">openexchangerates.org</a></p>
     </div>
 
@@ -157,8 +165,15 @@
     <div class="card">
       <span class="card-icon">🇷🇺</span>
       <h3>Bank Rossii</h3>
-      <p>The <strong>Russian Central Bank</strong> lists ~44 exchange rates against RUB, updated every business day. Returns XML data. Particularly useful for RUB-based conversions and as a reliable fallback for providers that have been retired.</p>
+      <p>The <strong>Russian Central Bank</strong> lists ~44 exchange rates against RUB, updated every business day. Returns XML data. Particularly useful for RUB-based conversions.</p>
       <p style="margin-top:.5rem;"><a href="https://cbr.ru/eng/currency_base/daily/">cbr.ru</a></p>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🇮🇱</span>
+      <h3>Bank of Israel</h3>
+      <p>The <strong>Bank of Israel</strong> publishes its representative rates for about 14 currencies against ILS every business day. No API key required.</p>
+      <p style="margin-top:.5rem;"><a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/">boi.org.il</a></p>
     </div>
 
   </div>
@@ -184,16 +199,16 @@
 
   <h2 class="section-title">Switching Providers</h2>
   <div class="prose">
-    <p>Open <strong>Settings → Exchange rates → Data provider</strong> and select a provider. The change takes effect immediately on the next pull-to-refresh or app restart. Cached rates from the previous provider are discarded.</p>
+    <p>Open <strong>Settings → Exchange rates → Data provider</strong> and select a provider. The next refresh uses it. You can also pick a <strong>fallback provider</strong> there: when the main one fails, the rates come from the fallback, the converter says so, and the next refresh tries the main one again.</p>
     <p>Providers that are often down (Norges Bank) or whose rates are inaccurate (InforEuro) are hidden from the list until you turn on <strong>Settings → Exchange rates → Show unreliable providers</strong>; then each is labelled with why. A provider you already use stays in the list either way.</p>
-    <p>If a provider requires an API key (OpenExchangerates and AllRatesToday), an input field appears in Settings after selecting it. The key is stored locally in SharedPreferences and is never transmitted to any server other than the provider's own API.</p>
+    <p>If a provider requires an API key (OpenExchangerates and AllRatesToday), the app asks for your key when you select it, and you can change it in Settings. The key is stored in the app's private storage and is sent only to that provider, in a request header, never in the address.</p>
   </div>
 
 </main>
 
 <footer>
-  <p>CurrenciX &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
-  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://translate.codeberg.org/engage/currencies/">Translate</a></p>
+  <p>CurrenciX &copy; 2026 Elior Machlev &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
+  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Translate</a></p>
 </footer>
 
 </body>

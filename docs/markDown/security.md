@@ -26,13 +26,13 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 
 ## Secrets
 
-- Release signing credentials are stored in `secrets.properties` (gitignored) and referenced only at build time.
-- No API keys are stored in source code. The keys a user enters for Open Exchangerates or AllRatesToday stay in the app's private storage, one per provider. AllRatesToday's goes as an `Authorization` header (never in a URL, so never in a log line or cache key), and debug builds' HTTP inspector redacts that header.
+- Release signing credentials: locally in `secrets.properties` (gitignored, like `*.jks`, `*.p12` and `/signing/`); in CI only as secrets of the `release` environment, which only the release workflow's build job can read (see [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17)).
+- No API keys are stored in source code. The keys a user enters for Open Exchangerates or AllRatesToday stay in the app's private storage, one per provider. Both go as an `Authorization` header (`Token …` for Open Exchangerates, `Bearer …` for AllRatesToday), never in a URL, so never in the app's log file or in the URLs the HTTP cache stores; debug builds' HTTP inspector redacts that header.
 - Gitleaks scans the full repository on every PR, every push to `master`, and weekly (Mon 07:00 UTC) for accidental credential commits.
 
 ## User-initiated Backup
 
-Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three SharedPreferences namespaces (`prefs`, `last_state`, `starred_currencies`) as versioned JSON; the cached exchange-rate table is deliberately excluded.
+Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) as versioned JSON: settings, fees, carts, rate alerts and any API keys entered, the converter's state and the starred currencies. The cached rates and rate histories are deliberately excluded.
 
 The app requests **no storage permission** — the SAF picker returns a scoped `content://` URI that the user has explicitly granted for that single file.
 
@@ -93,13 +93,13 @@ Release APKs are signed with the release key (`KEYSTORE_*` in `secrets.propertie
 
 `android:allowBackup="false"` and `android:fullBackupContent="false"` are set in the manifest, backed by an explicit `res/xml/data_extraction_rules.xml` that excludes every domain (`root`, `database`, `sharedpref`, `external`, `file`) from both **cloud backups** and **device-to-device transfers** on Android 12+.
 
-Rationale: SharedPreferences contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
+Rationale: the app's DataStore preferences contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
 
 ## Code Analysis
 
 | Tool | Scope | Frequency |
 |---|---|---|
-| Detekt | Kotlin source (app + helpers) | Every PR and master push |
+| Detekt | Kotlin source (app, helpers, baselineprofile; production and tests) | Every PR and master push |
 | Android Lint | App code, resources and manifest, per flavor (fdroid, play) | Every PR and master push |
 | Qodana JVM Community | Kotlin / Java | Every PR, master push, weekly |
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |
@@ -109,9 +109,9 @@ Rationale: SharedPreferences contain the user's API keys for Open Exchangerates 
 
 ## OpenSSF Scorecard
 
-The repository is evaluated weekly by the [OpenSSF Scorecard](https://securityscorecards.dev/). Results are uploaded to the GitHub Security tab. Key checks:
+The repository is evaluated by the [OpenSSF Scorecard](https://securityscorecards.dev/) on every push to `master` and weekly. Results are uploaded to the GitHub Security tab, and open findings show there as code scanning alerts. Key checks:
 
-- **Pinned-Dependencies** — all CI actions and Docker images use SHA pins; the CI scripts' Python packages are installed from `.github/scripts/requirements.txt` with `--require-hashes`
+- **Pinned-Dependencies** — every CI action uses a SHA pin; the CI scripts' Python packages are installed from `.github/scripts/requirements.txt` with `--require-hashes`
 - **Branch-Protection** — master branch is protected
 - **SAST** — multiple static analysis tools are active
 - **Dependency-Update-Tool** — Dependabot is configured

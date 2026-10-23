@@ -1,7 +1,7 @@
 # Accessibility Statement
 
 **Effective:** 2026-08-13
-**Last reviewed:** 2026-08-15
+**Last reviewed:** 2026-10-23
 **Accessibility coordinator:** Elior Machlev
 **Contact:** 26472689+EliorMachlev@users.noreply.github.com
 
@@ -36,18 +36,20 @@ It does **not** cover:
 
 ### App (Android)
 
-- **Screen readers**: Every interactive control has a text label reachable by TalkBack. Purely decorative icons are marked with `importantForAccessibility="no"` or `contentDescription="@null"`. Actionable icon-only buttons (search, clear search, delete cart item, swap currencies, fee-side toggle) have `contentDescription` set to a translated string.
-- **Merged focus stops**: Multi-line list rows — currency picker rows, quick-conversion rows, cart items, and About/Credits entries — use Compose `semantics(mergeDescendants = true)` so TalkBack reads each row as a single node instead of forcing a swipe per sub-line.
-- **Section headings**: The Credits list marks section titles with `semantics { heading() }` so TalkBack users can jump between "Project / Legal / Source / Libraries" with heading navigation.
-- **Live regions**: Dynamic numeric readouts (converted amount, fee badge, true cost, original value) declare `accessibilityLiveRegion="polite"` so TalkBack announces value changes without interrupting the user's current focus.
-- **State descriptions**: The fee-side toggle publishes its current state ("Converted" / "Original") via `ViewCompat.setStateDescription`, so its selection is announced independent of its visible label.
-- **Chart summary**: The exchange-rate line chart is inherently visual and its data model is opaque to accessibility services. A wrapping `contentDescription` announces the chart and directs users to the accessible MIN / AVG / MAX / current-rate readout rendered immediately below.
-- **Colour and contrast**: Light, dark, and pure-black themes are provided. Text and essential UI elements target the WCAG AA contrast minima (4.5:1 for normal text, 3:1 for large text and non-text UI). Semantic tokens `app_error` (`#B3261E` light / `#F2B8B5` dark) and `rate_diff_positive` (`#1B7343` light / `#85BB65` dark) are tuned for AA on both themes; opaque colour alone is used for state cues that were previously partially conveyed via reduced alpha.
-- **Non-colour cues**: Rate-difference percentages carry an explicit `+` / `-` sign so the direction is conveyed without relying on the red/green colour distinction.
-- **Touch targets**: Interactive elements target a minimum of **48 dp × 48 dp** per the Material accessibility guidance, matching the WCAG 2.1 target-size AA guidance for mobile. The fee-side toggle and the numeric-keypad icon buttons carry explicit `minWidth` / `minHeight` to guarantee this on small screens.
-- **Font scaling**: The app respects the system font-scale setting (`fontScale`) and uses `sp` units for text. Layouts have been reviewed to avoid clipping at scales up to 200%.
-- **Keyboard / switch access**: Focus order follows visual reading order. Custom compound controls expose an accessibility role and state.
-- **Predictive back gesture**: The app opts in to the predictive-back API so screen-reader users get consistent back-navigation feedback.
+The whole app is Jetpack Compose (Material 3), so accessibility comes from Compose semantics rather than View attributes.
+
+- **Screen readers**: Every interactive control has a text label reachable by TalkBack; icon-only buttons (the top bars' shortcuts, swap, search, clear, delete, close) carry a translated `contentDescription`, and purely decorative icons carry none.
+- **One stop per row**: Rows that hold several pieces of text read as one TalkBack node: currency picker rows and chips, and Credits entries merge their parts (`mergeDescendants`), and rows whose parts would read badly in pieces say one sentence instead (`clearAndSetSemantics`), as the cart's prices do: "4.50 US dollar, quantity 3, about 16.42 Israeli new shekel".
+- **Actions without gestures**: What a long-press or a drag does on a cart row (duplicate, move to top, delete, who an item is for) is also offered as TalkBack actions.
+- **Section headings**: Section titles in settings lists, sheets and the Credits list are marked as headings, so TalkBack's heading navigation jumps between them.
+- **Chart summary**: The exchange-rate chart is read as a sentence rather than a line: the change over the period with its first and last rates and dates, and the high and low (`timelineSummary`). The statistics tiles beside it (max, min, average, median, change) are ordinary text.
+- **Colour and contrast**: Light, dark and pure-black themes are provided. Text and essential UI elements target the WCAG AA contrast minima (4.5:1 for normal text, 3:1 for large text and non-text UI). With **Wallpaper colors** on, coloured feature icons are moved toward the text colour just far enough to keep 3:1 against the background (`readableOn`).
+- **Non-colour cues**: Rate changes carry an explicit sign and a trend arrow, so direction never relies on red / green alone.
+- **Touch targets**: Interactive elements meet Material's minimum interactive size of **48 dp × 48 dp**, matching WCAG 2.1's target-size guidance for mobile.
+- **Font scaling**: Text uses `sp` and follows the system font scale. The screenshot tests render the densest screens at 200 % font size, and labels that would be cut off shrink to fit instead.
+- **Keyboard / switch access**: Focus order follows the visual reading order; custom controls (toggle groups, the keypad, chips) expose their role and state. The converter also takes a hardware keyboard's digits and operators.
+- **Haptics and sound**: Vibration and click sounds each have their own switch (Settings → Look & Feel).
+- **Predictive back gesture**: The app opts in to the predictive-back API so back navigation behaves the same throughout.
 
 ### Website (where operated)
 
@@ -64,10 +66,11 @@ It does **not** cover:
 The maintainer is a single individual and comprehensive third-party accessibility audits have not yet been commissioned. The following are known or possible limitations. If you encounter one, please report it using the contact channel below.
 
 - **Third-party audit**: A comprehensive third-party accessibility audit has not yet been commissioned. Assessment is currently maintainer-run using TalkBack, Android Accessibility Scanner, and CI lint rules.
-- **Chart data exposure**: The Vico line chart's per-day data points are not individually reachable by accessibility services. A textual MIN / AVG / MAX / current-rate summary for the visible period is provided as an accessible alternative, and the chart itself announces a summary directing users to that readout. A per-day table or sonified view is not provided.
-- **Localised content descriptions**: Some strings inherited from the upstream `sal0max/currencies` project may not yet have translated content descriptions in every one of the 20+ supported languages. Fallbacks display the English string.
-- **Dynamic colour palettes**: The system-generated dynamic colour scheme is honoured. Because that palette is derived at runtime from the user's wallpaper, its contrast ratios cannot be verified ahead of time; the fixed light / dark / pure-black themes remain the AA-verified baseline.
-- **Custom on-screen keypad**: An in-app numeric keypad is used by default. On very small screens some keypad keys may fall below the 48 dp target-size guidance despite honouring `minWidth` / `minHeight` where present. Users who prefer the system keyboard (which may integrate better with certain accessibility services) can switch via **Settings → Keyboard**.
+- **Chart data exposure**: The Vico line chart's per-day data points are not individually reachable by accessibility services. The spoken summary and the statistics tiles cover the visible period; a per-day table or sonified view is not provided.
+- **Changing values aren't announced**: When a rate refresh changes the converted amount, TalkBack doesn't announce it by itself (no live region); the new value is read when focus reaches it.
+- **Localised content descriptions**: The app is translated into 33 languages, and Android Lint fails the build on a string missing from any of them, so content descriptions are translated too; the quality of the translations inherited from the upstream `sal0max/currencies` project varies.
+- **Wallpaper colour palettes**: **Wallpaper colors** (on by default) builds the palette from the user's wallpaper at runtime, so its contrast ratios can't be verified ahead of time beyond the icon adjustment above; turning it off in Settings → Look & Feel gives the fixed light / dark / pure-black themes, the AA-verified baseline.
+- **Custom on-screen keypad**: Amounts are typed on the app's own keypad; there is no option to use the system keyboard instead (a hardware keyboard works). Its rows shrink from 56 dp to 48 dp on short screens, so keys stay at the 48 dp target.
 - **RTL layouts**: In Hebrew, Arabic and Farsi, Settings, sheets and dialogs are laid out right to left; numbers, the converter and the chart stay left to right so digits and math read the same in every language. Labels mixing a right-to-left language with Latin currency codes or provider names keep the language's reading order (see architecture.md, *Right-to-left languages*).
 
 None of the above is a blocker to core currency-conversion functionality via TalkBack.

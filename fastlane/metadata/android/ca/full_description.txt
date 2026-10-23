@@ -1,4 +1,4 @@
-Currencies és un convertidor de moneda simple i directe. No està pensat per ser una eina financera de treball, sinó per a un ús més quotidià com podria ser, per exemple, anar de vacances.
+CurrenciX és un convertidor de moneda simple i directe. No està pensat per ser una eina financera de treball, sinó per a un ús més quotidià com podria ser, per exemple, anar de vacances.
 
 - L'aplicació inclou totes les monedes importants. Es pot triar entre diferents proveïdors de tipus de canvi:
    - frankfurter.app, amb unes 30 divises diferents. A partir de les dades del Banc Central Europeu
@@ -12,5 +12,5 @@ Currencies és un convertidor de moneda simple i directe. No està pensat per se
 - Dades històriques: Feu servir valors de dates anteriors.
 - Una característica rellevant és la calculadora que s'inclou. Útil, per exemple, per si es vol repartir el compte d'un restaurant.
 - Calculadora de comissions: Per afegir opcionalment una comissió als càlculs de canvi de moneda.
-- Currencies s'ha escrit per a Android utilitzant Kotlin, dirigit a Android 13 i inclou els temes fosc i clar.
+- CurrenciX s'ha escrit per a Android utilitzant Kotlin, dirigit a Android 13 i inclou els temes fosc i clar.
 - Lliure d'anuncis i sense espionatge a l'usuari.

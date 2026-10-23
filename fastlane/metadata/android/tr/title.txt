@@ -1,1 +1,1 @@
-Currencies: Döviz Hesaplama
+CurrenciX: Döviz Hesaplama
