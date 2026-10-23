@@ -14,7 +14,7 @@ This prevents a compromised or reused tag from injecting malicious code into CI.
 
 ### Dependabot Cooldown
 
-Both Gradle and GitHub Actions ecosystems enforce a **7-day cooldown** (`cooldown: default-days: 7`) before Dependabot proposes a version bump. This mitigates supply-chain attacks where a dependency is compromised shortly after publication.
+The Gradle, GitHub Actions and pip (the CI scripts' `requirements.txt`) ecosystems all enforce a **7-day cooldown** (`cooldown: default-days: 7`) before Dependabot proposes a version bump. This mitigates supply-chain attacks where a dependency is compromised shortly after publication.
 
 ### Dependency Review
 
@@ -111,7 +111,7 @@ Rationale: SharedPreferences contain the user's API keys for Open Exchangerates 
 
 The repository is evaluated weekly by the [OpenSSF Scorecard](https://securityscorecards.dev/). Results are uploaded to the GitHub Security tab. Key checks:
 
-- **Pinned-Dependencies** — all CI actions and Docker images use SHA pins
+- **Pinned-Dependencies** — all CI actions and Docker images use SHA pins; the CI scripts' Python packages are installed from `.github/scripts/requirements.txt` with `--require-hashes`
 - **Branch-Protection** — master branch is protected
 - **SAST** — multiple static analysis tools are active
 - **Dependency-Update-Tool** — Dependabot is configured

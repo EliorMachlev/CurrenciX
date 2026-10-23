@@ -167,7 +167,7 @@ jobs:
       - name: Annotate failed tests
         if: failure() && matrix.check == 'test'
         run: |
-          pip install --quiet defusedxml==0.7.1
+          pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           python3 .github/scripts/annotate-test-failures.py "app/build/test-results/**/*.xml"
 
   fdroid-release-build:

@@ -59,3 +59,20 @@ updates:
       actions:
         patterns:
           - "*"
+
+  # The CI scripts' Python packages, pinned by hash in requirements.txt.
+  - package-ecosystem: "pip"
+    directory: "/.github/scripts"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    cooldown:
+      default-days: 7
