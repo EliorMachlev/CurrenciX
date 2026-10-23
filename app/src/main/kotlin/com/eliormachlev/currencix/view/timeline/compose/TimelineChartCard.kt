@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -39,6 +40,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.fromHtmlLegacy
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.screenBackground
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private val CHART_PADDING = TIMELINE_CONTENT_PADDING
@@ -67,11 +69,13 @@ internal fun TimelineChartCard(
     modifier: Modifier = Modifier,
     chart: @Composable () -> Unit,
 ) {
+    // No card behind the chart: it sits on the screen's own background,
+    // painted here so a shared image of it is opaque too.
     Box(
         modifier =
             modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(screenBackground()),
     ) {
         if (status.isRefreshing) {
             LinearProgressIndicator(
@@ -102,6 +106,9 @@ internal fun TimelineChartCard(
 
         val provider = status.provider
         if (provider != null) {
+            // The theme's text color, not the View's default, which follows
+            // the context's theme rather than the app's (dark text on dark).
+            val providerColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
             AndroidView(
                 factory = { ctx ->
                     TextView(ctx).apply {
@@ -110,7 +117,10 @@ internal fun TimelineChartCard(
                         gravity = android.view.Gravity.END
                     }
                 },
-                update = { it.text = provider.fromHtmlLegacy() },
+                update = {
+                    it.text = provider.fromHtmlLegacy()
+                    it.setTextColor(providerColor)
+                },
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)

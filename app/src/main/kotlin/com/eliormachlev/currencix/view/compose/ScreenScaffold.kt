@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -124,11 +125,18 @@ fun ScreenScaffold(
 @Composable
 fun screenTopBarColors(): TopAppBarColors =
     TopAppBarDefaults.topAppBarColors(
-        containerColor = LocalScreenBackground.current.takeOrElse(MaterialTheme.colorScheme.background),
+        containerColor = screenBackground(),
         scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
     )
 
-private fun Color.takeOrElse(fallback: Color): Color = if (this == Color.Unspecified) fallback else this
+/**
+ * The color behind every screen ([LocalScreenBackground]: paper, ink or OLED
+ * black), or the theme's background outside the nav host (previews, tests).
+ * Something painted in it reads as having no background of its own, yet is
+ * opaque, as a captured image of it needs to be.
+ */
+@Composable
+fun screenBackground(): Color = LocalScreenBackground.current.takeOrElse { MaterialTheme.colorScheme.background }
 
 @Composable
 private fun BackButton(onBack: () -> Unit) {
