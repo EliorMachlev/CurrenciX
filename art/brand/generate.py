@@ -10,6 +10,10 @@ everything made from it:
   (the launcher icon, on ink);
 - fastlane's store icon (images/icon.png, 512 px), when cairosvg is
   installed (pip install cairosvg).
+- the README's animated mark, art/brand/currencix-mark-{light,dark}.gif: the
+  splash screen's animation (the arrows turning half a turn at a time,
+  animator/brand_mark_spin.xml) in the splash's colours, on GitHub's light and
+  dark page backgrounds, when Pillow is installed too (pip install pillow).
 
     python3 art/brand/generate.py
 
@@ -133,6 +137,111 @@ def svg(background: str | None) -> str:
     )
 
 
+# The README's animated mark: the splash's colours (values/ and values-night/
+# colors.xml, brandMark*) on GitHub's page backgrounds, so it sits on the
+# page with no box around it.
+README_GIF_THEMES = {
+    "light": {"background": "#FFFFFF", "green": "#5E9A40", "brass": "#9C7C3E", "cross": "#1C1B1F"},
+    "dark": {"background": "#0D1117", "green": BILL_GREEN, "brass": BRASS, "cross": INK_FOREGROUND},
+}
+README_GIF_PX = 240
+# The mark reaches SAFE_RADIUS from the centre; a little room around it.
+README_GIF_HALF_VIEW = SAFE_RADIUS + 4
+# As animator/brand_mark_spin.xml: a 1600 ms loop of two half turns, each eased
+# with fast_out_slow_in (cubic-bezier(0.4, 0, 0.2, 1)).
+SPIN_LOOP_MS = 1600
+GIF_FRAME_MS = 40  # 25 fps; GIF delays count in 10 ms
+
+
+def fast_out_slow_in(t: float) -> float:
+    """y at x = t on cubic-bezier(0.4, 0, 0.2, 1), found by bisection."""
+
+    def bezier(p1: float, p2: float, u: float) -> float:
+        return 3 * (1 - u) ** 2 * u * p1 + 3 * (1 - u) * u**2 * p2 + u**3
+
+    low, high = 0.0, 1.0
+    for _ in range(40):
+        mid = (low + high) / 2
+        if bezier(0.4, 0.2, mid) < t:
+            low = mid
+        else:
+            high = mid
+    return bezier(0.0, 1.0, (low + high) / 2)
+
+
+def spin_degrees(ms: float) -> float:
+    half = SPIN_LOOP_MS / 2
+    turns, into = divmod(ms % SPIN_LOOP_MS, half)
+    return 180 * turns + 180 * fast_out_slow_in(into / half)
+
+
+def animated_svg(colours: dict[str, str], degrees: float) -> str:
+    def arrow_path(d: str, color: str) -> str:
+        return f'<path d="{d}" fill="{color}" stroke="{color}" stroke-width="{ROUNDING:.2f}" stroke-linejoin="round"/>'
+
+    origin = CENTRE - README_GIF_HALF_VIEW
+    size = 2 * README_GIF_HALF_VIEW
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{origin} {origin} {size} {size}">'
+        f'<rect x="{origin}" y="{origin}" width="{size}" height="{size}" fill="{colours["background"]}"/>'
+        f'<g transform="rotate({degrees:.3f} {CENTRE} {CENTRE})">'
+        + arrow_path(TOP, colours["green"])
+        + arrow_path(BOTTOM, colours["brass"])
+        + "</g>"
+        f'<path d="{CROSS}" fill="none" stroke="{colours["cross"]}" '
+        f'stroke-width="{CROSS_STROKE:.2f}" stroke-linecap="round"/>'
+        "</svg>"
+    )
+
+
+def exact_background(frame, colours: dict[str, str]):
+    """
+    The frame with its background's palette entry set to the page's exact
+    colour: quantizing rounds it to a near neighbour (white to 253, 253, 252),
+    which would show as a faint box on the page.
+    """
+    entries = frame.getpalette()
+    corner = frame.getpixel((0, 0)) * 3
+    entries[corner : corner + 3] = [int(colours["background"][i : i + 2], 16) for i in (1, 3, 5)]
+    frame.putpalette(entries)
+    return frame
+
+
+def write_readme_gifs(here: pathlib.Path, cairosvg) -> None:
+    try:
+        from PIL import Image
+    except ImportError:
+        print("Pillow isn't installed; README GIFs not written")
+        return
+    import io
+
+    for name, colours in README_GIF_THEMES.items():
+        frames = [
+            Image.open(
+                io.BytesIO(
+                    cairosvg.svg2png(
+                        bytestring=animated_svg(colours, spin_degrees(ms)).encode(),
+                        output_width=README_GIF_PX,
+                        output_height=README_GIF_PX,
+                    )
+                )
+            ).convert("RGB")
+            for ms in range(0, SPIN_LOOP_MS, GIF_FRAME_MS)
+        ]
+        # One palette for every frame, so colours don't shimmer between them.
+        palette = frames[len(frames) // 4].quantize(colors=64, method=Image.Quantize.MEDIANCUT)
+        frames = [exact_background(frame.quantize(palette=palette, dither=Image.Dither.NONE), colours) for frame in frames]
+        frames[0].save(
+            here / f"currencix-mark-{name}.gif",
+            save_all=True,
+            append_images=frames[1:],
+            duration=GIF_FRAME_MS,
+            loop=0,
+            optimize=True,
+            disposal=1,
+        )
+
+
 def main() -> None:
     here = pathlib.Path(__file__).parent
     VALUES.write_text(values_xml())
@@ -150,6 +259,7 @@ def main() -> None:
         output_width=STORE_ICON_PX,
         output_height=STORE_ICON_PX,
     )
+    write_readme_gifs(here, cairosvg)
 
 
 if __name__ == "__main__":

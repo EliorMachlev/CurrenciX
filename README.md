@@ -1,64 +1,97 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="art/brand/currencix-mark-dark.gif">
+  <img alt="The CurrenciX mark: two arrows turning around a ×" src="art/brand/currencix-mark-light.gif" width="160">
+</picture>
+
 # CurrenciX
 
-<div align="right">
-   <img alt="build status" height="20" src="https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml/badge.svg">
-   <a href="https://www.bestpractices.dev/projects/15831"><img alt="OpenSSF Best Practices" height="20" src="https://www.bestpractices.dev/projects/15831/badge"></a>
+**A simple, private currency converter for Android.**<br>
+A handy travel companion, not a tool for real-time financial business.
+
+[![Build](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml/badge.svg)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15831/badge)](https://www.bestpractices.dev/projects/15831)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/EliorMachlev/CurrenciX/badge)](https://securityscorecards.dev/viewer/?uri=github.com/EliorMachlev/CurrenciX)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
+[![Android 13+](https://img.shields.io/badge/Android-13%2B-3DDC84?logo=android&logoColor=white)](docs/markDown/overview.md)
+
+[Website](https://currencix.machlev.org/) · [Features](https://currencix.machlev.org/features.html) · [Providers](https://currencix.machlev.org/providers.html) · [Privacy](https://currencix.machlev.org/privacy.html) · [Docs](docs/markDown/)
+
 </div>
 
-<div align="center">
-   <img alt="Logo" height="200" src="art/brand/ic_launcher.svg">
-</div>
+---
 
-**CurrenciX** is a [simple](https://en.wikipedia.org/wiki/KISS_principle) currency converter — a handy travel companion, not a tool for realtime financial business.
+## ✨ Highlights
 
-It's a fork of [Currencies](https://github.com/sal0max/currencies) by Maximilian Salomon. See [NOTICE.md](NOTICE.md) for a summary of what changed in the fork.
+| Feature | What you get |
+|---|---|
+| 💱 **Convert anything** | A calculator keypad (`+ − × ÷`, brackets, percent), your recent pairs one tap away, a price pasted from the clipboard, or past dates' rates back to 2010. |
+| 💳 **The true cost** | Add your card's or bank's exchange fee, globally or per pair, see the real price beside the mid-market one, and compare your cards. |
+| 📈 **Charts & alerts** | A week to five years of history, or a custom range up to ten, with high, low, average and median, and a notification when a pair reaches your rate. |
+| 🛒 **Cart** | A list of prices converted into your currency, with quantities, tip or tax, a budget, a split by person, trips, and receipt scanning on the device. |
+| 📲 **Everywhere on your phone** | "Convert currency" in any app's text-selection menu, a home-screen widget, a Quick Settings tile and launcher shortcuts. |
+| 🎨 **Looks right** | Material 3 with colors from your wallpaper; light, dark and pure-black themes; two panes on tablets and foldables; 33 languages, right to left where they read that way. |
+| 🔒 **Private** | No ads, no analytics, no account. An optional app lock, private requests and encrypted backups. Nothing about you leaves the phone. |
 
-## Features
+## 🏦 Exchange rate providers
 
-* Eight exchange rate providers to choose from, with a fallback for when your main one fails:
-   * [Frankfurter.app](https://frankfurter.dev/) — 30+ currencies, provided by the European Central Bank
-   * [Open Exchangerates](https://openexchangerates.org/) — 160+ currencies with hourly updates (requires a free API key)
-   * [AllRatesToday](https://allratestoday.com/) — ~160 mid-market rates, updated about every minute (requires an API key)
-   * [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) — the European Commission's monthly accounting rates for 150+ pairs
-   * [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) — ~23 CAD rates
-   * [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) (Norway) — ~40 rates
-   * [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) (Russia) — ~44 rates against the Ruble
-   * [Bank of Israel](https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/) — ~14 ILS rates
-* Built-in calculator (`+ − × ÷`, brackets, percent), recent pairs, and paste an amount straight from the clipboard.
-* Fee manager: global exchange/bank fees plus per-pair overrides — see the "true cost" alongside the mid-market rate, and compare your cards.
-* Rate chart from a week to 5 years or a custom range, with statistics, and rate alerts that notify you when a pair reaches your rate.
-* Historical rates: convert against rates from any prior date.
-* Cart: a running list of prices converted into your currency, with quantities, tip / tax, split by person, a budget, trips, and receipt scanning on the device.
-* Convert a price selected in any app ("Convert currency" in the text-selection menu), plus a home-screen widget, a Quick Settings tile and launcher shortcuts.
-* Optional background rate refresh, encrypted backup & restore, and an app lock.
-* Material 3 with colors from your wallpaper; light, dark and OLED themes; two panes on tablets and foldables.
-* 33 languages, with right-to-left layouts for Hebrew, Arabic and Farsi.
-* Ad-free and telemetry-free.
+Eight sources, and a fallback for when your main one is down. Details in [api-providers.md](docs/markDown/api-providers.md).
 
-Written in Kotlin with Jetpack Compose, min SDK 33 (Android 13), targeting Android 17 (SDK 37).
+| Provider | Source | Currencies | Updates | API key |
+|---|---|---|---|---|
+| [Frankfurter.app](https://frankfurter.dev/) | European Central Bank | ~33 | Business days | — |
+| [Open Exchangerates](https://openexchangerates.org/) | Commercial aggregator | 160+ | Hourly | Free key |
+| [AllRatesToday](https://allratestoday.com/) | Mid-market interbank | ~160 | About every minute | Key |
+| [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | European Commission | ~150 | Monthly | — |
+| [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) | Central bank | ~23 | Business days | — |
+| [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) | Central bank | ~40 | Business days | — |
+| [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) | Central bank | ~44 | Business days | — |
+| [Bank of Israel](https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/) | Central bank | ~14 | Business days | — |
 
-## Screenshots
+## 📦 Get it
 
-<div align="center">
-   <img src="art/screenshots/screen01.png" width="45%" alt="screenshot 1">
-   <img src="art/screenshots/screen03.png" width="45%" alt="screenshot 2">
-</div>
+CurrenciX hasn't had its first release yet. Releases will be published on [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): signed APKs (one per CPU type, and a universal one), their `SHA256SUMS`, and an SBOM of every library they ship. Android 17 and later also check a post-quantum signature. An F-Droid build is prepared.
 
-## Development
+Until then, build it yourself:
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Deeper docs — architecture, build flavors, CI/CD, security — live in [`docs/markDown/`](docs/markDown/).
+```bash
+git clone https://github.com/EliorMachlev/CurrenciX.git
+cd CurrenciX
+./gradlew assembleFdroidDebug   # JDK 21 or newer
+```
 
-## Legal & compliance
+## 🧱 Built with
 
-- [Privacy Policy](docs/markDown/privacy-policy.md) — the app collects no personal data; see the policy for the per-jurisdiction posture (GDPR, UK GDPR, CCPA family, LGPD, PIPEDA, APPI, POPIA, PDPA, PIPL, Australia Privacy Act, Israeli PPL incl. Amendment 13, COPPA, ePrivacy).
-- [Terms of Service](docs/markDown/terms-of-service.md) — usage terms, warranty disclaimer, rate-accuracy notice. Governed by the laws of Israel.
-- [Accessibility Statement](docs/markDown/accessibility-statement.md) — WCAG 2.1 AA target covering IS 5568, EN 301 549 / EAA, ADA / §508.
-- [Compliance Posture](docs/markDown/compliance-posture.md) — applicability under EU AI Act, DSA/DMA, financial-services regimes, EAR / EU Dual-Use, EU CRA, Play Data Safety, F-Droid.
-- Project website: [currencix.machlev.org](https://currencix.machlev.org/).
-- [SECURITY.md](SECURITY.md) — vulnerability reporting, coordinated disclosure, support period, SBOM.
+[Kotlin](https://kotlinlang.org/) · [Jetpack Compose](https://developer.android.com/compose) with Material 3 · Navigation 3 · DataStore · Retrofit + OkHttp · WorkManager · [Glance](https://developer.android.com/develop/ui/compose/glance) · [Vico](https://github.com/patrykandpatrick/vico) charts · [Tesseract](https://github.com/adaptech-cz/Tesseract4Android) OCR · Bouncy Castle + Tink
 
-## License
+Checked on every change by Android Lint, detekt, Qodana, Semgrep, CodeQL and Gitleaks, with unit, screenshot and fuzz tests. See [ci-cd.md](docs/markDown/ci-cd.md).
 
-Copyright © 2020 Maximilian Salomon (upstream Currencies) · CurrenciX fork © 2026 Elior Machlev.
+## 📚 Documentation
 
-Licensed under [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html).
+| Doc | What's in it |
+|---|---|
+| [Overview](docs/markDown/overview.md) | What the app does, at a glance |
+| [Architecture](docs/markDown/architecture.md) | How it's put together, and why |
+| [Build & flavors](docs/markDown/build-and-flavors.md) | Toolchain, `fdroid` and `play`, signing and releases |
+| [Providers](docs/markDown/api-providers.md) | Every rate source, caching and fallback |
+| [CI / CD](docs/markDown/ci-cd.md) | Workflows, checks and benchmarks |
+| [Security](docs/markDown/security.md) | Supply chain, network, backups, signing |
+| [Exceptions](docs/markDown/exceptions.md) | The only suppressed findings, and why |
+
+## 🤝 Contributing
+
+Bug fixes are welcome; for new features, open an issue first. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [contributor guide](docs/markDown/contributing.md).
+
+Found a vulnerability? Please report it privately, as [SECURITY.md](SECURITY.md) describes.
+
+## ⚖️ Legal
+
+[Privacy Policy](docs/markDown/privacy-policy.md) · [Terms of Service](docs/markDown/terms-of-service.md) · [Accessibility Statement](docs/markDown/accessibility-statement.md) · [Compliance Posture](docs/markDown/compliance-posture.md) · [SECURITY.md](SECURITY.md)
+
+## 📄 License
+
+CurrenciX is a fork of [Currencies](https://github.com/sal0max/currencies) by Maximilian Salomon; [NOTICE.md](NOTICE.md) sums up what changed.
+
+Copyright © 2020 Maximilian Salomon (upstream Currencies) · CurrenciX fork © 2026 Elior Machlev.<br>
+Licensed under [GPL-3.0-or-later](COPYING).
