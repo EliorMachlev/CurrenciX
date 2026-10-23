@@ -100,6 +100,7 @@ Rationale: SharedPreferences contain the user's API keys for Open Exchangerates 
 | Tool | Scope | Frequency |
 |---|---|---|
 | Detekt | Kotlin source (app + helpers) | Every PR and master push |
+| Android Lint | App code, resources and manifest, per flavor (fdroid, play) | Every PR and master push |
 | Qodana JVM Community | Kotlin / Java | Every PR, master push, weekly |
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |
 | Semgrep | Security patterns | Every PR, master push, weekly |
