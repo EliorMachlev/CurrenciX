@@ -1,0 +1,7 @@
+# Semgrep for the Semgrep workflow, installed with --require-hashes.
+# requirements.txt is compiled from this file on Python 3.13 (the version the
+# workflow sets up):
+#   pip-compile --allow-unsafe --generate-hashes --strip-extras requirements.in
+# Dependabot (pip, this directory) recompiles it when Semgrep or a
+# dependency has a new release.
+semgrep==1.182.1

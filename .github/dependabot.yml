@@ -57,9 +57,19 @@ updates:
         patterns:
           - "*"
 
-  # The CI scripts' Python packages, pinned by hash in requirements.txt.
+  # Python packages CI installs, pinned by hash in requirements.txt: the CI
+  # scripts' (.github/scripts) and Semgrep (.github/semgrep, compiled from
+  # requirements.in with pip-compile, which Dependabot reruns).
   - package-ecosystem: "pip"
-    directory: "/.github/scripts"
+    directories:
+      - "/.github/scripts"
+      - "/.github/semgrep"
+    # One PR for them all: Semgrep's ~65 pinned packages would otherwise
+    # each get their own.
+    groups:
+      python:
+        patterns:
+          - "*"
     schedule:
       interval: "weekly"
       day: "monday"

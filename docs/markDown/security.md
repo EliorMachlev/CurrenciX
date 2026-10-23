@@ -14,7 +14,7 @@ This prevents a compromised or reused tag from injecting malicious code into CI.
 
 ### Dependabot Cooldown
 
-The Gradle, GitHub Actions and pip (the CI scripts' `requirements.txt`) ecosystems all enforce a **7-day cooldown** (`cooldown: default-days: 7`) before Dependabot proposes a version bump. This mitigates supply-chain attacks where a dependency is compromised shortly after publication.
+The Gradle, GitHub Actions and pip (the CI scripts' and Semgrep's `requirements.txt`) ecosystems all enforce a **7-day cooldown** (`cooldown: default-days: 7`) before Dependabot proposes a version bump. This mitigates supply-chain attacks where a dependency is compromised shortly after publication.
 
 ### Dependency Review
 
@@ -111,7 +111,7 @@ Rationale: the app's DataStore preferences contain the user's API keys for Open 
 
 The repository is evaluated by the [OpenSSF Scorecard](https://securityscorecards.dev/) on every push to `master` and weekly. Results are uploaded to the GitHub Security tab, and open findings show there as code scanning alerts. Key checks:
 
-- **Pinned-Dependencies** — every CI action uses a SHA pin; the CI scripts' Python packages are installed from `.github/scripts/requirements.txt` with `--require-hashes`
+- **Pinned-Dependencies** — every CI action uses a SHA pin; the CI scripts' Python packages and Semgrep itself (with every package it needs) are installed with `--require-hashes`, from `.github/scripts/requirements.txt` and `.github/semgrep/requirements.txt`
 - **Branch-Protection** — master branch is protected
 - **SAST** — multiple static analysis tools are active
 - **Dependency-Update-Tool** — Dependabot is configured
