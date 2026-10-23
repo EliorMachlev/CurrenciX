@@ -130,6 +130,9 @@
     <string name="onboarding_autorefresh_body">Курсы обновляются при открытии приложения. Включите фоновое обновление, чтобы они оставались актуальными между запусками.</string>
     <string name="onboarding_autorefresh_enable">Включить сейчас</string>
     <string name="a11y_search_currencies">Поиск валют</string>
+    <string name="a11y_search_languages">Поиск языков</string>
+    <string name="error_positive_number">Введите число больше 0</string>
+    <string name="error_tip_percent">Введите процент больше 0 и не больше 100</string>
     <string name="a11y_clear_search">Очистить поиск</string>
     <string name="a11y_cart_item_name">Название позиции</string>
     <string name="a11y_chart_summary">График истории обменного курса. Статистика — минимум, среднее, максимум и текущий курс — показана ниже.</string>

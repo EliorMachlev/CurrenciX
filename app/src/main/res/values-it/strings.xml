@@ -131,6 +131,9 @@
     <string name="report_problem_none">Nessun arresto anomalo o blocco registrato</string>
     <string name="report_problem_summary">Condividi i dettagli di arresti anomali o blocchi recenti. Non viene inviato nulla a meno che tu non lo scelga.</string>
     <string name="a11y_search_currencies">Cerca valute</string>
+    <string name="a11y_search_languages">Cerca lingue</string>
+    <string name="error_positive_number">Inserisci un numero maggiore di 0</string>
+    <string name="error_tip_percent">Inserisci una percentuale maggiore di 0 e fino a 100</string>
     <string name="a11y_clear_search">Cancella ricerca</string>
     <string name="a11y_cart_item_name">Nome articolo</string>
     <string name="a11y_chart_summary">Grafico dello storico dei tassi di cambio. Le statistiche — minimo, media, massimo e tasso attuale — sono mostrate sotto.</string>

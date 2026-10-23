@@ -128,6 +128,9 @@
     <string name="onboarding_autorefresh_body">Tỷ giá được làm mới khi bạn mở ứng dụng. Hãy bật làm mới trong nền để tỷ giá luôn cập nhật giữa các lần mở.</string>
     <string name="onboarding_autorefresh_enable">Bật ngay</string>
     <string name="a11y_search_currencies">Tìm tiền tệ</string>
+    <string name="a11y_search_languages">Tìm ngôn ngữ</string>
+    <string name="error_positive_number">Nhập một số lớn hơn 0</string>
+    <string name="error_tip_percent">Nhập tỷ lệ phần trăm lớn hơn 0, tối đa 100</string>
     <string name="a11y_clear_search">Xóa tìm kiếm</string>
     <string name="a11y_cart_item_name">Tên mục</string>
     <string name="a11y_chart_summary">Biểu đồ lịch sử tỷ giá hối đoái. Thống kê — tối thiểu, trung bình, tối đa và tỷ giá hiện tại — được hiển thị bên dưới.</string>

@@ -131,6 +131,9 @@
     <string name="report_problem_none">Aucun plantage ni blocage enregistré</string>
     <string name="report_problem_summary">Partagez les détails des plantages ou blocages récents. Rien n\'est envoyé sans votre accord.</string>
     <string name="a11y_search_currencies">Rechercher des devises</string>
+    <string name="a11y_search_languages">Rechercher des langues</string>
+    <string name="error_positive_number">Saisissez un nombre supérieur à 0</string>
+    <string name="error_tip_percent">Saisissez un pourcentage supérieur à 0, jusqu’à 100</string>
     <string name="a11y_clear_search">Effacer la recherche</string>
     <string name="a11y_cart_item_name">Nom de l\'article</string>
     <string name="a11y_chart_summary">Graphique de l\'historique des taux de change. Les statistiques — minimum, moyenne, maximum et taux actuel — sont affichées ci-dessous.</string>

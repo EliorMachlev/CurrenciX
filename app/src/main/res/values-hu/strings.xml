@@ -130,6 +130,9 @@
     <string name="error_try_another_api">A beállításokban azonban más adatszolgáltatók közül is választhatsz. Csak próbáld ki!</string>
     <string name="error_unsupported_timeline">Ez az API nem támogatja az idővonal-adatokat.</string>
     <string name="a11y_search_currencies">Pénznemek keresése</string>
+    <string name="a11y_search_languages">Nyelvek keresése</string>
+    <string name="error_positive_number">Adj meg egy 0-nál nagyobb számot</string>
+    <string name="error_tip_percent">Adj meg egy 0-nál nagyobb, legfeljebb 100 százalékot</string>
     <string name="a11y_clear_search">Keresés törlése</string>
     <string name="a11y_cart_item_name">Tétel neve</string>
     <string name="a11y_chart_summary">Árfolyam-előzmények grafikonja. A statisztikák — minimum, átlag, maximum és aktuális árfolyam — lent láthatók.</string>

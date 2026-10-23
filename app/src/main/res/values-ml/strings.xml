@@ -134,6 +134,9 @@
     <string name="report_problem_none">ക്രാഷുകളോ ഫ്രീസുകളോ രേഖപ്പെടുത്തിയിട്ടില്ല</string>
     <string name="report_problem_summary">സമീപകാല ക്രാഷുകളുടെയോ ഫ്രീസുകളുടെയോ വിശദാംശങ്ങൾ പങ്കിടുക. നിങ്ങൾ തിരഞ്ഞെടുക്കാതെ ഒന്നും അയയ്ക്കില്ല.</string>
     <string name="a11y_search_currencies">കറൻസികൾ തിരയുക</string>
+    <string name="a11y_search_languages">ഭാഷകൾ തിരയുക</string>
+    <string name="error_positive_number">0-ൽ കൂടുതലുള്ള ഒരു സംഖ്യ നൽകുക</string>
+    <string name="error_tip_percent">0-ൽ കൂടുതലും 100 വരെയുമുള്ള ഒരു ശതമാനം നൽകുക</string>
     <string name="a11y_clear_search">തിരയൽ മായ്ക്കുക</string>
     <string name="a11y_cart_item_name">ഇനത്തിന്റെ പേര്</string>
     <string name="a11y_chart_summary">വിനിമയ നിരക്കിന്റെ ചരിത്ര ചാർട്ട്. സ്ഥിതിവിവരക്കണക്കുകൾ — കുറഞ്ഞത്, ശരാശരി, കൂടിയത്, ഇപ്പോഴത്തെ നിരക്ക് — താഴെ കാണിച്ചിരിക്കുന്നു.</string>

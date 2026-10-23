@@ -130,6 +130,9 @@
     <string name="onboarding_autorefresh_body">Kurlar, uygulamayı açtığınızda güncellenir. Açılışlar arasında da güncel kalmaları için arka planda güncellemeyi etkinleştirin.</string>
     <string name="onboarding_autorefresh_enable">Şimdi etkinleştir</string>
     <string name="a11y_search_currencies">Para birimlerini ara</string>
+    <string name="a11y_search_languages">Dilleri ara</string>
+    <string name="error_positive_number">0\'dan büyük bir sayı girin</string>
+    <string name="error_tip_percent">0\'dan büyük ve en fazla 100 olan bir yüzde girin</string>
     <string name="a11y_clear_search">Aramayı temizle</string>
     <string name="a11y_cart_item_name">Öğe adı</string>
     <string name="a11y_chart_summary">Döviz kuru geçmişi grafiği. İstatistikler — minimum, ortalama, maksimum ve mevcut kur — aşağıda gösterilmiştir.</string>

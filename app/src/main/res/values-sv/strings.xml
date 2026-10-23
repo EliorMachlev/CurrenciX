@@ -131,6 +131,9 @@
     <string name="onboarding_autorefresh_body">Kurserna uppdateras när du öppnar appen. Aktivera uppdatering i bakgrunden så att de hålls aktuella även när appen inte används.</string>
     <string name="onboarding_autorefresh_enable">Aktivera nu</string>
     <string name="a11y_search_currencies">Sök valutor</string>
+    <string name="a11y_search_languages">Sök språk</string>
+    <string name="error_positive_number">Ange ett tal större än 0</string>
+    <string name="error_tip_percent">Ange en procentsats över 0, högst 100</string>
     <string name="a11y_clear_search">Rensa sökning</string>
     <string name="a11y_cart_item_name">Artikelnamn</string>
     <string name="a11y_chart_summary">Diagram över växelkurshistorik. Statistik — minimum, medel, maximum och aktuell kurs — visas nedan.</string>

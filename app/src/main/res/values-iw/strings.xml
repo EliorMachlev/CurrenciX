@@ -130,6 +130,9 @@
     <string name="report_problem_none">לא נרשמו קריסות או תקיעות</string>
     <string name="report_problem_summary">שיתוף פרטים על קריסות או תקיעות אחרונות. שום דבר לא נשלח אלא אם תבחרו בכך.</string>
     <string name="a11y_search_currencies">חיפוש מטבעות</string>
+    <string name="a11y_search_languages">חיפוש שפות</string>
+    <string name="error_positive_number">יש להזין מספר גדול מ־0</string>
+    <string name="error_tip_percent">יש להזין אחוז גדול מ־0 ועד 100</string>
     <string name="a11y_clear_search">ניקוי החיפוש</string>
     <string name="a11y_cart_item_name">שם פריט</string>
     <string name="a11y_chart_summary">תרשים היסטוריית שערי חליפין. סטטיסטיקות — מינימום, ממוצע, מקסימום ושער נוכחי — מוצגות למטה.</string>

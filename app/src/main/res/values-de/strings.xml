@@ -129,6 +129,9 @@
     <string name="report_problem_none">Keine Abstürze oder Hänger aufgezeichnet</string>
     <string name="report_problem_summary">Details zu kürzlichen Abstürzen oder Hängern teilen. Es wird nichts gesendet, außer du entscheidest dich dafür.</string>
     <string name="a11y_search_currencies">Währungen suchen</string>
+    <string name="a11y_search_languages">Sprachen suchen</string>
+    <string name="error_positive_number">Gib eine Zahl größer als 0 ein</string>
+    <string name="error_tip_percent">Gib einen Prozentsatz über 0 und bis 100 ein</string>
     <string name="a11y_clear_search">Suche löschen</string>
     <string name="a11y_cart_item_name">Artikelname</string>
     <string name="a11y_chart_summary">Diagramm zum Wechselkursverlauf. Statistiken — Minimum, Durchschnitt, Maximum und aktueller Kurs — sind unten aufgeführt.</string>

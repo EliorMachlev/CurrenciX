@@ -130,6 +130,9 @@
     <string name="error_try_another_api">Namun, ada penyedia data lain yang dapat Anda pilih di pengaturan. Cobalah!</string>
     <string name="error_unsupported_timeline">Data timeline tidak didukung oleh API ini.</string>
     <string name="a11y_search_currencies">Cari mata uang</string>
+    <string name="a11y_search_languages">Cari bahasa</string>
+    <string name="error_positive_number">Masukkan angka yang lebih besar dari 0</string>
+    <string name="error_tip_percent">Masukkan persentase di atas 0, maksimal 100</string>
     <string name="a11y_clear_search">Hapus pencarian</string>
     <string name="a11y_cart_item_name">Nama barang</string>
     <string name="a11y_chart_summary">Grafik riwayat nilai tukar. Statistik — minimum, rata-rata, maksimum, dan nilai tukar saat ini — ditampilkan di bawah.</string>

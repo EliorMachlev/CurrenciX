@@ -130,6 +130,9 @@
     <string name="report_problem_none">Kokkujooksmisi ega hangumisi pole salvestatud</string>
     <string name="report_problem_summary">Jaga hiljutiste kokkujooksmiste või hangumiste üksikasju. Midagi ei saadeta, kui sa seda ei vali.</string>
     <string name="a11y_search_currencies">Otsi valuutasid</string>
+    <string name="a11y_search_languages">Otsi keeli</string>
+    <string name="error_positive_number">Sisesta arv, mis on suurem kui 0</string>
+    <string name="error_tip_percent">Sisesta protsent, mis on üle 0 ja kuni 100</string>
     <string name="a11y_clear_search">Tühjenda otsing</string>
     <string name="a11y_cart_item_name">Toote nimi</string>
     <string name="a11y_chart_summary">Vahetuskursi ajaloo graafik. Statistika — miinimum, keskmine, maksimum ja praegune kurss — kuvatakse allpool.</string>

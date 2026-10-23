@@ -107,7 +107,7 @@ import com.eliormachlev.currencix.view.compose.theme.AmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Spacing
-import com.eliormachlev.currencix.view.compose.theme.Stamp
+import com.eliormachlev.currencix.view.compose.theme.stampInk
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -582,7 +582,8 @@ private fun ReceiptPanel(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val borderColor = MaterialTheme.colorScheme.outline
+    // Decorative, so the faint line rather than a control's 3:1 border.
+    val borderColor = MaterialTheme.colorScheme.outlineVariant
     val surfaceColor = MaterialTheme.colorScheme.surface
     val borderWidthPx = with(LocalDensity.current) { PANEL_BORDER_WIDTH.roundToPx() }
     val labelInsetPx = with(LocalDensity.current) { PANEL_LABEL_START_INSET.roundToPx() }
@@ -644,7 +645,7 @@ private fun PayRule() {
             Modifier
                 .fillMaxWidth(PAY_RULE_WIDTH_FRACTION)
                 .height(PAY_RULE_HEIGHT)
-                .background(MaterialTheme.colorScheme.outline),
+                .background(MaterialTheme.colorScheme.outlineVariant),
         )
     }
 }
@@ -1137,7 +1138,8 @@ private fun FeeChip(
                 .joinToString(FEE_NAME_SEPARATOR)
                 .uppercase()
         }
-    val bg = Stamp.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
+    val stamp = stampInk()
+    val bg = stamp.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
     Row(
         modifier
             .maxWidthFraction(FEE_CHIP_MAX_WIDTH_FRACTION)
@@ -1145,7 +1147,7 @@ private fun FeeChip(
             .background(bg)
             .border(
                 width = FEE_STAMP_BORDER_WIDTH,
-                color = Stamp,
+                color = stamp,
                 shape = RoundedCornerShape(FEE_STAMP_CORNER_RADIUS),
             ).hapticClickable(onClick = onClick)
             .padding(
@@ -1181,7 +1183,7 @@ private fun FeeChipText(
         fontWeight = FontWeight.Medium,
         fontFamily = FontFamily.Monospace,
         letterSpacing = FEE_STAMP_LETTER_SPACING,
-        color = Stamp,
+        color = stampInk(),
         maxLines = 1,
         softWrap = false,
         modifier = modifier,

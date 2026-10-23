@@ -128,6 +128,9 @@
     <string name="onboarding_autorefresh_body">打开应用时会更新汇率。启用后台更新，可让汇率在两次打开之间也保持最新。</string>
     <string name="onboarding_autorefresh_enable">立即启用</string>
     <string name="a11y_search_currencies">搜索货币</string>
+    <string name="a11y_search_languages">搜索语言</string>
+    <string name="error_positive_number">请输入大于 0 的数字</string>
+    <string name="error_tip_percent">请输入大于 0 且不超过 100 的百分比</string>
     <string name="a11y_clear_search">清除搜索</string>
     <string name="a11y_cart_item_name">商品名称</string>
     <string name="a11y_chart_summary">汇率历史走势图。以下显示统计信息 — 最低、平均、最高和当前汇率。</string>

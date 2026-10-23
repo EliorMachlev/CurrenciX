@@ -20,13 +20,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.LIST_SUMMARY_LINES
 import com.eliormachlev.currencix.view.compose.LedgerLabel
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerSection
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
+import com.eliormachlev.currencix.view.compose.switchState
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlinx.coroutines.delay
@@ -123,7 +123,8 @@ fun NavigationRow(
 /**
  * Boolean preference — [PreferenceRow] with a trailing Material Switch. The
  * row-level click and the switch stay in sync: tapping anywhere on the row
- * toggles the value (with haptic), and the switch itself is presentational.
+ * toggles the value (with haptic), and the switch itself is presentational
+ * ([switchState]), so TalkBack reads the row as one switch.
  */
 @Composable
 fun SwitchRow(
@@ -135,10 +136,10 @@ fun SwitchRow(
     @DrawableRes iconRes: Int? = null,
     enabled: Boolean = true,
 ) {
-    val toggle = rememberHapticOnClick { onCheckedChange(!checked) }
     PreferenceRow(
         title = title,
-        modifier = modifier,
+        // The row is the switch: one TalkBack stop with the title and the state.
+        modifier = modifier.switchState(checked, enabled),
         summary = summary,
         iconRes = iconRes,
         enabled = enabled,
@@ -148,7 +149,7 @@ fun SwitchRow(
         trailing = {
             Switch(
                 checked = checked,
-                onCheckedChange = { toggle() },
+                onCheckedChange = null,
                 enabled = enabled,
             )
         },

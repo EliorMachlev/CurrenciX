@@ -264,14 +264,18 @@ private fun QuickConversionTile(
     val context = LocalContext.current
     val numbers = tableNumberStyle()
     val weight = if (row.isTyped) FontWeight.Bold else null
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    val colors = MaterialTheme.colorScheme
+    val container = if (row.isTyped) colors.secondaryContainer else colors.surfaceContainerHigh
+    // On the tinted tile, its own text color for the secondary lines: the
+    // muted gray and the fee's red fall under 4.5:1 on brass in dark themes.
+    val muted = if (row.isTyped) colors.onSecondaryContainer else colors.onSurfaceVariant
+    val feeColor = if (row.isTyped) colors.onSecondaryContainer else colors.error
     Column(
         modifier =
             modifier
                 .clip(MaterialTheme.shapes.large)
-                .background(
-                    if (row.isTyped) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
-                ).hapticCombinedClickable(
+                .background(container)
+                .hapticCombinedClickable(
                     onClick = { actions.onUseAmount(row.amount) },
                     onClickLabel = stringResource(R.string.quick_conversions_use_amount),
                     onLongClick = { actions.onCopy(row) },
@@ -285,7 +289,7 @@ private fun QuickConversionTile(
             Row {
                 Text(context.money(row.toValue, to), style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1)
                 row.feePercent?.let { fee ->
-                    Text(" $fee", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, maxLines = 1)
+                    Text(" $fee", style = MaterialTheme.typography.bodyMedium, color = feeColor, maxLines = 1)
                 }
             }
         }

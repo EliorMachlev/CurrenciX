@@ -48,6 +48,8 @@ import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
+import com.eliormachlev.currencix.view.compose.fieldMessage
+import com.eliormachlev.currencix.view.compose.invalidUnless
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
@@ -69,6 +71,7 @@ fun RateAlertSheet(
     val seed = remember(current) { current.roundForDisplay(ALERT_RATE_DECIMALS).toPlainString() }
     val field = rememberTextFieldState(seed)
     val threshold = parseDecimal(field.text.toString())?.takeIf { it.signum() > 0 }
+    val thresholdError = invalidUnless(field.text, threshold, stringResource(R.string.error_positive_number))
     val format = { value: BigDecimal ->
         value.roundForDisplay(ALERT_RATE_DECIMALS).toHumanReadableNumber(context, decimalPlaces = ALERT_RATE_DECIMALS)
     }
@@ -84,8 +87,9 @@ fun RateAlertSheet(
         OutlinedTextField(
             state = field,
             label = { Text(stringResource(R.string.alert_sheet_label, pair.from.iso4217Alpha(), pair.to.iso4217Alpha())) },
-            supportingText = { Text(stringResource(R.string.alert_sheet_now, format(current))) },
-            isError = field.text.isNotBlank() && threshold == null,
+            // While the entry is invalid, why in place of today's rate.
+            supportingText = fieldMessage(thresholdError ?: stringResource(R.string.alert_sheet_now, format(current))),
+            isError = thresholdError != null,
             lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.fillMaxWidth(),

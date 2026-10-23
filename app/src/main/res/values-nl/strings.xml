@@ -129,6 +129,9 @@
     <string name="onboarding_autorefresh_body">Koersen worden bijgewerkt wanneer je de app opent. Schakel bijwerken op de achtergrond in, zodat ze ook tussendoor actueel blijven.</string>
     <string name="onboarding_autorefresh_enable">Nu inschakelen</string>
     <string name="a11y_search_currencies">Valuta\'s zoeken</string>
+    <string name="a11y_search_languages">Talen zoeken</string>
+    <string name="error_positive_number">Voer een getal groter dan 0 in</string>
+    <string name="error_tip_percent">Voer een percentage boven 0 en tot 100 in</string>
     <string name="a11y_clear_search">Zoekopdracht wissen</string>
     <string name="a11y_cart_item_name">Artikelnaam</string>
     <string name="a11y_chart_summary">Grafiek van wisselkoersgeschiedenis. Statistieken — minimum, gemiddelde, maximum en huidige koers — worden hieronder weergegeven.</string>

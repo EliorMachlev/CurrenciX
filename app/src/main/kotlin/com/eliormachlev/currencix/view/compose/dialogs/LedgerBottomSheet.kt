@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -27,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.ReadingDirection
-import com.eliormachlev.currencix.view.compose.theme.Brass
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlinx.coroutines.launch
 
@@ -94,6 +94,9 @@ fun LedgerBottomSheet(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface,
             tonalElevation = 0.dp,
+            // The outline color, not Material's faded default (2.5:1): the
+            // handle is also the sheet's "close" control, so it needs 3:1.
+            dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.outline) },
             // Back is handled below rather than by the sheet, whose own
             // handler previews the gesture by shrinking the sheet under the
             // finger.
@@ -137,7 +140,7 @@ private suspend fun SheetState.stepBack(onDismiss: () -> Unit) {
 }
 
 /**
- * Brass small-caps title header for [LedgerBottomSheet] — mirrors the ledger
+ * Small-caps title header (the theme's brass, colorScheme.secondary) for [LedgerBottomSheet] — mirrors the ledger
  * section header (see [com.eliormachlev.currencix.view.compose.LedgerSection])
  * so the sheet reads as an extension of the surface underneath it.
  */
@@ -146,7 +149,7 @@ private fun LedgerSheetTitle(title: String) {
     Text(
         text = title.uppercase(),
         style = MaterialTheme.typography.labelMedium,
-        color = Brass,
+        color = MaterialTheme.colorScheme.secondary,
         letterSpacing = SHEET_TITLE_LETTER_SPACING,
         fontFamily = FontFamily.Monospace,
         modifier =

@@ -17,6 +17,9 @@
     <string name="report_problem_none">No crashes or freezes recorded</string>
     <string name="report_problem_summary">Share the details of recent crashes or freezes. Nothing is sent unless you choose to.</string>
     <string name="a11y_search_currencies">Search currencies</string>
+    <string name="a11y_search_languages">Search languages</string>
+    <string name="error_positive_number">Enter a number greater than 0</string>
+    <string name="error_tip_percent">Enter a percentage above 0, up to 100</string>
     <string name="a11y_clear_search">Clear search</string>
     <string name="a11y_cart_item_name">Item name</string>
     <string name="a11y_chart_summary">Exchange rate history chart. Statistics — minimum, average, maximum, and current rate — are shown below.</string>

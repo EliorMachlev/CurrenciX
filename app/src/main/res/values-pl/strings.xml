@@ -130,6 +130,9 @@
     <string name="onboarding_autorefresh_body">Kursy odświeżają się po otwarciu aplikacji. Włącz odświeżanie w tle, aby pozostawały aktualne między uruchomieniami.</string>
     <string name="onboarding_autorefresh_enable">Włącz teraz</string>
     <string name="a11y_search_currencies">Wyszukaj waluty</string>
+    <string name="a11y_search_languages">Wyszukaj języki</string>
+    <string name="error_positive_number">Wpisz liczbę większą od 0</string>
+    <string name="error_tip_percent">Wpisz procent większy od 0, maksymalnie 100</string>
     <string name="a11y_clear_search">Wyczyść wyszukiwanie</string>
     <string name="a11y_cart_item_name">Nazwa pozycji</string>
     <string name="a11y_chart_summary">Wykres historii kursu wymiany. Statystyki — minimum, średnia, maksimum i bieżący kurs — są pokazane poniżej.</string>

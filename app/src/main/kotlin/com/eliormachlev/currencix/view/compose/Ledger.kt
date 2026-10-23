@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
@@ -38,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.hapticClickable
-import com.eliormachlev.currencix.view.compose.theme.Brass
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 // Ledger vocabulary — the shared row/section primitives every list surface
@@ -104,6 +104,8 @@ fun LedgerRow(
         modifier
             .fillMaxWidth()
             .let { if (onClick != null) it.hapticClickable(enabled = enabled, onClick = onClick) else it }
+            // A greyed-out row without an action says so too, not only by its faded color.
+            .let { if (onClick == null && !enabled) it.semantics { disabled() } else it }
             .drawWithContent {
                 drawContent()
                 if (showDivider) {
@@ -164,7 +166,7 @@ fun LedgerSectionHeader(
     Text(
         text = title.uppercase(),
         style = MaterialTheme.typography.labelMedium,
-        color = Brass,
+        color = MaterialTheme.colorScheme.secondary,
         letterSpacing = LEDGER_SECTION_HEADER_LETTER_SPACING,
         modifier =
             modifier
@@ -250,13 +252,13 @@ fun LedgerActiveChip(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    val bg = Brass.copy(alpha = LEDGER_CHIP_BG_ALPHA)
+    val bg = MaterialTheme.colorScheme.secondary.copy(alpha = LEDGER_CHIP_BG_ALPHA)
     Row(
         modifier =
             modifier
                 .border(
                     width = LEDGER_CHIP_BORDER_WIDTH,
-                    color = Brass,
+                    color = MaterialTheme.colorScheme.secondary,
                     shape = RoundedCornerShape(LEDGER_CHIP_CORNER_RADIUS),
                 ).background(bg, shape = RoundedCornerShape(LEDGER_CHIP_CORNER_RADIUS))
                 .padding(
@@ -271,7 +273,7 @@ fun LedgerActiveChip(
             style = MaterialTheme.typography.labelSmall,
             fontFamily = FontFamily.Monospace,
             letterSpacing = LEDGER_CHIP_LETTER_SPACING,
-            color = Brass,
+            color = MaterialTheme.colorScheme.secondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

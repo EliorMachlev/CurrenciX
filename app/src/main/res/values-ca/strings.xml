@@ -131,6 +131,9 @@
     <string name="report_problem_none">No s\'ha registrat cap error ni bloqueig</string>
     <string name="report_problem_summary">Comparteix els detalls dels errors o bloquejos recents. No s\'envia res tret que ho triïs.</string>
     <string name="a11y_search_currencies">Cerca monedes</string>
+    <string name="a11y_search_languages">Cerca idiomes</string>
+    <string name="error_positive_number">Introduïu un nombre més gran que 0</string>
+    <string name="error_tip_percent">Introduïu un percentatge més gran que 0 i fins a 100</string>
     <string name="a11y_clear_search">Neteja la cerca</string>
     <string name="a11y_cart_item_name">Nom de l\'article</string>
     <string name="a11y_chart_summary">Gràfic històric del tipus de canvi. Les estadístiques — mínim, mitjana, màxim i tipus actual — es mostren a sota.</string>

@@ -129,6 +129,9 @@
     <string name="report_problem_none">Ingen nedbrud eller frysninger registreret</string>
     <string name="report_problem_summary">Del detaljer om nylige nedbrud eller frysninger. Intet sendes, medmindre du vælger det.</string>
     <string name="a11y_search_currencies">Søg valutaer</string>
+    <string name="a11y_search_languages">Søg sprog</string>
+    <string name="error_positive_number">Indtast et tal større end 0</string>
+    <string name="error_tip_percent">Indtast en procentsats over 0 og op til 100</string>
     <string name="a11y_clear_search">Ryd søgning</string>
     <string name="a11y_cart_item_name">Varenavn</string>
     <string name="a11y_chart_summary">Diagram over valutakursens historik. Statistikker — minimum, gennemsnit, maksimum og aktuel kurs — vises nedenfor.</string>

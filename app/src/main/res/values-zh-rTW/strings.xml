@@ -128,6 +128,9 @@
     <string name="onboarding_autorefresh_body">開啟應用程式時會更新匯率。啟用背景更新，讓匯率在兩次開啟之間也能保持最新。</string>
     <string name="onboarding_autorefresh_enable">立即啟用</string>
     <string name="a11y_search_currencies">搜尋貨幣</string>
+    <string name="a11y_search_languages">搜尋語言</string>
+    <string name="error_positive_number">請輸入大於 0 的數字</string>
+    <string name="error_tip_percent">請輸入大於 0 且不超過 100 的百分比</string>
     <string name="a11y_clear_search">清除搜尋</string>
     <string name="a11y_cart_item_name">項目名稱</string>
     <string name="a11y_chart_summary">匯率歷史走勢圖。下方顯示統計資訊 — 最低、平均、最高及目前匯率。</string>

@@ -130,6 +130,9 @@
     <string name="report_problem_none">لم يتم تسجيل أي أعطال أو تجمّد</string>
     <string name="report_problem_summary">شارك تفاصيل الأعطال أو حالات التجمّد الأخيرة. لا يتم إرسال أي شيء إلا إذا اخترت ذلك.</string>
     <string name="a11y_search_currencies">البحث عن العملات</string>
+    <string name="a11y_search_languages">البحث عن اللغات</string>
+    <string name="error_positive_number">أدخل رقمًا أكبر من 0</string>
+    <string name="error_tip_percent">أدخل نسبة مئوية أكبر من 0 وحتى 100</string>
     <string name="a11y_clear_search">مسح البحث</string>
     <string name="a11y_cart_item_name">اسم العنصر</string>
     <string name="a11y_chart_summary">مخطط سجل أسعار الصرف. الإحصائيات — الحد الأدنى والمتوسط والحد الأقصى والسعر الحالي — معروضة أدناه.</string>

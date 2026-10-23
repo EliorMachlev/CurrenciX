@@ -130,6 +130,9 @@
     <string name="error_try_another_api">В настройките обаче има и други доставчици на данни, от които можете да избирате. Просто опитайте!</string>
     <string name="error_unsupported_timeline">Този API не поддържа данни за графиката.</string>
     <string name="a11y_search_currencies">Търсене на валути</string>
+    <string name="a11y_search_languages">Търсене на езици</string>
+    <string name="error_positive_number">Въведете число, по-голямо от 0</string>
+    <string name="error_tip_percent">Въведете процент над 0 и до 100</string>
     <string name="a11y_clear_search">Изчисти търсенето</string>
     <string name="a11y_cart_item_name">Име на артикула</string>
     <string name="a11y_chart_summary">Графика на историята на обменния курс. Статистиката — минимум, средна стойност, максимум и текущ курс — е показана по-долу.</string>

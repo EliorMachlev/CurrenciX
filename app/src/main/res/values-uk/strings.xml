@@ -130,6 +130,9 @@
     <string name="onboarding_autorefresh_body">Курси оновлюються, коли ви відкриваєте застосунок. Увімкніть фонове оновлення, щоб вони залишалися актуальними між запусками.</string>
     <string name="onboarding_autorefresh_enable">Увімкнути зараз</string>
     <string name="a11y_search_currencies">Пошук валют</string>
+    <string name="a11y_search_languages">Пошук мов</string>
+    <string name="error_positive_number">Введіть число, більше за 0</string>
+    <string name="error_tip_percent">Введіть відсоток, більший за 0 і не більший за 100</string>
     <string name="a11y_clear_search">Очистити пошук</string>
     <string name="a11y_cart_item_name">Назва позиції</string>
     <string name="a11y_chart_summary">Графік історії обмінного курсу. Статистика — мінімум, середнє, максимум і поточний курс — показана нижче.</string>

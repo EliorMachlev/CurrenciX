@@ -131,6 +131,9 @@
     <string name="report_problem_summary">جزئیات خرابی‌ها یا هنگ‌های اخیر را به اشتراک بگذارید. تا خودتان نخواهید چیزی ارسال نمی‌شود.</string>
     <string name="error_unsupported_timeline">داده‌های خط زمانی توسط این API پشتیبانی نمی‌شود.</string>
     <string name="a11y_search_currencies">جستجوی ارزها</string>
+    <string name="a11y_search_languages">جستجوی زبان‌ها</string>
+    <string name="error_positive_number">عددی بزرگ‌تر از ۰ وارد کنید</string>
+    <string name="error_tip_percent">درصدی بیشتر از ۰ و حداکثر ۱۰۰ وارد کنید</string>
     <string name="a11y_clear_search">پاک کردن جستجو</string>
     <string name="a11y_cart_item_name">نام مورد</string>
     <string name="a11y_chart_summary">نمودار تاریخچه نرخ ارز. آمار — کمینه، میانگین، بیشینه و نرخ کنونی — در پایین نشان داده شده است.</string>

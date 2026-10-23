@@ -39,6 +39,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -55,7 +59,9 @@ import com.eliormachlev.currencix.view.compose.NameInputTransformation
 import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
+import com.eliormachlev.currencix.view.compose.fieldName
 import com.eliormachlev.currencix.view.compose.flagPainter
+import com.eliormachlev.currencix.view.compose.switchState
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import java.math.BigDecimal
@@ -179,17 +185,17 @@ private fun FeeEditorSheetBody(
             checked = fields.active.value,
             onCheckedChange = { fields.active.value = it },
         )
-        LabeledField(labelRes = R.string.fee_edit_name, topGap = FEE_EDITOR_SECTION_GAP) {
+        LabeledField(labelRes = R.string.fee_edit_name, topGap = FEE_EDITOR_SECTION_GAP) { label ->
             OutlinedTextField(
                 state = fields.name,
                 inputTransformation = NameInputTransformation,
                 lineLimits = TextFieldLineLimits.SingleLine,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().fieldName(label),
             )
         }
         if (isPair) FeePairFields(fields, onPickCurrency)
-        LabeledField(labelRes = R.string.fee_edit_percent, topGap = FEE_EDITOR_SECTION_GAP) {
-            FeePercentField(state = fields.percentText)
+        LabeledField(labelRes = R.string.fee_edit_percent, topGap = FEE_EDITOR_SECTION_GAP) { label ->
+            FeePercentField(state = fields.percentText, modifier = Modifier.fieldName(label))
         }
     }
 }
@@ -201,14 +207,16 @@ private fun FeePairFields(
     fields: FeeEditorFields,
     onPickCurrency: (disabled: Currency?, onPicked: (String) -> Unit) -> Unit,
 ) {
-    LabeledField(labelRes = R.string.fee_pair_from, topGap = FEE_EDITOR_SECTION_GAP) {
+    LabeledField(labelRes = R.string.fee_pair_from, topGap = FEE_EDITOR_SECTION_GAP) { label ->
         CurrencyPickerButton(
+            label = label,
             iso = fields.from.value,
             onClick = { onPickCurrency(fields.to.value?.let(Currency::fromString)) { fields.from.value = it } },
         )
     }
-    LabeledField(labelRes = R.string.fee_pair_to, topGap = FEE_EDITOR_SECTION_GAP) {
+    LabeledField(labelRes = R.string.fee_pair_to, topGap = FEE_EDITOR_SECTION_GAP) { label ->
         CurrencyPickerButton(
+            label = label,
             iso = fields.to.value,
             onClick = { onPickCurrency(fields.from.value?.let(Currency::fromString)) { fields.to.value = it } },
         )
@@ -272,11 +280,11 @@ private fun LabeledSwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    val toggle = rememberHapticOnClick { onCheckedChange(!checked) }
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .switchState(checked)
                 .hapticClickable(onClick = { onCheckedChange(!checked) })
                 .padding(vertical = ROW_TIGHT_VERTICAL),
         verticalAlignment = Alignment.CenterVertically,
@@ -286,7 +294,7 @@ private fun LabeledSwitchRow(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
         )
-        Switch(checked = checked, onCheckedChange = { toggle() })
+        Switch(checked = checked, onCheckedChange = null)
     }
 }
 
@@ -294,25 +302,31 @@ private fun LabeledSwitchRow(
 private fun LabeledField(
     @StringRes labelRes: Int,
     topGap: Dp,
-    content: @Composable () -> Unit,
+    content: @Composable (label: String) -> Unit,
 ) {
+    val label = stringResource(id = labelRes)
     Spacer(Modifier.height(topGap))
+    // Drawn above the field, and handed to it as its spoken name (the
+    // content's fieldName or description), so TalkBack reads it there once.
     Text(
-        text = stringResource(id = labelRes),
+        text = label,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(bottom = FEE_EDITOR_LABEL_GAP),
+        modifier = Modifier.padding(bottom = FEE_EDITOR_LABEL_GAP).clearAndSetSemantics {},
     )
-    content()
+    content(label)
 }
 
 @Composable
 private fun CurrencyPickerButton(
+    label: String,
     iso: String?,
     onClick: () -> Unit,
 ) {
     val currency = remember(iso) { iso?.let(Currency::fromString) }
     val placeholder = stringResource(id = R.string.fee_pair_pick_currency)
+    // "From: EUR", "To: pick a currency": the side and what's on it.
+    val spoken = "$label: ${iso ?: placeholder}"
     Row(
         modifier =
             Modifier
@@ -321,7 +335,11 @@ private fun CurrencyPickerButton(
                 .clip(RoundedCornerShape(CURRENCY_BUTTON_RADIUS))
                 .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 .hapticClickable(onClick = onClick)
-                .padding(horizontal = CURRENCY_BUTTON_HORIZONTAL),
+                // The click above stays; what's inside is read as this one line.
+                .clearAndSetSemantics {
+                    contentDescription = spoken
+                    role = Role.Button
+                }.padding(horizontal = CURRENCY_BUTTON_HORIZONTAL),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (currency != null) {

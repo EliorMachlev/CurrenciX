@@ -131,6 +131,9 @@
     <string name="onboarding_autorefresh_body">Kursene oppdateres når du åpner appen. Slå på oppdatering i bakgrunnen, slik at de holder seg oppdaterte også når appen er lukket.</string>
     <string name="onboarding_autorefresh_enable">Slå på nå</string>
     <string name="a11y_search_currencies">Søk etter valutaer</string>
+    <string name="a11y_search_languages">Søk etter språk</string>
+    <string name="error_positive_number">Skriv inn et tall større enn 0</string>
+    <string name="error_tip_percent">Skriv inn en prosent over 0, opptil 100</string>
     <string name="a11y_clear_search">Tøm søk</string>
     <string name="a11y_cart_item_name">Varenavn</string>
     <string name="a11y_chart_summary">Diagram over valutakurshistorikk. Statistikk — minimum, gjennomsnitt, maksimum og gjeldende kurs — vises nedenfor.</string>

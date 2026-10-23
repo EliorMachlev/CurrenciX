@@ -29,6 +29,8 @@ import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.NameInputTransformation
 import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
+import com.eliormachlev.currencix.view.compose.fieldMessage
+import com.eliormachlev.currencix.view.compose.invalidUnless
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
@@ -51,7 +53,8 @@ fun TripSheet(
     var currency by rememberSaveable { mutableStateOf(initial?.currency ?: currencies.first()) }
     val budgetText = budgetField.text.toString()
     val budget = parseDecimal(budgetText)?.takeIf { it.signum() > 0 }
-    val budgetValid = budgetText.isBlank() || budget != null
+    val budgetError = invalidUnless(budgetText, budget, stringResource(R.string.error_positive_number))
+    val budgetValid = budgetError == null
     LedgerPromptSheet(
         title = stringResource(if (initial == null) R.string.trip_new else R.string.trip_edit),
         confirmLabel = stringResource(R.string.done),
@@ -91,6 +94,7 @@ fun TripSheet(
             label = { Text(stringResource(R.string.trip_budget)) },
             suffix = { Text(currency.iso4217Alpha()) },
             isError = !budgetValid,
+            supportingText = fieldMessage(budgetError),
             lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.fillMaxWidth(),

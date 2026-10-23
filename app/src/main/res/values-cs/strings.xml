@@ -130,6 +130,9 @@
     <string name="report_problem_none">Nezaznamenány žádné pády ani zamrznutí</string>
     <string name="report_problem_summary">Sdílejte podrobnosti o nedávných pádech nebo zamrznutích. Nic se neodešle, pokud to nezvolíte.</string>
     <string name="a11y_search_currencies">Hledat měny</string>
+    <string name="a11y_search_languages">Hledat jazyky</string>
+    <string name="error_positive_number">Zadejte číslo větší než 0</string>
+    <string name="error_tip_percent">Zadejte procento větší než 0 a nejvýše 100</string>
     <string name="a11y_clear_search">Vymazat hledání</string>
     <string name="a11y_cart_item_name">Název položky</string>
     <string name="a11y_chart_summary">Graf historie směnného kurzu. Statistiky — minimum, průměr, maximum a aktuální kurz — jsou uvedeny níže.</string>

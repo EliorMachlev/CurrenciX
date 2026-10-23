@@ -130,6 +130,9 @@
     <string name="report_problem_none">Nema zabilježenih rušenja ni zamrzavanja</string>
     <string name="report_problem_summary">Podijelite pojedinosti o nedavnim rušenjima ili zamrzavanjima. Ništa se ne šalje osim ako vi to ne odaberete.</string>
     <string name="a11y_search_currencies">Traži valute</string>
+    <string name="a11y_search_languages">Traži jezike</string>
+    <string name="error_positive_number">Unesite broj veći od 0</string>
+    <string name="error_tip_percent">Unesite postotak veći od 0, najviše 100</string>
     <string name="a11y_clear_search">Očisti pretragu</string>
     <string name="a11y_cart_item_name">Naziv stavke</string>
     <string name="a11y_chart_summary">Grafikon povijesti tečajeva. Statistika — minimum, prosjek, maksimum i trenutni tečaj — prikazana je ispod.</string>

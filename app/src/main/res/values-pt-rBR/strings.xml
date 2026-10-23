@@ -131,6 +131,9 @@
     <string name="onboarding_autorefresh_body">As cotações são atualizadas quando você abre o app. Ative a atualização em segundo plano para que elas continuem em dia entre um uso e outro.</string>
     <string name="onboarding_autorefresh_enable">Ativar agora</string>
     <string name="a11y_search_currencies">Pesquisar moedas</string>
+    <string name="a11y_search_languages">Pesquisar idiomas</string>
+    <string name="error_positive_number">Digite um número maior que 0</string>
+    <string name="error_tip_percent">Digite uma porcentagem acima de 0 e até 100</string>
     <string name="a11y_clear_search">Limpar pesquisa</string>
     <string name="a11y_cart_item_name">Nome do item</string>
     <string name="a11y_chart_summary">Gráfico do histórico da taxa de câmbio. As estatísticas — mínima, média, máxima e cotação atual — são exibidas abaixo.</string>

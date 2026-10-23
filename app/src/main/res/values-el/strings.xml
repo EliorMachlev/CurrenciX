@@ -130,6 +130,9 @@
     <string name="error_no_api_key">Πρέπει να οριστεί έγκυρο κλειδί API για να χρησιμοποιήσετε αυτήν την πηγή.</string>
     <string name="error_unsupported_timeline">Τα δεδομένα χρονογραμμής δεν υποστηρίζονται από αυτό το API.</string>
     <string name="a11y_search_currencies">Αναζήτηση νομισμάτων</string>
+    <string name="a11y_search_languages">Αναζήτηση γλωσσών</string>
+    <string name="error_positive_number">Εισαγάγετε έναν αριθμό μεγαλύτερο από 0</string>
+    <string name="error_tip_percent">Εισαγάγετε ποσοστό πάνω από 0 και έως 100</string>
     <string name="a11y_clear_search">Καθαρισμός αναζήτησης</string>
     <string name="a11y_cart_item_name">Όνομα αντικειμένου</string>
     <string name="a11y_chart_summary">Γράφημα ιστορικού συναλλαγματικής ισοτιμίας. Οι στατιστικές — ελάχιστο, μέσο, μέγιστο και τρέχουσα ισοτιμία — εμφανίζονται παρακάτω.</string>

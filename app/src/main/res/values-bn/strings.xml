@@ -130,6 +130,9 @@
     <string name="report_problem_none">কোনো ক্র্যাশ বা আটকে যাওয়া রেকর্ড হয়নি</string>
     <string name="report_problem_summary">সাম্প্রতিক ক্র্যাশ বা আটকে যাওয়ার বিবরণ শেয়ার করুন। আপনি না চাইলে কিছুই পাঠানো হয় না।</string>
     <string name="a11y_search_currencies">মুদ্রা অনুসন্ধান</string>
+    <string name="a11y_search_languages">ভাষা অনুসন্ধান</string>
+    <string name="error_positive_number">০-এর চেয়ে বড় একটি সংখ্যা লিখুন</string>
+    <string name="error_tip_percent">০-এর বেশি এবং ১০০ পর্যন্ত একটি শতাংশ লিখুন</string>
     <string name="a11y_clear_search">অনুসন্ধান সাফ করুন</string>
     <string name="a11y_cart_item_name">আইটেমের নাম</string>
     <string name="a11y_chart_summary">বিনিময় হারের ইতিহাসের চার্ট। পরিসংখ্যান — সর্বনিম্ন, গড়, সর্বোচ্চ এবং বর্তমান হার — নিচে দেখানো হয়েছে।</string>

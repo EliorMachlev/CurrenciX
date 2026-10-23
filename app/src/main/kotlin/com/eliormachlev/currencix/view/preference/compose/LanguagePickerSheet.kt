@@ -25,6 +25,7 @@ import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.activeChipSlot
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
+import com.eliormachlev.currencix.view.compose.fieldName
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 private val SEARCH_FIELD_HORIZONTAL_PADDING = Spacing.XLarge
@@ -65,7 +66,8 @@ fun LanguagePickerSheet(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = SEARCH_FIELD_HORIZONTAL_PADDING),
+                    .padding(horizontal = SEARCH_FIELD_HORIZONTAL_PADDING)
+                    .fieldName(stringResource(id = R.string.a11y_search_languages)),
         )
         Spacer(Modifier.height(SEARCH_TO_LIST_GAP))
         filtered.forEachIndexed { index, language ->

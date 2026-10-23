@@ -131,6 +131,9 @@
     <string name="report_problem_none">No se han registrado cierres ni bloqueos</string>
     <string name="report_problem_summary">Comparte los detalles de los cierres o bloqueos recientes. No se envía nada a menos que tú lo elijas.</string>
     <string name="a11y_search_currencies">Buscar monedas</string>
+    <string name="a11y_search_languages">Buscar idiomas</string>
+    <string name="error_positive_number">Introduce un número mayor que 0</string>
+    <string name="error_tip_percent">Introduce un porcentaje mayor que 0 y hasta 100</string>
     <string name="a11y_clear_search">Borrar búsqueda</string>
     <string name="a11y_cart_item_name">Nombre del artículo</string>
     <string name="a11y_chart_summary">Gráfico del historial del tipo de cambio. Las estadísticas — mínimo, promedio, máximo y tipo actual — se muestran abajo.</string>

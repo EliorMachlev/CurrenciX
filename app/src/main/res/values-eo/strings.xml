@@ -130,6 +130,9 @@
     <string name="error_no_api_key">Valida API-ŝlosilo devas esti agordita por uzi ĉi tiun fonton.</string>
     <string name="error_unsupported_timeline">Templiniaj datumoj ne estas subtenataj de ĉi tiu API.</string>
     <string name="a11y_search_currencies">Serĉi valutojn</string>
+    <string name="a11y_search_languages">Serĉi lingvojn</string>
+    <string name="error_positive_number">Enigu nombron pli grandan ol 0</string>
+    <string name="error_tip_percent">Enigu procentaĵon pli grandan ol 0, ĝis 100</string>
     <string name="a11y_clear_search">Vakigi serĉon</string>
     <string name="a11y_cart_item_name">Nomo de ero</string>
     <string name="a11y_chart_summary">Diagramo de historio de kurzoj. Statistikoj — minimumo, mezumo, maksimumo kaj nuna kurzo — montriĝas sube.</string>
