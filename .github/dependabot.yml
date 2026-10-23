@@ -20,9 +20,6 @@ updates:
       androidx:
         patterns:
           - "androidx.*"
-      google-material:
-        patterns:
-          - "com.google.android.material:*"
       kotlin-and-ksp:
         patterns:
           - "org.jetbrains.kotlin*"
