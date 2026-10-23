@@ -200,7 +200,7 @@ jobs:
             echo
             echo "**Which APK?** \`universal\` installs on any phone. The others are smaller, one per CPU type (\`arm64-v8a\` fits most phones)."
             echo
-            echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`5C:F5:CB:30:0F:0D:A0:76:F7:BC:FD:36:5E:F8:3B:67:C6:46:D6:2A:D8:64:7A:6D:F4:6B:95:85:DF:A3:00:99\`. Checksums in \`SHA256SUMS\`."
+            echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`B0:87:B0:31:48:D7:73:B4:CE:DA:C0:24:79:F5:0B:2F:EB:C5:C8:08:AF:17:2E:16:7B:2E:D0:BB:68:E1:E0:59\`. Checksums in \`SHA256SUMS\`."
           } > notes.md
           prerelease=()
           case "$VERSION" in *-*) prerelease=(--prerelease) ;; esac
