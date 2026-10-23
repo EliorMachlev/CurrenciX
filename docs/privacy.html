@@ -1,73 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy — CurrenciX</title>
-  <meta name="description" content="Privacy policy for the CurrenciX Android app. The app does not collect, store, or share any personal data.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CurrenciX privacy policy</title>
+  <meta name="description" content="CurrenciX collects no personal data: no account, no analytics, no ads. What the app stores, what it sends, and to whom.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F3EEE5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#131311" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/space_grotesk_medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter_regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💱</text></svg>">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<nav>
-  <div class="nav-inner">
-    <a class="nav-brand" href="index.html">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      CurrenciX
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="features.html">Features</a></li>
-      <li><a href="providers.html">Providers</a></li>
-      <li><a href="privacy.html" class="active">Privacy</a></li>
-    </ul>
-  </div>
-</nav>
-
-<header class="hero" style="padding: 3.5rem 1.5rem 3rem;">
-  <div class="hero-inner">
-    <h1 style="font-size:clamp(1.6rem,4vw,2.4rem);">Privacy Policy</h1>
-    <p class="tagline" style="font-size:1.05rem;">Short version: we collect nothing. The long version is below.</p>
+<header class="bar">
+  <div class="wrap bar-inner">
+    <a class="wordmark" href="index.html" aria-label="CurrenciX home">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
+    <nav aria-label="Site">
+      <ul class="nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="features.html">Features</a></li>
+        <li><a href="providers.html">Providers</a></li>
+        <li><a href="privacy.html" aria-current="page">Privacy</a></li>
+      </ul>
+    </nav>
+    <a class="bar-source" href="https://github.com/EliorMachlev/CurrenciX"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.37.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.7.83.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg><span>Source</span></a>
   </div>
 </header>
 
-<main class="page">
+<main id="main">
+<div class="wrap">
+  <div class="page-head">
+    <h1>Privacy policy</h1>
+    <p>The short version: the app collects nothing. The full version is below.</p>
+  </div>
+  <div class="prose-layout">
+    <nav class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title">On this page</h2>
+      <ol>
+        <li><a href="#summary">Summary</a></li>
+        <li><a href="#data-collected-by-this-app">Data collected by this app</a></li>
+        <li><a href="#permissions">Permissions</a></li>
+        <li><a href="#network-activity">Network activity</a></li>
+        <li><a href="#local-storage">Local storage</a></li>
+        <li><a href="#third-party-libraries">Third-party libraries</a></li>
+        <li><a href="#children">Children</a></li>
+        <li><a href="#changes-to-this-policy">Changes to this policy</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ol>
+    </nav>
+    <div class="prose">
+      <p class="updated">Last updated October 2026</p>
 
-  <div class="prose">
+      <h2 id="summary">Summary</h2>
+      <p>CurrenciX does <strong>not</strong> collect, transmit, store, or share any personal data. The app has no account system, no analytics, no advertising SDK, and no crash-reporting service. Its network activity is fetching exchange rates from the providers you select, and, only if you scan receipts, a one-time download of the text reader's data (below).</p>
 
-    <p><em>Last updated: October 2026</em></p>
+      <h2 id="data-collected-by-this-app">Data collected by this app</h2>
+      <p><strong>None.</strong> The app does not collect any data whatsoever from users.</p>
 
-    <h2>Summary</h2>
-    <p>CurrenciX does <strong>not</strong> collect, transmit, store, or share any personal data. The app has no account system, no analytics, no advertising SDK, and no crash-reporting service. Its network activity is fetching exchange rates from the providers you select, and, only if you scan receipts, a one-time download of the text reader's data (below).</p>
-
-    <h2>Data Collected by This App</h2>
-    <p><strong>None.</strong> The app does not collect any data whatsoever from users.</p>
-
-    <h2>Permissions</h2>
-    <p>The app requests these Android permissions:</p>
-    <ul>
+      <h2 id="permissions">Permissions</h2>
+      <p>The app requests these Android permissions:</p>
+      <ul>
       <li><strong><code>android.permission.INTERNET</code></strong> — required to download exchange rates from the selected provider.</li>
       <li><strong><code>android.permission.ACCESS_NETWORK_STATE</code></strong> — lets the app check whether you're online before it asks for rates. It gives no access to network identifiers or traffic.</li>
       <li><strong><code>android.permission.USE_BIOMETRIC</code></strong> — only for the optional app lock (Settings → Security &amp; privacy): it lets the app show the system's fingerprint, face or screen-lock prompt. The prompt is Android's; the app only learns whether you got through, never your fingerprint, face or PIN.</li>
       <li><strong><code>android.permission.POST_NOTIFICATIONS</code></strong> — only for rate alerts, and asked for only when you set your first one. Alerts are checked on your device against the rates the app already downloads; nothing about them leaves the phone.</li>
-    </ul>
-    <p>The app does <em>not</em> request access to your location, contacts, camera, microphone, storage, phone state, or any other sensitive permission.</p>
+      </ul>
+      <p>The app does <em>not</em> request access to your location, contacts, camera, microphone, storage, phone state, or any other sensitive permission.</p>
 
-    <h2>Network Activity</h2>
-    <p>For rates, the app makes outbound HTTPS requests <em>only</em> to the exchange rate provider you have selected in Settings and to the fallback provider set there (asked at the same time, in case the main one fails). The request contains:</p>
-    <ul>
+      <h2 id="network-activity">Network activity</h2>
+      <p>For rates, the app makes outbound HTTPS requests <em>only</em> to the exchange rate provider you have selected in Settings and to the fallback provider set there (asked at the same time, in case the main one fails). The request contains:</p>
+      <ul>
       <li>The URL of the rates or history endpoint (publicly documented by each provider)</li>
       <li>Your device's standard HTTP headers (User-Agent, Accept-Encoding, etc.)</li>
       <li>For Open Exchangerates or AllRatesToday, your API key for that provider, in a request header</li>
-    </ul>
-    <p>With <strong>Settings → Security &amp; privacy → Private requests</strong> on, every request is sent the same way as everyone else's: a fixed app name instead of the usual software versions, and none of the cache identifiers a server could use to recognise your phone from one request to the next. Your IP address still reaches the provider, as with any connection.</p>
-    <p>No personally identifiable information is included in these requests. The providers' own privacy policies govern how they handle server-side access logs.</p>
-    <p>In the Google Play version, the first receipt scan downloads the text reader from Google Play, which handles that download under its own privacy policy. If you scan a receipt while the app is in a language other than English (or, in the Google Play version, the first time at all), the app downloads that language's text-recognition data once, from Tesseract's public repository on GitHub (<code>raw.githubusercontent.com</code>). The request is for a fixed public file and carries nothing about you; the file is checked against a fingerprint built into the app before it's used.</p>
-    <p>Receipt photos are read entirely on your device and are never uploaded. A photo taken for a scan is deleted as soon as it has been read. The app has no camera permission: the photo comes from your camera app or the system photo picker.</p>
+      </ul>
+      <p>With <strong>Settings → Security &amp; privacy → Private requests</strong> on, every request is sent the same way as everyone else's: a fixed app name instead of the usual software versions, and none of the cache identifiers a server could use to recognise your phone from one request to the next. Your IP address still reaches the provider, as with any connection.</p>
+      <p>No personally identifiable information is included in these requests. The providers' own privacy policies govern how they handle server-side access logs.</p>
+      <p>In the Google Play version, the first receipt scan downloads the text reader from Google Play, which handles that download under its own privacy policy. If you scan a receipt while the app is in a language other than English (or, in the Google Play version, the first time at all), the app downloads that language's text-recognition data once, from Tesseract's public repository on GitHub (<code>raw.githubusercontent.com</code>). The request is for a fixed public file and carries nothing about you; the file is checked against a fingerprint built into the app before it's used.</p>
+      <p>Receipt photos are read entirely on your device and are never uploaded. A photo taken for a scan is deleted as soon as it has been read. The app has no camera permission: the photo comes from your camera app or the system photo picker.</p>
 
-    <h3>Provider Privacy Policies</h3>
-    <ul>
+      <h3>Providers' privacy policies</h3>
+      <ul>
       <li><a href="https://frankfurter.dev/">Frankfurter.app</a> — open-source proxy, no account required</li>
       <li><a href="https://allratestoday.com/">AllRatesToday</a> — account required; subject to their privacy policy</li>
       <li><a href="https://openexchangerates.org/privacy">OpenExchangerates</a> — account required; subject to their privacy policy</li>
@@ -76,41 +93,52 @@
       <li><a href="https://www.norges-bank.no/en/about/privacy-cookies/">Norges Bank</a></li>
       <li><a href="https://cbr.ru/eng/contacts/policy/">Bank Rossii</a></li>
       <li><a href="https://www.boi.org.il/en/">Bank of Israel</a></li>
-    </ul>
+      </ul>
 
-    <h2>Local Storage</h2>
-    <p>The following data is stored <strong>locally on your device</strong>, in the app's private storage. It is never transmitted to any server:</p>
-    <ul>
+      <h2 id="local-storage">Local storage</h2>
+      <p>The following data is stored <strong>locally on your device</strong>, in the app's private storage. It is never transmitted to any server:</p>
+      <ul>
       <li>Cached exchange rates and rate history</li>
       <li>Selected currencies, recent pairs and the last historical date</li>
       <li>Starred (favourite) currencies</li>
       <li>Settings (theme, fees, provider choices, keypad, app lock) and any API keys you entered</li>
       <li>Carts, trips and rate alerts</li>
       <li>A small diagnostic log and records of the app's last few crashes</li>
-    </ul>
-    <p>Nothing leaves the device unless you send it: a backup or a cart export goes to a file you choose, and <strong>About this app → Report a problem</strong> shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.</p>
-    <p>This data is cleared when you uninstall the app. It can also be cleared via Android Settings → Apps → CurrenciX → Clear Data.</p>
+      </ul>
+      <p>Nothing leaves the device unless you send it: a backup or a cart export goes to a file you choose, and <strong>About this app → Report a problem</strong> shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.</p>
+      <p>This data is cleared when you uninstall the app. It can also be cleared via Android Settings → Apps → CurrenciX → Clear Data.</p>
 
-    <h2>Third-Party SDKs</h2>
-    <p>CurrenciX does <strong>not</strong> include any third-party analytics, advertising, crash-reporting, or social-login SDK. The complete dependency list is public in the repository's <code>app/build.gradle.kts</code> file.</p>
+      <h2 id="third-party-libraries">Third-party libraries</h2>
+      <p>CurrenciX does <strong>not</strong> include any third-party analytics, advertising, crash-reporting, or social-login SDK. The complete dependency list is public in the repository's <code>app/build.gradle.kts</code> file.</p>
 
-    <h2>Children</h2>
-    <p>The app does not knowingly collect any data from children or from any user, regardless of age.</p>
+      <h2 id="children">Children</h2>
+      <p>The app does not knowingly collect any data from children or from any user, regardless of age.</p>
 
-    <h2>Changes to This Policy</h2>
-    <p>If the privacy posture of the app ever changes materially, this page will be updated and the change will be noted in the release changelog.</p>
+      <h2 id="changes-to-this-policy">Changes to this policy</h2>
+      <p>If the privacy posture of the app ever changes materially, this page will be updated and the change will be noted in the release changelog.</p>
 
-    <h2>Contact</h2>
-    <p>For privacy questions or concerns, open an issue on the <a href="https://github.com/EliorMachlev/CurrenciX/issues">GitHub repository</a>.</p>
+      <h2 id="contact">Contact</h2>
+      <p>For privacy questions or concerns, open an issue on the <a href="https://github.com/EliorMachlev/CurrenciX/issues">GitHub repository</a>.</p>
 
+
+    </div>
   </div>
-
+</div>
 </main>
 
-<footer>
-  <p>CurrenciX &copy; 2026 Elior Machlev &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
-  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Translate</a></p>
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <a class="wordmark" href="index.html" aria-label="CurrenciX home">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
+      <p>CurrenciX © 2026 Elior Machlev, a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> © 2020 Maximilian Salomon. Free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL 3.0 or later</a>.</p>
+    </div>
+    <ul>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX">Source code</a></li>
+      <li><a href="privacy.html">Privacy policy</a></li>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/accessibility-statement.md">Accessibility</a></li>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Help translate</a></li>
+    </ul>
+  </div>
 </footer>
-
 </body>
 </html>

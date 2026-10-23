@@ -1,228 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Features — CurrenciX</title>
-  <meta name="description" content="Full list of features in the CurrenciX Android app — calculator, historical rates, charts, fee calculator, themes, and more.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CurrenciX features</title>
+  <meta name="description" content="Everything CurrenciX does: conversion, calculator, fees, charts and alerts, the cart, look and feel, privacy and security.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F3EEE5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#131311" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/space_grotesk_medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter_regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💱</text></svg>">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<nav>
-  <div class="nav-inner">
-    <a class="nav-brand" href="index.html">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      CurrenciX
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="features.html" class="active">Features</a></li>
-      <li><a href="providers.html">Providers</a></li>
-      <li><a href="privacy.html">Privacy</a></li>
-    </ul>
-  </div>
-</nav>
-
-<header class="hero" style="padding: 3.5rem 1.5rem 3rem;">
-  <div class="hero-inner">
-    <h1 style="font-size:clamp(1.6rem,4vw,2.4rem);">Features</h1>
-    <p class="tagline" style="font-size:1.05rem;">Everything CurrenciX can do, explained in one place.</p>
+<header class="bar">
+  <div class="wrap bar-inner">
+    <a class="wordmark" href="index.html" aria-label="CurrenciX home">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
+    <nav aria-label="Site">
+      <ul class="nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="features.html" aria-current="page">Features</a></li>
+        <li><a href="providers.html">Providers</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+      </ul>
+    </nav>
+    <a class="bar-source" href="https://github.com/EliorMachlev/CurrenciX"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.37.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.7.83.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg><span>Source</span></a>
   </div>
 </header>
 
-<main class="page">
-
-  <h2 class="section-title">Currency Conversion</h2>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">🌐</span>
-      <h3>Eight Providers</h3>
-      <p>Central banks (ECB via Frankfurter.app, Bank of Canada, Norges Bank, Bank Rossii, Bank of Israel), the European Commission's InforEuro, and Open Exchangerates or AllRatesToday with your own API key.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🛟</span>
-      <h3>Fallback Provider</h3>
-      <p>When your main provider is down, rates come from a second one you pick, and the app says so. The next refresh tries the main one again.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">⭐</span>
-      <h3>Starred Currencies</h3>
-      <p>Keep the currencies you use at the top, in your own order. Search finds a currency by code, name or country.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🕘</span>
-      <h3>Recent Pairs</h3>
-      <p>The pairs you used last sit under the converter, one tap to switch back. Swap either way with the round button.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">📋</span>
-      <h3>Copy &amp; Paste</h3>
-      <p>Copy any amount, or paste a price you copied in another app: the app finds the amount and its currency.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">✂️</span>
-      <h3>Convert from Any App</h3>
-      <p>Select a price anywhere and pick <em>Convert currency</em> from the text-selection menu: a sheet converts it at once, offline, from the saved rates.</p>
-    </div>
+<main id="main">
+<div class="wrap">
+  <div class="page-head">
+    <h1>Everything CurrenciX does</h1>
+    <p>From the keypad to the receipt scanner, in one place.</p>
+    <nav aria-label="Feature groups">
+      <ul class="jump">
+      <li><a href="#conversion">Conversion</a></li>
+      <li><a href="#calculator">Calculator</a></li>
+      <li><a href="#fees">Fees</a></li>
+      <li><a href="#rates">Rates, charts and alerts</a></li>
+      <li><a href="#cart">Cart</a></li>
+      <li><a href="#look">Look and feel</a></li>
+      <li><a href="#privacy">Privacy and security</a></li>
+      </ul>
+    </nav>
   </div>
 
-  <h2 class="section-title">Calculator</h2>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">🧮</span>
-      <h3>Full Arithmetic</h3>
-      <p>+, −, ×, ÷, brackets and percent, worked out before converting; = turns the result into the amount to carry on from.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">⌨️</span>
-      <h3>Expanded Keypad</h3>
-      <p>An optional extra row of 00 / 0 / 000 (Settings → Converter). On a tablet or unfolded phone the keypad keeps to one side, in reach of one thumb.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🖥️</span>
-      <h3>Hardware Keyboard</h3>
-      <p>Type digits and operators on a physical keyboard, on tablets and foldables alike.</p>
-    </div>
-  </div>
+  <section class="group" id="conversion" aria-labelledby="conversion-title">
+    <h2 id="conversion-title">Conversion</h2>
+    <ul class="ledger">
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#account_balance"/></svg></span><h3>Eight providers</h3><p>Central banks (the ECB through Frankfurter.app, Bank of Canada, Norges Bank, Bank Rossii, Bank of Israel), the European Commission's InforEuro, and Open Exchangerates or AllRatesToday with your own API key.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#alt_route"/></svg></span><h3>A fallback provider</h3><p>When your main provider is down, rates come from a second one you pick, and the app says so. The next refresh tries the main one again.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#star"/></svg></span><h3>Starred currencies</h3><p>Keep the currencies you use at the top, in your own order. Search finds a currency by code, name or country.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#history"/></svg></span><h3>Recent pairs</h3><p>The pairs you used last sit under the converter, one tap to switch back. Swap either way with the round button.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#content_paste"/></svg></span><h3>Copy and paste</h3><p>Copy any amount, or paste a price you copied in another app: the app finds the amount and its currency.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#touch_app"/></svg></span><h3>Convert from any app</h3><p>Select a price anywhere and pick <em>Convert currency</em> from the text-selection menu: a sheet converts it at once, offline, from the saved rates.</p></li>
+    </ul>
+  </section>
 
-  <h2 class="section-title">Fees</h2>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">💳</span>
-      <h3>Exchange &amp; Bank Fees</h3>
-      <p>Add your card's or bureau's fee and see the true cost next to the mid-market result, globally or per currency pair.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">⚖️</span>
-      <h3>Compare Cards</h3>
-      <p>With several cards saved, see what each would charge for the amount on screen, cheapest first, and switch with a tap.</p>
-    </div>
-  </div>
+  <section class="group" id="calculator" aria-labelledby="calculator-title">
+    <h2 id="calculator-title">Calculator</h2>
+    <ul class="ledger">
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#calculate"/></svg></span><h3>Full arithmetic</h3><p>+, −, ×, ÷, brackets and percent, worked out before converting; = turns the result into the amount to carry on from.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#dialpad"/></svg></span><h3>Expanded keypad</h3><p>An optional extra row of 00 / 0 / 000 (Settings → Converter). On a tablet or unfolded phone the keypad keeps to one side, in reach of one thumb.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#keyboard"/></svg></span><h3>Hardware keyboard</h3><p>Type digits and operators on a physical keyboard, on tablets and foldables alike.</p></li>
+    </ul>
+  </section>
 
-  <h2 class="section-title">Rates, Charts &amp; Alerts</h2>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">📅</span>
-      <h3>Past Dates</h3>
-      <p>Convert at any past date's rates, back to 2010 (how far depends on the provider).</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">📈</span>
-      <h3>Rate Charts</h3>
-      <p>A week, a month, a year, five years or a custom range of up to ten years, with high, low, average, median and the change.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🔍</span>
-      <h3>Interactive Chart</h3>
-      <p>Scrub to see the rate on any day, then convert at that day's rate or set an alert from it. Share the chart as an image.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🔔</span>
-      <h3>Rate Alerts</h3>
-      <p>Get a notification when a pair reaches your rate, checked on your phone after each update.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">⏱️</span>
-      <h3>Quick Conversions</h3>
-      <p>Your pair at round amounts, fees included, to copy or share.</p>
-    </div>
-  </div>
+  <section class="group" id="fees" aria-labelledby="fees-title">
+    <h2 id="fees-title">Fees</h2>
+    <ul class="ledger">
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#percent"/></svg></span><h3>Exchange and bank fees</h3><p>Add your card's or bureau's fee and see the true cost next to the mid-market result, for every pair or per pair.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#credit_card"/></svg></span><h3>Compare cards</h3><p>With several cards saved, see what each would charge for the amount on screen, cheapest first, and switch with a tap.</p></li>
+    </ul>
+  </section>
 
-  <h2 class="section-title">Cart</h2>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">🛒</span>
-      <h3>Prices in Your Currency</h3>
-      <p>A list of prices with quantities, converted into your currency, with tip or tax, a budget and the fees counted in.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">👥</span>
-      <h3>Split &amp; Trips</h3>
-      <p>Split the total evenly or by who had what, and group saved carts into trips with a home currency and budget.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🧾</span>
-      <h3>Receipt Scanning</h3>
-      <p>Scan a receipt to add its items, read on your phone; nothing is uploaded.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">📤</span>
-      <h3>Share &amp; Export</h3>
-      <p>Share a cart as text, an image, CSV or PDF, or save it to a file to import again later.</p>
-    </div>
-  </div>
+  <section class="group" id="rates" aria-labelledby="rates-title">
+    <h2 id="rates-title">Rates, charts and alerts</h2>
+    <ul class="ledger">
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#event"/></svg></span><h3>Past dates</h3><p>Convert at any past date's rates, back to 2010 (how far depends on the provider).</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#show_chart"/></svg></span><h3>Rate charts</h3><p>A week, a month, a year, five years or a custom range of up to ten years, with high, low, average, median and the change.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#query_stats"/></svg></span><h3>An interactive chart</h3><p>Scrub to see the rate on any day, then convert at that day's rate or set an alert from it. Share the chart as an image.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#notifications"/></svg></span><h3>Rate alerts</h3><p>Get a notification when a pair reaches your rate, checked on your phone after each update.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#table_chart"/></svg></span><h3>Quick conversions</h3><p>Your pair at round amounts, fees included, to copy or share.</p></li>
+    </ul>
+  </section>
 
-  <h2 class="section-title">Look &amp; Feel</h2>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">🎨</span>
-      <h3>Material 3</h3>
-      <p>Colors from your wallpaper (on by default), or the app's own paper-and-ink palette.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🌙</span>
-      <h3>Light, Dark &amp; Pure Black</h3>
-      <p>Pick one or follow the system, with an OLED-friendly black.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">📱</span>
-      <h3>Tablets &amp; Foldables</h3>
-      <p>Two panes on wide screens: the converter beside the chart or the cart.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🌏</span>
-      <h3>33 Languages</h3>
-      <p>Translated into 32 languages besides English. Hebrew, Arabic and Farsi lay out right to left, while numbers stay left to right.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🧩</span>
-      <h3>Widget, Tile &amp; Shortcuts</h3>
-      <p>A home-screen widget with its own pair and a trend line, a Quick Settings tile, and launcher shortcuts to your recent pairs.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">♿</span>
-      <h3>Accessibility</h3>
-      <p>TalkBack labels and spoken summaries, 48 dp touch targets, and layouts that hold at large font sizes.</p>
-    </div>
-  </div>
+  <section class="group" id="cart" aria-labelledby="cart-title">
+    <h2 id="cart-title">Cart</h2>
+    <ul class="ledger">
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#shopping_cart"/></svg></span><h3>Prices in your currency</h3><p>A list of prices with quantities, converted into your currency, with tip or tax, a budget and the fees counted in.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#luggage"/></svg></span><h3>Splits and trips</h3><p>Split the total evenly or by who had what, and group saved carts into trips with a home currency and a budget.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#receipt_long"/></svg></span><h3>Receipt scanning</h3><p>Scan a receipt to add its items, read on your phone; nothing is uploaded.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#ios_share"/></svg></span><h3>Share and export</h3><p>Share a cart as text, an image, CSV or PDF, or save it to a file to import again later.</p></li>
+    </ul>
+  </section>
 
-  <h2 class="section-title">Privacy &amp; Security</h2>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">🚫</span>
-      <h3>No Tracking</h3>
-      <p>No ads, no analytics, no account, no crash-reporting service. Nothing about you leaves your phone.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🔐</span>
-      <h3>App Lock</h3>
-      <p>Optionally lock the app behind your fingerprint or screen lock.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🕶️</span>
-      <h3>Private Requests</h3>
-      <p>Optionally make every rate request look the same as everyone else's.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">💾</span>
-      <h3>Your Data Stays Local</h3>
-      <p>Settings, carts and alerts live in the app's private storage. Back them up to a file you choose, encrypted with a password if you like.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🔒</span>
-      <h3>Few Permissions</h3>
-      <p>Internet and network state for rates, biometrics for the optional lock, and notifications only once you set a rate alert. No location, contacts, storage, camera or microphone.</p>
-    </div>
-  </div>
+  <section class="group" id="look" aria-labelledby="look-title">
+    <h2 id="look-title">Look and feel</h2>
+    <ul class="ledger">
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#palette"/></svg></span><h3>Material 3</h3><p>Colors from your wallpaper (on by default), or the app's own paper-and-ink palette.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#contrast"/></svg></span><h3>Light, dark and pure black</h3><p>Pick one or follow the system, with an OLED-friendly black.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#devices"/></svg></span><h3>Tablets and foldables</h3><p>Two panes on wide screens: the converter beside the chart or the cart.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#translate"/></svg></span><h3>33 languages</h3><p>Translated into 32 languages besides English. Hebrew, Arabic and Farsi lay out right to left, while numbers stay left to right.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#widgets"/></svg></span><h3>Widget, tile and shortcuts</h3><p>A home-screen widget with its own pair and a trend line, a Quick Settings tile, and launcher shortcuts to your recent pairs.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#accessibility_new"/></svg></span><h3>Accessibility</h3><p>TalkBack labels and spoken summaries, error messages in words, 48 dp touch targets, WCAG AA contrast, and layouts that hold at twice the font size.</p></li>
+    </ul>
+  </section>
 
+  <section class="group" id="privacy" aria-labelledby="privacy-title">
+    <h2 id="privacy-title">Privacy and security</h2>
+    <ul class="ledger">
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#block"/></svg></span><h3>No tracking</h3><p>No ads, no analytics, no account, no crash-reporting service. Nothing about you leaves your phone.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#lock"/></svg></span><h3>App lock</h3><p>Optionally lock the app behind your fingerprint or screen lock.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#visibility_off"/></svg></span><h3>Private requests</h3><p>Optionally make every rate request look the same as everyone else's.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#save"/></svg></span><h3>Your data stays local</h3><p>Settings, carts and alerts live in the app's private storage. Back them up to a file you choose, encrypted with a password if you like.</p></li>
+      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#shield"/></svg></span><h3>Few permissions</h3><p>Internet and network state for rates, biometrics for the optional lock, and notifications only once you set a rate alert. No location, contacts, storage, camera or microphone.</p></li>
+    </ul>
+  </section>
+</div>
 </main>
 
-<footer>
-  <p>CurrenciX &copy; 2026 Elior Machlev &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
-  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Translate</a></p>
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <a class="wordmark" href="index.html" aria-label="CurrenciX home">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
+      <p>CurrenciX © 2026 Elior Machlev, a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> © 2020 Maximilian Salomon. Free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL 3.0 or later</a>.</p>
+    </div>
+    <ul>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX">Source code</a></li>
+      <li><a href="privacy.html">Privacy policy</a></li>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/accessibility-statement.md">Accessibility</a></li>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Help translate</a></li>
+    </ul>
+  </div>
 </footer>
-
 </body>
 </html>

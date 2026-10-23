@@ -107,7 +107,7 @@ CurrenciX stores nothing on your device beyond what is **strictly necessary** to
 
 ## Website
 
-The project website, `currencix.machlev.org` (GitHub Pages), has its own privacy page; it uses no analytics or cookies of its own, though GitHub, which hosts it, sees visitors' IP addresses under its own terms. The same "no analytics, no tracking, no non-essential storage" posture is intended to apply there. Any deviation will be disclosed on the site itself.
+The project website, `currencix.machlev.org` (GitHub Pages), has its own privacy page; it uses no analytics or cookies of its own, and serves its fonts and icons itself, so a visit reaches no one but GitHub, which hosts it and sees visitors' IP addresses under its own terms. The same "no analytics, no tracking, no non-essential storage" posture is intended to apply there. Any deviation will be disclosed on the site itself.
 
 ## Changes to this policy
 

@@ -56,13 +56,13 @@ The whole app is Jetpack Compose (Material 3), so accessibility comes from Compo
 
 ### Website (where operated)
 
-- Semantic HTML with correct heading hierarchy.
+- Semantic HTML with one `<h1>` per page and an ordered heading hierarchy; tables have header cells and scopes.
 - `lang` attribute set on `<html>`.
-- Skip-to-content link where applicable.
-- Colour contrast checked against WCAG AA.
-- Alt text on informative images; empty `alt=""` on decorative ones.
-- Keyboard navigation across all interactive controls with visible focus indicators.
-- Form controls (if any) with associated `<label>` elements.
+- A skip-to-content link on every page, and the current page marked in the navigation (`aria-current`).
+- Light and dark themes following the system, with the app's palette: text at 4.5:1 or more, controls and outlines at 3:1.
+- Decorative icons and the brand mark are hidden from screen readers; the example receipt on the home page has a text alternative.
+- Keyboard navigation across all links and buttons, with a visible focus ring.
+- Layouts reflow down to a 320 px wide screen without sideways scrolling (wide tables scroll inside their own box), and the brand mark's one animation is off when the system asks for reduced motion.
 
 ## Known limitations
 
