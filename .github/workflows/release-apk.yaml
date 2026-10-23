@@ -14,7 +14,10 @@ name: Release
 #
 # Only these two can start it, so the signing keys never reach a pull request.
 #
-# Repository secrets it needs (Settings → Secrets and variables → Actions):
+# The signing keys are secrets of the "release" environment (Settings →
+# Environments → release), not of the repository, so only this job can read
+# them; limit the environment's deployment branches and tags to "v*" (and
+# master, for a run by hand). The secrets it needs:
 #   RELEASE_KEYSTORE_B64      base64 of the release keystore (release.p12)
 #   RELEASE_KEYSTORE_PASSWORD its password
 #   HYBRID_KEYSTORE_B64       base64 of the hybrid keystore (hybrid.p12)
@@ -41,6 +44,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Where the signing keys live (see the top of this file).
+    environment: release
     outputs:
       version: ${{ steps.version.outputs.name }}
     steps:
