@@ -1,0 +1,26 @@
+name: Gradle wrapper
+# Checks gradle/wrapper/gradle-wrapper.jar against the checksums of official
+# Gradle releases. Its own workflow, and a quick one, because Scorecard's
+# Binary-Artifacts accepts the committed jar only when it finds a successful
+# run of the workflow holding this check for the latest commit on master:
+# inside Build, that run only counted once every build job had passed, long
+# after Scorecard had looked. scorecard.yaml waits for this one.
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gradle-wrapper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate the Gradle wrapper
+        uses: gradle/actions/wrapper-validation@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0

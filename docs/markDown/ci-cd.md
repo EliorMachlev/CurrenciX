@@ -19,7 +19,8 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC) | Secret / credential scanning |
 | `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC) | Dependency vulnerability scan (CVSS ≥ 7) |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
-| `scorecard.yaml` | Push → `master`, weekly | OpenSSF Scorecard supply-chain score |
+| `gradle-wrapper.yaml` | PR, push → `master`, manual | `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. Its own quick workflow so Scorecard (below) can see it succeed on the latest commit, which is what makes Binary-Artifacts count the jar as validated |
+| `scorecard.yaml` | Push → `master`, weekly | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
 | `actionlint.yaml` | PR/push on `.github/workflows/**` | Validate workflow YAML syntax |
 
 ## Build Gate (`build.yaml`)
@@ -28,7 +29,6 @@ Runs on both PRs and pushes to `master`. Three jobs, side by side:
 
 - **`spotless`** — `spotlessCheck`, ktlint via Spotless (see [Code Style](contributing.md#code-style)).
 - **`fuzz`** — one job per fuzz target (`FuzzTest`: currency codes, selected-text prices, receipt text, calculations, typed amounts), each fuzzed for two minutes with Jazzer (`-PfuzzTests`, `JAZZER_FUZZ=1`). A crash fails the job and uploads its input (`fuzz-crash-<target>`). See [build-and-flavors.md](build-and-flavors.md#fuzz-tests).
-- **`gradle-wrapper`** — `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. With it, OpenSSF Scorecard's Binary-Artifacts check counts the jar as validated.
 - **`compose-stability`** — compiles with `-PcomposeReports` (the Compose compiler's report of each composable, `app/build/compose-reports/`) and runs `.github/scripts/compose-stability.py`, which fails on a composable that can't skip, or one taking a parameter the compiler can't prove stable: with strong skipping that parameter is compared by identity, so a fresh but equal value recomposes it every time. Fix it by making the type stable (immutable, `@Stable` / `@Immutable` when that's true, or listed in `app/compose-stability.conf`). Keys typed `Any`, an Android `Context` and receivers are compared by identity on purpose and aren't flagged; nor are the widget's Glance composables, which compose once per update.
 - **`build`** — matrix over `Fdroid` and `Play` flavors × the three checks below, six jobs in all, each running one of:
   - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
