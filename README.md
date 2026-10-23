@@ -55,7 +55,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Deeper docs — architecture, build flav
 - [Accessibility Statement](docs/markDown/accessibility-statement.md) — WCAG 2.1 AA target covering IS 5568, EN 301 549 / EAA, ADA / §508.
 - [Compliance Posture](docs/markDown/compliance-posture.md) — applicability under EU AI Act, DSA/DMA, financial-services regimes, EAR / EU Dual-Use, EU CRA, Play Data Safety, F-Droid.
 - Project website: [currencix.machlev.org](https://currencix.machlev.org/).
-- [SECURITY.md](SECURITY.md) — vulnerability reporting, coordinated disclosure, support period.
+- [SECURITY.md](SECURITY.md) — vulnerability reporting, coordinated disclosure, support period, SBOM.
 
 ## License
 

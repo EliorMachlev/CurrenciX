@@ -2,6 +2,11 @@
 import com.android.build.api.artifact.ArtifactTransformationRequest
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.FilterConfiguration
+import org.cyclonedx.Version
+import org.cyclonedx.gradle.CyclonedxDirectTask
+import org.cyclonedx.model.Component
+import org.cyclonedx.model.LicenseChoice
+import org.cyclonedx.model.license.Expression
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.awt.Color
@@ -25,6 +30,9 @@ plugins {
     // bakes them into the release AAB / APK for ProfileInstaller to hand to
     // ART at install time. Version pinned at the root build script.
     id("androidx.baselineprofile")
+    // CycloneDX SBOM of what the app ships; the release workflow attaches it
+    // to each GitHub release.
+    id("org.cyclonedx.bom") version "3.5.1"
 }
 
 kotlin {
@@ -791,6 +799,25 @@ fun generateVersionCode(semVer: String): Int =
         .reduce { sum, value -> sum * 100 + value }
 
 val composeReports = layout.buildDirectory.dir("compose-reports").takeIf { providers.gradleProperty("composeReports").isPresent }
+
+// The SBOM the release workflow attaches to each GitHub release: every
+// library the F-Droid release APK ships (its runtime classpath, direct and
+// transitive), with versions, hashes and licences, as CycloneDX JSON.
+// `./gradlew :app:cyclonedxDirectBom` writes it to app/build/reports/sbom/.
+val sbomConfiguration = "fdroidReleaseRuntimeClasspath"
+val sbomFileName = "currencix-sbom.cdx"
+
+tasks.named<CyclonedxDirectTask>("cyclonedxDirectBom") {
+    includeConfigs.set(listOf(sbomConfiguration))
+    projectType.set(Component.Type.APPLICATION)
+    schemaVersion.set(Version.VERSION_16)
+    componentGroup.set("com.eliormachlev")
+    componentName.set("CurrenciX")
+    componentVersion.set(android.defaultConfig.versionName)
+    licenseChoice.set(LicenseChoice().apply { addExpression(Expression("GPL-3.0-or-later")) })
+    jsonOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.json"))
+    xmlOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.xml"))
+}
 
 // JDK value types (BigDecimal, java.time) count as stable, so composables
 // taking rates and dates can skip recomposing (see compose-stability.conf).

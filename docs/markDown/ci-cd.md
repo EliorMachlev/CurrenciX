@@ -7,7 +7,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | Workflow | Trigger | Purpose |
 |---|---|---|
 | `build.yaml` | Push → `master`, PR, manual | Spotless, Compose stability and fuzzing (own jobs), lint, test, build debug APK for both flavors (matrix) + fdroid release APK; failed tests become error annotations |
-| `release-apk.yaml` | Tag `v*` push, manual | The release: on a `v<versionName>` tag of a `master` commit, build the fdroid release APKs signed with the release key and the post-quantum hybrid signature (keys from the `release` environment's secrets, which only this job can read, removed after the build; Gradle cache read-only) and publish them as a GitHub release with `SHA256SUMS` and notes generated from the Conventional Commit titles since the previous tag (`.github/scripts/release-notes.py`); publishing is a separate job with `contents: write` that never sees the keys. By hand it only builds and uploads the signed APKs, and previews the notes. See build-and-flavors.md, "Post-quantum signing" |
+| `release-apk.yaml` | Tag `v*` push, manual | The release: on a `v<versionName>` tag of a `master` commit, build the fdroid release APKs signed with the release key and the post-quantum hybrid signature (keys from the `release` environment's secrets, which only this job can read, removed after the build; Gradle cache read-only) and publish them as a GitHub release with their SBOM (`currencix-<version>-sbom.cdx.json`, CycloneDX), `SHA256SUMS` and notes generated from the Conventional Commit titles since the previous tag (`.github/scripts/release-notes.py`); publishing is a separate job with `contents: write` that never sees the keys. By hand it only builds and uploads the signed APKs, and previews the notes. See build-and-flavors.md, "Post-quantum signing" |
 | `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK, upload it as an artifact, and put a download link in the run summary |
 | `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator), plus 200 % font-size captures of the densest screens, and upload the PNGs as an artifact — not a gate, nothing is verified. `ScreenshotRule` renders on a manual clock, so the suite takes about a minute; the job times out at 20 min so a capture that never settles fails fast |
 | `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles on an API 34 emulator; upload them as an artifact (and, run by hand with **commit**, commit them through `commit-baseline-profiles.yaml`) |
@@ -35,7 +35,7 @@ Runs on PRs and pushes to `master` (and by hand). Its jobs run side by side:
   - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
   - `test<Flavor>DebugUnitTest` — JUnit unit tests
   - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
-- **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and uploads it as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
+- **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and writes its SBOM (`:app:cyclonedxDirectBom`, as the release does), and uploads both as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
 
 ## Speed
 
