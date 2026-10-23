@@ -2,6 +2,7 @@
 
 <div align="right">
    <img alt="build status" height="20" src="https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml/badge.svg">
+   <a href="https://www.bestpractices.dev/projects/15831"><img alt="OpenSSF Best Practices" height="20" src="https://www.bestpractices.dev/projects/15831/badge"></a>
 </div>
 
 <div align="center">
