@@ -50,42 +50,42 @@ jobs:
       # reporting a missing configuration.
       - name: Upload SARIF to code scanning (app (main, fdroid, debug))
         if: always() && hashFiles('app/build/reports/detekt/fdroidDebug.sarif') != ''
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: app/build/reports/detekt/fdroidDebug.sarif
           category: detekt
 
       - name: Upload SARIF to code scanning (app (play, release))
         if: always() && hashFiles('app/build/reports/detekt/playRelease.sarif') != ''
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: app/build/reports/detekt/playRelease.sarif
           category: detekt-release
 
       - name: Upload SARIF to code scanning (app unit tests)
         if: always() && hashFiles('app/build/reports/detekt/fdroidDebugUnitTest.sarif') != ''
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: app/build/reports/detekt/fdroidDebugUnitTest.sarif
           category: detekt-tests
 
       - name: Upload SARIF to code scanning (helpers)
         if: always() && hashFiles('helpers/build/reports/detekt/main.sarif') != ''
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: helpers/build/reports/detekt/main.sarif
           category: detekt-helpers
 
       - name: Upload SARIF to code scanning (ocr-engine)
         if: always() && hashFiles('ocr-engine/build/reports/detekt/release.sarif') != ''
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: ocr-engine/build/reports/detekt/release.sarif
           category: detekt-ocr-engine
 
       - name: Upload SARIF to code scanning (baselineprofile)
         if: always() && hashFiles('baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif') != ''
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif
           category: detekt-baselineprofile
