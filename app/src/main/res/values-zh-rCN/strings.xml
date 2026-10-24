@@ -349,4 +349,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – 你在此来源的请求额度已用完。</string>
     <string name="quick_conversions_use_amount">使用此金额</string>
     <string name="quick_conversions_copy">复制</string>
+    <string name="quick_conversions_options">更多选项</string>
+    <string name="quick_amount_change">更改金额</string>
+    <string name="quick_amount_keep">保留此金额</string>
+    <string name="quick_amount_reset">恢复自动金额</string>
+    <string name="quick_amount_label">金额</string>
+    <string name="quick_amount_taken">已是其中一个金额</string>
+    <string name="quick_amount_note">在所有货币对中用于 %1$s。</string>
 </resources>

@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Elhasználtad a kéréskeretedet ennél a forrásnál.</string>
     <string name="quick_conversions_use_amount">Ennek az összegnek a használata</string>
     <string name="quick_conversions_copy">Másolás</string>
+    <string name="quick_conversions_options">További lehetőségek</string>
+    <string name="quick_amount_change">Összeg módosítása</string>
+    <string name="quick_amount_keep">Ez az összeg maradjon</string>
+    <string name="quick_amount_reset">Vissza az automatikus összegekhez</string>
+    <string name="quick_amount_label">Összeg</string>
+    <string name="quick_amount_taken">Már szerepel az összegek között</string>
+    <string name="quick_amount_note">Minden párban ezt használja: %1$s.</string>
 </resources>

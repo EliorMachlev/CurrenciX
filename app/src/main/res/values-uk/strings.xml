@@ -360,4 +360,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Ви вичерпали ліміт запитів у цього джерела.</string>
     <string name="quick_conversions_use_amount">Використати цю суму</string>
     <string name="quick_conversions_copy">Копіювати</string>
+    <string name="quick_conversions_options">Інші дії</string>
+    <string name="quick_amount_change">Змінити суму</string>
+    <string name="quick_amount_keep">Залишити цю суму</string>
+    <string name="quick_amount_reset">Повернути автоматичні суми</string>
+    <string name="quick_amount_label">Сума</string>
+    <string name="quick_amount_taken">Вже є серед сум</string>
+    <string name="quick_amount_note">Використовується для %1$s у всіх парах.</string>
 </resources>

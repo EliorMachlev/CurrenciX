@@ -23,7 +23,7 @@ Convert between 30–160+ world currencies using live exchange rates fetched fro
 | Rate chart | Week, month, year, 5 years or a custom range (up to 10 years), with min/max/average/median, scrubbing, and convert or set an alert at a touched day |
 | Rate alerts | A notification when a pair reaches a rate, checked on the device after each update |
 | Cart | Items in one currency converted into another, with quantities, tip / tax, split by person, budget, shopping-list mode, saved carts grouped into trips, receipt scanning (on-device OCR), and export as text, CSV, PDF or image |
-| Quick conversions | The pair at round amounts, with fees, to copy or share |
+| Quick conversions | The pair at round amounts scaled to the currency (or your own), with fees, to copy or share |
 | Outside the app | "Convert currency" in any app's text-selection menu, launcher shortcuts, a Quick Settings tile, and a configurable home-screen widget |
 | Backup & restore | Local export of settings via SAF, optionally encrypted with Argon2id + AES-256-GCM |
 | Starred currencies | Favourites in your own order, with a starred-only filter |

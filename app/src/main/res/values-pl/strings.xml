@@ -360,4 +360,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Wykorzystałeś limit zapytań w tym źródle.</string>
     <string name="quick_conversions_use_amount">Użyj tej kwoty</string>
     <string name="quick_conversions_copy">Kopiuj</string>
+    <string name="quick_conversions_options">Więcej opcji</string>
+    <string name="quick_amount_change">Zmień kwotę</string>
+    <string name="quick_amount_keep">Zachowaj tę kwotę</string>
+    <string name="quick_amount_reset">Wróć do kwot automatycznych</string>
+    <string name="quick_amount_label">Kwota</string>
+    <string name="quick_amount_taken">To już jedna z kwot</string>
+    <string name="quick_amount_note">Używane dla %1$s w każdej parze.</string>
 </resources>

@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Bu kaynaktaki istek hakkınızı tükettiniz.</string>
     <string name="quick_conversions_use_amount">Bu tutarı kullan</string>
     <string name="quick_conversions_copy">Kopyala</string>
+    <string name="quick_conversions_options">Diğer seçenekler</string>
+    <string name="quick_amount_change">Tutarı değiştir</string>
+    <string name="quick_amount_keep">Bu tutarı tut</string>
+    <string name="quick_amount_reset">Otomatik tutarlara dön</string>
+    <string name="quick_amount_label">Tutar</string>
+    <string name="quick_amount_taken">Zaten tutarlardan biri</string>
+    <string name="quick_amount_note">Her çiftte %1$s için kullanılır.</string>
 </resources>

@@ -360,4 +360,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Вы израсходовали лимит запросов у этого источника.</string>
     <string name="quick_conversions_use_amount">Использовать эту сумму</string>
     <string name="quick_conversions_copy">Копировать</string>
+    <string name="quick_conversions_options">Другие действия</string>
+    <string name="quick_amount_change">Изменить сумму</string>
+    <string name="quick_amount_keep">Оставить эту сумму</string>
+    <string name="quick_amount_reset">Вернуть автоматические суммы</string>
+    <string name="quick_amount_label">Сумма</string>
+    <string name="quick_amount_taken">Уже есть среди сумм</string>
+    <string name="quick_amount_note">Используется для %1$s во всех парах.</string>
 </resources>

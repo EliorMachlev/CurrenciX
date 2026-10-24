@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Þú hefur klárað beiðnirnar þínar hjá þessari heimild.</string>
     <string name="quick_conversions_use_amount">Nota þessa upphæð</string>
     <string name="quick_conversions_copy">Afrita</string>
+    <string name="quick_conversions_options">Fleiri valkostir</string>
+    <string name="quick_amount_change">Breyta upphæð</string>
+    <string name="quick_amount_keep">Halda þessari upphæð</string>
+    <string name="quick_amount_reset">Aftur í sjálfvirkar upphæðir</string>
+    <string name="quick_amount_label">Upphæð</string>
+    <string name="quick_amount_taken">Er þegar ein upphæðanna</string>
+    <string name="quick_amount_note">Notað fyrir %1$s í öllum pörum.</string>
 </resources>

@@ -357,4 +357,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Potrošili ste dopuštene zahtjeve kod ovog izvora.</string>
     <string name="quick_conversions_use_amount">Koristi ovaj iznos</string>
     <string name="quick_conversions_copy">Kopiraj</string>
+    <string name="quick_conversions_options">Više opcija</string>
+    <string name="quick_amount_change">Promijeni iznos</string>
+    <string name="quick_amount_keep">Zadrži ovaj iznos</string>
+    <string name="quick_amount_reset">Natrag na automatske iznose</string>
+    <string name="quick_amount_label">Iznos</string>
+    <string name="quick_amount_taken">Već je jedan od iznosa</string>
+    <string name="quick_amount_note">Koristi se za %1$s u svakom paru.</string>
 </resources>

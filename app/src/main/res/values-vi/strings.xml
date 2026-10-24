@@ -351,4 +351,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Bạn đã dùng hết số yêu cầu ở nguồn này.</string>
     <string name="quick_conversions_use_amount">Dùng số tiền này</string>
     <string name="quick_conversions_copy">Sao chép</string>
+    <string name="quick_conversions_options">Tùy chọn khác</string>
+    <string name="quick_amount_change">Đổi số tiền</string>
+    <string name="quick_amount_keep">Giữ số tiền này</string>
+    <string name="quick_amount_reset">Quay lại số tiền tự động</string>
+    <string name="quick_amount_label">Số tiền</string>
+    <string name="quick_amount_taken">Đã là một trong các số tiền</string>
+    <string name="quick_amount_note">Dùng cho %1$s trong mọi cặp.</string>
 </resources>

@@ -360,4 +360,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Vyčerpali jste limit požadavků u tohoto zdroje.</string>
     <string name="quick_conversions_use_amount">Použít tuto částku</string>
     <string name="quick_conversions_copy">Kopírovat</string>
+    <string name="quick_conversions_options">Další možnosti</string>
+    <string name="quick_amount_change">Změnit částku</string>
+    <string name="quick_amount_keep">Ponechat tuto částku</string>
+    <string name="quick_amount_reset">Zpět na automatické částky</string>
+    <string name="quick_amount_label">Částka</string>
+    <string name="quick_amount_taken">Už je jednou z částek</string>
+    <string name="quick_amount_note">Použije se pro %1$s v každém páru.</string>
 </resources>

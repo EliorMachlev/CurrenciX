@@ -358,4 +358,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – ഈ ഉറവിടത്തിലെ നിങ്ങളുടെ അഭ്യർത്ഥന പരിധി തീർന്നു.</string>
     <string name="quick_conversions_use_amount">ഈ തുക ഉപയോഗിക്കുക</string>
     <string name="quick_conversions_copy">പകർത്തുക</string>
+    <string name="quick_conversions_options">കൂടുതൽ ഓപ്ഷനുകൾ</string>
+    <string name="quick_amount_change">തുക മാറ്റുക</string>
+    <string name="quick_amount_keep">ഈ തുക നിലനിർത്തുക</string>
+    <string name="quick_amount_reset">സ്വയമേവയുള്ള തുകകളിലേക്ക് മടങ്ങുക</string>
+    <string name="quick_amount_label">തുക</string>
+    <string name="quick_amount_taken">ഇത് ഇതിനകം തുകകളിൽ ഒന്നാണ്</string>
+    <string name="quick_amount_note">എല്ലാ ജോഡിയിലും %1$s-ന് ഉപയോഗിക്കും.</string>
 </resources>

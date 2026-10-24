@@ -358,4 +358,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Vous avez épuisé vos requêtes auprès de cette source.</string>
     <string name="quick_conversions_use_amount">Utiliser ce montant</string>
     <string name="quick_conversions_copy">Copier</string>
+    <string name="quick_conversions_options">Plus d\'options</string>
+    <string name="quick_amount_change">Modifier le montant</string>
+    <string name="quick_amount_keep">Garder ce montant</string>
+    <string name="quick_amount_reset">Revenir aux montants automatiques</string>
+    <string name="quick_amount_label">Montant</string>
+    <string name="quick_amount_taken">Fait déjà partie des montants</string>
+    <string name="quick_amount_note">Utilisé pour %1$s dans toutes les paires.</string>
 </resources>

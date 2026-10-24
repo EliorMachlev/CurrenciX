@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Oled selle allika päringulimiidi ära kasutanud.</string>
     <string name="quick_conversions_use_amount">Kasuta seda summat</string>
     <string name="quick_conversions_copy">Kopeeri</string>
+    <string name="quick_conversions_options">Rohkem valikuid</string>
+    <string name="quick_amount_change">Muuda summat</string>
+    <string name="quick_amount_keep">Jäta see summa alles</string>
+    <string name="quick_amount_reset">Tagasi automaatsete summade juurde</string>
+    <string name="quick_amount_label">Summa</string>
+    <string name="quick_amount_taken">On juba üks summadest</string>
+    <string name="quick_amount_note">Kasutatakse valuuta %1$s jaoks igas paaris.</string>
 </resources>

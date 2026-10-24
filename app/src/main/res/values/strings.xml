@@ -376,4 +376,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – You\'ve used up this Source\'s request allowance.</string>
     <string name="quick_conversions_use_amount">Use this amount</string>
     <string name="quick_conversions_copy">Copy</string>
+    <string name="quick_conversions_options">More options</string>
+    <string name="quick_amount_change">Change amount</string>
+    <string name="quick_amount_keep">Keep this amount</string>
+    <string name="quick_amount_reset">Back to automatic amounts</string>
+    <string name="quick_amount_label">Amount</string>
+    <string name="quick_amount_taken">Already one of the amounts</string>
+    <string name="quick_amount_note">Used for %1$s in every pair.</string>
 </resources>

@@ -353,4 +353,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Dein Anfragekontingent bei dieser Quelle ist aufgebraucht.</string>
     <string name="quick_conversions_use_amount">Diesen Betrag verwenden</string>
     <string name="quick_conversions_copy">Kopieren</string>
+    <string name="quick_conversions_options">Weitere Optionen</string>
+    <string name="quick_amount_change">Betrag ändern</string>
+    <string name="quick_amount_keep">Diesen Betrag behalten</string>
+    <string name="quick_amount_reset">Zurück zu automatischen Beträgen</string>
+    <string name="quick_amount_label">Betrag</string>
+    <string name="quick_amount_taken">Bereits einer der Beträge</string>
+    <string name="quick_amount_note">Gilt für %1$s in jedem Paar.</string>
 </resources>

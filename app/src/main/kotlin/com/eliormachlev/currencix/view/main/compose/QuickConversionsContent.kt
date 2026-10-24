@@ -1,7 +1,10 @@
 package com.eliormachlev.currencix.view.main.compose
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -39,6 +47,7 @@ import com.eliormachlev.currencix.view.compose.CurrencyPairRow
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
+import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.captureInto
 import com.eliormachlev.currencix.view.compose.theme.AmountFamily
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -83,6 +92,10 @@ data class QuickConversionsTable(
     val sourceText: String? = null,
     // Why they may not be today's: offline, the fallback, a past date.
     val warningText: String? = null,
+    // The tiles' amounts in [from] (the typed one and the filler aside), and
+    // whether they're the user's own rather than the automatic ones.
+    val amounts: List<BigDecimal> = emptyList(),
+    val customAmounts: Boolean = false,
 )
 
 /** What the sheet's taps do. */
@@ -95,8 +108,14 @@ class QuickConversionsActions(
     val onToClick: () -> Unit = {},
     // A row's tap: put its amount into the converter.
     val onUseAmount: (BigDecimal) -> Unit = {},
-    // A row's long-press: copy "100 USD = 92.00 EUR".
+    // From a row's long-press menu: copy "100 USD = 92.00 EUR".
     val onCopy: (QuickConversionsRow) -> Unit = {},
+    // From the menu: change a tile's amount, or keep the typed one as a tile;
+    // null leaves them out.
+    val onChangeAmount: ((QuickConversionsRow) -> Unit)? = null,
+    val onKeepAmount: ((QuickConversionsRow) -> Unit)? = null,
+    // From the menu, with the user's own amounts in force: back to the automatic ones.
+    val onResetAmounts: (() -> Unit)? = null,
     // Share the table; null hides the button.
     val onShare: (() -> Unit)? = null,
 )
@@ -243,7 +262,22 @@ private fun QuickConversionsTiles(
     ) {
         table.rows.chunked(TILES_PER_LINE).forEach { line ->
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.Small)) {
-                line.forEach { row -> QuickConversionTile(row, table.from, table.to, actions, Modifier.weight(1f)) }
+                line.forEach { row ->
+                    Box(Modifier.weight(1f)) {
+                        var menuOpen by remember { mutableStateOf(false) }
+                        QuickConversionTile(row, table.from, table.to, actions, onMenu = { menuOpen = true })
+                        // Words: the menu follows the language again.
+                        ReadingDirection {
+                            QuickConversionMenu(
+                                expanded = menuOpen,
+                                row = row,
+                                actions = actions,
+                                canReset = table.customAmounts,
+                                onDismiss = { menuOpen = false },
+                            )
+                        }
+                    }
+                }
                 repeat(TILES_PER_LINE - line.size) { Spacer(Modifier.weight(1f)) }
             }
         }
@@ -253,15 +287,15 @@ private fun QuickConversionsTiles(
 // One conversion: "$ 1", then "3.09 ₪ +1%" and the big "3.12 ₪" (each
 // symbol on the side the language puts it), as the
 // converter's receipt has it (without a fee, just the big result). A tap puts
-// the amount into the converter, a long-press copies the line; the typed
-// amount's tile is tinted and bold.
+// the amount into the converter, a long-press opens its menu ([onMenu]);
+// the typed amount's tile is tinted and bold.
 @Composable
 private fun QuickConversionTile(
     row: QuickConversionsRow,
     from: Currency?,
     to: Currency?,
     actions: QuickConversionsActions,
-    modifier: Modifier,
+    onMenu: () -> Unit,
 ) {
     val context = LocalContext.current
     val numbers = tableNumberStyle()
@@ -274,14 +308,15 @@ private fun QuickConversionTile(
     val feeColor = if (row.isTyped) colors.onSecondaryContainer else colors.error
     Column(
         modifier =
-            modifier
+            Modifier
+                .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
                 .background(container)
                 .hapticCombinedClickable(
                     onClick = { actions.onUseAmount(row.amount) },
                     onClickLabel = stringResource(R.string.quick_conversions_use_amount),
-                    onLongClick = { actions.onCopy(row) },
-                    onLongClickLabel = stringResource(R.string.quick_conversions_copy),
+                    onLongClick = onMenu,
+                    onLongClickLabel = stringResource(R.string.quick_conversions_options),
                 ).padding(Spacing.Medium)
                 // TalkBack hears the whole line, "CAD $ 1 = ILS ₪ 2.18 …", as one item.
                 .clearAndSetSemantics { contentDescription = row.copyText },
@@ -305,3 +340,46 @@ private fun QuickConversionTile(
         )
     }
 }
+
+// A tile's long-press: copy it; change its amount (or keep the typed one as
+// a tile); and, with the user's own amounts in force, go back to the
+// automatic ones.
+@Composable
+private fun QuickConversionMenu(
+    expanded: Boolean,
+    row: QuickConversionsRow,
+    actions: QuickConversionsActions,
+    canReset: Boolean,
+    onDismiss: () -> Unit,
+) {
+    val items =
+        listOfNotNull(
+            QuickMenuItem(R.string.quick_conversions_copy, R.drawable.ic_content_copy) { actions.onCopy(row) },
+            if (row.isTyped) {
+                actions.onKeepAmount?.let { keep -> QuickMenuItem(R.string.quick_amount_keep, R.drawable.ic_add) { keep(row) } }
+            } else {
+                actions.onChangeAmount?.let { change -> QuickMenuItem(R.string.quick_amount_change, R.drawable.ic_edit) { change(row) } }
+            },
+            actions.onResetAmounts?.takeIf { canReset }?.let { reset ->
+                QuickMenuItem(R.string.quick_amount_reset, R.drawable.ic_refresh, reset)
+            },
+        )
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        items.forEach { item ->
+            DropdownMenuItem(
+                text = { Text(stringResource(item.label)) },
+                leadingIcon = { Icon(painterResource(item.icon), contentDescription = null) },
+                onClick = {
+                    onDismiss()
+                    item.action()
+                },
+            )
+        }
+    }
+}
+
+private class QuickMenuItem(
+    @StringRes val label: Int,
+    @DrawableRes val icon: Int,
+    val action: () -> Unit,
+)

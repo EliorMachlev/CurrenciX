@@ -353,4 +353,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Du har brugt alle dine forespørgsler hos denne kilde.</string>
     <string name="quick_conversions_use_amount">Brug dette beløb</string>
     <string name="quick_conversions_copy">Kopiér</string>
+    <string name="quick_conversions_options">Flere muligheder</string>
+    <string name="quick_amount_change">Skift beløb</string>
+    <string name="quick_amount_keep">Behold dette beløb</string>
+    <string name="quick_amount_reset">Tilbage til automatiske beløb</string>
+    <string name="quick_amount_label">Beløb</string>
+    <string name="quick_amount_taken">Er allerede et af beløbene</string>
+    <string name="quick_amount_note">Bruges til %1$s i alle par.</string>
 </resources>

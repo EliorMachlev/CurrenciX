@@ -355,4 +355,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – سهمیه درخواست شما در این منبع تمام شده است.</string>
     <string name="quick_conversions_use_amount">استفاده از این مبلغ</string>
     <string name="quick_conversions_copy">کپی</string>
+    <string name="quick_conversions_options">گزینه‌های بیشتر</string>
+    <string name="quick_amount_change">تغییر مبلغ</string>
+    <string name="quick_amount_keep">نگه داشتن این مبلغ</string>
+    <string name="quick_amount_reset">بازگشت به مبالغ خودکار</string>
+    <string name="quick_amount_label">مبلغ</string>
+    <string name="quick_amount_taken">از قبل یکی از مبالغ است</string>
+    <string name="quick_amount_note">برای %1$s در همهٔ جفت‌ها استفاده می‌شود.</string>
 </resources>

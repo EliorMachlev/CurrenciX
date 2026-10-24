@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.screenshots
 
 import android.app.Application
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.view.main.compose.QuickAmountSheet
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsActions
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsContent
 import com.eliormachlev.currencix.view.main.compose.QuickConversionsRow
@@ -12,6 +13,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import java.math.BigDecimal
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -48,6 +50,34 @@ class QuickConversionsScreenshotTest {
                     ),
                 emptyText = "No conversions",
                 actions = ACTIONS,
+            )
+        }
+
+    // Amounts scaled to the currency: KRW starts at 1,000.
+    @Test fun quickConversionsScaled() =
+        shots.captureMatrix("quick_conversions_scaled") {
+            QuickConversionsContent(
+                table =
+                    QuickConversionsTable(
+                        Currency.KRW,
+                        Currency.ILS,
+                        KRW_ROWS,
+                        sourceText = "Based on Frankfurter.app, 24/10/26 16:00",
+                    ),
+                emptyText = "No conversions",
+                actions = ACTIONS,
+            )
+        }
+
+    // A tile's long-press → Change amount.
+    @Test fun quickAmountSheet() =
+        shots.captureMatrix("quick_amount_sheet") {
+            QuickAmountSheet(
+                currency = Currency.KRW,
+                initial = BigDecimal("5000"),
+                taken = listOf(BigDecimal("1000"), BigDecimal("10000")),
+                onSave = {},
+                onDismiss = {},
             )
         }
 
@@ -94,6 +124,19 @@ class QuickConversionsScreenshotTest {
                     feePercent = "+1%",
                 ),
             )
+
+        // 1 ILS = 369 KRW.
+        private val KRW_ROWS =
+            listOf(
+                "1,000" to "2.71",
+                "5,000" to "13.55",
+                "10,000" to "27.10",
+                "20,000" to "54.20",
+                "50,000" to "135.50",
+                "100,000" to "271.00",
+                "500,000" to "1,355.01",
+                "1,000,000" to "2,710.03",
+            ).map { (from, to) -> QuickConversionsRow("KRW ₩ $from", "ILS ₪ $to", null, fromValue = from, toValue = to) }
 
         private val SAMPLE_ROWS =
             listOf(

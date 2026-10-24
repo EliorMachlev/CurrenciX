@@ -357,4 +357,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – ניצלת את מכסת הבקשות שלך במקור הזה.</string>
     <string name="quick_conversions_use_amount">שימוש בסכום הזה</string>
     <string name="quick_conversions_copy">העתקה</string>
+    <string name="quick_conversions_options">אפשרויות נוספות</string>
+    <string name="quick_amount_change">שינוי הסכום</string>
+    <string name="quick_amount_keep">שמירת הסכום הזה</string>
+    <string name="quick_amount_reset">חזרה לסכומים האוטומטיים</string>
+    <string name="quick_amount_label">סכום</string>
+    <string name="quick_amount_taken">כבר אחד מהסכומים</string>
+    <string name="quick_amount_note">ישמש עבור %1$s בכל צמד.</string>
 </resources>

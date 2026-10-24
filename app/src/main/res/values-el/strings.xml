@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Εξαντλήσατε τα αιτήματα που σας αναλογούν σε αυτή την πηγή.</string>
     <string name="quick_conversions_use_amount">Χρήση αυτού του ποσού</string>
     <string name="quick_conversions_copy">Αντιγραφή</string>
+    <string name="quick_conversions_options">Περισσότερες επιλογές</string>
+    <string name="quick_amount_change">Αλλαγή ποσού</string>
+    <string name="quick_amount_keep">Διατήρηση αυτού του ποσού</string>
+    <string name="quick_amount_reset">Επιστροφή στα αυτόματα ποσά</string>
+    <string name="quick_amount_label">Ποσό</string>
+    <string name="quick_amount_taken">Είναι ήδη ένα από τα ποσά</string>
+    <string name="quick_amount_note">Χρησιμοποιείται για %1$s σε κάθε ζεύγος.</string>
 </resources>

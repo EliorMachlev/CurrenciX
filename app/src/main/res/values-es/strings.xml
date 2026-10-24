@@ -358,4 +358,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Has agotado las solicitudes disponibles de esta fuente.</string>
     <string name="quick_conversions_use_amount">Usar este importe</string>
     <string name="quick_conversions_copy">Copiar</string>
+    <string name="quick_conversions_options">Más opciones</string>
+    <string name="quick_amount_change">Cambiar importe</string>
+    <string name="quick_amount_keep">Conservar este importe</string>
+    <string name="quick_amount_reset">Volver a los importes automáticos</string>
+    <string name="quick_amount_label">Importe</string>
+    <string name="quick_amount_taken">Ya es uno de los importes</string>
+    <string name="quick_amount_note">Se usa para %1$s en todos los pares.</string>
 </resources>

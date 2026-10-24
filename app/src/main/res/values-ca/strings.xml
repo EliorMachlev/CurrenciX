@@ -358,4 +358,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Has esgotat les sol·licituds disponibles d’aquesta font.</string>
     <string name="quick_conversions_use_amount">Fes servir aquest import</string>
     <string name="quick_conversions_copy">Copia</string>
+    <string name="quick_conversions_options">Més opcions</string>
+    <string name="quick_amount_change">Canvia l\'import</string>
+    <string name="quick_amount_keep">Conserva aquest import</string>
+    <string name="quick_amount_reset">Torna als imports automàtics</string>
+    <string name="quick_amount_label">Import</string>
+    <string name="quick_amount_taken">Ja és un dels imports</string>
+    <string name="quick_amount_note">S\'usa per a %1$s en tots els parells.</string>
 </resources>

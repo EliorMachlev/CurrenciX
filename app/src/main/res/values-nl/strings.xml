@@ -353,4 +353,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Je hebt je verzoeken bij deze bron opgebruikt.</string>
     <string name="quick_conversions_use_amount">Dit bedrag gebruiken</string>
     <string name="quick_conversions_copy">Kopiëren</string>
+    <string name="quick_conversions_options">Meer opties</string>
+    <string name="quick_amount_change">Bedrag wijzigen</string>
+    <string name="quick_amount_keep">Dit bedrag houden</string>
+    <string name="quick_amount_reset">Terug naar automatische bedragen</string>
+    <string name="quick_amount_label">Bedrag</string>
+    <string name="quick_amount_taken">Is al een van de bedragen</string>
+    <string name="quick_amount_note">Gebruikt voor %1$s in elk paar.</string>
 </resources>

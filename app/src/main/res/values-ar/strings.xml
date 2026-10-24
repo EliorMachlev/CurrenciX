@@ -366,4 +366,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – استنفدت حصة الطلبات لدى هذا المصدر.</string>
     <string name="quick_conversions_use_amount">استخدام هذا المبلغ</string>
     <string name="quick_conversions_copy">نسخ</string>
+    <string name="quick_conversions_options">خيارات أخرى</string>
+    <string name="quick_amount_change">تغيير المبلغ</string>
+    <string name="quick_amount_keep">الاحتفاظ بهذا المبلغ</string>
+    <string name="quick_amount_reset">العودة إلى المبالغ التلقائية</string>
+    <string name="quick_amount_label">المبلغ</string>
+    <string name="quick_amount_taken">موجود بالفعل ضمن المبالغ</string>
+    <string name="quick_amount_note">يُستخدم لـ %1$s في كل زوج.</string>
 </resources>

@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Изчерпахте лимита на заявки при този източник.</string>
     <string name="quick_conversions_use_amount">Използване на тази сума</string>
     <string name="quick_conversions_copy">Копиране</string>
+    <string name="quick_conversions_options">Още опции</string>
+    <string name="quick_amount_change">Промяна на сумата</string>
+    <string name="quick_amount_keep">Запазване на тази сума</string>
+    <string name="quick_amount_reset">Обратно към автоматичните суми</string>
+    <string name="quick_amount_label">Сума</string>
+    <string name="quick_amount_taken">Вече е една от сумите</string>
+    <string name="quick_amount_note">Използва се за %1$s във всяка двойка.</string>
 </resources>

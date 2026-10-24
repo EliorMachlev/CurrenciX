@@ -358,4 +358,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Hai esaurito le richieste disponibili presso questa fonte.</string>
     <string name="quick_conversions_use_amount">Usa questo importo</string>
     <string name="quick_conversions_copy">Copia</string>
+    <string name="quick_conversions_options">Altre opzioni</string>
+    <string name="quick_amount_change">Cambia importo</string>
+    <string name="quick_amount_keep">Mantieni questo importo</string>
+    <string name="quick_amount_reset">Torna agli importi automatici</string>
+    <string name="quick_amount_label">Importo</string>
+    <string name="quick_amount_taken">È già uno degli importi</string>
+    <string name="quick_amount_note">Usato per %1$s in ogni coppia.</string>
 </resources>

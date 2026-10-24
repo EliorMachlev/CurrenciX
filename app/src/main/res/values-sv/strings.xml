@@ -355,4 +355,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Du har använt upp dina förfrågningar hos den här källan.</string>
     <string name="quick_conversions_use_amount">Använd det här beloppet</string>
     <string name="quick_conversions_copy">Kopiera</string>
+    <string name="quick_conversions_options">Fler alternativ</string>
+    <string name="quick_amount_change">Ändra belopp</string>
+    <string name="quick_amount_keep">Behåll det här beloppet</string>
+    <string name="quick_amount_reset">Tillbaka till automatiska belopp</string>
+    <string name="quick_amount_label">Belopp</string>
+    <string name="quick_amount_taken">Finns redan bland beloppen</string>
+    <string name="quick_amount_note">Används för %1$s i alla par.</string>
 </resources>

@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – এই উৎসে আপনার অনুরোধের সীমা শেষ।</string>
     <string name="quick_conversions_use_amount">এই পরিমাণ ব্যবহার করুন</string>
     <string name="quick_conversions_copy">কপি</string>
+    <string name="quick_conversions_options">আরও বিকল্প</string>
+    <string name="quick_amount_change">পরিমাণ বদলান</string>
+    <string name="quick_amount_keep">এই পরিমাণ রাখুন</string>
+    <string name="quick_amount_reset">স্বয়ংক্রিয় পরিমাণে ফিরুন</string>
+    <string name="quick_amount_label">পরিমাণ</string>
+    <string name="quick_amount_taken">এটি ইতিমধ্যেই পরিমাণগুলোর একটি</string>
+    <string name="quick_amount_note">প্রতিটি জোড়ায় %1$s-এর জন্য ব্যবহৃত হবে।</string>
 </resources>

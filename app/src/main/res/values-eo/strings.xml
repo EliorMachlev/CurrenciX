@@ -354,4 +354,11 @@
     <string name="error_api_quota_exceeded">HTTP 429 – Vi eluzis viajn petojn ĉe ĉi tiu fonto.</string>
     <string name="quick_conversions_use_amount">Uzi ĉi tiun sumon</string>
     <string name="quick_conversions_copy">Kopii</string>
+    <string name="quick_conversions_options">Pliaj elektoj</string>
+    <string name="quick_amount_change">Ŝanĝi sumon</string>
+    <string name="quick_amount_keep">Konservi ĉi tiun sumon</string>
+    <string name="quick_amount_reset">Reen al aŭtomataj sumoj</string>
+    <string name="quick_amount_label">Sumo</string>
+    <string name="quick_amount_taken">Jam unu el la sumoj</string>
+    <string name="quick_amount_note">Uzata por %1$s en ĉiu paro.</string>
 </resources>
