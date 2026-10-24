@@ -47,6 +47,8 @@ import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.compose.theme.TABULAR_FIGURES
 import com.eliormachlev.currencix.view.compose.theme.tile
 import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -125,25 +127,7 @@ internal fun TimelineSecondary(
                 .fillMaxWidth()
                 .padding(CONTENT_PADDING),
     ) {
-        // Past / diff-% / current row: the change takes the room between the
-        // two rates, so a long rate or a large font never draws over it.
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            DatedRateColumn(
-                dated = stats.ratePast,
-                horizontalAlignment = Alignment.Start,
-                formatter = formatter,
-                secondaryColor = secondaryColor,
-            )
-            Box(Modifier.weight(1f).padding(horizontal = DIFF_SIDE_GAP), contentAlignment = Alignment.Center) {
-                stats.diffPercent?.let { PercentChange(it) }
-            }
-            DatedRateColumn(
-                dated = stats.rateCurrent,
-                horizontalAlignment = Alignment.End,
-                formatter = formatter,
-                secondaryColor = secondaryColor,
-            )
-        }
+        PastCurrentRow(stats, formatter, secondaryColor)
 
         // Divider — hidden until there's a past rate, mirroring the pre-Compose behaviour.
         if (pastRate != null) {
@@ -159,7 +143,78 @@ internal fun TimelineSecondary(
             Box(modifier = Modifier.height(CONTENT_PADDING * 2))
         }
 
+        percentFromAverage(
+            stats.rateCurrent
+                ?.first
+                ?.value
+                ?.value,
+            stats.ratesAvg?.first?.value,
+        )?.let { AverageContext(it) }
         TilesAndPeriod(rows, period)
+    }
+}
+
+// Past / diff-% / current row: the change takes the room between the two
+// rates, so a long rate or a large font never draws over it.
+@Composable
+private fun PastCurrentRow(
+    stats: TimelineStats,
+    formatter: DateTimeFormatter,
+    secondaryColor: Color,
+) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        DatedRateColumn(
+            dated = stats.ratePast,
+            horizontalAlignment = Alignment.Start,
+            formatter = formatter,
+            secondaryColor = secondaryColor,
+        )
+        Box(Modifier.weight(1f).padding(horizontal = DIFF_SIDE_GAP), contentAlignment = Alignment.Center) {
+            stats.diffPercent?.let { PercentChange(it) }
+        }
+        DatedRateColumn(
+            dated = stats.rateCurrent,
+            horizontalAlignment = Alignment.End,
+            formatter = formatter,
+            secondaryColor = secondaryColor,
+        )
+    }
+}
+
+// Within this much (in percent) the latest rate counts as at the average.
+private val AT_AVERAGE_PERCENT = BigDecimal("0.05")
+private const val CONTEXT_PERCENT_DECIMALS = 1
+
+/**
+ * How far [current] is from [average], in percent (positive above it); null
+ * when either is missing or the average is zero. A fact for context, not a
+ * call to buy or sell.
+ */
+internal fun percentFromAverage(
+    current: BigDecimal?,
+    average: BigDecimal?,
+): BigDecimal? {
+    if (current == null || average == null || average.signum() == 0) return null
+    return (current - average).divide(average, MathContext.DECIMAL64).movePointRight(2)
+}
+
+// "Latest rate: 3.7% above this period's average", one neutral line under the change.
+@Composable
+private fun AverageContext(percent: BigDecimal) {
+    val shown = percent.abs().setScale(CONTEXT_PERCENT_DECIMALS, RoundingMode.HALF_UP)
+    val text =
+        when {
+            percent.abs() < AT_AVERAGE_PERCENT -> stringResource(R.string.chart_vs_average_at)
+            percent.signum() > 0 -> stringResource(R.string.chart_vs_average_above, "${shown.toPlainString()}%")
+            else -> stringResource(R.string.chart_vs_average_below, "${shown.toPlainString()}%")
+        }
+    ReadingDirection {
+        Text(
+            text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.fillMaxWidth().padding(bottom = CONTENT_PADDING),
+        )
     }
 }
 

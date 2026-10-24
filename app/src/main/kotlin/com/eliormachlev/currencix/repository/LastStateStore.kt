@@ -12,6 +12,7 @@ import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.repository.persistence.PrefStore
 import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
 import com.eliormachlev.currencix.repository.persistence.keyedPref
+import com.eliormachlev.currencix.repository.persistence.optionalStringPref
 import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.toLocalDate
 import com.eliormachlev.currencix.util.toMillis
@@ -27,6 +28,7 @@ private const val KEY_LAST_STATE_FROM = "_last_from"
 private const val KEY_LAST_STATE_TO = "_last_to"
 private const val KEY_HISTORICAL_DATE = "_historical_date"
 private const val KEY_RECENT_PAIRS = "_recent_pairs"
+private const val KEY_ABROAD_ASKED = "_abroad_asked_country"
 
 /** Where the converter was left: the pair, the recent pairs, and a pinned past date. */
 class LastStateStore(
@@ -55,6 +57,12 @@ class LastStateStore(
     /** The recent pairs, newest first (see [RecentPairs]). */
     val recentPairs: Pref<List<CurrencyPair>> =
         store.keyedPref(stringPreferencesKey(KEY_RECENT_PAIRS), RecentPairs::decode, RecentPairs::encode)
+
+    /**
+     * The country (ISO 3166) the converter last offered its local currency
+     * for: asked once per visit, cleared once the phone is home again.
+     */
+    val abroadAskedCountry: Pref<String?> = store.optionalStringPref(KEY_ABROAD_ASKED)
 
     /** The past date the converter is pinned to, or null for today's rates. */
     val historicalDate: Pref<LocalDate?> =

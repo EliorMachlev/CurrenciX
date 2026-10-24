@@ -12,6 +12,7 @@ import com.eliormachlev.currencix.model.RateAlert
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.util.newId
 import java.math.BigDecimal
+import java.time.LocalDate
 
 // The saved values rebuilt from their stored fields, whichever format held
 // them (the Protobuf files, a JSON backup or cart file): each read applies
@@ -60,6 +61,22 @@ internal fun tripOf(
     val currency = Currency.fromString(currencyCode) ?: return null
     return Trip(idOrNew(id), name, currency, positiveDecimalOrNull(budget))
 }
+
+/**
+ * This trip with where and when it is, checked: a destination the app knows
+ * (and not home itself), and dates in order (an end before the start is
+ * dropped).
+ */
+internal fun Trip.withPlan(
+    destinationCode: String?,
+    start: LocalDate?,
+    end: LocalDate?,
+): Trip =
+    copy(
+        destination = destinationCode?.let(Currency::fromString)?.takeIf { it != currency },
+        start = start,
+        end = end?.takeIf { start == null || !it.isBefore(start) },
+    )
 
 /** The fields of a fee, as stored. */
 internal class StoredFee(

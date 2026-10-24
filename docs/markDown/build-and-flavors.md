@@ -107,7 +107,7 @@ Replaces SharedPreferences across every namespace — see [architecture.md](arch
 
 | Dependency | Version |
 |---|---|
-| `androidx.compose:compose-bom-alpha` | 2026.10.00 — the pre-release BOM: Compose 1.13.0-beta01, Material 3 1.5.0-beta01. Back to `compose-bom` once both are stable |
+| `androidx.compose:compose-bom-alpha` | 2026.10.01 — the pre-release BOM: Compose 1.13.0-beta02, Material 3 1.5.0-beta02. Back to `compose-bom` once both are stable |
 | `androidx.compose.material3:material3` / `ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
 | `androidx.activity:activity-compose` | 1.13.0 |
 | `androidx.navigation3:navigation3-runtime` / `navigation3-ui` | 1.2.0 |
@@ -120,8 +120,8 @@ Hosts the Vico chart plus the rest of the app's UI — every screen is Compose, 
 
 | Dependency | Version |
 |---|---|
-| `com.squareup.okhttp3:okhttp` | 5.5.0 |
-| `com.squareup.okhttp3:logging-interceptor` | 5.5.0 |
+| `com.squareup.okhttp3:okhttp` | 5.5.1 |
+| `com.squareup.okhttp3:logging-interceptor` | 5.5.1 |
 | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | `com.squareup.retrofit2:converter-moshi` | 3.0.0 |
 | `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
@@ -189,7 +189,7 @@ No OCR language data ships in either app: English (tessdata_fast 4.1.0, 4.1 MB) 
 | `androidx.arch.core:core-testing` | 2.2.0 |
 | `org.junit.jupiter:junit-jupiter-*` | 6.1.3 |
 | `com.code-intelligence:jazzer-junit` | 0.30.0 (fuzz testing) |
-| `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.76.0 |
+| `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.77.0 |
 | `org.robolectric:robolectric` | 4.17 |
 | `androidx.compose.ui:ui-test-junit4` / `ui-test-manifest` | via BOM |
 | `com.lemonappdev:konsist` | 0.18.1 |

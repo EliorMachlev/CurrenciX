@@ -221,6 +221,13 @@ class MainActivity : AppCompatActivity() {
             ConverterLaunch.Request.OpenCart -> {
                 nav.navigate(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
             }
+
+            // Back from the chart lands on the converter, on the same pair.
+            is ConverterLaunch.Request.OpenChart -> {
+                viewModel.setCurrencyPair(request.pair)
+                nav.navigate(Screen.Converter)
+                nav.navigate(Screen.Timeline(request.pair.from, request.pair.to))
+            }
         }
     }
 

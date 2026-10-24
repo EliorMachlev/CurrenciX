@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.AbroadOffer
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -31,6 +32,7 @@ import com.eliormachlev.currencix.view.cart.compose.ReceiptReviewSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptSetupOfferSheet
 import com.eliormachlev.currencix.view.cart.compose.SavedCartActions
 import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
+import com.eliormachlev.currencix.view.cart.compose.TripSheet
 import com.eliormachlev.currencix.view.cart.compose.cartItemActions
 import com.eliormachlev.currencix.view.cart.compose.cartSources
 import com.eliormachlev.currencix.view.compose.PairChipContent
@@ -38,6 +40,7 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
+import com.eliormachlev.currencix.view.main.compose.AbroadSheet
 import com.eliormachlev.currencix.view.main.compose.CompareCardsSheet
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
@@ -57,6 +60,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.LocalDate
 
 // The surfaces added with recent pairs, cart sections and extras, the
 // text-selection popup. (Wallpaper colors aren't here:
@@ -303,6 +307,32 @@ class NewSurfacesScreenshotTest {
                 onConfirm = {},
                 onDismiss = {},
             )
+        }
+
+    // A trip with where and when: Korea, paying in KRW, for a week in November.
+    @Test fun tripSheetPlanned() =
+        shots.captureMatrix("trip_sheet_planned") {
+            TripSheet(
+                initial =
+                    Trip(
+                        "t",
+                        "Korea",
+                        Currency.ILS,
+                        BigDecimal("8000"),
+                        Currency.KRW,
+                        LocalDate.of(2026, 11, 7),
+                        LocalDate.of(2026, 11, 14),
+                    ),
+                currencies = listOf(Currency.ILS, Currency.USD),
+                onSave = {},
+                onDismiss = {},
+            )
+        }
+
+    // Landed abroad: switch the converter to the local currency?
+    @Test fun abroadSheet() =
+        shots.captureMatrix("abroad_sheet") {
+            AbroadSheet(offer = AbroadOffer("KR", Currency.KRW, Currency.ILS), onSwitch = {}, onDismiss = {})
         }
 
     @Test fun cartExtrasSheet() =

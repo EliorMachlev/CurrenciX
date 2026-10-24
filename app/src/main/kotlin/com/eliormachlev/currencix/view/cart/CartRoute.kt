@@ -77,8 +77,8 @@ fun CartRoute(
             host.dispose()
         }
     }
-    val scan = rememberReceiptScan()
     val cart by viewModel.getCurrentCart().observeAsState()
+    val scan = rememberReceiptScan(cart)
     val needsClosePrompt = remember(cart) { host.saveLoad.needsClosePrompt() }
     BackHandler(enabled = needsClosePrompt, onBack = host.saveLoad::attemptClose)
 
@@ -101,7 +101,7 @@ fun CartRoute(
             )
         }
     }
-    CartOverlays(host)
+    CartOverlays(host, onOpenFees)
     ReceiptOverlays(host, scan)
 }
 
@@ -129,7 +129,7 @@ private fun ReceiptOverlays(
         }
 
         setup is ReceiptSetup.LanguageOffer -> {
-            ReceiptLanguageOfferSheet(language = setup.language, onAnswer = scan::answerLanguage)
+            ReceiptLanguageOfferSheet(language = setup.language, onAnswer = scan::answerLanguage, until = setup.until)
         }
 
         setup is ReceiptSetup.Installing -> {
@@ -244,7 +244,10 @@ private fun cartMenu(
 
 // Every sheet / dialog the cart can open.
 @Composable
-private fun CartOverlays(host: CartHost) {
+private fun CartOverlays(
+    host: CartHost,
+    onOpenFees: () -> Unit,
+) {
     val state = host.overlays
     state.cartChoice?.let { request ->
         CartChoiceSheet(
@@ -273,6 +276,7 @@ private fun CartOverlays(host: CartHost) {
             onRename = host.saveLoad::onLoadRename,
             onDelete = host.saveLoad::onLoadDelete,
             onDismiss = { state.loadListVisible = false },
+            onOpenFees = onOpenFees,
         )
     }
     state.unsavedChanges?.let { request ->

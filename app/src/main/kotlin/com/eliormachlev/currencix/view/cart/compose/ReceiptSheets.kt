@@ -39,6 +39,11 @@ import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 /** "Reading the receipt…" while the photo is read; it takes a few seconds. */
 @Composable
@@ -91,8 +96,11 @@ fun ReceiptSetupOfferSheet(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.Small),
             ) {
                 Checkbox(checked = withLanguage, onCheckedChange = null)
+                val name = language.displayName(locale)
+                val size = language.downloadSize(context)
                 Text(
-                    stringResource(R.string.receipt_setup_also_language, language.displayName(locale), language.downloadSize(context)),
+                    offer.until?.let { stringResource(R.string.receipt_setup_also_language_until, name, size, formatUntilDay(it, locale)) }
+                        ?: stringResource(R.string.receipt_setup_also_language, name, size),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f),
                 )
@@ -110,9 +118,11 @@ fun ReceiptSetupOfferSheet(
 fun ReceiptLanguageOfferSheet(
     language: TessLanguage,
     onAnswer: (download: Boolean) -> Unit,
+    until: Instant? = null,
 ) {
     val context = LocalContext.current
-    val name = language.displayName(LocalConfiguration.current.locales[0])
+    val locale = LocalConfiguration.current.locales[0]
+    val name = language.displayName(locale)
     LedgerPromptSheet(
         title = stringResource(R.string.receipt_scan),
         confirmLabel = stringResource(R.string.receipt_setup_download),
@@ -120,7 +130,11 @@ fun ReceiptLanguageOfferSheet(
         onDismiss = { onAnswer(false) },
         cancelLabel = stringResource(R.string.receipt_language_english_only),
     ) {
-        PromptMessage(stringResource(R.string.receipt_language_offer, name, language.downloadSize(context)))
+        val size = language.downloadSize(context)
+        PromptMessage(
+            until?.let { stringResource(R.string.receipt_language_offer_trip, name, size, formatUntilDay(it, locale)) }
+                ?: stringResource(R.string.receipt_language_offer, name, size),
+        )
     }
 }
 
@@ -131,6 +145,12 @@ private fun SetupItem(text: String) {
 }
 
 private const val BULLET = "•"
+
+// The day a trip's language goes ("14 Nov 2026"), in the phone's time zone.
+private fun formatUntilDay(
+    until: Instant,
+    locale: Locale,
+): String = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale).format(until.atZone(ZoneId.systemDefault()))
 
 /** The reader downloading, [fraction] of the way when known; closing it lets it carry on unseen. */
 @Composable

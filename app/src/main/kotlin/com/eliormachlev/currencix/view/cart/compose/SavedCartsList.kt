@@ -45,6 +45,7 @@ import com.eliormachlev.currencix.viewmodel.cart.subtotalOf
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -70,6 +71,8 @@ class SavedCartActions(
     // A new trip, with this cart in it.
     val onNewTrip: (SavedCart) -> Unit = {},
     val onEditTrip: (Trip) -> Unit = {},
+    // The trip's before-you-go checklist.
+    val onTripChecklist: (Trip) -> Unit = {},
 )
 
 /**
@@ -85,9 +88,19 @@ fun SavedCartsList(
     val tripIds = trips.mapTo(mutableSetOf()) { it.trip.id }
     val loose = items.filter { it.tripId !in tripIds }
     val row: @Composable (SavedCart) -> Unit = { cart -> SavedCartRow(cart, trips.map { it.trip }, actions) }
+    // Trips under way or ahead first; those over go after them, in the order made.
+    val today = remember { LocalDate.now() }
+    val ordered = remember(trips, today) { trips.sortedBy { it.trip.hasEnded(today) } }
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        trips.forEach { summary ->
-            item(key = "trip:${summary.trip.id}") { TripHeader(summary, onEdit = { actions.onEditTrip(summary.trip) }) }
+        ordered.forEach { summary ->
+            item(key = "trip:${summary.trip.id}") {
+                TripHeader(
+                    summary,
+                    today,
+                    onEdit = { actions.onEditTrip(summary.trip) },
+                    onChecklist = { actions.onTripChecklist(summary.trip) },
+                )
+            }
             items(items = items.filter { it.tripId == summary.trip.id }, key = { it.id }) { row(it) }
         }
         if (trips.isNotEmpty() && loose.isNotEmpty()) {
@@ -102,11 +115,14 @@ fun SavedCartsList(
 // Distinct from cart ids (UUIDs) and the "trip:" keys.
 private const val OTHER_CARTS_KEY = "section:other"
 
-// "Japan 2026        ✎" / "1,234.50 ₪ of 3,000.00 ₪" and a bar, or "1,234.50 ₪ spent".
+// "Japan 2026     ☑ ✎" / "14 Nov – 21 Nov 2026" or "Ended" / "1,234.50 ₪ of 3,000.00 ₪" and a bar,
+// or "1,234.50 ₪ spent" / "₪ 120 a day · budget ₪ 375 a day".
 @Composable
 private fun TripHeader(
     summary: TripSummary,
+    today: LocalDate,
     onEdit: () -> Unit,
+    onChecklist: () -> Unit,
 ) {
     val context = LocalContext.current
     val trip = summary.trip
@@ -125,10 +141,17 @@ private fun TripHeader(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
+            // The checklist is for a trip with somewhere to go that isn't over.
+            if (trip.destination != null && !trip.hasEnded(today)) {
+                IconButton(onClick = rememberHapticOnClick(onChecklist)) {
+                    Icon(painterResource(R.drawable.ic_checklist), contentDescription = stringResource(R.string.trip_checklist))
+                }
+            }
             IconButton(onClick = rememberHapticOnClick(onEdit)) {
                 Icon(painterResource(R.drawable.ic_edit), contentDescription = stringResource(R.string.trip_edit))
             }
         }
+        TripWhen(trip, today)
         Text(
             if (budget == null) {
                 stringResource(R.string.trip_spent, spentText)
@@ -138,6 +161,7 @@ private fun TripHeader(
             style = MaterialTheme.typography.bodyMedium,
             color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        TripPerDay(trip, summary.spent, today)
         progress?.let {
             LinearProgressIndicator(
                 progress = { it },
@@ -147,6 +171,51 @@ private fun TripHeader(
             )
         }
     }
+}
+
+// Its dates, or "Ended" once they're past; nothing without dates.
+@Composable
+private fun TripWhen(
+    trip: Trip,
+    today: LocalDate,
+) {
+    val dates = TripDates(trip.start, trip.end).label(LocalConfiguration.current.locales[0]) ?: return
+    Text(
+        if (trip.hasEnded(today)) stringResource(R.string.trip_ended, dates) else dates,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+// What it has cost a day so far, against the budget's share of each day when both are known.
+@Composable
+private fun TripPerDay(
+    trip: Trip,
+    spent: BigDecimal?,
+    today: LocalDate,
+) {
+    val context = LocalContext.current
+    val daysSoFar = trip.daysSoFar(today) ?: return
+    val perDay = (spent ?: BigDecimal.ZERO).divide(BigDecimal.valueOf(daysSoFar), MathContext.DECIMAL64)
+    val perDayText = ltrIsolate(context.formatCartAmount(perDay, trip.currency))
+    val budgetPerDay =
+        trip.budget?.let { budget -> trip.days?.let { budget.divide(BigDecimal.valueOf(it), MathContext.DECIMAL64) } }
+    Text(
+        if (budgetPerDay == null) {
+            stringResource(R.string.trip_per_day, perDayText)
+        } else {
+            stringResource(R.string.trip_per_day_of, perDayText, ltrIsolate(context.formatCartAmount(budgetPerDay, trip.currency)))
+        },
+        style = MaterialTheme.typography.bodySmall,
+        color =
+            if (budgetPerDay != null &&
+                perDay > budgetPerDay
+            ) {
+                MaterialTheme.colorScheme.error
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            },
+    )
 }
 
 @Composable

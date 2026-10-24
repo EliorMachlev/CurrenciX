@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Instant
 import java.util.Locale
 
 // Nothing is downloaded for reading receipts until the user says yes to it
@@ -12,17 +13,21 @@ import java.util.Locale
 class ReceiptScanTest {
     private val installed = mutableSetOf<TessLanguage>()
     private val answers = mutableMapOf<TessLanguage, Boolean>()
+    private val untils = mutableMapOf<TessLanguage, Instant?>()
     private var recognizer = true
     private var setupsStarted = 0
     private var photoChoices = 0
 
     private fun scan(local: TessLanguage? = TessLanguage.HEBREW) =
         ReceiptScan().apply {
-            this.local = local
+            candidates = listOfNotNull(local)
             isInstalled = { it in installed }
             isRecognizerHere = { recognizer }
             answerFor = { answers[it] }
-            answer = { language, allowed -> answers[language] = allowed }
+            answer = { language, allowed, until ->
+                answers[language] = allowed
+                untils[language] = until
+            }
             startSetup = { setupsStarted++ }
         }
 
@@ -94,6 +99,25 @@ class ReceiptScanTest {
         scan.begin { photoChoices++ }
         assertNull(scan.setup)
         assertEquals(1, photoChoices)
+    }
+
+    @Test
+    fun `the trip's language comes first, kept until the trip ends`() {
+        installed += TessLanguage.ENGLISH
+        val tripEnd = Instant.parse("2026-11-14T14:59:59Z")
+        val scan =
+            scan().apply {
+                candidates = listOf(TessLanguage.KOREAN, TessLanguage.HEBREW)
+                untilFor = { if (it == TessLanguage.KOREAN) tripEnd else null }
+            }
+        scan.begin { photoChoices++ }
+        assertEquals(ReceiptSetup.LanguageOffer(TessLanguage.KOREAN, tripEnd), scan.setup)
+        scan.answerLanguage(download = true)
+        assertEquals(tripEnd, untils[TessLanguage.KOREAN])
+
+        // Korean answered, Hebrew is next.
+        scan.begin { photoChoices++ }
+        assertEquals(ReceiptSetup.LanguageOffer(TessLanguage.HEBREW, null), scan.setup)
     }
 
     @Test

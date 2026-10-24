@@ -13,6 +13,7 @@ import com.eliormachlev.currencix.proto.FeeProto
 import com.eliormachlev.currencix.proto.PersonProto
 import com.eliormachlev.currencix.proto.RateAlertProto
 import com.eliormachlev.currencix.proto.TripProto
+import java.time.LocalDate
 
 // The saved carts, trips, fees and rate alerts to and from their Protobuf messages
 // (src/main/proto/currencix/saved.proto). Reads go through the same checks as
@@ -61,10 +62,19 @@ private fun CartItem.toProto(): CartItemProto =
 private fun CartItemProto.toModel(): CartItem = CartItem(id, name, expression, pinned, quantity, checked, person_id).checked()
 
 internal fun Trip.toProto(): TripProto =
-    TripProto(id = id, name = name, currency = currency.iso4217Alpha(), budget = budget?.toPlainString())
+    TripProto(
+        id = id,
+        name = name,
+        currency = currency.iso4217Alpha(),
+        budget = budget?.toPlainString(),
+        destination = destination?.iso4217Alpha(),
+        start_day = start?.toEpochDay(),
+        end_day = end?.toEpochDay(),
+    )
 
 /** The trip, or null when its currency isn't one the app knows. */
-internal fun TripProto.toModel(): Trip? = tripOf(id, name, currency, budget)
+internal fun TripProto.toModel(): Trip? =
+    tripOf(id, name, currency, budget)?.withPlan(destination, start_day?.let(LocalDate::ofEpochDay), end_day?.let(LocalDate::ofEpochDay))
 
 internal fun Fee.toProto(): FeeProto {
     val stored = toStored()

@@ -25,7 +25,7 @@ plugins {
     // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
     // used by the .github/workflows/screenshots.yaml job. Runs on top of
     // Robolectric Native Graphics — no device or emulator required.
-    id("io.github.takahirom.roborazzi") version "1.76.0"
+    id("io.github.takahirom.roborazzi") version "1.77.0"
     // Consumes the baseline + startup profiles emitted by :baselineprofile and
     // bakes them into the release AAB / APK for ProfileInstaller to hand to
     // ART at install time. Version pinned at the root build script.
@@ -331,7 +331,7 @@ dependencies {
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
     // the shared instance via the HttpClientProvider.fetch extension.
-    val okHttpVersion = "5.5.0"
+    val okHttpVersion = "5.5.1"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     // Chucker: in-app HTTP inspector for debug builds. The real library is
@@ -357,10 +357,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView).
-    // The pre-release BOM: Compose 1.13.0-beta01 and Material 3 1.5.0-beta01,
+    // The pre-release BOM: Compose 1.13.0-beta02 and Material 3 1.5.0-beta02,
     // for their text-field keyboard (IME) and list-prefetch fixes. Back to
     // `compose-bom` once both are stable.
-    val composeBomVersion = "2026.10.00"
+    val composeBomVersion = "2026.10.01"
     implementation(platform("androidx.compose:compose-bom-alpha:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
@@ -445,7 +445,7 @@ dependencies {
     // CI can render every Compose surface without an emulator. The vintage
     // engine (already above) runs Robolectric's JUnit 4 test runner under
     // useJUnitPlatform().
-    val roborazziVersion = "1.76.0"
+    val roborazziVersion = "1.77.0"
     testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
     testImplementation("org.robolectric:robolectric:4.17")
