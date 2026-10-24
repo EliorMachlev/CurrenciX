@@ -1,7 +1,7 @@
 """Puts each failed test (class, name, message) on the workflow run as an
 error annotation, readable from the checks page and the API without the
 full log. Arguments: glob patterns for JUnit XML result files. Needs
-defusedxml (pip install defusedxml)."""
+defusedxml (pip install --require-hashes -r .github/scripts/requirements.txt)."""
 
 import glob
 import sys

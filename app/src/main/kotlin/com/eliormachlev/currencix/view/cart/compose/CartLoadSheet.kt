@@ -45,6 +45,7 @@ fun CartLoadSheet(
     onRename: (SavedCart) -> Unit,
     onDelete: (SavedCart) -> Unit,
     onDismiss: () -> Unit,
+    onOpenFees: () -> Unit = {},
 ) {
     // Seed with the persisted snapshot so the first frame has the real list,
     // otherwise the empty-list default would trip the auto-dismiss before the
@@ -52,6 +53,7 @@ fun CartLoadSheet(
     val saved by viewModel.getSavedCarts().observeAsState(viewModel.getSavedCartsSnapshot())
     val trips by viewModel.trips.getSummaries().observeAsState(emptyList())
     var editing by remember { mutableStateOf<TripEdit?>(null) }
+    var checklistFor by remember { mutableStateOf<Trip?>(null) }
     LaunchedEffect(saved.isEmpty()) {
         if (saved.isEmpty()) onDismiss()
     }
@@ -93,11 +95,23 @@ fun CartLoadSheet(
                         onMoveToTrip = { cart, tripId -> viewModel.trips.moveCart(cart.id, tripId) },
                         onNewTrip = { cart -> editing = TripEdit(trip = null, addCart = cart) },
                         onEditTrip = { trip -> editing = TripEdit(trip = trip, addCart = null) },
+                        onTripChecklist = { trip -> checklistFor = trip },
                     ),
             )
         }
     }
     editing?.let { TripEditor(it, viewModel, saved, onClose = { editing = null }) }
+    checklistFor?.let { trip ->
+        TripChecklistSheet(
+            trip = trip,
+            onOpenFees = {
+                checklistFor = null
+                onDismiss()
+                onOpenFees()
+            },
+            onDismiss = { checklistFor = null },
+        )
+    }
 }
 
 // The trip sheet's subject: a trip to edit, or a new one (with [addCart] put in it).
@@ -129,8 +143,8 @@ private fun TripEditor(
     TripSheet(
         initial = trip,
         currencies = currencies,
-        onSave = { name, currency, budget ->
-            val id = viewModel.trips.save(trip?.id, name, currency, budget)
+        onSave = { draft ->
+            val id = viewModel.trips.save(trip?.id, draft)
             edit.addCart?.let { viewModel.trips.moveCart(it.id, id) }
             onClose()
         },

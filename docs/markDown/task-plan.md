@@ -1,5 +1,7 @@
 # CurrenciX task plan
 
+> **Status (2026-10-23): historical.** This was the plan for the Compose redesign, which merged in #181. Every phase has landed except what the index below marks otherwise. The task IDs are this plan's own numbering, **not** GitHub issue or PR numbers (GitHub's #137–#164 are unrelated PRs). Current design is described in [architecture.md](architecture.md).
+
 Ordering rule: **backend first, UI second.** Within UI: **main → settings → cart → chart.**
 
 Critical path: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9.
@@ -21,15 +23,15 @@ Guardrails first. These catch regressions in everything that follows.
 ## Phase 1 — Data / state layer
 
 - **#150 DataStore migration** — namespace-by-namespace behind a `PersistenceKey` enum. Verify backup round-trip after each namespace. Kills `warmSharedPreferences()`. Inline a ~30-line `restartApp(context)` helper (`PackageManager.getLaunchIntentForPackage` + `exitProcess(0)`) and call it from the migration-complete hook and from `BackupManager.importArchive()` success — no ProcessPhoenix dep.
-- **#149 Molecule (LiveData → StateFlow)** — order: BackupViewModel → PreferenceViewModel → FeeManagerViewModel → MainViewModel. Land early so all subsequent UI (Phases 4–8) writes StateFlow-native, not LiveData that needs re-migration. **Pilot landed:** PreferenceViewModel migrated to `StateFlow` via `stateIn(WhileSubscribed(5s))` seeded from blocking `snapshot()` reads; Compose consumers switched to `collectAsStateWithLifecycle` via `lifecycle-runtime-compose`. Molecule itself is **not** adopted — plain `stateIn` covers the 1:1 fanout each VM does; revisit Molecule only if a VM starts composing multiple flows into derived UI state. Remaining VMs (Backup, FeeManager, Main) follow the same recipe.
+- **#149 Molecule (LiveData → StateFlow)** — order: BackupViewModel → PreferenceViewModel → FeeManagerViewModel → MainViewModel. Land early so all subsequent UI (Phases 4–8) writes StateFlow-native, not LiveData that needs re-migration. **Pilot landed:** PreferenceViewModel migrated to `StateFlow` via `stateIn(WhileSubscribed(5s))` seeded from blocking `snapshot()` reads; Compose consumers switched to `collectAsStateWithLifecycle` via `lifecycle-runtime-compose`. Molecule itself is **not** adopted — plain `stateIn` covers the 1:1 fanout each VM does; revisit Molecule only if a VM starts composing multiple flows into derived UI state. Later view models use `StateFlow` where they're new (the cart's, the timeline's); `MainViewModel` and `FeeManagerViewModel` still expose `LiveData` too, which architecture.md documents as current.
 - **#161 kotlinx.collections.immutable** *(rides with #149)* — expose `ImmutableList<T>` on the state side of every StateFlow that carries a list, so Compose stability inference skips recomposition on unchanged content. Land in the same pass so types don't need a second migration.
 
 ## Phase 2 — Networking layer
 
 - **#158 Retrofit atop OkHttp** — one provider at a time. Chucker (#143) already available for debugging.
   - Landed: Frankfurter (`FrankfurterApi` + shared `util/RetrofitProvider.kt`; reuses the OkHttp singleton from #163 so cache + rewrite interceptor still apply; `ApiHttpError` semantics preserved by `retrofitCall` translating `retrofit2.HttpException`).
-  - Next JSON providers, in order: OpenExchangerates → InforEuro → BankOfCanada → BankOfIsrael. Each is a separate PR (`feat(net): Retrofit for <provider> (#158)`).
-  - XML providers (NorgesBank, BankRossii) stay on raw OkHttp for now — Retrofit's converter story for SAX/XmlPullParser is thin. Revisit once every JSON provider is migrated.
+  - Then every other fixed-shape JSON endpoint: Open Exchange Rates, AllRatesToday, InforEuro, Bank of Canada, Bank of Israel's `PublicApi`.
+  - The XML and SDMX feeds (Norges Bank, Bank Rossii, Bank of Israel's SDMX-JSON) stay on raw OkHttp permanently: see [architecture.md](architecture.md#networking-one-okhttp-client-retrofit-for-fixed-shape-json-raw-okhttp-for-the-rest).
 - **#163 OkHttp Cache audit** *(blocks #148 scoping)* — audit each provider's `Cache-Control` / `ETag` headers, wire `OkHttp.Cache` for cooperative providers, per-provider rewrite interceptor for the rest. Whatever HTTP handles shrinks #148's app-layer scope.
 
 ## Phase 3 — Data plumbing
@@ -79,32 +81,32 @@ No open tasks. Ledger row treatment (#159) applies to any list on timeline scree
 
 ## Task index (by ID)
 
-| ID | Phase | Task |
-|---|---|---|
-| 137 | 5 | Motion: wordmark reveal, hero card, prefs stagger, hamburger |
-| 138 | 7 | Cart: SwipeToDismissBox + animateItem() |
-| 139 | 6 | Fees list: animateItem() on Specific Pair rows |
-| 140 | 5 | Hand-rolled shimmer modifier on hero card while updating |
-| 141 | 7 | Cart: drag-to-reorder via Reorderable |
-| 142 | 6 | Currency favorites: drag-to-reorder via Reorderable |
-| 143 | 0 | Chucker: in-app HTTP inspector |
-| 144 | 0 | LeakCanary: memory leak detection |
-| 145 | 5 | Share hero card as image (first-party GraphicsLayer) |
-| 146 | 5 | Haze: frosted-glass drawer scrim / fee chip (design-gated) |
-| 147 | 5 | Showcase Layout: first-run onboarding |
-| 148 | 3 | In-house rate cache (Fetcher / SoT / Converter shape) |
-| 149 | 1 | Molecule: LiveData → StateFlow migration |
-| 150 | 1 | SharedPreferences → DataStore migration |
-| 151 | 3 | Auto-refresh rates via WorkManager |
-| 152 | 9 | Baseline Profiles + ProfileInstaller |
-| 153 | 0 | detekt: static analysis |
-| 154 | 0 | Showkase: browsable @Preview gallery (removed) |
-| 155 | 5 | Splash screen: androidx.core.splashscreen |
-| 156 | 0 | JankStats: local jank tracking |
-| 157 | 0 | Konsist: architecture invariants as tests |
-| 158 | 2 | Retrofit atop existing OkHttp |
-| 159 | 4 | List redesign: ledger direction |
-| 160 | 4 | Dialog redesign: BasicAlertDialog + ModalBottomSheet |
-| 161 | 1 | kotlinx.collections.immutable: ImmutableList for Compose stability |
-| 163 | 2 | OkHttp Cache audit + wire cooperative providers |
-| 164 | — | Room migration for rate namespace (parked) |
+| ID | Phase | Task | Status |
+|---|---|---|---|
+| 137 | 5 | Motion: wordmark reveal, hero card, prefs stagger, hamburger | Landed |
+| 138 | 7 | Cart: SwipeToDismissBox + animateItem() | Landed |
+| 139 | 6 | Fees list: animateItem() on Specific Pair rows | Landed |
+| 140 | 5 | Hand-rolled shimmer modifier on hero card while updating | Landed |
+| 141 | 7 | Cart: drag-to-reorder via Reorderable | Landed |
+| 142 | 6 | Currency favorites: drag-to-reorder via Reorderable | Landed |
+| 143 | 0 | Chucker: in-app HTTP inspector | Landed |
+| 144 | 0 | LeakCanary: memory leak detection | Landed |
+| 145 | 5 | Share hero card as image (first-party GraphicsLayer) | Landed |
+| 146 | 5 | Haze: frosted-glass drawer scrim / fee chip (design-gated) | Not adopted (design-gated) |
+| 147 | 5 | Showcase Layout: first-run onboarding | Landed |
+| 148 | 3 | In-house rate cache (Fetcher / SoT / Converter shape) | Landed |
+| 149 | 1 | Molecule: LiveData → StateFlow migration | Partly: StateFlow where new, LiveData kept elsewhere; Molecule not adopted |
+| 150 | 1 | SharedPreferences → DataStore migration | Landed |
+| 151 | 3 | Auto-refresh rates via WorkManager | Landed |
+| 152 | 9 | Baseline Profiles + ProfileInstaller | Landed |
+| 153 | 0 | detekt: static analysis | Landed |
+| 154 | 0 | Showkase: browsable @Preview gallery (removed) | Landed, then removed |
+| 155 | 5 | Splash screen: androidx.core.splashscreen | Landed |
+| 156 | 0 | JankStats: local jank tracking | Landed |
+| 157 | 0 | Konsist: architecture invariants as tests | Landed |
+| 158 | 2 | Retrofit atop existing OkHttp | Landed |
+| 159 | 4 | List redesign: ledger direction | Landed |
+| 160 | 4 | Dialog redesign: BasicAlertDialog + ModalBottomSheet | Superseded: every prompt is a bottom sheet |
+| 161 | 1 | kotlinx.collections.immutable: ImmutableList for Compose stability | Landed |
+| 163 | 2 | OkHttp Cache audit + wire cooperative providers | Landed |
+| 164 | — | Room migration for rate namespace (parked) | Parked |

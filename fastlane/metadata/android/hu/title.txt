@@ -1,1 +1,1 @@
-Currencies: Valuta Kalkulátor
+CurrenciX: Valuta Kalkulátor

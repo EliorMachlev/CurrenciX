@@ -21,12 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.switchState
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Year
@@ -108,11 +108,13 @@ private fun HistoricalToggleRow(
     enabled: Boolean,
     onEnabledChange: (Boolean) -> Unit,
 ) {
-    val haptics = LocalHapticFeedback.current
+    // The whole row toggles, and TalkBack reads it as one named switch.
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .switchState(enabled)
+                .hapticClickable { onEnabledChange(!enabled) }
                 .padding(horizontal = SheetHorizontalPadding, vertical = SwitchRowVerticalPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -121,13 +123,7 @@ private fun HistoricalToggleRow(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
         )
-        Switch(
-            checked = enabled,
-            onCheckedChange = { new ->
-                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onEnabledChange(new)
-            },
-        )
+        Switch(checked = enabled, onCheckedChange = null)
     }
 }
 

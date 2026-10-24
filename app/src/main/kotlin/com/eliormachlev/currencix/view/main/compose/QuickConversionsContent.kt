@@ -40,14 +40,16 @@ import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.captureInto
+import com.eliormachlev.currencix.view.compose.theme.AmountFamily
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.compose.theme.TABULAR_FIGURES
+import com.eliormachlev.currencix.view.compose.theme.tile
 import java.math.BigDecimal
 
 // Between a result and its cost with the fee, in copied and shared text.
 private const val FEE_GAP = "   "
 
 // OpenType tabular figures: every digit the same width.
-private const val TABULAR_FIGURES = "tnum"
 
 data class QuickConversionsRow(
     val amountFromText: String,
@@ -264,14 +266,18 @@ private fun QuickConversionTile(
     val context = LocalContext.current
     val numbers = tableNumberStyle()
     val weight = if (row.isTyped) FontWeight.Bold else null
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    val colors = MaterialTheme.colorScheme
+    val container = if (row.isTyped) colors.secondaryContainer else colors.tile
+    // On the tinted tile, its own text color for the secondary lines: the
+    // muted gray and the fee's red fall under 4.5:1 on brass in dark themes.
+    val muted = if (row.isTyped) colors.onSecondaryContainer else colors.onSurfaceVariant
+    val feeColor = if (row.isTyped) colors.onSecondaryContainer else colors.error
     Column(
         modifier =
             modifier
                 .clip(MaterialTheme.shapes.large)
-                .background(
-                    if (row.isTyped) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
-                ).hapticCombinedClickable(
+                .background(container)
+                .hapticCombinedClickable(
                     onClick = { actions.onUseAmount(row.amount) },
                     onClickLabel = stringResource(R.string.quick_conversions_use_amount),
                     onLongClick = { actions.onCopy(row) },
@@ -285,14 +291,14 @@ private fun QuickConversionTile(
             Row {
                 Text(context.money(row.toValue, to), style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1)
                 row.feePercent?.let { fee ->
-                    Text(" $fee", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, maxLines = 1)
+                    Text(" $fee", style = MaterialTheme.typography.bodyMedium, color = feeColor, maxLines = 1)
                 }
             }
         }
         val total = MaterialTheme.typography.headlineSmall
         Text(
             context.money(row.withFeeValue ?: row.toValue, to),
-            style = total.copy(fontFeatureSettings = TABULAR_FIGURES, fontWeight = weight),
+            style = total.copy(fontFeatureSettings = TABULAR_FIGURES, fontWeight = weight, fontFamily = AmountFamily),
             maxLines = 1,
             // A big amount in a long currency shrinks to fit the tile.
             autoSize = TextAutoSize.StepBased(minFontSize = MaterialTheme.typography.bodyLarge.fontSize, maxFontSize = total.fontSize),

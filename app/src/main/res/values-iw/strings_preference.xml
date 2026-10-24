@@ -139,9 +139,11 @@
     <string name="credit_lib_compose">ערכת כלים לממשק המשתמש ו־Material 3</string>
     <string name="credit_lib_material_components">רכיבי Material Design</string>
     <string name="credit_lib_material_symbols">סמלים (מעוגלים)</string>
+    <string name="credit_lib_typeface">גופן</string>
     <string name="credit_lib_vico">תרשימים</string>
     <string name="credit_lib_okhttp">לקוח HTTP</string>
     <string name="credit_lib_moshi">מפענח JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (שמירת עגלות, טיולים ועמלות)</string>
     <string name="credit_lib_timber">רישום יומן</string>
     <string name="credit_lib_bouncy_castle">גזירת מפתחות Argon2id לגיבויים מוצפנים</string>
     <string name="credit_lib_tink">הצפנת AES-GCM לגיבויים</string>

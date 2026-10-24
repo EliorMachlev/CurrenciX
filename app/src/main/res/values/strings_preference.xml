@@ -163,9 +163,11 @@
     <string name="credit_lib_compose">UI toolkit and Material 3</string>
     <string name="credit_lib_material_components">Material Design components</string>
     <string name="credit_lib_material_symbols">Icons (Rounded)</string>
+    <string name="credit_lib_typeface">Typeface</string>
     <string name="credit_lib_vico">Charts</string>
     <string name="credit_lib_okhttp">HTTP client</string>
     <string name="credit_lib_moshi">JSON parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (how saved carts, trips and fees are stored)</string>
     <string name="credit_lib_timber">Logging</string>
     <string name="credit_lib_bouncy_castle">Argon2id key derivation for encrypted backups</string>
     <string name="credit_lib_tink">AES-GCM encryption for backups</string>

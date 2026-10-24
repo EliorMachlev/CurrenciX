@@ -60,7 +60,6 @@ import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
-import androidx.compose.ui.semantics.hintText
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -91,6 +90,7 @@ import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.WrappingNameInputTransformation
+import com.eliormachlev.currencix.view.compose.fieldName
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.cart.RowConversion
 import com.eliormachlev.currencix.viewmodel.cart.evaluateItem
@@ -106,7 +106,10 @@ private val FIELD_MIN_HEIGHT = 48.dp
 private val ROW_CORNER = 14.dp
 private val DIVIDER_INSET = 40.dp
 private const val ACTIVE_ROW_TINT = 0.08f
-private const val CHECKED_ROW_ALPHA = 0.55f
+
+// A row already in the basket fades only a little: the strikethrough and the
+// ticked box say so, and its muted text still reads at 4.5:1 or more.
+private const val CHECKED_ROW_ALPHA = 0.9f
 private val STEP_BUTTON_SIZE = 32.dp
 private val STEP_ICON_SIZE = 18.dp
 
@@ -788,7 +791,7 @@ private fun NameField(
                 Modifier
                     .fillMaxWidth()
                     .hapticOnFocus()
-                    .semantics { hintText = fieldLabel },
+                    .fieldName(fieldLabel),
         )
         if (state.text.isEmpty()) {
             // The hint above already says it; not read a second time.

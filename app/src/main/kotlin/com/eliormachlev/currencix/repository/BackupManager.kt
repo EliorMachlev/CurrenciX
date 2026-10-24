@@ -10,6 +10,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.eliormachlev.currencix.repository.json.JsonObject
+import com.eliormachlev.currencix.repository.json.MalformedJsonException
+import com.eliormachlev.currencix.repository.json.buildJsonObject
+import com.eliormachlev.currencix.repository.json.jsonText
+import com.eliormachlev.currencix.repository.json.parseJsonObject
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.AppDispatchers
@@ -17,9 +22,6 @@ import com.eliormachlev.currencix.util.restartApp
 import com.eliormachlev.currencix.util.wipe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import timber.log.Timber
 import java.io.IOException
 import java.security.GeneralSecurityException
@@ -54,7 +56,7 @@ private enum class BackupValueType(
         override fun restore(
             editor: MutablePreferences,
             key: String,
-            entry: JSONObject,
+            entry: JsonObject,
         ) {
             editor[stringPreferencesKey(key)] = entry.optString(KEY_VALUE)
         }
@@ -65,7 +67,7 @@ private enum class BackupValueType(
         override fun restore(
             editor: MutablePreferences,
             key: String,
-            entry: JSONObject,
+            entry: JsonObject,
         ) {
             editor[intPreferencesKey(key)] = entry.optInt(KEY_VALUE)
         }
@@ -76,7 +78,7 @@ private enum class BackupValueType(
         override fun restore(
             editor: MutablePreferences,
             key: String,
-            entry: JSONObject,
+            entry: JsonObject,
         ) {
             editor[longPreferencesKey(key)] = entry.optLong(KEY_VALUE)
         }
@@ -90,7 +92,7 @@ private enum class BackupValueType(
         override fun restore(
             editor: MutablePreferences,
             key: String,
-            entry: JSONObject,
+            entry: JsonObject,
         ) {
             editor[floatPreferencesKey(key)] = entry.optDouble(KEY_VALUE).toFloat()
         }
@@ -101,7 +103,7 @@ private enum class BackupValueType(
         override fun restore(
             editor: MutablePreferences,
             key: String,
-            entry: JSONObject,
+            entry: JsonObject,
         ) {
             editor[booleanPreferencesKey(key)] = entry.optBoolean(KEY_VALUE)
         }
@@ -109,15 +111,15 @@ private enum class BackupValueType(
     STRING_SET("stringSet") {
         override fun holds(value: Any) = value is Set<*>
 
-        override fun payload(value: Any): Any = JSONArray((value as Set<*>).filterIsInstance<String>())
+        override fun payload(value: Any): Any = (value as Set<*>).filterIsInstance<String>()
 
         override fun restore(
             editor: MutablePreferences,
             key: String,
-            entry: JSONObject,
+            entry: JsonObject,
         ) {
-            entry.optJSONArray(KEY_VALUE)?.let { values ->
-                editor[stringSetPreferencesKey(key)] = (0 until values.length()).mapTo(HashSet()) { values.optString(it) }
+            entry.optArray(KEY_VALUE)?.let { values ->
+                editor[stringSetPreferencesKey(key)] = values.filterIsInstance<String>().toHashSet()
             }
         }
     },
@@ -130,7 +132,7 @@ private enum class BackupValueType(
     abstract fun restore(
         editor: MutablePreferences,
         key: String,
-        entry: JSONObject,
+        entry: JsonObject,
     )
 
     companion object {
@@ -191,7 +193,7 @@ class BackupManager(
         password: CharArray?,
     ): BackupResult =
         try {
-            val payload = buildBackupJson(password).toString(2).toByteArray(Charsets.UTF_8)
+            val payload = jsonText(buildBackupJson(password), pretty = true).toByteArray(Charsets.UTF_8)
             val written = context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(payload) }
             if (written == null) BackupResult.Failure(FileFailure.CANNOT_OPEN) else BackupResult.Success
         } catch (e: IOException) {
@@ -229,7 +231,7 @@ class BackupManager(
             BackupResult.WrongPassword
         } catch (e: IOException) {
             BackupResult.Failure(FileFailure.READ_WRITE, e.message)
-        } catch (e: JSONException) {
+        } catch (e: MalformedJsonException) {
             BackupResult.Failure(FileFailure.DAMAGED, e.message)
         } catch (e: SecurityException) {
             BackupResult.Failure(FileFailure.NO_PERMISSION, e.message)
@@ -248,20 +250,20 @@ class BackupManager(
         } catch (e: IOException) {
             Timber.tag(TAG).w(e, "Could not read the backup file")
             false
-        } catch (e: JSONException) {
+        } catch (e: MalformedJsonException) {
             Timber.tag(TAG).w(e, "The backup file is not JSON")
             false
         }
 
     // The file's JSON; null when the provider gives no stream for it.
-    private fun readJson(uri: Uri): JSONObject? =
+    private fun readJson(uri: Uri): JsonObject? =
         context.contentResolver
             .openInputStream(uri)
             ?.use { it.readBytes() }
-            ?.let { JSONObject(String(it, Charsets.UTF_8)) }
+            ?.let { parseJsonObject(String(it, Charsets.UTF_8)) }
 
     private suspend fun restore(
-        root: JSONObject,
+        root: JsonObject,
         password: CharArray?,
     ): BackupResult {
         val version = root.optInt(BACKUP_KEY_VERSION, -1)
@@ -291,23 +293,22 @@ class BackupManager(
         }
     }
 
-    private fun buildBackupJson(password: CharArray?): JSONObject {
-        val nsObj = JSONObject()
-        BACKUP_NAMESPACES.forEach { key ->
-            nsObj.put(key.fileName, serializeNamespace(key.prefStore(context).snapshot()))
-        }
-        val root =
-            JSONObject().apply {
-                put(BACKUP_KEY_VERSION, BACKUP_SCHEMA_VERSION)
-                put(BACKUP_KEY_CREATED_AT, Instant.now().toString())
-                put(BACKUP_KEY_APP, BACKUP_APP_ID)
+    private fun buildBackupJson(password: CharArray?): Map<String, Any> {
+        val namespaces =
+            buildJsonObject {
+                BACKUP_NAMESPACES.forEach { key -> put(key.fileName, serializeNamespace(key.prefStore(context).snapshot())) }
+                SAVED_DATA_SECTIONS.forEach { section -> put(section.key, section.export(context)) }
             }
-        if (password != null && password.isNotEmpty()) {
-            root.put(KEY_ENCRYPTION, crypto.encrypt(nsObj.toString().toByteArray(Charsets.UTF_8), password))
-        } else {
-            root.put(KEY_NAMESPACES, nsObj)
+        return buildJsonObject {
+            put(BACKUP_KEY_VERSION, BACKUP_SCHEMA_VERSION)
+            put(BACKUP_KEY_CREATED_AT, Instant.now().toString())
+            put(BACKUP_KEY_APP, BACKUP_APP_ID)
+            if (password != null && password.isNotEmpty()) {
+                put(KEY_ENCRYPTION, crypto.encrypt(jsonText(namespaces).toByteArray(Charsets.UTF_8), password))
+            } else {
+                put(KEY_NAMESPACES, namespaces)
+            }
         }
-        return root
     }
 
     /**
@@ -315,44 +316,43 @@ class BackupManager(
      * the file is encrypted and [password] is null/empty (caller must prompt).
      */
     private fun extractNamespaces(
-        root: JSONObject,
+        root: JsonObject,
         password: CharArray?,
-    ): JSONObject? {
-        val encBlock = root.optJSONObject(KEY_ENCRYPTION)
+    ): JsonObject? {
+        val encBlock = root.optObject(KEY_ENCRYPTION)
         return when {
-            encBlock == null -> root.optJSONObject(KEY_NAMESPACES) ?: throw JSONException("Missing 'namespaces' section")
+            encBlock == null -> root.optObject(KEY_NAMESPACES) ?: throw MalformedJsonException("Missing 'namespaces' section")
             password == null || password.isEmpty() -> null
-            else -> JSONObject(String(crypto.decrypt(encBlock, password), Charsets.UTF_8))
+            else -> parseJsonObject(String(crypto.decrypt(encBlock, password), Charsets.UTF_8))
         }
     }
 
-    private fun serializeNamespace(prefs: Preferences): JSONObject {
-        val obj = JSONObject()
-        prefs.asMap().forEach { (key, value) ->
-            serializeEntry(value)?.let { obj.put(key.name, it) }
+    private fun serializeNamespace(prefs: Preferences): Map<String, Any> =
+        buildJsonObject {
+            prefs.asMap().forEach { (key, value) ->
+                serializeEntry(value)?.let { put(key.name, it) }
+            }
         }
-        return obj
-    }
 
     // {"type": …, "value": …} for a stored value; null for a type backups don't carry.
-    private fun serializeEntry(value: Any): JSONObject? {
+    private fun serializeEntry(value: Any): Map<String, Any>? {
         val type = BackupValueType.of(value) ?: return null
-        return JSONObject().apply {
-            put(KEY_TYPE, type.wire)
-            put(KEY_VALUE, type.payload(value))
-        }
+        return mapOf(KEY_TYPE to type.wire, KEY_VALUE to type.payload(value))
     }
 
     // Every write lands on disk before this returns: the restart that
     // follows a restore must find the restored state, not writes still in
     // flight on the PrefStore write pump.
-    private suspend fun restoreNamespaces(namespaces: JSONObject) {
+    private suspend fun restoreNamespaces(namespaces: JsonObject) {
+        SAVED_DATA_SECTIONS.forEach { section ->
+            namespaces.optObject(section.key)?.let { section.restore(context, it) }
+        }
         BACKUP_NAMESPACES.forEach { key ->
-            val nsData = namespaces.optJSONObject(key.fileName) ?: return@forEach
+            val nsData = namespaces.optObject(key.fileName) ?: return@forEach
             key.prefStore(context).editAndAwait {
                 clear()
-                nsData.keys().forEach { entryKey ->
-                    nsData.optJSONObject(entryKey)?.let { entry -> applyEntry(this, entryKey, entry) }
+                nsData.keys.forEach { entryKey ->
+                    nsData.optObject(entryKey)?.let { entry -> applyEntry(this, entryKey, entry) }
                 }
             }
         }
@@ -361,7 +361,7 @@ class BackupManager(
     private fun applyEntry(
         editor: MutablePreferences,
         key: String,
-        entry: JSONObject,
+        entry: JsonObject,
     ) {
         BackupValueType.fromWire(entry.optString(KEY_TYPE))?.restore(editor, key, entry)
     }

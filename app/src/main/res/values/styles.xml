@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="colorDisplayOverlay" format="reference|color" />
     <attr name="colorBackground" format="reference|color" />
 
     <!-- themes to be applied -->
@@ -22,7 +21,6 @@
     <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- theme-dependant colors (different for light/dark/black) -->
         <item name="colorBackground">@color/colorBackground</item>
-        <item name="colorDisplayOverlay">@color/displayOverlay</item>
 
         <!-- Compose owns the visual palette (see view/compose/theme/Color.kt).
              The XML theme supplies the window background (painted behind
@@ -43,7 +41,6 @@
     <style name="BaseAppTheme.PureBlack" parent="AppTheme">
         <!-- colors -->
         <item name="colorBackground">@color/colorBackgroundPureBlack</item>
-        <item name="colorDisplayOverlay">@color/displayOverlayPureBlack</item>
     </style>
 
     <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

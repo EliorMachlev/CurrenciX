@@ -12,7 +12,6 @@ import com.eliormachlev.currencix.util.fetch
 import com.eliormachlev.currencix.util.retrofitCall
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Response
 import java.io.IOException
 import java.time.format.DateTimeFormatter
@@ -21,14 +20,7 @@ import java.time.format.DateTimeFormatter
 // query DKK instead and let callers relabel the result on the way back.
 internal fun Currency.apiCodeOrDkkForFok(): String = if (this == Currency.FOK) Currency.DKK.iso4217Alpha() else this.iso4217Alpha()
 
-// One shared KotlinJsonAdapterFactory across every provider. The factory
-// keeps its own class-to-adapter cache internally, so a single instance
-// means the reflection scan runs once app-wide per data class instead of
-// once per HTTP request. Safe to share: the factory is stateless.
-internal val SHARED_KOTLIN_JSON_ADAPTER_FACTORY: KotlinJsonAdapterFactory =
-    KotlinJsonAdapterFactory()
-
-// Stateless date adapter — hoisted for the same reason as the factory above.
+// Stateless date adapter, shared by every provider that needs it.
 internal val SHARED_LOCAL_DATE_ADAPTER: LocalDateAdapter = LocalDateAdapter()
 
 // Timeline lookback window shared by the providers that don't guarantee a
@@ -48,13 +40,13 @@ internal val ISO_DATE: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 // Chains a step that can itself fail: [next] runs on success, a failure passes through.
 internal inline fun <T, R> Result<T>.flatMap(next: (T) -> Result<R>): Result<R> = fold(onSuccess = next, onFailure = { Result.failure(it) })
 
-// Build a Moshi instance preconfigured with the shared Kotlin adapter factory.
-// Callers add their per-request adapters inside [block].
+// A Moshi instance with a provider's own adapters, added in [block]. No
+// reflection: the model types have generated adapters (@JsonClass), and
+// anything else is one of the adapters registered here.
 internal inline fun moshi(block: Moshi.Builder.() -> Unit = {}): Moshi =
     Moshi
         .Builder()
         .apply(block)
-        .addLast(SHARED_KOTLIN_JSON_ADAPTER_FACTORY)
         .build()
 
 private fun emptyJson(providerLabel: String) = IOException("$providerLabel: empty JSON")

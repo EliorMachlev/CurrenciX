@@ -1,1 +1,1 @@
-Currencies: Valutakurskalkylator
+CurrenciX: Valutakurskalkylator

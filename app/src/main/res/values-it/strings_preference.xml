@@ -143,9 +143,11 @@
     <string name="credit_lib_compose">Toolkit per l\'interfaccia utente e Material 3</string>
     <string name="credit_lib_material_components">Componenti Material Design</string>
     <string name="credit_lib_material_symbols">Icone (arrotondate)</string>
+    <string name="credit_lib_typeface">Carattere</string>
     <string name="credit_lib_vico">Grafici</string>
     <string name="credit_lib_okhttp">Client HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (salvataggio di carrelli, viaggi e commissioni)</string>
     <string name="credit_lib_timber">Registrazione dei log</string>
     <string name="credit_lib_bouncy_castle">Derivazione della chiave Argon2id per i backup cifrati</string>
     <string name="credit_lib_tink">Cifratura AES-GCM per i backup</string>

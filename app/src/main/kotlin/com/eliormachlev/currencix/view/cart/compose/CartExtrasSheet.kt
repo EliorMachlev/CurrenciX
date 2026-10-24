@@ -52,6 +52,8 @@ import com.eliormachlev.currencix.view.compose.NameInputTransformation
 import com.eliormachlev.currencix.view.compose.PercentTextField
 import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
+import com.eliormachlev.currencix.view.compose.fieldMessage
+import com.eliormachlev.currencix.view.compose.invalidUnless
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import java.math.BigDecimal
 
@@ -87,11 +89,12 @@ fun CartExtrasSheet(
     val budget = budgetState.text.toString()
     val tipValue = remember(tip) { parseDecimal(tip)?.takeIf { it.signum() > 0 && it <= MAX_TIP } }
     val budgetValue = remember(budget) { parseDecimal(budget)?.takeIf { it.signum() > 0 } }
+    val budgetError = invalidUnless(budget, budgetValue, stringResource(R.string.error_positive_number))
     val context = LocalContext.current
     val symbolAfter = remember(context) { isCurrencySymbolOnRight(context) }
     LedgerBottomSheet(title = stringResource(R.string.cart_menu_extras), onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(CONTENT_PADDING), verticalArrangement = Arrangement.spacedBy(GAP)) {
-            TipField(tipState, isError = tip.isNotBlank() && tipValue == null)
+            TipField(tipState, error = invalidUnless(tip, tipValue, stringResource(R.string.error_tip_percent)))
             // Split by person replaces the even split.
             if (people.isEmpty()) SplitStepper(split, onChange = { split = it })
             PeopleEditor(people)
@@ -101,7 +104,8 @@ fun CartExtrasSheet(
                 // The currency on the side the language puts it, as on every amount.
                 prefix = destination?.takeUnless { symbolAfter }?.let { { Text(it.symbolOrIso() + " ") } },
                 suffix = destination?.takeIf { symbolAfter }?.let { { Text(" " + it.symbolOrIso()) } },
-                isError = budget.isNotBlank() && budgetValue == null,
+                isError = budgetError != null,
+                supportingText = fieldMessage(budgetError),
                 lineLimits = TextFieldLineLimits.SingleLine,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -117,11 +121,11 @@ fun CartExtrasSheet(
 @Composable
 private fun TipField(
     state: TextFieldState,
-    isError: Boolean,
+    error: String?,
 ) {
     val value = state.text.toString()
     Column(verticalArrangement = Arrangement.spacedBy(TIP_FIELD_GAP)) {
-        PercentTextField(state = state, label = stringResource(R.string.cart_tip_label), isError = isError)
+        PercentTextField(state = state, label = stringResource(R.string.cart_tip_label), error = error)
         // A quick rate fills the field; tapping it again clears it.
         ConnectedToggleGroup(
             options = QUICK_TIPS,

@@ -141,9 +141,11 @@
     <string name="credit_lib_compose">UI-Toolkit und Material 3</string>
     <string name="credit_lib_material_components">Material-Design-Komponenten</string>
     <string name="credit_lib_material_symbols">Symbole (abgerundet)</string>
+    <string name="credit_lib_typeface">Schriftart</string>
     <string name="credit_lib_vico">Diagramme</string>
     <string name="credit_lib_okhttp">HTTP-Client</string>
     <string name="credit_lib_moshi">JSON-Parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (Speicherformat für Warenkörbe, Reisen und Gebühren)</string>
     <string name="credit_lib_timber">Protokollierung</string>
     <string name="credit_lib_bouncy_castle">Argon2id-Schlüsselableitung für verschlüsselte Sicherungen</string>
     <string name="credit_lib_tink">AES-GCM-Verschlüsselung für Sicherungen</string>

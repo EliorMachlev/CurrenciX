@@ -14,7 +14,7 @@ This prevents a compromised or reused tag from injecting malicious code into CI.
 
 ### Dependabot Cooldown
 
-Both Gradle and GitHub Actions ecosystems enforce a **7-day cooldown** (`cooldown: default-days: 7`) before Dependabot proposes a version bump. This mitigates supply-chain attacks where a dependency is compromised shortly after publication.
+The Gradle, GitHub Actions and pip (the CI scripts' and Semgrep's `requirements.txt`) ecosystems all enforce a **7-day cooldown** (`cooldown: default-days: 7`) before Dependabot proposes a version bump. This mitigates supply-chain attacks where a dependency is compromised shortly after publication.
 
 ### Dependency Review
 
@@ -26,13 +26,13 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 
 ## Secrets
 
-- Release signing credentials are stored in `secrets.properties` (gitignored) and referenced only at build time.
-- No API keys are stored in source code. The keys a user enters for Open Exchangerates or AllRatesToday stay in the app's private storage, one per provider. AllRatesToday's goes as an `Authorization` header (never in a URL, so never in a log line or cache key), and debug builds' HTTP inspector redacts that header.
+- Release signing credentials: locally in `secrets.properties` (gitignored, like `*.jks`, `*.p12` and `/signing/`); in CI only as secrets of the `release` environment, which only the release workflow's build job can read (see [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17)).
+- No API keys are stored in source code. The keys a user enters for Open Exchangerates or AllRatesToday stay in the app's private storage, one per provider. Both go as an `Authorization` header (`Token …` for Open Exchangerates, `Bearer …` for AllRatesToday), never in a URL, so never in the app's log file or in the URLs the HTTP cache stores; debug builds' HTTP inspector redacts that header.
 - Gitleaks scans the full repository on every PR, every push to `master`, and weekly (Mon 07:00 UTC) for accidental credential commits.
 
 ## User-initiated Backup
 
-Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three SharedPreferences namespaces (`prefs`, `last_state`, `starred_currencies`) as versioned JSON; the cached exchange-rate table is deliberately excluded.
+Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore preference namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) and the saved carts, trips, fees and rate alerts (`carts`, `fees`, `alerts`; `SAVED_DATA_SECTIONS`, written as JSON from their Protobuf files), as versioned JSON: settings and any API keys entered, the converter's state, the starred currencies, the carts and trips, the fees, and the rate alerts. All of it is inside the encrypted block when a password is set. The cached rates and rate histories are deliberately excluded.
 
 The app requests **no storage permission** — the SAF picker returns a scoped `content://` URI that the user has explicitly granted for that single file.
 
@@ -66,7 +66,7 @@ The app declares these permissions (all normal, install-time ones except `POST_N
 <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 ```
 
-`ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. `POST_NOTIFICATIONS` is for rate alerts only: it's requested at runtime when the user sets their first alert (never at launch), and alerts are evaluated on the device against the rates already downloaded, so they add no network traffic or data. Denying it leaves the alerts waiting; nothing else in the app needs it. `USE_BIOMETRIC` lets the optional app lock show the system's biometric / screen-lock prompt (`BiometricPrompt`); the prompt is the system's, and the app learns only whether it succeeded. No location, contacts, storage, camera, or microphone access (receipt photos come from the system camera app or photo picker, which need no permission).
+Noticing travel reads the mobile network's country (`TelephonyManager.networkCountryIso`), which needs no permission; it isn't stored beyond the last country asked about, nor sent anywhere. `ACCESS_NETWORK_STATE` only lets the app check connectivity before firing a request; it grants no access to network identifiers or traffic content. `POST_NOTIFICATIONS` is for rate alerts only: it's requested at runtime when the user sets their first alert (never at launch), and alerts are evaluated on the device against the rates already downloaded, so they add no network traffic or data. Denying it leaves the alerts waiting; nothing else in the app needs it. `USE_BIOMETRIC` lets the optional app lock show the system's biometric / screen-lock prompt (`BiometricPrompt`); the prompt is the system's, and the app learns only whether it succeeded. No location, contacts, storage, camera, or microphone access (receipt photos come from the system camera app or photo picker, which need no permission).
 
 ## App lock and private requests
 
@@ -79,9 +79,11 @@ Settings → Security & privacy has two switches, both off by default (`PrivacyS
 
 `res/xml/network_security_config.xml` refuses cleartext HTTP globally. Every configured exchange-rate provider serves HTTPS only, so the config closes off downgrade / MITM avenues without breaking real traffic.
 
+**Forward secrecy.** The shared client (`HttpClientProvider`) accepts only TLS 1.3 and TLS 1.2 with an ECDHE key exchange and an AEAD cipher (`FORWARD_SECRET_TLS`, checked by `ForwardSecrecyTest`), so each connection's keys are ephemeral and a provider's private key, if it ever leaked, couldn't decrypt recorded traffic. OkHttp's default would also accept RSA key exchange and 3DES as a fallback; every provider offers TLS 1.3 or ECDHE, so nothing needs them.
+
 **Encrypted Client Hello (Android 17+).** The TLS handshake normally names the host in the clear (SNI), so anyone on the network can see which provider the app asks for rates, HTTPS or not. On Android 17 and later the shared client resolves through the platform's `DnsResolver` (OkHttp's `AndroidDns`, `HttpClientProvider.encryptedClientHelloDns`), which also fetches the host's DNS `HTTPS` record with its ECH keys, and the handshake then encrypts the host name. It covers the hosts that publish ECH keys (typically those behind Cloudflare); the others connect as before, as ECH isn't enforced in the network security config, which would make them fail. Earlier Android versions can't do ECH and keep the system resolver. The IP address stays visible either way.
 
-Receipt scanning adds one host: `raw.githubusercontent.com`, for the OCR language data (`tessdata_fast` at its fixed `4.1.0` tag), fetched once per language when a scan starts and the app's language isn't English (and English too in the Play app, which doesn't bundle it). In the Play app the recognizer itself comes from Google Play as an on-demand feature module (Play Feature Delivery): code is only ever installed by Play, never downloaded by the app. The request carries nothing about the user (a fixed file URL). Each file is streamed to a temporary file, hashed, and kept only if its SHA-256 matches the one compiled into the app (`TessLanguage.sha256`, `Tessdata.install`); a mismatch is discarded and not retried. The bundled English file goes through the same check when it's copied out of the assets. Receipt photos are read on the device and never uploaded; the camera photo is written to the app's cache through its `FileProvider` and deleted once read. The app has no camera permission: the photo comes from the system camera app (`TakePicture`) or the system photo picker.
+Receipt scanning adds one host: `raw.githubusercontent.com`, for the OCR language data (`tessdata_fast` at its fixed `4.1.0` tag), fetched once per language, and only after the user agrees to that language by name and size (English with the first scan's offer; the app's own language as a separate opt-in, remembered either way in `PrivacySettings.receiptLanguagesAllowed` / `receiptLanguagesDeclined`). No language ships with the app. Settings → Receipt languages lists what's on the phone; each can be deleted, or kept only until a date and time and then deleted by `TessdataExpiryWorker`. In the Play app the recognizer itself comes from Google Play as an on-demand feature module (Play Feature Delivery): code is only ever installed by Play, never downloaded by the app. The request carries nothing about the user (a fixed file URL). Each file is streamed to a temporary file, hashed, and kept only if its SHA-256 matches the one compiled into the app (`TessLanguage.sha256`, `Tessdata.install`); a mismatch is discarded and not retried. Receipt photos are read on the device and never uploaded; the camera photo is written to the app's cache through its `FileProvider` and deleted once read. The app has no camera permission: the photo comes from the system camera app (`TakePicture`) or the system photo picker.
 
 ## APK signing
 
@@ -91,13 +93,14 @@ Release APKs are signed with the release key (`KEYSTORE_*` in `secrets.propertie
 
 `android:allowBackup="false"` and `android:fullBackupContent="false"` are set in the manifest, backed by an explicit `res/xml/data_extraction_rules.xml` that excludes every domain (`root`, `database`, `sharedpref`, `external`, `file`) from both **cloud backups** and **device-to-device transfers** on Android 12+.
 
-Rationale: SharedPreferences contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
+Rationale: the app's DataStore files contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fees and carts, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
 
 ## Code Analysis
 
 | Tool | Scope | Frequency |
 |---|---|---|
-| Detekt | Kotlin source (app + helpers) | Every PR and master push |
+| Detekt | Kotlin source (app, helpers, baselineprofile; production and tests) | Every PR and master push |
+| Android Lint | App code, resources and manifest, per flavor (fdroid, play) | Every PR and master push |
 | Qodana JVM Community | Kotlin / Java | Every PR, master push, weekly |
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |
 | Semgrep | Security patterns | Every PR, master push, weekly |
@@ -106,9 +109,9 @@ Rationale: SharedPreferences contain the user's API keys for Open Exchangerates 
 
 ## OpenSSF Scorecard
 
-The repository is evaluated weekly by the [OpenSSF Scorecard](https://securityscorecards.dev/). Results are uploaded to the GitHub Security tab. Key checks:
+The repository is evaluated by the [OpenSSF Scorecard](https://securityscorecards.dev/) on every push to `master` and weekly. Results are uploaded to the GitHub Security tab, and open findings show there as code scanning alerts. Key checks:
 
-- **Pinned-Dependencies** — all CI actions and Docker images use SHA pins
+- **Pinned-Dependencies** — every CI action uses a SHA pin; the CI scripts' Python packages and Semgrep itself (with every package it needs) are installed with `--require-hashes`, from `.github/scripts/requirements.txt` and `.github/semgrep/requirements.txt`
 - **Branch-Protection** — master branch is protected
 - **SAST** — multiple static analysis tools are active
 - **Dependency-Update-Tool** — Dependabot is configured

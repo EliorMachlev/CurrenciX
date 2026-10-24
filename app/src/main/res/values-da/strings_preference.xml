@@ -142,9 +142,11 @@
     <string name="credit_lib_compose">UI-værktøjssæt og Material 3</string>
     <string name="credit_lib_material_components">Material Design-komponenter</string>
     <string name="credit_lib_material_symbols">Ikoner (afrundede)</string>
+    <string name="credit_lib_typeface">Skrifttype</string>
     <string name="credit_lib_vico">Diagrammer</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
     <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (sådan gemmes kurve, rejser og gebyrer)</string>
     <string name="credit_lib_timber">Logning</string>
     <string name="credit_lib_bouncy_castle">Argon2id-nøgleafledning til krypterede sikkerhedskopier</string>
     <string name="credit_lib_tink">AES-GCM-kryptering til sikkerhedskopier</string>

@@ -1,4 +1,4 @@
-Currencies è un convertitore di valuta semplice e diretto e non è destinato ad essere usato per affari finanziari in tempo reale, ma piuttosto per essere un compagno pratico, ad esempio durante le vacanze.
+CurrenciX è un convertitore di valuta semplice e diretto e non è destinato ad essere usato per affari finanziari in tempo reale, ma piuttosto per essere un compagno pratico, ad esempio durante le vacanze.
 
 - L'applicazione supporta tutte le valute rilevanti. È possibile scegliere tra diversi fornitori di tassi di cambio:
    - exchangerate.host con oltre 160 valute
@@ -8,5 +8,5 @@ Currencies è un convertitore di valuta semplice e diretto e non è destinato ad
 - Tassi storici: puoi utilizzare i tassi di date precedenti.
 - Una caratteristica importante è la calcolatrice inclusa. Utile ad esempio se vuoi dividere il conto di un ristorante.
 - Calcolatrice di tasse: aggiungi opzionalmente una tassa di cambio personalizzabile a tutti i calcoli.
-- Currencies è scritta per Android in Kotlin, punta ad Android 13 e supporta temi chiari e scuri.
+- CurrenciX è scritta per Android in Kotlin, punta ad Android 13 e supporta temi chiari e scuri.
 - L'app è priva di pubblicità e non spia l'utente.

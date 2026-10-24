@@ -81,7 +81,8 @@ private fun notifyReached(
         PendingIntent.getActivity(
             context,
             alert.id.hashCode(),
-            ConverterLaunch.convert(context, from, to),
+            // The chart, to see how the rate got there and convert at it.
+            ConverterLaunch.openChart(context, from, to),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
     val notification =

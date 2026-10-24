@@ -11,7 +11,9 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.eliormachlev.currencix.util.HttpClientProvider
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import okhttp3.Request
 import timber.log.Timber
 import java.io.IOException
@@ -21,6 +23,7 @@ private const val TAG = "TessdataDownload"
 private const val KEY_LANGUAGE = "language"
 private const val UNIQUE_PREFIX = "tessdata-"
 private const val BACKOFF_MINUTES = 5L
+private const val DOWNLOAD_TAG = "tessdata"
 
 /**
  * Downloads one OCR language file in the background, the way the rate
@@ -74,9 +77,31 @@ internal class TessdataDownloadWorker(
                     .setInputData(workDataOf(KEY_LANGUAGE to language.name))
                     .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                     .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_MINUTES, TimeUnit.MINUTES)
+                    .addTag(DOWNLOAD_TAG)
+                    // Its own tag too: a unique work's name isn't one of its tags.
+                    .addTag(UNIQUE_PREFIX + language.code)
                     .build()
             WorkManager.getInstance(context).enqueueUniqueWork(UNIQUE_PREFIX + language.code, ExistingWorkPolicy.KEEP, request)
         }
+
+        /** Stops [language]'s download, if one is on its way. */
+        fun cancel(
+            context: Context,
+            language: TessLanguage,
+        ) {
+            WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_PREFIX + language.code)
+        }
+
+        /** The languages downloading now (or waiting for a network to), as they change. */
+        fun downloading(context: Context): Flow<Set<TessLanguage>> =
+            WorkManager
+                .getInstance(context)
+                .getWorkInfosByTagFlow(DOWNLOAD_TAG)
+                .map { infos ->
+                    infos
+                        .filterNot { it.state.isFinished }
+                        .mapNotNullTo(HashSet()) { info -> TessLanguage.entries.firstOrNull { UNIQUE_PREFIX + it.code in info.tags } }
+                }
 
         /**
          * Waits for [language]'s download ([enqueue]d before) to end; true

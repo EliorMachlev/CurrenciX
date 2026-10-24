@@ -143,9 +143,11 @@
     <string name="credit_lib_compose">Verkfærasett fyrir notendaviðmót og Material 3</string>
     <string name="credit_lib_material_components">Material Design-einingar</string>
     <string name="credit_lib_material_symbols">Tákn (Rounded)</string>
+    <string name="credit_lib_typeface">Leturgerð</string>
     <string name="credit_lib_vico">Línurit</string>
     <string name="credit_lib_okhttp">HTTP-biðlari</string>
     <string name="credit_lib_moshi">JSON-þáttari</string>
+    <string name="credit_lib_wire">Protocol Buffers (hvernig körfur, ferðir og gjöld eru vistuð)</string>
     <string name="credit_lib_timber">Atvikaskráning</string>
     <string name="credit_lib_bouncy_castle">Argon2id-lyklaafleiðsla fyrir dulkóðuð öryggisafrit</string>
     <string name="credit_lib_tink">AES-GCM-dulkóðun öryggisafrita</string>

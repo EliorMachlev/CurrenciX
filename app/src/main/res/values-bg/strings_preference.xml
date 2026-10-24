@@ -117,9 +117,11 @@
     <string name="credit_lib_compose">Инструментариум за интерфейса и Material 3</string>
     <string name="credit_lib_material_components">Компоненти на Material Design</string>
     <string name="credit_lib_material_symbols">Икони (заоблени)</string>
+    <string name="credit_lib_typeface">Шрифт</string>
     <string name="credit_lib_vico">Графики</string>
     <string name="credit_lib_okhttp">HTTP клиент</string>
     <string name="credit_lib_moshi">JSON парсер</string>
+    <string name="credit_lib_wire">Protocol Buffers (как се пазят запазените колички, пътувания и такси)</string>
     <string name="credit_lib_timber">Журналиране</string>
     <string name="credit_lib_bouncy_castle">Извличане на ключове с Argon2id за шифровани резервни копия</string>
     <string name="credit_lib_tink">Шифроване с AES-GCM за резервните копия</string>

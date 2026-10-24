@@ -12,9 +12,11 @@ import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.RateAlert
+import com.eliormachlev.currencix.proto.RateAlertProto
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.repository.parseRateAlerts
-import com.eliormachlev.currencix.repository.serializeRateAlerts
+import com.eliormachlev.currencix.repository.throughJson
+import com.eliormachlev.currencix.repository.throughProto
+import com.eliormachlev.currencix.repository.toModel
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -63,9 +65,15 @@ class RateAlertsTest {
     @Test
     fun `alerts survive a save, and broken entries are skipped`() {
         val alerts = listOf(RateAlert.towards(usdIls, BigDecimal("3.5"), BigDecimal("3.6")))
-        assertEquals(alerts, parseRateAlerts(serializeRateAlerts(alerts)))
-        val broken = """[{"id":"x","from":"USD","to":"???","threshold":"3.5","direction":"below"},{"id":"y"}]"""
-        assertEquals(emptyList<RateAlert>(), parseRateAlerts(broken))
+        assertEquals(alerts, alerts.mapNotNull { it.throughProto() })
+        assertEquals(alerts, alerts.mapNotNull { it.throughJson() })
+        val broken =
+            listOf(
+                RateAlertProto(id = "x", from = "USD", to = "???", threshold = "3.5", direction = RateAlertProto.Direction.BELOW),
+                RateAlertProto(id = "y"),
+                RateAlertProto(from = "USD", to = "ILS", threshold = "0", direction = RateAlertProto.Direction.ABOVE),
+            )
+        assertEquals(emptyList<RateAlert>(), broken.mapNotNull { it.toModel() })
     }
 
     @Test

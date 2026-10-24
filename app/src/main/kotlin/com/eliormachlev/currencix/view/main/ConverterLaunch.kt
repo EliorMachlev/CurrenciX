@@ -8,7 +8,7 @@ import java.math.BigDecimal
 
 /**
  * Intents that open the app on a given pair (and amount) or on the cart —
- * from the text-selection popup, launcher shortcuts and widgets — and the
+ * from the text-selection popup, launcher shortcuts, widgets and rate alerts — and the
  * parsing of them on arrival ([parse]).
  *
  * MainActivity is exported, so any app can send these: every extra is
@@ -17,6 +17,7 @@ import java.math.BigDecimal
 object ConverterLaunch {
     const val ACTION_CONVERT = "com.eliormachlev.currencix.action.CONVERT"
     const val ACTION_OPEN_CART = "com.eliormachlev.currencix.action.OPEN_CART"
+    const val ACTION_OPEN_CHART = "com.eliormachlev.currencix.action.OPEN_CHART"
 
     private const val EXTRA_FROM = "from"
     private const val EXTRA_TO = "to"
@@ -34,6 +35,11 @@ object ConverterLaunch {
         ) : Request
 
         data object OpenCart : Request
+
+        /** The rate chart for [pair] (a rate alert's notification), over the converter on it. */
+        data class OpenChart(
+            val pair: CurrencyPair,
+        ) : Request
     }
 
     /** Opens the converter on [from] → [to], with [amount] typed in when given. */
@@ -49,6 +55,13 @@ object ConverterLaunch {
             .apply { amount?.let { putExtra(EXTRA_AMOUNT, it.toPlainString()) } }
 
     fun openCart(context: Context): Intent = base(context, ACTION_OPEN_CART)
+
+    /** Opens the rate chart for [from] → [to]. */
+    fun openChart(
+        context: Context,
+        from: Currency,
+        to: Currency,
+    ): Intent = base(context, ACTION_OPEN_CHART).putExtra(EXTRA_FROM, from.iso4217Alpha()).putExtra(EXTRA_TO, to.iso4217Alpha())
 
     /** Just the app, as it was. */
     fun openConverter(context: Context): Intent = base(context, Intent.ACTION_MAIN)
@@ -67,19 +80,25 @@ object ConverterLaunch {
         when (intent?.action) {
             ACTION_OPEN_CART -> Request.OpenCart
             ACTION_CONVERT -> parseConvert(intent)
+            ACTION_OPEN_CHART -> parsePair(intent)?.let(Request::OpenChart)
             else -> null
         }
 
-    private fun parseConvert(intent: Intent): Request.Convert? {
+    // The pair an intent names: two currencies the app has, not the same one.
+    private fun parsePair(intent: Intent): CurrencyPair? {
         val from = intent.getStringExtra(EXTRA_FROM)?.let(Currency::fromString) ?: return null
         val to = intent.getStringExtra(EXTRA_TO)?.let(Currency::fromString) ?: return null
-        if (from == to) return null
+        return if (from == to) null else CurrencyPair(from, to)
+    }
+
+    private fun parseConvert(intent: Intent): Request.Convert? {
+        val pair = parsePair(intent) ?: return null
         val amount =
             intent
                 .getStringExtra(EXTRA_AMOUNT)
                 ?.takeIf { it.length <= MAX_AMOUNT_LENGTH }
                 ?.toBigDecimalOrNull()
                 ?.takeIf { it.signum() >= 0 }
-        return Request.Convert(CurrencyPair(from, to), amount)
+        return Request.Convert(pair, amount)
     }
 }

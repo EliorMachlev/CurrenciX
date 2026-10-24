@@ -54,7 +54,7 @@ internal val Screen.paneRole: PaneRole?
         when (this) {
             Screen.Converter -> PaneRole.List
             is Screen.Timeline, is Screen.Cart -> PaneRole.Detail
-            Screen.Settings, is Screen.SettingsPage, Screen.Fees, Screen.Backup -> null
+            Screen.Settings, is Screen.SettingsPage, Screen.Fees, Screen.Backup, Screen.ReceiptLanguages -> null
         }
 
 /**

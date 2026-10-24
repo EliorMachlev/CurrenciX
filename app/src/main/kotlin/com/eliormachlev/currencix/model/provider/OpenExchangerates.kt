@@ -46,9 +46,9 @@ class OpenExchangerates : ApiProvider.Api {
         val api = retrofitApi<OpenExchangeratesApi>(context, RATES_MOSHI)
         return fetchRetrofit {
             if (date != null) {
-                api.getHistorical(date.format(ISO_DATE), apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
+                api.getHistorical(date.format(ISO_DATE), token(apiKey), PRETTY_PRINT, SHOW_ALTERNATIVE)
             } else {
-                api.getLatest(apiKey, PRETTY_PRINT, SHOW_ALTERNATIVE)
+                api.getLatest(token(apiKey), PRETTY_PRINT, SHOW_ALTERNATIVE)
             }
         }.map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
             .explainKeyErrors(context)
@@ -62,4 +62,7 @@ class OpenExchangerates : ApiProvider.Api {
         endDate: LocalDate,
         secrets: ApiSecrets,
     ): Result<Timeline> = Result.failure(Exception(context?.getString(R.string.error_unsupported_timeline)))
+
+    // The Authorization header's value for the app ID, exactly as the API asks.
+    private fun token(apiKey: String) = "Token $apiKey"
 }

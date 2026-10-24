@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
 import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
+import com.eliormachlev.currencix.view.compose.fieldName
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 /**
@@ -82,7 +83,8 @@ fun TextEntrySheet(
         OutlinedTextField(
             state = text,
             lineLimits = if (singleLine) TextFieldLineLimits.SingleLine else TextFieldLineLimits.Default,
-            modifier = Modifier.fillMaxWidth(),
+            // Named by the prompt's title ("Open Exchangerates API key").
+            modifier = Modifier.fillMaxWidth().fieldName(title),
         )
     }
 }

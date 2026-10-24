@@ -9,13 +9,16 @@
 
 ## Modifications by the fork
 
-Starting **2026-08**, Elior Machlev maintains this fork under the name **CurrenciX** with the following changes relative to upstream (non-exhaustive summary — see the Git history for the authoritative record):
+Since **2026-07**, Elior Machlev maintains this fork, renamed **CurrenciX** on 2026-08-08 (#89), with the following changes relative to upstream (non-exhaustive summary — see the Git history for the authoritative record):
 
-- Renamed the app: display name `Currencies` → `CurrenciX`; Android `applicationId` and `namespace` `de.salomax.currencies` → `com.eliormachlev.currencix`; Kotlin/Java package tree moved accordingly.
-- Bundled a shared debug signing keystore so debug builds from any machine share a signature.
-- CI (`.github/workflows/apk-artifact.yaml`) stamps each debug APK's `versionName` with the short commit SHA and uploads the artifact.
+- Renamed the app: display name `Currencies` → `CurrenciX`; Android `applicationId` and `namespace` `de.salomax.currencies` → `com.eliormachlev.currencix`; Kotlin/Java package tree moved accordingly; a new brand mark, launcher icon and splash.
+- Rewrote the UI in Jetpack Compose (Material 3) in a single Activity: a new converter and keypad, a cart, rate charts, settings, bottom-sheet prompts, two-pane layouts for tablets and foldables, and right-to-left layouts (#181).
+- Added features: a fallback provider and two new providers (Bank of Israel, AllRatesToday), rate alerts, the cart (quantities, tip / tax, split, budget, trips, receipt scanning with on-device OCR, exports), quick conversions, "Convert currency" from other apps' text selection, a Quick Settings tile, launcher shortcuts, a configurable widget, an app lock, private requests, password-encrypted backups and on-device problem reports.
+- Replaced the data layer: SharedPreferences → DataStore, Retrofit over one shared OkHttp client, an in-house rate cache, and WorkManager background refresh.
+- Bundled a shared debug signing keystore so debug builds from any machine share a signature; release APKs carry a post-quantum hybrid signature (APK Signature Scheme v3.2).
+- CI: lint, unit, screenshot and fuzz tests, static analysis and supply-chain checks (detekt, Qodana, Semgrep, CodeQL, Gitleaks, OpenSSF Scorecard), baseline profiles and benchmarks, and a tag-driven release workflow; `apk-artifact.yaml` stamps each debug APK's `versionName` with the short commit SHA and uploads it.
 - Bulk dependency and CI-action upgrades.
-- Documentation (`README.md`, `docs/**`) rebranded, upstream attribution preserved.
+- Documentation (`README.md`, `docs/**`) rebranded and rewritten, upstream attribution preserved.
 
 ## License
 

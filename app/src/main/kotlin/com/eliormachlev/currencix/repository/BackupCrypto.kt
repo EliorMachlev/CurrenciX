@@ -1,11 +1,12 @@
 package com.eliormachlev.currencix.repository
 
 import android.util.Base64
+import com.eliormachlev.currencix.repository.json.JsonObject
+import com.eliormachlev.currencix.repository.json.buildJsonObject
 import com.eliormachlev.currencix.util.wipe
 import com.google.crypto.tink.subtle.AesGcmJce
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator
 import org.bouncycastle.crypto.params.Argon2Parameters
-import org.json.JSONObject
 import java.nio.CharBuffer
 import java.nio.charset.StandardCharsets
 import java.security.GeneralSecurityException
@@ -79,12 +80,12 @@ internal class BackupCrypto(
     fun encrypt(
         plaintext: ByteArray,
         password: CharArray,
-    ): JSONObject {
+    ): Map<String, Any> {
         val salt = ByteArray(SALT_LENGTH_BYTES).also(secureRandom::nextBytes)
         // Tink returns nonce + ciphertext (with its tag) as one array; the
         // file keeps them in two fields.
         val sealed = withKey(deriveKeyArgon2id(password, salt, DEFAULT_ARGON2)) { it.encrypt(plaintext, NO_ASSOCIATED_DATA) }
-        return JSONObject().apply {
+        return buildJsonObject {
             put(ENC_KDF, ARGON2ID_ID)
             put(ENC_MEMORY_KIB, DEFAULT_ARGON2.memoryKib)
             put(ENC_ITERATIONS, DEFAULT_ARGON2.iterations)
@@ -104,7 +105,7 @@ internal class BackupCrypto(
      */
     @Throws(GeneralSecurityException::class)
     fun decrypt(
-        block: JSONObject,
+        block: JsonObject,
         password: CharArray,
     ): ByteArray {
         val cipherId = block.optString(ENC_CIPHER)
@@ -134,7 +135,7 @@ internal class BackupCrypto(
 
     // The key for [block], by whichever derivation the block names.
     private fun deriveKey(
-        block: JSONObject,
+        block: JsonObject,
         password: CharArray,
     ): ByteArray {
         val salt = block.bytes(ENC_SALT)
@@ -145,7 +146,7 @@ internal class BackupCrypto(
         }
     }
 
-    private fun argon2Cost(block: JSONObject): Argon2Cost {
+    private fun argon2Cost(block: JsonObject): Argon2Cost {
         val cost =
             Argon2Cost(
                 memoryKib = block.optInt(ENC_MEMORY_KIB, -1),
@@ -210,7 +211,7 @@ internal class BackupCrypto(
 
     private fun base64(bytes: ByteArray): String = Base64.encodeToString(bytes, Base64.NO_WRAP)
 
-    private fun JSONObject.bytes(key: String): ByteArray {
+    private fun JsonObject.bytes(key: String): ByteArray {
         val encoded = optString(key)
         requireSupported(encoded.isNotEmpty()) { "Missing $key" }
         return Base64.decode(encoded, Base64.DEFAULT)

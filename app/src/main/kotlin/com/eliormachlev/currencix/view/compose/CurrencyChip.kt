@@ -27,6 +27,7 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.compose.theme.tile
 
 private val CHIP_HEIGHT: Dp = 36.dp
 
@@ -82,7 +83,7 @@ private fun ChipFrame(
         modifier
             .height(height)
             .clip(RoundedCornerShape(height / 2))
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .background(MaterialTheme.colorScheme.tile)
             .then(action)
             .padding(horizontal = CHIP_PADDING_H),
         verticalAlignment = Alignment.CenterVertically,

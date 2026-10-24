@@ -23,14 +23,20 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.AbroadOffer
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.HomeCurrency
+import com.eliormachlev.currencix.model.abroadOffer
 import com.eliormachlev.currencix.model.compareCards
 import com.eliormachlev.currencix.model.convert
+import com.eliormachlev.currencix.model.isHome
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.networkCountry
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
 import com.eliormachlev.currencix.view.alert.rememberSetRateAlert
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
@@ -42,6 +48,7 @@ import com.eliormachlev.currencix.view.compose.onboarding.Spotlight
 import com.eliormachlev.currencix.view.compose.onboarding.SpotlightStep
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.main.compose.AbroadSheet
 import com.eliormachlev.currencix.view.main.compose.CompareCardsSheet
 import com.eliormachlev.currencix.view.main.compose.ConverterBody
 import com.eliormachlev.currencix.view.main.compose.ConverterTopBar
@@ -113,6 +120,9 @@ internal fun ConverterRoute(
             else -> destinations.open(action) { overlay = it }
         }
     }
+
+    // Abroad: offer the local currency once per visit, when nothing else is open.
+    AbroadOfferHost(viewModel, enabled = overlay == null)
 
     ProvideOnboardingAnchors {
         MainScreen(
@@ -595,5 +605,46 @@ private fun OnboardingSpotlightHost() {
         nextLabel = stringResource(R.string.onboarding_next),
         finishLabel = stringResource(R.string.onboarding_finish),
         onDismiss = { db.display.hasSeenOnboarding.set(true) },
+    )
+}
+
+// Checks where the phone is each time the converter comes back to the front:
+// abroad, it offers the local currency → home's (once per visit); back home,
+// it forgets the last visit so the next one is asked about.
+@Composable
+private fun AbroadOfferHost(
+    viewModel: MainViewModel,
+    enabled: Boolean,
+) {
+    val context = LocalContext.current
+    val db = rememberDatabase()
+    var offer by remember { mutableStateOf<AbroadOffer?>(null) }
+    LifecycleResumeEffect(viewModel) {
+        val network = networkCountry(context)
+        val home = HomeCurrency.systemRegion()
+        val asked = db.lastState.abroadAskedCountry
+        if (isHome(network, home)) asked.set(null)
+        val pair =
+            viewModel.getBaseCurrency().value?.let { from ->
+                viewModel.getDestinationCurrency().value?.let { CurrencyPair(from, it) }
+            }
+        offer =
+            abroadOffer(network, home, pair, asked.get(), HomeCurrency::currencyOf)
+                .takeIf { db.display.hasSeenOnboarding.get() }
+        onPauseOrDispose {}
+    }
+    val shown = offer?.takeIf { enabled } ?: return
+    val answered = {
+        db.lastState.abroadAskedCountry.set(shown.country)
+        offer = null
+    }
+    AbroadSheet(
+        offer = shown,
+        onSwitch = {
+            viewModel.setCurrencyPair(CurrencyPair(shown.local, shown.home))
+            viewModel.forceUpdateExchangeRate()
+            answered()
+        },
+        onDismiss = answered,
     )
 }

@@ -6,11 +6,12 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `build.yaml` | Push → `master`, PR | Spotless, Compose stability, Gradle wrapper validation and fuzzing (own jobs), lint, test, build debug APK for both flavors (matrix) + fdroid release APK; failed tests become error annotations |
-| `release-apk.yaml` | Tag `v*` push, manual | The release: on a `v<versionName>` tag of a `master` commit, build the fdroid release APKs signed with the release key and the post-quantum hybrid signature (keys from the `release` environment's secrets, which only this job can read, removed after the build; Gradle cache read-only) and publish them as a GitHub release with `SHA256SUMS` and notes generated from the Conventional Commit titles since the previous tag (`.github/scripts/release-notes.py`); publishing is a separate job with `contents: write` that never sees the keys. By hand it only builds and uploads the signed APKs, and previews the notes. See build-and-flavors.md, "Post-quantum signing" |
+| `build.yaml` | Push → `master`, PR, manual | Spotless, Compose stability and fuzzing (own jobs), lint, test, build debug APK for both flavors (matrix) + fdroid release APK; failed tests become error annotations |
+| `release-apk.yaml` | Tag `v*` push, manual | The release: on a `v<versionName>` tag of a `master` commit, build the fdroid release APKs signed with the release key and the post-quantum hybrid signature (keys from the `release` environment's secrets, which only this job can read, removed after the build; Gradle cache read-only) and publish them as a GitHub release with their SBOM (`currencix-<version>-sbom.cdx.json`, CycloneDX), `SHA256SUMS` and notes generated from the Conventional Commit titles since the previous tag (`.github/scripts/release-notes.py`); publishing is a separate job with `contents: write` that never sees the keys. By hand it only builds and uploads the signed APKs, and previews the notes. See build-and-flavors.md, "Post-quantum signing" |
 | `apk-artifact.yaml` | Push → non-master, manual | Build fdroid debug APK, upload it as an artifact, and put a download link in the run summary |
 | `screenshots.yaml` | Push → non-master, manual | Record Roborazzi screenshots of every Compose surface (JVM, no emulator), plus 200 % font-size captures of the densest screens, and upload the PNGs as an artifact — not a gate, nothing is verified. `ScreenshotRule` renders on a manual clock, so the suite takes about a minute; the job times out at 20 min so a capture that never settles fails fast |
-| `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles on an API 34 emulator; upload them as an artifact |
+| `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles on an API 34 emulator; upload them as an artifact (and, run by hand with **commit**, commit them through `commit-baseline-profiles.yaml`) |
+| `commit-baseline-profiles.yaml` | Called by Baseline Profile, manual | Put a profile run's artifacts back in their folders and push them to the branch; then start Screenshots and the debug APK build on that commit |
 | `benchmarks.yaml` | Push → non-master touching app code, the build, `baselineprofile/**` or the benchmark scripts, manual | Run the startup and frame-timing benchmarks on the same emulator; fail on a slowdown against the saved baseline |
 | `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |
@@ -19,22 +20,22 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC) | Secret / credential scanning |
 | `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC) | Dependency vulnerability scan (CVSS ≥ 7) |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
-| `scorecard.yaml` | Push → `master`, weekly | OpenSSF Scorecard supply-chain score |
+| `gradle-wrapper.yaml` | PR, push → `master`, manual | `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. Its own quick workflow so Scorecard (below) can see it succeed on the latest commit, which is what makes Binary-Artifacts count the jar as validated |
+| `scorecard.yaml` | Push → `master`, weekly | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
 | `actionlint.yaml` | PR/push on `.github/workflows/**` | Validate workflow YAML syntax |
 
 ## Build Gate (`build.yaml`)
 
-Runs on both PRs and pushes to `master`. Three jobs, side by side:
+Runs on PRs and pushes to `master` (and by hand). Its jobs run side by side:
 
 - **`spotless`** — `spotlessCheck`, ktlint via Spotless (see [Code Style](contributing.md#code-style)).
 - **`fuzz`** — one job per fuzz target (`FuzzTest`: currency codes, selected-text prices, receipt text, calculations, typed amounts), each fuzzed for two minutes with Jazzer (`-PfuzzTests`, `JAZZER_FUZZ=1`). A crash fails the job and uploads its input (`fuzz-crash-<target>`). See [build-and-flavors.md](build-and-flavors.md#fuzz-tests).
-- **`gradle-wrapper`** — `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. With it, OpenSSF Scorecard's Binary-Artifacts check counts the jar as validated.
 - **`compose-stability`** — compiles with `-PcomposeReports` (the Compose compiler's report of each composable, `app/build/compose-reports/`) and runs `.github/scripts/compose-stability.py`, which fails on a composable that can't skip, or one taking a parameter the compiler can't prove stable: with strong skipping that parameter is compared by identity, so a fresh but equal value recomposes it every time. Fix it by making the type stable (immutable, `@Stable` / `@Immutable` when that's true, or listed in `app/compose-stability.conf`). Keys typed `Any`, an Android `Context` and receivers are compared by identity on purpose and aren't flagged; nor are the widget's Glance composables, which compose once per update.
 - **`build`** — matrix over `Fdroid` and `Play` flavors × the three checks below, six jobs in all, each running one of:
   - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
   - `test<Flavor>DebugUnitTest` — JUnit unit tests
   - `assemble<Flavor>Debug` — compile debug APK for the matrix flavor
-- **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and uploads it as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
+- **`fdroid-release-build`** — assembles the fdroid *release* APK unsigned and writes its SBOM (`:app:cyclonedxDirectBom`, as the release does), and uploads both as an artifact (14-day retention). Reproducibility guard: catches breakage of the fdroid release build path before it blocks an F-Droid release.
 
 ## Speed
 
@@ -82,7 +83,9 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 
 ### Semgrep
 - Rule sets: `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`
+- Installed on Python 3.14 (the newest Semgrep supports; its wheels stop at 3.14) from `.github/semgrep/requirements.txt`, Semgrep and every package it needs pinned by hash (`--require-hashes`), not the unpinned `semgrep/semgrep` image; that file is compiled from `requirements.in` with `pip-compile --generate-hashes`, and Dependabot recompiles it
 - Every finding is printed in the job log and uploaded as SARIF to the GitHub Security tab. No rule is switched off and no path is left out. Two findings are excluded where they occur, both recorded in [exceptions.md](exceptions.md): `exported_activity` on the launcher and on the text-selection ("Convert currency") activity.
+- Semgrep honours those `nosemgrep` comments (the job passes) and marks both results suppressed in the SARIF, but GitHub code scanning doesn't read SARIF suppressions, so it still lists them as open alerts until they're dismissed there.
 - Any finding fails the job, whatever its severity.
 
 ### OWASP Dependency Check
@@ -92,8 +95,9 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - Uploads HTML + XML reports as artifact
 
 ### OpenSSF Scorecard
-- Evaluates pinned-dependencies, branch-protection, SAST, etc.
-- Results written to `scorecard-results.sarif` and uploaded to Security tab
+- Evaluates pinned-dependencies, branch-protection, SAST, etc., and publishes the score to the public Scorecard API (`publish_results`)
+- Results written to `results.sarif`, uploaded to the Security tab and kept 5 days as the `scorecard-sarif` artifact
+- On a push it waits for `gradle-wrapper.yaml` to pass on the commit first (`wrapper-validated`), so Binary-Artifacts counts the wrapper jar as validated
 
 ## Dependabot
 
@@ -103,12 +107,12 @@ Configured in `.github/dependabot.yml` with weekly Monday schedule.
 
 | Ecosystem | Directories | Open PR limit | Cooldown |
 |---|---|---|---|
-| `gradle` | `/`, `/app`, `/helpers` | 10 | 7 days |
+| `gradle` | `/` (every module) | 10 | 7 days |
 | `github-actions` | `/` | 5 | 7 days |
+| `pip` | `/.github/scripts` (the CI scripts' `requirements.txt`) and `/.github/semgrep` (Semgrep's), both pinned by hash; one grouped PR | 5 | 7 days |
 
 **Grouped updates** keep related libraries in one PR:
 - `androidx.*`
-- `com.google.android.material:*`
 - `org.jetbrains.kotlin*` + `com.google.devtools.ksp*`
 - `com.squareup.moshi:*`
 - `com.squareup.okhttp3:*`
@@ -122,9 +126,12 @@ All workflows use `permissions: contents: read` by default. Additional permissio
 | Workflow | Extra permissions |
 |---|---|
 | `detekt.yaml` | `security-events: write` |
+| `semgrep.yaml` | `security-events: write` |
 | `qodana.yaml` | `security-events: write`, `pull-requests: write`, `checks: write` |
-| `codeql.yaml` | `security-events: write`, `actions: read` |
-| `scorecard.yaml` | `security-events: write`, `id-token: write` |
+| `codeql.yaml` | `security-events: write`, `actions: read`, `packages: read` |
+| `scorecard.yaml` | `security-events: write`, `id-token: write`, `actions: read` (the analysis); `actions: read` (waiting for the wrapper check) |
+| `release-apk.yaml` | `contents: write` for the `publish` job only, which never sees the signing keys; the `build` job that holds them reads only |
+| `baseline-profile.yaml` | `contents: write`, `actions: write` for the `commit` job only (it calls `commit-baseline-profiles.yaml`) |
 | `dependency-review.yaml` | `pull-requests: write` |
 | `owasp-dependency-check.yaml` | `security-events: write` |
 | `commit-baseline-profiles.yaml` | `contents: write`, `actions: write`: pushes a Baseline Profile run's profiles to the branch (called by that workflow on a manual run with "commit" ticked, or run by hand with the run's ID), then dispatches Screenshots and the debug APK build on that commit; runs no build itself |

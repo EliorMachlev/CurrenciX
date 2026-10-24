@@ -143,9 +143,11 @@
     <string name="credit_lib_compose">Boîte à outils d\'interface et Material 3</string>
     <string name="credit_lib_material_components">Composants Material Design</string>
     <string name="credit_lib_material_symbols">Icônes (arrondies)</string>
+    <string name="credit_lib_typeface">Police de caractères</string>
     <string name="credit_lib_vico">Graphiques</string>
     <string name="credit_lib_okhttp">Client HTTP</string>
     <string name="credit_lib_moshi">Analyseur JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (stockage des paniers, voyages et frais)</string>
     <string name="credit_lib_timber">Journalisation</string>
     <string name="credit_lib_bouncy_castle">Dérivation de clé Argon2id pour les sauvegardes chiffrées</string>
     <string name="credit_lib_tink">Chiffrement AES-GCM des sauvegardes</string>

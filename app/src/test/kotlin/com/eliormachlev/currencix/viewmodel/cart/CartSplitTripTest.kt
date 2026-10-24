@@ -11,10 +11,8 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.repository.parseCart
-import com.eliormachlev.currencix.repository.parseTrips
-import com.eliormachlev.currencix.repository.serializeCart
-import com.eliormachlev.currencix.repository.serializeTrips
+import com.eliormachlev.currencix.repository.throughJson
+import com.eliormachlev.currencix.repository.throughProto
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -24,7 +22,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.math.BigDecimal
 
-// Split by person and trips. Robolectric for org.json and the stores.
+// Split by person and trips. Robolectric for the stores.
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = Application::class)
 class CartSplitTripTest {
@@ -76,9 +74,11 @@ class CartSplitTripTest {
     @Test
     fun `people, who an item is for, and the trip survive a save`() {
         val c = cart(CartItem("1", "salad", "30", personId = "d"), tripId = "t1")
-        assertEquals(c, parseCart(serializeCart(c).toString()))
+        assertEquals(c, c.throughJson())
+        assertEquals(c, c.throughProto())
         val trips = listOf(Trip("t1", "Japan", Currency.ILS, BigDecimal("3000")), Trip("t2", "", Currency.EUR))
-        assertEquals(trips, parseTrips(serializeTrips(trips)))
+        assertEquals(trips, trips.mapNotNull { it.throughJson() })
+        assertEquals(trips, trips.mapNotNull { it.throughProto() })
     }
 
     @Test

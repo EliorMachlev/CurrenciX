@@ -139,9 +139,11 @@
     <string name="credit_lib_compose">Ilaro por la uzantinterfaco kaj Material 3</string>
     <string name="credit_lib_material_components">Komponantoj de Material Design</string>
     <string name="credit_lib_material_symbols">Piktogramoj (rondigitaj)</string>
+    <string name="credit_lib_typeface">Tiparo</string>
     <string name="credit_lib_vico">Diagramoj</string>
     <string name="credit_lib_okhttp">HTTP-kliento</string>
     <string name="credit_lib_moshi">JSON-analizilo</string>
+    <string name="credit_lib_wire">Protocol Buffers (kiel konserviĝas ĉaroj, vojaĝoj kaj kotizoj)</string>
     <string name="credit_lib_timber">Protokolado</string>
     <string name="credit_lib_bouncy_castle">Ŝlosila derivado per Argon2id por ĉifritaj sekurkopioj</string>
     <string name="credit_lib_tink">AES-GCM-ĉifrado por sekurkopioj</string>

@@ -13,9 +13,9 @@ The project favours simplicity. Large feature additions are unlikely to be merge
 
 ## Translations
 
-The fork inherits translations for 20+ languages from upstream Currencies but doesn't yet run its own translation workflow. If you'd like to contribute a translation, open an issue first so we can coordinate.
+The app is in 33 languages: English plus 32 translations (`res/values-*`), most inherited from upstream Currencies, whose translators used Weblate. The fork doesn't run its own translation workflow yet; if you'd like to contribute or correct a translation, open an issue first so we can coordinate.
 
-Every translatable string exists in all 31 locales, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
+Every translatable string exists in all 32 translated locales, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
 
 ## Code Contributions
 
@@ -59,11 +59,12 @@ Warnings and findings get fixed, not hidden.
 - **Fix the cause.** Migrate off the deprecated API, split the long function, make the parameter list a type, remove the unused code.
 - **When no real fix exists yet,** leave the warning visible and say so in the PR. A visible warning is accurate; a hidden one is not.
 
-**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds two Semgrep findings, and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
+**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds six entries (two Semgrep findings, one LeakCanary reference and three incubating Android Gradle Plugin APIs), and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
 
 ### Pull Request Checklist
 
 - [ ] `./gradlew check assembleDebug` passes locally (includes the Konsist architecture tests)
+- [ ] New functionality comes with unit tests, and a bug fix with a test that fails without it (Robolectric for Android and Compose code, plain JUnit otherwise)
 - [ ] `./gradlew detekt` reports no findings
 - [ ] `./gradlew spotlessCheck` is clean
 - [ ] No suppressions or baseline entries beyond those in [exceptions.md](exceptions.md), and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))

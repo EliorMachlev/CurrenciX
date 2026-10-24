@@ -58,6 +58,10 @@ internal enum class ThemeMode(
     LIGHT(dark = false, oled = false),
     DARK(dark = true, oled = false),
     OLED(dark = true, oled = true),
+    ;
+
+    // The resource qualifier for the night mode the app sets on a phone.
+    val qualifier: String get() = if (dark) "night" else "notnight"
 }
 
 // Every axis × axis combo we render per composable. Kept as a top-level
@@ -136,9 +140,9 @@ class ScreenshotRule : TestRule {
         content: @Composable () -> Unit,
     ) {
         compose.mainClock.autoAdvance = false
-        cells.groupBy(Cell::locale).forEach { (locale, group) ->
+        cells.groupBy { "${it.locale.qualifier}-${it.theme.qualifier}" }.forEach { (qualifiers, group) ->
             val current = mutableStateOf(group.first())
-            showInLanguage(locale) {
+            showWith(qualifiers) {
                 val cell = current.value
                 key(cell) {
                     FontScaled(cell.fontScale) {
@@ -154,16 +158,17 @@ class ScreenshotRule : TestRule {
         }
     }
 
-    // The whole activity runs in the cell's language, as on a phone set to
-    // it: a sheet or dialog opens a window of its own that takes its
-    // resources (and so its strings and reading direction) from the
-    // activity, not from anything provided around it. Switching the
-    // qualifiers recreates the activity, so the content goes on the new one.
-    private fun showInLanguage(
-        locale: Locale2,
+    // The whole activity runs in the cell's language and night mode, as on a
+    // phone set to them: a sheet or dialog opens a window of its own that
+    // takes its resources (and so its strings, reading direction and light or
+    // dark theme) from the activity, not from anything provided around it.
+    // Switching the qualifiers recreates the activity, so the content goes on
+    // the new one.
+    private fun showWith(
+        qualifiers: String,
         content: @Composable () -> Unit,
     ) {
-        RuntimeEnvironment.setQualifiers("+${locale.qualifier}")
+        RuntimeEnvironment.setQualifiers("+$qualifiers")
         compose.runOnUiThread { compose.activity.setContent(content = content) }
     }
 

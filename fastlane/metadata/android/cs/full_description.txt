@@ -1,4 +1,4 @@
-Currencies je jednoduchý a přehledný převodník měn.Není určen pro finanční obchody v reálném čase, ale spíše jako praktický společník např. na dovolené.
+CurrenciX je jednoduchý a přehledný převodník měn.Není určen pro finanční obchody v reálném čase, ale spíše jako praktický společník např. na dovolené.
 
 - Aplikace podporuje všechny relevantní měny. Můžete si vybrat mezi několika oficiálními poskytovateli směnných kurzů:
    - frankfurter.app s více než 30 měnami, které poskytuje Evropská centrální banka
@@ -12,5 +12,5 @@ Currencies je jednoduchý a přehledný převodník měn.Není určen pro finan�
 - Historické kurzy: Můžete použít kurzy z předchozích dat.
 - Důležitou funkcí je přiložená kalkulačka. Užitečné např. pokud chcete rozdělit účet v restauraci.
 - Kalkulačka poplatků: Volitelně můžete ke všem výpočtům přidat přizpůsobitelný poplatek za směnu cizí měny.
-- Currencies je napsána pro Android v jazyce Kotlin, je zaměřena na Android 13 a podporuje světlá a tmavá témata.
+- CurrenciX je napsána pro Android v jazyce Kotlin, je zaměřena na Android 13 a podporuje světlá a tmavá témata.
 - Aplikace neobsahuje reklamy a nešpehuje uživatele.

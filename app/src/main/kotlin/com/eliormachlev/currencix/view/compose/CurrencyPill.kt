@@ -43,6 +43,7 @@ import com.eliormachlev.currencix.util.hapticClickable
 import com.eliormachlev.currencix.util.hapticCombinedClickable
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.compose.theme.tile
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.view.navigation.rememberPillTransition
 import com.eliormachlev.currencix.view.navigation.sharedCurrencyPill
@@ -88,7 +89,7 @@ fun CurrencyPill(
             .sharedCurrencyPill(transition)
             .height(PILL_HEIGHT)
             .clip(RoundedCornerShape(PILL_RADIUS))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(MaterialTheme.colorScheme.tile)
             .hapticClickable(enabled = currency != null, onClick = onClick)
             .padding(horizontal = PILL_HORIZONTAL_PADDING),
         verticalAlignment = Alignment.CenterVertically,

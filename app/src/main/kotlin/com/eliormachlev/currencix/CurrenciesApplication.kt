@@ -12,6 +12,7 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.TimelineFiles
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.prefStore
+import com.eliormachlev.currencix.repository.persistence.warmUpSavedData
 import com.eliormachlev.currencix.strict.installStrictMode
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.FileLoggingTree
@@ -92,6 +93,7 @@ class CurrenciesApplication : Application() {
         val app = this
         CoroutineScope(SupervisorJob() + AppDispatchers.production.io).launch {
             PersistenceKey.entries.filter { it != PersistenceKey.TIMELINES }.forEach { it.prefStore(app).snapshot() }
+            app.warmUpSavedData()
             TimelineFiles.get(app).warmUp()
         }
     }

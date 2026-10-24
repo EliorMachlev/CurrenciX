@@ -63,7 +63,6 @@ import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Motion
-import com.eliormachlev.currencix.view.compose.theme.SpaceGrotesk
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.main.KeyAvailability
 import com.eliormachlev.currencix.viewmodel.main.Operator
@@ -414,7 +413,7 @@ private fun KeyLabel(
     color: Color,
     size: TextUnit = KEY_TEXT_SIZE,
 ) {
-    Text(text = text, color = color, fontSize = size, fontFamily = SpaceGrotesk, fontWeight = FontWeight.Medium)
+    Text(text = text, color = color, fontSize = size, fontWeight = FontWeight.Medium)
 }
 
 // A key that types [digit].

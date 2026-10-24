@@ -23,8 +23,8 @@ object HomeCurrency {
         return CurrencyPair(from, home)
     }
 
-    // The currency used in [region], when the app has it.
-    private fun currencyOf(region: String?): Currency? {
+    /** The currency used in [region] (ISO 3166 code), when the app has it. */
+    fun currencyOf(region: String?): Currency? {
         if (region.isNullOrBlank()) return null
         // A malformed code, or a region with no currency of its own (Antarctica).
         val code =
@@ -38,8 +38,8 @@ object HomeCurrency {
         return code?.let(Currency::fromString)
     }
 
-    // The region of the phone's first language that has one.
-    private fun systemRegion(): String? {
+    /** The phone's home region: that of its first language that has one (its system setting, not the app's). */
+    fun systemRegion(): String? {
         val locales = Resources.getSystem().configuration.locales
         return (0 until locales.size()).map { locales[it].country }.firstOrNull { it.isNotBlank() }
     }

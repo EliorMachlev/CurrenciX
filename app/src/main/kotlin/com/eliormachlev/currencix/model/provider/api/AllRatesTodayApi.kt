@@ -36,8 +36,4 @@ internal interface AllRatesTodayApi {
         @Query("from") from: String,
         @Query("to") toExclusive: String,
     ): Response<Timeline>
-
-    companion object {
-        const val AUTHORIZATION = "Authorization"
-    }
 }
