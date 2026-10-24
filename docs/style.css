@@ -404,11 +404,11 @@ code { font-family: var(--code); font-size: .9em; }
 .tile { border-radius: var(--radius); background: var(--step); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; }
 .tile b { font: 500 var(--s-large)/1.1 var(--display); letter-spacing: -.02em; }
 .tile span { color: var(--muted); }
-.tile.lead { grid-column: span 2; background: var(--accent); color: var(--on-accent); }
+.tile.lead { grid-column: span 2; grid-row: span 2; background: var(--accent); color: var(--on-accent); }
 .tile.lead p { max-width: 40ch; }
 @media (max-width: 56rem) {
   .tiles { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; gap: 6px; }
-  .tile.lead { grid-column: 1 / -1; }
+  .tile.lead { grid-column: 1 / -1; grid-row: auto; }
   .tile { min-height: 8rem; padding: 1.1rem; }
 }
 
