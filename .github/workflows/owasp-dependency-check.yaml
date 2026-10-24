@@ -9,11 +9,11 @@ permissions:
   contents: read
 
 jobs:
-  check:
+  # Dependency-Check scans files, not Gradle's dependency graph: copy every
+  # library the F-Droid release ships out of Gradle's cache, each named by
+  # its coordinates (app/build/owasp-libraries/<group>/<module>-<version>).
+  libraries:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
@@ -21,23 +21,36 @@ jobs:
           java-version: 25
           distribution: temurin
       - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
-      # Dependency-Check scans files, not Gradle's dependency graph: copy every
-      # library the F-Droid release ships out of Gradle's cache, each named by
-      # its coordinates (app/build/owasp-libraries/<group>/<module>-<version>).
       - name: Collect the libraries the app ships
         run: ./gradlew :app:owaspLibraries
-      # The action runs Dependency-Check in its own container, with the
-      # vulnerability data built into its image (--noupdate), so it needs no
-      # NVD key. JAVA_HOME is emptied for it: setup-java's path above doesn't
-      # exist inside that container, and the scanner refuses to start with it
-      # ("JAVA_HOME is not defined correctly"); empty, it uses the image's java.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: owasp-libraries
+          path: app/build/owasp-libraries/
+          retention-days: 1
+
+  # A job of its own, without setup-java: the action runs Dependency-Check in
+  # its own container, which is handed the job's environment, and with
+  # setup-java's JAVA_HOME (a path that exists only on the runner) the scanner
+  # refuses to start ("JAVA_HOME is not defined correctly"). It scans with the
+  # vulnerability data built into its image (--noupdate), so it needs no NVD key.
+  check:
+    needs: libraries
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: owasp-libraries
+          path: owasp-libraries
       - name: Run OWASP Dependency-Check
         uses: dependency-check/Dependency-Check_Action@1e54355a8b4c8abaa8cc7d0b70aa655a3bb15a6c # main
-        env:
-          JAVA_HOME: ''
         with:
           project: currencies
-          path: 'app/build/owasp-libraries'
+          path: 'owasp-libraries'
           format: SARIF
           out: reports
           args: >-

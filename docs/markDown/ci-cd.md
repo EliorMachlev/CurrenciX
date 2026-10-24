@@ -93,7 +93,7 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - CVSS threshold: 7 (high+): `--failOnCVSS 7`
 - Scans every library the fdroid release ships: `:app:owaspLibraries` copies them out of Gradle's cache as `app/build/owasp-libraries/<group>/<module>-<version>.<jar|aar>` (each library once, the project's own modules left out), since Dependency-Check reads files and their names, not Gradle's dependency graph; aars are opened too (`--zipExtensions aar`)
 - Detects retired/archived dependencies (`--enableRetired`)
-- Runs in the action's own container, on the NVD data built into its image (the action passes `--noupdate`), so no NVD API key is needed. `JAVA_HOME` is emptied for that step: the runner's path from `setup-java` doesn't exist in the container, and the scanner refused to start with it ("JAVA_HOME is not defined correctly"), which is why every weekly run failed from at least September 2026
+- Two jobs: `libraries` (Java and Gradle) collects the libraries and hands them over as an artifact, and `check` scans them with the action, which runs in its own container on the NVD data built into its image (it passes `--noupdate`), so no NVD API key is needed. `check` has no `setup-java` on purpose: the action's container is handed the job's environment, and with `setup-java`'s `JAVA_HOME`, a path that exists only on the runner, the scanner refused to start ("JAVA_HOME is not defined correctly"), which is why every weekly run failed from at least September 2026
 - SARIF uploaded to the Security tab (category `owasp-dependency-check`), only when the scan wrote one, and kept 30 days as the `owasp-report` artifact
 
 ### OSV-Scanner
