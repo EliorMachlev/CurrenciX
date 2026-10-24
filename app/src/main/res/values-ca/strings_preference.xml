@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">La teva configuració actual se sobreescriurà amb la del fitxer. Aquesta acció no es pot desfer.</string>
     <string name="backup_import_confirm_positive">Restaura</string>
     <string name="backup_encrypt_option">Xifra amb una contrasenya</string>
+    <string name="backup_keys_left_out">Les claus d\'API no s\'inclouen en una còpia de seguretat sense contrasenya.</string>
     <string name="backup_password_hint">Contrasenya</string>
     <string name="backup_password_prompt_title">Introdueix la contrasenya</string>
     <string name="backup_password_wrong">La contrasenya no ha desxifrat el fitxer. Torna-ho a provar.</string>
@@ -198,6 +199,8 @@
     <string name="app_lock_unlock">Desbloqueja</string>
     <string name="private_requests_title">Peticions privades</string>
     <string name="private_requests_summary">Envia les peticions de canvi igual que tothom: sense versió de l\'app, detalls del dispositiu ni identificadors de memòria cau. Gasta una mica més de dades.</string>
+    <string name="block_screenshots_title">Bloca les captures de pantalla</string>
+    <string name="block_screenshots_summary">Mostra l\'aplicació en blanc a les captures, les gravacions de pantalla i les aplicacions recents</string>
     <string name="auto_refresh_summary">Mantén els tipus actualitzats en segon pla</string>
     <string name="refresh_interval_title">Actualitza cada</string>
     <string name="refresh_interval_daily">Un cop al dia, just després que %1$s publiqui</string>

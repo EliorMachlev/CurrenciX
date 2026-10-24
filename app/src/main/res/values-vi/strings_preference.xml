@@ -113,6 +113,7 @@
     <string name="backup_import_confirm_message">Cài đặt hiện tại sẽ bị ghi đè bằng cài đặt trong tệp. Không thể hoàn tác thao tác này.</string>
     <string name="backup_import_confirm_positive">Khôi phục</string>
     <string name="backup_encrypt_option">Mã hóa bằng mật khẩu</string>
+    <string name="backup_keys_left_out">Khóa API không được đưa vào bản sao lưu không có mật khẩu.</string>
     <string name="backup_password_hint">Mật khẩu</string>
     <string name="backup_password_prompt_title">Nhập mật khẩu</string>
     <string name="backup_password_wrong">Mật khẩu không giải mã được tệp này. Hãy thử lại.</string>
@@ -198,6 +199,8 @@
     <string name="app_lock_unlock">Mở khóa</string>
     <string name="private_requests_title">Yêu cầu riêng tư</string>
     <string name="private_requests_summary">Gửi yêu cầu tỷ giá giống như mọi người: không có phiên bản ứng dụng, thông tin thiết bị hay mã nhận dạng bộ nhớ đệm. Tốn dữ liệu hơn một chút.</string>
+    <string name="block_screenshots_title">Chặn ảnh chụp màn hình</string>
+    <string name="block_screenshots_summary">Ứng dụng hiển thị trống trong ảnh chụp, bản ghi màn hình và Gần đây</string>
     <string name="auto_refresh_summary">Giữ tỷ giá luôn cập nhật trong nền</string>
     <string name="refresh_interval_title">Làm mới mỗi</string>
     <string name="refresh_interval_daily">Mỗi ngày một lần, ngay sau khi %1$s công bố</string>

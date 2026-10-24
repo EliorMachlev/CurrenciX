@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">നിലവിലുള്ള ക്രമീകരണങ്ങൾ ഫയലിലുള്ളവ കൊണ്ട് മാറ്റിയെഴുതും. ഇത് പഴയപടിയാക്കാൻ കഴിയില്ല.</string>
     <string name="backup_import_confirm_positive">പുനഃസ്ഥാപിക്കുക</string>
     <string name="backup_encrypt_option">പാസ്‌വേഡ് ഉപയോഗിച്ച് എൻക്രിപ്റ്റ് ചെയ്യുക</string>
+    <string name="backup_keys_left_out">പാസ്‌വേഡില്ലാത്ത ബാക്കപ്പിൽ API കീകൾ ഉൾപ്പെടുത്തില്ല.</string>
     <string name="backup_password_hint">പാസ്‌വേഡ്</string>
     <string name="backup_password_prompt_title">പാസ്‌വേഡ് നൽകുക</string>
     <string name="backup_password_wrong">പാസ്‌വേഡിന് ഈ ഫയൽ ഡീക്രിപ്റ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.</string>
@@ -197,6 +198,8 @@
     <string name="app_lock_unlock">അൺലോക്ക്</string>
     <string name="private_requests_title">സ്വകാര്യ അഭ്യർത്ഥനകൾ</string>
     <string name="private_requests_summary">നിരക്ക് അഭ്യർത്ഥനകൾ എല്ലാവരുടേതുപോലെ അയയ്ക്കുക: ആപ്പ് പതിപ്പോ ഉപകരണ വിവരങ്ങളോ കാഷെ ഐഡന്റിഫയറുകളോ ഇല്ലാതെ. കുറച്ചുകൂടി ഡാറ്റ ഉപയോഗിക്കും.</string>
+    <string name="block_screenshots_title">സ്ക്രീൻഷോട്ടുകൾ തടയുക</string>
+    <string name="block_screenshots_summary">സ്ക്രീൻഷോട്ടുകളിലും സ്ക്രീൻ റെക്കോർഡിംഗിലും സമീപകാല ആപ്പുകളിലും ആപ്പ് ശൂന്യമായി കാണിക്കും</string>
     <string name="auto_refresh_summary">നിരക്കുകൾ പശ്ചാത്തലത്തിൽ കാലികമായി നിലനിർത്തുക</string>
     <string name="refresh_interval_title">പുതുക്കൽ ഇടവേള</string>
     <string name="refresh_interval_daily">ദിവസത്തിൽ ഒരിക്കൽ, %1$s പ്രസിദ്ധീകരിച്ച ഉടൻ</string>

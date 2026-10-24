@@ -3,9 +3,16 @@
   Cleartext HTTP is refused globally. Every exchange-rate provider currently
   configured (see ApiProvider) exposes HTTPS-only endpoints, so this closes
   off downgrade/MITM avenues without breaking any real traffic.
+
+  Certificate Transparency: a provider's certificate must be in the public CT
+  logs, so a certificate mis-issued for one of its hosts (by any CA the phone
+  trusts) is refused. Android 17 checks this by default for apps targeting it;
+  Android 16 only when asked, as here; earlier versions can't. The app's
+  OkHttp client uses the platform's trust manager, which applies it.
 -->
 <network-security-config>
     <base-config cleartextTrafficPermitted="false">
+        <certificateTransparency enabled="true" />
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

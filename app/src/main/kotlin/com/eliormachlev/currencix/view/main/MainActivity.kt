@@ -43,6 +43,7 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
 import com.eliormachlev.currencix.view.lock.LockGate
+import com.eliormachlev.currencix.view.lock.blockScreenshots
 import com.eliormachlev.currencix.view.lock.hideFromRecents
 import com.eliormachlev.currencix.view.navigation.AppNavHost
 import com.eliormachlev.currencix.view.navigation.AppNavigator
@@ -148,11 +149,16 @@ class MainActivity : AppCompatActivity() {
         keepRecentsInStep(database)
     }
 
-    // With the app lock on, Recents shows no picture of the last screen.
+    // With the app lock on, Recents shows no picture of the last screen; with
+    // "Block screenshots", the system shows the app as blank everywhere.
     private fun keepRecentsInStep(database: Database) {
         lifecycleScope.launch {
             database.privacy.appLock.flow
                 .collect { hideFromRecents(it) }
+        }
+        lifecycleScope.launch {
+            database.privacy.blockScreenshots.flow
+                .collect { blockScreenshots(it) }
         }
     }
 

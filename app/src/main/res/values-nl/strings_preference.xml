@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Je huidige instellingen worden overschreven met die uit het bestand. Dit kan niet ongedaan worden gemaakt.</string>
     <string name="backup_import_confirm_positive">Herstellen</string>
     <string name="backup_encrypt_option">Versleutelen met een wachtwoord</string>
+    <string name="backup_keys_left_out">API-sleutels gaan niet mee in een back-up zonder wachtwoord.</string>
     <string name="backup_password_hint">Wachtwoord</string>
     <string name="backup_password_prompt_title">Voer wachtwoord in</string>
     <string name="backup_password_wrong">Het wachtwoord kon dit bestand niet ontsleutelen. Probeer het opnieuw.</string>
@@ -196,6 +197,8 @@
     <string name="app_lock_unlock">Ontgrendelen</string>
     <string name="private_requests_title">Privéverzoeken</string>
     <string name="private_requests_summary">Verstuur koersverzoeken op dezelfde manier als iedereen: zonder appversie, apparaatgegevens of cache-ID\'s. Kost iets meer data.</string>
+    <string name="block_screenshots_title">Screenshots blokkeren</string>
+    <string name="block_screenshots_summary">De app is leeg in screenshots, schermopnamen en recente apps</string>
     <string name="auto_refresh_summary">Koersen op de achtergrond actueel houden</string>
     <string name="refresh_interval_title">Vernieuwen elke</string>
     <string name="refresh_interval_daily">Eén keer per dag, vlak nadat %1$s publiceert</string>

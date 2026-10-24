@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">目前的設定將被檔案中的設定覆蓋。此操作無法復原。</string>
     <string name="backup_import_confirm_positive">還原</string>
     <string name="backup_encrypt_option">使用密碼加密</string>
+    <string name="backup_keys_left_out">沒有密碼的備份不含 API 金鑰。</string>
     <string name="backup_password_hint">密碼</string>
     <string name="backup_password_prompt_title">輸入密碼</string>
     <string name="backup_password_wrong">此密碼無法解密該檔案，請再試一次。</string>
@@ -195,6 +196,8 @@
     <string name="app_lock_unlock">解鎖</string>
     <string name="private_requests_title">隱私要求</string>
     <string name="private_requests_summary">以與所有人相同的方式傳送匯率要求：不含應用程式版本、裝置資訊或快取識別碼。會多用一點數據。</string>
+    <string name="block_screenshots_title">封鎖螢幕截圖</string>
+    <string name="block_screenshots_summary">在螢幕截圖、螢幕錄製和最近使用中將應用程式顯示為空白</string>
     <string name="auto_refresh_summary">在背景保持匯率最新</string>
     <string name="refresh_interval_title">重新整理間隔</string>
     <string name="refresh_interval_daily">每天一次，在 %1$s 發布後立即重新整理</string>

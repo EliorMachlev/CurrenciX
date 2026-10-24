@@ -102,6 +102,7 @@
     <string name="backup_import_confirm_message">Viaj nunaj agordoj estos anstataŭigitaj per tiuj en la dosiero. Tio ne malfareblas.</string>
     <string name="backup_import_confirm_positive">Restarigi</string>
     <string name="backup_encrypt_option">Ĉifri per pasvorto</string>
+    <string name="backup_keys_left_out">API-ŝlosiloj ne estas en savkopio sen pasvorto.</string>
     <string name="backup_password_hint">Pasvorto</string>
     <string name="backup_password_prompt_title">Enigu pasvorton</string>
     <string name="backup_password_wrong">La pasvorto ne malĉifris ĉi tiun dosieron. Provu denove.</string>
@@ -199,6 +200,8 @@
     <string name="app_lock_unlock">Malŝlosi</string>
     <string name="private_requests_title">Privataj petoj</string>
     <string name="private_requests_summary">Sendi kurzajn petojn same kiel ĉiuj: sen aplikaĵa versio, aparataj detaloj aŭ kaŝmemoraj identigiloj. Uzas iom pli da datumoj.</string>
+    <string name="block_screenshots_title">Bloki ekrankopiojn</string>
+    <string name="block_screenshots_summary">La apo aperas malplena en ekrankopioj, ekranregistraĵoj kaj Lastatempaj</string>
     <string name="auto_refresh_summary">Teni kurzojn ĝisdataj fone</string>
     <string name="refresh_interval_title">Aktualigi ĉiun</string>
     <string name="refresh_interval_daily">Unufoje tage, tuj post kiam %1$s publikigas</string>

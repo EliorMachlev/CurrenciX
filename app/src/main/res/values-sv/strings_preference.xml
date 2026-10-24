@@ -112,6 +112,7 @@
     <string name="backup_import_confirm_message">Dina nuvarande inställningar skrivs över med de i filen. Detta kan inte ångras.</string>
     <string name="backup_import_confirm_positive">Återställ</string>
     <string name="backup_encrypt_option">Kryptera med lösenord</string>
+    <string name="backup_keys_left_out">API-nycklar tas inte med i en säkerhetskopia utan lösenord.</string>
     <string name="backup_password_hint">Lösenord</string>
     <string name="backup_password_prompt_title">Ange lösenord</string>
     <string name="backup_password_wrong">Filen kunde inte dekrypteras med det här lösenordet. Försök igen.</string>
@@ -198,6 +199,8 @@
     <string name="app_lock_unlock">Lås upp</string>
     <string name="private_requests_title">Privata förfrågningar</string>
     <string name="private_requests_summary">Skicka kursförfrågningar på samma sätt som alla andra: utan appversion, enhetsuppgifter eller cache-id:n. Drar lite mer data.</string>
+    <string name="block_screenshots_title">Blockera skärmbilder</string>
+    <string name="block_screenshots_summary">Appen visas tom på skärmbilder, skärminspelningar och i Senaste</string>
     <string name="auto_refresh_summary">Håll kurserna uppdaterade i bakgrunden</string>
     <string name="refresh_interval_title">Uppdatera var</string>
     <string name="refresh_interval_daily">En gång om dagen, strax efter att %1$s publicerar</string>

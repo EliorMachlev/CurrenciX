@@ -64,7 +64,7 @@ internal fun List<CartItem>.afterDrop(
  * A named, persisted cart. The "current" (session) cart is stored under its
  * own preferences key with an empty [id]/[name] — only carts the user has
  * explicitly saved get a real id and name. Currencies are stored as ISO-4217
- * alpha codes (not [Currency]) so a legacy or unknown code round-trips
+ * alpha codes (not [Currency]) so an unknown code round-trips
  * through disk without dropping the cart.
  *
  * [currency] is the base — items' prices are entered in this. [destinationCurrency]

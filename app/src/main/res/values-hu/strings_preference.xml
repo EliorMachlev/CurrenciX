@@ -80,6 +80,7 @@
     <string name="backup_import_confirm_message">A jelenlegi beállításaidat felülírják a fájlban lévők. Ez nem vonható vissza.</string>
     <string name="backup_import_confirm_positive">Visszaállítás</string>
     <string name="backup_encrypt_option">Titkosítás jelszóval</string>
+    <string name="backup_keys_left_out">Jelszó nélküli biztonsági mentésbe az API-kulcsok nem kerülnek bele.</string>
     <string name="backup_password_hint">Jelszó</string>
     <string name="backup_password_prompt_title">Add meg a jelszót</string>
     <string name="backup_password_wrong">A jelszóval nem sikerült visszafejteni a fájlt. Próbáld újra.</string>
@@ -199,6 +200,8 @@
     <string name="app_lock_unlock">Feloldás</string>
     <string name="private_requests_title">Privát kérések</string>
     <string name="private_requests_summary">Az árfolyamkéréseket mindenkivel azonos módon küldi: alkalmazásverzió, eszközadatok és gyorsítótár-azonosítók nélkül. Kicsit több adatot használ.</string>
+    <string name="block_screenshots_title">Képernyőképek tiltása</string>
+    <string name="block_screenshots_summary">Az alkalmazás üresen látszik képernyőképeken, képernyőfelvételeken és a legutóbbiak között</string>
     <string name="auto_refresh_summary">Árfolyamok frissen tartása a háttérben</string>
     <string name="refresh_interval_title">Frissítés gyakorisága</string>
     <string name="refresh_interval_daily">Naponta egyszer, közvetlenül a(z) %1$s közzététele után</string>

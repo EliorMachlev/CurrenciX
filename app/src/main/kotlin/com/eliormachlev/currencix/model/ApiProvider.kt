@@ -67,10 +67,6 @@ enum class ApiProvider(
     val needsApiKey: Boolean = false,
     val reliability: ProviderReliability = ProviderReliability.RELIABLE,
 ) {
-    // EXCHANGERATE_HOST(0, "https://api.exchangerate.host"), // removed, as API was shut down
-    // FER_EE(2, …), // removed: fer.ee no longer resolves and its repo is gone
-    //   (it served the same ECB rates as Frankfurter.app) — never reuse id 2
-
     // European Central Bank reference rates, ~30 currencies, reliable.
     // ECB reference rates are published around 16:00 CET.
     FRANKFURTER_APP(ID_FRANKFURTER_APP, FrankfurterApp(), dailyAt(16, 0, "Europe/Berlin")),
@@ -110,6 +106,9 @@ enum class ApiProvider(
     val cadence: UpdateCadence get() = publication.cadence
 
     companion object {
+        /** Every host a provider's requests may go to, the main and fallback providers alike. */
+        val allHosts: Set<String> by lazy { entries.flatMapTo(mutableSetOf()) { it.implementation.hosts } }
+
         fun fromId(value: Int): ApiProvider =
             entries.firstOrNull { it.id == value }
                 // this is our fallback, e.g. if an API is removed from the app
@@ -153,7 +152,7 @@ enum class ApiProvider(
     fun getHint(context: Context): CharSequence? = this.implementation.descriptionHint(context)
 
     // Host portion of [baseUrl], used to prewarm DNS at app start.
-    fun getHost(): String? = runCatching { URI(this.implementation.baseUrl).host }.getOrNull()
+    fun getHost(): String? = hostOf(this.implementation.baseUrl)
 
     suspend fun getRates(
         context: Context?,
@@ -192,6 +191,9 @@ enum class ApiProvider(
 
         val baseUrl: String
 
+        /** Every host its requests go to: [baseUrl]'s, and any other a feed of its lives on. */
+        val hosts: Set<String> get() = setOfNotNull(hostOf(baseUrl))
+
         suspend fun getRates(
             context: Context?,
             date: LocalDate?,
@@ -208,3 +210,6 @@ enum class ApiProvider(
         ): Result<Timeline>
     }
 }
+
+/** The host of [url], or null when it has none. */
+internal fun hostOf(url: String): String? = runCatching { URI(url).host }.getOrNull()

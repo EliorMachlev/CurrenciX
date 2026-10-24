@@ -15,6 +15,7 @@ import com.eliormachlev.currencix.model.adapter.NO_DATA_ERROR
 import com.eliormachlev.currencix.model.adapter.addFokFromDkkIfMissing
 import com.eliormachlev.currencix.model.adapter.rateOrNull
 import com.eliormachlev.currencix.model.adapter.register
+import com.eliormachlev.currencix.model.hostOf
 import com.eliormachlev.currencix.model.provider.api.BankOfIsraelApi
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.fetch
@@ -55,6 +56,9 @@ class BankOfIsrael : ApiProvider.Api {
     override fun descriptionHint(context: Context) = null
 
     override val baseUrl = "https://boi.org.il"
+
+    // The history comes from the SDMX host.
+    override val hosts = super.hosts + setOfNotNull(hostOf(SDMX_BASE_URL))
 
     override suspend fun getRates(
         context: Context?,

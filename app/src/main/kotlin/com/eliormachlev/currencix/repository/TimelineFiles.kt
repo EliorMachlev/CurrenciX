@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
-import androidx.datastore.preferences.core.Preferences
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
@@ -9,9 +8,6 @@ import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.json.MalformedJsonException
 import com.eliormachlev.currencix.repository.json.readJson
 import com.eliormachlev.currencix.repository.json.writeJson
-import com.eliormachlev.currencix.repository.persistence.PersistenceKey
-import com.eliormachlev.currencix.repository.persistence.PrefStore
-import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.DroppedCacheEntries
 import com.eliormachlev.currencix.util.toLocalDateOrNull
 import com.squareup.moshi.JsonReader
@@ -39,9 +35,7 @@ private const val MEMORY_ENTRIES = 8
 /**
  * Each provider's history for each pair, one file apiece
  * (`<providerId>_<BASE>_<SYMBOL>.json`, a flat {date → rate} JSON map),
- * so saving one pair's history rewrites that file alone. They used to share
- * one preferences file, held whole in memory and rewritten on every save;
- * what's left there moves into the files on first use.
+ * so saving one pair's history rewrites that file alone.
  *
  * Writes go to a `.tmp` file renamed over the old one, so a crash leaves the
  * old history or the new one, never half of it. Reads hit the disk, so call
@@ -49,27 +43,17 @@ private const val MEMORY_ENTRIES = 8
  */
 internal class TimelineFiles private constructor(
     private val dir: File,
-    private val legacy: PrefStore,
 ) {
     private val memory =
         object : LinkedHashMap<String, Timeline>(MEMORY_ENTRIES, LOAD_FACTOR, true) {
             override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Timeline>) = size > MEMORY_ENTRIES
         }
 
-    // The old shared file moves over once, before the first read or write.
-    private val migrated by lazy { migrateLegacy() }
-
-    /** Moves the old shared file over now, off the main thread (app start). */
-    fun warmUp() {
-        migrated
-    }
-
     fun read(
         provider: ApiProvider,
         base: Currency,
         symbol: Currency,
     ): Timeline? {
-        migrated
         val name = fileName(provider.id, base, symbol)
         synchronized(memory) { memory[name] }?.let { return it }
         val file = File(dir, name)
@@ -91,7 +75,6 @@ internal class TimelineFiles private constructor(
         base: Currency,
         symbol: Currency,
     ) {
-        migrated
         val provider = timeline.provider ?: return
         val rates = timeline.rates?.takeIf { it.isNotEmpty() } ?: return
         val name = fileName(provider.id, base, symbol)
@@ -116,31 +99,8 @@ internal class TimelineFiles private constructor(
         }
     }
 
-    // Moves each history out of the old preferences file into its own, then
-    // empties the old file.
-    private fun migrateLegacy() {
-        val entries = legacy.snapshot().asMap()
-        if (entries.isEmpty()) return
-        entries.forEach { (key, value) -> migrateEntry(key, value) }
-        legacy.edit { clear() }
-    }
-
-    private fun migrateEntry(
-        key: Preferences.Key<*>,
-        value: Any,
-    ) {
-        val json = value as? String ?: return
-        // The old key: "<providerId>|<BASE>|<SYMBOL>".
-        val parts = key.name.split(LEGACY_SEPARATOR)
-        val providerId = parts.getOrNull(0)?.toIntOrNull() ?: return
-        val base = parts.getOrNull(1)?.let(Currency::fromString) ?: return
-        val symbol = parts.getOrNull(2)?.let(Currency::fromString) ?: return
-        writeAtomically(fileName(providerId, base, symbol), json)
-    }
-
     companion object {
         private const val LOAD_FACTOR = 0.75f
-        private const val LEGACY_SEPARATOR = "|"
 
         private val instances = ConcurrentHashMap<String, TimelineFiles>()
 
@@ -149,7 +109,7 @@ internal class TimelineFiles private constructor(
         fun get(context: Context): TimelineFiles {
             val app = context.applicationContext
             val dir = File(app.filesDir, TIMELINES_DIR)
-            return instances.computeIfAbsent(dir.absolutePath) { TimelineFiles(dir, PersistenceKey.TIMELINES.prefStore(app)) }
+            return instances.computeIfAbsent(dir.absolutePath) { TimelineFiles(dir) }
         }
 
         private fun fileName(

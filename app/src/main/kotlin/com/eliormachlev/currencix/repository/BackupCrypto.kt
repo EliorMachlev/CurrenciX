@@ -12,8 +12,6 @@ import java.nio.charset.StandardCharsets
 import java.security.GeneralSecurityException
 import java.security.SecureRandom
 import javax.crypto.AEADBadTagException
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.PBEKeySpec
 
 // Encryption block keys.
 private const val ENC_KDF = "kdf"
@@ -29,10 +27,7 @@ private const val ENC_PARALLELISM = "parallelism"
 
 // KDF & cipher identifiers stored verbatim in the file so a future reader can
 // reject algorithms it doesn't understand instead of silently mis-decrypting.
-// New exports use ARGON2ID_ID; PBKDF2_ID is retained only as a reader path
-// for files exported by an earlier revision.
 private const val ARGON2ID_ID = "ARGON2ID-v1.3"
-private const val PBKDF2_ID = "PBKDF2-HMAC-SHA256"
 private const val CIPHER_ID = "AES-256-GCM"
 
 private const val KEY_LENGTH_BITS = 256
@@ -141,7 +136,6 @@ internal class BackupCrypto(
         val salt = block.bytes(ENC_SALT)
         return when (val kdf = block.optString(ENC_KDF)) {
             ARGON2ID_ID -> deriveKeyArgon2id(password, salt, argon2Cost(block))
-            PBKDF2_ID -> deriveKeyPbkdf2(password, salt, block.optInt(ENC_ITERATIONS, -1))
             else -> unsupported("Unsupported KDF: $kdf")
         }
     }
@@ -183,20 +177,6 @@ internal class BackupCrypto(
             return ByteArray(KEY_LENGTH_BYTES).also { generator.generateBytes(passwordBytes, it) }
         } finally {
             passwordBytes.wipe()
-        }
-    }
-
-    private fun deriveKeyPbkdf2(
-        password: CharArray,
-        salt: ByteArray,
-        iterations: Int,
-    ): ByteArray {
-        requireSupported(iterations > 0) { "Invalid iteration count" }
-        val spec = PBEKeySpec(password, salt, iterations, KEY_LENGTH_BITS)
-        try {
-            return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).encoded
-        } finally {
-            spec.clearPassword()
         }
     }
 

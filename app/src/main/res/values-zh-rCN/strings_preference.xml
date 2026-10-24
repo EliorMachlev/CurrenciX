@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">当前设置将被文件中的设置覆盖。此操作无法撤销。</string>
     <string name="backup_import_confirm_positive">恢复</string>
     <string name="backup_encrypt_option">使用密码加密</string>
+    <string name="backup_keys_left_out">没有密码的备份不包含 API 密钥。</string>
     <string name="backup_password_hint">密码</string>
     <string name="backup_password_prompt_title">输入密码</string>
     <string name="backup_password_wrong">此密码无法解密该文件，请重试。</string>
@@ -195,6 +196,8 @@
     <string name="app_lock_unlock">解锁</string>
     <string name="private_requests_title">隐私请求</string>
     <string name="private_requests_summary">以与所有人相同的方式发送汇率请求：不含应用版本、设备信息或缓存标识。会多用一点流量。</string>
+    <string name="block_screenshots_title">阻止截屏</string>
+    <string name="block_screenshots_summary">在截屏、录屏和最近任务中将应用显示为空白</string>
     <string name="auto_refresh_summary">在后台保持汇率最新</string>
     <string name="refresh_interval_title">刷新间隔</string>
     <string name="refresh_interval_daily">每天一次，在 %1$s 发布后立即刷新</string>

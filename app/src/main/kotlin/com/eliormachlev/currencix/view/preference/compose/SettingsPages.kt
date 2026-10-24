@@ -425,7 +425,21 @@ private fun AccessSection(page: SettingsPageContext) {
                 }
             },
         )
+        BlockScreenshotsRow(page)
     }
+}
+
+// FLAG_SECURE on the app's windows: blank in screenshots, recordings and Recents.
+@Composable
+private fun BlockScreenshotsRow(page: SettingsPageContext) {
+    val blocked by page.viewModel.isBlockScreenshotsEnabled.collectAsStateWithLifecycle()
+    SwitchRow(
+        title = stringResource(R.string.block_screenshots_title),
+        summary = stringResource(R.string.block_screenshots_summary),
+        iconRes = R.drawable.ic_no_screenshots,
+        checked = blocked,
+        onCheckedChange = page.viewModel::setBlockScreenshotsEnabled,
+    )
 }
 
 @Composable

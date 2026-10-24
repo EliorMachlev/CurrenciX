@@ -107,6 +107,7 @@
     <string name="backup_import_confirm_message">ההגדרות הנוכחיות שלך יוחלפו בהגדרות שבקובץ. לא ניתן לבטל פעולה זו.</string>
     <string name="backup_import_confirm_positive">שחזור</string>
     <string name="backup_encrypt_option">הצפנה באמצעות סיסמה</string>
+    <string name="backup_keys_left_out">מפתחות API לא נכללים בגיבוי ללא סיסמה.</string>
     <string name="backup_password_hint">סיסמה</string>
     <string name="backup_password_prompt_title">הזנת סיסמה</string>
     <string name="backup_password_wrong">לא ניתן לפענח את הקובץ עם הסיסמה הזו. יש לנסות שוב.</string>
@@ -199,6 +200,8 @@
     <string name="app_lock_unlock">ביטול נעילה</string>
     <string name="private_requests_title">בקשות פרטיות</string>
     <string name="private_requests_summary">שליחת בקשות השערים כמו של כולם: בלי גרסת אפליקציה, פרטי מכשיר או מזהי מטמון. צורך מעט יותר נתונים.</string>
+    <string name="block_screenshots_title">חסימת צילומי מסך</string>
+    <string name="block_screenshots_summary">האפליקציה תוצג ריקה בצילומי מסך, בהקלטות מסך ובאפליקציות האחרונות</string>
     <string name="auto_refresh_summary">שמירה על שערים עדכניים ברקע</string>
     <string name="refresh_interval_title">רענון כל</string>
     <string name="refresh_interval_daily">פעם ביום, מיד אחרי ש־%1$s מפרסם</string>

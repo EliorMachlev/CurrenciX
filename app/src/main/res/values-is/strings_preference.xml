@@ -109,6 +109,7 @@
     <string name="backup_import_confirm_message">Núverandi stillingum þínum verður skipt út fyrir þær sem eru í skránni. Ekki er hægt að afturkalla þetta.</string>
     <string name="backup_import_confirm_positive">Endurheimta</string>
     <string name="backup_encrypt_option">Dulkóða með lykilorði</string>
+    <string name="backup_keys_left_out">API-lyklar fara ekki í öryggisafrit án lykilorðs.</string>
     <string name="backup_password_hint">Lykilorð</string>
     <string name="backup_password_prompt_title">Sláðu inn lykilorð</string>
     <string name="backup_password_wrong">Lykilorðið afkóðaði ekki þessa skrá. Reyndu aftur.</string>
@@ -198,6 +199,8 @@
     <string name="app_lock_unlock">Opna</string>
     <string name="private_requests_title">Einkabeiðnir</string>
     <string name="private_requests_summary">Senda gengisbeiðnir eins og allir aðrir: án útgáfu forrits, upplýsinga um tæki eða skyndiminnisauðkenna. Notar aðeins meiri gögn.</string>
+    <string name="block_screenshots_title">Loka á skjámyndir</string>
+    <string name="block_screenshots_summary">Forritið birtist autt á skjámyndum, skjáupptökum og í Nýlegu</string>
     <string name="auto_refresh_summary">Halda gengi uppfærðu í bakgrunni</string>
     <string name="refresh_interval_title">Uppfæra á</string>
     <string name="refresh_interval_daily">Einu sinni á dag, rétt eftir að %1$s birtir</string>

@@ -56,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [fuzzCurrencyFromString, fuzzSelectedPrice, fuzzReceiptText, fuzzCalculation, fuzzTypedAmount]
+        target: [fuzzCurrencyFromString, fuzzSelectedPrice, fuzzReceiptText, fuzzCalculation, fuzzTypedAmount, fuzzLaunchIntent]
     name: fuzz (${{ matrix.target }})
     steps:
       - name: Checkout the code

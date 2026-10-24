@@ -42,6 +42,7 @@ import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.lock.blockScreenshots
 import com.eliormachlev.currencix.view.main.ConverterLaunch
 import com.eliormachlev.currencix.view.main.clipboardOf
 import java.math.BigDecimal
@@ -75,6 +76,7 @@ class ConvertTextActivity : ComponentActivity() {
                 .orEmpty()
                 .take(MAX_SELECTION_LENGTH)
         val db = Database(this)
+        blockScreenshots(db.privacy.blockScreenshots.get())
         val from = db.lastState.lastBaseCurrency.get() ?: HomeCurrency.defaultPair.from
         val to = db.lastState.lastDestinationCurrency.get() ?: HomeCurrency.defaultPair.to
         val conversion = convertSelection(text, db.rates.getExchangeRatesBlocking(), from, to)

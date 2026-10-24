@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.RefreshInterval
+import com.eliormachlev.currencix.repository.persistence.LastResult
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.repository.persistence.PrefStore
@@ -31,8 +32,8 @@ private const val KEY_SHOW_UNRELIABLE_PROVIDERS = "_showUnreliableProviders"
 private const val KEY_AUTO_REFRESH_ENABLED = "_autoRefreshEnabled"
 
 // How often auto-refresh runs, in minutes (RefreshInterval.minutes); absent
-// means the default. The name predates the setting: it's stored, so it stays.
-private const val KEY_AUTO_REFRESH_INTERVAL = "_autoRefreshIntervalMinutesOverride"
+// means the default.
+private const val KEY_AUTO_REFRESH_INTERVAL = "_autoRefreshIntervalMinutes"
 
 private val apiProviderKey = intPreferencesKey(KEY_API)
 
@@ -54,9 +55,16 @@ private fun resolveFallback(prefs: Preferences): ApiProvider {
     return chosen?.takeIf { it != main } ?: ApiProvider.defaultFallback(main)
 }
 
-/** Which rate provider to use, its fallback and API key, and background refresh. */
+/** The names API keys are stored under, for a backup to treat them apart. */
+internal val API_KEY_PREF_NAMES: Set<String> = apiKeyKeys.values.mapTo(mutableSetOf()) { it.name }
+
+/**
+ * Which rate provider to use, its fallback and API key, and background
+ * refresh. API keys are stored sealed by [secrets] (the Android Keystore).
+ */
 class ProviderSettings(
     context: Context,
+    secrets: SecretBox = KeystoreSecretBox,
 ) {
     private val store: PrefStore = PersistenceKey.APP.prefStore(context)
 
@@ -75,14 +83,20 @@ class ProviderSettings(
      */
     val apiKeys: Pref<Map<ApiProvider, String>> =
         store.pref(
-            read = { prefs -> apiKeyKeys.mapNotNull { (provider, key) -> prefs[key]?.let { provider to it } }.toMap() },
+            read = { prefs -> openKeys(apiKeyKeys.mapNotNull { (provider, key) -> prefs[key]?.let { provider to it } }.toMap()) },
             write = { keys ->
                 apiKeyKeys.forEach { (provider, key) ->
                     val value = keys[provider]
-                    if (value.isNullOrBlank()) remove(key) else this[key] = value
+                    if (value.isNullOrBlank()) remove(key) else this[key] = secrets.seal(value)
                 }
             },
         )
+
+    // Opened again only when what's stored changes, not on every write to the settings.
+    private val openKeys =
+        LastResult<Map<ApiProvider, String>, Map<ApiProvider, String>>({ a, b -> a == b }) { stored ->
+            stored.mapNotNull { (provider, value) -> secrets.open(value)?.let { provider to it } }.toMap()
+        }
 
     /** Stores [key] as [provider]'s API key; a blank one removes it. */
     fun setApiKey(

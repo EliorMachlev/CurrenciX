@@ -2,6 +2,8 @@ package com.eliormachlev.currencix.util
 
 import android.content.Context
 import android.os.Build
+import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.ocr.TessLanguage
 import okhttp3.Cache
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
@@ -120,6 +122,8 @@ object HttpClientProvider {
             // Network-layer rewrite runs before OkHttp's cache writer sees
             // the response, so the stamped Cache-Control controls what the
             // cache stores for the non-cooperative provider hosts.
+            // Only the rate providers' hosts and the OCR language host, at every redirect.
+            .addNetworkInterceptor(AllowedHostsInterceptor { ApiProvider.allHosts + TessLanguage.DOWNLOAD_HOST })
             .addNetworkInterceptor(ProviderCacheRewriteInterceptor(PROVIDER_CACHE_TTL_SECONDS))
             // Innermost, so the request it shapes is exactly what leaves the phone.
             .addNetworkInterceptor(PrivateRequestsInterceptor())

@@ -1,14 +1,11 @@
 package com.eliormachlev.currencix.repository
 
 import android.app.Application
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.eliormachlev.currencix.repository.persistence.PersistenceKey
-import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.DroppedCacheEntries
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -38,17 +35,6 @@ class TimelineFilesTest {
         val read = files.read(provider, Currency.USD, Currency.ILS)
         assertEquals(BigDecimal("3.71"), read?.rates?.get(day.plusDays(1))?.value)
         assertTrue(File(app.filesDir, "timelines/${provider.id}_USD_ILS.json").isFile)
-    }
-
-    @Test
-    fun `histories in the old shared file move into files`() {
-        val legacy = PersistenceKey.TIMELINES.prefStore(app)
-        legacy.edit { this[stringPreferencesKey("${provider.id}|EUR|USD")] = """{"$day":"1.08"}""" }
-
-        val read = TimelineFiles.get(app).read(provider, Currency.EUR, Currency.USD)
-
-        assertEquals(BigDecimal("1.08"), read?.rates?.get(day)?.value)
-        assertTrue("the old file is emptied", legacy.snapshot().asMap().isEmpty())
     }
 
     @Test

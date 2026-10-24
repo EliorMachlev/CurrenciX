@@ -1,14 +1,12 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.repository.persistence.PrefStore
 import com.eliormachlev.currencix.repository.persistence.booleanPref
 import com.eliormachlev.currencix.repository.persistence.intPref
-import com.eliormachlev.currencix.repository.persistence.keyedPref
 import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.repository.persistence.stringPref
 
@@ -71,13 +69,11 @@ class DisplaySettings(
      */
     val dynamicColor: Pref<Boolean> = store.booleanPref(KEY_DYNAMIC_COLOR, default = true)
 
-    // Stored as a String so old backups round-trip: the SharedPreferences
-    // preference screen wrote it through a ListPreference, which stringifies.
     val decimalPlaces: Pref<Int> =
-        store.keyedPref(
-            stringPreferencesKey(KEY_DECIMAL_PLACES),
-            decode = { it?.toIntOrNull()?.coerceIn(DECIMAL_PLACES_RANGE) ?: DEFAULT_DECIMAL_PLACES },
-            encode = { it.toString() },
+        store.intPref(
+            KEY_DECIMAL_PLACES,
+            decode = { it?.coerceIn(DECIMAL_PLACES_RANGE) ?: DEFAULT_DECIMAL_PLACES },
+            encode = { it },
         )
 
     val dateFormat: Pref<String> = store.stringPref(KEY_DATE_FORMAT, DEFAULT_DATE_FORMAT)

@@ -5,7 +5,7 @@ Material Symbols — Rounded, weight 400, outlined — the same glyphs as the
 app's icons (art/material-symbols/generate.py), and the favicon
 (docs/favicon.svg) from the brand mark (art/brand/currencix-mark.svg).
 
-    npm pack @material-symbols/svg-400@0.47.5 && tar xzf material-symbols-svg-400-*.tgz
+    npm pack @material-symbols/svg-400@0.48.1 && tar xzf material-symbols-svg-400-*.tgz
     python3 art/website/generate.py package/rounded
 
 A page draws an icon with <svg class="icon"><use href="icons.svg#name"/></svg>.
@@ -18,7 +18,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DOCS = ROOT / "docs"
 MARK = ROOT / "art" / "brand" / "currencix-mark.svg"
-SYMBOLS_VERSION = "0.47.5"
+SYMBOLS_VERSION = "0.48.1"
 
 ICONS = sorted({
     # conversion

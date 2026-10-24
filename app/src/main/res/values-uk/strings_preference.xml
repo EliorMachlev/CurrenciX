@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Ваші поточні налаштування буде замінено даними з файлу. Скасувати цю дію не можна.</string>
     <string name="backup_import_confirm_positive">Відновити</string>
     <string name="backup_encrypt_option">Шифрувати паролем</string>
+    <string name="backup_keys_left_out">Ключі API не потрапляють у резервну копію без пароля.</string>
     <string name="backup_password_hint">Пароль</string>
     <string name="backup_password_prompt_title">Введіть пароль</string>
     <string name="backup_password_wrong">Не вдалося розшифрувати файл цим паролем. Спробуйте ще раз.</string>
@@ -199,6 +200,8 @@
     <string name="app_lock_unlock">Розблокувати</string>
     <string name="private_requests_title">Приватні запити</string>
     <string name="private_requests_summary">Надсилати запити курсів так само, як усі: без версії застосунку, даних пристрою та ідентифікаторів кешу. Витрачає трохи більше трафіку.</string>
+    <string name="block_screenshots_title">Блокувати знімки екрана</string>
+    <string name="block_screenshots_summary">Застосунок буде порожнім на знімках, записах екрана та в недавніх</string>
     <string name="auto_refresh_summary">Оновлювати курси у фоновому режимі</string>
     <string name="refresh_interval_title">Оновлювати кожні</string>
     <string name="refresh_interval_daily">Раз на день, одразу після публікації %1$s</string>

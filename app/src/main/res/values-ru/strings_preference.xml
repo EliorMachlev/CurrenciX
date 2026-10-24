@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Ваши текущие настройки будут заменены данными из файла. Отменить это действие нельзя.</string>
     <string name="backup_import_confirm_positive">Восстановить</string>
     <string name="backup_encrypt_option">Шифровать паролем</string>
+    <string name="backup_keys_left_out">Ключи API не попадают в резервную копию без пароля.</string>
     <string name="backup_password_hint">Пароль</string>
     <string name="backup_password_prompt_title">Введите пароль</string>
     <string name="backup_password_wrong">Не удалось расшифровать файл этим паролем. Попробуйте ещё раз.</string>
@@ -199,6 +200,8 @@
     <string name="app_lock_unlock">Разблокировать</string>
     <string name="private_requests_title">Приватные запросы</string>
     <string name="private_requests_summary">Отправлять запросы курсов так же, как все: без версии приложения, данных устройства и идентификаторов кеша. Расходует чуть больше трафика.</string>
+    <string name="block_screenshots_title">Запретить скриншоты</string>
+    <string name="block_screenshots_summary">Приложение будет пустым на скриншотах, записях экрана и в недавних</string>
     <string name="auto_refresh_summary">Обновлять курсы в фоновом режиме</string>
     <string name="refresh_interval_title">Обновлять каждые</string>
     <string name="refresh_interval_daily">Раз в день, сразу после публикации %1$s</string>

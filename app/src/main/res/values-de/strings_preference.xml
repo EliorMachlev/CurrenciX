@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Deine aktuellen Einstellungen werden mit denen aus der Datei überschrieben. Dies kann nicht rückgängig gemacht werden.</string>
     <string name="backup_import_confirm_positive">Wiederherstellen</string>
     <string name="backup_encrypt_option">Mit Passwort verschlüsseln</string>
+    <string name="backup_keys_left_out">API-Schlüssel kommen nicht in eine Sicherung ohne Passwort.</string>
     <string name="backup_password_hint">Passwort</string>
     <string name="backup_password_prompt_title">Passwort eingeben</string>
     <string name="backup_password_wrong">Mit dem Passwort ließ sich die Datei nicht entschlüsseln. Versuche es erneut.</string>
@@ -196,6 +197,8 @@
     <string name="app_lock_unlock">Entsperren</string>
     <string name="private_requests_title">Private Anfragen</string>
     <string name="private_requests_summary">Kursanfragen so senden wie alle anderen: ohne App-Version, Gerätedetails oder Cache-Kennungen. Braucht etwas mehr Daten.</string>
+    <string name="block_screenshots_title">Screenshots blockieren</string>
+    <string name="block_screenshots_summary">Die App erscheint auf Screenshots, Bildschirmaufnahmen und in den letzten Apps leer</string>
     <string name="auto_refresh_summary">Kurse im Hintergrund aktuell halten</string>
     <string name="refresh_interval_title">Aktualisieren alle</string>
     <string name="refresh_interval_daily">Einmal täglich, kurz nach der Veröffentlichung durch %1$s</string>

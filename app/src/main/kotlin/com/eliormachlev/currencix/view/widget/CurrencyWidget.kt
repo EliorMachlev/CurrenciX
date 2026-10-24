@@ -93,8 +93,7 @@ private val BUTTON_FONT_SIZE = 12.sp
  * layer signals after every successful rate insert without importing this
  * class (keeps the Konsist layer boundary intact).
  *
- * Migrated from RemoteViews to Glance: the receiver class name is unchanged so
- * the AndroidManifest entry still points here; the composable content lives in
+ * The manifest's widget receiver; the composable content lives in
  * [CurrencyGlanceWidget] and the loading placeholder in `widget_currency.xml`
  * is briefly visible on first bind before Glance takes over.
  */

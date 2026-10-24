@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.core.app.ApplicationProvider
+import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
@@ -31,12 +32,19 @@ import java.math.BigDecimal
 
 private const val PASSWORD = "correct horse"
 private val PROBE = stringPreferencesKey("probe")
+private val OXR_KEY = stringPreferencesKey("_api_openExchangeratesApiKey")
+
+// The Android Keystore isn't there under Robolectric: a reversible stand-in.
+private object FakeSecretBox : SecretBox {
+    override fun seal(plain: String) = "sealed:" + plain.reversed()
+
+    override fun open(sealed: String) = sealed.removePrefix("sealed:").reversed()
+}
 
 /**
- * Backups round-trip, plain and encrypted, and files written by earlier
- * versions still open: the two fixtures under `resources/backup` were
- * produced before the cipher moved to Tink (Argon2id and the older PBKDF2
- * key derivation), each holding `probe` under the `prefs` namespace.
+ * Backups round-trip, plain and encrypted, and a saved encrypted file
+ * (`resources/backup/argon2id-v1.json`, holding `probe` under `prefs`) still
+ * opens, so a change to the file format can't go unnoticed.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = Application::class)
@@ -113,6 +121,25 @@ class BackupManagerTest {
         }
 
     @Test
+    fun `API keys go only into a password-protected backup, and come back sealed`() =
+        runBlocking<Unit> {
+            val manager = BackupManager(app, secretBox = FakeSecretBox) { restarts++ }
+            val providers = ProviderSettings(app, FakeSecretBox)
+            providers.setApiKey(ApiProvider.OPEN_EXCHANGERATES, "my-key")
+            assertEquals(FakeSecretBox.seal("my-key"), prefs.snapshot()[OXR_KEY])
+
+            val plain = newFile().also { manager.export(it) }
+            val plainText = File(checkNotNull(plain.path)).readText()
+            assertFalse("no key in a plain backup", "my-key" in plainText || FakeSecretBox.seal("my-key") in plainText)
+
+            val encrypted = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
+            providers.setApiKey(ApiProvider.OPEN_EXCHANGERATES, "")
+            assertEquals(BackupResult.Success, manager.import(encrypted, PASSWORD.toCharArray()))
+            assertEquals(FakeSecretBox.seal("my-key"), prefs.snapshot()[OXR_KEY])
+            assertEquals("my-key", ProviderSettings(app, FakeSecretBox).apiKeys.get()[ApiProvider.OPEN_EXCHANGERATES])
+        }
+
+    @Test
     fun `an encrypted backup hides its content and restores with the password`() =
         runBlocking<Unit> {
             val uri = newFile()
@@ -177,17 +204,10 @@ class BackupManagerTest {
         }
 
     @Test
-    fun `a backup encrypted by an earlier version still opens`() =
+    fun `a saved encrypted backup opens (the file format stays fixed)`() =
         runBlocking<Unit> {
             assertEquals(BackupResult.Success, manager.import(fixture("argon2id-v1.json"), PASSWORD.toCharArray()))
             assertEquals("golden", probe())
-        }
-
-    @Test
-    fun `a backup from the PBKDF2 era still opens`() =
-        runBlocking<Unit> {
-            assertEquals(BackupResult.Success, manager.import(fixture("pbkdf2-legacy.json"), PASSWORD.toCharArray()))
-            assertEquals("legacy", probe())
         }
 
     @Test

@@ -119,7 +119,9 @@ enum class TessLanguage(
     val url: String get() = "$TESSDATA_BASE_URL/$code.traineddata"
 
     companion object {
-        private const val TESSDATA_BASE_URL = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0"
+        /** The one host language data comes from. */
+        const val DOWNLOAD_HOST = "raw.githubusercontent.com"
+        private const val TESSDATA_BASE_URL = "https://$DOWNLOAD_HOST/tesseract-ocr/tessdata_fast/4.1.0"
 
         // Language (ISO 639, old and new codes alike) → data file; Chinese is by script below.
         private val BY_LANGUAGE =

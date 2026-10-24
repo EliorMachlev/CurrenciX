@@ -113,7 +113,7 @@ internal fun totalOf(
 ): BigDecimal = convertedSubtotalOf(cart, rates).multiply(feeStack, MathContext.DECIMAL128)
 
 /**
- * Persisted ISO codes are strings, so unknown values (legacy carts,
+ * Persisted ISO codes are strings, so unknown values (hand-edited carts,
  * imported files) can slip through and return `null` from
  * [Currency.fromString]. Fall back to USD in that case so downstream math
  * and UI stay non-null instead of exploding on an edge case.

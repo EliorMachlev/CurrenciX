@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Vos paramètres actuels seront remplacés par ceux du fichier. Cette action est irréversible.</string>
     <string name="backup_import_confirm_positive">Restaurer</string>
     <string name="backup_encrypt_option">Chiffrer avec un mot de passe</string>
+    <string name="backup_keys_left_out">Les clés d\'API ne sont pas incluses dans une sauvegarde sans mot de passe.</string>
     <string name="backup_password_hint">Mot de passe</string>
     <string name="backup_password_prompt_title">Saisir le mot de passe</string>
     <string name="backup_password_wrong">Ce mot de passe ne permet pas de déchiffrer ce fichier. Réessayez.</string>
@@ -198,6 +199,8 @@
     <string name="app_lock_unlock">Déverrouiller</string>
     <string name="private_requests_title">Requêtes privées</string>
     <string name="private_requests_summary">Envoyer les requêtes de taux comme tout le monde : sans version de l\'appli, détails de l\'appareil ni identifiants de cache. Consomme un peu plus de données.</string>
+    <string name="block_screenshots_title">Bloquer les captures d\'écran</string>
+    <string name="block_screenshots_summary">L\'appli apparaît vide dans les captures, les enregistrements d\'écran et les applis récentes</string>
     <string name="auto_refresh_summary">Garder les taux à jour en arrière-plan</string>
     <string name="refresh_interval_title">Actualiser toutes les</string>
     <string name="refresh_interval_daily">Une fois par jour, juste après la publication de %1$s</string>

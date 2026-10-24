@@ -76,26 +76,35 @@ object ConverterLaunch {
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
     /** The request [intent] carries; null for a plain launch or anything unreadable. */
-    fun parse(intent: Intent?): Request? =
-        when (intent?.action) {
+    fun parse(intent: Intent?): Request? = intent?.let { parse(it.action, it::getStringExtra) }
+
+    /**
+     * The request an intent with [action] and string extras ([extra] by name)
+     * carries; null for anything unreadable. Plain Kotlin, so it's fuzzed
+     * (FuzzTest): MainActivity is exported, and any app can send it anything.
+     */
+    fun parse(
+        action: String?,
+        extra: (String) -> String?,
+    ): Request? =
+        when (action) {
             ACTION_OPEN_CART -> Request.OpenCart
-            ACTION_CONVERT -> parseConvert(intent)
-            ACTION_OPEN_CHART -> parsePair(intent)?.let(Request::OpenChart)
+            ACTION_CONVERT -> parseConvert(extra)
+            ACTION_OPEN_CHART -> parsePair(extra)?.let(Request::OpenChart)
             else -> null
         }
 
-    // The pair an intent names: two currencies the app has, not the same one.
-    private fun parsePair(intent: Intent): CurrencyPair? {
-        val from = intent.getStringExtra(EXTRA_FROM)?.let(Currency::fromString) ?: return null
-        val to = intent.getStringExtra(EXTRA_TO)?.let(Currency::fromString) ?: return null
+    // The pair the extras name: two currencies the app has, not the same one.
+    private fun parsePair(extra: (String) -> String?): CurrencyPair? {
+        val from = extra(EXTRA_FROM)?.let(Currency::fromString) ?: return null
+        val to = extra(EXTRA_TO)?.let(Currency::fromString) ?: return null
         return if (from == to) null else CurrencyPair(from, to)
     }
 
-    private fun parseConvert(intent: Intent): Request.Convert? {
-        val pair = parsePair(intent) ?: return null
+    private fun parseConvert(extra: (String) -> String?): Request.Convert? {
+        val pair = parsePair(extra) ?: return null
         val amount =
-            intent
-                .getStringExtra(EXTRA_AMOUNT)
+            extra(EXTRA_AMOUNT)
                 ?.takeIf { it.length <= MAX_AMOUNT_LENGTH }
                 ?.toBigDecimalOrNull()
                 ?.takeIf { it.signum() >= 0 }

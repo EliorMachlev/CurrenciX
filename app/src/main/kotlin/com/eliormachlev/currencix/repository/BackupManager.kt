@@ -144,9 +144,8 @@ private enum class BackupValueType(
 
 // DataStore namespaces that carry user-authored state worth backing up. The
 // "rates" namespace is intentionally excluded — it's a network cache that
-// regenerates itself and would bloat backups. Wire-format names are stable
-// (they match the historical SharedPreferences file basenames) so backups
-// produced by older builds still restore into the DataStore-backed shape.
+// regenerates itself and would bloat backups. The namespace names are the
+// stores' file names (PersistenceKey).
 private val BACKUP_NAMESPACES: List<PersistenceKey> = PersistenceKey.backupNamespaces
 
 sealed interface BackupResult {
@@ -173,6 +172,8 @@ class BackupManager(
     // Reading and writing the file and deriving the key from a password
     // (Argon2, deliberately slow) happen here, never on the main thread.
     private val io: CoroutineDispatcher = AppDispatchers.production.io,
+    // Opens the stored API keys for a password-protected backup, and seals restored ones.
+    private val secretBox: SecretBox = KeystoreSecretBox,
     // What runs once a restore has replaced the stored state (tests pass a recorder).
     private val restart: (Context) -> Unit = ::restartApp,
 ) {
@@ -296,7 +297,8 @@ class BackupManager(
     private fun buildBackupJson(password: CharArray?): Map<String, Any> {
         val namespaces =
             buildJsonObject {
-                BACKUP_NAMESPACES.forEach { key -> put(key.fileName, serializeNamespace(key.prefStore(context).snapshot())) }
+                val withSecrets = password != null && password.isNotEmpty()
+                BACKUP_NAMESPACES.forEach { key -> put(key.fileName, serializeNamespace(key.prefStore(context).snapshot(), withSecrets)) }
                 SAVED_DATA_SECTIONS.forEach { section -> put(section.key, section.export(context)) }
             }
         return buildJsonObject {
@@ -327,10 +329,22 @@ class BackupManager(
         }
     }
 
-    private fun serializeNamespace(prefs: Preferences): Map<String, Any> =
+    // API keys go into a password-protected backup as the user typed them (a
+    // sealed one only opens on this phone, and a restore seals them again),
+    // and stay out of a plain one.
+    private fun serializeNamespace(
+        prefs: Preferences,
+        withSecrets: Boolean,
+    ): Map<String, Any> =
         buildJsonObject {
             prefs.asMap().forEach { (key, value) ->
-                serializeEntry(value)?.let { put(key.name, it) }
+                val exported =
+                    when {
+                        key.name !in API_KEY_PREF_NAMES -> value
+                        withSecrets -> (value as? String)?.let(secretBox::open)
+                        else -> null
+                    }
+                exported?.let(::serializeEntry)?.let { put(key.name, it) }
             }
         }
 
@@ -364,5 +378,10 @@ class BackupManager(
         entry: JsonObject,
     ) {
         BackupValueType.fromWire(entry.optString(KEY_TYPE))?.restore(editor, key, entry)
+        // An API key comes as typed and is stored sealed, as the settings store it.
+        if (key in API_KEY_PREF_NAMES) {
+            val apiKey = stringPreferencesKey(key)
+            editor[apiKey]?.takeIf { it.isNotBlank() }?.let { editor[apiKey] = secretBox.seal(it) } ?: editor.remove(apiKey)
+        }
     }
 }

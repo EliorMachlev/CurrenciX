@@ -7,7 +7,7 @@ import java.math.BigDecimal
  * currencies. All entries store the [percent] as a positive markup — real
  * exchange fees always inflate the cost, never reduce it.
  *
- * Every fee carries a user-facing [name] (may be empty for legacy entries)
+ * Every fee carries a user-facing [name] (may be empty: shown as untitled)
  * and an [isActive] flag that lets the user temporarily skip it without
  * deleting the entry.
  */

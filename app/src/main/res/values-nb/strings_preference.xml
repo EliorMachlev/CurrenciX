@@ -107,6 +107,7 @@
     <string name="backup_import_confirm_message">Gjeldende innstillinger vil bli overskrevet med de i filen. Dette kan ikke angres.</string>
     <string name="backup_import_confirm_positive">Gjenopprett</string>
     <string name="backup_encrypt_option">Krypter med passord</string>
+    <string name="backup_keys_left_out">API-nøkler tas ikke med i en sikkerhetskopi uten passord.</string>
     <string name="backup_password_hint">Passord</string>
     <string name="backup_password_prompt_title">Skriv inn passord</string>
     <string name="backup_password_wrong">Filen kunne ikke dekrypteres med dette passordet. Prøv igjen.</string>
@@ -200,6 +201,8 @@
     <string name="app_lock_unlock">Lås opp</string>
     <string name="private_requests_title">Private forespørsler</string>
     <string name="private_requests_summary">Send kursforespørsler på samme måte som alle andre: uten appversjon, enhetsdetaljer eller buffer-ID-er. Bruker litt mer data.</string>
+    <string name="block_screenshots_title">Blokker skjermbilder</string>
+    <string name="block_screenshots_summary">Appen vises tom i skjermbilder, skjermopptak og Nylige</string>
     <string name="auto_refresh_summary">Hold kursene oppdatert i bakgrunnen</string>
     <string name="refresh_interval_title">Oppdater hver</string>
     <string name="refresh_interval_daily">Én gang om dagen, rett etter at %1$s publiserer</string>

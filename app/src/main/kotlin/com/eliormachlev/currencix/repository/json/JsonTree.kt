@@ -11,7 +11,7 @@ import java.io.IOException
 // written with Moshi's streaming reader and writer: no reflection and no
 // adapters, just maps, lists, strings, numbers and booleans. Fields are read
 // leniently, as they always have been: a missing or mistyped field reads as
-// its fallback, so a hand-edited or older file still opens.
+// its fallback, so a hand-edited file still opens.
 
 private const val PRETTY_INDENT = "  "
 

@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Praegused seaded kirjutatakse failis olevatega üle. Seda pole võimalik tagasi võtta.</string>
     <string name="backup_import_confirm_positive">Taasta</string>
     <string name="backup_encrypt_option">Krüpteeri parooliga</string>
+    <string name="backup_keys_left_out">API-võtmeid ei panda paroolita varukoopiasse.</string>
     <string name="backup_password_hint">Parool</string>
     <string name="backup_password_prompt_title">Sisesta parool</string>
     <string name="backup_password_wrong">Selle parooliga ei õnnestunud faili dekrüpteerida. Proovi uuesti.</string>
@@ -197,6 +198,8 @@
     <string name="app_lock_unlock">Ava</string>
     <string name="private_requests_title">Privaatsed päringud</string>
     <string name="private_requests_summary">Saada kursipäringud nagu kõik teised: ilma rakenduse versiooni, seadme andmete ja vahemälu tunnusteta. Kulutab veidi rohkem andmeid.</string>
+    <string name="block_screenshots_title">Blokeeri ekraanipildid</string>
+    <string name="block_screenshots_summary">Rakendus paistab ekraanipiltidel, ekraanisalvestistes ja hiljutistes tühjana</string>
     <string name="auto_refresh_summary">Hoia kursid taustal ajakohasena</string>
     <string name="refresh_interval_title">Värskenda iga</string>
     <string name="refresh_interval_daily">Kord päevas, kohe pärast %1$s avaldamist</string>

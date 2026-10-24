@@ -63,6 +63,7 @@
     <string name="backup_import_confirm_message">Your current settings will be overwritten with those in the file. This can\'t be undone.</string>
     <string name="backup_import_confirm_positive">Restore</string>
     <string name="backup_encrypt_option">Encrypt with a password</string>
+    <string name="backup_keys_left_out">API keys are left out of a backup without a password.</string>
     <string name="backup_password_hint">Password</string>
     <string name="backup_password_prompt_title">Enter password</string>
     <string name="backup_password_wrong">Password didn\'t decrypt this file. Try again.</string>
@@ -204,6 +205,8 @@
     <string name="app_lock_unlock">Unlock</string>
     <string name="private_requests_title">Private requests</string>
     <string name="private_requests_summary">Send rate requests the same way as everyone else: no app version, no device details, no cache identifiers. Uses a little more data.</string>
+    <string name="block_screenshots_title">Block screenshots</string>
+    <string name="block_screenshots_summary">Show the app as blank in screenshots, screen recordings and Recents</string>
     <string name="auto_refresh_summary">Keep rates up to date in the background</string>
     <string name="refresh_interval_title">Refresh every</string>
     <string name="refresh_interval_daily">Once a day, just after %1$s publishes</string>
