@@ -5,7 +5,10 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -39,13 +42,15 @@ fun countTo(
     return count.at(progress.value)
 }
 
-// Where a count runs from and to, and for which key.
+// Where a count runs from and to, and for which key. Compose state, so a
+// jump (restart with the progress already at 1) redraws: as plain fields, the
+// total stayed on the value drawn before it (0.00 when the cart reopened).
 private class CountState(
     initial: BigDecimal?,
 ) {
-    private var from: BigDecimal? = initial
-    private var to: BigDecimal? = initial
-    var key: Any? = null
+    private var from by mutableStateOf(initial)
+    private var to by mutableStateOf(initial)
+    var key: Any? by mutableStateOf(null)
         private set
 
     fun restart(
