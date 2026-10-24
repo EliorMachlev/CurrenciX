@@ -57,6 +57,7 @@ jobs:
             --failOnCVSS 7
             --enableRetired
             --zipExtensions aar
+            --suppression /github/workspace/config/owasp/suppressions.xml
 
       # Only when the scan wrote one, so a scan that stopped early shows as
       # its own failure rather than as a missing file here.

@@ -129,6 +129,11 @@ class NoSuppressionsTest {
         const val PROFILE_BUILD = "baselineprofile/build.gradle.kts"
         const val UNSTABLE_API_RULE = "UnstableApiUsage"
 
+        const val OWASP_SUPPRESSIONS = "config/owasp/suppressions.xml"
+        const val OWASP_WORKFLOW = ".github/workflows/owasp-dependency-check.yaml"
+        const val WIRE_CVE = "CVE-2018-8909"
+        const val WIRE_RUNTIME = "wire-runtime"
+
         // An @Incubating AGP API kept on purpose: the marker (numbered as in
         // EXCEPTIONS_DOC) directly above the one statement that uses it.
         fun incubating(
@@ -173,6 +178,28 @@ class NoSuppressionsTest {
                     incubating(PROFILE_BUILD, 4, "ManagedVirtualDevice", "testOptions.managedDevices.localDevices.create(managedDevice) {"),
                     incubating(PROFILE_BUILD, 5, "testedApks", "v.instrumentationRunnerArguments.put("),
                     incubating(APP_BUILD, 6, "generateLocaleConfig", "generateLocaleConfig = true"),
+                ) +
+                listOf(
+                    RecordedException(
+                        OWASP_SUPPRESSIONS,
+                        "<suppress>",
+                        WIRE_CVE,
+                        WIRE_RUNTIME,
+                        // The one CVE, for Square's Wire runtime only.
+                        Regex(
+                            """<suppress>\s*<notes>[^<]*</notes>\s*<filePath regex="true">[^<]*""" +
+                                Regex.escape("com\\.squareup\\.wire/$WIRE_RUNTIME") +
+                                """[^<]*</filePath>\s*<cve>""" + WIRE_CVE + "</cve>\\s*</suppress>",
+                        ),
+                    ),
+                    RecordedException(
+                        OWASP_WORKFLOW,
+                        "--suppression /github/workspace/$OWASP_SUPPRESSIONS",
+                        WIRE_CVE,
+                        WIRE_RUNTIME,
+                        // The file above and nothing else.
+                        Regex(Regex.escape("--suppression /github/workspace/$OWASP_SUPPRESSIONS") + "\\s*$", RegexOption.MULTILINE),
+                    ),
                 )
 
         val SKIPPED_DIRECTORIES = setOf("build", ".gradle", ".git", ".kotlin", ".idea", "node_modules")
@@ -196,6 +223,9 @@ class NoSuppressionsTest {
                 Regex("""--exclude-rule|--exclude[ =]"""),
                 // LeakCanary told to stop reporting a reference
                 Regex("""IgnoredReferenceMatcher\("""),
+                // OWASP Dependency-Check: a finding excluded, and the file of them handed in
+                Regex("""<suppress\b"""),
+                Regex("""--suppression\b"""),
             )
 
         // detekt's baseline-<module>.xml / detekt-baseline.xml and lint's lint-baseline.xml.

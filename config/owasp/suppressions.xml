@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OWASP Dependency-Check: findings excluded where they occur, each one a
+  recorded exception in docs/markDown/exceptions.md (and in NoSuppressionsTest).
+  Nothing else belongs here.
+-->
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- exceptions.md #7 -->
+    <suppress>
+        <notes>CVE-2018-8909 is in the Wire secure messenger (Wire Swiss), which Dependency-Check matches to Square's Wire Protobuf library by name alone.</notes>
+        <filePath regex="true">.*/com\.squareup\.wire/wire-runtime(-jvm|-android)?-[^/]+\.(jar|aar)</filePath>
+        <cve>CVE-2018-8909</cve>
+    </suppress>
+</suppressions>

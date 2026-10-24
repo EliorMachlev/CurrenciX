@@ -22,8 +22,9 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 | 4 | Qodana / IntelliJ `UnstableApiUsage` | the Gradle Managed Device (`ManagedVirtualDevice`) | `baselineprofile/build.gradle.kts` |
 | 5 | Qodana / IntelliJ `UnstableApiUsage` | `testedApks` (the tested app's id for benchmarks) | `baselineprofile/build.gradle.kts` |
 | 6 | Qodana / IntelliJ `UnstableApiUsage` | `generateLocaleConfig` | `app/build.gradle.kts` |
+| 7 | OWASP Dependency-Check `CVE-2018-8909` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181).
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 on 2026-10-25 (PR #203).
 
 ### 1. `MainActivity` is exported
 
@@ -50,6 +51,13 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 - **Why it can't be fixed:** each is the only API AGP has for what it does, with no stable equivalent: declaring the managed emulator that generates baseline profiles and runs benchmarks (`ManagedVirtualDevice`: `localDevices`, `device`, `apiLevel`, `systemImageSource`), reading the tested app's id for the benchmark runner (`testedApks`), and generating the per-app language list from the translations (`generateLocaleConfig`). The alternatives are dropping the feature or a hand-kept copy: an emulator set up by hand in CI, a hard-coded app id, a hand-kept locale list.
 - **Why the rule is wrong here:** incubating is not deprecated; these are the APIs AGP's own documentation uses. If AGP changes one, the build fails at once, so nothing breaks quietly.
 - **What is excluded:** one `@Suppress("UnstableApiUsage")` on each of those three statements, never the file. Any other incubating API used later is still reported.
+
+### 7. OWASP Dependency-Check: `CVE-2018-8909` on `wire-runtime`
+
+- **What it reports:** a CVSS 7.5 vulnerability in `wire-runtime-jvm-7.1.0.jar`, which it identifies as the product `cpe:2.3:a:wire:wire`.
+- **Why the finding is wrong:** CVE-2018-8909 is in the Wire secure messenger (Wire Swiss GmbH). The app's library is Square's Wire, the Protobuf runtime (`com.squareup.wire`) that reads and writes the saved carts, fees and alerts. Dependency-Check names a jar's product from evidence such as its file name, and both are called "Wire". OSV-Scanner, which matches the same library by its package URL, reports nothing for it.
+- **Why it can't be fixed:** the match comes from the name, so no version of Square's Wire changes it; the only way to make it go away would be removing the library.
+- **What is excluded:** that one CVE, only for files under `com.squareup.wire/` named `wire-runtime…` (`config/owasp/suppressions.xml`, handed to the scan with `--suppression`). Any other CVE matched to that jar, and that CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
 
 ### What the exclusion does and doesn't cover
 

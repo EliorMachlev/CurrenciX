@@ -54,12 +54,12 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 
 Warnings and findings get fixed, not hidden.
 
-- **No suppressions of any kind.** That covers `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, new detekt or lint baseline entries, turning a rule off in `detekt.yml` / `lint.xml` / `.editorconfig`, `-dontwarn`, and compiler flags that silence warnings. (`@OptIn` for an experimental API is an explicit opt-in, not a suppression.)
+- **No suppressions of any kind.** That covers `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, an OWASP Dependency-Check `<suppress>`, new detekt or lint baseline entries, turning a rule off in `detekt.yml` / `lint.xml` / `.editorconfig`, `-dontwarn`, and compiler flags that silence warnings. (`@OptIn` for an experimental API is an explicit opt-in, not a suppression.)
 - **No workaround whose only purpose is to make a warning go away.** If the code still has the problem, the warning must still be there. Don't route a deprecated call through a wrapper, reflection or a cast, rename or restructure something only so an analyzer stops matching it, or exclude a file from a check.
 - **Fix the cause.** Migrate off the deprecated API, split the long function, make the parameter list a type, remove the unused code.
 - **When no real fix exists yet,** leave the warning visible and say so in the PR. A visible warning is accurate; a hidden one is not.
 
-**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds six entries (two Semgrep findings, one LeakCanary reference and three incubating Android Gradle Plugin APIs), and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
+**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds seven entries (two Semgrep findings, one LeakCanary reference, three incubating Android Gradle Plugin APIs and one OWASP Dependency-Check false match), and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
 
 ### Pull Request Checklist
 
