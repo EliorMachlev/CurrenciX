@@ -7,6 +7,7 @@ import com.eliormachlev.currencix.util.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +15,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
+import java.io.IOException
 
 /**
  * A [DataStore] of any kind (a preferences file, or a typed Protobuf one)
@@ -81,7 +85,7 @@ open class CachedStore<S> internal constructor(
         // (e.g. BackupManager restore, migrations) that bypass the queue —
         // but not while our own writes are pending (see the class doc).
         scope.launch {
-            store.data.collect { disk -> syncFromDisk(disk) }
+            store.data.retryWhen { cause, attempt -> retryAfterReadFailure(cause, attempt) }.collect { disk -> syncFromDisk(disk) }
         }
     }
 
@@ -124,7 +128,13 @@ open class CachedStore<S> internal constructor(
     // ignored emissions carried.
     private suspend fun onWriteLanded() {
         val drained = synchronized(cacheWriteLock) { --pendingWrites == 0 }
-        if (drained) syncFromDisk(store.data.first())
+        if (!drained) return
+        try {
+            syncFromDisk(store.data.first())
+        } catch (e: IOException) {
+            // The cache already holds every write; the next emission resyncs it.
+            Timber.tag(TAG).w(e, "Couldn't reread the store after a write")
+        }
     }
 
     /**
@@ -153,8 +163,25 @@ open class CachedStore<S> internal constructor(
         }
     }
 
+    // A disk read that failed (the file briefly unreadable) is tried again
+    // after a growing pause, so the cache keeps following the disk instead of
+    // the collector ending, or its failure escaping into the process. Any
+    // other failure is a bug and still surfaces.
+    private suspend fun retryAfterReadFailure(
+        cause: Throwable,
+        attempt: Long,
+    ): Boolean {
+        if (cause !is IOException) return false
+        Timber.tag(TAG).w(cause, "Couldn't read the store, trying again")
+        delay(READ_RETRY_BASE_MILLIS * minOf(attempt + 1, READ_RETRY_MAX_STEPS))
+        return true
+    }
+
     private companion object {
         const val WRITE_QUEUE_CAPACITY = 256
+        const val TAG = "CachedStore"
+        const val READ_RETRY_BASE_MILLIS = 1_000L
+        const val READ_RETRY_MAX_STEPS = 30L
     }
 }
 
