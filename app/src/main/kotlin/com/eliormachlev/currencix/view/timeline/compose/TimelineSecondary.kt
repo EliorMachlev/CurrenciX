@@ -41,6 +41,7 @@ import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.compose.theme.tile
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -309,7 +310,7 @@ private fun StatTile(
     Column(
         modifier
             .clip(RoundedCornerShape(TILE_RADIUS))
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .background(MaterialTheme.colorScheme.tile)
             .padding(horizontal = TILE_PADDING_H, vertical = TILE_PADDING_V),
     ) {
         Text(

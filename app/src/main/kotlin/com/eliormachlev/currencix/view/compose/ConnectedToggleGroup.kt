@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,6 +17,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.theme.tile
 
 // The smallest a label shrinks to before it would be cut off, at the
 // default font size. Divided by the font scale, so even at 200 % a long
@@ -51,6 +54,7 @@ internal fun <T> ConnectedToggleGroup(
                 onCheckedChange = { toggle() },
                 shapes = connectedShapes(index, options.size),
                 contentPadding = CONNECTED_BUTTON_PADDING,
+                colors = ToggleButtonDefaults.colors(containerColor = MaterialTheme.colorScheme.tile),
                 modifier = Modifier.weight(1f),
             ) {
                 // Shrinks to fit rather than cut off ("Mont", "5" for "5 years") at large font sizes.

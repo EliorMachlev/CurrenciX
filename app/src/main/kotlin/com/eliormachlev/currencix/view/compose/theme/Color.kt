@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.view.compose.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -162,3 +163,11 @@ val CurrenciXDarkColors =
         errorContainer = ErrorContainerDark,
         onErrorContainer = OnErrorContainerDark,
     )
+
+/**
+ * A tile, chip or unpicked button drawn straight on the screen's background
+ * (or a sheet): the deepest container tone, so it reads as a shape on paper
+ * (1.18:1) as Quick conversions' tiles do on a sheet. The lighter containers
+ * all but vanish on paper (1.05:1).
+ */
+val ColorScheme.tile: Color get() = surfaceContainerHighest
