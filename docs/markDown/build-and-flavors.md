@@ -5,7 +5,7 @@
 | Tool | Version |
 |---|---|
 | JDK | 21 or newer (Temurin recommended; CI uses 25). The code targets Java 21; signing with the post-quantum hybrid signature needs 24+, which the build fetches as a toolchain |
-| Gradle | 9.8.1 (the wrapper) |
+| Gradle | 9.8.2 (the wrapper) |
 | Android Gradle Plugin | 9.4.1 |
 | Kotlin | 2.4.21 |
 | Min SDK | 33 |
@@ -345,7 +345,7 @@ python3 .github/scripts/compose-stability.py app/build/compose-reports
 
 ### Gradle deprecation: `Configuration.setVisible(boolean)` (AGP)
 
-**Symptom:** During configuration of `:app`, Gradle (9.8.1) prints:
+**Symptom:** During configuration of `:app`, Gradle (9.8.2) prints the line below, and a build ends with "Deprecated Gradle features were used in this build, making it incompatible with Gradle 10":
 
 ```
 The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11.
@@ -353,4 +353,4 @@ The Configuration.setVisible(boolean) method has been deprecated. This is schedu
 
 **Root cause:** inside **AGP 9.4.1** (`BasePlugin.createAndroidJdkImageConfiguration`, `BasePlugin.kt:362`), not in any build script here (`./gradlew help --warning-mode all -Dorg.gradle.deprecation.trace=true` shows the stack).
 
-**Status:** left visible, as nothing in this repository can fix it; it should go away once AGP stops calling `setVisible`, and must before the move to Gradle 11. The earlier AGP warning about using a `Project` object as dependency notation (AGP 9.2.1) no longer appears on AGP 9.4.1.
+**Status:** left visible, as nothing in this repository can fix it. AGP 9.5.0-rc01 no longer makes the call (checked in its `BasePlugin` classes), so it goes away with the move to AGP 9.5.0 once that's stable; that move must happen before Gradle 11. Silencing it (`org.gradle.warning.mode=none`) would hide every other deprecation too, so it isn't done. The earlier AGP warning about using a `Project` object as dependency notation (AGP 9.2.1) no longer appears on AGP 9.4.1.
