@@ -41,6 +41,9 @@ sealed interface Screen {
     data object Fees : Screen
 
     data object Backup : Screen
+
+    /** The languages receipts are read in (Settings). */
+    data object ReceiptLanguages : Screen
 }
 
 // Stable on-disk names for the saved back stack. Never rename one: a stack
@@ -54,6 +57,7 @@ private enum class Route(
     SETTINGS("settings"),
     FEES("fees"),
     BACKUP("backup"),
+    RECEIPT_LANGUAGES("receipt_languages"),
     ;
 
     companion object {
@@ -80,6 +84,7 @@ internal fun Screen.encode(): String =
         is Screen.SettingsPage -> listOf(Route.SETTINGS.id, topic.id).joinToString(SEPARATOR.toString())
         Screen.Fees -> Route.FEES.id
         Screen.Backup -> Route.BACKUP.id
+        Screen.ReceiptLanguages -> Route.RECEIPT_LANGUAGES.id
     }
 
 /**
@@ -117,6 +122,10 @@ internal fun decodeScreen(encoded: String): Screen? {
 
         Route.BACKUP -> {
             Screen.Backup
+        }
+
+        Route.RECEIPT_LANGUAGES -> {
+            Screen.ReceiptLanguages
         }
 
         null -> {

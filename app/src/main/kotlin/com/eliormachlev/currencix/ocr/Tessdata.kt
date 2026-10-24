@@ -35,6 +35,16 @@ object Tessdata {
         language: TessLanguage,
     ): Boolean = file(context, language).length() > 0
 
+    /** Deletes [language]'s file (and any half-downloaded one); true when none is left. */
+    fun delete(
+        context: Context,
+        language: TessLanguage,
+    ): Boolean {
+        val target = file(context, language)
+        File(target.parentFile, target.name + DOWNLOAD_SUFFIX).delete()
+        return !target.exists() || target.delete()
+    }
+
     /**
      * Writes [source] to [target] through a temporary file, keeping it only
      * when its SHA-256 is [language]'s; returns whether it was kept.
@@ -61,14 +71,16 @@ object Tessdata {
     }
 
     /**
-     * The languages to read with, as Tesseract takes them ("heb+eng"): the
-     * app language's when its file is here, then English (prices and
-     * Latin-script names).
+     * The languages to read with, as Tesseract takes them ("heb+kor+eng"):
+     * the app language's first when its file is here, then any other the
+     * user added, then English (prices and Latin-script names).
      */
     fun languages(
         context: Context,
         local: TessLanguage?,
-    ): String =
-        listOfNotNull(local?.takeIf { it != TessLanguage.ENGLISH && isInstalled(context, it) }, TessLanguage.ENGLISH)
-            .joinToString("+") { it.code }
+    ): String {
+        val others = TessLanguage.entries.filter { it != TessLanguage.ENGLISH && it != local && isInstalled(context, it) }
+        val first = local?.takeIf { it != TessLanguage.ENGLISH && isInstalled(context, it) }
+        return (listOfNotNull(first) + others + TessLanguage.ENGLISH).joinToString("+") { it.code }
+    }
 }

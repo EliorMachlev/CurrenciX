@@ -388,12 +388,13 @@ dependencies {
     // WorkManager: periodic background refresh of exchange rates (#151).
     // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
     // opt-in via Settings until #147 onboarding wires the hero opt-in.
-    implementation("androidx.work:work-runtime-ktx:2.12.0")
+    val workVersion = "2.12.0"
+    implementation("androidx.work:work-runtime-ktx:$workVersion")
     // Receipt scanning: Tesseract OCR on the device (:ocr-engine), built into
     // the F-Droid app and installed on demand from :ocr in the Play app
-    // through Play Feature Delivery. The F-Droid app ships English data in
-    // its assets; other languages (and English, on Play) download in the
-    // background (ocr/TessdataDownloadWorker).
+    // through Play Feature Delivery. No language data ships with either:
+    // each downloads in the background once the user agrees to it
+    // (ocr/TessdataDownloadWorker), and can be deleted again (ocr/OcrLanguages).
     "fdroidImplementation"(project(":ocr-engine"))
     "playImplementation"("com.google.android.play:feature-delivery-ktx:2.1.0")
     implementation("androidx.exifinterface:exifinterface:1.4.2")
@@ -432,6 +433,8 @@ dependencies {
     // core-testing provides InstantTaskExecutorRule so LiveData setValue can
     // run on the JVM test thread without hitting the main-thread assertion.
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    // A synchronous WorkManager for tests of what schedules background work (receipt languages).
+    testImplementation("androidx.work:work-testing:$workVersion")
     // fuzzing
     val junitVersion = "6.1.3"
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")

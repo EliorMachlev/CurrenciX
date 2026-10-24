@@ -151,6 +151,12 @@ private fun CategoriesSection(page: SettingsPageContext) {
         TopicRow(SettingsTopic.APPEARANCE, page)
         TopicRow(SettingsTopic.CHART, page)
         NavigationRow(
+            title = stringResource(R.string.receipt_languages_title),
+            summary = stringResource(R.string.receipt_languages_summary),
+            iconRes = R.drawable.ic_receipt,
+            onClick = { page.callbacks.onOpen(Screen.ReceiptLanguages) },
+        )
+        NavigationRow(
             title = stringResource(R.string.backup_title),
             summary = stringResource(R.string.backup_summary),
             iconRes = R.drawable.ic_backup,

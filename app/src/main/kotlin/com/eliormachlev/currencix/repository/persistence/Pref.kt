@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * One setting or saved value, read and written as the app's type [T]: the
@@ -77,6 +78,18 @@ internal fun <S, F, T> CachedStore<S>.fieldPref(
     val decoded = LastResult<F, T>(same = { a, b -> a === b }, compute = decode)
     return statePref(read = { decoded(field(it)) }, write = write)
 }
+
+/** This value seen as [T]: read through [decode], written through [encode]. */
+internal fun <S, T> Pref<S>.mapped(
+    decode: (S) -> T,
+    encode: (T) -> S,
+): Pref<T> =
+    Pref(
+        read = { decode(get()) },
+        write = { set(encode(it)) },
+        change = { transform -> update { encode(transform(decode(it))) } },
+        changes = { flow.map(decode) },
+    )
 
 /** A setting read from the whole preference set and written by [write] (one derived from others). */
 internal fun <T> PrefStore.pref(

@@ -51,6 +51,7 @@ import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.rememberAppNavigator
 import com.eliormachlev.currencix.view.preference.BackupRoute
 import com.eliormachlev.currencix.view.preference.FeesRoute
+import com.eliormachlev.currencix.view.preference.ReceiptLanguagesRoute
 import com.eliormachlev.currencix.view.preference.SettingsRoute
 import com.eliormachlev.currencix.view.timeline.TimelineRoute
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -275,6 +276,10 @@ class MainActivity : AppCompatActivity() {
 
             Screen.Backup -> {
                 ReadingDirection { BackupRoute(onBack = nav::pop) }
+            }
+
+            Screen.ReceiptLanguages -> {
+                ReadingDirection { ReceiptLanguagesRoute(onBack = nav::pop) }
             }
         }
     }

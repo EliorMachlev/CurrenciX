@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.view.cart.compose
 
-import android.content.Context
-import android.text.format.Formatter
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -80,7 +78,7 @@ fun ReceiptSetupOfferSheet(
         if (offer.reader) SetupItem(stringResource(R.string.receipt_setup_reader))
         if (offer.english) {
             val english = TessLanguage.ENGLISH
-            SetupItem(stringResource(R.string.receipt_setup_language_data, english.displayName(locale), downloadSize(context, english)))
+            SetupItem(stringResource(R.string.receipt_setup_language_data, english.displayName(locale), english.downloadSize(context)))
         }
         offer.language?.let { language ->
             Row(
@@ -94,7 +92,7 @@ fun ReceiptSetupOfferSheet(
             ) {
                 Checkbox(checked = withLanguage, onCheckedChange = null)
                 Text(
-                    stringResource(R.string.receipt_setup_also_language, language.displayName(locale), downloadSize(context, language)),
+                    stringResource(R.string.receipt_setup_also_language, language.displayName(locale), language.downloadSize(context)),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f),
                 )
@@ -122,7 +120,7 @@ fun ReceiptLanguageOfferSheet(
         onDismiss = { onAnswer(false) },
         cancelLabel = stringResource(R.string.receipt_language_english_only),
     ) {
-        PromptMessage(stringResource(R.string.receipt_language_offer, name, downloadSize(context, language)))
+        PromptMessage(stringResource(R.string.receipt_language_offer, name, language.downloadSize(context)))
     }
 }
 
@@ -131,12 +129,6 @@ fun ReceiptLanguageOfferSheet(
 private fun SetupItem(text: String) {
     Text("$BULLET $text", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(vertical = Spacing.Tiny))
 }
-
-// The language file's size as the system writes sizes ("961 kB").
-private fun downloadSize(
-    context: Context,
-    language: TessLanguage,
-): String = Formatter.formatShortFileSize(context, language.bytes)
 
 private const val BULLET = "•"
 

@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.ocr.OcrInstall
+import com.eliormachlev.currencix.ocr.OcrLanguages
 import com.eliormachlev.currencix.ocr.TessLanguage
 import com.eliormachlev.currencix.ocr.Tessdata
 import com.eliormachlev.currencix.ocr.TessdataDownloadWorker
@@ -184,7 +185,8 @@ class ReceiptScan internal constructor() {
  * ships with the app: the first scan offers what reading needs (English, and
  * the Play app's text reader, [installReceiptReader]), and the app language's
  * data is a separate yes or no, asked once ([ReceiptSetup]) and remembered
- * ([com.eliormachlev.currencix.repository.PrivacySettings.receiptLanguagesAllowed]).
+ * ([com.eliormachlev.currencix.repository.ReceiptLanguageSettings]); more can be
+ * added, kept for a while and deleted in Settings ([OcrLanguages]).
  * A language agreed to downloads in the background ([TessdataDownloadWorker]);
  * until it's here, English is used.
  */
@@ -192,29 +194,25 @@ class ReceiptScan internal constructor() {
 fun rememberReceiptScan(): ReceiptScan {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val privacy = rememberDatabase().privacy
+    val languages = rememberDatabase().receiptLanguages
     val local = TessLanguage.forLocale(LocalConfiguration.current.locales[0])
     // Made when a photo is taken, not before: most cart visits never scan.
     val photo = remember(context) { lazy { cacheFile(context, RECEIPTS_DIR, PHOTO_NAME) } }
     val scan = remember { ReceiptScan() }
-    val answerFor = { language: TessLanguage ->
-        when (language.code) {
-            in privacy.receiptLanguagesAllowed.get() -> true
-            in privacy.receiptLanguagesDeclined.get() -> false
-            else -> null
-        }
-    }
+    val answerFor = { language: TessLanguage -> languages.answerFor(language.code) }
     scan.local = local
     scan.isInstalled = { Tessdata.isInstalled(context, it) }
     scan.isRecognizerHere = { isRecognizerInstalled(context) }
     scan.answerFor = answerFor
     scan.answer = { language, allowed ->
-        privacy.setReceiptLanguageAllowed(language.code, allowed)
+        languages.setAllowed(language.code, allowed)
         if (allowed && language != TessLanguage.ENGLISH) TessdataDownloadWorker.enqueue(context, language)
     }
     val read = { uri: Uri, deleteAfter: Boolean ->
         scan.reading = true
         scope.launch {
+            // A language kept for a trip that has ended isn't read with any more.
+            OcrLanguages.deleteExpired(context)
             val text = readReceipt(context, uri, Tessdata.languages(context, local))
             if (deleteAfter) photo.value.first.delete()
             val missing = local?.takeIf { !Tessdata.isInstalled(context, it) }

@@ -43,7 +43,11 @@ import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
 import com.eliormachlev.currencix.view.main.spinner.pickerActions
+import com.eliormachlev.currencix.view.preference.compose.KeepLanguageSheet
+import com.eliormachlev.currencix.view.preference.compose.ReceiptLanguagesList
 import com.eliormachlev.currencix.viewmodel.cart.TripSummary
+import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
+import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
@@ -52,6 +56,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.math.BigDecimal
+import java.time.Instant
 
 // The surfaces added with recent pairs, cart sections and extras, the
 // text-selection popup. (Wallpaper colors aren't here:
@@ -262,6 +267,42 @@ class NewSurfacesScreenshotTest {
     @Test fun receiptLanguageOfferSheet() =
         shots.captureMatrix("receipt_language_offer_sheet") {
             ReceiptLanguageOfferSheet(language = TessLanguage.HEBREW, onAnswer = {})
+        }
+
+    // Settings → Receipt languages: English kept, Korean until a trip's end, Japanese downloading.
+    @Test fun receiptLanguagesList() =
+        shots.captureMatrix("receipt_languages_list") {
+            ReceiptLanguagesList(
+                state =
+                    ReceiptLanguagesState(
+                        rows =
+                            listOf(
+                                ReceiptLanguageRow(TessLanguage.ENGLISH, keepUntil = null, downloading = false),
+                                ReceiptLanguageRow(
+                                    TessLanguage.KOREAN,
+                                    keepUntil = Instant.parse("2026-11-14T21:59:00Z"),
+                                    downloading = false,
+                                ),
+                                ReceiptLanguageRow(TessLanguage.JAPANESE, keepUntil = null, downloading = true),
+                            ),
+                        available = listOf(TessLanguage.THAI),
+                    ),
+                onAdd = {},
+                onEdit = {},
+                onDelete = {},
+            )
+        }
+
+    // Adding Korean: its size, kept for good or until a time.
+    @Test fun receiptLanguageKeepSheet() =
+        shots.captureMatrix("receipt_language_keep_sheet") {
+            KeepLanguageSheet(
+                language = TessLanguage.KOREAN,
+                initialUntil = Instant.parse("2026-11-14T21:59:00Z"),
+                confirmLabel = "Download",
+                onConfirm = {},
+                onDismiss = {},
+            )
         }
 
     @Test fun cartExtrasSheet() =
