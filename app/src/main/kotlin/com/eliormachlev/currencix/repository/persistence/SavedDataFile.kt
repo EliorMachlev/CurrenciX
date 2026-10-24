@@ -8,6 +8,7 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStore
 import com.eliormachlev.currencix.proto.CartsData
 import com.eliormachlev.currencix.proto.FeesData
+import com.eliormachlev.currencix.proto.RateAlertsData
 import com.squareup.wire.Message
 import com.squareup.wire.ProtoAdapter
 import timber.log.Timber
@@ -15,7 +16,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-// What the user saves, one typed Protobuf DataStore file per kind
+// What the user saves (carts and trips, fees, rate alerts), one typed Protobuf DataStore file per kind
 // (files/datastore/<name>.pb), with messages from src/main/proto. Kept out of
 // the preference files: a cart is a tree of values, not a setting.
 
@@ -51,6 +52,11 @@ private val Context.cartsFile by dataStore(
     serializer = WireSerializer(CartsData.ADAPTER, CartsData()),
     corruptionHandler = emptyOnCorruption(CartsData()),
 )
+private val Context.alertsFile by dataStore(
+    fileName = "alerts.pb",
+    serializer = WireSerializer(RateAlertsData.ADAPTER, RateAlertsData()),
+    corruptionHandler = emptyOnCorruption(RateAlertsData()),
+)
 private val Context.feesFile by dataStore(
     fileName = "fees.pb",
     serializer = WireSerializer(FeesData.ADAPTER, FeesData()),
@@ -72,6 +78,7 @@ private class StoreHolder<M>(
 
 private val carts = StoreHolder { it.cartsFile }
 private val fees = StoreHolder { it.feesFile }
+private val alerts = StoreHolder { it.alertsFile }
 
 /** The working cart, the saved carts and the trips. */
 internal fun Context.cartsStore(): CachedStore<CartsData> = carts.get(this)
@@ -79,8 +86,12 @@ internal fun Context.cartsStore(): CachedStore<CartsData> = carts.get(this)
 /** The saved fees. */
 internal fun Context.feesStore(): CachedStore<FeesData> = fees.get(this)
 
+/** The rate alerts waiting to fire. */
+internal fun Context.alertsStore(): CachedStore<RateAlertsData> = alerts.get(this)
+
 /** Reads each saved-data file once, so a screen's first read doesn't wait on the disk (call off the main thread). */
 internal fun Context.warmUpSavedData() {
     cartsStore().snapshot()
     feesStore().snapshot()
+    alertsStore().snapshot()
 }

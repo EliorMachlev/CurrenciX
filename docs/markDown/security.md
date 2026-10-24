@@ -32,7 +32,7 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 
 ## User-initiated Backup
 
-Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore preference namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) and the saved carts, trips and fees (`carts`, `fees`; `SAVED_DATA_SECTIONS`, written as JSON from their Protobuf files), as versioned JSON: settings, rate alerts and any API keys entered, the converter's state, the starred currencies, the carts and trips, and the fees. All of it is inside the encrypted block when a password is set. The cached rates and rate histories are deliberately excluded.
+Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore preference namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) and the saved carts, trips, fees and rate alerts (`carts`, `fees`, `alerts`; `SAVED_DATA_SECTIONS`, written as JSON from their Protobuf files), as versioned JSON: settings and any API keys entered, the converter's state, the starred currencies, the carts and trips, the fees, and the rate alerts. All of it is inside the encrypted block when a password is set. The cached rates and rate histories are deliberately excluded.
 
 The app requests **no storage permission** — the SAF picker returns a scoped `content://` URI that the user has explicitly granted for that single file.
 

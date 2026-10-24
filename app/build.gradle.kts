@@ -34,7 +34,7 @@ plugins {
     // to each GitHub release.
     id("org.cyclonedx.bom") version "3.5.1"
     // Kotlin classes for the Protobuf schema in src/main/proto (carts, trips,
-    // fees on disk): plain generated code, no reflection.
+    // fees, rate alerts on disk): plain generated code, no reflection.
     id("com.squareup.wire") version "7.1.0"
 }
 
@@ -301,7 +301,7 @@ dependencies {
     // namespace (see repository/persistence/PersistenceKey.kt). The `-preferences`
     // artifact pulls `datastore-preferences-core` transitively and provides the
     // Android-aware `preferencesDataStore` delegate. The plain artifact holds
-    // what the user saves (carts, trips, fees) as Protobuf, one typed file per
+    // what the user saves (carts, trips, fees, rate alerts) as Protobuf, one typed file per
     // kind (repository/persistence/SavedDataFile.kt).
     val datastoreVersion = "1.3.0"
     implementation("androidx.datastore:datastore-preferences:$datastoreVersion")

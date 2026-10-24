@@ -1,17 +1,20 @@
 package com.eliormachlev.currencix.repository
 
+import com.eliormachlev.currencix.model.AlertDirection
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeType
+import com.eliormachlev.currencix.model.RateAlert
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.proto.CartItemProto
 import com.eliormachlev.currencix.proto.CartProto
 import com.eliormachlev.currencix.proto.FeeProto
 import com.eliormachlev.currencix.proto.PersonProto
+import com.eliormachlev.currencix.proto.RateAlertProto
 import com.eliormachlev.currencix.proto.TripProto
 
-// The saved carts, trips and fees to and from their Protobuf messages
+// The saved carts, trips, fees and rate alerts to and from their Protobuf messages
 // (src/main/proto/currencix/saved.proto). Reads go through the same checks as
 // a JSON file's (SavedValues.kt).
 
@@ -94,3 +97,27 @@ private fun FeeProto.Kind.toType(): FeeType? =
         FeeProto.Kind.SPECIFIC_PAIR -> FeeType.SPECIFIC_PAIR
         FeeProto.Kind.KIND_UNSPECIFIED -> null
     }
+
+internal fun RateAlert.toProto(): RateAlertProto =
+    RateAlertProto(
+        id = id,
+        from = pair.from.iso4217Alpha(),
+        to = pair.to.iso4217Alpha(),
+        threshold = threshold.toPlainString(),
+        direction =
+            when (direction) {
+                AlertDirection.ABOVE -> RateAlertProto.Direction.ABOVE
+                AlertDirection.BELOW -> RateAlertProto.Direction.BELOW
+            },
+    )
+
+/** The alert, or null when the message can't be one (an unknown currency or direction, no threshold). */
+internal fun RateAlertProto.toModel(): RateAlert? {
+    val direction =
+        when (direction) {
+            RateAlertProto.Direction.ABOVE -> AlertDirection.ABOVE
+            RateAlertProto.Direction.BELOW -> AlertDirection.BELOW
+            RateAlertProto.Direction.DIRECTION_UNSPECIFIED -> null
+        }
+    return rateAlertOf(id, from, to, threshold, direction)
+}

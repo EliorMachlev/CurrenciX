@@ -6,7 +6,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.RateAlert
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.repository.json.parseJsonObject
@@ -80,10 +82,12 @@ class BackupManagerTest {
         }
 
     @Test
-    fun `carts, trips and fees go into a backup and come back from it`() =
+    fun `carts, trips, fees and rate alerts go into a backup and come back from it`() =
         runBlocking<Unit> {
             val carts = CartStore(app)
             val fees = FeeStore(app)
+            val alerts = RateAlertStore(app)
+            val alert = RateAlert.towards(CurrencyPair(Currency.USD, Currency.ILS), BigDecimal("3.5"), BigDecimal("3.6"))
             val cart = SavedCart("c1", "Market", "EUR", listOf(CartItem("i1", "bread", "2.5", quantity = 2)), createdAt = 1L, tripId = "t1")
             val trip = Trip("t1", "Rome", Currency.ILS, BigDecimal("900"))
             val fee = Fee.SpecificPair("f1", "Card", BigDecimal("1.5"), "EUR", "ILS", bothWays = true)
@@ -91,18 +95,21 @@ class BackupManagerTest {
             carts.savedCarts.set(listOf(cart))
             carts.trips.set(listOf(trip))
             fees.fees.set(persistentListOf(fee))
+            alerts.alerts.set(listOf(alert))
             val uri = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
 
             carts.currentCart.set(null)
             carts.savedCarts.set(emptyList())
             carts.trips.set(emptyList())
             fees.fees.set(persistentListOf())
+            alerts.alerts.set(emptyList())
             assertEquals(BackupResult.Success, manager.import(uri, PASSWORD.toCharArray()))
 
             assertEquals(cart.copy(id = "working"), carts.currentCart.get())
             assertEquals(listOf(cart), carts.savedCarts.get())
             assertEquals(listOf(trip), carts.trips.get())
             assertEquals(listOf(fee), fees.fees.get())
+            assertEquals(listOf(alert), alerts.alerts.get())
         }
 
     @Test

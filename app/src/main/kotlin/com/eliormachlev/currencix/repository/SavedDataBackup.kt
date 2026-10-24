@@ -3,18 +3,21 @@ package com.eliormachlev.currencix.repository
 import android.content.Context
 import com.eliormachlev.currencix.proto.CartsData
 import com.eliormachlev.currencix.proto.FeesData
+import com.eliormachlev.currencix.proto.RateAlertsData
 import com.eliormachlev.currencix.repository.json.JsonObject
 import com.eliormachlev.currencix.repository.json.buildJsonObject
 import com.eliormachlev.currencix.repository.persistence.CachedStore
+import com.eliormachlev.currencix.repository.persistence.alertsStore
 import com.eliormachlev.currencix.repository.persistence.cartsStore
 import com.eliormachlev.currencix.repository.persistence.feesStore
 
-// The saved carts, trips and fees in a backup. On the phone they're Protobuf;
+// The saved carts, trips, fees and rate alerts in a backup. On the phone they're Protobuf;
 // in the backup they're JSON, next to the preference namespaces (in the same
 // encrypted block when there's a password), so a plain backup stays readable.
 //
 //   "carts": {"current": {cart}, "saved": [{cart}, …], "trips": [{trip}, …]}
 //   "fees":  {"fees": [{fee}, …]}
+//   "alerts": {"alerts": [{alert}, …]}
 //
 // Older readers skip these keys; a backup without them leaves the data as it is.
 
@@ -22,6 +25,7 @@ private const val CARTS_KEY_CURRENT = "current"
 private const val CARTS_KEY_SAVED = "saved"
 private const val CARTS_KEY_TRIPS = "trips"
 private const val FEES_KEY_FEES = "fees"
+private const val ALERTS_KEY_ALERTS = "alerts"
 
 /** One Protobuf file in a backup: its key there, its store, and its JSON both ways. */
 internal class SavedDataSection<M>(
@@ -46,6 +50,7 @@ internal val SAVED_DATA_SECTIONS: List<SavedDataSection<*>> =
     listOf(
         SavedDataSection("carts", Context::cartsStore, ::cartsToJson, ::cartsFromJson),
         SavedDataSection("fees", Context::feesStore, ::feesToJson, ::feesFromJson),
+        SavedDataSection("alerts", Context::alertsStore, ::alertsToJson, ::alertsFromJson),
     )
 
 private fun cartsToJson(data: CartsData): Map<String, Any> =
@@ -71,3 +76,9 @@ private fun feesFromJson(obj: JsonObject): FeesData =
                 it.toProto()
             },
     )
+
+private fun alertsToJson(data: RateAlertsData): Map<String, Any> =
+    mapOf(ALERTS_KEY_ALERTS to data.alerts.mapNotNull { it.toModel() }.map(::serializeRateAlert))
+
+private fun alertsFromJson(obj: JsonObject): RateAlertsData =
+    RateAlertsData(alerts = obj.optObjects(ALERTS_KEY_ALERTS).mapNotNull(::parseRateAlert).map { it.toProto() })

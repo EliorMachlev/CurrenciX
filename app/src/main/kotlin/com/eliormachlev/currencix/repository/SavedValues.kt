@@ -1,11 +1,14 @@
 package com.eliormachlev.currencix.repository
 
+import com.eliormachlev.currencix.model.AlertDirection
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeType
 import com.eliormachlev.currencix.model.Person
+import com.eliormachlev.currencix.model.RateAlert
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.util.newId
 import java.math.BigDecimal
@@ -97,3 +100,23 @@ internal fun Fee.toStored(): StoredFee =
         type = type,
         pair = (this as? Fee.SpecificPair)?.let { StoredPair(it.from, it.to, it.bothWays) } ?: StoredPair(),
     )
+
+/** An alert, or null when it can't be one (an unknown currency or direction, no threshold above zero). */
+internal fun rateAlertOf(
+    id: String,
+    fromCode: String,
+    toCode: String,
+    threshold: String,
+    direction: AlertDirection?,
+): RateAlert? {
+    val from = Currency.fromString(fromCode) ?: return null
+    val to = Currency.fromString(toCode) ?: return null
+    val limit = positiveDecimalOrNull(threshold) ?: return null
+    return RateAlert(idOrNew(id), CurrencyPair(from, to), limit, direction ?: return null)
+}
+
+/** This list with [item] in place of the first entry that [isSame], or added at the end when none is. */
+internal fun <T> List<T>.replacingOrAppending(
+    item: T,
+    isSame: (T) -> Boolean,
+): List<T> = if (any(isSame)) map { if (isSame(it)) item else it } else this + item
