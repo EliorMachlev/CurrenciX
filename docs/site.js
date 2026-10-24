@@ -36,16 +36,16 @@
     const stamp = receipt.querySelector(".stamp");
     const out = (name) => receipt.querySelector(`[data-out="${name}"]`);
     const state = { fee: 2.5, reversed: false };
-    const SIDES = { ILS: "₪", USD: "$" };
+    const SIDES = { USD: "$", EUR: "€" };
 
     const render = () => {
-      const from = state.reversed ? "USD" : "ILS";
-      const to = state.reversed ? "ILS" : "USD";
-      const usdInIls = parse(rate.value);
+      const from = state.reversed ? "EUR" : "USD";
+      const to = state.reversed ? "USD" : "EUR";
+      const usdInEur = parse(rate.value);
       const amount = parse(price.value);
       // Rounded to the cent before adding, so the receipt's lines add up.
       const cents = (v) => Math.round(v * 100) / 100;
-      const mid = cents(state.reversed ? amount * usdInIls : amount / usdInIls);
+      const mid = cents(state.reversed ? amount / usdInEur : amount * usdInEur);
       const fee = cents(mid * (state.fee / 100));
       receipt.querySelector("[data-from]").textContent = from;
       receipt.querySelector("[data-to]").textContent = to;
@@ -80,13 +80,13 @@
   // ── The converter: a working keypad ──
   const converter = document.querySelector("[data-converter]");
   if (converter) {
-    const RATE = 3.7; // the page's example rate: 1 USD = 3.70 ILS
-    const FEE = 1.75; // the example card
+    const RATE = 0.8934; // the page's example rate: 1 USD = 0.8934 EUR
+    const FEE = 2.5; // the example card
     const expr = converter.querySelector("[data-expr]");
     const from = converter.querySelector("[data-amount]");
     const to = converter.querySelector("[data-result]");
     const pay = converter.querySelector("[data-true]");
-    let input = "64.86";
+    let input = "100";
 
     // + − × ÷, brackets and percent, worked out left to right with precedence.
     const evaluate = (text) => {
@@ -118,8 +118,8 @@
       const value = evaluate(input);
       expr.textContent = isExpression ? input.replace(/-/g, "−") : "";
       from.textContent = `$ ${input ? money(value) : "0"}`;
-      to.textContent = `₪ ${money(value * RATE)}`;
-      pay.textContent = `₪ ${money(value * RATE * (1 + FEE / 100))}`;
+      to.textContent = `€ ${money(value * RATE)}`;
+      pay.textContent = `€ ${money(value * RATE * (1 + FEE / 100))}`;
     };
 
     converter.querySelectorAll(".keypad button").forEach((key) =>

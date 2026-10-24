@@ -18,6 +18,13 @@ A handy travel companion, not a tool for real-time financial business.
 
 [Website](https://currencix.machlev.org/) · [Features](https://currencix.machlev.org/features.html) · [Providers](https://currencix.machlev.org/providers.html) · [Privacy](https://currencix.machlev.org/privacy.html) · [Docs](docs/markDown/)
 
+<br>
+
+<img src="docs/img/phone-converter.webp" width="200" alt="The converter: 1 US dollar is 0.893 euro, and 0.916 euro with a 2.5% card fee">&nbsp;
+<img src="docs/img/phone-quick-conversions.webp" width="200" alt="Quick conversions: 1 to 1,000 dollars in euros, each with the 2.5% fee counted in">&nbsp;
+<img src="docs/img/phone-cart.webp" width="200" alt="A shopping cart split between Jordan and Nick, with a 10% tip, a 2.50% conversion fee and the budget left">&nbsp;
+<img src="docs/img/phone-chart.webp" width="200" alt="A year of the dollar against the euro: up 3.74%, with the maximum, minimum, average and median">
+
 </div>
 
 ---

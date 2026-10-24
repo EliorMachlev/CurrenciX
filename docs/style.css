@@ -380,6 +380,7 @@ code { font-family: var(--code); font-size: .9em; }
 .shots img { width: 100%; height: auto; aspect-ratio: 822 / 600; object-fit: cover; background: var(--step); }
 .shots figcaption { margin-top: .6rem; font-size: var(--s-small); color: var(--muted); }
 .shots-3 { grid-template-columns: repeat(3, 1fr); }
+.shots.phones img { aspect-ratio: 720 / 1469; border-radius: 1.25rem; }
 @media (max-width: 56rem) { .shots, .shots-3 { grid-template-columns: 1fr 1fr; gap: 1.5rem 8px; } }
 /* On a phone the board above carries the same facts; the wide table would only scroll sideways. */
 @media (max-width: 48rem) { .compare-section { display: none; } }

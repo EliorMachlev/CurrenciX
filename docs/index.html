@@ -47,23 +47,23 @@
   <div class="hero-fragment">
     <form class="receipt" data-ui data-receipt aria-label="Try it: the converter's receipt" onsubmit="return false">
       <div class="pair">
-        <span class="pill" data-from>ILS</span>
+        <span class="pill" data-from>USD</span>
         <button type="button" class="swap" aria-label="Swap the currencies"><svg class="icon" aria-hidden="true"><use href="icons.svg#swap_horiz"/></svg></button>
-        <span class="pill" data-to>USD</span>
+        <span class="pill" data-to>EUR</span>
       </div>
       <div class="field">
         <label for="price">Price</label>
-        <div class="amount"><span data-symbol aria-hidden="true">₪</span><input id="price" inputmode="decimal" value="240.00" autocomplete="off"></div>
-        <p class="rate-line"><label for="rate">Example rate: 1 USD =</label> <input id="rate" inputmode="decimal" value="3.70" autocomplete="off"> ILS</p>
+        <div class="amount"><span data-symbol aria-hidden="true">$</span><input id="price" inputmode="decimal" value="100.00" autocomplete="off"></div>
+        <p class="rate-line"><label for="rate">Example rate: 1 USD =</label> <input id="rate" inputmode="decimal" value="0.8934" autocomplete="off"> EUR</p>
       </div>
       <div class="field" role="group" aria-labelledby="fee-label">
         <span class="label" id="fee-label">Your card's fee</span>
         <div class="fees"><button type="button" data-fee="0" aria-pressed="false">None</button><button type="button" data-fee="1" aria-pressed="false">1%</button><button type="button" data-fee="1.75" aria-pressed="false">1.75%</button><button type="button" data-fee="2.5" aria-pressed="true">2.5%</button><button type="button" data-fee="3" aria-pressed="false">3%</button></div>
       </div>
       <dl class="totals" aria-live="polite">
-        <div><dt>Mid-market</dt><dd data-out="mid">$ 64.86</dd></div>
-        <div><dt>Card fee</dt><dd data-out="fee">+ $ 1.62</dd></div>
-        <div class="pay"><dt>You pay</dt><dd data-out="pay">$ 66.48</dd></div>
+        <div><dt>Mid-market</dt><dd data-out="mid">€ 89.34</dd></div>
+        <div><dt>Card fee</dt><dd data-out="fee">+ € 2.23</dd></div>
+        <div class="pay"><dt>You pay</dt><dd data-out="pay">€ 91.57</dd></div>
       </dl>
       <span class="stamp" aria-hidden="true"><b>+2.5%</b><small>card fee</small></span>
     </form>
@@ -87,15 +87,15 @@
         <span class="ibtn" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#history"/></svg></span>
       </div>
       <div class="card">
-        <div class="pair" data-part="pair"><span class="pill">USD</span><span class="swap" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#swap_horiz"/></svg></span><span class="pill">ILS</span></div>
+        <div class="pair" data-part="pair"><span class="pill">USD</span><span class="swap" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#swap_horiz"/></svg></span><span class="pill">EUR</span></div>
         <div data-part="amount">
           <p class="expr" data-expr></p>
-          <p class="from" data-amount aria-live="polite">$ 64.86</p>
+          <p class="from" data-amount aria-live="polite">$ 100.00</p>
         </div>
-        <div class="to"><span class="label">At 3.70</span><span class="value" data-result>₪ 239.98</span></div>
-        <div class="true" data-part="true"><span class="label">With Visa abroad</span><span class="stamp-sm" aria-hidden="true">+1.75%</span><span class="value" data-true>₪ 244.18</span></div>
+        <div class="to"><span class="label">At 0.8934</span><span class="value" data-result>€ 89.34</span></div>
+        <div class="true" data-part="true"><span class="label">With your card</span><span class="stamp-sm" aria-hidden="true">+2.5%</span><span class="value" data-true>€ 91.57</span></div>
       </div>
-      <div class="chips" data-part="chips"><span class="chip">EUR → ILS</span><span class="chip">USD → EUR</span><span class="chip">GBP → ILS</span></div>
+      <div class="chips" data-part="chips"><span class="chip">USD → AUD</span><span class="chip">EUR → USD</span></div>
       <div class="keypad" data-part="keypad"><button type="button" class="clear" data-key="C" aria-label="Clear">C</button><button type="button" class="" data-key="()" aria-label="Brackets">( )</button><button type="button" class="" data-key="%" aria-label="Percent">%</button><button type="button" class="" data-key="7">7</button><button type="button" class="" data-key="8">8</button><button type="button" class="" data-key="9">9</button><button type="button" class="" data-key="4">4</button><button type="button" class="" data-key="5">5</button><button type="button" class="" data-key="6">6</button><button type="button" class="" data-key="1">1</button><button type="button" class="" data-key="2">2</button><button type="button" class="" data-key="3">3</button><button type="button" class="" data-key="0">0</button><button type="button" class="" data-key="." aria-label="Decimal point">.</button><button type="button" class="" data-key="back" aria-label="Delete"><svg class="icon" aria-hidden="true"><use href="icons.svg#backspace"/></svg></button><div class="rail"><button type="button" class="" data-key="÷" aria-label="Divide">÷</button><button type="button" class="" data-key="×" aria-label="Multiply">×</button><button type="button" class="" data-key="-" aria-label="Minus">−</button><button type="button" class="" data-key="+" aria-label="Plus">+</button></div><button type="button" class="eq" data-key="=" aria-label="Equals">=</button></div>
     </div>
     <div class="plate-notes right">
@@ -112,25 +112,25 @@
     <p class="section-intro" data-reveal style="--i:1">Every price in the currency you think in, with tip, split and budget. Open a row to see what the app does with it.</p>
   </div>
   <ul class="board" data-ui data-board data-reveal style="--i:2">
-      <li><button type="button" aria-expanded="false"><span class="name">Coffee ×2</span><span class="price num">$ 9.00</span><span class="conv num">≈ ₪ 33.30</span><span class="st basket">In basket</span><span class="detail">Two at $ 4.50, ticked off in the basket. The totals card counts what's in the basket on its own line.</span></button></li>
-      <li><button type="button" aria-expanded="false"><span class="name">Bread</span><span class="price num">$ 3.75</span><span class="conv num">≈ ₪ 13.88</span><span class="st basket">In basket</span><span class="detail">Typed as 3.25 + 0.50: the calculation stays under the name.</span></button></li>
-      <li><button type="button" aria-expanded="false"><span class="name">Olive oil</span><span class="price num">$ 12.90</span><span class="conv num">≈ ₪ 47.73</span><span class="st pinned">Pinned</span><span class="detail">Pinned items stay at the top of the cart, in a section of their own.</span></button></li>
-      <li class="open"><button type="button" aria-expanded="true"><span class="name">Dinner for three</span><span class="price num">$ 110.40</span><span class="conv num">≈ ₪ 408.48</span><span class="st shared">Split 3 ways</span><span class="detail">$ 96.00 with a 15% tip, split evenly: ₪ 136.16 each. Pick a person instead and they pay for their own items.</span></button></li>
-      <li><button type="button" aria-expanded="false"><span class="name">Museum ×2</span><span class="price num">$ 36.00</span><span class="conv num">≈ ₪ 133.20</span><span class="st person">Dana</span><span class="detail">For Dana: she pays for her own items, plus her share of the shared ones.</span></button></li>
-      <li><button type="button" aria-expanded="false"><span class="name">Sunscreen</span><span class="price num">$ 14.50</span><span class="conv num">≈ ₪ 53.65</span><span class="st shared">Shared</span><span class="detail">Items for no one in particular are shared by everyone.</span></button></li>
-      <li><button type="button" aria-expanded="false"><span class="name">Ferry ×3</span><span class="price num">$ 27.00</span><span class="conv num">≈ ₪ 99.90</span><span class="st pinned">Pinned</span><span class="detail">Three tickets at $ 9.00; the quantity sits beside the name.</span></button></li>
-      <li><button type="button" aria-expanded="false"><span class="name">Postcards ×4</span><span class="price num">$ 6.00</span><span class="conv num">≈ ₪ 22.20</span><span class="st basket">In basket</span><span class="detail">Scanned from the receipt: the text is read on the phone and never uploaded.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Steak</span><span class="price num">$ 100.00</span><span class="conv num">≈ € 89.34</span><span class="st shared">50 × 2</span><span class="detail">Typed as 50 × 2: the calculation stays under the name, the price on the right.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Fries</span><span class="price num">$ 20.00</span><span class="conv num">≈ € 17.87</span><span class="st shared">10 × 2</span><span class="detail">Every row shows its price in dollars and, under it, in euros.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Beer</span><span class="price num">$ 60.00</span><span class="conv num">≈ € 53.60</span><span class="st shared">30 × 2</span><span class="detail">Shared by everyone, as an item for no one in particular is.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Tip / tax</span><span class="price num">$ 18.00</span><span class="conv num">10%</span><span class="st pinned">Tip</span><span class="detail">A tip or tax on the subtotal, set once for the cart.</span></button></li>
+      <li class="open"><button type="button" aria-expanded="true"><span class="name">Total</span><span class="price num">$ 198.00</span><span class="conv num">€ 181.32</span><span class="st basket">Split 2 ways</span><span class="detail">Subtotal $ 180.00, a 10% tip of $ 18.00, and your card's 2.50% conversion fee of € 4.42: € 181.32, or € 90.66 each.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Jordan</span><span class="price num">Half</span><span class="conv num">€ 90.66</span><span class="st person">Jordan</span><span class="detail">Each person pays their own items plus a share of the shared ones; here everything is shared.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Nick</span><span class="price num">Half</span><span class="conv num">€ 90.66</span><span class="st person">Nick</span><span class="detail">Pick who an item is for from its long-press menu, and the split follows.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Left in budget</span><span class="price num">of € 240.00</span><span class="conv num">€ 58.68</span><span class="st basket">On budget</span><span class="detail">The bar under the total fills as the cart spends the budget.</span></button></li>
   </ul>
 </section>
 
 <section class="section wrap" aria-labelledby="screens-title">
-  <h2 class="section-title" id="screens-title" data-reveal>More of the app, as it draws itself</h2>
-  <p class="section-intro" data-reveal style="--i:1">Straight from the app's screenshot tests, light and dark.</p>
-  <div class="shots">
-    <figure data-reveal style="--i:0"><img src="img/quick-conversions-dark.webp" alt="Quick conversions in the dark theme: shekels at round amounts in dollars, with a 1% fee, and the typed amount on a brass tile." width="822" height="600" loading="lazy" decoding="async"><figcaption>Quick conversions, fee included</figcaption></figure>
-    <figure data-reveal style="--i:1"><img src="img/compare-cards.webp" alt="Which card is cheaper: Revolut at 0.50% comes to 366.82 shekels, Visa abroad at 2.50% to 374.12, 7.30 more." width="822" height="600" loading="lazy" decoding="async"><figcaption>Two cards, compared for one amount</figcaption></figure>
-    <figure data-reveal style="--i:2"><img src="img/rate-chart-dark.webp" alt="Euro rate statistics for a year: from 0.9153 to 0.9370, up 2.37%, with the maximum, minimum, average and median." width="822" height="600" loading="lazy" decoding="async"><figcaption>A year of rates, in figures</figcaption></figure>
-    <figure data-reveal style="--i:3"><img src="img/receipt-scan.webp" alt="A scanned receipt: milk, bread and bananas with their prices, ticked to add to the cart." width="822" height="600" loading="lazy" decoding="async"><figcaption>A receipt, read on the phone</figcaption></figure>
+  <h2 class="section-title" id="screens-title" data-reveal>On a phone</h2>
+  <p class="section-intro" data-reveal style="--i:1">Taken on an Android phone, with the wallpaper's colours.</p>
+  <div class="shots phones">
+    <figure data-reveal style="--i:0"><img src="img/phone-converter.webp" alt="The converter on a phone: 1 US dollar is 0.893 euro, and 0.916 euro with a 2.5% card fee stamped beside it, over the keypad." width="720" height="1469" loading="lazy" decoding="async"><figcaption>The converter, with a 2.5% card fee</figcaption></figure>
+    <figure data-reveal style="--i:1"><img src="img/phone-quick-conversions.webp" alt="Quick conversions: 1 to 1,000 dollars in euros, each with the 2.5% fee counted in, based on Frankfurter.app." width="720" height="1469" loading="lazy" decoding="async"><figcaption>Quick conversions, fee included</figcaption></figure>
+    <figure data-reveal style="--i:2"><img src="img/phone-cart.webp" alt="A shopping cart: steak, fries and beer in dollars and euros, a 10% tip, a 2.50% conversion fee, 181.32 euros in total, split between Jordan and Nick, 58.68 left in the budget." width="720" height="1469" loading="lazy" decoding="async"><figcaption>A cart, split between two</figcaption></figure>
+    <figure data-reveal style="--i:3"><img src="img/phone-chart.webp" alt="A year of the dollar against the euro: up 3.74% from 0.861 to 0.893, with the maximum, minimum, average and median." width="720" height="1469" loading="lazy" decoding="async"><figcaption>A year of rates</figcaption></figure>
   </div>
 </section>
 
