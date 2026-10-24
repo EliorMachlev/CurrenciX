@@ -289,7 +289,13 @@
     <string name="receipt_check_hint">Распознано на телефоне, проверьте названия и цены.</string>
     <string name="receipt_language_pending">Названия на вашем языке будут распознаваться лучше после загрузки текстовых данных.</string>
     <string name="recent_pair_alert_set">Оповещение о курсе задано</string>
-    <string name="receipt_setup_message">Для чтения чеков нужна однократная загрузка в несколько мегабайт: модуль распознавания текста, который потом работает на телефоне без сети.</string>
+    <string name="receipt_setup_message">Для чтения чеков нужна однократная загрузка. После этого всё работает офлайн на телефоне.</string>
+    <string name="receipt_setup_reader">Распознаватель текста</string>
+    <string name="receipt_setup_language_data">Текстовые данные: %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Читать чеки и на языке %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Читать чеки и на языке %1$s? Текстовые данные загружаются один раз, %2$s. Без них чеки читаются на английском.</string>
+    <string name="receipt_language_english_only">Только английский</string>
+    <string name="receipt_language_read_too">Читать и %1$s</string>
     <string name="receipt_setup_download">Загрузить</string>
     <string name="receipt_setup_progress">Загрузка модуля чтения чеков…</string>
     <string name="receipt_setup_failed">Не удалось загрузить модуль чтения чеков. Повторите позже.</string>

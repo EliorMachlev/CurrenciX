@@ -282,7 +282,13 @@
     <string name="receipt_check_hint">Gelezen op je telefoon, dus controleer namen en prijzen.</string>
     <string name="receipt_language_pending">Namen in jouw taal worden beter gelezen zodra de tekstgegevens zijn gedownload.</string>
     <string name="recent_pair_alert_set">Koersmelding ingesteld</string>
-    <string name="receipt_setup_message">Bonnetjes lezen vraagt één keer een download van een paar megabyte: de tekstlezer, die daarna offline op je telefoon werkt.</string>
+    <string name="receipt_setup_message">Voor het lezen van bonnetjes is een eenmalige download nodig. Daarna werkt het offline op je telefoon.</string>
+    <string name="receipt_setup_reader">De tekstlezer</string>
+    <string name="receipt_setup_language_data">Tekstgegevens voor %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Bonnetjes ook in het %1$s lezen (%2$s)</string>
+    <string name="receipt_language_offer">Bonnetjes ook in het %1$s lezen? De tekstgegevens zijn een eenmalige download van %2$s. Zonder worden bonnetjes in het Engels gelezen.</string>
+    <string name="receipt_language_english_only">Alleen Engels</string>
+    <string name="receipt_language_read_too">Ook %1$s lezen</string>
     <string name="receipt_setup_download">Downloaden</string>
     <string name="receipt_setup_progress">Bonnetjeslezer downloaden…</string>
     <string name="receipt_setup_failed">Kan de bonnetjeslezer niet downloaden. Probeer het later opnieuw.</string>

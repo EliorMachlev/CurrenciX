@@ -287,7 +287,13 @@
     <string name="receipt_check_hint">Leído en tu teléfono: revisa nombres y precios.</string>
     <string name="receipt_language_pending">Los nombres en tu idioma se leerán mejor cuando termine la descarga de los datos de texto.</string>
     <string name="recent_pair_alert_set">Alerta de tipo de cambio activa</string>
-    <string name="receipt_setup_message">Leer tiques requiere una descarga única de unos pocos megabytes: el lector de texto, que luego funciona sin conexión en tu teléfono.</string>
+    <string name="receipt_setup_message">Para leer tiques hace falta una descarga única. Después funciona sin conexión en tu teléfono.</string>
+    <string name="receipt_setup_reader">El lector de texto</string>
+    <string name="receipt_setup_language_data">Datos de texto en %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Leer también tiques en %1$s (%2$s)</string>
+    <string name="receipt_language_offer">¿Leer también tiques en %1$s? Sus datos de texto son una descarga única de %2$s. Sin ellos, los tiques se leen en inglés.</string>
+    <string name="receipt_language_english_only">Solo inglés</string>
+    <string name="receipt_language_read_too">Leer también en %1$s</string>
     <string name="receipt_setup_download">Descargar</string>
     <string name="receipt_setup_progress">Descargando el lector de tiques…</string>
     <string name="receipt_setup_failed">No se pudo descargar el lector de tiques. Inténtalo más tarde.</string>

@@ -35,6 +35,7 @@ import com.eliormachlev.currencix.view.cart.compose.CartReorder
 import com.eliormachlev.currencix.view.cart.compose.CartScreen
 import com.eliormachlev.currencix.view.cart.compose.CartScreenActions
 import com.eliormachlev.currencix.view.cart.compose.CartUnsavedChangesSheet
+import com.eliormachlev.currencix.view.cart.compose.ReceiptLanguageOfferSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptReadingSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptReviewSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptSetupOfferSheet
@@ -123,8 +124,12 @@ private fun ReceiptOverlays(
         }
     }
     when {
-        setup == ReceiptSetup.Offer -> {
-            ReceiptSetupOfferSheet(onDownload = scan::acceptSetup, onDismiss = scan::dismissSetup)
+        setup is ReceiptSetup.Offer -> {
+            ReceiptSetupOfferSheet(offer = setup, onDownload = scan::acceptSetup, onDismiss = scan::dismissSetup)
+        }
+
+        setup is ReceiptSetup.LanguageOffer -> {
+            ReceiptLanguageOfferSheet(language = setup.language, onAnswer = scan::answerLanguage)
         }
 
         setup is ReceiptSetup.Installing -> {
@@ -142,6 +147,8 @@ private fun ReceiptOverlays(
                 lines = lines,
                 currency = currency,
                 languagePending = scan.languagePending,
+                languageDeclined = scan.languageDeclined,
+                onOfferLanguage = scan::offerLanguageAgain,
                 onAdd = { chosen ->
                     chosen.forEach { host.viewModel.rows.add(it.name, it.price.toPlainString()) }
                     scan.clear()

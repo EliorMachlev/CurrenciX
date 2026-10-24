@@ -282,7 +282,13 @@
     <string name="receipt_check_hint">Auf deinem Handy gelesen – prüfe Namen und Preise.</string>
     <string name="receipt_language_pending">Namen in deiner Sprache werden besser erkannt, sobald die Textdaten heruntergeladen sind.</string>
     <string name="recent_pair_alert_set">Kursalarm gesetzt</string>
-    <string name="receipt_setup_message">Zum Lesen von Kassenbons ist ein einmaliger Download von wenigen Megabyte nötig: der Texterkenner, der danach offline auf deinem Telefon läuft.</string>
+    <string name="receipt_setup_message">Zum Lesen von Kassenbons ist ein einmaliger Download nötig. Danach läuft es offline auf deinem Telefon.</string>
+    <string name="receipt_setup_reader">Der Texterkenner</string>
+    <string name="receipt_setup_language_data">Textdaten für %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Kassenbons auch auf %1$s lesen (%2$s)</string>
+    <string name="receipt_language_offer">Kassenbons auch auf %1$s lesen? Die Textdaten sind ein einmaliger Download von %2$s. Ohne sie werden Kassenbons auf Englisch gelesen.</string>
+    <string name="receipt_language_english_only">Nur Englisch</string>
+    <string name="receipt_language_read_too">Auch %1$s lesen</string>
     <string name="receipt_setup_download">Herunterladen</string>
     <string name="receipt_setup_progress">Bonleser wird heruntergeladen …</string>
     <string name="receipt_setup_failed">Der Bonleser konnte nicht heruntergeladen werden. Versuche es später noch einmal.</string>

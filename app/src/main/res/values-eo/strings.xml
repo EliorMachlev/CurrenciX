@@ -283,7 +283,13 @@
     <string name="receipt_check_hint">Legita en via telefono, do kontrolu nomojn kaj prezojn.</string>
     <string name="receipt_language_pending">Nomoj en via lingvo legiĝos pli bone post kiam la tekstaj datumoj elŝutiĝos.</string>
     <string name="recent_pair_alert_set">Kurz-averto agordita</string>
-    <string name="receipt_setup_message">Legi kvitancojn bezonas unufojan elŝuton de kelkaj megabajtoj: la tekstlegilon, kiu poste funkcias senrete en via telefono.</string>
+    <string name="receipt_setup_message">Legi kvitancojn bezonas unufoja elŝuto. Poste ĝi funkcias senkonekte en via telefono.</string>
+    <string name="receipt_setup_reader">La tekstolegilo</string>
+    <string name="receipt_setup_language_data">Tekstaj datumoj por %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Legi kvitancojn ankaŭ en %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Ĉu legi kvitancojn ankaŭ en %1$s? Ĝiaj tekstaj datumoj estas unufoja elŝuto de %2$s. Sen ili, kvitancoj estas legataj angle.</string>
+    <string name="receipt_language_english_only">Nur la angla</string>
+    <string name="receipt_language_read_too">Legi ankaŭ %1$s</string>
     <string name="receipt_setup_download">Elŝuti</string>
     <string name="receipt_setup_progress">Elŝutante la kvitancan legilon…</string>
     <string name="receipt_setup_failed">Ne eblis elŝuti la kvitancan legilon. Reprovu poste.</string>

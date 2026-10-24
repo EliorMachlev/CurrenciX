@@ -143,7 +143,7 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 
 Modules: `:ocr-engine` (an Android library: Tesseract and `TesseractRecognizer`) and `:ocr` (a dynamic feature: just a manifest and a build file). The F-Droid app depends on `:ocr-engine` directly; the Play bundle carries it in `:ocr`, on demand. `:ocr` is declared in `:app` (`dynamicFeatures`) and has variants only in a bundle build: AGP can't make per-CPU APKs with a feature module, and only Play installs features.
 
-English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.1.0, 4.1 MB) ships in the F-Droid APKs; the Play app downloads it with the recognizer. The other languages download on demand in both, all checked against SHA-256s in `ocr/TessLanguage.kt`.
+No OCR language data ships in either app: English (tessdata_fast 4.1.0, 4.1 MB) and the app's language download on first use, once the user agrees to each, all checked against the SHA-256s and sizes in `ocr/TessLanguage.kt`.
 
 ### Charts
 

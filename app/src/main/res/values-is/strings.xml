@@ -283,7 +283,13 @@
     <string name="receipt_check_hint">Lesið í símanum, svo athugaðu heiti og verð.</string>
     <string name="receipt_language_pending">Heiti á þínu máli lesast betur þegar textagögnin hafa sótt.</string>
     <string name="recent_pair_alert_set">Gengisviðvörun sett</string>
-    <string name="receipt_setup_message">Til að lesa kvittanir þarf eitt niðurhal upp á nokkur megabæti: textalesarann, sem virkar síðan án nettengingar í símanum.</string>
+    <string name="receipt_setup_message">Til að lesa kvittanir þarf að sækja gögn einu sinni. Eftir það virkar það án nettengingar í símanum.</string>
+    <string name="receipt_setup_reader">Textalesarinn</string>
+    <string name="receipt_setup_language_data">Textagögn fyrir %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Lesa kvittanir líka á %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Lesa kvittanir líka á %1$s? Textagögnin eru sótt einu sinni, %2$s. Án þeirra eru kvittanir lesnar á ensku.</string>
+    <string name="receipt_language_english_only">Aðeins enska</string>
+    <string name="receipt_language_read_too">Lesa líka %1$s</string>
     <string name="receipt_setup_download">Sækja</string>
     <string name="receipt_setup_progress">Sæki kvittanalesarann…</string>
     <string name="receipt_setup_failed">Ekki tókst að sækja kvittanalesarann. Reyndu aftur síðar.</string>

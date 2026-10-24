@@ -284,7 +284,13 @@
     <string name="receipt_check_hint">Lest på telefonen, så sjekk navn og priser.</string>
     <string name="receipt_language_pending">Navn på ditt språk leses bedre når tekstdataene er lastet ned.</string>
     <string name="recent_pair_alert_set">Kursvarsel satt</string>
-    <string name="receipt_setup_message">Lesing av kvitteringer krever en engangsnedlasting på noen få megabyte: tekstleseren, som deretter virker frakoblet på telefonen.</string>
+    <string name="receipt_setup_message">Lesing av kvitteringer krever en nedlasting én gang. Etter det virker det uten nett på telefonen.</string>
+    <string name="receipt_setup_reader">Tekstleseren</string>
+    <string name="receipt_setup_language_data">Tekstdata for %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Les også kvitteringer på %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Vil du også lese kvitteringer på %1$s? Tekstdataene er en nedlasting på %2$s, én gang. Uten dem leses kvitteringer på engelsk.</string>
+    <string name="receipt_language_english_only">Bare engelsk</string>
+    <string name="receipt_language_read_too">Les også %1$s</string>
     <string name="receipt_setup_download">Last ned</string>
     <string name="receipt_setup_progress">Laster ned kvitteringsleseren…</string>
     <string name="receipt_setup_failed">Kunne ikke laste ned kvitteringsleseren. Prøv igjen senere.</string>

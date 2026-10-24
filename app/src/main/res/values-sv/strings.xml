@@ -284,7 +284,13 @@
     <string name="receipt_check_hint">Läst på telefonen, så kontrollera namn och priser.</string>
     <string name="receipt_language_pending">Namn på ditt språk läses bättre när textdata har laddats ned.</string>
     <string name="recent_pair_alert_set">Kursavisering satt</string>
-    <string name="receipt_setup_message">Att läsa kvitton kräver en engångsnedladdning på några megabyte: textläsaren, som sedan fungerar offline i telefonen.</string>
+    <string name="receipt_setup_message">Att läsa kvitton kräver en engångsnedladdning. Sedan fungerar det offline i telefonen.</string>
+    <string name="receipt_setup_reader">Textläsaren</string>
+    <string name="receipt_setup_language_data">Textdata för %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Läs även kvitton på %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Läsa kvitton även på %1$s? Textdatan är en engångsnedladdning på %2$s. Utan den läses kvitton på engelska.</string>
+    <string name="receipt_language_english_only">Bara engelska</string>
+    <string name="receipt_language_read_too">Läs även %1$s</string>
     <string name="receipt_setup_download">Ladda ned</string>
     <string name="receipt_setup_progress">Laddar ned kvittoläsaren…</string>
     <string name="receipt_setup_failed">Det gick inte att ladda ned kvittoläsaren. Försök igen senare.</string>

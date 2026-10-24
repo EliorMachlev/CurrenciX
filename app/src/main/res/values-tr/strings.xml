@@ -283,7 +283,13 @@
     <string name="receipt_check_hint">Telefonunuzda okundu, adları ve fiyatları kontrol edin.</string>
     <string name="receipt_language_pending">Metin verilerinin indirilmesi bitince kendi dilinizdeki adlar daha iyi okunur.</string>
     <string name="recent_pair_alert_set">Kur uyarısı kuruldu</string>
-    <string name="receipt_setup_message">Fişleri okumak birkaç megabaytlık tek seferlik bir indirme gerektirir: metin okuyucu, sonra telefonunuzda çevrimdışı çalışır.</string>
+    <string name="receipt_setup_message">Fiş okumak için tek seferlik bir indirme gerekir. Sonrasında telefonunuzda çevrimdışı çalışır.</string>
+    <string name="receipt_setup_reader">Metin okuyucu</string>
+    <string name="receipt_setup_language_data">%1$s metin verileri (%2$s)</string>
+    <string name="receipt_setup_also_language">Fişleri %1$s olarak da oku (%2$s)</string>
+    <string name="receipt_language_offer">Fişler %1$s olarak da okunsun mu? Metin verileri tek seferlik %2$s indirmedir. Olmadan fişler İngilizce okunur.</string>
+    <string name="receipt_language_english_only">Yalnızca İngilizce</string>
+    <string name="receipt_language_read_too">%1$s da oku</string>
     <string name="receipt_setup_download">İndir</string>
     <string name="receipt_setup_progress">Fiş okuyucu indiriliyor…</string>
     <string name="receipt_setup_failed">Fiş okuyucu indirilemedi. Daha sonra tekrar deneyin.</string>

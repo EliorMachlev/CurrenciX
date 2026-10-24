@@ -287,7 +287,13 @@
     <string name="receipt_check_hint">Lido no seu celular, então confira nomes e preços.</string>
     <string name="receipt_language_pending">Os nomes no seu idioma serão lidos melhor quando o download dos dados de texto terminar.</string>
     <string name="recent_pair_alert_set">Alerta de cotação ativo</string>
-    <string name="receipt_setup_message">Ler recibos exige um download único de alguns megabytes: o leitor de texto, que depois funciona offline no seu celular.</string>
+    <string name="receipt_setup_message">Ler recibos precisa de um download único. Depois funciona off-line no seu celular.</string>
+    <string name="receipt_setup_reader">O leitor de texto</string>
+    <string name="receipt_setup_language_data">Dados de texto em %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Ler recibos também em %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Ler recibos também em %1$s? Os dados de texto são um download único de %2$s. Sem eles, os recibos são lidos em inglês.</string>
+    <string name="receipt_language_english_only">Só inglês</string>
+    <string name="receipt_language_read_too">Ler também em %1$s</string>
     <string name="receipt_setup_download">Baixar</string>
     <string name="receipt_setup_progress">Baixando o leitor de recibos…</string>
     <string name="receipt_setup_failed">Não foi possível baixar o leitor de recibos. Tente mais tarde.</string>

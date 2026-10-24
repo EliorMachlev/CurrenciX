@@ -295,7 +295,13 @@
     <string name="receipt_check_hint">تمت القراءة على هاتفك، لذا راجع الأسماء والأسعار.</string>
     <string name="receipt_language_pending">تُقرأ الأسماء بلغتك بشكل أفضل بعد انتهاء تنزيل بيانات النص.</string>
     <string name="recent_pair_alert_set">تم ضبط تنبيه سعر</string>
-    <string name="receipt_setup_message">قراءة الإيصالات تحتاج إلى تنزيل لمرة واحدة بحجم بضعة ميغابايت: قارئ النصوص، الذي يعمل بعدها دون اتصال على هاتفك.</string>
+    <string name="receipt_setup_message">تحتاج قراءة الإيصالات إلى تنزيل لمرة واحدة. بعد ذلك تعمل دون اتصال على هاتفك.</string>
+    <string name="receipt_setup_reader">قارئ النصوص</string>
+    <string name="receipt_setup_language_data">بيانات نص %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">قراءة الإيصالات بـ%1$s أيضًا (%2$s)</string>
+    <string name="receipt_language_offer">هل تريد قراءة الإيصالات بـ%1$s أيضًا؟ بيانات النص تنزيل لمرة واحدة بحجم %2$s. بدونها تُقرأ الإيصالات بالإنجليزية.</string>
+    <string name="receipt_language_english_only">الإنجليزية فقط</string>
+    <string name="receipt_language_read_too">قراءة %1$s أيضًا</string>
     <string name="receipt_setup_download">تنزيل</string>
     <string name="receipt_setup_progress">جارٍ تنزيل قارئ الإيصالات…</string>
     <string name="receipt_setup_failed">تعذّر تنزيل قارئ الإيصالات. حاول لاحقًا.</string>

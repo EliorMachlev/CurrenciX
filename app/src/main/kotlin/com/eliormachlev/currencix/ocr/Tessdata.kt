@@ -13,10 +13,9 @@ private const val DOWNLOAD_SUFFIX = ".part"
 private const val BUFFER_BYTES = 64 * 1024
 
 /**
- * The OCR language files on the device: English copied once from the
- * app's assets (F-Droid) or downloaded (Play), the others downloaded into
- * the same folder
- * ([TessdataDownloadWorker]). Every file is checked against its
+ * The OCR language files on the device, English included: none ships with
+ * the app, each is downloaded into this folder once the user has agreed to
+ * it ([TessdataDownloadWorker]). Every file is checked against its
  * [TessLanguage.sha256] before it's used.
  */
 object Tessdata {
@@ -35,19 +34,6 @@ object Tessdata {
         context: Context,
         language: TessLanguage,
     ): Boolean = file(context, language).length() > 0
-
-    /**
-     * Whether the English file is on the device, copying it out of the
-     * assets first where the build carries it (the F-Droid app; Tesseract
-     * can't read assets). The Play app downloads it instead.
-     */
-    fun ensureEnglish(context: Context): Boolean {
-        val target = file(context, TessLanguage.ENGLISH)
-        if (target.length() > 0) return true
-        val name = TessLanguage.ENGLISH.code + TRAINEDDATA
-        if (context.assets.list(TESSDATA_DIR)?.contains(name) != true) return false
-        return context.assets.open("$TESSDATA_DIR/$name").use { install(it, target, TessLanguage.ENGLISH) }
-    }
 
     /**
      * Writes [source] to [target] through a temporary file, keeping it only

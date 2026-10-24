@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.Flow
@@ -110,6 +111,10 @@ internal fun PrefStore.booleanPref(
     name: String,
     default: Boolean,
 ): Pref<Boolean> = keyedPref(booleanPreferencesKey(name), { it ?: default }, { it })
+
+/** A set of strings, empty when unset (and removed when set empty). */
+internal fun PrefStore.stringSetPref(name: String): Pref<Set<String>> =
+    keyedPref(stringSetPreferencesKey(name), { it.orEmpty() }, { set -> set.takeIf { it.isNotEmpty() } })
 
 internal fun PrefStore.stringPref(
     name: String,

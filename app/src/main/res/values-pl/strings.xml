@@ -289,7 +289,13 @@
     <string name="receipt_check_hint">Odczytano na telefonie, więc sprawdź nazwy i ceny.</string>
     <string name="receipt_language_pending">Nazwy w Twoim języku będą odczytywane lepiej po pobraniu danych tekstowych.</string>
     <string name="recent_pair_alert_set">Ustawiono alert kursu</string>
-    <string name="receipt_setup_message">Odczyt paragonów wymaga jednorazowego pobrania kilku megabajtów: czytnika tekstu, który potem działa offline w telefonie.</string>
+    <string name="receipt_setup_message">Czytanie paragonów wymaga jednorazowego pobrania. Potem działa offline na telefonie.</string>
+    <string name="receipt_setup_reader">Czytnik tekstu</string>
+    <string name="receipt_setup_language_data">Dane tekstowe: %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Czytaj paragony także w języku %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Czytać paragony także w języku %1$s? Dane tekstowe to jednorazowe pobranie %2$s. Bez nich paragony są czytane po angielsku.</string>
+    <string name="receipt_language_english_only">Tylko angielski</string>
+    <string name="receipt_language_read_too">Czytaj też %1$s</string>
     <string name="receipt_setup_download">Pobierz</string>
     <string name="receipt_setup_progress">Pobieranie czytnika paragonów…</string>
     <string name="receipt_setup_failed">Nie udało się pobrać czytnika paragonów. Spróbuj później.</string>

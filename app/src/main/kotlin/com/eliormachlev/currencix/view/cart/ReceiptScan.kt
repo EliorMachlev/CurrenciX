@@ -19,13 +19,14 @@ import com.eliormachlev.currencix.ocr.TessLanguage
 import com.eliormachlev.currencix.ocr.Tessdata
 import com.eliormachlev.currencix.ocr.TessdataDownloadWorker
 import com.eliormachlev.currencix.ocr.installReceiptReader
-import com.eliormachlev.currencix.ocr.isReceiptReaderReady
+import com.eliormachlev.currencix.ocr.isRecognizerInstalled
 import com.eliormachlev.currencix.ocr.readReceipt
 import com.eliormachlev.currencix.util.ReceiptLine
 import com.eliormachlev.currencix.util.ReceiptParser
 import com.eliormachlev.currencix.util.cacheFile
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
+import com.eliormachlev.currencix.view.compose.rememberDatabase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -33,10 +34,26 @@ import kotlinx.coroutines.launch
 private const val RECEIPTS_DIR = "receipts"
 private const val PHOTO_NAME = "receipt.jpg"
 
-/** Getting the receipt reader onto the device, where the build doesn't carry it (Play). */
+/**
+ * Downloads the scan asks the user about first. Nothing is downloaded for
+ * reading receipts until they say yes to it by name, with its size.
+ */
 sealed interface ReceiptSetup {
-    /** Asking whether to download it. */
-    data object Offer : ReceiptSetup
+    /**
+     * What reading needs and isn't here: the text [reader] (the Play app's
+     * module) and the [english] data, plus, as a separate choice left
+     * unticked, the app's own [language] when it hasn't been asked about yet.
+     */
+    data class Offer(
+        val reader: Boolean,
+        val english: Boolean,
+        val language: TessLanguage?,
+    ) : ReceiptSetup
+
+    /** Whether to also read receipts in [language], its data downloaded once; English only otherwise. */
+    data class LanguageOffer(
+        val language: TessLanguage,
+    ) : ReceiptSetup
 
     /** Downloading; [fraction] done when known. */
     data class Installing(
@@ -53,18 +70,23 @@ class ReceiptScan internal constructor() {
     internal var startSetup: () -> Unit = {}
     internal var cancelSetup: () -> Unit = {}
 
+    // The app language's OCR data (null for English), and the user's say on downloading it.
+    internal var local: TessLanguage? = null
+    internal var isInstalled: (TessLanguage) -> Boolean = { true }
+    internal var isRecognizerHere: () -> Boolean = { true }
+    internal var answerFor: (TessLanguage) -> Boolean? = { null }
+    internal var answer: (TessLanguage, Boolean) -> Unit = { _, _ -> }
+
     // What to do once the reader is ready: show the photo choice.
     internal var afterSetup: () -> Unit = {}
 
-    /** The reader's download, while it's being offered or running; null otherwise. */
+    /** The download being offered or running; null otherwise. */
     var setup by mutableStateOf<ReceiptSetup?>(null)
         internal set
 
     /** The download just failed (cleared once said, see [setupFailureShown]). */
     var setupFailed by mutableStateOf(false)
         internal set
-
-    internal var isReady: () -> Boolean = { true }
 
     /** The photo is being read. */
     var reading by mutableStateOf(false)
@@ -76,6 +98,10 @@ class ReceiptScan internal constructor() {
 
     /** The app language's OCR data is still downloading, so only English was used. */
     var languagePending by mutableStateOf(false)
+        internal set
+
+    /** The app language the user said no to, so receipts were read in English: it can be offered again. */
+    var languageDeclined by mutableStateOf<TessLanguage?>(null)
         internal set
 
     /** "Take a photo" / "Choose a photo", as a choice sheet. */
@@ -96,25 +122,54 @@ class ReceiptScan internal constructor() {
 
     /**
      * Starts a scan: [then] (show the photo choice) right away when the
-     * reader is on the device, otherwise once its download, offered first,
-     * is done.
+     * reader is here and there's nothing to ask, otherwise once the user has
+     * answered (and what they agreed to that reading needs has downloaded).
      */
     fun begin(then: () -> Unit) {
-        if (isReady()) {
-            then()
-        } else {
-            afterSetup = then
-            setup = ReceiptSetup.Offer
-        }
+        val english = !isInstalled(TessLanguage.ENGLISH)
+        val reader = !isRecognizerHere()
+        val ask = local?.takeIf { !isInstalled(it) && answerFor(it) == null }
+        afterSetup = then
+        setup =
+            when {
+                english || reader -> ReceiptSetup.Offer(reader = reader, english = english, language = ask)
+                ask != null -> ReceiptSetup.LanguageOffer(ask)
+                else -> null
+            }
+        if (setup == null) then()
     }
 
-    /** The offered download, accepted. */
-    fun acceptSetup() = startSetup()
+    /** The reader's download, accepted; [withLanguage]: the offered app language too. */
+    fun acceptSetup(withLanguage: Boolean) {
+        (setup as? ReceiptSetup.Offer)?.language?.let { answer(it, withLanguage) }
+        answer(TessLanguage.ENGLISH, true)
+        startSetup()
+    }
 
-    /** The offer or the progress, closed: the download goes on, but nothing follows it here. */
+    /** The offer or the progress, closed: a download goes on, but nothing follows it here. */
     fun dismissSetup() {
         cancelSetup()
         setup = null
+    }
+
+    /** The app language offered on its own, answered; the scan goes on either way, in English until it's here. */
+    fun answerLanguage(download: Boolean) {
+        (setup as? ReceiptSetup.LanguageOffer)?.language?.let { language ->
+            answer(language, download)
+            if (download) {
+                languageDeclined = null
+                languagePending = lines != null
+            }
+        }
+        setup = null
+        afterSetup()
+    }
+
+    /** Asks again about the language the user said no to (from the review); nothing follows the answer. */
+    fun offerLanguageAgain() {
+        val language = languageDeclined ?: return
+        afterSetup = {}
+        setup = ReceiptSetup.LanguageOffer(language)
     }
 
     fun setupFailureShown() {
@@ -125,26 +180,46 @@ class ReceiptScan internal constructor() {
 /**
  * Scanning a receipt into the cart: a photo from the system camera or the
  * photo picker (neither needs a permission), read on the device
- * ([readReceipt]) and split into items ([ReceiptParser]). The app
- * language's OCR data is fetched in the background the first time a scan
- * starts ([TessdataDownloadWorker]); until it's here, English is used. Where
- * the reader itself isn't on the device (the Play app's on-demand module),
- * the first scan offers to download it ([installReceiptReader]).
+ * ([readReceipt]) and split into items ([ReceiptParser]). No language data
+ * ships with the app: the first scan offers what reading needs (English, and
+ * the Play app's text reader, [installReceiptReader]), and the app language's
+ * data is a separate yes or no, asked once ([ReceiptSetup]) and remembered
+ * ([com.eliormachlev.currencix.repository.PrivacySettings.receiptLanguagesAllowed]).
+ * A language agreed to downloads in the background ([TessdataDownloadWorker]);
+ * until it's here, English is used.
  */
 @Composable
 fun rememberReceiptScan(): ReceiptScan {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val privacy = rememberDatabase().privacy
     val local = TessLanguage.forLocale(LocalConfiguration.current.locales[0])
     // Made when a photo is taken, not before: most cart visits never scan.
     val photo = remember(context) { lazy { cacheFile(context, RECEIPTS_DIR, PHOTO_NAME) } }
     val scan = remember { ReceiptScan() }
+    val answerFor = { language: TessLanguage ->
+        when (language.code) {
+            in privacy.receiptLanguagesAllowed.get() -> true
+            in privacy.receiptLanguagesDeclined.get() -> false
+            else -> null
+        }
+    }
+    scan.local = local
+    scan.isInstalled = { Tessdata.isInstalled(context, it) }
+    scan.isRecognizerHere = { isRecognizerInstalled(context) }
+    scan.answerFor = answerFor
+    scan.answer = { language, allowed ->
+        privacy.setReceiptLanguageAllowed(language.code, allowed)
+        if (allowed && language != TessLanguage.ENGLISH) TessdataDownloadWorker.enqueue(context, language)
+    }
     val read = { uri: Uri, deleteAfter: Boolean ->
         scan.reading = true
         scope.launch {
             val text = readReceipt(context, uri, Tessdata.languages(context, local))
             if (deleteAfter) photo.value.first.delete()
-            scan.languagePending = local != null && !Tessdata.isInstalled(context, local)
+            val missing = local?.takeIf { !Tessdata.isInstalled(context, it) }
+            scan.languagePending = missing != null && answerFor(missing) == true
+            scan.languageDeclined = missing?.takeIf { answerFor(it) == false }
             scan.lines = ReceiptParser.parse(text)
             scan.reading = false
         }
@@ -152,13 +227,15 @@ fun rememberReceiptScan(): ReceiptScan {
     val camera =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken -> if (taken) read(photo.value.second, true) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> uri?.let { read(it, false) } }
-    val fetchLanguage = { local?.let { TessdataDownloadWorker.enqueue(context, it) } }
+    // A language agreed to before whose download hasn't finished (or whose
+    // file is gone) carries on; one not agreed to is never fetched.
+    val resumeLanguage = { local?.takeIf { answerFor(it) == true }?.let { TessdataDownloadWorker.enqueue(context, it) } }
     scan.takePhoto = {
-        fetchLanguage()
+        resumeLanguage()
         camera.launch(photo.value.second)
     }
     scan.choosePhoto = {
-        fetchLanguage()
+        resumeLanguage()
         picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
     ReaderSetup(scan)
@@ -174,7 +251,6 @@ private fun ReaderSetup(scan: ReceiptScan) {
     val scope = rememberCoroutineScope()
     val confirm = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {}
     val job = remember { arrayOfNulls<Job>(1) }
-    scan.isReady = { isReceiptReaderReady(context) }
     scan.cancelSetup = { job[0]?.cancel() }
     scan.startSetup = {
         scan.setup = ReceiptSetup.Installing(null)

@@ -286,7 +286,13 @@
     <string name="receipt_check_hint">Pročitano na telefonu, pa provjerite nazive i cijene.</string>
     <string name="receipt_language_pending">Nazivi na vašem jeziku čitat će se bolje kad se preuzmu tekstni podaci.</string>
     <string name="recent_pair_alert_set">Postavljeno upozorenje o tečaju</string>
-    <string name="receipt_setup_message">Čitanje računa zahtijeva jednokratno preuzimanje od nekoliko megabajta: čitača teksta, koji zatim radi izvanmrežno na vašem telefonu.</string>
+    <string name="receipt_setup_message">Čitanje računa traži jednokratno preuzimanje. Nakon toga radi izvanmrežno na vašem telefonu.</string>
+    <string name="receipt_setup_reader">Čitač teksta</string>
+    <string name="receipt_setup_language_data">Tekstni podaci za %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Čitaj račune i na jeziku %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Čitati račune i na jeziku %1$s? Tekstni podaci jednokratno su preuzimanje od %2$s. Bez njih se računi čitaju na engleskom.</string>
+    <string name="receipt_language_english_only">Samo engleski</string>
+    <string name="receipt_language_read_too">Čitaj i %1$s</string>
     <string name="receipt_setup_download">Preuzmi</string>
     <string name="receipt_setup_progress">Preuzimanje čitača računa…</string>
     <string name="receipt_setup_failed">Čitač računa nije bilo moguće preuzeti. Pokušajte kasnije.</string>

@@ -284,7 +284,13 @@
     <string name="receipt_check_hint">روی گوشی شما خوانده شد؛ نام‌ها و قیمت‌ها را بررسی کنید.</string>
     <string name="receipt_language_pending">نام‌ها به زبان شما پس از پایان دانلود داده‌های متن بهتر خوانده می‌شوند.</string>
     <string name="recent_pair_alert_set">هشدار نرخ تنظیم شده</string>
-    <string name="receipt_setup_message">خواندن رسیدها به یک بارگیری یک‌باره چند مگابایتی نیاز دارد: خواننده متن، که سپس بدون اینترنت روی تلفن شما کار می‌کند.</string>
+    <string name="receipt_setup_message">خواندن رسیدها به یک بار دانلود نیاز دارد. پس از آن روی گوشی شما بدون اینترنت کار می‌کند.</string>
+    <string name="receipt_setup_reader">خوانندهٔ متن</string>
+    <string name="receipt_setup_language_data">داده‌های متن %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">خواندن رسیدها به %1$s هم (%2$s)</string>
+    <string name="receipt_language_offer">رسیدها به %1$s هم خوانده شوند؟ داده‌های متن آن یک بار دانلود می‌شود، %2$s. بدون آن، رسیدها به انگلیسی خوانده می‌شوند.</string>
+    <string name="receipt_language_english_only">فقط انگلیسی</string>
+    <string name="receipt_language_read_too">خواندن %1$s هم</string>
     <string name="receipt_setup_download">بارگیری</string>
     <string name="receipt_setup_progress">در حال بارگیری خواننده رسید…</string>
     <string name="receipt_setup_failed">بارگیری خواننده رسید ممکن نشد. بعداً دوباره امتحان کنید.</string>

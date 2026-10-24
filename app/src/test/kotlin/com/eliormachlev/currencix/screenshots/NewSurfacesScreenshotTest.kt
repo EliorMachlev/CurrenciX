@@ -16,15 +16,19 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.model.compareCards
+import com.eliormachlev.currencix.ocr.TessLanguage
 import com.eliormachlev.currencix.util.ReceiptLine
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
+import com.eliormachlev.currencix.view.cart.ReceiptSetup
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartFooterCard
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
 import com.eliormachlev.currencix.view.cart.compose.CartTotals
 import com.eliormachlev.currencix.view.cart.compose.NO_PAIR_ACTIONS
 import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
+import com.eliormachlev.currencix.view.cart.compose.ReceiptLanguageOfferSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptReviewSheet
+import com.eliormachlev.currencix.view.cart.compose.ReceiptSetupOfferSheet
 import com.eliormachlev.currencix.view.cart.compose.SavedCartActions
 import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
 import com.eliormachlev.currencix.view.cart.compose.cartItemActions
@@ -242,6 +246,22 @@ class NewSurfacesScreenshotTest {
                 onAdd = {},
                 onDismiss = {},
             )
+        }
+
+    // The first scan: what it would download, each with its size, the app's language a separate tick.
+    @Test fun receiptSetupOfferSheet() =
+        shots.captureMatrix("receipt_setup_offer_sheet") {
+            ReceiptSetupOfferSheet(
+                offer = ReceiptSetup.Offer(reader = true, english = true, language = TessLanguage.HEBREW),
+                onDownload = {},
+                onDismiss = {},
+            )
+        }
+
+    // The app's language on its own: download it, or English only.
+    @Test fun receiptLanguageOfferSheet() =
+        shots.captureMatrix("receipt_language_offer_sheet") {
+            ReceiptLanguageOfferSheet(language = TessLanguage.HEBREW, onAnswer = {})
         }
 
     @Test fun cartExtrasSheet() =

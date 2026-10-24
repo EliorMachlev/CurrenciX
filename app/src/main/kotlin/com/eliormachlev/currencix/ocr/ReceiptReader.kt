@@ -37,17 +37,20 @@ suspend fun readReceipt(
     }
 
 /** Whether a receipt can be read now: the recognizer and the English data are on the device. */
-fun isReceiptReaderReady(context: Context): Boolean = ocrEngine.isInstalled(context) && Tessdata.ensureEnglish(context)
+fun isReceiptReaderReady(context: Context): Boolean = isRecognizerInstalled(context) && Tessdata.isInstalled(context, TessLanguage.ENGLISH)
+
+/** Whether this build's recognizer is on the device (always in the F-Droid app; Play's is a module). */
+fun isRecognizerInstalled(context: Context): Boolean = ocrEngine.isInstalled(context)
 
 /**
  * Gets what reading a receipt needs that isn't on the device yet: the
- * recognizer ([OcrEngine.install]) and the English data (downloaded where
- * the build doesn't carry it), reporting how it goes. Ends with
+ * recognizer ([OcrEngine.install]) and the English data, reporting how it
+ * goes. Only once the user has agreed to the download. Ends with
  * [OcrInstall.Installed] or [OcrInstall.Failed].
  */
 fun installReceiptReader(context: Context): Flow<OcrInstall> =
     flow {
-        if (!Tessdata.ensureEnglish(context)) TessdataDownloadWorker.enqueue(context, TessLanguage.ENGLISH)
+        TessdataDownloadWorker.enqueue(context, TessLanguage.ENGLISH)
         var outcome: OcrInstall = OcrInstall.Failed
         ocrEngine
             .install(context)

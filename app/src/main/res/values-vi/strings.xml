@@ -280,7 +280,13 @@
     <string name="receipt_check_hint">Đọc trên điện thoại của bạn, nên hãy kiểm tra tên và giá.</string>
     <string name="receipt_language_pending">Tên bằng ngôn ngữ của bạn sẽ được đọc tốt hơn khi dữ liệu văn bản tải xong.</string>
     <string name="recent_pair_alert_set">Đã đặt cảnh báo tỷ giá</string>
-    <string name="receipt_setup_message">Đọc hóa đơn cần tải xuống một lần vài megabyte: bộ đọc văn bản, sau đó chạy ngoại tuyến trên điện thoại của bạn.</string>
+    <string name="receipt_setup_message">Đọc hóa đơn cần tải xuống một lần. Sau đó nó chạy ngoại tuyến trên điện thoại của bạn.</string>
+    <string name="receipt_setup_reader">Trình đọc văn bản</string>
+    <string name="receipt_setup_language_data">Dữ liệu văn bản %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Đọc hóa đơn cả bằng %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Đọc hóa đơn cả bằng %1$s? Dữ liệu văn bản là tải xuống một lần, %2$s. Không có nó, hóa đơn được đọc bằng tiếng Anh.</string>
+    <string name="receipt_language_english_only">Chỉ tiếng Anh</string>
+    <string name="receipt_language_read_too">Đọc cả %1$s</string>
     <string name="receipt_setup_download">Tải xuống</string>
     <string name="receipt_setup_progress">Đang tải bộ đọc hóa đơn…</string>
     <string name="receipt_setup_failed">Không tải được bộ đọc hóa đơn. Hãy thử lại sau.</string>

@@ -278,7 +278,13 @@
     <string name="receipt_check_hint">在手机上识别，请核对名称和价格。</string>
     <string name="receipt_language_pending">文字数据下载完成后，你所用语言的名称会识别得更好。</string>
     <string name="recent_pair_alert_set">已设汇率提醒</string>
-    <string name="receipt_setup_message">读取小票需要一次性下载几兆字节的文字识别组件，之后可在手机上离线使用。</string>
+    <string name="receipt_setup_message">读取收据需要一次性下载。之后可在手机上离线使用。</string>
+    <string name="receipt_setup_reader">文字识别器</string>
+    <string name="receipt_setup_language_data">%1$s文字数据（%2$s）</string>
+    <string name="receipt_setup_also_language">同时读取%1$s收据（%2$s）</string>
+    <string name="receipt_language_offer">同时读取%1$s收据？其文字数据为一次性下载，大小 %2$s。不下载则按英文读取收据。</string>
+    <string name="receipt_language_english_only">仅英文</string>
+    <string name="receipt_language_read_too">同时读取%1$s</string>
     <string name="receipt_setup_download">下载</string>
     <string name="receipt_setup_progress">正在下载小票识别组件…</string>
     <string name="receipt_setup_failed">无法下载小票识别组件，请稍后重试。</string>

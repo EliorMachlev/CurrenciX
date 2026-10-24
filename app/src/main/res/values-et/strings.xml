@@ -283,7 +283,13 @@
     <string name="receipt_check_hint">Loetud sinu telefonis, seega kontrolli nimesid ja hindu.</string>
     <string name="receipt_language_pending">Sinu keele nimed loetakse paremini, kui tekstiandmed on alla laaditud.</string>
     <string name="recent_pair_alert_set">Kursiteavitus seatud</string>
-    <string name="receipt_setup_message">Tšekkide lugemiseks on vaja ühekordset mõne megabaidist allalaadimist: tekstilugejat, mis töötab siis telefonis võrguühenduseta.</string>
+    <string name="receipt_setup_message">Tšekkide lugemiseks on vaja ühekordset allalaadimist. Pärast seda töötab see telefonis võrguta.</string>
+    <string name="receipt_setup_reader">Tekstilugeja</string>
+    <string name="receipt_setup_language_data">Tekstiandmed: %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Loe tšekke ka keeles %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Kas lugeda tšekke ka keeles %1$s? Tekstiandmed on ühekordne allalaadimine, %2$s. Ilma nendeta loetakse tšekke inglise keeles.</string>
+    <string name="receipt_language_english_only">Ainult inglise keel</string>
+    <string name="receipt_language_read_too">Loe ka keelt %1$s</string>
     <string name="receipt_setup_download">Laadi alla</string>
     <string name="receipt_setup_progress">Tšekilugeja allalaadimine…</string>
     <string name="receipt_setup_failed">Tšekilugejat ei õnnestunud alla laadida. Proovi hiljem uuesti.</string>

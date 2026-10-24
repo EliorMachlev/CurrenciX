@@ -287,7 +287,13 @@
     <string name="receipt_check_hint">Letto sul telefono: controlla nomi e prezzi.</string>
     <string name="receipt_language_pending">I nomi nella tua lingua verranno letti meglio al termine del download dei dati di testo.</string>
     <string name="recent_pair_alert_set">Avviso di cambio impostato</string>
-    <string name="receipt_setup_message">Leggere gli scontrini richiede un download una tantum di pochi megabyte: il lettore di testo, che poi funziona offline sul telefono.</string>
+    <string name="receipt_setup_message">Per leggere gli scontrini serve un download una tantum. Poi funziona offline sul telefono.</string>
+    <string name="receipt_setup_reader">Il lettore di testo</string>
+    <string name="receipt_setup_language_data">Dati di testo in %1$s (%2$s)</string>
+    <string name="receipt_setup_also_language">Leggi gli scontrini anche in %1$s (%2$s)</string>
+    <string name="receipt_language_offer">Leggere gli scontrini anche in %1$s? I dati di testo sono un download una tantum di %2$s. Senza, gli scontrini vengono letti in inglese.</string>
+    <string name="receipt_language_english_only">Solo inglese</string>
+    <string name="receipt_language_read_too">Leggi anche in %1$s</string>
     <string name="receipt_setup_download">Scarica</string>
     <string name="receipt_setup_progress">Download del lettore di scontrini…</string>
     <string name="receipt_setup_failed">Impossibile scaricare il lettore di scontrini. Riprova più tardi.</string>
