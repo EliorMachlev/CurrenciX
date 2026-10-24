@@ -10,6 +10,7 @@ import org.cyclonedx.model.license.Expression
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.awt.Color
 import java.awt.Font
@@ -296,6 +297,11 @@ androidComponents {
 
 dependencies {
     // kotlin
+    // Every Kotlin library at the compiler's version: without it, Moshi and
+    // Reorderable pull kotlin-stdlib-jdk7 / -jdk8 1.9.0 in beside stdlib
+    // 2.4.21 (stubs since 1.8, but an old version all the same, which the
+    // OWASP scan flags).
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:${getKotlinPluginVersion()}"))
     implementation("androidx.core:core-ktx:1.19.1")
     // kotlinx.collections.immutable: exposes @Immutable persistent collection
     // types (ImmutableList / PersistentList / ...) so Compose stability

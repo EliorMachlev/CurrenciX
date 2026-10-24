@@ -90,6 +90,7 @@ Changelogs: F-Droid's app page shows `changelogs/<CurrentVersionCode>.txt`, the 
 | `androidx.lifecycle:lifecycle-*` (livedata/runtime/process/viewmodel/viewmodel-compose/runtime-compose) | 2.11.0 |
 | `androidx.constraintlayout:constraintlayout` | 2.2.2 |
 | `androidx.window:window` | 1.5.1 |
+| `org.jetbrains.kotlin:kotlin-bom` | the Kotlin plugin's version (2.4.21): every Kotlin library aligned to it, so no old `kotlin-stdlib-jdk7` / `-jdk8` comes in through Moshi or Reorderable |
 | `org.jetbrains.kotlinx:kotlinx-collections-immutable` | 0.5.2 |
 | `com.materialkolor:material-color-utilities` | 6.0.0 |
 | `androidx.profileinstaller:profileinstaller` | 1.4.1 (installs the baseline profile) |
