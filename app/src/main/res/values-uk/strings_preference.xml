@@ -148,6 +148,7 @@
     <string name="credit_lib_vico">Графіки</string>
     <string name="credit_lib_okhttp">HTTP-клієнт</string>
     <string name="credit_lib_moshi">Парсер JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (зберігання кошиків, подорожей і комісій)</string>
     <string name="credit_lib_timber">Журналювання</string>
     <string name="credit_lib_bouncy_castle">Формування ключів Argon2id для зашифрованих резервних копій</string>
     <string name="credit_lib_tink">Шифрування AES-GCM для резервних копій</string>

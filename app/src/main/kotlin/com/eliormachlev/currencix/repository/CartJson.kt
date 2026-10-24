@@ -2,19 +2,12 @@ package com.eliormachlev.currencix.repository
 
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
-import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.json.JsonObject
-import com.eliormachlev.currencix.repository.json.MalformedJsonException
 import com.eliormachlev.currencix.repository.json.buildJsonObject
-import com.eliormachlev.currencix.repository.json.jsonText
-import com.eliormachlev.currencix.repository.json.parseJsonObject
-import timber.log.Timber
 
-// Wire keys for on-disk cart JSON. Kept top-level (not nested inside
-// [Database]) so [CartExporter] can share the same serde for the file
-// envelope's `cart` payload.
-private const val TAG = "CartJson"
+// A cart as JSON: in cart files ([CartExporter]) and backups. On the phone
+// the carts are Protobuf (SavedProtos.kt).
 
 internal const val CART_KEY_ID = "id"
 internal const val CART_KEY_NAME = "name"
@@ -66,15 +59,11 @@ private fun serializeExtras(extras: CartExtras): Map<String, Any> =
 // Values out of range (a hand-edited or foreign file) fall back to "none".
 private fun parseExtras(obj: JsonObject?): CartExtras {
     obj ?: return CartExtras()
-    return CartExtras(
-        tipPercent = obj.optString(CART_EXTRAS_KEY_TIP).toBigDecimalOrNull()?.takeIf { it.signum() > 0 },
-        splitWays = obj.optInt(CART_EXTRAS_KEY_SPLIT, 1).takeIf { it in 1..CartExtras.MAX_SPLIT } ?: 1,
-        budget = obj.optString(CART_EXTRAS_KEY_BUDGET).toBigDecimalOrNull()?.takeIf { it.signum() > 0 },
-        people =
-            obj
-                .optObjects(CART_EXTRAS_KEY_PEOPLE)
-                .map { Person(it.optIdOrNew(PERSON_KEY_ID), it.optString(PERSON_KEY_NAME, "")) }
-                .take(CartExtras.MAX_PEOPLE),
+    return cartExtrasOf(
+        tipPercent = obj.optStringOrNull(CART_EXTRAS_KEY_TIP),
+        splitWays = obj.optInt(CART_EXTRAS_KEY_SPLIT, 1),
+        budget = obj.optStringOrNull(CART_EXTRAS_KEY_BUDGET),
+        people = obj.optObjects(CART_EXTRAS_KEY_PEOPLE).map { personOf(it.optString(PERSON_KEY_ID), it.optString(PERSON_KEY_NAME)) },
     )
 }
 
@@ -91,44 +80,26 @@ private fun serializeCartItem(item: CartItem): Map<String, Any> =
 
 internal fun parseCart(obj: JsonObject?): SavedCart? {
     obj ?: return null
-    val items = obj.optObjects(CART_KEY_ITEMS).map(::parseCartItem)
     return SavedCart(
-        id = obj.optIdOrNew(CART_KEY_ID),
-        name = obj.optString(CART_KEY_NAME, ""),
-        currency = obj.optString(CART_KEY_CURRENCY, ""),
+        id = idOrNew(obj.optString(CART_KEY_ID)),
+        name = obj.optString(CART_KEY_NAME),
+        currency = obj.optString(CART_KEY_CURRENCY),
         destinationCurrency = obj.optStringOrNull(CART_KEY_DEST_CURRENCY),
-        items = items,
+        items = obj.optObjects(CART_KEY_ITEMS).map(::parseCartItem),
         createdAt = obj.optLong(CART_KEY_CREATED_AT, System.currentTimeMillis()),
         extras = parseExtras(obj.optObject(CART_KEY_EXTRAS)),
-        shoppingMode = obj.optBoolean(CART_KEY_SHOPPING_MODE, false),
+        shoppingMode = obj.optBoolean(CART_KEY_SHOPPING_MODE),
         tripId = obj.optStringOrNull(CART_KEY_TRIP),
     )
 }
 
-internal fun parseCart(json: String?): SavedCart? {
-    if (json.isNullOrBlank()) return null
-    return try {
-        parseCart(parseJsonObject(json))
-    } catch (e: MalformedJsonException) {
-        Timber.tag(TAG).w(e, "Malformed saved cart, dropping it")
-        null
-    }
-}
-
 private fun parseCartItem(obj: JsonObject): CartItem =
     CartItem(
-        id = obj.optIdOrNew(CART_ITEM_KEY_ID),
-        name = obj.optString(CART_ITEM_KEY_NAME, ""),
-        expression = obj.optString(CART_ITEM_KEY_EXPR, ""),
-        pinned = obj.optBoolean(CART_ITEM_KEY_PINNED, false),
-        quantity = obj.optInt(CART_ITEM_KEY_QUANTITY, 1).coerceIn(CartItem.MIN_QUANTITY, CartItem.MAX_QUANTITY),
-        checked = obj.optBoolean(CART_ITEM_KEY_CHECKED, false),
+        id = obj.optString(CART_ITEM_KEY_ID),
+        name = obj.optString(CART_ITEM_KEY_NAME),
+        expression = obj.optString(CART_ITEM_KEY_EXPR),
+        pinned = obj.optBoolean(CART_ITEM_KEY_PINNED),
+        quantity = obj.optInt(CART_ITEM_KEY_QUANTITY, 1),
+        checked = obj.optBoolean(CART_ITEM_KEY_CHECKED),
         personId = obj.optStringOrNull(CART_ITEM_KEY_PERSON),
-    )
-
-/** The cart as JSON text, as one preference holds it. */
-internal fun serializeCartText(cart: SavedCart): String = jsonText(serializeCart(cart))
-
-internal fun serializeCartList(list: List<SavedCart>): String = list.toJsonArrayText(::serializeCart)
-
-internal fun parseCartList(json: String?): List<SavedCart> = parseJsonList(json, TAG, "saved-cart", ::parseCart)
+    ).checked()

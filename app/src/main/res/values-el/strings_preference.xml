@@ -146,6 +146,7 @@
     <string name="credit_lib_vico">Γραφήματα</string>
     <string name="credit_lib_okhttp">Πρόγραμμα-πελάτης HTTP</string>
     <string name="credit_lib_moshi">Αναλυτής JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (αποθήκευση καλαθιών, ταξιδιών και χρεώσεων)</string>
     <string name="credit_lib_timber">Καταγραφή συμβάντων</string>
     <string name="credit_lib_bouncy_castle">Παραγωγή κλειδιών Argon2id για κρυπτογραφημένα αντίγραφα ασφαλείας</string>
     <string name="credit_lib_tink">Κρυπτογράφηση AES-GCM για αντίγραφα ασφαλείας</string>

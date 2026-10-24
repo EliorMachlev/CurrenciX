@@ -145,6 +145,7 @@
     <string name="credit_lib_vico">Grafieken</string>
     <string name="credit_lib_okhttp">HTTP-client</string>
     <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (opslag van winkelwagens, reizen en kosten)</string>
     <string name="credit_lib_timber">Logboekregistratie</string>
     <string name="credit_lib_bouncy_castle">Argon2id-sleutelafleiding voor versleutelde back-ups</string>
     <string name="credit_lib_tink">AES-GCM-versleuteling voor back-ups</string>

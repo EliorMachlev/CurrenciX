@@ -4,9 +4,15 @@ import android.app.Application
 import android.net.Uri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.core.app.ApplicationProvider
+import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.repository.json.parseJsonObject
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.prefStore
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -19,6 +25,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
+import java.math.BigDecimal
 
 private const val PASSWORD = "correct horse"
 private val PROBE = stringPreferencesKey("probe")
@@ -70,6 +77,32 @@ class BackupManagerTest {
             assertEquals(BackupResult.Success, manager.import(uri))
             assertEquals("before", probe())
             assertEquals(1, restarts)
+        }
+
+    @Test
+    fun `carts, trips and fees go into a backup and come back from it`() =
+        runBlocking<Unit> {
+            val carts = CartStore(app)
+            val fees = FeeStore(app)
+            val cart = SavedCart("c1", "Market", "EUR", listOf(CartItem("i1", "bread", "2.5", quantity = 2)), createdAt = 1L, tripId = "t1")
+            val trip = Trip("t1", "Rome", Currency.ILS, BigDecimal("900"))
+            val fee = Fee.SpecificPair("f1", "Card", BigDecimal("1.5"), "EUR", "ILS", bothWays = true)
+            carts.currentCart.set(cart.copy(id = "working"))
+            carts.savedCarts.set(listOf(cart))
+            carts.trips.set(listOf(trip))
+            fees.fees.set(persistentListOf(fee))
+            val uri = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
+
+            carts.currentCart.set(null)
+            carts.savedCarts.set(emptyList())
+            carts.trips.set(emptyList())
+            fees.fees.set(persistentListOf())
+            assertEquals(BackupResult.Success, manager.import(uri, PASSWORD.toCharArray()))
+
+            assertEquals(cart.copy(id = "working"), carts.currentCart.get())
+            assertEquals(listOf(cart), carts.savedCarts.get())
+            assertEquals(listOf(trip), carts.trips.get())
+            assertEquals(listOf(fee), fees.fees.get())
         }
 
     @Test

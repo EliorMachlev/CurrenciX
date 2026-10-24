@@ -167,6 +167,7 @@
     <string name="credit_lib_vico">Charts</string>
     <string name="credit_lib_okhttp">HTTP client</string>
     <string name="credit_lib_moshi">JSON parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (how saved carts, trips and fees are stored)</string>
     <string name="credit_lib_timber">Logging</string>
     <string name="credit_lib_bouncy_castle">Argon2id key derivation for encrypted backups</string>
     <string name="credit_lib_tink">AES-GCM encryption for backups</string>

@@ -297,6 +297,7 @@ class BackupManager(
         val namespaces =
             buildJsonObject {
                 BACKUP_NAMESPACES.forEach { key -> put(key.fileName, serializeNamespace(key.prefStore(context).snapshot())) }
+                SAVED_DATA_SECTIONS.forEach { section -> put(section.key, section.export(context)) }
             }
         return buildJsonObject {
             put(BACKUP_KEY_VERSION, BACKUP_SCHEMA_VERSION)
@@ -343,6 +344,9 @@ class BackupManager(
     // follows a restore must find the restored state, not writes still in
     // flight on the PrefStore write pump.
     private suspend fun restoreNamespaces(namespaces: JsonObject) {
+        SAVED_DATA_SECTIONS.forEach { section ->
+            namespaces.optObject(section.key)?.let { section.restore(context, it) }
+        }
         BACKUP_NAMESPACES.forEach { key ->
             val nsData = namespaces.optObject(key.fileName) ?: return@forEach
             key.prefStore(context).editAndAwait {

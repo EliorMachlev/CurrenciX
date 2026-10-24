@@ -146,6 +146,7 @@
     <string name="credit_lib_vico">Graafikud</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
     <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (ostukorvide, reiside ja tasude salvestamine)</string>
     <string name="credit_lib_timber">Logimine</string>
     <string name="credit_lib_bouncy_castle">Argon2id-võtmetuletus krüpteeritud varukoopiatele</string>
     <string name="credit_lib_tink">Varukoopiate AES-GCM-krüpteerimine</string>

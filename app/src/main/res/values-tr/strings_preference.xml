@@ -146,6 +146,7 @@
     <string name="credit_lib_vico">Grafikler</string>
     <string name="credit_lib_okhttp">HTTP istemcisi</string>
     <string name="credit_lib_moshi">JSON ayrıştırıcı</string>
+    <string name="credit_lib_wire">Protocol Buffers (sepetlerin, gezilerin ve ücretlerin saklanması)</string>
     <string name="credit_lib_timber">Günlük kaydı</string>
     <string name="credit_lib_bouncy_castle">Şifreli yedekler için Argon2id anahtar türetme</string>
     <string name="credit_lib_tink">Yedekler için AES-GCM şifreleme</string>

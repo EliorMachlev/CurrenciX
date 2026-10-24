@@ -150,6 +150,7 @@
     <string name="credit_lib_vico">الرسوم البيانية</string>
     <string name="credit_lib_okhttp">عميل HTTP</string>
     <string name="credit_lib_moshi">محلّل JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (طريقة تخزين السلال والرحلات والرسوم المحفوظة)</string>
     <string name="credit_lib_timber">تسجيل السجلات</string>
     <string name="credit_lib_bouncy_castle">اشتقاق المفاتيح بخوارزمية Argon2id للنسخ الاحتياطية المشفّرة</string>
     <string name="credit_lib_tink">تشفير AES-GCM للنسخ الاحتياطية</string>

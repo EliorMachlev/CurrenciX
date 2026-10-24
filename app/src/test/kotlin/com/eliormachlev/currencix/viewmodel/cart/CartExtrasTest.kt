@@ -7,7 +7,8 @@ import com.eliormachlev.currencix.repository.CART_KEY_EXTRAS
 import com.eliormachlev.currencix.repository.json.JsonObject
 import com.eliormachlev.currencix.repository.parseCart
 import com.eliormachlev.currencix.repository.serializeCart
-import com.eliormachlev.currencix.repository.serializeCartText
+import com.eliormachlev.currencix.repository.throughJson
+import com.eliormachlev.currencix.repository.throughProto
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigDecimal
@@ -50,9 +51,10 @@ class CartExtrasTest {
     @Test
     fun `extras survive a save and load, and old carts load without them`() {
         val extras = CartExtras(tipPercent = BigDecimal("12.5"), splitWays = 4, budget = BigDecimal("250"))
-        assertEquals(extras, parseCart(serializeCartText(cart(extras)))?.extras)
-        val old = serializeCartText(cart())
-        assertEquals(CartExtras(), parseCart(old)?.extras)
+        assertEquals(extras, cart(extras).throughJson()?.extras)
+        assertEquals(extras, cart(extras).throughProto().extras)
+        assertEquals(CartExtras(), cart().throughJson()?.extras)
+        assertEquals(CartExtras(), cart().throughProto().extras)
     }
 
     @Test

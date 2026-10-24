@@ -119,6 +119,7 @@
     <string name="credit_lib_vico">Diagramok</string>
     <string name="credit_lib_okhttp">HTTP-kliens</string>
     <string name="credit_lib_moshi">JSON-elemző</string>
+    <string name="credit_lib_wire">Protocol Buffers (a kosarak, utak és díjak tárolása)</string>
     <string name="credit_lib_timber">Naplózás</string>
     <string name="credit_lib_bouncy_castle">Argon2id-kulcsszármaztatás a titkosított biztonsági mentésekhez</string>
     <string name="credit_lib_tink">AES-GCM-titkosítás a biztonsági mentésekhez</string>

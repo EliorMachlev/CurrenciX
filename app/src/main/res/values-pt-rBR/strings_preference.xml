@@ -129,6 +129,7 @@
     <string name="credit_lib_vico">Gráficos</string>
     <string name="credit_lib_okhttp">Cliente HTTP</string>
     <string name="credit_lib_moshi">Analisador de JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (como carrinhos, viagens e tarifas são salvos)</string>
     <string name="credit_lib_timber">Registro de logs</string>
     <string name="credit_lib_bouncy_castle">Derivação de chave Argon2id para backups criptografados</string>
     <string name="credit_lib_tink">Criptografia AES-GCM para backups</string>

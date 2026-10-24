@@ -31,7 +31,7 @@ CurrenciX follows **MVVM** (Model-View-ViewModel) with a Repository layer, imple
 ┌──────────────▼───────────────────────┐
 │      Data / Persistence Layer        │
 │  ApiProvider (Retrofit or raw OkHttp)│
-│  Database (DataStore Preferences)    │
+│  Database (DataStore: prefs + proto) │
 └──────────────────────────────────────┘
 ```
 
@@ -51,15 +51,17 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   └── provider/               # HTTP implementations per provider (api/ holds the Retrofit interfaces)
 ├── repository/
 │   ├── Database.kt             # Hands out the stores below; holds no logic of its own
-│   ├── RateStore.kt … RateAlertStore.kt  # One typed DataStore wrapper per concern (10 stores over 4 namespaces, plus the old timelines one read once)
+│   ├── RateStore.kt … RateAlertStore.kt  # One typed DataStore wrapper per concern (10 stores over 4 preference namespaces and 2 Protobuf files, plus the old timelines one read once)
 │   ├── ExchangeRatesRepository.kt
 │   ├── ExchangeRatesService.kt # Singleton, coroutine-based fetch orchestration
 │   ├── BackupManager.kt        # Encrypted export/import — see security.md
+│   ├── SavedProtos.kt          # Carts, trips and fees ↔ their Protobuf messages (SavedValues.kt: the checks every read applies)
+│   ├── json/JsonTree.kt        # The app's own JSON (backups, cart files, caches) over Moshi's streaming reader/writer
 │   ├── TimelineFiles.kt        # Each provider's history per pair, one file apiece
 │   ├── ProviderCooldown.kt     # Providers that failed lately, passed over for the fallback
 │   ├── RefreshState.kt         # In-memory "refresh running" state + debounced indicators
 │   ├── cache/                  # Memory → disk → network rate cache (Store5-inspired, no Store5 dep)
-│   └── persistence/             # PersistenceKey enum, DataStore delegates, PrefStore helper
+│   └── persistence/             # PersistenceKey enum, DataStore delegates, CachedStore / PrefStore, SavedDataFile (the Protobuf files)
 ├── view/
 │   ├── main/                   # MainActivity (the main Activity) + the converter route
 │   ├── convert/                # ConvertTextActivity: "Convert currency" in other apps' text-selection menu
@@ -94,9 +96,13 @@ helpers/src/main/kotlin/de/salomax/helpers/
 
 `ApiProvider` is an enum whose entries each implement `Api`, an interface exposing `getRates()` and `getTimeline()`. Switching provider at runtime is a single DataStore write; no factory classes required.
 
-### DataStore Preferences as the Persistence Layer
+### DataStore as the Persistence Layer
 
-The app has no SQLite database. `SharedPreferences` has been fully migrated to **Jetpack DataStore Preferences**: all data (cached rates, starred currencies, user state, preferences, and the Cart's current + saved carts as JSON blobs) lives in namespaced `DataStore<Preferences>` instances (`PersistenceKey`: `rates`, `last_state`, `starred_currencies`, `prefs`; `timelines` is only read once, to move what's in it into per-pair files, see below), managed by the stores in `repository/` and by `repository/persistence/`. File names deliberately match the old SharedPreferences basenames so that exported backups round-trip across the migration. Each setting is one `Pref<T>` (`repository/persistence/Pref.kt`) declared in its store: `display.hapticFeedback`, `providers.apiProvider`, `fees.fees`, `lastState.recentPairs`, … A `Pref` reads with `get()` (the in-memory snapshot, where a blocking read is unavoidable, e.g. `CurrenciesApplication`'s startup DNS prewarm), writes with `set()` or a read-modify-write `update { }`, and is observed as `flow` / `liveData` (`PrefStore.mappedFlow` / `mappedLiveData` underneath), so a setting's key, default and stored shape live in one declaration (`booleanPref(KEY, default = true)`, `keyedPref(key, decode, encode)`). ViewModels turn one into UI state with `Pref.stateInWhileSubscribed(viewModelScope)`. Stores that keep a list as a JSON array share `JsonLists.kt` (`parseJsonList`, `toJsonArray`, `optIdOrNew`). Writes update `PrefStore`'s in-memory cache at once and reach disk through a serial queue; while any of its own writes are still pending, the disk's emissions (each reflecting only the writes finished so far) are ignored, and the cache is resynced from disk when the queue drains, so a read between two quick writes never sees the first one undone (`PrefStoreTest`).
+The app has no SQLite database. `SharedPreferences` has been fully migrated to **Jetpack DataStore Preferences**: settings and small state (cached rates, starred currencies, user state, preferences, rate alerts) live in namespaced `DataStore<Preferences>` instances (`PersistenceKey`: `rates`, `last_state`, `starred_currencies`, `prefs`; `timelines` is only read once, to move what's in it into per-pair files, see below), managed by the stores in `repository/` and by `repository/persistence/`. File names deliberately match the old SharedPreferences basenames so that exported backups round-trip across the migration. Each setting is one `Pref<T>` (`repository/persistence/Pref.kt`) declared in its store: `display.hapticFeedback`, `providers.apiProvider`, `fees.fees`, `lastState.recentPairs`, … A `Pref` reads with `get()` (the in-memory snapshot, where a blocking read is unavoidable, e.g. `CurrenciesApplication`'s startup DNS prewarm), writes with `set()` or a read-modify-write `update { }`, and is observed as `flow` / `liveData` (`PrefStore.mappedFlow` / `mappedLiveData` underneath), so a setting's key, default and stored shape live in one declaration (`booleanPref(KEY, default = true)`, `keyedPref(key, decode, encode)`). ViewModels turn one into UI state with `Pref.stateInWhileSubscribed(viewModelScope)`. The rate alerts, a list kept as a JSON array in one preference, use `JsonLists.kt` (`parseJsonList`, `toJsonArrayText`, `optIdOrNew`).
+
+What the user saves (the working cart, the saved carts, the trips and the fees) is a tree of values, not a setting, so it lives in two typed **Proto DataStore** files instead, `carts.pb` and `fees.pb` (`persistence/SavedDataFile.kt`). Their schema is `app/src/main/proto/currencix/saved.proto`; **Wire** generates the Kotlin messages at build time (plain code, no reflection), and `WireSerializer` hands them to DataStore. `SavedProtos.kt` converts between the messages and the app's models, and every read, from these files or from a JSON backup or cart file, goes through the same checks (`SavedValues.kt`: quantities and splits clamped, amounts above zero, an unknown currency or fee type skipped, a missing id replaced). Amounts are decimal strings in both formats, so nothing is lost to a float. A file that can't be read starts over empty (`ReplaceFileCorruptionHandler`) rather than failing every read. `CartStore` and `FeeStore` expose them as the same `Pref<T>`s as before (`fieldPref`, decoded again only when its field of the message changes).
+
+Both kinds of file sit behind one `CachedStore<S>` (`persistence/CachedStore.kt`); `PrefStore` is its preferences flavour, with edits written as `MutablePreferences` changes. Writes update the in-memory cache at once and reach disk through a serial queue; while any of its own writes are still pending, the disk's emissions (each reflecting only the writes finished so far) are ignored, and the cache is resynced from disk when the queue drains, so a read between two quick writes never sees the first one undone (`PrefStoreTest`).
 
 `Database` is a handle on ten stores, each owning one concern, so no class grows past what one screen of code can hold:
 
@@ -121,9 +127,11 @@ Saved data that can't be read back (a rate or a history that doesn't parse) is d
 
 Each store's first read waits on the disk (`PrefStore.snapshot`), so `CurrenciesApplication` reads every store once in the background as the process starts (`warmUpStores`), moving the old history file over at the same time: by the time a screen asks, the read is done, instead of happening on the main thread mid-frame.
 
-Every write to a store emits the whole store again, and each setting read from it maps that snapshot to its value. A setting stored as JSON (the cart, the saved carts, the fees) is decoded only when its own stored text changes, and encoded once per write (`LastResult`, in `keyedPref`), so typing a price doesn't re-parse every saved cart on the main thread. The cached rates are parsed once per new set, process-wide, on the refresh's own background thread (`RateStore.parsedRates`), not by each screen and widget on each emission. `Currency.fromString` is a map lookup.
+Every write to a store emits the whole store again, and each setting read from it maps that snapshot to its value. A value stored encoded (the cart, the saved carts and the fees in their Protobuf fields, the rate alerts as JSON text) is decoded only when its own stored field changes (`LastResult`, in `fieldPref` and `keyedPref`), so typing a price doesn't re-decode every saved cart on the main thread. The cached rates are parsed once per new set, process-wide, on the refresh's own background thread (`RateStore.parsedRates`), not by each screen and widget on each emission. `Currency.fromString` is a map lookup.
 
-The one exception to "DataStore only": Cart JSON can be exported to / imported from an external file via the Storage Access Framework (`CartFileIo.kt`), but that's a one-off user-initiated file transfer, not an ongoing persistence layer.
+The one exception to "DataStore only": a cart can be exported to / imported from an external JSON file via the Storage Access Framework (`CartExporter.kt`), but that's a one-off user-initiated file transfer, not an ongoing persistence layer.
+
+The app's own JSON (backups, cart files, the rate caches on disk, the chart history files, the rate alerts) is read and written with Moshi's streaming `JsonReader` / `JsonWriter` through `repository/json/JsonTree.kt`: maps, lists, strings, numbers and booleans, with the lenient field reads (`optString`, `optInt`, …) a hand-edited or older file needs. There is no `org.json` and no Moshi reflection (`moshi-kotlin` / `kotlin-reflect` aren't in the app): provider responses go through KSP-generated or hand-written adapters.
 
 ### Three-tier rate cache: memory → disk → network
 

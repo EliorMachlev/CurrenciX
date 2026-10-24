@@ -67,6 +67,7 @@ private val LIBRARIES =
         Library("Vico", R.string.credit_lib_vico, "Patryk & Patrick", "https://github.com/patrykandpatrick/vico", APACHE_2),
         Library("OkHttp", R.string.credit_lib_okhttp, SQUARE, "https://square.github.io/okhttp/", APACHE_2),
         Library("Moshi", R.string.credit_lib_moshi, SQUARE, "https://github.com/square/moshi", APACHE_2),
+        Library("Wire", R.string.credit_lib_wire, SQUARE, "https://github.com/square/wire", APACHE_2),
         Library("Timber", R.string.credit_lib_timber, "Jake Wharton", "https://github.com/JakeWharton/timber", APACHE_2),
         Library("Bouncy Castle", R.string.credit_lib_bouncy_castle, null, "https://www.bouncycastle.org/", "MIT"),
         Library("Tink", R.string.credit_lib_tink, GOOGLE, "https://github.com/tink-crypto/tink-java", APACHE_2),

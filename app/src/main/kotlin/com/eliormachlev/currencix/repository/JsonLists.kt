@@ -5,11 +5,10 @@ import com.eliormachlev.currencix.repository.json.MalformedJsonException
 import com.eliormachlev.currencix.repository.json.jsonText
 import com.eliormachlev.currencix.repository.json.objects
 import com.eliormachlev.currencix.repository.json.parseJsonArray
-import com.eliormachlev.currencix.util.newId
 import timber.log.Timber
 
-// JSON helpers shared by the stores that keep lists as a JSON array in one
-// preference (fees, saved carts) and by their file formats.
+// JSON helpers for lists kept as a JSON array in one preference (the rate
+// alerts), and for the stores in general.
 
 /** This list as JSON array text, each entry written as the object [toJson] gives. */
 internal fun <T> List<T>.toJsonArrayText(toJson: (T) -> Map<String, Any>): String = jsonText(map(toJson))
@@ -35,7 +34,7 @@ internal fun <T> parseJsonList(
 }
 
 /** The object's [key] id, or a new one when it has none (entries saved before ids). */
-internal fun JsonObject.optIdOrNew(key: String): String = optString(key).ifEmpty { newId() }
+internal fun JsonObject.optIdOrNew(key: String): String = idOrNew(optString(key))
 
 /** This list with [item] in place of the first entry that [isSame], or added at the end when none is. */
 internal fun <T> List<T>.replacingOrAppending(

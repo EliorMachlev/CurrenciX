@@ -145,6 +145,7 @@
     <string name="credit_lib_vico">চার্ট</string>
     <string name="credit_lib_okhttp">HTTP ক্লায়েন্ট</string>
     <string name="credit_lib_moshi">JSON পার্সার</string>
+    <string name="credit_lib_wire">Protocol Buffers (সংরক্ষিত কার্ট, ভ্রমণ ও ফি যেভাবে রাখা হয়)</string>
     <string name="credit_lib_timber">লগিং</string>
     <string name="credit_lib_bouncy_castle">এনক্রিপ্ট করা ব্যাকআপের জন্য Argon2id কী ডেরিভেশন</string>
     <string name="credit_lib_tink">ব্যাকআপের জন্য AES-GCM এনক্রিপশন</string>

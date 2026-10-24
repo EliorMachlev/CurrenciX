@@ -32,7 +32,7 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 
 ## User-initiated Backup
 
-Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) as versioned JSON: settings, fees, carts, rate alerts and any API keys entered, the converter's state and the starred currencies. The cached rates and rate histories are deliberately excluded.
+Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore preference namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) and the saved carts, trips and fees (`carts`, `fees`; `SAVED_DATA_SECTIONS`, written as JSON from their Protobuf files), as versioned JSON: settings, rate alerts and any API keys entered, the converter's state, the starred currencies, the carts and trips, and the fees. All of it is inside the encrypted block when a password is set. The cached rates and rate histories are deliberately excluded.
 
 The app requests **no storage permission** — the SAF picker returns a scoped `content://` URI that the user has explicitly granted for that single file.
 
@@ -93,7 +93,7 @@ Release APKs are signed with the release key (`KEYSTORE_*` in `secrets.propertie
 
 `android:allowBackup="false"` and `android:fullBackupContent="false"` are set in the manifest, backed by an explicit `res/xml/data_extraction_rules.xml` that excludes every domain (`root`, `database`, `sharedpref`, `external`, `file`) from both **cloud backups** and **device-to-device transfers** on Android 12+.
 
-Rationale: the app's DataStore preferences contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fee config, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
+Rationale: the app's DataStore files contain the user's API keys for Open Exchangerates or AllRatesToday (if any), their fees and carts, and starred currencies — none of which should leak into an off-device Google backup by default. Users who want backups get an in-app, opt-in mechanism (see the Backup feature in Settings) with optional password encryption.
 
 ## Code Analysis
 

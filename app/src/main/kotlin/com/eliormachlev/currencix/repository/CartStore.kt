@@ -1,31 +1,26 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
-import com.eliormachlev.currencix.repository.persistence.PersistenceKey
+import com.eliormachlev.currencix.proto.CartsData
+import com.eliormachlev.currencix.repository.persistence.CachedStore
 import com.eliormachlev.currencix.repository.persistence.Pref
-import com.eliormachlev.currencix.repository.persistence.PrefStore
-import com.eliormachlev.currencix.repository.persistence.keyedPref
-import com.eliormachlev.currencix.repository.persistence.prefStore
+import com.eliormachlev.currencix.repository.persistence.cartsStore
+import com.eliormachlev.currencix.repository.persistence.fieldPref
 
-private const val KEY_CART_CURRENT_JSON = "_cart_current_json"
-private const val KEY_CARTS_SAVED_JSON = "_carts_saved_json"
-private const val KEY_TRIPS_JSON = "_trips_json"
-
-/** The working cart and the carts saved under a name. */
+/** The working cart and the carts saved under a name (Protobuf, in carts.pb). */
 class CartStore(
     context: Context,
 ) {
-    private val store: PrefStore = PersistenceKey.APP.prefStore(context)
+    private val store: CachedStore<CartsData> = context.cartsStore()
 
     /** The cart being edited; null (and removed) when there is none. */
     val currentCart: Pref<SavedCart?> =
-        store.keyedPref(stringPreferencesKey(KEY_CART_CURRENT_JSON), ::parseCart, { it?.let(::serializeCartText) })
+        store.fieldPref({ it.current }, { it?.toModel() }, { data, cart -> data.copy(current = cart?.toProto()) })
 
     val savedCarts: Pref<List<SavedCart>> =
-        store.keyedPref(stringPreferencesKey(KEY_CARTS_SAVED_JSON), ::parseCartList, ::serializeCartList)
+        store.fieldPref({ it.saved }, { list -> list.map { it.toModel() } }, { data, list -> data.copy(saved = list.map { it.toProto() }) })
 
     /**
      * Saves [cart] over the saved cart with its id, or as a new one. The
@@ -42,10 +37,10 @@ class CartStore(
 
     /** The trips saved carts can be grouped into. */
     val trips: Pref<List<Trip>> =
-        store.keyedPref(
-            stringPreferencesKey(KEY_TRIPS_JSON),
-            ::parseTrips,
-            { list -> list.takeIf { it.isNotEmpty() }?.let(::serializeTrips) },
+        store.fieldPref(
+            { it.trips },
+            { list -> list.mapNotNull { it.toModel() } },
+            { data, list -> data.copy(trips = list.map { it.toProto() }) },
         )
 
     /** Saves [trip] over the trip with its id, or as a new one. */

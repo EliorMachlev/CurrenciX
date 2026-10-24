@@ -148,6 +148,7 @@
     <string name="credit_lib_vico">Grafy</string>
     <string name="credit_lib_okhttp">Klient HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (ukládání košíků, cest a poplatků)</string>
     <string name="credit_lib_timber">Protokolování</string>
     <string name="credit_lib_bouncy_castle">Odvození klíče Argon2id pro šifrované zálohy</string>
     <string name="credit_lib_tink">Šifrování záloh pomocí AES-GCM</string>

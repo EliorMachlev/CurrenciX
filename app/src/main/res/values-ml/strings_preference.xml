@@ -146,6 +146,7 @@
     <string name="credit_lib_vico">ചാർട്ടുകൾ</string>
     <string name="credit_lib_okhttp">HTTP ക്ലയന്റ്</string>
     <string name="credit_lib_moshi">JSON പാഴ്‌സർ</string>
+    <string name="credit_lib_wire">Protocol Buffers (സേവ് ചെയ്ത കാർട്ടുകൾ, യാത്രകൾ, ഫീസുകൾ സൂക്ഷിക്കുന്ന രീതി)</string>
     <string name="credit_lib_timber">ലോഗിംഗ്</string>
     <string name="credit_lib_bouncy_castle">എൻക്രിപ്റ്റ് ചെയ്ത ബാക്കപ്പുകൾക്കായുള്ള Argon2id കീ ഡെറിവേഷൻ</string>
     <string name="credit_lib_tink">ബാക്കപ്പുകൾക്കായുള്ള AES-GCM എൻക്രിപ്ഷൻ</string>

@@ -148,6 +148,7 @@
     <string name="credit_lib_vico">Wykresy</string>
     <string name="credit_lib_okhttp">Klient HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (zapis koszyków, podróży i opłat)</string>
     <string name="credit_lib_timber">Rejestrowanie logów</string>
     <string name="credit_lib_bouncy_castle">Wyprowadzanie klucza Argon2id dla szyfrowanych kopii zapasowych</string>
     <string name="credit_lib_tink">Szyfrowanie AES-GCM kopii zapasowych</string>

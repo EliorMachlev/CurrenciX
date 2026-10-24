@@ -145,6 +145,7 @@
     <string name="credit_lib_vico">Grafik</string>
     <string name="credit_lib_okhttp">Klien HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (cara keranjang, perjalanan, dan biaya disimpan)</string>
     <string name="credit_lib_timber">Pencatatan log</string>
     <string name="credit_lib_bouncy_castle">Derivasi kunci Argon2id untuk cadangan terenkripsi</string>
     <string name="credit_lib_tink">Enkripsi AES-GCM untuk cadangan</string>

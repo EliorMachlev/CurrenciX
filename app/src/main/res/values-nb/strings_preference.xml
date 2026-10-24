@@ -146,6 +146,7 @@
     <string name="credit_lib_vico">Diagrammer</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
     <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (slik lagres handlekurver, reiser og gebyrer)</string>
     <string name="credit_lib_timber">Logging</string>
     <string name="credit_lib_bouncy_castle">Argon2id-nøkkelavledning for krypterte sikkerhetskopier</string>
     <string name="credit_lib_tink">AES-GCM-kryptering av sikkerhetskopier</string>

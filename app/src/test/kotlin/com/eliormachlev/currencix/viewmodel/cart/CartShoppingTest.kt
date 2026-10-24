@@ -11,7 +11,8 @@ import com.eliormachlev.currencix.repository.CART_KEY_SHOPPING_MODE
 import com.eliormachlev.currencix.repository.json.JsonObject
 import com.eliormachlev.currencix.repository.parseCart
 import com.eliormachlev.currencix.repository.serializeCart
-import com.eliormachlev.currencix.repository.serializeCartText
+import com.eliormachlev.currencix.repository.throughJson
+import com.eliormachlev.currencix.repository.throughProto
 import com.eliormachlev.currencix.view.cart.compose.RATES_OLD_AFTER_DAYS
 import com.eliormachlev.currencix.view.cart.compose.ratesAreOld
 import org.junit.Assert.assertEquals
@@ -55,7 +56,8 @@ class CartShoppingTest {
     @Test
     fun `quantity, ticks and shopping mode survive a save, and defaults aren't written`() {
         val saved = cart(CartItem("1", "a", "2", quantity = 4, checked = true), CartItem("2", "b", "3"), shoppingMode = true)
-        assertEquals(saved, parseCart(serializeCartText(saved)))
+        assertEquals(saved, saved.throughJson())
+        assertEquals(saved, saved.throughProto())
         val plain = serializeCart(cart(CartItem("2", "b", "3")))
         assertFalse(CART_KEY_SHOPPING_MODE in plain)
         val item = checkNotNull(JsonObject(plain).optObjects(CART_KEY_ITEMS).singleOrNull())

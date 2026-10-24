@@ -146,6 +146,7 @@
     <string name="credit_lib_vico">نمودارها</string>
     <string name="credit_lib_okhttp">کلاینت HTTP</string>
     <string name="credit_lib_moshi">تجزیه‌گر JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (روش ذخیرهٔ سبدها، سفرها و کارمزدها)</string>
     <string name="credit_lib_timber">ثبت رویدادها</string>
     <string name="credit_lib_bouncy_castle">استخراج کلید Argon2id برای پشتیبان‌های رمزنگاری‌شده</string>
     <string name="credit_lib_tink">رمزنگاری AES-GCM برای پشتیبان‌ها</string>

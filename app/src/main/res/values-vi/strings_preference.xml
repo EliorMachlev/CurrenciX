@@ -147,6 +147,7 @@
     <string name="credit_lib_vico">Biểu đồ</string>
     <string name="credit_lib_okhttp">Ứng dụng khách HTTP</string>
     <string name="credit_lib_moshi">Trình phân tích JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (cách lưu giỏ hàng, chuyến đi và phí)</string>
     <string name="credit_lib_timber">Ghi nhật ký</string>
     <string name="credit_lib_bouncy_castle">Dẫn xuất khóa Argon2id cho bản sao lưu được mã hóa</string>
     <string name="credit_lib_tink">Mã hóa AES-GCM cho bản sao lưu</string>
