@@ -23,7 +23,7 @@ Include:
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact
-- Android version and app version (`Settings → About`)
+- Android version and app version (Settings → About this app)
 
 You will receive a response within 7 days. If the vulnerability is confirmed, a fix will be released as soon as possible, and you will be credited in the release notes unless you prefer otherwise.
 
@@ -41,7 +41,7 @@ Public disclosure before a fix is available is discouraged. Reporters who wish t
 
 ### Actively exploited vulnerability reporting (EU CRA, from 11 September 2026)
 
-Once the CRA's vulnerability-reporting obligations are in force, any actively exploited vulnerability affecting a CurrenciX build distributed into the EU market in the course of a commercial activity will be reported to ENISA:
+The CRA's vulnerability-reporting obligations apply from 11 September 2026. Any actively exploited vulnerability affecting a CurrenciX build distributed into the EU market in the course of a commercial activity will be reported to ENISA:
 
 - **Early warning**: within **24 hours** of the maintainer becoming aware.
 - **Vulnerability notification**: within **72 hours**.
@@ -59,7 +59,7 @@ This app:
 - Requests only `INTERNET`, `ACCESS_NETWORK_STATE`, `POST_NOTIFICATIONS` (rate alerts, asked for at runtime) and `USE_BIOMETRIC` (the optional app lock); see [`docs/markDown/security.md`](docs/markDown/security.md#runtime-permissions)
 - Stores no personal data
 - Contains no accounts or payment flows; the optional app lock is checked on the device only
-- Communicates only with exchange rate providers: the one selected by the user, and a fallback when it can't be reached
+- Communicates only with exchange rate providers (the one selected by the user, and the fallback provider, asked at the same time so its answer is ready if the first fails) and, for receipt scanning and only after the user agrees, GitHub for OCR language data and, in the Play build, Google Play for the receipt reader
 
 Issues related to third-party exchange rate APIs should be reported directly to those providers.
 

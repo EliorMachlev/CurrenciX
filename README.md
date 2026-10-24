@@ -33,12 +33,12 @@ A handy travel companion, not a tool for real-time financial business.
 
 | Feature | What you get |
 |---|---|
-| 💱 **Convert anything** | A calculator keypad (`+ − × ÷`, brackets, percent), your recent pairs one tap away, a price pasted from the clipboard, or past dates' rates back to 2010. |
+| 💱 **Convert anything** | A calculator keypad (`+ − × ÷`, brackets, percent), your recent pairs one tap away, a price pasted from the clipboard, or past dates' rates back to 2010; abroad, it offers the local currency. |
 | 💳 **The true cost** | Add your card's or bank's exchange fee, globally or per pair, see the real price beside the mid-market one, and compare your cards. |
-| 📈 **Charts & alerts** | A week to five years of history, or a custom range up to ten, with high, low, average and median, and a notification when a pair reaches your rate. |
-| 🛒 **Cart** | A list of prices converted into your currency, with quantities, tip or tax, a budget, a split by person, trips, and receipt scanning on the device. |
+| 📈 **Charts & alerts** | A week to five years of history, or a custom range up to ten, with high, low, average and median, how today compares with the period's average, and a notification when a pair reaches your rate. |
+| 🛒 **Cart** | A list of prices converted into your currency, with quantities, tip or tax, a budget, a split by person, trips with dates, spending per day and a checklist before you go, and receipt scanning on the device. |
 | 📲 **Everywhere on your phone** | "Convert currency" in any app's text-selection menu, a home-screen widget, a Quick Settings tile and launcher shortcuts. |
-| 🎨 **Looks right** | Material 3 with colors from your wallpaper; light, dark and pure-black themes; two panes on tablets and foldables; 33 languages, right to left where they read that way. |
+| 🎨 **Looks right** | Material 3 with colors from your wallpaper; light, dark and pure-black themes; two panes on tablets and foldables; 32 languages, right to left where they read that way. |
 | 🔒 **Private** | No ads, no analytics, no account. An optional app lock, private requests and encrypted backups. Nothing about you leaves the phone. |
 
 ## 🏦 Exchange rate providers
@@ -47,7 +47,7 @@ Eight sources, and a fallback for when your main one is down. Details in [api-pr
 
 | Provider | Source | Currencies | Updates | API key |
 |---|---|---|---|---|
-| [Frankfurter.app](https://frankfurter.dev/) | European Central Bank | ~33 | Business days | — |
+| [Frankfurter.app](https://frankfurter.dev/) | European Central Bank | ~30 | Business days | — |
 | [Open Exchangerates](https://openexchangerates.org/) | Commercial aggregator | 160+ | Hourly | Free key |
 | [AllRatesToday](https://allratestoday.com/) | Mid-market interbank | ~160 | About every minute | Key |
 | [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | European Commission | ~150 | Monthly | — |

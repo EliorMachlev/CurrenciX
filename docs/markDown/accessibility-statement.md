@@ -1,7 +1,7 @@
 # Accessibility Statement
 
 **Effective:** 2026-08-13
-**Last reviewed:** 2026-10-23
+**Last reviewed:** 2026-10-25
 **Accessibility coordinator:** Elior Machlev
 **Contact:** 26472689+EliorMachlev@users.noreply.github.com
 
@@ -71,7 +71,7 @@ The maintainer is a single individual and comprehensive third-party accessibilit
 - **Third-party audit**: A comprehensive third-party accessibility audit has not yet been commissioned. Assessment is currently maintainer-run using TalkBack, Android Accessibility Scanner, and CI lint rules.
 - **Chart data exposure**: The Vico line chart's per-day data points are not individually reachable by accessibility services. The spoken summary and the statistics tiles cover the visible period; a per-day table or sonified view is not provided.
 - **Changing values aren't announced**: When a rate refresh changes the converted amount, TalkBack doesn't announce it by itself (no live region); the new value is read when focus reaches it.
-- **Localised content descriptions**: The app is translated into 33 languages, and Android Lint fails the build on a string missing from any of them, so content descriptions are translated too; the quality of the translations inherited from the upstream `sal0max/currencies` project varies.
+- **Localised content descriptions**: The app is in 32 languages (English plus 31 translations), and Android Lint fails the build on a string missing from any of them, so content descriptions are translated too; the quality of the translations inherited from the upstream `sal0max/currencies` project varies.
 - **Wallpaper colour palettes**: **Wallpaper colors** (on by default) builds the palette from the user's wallpaper at runtime, so its contrast can't be verified for every wallpaper ahead of time; the sample palettes checked pass, and Material's tonal palettes keep text and surfaces several tones apart. Turning it off in Settings → Look & Feel gives the fixed light / dark / pure-black themes, whose every role pair is checked.
 - **Custom on-screen keypad**: Amounts are typed on the app's own keypad; there is no option to use the system keyboard instead (a hardware keyboard works). Its rows shrink from 56 dp to 48 dp on short screens, so keys stay at the 48 dp target.
 - **RTL layouts**: In Hebrew, Arabic and Farsi, Settings, sheets and dialogs are laid out right to left; numbers, the converter and the chart stay left to right so digits and math read the same in every language. Labels mixing a right-to-left language with Latin currency codes or provider names keep the language's reading order (see architecture.md, *Right-to-left languages*).

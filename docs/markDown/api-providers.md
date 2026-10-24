@@ -4,7 +4,7 @@ CurrenciX supports multiple exchange-rate data sources. The active provider is s
 
 ## Picker order
 
-The picker (`ProviderPickerSheet`) lists `ApiProvider.pickerOrder`: free providers under **Free**, then the ones that need a key under **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`: hourly, business-daily, monthly), then the more useful — wider coverage, steadier service — which is the enum's declaration order. Each row says how often it updates. Today that's: Frankfurter.app, Bank Rossii, Norges Bank, Bank of Canada, Bank of Israel, InforEuro; then OpenExchangerates and AllRatesToday. Reordering the enum is safe: only each entry's `id` is stored.
+The picker (`ProviderPickerSheet`) lists `ApiProvider.pickerOrder`: free providers under **Free**, then the ones that need a key under **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`: every minute, hourly, daily, monthly), then the more useful — wider coverage, steadier service — which is the enum's declaration order. Each row says how often it updates. Today that's: Frankfurter.app, Bank Rossii, Norges Bank, Bank of Canada, Bank of Israel, InforEuro; then AllRatesToday and OpenExchangerates. Reordering the enum is safe: only each entry's `id` is stored.
 
 ## Unreliable providers
 
@@ -20,7 +20,7 @@ When the main provider fails while the device is online (a timeout, an HTTP erro
 
 | Provider | Currencies | Update freq | Base | Notes |
 |---|---|---|---|---|
-| [Frankfurter.app](https://frankfurter.dev/) | ~33 | Business days | EUR | European Central Bank data |
+| [Frankfurter.app](https://frankfurter.dev/) | ~30 | Business days | EUR | European Central Bank data |
 | [OpenExchangerates](https://openexchangerates.org/) | 160+ | Hourly | USD | Free tier requires API key |
 | [AllRatesToday](https://allratestoday.com/) | ~160 | About every minute | EUR (asked for) | Mid-market interbank rates; needs an API key; the free plan is 300 requests in total, ever |
 | [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | ~150 | Monthly | EUR | EU Commission accounting rates; unreliable (inaccurate data) |

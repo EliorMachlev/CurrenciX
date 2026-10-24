@@ -22,7 +22,7 @@ The `dependency-review` workflow blocks any PR that introduces a dependency with
 
 ### OWASP Dependency Check
 
-Weekly scan of the runtime classpath against the NVD database. Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries.
+Weekly scan against the NVD database: the workflow resolves the fdroid release runtime classpath, then scans the checkout. Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries.
 
 ## Secrets
 
@@ -32,7 +32,7 @@ Weekly scan of the runtime classpath against the NVD database. Fails the workflo
 
 ## User-initiated Backup
 
-Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore preference namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) and the saved carts, trips, fees and rate alerts (`carts`, `fees`, `alerts`; `SAVED_DATA_SECTIONS`, written as JSON from their Protobuf files), as versioned JSON: settings and any API keys entered, the converter's state, the starred currencies, the carts and trips, the fees, and the rate alerts. All of it is inside the encrypted block when a password is set. The cached rates and rate histories are deliberately excluded.
+Users can export their settings from **Settings → Backup & Restore** to a location of their choosing via the Storage Access Framework (`ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT`). The backup file contains three DataStore preference namespaces (`prefs`, `last_state`, `starred_currencies`; `PersistenceKey.backupNamespaces`) and the saved carts, trips, fees and rate alerts (`carts`, `fees`, `alerts`; `SAVED_DATA_SECTIONS`, written as JSON from their Protobuf files), as versioned JSON: settings and any API keys entered, the converter's state, the starred currencies, the quick-conversion amounts and receipt-language choices (in `prefs`), the carts and trips, the fees, and the rate alerts. All of it is inside the encrypted block when a password is set. The cached rates and rate histories are deliberately excluded.
 
 The app requests **no storage permission** — the SAF picker returns a scoped `content://` URI that the user has explicitly granted for that single file.
 
@@ -83,7 +83,7 @@ Settings → Security & privacy has two switches, both off by default (`PrivacyS
 
 **Encrypted Client Hello (Android 17+).** The TLS handshake normally names the host in the clear (SNI), so anyone on the network can see which provider the app asks for rates, HTTPS or not. On Android 17 and later the shared client resolves through the platform's `DnsResolver` (OkHttp's `AndroidDns`, `HttpClientProvider.encryptedClientHelloDns`), which also fetches the host's DNS `HTTPS` record with its ECH keys, and the handshake then encrypts the host name. It covers the hosts that publish ECH keys (typically those behind Cloudflare); the others connect as before, as ECH isn't enforced in the network security config, which would make them fail. Earlier Android versions can't do ECH and keep the system resolver. The IP address stays visible either way.
 
-Receipt scanning adds one host: `raw.githubusercontent.com`, for the OCR language data (`tessdata_fast` at its fixed `4.1.0` tag), fetched once per language, and only after the user agrees to that language by name and size (English with the first scan's offer; the app's own language as a separate opt-in, remembered either way in `PrivacySettings.receiptLanguagesAllowed` / `receiptLanguagesDeclined`). No language ships with the app. Settings → Receipt languages lists what's on the phone; each can be deleted, or kept only until a date and time and then deleted by `TessdataExpiryWorker`. In the Play app the recognizer itself comes from Google Play as an on-demand feature module (Play Feature Delivery): code is only ever installed by Play, never downloaded by the app. The request carries nothing about the user (a fixed file URL). Each file is streamed to a temporary file, hashed, and kept only if its SHA-256 matches the one compiled into the app (`TessLanguage.sha256`, `Tessdata.install`); a mismatch is discarded and not retried. Receipt photos are read on the device and never uploaded; the camera photo is written to the app's cache through its `FileProvider` and deleted once read. The app has no camera permission: the photo comes from the system camera app (`TakePicture`) or the system photo picker.
+Receipt scanning adds one host: `raw.githubusercontent.com`, for the OCR language data (`tessdata_fast` at its fixed `4.1.0` tag), fetched once per language, and only after the user agrees to that language by name and size (English with the first scan's offer; the app's own language, or a trip's, as a separate opt-in, remembered either way in `ReceiptLanguageSettings.allowed` / `declined`). No language ships with the app. Settings → Receipt languages lists what's on the phone; each can be deleted, or kept only until a date and time and then deleted by `TessdataExpiryWorker`. In the Play app the recognizer itself comes from Google Play as an on-demand feature module (Play Feature Delivery): code is only ever installed by Play, never downloaded by the app. The request carries nothing about the user (a fixed file URL). Each file is streamed to a temporary file, hashed, and kept only if its SHA-256 matches the one compiled into the app (`TessLanguage.sha256`, `Tessdata.install`); a mismatch is discarded and not retried. Receipt photos are read on the device and never uploaded; the camera photo is written to the app's cache through its `FileProvider` and deleted once read. The app has no camera permission: the photo comes from the system camera app (`TakePicture`) or the system photo picker.
 
 ## APK signing
 
@@ -99,7 +99,7 @@ Rationale: the app's DataStore files contain the user's API keys for Open Exchan
 
 | Tool | Scope | Frequency |
 |---|---|---|
-| Detekt | Kotlin source (app, helpers, baselineprofile; production and tests) | Every PR and master push |
+| Detekt | Kotlin source (app, helpers, ocr-engine, baselineprofile; production and tests) | Every PR and master push |
 | Android Lint | App code, resources and manifest, per flavor (fdroid, play) | Every PR and master push |
 | Qodana JVM Community | Kotlin / Java | Every PR, master push, weekly |
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |

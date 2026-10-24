@@ -13,16 +13,16 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**` or the workflow, manual | Generate baseline + startup profiles on an API 34 emulator; upload them as an artifact (and, run by hand with **commit**, commit them through `commit-baseline-profiles.yaml`) |
 | `commit-baseline-profiles.yaml` | Called by Baseline Profile, manual | Put a profile run's artifacts back in their folders and push them to the branch; then start Screenshots and the debug APK build on that commit |
 | `benchmarks.yaml` | Push → non-master touching app code, the build, `baselineprofile/**` or the benchmark scripts, manual | Run the startup and frame-timing benchmarks on the same emulator; fail on a slowdown against the saved baseline |
-| `detekt.yaml` | PR, push → `master` | Kotlin static analysis |
-| `qodana.yaml` | PR, push → `master`, weekly | JetBrains Qodana JVM analysis |
-| `codeql.yaml` | PR, push → `master`, weekly | GitHub CodeQL (Actions YAML) |
-| `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC) | SAST security pattern scanning |
-| `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC) | Secret / credential scanning |
-| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC) | Dependency vulnerability scan (CVSS ≥ 7) |
+| `detekt.yaml` | PR, push → `master`, manual | Kotlin static analysis |
+| `qodana.yaml` | PR, push → `master`, weekly (Mon 06:30 UTC), manual | JetBrains Qodana JVM analysis |
+| `codeql.yaml` | PR to `master`, push → `master`, weekly (Mon 05:30 UTC), manual | GitHub CodeQL (Actions YAML) |
+| `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC), manual | SAST security pattern scanning |
+| `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC), manual | Secret / credential scanning |
+| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC), manual | Dependency vulnerability scan (CVSS ≥ 7) |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. Its own quick workflow so Scorecard (below) can see it succeed on the latest commit, which is what makes Binary-Artifacts count the jar as validated |
-| `scorecard.yaml` | Push → `master`, weekly | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
-| `actionlint.yaml` | PR/push on `.github/workflows/**` | Validate workflow YAML syntax |
+| `scorecard.yaml` | Push → `master`, weekly (Mon 06:00 UTC), manual | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
+| `actionlint.yaml` | PR, push → `master`, on `.github/workflows/**` | Validate workflow YAML syntax |
 
 ## Build Gate (`build.yaml`)
 
@@ -41,7 +41,7 @@ Runs on PRs and pushes to `master` (and by hand). Its jobs run side by side:
 
 A PR's checks take about five minutes, all jobs running at once; the longest are the two build legs and the fdroid release build.
 
-- **Superseded runs are cancelled.** Every workflow that runs on PRs or branch pushes has a `concurrency` group per PR (or branch): a new push cancels the run still going for the previous one. Runs on `master` always finish.
+- **Superseded runs are cancelled.** Every workflow that runs on PRs or branch pushes has a `concurrency` group per PR (or branch): a new push cancels the run still going for the previous one. Runs on `master` always finish. The one exception is the Gradle wrapper check, which takes seconds.
 - **More jobs, side by side**: each flavor's lint, unit tests and debug build are separate jobs, as is Spotless, instead of one job per flavor running them one after another.
 - **Gradle** (`gradle.properties`): the build cache and parallel project execution are on, with a 3 GB daemon heap and a 2 GB Kotlin daemon. `setup-gradle` keeps Gradle's home, build cache included, between runs: `master` writes it, PRs read it, so a PR reuses whatever `master` already built. The configuration cache is off: measured on CI, it made lint + test + build about 70 s slower, by running one module's tasks side by side on 4 cores (the build script is compatible with it, should that change).
 
@@ -67,10 +67,10 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - Version: 2.0.0-alpha.6 (pinned in root `build.gradle.kts` via the `dev.detekt` Gradle plugin). Still an alpha: 1.23.8 is the last stable release, but it is incompatible with Gradle 10 and 2.0 is the line with the fix.
 - Config: `config/detekt/detekt.yml` (tuned to enforce the `CLAUDE.md` code-shape defaults). The size limits apply to `@Composable` functions like any other: one that needs six or more arguments takes them as a state type and an actions type. detekt 2 names each limit as what's allowed (`allowedLines: 59`, `allowedFunctionParameters: 5`), one below 1.x's trigger thresholds, so the limits are the same as before.
 - No baseline: every finding counts, in old code and new.
-- Type resolution: detekt 2 runs its type-aware rules (`LongParameterList`, `UnsafeCallOnNullableType`, `InjectDispatcher`, …) only in its per-variant tasks. `./gradlew detekt` runs a set of them that covers every source folder once — `:app:detektFdroidDebug` (main, fdroid, debug), `:app:detektPlayRelease` (play, release), `:app:detektFdroidDebugUnitTest` (unit tests), `:helpers:detektMain` / `detektTest` and `:baselineprofile:detektFdroidBenchmarkRelease` — and skips its own pass, which would leave those rules out (`detektVariantTasks` in the root build script).
+- Type resolution: detekt 2 runs its type-aware rules (`LongParameterList`, `UnsafeCallOnNullableType`, `InjectDispatcher`, …) only in its per-variant tasks. `./gradlew detekt` runs a set of them that covers every source folder once — `:app:detektFdroidDebug` (main, fdroid, debug), `:app:detektPlayRelease` (play, release), `:app:detektFdroidDebugUnitTest` (unit tests), `:helpers:detektMain` / `detektTest`, `:ocr-engine:detektRelease` and `:baselineprofile:detektFdroidBenchmarkRelease` — and skips its own pass, which would leave those rules out (`detektVariantTasks` in the root build script).
 - JVM target: 21
 - Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); any finding fails the build.
-- Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-baselineprofile`) + HTML/checkstyle/SARIF artifact retained 14 days
+- Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-baselineprofile`; `:ocr-engine`'s report isn't uploaded there, a finding in it still fails the job) + HTML/checkstyle/SARIF artifact retained 14 days
 
 ### Qodana
 - Image: `qodana-jvm-community:2026.2`
@@ -89,10 +89,10 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - Any finding fails the job, whatever its severity.
 
 ### OWASP Dependency Check
-- CVSS threshold: 7 (high+)
-- Scans runtime classpath only
-- Detects retired/archived dependencies
-- Uploads HTML + XML reports as artifact
+- CVSS threshold: 7 (high+): `--failOnCVSS 7`
+- Resolves the fdroid release runtime classpath first, then scans the checkout (`path: '.'`)
+- Detects retired/archived dependencies (`--enableRetired`)
+- SARIF uploaded to the Security tab (category `owasp-dependency-check`) and kept 30 days as the `owasp-report` artifact
 
 ### OpenSSF Scorecard
 - Evaluates pinned-dependencies, branch-protection, SAST, etc., and publishes the score to the public Scorecard API (`publish_results`)
@@ -121,7 +121,7 @@ Configured in `.github/dependabot.yml` with weekly Monday schedule.
 
 ## Permission Model
 
-All workflows use `permissions: contents: read` by default. Additional permissions are granted only when needed:
+Every workflow but one sets `permissions: contents: read` at the top; `scorecard.yaml` sets `read-all`, as Scorecard's own template does (its analysis reads the repository's settings). Additional permissions are granted per job, only when needed:
 
 | Workflow | Extra permissions |
 |---|---|

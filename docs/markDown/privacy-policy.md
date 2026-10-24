@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Effective:** 2026-10-24
-**Last reviewed:** 2026-10-24
+**Last reviewed:** 2026-10-25
 **Controller:** Elior Machlev (individual maintainer of CurrenciX)
 **Contact:** 26472689+EliorMachlev@users.noreply.github.com
 
@@ -13,7 +13,7 @@ CurrenciX is a currency-conversion app. It is designed to collect **no** persona
 
 **Off the device.** The app makes network requests to the exchange-rate provider you have selected in **Settings → Exchange rates → Data provider**, and to the fallback provider set there (asked at the same time, so its answer is ready if the main one fails). These requests carry your device's IP address, the standard HTTP headers a network client sends, the currencies and dates asked for (for example the pair a chart shows), and, for a provider that needs one, your API key. With **Settings → Security & privacy → Private requests** on, the headers are the same for every user and carry no cache identifiers. The providers — not CurrenciX — receive and process those requests under **their own** privacy terms. See [`api-providers.md`](api-providers.md) for the list.
 
-Two other services can be contacted, only for receipt scanning: the OCR language data (English, and your app's language if you choose) is downloaded once from GitHub (`raw.githubusercontent.com`, a fixed file address that carries nothing about you), and in the Google Play version the receipt reader itself is installed through Google Play. Nothing is downloaded until you agree: the first scan names each download and its size, and your app's language is a separate choice you can decline. More languages can be added in Settings → Receipt languages, each downloaded only after you agree; any can be deleted there, or kept only until a date you pick and then deleted automatically. On Android 17 and later, DNS look-ups go through Android's own resolver, as for any app. To offer the local currency when you travel, the app reads which country's mobile network the phone is on (no permission needed); that stays on the phone and is only compared with your phone's region.
+Two other services can be contacted, only for receipt scanning: the OCR language data (English, and your app's language or a trip's language if you choose) is downloaded once from GitHub (`raw.githubusercontent.com`, a fixed file address that carries nothing about you), and in the Google Play version the receipt reader itself is installed through Google Play. Nothing is downloaded until you agree: the first scan names each download and its size, and your app's language is a separate choice you can decline. More languages can be added in Settings → Receipt languages, each downloaded only after you agree; any can be deleted there, or kept only until a date you pick and then deleted automatically. On Android 17 and later, DNS look-ups go through Android's own resolver, as for any app. To offer the local currency when you travel, the app reads which country's mobile network the phone is on (no permission needed); that stays on the phone and is only compared with your phone's region.
 
 **No SDKs.** CurrenciX does not integrate any analytics SDK, crash-reporting SDK, advertising SDK, attribution SDK, or persistent-identifier SDK. There is no Google Analytics, no Firebase, no Crashlytics, no AdMob, no Facebook SDK.
 

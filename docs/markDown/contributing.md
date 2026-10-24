@@ -13,9 +13,9 @@ The project favours simplicity. Large feature additions are unlikely to be merge
 
 ## Translations
 
-The app is in 33 languages: English plus 32 translations (`res/values-*`), most inherited from upstream Currencies, whose translators used Weblate. The fork doesn't run its own translation workflow yet; if you'd like to contribute or correct a translation, open an issue first so we can coordinate.
+The app is in 32 languages: English plus 31 translations (`res/values-*`; `values-en-rGB` only sets British number and date formats), most inherited from upstream Currencies, whose translators used Weblate. The fork doesn't run its own translation workflow yet; if you'd like to contribute or correct a translation, open an issue first so we can coordinate.
 
-Every translatable string exists in all 32 translated locales, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
+Every translatable string exists in all 31 translations, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
 
 ## Code Contributions
 
@@ -68,7 +68,7 @@ Warnings and findings get fixed, not hidden.
 - [ ] `./gradlew detekt` reports no findings
 - [ ] `./gradlew spotlessCheck` is clean
 - [ ] No suppressions or baseline entries beyond those in [exceptions.md](exceptions.md), and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))
-- [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter is required, because Jazzer's instrumentation breaks Robolectric if the fuzz tests run in the same task.
+- [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter keeps the run to the screenshot tests (the fuzz tests, whose Jazzer instrumentation breaks Robolectric, are left out of the unit-test tasks anyway).
 - [ ] If adding a dependency: check F-Droid licence compatibility
 
 ### Commit Message Convention
@@ -83,13 +83,13 @@ chore(deps): bump moshi to 1.15.2
 chore(ci): pin checkout action to SHA
 ```
 
-PRs are squash-merged, and the PR title becomes the commit on `master`, so the title is what counts: release notes are generated from those titles (`feat` → New, `fix` → Fixes, `perf` → Faster, `i18n` → Translations; `chore`, `ci`, `build`, `refactor`, `test`, `docs`, `style` are left out). Write the description for users ("show the rate's change since yesterday", not "add DeltaRow composable"). See [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17).
+PRs are squash-merged, and the PR title becomes the commit on `master`, so the title is what counts: release notes are generated from those titles (`feat` → New, `fix` → Fixes, `perf` → Faster, `i18n` → Translations; `chore`, `ci`, `build`, `deps`, `refactor`, `test`, `docs`, `style` and `revert` are left out). Write the description for users ("show the rate's change since yesterday", not "add DeltaRow composable"). See [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17).
 
 ## Reporting Issues
 
 Open a GitHub Issue with:
 - Android version
-- App version (`Settings → About`)
+- App version (Settings → About this app)
 - Selected exchange rate provider
 - Steps to reproduce
 - Expected vs. actual behaviour

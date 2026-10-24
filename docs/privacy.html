@@ -58,7 +58,7 @@
       <li><strong><code>android.permission.USE_BIOMETRIC</code></strong> — only for the optional app lock (Settings → Security &amp; privacy): it lets the app show the system's fingerprint, face or screen-lock prompt. The prompt is Android's; the app only learns whether you got through, never your fingerprint, face or PIN.</li>
       <li><strong><code>android.permission.POST_NOTIFICATIONS</code></strong> — only for rate alerts, and asked for only when you set your first one. Alerts are checked on your device against the rates the app already downloads; nothing about them leaves the phone.</li>
       </ul>
-      <p>The app does <em>not</em> request access to your location, contacts, camera, microphone, storage, phone state, or any other sensitive permission.</p>
+      <p>The app does <em>not</em> request access to your location, contacts, camera, microphone, storage, phone state, or any other sensitive permission. To offer the local currency when you travel, it reads which country's mobile network the phone is on, which needs no permission; that stays on the phone and is only compared with your phone's region.</p>
 
       <h2 id="network-activity" data-reveal>Network activity</h2>
       <p>For rates, the app makes outbound HTTPS requests <em>only</em> to the exchange rate provider you have selected in Settings and to the fallback provider set there (asked at the same time, in case the main one fails). The request contains:</p>
@@ -69,7 +69,7 @@
       </ul>
       <p>With <strong>Settings → Security &amp; privacy → Private requests</strong> on, every request is sent the same way as everyone else's: a fixed app name instead of the usual software versions, and none of the cache identifiers a server could use to recognise your phone from one request to the next. Your IP address still reaches the provider, as with any connection.</p>
       <p>No personally identifiable information is included in these requests. The providers' own privacy policies govern how they handle server-side access logs.</p>
-      <p>In the Google Play version, the first receipt scan downloads the text reader from Google Play, which handles that download under its own privacy policy. Reading receipts also needs text-recognition data, English and, if you choose, your app's language, downloaded once from Tesseract's public repository on GitHub (<code>raw.githubusercontent.com</code>). Nothing is downloaded until you agree: the first scan names each download and its size, and your app's language is a separate choice you can decline. The request is for a fixed public file and carries nothing about you; the file is checked against a fingerprint built into the app before it's used.</p>
+      <p>In the Google Play version, the first receipt scan downloads the text reader from Google Play, which handles that download under its own privacy policy. Reading receipts also needs text-recognition data, English and, if you choose, your app's language, a trip's language or others you add in Settings → Receipt languages, downloaded once from Tesseract's public repository on GitHub (<code>raw.githubusercontent.com</code>). Nothing is downloaded until you agree: the first scan names each download and its size, and your app's language is a separate choice you can decline. The request is for a fixed public file and carries nothing about you; the file is checked against a fingerprint built into the app before it's used.</p>
       <p>Receipt photos are read entirely on your device and are never uploaded. A photo taken for a scan is deleted as soon as it has been read. The app has no camera permission: the photo comes from your camera app or the system photo picker.</p>
 
       <figure class="inline-shot" data-reveal><img src="img/receipt-scan.webp" alt="A scanned receipt: milk, bread and bananas with their prices, ticked to add to the cart, with a note that it was read on the phone." width="822" height="600" loading="lazy" decoding="async"><figcaption>A receipt, read on the phone: the photo never leaves it.</figcaption></figure>
@@ -92,8 +92,8 @@
       <li>Cached exchange rates and rate history</li>
       <li>Selected currencies, recent pairs and the last historical date</li>
       <li>Starred (favourite) currencies</li>
-      <li>Settings (theme, fees, provider choices, keypad, app lock) and any API keys you entered</li>
-      <li>Carts, trips and rate alerts</li>
+      <li>Settings (theme, fees, provider choices, keypad, quick-conversion amounts, receipt languages, app lock) and any API keys you entered</li>
+      <li>Carts, trips (with their destinations and dates) and rate alerts</li>
       <li>A small diagnostic log and records of the app's last few crashes</li>
       </ul>
       <p>Nothing leaves the device unless you send it: a backup or a cart export goes to a file you choose, and <strong>About this app → Report a problem</strong> shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.</p>
@@ -134,7 +134,7 @@
     </ul>
   </nav>
   <div class="ft facts">
-    <p>Android 13 and later, in 33 languages.</p>
+    <p>Android 13 and later, in 32 languages.</p>
   </div>
   <div class="ft contact">
     <p class="legal">Found a problem?</p>
