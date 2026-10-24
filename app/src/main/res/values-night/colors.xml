@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- dark -->
-    <color name="colorBackground">@android:color/system_neutral1_900</color>
+    <!-- dark: ink, as the Compose palette -->
+    <color name="colorBackground">@color/inkBg</color>
     <!-- pure black -->
     <color name="colorBackgroundPureBlack">@android:color/black</color>
-    <color name="displayOverlayPureBlack">@null</color>
 
     <!-- M3 error tone 80 for dark surfaces: ~7:1 on #333331. -->
     <color name="app_error">#F2B8B5</color>
@@ -13,7 +12,6 @@
          override so the same semantic slot points at the tone that works
          for the current theme. -->
     <color name="rate_diff_positive">@color/dollarBill</color>
-    <color name="displayOverlay">@android:color/system_neutral1_800</color>
 
     <color name="brandMarkGreen">@color/billGreen</color>
     <color name="brandMarkBrass">@color/brass</color>

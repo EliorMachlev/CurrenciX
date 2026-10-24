@@ -16,7 +16,7 @@ private const val COUNT_MILLIS = 450
  * [target], counting there from the value shown before whenever it changes
  * (adding an item to the cart counts the total up), and jumping straight to
  * it when [key] changes (another currency: nothing to count from) or there
- * was nothing before.
+ * was nothing, or zero, before.
  */
 @Composable
 fun countTo(
@@ -27,7 +27,7 @@ fun countTo(
     val progress = remember { Animatable(1f) }
     LaunchedEffect(target, key) {
         val shown = count.at(progress.value)
-        if (target == null || shown == null || key != count.key) {
+        if (target == null || !count.canCountFrom(shown, key)) {
             count.restart(target, target, key)
             progress.snapTo(1f)
             return@LaunchedEffect
@@ -57,6 +57,14 @@ private class CountState(
         this.to = to
         this.key = key
     }
+
+    // Whether there's something to count from: a value shown, in the same
+    // currency, and not zero (the cart as it opens, before its items load),
+    // which would otherwise count up from 0.00 each time the screen appears.
+    fun canCountFrom(
+        shown: BigDecimal?,
+        key: Any?,
+    ): Boolean = shown != null && shown.signum() != 0 && key == this.key
 
     fun at(fraction: Float): BigDecimal? {
         val start = from ?: return to
