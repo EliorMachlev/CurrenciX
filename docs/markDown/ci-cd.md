@@ -18,7 +18,8 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `codeql.yaml` | PR to `master`, push → `master`, weekly (Mon 05:30 UTC), manual | GitHub CodeQL (Actions YAML) |
 | `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC), manual | SAST security pattern scanning |
 | `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC), manual | Secret / credential scanning |
-| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC), manual | Dependency vulnerability scan (CVSS ≥ 7) |
+| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC), manual | Dependency vulnerability scan against the NVD (CVSS ≥ 7); uses the `NVD_API_KEY` secret when set |
+| `osv-scanner.yaml` | PR, push → `master`, weekly (Mon 08:30 UTC), manual | Every library the release ships, from its SBOM, checked against OSV.dev; no API key |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. Its own quick workflow so Scorecard (below) can see it succeed on the latest commit, which is what makes Binary-Artifacts count the jar as validated |
 | `scorecard.yaml` | Push → `master`, weekly (Mon 06:00 UTC), manual | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
@@ -92,7 +93,13 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - CVSS threshold: 7 (high+): `--failOnCVSS 7`
 - Scans every library the fdroid release ships: `:app:owaspLibraries` copies them out of Gradle's cache as `app/build/owasp-libraries/<group>/<module>-<version>.<jar|aar>` (each library once, the project's own modules left out), since Dependency-Check reads files and their names, not Gradle's dependency graph; aars are opened too (`--zipExtensions aar`)
 - Detects retired/archived dependencies (`--enableRetired`)
-- SARIF uploaded to the Security tab (category `owasp-dependency-check`) and kept 30 days as the `owasp-report` artifact
+- Downloads NVD's vulnerability data each run. Without an API key that goes through NVD's anonymous rate limit, which is the likely reason the step stopped before writing a report every week from September 2026; with the `NVD_API_KEY` repository secret (free at nvd.nist.gov) it's passed as `--nvdApiKey`
+- SARIF uploaded to the Security tab (category `owasp-dependency-check`), only when the scan wrote one, and kept 30 days as the `owasp-report` artifact
+
+### OSV-Scanner
+- Writes the release SBOM (`:app:cyclonedxDirectBom`, the CycloneDX file the release attaches) and checks every library in it against [OSV.dev](https://osv.dev/), which gathers GitHub's advisories and others, by package URL. No API key.
+- Any known vulnerability fails the job, whatever its severity; results go to the Security tab (category `osv-scanner`).
+- Pinned to `google/osv-scanner-action` v2.7.0 by SHA, like every other action.
 
 ### OpenSSF Scorecard
 - Evaluates pinned-dependencies, branch-protection, SAST, etc., and publishes the score to the public Scorecard API (`publish_results`)
@@ -134,4 +141,5 @@ Every workflow but one sets `permissions: contents: read` at the top; `scorecard
 | `baseline-profile.yaml` | `contents: write`, `actions: write` for the `commit` job only (it calls `commit-baseline-profiles.yaml`) |
 | `dependency-review.yaml` | `pull-requests: write` |
 | `owasp-dependency-check.yaml` | `security-events: write` |
+| `osv-scanner.yaml` | `security-events: write` |
 | `commit-baseline-profiles.yaml` | `contents: write`, `actions: write`: pushes a Baseline Profile run's profiles to the branch (called by that workflow on a manual run with "commit" ticked, or run by hand with the run's ID), then dispatches Screenshots and the debug APK build on that commit; runs no build itself |

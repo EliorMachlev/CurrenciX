@@ -20,9 +20,13 @@ The Gradle, GitHub Actions and pip (the CI scripts' and Semgrep's `requirements.
 
 The `dependency-review` workflow blocks any PR that introduces a dependency with a **high or critical** CVE (CVSS ≥ 7).
 
+### OSV-Scanner
+
+On every PR, every push to `master` and weekly, the release SBOM is checked against OSV.dev (GitHub's advisories and others); any known vulnerability fails the check. It needs no API key.
+
 ### OWASP Dependency Check
 
-Weekly scan against the NVD database of every library the fdroid release ships (`:app:owaspLibraries` copies them out of Gradle's cache, named by their coordinates). Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries.
+Weekly scan against the NVD database of every library the fdroid release ships (`:app:owaspLibraries` copies them out of Gradle's cache, named by their coordinates). Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries. It needs an NVD API key (the `NVD_API_KEY` secret) to download its data in time.
 
 ## Secrets
 
@@ -105,6 +109,7 @@ Rationale: the app's DataStore files contain the user's API keys for Open Exchan
 | CodeQL | GitHub Actions YAML | Every PR, master push, weekly |
 | Semgrep | Security patterns | Every PR, master push, weekly |
 | Gitleaks | Secret / credential scanning | Every PR, master push, weekly |
+| OSV-Scanner | Known vulnerabilities in every library the release ships (its SBOM) | Every PR, master push, weekly |
 | Jazzer fuzzing | Parsers of text the app doesn't control (selected text, receipt scans, calculations, codes, amounts) | Every PR and master push, two minutes per parser |
 
 ## OpenSSF Scorecard

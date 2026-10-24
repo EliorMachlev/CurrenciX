@@ -26,6 +26,9 @@ jobs:
       # its coordinates (app/build/owasp-libraries/<group>/<module>-<version>).
       - name: Collect the libraries the app ships
         run: ./gradlew :app:owaspLibraries
+      # Without an NVD API key the vulnerability database downloads through
+      # NVD's anonymous rate limit, slowly enough to fail; the key comes from
+      # the NVD_API_KEY secret when it's set (free at nvd.nist.gov).
       - name: Run OWASP Dependency-Check
         uses: dependency-check/Dependency-Check_Action@1e54355a8b4c8abaa8cc7d0b70aa655a3bb15a6c # main
         with:
@@ -37,8 +40,11 @@ jobs:
             --failOnCVSS 7
             --enableRetired
             --zipExtensions aar
+            ${{ secrets.NVD_API_KEY != '' && format('--nvdApiKey {0}', secrets.NVD_API_KEY) || '' }}
+      # Only when the scan wrote one, so a scan that stopped early shows as
+      # its own failure rather than as a missing file here.
       - name: Upload SARIF to code scanning
-        if: always()
+        if: always() && hashFiles('reports/dependency-check-report.sarif') != ''
         uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
         with:
           sarif_file: reports/dependency-check-report.sarif
