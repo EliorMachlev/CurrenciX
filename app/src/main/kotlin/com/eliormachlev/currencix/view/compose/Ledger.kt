@@ -32,13 +32,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.hapticClickable
+import com.eliormachlev.currencix.view.compose.theme.LabelFamily
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
 // Ledger vocabulary — the shared row/section primitives every list surface
@@ -168,6 +168,7 @@ fun LedgerSectionHeader(
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.secondary,
         letterSpacing = LEDGER_SECTION_HEADER_LETTER_SPACING,
+        fontFamily = LabelFamily,
         modifier =
             modifier
                 .padding(
@@ -271,7 +272,7 @@ fun LedgerActiveChip(
         Text(
             text = text.uppercase(),
             style = MaterialTheme.typography.labelSmall,
-            fontFamily = FontFamily.Monospace,
+            fontFamily = LabelFamily,
             letterSpacing = LEDGER_CHIP_LETTER_SPACING,
             color = MaterialTheme.colorScheme.secondary,
             maxLines = 1,

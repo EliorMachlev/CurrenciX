@@ -23,11 +23,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.ReadingDirection
+import com.eliormachlev.currencix.view.compose.theme.LabelFamily
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import kotlinx.coroutines.launch
 
@@ -151,7 +151,7 @@ private fun LedgerSheetTitle(title: String) {
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.secondary,
         letterSpacing = SHEET_TITLE_LETTER_SPACING,
-        fontFamily = FontFamily.Monospace,
+        fontFamily = LabelFamily,
         modifier =
             Modifier
                 .padding(

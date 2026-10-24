@@ -2,11 +2,23 @@ package com.eliormachlev.currencix.view.compose.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
 private val Base = TextStyle(fontFamily = Inter)
+
+// One typeface across the app (Inter; Space Grotesk is the logo's alone).
+// The two text roles beyond Material's scale are named here once so every
+// screen shows them the same way: labels (section titles, a field's name, the
+// fee stamp, the sum being worked out) and amounts (a converted result, a
+// chart's rates, a quick-conversion total). Amounts also use [TABULAR_FIGURES].
+val LabelFamily: FontFamily = Inter
+val AmountFamily: FontFamily = Inter
+
+/** Inter's even-width digits, so amounts line up and don't shift as they change. */
+const val TABULAR_FIGURES = "tnum"
 
 val CurrenciXTypography =
     Typography(

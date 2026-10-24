@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +41,10 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ReadingDirection
+import com.eliormachlev.currencix.view.compose.theme.AmountFamily
+import com.eliormachlev.currencix.view.compose.theme.LabelFamily
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.compose.theme.TABULAR_FIGURES
 import com.eliormachlev.currencix.view.compose.theme.tile
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -207,6 +211,8 @@ private fun DatedRateColumn(
             Text(
                 text = combineValueAndSymbol(context, rate.value, rate.currency.symbol(), dated.second),
                 fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
+                fontFamily = AmountFamily,
+                style = LocalTextStyle.current.copy(fontFeatureSettings = TABULAR_FIGURES),
             )
         }
     }
@@ -316,6 +322,7 @@ private fun StatTile(
         Text(
             text = stat.label.uppercase(),
             style = MaterialTheme.typography.labelSmall,
+            fontFamily = LabelFamily,
             letterSpacing = TILE_LABEL_LETTER_SPACING_EM.em,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -325,6 +332,8 @@ private fun StatTile(
             Text(
                 text = stat.value ?: AnnotatedString(PLACEHOLDER_VALUE),
                 fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
+                fontFamily = AmountFamily,
+                style = LocalTextStyle.current.copy(fontFeatureSettings = TABULAR_FIGURES),
                 maxLines = 1,
             )
         }

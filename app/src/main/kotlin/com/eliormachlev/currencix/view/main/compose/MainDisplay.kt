@@ -104,9 +104,12 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.onboardingAnchor
 import com.eliormachlev.currencix.view.compose.shimmer
 import com.eliormachlev.currencix.view.compose.theme.AmberContainer
+import com.eliormachlev.currencix.view.compose.theme.AmountFamily
+import com.eliormachlev.currencix.view.compose.theme.LabelFamily
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Spacing
+import com.eliormachlev.currencix.view.compose.theme.TABULAR_FIGURES
 import com.eliormachlev.currencix.view.compose.theme.stampInk
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
@@ -184,9 +187,9 @@ private class AmountStyle(
 // The typed amount, and the fair result when a fee-adjusted one follows it.
 private val SUBTOTAL_STYLE = AmountStyle(AMOUNT_SUBTOTAL_SIZE, FontWeight.Medium)
 
-// The fair result on its own, and the fee-adjusted final: engraved serif.
-private val RESULT_STYLE = AmountStyle(AMOUNT_TO_SIZE, FontWeight.SemiBold, FontFamily.Serif)
-private val FINAL_STYLE = AmountStyle(AMOUNT_HERO_SIZE, FontWeight.SemiBold, FontFamily.Serif)
+// The fair result on its own, and the fee-adjusted final: the amount face.
+private val RESULT_STYLE = AmountStyle(AMOUNT_TO_SIZE, FontWeight.SemiBold, AmountFamily)
+private val FINAL_STYLE = AmountStyle(AMOUNT_HERO_SIZE, FontWeight.SemiBold, AmountFamily)
 
 // Pinned-symbol dim so the number is the primary read.
 private const val SYMBOL_ALPHA = 0.65f
@@ -233,7 +236,7 @@ private val PAY_RULE_BOTTOM_GAP: Dp = Spacing.Tiny
 private val TIGHT_TEXT_STYLE =
     TextStyle(
         platformStyle = PlatformTextStyle(includeFontPadding = false),
-        fontFeatureSettings = "tnum",
+        fontFeatureSettings = TABULAR_FIGURES,
     )
 
 // Trailing glyph on the math line so a running expression reads as
@@ -607,7 +610,7 @@ private fun ReceiptPanel(
             Text(
                 text = label.uppercase(),
                 fontSize = FEE_CHIP_TEXT_SIZE,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = LabelFamily,
                 letterSpacing = PANEL_LABEL_LETTER_SPACING,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -803,7 +806,7 @@ private fun MathLine(text: String?) {
             Text(
                 text = if (hasMath) "$text $OP_EQUALS" else " ",
                 fontSize = MATH_LINE_TEXT_SIZE,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = LabelFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 softWrap = false,
@@ -964,7 +967,7 @@ private fun ChipBelow(
                 text = FEE_STAMP_OP_PREFIX,
                 fontSize = FEE_CHIP_TEXT_SIZE,
                 fontWeight = FontWeight.Medium,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = LabelFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = FEE_STAMP_OP_GAP),
             )
@@ -1181,7 +1184,7 @@ private fun FeeChipText(
         text = text,
         fontSize = FEE_CHIP_TEXT_SIZE,
         fontWeight = FontWeight.Medium,
-        fontFamily = FontFamily.Monospace,
+        fontFamily = LabelFamily,
         letterSpacing = FEE_STAMP_LETTER_SPACING,
         color = stampInk(),
         maxLines = 1,
