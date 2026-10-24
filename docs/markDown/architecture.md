@@ -121,6 +121,8 @@ Saved data that can't be read back (a rate or a history that doesn't parse) is d
 
 Each store's first read waits on the disk (`PrefStore.snapshot`), so `CurrenciesApplication` reads every store once in the background as the process starts (`warmUpStores`), moving the old history file over at the same time: by the time a screen asks, the read is done, instead of happening on the main thread mid-frame.
 
+Every write to a store emits the whole store again, and each setting read from it maps that snapshot to its value. A setting stored as JSON (the cart, the saved carts, the fees) is decoded only when its own stored text changes, and encoded once per write (`LastResult`, in `keyedPref`), so typing a price doesn't re-parse every saved cart on the main thread. The cached rates are parsed once per new set, process-wide, on the refresh's own background thread (`RateStore.parsedRates`), not by each screen and widget on each emission. `Currency.fromString` is a map lookup.
+
 The one exception to "DataStore only": Cart JSON can be exported to / imported from an external file via the Storage Access Framework (`CartFileIo.kt`), but that's a one-off user-initiated file transfer, not an ongoing persistence layer.
 
 ### Three-tier rate cache: memory → disk → network
@@ -148,11 +150,13 @@ Each exchange-rate API returns a different JSON (or XML) schema. Rather than nor
 
 ### Coroutine dispatchers in one place
 
-`AppDispatchers` (`util/AppDispatchers.kt`) holds the IO and Default dispatchers. Classes the app constructs take one, defaulting to `AppDispatchers.production` (`ExchangeRatesRepository`, `DiskJsonStore`; `HttpClientProvider.fetch` and `retrofitCall` take the IO dispatcher as a parameter), so a test can hand in its own; the ones Android instantiates (the Application, `MainActivity`, the widget receiver) and `PrefStore`'s process-wide scope use `production` directly. Nothing names `Dispatchers.IO` / `Default` elsewhere, which detekt's `InjectDispatcher` enforces.
+`AppDispatchers` (`util/AppDispatchers.kt`) holds the IO and Default dispatchers, and the main one (looked up on first use, as a plain JVM has none). Classes the app constructs take one, defaulting to `AppDispatchers.production` (`ExchangeRatesRepository`, `DiskJsonStore`; `HttpClientProvider.fetch` and `retrofitCall` take the IO dispatcher as a parameter), so a test can hand in its own; the ones Android instantiates (the Application, `MainActivity`, the widget receiver) and `PrefStore`'s process-wide scope use `production` directly. Nothing names `Dispatchers.IO` / `Default` elsewhere, which detekt's `InjectDispatcher` enforces.
 
 ### LiveData for Reactive UI
 
 ViewModels expose `LiveData<T>` streams. Screens observe them (`observeAsState`) without holding references to the ViewModel, ensuring lifecycle-safety and no memory leaks. Preference changes propagate automatically via `Pref.liveData` / `Pref.flow` (`PrefStore.mappedLiveData { … }` underneath), which bridge each DataStore namespace's `Flow<Preferences>` into a `LiveData<T>` so observers pick up writes without a manual re-read.
+
+A ViewModel's derived streams are made once (`by lazy`), not per call: a screen asks for them as it composes, and a new LiveData per recomposition redid its work every time. The chart's readouts (the change, average, median, minimum, maximum) are worked out on the Default dispatcher, latest request wins, since scrubbing the chart asks for them every frame (`TimelineViewModel.rangeLiveData`).
 
 ### Refresh state: in memory, debounced for display
 

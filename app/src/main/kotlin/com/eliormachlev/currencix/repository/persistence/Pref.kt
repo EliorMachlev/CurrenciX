@@ -59,15 +59,21 @@ internal fun <S : Any, T> PrefStore.keyedPref(
     decode: (S?) -> T,
     encode: (T) -> S?,
     afterWrite: () -> Unit = {},
-): Pref<T> =
-    pref(
-        read = { decode(it[key]) },
+): Pref<T> {
+    // Decoded again only when the stored value changes (equal text), and
+    // encoded once per write (the same value object): the cache and the disk
+    // write both apply it, and every emission of the store re-reads it.
+    val decoded = LastResult<S?, T>(same = { a, b -> a == b }, compute = decode)
+    val encoded = LastResult<T, S?>(same = { a, b -> a === b }, compute = encode)
+    return pref(
+        read = { decoded(it[key]) },
         write = { value ->
-            val stored = encode(value)
+            val stored = encoded(value)
             if (stored == null) remove(key) else this[key] = stored
         },
         afterWrite = afterWrite,
     )
+}
 
 internal fun PrefStore.booleanPref(
     name: String,

@@ -220,12 +220,14 @@ enum class Currency(
                 "CNH", // special / offshore
             )
 
-        fun fromString(value: String): Currency? =
-            if (value !in excluded) {
-                entries.firstOrNull { it.iso4217Alpha == value }
-            } else {
-                null
-            }
+        // Code → currency, built once: the rate cache parses one code per rate
+        // (~170 per read) and every saved cart row names its currency, so a
+        // scan of the entries per lookup added up.
+        private val byCode: Map<String, Currency> by lazy {
+            entries.filterNot { it.iso4217Alpha in excluded }.associateBy { it.iso4217Alpha }
+        }
+
+        fun fromString(value: String): Currency? = byCode[value]
     }
 
     /**
