@@ -4,10 +4,10 @@ import android.app.Application
 import android.net.Uri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.core.app.ApplicationProvider
+import com.eliormachlev.currencix.repository.json.parseJsonObject
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.prefStore
 import kotlinx.coroutines.runBlocking
-import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -77,10 +77,10 @@ class BackupManagerTest {
         runBlocking<Unit> {
             val uri = newFile()
             assertEquals(BackupResult.Success, manager.export(uri, PASSWORD.toCharArray()))
-            val file = JSONObject(File(checkNotNull(uri.path)).readText())
+            val text = File(checkNotNull(uri.path)).readText()
             assertTrue(manager.isEncrypted(uri))
-            assertFalse("no plaintext namespaces", file.has("namespaces"))
-            assertFalse("the content isn't readable", "before" in file.toString())
+            assertFalse("no plaintext namespaces", parseJsonObject(text).has("namespaces"))
+            assertFalse("the content isn't readable", "before" in text)
             setProbe("changed since")
 
             assertEquals(BackupResult.Success, manager.import(uri, PASSWORD.toCharArray()))
@@ -92,11 +92,11 @@ class BackupManagerTest {
         runBlocking<Unit> {
             val first = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
             val second = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
-            val encryption = { uri: Uri -> JSONObject(File(checkNotNull(uri.path)).readText()).getJSONObject("encryption") }
+            val encryption = { uri: Uri -> checkNotNull(parseJsonObject(File(checkNotNull(uri.path)).readText()).optObject("encryption")) }
 
-            assertFalse(encryption(first).getString("salt") == encryption(second).getString("salt"))
-            assertFalse(encryption(first).getString("iv") == encryption(second).getString("iv"))
-            assertFalse(encryption(first).getString("ciphertext") == encryption(second).getString("ciphertext"))
+            listOf("salt", "iv", "ciphertext").forEach { field ->
+                assertFalse(field, encryption(first).optString(field) == encryption(second).optString(field))
+            }
         }
 
     @Test
@@ -117,11 +117,9 @@ class BackupManagerTest {
         runBlocking<Unit> {
             val uri = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
             val file = File(checkNotNull(uri.path))
-            val root = JSONObject(file.readText())
-            val encryption = root.getJSONObject("encryption")
-            val ciphertext = encryption.getString("ciphertext")
-            encryption.put("ciphertext", (if (ciphertext.first() == 'A') "B" else "A") + ciphertext.drop(1))
-            file.writeText(root.toString())
+            val ciphertext = checkNotNull(parseJsonObject(file.readText()).optObject("encryption")).optString("ciphertext")
+            val tampered = (if (ciphertext.first() == 'A') "B" else "A") + ciphertext.drop(1)
+            file.writeText(file.readText().replace(ciphertext, tampered))
 
             assertEquals(BackupResult.WrongPassword, manager.import(uri, PASSWORD.toCharArray()))
         }

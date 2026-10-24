@@ -1,23 +1,18 @@
 package com.eliormachlev.currencix.viewmodel.cart
 
-import android.app.Application
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.repository.CART_KEY_EXTRAS
+import com.eliormachlev.currencix.repository.json.JsonObject
 import com.eliormachlev.currencix.repository.parseCart
 import com.eliormachlev.currencix.repository.serializeCart
-import org.json.JSONObject
+import com.eliormachlev.currencix.repository.serializeCartText
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-// Robolectric for org.json, which the JVM's android.jar only stubs.
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], application = Application::class)
 class CartExtrasTest {
     private fun cart(extras: CartExtras = CartExtras()) =
         SavedCart(
@@ -55,14 +50,14 @@ class CartExtrasTest {
     @Test
     fun `extras survive a save and load, and old carts load without them`() {
         val extras = CartExtras(tipPercent = BigDecimal("12.5"), splitWays = 4, budget = BigDecimal("250"))
-        assertEquals(extras, parseCart(serializeCart(cart(extras)).toString())?.extras)
-        val old = serializeCart(cart()).toString()
+        assertEquals(extras, parseCart(serializeCartText(cart(extras)))?.extras)
+        val old = serializeCartText(cart())
         assertEquals(CartExtras(), parseCart(old)?.extras)
     }
 
     @Test
     fun `out-of-range extras from a file fall back to none`() {
-        val json = serializeCart(cart()).put("extras", JSONObject("""{"tipPercent":"-3","splitWays":500,"budget":"abc"}"""))
-        assertEquals(CartExtras(), parseCart(json.toString())?.extras)
+        val extras = mapOf("tipPercent" to "-3", "splitWays" to 500, "budget" to "abc")
+        assertEquals(CartExtras(), parseCart(JsonObject(serializeCart(cart()) + (CART_KEY_EXTRAS to extras)))?.extras)
     }
 }

@@ -2,7 +2,8 @@ package com.eliormachlev.currencix.repository
 
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeType
-import org.json.JSONObject
+import com.eliormachlev.currencix.repository.json.JsonObject
+import com.eliormachlev.currencix.repository.json.buildJsonObject
 
 // Wire keys for the saved fees, a JSON array in one preference (and in
 // backups, which copy preferences as they are).
@@ -17,12 +18,12 @@ private const val FEE_KEY_TO = "to"
 private const val FEE_KEY_BOTH_WAYS = "bothWays"
 private const val NO_PERCENT = "0"
 
-internal fun serializeFeeList(list: List<Fee>): String = list.toJsonArray(::serializeFee).toString()
+internal fun serializeFeeList(list: List<Fee>): String = list.toJsonArrayText(::serializeFee)
 
 internal fun parseFeeList(json: String?): List<Fee> = parseJsonList(json, TAG, "fee", ::parseFee)
 
-private fun serializeFee(fee: Fee): JSONObject =
-    JSONObject().apply {
+private fun serializeFee(fee: Fee): Map<String, Any> =
+    buildJsonObject {
         put(FEE_KEY_ID, fee.id)
         put(FEE_KEY_NAME, fee.name)
         put(FEE_KEY_PERCENT, fee.percent.toPlainString())
@@ -36,7 +37,7 @@ private fun serializeFee(fee: Fee): JSONObject =
     }
 
 // Null for an entry that can't be a fee (no valid percent, unknown type).
-private fun parseFee(obj: JSONObject): Fee? {
+private fun parseFee(obj: JsonObject): Fee? {
     val id = obj.optIdOrNew(FEE_KEY_ID)
     val name = obj.optString(FEE_KEY_NAME, "")
     val percent = obj.optString(FEE_KEY_PERCENT, NO_PERCENT).toBigDecimalOrNull() ?: return null

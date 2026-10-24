@@ -5,9 +5,13 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.eliormachlev.currencix.repository.optStringOrNull
-import org.json.JSONObject
+import com.eliormachlev.currencix.repository.json.JsonObject
+import com.eliormachlev.currencix.repository.json.parseJsonObject
+import com.eliormachlev.currencix.repository.json.writeJson
+import com.eliormachlev.currencix.util.toLocalDateOrNull
+import com.squareup.moshi.JsonWriter
 import timber.log.Timber
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -25,37 +29,65 @@ private const val FIELD_SUCCESS = "success"
 private const val TAG = "RateConverters"
 
 // The provider the cached data came from, stored by its id.
-private fun JSONObject.optProvider(): ApiProvider? = (opt(FIELD_PROVIDER) as? Int)?.let(ApiProvider::fromId)
+private fun JsonObject.optProvider(): ApiProvider? = if (has(FIELD_PROVIDER)) ApiProvider.fromId(optInt(FIELD_PROVIDER)) else null
+
+// One field written only when there's a value for it.
+private fun JsonWriter.optionalField(
+    name: String,
+    value: Any?,
+) {
+    value ?: return
+    name(name)
+    when (value) {
+        is Number -> value(value)
+        is Boolean -> value(value)
+        else -> value(value.toString())
+    }
+}
+
+// The "rates" field: each key with its rate as a plain string, so no
+// precision is lost to a JSON double.
+private fun <K> JsonWriter.ratesField(
+    rates: Iterable<Pair<K, Rate>>,
+    key: (K) -> String,
+) {
+    name(FIELD_RATES).beginObject()
+    rates.forEach { (k, rate) -> name(key(k)).value(rate.value.toPlainString()) }
+    endObject()
+}
+
+// Each entry of a "rates" object whose key [toKey] knows and whose value is a number.
+private fun <K> JsonObject.rates(toKey: (String) -> K?): Sequence<Pair<K, BigDecimal>> =
+    keys.asSequence().mapNotNull { name ->
+        val key = toKey(name) ?: return@mapNotNull null
+        val value = optString(name).toBigDecimalOrNull() ?: return@mapNotNull null
+        key to value
+    }
 
 /**
- * JSON [Converter] for [ExchangeRates]. Deliberately hand-rolled with
- * `org.json` rather than routed through Moshi:
- *
- *  - Mirrors the existing `Database.parseExchangeRates` pattern for
- *    consistency with the preferences-backed store.
- *  - Preserves the `@Transient` `time` and `provider` fields — Moshi would
- *    silently drop them on the way through the disk tier.
- *  - Zero reflection cost per read/write.
+ * JSON [Converter] for [ExchangeRates], written field by field with Moshi's
+ * streaming writer rather than through a generated adapter: that keeps the
+ * `@Transient` `time` and `provider` fields, which the adapter (built for the
+ * providers' responses) leaves out.
  */
 internal object ExchangeRatesConverter : Converter<ExchangeRates> {
-    override fun encode(value: ExchangeRates): String {
-        val obj = JSONObject()
-        value.base?.let { obj.put(FIELD_BASE, it.iso4217Alpha()) }
-        value.date?.let { obj.put(FIELD_DATE, it.toString()) }
-        value.time?.let { obj.put(FIELD_TIME, it.toString()) }
-        value.provider?.let { obj.put(FIELD_PROVIDER, it.id) }
-        val ratesObj = JSONObject()
-        value.rates?.forEach { rate -> ratesObj.put(rate.currency.iso4217Alpha(), rate.value.toPlainString()) }
-        obj.put(FIELD_RATES, ratesObj)
-        return obj.toString()
-    }
+    override fun encode(value: ExchangeRates): String =
+        writeJson { writer ->
+            writer.beginObject()
+            writer.optionalField(FIELD_BASE, value.base?.iso4217Alpha())
+            writer.optionalField(FIELD_DATE, value.date)
+            writer.optionalField(FIELD_TIME, value.time)
+            writer.optionalField(FIELD_PROVIDER, value.provider?.id)
+            writer.ratesField(value.rates.orEmpty().map { it.currency to it }, Currency::iso4217Alpha)
+            writer.endObject()
+        }
 
     override fun decode(encoded: String): ExchangeRates? =
         runCatching {
-            val obj = JSONObject(encoded)
+            val obj = parseJsonObject(encoded)
             val date = obj.optStringOrNull(FIELD_DATE)?.let(LocalDate::parse)
-            val ratesObj = obj.optJSONObject(FIELD_RATES) ?: return@runCatching null
-            val rates = decodeRates(ratesObj)
+            val ratesObj = obj.optObject(FIELD_RATES) ?: return@runCatching null
+            val rates = ratesObj.rates(Currency::fromString).map { (currency, rate) -> Rate(currency, rate) }.toList()
             if (rates.isEmpty()) return@runCatching null
             ExchangeRates(
                 success = true,
@@ -68,16 +100,6 @@ internal object ExchangeRatesConverter : Converter<ExchangeRates> {
             )
         }.onFailure { Timber.tag(TAG).w(it, "Failed to decode ExchangeRates") }
             .getOrNull()
-
-    private fun decodeRates(ratesObj: JSONObject): List<Rate> =
-        ratesObj
-            .keys()
-            .asSequence()
-            .mapNotNull { key ->
-                val currency = Currency.fromString(key) ?: return@mapNotNull null
-                val value = ratesObj.optString(key).toBigDecimalOrNull() ?: return@mapNotNull null
-                Rate(currency, value)
-            }.toList()
 }
 
 /**
@@ -88,24 +110,23 @@ internal object ExchangeRatesConverter : Converter<ExchangeRates> {
 internal class TimelineConverter(
     private val symbol: Currency,
 ) : Converter<Timeline> {
-    override fun encode(value: Timeline): String {
-        val obj = JSONObject()
-        obj.put(FIELD_SUCCESS, value.success ?: true)
-        value.base?.let { obj.put(FIELD_BASE, it) }
-        value.startDate?.let { obj.put(FIELD_START, it.toString()) }
-        value.endDate?.let { obj.put(FIELD_END, it.toString()) }
-        value.provider?.let { obj.put(FIELD_PROVIDER, it.id) }
-        val ratesObj = JSONObject()
-        value.rates?.forEach { (date, rate) -> ratesObj.put(date.toString(), rate.value.toPlainString()) }
-        obj.put(FIELD_RATES, ratesObj)
-        return obj.toString()
-    }
+    override fun encode(value: Timeline): String =
+        writeJson { writer ->
+            writer.beginObject()
+            writer.optionalField(FIELD_SUCCESS, value.success ?: true)
+            writer.optionalField(FIELD_BASE, value.base)
+            writer.optionalField(FIELD_START, value.startDate)
+            writer.optionalField(FIELD_END, value.endDate)
+            writer.optionalField(FIELD_PROVIDER, value.provider?.id)
+            writer.ratesField(value.rates.orEmpty().toList(), LocalDate::toString)
+            writer.endObject()
+        }
 
     override fun decode(encoded: String): Timeline? =
         runCatching {
-            val obj = JSONObject(encoded)
-            val ratesObj = obj.optJSONObject(FIELD_RATES) ?: return@runCatching null
-            val rates = decodeTimelineRates(ratesObj)
+            val obj = parseJsonObject(encoded)
+            val ratesObj = obj.optObject(FIELD_RATES) ?: return@runCatching null
+            val rates = ratesObj.rates(String::toLocalDateOrNull).associateTo(sortedMapOf()) { (date, rate) -> date to Rate(symbol, rate) }
             if (rates.isEmpty()) return@runCatching null
             Timeline(
                 success = obj.optBoolean(FIELD_SUCCESS, true),
@@ -118,14 +139,4 @@ internal class TimelineConverter(
             )
         }.onFailure { Timber.tag(TAG).w(it, "Failed to decode Timeline") }
             .getOrNull()
-
-    private fun decodeTimelineRates(ratesObj: JSONObject): Map<LocalDate, Rate> =
-        ratesObj
-            .keys()
-            .asSequence()
-            .mapNotNull { key ->
-                val date = runCatching { LocalDate.parse(key) }.getOrNull() ?: return@mapNotNull null
-                val value = ratesObj.optString(key).toBigDecimalOrNull() ?: return@mapNotNull null
-                date to Rate(symbol, value)
-            }.toMap(sortedMapOf())
 }

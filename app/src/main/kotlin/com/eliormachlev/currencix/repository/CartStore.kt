@@ -22,7 +22,7 @@ class CartStore(
 
     /** The cart being edited; null (and removed) when there is none. */
     val currentCart: Pref<SavedCart?> =
-        store.keyedPref(stringPreferencesKey(KEY_CART_CURRENT_JSON), ::parseCart, { it?.let(::serializeCart)?.toString() })
+        store.keyedPref(stringPreferencesKey(KEY_CART_CURRENT_JSON), ::parseCart, { it?.let(::serializeCartText) })
 
     val savedCarts: Pref<List<SavedCart>> =
         store.keyedPref(stringPreferencesKey(KEY_CARTS_SAVED_JSON), ::parseCartList, ::serializeCartList)

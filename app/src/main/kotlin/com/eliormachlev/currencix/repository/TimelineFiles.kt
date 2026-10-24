@@ -6,15 +6,22 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
+import com.eliormachlev.currencix.repository.json.MalformedJsonException
+import com.eliormachlev.currencix.repository.json.readJson
+import com.eliormachlev.currencix.repository.json.writeJson
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.PrefStore
 import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.util.DroppedCacheEntries
-import org.json.JSONException
-import org.json.JSONObject
+import com.eliormachlev.currencix.util.toLocalDateOrNull
+import com.squareup.moshi.JsonReader
+import okio.BufferedSource
+import okio.buffer
+import okio.source
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.concurrent.ConcurrentHashMap
 
@@ -69,7 +76,7 @@ internal class TimelineFiles private constructor(
         if (!file.isFile) return null
         val timeline =
             try {
-                decode(file.readText(), provider, base, symbol)
+                file.source().buffer().use { decode(it, provider, base, symbol) }
             } catch (e: IOException) {
                 Timber.tag(TAG).w(e, "Couldn't read %s", name)
                 null
@@ -151,33 +158,31 @@ internal class TimelineFiles private constructor(
             symbol: Currency,
         ): String = "${providerId}_${base.iso4217Alpha()}_${symbol.iso4217Alpha()}$FILE_EXTENSION"
 
-        internal fun encode(rates: Map<LocalDate, Rate>): String {
-            val obj = JSONObject()
-            rates.forEach { (date, rate) -> obj.put(date.toString(), rate.value.toPlainString()) }
-            return obj.toString()
-        }
+        // Rates as plain strings, so no precision is lost to a JSON double.
+        private fun encode(rates: Map<LocalDate, Rate>): String =
+            writeJson { writer ->
+                writer.beginObject()
+                rates.forEach { (date, rate) -> writer.name(date.toString()).value(rate.value.toPlainString()) }
+                writer.endObject()
+            }
 
         // Null when the text isn't a history (it's then fetched again).
-        internal fun decode(
-            json: String,
+        // Streamed: a history runs to thousands of days.
+        private fun decode(
+            source: BufferedSource,
             provider: ApiProvider,
             base: Currency,
             symbol: Currency,
         ): Timeline? {
-            val obj =
+            val values =
                 try {
-                    JSONObject(json)
-                } catch (e: JSONException) {
+                    readJson(source, ::readDatedValues)
+                } catch (e: MalformedJsonException) {
                     Timber.tag(TAG).w(e, "Malformed history for %s/%s", base, symbol)
                     return null
                 }
-            val rates = sortedMapOf<LocalDate, Rate>()
-            obj.keys().forEach { key ->
-                val date = runCatching { LocalDate.parse(key) }.getOrNull() ?: return@forEach
-                val value = obj.optString(key).toBigDecimalOrNull() ?: return@forEach
-                rates[date] = Rate(symbol, value)
-            }
-            if (rates.isEmpty()) return null
+            if (values.isEmpty()) return null
+            val rates = values.mapValuesTo(sortedMapOf<LocalDate, Rate>()) { (_, value) -> Rate(symbol, value) }
             return Timeline(
                 success = true,
                 error = null,
@@ -190,3 +195,25 @@ internal class TimelineFiles private constructor(
         }
     }
 }
+
+// A flat {date → rate} object; entries that aren't a date and a number are skipped.
+private fun readDatedValues(reader: JsonReader): Map<LocalDate, BigDecimal> {
+    val values = HashMap<LocalDate, BigDecimal>()
+    reader.beginObject()
+    while (reader.hasNext()) {
+        val date = reader.nextName().toLocalDateOrNull()
+        val value =
+            if (reader.peek() in RATE_TOKENS) {
+                reader.nextString().toBigDecimalOrNull()
+            } else {
+                reader.skipValue()
+                null
+            }
+        if (date != null && value != null) values[date] = value
+    }
+    reader.endObject()
+    return values
+}
+
+// The tokens a rate can be: a string (as written) or a bare number (hand-edited).
+private val RATE_TOKENS = setOf(JsonReader.Token.STRING, JsonReader.Token.NUMBER)

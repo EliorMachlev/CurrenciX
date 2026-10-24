@@ -6,12 +6,12 @@ import com.eliormachlev.currencix.model.AlertDirection
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.RateAlert
+import com.eliormachlev.currencix.repository.json.buildJsonObject
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.repository.persistence.PrefStore
 import com.eliormachlev.currencix.repository.persistence.keyedPref
 import com.eliormachlev.currencix.repository.persistence.prefStore
-import org.json.JSONObject
 import java.math.BigDecimal
 
 private const val TAG = "RateAlertStore"
@@ -56,17 +56,16 @@ class RateAlertStore(
 }
 
 internal fun serializeRateAlerts(list: List<RateAlert>): String =
-    list
-        .toJsonArray { alert ->
-            JSONObject().apply {
-                put(ALERT_KEY_ID, alert.id)
-                put(ALERT_KEY_FROM, alert.pair.from.iso4217Alpha())
-                put(ALERT_KEY_TO, alert.pair.to.iso4217Alpha())
-                // A string, so no precision is lost to a JSON double.
-                put(ALERT_KEY_THRESHOLD, alert.threshold.toPlainString())
-                put(ALERT_KEY_DIRECTION, alert.direction.key)
-            }
-        }.toString()
+    list.toJsonArrayText { alert ->
+        buildJsonObject {
+            put(ALERT_KEY_ID, alert.id)
+            put(ALERT_KEY_FROM, alert.pair.from.iso4217Alpha())
+            put(ALERT_KEY_TO, alert.pair.to.iso4217Alpha())
+            // A string, so no precision is lost to a JSON double.
+            put(ALERT_KEY_THRESHOLD, alert.threshold.toPlainString())
+            put(ALERT_KEY_DIRECTION, alert.direction.key)
+        }
+    }
 
 // An entry with an unknown currency or direction, or no threshold, is skipped.
 internal fun parseRateAlerts(json: String?): List<RateAlert> =

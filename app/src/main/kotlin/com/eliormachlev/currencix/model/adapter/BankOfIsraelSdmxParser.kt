@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.model.adapter
 
+import com.eliormachlev.currencix.util.toLocalDateOrNull
 import com.squareup.moshi.JsonReader
 import okio.buffer
 import okio.source
@@ -79,7 +80,7 @@ internal class BankOfIsraelSdmxParser {
             .firstOrNull { it.id == DIM_TIME_PERIOD }
             ?.codes
             .orEmpty()
-            .map { code -> code?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
+            .map { code -> code?.toLocalDateOrNull() }
             .takeIf { parsed -> parsed.any { it != null } }
             .orEmpty()
 

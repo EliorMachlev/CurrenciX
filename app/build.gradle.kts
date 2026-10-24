@@ -331,8 +331,11 @@ dependencies {
     val chuckerVersion = "4.3.1"
     debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:$chuckerVersion")
+    // Moshi without its reflection module (moshi-kotlin pulls in kotlin-reflect):
+    // every JSON type has a generated adapter (@JsonClass, by KSP) or one of
+    // the app's own (model/adapter, repository/json).
     val moshiVersion = "1.15.2"
-    implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
+    implementation("com.squareup.moshi:moshi:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
     // Retrofit: type-safe HTTP interfaces layered on top of the shared OkHttp
     // client (see util/RetrofitProvider.kt). Migrated one provider at a time
