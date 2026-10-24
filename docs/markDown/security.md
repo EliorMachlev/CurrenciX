@@ -26,7 +26,7 @@ On every PR, every push to `master` and weekly, the release SBOM is checked agai
 
 ### OWASP Dependency Check
 
-Weekly scan against the NVD database of every library the fdroid release ships (`:app:owaspLibraries` copies them out of Gradle's cache, named by their coordinates). Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries. It needs an NVD API key (the `NVD_API_KEY` secret) to download its data in time.
+Weekly scan against the NVD database of every library the fdroid release ships (`:app:owaspLibraries` copies them out of Gradle's cache, named by their coordinates). Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries. It uses the NVD data built into the scanner's image, so it needs no API key.
 
 ## Secrets
 

@@ -26,11 +26,15 @@ jobs:
       # its coordinates (app/build/owasp-libraries/<group>/<module>-<version>).
       - name: Collect the libraries the app ships
         run: ./gradlew :app:owaspLibraries
-      # Without an NVD API key the vulnerability database downloads through
-      # NVD's anonymous rate limit, slowly enough to fail; the key comes from
-      # the NVD_API_KEY secret when it's set (free at nvd.nist.gov).
+      # The action runs Dependency-Check in its own container, with the
+      # vulnerability data built into its image (--noupdate), so it needs no
+      # NVD key. JAVA_HOME is emptied for it: setup-java's path above doesn't
+      # exist inside that container, and the scanner refuses to start with it
+      # ("JAVA_HOME is not defined correctly"); empty, it uses the image's java.
       - name: Run OWASP Dependency-Check
         uses: dependency-check/Dependency-Check_Action@1e54355a8b4c8abaa8cc7d0b70aa655a3bb15a6c # main
+        env:
+          JAVA_HOME: ''
         with:
           project: currencies
           path: 'app/build/owasp-libraries'
@@ -40,7 +44,7 @@ jobs:
             --failOnCVSS 7
             --enableRetired
             --zipExtensions aar
-            ${{ secrets.NVD_API_KEY != '' && format('--nvdApiKey {0}', secrets.NVD_API_KEY) || '' }}
+
       # Only when the scan wrote one, so a scan that stopped early shows as
       # its own failure rather than as a missing file here.
       - name: Upload SARIF to code scanning

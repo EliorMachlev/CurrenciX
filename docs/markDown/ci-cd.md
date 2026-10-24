@@ -18,7 +18,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `codeql.yaml` | PR to `master`, push → `master`, weekly (Mon 05:30 UTC), manual | GitHub CodeQL (Actions YAML) |
 | `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC), manual | SAST security pattern scanning |
 | `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC), manual | Secret / credential scanning |
-| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC), manual | Dependency vulnerability scan against the NVD (CVSS ≥ 7); uses the `NVD_API_KEY` secret when set |
+| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC), manual | Dependency vulnerability scan against the NVD data built into the action's image (CVSS ≥ 7) |
 | `osv-scanner.yaml` | PR, push → `master`, weekly (Mon 08:30 UTC), manual | Every library the release ships, from its SBOM, checked against OSV.dev; no API key |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. Its own quick workflow so Scorecard (below) can see it succeed on the latest commit, which is what makes Binary-Artifacts count the jar as validated |
@@ -93,7 +93,7 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - CVSS threshold: 7 (high+): `--failOnCVSS 7`
 - Scans every library the fdroid release ships: `:app:owaspLibraries` copies them out of Gradle's cache as `app/build/owasp-libraries/<group>/<module>-<version>.<jar|aar>` (each library once, the project's own modules left out), since Dependency-Check reads files and their names, not Gradle's dependency graph; aars are opened too (`--zipExtensions aar`)
 - Detects retired/archived dependencies (`--enableRetired`)
-- Downloads NVD's vulnerability data each run. Without an API key that goes through NVD's anonymous rate limit, which is the likely reason the step stopped before writing a report every week from September 2026; with the `NVD_API_KEY` repository secret (free at nvd.nist.gov) it's passed as `--nvdApiKey`
+- Runs in the action's own container, on the NVD data built into its image (the action passes `--noupdate`), so no NVD API key is needed. `JAVA_HOME` is emptied for that step: the runner's path from `setup-java` doesn't exist in the container, and the scanner refused to start with it ("JAVA_HOME is not defined correctly"), which is why every weekly run failed from at least September 2026
 - SARIF uploaded to the Security tab (category `owasp-dependency-check`), only when the scan wrote one, and kept 30 days as the `owasp-report` artifact
 
 ### OSV-Scanner
