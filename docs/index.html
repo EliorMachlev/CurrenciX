@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CurrenciX: a private currency converter for Android</title>
+  <title>CurrenciX, a private currency converter for Android</title>
   <meta name="description" content="CurrenciX is a free, open-source currency converter for Android: your card&#x27;s fee counted in, eight rate providers, charts, alerts and a travel cart, with no ads and no tracking.">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F3EEE5" media="(prefers-color-scheme: light)">
@@ -12,123 +12,188 @@
   <link rel="preload" href="fonts/space_grotesk_medium.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/inter_regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script src="site.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-
-<header class="bar">
-  <div class="wrap bar-inner">
-    <a class="wordmark" href="index.html" aria-label="CurrenciX home">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="index.html" aria-label="CurrenciX home"><span>Currenci</span><svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
     <nav aria-label="Site">
-      <ul class="nav">
-        <li><a href="index.html" aria-current="page">Home</a></li>
+      <ul>
         <li><a href="features.html">Features</a></li>
         <li><a href="providers.html">Providers</a></li>
         <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="https://github.com/EliorMachlev/CurrenciX">Source</a></li>
       </ul>
     </nav>
-    <a class="bar-source" href="https://github.com/EliorMachlev/CurrenciX"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.37.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.7.83.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg><span>Source</span></a>
   </div>
 </header>
 
 <main id="main">
-<section class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <svg class="mark mark-hero" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg>
-      <h1>What it really costs, in your money.</h1>
-      <p class="lede">CurrenciX converts prices with your card's fee counted in, keeps working offline from the last rates it saved, and sends nothing about you anywhere. A free, open-source travel companion for Android 13 and later.</p>
-      <div class="actions">
-        <a class="button button-primary" href="https://github.com/EliorMachlev/CurrenciX"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.37.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.7.83.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>Get the source</a>
-        <a class="button" href="features.html">See every feature</a>
+<section class="hero" aria-labelledby="title">
+  <div class="hero-text">
+    <svg class="mark mark-hero" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg>
+    <h1 id="title" class="lines"><span class="line"><span data-line style="--i:0">A currency converter</span></span><span class="line"><span data-line style="--i:1">that adds your card fee</span></span></h1>
+    <p class="lede" data-load style="--d:520ms">Type a price, pick your card's fee, and see what you'll really pay. CurrenciX is free, private and open source, for Android 13 and later.</p>
+    <div class="actions" data-load style="--d:640ms">
+      <a class="button" href="https://github.com/EliorMachlev/CurrenciX"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.37.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.7.83.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>Get the source code</a>
+      <a class="text-link" href="features.html">See every feature</a>
+    </div>
+    <p class="status" data-load style="--d:760ms">The first release is on its way to GitHub Releases and F-Droid.</p>
+  </div>
+
+  <div class="hero-fragment">
+    <form class="receipt" data-ui data-receipt aria-label="Try it: the converter's receipt" onsubmit="return false">
+      <div class="pair">
+        <span class="pill" data-from>ILS</span>
+        <button type="button" class="swap" aria-label="Swap the currencies"><svg class="icon" aria-hidden="true"><use href="icons.svg#swap_horiz"/></svg></button>
+        <span class="pill" data-to>USD</span>
       </div>
-      <p class="status">The first release is on its way to GitHub Releases and F-Droid. Until then, you can <a href="https://github.com/EliorMachlev/CurrenciX#-get-it">build it yourself</a>.</p>
-    </div>
-
-    <figure class="receipt" aria-label="Example: 240 shekels is 64.86 US dollars at the mid-market rate, and 66.48 dollars with a 2.5% card fee.">
-      <figcaption class="receipt-caption">Example: dinner in Tel Aviv</figcaption>
-      <div class="receipt-pair">ILS <svg class="icon" aria-hidden="true"><use href="icons.svg#swap_horiz"/></svg> USD</div>
-      <p class="receipt-price">₪ 240.00</p>
-      <dl>
-        <div><dt>Mid-market</dt><dd>$ 64.86</dd></div>
-        <div><dt>Card fee</dt><dd>+ $ 1.62</dd></div>
-        <div class="total"><dt>You pay</dt><dd>$ 66.48</dd></div>
+      <div class="field">
+        <label for="price">Price</label>
+        <div class="amount"><span data-symbol aria-hidden="true">₪</span><input id="price" inputmode="decimal" value="240.00" autocomplete="off"></div>
+        <p class="rate-line"><label for="rate">Example rate: 1 USD =</label> <input id="rate" inputmode="decimal" value="3.70" autocomplete="off"> ILS</p>
+      </div>
+      <div class="field" role="group" aria-labelledby="fee-label">
+        <span class="label" id="fee-label">Your card's fee</span>
+        <div class="fees"><button type="button" data-fee="0" aria-pressed="false">None</button><button type="button" data-fee="1" aria-pressed="false">1%</button><button type="button" data-fee="1.75" aria-pressed="false">1.75%</button><button type="button" data-fee="2.5" aria-pressed="true">2.5%</button><button type="button" data-fee="3" aria-pressed="false">3%</button></div>
+      </div>
+      <dl class="totals" aria-live="polite">
+        <div><dt>Mid-market</dt><dd data-out="mid">$ 64.86</dd></div>
+        <div><dt>Card fee</dt><dd data-out="fee">+ $ 1.62</dd></div>
+        <div class="pay"><dt>You pay</dt><dd data-out="pay">$ 66.48</dd></div>
       </dl>
-      <p class="receipt-source">At 3.7000 shekels to the dollar. Figures for illustration.</p>
-      <span class="stamp" aria-hidden="true">+2.5%<small>card fee</small></span>
-    </figure>
+      <span class="stamp" aria-hidden="true"><b>+2.5%</b><small>card fee</small></span>
+    </form>
   </div>
 </section>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Made for the till, not the trading floor</h2>
-      <a class="more" href="features.html">All features</a>
+<section class="section wrap" aria-labelledby="converter-title">
+  <div class="plate">
+    <div class="plate-notes left">
+<h2 class="plate-title" id="converter-title" data-reveal>The converter, part by part</h2>
+      <div class="note" data-note="pair" tabindex="0" style="--top:5rem" data-reveal><h3>Your pair, and a swap</h3><p>Two pills pick the currencies; the round button turns them around.</p></div>
+      <div class="note" data-note="true" tabindex="0" style="--top:11rem" data-reveal><h3>The true cost</h3><p>Your card's fee, counted in. The stamp says how much it adds.</p></div>
+      <div class="note" data-note="chips" tabindex="0" style="--top:17rem" data-reveal><h3>Recent pairs</h3><p>The pairs you used last, under the result, to switch back in one tap.</p></div>
     </div>
-    <ul class="ledger">
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#credit_card"/></svg></span><h3>The true cost</h3><p>Add your card's or bank's fee, for every pair or just one, and see what you'll really pay beside the mid-market rate. Compare your cards on the spot.</p></li>
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#calculate"/></svg></span><h3>A calculator built in</h3><p>Work out + − × ÷, brackets and percent before converting, or paste a price copied from another app.</p></li>
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#show_chart"/></svg></span><h3>Charts and alerts</h3><p>A week to five years of history, rates back to 2010 for any past date, and a notification when a pair reaches your rate.</p></li>
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#shopping_cart"/></svg></span><h3>A cart for the trip</h3><p>Prices in your currency with quantities, tip, a budget and a split by person. Scan a receipt to fill it, on the phone.</p></li>
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#touch_app"/></svg></span><h3>Wherever you are on the phone</h3><p>Convert a price you select in any app, from a home-screen widget, a Quick Settings tile or a launcher shortcut.</p></li>
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#lock"/></svg></span><h3>Nothing about you leaves</h3><p>No ads, no analytics, no account. An optional app lock, private requests and encrypted backups.</p></li>
-    </ul>
+    <div class="converter" data-ui data-converter role="group" aria-label="Try it: the converter">
+      <div class="bar" data-part="bar">
+        <span class="wordmark">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></span>
+        <span class="ibtn" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#show_chart"/></svg></span>
+        <span class="ibtn" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#shopping_cart"/></svg></span>
+        <span class="ibtn" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#table_chart"/></svg></span>
+        <span class="ibtn" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#history"/></svg></span>
+      </div>
+      <div class="card">
+        <div class="pair" data-part="pair"><span class="pill">USD</span><span class="swap" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#swap_horiz"/></svg></span><span class="pill">ILS</span></div>
+        <div data-part="amount">
+          <p class="expr" data-expr></p>
+          <p class="from" data-amount aria-live="polite">$ 64.86</p>
+        </div>
+        <div class="to"><span class="label">At 3.70</span><span class="value" data-result>₪ 239.98</span></div>
+        <div class="true" data-part="true"><span class="label">With Visa abroad</span><span class="stamp-sm" aria-hidden="true">+1.75%</span><span class="value" data-true>₪ 244.18</span></div>
+      </div>
+      <div class="chips" data-part="chips"><span class="chip">EUR → ILS</span><span class="chip">USD → EUR</span><span class="chip">GBP → ILS</span></div>
+      <div class="keypad" data-part="keypad"><button type="button" class="clear" data-key="C" aria-label="Clear">C</button><button type="button" class="" data-key="()" aria-label="Brackets">( )</button><button type="button" class="" data-key="%" aria-label="Percent">%</button><button type="button" class="" data-key="7">7</button><button type="button" class="" data-key="8">8</button><button type="button" class="" data-key="9">9</button><button type="button" class="" data-key="4">4</button><button type="button" class="" data-key="5">5</button><button type="button" class="" data-key="6">6</button><button type="button" class="" data-key="1">1</button><button type="button" class="" data-key="2">2</button><button type="button" class="" data-key="3">3</button><button type="button" class="" data-key="0">0</button><button type="button" class="" data-key="." aria-label="Decimal point">.</button><button type="button" class="" data-key="back" aria-label="Delete"><svg class="icon" aria-hidden="true"><use href="icons.svg#backspace"/></svg></button><div class="rail"><button type="button" class="" data-key="÷" aria-label="Divide">÷</button><button type="button" class="" data-key="×" aria-label="Multiply">×</button><button type="button" class="" data-key="-" aria-label="Minus">−</button><button type="button" class="" data-key="+" aria-label="Plus">+</button></div><button type="button" class="eq" data-key="=" aria-label="Equals">=</button></div>
+    </div>
+    <div class="plate-notes right">
+      <div class="note" data-note="bar" tabindex="0" style="--top:0rem" data-reveal><h3>Shortcuts on top</h3><p>The rate chart, the cart, quick conversions and your history, one tap away.</p></div>
+      <div class="note" data-note="amount" tabindex="0" style="--top:6rem" data-reveal><h3>Sums before you convert</h3><p>Add up a bill or take a percentage off; the line above the amount shows the sum.</p></div>
+      <div class="note" data-note="keypad" tabindex="0" style="--top:20rem" data-reveal><h3>A keypad made for money</h3><p>Brackets, percent and a brass rail of operators. Try it: the keys work.</p></div>
+    </div>
   </div>
 </section>
 
-<section class="section">
+<section class="board-section" aria-labelledby="cart-title">
   <div class="wrap">
-    <div class="section-head">
-      <h2>Eight sources for the rates</h2>
-      <p>Central banks, the European Commission and two commercial services. Pick one, and a fallback for when it's down.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th scope="col">Provider</th><th scope="col">Currencies</th><th scope="col">Updates</th><th scope="col">Quoted in</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Frankfurter.app<small>European Central Bank</small></th><td class="num">~33</td><td>Business days</td><td class="code">EUR</td></tr>
-          <tr><th scope="row">Open Exchangerates<small>Commercial aggregator</small></th><td class="num">160+</td><td>Hourly</td><td class="code">USD</td></tr>
-          <tr><th scope="row">AllRatesToday<small>Mid-market interbank rates</small></th><td class="num">~160</td><td>About every minute</td><td class="code">EUR</td></tr>
-          <tr><th scope="row">InforEuro<small>European Commission</small></th><td class="num">~150</td><td>Monthly</td><td class="code">EUR</td></tr>
-          <tr><th scope="row">Bank of Canada<small>Central bank</small></th><td class="num">~23</td><td>Business days</td><td class="code">CAD</td></tr>
-          <tr><th scope="row">Norges Bank<small>Central bank</small></th><td class="num">~40</td><td>Business days</td><td class="code">NOK</td></tr>
-          <tr><th scope="row">Bank Rossii<small>Central bank</small></th><td class="num">~44</td><td>Business days</td><td class="code">RUB</td></tr>
-          <tr><th scope="row">Bank of Israel<small>Central bank</small></th><td class="num">~14</td><td>Business days</td><td class="code">ILS</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p style="margin-top:var(--space-3)"><a class="more" href="providers.html">Compare the providers</a></p>
+    <h2 class="section-title" id="cart-title" data-reveal>A cart for the whole trip</h2>
+    <p class="section-intro" data-reveal style="--i:1">Every price in the currency you think in, with tip, split and budget. Open a row to see what the app does with it.</p>
+  </div>
+  <ul class="board" data-ui data-board data-reveal style="--i:2">
+      <li><button type="button" aria-expanded="false"><span class="name">Coffee ×2</span><span class="price num">$ 9.00</span><span class="conv num">≈ ₪ 33.30</span><span class="st basket">In basket</span><span class="detail">Two at $ 4.50, ticked off in the basket. The totals card counts what's in the basket on its own line.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Bread</span><span class="price num">$ 3.75</span><span class="conv num">≈ ₪ 13.88</span><span class="st basket">In basket</span><span class="detail">Typed as 3.25 + 0.50: the calculation stays under the name.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Olive oil</span><span class="price num">$ 12.90</span><span class="conv num">≈ ₪ 47.73</span><span class="st pinned">Pinned</span><span class="detail">Pinned items stay at the top of the cart, in a section of their own.</span></button></li>
+      <li class="open"><button type="button" aria-expanded="true"><span class="name">Dinner for three</span><span class="price num">$ 110.40</span><span class="conv num">≈ ₪ 408.48</span><span class="st shared">Split 3 ways</span><span class="detail">$ 96.00 with a 15% tip, split evenly: ₪ 136.16 each. Pick a person instead and they pay for their own items.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Museum ×2</span><span class="price num">$ 36.00</span><span class="conv num">≈ ₪ 133.20</span><span class="st person">Dana</span><span class="detail">For Dana: she pays for her own items, plus her share of the shared ones.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Sunscreen</span><span class="price num">$ 14.50</span><span class="conv num">≈ ₪ 53.65</span><span class="st shared">Shared</span><span class="detail">Items for no one in particular are shared by everyone.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Ferry ×3</span><span class="price num">$ 27.00</span><span class="conv num">≈ ₪ 99.90</span><span class="st pinned">Pinned</span><span class="detail">Three tickets at $ 9.00; the quantity sits beside the name.</span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="name">Postcards ×4</span><span class="price num">$ 6.00</span><span class="conv num">≈ ₪ 22.20</span><span class="st basket">In basket</span><span class="detail">Scanned from the receipt: the text is read on the phone and never uploaded.</span></button></li>
+  </ul>
+</section>
+
+<section class="section wrap" aria-labelledby="screens-title">
+  <h2 class="section-title" id="screens-title" data-reveal>More of the app, as it draws itself</h2>
+  <p class="section-intro" data-reveal style="--i:1">Straight from the app's screenshot tests, light and dark.</p>
+  <div class="shots">
+    <figure data-reveal style="--i:0"><img src="img/quick-conversions-dark.webp" alt="Quick conversions in the dark theme: shekels at round amounts in dollars, with a 1% fee, and the typed amount on a brass tile." width="822" height="600" loading="lazy" decoding="async"><figcaption>Quick conversions, fee included</figcaption></figure>
+    <figure data-reveal style="--i:1"><img src="img/compare-cards.webp" alt="Which card is cheaper: Revolut at 0.50% comes to 366.82 shekels, Visa abroad at 2.50% to 374.12, 7.30 more." width="822" height="600" loading="lazy" decoding="async"><figcaption>Two cards, compared for one amount</figcaption></figure>
+    <figure data-reveal style="--i:2"><img src="img/rate-chart-dark.webp" alt="Euro rate statistics for a year: from 0.9153 to 0.9370, up 2.37%, with the maximum, minimum, average and median." width="822" height="600" loading="lazy" decoding="async"><figcaption>A year of rates, in figures</figcaption></figure>
+    <figure data-reveal style="--i:3"><img src="img/receipt-scan.webp" alt="A scanned receipt: milk, bread and bananas with their prices, ticked to add to the cart." width="822" height="600" loading="lazy" decoding="async"><figcaption>A receipt, read on the phone</figcaption></figure>
   </div>
 </section>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Open, and checked on every change</h2>
+<section class="section wrap" aria-labelledby="more-title">
+  <div class="index">
+    <div>
+      <h2 class="section-title" id="more-title" data-reveal>And the rest of what it does</h2>
+      <p class="section-intro" data-reveal style="--i:1">Rates from eight sources, a cart for the trip, and a phone that stays yours.</p>
+      <p class="more" data-reveal style="--i:2"><a class="text-link" href="features.html">Every feature, explained</a><a class="text-link" href="providers.html">The rate providers</a></p>
     </div>
-    <ul class="ledger">
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#gavel"/></svg></span><h3>GPL 3.0 or later</h3><p>All of the source is on GitHub: read it, audit it, fork it, or send a fix.</p></li>
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#package_2"/></svg></span><h3>Ready for F-Droid</h3><p>The <code>fdroid</code> build has no proprietary libraries and is built to be reproducible from source.</p></li>
-      <li><span class="glyph"><svg class="icon" aria-hidden="true"><use href="icons.svg#verified_user"/></svg></span><h3>Security checks</h3><p>Android Lint, detekt, Qodana, Semgrep, CodeQL, Gitleaks and fuzz tests on every change; OpenSSF Scorecard and OWASP Dependency-Check watch the supply chain.</p></li>
-    </ul>
+    <div class="index-groups">
+      <div data-reveal style="--i:0"><h3>Rates</h3><ul class="rows"><li><svg class="icon" aria-hidden="true"><use href="icons.svg#account_balance"/></svg><span>Eight providers</span><span class="value">ECB to Bank of Israel</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#alt_route"/></svg><span>A fallback provider</span><span class="value">When one is down</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#event"/></svg><span>Past dates' rates</span><span class="value">Back to 2010</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#show_chart"/></svg><span>Charts</span><span class="value">A week to ten years</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#notifications"/></svg><span>Rate alerts</span><span class="value">Checked on the phone</span></li></ul></div>
+      <div data-reveal style="--i:1"><h3>Converting</h3><ul class="rows"><li><svg class="icon" aria-hidden="true"><use href="icons.svg#content_paste"/></svg><span>Paste a price</span><span class="value">Amount and currency</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#touch_app"/></svg><span>From any app</span><span class="value">Text selection menu</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#star"/></svg><span>Starred currencies</span><span class="value">Your own order</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#credit_card"/></svg><span>Compare cards</span><span class="value">Cheapest first</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#table_chart"/></svg><span>Quick conversions</span><span class="value">Round amounts</span></li></ul></div>
+      <div data-reveal style="--i:2"><h3>The cart</h3><ul class="rows"><li><svg class="icon" aria-hidden="true"><use href="icons.svg#receipt_long"/></svg><span>Receipt scanning</span><span class="value">On the phone</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#luggage"/></svg><span>Trips</span><span class="value">Home currency, budget</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#ios_share"/></svg><span>Share and export</span><span class="value">Text, image, CSV, PDF</span></li></ul></div>
+      <div data-reveal style="--i:3"><h3>On your phone</h3><ul class="rows"><li><svg class="icon" aria-hidden="true"><use href="icons.svg#palette"/></svg><span>Wallpaper colours</span><span class="value">Or paper and ink</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#contrast"/></svg><span>Themes</span><span class="value">Light, dark, black</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#translate"/></svg><span>Languages</span><span class="value">33</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#widgets"/></svg><span>Widget, tile, shortcuts</span><span class="value">Home screen</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#devices"/></svg><span>Tablets and foldables</span><span class="value">Two panes</span></li></ul></div>
+      <div data-reveal style="--i:4"><h3>Privacy</h3><ul class="rows"><li><svg class="icon" aria-hidden="true"><use href="icons.svg#block"/></svg><span>Ads, analytics, accounts</span><span class="value">None</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#lock"/></svg><span>App lock</span><span class="value">Fingerprint or PIN</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#visibility_off"/></svg><span>Private requests</span><span class="value">Look like anyone's</span></li><li><svg class="icon" aria-hidden="true"><use href="icons.svg#save"/></svg><span>Backups</span><span class="value">Encrypted, to your file</span></li></ul></div>
+    </div>
   </div>
+</section>
+
+<section class="section wrap" aria-labelledby="open-title">
+  <div class="tiles">
+    <div class="tile lead" data-reveal><h2 id="open-title">Open, and checked on every change</h2><p>Every line is on GitHub. Each change runs Android Lint, detekt, Qodana, the tools below and fuzz tests before it's merged.</p></div>
+    <div class="tile" data-reveal style="--i:1"><b>GPL 3.0</b><span>Free software, all of it</span></div>
+    <div class="tile" data-reveal style="--i:2"><b>F-Droid ready</b><span>No proprietary libraries</span></div>
+    <div class="tile" data-reveal style="--i:3"><b>CodeQL</b><span>Code scanning</span></div>
+    <div class="tile" data-reveal style="--i:4"><b>Semgrep</b><span>Security rules</span></div>
+    <div class="tile" data-reveal style="--i:5"><b>Gitleaks</b><span>No secrets in the code</span></div>
+    <div class="tile" data-reveal style="--i:6"><b>Scorecard</b><span>OpenSSF supply chain</span></div>
+  </div>
+</section>
+
+<section class="close wrap" aria-labelledby="close-title">
+  <h2 id="close-title" class="visually-hidden">Get CurrenciX</h2>
+  <p data-reveal>There's no release yet, but you can build it today on any computer with Java 21.</p>
+  <div class="actions" data-reveal style="--i:1"><a class="button" href="https://github.com/EliorMachlev/CurrenciX#-get-it">See how to build it</a><a class="text-link" href="https://github.com/EliorMachlev/CurrenciX/releases">Watch for releases</a></div>
 </section>
 </main>
 
 <footer class="footer">
-  <div class="wrap footer-grid">
-    <div>
-      <a class="wordmark" href="index.html" aria-label="CurrenciX home">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
-      <p>CurrenciX © 2026 Elior Machlev, a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> © 2020 Maximilian Salomon. Free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL 3.0 or later</a>.</p>
-    </div>
+  <div class="ft statement">
+    <p>A handy travel companion, not a tool for trading.</p>
+    <p class="legal">CurrenciX © 2026 Elior Machlev, a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> © 2020 Maximilian Salomon. Free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL 3.0 or later</a>. Type: Inter and Space Grotesk; icons: Material Symbols.</p>
+  </div>
+  <nav class="ft nav" aria-label="More">
     <ul>
-      <li><a href="https://github.com/EliorMachlev/CurrenciX">Source code</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="features.html">Features</a></li>
+      <li><a href="providers.html">Rate providers</a></li>
       <li><a href="privacy.html">Privacy policy</a></li>
       <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/accessibility-statement.md">Accessibility</a></li>
       <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Help translate</a></li>
     </ul>
+  </nav>
+  <div class="ft facts">
+    <p>Android 13 and later, in 33 languages.</p>
   </div>
+  <div class="ft contact">
+    <p class="legal">Found a problem?</p>
+    <a href="https://github.com/EliorMachlev/CurrenciX/issues">Open an issue on GitHub</a>
+  </div>
+  <div class="ft name" aria-hidden="true"><span class="wordmark">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></span></div>
+  <a class="ft go" href="https://github.com/EliorMachlev/CurrenciX"><span>Read the source</span><svg viewBox="0 0 72 72" aria-hidden="true"><path d="M18 54 54 18M26 18h28v28"/></svg></a>
 </footer>
 </body>
 </html>

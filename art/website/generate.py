@@ -34,9 +34,9 @@ ICONS = sorted({
     # look and feel
     "palette", "contrast", "devices", "translate", "widgets", "accessibility_new",
     # privacy and security
-    "block", "lock", "visibility_off", "save", "verified_user", "shield",
+    "block", "lock", "visibility_off", "save", "shield",
     # open source and links
-    "gavel", "package_2", "arrow_outward", "swap_horiz",
+    "swap_horiz", "backspace",
 })
 
 PATH = re.compile(r'<path d="([^"]+)"/>')

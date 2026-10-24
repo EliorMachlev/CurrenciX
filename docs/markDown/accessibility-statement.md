@@ -60,7 +60,7 @@ The whole app is Jetpack Compose (Material 3), so accessibility comes from Compo
 - `lang` attribute set on `<html>`.
 - A skip-to-content link on every page, and the current page marked in the navigation (`aria-current`).
 - Light and dark themes following the system, with the app's palette: text at 4.5:1 or more, controls and outlines at 3:1.
-- Decorative icons and the brand mark are hidden from screen readers; the example receipt on the home page has a text alternative.
+- Decorative icons and the brand mark are hidden from screen readers; every picture of the app has a text alternative describing what it shows, and the working examples (the receipt, the keypad, the rows that open) are real form controls and buttons with names and states (`aria-pressed`, `aria-expanded`), with the receipt's totals read out as they change.
 - Keyboard navigation across all links and buttons, with a visible focus ring.
 - Layouts reflow down to a 320 px wide screen without sideways scrolling (wide tables scroll inside their own box), and the brand mark's one animation is off when the system asks for reduced motion.
 
