@@ -122,8 +122,10 @@ jobs:
           } > secrets.properties
 
       # signApksHybridFdroidRelease re-signs each APK and verifies it.
+      # -PabiVersionNames names each per-CPU APK's type (1.23.0-arm64);
+      # F-Droid's own builds of the same tag keep the plain name.
       - name: Build the signed fdroid release APKs
-        run: ./gradlew assembleFdroidRelease
+        run: ./gradlew assembleFdroidRelease -PabiVersionNames
 
       - name: Remove the signing keys
         if: always()

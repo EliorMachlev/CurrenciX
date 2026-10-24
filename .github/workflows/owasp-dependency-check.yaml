@@ -21,20 +21,22 @@ jobs:
           java-version: 25
           distribution: temurin
       - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
-      - name: Resolve app runtime dependencies
-        run: |
-          ./gradlew :app:dependencies \
-            --configuration fdroidReleaseRuntimeClasspath > /dev/null
+      # Dependency-Check scans files, not Gradle's dependency graph: copy every
+      # library the F-Droid release ships out of Gradle's cache, each named by
+      # its coordinates (app/build/owasp-libraries/<group>/<module>-<version>).
+      - name: Collect the libraries the app ships
+        run: ./gradlew :app:owaspLibraries
       - name: Run OWASP Dependency-Check
         uses: dependency-check/Dependency-Check_Action@1e54355a8b4c8abaa8cc7d0b70aa655a3bb15a6c # main
         with:
           project: currencies
-          path: '.'
+          path: 'app/build/owasp-libraries'
           format: SARIF
           out: reports
           args: >-
             --failOnCVSS 7
             --enableRetired
+            --zipExtensions aar
       - name: Upload SARIF to code scanning
         if: always()
         uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0

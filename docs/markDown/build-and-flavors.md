@@ -42,7 +42,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 Each APK's version code is `versionCode × 10 + digit`: 1 `armeabi-v7a`, 2 `arm64-v8a`, 3 `x86`, 4 `x86_64`, 0 universal (so 1.23.0 is 123001 … 123004, and 123000). The APKs of one release need different codes, and a phone that runs two types (64-bit ARM runs 32-bit too) is offered the higher, better fit. `defaultConfig.versionCode` stays the plain SemVer code (12300), which `checkVersion` and `checkFastlaneChangelog` check.
 
-Each per-CPU APK's version name also names its type, for people (Settings and Android's app info show it): `1.23.0-arm32`, `-arm64`, `-x86`, `-x64` (debug: `1.23.0-<commit>-arm64`); the universal APK and the bundle keep the plain name. Settings reads the installed APK's name from the package manager, since `BuildConfig.VERSION_NAME` is one for all of a variant's APKs; the release-notes link keeps using `BuildConfig.VERSION_NAME`, the plain tag.
+Each per-CPU APK's version name can also name its type, for people (Settings and Android's app info show it): `1.23.0-arm32`, `-arm64`, `-x86`, `-x64`. Debug builds always do (`1.23.0-<commit>-arm64`); release builds only with `-PabiVersionNames`, which the release workflow passes for GitHub's APKs, so a release built without it, as F-Droid builds it, keeps the plain name (`1.23.0`, see below). The universal APK and the bundle keep the plain name. Settings reads the installed APK's name from the package manager, since `BuildConfig.VERSION_NAME` is one for all of a variant's APKs; the release-notes link keeps using `BuildConfig.VERSION_NAME`, the plain tag.
 
 `bundle*` (Play) builds no splits: AGP can't make an app bundle and per-CPU APKs in one run, and Play splits the bundle by CPU itself. The bundle's version code is the universal one (123000). Version codes only go up, so this ×10 scheme is permanent once released.
 
@@ -54,15 +54,15 @@ F-Droid builds each entry from source and keeps the APK that `output` names; its
 
 ```yaml
 Builds:
-  - versionName: 1.23.0-arm32
+  - versionName: 1.23.0
     versionCode: 123001
     commit: v1.23.0
     subdir: app
     gradle:
       - fdroid
     output: build/outputs/apk/fdroid/release/*-fdroid-armeabi-v7a-release-unsigned.apk
-  # … the same for 1.23.0-arm64 / 123002 (arm64-v8a), 1.23.0-x86 / 123003,
-  # 1.23.0-x64 / 123004 (x86_64)
+  # … the same for 123002 (arm64-v8a), 123003 (x86) and 123004 (x86_64),
+  # each with versionName 1.23.0
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
@@ -74,7 +74,7 @@ VercodeOperation:
 UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
 ```
 
-F-Droid's build checks that the APK's version name and code both match the entry ("Unexpected version/version code in output", `fdroidserver/build.py`), so each entry carries its labelled name. Its auto-update can't keep those names for new releases: `checkupdates` copies the last builds and gives every copy the same name, the tag's version plus one optional suffix from `AutoUpdateMode: Version +<suffix> <pattern>`, in which only `%c` (that copy's code) changes (`fdroidserver/checkupdates.py`, 2.4.5). A per-type word like `arm64` can't come out of that, so with the labels every auto-generated build would fail the check. Before submitting, the release builds F-Droid makes need the plain name (`1.23.0`), and the recipe's entries with it.
+F-Droid's build checks that the APK's version name and code both match the entry ("Unexpected version/version code in output", `fdroidserver/build.py`), so each entry carries the name its build produces: the plain one, as F-Droid builds without `-PabiVersionNames`. That's also the only name its auto-update can keep: `checkupdates` copies the last builds and gives every copy the same name, the tag's version plus one optional suffix from `AutoUpdateMode: Version +<suffix> <pattern>`, in which only `%c` (that copy's code) changes (`fdroidserver/checkupdates.py`, 2.4.5), so a per-type word like `arm64` would fail the check on every auto-generated build.
 
 Changelogs: F-Droid's app page shows `changelogs/<CurrentVersionCode>.txt`, the highest code of the release (the `x86_64` one, 123004), else `changelogs/default.txt`; a file named after any other build's code becomes that build's own notes (`fdroidserver/update.py`). `changelogs/12300.txt` (the plain code) matches no build, so F-Droid wouldn't show it.
 

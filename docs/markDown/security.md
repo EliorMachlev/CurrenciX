@@ -22,7 +22,7 @@ The `dependency-review` workflow blocks any PR that introduces a dependency with
 
 ### OWASP Dependency Check
 
-Weekly scan against the NVD database: the workflow resolves the fdroid release runtime classpath, then scans the checkout. Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries.
+Weekly scan against the NVD database of every library the fdroid release ships (`:app:owaspLibraries` copies them out of Gradle's cache, named by their coordinates). Fails the workflow on CVSS ≥ 7 findings. Also flags retired/archived libraries.
 
 ## Secrets
 

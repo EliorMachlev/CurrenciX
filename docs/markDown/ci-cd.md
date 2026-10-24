@@ -41,7 +41,7 @@ Runs on PRs and pushes to `master` (and by hand). Its jobs run side by side:
 
 A PR's checks take about five minutes, all jobs running at once; the longest are the two build legs and the fdroid release build.
 
-- **Superseded runs are cancelled.** Every workflow that runs on PRs or branch pushes has a `concurrency` group per PR (or branch): a new push cancels the run still going for the previous one. Runs on `master` always finish. The one exception is the Gradle wrapper check, which takes seconds.
+- **Superseded runs are cancelled.** Every workflow that runs on PRs or branch pushes has a `concurrency` group per PR (or branch): a new push cancels the run still going for the previous one. Runs on `master` always finish.
 - **More jobs, side by side**: each flavor's lint, unit tests and debug build are separate jobs, as is Spotless, instead of one job per flavor running them one after another.
 - **Gradle** (`gradle.properties`): the build cache and parallel project execution are on, with a 3 GB daemon heap and a 2 GB Kotlin daemon. `setup-gradle` keeps Gradle's home, build cache included, between runs: `master` writes it, PRs read it, so a PR reuses whatever `master` already built. The configuration cache is off: measured on CI, it made lint + test + build about 70 s slower, by running one module's tasks side by side on 4 cores (the build script is compatible with it, should that change).
 
@@ -70,7 +70,7 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - Type resolution: detekt 2 runs its type-aware rules (`LongParameterList`, `UnsafeCallOnNullableType`, `InjectDispatcher`, …) only in its per-variant tasks. `./gradlew detekt` runs a set of them that covers every source folder once — `:app:detektFdroidDebug` (main, fdroid, debug), `:app:detektPlayRelease` (play, release), `:app:detektFdroidDebugUnitTest` (unit tests), `:helpers:detektMain` / `detektTest`, `:ocr-engine:detektRelease` and `:baselineprofile:detektFdroidBenchmarkRelease` — and skips its own pass, which would leave those rules out (`detektVariantTasks` in the root build script).
 - JVM target: 21
 - Runs via `./gradlew detekt` — the step is enforced (no `continue-on-error`); any finding fails the build.
-- Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-baselineprofile`; `:ocr-engine`'s report isn't uploaded there, a finding in it still fails the job) + HTML/checkstyle/SARIF artifact retained 14 days
+- Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-ocr-engine`, `detekt-baselineprofile`) + HTML/checkstyle/SARIF artifact retained 14 days
 
 ### Qodana
 - Image: `qodana-jvm-community:2026.2`
@@ -90,7 +90,7 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 
 ### OWASP Dependency Check
 - CVSS threshold: 7 (high+): `--failOnCVSS 7`
-- Resolves the fdroid release runtime classpath first, then scans the checkout (`path: '.'`)
+- Scans every library the fdroid release ships: `:app:owaspLibraries` copies them out of Gradle's cache as `app/build/owasp-libraries/<group>/<module>-<version>.<jar|aar>` (each library once, the project's own modules left out), since Dependency-Check reads files and their names, not Gradle's dependency graph; aars are opened too (`--zipExtensions aar`)
 - Detects retired/archived dependencies (`--enableRetired`)
 - SARIF uploaded to the Security tab (category `owasp-dependency-check`) and kept 30 days as the `owasp-report` artifact
 

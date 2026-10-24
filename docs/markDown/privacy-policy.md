@@ -3,7 +3,7 @@
 **Effective:** 2026-10-24
 **Last reviewed:** 2026-10-25
 **Controller:** Elior Machlev (individual maintainer of CurrenciX)
-**Contact:** 26472689+EliorMachlev@users.noreply.github.com
+**Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
 
 CurrenciX is a currency-conversion app. It is designed to collect **no** personal data. This policy explains what that means in practice under the world's major privacy regimes.
 
@@ -115,4 +115,4 @@ Material changes will be reflected by updating the **Effective** and **Last revi
 
 ## Contact
 
-For any question about this policy or to exercise any right listed above, email `26472689+EliorMachlev@users.noreply.github.com`. Response target: 30 days.
+For any question about this policy or to exercise any right listed above, open an issue on [GitHub](https://github.com/EliorMachlev/CurrenciX/issues). Issues there are public, so don't include anything you'd rather keep private; as the app sends the maintainer nothing, no request needs personal details. Response target: 30 days.

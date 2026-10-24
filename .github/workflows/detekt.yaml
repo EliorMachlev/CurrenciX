@@ -76,6 +76,13 @@ jobs:
           sarif_file: helpers/build/reports/detekt/main.sarif
           category: detekt-helpers
 
+      - name: Upload SARIF to code scanning (ocr-engine)
+        if: always() && hashFiles('ocr-engine/build/reports/detekt/release.sarif') != ''
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        with:
+          sarif_file: ocr-engine/build/reports/detekt/release.sarif
+          category: detekt-ocr-engine
+
       - name: Upload SARIF to code scanning (baselineprofile)
         if: always() && hashFiles('baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif') != ''
         uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
@@ -91,6 +98,7 @@ jobs:
           path: |
             app/build/reports/detekt/
             helpers/build/reports/detekt/
+            ocr-engine/build/reports/detekt/
             baselineprofile/build/reports/detekt/
           retention-days: 14
           if-no-files-found: ignore

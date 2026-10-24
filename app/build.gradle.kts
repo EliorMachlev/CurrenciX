@@ -7,6 +7,8 @@ import org.cyclonedx.gradle.CyclonedxDirectTask
 import org.cyclonedx.model.Component
 import org.cyclonedx.model.LicenseChoice
 import org.cyclonedx.model.license.Expression
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.awt.Color
@@ -62,6 +64,13 @@ val abiVersionMultiplier = 10
 // Each per-CPU APK's version name says which it is ("1.23.0-arm64"), for
 // people: Settings and Android's app info show it. Stores go by the codes.
 val abiVersionLabels = mapOf("armeabi-v7a" to "arm32", "arm64-v8a" to "arm64", "x86" to "x86", "x86_64" to "x64")
+
+// Debug builds always carry those labels; release builds only with
+// -PabiVersionNames (the release workflow, for GitHub's APKs). F-Droid builds
+// each APK from source and checks its name against the recipe, and its
+// auto-update can give every copy of a release only one name, so the release
+// builds it makes keep the plain one ("1.23.0").
+val abiVersionNamesInRelease = providers.gradleProperty("abiVersionNames").isPresent
 
 // Whether this Gradle run builds an app bundle (Play), which takes no APK splits.
 // The Jazzer fuzz tests: left out of every unit-test run, or run alone
@@ -244,7 +253,8 @@ androidComponents {
             val abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
             val base = android.defaultConfig.versionCode ?: return@forEach
             output.versionCode.set(base * abiVersionMultiplier + (abiVersionDigits[abi] ?: 0))
-            val label = abiVersionLabels[abi] ?: return@forEach
+            val labelled = variant.buildType == "debug" || abiVersionNamesInRelease
+            val label = abiVersionLabels[abi]?.takeIf { labelled } ?: return@forEach
             val name = output.versionName.orNull ?: return@forEach
             output.versionName.set("$name-$label")
         }
@@ -834,6 +844,63 @@ tasks.named<CyclonedxDirectTask>("cyclonedxDirectBom") {
     licenseChoice.set(LicenseChoice().apply { addExpression(Expression("GPL-3.0-or-later")) })
     jsonOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.json"))
     xmlOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.xml"))
+}
+
+// The same libraries as files, for the weekly OWASP Dependency-Check, which
+// scans files, not Gradle's dependency graph: every jar and aar the F-Droid
+// release ships, named as Gradle names them (okhttp-5.5.1.jar), copied to
+// build/owasp-libraries/ by `./gradlew :app:owaspLibraries`.
+// Gradle's attribute for an artifact's file type: "aar" for an Android
+// library, "jar" for a plain one.
+val owaspArtifactType: Attribute<String> = Attribute.of("artifactType", String::class.java)
+
+tasks.register<OwaspLibraries>("owaspLibraries") {
+    val runtime = configurations.named(sbomConfiguration)
+    listOf("aar", "jar").forEach { type ->
+        artifacts.addAll(
+            runtime.flatMap { configuration ->
+                configuration.incoming
+                    .artifactView {
+                        // Each view skips the libraries that aren't of its type.
+                        lenient(true)
+                        attributes.attribute(owaspArtifactType, type)
+                    }.artifacts.resolvedArtifacts
+            },
+        )
+    }
+    outputDirectory.set(layout.buildDirectory.dir("owasp-libraries"))
+}
+
+/**
+ * Copies each external library in [artifacts] to [outputDirectory] as
+ * `<group>/<module>-<version>.<ext>`, the coordinates Dependency-Check reads
+ * from a file's place and name, each library once (an aar before the jar
+ * made of it). The project's own modules are left out.
+ */
+abstract class OwaspLibraries : DefaultTask() {
+    @get:Internal
+    abstract val artifacts: SetProperty<ResolvedArtifactResult>
+
+    @get:InputFiles
+    val libraryFiles: Provider<List<File>> get() = artifacts.map { all -> all.map { it.file } }
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val target = outputDirectory.get().asFile
+        target.deleteRecursively()
+        // An Android library comes as its aar, then again as the jar Gradle
+        // makes of it: the first one stands for the library.
+        val copied = mutableSetOf<ModuleComponentIdentifier>()
+        artifacts.get().forEach { artifact ->
+            val id = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@forEach
+            if (!copied.add(id)) return@forEach
+            val name = "${id.module}-${id.version}.${artifact.file.extension}"
+            artifact.file.copyTo(File(File(target, id.group), name), overwrite = true)
+        }
+    }
 }
 
 // JDK value types (BigDecimal, java.time) count as stable, so composables

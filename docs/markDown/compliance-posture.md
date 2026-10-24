@@ -2,7 +2,7 @@
 
 **Last reviewed:** 2026-10-25
 **Maintainer:** Elior Machlev
-**Contact:** 26472689+EliorMachlev@users.noreply.github.com
+**Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
 
 This document records CurrenciX's applicability posture under a set of regulatory frameworks that are commonly asked about but that do **not** currently apply to the project. Each section includes a review trigger — a change in the product that would require the analysis to be redone.
 

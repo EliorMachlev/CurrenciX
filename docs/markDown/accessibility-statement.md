@@ -3,7 +3,7 @@
 **Effective:** 2026-08-13
 **Last reviewed:** 2026-10-25
 **Accessibility coordinator:** Elior Machlev
-**Contact:** 26472689+EliorMachlev@users.noreply.github.com
+**Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
 
 CurrenciX is committed to making its Android application and any associated project website usable by the widest possible audience, including users with disabilities. This statement describes the standards the project applies, what has been done, known limitations, and how to reach us if you encounter an accessibility barrier.
 
@@ -82,8 +82,7 @@ None of the above is a blocker to core currency-conversion functionality via Tal
 
 If you cannot use a feature of the app or the site because of an accessibility barrier, please contact the accessibility coordinator:
 
-- **Email**: `26472689+EliorMachlev@users.noreply.github.com`
-- **GitHub issue**: open an issue at github.com/EliorMachlev/CurrenciX/issues with the label `accessibility`.
+- **GitHub issue**: open an issue at [github.com/EliorMachlev/CurrenciX/issues](https://github.com/EliorMachlev/CurrenciX/issues) with the label `accessibility`.
 
 Response target: **14 days** for an initial acknowledgement, **30 days** for a substantive response or fix plan.
 
@@ -110,4 +109,4 @@ This statement is reviewed at least annually and after any significant UI change
 
 ## Contact
 
-`26472689+EliorMachlev@users.noreply.github.com`
+[GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues), with the label `accessibility`.
