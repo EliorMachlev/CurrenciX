@@ -23,7 +23,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. Its own quick workflow so Scorecard (below) can see it succeed on the latest commit, which is what makes Binary-Artifacts count the jar as validated |
 | `scorecard.yaml` | Push → `master`, weekly (Mon 06:00 UTC), manual | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
-| `update-verification-metadata.yaml` | Manual | Regenerate `gradle/verification-metadata.xml` (the checksums of every downloaded dependency) on the branch it runs on, commit it, and start the push checks on that commit: run it on a Dependabot PR once the update looks right |
+| `update-verification-metadata.yaml` | Manual | Regenerate `gradle/verification-metadata.xml` (the checksums of every downloaded dependency) on the branch it runs on, from an empty Gradle cache so every file is resolved and recorded, commit it, and start the push checks on that commit: run it on a Dependabot PR once the update looks right |
 | `actionlint.yaml` | PR, push → `master`, on `.github/workflows/**` | Validate workflow YAML syntax |
 
 ## Build Gate (`build.yaml`)

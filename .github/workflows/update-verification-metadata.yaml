@@ -25,21 +25,34 @@ jobs:
           java-version: 25
           distribution: temurin
       - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        # No cache, and no configuration cache: a file Gradle doesn't
+        # resolve this run (because a cache already had the answer) isn't
+        # recorded, and the next build that does resolve it fails.
         with:
-          cache-read-only: true
+          cache-disabled: true
 
-      # Every task CI runs (bar the emulator ones), so every file CI downloads is recorded.
+      # Every task CI runs (bar the emulator ones), so every file CI downloads
+      # is recorded. Checksums already in the file are kept.
       - name: Record the checksums
+        env:
+          RECORD: --write-verification-metadata sha256 --no-configuration-cache
         run: |
-          ./gradlew --write-verification-metadata sha256 \
+          ./gradlew $RECORD \
             assembleFdroidDebug assemblePlayDebug \
-            :app:compileFdroidDebugUnitTestKotlin :app:compilePlayDebugUnitTestKotlin \
             spotlessCheck detekt \
             assembleFdroidRelease :app:cyclonedxDirectBom :app:owaspLibraries \
             :app:lintFdroidDebug :app:lintPlayDebug \
             :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease \
             :app:bundlePlayRelease
-          ./gradlew --write-verification-metadata sha256 :app:compileFdroidReleaseKotlin -PcomposeReports
+          ./gradlew $RECORD :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest
+          ./gradlew $RECORD :app:compileFdroidReleaseKotlin -PcomposeReports
+          ./gradlew $RECORD :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
+
+      # A file can be published with different bytes on different
+      # repositories (a plugin's marker POM on Maven Central and on the
+      # Plugin Portal), and a build takes whichever answers first.
+      - name: Trust the other genuine copies
+        run: python3 .github/scripts/trust-mirror-copies.py ~/.gradle gradle/verification-metadata.xml
 
       - name: Commit and push
         id: push

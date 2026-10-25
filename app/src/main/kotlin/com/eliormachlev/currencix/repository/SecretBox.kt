@@ -1,15 +1,10 @@
 package com.eliormachlev.currencix.repository
 
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
+import com.google.crypto.tink.Aead
+import com.google.crypto.tink.integration.android.AndroidKeystore
 import timber.log.Timber
 import java.security.GeneralSecurityException
-import java.security.KeyStore
 import java.util.Base64
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.spec.GCMParameterSpec
 
 /** Seals a short secret (an API key) for storage, and opens it again. */
 interface SecretBox {
@@ -20,37 +15,41 @@ interface SecretBox {
     fun open(sealed: String): String?
 }
 
-private const val KEYSTORE = "AndroidKeyStore"
 private const val KEY_ALIAS = "currencix_secrets"
-private const val TRANSFORMATION = "AES/GCM/NoPadding"
-private const val KEY_BITS = 256
-private const val TAG_BITS = 128
-private const val IV_BYTES = 12
 
 // What a sealed value starts with: the format's name, so a later one can be told apart.
 private const val SEALED_PREFIX = "ks1:"
 
+// Bound into every seal as associated data, so a value sealed for something
+// else under the same key doesn't open as one of these.
+private val ASSOCIATED_DATA = SEALED_PREFIX.toByteArray(Charsets.UTF_8)
+
 /**
  * AES-256-GCM under a key made in the Android Keystore, which never leaves
  * it (in the phone's secure hardware where it has some): what's stored is
- * useless off this phone, or from a copy of the app's files. Stored as
- * `ks1:` + Base64 of the IV and the ciphertext.
+ * useless off this phone, or from a copy of the app's files. Tink's
+ * Keystore AEAD runs the cipher and owns the nonce (a fresh random one per
+ * seal, carried in its output), so no IV is chosen or reused here. Stored
+ * as `ks1:` + Base64 of that output.
  */
 object KeystoreSecretBox : SecretBox {
     private const val TAG = "SecretBox"
 
+    // Made on first use and kept: the Keystore key outlives the process.
+    private val aead: Aead by lazy {
+        if (!AndroidKeystore.hasKey(KEY_ALIAS)) AndroidKeystore.generateNewAes256GcmKey(KEY_ALIAS)
+        AndroidKeystore.getAead(KEY_ALIAS)
+    }
+
     override fun seal(plain: String): String {
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply { init(Cipher.ENCRYPT_MODE, key()) }
-        val sealed = cipher.iv + cipher.doFinal(plain.toByteArray(Charsets.UTF_8))
+        val sealed = aead.encrypt(plain.toByteArray(Charsets.UTF_8), ASSOCIATED_DATA)
         return SEALED_PREFIX + Base64.getEncoder().encodeToString(sealed)
     }
 
     override fun open(sealed: String): String? =
         try {
             val bytes = Base64.getDecoder().decode(sealed.removePrefix(SEALED_PREFIX))
-            val cipher = Cipher.getInstance(TRANSFORMATION)
-            cipher.init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(TAG_BITS, bytes, 0, IV_BYTES))
-            String(cipher.doFinal(bytes, IV_BYTES, bytes.size - IV_BYTES), Charsets.UTF_8)
+            String(aead.decrypt(bytes, ASSOCIATED_DATA), Charsets.UTF_8)
         } catch (e: GeneralSecurityException) {
             // The key is gone (the phone's lock-screen keys were reset, the app's
             // data moved to another phone): the user enters the API key again.
@@ -60,18 +59,4 @@ object KeystoreSecretBox : SecretBox {
             Timber.tag(TAG).w(e, "A stored secret isn't valid Base64")
             null
         }
-
-    @Synchronized
-    private fun key(): SecretKey {
-        val store = KeyStore.getInstance(KEYSTORE).apply { load(null) }
-        (store.getKey(KEY_ALIAS, null) as? SecretKey)?.let { return it }
-        val spec =
-            KeyGenParameterSpec
-                .Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setKeySize(KEY_BITS)
-                .build()
-        return KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE).apply { init(spec) }.generateKey()
-    }
 }
