@@ -42,7 +42,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: currencies-fdroid-debug-${{ steps.sha.outputs.short }}
+          name: currencix-fdroid-debug-${{ steps.sha.outputs.short }}
           # The universal APK: it installs on any phone (the per-CPU ones are for stores).
           path: app/build/outputs/apk/fdroid/debug/*universal*.apk
           if-no-files-found: error

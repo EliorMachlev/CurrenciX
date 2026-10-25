@@ -51,8 +51,10 @@ kotlin {
     }
 }
 
+// The APKs are named <applicationId>-v<versionCode>-…, read from defaultConfig
+// below (where F-Droid's update check and the release workflow read the version).
 base {
-    archivesName.set("com.eliormachlev.currencix-v12300")
+    archivesName.set(provider { "${android.defaultConfig.applicationId}-v${android.defaultConfig.versionCode}" })
 }
 
 // The last digit of each APK's version code: versionCode × 10 + this, so
