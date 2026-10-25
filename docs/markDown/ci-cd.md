@@ -25,6 +25,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `scorecard.yaml` | Push → `master`, weekly (Mon 06:00 UTC), manual | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
 | `update-verification-metadata.yaml` | Manual | Regenerate `gradle/verification-metadata.xml` (the checksums of every downloaded dependency) on the branch it runs on, from an empty Gradle cache so every file is resolved and recorded, commit it, and start the push checks on that commit: run it on a Dependabot PR once the update looks right |
 | `actionlint.yaml` | PR, push → `master`, on `.github/workflows/**` | Validate workflow YAML syntax |
+| `site.yaml` | PR, push → `master`, on `docs/**`, manual | The website: every file a page or the stylesheet loads carries `?v=<content hash>` (`.github/scripts/site-assets.py check docs`; `stamp docs` updates them), and every inline script is allowed by its page's CSP |
 
 ## Build Gate (`build.yaml`)
 

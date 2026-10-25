@@ -9,12 +9,12 @@
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F3EEE5" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#131311" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="fonts/space_grotesk_medium.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/inter_regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.svg?v=28ab02235d" type="image/svg+xml">
+  <link rel="preload" href="fonts/space_grotesk_medium.woff2?v=0b9dd20ea2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter_regular.woff2?v=e06f6b1bc5" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=2ec046dabc">
   <script>document.documentElement.classList.add('js')</script>
-  <script src="site.js" defer></script>
+  <script src="site.js?v=1a59aa3145" defer></script>
 </head>
 <body class="page">
 <a class="skip" href="#main">Skip to content</a>
@@ -73,7 +73,7 @@
       <p>In the Google Play version, the first receipt scan downloads the text reader from Google Play, which handles that download under its own privacy policy. Reading receipts also needs text-recognition data, English and, if you choose, your app's language, a trip's language or others you add in Settings → Receipt languages, downloaded once from Tesseract's public repository on GitHub (<code>raw.githubusercontent.com</code>). Nothing is downloaded until you agree: the first scan names each download and its size, and your app's language is a separate choice you can decline. The request is for a fixed public file and carries nothing about you; the file is checked against a fingerprint built into the app before it's used.</p>
       <p>Receipt photos are read entirely on your device and are never uploaded. A photo taken for a scan is deleted as soon as it has been read. The app has no camera permission: the photo comes from your camera app or the system photo picker.</p>
 
-      <figure class="inline-shot" data-reveal><img src="img/receipt-scan.webp" alt="A scanned receipt: milk, bread and bananas with their prices, ticked to add to the cart, with a note that it was read on the phone." width="822" height="600" loading="lazy" decoding="async"><figcaption>A receipt, read on the phone: the photo never leaves it.</figcaption></figure>
+      <figure class="inline-shot" data-reveal><img src="img/receipt-scan.webp?v=f14043a476" alt="A scanned receipt: milk, bread and bananas with their prices, ticked to add to the cart, with a note that it was read on the phone." width="822" height="600" loading="lazy" decoding="async"><figcaption>A receipt, read on the phone: the photo never leaves it.</figcaption></figure>
       <h3>Providers' privacy policies</h3>
       <ul>
       <li><a href="https://frankfurter.dev/">Frankfurter.app</a> — open-source proxy, no account required</li>
@@ -86,7 +86,7 @@
       <li><a href="https://www.boi.org.il/en/">Bank of Israel</a></li>
       </ul>
 
-      <figure class="inline-shot" data-reveal><img src="img/rates-settings.webp" alt="Exchange rate settings: the data provider, a switch to show unreliable providers, auto-refresh and how often to refresh." width="822" height="600" loading="lazy" decoding="async"><figcaption>Where you pick the provider the app asks for rates.</figcaption></figure>
+      <figure class="inline-shot" data-reveal><img src="img/rates-settings.webp?v=2599981894" alt="Exchange rate settings: the data provider, a switch to show unreliable providers, auto-refresh and how often to refresh." width="822" height="600" loading="lazy" decoding="async"><figcaption>Where you pick the provider the app asks for rates.</figcaption></figure>
       <h2 id="local-storage" data-reveal>Local storage</h2>
       <p>The following data is stored <strong>locally on your device</strong>, in the app's private storage. It is never transmitted to any server:</p>
       <ul>
@@ -100,8 +100,8 @@
       <p>Nothing leaves the device unless you send it: a backup (with your API keys only when it has a password) or a cart export goes to a file you choose, and <strong>About this app → Report a problem</strong> shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.</p>
       <p>This data is cleared when you uninstall the app. It can also be cleared via Android Settings → Apps → CurrenciX → Clear Data.</p>
 
-      <figure class="inline-shot" data-reveal><img src="img/backup.webp" alt="The backup screen: export to a file, or import from a file." width="822" height="600" loading="lazy" decoding="async"><figcaption>Backups go to a file you choose.</figcaption></figure>
-      <figure class="inline-shot" data-reveal><img src="img/backup-password-dark.webp" alt="The backup password prompt in the dark theme, saying the password didn't decrypt the file." width="822" height="600" loading="lazy" decoding="async"><figcaption>An encrypted backup opens only with its password.</figcaption></figure>
+      <figure class="inline-shot" data-reveal><img src="img/backup.webp?v=5546344dde" alt="The backup screen: export to a file, or import from a file." width="822" height="600" loading="lazy" decoding="async"><figcaption>Backups go to a file you choose.</figcaption></figure>
+      <figure class="inline-shot" data-reveal><img src="img/backup-password-dark.webp?v=4bfe8c15b3" alt="The backup password prompt in the dark theme, saying the password didn't decrypt the file." width="822" height="600" loading="lazy" decoding="async"><figcaption>An encrypted backup opens only with its password.</figcaption></figure>
       <h2 id="third-party-libraries" data-reveal>Third-party libraries</h2>
       <p>CurrenciX does <strong>not</strong> include any third-party analytics, advertising, crash-reporting, or social-login SDK. The complete dependency list is public in the repository's <code>app/build.gradle.kts</code> file.</p>
 
