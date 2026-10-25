@@ -56,7 +56,12 @@ jobs:
       # Gradle's own source zip, which only an IDE sync downloads (to show
       # Gradle's API in build scripts), at the wrapper's version.
       - name: Record Gradle's source zip
-        run: python3 .github/scripts/gradle-sources-checksum.py gradle/wrapper/gradle-wrapper.properties gradle/verification-metadata.xml
+        env:
+          PROPS: gradle/wrapper/gradle-wrapper.properties
+          SCRIPT: .github/scripts/gradle-sources-checksum.py
+        run: |
+          curl -fsSL --proto =https "$(python3 "$SCRIPT" url "$PROPS")" -o "$RUNNER_TEMP/gradle-src.zip.sha256"
+          python3 "$SCRIPT" record "$PROPS" gradle/verification-metadata.xml "$RUNNER_TEMP/gradle-src.zip.sha256"
 
       - name: Commit and push
         id: push
