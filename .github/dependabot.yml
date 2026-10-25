@@ -20,9 +20,6 @@ updates:
       androidx:
         patterns:
           - "androidx.*"
-      google-material:
-        patterns:
-          - "com.google.android.material:*"
       kotlin-and-ksp:
         patterns:
           - "org.jetbrains.kotlin*"
@@ -59,3 +56,30 @@ updates:
       actions:
         patterns:
           - "*"
+
+  # Python packages CI installs, pinned by hash in requirements.txt: the CI
+  # scripts' (.github/scripts) and Semgrep (.github/semgrep, compiled from
+  # requirements.in with pip-compile, which Dependabot reruns).
+  - package-ecosystem: "pip"
+    directories:
+      - "/.github/scripts"
+      - "/.github/semgrep"
+    # One PR for them all: Semgrep's ~65 pinned packages would otherwise
+    # each get their own.
+    groups:
+      python:
+        patterns:
+          - "*"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    cooldown:
+      default-days: 7

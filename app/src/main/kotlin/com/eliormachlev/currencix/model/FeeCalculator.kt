@@ -99,8 +99,8 @@ object FeeCalculator {
 
     /**
      * Resolve the single-select choice: prefer the entry whose id matches
-     * [activeId]; otherwise fall back to the first entry (preserving legacy
-     * "one-and-only fee" behavior for users who haven't picked yet).
+     * [activeId]; otherwise fall back to the first entry (with one fee saved
+     * and none picked, that one counts).
      * Returns a 0-or-1 element list so it can be passed straight to
      * [stackFactor].
      */

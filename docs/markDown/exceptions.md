@@ -22,8 +22,11 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 | 4 | Qodana / IntelliJ `UnstableApiUsage` | the Gradle Managed Device (`ManagedVirtualDevice`) | `baselineprofile/build.gradle.kts` |
 | 5 | Qodana / IntelliJ `UnstableApiUsage` | `testedApks` (the tested app's id for benchmarks) | `baselineprofile/build.gradle.kts` |
 | 6 | Qodana / IntelliJ `UnstableApiUsage` | `generateLocaleConfig` | `app/build.gradle.kts` |
+| 7 | OWASP Dependency-Check `CVE-2018-8909` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
+| 8 | CodeQL `java/useless-null-check` | `QuickConversionsSheet` (a check the Kotlin compiler generates, line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| 9 | Gradle dependency verification, `trusted-artifacts` | libraries' `-sources.jar` and `-javadoc.jar` (downloaded only by IDE syncs) | `gradle/verification-metadata.xml` |
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181).
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203).
 
 ### 1. `MainActivity` is exported
 
@@ -50,6 +53,27 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 - **Why it can't be fixed:** each is the only API AGP has for what it does, with no stable equivalent: declaring the managed emulator that generates baseline profiles and runs benchmarks (`ManagedVirtualDevice`: `localDevices`, `device`, `apiLevel`, `systemImageSource`), reading the tested app's id for the benchmark runner (`testedApks`), and generating the per-app language list from the translations (`generateLocaleConfig`). The alternatives are dropping the feature or a hand-kept copy: an emulator set up by hand in CI, a hard-coded app id, a hand-kept locale list.
 - **Why the rule is wrong here:** incubating is not deprecated; these are the APIs AGP's own documentation uses. If AGP changes one, the build fails at once, so nothing breaks quietly.
 - **What is excluded:** one `@Suppress("UnstableApiUsage")` on each of those three statements, never the file. Any other incubating API used later is still reported.
+
+### 7. OWASP Dependency-Check: `CVE-2018-8909` on `wire-runtime`
+
+- **What it reports:** a CVSS 7.5 vulnerability in `wire-runtime-jvm-7.1.0.jar`, which it identifies as the product `cpe:2.3:a:wire:wire`.
+- **Why the finding is wrong:** CVE-2018-8909 is in the Wire secure messenger (Wire Swiss GmbH). The app's library is Square's Wire, the Protobuf runtime (`com.squareup.wire`) that reads and writes the saved carts, fees and alerts. Dependency-Check names a jar's product from evidence such as its file name, and both are called "Wire". OSV-Scanner, which matches the same library by its package URL, reports nothing for it.
+- **Why it can't be fixed:** the match comes from the name, so no version of Square's Wire changes it; the only way to make it go away would be removing the library.
+- **What is excluded:** that one CVE, only for files under `com.squareup.wire/` named `wire-runtime…` (`config/owasp/suppressions.xml`, handed to the scan with `--suppression`). Any other CVE matched to that jar, and that CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
+
+### 8. CodeQL: `java/useless-null-check` on `QuickConversionsSheet`
+
+- **What it reports:** "This check is useless. `tmpEnum` cannot be null at this check", at line 1 of `view/main/compose/QuickConversionsSheet.kt`.
+- **Why the finding is wrong:** the file has no such check, and no variable called `tmpEnum`. CodeQL reads Kotlin as the compiler lowers it, and the null check is one the Kotlin/Compose compiler generates there (the only enum in the file is the nullable `PillSide` that picks the currency picker's side); that's why it sits on line 1, where no code is. It first showed up when PR #203 turned on CodeQL for Kotlin.
+- **Why it can't be fixed:** the check isn't in the source, so no edit to the source removes it except restructuring working code until the compiler happens to generate something else, which is a cosmetic workaround.
+- **What is excluded:** that one finding: the rule, that file, line 1, and a message naming `tmpEnum` must all match (`.github/codeql/exceptions.yml`). The Kotlin analysis writes its results, `.github/scripts/codeql-exceptions.py` takes that finding out, and the rest is uploaded. The rule still runs everywhere, that file included: a real useless null check in it, on any other line, is still reported. The step fails when the entry stops matching (a newer Kotlin generating different code), so the exception can't outlive the finding.
+
+### 9. Dependency verification: `-sources.jar` and `-javadoc.jar`
+
+- **What it reports:** an IDE's Gradle sync (Android Studio, and Qodana, which imports the project the same way) fails dependency verification: it downloads each library's `-sources.jar` (and `-javadoc.jar` where one exists), and `gradle/verification-metadata.xml` lists no checksum for them.
+- **Why it can't be fixed:** the build itself never resolves these files, so recording them takes an IDE sync against an empty cache, and which ones a sync fetches depends on the IDE and its version. Listing them would mean regenerating the file from every developer's IDE and on every IDE update. Not downloading sources (`idea { module { isDownloadSources = false } }`) avoids the failure only by taking library sources away in the IDE.
+- **Why it's safe:** these files are documentation for the IDE. Nothing compiles against them, nothing runs them, and none goes into an APK, the SBOM or a test. Gradle's own documentation gives this exclusion for exactly this case.
+- **What is excluded:** files named `*-sources.jar` and `*-javadoc.jar` are accepted without a checksum (`<trusted-artifacts>` in the file's configuration). Every other file the build downloads (JARs, AARs, POMs, Gradle module files, plugins) is still checked, and a missing or changed checksum still fails the build.
 
 ### What the exclusion does and doesn't cover
 

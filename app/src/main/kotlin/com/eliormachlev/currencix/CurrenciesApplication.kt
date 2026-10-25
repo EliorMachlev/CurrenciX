@@ -9,9 +9,9 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.problems.ProblemReports
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.repository.TimelineFiles
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.prefStore
+import com.eliormachlev.currencix.repository.persistence.warmUpSavedData
 import com.eliormachlev.currencix.strict.installStrictMode
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.FileLoggingTree
@@ -85,14 +85,13 @@ class CurrenciesApplication : Application() {
     // Reads each saved store once, in the background, as the process starts:
     // the first read of a store waits on the disk (PrefStore.snapshot), and
     // done here it's over before a screen asks, instead of on the main
-    // thread mid-frame. The old shared history file moves into per-pair
-    // files at the same time (TimelineFiles). The settings store is read on
-    // the main thread right after anyway (the night mode needs it first).
+    // thread mid-frame. The settings store is read on the main thread right
+    // after anyway (the night mode needs it first).
     private fun warmUpStores() {
         val app = this
         CoroutineScope(SupervisorJob() + AppDispatchers.production.io).launch {
-            PersistenceKey.entries.filter { it != PersistenceKey.TIMELINES }.forEach { it.prefStore(app).snapshot() }
-            TimelineFiles.get(app).warmUp()
+            PersistenceKey.entries.forEach { it.prefStore(app).snapshot() }
+            app.warmUpSavedData()
         }
     }
 

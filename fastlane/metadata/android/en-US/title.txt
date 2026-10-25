@@ -1,1 +1,1 @@
-Currencies: Exchange Rate Calculator
+CurrenciX: Currency Converter

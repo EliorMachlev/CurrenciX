@@ -1,29 +1,31 @@
 # Privacy Policy
 
-**Effective:** 2026-08-13
-**Last reviewed:** 2026-08-13
+**Effective:** 2026-10-24
+**Last reviewed:** 2026-10-25
 **Controller:** Elior Machlev (individual maintainer of CurrenciX)
-**Contact:** 26472689+EliorMachlev@users.noreply.github.com
+**Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
 
 CurrenciX is a currency-conversion app. It is designed to collect **no** personal data. This policy explains what that means in practice under the world's major privacy regimes.
 
 ## What the app does with your data
 
-**On the device.** All configuration (fee settings, starred currencies, keyboard preferences, theme, API key if you supply one) is stored in Android SharedPreferences private to the app. Cached exchange rates are stored in the same private storage. Nothing in this storage leaves your device unless **you** initiate an export via **Settings → Backup & Restore**, and even then it goes to a file location **you** pick via the system file picker.
+**On the device.** All configuration (fee settings, starred currencies, keypad and display preferences, theme, rate alerts, carts and trips, and the API key for any provider that needs one, sealed with a key the Android Keystore holds) is stored in the app's private storage (Jetpack DataStore). Cached exchange rates and rate histories, a small rotating diagnostic log, and records of the app's own recent crashes (the latest five) are kept in the same private storage. A receipt photo you scan is read on the device and deleted once read; the photo itself never leaves the device. Rate alerts are checked on the device and shown as local notifications. Nothing in this storage leaves your device unless **you** initiate it: an export via **Settings → Backup & Restore** (API keys go only into a password-protected one) or a cart export, which goes to a file location **you** pick via the system file picker, or **About this app → Report a problem**, which shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you choose.
 
-**Off the device.** The app makes network requests to whichever exchange-rate provider you have selected in **Settings → Exchange rates → Data provider**. These requests carry your device's IP address, the standard HTTP headers a network client sends, and the currency codes you have starred. The provider — not CurrenciX — receives and processes those requests under **its own** privacy terms. See [`api-providers.md`](api-providers.md) for the list.
+**Off the device.** The app makes network requests to the exchange-rate provider you have selected in **Settings → Exchange rates → Data provider**, and to the fallback provider set there (asked at the same time, so its answer is ready if the main one fails). These requests carry your device's IP address, the standard HTTP headers a network client sends, the currencies and dates asked for (for example the pair a chart shows), and, for a provider that needs one, your API key. With **Settings → Security & privacy → Private requests** on, the headers are the same for every user and carry no cache identifiers. The providers — not CurrenciX — receive and process those requests under **their own** privacy terms. See [`api-providers.md`](api-providers.md) for the list.
+
+Two other services can be contacted, only for receipt scanning: the OCR language data (English, and your app's language or a trip's language if you choose) is downloaded once from GitHub (`raw.githubusercontent.com`, a fixed file address that carries nothing about you), and in the Google Play version the receipt reader itself is installed through Google Play. Nothing is downloaded until you agree: the first scan names each download and its size, and your app's language is a separate choice you can decline. More languages can be added in Settings → Receipt languages, each downloaded only after you agree; any can be deleted there, or kept only until a date you pick and then deleted automatically. On Android 17 and later, DNS look-ups go through Android's own resolver, as for any app. To offer the local currency when you travel, the app reads which country's mobile network the phone is on (no permission needed); that stays on the phone and is only compared with your phone's region.
 
 **No SDKs.** CurrenciX does not integrate any analytics SDK, crash-reporting SDK, advertising SDK, attribution SDK, or persistent-identifier SDK. There is no Google Analytics, no Firebase, no Crashlytics, no AdMob, no Facebook SDK.
 
 **No account.** There is no login, no user account, no cloud sync, no server that CurrenciX operates.
 
-**Permissions.** The app requests `android.permission.INTERNET` and `android.permission.ACCESS_NETWORK_STATE` — both normal permissions used only to fetch exchange rates and check connectivity beforehand. Nothing else.
+**Permissions.** The app requests `INTERNET` and `ACCESS_NETWORK_STATE` (to fetch exchange rates and check connectivity beforehand), `POST_NOTIFICATIONS` (asked for only when you set your first rate alert) and `USE_BIOMETRIC` (for the optional app lock, through Android's own prompt: the app learns only whether it succeeded, never your fingerprint or face). No camera, storage, location, contacts or microphone permission: receipt photos come from the system camera app or photo picker.
 
 ## Categories of "personal data" processed (by us)
 
 None on our servers — we don't operate servers.
 
-The only personal-data-adjacent element that ever leaves your device by our doing is your IP address, and only to the extent that TCP requires the provider you selected to see it. We do not log it, receive it, or store it on any server we control.
+The only personal-data-adjacent element that ever leaves your device by our doing is your IP address, and only to the extent that TCP requires the providers you selected (and, for receipt scanning, GitHub or Google Play) to see it. We do not log it, receive it, or store it on any server we control.
 
 ## Legal bases (where applicable) and jurisdictional notes
 
@@ -87,7 +89,7 @@ CurrenciX does not target users in the Republic of Korea and does not process pe
 
 ### Israel — Protection of Privacy Law 5741-1981 (as amended, incl. Amendment 13, in force August 2025)
 
-- **Database**: CurrenciX does not maintain a `מאגר מידע` (database) on any infrastructure the controller operates. On-device SharedPreferences held on your own device are not a controller-operated database.
+- **Database**: CurrenciX does not maintain a `מאגר מידע` (database) on any infrastructure the controller operates. On-device app storage held on your own device is not a controller-operated database.
 - **Registration**: because no controller-side database exists, PPA (`הרשות להגנת הפרטיות`) database registration under §8 does not apply.
 - **DPO** (`ממונה על הגנת הפרטיות`): the Amendment 13 triggers (public body, large-scale processing, sensitive-data processing) do not apply. If circumstances change, a DPO will be designated and named here.
 - **Data-subject rights**: right of access (§13), rectification (§14), and the expanded deletion right introduced by Amendment 13 are exercisable via the contact above.
@@ -101,11 +103,11 @@ CurrenciX is a general-audience currency converter. It is **not directed to chil
 
 ### EU ePrivacy Directive 2002/58/EC ("cookie law")
 
-CurrenciX stores nothing on your device beyond what is **strictly necessary** to deliver the currency-conversion service you requested (your settings, your starred currencies, cached rates for offline use). All such storage falls within the "strictly necessary" exemption. Because no non-essential storage is used, no cookie/consent banner is presented in-app.
+CurrenciX stores nothing on your device beyond what is **strictly necessary** to deliver the service you requested (your settings, your starred currencies, carts and rate alerts, cached rates for offline use, and the app's own diagnostic log and crash records). All such storage falls within the "strictly necessary" exemption. Because no non-essential storage is used, no cookie/consent banner is presented in-app.
 
 ## Website
 
-If a project website exists at `currencix.machlev.org` or a comparable domain, its privacy behavior is documented in its own footer. The same "no analytics, no tracking, no non-essential storage" posture is intended to apply there. Any deviation will be disclosed on the site itself.
+The project website, `currencix.machlev.org` (GitHub Pages), has its own privacy page; it uses no analytics or cookies of its own, and serves its fonts and icons itself, so a visit reaches no one but GitHub, which hosts it and sees visitors' IP addresses under its own terms. The same "no analytics, no tracking, no non-essential storage" posture is intended to apply there. Any deviation will be disclosed on the site itself.
 
 ## Changes to this policy
 
@@ -113,4 +115,4 @@ Material changes will be reflected by updating the **Effective** and **Last revi
 
 ## Contact
 
-For any question about this policy or to exercise any right listed above, email `26472689+EliorMachlev@users.noreply.github.com`. Response target: 30 days.
+For any question about this policy or to exercise any right listed above, open an issue on [GitHub](https://github.com/EliorMachlev/CurrenciX/issues). Issues there are public, so don't include anything you'd rather keep private; as the app sends the maintainer nothing, no request needs personal details. Response target: 30 days.

@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Tu configuración actual se sobrescribirá con la del archivo. Esta acción no se puede deshacer.</string>
     <string name="backup_import_confirm_positive">Restaurar</string>
     <string name="backup_encrypt_option">Cifrar con una contraseña</string>
+    <string name="backup_keys_left_out">Las claves de API no se incluyen en una copia de seguridad sin contraseña.</string>
     <string name="backup_password_hint">Contraseña</string>
     <string name="backup_password_prompt_title">Introduce la contraseña</string>
     <string name="backup_password_wrong">La contraseña no ha descifrado el archivo. Inténtalo de nuevo.</string>
@@ -143,9 +144,11 @@
     <string name="credit_lib_compose">Kit de herramientas de interfaz y Material 3</string>
     <string name="credit_lib_material_components">Componentes de Material Design</string>
     <string name="credit_lib_material_symbols">Iconos (redondeados)</string>
+    <string name="credit_lib_typeface">Tipo de letra</string>
     <string name="credit_lib_vico">Gráficos</string>
     <string name="credit_lib_okhttp">Cliente HTTP</string>
     <string name="credit_lib_moshi">Analizador de JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (cómo se guardan carritos, viajes y comisiones)</string>
     <string name="credit_lib_timber">Registro de eventos</string>
     <string name="credit_lib_bouncy_castle">Derivación de claves Argon2id para copias de seguridad cifradas</string>
     <string name="credit_lib_tink">Cifrado AES-GCM para copias de seguridad</string>
@@ -196,6 +199,8 @@
     <string name="app_lock_unlock">Desbloquear</string>
     <string name="private_requests_title">Solicitudes privadas</string>
     <string name="private_requests_summary">Envía las solicitudes de tipos de cambio igual que todos: sin versión de la app, datos del dispositivo ni identificadores de caché. Consume algo más de datos.</string>
+    <string name="block_screenshots_title">Bloquear capturas de pantalla</string>
+    <string name="block_screenshots_summary">La app aparece en blanco en capturas, grabaciones de pantalla y Recientes</string>
     <string name="auto_refresh_summary">Mantener los tipos actualizados en segundo plano</string>
     <string name="refresh_interval_title">Actualizar cada</string>
     <string name="refresh_interval_daily">Una vez al día, justo después de que %1$s publique</string>

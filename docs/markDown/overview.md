@@ -16,31 +16,33 @@ Convert between 30–160+ world currencies using live exchange rates fetched fro
 
 | Feature | Details |
 |---|---|
-| Exchange rate providers | 7 active providers (ECB via Frankfurter, OER, InforEuro, Bank of Canada, Norges Bank, Bank Rossii, Bank of Israel) |
-| Built-in calculator | Full arithmetic (+, −, ×, ÷) before conversion |
-| Cart (bill splitting) | Multi-item running total in one currency, converted against a chosen pair — a full-Compose screen, separate from the converter |
+| Exchange rate providers | 8 (Frankfurter.app with ECB data, Open Exchangerates, AllRatesToday, InforEuro, Bank of Canada, Norges Bank, Bank Rossii, Bank of Israel), plus a fallback provider used when the main one fails — see [api-providers.md](api-providers.md) |
+| Converter and calculator | `+ − × ÷`, brackets and percent before converting; recent pairs; paste an amount from the clipboard; compare your cards' fees; abroad, offers the local currency against yours |
 | Fee manager | Global exchange/bank fees plus per-pair overrides, with "true cost" alongside the mid-market rate |
-| Historical rates | Access rates back to 2010 |
-| Rate charts | 1-year historical timeline visualization with configurable overlays |
-| Backup & restore | Local export of settings via SAF, optionally encrypted with Argon2id + AES-256-GCM |
-| Starred currencies | Favourite/filter currencies for quick access |
-| Themes | Light, dark, and pure-black modes; follows system setting |
-| Foldable support | Adaptive multi-pane layout via WindowInfoTracker |
-| Predictive back gesture | Opted in via `android:enableOnBackInvokedCallback` (API 33+) |
-| Background rate refresh | Optional, off by default — periodic refresh via WorkManager with a provider-aware TTL |
-| Home-screen widget | Glance-based widget showing a chosen currency pair's rate |
-| DNS prewarm | Selected provider's host is resolved at app startup on a background thread |
-| Internationalization | 31 locales, every string translated in each (lint enforces it); most inherited from the upstream Currencies project. The system's per-app language list is generated from the `res/values-*` folders (`generateLocaleConfig`), so it always matches them |
+| Historical rates | Convert at any past date's rates (back to 2010) |
+| Rate chart | Week, month, year, 5 years or a custom range (up to 10 years), with min/max/average/median, how the latest rate compares with the period's average, scrubbing, and convert or set an alert at a touched day |
+| Rate alerts | A notification when a pair reaches a rate, checked on the device after each update; tapping it opens the pair's chart |
+| Cart | Items in one currency converted into another, with quantities, tip / tax, split by person, budget, shopping-list mode, saved carts grouped into trips (with a destination, dates, spending per day and a pre-trip checklist), receipt scanning (on-device OCR, each language downloaded only once you agree), and export as text, CSV, PDF or image |
+| Quick conversions | The pair at round amounts scaled to the currency (or your own), with fees, to copy or share |
+| Outside the app | "Convert currency" in any app's text-selection menu, launcher shortcuts, a Quick Settings tile, and a configurable home-screen widget |
+| Backup & restore | Local export of settings, carts, trips, fees and rate alerts via SAF, optionally encrypted with Argon2id + AES-256-GCM |
+| Starred currencies | Favourites in your own order, with a starred-only filter |
+| Look | Light, dark and pure-black themes or follow the system; colors from the wallpaper (Material You, on by default) |
+| Large screens | Two panes on tablets and unfolded foldables; a one-handed keypad on wide screens |
+| Privacy & security | Optional app lock (fingerprint / screen lock), screenshot blocking and private requests; API keys sealed by the Android Keystore; requests only to the rate providers; nothing sent anywhere about you; crash reports stay on the phone until you share them |
+| Background rate refresh | Optional, off by default — WorkManager, timed to each provider's publication |
+| Accessibility | TalkBack labels and summaries, 48 dp targets, font scaling — see [accessibility-statement.md](accessibility-statement.md) |
+| Internationalization | 32 languages (English plus 31 translations), every string translated in each (lint enforces it); most inherited from the upstream Currencies project. Hebrew, Arabic and Farsi lay out right to left where it reads better. The system's per-app language list is generated from the `res/values-*` folders (`generateLocaleConfig`), so it always matches them |
 
 ## Distribution
 
-CurrenciX is built from source in this repository; there is no public store listing. The upstream **Currencies** app by Maximilian Salomon is available on Google Play (`play.google.com/store/apps/details?id=de.salomax.currencies`) and F-Droid (`f-droid.org/packages/de.salomax.currencies/`) under its original package name.
+CurrenciX is built from source in this repository; there is no public store listing yet. Signed APKs are published as GitHub releases, starting with the first `v*` tag (see [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17)). The upstream **Currencies** app by Maximilian Salomon is available on Google Play (`play.google.com/store/apps/details?id=de.salomax.currencies`) and F-Droid (`f-droid.org/packages/de.salomax.currencies/`) under its original package name.
 
-The `fdroid` build flavor excludes any Play-Store-specific APIs and is reproducible.
+The `fdroid` build flavor excludes any Play-Store-specific APIs and is a reproducible-build target. The `play` flavor installs the receipt reader on demand through Play Feature Delivery.
 
 ## Privacy
 
-The app requests only `INTERNET` and `ACCESS_NETWORK_STATE` (both normal, non-dangerous permissions). No analytics SDK, no crash reporter, no advertising ID access. Exchange rates are fetched directly from public central-bank or open-data APIs.
+The app requests `INTERNET`, `ACCESS_NETWORK_STATE` and `USE_BIOMETRIC` (normal permissions), and `POST_NOTIFICATIONS` only when the first rate alert is set. No analytics SDK, no crash-reporting service, no advertising ID access. Exchange rates are fetched directly from the providers' APIs. See [privacy-policy.md](privacy-policy.md) and [security.md](security.md).
 
 ## Version Scheme
 

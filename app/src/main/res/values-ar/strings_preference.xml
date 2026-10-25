@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">سيتم استبدال إعداداتك الحالية بتلك الموجودة في الملف. لا يمكن التراجع عن هذا.</string>
     <string name="backup_import_confirm_positive">استعادة</string>
     <string name="backup_encrypt_option">التشفير بكلمة مرور</string>
+    <string name="backup_keys_left_out">لا تُضمَّن مفاتيح API في نسخة احتياطية بلا كلمة مرور.</string>
     <string name="backup_password_hint">كلمة المرور</string>
     <string name="backup_password_prompt_title">أدخل كلمة المرور</string>
     <string name="backup_password_wrong">تعذّر فك تشفير هذا الملف بكلمة المرور هذه. حاول مرة أخرى.</string>
@@ -146,9 +147,11 @@
     <string name="credit_lib_compose">أدوات واجهة المستخدم وMaterial 3</string>
     <string name="credit_lib_material_components">مكوّنات Material Design</string>
     <string name="credit_lib_material_symbols">الأيقونات (المستديرة)</string>
+    <string name="credit_lib_typeface">الخط</string>
     <string name="credit_lib_vico">الرسوم البيانية</string>
     <string name="credit_lib_okhttp">عميل HTTP</string>
     <string name="credit_lib_moshi">محلّل JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (طريقة تخزين السلال والرحلات والرسوم المحفوظة)</string>
     <string name="credit_lib_timber">تسجيل السجلات</string>
     <string name="credit_lib_bouncy_castle">اشتقاق المفاتيح بخوارزمية Argon2id للنسخ الاحتياطية المشفّرة</string>
     <string name="credit_lib_tink">تشفير AES-GCM للنسخ الاحتياطية</string>
@@ -199,6 +202,8 @@
     <string name="app_lock_unlock">فتح القفل</string>
     <string name="private_requests_title">طلبات خاصة</string>
     <string name="private_requests_summary">أرسل طلبات الأسعار بالطريقة نفسها لدى الجميع: بلا إصدار للتطبيق ولا تفاصيل للجهاز ولا معرّفات تخزين مؤقت. يستهلك بيانات أكثر قليلًا.</string>
+    <string name="block_screenshots_title">حظر لقطات الشاشة</string>
+    <string name="block_screenshots_summary">إظهار التطبيق فارغًا في لقطات الشاشة وتسجيلات الشاشة والتطبيقات الأخيرة</string>
     <string name="auto_refresh_summary">تحديث الأسعار في الخلفية باستمرار</string>
     <string name="refresh_interval_title">التحديث كل</string>
     <string name="refresh_interval_daily">مرة يوميًا، بعد نشر %1$s مباشرة</string>

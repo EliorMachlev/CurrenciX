@@ -4,9 +4,10 @@
 
 | Tool | Version |
 |---|---|
-| JDK | 21 (Temurin recommended) |
-| Android Gradle Plugin | see `build.gradle.kts` |
-| Kotlin | 2.4.20 |
+| JDK | 21 or newer (Temurin recommended; CI uses 25). The code targets Java 21; signing with the post-quantum hybrid signature needs 24+, which the build fetches as a toolchain |
+| Gradle | 9.8.2 (the wrapper) |
+| Android Gradle Plugin | 9.4.1 |
+| Kotlin | 2.4.21 |
 | Min SDK | 33 |
 | Compile SDK | 37.2 (Compose 1.13 needs at least 37.1; set with AGP's `release(37) { minorApiLevel = 2 }` DSL) |
 | Target SDK | 37 |
@@ -17,7 +18,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 | Flavor | Description |
 |---|---|
-| `fdroid` | F-Droid distribution — no Play Services dependency, fully open-source, reproducible |
+| `fdroid` | F-Droid distribution — no Play Services dependency, fully open-source, a reproducible-build target |
 | `play` | Google Play distribution — may use Play-specific APIs |
 
 ### Common Gradle tasks
@@ -41,7 +42,7 @@ Two flavors are defined in `app/build.gradle.kts`:
 
 Each APK's version code is `versionCode × 10 + digit`: 1 `armeabi-v7a`, 2 `arm64-v8a`, 3 `x86`, 4 `x86_64`, 0 universal (so 1.23.0 is 123001 … 123004, and 123000). The APKs of one release need different codes, and a phone that runs two types (64-bit ARM runs 32-bit too) is offered the higher, better fit. `defaultConfig.versionCode` stays the plain SemVer code (12300), which `checkVersion` and `checkFastlaneChangelog` check.
 
-Each per-CPU APK's version name also names its type, for people (Settings and Android's app info show it): `1.23.0-arm32`, `-arm64`, `-x86`, `-x64` (debug: `1.23.0-<commit>-arm64`); the universal APK and the bundle keep the plain name. Settings reads the installed APK's name from the package manager, since `BuildConfig.VERSION_NAME` is one for all of a variant's APKs; the release-notes link keeps using `BuildConfig.VERSION_NAME`, the plain tag.
+Each per-CPU APK's version name can also name its type, for people (Settings and Android's app info show it): `1.23.0-arm32`, `-arm64`, `-x86`, `-x64`. Debug builds always do (`1.23.0-<commit>-arm64`); release builds only with `-PabiVersionNames`, which the release workflow passes for GitHub's APKs, so a release built without it, as F-Droid builds it, keeps the plain name (`1.23.0`, see below). The universal APK and the bundle keep the plain name. Settings reads the installed APK's name from the package manager, since `BuildConfig.VERSION_NAME` is one for all of a variant's APKs; the release-notes link keeps using `BuildConfig.VERSION_NAME`, the plain tag.
 
 `bundle*` (Play) builds no splits: AGP can't make an app bundle and per-CPU APKs in one run, and Play splits the bundle by CPU itself. The bundle's version code is the universal one (123000). Version codes only go up, so this ×10 scheme is permanent once released.
 
@@ -53,15 +54,15 @@ F-Droid builds each entry from source and keeps the APK that `output` names; its
 
 ```yaml
 Builds:
-  - versionName: 1.23.0-arm32
+  - versionName: 1.23.0
     versionCode: 123001
     commit: v1.23.0
     subdir: app
     gradle:
       - fdroid
     output: build/outputs/apk/fdroid/release/*-fdroid-armeabi-v7a-release-unsigned.apk
-  # … the same for 1.23.0-arm64 / 123002 (arm64-v8a), 1.23.0-x86 / 123003,
-  # 1.23.0-x64 / 123004 (x86_64)
+  # … the same for 123002 (arm64-v8a), 123003 (x86) and 123004 (x86_64),
+  # each with versionName 1.23.0
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
@@ -73,7 +74,7 @@ VercodeOperation:
 UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
 ```
 
-F-Droid's build checks that the APK's version name and code both match the entry ("Unexpected version/version code in output", `fdroidserver/build.py`), so each entry carries its labelled name. Its auto-update can't keep those names for new releases: `checkupdates` copies the last builds and gives every copy the same name, the tag's version plus one optional suffix from `AutoUpdateMode: Version +<suffix> <pattern>`, in which only `%c` (that copy's code) changes (`fdroidserver/checkupdates.py`, 2.4.5). A per-type word like `arm64` can't come out of that, so with the labels every auto-generated build would fail the check. Before submitting, the release builds F-Droid makes need the plain name (`1.23.0`), and the recipe's entries with it.
+F-Droid's build checks that the APK's version name and code both match the entry ("Unexpected version/version code in output", `fdroidserver/build.py`), so each entry carries the name its build produces: the plain one, as F-Droid builds without `-PabiVersionNames`. That's also the only name its auto-update can keep: `checkupdates` copies the last builds and gives every copy the same name, the tag's version plus one optional suffix from `AutoUpdateMode: Version +<suffix> <pattern>`, in which only `%c` (that copy's code) changes (`fdroidserver/checkupdates.py`, 2.4.5), so a per-type word like `arm64` would fail the check on every auto-generated build.
 
 Changelogs: F-Droid's app page shows `changelogs/<CurrentVersionCode>.txt`, the highest code of the release (the `x86_64` one, 123004), else `changelogs/default.txt`; a file named after any other build's code becomes that build's own notes (`fdroidserver/update.py`). `changelogs/12300.txt` (the plain code) matches no build, so F-Droid wouldn't show it.
 
@@ -84,13 +85,15 @@ Changelogs: F-Droid's app page shows `changelogs/<CurrentVersionCode>.txt`, the 
 | Dependency | Version |
 |---|---|
 | `androidx.core:core-ktx` | 1.19.1 |
-| `androidx.appcompat:appcompat` | 1.8.0 |
+| `androidx.appcompat:appcompat` / `appcompat-resources` | 1.8.0 |
 | `androidx.core:core-splashscreen` | 1.2.0 |
-| `androidx.lifecycle:lifecycle-*` (livedata/runtime/viewmodel/viewmodel-compose/runtime-compose) | 2.11.0 |
+| `androidx.lifecycle:lifecycle-*` (livedata/runtime/process/viewmodel/viewmodel-compose/runtime-compose) | 2.11.0 |
 | `androidx.constraintlayout:constraintlayout` | 2.2.2 |
 | `androidx.window:window` | 1.5.1 |
+| `org.jetbrains.kotlin:kotlin-bom` | the Kotlin plugin's version (2.4.21): every Kotlin library aligned to it, so no old `kotlin-stdlib-jdk7` / `-jdk8` comes in through Moshi or Reorderable |
 | `org.jetbrains.kotlinx:kotlinx-collections-immutable` | 0.5.2 |
 | `com.materialkolor:material-color-utilities` | 6.0.0 |
+| `androidx.profileinstaller:profileinstaller` | 1.4.1 (installs the baseline profile) |
 
 `com.google.android.material` has been **dropped** — the app is appcompat-only chrome plus Compose Material 3 now (see [architecture.md](architecture.md)).
 
@@ -98,15 +101,16 @@ Changelogs: F-Droid's app page shows `changelogs/<CurrentVersionCode>.txt`, the 
 
 | Dependency | Version |
 |---|---|
-| `androidx.datastore:datastore-preferences` | 1.2.1 |
+| `androidx.datastore:datastore-preferences` / `datastore` | 1.3.0 |
+| `com.squareup.wire` (Gradle plugin and runtime) | 7.1.0 |
 
-Replaces SharedPreferences across every namespace — see [architecture.md](architecture.md).
+Preferences DataStore replaces SharedPreferences across every namespace; the working cart, saved carts, trips, fees and rate alerts are Proto DataStore files, their Kotlin generated by Wire from `src/main/proto/currencix/saved.proto` — see [architecture.md](architecture.md).
 
 ### Compose
 
 | Dependency | Version |
 |---|---|
-| `androidx.compose:compose-bom-alpha` | 2026.10.00 — the pre-release BOM: Compose 1.13.0-beta01, Material 3 1.5.0-beta01. Back to `compose-bom` once both are stable |
+| `androidx.compose:compose-bom-alpha` | 2026.10.01 — the pre-release BOM: Compose 1.13.0-beta02, Material 3 1.5.0-beta02. Back to `compose-bom` once both are stable |
 | `androidx.compose.material3:material3` / `ui` / `foundation` / `runtime` / `runtime-livedata` | via BOM |
 | `androidx.activity:activity-compose` | 1.13.0 |
 | `androidx.navigation3:navigation3-runtime` / `navigation3-ui` | 1.2.0 |
@@ -119,12 +123,12 @@ Hosts the Vico chart plus the rest of the app's UI — every screen is Compose, 
 
 | Dependency | Version |
 |---|---|
-| `com.squareup.okhttp3:okhttp` | 5.5.0 |
-| `com.squareup.okhttp3:logging-interceptor` | 5.5.0 |
+| `com.squareup.okhttp3:okhttp` | 5.5.1 |
+| `com.squareup.okhttp3:logging-interceptor` | 5.5.1 |
 | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | `com.squareup.retrofit2:converter-moshi` | 3.0.0 |
-| `com.squareup.moshi:moshi-kotlin` | 1.15.2 |
-| `com.google.devtools.ksp:*` | 2.3.11 |
+| `com.squareup.moshi:moshi` / `moshi-kotlin-codegen` (KSP; no reflection) | 1.15.2 |
+| `com.google.devtools.ksp` (Gradle plugin) | 2.3.12 |
 
 Retrofit is layered on the shared OkHttp client and serves every fixed-shape JSON endpoint; the XML and SDMX feeds stay on raw OkHttp by design — see [architecture.md](architecture.md).
 
@@ -142,7 +146,7 @@ No dependency. The keypad's expressions are `+ − × ÷`, brackets and percent,
 
 Modules: `:ocr-engine` (an Android library: Tesseract and `TesseractRecognizer`) and `:ocr` (a dynamic feature: just a manifest and a build file). The F-Droid app depends on `:ocr-engine` directly; the Play bundle carries it in `:ocr`, on demand. `:ocr` is declared in `:app` (`dynamicFeatures`) and has variants only in a bundle build: AGP can't make per-CPU APKs with a feature module, and only Play installs features.
 
-English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.1.0, 4.1 MB) ships in the F-Droid APKs; the Play app downloads it with the recognizer. The other languages download on demand in both, all checked against SHA-256s in `ocr/TessLanguage.kt`.
+No OCR language data ships in either app: English (tessdata_fast 4.1.0, 4.1 MB) and the app's language download on first use, once the user agrees to each, all checked against the SHA-256s and sizes in `ocr/TessLanguage.kt`.
 
 ### Charts
 
@@ -173,6 +177,22 @@ English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.
 | `com.squareup.leakcanary:leakcanary-android` | 3.0-alpha-9 | Debug-only leak detection, auto-installs via its own `ContentProvider` |
 | `androidx.metrics:metrics-performance` | 1.0.0 | JankStats — per-Activity jank logging via Timber, debug-only |
 
+### Release tooling (build plugin, nothing shipped)
+
+| Plugin | Version | Note |
+|---|---|---|
+| `org.cyclonedx.bom` | 3.5.1 | The release's SBOM: `:app:cyclonedxDirectBom` writes CycloneDX 1.6 JSON (and XML) of `fdroidReleaseRuntimeClasspath` to `app/build/reports/sbom/` |
+
+### Build tooling (Gradle plugins, nothing shipped)
+
+| Plugin | Version | Note |
+|---|---|---|
+| `org.jetbrains.kotlin.plugin.compose` | 2.4.21 | The Compose compiler, in step with Kotlin |
+| `com.diffplug.spotless` | 8.10.4 | ktlint formatting (see [contributing.md](contributing.md#code-style)) |
+| `dev.detekt` | 2.0.0-alpha.6 | Static analysis (see [ci-cd.md](ci-cd.md#detekt)) |
+| `io.github.ben-manes.versions` | 0.66.0 | `dependencyUpdates`: which dependencies have newer releases |
+| `androidx.baselineprofile` | 1.5.0 | Baseline and startup profiles (see [Baseline Profiles](#baseline-profiles)) |
+
 ### Testing
 
 | Dependency | Version |
@@ -180,18 +200,19 @@ English OCR data (`src/fdroid/assets/tessdata/eng.traineddata`, tessdata_fast 4.
 | `junit:junit` | 4.13.2 |
 | `org.mockito:mockito-core` | 5.24.0 |
 | `androidx.arch.core:core-testing` | 2.2.0 |
-| `org.junit.jupiter:junit-jupiter-*` | 6.1.3 |
+| `androidx.work:work-testing` | 2.12.0 |
+| `org.junit.jupiter:junit-jupiter-*` / `org.junit.vintage:junit-vintage-engine` | 6.1.3 |
 | `com.code-intelligence:jazzer-junit` | 0.30.0 (fuzz testing) |
-| `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.76.0 |
+| `io.github.takahirom.roborazzi:roborazzi` / `roborazzi-compose` | 1.77.0 |
 | `org.robolectric:robolectric` | 4.17 |
 | `androidx.compose.ui:ui-test-junit4` / `ui-test-manifest` | via BOM |
-| `com.lemonappdev:konsist` | 0.17.3 |
+| `com.lemonappdev:konsist` | 0.18.1 |
 
 Roborazzi + Robolectric give pure-JVM screenshot testing for every Compose surface (no emulator needed), running under the existing `test<Flavor>DebugUnitTest` task via the JUnit vintage engine. Konsist encodes the View / ViewModel / Repository / Model layer boundaries as JUnit tests on the plain JVM, so a refactor can't silently break MVVM separation.
 
 #### Fuzz tests
 
-`FuzzTest` (Jazzer) fuzzes the parsers that take text the app doesn't control, each of which must answer rather than throw on anything: a currency code (`Currency.fromString`), text selected in another app (`PriceParser`), a receipt's scanned text (`ReceiptParser`), a calculation, typed or in an imported cart (`evaluateCalculatorExpression`), and a typed amount (`parseDecimal`). Jazzer's instrumentation breaks Robolectric, so the unit-test tasks leave `FuzzTest` out, and `-PfuzzTests` runs it alone. Without `JAZZER_FUZZ` only the saved inputs are replayed; with it, one target is fuzzed for two minutes (one per run):
+`FuzzTest` (Jazzer) fuzzes the parsers that take text the app doesn't control, each of which must answer rather than throw on anything: a currency code (`Currency.fromString`), text selected in another app (`PriceParser`), a receipt's scanned text (`ReceiptParser`), a calculation, typed or in an imported cart (`evaluateCalculatorExpression`), a typed amount (`parseDecimal`), and another app's intent to the exported converter (`ConverterLaunch.parse`, `fuzzLaunchIntent`). Jazzer's instrumentation breaks Robolectric, so the unit-test tasks leave `FuzzTest` out, and `-PfuzzTests` runs it alone. Without `JAZZER_FUZZ` only the saved inputs are replayed; with it, one target is fuzzed for two minutes (one per run):
 
 ```bash
 JAZZER_FUZZ=1 ./gradlew :app:testFdroidDebugUnitTest -PfuzzTests \
@@ -199,6 +220,30 @@ JAZZER_FUZZ=1 ./gradlew :app:testFdroidDebugUnitTest -PfuzzTests \
 ```
 
 CI does this for each target on every PR (`build.yaml`'s `fuzz` job). A crash fails the run and saves its input under `app/src/test/resources/com/eliormachlev/currencix/FuzzTestInputs/<target>/`; commit it there with the fix, and it's replayed from then on. OpenSSF Scorecard's Fuzzing check doesn't recognise Jazzer (it looks for OSS-Fuzz, ClusterFuzzLite, or fuzzing in Go and a few other languages), so it keeps reporting the project as not fuzzed.
+
+## Dependency verification
+
+`gradle/verification-metadata.xml` lists the SHA-256 of every file the build downloads (libraries, plugins, their POMs and Gradle module files, the tools detekt, ktlint and lint fetch), and Gradle refuses one that doesn't match or isn't listed. After adding or updating a dependency, record the new checksums, either with **Update dependency checksums** in Actions (run from the branch; it commits them) or locally:
+
+```bash
+RECORD=(--write-verification-metadata sha256 --no-configuration-cache)
+./gradlew "${RECORD[@]}" \
+  assembleFdroidDebug assemblePlayDebug \
+  spotlessCheck detekt assembleFdroidRelease :app:cyclonedxDirectBom :app:owaspLibraries \
+  :app:lintFdroidDebug :app:lintPlayDebug \
+  :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease :app:bundlePlayRelease
+./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest
+./gradlew "${RECORD[@]}" :app:compileFdroidReleaseKotlin -PcomposeReports
+./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
+python3 .github/scripts/trust-mirror-copies.py ~/.gradle gradle/verification-metadata.xml
+PROPS=gradle/wrapper/gradle-wrapper.properties
+curl -fsSL --proto =https "$(python3 .github/scripts/gradle-sources-checksum.py url "$PROPS")" -o /tmp/gradle-src.zip.sha256
+python3 .github/scripts/gradle-sources-checksum.py record "$PROPS" gradle/verification-metadata.xml /tmp/gradle-src.zip.sha256
+```
+
+`--no-configuration-cache` matters: with a stored configuration Gradle never resolves the build's plugins, so their files go unrecorded, and a build without that cache (every CI run) fails on them. The tests are in the list because running them resolves libraries that compiling them doesn't. The last line covers a file published with different bytes on different repositories: a plugin's marker POM on Maven Central isn't the one on the Gradle Plugin Portal, and a build gets whichever repository answers first (Gradle moves on when Central throttles), so every copy Gradle's cache holds of a recorded file is trusted as well (`<also-trust>`).
+
+Gradle's own source zip (`gradle-<version>-src.zip`), which an IDE sync downloads to show Gradle's API in build scripts and the build never does, is recorded with the checksum Gradle publishes for it (the last three lines, for the wrapper's version; run them again after a Gradle update). Libraries' `-sources.jar` and `-javadoc.jar`, which only an IDE sync downloads (Android Studio, Qodana), are accepted without a checksum (`<trusted-artifacts>`, [exceptions.md](exceptions.md) #9). Then read the diff: it's every new file the build will trust. `dependencyUpdates` asks the repositories about versions the build doesn't use, so it runs with `--dependency-verification lenient`. The list is recorded on Linux; AGP's `aapt2` comes per operating system, so building on macOS or Windows adds that platform's `aapt2` with the same command.
 
 ## Signing (Release)
 
@@ -219,9 +264,9 @@ Release APKs can also carry Android 17's hybrid signature (APK Signature Scheme 
 
 **The keys exist** (made 2026-10-23, replacing a first set from 2026-10-17 whose passwords were lost before any release): the release key (`release.p12`, alias `currencix-release`, EC P-521, certificate `CN=CurrenciX`, SHA-256 `B0:87:B0:31:48:D7:73:B4:CE:DA:C0:24:79:F5:0B:2F:EB:C5:C8:08:AF:17:2E:16:7B:2E:D0:BB:68:E1:E0:59`) and the hybrid pair (`hybrid.p12`: `hybrid-classical`, EC P-521, `BF:9A:96:0A:…:21:FB:C3`; `hybrid-pqc`, ML-DSA-65, `45:47:5F:B9:…:A0:03:E6`). Their lineages hold certificates only and are in the repository (`signing-lineages/`). The keystores and passwords are not: the maintainer keeps them in an encrypted backup and as secrets of the `release` environment (Settings → Environments → release, deployment limited to `v*` tags and `master`), which only the release workflow's build job names, so no other workflow or branch can read them.
 
-**Releasing is pushing a tag.** Tag a commit of `master` `v<versionName>` (`v1.23.0`) and push the tag: `release-apk.yaml` checks that the tag names the version being built and is on `master`, decodes the keystores from the secrets `RELEASE_KEYSTORE_B64`, `RELEASE_KEYSTORE_PASSWORD`, `HYBRID_KEYSTORE_B64` and `HYBRID_KEYSTORE_PASSWORD` into the runner's temp folder, writes `secrets.properties`, builds `assembleFdroidRelease` (which signs and verifies every APK, below), deletes the keys and uploads the five APKs with a `SHA256SUMS`. A second job, the only one allowed to write to the repository and one that never sees the keys, then publishes the GitHub release "CurrenciX <version>": the APKs, the checksums and notes written automatically, followed by which APK to pick and the release certificate's fingerprint.
+**Releasing is pushing a tag.** Tag a commit of `master` `v<versionName>` (`v1.23.0`) and push the tag: `release-apk.yaml` checks that the tag names the version being built and is on `master`, decodes the keystores from the secrets `RELEASE_KEYSTORE_B64`, `RELEASE_KEYSTORE_PASSWORD`, `HYBRID_KEYSTORE_B64` and `HYBRID_KEYSTORE_PASSWORD` into the runner's temp folder, writes `secrets.properties`, builds `assembleFdroidRelease` (which signs and verifies every APK, below), deletes the keys, writes the SBOM (`:app:cyclonedxDirectBom`: CycloneDX 1.6 JSON of the fdroid release runtime classpath, every library the APKs ship with its version and licence) and uploads the five APKs, the SBOM as `currencix-<version>-sbom.cdx.json` and a `SHA256SUMS` covering them all. A second job, the only one allowed to write to the repository and one that never sees the keys, then publishes the GitHub release "CurrenciX <version>": the APKs, the SBOM, the checksums and notes written automatically, followed by which APK to pick and the release certificate's fingerprint.
 
-The notes come from `.github/scripts/release-notes.py <tag>`: the commits from the previous `v*` tag (for the first release, the fork's rebrand to CurrenciX, #89, as earlier history is the upstream app's) to this one. `master` takes each pull request as one squashed commit with a Conventional Commits title, so they group by type: **New** (`feat`), **Fixes** (`fix`), **Faster** (`perf`), **Translations** (`i18n`, plus one line naming the languages Weblate updated), and **Other changes** for a title in no known style. `chore`, `ci`, `build`, `refactor`, `test`, `docs`, `style` and `revert` are left out as not user-facing. Each entry keeps its PR number, which GitHub links, and the notes end with the compare link to the previous release. The PR title is the release note, so title PRs for users. Run by hand, the workflow shows the notes a tag would get in its summary. The fastlane changelog (`changelogs/<versionCode>.txt`, what F-Droid shows, 500 characters at most) is still written by hand. A version with a `-` (`1.24.0-beta1`) is marked a pre-release. F-Droid builds the same tag (`UpdateCheckMode: Tags`). Started by hand instead (Actions → Release → Run workflow), it only builds and uploads the signed APKs, to try a build before tagging it. Nothing else can start it, so pull requests never see the keys, and its Gradle cache is read-only, so nothing from a run that held them is cached.
+The notes come from `.github/scripts/release-notes.py <tag>`: the commits from the previous `v*` tag (for the first release, the fork's rebrand to CurrenciX, #89, as earlier history is the upstream app's) to this one. `master` takes each pull request as one squashed commit with a Conventional Commits title, so they group by type: **New** (`feat`), **Fixes** (`fix`), **Faster** (`perf`), **Translations** (`i18n`, plus one line naming the languages Weblate updated, should translations come through Weblate again as they did upstream), and **Other changes** for a title in no known style. `chore`, `ci`, `build`, `deps`, `refactor`, `test`, `docs`, `style` and `revert` are left out as not user-facing. Each entry keeps its PR number, which GitHub links, and the notes end with the compare link to the previous release. The PR title is the release note, so title PRs for users. Run by hand, the workflow shows the notes a tag would get in its summary. The fastlane changelog (`changelogs/<versionCode>.txt`, what F-Droid shows, 500 characters at most) is still written by hand. A version with a `-` (`1.24.0-beta1`) is marked a pre-release. F-Droid builds the same tag (`UpdateCheckMode: Tags`). Started by hand instead (Actions → Release → Run workflow), it only builds and uploads the signed APKs, to try a build before tagging it. Nothing else can start it, so pull requests never see the keys, and its Gradle cache is read-only, so nothing from a run that held them is cached.
 
 To make new keys instead (only before the first release; after it they're permanent):
 
@@ -323,22 +368,27 @@ timings, so Macrobenchmark's emulator guard is suppressed.
 composables taking rates and dates compare them by `equals` and skip
 recomposing for an equal value. Hot-path parameter objects are values too
 (`ConverterBody` is an `@Immutable` data class; the currency picker's
-conversion preview is remembered). To look again, add
-`reportsDestination` / `metricsDestination` to the `composeCompiler` block
-and compile a release variant: the reports list each composable's unstable
-parameters.
+conversion preview is remembered). CI keeps it that way: the `compose-stability`
+job compiles with `-PcomposeReports` (the compiler's report of each composable,
+in `app/build/compose-reports/`, also restored from the build cache) and
+`.github/scripts/compose-stability.py` fails on a composable that can't skip or
+a parameter the compiler can't prove stable (see [ci-cd.md](ci-cd.md)). Locally:
+
+```bash
+./gradlew :app:compileFdroidReleaseKotlin -PcomposeReports
+python3 .github/scripts/compose-stability.py app/build/compose-reports
+```
 
 ## Known Issues
 
-### Gradle deprecation: "Project object as dependency notation" (AGP bug)
+### Gradle deprecation: `Configuration.setVisible(boolean)` (AGP)
 
-**Symptom:** During configuration of `:app`, Gradle prints:
+**Symptom:** During configuration of `:app`, Gradle (9.8.2) prints the line below, and a build ends with "Deprecated Gradle features were used in this build, making it incompatible with Gradle 10":
 
 ```
-Using a Project object as a dependency notation has been deprecated.
-This will fail with an error in Gradle 10.
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11.
 ```
 
-**Root cause:** This originated inside **AGP 9.2.1** (`VariantDependenciesBuilder.java:279/333` → `VariantManager.createTestComponents`), not from any build script in this repository. The stack trace confirmed no call site in our code.
+**Root cause:** inside **AGP 9.4.1** (`BasePlugin.createAndroidJdkImageConfiguration`, `BasePlugin.kt:362`), not in any build script here (`./gradlew help --warning-mode all -Dorg.gradle.deprecation.trace=true` shows the stack).
 
-**Status:** The project has since moved to **AGP 9.3.2**. Upstream bug, expected to resolve once AGP uses `project(String)` internally — needs a fresh check on 9.3.2 to confirm whether it still reproduces before this section is trusted as current.
+**Status:** left visible, as nothing in this repository can fix it. AGP 9.5.0-rc01 no longer makes the call (checked in its `BasePlugin` classes), so it goes away with the move to AGP 9.5.0 once that's stable; that move must happen before Gradle 11. Silencing it (`org.gradle.warning.mode=none`) would hide every other deprecation too, so it isn't done. The earlier AGP warning about using a `Project` object as dependency notation (AGP 9.2.1) no longer appears on AGP 9.4.1.

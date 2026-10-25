@@ -13,10 +13,9 @@ private const val DOWNLOAD_SUFFIX = ".part"
 private const val BUFFER_BYTES = 64 * 1024
 
 /**
- * The OCR language files on the device: English copied once from the
- * app's assets (F-Droid) or downloaded (Play), the others downloaded into
- * the same folder
- * ([TessdataDownloadWorker]). Every file is checked against its
+ * The OCR language files on the device, English included: none ships with
+ * the app, each is downloaded into this folder once the user has agreed to
+ * it ([TessdataDownloadWorker]). Every file is checked against its
  * [TessLanguage.sha256] before it's used.
  */
 object Tessdata {
@@ -36,17 +35,14 @@ object Tessdata {
         language: TessLanguage,
     ): Boolean = file(context, language).length() > 0
 
-    /**
-     * Whether the English file is on the device, copying it out of the
-     * assets first where the build carries it (the F-Droid app; Tesseract
-     * can't read assets). The Play app downloads it instead.
-     */
-    fun ensureEnglish(context: Context): Boolean {
-        val target = file(context, TessLanguage.ENGLISH)
-        if (target.length() > 0) return true
-        val name = TessLanguage.ENGLISH.code + TRAINEDDATA
-        if (context.assets.list(TESSDATA_DIR)?.contains(name) != true) return false
-        return context.assets.open("$TESSDATA_DIR/$name").use { install(it, target, TessLanguage.ENGLISH) }
+    /** Deletes [language]'s file (and any half-downloaded one); true when none is left. */
+    fun delete(
+        context: Context,
+        language: TessLanguage,
+    ): Boolean {
+        val target = file(context, language)
+        File(target.parentFile, target.name + DOWNLOAD_SUFFIX).delete()
+        return !target.exists() || target.delete()
     }
 
     /**
@@ -75,14 +71,16 @@ object Tessdata {
     }
 
     /**
-     * The languages to read with, as Tesseract takes them ("heb+eng"): the
-     * app language's when its file is here, then English (prices and
-     * Latin-script names).
+     * The languages to read with, as Tesseract takes them ("heb+kor+eng"):
+     * the app language's first when its file is here, then any other the
+     * user added, then English (prices and Latin-script names).
      */
     fun languages(
         context: Context,
         local: TessLanguage?,
-    ): String =
-        listOfNotNull(local?.takeIf { it != TessLanguage.ENGLISH && isInstalled(context, it) }, TessLanguage.ENGLISH)
-            .joinToString("+") { it.code }
+    ): String {
+        val others = TessLanguage.entries.filter { it != TessLanguage.ENGLISH && it != local && isInstalled(context, it) }
+        val first = local?.takeIf { it != TessLanguage.ENGLISH && isInstalled(context, it) }
+        return (listOfNotNull(first) + others + TessLanguage.ENGLISH).joinToString("+") { it.code }
+    }
 }

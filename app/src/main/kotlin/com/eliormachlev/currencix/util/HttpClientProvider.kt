@@ -2,9 +2,14 @@ package com.eliormachlev.currencix.util
 
 import android.content.Context
 import android.os.Build
+import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.ocr.TessLanguage
 import okhttp3.Cache
+import okhttp3.CipherSuite
+import okhttp3.ConnectionSpec
 import okhttp3.Dns
 import okhttp3.OkHttpClient
+import okhttp3.TlsVersion
 import okhttp3.android.AndroidDns
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
@@ -29,6 +34,28 @@ private const val CONNECT_TIMEOUT_SECONDS = 15L
 // a truly dead endpoint hang the UI thread for too long.
 private const val READ_TIMEOUT_SECONDS = 30L
 private const val CALL_TIMEOUT_SECONDS = 45L
+
+// TLS with forward secrecy only: TLS 1.3 (whose key exchange is always
+// ephemeral), and TLS 1.2 only with ECDHE and an AEAD cipher. OkHttp's
+// default (MODERN_TLS) still accepts RSA key exchange and 3DES as a fallback,
+// under which a provider's private key, if it ever leaked, would decrypt
+// recorded traffic. Every provider offers TLS 1.3 or ECDHE, and minSdk 33
+// supports all of these. No cleartext either, as network_security_config.xml.
+internal val FORWARD_SECRET_TLS: ConnectionSpec =
+    ConnectionSpec
+        .Builder(ConnectionSpec.MODERN_TLS)
+        .tlsVersions(TlsVersion.TLS_1_3, TlsVersion.TLS_1_2)
+        .cipherSuites(
+            CipherSuite.TLS_AES_128_GCM_SHA256,
+            CipherSuite.TLS_AES_256_GCM_SHA384,
+            CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+        ).build()
 
 // Shared OkHttp client with an on-disk response cache and Timber-bridged
 // wire logging. Every rate provider funnels through this client via
@@ -95,6 +122,8 @@ object HttpClientProvider {
             // Network-layer rewrite runs before OkHttp's cache writer sees
             // the response, so the stamped Cache-Control controls what the
             // cache stores for the non-cooperative provider hosts.
+            // Only the rate providers' hosts and the OCR language host, at every redirect.
+            .addNetworkInterceptor(AllowedHostsInterceptor { ApiProvider.allHosts + TessLanguage.DOWNLOAD_HOST })
             .addNetworkInterceptor(ProviderCacheRewriteInterceptor(PROVIDER_CACHE_TTL_SECONDS))
             // Innermost, so the request it shapes is exactly what leaves the phone.
             .addNetworkInterceptor(PrivateRequestsInterceptor())
@@ -105,6 +134,7 @@ object HttpClientProvider {
             // read timeout indefinitely.
             .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
+            .connectionSpecs(listOf(FORWARD_SECRET_TLS))
             .apply { encryptedClientHelloDns()?.let(::dns) }
             .build()
     }

@@ -5,7 +5,8 @@ name: Release
 # Scheme v3.2) and publishes them as a GitHub release.
 #
 # - Push a tag "v<versionName>" (e.g. v1.23.0) on a commit of master: the
-#   release is published, its notes written from the commits since the last
+#   release is published with the APKs, their SBOM (CycloneDX JSON) and
+#   checksums, its notes written from the commits since the last
 #   release (.github/scripts/release-notes.py). F-Droid picks up the same tag
 #   (UpdateCheckMode: Tags).
 # - Or start it by hand (Actions → Release → Run workflow): it builds and
@@ -121,16 +122,28 @@ jobs:
           } > secrets.properties
 
       # signApksHybridFdroidRelease re-signs each APK and verifies it.
+      # -PabiVersionNames names each per-CPU APK's type (1.23.0-arm64);
+      # F-Droid's own builds of the same tag keep the plain name.
       - name: Build the signed fdroid release APKs
-        run: ./gradlew assembleFdroidRelease
+        run: ./gradlew assembleFdroidRelease -PabiVersionNames
 
       - name: Remove the signing keys
         if: always()
         run: rm -rf "$RUNNER_TEMP/signing" secrets.properties
 
+      # The software bill of materials: every library the APKs ship, with
+      # versions, hashes and licences (cyclonedxDirectBom in app/build.gradle.kts).
+      - name: Write the SBOM
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
+        run: |
+          ./gradlew :app:cyclonedxDirectBom
+          cp app/build/reports/sbom/currencix-sbom.cdx.json \
+            "app/build/outputs/apk/fdroid/release/currencix-${VERSION}-sbom.cdx.json"
+
       - name: Write checksums
         working-directory: app/build/outputs/apk/fdroid/release
-        run: sha256sum ./*-release.apk | sed 's| \./| |' > SHA256SUMS
+        run: sha256sum ./*-release.apk ./*-sbom.cdx.json | sed 's| \./| |' > SHA256SUMS
 
       - name: Upload the APKs
         id: upload
@@ -139,6 +152,7 @@ jobs:
           name: currencix-${{ steps.version.outputs.name }}-signed
           path: |
             app/build/outputs/apk/fdroid/release/*-release.apk
+            app/build/outputs/apk/fdroid/release/*-sbom.cdx.json
             app/build/outputs/apk/fdroid/release/SHA256SUMS
           if-no-files-found: error
 
@@ -150,7 +164,7 @@ jobs:
           {
             echo "### Signed release APKs, CurrenciX ${VERSION}"
             echo
-            echo "[Download the APKs](${ARTIFACT_URL}) (a zip: one per CPU type, and the universal one that installs everywhere)."
+            echo "[Download the APKs](${ARTIFACT_URL}) (a zip: one per CPU type, the universal one that installs everywhere, and the SBOM)."
             echo
             echo "Signed with the release key (v3.0, all Android versions) and the post-quantum hybrid signature (v3.2, Android 17+)."
           } >> "$GITHUB_STEP_SUMMARY"
@@ -174,6 +188,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Signed build provenance for each file (below).
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -186,6 +203,16 @@ jobs:
         with:
           name: currencix-${{ needs.build.outputs.version }}-signed
           path: release
+
+      # A signed statement, on GitHub's transparency log, of which commit and
+      # workflow run built each file: `gh attestation verify <apk> --repo
+      # EliorMachlev/CurrenciX` checks a download against it.
+      - name: Attest the build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            release/*.apk
+            release/*-sbom.cdx.json
 
       - name: Publish the release
         env:
@@ -200,7 +227,7 @@ jobs:
             echo
             echo "**Which APK?** \`universal\` installs on any phone. The others are smaller, one per CPU type (\`arm64-v8a\` fits most phones)."
             echo
-            echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`5C:F5:CB:30:0F:0D:A0:76:F7:BC:FD:36:5E:F8:3B:67:C6:46:D6:2A:D8:64:7A:6D:F4:6B:95:85:DF:A3:00:99\`. Checksums in \`SHA256SUMS\`."
+            echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`B0:87:B0:31:48:D7:73:B4:CE:DA:C0:24:79:F5:0B:2F:EB:C5:C8:08:AF:17:2E:16:7B:2E:D0:BB:68:E1:E0:59\`. The libraries it ships, with versions and licences: \`currencix-${VERSION}-sbom.cdx.json\` (CycloneDX). Checksums in \`SHA256SUMS\`; where each file was built: \`gh attestation verify <file> --repo EliorMachlev/CurrenciX\`."
           } > notes.md
           prerelease=()
           case "$VERSION" in *-*) prerelease=(--prerelease) ;; esac

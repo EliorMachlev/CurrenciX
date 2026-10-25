@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eliormachlev.currencix.model.Currency
@@ -17,8 +18,12 @@ import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.repository.RefreshState
 import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
 import com.eliormachlev.currencix.repository.defaultTimelineSince
+import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.calculateDifference
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -62,6 +67,7 @@ class TimelineViewModel(
     private val app: Application,
     private var base: Currency,
     private var target: Currency,
+    private val dispatchers: AppDispatchers = AppDispatchers.production,
 ) : AndroidViewModel(app) {
     companion object {
         /** Builds the [TimelineViewModel] for [base] → [target]. */
@@ -172,7 +178,13 @@ class TimelineViewModel(
      * until the first timeline arrives, so the title doesn't flash the pair
      * over an empty chart.
      */
-    fun getCurrencyPair(): LiveData<Pair<Currency, Currency>?> = dbLiveItems.map { if (it == null) null else base to target }
+    fun getCurrencyPair(): LiveData<Pair<Currency, Currency>?> = currencyPairLive
+
+    // Each readout is one LiveData for the screen's life, made on first use:
+    // the screen asks for them while it composes, and a fresh one per
+    // recomposition (several a second while the chart is scrubbed) redid the
+    // whole computation each time.
+    private val currencyPairLive by lazy { dbLiveItems.map { if (it == null) null else base to target } }
 
     /** Fetches the pair again — after an error, or once the provider changed. */
     fun retry() {
@@ -196,15 +208,13 @@ class TimelineViewModel(
         repository.getTimeline(base, target, fetchedSince)
     }
 
-    fun getProvider(): LiveData<CharSequence?> =
-        dbLiveItems.map {
-            it?.provider?.getName(app)
-        }
+    fun getProvider(): LiveData<CharSequence?> = providerLive
 
-    fun getRates(): LiveData<Map<LocalDate, Rate>?> =
-        dbLiveItems.map {
-            it?.rates
-        }
+    private val providerLive by lazy { dbLiveItems.map { it?.provider?.getName(app) } }
+
+    fun getRates(): LiveData<Map<LocalDate, Rate>?> = ratesLive
+
+    private val ratesLive by lazy { dbLiveItems.map { it?.rates } }
 
     /**
      * True when the dates on screen hold no rates once loading is done — a
@@ -212,7 +222,9 @@ class TimelineViewModel(
      * older history is still downloading it stays false (the progress bar
      * says what's happening).
      */
-    fun isRangeEmpty(): LiveData<Boolean> =
+    fun isRangeEmpty(): LiveData<Boolean> = rangeEmptyLive
+
+    private val rangeEmptyLive: LiveData<Boolean> by lazy {
         MediatorLiveData(false).apply {
             var timeline: Timeline? = null
             var loading = false
@@ -230,41 +242,61 @@ class TimelineViewModel(
                 update()
             }
         }
+    }
 
-    fun getRateCurrent(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> =
-        rangeLiveData(followScrub = false) { rates, _ -> Pair(rates?.lastOrNull(), decimalPlaces) }
+    fun getRateCurrent(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> = rateCurrentLive
 
-    fun getRatePast(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> =
-        rangeLiveData { rates, scrubDate -> Pair(rates?.pastEntry(scrubDate), decimalPlaces) }
+    private val rateCurrentLive by lazy {
+        rangeLiveData(followScrub = false) { rates, _, decimals -> Pair(rates?.lastOrNull(), decimals) }
+    }
 
-    fun getRatesDifferencePercent(): LiveData<BigDecimal?> =
-        rangeLiveData(withDecimals = false) { rates, scrubDate ->
+    fun getRatePast(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> = ratePastLive
+
+    private val ratePastLive by lazy { rangeLiveData { rates, scrubDate, decimals -> Pair(rates?.pastEntry(scrubDate), decimals) } }
+
+    fun getRatesDifferencePercent(): LiveData<BigDecimal?> = differenceLive
+
+    private val differenceLive by lazy {
+        rangeLiveData(withDecimals = false) { rates, scrubDate, _ ->
             calculateDifference(rates?.pastEntry(scrubDate)?.value?.value, rates?.lastOrNull()?.value?.value)
         }
+    }
 
-    fun getRatesAverage(): LiveData<Pair<Rate?, Int>> = aggregateLiveData(::averageOf)
+    fun getRatesAverage(): LiveData<Pair<Rate?, Int>> = averageLive
 
-    fun getRatesMedian(): LiveData<Pair<Rate?, Int>> = aggregateLiveData(::medianOf)
+    private val averageLive by lazy { aggregateLiveData(::averageOf) }
+
+    fun getRatesMedian(): LiveData<Pair<Rate?, Int>> = medianLive
+
+    private val medianLive by lazy { aggregateLiveData(::medianOf) }
 
     // Range-wide statistics that reduce the visible range's values to one
     // [Rate]. The reducer receives a non-empty list; an empty range
     // short-circuits to null before it runs.
     private fun aggregateLiveData(reducer: (List<BigDecimal>) -> BigDecimal): LiveData<Pair<Rate?, Int>> =
-        rangeLiveData { rates, scrubDate ->
+        rangeLiveData { rates, scrubDate, decimals ->
             val values = rates?.fromScrub(scrubDate)?.mapNotNull { entry -> entry.value?.value }
-            Pair(values?.takeIf { it.isNotEmpty() }?.let { Rate(target, reducer(it)) }, decimalPlaces)
+            Pair(values?.takeIf { it.isNotEmpty() }?.let { Rate(target, reducer(it)) }, decimals)
         }
 
-    fun getRatesMin(): LiveData<Triple<Rate?, LocalDate?, Int>> = extremeLiveData(pickMax = false, respectScrub = true)
+    fun getRatesMin(): LiveData<Triple<Rate?, LocalDate?, Int>> = minLive
 
-    fun getRatesMax(): LiveData<Triple<Rate?, LocalDate?, Int>> = extremeLiveData(pickMax = true, respectScrub = true)
+    private val minLive by lazy { extremeLiveData(pickMax = false, respectScrub = true) }
+
+    fun getRatesMax(): LiveData<Triple<Rate?, LocalDate?, Int>> = maxLive
+
+    private val maxLive by lazy { extremeLiveData(pickMax = true, respectScrub = true) }
 
     // Range-wide extremes for the on-chart reference lines: intentionally
     // ignore the scrub position so the horizontal min/max lines stay anchored
     // to the visible period's absolute extremes while the finger drags.
-    fun getRatesRangeMin(): LiveData<Double?> = rangeExtreme(pickMax = false)
+    fun getRatesRangeMin(): LiveData<Double?> = rangeMinLive
 
-    fun getRatesRangeMax(): LiveData<Double?> = rangeExtreme(pickMax = true)
+    private val rangeMinLive by lazy { rangeExtreme(pickMax = false) }
+
+    fun getRatesRangeMax(): LiveData<Double?> = rangeMaxLive
+
+    private val rangeMaxLive by lazy { rangeExtreme(pickMax = true) }
 
     private fun rangeExtreme(pickMax: Boolean): LiveData<Double?> =
         extremeLiveData(pickMax = pickMax, respectScrub = false).map { it.first?.value?.toDouble() }
@@ -273,7 +305,7 @@ class TimelineViewModel(
         pickMax: Boolean,
         respectScrub: Boolean,
     ): LiveData<Triple<Rate?, LocalDate?, Int>> =
-        rangeLiveData(followScrub = respectScrub) { rates, scrubDate ->
+        rangeLiveData(followScrub = respectScrub) { rates, scrubDate, decimals ->
             val slice = rates?.fromScrub(scrubDate)
             val extreme: Rate? =
                 slice
@@ -284,23 +316,37 @@ class TimelineViewModel(
                 slice
                     ?.findLast { entry -> entry.value?.value?.compareTo(extreme?.value) == 0 }
                     ?.key
-            Triple(extreme, date, decimalPlaces)
+            Triple(extreme, date, decimals)
         }
 
     /**
-     * A value [compute]d from the range's rates and the scrub date, redone
-     * when the rates change, the scrub date moves ([followScrub]) or the
-     * decimal places do ([withDecimals]; they also update [decimalPlaces]).
+     * A value [compute]d from the range's rates, the scrub date and the
+     * decimal places, redone when the rates change, the scrub date moves
+     * ([followScrub]) or the decimal places do ([withDecimals]; they also
+     * update [decimalPlaces]).
+     *
+     * Computed off the main thread: dragging along the chart moves the scrub
+     * date every frame, and the median sorts up to ten years of rates. Only
+     * the latest request's result is shown; one overtaken is dropped.
      */
     private fun <T> rangeLiveData(
         followScrub: Boolean = true,
         withDecimals: Boolean = true,
-        compute: (rates: Set<Map.Entry<LocalDate, Rate?>>?, scrubDate: LocalDate?) -> T,
+        compute: (rates: Set<Map.Entry<LocalDate, Rate?>>?, scrubDate: LocalDate?, decimals: Int) -> T,
     ): LiveData<T> =
         MediatorLiveData<T>().apply {
             var scrubDate: LocalDate? = null
             var rates: Set<Map.Entry<LocalDate, Rate?>>? = null
-            val update = { value = compute(rates, scrubDate) }
+            var running: Job? = null
+            val update = {
+                val input = Triple(rates, scrubDate, decimalPlaces)
+                running?.cancel()
+                running =
+                    viewModelScope.launch(dispatchers.default) {
+                        val result = compute(input.first, input.second, input.third)
+                        withContext(dispatchers.main) { value = result }
+                    }
+            }
             addSource(dbLiveItems) {
                 rates = it?.rates?.entries
                 update()
@@ -312,14 +358,15 @@ class TimelineViewModel(
                 }
             }
             if (withDecimals) {
-                addSource(getDecimalPlaces()) {
+                addSource(decimalPlacesLive) {
                     decimalPlaces = it
                     update()
                 }
             }
         }
 
-    private fun getDecimalPlaces(): LiveData<Int> =
+    // One for all the readouts (each used to scan the rates for its own).
+    private val decimalPlacesLive: LiveData<Int> by lazy {
         MediatorLiveData<Int>().apply {
             var min = BigDecimal.ZERO
             var max = BigDecimal.ZERO
@@ -338,6 +385,7 @@ class TimelineViewModel(
                 update()
             }
         }
+    }
 
     fun getPeriod(): LiveData<Period> = periodLiveData
 

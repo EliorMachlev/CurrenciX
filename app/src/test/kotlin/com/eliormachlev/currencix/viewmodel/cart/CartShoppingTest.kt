@@ -1,29 +1,28 @@
 package com.eliormachlev.currencix.viewmodel.cart
 
-import android.app.Application
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.CART_ITEM_KEY_CHECKED
+import com.eliormachlev.currencix.repository.CART_ITEM_KEY_EXPR
+import com.eliormachlev.currencix.repository.CART_ITEM_KEY_ID
 import com.eliormachlev.currencix.repository.CART_ITEM_KEY_QUANTITY
 import com.eliormachlev.currencix.repository.CART_KEY_ITEMS
 import com.eliormachlev.currencix.repository.CART_KEY_SHOPPING_MODE
+import com.eliormachlev.currencix.repository.json.JsonObject
 import com.eliormachlev.currencix.repository.parseCart
 import com.eliormachlev.currencix.repository.serializeCart
+import com.eliormachlev.currencix.repository.throughJson
+import com.eliormachlev.currencix.repository.throughProto
 import com.eliormachlev.currencix.view.cart.compose.RATES_OLD_AFTER_DAYS
 import com.eliormachlev.currencix.view.cart.compose.ratesAreOld
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import java.math.BigDecimal
 import java.time.LocalDate
 
-// Quantities, shopping-list ticks and the rates' age. Robolectric for org.json.
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], application = Application::class)
+// Quantities, shopping-list ticks and the rates' age.
 class CartShoppingTest {
     private fun cart(
         vararg items: CartItem,
@@ -57,21 +56,21 @@ class CartShoppingTest {
     @Test
     fun `quantity, ticks and shopping mode survive a save, and defaults aren't written`() {
         val saved = cart(CartItem("1", "a", "2", quantity = 4, checked = true), CartItem("2", "b", "3"), shoppingMode = true)
-        assertEquals(saved, parseCart(serializeCart(saved).toString()))
+        assertEquals(saved, saved.throughJson())
+        assertEquals(saved, saved.throughProto())
         val plain = serializeCart(cart(CartItem("2", "b", "3")))
-        assertFalse(plain.has(CART_KEY_SHOPPING_MODE))
-        val item = plain.getJSONArray(CART_KEY_ITEMS).getJSONObject(0)
+        assertFalse(CART_KEY_SHOPPING_MODE in plain)
+        val item = checkNotNull(JsonObject(plain).optObjects(CART_KEY_ITEMS).singleOrNull())
         assertFalse(item.has(CART_ITEM_KEY_QUANTITY))
         assertFalse(item.has(CART_ITEM_KEY_CHECKED))
     }
 
     @Test
     fun `a quantity out of range loads clamped`() {
-        val json = serializeCart(cart(CartItem("1", "a", "2")))
-        json.getJSONArray(CART_KEY_ITEMS).getJSONObject(0).put(CART_ITEM_KEY_QUANTITY, 500)
-        assertEquals(CartItem.MAX_QUANTITY, parseCart(json.toString())?.items?.single()?.quantity)
-        json.getJSONArray(CART_KEY_ITEMS).getJSONObject(0).put(CART_ITEM_KEY_QUANTITY, -2)
-        assertEquals(CartItem.MIN_QUANTITY, parseCart(json.toString())?.items?.single()?.quantity)
+        val item = mapOf(CART_ITEM_KEY_ID to "1", CART_ITEM_KEY_EXPR to "2")
+        val withQuantity = { quantity: Int -> JsonObject(mapOf(CART_KEY_ITEMS to listOf(item + (CART_ITEM_KEY_QUANTITY to quantity)))) }
+        assertEquals(CartItem.MAX_QUANTITY, parseCart(withQuantity(500))?.items?.single()?.quantity)
+        assertEquals(CartItem.MIN_QUANTITY, parseCart(withQuantity(-2))?.items?.single()?.quantity)
     }
 
     @Test

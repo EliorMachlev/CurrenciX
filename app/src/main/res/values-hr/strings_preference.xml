@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Trenutne postavke bit će prepisane onima iz datoteke. To se ne može poništiti.</string>
     <string name="backup_import_confirm_positive">Vrati</string>
     <string name="backup_encrypt_option">Šifriraj lozinkom</string>
+    <string name="backup_keys_left_out">API ključevi ne ulaze u sigurnosnu kopiju bez lozinke.</string>
     <string name="backup_password_hint">Lozinka</string>
     <string name="backup_password_prompt_title">Unesite lozinku</string>
     <string name="backup_password_wrong">Lozinkom nije moguće dešifrirati ovu datoteku. Pokušajte ponovno.</string>
@@ -143,9 +144,11 @@
     <string name="credit_lib_compose">Alati za korisničko sučelje i Material 3</string>
     <string name="credit_lib_material_components">Material Design komponente</string>
     <string name="credit_lib_material_symbols">Ikone (zaobljene)</string>
+    <string name="credit_lib_typeface">Font</string>
     <string name="credit_lib_vico">Grafikoni</string>
     <string name="credit_lib_okhttp">HTTP klijent</string>
     <string name="credit_lib_moshi">JSON parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (spremanje košarica, putovanja i naknada)</string>
     <string name="credit_lib_timber">Zapisivanje dnevnika</string>
     <string name="credit_lib_bouncy_castle">Izvođenje ključa Argon2id za šifrirane sigurnosne kopije</string>
     <string name="credit_lib_tink">AES-GCM šifriranje sigurnosnih kopija</string>
@@ -196,6 +199,8 @@
     <string name="app_lock_unlock">Otključaj</string>
     <string name="private_requests_title">Privatni zahtjevi</string>
     <string name="private_requests_summary">Šalji zahtjeve za tečaj kao svi ostali: bez verzije aplikacije, podataka o uređaju i identifikatora predmemorije. Troši malo više podataka.</string>
+    <string name="block_screenshots_title">Blokiraj snimke zaslona</string>
+    <string name="block_screenshots_summary">Aplikacija je prazna na snimkama zaslona, snimanjima zaslona i u nedavnim aplikacijama</string>
     <string name="auto_refresh_summary">Održavaj tečajeve ažurnima u pozadini</string>
     <string name="refresh_interval_title">Osvježi svakih</string>
     <string name="refresh_interval_daily">Jednom dnevno, odmah nakon objave %1$s</string>

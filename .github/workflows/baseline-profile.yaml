@@ -94,7 +94,7 @@ jobs:
       - name: Annotate failed journeys
         if: failure()
         run: |
-          pip install --quiet defusedxml==0.7.1
+          pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           python3 .github/scripts/annotate-test-failures.py "baselineprofile/build/outputs/androidTest-results/**/*.xml"
 
       # The profiles are the deliverable: one artifact per flavor, holding the

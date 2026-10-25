@@ -450,7 +450,7 @@ private fun TimelineCurrencyPicker(
     pair: Pair<Currency, Currency>,
     onDismiss: () -> Unit,
 ) {
-    val rates by db.rates.getExchangeRates().observeAsState()
+    val rates by remember(db) { db.rates.getExchangeRates() }.observeAsState()
     val (from, to) = pair
     val other = if (side == PillSide.FROM) to else from
     CurrencyPickerSheet(

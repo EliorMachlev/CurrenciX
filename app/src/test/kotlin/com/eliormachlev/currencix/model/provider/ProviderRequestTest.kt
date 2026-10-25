@@ -78,9 +78,8 @@ class ProviderRequestTest {
         runBlocking {
             val provider = OpenExchangerates()
             val result = provider.getRates(null, null, ApiSecrets(API_KEY))
-            assertRequested(
-                "https://openexchangerates.org/api/latest.json?app_id=$API_KEY&prettyprint=false&show_alternative=false",
-            )
+            assertRequested("https://openexchangerates.org/api/latest.json?prettyprint=false&show_alternative=false")
+            assertEquals("the key goes in the header, never the URL", listOf("Token $API_KEY"), http.authorizations)
             assertEmptyJson(result, provider.name)
         }
 
@@ -89,9 +88,9 @@ class ProviderRequestTest {
         runBlocking {
             OpenExchangerates().getRates(null, DATE, ApiSecrets(API_KEY))
             assertRequested(
-                "https://openexchangerates.org/api/historical/2024-03-15.json" +
-                    "?app_id=$API_KEY&prettyprint=false&show_alternative=false",
+                "https://openexchangerates.org/api/historical/2024-03-15.json?prettyprint=false&show_alternative=false",
             )
+            assertEquals(listOf("Token $API_KEY"), http.authorizations)
         }
 
     @Test

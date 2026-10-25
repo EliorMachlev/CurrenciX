@@ -49,3 +49,6 @@ __pycache__/
 
 # Jazzer's working corpus from local fuzzing runs (regenerated every run)
 .cifuzz-corpus/
+
+# OWASP Dependency-Check vulnerability data (CI cache)
+/.dependency-check-data/

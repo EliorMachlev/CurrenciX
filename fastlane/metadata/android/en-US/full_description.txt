@@ -1,16 +1,34 @@
-Currencies is a simple and straightforward currency converter.It is not intended to be used for realtime financial business, rather to be a handy companion e.g. on vacations.
+CurrenciX is a simple currency converter: a handy travel companion, not a tool for real-time financial business.
 
-- The app supports all relevant currencies. You can choose between several official exchange rate providers:
-   - frankfurter.app with over 30 currencies, provided by the European Central Bank
-   - OpenExchangerates contains over 160 currencies, with hourly updates
-   - InforEuro provides the European Commission’s official monthly accounting rates for the euro and over 150 corresponding conversion rates
-   - Bank of Canada provides about 23 currency rates of the Canadian Central Bank
-   - The Norwegian Central Bank "Norges Bank" lists some 40 exchange rates
-   - The Russian Central Bank "Bank Rossii" gives probably the most reliable data of exchange rates to Russian Ruble. Some 44 exchange rates are listed
-- The UI is simple and pure Material 3 Design.
-- Exchange rate history: Check out the chart for the past year, to see how the currencies have developed.
-- Historical rates: You can use rates from prior dates.
-- A major feature is the included calculator. Useful e.g. if you want to split up a restaurant bill.
-- Fee calculator: optionally add a customizable foreign exchange fee to all calculations.
-- Currencies is written for Android in Kotlin, targeting Android 13 and supporting light and dark themes.
-- The app is ad-free and doesn't spy on the user.
+<b>Exchange rates from the source</b>
+Choose from eight providers, with a second one to fall back on when the first is down:
+- Frankfurter.app: over 30 currencies from the European Central Bank
+- Open Exchangerates: over 160 currencies, updated hourly (free API key)
+- AllRatesToday: about 160 mid-market rates, updated about every minute (API key)
+- InforEuro: the European Commission's monthly accounting rates for over 150 currencies
+- Bank of Canada, Norges Bank, Bank Rossii and Bank of Israel: their central banks' daily rates
+
+<b>Convert and calculate</b>
+- A calculator keypad with brackets and percent, and your recent pairs one tap away
+- Fees: add your bank's or card's exchange fee and see the true cost; compare your cards
+- Historical rates: convert at any past date's rates
+- Quick conversions: the pair at round amounts, to copy or share
+- Convert a price you select in any app, from the text-selection menu
+
+<b>Charts and alerts</b>
+- Rate charts from a week to 5 years or a custom range, with high, low, average and median
+- Rate alerts: a notification when a pair reaches your rate
+
+<b>Cart</b>
+- A list of prices converted into your currency, with quantities, tip or tax, a budget, and a split by person
+- Scan a receipt to add its items (read on the device)
+- Group carts into trips, and share or export them as text, CSV, PDF or an image
+
+<b>Made for your phone</b>
+- Material 3 with colors from your wallpaper; light, dark and pure-black themes
+- Home-screen widget, Quick Settings tile and app shortcuts
+- Two panes on tablets and unfolded foldables
+- Optional app lock, encrypted backups, and background rate refresh
+- 33 languages
+
+No ads, no tracking, no account. Your settings stay on your phone.

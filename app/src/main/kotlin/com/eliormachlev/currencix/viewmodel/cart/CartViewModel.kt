@@ -26,7 +26,7 @@ class CartViewModel(
     private val db = Database(app)
     private val ratesCache = CartRatesCache(db)
 
-    // The session cart. Backed by the `_cart_current_json` pref, so it
+    // The session cart. Backed by the saved carts file (CartStore), so it
     // survives process death but can be cleared explicitly.
     private val current: MutableLiveData<SavedCart> = MutableLiveData(loadCurrentOrEmpty())
 

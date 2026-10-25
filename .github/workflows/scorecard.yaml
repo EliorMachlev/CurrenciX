@@ -10,7 +10,35 @@ on:
 permissions: read-all
 
 jobs:
+  # Scorecard's Binary-Artifacts accepts the committed Gradle wrapper jar only
+  # if gradle-wrapper.yaml has already succeeded on this commit, so a push
+  # waits for it here (it takes well under a minute). A schedule or a manual
+  # run finds it done already. Kept out of the analysis job, which may only
+  # run Scorecard's approved actions.
+  wrapper-validated:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    timeout-minutes: 15
+    steps:
+      - name: Wait for the Gradle wrapper check on this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          runs="repos/$REPO/actions/workflows/gradle-wrapper.yaml/runs?head_sha=$SHA&branch=master"
+          while true; do
+            conclusion=$(gh api "$runs" --jq '[.workflow_runs[] | select(.status == "completed") | .conclusion] | if any(.[]; . == "success") then "success" elif length > 0 then .[0] else "" end')
+            case "$conclusion" in
+              success) echo "Gradle wrapper validated on $SHA"; exit 0 ;;
+              "") sleep 15 ;;
+              *) echo "::error::The Gradle wrapper check ended in '$conclusion' on $SHA"; exit 1 ;;
+            esac
+          done
+
   analysis:
+    needs: wrapper-validated
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -32,6 +60,6 @@ jobs:
           name: scorecard-sarif
           path: results.sarif
           retention-days: 5
-      - uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: results.sarif

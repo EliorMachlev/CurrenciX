@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Ваши текущие настройки будут заменены данными из файла. Отменить это действие нельзя.</string>
     <string name="backup_import_confirm_positive">Восстановить</string>
     <string name="backup_encrypt_option">Шифровать паролем</string>
+    <string name="backup_keys_left_out">Ключи API не попадают в резервную копию без пароля.</string>
     <string name="backup_password_hint">Пароль</string>
     <string name="backup_password_prompt_title">Введите пароль</string>
     <string name="backup_password_wrong">Не удалось расшифровать файл этим паролем. Попробуйте ещё раз.</string>
@@ -144,9 +145,11 @@
     <string name="credit_lib_compose">Фреймворк интерфейса и Material 3</string>
     <string name="credit_lib_material_components">Компоненты Material Design</string>
     <string name="credit_lib_material_symbols">Значки (скруглённые)</string>
+    <string name="credit_lib_typeface">Шрифт</string>
     <string name="credit_lib_vico">Графики</string>
     <string name="credit_lib_okhttp">HTTP-клиент</string>
     <string name="credit_lib_moshi">JSON-парсер</string>
+    <string name="credit_lib_wire">Protocol Buffers (хранение корзин, поездок и комиссий)</string>
     <string name="credit_lib_timber">Логирование</string>
     <string name="credit_lib_bouncy_castle">Выработка ключей Argon2id для зашифрованных резервных копий</string>
     <string name="credit_lib_tink">Шифрование AES-GCM для резервных копий</string>
@@ -197,6 +200,8 @@
     <string name="app_lock_unlock">Разблокировать</string>
     <string name="private_requests_title">Приватные запросы</string>
     <string name="private_requests_summary">Отправлять запросы курсов так же, как все: без версии приложения, данных устройства и идентификаторов кеша. Расходует чуть больше трафика.</string>
+    <string name="block_screenshots_title">Запретить скриншоты</string>
+    <string name="block_screenshots_summary">Приложение будет пустым на скриншотах, записях экрана и в недавних</string>
     <string name="auto_refresh_summary">Обновлять курсы в фоновом режиме</string>
     <string name="refresh_interval_title">Обновлять каждые</string>
     <string name="refresh_interval_daily">Раз в день, сразу после публикации %1$s</string>

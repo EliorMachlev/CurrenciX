@@ -5,74 +5,150 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
- * One setting in a [PrefStore], read and written as the app's type [T]: the
+ * One setting or saved value, read and written as the app's type [T]: the
  * current value ([get]), a new one ([set]), and changes as a [flow] or
- * [liveData]. All four go through the same [read] and [write], so a setting's
- * default, its stored shape and its key live in one declaration.
+ * [liveData]. All of them go through the same read and write, so a value's
+ * default, its stored shape and where it's stored live in one declaration.
  *
  * Settings stores declare one per setting with the factories below
  * (`store.booleanPref(KEY, default = true)`), so adding a setting is one line.
+ * A [CachedStore] of any kind (preferences or a Protobuf file) makes them
+ * with [statePref].
  */
 class Pref<T> internal constructor(
-    private val store: PrefStore,
-    private val read: (Preferences) -> T,
-    private val write: MutablePreferences.(T) -> Unit,
+    private val read: () -> T,
+    private val write: (T) -> Unit,
+    private val change: ((T) -> T) -> Unit,
+    changes: () -> Flow<T>,
     // Runs after every write (the widget redraws when its pair changes).
     private val afterWrite: () -> Unit = {},
 ) {
-    /** The current value, from the in-memory cache (see [PrefStore.snapshot]). */
-    fun get(): T = read(store.snapshot())
+    /** The current value, from the in-memory cache (see [CachedStore.snapshot]). */
+    fun get(): T = read()
 
     /** Stores [value]: visible to [get] at once, on disk shortly after. */
     fun set(value: T) {
-        store.edit { write(value) }
+        write(value)
         afterWrite()
     }
 
     /** Replaces the value with [transform] of it, in one edit (no other write lands in between). */
     fun update(transform: (T) -> T) {
-        store.edit { write(transform(read(this))) }
+        change(transform)
         afterWrite()
     }
 
     /** The value, then each change to it. */
-    val flow: Flow<T> by lazy { store.mappedFlow(read) }
+    val flow: Flow<T> by lazy(changes)
 
     /** [flow] for View-system and LiveData observers. */
-    val liveData: LiveData<T> by lazy { store.mappedLiveData(read) }
+    val liveData: LiveData<T> by lazy { flow.asLiveData() }
 }
+
+/** A value read out of the store's whole state by [read], and put back into it by [write]. */
+internal fun <S, T> CachedStore<S>.statePref(
+    read: (S) -> T,
+    write: (S, T) -> S,
+    afterWrite: () -> Unit = {},
+): Pref<T> =
+    Pref(
+        read = { read(snapshot()) },
+        write = { value -> update { state -> write(state, value) } },
+        change = { transform -> update { state -> write(state, transform(read(state))) } },
+        changes = { mappedFlow(read) },
+        afterWrite = afterWrite,
+    )
+
+/**
+ * A value kept in one [field] of the store's state, as [decode] reads it:
+ * decoded again only when the field changes. [write] puts a new value back.
+ */
+internal fun <S, F, T> CachedStore<S>.fieldPref(
+    field: (S) -> F,
+    decode: (F) -> T,
+    write: (S, T) -> S,
+): Pref<T> {
+    val decoded = LastResult<F, T>(same = { a, b -> a === b }, compute = decode)
+    return statePref(read = { decoded(field(it)) }, write = write)
+}
+
+/** This value seen as [T]: read through [decode], written through [encode]. */
+internal fun <S, T> Pref<S>.mapped(
+    decode: (S) -> T,
+    encode: (T) -> S,
+): Pref<T> =
+    Pref(
+        read = { decode(get()) },
+        write = { set(encode(it)) },
+        change = { transform -> update { encode(transform(decode(it))) } },
+        changes = { flow.map(decode) },
+    )
 
 /** A setting read from the whole preference set and written by [write] (one derived from others). */
 internal fun <T> PrefStore.pref(
     read: (Preferences) -> T,
     write: MutablePreferences.(T) -> Unit,
     afterWrite: () -> Unit = {},
-): Pref<T> = Pref(this, read, write, afterWrite)
+): Pref<T> = statePref(read, { prefs, value -> prefs.edited { write(value) } }, afterWrite)
 
-/** A setting stored under one [key], with [decode] / [encode] between the stored and the app's value. Null [encode] removes it. */
-internal fun <S : Any, T> PrefStore.keyedPref(
+/**
+ * A setting stored under one [key], with [decode] / [encode] between the stored and the app's value. Null [encode] removes it.
+ *
+ * A value stored under that key as another type (a setting whose type changed
+ * from one build to the next) reads as unset, so [decode] gives the default
+ * and the next write replaces it, instead of failing to cast.
+ */
+internal inline fun <reified S : Any, T> PrefStore.keyedPref(
     key: Preferences.Key<S>,
+    noinline decode: (S?) -> T,
+    noinline encode: (T) -> S?,
+    noinline afterWrite: () -> Unit = {},
+): Pref<T> = typedKeyedPref(key, { it as? S }, decode, encode, afterWrite)
+
+/** [keyedPref], with [asStored] taking the raw stored value as [S] (null when unset or of another type). */
+@PublishedApi
+internal fun <S : Any, T> PrefStore.typedKeyedPref(
+    key: Preferences.Key<S>,
+    asStored: (Any?) -> S?,
     decode: (S?) -> T,
     encode: (T) -> S?,
-    afterWrite: () -> Unit = {},
-): Pref<T> =
-    pref(
-        read = { decode(it[key]) },
+    afterWrite: () -> Unit,
+): Pref<T> {
+    // Checked and decoded again only when the stored value changes (equal
+    // text), and encoded once per write (the same value object): the cache
+    // and the disk write both apply it, and every emission of the store
+    // re-reads it.
+    val decoded = LastResult<Any?, T>(same = { a, b -> a == b }, compute = { decode(asStored(it)) })
+    val encoded = LastResult<T, S?>(same = { a, b -> a === b }, compute = encode)
+    return pref(
+        read = { prefs ->
+            // Preferences.get is unchecked: whatever is stored comes back typed as S.
+            val raw: Any? = prefs[key]
+            decoded(raw)
+        },
         write = { value ->
-            val stored = encode(value)
+            val stored = encoded(value)
             if (stored == null) remove(key) else this[key] = stored
         },
         afterWrite = afterWrite,
     )
+}
 
 internal fun PrefStore.booleanPref(
     name: String,
     default: Boolean,
 ): Pref<Boolean> = keyedPref(booleanPreferencesKey(name), { it ?: default }, { it })
+
+/** A set of strings, empty when unset (and removed when set empty). */
+internal fun PrefStore.stringSetPref(name: String): Pref<Set<String>> =
+    keyedPref(stringSetPreferencesKey(name), { it.orEmpty() }, { set -> set.takeIf { it.isNotEmpty() } })
 
 internal fun PrefStore.stringPref(
     name: String,

@@ -108,6 +108,7 @@
     <string name="backup_import_confirm_message">Bieżące ustawienia zostaną zastąpione tymi z pliku. Tej operacji nie można cofnąć.</string>
     <string name="backup_import_confirm_positive">Przywróć</string>
     <string name="backup_encrypt_option">Szyfruj hasłem</string>
+    <string name="backup_keys_left_out">Klucze API nie trafiają do kopii zapasowej bez hasła.</string>
     <string name="backup_password_hint">Hasło</string>
     <string name="backup_password_prompt_title">Wpisz hasło</string>
     <string name="backup_password_wrong">Hasło nie odszyfrowało tego pliku. Spróbuj ponownie.</string>
@@ -144,9 +145,11 @@
     <string name="credit_lib_compose">Zestaw narzędzi interfejsu i Material 3</string>
     <string name="credit_lib_material_components">Komponenty Material Design</string>
     <string name="credit_lib_material_symbols">Ikony (zaokrąglone)</string>
+    <string name="credit_lib_typeface">Krój pisma</string>
     <string name="credit_lib_vico">Wykresy</string>
     <string name="credit_lib_okhttp">Klient HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (zapis koszyków, podróży i opłat)</string>
     <string name="credit_lib_timber">Rejestrowanie logów</string>
     <string name="credit_lib_bouncy_castle">Wyprowadzanie klucza Argon2id dla szyfrowanych kopii zapasowych</string>
     <string name="credit_lib_tink">Szyfrowanie AES-GCM kopii zapasowych</string>
@@ -197,6 +200,8 @@
     <string name="app_lock_unlock">Odblokuj</string>
     <string name="private_requests_title">Prywatne żądania</string>
     <string name="private_requests_summary">Wysyłaj żądania kursów tak samo jak wszyscy: bez wersji aplikacji, danych urządzenia i identyfikatorów pamięci podręcznej. Zużywa nieco więcej danych.</string>
+    <string name="block_screenshots_title">Blokuj zrzuty ekranu</string>
+    <string name="block_screenshots_summary">Aplikacja jest pusta na zrzutach i nagraniach ekranu oraz w ostatnich aplikacjach</string>
     <string name="auto_refresh_summary">Aktualizuj kursy w tle</string>
     <string name="refresh_interval_title">Odświeżaj co</string>
     <string name="refresh_interval_daily">Raz dziennie, zaraz po publikacji przez %1$s</string>

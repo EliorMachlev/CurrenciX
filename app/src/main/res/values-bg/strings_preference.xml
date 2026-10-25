@@ -82,6 +82,7 @@
     <string name="backup_import_confirm_message">Текущите ви настройки ще бъдат заменени с тези от файла. Това действие не може да бъде отменено.</string>
     <string name="backup_import_confirm_positive">Възстанови</string>
     <string name="backup_encrypt_option">Шифроване с парола</string>
+    <string name="backup_keys_left_out">API ключовете не се включват в резервно копие без парола.</string>
     <string name="backup_password_hint">Парола</string>
     <string name="backup_password_prompt_title">Въведете парола</string>
     <string name="backup_password_wrong">Файлът не може да бъде дешифриран с тази парола. Опитайте отново.</string>
@@ -117,9 +118,11 @@
     <string name="credit_lib_compose">Инструментариум за интерфейса и Material 3</string>
     <string name="credit_lib_material_components">Компоненти на Material Design</string>
     <string name="credit_lib_material_symbols">Икони (заоблени)</string>
+    <string name="credit_lib_typeface">Шрифт</string>
     <string name="credit_lib_vico">Графики</string>
     <string name="credit_lib_okhttp">HTTP клиент</string>
     <string name="credit_lib_moshi">JSON парсер</string>
+    <string name="credit_lib_wire">Protocol Buffers (как се пазят запазените колички, пътувания и такси)</string>
     <string name="credit_lib_timber">Журналиране</string>
     <string name="credit_lib_bouncy_castle">Извличане на ключове с Argon2id за шифровани резервни копия</string>
     <string name="credit_lib_tink">Шифроване с AES-GCM за резервните копия</string>
@@ -198,6 +201,8 @@
     <string name="app_lock_unlock">Отключване</string>
     <string name="private_requests_title">Лични заявки</string>
     <string name="private_requests_summary">Заявките за курсове се изпращат еднакво за всички: без версия на приложението, данни за устройството и идентификатори на кеша. Използва малко повече данни.</string>
+    <string name="block_screenshots_title">Блокиране на екранни снимки</string>
+    <string name="block_screenshots_summary">Приложението се показва празно в екранни снимки, записи на екрана и скорошните приложения</string>
     <string name="auto_refresh_summary">Курсовете се обновяват във фонов режим</string>
     <string name="refresh_interval_title">Обновяване на всеки</string>
     <string name="refresh_interval_daily">Веднъж дневно, веднага след публикуване от %1$s</string>

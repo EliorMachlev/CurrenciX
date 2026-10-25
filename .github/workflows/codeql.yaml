@@ -18,30 +18,67 @@ concurrency:
 permissions:
   contents: read
 
-# Kotlin analysis is handled by Qodana (see qodana.yaml). CodeQL is
-# limited to GitHub Actions YAML analysis here because the CodeQL
-# Kotlin extractor lags behind Kotlin releases.
+# GitHub Actions YAML, and the app's Kotlin (CodeQL's extractor reads it while
+# Gradle compiles the fdroid debug build, which covers the main source set).
 jobs:
   analyze:
-    name: Analyze (actions)
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
       packages: read
       actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: java-kotlin
+            build-mode: manual
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        if: matrix.language == 'java-kotlin'
         with:
-          languages: actions
-          build-mode: none
+          java-version: 25
+          distribution: temurin
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        if: matrix.language == 'java-kotlin'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
           queries: security-and-quality
           config-file: ./.github/codeql/codeql-config.yml
 
+      # A fresh compile in this process (no build cache, no Gradle or Kotlin daemon),
+      # so the extractor, which watches the compiler, sees every file.
+      - name: Compile the app
+        if: matrix.language == 'java-kotlin'
+        run: ./gradlew --no-daemon --no-build-cache --rerun-tasks -Pkotlin.compiler.execution.strategy=in-process :app:compileFdroidDebugKotlin
+
+      # The Kotlin results are written, not uploaded straight away: the
+      # findings recorded in .github/codeql/exceptions.yml (each explained in
+      # docs/markDown/exceptions.md) come out first, matched one by one.
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
-          category: /language:actions
+          category: /language:${{ matrix.language }}
+          upload: ${{ matrix.language == 'java-kotlin' && 'never' || 'always' }}
+          output: sarif
+
+      - name: Leave out the recorded exceptions
+        if: matrix.language == 'java-kotlin'
+        run: python3 .github/scripts/codeql-exceptions.py .github/codeql/exceptions.yml sarif
+
+      - name: Upload the results
+        if: matrix.language == 'java-kotlin'
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: sarif
+          category: /language:${{ matrix.language }}

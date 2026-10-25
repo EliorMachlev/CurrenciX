@@ -3,8 +3,11 @@ package com.eliormachlev.currencix.repository
 import android.content.Context
 import android.net.Uri
 import com.eliormachlev.currencix.model.SavedCart
-import org.json.JSONException
-import org.json.JSONObject
+import com.eliormachlev.currencix.repository.json.JsonObject
+import com.eliormachlev.currencix.repository.json.MalformedJsonException
+import com.eliormachlev.currencix.repository.json.buildJsonObject
+import com.eliormachlev.currencix.repository.json.jsonText
+import com.eliormachlev.currencix.repository.json.parseJsonObject
 import java.io.IOException
 import java.time.Instant
 
@@ -44,14 +47,14 @@ class CartExporter(
     ): CartFileResult =
         try {
             val root =
-                JSONObject().apply {
+                buildJsonObject {
                     put(BACKUP_KEY_VERSION, CART_FILE_SCHEMA_VERSION)
                     put(BACKUP_KEY_APP, BACKUP_APP_ID)
                     put(CART_FILE_KEY_TYPE, CART_FILE_TYPE)
                     put(BACKUP_KEY_CREATED_AT, Instant.now().toString())
                     put(CART_FILE_KEY_PAYLOAD, serializeCart(cart))
                 }
-            val bytes = root.toString(2).toByteArray(Charsets.UTF_8)
+            val bytes = jsonText(root, pretty = true).toByteArray(Charsets.UTF_8)
             val written = context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
             if (written == null) CartFileResult.Failure(FileFailure.CANNOT_OPEN) else CartFileResult.Success
         } catch (e: IOException) {
@@ -66,18 +69,18 @@ class CartExporter(
             if (bytes == null) {
                 CartFileResult.Failure(FileFailure.CANNOT_OPEN)
             } else {
-                decode(JSONObject(String(bytes, Charsets.UTF_8)))
+                decode(parseJsonObject(String(bytes, Charsets.UTF_8)))
             }
         } catch (e: IOException) {
             CartFileResult.Failure(FileFailure.READ_WRITE, e.message)
-        } catch (e: JSONException) {
+        } catch (e: MalformedJsonException) {
             CartFileResult.Failure(FileFailure.DAMAGED, e.message)
         } catch (e: SecurityException) {
             CartFileResult.Failure(FileFailure.NO_PERMISSION, e.message)
         }
 
     // The cart in a cart file's JSON, or why it isn't one.
-    private fun decode(root: JSONObject): CartFileResult {
+    private fun decode(root: JsonObject): CartFileResult {
         val version = root.optInt(BACKUP_KEY_VERSION, -1)
         return when {
             version != CART_FILE_SCHEMA_VERSION -> {
@@ -94,7 +97,7 @@ class CartExporter(
             }
 
             else -> {
-                parseCart(root.optJSONObject(CART_FILE_KEY_PAYLOAD))?.let(CartFileResult::Loaded)
+                parseCart(root.optObject(CART_FILE_KEY_PAYLOAD))?.let(CartFileResult::Loaded)
                     ?: CartFileResult.Failure(FileFailure.DAMAGED, "Malformed cart payload")
             }
         }

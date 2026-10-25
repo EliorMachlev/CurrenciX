@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Οι τρέχουσες ρυθμίσεις σας θα αντικατασταθούν από αυτές του αρχείου. Η ενέργεια δεν μπορεί να αναιρεθεί.</string>
     <string name="backup_import_confirm_positive">Επαναφορά</string>
     <string name="backup_encrypt_option">Κρυπτογράφηση με κωδικό</string>
+    <string name="backup_keys_left_out">Τα κλειδιά API δεν περιλαμβάνονται σε αντίγραφο ασφαλείας χωρίς κωδικό.</string>
     <string name="backup_password_hint">Κωδικός</string>
     <string name="backup_password_prompt_title">Εισαγωγή κωδικού</string>
     <string name="backup_password_wrong">Το αρχείο δεν αποκρυπτογραφήθηκε με αυτόν τον κωδικό. Δοκιμάστε ξανά.</string>
@@ -142,9 +143,11 @@
     <string name="credit_lib_compose">Εργαλειοθήκη UI και Material 3</string>
     <string name="credit_lib_material_components">Στοιχεία Material Design</string>
     <string name="credit_lib_material_symbols">Εικονίδια (Rounded)</string>
+    <string name="credit_lib_typeface">Γραμματοσειρά</string>
     <string name="credit_lib_vico">Γραφήματα</string>
     <string name="credit_lib_okhttp">Πρόγραμμα-πελάτης HTTP</string>
     <string name="credit_lib_moshi">Αναλυτής JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (αποθήκευση καλαθιών, ταξιδιών και χρεώσεων)</string>
     <string name="credit_lib_timber">Καταγραφή συμβάντων</string>
     <string name="credit_lib_bouncy_castle">Παραγωγή κλειδιών Argon2id για κρυπτογραφημένα αντίγραφα ασφαλείας</string>
     <string name="credit_lib_tink">Κρυπτογράφηση AES-GCM για αντίγραφα ασφαλείας</string>
@@ -195,6 +198,8 @@
     <string name="app_lock_unlock">Ξεκλείδωμα</string>
     <string name="private_requests_title">Ιδιωτικά αιτήματα</string>
     <string name="private_requests_summary">Στέλνει τα αιτήματα ισοτιμιών όπως όλοι: χωρίς έκδοση εφαρμογής, στοιχεία συσκευής ή αναγνωριστικά cache. Χρησιμοποιεί λίγα περισσότερα δεδομένα.</string>
+    <string name="block_screenshots_title">Αποκλεισμός στιγμιότυπων</string>
+    <string name="block_screenshots_summary">Η εφαρμογή εμφανίζεται κενή σε στιγμιότυπα, εγγραφές οθόνης και στις πρόσφατες</string>
     <string name="auto_refresh_summary">Διατήρηση ενημερωμένων ισοτιμιών στο παρασκήνιο</string>
     <string name="refresh_interval_title">Ανανέωση κάθε</string>
     <string name="refresh_interval_daily">Μία φορά την ημέρα, αμέσως μετά τη δημοσίευση από %1$s</string>

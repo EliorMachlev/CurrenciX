@@ -4,7 +4,7 @@ Regenerates the app's UI icons (app/src/main/res/drawable/ic_*.xml) from
 Material Symbols — Rounded, weight 400, outlined (fill 0), 24 dp — so every
 icon in the app is drawn in one modern style.
 
-    npm pack @material-symbols/svg-400@0.47.5 && tar xzf material-symbols-svg-400-*.tgz
+    npm pack @material-symbols/svg-400@0.48.1 && tar xzf material-symbols-svg-400-*.tgz
     python3 art/material-symbols/generate.py package/rounded
 
 Material Symbols are Apache-2.0 (Google). To add an icon: add a row to ICONS
@@ -14,10 +14,11 @@ import pathlib
 import re
 import sys
 
-SYMBOLS_VERSION = "0.47.5"
+SYMBOLS_VERSION = "0.48.1"
 
 # drawable name -> (Material Symbols name, mirrors in RTL)
 ICONS = {
+    "ic_no_screenshots": ("no_photography", False),
     # navigation / chrome
     "ic_arrow_back": ("arrow_back", True),
     "ic_arrow_forward": ("arrow_forward", True),

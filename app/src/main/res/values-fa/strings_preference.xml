@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">تنظیمات کنونی شما با تنظیمات موجود در فایل جایگزین خواهد شد. این کار قابل بازگشت نیست.</string>
     <string name="backup_import_confirm_positive">بازیابی</string>
     <string name="backup_encrypt_option">رمزنگاری با گذرواژه</string>
+    <string name="backup_keys_left_out">کلیدهای API در پشتیبان بدون گذرواژه گنجانده نمی‌شوند.</string>
     <string name="backup_password_hint">گذرواژه</string>
     <string name="backup_password_prompt_title">گذرواژه را وارد کنید</string>
     <string name="backup_password_wrong">گذرواژه نتوانست این فایل را رمزگشایی کند. دوباره تلاش کنید.</string>
@@ -142,9 +143,11 @@
     <string name="credit_lib_compose">ابزار رابط کاربری و Material 3</string>
     <string name="credit_lib_material_components">مؤلفه‌های Material Design</string>
     <string name="credit_lib_material_symbols">نمادها (گرد)</string>
+    <string name="credit_lib_typeface">قلم</string>
     <string name="credit_lib_vico">نمودارها</string>
     <string name="credit_lib_okhttp">کلاینت HTTP</string>
     <string name="credit_lib_moshi">تجزیه‌گر JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (روش ذخیرهٔ سبدها، سفرها و کارمزدها)</string>
     <string name="credit_lib_timber">ثبت رویدادها</string>
     <string name="credit_lib_bouncy_castle">استخراج کلید Argon2id برای پشتیبان‌های رمزنگاری‌شده</string>
     <string name="credit_lib_tink">رمزنگاری AES-GCM برای پشتیبان‌ها</string>
@@ -195,6 +198,8 @@
     <string name="app_lock_unlock">باز کردن قفل</string>
     <string name="private_requests_title">درخواست‌های خصوصی</string>
     <string name="private_requests_summary">درخواست‌های نرخ را مثل بقیه بفرستد: بدون نسخه برنامه، جزئیات دستگاه یا شناسه‌های حافظه پنهان. کمی داده بیشتری مصرف می‌کند.</string>
+    <string name="block_screenshots_title">مسدود کردن نماگرفت</string>
+    <string name="block_screenshots_summary">برنامه در نماگرفت‌ها، ضبط صفحه و برنامه‌های اخیر خالی نمایش داده می‌شود</string>
     <string name="auto_refresh_summary">به‌روز نگه داشتن نرخ‌ها در پس‌زمینه</string>
     <string name="refresh_interval_title">تازه‌سازی هر</string>
     <string name="refresh_interval_daily">روزی یک بار، درست پس از انتشار %1$s</string>

@@ -6,16 +6,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.theme.tile
 
-// The smallest a label shrinks to before it would be cut off.
+// The smallest a label shrinks to before it would be cut off, at the
+// default font size. Divided by the font scale, so even at 200 % a long
+// word ("Custom", "Month") still fits its share of the row whole.
 private val MIN_LABEL_SIZE = 10.sp
 
 // Tighter than a lone button's 24 dp sides: the buttons share one row, and a
@@ -38,6 +44,7 @@ internal fun <T> ConnectedToggleGroup(
     onToggle: (option: T, checked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val minLabelSize = MIN_LABEL_SIZE / LocalDensity.current.fontScale
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
         options.forEachIndexed { index, option ->
             val checked = option == selected
@@ -47,13 +54,14 @@ internal fun <T> ConnectedToggleGroup(
                 onCheckedChange = { toggle() },
                 shapes = connectedShapes(index, options.size),
                 contentPadding = CONNECTED_BUTTON_PADDING,
+                colors = ToggleButtonDefaults.colors(containerColor = MaterialTheme.colorScheme.tile),
                 modifier = Modifier.weight(1f),
             ) {
-                // Shrinks to fit rather than cut off ("Mon…") at large font sizes.
+                // Shrinks to fit rather than cut off ("Mont", "5" for "5 years") at large font sizes.
                 Text(
                     label(option),
                     maxLines = 1,
-                    autoSize = TextAutoSize.StepBased(minFontSize = MIN_LABEL_SIZE, maxFontSize = LocalTextStyle.current.fontSize),
+                    autoSize = TextAutoSize.StepBased(minFontSize = minLabelSize, maxFontSize = LocalTextStyle.current.fontSize),
                 )
             }
         }

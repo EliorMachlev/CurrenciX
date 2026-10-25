@@ -90,6 +90,7 @@
     <string name="backup_import_confirm_message">Suas configurações atuais serão substituídas pelas do arquivo. Isso não pode ser desfeito.</string>
     <string name="backup_import_confirm_positive">Restaurar</string>
     <string name="backup_encrypt_option">Criptografar com senha</string>
+    <string name="backup_keys_left_out">As chaves de API ficam de fora de um backup sem senha.</string>
     <string name="backup_password_hint">Senha</string>
     <string name="backup_password_prompt_title">Digite a senha</string>
     <string name="backup_password_wrong">A senha não descriptografou este arquivo. Tente novamente.</string>
@@ -125,9 +126,11 @@
     <string name="credit_lib_compose">Kit de interface do usuário e Material 3</string>
     <string name="credit_lib_material_components">Componentes do Material Design</string>
     <string name="credit_lib_material_symbols">Ícones (arredondados)</string>
+    <string name="credit_lib_typeface">Fonte</string>
     <string name="credit_lib_vico">Gráficos</string>
     <string name="credit_lib_okhttp">Cliente HTTP</string>
     <string name="credit_lib_moshi">Analisador de JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (como carrinhos, viagens e tarifas são salvos)</string>
     <string name="credit_lib_timber">Registro de logs</string>
     <string name="credit_lib_bouncy_castle">Derivação de chave Argon2id para backups criptografados</string>
     <string name="credit_lib_tink">Criptografia AES-GCM para backups</string>
@@ -199,6 +202,8 @@
     <string name="app_lock_unlock">Desbloquear</string>
     <string name="private_requests_title">Solicitações privadas</string>
     <string name="private_requests_summary">Envia as solicitações de cotação como todo mundo: sem versão do app, detalhes do aparelho ou identificadores de cache. Usa um pouco mais de dados.</string>
+    <string name="block_screenshots_title">Bloquear capturas de tela</string>
+    <string name="block_screenshots_summary">O app aparece em branco em capturas, gravações de tela e nos Recentes</string>
     <string name="auto_refresh_summary">Manter as cotações atualizadas em segundo plano</string>
     <string name="refresh_interval_title">Atualizar a cada</string>
     <string name="refresh_interval_daily">Uma vez por dia, logo após %1$s publicar</string>

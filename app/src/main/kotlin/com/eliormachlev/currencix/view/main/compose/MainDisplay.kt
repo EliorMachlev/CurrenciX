@@ -64,6 +64,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.PlatformTextStyle
@@ -72,6 +73,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -104,10 +106,13 @@ import com.eliormachlev.currencix.view.compose.onboarding.OnboardingAnchor
 import com.eliormachlev.currencix.view.compose.onboarding.onboardingAnchor
 import com.eliormachlev.currencix.view.compose.shimmer
 import com.eliormachlev.currencix.view.compose.theme.AmberContainer
+import com.eliormachlev.currencix.view.compose.theme.AmountFamily
+import com.eliormachlev.currencix.view.compose.theme.LabelFamily
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.OnAmberContainer
 import com.eliormachlev.currencix.view.compose.theme.Spacing
-import com.eliormachlev.currencix.view.compose.theme.Stamp
+import com.eliormachlev.currencix.view.compose.theme.TABULAR_FIGURES
+import com.eliormachlev.currencix.view.compose.theme.stampInk
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -184,9 +189,9 @@ private class AmountStyle(
 // The typed amount, and the fair result when a fee-adjusted one follows it.
 private val SUBTOTAL_STYLE = AmountStyle(AMOUNT_SUBTOTAL_SIZE, FontWeight.Medium)
 
-// The fair result on its own, and the fee-adjusted final: engraved serif.
-private val RESULT_STYLE = AmountStyle(AMOUNT_TO_SIZE, FontWeight.SemiBold, FontFamily.Serif)
-private val FINAL_STYLE = AmountStyle(AMOUNT_HERO_SIZE, FontWeight.SemiBold, FontFamily.Serif)
+// The fair result on its own, and the fee-adjusted final: the amount face.
+private val RESULT_STYLE = AmountStyle(AMOUNT_TO_SIZE, FontWeight.SemiBold, AmountFamily)
+private val FINAL_STYLE = AmountStyle(AMOUNT_HERO_SIZE, FontWeight.SemiBold, AmountFamily)
 
 // Pinned-symbol dim so the number is the primary read.
 private const val SYMBOL_ALPHA = 0.65f
@@ -233,7 +238,7 @@ private val PAY_RULE_BOTTOM_GAP: Dp = Spacing.Tiny
 private val TIGHT_TEXT_STYLE =
     TextStyle(
         platformStyle = PlatformTextStyle(includeFontPadding = false),
-        fontFeatureSettings = "tnum",
+        fontFeatureSettings = TABULAR_FIGURES,
     )
 
 // Trailing glyph on the math line so a running expression reads as
@@ -399,13 +404,25 @@ internal fun MainDisplay(
                 onSwapLongPress = callbacks.onSwapLongPress,
             )
         }
-    HeroCard(
-        state = state,
-        pair = pairActions,
-        callbacks = callbacks,
+    // The card, plus room under it for what the fee chain would add: what
+    // follows the card (the recent-pair chips, the keypad) sits at the same
+    // height whether fees are on or off.
+    Layout(
         modifier = modifier,
-        captureController = captureController,
-    )
+        content = {
+            HeroCard(
+                state = state,
+                pair = pairActions,
+                callbacks = callbacks,
+                captureController = captureController,
+            )
+            FeeChainReserve(layout = state.result.layout(), withCompare = callbacks.onCompareCards != null)
+        },
+    ) { measurables, constraints ->
+        val card = measurables[0].measure(constraints)
+        val reserve = measurables[1].measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
+        layout(card.width, card.height + reserve.height) { card.place(0, 0) }
+    }
     pickerSide?.let { side -> ConverterCurrencyPicker(side = side, viewModel = viewModel, onDismiss = { pickerSide = null }) }
 }
 
@@ -582,7 +599,8 @@ private fun ReceiptPanel(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val borderColor = MaterialTheme.colorScheme.outline
+    // Decorative, so the faint line rather than a control's 3:1 border.
+    val borderColor = MaterialTheme.colorScheme.outlineVariant
     val surfaceColor = MaterialTheme.colorScheme.surface
     val borderWidthPx = with(LocalDensity.current) { PANEL_BORDER_WIDTH.roundToPx() }
     val labelInsetPx = with(LocalDensity.current) { PANEL_LABEL_START_INSET.roundToPx() }
@@ -606,7 +624,7 @@ private fun ReceiptPanel(
             Text(
                 text = label.uppercase(),
                 fontSize = FEE_CHIP_TEXT_SIZE,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = LabelFamily,
                 letterSpacing = PANEL_LABEL_LETTER_SPACING,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -644,7 +662,7 @@ private fun PayRule() {
             Modifier
                 .fillMaxWidth(PAY_RULE_WIDTH_FRACTION)
                 .height(PAY_RULE_HEIGHT)
-                .background(MaterialTheme.colorScheme.outline),
+                .background(MaterialTheme.colorScheme.outlineVariant),
         )
     }
 }
@@ -802,7 +820,7 @@ private fun MathLine(text: String?) {
             Text(
                 text = if (hasMath) "$text $OP_EQUALS" else " ",
                 fontSize = MATH_LINE_TEXT_SIZE,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = LabelFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 softWrap = false,
@@ -857,7 +875,7 @@ private fun AmountToRow(
     callbacks: MainDisplayCallbacks,
 ) {
     val context = LocalContext.current
-    val stack = state.feeStack?.takeIf { it.hasFee() }
+    val stack = state.armedFeeStack()
     ReceiptPanel(label = remember(currency, context) { currency.panelLabel(context) }) {
         Column(Modifier.fillMaxWidth()) {
             // When a fee is armed we always render the full receipt chain
@@ -865,12 +883,91 @@ private fun AmountToRow(
             // input is 0. Showing "0 + 1% = 0" is intentional: the final slot
             // stays present so the user sees the same visual anchor at any
             // input.
-            if (stack != null && state.hasTrueCost) {
-                AmountToChain(state = state, stack = stack, callbacks = callbacks)
-            } else {
-                AmountToBare(state = state, stack = stack, callbacks = callbacks)
+            when (state.layout()) {
+                ResultLayout.Chain -> AmountToChain(state = state, stack = checkNotNull(stack), callbacks = callbacks)
+                ResultLayout.BareWithStamp, ResultLayout.Bare -> AmountToBare(state = state, stack = stack, callbacks = callbacks)
             }
         }
+    }
+}
+
+// Which of the destination panel's renders is on screen.
+private enum class ResultLayout {
+    // Fair subtotal, fee stamp, rule, fee-adjusted final.
+    Chain,
+
+    // The fair result with the fee stamp under it (a fee armed, nothing typed yet).
+    BareWithStamp,
+
+    // The fair result alone (no fee in force).
+    Bare,
+}
+
+// The fee stack when it changes the amount (not a no-op 1).
+private fun ResultState.armedFeeStack(): BigDecimal? = feeStack?.takeIf { it.hasFee() }
+
+private fun ResultState.layout(): ResultLayout =
+    when {
+        armedFeeStack() == null -> ResultLayout.Bare
+        hasTrueCost -> ResultLayout.Chain
+        else -> ResultLayout.BareWithStamp
+    }
+
+// A stand-in amount and fee for measuring the renders (any one-line value
+// measures the same: the rows are a single line that scrolls sideways).
+private val RESERVE_SAMPLE = AmountParts(symbol = "$", digits = "0")
+private val RESERVE_SAMPLE_STACK = BigDecimal("1.01")
+
+/**
+ * Takes up, without drawing anything, the height the full fee chain would
+ * add to the destination panel over its current [layout] (none when the
+ * chain is on screen): measured from the same rows, stamp and rule, so it
+ * follows font scaling. [withCompare] mirrors the "Compare cards" button on
+ * the stamp's row. Never placed, and hidden from accessibility.
+ */
+@Composable
+private fun FeeChainReserve(
+    layout: ResultLayout,
+    withCompare: Boolean,
+) {
+    val sampleChip: @Composable () -> Unit = {
+        ChipBelow(
+            stack = RESERVE_SAMPLE_STACK,
+            fees = persistentListOf(),
+            onClick = {},
+            onCompare = if (withCompare) ({}) else null,
+            chipModifier = Modifier,
+        )
+    }
+    Layout(
+        modifier = Modifier.clearAndSetSemantics {},
+        content = {
+            // The full chain…
+            Column(Modifier.fillMaxWidth()) {
+                ScrollingAmount(parts = RESERVE_SAMPLE, style = SUBTOTAL_STYLE, cursorHeight = null, onLongClick = {})
+                Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+                sampleChip()
+                Spacer(Modifier.height(PAY_RULE_TOP_GAP))
+                PayRule()
+                Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
+                ScrollingAmount(parts = RESERVE_SAMPLE, style = FINAL_STYLE, cursorHeight = null, onLongClick = {})
+            }
+            // …and the render on screen.
+            Column(Modifier.fillMaxWidth()) {
+                if (layout != ResultLayout.Chain) {
+                    ScrollingAmount(parts = RESERVE_SAMPLE, style = RESULT_STYLE, cursorHeight = null, onLongClick = {})
+                }
+                if (layout == ResultLayout.BareWithStamp) {
+                    Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+                    sampleChip()
+                }
+            }
+        },
+    ) { measurables, constraints ->
+        if (layout == ResultLayout.Chain) return@Layout layout(0, 0) {}
+        val chain = measurables[0].measure(constraints)
+        val current = measurables[1].measure(constraints)
+        layout(0, (chain.height - current.height).coerceAtLeast(0)) {}
     }
 }
 
@@ -948,6 +1045,7 @@ private fun ChipBelow(
     fees: ImmutableList<Fee>,
     onClick: () -> Unit,
     onCompare: (() -> Unit)? = null,
+    chipModifier: Modifier = Modifier.onboardingAnchor(OnboardingAnchor.FeeStamp),
 ) {
     Ltr {
         Row(
@@ -963,11 +1061,11 @@ private fun ChipBelow(
                 text = FEE_STAMP_OP_PREFIX,
                 fontSize = FEE_CHIP_TEXT_SIZE,
                 fontWeight = FontWeight.Medium,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = LabelFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = FEE_STAMP_OP_GAP),
             )
-            FeeChip(stack, fees, onClick, modifier = Modifier.onboardingAnchor(OnboardingAnchor.FeeStamp))
+            FeeChip(stack, fees, onClick, modifier = chipModifier)
         }
     }
 }
@@ -1137,7 +1235,8 @@ private fun FeeChip(
                 .joinToString(FEE_NAME_SEPARATOR)
                 .uppercase()
         }
-    val bg = Stamp.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
+    val stamp = stampInk()
+    val bg = stamp.copy(alpha = FEE_CHIP_BG_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
     Row(
         modifier
             .maxWidthFraction(FEE_CHIP_MAX_WIDTH_FRACTION)
@@ -1145,7 +1244,7 @@ private fun FeeChip(
             .background(bg)
             .border(
                 width = FEE_STAMP_BORDER_WIDTH,
-                color = Stamp,
+                color = stamp,
                 shape = RoundedCornerShape(FEE_STAMP_CORNER_RADIUS),
             ).hapticClickable(onClick = onClick)
             .padding(
@@ -1179,9 +1278,9 @@ private fun FeeChipText(
         text = text,
         fontSize = FEE_CHIP_TEXT_SIZE,
         fontWeight = FontWeight.Medium,
-        fontFamily = FontFamily.Monospace,
+        fontFamily = LabelFamily,
         letterSpacing = FEE_STAMP_LETTER_SPACING,
-        color = Stamp,
+        color = stampInk(),
         maxLines = 1,
         softWrap = false,
         modifier = modifier,

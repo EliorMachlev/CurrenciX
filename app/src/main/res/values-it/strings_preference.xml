@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Le impostazioni attuali verranno sovrascritte con quelle nel file. L\'operazione non può essere annullata.</string>
     <string name="backup_import_confirm_positive">Ripristina</string>
     <string name="backup_encrypt_option">Cifra con una password</string>
+    <string name="backup_keys_left_out">Le chiavi API non vengono incluse in un backup senza password.</string>
     <string name="backup_password_hint">Password</string>
     <string name="backup_password_prompt_title">Inserisci la password</string>
     <string name="backup_password_wrong">La password non ha decifrato questo file. Riprova.</string>
@@ -143,9 +144,11 @@
     <string name="credit_lib_compose">Toolkit per l\'interfaccia utente e Material 3</string>
     <string name="credit_lib_material_components">Componenti Material Design</string>
     <string name="credit_lib_material_symbols">Icone (arrotondate)</string>
+    <string name="credit_lib_typeface">Carattere</string>
     <string name="credit_lib_vico">Grafici</string>
     <string name="credit_lib_okhttp">Client HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (salvataggio di carrelli, viaggi e commissioni)</string>
     <string name="credit_lib_timber">Registrazione dei log</string>
     <string name="credit_lib_bouncy_castle">Derivazione della chiave Argon2id per i backup cifrati</string>
     <string name="credit_lib_tink">Cifratura AES-GCM per i backup</string>
@@ -196,6 +199,8 @@
     <string name="app_lock_unlock">Sblocca</string>
     <string name="private_requests_title">Richieste private</string>
     <string name="private_requests_summary">Invia le richieste dei cambi come tutti gli altri: senza versione dell\'app, dettagli del dispositivo o identificatori della cache. Usa un po\' più di dati.</string>
+    <string name="block_screenshots_title">Blocca screenshot</string>
+    <string name="block_screenshots_summary">L\'app appare vuota negli screenshot, nelle registrazioni dello schermo e nelle app recenti</string>
     <string name="auto_refresh_summary">Mantieni i tassi aggiornati in background</string>
     <string name="refresh_interval_title">Aggiorna ogni</string>
     <string name="refresh_interval_daily">Una volta al giorno, subito dopo la pubblicazione di %1$s</string>

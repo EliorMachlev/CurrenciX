@@ -29,6 +29,13 @@ class ConverterLaunchTest {
     }
 
     @Test
+    fun `a rate alert's intent opens the chart for its pair`() {
+        val request = ConverterLaunch.parse(ConverterLaunch.openChart(context, Currency.USD, Currency.ILS))
+        assertEquals(ConverterLaunch.Request.OpenChart(CurrencyPair(Currency.USD, Currency.ILS)), request)
+        assertNull(ConverterLaunch.parse(Intent(ConverterLaunch.ACTION_OPEN_CHART).putExtra("from", "USD").putExtra("to", "USD")))
+    }
+
+    @Test
     fun `anything unreadable from outside is dropped, not guessed`() {
         fun convert(vararg extras: Pair<String, String>) =
             ConverterLaunch.parse(

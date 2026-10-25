@@ -20,4 +20,6 @@ class Database(
     val chart = ChartSettings(context)
     val carts = CartStore(context)
     val alerts = RateAlertStore(context)
+    val receiptLanguages = ReceiptLanguageSettings(context)
+    val quickAmounts = QuickAmountSettings(context)
 }

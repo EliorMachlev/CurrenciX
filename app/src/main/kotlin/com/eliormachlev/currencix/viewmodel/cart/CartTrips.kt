@@ -8,9 +8,21 @@ import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.repository.withPlan
 import com.eliormachlev.currencix.util.newId
 import java.math.BigDecimal
 import java.math.MathContext
+import java.time.LocalDate
+
+/** What the trip sheet saves: everything about a trip but its id. */
+data class TripDraft(
+    val name: String,
+    val currency: Currency,
+    val budget: BigDecimal? = null,
+    val destination: Currency? = null,
+    val start: LocalDate? = null,
+    val end: LocalDate? = null,
+)
 
 /** A trip with what its carts come to so far, and how many there are. */
 data class TripSummary(
@@ -81,12 +93,13 @@ class CartTrips internal constructor(
     /** Saves a new trip or the edits to one; returns its id. */
     fun save(
         id: String?,
-        name: String,
-        currency: Currency,
-        budget: BigDecimal?,
+        draft: TripDraft,
     ): String {
         val tripId = id ?: newId()
-        db.carts.saveTrip(Trip(tripId, name, currency, budget))
+        db.carts.saveTrip(
+            Trip(tripId, draft.name, draft.currency, draft.budget)
+                .withPlan(draft.destination?.iso4217Alpha(), draft.start, draft.end),
+        )
         return tripId
     }
 

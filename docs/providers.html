@@ -1,200 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exchange Rate Providers — CurrenciX</title>
-  <meta name="description" content="Compare all exchange rate providers supported by the CurrenciX Android app — Frankfurter, OpenExchangerates, InforEuro, Bank of Canada, Norges Bank, Bank Rossii.">
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-Du+OJKJSbdUgz5nrHeWWINvez6XKDDU/tyj/5c2uvwo='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CurrenciX exchange rate providers</title>
+  <meta name="description" content="The eight exchange-rate providers in CurrenciX: currencies, update frequency, base currency, history and API keys.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F3EEE5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#131311" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/space_grotesk_medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter_regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💱</text></svg>">
+  <script>document.documentElement.classList.add('js')</script>
+  <script src="site.js" defer></script>
 </head>
-<body>
-
-<nav>
-  <div class="nav-inner">
-    <a class="nav-brand" href="index.html">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      CurrenciX
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="features.html">Features</a></li>
-      <li><a href="providers.html" class="active">Providers</a></li>
-      <li><a href="privacy.html">Privacy</a></li>
-    </ul>
-  </div>
-</nav>
-
-<header class="hero" style="padding: 3.5rem 1.5rem 3rem;">
-  <div class="hero-inner">
-    <h1 style="font-size:clamp(1.6rem,4vw,2.4rem);">Exchange Rate Providers</h1>
-    <p class="tagline" style="font-size:1.05rem;">Compare the 6 active data sources. Switch freely in Settings — no account needed for most.</p>
+<body class="page">
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="index.html" aria-label="CurrenciX home"><span>Currenci</span><svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></a>
+    <nav aria-label="Site">
+      <ul>
+        <li><a href="features.html">Features</a></li>
+        <li><a href="providers.html" aria-current="page">Providers</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="https://github.com/EliorMachlev/CurrenciX">Source</a></li>
+      </ul>
+    </nav>
   </div>
 </header>
 
-<main class="page">
+<main id="main">
+<div class="wrap page-head">
+  <h1>Providers</h1>
+  <p>Where the rates come from: eight sources, from central banks to interbank feeds. Most need no account.</p>
+</div>
 
-  <h2 class="section-title">Provider Comparison</h2>
-  <div class="table-wrap">
+<section class="board-section provider-board" aria-labelledby="board-title" style="margin-top:0">
+  <div class="wrap">
+    <h2 class="section-title" id="board-title" data-reveal>The eight, by the currency they quote in</h2>
+    <p class="section-intro" data-reveal style="--i:1">Open a row for what it covers, how often it updates and what it needs.</p>
+  </div>
+  <ul class="board" data-ui data-board data-reveal style="--i:2">
+      <li class="open"><button type="button" aria-expanded="true"><span class="code">EUR</span><span class="name">Frankfurter.app</span><span class="upd">~30 currencies</span><span class="st basket">No key</span><span class="detail"><span class="d">A free, open-source service around the European Central Bank's reference rates, published every business day around 16:00 CET for about 30 major currencies. Its history goes back to 1999 (the app's date picker to 2010), and it's very reliable. No sign-up.</span><span class="d">Updates: Business days, about 16:00 CET. History: Yes, ECB data from 1999. Source: European Central Bank.</span></span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="code">USD</span><span class="name">Open Exchangerates</span><span class="upd">160+ currencies</span><span class="st pinned">Free key</span><span class="detail"><span class="d">A commercial service with the widest coverage in the app: 160+ currencies, updated hourly. The free plan gives today's and past dates' rates (the app draws no chart from it). It needs a free account; you enter the key in Settings.</span><span class="d">Updates: Hourly. History: Past dates only, no chart. Source: Commercial aggregator.</span></span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="code">EUR</span><span class="name">AllRatesToday</span><span class="upd">~160 currencies</span><span class="st pinned">Key</span><span class="detail"><span class="d">Mid-market rates from interbank data for about 160 currencies, updated about every minute. It needs your own API key. The free plan allows 300 requests in total, ever; each refresh and each chart range uses one, so pick a long refresh interval or a paid plan.</span><span class="d">Updates: About every minute. History: Yes. Source: Mid-market interbank rates.</span></span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="code">EUR</span><span class="name">InforEuro</span><span class="upd">~150 currencies</span><span class="st person">Inaccurate</span><span class="detail"><span class="d">The European Commission's official monthly accounting rates for the euro, used for EU budgets and grants: about 150 currencies, once a month. Use it when you need the official EU rate. A month-old rate can be far from today's market, so the app lists it only with Show unreliable providers on.</span><span class="d">Updates: Monthly. History: Yes. Source: European Commission.</span></span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="code">CAD</span><span class="name">Bank of Canada</span><span class="upd">~23 currencies</span><span class="st basket">No key</span><span class="detail"><span class="d">Daily rates from Canada's central bank for about 23 currencies against the Canadian dollar, every business day. No key.</span><span class="d">Updates: Business days. History: Yes. Source: Central bank.</span></span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="code">NOK</span><span class="name">Norges Bank</span><span class="upd">~40 currencies</span><span class="st person">Often down</span><span class="detail"><span class="d">Norway's central bank publishes about 40 rates against the krone every business day. No key. Its service is often down (HTTP 503), so the app lists it only with Show unreliable providers on.</span><span class="d">Updates: Business days. History: Yes. Source: Central bank.</span></span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="code">RUB</span><span class="name">Bank Rossii</span><span class="upd">~44 currencies</span><span class="st basket">No key</span><span class="detail"><span class="d">The Central Bank of Russia lists about 44 rates against the ruble every business day. Most useful for ruble conversions.</span><span class="d">Updates: Business days. History: Yes. Source: Central bank.</span></span></button></li>
+      <li><button type="button" aria-expanded="false"><span class="code">ILS</span><span class="name">Bank of Israel</span><span class="upd">~14 currencies</span><span class="st basket">No key</span><span class="detail"><span class="d">The Bank of Israel's representative rates for about 14 currencies against the shekel, every business day. No key.</span><span class="d">Updates: Business days. History: Yes. Source: Central bank.</span></span></button></li>
+  </ul>
+</section>
+
+<section class="section wrap compare-section" aria-labelledby="compare-title">
+  <h2 class="section-title" id="compare-title" data-reveal>Side by side</h2>
+  <div class="table-wrap compare" style="margin-top:2rem;--i:1" data-reveal>
     <table>
-      <thead>
-        <tr>
-          <th>Provider</th>
-          <th>Currencies</th>
-          <th>Update Frequency</th>
-          <th>Base Currency</th>
-          <th>History</th>
-          <th>API Key</th>
-        </tr>
-      </thead>
+      <thead><tr><th scope="col">Provider</th><th scope="col">Currencies</th><th scope="col">Updates</th><th scope="col">Quoted in</th><th scope="col">History</th><th scope="col">API key</th></tr></thead>
       <tbody>
-        <tr>
-          <td><strong>Frankfurter.app</strong><br><small style="color:var(--clr-text-muted)">European Central Bank</small></td>
-          <td><span class="tag">~33</span></td>
-          <td>Business days (~16:00 CET)</td>
-          <td>EUR</td>
-          <td>From 2010-01-04</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td><strong>OpenExchangerates</strong></td>
-          <td><span class="tag">160+</span></td>
-          <td>Hourly</td>
-          <td>USD</td>
-          <td>Yes</td>
-          <td>Free tier available</td>
-        </tr>
-        <tr>
-          <td><strong>AllRatesToday</strong><br><small style="color:var(--clr-text-muted)">Mid-market interbank rates</small></td>
-          <td><span class="tag">~160</span></td>
-          <td>About every minute</td>
-          <td>EUR</td>
-          <td>Yes</td>
-          <td>Required; free plan 300 requests in total</td>
-        </tr>
-        <tr>
-          <td><strong>InforEuro</strong><br><small style="color:var(--clr-text-muted)">European Commission · inaccurate data</small></td>
-          <td><span class="tag">~150</span></td>
-          <td>Monthly</td>
-          <td>EUR</td>
-          <td>Yes</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td><strong>Bank of Canada</strong></td>
-          <td><span class="tag">~23</span></td>
-          <td>Business days</td>
-          <td>CAD</td>
-          <td>Yes</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td><strong>Norges Bank</strong><br><small style="color:var(--clr-text-muted)">Norwegian Central Bank · often down</small></td>
-          <td><span class="tag">~40</span></td>
-          <td>Business days</td>
-          <td>NOK</td>
-          <td>Yes</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td><strong>Bank Rossii</strong><br><small style="color:var(--clr-text-muted)">Russian Central Bank</small></td>
-          <td><span class="tag">~44</span></td>
-          <td>Business days</td>
-          <td>RUB</td>
-          <td>Yes</td>
-          <td>No</td>
-        </tr>
+          <tr><th scope="row">Frankfurter.app<small>European Central Bank</small></th><td>~30</td><td>Business days, about 16:00 CET</td><td>EUR</td><td>Yes, ECB data from 1999</td><td>No</td></tr>
+          <tr><th scope="row">Open Exchangerates<small>Commercial aggregator</small></th><td>160+</td><td>Hourly</td><td>USD</td><td>Past dates only, no chart</td><td>Free key</td></tr>
+          <tr><th scope="row">AllRatesToday<small>Mid-market interbank rates</small></th><td>~160</td><td>About every minute</td><td>EUR</td><td>Yes</td><td>Key</td></tr>
+          <tr><th scope="row">InforEuro<small>European Commission</small></th><td>~150</td><td>Monthly</td><td>EUR</td><td>Yes</td><td>No</td></tr>
+          <tr><th scope="row">Bank of Canada<small>Central bank</small></th><td>~23</td><td>Business days</td><td>CAD</td><td>Yes</td><td>No</td></tr>
+          <tr><th scope="row">Norges Bank<small>Central bank</small></th><td>~40</td><td>Business days</td><td>NOK</td><td>Yes</td><td>No</td></tr>
+          <tr><th scope="row">Bank Rossii<small>Central bank</small></th><td>~44</td><td>Business days</td><td>RUB</td><td>Yes</td><td>No</td></tr>
+          <tr><th scope="row">Bank of Israel<small>Central bank</small></th><td>~14</td><td>Business days</td><td>ILS</td><td>Yes</td><td>No</td></tr>
       </tbody>
     </table>
   </div>
+</section>
 
-  <h2 class="section-title">Provider Details</h2>
-
-  <div class="cards" style="grid-template-columns: 1fr;">
-
-    <div class="card">
-      <span class="card-icon">🇪🇺</span>
-      <h3>Frankfurter.app</h3>
-      <p>A free, open-source API wrapper around the <strong>European Central Bank</strong> reference rates. Rates are published every business day around 16:00 CET. Covers major world currencies (~33). Historical data starts at 2010-01-04 and the service is highly reliable. No sign-up required.</p>
-      <p style="margin-top:.5rem;"><a href="https://frankfurter.app/">frankfurter.app</a></p>
-    </div>
-
-    <div class="card">
-      <span class="card-icon">🌐</span>
-      <h3>OpenExchangerates</h3>
-      <p>A commercial service offering the widest currency coverage of any provider in the app — <strong>160+ currencies</strong> updated hourly. The free "App ID" tier provides access to current and historical rates. A free account is required; the API key is entered in Settings.</p>
-      <p style="margin-top:.5rem;"><a href="https://openexchangerates.org/">openexchangerates.org</a></p>
-    </div>
-
-    <div class="card">
-      <span class="card-icon">⏱️</span>
-      <h3>AllRatesToday</h3>
-      <p>Mid-market exchange rates from <strong>interbank data</strong> for about 160 currencies, updated about every minute. It needs your own API key, entered in Settings. The free plan allows <strong>300 requests in total, ever</strong>; each refresh and each chart range uses one, so pick a long refresh interval or a paid plan.</p>
-      <p style="margin-top:.5rem;"><a href="https://allratestoday.com/">allratestoday.com</a></p>
-    </div>
-
-    <div class="card">
-      <span class="card-icon">🏛️</span>
-      <h3>InforEuro</h3>
-      <p>The <strong>European Commission's</strong> official monthly accounting rates for the euro, used for EU budget and grant calculations. Covers ~150 currencies and is updated once per month. Ideal when you need the official EU rate rather than market rates — but since a month-old rate can be far from today's market, the app lists it only when <em>Show unreliable providers</em> is on, labelled <em>Inaccurate data</em>.</p>
-      <p style="margin-top:.5rem;"><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en">European Commission</a></p>
-    </div>
-
-    <div class="card">
-      <span class="card-icon">🍁</span>
-      <h3>Bank of Canada</h3>
-      <p>Daily exchange rates published by the <strong>Canadian Central Bank</strong>. Covers approximately 23 currencies against CAD. Updated every business day. No API key required.</p>
-      <p style="margin-top:.5rem;"><a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/">bankofcanada.ca</a></p>
-    </div>
-
-    <div class="card">
-      <span class="card-icon">🇳🇴</span>
-      <h3>Norges Bank</h3>
-      <p>The <strong>Norwegian Central Bank</strong> publishes about 40 exchange rates against NOK every business day. Data is returned as XML and parsed natively in the app. No API key required. Its service has regular outages (HTTP 503), so the app lists it only when <em>Show unreliable providers</em> is on, labelled <em>Downtime</em>.</p>
-      <p style="margin-top:.5rem;"><a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/">norges-bank.no</a></p>
-    </div>
-
-    <div class="card">
-      <span class="card-icon">🇷🇺</span>
-      <h3>Bank Rossii</h3>
-      <p>The <strong>Russian Central Bank</strong> lists ~44 exchange rates against RUB, updated every business day. Returns XML data. Particularly useful for RUB-based conversions and as a reliable fallback for providers that have been retired.</p>
-      <p style="margin-top:.5rem;"><a href="https://cbr.ru/eng/currency_base/daily/">cbr.ru</a></p>
-    </div>
-
+<section class="section wrap" aria-labelledby="in-app-title">
+  <h2 class="section-title" id="in-app-title" data-reveal>Choosing one in the app</h2>
+  <p class="section-intro" data-reveal style="--i:1">Settings → Exchange rates. Each provider says what it covers and how often it updates.</p>
+  <div class="shots shots-3">
+    <figure data-reveal style="--i:2"><img src="img/rates-settings.webp" alt="Exchange rate settings: the data provider, a switch to show unreliable providers, auto-refresh and how often to refresh." width="822" height="600" loading="lazy" decoding="async"><figcaption>The exchange rate settings</figcaption></figure>
+    <figure data-reveal style="--i:3"><img src="img/provider-picker.webp" alt="The provider picker: Frankfurter.app marked active, then Bank Rossii, each with how many rates it has and where they come from." width="822" height="600" loading="lazy" decoding="async"><figcaption>Picking a provider</figcaption></figure>
+    <figure data-reveal style="--i:4"><img src="img/unreliable-providers-dark.webp" alt="The provider picker in the dark theme with unreliable providers shown: Norges Bank appears, labelled with its downtime." width="822" height="600" loading="lazy" decoding="async"><figcaption>With unreliable providers shown</figcaption></figure>
   </div>
+</section>
 
-  <h2 class="section-title" style="margin-top:2.5rem;">Retired &amp; Deactivated Providers</h2>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr><th>Provider</th><th>Reason</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>fer.ee</strong></td>
-          <td>Removed — the domain no longer resolves and the project is gone</td>
-        </tr>
-        <tr>
-          <td><strong>exchangerate.host</strong></td>
-          <td>Removed — the service shut down its free API</td>
-        </tr>
-      </tbody>
-    </table>
+<section class="section wrap" aria-labelledby="switch-title">
+  <div class="prose-layout" style="padding-bottom:0">
+    <h2 class="section-title" id="switch-title" data-reveal>Switching providers</h2>
+    <div class="prose">
+      <p data-reveal style="--i:1">Open <strong>Settings → Exchange rates → Data provider</strong> and pick one; the next refresh uses it. You can pick a <strong>fallback provider</strong> there too: when the main one fails, the rates come from the fallback, the converter says so, and the next refresh tries the main one again.</p>
+      <p data-reveal style="--i:2">Providers that are often down (Norges Bank) or whose rates are inaccurate (InforEuro) are hidden until you turn on <strong>Settings → Exchange rates → Show unreliable providers</strong>; then each says why. A provider you already use stays in the list either way.</p>
+      <p data-reveal style="--i:3">For a provider that needs an API key (Open Exchangerates and AllRatesToday), the app asks for it when you pick the provider, and you can change it in Settings. The key stays in the app's private storage and is sent only to that provider, in a request header, never in the address.</p>
+      <h3>Their websites</h3>
+      <ul><li><a href="https://frankfurter.dev/">Frankfurter.app, at frankfurter.dev</a></li><li><a href="https://openexchangerates.org/">Open Exchangerates, at openexchangerates.org</a></li><li><a href="https://allratestoday.com/">AllRatesToday, at allratestoday.com</a></li><li><a href="https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en">InforEuro, at the European Commission</a></li><li><a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/">Bank of Canada, at bankofcanada.ca</a></li><li><a href="https://www.norges-bank.no/en/topics/Statistics/exchange_rates/">Norges Bank, at norges-bank.no</a></li><li><a href="https://cbr.ru/eng/currency_base/daily/">Bank Rossii, at cbr.ru</a></li><li><a href="https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/">Bank of Israel, at boi.org.il</a></li></ul>
+      <h3>No longer offered</h3>
+      <p>fer.ee was removed when its domain stopped resolving and the project disappeared; exchangerate.host when the service shut down its free API.</p>
+    </div>
   </div>
-
-  <h2 class="section-title">Switching Providers</h2>
-  <div class="prose">
-    <p>Open <strong>Settings → Exchange rates → Data provider</strong> and select a provider. The change takes effect immediately on the next pull-to-refresh or app restart. Cached rates from the previous provider are discarded.</p>
-    <p>Providers that are often down (Norges Bank) or whose rates are inaccurate (InforEuro) are hidden from the list until you turn on <strong>Settings → Exchange rates → Show unreliable providers</strong>; then each is labelled with why. A provider you already use stays in the list either way.</p>
-    <p>If a provider requires an API key (OpenExchangerates and AllRatesToday), an input field appears in Settings after selecting it. The key is stored locally in SharedPreferences and is never transmitted to any server other than the provider's own API.</p>
-  </div>
-
+</section>
+<div class="page-end"></div>
 </main>
 
-<footer>
-  <p>CurrenciX &mdash; a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> &copy; 2020 Maximilian Salomon &mdash; Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a></p>
-  <p style="margin-top:.4rem;"><a href="https://github.com/EliorMachlev/CurrenciX">GitHub</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="https://translate.codeberg.org/engage/currencies/">Translate</a></p>
+<footer class="footer">
+  <div class="ft statement">
+    <p>A handy travel companion, not a tool for trading.</p>
+    <p class="legal">CurrenciX © 2026 Elior Machlev, a fork of <a href="https://github.com/sal0max/currencies">Currencies</a> © 2020 Maximilian Salomon. Free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL 3.0 or later</a>. Type: Inter and Space Grotesk; icons: Material Symbols.</p>
+  </div>
+  <nav class="ft nav" aria-label="More">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="features.html">Features</a></li>
+      <li><a href="providers.html">Rate providers</a></li>
+      <li><a href="privacy.html">Privacy policy</a></li>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/accessibility-statement.md">Accessibility</a></li>
+      <li><a href="https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/contributing.md#translations">Help translate</a></li>
+    </ul>
+  </nav>
+  <div class="ft facts">
+    <p>Android 13 and later, in 32 languages.</p>
+  </div>
+  <div class="ft contact">
+    <p class="legal">Found a problem?</p>
+    <a href="https://github.com/EliorMachlev/CurrenciX/issues">Open an issue on GitHub</a>
+  </div>
+  <div class="ft name" aria-hidden="true"><span class="wordmark">Currenci<svg class="mark" viewBox="18 18 72 72" aria-hidden="true"><g class="arrows"><path class="arrow-green" d="M30.05,66.20 A26.8800,26.8800 0 0 1 52.59,27.16 L52.33,22.04 L63.83,29.56 L53.17,38.23 L52.91,33.12 A20.9067,20.9067 0 0 0 35.37,63.49 A2.9867,2.9867 0 0 1 30.05,66.20 Z" stroke-width=".85" stroke-linejoin="round"/><path class="arrow-brass" d="M77.95,41.80 A26.8800,26.8800 0 0 1 55.41,80.84 L55.67,85.96 L44.17,78.44 L54.83,69.77 L55.09,74.88 A20.9067,20.9067 0 0 0 72.63,44.51 A2.9867,2.9867 0 0 1 77.95,41.80 Z" stroke-width=".85" stroke-linejoin="round"/></g><path class="cross" d="M46.75,46.75 L61.25,61.25 M61.25,46.75 L46.75,61.25" fill="none" stroke-width="5.55" stroke-linecap="round"/></svg></span></div>
+  <a class="ft go" href="https://github.com/EliorMachlev/CurrenciX"><span>Read the source</span><svg viewBox="0 0 72 72" aria-hidden="true"><path d="M18 54 54 18M26 18h28v28"/></svg></a>
 </footer>
-
 </body>
 </html>

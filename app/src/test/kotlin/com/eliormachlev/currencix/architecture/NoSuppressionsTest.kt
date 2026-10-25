@@ -96,8 +96,6 @@ class NoSuppressionsTest {
 
     // Unit tests run from the module directory; the repository is the first
     // parent holding the Gradle wrapper.
-    private fun repositoryRoot(): File = generateSequence(File("").absoluteFile) { it.parentFile }.first { File(it, "gradlew").exists() }
-
     private data class Suppression(
         val path: String,
         val lineNumber: Int,
@@ -130,6 +128,25 @@ class NoSuppressionsTest {
         const val APP_BUILD = "app/build.gradle.kts"
         const val PROFILE_BUILD = "baselineprofile/build.gradle.kts"
         const val UNSTABLE_API_RULE = "UnstableApiUsage"
+
+        const val OWASP_SUPPRESSIONS = "config/owasp/suppressions.xml"
+        const val OWASP_WORKFLOW = ".github/workflows/owasp-dependency-check.yaml"
+        const val WIRE_CVE = "CVE-2018-8909"
+        const val WIRE_RUNTIME = "wire-runtime"
+
+        const val CODEQL_EXCEPTIONS = ".github/codeql/exceptions.yml"
+        const val CODEQL_WORKFLOW = ".github/workflows/codeql.yaml"
+        const val CODEQL_FILTER = ".github/scripts/codeql-exceptions.py"
+        const val USELESS_NULL_CHECK = "java/useless-null-check"
+        const val QUICK_CONVERSIONS = "QuickConversionsSheet"
+
+        const val VERIFICATION_METADATA = "gradle/verification-metadata.xml"
+        const val TRUSTED_ARTIFACTS = "trusted-artifacts"
+
+        // The files only an IDE sync downloads, accepted without a checksum (exceptions.md #9).
+        val IDE_DOCUMENTATION = listOf("sources", "javadoc")
+
+        fun trustLine(kind: String) = """<trust file=".*-$kind[.]jar" regex="true"/>"""
 
         // An @Incubating AGP API kept on purpose: the marker (numbered as in
         // EXCEPTIONS_DOC) directly above the one statement that uses it.
@@ -175,7 +192,66 @@ class NoSuppressionsTest {
                     incubating(PROFILE_BUILD, 4, "ManagedVirtualDevice", "testOptions.managedDevices.localDevices.create(managedDevice) {"),
                     incubating(PROFILE_BUILD, 5, "testedApks", "v.instrumentationRunnerArguments.put("),
                     incubating(APP_BUILD, 6, "generateLocaleConfig", "generateLocaleConfig = true"),
-                )
+                ) +
+                listOf(
+                    RecordedException(
+                        OWASP_SUPPRESSIONS,
+                        "<suppress>",
+                        WIRE_CVE,
+                        WIRE_RUNTIME,
+                        // The one CVE, for Square's Wire runtime only.
+                        Regex(
+                            """<suppress>\s*<notes>[^<]*</notes>\s*<filePath regex="true">[^<]*""" +
+                                Regex.escape("com\\.squareup\\.wire/$WIRE_RUNTIME") +
+                                """[^<]*</filePath>\s*<cve>""" + WIRE_CVE + "</cve>\\s*</suppress>",
+                        ),
+                    ),
+                    RecordedException(
+                        OWASP_WORKFLOW,
+                        "--suppression $OWASP_SUPPRESSIONS",
+                        WIRE_CVE,
+                        WIRE_RUNTIME,
+                        // The file above and nothing else.
+                        Regex(Regex.escape("--suppression $OWASP_SUPPRESSIONS") + "\\s*$", RegexOption.MULTILINE),
+                    ),
+                ) +
+                listOf(
+                    RecordedException(
+                        CODEQL_EXCEPTIONS,
+                        "- excluded-rule: $USELESS_NULL_CHECK",
+                        USELESS_NULL_CHECK,
+                        QUICK_CONVERSIONS,
+                        // That one finding: its file, the generated line 1 and the compiler's temporary.
+                        Regex(
+                            Regex.escape("- excluded-rule: $USELESS_NULL_CHECK") +
+                                """\s*file: \S*/""" + QUICK_CONVERSIONS + """\.kt\s*line: 1\s*message-contains: tmpEnum""",
+                        ),
+                    ),
+                    RecordedException(
+                        CODEQL_WORKFLOW,
+                        "run: python3 $CODEQL_FILTER $CODEQL_EXCEPTIONS sarif",
+                        USELESS_NULL_CHECK,
+                        QUICK_CONVERSIONS,
+                        // The file above, on the Kotlin results only.
+                        Regex(
+                            Regex.escape("if: matrix.language == 'java-kotlin'") + """\s*""" +
+                                Regex.escape("run: python3 $CODEQL_FILTER $CODEQL_EXCEPTIONS sarif"),
+                        ),
+                    ),
+                ) +
+                IDE_DOCUMENTATION.map { kind ->
+                    RecordedException(
+                        VERIFICATION_METADATA,
+                        trustLine(kind),
+                        TRUSTED_ARTIFACTS,
+                        "-$kind.jar",
+                        // Inside the configuration's trusted-artifacts block, which holds only these two.
+                        Regex(
+                            (listOf("<$TRUSTED_ARTIFACTS>") + IDE_DOCUMENTATION.map(::trustLine) + "</$TRUSTED_ARTIFACTS>")
+                                .joinToString("""\s*""") { Regex.escape(it) },
+                        ),
+                    )
+                }
 
         val SKIPPED_DIRECTORIES = setOf("build", ".gradle", ".git", ".kotlin", ".idea", "node_modules")
         val SCANNED_EXTENSIONS = setOf("kt", "kts", "java", "gradle", "xml", "pro", "yml", "yaml", "toml", "properties")
@@ -198,6 +274,14 @@ class NoSuppressionsTest {
                 Regex("""--exclude-rule|--exclude[ =]"""),
                 // LeakCanary told to stop reporting a reference
                 Regex("""IgnoredReferenceMatcher\("""),
+                // OWASP Dependency-Check: a finding excluded, and the file of them handed in
+                Regex("""<suppress\b"""),
+                Regex("""--suppression\b"""),
+                // CodeQL: a finding listed for removal, and the step that removes the listed ones
+                Regex("""excluded-rule:"""),
+                Regex("""codeql-exceptions\.py\s+\S"""),
+                // Gradle dependency verification: files accepted without a checksum
+                Regex("""<(trust|ignored-key|trusted-key)\s"""),
             )
 
         // detekt's baseline-<module>.xml / detekt-baseline.xml and lint's lint-baseline.xml.

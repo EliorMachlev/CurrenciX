@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
+import com.eliormachlev.currencix.view.compose.fieldMessage
 import com.eliormachlev.currencix.view.compose.rememberLinkedText
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 
@@ -246,7 +247,7 @@ internal fun PasswordFieldWithToggle(
             textObfuscationMode = if (input.visible) TextObfuscationMode.Visible else TextObfuscationMode.RevealLastTyped,
             label = { Text(text = label) },
             isError = input.errorText != null,
-            supportingText = input.errorText?.let { { Text(text = it) } },
+            supportingText = fieldMessage(input.errorText),
             modifier = Modifier.weight(1f),
         )
         Spacer(Modifier.width(PASSWORD_FIELD_TO_TOGGLE_GAP))

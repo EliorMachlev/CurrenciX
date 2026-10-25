@@ -3,6 +3,8 @@ package com.eliormachlev.currencix.view.main.compose
 import android.content.Context
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.quickAmounts
+import com.eliormachlev.currencix.model.quickFillAmount
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.isNeutralFeeStack
@@ -12,14 +14,8 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 
-private val QUICK_AMOUNTS: List<BigDecimal> = listOf("1", "5", "10", "20", "50", "100", "500", "1000").map(::BigDecimal)
-
 /** The sheet shows its rows as tiles, this many to a line. */
 internal const val TILES_PER_LINE = 2
-
-// When the typed amount makes the rows' number odd, this one more round
-// amount fills the last line of tiles.
-private val EVEN_FILL_AMOUNT = BigDecimal("2000")
 
 // Fee percent shown on a row ("+1%"), as on the converter's fee chip.
 private const val FEE_PERCENT_DECIMAL_PLACES = 2
@@ -41,11 +37,15 @@ data class QuickConversionRowInputs(
     // The user's decimal places (Settings → Converter), as the converter
     // shows its result: every result in the table rounds to it.
     val decimalPlaces: Int,
+    // The tiles' amounts in [from] ([quickAmounts]): the user's own, or the
+    // round ones scaled to the currency.
+    val amounts: List<BigDecimal> = quickAmounts(from, rates, emptyMap()),
 )
 
 /**
- * The pair at round amounts, plus the typed one, smallest first (and one
- * more round amount when that makes an odd number, so the tiles pair up): the bare
+ * The pair at the tiles' amounts ([QuickConversionRowInputs.amounts]), plus
+ * the typed one, smallest first (and twice the largest when that makes an odd
+ * number, so the tiles pair up): the bare
  * numbers for the sheet's table, and each as "ILS ₪ 1 = USD $ 0.3249" for
  * copy, share and TalkBack. With a fee in force each row adds what it comes
  * to with the fee, "+1% = USD $ 0.3281": the converter's True Cost
@@ -55,9 +55,9 @@ fun buildQuickConversionRows(inputs: QuickConversionRowInputs): List<QuickConver
     val baseRate = inputs.rates.rateFor(inputs.from)?.value ?: return emptyList()
     val destRate = inputs.rates.rateFor(inputs.to)?.value ?: return emptyList()
     val feePercent = inputs.feeStack.takeUnless { it.isNeutralFeeStack() }?.let { feePercentLabel(inputs.ctx, it) }
-    val typed = inputs.typed?.takeIf { it.signum() > 0 && QUICK_AMOUNTS.none { round -> round.compareTo(it) == 0 } }
-    val amounts = QUICK_AMOUNTS + listOfNotNull(typed)
-    val filled = if (amounts.size % TILES_PER_LINE == 0) amounts else amounts + EVEN_FILL_AMOUNT
+    val typed = inputs.typed?.takeIf { it.signum() > 0 && inputs.amounts.none { round -> round.compareTo(it) == 0 } }
+    val amounts = inputs.amounts + listOfNotNull(typed)
+    val filled = if (amounts.size % TILES_PER_LINE == 0) amounts else amounts + quickFillAmount(inputs.amounts)
     return filled.sorted().map { amount ->
         val fair = amount.divide(baseRate, MathContext.DECIMAL128).multiply(destRate)
         // "1,000", grouped as the results are.

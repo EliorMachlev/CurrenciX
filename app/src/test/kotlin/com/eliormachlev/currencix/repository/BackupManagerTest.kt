@@ -4,10 +4,19 @@ import android.app.Application
 import android.net.Uri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.core.app.ApplicationProvider
+import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.model.CartItem
+import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.RateAlert
+import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.Trip
+import com.eliormachlev.currencix.repository.json.parseJsonObject
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.prefStore
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.runBlocking
-import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -19,15 +28,23 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
+import java.math.BigDecimal
 
 private const val PASSWORD = "correct horse"
 private val PROBE = stringPreferencesKey("probe")
+private val OXR_KEY = stringPreferencesKey("_api_openExchangeratesApiKey")
+
+// The Android Keystore isn't there under Robolectric: a reversible stand-in.
+private object FakeSecretBox : SecretBox {
+    override fun seal(plain: String) = "sealed:" + plain.reversed()
+
+    override fun open(sealed: String) = sealed.removePrefix("sealed:").reversed()
+}
 
 /**
- * Backups round-trip, plain and encrypted, and files written by earlier
- * versions still open: the two fixtures under `resources/backup` were
- * produced before the cipher moved to Tink (Argon2id and the older PBKDF2
- * key derivation), each holding `probe` under the `prefs` namespace.
+ * Backups round-trip, plain and encrypted, and a saved encrypted file
+ * (`resources/backup/argon2id-v1.json`, holding `probe` under `prefs`) still
+ * opens, so a change to the file format can't go unnoticed.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = Application::class)
@@ -73,14 +90,64 @@ class BackupManagerTest {
         }
 
     @Test
+    fun `carts, trips, fees and rate alerts go into a backup and come back from it`() =
+        runBlocking<Unit> {
+            val carts = CartStore(app)
+            val fees = FeeStore(app)
+            val alerts = RateAlertStore(app)
+            val alert = RateAlert.towards(CurrencyPair(Currency.USD, Currency.ILS), BigDecimal("3.5"), BigDecimal("3.6"))
+            val cart = SavedCart("c1", "Market", "EUR", listOf(CartItem("i1", "bread", "2.5", quantity = 2)), createdAt = 1L, tripId = "t1")
+            val trip = Trip("t1", "Rome", Currency.ILS, BigDecimal("900"))
+            val fee = Fee.SpecificPair("f1", "Card", BigDecimal("1.5"), "EUR", "ILS", bothWays = true)
+            carts.currentCart.set(cart.copy(id = "working"))
+            carts.savedCarts.set(listOf(cart))
+            carts.trips.set(listOf(trip))
+            fees.fees.set(persistentListOf(fee))
+            alerts.alerts.set(listOf(alert))
+            val uri = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
+
+            carts.currentCart.set(null)
+            carts.savedCarts.set(emptyList())
+            carts.trips.set(emptyList())
+            fees.fees.set(persistentListOf())
+            alerts.alerts.set(emptyList())
+            assertEquals(BackupResult.Success, manager.import(uri, PASSWORD.toCharArray()))
+
+            assertEquals(cart.copy(id = "working"), carts.currentCart.get())
+            assertEquals(listOf(cart), carts.savedCarts.get())
+            assertEquals(listOf(trip), carts.trips.get())
+            assertEquals(listOf(fee), fees.fees.get())
+            assertEquals(listOf(alert), alerts.alerts.get())
+        }
+
+    @Test
+    fun `API keys go only into a password-protected backup, and come back sealed`() =
+        runBlocking<Unit> {
+            val manager = BackupManager(app, secretBox = FakeSecretBox) { restarts++ }
+            val providers = ProviderSettings(app, FakeSecretBox)
+            providers.setApiKey(ApiProvider.OPEN_EXCHANGERATES, "my-key")
+            assertEquals(FakeSecretBox.seal("my-key"), prefs.snapshot()[OXR_KEY])
+
+            val plain = newFile().also { manager.export(it) }
+            val plainText = File(checkNotNull(plain.path)).readText()
+            assertFalse("no key in a plain backup", "my-key" in plainText || FakeSecretBox.seal("my-key") in plainText)
+
+            val encrypted = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
+            providers.setApiKey(ApiProvider.OPEN_EXCHANGERATES, "")
+            assertEquals(BackupResult.Success, manager.import(encrypted, PASSWORD.toCharArray()))
+            assertEquals(FakeSecretBox.seal("my-key"), prefs.snapshot()[OXR_KEY])
+            assertEquals("my-key", ProviderSettings(app, FakeSecretBox).apiKeys.get()[ApiProvider.OPEN_EXCHANGERATES])
+        }
+
+    @Test
     fun `an encrypted backup hides its content and restores with the password`() =
         runBlocking<Unit> {
             val uri = newFile()
             assertEquals(BackupResult.Success, manager.export(uri, PASSWORD.toCharArray()))
-            val file = JSONObject(File(checkNotNull(uri.path)).readText())
+            val text = File(checkNotNull(uri.path)).readText()
             assertTrue(manager.isEncrypted(uri))
-            assertFalse("no plaintext namespaces", file.has("namespaces"))
-            assertFalse("the content isn't readable", "before" in file.toString())
+            assertFalse("no plaintext namespaces", parseJsonObject(text).has("namespaces"))
+            assertFalse("the content isn't readable", "before" in text)
             setProbe("changed since")
 
             assertEquals(BackupResult.Success, manager.import(uri, PASSWORD.toCharArray()))
@@ -92,11 +159,11 @@ class BackupManagerTest {
         runBlocking<Unit> {
             val first = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
             val second = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
-            val encryption = { uri: Uri -> JSONObject(File(checkNotNull(uri.path)).readText()).getJSONObject("encryption") }
+            val encryption = { uri: Uri -> checkNotNull(parseJsonObject(File(checkNotNull(uri.path)).readText()).optObject("encryption")) }
 
-            assertFalse(encryption(first).getString("salt") == encryption(second).getString("salt"))
-            assertFalse(encryption(first).getString("iv") == encryption(second).getString("iv"))
-            assertFalse(encryption(first).getString("ciphertext") == encryption(second).getString("ciphertext"))
+            listOf("salt", "iv", "ciphertext").forEach { field ->
+                assertFalse(field, encryption(first).optString(field) == encryption(second).optString(field))
+            }
         }
 
     @Test
@@ -117,11 +184,9 @@ class BackupManagerTest {
         runBlocking<Unit> {
             val uri = newFile().also { manager.export(it, PASSWORD.toCharArray()) }
             val file = File(checkNotNull(uri.path))
-            val root = JSONObject(file.readText())
-            val encryption = root.getJSONObject("encryption")
-            val ciphertext = encryption.getString("ciphertext")
-            encryption.put("ciphertext", (if (ciphertext.first() == 'A') "B" else "A") + ciphertext.drop(1))
-            file.writeText(root.toString())
+            val ciphertext = checkNotNull(parseJsonObject(file.readText()).optObject("encryption")).optString("ciphertext")
+            val tampered = (if (ciphertext.first() == 'A') "B" else "A") + ciphertext.drop(1)
+            file.writeText(file.readText().replace(ciphertext, tampered))
 
             assertEquals(BackupResult.WrongPassword, manager.import(uri, PASSWORD.toCharArray()))
         }
@@ -139,17 +204,10 @@ class BackupManagerTest {
         }
 
     @Test
-    fun `a backup encrypted by an earlier version still opens`() =
+    fun `a saved encrypted backup opens (the file format stays fixed)`() =
         runBlocking<Unit> {
             assertEquals(BackupResult.Success, manager.import(fixture("argon2id-v1.json"), PASSWORD.toCharArray()))
             assertEquals("golden", probe())
-        }
-
-    @Test
-    fun `a backup from the PBKDF2 era still opens`() =
-        runBlocking<Unit> {
-            assertEquals(BackupResult.Success, manager.import(fixture("pbkdf2-legacy.json"), PASSWORD.toCharArray()))
-            assertEquals("legacy", probe())
         }
 
     @Test

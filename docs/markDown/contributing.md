@@ -13,9 +13,9 @@ The project favours simplicity. Large feature additions are unlikely to be merge
 
 ## Translations
 
-The fork inherits translations for 20+ languages from upstream Currencies but doesn't yet run its own translation workflow. If you'd like to contribute a translation, open an issue first so we can coordinate.
+The app is in 32 languages: English plus 31 translations (`res/values-*`; `values-en-rGB` only sets British number and date formats), most inherited from upstream Currencies, whose translators used Weblate. The fork doesn't run its own translation workflow yet; if you'd like to contribute or correct a translation, open an issue first so we can coordinate.
 
-Every translatable string exists in all 31 locales, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
+Every translatable string exists in all 31 translations, and lint fails the build on one that doesn't (`MissingTranslation`). A new string therefore comes with its translations in the same change; the ones added to close the gap in bulk were machine translated, so corrections from native speakers are welcome. A string with nothing to translate — a bare format like `%1$s → %2$s`, an alias — is marked `translatable="false"`.
 
 ## Code Contributions
 
@@ -54,21 +54,22 @@ Use descriptive branch names. The CI `apk-artifact.yaml` workflow runs on any no
 
 Warnings and findings get fixed, not hidden.
 
-- **No suppressions of any kind.** That covers `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, new detekt or lint baseline entries, turning a rule off in `detekt.yml` / `lint.xml` / `.editorconfig`, `-dontwarn`, and compiler flags that silence warnings. (`@OptIn` for an experimental API is an explicit opt-in, not a suppression.)
+- **No suppressions of any kind.** That covers `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, an OWASP Dependency-Check `<suppress>`, new detekt or lint baseline entries, turning a rule off in `detekt.yml` / `lint.xml` / `.editorconfig`, `-dontwarn`, and compiler flags that silence warnings. (`@OptIn` for an experimental API is an explicit opt-in, not a suppression.)
 - **No workaround whose only purpose is to make a warning go away.** If the code still has the problem, the warning must still be there. Don't route a deprecated call through a wrapper, reflection or a cast, rename or restructure something only so an analyzer stops matching it, or exclude a file from a check.
 - **Fix the cause.** Migrate off the deprecated API, split the long function, make the parameter list a type, remove the unused code.
 - **When no real fix exists yet,** leave the warning visible and say so in the PR. A visible warning is accurate; a hidden one is not.
 
-**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds two Semgrep findings, and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
+**Exceptions** are listed in [exceptions.md](exceptions.md), each with the reason no real fix exists. That list is complete: today it holds seven entries (two Semgrep findings, one LeakCanary reference, three incubating Android Gradle Plugin APIs and one OWASP Dependency-Check false match), and nothing else in the tree is suppressed — no annotation or comment, no detekt or lint baseline, no `-dontwarn`. An exception is the maintainer's decision, not the author's; `NoSuppressionsTest` fails the unit tests on any suppression that isn't recorded there.
 
 ### Pull Request Checklist
 
 - [ ] `./gradlew check assembleDebug` passes locally (includes the Konsist architecture tests)
+- [ ] New functionality comes with unit tests, and a bug fix with a test that fails without it (Robolectric for Android and Compose code, plain JUnit otherwise)
 - [ ] `./gradlew detekt` reports no findings
 - [ ] `./gradlew spotlessCheck` is clean
 - [ ] No suppressions or baseline entries beyond those in [exceptions.md](exceptions.md), and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))
-- [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter is required, because Jazzer's instrumentation breaks Robolectric if the fuzz tests run in the same task.
-- [ ] If adding a dependency: check F-Droid licence compatibility
+- [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter keeps the run to the screenshot tests (the fuzz tests, whose Jazzer instrumentation breaks Robolectric, are left out of the unit-test tasks anyway).
+- [ ] If adding a dependency: check F-Droid licence compatibility, and record its checksums in `gradle/verification-metadata.xml` (**Update dependency checksums** in Actions, or the command in [build-and-flavors.md](build-and-flavors.md#dependency-verification)); the build refuses files it doesn't list
 
 ### Commit Message Convention
 
@@ -82,13 +83,13 @@ chore(deps): bump moshi to 1.15.2
 chore(ci): pin checkout action to SHA
 ```
 
-PRs are squash-merged, and the PR title becomes the commit on `master`, so the title is what counts: release notes are generated from those titles (`feat` → New, `fix` → Fixes, `perf` → Faster, `i18n` → Translations; `chore`, `ci`, `build`, `refactor`, `test`, `docs`, `style` are left out). Write the description for users ("show the rate's change since yesterday", not "add DeltaRow composable"). See [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17).
+PRs are squash-merged, and the PR title becomes the commit on `master`, so the title is what counts: release notes are generated from those titles (`feat` → New, `fix` → Fixes, `perf` → Faster, `i18n` → Translations; `chore`, `ci`, `build`, `deps`, `refactor`, `test`, `docs`, `style` and `revert` are left out). Write the description for users ("show the rate's change since yesterday", not "add DeltaRow composable"). See [build-and-flavors.md](build-and-flavors.md#post-quantum-signing-android-17).
 
 ## Reporting Issues
 
 Open a GitHub Issue with:
 - Android version
-- App version (`Settings → About`)
+- App version (Settings → About this app)
 - Selected exchange rate provider
 - Steps to reproduce
 - Expected vs. actual behaviour

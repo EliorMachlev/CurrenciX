@@ -24,6 +24,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.SupportingText
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPasswordSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
@@ -221,6 +222,9 @@ private fun ExportPasswordSheetBody(
                 label = stringResource(id = R.string.backup_password_hint),
                 onToggleVisibility = onToggleVisibility,
             )
+        } else {
+            // API keys go only into a backup that a password protects.
+            SupportingText(stringResource(R.string.backup_keys_left_out))
         }
     }
 }

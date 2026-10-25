@@ -112,6 +112,7 @@
     <string name="backup_import_confirm_message">Dine nuværende indstillinger overskrives med dem i filen. Dette kan ikke fortrydes.</string>
     <string name="backup_import_confirm_positive">Gendan</string>
     <string name="backup_encrypt_option">Krypter med adgangskode</string>
+    <string name="backup_keys_left_out">API-nøgler udelades fra en sikkerhedskopi uden adgangskode.</string>
     <string name="backup_password_hint">Adgangskode</string>
     <string name="backup_password_prompt_title">Indtast adgangskode</string>
     <string name="backup_password_wrong">Adgangskoden kunne ikke dekryptere filen. Prøv igen.</string>
@@ -142,9 +143,11 @@
     <string name="credit_lib_compose">UI-værktøjssæt og Material 3</string>
     <string name="credit_lib_material_components">Material Design-komponenter</string>
     <string name="credit_lib_material_symbols">Ikoner (afrundede)</string>
+    <string name="credit_lib_typeface">Skrifttype</string>
     <string name="credit_lib_vico">Diagrammer</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
     <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_wire">Protocol Buffers (sådan gemmes kurve, rejser og gebyrer)</string>
     <string name="credit_lib_timber">Logning</string>
     <string name="credit_lib_bouncy_castle">Argon2id-nøgleafledning til krypterede sikkerhedskopier</string>
     <string name="credit_lib_tink">AES-GCM-kryptering til sikkerhedskopier</string>
@@ -196,6 +199,8 @@
     <string name="app_lock_unlock">Lås op</string>
     <string name="private_requests_title">Private forespørgsler</string>
     <string name="private_requests_summary">Send kursforespørgsler på samme måde som alle andre: uden appversion, enhedsoplysninger eller cache-id\'er. Bruger lidt mere data.</string>
+    <string name="block_screenshots_title">Bloker skærmbilleder</string>
+    <string name="block_screenshots_summary">Vis appen som tom på skærmbilleder, skærmoptagelser og i Seneste</string>
     <string name="auto_refresh_summary">Hold kurserne opdaterede i baggrunden</string>
     <string name="refresh_interval_title">Opdater hver</string>
     <string name="refresh_interval_daily">Én gang om dagen, lige efter %1$s offentliggør</string>

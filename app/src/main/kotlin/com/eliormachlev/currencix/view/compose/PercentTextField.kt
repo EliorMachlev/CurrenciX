@@ -25,7 +25,8 @@ fun PercentTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     label: String? = null,
-    isError: Boolean = false,
+    // Why the entry is invalid, under the field; null while it's valid.
+    error: String? = null,
     inputTransformation: InputTransformation? = null,
 ) {
     Ltr {
@@ -33,7 +34,8 @@ fun PercentTextField(
             state = state,
             label = label?.let { { Text(it) } },
             suffix = { Text(PERCENT_SIGN, style = MaterialTheme.typography.bodyLarge) },
-            isError = isError,
+            isError = error != null,
+            supportingText = fieldMessage(error),
             inputTransformation = inputTransformation,
             lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),

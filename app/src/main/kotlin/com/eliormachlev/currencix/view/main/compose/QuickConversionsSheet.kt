@@ -18,6 +18,8 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.quickAmounts
+import com.eliormachlev.currencix.model.withQuickAmount
 import com.eliormachlev.currencix.util.shareImageOrText
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
@@ -59,8 +61,11 @@ internal fun QuickConversionsSheet(
     val scope = rememberCoroutineScope()
     // A pill's picker, over the sheet: the converter's own.
     var pickerSide by remember { mutableStateOf<PillSide?>(null) }
+    // The tile whose amount is being changed.
+    var editing by remember { mutableStateOf<QuickConversionsRow?>(null) }
+    val custom = rememberDatabase().quickAmounts.custom
     val actions =
-        remember(viewModel, table, onSwap, onOpenFees, onDismiss) {
+        remember(viewModel, table, custom, onSwap, onOpenFees, onDismiss) {
             QuickConversionsActions(
                 onSwap = onSwap,
                 onSwapLongPress = onOpenFees,
@@ -71,6 +76,11 @@ internal fun QuickConversionsSheet(
                     onDismiss()
                 },
                 onCopy = { row -> copyToClipboard(ctx, row.copyText) },
+                onChangeAmount = { row -> editing = row },
+                onKeepAmount = { row ->
+                    table.from?.let { from -> custom.update { it.withQuickAmount(from, table.amounts, null, row.amount) } }
+                },
+                onResetAmounts = { table.from?.let { from -> custom.update { it - from } } },
                 onShare = {
                     scope.launch { shareImageOrText(ctx, capture.capture(), namePrefix = SHARE_NAME_PREFIX, text = table.shareText()) }
                 },
@@ -91,6 +101,20 @@ internal fun QuickConversionsSheet(
         )
     }
     pickerSide?.let { side -> ConverterCurrencyPicker(side = side, viewModel = viewModel, onDismiss = { pickerSide = null }) }
+    val from = table.from
+    val row = editing
+    if (from != null && row != null) {
+        QuickAmountSheet(
+            currency = from,
+            initial = row.amount,
+            taken = table.amounts.filterNot { it.compareTo(row.amount) == 0 },
+            onSave = { amount ->
+                custom.update { it.withQuickAmount(from, table.amounts, row.amount, amount) }
+                editing = null
+            },
+            onDismiss = { editing = null },
+        )
+    }
 }
 
 // The table for the pair on screen, the typed amount among its rows, and
@@ -108,6 +132,7 @@ private fun rememberQuickConversionsTable(
     // Observed for recomposition; feeStackFor() itself isn't snapshot-observed.
     val fees by viewModel.getFees().collectAsStateWithLifecycle()
     val decimalPlaces by viewModel.getDecimalPlaces().collectAsStateWithLifecycle()
+    val custom by rememberDatabase().quickAmounts.custom.collectAsStateWithLifecycle()
     val warning = status.banner.value?.text
 
     val feeStack: BigDecimal =
@@ -116,13 +141,14 @@ private fun rememberQuickConversionsTable(
             val pairTo = to
             if (pairFrom != null && pairTo != null) viewModel.feeStackFor(pairFrom, pairTo) else BigDecimal.ONE
         }
-    return remember(from, to, rates, typed, feeStack, decimalPlaces, warning) {
+    return remember(from, to, rates, typed, feeStack, decimalPlaces, warning, custom) {
         val pairFrom = from
         val pairTo = to
         val current = rates
+        val amounts = if (pairFrom != null && current != null) quickAmounts(pairFrom, current, custom) else emptyList()
         val rows =
             if (pairFrom != null && pairTo != null && current != null) {
-                buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, typed, decimalPlaces))
+                buildQuickConversionRows(QuickConversionRowInputs(ctx, pairFrom, pairTo, current, feeStack, typed, decimalPlaces, amounts))
             } else {
                 emptyList()
             }
@@ -132,6 +158,8 @@ private fun rememberQuickConversionsTable(
             rows = rows,
             sourceText = current?.let { ratesSource(ctx, it, status) },
             warningText = warning,
+            amounts = amounts,
+            customAmounts = pairFrom != null && pairFrom in custom,
         )
     }
 }

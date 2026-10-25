@@ -1,4 +1,4 @@
-A Currencies egy egyszerű és letisztult valutaváltó. Nem arra szolgál, hogy valós idejű pénzügyi ügyletekre használják, inkább arra, hogy egy praktikus társ legyen pl. nyaralások alkalmával.
+A CurrenciX egy egyszerű és letisztult valutaváltó. Nem arra szolgál, hogy valós idejű pénzügyi ügyletekre használják, inkább arra, hogy egy praktikus társ legyen pl. nyaralások alkalmával.
 
 - Az alkalmazás támogatja az összes releváns pénznemet. Több árfolyamszolgáltató közül választhatsz:
    - több mint 160 valutával: exchangerate.host
@@ -8,5 +8,5 @@ A Currencies egy egyszerű és letisztult valutaváltó. Nem arra szolgál, hogy
 - Múltbéli árfolyamok: Használhatod a korábbi időpontok árfolyamait.
 - Fontos funkció a mellékelt kalkulátor. Hasznos például, ha egy éttermi számlát szeretnél felosztani.
 - Díjkalkulátor: opcionálisan minden számításhoz hozzáadhatsz egy testreszabható devizadíjat.
-- A Currencies Androidra íródott Kotlin nyelven, az Android 13-t célozza meg, és támogatja a világos és sötét témákat.
+- A CurrenciX Androidra íródott Kotlin nyelven, az Android 13-t célozza meg, és támogatja a világos és sötét témákat.
 - Az alkalmazás reklámmentes és nem kémkedik a felhasználó után.

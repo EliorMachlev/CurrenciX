@@ -1,15 +1,15 @@
 # Terms of Service
 
 **Effective:** 2026-08-13
-**Last reviewed:** 2026-08-13
+**Last reviewed:** 2026-10-25
 **Maintainer:** Elior Machlev
-**Contact:** 26472689+EliorMachlev@users.noreply.github.com
+**Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
 
 These Terms of Service ("Terms") govern your use of the **CurrenciX** Android application ("the App") and any project website operated by the maintainer for CurrenciX ("the Site"). By installing, running, or otherwise using the App or the Site you agree to these Terms. If you do not agree, do not use the App or the Site.
 
 ## 1. The service
 
-CurrenciX is a currency-conversion utility. It fetches exchange-rate data from third-party providers you select in **Settings → Exchange rates → Data provider** and displays computed conversions. It is provided as **open-source software** under the terms of the GNU General Public License v3 or later (see [`LICENSE`](../../LICENSE)); nothing in these Terms overrides your rights under that license.
+CurrenciX is a currency-conversion utility. It fetches exchange-rate data from third-party providers you select in **Settings → Exchange rates → Data provider** and displays computed conversions. It is provided as **open-source software** under the terms of the GNU General Public License v3 or later (see [`COPYING`](../../COPYING)); nothing in these Terms overrides your rights under that license.
 
 ## 2. Rate-accuracy disclaimer
 
@@ -82,4 +82,4 @@ These Terms are governed by the laws of the **State of Israel**, without regard 
 
 ## Contact
 
-Questions about these Terms: `26472689+EliorMachlev@users.noreply.github.com`.
+Questions about these Terms: open an issue on [GitHub](https://github.com/EliorMachlev/CurrenciX/issues).

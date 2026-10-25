@@ -1,0 +1,5 @@
+Contact: https://github.com/EliorMachlev/CurrenciX/security/advisories/new
+Expires: 2027-10-25T00:00:00.000Z
+Preferred-Languages: en, he
+Canonical: https://currencix.machlev.org/.well-known/security.txt
+Policy: https://github.com/EliorMachlev/CurrenciX/blob/master/SECURITY.md

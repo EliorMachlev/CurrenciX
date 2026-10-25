@@ -4,7 +4,7 @@ CurrenciX supports multiple exchange-rate data sources. The active provider is s
 
 ## Picker order
 
-The picker (`ProviderPickerSheet`) lists `ApiProvider.pickerOrder`: free providers under **Free**, then the ones that need a key under **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`: hourly, business-daily, monthly), then the more useful — wider coverage, steadier service — which is the enum's declaration order. Each row says how often it updates. Today that's: Frankfurter.app, Bank Rossii, Norges Bank, Bank of Canada, Bank of Israel, InforEuro; then OpenExchangerates and AllRatesToday. Reordering the enum is safe: only each entry's `id` is stored.
+The picker (`ProviderPickerSheet`) lists `ApiProvider.pickerOrder`: free providers under **Free**, then the ones that need a key under **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`: every minute, hourly, daily, monthly), then the more useful — wider coverage, steadier service — which is the enum's declaration order. Each row says how often it updates. Today that's: Frankfurter.app, Bank Rossii, Norges Bank, Bank of Canada, Bank of Israel, InforEuro; then AllRatesToday and OpenExchangerates. Reordering the enum is safe: only each entry's `id` is stored.
 
 ## Unreliable providers
 
@@ -20,7 +20,7 @@ When the main provider fails while the device is online (a timeout, an HTTP erro
 
 | Provider | Currencies | Update freq | Base | Notes |
 |---|---|---|---|---|
-| [Frankfurter.app](https://frankfurter.app/) | ~33 | Business days | EUR | European Central Bank data |
+| [Frankfurter.app](https://frankfurter.dev/) | ~30 | Business days | EUR | European Central Bank data |
 | [OpenExchangerates](https://openexchangerates.org/) | 160+ | Hourly | USD | Free tier requires API key |
 | [AllRatesToday](https://allratestoday.com/) | ~160 | About every minute | EUR (asked for) | Mid-market interbank rates; needs an API key; the free plan is 300 requests in total, ever |
 | [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | ~150 | Monthly | EUR | EU Commission accounting rates; unreliable (inaccurate data) |
@@ -66,17 +66,17 @@ subsequent hits, which is the easiest way to confirm the cache is warm.
 
 ## Historical Rate Support
 
-All active providers support historical rates to varying degrees. Frankfurter.app data goes back to **2010-01-04** (ECB reference start date). Bank Rossii and InforEuro have their own historical archives.
+All active providers support historical rates to varying degrees. Frankfurter.app's ECB data goes back to **1999-01-04**; Bank Rossii and InforEuro have their own historical archives. In the app, the converter's historical date picker reaches back to 2010 (`HISTORICAL_MIN_YEAR`), and the chart's custom range ten years (`TIMELINE_MAX_YEARS`).
 
 When a historical date is selected in the app, the provider's history endpoint is queried instead of the live-rates endpoint.
 
 ## Provider Implementation
 
-Each provider is implemented as a class inside `app/src/main/kotlin/com/eliormachlev/currencix/model/provider/`. They all conform to the `Api` abstract class defined in `ApiProvider.kt`:
+Each provider is implemented as a class inside `app/src/main/kotlin/com/eliormachlev/currencix/model/provider/`. They all implement the `ApiProvider.Api` interface defined in `ApiProvider.kt` (with its names, descriptions and `baseUrl`):
 
 ```kotlin
-abstract suspend fun getRates(context: Context?, date: LocalDate?, secrets: ApiSecrets): Result<ExchangeRates>
-abstract suspend fun getTimeline(context: Context?, base: Currency, symbol: Currency, startDate: LocalDate, endDate: LocalDate): Result<Timeline>
+suspend fun getRates(context: Context?, date: LocalDate?, secrets: ApiSecrets): Result<ExchangeRates>
+suspend fun getTimeline(context: Context?, base: Currency, symbol: Currency, startDate: LocalDate, endDate: LocalDate, secrets: ApiSecrets = ApiSecrets.EMPTY): Result<Timeline>
 ```
 
 Response parsing is handled by provider-specific Moshi adapters (`model/adapter/`), SAX XML parsers (Norges Bank and Bank Rossii, which return XML), or `BankOfIsraelSdmxParser` (Bank of Israel's SDMX-JSON feed).
@@ -94,7 +94,7 @@ Fixed-shape JSON endpoints are declared as Retrofit interfaces in `model/provide
 
 ## Providers that need an API key
 
-Open Exchangerates and AllRatesToday each take the user's own key, each stored under its own setting (`ProviderSettings.apiKeys`, `setApiKey`). Settings → Exchange rates shows a key row for every provider in use that takes one, the main provider's and the fallback's alike (`ApiProvider.apiKeyTexts`), the key masked to its last four characters. Picking a keyed provider that has no key yet, in any provider picker (Settings' main and fallback, the converter's, the chart's), goes straight on to its key prompt (`ProviderPickerWithKeyPrompt`). Every fetch, rates and timeline alike, gets all keys as `ApiSecrets`. Without a key a provider fails at once, without a request. A 401, 403 or 429 reaches the user as "check your key", "your plan doesn't include this" or "you've used up your requests" (`explainKeyErrors`).
+Open Exchangerates and AllRatesToday each take the user's own key, each stored under its own setting (`ProviderSettings.apiKeys`, `setApiKey`). Settings → Exchange rates shows a key row for every provider in use that takes one, the main provider's and the fallback's alike (`ApiProvider.apiKeyTexts`), the key masked to its last four characters. Picking a keyed provider that has no key yet, in any provider picker (Settings' main and fallback, the converter's, the chart's), goes straight on to its key prompt (`ProviderPickerWithKeyPrompt`). Every fetch, rates and timeline alike, gets all keys as `ApiSecrets`. Without a key a provider fails at once, without a request. Both send the key in the `Authorization` header, never in the URL (`AUTHORIZATION` in `model/provider/api/`): Open Exchangerates as `Token <key>`, which its API takes in place of the `app_id` parameter, AllRatesToday as `Bearer <key>`. A 401, 403 or 429 reaches the user as "check your key", "your plan doesn't include this" or "you've used up your requests" (`explainKeyErrors`).
 
 **AllRatesToday** ([docs](https://allratestoday.com/docs), [OpenAPI spec](https://allratestoday.com/api/openapi.json)) is built from its published spec, against `GET /api/v1/rates`:
 

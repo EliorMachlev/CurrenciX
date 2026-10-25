@@ -110,6 +110,7 @@
     <string name="backup_import_confirm_message">আপনার বর্তমান সেটিংস ফাইলের সেটিংস দ্বারা প্রতিস্থাপিত হবে। এটি পূর্বাবস্থায় ফেরানো যাবে না।</string>
     <string name="backup_import_confirm_positive">পুনরুদ্ধার করুন</string>
     <string name="backup_encrypt_option">পাসওয়ার্ড দিয়ে এনক্রিপ্ট করুন</string>
+    <string name="backup_keys_left_out">পাসওয়ার্ড ছাড়া ব্যাকআপে API কী রাখা হয় না।</string>
     <string name="backup_password_hint">পাসওয়ার্ড</string>
     <string name="backup_password_prompt_title">পাসওয়ার্ড লিখুন</string>
     <string name="backup_password_wrong">পাসওয়ার্ড এই ফাইল ডিক্রিপ্ট করতে পারেনি। আবার চেষ্টা করুন।</string>
@@ -141,9 +142,11 @@
     <string name="credit_lib_compose">UI টুলকিট ও Material 3</string>
     <string name="credit_lib_material_components">Material Design কম্পোনেন্ট</string>
     <string name="credit_lib_material_symbols">আইকন (Rounded)</string>
+    <string name="credit_lib_typeface">টাইপফেস</string>
     <string name="credit_lib_vico">চার্ট</string>
     <string name="credit_lib_okhttp">HTTP ক্লায়েন্ট</string>
     <string name="credit_lib_moshi">JSON পার্সার</string>
+    <string name="credit_lib_wire">Protocol Buffers (সংরক্ষিত কার্ট, ভ্রমণ ও ফি যেভাবে রাখা হয়)</string>
     <string name="credit_lib_timber">লগিং</string>
     <string name="credit_lib_bouncy_castle">এনক্রিপ্ট করা ব্যাকআপের জন্য Argon2id কী ডেরিভেশন</string>
     <string name="credit_lib_tink">ব্যাকআপের জন্য AES-GCM এনক্রিপশন</string>
@@ -196,6 +199,8 @@
     <string name="app_lock_unlock">আনলক</string>
     <string name="private_requests_title">ব্যক্তিগত অনুরোধ</string>
     <string name="private_requests_summary">হারের অনুরোধ সবার মতো একইভাবে পাঠান: অ্যাপ সংস্করণ, ডিভাইসের তথ্য বা ক্যাশ শনাক্তকারী ছাড়া। একটু বেশি ডেটা লাগে।</string>
+    <string name="block_screenshots_title">স্ক্রিনশট ব্লক করুন</string>
+    <string name="block_screenshots_summary">স্ক্রিনশট, স্ক্রিন রেকর্ডিং ও সাম্প্রতিক অ্যাপে অ্যাপটি ফাঁকা দেখাবে</string>
     <string name="auto_refresh_summary">পটভূমিতে হার হালনাগাদ রাখুন</string>
     <string name="refresh_interval_title">প্রতি কত সময় পর রিফ্রেশ</string>
     <string name="refresh_interval_daily">দিনে একবার, %1$s প্রকাশের ঠিক পরে</string>

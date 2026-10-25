@@ -2,7 +2,16 @@
 import com.android.build.api.artifact.ArtifactTransformationRequest
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.FilterConfiguration
+import org.cyclonedx.Version
+import org.cyclonedx.gradle.CyclonedxDirectTask
+import org.cyclonedx.model.Component
+import org.cyclonedx.model.LicenseChoice
+import org.cyclonedx.model.license.Expression
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.awt.Color
 import java.awt.Font
 import java.awt.RenderingHints
@@ -19,21 +28,27 @@ plugins {
     // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
     // used by the .github/workflows/screenshots.yaml job. Runs on top of
     // Robolectric Native Graphics — no device or emulator required.
-    id("io.github.takahirom.roborazzi") version "1.76.0"
+    id("io.github.takahirom.roborazzi") version "1.77.0"
     // Consumes the baseline + startup profiles emitted by :baselineprofile and
     // bakes them into the release AAB / APK for ProfileInstaller to hand to
     // ART at install time. Version pinned at the root build script.
     id("androidx.baselineprofile")
+    // CycloneDX SBOM of what the app ships; the release workflow attaches it
+    // to each GitHub release.
+    id("org.cyclonedx.bom") version "3.5.1"
+    // Kotlin classes for the Protobuf schema in src/main/proto (carts, trips,
+    // fees, rate alerts on disk): plain generated code, no reflection.
+    id("com.squareup.wire") version "7.1.0"
+}
+
+wire {
+    kotlin {}
 }
 
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
     }
-}
-
-base {
-    archivesName.set("com.eliormachlev.currencix-v12300")
 }
 
 // The last digit of each APK's version code: versionCode × 10 + this, so
@@ -46,6 +61,13 @@ val abiVersionMultiplier = 10
 // Each per-CPU APK's version name says which it is ("1.23.0-arm64"), for
 // people: Settings and Android's app info show it. Stores go by the codes.
 val abiVersionLabels = mapOf("armeabi-v7a" to "arm32", "arm64-v8a" to "arm64", "x86" to "x86", "x86_64" to "x64")
+
+// Debug builds always carry those labels; release builds only with
+// -PabiVersionNames (the release workflow, for GitHub's APKs). F-Droid builds
+// each APK from source and checks its name against the recipe, and its
+// auto-update can give every copy of a release only one name, so the release
+// builds it makes keep the plain one ("1.23.0").
+val abiVersionNamesInRelease = providers.gradleProperty("abiVersionNames").isPresent
 
 // Whether this Gradle run builds an app bundle (Play), which takes no APK splits.
 // The Jazzer fuzz tests: left out of every unit-test run, or run alone
@@ -222,13 +244,20 @@ android {
     }
 }
 
+// The APKs are named <applicationId>-v<versionCode>-…, from defaultConfig above
+// (where F-Droid's update check and the release workflow read the version).
+base {
+    archivesName.set("${android.defaultConfig.applicationId}-v${android.defaultConfig.versionCode}")
+}
+
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
             val abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
             val base = android.defaultConfig.versionCode ?: return@forEach
             output.versionCode.set(base * abiVersionMultiplier + (abiVersionDigits[abi] ?: 0))
-            val label = abiVersionLabels[abi] ?: return@forEach
+            val labelled = variant.buildType == "debug" || abiVersionNamesInRelease
+            val label = abiVersionLabels[abi]?.takeIf { labelled } ?: return@forEach
             val name = output.versionName.orNull ?: return@forEach
             output.versionName.set("$name-$label")
         }
@@ -270,6 +299,11 @@ androidComponents {
 
 dependencies {
     // kotlin
+    // Every Kotlin library at the compiler's version: without it, Moshi and
+    // Reorderable pull kotlin-stdlib-jdk7 / -jdk8 1.9.0 in beside stdlib
+    // 2.4.21 (stubs since 1.8, but an old version all the same, which the
+    // OWASP scan flags).
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:${getKotlinPluginVersion()}"))
     implementation("androidx.core:core-ktx:1.19.1")
     // kotlinx.collections.immutable: exposes @Immutable persistent collection
     // types (ImmutableList / PersistentList / ...) so Compose stability
@@ -284,8 +318,12 @@ dependencies {
     // persistence: DataStore Preferences replaces SharedPreferences across every
     // namespace (see repository/persistence/PersistenceKey.kt). The `-preferences`
     // artifact pulls `datastore-preferences-core` transitively and provides the
-    // Android-aware `preferencesDataStore` delegate.
-    implementation("androidx.datastore:datastore-preferences:1.2.1")
+    // Android-aware `preferencesDataStore` delegate. The plain artifact holds
+    // what the user saves (carts, trips, fees, rate alerts) as Protobuf, one typed file per
+    // kind (repository/persistence/SavedDataFile.kt).
+    val datastoreVersion = "1.3.0"
+    implementation("androidx.datastore:datastore-preferences:$datastoreVersion")
+    implementation("androidx.datastore:datastore:$datastoreVersion")
     // profileinstaller: reads the baseline + startup profiles baked in by the
     // androidx.baselineprofile plugin (generated by :baselineprofile) and
     // hands them to ART at install time so first-frame + first-interaction
@@ -311,7 +349,7 @@ dependencies {
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
     // the shared instance via the HttpClientProvider.fetch extension.
-    val okHttpVersion = "5.5.0"
+    val okHttpVersion = "5.5.1"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     // Chucker: in-app HTTP inspector for debug builds. The real library is
@@ -322,8 +360,11 @@ dependencies {
     val chuckerVersion = "4.3.1"
     debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:$chuckerVersion")
+    // Moshi without its reflection module (moshi-kotlin pulls in kotlin-reflect):
+    // every JSON type has a generated adapter (@JsonClass, by KSP) or one of
+    // the app's own (model/adapter, repository/json).
     val moshiVersion = "1.15.2"
-    implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
+    implementation("com.squareup.moshi:moshi:$moshiVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
     // Retrofit: type-safe HTTP interfaces layered on top of the shared OkHttp
     // client (see util/RetrofitProvider.kt). Migrated one provider at a time
@@ -334,10 +375,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView).
-    // The pre-release BOM: Compose 1.13.0-beta01 and Material 3 1.5.0-beta01,
+    // The pre-release BOM: Compose 1.13.0-beta02 and Material 3 1.5.0-beta02,
     // for their text-field keyboard (IME) and list-prefetch fixes. Back to
     // `compose-bom` once both are stable.
-    val composeBomVersion = "2026.10.00"
+    val composeBomVersion = "2026.10.01"
     implementation(platform("androidx.compose:compose-bom-alpha:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
@@ -365,12 +406,13 @@ dependencies {
     // WorkManager: periodic background refresh of exchange rates (#151).
     // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
     // opt-in via Settings until #147 onboarding wires the hero opt-in.
-    implementation("androidx.work:work-runtime-ktx:2.12.0")
+    val workVersion = "2.12.0"
+    implementation("androidx.work:work-runtime-ktx:$workVersion")
     // Receipt scanning: Tesseract OCR on the device (:ocr-engine), built into
     // the F-Droid app and installed on demand from :ocr in the Play app
-    // through Play Feature Delivery. The F-Droid app ships English data in
-    // its assets; other languages (and English, on Play) download in the
-    // background (ocr/TessdataDownloadWorker).
+    // through Play Feature Delivery. No language data ships with either:
+    // each downloads in the background once the user agrees to it
+    // (ocr/TessdataDownloadWorker), and can be deleted again (ocr/OcrLanguages).
     "fdroidImplementation"(project(":ocr-engine"))
     "playImplementation"("com.google.android.play:feature-delivery-ktx:2.1.0")
     implementation("androidx.exifinterface:exifinterface:1.4.2")
@@ -409,6 +451,8 @@ dependencies {
     // core-testing provides InstantTaskExecutorRule so LiveData setValue can
     // run on the JVM test thread without hitting the main-thread assertion.
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    // A synchronous WorkManager for tests of what schedules background work (receipt languages).
+    testImplementation("androidx.work:work-testing:$workVersion")
     // fuzzing
     val junitVersion = "6.1.3"
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
@@ -419,7 +463,7 @@ dependencies {
     // CI can render every Compose surface without an emulator. The vintage
     // engine (already above) runs Robolectric's JUnit 4 test runner under
     // useJUnitPlatform().
-    val roborazziVersion = "1.76.0"
+    val roborazziVersion = "1.77.0"
     testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
     testImplementation("org.robolectric:robolectric:4.17")
@@ -789,6 +833,84 @@ fun generateVersionCode(semVer: String): Int =
         .map { Integer.parseInt(it) }
         .reduce { sum, value -> sum * 100 + value }
 
+val composeReports = layout.buildDirectory.dir("compose-reports").takeIf { providers.gradleProperty("composeReports").isPresent }
+
+// The SBOM the release workflow attaches to each GitHub release: every
+// library the F-Droid release APK ships (its runtime classpath, direct and
+// transitive), with versions, hashes and licences, as CycloneDX JSON.
+// `./gradlew :app:cyclonedxDirectBom` writes it to app/build/reports/sbom/.
+val sbomConfiguration = "fdroidReleaseRuntimeClasspath"
+val sbomFileName = "currencix-sbom.cdx"
+
+tasks.named<CyclonedxDirectTask>("cyclonedxDirectBom") {
+    includeConfigs.set(listOf(sbomConfiguration))
+    projectType.set(Component.Type.APPLICATION)
+    schemaVersion.set(Version.VERSION_16)
+    componentGroup.set("com.eliormachlev")
+    componentName.set("CurrenciX")
+    componentVersion.set(android.defaultConfig.versionName)
+    licenseChoice.set(LicenseChoice().apply { addExpression(Expression("GPL-3.0-or-later")) })
+    jsonOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.json"))
+    xmlOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.xml"))
+}
+
+// The same libraries as files, for the weekly OWASP Dependency-Check, which
+// scans files, not Gradle's dependency graph: every jar and aar the F-Droid
+// release ships, named as Gradle names them (okhttp-5.5.1.jar), copied to
+// build/owasp-libraries/ by `./gradlew :app:owaspLibraries`.
+// Gradle's attribute for an artifact's file type: "aar" for an Android
+// library, "jar" for a plain one.
+val owaspArtifactType: Attribute<String> = Attribute.of("artifactType", String::class.java)
+
+tasks.register<OwaspLibraries>("owaspLibraries") {
+    val runtime = configurations.named(sbomConfiguration)
+    listOf("aar", "jar").forEach { type ->
+        artifacts.addAll(
+            runtime.flatMap { configuration ->
+                configuration.incoming
+                    .artifactView {
+                        // Each view skips the libraries that aren't of its type.
+                        lenient(true)
+                        attributes.attribute(owaspArtifactType, type)
+                    }.artifacts.resolvedArtifacts
+            },
+        )
+    }
+    outputDirectory.set(layout.buildDirectory.dir("owasp-libraries"))
+}
+
+/**
+ * Copies each external library in [artifacts] to [outputDirectory] as
+ * `<group>/<module>-<version>.<ext>`, the coordinates Dependency-Check reads
+ * from a file's place and name, each library once (an aar before the jar
+ * made of it). The project's own modules are left out.
+ */
+abstract class OwaspLibraries : DefaultTask() {
+    @get:Internal
+    abstract val artifacts: SetProperty<ResolvedArtifactResult>
+
+    @get:InputFiles
+    val libraryFiles: Provider<List<File>> get() = artifacts.map { all -> all.map { it.file } }
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val target = outputDirectory.get().asFile
+        target.deleteRecursively()
+        // An Android library comes as its aar, then again as the jar Gradle
+        // makes of it: the first one stands for the library.
+        val copied = mutableSetOf<ModuleComponentIdentifier>()
+        artifacts.get().forEach { artifact ->
+            val id = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@forEach
+            if (!copied.add(id)) return@forEach
+            val name = "${id.module}-${id.version}.${artifact.file.extension}"
+            artifact.file.copyTo(File(File(target, id.group), name), overwrite = true)
+        }
+    }
+}
+
 // JDK value types (BigDecimal, java.time) count as stable, so composables
 // taking rates and dates can skip recomposing (see compose-stability.conf).
 composeCompiler {
@@ -796,7 +918,12 @@ composeCompiler {
     // -PcomposeReports: the compiler's report of each composable and how
     // stable its parameters are (build/compose-reports/*-composables.txt),
     // which CI's stability check reads. Off otherwise, to keep builds lean.
-    if (providers.gradleProperty("composeReports").isPresent) {
-        reportsDestination.set(layout.buildDirectory.dir("compose-reports"))
-    }
+    if (composeReports != null) reportsDestination.set(composeReports)
+}
+
+// The report is something compiling writes, so it's declared as an output of
+// the compile: a compile taken from the build cache (as on a PR that changes
+// no code) then brings its report back instead of leaving none.
+if (composeReports != null) {
+    tasks.withType<KotlinCompile>().configureEach { outputs.dir(composeReports) }
 }

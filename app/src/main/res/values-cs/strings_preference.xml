@@ -111,6 +111,7 @@
     <string name="backup_import_confirm_message">Aktuální nastavení bude přepsáno hodnotami ze souboru. Tuto akci nelze vrátit zpět.</string>
     <string name="backup_import_confirm_positive">Obnovit</string>
     <string name="backup_encrypt_option">Šifrovat heslem</string>
+    <string name="backup_keys_left_out">Klíče API se do zálohy bez hesla neukládají.</string>
     <string name="backup_password_hint">Heslo</string>
     <string name="backup_password_prompt_title">Zadejte heslo</string>
     <string name="backup_password_wrong">Heslem se soubor nepodařilo dešifrovat. Zkuste to znovu.</string>
@@ -144,9 +145,11 @@
     <string name="credit_lib_compose">Sada nástrojů pro UI a Material 3</string>
     <string name="credit_lib_material_components">Komponenty Material Design</string>
     <string name="credit_lib_material_symbols">Ikony (zaoblené)</string>
+    <string name="credit_lib_typeface">Písmo</string>
     <string name="credit_lib_vico">Grafy</string>
     <string name="credit_lib_okhttp">Klient HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (ukládání košíků, cest a poplatků)</string>
     <string name="credit_lib_timber">Protokolování</string>
     <string name="credit_lib_bouncy_castle">Odvození klíče Argon2id pro šifrované zálohy</string>
     <string name="credit_lib_tink">Šifrování záloh pomocí AES-GCM</string>
@@ -197,6 +200,8 @@
     <string name="app_lock_unlock">Odemknout</string>
     <string name="private_requests_title">Soukromé požadavky</string>
     <string name="private_requests_summary">Posílat požadavky na kurzy stejně jako všichni ostatní: bez verze aplikace, údajů o zařízení a identifikátorů mezipaměti. Spotřebuje o něco víc dat.</string>
+    <string name="block_screenshots_title">Blokovat snímky obrazovky</string>
+    <string name="block_screenshots_summary">Aplikace se zobrazí prázdná na snímcích, záznamech obrazovky i v nedávných aplikacích</string>
     <string name="auto_refresh_summary">Udržovat kurzy aktuální na pozadí</string>
     <string name="refresh_interval_title">Obnovovat každých</string>
     <string name="refresh_interval_daily">Jednou denně, hned po zveřejnění od %1$s</string>

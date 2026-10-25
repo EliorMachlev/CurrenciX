@@ -45,15 +45,6 @@ jobs:
   # one of Gradle's own releases (by checksum), so a swapped jar can't slip
   # in. Scorecard's Binary-Artifacts check counts it as reviewed once this
   # runs.
-  gradle-wrapper:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Validate the Gradle wrapper
-        uses: gradle/actions/wrapper-validation@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
-
   # Fuzzes each parser that takes text the app doesn't control
   # (app/src/test/.../FuzzTest.kt) for two minutes: Jazzer fuzzes one
   # target per run, and the fuzz tests stay out of the other test runs
@@ -65,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [fuzzCurrencyFromString, fuzzSelectedPrice, fuzzReceiptText, fuzzCalculation, fuzzTypedAmount]
+        target: [fuzzCurrencyFromString, fuzzSelectedPrice, fuzzReceiptText, fuzzCalculation, fuzzTypedAmount, fuzzLaunchIntent]
     name: fuzz (${{ matrix.target }})
     steps:
       - name: Checkout the code
@@ -176,7 +167,7 @@ jobs:
       - name: Annotate failed tests
         if: failure() && matrix.check == 'test'
         run: |
-          pip install --quiet defusedxml==0.7.1
+          pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           python3 .github/scripts/annotate-test-failures.py "app/build/test-results/**/*.xml"
 
   fdroid-release-build:
@@ -197,13 +188,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
 
-      - name: Assemble fdroid release (unsigned)
-        run: ./gradlew assembleFdroidRelease
+      # The SBOM too, as the release attaches it: a change that breaks it
+      # fails here, not on release day.
+      - name: Assemble fdroid release (unsigned) and its SBOM
+        run: ./gradlew assembleFdroidRelease :app:cyclonedxDirectBom
 
       - name: Upload fdroid release APK
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: fdroid-release-apk
-          path: app/build/outputs/apk/fdroid/release/*.apk
+          path: |
+            app/build/outputs/apk/fdroid/release/*.apk
+            app/build/reports/sbom/currencix-sbom.cdx.json
           retention-days: 14
           if-no-files-found: warn

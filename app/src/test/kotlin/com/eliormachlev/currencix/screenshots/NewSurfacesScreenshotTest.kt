@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.model.AbroadOffer
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -16,17 +17,22 @@ import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.model.compareCards
+import com.eliormachlev.currencix.ocr.TessLanguage
 import com.eliormachlev.currencix.util.ReceiptLine
 import com.eliormachlev.currencix.view.alert.RateAlertSheet
+import com.eliormachlev.currencix.view.cart.ReceiptSetup
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartFooterCard
 import com.eliormachlev.currencix.view.cart.compose.CartItemsList
 import com.eliormachlev.currencix.view.cart.compose.CartTotals
 import com.eliormachlev.currencix.view.cart.compose.NO_PAIR_ACTIONS
 import com.eliormachlev.currencix.view.cart.compose.NO_REORDER
+import com.eliormachlev.currencix.view.cart.compose.ReceiptLanguageOfferSheet
 import com.eliormachlev.currencix.view.cart.compose.ReceiptReviewSheet
+import com.eliormachlev.currencix.view.cart.compose.ReceiptSetupOfferSheet
 import com.eliormachlev.currencix.view.cart.compose.SavedCartActions
 import com.eliormachlev.currencix.view.cart.compose.SavedCartsList
+import com.eliormachlev.currencix.view.cart.compose.TripSheet
 import com.eliormachlev.currencix.view.cart.compose.cartItemActions
 import com.eliormachlev.currencix.view.cart.compose.cartSources
 import com.eliormachlev.currencix.view.compose.PairChipContent
@@ -34,12 +40,17 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.RemoveFromHistorySheet
 import com.eliormachlev.currencix.view.convert.ConvertTextSheet
 import com.eliormachlev.currencix.view.convert.SelectionConversion
+import com.eliormachlev.currencix.view.main.compose.AbroadSheet
 import com.eliormachlev.currencix.view.main.compose.CompareCardsSheet
 import com.eliormachlev.currencix.view.main.compose.RecentPairsRow
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerContent
 import com.eliormachlev.currencix.view.main.spinner.SearchableCurrencyPicker
 import com.eliormachlev.currencix.view.main.spinner.pickerActions
+import com.eliormachlev.currencix.view.preference.compose.KeepLanguageSheet
+import com.eliormachlev.currencix.view.preference.compose.ReceiptLanguagesList
 import com.eliormachlev.currencix.viewmodel.cart.TripSummary
+import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
+import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
@@ -48,6 +59,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.math.BigDecimal
+import java.time.Instant
+import java.time.LocalDate
 
 // The surfaces added with recent pairs, cart sections and extras, the
 // text-selection popup. (Wallpaper colors aren't here:
@@ -242,6 +255,84 @@ class NewSurfacesScreenshotTest {
                 onAdd = {},
                 onDismiss = {},
             )
+        }
+
+    // The first scan: what it would download, each with its size, the app's language a separate tick.
+    @Test fun receiptSetupOfferSheet() =
+        shots.captureMatrix("receipt_setup_offer_sheet") {
+            ReceiptSetupOfferSheet(
+                offer = ReceiptSetup.Offer(reader = true, english = true, language = TessLanguage.HEBREW),
+                onDownload = {},
+                onDismiss = {},
+            )
+        }
+
+    // The app's language on its own: download it, or English only.
+    @Test fun receiptLanguageOfferSheet() =
+        shots.captureMatrix("receipt_language_offer_sheet") {
+            ReceiptLanguageOfferSheet(language = TessLanguage.HEBREW, onAnswer = {})
+        }
+
+    // Settings → Receipt languages: English kept, Korean until a trip's end, Japanese downloading.
+    @Test fun receiptLanguagesList() =
+        shots.captureMatrix("receipt_languages_list") {
+            ReceiptLanguagesList(
+                state =
+                    ReceiptLanguagesState(
+                        rows =
+                            listOf(
+                                ReceiptLanguageRow(TessLanguage.ENGLISH, keepUntil = null, downloading = false),
+                                ReceiptLanguageRow(
+                                    TessLanguage.KOREAN,
+                                    keepUntil = Instant.parse("2026-11-14T21:59:00Z"),
+                                    downloading = false,
+                                ),
+                                ReceiptLanguageRow(TessLanguage.JAPANESE, keepUntil = null, downloading = true),
+                            ),
+                        available = listOf(TessLanguage.THAI),
+                    ),
+                onAdd = {},
+                onEdit = {},
+                onDelete = {},
+            )
+        }
+
+    // Adding Korean: its size, kept for good or until a time.
+    @Test fun receiptLanguageKeepSheet() =
+        shots.captureMatrix("receipt_language_keep_sheet") {
+            KeepLanguageSheet(
+                language = TessLanguage.KOREAN,
+                initialUntil = Instant.parse("2026-11-14T21:59:00Z"),
+                confirmLabel = "Download",
+                onConfirm = {},
+                onDismiss = {},
+            )
+        }
+
+    // A trip with where and when: Korea, paying in KRW, for a week in November.
+    @Test fun tripSheetPlanned() =
+        shots.captureMatrix("trip_sheet_planned") {
+            TripSheet(
+                initial =
+                    Trip(
+                        "t",
+                        "Korea",
+                        Currency.ILS,
+                        BigDecimal("8000"),
+                        Currency.KRW,
+                        LocalDate.of(2026, 11, 7),
+                        LocalDate.of(2026, 11, 14),
+                    ),
+                currencies = listOf(Currency.ILS, Currency.USD),
+                onSave = {},
+                onDismiss = {},
+            )
+        }
+
+    // Landed abroad: switch the converter to the local currency?
+    @Test fun abroadSheet() =
+        shots.captureMatrix("abroad_sheet") {
+            AbroadSheet(offer = AbroadOffer("KR", Currency.KRW, Currency.ILS), onSwitch = {}, onDismiss = {})
         }
 
     @Test fun cartExtrasSheet() =

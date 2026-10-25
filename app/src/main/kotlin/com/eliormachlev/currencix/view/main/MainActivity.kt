@@ -43,6 +43,7 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
 import com.eliormachlev.currencix.view.lock.LockGate
+import com.eliormachlev.currencix.view.lock.blockScreenshots
 import com.eliormachlev.currencix.view.lock.hideFromRecents
 import com.eliormachlev.currencix.view.navigation.AppNavHost
 import com.eliormachlev.currencix.view.navigation.AppNavigator
@@ -51,6 +52,7 @@ import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.rememberAppNavigator
 import com.eliormachlev.currencix.view.preference.BackupRoute
 import com.eliormachlev.currencix.view.preference.FeesRoute
+import com.eliormachlev.currencix.view.preference.ReceiptLanguagesRoute
 import com.eliormachlev.currencix.view.preference.SettingsRoute
 import com.eliormachlev.currencix.view.timeline.TimelineRoute
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -147,11 +149,16 @@ class MainActivity : AppCompatActivity() {
         keepRecentsInStep(database)
     }
 
-    // With the app lock on, Recents shows no picture of the last screen.
+    // With the app lock on, Recents shows no picture of the last screen; with
+    // "Block screenshots", the system shows the app as blank everywhere.
     private fun keepRecentsInStep(database: Database) {
         lifecycleScope.launch {
             database.privacy.appLock.flow
                 .collect { hideFromRecents(it) }
+        }
+        lifecycleScope.launch {
+            database.privacy.blockScreenshots.flow
+                .collect { blockScreenshots(it) }
         }
     }
 
@@ -220,6 +227,13 @@ class MainActivity : AppCompatActivity() {
             ConverterLaunch.Request.OpenCart -> {
                 nav.navigate(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
             }
+
+            // Back from the chart lands on the converter, on the same pair.
+            is ConverterLaunch.Request.OpenChart -> {
+                viewModel.setCurrencyPair(request.pair)
+                nav.navigate(Screen.Converter)
+                nav.navigate(Screen.Timeline(request.pair.from, request.pair.to))
+            }
         }
     }
 
@@ -275,6 +289,10 @@ class MainActivity : AppCompatActivity() {
 
             Screen.Backup -> {
                 ReadingDirection { BackupRoute(onBack = nav::pop) }
+            }
+
+            Screen.ReceiptLanguages -> {
+                ReadingDirection { ReceiptLanguagesRoute(onBack = nav::pop) }
             }
         }
     }

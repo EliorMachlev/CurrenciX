@@ -6,9 +6,8 @@ import android.content.Intent
 /**
  * Kill this process and relaunch the app from its default launcher intent.
  *
- * Inlined in-repo replacement for Jake Wharton's ProcessPhoenix so the
- * migration path (SharedPreferences → DataStore) doesn't drag in a third-party
- * dep for a ~10-line action. Call from any [Context] on the main thread; the
+ * In-repo rather than Jake Wharton's ProcessPhoenix: a third-party
+ * dependency for a ~10-line action isn't worth it. Call from any [Context] on the main thread; the
  * activity stack is wiped and the process exits after the new task is queued.
  *
  * Called from [com.eliormachlev.currencix.repository.BackupManager] after a

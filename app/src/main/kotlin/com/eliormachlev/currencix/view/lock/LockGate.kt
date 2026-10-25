@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.view.lock
 
 import android.app.Activity
+import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,3 +75,15 @@ private fun LockScreen() {
  * still work.
  */
 fun Activity.hideFromRecents(hidden: Boolean) = setRecentsScreenshotEnabled(!hidden)
+
+/**
+ * With "Block screenshots" on, the system shows the app as blank in
+ * screenshots, screen recordings, casting and Recents (FLAG_SECURE).
+ */
+fun Activity.blockScreenshots(blocked: Boolean) {
+    if (blocked) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+    } else {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+    }
+}

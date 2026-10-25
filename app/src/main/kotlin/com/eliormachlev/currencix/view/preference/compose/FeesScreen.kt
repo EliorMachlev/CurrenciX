@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ProseTheme
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -279,9 +280,16 @@ private fun LazyListScope.specificPairSection(
     }
     if (entries.isEmpty()) {
         item(key = SPECIFIC_PAIR_EMPTY_KEY) {
-            PreferenceRow(
-                title = stringResource(id = R.string.fee_empty),
-                enabled = false,
+            // A notice, not a greyed-out entry: the muted text color, at
+            // full contrast, rather than the disabled style's faded one.
+            LedgerRow(
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.fee_empty),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
             )
         }
     } else {

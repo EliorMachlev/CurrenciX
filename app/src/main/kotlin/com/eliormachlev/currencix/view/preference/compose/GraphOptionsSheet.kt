@@ -21,6 +21,7 @@ import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.LedgerTrailing
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.SheetListEnd
+import com.eliormachlev.currencix.view.compose.switchState
 
 /**
  * Ledger-styled graph options sheet — replaces the old
@@ -75,6 +76,7 @@ private fun GraphOptionRow(
     }
     LedgerRow(
         onClick = { commit(!checked) },
+        modifier = Modifier.switchState(checked),
         showDivider = !isLast,
         label = {
             Text(
@@ -86,7 +88,7 @@ private fun GraphOptionRow(
         },
         value = {
             LedgerTrailing {
-                Switch(checked = checked, onCheckedChange = commit)
+                Switch(checked = checked, onCheckedChange = null)
             }
         },
     )

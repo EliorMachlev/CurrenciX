@@ -107,6 +107,7 @@
     <string name="backup_import_confirm_message">Pengaturan Anda saat ini akan ditimpa dengan pengaturan dalam file. Tindakan ini tidak bisa dibatalkan.</string>
     <string name="backup_import_confirm_positive">Pulihkan</string>
     <string name="backup_encrypt_option">Enkripsi dengan kata sandi</string>
+    <string name="backup_keys_left_out">Kunci API tidak disertakan dalam cadangan tanpa sandi.</string>
     <string name="backup_password_hint">Kata sandi</string>
     <string name="backup_password_prompt_title">Masukkan kata sandi</string>
     <string name="backup_password_wrong">Kata sandi tidak berhasil mendekripsi file. Coba lagi.</string>
@@ -141,9 +142,11 @@
     <string name="credit_lib_compose">Toolkit UI dan Material 3</string>
     <string name="credit_lib_material_components">Komponen Material Design</string>
     <string name="credit_lib_material_symbols">Ikon (Rounded)</string>
+    <string name="credit_lib_typeface">Jenis huruf</string>
     <string name="credit_lib_vico">Grafik</string>
     <string name="credit_lib_okhttp">Klien HTTP</string>
     <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_wire">Protocol Buffers (cara keranjang, perjalanan, dan biaya disimpan)</string>
     <string name="credit_lib_timber">Pencatatan log</string>
     <string name="credit_lib_bouncy_castle">Derivasi kunci Argon2id untuk cadangan terenkripsi</string>
     <string name="credit_lib_tink">Enkripsi AES-GCM untuk cadangan</string>
@@ -196,6 +199,8 @@
     <string name="app_lock_unlock">Buka kunci</string>
     <string name="private_requests_title">Permintaan privat</string>
     <string name="private_requests_summary">Kirim permintaan kurs sama seperti orang lain: tanpa versi aplikasi, detail perangkat, atau pengenal cache. Memakai sedikit lebih banyak data.</string>
+    <string name="block_screenshots_title">Blokir tangkapan layar</string>
+    <string name="block_screenshots_summary">Aplikasi tampil kosong di tangkapan layar, rekaman layar, dan Terbaru</string>
     <string name="auto_refresh_summary">Perbarui kurs di latar belakang</string>
     <string name="refresh_interval_title">Perbarui setiap</string>
     <string name="refresh_interval_daily">Sekali sehari, tepat setelah %1$s menerbitkan</string>
