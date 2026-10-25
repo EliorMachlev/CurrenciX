@@ -64,6 +64,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.PlatformTextStyle
@@ -72,6 +73,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -402,13 +404,25 @@ internal fun MainDisplay(
                 onSwapLongPress = callbacks.onSwapLongPress,
             )
         }
-    HeroCard(
-        state = state,
-        pair = pairActions,
-        callbacks = callbacks,
+    // The card, plus room under it for what the fee chain would add: what
+    // follows the card (the recent-pair chips, the keypad) sits at the same
+    // height whether fees are on or off.
+    Layout(
         modifier = modifier,
-        captureController = captureController,
-    )
+        content = {
+            HeroCard(
+                state = state,
+                pair = pairActions,
+                callbacks = callbacks,
+                captureController = captureController,
+            )
+            FeeChainReserve(layout = state.result.layout(), withCompare = callbacks.onCompareCards != null)
+        },
+    ) { measurables, constraints ->
+        val card = measurables[0].measure(constraints)
+        val reserve = measurables[1].measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
+        layout(card.width, card.height + reserve.height) { card.place(0, 0) }
+    }
     pickerSide?.let { side -> ConverterCurrencyPicker(side = side, viewModel = viewModel, onDismiss = { pickerSide = null }) }
 }
 
@@ -861,7 +875,7 @@ private fun AmountToRow(
     callbacks: MainDisplayCallbacks,
 ) {
     val context = LocalContext.current
-    val stack = state.feeStack?.takeIf { it.hasFee() }
+    val stack = state.armedFeeStack()
     ReceiptPanel(label = remember(currency, context) { currency.panelLabel(context) }) {
         Column(Modifier.fillMaxWidth()) {
             // When a fee is armed we always render the full receipt chain
@@ -869,12 +883,91 @@ private fun AmountToRow(
             // input is 0. Showing "0 + 1% = 0" is intentional: the final slot
             // stays present so the user sees the same visual anchor at any
             // input.
-            if (stack != null && state.hasTrueCost) {
-                AmountToChain(state = state, stack = stack, callbacks = callbacks)
-            } else {
-                AmountToBare(state = state, stack = stack, callbacks = callbacks)
+            when (state.layout()) {
+                ResultLayout.Chain -> AmountToChain(state = state, stack = checkNotNull(stack), callbacks = callbacks)
+                ResultLayout.BareWithStamp, ResultLayout.Bare -> AmountToBare(state = state, stack = stack, callbacks = callbacks)
             }
         }
+    }
+}
+
+// Which of the destination panel's renders is on screen.
+private enum class ResultLayout {
+    // Fair subtotal, fee stamp, rule, fee-adjusted final.
+    Chain,
+
+    // The fair result with the fee stamp under it (a fee armed, nothing typed yet).
+    BareWithStamp,
+
+    // The fair result alone (no fee in force).
+    Bare,
+}
+
+// The fee stack when it changes the amount (not a no-op 1).
+private fun ResultState.armedFeeStack(): BigDecimal? = feeStack?.takeIf { it.hasFee() }
+
+private fun ResultState.layout(): ResultLayout =
+    when {
+        armedFeeStack() == null -> ResultLayout.Bare
+        hasTrueCost -> ResultLayout.Chain
+        else -> ResultLayout.BareWithStamp
+    }
+
+// A stand-in amount and fee for measuring the renders (any one-line value
+// measures the same: the rows are a single line that scrolls sideways).
+private val RESERVE_SAMPLE = AmountParts(symbol = "$", digits = "0")
+private val RESERVE_SAMPLE_STACK = BigDecimal("1.01")
+
+/**
+ * Takes up, without drawing anything, the height the full fee chain would
+ * add to the destination panel over its current [layout] (none when the
+ * chain is on screen): measured from the same rows, stamp and rule, so it
+ * follows font scaling. [withCompare] mirrors the "Compare cards" button on
+ * the stamp's row. Never placed, and hidden from accessibility.
+ */
+@Composable
+private fun FeeChainReserve(
+    layout: ResultLayout,
+    withCompare: Boolean,
+) {
+    val sampleChip: @Composable () -> Unit = {
+        ChipBelow(
+            stack = RESERVE_SAMPLE_STACK,
+            fees = persistentListOf(),
+            onClick = {},
+            onCompare = if (withCompare) ({}) else null,
+            chipModifier = Modifier,
+        )
+    }
+    Layout(
+        modifier = Modifier.clearAndSetSemantics {},
+        content = {
+            // The full chain…
+            Column(Modifier.fillMaxWidth()) {
+                ScrollingAmount(parts = RESERVE_SAMPLE, style = SUBTOTAL_STYLE, cursorHeight = null, onLongClick = {})
+                Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+                sampleChip()
+                Spacer(Modifier.height(PAY_RULE_TOP_GAP))
+                PayRule()
+                Spacer(Modifier.height(PAY_RULE_BOTTOM_GAP))
+                ScrollingAmount(parts = RESERVE_SAMPLE, style = FINAL_STYLE, cursorHeight = null, onLongClick = {})
+            }
+            // …and the render on screen.
+            Column(Modifier.fillMaxWidth()) {
+                if (layout != ResultLayout.Chain) {
+                    ScrollingAmount(parts = RESERVE_SAMPLE, style = RESULT_STYLE, cursorHeight = null, onLongClick = {})
+                }
+                if (layout == ResultLayout.BareWithStamp) {
+                    Spacer(Modifier.height(SUBTOTAL_TO_CHIP_GAP))
+                    sampleChip()
+                }
+            }
+        },
+    ) { measurables, constraints ->
+        if (layout == ResultLayout.Chain) return@Layout layout(0, 0) {}
+        val chain = measurables[0].measure(constraints)
+        val current = measurables[1].measure(constraints)
+        layout(0, (chain.height - current.height).coerceAtLeast(0)) {}
     }
 }
 
@@ -952,6 +1045,7 @@ private fun ChipBelow(
     fees: ImmutableList<Fee>,
     onClick: () -> Unit,
     onCompare: (() -> Unit)? = null,
+    chipModifier: Modifier = Modifier.onboardingAnchor(OnboardingAnchor.FeeStamp),
 ) {
     Ltr {
         Row(
@@ -971,7 +1065,7 @@ private fun ChipBelow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = FEE_STAMP_OP_GAP),
             )
-            FeeChip(stack, fees, onClick, modifier = Modifier.onboardingAnchor(OnboardingAnchor.FeeStamp))
+            FeeChip(stack, fees, onClick, modifier = chipModifier)
         }
     }
 }
