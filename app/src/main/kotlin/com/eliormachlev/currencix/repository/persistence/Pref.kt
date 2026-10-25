@@ -98,20 +98,41 @@ internal fun <T> PrefStore.pref(
     afterWrite: () -> Unit = {},
 ): Pref<T> = statePref(read, { prefs, value -> prefs.edited { write(value) } }, afterWrite)
 
-/** A setting stored under one [key], with [decode] / [encode] between the stored and the app's value. Null [encode] removes it. */
-internal fun <S : Any, T> PrefStore.keyedPref(
+/**
+ * A setting stored under one [key], with [decode] / [encode] between the stored and the app's value. Null [encode] removes it.
+ *
+ * A value stored under that key as another type (a setting whose type changed
+ * from one build to the next) reads as unset, so [decode] gives the default
+ * and the next write replaces it, instead of failing to cast.
+ */
+internal inline fun <reified S : Any, T> PrefStore.keyedPref(
     key: Preferences.Key<S>,
+    noinline decode: (S?) -> T,
+    noinline encode: (T) -> S?,
+    noinline afterWrite: () -> Unit = {},
+): Pref<T> = typedKeyedPref(key, { it as? S }, decode, encode, afterWrite)
+
+/** [keyedPref], with [asStored] taking the raw stored value as [S] (null when unset or of another type). */
+@PublishedApi
+internal fun <S : Any, T> PrefStore.typedKeyedPref(
+    key: Preferences.Key<S>,
+    asStored: (Any?) -> S?,
     decode: (S?) -> T,
     encode: (T) -> S?,
-    afterWrite: () -> Unit = {},
+    afterWrite: () -> Unit,
 ): Pref<T> {
-    // Decoded again only when the stored value changes (equal text), and
-    // encoded once per write (the same value object): the cache and the disk
-    // write both apply it, and every emission of the store re-reads it.
-    val decoded = LastResult<S?, T>(same = { a, b -> a == b }, compute = decode)
+    // Checked and decoded again only when the stored value changes (equal
+    // text), and encoded once per write (the same value object): the cache
+    // and the disk write both apply it, and every emission of the store
+    // re-reads it.
+    val decoded = LastResult<Any?, T>(same = { a, b -> a == b }, compute = { decode(asStored(it)) })
     val encoded = LastResult<T, S?>(same = { a, b -> a === b }, compute = encode)
     return pref(
-        read = { decoded(it[key]) },
+        read = { prefs ->
+            // Preferences.get is unchecked: whatever is stored comes back typed as S.
+            val raw: Any? = prefs[key]
+            decoded(raw)
+        },
         write = { value ->
             val stored = encoded(value)
             if (stored == null) remove(key) else this[key] = stored
