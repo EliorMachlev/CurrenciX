@@ -134,6 +134,12 @@ class NoSuppressionsTest {
         const val WIRE_CVE = "CVE-2018-8909"
         const val WIRE_RUNTIME = "wire-runtime"
 
+        const val CODEQL_EXCEPTIONS = ".github/codeql/exceptions.yml"
+        const val CODEQL_WORKFLOW = ".github/workflows/codeql.yaml"
+        const val CODEQL_FILTER = ".github/scripts/codeql-exceptions.py"
+        const val USELESS_NULL_CHECK = "java/useless-null-check"
+        const val QUICK_CONVERSIONS = "QuickConversionsSheet"
+
         // An @Incubating AGP API kept on purpose: the marker (numbered as in
         // EXCEPTIONS_DOC) directly above the one statement that uses it.
         fun incubating(
@@ -200,6 +206,30 @@ class NoSuppressionsTest {
                         // The file above and nothing else.
                         Regex(Regex.escape("--suppression $OWASP_SUPPRESSIONS") + "\\s*$", RegexOption.MULTILINE),
                     ),
+                ) +
+                listOf(
+                    RecordedException(
+                        CODEQL_EXCEPTIONS,
+                        "- excluded-rule: $USELESS_NULL_CHECK",
+                        USELESS_NULL_CHECK,
+                        QUICK_CONVERSIONS,
+                        // That one finding: its file, the generated line 1 and the compiler's temporary.
+                        Regex(
+                            Regex.escape("- excluded-rule: $USELESS_NULL_CHECK") +
+                                """\s*file: \S*/""" + QUICK_CONVERSIONS + """\.kt\s*line: 1\s*message-contains: tmpEnum""",
+                        ),
+                    ),
+                    RecordedException(
+                        CODEQL_WORKFLOW,
+                        "run: python3 $CODEQL_FILTER $CODEQL_EXCEPTIONS sarif",
+                        USELESS_NULL_CHECK,
+                        QUICK_CONVERSIONS,
+                        // The file above, on the Kotlin results only.
+                        Regex(
+                            Regex.escape("if: matrix.language == 'java-kotlin'") + """\s*""" +
+                                Regex.escape("run: python3 $CODEQL_FILTER $CODEQL_EXCEPTIONS sarif"),
+                        ),
+                    ),
                 )
 
         val SKIPPED_DIRECTORIES = setOf("build", ".gradle", ".git", ".kotlin", ".idea", "node_modules")
@@ -226,6 +256,9 @@ class NoSuppressionsTest {
                 // OWASP Dependency-Check: a finding excluded, and the file of them handed in
                 Regex("""<suppress\b"""),
                 Regex("""--suppression\b"""),
+                // CodeQL: a finding listed for removal, and the step that removes the listed ones
+                Regex("""excluded-rule:"""),
+                Regex("""codeql-exceptions\.py\s+\S"""),
             )
 
         // detekt's baseline-<module>.xml / detekt-baseline.xml and lint's lint-baseline.xml.

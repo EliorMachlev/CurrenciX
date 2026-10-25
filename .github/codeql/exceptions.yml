@@ -1,0 +1,11 @@
+# CodeQL findings excluded by the maintainer, each one recorded and explained
+# in docs/markDown/exceptions.md. Each entry matches one finding: its rule, its
+# file, its line and a piece of its message. .github/scripts/codeql-exceptions.py
+# removes exactly these from the results before they're uploaded, and fails
+# when an entry no longer matches anything.
+
+# exceptions.md #8: a null check the Kotlin compiler generates (no such check in the source).
+- excluded-rule: java/useless-null-check
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/main/compose/QuickConversionsSheet.kt
+  line: 1
+  message-contains: tmpEnum

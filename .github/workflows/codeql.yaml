@@ -62,7 +62,23 @@ jobs:
         if: matrix.language == 'java-kotlin'
         run: ./gradlew --no-daemon --no-build-cache --rerun-tasks -Pkotlin.compiler.execution.strategy=in-process :app:compileFdroidDebugKotlin
 
+      # The Kotlin results are written, not uploaded straight away: the
+      # findings recorded in .github/codeql/exceptions.yml (each explained in
+      # docs/markDown/exceptions.md) come out first, matched one by one.
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
+          category: /language:${{ matrix.language }}
+          upload: ${{ matrix.language == 'java-kotlin' && 'never' || 'always' }}
+          output: sarif
+
+      - name: Leave out the recorded exceptions
+        if: matrix.language == 'java-kotlin'
+        run: python3 .github/scripts/codeql-exceptions.py .github/codeql/exceptions.yml sarif
+
+      - name: Upload the results
+        if: matrix.language == 'java-kotlin'
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: sarif
           category: /language:${{ matrix.language }}
