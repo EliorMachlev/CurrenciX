@@ -14,7 +14,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `commit-baseline-profiles.yaml` | Called by Baseline Profile, manual | Put a profile run's artifacts back in their folders and push them to the branch; then start Screenshots and the debug APK build on that commit |
 | `benchmarks.yaml` | Push → non-master touching app code, the build, `baselineprofile/**` or the benchmark scripts, manual | Run the startup and frame-timing benchmarks on the same emulator; fail on a slowdown against the saved baseline |
 | `detekt.yaml` | PR, push → `master`, manual | Kotlin static analysis |
-| `qodana.yaml` | PR, push → `master`, weekly (Mon 06:30 UTC), manual | JetBrains Qodana JVM analysis |
+| `qodana.yaml` | PR, push → `master`, weekly (Mon 06:30 UTC), manual | JetBrains Qodana JVM analysis. When its project import fails dependency verification, the refused files are listed as one annotation and in the run summary (`.github/scripts/verification-report.py`) |
 | `codeql.yaml` | PR to `master`, push → `master`, weekly (Mon 05:30 UTC), manual | GitHub CodeQL: the app's Kotlin and the workflows' YAML. The Kotlin results leave out the findings recorded in `.github/codeql/exceptions.yml` (exceptions.md #8) before upload |
 | `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC), manual | SAST security pattern scanning |
 | `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC), manual | Secret / credential scanning |

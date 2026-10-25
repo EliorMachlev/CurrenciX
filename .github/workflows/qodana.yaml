@@ -39,6 +39,11 @@ jobs:
         with:
           upload-result: true
           pr-mode: false
+      # When the project import fails dependency verification, name the
+      # files it refused (an annotation on the PR; the scan's log is long).
+      - name: List the files dependency verification refused
+        if: failure()
+        run: python3 .github/scripts/verification-report.py build/reports/dependency-verification
       - name: Upload SARIF to code scanning
         if: always()
         uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
