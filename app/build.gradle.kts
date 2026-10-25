@@ -190,7 +190,7 @@ android {
             // Excluding FuzzTest keeps Jazzer's agent from attaching. With
             // -PfuzzTests the run is the other way round: the fuzz tests
             // alone (CI's fuzz job; JAZZER_FUZZ=1 fuzzes rather than only
-            // replaying the saved inputs; see docs/markDown/build-and-flavors.md).
+            // replaying the saved inputs; see docs/markDown/engineering/build.md).
             val fuzzOnly = providers.gradleProperty("fuzzTests").isPresent
             it.filter {
                 if (fuzzOnly) {
@@ -423,8 +423,7 @@ dependencies {
     // section (#142) and the cart list (#141). Provides `ReorderableItem` +
     // `longPressDraggableHandle` so cart rows can pair the drag handle with a
     // sibling SwipeToDismissBox. Pinned to a stable tag so upstream drop-in
-    // changes can't move the API out from under us — see
-    // docs/markDown/contributing.md on version pins.
+    // changes can't move the API out from under us.
     implementation("sh.calvin.reorderable:reorderable:3.1.0")
     // crypto: BouncyCastle provides pure-Java Argon2id, the key derivation
     // for password-based backup encryption (quantum-resistant KDF).

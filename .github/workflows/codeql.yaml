@@ -64,7 +64,7 @@ jobs:
 
       # The Kotlin results are written, not uploaded straight away: the
       # findings recorded in .github/codeql/exceptions.yml (each explained in
-      # docs/markDown/exceptions.md) come out first, matched one by one.
+      # docs/markDown/engineering/exceptions.md) come out first, matched one by one.
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:

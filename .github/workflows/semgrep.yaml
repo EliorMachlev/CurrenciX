@@ -36,7 +36,7 @@ jobs:
       # Every finding is printed here and uploaded to code scanning below, and
       # any finding fails the job (--error). No rule is switched off and no
       # path is left out; the two findings excluded where they occur are
-      # recorded in docs/markDown/exceptions.md.
+      # recorded in docs/markDown/engineering/exceptions.md.
       - name: Run Semgrep
         run: |
           semgrep scan \

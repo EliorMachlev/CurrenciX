@@ -9,7 +9,7 @@ These Terms of Service ("Terms") govern your use of the **CurrenciX** Android ap
 
 ## 1. The service
 
-CurrenciX is a currency-conversion utility. It fetches exchange-rate data from third-party providers you select in **Settings → Exchange rates → Data provider** and displays computed conversions. It is provided as **open-source software** under the terms of the GNU General Public License v3 or later (see [`COPYING`](../../COPYING)); nothing in these Terms overrides your rights under that license.
+CurrenciX is a currency-conversion utility. It fetches exchange-rate data from third-party providers you select in **Settings → Exchange rates → Data provider** and displays computed conversions. It is provided as **open-source software** under the terms of the GNU General Public License v3 or later (see [`COPYING`](../../../COPYING)); nothing in these Terms overrides your rights under that license.
 
 ## 2. Rate-accuracy disclaimer
 
@@ -24,7 +24,7 @@ CurrenciX is a currency-conversion utility. It fetches exchange-rate data from t
 
 ## 3. Third-party providers
 
-Each exchange-rate provider (see [`api-providers.md`](api-providers.md)) is a separate service governed by its own terms and privacy practices. When you select a provider, network requests go directly from your device to that provider. The maintainer is not a party to that relationship, has no control over provider availability or accuracy, and is not liable for provider outages, rate quality, data-handling practices, fees, or terms changes.
+Each exchange-rate provider (see [`product/providers.md`](../product/providers.md)) is a separate service governed by its own terms and privacy practices. When you select a provider, network requests go directly from your device to that provider. The maintainer is not a party to that relationship, has no control over provider availability or accuracy, and is not liable for provider outages, rate quality, data-handling practices, fees, or terms changes.
 
 You are responsible for complying with any applicable provider terms — including attribution requirements, rate-limit constraints, and non-commercial-use restrictions if the provider imposes them.
 
@@ -63,7 +63,7 @@ CurrenciX's accessibility posture is set out in the [Accessibility Statement](ac
 
 ## 9. Security disclosures
 
-Security-vulnerability reporting is governed by [`SECURITY.md`](../../SECURITY.md).
+Security-vulnerability reporting is governed by [`SECURITY.md`](../../../SECURITY.md).
 
 ## 10. Changes to the Terms
 

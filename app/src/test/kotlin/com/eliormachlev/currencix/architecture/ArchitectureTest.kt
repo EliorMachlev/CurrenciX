@@ -9,7 +9,7 @@ import org.junit.Test
 
 /**
  * Encodes CurrenciX's MVVM layer boundaries as executable invariants so
- * Phase 1+ rewrites can't silently blur them (see docs/markDown/architecture.md).
+ * Phase 1+ rewrites can't silently blur them (see docs/markDown/engineering/architecture/README.md).
  *
  * Layer packages under `com.eliormachlev.currencix`:
  *   view       — Activities, Custom Views, Dialogs, Widget, Compose surfaces

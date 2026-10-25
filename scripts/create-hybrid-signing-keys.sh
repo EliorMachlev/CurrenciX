@@ -13,7 +13,7 @@
 # 37.0.0+ (apksigner with --hybrid-signer-role), found through ANDROID_HOME.
 #
 # Afterwards add the lines it prints to secrets.properties; see
-# docs/markDown/build-and-flavors.md, "Post-quantum signing".
+# docs/markDown/engineering/release.md, "Post-quantum signing".
 set -euo pipefail
 
 if [[ $# -lt 2 ]]; then

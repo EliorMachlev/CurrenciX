@@ -6,11 +6,11 @@ import org.junit.Test
 import java.io.File
 
 /**
- * Warnings get fixed, not hidden (docs/markDown/contributing.md, "No
+ * Warnings get fixed, not hidden (docs/markDown/engineering/contributing.md, "No
  * Suppressions, No Cosmetic Workarounds"). This walks the repository's
  * sources, build scripts, resources and workflows and fails on anything that
  * silences a compiler or an analyzer — other than the exceptions recorded in
- * docs/markDown/exceptions.md, which are listed in [EXCEPTIONS] line for line.
+ * docs/markDown/engineering/exceptions.md, which are listed in [EXCEPTIONS] line for line.
  */
 class NoSuppressionsTest {
     private val root = repositoryRoot()
@@ -117,7 +117,7 @@ class NoSuppressionsTest {
 
     private companion object {
         const val OWN_FILE = "NoSuppressionsTest.kt"
-        const val EXCEPTIONS_DOC = "docs/markDown/exceptions.md"
+        const val EXCEPTIONS_DOC = "docs/markDown/engineering/exceptions.md"
 
         const val MANIFEST = "app/src/main/AndroidManifest.xml"
         const val EXPORTED_ACTIVITY_RULE = "java.android.security.exported_activity.exported_activity"

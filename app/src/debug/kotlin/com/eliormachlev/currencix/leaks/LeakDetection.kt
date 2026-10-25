@@ -10,7 +10,7 @@ import shark.ReferencePattern.StaticFieldPattern
 // finished WorkManager service. It's in the framework, held one at a time
 // and replaced by the next; the app has no reference it could let go of.
 // LeakCanary reports it on every such phone, so it's ignored: exception 3 in
-// docs/markDown/exceptions.md, the maintainer's decision.
+// docs/markDown/engineering/exceptions.md, the maintainer's decision.
 private val vendorAppContext = StaticFieldPattern("android.content.res.ResourcesImpl", "mAppContext")
 
 /** LeakCanary's usual known-leak list, the vendor field above ignored rather than reported. */

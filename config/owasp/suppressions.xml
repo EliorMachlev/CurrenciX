@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   OWASP Dependency-Check: findings excluded where they occur, each one a
-  recorded exception in docs/markDown/exceptions.md (and in NoSuppressionsTest).
+  recorded exception in docs/markDown/engineering/exceptions.md (and in NoSuppressionsTest).
   Nothing else belongs here.
 -->
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">

@@ -25,7 +25,7 @@ name: Release
 #   HYBRID_KEYSTORE_PASSWORD  its password
 # The lineages tying the hybrid keys to the release key hold certificates
 # only and are in the repository (signing-lineages/). See
-# docs/markDown/build-and-flavors.md, "Post-quantum signing".
+# docs/markDown/engineering/release.md, "Post-quantum signing".
 
 on:
   push:

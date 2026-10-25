@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme">
         <!-- The launcher entry: exported so the home screen can start the app.
              Excluded from Semgrep's exported-activity rule; see
-             docs/markDown/exceptions.md. -->
+             docs/markDown/engineering/exceptions.md. -->
         <!-- nosemgrep: java.android.security.exported_activity.exported_activity -->
         <activity
             android:name=".view.main.MainActivity"
@@ -42,7 +42,7 @@
              translucent, so it floats over the calling app and leaves nothing
              in Recents. Exported so the app showing the selection can start
              it. Excluded from Semgrep's exported-activity rule; see
-             docs/markDown/exceptions.md. -->
+             docs/markDown/engineering/exceptions.md. -->
         <!-- nosemgrep: java.android.security.exported_activity.exported_activity -->
         <activity
             android:name=".view.convert.ConvertTextActivity"
