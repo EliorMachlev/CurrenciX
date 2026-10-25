@@ -9,10 +9,10 @@
  */
 
 /* ── Fonts ─────────────────────────────────────────────────── */
-@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("fonts/inter_regular.woff2") format("woff2"); }
-@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("fonts/inter_medium.woff2") format("woff2"); }
-@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("fonts/inter_semibold.woff2") format("woff2"); }
-@font-face { font-family: "Space Grotesk"; font-weight: 500; font-display: swap; src: url("fonts/space_grotesk_medium.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("fonts/inter_regular.woff2?v=e06f6b1bc5") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("fonts/inter_medium.woff2?v=0ff3e94614") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("fonts/inter_semibold.woff2?v=5cb7103e4e") format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-weight: 500; font-display: swap; src: url("fonts/space_grotesk_medium.woff2?v=0b9dd20ea2") format("woff2"); }
 
 /* ── Tokens ────────────────────────────────────────────────── */
 :root {

@@ -1,0 +1,36 @@
+name: Site
+
+# The website (docs/, served by GitHub Pages): every file a page or the
+# stylesheet loads is asked for as name?v=<content hash>, so a deploy never
+# pairs a new page with a stylesheet or script a browser or the CDN still
+# has from before, and every inline script is allowed by its page's
+# Content-Security-Policy. After changing a file under docs/, run
+#   python3 .github/scripts/site-assets.py stamp docs
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - ".github/scripts/site-assets.py"
+      - ".github/workflows/site.yaml"
+  push:
+    branches: [master]
+    paths:
+      - "docs/**"
+      - ".github/scripts/site-assets.py"
+      - ".github/workflows/site.yaml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check asset versions and inline scripts
+        run: python3 .github/scripts/site-assets.py check docs
