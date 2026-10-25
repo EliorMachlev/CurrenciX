@@ -51,12 +51,6 @@ kotlin {
     }
 }
 
-// The APKs are named <applicationId>-v<versionCode>-…, read from defaultConfig
-// below (where F-Droid's update check and the release workflow read the version).
-base {
-    archivesName.set(provider { "${android.defaultConfig.applicationId}-v${android.defaultConfig.versionCode}" })
-}
-
 // The last digit of each APK's version code: versionCode × 10 + this, so
 // the per-CPU APKs of one release differ (Android and F-Droid need that)
 // and a phone that runs several types (64-bit ARM also runs 32-bit) gets
@@ -248,6 +242,12 @@ android {
             useLegacyPackaging = true
         }
     }
+}
+
+// The APKs are named <applicationId>-v<versionCode>-…, from defaultConfig above
+// (where F-Droid's update check and the release workflow read the version).
+base {
+    archivesName.set("${android.defaultConfig.applicationId}-v${android.defaultConfig.versionCode}")
 }
 
 androidComponents {
