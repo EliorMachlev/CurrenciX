@@ -4,22 +4,42 @@
 **Maintainer:** Elior Machlev
 **Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
 
-This document records CurrenciX's applicability posture under a set of regulatory frameworks that are commonly asked about but that do **not** currently apply to the project. Each section includes a review trigger — a change in the product that would require the analysis to be redone.
+This document records CurrenciX's applicability posture under a set of regulatory frameworks that are commonly asked about. Most do **not** apply to the project; the EU AI Act is treated as applying, to be on the safe side, and its one obligation is met. Each section includes a review trigger — a change in the product that would require the analysis to be redone.
 
 Privacy-law compliance is a separate document: [`privacy-policy.md`](privacy-policy.md). Accessibility is documented at [`accessibility-statement.md`](accessibility-statement.md). Security and supply-chain posture is at [`security.md`](security.md) and [`SECURITY.md`](../../SECURITY.md).
 
 ## EU AI Act — Regulation (EU) 2024/1689
 
-**Posture:** **Needs a classification; no obligations expected.** All conversion is deterministic arithmetic against a rate table, and there is no LLM API call, no automated decision-making system, no biometric identification or categorisation, no emotion recognition and no predictive analytics. There is one machine-learning model: **receipt scanning** reads photos with Tesseract, whose `tessdata_fast` language data are LSTM neural-network text-recognition models, run on the phone only, on photos the user picks, with every recognised line shown for review before anything is added. Whether this OCR is an "AI system" under Art. 3(1) is for the maintainer to settle; if it is, it falls in no prohibited (Art. 5) or high-risk (Art. 6, Annexes I and III) category, and none of the Art. 50 transparency cases (it interacts with no one as a chatbot, generates no content, recognises no emotions). The app lock's biometric prompt is Android's own (`BiometricPrompt`): the app receives only whether it succeeded, so it is not a biometric system of the app's.
+**Posture:** **Treated as in scope, by the maintainer's decision, though the open-source exclusion would likely apply; minimal risk; the only obligation, AI literacy, is met, with further measures taken voluntarily.** All conversion is deterministic arithmetic against a rate table, and there is no LLM API call, no automated decision-making system, no biometric identification or categorisation, no emotion recognition and no predictive analytics. There is one machine-learning model: **receipt scanning** reads photos with Tesseract, whose `tessdata_fast` language data are LSTM neural-network text-recognition models.
 
-**Phased-application dates tracked for future reference:**
+**Classification (decided 2026-10-25, the stricter reading).**
 
-- Prohibited practices (Chapter II): February 2025.
+- **AI system (Art. 3(1)): yes, accepted.** The OCR infers text from an image with a trained neural network, so it is treated as an AI system and CurrenciX as its provider.
+- **Open-source exclusion (Art. 2(12)): likely available, not relied on.** The Regulation does not apply to AI systems released under free and open-source licences unless they are placed on the market or put into service as high-risk systems or as systems under Art. 5 or Art. 50. CurrenciX is released under GPL-3.0 and Tesseract and its language data under Apache-2.0, and the OCR is none of those three, so the exclusion would most likely take the app out of the Regulation altogether. To be on the safe side, the project does not depend on it: the classification below, and the measures after it, hold whether or not the exclusion applies.
+- **Prohibited practices (Art. 5): none.** No manipulation, social scoring, biometric identification or categorisation, emotion recognition or predictive policing.
+- **High-risk (Art. 6, Annexes I and III): no.** Reading the text of a receipt is in none of the listed areas and is not a safety component of a regulated product.
+- **Transparency obligations (Art. 50): none triggered.** It interacts with no one as a chatbot, generates or manipulates no image, audio, video or text presented as authentic, and recognises no emotions; it reads the text already on the user's own photo.
+- **General-purpose AI models (Chapter V): no.** Tesseract's per-language recognition models are task-specific, not general-purpose models.
+- **Result: minimal risk.** The one obligation that applies to every provider regardless of risk is AI literacy (Art. 4).
+
+**What the project does (each in place today):**
+
+- **AI literacy (Art. 4):** the maintainer, the only person who builds and releases the app, knows what the model does, where it can fail (blurred, curved or low-contrast photos, unusual fonts, languages without downloaded data) and how its output is used; this section and [`architecture.md`](architecture.md) (receipt scanning) record it for any contributor.
+- **Transparency to users (voluntary, beyond Art. 50):** the review screen says the receipt was read on the phone and asks the user to check the names and prices; the setup and language sheets say what is downloaded, its size, and that reading then works offline; nothing is downloaded until the user agrees.
+- **Human oversight (voluntary, beyond Art. 14):** nothing recognised is used until the user has reviewed it: the review sheet lists every item found, and only the ones left ticked are added to the cart, as ordinary rows the user can then edit or delete, so the model's output never acts on its own.
+- **Data minimisation:** the model runs on the phone only, on photos the user picks; the photo is deleted once read and never leaves the device (see [`privacy-policy.md`](privacy-policy.md)). The app never has camera access.
+- **Model provenance and integrity:** the language data come from Tesseract's `tessdata_fast` at a fixed tag (4.1.0) and are installed only when their SHA-256 matches the recorded value; the libraries are listed in the release SBOM.
+
+The app lock's biometric prompt is Android's own (`BiometricPrompt`): the app receives only whether it succeeded, so it is not a biometric system of the app's.
+
+**Phased-application dates tracked for future reference** (as published; check for later amendments, such as the Commission's 2025 "Digital Omnibus" proposals on Art. 4 and on the timelines):
+
+- Prohibited practices (Chapter II) and AI literacy (Art. 4): February 2025.
 - GPAI obligations (Chapter V): August 2025.
-- Full application (most obligations): August 2026.
+- Full application (most obligations, including Art. 50): August 2026.
 - High-risk systems listed in Annex I: August 2027.
 
-**Review trigger:** any pull request that introduces (a) an on-device or server-side ML model, (b) an LLM API call for text generation or classification, (c) automated decision-making that produces legal or similarly significant effects on a user, (d) biometric categorisation or emotion recognition, must revisit this posture and classify the system per the Act's risk categories **before** merging.
+**Review trigger:** any pull request that (a) adds or replaces an on-device or server-side ML model, or changes how the OCR's output is used (for example adding it without the review step), (b) introduces an LLM API call for text generation or classification, (c) adds automated decision-making that produces legal or similarly significant effects on a user, (d) adds biometric categorisation or emotion recognition, or (e) generates synthetic content, must revisit this classification **before** merging.
 
 ## EU Digital Services Act — Regulation (EU) 2022/2065
 
