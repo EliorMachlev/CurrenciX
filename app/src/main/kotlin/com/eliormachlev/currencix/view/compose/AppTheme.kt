@@ -58,7 +58,7 @@ val LocalClickSounds = compositionLocalOf { true }
 // makes those numbers harder to parse. Paired with `supportsRtl="false"` in
 // the manifest for any surviving XML surfaces. The prose surfaces — Settings,
 // the sheets and the dialogs — opt back into the language's direction with
-// ReadingDirection (see architecture.md, "Right-to-left languages").
+// ReadingDirection (see docs/markDown/engineering/architecture/ui.md, "Right-to-left").
 //
 // [clickSounds] lets the user turn off the system click Compose plays on
 // taps (Settings → Click sounds).

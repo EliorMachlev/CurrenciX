@@ -62,7 +62,7 @@ internal val FORWARD_SECRET_TLS: ConnectionSpec =
 // HttpFetch.kt; the cache warms up whenever the upstream response carries
 // usable Cache-Control headers. Providers whose upstreams do not send
 // usable headers get their responses stamped with a per-host TTL by
-// [ProviderCacheRewriteInterceptor] — see api-providers.md for the matrix.
+// [ProviderCacheRewriteInterceptor] — see docs/markDown/engineering/architecture/networking.md for the matrix.
 object HttpClientProvider {
     @Volatile
     private var cachedInstance: OkHttpClient? = null

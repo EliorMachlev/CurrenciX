@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Removes the CodeQL findings recorded in .github/codeql/exceptions.yml (and
-explained in docs/markDown/exceptions.md) from the SARIF the analysis wrote,
+explained in docs/markDown/engineering/exceptions.md) from the SARIF the analysis wrote,
 before it's uploaded. A finding is removed only when its rule, file, line and
 message all match one entry, so the rule keeps reporting everywhere else.
 Fails when an entry matches nothing: the finding is gone, so its exception
@@ -72,7 +72,7 @@ def main(exceptions_file: str, sarif_dir: str) -> None:
     stale = [entry for entry, count in zip(entries, used) if count == 0]
     for entry in stale:
         print(f"::error file={exceptions_file}::{entry[RULE]} no longer reported at {entry['file']}:{entry['line']}; "
-              "remove the exception (docs/markDown/exceptions.md)")
+              "remove the exception (docs/markDown/engineering/exceptions.md)")
     if stale:
         sys.exit(1)
 

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
  * exchange-rate providers whose upstreams either omit the header entirely or
  * emit `no-cache` even though the underlying data changes only on a known,
  * slow cadence (business-day / hourly / monthly — see
- * `docs/markDown/api-providers.md`).
+ * `docs/markDown/engineering/architecture/networking.md`).
  *
  * ### Why an allowlist rather than a blanket rewrite
  * Stamping `max-age` onto arbitrary hosts would poison legitimately dynamic
@@ -48,7 +48,7 @@ internal class ProviderCacheRewriteInterceptor(
 /**
  * Per-host TTL for the rewrite interceptor. Keys are `okhttp3.HttpUrl.host`
  * values (no scheme, no port). TTLs derive from the upstream update cadence
- * documented in `docs/markDown/api-providers.md`:
+ * documented in `docs/markDown/engineering/architecture/networking.md`:
  *
  *  - Business-day publishers → 1 h (`3600`): safely inside a working day so
  *    the next publish will be picked up within an hour of app foregrounding.

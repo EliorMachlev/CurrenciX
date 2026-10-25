@@ -14,7 +14,7 @@ A handy travel companion, not a tool for real-time financial business.
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15831/badge)](https://www.bestpractices.dev/projects/15831)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/EliorMachlev/CurrenciX/badge)](https://securityscorecards.dev/viewer/?uri=github.com/EliorMachlev/CurrenciX)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
-[![Android 13+](https://img.shields.io/badge/Android-13%2B-3DDC84?logo=android&logoColor=white)](docs/markDown/overview.md)
+[![Android 13+](https://img.shields.io/badge/Android-13%2B-3DDC84?logo=android&logoColor=white)](docs/markDown/engineering/build.md)
 
 [Website](https://currencix.machlev.org/) · [Features](https://currencix.machlev.org/features.html) · [Providers](https://currencix.machlev.org/providers.html) · [Privacy](https://currencix.machlev.org/privacy.html) · [Docs](docs/markDown/)
 
@@ -33,17 +33,17 @@ A handy travel companion, not a tool for real-time financial business.
 
 | Feature | What you get |
 |---|---|
-| 💱 **Convert anything** | A calculator keypad (`+ − × ÷`, brackets, percent), your recent pairs one tap away, a price pasted from the clipboard, or past dates' rates back to 2010; abroad, it offers the local currency. |
+| 💱 **Convert anything** | 173 currencies, a calculator keypad (`+ − × ÷`, brackets, percent), starred currencies and recent pairs one tap away, a price pasted from the clipboard, or past dates' rates back to 2010; abroad, it offers the local currency. |
 | 💳 **The true cost** | Add your card's or bank's exchange fee, globally or per pair, see the real price beside the mid-market one, and compare your cards. |
 | 📈 **Charts & alerts** | A week to five years of history, or a custom range up to ten, with high, low, average and median, how today compares with the period's average, and a notification when a pair reaches your rate. |
 | 🛒 **Cart** | A list of prices converted into your currency, with quantities, tip or tax, a budget, a split by person, trips with dates, spending per day and a checklist before you go, and receipt scanning on the device. |
 | 📲 **Everywhere on your phone** | "Convert currency" in any app's text-selection menu, a home-screen widget, a Quick Settings tile and launcher shortcuts. |
 | 🎨 **Looks right** | Material 3 with colors from your wallpaper; light, dark and pure-black themes; two panes on tablets and foldables; 32 languages, right to left where they read that way. |
-| 🔒 **Private** | No ads, no analytics, no account. An optional app lock, screenshot blocking, private requests and encrypted backups; API keys sealed in the phone's Keystore. Nothing about you leaves the phone. |
+| 🔒 **Private** | No ads, no analytics, no account. An optional app lock, screenshot blocking, private requests and backups you can encrypt (Argon2id + AES-256-GCM); API keys sealed in the phone's Keystore; crash reports stay on the phone until you share them. |
 
 ## 🏦 Exchange rate providers
 
-Eight sources, and a fallback for when your main one is down. Details in [api-providers.md](docs/markDown/api-providers.md).
+Eight sources, and a fallback for when your main one is down. Details in [providers](docs/markDown/product/providers.md).
 
 | Provider | Source | Currencies | Updates | API key |
 |---|---|---|---|---|
@@ -60,7 +60,7 @@ Eight sources, and a fallback for when your main one is down. Details in [api-pr
 
 CurrenciX hasn't had its first release yet. Releases will be published on [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): signed APKs (one per CPU type, and a universal one), their `SHA256SUMS`, and an SBOM of every library they ship. Android 17 and later also check a post-quantum signature. An F-Droid build is prepared.
 
-Until then, build it yourself:
+The upstream **Currencies** app is on [Google Play](https://play.google.com/store/apps/details?id=de.salomax.currencies) and [F-Droid](https://f-droid.org/packages/de.salomax.currencies/) under its own package name. To build CurrenciX (`com.eliormachlev.currencix`) yourself:
 
 ```bash
 git clone https://github.com/EliorMachlev/CurrenciX.git
@@ -72,29 +72,21 @@ cd CurrenciX
 
 [Kotlin](https://kotlinlang.org/) · [Jetpack Compose](https://developer.android.com/compose) with Material 3 · Navigation 3 · DataStore · Retrofit + OkHttp · WorkManager · [Glance](https://developer.android.com/develop/ui/compose/glance) · [Vico](https://github.com/patrykandpatrick/vico) charts · [Tesseract](https://github.com/adaptech-cz/Tesseract4Android) OCR · Bouncy Castle + Tink
 
-Checked on every change by Android Lint, detekt, Qodana, Semgrep, CodeQL, Gitleaks and OSV-Scanner, with unit, screenshot and fuzz tests; OWASP Dependency-Check audits the shipped libraries weekly. See [ci-cd.md](docs/markDown/ci-cd.md).
+Checked on every change by Android Lint, detekt, Qodana, Semgrep, CodeQL, Gitleaks and OSV-Scanner, with unit, screenshot and fuzz tests; OWASP Dependency-Check audits the shipped libraries weekly. See [CI / CD](docs/markDown/engineering/ci-cd.md).
 
 ## 📚 Documentation
 
-| Doc | What's in it |
-|---|---|
-| [Overview](docs/markDown/overview.md) | What the app does, at a glance |
-| [Architecture](docs/markDown/architecture.md) | How it's put together, and why |
-| [Build & flavors](docs/markDown/build-and-flavors.md) | Toolchain, `fdroid` and `play`, signing and releases |
-| [Providers](docs/markDown/api-providers.md) | Every rate source, caching and fallback |
-| [CI / CD](docs/markDown/ci-cd.md) | Workflows, checks and benchmarks |
-| [Security](docs/markDown/security.md) | Supply chain, network, backups, signing |
-| [Exceptions](docs/markDown/exceptions.md) | The only suppressed findings, and why |
+[All docs](docs/markDown/README.md): [architecture](docs/markDown/engineering/architecture/README.md), [build](docs/markDown/engineering/build.md), [release](docs/markDown/engineering/release.md), [providers](docs/markDown/product/providers.md), [CI / CD](docs/markDown/engineering/ci-cd.md), [security](docs/markDown/engineering/security.md) and [exceptions](docs/markDown/engineering/exceptions.md).
 
 ## 🤝 Contributing
 
-Bug fixes are welcome; for new features, open an issue first. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [contributor guide](docs/markDown/contributing.md).
+Bug fixes are welcome; for new features, open an issue first. See the [contributor guide](docs/markDown/engineering/contributing.md).
 
 Found a vulnerability? Please report it privately, as [SECURITY.md](SECURITY.md) describes.
 
 ## ⚖️ Legal
 
-[Privacy Policy](docs/markDown/privacy-policy.md) · [Terms of Service](docs/markDown/terms-of-service.md) · [Accessibility Statement](docs/markDown/accessibility-statement.md) · [Compliance Posture](docs/markDown/compliance-posture.md) · [SECURITY.md](SECURITY.md)
+[Privacy Policy](docs/markDown/legal/privacy-policy.md) · [Terms of Service](docs/markDown/legal/terms-of-service.md) · [Accessibility Statement](docs/markDown/legal/accessibility-statement.md) · [Compliance Posture](docs/markDown/legal/compliance-posture.md) · [SECURITY.md](SECURITY.md)
 
 ## 📄 License
 
