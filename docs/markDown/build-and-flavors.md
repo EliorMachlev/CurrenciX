@@ -236,11 +236,12 @@ RECORD=(--write-verification-metadata sha256 --no-configuration-cache)
 ./gradlew "${RECORD[@]}" :app:compileFdroidReleaseKotlin -PcomposeReports
 ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
 python3 .github/scripts/trust-mirror-copies.py ~/.gradle gradle/verification-metadata.xml
+python3 .github/scripts/gradle-sources-checksum.py gradle/wrapper/gradle-wrapper.properties gradle/verification-metadata.xml
 ```
 
 `--no-configuration-cache` matters: with a stored configuration Gradle never resolves the build's plugins, so their files go unrecorded, and a build without that cache (every CI run) fails on them. The tests are in the list because running them resolves libraries that compiling them doesn't. The last line covers a file published with different bytes on different repositories: a plugin's marker POM on Maven Central isn't the one on the Gradle Plugin Portal, and a build gets whichever repository answers first (Gradle moves on when Central throttles), so every copy Gradle's cache holds of a recorded file is trusted as well (`<also-trust>`).
 
-Libraries' `-sources.jar` and `-javadoc.jar`, which only an IDE sync downloads (Android Studio, Qodana), are accepted without a checksum (`<trusted-artifacts>`, [exceptions.md](exceptions.md) #9). Then read the diff: it's every new file the build will trust. `dependencyUpdates` asks the repositories about versions the build doesn't use, so it runs with `--dependency-verification lenient`. The list is recorded on Linux; AGP's `aapt2` comes per operating system, so building on macOS or Windows adds that platform's `aapt2` with the same command.
+Gradle's own source zip (`gradle-<version>-src.zip`), which an IDE sync downloads to show Gradle's API in build scripts and the build never does, is recorded with the checksum Gradle publishes for it (the last line, for the wrapper's version; run it again after a Gradle update). Libraries' `-sources.jar` and `-javadoc.jar`, which only an IDE sync downloads (Android Studio, Qodana), are accepted without a checksum (`<trusted-artifacts>`, [exceptions.md](exceptions.md) #9). Then read the diff: it's every new file the build will trust. `dependencyUpdates` asks the repositories about versions the build doesn't use, so it runs with `--dependency-verification lenient`. The list is recorded on Linux; AGP's `aapt2` comes per operating system, so building on macOS or Windows adds that platform's `aapt2` with the same command.
 
 ## Signing (Release)
 

@@ -53,6 +53,11 @@ jobs:
       - name: Trust the other genuine copies
         run: python3 .github/scripts/trust-mirror-copies.py ~/.gradle gradle/verification-metadata.xml
 
+      # Gradle's own source zip, which only an IDE sync downloads (to show
+      # Gradle's API in build scripts), at the wrapper's version.
+      - name: Record Gradle's source zip
+        run: python3 .github/scripts/gradle-sources-checksum.py gradle/wrapper/gradle-wrapper.properties gradle/verification-metadata.xml
+
       - name: Commit and push
         id: push
         env:
