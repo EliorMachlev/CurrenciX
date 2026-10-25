@@ -8,10 +8,6 @@ name: Update dependency checksums
 # push checks on the new commit. The diff shows every checksum it added.
 on:
   workflow_dispatch:
-  # TEMPORARY: one run on this branch before the workflow is on master. Remove after.
-  push:
-    branches: [docs/general-fixes]
-    paths: [.github/workflows/update-verification-metadata.yaml]
 
 permissions:
   contents: read
