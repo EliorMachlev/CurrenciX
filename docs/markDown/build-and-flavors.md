@@ -226,15 +226,15 @@ CI does this for each target on every PR (`build.yaml`'s `fuzz` job). A crash fa
 `gradle/verification-metadata.xml` lists the SHA-256 of every file the build downloads (libraries, plugins, their POMs and Gradle module files, the tools detekt, ktlint and lint fetch), and Gradle refuses one that doesn't match or isn't listed. After adding or updating a dependency, record the new checksums, either with **Update dependency checksums** in Actions (run from the branch; it commits them) or locally:
 
 ```bash
-RECORD="--write-verification-metadata sha256 --no-configuration-cache"
-./gradlew $RECORD \
+RECORD=(--write-verification-metadata sha256 --no-configuration-cache)
+./gradlew "${RECORD[@]}" \
   assembleFdroidDebug assemblePlayDebug \
   spotlessCheck detekt assembleFdroidRelease :app:cyclonedxDirectBom :app:owaspLibraries \
   :app:lintFdroidDebug :app:lintPlayDebug \
   :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease :app:bundlePlayRelease
-./gradlew $RECORD :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest
-./gradlew $RECORD :app:compileFdroidReleaseKotlin -PcomposeReports
-./gradlew $RECORD :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
+./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest
+./gradlew "${RECORD[@]}" :app:compileFdroidReleaseKotlin -PcomposeReports
+./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
 python3 .github/scripts/trust-mirror-copies.py ~/.gradle gradle/verification-metadata.xml
 ```
 

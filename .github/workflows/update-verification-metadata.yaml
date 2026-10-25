@@ -34,19 +34,18 @@ jobs:
       # Every task CI runs (bar the emulator ones), so every file CI downloads
       # is recorded. Checksums already in the file are kept.
       - name: Record the checksums
-        env:
-          RECORD: --write-verification-metadata sha256 --no-configuration-cache
         run: |
-          ./gradlew $RECORD \
+          RECORD=(--write-verification-metadata sha256 --no-configuration-cache)
+          ./gradlew "${RECORD[@]}" \
             assembleFdroidDebug assemblePlayDebug \
             spotlessCheck detekt \
             assembleFdroidRelease :app:cyclonedxDirectBom :app:owaspLibraries \
             :app:lintFdroidDebug :app:lintPlayDebug \
             :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease \
             :app:bundlePlayRelease
-          ./gradlew $RECORD :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest
-          ./gradlew $RECORD :app:compileFdroidReleaseKotlin -PcomposeReports
-          ./gradlew $RECORD :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
+          ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest
+          ./gradlew "${RECORD[@]}" :app:compileFdroidReleaseKotlin -PcomposeReports
+          ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
 
       # A file can be published with different bytes on different
       # repositories (a plugin's marker POM on Maven Central and on the
