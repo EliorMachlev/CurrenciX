@@ -24,8 +24,9 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 | 6 | Qodana / IntelliJ `UnstableApiUsage` | `generateLocaleConfig` | `app/build.gradle.kts` |
 | 7 | OWASP Dependency-Check `CVE-2018-8909` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
 | 8 | CodeQL `java/useless-null-check` | `QuickConversionsSheet` (a check the Kotlin compiler generates, line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| 9 | Gradle dependency verification, `trusted-artifacts` | libraries' `-sources.jar` and `-javadoc.jar` (downloaded only by IDE syncs) | `gradle/verification-metadata.xml` |
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 and 8 on 2026-10-25 (PR #203).
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203).
 
 ### 1. `MainActivity` is exported
 
@@ -66,6 +67,13 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 - **Why the finding is wrong:** the file has no such check, and no variable called `tmpEnum`. CodeQL reads Kotlin as the compiler lowers it, and the null check is one the Kotlin/Compose compiler generates there (the only enum in the file is the nullable `PillSide` that picks the currency picker's side); that's why it sits on line 1, where no code is. It first showed up when PR #203 turned on CodeQL for Kotlin.
 - **Why it can't be fixed:** the check isn't in the source, so no edit to the source removes it except restructuring working code until the compiler happens to generate something else, which is a cosmetic workaround.
 - **What is excluded:** that one finding: the rule, that file, line 1, and a message naming `tmpEnum` must all match (`.github/codeql/exceptions.yml`). The Kotlin analysis writes its results, `.github/scripts/codeql-exceptions.py` takes that finding out, and the rest is uploaded. The rule still runs everywhere, that file included: a real useless null check in it, on any other line, is still reported. The step fails when the entry stops matching (a newer Kotlin generating different code), so the exception can't outlive the finding.
+
+### 9. Dependency verification: `-sources.jar` and `-javadoc.jar`
+
+- **What it reports:** an IDE's Gradle sync (Android Studio, and Qodana, which imports the project the same way) fails dependency verification: it downloads each library's `-sources.jar` (and `-javadoc.jar` where one exists), and `gradle/verification-metadata.xml` lists no checksum for them.
+- **Why it can't be fixed:** the build itself never resolves these files, so recording them takes an IDE sync against an empty cache, and which ones a sync fetches depends on the IDE and its version. Listing them would mean regenerating the file from every developer's IDE and on every IDE update. Not downloading sources (`idea { module { isDownloadSources = false } }`) avoids the failure only by taking library sources away in the IDE.
+- **Why it's safe:** these files are documentation for the IDE. Nothing compiles against them, nothing runs them, and none goes into an APK, the SBOM or a test. Gradle's own documentation gives this exclusion for exactly this case.
+- **What is excluded:** files named `*-sources.jar` and `*-javadoc.jar` are accepted without a checksum (`<trusted-artifacts>` in the file's configuration). Every other file the build downloads (JARs, AARs, POMs, Gradle module files, plugins) is still checked, and a missing or changed checksum still fails the build.
 
 ### What the exclusion does and doesn't cover
 

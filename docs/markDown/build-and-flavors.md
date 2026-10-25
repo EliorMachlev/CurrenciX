@@ -240,7 +240,7 @@ python3 .github/scripts/trust-mirror-copies.py ~/.gradle gradle/verification-met
 
 `--no-configuration-cache` matters: with a stored configuration Gradle never resolves the build's plugins, so their files go unrecorded, and a build without that cache (every CI run) fails on them. The tests are in the list because running them resolves libraries that compiling them doesn't. The last line covers a file published with different bytes on different repositories: a plugin's marker POM on Maven Central isn't the one on the Gradle Plugin Portal, and a build gets whichever repository answers first (Gradle moves on when Central throttles), so every copy Gradle's cache holds of a recorded file is trusted as well (`<also-trust>`).
 
-Then read the diff: it's every new file the build will trust. `dependencyUpdates` asks the repositories about versions the build doesn't use, so it runs with `--dependency-verification lenient`. The list is recorded on Linux; AGP's `aapt2` comes per operating system, so building on macOS or Windows adds that platform's `aapt2` with the same command.
+Libraries' `-sources.jar` and `-javadoc.jar`, which only an IDE sync downloads (Android Studio, Qodana), are accepted without a checksum (`<trusted-artifacts>`, [exceptions.md](exceptions.md) #9). Then read the diff: it's every new file the build will trust. `dependencyUpdates` asks the repositories about versions the build doesn't use, so it runs with `--dependency-verification lenient`. The list is recorded on Linux; AGP's `aapt2` comes per operating system, so building on macOS or Windows adds that platform's `aapt2` with the same command.
 
 ## Signing (Release)
 

@@ -140,6 +140,14 @@ class NoSuppressionsTest {
         const val USELESS_NULL_CHECK = "java/useless-null-check"
         const val QUICK_CONVERSIONS = "QuickConversionsSheet"
 
+        const val VERIFICATION_METADATA = "gradle/verification-metadata.xml"
+        const val TRUSTED_ARTIFACTS = "trusted-artifacts"
+
+        // The files only an IDE sync downloads, accepted without a checksum (exceptions.md #9).
+        val IDE_DOCUMENTATION = listOf("sources", "javadoc")
+
+        fun trustLine(kind: String) = """<trust file=".*-$kind[.]jar" regex="true"/>"""
+
         // An @Incubating AGP API kept on purpose: the marker (numbered as in
         // EXCEPTIONS_DOC) directly above the one statement that uses it.
         fun incubating(
@@ -230,7 +238,20 @@ class NoSuppressionsTest {
                                 Regex.escape("run: python3 $CODEQL_FILTER $CODEQL_EXCEPTIONS sarif"),
                         ),
                     ),
-                )
+                ) +
+                IDE_DOCUMENTATION.map { kind ->
+                    RecordedException(
+                        VERIFICATION_METADATA,
+                        trustLine(kind),
+                        TRUSTED_ARTIFACTS,
+                        "-$kind.jar",
+                        // Inside the configuration's trusted-artifacts block, which holds only these two.
+                        Regex(
+                            (listOf("<$TRUSTED_ARTIFACTS>") + IDE_DOCUMENTATION.map(::trustLine) + "</$TRUSTED_ARTIFACTS>")
+                                .joinToString("""\s*""") { Regex.escape(it) },
+                        ),
+                    )
+                }
 
         val SKIPPED_DIRECTORIES = setOf("build", ".gradle", ".git", ".kotlin", ".idea", "node_modules")
         val SCANNED_EXTENSIONS = setOf("kt", "kts", "java", "gradle", "xml", "pro", "yml", "yaml", "toml", "properties")
@@ -259,6 +280,8 @@ class NoSuppressionsTest {
                 // CodeQL: a finding listed for removal, and the step that removes the listed ones
                 Regex("""excluded-rule:"""),
                 Regex("""codeql-exceptions\.py\s+\S"""),
+                // Gradle dependency verification: files accepted without a checksum
+                Regex("""<(trust|ignored-key|trusted-key)\s"""),
             )
 
         // detekt's baseline-<module>.xml / detekt-baseline.xml and lint's lint-baseline.xml.
