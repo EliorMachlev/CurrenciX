@@ -29,7 +29,7 @@ Convert between 30–160+ world currencies using live exchange rates fetched fro
 | Starred currencies | Favourites in your own order, with a starred-only filter |
 | Look | Light, dark and pure-black themes or follow the system; colors from the wallpaper (Material You, on by default) |
 | Large screens | Two panes on tablets and unfolded foldables; a one-handed keypad on wide screens |
-| Privacy & security | Optional app lock (fingerprint / screen lock), private requests, nothing sent anywhere about you; crash reports stay on the phone until you share them |
+| Privacy & security | Optional app lock (fingerprint / screen lock), screenshot blocking and private requests; API keys sealed by the Android Keystore; requests only to the rate providers; nothing sent anywhere about you; crash reports stay on the phone until you share them |
 | Background rate refresh | Optional, off by default — WorkManager, timed to each provider's publication |
 | Accessibility | TalkBack labels and summaries, 48 dp targets, font scaling — see [accessibility-statement.md](accessibility-statement.md) |
 | Internationalization | 32 languages (English plus 31 translations), every string translated in each (lint enforces it); most inherited from the upstream Currencies project. Hebrew, Arabic and Farsi lay out right to left where it reads better. The system's per-app language list is generated from the `res/values-*` folders (`generateLocaleConfig`), so it always matches them |

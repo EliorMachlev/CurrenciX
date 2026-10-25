@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-Du+OJKJSbdUgz5nrHeWWINvez6XKDDU/tyj/5c2uvwo='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CurrenciX privacy policy</title>
   <meta name="description" content="CurrenciX collects no personal data: no account, no analytics, no ads. What the app stores, what it sends, and to whom.">
@@ -92,11 +93,11 @@
       <li>Cached exchange rates and rate history</li>
       <li>Selected currencies, recent pairs and the last historical date</li>
       <li>Starred (favourite) currencies</li>
-      <li>Settings (theme, fees, provider choices, keypad, quick-conversion amounts, receipt languages, app lock) and any API keys you entered</li>
+      <li>Settings (theme, fees, provider choices, keypad, quick-conversion amounts, receipt languages, app lock, screenshot blocking) and any API keys you entered, sealed with a key the phone's Keystore holds</li>
       <li>Carts, trips (with their destinations and dates) and rate alerts</li>
       <li>A small diagnostic log and records of the app's last few crashes</li>
       </ul>
-      <p>Nothing leaves the device unless you send it: a backup or a cart export goes to a file you choose, and <strong>About this app → Report a problem</strong> shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.</p>
+      <p>Nothing leaves the device unless you send it: a backup (with your API keys only when it has a password) or a cart export goes to a file you choose, and <strong>About this app → Report a problem</strong> shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.</p>
       <p>This data is cleared when you uninstall the app. It can also be cleared via Android Settings → Apps → CurrenciX → Clear Data.</p>
 
       <figure class="inline-shot" data-reveal><img src="img/backup.webp" alt="The backup screen: export to a file, or import from a file." width="822" height="600" loading="lazy" decoding="async"><figcaption>Backups go to a file you choose.</figcaption></figure>

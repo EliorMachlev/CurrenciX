@@ -15,14 +15,15 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 | `benchmarks.yaml` | Push → non-master touching app code, the build, `baselineprofile/**` or the benchmark scripts, manual | Run the startup and frame-timing benchmarks on the same emulator; fail on a slowdown against the saved baseline |
 | `detekt.yaml` | PR, push → `master`, manual | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly (Mon 06:30 UTC), manual | JetBrains Qodana JVM analysis |
-| `codeql.yaml` | PR to `master`, push → `master`, weekly (Mon 05:30 UTC), manual | GitHub CodeQL (Actions YAML) |
+| `codeql.yaml` | PR to `master`, push → `master`, weekly (Mon 05:30 UTC), manual | GitHub CodeQL: the app's Kotlin and the workflows' YAML |
 | `semgrep.yaml` | PR, push → `master`, weekly (Mon 09:00 UTC), manual | SAST security pattern scanning |
 | `gitleaks.yaml` | PR, push → `master`, weekly (Mon 07:00 UTC), manual | Secret / credential scanning |
-| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC), manual | Dependency vulnerability scan against the NVD data built into the action's image (CVSS ≥ 7) |
+| `owasp-dependency-check.yaml` | Weekly (Mon 08:00 UTC), manual | Dependency vulnerability scan against the NVD (CVSS ≥ 7), with Dependency-Check's CLI pinned by checksum |
 | `osv-scanner.yaml` | PR, push → `master`, weekly (Mon 08:30 UTC), manual | Every library the release ships, from its SBOM, checked against OSV.dev; no API key |
 | `dependency-review.yaml` | PR | Block high-severity new dependencies |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | `gradle/actions/wrapper-validation`: checks `gradle/wrapper/gradle-wrapper.jar`, the one binary in the repository, against the checksums of Gradle's own releases, so a swapped jar can't come in through a PR. Its own quick workflow so Scorecard (below) can see it succeed on the latest commit, which is what makes Binary-Artifacts count the jar as validated |
 | `scorecard.yaml` | Push → `master`, weekly (Mon 06:00 UTC), manual | OpenSSF Scorecard supply-chain score. On a push it first waits for `gradle-wrapper.yaml` to pass on that commit (`wrapper-validated` job), since Binary-Artifacts only accepts the wrapper jar once that run has succeeded |
+| `update-verification-metadata.yaml` | Manual | Regenerate `gradle/verification-metadata.xml` (the checksums of every downloaded dependency) on the branch it runs on, commit it, and start the push checks on that commit: run it on a Dependabot PR once the update looks right |
 | `actionlint.yaml` | PR, push → `master`, on `.github/workflows/**` | Validate workflow YAML syntax |
 
 ## Build Gate (`build.yaml`)
@@ -30,7 +31,7 @@ All automation lives in `.github/workflows/`. Every workflow pins its GitHub Act
 Runs on PRs and pushes to `master` (and by hand). Its jobs run side by side:
 
 - **`spotless`** — `spotlessCheck`, ktlint via Spotless (see [Code Style](contributing.md#code-style)).
-- **`fuzz`** — one job per fuzz target (`FuzzTest`: currency codes, selected-text prices, receipt text, calculations, typed amounts), each fuzzed for two minutes with Jazzer (`-PfuzzTests`, `JAZZER_FUZZ=1`). A crash fails the job and uploads its input (`fuzz-crash-<target>`). See [build-and-flavors.md](build-and-flavors.md#fuzz-tests).
+- **`fuzz`** — one job per fuzz target (`FuzzTest`: currency codes, selected-text prices, receipt text, calculations, typed amounts, other apps' intents to the converter), each fuzzed for two minutes with Jazzer (`-PfuzzTests`, `JAZZER_FUZZ=1`). A crash fails the job and uploads its input (`fuzz-crash-<target>`). See [build-and-flavors.md](build-and-flavors.md#fuzz-tests).
 - **`compose-stability`** — compiles with `-PcomposeReports` (the Compose compiler's report of each composable, `app/build/compose-reports/`) and runs `.github/scripts/compose-stability.py`, which fails on a composable that can't skip, or one taking a parameter the compiler can't prove stable: with strong skipping that parameter is compared by identity, so a fresh but equal value recomposes it every time. Fix it by making the type stable (immutable, `@Stable` / `@Immutable` when that's true, or listed in `app/compose-stability.conf`). Keys typed `Any`, an Android `Context` and receivers are compared by identity on purpose and aren't flagged; nor are the widget's Glance composables, which compose once per update.
 - **`build`** — matrix over `Fdroid` and `Play` flavors × the three checks below, six jobs in all, each running one of:
   - `lint<Flavor>Debug` — Android Lint. Nothing is disabled: a string missing from any of the app's locales fails the build.
@@ -48,7 +49,7 @@ A PR's checks take about five minutes, all jobs running at once; the longest are
 
 ## Baseline Profiles (`baseline-profile.yaml`)
 
-One job per flavor, side by side (`profile (fdroid)`, `profile (play)`): together, one after the other, they took about 80 of the 90 minutes a job may run. Each boots a Gradle Managed Device (`pixel6Api34`, API 34 AOSP emulator, software GPU) on a KVM-enabled hosted runner, generates its flavor's baseline + startup profiles and uploads them as `baseline-profiles-<flavor>` (the contents of that flavor's profile folder). Commit the files under `app/src/<flavor>Release/generated/baselineProfiles/` to ship them, or run the workflow by hand with **commit** ticked: `commit-baseline-profiles.yaml` then puts each flavor's artifact back in its folder (or, for a run from before the split, the single `baseline-profiles` artifact) and pushes them to the branch it ran on, and starts Screenshots and the debug APK build on that commit by `workflow_dispatch` (a push made with the workflow's own token starts no push-triggered workflows). To commit an earlier run's profiles without generating them again, run Baseline Profile by hand with **commit_run_id** set to that run's ID (or `commit-baseline-profiles.yaml` directly, once it is on the default branch).
+One job per flavor, side by side (`profile (fdroid)`, `profile (play)`): together, one after the other, they took about 80 of the 90 minutes a job may run. Each boots a Gradle Managed Device (`pixel6Api34`, API 34 AOSP emulator, software GPU) on a KVM-enabled hosted runner, generates its flavor's baseline + startup profiles and uploads them as `baseline-profiles-<flavor>` (the contents of that flavor's profile folder). Commit the files under `app/src/<flavor>Release/generated/baselineProfiles/` to ship them, or run the workflow by hand with **commit** ticked: `commit-baseline-profiles.yaml` then puts each flavor's artifact back in its folder and pushes them to the branch it ran on, and starts Screenshots and the debug APK build on that commit by `workflow_dispatch` (a push made with the workflow's own token starts no push-triggered workflows). To commit an earlier run's profiles without generating them again, run Baseline Profile by hand with **commit_run_id** set to that run's ID (or `commit-baseline-profiles.yaml` directly, once it is on the default branch).
 
 Each flavor's profiles take most of an hour of emulator time, so it triggers only when `baselineprofile/**` or the workflow itself changes on a non-master push, or on demand. See [build-and-flavors.md](build-and-flavors.md#baseline-profiles).
 
@@ -74,13 +75,15 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - Output: one SARIF per variant task, uploaded to the GitHub Security tab under its own category (`detekt` for the app's main one, `detekt-release`, `detekt-tests`, `detekt-helpers`, `detekt-ocr-engine`, `detekt-baselineprofile`) + HTML/checkstyle/SARIF artifact retained 14 days
 
 ### Qodana
-- Image: `qodana-jvm-community:2026.2`
+- Image: `qodana-jvm-community:2026.2`, pinned by digest as well (`qodana.yaml`), so a re-pushed tag can't change what runs; a new release means a new digest there
 - Scans production and test sources alike (only build output is excluded)
 - Posts inline PR comments on findings
 - SARIF uploaded to GitHub Security tab
 
 ### CodeQL
-- Language scope: `actions` (YAML workflows only — Kotlin delegated to Qodana)
+- Two analyses (matrix): `actions` (the workflows' YAML, no build) and `java-kotlin`, which watches the Kotlin compiler during a fresh, in-process compile of the fdroid debug build (`--no-daemon --no-build-cache --rerun-tasks -Pkotlin.compiler.execution.strategy=in-process :app:compileFdroidDebugKotlin`), so every main source file is extracted
+- `security-and-quality` queries; build output and generated code are left out (`.github/codeql/codeql-config.yml`)
+- CodeQL's Kotlin support trails Kotlin's releases by a little (2.4.20 arrived in CodeQL 2.27.1); a Kotlin update the extractor doesn't know yet shows as a failed `java-kotlin` analysis
 
 ### Semgrep
 - Rule sets: `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`
@@ -93,7 +96,9 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 - CVSS threshold: 7 (high+): `--failOnCVSS 7`
 - Scans every library the fdroid release ships: `:app:owaspLibraries` copies them out of Gradle's cache as `app/build/owasp-libraries/<group>/<module>-<version>.<jar|aar>` (each library once, the project's own modules left out), since Dependency-Check reads files and their names, not Gradle's dependency graph; aars are opened too (`--zipExtensions aar`)
 - Detects retired/archived dependencies (`--enableRetired`)
-- Two jobs: `libraries` (Java and Gradle) collects the libraries and hands them over as an artifact, and `check` scans them with the action, which runs in its own container on the NVD data built into its image (it passes `--noupdate`), so no NVD API key is needed. `check` has no `setup-java` on purpose: the action's container is handed the job's environment, and with `setup-java`'s `JAVA_HOME`, a path that exists only on the runner, the scanner refused to start ("JAVA_HOME is not defined correctly"), which is why every weekly run failed from at least September 2026
+- Runs Dependency-Check's CLI from Maven Central, version and SHA-256 pinned in the workflow (`DEPENDENCY_CHECK_VERSION`, `DEPENDENCY_CHECK_SHA256`) and checked before it runs, rather than the Dependency-Check action, which builds on an image tagged `latest`. A new release means updating both lines (Dependabot doesn't track it); Maven Central's `.sha1` for the zip is the cross-check
+- NVD's data comes with the `NVD_API_KEY` repository secret and is kept between runs (`actions/cache` restore and save, saved even when the scan finds something), so a week's changes take seconds; OSS Index is off (`--disableOssIndex`; it now needs an account)
+- Findings excluded where they occur, each a recorded exception: `--suppression config/owasp/suppressions.xml` (see [exceptions.md](exceptions.md))
 - SARIF uploaded to the Security tab (category `owasp-dependency-check`), only when the scan wrote one, and kept 30 days as the `owasp-report` artifact
 
 ### OSV-Scanner
@@ -109,6 +114,8 @@ The benchmark step itself is `continue-on-error`: the software-GPU emulator does
 ## Dependabot
 
 Configured in `.github/dependabot.yml` with weekly Monday schedule.
+
+A Gradle update adds files `gradle/verification-metadata.xml` doesn't list yet, so its PR's builds fail dependency verification until the checksums are recorded: once the update looks right, run **Update dependency checksums** on that PR's branch (Actions → Update dependency checksums → Run workflow, from that branch). Its commit shows every checksum it adds.
 
 **Ecosystems:**
 
@@ -137,9 +144,10 @@ Every workflow but one sets `permissions: contents: read` at the top; `scorecard
 | `qodana.yaml` | `security-events: write`, `pull-requests: write`, `checks: write` |
 | `codeql.yaml` | `security-events: write`, `actions: read`, `packages: read` |
 | `scorecard.yaml` | `security-events: write`, `id-token: write`, `actions: read` (the analysis); `actions: read` (waiting for the wrapper check) |
-| `release-apk.yaml` | `contents: write` for the `publish` job only, which never sees the signing keys; the `build` job that holds them reads only |
+| `release-apk.yaml` | `contents: write`, `id-token: write`, `attestations: write` for the `publish` job only (the release, and the build provenance it attests), which never sees the signing keys; the `build` job that holds them reads only |
 | `baseline-profile.yaml` | `contents: write`, `actions: write` for the `commit` job only (it calls `commit-baseline-profiles.yaml`) |
 | `dependency-review.yaml` | `pull-requests: write` |
 | `owasp-dependency-check.yaml` | `security-events: write` |
 | `osv-scanner.yaml` | `security-events: write` |
+| `update-verification-metadata.yaml` | `contents: write`, `actions: write`: pushes the regenerated checksums to the branch, then dispatches the push checks on that commit |
 | `commit-baseline-profiles.yaml` | `contents: write`, `actions: write`: pushes a Baseline Profile run's profiles to the branch (called by that workflow on a manual run with "commit" ticked, or run by hand with the run's ID), then dispatches Screenshots and the debug APK build on that commit; runs no build itself |

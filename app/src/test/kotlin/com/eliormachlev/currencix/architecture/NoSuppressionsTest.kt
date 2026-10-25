@@ -194,11 +194,11 @@ class NoSuppressionsTest {
                     ),
                     RecordedException(
                         OWASP_WORKFLOW,
-                        "--suppression /github/workspace/$OWASP_SUPPRESSIONS",
+                        "--suppression $OWASP_SUPPRESSIONS",
                         WIRE_CVE,
                         WIRE_RUNTIME,
                         // The file above and nothing else.
-                        Regex(Regex.escape("--suppression /github/workspace/$OWASP_SUPPRESSIONS") + "\\s*$", RegexOption.MULTILINE),
+                        Regex(Regex.escape("--suppression $OWASP_SUPPRESSIONS") + "\\s*$", RegexOption.MULTILINE),
                     ),
                 )
 

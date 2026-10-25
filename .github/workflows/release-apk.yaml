@@ -188,6 +188,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Signed build provenance for each file (below).
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -200,6 +203,16 @@ jobs:
         with:
           name: currencix-${{ needs.build.outputs.version }}-signed
           path: release
+
+      # A signed statement, on GitHub's transparency log, of which commit and
+      # workflow run built each file: `gh attestation verify <apk> --repo
+      # EliorMachlev/CurrenciX` checks a download against it.
+      - name: Attest the build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            release/*.apk
+            release/*-sbom.cdx.json
 
       - name: Publish the release
         env:
@@ -214,7 +227,7 @@ jobs:
             echo
             echo "**Which APK?** \`universal\` installs on any phone. The others are smaller, one per CPU type (\`arm64-v8a\` fits most phones)."
             echo
-            echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`B0:87:B0:31:48:D7:73:B4:CE:DA:C0:24:79:F5:0B:2F:EB:C5:C8:08:AF:17:2E:16:7B:2E:D0:BB:68:E1:E0:59\`. The libraries it ships, with versions and licences: \`currencix-${VERSION}-sbom.cdx.json\` (CycloneDX). Checksums in \`SHA256SUMS\`."
+            echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`B0:87:B0:31:48:D7:73:B4:CE:DA:C0:24:79:F5:0B:2F:EB:C5:C8:08:AF:17:2E:16:7B:2E:D0:BB:68:E1:E0:59\`. The libraries it ships, with versions and licences: \`currencix-${VERSION}-sbom.cdx.json\` (CycloneDX). Checksums in \`SHA256SUMS\`; where each file was built: \`gh attestation verify <file> --repo EliorMachlev/CurrenciX\`."
           } > notes.md
           prerelease=()
           case "$VERSION" in *-*) prerelease=(--prerelease) ;; esac

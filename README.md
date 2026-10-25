@@ -39,7 +39,7 @@ A handy travel companion, not a tool for real-time financial business.
 | 🛒 **Cart** | A list of prices converted into your currency, with quantities, tip or tax, a budget, a split by person, trips with dates, spending per day and a checklist before you go, and receipt scanning on the device. |
 | 📲 **Everywhere on your phone** | "Convert currency" in any app's text-selection menu, a home-screen widget, a Quick Settings tile and launcher shortcuts. |
 | 🎨 **Looks right** | Material 3 with colors from your wallpaper; light, dark and pure-black themes; two panes on tablets and foldables; 32 languages, right to left where they read that way. |
-| 🔒 **Private** | No ads, no analytics, no account. An optional app lock, private requests and encrypted backups. Nothing about you leaves the phone. |
+| 🔒 **Private** | No ads, no analytics, no account. An optional app lock, screenshot blocking, private requests and encrypted backups; API keys sealed in the phone's Keystore. Nothing about you leaves the phone. |
 
 ## 🏦 Exchange rate providers
 

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-Du+OJKJSbdUgz5nrHeWWINvez6XKDDU/tyj/5c2uvwo='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CurrenciX features</title>
   <meta name="description" content="Everything CurrenciX does: conversion, calculator, fees, charts and alerts, the cart, look and feel, privacy and security.">
@@ -97,9 +98,9 @@
   <div class="group-head" data-reveal><h2 id="privacy-title">Privacy and security</h2></div>
   <ul class="feature-list">
     <li data-reveal style="--i:0"><svg class="icon" aria-hidden="true"><use href="icons.svg#block"/></svg><h3>No tracking</h3><p>No ads, no analytics, no account, no crash-reporting service. Nothing about you leaves your phone.</p></li>
-    <li data-reveal style="--i:1"><svg class="icon" aria-hidden="true"><use href="icons.svg#lock"/></svg><h3>App lock</h3><p>Optionally lock the app behind your fingerprint or screen lock.</p></li>
+    <li data-reveal style="--i:1"><svg class="icon" aria-hidden="true"><use href="icons.svg#lock"/></svg><h3>App lock</h3><p>Optionally lock the app behind your fingerprint or screen lock, and keep it out of screenshots and Recents.</p></li>
     <li data-reveal style="--i:2"><svg class="icon" aria-hidden="true"><use href="icons.svg#visibility_off"/></svg><h3>Private requests</h3><p>Optionally make every rate request look the same as everyone else's.</p></li>
-    <li data-reveal style="--i:3"><svg class="icon" aria-hidden="true"><use href="icons.svg#save"/></svg><h3>Your data stays local</h3><p>Settings, carts and alerts live in the app's private storage. Back them up to a file you choose, encrypted with a password if you like.</p></li>
+    <li data-reveal style="--i:3"><svg class="icon" aria-hidden="true"><use href="icons.svg#save"/></svg><h3>Your data stays local</h3><p>Settings, carts and alerts live in the app's private storage. Back them up to a file you choose, encrypted with a password if you like. API keys are sealed with a key the phone's Keystore holds, and the app only talks to the rate providers.</p></li>
     <li data-reveal style="--i:4"><svg class="icon" aria-hidden="true"><use href="icons.svg#shield"/></svg><h3>Few permissions</h3><p>Internet and network state for rates, biometrics for the optional lock, and notifications only once you set a rate alert. No location, contacts, storage, camera or microphone.</p></li>
   </ul>
 </section>

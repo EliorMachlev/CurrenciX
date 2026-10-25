@@ -42,6 +42,44 @@ class PreferenceScreenScreenshotTest {
     @Test fun ratesScreen() = shots.captureMatrix("preference_rates") { Prose { RatesPreview() } }
 
     @Test fun aboutScreen() = shots.captureMatrix("preference_about") { Prose { AboutPreview() } }
+
+    @Test fun securityScreen() = shots.captureMatrix("preference_security") { Prose { SecurityPreview() } }
+}
+
+// Security & privacy: the app lock, blocking screenshots, private requests.
+@Composable
+private fun SecurityPreview() {
+    SettingsList {
+        item {
+            PreferenceSection(text = stringResource(id = R.string.settings_access_section)) {
+                SwitchRow(
+                    title = stringResource(id = R.string.app_lock_title),
+                    summary = stringResource(id = R.string.app_lock_summary),
+                    iconRes = R.drawable.ic_fingerprint,
+                    checked = true,
+                    onCheckedChange = {},
+                )
+                SwitchRow(
+                    title = stringResource(id = R.string.block_screenshots_title),
+                    summary = stringResource(id = R.string.block_screenshots_summary),
+                    iconRes = R.drawable.ic_no_screenshots,
+                    checked = false,
+                    onCheckedChange = {},
+                )
+            }
+        }
+        item {
+            PreferenceSection(text = stringResource(id = R.string.settings_network_section)) {
+                SwitchRow(
+                    title = stringResource(id = R.string.private_requests_title),
+                    summary = stringResource(id = R.string.private_requests_summary),
+                    iconRes = R.drawable.ic_visibility_off,
+                    checked = false,
+                    onCheckedChange = {},
+                )
+            }
+        }
+    }
 }
 
 // Settings is laid out the way the language reads (ProseTheme in the app).

@@ -69,7 +69,7 @@ Warnings and findings get fixed, not hidden.
 - [ ] `./gradlew spotlessCheck` is clean
 - [ ] No suppressions or baseline entries beyond those in [exceptions.md](exceptions.md), and no workaround that only hides a warning (see [No Suppressions, No Cosmetic Workarounds](#no-suppressions-no-cosmetic-workarounds))
 - [ ] If you changed a Compose screen, look over its screenshots. They aren't gated: the Screenshots workflow re-renders them on every branch push and uploads the PNGs as an artifact. To render locally: `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`. The `--tests` filter keeps the run to the screenshot tests (the fuzz tests, whose Jazzer instrumentation breaks Robolectric, are left out of the unit-test tasks anyway).
-- [ ] If adding a dependency: check F-Droid licence compatibility
+- [ ] If adding a dependency: check F-Droid licence compatibility, and record its checksums in `gradle/verification-metadata.xml` (**Update dependency checksums** in Actions, or the command in [build-and-flavors.md](build-and-flavors.md#dependency-verification)); the build refuses files it doesn't list
 
 ### Commit Message Convention
 

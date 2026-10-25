@@ -1,5 +1,7 @@
 version: "1.0"
-linter: jetbrains/qodana-jvm-community:2026.2
+# Pinned by digest as well as tag, so a re-pushed tag can't change what runs;
+# a new release means a new digest here (Docker Hub lists it per tag).
+linter: jetbrains/qodana-jvm-community:2026.2@sha256:160fa08f58a17596fc501fd700a1b29dac4bfa52e99befd3cc098bc0929563ad
 profile:
   name: qodana.recommended
 exclude:
