@@ -1,8 +1,11 @@
 name: OWASP Dependency Check
 
 on:
+  # Twice a week, so the cached NVD data (below) is always read again within
+  # GitHub's 7-day eviction window: scheduled runs start hours late, and a
+  # weekly run that starts earlier than the last one finds the cache evicted.
   schedule:
-    - cron: '0 8 * * 1'
+    - cron: '0 8 * * 1,4'
   workflow_dispatch:
 
 permissions:
@@ -14,6 +17,11 @@ env:
   # A new release: update both lines, after checking the zip's .sha1 there.
   DEPENDENCY_CHECK_VERSION: "13.0.0"
   DEPENDENCY_CHECK_SHA256: "44d920d1ec03e948df862a253f0912782a31b9beee8a7c8895b9cb95760176ed"
+  NVD_DATA: .dependency-check-data
+  # Written into the data once a load of the whole NVD has completed.
+  NVD_LOADED_MARKER: .dependency-check-data/full-load-complete
+  # NVD's official yearly JSON feeds; {0} is a year or "modified".
+  NVD_DATAFEED: "https://nvd.nist.gov/feeds/json/cve/2.0/nvdcve-2.0-{0}.json.gz"
 
 jobs:
   check:
@@ -42,39 +50,56 @@ jobs:
           echo "${DEPENDENCY_CHECK_SHA256}  $zip" | sha256sum --check --strict -
           unzip -q "$zip" -d "$RUNNER_TEMP"
 
-      # NVD's data, kept between runs: with the API key a week's changes take
-      # seconds, the whole database (the first run) some minutes.
+      # NVD's data, kept between runs, so a run only fetches what changed.
       - name: Restore the vulnerability data
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .dependency-check-data
+          path: ${{ env.NVD_DATA }}
           key: dependency-check-data-${{ github.run_id }}
           restore-keys: dependency-check-data-
 
+      # The whole NVD (no completed load in the cache) comes from its yearly
+      # feeds: a few dozen files from a CDN. Through the API it's 200+ pages
+      # that can take over an hour, and the API keeps no progress, so one NVD
+      # error (a 520 at page 15 once) throws the lot away. After that, the API
+      # (with the key) brings each run's changes in seconds.
       - name: Run OWASP Dependency-Check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
+          source=()
+          if [ ! -f "$NVD_LOADED_MARKER" ]; then
+            source=(--nvdDatafeed "$NVD_DATAFEED")
+          fi
+          status=0
           "$RUNNER_TEMP/dependency-check/bin/dependency-check.sh" \
             --project CurrenciX \
             --scan app/build/owasp-libraries \
             --format SARIF \
             --out reports \
-            --data .dependency-check-data \
+            --data "$NVD_DATA" \
+            "${source[@]}" \
             ${NVD_API_KEY:+--nvdApiKey "$NVD_API_KEY"} \
             --failOnCVSS 7 \
             --enableRetired \
             --zipExtensions aar \
             --disableOssIndex \
-            --suppression config/owasp/suppressions.xml
+            --suppression config/owasp/suppressions.xml || status=$?
+          # 0 (nothing at CVSS 7+) and 15 (something) mean the run, update
+          # included, had no errors; 14 means something failed, maybe the update.
+          if [ "$status" -eq 0 ] || [ "$status" -eq 15 ]; then
+            date -u +%FT%TZ > "$NVD_LOADED_MARKER"
+          fi
+          exit "$status"
 
-      # Saved whether or not the scan found anything, so the next run only
-      # fetches what changed.
+      # Saved whether or not the scan found anything, but only data from a
+      # completed load: a partial one is no use to the API, which would start
+      # the whole NVD over.
       - name: Save the vulnerability data
-        if: always() && hashFiles('.dependency-check-data/**') != ''
+        if: always() && hashFiles(env.NVD_LOADED_MARKER) != ''
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .dependency-check-data
+          path: ${{ env.NVD_DATA }}
           key: dependency-check-data-${{ github.run_id }}
 
       # Only when the scan wrote one, so a scan that stopped early shows as

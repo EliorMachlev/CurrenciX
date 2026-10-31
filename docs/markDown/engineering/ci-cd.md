@@ -18,7 +18,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `semgrep.yaml` | PR, push → `master`, weekly, manual | SAST patterns |
 | `gitleaks.yaml` | PR, push → `master`, weekly, manual | Secrets in the repository |
 | `osv-scanner.yaml` | PR, push → `master`, weekly, manual | The release SBOM against OSV.dev |
-| `owasp-dependency-check.yaml` | Weekly, manual | Shipped libraries against the NVD |
+| `owasp-dependency-check.yaml` | Mondays and Thursdays, manual | Shipped libraries against the NVD |
 | `dependency-review.yaml` | PR | Blocks new dependencies with high-severity CVEs |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | Validates `gradle-wrapper.jar`, the one binary in the repo, against Gradle's releases; its own workflow so Scorecard sees it pass |
 | `scorecard.yaml` | Push → `master`, weekly, manual | OpenSSF Scorecard (waits for the wrapper check on a push) |
@@ -53,7 +53,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | **CodeQL** | `actions` (no build) and `java-kotlin`, extracted from a fresh in-process compile of the fdroid debug build (`--no-daemon --no-build-cache --rerun-tasks -Pkotlin.compiler.execution.strategy=in-process`). `security-and-quality` queries; build output and generated code excluded. The Kotlin SARIF drops the findings in `.github/codeql/exceptions.yml` before upload ([exceptions.md](exceptions.md) #8). CodeQL trails Kotlin releases slightly; an unknown Kotlin shows as a failed analysis |
 | **Semgrep** | `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`. Installed from `.github/semgrep/requirements.txt`, every package pinned by hash (`pip-compile --generate-hashes`), not the unpinned image. Any finding fails. The two `nosemgrep` exceptions pass Semgrep but still show as open in code scanning, which ignores SARIF suppressions, until dismissed there |
 | **OSV-Scanner** | Writes the release SBOM and checks every library in it by package URL; any known vulnerability fails. No API key |
-| **OWASP Dependency-Check** | CLI from Maven Central, version and SHA-256 pinned in the workflow (update both by hand; Dependabot doesn't track it), not the action's `latest` image. `:app:owaspLibraries` copies each shipped library out of Gradle's cache named by its coordinates, since the tool reads files, not Gradle's graph; aars are opened. `--failOnCVSS 7 --enableRetired`, OSS Index off, NVD data via `NVD_API_KEY` cached between runs. `--suppression config/owasp/suppressions.xml` ([exceptions.md](exceptions.md) #7) |
+| **OWASP Dependency-Check** | CLI from Maven Central, version and SHA-256 pinned in the workflow (update both by hand; Dependabot doesn't track it), not the action's `latest` image. `:app:owaspLibraries` copies each shipped library out of Gradle's cache named by its coordinates, since the tool reads files, not Gradle's graph; aars are opened. `--failOnCVSS 7 --enableRetired`, OSS Index off, NVD data cached between runs: the first load from NVD's yearly JSON feeds (the API keeps no progress, so one error over its hour-plus of pages loses it all), then each run's changes through the API with `NVD_API_KEY`; only a completed load is cached. Twice a week so the cache never goes unread for GitHub's 7-day eviction. `--suppression config/owasp/suppressions.xml` ([exceptions.md](exceptions.md) #7) |
 | **Scorecard** | Publishes to the public Scorecard API; SARIF to the Security tab |
 
 ## Dependabot
