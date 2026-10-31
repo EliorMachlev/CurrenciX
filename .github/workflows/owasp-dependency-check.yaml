@@ -71,7 +71,7 @@ jobs:
           if [ ! -f "$NVD_LOADED_MARKER" ]; then
             source=(--nvdDatafeed "$NVD_DATAFEED")
           fi
-          status=0
+          set +e
           "$RUNNER_TEMP/dependency-check/bin/dependency-check.sh" \
             --project CurrenciX \
             --scan app/build/owasp-libraries \
@@ -84,7 +84,9 @@ jobs:
             --enableRetired \
             --zipExtensions aar \
             --disableOssIndex \
-            --suppression config/owasp/suppressions.xml || status=$?
+            --suppression config/owasp/suppressions.xml
+          status=$?
+          set -e
           # 0 (nothing at CVSS 7+) and 15 (something) mean the run, update
           # included, had no errors; 14 means something failed, maybe the update.
           if [ "$status" -eq 0 ] || [ "$status" -eq 15 ]; then
