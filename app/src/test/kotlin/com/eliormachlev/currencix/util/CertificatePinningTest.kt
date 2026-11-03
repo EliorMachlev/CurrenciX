@@ -31,7 +31,7 @@ class CertificatePinningTest {
     }
 
     @Test
-    fun `on, each host and its subdomains chain to its pins; off, nothing is pinned`() {
+    fun `on, each host and its subdomains chain to its pins, and off, nothing is pinned`() {
         val pinner = pinnerFor(enabled = true, userPins = emptyMap())
         BUILT_IN_PINS.forEach { (host, pins) ->
             assertEquals(host, pins, pinsFor(pinner, host))
