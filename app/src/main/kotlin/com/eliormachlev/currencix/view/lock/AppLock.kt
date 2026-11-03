@@ -82,7 +82,7 @@ object AppLock : DefaultLifecycleObserver {
         context: Context,
         onSuccess: () -> Unit,
     ) {
-        val cipher = runCatching(UnlockKey::cipher).onFailure { Timber.tag(TAG).w(it, "No unlock key") }.getOrNull() ?: return
+        val mac = runCatching(UnlockKey::mac).onFailure { Timber.tag(TAG).w(it, "No unlock key") }.getOrNull() ?: return
         val prompt =
             BiometricPrompt
                 .Builder(context)
@@ -90,12 +90,12 @@ object AppLock : DefaultLifecycleObserver {
                 .setAllowedAuthenticators(AUTHENTICATORS)
                 .build()
         prompt.authenticate(
-            BiometricPrompt.CryptoObject(cipher),
+            BiometricPrompt.CryptoObject(mac),
             CancellationSignal(),
             context.mainExecutor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    if (UnlockKey.proves(result.cryptoObject?.cipher)) onSuccess()
+                    if (UnlockKey.proves(result.cryptoObject?.mac)) onSuccess()
                 }
             },
         )

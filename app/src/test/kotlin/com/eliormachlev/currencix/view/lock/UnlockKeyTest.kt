@@ -2,14 +2,14 @@ package com.eliormachlev.currencix.view.lock
 
 import org.junit.Assert.assertFalse
 import org.junit.Test
-import javax.crypto.Cipher
+import javax.crypto.Mac
 
-// A passed prompt unlocks only when its key then encrypts: a result without
-// one, or with a cipher the Keystore never authorized, proves nothing.
+// A passed prompt unlocks only when its key then signs: a result without
+// one, or with a MAC the Keystore never authorized, proves nothing.
 class UnlockKeyTest {
     @Test
-    fun `no cipher, or one that can't encrypt, doesn't unlock`() {
+    fun `no MAC, or one that can't sign, doesn't unlock`() {
         assertFalse(UnlockKey.proves(null))
-        assertFalse(UnlockKey.proves(Cipher.getInstance("AES/GCM/NoPadding")))
+        assertFalse(UnlockKey.proves(Mac.getInstance("HmacSHA256")))
     }
 }
