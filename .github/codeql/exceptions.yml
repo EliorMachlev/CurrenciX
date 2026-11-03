@@ -9,3 +9,111 @@
   file: app/src/main/kotlin/com/eliormachlev/currencix/view/main/compose/QuickConversionsSheet.kt
   line: 1
   message-contains: tmpEnum
+
+# exceptions.md #10: the static $stable field the Compose compiler adds to every class, on a class
+# whose superclass has its own (no such field in the source).
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/AdapterUtils.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/AllRatesTodayAdapters.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/BankOfCanadaRatesAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/BankOfCanadaTimelineAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/BankOfIsraelRatesAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/FrankfurterAppRatesAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/FrankfurterAppTimelineAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/InforEuroRatesAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/InforEuroTimelineAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/LocalDateAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/model/adapter/OpenExchangeratesRatesAdapter.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/repository/persistence/PrefStore.kt
+  line: 1
+  message-contains: $stable
+- excluded-rule: java/field-masks-super-field
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/widget/CurrencyWidget.kt
+  line: 1
+  message-contains: $stable
+
+# exceptions.md #11: the cast in the equals() the Kotlin compiler generates for a data object
+# (no such variable in the source).
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/ocr/OcrEngine.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/repository/BackupManager.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/repository/CartExporter.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/convert/SelectionConversion.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/main/ConverterLaunch.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/navigation/Screen.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/preference/compose/FeesScreen.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/preference/compose/PreferenceScreen.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/preference/compose/ReceiptLanguagesScreen.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/viewmodel/cart/TripChecklist.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/viewmodel/preference/BackupViewModel.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+
+# exceptions.md #12: Kotlin's == on two Doubles smart-cast from Double?, a comparison of values.
+- excluded-rule: java/reference-equality-of-boxed-types
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/timeline/TimelineChart.kt
+  line: 522
+  message-contains: reference comparison of boxed numerical values

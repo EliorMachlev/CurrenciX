@@ -22,11 +22,14 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 | 4 | Qodana / IntelliJ `UnstableApiUsage` | the Gradle Managed Device (`ManagedVirtualDevice`) | `baselineprofile/build.gradle.kts` |
 | 5 | Qodana / IntelliJ `UnstableApiUsage` | `testedApks` (the tested app's id for benchmarks) | `baselineprofile/build.gradle.kts` |
 | 6 | Qodana / IntelliJ `UnstableApiUsage` | `generateLocaleConfig` | `app/build.gradle.kts` |
-| 7 | OWASP Dependency-Check `CVE-2018-8909` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
+| 7 | OWASP Dependency-Check `CVE-2018-8909`, `CVE-2023-22737` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
 | 8 | CodeQL `java/useless-null-check` | `QuickConversionsSheet` (a check the Kotlin compiler generates, line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 | 9 | Gradle dependency verification, `trusted-artifacts` | libraries' `-sources.jar` and `-javadoc.jar` (downloaded only by IDE syncs) | `gradle/verification-metadata.xml` |
+| 10 | CodeQL `java/field-masks-super-field` | the Compose compiler's `$stable` field, in 13 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| 11 | CodeQL `java/local-variable-is-never-read` | the cast in data objects' generated `equals()`, in 11 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| 12 | CodeQL `java/reference-equality-of-boxed-types` | `TimelineChart` (`min == max` on two `Double`s) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203).
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 12, on 2026-11-04.
 
 ### 1. `MainActivity` is exported
 
@@ -54,12 +57,12 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 - **Why the rule is wrong here:** incubating is not deprecated; these are the APIs AGP's own documentation uses. If AGP changes one, the build fails at once, so nothing breaks quietly.
 - **What is excluded:** one `@Suppress("UnstableApiUsage")` on each of those three statements, never the file. Any other incubating API used later is still reported.
 
-### 7. OWASP Dependency-Check: `CVE-2018-8909` on `wire-runtime`
+### 7. OWASP Dependency-Check: `CVE-2018-8909` and `CVE-2023-22737` on `wire-runtime`
 
-- **What it reports:** a CVSS 7.5 vulnerability in `wire-runtime-jvm-7.1.0.jar`, which it identifies as the product `cpe:2.3:a:wire:wire`.
-- **Why the finding is wrong:** CVE-2018-8909 is in the Wire secure messenger (Wire Swiss GmbH). The app's library is Square's Wire, the Protobuf runtime (`com.squareup.wire`) that reads and writes the saved carts, fees and alerts. Dependency-Check names a jar's product from evidence such as its file name, and both are called "Wire". OSV-Scanner, which matches the same library by its package URL, reports nothing for it.
+- **What it reports:** two vulnerabilities in `wire-runtime-jvm-7.1.0.jar`, which it identifies as Wire Swiss's products: `CVE-2018-8909` (CVSS 7.5, `cpe:2.3:a:wire:wire`) and `CVE-2023-22737` (medium).
+- **Why the finding is wrong:** CVE-2018-8909 is in the Wire secure messenger (Wire Swiss GmbH), and CVE-2023-22737 in `wire-server`, that messenger's backend (a missing permission check on removing bots from a conversation). The app's library is Square's Wire, the Protobuf runtime (`com.squareup.wire`) that reads and writes the saved carts, fees and alerts. Dependency-Check names a jar's product from evidence such as its file name, and both are called "Wire". OSV-Scanner, which matches the same library by its package URL, reports nothing for it.
 - **Why it can't be fixed:** the match comes from the name, so no version of Square's Wire changes it; the only way to make it go away would be removing the library.
-- **What is excluded:** that one CVE, only for files under `com.squareup.wire/` named `wire-runtime…` (`config/owasp/suppressions.xml`, handed to the scan with `--suppression`). Any other CVE matched to that jar, and that CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
+- **What is excluded:** those two CVEs, each in its own entry, only for files under `com.squareup.wire/` named `wire-runtime…` (`config/owasp/suppressions.xml`, handed to the scan with `--suppression`). Any other CVE matched to that jar, and either CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
 
 ### 8. CodeQL: `java/useless-null-check` on `QuickConversionsSheet`
 
@@ -74,6 +77,27 @@ A finding that is merely hard, slow or unpleasant to fix does not qualify. Fix i
 - **Why it can't be fixed:** the build itself never resolves these files, so recording them takes an IDE sync against an empty cache, and which ones a sync fetches depends on the IDE and its version. Listing them would mean regenerating the file from every developer's IDE and on every IDE update. Not downloading sources (`idea { module { isDownloadSources = false } }`) avoids the failure only by taking library sources away in the IDE.
 - **Why it's safe:** these files are documentation for the IDE. Nothing compiles against them, nothing runs them, and none goes into an APK, the SBOM or a test. Gradle's own documentation gives this exclusion for exactly this case.
 - **What is excluded:** files named `*-sources.jar` and `*-javadoc.jar` are accepted without a checksum (`<trusted-artifacts>` in the file's configuration). Every other file the build downloads (JARs, AARs, POMs, Gradle module files, plugins) is still checked, and a missing or changed checksum still fails the build.
+
+### 10. CodeQL: `java/field-masks-super-field` on the Compose compiler's `$stable`
+
+- **What it reports:** "This field shadows another field called `$stable` in a superclass", at line 1 of 13 files: `AdapterUtils`, `AllRatesTodayAdapters`, `BankOfCanadaRatesAdapter`, `BankOfCanadaTimelineAdapter`, `BankOfIsraelRatesAdapter`, `FrankfurterAppRatesAdapter`, `FrankfurterAppTimelineAdapter`, `InforEuroRatesAdapter`, `InforEuroTimelineAdapter`, `LocalDateAdapter`, `OpenExchangeratesRatesAdapter`, `PrefStore`, `CurrencyWidget`.
+- **Why the finding is wrong:** no class in the source declares `$stable`. The Compose compiler adds a static `$stable` field (its record of whether the class is stable) to every class it compiles, so a class whose superclass was also compiled by it (the app's `TypedJsonAdapter`, `ResponseAdapter` and `CachedStore`, Glance's `GlanceAppWidget` and `GlanceAppWidgetReceiver`) has one that "shadows" the superclass's. Static fields aren't inherited the way the rule worries about, and nothing reads them by name. Line 1 is where CodeQL puts generated code.
+- **Why it can't be fixed:** the field isn't in the source. Removing it would mean these classes no longer extend those superclasses, rewriting working code so the compiler happens not to generate it.
+- **What is excluded:** each finding by rule, file, line 1 and a message naming `$stable`. The rule still runs everywhere: a field in the source shadowing a superclass's, in these files or any other, is reported.
+
+### 11. CodeQL: `java/local-variable-is-never-read` in data objects' `equals()`
+
+- **What it reports:** "Variable '… `tmp0_other_with_cast`' is never read", at line 1 of 11 files: `OcrEngine`, `BackupManager`, `CartExporter`, `SelectionConversion`, `ConverterLaunch`, `Screen`, `FeesScreen`, `PreferenceScreen`, `ReceiptLanguagesScreen`, `TripChecklist`, `BackupViewModel`.
+- **Why the finding is wrong:** for a `data object` the Kotlin compiler generates `equals()`, which casts `other` to a temporary (`tmp0_other_with_cast`) and then has no properties to compare, so it never reads it. The variable exists only in the compiled code.
+- **Why it can't be fixed:** the only way to remove the generated `equals()` would be turning the data objects (sealed states, navigation keys, results) into plain objects, which changes their `toString()` and `equals()` for no reason but the finding.
+- **What is excluded:** each finding by rule, file, line 1 and a message naming `tmp0_other_with_cast`. An unread variable written in the source is still reported, in these files too.
+
+### 12. CodeQL: `java/reference-equality-of-boxed-types` on `TimelineChart`
+
+- **What it reports:** "Suspicious reference comparison of boxed numerical values" at `view/timeline/TimelineChart.kt`, `if (min == null || max == null || min == max) return`.
+- **Why the finding is wrong:** `min` and `max` are `Double?`, smart-cast to `Double` by the null checks before it. Kotlin's `==` compares values, never references, and for statically known `Double`s it is IEEE equality. The rule is written for Java's `==` on `Double` objects, and CodeQL applies it to this Kotlin comparison.
+- **Why it can't be fixed:** the comparison is already correct. Rewriting it only so the rule stops matching is a cosmetic workaround.
+- **What is excluded:** that one finding: the rule, that file, its line and its message. The step fails when the line moves, so the entry is checked whenever the function changes.
 
 ### What the exclusion does and doesn't cover
 
