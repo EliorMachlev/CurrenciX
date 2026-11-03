@@ -19,6 +19,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.time.Duration
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 // Receipt languages the user manages: added only when agreed to, kept for
 // good or until a time, and deleted when they say or when that time comes.
@@ -27,7 +28,13 @@ import java.time.Instant
 class OcrLanguagesTest {
     private val context = ApplicationProvider.getApplicationContext<Application>()
     private val settings get() = Database(context).receiptLanguages
-    private val now = Instant.parse("2026-11-01T10:00:00Z")
+
+    // The test's "now" is a month ahead of the real clock. The expiry run that
+    // keep() schedules waits from the real clock, so it stays pending while a
+    // test calls deleteExpired at this "now" itself; a fixed date ran it at
+    // once (and deleted the language first) as soon as the date had passed.
+    // Whole milliseconds, as stored.
+    private val now = Instant.now().plus(Duration.ofDays(30)).truncatedTo(ChronoUnit.MILLIS)
 
     @Before
     fun setUp() {
