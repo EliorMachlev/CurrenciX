@@ -213,7 +213,7 @@
     <string name="repin_summary_own">正在为 %2$d 个服务器中的 %1$d 个使用在此手机上获取的固定</string>
     <string name="repin_summary_running">正在检查服务器…</string>
     <string name="repin_prompt_title">重新固定证书？</string>
-    <string name="repin_prompt_message">应用将立即连接每个汇率服务器，此后只接受各服务器使用的证书颁发机构。请在你信任的网络上进行，例如家中的 Wi-Fi。</string>
+    <string name="repin_prompt_message">应用将立即连接你的数据提供方和备用提供方，此后只接受它们各自使用的证书颁发机构。其他提供方保留应用内置的固定。请在你信任的网络上进行，例如家中的 Wi-Fi。</string>
     <string name="repin_confirm">重新固定</string>
     <string name="restore_pins_title">使用内置固定</string>
     <string name="restore_pins_summary">忘记在此手机上获取的固定</string>

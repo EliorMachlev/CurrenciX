@@ -216,7 +216,7 @@
     <string name="repin_summary_own">Festingar teknar í þessum síma eru notaðar fyrir %1$d af %2$d þjónum</string>
     <string name="repin_summary_running">Athugar þjónana…</string>
     <string name="repin_prompt_title">Festa skilríkin aftur?</string>
-    <string name="repin_prompt_message">Forritið tengist nú hverjum gengisþjóni og tekur eftir það aðeins við þeim vottunaraðilum sem hver þeirra notar. Gerðu þetta á neti sem þú treystir, t.d. Wi-Fi heima.</string>
+    <string name="repin_prompt_message">Forritið tengist nú gagnaveitunni þinni og varaveitunni og tekur eftir það aðeins við þeim vottunaraðilum sem hvor þeirra notar. Aðrar veitur halda festingunum sem eru innbyggðar í forritið. Gerðu þetta á neti sem þú treystir, t.d. Wi-Fi heima.</string>
     <string name="repin_confirm">Festa aftur</string>
     <string name="restore_pins_title">Nota innbyggðar festingar</string>
     <string name="restore_pins_summary">Gleyma festingum teknum í þessum síma</string>

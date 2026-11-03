@@ -214,7 +214,7 @@
     <string name="repin_summary_own">Op deze telefoon genomen pins worden gebruikt voor %1$d van %2$d servers</string>
     <string name="repin_summary_running">Servers worden gecontroleerd…</string>
     <string name="repin_prompt_title">Certificaten opnieuw vastpinnen?</string>
-    <string name="repin_prompt_message">De app maakt nu verbinding met elke koersserver en accepteert daarna alleen de certificaatautoriteiten die elk ervan gebruikt. Doe dit op een netwerk dat je vertrouwt, zoals je wifi thuis.</string>
+    <string name="repin_prompt_message">De app maakt nu verbinding met je gegevensaanbieder en je reserveaanbieder en accepteert daarna alleen de certificaatautoriteiten die elk ervan gebruikt. Andere aanbieders houden de in de app ingebouwde pins. Doe dit op een netwerk dat je vertrouwt, zoals je wifi thuis.</string>
     <string name="repin_confirm">Opnieuw vastpinnen</string>
     <string name="restore_pins_title">Ingebouwde pins gebruiken</string>
     <string name="restore_pins_summary">Op deze telefoon genomen pins vergeten</string>

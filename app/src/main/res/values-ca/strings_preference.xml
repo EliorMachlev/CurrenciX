@@ -216,7 +216,7 @@
     <string name="repin_summary_own">S\'utilitzen fixacions preses en aquest telèfon per a %1$d de %2$d servidors</string>
     <string name="repin_summary_running">S\'estan comprovant els servidors…</string>
     <string name="repin_prompt_title">Vols tornar a fixar els certificats?</string>
-    <string name="repin_prompt_message">L\'aplicació es connectarà ara a cada servidor de tipus de canvi i a partir d\'aleshores només acceptarà les autoritats de certificació que utilitzi cadascun. Fes-ho en una xarxa de confiança, com la Wi-Fi de casa.</string>
+    <string name="repin_prompt_message">L\'aplicació es connectarà ara al teu proveïdor de dades i al proveïdor alternatiu, i a partir d\'aleshores només acceptarà les autoritats de certificació que utilitzi cadascun. Els altres proveïdors mantenen les fixacions integrades a l\'aplicació. Fes-ho en una xarxa de confiança, com la Wi-Fi de casa.</string>
     <string name="repin_confirm">Torna a fixar</string>
     <string name="restore_pins_title">Utilitza les fixacions integrades</string>
     <string name="restore_pins_summary">Oblida les fixacions preses en aquest telèfon</string>

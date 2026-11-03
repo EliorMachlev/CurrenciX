@@ -218,7 +218,7 @@
     <string name="repin_summary_own">Bruker låsinger tatt på denne telefonen for %1$d av %2$d servere</string>
     <string name="repin_summary_running">Sjekker serverne…</string>
     <string name="repin_prompt_title">Låse sertifikatene på nytt?</string>
-    <string name="repin_prompt_message">Appen kobler seg nå til hver kursserver og godtar deretter bare sertifikatutstederne hver av dem bruker. Gjør dette på et nettverk du stoler på, for eksempel Wi-Fi hjemme.</string>
+    <string name="repin_prompt_message">Appen kobler seg nå til dataleverandøren og reserveleverandøren din og godtar deretter bare sertifikatutstederne hver av dem bruker. Andre leverandører beholder låsingene som er innebygd i appen. Gjør dette på et nettverk du stoler på, for eksempel Wi-Fi hjemme.</string>
     <string name="repin_confirm">Lås på nytt</string>
     <string name="restore_pins_title">Bruk de innebygde låsingene</string>
     <string name="restore_pins_summary">Glem låsingene tatt på denne telefonen</string>

@@ -219,7 +219,7 @@
     <string name="repin_summary_own">Usando fixações tiradas neste celular para %1$d de %2$d servidores</string>
     <string name="repin_summary_running">Verificando os servidores…</string>
     <string name="repin_prompt_title">Fixar os certificados de novo?</string>
-    <string name="repin_prompt_message">O app vai se conectar agora a cada servidor de cotações e, a partir daí, aceitar só as autoridades certificadoras que cada um usa. Faça isso numa rede de confiança, como o Wi-Fi de casa.</string>
+    <string name="repin_prompt_message">O app vai se conectar agora ao seu provedor de dados e ao seu provedor reserva e, a partir daí, aceitar só as autoridades certificadoras que cada um usa. Os outros provedores mantêm as fixações integradas ao app. Faça isso numa rede de confiança, como o Wi-Fi de casa.</string>
     <string name="repin_confirm">Fixar de novo</string>
     <string name="restore_pins_title">Usar as fixações integradas</string>
     <string name="restore_pins_summary">Esquecer as fixações tiradas neste celular</string>

@@ -219,7 +219,7 @@
     <string name="repin_summary_own">تُستخدم تثبيتات أُخذت على هذا الهاتف لـ %1$d من %2$d خوادم</string>
     <string name="repin_summary_running">جارٍ فحص الخوادم…</string>
     <string name="repin_prompt_title">إعادة تثبيت الشهادات؟</string>
-    <string name="repin_prompt_message">سيتصل التطبيق الآن بكل خادم أسعار، ومن بعدها لن يقبل إلا جهات إصدار الشهادات التي يستخدمها كل منها. افعل ذلك على شبكة تثق بها، مثل شبكة Wi-Fi المنزلية.</string>
+    <string name="repin_prompt_message">سيتصل التطبيق الآن بمزوّد البيانات والمزوّد الاحتياطي، ومن بعدها لن يقبل إلا جهات إصدار الشهادات التي يستخدمها كل منهما. تحتفظ المزوّدات الأخرى بالتثبيتات المضمّنة في التطبيق. افعل ذلك على شبكة تثق بها، مثل شبكة Wi-Fi المنزلية.</string>
     <string name="repin_confirm">إعادة التثبيت</string>
     <string name="restore_pins_title">استخدام التثبيتات المضمّنة</string>
     <string name="restore_pins_summary">نسيان التثبيتات المأخوذة على هذا الهاتف</string>

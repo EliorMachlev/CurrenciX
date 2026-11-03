@@ -217,7 +217,7 @@
     <string name="repin_summary_own">Uzataj estas fiksoj prenitaj en ĉi tiu telefono por %1$d el %2$d serviloj</string>
     <string name="repin_summary_running">Kontrolado de la serviloj…</string>
     <string name="repin_prompt_title">Ĉu refiksi la atestilojn?</string>
-    <string name="repin_prompt_message">La aplikaĵo nun konektos al ĉiu kurza servilo kaj poste akceptos nur la atestilajn aŭtoritatojn, kiujn ĉiu uzas. Faru tion en reto, al kiu vi fidas, ekzemple via hejma Wi-Fi.</string>
+    <string name="repin_prompt_message">La aplikaĵo nun konektos al via datuma provizanto kaj via rezerva provizanto, kaj poste akceptos nur la atestilajn aŭtoritatojn, kiujn ĉiu uzas. Aliaj provizantoj gardas la fiksojn enkonstruitajn en la aplikaĵo. Faru tion en reto, al kiu vi fidas, ekzemple via hejma Wi-Fi.</string>
     <string name="repin_confirm">Refiksi</string>
     <string name="restore_pins_title">Uzi la enkonstruitajn fiksojn</string>
     <string name="restore_pins_summary">Forgesi la fiksojn prenitajn en ĉi tiu telefono</string>

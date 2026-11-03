@@ -11,7 +11,6 @@ import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
-import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.androidLanguageCode
 import com.eliormachlev.currencix.util.currentPins
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
@@ -162,20 +161,27 @@ class PreferenceViewModel(
     fun setCertificatePinningEnabled(enabled: Boolean) = db.privacy.certificatePinning.set(enabled)
 
     /**
-     * Re-pin: takes each server's pins as it serves them now, in place of the
-     * built-in ones; a server that doesn't answer keeps the pins it had.
+     * Re-pin: takes the pins of the main and fallback providers' servers as
+     * they serve them now, in place of the built-in ones. Only those two are
+     * contacted; every other server, and one that doesn't answer, keeps the
+     * pins it had.
      */
     fun repinCertificates() {
         if (!repinning.compareAndSet(expect = false, update = true)) return
         viewModelScope.launch {
             try {
-                val taken = currentPins(HttpClientProvider.allowedHosts)
+                val taken = currentPins(selectedProviderHosts())
                 db.privacy.certificatePins.update { it + taken }
             } finally {
                 repinning.value = false
             }
         }
     }
+
+    // The servers of the providers in use: the main one and the fallback.
+    private fun selectedProviderHosts(): Set<String> =
+        listOf(db.providers.apiProvider.get(), db.providers.fallbackProvider.get())
+            .flatMapTo(mutableSetOf()) { it.implementation.hosts }
 
     /** Back to the pins built into the app, for every server. */
     fun restoreBuiltInPins() = db.privacy.certificatePins.set(emptyMap())

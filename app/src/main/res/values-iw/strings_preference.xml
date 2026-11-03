@@ -217,7 +217,7 @@
     <string name="repin_summary_own">בשימוש הצמדות שנלקחו בטלפון הזה עבור %1$d מתוך %2$d שרתים</string>
     <string name="repin_summary_running">בודק את השרתים…</string>
     <string name="repin_prompt_title">להצמיד מחדש את האישורים?</string>
-    <string name="repin_prompt_message">האפליקציה תתחבר עכשיו לכל שרת שערים, ומאז תקבל רק את רשויות האישורים שכל אחד מהם משתמש בהן. כדאי לעשות זאת ברשת שסומכים עליה, כמו ה-Wi-Fi בבית.</string>
+    <string name="repin_prompt_message">האפליקציה תתחבר עכשיו לספק הנתונים ולספק הגיבוי שלך, ומאז תקבל רק את רשויות האישורים שכל אחד מהם משתמש בהן. שאר הספקים שומרים על ההצמדות המובנות באפליקציה. כדאי לעשות זאת ברשת שסומכים עליה, כמו ה-Wi-Fi בבית.</string>
     <string name="repin_confirm">הצמדה מחדש</string>
     <string name="restore_pins_title">שימוש בהצמדות המובנות</string>
     <string name="restore_pins_summary">שכחת ההצמדות שנלקחו בטלפון הזה</string>

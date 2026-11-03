@@ -217,7 +217,7 @@
     <string name="repin_summary_own">Používají se připnutí z tohoto telefonu pro %1$d z %2$d serverů</string>
     <string name="repin_summary_running">Kontrolují se servery…</string>
     <string name="repin_prompt_title">Znovu připnout certifikáty?</string>
-    <string name="repin_prompt_message">Aplikace se teď připojí ke každému serveru kurzů a od té chvíle bude přijímat jen certifikační autority, které každý z nich používá. Udělejte to v síti, které důvěřujete, třeba na domácí Wi-Fi.</string>
+    <string name="repin_prompt_message">Aplikace se teď připojí k vašemu poskytovateli dat a k záložnímu poskytovateli a od té chvíle bude přijímat jen certifikační autority, které každý z nich používá. Ostatní poskytovatelé si ponechají připnutí vestavěná v aplikaci. Udělejte to v síti, které důvěřujete, třeba na domácí Wi-Fi.</string>
     <string name="repin_confirm">Připnout znovu</string>
     <string name="restore_pins_title">Použít vestavěná připnutí</string>
     <string name="restore_pins_summary">Zapomenout připnutí z tohoto telefonu</string>

@@ -215,7 +215,7 @@
     <string name="repin_summary_own">%2$d sunucudan %1$d tanesi için bu telefonda alınan sabitlemeler kullanılıyor</string>
     <string name="repin_summary_running">Sunucular denetleniyor…</string>
     <string name="repin_prompt_title">Sertifikalar yeniden sabitlensin mi?</string>
-    <string name="repin_prompt_message">Uygulama şimdi her kur sunucusuna bağlanacak ve bundan sonra yalnızca her birinin kullandığı sertifika yetkililerini kabul edecek. Bunu evdeki Wi-Fi gibi güvendiğiniz bir ağda yapın.</string>
+    <string name="repin_prompt_message">Uygulama şimdi veri sağlayıcınıza ve yedek sağlayıcınıza bağlanacak ve bundan sonra yalnızca her birinin kullandığı sertifika yetkililerini kabul edecek. Diğer sağlayıcılar uygulamaya yerleşik sabitlemeleri korur. Bunu evdeki Wi-Fi gibi güvendiğiniz bir ağda yapın.</string>
     <string name="repin_confirm">Yeniden sabitle</string>
     <string name="restore_pins_title">Yerleşik sabitlemeleri kullan</string>
     <string name="restore_pins_summary">Bu telefonda alınan sabitlemeleri unut</string>

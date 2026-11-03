@@ -216,7 +216,7 @@
     <string name="repin_summary_own">Använder fästningar tagna på den här telefonen för %1$d av %2$d servrar</string>
     <string name="repin_summary_running">Kontrollerar servrarna…</string>
     <string name="repin_prompt_title">Fästa om certifikaten?</string>
-    <string name="repin_prompt_message">Appen ansluter nu till varje kursserver och accepterar därefter bara de certifikatutfärdare som var och en använder. Gör det på ett nätverk du litar på, till exempel ditt Wi-Fi hemma.</string>
+    <string name="repin_prompt_message">Appen ansluter nu till din dataleverantör och din reservleverantör och accepterar därefter bara de certifikatutfärdare som var och en använder. Andra leverantörer behåller fästningarna som är inbyggda i appen. Gör det på ett nätverk du litar på, till exempel ditt Wi-Fi hemma.</string>
     <string name="repin_confirm">Fäst om</string>
     <string name="restore_pins_title">Använd de inbyggda fästningarna</string>
     <string name="restore_pins_summary">Glöm fästningarna tagna på den här telefonen</string>
