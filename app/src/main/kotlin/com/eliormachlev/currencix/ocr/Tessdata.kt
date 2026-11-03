@@ -65,9 +65,10 @@ object Tessdata {
                 out.write(buffer, 0, read)
             }
         }
-        val matches = digest.digest().toHexString() == language.sha256
-        if (matches) part.renameTo(target) else part.delete()
-        return matches
+        // Kept only when the checksum matches and the file is in place.
+        val kept = digest.digest().toHexString() == language.sha256 && part.renameTo(target)
+        if (!kept) part.delete()
+        return kept
     }
 
     /**
