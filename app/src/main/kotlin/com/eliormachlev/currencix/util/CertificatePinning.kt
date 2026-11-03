@@ -59,7 +59,7 @@ internal fun pinnerFor(
         .Builder()
         .apply {
             (BUILT_IN_PINS + userPins).forEach { (host, pins) ->
-                if (pins.isNotEmpty()) add("$SUBDOMAINS$host", *pins.toTypedArray())
+                pins.forEach { pin -> add("$SUBDOMAINS$host", pin) }
             }
         }.build()
 }
