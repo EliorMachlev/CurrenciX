@@ -7,8 +7,12 @@ import com.eliormachlev.currencix.model.Rate
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 import java.math.BigDecimal
-import java.math.MathContext
 import java.time.LocalDate
+
+// The day's list, one currency in it, and its code.
+private const val RATES_TAG = "ValCurs"
+private const val CURRENCY_TAG = "Valute"
+private const val CODE_TAG = "CharCode"
 
 class BankRossiiRatesXmlParser {
     private var date: LocalDate? = null
@@ -26,7 +30,7 @@ class BankRossiiRatesXmlParser {
             tagname = parser.name ?: tagname
             when (eventType) {
                 XmlPullParser.START_TAG -> {
-                    if (tagname == "ValCurs") {
+                    if (tagname == RATES_TAG) {
                         date =
                             parser.bankRossiiDate()
                     }
@@ -34,22 +38,18 @@ class BankRossiiRatesXmlParser {
 
                 XmlPullParser.TEXT -> {
                     when (tagname) {
-                        "CharCode" -> {
+                        CODE_TAG -> {
                             currency = Currency.fromString(parser.text)
                         }
 
-                        "VunitRate" -> {
-                            value =
-                                BigDecimal.ONE.divide(
-                                    parser.text.replace(',', '.').toBigDecimal(),
-                                    MathContext.DECIMAL128,
-                                )
+                        BANK_ROSSII_RATE_TAG -> {
+                            value = bankRossiiRate(parser.text)
                         }
                     }
                 }
 
                 XmlPullParser.END_TAG -> {
-                    if (tagname == "Valute") {
+                    if (tagname == CURRENCY_TAG) {
                         recordRate(currency, value)
                         currency = null
                         value = null

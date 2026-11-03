@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
 import java.lang.reflect.Type
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
@@ -90,6 +91,19 @@ internal const val BANK_OF_CANADA_DATE = "d"
 internal const val NORGES_BANK_SERIES_TAG = "Series"
 internal const val NORGES_BANK_TIME_PERIOD = "TIME_PERIOD"
 
+// Norges Bank's observation element and the attributes the parsers read off it and its series.
+internal const val NORGES_BANK_OBSERVATION_TAG = "Obs"
+internal const val NORGES_BANK_BASE_CURRENCY = "BASE_CUR"
+internal const val NORGES_BANK_VALUE = "OBS_VALUE"
+private const val NORGES_BANK_UNIT_MULTIPLIER = "UNIT_MULT"
+
+// Bank Rossii's rate element: roubles per one unit of the currency, a comma as the decimal point.
+internal const val BANK_ROSSII_RATE_TAG = "VunitRate"
+private const val BANK_ROSSII_DATE = "Date"
+
+// UNIT_MULT is a power of ten.
+private const val DECIMAL_BASE = 10.0
+
 /**
  * Reads the whole current object (Retrofit rejects a response its adapter
  * left partly unread) and returns the first non-null answer of [onField],
@@ -140,7 +154,8 @@ internal val BANK_ROSSII_DATE_FORMATTER: DateTimeFormatter =
     DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
 /** The current element's Date attribute, as Bank Rossii writes it (dd.MM.yyyy). */
-internal fun XmlPullParser.bankRossiiDate(): LocalDate = LocalDate.parse(getAttributeValue(null, "Date"), BANK_ROSSII_DATE_FORMATTER)
+internal fun XmlPullParser.bankRossiiDate(): LocalDate =
+    LocalDate.parse(getAttributeValue(null, BANK_ROSSII_DATE), BANK_ROSSII_DATE_FORMATTER)
 
 // dd/MM/yyyy: InforEuro's timeline dateStart/dateEnd, and Bank Rossii's
 // date query parameters.
@@ -168,9 +183,19 @@ internal fun newXmlPullParser(inputStream: InputStream): XmlPullParser =
 // Norges Bank encodes the currency's decimal scale as UNIT_MULT (an integer
 // exponent). Missing/invalid values fall back to 1 (10^0).
 internal fun XmlPullParser.norgesBankUnitMultiplier(): Int =
-    getAttributeValue(null, "UNIT_MULT")
+    getAttributeValue(null, NORGES_BANK_UNIT_MULTIPLIER)
         ?.toIntOrNull()
-        ?.let { 10.0.pow(it).toInt() } ?: 1
+        ?.let { DECIMAL_BASE.pow(it).toInt() } ?: 1
+
+/** The series' base currency (Norges Bank's BASE_CUR), when the app knows it. */
+internal fun XmlPullParser.norgesBankBaseCurrency(): Currency? = Currency.fromString(getAttributeValue(null, NORGES_BANK_BASE_CURRENCY))
+
+/** The observation's value and date (Norges Bank's OBS_VALUE and TIME_PERIOD). */
+internal fun XmlPullParser.norgesBankObservation(): Pair<LocalDate, BigDecimal?> =
+    LocalDate.parse(getAttributeValue(null, NORGES_BANK_TIME_PERIOD)) to getAttributeValue(null, NORGES_BANK_VALUE).toBigDecimalOrNull()
+
+/** Bank Rossii's rate text ("12,3456" roubles for one unit) as the currency per rouble. */
+internal fun bankRossiiRate(text: String): BigDecimal = BigDecimal.ONE.divide(text.replace(',', '.').toBigDecimal(), MathContext.DECIMAL128)
 
 // BankOfCanada quotes series names as "FX<iso>CAD" (e.g. "FXUSDCAD"); the
 // currency ISO-4217 alpha code lives at indices [2, 5). Shared by the rates

@@ -31,9 +31,10 @@ TIMEOUT_SECONDS = 30
 MAX_LABEL = 100
 TRUST_STORE = pathlib.Path("/etc/ssl/certs")
 PEM = re.compile(r"-----BEGIN CERTIFICATE-----.+?-----END CERTIFICATE-----", re.DOTALL)
+CONSTANT = re.compile(r'^private const val ([A-Z0-9_]+) = "(sha256/[A-Za-z0-9+/=]+)"', re.MULTILINE)
 HOST_ENTRY = re.compile(r'^\s*"(?P<host>[a-z0-9.-]+)" to', re.MULTILINE)
 PINS_START = "    mapOf(\n"
-HEADER = """package com.eliormachlev.currencix.util
+HEADER_COMMENT = """package com.eliormachlev.currencix.util
 
 // The public keys of the certificate authorities each host's certificate
 // chain runs through: its intermediates and their root, never the server's
@@ -42,8 +43,8 @@ HEADER = """package com.eliormachlev.currencix.util
 // Written by .github/scripts/certificate-pins.py ("Update certificate pins"
 // workflow, which also checks them weekly): add a new host by hand with no
 // pins, then run the workflow to fill it in.
-internal val BUILT_IN_PINS: Map<String, Set<String>> =
 """
+DECLARATION = "internal val BUILT_IN_PINS: Map<String, Set<String>> =\n"
 
 
 def openssl(*args: str, data: bytes | None = None) -> bytes:
@@ -127,20 +128,37 @@ def hosts_in(path: pathlib.Path) -> list[str]:
 
 
 def pins_in(path: pathlib.Path, host: str) -> set[str]:
-    # The pins between this host's entry and the next one (comments may hold parentheses).
+    # The pins named between this host's entry and the next one, through their constants.
     text = path.read_text()
+    constants = dict(CONSTANT.findall(text))
     entries = list(HOST_ENTRY.finditer(text))
     index = next(i for i, entry in enumerate(entries) if entry["host"] == host)
     end = entries[index + 1].start() if index + 1 < len(entries) else len(text)
-    return set(re.findall(r'"(sha256/[A-Za-z0-9+/=]+)"', text[entries[index].end():end]))
+    block = text[entries[index].end():end]
+    return {constants[name] for name in re.findall(r"\b([A-Z][A-Z0-9_]+),", block) if name in constants}
+
+
+def constant_name(label: str) -> str:
+    # "GTS Root R4 (Google Trust Services LLC)" -> GTS_ROOT_R4
+    return re.sub(r"[^A-Z0-9]+", "_", label.split(" (")[0].upper()).strip("_")
 
 
 def kotlin(pins: dict[str, dict[str, str]]) -> str:
+    # One constant per CA key, named after the CA, then each host's set of them:
+    # a CA several hosts use (GTS, Let's Encrypt) is written once.
+    names: dict[str, str] = {}
+    for pin, label in sorted({pin: label for host in pins.values() for pin, label in host.items()}.items(), key=lambda i: i[1]):
+        name = constant_name(label)
+        while name in names.values():
+            name += "_2"
+        names[pin] = name
+    constants = "".join(f'// {label}\nprivate const val {names[pin]} = "{pin}"\n\n' for pin, label in
+                        sorted({p: l for h in pins.values() for p, l in h.items()}.items(), key=lambda i: names[i[0]]))
     entries = []
     for host in sorted(pins):
-        lines = "".join(f'                // {name}\n                "{pin}",\n' for pin, name in sorted(pins[host].items(), key=lambda item: item[1]))
+        lines = "".join(f"                {names[pin]},\n" for pin in sorted(pins[host], key=lambda p: names[p]))
         entries.append(f'        "{host}" to\n            setOf(\n{lines}            ),\n')
-    return HEADER + PINS_START + "".join(entries) + "    )\n"
+    return HEADER_COMMENT + "\n" + constants + DECLARATION + PINS_START + "".join(entries) + "    )\n"
 
 
 def main(mode: str, file: str) -> None:
