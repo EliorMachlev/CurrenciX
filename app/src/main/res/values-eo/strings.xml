@@ -361,4 +361,5 @@
     <string name="quick_amount_label">Sumo</string>
     <string name="quick_amount_taken">Jam unu el la sumoj</string>
     <string name="quick_amount_note">Uzata por %1$s en ĉiu paro.</string>
+    <string name="error_certificate_pinning">La atestilo de la servilo ne estas iu el tiuj, kiujn la aplikaĵo fiksis por ĝi. Se la provizanto ŝanĝis ĝin, refiksu en Agordoj aŭ malŝaltu la fiksadon de atestiloj.</string>
 </resources>

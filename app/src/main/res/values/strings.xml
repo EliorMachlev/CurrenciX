@@ -383,4 +383,5 @@
     <string name="quick_amount_label">Amount</string>
     <string name="quick_amount_taken">Already one of the amounts</string>
     <string name="quick_amount_note">Used for %1$s in every pair.</string>
+    <string name="error_certificate_pinning">The server\'s certificate isn\'t one the app has pinned for it. If the provider changed it, re-pin in Settings, or turn certificate pinning off.</string>
 </resources>

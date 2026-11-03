@@ -362,4 +362,5 @@
     <string name="quick_amount_label">Beløp</string>
     <string name="quick_amount_taken">Er allerede ett av beløpene</string>
     <string name="quick_amount_note">Brukes for %1$s i alle par.</string>
+    <string name="error_certificate_pinning">Serverens sertifikat er ikke ett av dem appen har låst for den. Hvis leverandøren har byttet det, lås på nytt i Innstillinger, eller slå av sertifikatlåsing.</string>
 </resources>

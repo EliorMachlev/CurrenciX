@@ -214,4 +214,16 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API Key</string>
     <string name="api_all_rates_today_api_key_message">To use this Source, you need your own API key.\n\nCreate a free account at https://allratestoday.com, then copy your key (it starts with art_live_) from your profile page and enter it here.\n\nThe free plan allows 300 requests in total, ever. Each refresh and each chart range uses one.</string>
     <string name="provider_cadence_every_minute">Updates about every minute</string>
+    <string name="settings_advanced_section">Advanced</string>
+    <string name="certificate_pinning_title">Certificate pinning</string>
+    <string name="certificate_pinning_summary">Connect to rate servers only through the certificate authorities pinned for them. Turn off only if a server changed its certificate and rates stop loading.</string>
+    <string name="repin_title">Re-pin to current certificates</string>
+    <string name="repin_summary_builtin">Using the pins built into the app</string>
+    <string name="repin_summary_own">Using pins taken on this phone for %1$d of %2$d servers</string>
+    <string name="repin_summary_running">Checking the servers…</string>
+    <string name="repin_prompt_title">Re-pin certificates?</string>
+    <string name="repin_prompt_message">The app connects to every rate server now and from then on accepts only the certificate authorities each one uses. Do this on a network you trust, such as your home Wi-Fi.</string>
+    <string name="repin_confirm">Re-pin</string>
+    <string name="restore_pins_title">Use the built-in pins</string>
+    <string name="restore_pins_summary">Forget the pins taken on this phone</string>
 </resources>

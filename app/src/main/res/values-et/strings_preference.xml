@@ -207,4 +207,16 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-võti</string>
     <string name="api_all_rates_today_api_key_message">Selle allika kasutamiseks vajad oma API-võtit.\n\nLoo tasuta konto aadressil https://allratestoday.com, kopeeri oma võti (algab art_live_) profiililehelt ja sisesta see siia.\n\nTasuta pakett lubab kokku 300 päringut, ühekordselt. Iga värskendus ja iga graafiku vahemik kasutab ühe.</string>
     <string name="provider_cadence_every_minute">Uuendatakse umbes iga minut</string>
+    <string name="settings_advanced_section">Täpsemad</string>
+    <string name="certificate_pinning_title">Sertifikaatide kinnitamine</string>
+    <string name="certificate_pinning_summary">Ühendu kursiserveritega ainult nende jaoks kinnitatud sertifitseerimisasutuste kaudu. Lülita välja ainult siis, kui server on sertifikaati vahetanud ja kursid ei laadi.</string>
+    <string name="repin_title">Kinnita uuesti praegustele sertifikaatidele</string>
+    <string name="repin_summary_builtin">Kasutusel on rakendusse sisseehitatud kinnitused</string>
+    <string name="repin_summary_own">Kasutusel on selles telefonis võetud kinnitused %1$d serverile %2$d-st</string>
+    <string name="repin_summary_running">Servereid kontrollitakse…</string>
+    <string name="repin_prompt_title">Kas kinnitada sertifikaadid uuesti?</string>
+    <string name="repin_prompt_message">Rakendus loob nüüd ühenduse iga kursiserveriga ja aktsepteerib edaspidi ainult neid sertifitseerimisasutusi, mida igaüks neist kasutab. Tee seda võrgus, mida usaldad, näiteks kodusel Wi-Fi-l.</string>
+    <string name="repin_confirm">Kinnita uuesti</string>
+    <string name="restore_pins_title">Kasuta sisseehitatud kinnitusi</string>
+    <string name="restore_pins_summary">Unusta selles telefonis võetud kinnitused</string>
 </resources>

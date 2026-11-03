@@ -361,4 +361,5 @@
     <string name="quick_amount_label">পরিমাণ</string>
     <string name="quick_amount_taken">এটি ইতিমধ্যেই পরিমাণগুলোর একটি</string>
     <string name="quick_amount_note">প্রতিটি জোড়ায় %1$s-এর জন্য ব্যবহৃত হবে।</string>
+    <string name="error_certificate_pinning">সার্ভারের সার্টিফিকেটটি অ্যাপ এর জন্য পিন করা কোনোটি নয়। প্রদানকারী এটি বদলালে সেটিংসে আবার পিন করুন, অথবা সার্টিফিকেট পিনিং বন্ধ করুন।</string>
 </resources>

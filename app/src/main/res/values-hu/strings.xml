@@ -361,4 +361,5 @@
     <string name="quick_amount_label">Összeg</string>
     <string name="quick_amount_taken">Már szerepel az összegek között</string>
     <string name="quick_amount_note">Minden párban ezt használja: %1$s.</string>
+    <string name="error_certificate_pinning">A szerver tanúsítványa nem tartozik azok közé, amelyeket az alkalmazás rögzített hozzá. Ha a szolgáltató lecserélte, rögzítse újra a Beállításokban, vagy kapcsolja ki a tanúsítványrögzítést.</string>
 </resources>

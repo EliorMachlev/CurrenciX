@@ -37,6 +37,7 @@ import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.view.alert.RateAlertsSheet
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.compose.rememberLinkedText
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
@@ -67,6 +68,9 @@ internal sealed interface OpenDialog {
     data object RateAlerts : OpenDialog
 
     data object AutoRefreshInterval : OpenDialog
+
+    /** Re-pin: asked first, since it trusts whatever the network serves now. */
+    data object Repin : OpenDialog
 }
 
 /**
@@ -229,6 +233,19 @@ private fun PreferenceDialogsHost(
 
         OpenDialog.RateAlerts -> {
             RateAlertsSheet(onDismiss = dismiss)
+        }
+
+        OpenDialog.Repin -> {
+            LedgerConfirmSheet(
+                title = stringResource(R.string.repin_prompt_title),
+                message = stringResource(R.string.repin_prompt_message),
+                confirmLabel = stringResource(R.string.repin_confirm),
+                onConfirm = {
+                    viewModel.repinCertificates()
+                    dismiss()
+                },
+                onDismiss = dismiss,
+            )
         }
 
         is OpenDialog.ApiKey -> {

@@ -207,4 +207,16 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API കീ</string>
     <string name="api_all_rates_today_api_key_message">ഈ ഉറവിടം ഉപയോഗിക്കാൻ നിങ്ങൾക്ക് സ്വന്തം API കീ വേണം.\n\nhttps://allratestoday.com ൽ സൗജന്യ അക്കൗണ്ട് സൃഷ്ടിക്കുക, തുടർന്ന് പ്രൊഫൈൽ പേജിൽ നിന്ന് നിങ്ങളുടെ കീ (art_live_ ൽ തുടങ്ങുന്നത്) പകർത്തി ഇവിടെ നൽകുക.\n\nസൗജന്യ പ്ലാനിൽ ആകെ 300 അഭ്യർത്ഥനകൾ, ഒരിക്കൽ മാത്രം. ഓരോ പുതുക്കലും ഓരോ ചാർട്ട് കാലയളവും ഒന്ന് ഉപയോഗിക്കുന്നു.</string>
     <string name="provider_cadence_every_minute">ഏകദേശം ഓരോ മിനിറ്റിലും പുതുക്കുന്നു</string>
+    <string name="settings_advanced_section">വിപുലമായത്</string>
+    <string name="certificate_pinning_title">സർട്ടിഫിക്കറ്റ് പിന്നിംഗ്</string>
+    <string name="certificate_pinning_summary">നിരക്ക് സെർവറുകളിലേക്ക് അവയ്ക്കായി പിൻ ചെയ്ത സർട്ടിഫിക്കറ്റ് അതോറിറ്റികളിലൂടെ മാത്രം കണക്റ്റ് ചെയ്യുക. ഒരു സെർവർ സർട്ടിഫിക്കറ്റ് മാറ്റി നിരക്കുകൾ ലോഡ് ആകാതായാൽ മാത്രം ഓഫാക്കുക.</string>
+    <string name="repin_title">നിലവിലെ സർട്ടിഫിക്കറ്റുകളിലേക്ക് വീണ്ടും പിൻ ചെയ്യുക</string>
+    <string name="repin_summary_builtin">ആപ്പിൽ ഉൾപ്പെടുത്തിയ പിന്നുകൾ ഉപയോഗിക്കുന്നു</string>
+    <string name="repin_summary_own">%2$d സെർവറുകളിൽ %1$d എണ്ണത്തിന് ഈ ഫോണിൽ എടുത്ത പിന്നുകൾ ഉപയോഗിക്കുന്നു</string>
+    <string name="repin_summary_running">സെർവറുകൾ പരിശോധിക്കുന്നു…</string>
+    <string name="repin_prompt_title">സർട്ടിഫിക്കറ്റുകൾ വീണ്ടും പിൻ ചെയ്യണോ?</string>
+    <string name="repin_prompt_message">ആപ്പ് ഇപ്പോൾ ഓരോ നിരക്ക് സെർവറുമായും കണക്റ്റ് ചെയ്യും, തുടർന്ന് ഓരോന്നും ഉപയോഗിക്കുന്ന സർട്ടിഫിക്കറ്റ് അതോറിറ്റികളെ മാത്രം സ്വീകരിക്കും. വീട്ടിലെ Wi-Fi പോലെ നിങ്ങൾ വിശ്വസിക്കുന്ന നെറ്റ്‌വർക്കിൽ ഇത് ചെയ്യുക.</string>
+    <string name="repin_confirm">വീണ്ടും പിൻ ചെയ്യുക</string>
+    <string name="restore_pins_title">ഉൾപ്പെടുത്തിയ പിന്നുകൾ ഉപയോഗിക്കുക</string>
+    <string name="restore_pins_summary">ഈ ഫോണിൽ എടുത്ത പിന്നുകൾ മറക്കുക</string>
 </resources>

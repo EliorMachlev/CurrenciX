@@ -208,4 +208,16 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API ključ</string>
     <string name="api_all_rates_today_api_key_message">Za korištenje ovog izvora potreban vam je vlastiti API ključ.\n\nIzradite besplatni račun na https://allratestoday.com, kopirajte ključ (počinje s art_live_) sa stranice profila i unesite ga ovdje.\n\nBesplatni plan dopušta ukupno 300 zahtjeva, jednokratno. Svako osvježavanje i svako razdoblje grafikona troši jedan.</string>
     <string name="provider_cadence_every_minute">Ažurira se otprilike svake minute</string>
+    <string name="settings_advanced_section">Napredno</string>
+    <string name="certificate_pinning_title">Prikvačivanje certifikata</string>
+    <string name="certificate_pinning_summary">Spajaj se na poslužitelje tečajeva samo preko certifikacijskih tijela prikvačenih za njih. Isključi samo ako je poslužitelj promijenio certifikat i tečajevi se prestanu učitavati.</string>
+    <string name="repin_title">Ponovno prikvači trenutačne certifikate</string>
+    <string name="repin_summary_builtin">Koriste se prikvačivanja ugrađena u aplikaciju</string>
+    <string name="repin_summary_own">Koriste se prikvačivanja s ovog telefona za %1$d od %2$d poslužitelja</string>
+    <string name="repin_summary_running">Provjeravaju se poslužitelji…</string>
+    <string name="repin_prompt_title">Ponovno prikvačiti certifikate?</string>
+    <string name="repin_prompt_message">Aplikacija će se sada spojiti na svaki poslužitelj tečajeva i nakon toga prihvaćati samo certifikacijska tijela koja svaki od njih koristi. Učini to na mreži kojoj vjeruješ, npr. kućnom Wi-Fiju.</string>
+    <string name="repin_confirm">Ponovno prikvači</string>
+    <string name="restore_pins_title">Koristi ugrađena prikvačivanja</string>
+    <string name="restore_pins_summary">Zaboravi prikvačivanja s ovog telefona</string>
 </resources>

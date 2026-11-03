@@ -209,4 +209,16 @@
     <string name="api_all_rates_today_api_key_title">API-ŝlosilo de AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Por uzi ĉi tiun fonton, vi bezonas vian propran API-ŝlosilon.\n\nKreu senpagan konton ĉe https://allratestoday.com, kopiu vian ŝlosilon (ĝi komenciĝas per art_live_) el via profilpaĝo kaj enigu ĝin ĉi tie.\n\nLa senpaga plano permesas entute 300 petojn, por ĉiam. Ĉiu aktualigo kaj ĉiu grafika periodo uzas unu.</string>
     <string name="provider_cadence_every_minute">Ĝisdatigata ĉirkaŭ ĉiuminute</string>
+    <string name="settings_advanced_section">Altnivela</string>
+    <string name="certificate_pinning_title">Fiksado de atestiloj</string>
+    <string name="certificate_pinning_summary">Konekti al kurzaj serviloj nur per la atestilaj aŭtoritatoj fiksitaj por ili. Malŝaltu nur se servilo ŝanĝis sian atestilon kaj la kurzoj ne plu ŝargiĝas.</string>
+    <string name="repin_title">Refiksi al la nunaj atestiloj</string>
+    <string name="repin_summary_builtin">Uzataj estas la fiksoj enkonstruitaj en la aplikaĵo</string>
+    <string name="repin_summary_own">Uzataj estas fiksoj prenitaj en ĉi tiu telefono por %1$d el %2$d serviloj</string>
+    <string name="repin_summary_running">Kontrolado de la serviloj…</string>
+    <string name="repin_prompt_title">Ĉu refiksi la atestilojn?</string>
+    <string name="repin_prompt_message">La aplikaĵo nun konektos al ĉiu kurza servilo kaj poste akceptos nur la atestilajn aŭtoritatojn, kiujn ĉiu uzas. Faru tion en reto, al kiu vi fidas, ekzemple via hejma Wi-Fi.</string>
+    <string name="repin_confirm">Refiksi</string>
+    <string name="restore_pins_title">Uzi la enkonstruitajn fiksojn</string>
+    <string name="restore_pins_summary">Forgesi la fiksojn prenitajn en ĉi tiu telefono</string>
 </resources>

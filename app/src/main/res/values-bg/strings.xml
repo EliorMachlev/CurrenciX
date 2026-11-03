@@ -361,4 +361,5 @@
     <string name="quick_amount_label">Сума</string>
     <string name="quick_amount_taken">Вече е една от сумите</string>
     <string name="quick_amount_note">Използва се за %1$s във всяка двойка.</string>
+    <string name="error_certificate_pinning">Сертификатът на сървъра не е от закачените за него в приложението. Ако доставчикът го е сменил, закачете отново в Настройки или изключете закачането на сертификати.</string>
 </resources>

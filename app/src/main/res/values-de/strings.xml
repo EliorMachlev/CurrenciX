@@ -360,4 +360,5 @@
     <string name="quick_amount_label">Betrag</string>
     <string name="quick_amount_taken">Bereits einer der Beträge</string>
     <string name="quick_amount_note">Gilt für %1$s in jedem Paar.</string>
+    <string name="error_certificate_pinning">Das Zertifikat des Servers gehört zu keinem der Pins, die die App für ihn hat. Falls der Anbieter es gewechselt hat, in den Einstellungen neu pinnen oder das Zertifikat-Pinning ausschalten.</string>
 </resources>

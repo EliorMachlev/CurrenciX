@@ -208,4 +208,16 @@
     <string name="api_all_rates_today_api_key_title">Kunci API AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Untuk menggunakan sumber ini, Anda memerlukan kunci API sendiri.\n\nBuat akun gratis di https://allratestoday.com, lalu salin kunci Anda (diawali art_live_) dari halaman profil dan masukkan di sini.\n\nPaket gratis mengizinkan total 300 permintaan, selamanya. Setiap pembaruan dan setiap rentang grafik memakai satu.</string>
     <string name="provider_cadence_every_minute">Diperbarui kira-kira setiap menit</string>
+    <string name="settings_advanced_section">Lanjutan</string>
+    <string name="certificate_pinning_title">Penyematan sertifikat</string>
+    <string name="certificate_pinning_summary">Hubungkan ke server kurs hanya melalui otoritas sertifikat yang disematkan untuknya. Matikan hanya jika server mengganti sertifikatnya dan kurs berhenti dimuat.</string>
+    <string name="repin_title">Sematkan ulang ke sertifikat saat ini</string>
+    <string name="repin_summary_builtin">Menggunakan sematan bawaan aplikasi</string>
+    <string name="repin_summary_own">Menggunakan sematan yang diambil di ponsel ini untuk %1$d dari %2$d server</string>
+    <string name="repin_summary_running">Memeriksa server…</string>
+    <string name="repin_prompt_title">Sematkan ulang sertifikat?</string>
+    <string name="repin_prompt_message">Aplikasi akan terhubung ke setiap server kurs sekarang dan setelahnya hanya menerima otoritas sertifikat yang digunakan masing-masing. Lakukan di jaringan yang Anda percayai, seperti Wi-Fi rumah.</string>
+    <string name="repin_confirm">Sematkan ulang</string>
+    <string name="restore_pins_title">Gunakan sematan bawaan</string>
+    <string name="restore_pins_summary">Lupakan sematan yang diambil di ponsel ini</string>
 </resources>

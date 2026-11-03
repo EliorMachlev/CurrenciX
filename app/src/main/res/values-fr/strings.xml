@@ -365,4 +365,5 @@
     <string name="quick_amount_label">Montant</string>
     <string name="quick_amount_taken">Fait déjà partie des montants</string>
     <string name="quick_amount_note">Utilisé pour %1$s dans toutes les paires.</string>
+    <string name="error_certificate_pinning">Le certificat du serveur ne fait pas partie de ceux que l\'application a épinglés pour lui. Si le fournisseur l\'a changé, réépinglez dans les Paramètres ou désactivez l\'épinglage des certificats.</string>
 </resources>

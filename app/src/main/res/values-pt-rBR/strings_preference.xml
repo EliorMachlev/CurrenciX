@@ -211,4 +211,16 @@
     <string name="api_all_rates_today_api_key_title">Chave de API do AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Para usar esta fonte, você precisa da sua própria chave de API.\n\nCrie uma conta gratuita em https://allratestoday.com, copie sua chave (ela começa com art_live_) na página do seu perfil e insira-a aqui.\n\nO plano gratuito permite 300 solicitações no total, uma única vez. Cada atualização e cada período do gráfico usa uma.</string>
     <string name="provider_cadence_every_minute">Atualizado mais ou menos a cada minuto</string>
+    <string name="settings_advanced_section">Avançado</string>
+    <string name="certificate_pinning_title">Fixação de certificados</string>
+    <string name="certificate_pinning_summary">Conectar aos servidores de cotações apenas pelas autoridades certificadoras fixadas para cada um. Desative somente se um servidor trocou o certificado e as cotações pararam de carregar.</string>
+    <string name="repin_title">Fixar de novo nos certificados atuais</string>
+    <string name="repin_summary_builtin">Usando as fixações integradas ao app</string>
+    <string name="repin_summary_own">Usando fixações tiradas neste celular para %1$d de %2$d servidores</string>
+    <string name="repin_summary_running">Verificando os servidores…</string>
+    <string name="repin_prompt_title">Fixar os certificados de novo?</string>
+    <string name="repin_prompt_message">O app vai se conectar agora a cada servidor de cotações e, a partir daí, aceitar só as autoridades certificadoras que cada um usa. Faça isso numa rede de confiança, como o Wi-Fi de casa.</string>
+    <string name="repin_confirm">Fixar de novo</string>
+    <string name="restore_pins_title">Usar as fixações integradas</string>
+    <string name="restore_pins_summary">Esquecer as fixações tiradas neste celular</string>
 </resources>

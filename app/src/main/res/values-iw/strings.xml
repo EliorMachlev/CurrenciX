@@ -364,4 +364,5 @@
     <string name="quick_amount_label">סכום</string>
     <string name="quick_amount_taken">כבר אחד מהסכומים</string>
     <string name="quick_amount_note">ישמש עבור %1$s בכל צמד.</string>
+    <string name="error_certificate_pinning">האישור של השרת אינו אחד מאלה שהאפליקציה הצמידה לו. אם הספק החליף אותו, יש להצמיד מחדש בהגדרות או לכבות את הצמדת האישורים.</string>
 </resources>

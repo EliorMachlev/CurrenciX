@@ -367,4 +367,5 @@
     <string name="quick_amount_label">Kwota</string>
     <string name="quick_amount_taken">To już jedna z kwot</string>
     <string name="quick_amount_note">Używane dla %1$s w każdej parze.</string>
+    <string name="error_certificate_pinning">Certyfikat serwera nie jest żadnym z tych, które aplikacja przypięła dla niego. Jeśli dostawca go zmienił, przypnij ponownie w Ustawieniach lub wyłącz przypinanie certyfikatów.</string>
 </resources>

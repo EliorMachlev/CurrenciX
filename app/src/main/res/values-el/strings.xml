@@ -361,4 +361,5 @@
     <string name="quick_amount_label">Ποσό</string>
     <string name="quick_amount_taken">Είναι ήδη ένα από τα ποσά</string>
     <string name="quick_amount_note">Χρησιμοποιείται για %1$s σε κάθε ζεύγος.</string>
+    <string name="error_certificate_pinning">Το πιστοποιητικό του διακομιστή δεν είναι κάποιο από αυτά που έχει καρφιτσώσει η εφαρμογή για αυτόν. Αν ο πάροχος το άλλαξε, κάντε νέο καρφίτσωμα στις Ρυθμίσεις ή απενεργοποιήστε το καρφίτσωμα πιστοποιητικών.</string>
 </resources>

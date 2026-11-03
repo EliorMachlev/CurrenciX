@@ -208,4 +208,16 @@
     <string name="api_all_rates_today_api_key_title">Chiave API di AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Per usare questa fonte ti serve una tua chiave API.\n\nCrea un account gratuito su https://allratestoday.com, copia la tua chiave (inizia con art_live_) dalla pagina del profilo e inseriscila qui.\n\nIl piano gratuito consente 300 richieste in tutto, una volta sola. Ogni aggiornamento e ogni periodo del grafico ne usa una.</string>
     <string name="provider_cadence_every_minute">Aggiornato circa ogni minuto</string>
+    <string name="settings_advanced_section">Avanzate</string>
+    <string name="certificate_pinning_title">Pinning dei certificati</string>
+    <string name="certificate_pinning_summary">Connettiti ai server dei tassi solo tramite le autorità di certificazione fissate per ciascuno. Disattiva solo se un server ha cambiato certificato e i tassi non si caricano più.</string>
+    <string name="repin_title">Fissa di nuovo sui certificati attuali</string>
+    <string name="repin_summary_builtin">In uso i pin integrati nell\'app</string>
+    <string name="repin_summary_own">In uso i pin presi su questo telefono per %1$d server su %2$d</string>
+    <string name="repin_summary_running">Controllo dei server…</string>
+    <string name="repin_prompt_title">Fissare di nuovo i certificati?</string>
+    <string name="repin_prompt_message">L\'app si collegherà ora a ogni server dei tassi e da quel momento accetterà solo le autorità di certificazione usate da ciascuno. Fallo su una rete di cui ti fidi, come il Wi-Fi di casa.</string>
+    <string name="repin_confirm">Fissa di nuovo</string>
+    <string name="restore_pins_title">Usa i pin integrati</string>
+    <string name="restore_pins_summary">Dimentica i pin presi su questo telefono</string>
 </resources>

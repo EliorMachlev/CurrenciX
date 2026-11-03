@@ -361,4 +361,5 @@
     <string name="quick_amount_label">Upphæð</string>
     <string name="quick_amount_taken">Er þegar ein upphæðanna</string>
     <string name="quick_amount_note">Notað fyrir %1$s í öllum pörum.</string>
+    <string name="error_certificate_pinning">Skilríki þjónsins eru ekki ein af þeim sem forritið hefur fest fyrir hann. Ef þjónustuveitan skipti um þau skaltu festa aftur í Stillingum eða slökkva á festingu skilríkja.</string>
 </resources>
