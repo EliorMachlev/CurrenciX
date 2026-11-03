@@ -1,0 +1,43 @@
+name: Code scanning report
+# Saves the open code scanning alerts on master (every tool: CodeQL, Semgrep,
+# detekt, Dependency-Check, OSV-Scanner, ...) as a downloadable artifact and a
+# summary on the run page, for reading them outside GitHub's Security tab.
+# Run by hand only; it changes nothing.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: read
+    steps:
+      - name: List the open alerts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          gh api --paginate \
+            "repos/$REPO/code-scanning/alerts?state=open&ref=refs/heads/$BRANCH&per_page=100" \
+            --jq '.[]' | jq -s . > code-scanning-alerts.json
+          {
+            echo "## Open code scanning alerts on $BRANCH: $(jq length code-scanning-alerts.json)"
+            echo
+            echo "| Alerts | Tool | Rule | Severity |"
+            echo "|---|---|---|---|"
+            jq -r 'group_by([.tool.name, .rule.id])
+              | map([length, .[0].tool.name, .[0].rule.id,
+                     (.[0].rule.security_severity_level // .[0].rule.severity // "")])
+              | sort_by(-.[0]) | .[] | "| \(join(" | ")) |"' code-scanning-alerts.json
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the alerts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: code-scanning-alerts
+          path: code-scanning-alerts.json
+          retention-days: 7
