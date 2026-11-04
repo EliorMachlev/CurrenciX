@@ -117,3 +117,10 @@
   file: app/src/main/kotlin/com/eliormachlev/currencix/view/timeline/TimelineChart.kt
   line: 522
   message-contains: reference comparison of boxed numerical values
+
+# exceptions.md #13: re-pin's one connection without pins, made on purpose to read the
+# certificate chain a provider presents now, so it can become that host's pins.
+- excluded-rule: java/android/missing-certificate-pinning
+  file: app/src/main/kotlin/com/eliormachlev/currencix/util/CertificatePinning.kt
+  line: 100
+  message-contains: does not implement certificate pinning

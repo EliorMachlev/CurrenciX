@@ -96,6 +96,7 @@ The app's own code, written as it is on purpose.
 | 1 | Semgrep `java.android.security.exported_activity.exported_activity` | `MainActivity` | `app/src/main/AndroidManifest.xml` |
 | 2 | Semgrep `java.android.security.exported_activity.exported_activity` | `ConvertTextActivity` | `app/src/main/AndroidManifest.xml` |
 | 12 | CodeQL `java/reference-equality-of-boxed-types` | `TimelineChart` (`min == max` on two `Double`s) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| 13 | CodeQL `java/android/missing-certificate-pinning` | `CertificatePinning` (re-pin's request for a provider's current certificates) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 
 #### 1. `MainActivity` is exported
 
@@ -119,9 +120,17 @@ The app's own code, written as it is on purpose.
 - **Why it can't be fixed:** the comparison is already correct. Rewriting it only so the rule stops matching is a cosmetic workaround.
 - **What is excluded:** that one finding: the rule, that file, its line and its message. The step fails when the line moves, so the entry is checked whenever the function changes.
 
+#### 13. CodeQL: `java/android/missing-certificate-pinning` on `CertificatePinning`
+
+- **What it reports:** "This network call does not implement certificate pinning", at `util/CertificatePinning.kt`, the request in `authorityPinsOf`.
+- **Why the finding is wrong:** this is the one connection that must not be pinned. **Re-pin to current certificates** (Settings → Security & privacy → Advanced, asked first) is for a provider that moved to a CA its pins don't list: every pinned request to it fails until an app update. Re-pin connects with the phone's own trust, takes the CA keys from the chain the phone verified, and makes them that host's pins. Every other request the app makes goes through the pinned clients ([security.md](security.md#certificate-pinning)).
+- **Why it can't be fixed:** pinning this request would check the new chain against the old pins, which is the failure re-pin exists to recover from; it could never take a new CA. The alternative is removing re-pin, leaving a provider unusable until a release.
+- **What still guards it:** the client (`HttpClientProvider.unpinnedClient`) is used only by `currentPins`. It follows no redirects, so the chain is the asked host's own, sends a `HEAD` and reads nothing but the handshake. It reaches only the main and fallback providers' hosts, and only when the user confirms the prompt, which says to do it on a trusted network. The pins it takes are shown as "pins taken on this phone", and **Use the built-in pins** drops them.
+- **What is excluded:** that one finding: the rule, that file, its line and its message. The rule still runs everywhere, and the step fails when the line moves, so the entry is checked whenever the function changes.
+
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 12, on 2026-11-04.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04.
 
 ## Adding an exception
 
