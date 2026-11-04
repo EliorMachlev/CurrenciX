@@ -1,0 +1,6 @@
+# typos for the Docs checks workflow, installed with --require-hashes.
+# requirements.txt is compiled from this file on Python 3.14 (the version the
+# workflow sets up):
+#   pip-compile --allow-unsafe --generate-hashes --strip-extras requirements.in
+# Dependabot (pip, this directory) recompiles it when typos has a new release.
+typos==1.52.0

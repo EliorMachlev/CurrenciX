@@ -29,6 +29,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `certificate-pins.yaml` | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites `BuiltInPins.kt` from the chains served now, commits it and restarts the checks |
 | `code-scanning-report.yaml` | Manual | Saves the open code scanning alerts on `master`, from every tool, as an artifact and a summary table on the run page |
 | `zizmor.yaml` | PR or push → `master` touching workflows, weekly, manual | zizmor (pinned by hash, `.github/zizmor`) audits the workflows for what actionlint doesn't: template injection, credentials a checkout leaves, cache poisoning, broad permissions, impostor actions. Every finding goes to code scanning; medium and above fail the job |
+| `docs-checks.yaml` | PR or push → `master` touching the docs, weekly, manual | lychee: every local link and section anchor in `docs/` and the top-level Markdown must resolve (offline, each run), and external links weekly; typos: spelling, with the two correct words it misreads in `_typos.toml` ([exceptions.md](exceptions.md) #16) |
 | `actionlint.yaml` | PR, push → `master`, on workflows | Workflow syntax |
 | `site.yaml` | PR, push → `master`, on `docs/**`, manual | Website asset versions and CSP hashes ([website.md](website.md)) |
 
@@ -70,7 +71,7 @@ Weekly, Mondays, 7-day cooldown, in `.github/dependabot.yml`:
 |---|---|---|
 | `gradle` | `/` | 10 |
 | `github-actions` | `/` | 5 |
-| `pip` | `/.github/scripts`, `/.github/semgrep` (hash-pinned; one grouped PR) | 5 |
+| `pip` | `/.github/scripts`, `/.github/semgrep`, `/.github/zizmor`, `/.github/docs-checks` (hash-pinned; one grouped PR) | 5 |
 
 Grouped: `androidx.*`; Kotlin + KSP; Moshi; OkHttp; test dependencies; all actions. A Gradle update fails dependency verification until its checksums are recorded: run **Update dependency checksums** on its branch once the update looks right.
 
