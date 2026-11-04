@@ -73,6 +73,8 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 |---|---|---|---|
 | 3 | LeakCanary IgnoredReferenceMatcher (debug builds) | `ResourcesImpl.mAppContext` (vendor framework field) | `app/src/debug/kotlin/com/eliormachlev/currencix/leaks/LeakDetection.kt` |
 | 7 | OWASP Dependency-Check `CVE-2018-8909`, `CVE-2023-22737` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
+| 17 | Licensee: a license named by URL only | `bcprov` (Bouncy Castle), its license page | `licensee {}` in `app/build.gradle.kts` (`allowUrl`) |
+| 18 | Licensee: no license declared | `tesseract4android` 4.8.0 (Tesseract4Android) | `licensee {}` in `app/build.gradle.kts` (`allowDependency`) |
 
 #### 3. LeakCanary: `ResourcesImpl.mAppContext`
 
@@ -86,6 +88,20 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 - **Why the finding is wrong:** CVE-2018-8909 is in the Wire secure messenger (Wire Swiss GmbH), and CVE-2023-22737 in `wire-server`, that messenger's backend (a missing permission check on removing bots from a conversation). The app's library is Square's Wire, the Protobuf runtime (`com.squareup.wire`) that reads and writes the saved carts, fees and alerts. Dependency-Check names a jar's product from evidence such as its file name, and both are called "Wire". OSV-Scanner, which matches the same library by its package URL, reports nothing for it.
 - **Why it can't be fixed:** the match comes from the name, so no version of Square's Wire changes it; the only way to make it go away would be removing the library.
 - **What is excluded:** those two CVEs, each in its own entry, only for files under `com.squareup.wire/` named `wire-runtime…` (`config/owasp/suppressions.xml`, handed to the scan with `--suppression`). Any other CVE matched to that jar, and either CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
+
+#### 17. Licensee: Bouncy Castle's license, named by URL
+
+- **What it reports:** `org.bouncycastle:bcprov-jdk18on` declares its license only as `https://www.bouncycastle.org/licence.html`, which Licensee can't map to an SPDX identifier, so the F-Droid release's license check (`licenseeAndroidFdroidRelease`) fails.
+- **Why the finding is wrong:** that page is the Bouncy Castle Licence, adapted from the MIT X11 license (the same terms, with Bouncy Castle's copyright line); the credits list it as MIT.
+- **Why it can't be fixed:** the URL is what Bouncy Castle's own POM declares, in every release; only Bouncy Castle can change it.
+- **What is excluded:** that one URL. A Bouncy Castle release that declares anything else, and every other library, is still checked against the allowed identifiers (Apache-2.0, BSD-3-Clause).
+
+#### 18. Licensee: Tesseract4Android declares no license
+
+- **What it reports:** `com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.8.0` (the receipt scanner's OCR) has no license in its POM, so the F-Droid release's license check fails.
+- **Why the finding is wrong:** the project is Apache-2.0 (its repository's license and README); the POM, built by JitPack, just leaves it out. The Tesseract, Leptonica, libjpeg and libpng it bundles have their own licenses, which Licensee never saw either way.
+- **Why it can't be fixed:** the POM is the project's own; replacing the library would remove receipt scanning.
+- **What is excluded:** that library at 4.8.0 only. A new version is checked again, so the exception is reviewed on each update; every other library is checked as usual.
 
 ### Action exceptions
 
@@ -155,7 +171,7 @@ The app's own code, written as it is on purpose.
 
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 17 and 18 on 2026-11-04.
 
 ## Adding an exception
 

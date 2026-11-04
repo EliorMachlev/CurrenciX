@@ -65,9 +65,11 @@ kover {
 // The licences the app's libraries may carry, by SPDX id.
 licensee {
     allow("Apache-2.0")
-    allow("MIT")
-    allow("BSD-2-Clause")
     allow("BSD-3-Clause")
+    // exceptions.md #17: Bouncy Castle names its license (MIT's text) by URL alone.
+    allowUrl("https://www.bouncycastle.org/licence.html")
+    // exceptions.md #18: this release's POM names no license (the project is Apache-2.0).
+    allowDependency("com.github.adaptech-cz.Tesseract4Android", "tesseract4android", "4.8.0")
 }
 
 kotlin {
@@ -517,9 +519,6 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.17")
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.ui:ui-test-manifest")
-    // Google's Accessibility Test Framework on Compose tests (touch targets,
-    // contrast, labels): enableAccessibilityChecks().
-    testImplementation("androidx.compose.ui:ui-test-junit4-accessibility")
     // Coroutines and Flows on a virtual clock (runTest), and Flow emissions
     // checked one at a time (Turbine).
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")

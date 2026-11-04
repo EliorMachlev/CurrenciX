@@ -41,8 +41,8 @@ Versions live in the build files; Dependabot keeps them current. What's worth kn
 - **Crypto:** Bouncy Castle (pure-Java Argon2id) and Tink (AES-GCM, Keystore AEAD); see [security.md](security.md).
 - **Logging and debug tools:** Timber writes a local rotating file only. Chucker is debug-only (`library-no-op` in release); LeakCanary and JankStats are debug-only.
 - **Build plugins:** Spotless (ktlint), detekt, `ben-manes.versions` (`dependencyUpdates`), `androidx.baselineprofile`, CycloneDX (the release SBOM).
-- **Tests:** JUnit 4 and Jupiter (vintage engine), Mockito, Robolectric, Roborazzi (JVM screenshots of every Compose surface, no emulator), Konsist (layer boundaries), Jazzer (fuzzing), `kotlinx-coroutines-test` and Turbine (coroutines and Flows on a virtual clock), Google's Accessibility Test Framework (`enableAccessibilityChecks()` in `ScreenReaderLabelsTest`).
-- **Coverage and licences:** Kover measures the unit tests' line and branch coverage (`koverXmlReport<Variant>`; CI puts a summary on each test run, `coverage-summary.py`); it stays off for the fuzz runs, which Jazzer instruments. Licensee (`licenseeAndroidFdroidRelease`, in the F-Droid lint job) fails on a library whose licence isn't Apache-2.0, MIT, BSD-2-Clause or BSD-3-Clause.
+- **Tests:** JUnit 4 and Jupiter (vintage engine), Mockito, Robolectric, Roborazzi (JVM screenshots of every Compose surface, no emulator), Konsist (layer boundaries), Jazzer (fuzzing), `kotlinx-coroutines-test` and Turbine (coroutines and Flows on a virtual clock).
+- **Coverage and licenses:** Kover measures the unit tests' line and branch coverage (`koverXmlReport<Variant>`; CI puts a summary on each test run, `coverage-summary.py`); it stays off for the fuzz runs, which Jazzer instruments. Licensee (`licenseeAndroidFdroidRelease`, in the F-Droid lint job) fails on a library whose license isn't Apache-2.0 or BSD-3-Clause; two libraries are allowed by name ([exceptions.md](exceptions.md) #17, #18).
 
 ## Live provider tests
 

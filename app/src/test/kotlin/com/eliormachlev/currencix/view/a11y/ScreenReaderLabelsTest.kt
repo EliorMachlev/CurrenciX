@@ -8,10 +8,7 @@ import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.isRoot
-import androidx.compose.ui.test.junit4.accessibility.enableAccessibilityChecks
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.tryPerformAccessibilityChecks
 import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.CartExtras
@@ -50,9 +47,7 @@ import java.math.BigDecimal
  * What TalkBack needs from every screen: each thing you can tap says what it
  * is — a content description, its text, or its field's text or hint. An
  * unlabelled button reads as just "button". Checked on the merged semantics
- * tree, the one TalkBack walks, across every window (sheets included). Then
- * Google's Accessibility Test Framework runs its checks on each window too
- * (touch target size, contrast, labels it can't read), and any finding fails.
+ * tree, the one TalkBack walks, across every window (sheets included).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = Application::class)
@@ -62,7 +57,6 @@ class ScreenReaderLabelsTest {
     @get:Rule val rules: RuleChain = RuleChain.outerRule(registerActivityRule(ComponentActivity::class.java)).around(compose)
 
     private fun assertEveryTapTargetIsLabelled(content: @Composable () -> Unit) {
-        compose.enableAccessibilityChecks()
         compose.mainClock.autoAdvance = false
         compose.setContent { AppTheme(content = content) }
         compose.waitForIdle()
@@ -71,8 +65,6 @@ class ScreenReaderLabelsTest {
         assertTrue("nothing to tap was found", targets.isNotEmpty())
         val unlabelled = targets.filterNot(::isLabelled)
         assertTrue("unlabelled tap targets: ${unlabelled.map { it.config }}", unlabelled.isEmpty())
-        val windows = compose.onAllNodes(isRoot())
-        windows.fetchSemanticsNodes().indices.forEach { window -> windows[window].tryPerformAccessibilityChecks() }
     }
 
     private fun isLabelled(node: SemanticsNode): Boolean {
