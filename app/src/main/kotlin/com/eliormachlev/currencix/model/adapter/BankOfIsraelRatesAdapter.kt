@@ -4,30 +4,30 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.io.IOException
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
-internal class BankOfIsraelRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): ExchangeRates? {
-        if (reader.skipIfNotObject()) return null
+private const val FIELD_EXCHANGE_RATES = "exchangeRates"
+private const val FIELD_KEY = "key"
+private const val FIELD_CURRENT_RATE = "currentExchangeRate"
+private const val FIELD_UNIT = "unit"
+private const val FIELD_LAST_UPDATE = "lastUpdate"
 
-        var date: LocalDate? = null
+/**
+ * Bank of Israel's PublicApi: `{exchangeRates: [{key, currentExchangeRate, unit, lastUpdate}, …]}`,
+ * shekels per [unit] of each currency, dated by the newest update.
+ */
+internal class BankOfIsraelRatesAdapter : ResponseAdapter<ExchangeRates> {
+    override fun decode(json: JsonElement): ExchangeRates? {
+        val response = json as? JsonObject ?: return null
         val rates = mutableListOf<Rate>()
-
-        reader.beginObject()
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "exchangeRates" -> date = readEntries(reader, rates)
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
+        val date = response[FIELD_EXCHANGE_RATES]?.let { readEntries(it, rates) }
 
         if (rates.isNotEmpty()) {
             rates.add(Rate(Currency.ILS, BigDecimal.ONE))
@@ -44,42 +44,23 @@ internal class BankOfIsraelRatesAdapter : ResponseAdapter<ExchangeRates>(Exchang
         )
     }
 
+    // Adds each entry's rate, and returns the newest update's date.
     private fun readEntries(
-        reader: JsonReader,
+        entries: JsonElement,
         rates: MutableList<Rate>,
-    ): LocalDate? {
-        var latestDate: LocalDate? = null
-        reader.beginArray()
-        while (reader.hasNext()) {
-            val (rate, obsDate) = readEntry(reader)
-            if (rate != null) rates.add(rate)
-            if (obsDate != null && (latestDate == null || obsDate.isAfter(latestDate))) {
-                latestDate = obsDate
-            }
-        }
-        reader.endArray()
-        return latestDate
-    }
+    ): LocalDate? =
+        entries.jsonArray
+            .map(::readEntry)
+            .onEach { (rate, _) -> rate?.let(rates::add) }
+            .mapNotNull { (_, date) -> date }
+            .maxOrNull()
 
-    private fun readEntry(reader: JsonReader): Pair<Rate?, LocalDate?> {
-        var code: String? = null
-        var value: BigDecimal? = null
-        var unit: BigDecimal = BigDecimal.ONE
-        var date: LocalDate? = null
-
-        reader.beginObject()
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "key" -> code = reader.nextString()
-                "currentExchangeRate" -> value = BigDecimal(reader.nextString())
-                "unit" -> unit = BigDecimal(reader.nextString())
-                "lastUpdate" -> date = OffsetDateTime.parse(reader.nextString()).toLocalDate()
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-
-        val currency = code?.let(Currency::fromString)
+    private fun readEntry(entry: JsonElement): Pair<Rate?, LocalDate?> {
+        val fields = entry.jsonObject
+        val currency = fields[FIELD_KEY]?.let { Currency.fromString(it.text()) }
+        val value = fields[FIELD_CURRENT_RATE]?.decimal()
+        val unit = fields[FIELD_UNIT]?.decimal() ?: BigDecimal.ONE
+        val date = fields[FIELD_LAST_UPDATE]?.let { OffsetDateTime.parse(it.text()).toLocalDate() }
         val rate =
             if (currency != null && value != null && value.signum() > 0) {
                 Rate(currency, unit.divide(value, MathContext.DECIMAL128))

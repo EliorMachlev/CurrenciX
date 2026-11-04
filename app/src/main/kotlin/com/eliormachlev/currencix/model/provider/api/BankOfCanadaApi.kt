@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.model.provider.api
 
-import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.Timeline
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -36,7 +35,7 @@ internal interface BankOfCanadaApi {
         @Query("start_date") startDate: String?,
         @Query("end_date") endDate: String?,
         @Query("order_dir") order: ValetOrder,
-    ): Response<ExchangeRates>
+    ): Response<ResponseBody>
 
     // [seriesNames] is a comma-separated list of Valet series, e.g.
     // `FXUSDCAD,FXEURCAD`.
@@ -46,5 +45,5 @@ internal interface BankOfCanadaApi {
         @Query("start_date") startDate: String,
         @Query("end_date") endDate: String,
         @Query("order_dir") order: ValetOrder,
-    ): Response<Timeline>
+    ): Response<ResponseBody>
 }

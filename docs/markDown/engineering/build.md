@@ -31,11 +31,11 @@ Flavor- and build-type-specific code goes in `app/src/<flavor>/` behind a hook `
 
 Versions live in the build files; Dependabot keeps them current. What's worth knowing:
 
-- **Kotlin BOM** at the plugin's version aligns every Kotlin library, so no old `kotlin-stdlib-jdk7` / `-jdk8` arrives through Moshi or Reorderable.
+- **Kotlin BOM** at the plugin's version aligns every Kotlin library, so no old `kotlin-stdlib-jdk7` / `-jdk8` arrives through Reorderable or another library.
 - **No `com.google.android.material`:** appcompat-only chrome plus Compose Material 3.
 - **Compose pre-release BOM** (`compose-bom-alpha`: Compose 1.13 beta, Material 3 1.5 beta), back to `compose-bom` once both are stable. Navigation 3 with `lifecycle-viewmodel-navigation3` for per-screen ViewModel stores.
 - **Persistence:** DataStore (preferences and proto), with Wire generating the Protobuf Kotlin.
-- **HTTP:** OkHttp and Retrofit with the Moshi converter; Moshi via KSP codegen, no reflection.
+- **HTTP and JSON:** OkHttp and Retrofit, with no converter: each provider's adapter reads the body as a kotlinx.serialization JSON tree. Only the JSON tree is used, so there is no serialization compiler plugin, no generated code and no reflection (and no KSP).
 - **Calculator: no dependency.** `util/Arithmetic.kt` evaluates `+ − × ÷`, brackets and percent in ~100 lines of `BigDecimal` recursive descent (68 significant digits). EvalEx was dropped because its Lombok marker needed a `-dontwarn`; mXparser before it has a license F-Droid can't take.
 - **Receipt scanning:** Tesseract4Android (Apache-2.0, native, in `:ocr-engine`) comes only from JitPack, which `settings.gradle` allows for that one group (`exclusiveContent`); `ocr-engine/consumer-rules.pro` keeps the packages its native code finds by name. `feature-delivery-ktx` is `playImplementation` only. `:ocr` is a dynamic feature with just a manifest, declared only for bundle builds. No OCR language data ships; English and others download on consent, checked against the SHA-256s in `ocr/TessLanguage.kt`.
 - **Crypto:** Bouncy Castle (pure-Java Argon2id) and Tink (AES-GCM, Keystore AEAD); see [security.md](security.md).
@@ -131,7 +131,7 @@ python3 .github/scripts/compose-stability.py app/build/compose-reports
 
 ## Unit tests on the profile build types
 
-The baseline profile plugin turns unit tests off for the build types it adds (`benchmarkRelease`, `nonMinifiedRelease`). Since AGP 9.5.0, every variant with Compose gets a `generate<Variant>ComposePreviewRunfiles` task, which fails to configure without unit tests, and an IDE sync (Android Studio, Qodana's project import) configures every task, so the sync failed. Neither AGP nor the plugin has a setting for it. `app/build.gradle.kts` turns unit tests back on for those build types (`enableUnitTest`, in `beforeVariants`) and disables their unit-test tasks (`test`, `compile` and `ksp` …`UnitTest`…), so they still compile and run none.
+The baseline profile plugin turns unit tests off for the build types it adds (`benchmarkRelease`, `nonMinifiedRelease`). Since AGP 9.5.0, every variant with Compose gets a `generate<Variant>ComposePreviewRunfiles` task, which fails to configure without unit tests, and an IDE sync (Android Studio, Qodana's project import) configures every task, so the sync failed. Neither AGP nor the plugin has a setting for it. `app/build.gradle.kts` turns unit tests back on for those build types (`enableUnitTest`, in `beforeVariants`) and disables their unit-test tasks (`test` and `compile` …`UnitTest`…), so they still compile and run none.
 
 ## Known issue: `Configuration.setVisible(boolean)` deprecation
 

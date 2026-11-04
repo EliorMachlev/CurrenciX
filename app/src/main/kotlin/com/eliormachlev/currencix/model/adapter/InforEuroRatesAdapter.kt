@@ -4,26 +4,20 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.io.IOException
-import java.math.BigDecimal
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
 import java.time.LocalDate
 
+private const val FIELD_ISO_CODE = "isoA3Code"
+private const val FIELD_VALUE = "value"
+
+/** InforEuro's month of rates: `[{isoA3Code, value}, …]`, dated [date]. */
 internal class InforEuroRatesAdapter(
     private val date: LocalDate,
-) : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): ExchangeRates =
-        reader.readArrayOrError(
-            onError = ::errorResponse,
-        ) { r ->
-            val rates =
-                buildList {
-                    while (r.hasNext()) {
-                        parseEntry(r)?.let { add(it) }
-                    }
-                }
+) : ResponseAdapter<ExchangeRates> {
+    override fun decode(json: JsonElement): ExchangeRates =
+        json.arrayOrError(onError = ::errorResponse) { entries ->
+            val rates = entries.mapNotNull(::parseEntry)
             ExchangeRates(
                 success = rates.isNotEmpty(),
                 error = null,
@@ -34,19 +28,12 @@ internal class InforEuroRatesAdapter(
             )
         }
 
-    private fun parseEntry(reader: JsonReader): Rate? {
-        reader.beginObject()
-        var name: Currency? = null
-        var value: BigDecimal? = null
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "isoA3Code" -> name = Currency.fromString(reader.nextString())
-                "value" -> value = BigDecimal(reader.nextString())
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-        return rateOrNull(name, value)
+    private fun parseEntry(entry: JsonElement): Rate? {
+        val fields = entry.jsonObject
+        return rateOrNull(
+            fields[FIELD_ISO_CODE]?.let { Currency.fromString(it.text()) },
+            fields[FIELD_VALUE]?.decimal(),
+        )
     }
 
     private fun errorResponse(message: String?): ExchangeRates =

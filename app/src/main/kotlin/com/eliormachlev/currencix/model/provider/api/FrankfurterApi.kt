@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.model.provider.api
 
-import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.Timeline
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -13,9 +12,8 @@ import retrofit2.http.Query
  * The endpoints mirror the raw-OkHttp URLs previously built by
  * `FrankfurterApp.ratesUrl` / `.timelineUrl` — see
  * [https://frankfurter.dev/](https://frankfurter.dev/) for the upstream
- * schema. Response decoding delegates to the same custom Moshi adapters
- * (`FrankfurterAppRatesAdapter`, `FrankfurterAppTimelineAdapter`) already
- * used by the raw path, so wire-format handling is unchanged.
+ * schema. The bodies are read by `FrankfurterAppRatesAdapter` and
+ * `FrankfurterAppTimelineAdapter`.
  *
  * `datePath` accepts either `latest` or an ISO-8601 date; the timeline
  * variant expects a `<start>..<end>` range in a single path segment.
@@ -28,7 +26,7 @@ internal interface FrankfurterApi {
     suspend fun getRates(
         @Path("datePath") datePath: String,
         @Query("base") base: String,
-    ): Response<ExchangeRates>
+    ): Response<ResponseBody>
 
     @GET("{start}..{end}")
     suspend fun getTimeline(
@@ -36,5 +34,5 @@ internal interface FrankfurterApi {
         @Path("end") end: String,
         @Query("base") base: String,
         @Query("symbols") symbols: String,
-    ): Response<Timeline>
+    ): Response<ResponseBody>
 }

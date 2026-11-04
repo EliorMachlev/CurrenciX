@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.eliormachlev.currencix.R
-import com.squareup.moshi.JsonClass
 import java.util.EnumSet
 
 // Unicode bidi controls used to force LTR display of an RTL currency symbol
@@ -18,7 +17,6 @@ private const val POP_DIRECTIONAL_FORMATTING = "\u202C"
 //   symbol          e.g. "$"
 //   fullNameRes     string res, e.g. "US dollar"
 //   flag            drawable res, e.g. star-spangled banner
-@JsonClass(generateAdapter = false) // see https://stackoverflow.com/a/64085370/421140
 enum class Currency(
     private val iso4217Alpha: String,
     private val symbol: String?,

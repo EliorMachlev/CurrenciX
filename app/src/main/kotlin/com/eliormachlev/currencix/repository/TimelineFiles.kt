@@ -6,14 +6,13 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.json.MalformedJsonException
-import com.eliormachlev.currencix.repository.json.readJson
-import com.eliormachlev.currencix.repository.json.writeJson
+import com.eliormachlev.currencix.repository.json.jsonText
+import com.eliormachlev.currencix.repository.json.parseJsonElement
 import com.eliormachlev.currencix.util.DroppedCacheEntries
 import com.eliormachlev.currencix.util.toLocalDateOrNull
-import com.squareup.moshi.JsonReader
-import okio.BufferedSource
-import okio.buffer
-import okio.source
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -60,7 +59,7 @@ internal class TimelineFiles private constructor(
         if (!file.isFile) return null
         val timeline =
             try {
-                file.source().buffer().use { decode(it, provider, base, symbol) }
+                decode(file.readText(), provider, base, symbol)
             } catch (e: IOException) {
                 Timber.tag(TAG).w(e, "Couldn't read %s", name)
                 null
@@ -120,23 +119,18 @@ internal class TimelineFiles private constructor(
 
         // Rates as plain strings, so no precision is lost to a JSON double.
         private fun encode(rates: Map<LocalDate, Rate>): String =
-            writeJson { writer ->
-                writer.beginObject()
-                rates.forEach { (date, rate) -> writer.name(date.toString()).value(rate.value.toPlainString()) }
-                writer.endObject()
-            }
+            jsonText(rates.entries.associate { (date, rate) -> date.toString() to rate.value.toPlainString() })
 
         // Null when the text isn't a history (it's then fetched again).
-        // Streamed: a history runs to thousands of days.
         private fun decode(
-            source: BufferedSource,
+            text: String,
             provider: ApiProvider,
             base: Currency,
             symbol: Currency,
         ): Timeline? {
             val values =
                 try {
-                    readJson(source, ::readDatedValues)
+                    datedValues(parseJsonElement(text))
                 } catch (e: MalformedJsonException) {
                     Timber.tag(TAG).w(e, "Malformed history for %s/%s", base, symbol)
                     return null
@@ -156,24 +150,15 @@ internal class TimelineFiles private constructor(
     }
 }
 
-// A flat {date → rate} object; entries that aren't a date and a number are skipped.
-private fun readDatedValues(reader: JsonReader): Map<LocalDate, BigDecimal> {
+// A flat {date → rate} object; entries that aren't a date and a number are
+// skipped. A rate is a string (as written) or a bare number (hand-edited),
+// read from its text either way so no digit is lost.
+private fun datedValues(json: JsonElement): Map<LocalDate, BigDecimal> {
     val values = HashMap<LocalDate, BigDecimal>()
-    reader.beginObject()
-    while (reader.hasNext()) {
-        val date = reader.nextName().toLocalDateOrNull()
-        val value =
-            if (reader.peek() in RATE_TOKENS) {
-                reader.nextString().toBigDecimalOrNull()
-            } else {
-                reader.skipValue()
-                null
-            }
-        if (date != null && value != null) values[date] = value
+    (json as? JsonObject ?: throw MalformedJsonException("Not a JSON object")).forEach { (name, value) ->
+        val date = name.toLocalDateOrNull()
+        val rate = (value as? JsonPrimitive)?.content?.toBigDecimalOrNull()
+        if (date != null && rate != null) values[date] = rate
     }
-    reader.endObject()
     return values
 }
-
-// The tokens a rate can be: a string (as written) or a bare number (hand-edited).
-private val RATE_TOKENS = setOf(JsonReader.Token.STRING, JsonReader.Token.NUMBER)

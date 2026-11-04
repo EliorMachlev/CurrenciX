@@ -146,7 +146,7 @@
     <string name="credit_lib_typeface">Skrifttype</string>
     <string name="credit_lib_vico">Diagrammer</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
-    <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_json">JSON-parser</string>
     <string name="credit_lib_wire">Protocol Buffers (sådan gemmes kurve, rejser og gebyrer)</string>
     <string name="credit_lib_timber">Logning</string>
     <string name="credit_lib_bouncy_castle">Argon2id-nøgleafledning til krypterede sikkerhedskopier</string>

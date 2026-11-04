@@ -4,21 +4,24 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.io.IOException
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 
-internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): ExchangeRates? =
-        reader.readObjectFirstOf { name ->
+/**
+ * Bank of Canada's latest observation: `{observations: [{d, FXUSDCAD: {v}, …}]}`,
+ * or `{message}` when it has none to give.
+ */
+internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates> {
+    override fun decode(json: JsonElement): ExchangeRates? =
+        json.firstOfFields { name, value ->
             when (name) {
-                FIELD_MESSAGE -> errorResponse(reader.nextString())
-                BANK_OF_CANADA_OBSERVATIONS -> readObservations(reader)
-                else -> null.also { reader.skipValue() }
+                FIELD_MESSAGE -> errorResponse(value.text())
+                BANK_OF_CANADA_OBSERVATIONS -> convertObservation(value.jsonArray.firstOrNull())
+                else -> null
             }
         }
 
@@ -32,29 +35,14 @@ internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates>(Exchang
             provider = ApiProvider.BANK_OF_CANADA,
         )
 
-    // The first observation is the one asked for; any others are read past.
-    private fun readObservations(reader: JsonReader): ExchangeRates {
-        reader.beginArray()
-        val result = convertObservation(reader)
-        while (reader.hasNext()) reader.skipValue()
-        reader.endArray()
-        return result
-    }
-
-    private fun convertObservation(reader: JsonReader): ExchangeRates {
-        var errorMessage: String? = null
-        var date: LocalDate? = null
+    // The first observation is the one asked for; any others are passed over.
+    private fun convertObservation(observation: JsonElement?): ExchangeRates {
         val rates = mutableListOf<Rate>()
-
-        if (reader.peek() == JsonReader.Token.END_ARRAY) {
-            errorMessage = NO_DATA_ERROR
-        } else {
-            date = readObservationRates(reader, rates)
-        }
+        val date = observation?.let { readObservationRates(it, rates) }
         if (rates.isNotEmpty()) {
             rates.add(Rate(Currency.CAD, BigDecimal.ONE))
         }
-
+        val errorMessage = if (observation == null) NO_DATA_ERROR else null
         return ExchangeRates(
             success = errorMessage == null && rates.isNotEmpty() && date != null,
             error = errorMessage,
@@ -66,29 +54,26 @@ internal class BankOfCanadaRatesAdapter : ResponseAdapter<ExchangeRates>(Exchang
     }
 
     private fun readObservationRates(
-        reader: JsonReader,
+        observation: JsonElement,
         rates: MutableList<Rate>,
     ): LocalDate? {
         var date: LocalDate? = null
-        reader.beginObject()
-        while (reader.hasNext()) {
-            val nextName = reader.nextName()
-            if (nextName == BANK_OF_CANADA_DATE) {
-                date = LocalDate.parse(reader.nextString())
+        observation.jsonObject.forEach { (name, value) ->
+            if (name == BANK_OF_CANADA_DATE) {
+                date = LocalDate.parse(value.text())
             } else {
-                readRate(reader, nextName)?.let(rates::add)
+                readRate(value, name)?.let(rates::add)
             }
         }
-        reader.endObject()
         return date
     }
 
     // The value is Canadian dollars per unit; the rate is units per dollar.
     private fun readRate(
-        reader: JsonReader,
+        value: JsonElement,
         name: String,
     ): Rate? {
-        val (currency, value) = reader.readBankOfCanadaValue(name)
-        return currency?.let { Rate(it, BigDecimal.ONE.divide(value, MathContext.DECIMAL128)) }
+        val (currency, dollars) = value.bankOfCanadaValue(name)
+        return currency?.let { Rate(it, BigDecimal.ONE.divide(dollars, MathContext.DECIMAL128)) }
     }
 }

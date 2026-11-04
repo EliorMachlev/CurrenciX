@@ -121,7 +121,7 @@
     <string name="credit_lib_typeface">Шрифт</string>
     <string name="credit_lib_vico">Графики</string>
     <string name="credit_lib_okhttp">HTTP клиент</string>
-    <string name="credit_lib_moshi">JSON парсер</string>
+    <string name="credit_lib_json">JSON парсер</string>
     <string name="credit_lib_wire">Protocol Buffers (как се пазят запазените колички, пътувания и такси)</string>
     <string name="credit_lib_timber">Журналиране</string>
     <string name="credit_lib_bouncy_castle">Извличане на ключове с Argon2id за шифровани резервни копия</string>

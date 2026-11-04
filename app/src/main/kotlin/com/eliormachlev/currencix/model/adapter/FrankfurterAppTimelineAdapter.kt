@@ -2,49 +2,56 @@ package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.math.BigDecimal
+import com.eliormachlev.currencix.model.Timeline
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import java.time.LocalDate
 
-/*
- * Converts a timeline rates object to a Map<LocalDate, Rate?>>
- * The API actually returns Map<LocalDate, List<Rate>>>, however, we only want one Rate per day.
- * This converter reduces the list.
+private const val FIELD_START_DATE = "start_date"
+private const val FIELD_END_DATE = "end_date"
+
+/**
+ * Frankfurter's timeline, `{base, start_date, end_date, rates: {date: {USD: 1.09}}}`,
+ * with one rate per day: the [symbol] asked for (DKK read as FOK, when FOK
+ * was asked for). A day without it is left out.
  */
 internal class FrankfurterAppTimelineAdapter(
     private val symbol: Currency,
-) : ResponseAdapter<Map<LocalDate, Rate>>(DATED_RATES_TYPE) {
-    @Synchronized
-    override fun fromJson(reader: JsonReader): Map<LocalDate, Rate> =
+) : ResponseAdapter<Timeline> {
+    override fun decode(json: JsonElement): Timeline? {
+        if (json is JsonNull) return null
+        val response = json.jsonObject
+        return Timeline(
+            success = null,
+            error = null,
+            base = response.field(FIELD_BASE)?.text(),
+            startDate = response.field(FIELD_START_DATE)?.let { LocalDate.parse(it.text()) },
+            endDate = response.field(FIELD_END_DATE)?.let { LocalDate.parse(it.text()) },
+            rates = response.field(FIELD_RATES)?.let { rates(it.jsonObject) },
+        )
+    }
+
+    private fun rates(days: JsonObject): Map<LocalDate, Rate> =
         buildMap {
-            reader.beginObject()
-            // convert
-            while (reader.hasNext()) {
-                val date: LocalDate = LocalDate.parse(reader.nextName())
-                var rate: Rate? = null
-                reader.beginObject()
-                // sometimes there's no rate yet, but an empty body or more than one rate, so check first
-                while (reader.hasNext() && reader.peek() == JsonReader.Token.NAME) {
-                    val name = Currency.fromString(reader.nextName())
-                    val value: BigDecimal = BigDecimal(reader.nextString())
-                    // Rate resolution order:
-                    //   - change dkk to fok, when needed
-                    //   - otherwise, require the symbol to match the one we requested
-                    //   - anything else is discarded
-                    rate =
-                        if (name == Currency.DKK && symbol == Currency.FOK) {
-                            Rate(Currency.FOK, value)
-                        } else if (name == symbol) {
-                            Rate(name, value)
-                        } else {
-                            null
-                        }
-                }
-                if (rate != null) {
-                    put(date, rate)
-                }
-                reader.endObject()
+            days.forEach { (day, quotes) ->
+                // A day can have no rate yet, or more than the one asked for.
+                quotes.jsonObject.firstNotNullOfOrNull { (name, value) -> rate(name, value) }?.let { put(LocalDate.parse(day), it) }
             }
-            reader.endObject()
         }
+
+    // Rate resolution order: DKK becomes FOK when FOK was asked for;
+    // otherwise only the symbol asked for counts.
+    private fun rate(
+        name: String,
+        value: JsonElement,
+    ): Rate? {
+        val currency = Currency.fromString(name)
+        return when {
+            currency == Currency.DKK && symbol == Currency.FOK -> Rate(Currency.FOK, value.decimal())
+            currency == symbol -> Rate(symbol, value.decimal())
+            else -> null
+        }
+    }
 }

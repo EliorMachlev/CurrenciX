@@ -1,12 +1,10 @@
 package com.eliormachlev.currencix.util
 
 import android.content.Context
-import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * Builds a [Retrofit] instance layered on top of the shared [okhttp3.OkHttpClient]
@@ -15,9 +13,12 @@ import retrofit2.converter.moshi.MoshiConverterFactory
  * apply uniformly to Retrofit-backed and raw-OkHttp providers alike.
  *
  * A fresh [Retrofit] is cheap to build (no I/O, no reflection scan until an
- * interface is created), so per-provider builders don't need to be cached; the
- * `OkHttpClient` and `Moshi` instances they close over are the expensive
- * singletons and both are already hoisted.
+ * interface is created), so per-provider builders don't need to be cached;
+ * the `OkHttpClient` it closes over is the expensive singleton, and it's
+ * already hoisted.
+ *
+ * No converter: every interface returns the raw body, which the provider's
+ * own adapter reads as a JSON tree (see `fetchRetrofit`).
  */
 object RetrofitProvider {
     /**
@@ -26,19 +27,15 @@ object RetrofitProvider {
      *   null to get a cache-less client with the same timeouts / logging.
      * @param baseUrl the provider's base URL. Retrofit requires this to end in
      *   `/`; the helper appends one if the caller forgot.
-     * @param moshi the preconfigured [Moshi] instance — providers add their
-     *   per-request custom adapters via [com.eliormachlev.currencix.model.provider.moshi].
      */
     fun retrofit(
         context: Context?,
         baseUrl: String,
-        moshi: Moshi,
     ): Retrofit =
         Retrofit
             .Builder()
             .baseUrl(if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/")
             .callFactory(RevalidatingCallFactory(HttpClientProvider.client(context)))
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 }
 
@@ -51,7 +48,8 @@ object RetrofitProvider {
  *    which pattern-matches on [ApiHttpError], keeps working unchanged).
  *  - Network failures propagate as their original exception type
  *    (`SocketTimeoutException`, `IOException`, …).
- *  - Deserialization failures propagate as whatever the converter throws.
+ *  - Decoding failures propagate as whatever the provider's adapter or the
+ *    JSON parser throws.
  *
  * Runs on [dispatcher] (the IO one) so response body decoding doesn't touch
  * the main thread even though Retrofit's own dispatcher already backgrounds

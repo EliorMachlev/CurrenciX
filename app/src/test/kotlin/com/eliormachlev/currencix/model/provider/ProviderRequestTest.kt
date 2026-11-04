@@ -39,7 +39,7 @@ class ProviderRequestTest {
     // The default stub body is a JSON `null`. Adapters that treat a non-object
     // payload as "no data" (Frankfurter, Open Exchange Rates, Bank of Israel)
     // decode it to null, which must surface as "<provider>: empty JSON". The
-    // Bank of Canada and InforEuro adapters reject it with a JsonDataException
+    // Bank of Canada and InforEuro adapters reject it (IllegalArgumentException)
     // instead — the same on either transport, so those tests only pin the request.
 
     private fun assertRequested(vararg expected: String) = assertEquals(expected.toList(), http.requests.map { it.toString() })

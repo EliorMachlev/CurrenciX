@@ -25,7 +25,6 @@ import javax.imageio.ImageIO
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.21"
-    id("com.google.devtools.ksp") version "2.3.12"
     // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
     // used by the .github/workflows/screenshots.yaml job. Runs on top of
     // Robolectric Native Graphics — no device or emulator required.
@@ -292,7 +291,7 @@ base {
 // none (the profiles and benchmarks are tested on a device, not here).
 val profileBuildTypes = listOf("benchmark", "nonMinified")
 val profileUnitTestTask =
-    Regex("""^(test|compile|ksp)\w*(${profileBuildTypes.joinToString("|") { it.replaceFirstChar(Char::uppercase) }})\w*UnitTest\w*$""")
+    Regex("""^(test|compile)\w*(${profileBuildTypes.joinToString("|") { it.replaceFirstChar(Char::uppercase) }})\w*UnitTest\w*$""")
 
 tasks.configureEach {
     if (profileUnitTestTask.matches(name)) enabled = false
@@ -411,20 +410,15 @@ dependencies {
     val chuckerVersion = "4.3.1"
     debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:$chuckerVersion")
-    // Moshi without its reflection module (moshi-kotlin pulls in kotlin-reflect):
-    // every JSON type has a generated adapter (@JsonClass, by KSP) or one of
-    // the app's own (model/adapter, repository/json).
-    val moshiVersion = "1.15.2"
-    implementation("com.squareup.moshi:moshi:$moshiVersion")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
+    // JSON: kotlinx.serialization's JSON tree only (JsonElement), so no
+    // compiler plugin, no generated serializers and no reflection. Provider
+    // responses are read by the app's own adapters (model/adapter), its files
+    // by repository/json.
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
     // Retrofit: type-safe HTTP interfaces layered on top of the shared OkHttp
-    // client (see util/RetrofitProvider.kt). Migrated one provider at a time
-    // starting with Frankfurter (#158) — subsequent JSON providers follow as
-    // separate PRs. converter-moshi reuses our existing Moshi adapters so
-    // custom (De)serializers keep working unchanged.
-    val retrofitVersion = "3.0.0"
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+    // client (see util/RetrofitProvider.kt). No converter: each interface
+    // returns the raw body, read by the provider's adapter.
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
     // compose (hosts the Vico chart plus migrated UI surfaces via ComposeView).
     // The pre-release BOM: Compose 1.13.0-beta02 and Material 3 1.5.0-beta02,
     // for their text-field keyboard (IME) and list-prefetch fixes. Back to

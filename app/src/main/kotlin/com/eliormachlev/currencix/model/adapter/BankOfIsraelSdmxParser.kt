@@ -1,9 +1,12 @@
 package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.util.toLocalDateOrNull
-import com.squareup.moshi.JsonReader
-import okio.buffer
-import okio.source
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import java.io.InputStream
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -38,12 +41,16 @@ private const val DIM_TIME_PERIOD = "TIME_PERIOD"
  */
 internal class BankOfIsraelSdmxParser {
     fun parse(inputStream: InputStream): List<BankOfIsraelObservation> =
-        JsonReader.of(inputStream.source().buffer()).use { reader ->
-            val data = (reader.readJsonValue() as? Map<*, *>)?.get("data") as? Map<*, *>
-            data?.let(::officialFixings).orEmpty()
-        }
+        (
+            Json
+                .parseToJsonElement(inputStream.readBytes().decodeToString())
+                .obj()
+                ?.get("data")
+                ?.obj()
+        )?.let(::officialFixings)
+            .orEmpty()
 
-    private fun officialFixings(data: Map<*, *>): List<BankOfIsraelObservation> {
+    private fun officialFixings(data: JsonObject): List<BankOfIsraelObservation> {
         val seriesDimensions = dimensions(data, SERIES)
         val currencyPos = seriesDimensions.indexOfFirst { it.id == DIM_BASE_CURRENCY }
         val dataTypePos = seriesDimensions.indexOfFirst { it.id == DIM_DATA_TYPE }
@@ -64,21 +71,28 @@ internal class BankOfIsraelSdmxParser {
     // A dimension's declared codes, in the order the keys index them. A slot
     // is null when its entry has no id, so the positions stay aligned.
     private fun dimensions(
-        data: Map<*, *>,
+        data: JsonObject,
         kind: String,
     ): List<Dimension> {
-        val structures = data["structures"] as? List<*> ?: listOfNotNull(data["structure"])
-        val declared = ((structures.firstOrNull() as? Map<*, *>)?.get("dimensions") as? Map<*, *>)?.get(kind) as? List<*>
-        return declared.orEmpty().filterIsInstance<Map<*, *>>().map { dimension ->
+        val structures = data["structures"]?.array() ?: listOfNotNull(data["structure"])
+        val declared =
+            structures
+                .firstOrNull()
+                ?.obj()
+                ?.get("dimensions")
+                ?.obj()
+                ?.get(kind)
+                ?.array()
+        return declared.orEmpty().mapNotNull { it.obj() }.map { dimension ->
             Dimension(
-                id = (dimension["id"] as? String).orEmpty(),
-                codes = (dimension["values"] as? List<*>).orEmpty().map { (it as? Map<*, *>)?.get("id") as? String },
+                id = dimension["id"]?.string().orEmpty(),
+                codes = dimension["values"]?.array().orEmpty().map { it.obj()?.get("id")?.string() },
             )
         }
     }
 
     // The observation dates, by observation index; empty when none parses.
-    private fun dates(data: Map<*, *>): List<LocalDate?> =
+    private fun dates(data: JsonObject): List<LocalDate?> =
         dimensions(data, "observation")
             .firstOrNull { it.id == DIM_TIME_PERIOD }
             ?.codes
@@ -87,32 +101,41 @@ internal class BankOfIsraelSdmxParser {
             .takeIf { parsed -> parsed.any { it != null } }
             .orEmpty()
 
-    private fun seriesOf(data: Map<*, *>): Map<*, *> =
-        (((data["dataSets"] as? List<*>)?.firstOrNull() as? Map<*, *>)?.get(SERIES) as? Map<*, *>).orEmpty()
+    private fun seriesOf(data: JsonObject): Map<String, JsonElement> =
+        data["dataSets"]
+            ?.array()
+            ?.firstOrNull()
+            ?.obj()
+            ?.get(SERIES)
+            ?.obj()
+            .orEmpty()
 
     // "0:0:6:0:0:0" → the code each position selects in its dimension; null
     // where a position doesn't resolve.
     private fun codesOf(
-        seriesKey: Any?,
+        seriesKey: String,
         dimensions: List<Dimension>,
     ): List<String?> =
-        (seriesKey as? String)?.split(':').orEmpty().mapIndexed { position, index ->
+        seriesKey.split(':').mapIndexed { position, index ->
             index.toIntOrNull()?.let { dimensions.getOrNull(position)?.codes?.getOrNull(it) }
         }
 
     // A series' observations as (date index, raw entry).
-    private fun observationsOf(series: Any?): List<Pair<Int, Any?>> =
-        ((series as? Map<*, *>)?.get("observations") as? Map<*, *>)
+    private fun observationsOf(series: JsonElement): List<Pair<Int, JsonElement>> =
+        series
+            .obj()
+            ?.get("observations")
+            ?.obj()
             .orEmpty()
-            .mapNotNull { (key, value) -> (key as? String)?.toIntOrNull()?.let { it to value } }
+            .mapNotNull { (key, value) -> key.toIntOrNull()?.let { it to value } }
 
     private fun observation(
         currency: String,
         date: LocalDate?,
-        entry: Any?,
+        entry: JsonElement,
     ): BankOfIsraelObservation? {
-        // An entry is an array: [value, ...attributes].
-        val rawValue = (entry as? List<*>)?.firstOrNull()?.let { runCatching { BigDecimal(it.toString()) }.getOrNull() }
+        // An entry is an array: [value, ...attributes]; the value a number or its text.
+        val rawValue = (entry.array()?.firstOrNull() as? JsonPrimitive)?.contentOrNull?.toBigDecimalOrNull()
         return if (date != null && rawValue != null) BankOfIsraelObservation(currency, date, rawValue) else null
     }
 }
@@ -121,3 +144,10 @@ private class Dimension(
     val id: String,
     val codes: List<String?>,
 )
+
+private fun JsonElement.obj(): JsonObject? = this as? JsonObject
+
+private fun JsonElement.array(): JsonArray? = this as? JsonArray
+
+// A string's text; null for anything else.
+private fun JsonElement.string(): String? = (this as? JsonPrimitive)?.takeIf { it.isString }?.content

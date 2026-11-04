@@ -1,6 +1,6 @@
 package com.eliormachlev.currencix.model.provider.api
 
-import com.eliormachlev.currencix.model.ExchangeRates
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 
@@ -17,5 +17,5 @@ import retrofit2.http.GET
  */
 internal interface BankOfIsraelApi {
     @GET("PublicApi/GetExchangeRates")
-    suspend fun getLatestRates(): Response<ExchangeRates>
+    suspend fun getLatestRates(): Response<ResponseBody>
 }

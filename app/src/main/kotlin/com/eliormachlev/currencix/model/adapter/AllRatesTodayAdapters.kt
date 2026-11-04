@@ -5,7 +5,11 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.squareup.moshi.JsonReader
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
@@ -42,38 +46,21 @@ private data class Quote(
  * error object (`{"error": …}` or `{"message": …}`) instead. Entries for a
  * currency the app doesn't know are skipped.
  */
-private inline fun <T> JsonReader.readQuotes(
+private inline fun <T> JsonElement.readQuotes(
     onError: (String?) -> T,
     onQuotes: (List<Quote>) -> T,
-): T {
-    if (peek() == JsonReader.Token.BEGIN_OBJECT) return onError(readQuoteError())
-    if (peek() != JsonReader.Token.BEGIN_ARRAY) {
-        skipValue()
-        return onError(null)
+): T =
+    when (this) {
+        is JsonObject -> onError(quoteError())
+        is JsonArray -> onQuotes(mapNotNull { it.quote() })
+        else -> onError(null)
     }
-    val quotes =
-        buildList {
-            beginArray()
-            while (hasNext()) readQuote()?.let(::add)
-            endArray()
-        }
-    return onQuotes(quotes)
-}
 
-private fun JsonReader.readQuote(): Quote? {
-    var target: Currency? = null
-    var rate: BigDecimal? = null
-    var timeText: String? = null
-    beginObject()
-    while (hasNext()) {
-        when (nextName()) {
-            FIELD_TARGET -> target = Currency.fromString(nextString())
-            FIELD_RATE -> rate = BigDecimal(nextString())
-            FIELD_TIME -> timeText = nextString()
-            else -> skipValue()
-        }
-    }
-    endObject()
+private fun JsonElement.quote(): Quote? {
+    val fields = jsonObject
+    val target = fields[FIELD_TARGET]?.let { Currency.fromString(it.text()) }
+    val rate = fields[FIELD_RATE]?.decimal()
+    val timeText = fields[FIELD_TIME]?.text()
     if (target == null || rate == null) return null
     val time = timeText?.let(::parseQuoteTime)
     val date = time?.toLocalDate() ?: timeText?.let(::parsePlainDate)
@@ -95,19 +82,9 @@ private inline fun <T> runCatchingParse(parse: () -> T): T? =
         null
     }
 
-private fun JsonReader.readQuoteError(): String? {
-    var message: String? = null
-    beginObject()
-    while (hasNext()) {
-        if (nextName() in ERROR_FIELDS && peek() == JsonReader.Token.STRING) {
-            message = message ?: nextString()
-        } else {
-            skipValue()
-        }
-    }
-    endObject()
-    return message
-}
+// The first message, as a string, among the error object's fields.
+private fun JsonObject.quoteError(): String? =
+    firstNotNullOfOrNull { (name, value) -> (value as? JsonPrimitive)?.takeIf { name in ERROR_FIELDS && it.isString }?.content }
 
 /**
  * Every rate from [base] (`/api/v1/rates?source=…` with no target), dated by
@@ -115,10 +92,9 @@ private fun JsonReader.readQuoteError(): String? {
  */
 internal class AllRatesTodayRatesAdapter(
     private val base: Currency,
-) : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
-    @Synchronized
-    override fun fromJson(reader: JsonReader): ExchangeRates =
-        reader.readQuotes(
+) : ResponseAdapter<ExchangeRates> {
+    override fun decode(json: JsonElement): ExchangeRates =
+        json.readQuotes(
             onError = { message ->
                 ExchangeRates(
                     success = false,
@@ -159,10 +135,9 @@ internal class AllRatesTodayRatesAdapter(
 internal class AllRatesTodayTimelineAdapter(
     private val base: Currency,
     private val symbol: Currency,
-) : ResponseAdapter<Timeline>(Timeline::class.java) {
-    @Synchronized
-    override fun fromJson(reader: JsonReader): Timeline =
-        reader.readQuotes(
+) : ResponseAdapter<Timeline> {
+    override fun decode(json: JsonElement): Timeline =
+        json.readQuotes(
             onError = { message -> timeline(success = false, error = message, rates = null) },
             onQuotes = { quotes ->
                 val asked = if (symbol == Currency.FOK) Currency.DKK else symbol

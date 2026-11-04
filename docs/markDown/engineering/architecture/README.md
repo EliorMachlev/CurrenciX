@@ -45,7 +45,7 @@ Konsist tests (`ArchitectureTest`) hold the View / ViewModel / Repository / Mode
 app/src/main/kotlin/com/eliormachlev/currencix/
 ├── CurrenciesApplication.kt   # Warms provider DNS and the stores, installs the crash recorder
 ├── model/                     # ApiProvider (8 providers + the Api interface), Currency (173), rates, timelines
-│   ├── adapter/               # Moshi / XML adapters per provider
+│   ├── adapter/               # JSON / XML adapters per provider
 │   └── provider/              # One class per provider; api/ holds the Retrofit interfaces
 ├── repository/                # Database and its stores, ExchangeRatesRepository, BackupManager, SavedProtos
 │   ├── cache/                 # Memory → disk → network rate cache

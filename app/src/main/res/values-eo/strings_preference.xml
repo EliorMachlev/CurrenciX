@@ -143,7 +143,7 @@
     <string name="credit_lib_typeface">Tiparo</string>
     <string name="credit_lib_vico">Diagramoj</string>
     <string name="credit_lib_okhttp">HTTP-kliento</string>
-    <string name="credit_lib_moshi">JSON-analizilo</string>
+    <string name="credit_lib_json">JSON-analizilo</string>
     <string name="credit_lib_wire">Protocol Buffers (kiel konserviĝas ĉaroj, vojaĝoj kaj kotizoj)</string>
     <string name="credit_lib_timber">Protokolado</string>
     <string name="credit_lib_bouncy_castle">Ŝlosila derivado per Argon2id por ĉifritaj sekurkopioj</string>

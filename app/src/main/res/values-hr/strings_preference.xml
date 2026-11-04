@@ -147,7 +147,7 @@
     <string name="credit_lib_typeface">Font</string>
     <string name="credit_lib_vico">Grafikoni</string>
     <string name="credit_lib_okhttp">HTTP klijent</string>
-    <string name="credit_lib_moshi">JSON parser</string>
+    <string name="credit_lib_json">JSON parser</string>
     <string name="credit_lib_wire">Protocol Buffers (spremanje košarica, putovanja i naknada)</string>
     <string name="credit_lib_timber">Zapisivanje dnevnika</string>
     <string name="credit_lib_bouncy_castle">Izvođenje ključa Argon2id za šifrirane sigurnosne kopije</string>

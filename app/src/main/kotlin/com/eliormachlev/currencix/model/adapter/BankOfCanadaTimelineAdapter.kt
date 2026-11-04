@@ -4,24 +4,28 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.squareup.moshi.JsonReader
-import java.io.IOException
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 
+/**
+ * Bank of Canada's series for two currencies, `{observations: [{d, FXUSDCAD: {v}, …}]}`,
+ * as the [symbol] priced in the [base] each day both are quoted; or
+ * `{message}` when it has none to give.
+ */
 internal class BankOfCanadaTimelineAdapter(
     private val base: Currency,
     private val symbol: Currency,
-) : ResponseAdapter<Timeline>(Timeline::class.java) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): Timeline? =
-        reader.readObjectFirstOf { name ->
+) : ResponseAdapter<Timeline> {
+    override fun decode(json: JsonElement): Timeline? =
+        json.firstOfFields { name, value ->
             when (name) {
-                FIELD_MESSAGE -> errorResponse(reader.nextString())
-                BANK_OF_CANADA_OBSERVATIONS -> convertObservations(reader)
-                else -> null.also { reader.skipValue() }
+                FIELD_MESSAGE -> errorResponse(value.text())
+                BANK_OF_CANADA_OBSERVATIONS -> convertObservations(value)
+                else -> null
             }
         }
 
@@ -36,13 +40,11 @@ internal class BankOfCanadaTimelineAdapter(
             provider = ApiProvider.BANK_OF_CANADA,
         )
 
-    private fun convertObservations(reader: JsonReader): Timeline {
+    private fun convertObservations(observations: JsonElement): Timeline {
         val rates = sortedMapOf<LocalDate, Rate>()
-        reader.beginArray()
-        while (reader.hasNext()) {
-            convertObservation(reader)?.let { (date, rate) -> rates[date] = rate }
+        observations.jsonArray.forEach { observation ->
+            convertObservation(observation)?.let { (date, rate) -> rates[date] = rate }
         }
-        reader.endArray()
         return Timeline(
             success = rates.isNotEmpty(),
             error = if (rates.isEmpty()) NO_DATA_ERROR else null,
@@ -55,25 +57,24 @@ internal class BankOfCanadaTimelineAdapter(
     }
 
     // One day's observation: the symbol priced in the base, when the day has both.
-    private fun convertObservation(reader: JsonReader): Pair<LocalDate, Rate>? {
+    private fun convertObservation(observation: JsonElement): Pair<LocalDate, Rate>? {
         var date: LocalDate? = null
         var baseValue: BigDecimal? = null
         var symbolValue: BigDecimal? = null
-
-        reader.beginObject()
-        while (reader.hasNext()) {
-            val nextName = reader.nextName()
-            if (nextName == BANK_OF_CANADA_DATE) {
-                date = LocalDate.parse(reader.nextString())
+        observation.jsonObject.forEach { (name, value) ->
+            if (name == BANK_OF_CANADA_DATE) {
+                date = LocalDate.parse(value.text())
             } else {
-                val (currency, value) = reader.readBankOfCanadaValue(nextName)
-                if (currency == base) baseValue = value
-                if (currency == symbol) symbolValue = value
+                val (currency, dollars) = value.bankOfCanadaValue(name)
+                if (currency == base) baseValue = dollars
+                if (currency == symbol) symbolValue = dollars
             }
         }
-        reader.endObject()
-        return if (date != null && baseValue != null && symbolValue != null) {
-            date to Rate(symbol, baseValue.divide(symbolValue, MathContext.DECIMAL128))
+        val day = date
+        val baseDollars = baseValue
+        val symbolDollars = symbolValue
+        return if (day != null && baseDollars != null && symbolDollars != null) {
+            day to Rate(symbol, baseDollars.divide(symbolDollars, MathContext.DECIMAL128))
         } else {
             null
         }

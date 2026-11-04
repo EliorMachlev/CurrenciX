@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.model.provider.api
 
-import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.Timeline
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -19,12 +18,12 @@ internal interface InforEuroApi {
     suspend fun getMonthlyRates(
         @Query("year") year: Int?,
         @Query("month") month: Int?,
-    ): Response<ExchangeRates>
+    ): Response<ResponseBody>
 
     // Full EUR <-> [currency] history; the adapter trims it to the requested
     // window.
     @GET("currencies/{currency}")
     suspend fun getCurrencyHistory(
         @Path("currency") currency: String,
-    ): Response<Timeline>
+    ): Response<ResponseBody>
 }

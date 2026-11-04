@@ -143,7 +143,7 @@
     <string name="credit_lib_typeface">גופן</string>
     <string name="credit_lib_vico">תרשימים</string>
     <string name="credit_lib_okhttp">לקוח HTTP</string>
-    <string name="credit_lib_moshi">מפענח JSON</string>
+    <string name="credit_lib_json">מפענח JSON</string>
     <string name="credit_lib_wire">Protocol Buffers (שמירת עגלות, טיולים ועמלות)</string>
     <string name="credit_lib_timber">רישום יומן</string>
     <string name="credit_lib_bouncy_castle">גזירת מפתחות Argon2id לגיבויים מוצפנים</string>

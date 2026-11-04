@@ -54,7 +54,7 @@ private fun ttlFor(provider: ApiProvider): Long = PROVIDER_TTL_MS[provider] ?: R
  * Both caches sit *on top* of the shared OkHttp Cache (5 MiB, per-provider
  * `Cache-Control` rewrite interceptor). Layered caches are intentional —
  * OkHttp caches transport bytes, RateCache caches parsed domain objects.
- * Every hit that skips the parser is a hit that skips a moshi/XML pipeline.
+ * Every hit that skips the parser is a hit that skips a JSON/XML parse.
  */
 internal object RateCacheFactory {
     /**

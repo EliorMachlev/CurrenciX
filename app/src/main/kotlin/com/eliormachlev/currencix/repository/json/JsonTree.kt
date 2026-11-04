@@ -1,20 +1,24 @@
 package com.eliormachlev.currencix.repository.json
 
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import okio.Buffer
-import okio.BufferedSource
-import java.io.IOException
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.JsonObject as JsonElementObject
 
 // The app's own JSON (saved lists, backups, cart files, cached rates) read and
-// written with Moshi's streaming reader and writer: no reflection and no
-// adapters, just maps, lists, strings, numbers and booleans. Fields are read
-// leniently, as they always have been: a missing or mistyped field reads as
-// its fallback, so a hand-edited file still opens.
+// written with kotlinx.serialization's JSON tree: no reflection and no
+// generated serializers, just maps, lists, strings, numbers and booleans.
+// Fields are read leniently, as they always have been: a missing or mistyped
+// field reads as its fallback, so a hand-edited file still opens.
 
-private const val PRETTY_INDENT = "  "
 private const val MALFORMED_JSON = "Malformed JSON"
+
+// Strict JSON (no comments, no unquoted strings), indented for files people may open.
+private val PRETTY_JSON = Json { prettyPrint = true }
 
 /** Text that isn't the JSON it should be: not JSON at all, or the wrong shape. */
 internal class MalformedJsonException(
@@ -95,27 +99,34 @@ internal fun parseJsonObject(text: String): JsonObject =
 /** [text] as a JSON array. @throws MalformedJsonException when it isn't one. */
 internal fun parseJsonArray(text: String): List<*> = parseJsonValue(text) as? List<*> ?: throw MalformedJsonException("Not a JSON array")
 
-// The whole document as maps, lists, strings, doubles and booleans.
-private fun parseJsonValue(text: String): Any? = readJson(Buffer().writeUtf8(text)) { it.readJsonValue() }
+/**
+ * [text] as one JSON document, numbers kept exactly as they were written.
+ * @throws MalformedJsonException when it isn't well-formed JSON.
+ */
+internal fun parseJsonElement(text: String): JsonElement =
+    try {
+        Json.parseToJsonElement(text)
+    } catch (e: SerializationException) {
+        throw MalformedJsonException(e.message ?: MALFORMED_JSON, e)
+    }
 
 /**
- * Reads one JSON document from [source] with [read], and checks nothing
- * follows it. @throws MalformedJsonException when it isn't well-formed JSON.
+ * [text] as maps, lists, strings, doubles and booleans. An object naming a
+ * field twice is malformed here: which of the two would count is a guess.
+ * @throws MalformedJsonException when it isn't well-formed JSON.
  */
-internal fun <T> readJson(
-    source: BufferedSource,
-    read: (JsonReader) -> T,
-): T =
-    try {
-        JsonReader.of(source).use { reader ->
-            read(reader).also {
-                if (reader.peek() != JsonReader.Token.END_DOCUMENT) throw MalformedJsonException("Text after the JSON")
-            }
-        }
-    } catch (e: IOException) {
-        throw MalformedJsonException(e.message ?: MALFORMED_JSON, e)
-    } catch (e: JsonDataException) {
-        throw MalformedJsonException(e.message ?: MALFORMED_JSON, e)
+private fun parseJsonValue(text: String): Any? {
+    val element = parseJsonElement(text)
+    duplicateFieldName(text)?.let { throw MalformedJsonException("The field \"$it\" is there twice") }
+    return element.toValue()
+}
+
+private fun JsonElement.toValue(): Any? =
+    when (this) {
+        is JsonElementObject -> mapValuesTo(LinkedHashMap()) { (_, value) -> value.toValue() }
+        is JsonArray -> map { it.toValue() }
+        JsonNull -> null
+        is JsonPrimitive -> if (isString) content else booleanOrNull ?: content.toDouble()
     }
 
 /**
@@ -125,20 +136,28 @@ internal fun <T> readJson(
 internal fun jsonText(
     value: Any?,
     pretty: Boolean = false,
-): String = writeJson(pretty) { it.jsonValue(value) }
+): String = (if (pretty) PRETTY_JSON else Json).encodeToString(JsonElement.serializer(), value.toElement())
 
-/** The JSON that [write] writes, as text, indented when [pretty]. */
-internal fun writeJson(
-    pretty: Boolean = false,
-    write: (JsonWriter) -> Unit,
-): String {
-    val buffer = Buffer()
-    JsonWriter.of(buffer).use { writer ->
-        if (pretty) writer.indent = PRETTY_INDENT
-        write(writer)
+private fun Any?.toElement(): JsonElement =
+    when (this) {
+        null -> JsonNull
+        is JsonElement -> this
+        is String -> JsonPrimitive(this)
+        is Boolean -> JsonPrimitive(this)
+        is Number -> JsonPrimitive(this.also { require(it.toDouble().isFinite()) { "Not a finite number: $it" } })
+        is Map<*, *> -> toObjectElement()
+        is Collection<*> -> JsonArray(map { it.toElement() })
+        else -> throw IllegalArgumentException("Not a JSON value: ${this::class.java.simpleName}")
     }
-    return buffer.readUtf8()
-}
+
+// The map's fields in order, with nulls left out.
+private fun Map<*, *>.toObjectElement(): JsonElementObject =
+    JsonElementObject(
+        entries.filter { it.value != null }.associateTo(LinkedHashMap()) { (key, value) ->
+            require(key is String) { "A JSON field name must be a string: $key" }
+            key to value.toElement()
+        },
+    )
 
 /** A JSON object's fields, in order, with nulls left out (as a field that isn't there). */
 internal inline fun buildJsonObject(build: MutableMap<String, Any>.() -> Unit): Map<String, Any> = LinkedHashMap<String, Any>().apply(build)

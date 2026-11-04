@@ -1,6 +1,6 @@
 package com.eliormachlev.currencix.model.provider.api
 
-import com.eliormachlev.currencix.model.ExchangeRates
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -23,7 +23,7 @@ internal interface OpenExchangeratesApi {
         @Header(AUTHORIZATION) authorization: String,
         @Query("prettyprint") prettyPrint: Boolean,
         @Query("show_alternative") showAlternative: Boolean,
-    ): Response<ExchangeRates>
+    ): Response<ResponseBody>
 
     @GET("historical/{date}.json")
     suspend fun getHistorical(
@@ -31,5 +31,5 @@ internal interface OpenExchangeratesApi {
         @Header(AUTHORIZATION) authorization: String,
         @Query("prettyprint") prettyPrint: Boolean,
         @Query("show_alternative") showAlternative: Boolean,
-    ): Response<ExchangeRates>
+    ): Response<ResponseBody>
 }

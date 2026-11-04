@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix.model.provider.api
 
-import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.Timeline
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -25,7 +24,7 @@ internal interface AllRatesTodayApi {
         @Header(AUTHORIZATION) authorization: String,
         @Query("source") source: String,
         @Query("time") time: String?,
-    ): Response<ExchangeRates>
+    ): Response<ResponseBody>
 
     // A series is always one rate per day.
     @GET("api/v1/rates?group=day")
@@ -35,5 +34,5 @@ internal interface AllRatesTodayApi {
         @Query("target") target: String,
         @Query("from") from: String,
         @Query("to") toExclusive: String,
-    ): Response<Timeline>
+    ): Response<ResponseBody>
 }

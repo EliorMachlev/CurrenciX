@@ -6,10 +6,10 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.json.JsonObject
+import com.eliormachlev.currencix.repository.json.buildJsonObject
+import com.eliormachlev.currencix.repository.json.jsonText
 import com.eliormachlev.currencix.repository.json.parseJsonObject
-import com.eliormachlev.currencix.repository.json.writeJson
 import com.eliormachlev.currencix.util.toLocalDateOrNull
-import com.squareup.moshi.JsonWriter
 import timber.log.Timber
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -31,29 +31,23 @@ private const val TAG = "RateConverters"
 // The provider the cached data came from, stored by its id.
 private fun JsonObject.optProvider(): ApiProvider? = if (has(FIELD_PROVIDER)) ApiProvider.fromId(optInt(FIELD_PROVIDER)) else null
 
-// One field written only when there's a value for it.
-private fun JsonWriter.optionalField(
+// One field written only when there's a value for it: numbers and booleans
+// as they are, anything else (a date, a time) as its text.
+private fun MutableMap<String, Any>.optionalField(
     name: String,
     value: Any?,
 ) {
     value ?: return
-    name(name)
-    when (value) {
-        is Number -> value(value)
-        is Boolean -> value(value)
-        else -> value(value.toString())
-    }
+    put(name, if (value is Number || value is Boolean) value else value.toString())
 }
 
 // The "rates" field: each key with its rate as a plain string, so no
 // precision is lost to a JSON double.
-private fun <K> JsonWriter.ratesField(
+private fun <K> MutableMap<String, Any>.ratesField(
     rates: Iterable<Pair<K, Rate>>,
     key: (K) -> String,
 ) {
-    name(FIELD_RATES).beginObject()
-    rates.forEach { (k, rate) -> name(key(k)).value(rate.value.toPlainString()) }
-    endObject()
+    put(FIELD_RATES, rates.associate { (k, rate) -> key(k) to rate.value.toPlainString() })
 }
 
 // Each entry of a "rates" object whose key [toKey] knows and whose value is a number.
@@ -65,22 +59,20 @@ private fun <K> JsonObject.rates(toKey: (String) -> K?): Sequence<Pair<K, BigDec
     }
 
 /**
- * JSON [Converter] for [ExchangeRates], written field by field with Moshi's
- * streaming writer rather than through a generated adapter: that keeps the
- * `@Transient` `time` and `provider` fields, which the adapter (built for the
- * providers' responses) leaves out.
+ * JSON [Converter] for [ExchangeRates], written field by field: the cache
+ * keeps the `time` and `provider` a provider's response doesn't carry.
  */
 internal object ExchangeRatesConverter : Converter<ExchangeRates> {
     override fun encode(value: ExchangeRates): String =
-        writeJson { writer ->
-            writer.beginObject()
-            writer.optionalField(FIELD_BASE, value.base?.iso4217Alpha())
-            writer.optionalField(FIELD_DATE, value.date)
-            writer.optionalField(FIELD_TIME, value.time)
-            writer.optionalField(FIELD_PROVIDER, value.provider?.id)
-            writer.ratesField(value.rates.orEmpty().map { it.currency to it }, Currency::iso4217Alpha)
-            writer.endObject()
-        }
+        jsonText(
+            buildJsonObject {
+                optionalField(FIELD_BASE, value.base?.iso4217Alpha())
+                optionalField(FIELD_DATE, value.date)
+                optionalField(FIELD_TIME, value.time)
+                optionalField(FIELD_PROVIDER, value.provider?.id)
+                ratesField(value.rates.orEmpty().map { it.currency to it }, Currency::iso4217Alpha)
+            },
+        )
 
     override fun decode(encoded: String): ExchangeRates? =
         runCatching {
@@ -103,24 +95,23 @@ internal object ExchangeRatesConverter : Converter<ExchangeRates> {
 }
 
 /**
- * JSON [Converter] for [Timeline]. Same rationale as [ExchangeRatesConverter]
- * — hand-rolled preserves the `@Transient` `provider` field and stays
- * consistent with the preferences-backed cached timeline layout.
+ * JSON [Converter] for [Timeline]. Written field by field, as
+ * [ExchangeRatesConverter] is, so the cache keeps the `provider`.
  */
 internal class TimelineConverter(
     private val symbol: Currency,
 ) : Converter<Timeline> {
     override fun encode(value: Timeline): String =
-        writeJson { writer ->
-            writer.beginObject()
-            writer.optionalField(FIELD_SUCCESS, value.success ?: true)
-            writer.optionalField(FIELD_BASE, value.base)
-            writer.optionalField(FIELD_START, value.startDate)
-            writer.optionalField(FIELD_END, value.endDate)
-            writer.optionalField(FIELD_PROVIDER, value.provider?.id)
-            writer.ratesField(value.rates.orEmpty().toList(), LocalDate::toString)
-            writer.endObject()
-        }
+        jsonText(
+            buildJsonObject {
+                optionalField(FIELD_SUCCESS, value.success ?: true)
+                optionalField(FIELD_BASE, value.base)
+                optionalField(FIELD_START, value.startDate)
+                optionalField(FIELD_END, value.endDate)
+                optionalField(FIELD_PROVIDER, value.provider?.id)
+                ratesField(value.rates.orEmpty().toList(), LocalDate::toString)
+            },
+        )
 
     override fun decode(encoded: String): Timeline? =
         runCatching {

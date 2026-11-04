@@ -4,29 +4,29 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.squareup.moshi.JsonReader
-import java.io.IOException
-import java.math.BigDecimal
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
 import java.time.LocalDate
 
+private const val FIELD_CURRENCY = "currencyIso"
+private const val FIELD_AMOUNT = "amount"
+private const val FIELD_DATE_START = "dateStart"
+private const val FIELD_DATE_END = "dateEnd"
+
+/**
+ * One currency's InforEuro history: `[{currencyIso, amount, dateStart, dateEnd}, …]`,
+ * each rate standing for every day from its start to its end. Periods that
+ * start before the month of [startDate] are left out.
+ */
 internal class InforEuroTimelineAdapter(
     private val startDate: LocalDate,
     private val endDate: LocalDate,
-) : ResponseAdapter<Timeline>(Timeline::class.java) {
+) : ResponseAdapter<Timeline> {
     private val base: String = Currency.EUR.iso4217Alpha()
 
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): Timeline =
-        reader.readArrayOrError(
-            onError = ::errorResponse,
-        ) { r ->
-            val rates =
-                buildMap {
-                    while (r.hasNext()) {
-                        processEntry(r, this)
-                    }
-                }
+    override fun decode(json: JsonElement): Timeline =
+        json.arrayOrError(onError = ::errorResponse) { entries ->
+            val rates = buildMap { entries.forEach { processEntry(it, this) } }
             Timeline(
                 success = rates.isNotEmpty(),
                 error = null,
@@ -39,27 +39,14 @@ internal class InforEuroTimelineAdapter(
         }
 
     private fun processEntry(
-        reader: JsonReader,
+        entry: JsonElement,
         rates: MutableMap<LocalDate, Rate>,
     ) {
-        reader.beginObject()
-        var currencyIso: Currency? = null
-        var value: BigDecimal? = null
-        var dateStart: LocalDate? = null
-        var dateEnd: LocalDate? = null
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "currencyIso" -> currencyIso = Currency.fromString(reader.nextString())
-                "amount" -> value = BigDecimal(reader.nextString())
-                "dateStart" -> dateStart = LocalDate.parse(reader.nextString(), SLASHED_DATE_FORMATTER)
-                "dateEnd" -> dateEnd = LocalDate.parse(reader.nextString(), SLASHED_DATE_FORMATTER)
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-
-        val rate = rateOrNull(currencyIso, value) ?: return
-        if (dateStart == null || dateEnd == null) return
+        val fields = entry.jsonObject
+        val rate = rateOrNull(fields[FIELD_CURRENCY]?.let { Currency.fromString(it.text()) }, fields[FIELD_AMOUNT]?.decimal())
+        val dateStart = fields[FIELD_DATE_START]?.let { LocalDate.parse(it.text(), SLASHED_DATE_FORMATTER) }
+        val dateEnd = fields[FIELD_DATE_END]?.let { LocalDate.parse(it.text(), SLASHED_DATE_FORMATTER) }
+        if (rate == null || dateStart == null || dateEnd == null) return
         // inclusive: before-or-equal start
         if (startDate.withDayOfMonth(1).isAfter(dateStart)) return
 

@@ -4,94 +4,48 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.io.IOException
-import java.math.BigDecimal
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.ZoneId
 
-internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): ExchangeRates? {
-        var base: Currency? = null
-        var date: LocalDate? = null
-        var time: LocalTime? = null
-        var errorMessage: String? = null
+private const val FIELD_TIMESTAMP = "timestamp"
 
-        if (reader.skipIfNotObject()) return null
-
+/**
+ * Open Exchange Rates' `{timestamp, base, rates: {USD: 1, …}}`, dated and
+ * timed (to the minute) in the phone's zone; or `{message}` on failure.
+ */
+internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates> {
+    override fun decode(json: JsonElement): ExchangeRates? {
+        val response = json as? JsonObject ?: return null
+        val base = response[FIELD_BASE]?.let { Currency.fromString(it.text()) }
+        val zoned =
+            response[FIELD_TIMESTAMP]?.let { Instant.ofEpochSecond(it.jsonPrimitive.long).atZone(ZoneId.systemDefault()) }
+        val date = zoned?.toLocalDate()
+        val time = zoned?.toLocalTime()?.withSecond(0)?.withNano(0)
         val rates =
             buildList {
-                reader.beginObject()
-                while (reader.hasNext()) {
-                    if (reader.peek() != JsonReader.Token.NAME) continue
-                    when (reader.nextName()) {
-                        FIELD_RATES -> {
-                            addAll(parseRates(reader))
-                        }
-
-                        "timestamp" -> {
-                            val zoned =
-                                Instant
-                                    .ofEpochSecond(reader.nextLong())
-                                    .atZone(ZoneId.systemDefault())
-                            date = zoned.toLocalDate()
-                            time = zoned.toLocalTime().withSecond(0).withNano(0)
-                        }
-
-                        FIELD_BASE -> {
-                            base = Currency.fromString(reader.nextString())
-                        }
-
-                        FIELD_MESSAGE -> {
-                            errorMessage = reader.nextString()
-                        }
-
-                        else -> {
-                            reader.skipValue()
-                        }
-                    }
-                }
-                reader.endObject()
+                response[FIELD_RATES]?.let { addAll(parseRates(it)) }
                 addFokFromDkkIfMissing()
             }
 
-        return if (rates.isNotEmpty()) {
-            ExchangeRates(
-                success = true,
-                error = null,
-                base = base,
-                date = date,
-                time = time,
-                rates = rates,
-                provider = ApiProvider.OPEN_EXCHANGERATES,
-            )
-        } else {
-            ExchangeRates(
-                success = false,
-                error = errorMessage,
-                base = base,
-                date = date,
-                time = time,
-                rates = null,
-                provider = ApiProvider.OPEN_EXCHANGERATES,
-            )
-        }
+        return ExchangeRates(
+            success = rates.isNotEmpty(),
+            error = if (rates.isEmpty()) response[FIELD_MESSAGE]?.text() else null,
+            base = base,
+            date = date,
+            time = time,
+            rates = rates.takeIf { it.isNotEmpty() },
+            provider = ApiProvider.OPEN_EXCHANGERATES,
+        )
     }
 
-    private fun parseRates(reader: JsonReader): List<Rate> =
-        buildList {
-            reader.beginObject()
-            while (reader.hasNext()) {
-                val name = Currency.fromString(reader.nextName())
-                val value: BigDecimal = BigDecimal(reader.nextString())
-                if (name != null) {
-                    add(Rate(name, value))
-                }
-            }
-            reader.endObject()
+    private fun parseRates(rates: JsonElement): List<Rate> =
+        rates.jsonObject.mapNotNull { (name, value) ->
+            val rate = value.decimal()
+            Currency.fromString(name)?.let { Rate(it, rate) }
         }
 }

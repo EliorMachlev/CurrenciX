@@ -20,13 +20,9 @@ updates:
       androidx:
         patterns:
           - "androidx.*"
-      kotlin-and-ksp:
+      kotlin:
         patterns:
           - "org.jetbrains.kotlin*"
-          - "com.google.devtools.ksp*"
-      moshi:
-        patterns:
-          - "com.squareup.moshi:*"
       okhttp:
         patterns:
           - "com.squareup.okhttp3:*"

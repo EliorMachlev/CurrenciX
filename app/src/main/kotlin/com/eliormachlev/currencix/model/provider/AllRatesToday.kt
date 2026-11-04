@@ -9,7 +9,6 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.AllRatesTodayRatesAdapter
 import com.eliormachlev.currencix.model.adapter.AllRatesTodayTimelineAdapter
-import com.eliormachlev.currencix.model.adapter.register
 import com.eliormachlev.currencix.model.provider.api.AllRatesTodayApi
 import java.time.LocalDate
 import java.time.LocalTime
@@ -51,9 +50,9 @@ class AllRatesToday : ApiProvider.Api {
     ): Result<ExchangeRates> {
         val apiKey = secrets.allRatesTodayApiKey
         if (apiKey.isNullOrBlank()) return missingApiKey(context)
-        val api = retrofitApi<AllRatesTodayApi>(context, moshi { register(AllRatesTodayRatesAdapter(BASE)) })
+        val api = retrofitApi<AllRatesTodayApi>(context)
         val time = date?.atTime(HISTORICAL_TIME_OF_DAY)?.atOffset(ZoneOffset.UTC)?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-        return fetchRetrofit { api.getRates(bearer(apiKey), source = BASE.iso4217Alpha(), time = time) }
+        return fetchRetrofit(AllRatesTodayRatesAdapter(BASE)) { api.getRates(bearer(apiKey), source = BASE.iso4217Alpha(), time = time) }
             .explainKeyErrors(context)
     }
 
@@ -67,8 +66,8 @@ class AllRatesToday : ApiProvider.Api {
     ): Result<Timeline> {
         val apiKey = secrets.allRatesTodayApiKey
         if (apiKey.isNullOrBlank()) return missingApiKey(context)
-        val api = retrofitApi<AllRatesTodayApi>(context, moshi { register(AllRatesTodayTimelineAdapter(base, symbol)) })
-        return fetchRetrofit {
+        val api = retrofitApi<AllRatesTodayApi>(context)
+        return fetchRetrofit(AllRatesTodayTimelineAdapter(base, symbol)) {
             api.getTimeline(
                 bearer(apiKey),
                 source = base.apiCodeOrDkkForFok(),
