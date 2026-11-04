@@ -7,6 +7,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.JsonObject as JsonElementObject
 
 // The app's own JSON (saved lists, backups, cart files, cached rates) read and
@@ -123,10 +124,28 @@ private fun parseJsonValue(text: String): Any? {
 
 private fun JsonElement.toValue(): Any? =
     when (this) {
-        is JsonElementObject -> mapValuesTo(LinkedHashMap()) { (_, value) -> value.toValue() }
-        is JsonArray -> map { it.toValue() }
-        JsonNull -> null
-        is JsonPrimitive -> if (isString) content else booleanOrNull ?: content.toDouble()
+        is JsonElementObject -> {
+            mapValuesTo(LinkedHashMap()) { (_, value) -> value.toValue() }
+        }
+
+        is JsonArray -> {
+            map { it.toValue() }
+        }
+
+        JsonNull -> {
+            null
+        }
+
+        // A bare word that is neither a boolean nor a number ("nope") isn't
+        // JSON, though the tree's reader lets it through.
+        is JsonPrimitive -> {
+            if (isString) {
+                content
+            } else {
+                booleanOrNull ?: doubleOrNull
+                    ?: throw MalformedJsonException("Not a JSON value: $content")
+            }
+        }
     }
 
 /**
