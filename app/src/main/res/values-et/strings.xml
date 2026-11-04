@@ -265,8 +265,6 @@
     <string name="trip_unnamed">Reis</string>
     <string name="trip_move">Reis</string>
     <string name="trip_none">Reisita</string>
-    <string name="receipt_setup_also_language_until">Loe tšekke ka keeles %1$s (%2$s), kuni %3$s</string>
-    <string name="receipt_language_offer_trip">Kas lugeda reisil tšekke keeles %1$s? Tekstiandmed on ühekordne allalaadimine, %2$s, ja jäävad alles kuni %3$s. Ilma nendeta loetakse tšekke inglise keeles.</string>
     <string name="trip_destination">Sihtkoht (seal kasutatav valuuta)</string>
     <string name="trip_optional">Valikuline</string>
     <string name="trip_dates">Kuupäevad</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">Kursiteavitus seatud</string>
     <string name="receipt_setup_message">Tšekkide lugemiseks on vaja ühekordset allalaadimist. Pärast seda töötab see telefonis võrguta.</string>
     <string name="receipt_setup_reader">Tekstilugeja</string>
-    <string name="receipt_setup_language_data">Tekstiandmed: %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Loe tšekke ka keeles %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Kas lugeda tšekke ka keeles %1$s? Tekstiandmed on ühekordne allalaadimine, %2$s. Ilma nendeta loetakse tšekke inglise keeles.</string>
-    <string name="receipt_language_english_only">Ainult inglise keel</string>
     <string name="receipt_language_read_too">Loe ka keelt %1$s</string>
     <string name="receipt_languages_title">Tšekkide keeled</string>
     <string name="receipt_languages_summary">Lisa keel reisiks, hoia seda kuupäevani või kustuta</string>
-    <string name="receipt_languages_intro">Tšekke loetakse sinu telefonis, inglise keeles ja siin olevates keeltes. Ilma sinu nõusolekuta ei laadita midagi alla.</string>
     <string name="receipt_languages_installed">Selles telefonis</string>
-    <string name="receipt_languages_empty">Veel pole. Esimene tšeki skannimine pakub inglise keelt.</string>
     <string name="receipt_languages_add">Lisa keel</string>
     <string name="receipt_languages_downloading">%1$s · laaditakse alla…</string>
     <string name="receipt_languages_kept">%1$s · alles</string>
@@ -361,5 +353,13 @@
     <string name="quick_amount_label">Summa</string>
     <string name="quick_amount_taken">On juba üks summadest</string>
     <string name="quick_amount_note">Kasutatakse valuuta %1$s jaoks igas paaris.</string>
+    <string name="receipt_setup_language">Loe kviitungeid keeles %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Loe kviitungeid keeles %1$s (%2$s), hoitakse kuni %3$s</string>
+    <string name="receipt_setup_pick_language">Vali vähemalt üks keel, milles kviitungeid lugeda.</string>
+    <string name="receipt_language_offer">Kas lugeda kviitungeid ka keeles %1$s? Selle tekstiandmed on ühekordne allalaadimine, %2$s.</string>
+    <string name="receipt_language_offer_trip">Kas lugeda reisil kviitungeid keeles %1$s? Selle tekstiandmed on ühekordne allalaadimine, %2$s, hoitakse kuni %3$s.</string>
+    <string name="receipt_language_not_now">Mitte praegu</string>
+    <string name="receipt_languages_intro">Kviitungeid loetakse sinu telefonis, siinsetes keeltes. Midagi ei laadita alla enne, kui nõustud.</string>
+    <string name="receipt_languages_empty">Veel pole. Esimene kviitungi skannimine küsib, mida alla laadida.</string>
     <string name="error_certificate_pinning">Serveri sertifikaat pole ükski neist, mille rakendus on talle kinnitanud. Kui teenusepakkuja selle vahetas, kinnita uuesti seadetes või lülita sertifikaatide kinnitamine välja.</string>
 </resources>

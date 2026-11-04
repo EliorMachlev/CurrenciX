@@ -266,8 +266,6 @@
     <string name="trip_unnamed">טיול</string>
     <string name="trip_move">טיול</string>
     <string name="trip_none">בלי טיול</string>
-    <string name="receipt_setup_also_language_until">לקרוא קבלות גם ב%1$s (%2$s), לשמור עד %3$s</string>
-    <string name="receipt_language_offer_trip">לקרוא קבלות ב%1$s בטיול? נתוני הטקסט הם הורדה חד־פעמית של %2$s, נשמרים עד %3$s. בלעדיהם, קבלות נקראות באנגלית.</string>
     <string name="trip_destination">לאן (המטבע שמשלמים בו שם)</string>
     <string name="trip_optional">לא חובה</string>
     <string name="trip_dates">תאריכים</string>
@@ -323,16 +321,10 @@
     <string name="recent_pair_alert_set">הוגדרה התראת שער</string>
     <string name="receipt_setup_message">קריאת קבלות דורשת הורדה חד־פעמית. אחר כך היא עובדת בטלפון גם בלי חיבור.</string>
     <string name="receipt_setup_reader">קורא הטקסט</string>
-    <string name="receipt_setup_language_data">נתוני טקסט ב%1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">לקרוא קבלות גם ב%1$s (%2$s)</string>
-    <string name="receipt_language_offer">לקרוא קבלות גם ב%1$s? נתוני הטקסט הם הורדה חד־פעמית של %2$s. בלעדיהם, קבלות נקראות באנגלית.</string>
-    <string name="receipt_language_english_only">רק אנגלית</string>
     <string name="receipt_language_read_too">לקרוא גם ב%1$s</string>
     <string name="receipt_languages_title">שפות קבלות</string>
     <string name="receipt_languages_summary">להוסיף שפה לטיול, לשמור אותה עד תאריך או למחוק אותה</string>
-    <string name="receipt_languages_intro">קבלות נקראות בטלפון, באנגלית ובשפות שכאן. שום דבר לא יורד בלי הסכמתכם.</string>
     <string name="receipt_languages_installed">בטלפון הזה</string>
-    <string name="receipt_languages_empty">עדיין אין. סריקת הקבלה הראשונה מציעה אנגלית.</string>
     <string name="receipt_languages_add">הוספת שפה</string>
     <string name="receipt_languages_downloading">בהורדה… · %1$s</string>
     <string name="receipt_languages_kept">%1$s · נשמרת</string>
@@ -364,5 +356,13 @@
     <string name="quick_amount_label">סכום</string>
     <string name="quick_amount_taken">כבר אחד מהסכומים</string>
     <string name="quick_amount_note">ישמש עבור %1$s בכל צמד.</string>
+    <string name="receipt_setup_language">קריאת קבלות ב%1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">קריאת קבלות ב%1$s (%2$s), נשמר עד %3$s</string>
+    <string name="receipt_setup_pick_language">יש לבחור לפחות שפה אחת לקריאת קבלות.</string>
+    <string name="receipt_language_offer">לקרוא קבלות גם ב%1$s? נתוני הטקסט שלה הם הורדה חד-פעמית של %2$s.</string>
+    <string name="receipt_language_offer_trip">לקרוא קבלות ב%1$s בטיול? נתוני הטקסט שלה הם הורדה חד-פעמית של %2$s, נשמרים עד %3$s.</string>
+    <string name="receipt_language_not_now">לא עכשיו</string>
+    <string name="receipt_languages_intro">הקבלות נקראות בטלפון שלך, בשפות שכאן. שום דבר לא יורד לפני שהסכמת.</string>
+    <string name="receipt_languages_empty">אין עדיין. סריקת הקבלה הראשונה שלך תשאל מה להוריד.</string>
     <string name="error_certificate_pinning">האישור של השרת אינו אחד מאלה שהאפליקציה הצמידה לו. אם הספק החליף אותו, יש להצמיד מחדש בהגדרות או לכבות את הצמדת האישורים.</string>
 </resources>

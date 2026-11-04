@@ -14,10 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,59 +58,82 @@ fun ReceiptReadingSheet(onDismiss: () -> Unit) {
 /**
  * The first scan, with what reading needs not on the device yet: what
  * [offer] lists is downloaded only on [onDownload], each named with its size.
- * The app's own language, when offered, is a separate tick left unticked:
- * [onDownload] says whether it was ticked.
+ * Every language is a tick left unticked; while there's none on the phone,
+ * Download waits for at least one. [onDownload] gets those ticked.
  */
 @Composable
 fun ReceiptSetupOfferSheet(
     offer: ReceiptSetup.Offer,
-    onDownload: (withLanguage: Boolean) -> Unit,
+    onDownload: (chosen: Set<TessLanguage>) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val locale = LocalConfiguration.current.locales[0]
-    var withLanguage by remember(offer) { mutableStateOf(false) }
+    val chosen = remember(offer) { mutableStateListOf<TessLanguage>() }
+    val missingLanguage = offer.needsLanguage && chosen.isEmpty()
     LedgerPromptSheet(
         title = stringResource(R.string.receipt_scan),
         confirmLabel = stringResource(R.string.receipt_setup_download),
-        onConfirm = { onDownload(withLanguage) },
+        onConfirm = { onDownload(chosen.toSet()) },
         onDismiss = onDismiss,
+        confirmEnabled = !missingLanguage && (offer.reader || chosen.isNotEmpty()),
     ) {
         PromptMessage(stringResource(R.string.receipt_setup_message))
         Spacer(Modifier.height(Spacing.Small))
         if (offer.reader) SetupItem(stringResource(R.string.receipt_setup_reader))
-        if (offer.english) {
-            val english = TessLanguage.ENGLISH
-            SetupItem(stringResource(R.string.receipt_setup_language_data, english.displayName(locale), english.downloadSize(context)))
+        offer.languages.forEach { language ->
+            LanguageChoice(
+                language = language,
+                until = offer.until[language],
+                checked = language in chosen,
+                onCheckedChange = { on -> if (on) chosen += language else chosen -= language },
+            )
         }
-        offer.language?.let { language ->
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .toggleable(value = withLanguage, role = Role.Checkbox) { withLanguage = it }
-                        .padding(vertical = Spacing.Tiny),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Spacing.Small),
-            ) {
-                Checkbox(checked = withLanguage, onCheckedChange = null)
-                val name = language.displayName(locale)
-                val size = language.downloadSize(context)
-                Text(
-                    offer.until?.let { stringResource(R.string.receipt_setup_also_language_until, name, size, formatUntilDay(it, locale)) }
-                        ?: stringResource(R.string.receipt_setup_also_language, name, size),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f),
-                )
-            }
+        if (missingLanguage) {
+            Text(
+                stringResource(R.string.receipt_setup_pick_language),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = Spacing.Small),
+            )
         }
     }
 }
 
+// One language as a tick: its name, its size, and the day it goes when it's for a trip.
+@Composable
+private fun LanguageChoice(
+    language: TessLanguage,
+    until: Instant?,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .toggleable(value = checked, role = Role.Checkbox, onValueChange = onCheckedChange)
+                .padding(vertical = Spacing.Tiny),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.Small),
+    ) {
+        Checkbox(checked = checked, onCheckedChange = null)
+        val name = language.displayName(locale)
+        val size = language.downloadSize(context)
+        Text(
+            until?.let { stringResource(R.string.receipt_setup_language_until, name, size, formatUntilDay(it, locale)) }
+                ?: stringResource(R.string.receipt_setup_language, name, size),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
 /**
- * Whether to also read receipts in [language] (the app's own), its data a
- * one-time download of its size: [onAnswer] true to download it, false for
- * English only (closing the sheet says no too).
+ * Whether to also read receipts in [language] (the trip's, the cart
+ * currency's or the app's own), its data a one-time download of its size:
+ * [onAnswer] true to download it, false for not now (closing the sheet says
+ * no too).
  */
 @Composable
 fun ReceiptLanguageOfferSheet(
@@ -128,7 +149,7 @@ fun ReceiptLanguageOfferSheet(
         confirmLabel = stringResource(R.string.receipt_setup_download),
         onConfirm = { onAnswer(true) },
         onDismiss = { onAnswer(false) },
-        cancelLabel = stringResource(R.string.receipt_language_english_only),
+        cancelLabel = stringResource(R.string.receipt_language_not_now),
     ) {
         val size = language.downloadSize(context)
         PromptMessage(
@@ -174,8 +195,8 @@ fun ReceiptSetupProgressSheet(
 /**
  * The items found on a receipt, each ticked, prices in the cart's
  * [currency]: untick what isn't wanted, then add the rest ([onAdd]). With
- * none found, says so. [languagePending]: the app language's OCR data is
- * still downloading, so names were read as English. [languageDeclined]: the
+ * none found, says so. [languagePending]: a language's OCR data is still
+ * downloading, so names were read in the ones already here. [languageDeclined]: the
  * user said no to it, so a button offers it again ([onOfferLanguage]).
  */
 @Composable

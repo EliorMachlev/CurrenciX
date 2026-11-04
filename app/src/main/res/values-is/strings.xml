@@ -265,8 +265,6 @@
     <string name="trip_unnamed">Ferð</string>
     <string name="trip_move">Ferð</string>
     <string name="trip_none">Engin ferð</string>
-    <string name="receipt_setup_also_language_until">Lesa kvittanir líka á %1$s (%2$s), til %3$s</string>
-    <string name="receipt_language_offer_trip">Lesa kvittanir á %1$s á ferðalaginu? Textagögnin eru sótt einu sinni, %2$s, og geymd til %3$s. Án þeirra eru kvittanir lesnar á ensku.</string>
     <string name="trip_destination">Áfangastaður (gjaldmiðillinn sem þar er greitt með)</string>
     <string name="trip_optional">Valfrjálst</string>
     <string name="trip_dates">Dagsetningar</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">Gengisviðvörun sett</string>
     <string name="receipt_setup_message">Til að lesa kvittanir þarf að sækja gögn einu sinni. Eftir það virkar það án nettengingar í símanum.</string>
     <string name="receipt_setup_reader">Textalesarinn</string>
-    <string name="receipt_setup_language_data">Textagögn fyrir %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Lesa kvittanir líka á %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Lesa kvittanir líka á %1$s? Textagögnin eru sótt einu sinni, %2$s. Án þeirra eru kvittanir lesnar á ensku.</string>
-    <string name="receipt_language_english_only">Aðeins enska</string>
     <string name="receipt_language_read_too">Lesa líka %1$s</string>
     <string name="receipt_languages_title">Tungumál kvittana</string>
     <string name="receipt_languages_summary">Bættu við tungumáli fyrir ferð, haltu því til dagsetningar eða eyddu því</string>
-    <string name="receipt_languages_intro">Kvittanir eru lesnar í símanum, á ensku og tungumálunum hér. Ekkert er sótt án samþykkis þíns.</string>
     <string name="receipt_languages_installed">Í þessum síma</string>
-    <string name="receipt_languages_empty">Ekkert enn. Fyrsta skönnun kvittunar býður upp á ensku.</string>
     <string name="receipt_languages_add">Bæta við tungumáli</string>
     <string name="receipt_languages_downloading">%1$s · sæki…</string>
     <string name="receipt_languages_kept">%1$s · haldið</string>
@@ -361,5 +353,13 @@
     <string name="quick_amount_label">Upphæð</string>
     <string name="quick_amount_taken">Er þegar ein upphæðanna</string>
     <string name="quick_amount_note">Notað fyrir %1$s í öllum pörum.</string>
+    <string name="receipt_setup_language">Lesa kvittanir á %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Lesa kvittanir á %1$s (%2$s), geymt til %3$s</string>
+    <string name="receipt_setup_pick_language">Veldu að minnsta kosti eitt tungumál til að lesa kvittanir á.</string>
+    <string name="receipt_language_offer">Lesa kvittanir líka á %1$s? Textagögnin eru eitt niðurhal upp á %2$s.</string>
+    <string name="receipt_language_offer_trip">Lesa kvittanir á %1$s í ferðinni? Textagögnin eru eitt niðurhal upp á %2$s, geymt til %3$s.</string>
+    <string name="receipt_language_not_now">Ekki núna</string>
+    <string name="receipt_languages_intro">Kvittanir eru lesnar í símanum þínum, á tungumálunum hér. Ekkert er sótt fyrr en þú samþykkir.</string>
+    <string name="receipt_languages_empty">Ekkert enn. Fyrsta skönnun kvittunar spyr hvað eigi að sækja.</string>
     <string name="error_certificate_pinning">Skilríki þjónsins eru ekki ein af þeim sem forritið hefur fest fyrir hann. Ef þjónustuveitan skipti um þau skaltu festa aftur í Stillingum eða slökkva á festingu skilríkja.</string>
 </resources>

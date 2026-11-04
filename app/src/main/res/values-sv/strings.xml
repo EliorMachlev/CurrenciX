@@ -266,8 +266,6 @@
     <string name="trip_unnamed">Resa</string>
     <string name="trip_move">Resa</string>
     <string name="trip_none">Ingen resa</string>
-    <string name="receipt_setup_also_language_until">Läs även kvitton på %1$s (%2$s), behålls till %3$s</string>
-    <string name="receipt_language_offer_trip">Läsa kvitton på %1$s under resan? Textdatan är en engångsnedladdning på %2$s och behålls till %3$s. Utan den läses kvitton på engelska.</string>
     <string name="trip_destination">Resmål (valutan man betalar med där)</string>
     <string name="trip_optional">Valfritt</string>
     <string name="trip_dates">Datum</string>
@@ -321,16 +319,10 @@
     <string name="recent_pair_alert_set">Kursavisering satt</string>
     <string name="receipt_setup_message">Att läsa kvitton kräver en engångsnedladdning. Sedan fungerar det offline i telefonen.</string>
     <string name="receipt_setup_reader">Textläsaren</string>
-    <string name="receipt_setup_language_data">Textdata för %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Läs även kvitton på %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Läsa kvitton även på %1$s? Textdatan är en engångsnedladdning på %2$s. Utan den läses kvitton på engelska.</string>
-    <string name="receipt_language_english_only">Bara engelska</string>
     <string name="receipt_language_read_too">Läs även %1$s</string>
     <string name="receipt_languages_title">Kvittospråk</string>
     <string name="receipt_languages_summary">Lägg till ett språk för en resa, behåll det till ett datum eller ta bort det</string>
-    <string name="receipt_languages_intro">Kvitton läses i telefonen, på engelska och språken här. Inget laddas ned utan ditt godkännande.</string>
     <string name="receipt_languages_installed">I den här telefonen</string>
-    <string name="receipt_languages_empty">Inga än. Din första kvittoskanning erbjuder engelska.</string>
     <string name="receipt_languages_add">Lägg till ett språk</string>
     <string name="receipt_languages_downloading">%1$s · laddas ned…</string>
     <string name="receipt_languages_kept">%1$s · behålls</string>
@@ -362,5 +354,13 @@
     <string name="quick_amount_label">Belopp</string>
     <string name="quick_amount_taken">Finns redan bland beloppen</string>
     <string name="quick_amount_note">Används för %1$s i alla par.</string>
+    <string name="receipt_setup_language">Läs kvitton på %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Läs kvitton på %1$s (%2$s), sparas till %3$s</string>
+    <string name="receipt_setup_pick_language">Välj minst ett språk att läsa kvitton på.</string>
+    <string name="receipt_language_offer">Läsa kvitton på %1$s också? Textdatan är en engångsnedladdning på %2$s.</string>
+    <string name="receipt_language_offer_trip">Läsa kvitton på %1$s under resan? Textdatan är en engångsnedladdning på %2$s, sparas till %3$s.</string>
+    <string name="receipt_language_not_now">Inte nu</string>
+    <string name="receipt_languages_intro">Kvitton läses på din telefon, på språken här. Inget laddas ned förrän du säger ja.</string>
+    <string name="receipt_languages_empty">Inga ännu. Din första kvittoskanning frågar vilka som ska laddas ned.</string>
     <string name="error_certificate_pinning">Serverns certifikat är inte något av dem appen har fäst för den. Om leverantören har bytt det, fäst om i Inställningar eller stäng av certifikatfästning.</string>
 </resources>
