@@ -40,10 +40,34 @@ plugins {
     // Kotlin classes for the Protobuf schema in src/main/proto (carts, trips,
     // fees, rate alerts on disk): plain generated code, no reflection.
     id("com.squareup.wire") version "7.1.2"
+    // Line and branch coverage of the unit tests (koverXmlReport<Variant>,
+    // koverLog<Variant>), summarised on each CI test run.
+    id("org.jetbrains.kotlinx.kover") version "0.9.11"
+    // Fails the build on a dependency whose licence isn't one allowed below
+    // (licenseeFdroidRelease in CI): the F-Droid app ships free software only.
+    id("app.cash.licensee") version "1.14.1"
 }
 
 wire {
     kotlin {}
+}
+
+kover {
+    currentProject {
+        instrumentation {
+            // Jazzer instruments the classes itself: the fuzz runs
+            // (-PfuzzTests) go without Kover's agent.
+            disabledForAll.set(providers.gradleProperty("fuzzTests").isPresent)
+        }
+    }
+}
+
+// The licences the app's libraries may carry, by SPDX id.
+licensee {
+    allow("Apache-2.0")
+    allow("MIT")
+    allow("BSD-2-Clause")
+    allow("BSD-3-Clause")
 }
 
 kotlin {
@@ -493,6 +517,13 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.17")
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.ui:ui-test-manifest")
+    // Google's Accessibility Test Framework on Compose tests (touch targets,
+    // contrast, labels): enableAccessibilityChecks().
+    testImplementation("androidx.compose.ui:ui-test-junit4-accessibility")
+    // Coroutines and Flows on a virtual clock (runTest), and Flow emissions
+    // checked one at a time (Turbine).
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    testImplementation("app.cash.turbine:turbine:1.2.1")
     // architecture: Konsist encodes MVVM layer boundaries as JUnit tests so
     // Phase 1+ rewrites can't silently break the View / ViewModel / Repository
     // / Model separation. Runs on the plain JVM (no Android / Robolectric).
