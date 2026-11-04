@@ -64,8 +64,10 @@ jobs:
       # production classes loaded by Robolectric's sandbox and blow up
       # with `NoClassDefFoundError: JazzerInternal` on the first call
       # to any instrumented method (e.g. TextUtils.roundIfNeeded).
+      # A fixed commit in the debug version name, which the splash's version
+      # line shows: otherwise every commit would change that screenshot.
       - name: Record Roborazzi screenshots (fdroid debug)
-        run: ./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*" --stacktrace
+        run: ./gradlew :app:recordRoborazziFdroidDebug -PdebugCommitSha=0000000 --tests "com.eliormachlev.currencix.screenshots.*" --stacktrace
 
       - name: Upload screenshots
         if: always()
