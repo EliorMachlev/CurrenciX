@@ -182,7 +182,9 @@ jobs:
         run: |
           runs=$(gh api "repos/$REPO/actions/workflows/build.yaml/runs?branch=master&event=push&status=success&per_page=20" --jq '.workflow_runs[].id')
           for run in $runs; do
-            if gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '.artifacts[] | select(.name == "fdroid-release-apk" and (.expired | not)) | .id' | grep -q .; then
+            # A failed request fails the step: it says nothing about whether there's a baseline.
+            artifact=$(gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '.artifacts[] | select(.name == "fdroid-release-apk" and (.expired | not)) | .id')
+            if [ -n "$artifact" ]; then
               gh run download "$run" --repo "$REPO" --name fdroid-release-apk --dir master
               echo "found=true" >> "$GITHUB_OUTPUT"
               exit 0
