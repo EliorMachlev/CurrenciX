@@ -1,0 +1,45 @@
+name: Dependency submission
+# Sends GitHub's dependency graph every library the Gradle build resolves,
+# the build tools' own included: GitHub can't read Gradle build files by
+# itself, so without this Dependabot alerts and Dependency Review see almost
+# none of them. On master for the alerts; on each PR from this repository so
+# Dependency Review can compare the PR's libraries with master's (a fork's PR
+# has no token that may submit, so it's left to master's).
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same PR or branch supersedes a run still going;
+# master's runs always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+
+env:
+  # As in build.yaml: silences the JDK's CDS banner in forked JVMs.
+  JDK_JAVA_OPTIONS: -Xshare:off
+
+jobs:
+  submit:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      # The dependency submission API takes a write token.
+      contents: write
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup java environment
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          java-version: 25
+          distribution: temurin
+
+      - name: Submit the dependency graph
+        uses: gradle/actions/dependency-submission@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
