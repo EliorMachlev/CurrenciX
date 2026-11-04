@@ -46,6 +46,7 @@ def patchedLibraries = [
     'org.bouncycastle:bcpkix-jdk18on'            : '1.86',
     'org.bouncycastle:bcprov-jdk18on'            : '1.86',
     'org.bouncycastle:bcutil-jdk18on'            : '1.86',
+    'org.freemarker:freemarker'                  : '2.3.35',
     'org.jdom:jdom2'                             : '2.0.6.1',
 ]
 
