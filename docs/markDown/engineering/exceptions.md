@@ -87,6 +87,12 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 - **Why it can't be fixed:** the match comes from the name, so no version of Square's Wire changes it; the only way to make it go away would be removing the library.
 - **What is excluded:** those two CVEs, each in its own entry, only for files under `com.squareup.wire/` named `wire-runtime…` (`config/owasp/suppressions.xml`, handed to the scan with `--suppression`). Any other CVE matched to that jar, and either CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
 
+### Action exceptions
+
+The GitHub Actions workflows in `.github/workflows/`: a step allowed to fail without failing its job (`continue-on-error`), or a finding left out by the workflow linters, actionlint and the ShellCheck it runs on each `run:` script (`# shellcheck disable=`, `-ignore`), or by zizmor (`# zizmor: ignore`).
+
+None at present.
+
 ### CurrenciX exceptions
 
 The app's own code, written as it is on purpose.
@@ -128,7 +134,7 @@ The app's own code, written as it is on purpose.
 1. Establish that there is no real fix, and what the next-best outcome would cost (a removed feature, a broken platform contract).
 2. Get the maintainer's decision. An exception is theirs to grant, not the author's.
 3. Exclude the narrowest thing possible: the one finding, by rule id, where it occurs. Never a rule switched off for the project, a file or directory left out of a scan, or a baseline.
-4. Add a row and a section above, in the group where the finding lives (the build, a package, or CurrenciX's own code), under the next unused number: what the rule says, why it can't be fixed, what still guards the code.
+4. Add a row and a section above, in the group where the finding lives (the build, a package, a workflow, or CurrenciX's own code), under the next unused number: what the rule says, why it can't be fixed, what still guards the code.
 5. Add the exact line to `EXCEPTIONS` in `NoSuppressionsTest`. That test fails on any suppression marker not listed there, on a listed one that is no longer in the code or has moved off the thing it was granted for, and on one this file doesn't explain.
 
 ## Removing an exception
