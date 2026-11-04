@@ -365,4 +365,5 @@
     <string name="receipt_language_not_now">Pas maintenant</string>
     <string name="receipt_languages_intro">Les tickets sont lus sur votre téléphone, dans les langues présentes ici. Rien n\'est téléchargé sans votre accord.</string>
     <string name="receipt_languages_empty">Aucune pour l\'instant. Votre premier scan de ticket vous demande lesquelles télécharger.</string>
+    <string name="error_certificate_pinning">Le certificat du serveur ne fait pas partie de ceux que l\'application a épinglés pour lui. Si le fournisseur l\'a changé, réépinglez dans les Paramètres ou désactivez l\'épinglage des certificats.</string>
 </resources>

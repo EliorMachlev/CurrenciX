@@ -361,4 +361,5 @@
     <string name="receipt_language_not_now">Ne nun</string>
     <string name="receipt_languages_intro">Kvitancoj estas legataj en via telefono, en la lingvoj ĉi tie. Nenio estas elŝutata ĝis vi konsentas.</string>
     <string name="receipt_languages_empty">Ankoraŭ neniu. Via unua skanado de kvitanco demandas, kiujn elŝuti.</string>
+    <string name="error_certificate_pinning">La atestilo de la servilo ne estas iu el tiuj, kiujn la aplikaĵo fiksis por ĝi. Se la provizanto ŝanĝis ĝin, refiksu en Agordoj aŭ malŝaltu la fiksadon de atestiloj.</string>
 </resources>

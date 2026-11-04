@@ -7,8 +7,11 @@ import com.eliormachlev.currencix.model.Timeline
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 import java.math.BigDecimal
-import java.math.MathContext
 import java.time.LocalDate
+
+// One day's rate, and the internal id of its currency.
+private const val RECORD_TAG = "Record"
+private const val RECORD_CURRENCY_ID = "Id"
 
 class BankRossiiTimelineXmlParser(
     private val ids: Map<String, String>,
@@ -28,25 +31,21 @@ class BankRossiiTimelineXmlParser(
             tagname = parser.name ?: tagname
             when (eventType) {
                 XmlPullParser.START_TAG -> {
-                    if (tagname == "Record") {
+                    if (tagname == RECORD_TAG) {
                         date =
                             parser.bankRossiiDate()
-                        currencyId = parser.getAttributeValue(null, "Id")
+                        currencyId = parser.getAttributeValue(null, RECORD_CURRENCY_ID)
                     }
                 }
 
                 XmlPullParser.TEXT -> {
-                    if (tagname == "VunitRate") {
-                        value =
-                            BigDecimal.ONE.divide(
-                                parser.text.replace(',', '.').toBigDecimal(),
-                                MathContext.DECIMAL128,
-                            )
+                    if (tagname == BANK_ROSSII_RATE_TAG) {
+                        value = bankRossiiRate(parser.text)
                     }
                 }
 
                 XmlPullParser.END_TAG -> {
-                    if (tagname == "Record") {
+                    if (tagname == RECORD_TAG) {
                         recordRate(date, value, currencyId)
                         date = null
                         currencyId = null

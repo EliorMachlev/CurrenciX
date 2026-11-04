@@ -17,6 +17,13 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # A PR's results go on its head commit, not GitHub's test merge with
+  # master, which GitHub can rebuild after the run starts and the merge rule
+  # would then wait on (see codeql.yaml).
+  SARIF_REF: ${{ github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number) || '' }}
+  SARIF_SHA: ${{ github.event.pull_request.head.sha || '' }}
+
 jobs:
   qodana:
     runs-on: ubuntu-latest
@@ -50,3 +57,5 @@ jobs:
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
           category: qodana
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}

@@ -365,4 +365,5 @@
     <string name="receipt_language_not_now">Agora não</string>
     <string name="receipt_languages_intro">Os recibos são lidos no seu celular, nos idiomas daqui. Nada é baixado até você concordar.</string>
     <string name="receipt_languages_empty">Nenhum ainda. A primeira leitura de recibo pergunta quais baixar.</string>
+    <string name="error_certificate_pinning">O certificado do servidor não é nenhum dos que o app fixou para ele. Se o provedor o trocou, fixe de novo em Configurações ou desative a fixação de certificados.</string>
 </resources>

@@ -311,6 +311,7 @@ private const val FEE_STAMP_OP_PREFIX = "+"
 // a fixed millis budget and long trips would race by).
 private const val PILL_AUTO_SCROLL_IDLE_MILLIS = 10_000L
 private const val PILL_AUTO_SCROLL_SPEED_DP_PER_S = 30f
+private const val MILLIS_PER_SECOND = 1000f
 private const val PILL_AUTO_SCROLL_MIN_TRIP_MILLIS = 1500
 private const val PILL_AUTO_SCROLL_RETURN_MILLIS = 1200
 private const val PILL_AUTO_SCROLL_DWELL_MILLIS = 1500L
@@ -1124,7 +1125,7 @@ private fun rememberEndAnchoredScrollState(key: Any?): ScrollState {
 @Composable
 private fun rememberIdleAutoScrollState(resetKey: Any? = null): ScrollState {
     val state = rememberScrollState()
-    val pxPerMs = PILL_AUTO_SCROLL_SPEED_DP_PER_S * LocalDensity.current.density / 1000f
+    val pxPerMs = PILL_AUTO_SCROLL_SPEED_DP_PER_S * LocalDensity.current.density / MILLIS_PER_SECOND
     LaunchedEffect(resetKey) {
         state.scrollTo(0)
     }

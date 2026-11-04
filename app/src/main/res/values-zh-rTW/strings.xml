@@ -356,4 +356,5 @@
     <string name="receipt_language_not_now">以後再說</string>
     <string name="receipt_languages_intro">收據在你的手機上讀取，使用這裡的語言。在你同意之前不會下載任何內容。</string>
     <string name="receipt_languages_empty">還沒有。第一次掃描收據時會詢問要下載哪些。</string>
+    <string name="error_certificate_pinning">伺服器的憑證不是 App 為其綁定的憑證之一。如果供應商更換了憑證，請在設定中重新綁定，或關閉憑證綁定。</string>
 </resources>

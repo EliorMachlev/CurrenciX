@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.eliormachlev.currencix.R
 import com.squareup.moshi.JsonClass
+import java.util.EnumSet
 
 // Unicode bidi controls used to force LTR display of an RTL currency symbol
 // (embedding form: LRE + PDF). The isolate form (FSI + PDI) is theoretically
@@ -204,27 +205,27 @@ enum class Currency(
 
     companion object {
         // non-tradeable / superseded / special currencies excluded from conversion
-        private val excluded =
-            setOf(
-                "BTC", // Bitcoin
-                "XAG",
-                "XAU",
-                "XPD",
-                "XPT", // metals
-                "MRO",
-                "STD",
-                "VEF",
-                "CUC", // superseded
-                "XDR",
-                "CLF",
-                "CNH", // special / offshore
+        private val excluded: Set<Currency> =
+            EnumSet.of(
+                BTC, // Bitcoin
+                XAG,
+                XAU,
+                XPD,
+                XPT, // metals
+                MRO,
+                STD,
+                VEF,
+                CUC, // superseded
+                XDR,
+                CLF,
+                CNH, // special / offshore
             )
 
         // Code → currency, built once: the rate cache parses one code per rate
         // (~170 per read) and every saved cart row names its currency, so a
         // scan of the entries per lookup added up.
         private val byCode: Map<String, Currency> by lazy {
-            entries.filterNot { it.iso4217Alpha in excluded }.associateBy { it.iso4217Alpha }
+            entries.filterNot { it in excluded }.associateBy { it.iso4217Alpha }
         }
 
         fun fromString(value: String): Currency? = byCode[value]

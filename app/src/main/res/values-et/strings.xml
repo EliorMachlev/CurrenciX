@@ -361,4 +361,5 @@
     <string name="receipt_language_not_now">Mitte praegu</string>
     <string name="receipt_languages_intro">Kviitungeid loetakse sinu telefonis, siinsetes keeltes. Midagi ei laadita alla enne, kui nõustud.</string>
     <string name="receipt_languages_empty">Veel pole. Esimene kviitungi skannimine küsib, mida alla laadida.</string>
+    <string name="error_certificate_pinning">Serveri sertifikaat pole ükski neist, mille rakendus on talle kinnitanud. Kui teenusepakkuja selle vahetas, kinnita uuesti seadetes või lülita sertifikaatide kinnitamine välja.</string>
 </resources>

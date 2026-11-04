@@ -356,4 +356,5 @@
     <string name="receipt_language_not_now">以后再说</string>
     <string name="receipt_languages_intro">收据在你的手机上读取，使用这里的语言。在你同意之前不会下载任何内容。</string>
     <string name="receipt_languages_empty">还没有。首次扫描收据时会询问要下载哪些。</string>
+    <string name="error_certificate_pinning">服务器的证书不是应用为其固定的证书之一。如果提供方更换了证书，请在设置中重新固定，或关闭证书固定。</string>
 </resources>

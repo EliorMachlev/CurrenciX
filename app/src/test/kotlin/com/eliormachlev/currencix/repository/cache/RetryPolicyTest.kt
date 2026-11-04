@@ -6,6 +6,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.net.SocketTimeoutException
+import javax.net.ssl.SSLPeerUnverifiedException
 import kotlin.random.Random
 
 private const val MAX_ATTEMPTS = 3
@@ -49,6 +50,22 @@ class RetryPolicyTest {
 
             assertEquals(1, attempts)
             assertTrue(result.isFailure)
+        }
+
+    @Test
+    fun `a certificate that doesn't match its pins isn't retried`() =
+        runBlocking {
+            var attempts = 0
+            val policy = RetryPolicy(maxAttempts = MAX_ATTEMPTS, baseDelayMs = 1L, jitterMs = 0L)
+
+            val result: Result<String> =
+                policy.execute {
+                    attempts++
+                    Result.failure(SSLPeerUnverifiedException("Certificate pinning failure!"))
+                }
+
+            assertEquals(1, attempts)
+            assertTrue(result.exceptionOrNull() is SSLPeerUnverifiedException)
         }
 
     @Test

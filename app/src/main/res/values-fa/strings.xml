@@ -362,4 +362,5 @@
     <string name="receipt_language_not_now">الان نه</string>
     <string name="receipt_languages_intro">رسیدها روی گوشی شما خوانده می‌شوند، به زبان‌های این‌جا. تا موافقت نکنید چیزی دانلود نمی‌شود.</string>
     <string name="receipt_languages_empty">هنوز هیچ. اولین اسکن رسید می‌پرسد کدام‌ها دانلود شوند.</string>
+    <string name="error_certificate_pinning">گواهی سرور هیچ‌یک از گواهی‌هایی نیست که برنامه برایش سنجاق کرده است. اگر ارائه‌دهنده آن را عوض کرده، در تنظیمات دوباره سنجاق کنید یا سنجاق کردن گواهی را خاموش کنید.</string>
 </resources>

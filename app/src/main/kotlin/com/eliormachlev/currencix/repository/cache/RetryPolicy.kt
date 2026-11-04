@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.io.IOException
 import java.net.SocketTimeoutException
+import javax.net.ssl.SSLPeerUnverifiedException
 import kotlin.random.Random
 
 // Total attempts INCLUDING the initial one. Three means "one try + two
@@ -66,9 +67,11 @@ internal class RetryPolicy(
 
     private fun shouldRetry(result: Result<*>): Boolean {
         val error = result.exceptionOrNull() ?: return false
+        // A certificate that doesn't match its pins comes back the same on every try.
         return when (error) {
             is SocketTimeoutException -> true
             is ApiHttpError -> error.statusCode in HTTP_5XX_MIN..HTTP_5XX_MAX
+            is SSLPeerUnverifiedException -> false
             is IOException -> true
             else -> false
         }

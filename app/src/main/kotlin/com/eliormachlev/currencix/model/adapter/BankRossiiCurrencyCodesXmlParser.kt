@@ -3,6 +3,11 @@ package com.eliormachlev.currencix.model.adapter
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 
+// One currency: Bank Rossii's internal id for it, and its ISO 4217 code.
+private const val ITEM_TAG = "Item"
+private const val ITEM_ID = "ID"
+private const val ISO_CODE_TAG = "ISO_Char_Code"
+
 class BankRossiiCurrencyCodesXmlParser {
     private val items = mutableMapOf<String, String>()
 
@@ -18,19 +23,19 @@ class BankRossiiCurrencyCodesXmlParser {
             tagname = parser.name ?: tagname
             when (eventType) {
                 XmlPullParser.START_TAG -> {
-                    if (tagname == "Item") {
-                        id = parser.getAttributeValue(null, "ID")
+                    if (tagname == ITEM_TAG) {
+                        id = parser.getAttributeValue(null, ITEM_ID)
                     }
                 }
 
                 XmlPullParser.TEXT -> {
-                    if (tagname == "ISO_Char_Code") {
+                    if (tagname == ISO_CODE_TAG) {
                         iso4217Alpha = parser.text
                     }
                 }
 
                 XmlPullParser.END_TAG -> {
-                    if (tagname == "Item") {
+                    if (tagname == ITEM_TAG) {
                         recordItem(id, iso4217Alpha)
                         id = null
                         iso4217Alpha = null

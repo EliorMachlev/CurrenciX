@@ -20,6 +20,9 @@ internal data class BankOfIsraelObservation(
 
 private const val DATA_TYPE_OFFICIAL_FIXING = "OF00"
 private const val DIM_BASE_CURRENCY = "BASE_CURRENCY"
+
+// The data's series: their dimensions under "structure", their values under "dataSets".
+private const val SERIES = "series"
 private const val DIM_DATA_TYPE = "DATA_TYPE"
 private const val DIM_TIME_PERIOD = "TIME_PERIOD"
 
@@ -41,7 +44,7 @@ internal class BankOfIsraelSdmxParser {
         }
 
     private fun officialFixings(data: Map<*, *>): List<BankOfIsraelObservation> {
-        val seriesDimensions = dimensions(data, "series")
+        val seriesDimensions = dimensions(data, SERIES)
         val currencyPos = seriesDimensions.indexOfFirst { it.id == DIM_BASE_CURRENCY }
         val dataTypePos = seriesDimensions.indexOfFirst { it.id == DIM_DATA_TYPE }
         val dates = dates(data)
@@ -85,7 +88,7 @@ internal class BankOfIsraelSdmxParser {
             .orEmpty()
 
     private fun seriesOf(data: Map<*, *>): Map<*, *> =
-        (((data["dataSets"] as? List<*>)?.firstOrNull() as? Map<*, *>)?.get("series") as? Map<*, *>).orEmpty()
+        (((data["dataSets"] as? List<*>)?.firstOrNull() as? Map<*, *>)?.get(SERIES) as? Map<*, *>).orEmpty()
 
     // "0:0:6:0:0:0" → the code each position selects in its dimension; null
     // where a position doesn't resolve.

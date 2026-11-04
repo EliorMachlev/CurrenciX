@@ -361,4 +361,5 @@
     <string name="receipt_language_not_now">Не сега</string>
     <string name="receipt_languages_intro">Бележките се разчитат на телефона ви, на езиците тук. Нищо не се изтегля, докато не се съгласите.</string>
     <string name="receipt_languages_empty">Още няма. Първото сканиране на бележка пита какво да се изтегли.</string>
+    <string name="error_certificate_pinning">Сертификатът на сървъра не е от закачените за него в приложението. Ако доставчикът го е сменил, закачете отново в Настройки или изключете закачането на сертификати.</string>
 </resources>

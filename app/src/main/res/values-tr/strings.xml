@@ -361,4 +361,5 @@
     <string name="receipt_language_not_now">Şimdi değil</string>
     <string name="receipt_languages_intro">Fişler telefonunuzda, buradaki dillerde okunur. Siz kabul edene kadar hiçbir şey indirilmez.</string>
     <string name="receipt_languages_empty">Henüz yok. İlk fiş taramanız hangilerinin indirileceğini sorar.</string>
+    <string name="error_certificate_pinning">Sunucunun sertifikası, uygulamanın onun için sabitlediklerinden biri değil. Sağlayıcı değiştirdiyse Ayarlar\'da yeniden sabitleyin veya sertifika sabitlemeyi kapatın.</string>
 </resources>

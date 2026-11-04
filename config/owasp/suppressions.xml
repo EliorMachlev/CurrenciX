@@ -11,4 +11,10 @@
         <filePath regex="true">.*/com\.squareup\.wire/wire-runtime(-jvm|-android)?-[^/]+\.(jar|aar)</filePath>
         <cve>CVE-2018-8909</cve>
     </suppress>
+    <!-- exceptions.md #7 -->
+    <suppress>
+        <notes>CVE-2023-22737 is in wire-server, the Wire messenger's backend (Wire Swiss), which Dependency-Check matches to Square's Wire Protobuf library by name alone.</notes>
+        <filePath regex="true">.*/com\.squareup\.wire/wire-runtime(-jvm|-android)?-[^/]+\.(jar|aar)</filePath>
+        <cve>CVE-2023-22737</cve>
+    </suppress>
 </suppressions>

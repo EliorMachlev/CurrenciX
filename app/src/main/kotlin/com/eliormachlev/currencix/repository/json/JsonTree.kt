@@ -14,6 +14,7 @@ import java.io.IOException
 // its fallback, so a hand-edited file still opens.
 
 private const val PRETTY_INDENT = "  "
+private const val MALFORMED_JSON = "Malformed JSON"
 
 /** Text that isn't the JSON it should be: not JSON at all, or the wrong shape. */
 internal class MalformedJsonException(
@@ -112,9 +113,9 @@ internal fun <T> readJson(
             }
         }
     } catch (e: IOException) {
-        throw MalformedJsonException(e.message ?: "Malformed JSON", e)
+        throw MalformedJsonException(e.message ?: MALFORMED_JSON, e)
     } catch (e: JsonDataException) {
-        throw MalformedJsonException(e.message ?: "Malformed JSON", e)
+        throw MalformedJsonException(e.message ?: MALFORMED_JSON, e)
     }
 
 /**

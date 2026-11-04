@@ -373,4 +373,5 @@
     <string name="receipt_language_not_now">ليس الآن</string>
     <string name="receipt_languages_intro">تُقرأ الإيصالات على هاتفك، باللغات الموجودة هنا. لا يُنزَّل شيء حتى توافق.</string>
     <string name="receipt_languages_empty">لا شيء بعد. أول مسح لإيصال يسألك ماذا تنزّل.</string>
+    <string name="error_certificate_pinning">شهادة الخادم ليست من الشهادات التي ثبّتها التطبيق له. إذا غيّرها المزوّد، فأعد التثبيت في الإعدادات أو أوقف تثبيت الشهادات.</string>
 </resources>

@@ -208,4 +208,16 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-nøgle</string>
     <string name="api_all_rates_today_api_key_message">For at bruge denne kilde skal du have din egen API-nøgle.\n\nOpret en gratis konto på https://allratestoday.com, kopiér din nøgle (den starter med art_live_) fra din profilside, og indtast den her.\n\nGratisplanen giver 300 forespørgsler i alt, nogensinde. Hver opdatering og hver graf-periode bruger én.</string>
     <string name="provider_cadence_every_minute">Opdateres cirka hvert minut</string>
+    <string name="settings_advanced_section">Avanceret</string>
+    <string name="certificate_pinning_title">Certifikatfastlåsning</string>
+    <string name="certificate_pinning_summary">Opret kun forbindelse til kursservere gennem de certifikatudstedere, der er fastlåst for dem. Slå kun fra, hvis en server har skiftet certifikat, og kurserne holder op med at indlæse.</string>
+    <string name="repin_title">Fastlås til de nuværende certifikater</string>
+    <string name="repin_summary_builtin">Bruger appens indbyggede fastlåsninger</string>
+    <string name="repin_summary_own">Bruger fastlåsninger taget på denne telefon for %1$d af %2$d servere</string>
+    <string name="repin_summary_running">Tjekker serverne…</string>
+    <string name="repin_prompt_title">Fastlås certifikaterne igen?</string>
+    <string name="repin_prompt_message">Appen opretter nu forbindelse til din dataudbyder og din reserveudbyder og accepterer derefter kun de certifikatudstedere, hver af dem bruger. Andre udbydere beholder appens indbyggede fastlåsninger. Gør det på et netværk, du stoler på, f.eks. dit Wi-Fi derhjemme.</string>
+    <string name="repin_confirm">Fastlås igen</string>
+    <string name="restore_pins_title">Brug de indbyggede fastlåsninger</string>
+    <string name="restore_pins_summary">Glem fastlåsningerne taget på denne telefon</string>
 </resources>

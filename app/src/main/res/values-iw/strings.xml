@@ -364,4 +364,5 @@
     <string name="receipt_language_not_now">לא עכשיו</string>
     <string name="receipt_languages_intro">הקבלות נקראות בטלפון שלך, בשפות שכאן. שום דבר לא יורד לפני שהסכמת.</string>
     <string name="receipt_languages_empty">אין עדיין. סריקת הקבלה הראשונה שלך תשאל מה להוריד.</string>
+    <string name="error_certificate_pinning">האישור של השרת אינו אחד מאלה שהאפליקציה הצמידה לו. אם הספק החליף אותו, יש להצמיד מחדש בהגדרות או לכבות את הצמדת האישורים.</string>
 </resources>

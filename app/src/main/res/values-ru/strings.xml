@@ -367,4 +367,5 @@
     <string name="receipt_language_not_now">Не сейчас</string>
     <string name="receipt_languages_intro">Чеки читаются на вашем телефоне, на языках из этого списка. Ничего не загружается без вашего согласия.</string>
     <string name="receipt_languages_empty">Пока нет. Первое сканирование чека спросит, что загрузить.</string>
+    <string name="error_certificate_pinning">Сертификат сервера не входит в привязанные к нему в приложении. Если поставщик сменил его, привяжите заново в Настройках или отключите привязку сертификатов.</string>
 </resources>

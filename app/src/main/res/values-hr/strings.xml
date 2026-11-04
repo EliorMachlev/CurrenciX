@@ -364,4 +364,5 @@
     <string name="receipt_language_not_now">Ne sada</string>
     <string name="receipt_languages_intro">Računi se čitaju na tvom telefonu, na jezicima ovdje. Ništa se ne preuzima dok ne pristaneš.</string>
     <string name="receipt_languages_empty">Još nijedan. Prvo skeniranje računa pita što preuzeti.</string>
+    <string name="error_certificate_pinning">Certifikat poslužitelja nije nijedan od onih koje je aplikacija prikvačila za njega. Ako ga je pružatelj promijenio, ponovno prikvači u Postavkama ili isključi prikvačivanje certifikata.</string>
 </resources>

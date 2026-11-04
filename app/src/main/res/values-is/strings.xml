@@ -361,4 +361,5 @@
     <string name="receipt_language_not_now">Ekki núna</string>
     <string name="receipt_languages_intro">Kvittanir eru lesnar í símanum þínum, á tungumálunum hér. Ekkert er sótt fyrr en þú samþykkir.</string>
     <string name="receipt_languages_empty">Ekkert enn. Fyrsta skönnun kvittunar spyr hvað eigi að sækja.</string>
+    <string name="error_certificate_pinning">Skilríki þjónsins eru ekki ein af þeim sem forritið hefur fest fyrir hann. Ef þjónustuveitan skipti um þau skaltu festa aftur í Stillingum eða slökkva á festingu skilríkja.</string>
 </resources>
