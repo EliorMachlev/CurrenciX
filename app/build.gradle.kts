@@ -44,7 +44,7 @@ plugins {
     // koverLog<Variant>), summarised on each CI test run.
     id("org.jetbrains.kotlinx.kover") version "0.9.11"
     // Fails the build on a dependency whose licence isn't one allowed below
-    // (licenseeFdroidRelease in CI): the F-Droid app ships free software only.
+    // (licenseeAndroidFdroidRelease in CI): the F-Droid app ships free software only.
     id("app.cash.licensee") version "1.14.1"
 }
 

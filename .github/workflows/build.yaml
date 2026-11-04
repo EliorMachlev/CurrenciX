@@ -156,7 +156,7 @@ jobs:
           fi
           case "$CHECK" in
             # The F-Droid app's licences are checked with its lint (Licensee).
-            lint) TASKS=("lint${FLAVOR}Debug") ; [ "$FLAVOR" = Fdroid ] && TASKS+=("licenseeFdroidRelease") ;;
+            lint) TASKS=("lint${FLAVOR}Debug") ; [ "$FLAVOR" = Fdroid ] && TASKS+=("licenseeAndroidFdroidRelease") ;;
             # Kover's report of what the tests covered, from the same run.
             test) TASKS=("test${FLAVOR}DebugUnitTest" "koverXmlReport${FLAVOR}Debug") ;;
             assemble) TASKS=("assemble${FLAVOR}Debug") ;;
