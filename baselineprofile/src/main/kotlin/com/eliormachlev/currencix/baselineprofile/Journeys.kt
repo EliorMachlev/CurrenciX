@@ -51,6 +51,10 @@ private const val PROMPT_TIMEOUT_MS = 2_000L
 private const val CART_ROWS = 15
 private const val CART_ROW_PRICE = "12"
 
+// Where a key is looked for, in failure messages.
+private const val CONVERTER_KEYPAD = "converter keypad"
+private const val CART_KEYPAD = "cart keypad"
+
 /** Cold path to the converter: launch, clear onboarding if shown, wait for the keypad. */
 internal fun MacrobenchmarkScope.launchToConverter() {
     pressHome()
@@ -66,8 +70,12 @@ internal fun MacrobenchmarkScope.launchToConverter() {
 
 /** Types [keys] (digits) on the converter keypad, then deletes them again. */
 internal fun MacrobenchmarkScope.typeOnKeypad(keys: String) {
-    keys.forEach { device.findObject(By.res(UiTags.key(it))).click() }
-    repeat(keys.length) { device.findObject(By.res(UiTags.KEY_DELETE)).click() }
+    // Each key is waited for. A tap changes the amount and every converted value,
+    // and while the app is still updating its accessibility tree for that, a
+    // lookup can get no node for a key ("Node returned null child"), though
+    // the key never left the screen.
+    keys.forEach { awaitTag(UiTags.key(it), CONVERTER_KEYPAD).click() }
+    repeat(keys.length) { awaitTag(UiTags.KEY_DELETE, CONVERTER_KEYPAD).click() }
     device.waitForIdle()
 }
 
@@ -112,9 +120,9 @@ internal fun MacrobenchmarkScope.openCartWithRows() {
     add.click()
     awaitTag(UiTags.CART_PRICE, "cart").click()
     repeat(CART_ROWS) {
-        awaitTag(UiTags.CART_NEXT, "cart keypad")
-        CART_ROW_PRICE.forEach { digit -> device.findObject(By.res(UiTags.key(digit))).click() }
-        device.findObject(By.res(UiTags.CART_NEXT)).click()
+        awaitTag(UiTags.CART_NEXT, CART_KEYPAD)
+        CART_ROW_PRICE.forEach { digit -> awaitTag(UiTags.key(digit), CART_KEYPAD).click() }
+        awaitTag(UiTags.CART_NEXT, CART_KEYPAD).click()
     }
     backUntilGone(UiTags.CART_NEXT)
 }
