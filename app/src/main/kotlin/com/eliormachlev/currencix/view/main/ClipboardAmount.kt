@@ -57,12 +57,19 @@ internal fun ClipDescription.toClipInfo() =
 
 /**
  * Whether a clip is worth offering: text, copied in the last
- * [RECENT_COPY_MILLIS] of [now], and not the app's own.
+ * [RECENT_COPY_MILLIS] of [now], not the app's own, and not the one already
+ * [taken] (by its copy time).
  */
 internal fun isPasteCandidate(
     clip: ClipInfo?,
     now: Long,
-): Boolean = clip != null && clip.isText && clip.label != OWN_CLIP_LABEL && now - clip.copiedAt in 0..RECENT_COPY_MILLIS
+    taken: Long? = null,
+): Boolean =
+    clip != null &&
+        clip.isText &&
+        clip.label != OWN_CLIP_LABEL &&
+        now - clip.copiedAt in 0..RECENT_COPY_MILLIS &&
+        clip.copiedAt != taken
 
 /**
  * The pair to convert a pasted [price] with, from [current]: its currency
@@ -106,8 +113,7 @@ internal fun rememberClipboardOffer(): ClipboardOffer {
     // The clip already offered and taken, by its copy time: not offered again.
     var taken by remember { mutableStateOf<Long?>(null) }
     val check = {
-        val clip = clipboard.primaryClipDescription?.toClipInfo()
-        available = isPasteCandidate(clip, System.currentTimeMillis()) && clip?.copiedAt != taken
+        available = isPasteCandidate(clipboard.primaryClipDescription?.toClipInfo(), System.currentTimeMillis(), taken)
     }
     LifecycleResumeEffect(clipboard) {
         check()

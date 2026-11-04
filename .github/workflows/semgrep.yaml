@@ -17,6 +17,13 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # A PR's results go on its head commit, not GitHub's test merge with
+  # master, which GitHub can rebuild after the run starts and the merge rule
+  # would then wait on (see codeql.yaml).
+  SARIF_REF: ${{ github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number) || '' }}
+  SARIF_SHA: ${{ github.event.pull_request.head.sha || '' }}
+
 jobs:
   semgrep:
     runs-on: ubuntu-latest
@@ -25,6 +32,8 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       # Semgrep and every package it needs, each pinned by hash
       # (.github/semgrep/requirements.txt, compiled on this Python version),
       # instead of the unpinned semgrep/semgrep image. Dependabot updates it.
@@ -53,3 +62,5 @@ jobs:
         with:
           sarif_file: semgrep.sarif
           category: semgrep
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}

@@ -63,10 +63,12 @@ class ClipboardAmountTest {
     }
 
     @Test
-    fun `an old copy, the app's own, or nothing is not`() {
+    fun `an old copy, the app's own, the one already taken, or nothing is not`() {
         assertFalse(isPasteCandidate(copied("note", at = 1_000), now = 1_001 + RECENT_COPY_MILLIS))
         assertFalse(isPasteCandidate(copied("CurrenciX", at = 1_000), now = 1_000))
         assertFalse(isPasteCandidate(null, now = 1_000))
+        assertFalse(isPasteCandidate(copied("note", at = 1_000), now = 1_000, taken = 1_000))
+        assertTrue(isPasteCandidate(copied("note", at = 1_000), now = 1_000, taken = 900))
         assertFalse(isPasteCandidate(copied("note", at = 1_000).copy(isText = false), now = 1_000))
     }
 
