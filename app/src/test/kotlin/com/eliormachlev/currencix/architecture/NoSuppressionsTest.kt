@@ -182,6 +182,12 @@ class NoSuppressionsTest {
 
         // The correct words typos takes for misspellings (exceptions.md #16).
         val TYPOS_ALLOWED = listOf("infor", "mis")
+
+        // Licensee's allowances beyond its SPDX identifiers (exceptions.md #17, #18).
+        const val LICENSEE_RULE = "Licensee"
+        const val BOUNCY_CASTLE_LICENCE = "allowUrl(\"https://www.bouncycastle.org/licence.html\")"
+        const val TESSERACT = "tesseract4android"
+        const val TESSERACT_ALLOWANCE = "allowDependency(\"com.github.adaptech-cz.Tesseract4Android\", \"$TESSERACT\", \"4.8.0\")"
         const val TRUSTED_ARTIFACTS = "trusted-artifacts"
 
         // The files only an IDE sync downloads, accepted without a checksum (exceptions.md #9).
@@ -310,6 +316,16 @@ class NoSuppressionsTest {
                         ),
                     ),
                 ) +
+                listOf(BOUNCY_CASTLE_LICENCE to "bcprov", TESSERACT_ALLOWANCE to TESSERACT).map { (line, subject) ->
+                    RecordedException(
+                        APP_BUILD,
+                        line,
+                        LICENSEE_RULE,
+                        subject,
+                        // Inside the licensee block.
+                        Regex(Regex.escape("licensee {") + "[^}]*" + Regex.escape(line)),
+                    )
+                } +
                 IDE_DOCUMENTATION.map { kind ->
                     RecordedException(
                         VERIFICATION_METADATA,
@@ -370,6 +386,8 @@ class NoSuppressionsTest {
                 Regex("""continue-on-error:\s*(true|\$\{\{)"""),
                 // typos: words added to its dictionary, or files and patterns it skips
                 Regex("""\bextend-(words|identifiers|exclude|ignore-re|ignore-identifiers-re)\b"""),
+                // Licensee: a license or library allowed beyond the SPDX identifiers
+                Regex("""\b(allowUrl|allowDependency|ignoreDependencies)\("""),
                 // Workflow linters: ShellCheck (run by actionlint on each run: script), actionlint, zizmor
                 Regex("""shellcheck\s+disable="""),
                 Regex("""actionlint\b.*\s-ignore\b"""),

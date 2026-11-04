@@ -183,11 +183,21 @@ jobs:
             ARGS+=("-PdebugCommitSha=${COMMIT_SHA_FULL:0:7}")
           fi
           case "$CHECK" in
-            lint) TASK="lint${FLAVOR}Debug" ;;
-            test) TASK="test${FLAVOR}DebugUnitTest" ;;
-            assemble) TASK="assemble${FLAVOR}Debug" ;;
+            # The F-Droid app's licences are checked with its lint (Licensee).
+            lint) TASKS=("lint${FLAVOR}Debug") ; [ "$FLAVOR" = Fdroid ] && TASKS+=("licenseeAndroidFdroidRelease") ;;
+            # Kover's report of what the tests covered, from the same run.
+            test) TASKS=("test${FLAVOR}DebugUnitTest" "koverXmlReport${FLAVOR}Debug") ;;
+            assemble) TASKS=("assemble${FLAVOR}Debug") ;;
           esac
-          ./gradlew "${ARGS[@]}" "$TASK"
+          ./gradlew "${ARGS[@]}" "${TASKS[@]}"
+
+      - name: Coverage summary
+        if: matrix.check == 'test'
+        env:
+          FLAVOR: ${{ matrix.flavor }}
+        run: |
+          pip install --quiet --require-hashes -r .github/scripts/requirements.txt
+          python3 .github/scripts/coverage-summary.py "app/build/reports/kover/report${FLAVOR}Debug.xml" "$FLAVOR" >> "$GITHUB_STEP_SUMMARY"
 
       # A failed test otherwise shows only as "exit code 1": put each one
       # (class, name, message) on the run as an error annotation, readable

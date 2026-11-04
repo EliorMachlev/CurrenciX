@@ -62,7 +62,7 @@ jobs:
             :app:lintFdroidDebug :app:lintPlayDebug \
             :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease \
             :app:bundlePlayRelease
-          ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest
+          ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest :app:koverXmlReportFdroidDebug :app:koverXmlReportPlayDebug :app:licenseeAndroidFdroidRelease
           ./gradlew "${RECORD[@]}" :app:compileFdroidReleaseKotlin -PcomposeReports
           ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
 
