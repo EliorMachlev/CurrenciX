@@ -8,6 +8,14 @@ name: Update dependency checksums
 # push checks on the new commit. The diff shows every checksum it added.
 on:
   workflow_dispatch:
+    inputs:
+      from_scratch:
+        description: >-
+          Start from an empty list, so files no longer fetched (versions a
+          dependency stopped asking for) drop out; macOS and Windows aapt2
+          entries go too until someone builds there again
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -30,6 +38,10 @@ jobs:
         # recorded, and the next build that does resolve it fails.
         with:
           cache-disabled: true
+
+      - name: Start from an empty list
+        if: inputs.from_scratch
+        run: python3 .github/scripts/verification-metadata-reset.py gradle/verification-metadata.xml
 
       # Every task CI runs (bar the emulator ones), so every file CI downloads
       # is recorded. Checksums already in the file are kept.

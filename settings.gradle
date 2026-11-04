@@ -1,3 +1,5 @@
+import org.gradle.api.artifacts.ResolutionStrategy
+
 pluginManagement {
     repositories {
         google()
@@ -21,3 +23,52 @@ dependencyResolutionManagement {
 }
 
 include ':app', ':helpers', ':baselineprofile', ':ocr-engine', ':ocr'
+
+// Libraries the build's own tools (the Android Gradle plugin, lint, detekt,
+// CycloneDX and the like) bring in at versions with published
+// vulnerabilities, raised to the first release that fixes them: the plugins'
+// classpath and every project's configurations. None of these ships in the
+// app, whose own libraries are already newer; a version newer than the fix,
+// whoever asks for it, is left alone. Remove an entry once nothing asks for
+// a version older than it (the verification metadata shows what's fetched).
+def patchedLibraries = [
+    'ch.qos.logback:logback-classic'             : '1.5.34',
+    'ch.qos.logback:logback-core'                : '1.5.34',
+    'com.fasterxml.jackson.core:jackson-core'    : '2.22.3',
+    'com.fasterxml.jackson.core:jackson-databind': '2.22.3',
+    'com.google.guava:guava'                     : '33.7.2-jre',
+    'com.squareup.okio:okio'                     : '3.18.2',
+    'com.squareup.wire:wire-runtime'             : '6.4.5',
+    'org.apache.commons:commons-lang3'           : '3.18.0',
+    'org.apache.httpcomponents:httpclient'       : '4.5.14',
+    'org.bitbucket.b_c:jose4j'                   : '0.9.6',
+    'org.bouncycastle:bcpkix-jdk18on'            : '1.86',
+    'org.bouncycastle:bcprov-jdk18on'            : '1.86',
+    'org.bouncycastle:bcutil-jdk18on'            : '1.86',
+    'org.jdom:jdom2'                             : '2.0.6.1',
+]
+
+// "33.4.0-jre" before "33.7.2-jre": the numbers, part by part.
+def versionParts = { String version -> version.tokenize('.-').collect { it.isInteger() ? it.toInteger() : -1 } }
+def isOlder = { String version, String than ->
+    def (a, b) = [versionParts(version), versionParts(than)]
+    def differing = [a, b].transpose().find { it[0] != it[1] }
+    differing != null ? differing[0] < differing[1] : a.size() < b.size()
+}
+
+def usePatchedLibraries = { ResolutionStrategy strategy ->
+    strategy.eachDependency { details ->
+        def fixed = patchedLibraries["${details.requested.group}:${details.requested.name}"]
+        def requested = details.requested.version
+        if (fixed == null || requested == null || !isOlder(requested, fixed)) return
+        // Guava's Android flavour stays Android.
+        details.useVersion(requested.endsWith('-android') ? fixed.replace('-jre', '-android') : fixed)
+        details.because('a release with a known vulnerability, raised to its fix (settings.gradle)')
+    }
+}
+
+gradle.allprojects { project ->
+    project.buildscript.configurations.configureEach { usePatchedLibraries(it.resolutionStrategy) }
+    project.configurations.configureEach { usePatchedLibraries(it.resolutionStrategy) }
+}
+
