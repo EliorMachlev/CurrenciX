@@ -1,0 +1,5 @@
+# typos (docs-checks.yaml): two correct words it takes for misspellings,
+# exceptions.md #16. Nothing else is added, and no file is left out.
+[default.extend-words]
+infor = "infor"
+mis = "mis"
