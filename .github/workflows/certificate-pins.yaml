@@ -34,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Check every host serves a pinned key
         run: python3 "$SCRIPT" check "$PINS"
@@ -61,6 +63,8 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Rewrite the pins
         run: python3 "$SCRIPT" update "$PINS"
@@ -69,6 +73,8 @@ jobs:
         id: push
         env:
           BRANCH: ${{ github.ref_name }}
+          # Only this step gets the token: the checkout keeps no credentials.
+          PUSH_TOKEN: ${{ github.token }}
         run: |
           git add "$PINS"
           if git diff --cached --quiet; then
@@ -78,7 +84,8 @@ jobs:
           git -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -m "fix(network): pin the certificate authorities the hosts serve now"
-          git push origin "HEAD:${BRANCH}"
+          auth=$(printf 'x-access-token:%s' "$PUSH_TOKEN" | base64 -w0)
+          git -c http.extraheader="AUTHORIZATION: basic ${auth}" push origin "HEAD:${BRANCH}"
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
       # A push made with the workflow's own token starts no workflows.

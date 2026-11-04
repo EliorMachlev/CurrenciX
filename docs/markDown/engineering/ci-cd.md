@@ -28,6 +28,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `update-verification-metadata.yaml` | Manual | Records dependency checksums from an empty cache, commits them, restarts the checks |
 | `certificate-pins.yaml` | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites `BuiltInPins.kt` from the chains served now, commits it and restarts the checks |
 | `code-scanning-report.yaml` | Manual | Saves the open code scanning alerts on `master`, from every tool, as an artifact and a summary table on the run page |
+| `zizmor.yaml` | PR or push → `master` touching workflows, weekly, manual | zizmor (pinned by hash, `.github/zizmor`) audits the workflows for what actionlint doesn't: template injection, credentials a checkout leaves, cache poisoning, broad permissions, impostor actions. Every finding goes to code scanning; medium and above fail the job |
 | `actionlint.yaml` | PR, push → `master`, on workflows | Workflow syntax |
 | `site.yaml` | PR, push → `master`, on `docs/**`, manual | Website asset versions and CSP hashes ([website.md](website.md)) |
 
@@ -79,7 +80,7 @@ Every workflow starts at `contents: read` (`scorecard.yaml`: `read-all`, as Scor
 
 | Workflow | Extra |
 |---|---|
-| detekt, semgrep, owasp, osv-scanner | `security-events: write` |
+| detekt, semgrep, zizmor, owasp, osv-scanner | `security-events: write` |
 | qodana | `security-events`, `pull-requests`, `checks: write` |
 | codeql | `security-events: write`, `actions: read`, `packages: read` |
 | scorecard | `security-events: write`, `id-token: write`, `actions: read` |
@@ -88,3 +89,5 @@ Every workflow starts at `contents: read` (`scorecard.yaml`: `read-all`, as Scor
 | commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
 | dependency-review | `pull-requests: write` |
 | code-scanning-report | `security-events: read` only (no checkout) |
+
+Every checkout sets `persist-credentials: false`, so no later step finds the token in `.git/config`. The three workflows that push hand `github.token` only to their push step, as a one-off `http.extraheader` on that `git push`. The release build runs without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
