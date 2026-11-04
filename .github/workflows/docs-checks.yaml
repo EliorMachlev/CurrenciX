@@ -37,12 +37,17 @@ env:
   # release: update both lines, after checking that file.
   LYCHEE_VERSION: "0.24.2"
   LYCHEE_SHA256: "1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a"
-  DOCS: "docs/**/*.md docs/*.html README.md CONTRIBUTING.md SECURITY.md NOTICE.md"
+  DOCS: "docs/**/*.md docs/*.html *.md"
 
 jobs:
   links:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -72,6 +77,11 @@ jobs:
   spelling:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -83,4 +93,4 @@ jobs:
       - name: Install typos
         run: python -m pip install --quiet --require-hashes -r .github/docs-checks/requirements.txt
       - name: Check spelling
-        run: typos docs README.md CONTRIBUTING.md SECURITY.md NOTICE.md
+        run: typos -- docs ./*.md
