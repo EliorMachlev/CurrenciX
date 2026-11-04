@@ -1,6 +1,6 @@
 # CI / CD
 
-Everything is in `.github/workflows/`. Every action is pinned to a full commit SHA with its release in a comment (`# v7.0.1`); every Java job runs JDK 25.
+Everything is in `.github/workflows/`. Every action is pinned to a full commit SHA with its release in a comment (`# v7.0.1`); every Java job runs JDK 25. Every job's first step is Harden-Runner in audit mode ([security.md](security.md#supply-chain)).
 
 ## Workflows
 

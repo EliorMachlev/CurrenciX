@@ -43,6 +43,11 @@ jobs:
           - language: java-kotlin
             build-mode: manual
     steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
       # A PR is analysed at its head commit, not GitHub's test merge with
       # master: GitHub rebuilds that merge after the run has started, and the
       # merge rule then waits for results on the new one. master requires a PR
