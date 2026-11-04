@@ -43,6 +43,16 @@ Versions live in the build files; Dependabot keeps them current. What's worth kn
 - **Build plugins:** Spotless (ktlint), detekt, `ben-manes.versions` (`dependencyUpdates`), `androidx.baselineprofile`, CycloneDX (the release SBOM).
 - **Tests:** JUnit 4 and Jupiter (vintage engine), Mockito, Robolectric, Roborazzi (JVM screenshots of every Compose surface, no emulator), Konsist (layer boundaries), Jazzer (fuzzing).
 
+## Live provider tests
+
+`ExchangeRatesServiceTest` calls each provider's real API and checks the rates and timeline it returns. Unit-test tasks leave it out, so a provider's outage doesn't fail the build gate (the same parsing is checked on recorded responses in `ProviderDecodingTest`); `-PliveProviders` runs it alone:
+
+```bash
+./gradlew :app:testFdroidDebugUnitTest -PliveProviders
+```
+
+CI runs it in `live-providers.yaml`: on a PR that changes `model/`, `repository/`, `util/` or the app's build file, so a change that breaks a live integration shows on that PR, and daily, so a provider's API change or outage shows without one. It isn't a required check; read it on such a PR before merging.
+
 ## Fuzz tests
 
 `FuzzTest` (Jazzer) fuzzes every parser of input the app doesn't control, each of which must answer rather than throw: `Currency.fromString`, `PriceParser`, `ReceiptParser`, `evaluateCalculatorExpression`, `parseDecimal` and `ConverterLaunch.parse`. Jazzer's instrumentation breaks Robolectric, so unit-test tasks leave it out and `-PfuzzTests` runs it alone; without `JAZZER_FUZZ` it only replays saved inputs:

@@ -12,6 +12,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `screenshots.yaml` | Push → non-master, manual | Roborazzi screenshots of every Compose surface (plus 200 % font scale), uploaded as an artifact; records, doesn't compare. Times out at 20 min |
 | `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**`, manual | Profiles on an API 34 emulator, one job per flavor; by hand with **commit**, pushes them through `commit-baseline-profiles.yaml` |
 | `benchmarks.yaml` | Push → non-master touching app code, the build or benchmarks, manual | Startup and frame-timing benchmarks; fails on a slowdown |
+| `live-providers.yaml` | PR changing `model/`, `repository/`, `util/` or the app's build file, daily, manual | Calls each provider's live API (`ExchangeRatesServiceTest`, `-PliveProviders`); not a required check, so a provider's outage is reported without blocking merges |
 | `detekt.yaml` | PR, push → `master`, manual | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly, manual | JetBrains Qodana; when its project import fails dependency verification, lists the refused files (`verification-report.py`) |
 | `codeql.yaml` | PR, push → `master`, weekly, manual | CodeQL on the Kotlin and the workflows |
