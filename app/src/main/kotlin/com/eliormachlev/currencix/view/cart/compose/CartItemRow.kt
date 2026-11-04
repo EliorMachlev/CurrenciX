@@ -614,7 +614,7 @@ private fun PriceDetails(
     state: CartRowState,
     actions: CartRowActions,
 ) {
-    val calculation = state.calculation()
+    val calculation = state.calculationText()
     val converted = convertedPrice(state)
     val person = state.person?.name?.ifBlank { stringResource(R.string.cart_person_unnamed) }
     // Nothing under the name and price: no line at all.
@@ -646,7 +646,7 @@ private fun PriceDetails(
 // The calculation under the price: when it's worked out ("3.25 + 0.50") or
 // bought more than once ("4.50 × 3"); null for a plain price. While the row
 // is edited the stepper shows the quantity, so it's left out here.
-private fun CartRowState.calculation(): String? {
+private fun CartRowState.calculationText(): String? {
     val expression = displayedExpression.takeIf { it.isNotBlank() } ?: return null
     if (item.quantity == 1 && expression.none(CALCULATION_CHARS::contains)) return null
     return if (isActive) expression else item.copy(expression = expression).expressionWithQuantity

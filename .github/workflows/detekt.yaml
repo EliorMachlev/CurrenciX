@@ -16,6 +16,11 @@ permissions:
   contents: read
 
 env:
+  # A PR's results go on its head commit, not GitHub's test merge with
+  # master, which GitHub can rebuild after the run starts and the merge rule
+  # would then wait on (see codeql.yaml).
+  SARIF_REF: ${{ github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number) || '' }}
+  SARIF_SHA: ${{ github.event.pull_request.head.sha || '' }}
   # Disable class data sharing across all JVMs the build spawns; matches
   # build.yaml. Without this, the JDK prints a "Sharing is only supported for
   # boot loader classes..." banner from every forked worker.
@@ -29,6 +34,8 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: 25
@@ -54,6 +61,8 @@ jobs:
         with:
           sarif_file: app/build/reports/detekt/fdroidDebug.sarif
           category: detekt
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
 
       - name: Upload SARIF to code scanning (app (play, release))
         if: always() && hashFiles('app/build/reports/detekt/playRelease.sarif') != ''
@@ -61,6 +70,8 @@ jobs:
         with:
           sarif_file: app/build/reports/detekt/playRelease.sarif
           category: detekt-release
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
 
       - name: Upload SARIF to code scanning (app unit tests)
         if: always() && hashFiles('app/build/reports/detekt/fdroidDebugUnitTest.sarif') != ''
@@ -68,6 +79,8 @@ jobs:
         with:
           sarif_file: app/build/reports/detekt/fdroidDebugUnitTest.sarif
           category: detekt-tests
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
 
       - name: Upload SARIF to code scanning (helpers)
         if: always() && hashFiles('helpers/build/reports/detekt/main.sarif') != ''
@@ -75,6 +88,8 @@ jobs:
         with:
           sarif_file: helpers/build/reports/detekt/main.sarif
           category: detekt-helpers
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
 
       - name: Upload SARIF to code scanning (ocr-engine)
         if: always() && hashFiles('ocr-engine/build/reports/detekt/release.sarif') != ''
@@ -82,6 +97,8 @@ jobs:
         with:
           sarif_file: ocr-engine/build/reports/detekt/release.sarif
           category: detekt-ocr-engine
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
 
       - name: Upload SARIF to code scanning (baselineprofile)
         if: always() && hashFiles('baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif') != ''
@@ -89,6 +106,8 @@ jobs:
         with:
           sarif_file: baselineprofile/build/reports/detekt/fdroidBenchmarkRelease.sarif
           category: detekt-baselineprofile
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
 
       - name: Upload detekt report artifact
         if: always()
