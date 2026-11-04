@@ -207,4 +207,16 @@
     <string name="api_all_rates_today_api_key_title">Κλειδί API του AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Για να χρησιμοποιήσετε αυτή την πηγή χρειάζεστε δικό σας κλειδί API.\n\nΔημιουργήστε δωρεάν λογαριασμό στο https://allratestoday.com, αντιγράψτε το κλειδί σας (ξεκινά με art_live_) από τη σελίδα του προφίλ σας και εισαγάγετέ το εδώ.\n\nΤο δωρεάν πρόγραμμα επιτρέπει συνολικά 300 αιτήματα, εφάπαξ. Κάθε ανανέωση και κάθε διάστημα γραφήματος χρησιμοποιεί ένα.</string>
     <string name="provider_cadence_every_minute">Ενημερώνεται περίπου κάθε λεπτό</string>
+    <string name="settings_advanced_section">Για προχωρημένους</string>
+    <string name="certificate_pinning_title">Καρφίτσωμα πιστοποιητικών</string>
+    <string name="certificate_pinning_summary">Σύνδεση με τους διακομιστές ισοτιμιών μόνο μέσω των αρχών πιστοποίησης που έχουν καρφιτσωθεί για αυτούς. Απενεργοποιήστε μόνο αν ένας διακομιστής άλλαξε πιστοποιητικό και οι ισοτιμίες δεν φορτώνουν.</string>
+    <string name="repin_title">Νέο καρφίτσωμα στα τρέχοντα πιστοποιητικά</string>
+    <string name="repin_summary_builtin">Χρησιμοποιούνται τα ενσωματωμένα καρφιτσώματα της εφαρμογής</string>
+    <string name="repin_summary_own">Χρησιμοποιούνται καρφιτσώματα από αυτό το τηλέφωνο για %1$d από %2$d διακομιστές</string>
+    <string name="repin_summary_running">Έλεγχος των διακομιστών…</string>
+    <string name="repin_prompt_title">Νέο καρφίτσωμα των πιστοποιητικών;</string>
+    <string name="repin_prompt_message">Η εφαρμογή θα συνδεθεί τώρα με τον πάροχο δεδομένων και τον εφεδρικό πάροχο και από εκεί και πέρα θα δέχεται μόνο τις αρχές πιστοποίησης που χρησιμοποιεί ο καθένας. Οι άλλοι πάροχοι κρατούν τα ενσωματωμένα καρφιτσώματα της εφαρμογής. Κάντε το σε δίκτυο που εμπιστεύεστε, όπως το Wi-Fi του σπιτιού σας.</string>
+    <string name="repin_confirm">Νέο καρφίτσωμα</string>
+    <string name="restore_pins_title">Χρήση των ενσωματωμένων καρφιτσωμάτων</string>
+    <string name="restore_pins_summary">Διαγραφή των καρφιτσωμάτων αυτού του τηλεφώνου</string>
 </resources>

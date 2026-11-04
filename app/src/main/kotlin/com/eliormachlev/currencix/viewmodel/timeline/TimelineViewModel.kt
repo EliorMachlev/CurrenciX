@@ -244,15 +244,15 @@ class TimelineViewModel(
         }
     }
 
-    fun getRateCurrent(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> = rateCurrentLive
+    fun getRateCurrent(): LiveData<RateReadout> = rateCurrentLive
 
     private val rateCurrentLive by lazy {
-        rangeLiveData(followScrub = false) { rates, _, decimals -> Pair(rates?.lastOrNull(), decimals) }
+        rangeLiveData(followScrub = false) { rates, _, decimals -> rates?.lastOrNull().toReadout(decimals) }
     }
 
-    fun getRatePast(): LiveData<Pair<Map.Entry<LocalDate, Rate?>?, Int>> = ratePastLive
+    fun getRatePast(): LiveData<RateReadout> = ratePastLive
 
-    private val ratePastLive by lazy { rangeLiveData { rates, scrubDate, decimals -> Pair(rates?.pastEntry(scrubDate), decimals) } }
+    private val ratePastLive by lazy { rangeLiveData { rates, scrubDate, decimals -> rates?.pastEntry(scrubDate).toReadout(decimals) } }
 
     fun getRatesDifferencePercent(): LiveData<BigDecimal?> = differenceLive
 
@@ -262,28 +262,28 @@ class TimelineViewModel(
         }
     }
 
-    fun getRatesAverage(): LiveData<Pair<Rate?, Int>> = averageLive
+    fun getRatesAverage(): LiveData<RateReadout> = averageLive
 
     private val averageLive by lazy { aggregateLiveData(::averageOf) }
 
-    fun getRatesMedian(): LiveData<Pair<Rate?, Int>> = medianLive
+    fun getRatesMedian(): LiveData<RateReadout> = medianLive
 
     private val medianLive by lazy { aggregateLiveData(::medianOf) }
 
     // Range-wide statistics that reduce the visible range's values to one
     // [Rate]. The reducer receives a non-empty list; an empty range
     // short-circuits to null before it runs.
-    private fun aggregateLiveData(reducer: (List<BigDecimal>) -> BigDecimal): LiveData<Pair<Rate?, Int>> =
+    private fun aggregateLiveData(reducer: (List<BigDecimal>) -> BigDecimal): LiveData<RateReadout> =
         rangeLiveData { rates, scrubDate, decimals ->
             val values = rates?.fromScrub(scrubDate)?.mapNotNull { entry -> entry.value?.value }
-            Pair(values?.takeIf { it.isNotEmpty() }?.let { Rate(target, reducer(it)) }, decimals)
+            RateReadout(values?.takeIf { it.isNotEmpty() }?.let { Rate(target, reducer(it)) }, date = null, decimals)
         }
 
-    fun getRatesMin(): LiveData<Triple<Rate?, LocalDate?, Int>> = minLive
+    fun getRatesMin(): LiveData<RateReadout> = minLive
 
     private val minLive by lazy { extremeLiveData(pickMax = false, respectScrub = true) }
 
-    fun getRatesMax(): LiveData<Triple<Rate?, LocalDate?, Int>> = maxLive
+    fun getRatesMax(): LiveData<RateReadout> = maxLive
 
     private val maxLive by lazy { extremeLiveData(pickMax = true, respectScrub = true) }
 
@@ -299,12 +299,12 @@ class TimelineViewModel(
     private val rangeMaxLive by lazy { rangeExtreme(pickMax = true) }
 
     private fun rangeExtreme(pickMax: Boolean): LiveData<Double?> =
-        extremeLiveData(pickMax = pickMax, respectScrub = false).map { it.first?.value?.toDouble() }
+        extremeLiveData(pickMax = pickMax, respectScrub = false).map { it.rate?.value?.toDouble() }
 
     private fun extremeLiveData(
         pickMax: Boolean,
         respectScrub: Boolean,
-    ): LiveData<Triple<Rate?, LocalDate?, Int>> =
+    ): LiveData<RateReadout> =
         rangeLiveData(followScrub = respectScrub) { rates, scrubDate, decimals ->
             val slice = rates?.fromScrub(scrubDate)
             val extreme: Rate? =
@@ -316,7 +316,7 @@ class TimelineViewModel(
                 slice
                     ?.findLast { entry -> entry.value?.value?.compareTo(extreme?.value) == 0 }
                     ?.key
-            Triple(extreme, date, decimals)
+            RateReadout(extreme, date, decimals)
         }
 
     /**

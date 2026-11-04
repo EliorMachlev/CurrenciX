@@ -63,12 +63,24 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # Can fail to confirm launches on the software-GPU emulator ("Unable to
-      # confirm activity launch completion"); the check below then has no
-      # numbers and passes, so this step mustn't fail the run by itself.
+      # The software-GPU emulator sometimes can't confirm a launch; that
+      # failure, and only that one, gets one more try. Any other failure, or
+      # that one twice, fails the run.
       - name: Run benchmarks (fdroid)
-        continue-on-error: true
-        run: ./gradlew "${GMD_GPU}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace
+        env:
+          LAUNCH_FLAKE: Unable to confirm activity launch completion
+          BENCHMARK_LOG: ${{ runner.temp }}/benchmarks.log
+        run: |
+          set -o pipefail
+          benchmark() {
+            ./gradlew "${GMD_GPU}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace 2>&1 | tee "$BENCHMARK_LOG"
+          }
+          benchmark && exit 0
+          if ! grep -rqF "$LAUNCH_FLAKE" "$BENCHMARK_LOG" baselineprofile/build/outputs/androidTest-results; then
+            exit 1
+          fi
+          echo "::warning title=Benchmarks retried::The emulator couldn't confirm a launch; running the benchmarks once more."
+          benchmark
 
       # The numbers in the run summary and as annotations.
       - name: Report benchmark numbers

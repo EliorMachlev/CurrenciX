@@ -30,6 +30,7 @@ import com.eliormachlev.currencix.problems.ProblemReports
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.util.AppDispatchers
+import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.fastestMode
 import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.util.releaseNotesUrl
@@ -78,7 +79,7 @@ private fun sectionsOf(topic: SettingsTopic?): List<PageSection> =
         SettingsTopic.PROVIDERS -> listOf { ProvidersSection(it) }
         SettingsTopic.APPEARANCE -> listOf({ DisplaySection(it) }, { TouchSection(it) })
         SettingsTopic.CHART -> listOf { ChartSection() }
-        SettingsTopic.SECURITY -> listOf({ AccessSection(it) }, { NetworkPrivacySection(it) })
+        SettingsTopic.SECURITY -> listOf({ AccessSection(it) }, { NetworkPrivacySection(it) }, { CertificatePinningSection(it) })
         SettingsTopic.ABOUT -> listOf({ VersionSection() }, { ProjectSection(it) }, { LegalSection() })
         SettingsTopic.CREDITS -> emptyList()
     }
@@ -453,6 +454,50 @@ private fun NetworkPrivacySection(page: SettingsPageContext) {
             checked = enabled,
             onCheckedChange = page.viewModel::setPrivateRequestsEnabled,
         )
+    }
+}
+
+// Certificate pinning: on, each rate server is accepted only through the
+// certificate authorities pinned for it (util/CertificatePinning); Re-pin
+// takes them from the servers as they answer now (asked first), and the
+// built-in ones can be had back.
+@Composable
+private fun CertificatePinningSection(page: SettingsPageContext) {
+    val pinning by page.viewModel.isCertificatePinningEnabled.collectAsStateWithLifecycle()
+    val ownPins by page.viewModel.certificatePins.collectAsStateWithLifecycle()
+    val repinning by page.viewModel.isRepinning.collectAsStateWithLifecycle()
+    val hosts = remember { HttpClientProvider.allowedHosts }
+    val ownHosts = ownPins.keys.count { it in hosts }
+    PreferenceSection(text = stringResource(R.string.settings_advanced_section)) {
+        SwitchRow(
+            title = stringResource(R.string.certificate_pinning_title),
+            summary = stringResource(R.string.certificate_pinning_summary),
+            iconRes = R.drawable.ic_lock,
+            checked = pinning,
+            onCheckedChange = page.viewModel::setCertificatePinningEnabled,
+        )
+        PreferenceRow(
+            title = stringResource(R.string.repin_title),
+            summary =
+                when {
+                    repinning -> stringResource(R.string.repin_summary_running)
+                    ownHosts == 0 -> stringResource(R.string.repin_summary_builtin)
+                    else -> stringResource(R.string.repin_summary_own, ownHosts, hosts.size)
+                },
+            iconRes = R.drawable.ic_refresh,
+            enabled = pinning && !repinning,
+            onClick = { page.openDialog(OpenDialog.Repin) },
+            summaryMaxLines = FULL_SUMMARY,
+        )
+        if (ownHosts > 0) {
+            PreferenceRow(
+                title = stringResource(R.string.restore_pins_title),
+                summary = stringResource(R.string.restore_pins_summary),
+                iconRes = R.drawable.ic_history,
+                enabled = !repinning,
+                onClick = page.viewModel::restoreBuiltInPins,
+            )
+        }
     }
 }
 

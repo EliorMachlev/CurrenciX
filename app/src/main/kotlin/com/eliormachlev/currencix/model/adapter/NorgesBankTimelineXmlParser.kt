@@ -30,17 +30,13 @@ class NorgesBankTimelineXmlParser(
             when {
                 eventType == XmlPullParser.START_TAG &&
                     tagname.equals(NORGES_BANK_SERIES_TAG, ignoreCase = true) -> {
-                    seriesCurrency =
-                        Currency.fromString(
-                            parser.getAttributeValue(null, "BASE_CUR"),
-                        )
+                    seriesCurrency = parser.norgesBankBaseCurrency()
                     multiplier = parser.norgesBankUnitMultiplier()
                 }
 
                 eventType == XmlPullParser.START_TAG &&
-                    tagname.equals("Obs", ignoreCase = true) -> {
-                    val date = LocalDate.parse(parser.getAttributeValue(null, NORGES_BANK_TIME_PERIOD))
-                    val value = parser.getAttributeValue(null, "OBS_VALUE").toBigDecimalOrNull()
+                    tagname.equals(NORGES_BANK_OBSERVATION_TAG, ignoreCase = true) -> {
+                    val (date, value) = parser.norgesBankObservation()
                     if (seriesCurrency != null && value != null) {
                         currentTimeline[date] =
                             Rate(

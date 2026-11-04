@@ -132,6 +132,7 @@ class NoSuppressionsTest {
         const val OWASP_SUPPRESSIONS = "config/owasp/suppressions.xml"
         const val OWASP_WORKFLOW = ".github/workflows/owasp-dependency-check.yaml"
         const val WIRE_CVE = "CVE-2018-8909"
+        const val WIRE_SERVER_CVE = "CVE-2023-22737"
         const val WIRE_RUNTIME = "wire-runtime"
 
         const val CODEQL_EXCEPTIONS = ".github/codeql/exceptions.yml"
@@ -139,6 +140,41 @@ class NoSuppressionsTest {
         const val CODEQL_FILTER = ".github/scripts/codeql-exceptions.py"
         const val USELESS_NULL_CHECK = "java/useless-null-check"
         const val QUICK_CONVERSIONS = "QuickConversionsSheet"
+        const val SOURCES = "app/src/main/kotlin/com/eliormachlev/currencix"
+
+        // Classes whose superclass also carries the Compose compiler's $stable (exceptions.md #10).
+        val STABLE_SHADOWING =
+            listOf(
+                "model/adapter/AdapterUtils",
+                "model/adapter/AllRatesTodayAdapters",
+                "model/adapter/BankOfCanadaRatesAdapter",
+                "model/adapter/BankOfCanadaTimelineAdapter",
+                "model/adapter/BankOfIsraelRatesAdapter",
+                "model/adapter/FrankfurterAppRatesAdapter",
+                "model/adapter/FrankfurterAppTimelineAdapter",
+                "model/adapter/InforEuroRatesAdapter",
+                "model/adapter/InforEuroTimelineAdapter",
+                "model/adapter/LocalDateAdapter",
+                "model/adapter/OpenExchangeratesRatesAdapter",
+                "repository/persistence/PrefStore",
+                "view/widget/CurrencyWidget",
+            )
+
+        // Files with data objects, whose generated equals() casts to a temporary it never reads (#11).
+        val DATA_OBJECT_EQUALS =
+            listOf(
+                "ocr/OcrEngine",
+                "repository/BackupManager",
+                "repository/CartExporter",
+                "view/convert/SelectionConversion",
+                "view/main/ConverterLaunch",
+                "view/navigation/Screen",
+                "view/preference/compose/FeesScreen",
+                "view/preference/compose/PreferenceScreen",
+                "view/preference/compose/ReceiptLanguagesScreen",
+                "viewmodel/cart/TripChecklist",
+                "viewmodel/preference/BackupViewModel",
+            )
 
         const val VERIFICATION_METADATA = "gradle/verification-metadata.xml"
         const val TRUSTED_ARTIFACTS = "trusted-artifacts"
@@ -147,6 +183,41 @@ class NoSuppressionsTest {
         val IDE_DOCUMENTATION = listOf("sources", "javadoc")
 
         fun trustLine(kind: String) = """<trust file=".*-$kind[.]jar" regex="true"/>"""
+
+        // A Dependency-Check CVE excluded for Square's Wire runtime only (exceptions.md #7).
+        fun wireSuppression(cve: String) =
+            RecordedException(
+                OWASP_SUPPRESSIONS,
+                "<suppress>",
+                cve,
+                WIRE_RUNTIME,
+                Regex(
+                    """<suppress>\s*<notes>[^<]*</notes>\s*<filePath regex="true">[^<]*""" +
+                        Regex.escape("com\\.squareup\\.wire/$WIRE_RUNTIME") +
+                        """[^<]*</filePath>\s*<cve>""" + cve + "</cve>\\s*</suppress>",
+                ),
+            )
+
+        // One CodeQL finding taken out of the results: its rule, the source file
+        // (under SOURCES, without .kt), its line and a piece of its message.
+        fun codeqlException(
+            rule: String,
+            source: String,
+            line: Int,
+            message: String,
+        ): RecordedException {
+            val marker = "- excluded-rule: $rule"
+            return RecordedException(
+                CODEQL_EXCEPTIONS,
+                marker,
+                rule,
+                source.substringAfterLast('/'),
+                Regex(
+                    Regex.escape(marker) + """\s*file: """ + Regex.escape("$SOURCES/$source.kt") +
+                        """\s*line: $line\s*message-contains: """ + Regex.escape(message),
+                ),
+            )
+        }
 
         // An @Incubating AGP API kept on purpose: the marker (numbered as in
         // EXCEPTIONS_DOC) directly above the one statement that uses it.
@@ -193,19 +264,9 @@ class NoSuppressionsTest {
                     incubating(PROFILE_BUILD, 5, "testedApks", "v.instrumentationRunnerArguments.put("),
                     incubating(APP_BUILD, 6, "generateLocaleConfig", "generateLocaleConfig = true"),
                 ) +
+                // Each CVE, for Square's Wire runtime only.
+                listOf(WIRE_CVE, WIRE_SERVER_CVE).map(::wireSuppression) +
                 listOf(
-                    RecordedException(
-                        OWASP_SUPPRESSIONS,
-                        "<suppress>",
-                        WIRE_CVE,
-                        WIRE_RUNTIME,
-                        // The one CVE, for Square's Wire runtime only.
-                        Regex(
-                            """<suppress>\s*<notes>[^<]*</notes>\s*<filePath regex="true">[^<]*""" +
-                                Regex.escape("com\\.squareup\\.wire/$WIRE_RUNTIME") +
-                                """[^<]*</filePath>\s*<cve>""" + WIRE_CVE + "</cve>\\s*</suppress>",
-                        ),
-                    ),
                     RecordedException(
                         OWASP_WORKFLOW,
                         "--suppression $OWASP_SUPPRESSIONS",
@@ -215,18 +276,23 @@ class NoSuppressionsTest {
                         Regex(Regex.escape("--suppression $OWASP_SUPPRESSIONS") + "\\s*$", RegexOption.MULTILINE),
                     ),
                 ) +
+                // Each finding: its file, its line (1: code the compiler generates) and its message.
+                codeqlException(USELESS_NULL_CHECK, "view/main/compose/$QUICK_CONVERSIONS", 1, "tmpEnum") +
+                STABLE_SHADOWING.map { codeqlException("java/field-masks-super-field", it, 1, "\$stable") } +
+                DATA_OBJECT_EQUALS.map { codeqlException("java/local-variable-is-never-read", it, 1, "tmp0_other_with_cast") } +
+                codeqlException(
+                    "java/reference-equality-of-boxed-types",
+                    "view/timeline/TimelineChart",
+                    522,
+                    "reference comparison of boxed numerical values",
+                ) +
+                codeqlException(
+                    "java/android/missing-certificate-pinning",
+                    "util/CertificatePinning",
+                    100,
+                    "does not implement certificate pinning",
+                ) +
                 listOf(
-                    RecordedException(
-                        CODEQL_EXCEPTIONS,
-                        "- excluded-rule: $USELESS_NULL_CHECK",
-                        USELESS_NULL_CHECK,
-                        QUICK_CONVERSIONS,
-                        // That one finding: its file, the generated line 1 and the compiler's temporary.
-                        Regex(
-                            Regex.escape("- excluded-rule: $USELESS_NULL_CHECK") +
-                                """\s*file: \S*/""" + QUICK_CONVERSIONS + """\.kt\s*line: 1\s*message-contains: tmpEnum""",
-                        ),
-                    ),
                     RecordedException(
                         CODEQL_WORKFLOW,
                         "run: python3 $CODEQL_FILTER $CODEQL_EXCEPTIONS sarif",
@@ -283,6 +349,12 @@ class NoSuppressionsTest {
                 // CodeQL: a finding listed for removal, and the step that removes the listed ones
                 Regex("""excluded-rule:"""),
                 Regex("""codeql-exceptions\.py\s+\S"""),
+                // A workflow step whose failure doesn't fail its job
+                Regex("""continue-on-error:\s*(true|\$\{\{)"""),
+                // Workflow linters: ShellCheck (run by actionlint on each run: script), actionlint, zizmor
+                Regex("""shellcheck\s+disable="""),
+                Regex("""actionlint\b.*\s-ignore\b"""),
+                Regex("""zizmor:\s*ignore"""),
                 // Gradle dependency verification: files accepted without a checksum
                 Regex("""<(trust|ignored-key|trusted-key)\s"""),
             )

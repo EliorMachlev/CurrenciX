@@ -208,4 +208,16 @@
     <string name="api_all_rates_today_api_key_title">Clau d’API d’AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Per fer servir aquesta font necessites la teva pròpia clau d’API.\n\nCrea un compte gratuït a https://allratestoday.com, copia la clau (comença per art_live_) de la pàgina del perfil i introdueix-la aquí.\n\nEl pla gratuït permet 300 sol·licituds en total, per sempre. Cada actualització i cada interval del gràfic en gasta una.</string>
     <string name="provider_cadence_every_minute">S’actualitza aproximadament cada minut</string>
+    <string name="settings_advanced_section">Avançat</string>
+    <string name="certificate_pinning_title">Fixació de certificats</string>
+    <string name="certificate_pinning_summary">Connecta amb els servidors de tipus de canvi només a través de les autoritats de certificació fixades per a cadascun. Desactiva-ho només si un servidor ha canviat de certificat i els tipus no es carreguen.</string>
+    <string name="repin_title">Torna a fixar als certificats actuals</string>
+    <string name="repin_summary_builtin">S\'utilitzen les fixacions integrades a l\'aplicació</string>
+    <string name="repin_summary_own">S\'utilitzen fixacions preses en aquest telèfon per a %1$d de %2$d servidors</string>
+    <string name="repin_summary_running">S\'estan comprovant els servidors…</string>
+    <string name="repin_prompt_title">Vols tornar a fixar els certificats?</string>
+    <string name="repin_prompt_message">L\'aplicació es connectarà ara al teu proveïdor de dades i al proveïdor alternatiu, i a partir d\'aleshores només acceptarà les autoritats de certificació que utilitzi cadascun. Els altres proveïdors mantenen les fixacions integrades a l\'aplicació. Fes-ho en una xarxa de confiança, com la Wi-Fi de casa.</string>
+    <string name="repin_confirm">Torna a fixar</string>
+    <string name="restore_pins_title">Utilitza les fixacions integrades</string>
+    <string name="restore_pins_summary">Oblida les fixacions preses en aquest telèfon</string>
 </resources>

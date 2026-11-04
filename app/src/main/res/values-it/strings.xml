@@ -365,4 +365,5 @@
     <string name="quick_amount_label">Importo</string>
     <string name="quick_amount_taken">È già uno degli importi</string>
     <string name="quick_amount_note">Usato per %1$s in ogni coppia.</string>
+    <string name="error_certificate_pinning">Il certificato del server non è tra quelli che l\'app ha fissato per lui. Se il fornitore l\'ha cambiato, fissalo di nuovo in Impostazioni o disattiva il pinning dei certificati.</string>
 </resources>

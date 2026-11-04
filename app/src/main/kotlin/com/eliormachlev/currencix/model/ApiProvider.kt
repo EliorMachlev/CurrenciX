@@ -107,7 +107,7 @@ enum class ApiProvider(
 
     companion object {
         /** Every host a provider's requests may go to, the main and fallback providers alike. */
-        val allHosts: Set<String> by lazy { entries.flatMapTo(mutableSetOf()) { it.implementation.hosts } }
+        val allHosts: Set<String> by lazy { entries.flatMapTo(mutableSetOf()) { it.hosts } }
 
         fun fromId(value: Int): ApiProvider =
             entries.firstOrNull { it.id == value }
@@ -153,6 +153,9 @@ enum class ApiProvider(
 
     // Host portion of [baseUrl], used to prewarm DNS at app start.
     fun getHost(): String? = hostOf(this.implementation.baseUrl)
+
+    /** Every host this provider's requests go to (its API, and any other feed it reads). */
+    val hosts: Set<String> get() = implementation.hosts
 
     suspend fun getRates(
         context: Context?,

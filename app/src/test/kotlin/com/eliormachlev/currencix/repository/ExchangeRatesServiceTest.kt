@@ -13,9 +13,10 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 // Live-network tests hit real upstream APIs, which occasionally 5xx or drop
-// HTTP/2 streams under CI-runner load. Retry once with a short backoff so a
-// single upstream hiccup doesn't fail the whole build gate — a true outage
-// still surfaces after both attempts.
+// HTTP/2 streams under CI-runner load. Retried with a backoff so one upstream
+// hiccup doesn't fail the run; a true outage still surfaces. They run on
+// their own (-PliveProviders, .github/workflows/live-providers.yaml), not in
+// the build gate, so an outage fails that workflow rather than every PR.
 private const val LIVE_RETRY_ATTEMPTS = 5
 private const val LIVE_RETRY_BACKOFF_MS = 10_000L
 

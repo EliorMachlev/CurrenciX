@@ -358,4 +358,5 @@
     <string name="quick_amount_label">Jumlah</string>
     <string name="quick_amount_taken">Sudah menjadi salah satu jumlah</string>
     <string name="quick_amount_note">Dipakai untuk %1$s di setiap pasangan.</string>
+    <string name="error_certificate_pinning">Sertifikat server bukan salah satu yang disematkan aplikasi untuknya. Jika penyedia menggantinya, sematkan ulang di Setelan, atau matikan penyematan sertifikat.</string>
 </resources>

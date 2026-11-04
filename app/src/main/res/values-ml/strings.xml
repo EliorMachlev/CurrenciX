@@ -365,4 +365,5 @@
     <string name="quick_amount_label">തുക</string>
     <string name="quick_amount_taken">ഇത് ഇതിനകം തുകകളിൽ ഒന്നാണ്</string>
     <string name="quick_amount_note">എല്ലാ ജോഡിയിലും %1$s-ന് ഉപയോഗിക്കും.</string>
+    <string name="error_certificate_pinning">സെർവറിന്റെ സർട്ടിഫിക്കറ്റ് ആപ്പ് അതിനായി പിൻ ചെയ്തവയിൽ ഒന്നല്ല. ദാതാവ് അത് മാറ്റിയെങ്കിൽ, ക്രമീകരണങ്ങളിൽ വീണ്ടും പിൻ ചെയ്യുക, അല്ലെങ്കിൽ സർട്ടിഫിക്കറ്റ് പിന്നിംഗ് ഓഫാക്കുക.</string>
 </resources>

@@ -36,10 +36,10 @@ enum class PersistenceKey(
 // One property delegate per PersistenceKey — `preferencesDataStore` requires a
 // unique property per file name (it registers a process-wide singleton), so we
 // enumerate them here and fan them out through [dataStoreFor].
-private val Context.rates by preferencesDataStore(name = "rates")
-private val Context.lastState by preferencesDataStore(name = "last_state")
-private val Context.starredCurrencies by preferencesDataStore(name = "starred_currencies")
-private val Context.appPrefs by preferencesDataStore(name = "prefs")
+private val Context.rates by preferencesDataStore(name = PersistenceKey.RATES.fileName)
+private val Context.lastState by preferencesDataStore(name = PersistenceKey.LAST_STATE.fileName)
+private val Context.starredCurrencies by preferencesDataStore(name = PersistenceKey.STARRED_CURRENCIES.fileName)
+private val Context.appPrefs by preferencesDataStore(name = PersistenceKey.APP.fileName)
 
 private fun Context.dataStoreFor(key: PersistenceKey): DataStore<Preferences> =
     when (key) {

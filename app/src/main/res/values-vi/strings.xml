@@ -358,4 +358,5 @@
     <string name="quick_amount_label">Số tiền</string>
     <string name="quick_amount_taken">Đã là một trong các số tiền</string>
     <string name="quick_amount_note">Dùng cho %1$s trong mọi cặp.</string>
+    <string name="error_certificate_pinning">Chứng chỉ của máy chủ không thuộc các chứng chỉ ứng dụng đã ghim cho nó. Nếu nhà cung cấp đã đổi, hãy ghim lại trong Cài đặt hoặc tắt ghim chứng chỉ.</string>
 </resources>
