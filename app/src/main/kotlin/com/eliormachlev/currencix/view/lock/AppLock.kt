@@ -15,10 +15,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.PrivacySettings
+import timber.log.Timber
 
 // Away for less than this (the camera for a receipt, the file picker for a
 // backup, a glance at another app), the app opens without asking again.
 private const val GRACE_MILLIS = 60_000L
+
+private const val TAG = "AppLock"
 
 // The phone's strong biometrics, or its screen lock (PIN, pattern or
 // password) — whichever the person prefers at the prompt.
@@ -70,13 +73,16 @@ object AppLock : DefaultLifecycleObserver {
 
     /**
      * The system prompt for biometrics or the screen lock, titled for this
-     * app; [onSuccess] once the person is through. Cancelling or failing
-     * leaves things as they were.
+     * app; [onSuccess] once the person is through, as the Keystore attests
+     * ([UnlockKey]). Cancelling or failing leaves things as they were, and
+     * so does a phone whose Keystore can't make the key: turning the lock on
+     * goes through here, so it can't be turned on there.
      */
     fun authenticate(
         context: Context,
         onSuccess: () -> Unit,
     ) {
+        val mac = runCatching(UnlockKey::mac).onFailure { Timber.tag(TAG).w(it, "No unlock key") }.getOrNull() ?: return
         val prompt =
             BiometricPrompt
                 .Builder(context)
@@ -84,10 +90,13 @@ object AppLock : DefaultLifecycleObserver {
                 .setAllowedAuthenticators(AUTHENTICATORS)
                 .build()
         prompt.authenticate(
+            BiometricPrompt.CryptoObject(mac),
             CancellationSignal(),
             context.mainExecutor,
             object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) = onSuccess()
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    if (UnlockKey.proves(result.cryptoObject?.mac)) onSuccess()
+                }
             },
         )
     }
