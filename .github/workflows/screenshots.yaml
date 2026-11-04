@@ -2,12 +2,11 @@ name: Screenshots
 
 # Renders every Compose surface with Roborazzi (JVM screenshot testing, no
 # emulator) and uploads the PNGs as an artifact so Claude can pull them via
-# `gh run download` and iterate on UI without a device round-trip. Runs on
-# any non-master branch push — same trigger shape as apk-artifact.yaml.
+# `gh run download` and iterate on UI without a device round-trip. On a
+# branch, the screenshots are then compared with master's latest (master's
+# own push run records them).
 on:
   push:
-    branches-ignore:
-      - master
   workflow_dispatch:
 
 # A newer push to the same PR or branch supersedes a run still going;
@@ -28,6 +27,10 @@ jobs:
     # The suite records in about a minute on a manual clock (ScreenshotRule);
     # a capture that never settles fails here instead of running for hours.
     timeout-minutes: 20
+    permissions:
+      contents: read
+      # Master's screenshots are another run's artifact.
+      actions: read
     steps:
       - name: Harden the runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
@@ -52,9 +55,9 @@ jobs:
         id: sha
         run: echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
-      # `record` writes fresh PNGs (vs. `verify` which fails on diff). We
-      # want fresh output every push so Claude can pull the latest render;
-      # visual-regression gating is a future concern.
+      # `record` writes fresh PNGs (vs. `verify`, which fails on any
+      # difference): every push gets the latest render, and the comparison
+      # below reports what differs from master without failing.
       # `--tests "*.screenshots.*"` scopes the run to the screenshots
       # package. Without it, the fuzzing tests (Jazzer-instrumented) also
       # run under this task; Jazzer's bytecode hooks then leak into
@@ -71,6 +74,41 @@ jobs:
           name: screenshots-${{ steps.sha.outputs.short }}
           path: app/build/outputs/roborazzi/**/*.png
           if-no-files-found: warn
+
+      # What the branch changes on screen: its screenshots against master's
+      # latest, in the run summary, with the changed and new ones uploaded
+      # (master's beside each changed one). Reported, never failed: a
+      # change is often the point of the branch.
+      - name: Get master's screenshots
+        id: master
+        if: github.ref != 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          run=$(gh api "repos/$REPO/actions/workflows/screenshots.yaml/runs?branch=master&event=push&status=success&per_page=1" --jq '.workflow_runs[0].id // empty')
+          name=""
+          if [ -n "$run" ]; then
+            name=$(gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '[.artifacts[] | select((.name | startswith("screenshots-")) and (.expired | not))][0].name // empty')
+          fi
+          if [ -z "$name" ]; then
+            echo "::notice title=Screenshots::Master has no screenshots to compare with yet"
+            exit 0
+          fi
+          gh run download "$run" --repo "$REPO" --name "$name" --dir "$RUNNER_TEMP/master-screenshots"
+          echo "found=true" >> "$GITHUB_OUTPUT"
+
+      - name: Compare with master
+        if: steps.master.outputs.found == 'true'
+        run: python3 .github/scripts/screenshot-diff.py "$RUNNER_TEMP/master-screenshots" app/build/outputs/roborazzi screenshot-changes "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the changes
+        if: steps.master.outputs.found == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: screenshot-changes-${{ steps.sha.outputs.short }}
+          path: screenshot-changes/*.png
+          if-no-files-found: ignore
 
       # Test report ships the full stack trace when the Robolectric run
       # blows up before writing PNGs — Gradle's console output truncates
