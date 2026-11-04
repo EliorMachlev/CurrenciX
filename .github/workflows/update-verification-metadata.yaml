@@ -75,6 +75,15 @@ jobs:
           curl -fsSL --proto =https "$(python3 "$SCRIPT" url "$PROPS")" -o "$RUNNER_TEMP/gradle-src.zip.sha256"
           python3 "$SCRIPT" record "$PROPS" gradle/verification-metadata.xml "$RUNNER_TEMP/gradle-src.zip.sha256"
 
+      # What was recorded, to read when a later step or the checks fail.
+      - name: Upload the recorded file
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verification-metadata
+          path: gradle/verification-metadata.xml
+          retention-days: 7
+
       - name: Commit and push
         id: push
         env:
