@@ -145,17 +145,6 @@ class NoSuppressionsTest {
         // Classes whose superclass also carries the Compose compiler's $stable (exceptions.md #10).
         val STABLE_SHADOWING =
             listOf(
-                "model/adapter/AdapterUtils",
-                "model/adapter/AllRatesTodayAdapters",
-                "model/adapter/BankOfCanadaRatesAdapter",
-                "model/adapter/BankOfCanadaTimelineAdapter",
-                "model/adapter/BankOfIsraelRatesAdapter",
-                "model/adapter/FrankfurterAppRatesAdapter",
-                "model/adapter/FrankfurterAppTimelineAdapter",
-                "model/adapter/InforEuroRatesAdapter",
-                "model/adapter/InforEuroTimelineAdapter",
-                "model/adapter/LocalDateAdapter",
-                "model/adapter/OpenExchangeratesRatesAdapter",
                 "repository/persistence/PrefStore",
                 "view/widget/CurrencyWidget",
             )

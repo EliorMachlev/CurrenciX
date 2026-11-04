@@ -27,7 +27,7 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 | 6 | Qodana / IntelliJ `UnstableApiUsage` | `generateLocaleConfig` | `app/build.gradle.kts` |
 | 8 | CodeQL `java/useless-null-check` | `QuickConversionsSheet` (a check the Kotlin compiler generates, line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 | 9 | Gradle dependency verification, `trusted-artifacts` | libraries' `-sources.jar` and `-javadoc.jar` (downloaded only by IDE syncs) | `gradle/verification-metadata.xml` |
-| 10 | CodeQL `java/field-masks-super-field` | the Compose compiler's `$stable` field, in 13 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| 10 | CodeQL `java/field-masks-super-field` | the Compose compiler's `$stable` field, in 2 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 | 11 | CodeQL `java/local-variable-is-never-read` | the cast in data objects' generated `equals()`, in 11 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 
 #### 4 to 6. Incubating Android Gradle Plugin APIs
@@ -53,8 +53,8 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 
 #### 10. CodeQL: `java/field-masks-super-field` on the Compose compiler's `$stable`
 
-- **What it reports:** "This field shadows another field called `$stable` in a superclass", at line 1 of 13 files: `AdapterUtils`, `AllRatesTodayAdapters`, `BankOfCanadaRatesAdapter`, `BankOfCanadaTimelineAdapter`, `BankOfIsraelRatesAdapter`, `FrankfurterAppRatesAdapter`, `FrankfurterAppTimelineAdapter`, `InforEuroRatesAdapter`, `InforEuroTimelineAdapter`, `LocalDateAdapter`, `OpenExchangeratesRatesAdapter`, `PrefStore`, `CurrencyWidget`.
-- **Why the finding is wrong:** no class in the source declares `$stable`. The Compose compiler adds a static `$stable` field (its record of whether the class is stable) to every class it compiles, so a class whose superclass was also compiled by it (the app's `TypedJsonAdapter`, `ResponseAdapter` and `CachedStore`, Glance's `GlanceAppWidget` and `GlanceAppWidgetReceiver`) has one that "shadows" the superclass's. Static fields aren't inherited the way the rule worries about, and nothing reads them by name. Line 1 is where CodeQL puts generated code.
+- **What it reports:** "This field shadows another field called `$stable` in a superclass", at line 1 of 2 files: `PrefStore`, `CurrencyWidget`.
+- **Why the finding is wrong:** no class in the source declares `$stable`. The Compose compiler adds a static `$stable` field (its record of whether the class is stable) to every class it compiles, so a class whose superclass was also compiled by it (the app's `CachedStore`, Glance's `GlanceAppWidget` and `GlanceAppWidgetReceiver`) has one that "shadows" the superclass's. Static fields aren't inherited the way the rule worries about, and nothing reads them by name. Line 1 is where CodeQL puts generated code.
 - **Why it can't be fixed:** the field isn't in the source. Removing it would mean these classes no longer extend those superclasses, rewriting working code so the compiler happens not to generate it.
 - **What is excluded:** each finding by rule, file, line 1 and a message naming `$stable`. The rule still runs everywhere: a field in the source shadowing a superclass's, in these files or any other, is reported.
 
