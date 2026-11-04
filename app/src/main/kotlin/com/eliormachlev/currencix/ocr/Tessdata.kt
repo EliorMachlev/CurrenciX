@@ -6,6 +6,11 @@ import java.io.InputStream
 import java.security.MessageDigest
 
 // Tesseract wants a folder holding "tessdata/<code>.traineddata".
+// Tesseract's separator between languages ("heb+eng"), and where each comes in it.
+private const val LANGUAGE_SEPARATOR = "+"
+private const val FIRST = 0
+private const val BETWEEN = 1
+private const val LAST = 2
 private const val OCR_DIR = "ocr"
 private const val TESSDATA_DIR = "tessdata"
 private const val TRAINEDDATA = ".traineddata"
@@ -70,17 +75,30 @@ object Tessdata {
         return matches
     }
 
+    /** The languages whose data is on the device. */
+    fun installed(context: Context): List<TessLanguage> = TessLanguage.entries.filter { isInstalled(context, it) }
+
     /**
      * The languages to read with, as Tesseract takes them ("heb+kor+eng"):
-     * the app language's first when its file is here, then any other the
-     * user added, then English (prices and Latin-script names).
+     * those on the device, the app language's first and English, when it's
+     * here, last (prices and Latin-script names read in any of them). Empty
+     * with none here.
      */
     fun languages(
         context: Context,
         local: TessLanguage?,
-    ): String {
-        val others = TessLanguage.entries.filter { it != TessLanguage.ENGLISH && it != local && isInstalled(context, it) }
-        val first = local?.takeIf { it != TessLanguage.ENGLISH && isInstalled(context, it) }
-        return (listOfNotNull(first) + others + TessLanguage.ENGLISH).joinToString("+") { it.code }
-    }
+    ): String =
+        installed(context)
+            .sortedBy { readingOrder(it, local) }
+            .joinToString(LANGUAGE_SEPARATOR) { it.code }
+
+    private fun readingOrder(
+        language: TessLanguage,
+        local: TessLanguage?,
+    ): Int =
+        when (language) {
+            local -> FIRST
+            TessLanguage.ENGLISH -> LAST
+            else -> BETWEEN
+        }
 }

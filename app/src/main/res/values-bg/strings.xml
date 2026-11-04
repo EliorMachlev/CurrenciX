@@ -265,8 +265,6 @@
     <string name="trip_unnamed">Пътуване</string>
     <string name="trip_move">Пътуване</string>
     <string name="trip_none">Без пътуване</string>
-    <string name="receipt_setup_also_language_until">Четене на бележки и на %1$s (%2$s), до %3$s</string>
-    <string name="receipt_language_offer_trip">Да се четат ли бележките на %1$s по време на пътуването? Текстовите данни са еднократно изтегляне от %2$s, пазени до %3$s. Без тях бележките се четат на английски.</string>
     <string name="trip_destination">Накъде (валутата, с която се плаща там)</string>
     <string name="trip_optional">По избор</string>
     <string name="trip_dates">Дати</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">Зададено известие за курс</string>
     <string name="receipt_setup_message">Четенето на касови бележки изисква еднократно изтегляне. След това работи офлайн на телефона ви.</string>
     <string name="receipt_setup_reader">Четецът на текст</string>
-    <string name="receipt_setup_language_data">Текстови данни за %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Четене на бележки и на %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Да се четат ли бележките и на %1$s? Текстовите данни са еднократно изтегляне от %2$s. Без тях бележките се четат на английски.</string>
-    <string name="receipt_language_english_only">Само английски</string>
     <string name="receipt_language_read_too">Четене и на %1$s</string>
     <string name="receipt_languages_title">Езици за бележки</string>
     <string name="receipt_languages_summary">Добавете език за пътуване, пазете го до дата или го изтрийте</string>
-    <string name="receipt_languages_intro">Бележките се четат на телефона ви, на английски и на езиците тук. Нищо не се изтегля без съгласието ви.</string>
     <string name="receipt_languages_installed">На този телефон</string>
-    <string name="receipt_languages_empty">Още няма. Първото сканиране на бележка предлага английски.</string>
     <string name="receipt_languages_add">Добавяне на език</string>
     <string name="receipt_languages_downloading">%1$s · изтегля се…</string>
     <string name="receipt_languages_kept">%1$s · запазен</string>
@@ -361,4 +353,12 @@
     <string name="quick_amount_label">Сума</string>
     <string name="quick_amount_taken">Вече е една от сумите</string>
     <string name="quick_amount_note">Използва се за %1$s във всяка двойка.</string>
+    <string name="receipt_setup_language">Разчитане на касови бележки на %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Разчитане на касови бележки на %1$s (%2$s), пази се до %3$s</string>
+    <string name="receipt_setup_pick_language">Изберете поне един език за разчитане на бележки.</string>
+    <string name="receipt_language_offer">Да се разчитат бележки и на %1$s? Текстовите му данни са еднократно изтегляне от %2$s.</string>
+    <string name="receipt_language_offer_trip">Да се разчитат бележки на %1$s по време на пътуването? Текстовите му данни са еднократно изтегляне от %2$s, пазят се до %3$s.</string>
+    <string name="receipt_language_not_now">Не сега</string>
+    <string name="receipt_languages_intro">Бележките се разчитат на телефона ви, на езиците тук. Нищо не се изтегля, докато не се съгласите.</string>
+    <string name="receipt_languages_empty">Още няма. Първото сканиране на бележка пита какво да се изтегли.</string>
 </resources>

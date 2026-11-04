@@ -262,8 +262,6 @@
     <string name="trip_unnamed">旅程</string>
     <string name="trip_move">旅程</string>
     <string name="trip_none">不屬於旅程</string>
-    <string name="receipt_setup_also_language_until">同時讀取%1$s收據（%2$s），保留至 %3$s</string>
-    <string name="receipt_language_offer_trip">旅行期間用%1$s讀取收據？其文字資料為一次性下載，大小 %2$s，保留至 %3$s。不下載則以英文讀取收據。</string>
     <string name="trip_destination">目的地（當地使用的貨幣）</string>
     <string name="trip_optional">選填</string>
     <string name="trip_dates">日期</string>
@@ -315,16 +313,10 @@
     <string name="recent_pair_alert_set">已設匯率提醒</string>
     <string name="receipt_setup_message">讀取收據需要一次性下載。之後可在手機上離線使用。</string>
     <string name="receipt_setup_reader">文字辨識器</string>
-    <string name="receipt_setup_language_data">%1$s文字資料（%2$s）</string>
-    <string name="receipt_setup_also_language">同時讀取%1$s收據（%2$s）</string>
-    <string name="receipt_language_offer">同時讀取%1$s收據？其文字資料為一次性下載，大小 %2$s。不下載則以英文讀取收據。</string>
-    <string name="receipt_language_english_only">僅英文</string>
     <string name="receipt_language_read_too">同時讀取%1$s</string>
     <string name="receipt_languages_title">收據語言</string>
     <string name="receipt_languages_summary">為旅行新增語言、保留到某個日期或刪除</string>
-    <string name="receipt_languages_intro">收據在手機上讀取，使用英文和這裡的語言。未經您同意不會下載任何內容。</string>
     <string name="receipt_languages_installed">此手機上</string>
-    <string name="receipt_languages_empty">尚無。首次掃描收據時會提供英文。</string>
     <string name="receipt_languages_add">新增語言</string>
     <string name="receipt_languages_downloading">%1$s · 正在下載…</string>
     <string name="receipt_languages_kept">%1$s · 保留</string>
@@ -356,4 +348,12 @@
     <string name="quick_amount_label">金額</string>
     <string name="quick_amount_taken">已是其中一個金額</string>
     <string name="quick_amount_note">在所有貨幣組合中用於 %1$s。</string>
+    <string name="receipt_setup_language">用%1$s讀取收據（%2$s）</string>
+    <string name="receipt_setup_language_until">用%1$s讀取收據（%2$s），保留至 %3$s</string>
+    <string name="receipt_setup_pick_language">請至少選擇一種用於讀取收據的語言。</string>
+    <string name="receipt_language_offer">也用%1$s讀取收據嗎？其文字資料需一次性下載 %2$s。</string>
+    <string name="receipt_language_offer_trip">旅行期間用%1$s讀取收據嗎？其文字資料需一次性下載 %2$s，保留至 %3$s。</string>
+    <string name="receipt_language_not_now">以後再說</string>
+    <string name="receipt_languages_intro">收據在你的手機上讀取，使用這裡的語言。在你同意之前不會下載任何內容。</string>
+    <string name="receipt_languages_empty">還沒有。第一次掃描收據時會詢問要下載哪些。</string>
 </resources>

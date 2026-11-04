@@ -16,6 +16,7 @@ class ReceiptScanTest {
     private val untils = mutableMapOf<TessLanguage, Instant?>()
     private var recognizer = true
     private var setupsStarted = 0
+    private var awaited: Set<TessLanguage>? = null
     private var photoChoices = 0
 
     private fun scan(local: TessLanguage? = TessLanguage.HEBREW) =
@@ -28,27 +29,56 @@ class ReceiptScanTest {
                 answers[language] = allowed
                 untils[language] = until
             }
-            startSetup = { setupsStarted++ }
+            startSetup = {
+                setupsStarted++
+                awaited = it
+            }
         }
 
     @Test
-    fun `the first scan names what it would download, the app language unticked, and starts nothing`() {
+    fun `the first scan names what it would download, English only as a choice, and starts nothing`() {
         recognizer = false
         val scan = scan()
         scan.begin { photoChoices++ }
-        assertEquals(ReceiptSetup.Offer(reader = true, english = true, language = TessLanguage.HEBREW), scan.setup)
+        assertEquals(
+            ReceiptSetup.Offer(reader = true, languages = listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH), needsLanguage = true),
+            scan.setup,
+        )
         assertEquals(0, setupsStarted)
         assertEquals(0, photoChoices)
         assertTrue(answers.isEmpty())
     }
 
     @Test
-    fun `accepting without the tick downloads English only and remembers the no`() {
+    fun `accepting downloads only the languages ticked, waits for them, and remembers the rest as no`() {
         val scan = scan()
         scan.begin { photoChoices++ }
-        scan.acceptSetup(withLanguage = false)
-        assertEquals(mapOf(TessLanguage.ENGLISH to true, TessLanguage.HEBREW to false), answers)
+        scan.acceptSetup(chosen = setOf(TessLanguage.HEBREW))
+        assertEquals(mapOf(TessLanguage.HEBREW to true, TessLanguage.ENGLISH to false), answers)
         assertEquals(1, setupsStarted)
+        assertEquals(setOf(TessLanguage.HEBREW), awaited)
+    }
+
+    @Test
+    fun `with no language left, every one is offered again, whatever was said before`() {
+        answers[TessLanguage.ENGLISH] = false
+        answers[TessLanguage.HEBREW] = false
+        val scan = scan()
+        scan.begin { photoChoices++ }
+        assertEquals(listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH), (scan.setup as ReceiptSetup.Offer).languages)
+        assertEquals(0, photoChoices)
+    }
+
+    @Test
+    fun `only the reader missing: nothing is waited for, a language not asked about is a choice`() {
+        installed += TessLanguage.ENGLISH
+        recognizer = false
+        val scan = scan()
+        scan.begin { photoChoices++ }
+        assertEquals(ReceiptSetup.Offer(reader = true, languages = listOf(TessLanguage.HEBREW), needsLanguage = false), scan.setup)
+        scan.acceptSetup(chosen = emptySet())
+        assertEquals(false, answers[TessLanguage.HEBREW])
+        assertEquals(emptySet<TessLanguage>(), awaited)
     }
 
     @Test
@@ -62,14 +92,14 @@ class ReceiptScanTest {
     }
 
     @Test
-    fun `with English here, a language not asked about gets its own question`() {
+    fun `with a language here, one not asked about gets its own question`() {
         installed += TessLanguage.ENGLISH
         val scan = scan()
         scan.begin { photoChoices++ }
         assertEquals(ReceiptSetup.LanguageOffer(TessLanguage.HEBREW), scan.setup)
         scan.answerLanguage(download = false)
         assertEquals(false, answers[TessLanguage.HEBREW])
-        assertEquals("the scan goes on in English", 1, photoChoices)
+        assertEquals("the scan goes on in the languages here", 1, photoChoices)
 
         scan.begin { photoChoices++ }
         assertNull("asked once", scan.setup)
@@ -93,7 +123,7 @@ class ReceiptScanTest {
     }
 
     @Test
-    fun `English as the app language asks nothing once English is here`() {
+    fun `with no other language worth reading in, nothing is asked once one is here`() {
         installed += TessLanguage.ENGLISH
         val scan = scan(local = null)
         scan.begin { photoChoices++ }

@@ -265,8 +265,6 @@
     <string name="trip_unnamed">Seyahat</string>
     <string name="trip_move">Seyahat</string>
     <string name="trip_none">Seyahat yok</string>
-    <string name="receipt_setup_also_language_until">Fişleri %1$s olarak da oku (%2$s), %3$s tarihine kadar</string>
-    <string name="receipt_language_offer_trip">Gezide fişler %1$s olarak okunsun mu? Metin verileri tek seferlik %2$s indirmedir ve %3$s tarihine kadar tutulur. Olmadan fişler İngilizce okunur.</string>
     <string name="trip_destination">Nereye (orada ödenen para birimi)</string>
     <string name="trip_optional">İsteğe bağlı</string>
     <string name="trip_dates">Tarihler</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">Kur uyarısı kuruldu</string>
     <string name="receipt_setup_message">Fiş okumak için tek seferlik bir indirme gerekir. Sonrasında telefonunuzda çevrimdışı çalışır.</string>
     <string name="receipt_setup_reader">Metin okuyucu</string>
-    <string name="receipt_setup_language_data">%1$s metin verileri (%2$s)</string>
-    <string name="receipt_setup_also_language">Fişleri %1$s olarak da oku (%2$s)</string>
-    <string name="receipt_language_offer">Fişler %1$s olarak da okunsun mu? Metin verileri tek seferlik %2$s indirmedir. Olmadan fişler İngilizce okunur.</string>
-    <string name="receipt_language_english_only">Yalnızca İngilizce</string>
     <string name="receipt_language_read_too">%1$s da oku</string>
     <string name="receipt_languages_title">Fiş dilleri</string>
     <string name="receipt_languages_summary">Bir gezi için dil ekleyin, bir tarihe kadar tutun ya da silin</string>
-    <string name="receipt_languages_intro">Fişler telefonunuzda, İngilizce ve buradaki dillerde okunur. Onayınız olmadan hiçbir şey indirilmez.</string>
     <string name="receipt_languages_installed">Bu telefonda</string>
-    <string name="receipt_languages_empty">Henüz yok. İlk fiş taramanız İngilizceyi önerir.</string>
     <string name="receipt_languages_add">Dil ekle</string>
     <string name="receipt_languages_downloading">%1$s · indiriliyor…</string>
     <string name="receipt_languages_kept">%1$s · tutuluyor</string>
@@ -361,4 +353,12 @@
     <string name="quick_amount_label">Tutar</string>
     <string name="quick_amount_taken">Zaten tutarlardan biri</string>
     <string name="quick_amount_note">Her çiftte %1$s için kullanılır.</string>
+    <string name="receipt_setup_language">Fişleri %1$s oku (%2$s)</string>
+    <string name="receipt_setup_language_until">Fişleri %1$s oku (%2$s), %3$s tarihine kadar saklanır</string>
+    <string name="receipt_setup_pick_language">Fişleri okumak için en az bir dil seçin.</string>
+    <string name="receipt_language_offer">Fişler %1$s da okunsun mu? Metin verileri tek seferlik %2$s indirmedir.</string>
+    <string name="receipt_language_offer_trip">Gezinizde fişler %1$s okunsun mu? Metin verileri tek seferlik %2$s indirmedir, %3$s tarihine kadar saklanır.</string>
+    <string name="receipt_language_not_now">Şimdi değil</string>
+    <string name="receipt_languages_intro">Fişler telefonunuzda, buradaki dillerde okunur. Siz kabul edene kadar hiçbir şey indirilmez.</string>
+    <string name="receipt_languages_empty">Henüz yok. İlk fiş taramanız hangilerinin indirileceğini sorar.</string>
 </resources>

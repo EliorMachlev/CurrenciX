@@ -12,7 +12,7 @@ import java.time.Instant
  */
 object OcrLanguages {
     /** The languages whose data is on the phone. */
-    fun installed(context: Context): List<TessLanguage> = TessLanguage.entries.filter { Tessdata.isInstalled(context, it) }
+    fun installed(context: Context): List<TessLanguage> = Tessdata.installed(context)
 
     /** When each language kept for a while goes. */
     fun keepUntil(context: Context): Map<TessLanguage, Instant> =
@@ -51,8 +51,8 @@ object OcrLanguages {
 
     /**
      * Deletes [language]'s data and stops its download. It isn't fetched
-     * again unasked: the app's own language counts as said no to (the review
-     * can offer it again), English is asked for again with the next scan.
+     * again unasked: it counts as said no to (the review can offer it again,
+     * and a scan with no language left asks which to download).
      */
     fun delete(
         context: Context,
@@ -62,7 +62,7 @@ object OcrLanguages {
         Tessdata.delete(context, language)
         val settings = Database(context).receiptLanguages
         settings.setKeepUntil(language.code, null)
-        if (language == TessLanguage.ENGLISH) settings.forget(language.code) else settings.setAllowed(language.code, allowed = false)
+        settings.setAllowed(language.code, allowed = false)
         TessdataExpiryWorker.schedule(context)
     }
 

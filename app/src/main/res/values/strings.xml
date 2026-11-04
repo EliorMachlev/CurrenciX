@@ -294,8 +294,6 @@
     <string name="abroad_message">Convert %1$s here? Rates refresh now, while you\'re connected.</string>
     <string name="abroad_switch">Switch</string>
     <string name="abroad_not_now">Not now</string>
-    <string name="receipt_setup_also_language_until">Also read receipts in %1$s (%2$s), kept until %3$s</string>
-    <string name="receipt_language_offer_trip">Read receipts in %1$s on your trip? Its text data is a one-time download of %2$s, kept until %3$s. Without it, receipts are read in English.</string>
     <string name="trip_destination">Where to (the currency paid there)</string>
     <string name="trip_optional">Optional</string>
     <string name="trip_dates">Dates</string>
@@ -342,16 +340,10 @@
     <string name="recent_pair_alert_set">Rate alert set</string>
     <string name="receipt_setup_message">Reading receipts needs a one-time download. After that, it works offline on your phone.</string>
     <string name="receipt_setup_reader">The text reader</string>
-    <string name="receipt_setup_language_data">%1$s text data (%2$s)</string>
-    <string name="receipt_setup_also_language">Also read receipts in %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Read receipts in %1$s too? Its text data is a one-time download of %2$s. Without it, receipts are read in English.</string>
-    <string name="receipt_language_english_only">English only</string>
     <string name="receipt_language_read_too">Read %1$s too</string>
     <string name="receipt_languages_title">Receipt languages</string>
     <string name="receipt_languages_summary">Add a language for a trip, keep it until a date, or delete it</string>
-    <string name="receipt_languages_intro">Receipts are read on your phone, in English and the languages here. Nothing is downloaded until you agree.</string>
     <string name="receipt_languages_installed">On this phone</string>
-    <string name="receipt_languages_empty">None yet. Your first receipt scan offers English.</string>
     <string name="receipt_languages_add">Add a language</string>
     <string name="receipt_languages_downloading">%1$s · downloading…</string>
     <string name="receipt_languages_kept">%1$s · kept</string>
@@ -383,4 +375,12 @@
     <string name="quick_amount_label">Amount</string>
     <string name="quick_amount_taken">Already one of the amounts</string>
     <string name="quick_amount_note">Used for %1$s in every pair.</string>
+    <string name="receipt_setup_language">Read receipts in %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Read receipts in %1$s (%2$s), kept until %3$s</string>
+    <string name="receipt_setup_pick_language">Pick at least one language to read receipts in.</string>
+    <string name="receipt_language_offer">Read receipts in %1$s too? Its text data is a one-time download of %2$s.</string>
+    <string name="receipt_language_offer_trip">Read receipts in %1$s on your trip? Its text data is a one-time download of %2$s, kept until %3$s.</string>
+    <string name="receipt_language_not_now">Not now</string>
+    <string name="receipt_languages_intro">Receipts are read on your phone, in the languages here. Nothing is downloaded until you agree.</string>
+    <string name="receipt_languages_empty">None yet. Your first receipt scan asks which to download.</string>
 </resources>

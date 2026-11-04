@@ -257,17 +257,22 @@ class NewSurfacesScreenshotTest {
             )
         }
 
-    // The first scan: what it would download, each with its size, the app's language a separate tick.
+    // The first scan: what it would download, each language its own tick, none ticked.
     @Test fun receiptSetupOfferSheet() =
         shots.captureMatrix("receipt_setup_offer_sheet") {
             ReceiptSetupOfferSheet(
-                offer = ReceiptSetup.Offer(reader = true, english = true, language = TessLanguage.HEBREW),
+                offer =
+                    ReceiptSetup.Offer(
+                        reader = true,
+                        languages = listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH),
+                        needsLanguage = true,
+                    ),
                 onDownload = {},
                 onDismiss = {},
             )
         }
 
-    // The app's language on its own: download it, or English only.
+    // A language on its own: download it, or not now.
     @Test fun receiptLanguageOfferSheet() =
         shots.captureMatrix("receipt_language_offer_sheet") {
             ReceiptLanguageOfferSheet(language = TessLanguage.HEBREW, onAnswer = {})

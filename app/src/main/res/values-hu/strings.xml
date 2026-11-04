@@ -265,8 +265,6 @@
     <string name="trip_unnamed">Utazás</string>
     <string name="trip_move">Utazás</string>
     <string name="trip_none">Nincs utazás</string>
-    <string name="receipt_setup_also_language_until">Blokkok olvasása ezen a nyelven is: %1$s (%2$s), eddig: %3$s</string>
-    <string name="receipt_language_offer_trip">Olvassa az úton a blokkokat ezen a nyelven: %1$s? A szövegadatok egyszeri %2$s letöltés, eddig maradnak: %3$s. Nélküle angolul olvassa a blokkokat.</string>
     <string name="trip_destination">Úti cél (az ott használt pénznem)</string>
     <string name="trip_optional">Nem kötelező</string>
     <string name="trip_dates">Dátumok</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">Árfolyam-értesítés beállítva</string>
     <string name="receipt_setup_message">A blokkok olvasásához egyszeri letöltés kell. Utána offline működik a telefonodon.</string>
     <string name="receipt_setup_reader">A szövegolvasó</string>
-    <string name="receipt_setup_language_data">Szövegadatok – %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Blokkok olvasása ezen a nyelven is: %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Olvasson blokkokat ezen a nyelven is: %1$s? A szövegadatok egyszeri letöltése %2$s. Nélküle a blokkokat angolul olvassa.</string>
-    <string name="receipt_language_english_only">Csak angol</string>
     <string name="receipt_language_read_too">Ezt is olvasd: %1$s</string>
     <string name="receipt_languages_title">Blokkok nyelvei</string>
     <string name="receipt_languages_summary">Adj hozzá nyelvet egy utazáshoz, tartsd meg egy dátumig, vagy töröld</string>
-    <string name="receipt_languages_intro">A blokkokat a telefonod olvassa, angolul és az itt lévő nyelveken. A beleegyezésed nélkül semmi sem töltődik le.</string>
     <string name="receipt_languages_installed">Ezen a telefonon</string>
-    <string name="receipt_languages_empty">Még nincs. Az első blokkbeolvasás felajánlja az angolt.</string>
     <string name="receipt_languages_add">Nyelv hozzáadása</string>
     <string name="receipt_languages_downloading">%1$s · letöltés…</string>
     <string name="receipt_languages_kept">%1$s · megtartva</string>
@@ -361,4 +353,12 @@
     <string name="quick_amount_label">Összeg</string>
     <string name="quick_amount_taken">Már szerepel az összegek között</string>
     <string name="quick_amount_note">Minden párban ezt használja: %1$s.</string>
+    <string name="receipt_setup_language">Nyugták olvasása %1$s nyelven (%2$s)</string>
+    <string name="receipt_setup_language_until">Nyugták olvasása %1$s nyelven (%2$s), megtartva eddig: %3$s</string>
+    <string name="receipt_setup_pick_language">Válasszon legalább egy nyelvet a nyugták olvasásához.</string>
+    <string name="receipt_language_offer">Nyugták olvasása %1$s nyelven is? A szöveges adatai egyszeri letöltés, %2$s.</string>
+    <string name="receipt_language_offer_trip">Nyugták olvasása %1$s nyelven az utazáson? A szöveges adatai egyszeri letöltés, %2$s, megtartva eddig: %3$s.</string>
+    <string name="receipt_language_not_now">Most nem</string>
+    <string name="receipt_languages_intro">A nyugtákat a telefonja olvassa, az itt lévő nyelveken. Semmi sem töltődik le, amíg bele nem egyezik.</string>
+    <string name="receipt_languages_empty">Még nincs. Az első nyugtaszkennelés megkérdezi, mit töltsön le.</string>
 </resources>

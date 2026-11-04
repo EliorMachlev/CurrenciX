@@ -65,6 +65,6 @@ class TessdataTest {
         val target = Tessdata.file(context, TessLanguage.HEBREW)
         assertFalse(Tessdata.install("not hebrew".byteInputStream(), target, TessLanguage.HEBREW))
         assertFalse(target.exists())
-        assertEquals("eng", Tessdata.languages(context, TessLanguage.HEBREW))
+        assertEquals("nothing to read in, not even English", "", Tessdata.languages(context, TessLanguage.HEBREW))
     }
 }

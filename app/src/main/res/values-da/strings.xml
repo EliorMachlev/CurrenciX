@@ -264,8 +264,6 @@
     <string name="trip_unnamed">Rejse</string>
     <string name="trip_move">Rejse</string>
     <string name="trip_none">Ingen rejse</string>
-    <string name="receipt_setup_also_language_until">Læs også kvitteringer på %1$s (%2$s), beholdes til %3$s</string>
-    <string name="receipt_language_offer_trip">Læse kvitteringer på %1$s på rejsen? Tekstdataene er en download én gang på %2$s og beholdes til %3$s. Uden dem læses kvitteringer på engelsk.</string>
     <string name="trip_destination">Rejsemål (valutaen, man betaler med der)</string>
     <string name="trip_optional">Valgfrit</string>
     <string name="trip_dates">Datoer</string>
@@ -319,16 +317,10 @@
     <string name="recent_pair_alert_set">Kursalarm sat</string>
     <string name="receipt_setup_message">Læsning af kvitteringer kræver en download én gang. Derefter virker det offline på din telefon.</string>
     <string name="receipt_setup_reader">Tekstlæseren</string>
-    <string name="receipt_setup_language_data">Tekstdata for %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Læs også kvitteringer på %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Vil du også læse kvitteringer på %1$s? Tekstdataene er en download én gang på %2$s. Uden dem læses kvitteringer på engelsk.</string>
-    <string name="receipt_language_english_only">Kun engelsk</string>
     <string name="receipt_language_read_too">Læs også %1$s</string>
     <string name="receipt_languages_title">Kvitteringssprog</string>
     <string name="receipt_languages_summary">Tilføj et sprog til en rejse, behold det til en dato, eller slet det</string>
-    <string name="receipt_languages_intro">Kvitteringer læses på din telefon, på engelsk og sprogene her. Intet downloades, før du siger ja.</string>
     <string name="receipt_languages_installed">På denne telefon</string>
-    <string name="receipt_languages_empty">Ingen endnu. Din første kvitteringsscanning tilbyder engelsk.</string>
     <string name="receipt_languages_add">Tilføj et sprog</string>
     <string name="receipt_languages_downloading">%1$s · downloader…</string>
     <string name="receipt_languages_kept">%1$s · beholdes</string>
@@ -360,4 +352,12 @@
     <string name="quick_amount_label">Beløb</string>
     <string name="quick_amount_taken">Er allerede et af beløbene</string>
     <string name="quick_amount_note">Bruges til %1$s i alle par.</string>
+    <string name="receipt_setup_language">Læs kvitteringer på %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Læs kvitteringer på %1$s (%2$s), beholdes til %3$s</string>
+    <string name="receipt_setup_pick_language">Vælg mindst ét sprog at læse kvitteringer på.</string>
+    <string name="receipt_language_offer">Også læse kvitteringer på %1$s? Tekstdataene er en engangsdownload på %2$s.</string>
+    <string name="receipt_language_offer_trip">Læse kvitteringer på %1$s på din rejse? Tekstdataene er en engangsdownload på %2$s, som beholdes til %3$s.</string>
+    <string name="receipt_language_not_now">Ikke nu</string>
+    <string name="receipt_languages_intro">Kvitteringer læses på din telefon, på sprogene her. Intet downloades, før du siger ja.</string>
+    <string name="receipt_languages_empty">Ingen endnu. Din første kvitteringsscanning spørger, hvilke der skal downloades.</string>
 </resources>
