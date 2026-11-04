@@ -58,12 +58,14 @@ updates:
           - "*"
 
   # Python packages CI installs, pinned by hash in requirements.txt: the CI
-  # scripts' (.github/scripts) and Semgrep (.github/semgrep, compiled from
-  # requirements.in with pip-compile, which Dependabot reruns).
+  # scripts' (.github/scripts), Semgrep (.github/semgrep) and typos
+  # (.github/docs-checks), the last two compiled from requirements.in with
+  # pip-compile, which Dependabot reruns.
   - package-ecosystem: "pip"
     directories:
       - "/.github/scripts"
       - "/.github/semgrep"
+      - "/.github/docs-checks"
     # One PR for them all: Semgrep's ~65 pinned packages would otherwise
     # each get their own.
     groups:

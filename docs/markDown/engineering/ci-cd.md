@@ -27,6 +27,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `update-verification-metadata.yaml` | Manual | Records dependency checksums from an empty cache, commits them, restarts the checks |
 | `certificate-pins.yaml` | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites `BuiltInPins.kt` from the chains served now, commits it and restarts the checks |
 | `code-scanning-report.yaml` | Manual | Saves the open code scanning alerts on `master`, from every tool, as an artifact and a summary table on the run page |
+| `docs-checks.yaml` | PR or push → `master` touching the docs, weekly, manual | lychee: every local link and section anchor in `docs/` and the top-level Markdown must resolve (offline, each run), and external links weekly; typos: spelling, with the two correct words it misreads in `_typos.toml` ([exceptions.md](exceptions.md) #16) |
 | `actionlint.yaml` | PR, push → `master`, on workflows | Workflow syntax |
 | `site.yaml` | PR, push → `master`, on `docs/**`, manual | Website asset versions and CSP hashes ([website.md](website.md)) |
 
