@@ -181,7 +181,7 @@ jobs:
   fdroid-release-build:
     # F-Droid reproducibility guard: the fdroid release APK must build unsigned
     # in CI, so we catch any breakage of the reproducible build path before it
-    # blocks an F-Droid release.
+    # blocks an F-Droid release. apk-checks.yaml builds it twice and compares.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
