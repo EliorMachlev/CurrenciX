@@ -181,7 +181,7 @@ class PreferenceViewModel(
     // The servers of the providers in use: the main one and the fallback.
     private fun selectedProviderHosts(): Set<String> =
         listOf(db.providers.apiProvider.get(), db.providers.fallbackProvider.get())
-            .flatMapTo(mutableSetOf()) { it.implementation.hosts }
+            .flatMapTo(mutableSetOf()) { it.hosts }
 
     /** Back to the pins built into the app, for every server. */
     fun restoreBuiltInPins() = db.privacy.certificatePins.set(emptyMap())
