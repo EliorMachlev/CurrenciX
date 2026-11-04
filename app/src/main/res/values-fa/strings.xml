@@ -266,8 +266,6 @@
     <string name="trip_unnamed">سفر</string>
     <string name="trip_move">سفر</string>
     <string name="trip_none">بدون سفر</string>
-    <string name="receipt_setup_also_language_until">خواندن رسیدها به %1$s هم (%2$s)، نگه‌داری تا %3$s</string>
-    <string name="receipt_language_offer_trip">در سفر رسیدها به %1$s خوانده شوند؟ داده‌های متن یک بار دانلود می‌شود، %2$s، و تا %3$s می‌ماند. بدون آن، رسیدها به انگلیسی خوانده می‌شوند.</string>
     <string name="trip_destination">مقصد (ارزی که آنجا می‌پردازید)</string>
     <string name="trip_optional">اختیاری</string>
     <string name="trip_dates">تاریخ‌ها</string>
@@ -321,16 +319,10 @@
     <string name="recent_pair_alert_set">هشدار نرخ تنظیم شده</string>
     <string name="receipt_setup_message">خواندن رسیدها به یک بار دانلود نیاز دارد. پس از آن روی گوشی شما بدون اینترنت کار می‌کند.</string>
     <string name="receipt_setup_reader">خوانندهٔ متن</string>
-    <string name="receipt_setup_language_data">داده‌های متن %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">خواندن رسیدها به %1$s هم (%2$s)</string>
-    <string name="receipt_language_offer">رسیدها به %1$s هم خوانده شوند؟ داده‌های متن آن یک بار دانلود می‌شود، %2$s. بدون آن، رسیدها به انگلیسی خوانده می‌شوند.</string>
-    <string name="receipt_language_english_only">فقط انگلیسی</string>
     <string name="receipt_language_read_too">خواندن %1$s هم</string>
     <string name="receipt_languages_title">زبان‌های رسید</string>
     <string name="receipt_languages_summary">زبانی برای سفر اضافه کنید، تا تاریخی نگه دارید یا حذف کنید</string>
-    <string name="receipt_languages_intro">رسیدها روی گوشی شما خوانده می‌شوند، به انگلیسی و زبان‌های اینجا. بدون موافقت شما چیزی دانلود نمی‌شود.</string>
     <string name="receipt_languages_installed">روی این گوشی</string>
-    <string name="receipt_languages_empty">هنوز هیچ. اولین اسکن رسید انگلیسی را پیشنهاد می‌دهد.</string>
     <string name="receipt_languages_add">افزودن زبان</string>
     <string name="receipt_languages_downloading">در حال دانلود… · %1$s</string>
     <string name="receipt_languages_kept">%1$s · نگه داشته شده</string>
@@ -362,4 +354,13 @@
     <string name="quick_amount_label">مبلغ</string>
     <string name="quick_amount_taken">از قبل یکی از مبالغ است</string>
     <string name="quick_amount_note">برای %1$s در همهٔ جفت‌ها استفاده می‌شود.</string>
+    <string name="receipt_setup_language">خواندن رسیدها به %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">خواندن رسیدها به %1$s (%2$s)، نگه‌داری تا %3$s</string>
+    <string name="receipt_setup_pick_language">دست‌کم یک زبان برای خواندن رسیدها انتخاب کنید.</string>
+    <string name="receipt_language_offer">رسیدها به %1$s هم خوانده شوند؟ داده‌های متنی آن یک بار دانلود می‌شود، %2$s.</string>
+    <string name="receipt_language_offer_trip">رسیدها در سفرتان به %1$s خوانده شوند؟ داده‌های متنی آن یک بار دانلود می‌شود، %2$s، و تا %3$s نگه داشته می‌شود.</string>
+    <string name="receipt_language_not_now">الان نه</string>
+    <string name="receipt_languages_intro">رسیدها روی گوشی شما خوانده می‌شوند، به زبان‌های این‌جا. تا موافقت نکنید چیزی دانلود نمی‌شود.</string>
+    <string name="receipt_languages_empty">هنوز هیچ. اولین اسکن رسید می‌پرسد کدام‌ها دانلود شوند.</string>
+    <string name="error_certificate_pinning">گواهی سرور هیچ‌یک از گواهی‌هایی نیست که برنامه برایش سنجاق کرده است. اگر ارائه‌دهنده آن را عوض کرده، در تنظیمات دوباره سنجاق کنید یا سنجاق کردن گواهی را خاموش کنید.</string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.viewmodel.timeline.RateReadout
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -62,16 +63,9 @@ private fun spoken(
     decimals: Int,
 ) = SpokenRate("${rate.value.toHumanReadableNumber(context, decimalPlaces = decimals)} ${rate.currency.fullName(context)}", date)
 
-// The first / last rate (date, rate, decimals).
-private fun Pair<Map.Entry<LocalDate, Rate?>?, Int>.toSpoken(context: Context): SpokenRate? {
-    val entry = first ?: return null
-    val rate = entry.value ?: return null
-    return spoken(context, rate, entry.key, second)
-}
-
-// The high / low (rate, date, decimals).
-private fun Triple<Rate?, LocalDate?, Int>.toSpoken(context: Context): SpokenRate? {
-    val rate = first ?: return null
-    val date = second ?: return null
-    return spoken(context, rate, date, third)
+// A dated readout (the first / last rate, the high / low), when it has both its rate and its day.
+private fun RateReadout.toSpoken(context: Context): SpokenRate? {
+    val rate = rate ?: return null
+    val date = date ?: return null
+    return spoken(context, rate, date, decimals)
 }

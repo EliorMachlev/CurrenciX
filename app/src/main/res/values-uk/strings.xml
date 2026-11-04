@@ -267,8 +267,6 @@
     <string name="trip_unnamed">Подорож</string>
     <string name="trip_move">Подорож</string>
     <string name="trip_none">Без подорожі</string>
-    <string name="receipt_setup_also_language_until">Читати чеки й мовою %1$s (%2$s), залишити до %3$s</string>
-    <string name="receipt_language_offer_trip">Читати чеки мовою %1$s у подорожі? Текстові дані завантажуються один раз, %2$s, і зберігаються до %3$s. Без них чеки читаються англійською.</string>
     <string name="trip_destination">Куди (валюта, якою там платять)</string>
     <string name="trip_optional">Необов’язково</string>
     <string name="trip_dates">Дати</string>
@@ -326,16 +324,10 @@
     <string name="recent_pair_alert_set">Сповіщення про курс задано</string>
     <string name="receipt_setup_message">Для читання чеків потрібне одноразове завантаження. Потім усе працює офлайн на телефоні.</string>
     <string name="receipt_setup_reader">Розпізнавач тексту</string>
-    <string name="receipt_setup_language_data">Текстові дані: %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Читати чеки й мовою %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Читати чеки й мовою %1$s? Текстові дані завантажуються один раз, %2$s. Без них чеки читаються англійською.</string>
-    <string name="receipt_language_english_only">Лише англійська</string>
     <string name="receipt_language_read_too">Читати й %1$s</string>
     <string name="receipt_languages_title">Мови чеків</string>
     <string name="receipt_languages_summary">Додайте мову для подорожі, залиште до дати або видаліть</string>
-    <string name="receipt_languages_intro">Чеки читаються на телефоні, англійською та мовами тут. Без вашої згоди нічого не завантажується.</string>
     <string name="receipt_languages_installed">На цьому телефоні</string>
-    <string name="receipt_languages_empty">Поки немає. Перше сканування чека запропонує англійську.</string>
     <string name="receipt_languages_add">Додати мову</string>
     <string name="receipt_languages_downloading">%1$s · завантаження…</string>
     <string name="receipt_languages_kept">%1$s · залишено</string>
@@ -367,4 +359,13 @@
     <string name="quick_amount_label">Сума</string>
     <string name="quick_amount_taken">Вже є серед сум</string>
     <string name="quick_amount_note">Використовується для %1$s у всіх парах.</string>
+    <string name="receipt_setup_language">Читати чеки мовою «%1$s» (%2$s)</string>
+    <string name="receipt_setup_language_until">Читати чеки мовою «%1$s» (%2$s), зберігати до %3$s</string>
+    <string name="receipt_setup_pick_language">Виберіть принаймні одну мову для читання чеків.</string>
+    <string name="receipt_language_offer">Читати чеки також мовою «%1$s»? Її текстові дані завантажуються один раз, %2$s.</string>
+    <string name="receipt_language_offer_trip">Читати чеки в поїздці мовою «%1$s»? Її текстові дані завантажуються один раз, %2$s, і зберігаються до %3$s.</string>
+    <string name="receipt_language_not_now">Не зараз</string>
+    <string name="receipt_languages_intro">Чеки читаються на вашому телефоні, мовами з цього списку. Нічого не завантажується без вашої згоди.</string>
+    <string name="receipt_languages_empty">Поки немає. Перше сканування чека запитає, що завантажити.</string>
+    <string name="error_certificate_pinning">Сертифікат сервера не з тих, що застосунок прив’язав до нього. Якщо постачальник його змінив, прив’яжіть заново в Налаштуваннях або вимкніть прив’язування сертифікатів.</string>
 </resources>

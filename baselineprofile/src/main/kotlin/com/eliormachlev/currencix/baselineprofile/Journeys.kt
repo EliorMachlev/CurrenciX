@@ -59,7 +59,9 @@ internal fun MacrobenchmarkScope.launchToConverter() {
     // it's the active window and can hide the converter from lookups.
     device.wait(Until.findObject(By.res(UiTags.ONBOARDING_SKIP)), ONBOARDING_TIMEOUT_MS)?.click()
     device.waitForIdle()
-    awaitConverter()
+    // Unless the process was killed, the app comes back on the screen the
+    // last iteration left open: from the cart, go back to the converter.
+    if (device.hasObject(By.res(UiTags.CART_LIST))) leaveToConverter() else awaitConverter()
 }
 
 /** Types [keys] (digits) on the converter keypad, then deletes them again. */

@@ -265,8 +265,6 @@
     <string name="trip_unnamed">Vojaĝo</string>
     <string name="trip_move">Vojaĝo</string>
     <string name="trip_none">Neniu vojaĝo</string>
-    <string name="receipt_setup_also_language_until">Legi kvitancojn ankaŭ en %1$s (%2$s), ĝis %3$s</string>
-    <string name="receipt_language_offer_trip">Ĉu legi kvitancojn en %1$s dum la vojaĝo? Ĝiaj tekstaj datumoj estas unufoja elŝuto de %2$s, konservata ĝis %3$s. Sen ili, kvitancoj estas legataj angle.</string>
     <string name="trip_destination">Celo (la valuto pagata tie)</string>
     <string name="trip_optional">Nedeviga</string>
     <string name="trip_dates">Datoj</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">Kurz-averto agordita</string>
     <string name="receipt_setup_message">Legi kvitancojn bezonas unufoja elŝuto. Poste ĝi funkcias senkonekte en via telefono.</string>
     <string name="receipt_setup_reader">La tekstolegilo</string>
-    <string name="receipt_setup_language_data">Tekstaj datumoj por %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Legi kvitancojn ankaŭ en %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Ĉu legi kvitancojn ankaŭ en %1$s? Ĝiaj tekstaj datumoj estas unufoja elŝuto de %2$s. Sen ili, kvitancoj estas legataj angle.</string>
-    <string name="receipt_language_english_only">Nur la angla</string>
     <string name="receipt_language_read_too">Legi ankaŭ %1$s</string>
     <string name="receipt_languages_title">Lingvoj de kvitancoj</string>
     <string name="receipt_languages_summary">Aldoni lingvon por vojaĝo, konservi ĝin ĝis dato aŭ forigi ĝin</string>
-    <string name="receipt_languages_intro">Kvitancoj estas legataj en via telefono, angle kaj en la lingvoj ĉi tie. Nenio elŝutiĝas sen via konsento.</string>
     <string name="receipt_languages_installed">En ĉi tiu telefono</string>
-    <string name="receipt_languages_empty">Ankoraŭ neniu. Via unua skanado de kvitanco proponas la anglan.</string>
     <string name="receipt_languages_add">Aldoni lingvon</string>
     <string name="receipt_languages_downloading">%1$s · elŝutante…</string>
     <string name="receipt_languages_kept">%1$s · konservata</string>
@@ -361,4 +353,13 @@
     <string name="quick_amount_label">Sumo</string>
     <string name="quick_amount_taken">Jam unu el la sumoj</string>
     <string name="quick_amount_note">Uzata por %1$s en ĉiu paro.</string>
+    <string name="receipt_setup_language">Legi kvitancojn en %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Legi kvitancojn en %1$s (%2$s), gardata ĝis %3$s</string>
+    <string name="receipt_setup_pick_language">Elektu almenaŭ unu lingvon por legi kvitancojn.</string>
+    <string name="receipt_language_offer">Ĉu legi kvitancojn ankaŭ en %1$s? Ĝiaj tekstaj datumoj estas unufoja elŝuto de %2$s.</string>
+    <string name="receipt_language_offer_trip">Ĉu legi kvitancojn en %1$s dum via vojaĝo? Ĝiaj tekstaj datumoj estas unufoja elŝuto de %2$s, gardata ĝis %3$s.</string>
+    <string name="receipt_language_not_now">Ne nun</string>
+    <string name="receipt_languages_intro">Kvitancoj estas legataj en via telefono, en la lingvoj ĉi tie. Nenio estas elŝutata ĝis vi konsentas.</string>
+    <string name="receipt_languages_empty">Ankoraŭ neniu. Via unua skanado de kvitanco demandas, kiujn elŝuti.</string>
+    <string name="error_certificate_pinning">La atestilo de la servilo ne estas iu el tiuj, kiujn la aplikaĵo fiksis por ĝi. Se la provizanto ŝanĝis ĝin, refiksu en Agordoj aŭ malŝaltu la fiksadon de atestiloj.</string>
 </resources>

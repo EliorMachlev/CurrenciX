@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ReadingDirection
@@ -46,10 +45,10 @@ import com.eliormachlev.currencix.view.compose.theme.LabelFamily
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.compose.theme.TABULAR_FIGURES
 import com.eliormachlev.currencix.view.compose.theme.tile
+import com.eliormachlev.currencix.viewmodel.timeline.RateReadout
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private const val RATE_DIFF_DECIMALS = 2
@@ -79,6 +78,14 @@ private data class StatRowData(
     val date: String?,
 )
 
+// The four tiles, by what they show.
+private class StatRows(
+    val max: StatRowData,
+    val avg: StatRowData,
+    val med: StatRowData,
+    val min: StatRowData,
+)
+
 /**
  * The readouts under the chart, as the view model publishes them: the rate
  * at the start of the range (or at the scrub) and now, the change between
@@ -87,13 +94,13 @@ private data class StatRowData(
  */
 @Immutable
 data class TimelineStats(
-    val ratePast: Pair<Map.Entry<LocalDate, Rate?>?, Int>? = null,
-    val rateCurrent: Pair<Map.Entry<LocalDate, Rate?>?, Int>? = null,
+    val ratePast: RateReadout? = null,
+    val rateCurrent: RateReadout? = null,
     val diffPercent: BigDecimal? = null,
-    val ratesMax: Triple<Rate?, LocalDate?, Int>? = null,
-    val ratesAvg: Pair<Rate?, Int>? = null,
-    val ratesMed: Pair<Rate?, Int>? = null,
-    val ratesMin: Triple<Rate?, LocalDate?, Int>? = null,
+    val ratesMax: RateReadout? = null,
+    val ratesAvg: RateReadout? = null,
+    val ratesMed: RateReadout? = null,
+    val ratesMin: RateReadout? = null,
 )
 
 @Composable
@@ -105,7 +112,7 @@ internal fun TimelineSecondary(
 ) {
     val context = LocalContext.current
     val secondaryColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val pastRate = stats.ratePast?.first?.value
+    val pastRate = stats.ratePast?.rate
 
     val maxLabel = stringResource(R.string.rate_max)
     val avgLabel = stringResource(R.string.rate_average)
@@ -114,11 +121,11 @@ internal fun TimelineSecondary(
 
     val stat = StatFormat(context, formatter)
     val rows =
-        listOf(
-            stat.row(maxLabel, stats.ratesMax?.first, stats.ratesMax?.second, stats.ratesMax?.third),
-            stat.row(avgLabel, stats.ratesAvg?.first, null, stats.ratesAvg?.second),
-            stat.row(medLabel, stats.ratesMed?.first, null, stats.ratesMed?.second),
-            stat.row(minLabel, stats.ratesMin?.first, stats.ratesMin?.second, stats.ratesMin?.third),
+        StatRows(
+            max = stat.row(maxLabel, stats.ratesMax),
+            avg = stat.row(avgLabel, stats.ratesAvg),
+            med = stat.row(medLabel, stats.ratesMed),
+            min = stat.row(minLabel, stats.ratesMin),
         )
 
     Column(
@@ -143,13 +150,7 @@ internal fun TimelineSecondary(
             Box(modifier = Modifier.height(CONTENT_PADDING * 2))
         }
 
-        percentFromAverage(
-            stats.rateCurrent
-                ?.first
-                ?.value
-                ?.value,
-            stats.ratesAvg?.first?.value,
-        )?.let { AverageContext(it) }
+        percentFromAverage(stats.rateCurrent?.rate?.value, stats.ratesAvg?.rate?.value)?.let { AverageContext(it) }
         TilesAndPeriod(rows, period)
     }
 }
@@ -201,12 +202,12 @@ internal fun percentFromAverage(
 // "Latest rate: 3.7% above this period's average", one neutral line under the change.
 @Composable
 private fun AverageContext(percent: BigDecimal) {
-    val shown = percent.abs().setScale(CONTEXT_PERCENT_DECIMALS, RoundingMode.HALF_UP)
+    val shown = "${percent.abs().setScale(CONTEXT_PERCENT_DECIMALS, RoundingMode.HALF_UP).toPlainString()}%"
     val text =
         when {
             percent.abs() < AT_AVERAGE_PERCENT -> stringResource(R.string.chart_vs_average_at)
-            percent.signum() > 0 -> stringResource(R.string.chart_vs_average_above, "${shown.toPlainString()}%")
-            else -> stringResource(R.string.chart_vs_average_below, "${shown.toPlainString()}%")
+            percent.signum() > 0 -> stringResource(R.string.chart_vs_average_above, shown)
+            else -> stringResource(R.string.chart_vs_average_below, shown)
         }
     ReadingDirection {
         Text(
@@ -225,12 +226,12 @@ private fun AverageContext(percent: BigDecimal) {
 // left to right, in step with the chart's time axis.
 @Composable
 private fun TilesAndPeriod(
-    rows: List<StatRowData>,
+    rows: StatRows,
     period: PeriodControl,
 ) {
     ReadingDirection {
         Column {
-            StatGrid(max = rows[0], min = rows[3], avg = rows[1], med = rows[2])
+            StatGrid(max = rows.max, min = rows.min, avg = rows.avg, med = rows.med)
             Spacer(Modifier.height(CONTENT_PADDING))
             TimelinePeriodControls(control = period, modifier = Modifier.fillMaxWidth())
         }
@@ -239,32 +240,27 @@ private fun TilesAndPeriod(
 
 @Composable
 private fun DatedRateColumn(
-    dated: Pair<Map.Entry<LocalDate, Rate?>?, Int>?,
+    dated: RateReadout?,
     horizontalAlignment: Alignment.Horizontal,
     formatter: DateTimeFormatter,
     secondaryColor: Color,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val rate = dated?.first?.value
+    val rate = dated?.rate
     Column(
         modifier = modifier,
         horizontalAlignment = horizontalAlignment,
     ) {
         Text(
-            text =
-                dated
-                    ?.first
-                    ?.key
-                    ?.format(formatter)
-                    .orEmpty(),
+            text = dated?.date?.format(formatter).orEmpty(),
             fontSize = TIMELINE_DATE_FONT_SIZE,
             letterSpacing = TIMELINE_DATE_LETTER_SPACING_EM.sp,
             color = secondaryColor,
         )
         if (rate != null) {
             Text(
-                text = combineValueAndSymbol(context, rate.value, rate.currency.symbol(), dated.second),
+                text = combineValueAndSymbol(context, rate.value, rate.currency.symbol(), dated.decimals),
                 fontSize = TIMELINE_RATE_VALUE_FONT_SIZE,
                 fontFamily = AmountFamily,
                 style = LocalTextStyle.current.copy(fontFeatureSettings = TABULAR_FIGURES),
@@ -281,17 +277,11 @@ private class StatFormat(
 ) {
     fun row(
         label: String,
-        rate: Rate?,
-        date: LocalDate?,
-        decimals: Int?,
+        readout: RateReadout?,
     ): StatRowData {
-        val value =
-            if (rate != null && decimals != null) {
-                combineValueAndSymbol(context, rate.value, rate.currency.symbol(), decimals)
-            } else {
-                null
-            }
-        return StatRowData(label = label, value = value, date = date?.format(dates))
+        val rate = readout?.rate
+        val value = rate?.let { combineValueAndSymbol(context, it.value, it.currency.symbol(), readout.decimals) }
+        return StatRowData(label = label, value = value, date = readout?.date?.format(dates))
     }
 }
 

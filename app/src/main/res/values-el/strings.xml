@@ -265,8 +265,6 @@
     <string name="trip_unnamed">Ταξίδι</string>
     <string name="trip_move">Ταξίδι</string>
     <string name="trip_none">Χωρίς ταξίδι</string>
-    <string name="receipt_setup_also_language_until">Ανάγνωση αποδείξεων και σε %1$s (%2$s), έως %3$s</string>
-    <string name="receipt_language_offer_trip">Να διαβάζονται οι αποδείξεις σε %1$s στο ταξίδι; Τα δεδομένα κειμένου είναι λήψη μίας φοράς, %2$s, και κρατιούνται έως %3$s. Χωρίς αυτά, οι αποδείξεις διαβάζονται στα αγγλικά.</string>
     <string name="trip_destination">Προορισμός (το νόμισμα που πληρώνεται εκεί)</string>
     <string name="trip_optional">Προαιρετικό</string>
     <string name="trip_dates">Ημερομηνίες</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">Ορίστηκε ειδοποίηση ισοτιμίας</string>
     <string name="receipt_setup_message">Η ανάγνωση αποδείξεων χρειάζεται μια λήψη μία φορά. Μετά λειτουργεί εκτός σύνδεσης στο τηλέφωνό σας.</string>
     <string name="receipt_setup_reader">Ο αναγνώστης κειμένου</string>
-    <string name="receipt_setup_language_data">Δεδομένα κειμένου για %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Ανάγνωση αποδείξεων και σε %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Να διαβάζονται οι αποδείξεις και σε %1$s; Τα δεδομένα κειμένου είναι λήψη μίας φοράς, %2$s. Χωρίς αυτά, οι αποδείξεις διαβάζονται στα αγγλικά.</string>
-    <string name="receipt_language_english_only">Μόνο αγγλικά</string>
     <string name="receipt_language_read_too">Ανάγνωση και σε %1$s</string>
     <string name="receipt_languages_title">Γλώσσες αποδείξεων</string>
     <string name="receipt_languages_summary">Προσθέστε γλώσσα για ταξίδι, κρατήστε την ως μια ημερομηνία ή διαγράψτε την</string>
-    <string name="receipt_languages_intro">Οι αποδείξεις διαβάζονται στο τηλέφωνό σας, στα αγγλικά και στις γλώσσες εδώ. Τίποτα δεν κατεβαίνει χωρίς τη συγκατάθεσή σας.</string>
     <string name="receipt_languages_installed">Σε αυτό το τηλέφωνο</string>
-    <string name="receipt_languages_empty">Καμία ακόμη. Η πρώτη σάρωση απόδειξης προτείνει αγγλικά.</string>
     <string name="receipt_languages_add">Προσθήκη γλώσσας</string>
     <string name="receipt_languages_downloading">%1$s · λήψη…</string>
     <string name="receipt_languages_kept">%1$s · διατηρείται</string>
@@ -361,4 +353,13 @@
     <string name="quick_amount_label">Ποσό</string>
     <string name="quick_amount_taken">Είναι ήδη ένα από τα ποσά</string>
     <string name="quick_amount_note">Χρησιμοποιείται για %1$s σε κάθε ζεύγος.</string>
+    <string name="receipt_setup_language">Ανάγνωση αποδείξεων στα %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Ανάγνωση αποδείξεων στα %1$s (%2$s), διατηρείται έως %3$s</string>
+    <string name="receipt_setup_pick_language">Επιλέξτε τουλάχιστον μία γλώσσα για την ανάγνωση αποδείξεων.</string>
+    <string name="receipt_language_offer">Ανάγνωση αποδείξεων και στα %1$s; Τα δεδομένα κειμένου είναι μία λήψη %2$s.</string>
+    <string name="receipt_language_offer_trip">Ανάγνωση αποδείξεων στα %1$s στο ταξίδι σας; Τα δεδομένα κειμένου είναι μία λήψη %2$s, διατηρούνται έως %3$s.</string>
+    <string name="receipt_language_not_now">Όχι τώρα</string>
+    <string name="receipt_languages_intro">Οι αποδείξεις διαβάζονται στο τηλέφωνό σας, στις γλώσσες εδώ. Δεν γίνεται λήψη τίποτα χωρίς τη συγκατάθεσή σας.</string>
+    <string name="receipt_languages_empty">Καμία ακόμη. Η πρώτη σάρωση απόδειξης ρωτά τι θα ληφθεί.</string>
+    <string name="error_certificate_pinning">Το πιστοποιητικό του διακομιστή δεν είναι κάποιο από αυτά που έχει καρφιτσώσει η εφαρμογή για αυτόν. Αν ο πάροχος το άλλαξε, κάντε νέο καρφίτσωμα στις Ρυθμίσεις ή απενεργοποιήστε το καρφίτσωμα πιστοποιητικών.</string>
 </resources>

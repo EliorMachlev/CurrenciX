@@ -265,8 +265,6 @@
     <string name="trip_unnamed">ট্রিপ</string>
     <string name="trip_move">ট্রিপ</string>
     <string name="trip_none">কোনো ট্রিপ নয়</string>
-    <string name="receipt_setup_also_language_until">রসিদ %1$s-তেও পড়ুন (%2$s), %3$s পর্যন্ত রাখা হবে</string>
-    <string name="receipt_language_offer_trip">ভ্রমণে রসিদ %1$s-তে পড়বেন? এর টেক্সট ডেটা একবারের ডাউনলোড, %2$s, %3$s পর্যন্ত রাখা হবে। এটি ছাড়া রসিদ ইংরেজিতে পড়া হয়।</string>
     <string name="trip_destination">গন্তব্য (সেখানে যে মুদ্রায় দাম দেওয়া হয়)</string>
     <string name="trip_optional">ঐচ্ছিক</string>
     <string name="trip_dates">তারিখ</string>
@@ -320,16 +318,10 @@
     <string name="recent_pair_alert_set">হার সতর্কতা সেট করা আছে</string>
     <string name="receipt_setup_message">রসিদ পড়তে একবার ডাউনলোড করতে হবে। এরপর এটি আপনার ফোনে অফলাইনে কাজ করে।</string>
     <string name="receipt_setup_reader">টেক্সট রিডার</string>
-    <string name="receipt_setup_language_data">%1$s টেক্সট ডেটা (%2$s)</string>
-    <string name="receipt_setup_also_language">রসিদ %1$s-তেও পড়ুন (%2$s)</string>
-    <string name="receipt_language_offer">রসিদ %1$s-তেও পড়বেন? এর টেক্সট ডেটা একবারের ডাউনলোড, %2$s। এটি ছাড়া রসিদ ইংরেজিতে পড়া হয়।</string>
-    <string name="receipt_language_english_only">শুধু ইংরেজি</string>
     <string name="receipt_language_read_too">%1$s-ও পড়ুন</string>
     <string name="receipt_languages_title">রসিদের ভাষা</string>
     <string name="receipt_languages_summary">ভ্রমণের জন্য ভাষা যোগ করুন, একটি তারিখ পর্যন্ত রাখুন, বা মুছুন</string>
-    <string name="receipt_languages_intro">রসিদ আপনার ফোনে পড়া হয়, ইংরেজি ও এখানকার ভাষায়। আপনি রাজি না হলে কিছু ডাউনলোড হয় না।</string>
     <string name="receipt_languages_installed">এই ফোনে</string>
-    <string name="receipt_languages_empty">এখনও নেই। প্রথম রসিদ স্ক্যান ইংরেজি দেয়।</string>
     <string name="receipt_languages_add">ভাষা যোগ করুন</string>
     <string name="receipt_languages_downloading">%1$s · ডাউনলোড হচ্ছে…</string>
     <string name="receipt_languages_kept">%1$s · রাখা আছে</string>
@@ -361,4 +353,13 @@
     <string name="quick_amount_label">পরিমাণ</string>
     <string name="quick_amount_taken">এটি ইতিমধ্যেই পরিমাণগুলোর একটি</string>
     <string name="quick_amount_note">প্রতিটি জোড়ায় %1$s-এর জন্য ব্যবহৃত হবে।</string>
+    <string name="receipt_setup_language">%1$s ভাষায় রসিদ পড়ুন (%2$s)</string>
+    <string name="receipt_setup_language_until">%1$s ভাষায় রসিদ পড়ুন (%2$s), %3$s পর্যন্ত রাখা হবে</string>
+    <string name="receipt_setup_pick_language">রসিদ পড়ার জন্য অন্তত একটি ভাষা বেছে নিন।</string>
+    <string name="receipt_language_offer">%1$s ভাষাতেও রসিদ পড়বেন? এর টেক্সট ডেটা একবারের ডাউনলোড, %2$s।</string>
+    <string name="receipt_language_offer_trip">আপনার ভ্রমণে %1$s ভাষায় রসিদ পড়বেন? এর টেক্সট ডেটা একবারের ডাউনলোড, %2$s, %3$s পর্যন্ত রাখা হবে।</string>
+    <string name="receipt_language_not_now">এখন নয়</string>
+    <string name="receipt_languages_intro">রসিদ আপনার ফোনেই পড়া হয়, এখানে থাকা ভাষাগুলোতে। আপনি রাজি না হওয়া পর্যন্ত কিছুই ডাউনলোড হয় না।</string>
+    <string name="receipt_languages_empty">এখনও কিছু নেই। প্রথম রসিদ স্ক্যানে জিজ্ঞেস করা হবে কোনটি ডাউনলোড করবেন।</string>
+    <string name="error_certificate_pinning">সার্ভারের সার্টিফিকেটটি অ্যাপ এর জন্য পিন করা কোনোটি নয়। প্রদানকারী এটি বদলালে সেটিংসে আবার পিন করুন, অথবা সার্টিফিকেট পিনিং বন্ধ করুন।</string>
 </resources>

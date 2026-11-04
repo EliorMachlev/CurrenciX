@@ -20,6 +20,11 @@ permissions:
 
 # GitHub Actions YAML, and the app's Kotlin (CodeQL's extractor reads it while
 # Gradle compiles the fdroid debug build, which covers the main source set).
+env:
+  # Results for a PR go on its head commit (below).
+  SARIF_REF: ${{ github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number) || '' }}
+  SARIF_SHA: ${{ github.event.pull_request.head.sha || '' }}
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
@@ -38,7 +43,13 @@ jobs:
           - language: java-kotlin
             build-mode: manual
     steps:
+      # A PR is analysed at its head commit, not GitHub's test merge with
+      # master: GitHub rebuilds that merge after the run has started, and the
+      # merge rule then waits for results on the new one. master requires a PR
+      # to be up to date, so its head already holds everything in master.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         if: matrix.language == 'java-kotlin'
@@ -69,6 +80,8 @@ jobs:
         uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           category: /language:${{ matrix.language }}
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
           upload: ${{ matrix.language == 'java-kotlin' && 'never' || 'always' }}
           output: sarif
 
@@ -82,3 +95,5 @@ jobs:
         with:
           sarif_file: sarif
           category: /language:${{ matrix.language }}
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}

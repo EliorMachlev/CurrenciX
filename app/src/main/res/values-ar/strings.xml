@@ -269,8 +269,6 @@
     <string name="trip_unnamed">رحلة</string>
     <string name="trip_move">رحلة</string>
     <string name="trip_none">بلا رحلة</string>
-    <string name="receipt_setup_also_language_until">قراءة الإيصالات بـ%1$s أيضًا (%2$s)، محفوظة حتى %3$s</string>
-    <string name="receipt_language_offer_trip">قراءة الإيصالات بـ%1$s في رحلتك؟ بيانات النص تنزيل لمرة واحدة بحجم %2$s، محفوظة حتى %3$s. بدونها تُقرأ الإيصالات بالإنجليزية.</string>
     <string name="trip_destination">الوجهة (العملة المستخدمة هناك)</string>
     <string name="trip_optional">اختياري</string>
     <string name="trip_dates">التواريخ</string>
@@ -332,16 +330,10 @@
     <string name="recent_pair_alert_set">تم ضبط تنبيه سعر</string>
     <string name="receipt_setup_message">تحتاج قراءة الإيصالات إلى تنزيل لمرة واحدة. بعد ذلك تعمل دون اتصال على هاتفك.</string>
     <string name="receipt_setup_reader">قارئ النصوص</string>
-    <string name="receipt_setup_language_data">بيانات نص %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">قراءة الإيصالات بـ%1$s أيضًا (%2$s)</string>
-    <string name="receipt_language_offer">هل تريد قراءة الإيصالات بـ%1$s أيضًا؟ بيانات النص تنزيل لمرة واحدة بحجم %2$s. بدونها تُقرأ الإيصالات بالإنجليزية.</string>
-    <string name="receipt_language_english_only">الإنجليزية فقط</string>
     <string name="receipt_language_read_too">قراءة %1$s أيضًا</string>
     <string name="receipt_languages_title">لغات الإيصالات</string>
     <string name="receipt_languages_summary">أضف لغة لرحلة، أو احتفظ بها حتى تاريخ، أو احذفها</string>
-    <string name="receipt_languages_intro">تُقرأ الإيصالات على هاتفك بالإنجليزية وباللغات هنا. لا يُنزَّل شيء قبل موافقتك.</string>
     <string name="receipt_languages_installed">على هذا الهاتف</string>
-    <string name="receipt_languages_empty">لا شيء بعد. أول مسح لإيصال يعرض الإنجليزية.</string>
     <string name="receipt_languages_add">إضافة لغة</string>
     <string name="receipt_languages_downloading">جارٍ التنزيل… · %1$s</string>
     <string name="receipt_languages_kept">%1$s · محفوظة</string>
@@ -373,4 +365,13 @@
     <string name="quick_amount_label">المبلغ</string>
     <string name="quick_amount_taken">موجود بالفعل ضمن المبالغ</string>
     <string name="quick_amount_note">يُستخدم لـ %1$s في كل زوج.</string>
+    <string name="receipt_setup_language">قراءة الإيصالات بـ%1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">قراءة الإيصالات بـ%1$s (%2$s)، محفوظة حتى %3$s</string>
+    <string name="receipt_setup_pick_language">اختر لغة واحدة على الأقل لقراءة الإيصالات.</string>
+    <string name="receipt_language_offer">قراءة الإيصالات بـ%1$s أيضًا؟ بيانات النص تنزيل لمرة واحدة بحجم %2$s.</string>
+    <string name="receipt_language_offer_trip">قراءة الإيصالات بـ%1$s في رحلتك؟ بيانات النص تنزيل لمرة واحدة بحجم %2$s، محفوظة حتى %3$s.</string>
+    <string name="receipt_language_not_now">ليس الآن</string>
+    <string name="receipt_languages_intro">تُقرأ الإيصالات على هاتفك، باللغات الموجودة هنا. لا يُنزَّل شيء حتى توافق.</string>
+    <string name="receipt_languages_empty">لا شيء بعد. أول مسح لإيصال يسألك ماذا تنزّل.</string>
+    <string name="error_certificate_pinning">شهادة الخادم ليست من الشهادات التي ثبّتها التطبيق له. إذا غيّرها المزوّد، فأعد التثبيت في الإعدادات أو أوقف تثبيت الشهادات.</string>
 </resources>

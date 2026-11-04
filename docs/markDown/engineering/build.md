@@ -43,6 +43,16 @@ Versions live in the build files; Dependabot keeps them current. What's worth kn
 - **Build plugins:** Spotless (ktlint), detekt, `ben-manes.versions` (`dependencyUpdates`), `androidx.baselineprofile`, CycloneDX (the release SBOM).
 - **Tests:** JUnit 4 and Jupiter (vintage engine), Mockito, Robolectric, Roborazzi (JVM screenshots of every Compose surface, no emulator), Konsist (layer boundaries), Jazzer (fuzzing).
 
+## Live provider tests
+
+`ExchangeRatesServiceTest` calls each provider's real API and checks the rates and timeline it returns. Unit-test tasks leave it out, so a provider's outage doesn't fail the build gate (the same parsing is checked on recorded responses in `ProviderDecodingTest`); `-PliveProviders` runs it alone:
+
+```bash
+./gradlew :app:testFdroidDebugUnitTest -PliveProviders
+```
+
+CI runs it in `live-providers.yaml`: on a PR that changes `model/`, `repository/`, `util/` or the app's build file, so a change that breaks a live integration shows on that PR, and daily, so a provider's API change or outage shows without one. It isn't a required check; read it on such a PR before merging.
+
 ## Fuzz tests
 
 `FuzzTest` (Jazzer) fuzzes every parser of input the app doesn't control, each of which must answer rather than throw: `Currency.fromString`, `PriceParser`, `ReceiptParser`, `evaluateCalculatorExpression`, `parseDecimal` and `ConverterLaunch.parse`. Jazzer's instrumentation breaks Robolectric, so unit-test tasks leave it out and `-PfuzzTests` runs it alone; without `JAZZER_FUZZ` it only replays saved inputs:
@@ -80,7 +90,16 @@ Then read the diff: it's every new file the build will trust.
 - `trust-mirror-copies.py`: some files differ between repositories (a plugin's marker POM on Maven Central vs the Plugin Portal), and a build takes whichever answers first, so every copy in Gradle's cache is trusted (`<also-trust>`).
 - `gradle-sources-checksum.py`: Gradle's own source zip, which IDE syncs download and the build never does, recorded with Gradle's published checksum. Rerun after a Gradle update.
 - Libraries' `-sources.jar` / `-javadoc.jar`, also IDE-only, are accepted without a checksum ([exceptions.md](exceptions.md) #9).
+- **From scratch:** recording keeps every entry already there, so a version nothing asks for any more stays listed, and Scorecard and OSV-Scanner, which read this file, still count it. Running the workflow with *from scratch* (`verification-metadata-reset.py`) empties the list first; macOS and Windows `aapt2` entries go too until someone builds there again.
 - `dependencyUpdates` asks about versions the build doesn't use, so it runs with `--dependency-verification lenient`. AGP's `aapt2` is per OS and the list is recorded on Linux; building on macOS or Windows adds theirs with the same command.
+
+## Build tools' own libraries
+
+The build's tools (the Android Gradle plugin, lint, detekt, CycloneDX and the like) bring in libraries of their own, some at versions with published vulnerabilities: old Guava, Jackson, Bouncy Castle, Logback, jdom2, jose4j, httpclient, commons-lang3, Wire 6 and okio 2. None ships in the app; they run only at build time, on CI's own sources. `settings.gradle` raises each one to the first release that fixes it (`patchedLibraries`), on the plugins' classpath, in every project's configurations, and in what each library itself asks for (a component metadata rule, which also reaches tools that resolve outside any configuration, such as the ktlint Spotless fetches), and leaves a newer version alone. An entry can go once nothing asks for a version older than it. To check, scan the verification metadata as Scorecard does:
+
+```bash
+osv-scanner scan source -L gradle/verification-metadata.xml
+```
 
 ## Baseline profiles
 

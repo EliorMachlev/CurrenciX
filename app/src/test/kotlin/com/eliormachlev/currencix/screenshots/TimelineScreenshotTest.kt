@@ -20,6 +20,7 @@ import com.eliormachlev.currencix.view.timeline.compose.TimelineChartCard
 import com.eliormachlev.currencix.view.timeline.compose.TimelinePeriodControls
 import com.eliormachlev.currencix.view.timeline.compose.TimelineSecondary
 import com.eliormachlev.currencix.view.timeline.compose.TimelineStats
+import com.eliormachlev.currencix.viewmodel.timeline.RateReadout
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import org.junit.Rule
 import org.junit.Test
@@ -163,18 +164,13 @@ private val SAMPLE_AVG_RATE: Rate = Rate(currency = Currency.EUR, value = BigDec
 private val SAMPLE_MED_RATE: Rate = Rate(currency = Currency.EUR, value = BigDecimal("0.9271"))
 private val SAMPLE_MIN_RATE: Rate = Rate(currency = Currency.EUR, value = BigDecimal("0.8998"))
 
-private val SAMPLE_PAST_RATE_ENTRY: Map.Entry<LocalDate, Rate?> =
-    java.util.AbstractMap.SimpleImmutableEntry(SAMPLE_PAST_DATE, SAMPLE_PAST_RATE)
-private val SAMPLE_CURRENT_RATE_ENTRY: Map.Entry<LocalDate, Rate?> =
-    java.util.AbstractMap.SimpleImmutableEntry(SAMPLE_CURRENT_DATE, SAMPLE_CURRENT_RATE)
-
 private val SAMPLE_STATS =
     TimelineStats(
-        ratePast = SAMPLE_PAST_RATE_ENTRY to DECIMALS,
-        rateCurrent = SAMPLE_CURRENT_RATE_ENTRY to DECIMALS,
+        ratePast = RateReadout(SAMPLE_PAST_RATE, SAMPLE_PAST_DATE, DECIMALS),
+        rateCurrent = RateReadout(SAMPLE_CURRENT_RATE, SAMPLE_CURRENT_DATE, DECIMALS),
         diffPercent = BigDecimal("2.37"),
-        ratesMax = Triple(SAMPLE_MAX_RATE, SAMPLE_MAX_DATE, DECIMALS),
-        ratesAvg = SAMPLE_AVG_RATE to DECIMALS,
-        ratesMed = SAMPLE_MED_RATE to DECIMALS,
-        ratesMin = Triple(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
+        ratesMax = RateReadout(SAMPLE_MAX_RATE, SAMPLE_MAX_DATE, DECIMALS),
+        ratesAvg = RateReadout(SAMPLE_AVG_RATE, date = null, DECIMALS),
+        ratesMed = RateReadout(SAMPLE_MED_RATE, date = null, DECIMALS),
+        ratesMin = RateReadout(SAMPLE_MIN_RATE, SAMPLE_MIN_DATE, DECIMALS),
     )

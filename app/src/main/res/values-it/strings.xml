@@ -267,8 +267,6 @@
     <string name="trip_unnamed">Viaggio</string>
     <string name="trip_move">Viaggio</string>
     <string name="trip_none">Nessun viaggio</string>
-    <string name="receipt_setup_also_language_until">Leggi anche gli scontrini in %1$s (%2$s), tenuta fino al %3$s</string>
-    <string name="receipt_language_offer_trip">Leggere gli scontrini in %1$s durante il viaggio? I dati di testo sono un download una tantum di %2$s, tenuti fino al %3$s. Senza, gli scontrini vengono letti in inglese.</string>
     <string name="trip_destination">Destinazione (la valuta usata lì)</string>
     <string name="trip_optional">Facoltativo</string>
     <string name="trip_dates">Date</string>
@@ -324,16 +322,10 @@
     <string name="recent_pair_alert_set">Avviso di cambio impostato</string>
     <string name="receipt_setup_message">Per leggere gli scontrini serve un download una tantum. Poi funziona offline sul telefono.</string>
     <string name="receipt_setup_reader">Il lettore di testo</string>
-    <string name="receipt_setup_language_data">Dati di testo in %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Leggi gli scontrini anche in %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Leggere gli scontrini anche in %1$s? I dati di testo sono un download una tantum di %2$s. Senza, gli scontrini vengono letti in inglese.</string>
-    <string name="receipt_language_english_only">Solo inglese</string>
     <string name="receipt_language_read_too">Leggi anche in %1$s</string>
     <string name="receipt_languages_title">Lingue degli scontrini</string>
     <string name="receipt_languages_summary">Aggiungi una lingua per un viaggio, tienila fino a una data o eliminala</string>
-    <string name="receipt_languages_intro">Gli scontrini vengono letti sul telefono, in inglese e nelle lingue qui. Nulla viene scaricato senza il tuo consenso.</string>
     <string name="receipt_languages_installed">Su questo telefono</string>
-    <string name="receipt_languages_empty">Ancora nessuna. La prima scansione di uno scontrino propone l\'inglese.</string>
     <string name="receipt_languages_add">Aggiungi una lingua</string>
     <string name="receipt_languages_downloading">%1$s · download…</string>
     <string name="receipt_languages_kept">%1$s · tenuta</string>
@@ -365,4 +357,13 @@
     <string name="quick_amount_label">Importo</string>
     <string name="quick_amount_taken">È già uno degli importi</string>
     <string name="quick_amount_note">Usato per %1$s in ogni coppia.</string>
+    <string name="receipt_setup_language">Leggi gli scontrini in %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Leggi gli scontrini in %1$s (%2$s), conservato fino al %3$s</string>
+    <string name="receipt_setup_pick_language">Scegli almeno una lingua in cui leggere gli scontrini.</string>
+    <string name="receipt_language_offer">Leggere gli scontrini anche in %1$s? I suoi dati di testo sono un download unico di %2$s.</string>
+    <string name="receipt_language_offer_trip">Leggere gli scontrini in %1$s durante il viaggio? I suoi dati di testo sono un download unico di %2$s, conservati fino al %3$s.</string>
+    <string name="receipt_language_not_now">Non ora</string>
+    <string name="receipt_languages_intro">Gli scontrini vengono letti sul telefono, nelle lingue qui. Non viene scaricato nulla finché non accetti.</string>
+    <string name="receipt_languages_empty">Ancora nessuna. La prima scansione di uno scontrino chiede quali scaricare.</string>
+    <string name="error_certificate_pinning">Il certificato del server non è tra quelli che l\'app ha fissato per lui. Se il fornitore l\'ha cambiato, fissalo di nuovo in Impostazioni o disattiva il pinning dei certificati.</string>
 </resources>

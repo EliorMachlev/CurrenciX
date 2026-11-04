@@ -36,6 +36,10 @@ private const val MARK_SCALE = 1.5f
 // Air between "Currenci" and the logo, as a fraction of the font size.
 private const val MARK_GAP = 0.08f
 
+// The wordmark's size where nothing asks otherwise, and its slightly tight tracking.
+private val WORDMARK_FONT_SIZE = 22.sp
+private const val WORDMARK_LETTER_SPACING_EM = -0.01f
+
 /**
  * The wordmark's reveal, the logo's arrows turning into place, which plays
  * once per cold start ([play]), and its hand-off with the splash screen:
@@ -61,7 +65,7 @@ class WordmarkReveal(
 @Composable
 fun Wordmark(
     modifier: Modifier = Modifier,
-    fontSize: TextUnit = 22.sp,
+    fontSize: TextUnit = WORDMARK_FONT_SIZE,
     color: Color = MaterialTheme.colorScheme.onBackground,
     reveal: WordmarkReveal = WordmarkReveal.Shown,
     turning: Boolean = false,
@@ -72,7 +76,7 @@ fun Wordmark(
             fontFamily = SpaceGrotesk,
             fontSize = fontSize,
             fontWeight = FontWeight.Medium,
-            letterSpacing = (-0.01).em,
+            letterSpacing = WORDMARK_LETTER_SPACING_EM.em,
         )
     val turns = remember(reveal) { MarkTurns(launch = reveal.play) }
     val isTurning by rememberUpdatedState(turning)

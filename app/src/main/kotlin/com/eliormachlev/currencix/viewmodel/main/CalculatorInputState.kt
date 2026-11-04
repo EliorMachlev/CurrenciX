@@ -220,27 +220,31 @@ internal class CalculatorInputState {
     fun addOperator(operator: String) {
         val current = calculation()
         if (current != null) {
-            val lastChar = current.trim().last()
+            val trimmed = current.trim()
+            val lastChar = trimmed.last()
             when {
-                // already an operator at the end: swap it
+                // already an operator at the end (its space before it stays): swap it
                 lastChar.toString().matches(OPERATOR_REGEX) -> {
-                    setCalc(current.trim().dropLast(1) + "$operator ")
+                    setCalc(trimmed.dropLast(1) + "$operator ")
                 }
 
                 // trailing '.': drop it, then append operator
                 lastChar == '.' -> {
-                    setCalc(current.trim().dropLast(1) + " $operator ")
+                    setCalc(trimmed.dropLast(1) + spaced(operator))
                 }
 
                 else -> {
-                    setCalc(current.trim() + " $operator ")
+                    setCalc(trimmed + spaced(operator))
                 }
             }
         } else {
             // switch to calculation mode, seeded from the base row
-            setCalc(_baseValueText.value + " $operator ")
+            setCalc(_baseValueText.value + spaced(operator))
         }
     }
+
+    // An operator as the calculation shows it, a space on each side ("12 + 3").
+    private fun spaced(operator: String): String = " $operator "
 
     // A "completed value" tail is safe to append `)` after — a digit, a `)`
     // already there, or a `%` (which resolves to a number). A trailing `.` is
@@ -252,5 +256,5 @@ internal class CalculatorInputState {
     // decimal point that would otherwise collide with `(`.
     private fun isValueContinuationTail(c: Char?): Boolean = isCompletedValueTail(c) || c == '.'
 
-    private fun withImplicitMultBeforeOpen(prefix: String): String = "$prefix $OPERATOR_MULTIPLY $PAREN_OPEN"
+    private fun withImplicitMultBeforeOpen(prefix: String): String = prefix + spaced(OPERATOR_MULTIPLY) + PAREN_OPEN
 }

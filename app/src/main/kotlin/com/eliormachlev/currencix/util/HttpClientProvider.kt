@@ -5,6 +5,7 @@ import android.os.Build
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.ocr.TessLanguage
 import okhttp3.Cache
+import okhttp3.CertificatePinner
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
 import okhttp3.Dns
@@ -14,6 +15,7 @@ import okhttp3.android.AndroidDns
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 private const val CACHE_DIR = "http-cache"
@@ -81,28 +83,59 @@ object HttpClientProvider {
      * directory doesn't have to be faked. Both are one client underneath
      * ([OkHttpClient.newBuilder]): the same connections, threads and timeouts.
      */
-    fun client(context: Context?): OkHttpClient =
-        if (context != null) {
-            cachedInstance ?: synchronized(this) {
-                cachedInstance ?: withCache(base(), context).also { cachedInstance = it }
-            }
-        } else {
-            base()
-        }
+    fun client(context: Context?): OkHttpClient = (if (context != null) cached(context) else base()).pinned()
 
     /**
      * For a large one-off download (an OCR language file, a few megabytes):
      * the shared client without its call time limit or its cache.
      */
     fun downloadClient(context: Context): OkHttpClient =
-        downloadInstance ?: synchronized(this) {
-            downloadInstance ?: client(context)
-                .newBuilder()
-                .cache(null)
-                .callTimeout(0, TimeUnit.SECONDS)
-                .build()
-                .also { downloadInstance = it }
+        (
+            downloadInstance ?: synchronized(this) {
+                downloadInstance ?: cached(context)
+                    .newBuilder()
+                    .cache(null)
+                    .callTimeout(0, TimeUnit.SECONDS)
+                    .build()
+                    .also { downloadInstance = it }
+            }
+        ).pinned()
+
+    /**
+     * The hosts the app may reach: the rate providers' and the OCR language
+     * files'. Every other host is refused, at every redirect too
+     * ([AllowedHostsInterceptor]), and these are the ones pinned.
+     */
+    val allowedHosts: Set<String> get() = ApiProvider.allHosts + TessLanguage.DOWNLOAD_HOST
+
+    /**
+     * For taking a host's current pins only: the shared client without pins
+     * (any certificate the phone trusts) and without following redirects,
+     * so the handshake is the asked host's own.
+     */
+    internal fun unpinnedClient(): OkHttpClient =
+        base()
+            .newBuilder()
+            .followRedirects(false)
+            .followSslRedirects(false)
+            .build()
+
+    private fun cached(context: Context): OkHttpClient =
+        cachedInstance ?: synchronized(this) {
+            cachedInstance ?: withCache(base(), context).also { cachedInstance = it }
         }
+
+    // Each client with the pins in force now (CertificatePinning). The pinned
+    // one shares its base's cache, connections and threads, and is rebuilt
+    // only when the pins change; OkHttp never reuses a connection made under
+    // other pins.
+    private val pinnedClients = ConcurrentHashMap<OkHttpClient, Pair<CertificatePinner, OkHttpClient>>()
+
+    private fun OkHttpClient.pinned(): OkHttpClient {
+        val pinner = CertificatePinning.pinner
+        pinnedClients[this]?.let { (pinnedWith, client) -> if (pinnedWith === pinner) return client }
+        return newBuilder().certificatePinner(pinner).build().also { pinnedClients[this] = pinner to it }
+    }
 
     private fun base(): OkHttpClient =
         uncachedInstance ?: synchronized(this) {
@@ -123,7 +156,7 @@ object HttpClientProvider {
             // the response, so the stamped Cache-Control controls what the
             // cache stores for the non-cooperative provider hosts.
             // Only the rate providers' hosts and the OCR language host, at every redirect.
-            .addNetworkInterceptor(AllowedHostsInterceptor { ApiProvider.allHosts + TessLanguage.DOWNLOAD_HOST })
+            .addNetworkInterceptor(AllowedHostsInterceptor { allowedHosts })
             .addNetworkInterceptor(ProviderCacheRewriteInterceptor(PROVIDER_CACHE_TTL_SECONDS))
             // Innermost, so the request it shapes is exactly what leaves the phone.
             .addNetworkInterceptor(PrivateRequestsInterceptor())

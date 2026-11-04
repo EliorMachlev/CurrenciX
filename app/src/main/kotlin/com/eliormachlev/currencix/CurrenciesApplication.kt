@@ -14,6 +14,7 @@ import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.repository.persistence.warmUpSavedData
 import com.eliormachlev.currencix.strict.installStrictMode
 import com.eliormachlev.currencix.util.AppDispatchers
+import com.eliormachlev.currencix.util.CertificatePinning
 import com.eliormachlev.currencix.util.FileLoggingTree
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.PrivateRequests
@@ -25,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -60,13 +62,15 @@ class CurrenciesApplication : Application() {
         appScope.publishWidgetPreviews(this)
     }
 
-    // Security & privacy: requests go out private from the first one when the
-    // setting is on, and follow it after; the app lock starts following the
-    // app coming and going.
+    // Security & privacy: requests go out private, and pinned, from the first
+    // one as the settings say, and follow them after; the app lock starts
+    // following the app coming and going.
     private fun keepPrivacyInStep() {
         val privacy = Database(this).privacy
         PrivateRequests.enabled = privacy.privateRequests.get()
         appScope.launch { privacy.privateRequests.flow.collect { PrivateRequests.enabled = it } }
+        CertificatePinning.update(privacy.certificatePinning.get(), privacy.certificatePins.get())
+        combine(privacy.certificatePinning.flow, privacy.certificatePins.flow, CertificatePinning::update).launchIn(appScope)
         AppLock.install(this, privacy)
     }
 

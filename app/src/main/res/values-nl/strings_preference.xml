@@ -206,4 +206,16 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-sleutel</string>
     <string name="api_all_rates_today_api_key_message">Om deze bron te gebruiken heb je je eigen API-sleutel nodig.\n\nMaak een gratis account aan op https://allratestoday.com, kopieer je sleutel (die begint met art_live_) van je profielpagina en voer hem hier in.\n\nHet gratis abonnement staat in totaal 300 verzoeken toe, eenmalig. Elke vernieuwing en elke grafiekperiode gebruikt er één.</string>
     <string name="provider_cadence_every_minute">Ongeveer elke minuut bijgewerkt</string>
+    <string name="settings_advanced_section">Geavanceerd</string>
+    <string name="certificate_pinning_title">Certificaat-pinning</string>
+    <string name="certificate_pinning_summary">Alleen met koersservers verbinden via de certificaatautoriteiten die voor hen zijn vastgepind. Zet dit alleen uit als een server van certificaat is gewisseld en de koersen niet meer laden.</string>
+    <string name="repin_title">Opnieuw vastpinnen op de huidige certificaten</string>
+    <string name="repin_summary_builtin">De in de app ingebouwde pins worden gebruikt</string>
+    <string name="repin_summary_own">Op deze telefoon genomen pins worden gebruikt voor %1$d van %2$d servers</string>
+    <string name="repin_summary_running">Servers worden gecontroleerd…</string>
+    <string name="repin_prompt_title">Certificaten opnieuw vastpinnen?</string>
+    <string name="repin_prompt_message">De app maakt nu verbinding met je gegevensaanbieder en je reserveaanbieder en accepteert daarna alleen de certificaatautoriteiten die elk ervan gebruikt. Andere aanbieders houden de in de app ingebouwde pins. Doe dit op een netwerk dat je vertrouwt, zoals je wifi thuis.</string>
+    <string name="repin_confirm">Opnieuw vastpinnen</string>
+    <string name="restore_pins_title">Ingebouwde pins gebruiken</string>
+    <string name="restore_pins_summary">Op deze telefoon genomen pins vergeten</string>
 </resources>

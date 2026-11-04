@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
+import com.eliormachlev.currencix.viewmodel.timeline.RateReadout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -13,7 +14,8 @@ import org.robolectric.annotation.Config
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.AbstractMap.SimpleImmutableEntry
+
+private const val DECIMALS = 4
 
 // What TalkBack reads for the chart.
 @RunWith(RobolectricTestRunner::class)
@@ -27,15 +29,15 @@ class TimelineSummaryTest {
     private fun day(
         date: String,
         rate: String,
-    ) = SimpleImmutableEntry<LocalDate, Rate?>(LocalDate.parse(date), euro(rate)) to 4
+    ) = RateReadout(euro(rate), LocalDate.parse(date), DECIMALS)
 
     private val stats =
         TimelineStats(
             ratePast = day("2025-09-13", "0.9153"),
             rateCurrent = day("2026-09-13", "0.9370"),
             diffPercent = BigDecimal("2.3708"),
-            ratesMax = Triple(euro("0.9521"), LocalDate.parse("2026-03-04"), 4),
-            ratesMin = Triple(euro("0.8998"), LocalDate.parse("2025-11-22"), 4),
+            ratesMax = day("2026-03-04", "0.9521"),
+            ratesMin = day("2025-11-22", "0.8998"),
         )
 
     @Test

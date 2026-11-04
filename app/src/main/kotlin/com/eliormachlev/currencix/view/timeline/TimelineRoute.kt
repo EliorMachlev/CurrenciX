@@ -165,7 +165,7 @@ private fun TimelineBarActions(
 ) {
     val error by model.getError().observeAsState()
     val rateCurrent by remember(model) { model.getRateCurrent() }.observeAsState()
-    val today = rateCurrent?.first?.value?.value
+    val today = rateCurrent?.rate?.value
     val alertLabel = stringResource(R.string.alert_sheet_title)
     val shareLabel = stringResource(R.string.timeline_share)
     val optionsLabel = stringResource(R.string.graph_options_title)

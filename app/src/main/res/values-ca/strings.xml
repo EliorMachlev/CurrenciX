@@ -267,8 +267,6 @@
     <string name="trip_unnamed">Viatge</string>
     <string name="trip_move">Viatge</string>
     <string name="trip_none">Sense viatge</string>
-    <string name="receipt_setup_also_language_until">Llegeix també tiquets en %1$s (%2$s), fins al %3$s</string>
-    <string name="receipt_language_offer_trip">Vols llegir els tiquets en %1$s durant el viatge? Les dades de text són una baixada única de %2$s, guardades fins al %3$s. Sense elles, els tiquets es llegeixen en anglès.</string>
     <string name="trip_destination">Destinació (la moneda que s\'hi paga)</string>
     <string name="trip_optional">Opcional</string>
     <string name="trip_dates">Dates</string>
@@ -324,16 +322,10 @@
     <string name="recent_pair_alert_set">Alerta de canvi activa</string>
     <string name="receipt_setup_message">Per llegir tiquets cal una baixada única. Després funciona sense connexió al telèfon.</string>
     <string name="receipt_setup_reader">El lector de text</string>
-    <string name="receipt_setup_language_data">Dades de text en %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Llegeix també tiquets en %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Vols llegir també tiquets en %1$s? Les dades de text són una baixada única de %2$s. Sense elles, els tiquets es llegeixen en anglès.</string>
-    <string name="receipt_language_english_only">Només anglès</string>
     <string name="receipt_language_read_too">Llegeix també en %1$s</string>
     <string name="receipt_languages_title">Idiomes dels tiquets</string>
     <string name="receipt_languages_summary">Afegeix un idioma per a un viatge, guarda\'l fins a una data o esborra\'l</string>
-    <string name="receipt_languages_intro">Els tiquets es llegeixen al telèfon, en anglès i en els idiomes d\'aquí. No es baixa res sense el teu permís.</string>
     <string name="receipt_languages_installed">En aquest telèfon</string>
-    <string name="receipt_languages_empty">Encara cap. El primer escaneig de tiquet ofereix l\'anglès.</string>
     <string name="receipt_languages_add">Afegeix un idioma</string>
     <string name="receipt_languages_downloading">%1$s · baixant…</string>
     <string name="receipt_languages_kept">%1$s · guardat</string>
@@ -365,4 +357,13 @@
     <string name="quick_amount_label">Import</string>
     <string name="quick_amount_taken">Ja és un dels imports</string>
     <string name="quick_amount_note">S\'usa per a %1$s en tots els parells.</string>
+    <string name="receipt_setup_language">Llegeix tiquets en %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Llegeix tiquets en %1$s (%2$s), es conserva fins al %3$s</string>
+    <string name="receipt_setup_pick_language">Tria almenys una llengua per llegir els tiquets.</string>
+    <string name="receipt_language_offer">Vols llegir tiquets també en %1$s? Les dades de text són una baixada única de %2$s.</string>
+    <string name="receipt_language_offer_trip">Vols llegir tiquets en %1$s durant el viatge? Les dades de text són una baixada única de %2$s, es conserven fins al %3$s.</string>
+    <string name="receipt_language_not_now">Ara no</string>
+    <string name="receipt_languages_intro">Els tiquets es llegeixen al telèfon, en les llengües d\'aquí. No es baixa res fins que hi estiguis d\'acord.</string>
+    <string name="receipt_languages_empty">Encara cap. El primer escaneig d\'un tiquet et pregunta quines baixar.</string>
+    <string name="error_certificate_pinning">El certificat del servidor no és cap dels que l\'aplicació té fixats per a ell. Si el proveïdor l\'ha canviat, torna a fixar-lo a Configuració o desactiva la fixació de certificats.</string>
 </resources>

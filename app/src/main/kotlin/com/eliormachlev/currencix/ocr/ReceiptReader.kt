@@ -18,8 +18,9 @@ private const val MAX_IMAGE_SIDE = 2400
 /**
  * The text on a receipt photo ([uri]), read on the device by this build's
  * recognizer ([ocrEngine]) in [languages] ("heb+eng", see
- * [Tessdata.languages]). Empty when the image can't be read. Only once
- * [isReceiptReaderReady]. Runs off the main thread: it takes a few seconds.
+ * [Tessdata.languages]). Empty when the image can't be read, or with no
+ * language to read in. Only once [isReceiptReaderReady]. Runs off the main
+ * thread: it takes a few seconds.
  */
 suspend fun readReceipt(
     context: Context,
@@ -28,6 +29,7 @@ suspend fun readReceipt(
     dispatchers: AppDispatchers = AppDispatchers.production,
 ): String =
     withContext(dispatchers.default) {
+        if (languages.isEmpty()) return@withContext ""
         val bitmap = decodeUpright(context, uri) ?: return@withContext ""
         try {
             ocrEngine.recognizer(context).recognize(bitmap, Tessdata.root(context).absolutePath, languages)
@@ -36,21 +38,24 @@ suspend fun readReceipt(
         }
     }
 
-/** Whether a receipt can be read now: the recognizer and the English data are on the device. */
-fun isReceiptReaderReady(context: Context): Boolean = isRecognizerInstalled(context) && Tessdata.isInstalled(context, TessLanguage.ENGLISH)
+/** Whether a receipt can be read now: the recognizer and at least one language's data are on the device. */
+fun isReceiptReaderReady(context: Context): Boolean = isRecognizerInstalled(context) && Tessdata.installed(context).isNotEmpty()
 
 /** Whether this build's recognizer is on the device (always in the F-Droid app; Play's is a module). */
 fun isRecognizerInstalled(context: Context): Boolean = ocrEngine.isInstalled(context)
 
 /**
  * Gets what reading a receipt needs that isn't on the device yet: the
- * recognizer ([OcrEngine.install]) and the English data, reporting how it
- * goes. Only once the user has agreed to the download. Ends with
- * [OcrInstall.Installed] or [OcrInstall.Failed].
+ * recognizer ([OcrEngine.install]), then waits for [languages] (agreed to and
+ * already downloading, [OcrLanguages.download]) when reading has to have
+ * them, reporting how it goes. Only once the user has agreed to the download.
+ * Ends with [OcrInstall.Installed] or [OcrInstall.Failed].
  */
-fun installReceiptReader(context: Context): Flow<OcrInstall> =
+fun installReceiptReader(
+    context: Context,
+    languages: Set<TessLanguage>,
+): Flow<OcrInstall> =
     flow {
-        TessdataDownloadWorker.enqueue(context, TessLanguage.ENGLISH)
         var outcome: OcrInstall = OcrInstall.Failed
         ocrEngine
             .install(context)
@@ -62,8 +67,9 @@ fun installReceiptReader(context: Context): Flow<OcrInstall> =
                 emit(step)
             }
         if (outcome != OcrInstall.Installed) return@flow
-        if (!Tessdata.isInstalled(context, TessLanguage.ENGLISH)) emit(OcrInstall.Downloading(null))
-        emit(if (TessdataDownloadWorker.awaitInstalled(context, TessLanguage.ENGLISH)) OcrInstall.Installed else OcrInstall.Failed)
+        val missing = languages.filterNot { Tessdata.isInstalled(context, it) }
+        if (missing.isNotEmpty()) emit(OcrInstall.Downloading(null))
+        emit(if (missing.all { TessdataDownloadWorker.awaitInstalled(context, it) }) OcrInstall.Installed else OcrInstall.Failed)
     }
 
 // The photo, scaled down to at most MAX_IMAGE_SIDE and turned the way it was taken.

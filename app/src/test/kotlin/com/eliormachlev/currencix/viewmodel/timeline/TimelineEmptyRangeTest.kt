@@ -57,8 +57,8 @@ class TimelineEmptyRangeTest {
         idle()
 
         assertEquals(TimelineViewModel.Period.CUSTOM, model.getPeriod().value)
-        assertNull(past.value?.first)
-        assertNull(current.value?.first)
+        assertNull(past.value?.rate)
+        assertNull(current.value?.rate)
         assertNull(diff.value)
     }
 
