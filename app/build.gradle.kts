@@ -38,7 +38,7 @@ plugins {
     id("org.cyclonedx.bom") version "3.5.1"
     // Kotlin classes for the Protobuf schema in src/main/proto (carts, trips,
     // fees, rate alerts on disk): plain generated code, no reflection.
-    id("com.squareup.wire") version "7.1.0"
+    id("com.squareup.wire") version "7.1.2"
 }
 
 wire {

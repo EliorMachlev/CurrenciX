@@ -4,7 +4,7 @@
 |---|---|
 | JDK | 21 or newer (CI uses 25). Bytecode targets 21; hybrid signing needs 24+, fetched as a toolchain |
 | Gradle | 9.8.2 (wrapper) |
-| Android Gradle Plugin | 9.4.1 |
+| Android Gradle Plugin | 9.5.0 |
 | Kotlin | 2.4.21 |
 | SDK | min 33, compile 37.2 (Compose 1.13 needs 37.1+: `release(37) { minorApiLevel = 2 }`), target 37 |
 
