@@ -11,45 +11,59 @@ private const val ESCAPE = '\\'
  * JSON tree keeps only the last of the two, so this reads the text itself;
  * [json] must already be well-formed (it isn't checked again here).
  */
-internal fun duplicateFieldName(json: String): String? {
+internal fun duplicateFieldName(json: String): String? = FieldNameScanner(json).firstDuplicate()
+
+private class FieldNameScanner(
+    private val json: String,
+) {
     // The names seen in each object around the current position; null for an array.
-    val open = ArrayDeque<MutableSet<String>?>()
-    var expectName = false
-    var i = 0
-    while (i < json.length) {
-        when (json[i]) {
-            '{' -> {
-                open.addLast(HashSet())
-                expectName = true
-            }
+    private val open = ArrayDeque<MutableSet<String>?>()
+    private var expectName = false
 
-            '[' -> {
-                open.addLast(null)
-                expectName = false
-            }
-
-            '}', ']' -> {
-                open.removeLast()
-                expectName = false
-            }
-
-            ',' -> {
-                expectName = open.lastOrNull() != null
-            }
-
-            QUOTE -> {
-                val end = stringEnd(json, i)
-                if (expectName) {
-                    val name = stringValue(json, i, end)
-                    if (open.lastOrNull()?.add(name) == false) return name
-                    expectName = false
-                }
-                i = end
-            }
+    fun firstDuplicate(): String? {
+        var i = 0
+        while (i < json.length) {
+            val (next, repeated) = step(i)
+            if (repeated != null) return repeated
+            i = next
         }
-        i++
+        return null
     }
-    return null
+
+    // Reads the character at [i]: where reading goes on, and the name it
+    // repeats when it opens a field name already given in its object.
+    private fun step(i: Int): Pair<Int, String?> {
+        when (json[i]) {
+            '{' -> enter(HashSet())
+            '[' -> enter(null)
+            '}', ']' -> leave()
+            ',' -> expectName = open.lastOrNull() != null
+            QUOTE -> return string(i)
+        }
+        return i + 1 to null
+    }
+
+    private fun enter(names: MutableSet<String>?) {
+        open.addLast(names)
+        expectName = names != null
+    }
+
+    private fun leave() {
+        open.removeLast()
+        expectName = false
+    }
+
+    private fun string(start: Int): Pair<Int, String?> {
+        val end = stringEnd(json, start)
+        val repeated =
+            if (expectName) {
+                expectName = false
+                stringValue(json, start, end).takeIf { open.lastOrNull()?.add(it) == false }
+            } else {
+                null
+            }
+        return end + 1 to repeated
+    }
 }
 
 // The index of the quote closing the string that opens at [start].
