@@ -365,4 +365,5 @@
     <string name="quick_amount_label">Import</string>
     <string name="quick_amount_taken">Ja és un dels imports</string>
     <string name="quick_amount_note">S\'usa per a %1$s en tots els parells.</string>
+    <string name="error_certificate_pinning">El certificat del servidor no és cap dels que l\'aplicació té fixats per a ell. Si el proveïdor l\'ha canviat, torna a fixar-lo a Configuració o desactiva la fixació de certificats.</string>
 </resources>

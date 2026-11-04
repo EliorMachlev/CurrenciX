@@ -365,4 +365,5 @@
     <string name="quick_amount_label">Importe</string>
     <string name="quick_amount_taken">Ya es uno de los importes</string>
     <string name="quick_amount_note">Se usa para %1$s en todos los pares.</string>
+    <string name="error_certificate_pinning">El certificado del servidor no es ninguno de los que la app tiene fijados para él. Si el proveedor lo cambió, vuelve a fijarlo en Ajustes o desactiva la fijación de certificados.</string>
 </resources>

@@ -26,6 +26,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.time.LocalDate
+import javax.net.ssl.SSLPeerUnverifiedException
 import kotlin.time.Duration.Companion.seconds
 
 // The default timeline fetch: the last year, plus a small buffer so the
@@ -439,6 +440,12 @@ class ExchangeRatesRepository(
             // timeout after 15s. likely server not reachable
             is SocketTimeoutException -> {
                 postError(R.string.error_timeout.text())
+            }
+
+            // the server's chain holds none of the keys pinned for it
+            // (util/CertificatePinning): a provider that changed CAs, or someone in between
+            is SSLPeerUnverifiedException -> {
+                postError(R.string.error_certificate_pinning.text())
             }
 
             // happens e.g. when device is offline or there's a DNS error

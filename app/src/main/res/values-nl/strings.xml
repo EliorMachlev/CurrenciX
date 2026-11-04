@@ -360,4 +360,5 @@
     <string name="quick_amount_label">Bedrag</string>
     <string name="quick_amount_taken">Is al een van de bedragen</string>
     <string name="quick_amount_note">Gebruikt voor %1$s in elk paar.</string>
+    <string name="error_certificate_pinning">Het certificaat van de server is niet een van de certificaten die de app ervoor heeft vastgepind. Als de aanbieder het heeft gewisseld, pin dan opnieuw vast in Instellingen of zet certificaat-pinning uit.</string>
 </resources>

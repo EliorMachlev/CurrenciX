@@ -365,4 +365,5 @@
     <string name="quick_amount_label">Valor</string>
     <string name="quick_amount_taken">Já é um dos valores</string>
     <string name="quick_amount_note">Usado para %1$s em todos os pares.</string>
+    <string name="error_certificate_pinning">O certificado do servidor não é nenhum dos que o app fixou para ele. Se o provedor o trocou, fixe de novo em Configurações ou desative a fixação de certificados.</string>
 </resources>

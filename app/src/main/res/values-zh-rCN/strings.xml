@@ -356,4 +356,5 @@
     <string name="quick_amount_label">金额</string>
     <string name="quick_amount_taken">已是其中一个金额</string>
     <string name="quick_amount_note">在所有货币对中用于 %1$s。</string>
+    <string name="error_certificate_pinning">服务器的证书不是应用为其固定的证书之一。如果提供方更换了证书，请在设置中重新固定，或关闭证书固定。</string>
 </resources>

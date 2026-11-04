@@ -364,4 +364,5 @@
     <string name="quick_amount_label">Iznos</string>
     <string name="quick_amount_taken">Već je jedan od iznosa</string>
     <string name="quick_amount_note">Koristi se za %1$s u svakom paru.</string>
+    <string name="error_certificate_pinning">Certifikat poslužitelja nije nijedan od onih koje je aplikacija prikvačila za njega. Ako ga je pružatelj promijenio, ponovno prikvači u Postavkama ili isključi prikvačivanje certifikata.</string>
 </resources>
