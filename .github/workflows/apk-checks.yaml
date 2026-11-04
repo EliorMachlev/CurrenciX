@@ -18,6 +18,7 @@ on:
       - 'settings.gradle'
       - 'gradle.properties'
       - 'gradle/**'
+      - 'gradlew'
       - '.github/workflows/apk-checks.yaml'
   push:
     branches: [master]
@@ -52,6 +53,11 @@ jobs:
       # Set once the universal APK is uploaded for the size check.
       apk: ${{ steps.keep.outputs.artifact-id }}
     steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
       - name: Checkout the code (first build)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -82,6 +88,11 @@ jobs:
 
       - name: Compare the builds
         run: |
+          # The same APKs first: one only a single build made is a difference too.
+          if ! diff <(cd "first/$APKS" && ls -- *.apk) <(cd "second/$APKS" && ls -- *.apk); then
+            echo "::error title=Not reproducible::the two builds made different APKs"
+            exit 1
+          fi
           status=0
           for apk in "first/$APKS"/*.apk; do
             name=$(basename "$apk")
@@ -136,6 +147,11 @@ jobs:
       contents: read
       actions: read
     steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: 25
@@ -155,16 +171,27 @@ jobs:
           name: pr-universal-apk
           path: pr
 
-      # Build uploads each master build's unsigned fdroid release APKs.
+      # Build uploads each master push's unsigned fdroid release APKs, kept
+      # 14 days: the newest push run whose upload hasn't expired. With none
+      # (no push to master in that time), the comparison is skipped, noted.
       - name: Get master's APK
+        id: master
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          run=$(gh api "repos/$REPO/actions/workflows/build.yaml/runs?branch=master&status=success&per_page=1" --jq '.workflow_runs[0].id')
-          gh run download "$run" --repo "$REPO" --name fdroid-release-apk --dir master
+          runs=$(gh api "repos/$REPO/actions/workflows/build.yaml/runs?branch=master&event=push&status=success&per_page=20" --jq '.workflow_runs[].id')
+          for run in $runs; do
+            if gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '.artifacts[] | select(.name == "fdroid-release-apk" and (.expired | not)) | .id' | grep -q .; then
+              gh run download "$run" --repo "$REPO" --name fdroid-release-apk --dir master
+              echo "found=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "::notice title=APK size::master has no unexpired release APK to compare with"
 
       - name: Compare with master
+        if: steps.master.outputs.found == 'true'
         run: |
           old=$(find master -name '*universal*.apk' | head -1)
           new=$(find pr -name '*universal*.apk' | head -1)
