@@ -70,7 +70,10 @@ internal fun MacrobenchmarkScope.launchToConverter() {
 
 /** Types [keys] (digits) on the converter keypad, then deletes them again. */
 internal fun MacrobenchmarkScope.typeOnKeypad(keys: String) {
-    // Each key is waited for: one looked up while the keypad redraws comes back null.
+    // Each key is waited for. A tap changes the amount and every converted value,
+    // and while the app is still updating its accessibility tree for that, a
+    // lookup can get no node for a key ("Node returned null child"), though
+    // the key never left the screen.
     keys.forEach { awaitTag(UiTags.key(it), CONVERTER_KEYPAD).click() }
     repeat(keys.length) { awaitTag(UiTags.KEY_DELETE, CONVERTER_KEYPAD).click() }
     device.waitForIdle()
