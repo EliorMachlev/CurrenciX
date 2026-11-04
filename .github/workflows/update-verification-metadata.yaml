@@ -8,6 +8,14 @@ name: Update dependency checksums
 # push checks on the new commit. The diff shows every checksum it added.
 on:
   workflow_dispatch:
+    inputs:
+      from_scratch:
+        description: >-
+          Start from an empty list, so files no longer fetched (versions a
+          dependency stopped asking for) drop out; macOS and Windows aapt2
+          entries go too until someone builds there again
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -30,6 +38,10 @@ jobs:
         # recorded, and the next build that does resolve it fails.
         with:
           cache-disabled: true
+
+      - name: Start from an empty list
+        if: inputs.from_scratch
+        run: python3 .github/scripts/verification-metadata-reset.py gradle/verification-metadata.xml
 
       # Every task CI runs (bar the emulator ones), so every file CI downloads
       # is recorded. Checksums already in the file are kept.
@@ -62,6 +74,15 @@ jobs:
         run: |
           curl -fsSL --proto =https "$(python3 "$SCRIPT" url "$PROPS")" -o "$RUNNER_TEMP/gradle-src.zip.sha256"
           python3 "$SCRIPT" record "$PROPS" gradle/verification-metadata.xml "$RUNNER_TEMP/gradle-src.zip.sha256"
+
+      # What was recorded, to read when a later step or the checks fail.
+      - name: Upload the recorded file
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verification-metadata
+          path: gradle/verification-metadata.xml
+          retention-days: 7
 
       - name: Commit and push
         id: push
