@@ -10,7 +10,6 @@ import com.eliormachlev.currencix.repository.decodeKeepUntil
 import com.eliormachlev.currencix.repository.encodeKeepUntil
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -82,7 +81,7 @@ class OcrLanguagesTest {
     }
 
     @Test
-    fun `a deleted language isn't fetched again unasked, English is asked for again`() {
+    fun `a deleted language isn't fetched again unasked, English like any other`() {
         place(TessLanguage.HEBREW)
         place(TessLanguage.ENGLISH)
         settings.setAllowed("heb", allowed = true)
@@ -93,7 +92,7 @@ class OcrLanguagesTest {
 
         assertFalse(Tessdata.isInstalled(context, TessLanguage.HEBREW))
         assertEquals(false, settings.answerFor("heb"))
-        assertNull(settings.answerFor("eng"))
+        assertEquals(false, settings.answerFor("eng"))
     }
 
     @Test

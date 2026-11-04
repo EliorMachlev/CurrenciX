@@ -266,8 +266,6 @@
     <string name="trip_unnamed">Putovanje</string>
     <string name="trip_move">Putovanje</string>
     <string name="trip_none">Bez putovanja</string>
-    <string name="receipt_setup_also_language_until">Čitaj račune i na jeziku %1$s (%2$s), do %3$s</string>
-    <string name="receipt_language_offer_trip">Čitati račune na jeziku %1$s na putovanju? Tekstni podaci jednokratno su preuzimanje od %2$s, čuvaju se do %3$s. Bez njih se računi čitaju na engleskom.</string>
     <string name="trip_destination">Kamo (valuta kojom se tamo plaća)</string>
     <string name="trip_optional">Neobavezno</string>
     <string name="trip_dates">Datumi</string>
@@ -323,16 +321,10 @@
     <string name="recent_pair_alert_set">Postavljeno upozorenje o tečaju</string>
     <string name="receipt_setup_message">Čitanje računa traži jednokratno preuzimanje. Nakon toga radi izvanmrežno na vašem telefonu.</string>
     <string name="receipt_setup_reader">Čitač teksta</string>
-    <string name="receipt_setup_language_data">Tekstni podaci za %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Čitaj račune i na jeziku %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Čitati račune i na jeziku %1$s? Tekstni podaci jednokratno su preuzimanje od %2$s. Bez njih se računi čitaju na engleskom.</string>
-    <string name="receipt_language_english_only">Samo engleski</string>
     <string name="receipt_language_read_too">Čitaj i %1$s</string>
     <string name="receipt_languages_title">Jezici računa</string>
     <string name="receipt_languages_summary">Dodajte jezik za putovanje, zadržite ga do datuma ili ga izbrišite</string>
-    <string name="receipt_languages_intro">Računi se čitaju na vašem telefonu, na engleskom i jezicima ovdje. Ništa se ne preuzima bez vašeg pristanka.</string>
     <string name="receipt_languages_installed">Na ovom telefonu</string>
-    <string name="receipt_languages_empty">Još nema. Prvo skeniranje računa nudi engleski.</string>
     <string name="receipt_languages_add">Dodaj jezik</string>
     <string name="receipt_languages_downloading">%1$s · preuzima se…</string>
     <string name="receipt_languages_kept">%1$s · zadržano</string>
@@ -364,5 +356,13 @@
     <string name="quick_amount_label">Iznos</string>
     <string name="quick_amount_taken">Već je jedan od iznosa</string>
     <string name="quick_amount_note">Koristi se za %1$s u svakom paru.</string>
+    <string name="receipt_setup_language">Čitaj račune na jeziku %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Čitaj račune na jeziku %1$s (%2$s), čuva se do %3$s</string>
+    <string name="receipt_setup_pick_language">Odaberi barem jedan jezik za čitanje računa.</string>
+    <string name="receipt_language_offer">Čitati račune i na jeziku %1$s? Njegovi tekstni podaci jednokratno su preuzimanje od %2$s.</string>
+    <string name="receipt_language_offer_trip">Čitati račune na putovanju na jeziku %1$s? Njegovi tekstni podaci jednokratno su preuzimanje od %2$s, čuvaju se do %3$s.</string>
+    <string name="receipt_language_not_now">Ne sada</string>
+    <string name="receipt_languages_intro">Računi se čitaju na tvom telefonu, na jezicima ovdje. Ništa se ne preuzima dok ne pristaneš.</string>
+    <string name="receipt_languages_empty">Još nijedan. Prvo skeniranje računa pita što preuzeti.</string>
     <string name="error_certificate_pinning">Certifikat poslužitelja nije nijedan od onih koje je aplikacija prikvačila za njega. Ako ga je pružatelj promijenio, ponovno prikvači u Postavkama ili isključi prikvačivanje certifikata.</string>
 </resources>

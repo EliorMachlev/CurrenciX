@@ -22,3 +22,7 @@ jobs:
         with:
           comment-summary-in-pr: on-failure
           fail-on-severity: high
+          # Waits for dependency-submission.yaml's Gradle graph of this PR,
+          # without which the review sees almost none of the libraries.
+          retry-on-snapshot-warnings: true
+          retry-on-snapshot-warnings-timeout: 600

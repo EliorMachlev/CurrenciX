@@ -70,9 +70,14 @@ val abiVersionLabels = mapOf("armeabi-v7a" to "arm32", "arm64-v8a" to "arm64", "
 val abiVersionNamesInRelease = providers.gradleProperty("abiVersionNames").isPresent
 
 // Whether this Gradle run builds an app bundle (Play), which takes no APK splits.
-// The Jazzer fuzz tests: left out of every unit-test run, or run alone
-// with -PfuzzTests (see the unitTests filter below).
+// Test classes left out of every ordinary unit-test run, each run alone with
+// its Gradle property (see the unitTests filter below): the Jazzer fuzz tests
+// (-PfuzzTests), and the tests that call the providers' live APIs
+// (-PliveProviders, live-providers.yaml), so a provider's outage doesn't
+// fail the build gate.
 val fuzzTestClass = "com.eliormachlev.currencix.FuzzTest"
+val liveProviderTestClass = "com.eliormachlev.currencix.repository.ExchangeRatesServiceTest"
+val separateTestRuns = mapOf("fuzzTests" to fuzzTestClass, "liveProviders" to liveProviderTestClass)
 
 val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
 
@@ -191,12 +196,13 @@ android {
             // -PfuzzTests the run is the other way round: the fuzz tests
             // alone (CI's fuzz job; JAZZER_FUZZ=1 fuzzes rather than only
             // replaying the saved inputs; see docs/markDown/engineering/build.md).
-            val fuzzOnly = providers.gradleProperty("fuzzTests").isPresent
+            // -PliveProviders runs the live-API tests alone the same way.
+            val separateRun = separateTestRuns.entries.firstOrNull { (property, _) -> providers.gradleProperty(property).isPresent }
             it.filter {
-                if (fuzzOnly) {
-                    includeTestsMatching(fuzzTestClass)
+                if (separateRun != null) {
+                    includeTestsMatching(separateRun.value)
                 } else {
-                    excludeTestsMatching(fuzzTestClass)
+                    separateTestRuns.values.forEach { testClass -> excludeTestsMatching(testClass) }
                 }
             }
         }

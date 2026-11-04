@@ -264,8 +264,6 @@
     <string name="trip_unnamed">Chuyến đi</string>
     <string name="trip_move">Chuyến đi</string>
     <string name="trip_none">Không thuộc chuyến nào</string>
-    <string name="receipt_setup_also_language_until">Đọc hóa đơn cả bằng %1$s (%2$s), giữ đến %3$s</string>
-    <string name="receipt_language_offer_trip">Đọc hóa đơn bằng %1$s trong chuyến đi? Dữ liệu văn bản là tải xuống một lần, %2$s, giữ đến %3$s. Không có nó, hóa đơn được đọc bằng tiếng Anh.</string>
     <string name="trip_destination">Điểm đến (tiền tệ dùng ở đó)</string>
     <string name="trip_optional">Không bắt buộc</string>
     <string name="trip_dates">Ngày</string>
@@ -317,16 +315,10 @@
     <string name="recent_pair_alert_set">Đã đặt cảnh báo tỷ giá</string>
     <string name="receipt_setup_message">Đọc hóa đơn cần tải xuống một lần. Sau đó nó chạy ngoại tuyến trên điện thoại của bạn.</string>
     <string name="receipt_setup_reader">Trình đọc văn bản</string>
-    <string name="receipt_setup_language_data">Dữ liệu văn bản %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Đọc hóa đơn cả bằng %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Đọc hóa đơn cả bằng %1$s? Dữ liệu văn bản là tải xuống một lần, %2$s. Không có nó, hóa đơn được đọc bằng tiếng Anh.</string>
-    <string name="receipt_language_english_only">Chỉ tiếng Anh</string>
     <string name="receipt_language_read_too">Đọc cả %1$s</string>
     <string name="receipt_languages_title">Ngôn ngữ hóa đơn</string>
     <string name="receipt_languages_summary">Thêm ngôn ngữ cho chuyến đi, giữ đến một ngày hoặc xóa</string>
-    <string name="receipt_languages_intro">Hóa đơn được đọc trên điện thoại, bằng tiếng Anh và các ngôn ngữ ở đây. Không tải gì xuống khi chưa có sự đồng ý của bạn.</string>
     <string name="receipt_languages_installed">Trên điện thoại này</string>
-    <string name="receipt_languages_empty">Chưa có. Lần quét hóa đơn đầu tiên sẽ đề xuất tiếng Anh.</string>
     <string name="receipt_languages_add">Thêm ngôn ngữ</string>
     <string name="receipt_languages_downloading">%1$s · đang tải xuống…</string>
     <string name="receipt_languages_kept">%1$s · đã giữ</string>
@@ -358,5 +350,13 @@
     <string name="quick_amount_label">Số tiền</string>
     <string name="quick_amount_taken">Đã là một trong các số tiền</string>
     <string name="quick_amount_note">Dùng cho %1$s trong mọi cặp.</string>
+    <string name="receipt_setup_language">Đọc hóa đơn bằng %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Đọc hóa đơn bằng %1$s (%2$s), giữ đến %3$s</string>
+    <string name="receipt_setup_pick_language">Hãy chọn ít nhất một ngôn ngữ để đọc hóa đơn.</string>
+    <string name="receipt_language_offer">Đọc hóa đơn cả bằng %1$s? Dữ liệu văn bản của nó là một lần tải %2$s.</string>
+    <string name="receipt_language_offer_trip">Đọc hóa đơn bằng %1$s trong chuyến đi? Dữ liệu văn bản của nó là một lần tải %2$s, giữ đến %3$s.</string>
+    <string name="receipt_language_not_now">Để sau</string>
+    <string name="receipt_languages_intro">Hóa đơn được đọc trên điện thoại của bạn, bằng các ngôn ngữ ở đây. Không tải gì cho đến khi bạn đồng ý.</string>
+    <string name="receipt_languages_empty">Chưa có. Lần quét hóa đơn đầu tiên sẽ hỏi bạn tải ngôn ngữ nào.</string>
     <string name="error_certificate_pinning">Chứng chỉ của máy chủ không thuộc các chứng chỉ ứng dụng đã ghim cho nó. Nếu nhà cung cấp đã đổi, hãy ghim lại trong Cài đặt hoặc tắt ghim chứng chỉ.</string>
 </resources>

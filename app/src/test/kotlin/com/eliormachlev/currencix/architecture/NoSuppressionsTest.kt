@@ -311,10 +311,13 @@ class NoSuppressionsTest {
                         trustLine(kind),
                         TRUSTED_ARTIFACTS,
                         "-$kind.jar",
-                        // Inside the configuration's trusted-artifacts block, which holds only these two.
+                        // Inside the configuration's trusted-artifacts block, which holds only these two,
+                        // in either order: Gradle sorts them when it writes the file from scratch.
                         Regex(
-                            (listOf("<$TRUSTED_ARTIFACTS>") + IDE_DOCUMENTATION.map(::trustLine) + "</$TRUSTED_ARTIFACTS>")
-                                .joinToString("""\s*""") { Regex.escape(it) },
+                            listOf(IDE_DOCUMENTATION, IDE_DOCUMENTATION.reversed()).joinToString("|") { order ->
+                                (listOf("<$TRUSTED_ARTIFACTS>") + order.map(::trustLine) + "</$TRUSTED_ARTIFACTS>")
+                                    .joinToString("""\s*""") { Regex.escape(it) }
+                            },
                         ),
                     )
                 }

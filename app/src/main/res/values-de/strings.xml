@@ -264,8 +264,6 @@
     <string name="trip_unnamed">Reise</string>
     <string name="trip_move">Reise</string>
     <string name="trip_none">Keine Reise</string>
-    <string name="receipt_setup_also_language_until">Kassenbons auch auf %1$s lesen (%2$s), behalten bis %3$s</string>
-    <string name="receipt_language_offer_trip">Kassenbons auf deiner Reise auch auf %1$s lesen? Die Textdaten sind ein einmaliger Download von %2$s, behalten bis %3$s. Ohne sie werden Kassenbons auf Englisch gelesen.</string>
     <string name="trip_destination">Wohin (die Währung dort)</string>
     <string name="trip_optional">Optional</string>
     <string name="trip_dates">Reisedaten</string>
@@ -319,16 +317,10 @@
     <string name="recent_pair_alert_set">Kursalarm gesetzt</string>
     <string name="receipt_setup_message">Zum Lesen von Kassenbons ist ein einmaliger Download nötig. Danach läuft es offline auf deinem Telefon.</string>
     <string name="receipt_setup_reader">Der Texterkenner</string>
-    <string name="receipt_setup_language_data">Textdaten für %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Kassenbons auch auf %1$s lesen (%2$s)</string>
-    <string name="receipt_language_offer">Kassenbons auch auf %1$s lesen? Die Textdaten sind ein einmaliger Download von %2$s. Ohne sie werden Kassenbons auf Englisch gelesen.</string>
-    <string name="receipt_language_english_only">Nur Englisch</string>
     <string name="receipt_language_read_too">Auch %1$s lesen</string>
     <string name="receipt_languages_title">Sprachen für Kassenbons</string>
     <string name="receipt_languages_summary">Sprache für eine Reise hinzufügen, bis zu einem Datum behalten oder löschen</string>
-    <string name="receipt_languages_intro">Kassenbons werden auf deinem Telefon gelesen, auf Englisch und in den Sprachen hier. Ohne deine Zustimmung wird nichts heruntergeladen.</string>
     <string name="receipt_languages_installed">Auf diesem Telefon</string>
-    <string name="receipt_languages_empty">Noch keine. Der erste Bon-Scan bietet Englisch an.</string>
     <string name="receipt_languages_add">Sprache hinzufügen</string>
     <string name="receipt_languages_downloading">%1$s · wird heruntergeladen…</string>
     <string name="receipt_languages_kept">%1$s · behalten</string>
@@ -360,5 +352,13 @@
     <string name="quick_amount_label">Betrag</string>
     <string name="quick_amount_taken">Bereits einer der Beträge</string>
     <string name="quick_amount_note">Gilt für %1$s in jedem Paar.</string>
+    <string name="receipt_setup_language">Belege auf %1$s lesen (%2$s)</string>
+    <string name="receipt_setup_language_until">Belege auf %1$s lesen (%2$s), behalten bis %3$s</string>
+    <string name="receipt_setup_pick_language">Wähle mindestens eine Sprache, in der Belege gelesen werden.</string>
+    <string name="receipt_language_offer">Belege auch auf %1$s lesen? Die Textdaten sind ein einmaliger Download von %2$s.</string>
+    <string name="receipt_language_offer_trip">Belege auf deiner Reise auf %1$s lesen? Die Textdaten sind ein einmaliger Download von %2$s, behalten bis %3$s.</string>
+    <string name="receipt_language_not_now">Nicht jetzt</string>
+    <string name="receipt_languages_intro">Belege werden auf deinem Telefon gelesen, in den Sprachen hier. Nichts wird heruntergeladen, bevor du zustimmst.</string>
+    <string name="receipt_languages_empty">Noch keine. Dein erster Beleg-Scan fragt, welche heruntergeladen werden.</string>
     <string name="error_certificate_pinning">Das Zertifikat des Servers gehört zu keinem der Pins, die die App für ihn hat. Falls der Anbieter es gewechselt hat, in den Einstellungen neu pinnen oder das Zertifikat-Pinning ausschalten.</string>
 </resources>

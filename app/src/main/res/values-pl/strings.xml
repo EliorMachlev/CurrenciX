@@ -267,8 +267,6 @@
     <string name="trip_unnamed">Podróż</string>
     <string name="trip_move">Podróż</string>
     <string name="trip_none">Bez podróży</string>
-    <string name="receipt_setup_also_language_until">Czytaj paragony także w języku %1$s (%2$s), do %3$s</string>
-    <string name="receipt_language_offer_trip">Czytać paragony w języku %1$s w podróży? Dane tekstowe to jednorazowe pobranie %2$s, przechowywane do %3$s. Bez nich paragony są czytane po angielsku.</string>
     <string name="trip_destination">Dokąd (waluta, którą się tam płaci)</string>
     <string name="trip_optional">Opcjonalnie</string>
     <string name="trip_dates">Daty</string>
@@ -326,16 +324,10 @@
     <string name="recent_pair_alert_set">Ustawiono alert kursu</string>
     <string name="receipt_setup_message">Czytanie paragonów wymaga jednorazowego pobrania. Potem działa offline na telefonie.</string>
     <string name="receipt_setup_reader">Czytnik tekstu</string>
-    <string name="receipt_setup_language_data">Dane tekstowe: %1$s (%2$s)</string>
-    <string name="receipt_setup_also_language">Czytaj paragony także w języku %1$s (%2$s)</string>
-    <string name="receipt_language_offer">Czytać paragony także w języku %1$s? Dane tekstowe to jednorazowe pobranie %2$s. Bez nich paragony są czytane po angielsku.</string>
-    <string name="receipt_language_english_only">Tylko angielski</string>
     <string name="receipt_language_read_too">Czytaj też %1$s</string>
     <string name="receipt_languages_title">Języki paragonów</string>
     <string name="receipt_languages_summary">Dodaj język na podróż, zachowaj go do daty lub usuń</string>
-    <string name="receipt_languages_intro">Paragony są czytane na telefonie, po angielsku i w językach tutaj. Nic nie jest pobierane bez Twojej zgody.</string>
     <string name="receipt_languages_installed">Na tym telefonie</string>
-    <string name="receipt_languages_empty">Jeszcze żadnego. Pierwsze skanowanie paragonu zaproponuje angielski.</string>
     <string name="receipt_languages_add">Dodaj język</string>
     <string name="receipt_languages_downloading">%1$s · pobieranie…</string>
     <string name="receipt_languages_kept">%1$s · zachowany</string>
@@ -367,5 +359,13 @@
     <string name="quick_amount_label">Kwota</string>
     <string name="quick_amount_taken">To już jedna z kwot</string>
     <string name="quick_amount_note">Używane dla %1$s w każdej parze.</string>
+    <string name="receipt_setup_language">Czytaj paragony w języku %1$s (%2$s)</string>
+    <string name="receipt_setup_language_until">Czytaj paragony w języku %1$s (%2$s), zachowane do %3$s</string>
+    <string name="receipt_setup_pick_language">Wybierz co najmniej jeden język do czytania paragonów.</string>
+    <string name="receipt_language_offer">Czytać paragony także w języku %1$s? Jego dane tekstowe to jednorazowe pobranie %2$s.</string>
+    <string name="receipt_language_offer_trip">Czytać paragony w podróży w języku %1$s? Jego dane tekstowe to jednorazowe pobranie %2$s, zachowane do %3$s.</string>
+    <string name="receipt_language_not_now">Nie teraz</string>
+    <string name="receipt_languages_intro">Paragony są czytane na Twoim telefonie, w językach z tej listy. Nic nie jest pobierane bez Twojej zgody.</string>
+    <string name="receipt_languages_empty">Jeszcze żadnych. Pierwsze skanowanie paragonu zapyta, co pobrać.</string>
     <string name="error_certificate_pinning">Certyfikat serwera nie jest żadnym z tych, które aplikacja przypięła dla niego. Jeśli dostawca go zmienił, przypnij ponownie w Ustawieniach lub wyłącz przypinanie certyfikatów.</string>
 </resources>

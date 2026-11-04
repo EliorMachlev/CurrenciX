@@ -12,6 +12,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `screenshots.yaml` | Push → non-master, manual | Roborazzi screenshots of every Compose surface (plus 200 % font scale), uploaded as an artifact; records, doesn't compare. Times out at 20 min |
 | `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**`, manual | Profiles on an API 34 emulator, one job per flavor; by hand with **commit**, pushes them through `commit-baseline-profiles.yaml` |
 | `benchmarks.yaml` | Push → non-master touching app code, the build or benchmarks, manual | Startup and frame-timing benchmarks; fails on a slowdown |
+| `live-providers.yaml` | PR changing `model/`, `repository/`, `util/` or the app's build file, daily, manual | Calls each provider's live API (`ExchangeRatesServiceTest`, `-PliveProviders`); not a required check, so a provider's outage is reported without blocking merges |
 | `detekt.yaml` | PR, push → `master`, manual | Kotlin static analysis |
 | `qodana.yaml` | PR, push → `master`, weekly, manual | JetBrains Qodana; when its project import fails dependency verification, lists the refused files (`verification-report.py`) |
 | `codeql.yaml` | PR, push → `master`, weekly, manual | CodeQL on the Kotlin and the workflows |
@@ -19,7 +20,8 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `gitleaks.yaml` | PR, push → `master`, weekly, manual | Secrets in the repository |
 | `osv-scanner.yaml` | PR, push → `master`, weekly, manual | The release SBOM against OSV.dev |
 | `owasp-dependency-check.yaml` | Mondays and Thursdays, manual | Shipped libraries against the NVD |
-| `dependency-review.yaml` | PR | Blocks new dependencies with high-severity CVEs |
+| `dependency-submission.yaml` | PR from this repository, push → `master`, manual | Sends GitHub's dependency graph every library the Gradle build resolves (`gradle/actions/dependency-submission`), the build tools' included, which GitHub can't read from Gradle files itself; Dependabot alerts and Dependency Review rely on it |
+| `dependency-review.yaml` | PR | Blocks new dependencies with high-severity CVEs; waits up to 10 min for the PR's submitted graph |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | Validates `gradle-wrapper.jar`, the one binary in the repo, against Gradle's releases; its own workflow so Scorecard sees it pass |
 | `scorecard.yaml` | Push → `master`, weekly, manual | OpenSSF Scorecard (waits for the wrapper check on a push) |
 | `update-verification-metadata.yaml` | Manual | Records dependency checksums from an empty cache, commits them, restarts the checks |
