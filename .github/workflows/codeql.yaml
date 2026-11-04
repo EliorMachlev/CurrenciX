@@ -20,6 +20,11 @@ permissions:
 
 # GitHub Actions YAML, and the app's Kotlin (CodeQL's extractor reads it while
 # Gradle compiles the fdroid debug build, which covers the main source set).
+env:
+  # Results for a PR go on its head commit (below).
+  SARIF_REF: ${{ github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number) || '' }}
+  SARIF_SHA: ${{ github.event.pull_request.head.sha || '' }}
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
@@ -75,8 +80,8 @@ jobs:
         uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           category: /language:${{ matrix.language }}
-          ref: ${{ github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number) || '' }}
-          sha: ${{ github.event.pull_request.head.sha || '' }}
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
           upload: ${{ matrix.language == 'java-kotlin' && 'never' || 'always' }}
           output: sarif
 
@@ -90,5 +95,5 @@ jobs:
         with:
           sarif_file: sarif
           category: /language:${{ matrix.language }}
-          ref: ${{ github.event.pull_request && format('refs/pull/{0}/head', github.event.pull_request.number) || '' }}
-          sha: ${{ github.event.pull_request.head.sha || '' }}
+          ref: ${{ env.SARIF_REF }}
+          sha: ${{ env.SARIF_SHA }}
