@@ -20,7 +20,8 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `gitleaks.yaml` | PR, push → `master`, weekly, manual | Secrets in the repository |
 | `osv-scanner.yaml` | PR, push → `master`, weekly, manual | The release SBOM against OSV.dev |
 | `owasp-dependency-check.yaml` | Mondays and Thursdays, manual | Shipped libraries against the NVD |
-| `dependency-review.yaml` | PR | Blocks new dependencies with high-severity CVEs |
+| `dependency-submission.yaml` | PR from this repository, push → `master`, manual | Sends GitHub's dependency graph every library the Gradle build resolves (`gradle/actions/dependency-submission`), the build tools' included, which GitHub can't read from Gradle files itself; Dependabot alerts and Dependency Review rely on it |
+| `dependency-review.yaml` | PR | Blocks new dependencies with high-severity CVEs; waits up to 10 min for the PR's submitted graph |
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | Validates `gradle-wrapper.jar`, the one binary in the repo, against Gradle's releases; its own workflow so Scorecard sees it pass |
 | `scorecard.yaml` | Push → `master`, weekly, manual | OpenSSF Scorecard (waits for the wrapper check on a push) |
 | `update-verification-metadata.yaml` | Manual | Records dependency checksums from an empty cache, commits them, restarts the checks |
