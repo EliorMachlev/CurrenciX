@@ -2,6 +2,7 @@
 import com.android.build.api.artifact.ArtifactTransformationRequest
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.FilterConfiguration
+import com.android.build.api.variant.HasUnitTestBuilder
 import org.cyclonedx.Version
 import org.cyclonedx.gradle.CyclonedxDirectTask
 import org.cyclonedx.model.Component
@@ -273,7 +274,7 @@ tasks.configureEach {
 
 androidComponents {
     beforeVariants { variant ->
-        if (profileBuildTypes.any { variant.buildType?.startsWith(it) == true }) variant.enableUnitTest = true
+        if (profileBuildTypes.any { variant.buildType?.startsWith(it) == true }) (variant as? HasUnitTestBuilder)?.enableUnitTest = true
     }
     onVariants { variant ->
         variant.outputs.forEach { output ->
