@@ -89,9 +89,28 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 
 ### Action exceptions
 
-The GitHub Actions workflows in `.github/workflows/`: a step allowed to fail without failing its job (`continue-on-error`), or a finding left out by the workflow linters, actionlint and the ShellCheck it runs on each `run:` script (`# shellcheck disable=`, `-ignore`), or by zizmor (`# zizmor: ignore`).
+The GitHub Actions workflows in `.github/workflows/` and what their scans report about the repository on GitHub: a step allowed to fail without failing its job (`continue-on-error`), a finding left out by the workflow linters, actionlint and the ShellCheck it runs on each `run:` script (`# shellcheck disable=`, `-ignore`), or by zizmor (`# zizmor: ignore`), and an alert dismissed on GitHub's Security tab.
 
-None at present.
+| # | Tool and rule | Excluded for | Marked in |
+|---|---|---|---|
+| 14 | OpenSSF Scorecard `BranchProtectionID` | the review requirements on `master` | Dismissed on GitHub: code scanning alert #379, "won't fix" |
+| 15 | OpenSSF Scorecard `CodeReviewID` | changes merged without a second person's approval | Dismissed on GitHub: code scanning alert #387, "won't fix" |
+
+#### 14. Scorecard: Branch-Protection on `master`
+
+- **What it reports:** "branch protection is not maximal" (score 5 of 10), from `.github/workflows/scorecard.yaml`. When it was dismissed: stale-review dismissal off, one approving review required rather than two, no code-owner review, no approval of the last push.
+- **Why it can't be fixed:** each missing setting asks for review by someone other than the author, and the project has one maintainer. Requiring two reviewers, code owners, or approval of the last push would leave nobody able to approve, so no change could be merged.
+- **What still guards `master`:** the "Protection" ruleset. Changes arrive only through pull requests; force pushes and deletion are blocked; each PR must be up to date with `master` and pass the required checks (build, tests, lint, detekt, spotless, screenshots, fuzzing, Semgrep, Gitleaks, OSV-Scanner, dependency review, Qodana, CodeQL); and code scanning blocks a merge on CodeQL, Qodana, Semgrep or detekt findings.
+- **What is excluded:** that one alert, dismissed with the reason "Single dev, can't do a real review." Scorecard still runs every week and on every push to `master`, and still scores the check; a new Branch-Protection alert, after the setup changes, is reported again.
+
+#### 15. Scorecard: Code-Review
+
+- **What it reports:** "Found 0/28 approved changesets" (score 0 of 10): no recent change was approved by a reviewer, or merged by someone other than its author.
+- **Why it can't be fixed:** the same: one maintainer, so no second person exists to review. A review by the author, or by an account set up for it, would only make the score claim a review that didn't happen.
+- **What still guards the code:** the checks and code scanning above, on every PR, and the PR description, which records what changed and why.
+- **What is excluded:** that one alert, dismissed with the reason "I am a single developer on the project, so it is impossible to perform a review with another person." The check keeps running; once a second maintainer reviews, the score rises by itself.
+
+**Not checked by `NoSuppressionsTest`:** 14 and 15 are dismissals on GitHub, not markers in a file, so no test sees them. Check the dismissed alerts on the Security tab against this list.
 
 ### CurrenciX exceptions
 
@@ -127,7 +146,7 @@ The app's own code, written as it is on purpose.
 
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 12, on 2026-11-04.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 12, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04.
 
 ## Adding an exception
 
@@ -135,7 +154,7 @@ The app's own code, written as it is on purpose.
 2. Get the maintainer's decision. An exception is theirs to grant, not the author's.
 3. Exclude the narrowest thing possible: the one finding, by rule id, where it occurs. Never a rule switched off for the project, a file or directory left out of a scan, or a baseline.
 4. Add a row and a section above, in the group where the finding lives (the build, a package, a workflow, or CurrenciX's own code), under the next unused number: what the rule says, why it can't be fixed, what still guards the code.
-5. Add the exact line to `EXCEPTIONS` in `NoSuppressionsTest`. That test fails on any suppression marker not listed there, on a listed one that is no longer in the code or has moved off the thing it was granted for, and on one this file doesn't explain.
+5. Add the exact line to `EXCEPTIONS` in `NoSuppressionsTest`. (A finding dismissed on GitHub, like 14 and 15, has no line to add: give its alert number and the reason it was dismissed with instead.) That test fails on any suppression marker not listed there, on a listed one that is no longer in the code or has moved off the thing it was granted for, and on one this file doesn't explain.
 
 ## Removing an exception
 
