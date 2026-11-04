@@ -346,6 +346,12 @@ class NoSuppressionsTest {
                 // CodeQL: a finding listed for removal, and the step that removes the listed ones
                 Regex("""excluded-rule:"""),
                 Regex("""codeql-exceptions\.py\s+\S"""),
+                // A workflow step whose failure doesn't fail its job
+                Regex("""continue-on-error:\s*(true|\$\{\{)"""),
+                // Workflow linters: ShellCheck (run by actionlint on each run: script), actionlint, zizmor
+                Regex("""shellcheck\s+disable="""),
+                Regex("""actionlint\b.*\s-ignore\b"""),
+                Regex("""zizmor:\s*ignore"""),
                 // Gradle dependency verification: files accepted without a checksum
                 Regex("""<(trust|ignored-key|trusted-key)\s"""),
             )
