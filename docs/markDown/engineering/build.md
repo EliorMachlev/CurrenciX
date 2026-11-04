@@ -85,7 +85,7 @@ Then read the diff: it's every new file the build will trust.
 
 ## Build tools' own libraries
 
-The build's tools (the Android Gradle plugin, lint, detekt, CycloneDX and the like) bring in libraries of their own, some at versions with published vulnerabilities: old Guava, Jackson, Bouncy Castle, Logback, jdom2, jose4j, httpclient, commons-lang3, Wire 6 and okio 2. None ships in the app; they run only at build time, on CI's own sources. `settings.gradle` raises each one to the first release that fixes it (`patchedLibraries`), on the plugins' classpath and in every project's configurations, and leaves a newer version alone. An entry can go once nothing asks for a version older than it. To check, scan the verification metadata as Scorecard does:
+The build's tools (the Android Gradle plugin, lint, detekt, CycloneDX and the like) bring in libraries of their own, some at versions with published vulnerabilities: old Guava, Jackson, Bouncy Castle, Logback, jdom2, jose4j, httpclient, commons-lang3, Wire 6 and okio 2. None ships in the app; they run only at build time, on CI's own sources. `settings.gradle` raises each one to the first release that fixes it (`patchedLibraries`), on the plugins' classpath, in every project's configurations, and in what each library itself asks for (a component metadata rule, which also reaches tools that resolve outside any configuration, such as the ktlint Spotless fetches), and leaves a newer version alone. An entry can go once nothing asks for a version older than it. To check, scan the verification metadata as Scorecard does:
 
 ```bash
 osv-scanner scan source -L gradle/verification-metadata.xml

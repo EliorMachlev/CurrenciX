@@ -1,3 +1,4 @@
+import org.gradle.api.artifacts.ComponentMetadataDetails
 import org.gradle.api.artifacts.ResolutionStrategy
 
 pluginManagement {
@@ -56,19 +57,39 @@ def isOlder = { String version, String than ->
     differing != null ? differing[0] < differing[1] : a.size() < b.size()
 }
 
+// The fixed version for a request older than the fix, or null to leave it.
+def fixedVersion = { String group, String name, String requested ->
+    def fixed = patchedLibraries["$group:$name"]
+    if (fixed == null || !requested || !isOlder(requested, fixed)) return null
+    // Guava's Android flavour stays Android.
+    requested.endsWith('-android') ? fixed.replace('-jre', '-android') : fixed
+}
+
 def usePatchedLibraries = { ResolutionStrategy strategy ->
     strategy.eachDependency { details ->
-        def fixed = patchedLibraries["${details.requested.group}:${details.requested.name}"]
-        def requested = details.requested.version
-        if (fixed == null || requested == null || !isOlder(requested, fixed)) return
-        // Guava's Android flavour stays Android.
-        details.useVersion(requested.endsWith('-android') ? fixed.replace('-jre', '-android') : fixed)
+        def fixed = fixedVersion(details.requested.group, details.requested.name, details.requested.version)
+        if (fixed == null) return
+        details.useVersion(fixed)
         details.because('a release with a known vulnerability, raised to its fix (settings.gradle)')
+    }
+}
+
+// The same for what each library itself asks for. This also reaches the
+// libraries a tool resolves outside every configuration above: Spotless
+// fetches ktlint, which logs with Logback, through a detached configuration.
+def raisePatchedDependencies = { ComponentMetadataDetails component ->
+    component.allVariants { variant ->
+        variant.withDependencies { dependencies ->
+            dependencies.each { dependency ->
+                def fixed = fixedVersion(dependency.group, dependency.name, dependency.versionConstraint.requiredVersion)
+                if (fixed != null) dependency.version { it.require(fixed) }
+            }
+        }
     }
 }
 
 gradle.allprojects { project ->
     project.buildscript.configurations.configureEach { usePatchedLibraries(it.resolutionStrategy) }
     project.configurations.configureEach { usePatchedLibraries(it.resolutionStrategy) }
+    project.dependencies.components.all(raisePatchedDependencies)
 }
-
