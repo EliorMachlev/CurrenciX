@@ -1,6 +1,6 @@
 # CI / CD
 
-Everything is in `.github/workflows/`. Every action is pinned to a full commit SHA with its release in a comment (`# v7.0.1`); every Java job runs JDK 25.
+Everything is in `.github/workflows/`. Every action is pinned to a full commit SHA with its release in a comment (`# v7.0.1`); every Java job runs JDK 25. Every job's first step is Harden-Runner in audit mode ([security.md](security.md#supply-chain)).
 
 ## Workflows
 
@@ -9,6 +9,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `build.yaml` | PR, push → `master`, manual | The gate (below) |
 | `release-apk.yaml` | `v*` tag, manual | Signed release APKs, SBOM, checksums, provenance, GitHub release ([release.md](release.md)) |
 | `apk-artifact.yaml` | Push → non-master, manual | fdroid debug APK as an artifact, linked in the run summary |
+| `apk-checks.yaml` | PR touching the app or the build, push → `master`, weekly, manual | The unsigned fdroid release built twice, from two checkouts with no build cache, and compared byte for byte (any difference fails, with `diffoscope`'s account as an artifact); on PRs, `diffuse` compares the universal APK with master's latest in the run summary. Not part of the gate |
 | `screenshots.yaml` | Push → non-master, manual | Roborazzi screenshots of every Compose surface (plus 200 % font scale), uploaded as an artifact; records, doesn't compare. Times out at 20 min |
 | `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**`, manual | Profiles on an API 34 emulator, one job per flavor; by hand with **commit**, pushes them through `commit-baseline-profiles.yaml` |
 | `benchmarks.yaml` | Push → non-master touching app code, the build or benchmarks, manual | Startup and frame-timing benchmarks; fails on a slowdown |
@@ -28,6 +29,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `certificate-pins.yaml` | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites `BuiltInPins.kt` from the chains served now, commits it and restarts the checks |
 | `code-scanning-report.yaml` | Manual | Saves the open code scanning alerts on `master`, from every tool, as an artifact and a summary table on the run page |
 | `zizmor.yaml` | PR or push → `master` touching workflows, weekly, manual | zizmor (pinned by hash, `.github/zizmor`) audits the workflows for what actionlint doesn't: template injection, credentials a checkout leaves, cache poisoning, broad permissions, impostor actions. Every finding goes to code scanning; medium and above fail the job |
+| `docs-checks.yaml` | PR or push → `master` touching the docs, weekly, manual | lychee: every local link and section anchor in `docs/` and the top-level Markdown must resolve (offline, each run), and external links weekly; typos: spelling, with the two correct words it misreads in `_typos.toml` ([exceptions.md](exceptions.md) #16) |
 | `actionlint.yaml` | PR, push → `master`, on workflows | Workflow syntax |
 | `site.yaml` | PR, push → `master`, on `docs/**`, manual | Website asset versions and CSP hashes ([website.md](website.md)) |
 
@@ -69,7 +71,7 @@ Weekly, Mondays, 7-day cooldown, in `.github/dependabot.yml`:
 |---|---|---|
 | `gradle` | `/` | 10 |
 | `github-actions` | `/` | 5 |
-| `pip` | `/.github/scripts`, `/.github/semgrep` (hash-pinned; one grouped PR) | 5 |
+| `pip` | `/.github/scripts`, `/.github/semgrep`, `/.github/zizmor`, `/.github/docs-checks` (hash-pinned; one grouped PR) | 5 |
 
 Grouped: `androidx.*`; Kotlin + KSP; Moshi; OkHttp; test dependencies; all actions. A Gradle update fails dependency verification until its checksums are recorded: run **Update dependency checksums** on its branch once the update looks right.
 
@@ -89,4 +91,4 @@ Every workflow starts at `contents: read` (`scorecard.yaml`: `read-all`, as Scor
 | dependency-review | `pull-requests: write` |
 | code-scanning-report | `security-events: read` only (no checkout) |
 
-Every checkout sets `persist-credentials: false`, so no later step finds the token in `.git/config`. The three workflows that push hand `github.token` only to their push step, as a one-off `http.extraheader` on that `git push`. The release build runs without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
+Every checkout sets `persist-credentials: false`, so no later step finds the token in `.git/config`. The three workflows that push give the token to `git` only for the push itself, as a one-off `http.extraheader` on that `git push`. That keeps it out of the repository's config, not out of the job: other steps can still be given `github.token` (dispatching a workflow, downloading an artifact), and what the token may do is set by the job's `permissions`, which `persist-credentials` doesn't change. The release build runs without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.

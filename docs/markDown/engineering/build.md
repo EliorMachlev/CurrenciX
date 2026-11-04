@@ -12,7 +12,7 @@
 
 | Flavor | |
 |---|---|
-| `fdroid` | No Play Services, fully open source, a reproducible-build target. Carries the receipt recognizer |
+| `fdroid` | No Play Services, fully open source, a reproducible-build target (`apk-checks.yaml` builds it twice and compares the APKs byte for byte). Carries the receipt recognizer |
 | `play` | May use Play APIs; installs the receipt recognizer on demand (Play Feature Delivery) |
 
 ```bash

@@ -1,0 +1,96 @@
+name: Docs checks
+# The docs (docs/**, the top-level Markdown) checked for broken links and
+# misspellings. Links: lychee, offline on every PR (every local link and
+# section anchor must resolve), and weekly online too (external links).
+# Spelling: typos, with the two correct words it misreads in _typos.toml
+# (exceptions.md #16).
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '*.md'
+      - '_typos.toml'
+      - '.github/docs-checks/**'
+      - '.github/workflows/docs-checks.yaml'
+  push:
+    branches: [master]
+    paths:
+      - 'docs/**'
+      - '*.md'
+      - '_typos.toml'
+  schedule:
+    - cron: '40 4 * * 2'
+  workflow_dispatch:
+
+# A newer push to the same PR or branch supersedes a run still going;
+# master's runs always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+
+env:
+  # lychee's release binary, checked against this SHA-256 before it runs
+  # (it matched the release's own .sha256 when it was pinned). A new
+  # release: update both lines, after checking that file.
+  LYCHEE_VERSION: "0.24.2"
+  LYCHEE_SHA256: "1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a"
+  DOCS: "docs/**/*.md docs/*.html *.md"
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install lychee
+        run: |
+          archive="$RUNNER_TEMP/lychee.tar.gz"
+          curl -fsSL -o "$archive" "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/lychee-x86_64-unknown-linux-gnu.tar.gz"
+          echo "${LYCHEE_SHA256}  $archive" | sha256sum --check --strict -
+          tar -xzf "$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/lychee-x86_64-unknown-linux-gnu" >> "$GITHUB_PATH"
+      # Local links and #anchors, every run: a renamed section breaks them
+      # without a word.
+      - name: Check local links
+        run: |
+          read -ra docs <<< "$DOCS"
+          lychee --offline --include-fragments --no-progress "${docs[@]}"
+      # External links weekly and by hand: a site that's down for an hour
+      # isn't a PR's fault.
+      - name: Check external links
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          read -ra docs <<< "$DOCS"
+          lychee --no-progress --max-retries 3 "${docs[@]}"
+
+  spelling:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # typos pinned by hash (.github/docs-checks/requirements.txt, compiled
+      # on this Python version). Dependabot updates it.
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+      - name: Install typos
+        run: python -m pip install --quiet --require-hashes -r .github/docs-checks/requirements.txt
+      - name: Check spelling
+        run: typos -- docs ./*.md

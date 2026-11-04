@@ -111,6 +111,7 @@ The GitHub Actions workflows in `.github/workflows/` and what their scans report
 |---|---|---|---|
 | 14 | OpenSSF Scorecard `BranchProtectionID` | the review requirements on `master` | Dismissed on GitHub: code scanning alert #379, "won't fix" |
 | 15 | OpenSSF Scorecard `CodeReviewID` | changes merged without a second person's approval | Dismissed on GitHub: code scanning alert #387, "won't fix" |
+| 16 | typos extend-words | "Infor" (InforEuro) and "mis" (mis-issued), in the docs | `_typos.toml`, read by `.github/workflows/docs-checks.yaml` |
 
 #### 14. Scorecard: Branch-Protection on `master`
 
@@ -125,6 +126,13 @@ The GitHub Actions workflows in `.github/workflows/` and what their scans report
 - **Why it can't be fixed:** the same: one maintainer, so no second person exists to review. A review by the author, or by an account set up for it, would only make the score claim a review that didn't happen.
 - **What still guards the code:** the checks and code scanning above, on every PR, and the PR description, which records what changed and why.
 - **What is excluded:** that one alert, dismissed with the reason "I am a single developer on the project, so it is impossible to perform a review with another person." The check keeps running; once a second maintainer reviews, the score rises by itself.
+
+#### 16. typos: "Infor" and "mis"
+
+- **What it reports:** `Infor` "should be `Info`, `Inform`" (15 times, wherever the docs name InforEuro) and `mis` "should be `miss`, `mist`" (once, "a certificate mis-issued" in `security.md`).
+- **Why the finding is wrong:** InforEuro is the European Commission's exchange rate service, and typos reads the first part of the name as a word on its own. "Mis-issued" is the standard term for a certificate a CA issued wrongly; typos splits it at the hyphen.
+- **Why it can't be fixed:** the name is the service's own, and rewording "mis-issued" only so the check stops matching is a cosmetic workaround.
+- **What is excluded:** those two words, added to typos' dictionary in `_typos.toml` (`[default.extend-words]`). Every other word in the docs is still checked, and no file is left out. `NoSuppressionsTest` fails on any other typos dictionary entry or exclusion.
 
 **Not checked by `NoSuppressionsTest`:** 14 and 15 are dismissals on GitHub, not markers in a file, so no test sees them. Check the dismissed alerts on the Security tab against this list.
 
@@ -171,7 +179,7 @@ The app's own code, written as it is on purpose.
 
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 17 and 18 on 2026-11-04.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04.
 
 ## Adding an exception
 

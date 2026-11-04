@@ -177,6 +177,11 @@ class NoSuppressionsTest {
             )
 
         const val VERIFICATION_METADATA = "gradle/verification-metadata.xml"
+        const val TYPOS_CONFIG = "_typos.toml"
+        const val TYPOS_WORDS = "[default.extend-words]"
+
+        // The correct words typos takes for misspellings (exceptions.md #16).
+        val TYPOS_ALLOWED = listOf("infor", "mis")
 
         // Licensee's allowances beyond its SPDX identifiers (exceptions.md #17, #18).
         const val LICENSEE_RULE = "Licensee"
@@ -336,7 +341,19 @@ class NoSuppressionsTest {
                             },
                         ),
                     )
-                }
+                } +
+                RecordedException(
+                    TYPOS_CONFIG,
+                    TYPOS_WORDS,
+                    "typos extend-words",
+                    "mis-issued",
+                    // The section holds those two words and nothing else, and is the file's last.
+                    Regex(
+                        Regex.escape(TYPOS_WORDS) +
+                            TYPOS_ALLOWED.joinToString("") { word -> """\s*""" + Regex.escape("$word = \"$word\"") } +
+                            """\s*\z""",
+                    ),
+                )
 
         val SKIPPED_DIRECTORIES = setOf("build", ".gradle", ".git", ".kotlin", ".idea", "node_modules")
         val SCANNED_EXTENSIONS = setOf("kt", "kts", "java", "gradle", "xml", "pro", "yml", "yaml", "toml", "properties")
@@ -367,6 +384,8 @@ class NoSuppressionsTest {
                 Regex("""codeql-exceptions\.py\s+\S"""),
                 // A workflow step whose failure doesn't fail its job
                 Regex("""continue-on-error:\s*(true|\$\{\{)"""),
+                // typos: words added to its dictionary, or files and patterns it skips
+                Regex("""\bextend-(words|identifiers|exclude|ignore-re|ignore-identifiers-re)\b"""),
                 // Licensee: a license or library allowed beyond the SPDX identifiers
                 Regex("""\b(allowUrl|allowDependency|ignoreDependencies)\("""),
                 // Workflow linters: ShellCheck (run by actionlint on each run: script), actionlint, zizmor
