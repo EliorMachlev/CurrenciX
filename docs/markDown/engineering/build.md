@@ -4,7 +4,7 @@
 |---|---|
 | JDK | 21 or newer (CI uses 25). Bytecode targets 21; hybrid signing needs 24+, fetched as a toolchain |
 | Gradle | 9.8.2 (wrapper) |
-| Android Gradle Plugin | 9.4.1 |
+| Android Gradle Plugin | 9.5.0 |
 | Kotlin | 2.4.21 |
 | SDK | min 33, compile 37.2 (Compose 1.13 needs 37.1+: `release(37) { minorApiLevel = 2 }`), target 37 |
 
@@ -128,6 +128,10 @@ Regenerate when hot paths shift materially. F-Droid APKs carry the profile too (
 python3 .github/scripts/compose-stability.py app/build/compose-reports
 ```
 
+## Unit tests on the profile build types
+
+The baseline profile plugin turns unit tests off for the build types it adds (`benchmarkRelease`, `nonMinifiedRelease`). Since AGP 9.5.0, every variant with Compose gets a `generate<Variant>ComposePreviewRunfiles` task, which fails to configure without unit tests, and an IDE sync (Android Studio, Qodana's project import) configures every task, so the sync failed. Neither AGP nor the plugin has a setting for it. `app/build.gradle.kts` turns unit tests back on for those build types (`enableUnitTest`, in `beforeVariants`) and disables their unit-test tasks (`test`, `compile` and `ksp` …`UnitTest`…), so they still compile and run none.
+
 ## Known issue: `Configuration.setVisible(boolean)` deprecation
 
-Gradle warns about it while configuring `:app`, and a build ends "incompatible with Gradle 10". It's inside AGP 9.4.1 (`BasePlugin.createAndroidJdkImageConfiguration`), not in any build script here. Left visible: AGP 9.5.0 no longer makes the call, so it goes with that upgrade, which must happen before Gradle 11. `org.gradle.warning.mode=none` would hide every other deprecation too.
+Gradle warned about it while configuring `:app`, and a build ended "incompatible with Gradle 10". It was inside AGP 9.4.1 (`BasePlugin.createAndroidJdkImageConfiguration`), not in any build script here. With AGP 9.5.0 a build still ends with that line; which deprecation it now reports hasn't been checked (`./gradlew help --warning-mode all` lists each one and where it comes from). Left visible either way: `org.gradle.warning.mode=none` would hide every other deprecation too.

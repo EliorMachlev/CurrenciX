@@ -3,8 +3,8 @@ import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.extensions.DetektExtension
 
 plugins {
-    id("com.android.application") version "9.4.1" apply false
-    id("com.android.test") version "9.4.1" apply false
+    id("com.android.application") version "9.5.0" apply false
+    id("com.android.test") version "9.5.0" apply false
     id("org.jetbrains.kotlin.jvm") version "2.4.21" apply false
     // Baseline-profile Gradle plugin — wired at :app (to consume generated
     // profiles) and :baselineprofile (to run the generator). Pinned to the
@@ -12,13 +12,13 @@ plugins {
     // :baselineprofile module so the generator + consumer stay in lockstep.
     id("androidx.baselineprofile") version "1.5.0" apply false
     // dependency-update-checker
-    id("io.github.ben-manes.versions") version "0.66.0"
+    id("io.github.ben-manes.versions") version "0.67.0"
     // Spotless drives ktlint (chosen over the org.jlleitschuh.gradle.ktlint
     // plugin because that plugin's Android source-set hook does not fire under
     // AGP 9 — only its .kts checker runs, leaving app/src/main/kotlin unlinted).
     // apply=false at root so the base plugin doesn't collide with the manual
     // clean task below; each subproject opts in.
-    id("com.diffplug.spotless") version "8.10.4" apply false
+    id("com.diffplug.spotless") version "8.11.0" apply false
     // Static analysis. Version pinned so upstream releases can't silently
     // change what CI enforces. See config/detekt/detekt.yml for tuned rules.
     // There is no baseline: every finding fails the build.

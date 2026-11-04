@@ -4,4 +4,4 @@
 #   pip-compile --allow-unsafe --generate-hashes --strip-extras requirements.in
 # Dependabot (pip, this directory) recompiles it when Semgrep or a
 # dependency has a new release.
-semgrep==1.182.1
+semgrep==1.183.0
