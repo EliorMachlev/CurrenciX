@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup java environment
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
@@ -36,7 +38,9 @@ jobs:
         run: echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
       - name: Build fdroid debug APK
-        run: ./gradlew assembleFdroidDebug -PdebugCommitSha=${{ steps.sha.outputs.short }}
+        run: ./gradlew assembleFdroidDebug -PdebugCommitSha="${COMMIT_SHA_SHORT}"
+        env:
+          COMMIT_SHA_SHORT: ${{ steps.sha.outputs.short }}
 
       - name: Upload APK
         id: upload
