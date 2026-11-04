@@ -256,7 +256,25 @@ base {
     archivesName.set("${android.defaultConfig.applicationId}-v${android.defaultConfig.versionCode}")
 }
 
+// The baseline profile plugin's build types (benchmarkRelease,
+// nonMinifiedRelease) turn unit tests off, and since AGP 9.5.0 each Compose
+// variant's generate<Variant>ComposePreviewRunfiles task fails to configure
+// without them, which breaks an IDE sync (Android Studio, Qodana's import).
+// Unit tests are turned back on for those variants so the task can be set
+// up, and their unit-test tasks are disabled, so they still compile and run
+// none (the profiles and benchmarks are tested on a device, not here).
+val profileBuildTypes = listOf("benchmark", "nonMinified")
+val profileUnitTestTask =
+    Regex("""^(test|compile|ksp)\w*(${profileBuildTypes.joinToString("|") { it.replaceFirstChar(Char::uppercase) }})\w*UnitTest\w*$""")
+
+tasks.configureEach {
+    if (profileUnitTestTask.matches(name)) enabled = false
+}
+
 androidComponents {
+    beforeVariants { variant ->
+        if (profileBuildTypes.any { variant.buildType?.startsWith(it) == true }) variant.enableUnitTest = true
+    }
     onVariants { variant ->
         variant.outputs.forEach { output ->
             val abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
