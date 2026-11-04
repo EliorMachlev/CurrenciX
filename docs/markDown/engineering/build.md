@@ -130,4 +130,4 @@ python3 .github/scripts/compose-stability.py app/build/compose-reports
 
 ## Known issue: `Configuration.setVisible(boolean)` deprecation
 
-Gradle warns about it while configuring `:app`, and a build ends "incompatible with Gradle 10". It's inside AGP 9.4.1 (`BasePlugin.createAndroidJdkImageConfiguration`), not in any build script here. Left visible: AGP 9.5.0 no longer makes the call, so it goes with that upgrade, which must happen before Gradle 11. `org.gradle.warning.mode=none` would hide every other deprecation too.
+Gradle warned about it while configuring `:app`, and a build ended "incompatible with Gradle 10". It was inside AGP 9.4.1 (`BasePlugin.createAndroidJdkImageConfiguration`), not in any build script here. With AGP 9.5.0 a build still ends with that line; which deprecation it now reports hasn't been checked (`./gradlew help --warning-mode all` lists each one and where it comes from). Left visible either way: `org.gradle.warning.mode=none` would hide every other deprecation too.
