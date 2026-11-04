@@ -70,7 +70,7 @@ class ReceiptScanTest {
     }
 
     @Test
-    fun `only the reader missing: nothing is waited for, a language not asked about is a choice`() {
+    fun `with only the reader missing, nothing is waited for and a language not asked about is a choice`() {
         installed += TessLanguage.ENGLISH
         recognizer = false
         val scan = scan()
