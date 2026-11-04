@@ -34,6 +34,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       # Semgrep and every package it needs, each pinned by hash
       # (.github/semgrep/requirements.txt, compiled on this Python version),
       # instead of the unpinned semgrep/semgrep image. Dependabot updates it.

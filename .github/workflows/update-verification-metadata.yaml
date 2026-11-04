@@ -28,6 +28,8 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: 25
@@ -88,6 +90,8 @@ jobs:
         id: push
         env:
           BRANCH: ${{ github.ref_name }}
+          # Only this step gets the token: the checkout keeps no credentials.
+          PUSH_TOKEN: ${{ github.token }}
         run: |
           git add gradle/verification-metadata.xml
           if git diff --cached --quiet; then
@@ -97,7 +101,8 @@ jobs:
           git -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -m "build(deps): record the new dependencies' checksums"
-          git push origin "HEAD:${BRANCH}"
+          auth=$(printf 'x-access-token:%s' "$PUSH_TOKEN" | base64 -w0)
+          git -c http.extraheader="AUTHORIZATION: basic ${auth}" push origin "HEAD:${BRANCH}"
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
       # A push made with the workflow's own token starts no workflows.
