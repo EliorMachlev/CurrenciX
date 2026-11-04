@@ -3,43 +3,26 @@ package com.eliormachlev.currencix.model.adapter
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
+import com.eliormachlev.currencix.model.provider.api.FrankfurterRates
 import java.math.BigDecimal
-import java.time.LocalDate
 
 /**
- * Frankfurter's `{base, date, rates: {USD: 1.08, …}}`: the rates as a list,
- * with the [base] added (at 1) when the response leaves it out, and FOK
- * riding on DKK.
+ * Frankfurter's rates as the app's: a list, with the [base] added (at 1)
+ * when the response leaves it out, FOK riding on DKK, and currencies the
+ * app doesn't know left out.
  */
-internal class FrankfurterAppRatesAdapter(
-    private val base: Currency,
-) : ResponseAdapter<ExchangeRates> {
-    override fun decode(json: JsonElement): ExchangeRates? {
-        if (json is JsonNull) return null
-        val response = json.jsonObject
-        return ExchangeRates(
-            success = null,
-            error = null,
-            base = response.field(FIELD_BASE)?.let { Currency.valueOf(it.text()) },
-            date = response.field(FIELD_DATE)?.let { LocalDate.parse(it.text()) },
-            rates = response.field(FIELD_RATES)?.let { rates(it.jsonObject) },
-        )
-    }
-
-    private fun rates(rates: JsonObject): List<Rate> =
-        buildList {
-            rates.forEach { (name, value) ->
-                val rate = value.decimal()
-                Currency.fromString(name)?.let { add(Rate(it, rate)) }
-            }
-            // add base - but only if it's missing in the api response!
-            if (none { rate -> rate.currency == base }) {
-                add(Rate(base, BigDecimal.ONE))
-            }
-            addFokFromDkkIfMissing()
-        }
-}
+internal fun FrankfurterRates.toExchangeRates(base: Currency): ExchangeRates =
+    ExchangeRates(
+        success = null,
+        error = null,
+        base = this.base?.let(Currency::valueOf),
+        date = date,
+        rates =
+            rates?.let { quoted ->
+                buildList {
+                    quoted.forEach { (name, value) -> Currency.fromString(name)?.let { add(Rate(it, value)) } }
+                    if (none { rate -> rate.currency == base }) add(Rate(base, BigDecimal.ONE))
+                    addFokFromDkkIfMissing()
+                }
+            },
+    )

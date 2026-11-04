@@ -8,12 +8,12 @@ Every request goes through one `OkHttpClient` (`HttpClientProvider`): a disk cac
 
 | Transport | For | Endpoints |
 |---|---|---|
-| **Retrofit** (`model/provider/api/*Api.kt`) | JSON a provider adapter reads from the body | Frankfurter, Open Exchange Rates, AllRatesToday, InforEuro, Bank of Canada, Bank of Israel `PublicApi` |
+| **Retrofit** (`model/provider/api/*Api.kt`) | JSON that decodes into `@Serializable` response classes | Frankfurter, Open Exchange Rates, AllRatesToday, InforEuro, Bank of Canada, Bank of Israel `PublicApi` |
 | **Raw OkHttp** (`HttpClientProvider.fetch`) | Feeds parsed by hand from the byte stream | Norges Bank (SDMX XML), Bank Rossii (XML), Bank of Israel SDMX-JSON (history, timeline) |
 
 The split is permanent, not an unfinished migration: the XML feeds go through SAX parsers, and Bank of Israel's SDMX-JSON is keyed by dimension-index tuples (`BankOfIsraelSdmxParser` walks it as a JSON tree), so Retrofit would only replace a query string.
 
-**One error contract** across both, so the repository never cares which: non-2xx → `ApiHttpError(statusCode)`; network failures keep their exception types; no body, or one the adapter finds nothing in (JSON `null`) → `IOException("<provider>: empty JSON")`; malformed JSON → kotlinx.serialization's `SerializationException`. On the Retrofit side, `retrofitApi<T>()` binds an interface to the provider's `baseUrl` and `fetchRetrofit(adapter) { }` makes the call and reads its body; interfaces return `Response<ResponseBody>` (no converter), since Retrofit's suspend adapter throws an opaque `KotlinNullPointerException` on a null body. An adapter (`ResponseAdapter`) reads a `JsonElement`, the whole body parsed, so it can look at the payload's shape before reading any of it. `ProviderRequestTest` pins every provider's exact URL and this contract, offline.
+**One error contract** across both, so the repository never cares which: non-2xx → `ApiHttpError(statusCode)`; network failures keep their exception types; no body, or a decoded one that holds nothing to read → `IOException("<provider>: empty JSON")`; a body that isn't the JSON expected (JSON `null` included) → kotlinx.serialization's `SerializationException`. On the Retrofit side, `retrofitApi<T>()` binds an interface to the provider's `baseUrl`, and `fetchRetrofit({ call }) { mapping }` makes the call and turns the decoded body into the app's model; interfaces return `Response<T>`, since Retrofit's suspend adapter throws an opaque `KotlinNullPointerException` on a null body. Each interface declares its `@Serializable` response classes beside it (`PROVIDER_JSON`: unknown fields are passed over; rates are `BigDecimal`s read from the number's own text). An endpoint answering an array or an error object has a sealed type, picked by the JSON's shape (`JsonContentPolymorphicSerializer`). `ProviderRequestTest` pins every provider's exact URL and this contract, offline.
 
 ## Provider contract
 
@@ -24,7 +24,7 @@ suspend fun getRates(context: Context?, date: LocalDate?, secrets: ApiSecrets): 
 suspend fun getTimeline(context: Context?, base: Currency, symbol: Currency, startDate: LocalDate, endDate: LocalDate, secrets: ApiSecrets = ApiSecrets.EMPTY): Result<Timeline>
 ```
 
-`ApiProvider` is an enum whose entries implement it, so switching provider is one DataStore write. Only each entry's `id` is stored, so reordering the enum is safe. Each provider maps its own schema to the shared model: a JSON adapter (`model/adapter/`, over kotlinx.serialization's `JsonElement`), a SAX parser (Norges Bank, Bank Rossii) or `BankOfIsraelSdmxParser`. A historical date queries the history endpoint instead of the live one.
+`ApiProvider` is an enum whose entries implement it, so switching provider is one DataStore write. Only each entry's `id` is stored, so reordering the enum is safe. Each provider maps its own schema to the shared model: a mapping from its response classes (`model/adapter/`), a SAX parser (Norges Bank, Bank Rossii) or `BankOfIsraelSdmxParser`. A historical date queries the history endpoint instead of the live one.
 
 **AllRatesToday** is built from its [OpenAPI spec](https://allratestoday.com/api/openapi.json), `GET /api/v1/rates`: latest is `?source=EUR` (a past day adds `time=<day>T12:00:00Z`); a timeline is `?group=day&source=&target=&from=&to=<end + 1 day>` (`to` is exclusive), FOK asked for as DKK.
 

@@ -7,8 +7,8 @@ import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
-import com.eliormachlev.currencix.model.adapter.FrankfurterAppRatesAdapter
-import com.eliormachlev.currencix.model.adapter.FrankfurterAppTimelineAdapter
+import com.eliormachlev.currencix.model.adapter.toExchangeRates
+import com.eliormachlev.currencix.model.adapter.toTimeline
 import com.eliormachlev.currencix.model.provider.api.FrankfurterApi
 import java.time.LocalDate
 
@@ -38,9 +38,8 @@ class FrankfurterApp : ApiProvider.Api {
         val base = Currency.EUR
         val api = retrofitApi<FrankfurterApi>(context)
         val datePath = date?.format(ISO_DATE) ?: LATEST_DATE_PATH
-        return fetchRetrofit(FrankfurterAppRatesAdapter(base)) {
-            api.getRates(datePath = datePath, base = base.toString())
-        }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
+        return fetchRetrofit({ api.getRates(datePath = datePath, base = base.toString()) }) { it.toExchangeRates(base) }
+            .map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
     }
 
     override suspend fun getTimeline(
@@ -52,16 +51,17 @@ class FrankfurterApp : ApiProvider.Api {
         secrets: ApiSecrets,
     ): Result<Timeline> {
         val api = retrofitApi<FrankfurterApi>(context)
-        return fetchRetrofit(FrankfurterAppTimelineAdapter(symbol)) {
+        return fetchRetrofit({
             api.getTimeline(
                 start = startDate.format(ISO_DATE),
                 end = endDate.format(ISO_DATE),
                 base = base.apiCodeOrDkkForFok(),
                 symbols = symbol.apiCodeOrDkkForFok(),
             )
-        }.map { timeline ->
-            // change dkk base back to fok, if needed
-            if (base == Currency.FOK) timeline.copy(base = base.iso4217Alpha()) else timeline
-        }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
+        }) { it.toTimeline(symbol) }
+            .map { timeline ->
+                // change dkk base back to fok, if needed
+                if (base == Currency.FOK) timeline.copy(base = base.iso4217Alpha()) else timeline
+            }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
     }
 }

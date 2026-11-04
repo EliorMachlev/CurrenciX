@@ -4,48 +4,28 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.long
+import com.eliormachlev.currencix.model.provider.api.OpenExchangeratesRates
 import java.time.Instant
 import java.time.ZoneId
 
-private const val FIELD_TIMESTAMP = "timestamp"
-
 /**
- * Open Exchange Rates' `{timestamp, base, rates: {USD: 1, …}}`, dated and
- * timed (to the minute) in the phone's zone; or `{message}` on failure.
+ * Open Exchange Rates' answer as the app's rates, dated and timed (to the
+ * minute) in the phone's zone; its message when there are no rates.
  */
-internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates> {
-    override fun decode(json: JsonElement): ExchangeRates? {
-        val response = json as? JsonObject ?: return null
-        val base = response[FIELD_BASE]?.let { Currency.fromString(it.text()) }
-        val zoned =
-            response[FIELD_TIMESTAMP]?.let { Instant.ofEpochSecond(it.jsonPrimitive.long).atZone(ZoneId.systemDefault()) }
-        val date = zoned?.toLocalDate()
-        val time = zoned?.toLocalTime()?.withSecond(0)?.withNano(0)
-        val rates =
-            buildList {
-                response[FIELD_RATES]?.let { addAll(parseRates(it)) }
-                addFokFromDkkIfMissing()
-            }
-
-        return ExchangeRates(
-            success = rates.isNotEmpty(),
-            error = if (rates.isEmpty()) response[FIELD_MESSAGE]?.text() else null,
-            base = base,
-            date = date,
-            time = time,
-            rates = rates.takeIf { it.isNotEmpty() },
-            provider = ApiProvider.OPEN_EXCHANGERATES,
-        )
-    }
-
-    private fun parseRates(rates: JsonElement): List<Rate> =
-        rates.jsonObject.mapNotNull { (name, value) ->
-            val rate = value.decimal()
-            Currency.fromString(name)?.let { Rate(it, rate) }
+internal fun OpenExchangeratesRates.toExchangeRates(): ExchangeRates {
+    val zoned = timestamp?.let { Instant.ofEpochSecond(it).atZone(ZoneId.systemDefault()) }
+    val known =
+        buildList {
+            rates?.forEach { (name, value) -> Currency.fromString(name)?.let { add(Rate(it, value)) } }
+            addFokFromDkkIfMissing()
         }
+    return ExchangeRates(
+        success = known.isNotEmpty(),
+        error = if (known.isEmpty()) message else null,
+        base = base?.let(Currency::fromString),
+        date = zoned?.toLocalDate(),
+        time = zoned?.toLocalTime()?.withSecond(0)?.withNano(0),
+        rates = known.takeIf { it.isNotEmpty() },
+        provider = ApiProvider.OPEN_EXCHANGERATES,
+    )
 }

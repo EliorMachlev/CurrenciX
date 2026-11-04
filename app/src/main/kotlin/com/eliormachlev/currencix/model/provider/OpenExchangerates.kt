@@ -7,7 +7,7 @@ import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
-import com.eliormachlev.currencix.model.adapter.OpenExchangeratesRatesAdapter
+import com.eliormachlev.currencix.model.adapter.toExchangeRates
 import com.eliormachlev.currencix.model.provider.api.OpenExchangeratesApi
 import java.time.LocalDate
 
@@ -15,9 +15,6 @@ import java.time.LocalDate
 // flags every request carries.
 private const val PRETTY_PRINT = false
 private const val SHOW_ALTERNATIVE = false
-
-// The rates adapter is stateless, so one serves every request.
-private val RATES_ADAPTER = OpenExchangeratesRatesAdapter()
 
 class OpenExchangerates : ApiProvider.Api {
     override val name = "Open Exchangerates"
@@ -42,13 +39,14 @@ class OpenExchangerates : ApiProvider.Api {
         if (apiKey.isNullOrBlank()) return missingApiKey(context)
 
         val api = retrofitApi<OpenExchangeratesApi>(context)
-        return fetchRetrofit(RATES_ADAPTER) {
+        return fetchRetrofit({
             if (date != null) {
                 api.getHistorical(date.format(ISO_DATE), token(apiKey), PRETTY_PRINT, SHOW_ALTERNATIVE)
             } else {
                 api.getLatest(token(apiKey), PRETTY_PRINT, SHOW_ALTERNATIVE)
             }
-        }.map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
+        }) { it.toExchangeRates() }
+            .map { it.copy(provider = ApiProvider.OPEN_EXCHANGERATES) }
             .explainKeyErrors(context)
     }
 

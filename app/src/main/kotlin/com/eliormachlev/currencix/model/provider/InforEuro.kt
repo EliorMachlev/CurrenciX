@@ -8,8 +8,8 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.eliormachlev.currencix.model.adapter.InforEuroRatesAdapter
-import com.eliormachlev.currencix.model.adapter.InforEuroTimelineAdapter
+import com.eliormachlev.currencix.model.adapter.toExchangeRates
+import com.eliormachlev.currencix.model.adapter.toTimeline
 import com.eliormachlev.currencix.model.provider.api.InforEuroApi
 import java.math.BigDecimal
 import java.math.MathContext
@@ -37,7 +37,7 @@ class InforEuro : ApiProvider.Api {
     ): Result<ExchangeRates> {
         val effective = date ?: LocalDate.now(ZoneOffset.UTC)
         val api = retrofitApi<InforEuroApi>(context)
-        return fetchRetrofit(InforEuroRatesAdapter(effective)) { api.getMonthlyRates(year = date?.year, month = date?.monthValue) }
+        return fetchRetrofit({ api.getMonthlyRates(year = date?.year, month = date?.monthValue) }) { it.toExchangeRates(effective) }
             .map { it.copy(provider = ApiProvider.INFOR_EURO) }
     }
 
@@ -52,9 +52,8 @@ class InforEuro : ApiProvider.Api {
         // InforEuro needs 2 calls: the API only provides EUR <-> symbol, without changing the base.
         // So, we make 2 calls: EUR <-> base & EUR <-> symbol
         val api = retrofitApi<InforEuroApi>(context)
-        val adapter = InforEuroTimelineAdapter(startDate, endDate)
-        val resultBase = fetchRetrofit(adapter) { api.getCurrencyHistory(base.apiCodeOrDkkForFok()) }
-        val resultSymbol = fetchRetrofit(adapter) { api.getCurrencyHistory(symbol.apiCodeOrDkkForFok()) }
+        val resultBase = fetchRetrofit({ api.getCurrencyHistory(base.apiCodeOrDkkForFok()) }) { it.toTimeline(startDate, endDate) }
+        val resultSymbol = fetchRetrofit({ api.getCurrencyHistory(symbol.apiCodeOrDkkForFok()) }) { it.toTimeline(startDate, endDate) }
 
         return when {
             resultBase.isFailure -> {

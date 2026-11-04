@@ -2,10 +2,8 @@ package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.xmlpull.v1.XmlPullParser
@@ -17,23 +15,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
 
-/**
- * Reads one provider's response from its JSON. Null when the body isn't
- * there to read (JSON `null`, or not the object the provider answers with),
- * which the provider reports as an empty response.
- */
-internal fun interface ResponseAdapter<T : Any> {
-    fun decode(json: JsonElement): T?
-}
-
 /** A [Rate] once both of its parts have been read; null while either is missing. */
 internal fun rateOrNull(
     currency: Currency?,
     value: BigDecimal?,
 ): Rate? = if (currency != null && value != null) Rate(currency, value) else null
-
-/** The value of a field that is there and not `null`. */
-internal fun JsonObject.field(name: String): JsonElement? = get(name)?.takeUnless { it is JsonNull }
 
 /**
  * A string's or a number's text, a number exactly as written.
@@ -46,20 +32,6 @@ internal fun JsonElement.text(): String {
 
 /** The number this string or number is, exactly as written. */
 internal fun JsonElement.decimal(): BigDecimal = BigDecimal(text())
-
-// Both InforEuro endpoints return a JSON array on success and an
-// { "message": "..." } object on failure: [onArray] gets the array, and
-// [onError] the message otherwise.
-internal inline fun <T> JsonElement.arrayOrError(
-    onError: (String?) -> T,
-    onArray: (JsonArray) -> T,
-): T = if (this is JsonArray) onArray(this) else onError(errorMessage())
-
-// Response field names more than one adapter reads.
-internal const val FIELD_MESSAGE = "message"
-internal const val FIELD_RATES = "rates"
-internal const val FIELD_BASE = "base"
-internal const val FIELD_DATE = "date"
 
 // Bank of Canada's Valet API: the rows of a series, each dated by "d".
 internal const val BANK_OF_CANADA_OBSERVATIONS = "observations"
@@ -85,13 +57,6 @@ private const val BANK_ROSSII_DATE = "Date"
 private const val DECIMAL_BASE = 10.0
 
 /**
- * The first non-null answer of [onField], which gets each of the object's
- * fields in turn; every field is read, so a malformed one still fails.
- */
-internal inline fun <T : Any> JsonElement.firstOfFields(onField: (name: String, value: JsonElement) -> T?): T? =
-    jsonObject.entries.map { (name, value) -> onField(name, value) }.firstNotNullOfOrNull { it }
-
-/**
  * One currency's value in a Bank of Canada observation: the field [name]
  * (FXUSDCAD, …) holds { "v": "1.3672" }, Canadian dollars per unit.
  */
@@ -100,10 +65,6 @@ internal fun JsonElement.bankOfCanadaValue(name: String): Pair<Currency?, BigDec
     val value = requireNotNull(jsonObject[BANK_OF_CANADA_VALUE]) { "No value for $name" }.decimal()
     return currency to value
 }
-
-// Providers surface error payloads as { "message": "..." }: that message.
-// @throws IllegalArgumentException when the payload isn't an object.
-internal fun JsonElement.errorMessage(): String? = jsonObject.field(FIELD_MESSAGE)?.text()
 
 // Bank Rossii serializes dates as dd.MM.yyyy in every response.
 internal val BANK_ROSSII_DATE_FORMATTER: DateTimeFormatter =

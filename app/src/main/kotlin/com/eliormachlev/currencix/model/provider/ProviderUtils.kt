@@ -4,14 +4,11 @@ import android.content.Context
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
-import com.eliormachlev.currencix.model.adapter.ResponseAdapter
 import com.eliormachlev.currencix.util.ApiHttpError
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.RetrofitProvider
 import com.eliormachlev.currencix.util.fetch
 import com.eliormachlev.currencix.util.retrofitCall
-import kotlinx.serialization.json.Json
-import okhttp3.ResponseBody
 import retrofit2.Response
 import java.io.IOException
 import java.time.format.DateTimeFormatter
@@ -44,22 +41,22 @@ private fun emptyJson(providerLabel: String) = IOException("$providerLabel: empt
 internal inline fun <reified T : Any> ApiProvider.Api.retrofitApi(context: Context?): T =
     RetrofitProvider.retrofit(context, baseUrl).create(T::class.java)
 
-// Runs a Retrofit [call] and reads its body with [adapter]: non-2xx becomes
-// [ApiHttpError]; no body, or one the adapter finds nothing in (JSON `null`),
-// an IOException labelled with the provider name; malformed JSON, the
-// parser's SerializationException. Interfaces return [Response] rather than
-// the bare body because Retrofit's suspend adapter would otherwise throw an
-// opaque KotlinNullPointerException on a null body.
-internal suspend fun <T : Any> ApiProvider.Api.fetchRetrofit(
-    adapter: ResponseAdapter<T>,
-    call: suspend () -> Response<ResponseBody>,
-): Result<T> =
+// Runs a Retrofit [call] and turns its decoded body into the app's model
+// with [read]: non-2xx becomes [ApiHttpError]; no body, or one [read] finds
+// nothing in (null), an IOException labelled with the provider name; a body
+// that isn't the JSON expected, kotlinx.serialization's SerializationException.
+// Interfaces return [Response] rather than the bare body because Retrofit's
+// suspend adapter would otherwise throw an opaque KotlinNullPointerException
+// on a missing body.
+internal suspend fun <T : Any, R : Any> ApiProvider.Api.fetchRetrofit(
+    call: suspend () -> Response<T>,
+    read: (T) -> R?,
+): Result<R> =
     retrofitCall {
         val response = call()
         if (!response.isSuccessful) throw ApiHttpError(response.code())
         val body = response.body() ?: throw emptyJson(name)
-        val json = body.use { Json.parseToJsonElement(it.string()) }
-        adapter.decode(json) ?: throw emptyJson(name)
+        read(body) ?: throw emptyJson(name)
     }
 
 private const val HTTP_UNAUTHORIZED = 401

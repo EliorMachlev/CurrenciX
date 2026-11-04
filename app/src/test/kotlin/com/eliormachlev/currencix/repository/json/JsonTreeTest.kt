@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.repository.json
 
-import kotlinx.serialization.json.JsonObject as JsonElementObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -8,6 +7,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.serialization.json.JsonObject as JsonElementObject
 
 // The JSON the app writes for itself, read and written without org.json.
 class JsonTreeTest {
