@@ -367,4 +367,5 @@
     <string name="quick_amount_label">Сума</string>
     <string name="quick_amount_taken">Вже є серед сум</string>
     <string name="quick_amount_note">Використовується для %1$s у всіх парах.</string>
+    <string name="error_certificate_pinning">Сертифікат сервера не з тих, що застосунок прив’язав до нього. Якщо постачальник його змінив, прив’яжіть заново в Налаштуваннях або вимкніть прив’язування сертифікатів.</string>
 </resources>

@@ -362,4 +362,5 @@
     <string name="quick_amount_label">Belopp</string>
     <string name="quick_amount_taken">Finns redan bland beloppen</string>
     <string name="quick_amount_note">Används för %1$s i alla par.</string>
+    <string name="error_certificate_pinning">Serverns certifikat är inte något av dem appen har fäst för den. Om leverantören har bytt det, fäst om i Inställningar eller stäng av certifikatfästning.</string>
 </resources>

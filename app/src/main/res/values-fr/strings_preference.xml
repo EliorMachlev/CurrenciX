@@ -208,4 +208,16 @@
     <string name="api_all_rates_today_api_key_title">Clé d’API AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Pour utiliser cette source, il vous faut votre propre clé d’API.\n\nCréez un compte gratuit sur https://allratestoday.com, copiez votre clé (elle commence par art_live_) depuis votre page de profil et saisissez-la ici.\n\nL’offre gratuite permet 300 requêtes au total, une fois pour toutes. Chaque actualisation et chaque période du graphique en consomme une.</string>
     <string name="provider_cadence_every_minute">Mis à jour environ chaque minute</string>
+    <string name="settings_advanced_section">Avancé</string>
+    <string name="certificate_pinning_title">Épinglage des certificats</string>
+    <string name="certificate_pinning_summary">Se connecter aux serveurs de taux uniquement via les autorités de certification épinglées pour eux. À désactiver seulement si un serveur a changé de certificat et que les taux ne se chargent plus.</string>
+    <string name="repin_title">Réépingler sur les certificats actuels</string>
+    <string name="repin_summary_builtin">Épinglages intégrés à l\'application utilisés</string>
+    <string name="repin_summary_own">Épinglages pris sur ce téléphone utilisés pour %1$d serveurs sur %2$d</string>
+    <string name="repin_summary_running">Vérification des serveurs…</string>
+    <string name="repin_prompt_title">Réépingler les certificats ?</string>
+    <string name="repin_prompt_message">L\'application va se connecter maintenant à votre fournisseur de données et à votre fournisseur de secours, et n\'acceptera ensuite que les autorités de certification utilisées par chacun. Les autres fournisseurs gardent les épinglages intégrés à l\'application. Faites-le sur un réseau de confiance, comme le Wi-Fi de votre domicile.</string>
+    <string name="repin_confirm">Réépingler</string>
+    <string name="restore_pins_title">Utiliser les épinglages intégrés</string>
+    <string name="restore_pins_summary">Oublier les épinglages pris sur ce téléphone</string>
 </resources>

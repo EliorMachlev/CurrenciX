@@ -356,4 +356,5 @@
     <string name="quick_amount_label">金額</string>
     <string name="quick_amount_taken">已是其中一個金額</string>
     <string name="quick_amount_note">在所有貨幣組合中用於 %1$s。</string>
+    <string name="error_certificate_pinning">伺服器的憑證不是 App 為其綁定的憑證之一。如果供應商更換了憑證，請在設定中重新綁定，或關閉憑證綁定。</string>
 </resources>

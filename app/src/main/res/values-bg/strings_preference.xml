@@ -210,4 +210,16 @@
     <string name="api_all_rates_today_api_key_title">API ключ за AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">За да използвате този източник, ви трябва собствен API ключ.\n\nСъздайте безплатен акаунт на https://allratestoday.com, копирайте ключа си (започва с art_live_) от страницата на профила и го въведете тук.\n\nБезплатният план позволява общо 300 заявки, еднократно. Всяко обновяване и всеки период на графиката използва по една.</string>
     <string name="provider_cadence_every_minute">Обновява се приблизително всяка минута</string>
+    <string name="settings_advanced_section">Разширени</string>
+    <string name="certificate_pinning_title">Закачане на сертификати</string>
+    <string name="certificate_pinning_summary">Свързване със сървърите за курсове само чрез сертифициращите органи, закачени за тях. Изключете само ако сървър е сменил сертификата си и курсовете не се зареждат.</string>
+    <string name="repin_title">Повторно закачане към текущите сертификати</string>
+    <string name="repin_summary_builtin">Използват се вградените в приложението закачания</string>
+    <string name="repin_summary_own">Използват се закачания от този телефон за %1$d от %2$d сървъра</string>
+    <string name="repin_summary_running">Сървърите се проверяват…</string>
+    <string name="repin_prompt_title">Повторно закачане на сертификатите?</string>
+    <string name="repin_prompt_message">Приложението ще се свърже сега с доставчика на данни и резервния доставчик и оттук нататък ще приема само сертифициращите органи, които всеки от тях използва. Другите доставчици запазват вградените в приложението закачания. Направете го в мрежа, на която имате доверие, например домашния Wi-Fi.</string>
+    <string name="repin_confirm">Закачи отново</string>
+    <string name="restore_pins_title">Използване на вградените закачания</string>
+    <string name="restore_pins_summary">Забравяне на закачанията от този телефон</string>
 </resources>

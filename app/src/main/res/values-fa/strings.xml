@@ -362,4 +362,5 @@
     <string name="quick_amount_label">مبلغ</string>
     <string name="quick_amount_taken">از قبل یکی از مبالغ است</string>
     <string name="quick_amount_note">برای %1$s در همهٔ جفت‌ها استفاده می‌شود.</string>
+    <string name="error_certificate_pinning">گواهی سرور هیچ‌یک از گواهی‌هایی نیست که برنامه برایش سنجاق کرده است. اگر ارائه‌دهنده آن را عوض کرده، در تنظیمات دوباره سنجاق کنید یا سنجاق کردن گواهی را خاموش کنید.</string>
 </resources>

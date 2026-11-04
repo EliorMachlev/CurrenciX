@@ -35,8 +35,8 @@ private const val UNIQUE_NAME_PUBLISHED = "rate-refresh-published"
 private const val UNIQUE_NAME_NOW = "rate-refresh-now"
 
 // Marks the one-off refresh timed to a publication, so the worker knows to
-// queue the next one when it's done.
-internal const val TAG_PUBLISHED_REFRESH = "rate-refresh-published"
+// queue the next one when it's done: the work is tagged with its own name.
+internal const val TAG_PUBLISHED_REFRESH = UNIQUE_NAME_PUBLISHED
 
 /**
  * Turns the background auto-refresh (#151) on and off.

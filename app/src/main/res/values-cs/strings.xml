@@ -367,4 +367,5 @@
     <string name="quick_amount_label">Částka</string>
     <string name="quick_amount_taken">Už je jednou z částek</string>
     <string name="quick_amount_note">Použije se pro %1$s v každém páru.</string>
+    <string name="error_certificate_pinning">Certifikát serveru není žádný z těch, které má aplikace pro tento server připnuté. Pokud ho poskytovatel změnil, připněte znovu v Nastavení, nebo připínání certifikátů vypněte.</string>
 </resources>

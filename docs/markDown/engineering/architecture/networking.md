@@ -2,7 +2,7 @@
 
 ## One client
 
-Every request goes through one `OkHttpClient` (`HttpClientProvider`): a disk cache (5 MiB, `cacheDir/http-cache`), a per-provider `Cache-Control` rewrite, and a host allowlist (`AllowedHostsInterceptor`: the providers' `Api.hosts` plus the OCR language host, checked at every redirect). The cache-less client tests use and the OCR download client (no call timeout, no cache) are `newBuilder` views of it, sharing connections and threads. TLS, Certificate Transparency, Encrypted Client Hello and private requests: [security.md](../security.md#network).
+Every request goes through one `OkHttpClient` (`HttpClientProvider`): a disk cache (5 MiB, `cacheDir/http-cache`), a per-provider `Cache-Control` rewrite, and a host allowlist (`AllowedHostsInterceptor`: the providers' `Api.hosts` plus the OCR language host, checked at every redirect). The cache-less client tests use and the OCR download client (no call timeout, no cache) are `newBuilder` views of it, sharing connections and threads. Every client is used with the certificate pins in force (`CertificatePinning`): a `newBuilder` view with that `CertificatePinner`, rebuilt only when the pins change, so it shares the same cache, connections and threads. TLS, Certificate Transparency, certificate pinning, Encrypted Client Hello and private requests: [security.md](../security.md#network).
 
 ## Retrofit for fixed-shape JSON, raw OkHttp for the rest
 

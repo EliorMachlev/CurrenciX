@@ -209,4 +209,16 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-kulcs</string>
     <string name="api_all_rates_today_api_key_message">A forrás használatához saját API-kulcs kell.\n\nHozz létre ingyenes fiókot a https://allratestoday.com oldalon, másold ki a kulcsodat (art_live_ kezdetű) a profiloldaladról, és add meg itt.\n\nAz ingyenes csomag összesen 300 kérést enged, egyszeri keretként. Minden frissítés és minden grafikonidőszak egyet használ el.</string>
     <string name="provider_cadence_every_minute">Nagyjából percenként frissül</string>
+    <string name="settings_advanced_section">Speciális</string>
+    <string name="certificate_pinning_title">Tanúsítványrögzítés</string>
+    <string name="certificate_pinning_summary">Az árfolyamszerverekhez csak a nekik rögzített hitelesítésszolgáltatókon keresztül csatlakozzon. Csak akkor kapcsolja ki, ha egy szerver tanúsítványt váltott, és nem töltődnek be az árfolyamok.</string>
+    <string name="repin_title">Újrarögzítés a jelenlegi tanúsítványokra</string>
+    <string name="repin_summary_builtin">Az alkalmazásba épített rögzítések vannak használatban</string>
+    <string name="repin_summary_own">A telefonon vett rögzítések vannak használatban %2$d szerverből %1$d esetén</string>
+    <string name="repin_summary_running">Szerverek ellenőrzése…</string>
+    <string name="repin_prompt_title">Újrarögzíti a tanúsítványokat?</string>
+    <string name="repin_prompt_message">Az alkalmazás most csatlakozik az adatszolgáltatójához és a tartalék szolgáltatójához, és ezután csak azokat a hitelesítésszolgáltatókat fogadja el, amelyeket mindkettő használ. A többi szolgáltató megtartja az alkalmazásba épített rögzítéseket. Megbízható hálózaton tegye, például az otthoni Wi-Fin.</string>
+    <string name="repin_confirm">Újrarögzítés</string>
+    <string name="restore_pins_title">A beépített rögzítések használata</string>
+    <string name="restore_pins_summary">A telefonon vett rögzítések elfelejtése</string>
 </resources>

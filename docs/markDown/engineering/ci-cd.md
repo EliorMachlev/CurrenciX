@@ -23,6 +23,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 | `gradle-wrapper.yaml` | PR, push → `master`, manual | Validates `gradle-wrapper.jar`, the one binary in the repo, against Gradle's releases; its own workflow so Scorecard sees it pass |
 | `scorecard.yaml` | Push → `master`, weekly, manual | OpenSSF Scorecard (waits for the wrapper check on a push) |
 | `update-verification-metadata.yaml` | Manual | Records dependency checksums from an empty cache, commits them, restarts the checks |
+| `certificate-pins.yaml` | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites `BuiltInPins.kt` from the chains served now, commits it and restarts the checks |
 | `code-scanning-report.yaml` | Manual | Saves the open code scanning alerts on `master`, from every tool, as an artifact and a summary table on the run page |
 | `actionlint.yaml` | PR, push → `master`, on workflows | Workflow syntax |
 | `site.yaml` | PR, push → `master`, on `docs/**`, manual | Website asset versions and CSP hashes ([website.md](website.md)) |
@@ -81,6 +82,6 @@ Every workflow starts at `contents: read` (`scorecard.yaml`: `read-all`, as Scor
 | scorecard | `security-events: write`, `id-token: write`, `actions: read` |
 | release-apk | `contents`, `id-token`, `attestations: write` on the publish job only, which never sees the keys |
 | baseline-profile | `contents`, `actions: write` on its commit job only |
-| commit-baseline-profiles, update-verification-metadata | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
+| commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
 | dependency-review | `pull-requests: write` |
 | code-scanning-report | `security-events: read` only (no checkout) |
