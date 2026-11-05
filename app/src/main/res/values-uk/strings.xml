@@ -341,8 +341,8 @@
     <string name="receipt_languages_until_title">Залишити до</string>
     <string name="receipt_languages_save">Зберегти</string>
     <string name="receipt_setup_download">Завантажити</string>
-    <string name="receipt_setup_progress">Завантаження модуля читання чеків…</string>
-    <string name="receipt_setup_failed">Не вдалося завантажити модуль читання чеків. Спробуйте пізніше.</string>
+    <string name="receipt_setup_progress">Завантаження мов для чеків…</string>
+    <string name="receipt_setup_failed">Не вдалося завантажити мови для чеків. Спробуйте пізніше.</string>
     <string name="show_unreliable_providers_title">Показувати ненадійних постачальників</string>
     <string name="show_unreliable_providers_summary">Показувати й постачальників, які часто не працюють або мають неточні курси, з відповідною позначкою</string>
     <string name="provider_reliability_downtime">Збої</string>

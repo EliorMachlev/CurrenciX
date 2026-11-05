@@ -332,8 +332,8 @@
     <string name="receipt_languages_until_title">Simpan hingga</string>
     <string name="receipt_languages_save">Simpan</string>
     <string name="receipt_setup_download">Unduh</string>
-    <string name="receipt_setup_progress">Mengunduh pembaca struk…</string>
-    <string name="receipt_setup_failed">Tidak dapat mengunduh pembaca struk. Coba lagi nanti.</string>
+    <string name="receipt_setup_progress">Mengunduh bahasa struk…</string>
+    <string name="receipt_setup_failed">Tidak dapat mengunduh bahasa struk. Coba lagi nanti.</string>
     <string name="show_unreliable_providers_title">Tampilkan penyedia yang tidak andal</string>
     <string name="show_unreliable_providers_summary">Tampilkan juga penyedia yang sering tidak aktif atau kursnya tidak akurat, dengan label yang sesuai</string>
     <string name="provider_reliability_downtime">Gangguan</string>
