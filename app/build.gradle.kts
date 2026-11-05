@@ -119,14 +119,16 @@ val separateTestRuns = mapOf("fuzzTests" to fuzzTestClass, "liveProviders" to li
 // with "Unable to locate dependency" rather than downloading.
 val robolectricVersion = "4.17"
 val robolectricAndroidAll = "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7"
-val robolectricJarsConfiguration =
-    configurations.create("robolectricJars") {
-        isCanBeConsumed = false
+// Declared on one configuration, resolved (that jar alone) through another.
+val robolectricAndroidAllScope = configurations.dependencyScope("robolectricAndroidAll")
+val robolectricAndroidAllJars =
+    configurations.resolvable("robolectricAndroidAllJars") {
+        extendsFrom(robolectricAndroidAllScope.get())
         isTransitive = false
     }
 val robolectricJars =
     tasks.register<Sync>("robolectricJars") {
-        from(robolectricJarsConfiguration)
+        from(robolectricAndroidAllJars)
         into(layout.buildDirectory.dir("robolectric-jars"))
     }
 
@@ -232,9 +234,9 @@ android {
         unitTests.all {
             it.useJUnitPlatform()
             // Robolectric reads its Android jar from robolectricJars, never the network.
-            it.inputs.files(robolectricJars).withPropertyName("robolectricJars")
-            it.systemProperty("robolectric.offline", "true")
-            it.systemProperty("robolectric.dependency.dir", robolectricJars.get().destinationDir.absolutePath)
+            it.jvmArgumentProviders.add(
+                objects.newInstance<RobolectricOffline>().apply { jars.fileProvider(robolectricJars.map { sync -> sync.destinationDir }) },
+            )
             it.testLogging {
                 events("failed")
                 exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
@@ -541,7 +543,7 @@ dependencies {
     testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
     testImplementation("org.robolectric:robolectric:$robolectricVersion")
-    robolectricJarsConfiguration(robolectricAndroidAll)
+    add(robolectricAndroidAllScope.name, robolectricAndroidAll)
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.ui:ui-test-manifest")
     // Coroutines and Flows on a virtual clock (runTest), and Flow emissions
@@ -670,6 +672,18 @@ data class HybridSigningKeys(
  * Wired as a transform of the APK artifact, so `assemble`, `install` and the
  * output folder all get the hybrid-signed APKs, never the others.
  */
+// Runs Robolectric offline on the jars in [jars]. The folder is an input by its
+// contents and relative paths, so a test run's cache entry doesn't depend on
+// where the checkout is; its absolute path only reaches the test JVM.
+abstract class RobolectricOffline : CommandLineArgumentProvider {
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val jars: DirectoryProperty
+
+    override fun asArguments(): List<String> =
+        listOf("-Drobolectric.offline=true", "-Drobolectric.dependency.dir=${jars.get().asFile.absolutePath}")
+}
+
 abstract class SignApksHybrid : DefaultTask() {
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
