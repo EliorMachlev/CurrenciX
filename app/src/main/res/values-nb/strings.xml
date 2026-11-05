@@ -318,7 +318,6 @@
     <string name="receipt_language_pending">Navn på ditt språk leses bedre når tekstdataene er lastet ned.</string>
     <string name="recent_pair_alert_set">Kursvarsel satt</string>
     <string name="receipt_setup_message">Lesing av kvitteringer krever en nedlasting én gang. Etter det virker det uten nett på telefonen.</string>
-    <string name="receipt_setup_reader">Tekstleseren</string>
     <string name="receipt_language_read_too">Les også %1$s</string>
     <string name="receipt_languages_title">Kvitteringsspråk</string>
     <string name="receipt_languages_summary">Legg til et språk for en reise, behold det til en dato, eller slett det</string>
@@ -337,8 +336,8 @@
     <string name="receipt_languages_until_title">Behold til</string>
     <string name="receipt_languages_save">Lagre</string>
     <string name="receipt_setup_download">Last ned</string>
-    <string name="receipt_setup_progress">Laster ned kvitteringsleseren…</string>
-    <string name="receipt_setup_failed">Kunne ikke laste ned kvitteringsleseren. Prøv igjen senere.</string>
+    <string name="receipt_setup_progress">Laster ned kvitteringsspråk…</string>
+    <string name="receipt_setup_failed">Kunne ikke laste ned kvitteringsspråkene. Prøv igjen senere.</string>
     <string name="show_unreliable_providers_title">Vis upålitelige leverandører</string>
     <string name="show_unreliable_providers_summary">List også opp leverandører som ofte er nede eller har unøyaktige kurser, merket som det</string>
     <string name="provider_reliability_downtime">Nedetid</string>

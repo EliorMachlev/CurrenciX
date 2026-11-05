@@ -24,15 +24,15 @@
 # exceptions.md #11: the cast in the equals() the Kotlin compiler generates for a data object
 # (no such variable in the source).
 - excluded-rule: java/local-variable-is-never-read
-  file: app/src/main/kotlin/com/eliormachlev/currencix/ocr/OcrEngine.kt
-  line: 1
-  message-contains: tmp0_other_with_cast
-- excluded-rule: java/local-variable-is-never-read
   file: app/src/main/kotlin/com/eliormachlev/currencix/repository/BackupManager.kt
   line: 1
   message-contains: tmp0_other_with_cast
 - excluded-rule: java/local-variable-is-never-read
   file: app/src/main/kotlin/com/eliormachlev/currencix/repository/CartExporter.kt
+  line: 1
+  message-contains: tmp0_other_with_cast
+- excluded-rule: java/local-variable-is-never-read
+  file: app/src/main/kotlin/com/eliormachlev/currencix/view/cart/ReceiptScan.kt
   line: 1
   message-contains: tmp0_other_with_cast
 - excluded-rule: java/local-variable-is-never-read

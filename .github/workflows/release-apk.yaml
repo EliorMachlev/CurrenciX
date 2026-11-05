@@ -1,6 +1,6 @@
 name: Release
 
-# The project's release: builds the fdroid release APK (one, for every phone) signed with the
+# The project's release: builds the fdroid release APK (one, for every 64-bit phone) signed with the
 # release key and Android 17's post-quantum hybrid signature (APK Signature
 # Scheme v3.2) and publishes it as a GitHub release.
 #
@@ -170,7 +170,7 @@ jobs:
           {
             echo "### Signed release APK, CurrenciX ${VERSION}"
             echo
-            echo "[Download the APK](${ARTIFACT_URL}) (a zip: the APK, which installs on any phone, its SBOM and SHA256SUMS)."
+            echo "[Download the APK](${ARTIFACT_URL}) (a zip: the APK, which installs on any 64-bit phone, its SBOM and SHA256SUMS)."
             echo
             echo "Signed with the release key (v3.0, all Android versions) and the post-quantum hybrid signature (v3.2, Android 17+)."
           } >> "$GITHUB_STEP_SUMMARY"

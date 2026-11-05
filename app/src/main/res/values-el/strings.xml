@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">Τα ονόματα στη γλώσσα σας θα διαβάζονται καλύτερα μόλις ολοκληρωθεί η λήψη των δεδομένων κειμένου.</string>
     <string name="recent_pair_alert_set">Ορίστηκε ειδοποίηση ισοτιμίας</string>
     <string name="receipt_setup_message">Η ανάγνωση αποδείξεων χρειάζεται μια λήψη μία φορά. Μετά λειτουργεί εκτός σύνδεσης στο τηλέφωνό σας.</string>
-    <string name="receipt_setup_reader">Ο αναγνώστης κειμένου</string>
     <string name="receipt_language_read_too">Ανάγνωση και σε %1$s</string>
     <string name="receipt_languages_title">Γλώσσες αποδείξεων</string>
     <string name="receipt_languages_summary">Προσθέστε γλώσσα για ταξίδι, κρατήστε την ως μια ημερομηνία ή διαγράψτε την</string>
@@ -336,8 +335,8 @@
     <string name="receipt_languages_until_title">Διατήρηση έως</string>
     <string name="receipt_languages_save">Αποθήκευση</string>
     <string name="receipt_setup_download">Λήψη</string>
-    <string name="receipt_setup_progress">Λήψη αναγνώστη αποδείξεων…</string>
-    <string name="receipt_setup_failed">Δεν ήταν δυνατή η λήψη του αναγνώστη αποδείξεων. Δοκιμάστε αργότερα.</string>
+    <string name="receipt_setup_progress">Λήψη γλωσσών αποδείξεων…</string>
+    <string name="receipt_setup_failed">Δεν ήταν δυνατή η λήψη των γλωσσών αποδείξεων. Δοκιμάστε αργότερα.</string>
     <string name="show_unreliable_providers_title">Εμφάνιση αναξιόπιστων παρόχων</string>
     <string name="show_unreliable_providers_summary">Εμφανίζονται και πάροχοι που συχνά δεν λειτουργούν ή έχουν ανακριβείς ισοτιμίες, με σχετική σήμανση</string>
     <string name="provider_reliability_downtime">Διακοπές λειτουργίας</string>

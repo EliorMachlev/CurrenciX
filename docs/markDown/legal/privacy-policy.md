@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Effective:** 2026-11-04
+**Effective:** 2026-11-05
 **Last reviewed:** 2026-11-05
 **Controller:** Elior Machlev (individual maintainer of CurrenciX)
 **Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
@@ -13,7 +13,7 @@ CurrenciX is a currency-conversion app. It is designed to collect **no** persona
 
 **Off the device.** The app makes network requests to the exchange-rate provider you have selected in **Settings → Exchange rates → Data provider**, and to the fallback provider set there (asked at the same time, so its answer is ready if the main one fails). These requests carry your device's IP address, the standard HTTP headers a network client sends, the currencies and dates asked for (for example the pair a chart shows), and, for a provider that needs one, your API key. With **Settings → Security & privacy → Private requests** on, the headers are the same for every user and carry no cache identifiers. The providers — not CurrenciX — receive and process those requests under **their own** privacy terms. See [`product/providers.md`](../product/providers.md) for the list. **Settings → Security & privacy → Re-pin to current certificates**, only when you use it, connects once to the servers of your data provider and fallback provider to read their certificates; those requests carry your IP address and the standard headers, and no currencies, dates or API keys.
 
-Two other services can be contacted, only for receipt scanning: the OCR language data for each language you choose (none by default; the first scan offers your app's language, a trip's language and English) is downloaded once from GitHub (`raw.githubusercontent.com`, a fixed file address that carries nothing about you), and in the Google Play version the receipt reader itself is installed through Google Play. Nothing is downloaded until you agree: the first scan names each download and its size, and every language is a choice you tick yourself. More languages can be added in Settings → Receipt languages, each downloaded only after you agree; any can be deleted there, or kept only until a date you pick and then deleted automatically. On Android 17 and later, DNS look-ups go through Android's own resolver, as for any app. To offer the local currency when you travel, the app reads which country's mobile network the phone is on (no permission needed); that stays on the phone and is only compared with your phone's region.
+One other service can be contacted, only for receipt scanning: the OCR language data for each language you choose (none by default; the first scan offers your app's language, a trip's language and English) is downloaded once from GitHub (`raw.githubusercontent.com`, a fixed file address that carries nothing about you). Nothing is downloaded until you agree: the first scan names each download and its size, and every language is a choice you tick yourself. More languages can be added in Settings → Receipt languages, each downloaded only after you agree; any can be deleted there, or kept only until a date you pick and then deleted automatically. On Android 17 and later, DNS look-ups go through Android's own resolver, as for any app. To offer the local currency when you travel, the app reads which country's mobile network the phone is on (no permission needed); that stays on the phone and is only compared with your phone's region.
 
 **No SDKs.** CurrenciX does not integrate any analytics SDK, crash-reporting SDK, advertising SDK, attribution SDK, or persistent-identifier SDK. There is no Google Analytics, no Firebase, no Crashlytics, no AdMob, no Facebook SDK.
 
@@ -25,7 +25,7 @@ Two other services can be contacted, only for receipt scanning: the OCR language
 
 None on our servers — we don't operate servers.
 
-The only personal-data-adjacent element that ever leaves your device by our doing is your IP address, and only to the extent that TCP requires the providers you selected (and, for receipt scanning, GitHub or Google Play) to see it. We do not log it, receive it, or store it on any server we control.
+The only personal-data-adjacent element that ever leaves your device by our doing is your IP address, and only to the extent that TCP requires the providers you selected (and, for receipt scanning, GitHub) to see it. We do not log it, receive it, or store it on any server we control.
 
 ## Legal bases (where applicable) and jurisdictional notes
 

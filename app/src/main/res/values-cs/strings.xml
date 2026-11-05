@@ -323,7 +323,6 @@
     <string name="receipt_language_pending">Názvy ve vašem jazyce se přečtou lépe, až se dokončí stahování textových dat.</string>
     <string name="recent_pair_alert_set">Upozornění na kurz nastaveno</string>
     <string name="receipt_setup_message">Čtení účtenek vyžaduje jednorázové stažení. Potom funguje offline ve vašem telefonu.</string>
-    <string name="receipt_setup_reader">Čtečka textu</string>
     <string name="receipt_language_read_too">Číst i jazyk %1$s</string>
     <string name="receipt_languages_title">Jazyky účtenek</string>
     <string name="receipt_languages_summary">Přidejte jazyk na cestu, nechte si ho do data nebo ho smažte</string>
@@ -342,8 +341,8 @@
     <string name="receipt_languages_until_title">Ponechat do</string>
     <string name="receipt_languages_save">Uložit</string>
     <string name="receipt_setup_download">Stáhnout</string>
-    <string name="receipt_setup_progress">Stahování čtečky účtenek…</string>
-    <string name="receipt_setup_failed">Čtečku účtenek se nepodařilo stáhnout. Zkuste to později.</string>
+    <string name="receipt_setup_progress">Stahování jazyků pro účtenky…</string>
+    <string name="receipt_setup_failed">Jazyky pro účtenky se nepodařilo stáhnout. Zkuste to později.</string>
     <string name="show_unreliable_providers_title">Zobrazit nespolehlivé poskytovatele</string>
     <string name="show_unreliable_providers_summary">Uvádět i poskytovatele, kteří často nefungují nebo mají nepřesné kurzy, s příslušným označením</string>
     <string name="provider_reliability_downtime">Výpadky</string>

@@ -312,7 +312,6 @@
     <string name="receipt_language_pending">文字数据下载完成后，你所用语言的名称会识别得更好。</string>
     <string name="recent_pair_alert_set">已设汇率提醒</string>
     <string name="receipt_setup_message">读取收据需要一次性下载。之后可在手机上离线使用。</string>
-    <string name="receipt_setup_reader">文字识别器</string>
     <string name="receipt_language_read_too">同时读取%1$s</string>
     <string name="receipt_languages_title">收据语言</string>
     <string name="receipt_languages_summary">为旅行添加语言、保留到某个日期或删除</string>
@@ -331,8 +330,8 @@
     <string name="receipt_languages_until_title">保留至</string>
     <string name="receipt_languages_save">保存</string>
     <string name="receipt_setup_download">下载</string>
-    <string name="receipt_setup_progress">正在下载小票识别组件…</string>
-    <string name="receipt_setup_failed">无法下载小票识别组件，请稍后重试。</string>
+    <string name="receipt_setup_progress">正在下载小票语言…</string>
+    <string name="receipt_setup_failed">无法下载小票语言，请稍后重试。</string>
     <string name="show_unreliable_providers_title">显示不可靠的提供方</string>
     <string name="show_unreliable_providers_summary">同时列出经常无法访问或汇率不准确的提供方，并作相应标注</string>
     <string name="provider_reliability_downtime">经常中断</string>

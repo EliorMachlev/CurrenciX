@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">Metin verilerinin indirilmesi bitince kendi dilinizdeki adlar daha iyi okunur.</string>
     <string name="recent_pair_alert_set">Kur uyarısı kuruldu</string>
     <string name="receipt_setup_message">Fiş okumak için tek seferlik bir indirme gerekir. Sonrasında telefonunuzda çevrimdışı çalışır.</string>
-    <string name="receipt_setup_reader">Metin okuyucu</string>
     <string name="receipt_language_read_too">%1$s da oku</string>
     <string name="receipt_languages_title">Fiş dilleri</string>
     <string name="receipt_languages_summary">Bir gezi için dil ekleyin, bir tarihe kadar tutun ya da silin</string>
@@ -336,8 +335,8 @@
     <string name="receipt_languages_until_title">Şu tarihe kadar tut</string>
     <string name="receipt_languages_save">Kaydet</string>
     <string name="receipt_setup_download">İndir</string>
-    <string name="receipt_setup_progress">Fiş okuyucu indiriliyor…</string>
-    <string name="receipt_setup_failed">Fiş okuyucu indirilemedi. Daha sonra tekrar deneyin.</string>
+    <string name="receipt_setup_progress">Fiş dilleri indiriliyor…</string>
+    <string name="receipt_setup_failed">Fiş dilleri indirilemedi. Daha sonra tekrar deneyin.</string>
     <string name="show_unreliable_providers_title">Güvenilmez sağlayıcıları göster</string>
     <string name="show_unreliable_providers_summary">Sık sık çalışmayan veya kurları hatalı olan sağlayıcıları da bu şekilde etiketleyerek listele</string>
     <string name="provider_reliability_downtime">Kesintiler</string>

@@ -14,7 +14,6 @@ class ReceiptScanTest {
     private val installed = mutableSetOf<TessLanguage>()
     private val answers = mutableMapOf<TessLanguage, Boolean>()
     private val untils = mutableMapOf<TessLanguage, Instant?>()
-    private var recognizer = true
     private var setupsStarted = 0
     private var awaited: Set<TessLanguage>? = null
     private var photoChoices = 0
@@ -23,7 +22,6 @@ class ReceiptScanTest {
         ReceiptScan().apply {
             candidates = listOfNotNull(local)
             isInstalled = { it in installed }
-            isRecognizerHere = { recognizer }
             answerFor = { answers[it] }
             answer = { language, allowed, until ->
                 answers[language] = allowed
@@ -37,13 +35,9 @@ class ReceiptScanTest {
 
     @Test
     fun `the first scan names what it would download, English only as a choice, and starts nothing`() {
-        recognizer = false
         val scan = scan()
         scan.begin { photoChoices++ }
-        assertEquals(
-            ReceiptSetup.Offer(reader = true, languages = listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH), needsLanguage = true),
-            scan.setup,
-        )
+        assertEquals(ReceiptSetup.Offer(languages = listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH)), scan.setup)
         assertEquals(0, setupsStarted)
         assertEquals(0, photoChoices)
         assertTrue(answers.isEmpty())
@@ -67,18 +61,6 @@ class ReceiptScanTest {
         scan.begin { photoChoices++ }
         assertEquals(listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH), (scan.setup as ReceiptSetup.Offer).languages)
         assertEquals(0, photoChoices)
-    }
-
-    @Test
-    fun `with only the reader missing, nothing is waited for and a language not asked about is a choice`() {
-        installed += TessLanguage.ENGLISH
-        recognizer = false
-        val scan = scan()
-        scan.begin { photoChoices++ }
-        assertEquals(ReceiptSetup.Offer(reader = true, languages = listOf(TessLanguage.HEBREW), needsLanguage = false), scan.setup)
-        scan.acceptSetup(chosen = emptySet())
-        assertEquals(false, answers[TessLanguage.HEBREW])
-        assertEquals(emptySet<TessLanguage>(), awaited)
     }
 
     @Test

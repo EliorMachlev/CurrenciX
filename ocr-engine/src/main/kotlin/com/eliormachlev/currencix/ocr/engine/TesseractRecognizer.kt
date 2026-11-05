@@ -4,10 +4,9 @@ import android.graphics.Bitmap
 import com.googlecode.tesseract.android.TessBaseAPI
 
 /**
- * Reads the text in a receipt photo with Tesseract. The F-Droid app calls it
- * directly; the Play app loads it by name from the :ocr feature module once
- * that's installed, which is why it implements no app interface and keeps a
- * public no-argument constructor (see consumer-rules.pro).
+ * Reads the text in a receipt photo with Tesseract, for both flavors of the
+ * app (its native code is what makes the app 64-bit only, see
+ * gradle.properties).
  */
 class TesseractRecognizer {
     /**

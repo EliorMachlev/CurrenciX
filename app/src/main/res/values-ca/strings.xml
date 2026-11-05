@@ -321,7 +321,6 @@
     <string name="receipt_language_pending">Els noms en el teu idioma es llegiran millor quan acabi la baixada de les dades de text.</string>
     <string name="recent_pair_alert_set">Alerta de canvi activa</string>
     <string name="receipt_setup_message">Per llegir tiquets cal una baixada única. Després funciona sense connexió al telèfon.</string>
-    <string name="receipt_setup_reader">El lector de text</string>
     <string name="receipt_language_read_too">Llegeix també en %1$s</string>
     <string name="receipt_languages_title">Idiomes dels tiquets</string>
     <string name="receipt_languages_summary">Afegeix un idioma per a un viatge, guarda\'l fins a una data o esborra\'l</string>
@@ -340,8 +339,8 @@
     <string name="receipt_languages_until_title">Guarda fins a</string>
     <string name="receipt_languages_save">Desa</string>
     <string name="receipt_setup_download">Baixa</string>
-    <string name="receipt_setup_progress">S\'està baixant el lector de tiquets…</string>
-    <string name="receipt_setup_failed">No s\'ha pogut baixar el lector de tiquets. Torna-ho a provar més tard.</string>
+    <string name="receipt_setup_progress">S\'estan baixant les llengües dels tiquets…</string>
+    <string name="receipt_setup_failed">No s\'han pogut baixar les llengües dels tiquets. Torna-ho a provar més tard.</string>
     <string name="show_unreliable_providers_title">Mostra proveïdors poc fiables</string>
     <string name="show_unreliable_providers_summary">Llista també els proveïdors que sovint fallen o que tenen tipus inexactes, indicant-ho</string>
     <string name="provider_reliability_downtime">Caigudes</string>

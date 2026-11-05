@@ -7,10 +7,13 @@ import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.Operation
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.await
 import androidx.work.workDataOf
 import com.eliormachlev.currencix.util.HttpClientProvider
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -66,12 +69,12 @@ internal class TessdataDownloadWorker(
     }
 
     companion object {
-        /** Downloads [language]'s file unless it's here or already on its way. */
+        /** Downloads [language]'s file unless it's here or already on its way; null when it's here. */
         fun enqueue(
             context: Context,
             language: TessLanguage,
-        ) {
-            if (Tessdata.isInstalled(context, language)) return
+        ): Operation? {
+            if (Tessdata.isInstalled(context, language)) return null
             val request =
                 OneTimeWorkRequestBuilder<TessdataDownloadWorker>()
                     .setInputData(workDataOf(KEY_LANGUAGE to language.name))
@@ -81,7 +84,7 @@ internal class TessdataDownloadWorker(
                     // Its own tag too: a unique work's name isn't one of its tags.
                     .addTag(UNIQUE_PREFIX + language.code)
                     .build()
-            WorkManager.getInstance(context).enqueueUniqueWork(UNIQUE_PREFIX + language.code, ExistingWorkPolicy.KEEP, request)
+            return WorkManager.getInstance(context).enqueueUniqueWork(UNIQUE_PREFIX + language.code, ExistingWorkPolicy.KEEP, request)
         }
 
         /** Stops [language]'s download, if one is on its way. */
@@ -104,7 +107,7 @@ internal class TessdataDownloadWorker(
                 }
 
         /**
-         * Waits for [language]'s download ([enqueue]d before) to end; true
+         * Waits for the download of [language] (one agreed to) to end; true
          * when its file is then on the device. A download retrying after a
          * failure keeps it waiting.
          */
@@ -113,10 +116,21 @@ internal class TessdataDownloadWorker(
             language: TessLanguage,
         ): Boolean {
             if (Tessdata.isInstalled(context, language)) return true
+            // Queued here as well, and that awaited (a no-op when it's already
+            // on its way), so the wait below sees this download: not an empty
+            // list while the first enqueue is still being written, nor an
+            // earlier download that was cancelled. A download WorkManager
+            // can't queue (its database full, say) ends the wait as failed,
+            // shown as such, rather than crashing the scan.
+            runCatching { enqueue(context, language)?.await() }.exceptionOrNull()?.let { failure ->
+                if (failure is CancellationException) throw failure
+                Timber.tag(TAG).w(failure, "Couldn't queue the download of %s", language.code)
+                return false
+            }
             WorkManager
                 .getInstance(context)
                 .getWorkInfosForUniqueWorkFlow(UNIQUE_PREFIX + language.code)
-                .first { infos -> infos.none { !it.state.isFinished } }
+                .first { infos -> infos.isNotEmpty() && infos.all { it.state.isFinished } }
             return Tessdata.isInstalled(context, language)
         }
     }

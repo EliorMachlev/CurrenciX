@@ -329,7 +329,6 @@
     <string name="receipt_language_pending">تُقرأ الأسماء بلغتك بشكل أفضل بعد انتهاء تنزيل بيانات النص.</string>
     <string name="recent_pair_alert_set">تم ضبط تنبيه سعر</string>
     <string name="receipt_setup_message">تحتاج قراءة الإيصالات إلى تنزيل لمرة واحدة. بعد ذلك تعمل دون اتصال على هاتفك.</string>
-    <string name="receipt_setup_reader">قارئ النصوص</string>
     <string name="receipt_language_read_too">قراءة %1$s أيضًا</string>
     <string name="receipt_languages_title">لغات الإيصالات</string>
     <string name="receipt_languages_summary">أضف لغة لرحلة، أو احتفظ بها حتى تاريخ، أو احذفها</string>
@@ -348,8 +347,8 @@
     <string name="receipt_languages_until_title">الاحتفاظ حتى</string>
     <string name="receipt_languages_save">حفظ</string>
     <string name="receipt_setup_download">تنزيل</string>
-    <string name="receipt_setup_progress">جارٍ تنزيل قارئ الإيصالات…</string>
-    <string name="receipt_setup_failed">تعذّر تنزيل قارئ الإيصالات. حاول لاحقًا.</string>
+    <string name="receipt_setup_progress">جارٍ تنزيل لغات الإيصالات…</string>
+    <string name="receipt_setup_failed">تعذّر تنزيل لغات الإيصالات. حاول لاحقًا.</string>
     <string name="show_unreliable_providers_title">عرض المزوّدين غير الموثوقين</string>
     <string name="show_unreliable_providers_summary">إدراج المزوّدين الذين يتعطّلون كثيرًا أو أسعارهم غير دقيقة أيضًا، مع وسمهم بذلك</string>
     <string name="provider_reliability_downtime">انقطاعات</string>
