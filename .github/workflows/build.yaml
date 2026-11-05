@@ -28,6 +28,7 @@ jobs:
   # Its own job, beside the builds rather than ahead of them in each one.
   spotless:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Harden the runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
@@ -66,6 +67,7 @@ jobs:
   # replayed from then on.
   fuzz:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -112,6 +114,7 @@ jobs:
   # skip, or a parameter the compiler can't prove stable (see the script).
   compose-stability:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Harden the runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
@@ -143,6 +146,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -228,6 +232,7 @@ jobs:
     # in CI, so we catch any breakage of the reproducible build path before it
     # blocks an F-Droid release. apk-checks.yaml builds it twice and compares.
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Harden the runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3

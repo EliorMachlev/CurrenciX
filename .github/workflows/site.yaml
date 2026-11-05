@@ -30,6 +30,7 @@ permissions:
 jobs:
   assets:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Harden the runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3

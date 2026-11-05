@@ -387,9 +387,11 @@ class NoSuppressionsTest {
                 Regex("""\bextend-(words|identifiers|exclude|ignore-re|ignore-identifiers-re)\b"""),
                 // Licensee: a license or library allowed beyond the SPDX identifiers
                 Regex("""\b(allowUrl|allowDependency|ignoreDependencies)\("""),
-                // Workflow linters: ShellCheck (run by actionlint on each run: script), actionlint, zizmor
+                // Workflow linters: ShellCheck (run by jactionlint on each run: script), jactionlint
+                // (an -ignore flag, or its # jactionlint / # actionlint ignore= comment), zizmor
                 Regex("""shellcheck\s+disable="""),
                 Regex("""actionlint\b.*\s-ignore\b"""),
+                Regex("""#\s*j?actionlint\s+ignore="""),
                 Regex("""zizmor:\s*ignore"""),
                 // Gradle dependency verification: files accepted without a checksum
                 Regex("""<(trust|ignored-key|trusted-key)\s"""),

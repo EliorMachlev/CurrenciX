@@ -1,0 +1,65 @@
+name: jactionlint
+# Lints the workflows, the local actions and the Dependabot configuration:
+# syntax, expressions, runner labels, action inputs, ShellCheck on every run:
+# script, and its default profile's rules on top (timeouts, concurrency,
+# permissions, pipefail and more). jactionlint is jdx's maintained fork of
+# rhysd/actionlint (https://github.com/jdx/jactionlint), and it knows GitHub's
+# newer syntax, such as `$/` for this repository's own actions and workflows.
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+      - '.github/dependabot.yml'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+      - '.github/dependabot.yml'
+
+# A newer push to the same PR or branch supersedes a run still going;
+# master's runs always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+
+env:
+  # The release archive, pinned by version and SHA-256 (from the release's
+  # checksums file). Dependabot doesn't follow a download: update both by hand.
+  JACTIONLINT_VERSION: 2.4.0
+  JACTIONLINT_SHA256: 26ddba81db28fffc51163175c070ee1a9d1150260de4b5232f01d9b749f32d8e
+
+jobs:
+  jactionlint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install jactionlint
+        run: |
+          archive="jactionlint_${JACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/$archive" \
+            "https://github.com/jdx/jactionlint/releases/download/v${JACTIONLINT_VERSION}/$archive"
+          echo "$JACTIONLINT_SHA256  $RUNNER_TEMP/$archive" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" jactionlint
+
+      # ShellCheck comes with the runner image; pyflakes isn't there, and
+      # jactionlint skips it (it would only check `shell: python` steps,
+      # which no workflow has).
+      # The profile named, so a config file can't change it unseen; a warning
+      # or a note fails the job too, as an error does; findings annotate the PR.
+      - name: Lint the workflows
+        run: '"$RUNNER_TEMP/jactionlint" --profile default --strict-exit --format github'

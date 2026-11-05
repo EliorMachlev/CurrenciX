@@ -12,7 +12,7 @@ How each scanner and workflow is configured is in [ci-cd.md](ci-cd.md); this is 
 - **Reproducible builds.** [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml) builds the unsigned fdroid release twice, from two checkouts with no build cache, and fails if any APK differs, so a change that makes the build depend on where or when it runs is caught before F-Droid's own rebuild would be ([ci-cd.md](ci-cd.md#workflows)).
 - **Release provenance.** Each APK and the SBOM are attested (`actions/attest-build-provenance`, on Sigstore's transparency log); `gh attestation verify <file> --repo EliorMachlev/CurrenciX` checks a download.
 - **Code analysis.** detekt, Lint, Qodana, CodeQL (data flow from intents and other input into files, URLs and logs), Semgrep and Gitleaks on every PR; Jazzer fuzzes every parser of outside input.
-- **Workflow analysis.** actionlint checks every workflow change, and CodeQL's `actions` analysis and zizmor look for template injection, leaked credentials, cache poisoning and over-broad permissions; zizmor fails on a medium or worse finding ([ci-cd.md](ci-cd.md#workflows)).
+- **Workflow analysis.** jactionlint checks every workflow change, and CodeQL's `actions` analysis and zizmor look for template injection, leaked credentials, cache poisoning and over-broad permissions; zizmor fails on a medium or worse finding ([ci-cd.md](ci-cd.md#workflows)).
 
 ## Secrets
 

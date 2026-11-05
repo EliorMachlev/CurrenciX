@@ -45,6 +45,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     # Where the signing keys live (see the top of this file).
     environment: release
     outputs:
@@ -149,7 +150,9 @@ jobs:
 
       - name: Write checksums
         working-directory: app/build/outputs/apk/fdroid/release
-        run: sha256sum ./*-release.apk ./*-sbom.cdx.json | sed 's| \./| |' > SHA256SUMS
+        run: |
+          set -o pipefail
+          sha256sum ./*-release.apk ./*-sbom.cdx.json | sed 's| \./| |' > SHA256SUMS
 
       - name: Upload the APK
         id: upload
@@ -192,6 +195,7 @@ jobs:
     if: github.ref_type == 'tag'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
       # Signed build provenance for each file (below).
