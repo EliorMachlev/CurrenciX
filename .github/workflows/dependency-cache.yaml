@@ -1,0 +1,135 @@
+name: Dependency cache
+# Builds the read-only Gradle dependency cache the other Gradle jobs restore
+# (.github/actions/dependency-cache): every library, plugin and test jar the
+# build resolves, Robolectric's Android framework jar among them. Maven
+# Central rate-limits GitHub's runners (HTTP 429 and 403), and a job whose
+# own setup-gradle cache missed one jar failed over it; with this cache a job
+# downloads only what changed since master's last build files.
+#
+# Saved only from master, so a branch can never write a cache other runs
+# read, and Gradle checks every file taken from it against
+# gradle/verification-metadata.xml. On a PR changing this workflow, the
+# action or the init script, it builds the cache without saving it, to show
+# it still works. The release build doesn't use it (cache-disabled), and
+# update-verification-metadata.yaml must start from an empty cache.
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'gradle/libs.versions.toml'
+      - 'gradle/verification-metadata.xml'
+      - 'gradle/wrapper/gradle-wrapper.properties'
+      - 'gradle.properties'
+      - 'settings.gradle'
+      - '**/*.gradle.kts'
+      - '.github/actions/dependency-cache/**'
+      - '.github/scripts/resolve-dependencies.init.gradle.kts'
+      - '.github/workflows/dependency-cache.yaml'
+  pull_request:
+    paths:
+      - '.github/actions/dependency-cache/**'
+      - '.github/scripts/resolve-dependencies.init.gradle.kts'
+      - '.github/workflows/dependency-cache.yaml'
+  # Weekly, to build a cache that's missing: a master run that failed, or
+  # one GitHub evicted (it drops caches unused for 7 days).
+  schedule:
+    - cron: '41 2 * * 0'
+  workflow_dispatch:
+
+# One build at a time; a newer push to the same PR supersedes a run still going.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  # As in build.yaml: silences the JDK's CDS banner in forked JVMs.
+  JDK_JAVA_OPTIONS: -Xshare:off
+  # Where the cache is laid out and saved from: the path every workflow sets
+  # as GRADLE_RO_DEP_CACHE (the cache's key includes it). Not set as
+  # GRADLE_RO_DEP_CACHE here, so the build below starts from nothing.
+  RO_CACHE: /home/runner/gradle-ro-dep-cache
+
+jobs:
+  # Whether to build: always on a PR (to test it), else only when this
+  # commit's build files have no cache yet.
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # RO_CACHE, for the action (a job's env can't read the workflow's).
+      GRADLE_RO_DEP_CACHE: /home/runner/gradle-ro-dep-cache
+    outputs:
+      key: ${{ steps.cache.outputs.key }}
+      build: ${{ github.event_name == 'pull_request' || steps.cache.outputs.cache-hit != 'true' }}
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check for this build's cache
+        id: cache
+        uses: ./.github/actions/dependency-cache
+        with:
+          lookup-only: 'true'
+
+  cache:
+    needs: check
+    if: needs.check.outputs.build == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup java environment
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          java-version: 25
+          distribution: temurin
+
+      # An empty Gradle home, so the cache holds what this build resolves
+      # and nothing a restored cache brought along.
+      - name: Use an empty Gradle home
+        run: echo "GRADLE_USER_HOME=$RUNNER_TEMP/gradle-home" >> "$GITHUB_ENV"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          cache-disabled: true
+
+      - name: Resolve every dependency
+        run: ./gradlew --no-configuration-cache --init-script .github/scripts/resolve-dependencies.init.gradle.kts resolveDependencies
+
+      # Gradle's layout for a read-only cache: the modules-2 folder without
+      # its lock files and cleanup marker.
+      - name: Lay out the read-only cache
+        run: |
+          mkdir -p "$RO_CACHE"
+          cp -a "$GRADLE_USER_HOME/caches/modules-2" "$RO_CACHE/"
+          find "$RO_CACHE" -name '*.lock' -delete
+          rm -f "$RO_CACHE/modules-2/gc.properties"
+          du -sh "$RO_CACHE" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Save the cache
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.RO_CACHE }}
+          key: ${{ needs.check.outputs.key }}
