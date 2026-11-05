@@ -352,8 +352,8 @@ androidComponents {
 
 dependencies {
     // kotlin
-    // Every Kotlin library at the compiler's version: without it, Moshi and
-    // Reorderable pull kotlin-stdlib-jdk7 / -jdk8 1.9.0 in beside stdlib
+    // Every Kotlin library at the compiler's version: without it, Reorderable
+    // pulls kotlin-stdlib-jdk7 / -jdk8 1.9.0 in beside stdlib
     // 2.4.21 (stubs since 1.8, but an old version all the same, which the
     // OWASP scan flags).
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:${getKotlinPluginVersion()}"))
